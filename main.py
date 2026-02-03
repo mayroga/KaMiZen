@@ -1,69 +1,57 @@
 import os
-from fastapi import FastAPI, Depends, Request
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
+import random
+from fastapi import FastAPI, Depends
 from datetime import datetime
 import pytz
-import requests
+from typing import List
 
 app = FastAPI()
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# Diccionario de Estados Vitales (El Espejo del Usuario)
+ESTADOS = {
+    "Fuego": "Estado de alta energía, ansiedad o estrés. Necesidad de enfriamiento.",
+    "Tierra": "Estado de estancamiento o pesadez. Necesidad de movimiento.",
+    "Aire": "Estado de dispersión. Necesidad de enfoque y respiración.",
+    "Equilibrio": "Estado óptimo de conexión entre el cuerpo y el entorno."
+}
 
-# API Weather Integration (Usando tu servicio en Render o OpenWeather)
-WEATHER_API_KEY = os.getenv("WEATHER_API_KEY")
+@app.get("/sensor_completo")
+async def sensor_completo(lat: float = None, lon: float = None, pasos: int = 0, vasos_agua: int = 0):
+    now = datetime.now()
+    # Lógica de Estado Vital Automática (Simulada para el sensor)
+    # Si hay poco movimiento y mucha hora de trabajo -> Fuego o Tierra
+    if pasos < 1000 and now.hour > 10:
+        estado_actual = "Fuego"
+    elif vasos_agua >= 8 and pasos > 5000:
+        estado_actual = "Equilibrio"
+    else:
+        estado_actual = "Aire"
 
-def get_real_context(lat: float = None, lon: float = None):
-    context = {
-        "time": datetime.now().strftime("%H:%M:%S"),
-        "is_dark": datetime.now().hour > 18 or datetime.now().hour < 6,
-        "weather": "clear",
-        "temp": 20,
-        "sentiment": "neutral"
-    }
-    if lat and lon:
-        try:
-            # Conexión al flujo real del clima
-            url = f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={WEATHER_API_KEY}&units=metric"
-            res = requests.get(url).json()
-            context["weather"] = res["weather"][0]["main"].lower()
-            context["temp"] = res["main"]["temp"]
-            # Interpretación existencial del clima
-            if context["weather"] in ["rain", "drizzle", "thunderstorm"]:
-                context["sentiment"] = "melancholy" # El llanto de la tierra
-            elif context["temp"] > 30:
-                context["sentiment"] = "exhaustion" # El peso del sol
-        except:
-            pass
-    return context
-
-@app.get("/init_vital")
-async def init_vital(lat: float = None, lon: float = None):
-    ctx = get_real_context(lat, lon)
     return {
-        "app": "KaMiZen",
-        "context": ctx,
-        "global_pulse": 8200451032, # Población mundial latiendo
-        "levels": {"1": "Gratis - Prueba", "2": "Gratis - Prueba"}
+        "timestamp": now.isoformat(),
+        "hora_local": now.strftime("%H:%M:%S"),
+        "clima": "Soleado" if now.hour < 18 else "Estrellado", # Aquí se conectaría tu API Weather
+        "estado_vital": estado_actual,
+        "descripcion": ESTADOS[estado_actual],
+        "metricas": {
+            "hidratacion": f"{vasos_agua}/8 vasos",
+            "movimiento": f"{pasos} pasos",
+            "conexion_entorno": "85% - Sincronizado"
+        }
     }
 
-@app.get("/flow/{level}")
-async def get_flow(level: int, lat: float = None, lon: float = None):
-    ctx = get_real_context(lat, lon)
-    # Nivel 2 es la profundidad absoluta: El miedo y la trascendencia
+# Endpoint para generar el Reporte Vital PDF (Estructura de datos)
+@app.get("/reporte_vital_data")
+async def reporte_vital_data():
+    # Este endpoint entrega los datos que el PDF usará
     return {
-        "level": level,
-        "atmosphere": ctx,
-        "microactions": [
-            {"t": "Hidratación", "m": "Tus células mueren sin agua. Bébetela ahora."},
-            {"t": "Miedo", "m": "Esa presión en el pecho es solo energía. Suéltala."},
-            {"t": "Conexión", "m": "Mil personas bajo esta misma lluvia están pensando en alguien."}
-        ]
+        "titulo": "REPORTE DE CICLO VITAL - KaMiZen",
+        "usuario": "Explorador del Ciclo",
+        "resumen_24h": "Hoy pasaste de un estado de Fuego a un estado de Equilibrio. Tu hidratación fue óptima.",
+        "puntos_clave": [
+            "Conexión con el entorno aumentó un 20% al atardecer.",
+            "Ritmo circadiano mantenido.",
+            "Microacciones completadas: 12/15."
+        ],
+        "nota_legal": "Este documento es una guía de bienestar personal, no constituye un diagnóstico médico."
     }
-
-app.mount("/sounds", StaticFiles(directory="sounds"), name="sounds")
