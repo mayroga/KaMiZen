@@ -1,66 +1,65 @@
 import React, { useState, useEffect } from "react";
 
 export default function LoadingScreen({ onReady }) {
-  const [phase, setPhase] = useState(0);
-  const [isStarting, setIsStarting] = useState(false);
+  const [textIndex, setTextIndex] = useState(0);
+  const [seed] = useState(Math.random()); // Semilla única para que cada entrada sea distinta
 
-  const lifeCycles = [
-    { text: "Respirar...", color: "#1a2a6c" },
-    { text: "Existir...", color: "#b21f1f" },
-    { text: "Sentir...", color: "#fdbb2d" },
-    { text: "Trascender...", color: "#22c1c3" }
+  const philosophy = [
+    "Cada segundo es una vida entera.",
+    "Nacer, crecer, soltar, trascender.",
+    "El equilibrio entre el caos y la calma.",
+    "Tu pulso es el ritmo del universo.",
+    "Lo que buscas, también te está buscando."
   ];
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setPhase((prev) => (prev + 1) % lifeCycles.length);
-    }, 3000);
-    return () => clearInterval(interval);
+    const timer = setInterval(() => {
+      setTextIndex((prev) => (prev + 1) % philosophy.length);
+    }, 4000);
+    return () => clearInterval(timer);
   }, []);
 
-  const startApp = () => {
-    setIsStarting(true);
-    // USO DE RUTA RELATIVA PARA EVITAR EL ERROR DE FETCH
-    fetch(`/init?user_id=guest&lang=es`)
-      .then(res => {
-        if (!res.ok) throw new Error("Error en red");
-        return res.json();
-      })
-      .then(data => setTimeout(() => onReady(data), 1200))
-      .catch((err) => {
-        console.warn("Servidor despertando...", err);
-        // Fallback para que la app no se bloquee si el servidor tarda en despertar
-        onReady({ stage: "morning", is_premium: true }); 
-      });
+  const handleStart = () => {
+    fetch(`/init?user_id=guest`).then(res => res.json()).then(onReady);
   };
 
   return (
     <div style={{
-      width: "100vw", height: "100vh", display: "flex", justifyContent: "center", alignItems: "center",
-      backgroundColor: lifeCycles[phase].color, transition: "background-color 2s ease-in-out", overflow: "hidden", position: "relative"
+      width: "100vw", height: "100vh", position: "relative", overflow: "hidden",
+      background: `radial-gradient(circle at ${seed * 100}% ${seed * 80}%, #1a2a6c, #b21f1f, #fdbb2d)`,
+      display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center"
     }}>
-      <div style={{ zIndex: 10, textAlign: "center", color: "white" }}>
-        <h1 style={{ fontSize: "4rem", letterSpacing: "15px", fontWeight: "200", textShadow: "0 0 20px rgba(255,255,255,0.5)" }}>KaMiZen</h1>
-        <p style={{ fontSize: "1.2rem", marginBottom: "40px", opacity: 0.8 }}>{lifeCycles[phase].text}</p>
+      {/* Capas de movimiento orgánico */}
+      <div className="vortex" />
+      
+      <div style={{ zIndex: 10, textAlign: "center", color: "white", padding: "20px" }}>
+        <h1 style={{ fontSize: "5rem", fontWeight: "100", letterSpacing: "20px", margin: 0 }}>KaMiZen</h1>
+        <div style={{ height: "60px", margin: "20px 0" }}>
+           <p key={textIndex} className="fade-text" style={{ fontSize: "1.5rem", fontStyle: "italic", opacity: 0.8 }}>
+            {philosophy[textIndex]}
+          </p>
+        </div>
         
-        {!isStarting ? (
-          <button onClick={startApp} style={styles.btnStart}>RECONOCER EL CICLO</button>
-        ) : (
-          <div className="pulse-loader"></div>
-        )}
+        <button onClick={handleStart} className="btn-entrar">
+          INICIAR EXPERIENCIA ÚNICA
+        </button>
       </div>
 
       <style>{`
-        .pulse-loader { width: 50px; height: 50px; border: 2px solid white; border-radius: 50%; margin: 0 auto; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { transform: scale(0.8); opacity: 1; } 100% { transform: scale(2.5); opacity: 0; } }
+        .vortex {
+          position: absolute; width: 200%; height: 200%;
+          background: url('https://www.transparenttextures.com/patterns/asfalt-dark.png');
+          opacity: 0.15; animation: rotateVortex ${60 + seed * 20}s linear infinite;
+        }
+        @keyframes rotateVortex { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .fade-text { animation: fadeInOut 4s ease-in-out infinite; }
+        @keyframes fadeInOut { 0%, 100% { opacity: 0; transform: translateY(10px); } 50% { opacity: 1; transform: translateY(0); } }
+        .btn-entrar {
+          padding: 20px 60px; background: none; border: 1px solid white; color: white;
+          font-size: 1.2rem; cursor: pointer; transition: 0.5s; letter-spacing: 5px;
+        }
+        .btn-entrar:hover { background: white; color: black; box-shadow: 0 0 30px white; }
       `}</style>
     </div>
   );
 }
-
-const styles = {
-  btnStart: {
-    padding: "20px 50px", fontSize: "1rem", background: "none", border: "1px solid white",
-    color: "white", borderRadius: "2px", cursor: "pointer", letterSpacing: "4px"
-  }
-};
