@@ -1,103 +1,95 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import LoadingScreen from "./LoadingScreen";
 
-async function playSound(layers) {
-  if (!layers) return;
-  try {
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    layers.forEach(async (layer) => {
-      try {
-        const res = await fetch(`/sounds/${layer.name}.mp3`);
-        const buffer = await audioCtx.decodeAudioData(await res.arrayBuffer());
-        const source = audioCtx.createBufferSource();
-        source.buffer = buffer;
-        source.loop = true;
-        const gain = audioCtx.createGain();
-        gain.gain.value = layer.volume;
-        source.connect(gain).connect(audioCtx.destination);
-        source.start(0);
-      } catch (e) { console.warn("Audio layer failed:", layer.name); }
-    });
-  } catch (e) { console.error("Audio Context error"); }
-}
-
 export default function App() {
-  const [initData, setInitData] = useState(null);
-  const [level, setLevel] = useState(0); 
+  const [data, setData] = useState(null);
+  const [level, setLevel] = useState(1);
   const [actions, setActions] = useState([]);
+  const [quote, setQuote] = useState("");
 
-  const handleStart = async (data) => {
-    setInitData(data);
-    try {
-      // Ruta relativa para nivel 1
-      const res = await fetch(`/level1`);
-      const l1 = await res.json();
-      playSound(l1.sound?.layers);
-      setLevel(1);
-      
-      // Carga microacciones con sentido vital
-      fetch(`/microactions/generate/1`, {method: 'POST'})
-        .then(r => r.json())
-        .then(setActions)
-        .catch(e => console.log("Actions deferred"));
-    } catch (err) {
-      setLevel(1); // Entrar aunque falle el fetch para no dejar pantalla blanca
-    }
+  const quotes = [
+    "Respirar es el primer acto de rebeldía contra la muerte.",
+    "Tu cuerpo es el único lugar donde vivirás toda la vida.",
+    "El agua que bebes hoy es la misma que fluyó hace millones de años.",
+    "No estás solo; 8 mil millones de corazones laten contigo ahora."
+  ];
+
+  const handleInit = (initData) => {
+    setData(initData);
+    setQuote(quotes[Math.floor(Math.random() * quotes.length)]);
+    fetch(`/level1`).then(res => res.json()).then(lvl => {
+      setActions([
+        { id: 1, text: "Hidrata tus células: El combustible de la existencia.", time: "Ahora" },
+        { id: 2, text: "Siente tu pulso: Estás aquí, estás vivo.", time: "Constante" }
+      ]);
+    });
   };
 
-  if (level === 0) return <LoadingScreen onReady={handleStart} />;
+  if (!data) return <LoadingScreen onReady={handleInit} />;
 
   return (
-    <div style={{ width: "100vw", height: "100vh", overflow: "hidden", position: "relative" }}>
-      <Landscape level={level} stage={initData?.stage || "morning"} />
-      
-      <div style={styles.actionLayer}>
-        {actions.slice(0, 2).map((a, i) => (
-          <div key={i} style={styles.actionCard}>
-            {a.action}
+    <div style={{ width: "100vw", height: "100vh", color: "white", overflow: "hidden", position: "relative" }}>
+      {/* FONDO DINÁMICO QUE CAMBIA POR HORA */}
+      <DynamicBackground level={level} stage={data.stage} />
+
+      {/* TEXTO DE SABIDURÍA (El "gancho" emocional) */}
+      <div style={styles.quoteContainer}>
+        <h2 style={styles.quoteText}>"{quote}"</h2>
+      </div>
+
+      {/* MICROACCIONES (Lo productivo) */}
+      <div style={styles.actionGrid}>
+        {actions.map(action => (
+          <div key={action.id} style={styles.actionCard}>
+            <span style={{ fontSize: "0.8rem", color: "#ffd700" }}>● ACCIÓN VITAL</span>
+            <p style={{ margin: "10px 0", fontSize: "1.1rem" }}>{action.text}</p>
+            <small style={{ opacity: 0.6 }}>Prioridad: {action.time}</small>
           </div>
         ))}
       </div>
 
-      {level === 1 && (
-        <button style={styles.btnDeep} onClick={() => setLevel(2)}>
-          DESCENDER A LO PROFUNDO
-        </button>
-      )}
+      {/* BOTÓN DE TRASCENDENCIA */}
+      <button 
+        style={styles.levelBtn} 
+        onClick={() => setLevel(level === 1 ? 2 : 1)}
+      >
+        {level === 1 ? "PROFUNDIZAR EXISTENCIA" : "VOLVER AL ORIGEN"}
+      </button>
 
       <style>{`
-        @keyframes drift { from { transform: rotate(0deg) translate(10px); } to { transform: rotate(360deg) translate(10px); } }
-        @keyframes pulse-sky { 0% { filter: brightness(1); } 50% { filter: brightness(1.1); } 100% { filter: brightness(1); } }
+        @keyframes floatBg { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
       `}</style>
     </div>
   );
 }
 
-const Landscape = ({ level, stage }) => {
+const DynamicBackground = ({ level, stage }) => {
   const isNight = stage === "night";
   return (
     <div style={{
-      width: "100%", height: "100%", transition: "all 5s ease",
+      position: "absolute", width: "100%", height: "100%", zIndex: -1,
       background: level === 1 
-        ? (isNight ? "radial-gradient(circle, #0f2027, #2c5364)" : "linear-gradient(to bottom, #74ebd5, #acb6e5)")
-        : "radial-gradient(circle at center, #23074d, #000000)",
-      animation: "pulse-sky 10s infinite alternate"
-    }}>
-      <div style={{
-        position: "absolute", top: "20%", left: "50%", transform: "translateX(-50%)",
-        width: level === 2 ? "300px" : "150px",
-        height: level === 2 ? "300px" : "150px",
-        borderRadius: "50%",
-        background: isNight ? "#f5f3ce" : "#fff9d1",
-        boxShadow: isNight ? "0 0 80px #f5f3ce" : "0 0 100px #ffcc33",
-        transition: "all 4s ease-in-out"
-      }} />
-    </div>
+        ? (isNight ? "linear-gradient(-45deg, #000428, #004e92, #000428)" : "linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab)")
+        : "linear-gradient(-45deg, #23074d, #000000, #440000)",
+      backgroundSize: "400% 400%",
+      animation: "floatBg 15s ease infinite",
+      filter: level === 2 ? "contrast(1.5) brightness(0.8)" : "none",
+      transition: "all 3s ease"
+    }} />
   );
 };
 
 const styles = {
-  actionLayer: { position: "absolute", top: "10%", width: "100%", display: "flex", flexDirection: "column", alignItems: "center", gap: "10px", pointerEvents: "none" },
-  actionCard: { padding: "12px 25px", background: "rgba(255,255,255,0.1)", backdropFilter: "blur(15px)", color: "white", borderRadius: "30px", fontSize: "0.9rem", border: "1px solid rgba(255,255,255,0.2)", textAlign: "center", maxWidth: "80%" },
-  btnDeep: { position: "absolute", bottom: "10%", left: "50%", transform: "translateX(-50%)", padding: "15px 30px", background: "rgba(255,255,255,0.1)", border: "1px solid white", color: "white", cursor: "pointer", borderRadius: "50px", letterSpacing: "2px" }
+  quoteContainer: { position: "absolute", top: "15%", width: "100%", textAlign: "center", padding: "0 20px" },
+  quoteText: { fontSize: "2rem", fontWeight: "300", fontStyle: "italic", textShadow: "0 2px 10px rgba(0,0,0,0.5)" },
+  actionGrid: { position: "absolute", bottom: "15%", width: "100%", display: "flex", justifyContent: "center", gap: "20px", flexWrap: "wrap" },
+  actionCard: { 
+    width: "280px", padding: "20px", background: "rgba(0,0,0,0.4)", backdropFilter: "blur(10px)", 
+    border: "1px solid rgba(255,255,255,0.1)", borderRadius: "15px", transition: "0.3s"
+  },
+  levelBtn: {
+    position: "absolute", bottom: "40px", left: "50%", transform: "translateX(-50%)",
+    padding: "10px 30px", background: "rgba(255,255,255,0.2)", border: "1px solid white",
+    color: "white", borderRadius: "30px", cursor: "pointer", fontSize: "0.9rem"
+  }
 };
