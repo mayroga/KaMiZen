@@ -1,101 +1,131 @@
-// src/components/LoadingScreen.jsx
-import React, { useEffect, useRef } from "react";
-import { Howl } from "howler";
-import { useNavigate } from "react-router-dom"; // Para la transición a Nivel 1
+import React, { useEffect } from "react";
 
-const LoadingScreen = () => {
-  const canvasRef = useRef(null);
-  const navigate = useNavigate();
+// --- Función para reproducir sonido en background ---
+async function playBackgroundSound(layers) {
+  try {
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    for (const layer of layers) {
+      fetch(`/sounds/${layer.name}.mp3`)
+        .then(res => res.arrayBuffer())
+        .then(arrayBuffer => audioCtx.decodeAudioData(arrayBuffer))
+        .then(audioBuffer => {
+          const source = audioCtx.createBufferSource();
+          source.buffer = audioBuffer;
+          const gainNode = audioCtx.createGain();
+          gainNode.gain.value = layer.volume;
+          source.loop = layer.loop;
+          source.connect(gainNode).connect(audioCtx.destination);
+          source.start(0);
+        });
+    }
+  } catch (err) {
+    console.warn("Error al cargar audio de fondo:", err);
+  }
+}
 
-  useEffect(() => {
-    // =========================
-    // 1️⃣ SONIDO DE FONDO
-    // =========================
-    const sound = new Howl({
-      src: ["/sounds/relaxing_loop.mp3"], // Pon aquí tu mp3
-      loop: true,
-      volume: 0.2,
-    });
-    sound.play();
+// --- Componente animaciones del preload ---
+const PreloadAnimation = () => {
+  const clouds = [];
+  const particles = [];
 
-    // =========================
-    // 2️⃣ FONDO ANIMADO CON PARTICULAS
-    // =========================
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext("2d");
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+  for (let i = 0; i < 5; i++) {
+    const top = Math.random() * 50;
+    const left = Math.random() * 100;
+    const size = 50 + Math.random() * 50;
+    clouds.push(
+      <div
+        key={i}
+        style={{
+          position: "absolute",
+          top: `${top}%`,
+          left: `${left}%`,
+          width: `${size}px`,
+          height: `${size / 2}px`,
+          background: "rgba(255,255,255,0.3)",
+          borderRadius: "50%",
+          animation: `cloudMove ${20 + Math.random() * 10}s linear infinite`,
+        }}
+      ></div>
+    );
+  }
 
-    const particles = Array.from({ length: 50 }, () => ({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
-      r: Math.random() * 3 + 1,
-      dx: (Math.random() - 0.5) * 0.5,
-      dy: (Math.random() - 0.5) * 0.5,
-    }));
-
-    const animate = () => {
-      // Fondo azul profundo
-      ctx.fillStyle = "#0A1E2E";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      // Dibujar partículas
-      particles.forEach((p) => {
-        p.x += p.dx;
-        p.y += p.dy;
-
-        if (p.x > canvas.width) p.x = 0;
-        if (p.x < 0) p.x = canvas.width;
-        if (p.y > canvas.height) p.y = 0;
-        if (p.y < 0) p.y = canvas.height;
-
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(144,238,144,0.5)"; // Verde suave
-        ctx.fill();
-      });
-
-      requestAnimationFrame(animate);
-    };
-
-    animate();
-
-    // =========================
-    // 3️⃣ TRANSICIÓN AUTOMÁTICA AL NIVEL 1
-    // =========================
-    const timer = setTimeout(() => {
-      navigate("/nivel1"); // Cambia la ruta según tu app
-    }, 4000); // 4 segundos de carga
-
-    // =========================
-    // CLEANUP
-    // =========================
-    return () => {
-      clearTimeout(timer);
-      sound.stop();
-    };
-  }, [navigate]);
+  for (let i = 0; i < 15; i++) {
+    const top = Math.random() * 100;
+    const left = Math.random() * 100;
+    particles.push(
+      <div
+        key={i}
+        style={{
+          position: "absolute",
+          top: `${top}%`,
+          left: `${left}%`,
+          width: "4px",
+          height: "4px",
+          background: "white",
+          borderRadius: "50%",
+          animation: `particleMove ${5 + Math.random() * 5}s linear infinite alternate`,
+        }}
+      ></div>
+    );
+  }
 
   return (
-    <div style={{ position: "relative", width: "100vw", height: "100vh" }}>
-      <canvas ref={canvasRef} />
+    <>
       <div
         style={{
           position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          color: "#d4f0dc",
-          fontSize: "2rem",
-          fontFamily: "sans-serif",
-          textAlign: "center",
-          textShadow: "0 0 8px #1f5e1f",
+          width: "100%",
+          height: "100%",
+          background: "linear-gradient(to top, #223344, #445566)",
         }}
-      >
-        🌿 Relájate… Cargando experiencia 🌿
-      </div>
-    </div>
+      ></div>
+      {clouds}
+      {particles}
+    </>
   );
 };
 
-export default LoadingScreen;
+export default function LoadingScreen({ onReady }) {
+  useEffect(() => {
+    // --- Audio opcional de fondo ---
+    playBackgroundSound([{ name: "ambient", volume: 0.3, loop: true }]);
+
+    // --- Simular fetch inicial en background ---
+    fetch(`/init?user_id=guest&lang=es`)
+      .then(res => res.json())
+      .then(data => {
+        console.log("Datos iniciales cargados:", data);
+        // Espera 1s extra para transición suave
+        setTimeout(() => onReady(data), 1000);
+      })
+      .catch(err => {
+        console.warn("Error cargando init:", err);
+        onReady(null);
+      });
+  }, [onReady]);
+
+  return (
+    <div
+      style={{
+        width: "100vw",
+        height: "100vh",
+        overflow: "hidden",
+        position: "relative",
+      }}
+    >
+      <PreloadAnimation />
+      <div
+        style={{
+          position: "absolute",
+          bottom: "10%",
+          width: "100%",
+          textAlign: "center",
+          color: "white",
+          fontSize: "1.8em",
+        }}
+      >
+        🌿 Relájate... Cargando experiencia 🌿
+      </div>
+    </div>
+  );
+}
