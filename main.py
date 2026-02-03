@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, HTTPException, Request
+from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
@@ -6,13 +6,15 @@ from datetime import datetime
 import random
 import os
 
-# Importaciones locales (asegúrate de que existan database, models, schemas, ai_engine)
-from . import database, models, schemas, ai_engine, crud
+# Importaciones de tus módulos de base de datos y esquemas
+from . import database, models, schemas, ai_engine, crud, services
 
+# Inicializar base de datos
 database.Base.metadata.create_all(bind=database.engine)
 
-app = FastAPI(title="KaMiZen Backend")
+app = FastAPI(title="KaMiZen Engine")
 
+# Configuración CORS para permitir conexión desde el Frontend
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -20,6 +22,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Dependencia de DB
 def get_db():
     db = database.SessionLocal()
     try:
@@ -27,7 +30,7 @@ def get_db():
     finally:
         db.close()
 
-# --- LÓGICA DE ESTADO Y PAISAJE ---
+# --- Lógica de Paisajes y Estados ---
 def detect_stage():
     hour = datetime.now().hour
     if 5 <= hour < 12: return "morning"
@@ -35,44 +38,55 @@ def detect_stage():
     elif 18 <= hour < 21: return "evening"
     else: return "night"
 
-def generate_landscape_data(level=1):
+def generate_landscape(level=1):
+    seasons = ["spring", "summer", "autumn", "winter"]
+    weather = ["sunny", "cloudy", "rainy", "snowy"]
     return {
         "stage": detect_stage(),
-        "season": random.choice(["spring", "summer", "autumn", "winter"]),
-        "weather": random.choice(["sunny", "cloudy", "rainy"]),
+        "season": random.choice(seasons),
+        "weather": random.choice(weather),
+        "complexity": "high" if level == 2 else "medium",
         "layers": 5 if level == 2 else 3
     }
 
-# --- ENDPOINTS ---
+# --- Endpoints Principales ---
 
 @app.get("/init")
 async def init(user_id: str = "guest", lang: str = "es"):
+    premium_users = os.getenv("PREMIUM_USERS", "").split(",")
     return {
         "stage": detect_stage(),
-        "is_premium": user_id in os.getenv("PREMIUM_USERS", "").split(","),
+        "is_premium": user_id in premium_users,
+        "random_gift": user_id == os.getenv("RANDOM_GIFT_USER"),
         "lang": lang,
-        "app_name": "KaMiZen"
+        "app": "KaMiZen"
     }
 
 @app.get("/level1")
-async def level1():
+async def level1(user_id: str = "guest"):
     return {
-        "landscape": generate_landscape_data(level=1),
-        "sound": {"layers": [{"name": "ambient_light", "volume": 0.3, "loop": True}]}
+        "landscape": generate_landscape(level=1),
+        "sound": {
+            "layers": [{"name": "ambient_light", "volume": 0.3, "loop": True}]
+        }
     }
 
 @app.get("/level2")
 async def level2(user_id: str = "guest"):
-    # Lógica de acceso para nivel profundo
+    # Aquí puedes añadir validación de premium si lo deseas
     return {
-        "landscape": generate_landscape_data(level=2),
+        "landscape": generate_landscape(level=2),
         "sound": {
             "layers": [
                 {"name": "base_grave", "volume": 0.5, "loop": True},
+                {"name": "harmonics", "volume": 0.3, "loop": True},
                 {"name": "environmental", "volume": 0.3, "loop": True}
             ]
-        }
+        },
+        "soft_exit_duration": 90
     }
+
+# --- Endpoints de Microacciones ---
 
 @app.get("/microactions/{user_id}")
 def get_actions(user_id: int, db: Session = Depends(get_db)):
@@ -88,3 +102,7 @@ def generate_actions(user_id: int, db: Session = Depends(get_db)):
         )
         created.append(crud.create_microaction(db, action_data))
     return created
+
+@app.get("/weather/{city}")
+def weather(city: str):
+    return services.get_weather(city)
