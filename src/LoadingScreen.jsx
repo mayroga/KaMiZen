@@ -1,13 +1,13 @@
-import React, { useEffect } from "react";
+import React from "react";
+import useAmbientSound from "./useAmbientSound";
 
 export default function LoadingScreen({ onReady }) {
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      onReady();
-    }, 2500); // tiempo fijo, controlado
+  const { startSound } = useAmbientSound();
 
-    return () => clearTimeout(timer);
-  }, [onReady]);
+  const iniciar = () => {
+    startSound();
+    setTimeout(onReady, 800);
+  };
 
   return (
     <div style={{
@@ -15,12 +15,16 @@ export default function LoadingScreen({ onReady }) {
       height: "100vh",
       background: "linear-gradient(to top, #001a33, #000)",
       display: "flex",
+      flexDirection: "column",
       alignItems: "center",
       justifyContent: "center",
-      color: "white",
-      fontSize: "1.8rem"
+      color: "white"
     }}>
-      🌿 Relájate... Cargando experiencia 🌿
+      <h1>KaMiZen</h1>
+      <p>🌿 Respira… el ciclo comienza 🌿</p>
+      <button onClick={iniciar} style={{ padding: "15px 40px" }}>
+        ENTRAR
+      </button>
     </div>
   );
 }
