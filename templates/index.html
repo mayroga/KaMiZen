@@ -2,56 +2,41 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>KaMiZen</title>
+<title>KaMiZen – Sistema Integral de Bienestar</title>
 <link rel="stylesheet" href="/static/style.css">
 <script src="https://js.stripe.com/v3/"></script>
 </head>
 <body>
 
-<div id="loader">KaMiZen está sincronizando tu momento y preparando tu experiencia…</div>
+<div id="loader">KaMiZen sintonizando tu momento…</div>
 
 <div id="app" style="display:none">
-
 <header>
-<select id="lang" onchange="setLang(this.value)">
-<option value="es">ES</option>
-<option value="en">English</option>
-<option value="fr">Français</option>
-<option value="de">Deutsch</option>
-<option value="zh">中文</option>
-</select>
+  <select id="lang" onchange="setLang(this.value)">
+    <option value="es">ES</option>
+    <option value="en">English</option>
+    <option value="fr">Français</option>
+    <option value="de">Deutsch</option>
+    <option value="zh">中文</option>
+  </select>
 </header>
 
 <section class="landscape">
-<h2>Tu paisaje KaMiZen personalizado:</h2>
-<pre>{{ ai_landscape }}</pre>
+  <pre>{{ ai_landscape }}</pre>
 </section>
 
-<section class="recommendations">
-<h3>Recomendaciones del día:</h3>
-<ul>
-{% for r in recommendations %}
-<li>{{ r }}</li>
-{% endfor %}
-</ul>
+<section id="nivel1">
+  <h2>Nivel 1 – CSi Perfecto</h2>
+  <p>Microacciones, respiración, mindfulness breve, hidratación, estiramientos, pausas, exposición a luz solar.</p>
+  <button onclick="recordMicroaction('respiración consciente')">Respiración consciente</button>
+  <button onclick="recordMicroaction('mini estiramiento')">Mini estiramiento</button>
 </section>
 
-<section class="level1">
-<h2>Nivel 1 – CSi Perfecto</h2>
-<p>Microacciones rápidas, respiración, mindfulness breve y paisajes adaptativos.</p>
-<form method="post" action="/microaction">
-<input type="hidden" name="user" value="{{ user }}">
-<input type="text" name="action" placeholder="Escribe tu microacción">
-<button type="submit">Registrar</button>
-</form>
+<section id="nivel2">
+  <h2>Nivel 2 – PRO</h2>
+  <p>Experiencia profunda, dualidad emocional, audio ambiental, paisajes únicos, risoterapia adaptativa.</p>
+  <button onclick="goPro()">Entrar PRO – $99</button>
 </section>
-
-<section class="level2">
-<h2>Nivel 2 – PRO</h2>
-<p>Experiencia avanzada, audio ambiental, música terapéutica, dualidad emocional y anti-envejecimiento.</p>
-<button onclick="goPro()">Entrar PRO – $99/mes</button>
-</section>
-
 </div>
 
 <script>
@@ -67,8 +52,18 @@ function goPro(){
  .then(r=>r.json())
  .then(d=>stripe.redirectToCheckout({sessionId:d.id}))
 }
-</script>
 
+function recordMicroaction(action){
+ fetch("/microaction",{
+  method:"POST",
+  body: new URLSearchParams({user_id: location.hostname, action: action})
+}).then(r=>r.json()).then(console.log)
+}
+
+function setLang(l){
+ document.documentElement.lang = l;
+}
+</script>
 <script src="/static/app.js"></script>
 </body>
 </html>
