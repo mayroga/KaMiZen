@@ -1,64 +1,108 @@
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-from datetime import datetime
+import os, random, hashlib, datetime, requests
+from fastapi import FastAPI, Request, Form, Depends, HTTPException
+from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+import stripe
 
+# ================== ENV ==================
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+
+STRIPE_PUBLISHABLE_KEY = os.getenv("STRIPE_PUBLISHABLE_KEY")
+STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
+STRIPE_WEBHOOK_SECRET = os.getenv("STRIPE_WEBHOOK_SECRET")
+
+ADMIN_USERNAME = os.getenv("ADMIN_USERNAME")
+ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
+
+WEATHER_API_KEY = os.getenv("WEATHER_API_KEY")
+
+stripe.api_key = STRIPE_SECRET_KEY
+
+# ================== APP ==================
 app = FastAPI()
+templates = Jinja2Templates(directory="templates")
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
-# Permitir que React acceda a FastAPI
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # En producción, poner solo tu dominio
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# ================== IA FALLBACK ==================
+def generate_ai_prompt(context: str):
+    seed = hashlib.sha256(f"{context}{random.random()}".encode()).hexdigest()
+    prompt = f"""
+    Ultra-realistic natural landscape.
+    Context: {context}
+    Mood: calm, immersive, personal
+    No humans, no text.
+    Unique seed: {seed}
+    """
+    # Try OpenAI
+    try:
+        r = requests.post(
+            "https://api.openai.com/v1/chat/completions",
+            headers={"Authorization": f"Bearer {OPENAI_API_KEY}"},
+            json={
+                "model": "gpt-4o-mini",
+                "messages": [{"role": "user", "content": prompt}]
+            },
+            timeout=10
+        )
+        return r.json()["choices"][0]["message"]["content"]
+    except:
+        # Fallback Gemini
+        r = requests.post(
+            f"https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key={GEMINI_API_KEY}",
+            json={"contents":[{"parts":[{"text":prompt}]}]},
+            timeout=10
+        )
+        return r.json()["candidates"][0]["content"]["parts"][0]["text"]
 
-# Datos simulados para prueba, listo para reemplazar con DB real
-ESTADOS = {
-    "Fuego": "Alta energía, ansiedad o estrés. Necesidad de enfriamiento.",
-    "Tierra": "Estancamiento o pesadez. Necesidad de movimiento.",
-    "Aire": "Dispersión. Necesidad de enfoque y respiración.",
-    "Equilibrio": "Conexión óptima entre cuerpo y entorno."
-}
+# ================== HELPERS ==================
+def get_context(request: Request):
+    now = datetime.datetime.now()
+    hour = now.hour
+    city = "Miami"
+    weather = requests.get(
+        f"http://api.openweathermap.org/data/2.5/weather?q={city}&appid={WEATHER_API_KEY}&units=metric"
+    ).json()
+    temp = weather.get("main", {}).get("temp", 25)
+    return f"{now} | hour:{hour} | temp:{temp}"
 
-MICROACCIONES = [
-    {"id": 1, "action": "Beber agua", "scheduled_at": datetime.now(), "done": False},
-    {"id": 2, "action": "Respirar profundo 1 minuto", "scheduled_at": datetime.now(), "done": False},
-    {"id": 3, "action": "Pequeña caminata", "scheduled_at": datetime.now(), "done": False},
-]
+def is_admin(user: str, pwd: str):
+    return user == ADMIN_USERNAME and pwd == ADMIN_PASSWORD
 
-@app.get("/sensor_completo")
-def sensor_completo(pasos: int = 0, vasos_agua: int = 0):
-    now = datetime.now()
-    if pasos < 1000:
-        estado_actual = "Fuego"
-    elif vasos_agua >= 8:
-        estado_actual = "Equilibrio"
-    else:
-        estado_actual = "Aire"
+# ================== ROUTES ==================
+@app.get("/", response_class=HTMLResponse)
+def home(request: Request):
+    context = get_context(request)
+    ai_landscape = generate_ai_prompt(context)
 
-    return {
-        "timestamp": now.isoformat(),
-        "hora_local": now.strftime("%H:%M:%S"),
-        "estado_vital": estado_actual,
-        "descripcion": ESTADOS[estado_actual],
-        "metricas": {
-            "hidratacion": f"{vasos_agua}/8 vasos",
-            "movimiento": f"{pasos} pasos",
-            "conexion_entorno": "85% - Sincronizado"
-        },
-        "nivel_usuario": "Nivel 1"  # Cambiar dinámicamente luego
-    }
+    return templates.TemplateResponse("index.html", {
+        "request": request,
+        "ai_landscape": ai_landscape,
+        "stripe_key": STRIPE_PUBLISHABLE_KEY
+    })
 
-@app.get("/microacciones")
-def get_microacciones():
-    # Simuladas, luego conectar a DB real
-    return MICROACCIONES
+@app.post("/admin/login")
+def admin_login(username: str = Form(...), password: str = Form(...)):
+    if not is_admin(username, password):
+        raise HTTPException(status_code=403)
+    return {"status": "admin"}
 
-@app.get("/reporte_vital_data")
-def reporte_vital_data():
-    return {
-        "usuario": "Explorador KaMiZen",
-        "nivel": "Nivel 1",
-        "microacciones_completadas": [m["action"] for m in MICROACCIONES if m["done"]]
-    }
+@app.post("/create-checkout-session")
+def create_checkout():
+    session = stripe.checkout.Session.create(
+        payment_method_types=["card"],
+        mode="subscription",
+        line_items=[{
+            "price_data": {
+                "currency": "usd",
+                "product_data": {"name": "KaMiZen PRO"},
+                "unit_amount": 9900,
+                "recurring": {"interval": "month"}
+            },
+            "quantity": 1
+        }],
+        success_url="/?pro=1",
+        cancel_url="/"
+    )
+    return {"id": session.id}
