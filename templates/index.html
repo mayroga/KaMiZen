@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>KaMiZen</title>
+<link rel="stylesheet" href="/static/style.css">
+<script src="https://js.stripe.com/v3/"></script>
+</head>
+<body>
+
+<div id="loader">KaMiZen sintonizando tu momento…</div>
+
+<div id="app" style="display:none">
+  <header>
+    <select id="lang" onchange="setLang(this.value)">
+      <option value="es">ES</option>
+      <option value="en">English</option>
+      <option value="fr">Français</option>
+      <option value="de">Deutsch</option>
+      <option value="zh">中文</option>
+    </select>
+  </header>
+
+  <section class="landscape">
+    <pre>{{ ai_landscape }}</pre>
+  </section>
+
+  <section>
+    <h2>Nivel 1 – CSi Perfecto</h2>
+    <p>Microacciones, calma, paisaje único.</p>
+  </section>
+
+  <section class="pro">
+    <h2>Nivel 2 – PRO</h2>
+    <p>Experiencia profunda, evolución continua.</p>
+    <button onclick="goPro()">Entrar PRO – $99</button>
+  </section>
+</div>
+
+<script>
+setTimeout(()=>{
+ document.getElementById("loader").style.display="none";
+ document.getElementById("app").style.display="block";
+},1200)
+
+const stripe = Stripe("{{ stripe_key }}");
+
+function goPro(){
+ fetch("/create-checkout-session",{method:"POST"})
+ .then(r=>r.json())
+ .then(d=>stripe.redirectToCheckout({sessionId:d.id}))
+}
+</script>
+<script src="/static/app.js"></script>
+</body>
+</html>
