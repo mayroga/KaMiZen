@@ -8,33 +8,50 @@
 </head>
 <body>
 
-<div id="loader">KaMiZen sintonizando tu momento…</div>
+<div id="loader">KaMiZen está sincronizando tu momento y preparando tu experiencia…</div>
 
 <div id="app" style="display:none">
-  <header>
-    <select id="lang" onchange="setLang(this.value)">
-      <option value="es">ES</option>
-      <option value="en">English</option>
-      <option value="fr">Français</option>
-      <option value="de">Deutsch</option>
-      <option value="zh">中文</option>
-    </select>
-  </header>
 
-  <section class="landscape">
-    <pre>{{ ai_landscape }}</pre>
-  </section>
+<header>
+<select id="lang" onchange="setLang(this.value)">
+<option value="es">ES</option>
+<option value="en">English</option>
+<option value="fr">Français</option>
+<option value="de">Deutsch</option>
+<option value="zh">中文</option>
+</select>
+</header>
 
-  <section>
-    <h2>Nivel 1 – CSi Perfecto</h2>
-    <p>Microacciones, calma, paisaje único.</p>
-  </section>
+<section class="landscape">
+<h2>Tu paisaje KaMiZen personalizado:</h2>
+<pre>{{ ai_landscape }}</pre>
+</section>
 
-  <section class="pro">
-    <h2>Nivel 2 – PRO</h2>
-    <p>Experiencia profunda, evolución continua.</p>
-    <button onclick="goPro()">Entrar PRO – $99</button>
-  </section>
+<section class="recommendations">
+<h3>Recomendaciones del día:</h3>
+<ul>
+{% for r in recommendations %}
+<li>{{ r }}</li>
+{% endfor %}
+</ul>
+</section>
+
+<section class="level1">
+<h2>Nivel 1 – CSi Perfecto</h2>
+<p>Microacciones rápidas, respiración, mindfulness breve y paisajes adaptativos.</p>
+<form method="post" action="/microaction">
+<input type="hidden" name="user" value="{{ user }}">
+<input type="text" name="action" placeholder="Escribe tu microacción">
+<button type="submit">Registrar</button>
+</form>
+</section>
+
+<section class="level2">
+<h2>Nivel 2 – PRO</h2>
+<p>Experiencia avanzada, audio ambiental, música terapéutica, dualidad emocional y anti-envejecimiento.</p>
+<button onclick="goPro()">Entrar PRO – $99/mes</button>
+</section>
+
 </div>
 
 <script>
@@ -51,6 +68,7 @@ function goPro(){
  .then(d=>stripe.redirectToCheckout({sessionId:d.id}))
 }
 </script>
+
 <script src="/static/app.js"></script>
 </body>
 </html>
