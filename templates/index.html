@@ -1,48 +1,54 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <title>KaMiZen – Sistema Integral de Bienestar</title>
 <link rel="stylesheet" href="/static/style.css">
 <script src="https://js.stripe.com/v3/"></script>
+<script src="/static/canvas.js"></script>
 </head>
 <body>
-
 <div id="loader">KaMiZen sintonizando tu momento…</div>
 
 <div id="app" style="display:none">
 <header>
   <select id="lang" onchange="setLang(this.value)">
-    <option value="es">ES</option>
     <option value="en">English</option>
+    <option value="es">Español</option>
     <option value="fr">Français</option>
-    <option value="de">Deutsch</option>
+    <option value="it">Italiano</option>
+    <option value="pt">Português</option>
     <option value="zh">中文</option>
   </select>
 </header>
 
-<section class="landscape">
-  <pre>{{ ai_landscape }}</pre>
-</section>
+<canvas id="kaCanvas" width="1200" height="700"></canvas>
 
 <section id="nivel1">
-  <h2>Nivel 1 – CSi Perfecto</h2>
-  <p>Microacciones, respiración, mindfulness breve, hidratación, estiramientos, pausas, exposición a luz solar.</p>
+  <h2>Nivel 1 – CSi Perfecto ($1.69)</h2>
+  <p>Microacciones, respiración, mindfulness breve, hábitos de alimentación, hidratación, estiramientos, pausas, exposición a luz solar.</p>
   <button onclick="recordMicroaction('respiración consciente')">Respiración consciente</button>
   <button onclick="recordMicroaction('mini estiramiento')">Mini estiramiento</button>
 </section>
 
 <section id="nivel2">
-  <h2>Nivel 2 – PRO</h2>
-  <p>Experiencia profunda, dualidad emocional, audio ambiental, paisajes únicos, risoterapia adaptativa.</p>
+  <h2>Nivel 2 – PRO ($99)</h2>
+  <p>Experiencia profunda, dualidad emocional, audio ambiental, paisajes únicos, risoterapia adaptativa, educación, misterio.</p>
   <button onclick="goPro()">Entrar PRO – $99</button>
 </section>
+
+<section id="frases">
+  <h3>Frases y Consejos del Momento</h3>
+  <div id="floatingPhrases"></div>
+</section>
+
 </div>
 
 <script>
 setTimeout(()=>{
  document.getElementById("loader").style.display="none";
  document.getElementById("app").style.display="block";
+ initCanvas();  // inicializa Canvas con animaciones avanzadas
 },1200)
 
 const stripe = Stripe("{{ stripe_key }}");
@@ -57,13 +63,49 @@ function recordMicroaction(action){
  fetch("/microaction",{
   method:"POST",
   body: new URLSearchParams({user_id: location.hostname, action: action})
-}).then(r=>r.json()).then(console.log)
+}).then(r=>r.json()).then(res=>{
+    console.log(res)
+    updateCanvasOnAction(action); // dispara efectos en Canvas según microacción
+})
 }
 
+// ===================== Idioma =====================
+const texts = { en:{}, es:{}, fr:{}, it:{}, pt:{}, zh:{} };
 function setLang(l){
  document.documentElement.lang = l;
+ // TODO: traducir frases y consejos flotantes
 }
+
+// ==================== Frases flotantes ====================
+let floatingPhrases = [
+  "Bebe agua, hidrátate",
+  "Respira profundamente",
+  "Toma un pequeño descanso",
+  "Recuerda tus metas",
+  "La alegría es contagiosa",
+  "Cada microacción cuenta",
+  "Hoy es un buen día para avanzar",
+  "Observa tu entorno y respira"
+];
+
+function showFloatingPhrases(){
+  const container = document.getElementById("floatingPhrases");
+  container.innerHTML = "";
+  floatingPhrases.forEach((p, i)=>{
+    const span = document.createElement("span");
+    span.textContent = p;
+    span.style.position="absolute";
+    span.style.top = `${Math.random()*500}px`;
+    span.style.left = `${Math.random()*800}px`;
+    span.style.fontSize = `${14 + Math.random()*12}px`;
+    span.style.color = `hsl(${Math.random()*360}, 80%, 60%)`;
+    span.style.opacity = Math.random()*0.8 + 0.2;
+    container.appendChild(span);
+  });
+}
+setInterval(showFloatingPhrases, 15000); // actualiza cada 15s
 </script>
+
 <script src="/static/app.js"></script>
 </body>
 </html>
