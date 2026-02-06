@@ -1,8 +1,6 @@
-fastapi
-uvicorn
+flask
 requests
 stripe
 jinja2
 python-multipart
-flask
-openai
+openai>=1.0.0
