@@ -1,90 +1,50 @@
-// ================== CONFIGURACIÓN DE IDIOMAS ==================
-const texts = { es:{}, en:{}, fr:{}, de:{}, zh:{} };
+let lang = "es", active = false, currentMiniWorld="luz";
 
-let currentLang = "en";
-let userId = location.hostname; // simple tracking
-let aiItems = [];
-let aiIndex = 0;
-let ttsEnabled = true;
-
-// ================== CONFIGURACIÓN DE VOZ TTS ==================
-function speak(text) {
-    if (!ttsEnabled || !text) return;
-    const utter = new SpeechSynthesisUtterance(text);
-    utter.lang = currentLang;
-    utter.pitch = 1.0;
-    utter.rate = 1.0;
-    utter.volume = 1.0;
-    utter.voice = speechSynthesis.getVoices().find(v => v.lang.startsWith(currentLang)) || null;
-    speechSynthesis.speak(utter);
+function speak(text){
+    if(!text) return;
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = lang==="es"?"es-ES":"en-US";
+    u.pitch=1.0; u.rate=1.0; u.volume=1.0;
+    speechSynthesis.speak(u);
 }
 
-// ================== CONSUMO AI-CONTENT ==================
-async function fetchAIContent() {
-    try {
-        const res = await fetch(`/ai-content?user_id=${userId}`);
-        const data = await res.json();
-        aiItems = data.items;
-        aiIndex = 0;
-    } catch(e) {
-        console.error("Error fetching AI content:", e);
-    }
-}
+function begin(){
+    const age = parseInt(document.getElementById("age").value)||30;
+    const state = document.getElementById("state").value||"presente";
+    const destination = document.getElementById("destination").value||"bienestar";
+    const mode = document.getElementById("mode").value;
+    const offline = document.getElementById("offline").checked;
 
-// ================== FUNCIONES DE INTERFAZ ==================
-function setLang(lang){
-    currentLang = lang;
-    document.documentElement.lang = lang;
-}
-
-// ================== MICROACCIONES ==================
-function recordMicroaction(action){
-    fetch("/microaction",{
+    fetch("/start", {
         method:"POST",
-        body: new URLSearchParams({user_id, action})
-    }).then(r=>r.json()).then(console.log)
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({lang, age, state, destination, mode, offline})
+    }).then(()=>{
+        document.getElementById("intro").style.display="none";
+        document.getElementById("options").style.display="block";
+        active = true;
+        speak(`Bienvenido, te acompañaré en tu camino hacia ${destination}`);
+        run();
+    });
 }
 
-// ================== AI DISPLAY ==================
-function showNextAIItem() {
-    if (!aiItems.length) return;
-    const item = aiItems[aiIndex % aiItems.length];
-    aiIndex++;
-
-    // Texto flotante
-    const canvasText = document.getElementById("canvas-text");
-    canvasText.innerText = item;
-
-    // Voz
-    speak(item);
-
-    // Cambios de color y animaciones
-    const hue = Math.floor(Math.random() * 360);
-    document.body.style.background = `hsl(${hue}, 60%, 10%)`;
-
-    // Actualiza Canvas
-    if (window.updateCanvas) window.updateCanvas(item);
+function userDecision(action){
+    speak(`Has decidido ${action} el obstáculo.`);
+    // Enviar acción a backend si se quiere adaptar IA
 }
 
-// ================== CICLO INFINITO ==================
-async function startAI() {
-    await fetchAIContent();
-    showNextAIItem();
+function run(){
     setInterval(async ()=>{
-        aiIndex++;
-        if(aiIndex >= aiItems.length) await fetchAIContent();
-        showNextAIItem();
-    }, 60000); // cada minuto
+        if(!active) return;
+        const r = await fetch("/step");
+        const d = await r.json();
+        if(d.end){
+            speak("La Vida Continúa…");
+            active=false;
+            return;
+        }
+        speak(d.message);
+        currentMiniWorld=d.mini_world;
+        updateLifeCanvas(d.position, currentMiniWorld);
+    },5000);
 }
-
-// ================== INICIALIZACIÓN ==================
-window.addEventListener("load", ()=>{
-    // Mostrar app después del loader
-    setTimeout(()=>{
-        document.getElementById("loader").style.display="none";
-        document.getElementById("app").style.display="block";
-    },1200);
-
-    // Inicia AI
-    startAI();
-});
