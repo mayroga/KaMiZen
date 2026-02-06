@@ -4,3 +4,4 @@ requests
 stripe
 jinja2
 python-multipart
+flask
