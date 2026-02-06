@@ -1,170 +1,221 @@
-import os, random, hashlib, datetime, json, traceback
-from fastapi import FastAPI, Request, Form, HTTPException
+import os
+import random
+import datetime
+from typing import Dict
+
+from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
-import stripe
-import requests
 
-# ================== VARIABLES DE RENDER ==================
+import stripe
+
+# =========================
+# CONFIGURACIÓN GENERAL
+# =========================
+
+APP_NAME = "KaMiZen"
+BASE_URL = os.getenv("BASE_URL", "https://kamizen.onrender.com")
+
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-STRIPE_PUBLISHABLE_KEY = os.getenv("STRIPE_PUBLISHABLE_KEY")
+
+WEATHER_API_KEY = os.getenv("WEATHER_API_KEY")
+
 STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
+STRIPE_PUBLISHABLE_KEY = os.getenv("STRIPE_PUBLISHABLE_KEY")
 STRIPE_WEBHOOK_SECRET = os.getenv("STRIPE_WEBHOOK_SECRET")
+
 ADMIN_USERNAME = os.getenv("ADMIN_USERNAME")
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
-WEATHER_API_KEY = os.getenv("WEATHER_API_KEY")
 
 stripe.api_key = STRIPE_SECRET_KEY
 
-# ================== APP ==================
-app = FastAPI()
-templates = Jinja2Templates(directory="templates")
+# =========================
+# APP
+# =========================
+
+app = FastAPI(title=APP_NAME)
+
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-# ================== BASES DE DATOS SIMPLES ==================
-microactions_db = {}  # {user_id: [acciones]}
-users_db = {}         # {user_id: {"nivel":1/2, "preferencias":{}, "idioma":"es"}}
+# =========================
+# UTILIDADES IA
+# =========================
 
-# ================== UTILIDADES ==================
-def is_admin(user: str, pwd: str):
-    return user == ADMIN_USERNAME and pwd == ADMIN_PASSWORD
+def generate_ai_content() -> Dict:
+    """
+    Generador infinito de microcontenido.
+    Si falla OpenAI → Gemini.
+    Si fallan ambos → fallback interno.
+    """
 
-def get_context(user_id: str):
     now = datetime.datetime.now()
     hour = now.hour
 
-    # Clima
-    try:
-        weather_data = requests.get(
-            f"http://api.openweathermap.org/data/2.5/weather?q=Miami&appid={WEATHER_API_KEY}&units=metric"
-        ).json()
-        temp = weather_data.get("main", {}).get("temp", 25)
-        humidity = weather_data.get("main", {}).get("humidity", 50)
-        wind = weather_data.get("wind", {}).get("speed", 0)
-    except:
-        temp, humidity, wind = 25, 50, 0
-
-    context = {
-        "datetime": str(now),
-        "hour": hour,
-        "temp": temp,
-        "humidity": humidity,
-        "wind": wind,
-        "user_preferences": users_db.get(user_id, {}).get("preferencias", {}),
-        "user_microactions": microactions_db.get(user_id, [])
-    }
-    return json.dumps(context)
-
-# ================== IA GENERATIVA ==================
-def generate_ai_content(context: str):
-    prompt = f"""
-    KaMiZen Infinite Content
-    Context: {context}
-    Generate short phrases, micro-challenges, inspiring advice, mini-stories and tips.
-    Output as JSON list of strings.
-    """
-    # Intentamos OpenAI
-    try:
-        import openai
-        openai.api_key = OPENAI_API_KEY
-        response = openai.ChatCompletion.create(
-            model="gpt-4o-mini",
-            messages=[{"role":"user","content":prompt}],
-            temperature=0.8,
-            max_tokens=500
-        )
-        content = response["choices"][0]["message"]["content"]
-        items = json.loads(content)
-        if isinstance(items, list):
-            return items
-    except Exception as e:
-        print("OpenAI failed:", e, traceback.format_exc())
-
-    # Fallback Gemini
-    try:
-        r = requests.post(
-            f"https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key={GEMINI_API_KEY}",
-            json={"contents":[{"parts":[{"text":prompt}]}]},
-            timeout=10
-        )
-        content = r.json()["candidates"][0]["content"]["parts"][0]["text"]
-        items = json.loads(content)
-        if isinstance(items, list):
-            return items
-    except Exception as e:
-        print("Gemini failed:", e, traceback.format_exc())
-
-    # Fallback local
-    return [
-        "Respira profundamente y siente el momento.",
-        "Mini estiramiento recomendado.",
-        "Observa tu entorno y agradece algo.",
-        "Desafío: piensa en algo positivo que hayas hecho hoy.",
-        "Historia breve: Una persona logró algo increíble solo con paciencia y foco.",
-        "Consejo: Hidrátate y toma un momento de silencio.",
-        "Frase motivadora: Cada día es una nueva oportunidad."
+    moods = [
+        "calma", "misterio", "reflexión", "impulso",
+        "silencio", "claridad", "curiosidad", "esperanza"
     ]
 
-# ================== RUTAS ==================
+    mood = random.choice(moods)
+
+    base_content = {
+        "timestamp": now.isoformat(),
+        "mood": mood,
+        "colors": {
+            "background": random.choice([
+                "#0f2027", "#203a43", "#2c5364",
+                "#1b1b1b", "#101820", "#2b1055"
+            ]),
+            "accent": random.choice([
+                "#f5af19", "#f12711", "#00c6ff",
+                "#7f00ff", "#38ef7d"
+            ])
+        },
+        "animation": random.choice([
+            "slow-fade", "breathing", "floating",
+            "pulse", "drift"
+        ]),
+    }
+
+    # =========================
+    # INTENTO OPENAI
+    # =========================
+    if OPENAI_API_KEY:
+        try:
+            from openai import OpenAI
+            client = OpenAI(api_key=OPENAI_API_KEY)
+
+            prompt = f"""
+            Create a short reflective message for a human.
+            Tone: warm, elegant, calm.
+            Mood: {mood}
+            Time of day: {hour}
+            """
+
+            response = client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[{"role": "user", "content": prompt}],
+                temperature=0.9,
+            )
+
+            text = response.choices[0].message.content.strip()
+
+            return {
+                **base_content,
+                "source": "openai",
+                "text": text,
+                "voice": {
+                    "enabled": True,
+                    "gender": random.choice(["female", "male"]),
+                    "style": "soft"
+                }
+            }
+
+        except Exception:
+            pass
+
+    # =========================
+    # INTENTO GEMINI
+    # =========================
+    if GEMINI_API_KEY:
+        try:
+            import google.generativeai as genai
+            genai.configure(api_key=GEMINI_API_KEY)
+
+            model = genai.GenerativeModel("gemini-pro")
+
+            prompt = f"""
+            Write a gentle reflective micro-story.
+            Emotional tone: {mood}
+            """
+
+            result = model.generate_content(prompt)
+
+            return {
+                **base_content,
+                "source": "gemini",
+                "text": result.text.strip(),
+                "voice": {
+                    "enabled": True,
+                    "gender": random.choice(["female", "male"]),
+                    "style": "soft"
+                }
+            }
+
+        except Exception:
+            pass
+
+    # =========================
+    # FALLBACK INTERNO
+    # =========================
+    fallback_texts = [
+        "Respira. Nada te persigue ahora.",
+        "Este segundo también cuenta.",
+        "Lo que buscas ya empezó dentro de ti.",
+        "No todo se mueve rápido. Y está bien.",
+        "El silencio también responde."
+    ]
+
+    return {
+        **base_content,
+        "source": "internal",
+        "text": random.choice(fallback_texts),
+        "voice": {
+            "enabled": False
+        }
+    }
+
+# =========================
+# RUTAS
+# =========================
+
 @app.get("/", response_class=HTMLResponse)
-def home(request: Request):
-    user_id = request.client.host
-    if user_id not in users_db:
-        users_db[user_id] = {"nivel":1, "preferencias":{}, "idioma":"es"}
-    context = get_context(user_id)
-    # Generamos un primer paisaje como placeholder
-    ai_landscape = "Bienvenido a KaMiZen. Tu experiencia se está preparando..."
-    return templates.TemplateResponse("index.html", {
-        "request": request,
-        "ai_landscape": ai_landscape,
-        "stripe_key": STRIPE_PUBLISHABLE_KEY
-    })
+async def home():
+    try:
+        with open("static/index.html", "r", encoding="utf-8") as f:
+            return f.read()
+    except FileNotFoundError:
+        return "<h1>KaMiZen sintonizando tu momento…</h1>"
 
-@app.post("/microaction")
-def add_microaction(user_id: str = Form(...), action: str = Form(...)):
-    if user_id not in microactions_db:
-        microactions_db[user_id] = []
-    microactions_db[user_id].append({"action": action, "timestamp": str(datetime.datetime.now())})
-    return {"status": "ok"}
+@app.get("/ai-content")
+async def ai_content():
+    return generate_ai_content()
 
-@app.post("/admin/login")
-def admin_login(username: str = Form(...), password: str = Form(...)):
-    if not is_admin(username, password):
-        raise HTTPException(status_code=403)
-    return {"status": "admin"}
+# =========================
+# STRIPE – CHECKOUT
+# =========================
 
-@app.post("/create-checkout-session")
-def create_checkout():
-    BASE_URL = os.getenv("BASE_URL", "https://kamizen.onrender.com")
+@app.post("/create-checkout")
+async def create_checkout(request: Request):
+    data = await request.json()
+    plan = data.get("plan")
 
-session = stripe.checkout.Session.create(
-    payment_method_types=["card"],
-    mode="subscription",
-    line_items=[{
-        "price": PRICE_ID,
-        "quantity": 1
-    }],
-    success_url=f"{BASE_URL}/?payment=success",
-    cancel_url=f"{BASE_URL}/?payment=cancel"
-)
+    if plan not in ["basic", "pro"]:
+        raise HTTPException(status_code=400, detail="Invalid plan")
+
+    if plan == "basic":
+        price_id = os.getenv("STRIPE_PRICE_BASIC")  # $1.69
+    else:
+        price_id = os.getenv("STRIPE_PRICE_PRO")    # $99
+
+    session = stripe.checkout.Session.create(
+        payment_method_types=["card"],
+        mode="subscription",
+        line_items=[{
+            "price": price_id,
+            "quantity": 1
+        }],
+        success_url=f"{BASE_URL}/?payment=success",
+        cancel_url=f"{BASE_URL}/?payment=cancel",
+    )
 
     return {"id": session.id}
 
-@app.get("/report")
-def generate_report(user_id: str):
-    actions = microactions_db.get(user_id, [])
-    report = {
-        "total_microacciones": len(actions),
-        "acciones": actions[-20:],  # últimas 20
-        "resumen": f"KaMiZen report for {user_id}"
-    }
-    return report
+# =========================
+# SALUD
+# =========================
 
-# ================== ENDPOINT AI CONTENT ==================
-@app.get("/ai-content")
-def ai_content(user_id: str):
-    context = get_context(user_id)
-    items = generate_ai_content(context)
-    return JSONResponse({"items": items})
+@app.get("/health")
+async def health():
+    return {"status": "ok", "app": APP_NAME}
