@@ -1,106 +1,182 @@
-// ================== CONFIGURACIÓN CANVAS ==================
+// =========================
+// CANVAS PRINCIPAL DE KAMIZEN
+// =========================
 const canvas = document.getElementById("ai-canvas");
 const ctx = canvas.getContext("2d");
+let width = window.innerWidth;
+let height = window.innerHeight;
+canvas.width = width;
+canvas.height = height;
+window.onresize = () => {
+    width = window.innerWidth;
+    height = window.innerHeight;
+    canvas.width = width;
+    canvas.height = height;
+};
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+// Variables globales para animaciones
+let t = 0, p = 0, e = 0, phase = 0, depth = 0;
+let clouds = [], stars = [], fog = [];
 
-let elements = []; // figuras, sol, luna, estrellas
-let lastUpdate = Date.now();
+// =========================
+// CAPÍTULO 1 – Amanecer Interior
+// =========================
+function renderChapter1(config) {
+    clouds = Array.from({ length: 20 }, () => ({
+        x: Math.random() * width,
+        y: Math.random() * height / 2,
+        r: 50 + Math.random() * 80,
+        v: 0.2 + Math.random() * 0.5
+    }));
 
-// ================== UTILIDADES ==================
-function rand(min,max){ return Math.random()*(max-min)+min; }
-function degToRad(deg){ return deg*Math.PI/180; }
+    function draw1() {
+        t += 0.002;
+        phase += 0.02;
 
-// ================== ELEMENTOS ==================
-function initElements() {
-    elements = [];
+        // Fondo dinámico
+        const g = ctx.createLinearGradient(0, 0, 0, height);
+        g.addColorStop(0, `hsl(${Math.random()*360},60%,${40 + 20 * Math.sin(t)}%)`);
+        g.addColorStop(1, config.background || "#1a1a2e");
+        ctx.fillStyle = g;
+        ctx.fillRect(0, 0, width, height);
 
-    // Sol o luna según hora
-    const hour = new Date().getHours();
-    const isDay = hour >=6 && hour<18;
-    elements.push({
-        type: isDay?"sun":"moon",
-        x: rand(50, canvas.width-50),
-        y: rand(50, canvas.height/2),
-        radius: 50,
-        hue: isDay?60:220
-    });
+        // Sol animado
+        ctx.beginPath();
+        ctx.arc(width / 2, height * 0.65 - Math.sin(t) * 40, 80, 0, Math.PI * 2);
+        ctx.fillStyle = config.accent || "rgba(255,200,120,0.8)";
+        ctx.fill();
 
-    // Estrellas
-    for(let i=0;i<50;i++){
-        elements.push({
-            type:"star",
-            x: rand(0,canvas.width),
-            y: rand(0,canvas.height/2),
-            size: rand(1,3),
-            blink: Math.random()
-        });
+        requestAnimationFrame(draw1);
     }
 
-    // Figuras geométricas 3D/4D
-    for(let i=0;i<20;i++){
-        elements.push({
-            type:"shape",
-            x: rand(0,canvas.width),
-            y: rand(canvas.height/2, canvas.height),
-            size: rand(20,50),
-            hue: rand(0,360),
-            angle: rand(0,360),
-            speed: rand(0.1,0.5)
+    draw1();
+}
+
+// =========================
+// CAPÍTULO 2 – El mundo te escucha
+// =========================
+function renderChapter2(config) {
+    stars = Array.from({ length: 40 }, () => ({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        a: Math.random()
+    }));
+
+    let thoughts = Array.from({ length: 30 }, () => ({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        v: 0.2 + Math.random()
+    }));
+
+    function draw2() {
+        t += 0.003;
+        p += 0.04;
+        e += 0.05;
+        depth += 0.001;
+
+        // Fondo noche
+        ctx.fillStyle = config.background || "#02010a";
+        ctx.fillRect(0, 0, width, height);
+
+        // Luna
+        ctx.beginPath();
+        ctx.arc(width * 0.7, height * 0.3, 60 + Math.sin(t) * 5, 0, Math.PI * 2);
+        ctx.fillStyle = config.accent || "rgba(220,220,255,0.6)";
+        ctx.fill();
+
+        // Estrellas lentas
+        for (let i = 0; i < stars.length; i++) {
+            const s = stars[i];
+            s.a += 0.002;
+            if (s.a > 1) s.a = 0;
+            ctx.fillStyle = `rgba(255,255,255,${s.a})`;
+            ctx.fillRect(s.x, s.y, 2, 2);
+        }
+
+        // Respiración líquida
+        for (let i = 0; i < 50; i++) {
+            ctx.beginPath();
+            ctx.arc(i * 30, height / 2 + Math.sin(p + i) * 40, 20, 0, Math.PI * 2);
+            ctx.fillStyle = "rgba(0,150,255,0.15)";
+            ctx.fill();
+        }
+
+        // Pensamientos que pasan
+        thoughts.forEach(th => {
+            ctx.beginPath();
+            ctx.arc(th.x, th.y, 25, 0, Math.PI * 2);
+            ctx.fillStyle = "rgba(255,255,255,0.04)";
+            ctx.fill();
+            th.y -= th.v;
+            if (th.y < 0) th.y = height;
         });
+
+        // Energía interna
+        for (let i = 0; i < 60; i++) {
+            ctx.fillStyle = "rgba(255,80,0,0.12)";
+            ctx.fillRect(width / 2 + Math.sin(e + i) * 100, height / 2 - Math.random() * 200, 4, 20);
+        }
+
+        // Continuidad
+        ctx.beginPath();
+        ctx.arc(width / 2, height / 2, 100 + depth * 30, 0, Math.PI * 2);
+        ctx.strokeStyle = "rgba(255,255,255,0.2)";
+        ctx.stroke();
+
+        requestAnimationFrame(draw2);
     }
+
+    draw2();
 }
 
-// ================== ACTUALIZACIÓN CANVAS ==================
-function updateCanvas(itemText) {
-    const now = Date.now();
-    const dt = (now - lastUpdate)/1000;
-    lastUpdate = now;
+// =========================
+// CAPÍTULO 3 – Mundos finales
+// =========================
+function renderChapter3(config) {
+    fog = Array.from({ length: 30 }, () => ({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        r: 100 + Math.random() * 200,
+        v: 0.1 + Math.random() * 0.3
+    }));
 
-    ctx.clearRect(0,0,canvas.width,canvas.height);
+    stars = Array.from({ length: 100 }, () => ({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        v: 0.05 + Math.random() * 0.2
+    }));
 
-    elements.forEach(e=>{
-        if(e.type==="sun"||e.type==="moon"){
+    function draw3() {
+        t += 0.003;
+        p += 0.015;
+
+        // Fondo
+        const g = ctx.createRadialGradient(width / 2, height / 2, 50, width / 2, height / 2, width);
+        g.addColorStop(0, config.background || "#1b263b");
+        g.addColorStop(1, config.accent || "#03071e");
+        ctx.fillStyle = g;
+        ctx.fillRect(0, 0, width, height);
+
+        // Niebla
+        fog.forEach(f => {
             ctx.beginPath();
-            ctx.arc(e.x,e.y,e.radius,0,2*Math.PI);
-            ctx.fillStyle = `hsl(${e.hue},80%,50%)`;
+            ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
+            ctx.fillStyle = "rgba(255,255,255,0.02)";
             ctx.fill();
-        }
-        if(e.type==="star"){
-            ctx.beginPath();
-            ctx.arc(e.x,e.y,e.size,0,2*Math.PI);
-            const alpha = 0.5 + 0.5*Math.sin(Date.now()/500 + e.blink*10);
-            ctx.fillStyle = `rgba(255,255,255,${alpha})`;
-            ctx.fill();
-        }
-        if(e.type==="shape"){
-            e.angle += e.speed;
-            ctx.save();
-            ctx.translate(e.x,e.y);
-            ctx.rotate(degToRad(e.angle));
-            ctx.fillStyle = `hsl(${e.hue},80%,50%)`;
-            ctx.fillRect(-e.size/2,-e.size/2,e.size,e.size);
-            ctx.restore();
-        }
-    });
+            f.x += f.v;
+            if (f.x - f.r > width) f.x = -f.r;
+        });
 
-    // Texto flotante en Canvas
-    ctx.font = "20px sans-serif";
-    ctx.fillStyle = "white";
-    ctx.textAlign = "center";
-    ctx.fillText(itemText, canvas.width/2, canvas.height-50);
+        // Estrellas
+        stars.forEach(s => {
+            ctx.fillStyle = "rgba(255,255,255,0.4)";
+            ctx.fillRect(s.x, s.y, 2, 2);
+            s.y += s.v;
+            if (s.y > height) s.y = 0;
+        });
+
+        requestAnimationFrame(draw3);
+    }
+
+    draw3();
 }
-
-// ================== LOOP ANIMACIÓN ==================
-function loop(){
-    updateCanvas();
-    requestAnimationFrame(loop);
-}
-
-// ================== INICIALIZACIÓN ==================
-window.addEventListener("load", ()=>{
-    initElements();
-    loop();
-    window.updateCanvas = updateCanvas;
-});
