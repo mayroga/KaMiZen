@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify, render_template
-import os, time, random, requests, hashlib
+import os, time, random, hashlib, requests
 from openai import OpenAI
 import stripe
 
@@ -8,10 +8,8 @@ app = Flask(__name__)
 # ================== CONFIG ==================
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 WEATHER_API_KEY = os.getenv("WEATHER_API_KEY")
-
 ADMIN_USERNAME = os.getenv("ADMIN_USERNAME")
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
-
 STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
 STRIPE_PUBLISHABLE_KEY = os.getenv("STRIPE_PUBLISHABLE_KEY")
 
@@ -32,18 +30,15 @@ def life_engine(data):
     profile = data["profile"]
 
     system = f"""
-You are 'La Vida Continúa'.
-Never say you are an AI.
-You are a masculine, calm, confident voice.
-You guide humans through life as a living map.
-You never repeat phrases, metaphors, stories or structures.
-You inspire abundance, dignity, calm, power and well-being.
-You are NOT medical. You are a companion.
-Tone adapts to age and profile.
-Hospital mode is extra gentle, slow, validating and warm.
+You are 'La Vida Continúa'. Masculine, calm, confident voice. Never say you are AI.
+Guide humans through life as a living map.
+Never repeat phrases, metaphors, stories or structures.
+Inspire abundance, dignity, calm, power and well-being.
+Not medical. Companion only.
+Hospital mode: extra gentle, validating, slow.
 """
 
-    user = f"""
+    user_prompt = f"""
 Language: {lang}
 Age: {age}
 Profile: {profile}
@@ -53,32 +48,42 @@ Weather: {weather}
 Hour: {hour}
 
 Generate:
-- A short welcoming narration
-- A symbolic mini-story (realistic but poetic)
-- One concrete life action (small, doable now)
-- One obstacle shown on the life map
-- One choice: remove / keep / go around
+- 1 short welcoming narration
+- 1 mini-world description (water, city, forest, sun, stars)
+- 1 symbolic micro-story (4 sentences max)
+- 1 concrete life action (small, doable now)
+- 1 obstacle for the map and a choice (remove/keep/shortcut)
+- 1 mini-game prompt (math, puzzle, riddle)
 - Text must feel premium, abundant, human
+- No punctuation reading in voice, conversational
+- Short pauses suggested (3-5s)
+- Format as JSON:
+{{
+"narration": "...",
+"mini_world": "...",
+"micro_story": "...",
+"life_action": "...",
+"obstacle": "...",
+"choice": "...",
+"mini_game": "..."
+}}
 """
-
     r = client.chat.completions.create(
         model="gpt-4o-mini",
-        messages=[
-            {"role": "system", "content": system},
-            {"role": "user", "content": user}
-        ],
+        messages=[{"role": "system", "content": system}, {"role": "user", "content": user_prompt}],
         temperature=0.95,
-        max_tokens=220
+        max_tokens=400
     )
-
-    return r.choices[0].message.content.strip()
+    import json
+    try:
+        return json.loads(r.choices[0].message.content.strip())
+    except:
+        return {"narration": "Bienvenido a tu mapa de la vida", "mini_world": "", "micro_story": "", "life_action": "", "obstacle": "", "choice": "", "mini_game": ""}
 
 # ================== WEATHER ==================
 def get_weather(city):
     try:
-        r = requests.get(
-            f"https://api.openweathermap.org/data/2.5/weather?q={city}&appid={WEATHER_API_KEY}&units=metric"
-        ).json()
+        r = requests.get(f"https://api.openweathermap.org/data/2.5/weather?q={city}&appid={WEATHER_API_KEY}&units=metric").json()
         return f"{r['weather'][0]['description']} {r['main']['temp']}°C"
     except:
         return "clear"
@@ -92,7 +97,6 @@ def index():
 def start():
     data = request.json
     uid = hashlib.md5(str(time.time()).encode()).hexdigest()
-
     weather = get_weather(data["city"])
     hour = time.strftime("%H:%M")
 
@@ -104,7 +108,9 @@ def start():
             "city": data["city"],
             "weather": weather,
             "hour": hour,
-            "profile": data["profile"]
+            "profile": data["profile"],
+            "progress": 0,
+            "mini_worlds": []
         },
         "start": time.time()
     }
@@ -115,12 +121,20 @@ def step(uid):
     if uid not in sessions:
         return jsonify({"end": True})
 
-    text = life_engine(sessions[uid]["data"])
-    pos = random.randint(5, 15)
+    life_data = sessions[uid]["data"]
+    response = life_engine(life_data)
+    step_size = random.randint(5, 15)
+    life_data["progress"] += step_size
 
     return jsonify({
-        "text": text,
-        "move": pos
+        "text": response["narration"],
+        "mini_world": response["mini_world"],
+        "micro_story": response["micro_story"],
+        "life_action": response["life_action"],
+        "obstacle": response["obstacle"],
+        "choice": response["choice"],
+        "mini_game": response["mini_game"],
+        "move": step_size
     })
 
 # ================== STRIPE ==================
@@ -128,7 +142,6 @@ def step(uid):
 def checkout():
     plan = request.json["plan"]
     price = "price_day" if plan == "day" else "price_night"
-
     session = stripe.checkout.Session.create(
         payment_method_types=["card"],
         line_items=[{"price": price, "quantity": 1}],
