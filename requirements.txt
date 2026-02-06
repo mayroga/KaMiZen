@@ -1,6 +1,7 @@
 flask
 requests
 stripe
+uvicorn
 jinja2
 python-multipart
 openai>=1.0.0
