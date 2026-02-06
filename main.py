@@ -1,173 +1,90 @@
-import os
-import random
-import datetime
-from typing import Dict
+from flask import Flask, request, jsonify, render_template
+import os, time, random
+from openai import OpenAI
 
-from fastapi import FastAPI, Request, HTTPException
-from fastapi.responses import HTMLResponse, JSONResponse
-from fastapi.staticfiles import StaticFiles
-import stripe
+app = Flask(__name__)
 
-# =========================
-# CONFIGURACIÓN GENERAL
-# =========================
-APP_NAME = "KaMiZen"
-BASE_URL = os.getenv("BASE_URL", "https://kamizen.onrender.com")
+SESSION_TIME = 600
+EXTRA_TIME = 600
+OFFLINE_TIME = 1200
 
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-WEATHER_API_KEY = os.getenv("WEATHER_API_KEY")
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+sessions = {}
 
-STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
-STRIPE_PUBLISHABLE_KEY = os.getenv("STRIPE_PUBLISHABLE_KEY")
-STRIPE_WEBHOOK_SECRET = os.getenv("STRIPE_WEBHOOK_SECRET")
-stripe.api_key = STRIPE_SECRET_KEY
+# Definición de mini-mundos posibles
+MINI_WORLDS = ["agua", "luz", "sol", "noche", "nubes", "montañas", "bosque", "ciudad", "playa", "estrellas"]
 
-ADMIN_USERNAME = os.getenv("ADMIN_USERNAME")
-ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
-
-# =========================
-# APP
-# =========================
-app = FastAPI(title=APP_NAME)
-app.mount("/static", StaticFiles(directory="static"), name="static")
-
-# =========================
-# UTILIDADES
-# =========================
-
-def get_weather():
-    """Retorna info de clima simulada (puedes integrar Weather API real)"""
-    return random.choice(["soleado", "nublado", "lluvioso", "ventoso", "nevado"])
-
-def generate_ai_text(hour:int, weather:str, mood:str, chapter:int) -> str:
-    """Genera narrativa adaptativa usando IA (OpenAI/Gemini/fallback)"""
-    base_messages = [
-        "Respira, nada te persigue ahora.",
-        "Cada momento es un regalo silencioso.",
-        "Lo que buscas ya empezó dentro de ti.",
-        "El cambio ocurre incluso en silencio.",
-        "Observa. Todo se mueve sin que hagas nada."
-    ]
-
-    # Intento OpenAI
-    if OPENAI_API_KEY:
-        try:
-            from openai import OpenAI
-            client = OpenAI(api_key=OPENAI_API_KEY)
-            prompt = f"""
-            Genera un mensaje corto de sabiduría, relajación y consejo,
-            adaptado a la hora {hour}, clima {weather}, mood {mood}, capítulo {chapter}.
-            Tono cálido, elegante y calmado.
-            """
-            response = client.chat.completions.create(
-                model="gpt-4o-mini",
-                messages=[{"role": "user", "content": prompt}],
-                temperature=0.8,
-            )
-            text = response.choices[0].message.content.strip()
-            return text
-        except Exception:
-            pass
-
-    # Intento Gemini
-    if GEMINI_API_KEY:
-        try:
-            import google.generativeai as genai
-            genai.configure(api_key=GEMINI_API_KEY)
-            model = genai.GenerativeModel("gemini-pro")
-            prompt = f"Escribe un mensaje breve de sabiduría y relajación para capítulo {chapter}, hora {hour}, clima {weather}."
-            result = model.generate_content(prompt)
-            return result.text.strip()
-        except Exception:
-            pass
-
-    # Fallback interno
-    return random.choice(base_messages)
-
-def get_canvas_for_chapter(chapter:int) -> Dict:
-    """Devuelve colores y animaciones según capítulo"""
-    if chapter == 1:
-        return {"background":"#0f2027","accent":"#f5af19","animation":"slow-fade"}
-    if chapter == 2:
-        return {"background":"#0b132b","accent":"#00c6ff","animation":"floating"}
-    if chapter == 3:
-        return {"background":"#001219","accent":"#38ef7d","animation":"pulse"}
-    return {"background":"#000","accent":"#fff","animation":"drift"}
-
-# =========================
-# RUTAS
-# =========================
-
-@app.get("/", response_class=HTMLResponse)
-async def home():
-    try:
-        with open("templates/index.html", "r", encoding="utf-8") as f:
-            return f.read()
-    except FileNotFoundError:
-        return "<h1>KaMiZen preparando tu experiencia…</h1>"
-
-@app.get("/ai-content")
-async def ai_content(user_id:str = None):
-    """Retorna JSON con capítulo, texto y configuración de canvas adaptativa"""
-    now = datetime.datetime.now()
-    hour = now.hour
-    weather = get_weather()
-
-    # Decide capítulo según hora
-    if 5 <= hour < 12:
-        chapter = 1
-        mood = "calma"
-    elif 12 <= hour < 18:
-        chapter = 2
-        mood = "reflexión"
-    else:
-        chapter = 3
-        mood = "descanso"
-
-    text = generate_ai_text(hour, weather, mood, chapter)
-    canvas_config = get_canvas_for_chapter(chapter)
-
-    return {
-        "chapter": chapter,
-        "text": text,
-        "canvas": canvas_config,
-        "voice": {"enabled": True, "gender":"female", "style":"soft"}
-    }
-
-# =========================
-# MICROACCIONES
-# =========================
-@app.post("/microaction")
-async def microaction(request: Request):
-    form = await request.form()
-    user_id = form.get("user_id")
-    action = form.get("action")
-    print(f"[MICROACTION] User {user_id} -> {action}")
-    return JSONResponse({"status":"ok","user":user_id,"action":action})
-
-# =========================
-# STRIPE CHECKOUT
-# =========================
-@app.post("/create-checkout")
-async def create_checkout(request: Request):
-    data = await request.json()
-    plan = data.get("plan")
-    if plan not in ["basic","pro"]:
-        raise HTTPException(status_code=400, detail="Invalid plan")
-    price_id = os.getenv("STRIPE_PRICE_BASIC") if plan=="basic" else os.getenv("STRIPE_PRICE_PRO")
-    session = stripe.checkout.Session.create(
-        payment_method_types=["card"],
-        mode="subscription",
-        line_items=[{"price": price_id,"quantity":1}],
-        success_url=f"{BASE_URL}/?payment=success",
-        cancel_url=f"{BASE_URL}/?payment=cancel",
+def generate_life_step(state, age, mode, lang, position):
+    system = (
+        "You are 'La Vida Continúa'. Never say you are AI. "
+        "Guide the user through life with dynamic events, mini-worlds, obstacles, and choices. "
+        "Provide actions, solutions, consequences, and adaptations to the user's state, age, mode, and position. "
+        "Always aim for the user's well-being, joy, relaxation, growth, social and mental balance. "
+        "Each step must be unique and never repeated."
     )
-    return {"id": session.id}
+    mini_world = random.choice(MINI_WORLDS)
+    user = (
+        f"User age: {age}, state: {state}, position: {position}, mode: {mode}, language: {lang}. "
+        f"Place the user in a mini-world: {mini_world}. "
+        "Give a unique action, obstacle, resolution, or advice. Include options to remove, keep, or take an atajo (shortcut)."
+    )
 
-# =========================
-# SALUD
-# =========================
-@app.get("/health")
-async def health():
-    return {"status":"ok","app":APP_NAME}
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "system", "content": system},
+            {"role": "user", "content": user}
+        ],
+        temperature=0.9,
+        max_tokens=150
+    )
+    return response.choices[0].message.content.strip(), mini_world
+
+@app.route("/")
+def index():
+    return render_template("index.html")
+
+@app.route("/start", methods=["POST"])
+def start():
+    uid = request.remote_addr
+    data = request.json
+
+    sessions[uid] = {
+        "start": time.time(),
+        "lang": data.get("lang", "es"),
+        "age": data.get("age", 30),
+        "state": data.get("state", "presente"),
+        "mode": data.get("mode", "personal"),
+        "offline": data.get("offline", False),
+        "destination": data.get("destination", "bienestar"),
+        "position": 0,
+        "extended": False
+    }
+    return jsonify({"ok": True})
+
+@app.route("/step", methods=["GET"])
+def step():
+    uid = request.remote_addr
+    s = sessions.get(uid)
+    if not s:
+        return jsonify({"end": True})
+
+    elapsed = time.time() - s["start"]
+    limit = OFFLINE_TIME if s["offline"] else SESSION_TIME + (EXTRA_TIME if s["extended"] else 0)
+    if elapsed > limit:
+        return jsonify({"end": True})
+
+    message, mini_world = generate_life_step(s["state"], s["age"], s["mode"], s["lang"], s["position"])
+    s["position"] += random.randint(10, 20)
+
+    if int(elapsed // 60) >= 9 and not s["offline"]:
+        s["extended"] = True
+
+    return jsonify({
+        "end": False,
+        "minute": int(elapsed // 60),
+        "message": message,
+        "position": s["position"],
+        "extended": s["extended"],
+        "mini_world": mini_world
+    })
