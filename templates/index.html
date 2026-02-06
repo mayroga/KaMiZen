@@ -5,87 +5,6 @@
 <title>KaMiZen – Sistema Integral de Bienestar</title>
 <link rel="stylesheet" href="/static/style.css">
 <script src="https://js.stripe.com/v3/"></script>
-
-<style>
-/* ================== ESTILOS ADICIONALES ================== */
-html, body {
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    font-family: Arial, sans-serif;
-    color: white;
-    background: #000;
-}
-
-canvas {
-    display: block;
-}
-
-#ui, #menu-worlds {
-    position: absolute;
-    top: 10px;
-    width: 100%;
-    text-align: center;
-    z-index: 10;
-}
-
-#ui h1 {
-    margin: 5px 0;
-    font-size: 22px;
-    font-weight: normal;
-    opacity: 0.85;
-}
-
-#ui p {
-    margin: 5px 0 15px;
-    opacity: 0.7;
-}
-
-#buttons button, #menu-worlds button, #menu-worlds select {
-    margin: 5px;
-    padding: 10px 20px;
-    background: #222;
-    color: white;
-    border: none;
-    cursor: pointer;
-    font-size: 14px;
-}
-
-#buttons button:hover, #menu-worlds button:hover {
-    background: #333;
-}
-
-#menu-worlds select {
-    padding: 5px;
-    border-radius: 5px;
-}
-
-#canvas-text {
-    position: fixed;
-    bottom: 20px;
-    width: 100%;
-    text-align: center;
-    font-size: 1.5em;
-    color: white;
-    text-shadow: 2px 2px 4px black;
-    z-index: 10;
-}
-
-#levels {
-    position: fixed;
-    top: 70px;
-    right: 20px;
-    background: rgba(0,0,0,0.5);
-    border-radius: 10px;
-    padding: 15px;
-    max-width: 300px;
-    z-index: 10;
-}
-
-#levels h2, #levels p {
-    margin: 5px 0;
-}
-</style>
 </head>
 <body>
 
@@ -95,7 +14,6 @@ canvas {
 <!-- ================== APP ================== -->
 <div id="app" style="display:none">
 
-<!-- ===== HEADER ===== -->
 <header style="display:flex; justify-content:space-between; align-items:center; padding:10px;">
     <div>
         <label for="lang">Idioma:</label>
@@ -114,30 +32,23 @@ canvas {
     </div>
 </header>
 
-<!-- ===== MENÚ DE MUNDOS (KaMiZen 1, 2, 3) ===== -->
-<div id="menu-worlds">
-    <button onclick="switchWorld('kamizen1')">KaMiZen 1</button>
-    <button onclick="switchWorld('kamizen2')">KaMiZen 2</button>
-    <button onclick="switchWorld('kamizen3')">KaMiZen 3</button>
-</div>
-
-<!-- ================== CANVAS PRINCIPAL ================== -->
-<canvas id="main-canvas" style="position:absolute; top:0; left:0; width:100%; height:100%; z-index:-1;"></canvas>
+<!-- ================== CANVAS INFINITO ================== -->
+<canvas id="ai-canvas" style="position:absolute; top:0; left:0; width:100%; height:100%; z-index:-1;"></canvas>
 
 <!-- ================== TEXTO FLOTANTE ================== -->
-<section>
-    <div id="canvas-text">Bienvenido a KaMiZen</div>
+<section style="position:fixed; bottom:20px; width:100%; text-align:center; z-index:10;">
+    <div id="canvas-text" style="font-size:1.5em; color:white; text-shadow: 2px 2px 4px black;"></div>
 </section>
 
 <!-- ================== NIVELES ================== -->
-<div id="levels">
+<section style="position:fixed; top:70px; right:20px; background:rgba(0,0,0,0.5); border-radius:10px; padding:15px; max-width:300px; z-index:10;">
     <h2>Nivel 1 – $1.69</h2>
     <p>Microacciones, mindfulness, hábitos</p>
 
     <h2>Nivel 2 PRO – $99</h2>
     <p>Experiencia profunda, dualidad emocional, paisajes infinitos, risoterapia, educación, misterio</p>
     <button onclick="goPro()">Entrar PRO</button>
-</div>
+</section>
 
 </div>
 
@@ -146,219 +57,43 @@ canvas {
 <script src="/static/canvas.js"></script>
 <script>
 const stripe = Stripe("{{ stripe_key }}");
-
-// ================== CHECKOUT ==================
 function goPro(){
-    fetch("/create-checkout",{method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({plan:"pro"})})
+    fetch("/create-checkout",{method:"POST", body: JSON.stringify({plan:"pro"}), headers:{"Content-Type":"application/json"}})
     .then(r=>r.json())
     .then(d=>stripe.redirectToCheckout({sessionId:d.id}));
 }
 
-// ================== LOADER ==================
+// Loader inicial
 setTimeout(()=>{
     document.getElementById("loader").style.display="none";
     document.getElementById("app").style.display="block";
+
+    // Cargar capítulo automáticamente según IA
+    fetch("/ai-content")
+    .then(r=>r.json())
+    .then(data=>{
+        // Texto inicial
+        const canvasText = document.getElementById("canvas-text");
+        canvasText.innerText = data.text;
+
+        // Voz
+        if(data.voice.enabled){
+            const utter = new SpeechSynthesisUtterance(data.text);
+            utter.lang = "es-ES";
+            const voices = speechSynthesis.getVoices();
+            utter.voice = voices.find(v=>v.name.toLowerCase().includes(data.voice.gender)) || voices[0];
+            speechSynthesis.speak(utter);
+        }
+
+        // Canvas según capítulo
+        if(window.renderChapter1 && data.chapter===1) renderChapter1(data.canvas);
+        if(window.renderChapter2 && data.chapter===2) renderChapter2(data.canvas);
+        if(window.renderChapter3 && data.chapter===3) renderChapter3(data.canvas);
+
+        // Inicia ciclo infinito de AI items
+        if(window.startAI) startAI();
+    });
 },1200);
-
-// ================== MICROACCIONES ==================
-function recordMicroaction(action){
-    console.log("Microacción registrada:", action);
-}
-
-// ================== IDIOMA ==================
-function setLang(lang){
-    console.log("Idioma cambiado a:", lang);
-}
-
-// ================== SISTEMA DE MUNDOS ==================
-let activeWorld = "kamizen1";
-let canvas = document.getElementById("main-canvas");
-let ctx = canvas.getContext("2d");
-resizeCanvas();
-window.onresize = resizeCanvas;
-
-// Variables KaMiZen 1
-let world1 = 1, t1=0, phase1=0, mood1="calma";
-let clouds1 = Array.from({length:20},()=>({x:Math.random()*innerWidth,y:Math.random()*innerHeight/2,r:50+Math.random()*80,v:0.2+Math.random()*0.5}));
-let stars1 = Array.from({length:50},()=>({x:Math.random()*innerWidth,y:Math.random()*innerHeight,a:Math.random()}));
-
-// Variables KaMiZen 2
-let t2=0,p2=0,e2=0,depth2=0;
-let thoughts2 = Array.from({length:30},()=>({x:Math.random()*innerWidth,y:Math.random()*innerHeight,v:0.2+Math.random()}));
-
-// Variables KaMiZen 3
-let t3=0,p3=0;
-let fog3 = Array.from({length:30},()=>({x:Math.random()*innerWidth,y:Math.random()*innerHeight,r:100+Math.random()*200,v:0.1+Math.random()*0.3}));
-let stars3 = Array.from({length:100},()=>({x:Math.random()*innerWidth,y:Math.random()*innerHeight,v:0.05+Math.random()*0.2}));
-let world3Select = "agua";
-
-// ================== FUNCIONES ==================
-function resizeCanvas(){
-    canvas.width = innerWidth;
-    canvas.height = innerHeight;
-}
-
-// Cambiar de mundo
-function switchWorld(world){
-    activeWorld = world;
-    t1=t2=t3=0; p1=p2=p3=0; // reset variables
-    if(world==="kamizen1") document.getElementById("canvas-text").innerText="KaMiZen 1: Amanecer interior";
-    if(world==="kamizen2") document.getElementById("canvas-text").innerText="KaMiZen 2: El mundo te escucha";
-    if(world==="kamizen3") document.getElementById("canvas-text").innerText="KaMiZen 3: Respiración y paisajes";
-}
-
-// Selección de sub-mundos KaMiZen 3
-document.addEventListener("change", e=>{
-    if(e.target.id==="worldSelect") world3Select=e.target.value;
-});
-
-// ================== LOOP PRINCIPAL ==================
-function draw(){
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-
-    // ===== KaMiZen 1 =====
-    if(activeWorld==="kamizen1"){
-        t1 += 0.002; phase1 += 0.02;
-
-        switch(world1){
-            case 1:
-                const g1 = ctx.createLinearGradient(0,0,0,canvas.height);
-                g1.addColorStop(0, `hsl(30,60%,${40+20*Math.sin(t1)}%)`);
-                g1.addColorStop(1, "#1a1a2e");
-                ctx.fillStyle=g1;
-                ctx.fillRect(0,0,canvas.width,canvas.height);
-                ctx.beginPath();
-                ctx.arc(canvas.width/2, canvas.height*0.65 - Math.sin(t1)*40, 80, 0, Math.PI*2);
-                ctx.fillStyle="rgba(255,200,120,0.8)";
-                ctx.fill();
-                break;
-            case 2:
-                ctx.fillStyle="#0b132b";
-                ctx.fillRect(0,0,canvas.width,canvas.height);
-                clouds1.forEach(cl=>{
-                    ctx.beginPath();
-                    ctx.arc(cl.x,cl.y,cl.r,0,Math.PI*2);
-                    ctx.fillStyle="rgba(255,255,255,0.05)";
-                    ctx.fill();
-                    cl.x+=cl.v; if(cl.x-cl.r>canvas.width) cl.x=-cl.r;
-                });
-                break;
-            case 3:
-                let r = 80 + Math.sin(phase1)*40;
-                ctx.fillStyle="#000814";
-                ctx.fillRect(0,0,canvas.width,canvas.height);
-                ctx.beginPath();
-                ctx.arc(canvas.width/2,canvas.height/2,r,0,Math.PI*2);
-                ctx.fillStyle="rgba(100,200,255,0.4)";
-                ctx.fill();
-                break;
-            case 4:
-                ctx.fillStyle = mood1==="calma" ? "#001d3d" : "#3a0ca3";
-                ctx.fillRect(0,0,canvas.width,canvas.height);
-                break;
-            case 5:
-                ctx.fillStyle="#000";
-                ctx.fillRect(0,0,canvas.width,canvas.height);
-                stars1.forEach(s=>{
-                    s.a+=0.002; if(s.a>1) s.a=0;
-                    ctx.fillStyle=`rgba(255,255,255,${s.a})`;
-                    ctx.fillRect(s.x,s.y,2,2);
-                });
-                break;
-        }
-    }
-
-    // ===== KaMiZen 2 =====
-    if(activeWorld==="kamizen2"){
-        t2 += 0.003; p2 += 0.04; e2 += 0.05; depth2 += 0.001;
-        ctx.fillStyle="#02010a"; ctx.fillRect(0,0,canvas.width,canvas.height);
-
-        // Luna
-        ctx.beginPath();
-        ctx.arc(canvas.width*0.7, canvas.height*0.3, 60 + Math.sin(t2)*5, 0, Math.PI*2);
-        ctx.fillStyle = "rgba(220,220,255,0.6)"; ctx.fill();
-
-        // Estrellas lentas
-        for(let i=0;i<40;i++){
-            ctx.fillStyle="rgba(255,255,255,0.3)";
-            ctx.fillRect(Math.random()*canvas.width, Math.random()*canvas.height, 1, 1);
-        }
-
-        // Respiración líquida
-        for(let i=0;i<50;i++){
-            ctx.beginPath();
-            ctx.arc(i*30, canvas.height/2 + Math.sin(p2+i)*40, 20, 0, Math.PI*2);
-            ctx.fillStyle="rgba(0,150,255,0.15)";
-            ctx.fill();
-        }
-
-        // Pensamientos
-        thoughts2.forEach(th=>{
-            ctx.beginPath();
-            ctx.arc(th.x, th.y, 25,0,Math.PI*2);
-            ctx.fillStyle="rgba(255,255,255,0.04)";
-            ctx.fill();
-            th.y -= th.v; if(th.y<0) th.y=canvas.height;
-        });
-
-        // Energía interna
-        for(let i=0;i<60;i++){
-            ctx.fillStyle="rgba(255,80,0,0.12)";
-            ctx.fillRect(canvas.width/2 + Math.sin(e2+i)*100, canvas.height/2 - Math.random()*200, 4, 20);
-        }
-
-        // Continuidad
-        ctx.beginPath();
-        ctx.arc(canvas.width/2, canvas.height/2, 100 + depth2*30,0,Math.PI*2);
-        ctx.strokeStyle="rgba(255,255,255,0.2)"; ctx.stroke();
-    }
-
-    // ===== KaMiZen 3 =====
-    if(activeWorld==="kamizen3"){
-        ctx.clearRect(0,0,canvas.width,canvas.height);
-        switch(world3Select){
-            case "agua":
-                t3 +=0.01; ctx.fillStyle="#001219"; ctx.fillRect(0,0,canvas.width,canvas.height);
-                for(let i=0;i<20;i++){
-                    let y=canvas.height/2 + Math.sin(t3+i)*30 + i*8;
-                    ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(canvas.width,y);
-                    ctx.strokeStyle="rgba(173,232,244,0.05)"; ctx.lineWidth=2; ctx.stroke();
-                }
-                break;
-            case "niebla":
-                ctx.fillStyle="#111"; ctx.fillRect(0,0,canvas.width,canvas.height);
-                fog3.forEach(f=>{
-                    ctx.beginPath(); ctx.arc(f.x,f.y,f.r,0,Math.PI*2);
-                    ctx.fillStyle="rgba(255,255,255,0.02)"; ctx.fill();
-                    f.x += f.v; if(f.x-f.r>canvas.width) f.x=-f.r;
-                });
-                break;
-            case "pulso":
-                p3 +=0.015; ctx.fillStyle="#000"; ctx.fillRect(0,0,canvas.width,canvas.height);
-                let r = 60 + Math.sin(p3)*20;
-                ctx.beginPath(); ctx.arc(canvas.width/2, canvas.height/2, r,0,Math.PI*2);
-                ctx.strokeStyle="rgba(255,255,255,0.3)"; ctx.lineWidth=2; ctx.stroke();
-                break;
-            case "estrellas":
-                ctx.fillStyle="#02010a"; ctx.fillRect(0,0,canvas.width,canvas.height);
-                stars3.forEach(s=>{
-                    ctx.fillStyle="rgba(255,255,255,0.4)"; ctx.fillRect(s.x,s.y,2,2);
-                    s.y+=s.v; if(s.y>canvas.height) s.y=0;
-                });
-                break;
-            case "noche":
-                t3+=0.003;
-                const g3 = ctx.createRadialGradient(canvas.width/2,canvas.height/2,50,canvas.width/2,canvas.height/2,canvas.width);
-                g3.addColorStop(0,"#1b263b"); g3.addColorStop(1,"#03071e");
-                ctx.fillStyle=g3; ctx.fillRect(0,0,canvas.width,canvas.height);
-                break;
-        }
-    }
-
-    requestAnimationFrame(draw);
-}
-
-draw();
 </script>
 
 </body>
