@@ -3,8 +3,7 @@ from fastapi import FastAPI, Request, Form, HTTPException
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-import stripe
-import requests
+import stripe, requests
 
 # ================== VARIABLES RENDER ==================
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
@@ -28,17 +27,20 @@ microactions_db = {}  # {user_id: [acciones]}
 users_db = {}         # {user_id: {"nivel":1/2, "preferencias":{}, "idioma":"es"}}
 
 # ================== IA GENERATIVA ==================
-def generate_landscape(context: str):
+def generate_landscape(context: str, mystery=False):
     seed = hashlib.sha256(f"{context}{random.random()}".encode()).hexdigest()
     prompt = f"""
     KaMiZen Landscape Generation
     Context: {context}
     Mood: calm, immersive, personal
     Dynamic elements: amanecer, atardecer, noche estrellada, lluvia, nieve, viento
-    Effects: lumínicos variables
+    Effects: lumínicos variables, reflejos
+    Include floating motivational phrases, 3D geometric shapes, color shifts based on microactions
     Unique seed: {seed}
     """
-    # OpenAI GPT-4O mini
+    if mystery:
+        prompt += "Add a subtle mysterious presence hidden somewhere, changing daily, not scary but noticeable."
+
     try:
         r = requests.post(
             "https://api.openai.com/v1/chat/completions",
@@ -51,7 +53,6 @@ def generate_landscape(context: str):
         )
         return r.json()["choices"][0]["message"]["content"]
     except:
-        # Fallback Gemini
         r = requests.post(
             f"https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key={GEMINI_API_KEY}",
             json={"contents":[{"parts":[{"text":prompt}]}]},
@@ -69,16 +70,16 @@ def get_context(user_id: str):
     temp = weather_data.get("main", {}).get("temp", 25)
     humidity = weather_data.get("main", {}).get("humidity", 50)
     wind = weather_data.get("wind", {}).get("speed", 0)
-    context = {
+    
+    return json.dumps({
         "datetime": str(now),
         "hour": hour,
-        "temp": temp,
-        "humidity": humidity,
-        "wind": wind,
-        "user_preferences": users_db.get(user_id, {}).get("preferencias", {}),
-        "user_microactions": microactions_db.get(user_id, [])
-    }
-    return json.dumps(context)
+        "temperature_C": temp,
+        "humidity_percent": humidity,
+        "wind_kmh": wind,
+        "microactions": microactions_db.get(user_id, []),
+        "user_preferences": users_db.get(user_id, {}).get("preferencias", {})
+    })
 
 # ================== ADMIN ==================
 def is_admin(user: str, pwd: str):
@@ -86,24 +87,40 @@ def is_admin(user: str, pwd: str):
 
 # ================== RUTAS ==================
 @app.get("/", response_class=HTMLResponse)
-def home(request: Request):
-    user_id = request.client.host  # simple tracking
+def home(request: Request, pro: int = 0):
+    user_id = request.client.host
     if user_id not in users_db:
-        users_db[user_id] = {"nivel":1, "preferencias":{}, "idioma":"es"}
+        users_db[user_id] = {"nivel":1, "preferencias":{}, "idioma":"en"}
+    if pro:
+        users_db[user_id]["nivel"] = 2
+    # Determinar si toca misterio diario (ej: primera visita del día)
+    last_visit = users_db[user_id].get("last_visit")
+    today = datetime.date.today().isoformat()
+    mystery = False
+    if last_visit != today:
+        mystery = True
+        users_db[user_id]["last_visit"] = today
+
     context = get_context(user_id)
-    ai_landscape = generate_landscape(context)
+    ai_landscape = generate_landscape(context, mystery=mystery)
     return templates.TemplateResponse("index.html", {
         "request": request,
         "ai_landscape": ai_landscape,
-        "stripe_key": STRIPE_PUBLISHABLE_KEY
+        "stripe_key": STRIPE_PUBLISHABLE_KEY,
+        "nivel1_price": 169,
+        "nivel2_price": 9900
     })
 
 @app.post("/microaction")
 def add_microaction(user_id: str = Form(...), action: str = Form(...)):
-    if user_id not in microactions_db:
-        microactions_db[user_id] = []
-    microactions_db[user_id].append({"action": action, "timestamp": str(datetime.datetime.now())})
-    return {"status": "ok"}
+    now = datetime.datetime.now().isoformat()
+    microactions_db.setdefault(user_id, []).append({"action": action, "timestamp": now})
+    return {
+        "status": "ok",
+        "total": len(microactions_db[user_id]),
+        "last_action": action,
+        "timestamp": now
+    }
 
 @app.post("/admin/login")
 def admin_login(username: str = Form(...), password: str = Form(...)):
