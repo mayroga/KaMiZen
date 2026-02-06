@@ -1,47 +1,58 @@
-let lang = "en";
-let level = "day";
+let uid = null;
+let lang = "es";
+let voice;
 
-function setLang(l) {
-  lang = l;
-  speechSynthesis.cancel();
+function loadVoice(){
+  const voices = speechSynthesis.getVoices();
+  voice = voices.find(v => v.lang.startsWith(lang) && v.name.toLowerCase().includes("male")) || voices[0];
 }
 
-function speak(text) {
-  const msg = new SpeechSynthesisUtterance(text);
-  msg.lang = lang === "es" ? "es-ES" : "en-US";
-  msg.voice = speechSynthesis.getVoices().find(v => v.lang.includes(msg.lang));
-  speechSynthesis.speak(msg);
+speechSynthesis.onvoiceschanged = loadVoice;
+
+function speak(text){
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = lang === "es" ? "es-ES" : "en-US";
+  u.voice = voice;
+  u.rate = 0.95;
+  speechSynthesis.speak(u);
 }
 
-async function startLife() {
-  const age = document.getElementById("age").value;
-  const mood = document.getElementById("mood").value;
+function begin(){
+  lang = document.getElementById("lang").value;
 
-  const res = await fetch("/life/guide", {
-    method: "POST",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({ age, mood, lang, level })
-  });
-
-  const data = await res.json();
-  speak(data.message);
-}
-
-async function pay(lvl) {
-  level = lvl;
-  const price = lvl === "day" ? 1.69 : 99.0;
-
-  const res = await fetch("/create-checkout-session", {
-    method: "POST",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({
-      level: lvl,
-      price: price,
-      success: window.location.href,
-      cancel: window.location.href
+  fetch("/start",{
+    method:"POST",
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      city:city.value,
+      age:age.value,
+      profile:profile.value,
+      mode:"day",
+      lang:lang
     })
+  })
+  .then(r=>r.json())
+  .then(d=>{
+    uid = d.uid;
+    document.getElementById("intro").style.display="none";
+    run();
   });
+}
 
-  const data = await res.json();
-  window.location.href = data.url;
+function run(){
+  setInterval(()=>{
+    fetch(`/step/${uid}`)
+    .then(r=>r.json())
+    .then(d=>{
+      speak(d.text);
+      animateText(d.text);
+      moveMap(d.move);
+    });
+  }, 6000);
+}
+
+function animateText(text){
+  const el = document.getElementById("floatingText");
+  el.innerText = text;
+  el.className = "glow";
 }
