@@ -137,21 +137,19 @@ def admin_login(username: str = Form(...), password: str = Form(...)):
 
 @app.post("/create-checkout-session")
 def create_checkout():
-    session = stripe.checkout.Session.create(
-        payment_method_types=["card"],
-        mode="subscription",
-        line_items=[{
-            "price_data": {
-                "currency": "usd",
-                "product_data": {"name": "KaMiZen PRO"},
-                "unit_amount": 9900,
-                "recurring": {"interval": "month"}
-            },
-            "quantity": 1
-        }],
-        success_url="/?pro=1",
-        cancel_url="/"
-    )
+    BASE_URL = os.getenv("BASE_URL", "https://kamizen.onrender.com")
+
+session = stripe.checkout.Session.create(
+    payment_method_types=["card"],
+    mode="subscription",
+    line_items=[{
+        "price": PRICE_ID,
+        "quantity": 1
+    }],
+    success_url=f"{BASE_URL}/?payment=success",
+    cancel_url=f"{BASE_URL}/?payment=cancel"
+)
+
     return {"id": session.id}
 
 @app.get("/report")
