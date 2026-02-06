@@ -1,50 +1,47 @@
-let lang = "es", active = false, currentMiniWorld="luz";
+let lang = "en";
+let level = "day";
 
-function speak(text){
-    if(!text) return;
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = lang==="es"?"es-ES":"en-US";
-    u.pitch=1.0; u.rate=1.0; u.volume=1.0;
-    speechSynthesis.speak(u);
+function setLang(l) {
+  lang = l;
+  speechSynthesis.cancel();
 }
 
-function begin(){
-    const age = parseInt(document.getElementById("age").value)||30;
-    const state = document.getElementById("state").value||"presente";
-    const destination = document.getElementById("destination").value||"bienestar";
-    const mode = document.getElementById("mode").value;
-    const offline = document.getElementById("offline").checked;
-
-    fetch("/start", {
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body: JSON.stringify({lang, age, state, destination, mode, offline})
-    }).then(()=>{
-        document.getElementById("intro").style.display="none";
-        document.getElementById("options").style.display="block";
-        active = true;
-        speak(`Bienvenido, te acompañaré en tu camino hacia ${destination}`);
-        run();
-    });
+function speak(text) {
+  const msg = new SpeechSynthesisUtterance(text);
+  msg.lang = lang === "es" ? "es-ES" : "en-US";
+  msg.voice = speechSynthesis.getVoices().find(v => v.lang.includes(msg.lang));
+  speechSynthesis.speak(msg);
 }
 
-function userDecision(action){
-    speak(`Has decidido ${action} el obstáculo.`);
-    // Enviar acción a backend si se quiere adaptar IA
+async function startLife() {
+  const age = document.getElementById("age").value;
+  const mood = document.getElementById("mood").value;
+
+  const res = await fetch("/life/guide", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({ age, mood, lang, level })
+  });
+
+  const data = await res.json();
+  speak(data.message);
 }
 
-function run(){
-    setInterval(async ()=>{
-        if(!active) return;
-        const r = await fetch("/step");
-        const d = await r.json();
-        if(d.end){
-            speak("La Vida Continúa…");
-            active=false;
-            return;
-        }
-        speak(d.message);
-        currentMiniWorld=d.mini_world;
-        updateLifeCanvas(d.position, currentMiniWorld);
-    },5000);
+async function pay(lvl) {
+  level = lvl;
+  const price = lvl === "day" ? 1.69 : 99.0;
+
+  const res = await fetch("/create-checkout-session", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({
+      level: lvl,
+      price: price,
+      success: window.location.href,
+      cancel: window.location.href
+    })
+  });
+
+  const data = await res.json();
+  window.location.href = data.url;
 }
