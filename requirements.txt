@@ -4,5 +4,4 @@ stripe
 jinja2
 python-multipart
 openai>=1.0.0
-uvicorn
 gunicorn
