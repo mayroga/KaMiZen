@@ -1,122 +1,142 @@
-from fastapi import FastAPI, Request, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
-import os, uuid, random, datetime
-import openai
+from flask import Flask, request, jsonify, render_template
+import os, time, random, requests, hashlib
+from openai import OpenAI
 import stripe
-import psycopg2
-import requests
 
-app = FastAPI()
+app = Flask(__name__)
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# ================== CONFIG ==================
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+WEATHER_API_KEY = os.getenv("WEATHER_API_KEY")
 
-# ENV
 ADMIN_USERNAME = os.getenv("ADMIN_USERNAME")
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
 
-openai.api_key = os.getenv("OPENAI_API_KEY")
-stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
+STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
+STRIPE_PUBLISHABLE_KEY = os.getenv("STRIPE_PUBLISHABLE_KEY")
 
-WEATHER_API_KEY = os.getenv("WEATHER_API_KEY")
+stripe.api_key = STRIPE_SECRET_KEY
+client = OpenAI(api_key=OPENAI_API_KEY)
 
-# DB
-conn = psycopg2.connect(
-    dbname=os.getenv("POSTGRES_DB"),
-    user=os.getenv("POSTGRES_USER"),
-    password=os.getenv("POSTGRES_PASSWORD"),
-    host=os.getenv("POSTGRES_HOST")
-)
+# ================== SESSION ==================
+sessions = {}
 
-# ---- HELPERS ----
+# ================== NARRATIVE ENGINE ==================
+def life_engine(data):
+    age = data["age"]
+    lang = data["lang"]
+    mode = data["mode"]
+    city = data["city"]
+    weather = data["weather"]
+    hour = data["hour"]
+    profile = data["profile"]
 
-def unique_seed():
-    return str(uuid.uuid4()) + str(datetime.datetime.utcnow())
+    system = f"""
+You are 'La Vida Continúa'.
+Never say you are an AI.
+You are a masculine, calm, confident voice.
+You guide humans through life as a living map.
+You never repeat phrases, metaphors, stories or structures.
+You inspire abundance, dignity, calm, power and well-being.
+You are NOT medical. You are a companion.
+Tone adapts to age and profile.
+Hospital mode is extra gentle, slow, validating and warm.
+"""
 
-def weather_context():
+    user = f"""
+Language: {lang}
+Age: {age}
+Profile: {profile}
+Mode: {mode}
+City: {city}
+Weather: {weather}
+Hour: {hour}
+
+Generate:
+- A short welcoming narration
+- A symbolic mini-story (realistic but poetic)
+- One concrete life action (small, doable now)
+- One obstacle shown on the life map
+- One choice: remove / keep / go around
+- Text must feel premium, abundant, human
+"""
+
+    r = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "system", "content": system},
+            {"role": "user", "content": user}
+        ],
+        temperature=0.95,
+        max_tokens=220
+    )
+
+    return r.choices[0].message.content.strip()
+
+# ================== WEATHER ==================
+def get_weather(city):
     try:
         r = requests.get(
-            f"https://api.openweathermap.org/data/2.5/weather?q=Miami&appid={WEATHER_API_KEY}"
+            f"https://api.openweathermap.org/data/2.5/weather?q={city}&appid={WEATHER_API_KEY}&units=metric"
         ).json()
-        return r["weather"][0]["description"]
+        return f"{r['weather'][0]['description']} {r['main']['temp']}°C"
     except:
         return "clear"
 
-# ---- AUTH ----
+# ================== ROUTES ==================
+@app.route("/")
+def index():
+    return render_template("index.html", stripe_key=STRIPE_PUBLISHABLE_KEY)
 
-@app.post("/admin/login")
-async def admin_login(data: dict):
-    if data["username"] == ADMIN_USERNAME and data["password"] == ADMIN_PASSWORD:
-        return {"status": "ok", "role": "admin"}
-    raise HTTPException(status_code=403, detail="Unauthorized")
+@app.route("/start", methods=["POST"])
+def start():
+    data = request.json
+    uid = hashlib.md5(str(time.time()).encode()).hexdigest()
 
-# ---- STRIPE ----
+    weather = get_weather(data["city"])
+    hour = time.strftime("%H:%M")
 
-@app.post("/create-checkout-session")
-async def create_checkout(data: dict):
-    price = data["price"]
+    sessions[uid] = {
+        "data": {
+            "age": data["age"],
+            "lang": data["lang"],
+            "mode": data["mode"],
+            "city": data["city"],
+            "weather": weather,
+            "hour": hour,
+            "profile": data["profile"]
+        },
+        "start": time.time()
+    }
+    return jsonify({"uid": uid})
+
+@app.route("/step/<uid>")
+def step(uid):
+    if uid not in sessions:
+        return jsonify({"end": True})
+
+    text = life_engine(sessions[uid]["data"])
+    pos = random.randint(5, 15)
+
+    return jsonify({
+        "text": text,
+        "move": pos
+    })
+
+# ================== STRIPE ==================
+@app.route("/checkout", methods=["POST"])
+def checkout():
+    plan = request.json["plan"]
+    price = "price_day" if plan == "day" else "price_night"
+
     session = stripe.checkout.Session.create(
         payment_method_types=["card"],
-        line_items=[{
-            "price_data": {
-                "currency": "usd",
-                "product_data": {"name": data["level"]},
-                "unit_amount": int(price * 100),
-            },
-            "quantity": 1,
-        }],
+        line_items=[{"price": price, "quantity": 1}],
         mode="payment",
-        success_url=data["success"],
-        cancel_url=data["cancel"],
+        success_url="/",
+        cancel_url="/"
     )
-    return {"url": session.url}
+    return jsonify({"id": session.id})
 
-# ---- AI CORE ----
-
-@app.post("/life/guide")
-async def life_guide(data: dict):
-    lang = data["lang"]
-    age = data["age"]
-    mood = data["mood"]
-    level = data["level"]
-
-    seed = unique_seed()
-    weather = weather_context()
-
-    system_prompt = f"""
-You are La Vida Continúa, a masculine calm guide.
-Language: {lang}.
-Never repeat phrases.
-You guide life as a map.
-Focus on wellbeing, wealth mindset, emotional balance, power, calm.
-No medical advice.
-Weather: {weather}.
-Age: {age}.
-Level: {level}.
-Seed: {seed}.
-"""
-
-    user_prompt = f"""
-User feels {mood}.
-Guide them through a life map with obstacles, routes and decisions.
-Use story, action, movement.
-"""
-
-    response = openai.ChatCompletion.create(
-        model="gpt-4o-mini",
-        messages=[
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_prompt}
-        ],
-        temperature=0.95
-    )
-
-    return {
-        "message": response.choices[0].message.content,
-        "seed": seed
-    }
+if __name__ == "__main__":
+    app.run()
