@@ -1,100 +1,32 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>KaMiZen – Sistema Integral de Bienestar</title>
-<link rel="stylesheet" href="/static/style.css">
-<script src="https://js.stripe.com/v3/"></script>
+<title>KaMiZen – La Vida Continúa</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<!-- ================== LOADER ================== -->
-<div id="loader">KaMiZen preparando tu experiencia…</div>
-
-<!-- ================== APP ================== -->
-<div id="app" style="display:none">
-
-<header style="display:flex; justify-content:space-between; align-items:center; padding:10px;">
-    <div>
-        <label for="lang">Idioma:</label>
-        <select id="lang" onchange="setLang(this.value)">
-            <option value="en">English</option>
-            <option value="es" selected>Español</option>
-            <option value="fr">Français</option>
-            <option value="it">Italiano</option>
-            <option value="pt">Português</option>
-            <option value="zh">中文</option>
-        </select>
-    </div>
-    <div>
-        <button onclick="recordMicroaction('respiración consciente')">Respiración consciente</button>
-        <button onclick="recordMicroaction('mini estiramiento')">Mini estiramiento</button>
-    </div>
-</header>
-
-<!-- ================== CANVAS INFINITO ================== -->
-<canvas id="ai-canvas" style="position:absolute; top:0; left:0; width:100%; height:100%; z-index:-1;"></canvas>
-
-<!-- ================== TEXTO FLOTANTE ================== -->
-<section style="position:fixed; bottom:20px; width:100%; text-align:center; z-index:10;">
-    <div id="canvas-text" style="font-size:1.5em; color:white; text-shadow: 2px 2px 4px black;"></div>
-</section>
-
-<!-- ================== NIVELES ================== -->
-<section style="position:fixed; top:70px; right:20px; background:rgba(0,0,0,0.5); border-radius:10px; padding:15px; max-width:300px; z-index:10;">
-    <h2>Nivel 1 – $1.69</h2>
-    <p>Microacciones, mindfulness, hábitos</p>
-
-    <h2>Nivel 2 PRO – $99</h2>
-    <p>Experiencia profunda, dualidad emocional, paisajes infinitos, risoterapia, educación, misterio</p>
-    <button onclick="goPro()">Entrar PRO</button>
-</section>
-
+<div id="language">
+  <button onclick="setLang('en')">English</button>
+  <button onclick="setLang('es')">Español</button>
 </div>
 
-<!-- ================== SCRIPTS ================== -->
-<script src="/static/app.js"></script>
-<script src="/static/canvas.js"></script>
-<script>
-const stripe = Stripe("{{ stripe_key }}");
-function goPro(){
-    fetch("/create-checkout",{method:"POST", body: JSON.stringify({plan:"pro"}), headers:{"Content-Type":"application/json"}})
-    .then(r=>r.json())
-    .then(d=>stripe.redirectToCheckout({sessionId:d.id}));
-}
+<div id="login">
+  <input id="age" placeholder="Age / Edad">
+  <input id="mood" placeholder="How do you feel? / ¿Cómo te sientes?">
+</div>
 
-// Loader inicial
-setTimeout(()=>{
-    document.getElementById("loader").style.display="none";
-    document.getElementById("app").style.display="block";
+<div id="levels">
+  <button onclick="pay('day')">Day – $1.69</button>
+  <button onclick="pay('night')">Night – $99</button>
+</div>
 
-    // Cargar capítulo automáticamente según IA
-    fetch("/ai-content")
-    .then(r=>r.json())
-    .then(data=>{
-        // Texto inicial
-        const canvasText = document.getElementById("canvas-text");
-        canvasText.innerText = data.text;
+<canvas id="lifeCanvas"></canvas>
 
-        // Voz
-        if(data.voice.enabled){
-            const utter = new SpeechSynthesisUtterance(data.text);
-            utter.lang = "es-ES";
-            const voices = speechSynthesis.getVoices();
-            utter.voice = voices.find(v=>v.name.toLowerCase().includes(data.voice.gender)) || voices[0];
-            speechSynthesis.speak(utter);
-        }
+<button onclick="startLife()">Start / Comenzar</button>
 
-        // Canvas según capítulo
-        if(window.renderChapter1 && data.chapter===1) renderChapter1(data.canvas);
-        if(window.renderChapter2 && data.chapter===2) renderChapter2(data.canvas);
-        if(window.renderChapter3 && data.chapter===3) renderChapter3(data.canvas);
-
-        // Inicia ciclo infinito de AI items
-        if(window.startAI) startAI();
-    });
-},1200);
-</script>
-
+<script src="canvas.js"></script>
+<script src="app.js"></script>
 </body>
 </html>
