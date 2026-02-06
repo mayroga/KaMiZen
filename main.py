@@ -1,9 +1,10 @@
-import os, random, hashlib, datetime, json
+import os, random, hashlib, datetime, json, asyncio
 from fastapi import FastAPI, Request, Form, HTTPException
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-import stripe, requests
+import stripe
+import requests
 
 # ================== VARIABLES RENDER ==================
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
@@ -22,45 +23,65 @@ app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-# ================== REGISTRO DE MICROACCIONES ==================
-microactions_db = {}  # {user_id: [acciones]}
-users_db = {}         # {user_id: {"nivel":1/2, "preferencias":{}, "idioma":"es"}}
+# ================== REGISTRO ==================
+microactions_db = {}
+users_db = {}
 
-# ================== IA GENERATIVA ==================
-def generate_landscape(context: str, mystery=False):
+# ================== AI INFINITA ==================
+ai_cache = {}  # {user_id: {"last_generated": datetime, "content": [items]}}
+
+def generate_ai_content(context: str, n_items: int = 20):
+    """
+    Genera historias, frases, desafíos, cuentos, consejos, traducciones y voces.
+    Usa OpenAI y Gemini como fallback.
+    """
     seed = hashlib.sha256(f"{context}{random.random()}".encode()).hexdigest()
     prompt = f"""
-    KaMiZen Landscape Generation
-    Context: {context}
-    Mood: calm, immersive, personal
-    Dynamic elements: amanecer, atardecer, noche estrellada, lluvia, nieve, viento
-    Effects: lumínicos variables, reflejos
-    Include floating motivational phrases, 3D geometric shapes, color shifts based on microactions
-    Unique seed: {seed}
+    KaMiZen AI Content Generation
+    Contexto: {context}
+    Genera {n_items} items variados:
+    - Frases motivacionales y consejos diarios
+    - Mini historias y cuentos basados en hechos reales
+    - Microdesafíos de mente y cuerpo
+    - Preguntas para reflexión y curiosidad
+    - Traducción inmediata a todos los idiomas soportados
+    - Guía de voz TTS (suave, cálida, masculina/femenina, niño/niña)
+    - Cambios de color, figuras y animaciones sugeridas para frontend
+    - Inclusión de misterio sutil y elementos de sorpresa
+    Cada item debe ser único, creativo y nunca repetido.
+    Identificador único: {seed}
     """
-    if mystery:
-        prompt += "Add a subtle mysterious presence hidden somewhere, changing daily, not scary but noticeable."
-
     try:
         r = requests.post(
             "https://api.openai.com/v1/chat/completions",
             headers={"Authorization": f"Bearer {OPENAI_API_KEY}"},
             json={
                 "model": "gpt-4o-mini",
-                "messages":[{"role":"user","content":prompt}]
+                "messages":[{"role":"user","content":prompt}],
+                "temperature":0.9,
+                "max_tokens":1000
             },
-            timeout=10
+            timeout=15
         )
-        return r.json()["choices"][0]["message"]["content"]
+        data = r.json()
+        items = data["choices"][0]["message"]["content"].split("\n")
+        return items
     except:
         r = requests.post(
             f"https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key={GEMINI_API_KEY}",
             json={"contents":[{"parts":[{"text":prompt}]}]},
-            timeout=10
+            timeout=15
         )
-        return r.json()["candidates"][0]["content"]["parts"][0]["text"]
+        data = r.json()
+        text = data["candidates"][0]["content"]["parts"][0]["text"]
+        return text.split("\n")
 
-# ================== CONTEXTO DEL USUARIO ==================
+async def refresh_ai_cache(user_id: str):
+    context = get_context(user_id)
+    ai_items = generate_ai_content(context, n_items=50)
+    ai_cache[user_id] = {"last_generated": datetime.datetime.now(), "content": ai_items}
+
+# ================== CONTEXTO ==================
 def get_context(user_id: str):
     now = datetime.datetime.now()
     hour = now.hour
@@ -70,63 +91,34 @@ def get_context(user_id: str):
     temp = weather_data.get("main", {}).get("temp", 25)
     humidity = weather_data.get("main", {}).get("humidity", 50)
     wind = weather_data.get("wind", {}).get("speed", 0)
-    
-    return json.dumps({
+    context = {
         "datetime": str(now),
         "hour": hour,
-        "temperature_C": temp,
-        "humidity_percent": humidity,
-        "wind_kmh": wind,
-        "microactions": microactions_db.get(user_id, []),
+        "temp": temp,
+        "humidity": humidity,
+        "wind": wind,
+        "user_microactions": microactions_db.get(user_id, []),
         "user_preferences": users_db.get(user_id, {}).get("preferencias", {})
-    })
-
-# ================== ADMIN ==================
-def is_admin(user: str, pwd: str):
-    return user == ADMIN_USERNAME and pwd == ADMIN_PASSWORD
+    }
+    return json.dumps(context)
 
 # ================== RUTAS ==================
 @app.get("/", response_class=HTMLResponse)
-def home(request: Request, pro: int = 0):
+def home(request: Request):
     user_id = request.client.host
     if user_id not in users_db:
-        users_db[user_id] = {"nivel":1, "preferencias":{}, "idioma":"en"}
-    if pro:
-        users_db[user_id]["nivel"] = 2
-    # Determinar si toca misterio diario (ej: primera visita del día)
-    last_visit = users_db[user_id].get("last_visit")
-    today = datetime.date.today().isoformat()
-    mystery = False
-    if last_visit != today:
-        mystery = True
-        users_db[user_id]["last_visit"] = today
-
-    context = get_context(user_id)
-    ai_landscape = generate_landscape(context, mystery=mystery)
+        users_db[user_id] = {"nivel":1, "preferencias":{}, "idioma":"es"}
     return templates.TemplateResponse("index.html", {
         "request": request,
-        "ai_landscape": ai_landscape,
-        "stripe_key": STRIPE_PUBLISHABLE_KEY,
-        "nivel1_price": 169,
-        "nivel2_price": 9900
+        "stripe_key": STRIPE_PUBLISHABLE_KEY
     })
 
 @app.post("/microaction")
 def add_microaction(user_id: str = Form(...), action: str = Form(...)):
-    now = datetime.datetime.now().isoformat()
-    microactions_db.setdefault(user_id, []).append({"action": action, "timestamp": now})
-    return {
-        "status": "ok",
-        "total": len(microactions_db[user_id]),
-        "last_action": action,
-        "timestamp": now
-    }
-
-@app.post("/admin/login")
-def admin_login(username: str = Form(...), password: str = Form(...)):
-    if not is_admin(username, password):
-        raise HTTPException(status_code=403)
-    return {"status": "admin"}
+    if user_id not in microactions_db:
+        microactions_db[user_id] = []
+    microactions_db[user_id].append({"action": action, "timestamp": str(datetime.datetime.now())})
+    return {"status": "ok"}
 
 @app.post("/create-checkout-session")
 def create_checkout():
@@ -147,12 +139,14 @@ def create_checkout():
     )
     return {"id": session.id}
 
-@app.get("/report")
-def generate_report(user_id: str):
-    actions = microactions_db.get(user_id, [])
-    report = {
-        "total_microacciones": len(actions),
-        "acciones": actions[-20:],  # últimas 20
-        "resumen": f"KaMiZen report for {user_id}"
-    }
-    return report
+@app.get("/ai-content")
+async def get_ai_content(user_id: str):
+    """
+    Retorna contenido generado dinámico infinito para el usuario.
+    Genera nuevo contenido cada minuto.
+    """
+    now = datetime.datetime.now()
+    cache = ai_cache.get(user_id)
+    if not cache or (now - cache["last_generated"]).seconds > 60:
+        await refresh_ai_cache(user_id)
+    return JSONResponse({"items": ai_cache[user_id]["content"]})
