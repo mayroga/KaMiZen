@@ -1,32 +1,28 @@
-const canvas = document.getElementById("lifeCanvas");
+const canvas = document.getElementById("map");
 const ctx = canvas.getContext("2d");
-
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-let nodes = [];
+let x = 50;
 
-function generateLifeMap() {
-  nodes = [];
-  for (let i = 0; i < 20; i++) {
-    nodes.push({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
-      r: 10 + Math.random() * 30
-    });
-  }
-}
-
-function drawMap() {
+function moveMap(step){
   ctx.clearRect(0,0,canvas.width,canvas.height);
-  nodes.forEach(n => {
-    ctx.beginPath();
-    ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
-    ctx.fillStyle = "rgba(100,200,255,0.6)";
-    ctx.fill();
-  });
-  requestAnimationFrame(drawMap);
-}
 
-generateLifeMap();
-drawMap();
+  ctx.strokeStyle="#00ccff";
+  ctx.lineWidth=6;
+  ctx.beginPath();
+  ctx.moveTo(40, canvas.height/2);
+  ctx.lineTo(x, canvas.height/2);
+  ctx.stroke();
+
+  ctx.fillStyle="#ffffff";
+  ctx.beginPath();
+  ctx.arc(x, canvas.height/2, 12, 0, Math.PI*2);
+  ctx.fill();
+
+  x += step;
+
+  // obstacle
+  ctx.fillStyle="rgba(255,0,0,0.3)";
+  ctx.fillRect(x+80, canvas.height/2-30, 30, 60);
+}
