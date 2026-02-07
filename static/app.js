@@ -1,71 +1,84 @@
-let uid = null;
-let lang = "es";
+let uid=null;
+let lang="es";
 let voice;
 
 function loadVoice(){
   const voices = speechSynthesis.getVoices();
-  voice = voices.find(v => v.lang.startsWith(lang) && v.name.toLowerCase().includes("male")) || voices[0];
+  voice = voices.find(v=>v.lang.startsWith(lang)) || voices[0];
 }
 speechSynthesis.onvoiceschanged = loadVoice;
 
-function speak(text){
+function speak(text, pace){
   const u = new SpeechSynthesisUtterance(text);
-  u.lang = lang === "es" ? "es-ES" : "en-US";
+  u.lang = lang==="es"?"es-ES":"en-US";
   u.voice = voice;
-  u.rate = 0.95;
+  u.rate = pace==="slow"?0.85:1;
   speechSynthesis.speak(u);
 }
 
 function acceptLegal(){
-  document.getElementById("legal").style.display="none";
-  document.getElementById("intro").style.display="block";
+  legal.style.display="none";
+  intro.style.display="block";
 }
 
 function begin(){
-  lang = document.getElementById("lang").value;
+  lang = langSelect.value;
+
   fetch("/start",{
     method:"POST",
     headers:{'Content-Type':'application/json'},
     body:JSON.stringify({
-      city:city.value,
       age:age.value,
+      lang:lang,
       profile:profile.value,
-      mode:"day",
-      lang:lang
+      duration:parseInt(duration.value)
     })
-  })
-  .then(r=>r.json())
-  .then(d=>{
-    uid = d.uid;
-    document.getElementById("intro").style.display="none";
+  }).then(r=>r.json()).then(d=>{
+    uid=d.uid;
+    intro.style.display="none";
     run();
   });
 }
 
 function run(){
-  setInterval(()=>{
-    fetch(`/step/${uid}`)
-    .then(r=>r.json())
-    .then(d=>{
-      speak(d.text);
-      animateText(d.text, d.micro_story, d.life_action);
-      moveMap(d.move, d.mini_world, d.obstacle, d.choice, d.mini_game);
+  const interval = 10000;
+  const timer = setInterval(()=>{
+    fetch(`/step/${uid}`).then(r=>r.json()).then(d=>{
+      if(d.end){ clearInterval(timer); return; }
+
+      speak(d.welcome, d.voice_pace);
+      renderText(d);
+      moveMap(
+        d.map.move,
+        d.map.mini_world,
+        d.map.obstacle,
+        d.map.choice,
+        d.mini_game
+      );
     });
-  }, 8000);
+  }, interval);
 }
 
-function animateText(text, story, action){
-  const el = document.getElementById("floatingText");
-  el.innerHTML = `<p>${text}</p><p>${story}</p><p>${action}</p>`;
-  el.className = "glow";
+function renderText(d){
+  floatingText.innerHTML = `
+    <p>${d.welcome}</p>
+    <p>${d.validation}</p>
+    <p>${d.story}</p>
+    <p>${d.companion}</p>
+    <p><b>${d.action}</b></p>
+  `;
 }
 
 function showMiniGame(game){
-  const mg = document.getElementById("miniGame");
-  mg.innerHTML = `<p>${game}</p><button onclick="resolveMiniGame(true)">✔</button><button onclick="resolveMiniGame(false)">✖</button>`;
+  miniGame.innerHTML = `
+    <p>${game.question}</p>
+    <button onclick="resolveMiniGame(true,${game.correct_answer})">✔</button>
+    <button onclick="resolveMiniGame(false,${game.correct_answer})">✖</button>
+  `;
 }
 
-function resolveMiniGame(ans){
-  const mg = document.getElementById("miniGame");
-  mg.innerHTML = ans ? "<p>¡Bien hecho!</p>" : "<p>Intenta de nuevo</p>";
+function resolveMiniGame(ans, correct){
+  miniGame.innerHTML = ans===correct
+    ? "<p>Correcto. Continúa.</p>"
+    : "<p>Observa. La respuesta estaba ahí.</p>";
 }
