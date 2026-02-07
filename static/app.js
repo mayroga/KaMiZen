@@ -1,69 +1,52 @@
-let uid = null;
-let lang = "es";
-let queue = false;
+let lang="es";
+let level="day";
+let uid="";
+
+function setLang(l){
+  lang=l;
+  speechSynthesis.cancel();
+}
 
 function speak(text){
-  const u = new SpeechSynthesisUtterance(text);
-  u.lang = lang === "es" ? "es-ES" : "en-US";
-  u.rate = 0.9;
-  speechSynthesis.cancel();
-  speechSynthesis.speak(u);
+  const msg = new SpeechSynthesisUtterance(text);
+  msg.lang = lang==="es"?"es-ES":"en-US";
+  msg.voice = speechSynthesis.getVoices().find(v=>v.lang.includes(msg.lang));
+  speechSynthesis.speak(msg);
 }
 
-function startSession(){
-  lang = document.getElementById("lang").value;
+async function startLife(){
+  const age = document.getElementById("age").value;
+  const mood = document.getElementById("mood").value;
+  const city = document.getElementById("city").value;
 
-  fetch("/start",{
+  const res = await fetch("/life/guide",{
     method:"POST",
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({
-      age: age.value,
-      profile: profile.value,
-      state: state.value,
-      lang: lang
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({age,mood,lang,level,city})
+  });
+
+  const data = await res.json();
+  uid = data.uid;
+  speak(data.message);
+  moveAvatar();
+}
+
+// Stripe payment
+async function pay(lvl){
+  level = lvl;
+  const price = lvl==="day"?9.99:99.99;
+
+  const res = await fetch("/create-checkout-session",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({
+      level:lvl,
+      price:price,
+      success:window.location.href,
+      cancel:window.location.href
     })
-  })
-  .then(r=>r.json())
-  .then(d=>{
-    uid = d.uid;
-    nextBlock();
   });
-}
 
-function nextBlock(){
-  if(queue) return;
-  queue = true;
-
-  fetch(`/next/${uid}`)
-  .then(r=>r.json())
-  .then(d=>{
-    if(d.end) return;
-
-    renderBlock(d.type, d.content);
-    speak(d.content);
-
-    setTimeout(()=>{ queue=false; }, 6000);
-  });
-}
-
-function renderBlock(type, content){
-  const box = document.getElementById("content");
-  box.innerHTML = "";
-
-  if(type === "game"){
-    const parts = content.split("Respuesta:");
-    box.innerHTML = `
-      <p>${parts[0]}</p>
-      <button onclick="showAnswer('${parts[1] || ""}')">
-        Ver respuesta
-      </button>`;
-  } else {
-    box.innerHTML = `<p>${content}</p>`;
-  }
-
-  setTimeout(nextBlock, 60000); // flujo 10 min total
-}
-
-function showAnswer(ans){
-  alert("Respuesta correcta: " + ans);
+  const data = await res.json();
+  window.location.href=data.url;
 }
