@@ -1,100 +1,69 @@
-const legalDiv = document.getElementById("legal");
-const startButton = document.getElementById("startButton");
-const estadoSelect = document.getElementById("estado_inicial");
-const experienciaDiv = document.getElementById("experiencia");
-const checkoutButton = document.getElementById("checkoutButton");
+let uid = null;
+let lang = "es";
+let queue = false;
 
-// --- Aceptar legal ---
-document.getElementById("acceptLegal").addEventListener("click", async () => {
-    const res = await fetch("/accept_legal", { method: "POST" });
-    const data = await res.json();
-    if (data.success) {
-        legalDiv.style.display = "none";
-        startButton.style.display = "block";
-    }
-});
+function speak(text){
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = lang === "es" ? "es-ES" : "en-US";
+  u.rate = 0.9;
+  speechSynthesis.cancel();
+  speechSynthesis.speak(u);
+}
 
-// --- Iniciar experiencia ---
-startButton.addEventListener("click", async () => {
-    const estado = estadoSelect.value;
-    const res = await fetch("/start_experience", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({estado_inicial: estado})
-    });
-    const data = await res.json();
-    if (data.error) {
-        alert(data.error);
-        return;
-    }
-    
-    // Limpiar anterior
-    experienciaDiv.innerHTML = "";
+function startSession(){
+  lang = document.getElementById("lang").value;
 
-    // Mostrar historias
-    data.historias.forEach(h => {
-        const p = document.createElement("p");
-        p.textContent = h;
-        experienciaDiv.appendChild(p);
-    });
+  fetch("/start",{
+    method:"POST",
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      age: age.value,
+      profile: profile.value,
+      state: state.value,
+      lang: lang
+    })
+  })
+  .then(r=>r.json())
+  .then(d=>{
+    uid = d.uid;
+    nextBlock();
+  });
+}
 
-    // Mostrar frases
-    data.frases.forEach(f => {
-        const p = document.createElement("p");
-        p.textContent = f;
-        experienciaDiv.appendChild(p);
-    });
+function nextBlock(){
+  if(queue) return;
+  queue = true;
 
-    // Mostrar microacciones
-    data.microacciones.forEach(m => {
-        const p = document.createElement("p");
-        p.textContent = m;
-        experienciaDiv.appendChild(p);
-    });
+  fetch(`/next/${uid}`)
+  .then(r=>r.json())
+  .then(d=>{
+    if(d.end) return;
 
-    // Mostrar juegos con botón de respuesta
-    data.juegos.forEach(j => {
-        const div = document.createElement("div");
-        div.innerHTML = `<p>${j.pregunta}</p><button class="respuesta">${j.respuesta}</button>`;
-        experienciaDiv.appendChild(div);
-    });
+    renderBlock(d.type, d.content);
+    speak(d.content);
 
-    // Mostrar mapa
-    const mapDiv = document.createElement("div");
-    mapDiv.style.width = "90%";
-    mapDiv.style.height = "400px";
-    mapDiv.style.border = "2px solid #333";
-    mapDiv.style.margin = "20px auto";
-    mapDiv.style.display = "flex";
-    mapDiv.style.justifyContent = "space-around";
-    mapDiv.style.alignItems = "center";
-    mapDiv.innerHTML = `<p style="text-align:center; font-weight:bold;">Mapa de la Vida - Destino: ${data.destino_final}</p>`;
-    data.map_elements.forEach(e => {
-        const span = document.createElement("span");
-        span.textContent = e.nombre;
-        span.style.fontSize = "18px";
-        mapDiv.appendChild(span);
-    });
-    experienciaDiv.appendChild(mapDiv);
+    setTimeout(()=>{ queue=false; }, 6000);
+  });
+}
 
-    // Mostrar obstáculos
-    const obsDiv = document.createElement("div");
-    obsDiv.innerHTML = "<h3>Obstáculos en tu camino:</h3>";
-    data.obstaculos.forEach(o => {
-        const p = document.createElement("p");
-        p.textContent = o;
-        obsDiv.appendChild(p);
-    });
-    experienciaDiv.appendChild(obsDiv);
+function renderBlock(type, content){
+  const box = document.getElementById("content");
+  box.innerHTML = "";
 
-    // Botón de pago
-    checkoutButton.style.display = "block";
-});
+  if(type === "game"){
+    const parts = content.split("Respuesta:");
+    box.innerHTML = `
+      <p>${parts[0]}</p>
+      <button onclick="showAnswer('${parts[1] || ""}')">
+        Ver respuesta
+      </button>`;
+  } else {
+    box.innerHTML = `<p>${content}</p>`;
+  }
 
-// --- Stripe Checkout ---
-checkoutButton.addEventListener("click", async () => {
-    const res = await fetch("/create_checkout_session", {method: "POST"});
-    const session = await res.json();
-    const stripe = Stripe(window.STRIPE_PUBLISHABLE_KEY);
-    await stripe.redirectToCheckout({ sessionId: session.id });
-});
+  setTimeout(nextBlock, 60000); // flujo 10 min total
+}
+
+function showAnswer(ans){
+  alert("Respuesta correcta: " + ans);
+}
