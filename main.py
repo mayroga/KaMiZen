@@ -5,125 +5,99 @@ import stripe
 
 app = Flask(__name__)
 
-# ================== CONFIG ==================
+# ================= CONFIG =================
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 WEATHER_API_KEY = os.getenv("WEATHER_API_KEY")
-
+ADMIN_USERNAME = os.getenv("ADMIN_USERNAME")
+ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
 STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
-STRIPE_PUBLISHABLE_KEY = os.getenv("STRIPE_PUBLISHABLE_KEY")
+STRIPE_PUBLISHABLE_KEY = "pk_live_51NqPxQBOA5mT4t0PEoRVRc0Sj7DugiHvxhozC3BYh0q0hAx1N3HCLJe4xEp3MSuNMA6mQ7fAO4mvtppqLodrtqEn00pgJNQaxz"
 
 stripe.api_key = STRIPE_SECRET_KEY
 client = OpenAI(api_key=OPENAI_API_KEY)
 
-# ================== SESSION ==================
+# ================= SESIONES =================
 sessions = {}
 
-# ================== UTILIDADES ==================
+# ================= UTILIDADES =================
 def get_weather(city):
     try:
-        r = requests.get(
-            f"https://api.openweathermap.org/data/2.5/weather?q={city}&appid={WEATHER_API_KEY}&units=metric"
-        ).json()
+        r = requests.get(f"https://api.openweathermap.org/data/2.5/weather?q={city}&appid={WEATHER_API_KEY}&units=metric").json()
         return f"{r['weather'][0]['description']} {r['main']['temp']}°C"
     except:
-        return "despejado"
+        return "clear"
 
-def generate_uid():
-    return hashlib.md5(str(time.time()).encode()).hexdigest()
-
-def life_engine_block(data, block_type):
-    """
-    block_type: 'welcome', 'story', 'inspiration', 'action', 'obstacle', 'game'
-    """
-    age = data["age"]
+def life_engine(data):
+    """Genera contenido dinámico, historias, frases y microacciones"""
     lang = data["lang"]
     profile = data["profile"]
-    state = data.get("origin_state", "neutral")
-    city = data["city"]
-    weather = data["weather"]
-    hour = data["hour"]
-
-    system_prompt = f"""
+    system = f"""
 You are 'La Vida Continúa'.
 Never say you are an AI.
-You are masculine, calm, confident, human.
-You guide humans through life as a living map.
-Do not repeat stories, metaphors, or phrases.
-Tone adapts to age, profile, block_type, and hour.
-Hospital mode is extra gentle, validating, warm.
+Voice: masculine, calm, confident.
+Adapt tone by profile ({profile}) and language ({lang}).
+Provide:
+1. Short welcoming phrase
+2. Symbolic short story
+3. One micro-action (small and doable)
+4. One obstacle in the map
+5. One choice (remove/keep/around)
+6. One mini-game: puzzle, math problem, word game
+All must be unique per session.
 """
-
-    user_prompt = f"""
-Block Type: {block_type}
-Language: {lang}
-Age: {age}
-Profile: {profile}
-State: {state}
-City: {city}
-Weather: {weather}
-Hour: {hour}
-
-Generate the following depending on block type:
-
-- welcome: 1 short welcoming phrase
-- story: 1 symbolic short story (realistic, poetic)
-- inspiration: 2 short motivational phrases
-- action: 1 micro-action (small, doable, real)
-- obstacle: 1 obstacle and 1 choice (remove/keep/go around)
-- game: 1 mental game, riddle, or math puzzle with hidden correct answer (do not show until user clicks button)
-
-Ensure:
-- Each output is unique per session
-- Text is premium, abundant, human
-- Spanish text in Spanish, English in English (according to lang)
-- Short phrases, pauses, whispers if night, clear rhythm if day
-- Do not mention AI or therapy
+    user = f"""
+City: {data['city']}
+Age: {data['age']}
+Mode: {data['mode']}
+Weather: {data['weather']}
+Hour: {data['hour']}
+Session duration: 10 minutes
 """
-
-    response = client.chat.completions.create(
+    r = client.chat.completions.create(
         model="gpt-4o-mini",
         messages=[
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_prompt}
+            {"role": "system", "content": system},
+            {"role": "user", "content": user}
         ],
         temperature=0.95,
-        max_tokens=250
+        max_tokens=400
     )
+    return r.choices[0].message.content.strip()
 
-    return response.choices[0].message.content.strip()
-
-# ================== ROUTAS ==================
+# ================= ROUTES =================
 @app.route("/")
 def index():
     return render_template("index.html", stripe_key=STRIPE_PUBLISHABLE_KEY)
 
 @app.route("/start", methods=["POST"])
 def start():
-    data = request.get_json() or {}
-    city = data.get("city", "Unknown")
-    age = data.get("age", 0)
+    data = request.json
+    # Acceso gratis para admin
+    if data.get("username") == ADMIN_USERNAME and data.get("password") == ADMIN_PASSWORD:
+        uid = "admin_free"
+    else:
+        uid = hashlib.md5(str(time.time()).encode()).hexdigest()
+    city = data.get("city", "Miami")
+    age = data.get("age", 25)
     profile = data.get("profile", "normal")
+    mode = data.get("mode", "day")
     lang = data.get("lang", "es")
-    
-    uid = generate_uid()
+
     weather = get_weather(city)
     hour = time.strftime("%H:%M")
 
     sessions[uid] = {
         "data": {
+            "city": city,
             "age": age,
             "profile": profile,
-            "mode": "day",
-            "city": city,
-            "weather": weather,
-            "hour": hour,
+            "mode": mode,
             "lang": lang,
-            "origin_state": "neutral"
+            "weather": weather,
+            "hour": hour
         },
-        "start": time.time(),
-        "step_index": 0
+        "start_time": time.time()
     }
-
     return jsonify({"uid": uid})
 
 @app.route("/step/<uid>")
@@ -131,61 +105,36 @@ def step(uid):
     if uid not in sessions:
         return jsonify({"end": True})
 
-    session = sessions[uid]
-    data = session["data"]
-    step_index = session["step_index"]
-    total_steps = 10  # 10 blocks = 10 minutes
-    block_types = [
-        "welcome",
-        "story",
-        "inspiration",
-        "action",
-        "obstacle",
-        "story",
-        "inspiration",
-        "action",
-        "game",
-        "obstacle"
-    ]
-    block_type = block_types[step_index % total_steps]
+    text = life_engine(sessions[uid]["data"])
+    pos = random.randint(50, 100)  # movimiento del mapa grande
 
-    # Genera contenido
-    content = life_engine_block(data, block_type)
-    
-    # Movimiento del mapa
-    move = random.randint(5, 15)
-    
-    # Obstáculos visibles solo si block_type es 'obstacle'
-    obstacle = block_type == "obstacle"
-    
-    # Mini-juegos visibles solo si block_type es 'game'
-    mini_game = content if block_type == "game" else None
-    
-    # Actualiza índice para siguiente paso
-    session["step_index"] += 1
+    # Generación de mini-juego simple
+    mini_game = {
+        "question": "Resuelve: 5 + 7 = ?",
+        "answer": "12"
+    }
 
     return jsonify({
-        "text": content,
-        "move": move,
-        "obstacle": obstacle,
-        "mini_game": mini_game
+        "text": text,
+        "move": pos,
+        "mini_game": mini_game,
+        "obstacle": random.choice(["perseverancia", "miedo", "duda"]),
+        "choice": random.choice(["keep", "remove", "around"]),
+        "micro_action": "Respira profundo y visualiza tu meta"
     })
 
-# ================== STRIPE ==================
+# ================= STRIPE =================
 @app.route("/checkout", methods=["POST"])
 def checkout():
     plan = request.json.get("plan", "day")
-    price = "price_day" if plan == "day" else "price_night"
-
     session = stripe.checkout.Session.create(
         payment_method_types=["card"],
-        line_items=[{"price": price, "quantity": 1}],
+        line_items=[{"price": "price_9_99", "quantity": 1}],
         mode="payment",
         success_url="/",
         cancel_url="/"
     )
     return jsonify({"id": session.id})
 
-# ================== RUN ==================
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)
