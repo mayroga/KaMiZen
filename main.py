@@ -1,56 +1,54 @@
 from flask import Flask, request, jsonify, render_template
-import os, time, random, hashlib
+import os, time, random, hashlib, requests
 from openai import OpenAI
+import stripe
 
 app = Flask(__name__)
 
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
+stripe.api_key = STRIPE_SECRET_KEY
+client = OpenAI(api_key=OPENAI_API_KEY)
 
-# ===================== SESIONES =====================
 sessions = {}
 
-# ===================== MOTOR DE VIDA =====================
 def life_engine(data):
-    system = """
-You are "La Vida Continúa".
-You never say AI, therapy, medical, diagnosis.
-You are a masculine, calm, confident human presence.
-You generate STATES, not advice.
-You validate desire: money, power, rest, pleasure, peace.
-Short phrases. Pauses. Human warmth.
-Never repeat metaphors or structures.
-Never promise results.
+    system = f"""
+You are 'La Vida Continúa'.
+Never say you are an AI.
+Guide humans through life as a living map.
+Voice: masculine, calm, confident.
+Tone adapts to age and profile.
+Hospital mode: extra gentle, slow, validating, warm.
+Always generate:
+- Short human welcome
+- Symbolic mini-story
+- Micro-action real now
+- Obstacles and choices for the map
+- Text is abundant, premium, human
+- Stories and phrases never repeat
+- Two languages possible: Spanish and English
 """
-
     user = f"""
-Language: {data['lang']}
 Age: {data['age']}
 Profile: {data['profile']}
-Energy: {data['energy']}
-Moment: {data['moment']}
-TimeAvailable: {data['duration']}
-Context: {data['context']}
+Mode: {data['mode']}
+City: {data['city']}
+Weather: {data['weather']}
+Hour: {data['hour']}
+Language: {data['lang']}
 
-Generate a PURE JSON with:
-welcome
-validation
-story
-companion
-action (30–60 seconds max)
-map {{
-  move (5-15),
-  mini_world (array like agua, sol, ciudad, bosque),
-  obstacle,
-  choice (quitar / mantener / rodear)
-}}
-mini_game {{
-  question,
-  correct_answer (true/false),
-  reveal
-}}
-voice_pace (slow or clear)
+Origin: {data['origin_state']}
+
+Generate:
+- Text: human welcome
+- Story: symbolic short story
+- Action: micro-action for now
+- Obstacle: value / habit / trait
+- Mini-world: water, sun, city (if applies)
+- Mini-game: optional mental puzzle
+- Choice: remove / leave
 """
-
     r = client.chat.completions.create(
         model="gpt-4o-mini",
         messages=[
@@ -58,12 +56,17 @@ voice_pace (slow or clear)
             {"role":"user","content":user}
         ],
         temperature=0.95,
-        max_tokens=400
+        max_tokens=300
     )
+    return r.choices[0].message.content.strip()
 
-    return eval(r.choices[0].message.content)
+def get_weather(city):
+    try:
+        r = requests.get(f"https://api.openweathermap.org/data/2.5/weather?q={city}&appid={os.getenv('WEATHER_API_KEY')}&units=metric").json()
+        return f"{r['weather'][0]['description']} {r['main']['temp']}°C"
+    except:
+        return "clear"
 
-# ===================== RUTAS =====================
 @app.route("/")
 def index():
     return render_template("index.html")
@@ -72,34 +75,44 @@ def index():
 def start():
     data = request.json
     uid = hashlib.md5(str(time.time()).encode()).hexdigest()
-
+    weather = get_weather(data["city"])
+    hour = time.strftime("%H:%M")
     sessions[uid] = {
         "data": {
             "age": data["age"],
-            "lang": data["lang"],
             "profile": data["profile"],
-            "energy": data.get("energy","media"),
-            "context": data.get("context","vida"),
-            "moment": data.get("moment","day"),
-            "duration": data.get("duration",10)
+            "mode": "day",
+            "city": data["city"],
+            "weather": weather,
+            "hour": hour,
+            "lang": data["lang"],
+            "origin_state": "neutral"  # usuario define: eufórico, cansado, triste, etc.
         },
-        "steps": 0,
-        "max_steps": 6 if data.get("duration",10)==10 else 12
+        "start": time.time()
     }
-
     return jsonify({"uid": uid})
 
 @app.route("/step/<uid>")
 def step(uid):
     if uid not in sessions:
         return jsonify({"end": True})
+    text = life_engine(sessions[uid]["data"])
+    pos = random.randint(5,15)
+    obstacle = random.choice(["Perseverancia","Disciplina","Fe","Paciencia"])
+    mini_world = random.sample(["agua","sol","ciudad"], random.randint(0,3))
+    mini_game = random.choice([None,"Resuelve: 3+4*2=?","Encuentra la palabra escondida"])
+    choice = True if random.random() > 0.5 else False
 
-    if sessions[uid]["steps"] >= sessions[uid]["max_steps"]:
-        return jsonify({"end": True})
-
-    sessions[uid]["steps"] += 1
-    state = life_engine(sessions[uid]["data"])
-    return jsonify(state)
+    return jsonify({
+        "text": text,
+        "move": pos,
+        "obstacle": obstacle,
+        "choice": choice,
+        "mini_world": mini_world,
+        "mini_game": mini_game,
+        "story": "Historia corta inspiradora.",
+        "action": "Micro acción que puedes hacer ahora."
+    })
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)
