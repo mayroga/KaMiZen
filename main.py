@@ -2,7 +2,6 @@ from flask import Flask, request, jsonify, render_template
 import os, time, random, hashlib, requests
 from openai import OpenAI
 import stripe
-import json
 
 app = Flask(__name__)
 
@@ -49,7 +48,7 @@ Weather: {weather}
 Hour: {hour}
 
 Generate:
-- 1 welcoming narration
+- 1 short welcoming narration
 - 1 mini-world description (water, city, forest, sun, stars)
 - 1 symbolic micro-story (4 sentences max)
 - 1 concrete life action (small, doable now)
@@ -58,16 +57,24 @@ Generate:
 - Text must feel premium, abundant, human
 - No punctuation reading in voice, conversational
 - Short pauses suggested (3-5s)
-- Format as JSON
+- Format as JSON:
+{{
+"narration": "...",
+"mini_world": "...",
+"micro_story": "...",
+"life_action": "...",
+"obstacle": "...",
+"choice": "...",
+"mini_game": "..."
+}}
 """
-
     r = client.chat.completions.create(
         model="gpt-4o-mini",
         messages=[{"role": "system", "content": system}, {"role": "user", "content": user_prompt}],
         temperature=0.95,
         max_tokens=400
     )
-
+    import json
     try:
         return json.loads(r.choices[0].message.content.strip())
     except:
