@@ -3,57 +3,57 @@
 <head>
 <meta charset="UTF-8">
 <title>KaMiZen – La Vida Continúa</title>
-<link rel="stylesheet" href="/static/style.css">
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<!-- Selección de idioma -->
+<!-- ======= Selección de idioma ======= -->
 <div id="language">
-  <button onclick="setLang('en')">English</button>
-  <button onclick="setLang('es')">Español</button>
+  <button id="btnEn">English</button>
+  <button id="btnEs">Español</button>
 </div>
 
-<!-- Formulario de inicio -->
+<!-- ======= Login / Datos iniciales ======= -->
 <div id="login">
   <input id="age" placeholder="Age / Edad">
   <input id="mood" placeholder="How do you feel? / ¿Cómo te sientes?">
   <input id="city" placeholder="City / Ciudad">
 </div>
 
-<!-- Selección de niveles -->
+<!-- ======= Niveles ======= -->
 <div id="levels">
-  <button onclick="pay('day')">Day – $9.99</button>
-  <button onclick="pay('night')">Night – $99.99</button>
-  <button onclick="loadLevel2()">Nivel 2</button>
+  <button id="btnDay">Day – $9.99</button>
+  <button id="btnNight">Night – $99.99</button>
 </div>
 
-<!-- Canvas para mapa -->
+<!-- ======= Canvas del mapa y avatar ======= -->
 <canvas id="lifeCanvas"></canvas>
 
-<!-- Botón iniciar -->
-<button onclick="startLife()">Start / Comenzar</button>
+<!-- ======= Botón de inicio ======= -->
+<button id="btnStart">Start / Comenzar</button>
 
-<!-- Microacciones -->
+<!-- ======= Microacciones ======= -->
 <div id="microActions">
-  <button id="btnRespirar">Respirar</button>
-  <button id="btnEstirarse">Estirarse</button>
-  <button id="btnCerrarOjos">Cerrar Ojos</button>
+  <button id="btnRespirar">Respirar / Breathe</button>
+  <button id="btnEstirarse">Estirarse / Stretch</button>
+  <button id="btnCerrarOjos">Cerrar Ojos / Close Eyes</button>
 </div>
 
-<script src="/static/app.js"></script>
-<script src="/static/canvas.js"></script>
+<!-- ======= Scripts generales ======= -->
+<script src="static/app.js"></script>
+<script src="static/canvas.js"></script>
 
-<!-- Nivel 2 módulos -->
-<script src="/static/mapLevel2.js"></script>
-<script src="/static/avatarLevel2.js"></script>
-<script src="/static/obstaclesLevel2.js"></script>
-<script src="/static/microactionsLevel2.js"></script>
-<script src="/static/timelineLevel2.js"></script>
-<script src="/static/voiceLevel2.js"></script>
-<script src="/static/contentLevel2.js"></script>
-<script src="/static/questionsLevel2.js"></script>
-<script src="/static/visualLevel2.js"></script>
-<script src="/static/rulesLevel2.js"></script>
+<!-- ======= Scripts Nivel 2 ======= -->
+<script src="static/mapLevel2.js"></script>
+<script src="static/avatarLevel2.js"></script>
+<script src="static/obstaclesLevel2.js"></script>
+<script src="static/microactionsLevel2.js"></script>
+<script src="static/timelineLevel2.js"></script>
+<script src="static/voiceLevel2.js"></script>
+<script src="static/contentLevel2.js"></script>
+<script src="static/questionsLevel2.js"></script>
+<script src="static/visualLevel2.js"></script>
+<script src="static/rulesLevel2.js"></script>
 
 </body>
 </html>
