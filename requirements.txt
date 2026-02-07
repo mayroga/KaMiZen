@@ -7,3 +7,4 @@ python-multipart
 openai>=1.0.0
 gunicorn
 flask-cors
+fastapi
