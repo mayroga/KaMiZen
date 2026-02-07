@@ -1,43 +1,33 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <title>KaMiZen – La Vida Continúa</title>
-<link rel="stylesheet" href="/static/style.css">
-<script src="https://js.stripe.com/v3/"></script>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div id="legal">
-  <p>Al usar esta app, aceptas que esto es bienestar general y recreativo, no terapia ni diagnóstico médico.</p>
-  <button onclick="acceptLegal()">Aceptar y continuar</button>
+<div id="language">
+  <button onclick="setLang('en')">English</button>
+  <button onclick="setLang('es')">Español</button>
 </div>
 
-<div id="intro" style="display:none;">
-  <h1>KaMiZen</h1>
-  <p>La Vida Continúa</p>
-
-  <input id="city" placeholder="Ciudad">
-  <input id="age" type="number" placeholder="Edad">
-  
-  <select id="profile">
-    <option value="normal">Normal</option>
-    <option value="hospital">Hospital / Adulto Mayor</option>
-  </select>
-
-  <select id="lang">
-    <option value="es">Español</option>
-    <option value="en">English</option>
-  </select>
-
-  <button onclick="begin()">Comenzar</button>
+<div id="login">
+  <input id="age" placeholder="Age / Edad">
+  <input id="mood" placeholder="How do you feel? / ¿Cómo te sientes?">
+  <input id="city" placeholder="City / Ciudad">
 </div>
 
-<canvas id="map"></canvas>
-<div id="floatingText"></div>
-<div id="miniGame"></div>
+<div id="levels">
+  <button onclick="pay('day')">Day – $9.99</button>
+  <button onclick="pay('night')">Night – $99.99</button>
+</div>
 
-<script src="/static/app.js"></script>
-<script src="/static/canvas.js"></script>
+<canvas id="lifeCanvas"></canvas>
+
+<button onclick="startLife()">Start / Comenzar</button>
+
+<script src="canvas.js"></script>
+<script src="app.js"></script>
 </body>
 </html>
