@@ -16,6 +16,11 @@ function speak(text){
   speechSynthesis.speak(u);
 }
 
+function acceptLegal(){
+  document.getElementById("legal").style.display="none";
+  document.getElementById("intro").style.display="block";
+}
+
 function begin(){
   lang = document.getElementById("lang").value;
   fetch("/start",{
