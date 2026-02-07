@@ -4,40 +4,30 @@
 <meta charset="UTF-8">
 <title>KaMiZen – La Vida Continúa</title>
 <link rel="stylesheet" href="/static/style.css">
+<script src="https://js.stripe.com/v3/"></script>
 </head>
 <body>
 
 <div id="legal">
-  <h2>Antes de entrar</h2>
-  <p>
-    Este espacio es una experiencia de acompañamiento personal.
-    No es terapia, ni atención médica, ni asesoría profesional.
-    No promete resultados.
-    Participas de forma voluntaria y consciente.
-  </p>
-  <button onclick="acceptLegal()">Acepto y continúo</button>
+  <p>Al usar esta app, aceptas que esto es bienestar general y recreativo, no terapia ni diagnóstico médico.</p>
+  <button onclick="acceptLegal()">Aceptar y continuar</button>
 </div>
 
-<div id="intro">
+<div id="intro" style="display:none;">
   <h1>KaMiZen</h1>
   <p>La Vida Continúa</p>
 
+  <input id="city" placeholder="Ciudad">
   <input id="age" type="number" placeholder="Edad">
-
+  
   <select id="profile">
-    <option value="normal">General</option>
+    <option value="normal">Normal</option>
     <option value="hospital">Hospital / Adulto Mayor</option>
-    <option value="group">Grupo</option>
   </select>
 
-  <select id="langSelect">
+  <select id="lang">
     <option value="es">Español</option>
     <option value="en">English</option>
-  </select>
-
-  <select id="duration">
-    <option value="10">10 minutos</option>
-    <option value="20">20 minutos</option>
   </select>
 
   <button onclick="begin()">Comenzar</button>
