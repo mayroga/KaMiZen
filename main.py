@@ -1,113 +1,92 @@
 from flask import Flask, request, jsonify, render_template
-import os, time, random, requests, hashlib
+import os, time, random, hashlib
 from openai import OpenAI
-import stripe
 
 app = Flask(__name__)
 
-# ================== CONFIG ==================
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-WEATHER_API_KEY = os.getenv("WEATHER_API_KEY")
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-ADMIN_USERNAME = os.getenv("ADMIN_USERNAME")
-ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
-
-STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
-STRIPE_PUBLISHABLE_KEY = os.getenv("STRIPE_PUBLISHABLE_KEY")
-
-stripe.api_key = STRIPE_SECRET_KEY
-client = OpenAI(api_key=OPENAI_API_KEY)
-
-# ================== SESSION ==================
+# ===================== SESIONES =====================
 sessions = {}
 
-# ================== NARRATIVE ENGINE ==================
+# ===================== MOTOR DE VIDA =====================
 def life_engine(data):
-    age = data["age"]
-    lang = data["lang"]
-    mode = data["mode"]
-    city = data["city"]
-    weather = data["weather"]
-    hour = data["hour"]
-    profile = data["profile"]
-
-    system = f"""
-You are 'La Vida Continúa'.
-Never say you are an AI.
-You are a masculine, calm, confident voice.
-You guide humans through life as a living map.
-You never repeat phrases, metaphors, stories or structures.
-You inspire abundance, dignity, calm, power and well-being.
-You are NOT medical. You are a companion.
-Tone adapts to age and profile.
-Hospital mode is extra gentle, slow, validating and warm.
+    system = """
+You are "La Vida Continúa".
+You never say AI, therapy, medical, diagnosis.
+You are a masculine, calm, confident human presence.
+You generate STATES, not advice.
+You validate desire: money, power, rest, pleasure, peace.
+Short phrases. Pauses. Human warmth.
+Never repeat metaphors or structures.
+Never promise results.
 """
 
     user = f"""
-Language: {lang}
-Age: {age}
-Profile: {profile}
-Mode: {mode}
-City: {city}
-Weather: {weather}
-Hour: {hour}
+Language: {data['lang']}
+Age: {data['age']}
+Profile: {data['profile']}
+Energy: {data['energy']}
+Moment: {data['moment']}
+TimeAvailable: {data['duration']}
+Context: {data['context']}
 
-Generate:
-- A short welcoming narration
-- A symbolic mini-story (realistic but poetic)
-- One concrete life action (small, doable now)
-- One obstacle shown on the life map
-- One choice: remove / keep / go around
-- Text must feel premium, abundant, human
+Generate a PURE JSON with:
+welcome
+validation
+story
+companion
+action (30–60 seconds max)
+map {{
+  move (5-15),
+  mini_world (array like agua, sol, ciudad, bosque),
+  obstacle,
+  choice (quitar / mantener / rodear)
+}}
+mini_game {{
+  question,
+  correct_answer (true/false),
+  reveal
+}}
+voice_pace (slow or clear)
 """
 
     r = client.chat.completions.create(
         model="gpt-4o-mini",
         messages=[
-            {"role": "system", "content": system},
-            {"role": "user", "content": user}
+            {"role":"system","content":system},
+            {"role":"user","content":user}
         ],
         temperature=0.95,
-        max_tokens=220
+        max_tokens=400
     )
 
-    return r.choices[0].message.content.strip()
+    return eval(r.choices[0].message.content)
 
-# ================== WEATHER ==================
-def get_weather(city):
-    try:
-        r = requests.get(
-            f"https://api.openweathermap.org/data/2.5/weather?q={city}&appid={WEATHER_API_KEY}&units=metric"
-        ).json()
-        return f"{r['weather'][0]['description']} {r['main']['temp']}°C"
-    except:
-        return "clear"
-
-# ================== ROUTES ==================
+# ===================== RUTAS =====================
 @app.route("/")
 def index():
-    return render_template("index.html", stripe_key=STRIPE_PUBLISHABLE_KEY)
+    return render_template("index.html")
 
 @app.route("/start", methods=["POST"])
 def start():
     data = request.json
     uid = hashlib.md5(str(time.time()).encode()).hexdigest()
 
-    weather = get_weather(data["city"])
-    hour = time.strftime("%H:%M")
-
     sessions[uid] = {
         "data": {
             "age": data["age"],
             "lang": data["lang"],
-            "mode": data["mode"],
-            "city": data["city"],
-            "weather": weather,
-            "hour": hour,
-            "profile": data["profile"]
+            "profile": data["profile"],
+            "energy": data.get("energy","media"),
+            "context": data.get("context","vida"),
+            "moment": data.get("moment","day"),
+            "duration": data.get("duration",10)
         },
-        "start": time.time()
+        "steps": 0,
+        "max_steps": 6 if data.get("duration",10)==10 else 12
     }
+
     return jsonify({"uid": uid})
 
 @app.route("/step/<uid>")
@@ -115,28 +94,12 @@ def step(uid):
     if uid not in sessions:
         return jsonify({"end": True})
 
-    text = life_engine(sessions[uid]["data"])
-    pos = random.randint(5, 15)
+    if sessions[uid]["steps"] >= sessions[uid]["max_steps"]:
+        return jsonify({"end": True})
 
-    return jsonify({
-        "text": text,
-        "move": pos
-    })
-
-# ================== STRIPE ==================
-@app.route("/checkout", methods=["POST"])
-def checkout():
-    plan = request.json["plan"]
-    price = "price_day" if plan == "day" else "price_night"
-
-    session = stripe.checkout.Session.create(
-        payment_method_types=["card"],
-        line_items=[{"price": price, "quantity": 1}],
-        mode="payment",
-        success_url="/",
-        cancel_url="/"
-    )
-    return jsonify({"id": session.id})
+    sessions[uid]["steps"] += 1
+    state = life_engine(sessions[uid]["data"])
+    return jsonify(state)
 
 if __name__ == "__main__":
     app.run()
