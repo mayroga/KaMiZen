@@ -7,7 +7,7 @@ canvas.height = window.innerHeight * 0.8;
 let nodes = [];
 let obstacles = [];
 let path = [];
-let avatar = {x: 50, y: canvas.height - 50, size: 20};
+let avatar = {x: 50, y: canvas.height - 50, size: 20, color:"green"};
 
 function generateLifeMap() {
   nodes = [];
@@ -21,8 +21,7 @@ function generateLifeMap() {
 
 function drawMap() {
   ctx.clearRect(0,0,canvas.width,canvas.height);
-  
-  // Draw path lines
+
   ctx.beginPath();
   ctx.moveTo(avatar.x, avatar.y);
   path.forEach(p => ctx.lineTo(p.x, p.y));
@@ -30,7 +29,6 @@ function drawMap() {
   ctx.lineWidth = 4;
   ctx.stroke();
 
-  // Draw nodes (wealth)
   nodes.forEach(n=>{
     ctx.beginPath();
     ctx.arc(n.x,n.y,n.r,0,2*Math.PI);
@@ -40,7 +38,6 @@ function drawMap() {
     ctx.stroke();
   });
 
-  // Draw obstacles
   obstacles.forEach(o=>{
     ctx.beginPath();
     ctx.arc(o.x,o.y,o.r,0,2*Math.PI);
@@ -48,19 +45,14 @@ function drawMap() {
     ctx.fill();
   });
 
-  // Draw avatar
   ctx.beginPath();
   ctx.arc(avatar.x,avatar.y,avatar.size,0,2*Math.PI);
-  ctx.fillStyle="green";
+  ctx.fillStyle=avatar.color;
   ctx.fill();
 
   requestAnimationFrame(drawMap);
 }
 
-generateLifeMap();
-drawMap();
-
-// Move avatar along path
 let currentTarget = 0;
 function moveAvatar(){
   if(currentTarget<path.length){
@@ -73,3 +65,6 @@ function moveAvatar(){
     requestAnimationFrame(moveAvatar);
   }
 }
+
+generateLifeMap();
+drawMap();
