@@ -1,106 +1,59 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>KaMiZen – La Vida Continúa</title>
-    <link rel="stylesheet" href="/static/style.css">
-    <style>
-        /* Ajustes adicionales de layout */
-        #controls {
-            position: fixed;
-            top: 5%;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 15px;
-            z-index: 1000;
-        }
-
-        #microActions {
-            position: fixed;
-            bottom: 5%;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 15px;
-            z-index: 1000;
-        }
-
-        #levels {
-            position: fixed;
-            top: 15%;
-            right: 5%;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        input {
-            padding: 8px;
-            font-size: 1em;
-            border-radius: 8px;
-            border: 1px solid #ccc;
-        }
-
-        button {
-            padding: 10px 15px;
-            border-radius: 8px;
-            border: none;
-            background: #0077ff;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        button:hover { background: #005bbb; }
-    </style>
+<meta charset="UTF-8">
+<title>KaMiZen – La Vida Continúa</title>
+<link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
 
-    <!-- Controles principales -->
-    <div id="controls">
-        <input id="age" placeholder="Edad / Age" type="number" min="1">
-        <input id="mood" placeholder="¿Cómo te sientes? / Mood">
-        <input id="city" placeholder="Ciudad / City">
-        <button id="startBtn">Comenzar / Start</button>
-    </div>
+<!-- Selección de idioma -->
+<div id="language">
+  <button onclick="setLang('en')">English</button>
+  <button onclick="setLang('es')">Español</button>
+</div>
 
-    <!-- Botones de idioma -->
-    <div id="language" style="position: fixed; top: 5%; left: 5%; display: flex; gap: 10px;">
-        <button id="langEsBtn">Español</button>
-        <button id="langEnBtn">English</button>
-    </div>
+<!-- Formulario de inicio -->
+<div id="login">
+  <input id="age" placeholder="Age / Edad">
+  <input id="mood" placeholder="How do you feel? / ¿Cómo te sientes?">
+  <input id="city" placeholder="City / Ciudad">
+</div>
 
-    <!-- Botones de nivel/pago -->
-    <div id="levels">
-        <button id="payDayBtn">Day – $9.99</button>
-        <button id="payNightBtn">Night – $99.99</button>
-    </div>
+<!-- Selección de niveles -->
+<div id="levels">
+  <button onclick="pay('day')">Day – $9.99</button>
+  <button onclick="pay('night')">Night – $99.99</button>
+  <button onclick="loadLevel2()">Nivel 2</button>
+</div>
 
-    <!-- Microacciones visibles -->
-    <div id="microActions">
-        <button id="btnRespirar">Respirar / Breathe</button>
-        <button id="btnEstirarse">Estirarse / Stretch</button>
-        <button id="btnCerrarOjos">Cerrar Ojos / Close Eyes</button>
-    </div>
+<!-- Canvas para mapa -->
+<canvas id="lifeCanvas"></canvas>
 
-    <!-- Canvas para mapa y avatar -->
-    <canvas id="lifeCanvas"></canvas>
+<!-- Botón iniciar -->
+<button onclick="startLife()">Start / Comenzar</button>
 
-    <!-- Scripts de módulos -->
-    <script src="/static/map.js"></script>
-    <script src="/static/avatar.js"></script>
-    <script src="/static/obstacles.js"></script>
-    <script src="/static/microactions.js"></script>
-    <script src="/static/timeline.js"></script>
-    <script src="/static/voice.js"></script>
-    <script src="/static/content.js"></script>
-    <script src="/static/questions.js"></script>
-    <script src="/static/visual.js"></script>
-    <script src="/static/rules.js"></script>
+<!-- Microacciones -->
+<div id="microActions">
+  <button id="btnRespirar">Respirar</button>
+  <button id="btnEstirarse">Estirarse</button>
+  <button id="btnCerrarOjos">Cerrar Ojos</button>
+</div>
 
-    <!-- Script maestro -->
-    <script src="/static/app.js"></script>
+<script src="/static/app.js"></script>
+<script src="/static/canvas.js"></script>
+
+<!-- Nivel 2 módulos -->
+<script src="/static/mapLevel2.js"></script>
+<script src="/static/avatarLevel2.js"></script>
+<script src="/static/obstaclesLevel2.js"></script>
+<script src="/static/microactionsLevel2.js"></script>
+<script src="/static/timelineLevel2.js"></script>
+<script src="/static/voiceLevel2.js"></script>
+<script src="/static/contentLevel2.js"></script>
+<script src="/static/questionsLevel2.js"></script>
+<script src="/static/visualLevel2.js"></script>
+<script src="/static/rulesLevel2.js"></script>
 
 </body>
 </html>
