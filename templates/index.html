@@ -1,59 +1,79 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-<meta charset="UTF-8">
-<title>KaMiZen – La Vida Continúa</title>
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <title>KaMiZen</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script defer src="/static/app.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            background: #0b0b0b;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .container {
+            margin-top: 80px;
+        }
+
+        input {
+            padding: 10px;
+            margin: 8px;
+            width: 220px;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 12px 20px;
+            background: #1e90ff;
+            color: white;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #187bcd;
+        }
+
+        #level1 {
+            margin-top: 60px;
+        }
+    </style>
 </head>
+
 <body>
 
-<!-- ======= Selección de idioma ======= -->
-<div id="language">
-  <button id="btnEn">English</button>
-  <button id="btnEs">Español</button>
+<!-- LOGIN -->
+<div id="login" class="container">
+    <h2>KaMiZen – Acceso</h2>
+    <input id="username" placeholder="Usuario" />
+    <br>
+    <input id="password" type="password" placeholder="Clave" />
+    <br>
+    <button onclick="login()">Entrar</button>
+    <p id="loginMsg"></p>
 </div>
 
-<!-- ======= Login / Datos iniciales ======= -->
-<div id="login">
-  <input id="age" placeholder="Age / Edad">
-  <input id="mood" placeholder="How do you feel? / ¿Cómo te sientes?">
-  <input id="city" placeholder="City / Ciudad">
+<!-- NIVEL 1 -->
+<div id="level1" class="container hidden">
+    <h1>KaMiZen – Nivel 1</h1>
+    <p>Respira. Observa. Estás comenzando tu camino.</p>
+
+    <button onclick="microAction('respirar')">Respirar</button>
+    <button onclick="microAction('estirarse')">Estirarse</button>
+    <button onclick="microAction('cerrar_ojos')">Cerrar ojos</button>
+
+    <br><br>
+    <button onclick="logout()">Salir</button>
 </div>
-
-<!-- ======= Niveles ======= -->
-<div id="levels">
-  <button id="btnDay">Day – $9.99</button>
-  <button id="btnNight">Night – $99.99</button>
-</div>
-
-<!-- ======= Canvas del mapa y avatar ======= -->
-<canvas id="lifeCanvas"></canvas>
-
-<!-- ======= Botón de inicio ======= -->
-<button id="btnStart">Start / Comenzar</button>
-
-<!-- ======= Microacciones ======= -->
-<div id="microActions">
-  <button id="btnRespirar">Respirar / Breathe</button>
-  <button id="btnEstirarse">Estirarse / Stretch</button>
-  <button id="btnCerrarOjos">Cerrar Ojos / Close Eyes</button>
-</div>
-
-<!-- ======= Scripts generales ======= -->
-<script src="static/app.js"></script>
-<script src="static/canvas.js"></script>
-
-<!-- ======= Scripts Nivel 2 ======= -->
-<script src="static/mapLevel2.js"></script>
-<script src="static/avatarLevel2.js"></script>
-<script src="static/obstaclesLevel2.js"></script>
-<script src="static/microactionsLevel2.js"></script>
-<script src="static/timelineLevel2.js"></script>
-<script src="static/voiceLevel2.js"></script>
-<script src="static/contentLevel2.js"></script>
-<script src="static/questionsLevel2.js"></script>
-<script src="static/visualLevel2.js"></script>
-<script src="static/rulesLevel2.js"></script>
 
 </body>
 </html>
