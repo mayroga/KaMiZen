@@ -9,42 +9,57 @@
 
 <div id="loginBox">
   <h2>KaMiZen – Acceso</h2>
-  <form action="/login" method="post">
-    <input type="text" name="username" placeholder="Usuario / Username" required>
-    <input type="password" name="password" placeholder="Contraseña / Password" required>
-    <button type="submit">Entrar</button>
+
+  <!-- Login Admin / Usuario -->
+  <form id="loginForm">
+    <input type="text" id="username" placeholder="Usuario / Username" required>
+    <input type="password" id="password" placeholder="Contraseña / Password" required>
+    <button type="button" onclick="login()">Entrar</button>
   </form>
-</div>
 
-</body>
-</html>
+  <hr>
 
-    <!-- Formulario de login -->
-    <form action="/login" method="post" class="login-form">
-      <input type="text" name="username" placeholder="Usuario / Username" required>
-      <input type="password" name="password" placeholder="Contraseña / Password" required>
-      <button type="submit">Entrar</button>
-    </form>
-
-    <!-- Opciones de inicio libre (solo para pruebas) -->
-    <div class="guest-access">
-      <p>O ingresa como invitado para probar:</p>
-      <form action="/life/guide" method="post">
-        <input type="text" name="age" placeholder="Edad / Age" required>
-        <input type="text" name="mood" placeholder="¿Cómo te sientes? / How do you feel?" required>
-        <input type="text" name="city" placeholder="Ciudad / City" required>
-        <input type="hidden" name="lang" id="guestLang" value="es">
-        <button type="submit">Comenzar / Start</button>
-      </form>
-    </div>
+  <!-- Acceso libre / Invitado -->
+  <div class="guest-access">
+    <p>O ingresa como invitado para probar:</p>
+    <input type="text" id="guestAge" placeholder="Edad / Age" required>
+    <input type="text" id="guestMood" placeholder="¿Cómo te sientes? / How do you feel?" required>
+    <input type="text" id="guestCity" placeholder="Ciudad / City" required>
+    <input type="hidden" id="guestLang" value="es">
+    <button type="button" onclick="startGuest()">Comenzar / Start</button>
   </div>
 
-  <script src="/static/app.js"></script>
-  <script>
-    function setLang(lang){
-      document.getElementById("guestLang").value = lang;
-      // Puedes agregar aquí más lógica si quieres cambiar textos de la página dinámicamente
-    }
-  </script>
+  <hr>
+
+  <!-- Selección de idioma -->
+  <div id="language">
+    <button onclick="setLang('es')">Español</button>
+    <button onclick="setLang('en')">English</button>
+  </div>
+</div>
+
+<!-- Contenedor de juego / mapa -->
+<div id="gameArea" style="display:none;">
+  <canvas id="lifeCanvas"></canvas>
+
+  <div id="controls">
+    <button id="btnRespirar">Respirar / Breathe</button>
+    <button id="btnEstirarse">Estirarse / Stretch</button>
+    <button id="btnCerrarOjos">Cerrar Ojos / Close Eyes</button>
+  </div>
+
+  <div id="levelButtons">
+    <button onclick="startLevel('day')">Nivel 1 – Day $9.99</button>
+    <button onclick="startLevel('night')">Nivel 2 – Night $99.99</button>
+  </div>
+</div>
+
+<script src="/static/app.js"></script>
+<script>
+function setLang(l){
+    document.getElementById("guestLang").value = l;
+    lang = l;
+}
+</script>
 </body>
 </html>
