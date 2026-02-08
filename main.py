@@ -2,74 +2,69 @@ from fastapi import FastAPI, Request, Form
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-import uuid
-import random
+import os
+import openai
+
+# Configuración OpenAI
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 app = FastAPI()
 
 # Carpeta de templates y estáticos
-app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
-# Usuarios de ejemplo (usuario/pago)
-USERS = {
-    "admin": {"password": "miclavegratis", "role": "admin"},
-    "cliente1": {"password": "123", "role": "cliente_n1", "price": 9.99},
-    "cliente2": {"password": "456", "role": "cliente_n2", "price": 99.99},
-}
+# Credenciales (solo tú puedes usar acceso gratuito)
+ADMIN_USER = os.getenv("ADMIN_USER") or "miusuario"
+ADMIN_PASS = os.getenv("ADMIN_PASS") or "miclave"
 
-# ================= Página principal =================
+# =================== RUTAS ===================
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
-# ================= Login =================
-@app.post("/admin/login")
-async def admin_login(data: dict):
-    username = data.get("username")
-    password = data.get("password")
-    user = USERS.get(username)
-    if user and user["password"] == password:
-        return JSONResponse({"status": "ok", "role": user["role"], "price": user.get("price", 0)})
-    return JSONResponse({"detail": "Usuario o contraseña incorrectos"}, status_code=401)
+@app.post("/login")
+async def login(username: str = Form(...), password: str = Form(...)):
+    if username == ADMIN_USER and password == ADMIN_PASS:
+        return JSONResponse({"role": "admin", "message": "Acceso gratuito concedido"})
+    else:
+        return JSONResponse({"detail": "Usuario o contraseña incorrectos"}, status_code=401)
 
-# ================= Sesión de KaMiZen =================
-@app.post("/session/start")
+@app.post("/start_session")
 async def start_session(data: dict):
-    # Generar ID de sesión único
-    session_id = str(uuid.uuid4())
-    # Preparar respuesta inicial de IA
-    messages = [
-        "Estoy aquí contigo.",
-        "¿Cómo puedo acompañarte hoy?",
-        "¿Prefieres escuchar o caminar un poco?"
-    ]
-    message = random.choice(messages)
-    return JSONResponse({
-        "session_id": session_id,
-        "message": message
-    })
-
-# ================= Flujo de microacciones =================
-@app.post("/session/action")
-async def session_action(data: dict):
-    # data contiene: session_id, action
-    action = data.get("action", "")
-    responses = {
-        "respirar": "Respiras profundamente y te relajas.",
-        "estirarse": "Te estiras suavemente sintiendo alivio.",
-        "cerrarOjos": "Cierras los ojos y sientes calma.",
-        "caminar": "Das un paso adelante sintiendo tu progreso."
-    }
-    message = responses.get(action, "Sigue avanzando lentamente...")
-    return JSONResponse({"message": message})
-
-# ================= Test de mapa =================
-@app.post("/session/map")
-async def session_map(data: dict):
-    # data puede contener lat/lon o ciudad
+    """
+    Inicia la sesión de KaMiZen:
+    - data: { city: str, level: str }
+    Devuelve info para mostrar mapa y avatar.
+    """
     city = data.get("city", "Miami")
-    # En este ejemplo devolvemos coords simuladas
-    coords = {"Miami": [25.7617, -80.1918]}
-    lat, lon = coords.get(city, [25.7617, -80.1918])
-    return JSONResponse({"lat": lat, "lon": lon})
+    level = data.get("level", "day")
+
+    # Crear prompt dinámico para IA
+    prompt = f"""
+    Usuario en ciudad: {city}.
+    Nivel: {level}.
+    Genera microacciones y guía emocional progresiva siguiendo el manual KaMiZen.
+    Nunca repetir estímulos en la misma sesión.
+    Devuelve JSON con: message, actions[], colors[].
+    """
+
+    try:
+        # Usando OpenAI API moderna
+        response = openai.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[{"role": "system", "content": "Eres KaMiZen, guía emocional humano."},
+                      {"role": "user", "content": prompt}],
+            temperature=0.7,
+            max_tokens=500
+        )
+        ai_output = response.choices[0].message.content
+    except Exception as e:
+        ai_output = f"No se pudo generar IA: {e}"
+
+    # Respuesta
+    return JSONResponse({
+        "city": city,
+        "level": level,
+        "ai_message": ai_output
+    })
