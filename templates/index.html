@@ -4,31 +4,41 @@
 <meta charset="UTF-8">
 <title>KaMiZen – Acceso</title>
 <link rel="stylesheet" href="/static/style.css">
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.5/dist/leaflet.css" />
-<script src="https://unpkg.com/leaflet@1.9.5/dist/leaflet.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 </head>
 <body>
-
 <div id="loginBox">
   <h2>KaMiZen – Acceso</h2>
-
-  <!-- Login Admin -->
   <form id="loginForm">
     <input type="text" id="username" placeholder="Usuario / Username" required>
     <input type="password" id="password" placeholder="Contraseña / Password" required>
     <button type="button" onclick="login()">Entrar</button>
   </form>
-  <div id="loginMessage" style="color:red;margin-top:10px;"></div>
+  <hr>
+  <div id="levelPrices">
+    <p>Precios disponibles:</p>
+    <ul>
+      {% for key, lvl in levels.items() %}
+      <li>{{ lvl.name }}: ${{ lvl.price }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  <hr>
+  <div id="cityInput">
+    <input type="text" id="city" placeholder="Ciudad / City" required>
+    <button type="button" onclick="startSession()">Comenzar / Start</button>
+  </div>
 </div>
 
 <div id="gameArea" style="display:none;">
-  <h2>Mapa y Avatar – KaMiZen</h2>
   <div id="map" style="height:500px;"></div>
-  <button onclick="startSession('day')">Nivel 1 – $9.99</button>
-  <button onclick="startSession('night')">Nivel 2 – $99</button>
-  <div id="aiMessage" style="margin-top:20px;font-weight:bold;"></div>
+  <div id="avatar" style="position:absolute;width:40px;height:40px;background:red;border-radius:50%;"></div>
+  <div id="controls">
+    <button onclick="moveAvatar()">Caminar</button>
+  </div>
 </div>
 
 <script src="/static/app.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </body>
 </html>
