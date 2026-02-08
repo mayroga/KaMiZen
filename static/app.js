@@ -1,68 +1,84 @@
-let lang="es";
-let level="day";
+let lang = "es";
+let level = "day";
+let uid = "";
 
-function setLang(l){
-  lang=l;
-  speechSynthesis.cancel();
+// ================= LOGIN =================
+async function login(){
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+
+    const res = await fetch("/admin/login", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({username, password})
+    });
+
+    if(res.ok){
+        const data = await res.json();
+        alert("Login exitoso: " + data.role);
+        document.getElementById("loginBox").style.display = "none";
+        document.getElementById("gameArea").style.display = "block";
+        startLevel("day");
+    } else {
+        const err = await res.json();
+        alert("Error: " + err.detail);
+    }
 }
 
+// ================= INVITADO =================
+async function startGuest(){
+    const age = document.getElementById("guestAge").value;
+    const mood = document.getElementById("guestMood").value;
+    const city = document.getElementById("guestCity").value;
+
+    const res = await fetch("/life/guide", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({age, mood, city, lang, level})
+    });
+
+    if(res.ok){
+        const data = await res.json();
+        uid = data.session_id;
+        speak(data.message);
+        document.getElementById("loginBox").style.display = "none";
+        document.getElementById("gameArea").style.display = "block";
+        startLevel(level);
+    } else {
+        const err = await res.json();
+        alert("Error: " + JSON.stringify(err));
+    }
+}
+
+// ================= VOZ =================
 function speak(text){
-  const msg = new SpeechSynthesisUtterance(text);
-  msg.lang = lang==="es"?"es-ES":"en-US";
-  msg.voice = speechSynthesis.getVoices().find(v=>v.lang.includes(msg.lang));
-  speechSynthesis.speak(msg);
+    const msg = new SpeechSynthesisUtterance(text);
+    msg.lang = lang === "es" ? "es-ES" : "en-US";
+    msg.voice = speechSynthesis.getVoices().find(v => v.lang.includes(msg.lang));
+    speechSynthesis.speak(msg);
 }
 
-// Inicio Nivel 1
-async function startLevel1(){
-  const age = document.getElementById("age").value;
-  const mood = document.getElementById("mood").value;
-  const city = document.getElementById("city").value;
-
-  const res = await fetch("/life/guide",{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body: JSON.stringify({age,mood,lang,level,city})
-  });
-
-  const data = await res.json();
-  speak(data.message);
-  moveAvatarLevel1();
+// ================= NIVEL =================
+function startLevel(l){
+    level = l;
+    resetAvatar();
+    generateLifeMapLevel2();
+    drawMapLevel2();
+    startTimeline();
 }
 
-// Inicio Nivel 2
-async function startLevel2(){
-  const age = document.getElementById("age").value;
-  const mood = document.getElementById("mood").value;
-  const city = document.getElementById("city").value;
+// ================= CONTROLES MICROACCIONES =================
+document.getElementById("btnRespirar").onclick = () => {
+    avatarReact('respirar');
+    speak(lang==="es"?"Respiras profundamente.":"Take a deep breath.");
+};
 
-  const res = await fetch("/life/guide",{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body: JSON.stringify({age,mood,lang,level:"night",city})
-  });
+document.getElementById("btnEstirarse").onclick = () => {
+    avatarReact('estirarse');
+    speak(lang==="es"?"Te estiras y te relajas.":"Stretch and relax.");
+};
 
-  const data = await res.json();
-  speak(data.message);
-  moveAvatarLevel2();
-}
-
-// Stripe payment
-async function pay(lvl){
-  level = lvl;
-  const price = lvl==="day"?9.99:99.99;
-
-  const res = await fetch("/create-checkout-session",{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body: JSON.stringify({
-      level:lvl,
-      price:price,
-      success:window.location.href,
-      cancel:window.location.href
-    })
-  });
-
-  const data = await res.json();
-  window.location.href=data.url;
-}
+document.getElementById("btnCerrarOjos").onclick = () => {
+    avatarReact('cerrarOjos');
+    speak(lang==="es"?"Cierras los ojos y sientes paz.":"Close your eyes and feel calm.");
+};
