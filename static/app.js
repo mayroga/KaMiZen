@@ -2,72 +2,65 @@ let lang = "es";
 let level = "day";
 let uid = "";
 
-// ================= LOGIN =================
+// ================= LOGIN ADMIN =================
 async function login(){
     const username = document.getElementById("username").value;
     const password = document.getElementById("password").value;
 
-    const res = await fetch("/admin/login", {
+    const res = await fetch("/login", {
         method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({username, password})
+        headers: {"Content-Type": "application/x-www-form-urlencoded"},
+        body: new URLSearchParams({username, password})
     });
 
     if(res.ok){
-        const data = await res.json();
-        alert("Login exitoso: " + data.role);
+        alert("Login exitoso. Acceso gratuito habilitado.");
         document.getElementById("loginBox").style.display = "none";
         document.getElementById("gameArea").style.display = "block";
-        startLevel("day");
+        startLevel("day"); // Admin siempre inicia Nivel 1
     } else {
         const err = await res.json();
         alert("Error: " + err.detail);
     }
 }
 
-// ================= INVITADO =================
-async function startGuest(){
-    const age = document.getElementById("guestAge").value;
-    const mood = document.getElementById("guestMood").value;
-    const city = document.getElementById("guestCity").value;
+// ================= PAGO CLIENTES =================
+async function pay(lvl){
+    level = lvl;
+    const price = lvl === "day" ? 9.99 : 99.99;
 
-    const res = await fetch("/life/guide", {
+    const res = await fetch("/create-checkout-session", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({age, mood, city, lang, level})
+        body: JSON.stringify({
+            level: lvl,
+            price: price,
+            success: window.location.origin + "/life?level=" + lvl,
+            cancel: window.location.href
+        })
     });
 
-    if(res.ok){
-        const data = await res.json();
-        uid = data.session_id;
-        speak(data.message);
-        document.getElementById("loginBox").style.display = "none";
-        document.getElementById("gameArea").style.display = "block";
-        startLevel(level);
-    } else {
-        const err = await res.json();
-        alert("Error: " + JSON.stringify(err));
-    }
-}
-
-// ================= VOZ =================
-function speak(text){
-    const msg = new SpeechSynthesisUtterance(text);
-    msg.lang = lang === "es" ? "es-ES" : "en-US";
-    msg.voice = speechSynthesis.getVoices().find(v => v.lang.includes(msg.lang));
-    speechSynthesis.speak(msg);
+    const data = await res.json();
+    window.location.href = data.url;
 }
 
 // ================= NIVEL =================
-function startLevel(l){
-    level = l;
+function startLevel(lvl){
+    level = lvl;
     resetAvatar();
-    generateLifeMapLevel2();
-    drawMapLevel2();
+
+    if(level === "day"){
+        generateLifeMapLevel1();
+        drawMapLevel1();
+    } else {
+        generateLifeMapLevel2();
+        drawMapLevel2();
+    }
+
     startTimeline();
 }
 
-// ================= CONTROLES MICROACCIONES =================
+// ================= MICROACCIONES =================
 document.getElementById("btnRespirar").onclick = () => {
     avatarReact('respirar');
     speak(lang==="es"?"Respiras profundamente.":"Take a deep breath.");
@@ -82,3 +75,11 @@ document.getElementById("btnCerrarOjos").onclick = () => {
     avatarReact('cerrarOjos');
     speak(lang==="es"?"Cierras los ojos y sientes paz.":"Close your eyes and feel calm.");
 };
+
+// ================= VOZ =================
+function speak(text){
+    const msg = new SpeechSynthesisUtterance(text);
+    msg.lang = lang==="es" ? "es-ES" : "en-US";
+    msg.voice = speechSynthesis.getVoices().find(v => v.lang.includes(msg.lang));
+    speechSynthesis.speak(msg);
+}
