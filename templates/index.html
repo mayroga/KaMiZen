@@ -4,30 +4,31 @@
 <meta charset="UTF-8">
 <title>KaMiZen – Acceso</title>
 <link rel="stylesheet" href="/static/style.css">
-<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.5/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.5/dist/leaflet.js"></script>
 </head>
 <body>
 
 <div id="loginBox">
   <h2>KaMiZen – Acceso</h2>
+
+  <!-- Login Admin -->
   <form id="loginForm">
     <input type="text" id="username" placeholder="Usuario / Username" required>
     <input type="password" id="password" placeholder="Contraseña / Password" required>
     <button type="button" onclick="login()">Entrar</button>
   </form>
+  <div id="loginMessage" style="color:red;margin-top:10px;"></div>
 </div>
 
 <div id="gameArea" style="display:none;">
-  <div id="map" style="height: 400px;"></div>
-  <div id="controls">
-    <button onclick="microAction('respirar')">Respirar</button>
-    <button onclick="microAction('estirarse')">Estirarse</button>
-    <button onclick="microAction('cerrarOjos')">Cerrar Ojos</button>
-    <button onclick="microAction('caminar')">Caminar</button>
-  </div>
+  <h2>Mapa y Avatar – KaMiZen</h2>
+  <div id="map" style="height:500px;"></div>
+  <button onclick="startSession('day')">Nivel 1 – $9.99</button>
+  <button onclick="startSession('night')">Nivel 2 – $99</button>
+  <div id="aiMessage" style="margin-top:20px;font-weight:bold;"></div>
 </div>
 
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script src="/static/app.js"></script>
 </body>
 </html>
