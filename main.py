@@ -1,30 +1,18 @@
-# main.py
-from fastapi import FastAPI, Request, HTTPException
-from fastapi.responses import JSONResponse, HTMLResponse
+import os
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-import openai
-import os
 
 app = FastAPI()
 
-# Configuración de carpetas
-app.mount("/static", StaticFiles(directory="static"), name="static")
+# Carpeta de templates y static
 templates = Jinja2Templates(directory="templates")
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
-# ADMIN credentials desde Render
-ADMIN_USERNAME = os.getenv("ADMIN_USERNAME", "admin")
-ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "adminpass")
-
-# Clave de OpenAI desde entorno
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
-openai.api_key = OPENAI_API_KEY
-
-# ================= ROUTES =================
-
-@app.get("/", response_class=HTMLResponse)
-async def root(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+# Admin desde Render
+ADMIN_USERNAME = os.environ.get("ADMIN_USERNAME", "admin")
+ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "1234")
 
 # ================= LOGIN =================
 @app.post("/admin/login")
@@ -32,38 +20,32 @@ async def admin_login(req: Request):
     data = await req.json()
     username = data.get("username")
     password = data.get("password")
-    
     if username == ADMIN_USERNAME and password == ADMIN_PASSWORD:
-        return JSONResponse({"role": "admin", "message": "Acceso concedido"})
+        return JSONResponse({"role": "admin", "message": "Acceso autorizado"})
     else:
-        raise HTTPException(status_code=401, detail="Usuario o contraseña incorrectos")
+        return JSONResponse({"detail": "Usuario o contraseña incorrecta"}, status_code=401)
 
-# ================= LIFE GUIDE / NIVELES =================
+# ================= LIFE / MAP =================
 @app.post("/life/guide")
 async def life_guide(req: Request):
     data = await req.json()
     age = data.get("age")
     mood = data.get("mood")
     city = data.get("city")
-    lang = data.get("lang", "es")
     level = data.get("level", "day")
+    lang = data.get("lang", "es")
 
-    if not all([age, mood, city, level]):
-        raise HTTPException(status_code=400, detail="Faltan datos requeridos")
+    # Para demo: mensaje simple y ubicación para el mapa
+    message = f"Bienvenido a KaMiZen. Edad: {age}, Mood: {mood}, Ciudad: {city}, Nivel: {level}"
 
-    # Crear prompt para OpenAI
-    prompt = f"Usuario de {age} años, estado de ánimo: {mood}, ciudad: {city}, idioma: {lang}, nivel: {level}. Genera un mensaje breve para mostrar en la app."
+    return JSONResponse({
+        "session_id": "session123",  # aquí puedes generar un UUID real si quieres
+        "message": message,
+        "city": city,
+        "level": level
+    })
 
-    try:
-        response = openai.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[{"role": "user", "content": prompt}],
-            max_tokens=200
-        )
-        answer = response.choices[0].message.content
-
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-    # Retornar al frontend
-    return {"session_id": "12345", "message": answer}
+# ================= INDEX =================
+@app.get("/")
+async def index(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
