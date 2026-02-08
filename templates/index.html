@@ -4,41 +4,30 @@
 <meta charset="UTF-8">
 <title>KaMiZen – Acceso</title>
 <link rel="stylesheet" href="/static/style.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 </head>
 <body>
 
 <div id="loginBox">
   <h2>KaMiZen – Acceso</h2>
-
   <form id="loginForm">
     <input type="text" id="username" placeholder="Usuario / Username" required>
     <input type="password" id="password" placeholder="Contraseña / Password" required>
     <button type="button" onclick="login()">Entrar</button>
   </form>
-
-  <hr>
-
-  <div id="language">
-    <button onclick="setLang('es')">Español</button>
-    <button onclick="setLang('en')">English</button>
-  </div>
 </div>
 
 <div id="gameArea" style="display:none;">
-  <canvas id="lifeCanvas" width="800" height="600"></canvas>
-
+  <div id="map" style="height: 400px;"></div>
   <div id="controls">
-    <button id="btnRespirar">Respirar / Breathe</button>
-    <button id="btnEstirarse">Estirarse / Stretch</button>
-    <button id="btnCerrarOjos">Cerrar Ojos / Close Eyes</button>
-  </div>
-
-  <div id="levelButtons">
-    <button onclick="startLevel('day')">Nivel 1 – Day $9.99</button>
-    <button onclick="startLevel('night')">Nivel 2 – Night $99.99</button>
+    <button onclick="microAction('respirar')">Respirar</button>
+    <button onclick="microAction('estirarse')">Estirarse</button>
+    <button onclick="microAction('cerrarOjos')">Cerrar Ojos</button>
+    <button onclick="microAction('caminar')">Caminar</button>
   </div>
 </div>
 
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script src="/static/app.js"></script>
 </body>
 </html>
