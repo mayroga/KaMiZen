@@ -1,77 +1,69 @@
-let session_id = "";
 let map, avatarMarker;
+let level = "day";
 
-// ================= LOGIN =================
+// =================== LOGIN ===================
 async function login(){
     const username = document.getElementById("username").value;
     const password = document.getElementById("password").value;
 
-    const res = await fetch("/admin/login", {
+    const res = await fetch("/login", {
         method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({username, password})
+        body: new URLSearchParams({username, password})
     });
 
     if(res.ok){
         const data = await res.json();
-        alert("Login exitoso: " + data.role);
         document.getElementById("loginBox").style.display = "none";
         document.getElementById("gameArea").style.display = "block";
-        startSession();
+        alert(data.message);
+        initMap();
     } else {
         const err = await res.json();
-        alert("Error: " + err.detail);
+        document.getElementById("loginMessage").innerText = err.detail;
     }
 }
 
-// ================= INICIO DE SESIÓN =================
-async function startSession(){
-    const res = await fetch("/session/start", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({})
-    });
-    const data = await res.json();
-    session_id = data.session_id;
-    speak(data.message);
-    initMap();
-}
-
-// ================= VOZ =================
-function speak(text){
-    const msg = new SpeechSynthesisUtterance(text);
-    msg.lang = "es-ES";
-    speechSynthesis.speak(msg);
-}
-
-// ================= MICROACCIONES =================
-async function microAction(action){
-    const res = await fetch("/session/action", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({session_id, action})
-    });
-    const data = await res.json();
-    speak(data.message);
-}
-
-// ================= MAPA =================
-async function initMap(){
-    const res = await fetch("/session/map", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({city: "Miami"})
-    });
-    const data = await res.json();
-
-    map = L.map('map').setView([data.lat, data.lon], 13);
-
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors'
+// =================== MAPA ===================
+function initMap(){
+    // Centrar en Miami por defecto
+    map = L.map('map').setView([25.7617, -80.1918], 13);
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19
     }).addTo(map);
 
-    // Avatar
-    avatarMarker = L.marker([data.lat, data.lon]).addTo(map)
-        .bindPopup("Aquí estás")
-        .openPopup();
+    // Avatar inicial
+    const avatarIcon = L.icon({
+        iconUrl: '/static/avatar.png', 
+        iconSize: [40, 40]
+    });
+    avatarMarker = L.marker([25.7617, -80.1918], {icon: avatarIcon}).addTo(map);
+}
+
+// =================== INICIAR SESIÓN ===================
+async function startSession(l){
+    level = l;
+    const city = prompt("Indica tu ciudad (solo nombre):", "Miami") || "Miami";
+
+    const res = await fetch("/start_session", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({city, level})
+    });
+
+    const data = await res.json();
+    document.getElementById("aiMessage").innerText = data.ai_message;
+
+    // Simular avatar caminando (simple animación de prueba)
+    let lat = map.getCenter().lat;
+    let lng = map.getCenter().lng;
+    let steps = 10;
+    let stepCount = 0;
+
+    const moveAvatar = setInterval(()=>{
+        if(stepCount >= steps) { clearInterval(moveAvatar); return; }
+        lat += 0.0005;
+        lng += 0.0005;
+        avatarMarker.setLatLng([lat,lng]);
+        stepCount++;
+    }, 500);
 }
