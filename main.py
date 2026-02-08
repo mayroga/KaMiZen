@@ -3,68 +3,44 @@ from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 import os
-import openai
-
-# Configuración OpenAI
-openai.api_key = os.getenv("OPENAI_API_KEY")
 
 app = FastAPI()
-
-# Carpeta de templates y estáticos
 templates = Jinja2Templates(directory="templates")
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-# Credenciales (solo tú puedes usar acceso gratuito)
-ADMIN_USER = os.getenv("ADMIN_USER") or "miusuario"
-ADMIN_PASS = os.getenv("ADMIN_PASS") or "miclave"
+# Usuario y contraseña para tu acceso gratis (tomados desde Render environment)
+FREE_USER = os.getenv("FREE_USER")
+FREE_PASS = os.getenv("FREE_PASS")
 
-# =================== RUTAS ===================
+# Niveles de pago
+LEVELS = {
+    "day": {"name": "Nivel 1 – Day", "price": 9.99},
+    "night": {"name": "Nivel 2 – Night", "price": 99.0}
+}
+
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+    return templates.TemplateResponse("index.html", {"request": request, "levels": LEVELS})
 
 @app.post("/login")
-async def login(username: str = Form(...), password: str = Form(...)):
-    if username == ADMIN_USER and password == ADMIN_PASS:
-        return JSONResponse({"role": "admin", "message": "Acceso gratuito concedido"})
+async def login(request: Request):
+    data = await request.json()
+    username = data.get("username")
+    password = data.get("password")
+    if username == FREE_USER and password == FREE_PASS:
+        return JSONResponse({"success": True, "role": "admin"})
     else:
-        return JSONResponse({"detail": "Usuario o contraseña incorrectos"}, status_code=401)
+        return JSONResponse({"success": False, "detail": "Usuario o contraseña incorrectos"}, status_code=401)
 
 @app.post("/start_session")
-async def start_session(data: dict):
-    """
-    Inicia la sesión de KaMiZen:
-    - data: { city: str, level: str }
-    Devuelve info para mostrar mapa y avatar.
-    """
-    city = data.get("city", "Miami")
-    level = data.get("level", "day")
-
-    # Crear prompt dinámico para IA
-    prompt = f"""
-    Usuario en ciudad: {city}.
-    Nivel: {level}.
-    Genera microacciones y guía emocional progresiva siguiendo el manual KaMiZen.
-    Nunca repetir estímulos en la misma sesión.
-    Devuelve JSON con: message, actions[], colors[].
-    """
-
-    try:
-        # Usando OpenAI API moderna
-        response = openai.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[{"role": "system", "content": "Eres KaMiZen, guía emocional humano."},
-                      {"role": "user", "content": prompt}],
-            temperature=0.7,
-            max_tokens=500
-        )
-        ai_output = response.choices[0].message.content
-    except Exception as e:
-        ai_output = f"No se pudo generar IA: {e}"
-
-    # Respuesta
+async def start_session(request: Request):
+    data = await request.json()
+    level = data.get("level")
+    city = data.get("city")
+    # Retorna datos de sesión
     return JSONResponse({
+        "success": True,
+        "level": LEVELS.get(level, LEVELS["day"]),
         "city": city,
-        "level": level,
-        "ai_message": ai_output
+        "message": f"Bienvenido a KaMiZen. Nivel seleccionado: {LEVELS.get(level, LEVELS['day'])['name']}"
     })
