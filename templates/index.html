@@ -1,79 +1,47 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>KaMiZen</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script defer src="/static/app.js"></script>
-
-    <style>
-        body {
-            margin: 0;
-            background: #0b0b0b;
-            color: white;
-            font-family: Arial, sans-serif;
-            text-align: center;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .container {
-            margin-top: 80px;
-        }
-
-        input {
-            padding: 10px;
-            margin: 8px;
-            width: 220px;
-            font-size: 16px;
-        }
-
-        button {
-            padding: 12px 20px;
-            background: #1e90ff;
-            color: white;
-            border: none;
-            font-size: 16px;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background: #187bcd;
-        }
-
-        #level1 {
-            margin-top: 60px;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KaMiZen – Acceso</title>
+<link rel="stylesheet" href="/static/style.css">
 </head>
-
 <body>
+  <div class="login-container">
+    <h1>KaMiZen – Acceso</h1>
 
-<!-- LOGIN -->
-<div id="login" class="container">
-    <h2>KaMiZen – Acceso</h2>
-    <input id="username" placeholder="Usuario" />
-    <br>
-    <input id="password" type="password" placeholder="Clave" />
-    <br>
-    <button onclick="login()">Entrar</button>
-    <p id="loginMsg"></p>
-</div>
+    <!-- Selección de idioma -->
+    <div class="language-selector">
+      <button onclick="setLang('es')">Español</button>
+      <button onclick="setLang('en')">English</button>
+    </div>
 
-<!-- NIVEL 1 -->
-<div id="level1" class="container hidden">
-    <h1>KaMiZen – Nivel 1</h1>
-    <p>Respira. Observa. Estás comenzando tu camino.</p>
+    <!-- Formulario de login -->
+    <form action="/login" method="post" class="login-form">
+      <input type="text" name="username" placeholder="Usuario / Username" required>
+      <input type="password" name="password" placeholder="Contraseña / Password" required>
+      <button type="submit">Entrar</button>
+    </form>
 
-    <button onclick="microAction('respirar')">Respirar</button>
-    <button onclick="microAction('estirarse')">Estirarse</button>
-    <button onclick="microAction('cerrar_ojos')">Cerrar ojos</button>
+    <!-- Opciones de inicio libre (solo para pruebas) -->
+    <div class="guest-access">
+      <p>O ingresa como invitado para probar:</p>
+      <form action="/life/guide" method="post">
+        <input type="text" name="age" placeholder="Edad / Age" required>
+        <input type="text" name="mood" placeholder="¿Cómo te sientes? / How do you feel?" required>
+        <input type="text" name="city" placeholder="Ciudad / City" required>
+        <input type="hidden" name="lang" id="guestLang" value="es">
+        <button type="submit">Comenzar / Start</button>
+      </form>
+    </div>
+  </div>
 
-    <br><br>
-    <button onclick="logout()">Salir</button>
-</div>
-
+  <script src="/static/app.js"></script>
+  <script>
+    function setLang(lang){
+      document.getElementById("guestLang").value = lang;
+      // Puedes agregar aquí más lógica si quieres cambiar textos de la página dinámicamente
+    }
+  </script>
 </body>
 </html>
