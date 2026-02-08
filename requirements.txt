@@ -4,5 +4,5 @@ gunicorn
 requests
 stripe
 python-multipart
-openai>=1.0.0
+openai
 jinja2
