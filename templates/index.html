@@ -10,24 +10,23 @@
 <div id="loginBox">
   <h2>KaMiZen – Acceso</h2>
 
-  <!-- LOGIN ADMIN -->
+  <!-- Login Admin / Usuario -->
   <form id="loginForm">
     <input type="text" id="username" placeholder="Usuario / Username" required>
     <input type="password" id="password" placeholder="Contraseña / Password" required>
-    <button type="button" onclick="login()">Entrar Gratis (Admin)</button>
+    <button type="button" onclick="login()">Entrar</button>
   </form>
 
   <hr>
 
-  <!-- ACCESO CLIENTES CON PAGO -->
-  <h3>Acceso Clientes</h3>
-  <div id="levels">
-    <button onclick="pay('day')">Nivel 1 – $9.99</button>
-    <button onclick="pay('night')">Nivel 2 – $99.99</button>
+  <!-- Selección de idioma -->
+  <div id="language">
+    <button onclick="setLang('es')">Español</button>
+    <button onclick="setLang('en')">English</button>
   </div>
 </div>
 
-<!-- CONTENEDOR DEL JUEGO -->
+<!-- Contenedor de juego / mapa -->
 <div id="gameArea" style="display:none;">
   <canvas id="lifeCanvas"></canvas>
 
@@ -36,8 +35,19 @@
     <button id="btnEstirarse">Estirarse / Stretch</button>
     <button id="btnCerrarOjos">Cerrar Ojos / Close Eyes</button>
   </div>
+
+  <div id="levelButtons">
+    <button onclick="startLevel('day')">Nivel 1 – Day $9.99</button>
+    <button onclick="startLevel('night')">Nivel 2 – Night $99.99</button>
+  </div>
 </div>
 
 <script src="/static/app.js"></script>
+<script>
+let lang = "es";
+function setLang(l){
+    lang = l;
+}
+</script>
 </body>
 </html>
