@@ -1,10 +1,8 @@
-flask
+fastapi
+uvicorn
+gunicorn
 requests
 stripe
-uvicorn
-jinja2
 python-multipart
 openai>=1.0.0
-gunicorn
-flask-cors
-fastapi
+jinja2
