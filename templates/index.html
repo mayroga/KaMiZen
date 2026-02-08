@@ -10,7 +10,6 @@
 <div id="loginBox">
   <h2>KaMiZen – Acceso</h2>
 
-  <!-- Login Admin / Usuario -->
   <form id="loginForm">
     <input type="text" id="username" placeholder="Usuario / Username" required>
     <input type="password" id="password" placeholder="Contraseña / Password" required>
@@ -19,16 +18,14 @@
 
   <hr>
 
-  <!-- Selección de idioma -->
   <div id="language">
     <button onclick="setLang('es')">Español</button>
     <button onclick="setLang('en')">English</button>
   </div>
 </div>
 
-<!-- Contenedor de juego / mapa -->
 <div id="gameArea" style="display:none;">
-  <canvas id="lifeCanvas"></canvas>
+  <canvas id="lifeCanvas" width="800" height="600"></canvas>
 
   <div id="controls">
     <button id="btnRespirar">Respirar / Breathe</button>
@@ -43,11 +40,5 @@
 </div>
 
 <script src="/static/app.js"></script>
-<script>
-let lang = "es";
-function setLang(l){
-    lang = l;
-}
-</script>
 </body>
 </html>
