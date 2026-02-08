@@ -6,4 +6,3 @@ stripe
 python-multipart
 openai
 jinja2
-StaticFiles
