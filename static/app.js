@@ -1,64 +1,68 @@
-async function checkState() {
-    const res = await fetch("/state", {
-        credentials: "include"
-    });
-    const data = await res.json();
+let lang="es";
+let level="day";
 
-    if (data.authenticated && data.level === 1) {
-        showLevel1();
-    } else {
-        showLogin();
-    }
+function setLang(l){
+  lang=l;
+  speechSynthesis.cancel();
 }
 
-function showLogin() {
-    document.getElementById("login").classList.remove("hidden");
-    document.getElementById("level1").classList.add("hidden");
+function speak(text){
+  const msg = new SpeechSynthesisUtterance(text);
+  msg.lang = lang==="es"?"es-ES":"en-US";
+  msg.voice = speechSynthesis.getVoices().find(v=>v.lang.includes(msg.lang));
+  speechSynthesis.speak(msg);
 }
 
-function showLevel1() {
-    document.getElementById("login").classList.add("hidden");
-    document.getElementById("level1").classList.remove("hidden");
+// Inicio Nivel 1
+async function startLevel1(){
+  const age = document.getElementById("age").value;
+  const mood = document.getElementById("mood").value;
+  const city = document.getElementById("city").value;
+
+  const res = await fetch("/life/guide",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({age,mood,lang,level,city})
+  });
+
+  const data = await res.json();
+  speak(data.message);
+  moveAvatarLevel1();
 }
 
-async function login() {
-    const username = document.getElementById("username").value;
-    const password = document.getElementById("password").value;
+// Inicio Nivel 2
+async function startLevel2(){
+  const age = document.getElementById("age").value;
+  const mood = document.getElementById("mood").value;
+  const city = document.getElementById("city").value;
 
-    const res = await fetch("/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ username, password })
-    });
+  const res = await fetch("/life/guide",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({age,mood,lang,level:"night",city})
+  });
 
-    const data = await res.json();
-
-    if (data.success) {
-        showLevel1();
-    } else {
-        document.getElementById("loginMsg").innerText = data.message;
-    }
+  const data = await res.json();
+  speak(data.message);
+  moveAvatarLevel2();
 }
 
-async function logout() {
-    await fetch("/logout", {
-        method: "POST",
-        credentials: "include"
-    });
-    showLogin();
-}
+// Stripe payment
+async function pay(lvl){
+  level = lvl;
+  const price = lvl==="day"?9.99:99.99;
 
-function microAction(action) {
-    if (action === "respirar") {
-        alert("Respira profundo");
-    }
-    if (action === "estirarse") {
-        alert("Estírate suavemente");
-    }
-    if (action === "cerrar_ojos") {
-        alert("Cierra los ojos unos segundos");
-    }
-}
+  const res = await fetch("/create-checkout-session",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({
+      level:lvl,
+      price:price,
+      success:window.location.href,
+      cancel:window.location.href
+    })
+  });
 
-window.onload = checkState;
+  const data = await res.json();
+  window.location.href=data.url;
+}
