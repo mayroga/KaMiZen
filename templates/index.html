@@ -10,35 +10,24 @@
 <div id="loginBox">
   <h2>KaMiZen – Acceso</h2>
 
-  <!-- Login Admin / Usuario -->
+  <!-- LOGIN ADMIN -->
   <form id="loginForm">
     <input type="text" id="username" placeholder="Usuario / Username" required>
     <input type="password" id="password" placeholder="Contraseña / Password" required>
-    <button type="button" onclick="login()">Entrar</button>
+    <button type="button" onclick="login()">Entrar Gratis (Admin)</button>
   </form>
 
   <hr>
 
-  <!-- Acceso libre / Invitado -->
-  <div class="guest-access">
-    <p>O ingresa como invitado para probar:</p>
-    <input type="text" id="guestAge" placeholder="Edad / Age" required>
-    <input type="text" id="guestMood" placeholder="¿Cómo te sientes? / How do you feel?" required>
-    <input type="text" id="guestCity" placeholder="Ciudad / City" required>
-    <input type="hidden" id="guestLang" value="es">
-    <button type="button" onclick="startGuest()">Comenzar / Start</button>
-  </div>
-
-  <hr>
-
-  <!-- Selección de idioma -->
-  <div id="language">
-    <button onclick="setLang('es')">Español</button>
-    <button onclick="setLang('en')">English</button>
+  <!-- ACCESO CLIENTES CON PAGO -->
+  <h3>Acceso Clientes</h3>
+  <div id="levels">
+    <button onclick="pay('day')">Nivel 1 – $9.99</button>
+    <button onclick="pay('night')">Nivel 2 – $99.99</button>
   </div>
 </div>
 
-<!-- Contenedor de juego / mapa -->
+<!-- CONTENEDOR DEL JUEGO -->
 <div id="gameArea" style="display:none;">
   <canvas id="lifeCanvas"></canvas>
 
@@ -47,19 +36,8 @@
     <button id="btnEstirarse">Estirarse / Stretch</button>
     <button id="btnCerrarOjos">Cerrar Ojos / Close Eyes</button>
   </div>
-
-  <div id="levelButtons">
-    <button onclick="startLevel('day')">Nivel 1 – Day $9.99</button>
-    <button onclick="startLevel('night')">Nivel 2 – Night $99.99</button>
-  </div>
 </div>
 
 <script src="/static/app.js"></script>
-<script>
-function setLang(l){
-    document.getElementById("guestLang").value = l;
-    lang = l;
-}
-</script>
 </body>
 </html>
