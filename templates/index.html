@@ -1,51 +1,73 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KaMiZen | Access</title>
+    <title>KaMiZen | May Roga LLC</title>
     <script src="https://js.stripe.com/v3/"></script>
     <style>
-        body { font-family: 'Helvetica Neue', Arial; background: #eef2f3; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .card { background: white; padding: 40px; border-radius: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); text-align: center; width: 320px; }
-        .lang-btn { position: absolute; top: 20px; right: 20px; padding: 8px 15px; cursor: pointer; border-radius: 20px; border: 1px solid #2c3e50; background: transparent; font-weight: bold; }
-        .pay-btn { background: #2c3e50; color: white; width: 100%; padding: 15px; border: none; border-radius: 12px; cursor: pointer; font-size: 16px; margin-top: 25px; }
-        .admin-trigger { margin-top: 25px; font-size: 11px; color: #bdc3c7; cursor: pointer; }
-        #admin-form { display: none; margin-top: 15px; }
-        input { width: 90%; padding: 10px; margin: 5px 0; border: 1px solid #ddd; border-radius: 8px; }
+        body { font-family: 'Inter', system-ui, sans-serif; background: #f0f4f3; height: 100vh; margin: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .card { background: white; padding: 50px; border-radius: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.08); text-align: center; width: 100%; max-width: 350px; position: relative; }
+        .lang-btn { position: absolute; top: 20px; right: 20px; border: 1.5px solid #2c3e50; background: none; padding: 5px 12px; border-radius: 20px; cursor: pointer; font-weight: bold; font-size: 12px; }
+        h1 { color: #2c3e50; margin-bottom: 10px; font-weight: 300; letter-spacing: 2px; }
+        p { color: #7f8c8d; font-size: 14px; margin-bottom: 30px; }
+        .pay-btn { background: #2c3e50; color: white; border: none; width: 100%; padding: 18px; border-radius: 15px; font-size: 16px; cursor: pointer; transition: 0.3s; }
+        .pay-btn:hover { background: #1a252f; transform: translateY(-2px); }
+        .admin-trigger { margin-top: 30px; font-size: 10px; color: #bdc3c7; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
+        #admin-form { display: none; margin-top: 20px; border-top: 1px solid #eee; padding-top: 20px; }
+        input { width: 90%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 10px; font-size: 14px; }
+        .login-btn { background: #bdc3c7; color: white; border: none; padding: 10px; width: 100%; border-radius: 10px; cursor: pointer; }
     </style>
 </head>
 <body>
+
     <button class="lang-btn" onclick="toggleLang()" id="lang-btn">ESP</button>
+
     <div class="card">
-        <h2 id="t1">KaMiZen</h2>
-        <p id="t2">10 Minutes of Pure Path</p>
-        <button class="pay-btn" onclick="startPayment()" id="t3">Access for $4.99</button>
-        <div class="admin-trigger" onclick="document.getElementById('admin-form').style.display='block'">Admin Access</div>
+        <h1 id="title">KaMiZen</h1>
+        <p id="tagline">10 minutes of peace and wisdom.</p>
+        
+        <button class="pay-btn" onclick="startPayment()" id="pay-btn">Access for $4.99</button>
+
+        <div class="admin-trigger" onclick="showAdmin()">Admin Portal</div>
+        
         <div id="admin-form">
             <form action="/login" method="POST">
-                <input type="text" name="username" placeholder="User">
-                <input type="password" name="password" placeholder="Password">
-                <button type="submit" style="background:#bdc3c7; border:none; padding:8px; width:100%; border-radius:8px;">Enter</button>
+                <input type="text" name="username" placeholder="User" required>
+                <input type="password" name="password" placeholder="Password" required>
+                <button type="submit" class="login-btn">Enter</button>
             </form>
         </div>
     </div>
+
     <script>
-        let lang = 'en';
+        let currentLang = 'en';
         const stripe = Stripe('{{ stripe_key }}');
+
         function toggleLang() {
-            lang = (lang === 'en') ? 'es' : 'en';
-            document.getElementById('lang-btn').innerText = (lang === 'en') ? 'ESP' : 'ENG';
-            document.getElementById('t1').innerText = (lang === 'en') ? 'KaMiZen' : 'KaMiZen';
-            document.getElementById('t2').innerText = (lang === 'en') ? '10 Minutes of Pure Path' : '10 Minutos de Camino Puro';
-            document.getElementById('t3').innerText = (lang === 'en') ? 'Access for $4.99' : 'Acceder por $4.99';
-            localStorage.setItem('kmz_lang', lang);
+            currentLang = (currentLang === 'en') ? 'es' : 'en';
+            localStorage.setItem('kmz_lang', currentLang);
+            
+            const content = {
+                en: { btn: "ESP", tag: "10 minutes of peace and wisdom.", pay: "Access for $4.99" },
+                es: { btn: "ENG", tag: "10 minutos de paz y sabiduría.", pay: "Acceder por $4.99" }
+            };
+
+            document.getElementById('lang-btn').innerText = content[currentLang].btn;
+            document.getElementById('tagline').innerText = content[currentLang].tag;
+            document.getElementById('pay-btn').innerText = content[currentLang].pay;
         }
+
+        function showAdmin() { document.getElementById('admin-form').style.display = 'block'; }
+
         async function startPayment() {
             const res = await fetch('/create-checkout-session', { method: 'POST' });
-            const s = await res.json();
-            stripe.redirectToCheckout({ sessionId: s.id });
+            const session = await res.json();
+            stripe.redirectToCheckout({ sessionId: session.id });
         }
+
+        // Inicializar idioma
+        if(!localStorage.getItem('kmz_lang')) localStorage.setItem('kmz_lang', 'en');
     </script>
 </body>
 </html>
