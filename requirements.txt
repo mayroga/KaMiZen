@@ -1,5 +1,6 @@
 flask
 gunicorn
 stripe
-openai
+openai>=1.0.0
+google-generativeai
 requests
