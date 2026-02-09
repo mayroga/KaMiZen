@@ -107,9 +107,16 @@
             const container = document.getElementById('obstacle-frame-container');
             const iframe = document.getElementById('obs-iframe');
             
-            iframe.src = "/templates/obstaculos_dinamicos.html"; // Asegúrate que esta ruta sea accesible
-            container.style.display = "block";
-        }
+            function activarObstaculo() {
+    movimientoActivo = false; 
+    document.getElementById('voice-player').pause();
+    const container = document.getElementById('obstacle-frame-container');
+    const iframe = document.getElementById('obs-iframe');
+    
+    // CAMBIO AQUÍ: Ahora llama a la ruta de Flask, no al archivo directo
+    iframe.src = "/obstaculos"; 
+    container.style.display = "block";
+}
 
         // Escuchar cuando el obstáculo sea superado
         window.addEventListener('message', (event) => {
