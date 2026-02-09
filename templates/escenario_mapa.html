@@ -2,160 +2,65 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AL CIELO - La Vida Continúa</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
-        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; font-family: 'Segoe UI', sans-serif; background: #000; }
-        
-        #map { 
-            height: 100vh; width: 100%; 
-            filter: sepia(0.3) saturate(1.1) brightness(0.9);
-            z-index: 1;
+        body, html { margin: 0; padding: 0; height: 100%; background: #000; overflow: hidden; }
+        #map { height: 100vh; width: 100%; filter: grayscale(0.2) contrast(1.1); }
+        #narrative-overlay {
+            position: absolute; bottom: 10%; left: 50%; transform: translateX(-50%);
+            width: 80%; text-align: center; z-index: 1000;
+            color: white; font-size: 1.4rem; text-shadow: 0 2px 10px rgba(0,0,0,0.8);
         }
-
-        #text-container {
-            position: absolute; top: 20px; left: 50%;
-            transform: translateX(-50%); width: 90%; max-width: 800px;
-            background: rgba(255, 255, 255, 0.95); padding: 20px;
-            border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            z-index: 2000; text-align: center; min-height: 100px;
-        }
-
-        #typewriter { font-size: 1.2rem; color: #222; line-height: 1.6; display: block; margin-bottom: 15px; }
-
-        /* Contenedor del Obstáculo (Iframe) */
-        #obstacle-frame-container {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.7); display: none; z-index: 4000;
-        }
-        iframe { width: 100%; height: 100%; border: none; }
-
-        .controls { display: flex; justify-content: center; gap: 10px; margin-top: 10px; }
-        button { padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; transition: 0.3s; }
-        .btn-delete { background: #ff4444; color: white; }
-        .btn-action { background: #444; color: white; }
-        .btn-pdf { background: #28a745; color: white; }
-
-        .walker-icon { font-size: 45px; animation: moveIcon 2s infinite ease-in-out; }
-        @keyframes moveIcon {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-12px) rotate(5deg); }
-        }
+        .ui-controls { position: absolute; top: 20px; right: 20px; z-index: 2000; display: flex; gap: 10px; }
+        button { background: rgba(255,255,255,0.9); border: none; padding: 10px 20px; cursor: pointer; font-weight: bold; }
+        .walker { font-size: 50px; text-shadow: 0 0 10px white; }
     </style>
 </head>
 <body>
 
-    <div id="text-container">
-        <div id="typewriter">Cargando sabiduría...</div>
-        <div class="controls">
-            <button class="btn-delete" onclick="borrarDatos()">BORRAR</button>
-            <button class="btn-action" onclick="cambiarIdioma()">ES / EN</button>
-            <button class="btn-pdf" onclick="window.print()">PDF</button>
-        </div>
-    </div>
+<div class="ui-controls">
+    <button onclick="window.print()">PDF</button>
+    <button onclick="location.href='/pago-exitoso'" style="color: red;">BORRAR</button>
+</div>
 
-    <div id="obstacle-frame-container">
-        <iframe id="obs-iframe" src=""></iframe>
-    </div>
+<div id="narrative-overlay"></div>
+<div id="map"></div>
+<audio id="onyx-voice"></audio>
 
-    <div id="map"></div>
-    <audio id="voice-player" style="display:none;"></audio>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+    const map = L.map('map', { zoomControl: false, dragging: false }).setView([25.7617, -80.1918], 18);
+    L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png').addTo(map);
 
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script>
-        let userLang = localStorage.getItem('kmz_lang') || 'es';
-        const lat = 25.7617, lng = -80.1918;
-        let cLat = lat;
-        let movimientoActivo = true;
+    const marker = L.marker([25.7617, -80.1918], {
+        icon: L.divIcon({ className: 'walker', html: "🚶‍♂️" })
+    }).addTo(map);
 
-        const map = L.map('map', { zoomControl: false, dragging: false }).setView([lat, lng], 17);
-        L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png').addTo(map);
-
-        const marker = L.marker([lat, lng], {
-            icon: L.divIcon({ className: 'custom-icon', html: "<div class='walker-icon'>🚶‍♂️</div>", iconSize: [40, 50] })
-        }).addTo(map);
-
-        async function cargarNuevaExperiencia() {
-            if (!movimientoActivo) return;
-            try {
-                const response = await fetch(`/api/get_story?lang=${userLang}`);
-                const data = await response.json();
-                const display = document.getElementById('typewriter');
-                const player = document.getElementById('voice-player');
-                
-                display.innerHTML = "";
-                let i = 0;
-                function type() {
-                    if (i < data.texto.length) {
-                        display.innerHTML += data.texto.charAt(i);
-                        i++;
-                        setTimeout(type, 30);
-                    } else {
-                        player.src = data.audio_url;
-                        player.play();
-                    }
-                }
-                type();
-            } catch (e) { console.error("Error cargando historia"); }
-        }
-
-        // --- LÓGICA DE OBSTÁCULOS ---
-        function activarObstaculo() {
-            movimientoActivo = false; // Detenemos al caminante
-            document.getElementById('voice-player').pause();
-            const container = document.getElementById('obstacle-frame-container');
-            const iframe = document.getElementById('obs-iframe');
-            
-            function activarObstaculo() {
-    movimientoActivo = false; 
-    document.getElementById('voice-player').pause();
-    const container = document.getElementById('obstacle-frame-container');
-    const iframe = document.getElementById('obs-iframe');
-    
-    // CAMBIO AQUÍ: Ahora llama a la ruta de Flask, no al archivo directo
-    iframe.src = "/obstaculos"; 
-    container.style.display = "block";
-}
-
-        // Escuchar cuando el obstáculo sea superado
-        window.addEventListener('message', (event) => {
-            if (event.data === 'obstaculo_superado') {
-                document.getElementById('obstacle-frame-container').style.display = "none";
-                document.getElementById('obs-iframe').src = "";
-                movimientoActivo = true; // El caminante sigue
-                cargarNuevaExperiencia();
-            }
-        });
-
-        function borrarDatos() {
-            document.getElementById('typewriter').innerHTML = "Memoria liberada. El camino vuelve a empezar.";
-            document.getElementById('voice-player').pause();
-            setTimeout(() => location.reload(), 2000);
-        }
-
-        function cambiarIdioma() {
-            userLang = (userLang === 'es') ? 'en' : 'es';
-            localStorage.setItem('kmz_lang', userLang);
-            cargarNuevaExperiencia();
-        }
-
-        // Movimiento constante
-        setInterval(() => {
-            if (movimientoActivo) {
-                cLat += 0.00005;
-                marker.setLatLng([cLat, lng]);
-                map.panTo([cLat, lng]);
-            }
-        }, 3000);
-
-        window.onload = cargarNuevaExperiencia;
+    async function fluirSesion() {
+        const res = await fetch(`/api/get_content?lang=es`);
+        const data = await res.json();
         
-        // Cada 3 minutos cambia la historia
-        setInterval(cargarNuevaExperiencia, 180000);
+        // Regla 9: Primero el texto sutil, luego la voz con peso
+        document.getElementById('narrative-overlay').innerText = data.texto;
+        
+        const audio = document.getElementById('onyx-voice');
+        audio.src = `/api/get_audio?text=${encodeURIComponent(data.reflexion)}`;
+        audio.play();
+        
+        audio.onended = () => {
+            setTimeout(fluirSesion, 15000); // Pausa de integración (Regla 12)
+        };
+    }
 
-        // LANZAR OBSTÁCULO: Por ejemplo, a los 45 segundos de iniciar
-        setTimeout(activarObstaculo, 45000);
-    </script>
+    // Movimiento constante y suave (Regla 6)
+    let lat = 25.7617;
+    setInterval(() => {
+        lat += 0.00002;
+        marker.setLatLng([lat, -80.1918]);
+        map.panTo([lat, -80.1918]);
+    }, 2000);
+
+    window.onload = fluirSesion;
+</script>
 </body>
 </html>
