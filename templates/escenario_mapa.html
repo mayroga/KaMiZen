@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #000; }
+        #map { height: 100vh; width: 100%; filter: saturate(1.1) brightness(1.02); }
+        #text-box {
+            position: absolute; top: 10%; left: 50%; transform: translateX(-50%);
+            width: 80%; background: rgba(255,255,255,0.92); padding: 25px;
+            border-radius: 20px; z-index: 9999; text-align: center;
+            font-size: 1.5rem; color: #1a1a1a; line-height: 1.4; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .walker-icon { font-size: 40px; animation: walk 1.5s infinite; }
+        @keyframes walk { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+    </style>
+</head>
+<body>
+    <div id="text-box"><span id="writer"></span></div>
+    <div id="map"></div>
+    <audio id="player" style="display:none;"></audio>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        const map = L.map('map', { zoomControl:false, dragging:false, scrollWheelZoom:false }).setView([25.7617, -80.1918], 17);
+        L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png').addTo(map);
+        const marker = L.marker([25.7617, -80.1918], {
+            icon: L.divIcon({ className:'w', html:"<div class='walker-icon'>🚶‍♂️</div>", iconSize:[40,40] })
+        }).addTo(map);
+
+        async function fluir() {
+            const lang = localStorage.getItem('kmz_lang') || 'en';
+            const res = await fetch(`/api/get_content?lang=${lang}`);
+            const data = await res.json();
+            
+            const box = document.getElementById('writer');
+            box.innerHTML = "";
+            let fullText = data.texto + ". " + data.reflexion;
+            let i = 0;
+
+            function type() {
+                if (i < fullText.length) {
+                    box.innerHTML += fullText.charAt(i);
+                    i++; setTimeout(type, 45);
+                } else {
+                    const audio = document.getElementById('player');
+                    audio.src = `/api/get_audio?text=${encodeURIComponent(data.reflexion)}`;
+                    audio.play();
+                }
+            }
+            type();
+        }
+
+        setInterval(() => {
+            const c = marker.getLatLng();
+            const next = [c.lat + 0.00008, c.lng];
+            marker.setLatLng(next);
+            map.panTo(next, {animate:true, duration:2});
+        }, 3000);
+
+        window.onload = fluir;
+        setInterval(fluir, 180000); // Nueva historia cada 3 min
+    </script>
+</body>
+</html>
