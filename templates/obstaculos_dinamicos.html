@@ -1,59 +1,90 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
     <style>
+        body { margin: 0; background: transparent; font-family: 'Segoe UI', sans-serif; }
         .obstacle-overlay {
-            position: absolute; top: 25%; left: 50%;
+            position: absolute; top: 15%; left: 50%;
             transform: translateX(-50%); z-index: 3000;
-            text-align: center; width: 85%;
+            text-align: center; width: 90%; max-width: 600px;
         }
         .obstacle-item {
-            background: rgba(255, 255, 255, 0.95); padding: 30px;
-            border-radius: 20px; box-shadow: 0 15px 40px rgba(0,0,0,0.2);
-            border-left: 8px solid #2c3e50; animation: slideUp 0.8s ease-out;
+            background: rgba(255, 255, 255, 0.98); padding: 30px;
+            border-radius: 20px; box-shadow: 0 15px 50px rgba(0,0,0,0.3);
+            border-top: 10px solid #c0392b; animation: slideUp 0.6s ease-out;
         }
+        h3 { color: #c0392b; margin-top: 0; font-size: 1.5rem; }
+        p { font-size: 1.1rem; color: #333; line-height: 1.4; }
+        .decision-buttons { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 20px; }
         .btn-decision {
-            padding: 12px 20px; margin: 10px; border-radius: 25px;
-            border: 1px solid #2c3e50; background: white;
-            cursor: pointer; transition: 0.3s; font-weight: bold;
+            padding: 12px 25px; border-radius: 30px;
+            border: 2px solid #2c3e50; background: white;
+            cursor: pointer; transition: 0.3s; font-weight: bold; color: #2c3e50;
         }
         .btn-decision:hover { background: #2c3e50; color: white; }
-        @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        #feedback-text { margin-top: 20px; font-style: italic; color: #16a085; min-height: 40px; }
+        @keyframes slideUp { from { transform: translateY(100px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     </style>
 </head>
 <body>
     <div class="obstacle-overlay">
         <div id="obstacle-card" class="obstacle-item">
-            <h3 id="obs-title">Un obstáculo en tu camino</h3>
-            <p id="obs-desc">¿Cómo deseas proceder?</p>
-            <div class="decision-buttons">
-                <button class="btn-decision" onclick="decidir('Despejar el camino')">Despejar</button>
-                <button class="btn-decision" onclick="decidir('Rodear el problema')">Rodear</button>
-            </div>
-            <p id="feedback-text" style="margin-top:20px; font-weight:bold; color:#2c3e50;"></p>
+            <h3 id="obs-title">Cargando desafío...</h3>
+            <p id="obs-desc">La Vida Continúa está evaluando el camino.</p>
+            <div id="buttons-container" class="decision-buttons">
+                </div>
+            <p id="feedback-text"></p>
         </div>
     </div>
     <audio id="audio-feedback" style="display:none;"></audio>
 
     <script>
-        async function decidir(opcion) {
-            const lang = localStorage.getItem('kmz_lang') || 'en';
-            const promptIA = `El usuario eligió la opción '${opcion}' ante un obstáculo. Dame una frase de sabiduría breve sobre esta elección en ${lang}.`;
+        const lang = localStorage.getItem('kmz_lang') || 'es';
+
+        async function cargarObstaculo() {
+            const res = await fetch(`/api/get_obstaculo?lang=${lang}`);
+            const data = await res.json();
             
-            const res = await fetch(`/api/get_ai_feedback?prompt=${encodeURIComponent(promptIA)}`);
+            document.getElementById('obs-title').innerText = data.tipo;
+            document.getElementById('obs-desc').innerText = data.descripcion;
+            
+            // Creamos los botones basados en el JSON
+            const container = document.getElementById('buttons-container');
+            container.innerHTML = "";
+            // Usamos las opciones que vienen del servidor (basadas en tu almacen_contenido.json)
+            const opciones = ["Corregir", "Rodear", "Esperar"]; 
+            
+            opciones.forEach(opc => {
+                const btn = document.createElement('button');
+                btn.className = 'btn-decision';
+                btn.innerText = opc;
+                btn.onclick = () => decidir(opc, data.tipo);
+                container.appendChild(btn);
+            });
+        }
+
+        async function decidir(opcion, tipoObstaculo) {
+            document.getElementById('buttons-container').style.pointerEvents = 'none';
+            document.getElementById('feedback-text').innerText = "La Vida Continúa reflexiona...";
+
+            const promptIA = `El usuario eligió '${opcion}' ante el obstáculo de '${tipoObstaculo}'. Dame una respuesta de sabiduría muy breve, de asesor, que valide su decisión y le dé peso.`;
+            
+            const res = await fetch(`/api/get_ai_feedback?prompt=${encodeURIComponent(promptIA)}&lang=${lang}`);
             const data = await res.json();
             
             document.getElementById('feedback-text').innerText = data.texto;
             
             const audio = document.getElementById('audio-feedback');
-            audio.src = `/api/get_audio?text=${encodeURIComponent(data.texto)}`;
+            audio.src = data.audio_url;
             audio.play();
 
             setTimeout(() => {
-                document.getElementById('obstacle-card').style.opacity = '0';
-                setTimeout(() => { window.parent.postMessage('obstaculo_superado', '*'); }, 1000);
-            }, 5000);
+                window.parent.postMessage('obstaculo_superado', '*');
+            }, 6000);
         }
+
+        window.onload = cargarObstaculo;
     </script>
 </body>
 </html>
