@@ -1,116 +1,148 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AL CIELO - La Vida Continúa</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
-        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; font-family: 'Segoe UI', sans-serif; background: #000; }
         
         #map { 
-            height: 100vh; 
-            width: 100%; 
-            filter: sepia(0.2) saturate(1.2) contrast(0.9) brightness(1.05);
+            height: 100vh; width: 100%; 
+            filter: sepia(0.3) saturate(1.1) brightness(0.9);
             z-index: 1;
         }
 
         #text-container {
             position: absolute;
-            top: 5%;
-            left: 50%;
+            top: 20px; left: 50%;
             transform: translateX(-50%);
-            width: 85%;
-            max-width: 850px;
-            background: rgba(255, 255, 255, 0.9); 
-            padding: 25px;
-            border-radius: 20px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            width: 90%; max-width: 800px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             z-index: 2000;
             text-align: center;
-            font-size: 1.5rem;
-            color: #1a1a1a;
-            line-height: 1.5;
+            min-height: 100px;
         }
+
+        #typewriter {
+            font-size: 1.2rem;
+            color: #222;
+            line-height: 1.6;
+            display: block;
+            margin-bottom: 15px;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .btn-delete { background: #ff4444; color: white; }
+        .btn-action { background: #444; color: white; }
+        .btn-pdf { background: #28a745; color: white; }
 
         .walker-icon {
-            font-size: 40px;
-            text-align: center;
-            animation: bounce 1.2s infinite ease-in-out;
+            font-size: 45px;
+            animation: moveIcon 2s infinite ease-in-out;
         }
 
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+        @keyframes moveIcon {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-12px) rotate(5deg); }
         }
     </style>
 </head>
 <body>
 
-    <div id="text-container"><span id="typewriter"></span></div>
-    <div id="map"></div>
+    <div id="text-container">
+        <div id="typewriter">Cargando sabiduría...</div>
+        <div class="controls">
+            <button class="btn-delete" onclick="borrarDatos()">BORRAR</button>
+            <button class="btn-action" onclick="cambiarIdioma()">ES / EN</button>
+            <button class="btn-pdf" onclick="window.print()">PDF</button>
+        </div>
+    </div>
 
+    <div id="map"></div>
     <audio id="voice-player" style="display:none;"></audio>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // Recuperar idioma seleccionado en el index
-        const userLang = localStorage.getItem('kmz_lang') || 'en';
+        let userLang = localStorage.getItem('kmz_lang') || 'es';
+        const lat = 25.7617, lng = -80.1918;
 
-        const lat = {{ latitud|default(25.7617) }}; 
-        const lng = {{ longitud|default(-80.1918) }};
-
-        const map = L.map('map', {
-            zoomControl: false,
-            attributionControl: false,
-            dragging: false,
-            scrollWheelZoom: false
-        }).setView([lat, lng], 17);
-
+        const map = L.map('map', { zoomControl: false, dragging: false }).setView([lat, lng], 17);
         L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png').addTo(map);
 
         const marker = L.marker([lat, lng], {
-            icon: L.divIcon({ 
-                className: 'custom-div-icon', 
-                html: "<div class='walker-icon'>🚶‍♂️</div>", 
-                iconSize: [40, 50] 
-            })
+            icon: L.divIcon({ className: 'custom-icon', html: "<div class='walker-icon'>🚶‍♂️</div>", iconSize: [40, 50] })
         }).addTo(map);
 
         async function cargarNuevaExperiencia() {
-            // Conexión corregida al endpoint del main.py con el idioma
-            const response = await fetch(`/api/get_content?lang=${userLang}`);
-            const data = await response.json();
-            
-            const displayElement = document.getElementById('typewriter');
-            const audioPlayer = document.getElementById('voice-player');
-            
-            displayElement.innerHTML = ""; 
-            let i = 0;
-            const textoFull = data.texto + " ... " + data.reflexion;
-
-            function typeWriter() {
-                if (i < textoFull.length) {
-                    displayElement.innerHTML += textoFull.charAt(i);
-                    i++;
-                    setTimeout(typeWriter, 45); 
-                } else {
-                    // Al terminar de escribir, suena la voz masculina Onyx
-                    audioPlayer.src = data.audio_url;
-                    audioPlayer.play();
+            try {
+                // Conectamos con el endpoint que definimos en main.py
+                const response = await fetch(`/api/get_story?lang=${userLang}`);
+                const data = await response.json();
+                
+                const display = document.getElementById('typewriter');
+                const player = document.getElementById('voice-player');
+                
+                // Efecto de escritura
+                display.innerHTML = "";
+                let i = 0;
+                function type() {
+                    if (i < data.texto.length) {
+                        display.innerHTML += data.texto.charAt(i);
+                        i++;
+                        setTimeout(type, 30);
+                    } else {
+                        player.src = data.audio_url;
+                        player.play();
+                    }
                 }
+                type();
+            } catch (e) {
+                document.getElementById('typewriter').innerText = "La conexión es el primer paso. Respira.";
             }
-            typeWriter();
         }
 
-        window.onload = cargarNuevaExperiencia;
+        function borrarDatos() {
+            document.getElementById('typewriter').innerHTML = "Memoria liberada. El camino vuelve a empezar.";
+            document.getElementById('voice-player').pause();
+            setTimeout(() => location.reload(), 2000);
+        }
 
-        let currentLat = lat;
+        function cambiarIdioma() {
+            userLang = (userLang === 'es') ? 'en' : 'es';
+            localStorage.setItem('kmz_lang', userLang);
+            cargarNuevaExperiencia();
+        }
+
+        // Movimiento del mapa
+        let cLat = lat;
         setInterval(() => {
-            currentLat += 0.00008; 
-            marker.setLatLng([currentLat, lng]);
-            map.panTo([currentLat, lng], {animate: true, duration: 2});
+            cLat += 0.00005;
+            marker.setLatLng([cLat, lng]);
+            map.panTo([cLat, lng]);
         }, 3000);
 
-        // Cada 3 minutos cambia la historia para mantener el flujo de 10 min
+        window.onload = cargarNuevaExperiencia;
+        // Cambia historia cada 3 minutos
         setInterval(cargarNuevaExperiencia, 180000);
     </script>
 </body>
