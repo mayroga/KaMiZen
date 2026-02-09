@@ -4,7 +4,7 @@ import random
 import time
 import stripe
 import openai
-import google.generativeai as genai
+from google import genai
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 
 app = Flask(__name__)
@@ -38,7 +38,13 @@ def obtener_reflexion_ia(texto_base, idioma):
         return response.choices[0].message.content
     except:
         # Respaldo: Gemini
-        model = genai.GenerativeModel('gemini-pro')
+client = genai.Client()
+res = client.models.generate_content(
+    model="gemini-1.5-pro",
+    contents=prompt
+)
+return res.text
+
         res = model.generate_content(prompt)
         return res.text
 
