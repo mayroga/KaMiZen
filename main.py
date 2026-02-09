@@ -6,26 +6,59 @@ app.secret_key = os.getenv("ADMIN_PASSWORD", "kmz_2026_prod")
 
 client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-# --- Carga de Sabiduría ---
+# --- Configuración Admin y Stripe ---
+ADMIN_USERNAME = os.getenv("ADMIN_USERNAME", "admin")
+ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "kmz_2026_prod")
+STRIPE_PUBLISHABLE_KEY = os.getenv("STRIPE_PUBLISHABLE_KEY")
+
 def cargar_almacen():
     try:
         with open('almacen_contenido.json', 'r', encoding='utf-8') as f:
             return json.load(f)
-    except Exception:
+    except:
         return {"biblioteca": {"triunfo_riqueza": [], "historias_largas_sabiduria": []}}
 
-# --- Navegación y Flujo ---
 @app.route('/')
 def index():
-    return render_template('index.html', role=session.get('role', 'client'))
+    return render_template('index.html', stripe_key=STRIPE_PUBLISHABLE_KEY, role=session.get('role', 'client'))
+
+@app.route('/login', methods=['POST'])
+def login():
+    user = request.form.get('username')
+    pw = request.form.get('password')
+    if user == ADMIN_USERNAME and pw == ADMIN_PASSWORD:
+        session['access_granted'] = True
+        session['role'] = 'admin'
+        session['start_time'] = time.time()
+        return redirect(url_for('servicio'))
+    return redirect(url_for('index')) # Sin mensajes de error según el manual
+
+@app.route('/create-checkout-session', methods=['POST'])
+def create_checkout():
+    try:
+        checkout_session = stripe.checkout.Session.create(
+            payment_method_types=['card'],
+            line_items=[{'price_data': {'currency': 'usd', 'product_data': {'name': 'KaMiZen Session'}, 'unit_amount': 499}, 'quantity': 1}],
+            mode='payment',
+            success_url=url_for('pago_exitoso', _external=True),
+            cancel_url=url_for('index', _external=True),
+        )
+        return jsonify({'id': checkout_session.id})
+    except Exception as e:
+        return jsonify(error="Error de proceso"), 403
+
+@app.route('/pago_exitoso')
+def pago_exitoso():
+    session['access_granted'] = True
+    session['role'] = 'client'
+    session['start_time'] = time.time()
+    session['used_items'] = []
+    return redirect(url_for('servicio'))
 
 @app.route('/servicio')
 def servicio():
     if not session.get('access_granted'):
         return redirect(url_for('index'))
-    # Iniciamos el conteo de los 10 minutos si no existe
-    if 'start_time' not in session:
-        session['start_time'] = time.time()
     return render_template('escenario_mapa.html')
 
 @app.route('/bienestar_final')
@@ -34,46 +67,34 @@ def bienestar_final():
         return redirect(url_for('index'))
     return render_template('bienestar_final.html')
 
-@app.route('/logout')
-def logout():
-    session.clear() # Regla 5 y 15: Estado limpio siempre
-    return redirect(url_for('index'))
-
-# --- API de Contenido Dinámico ---
 @app.route('/api/get_event')
 def get_event():
-    # Verificar si el tiempo de sesión (10 min) ha expirado
+    # Control de tiempo: 10 minutos (600 segundos)
     elapsed = time.time() - session.get('start_time', time.time())
-    if elapsed > 600: # 10 minutos
+    if elapsed > 600:
         return jsonify({"redirect": "/bienestar_final"})
 
     lang = request.args.get('lang', 'en')
     almacen = cargar_almacen()
-    
-    # Lógica de no repetición dentro de la sesión
-    if 'used_ids' not in session: session['used_ids'] = []
-    
-    pool = [h for h in almacen['biblioteca']['historias_largas_sabiduria'] if h['id'] not in session['used_ids']]
-    if not pool: pool = almacen['biblioteca']['historias_largas_sabiduria']
-    
-    item = random.choice(pool)
-    session['used_ids'].append(item['id'])
-    session.modified = True
-
-    prompt = f"Eres KaMiZen. Adapta esta historia al idioma {lang} con voz masculina y sabia: {item['texto']}"
+    item = random.choice(almacen['biblioteca']['triunfo_riqueza'] + almacen['biblioteca']['historias_largas_sabiduria'])
     
     response = client.chat.completions.create(
         model="gpt-4o",
-        messages=[{"role": "system", "content": "Voz sabia, sin listas, sin mencionar que eres IA."},
-                  {"role": "user", "content": prompt}]
+        messages=[{"role": "system", "content": "Eres KaMiZen. Voz masculina sabia. No IA. Sin listas."},
+                  {"role": "user", "content": f"Idioma {lang}: {item['texto']}"}]
     )
-    return jsonify({"contenido": response.choices[0].message.content, "redirect": None})
+    return jsonify({"contenido": response.choices[0].message.content})
 
 @app.route('/api/get_audio')
 def get_audio():
     text = request.args.get('text', '')
     response = client.audio.speech.create(model="tts-1-hd", voice="onyx", input=text)
     return response.content, 200, {'Content-Type': 'audio/mpeg'}
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('index'))
 
 if __name__ == '__main__':
     app.run(debug=False)
