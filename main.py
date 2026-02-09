@@ -102,7 +102,15 @@ def get_audio():
         return response.content, 200, {'Content-Type': 'audio/mpeg'}
     except:
         return "", 404
-
+@app.route('/api/get_ai_feedback')
+def get_ai_feedback():
+    prompt = request.args.get('prompt', '')
+    lang = request.args.get('lang', 'es')
+    texto = obtener_ia(prompt, lang)
+    return jsonify({
+        "texto": texto,
+        "audio_url": url_for('get_audio', text=texto)
+    })
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 10000))
     app.run(host='0.0.0.0', port=port)
