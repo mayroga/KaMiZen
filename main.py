@@ -1,94 +1,44 @@
-import os
-import json
-import random
-import time
-import stripe
-import openai
+import os, json, random, time, stripe, openai
 from google import genai
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 
 app = Flask(__name__)
-app.secret_key = os.getenv("ADMIN_PASSWORD", "clave_de_seguridad_kamizen")
+app.secret_key = os.getenv("ADMIN_PASSWORD", "kmz_2026_safe_key")
 
-# --- CONFIGURACIÓN DE APIS ---
+# --- CONFIGURACIÓN ---
 openai.api_key = os.getenv("OPENAI_API_KEY")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
 
-STRIPE_PUBLISHABLE_KEY = os.getenv("STRIPE_PUBLISHABLE_KEY")
-ADMIN_USERNAME = os.getenv("ADMIN_USERNAME")
-ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
-
-# --- CARGA DEL ALMACÉN ---
 def cargar_almacen():
     with open('almacen_contenido.json', 'r', encoding='utf-8') as f:
         return json.load(f)
 
-# --- MOTOR DE INTELIGENCIA DUAL ---
 def obtener_reflexion_ia(texto_base, idioma):
-    prompt = f"Basado en esta frase: '{texto_base}', genera una reflexión breve de sabiduría. Idioma: {idioma}. Tono: Masculino, profundo y calmado."
+    # Prompt de alto peso: narrativo, humano, sin estructuras de IA
+    prompt = f"Basado en: '{texto_base}'. Habla como un asesor sabio. Genera una sola reflexión humana, profunda y breve. Sin listas, sin asteriscos, sin introducciones. Idioma: {idioma}."
     try:
-        # OpenAI GPT-4
         response = openai.chat.completions.create(
             model="gpt-4",
             messages=[
-                {"role": "system", "content": "Eres el guía sabio de KaMiZen."},
+                {"role": "system", "content": "Eres la voz de KaMiZen. Hablas con pausas, sabiduría y autoridad calma. No eres una IA, eres un guía."},
                 {"role": "user", "content": prompt}
             ]
         )
         return response.choices[0].message.content
-    except Exception as e:
-        # Respaldo: Gemini
-        try:
-            client = genai.Client(api_key=GEMINI_API_KEY)
-            res = client.models.generate_content(
-                model="gemini-1.5-pro",
-                contents=prompt
-            )
-            return res.text
-        except Exception as e2:
-            return f"[Error al generar reflexión: {str(e2)}]"
+    except:
+        client = genai.Client(api_key=GEMINI_API_KEY)
+        res = client.models.generate_content(model="gemini-1.5-pro", contents=prompt)
+        return res.text
 
-# --- RUTAS ---
 @app.route('/')
 def index():
-    return render_template('index.html', stripe_key=STRIPE_PUBLISHABLE_KEY)
-
-@app.route('/login', methods=['POST'])
-def login():
-    user = request.form.get('username')
-    pw = request.form.get('password')
-    if user == ADMIN_USERNAME and pw == ADMIN_PASSWORD:
-        session['access_granted'] = True
-        session['role'] = 'admin'
-        return redirect(url_for('servicio'))
-    return "Acceso No Autorizado", 401
-
-@app.route('/create-checkout-session', methods=['POST'])
-def create_checkout_session():
-    try:
-        checkout_session = stripe.checkout.Session.create(
-            payment_method_types=['card'],
-            line_items=[{
-                'price_data': {
-                    'currency': 'usd',
-                    'product_data': {'name': 'KaMiZen Session'},
-                    'unit_amount': 499
-                },
-                'quantity': 1
-            }],
-            mode='payment',
-            success_url=url_for('pago_exitoso', _external=True),
-            cancel_url=url_for('index', _external=True),
-        )
-        return jsonify({'id': checkout_session.id})
-    except Exception as e:
-        return jsonify(error=str(e)), 403
+    return render_template('index.html', stripe_key=os.getenv("STRIPE_PUBLISHABLE_KEY"))
 
 @app.route('/pago-exitoso')
 def pago_exitoso():
+    session.clear() # Limpieza preventiva
     session['access_granted'] = True
-    session['role'] = 'client'
     session['start_time'] = time.time()
     return redirect(url_for('servicio'))
 
@@ -102,29 +52,18 @@ def servicio():
 def get_content():
     idioma = request.args.get('lang', 'en')
     almacen = cargar_almacen()
-    categoria = random.choice(list(almacen['biblioteca'].keys()))
-    item = random.choice(almacen['biblioteca'][categoria])
+    # Selección de peso: historias largas o triunfos
+    cat = random.choice(['triunfo_riqueza', 'historias_largas_sabiduria'])
+    item = random.choice(almacen['biblioteca'][cat])
     
     reflexion = obtener_reflexion_ia(item['texto'], idioma)
-    
-    return jsonify({
-        "texto": item['texto'],
-        "reflexion": reflexion,
-        "audio_url": url_for('get_audio', text=reflexion)
-    })
+    return jsonify({"texto": item['texto'], "reflexion": reflexion})
 
 @app.route('/api/get_audio')
 def get_audio():
     text = request.args.get('text', '')
-    try:
-        response = openai.audio.speech.create(
-            model="tts-1-hd",
-            voice="onyx",
-            input=text
-        )
-        return response.content, 200, {'Content-Type': 'audio/mpeg'}
-    except Exception as e:
-        return f"[Error al generar audio: {str(e)}]", 500
+    response = openai.audio.speech.create(model="tts-1-hd", voice="onyx", input=text)
+    return response.content, 200, {'Content-Type': 'audio/mpeg'}
 
 if __name__ == '__main__':
     app.run(debug=False)
