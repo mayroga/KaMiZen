@@ -15,52 +15,29 @@
         }
 
         #text-container {
-            position: absolute;
-            top: 20px; left: 50%;
-            transform: translateX(-50%);
-            width: 90%; max-width: 800px;
-            background: rgba(255, 255, 255, 0.95);
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            z-index: 2000;
-            text-align: center;
-            min-height: 100px;
+            position: absolute; top: 20px; left: 50%;
+            transform: translateX(-50%); width: 90%; max-width: 800px;
+            background: rgba(255, 255, 255, 0.95); padding: 20px;
+            border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            z-index: 2000; text-align: center; min-height: 100px;
         }
 
-        #typewriter {
-            font-size: 1.2rem;
-            color: #222;
-            line-height: 1.6;
-            display: block;
-            margin-bottom: 15px;
-        }
+        #typewriter { font-size: 1.2rem; color: #222; line-height: 1.6; display: block; margin-bottom: 15px; }
 
-        .controls {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 10px;
+        /* Contenedor del Obstáculo (Iframe) */
+        #obstacle-frame-container {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7); display: none; z-index: 4000;
         }
+        iframe { width: 100%; height: 100%; border: none; }
 
-        button {
-            padding: 8px 15px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: 0.3s;
-        }
-
+        .controls { display: flex; justify-content: center; gap: 10px; margin-top: 10px; }
+        button { padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; transition: 0.3s; }
         .btn-delete { background: #ff4444; color: white; }
         .btn-action { background: #444; color: white; }
         .btn-pdf { background: #28a745; color: white; }
 
-        .walker-icon {
-            font-size: 45px;
-            animation: moveIcon 2s infinite ease-in-out;
-        }
-
+        .walker-icon { font-size: 45px; animation: moveIcon 2s infinite ease-in-out; }
         @keyframes moveIcon {
             0%, 100% { transform: translateY(0) rotate(0deg); }
             50% { transform: translateY(-12px) rotate(5deg); }
@@ -78,6 +55,10 @@
         </div>
     </div>
 
+    <div id="obstacle-frame-container">
+        <iframe id="obs-iframe" src=""></iframe>
+    </div>
+
     <div id="map"></div>
     <audio id="voice-player" style="display:none;"></audio>
 
@@ -85,6 +66,8 @@
     <script>
         let userLang = localStorage.getItem('kmz_lang') || 'es';
         const lat = 25.7617, lng = -80.1918;
+        let cLat = lat;
+        let movimientoActivo = true;
 
         const map = L.map('map', { zoomControl: false, dragging: false }).setView([lat, lng], 17);
         L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png').addTo(map);
@@ -94,15 +77,13 @@
         }).addTo(map);
 
         async function cargarNuevaExperiencia() {
+            if (!movimientoActivo) return;
             try {
-                // Conectamos con el endpoint que definimos en main.py
                 const response = await fetch(`/api/get_story?lang=${userLang}`);
                 const data = await response.json();
-                
                 const display = document.getElementById('typewriter');
                 const player = document.getElementById('voice-player');
                 
-                // Efecto de escritura
                 display.innerHTML = "";
                 let i = 0;
                 function type() {
@@ -116,10 +97,29 @@
                     }
                 }
                 type();
-            } catch (e) {
-                document.getElementById('typewriter').innerText = "La conexión es el primer paso. Respira.";
-            }
+            } catch (e) { console.error("Error cargando historia"); }
         }
+
+        // --- LÓGICA DE OBSTÁCULOS ---
+        function activarObstaculo() {
+            movimientoActivo = false; // Detenemos al caminante
+            document.getElementById('voice-player').pause();
+            const container = document.getElementById('obstacle-frame-container');
+            const iframe = document.getElementById('obs-iframe');
+            
+            iframe.src = "/templates/obstaculos_dinamicos.html"; // Asegúrate que esta ruta sea accesible
+            container.style.display = "block";
+        }
+
+        // Escuchar cuando el obstáculo sea superado
+        window.addEventListener('message', (event) => {
+            if (event.data === 'obstaculo_superado') {
+                document.getElementById('obstacle-frame-container').style.display = "none";
+                document.getElementById('obs-iframe').src = "";
+                movimientoActivo = true; // El caminante sigue
+                cargarNuevaExperiencia();
+            }
+        });
 
         function borrarDatos() {
             document.getElementById('typewriter').innerHTML = "Memoria liberada. El camino vuelve a empezar.";
@@ -133,17 +133,22 @@
             cargarNuevaExperiencia();
         }
 
-        // Movimiento del mapa
-        let cLat = lat;
+        // Movimiento constante
         setInterval(() => {
-            cLat += 0.00005;
-            marker.setLatLng([cLat, lng]);
-            map.panTo([cLat, lng]);
+            if (movimientoActivo) {
+                cLat += 0.00005;
+                marker.setLatLng([cLat, lng]);
+                map.panTo([cLat, lng]);
+            }
         }, 3000);
 
         window.onload = cargarNuevaExperiencia;
-        // Cambia historia cada 3 minutos
+        
+        // Cada 3 minutos cambia la historia
         setInterval(cargarNuevaExperiencia, 180000);
+
+        // LANZAR OBSTÁCULO: Por ejemplo, a los 45 segundos de iniciar
+        setTimeout(activarObstaculo, 45000);
     </script>
 </body>
 </html>
