@@ -3,103 +3,57 @@
 <head>
     <style>
         .obstacle-overlay {
-            position: absolute;
-            top: 20%;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 3000;
-            text-align: center;
-            width: 90%;
+            position: absolute; top: 25%; left: 50%;
+            transform: translateX(-50%); z-index: 3000;
+            text-align: center; width: 85%;
         }
-
         .obstacle-item {
-            background: rgba(255, 255, 255, 0.9);
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-            border-left: 5px solid #80cbc4;
-            display: none; /* Aparece solo cuando el Main lo ordena */
-            animation: slideUp 0.8s ease-out;
+            background: rgba(255, 255, 255, 0.95); padding: 30px;
+            border-radius: 20px; box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+            border-left: 8px solid #2c3e50; animation: slideUp 0.8s ease-out;
         }
-
-        .decision-buttons {
-            margin-top: 20px;
-            display: flex;
-            justify-content: space-around;
-        }
-
         .btn-decision {
-            padding: 10px 25px;
-            border-radius: 20px;
-            border: 1px solid #b2dfdb;
-            background: white;
-            cursor: pointer;
-            font-family: 'Segoe UI', sans-serif;
-            transition: 0.3s;
+            padding: 12px 20px; margin: 10px; border-radius: 25px;
+            border: 1px solid #2c3e50; background: white;
+            cursor: pointer; transition: 0.3s; font-weight: bold;
         }
-
-        .btn-decision:hover { background: #e0f2f1; }
-
-        @keyframes slideUp {
-            from { transform: translateY(50px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        #feedback-text {
-            margin-top: 15px;
-            font-style: italic;
-            color: #455a64;
-            min-height: 20px;
-        }
+        .btn-decision:hover { background: #2c3e50; color: white; }
+        @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     </style>
 </head>
 <body>
-
     <div class="obstacle-overlay">
         <div id="obstacle-card" class="obstacle-item">
-            <p id="obstacle-description">{{ descripcion_obstaculo }}</p>
-            
+            <h3 id="obs-title">Un obstáculo en tu camino</h3>
+            <p id="obs-desc">¿Cómo deseas proceder?</p>
             <div class="decision-buttons">
-                <button class="btn-decision" onclick="decidir('quitar')">Despejar</button>
-                <button class="btn-decision" onclick="decidir('rodear')">Rodear</button>
-                <button class="btn-decision" onclick="decidir('observar')">Observar</button>
+                <button class="btn-decision" onclick="decidir('Despejar el camino')">Despejar</button>
+                <button class="btn-decision" onclick="decidir('Rodear el problema')">Rodear</button>
             </div>
-            
-            <p id="feedback-text"></p>
+            <p id="feedback-text" style="margin-top:20px; font-weight:bold; color:#2c3e50;"></p>
         </div>
     </div>
+    <audio id="audio-feedback" style="display:none;"></audio>
 
     <script>
-        // Respuestas inteligentes basadas en bienestar biopsicosocial
-        const respuestas = {
-            quitar: "Has decidido actuar. Tu voluntad transforma el entorno.",
-            rodear: "La flexibilidad es una forma de sabiduría; no todo requiere lucha.",
-            observar: "En la pausa hay poder. Contemplar el camino también es avanzar."
-        };
-
-        // El Main.py activa este obstáculo tras 5 minutos de sesión
-        function mostrarObstaculo() {
-            document.getElementById('obstacle-card').style.display = 'block';
-        }
-
-        function decidir(tipo) {
-            const feedback = document.getElementById('feedback-text');
-            feedback.innerText = respuestas[tipo];
+        async function decidir(opcion) {
+            const lang = localStorage.getItem('kmz_lang') || 'en';
+            const promptIA = `El usuario eligió la opción '${opcion}' ante un obstáculo. Dame una frase de sabiduría breve sobre esta elección en ${lang}.`;
             
-            // La voz masculina acompaña la respuesta (Regla 12)
-            reproducirVozRespuesta(tipo);
+            const res = await fetch(`/api/get_ai_feedback?prompt=${encodeURIComponent(promptIA)}`);
+            const data = await res.json();
+            
+            document.getElementById('feedback-text').innerText = data.texto;
+            
+            const audio = document.getElementById('audio-feedback');
+            audio.src = `/api/get_audio?text=${encodeURIComponent(data.texto)}`;
+            audio.play();
 
-            // El obstáculo se desvanece suavemente tras la decisión
             setTimeout(() => {
                 document.getElementById('obstacle-card').style.opacity = '0';
-                setTimeout(() => {
-                    document.getElementById('obstacle-card').style.display = 'none';
-                    // Notificar al Main para continuar con la progresión
-                }, 1000);
-            }, 3000);
+                setTimeout(() => { window.parent.postMessage('obstaculo_superado', '*'); }, 1000);
+            }, 5000);
         }
-
-        window.onload = () => setTimeout(mostrarObstaculo, 3000);
     </script>
 </body>
 </html>
