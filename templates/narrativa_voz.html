@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .narrative-container {
+            position: absolute;
+            bottom: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            text-align: center;
+            z-index: 2000;
+            pointer-events: none; /* No interfiere con el mapa */
+        }
+
+        .subtitle-text {
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 1.4rem;
+            color: #2c3e50;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 15px 30px;
+            border-radius: 30px;
+            display: inline-block;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            backdrop-filter: blur(5px);
+            opacity: 0;
+            transition: opacity 2s ease-in-out; /* Aparición suave */
+        }
+
+        .active { opacity: 1; }
+    </style>
+</head>
+<body>
+
+    <div class="narrative-container">
+        <div id="narrative-box" class="subtitle-text"></div>
+    </div>
+
+    <script>
+        // Datos inyectados por el Main.py (Bolsa de contenido)
+        const historia = {
+            texto: "{{ relato_texto }}", // Ej: "Había un hombre que alcanzó la cima..."
+            audio_url: "{{ audio_path }}" // Link al archivo .mp3 de voz humana
+        };
+
+        const audio = new Audio(historia.audio_url);
+        const box = document.getElementById('narrative-box');
+
+        // Función para iniciar la historia (Regla 12: Pausas reales)
+        function iniciarRelato() {
+            setTimeout(() => {
+                audio.play();
+                box.innerText = historia.texto;
+                box.classList.add('active');
+            }, 2000); // Pequeño silencio al inicio para generar calma
+        }
+
+        // Al terminar el audio, el Main.py recibirá una señal para pasar a la siguiente fase
+        audio.onended = function() {
+            box.classList.remove('active');
+            // Aquí se enviaría la señal de "Escena Completada"
+        };
+
+        window.onload = iniciarRelato;
+    </script>
+</body>
+</html>
