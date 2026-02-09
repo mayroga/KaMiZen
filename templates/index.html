@@ -1,72 +1,51 @@
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
-<meta charset="UTF-8">
-<title>KaMiZen – Acceso</title>
-<link rel="stylesheet" href="/static/style.css">
-<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
-<style>
-  body { margin:0; padding:0; font-family:"Segoe UI", sans-serif; background:#f5f5f5; text-align:center; }
-  #loginBox { max-width:400px; margin:50px auto; padding:20px; background:white; border-radius:10px; box-shadow:0 0 10px rgba(0,0,0,0.2); }
-  input, button { width:90%; padding:10px; margin:5px 0; font-size:1em; }
-  #gameArea { display:none; }
-  #map { height:400px; margin:20px 0; border-radius:10px; }
-  #avatar { position:absolute; width:50px; height:50px; background:red; border-radius:50%; pointer-events:none; transition: all 0.3s ease; }
-  #levelButtons button { margin:5px; padding:10px 20px; font-size:1em; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KaMiZen | Access</title>
+    <script src="https://js.stripe.com/v3/"></script>
+    <style>
+        body { font-family: 'Helvetica Neue', Arial; background: #eef2f3; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .card { background: white; padding: 40px; border-radius: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); text-align: center; width: 320px; }
+        .lang-btn { position: absolute; top: 20px; right: 20px; padding: 8px 15px; cursor: pointer; border-radius: 20px; border: 1px solid #2c3e50; background: transparent; font-weight: bold; }
+        .pay-btn { background: #2c3e50; color: white; width: 100%; padding: 15px; border: none; border-radius: 12px; cursor: pointer; font-size: 16px; margin-top: 25px; }
+        .admin-trigger { margin-top: 25px; font-size: 11px; color: #bdc3c7; cursor: pointer; }
+        #admin-form { display: none; margin-top: 15px; }
+        input { width: 90%; padding: 10px; margin: 5px 0; border: 1px solid #ddd; border-radius: 8px; }
+    </style>
 </head>
 <body>
-
-<div id="loginBox">
-  <h2>KaMiZen – Acceso</h2>
-
-  <!-- Login Admin / Usuario -->
-  <form id="loginForm">
-    <input type="text" id="username" placeholder="Usuario / Username" required>
-    <input type="password" id="password" placeholder="Contraseña / Password" required>
-    <button type="button" onclick="login()">Entrar</button>
-  </form>
-
-  <hr>
-
-  <!-- Selección de idioma -->
-  <div id="language">
-    <button onclick="setLang('es')">Español</button>
-    <button onclick="setLang('en')">English</button>
-  </div>
-
-  <hr>
-
-  <!-- Precios visibles -->
-  <div id="prices">
-    <h3>Niveles y Precios</h3>
-    <ul>
-      {% for key, lvl in levels.items() %}
-        <li>{{ lvl.name }} – ${{ lvl.price }}</li>
-      {% endfor %}
-    </ul>
-  </div>
-</div>
-
-<!-- Contenedor de juego / mapa -->
-<div id="gameArea">
-  <div id="map"></div>
-  <div id="avatar"></div>
-
-  <div id="levelButtons">
-    {% for key, lvl in levels.items() %}
-      <button onclick="startLevel('{{ key }}')">{{ lvl.name }} – ${{ lvl.price }}</button>
-    {% endfor %}
-  </div>
-</div>
-
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-<script src="/static/app.js"></script>
-<script>
-let lang = "es";
-function setLang(l){
-    lang = l;
-}
-</script>
+    <button class="lang-btn" onclick="toggleLang()" id="lang-btn">ESP</button>
+    <div class="card">
+        <h2 id="t1">KaMiZen</h2>
+        <p id="t2">10 Minutes of Pure Path</p>
+        <button class="pay-btn" onclick="startPayment()" id="t3">Access for $4.99</button>
+        <div class="admin-trigger" onclick="document.getElementById('admin-form').style.display='block'">Admin Access</div>
+        <div id="admin-form">
+            <form action="/login" method="POST">
+                <input type="text" name="username" placeholder="User">
+                <input type="password" name="password" placeholder="Password">
+                <button type="submit" style="background:#bdc3c7; border:none; padding:8px; width:100%; border-radius:8px;">Enter</button>
+            </form>
+        </div>
+    </div>
+    <script>
+        let lang = 'en';
+        const stripe = Stripe('{{ stripe_key }}');
+        function toggleLang() {
+            lang = (lang === 'en') ? 'es' : 'en';
+            document.getElementById('lang-btn').innerText = (lang === 'en') ? 'ESP' : 'ENG';
+            document.getElementById('t1').innerText = (lang === 'en') ? 'KaMiZen' : 'KaMiZen';
+            document.getElementById('t2').innerText = (lang === 'en') ? '10 Minutes of Pure Path' : '10 Minutos de Camino Puro';
+            document.getElementById('t3').innerText = (lang === 'en') ? 'Access for $4.99' : 'Acceder por $4.99';
+            localStorage.setItem('kmz_lang', lang);
+        }
+        async function startPayment() {
+            const res = await fetch('/create-checkout-session', { method: 'POST' });
+            const s = await res.json();
+            stripe.redirectToCheckout({ sessionId: s.id });
+        }
+    </script>
 </body>
 </html>
