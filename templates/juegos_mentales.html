@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .game-container {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 85%;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 25px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+            text-align: center;
+            font-family: 'Segoe UI', sans-serif;
+            z-index: 4000;
+        }
+
+        .level-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            margin-bottom: 15px;
+            background: #e0f2f1;
+            color: #00796b;
+        }
+
+        .challenge-text {
+            font-size: 1.5rem;
+            color: #37474f;
+            margin-bottom: 25px;
+            line-height: 1.4;
+        }
+
+        .btn-reveal {
+            background: #80cbc4;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: 0.3s;
+        }
+
+        .answer-box {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f1f8e9;
+            border-radius: 15px;
+            display: none; /* Oculto hasta que se pide */
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <div class="game-container">
+        <div class="level-badge" id="level-label">{{ nivel }}</div>
+        
+        <div class="challenge-text" id="challenge">
+            {{ reto_contenido }}
+        </div>
+
+        <button class="btn-reveal" onclick="revelarRespuesta()">Ver respuesta y aprendizaje</button>
+
+        <div id="answer-box" class="answer-box">
+            <strong id="correct-answer"></strong>
+            <p id="explanation" style="font-size: 0.9rem; margin-top: 10px;"></p>
+        </div>
+    </div>
+
+    <script>
+        // Datos inyectados dinámicamente para que NUNCA se repitan
+        const data = {
+            respuesta: "{{ respuesta_correcta }}",
+            explicacion: "{{ explicacion_logica }}"
+        };
+
+        function revelarRespuesta() {
+            document.getElementById('correct-answer').innerText = "Respuesta: " + data.respuesta;
+            document.getElementById('explanation').innerText = data.explicacion;
+            document.getElementById('answer-box').style.display = 'block';
+            
+            // La voz masculina explica la lógica suavemente (Regla 12)
+            // reproducirVozExplicacion();
+        }
+    </script>
+</body>
+</html>
