@@ -4,63 +4,114 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
-        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #000; }
-        #map { height: 100vh; width: 100%; filter: saturate(1.1) brightness(1.02); }
-        #text-box {
-            position: absolute; top: 10%; left: 50%; transform: translateX(-50%);
-            width: 80%; background: rgba(255,255,255,0.92); padding: 25px;
-            border-radius: 20px; z-index: 9999; text-align: center;
-            font-size: 1.5rem; color: #1a1a1a; line-height: 1.4; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        
+        #map { 
+            height: 100vh; 
+            width: 100%; 
+            filter: sepia(0.2) saturate(1.2) contrast(0.9) brightness(1.05);
+            z-index: 1;
         }
-        .walker-icon { font-size: 40px; animation: walk 1.5s infinite; }
-        @keyframes walk { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+        #text-container {
+            position: absolute;
+            top: 5%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 85%;
+            max-width: 850px;
+            background: rgba(255, 255, 255, 0.9); 
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            z-index: 2000;
+            text-align: center;
+            font-size: 1.5rem;
+            color: #1a1a1a;
+            line-height: 1.5;
+        }
+
+        .walker-icon {
+            font-size: 40px;
+            text-align: center;
+            animation: bounce 1.2s infinite ease-in-out;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
     </style>
 </head>
 <body>
-    <div id="text-box"><span id="writer"></span></div>
+
+    <div id="text-container"><span id="typewriter"></span></div>
     <div id="map"></div>
-    <audio id="player" style="display:none;"></audio>
+
+    <audio id="voice-player" style="display:none;"></audio>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        const map = L.map('map', { zoomControl:false, dragging:false, scrollWheelZoom:false }).setView([25.7617, -80.1918], 17);
+        // Recuperar idioma seleccionado en el index
+        const userLang = localStorage.getItem('kmz_lang') || 'en';
+
+        const lat = {{ latitud|default(25.7617) }}; 
+        const lng = {{ longitud|default(-80.1918) }};
+
+        const map = L.map('map', {
+            zoomControl: false,
+            attributionControl: false,
+            dragging: false,
+            scrollWheelZoom: false
+        }).setView([lat, lng], 17);
+
         L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png').addTo(map);
-        const marker = L.marker([25.7617, -80.1918], {
-            icon: L.divIcon({ className:'w', html:"<div class='walker-icon'>🚶‍♂️</div>", iconSize:[40,40] })
+
+        const marker = L.marker([lat, lng], {
+            icon: L.divIcon({ 
+                className: 'custom-div-icon', 
+                html: "<div class='walker-icon'>🚶‍♂️</div>", 
+                iconSize: [40, 50] 
+            })
         }).addTo(map);
 
-        async function fluir() {
-            const lang = localStorage.getItem('kmz_lang') || 'en';
-            const res = await fetch(`/api/get_content?lang=${lang}`);
-            const data = await res.json();
+        async function cargarNuevaExperiencia() {
+            // Conexión corregida al endpoint del main.py con el idioma
+            const response = await fetch(`/api/get_content?lang=${userLang}`);
+            const data = await response.json();
             
-            const box = document.getElementById('writer');
-            box.innerHTML = "";
-            let fullText = data.texto + ". " + data.reflexion;
+            const displayElement = document.getElementById('typewriter');
+            const audioPlayer = document.getElementById('voice-player');
+            
+            displayElement.innerHTML = ""; 
             let i = 0;
+            const textoFull = data.texto + " ... " + data.reflexion;
 
-            function type() {
-                if (i < fullText.length) {
-                    box.innerHTML += fullText.charAt(i);
-                    i++; setTimeout(type, 45);
+            function typeWriter() {
+                if (i < textoFull.length) {
+                    displayElement.innerHTML += textoFull.charAt(i);
+                    i++;
+                    setTimeout(typeWriter, 45); 
                 } else {
-                    const audio = document.getElementById('player');
-                    audio.src = `/api/get_audio?text=${encodeURIComponent(data.reflexion)}`;
-                    audio.play();
+                    // Al terminar de escribir, suena la voz masculina Onyx
+                    audioPlayer.src = data.audio_url;
+                    audioPlayer.play();
                 }
             }
-            type();
+            typeWriter();
         }
 
+        window.onload = cargarNuevaExperiencia;
+
+        let currentLat = lat;
         setInterval(() => {
-            const c = marker.getLatLng();
-            const next = [c.lat + 0.00008, c.lng];
-            marker.setLatLng(next);
-            map.panTo(next, {animate:true, duration:2});
+            currentLat += 0.00008; 
+            marker.setLatLng([currentLat, lng]);
+            map.panTo([currentLat, lng], {animate: true, duration: 2});
         }, 3000);
 
-        window.onload = fluir;
-        setInterval(fluir, 180000); // Nueva historia cada 3 min
+        // Cada 3 minutos cambia la historia para mantener el flujo de 10 min
+        setInterval(cargarNuevaExperiencia, 180000);
     </script>
 </body>
 </html>
