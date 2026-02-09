@@ -1,40 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KaMiZen - Al Cielo</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <style>
-        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #000; font-family: 'Segoe UI', sans-serif; }
-        #map { height: 100vh; width: 100%; z-index: 1; filter: sepia(0.2) brightness(0.8); }
-        
-        /* Cuadro de Inicio - Localización */
-        #init-box {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            z-index: 3000; background: white; padding: 30px; border-radius: 20px;
-            text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KaMiZen - Al Cielo</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #000; font-family: 'Segoe UI', sans-serif; }
+#map { height: 100vh; width: 100%; z-index: 1; filter: sepia(0.2) brightness(0.8); }
 
-        #narrative-box {
-            position: absolute; bottom: 15%; left: 50%; transform: translateX(-50%);
-            width: 85%; z-index: 2000; text-align: center;
-            background: rgba(255, 255, 255, 0.9); padding: 25px; border-radius: 15px;
-            display: none; animation: fadeIn 1.5s;
-        }
+/* Cuadro de Inicio - Localización */
+#init-box {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    z-index: 3000; background: white; padding: 30px; border-radius: 20px;
+    text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+}
 
-        .walker { font-size: 50px; text-shadow: 0 0 10px rgba(255,255,255,0.8); }
-        .controls { position: absolute; top: 20px; right: 20px; z-index: 4000; }
-        input { padding: 10px; border-radius: 5px; border: 1px solid #ccc; margin-bottom: 10px; width: 80%; }
-        button { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
-        .btn-main { background: #1a1a1a; color: white; }
-    </style>
+#narrative-box {
+    position: absolute; bottom: 15%; left: 50%; transform: translateX(-50%);
+    width: 85%; z-index: 2000; text-align: center;
+    background: rgba(255, 255, 255, 0.9); padding: 25px; border-radius: 15px;
+    display: none; animation: fadeIn 1.5s;
+}
+
+.walker { font-size: 50px; text-shadow: 0 0 10px rgba(255,255,255,0.8); }
+.controls { position: absolute; top: 20px; right: 20px; z-index: 4000; }
+input { padding: 10px; border-radius: 5px; border: 1px solid #ccc; margin-bottom: 10px; width: 80%; }
+button { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+.btn-main { background: #1a1a1a; color: white; }
+</style>
 </head>
 <body>
 
 <div class="controls">
     <button onclick="cambiarIdioma()" id="lang-btn">ESPAÑOL</button>
-    <button onclick="window.location.href='/'" style="background:red; color:white;">BORRAR</button>
+    <button onclick="window.location.href='/'" style="background:red; color:white;">SALIR</button>
 </div>
 
 <div id="init-box">
@@ -53,27 +53,30 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-    let currentLang = 'en';
-    let map, marker, lat = 25.7617, lng = -80.1918;
+let currentLang = 'en';
+let map, marker, lat = 25.7617, lng = -80.1918;
 
-    function initMap() {
-        map = L.map('map', { zoomControl: false, dragging: false }).setView([lat, lng], 17);
-        L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png').addTo(map);
-        marker = L.marker([lat, lng], { icon: L.divIcon({ className: 'walker', html: "🚶‍♂️" }) }).addTo(map);
-    }
+// Detecta rol del usuario desde Flask session (inyectar en HTML)
+const userRole = "{{ session.get('role', 'client') }}"; // 'admin' o 'client'
 
-    async function empezarViaje() {
-        const loc = document.getElementById('user-loc').value;
-        if(!loc) return alert("Por favor, dinos dónde te encuentras.");
-        
-        document.getElementById('init-box').style.display = 'none';
-        document.getElementById('narrative-box').style.display = 'block';
-        
-        // El mapa "viaja" hacia el bienestar
-        fluirExperiencia();
-    }
+function initMap() {
+    map = L.map('map', { zoomControl: false, dragging: false }).setView([lat, lng], 17);
+    L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png').addTo(map);
+    marker = L.marker([lat, lng], { icon: L.divIcon({ className: 'walker', html: "🚶‍♂️" }) }).addTo(map);
+}
 
-    async function fluirExperiencia() {
+async function empezarViaje() {
+    const loc = document.getElementById('user-loc').value;
+    if(!loc) return alert("Por favor, dinos dónde te encuentras.");
+    
+    document.getElementById('init-box').style.display = 'none';
+    document.getElementById('narrative-box').style.display = 'block';
+    
+    fluirExperiencia();
+}
+
+async function fluirExperiencia() {
+    try {
         const res = await fetch(`/api/get_event?lang=${currentLang}`);
         const data = await res.json();
         
@@ -85,27 +88,32 @@
         player.play();
 
         player.onended = () => {
-            // Pausa de silencio relajante antes del siguiente estímulo (Regla 9)
-            setTimeout(fluirExperiencia, 8000);
+            // Admin/Gratis: salta el delay, Client: 8s de pausa
+            const delay = (userRole === 'admin') ? 1000 : 8000;
+            setTimeout(fluirExperiencia, delay);
         };
+    } catch(e) {
+        console.error("Error en fluirExperiencia:", e);
+        setTimeout(fluirExperiencia, 5000);
     }
+}
 
-    function cambiarIdioma() {
-        currentLang = (currentLang === 'en') ? 'es' : 'en';
-        document.getElementById('lang-btn').innerText = (currentLang === 'en') ? 'ESPAÑOL' : 'ENGLISH';
-        document.getElementById('init-title').innerText = (currentLang === 'en') ? 'Where are you on this path?' : '¿En qué parte del camino te encuentras?';
+function cambiarIdioma() {
+    currentLang = (currentLang === 'en') ? 'es' : 'en';
+    document.getElementById('lang-btn').innerText = (currentLang === 'en') ? 'ESPAÑOL' : 'ENGLISH';
+    document.getElementById('init-title').innerText = (currentLang === 'en') ? 'Where are you on this path?' : '¿En qué parte del camino te encuentras?';
+}
+
+// Movimiento suave del caminante
+setInterval(() => {
+    lat += 0.00003;
+    if(marker) {
+        marker.setLatLng([lat, lng]);
+        map.panTo([lat, lng]);
     }
+}, 3000);
 
-    // Movimiento suave del caminante
-    setInterval(() => {
-        lat += 0.00003;
-        if(marker) {
-            marker.setLatLng([lat, lng]);
-            map.panTo([lat, lng]);
-        }
-    }, 3000);
-
-    window.onload = initMap;
+window.onload = initMap;
 </script>
 </body>
 </html>
