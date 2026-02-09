@@ -8,12 +8,11 @@ from google import genai
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 
 app = Flask(__name__)
-# Usa tu ADMIN_PASSWORD de Render como clave de sesión
 app.secret_key = os.getenv("ADMIN_PASSWORD", "clave_de_seguridad_kamizen")
 
-# --- CONFIGURACIÓN DE APIS DESDE RENDER ---
+# --- CONFIGURACIÓN DE APIS ---
 openai.api_key = os.getenv("OPENAI_API_KEY")
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
 
 STRIPE_PUBLISHABLE_KEY = os.getenv("STRIPE_PUBLISHABLE_KEY")
@@ -29,34 +28,34 @@ def cargar_almacen():
 def obtener_reflexion_ia(texto_base, idioma):
     prompt = f"Basado en esta frase: '{texto_base}', genera una reflexión breve de sabiduría. Idioma: {idioma}. Tono: Masculino, profundo y calmado."
     try:
-        # Intento principal: OpenAI
+        # OpenAI GPT-4
         response = openai.chat.completions.create(
             model="gpt-4",
-            messages=[{"role": "system", "content": "Eres el guía sabio de KaMiZen."},
-                      {"role": "user", "content": prompt}]
+            messages=[
+                {"role": "system", "content": "Eres el guía sabio de KaMiZen."},
+                {"role": "user", "content": prompt}
+            ]
         )
         return response.choices[0].message.content
-    except:
+    except Exception as e:
         # Respaldo: Gemini
-client = genai.Client()
-res = client.models.generate_content(
-    model="gemini-1.5-pro",
-    contents=prompt
-)
-return res.text
-
-        res = model.generate_content(prompt)
-        return res.text
+        try:
+            client = genai.Client(api_key=GEMINI_API_KEY)
+            res = client.models.generate_content(
+                model="gemini-1.5-pro",
+                contents=prompt
+            )
+            return res.text
+        except Exception as e2:
+            return f"[Error al generar reflexión: {str(e2)}]"
 
 # --- RUTAS ---
-
 @app.route('/')
 def index():
     return render_template('index.html', stripe_key=STRIPE_PUBLISHABLE_KEY)
 
 @app.route('/login', methods=['POST'])
 def login():
-    """Acceso Administrativo Gratuito"""
     user = request.form.get('username')
     pw = request.form.get('password')
     if user == ADMIN_USERNAME and pw == ADMIN_PASSWORD:
@@ -70,7 +69,14 @@ def create_checkout_session():
     try:
         checkout_session = stripe.checkout.Session.create(
             payment_method_types=['card'],
-            line_items=[{'price_data': {'currency': 'usd', 'product_data': {'name': 'KaMiZen Session'}, 'unit_amount': 499}, 'quantity': 1}],
+            line_items=[{
+                'price_data': {
+                    'currency': 'usd',
+                    'product_data': {'name': 'KaMiZen Session'},
+                    'unit_amount': 499
+                },
+                'quantity': 1
+            }],
             mode='payment',
             success_url=url_for('pago_exitoso', _external=True),
             cancel_url=url_for('index', _external=True),
@@ -110,12 +116,15 @@ def get_content():
 @app.route('/api/get_audio')
 def get_audio():
     text = request.args.get('text', '')
-    response = openai.audio.speech.create(
-        model="tts-1-hd",
-        voice="onyx", # Voz masculina profunda
-        input=text
-    )
-    return response.content, 200, {'Content-Type': 'audio/mpeg'}
+    try:
+        response = openai.audio.speech.create(
+            model="tts-1-hd",
+            voice="onyx",
+            input=text
+        )
+        return response.content, 200, {'Content-Type': 'audio/mpeg'}
+    except Exception as e:
+        return f"[Error al generar audio: {str(e)}]", 500
 
 if __name__ == '__main__':
     app.run(debug=False)
