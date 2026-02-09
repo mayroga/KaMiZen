@@ -1,8 +1,5 @@
-fastapi
-uvicorn
+flask
 gunicorn
-requests
 stripe
-python-multipart
 openai
-jinja2
+requests
