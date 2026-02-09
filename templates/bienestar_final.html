@@ -1,66 +1,44 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KaMiZen - Bienestar Alcanzado</title>
     <style>
-        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; font-family: 'Segoe UI', sans-serif; }
+        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; font-family: 'Segoe UI', sans-serif; background: #f4f7f6; }
         
         .final-overlay {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(to bottom, rgba(224, 242, 241, 0.4) 0%, rgba(255, 255, 255, 0.9) 100%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 5000;
-            text-align: center;
-            animation: fadeInPage 3s ease-in;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, rgba(224, 242, 241, 0.6) 0%, #ffffff 100%);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            text-align: center; animation: fadeIn 3s ease-in;
         }
 
         .reflection-card {
-            max-width: 80%;
-            padding: 40px;
-            border-radius: 30px;
-            background: white;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.05);
+            max-width: 500px; width: 85%; padding: 40px; border-radius: 2px;
+            background: white; box-shadow: 0 30px 60px rgba(0,0,0,0.05);
         }
 
-        h2 { color: #00796b; font-weight: 300; font-size: 1.8rem; margin-bottom: 20px; }
+        h2 { color: #2c3e50; font-weight: 300; font-size: 1.6rem; margin-bottom: 25px; letter-spacing: 1px; }
         
         textarea {
-            width: 100%;
-            height: 100px;
-            border: 1px solid #e0f2f1;
-            border-radius: 15px;
-            padding: 15px;
-            font-size: 1rem;
-            resize: none;
-            outline: none;
-            margin-top: 15px;
-            background: #fdfdfd;
+            width: 100%; height: 120px; border: 1px solid #eee; border-radius: 0;
+            padding: 15px; font-size: 1rem; resize: none; outline: none;
+            background: #fafafa; box-sizing: border-box; font-style: italic;
         }
 
         .btn-finish {
-            margin-top: 30px;
-            background: #00796b;
-            color: white;
-            border: none;
-            padding: 15px 40px;
-            border-radius: 30px;
-            cursor: pointer;
-            font-size: 1.1rem;
-            transition: 0.3s;
+            margin-top: 30px; background: #1a1a1a; color: white; border: none;
+            padding: 15px 45px; cursor: pointer; font-size: 1rem; text-transform: uppercase;
+            letter-spacing: 2px; transition: 0.4s;
         }
 
-        .promo-app {
-            margin-top: 40px;
-            font-size: 0.9rem;
-            color: #80cbc4;
-            font-style: italic;
-            cursor: pointer;
-        }
+        .btn-finish:hover { background: #444; }
 
-        @keyframes fadeInPage { from { opacity: 0; } to { opacity: 1; } }
+        .promo-app { margin-top: 40px; font-size: 0.85rem; color: #95a5a6; cursor: pointer; transition: 0.3s; }
+        .promo-app:hover { color: #2c3e50; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
@@ -69,32 +47,36 @@
         <div class="reflection-card">
             <h2 id="final-question">Hemos llegado. ¿Cómo se siente tu mundo interno ahora?</h2>
             
-            <textarea id="user-reflection" placeholder="Puedes escribir aquí o simplemente guardar el silencio..."></textarea>
+            <textarea id="user-reflection" placeholder="El silencio también es una respuesta..."></textarea>
             
             <button class="btn-finish" onclick="cerrarSesion()">Cerrar sesión con gratitud</button>
             
             <div class="promo-app" onclick="compartirApp()">
-                "El bienestar crece cuando se comparte. Invita a alguien más a caminar con KaMiZen."
+                "El bienestar crece cuando se comparte. Invita a otro caminante."
             </div>
         </div>
     </div>
 
+    <audio id="audio-final"></audio>
+
     <script>
-        // La voz masculina acompaña el cierre (Regla 12)
-        function iniciarCierre() {
-            // Reproducir audio final de bienestar
-            console.log("Iniciando audio de cierre: 'Lo has logrado, eres suficiente'...");
+        async function iniciarCierre() {
+            // Regla 12: Voz masculina acompaña el cierre
+            const mensajeFinal = "Has completado este tramo del camino. Todo lo que necesitas ya está en ti. Ve en paz.";
+            const audio = document.getElementById('audio-final');
+            audio.src = `/api/get_audio?text=${encodeURIComponent(mensajeFinal)}`;
+            audio.play();
         }
 
         function cerrarSesion() {
-            // Regla 5 y 15: Limpieza total de datos antes de salir
-            alert("Tu sesión ha terminado. Todo rastro de esta charla se ha disuelto en la calma.");
-            window.location.href = "index.html"; 
+            // Regla 15: Limpieza total. Redirigimos al logout de Flask para limpiar la sesión del servidor.
+            window.location.href = "/logout"; 
         }
 
         function compartirApp() {
-            // Lógica para copiar link o invitar
-            alert("Gracias por expandir la luz de KaMiZen.");
+            const link = window.location.origin;
+            navigator.clipboard.writeText(link);
+            alert("Enlace de KaMiZen copiado. Gracias por expandir la luz.");
         }
 
         window.onload = iniciarCierre;
