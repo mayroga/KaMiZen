@@ -4,3 +4,4 @@ stripe
 openai>=1.0.0
 google-genai
 requests
+python-dotenv
