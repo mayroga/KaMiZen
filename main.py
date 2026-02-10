@@ -1,122 +1,77 @@
-import os, json, random, time, openai, stripe
+import os, json, random, time, openai
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 
 app = Flask(__name__)
 app.secret_key = os.getenv("ADMIN_PASSWORD", "kmz_2026_prod")
 client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
 
-# =========================
-# CONFIGURACIÓN BASE
-# =========================
 ADMIN_USERNAME = os.getenv("ADMIN_USERNAME", "admin")
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "kmz_2026_prod")
-STRIPE_PUBLIC_KEY = os.getenv("STRIPE_PUBLIC_KEY", "")
-
-def cargar_almacen():
-    try:
-        with open('almacen_contenido.json', 'r', encoding='utf-8') as f:
-            return json.load(f)
-    except:
-        return {"biblioteca": {"historias": []}}
-
-# =========================
-# RUTAS DE ACCESO E IDIOMA
-# =========================
 
 @app.route("/")
 def index():
-    # No limpiamos toda la sesión para no perder el idioma
-    if "idioma" not in session:
-        session["idioma"] = "en"
-    return render_template("index.html", 
-                           role=session.get('role', 'client'), 
-                           stripe_public_key=STRIPE_PUBLIC_KEY)
+    return render_template("index.html")
 
 @app.route("/login", methods=["POST"])
 def login():
     user = request.form.get("username")
     pw = request.form.get("password")
+    lang = request.form.get("lang", "en") # Recibe el idioma del formulario
     if user == ADMIN_USERNAME and pw == ADMIN_PASSWORD:
         session.update({
-            'access_granted': True, 
-            'role': 'admin', 
-            'start_time': time.time()
+            'access_granted': True,
+            'start_time': time.time(),
+            'lang': lang
         })
         return redirect(url_for("servicio"))
     return redirect(url_for("index"))
-
-@app.route("/create-checkout-session", methods=["POST"])
-def create_checkout_session():
-    try:
-        checkout_session = stripe.checkout.Session.create(
-            payment_method_types=['card'],
-            line_items=[{
-                'price_data': {
-                    'currency': 'usd',
-                    'product_data': {'name': 'KaMiZen Experience'},
-                    'unit_amount': 499,
-                },
-                'quantity': 1,
-            }],
-            mode='payment',
-            success_url=request.host_url + 'pago_exitoso',
-            cancel_url=request.host_url,
-        )
-        return jsonify({'id': checkout_session.id})
-    except Exception as e:
-        return jsonify(error=str(e)), 403
-
-@app.route("/pago_exitoso")
-def pago_exitoso():
-    session.update({
-        'access_granted': True, 
-        'role': 'client', 
-        'start_time': time.time()
-    })
-    return redirect(url_for("servicio"))
-
-# =========================
-# EXPERIENCIA KaMiZen
-# =========================
 
 @app.route("/servicio")
 def servicio():
     if not session.get('access_granted'):
         return redirect(url_for("index"))
-    return render_template("escenario_mapa.html")
+    return render_template("escenario_mapa.html", lang=session.get('lang'))
 
 @app.route("/api/get_sequence")
 def get_sequence():
     if not session.get('start_time'):
-        return jsonify({"error": "No session active"}), 401
+        return jsonify({"error": "No session"}), 401
     
     elapsed = (time.time() - session['start_time']) / 60
-    idioma = request.args.get('lang', session.get('idioma', 'es'))
+    lang = session.get('lang', 'es')
     
-    # Lógica TVID (Estructura de 10 minutos)
+    # Lista de paisajes que cambian cada minuto
+    paisajes = [
+        "https://images.unsplash.com/photo-1506744038136-46273834b3fb", # Valle
+        "https://images.unsplash.com/photo-1470770841072-f978cf4d019e", # Lago
+        "https://images.unsplash.com/photo-1441974231531-c6227db76b6e", # Bosque
+        "https://images.unsplash.com/photo-1501854140801-50d01698950b", # Montaña
+        "https://images.unsplash.com/photo-1447752875215-b2761acb3c5d"  # Cascada
+    ]
+    current_bg = paisajes[int(elapsed) % len(paisajes)]
+
+    # Lógica de contenido breve
     opciones = None
     if elapsed < 1:
-        prompt = "Welcome the traveler. Ask how they feel in their soul today."
-    elif elapsed < 5:
-        prompt = "Share a short power riddle (adivinanza). Provide 3 options."
-        opciones = ["A", "B", "C"] # La IA generará el contenido real
-    elif elapsed < 9:
-        prompt = "Narrate a story of internal wealth and victory."
+        p = "Saludo místico muy breve."
+    elif 3 < elapsed < 5:
+        p = "Plantea una adivinanza de poder corta con 3 opciones."
+        opciones = ["A", "B", "C"] # La IA generará el texto real
     else:
-        prompt = "Closing message. High biopsychosocial impact. Farewell."
+        p = "Cuenta una enseñanza de riqueza de máximo 20 segundos."
 
     try:
         response = client.chat.completions.create(
             model="gpt-4o",
             messages=[
-                {"role": "system", "content": f"You are KaMiZen. Wise, professional. Language: {idioma}. Never say IA."},
-                {"role": "user", "content": prompt}
+                {"role": "system", "content": f"Eres KaMiZen. Sabio. Idioma: {lang}. Sé breve. Peso en cada palabra."},
+                {"role": "user", "content": p}
             ]
         )
         return jsonify({
             "texto": response.choices[0].message.content,
-            "opciones": opciones if elapsed > 1 and elapsed < 6 else None,
+            "opciones": opciones,
+            "bg": current_bg,
             "finalizado": elapsed >= 10
         })
     except:
@@ -134,4 +89,4 @@ def logout():
     return redirect(url_for("index"))
 
 if __name__ == "__main__":
-    app.run(port=10000)
+    app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 10000)))
