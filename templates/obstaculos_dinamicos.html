@@ -1,87 +1,71 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KaMiZen - Obstáculos Dinámicos</title>
     <style>
-        body { margin: 0; background: transparent; font-family: 'Segoe UI', sans-serif; }
-        .obstacle-overlay {
-            position: absolute; top: 15%; left: 50%;
-            transform: translateX(-50%); z-index: 3000;
-            text-align: center; width: 90%; max-width: 600px;
-        }
-        .obstacle-item {
-            background: rgba(255, 255, 255, 0.98); padding: 30px;
-            border-radius: 20px; box-shadow: 0 15px 50px rgba(0,0,0,0.3);
-            border-top: 10px solid #c0392b; animation: slideUp 0.6s ease-out;
-        }
-        h3 { color: #c0392b; margin-top: 0; font-size: 1.5rem; }
-        p { font-size: 1.1rem; color: #333; line-height: 1.4; }
-        .decision-buttons { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 20px; }
-        .btn-decision {
-            padding: 12px 25px; border-radius: 30px;
-            border: 2px solid #2c3e50; background: white;
-            cursor: pointer; transition: 0.3s; font-weight: bold; color: #2c3e50;
-        }
-        .btn-decision:hover { background: #2c3e50; color: white; }
-        #feedback-text { margin-top: 20px; font-style: italic; color: #16a085; min-height: 40px; }
-        @keyframes slideUp { from { transform: translateY(100px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        body { margin: 0; font-family: 'Segoe UI', sans-serif; background: #FAF9F6; color: #2C3E50; display: flex; justify-content: center; align-items: center; height: 100vh; text-align: center; }
+        .container { max-width: 650px; padding: 40px; background: white; border-radius: 4px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        h2 { font-weight: 300; letter-spacing: 2px; color: #1a1a1a; }
+        #obstaculo-texto { font-size: 1.3rem; margin: 30px 0; min-height: 100px; line-height: 1.6; }
+        .opciones-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        button { padding: 15px; border: 1px solid #1a1a1a; background: white; color: #1a1a1a; cursor: pointer; transition: 0.3s; font-size: 1rem; }
+        button:hover { background: #1a1a1a; color: white; }
+        #feedback-area { margin-top: 25px; padding: 20px; background: #f9f9f9; border-left: 4px solid #d4af37; display: none; text-align: left; }
     </style>
 </head>
 <body>
-    <div class="obstacle-overlay">
-        <div id="obstacle-card" class="obstacle-item">
-            <h3 id="obs-title">Cargando desafío...</h3>
-            <p id="obs-desc">La Vida Continúa está evaluando el camino.</p>
-            <div id="buttons-container" class="decision-buttons">
-                </div>
-            <p id="feedback-text"></p>
+    <div class="container">
+        <h2>DESAFÍO DEL CAMINO</h2>
+        <div id="obstaculo-texto">Analizando el entorno...</div>
+        <div id="opciones" class="opciones-grid"></div>
+        <div id="feedback-area">
+            <strong id="feedback-titulo">Asesoría KaMiZen:</strong>
+            <p id="feedback-texto"></p>
         </div>
     </div>
-    <audio id="audio-feedback" style="display:none;"></audio>
+
+    <audio id="audio-feedback"></audio>
 
     <script>
-        const lang = localStorage.getItem('kmz_lang') || 'es';
-
         async function cargarObstaculo() {
-            const res = await fetch(`/api/get_obstaculo?lang=${lang}`);
+            const res = await fetch('/api/get_sequence?lang=es');
             const data = await res.json();
             
-            document.getElementById('obs-title').innerText = data.tipo;
-            document.getElementById('obs-desc').innerText = data.descripcion;
+            document.getElementById('obstaculo-texto').innerText = data.texto;
             
-            // Creamos los botones basados en el JSON
-            const container = document.getElementById('buttons-container');
-            container.innerHTML = "";
-            // Usamos las opciones que vienen del servidor (basadas en tu almacen_contenido.json)
-            const opciones = ["Corregir", "Rodear", "Esperar"]; 
+            // Opciones dinámicas de asesoría
+            const opciones = ["Afrontar con disciplina", "Reflexionar y esperar", "Cambiar de estrategia", "Buscar una visión clara"];
+            const container = document.getElementById('opciones');
+            container.innerHTML = '';
             
-            opciones.forEach(opc => {
+            opciones.forEach(opt => {
                 const btn = document.createElement('button');
-                btn.className = 'btn-decision';
-                btn.innerText = opc;
-                btn.onclick = () => decidir(opc, data.tipo);
+                btn.innerText = opt;
+                btn.onclick = () => procesarDecision(opt, data.texto);
                 container.appendChild(btn);
             });
         }
 
-        async function decidir(opcion, tipoObstaculo) {
-            document.getElementById('buttons-container').style.pointerEvents = 'none';
-            document.getElementById('feedback-text').innerText = "La Vida Continúa reflexiona...";
+        async function procesarDecision(decision, contexto) {
+            document.getElementById('opciones').style.pointerEvents = 'none';
+            const feedbackArea = document.getElementById('feedback-area');
+            const prompt = `El caminante eligió "${decision}" ante el obstáculo: "${contexto}". Dame una respuesta breve de sabiduría, validando su elección como un asesor profesional.`;
 
-            const promptIA = `El usuario eligió '${opcion}' ante el obstáculo de '${tipoObstaculo}'. Dame una respuesta de sabiduría muy breve, de asesor, que valide su decisión y le dé peso.`;
-            
-            const res = await fetch(`/api/get_ai_feedback?prompt=${encodeURIComponent(promptIA)}&lang=${lang}`);
+            // Usamos la API de secuencia con un flag de feedback o directamente una llamada a chat
+            const res = await fetch(`/api/get_sequence?lang=es&prompt_override=${encodeURIComponent(prompt)}`);
             const data = await res.json();
-            
-            document.getElementById('feedback-text').innerText = data.texto;
-            
+
+            document.getElementById('feedback-texto').innerText = data.texto;
+            feedbackArea.style.display = 'block';
+
             const audio = document.getElementById('audio-feedback');
-            audio.src = data.audio_url;
+            audio.src = `/api/get_audio?text=${encodeURIComponent(data.texto)}`;
             audio.play();
 
-            setTimeout(() => {
-                window.parent.postMessage('obstaculo_superado', '*');
-            }, 6000);
+            // Regresar al mapa después de la reflexión
+            setTimeout(() => { window.location.href = '/servicio'; }, 8000);
         }
 
         window.onload = cargarObstaculo;
