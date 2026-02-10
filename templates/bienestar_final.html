@@ -2,67 +2,44 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <title>KaMiZen - El Destino</title>
     <style>
-        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; font-family: 'Segoe UI', serif; background: #fdfdfd; }
-        .final-overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(135deg, #e0f2f1 0%, #ffffff 100%);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            text-align: center; animation: fadeIn 3s ease;
-        }
-        .reflection-card {
-            max-width: 500px; width: 85%; padding: 40px;
-            background: white; border-radius: 2px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.03);
-        }
-        h2 { color: #2c3e50; font-weight: 300; margin-bottom: 25px; }
-        textarea {
-            width: 100%; height: 120px; border: 1px solid #eee; padding: 15px;
-            font-size: 1rem; resize: none; outline: none; background: #fafafa;
-            box-sizing: border-box; font-family: inherit;
-        }
-        .btn-finish {
-            margin-top: 30px; background: #1a1a1a; color: white;
-            border: none; padding: 15px 50px; cursor: pointer;
-            text-transform: uppercase; letter-spacing: 2px; transition: 0.3s;
-        }
-        .btn-finish:hover { background: #444; }
-        .promo { margin-top: 30px; color: #999; font-style: italic; font-size: 0.9rem; cursor: pointer; }
+        body { margin: 0; background: white; font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        .final-card { text-align: center; max-width: 600px; animation: fadeIn 3s ease; }
+        .logo { font-size: 2.5rem; letter-spacing: 5px; margin-bottom: 20px; }
+        .texto-final { font-size: 1.4rem; color: #333; line-height: 1.8; margin-bottom: 40px; }
+        .btn-restart { background: none; border: 1px solid #1a1a1a; padding: 15px 30px; cursor: pointer; transition: 0.4s; }
+        .btn-restart:hover { background: #1a1a1a; color: white; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
-
-    <div class="final-overlay">
-        <div class="reflection-card">
-            <h2 id="final-question">El camino ha sido completado. ¿Cómo está tu paz interna?</h2>
-            <textarea id="user-reflection" placeholder="Guarda aquí tu última reflexión o simplemente respira..."></textarea>
-            <button class="btn-finish" onclick="terminar()">Cerrar con Gratitud</button>
-            <div class="promo" onclick="alert('Enlace copiado. Comparte el bienestar.')">
-                "El bienestar crece al compartirse. Invita a otros a KaMiZen."
-            </div>
-        </div>
+    <div class="final-card">
+        <div class="logo">KaMiZen</div>
+        <div id="mensaje-final" class="texto-final">Has completado el camino. Tu riqueza interna es ahora más sólida.</div>
+        <button class="btn-restart" onclick="terminar()">CERRAR Y REINICIAR</button>
+        <p style="margin-top: 30px; color: #999; font-size: 0.8rem;">El bienestar crece al compartirse. Invita a otros al camino.</p>
     </div>
 
-    <audio id="cierre-audio"></audio>
+    <audio id="audio-final"></audio>
 
     <script>
-        async function iniciarCierre() {
-            // Regla 12: Voz masculina de Onyx para el cierre
-            const texto = "Lo has logrado. Eres suficiente. Este momento es tuyo y la paz que sientes te pertenece.";
-            const audio = document.getElementById('cierre-audio');
-            audio.src = `/api/get_audio?text=${encodeURIComponent(texto)}`;
+        async function cargarCierre() {
+            const res = await fetch('/api/get_sequence?lang=es');
+            const data = await res.json();
+            document.getElementById('mensaje-final').innerText = data.texto;
+
+            const audio = document.getElementById('audio-final');
+            audio.src = `/api/get_audio?text=${encodeURIComponent(data.texto)}`;
             audio.play();
         }
 
         function terminar() {
-            // Regla 5 y 15: Limpieza absoluta
-            localStorage.clear();
-            sessionStorage.clear();
-            window.location.href = "/logout";
+            // Limpieza absoluta según reglas
+            window.location.href = '/logout';
         }
 
-        window.onload = iniciarCierre;
+        window.onload = cargarCierre;
     </script>
 </body>
 </html>
