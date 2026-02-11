@@ -1,5 +1,5 @@
-import os, random, time
-from flask import Flask, render_template, request, redirect, url_for, session, jsonify
+import os, time, random
+from flask import Flask, render_template, request, redirect, session, jsonify
 import openai
 
 app = Flask(__name__)
@@ -14,7 +14,7 @@ FASES = [
     "bienvenida",
     "historia_poder",
     "obstaculo",
-    "juego_mental",
+    "juego",
     "historia_riqueza",
     "silencio",
     "reflexion",
@@ -30,12 +30,12 @@ PAISAJES = [
     "https://images.unsplash.com/photo-1447752875215-b2761acb3c5d"
 ]
 
-def ia_texto(prompt, lang):
+def ia(prompt, lang):
     try:
         r = client.chat.completions.create(
             model="gpt-4o",
             messages=[
-                {"role": "system", "content": f"You are KaMiZen. Calm, wise, brief. Language: {lang}"},
+                {"role": "system", "content": f"You are KaMiZen. Calm, wise, minimal. Language: {lang}"},
                 {"role": "user", "content": prompt}
             ]
         )
@@ -50,69 +50,71 @@ def index():
 @app.route("/login", methods=["POST"])
 def login():
     if request.form["username"] == ADMIN_USERNAME and request.form["password"] == ADMIN_PASSWORD:
-        session["start"] = time.time()
+        session["start_time"] = time.time()
         session["lang"] = request.form.get("lang", "en")
         return redirect("/servicio")
     return redirect("/")
 
 @app.route("/servicio")
 def servicio():
-    if "start" not in session:
+    if "start_time" not in session:
         return redirect("/")
     return render_template("escenario_mapa.html", lang=session["lang"])
 
 @app.route("/api/state")
 def state():
-    elapsed = (time.time() - session["start"]) / 60
-    fase = min(int(elapsed), len(FASES) - 1)
+    if "start_time" not in session:
+        return jsonify({"error": "no session"}), 401
+
+    elapsed = (time.time() - session["start_time"]) / 60
+    fase_idx = min(int(elapsed), len(FASES) - 1)
+    fase = FASES[fase_idx]
     lang = session.get("lang", "en")
 
     texto = ""
     voz = False
     opciones = None
 
-    fase_actual = FASES[fase]
-
-    if fase_actual == "bienvenida":
-        texto = ia_texto("Welcome the user gently. Presence and calm.", lang)
+    if fase == "bienvenida":
+        texto = ia("Welcome the user. Calm presence. One or two sentences.", lang)
         voz = True
 
-    elif fase_actual == "historia_poder":
-        texto = ia_texto("Short symbolic story about inner power and dignity.", lang)
+    elif fase == "historia_poder":
+        texto = ia("Short symbolic story about dignity and inner power.", lang)
         voz = True
 
-    elif fase_actual == "obstaculo":
-        texto = ia_texto("Present a soft obstacle and its emotional meaning.", lang)
+    elif fase == "obstaculo":
+        texto = ia("Present a soft emotional obstacle and its meaning.", lang)
         opciones = [
-            {"texto": "Face it" if lang=="en" else "Enfrentarlo", "valor": "face"},
-            {"texto": "Walk around" if lang=="en" else "Rodearlo", "valor": "avoid"}
+            {"texto": "Face it" if lang=="en" else "Enfrentarlo"},
+            {"texto": "Let it pass" if lang=="en" else "Dejarlo pasar"}
         ]
 
-    elif fase_actual == "juego_mental":
-        texto = ia_texto("Invite to imagine luxury and abundance without desire or stress.", lang)
+    elif fase == "juego":
+        texto = ia("Invite to imagine abundance without desire or pressure.", lang)
 
-    elif fase_actual == "historia_riqueza":
-        texto = ia_texto("Story about wealth as freedom, peace and capability.", lang)
+    elif fase == "historia_riqueza":
+        texto = ia("Story about wealth as freedom, peace and capability.", lang)
         voz = True
 
-    elif fase_actual == "silencio":
-        texto = ""
+    elif fase == "silencio":
+        texto = ""  # silencio real
 
-    elif fase_actual == "reflexion":
-        texto = ia_texto("Guide reflection toward inner satisfaction.", lang)
+    elif fase == "reflexion":
+        texto = ia("Invite reflection toward inner satisfaction.", lang)
 
-    elif fase_actual == "historia_integracion":
-        texto = ia_texto("Story of integration, wholeness and calm success.", lang)
+    elif fase == "historia_integracion":
+        texto = ia("Story of wholeness, calm success and continuity.", lang)
         voz = True
 
-    elif fase_actual == "cierre":
-        texto = ia_texto("Close the experience with peace and completeness.", lang)
+    elif fase == "cierre":
+        texto = ia("Close with peace, gratitude and completeness.", lang)
         voz = True
 
     return jsonify({
         "texto": texto,
         "voz": voz,
-        "bg": PAISAJES[fase % len(PAISAJES)],
+        "bg": PAISAJES[fase_idx % len(PAISAJES)],
         "final": elapsed >= 10,
         "opciones": opciones
     })
@@ -120,6 +122,8 @@ def state():
 @app.route("/api/audio")
 def audio():
     text = request.args.get("text", "")
+    if not text:
+        return "", 204
     try:
         r = client.audio.speech.create(
             model="tts-1-hd",
