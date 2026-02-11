@@ -1,46 +1,34 @@
-import os, random, time
+import os, json, random, time, openai
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
-from openai import OpenAI
 
 app = Flask(__name__)
-app.secret_key = os.getenv("SECRET_KEY", "kamizen_ultra_2026")
-
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+app.secret_key = os.getenv("ADMIN_PASSWORD", "kmz_2026_prod")
+client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 ADMIN_USERNAME = os.getenv("ADMIN_USERNAME", "admin")
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "kmz_2026_prod")
 
 FASES = [
-    "bienvenida",
-    "obstaculo",
-    "juego",
-    "historia",
-    "reflexion",
-    "cierre"
+    "bienvenida", "obstaculos", "juego1", "historia1",
+    "obstaculos2", "juego2", "historia2", "reflexion",
+    "cierre", "autopropaganda"
 ]
 
-PAISAJES = [
-    "https://images.unsplash.com/photo-1506744038136-46273834b3fb",
-    "https://images.unsplash.com/photo-1441974231531-c6227db76b6e",
-    "https://images.unsplash.com/photo-1501854140801-50d01698950b",
-    "https://images.unsplash.com/photo-1470770841072-f978cf4d019e"
+# Listado base de obstáculos y juegos
+OBSTACULOS_BASE = [
+    {"nombre_es":"Perseverancia","nombre_en":"Perseverance"},
+    {"nombre_es":"Ira","nombre_en":"Anger"},
+    {"nombre_es":"Envidia","nombre_en":"Envy"},
+    {"nombre_es":"Derrota","nombre_en":"Defeat"},
+    {"nombre_es":"Astucia","nombre_en":"Cleverness"},
+    {"nombre_es":"Inteligencia","nombre_en":"Intelligence"}
 ]
 
-FALLBACK_TEXT = {
-    "es": "Respira. Todo avanza aunque no lo notes. Sigue caminando.",
-    "en": "Breathe. Everything moves forward even if you cannot see it."
-}
-
-def ia_text(prompt, lang):
-    try:
-        r = client.responses.create(
-            model="gpt-4.1-mini",
-            input=f"Eres KaMiZen. Hablas siempre. Frases cortas, sabias, motivadoras. Idioma {lang}. {prompt}"
-        )
-        txt = r.output_text.strip()
-        return txt if txt else FALLBACK_TEXT[lang]
-    except:
-        return FALLBACK_TEXT[lang]
+JUEGOS_BASE = [
+    {"pregunta_es":"Resuelve el rompecabezas: ¿qué número sigue?", "pregunta_en":"Solve the puzzle: what number comes next?"},
+    {"pregunta_es":"Adivina la palabra oculta", "pregunta_en":"Guess the hidden word"},
+    {"pregunta_es":"Encuentra la lógica detrás de la secuencia", "pregunta_en":"Find the logic behind the sequence"}
+]
 
 @app.route("/")
 def index():
@@ -48,78 +36,115 @@ def index():
 
 @app.route("/login", methods=["POST"])
 def login():
-    if request.form.get("username") == ADMIN_USERNAME and request.form.get("password") == ADMIN_PASSWORD:
-        session["ok"] = True
-        session["start"] = time.time()
-        session["fase"] = 0
-        session["lang"] = request.form.get("lang", "es")
-        return redirect("/servicio")
-    return redirect("/")
+    user = request.form.get("username")
+    pw = request.form.get("password")
+    lang = request.form.get("lang", "en")
+    if user == ADMIN_USERNAME and pw == ADMIN_PASSWORD:
+        session.update({
+            'access_granted': True,
+            'start_time': time.time(),
+            'fase_idx':0,
+            'lang':lang
+        })
+        return redirect(url_for("servicio"))
+    return redirect(url_for("index"))
 
 @app.route("/servicio")
 def servicio():
-    if not session.get("ok"):
-        return redirect("/")
-    return render_template("escenario_mapa.html", lang=session["lang"])
+    if not session.get('access_granted'):
+        return redirect(url_for("index"))
+    return render_template("escenario_mapa.html", lang=session.get('lang'))
 
-@app.route("/api/lang", methods=["POST"])
-def cambiar_idioma():
-    session["lang"] = request.json.get("lang", "es")
-    return jsonify(ok=True)
-
-@app.route("/api/skip")
-def skip():
-    session["fase"] = min(session.get("fase", 0) + 1, len(FASES) - 1)
-    return jsonify(ok=True)
-
-@app.route("/api/sequence")
-def sequence():
-    if not session.get("ok"):
-        return jsonify(error=True)
-
-    lang = session.get("lang", "es")
-    fase = session.get("fase", 0)
-    nombre_fase = FASES[fase]
-
-    prompts = {
-        "bienvenida": "Da la bienvenida al viajero.",
-        "obstaculo": "Describe un obstáculo interior.",
-        "juego": "Plantea un pequeño reto mental.",
-        "historia": "Cuenta una micro historia de superación.",
-        "reflexion": "Invita a reflexionar con calma.",
-        "cierre": "Cierra el viaje con fuerza interior."
-    }
-
-    texto = ia_text(prompts[nombre_fase], lang)
-
-    session["fase"] = min(fase + 1, len(FASES) - 1)
-
-    return jsonify(
-        texto=texto,
-        bg=random.choice(PAISAJES),
-        final=session["fase"] == len(FASES) - 1
-    )
-
-@app.route("/api/audio")
-def audio():
-    text = request.args.get("text", "")
-    if not text:
-        return "", 204
-
+def generar_texto_ia(prompt: str, lang: str):
+    """
+    Llama a OpenAI para generar texto dinámico y sorprendente.
+    """
     try:
-        audio = client.audio.speech.create(
-            model="gpt-4o-mini-tts",
-            voice="onyx",
-            input=text
+        response = client.chat.completions.create(
+            model="gpt-4o",
+            messages=[
+                {"role":"system","content":f"Eres KaMiZen, sabio, breve, profundo, motivador, en idioma {lang}."},
+                {"role":"user","content":prompt}
+            ]
         )
-        return audio.content, 200, {"Content-Type": "audio/mpeg"}
+        return response.choices[0].message.content
     except:
-        return "", 204
+        return prompt  # fallback si falla la IA
+
+@app.route("/api/get_sequence")
+def get_sequence():
+    if not session.get('start_time'):
+        return jsonify({"error":"No session"}), 401
+
+    elapsed = (time.time() - session['start_time']) / 60
+    lang = session.get('lang', 'es')
+    fase_idx = min(int(elapsed), len(FASES)-1)
+    fase_actual = FASES[fase_idx]
+
+    paisajes = [
+        "https://images.unsplash.com/photo-1506744038136-46273834b3fb",
+        "https://images.unsplash.com/photo-1470770841072-f978cf4d019e",
+        "https://images.unsplash.com/photo-1441974231531-c6227db76b6e",
+        "https://images.unsplash.com/photo-1501854140801-50d01698950b",
+        "https://images.unsplash.com/photo-1447752875215-b2761acb3c5d"
+    ]
+    current_bg = paisajes[fase_idx % len(paisajes)]
+
+    texto = ""
+    opciones = None
+
+    # Generación dinámica por fase
+    if fase_actual.startswith("bienvenida"):
+        texto = generar_texto_ia("Saluda al usuario de forma mística y breve, motivándolo a iniciar su viaje interior.", lang)
+    elif fase_actual.startswith("obstaculos"):
+        obstaculo = random.choice(OBSTACULOS_BASE)
+        nombre_obs = obstaculo["nombre_es"] if lang=="es" else obstaculo["nombre_en"]
+        texto = generar_texto_ia(f"Aparece un obstáculo: {nombre_obs}. Explica brevemente qué pasa si lo supero o lo dejo.", lang)
+        opciones = [
+            {"texto":"Superarlo" if lang=="es" else "Overcome","valor":"superar"},
+            {"texto":"Dejarlo" if lang=="es" else "Leave","valor":"dejar"}
+        ]
+    elif fase_actual.startswith("juego"):
+        juego = random.choice(JUEGOS_BASE)
+        pregunta = juego["pregunta_es"] if lang=="es" else juego["pregunta_en"]
+        texto = generar_texto_ia(f"Genera un juego o adivinanza corta basada en: {pregunta}", lang)
+        opciones = [
+            {"texto":"A","valor":"A"},
+            {"texto":"B","valor":"B"},
+            {"texto":"C","valor":"C"}
+        ]
+    elif fase_actual.startswith("historia"):
+        texto = generar_texto_ia("Cuenta una historia corta de riqueza, sabiduría y poder, max 20 segundos.", lang)
+    elif fase_actual.startswith("reflexion"):
+        texto = generar_texto_ia("Invita al usuario a reflexionar sobre lo aprendido y conectar con bienestar interior.", lang)
+    elif fase_actual.startswith("cierre"):
+        texto = generar_texto_ia("Finaliza el viaje del usuario con grandeza, riqueza y paz interior.", lang)
+    elif fase_actual.startswith("autopropaganda"):
+        texto = generar_texto_ia("Promociona KaMiZen brevemente para motivar al usuario a volver.", lang)
+
+    return jsonify({"texto": texto, "opciones": opciones, "bg": current_bg, "finalizado": elapsed>=10})
+
+@app.route("/api/get_audio")
+def get_audio():
+    text = request.args.get('text','')
+    try:
+        response = client.audio.speech.create(model="tts-1-hd", voice="onyx", input=text)
+        return response.content, 200, {'Content-Type':'audio/mpeg'}
+    except:
+        return "", 500
+
+@app.route("/api/decision")
+def decision():
+    opcion = request.args.get("opcion","")
+    lang = session.get("lang","es")
+    feedback_prompt = f"Genera un feedback corto, sabio y motivador sobre la opción elegida: {opcion}, idioma {lang}."
+    feedback = generar_texto_ia(feedback_prompt, lang)
+    return jsonify({"ok":True, "feedback": feedback})
 
 @app.route("/logout")
 def logout():
     session.clear()
-    return redirect("/")
+    return redirect(url_for("index"))
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=int(os.getenv("PORT", 10000)))
+if __name__=="__main__":
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT",10000)))
