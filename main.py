@@ -1,143 +1,125 @@
-import os, time, random
-from flask import Flask, render_template, request, redirect, session, jsonify
-import openai
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+<meta charset="UTF-8">
+<title>KaMiZen Experience</title>
 
-app = Flask(__name__)
-app.secret_key = os.getenv("ADMIN_PASSWORD", "kmz_2026_prod")
+<style>
+html, body {
+    margin:0;
+    height:100%;
+    overflow:hidden;
+    background:black;
+    font-family:Georgia, serif;
+    color:white;
+}
 
-client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+#bg {
+    position:absolute;
+    width:120%;
+    height:120%;
+    top:-10%;
+    left:-10%;
+    background-size:cover;
+    background-position:center;
+    transition:transform 12s ease, filter 6s ease;
+    filter:brightness(0.65);
+    z-index:1;
+}
 
-ADMIN_USERNAME = os.getenv("ADMIN_USERNAME", "admin")
-ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "kmz_2026_prod")
+#walker {
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    font-size:80px;
+    z-index:3;
+}
 
-FASES = [
-    "bienvenida",
-    "historia_poder",
-    "obstaculo",
-    "juego",
-    "historia_riqueza",
-    "silencio",
-    "reflexion",
-    "historia_integracion",
-    "cierre"
-]
+#panel {
+    position:absolute;
+    bottom:0;
+    width:100%;
+    background:rgba(0,0,0,0.85);
+    padding:20px;
+    text-align:center;
+    z-index:4;
+}
 
-PAISAJES = [
-    "https://images.unsplash.com/photo-1506744038136-46273834b3fb",
-    "https://images.unsplash.com/photo-1470770841072-f978cf4d019e",
-    "https://images.unsplash.com/photo-1441974231531-c6227db76b6e",
-    "https://images.unsplash.com/photo-1501854140801-50d01698950b",
-    "https://images.unsplash.com/photo-1447752875215-b2761acb3c5d"
-]
+#choices button {
+    background:none;
+    border:1px solid gold;
+    color:white;
+    padding:10px 22px;
+    margin:6px;
+    cursor:pointer;
+}
+</style>
+</head>
 
-def ia(prompt, lang):
-    try:
-        r = client.chat.completions.create(
-            model="gpt-4o",
-            messages=[
-                {"role": "system", "content": f"You are KaMiZen. Calm, wise, minimal. Language: {lang}"},
-                {"role": "user", "content": prompt}
-            ]
-        )
-        return r.choices[0].message.content.strip()
-    except:
-        return prompt
+<body>
 
-@app.route("/")
-def index():
-    return render_template("index.html")
+<div id="bg"></div>
+<div id="walker">🚶‍♂️</div>
 
-@app.route("/login", methods=["POST"])
-def login():
-    if request.form["username"] == ADMIN_USERNAME and request.form["password"] == ADMIN_PASSWORD:
-        session["start_time"] = time.time()
-        session["lang"] = request.form.get("lang", "en")
-        return redirect("/servicio")
-    return redirect("/")
+<div id="panel">
+    <div id="text">Preparing your journey…</div>
+    <div id="choices"></div>
+</div>
 
-@app.route("/servicio")
-def servicio():
-    if "start_time" not in session:
-        return redirect("/")
-    return render_template("escenario_mapa.html", lang=session["lang"])
+<audio id="audio"></audio>
 
-@app.route("/api/state")
-def state():
-    if "start_time" not in session:
-        return jsonify({"error": "no session"}), 401
+<script>
+let active = true;
 
-    elapsed = (time.time() - session["start_time"]) / 60
-    fase_idx = min(int(elapsed), len(FASES) - 1)
-    fase = FASES[fase_idx]
-    lang = session.get("lang", "en")
+async function updateScene(){
+    if(!active) return;
 
-    texto = ""
-    voz = False
-    opciones = None
+    try{
+        const res = await fetch("/api/state");
+        const data = await res.json();
 
-    if fase == "bienvenida":
-        texto = ia("Welcome the user. Calm presence. One or two sentences.", lang)
-        voz = True
+        if(!data.texto){
+            data.texto = "You are accompanied. Everything is unfolding.";
+        }
 
-    elif fase == "historia_poder":
-        texto = ia("Short symbolic story about dignity and inner power.", lang)
-        voz = True
+        document.getElementById("bg").style.backgroundImage =
+            `url(${data.bg})`;
+        document.getElementById("bg").style.transform = "scale(1.15)";
 
-    elif fase == "obstaculo":
-        texto = ia("Present a soft emotional obstacle and its meaning.", lang)
-        opciones = [
-            {"texto": "Face it" if lang=="en" else "Enfrentarlo"},
-            {"texto": "Let it pass" if lang=="en" else "Dejarlo pasar"}
-        ]
+        document.getElementById("text").innerText = data.texto;
 
-    elif fase == "juego":
-        texto = ia("Invite to imagine abundance without desire or pressure.", lang)
+        const choices = document.getElementById("choices");
+        choices.innerHTML = "";
 
-    elif fase == "historia_riqueza":
-        texto = ia("Story about wealth as freedom, peace and capability.", lang)
-        voz = True
+        if(data.opciones){
+            data.opciones.forEach(o=>{
+                const b = document.createElement("button");
+                b.innerText = o.texto;
+                b.onclick = ()=>choices.innerHTML="";
+                choices.appendChild(b);
+            });
+        }
 
-    elif fase == "silencio":
-        texto = ""  # silencio real
+        if(data.voz){
+            const audio = document.getElementById("audio");
+            audio.src = "/api/audio?text=" + encodeURIComponent(data.texto);
+            audio.play().catch(()=>{});
+        }
 
-    elif fase == "reflexion":
-        texto = ia("Invite reflection toward inner satisfaction.", lang)
+        if(data.final){
+            active = false;
+            setTimeout(()=>location.href="/logout", 4000);
+        }
 
-    elif fase == "historia_integracion":
-        texto = ia("Story of wholeness, calm success and continuity.", lang)
-        voz = True
+    }catch(e){
+        console.error(e);
+    }
+}
 
-    elif fase == "cierre":
-        texto = ia("Close with peace, gratitude and completeness.", lang)
-        voz = True
+updateScene();
+setInterval(updateScene, 6000);
+</script>
 
-    return jsonify({
-        "texto": texto,
-        "voz": voz,
-        "bg": PAISAJES[fase_idx % len(PAISAJES)],
-        "final": elapsed >= 10,
-        "opciones": opciones
-    })
-
-@app.route("/api/audio")
-def audio():
-    text = request.args.get("text", "")
-    if not text:
-        return "", 204
-    try:
-        r = client.audio.speech.create(
-            model="tts-1-hd",
-            voice="onyx",
-            input=text
-        )
-        return r.content, 200, {"Content-Type": "audio/mpeg"}
-    except:
-        return "", 500
-
-@app.route("/logout")
-def logout():
-    session.clear()
-    return redirect("/")
-
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 10000)))
+</body>
+</html>
