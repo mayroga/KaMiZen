@@ -1,86 +1,95 @@
 <!DOCTYPE html>
-<html lang="{{ lang }}">
+<html lang="es">
 <head>
-<meta charset="UTF-8">
-<style>
-body,html{margin:0;padding:0;height:100%;overflow:hidden;background:#000;font-family:'Georgia',serif;color:#FFF;}
-#mapa-fondo{position:absolute;width:100%;height:100vh;background-size:cover;background-position:center;transition:3s ease-in-out;filter:brightness(0.6);}
-#caminante{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:80px;z-index:10;filter:drop-shadow(0 0 20px gold);}
-#narrativa-container{position:absolute;bottom:0;width:100%;background:rgba(0,0,0,0.85);color:#FFF;padding:20px;text-align:center;border-top:2px solid #D4AF37;max-height:35vh;overflow-y:auto;}
-.botones-area{margin-top:10px;display:none;gap:10px;justify-content:center;flex-wrap:wrap;}
-.btn-opcion{background:none;border:1px solid #D4AF37;color:white;padding:10px 20px;cursor:pointer;border-radius:5px;font-weight:bold;}
-.frase-flotante{position:absolute;font-size:2.2rem;font-weight:bold;color:#FFD700;animation:floatText 8s ease-in-out infinite;pointer-events:none;text-shadow:2px 2px 5px black;}
-@keyframes floatText{0%{opacity:0;transform:translateY(50px);}50%{opacity:1;transform:translateY(-20px);}100%{opacity:0;transform:translateY(-80px);}}
-#feedback{position:absolute;bottom:40%;width:100%;text-align:center;font-size:1.5rem;color:#ADFF2F;pointer-events:none;text-shadow:1px 1px 3px black;}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KaMiZen - Camino Vivo</title>
+    <style>
+        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #eef2f3; font-family: 'Segoe UI', serif; }
+        #mapa-fondo { 
+            position: absolute; width: 100%; height: 100vh; 
+            background: linear-gradient(rgba(255,255,255,0.2), rgba(255,255,255,0.2)), url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1920&q=80'); 
+            background-size: cover; background-position: center; filter: sepia(0.2);
+        }
+        #caminante { 
+            position: absolute; width: 80px; height: 80px; bottom: 15%; left: 10%; 
+            transition: all 2s ease-in-out; z-index: 10;
+        }
+        #narrativa-container { 
+            position: absolute; bottom: 0; width: 100%; 
+            background: rgba(26, 26, 26, 0.9); color: white; 
+            padding: 25px; box-sizing: border-box; z-index: 20;
+            border-top: 3px solid #d4af37; box-shadow: 0 -5px 20px rgba(0,0,0,0.3);
+        }
+        .texto-guia { font-size: 1.2rem; line-height: 1.6; max-width: 900px; margin: 0 auto; }
+        .controles { margin-top: 10px; text-align: center; }
+        .btn-borrar { background: #c0392b; color: white; border: none; padding: 8px 15px; cursor: pointer; border-radius: 4px; }
+    </style>
 </head>
 <body>
-<div id="mapa-fondo"></div>
-<div id="caminante">🚶‍♂️</div>
-<div id="narrativa-container">
-<div id="texto-display">Iniciando...</div>
-<div id="botones-interaccion" class="botones-area"></div>
-</div>
-<div id="feedback"></div>
-<audio id="audio-player"></audio>
 
-<script>
-let frasesFlotantes=["Perseverancia","Astucia","Riqueza","Sabiduría","Fuerza","Alegría","Emoción"];
-function mostrarFrase(){
-    const f=document.createElement('div');
-    f.className='frase-flotante';
-    f.innerText=frasesFlotantes[Math.floor(Math.random()*frasesFlotantes.length)];
-    f.style.left=Math.random()*80+"%";
-    f.style.top=Math.random()*50+"%";
-    document.body.appendChild(f);
-    setTimeout(()=>f.remove(),8000);
-}
+    <div id="mapa-fondo">
+        <div id="caminante" style="font-size: 50px;">🚶‍♂️</div>
+    </div>
 
-async function mostrarFeedback(opcion){
-    const res=await fetch(`/api/decision?opcion=${encodeURIComponent(opcion)}`);
-    const data=await res.json();
-    const fb=document.getElementById('feedback');
-    fb.innerText=data.feedback;
-    setTimeout(()=>fb.innerText='',5000);
-}
+    <div id="narrativa-container">
+        <div id="texto-display" class="texto-guia">Iniciando el viaje KaMiZen...</div>
+        <div class="controles">
+            <button class="btn-borrar" onclick="window.location.href='/logout'">Borrar Sesión / Salir</button>
+        </div>
+    </div>
 
-async function ciclo(){
-    const res=await fetch('/api/get_sequence');
-    const data=await res.json();
-    document.getElementById('mapa-fondo').style.backgroundImage=`url(${data.bg})`;
-    document.getElementById('texto-display').innerText=data.texto;
+    <audio id="audio-player"></audio>
 
-    const player=document.getElementById('audio-player');
-    player.src=`/api/get_audio?text=${encodeURIComponent(data.texto)}`;
-    player.play();
+    <script>
+        const textoDisplay = document.getElementById('texto-display');
+        const caminante = document.getElementById('caminante');
+        const audioPlayer = document.getElementById('audio-player');
 
-    const btns=document.getElementById('botones-interaccion');
-    if(data.opciones){
-        btns.style.display='flex';
-        btns.innerHTML='';
-        data.opciones.forEach(o=>{
-            const b=document.createElement('button');
-            b.className='btn-opcion';
-            b.innerText=o.texto;
-            b.onclick=async ()=>{
-                btns.style.display='none';
-                await mostrarFeedback(o.valor);
-                setTimeout(ciclo,1000);
-            };
-            btns.appendChild(b);
-        });
-    }else{
-        btns.style.display='none';
-    }
+        async function actualizarCamino() {
+            try {
+                const response = await fetch('/api/get_sequence?lang=es');
+                const data = await response.json();
 
-    mostrarFrase();
-    player.onended=()=>{
-        if(data.finalizado) window.location.href='/logout';
-        else if(!data.opciones) setTimeout(ciclo,5000);
-    }
-}
+                if (data.error) {
+                    window.location.href = '/';
+                    return;
+                }
 
-window.onload=ciclo;
-</script>
+                // Actualizar texto en pantalla
+                textoDisplay.innerText = data.texto;
+
+                // Mover al caminante visualmente
+                const randomLeft = Math.floor(Math.random() * 60 + 10);
+                const randomBottom = Math.floor(Math.random() * 40 + 10);
+                caminante.style.left = `${randomLeft}%`;
+                caminante.style.bottom = `${randomBottom}%`;
+
+                // Reproducir Audio (Voz Onyx)
+                const audioUrl = `/api/get_audio?text=${encodeURIComponent(data.texto)}`;
+                audioPlayer.src = audioUrl;
+                audioPlayer.play();
+
+                // Si ha finalizado (10 min), redirigir al bienestar final
+                if (data.finalizado) {
+                    audioPlayer.onended = () => {
+                        window.location.href = '/bienestar_final';
+                    };
+                } else {
+                    // Esperar a que termine el audio + una pausa de reflexión (8s)
+                    audioPlayer.onended = () => {
+                        setTimeout(actualizarCamino, 8000);
+                    };
+                }
+
+            } catch (error) {
+                console.error("Error en el camino:", error);
+                setTimeout(actualizarCamino, 5000);
+            }
+        }
+
+        // Iniciar el ciclo
+        window.onload = actualizarCamino;
+    </script>
 </body>
 </html>
