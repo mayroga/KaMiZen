@@ -1,37 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KaMiZen</title>
-    <style>
-        :root { --gold: #D4AF37; }
-        body { margin: 0; background: #FAF9F6; font-family: 'Georgia', serif; display: flex; justify-content: center; align-items: center; height: 100vh; }
-        .card { text-align: center; padding: 50px; background: white; border-radius: 4px; box-shadow: 0 30px 60px rgba(0,0,0,0.05); border-top: 4px solid var(--gold); width: 350px; }
-        .logo { font-size: 2.2rem; letter-spacing: 10px; text-transform: uppercase; margin-bottom: 30px; color: #1A1A1A; }
-        input { width: 100%; padding: 15px; margin-bottom: 15px; border: 1px solid #EEE; box-sizing: border-box; font-size: 1rem; }
-        .btn { background: #1A1A1A; color: white; border: none; padding: 18px; width: 100%; cursor: pointer; letter-spacing: 2px; transition: 0.3s; }
-        .btn:hover { background: var(--gold); }
-        .lang-switch { position: absolute; top: 20px; right: 20px; cursor: pointer; border: 1px solid #DDD; background: white; padding: 8px 15px; }
-    </style>
+<meta charset="UTF-8">
+<title>KaMiZen</title>
+<style>
+body {
+    background:#f5f4f0;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+    font-family:Georgia, serif;
+}
+.box {
+    background:white;
+    padding:40px;
+    width:360px;
+    text-align:center;
+    border-radius:18px;
+    box-shadow:0 15px 40px rgba(0,0,0,.08);
+}
+button,input {
+    width:100%;
+    padding:12px;
+    margin-top:10px;
+}
+button {
+    background:black;
+    color:white;
+    border:none;
+}
+.lang {
+    position:absolute;
+    top:20px;
+    right:20px;
+}
+</style>
 </head>
 <body>
-    <button class="lang-switch" onclick="toggleLang()" id="lang-btn">ESPAÑOL</button>
-    <div class="card">
-        <div class="logo">KaMiZen</div>
-        <form action="/login" method="POST">
-            <input type="hidden" name="lang" id="lang-input" value="en">
-            <input type="text" name="username" placeholder="User" required>
-            <input type="password" name="password" placeholder="Password" required>
-            <button type="submit" class="btn" id="login-btn">ENTER THE PATH</button>
-        </form>
-    </div>
-    <script>
-        function toggleLang() {
-            const i = document.getElementById('lang-input'), b = document.getElementById('lang-btn'), l = document.getElementById('login-btn');
-            if(i.value === 'en') { i.value = 'es'; b.innerText = 'ENGLISH'; l.innerText = 'ENTRAR AL CAMINO'; }
-            else { i.value = 'en'; b.innerText = 'ESPAÑOL'; l.innerText = 'ENTER THE PATH'; }
-        }
-    </script>
+<button class="lang" onclick="toggle()">ES / EN</button>
+<div class="box">
+<h2>KaMiZen</h2>
+<p id="tag">The path to internal wealth begins here</p>
+<form method="POST" action="/login">
+<input type="hidden" name="lang" id="lang" value="en">
+<input name="username" placeholder="User">
+<input name="password" type="password" placeholder="Password">
+<button id="btn">ENTER</button>
+</form>
+</div>
+
+<script>
+let l="en";
+function toggle(){
+ l=l==="en"?"es":"en";
+ document.getElementById("lang").value=l;
+ document.getElementById("tag").innerText=l==="en"
+ ? "The path to internal wealth begins here"
+ : "El camino hacia la riqueza interior comienza aquí";
+ document.getElementById("btn").innerText=l==="en"?"ENTER":"ENTRAR";
+}
+</script>
 </body>
 </html>
