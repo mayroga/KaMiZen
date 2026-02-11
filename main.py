@@ -14,7 +14,6 @@ FASES = [
     "cierre", "autopropaganda"
 ]
 
-# Listado base de obstáculos y juegos
 OBSTACULOS_BASE = [
     {"nombre_es":"Perseverancia","nombre_en":"Perseverance"},
     {"nombre_es":"Ira","nombre_en":"Anger"},
@@ -29,6 +28,31 @@ JUEGOS_BASE = [
     {"pregunta_es":"Adivina la palabra oculta", "pregunta_en":"Guess the hidden word"},
     {"pregunta_es":"Encuentra la lógica detrás de la secuencia", "pregunta_en":"Find the logic behind the sequence"}
 ]
+
+PAISAJES = [
+    "https://images.unsplash.com/photo-1506744038136-46273834b3fb",
+    "https://images.unsplash.com/photo-1470770841072-f978cf4d019e",
+    "https://images.unsplash.com/photo-1441974231531-c6227db76b6e",
+    "https://images.unsplash.com/photo-1501854140801-50d01698950b",
+    "https://images.unsplash.com/photo-1447752875215-b2761acb3c5d"
+]
+
+# Función para generar texto usando OpenAI
+def generar_texto_ia(prompt: str, lang: str):
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4o",
+            messages=[
+                {"role":"system","content":f"Eres KaMiZen, sabio, breve, profundo, motivador, en idioma {lang}."},
+                {"role":"user","content":prompt}
+            ]
+        )
+        return response.choices[0].message.content
+    except:
+        # fallback elegante
+        fallback_es = "Bienvenido a tu viaje interior. Prepárate para crecer y brillar."
+        fallback_en = "Welcome to your inner journey. Get ready to grow and shine."
+        return fallback_es if lang=="es" else fallback_en
 
 @app.route("/")
 def index():
@@ -55,47 +79,22 @@ def servicio():
         return redirect(url_for("index"))
     return render_template("escenario_mapa.html", lang=session.get('lang'))
 
-def generar_texto_ia(prompt: str, lang: str):
-    """
-    Llama a OpenAI para generar texto dinámico y sorprendente.
-    """
-    try:
-        response = client.chat.completions.create(
-            model="gpt-4o",
-            messages=[
-                {"role":"system","content":f"Eres KaMiZen, sabio, breve, profundo, motivador, en idioma {lang}."},
-                {"role":"user","content":prompt}
-            ]
-        )
-        return response.choices[0].message.content
-    except:
-        return prompt  # fallback si falla la IA
-
 @app.route("/api/get_sequence")
 def get_sequence():
     if not session.get('start_time'):
         return jsonify({"error":"No session"}), 401
 
     elapsed = (time.time() - session['start_time']) / 60
-    lang = session.get('lang', 'es')
     fase_idx = min(int(elapsed), len(FASES)-1)
     fase_actual = FASES[fase_idx]
+    lang = session.get('lang', 'es')
 
-    paisajes = [
-        "https://images.unsplash.com/photo-1506744038136-46273834b3fb",
-        "https://images.unsplash.com/photo-1470770841072-f978cf4d019e",
-        "https://images.unsplash.com/photo-1441974231531-c6227db76b6e",
-        "https://images.unsplash.com/photo-1501854140801-50d01698950b",
-        "https://images.unsplash.com/photo-1447752875215-b2761acb3c5d"
-    ]
-    current_bg = paisajes[fase_idx % len(paisajes)]
-
+    current_bg = PAISAJES[fase_idx % len(PAISAJES)]
     texto = ""
     opciones = None
 
-    # Generación dinámica por fase
     if fase_actual.startswith("bienvenida"):
-        texto = generar_texto_ia("Saluda al usuario de forma mística y breve, motivándolo a iniciar su viaje interior.", lang)
+        texto = generar_texto_ia("Saluda al usuario de forma mística y motivadora, iniciando su viaje interior.", lang)
     elif fase_actual.startswith("obstaculos"):
         obstaculo = random.choice(OBSTACULOS_BASE)
         nombre_obs = obstaculo["nombre_es"] if lang=="es" else obstaculo["nombre_en"]
@@ -107,20 +106,20 @@ def get_sequence():
     elif fase_actual.startswith("juego"):
         juego = random.choice(JUEGOS_BASE)
         pregunta = juego["pregunta_es"] if lang=="es" else juego["pregunta_en"]
-        texto = generar_texto_ia(f"Genera un juego o adivinanza corta basada en: {pregunta}", lang)
+        texto = generar_texto_ia(f"Genera un juego breve y divertido basado en: {pregunta}", lang)
         opciones = [
             {"texto":"A","valor":"A"},
             {"texto":"B","valor":"B"},
             {"texto":"C","valor":"C"}
         ]
     elif fase_actual.startswith("historia"):
-        texto = generar_texto_ia("Cuenta una historia corta de riqueza, sabiduría y poder, max 20 segundos.", lang)
+        texto = generar_texto_ia("Cuenta una historia corta de riqueza, sabiduría y poder interior, max 20 segundos.", lang)
     elif fase_actual.startswith("reflexion"):
         texto = generar_texto_ia("Invita al usuario a reflexionar sobre lo aprendido y conectar con bienestar interior.", lang)
     elif fase_actual.startswith("cierre"):
-        texto = generar_texto_ia("Finaliza el viaje del usuario con grandeza, riqueza y paz interior.", lang)
+        texto = generar_texto_ia("Finaliza el viaje con paz, riqueza y motivación para el futuro.", lang)
     elif fase_actual.startswith("autopropaganda"):
-        texto = generar_texto_ia("Promociona KaMiZen brevemente para motivar al usuario a volver.", lang)
+        texto = generar_texto_ia("Motiva al usuario a volver y seguir su crecimiento interior.", lang)
 
     return jsonify({"texto": texto, "opciones": opciones, "bg": current_bg, "finalizado": elapsed>=10})
 
