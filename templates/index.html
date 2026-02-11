@@ -1,123 +1,102 @@
 <!DOCTYPE html>
-<html lang="{{ lang }}">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>KaMiZen Journey</title>
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KaMiZen</title>
 <style>
-html, body {
-    margin:0;
-    padding:0;
-    height:100%;
-    overflow:hidden;
-    background:black;
-    font-family:Georgia, serif;
-    color:white;
-}
-
-#bg {
-    position:absolute;
-    width:120%;
-    height:120%;
-    top:-10%;
-    left:-10%;
-    background-size:cover;
-    background-position:center;
-    transition:transform 12s ease, filter 6s ease;
-    filter:brightness(0.65);
-    z-index:1;
-}
-
-#walker {
-    position:absolute;
-    top:50%;
-    left:50%;
-    transform:translate(-50%,-50%);
-    font-size:80px;
-    z-index:3;
-}
-
-#panel {
-    position:absolute;
-    bottom:0;
-    width:100%;
-    background:rgba(0,0,0,0.85);
-    padding:20px;
-    text-align:center;
-    z-index:4;
-}
-
-#choices button {
-    background:none;
-    border:1px solid gold;
-    color:white;
-    padding:10px 22px;
-    margin:5px;
-    cursor:pointer;
-}
+    :root { --primary-bg: #FAF9F6; --accent-color: #1A1A1A; }
+    body {
+        margin: 0;
+        background: var(--primary-bg);
+        font-family: 'Georgia', serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+    .container {
+        text-align: center;
+        max-width: 400px;
+        padding: 40px;
+        background: white;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+        border-radius: 15px;
+        position: relative;
+    }
+    .logo {
+        font-size: 2rem;
+        letter-spacing: 5px;
+        text-transform: uppercase;
+        margin-bottom: 10px;
+    }
+    .admin-login input {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 10px;
+        border: 1px solid #DDD;
+        box-sizing: border-box;
+        border-radius: 5px;
+    }
+    .btn-admin {
+        background: var(--accent-color);
+        color: white;
+        border: none;
+        padding: 15px;
+        width: 100%;
+        cursor: pointer;
+        letter-spacing: 2px;
+        border-radius: 5px;
+    }
+    .lang-toggle {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        cursor: pointer;
+        background: white;
+        border: 1px solid #DDD;
+        padding: 5px 15px;
+        border-radius: 5px;
+    }
 </style>
 </head>
-
 <body>
+    <button class="lang-toggle" onclick="toggleLang()" id="lang-btn">ESPAÑOL</button>
 
-<div id="bg"></div>
-<div id="walker">🚶‍♂️</div>
-
-<div id="panel">
-    <div id="text"></div>
-    <div id="choices"></div>
-</div>
-
-<audio id="audio"></audio>
+    <div class="container">
+        <div class="logo">KaMiZen</div>
+        <p id="tagline">The path to internal wealth starts here.</p>
+        <form class="admin-login" action="/login" method="POST">
+            <input type="hidden" name="lang" id="lang-input" value="en">
+            <input type="text" name="username" placeholder="User" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <button type="submit" class="btn-admin" id="login-btn">ENTER</button>
+        </form>
+    </div>
 
 <script>
-let running = true;
+    // Mantener idioma seleccionado entre sesiones
+    let currentLang = 'en';
 
-async function updateScene(){
-    if(!running) return;
-
-    try {
-        const res = await fetch("/api/state");
-        const data = await res.json();
-
-        const bg = document.getElementById("bg");
-        bg.style.backgroundImage = `url(${data.bg})`;
-        bg.style.transform = "scale(1.15)";
-
-        const textEl = document.getElementById("text");
-        textEl.innerText = data.texto || "";
-
-        const choices = document.getElementById("choices");
-        choices.innerHTML = "";
-
-        if(data.opciones){
-            data.opciones.forEach(o=>{
-                const b = document.createElement("button");
-                b.innerText = o.texto;
-                b.onclick = ()=>choices.innerHTML="";
-                choices.appendChild(b);
-            });
-        }
-
-        if(data.voz && data.texto){
-            const audio = document.getElementById("audio");
-            audio.src = "/api/audio?text=" + encodeURIComponent(data.texto);
-            audio.play().catch(()=>{});
-        }
-
-        if(data.final){
-            running = false;
-            setTimeout(()=>window.location.href="/logout", 4000);
-        }
-
-    } catch(e){
-        console.error(e);
+    function toggleLang() {
+        currentLang = currentLang === 'en' ? 'es' : 'en';
+        document.getElementById('lang-btn').innerText = currentLang === 'en' ? 'ESPAÑOL' : 'ENGLISH';
+        document.getElementById('tagline').innerText = currentLang === 'en'
+            ? 'The path to internal wealth starts here.'
+            : 'El camino hacia la riqueza interior comienza aquí.';
+        document.getElementById('login-btn').innerText = currentLang === 'en' ? 'ENTER' : 'ENTRAR';
+        document.getElementById('lang-input').value = currentLang;
+        localStorage.setItem('kmz_lang', currentLang); // guardar selección en navegador
     }
-}
 
-setInterval(updateScene, 6000);
-updateScene();
+    // Recuperar idioma de sesiones previas
+    window.onload = () => {
+        const savedLang = localStorage.getItem('kmz_lang');
+        if(savedLang && savedLang !== currentLang){
+            currentLang = savedLang;
+            toggleLang();
+        }
+    }
 </script>
-
 </body>
 </html>
