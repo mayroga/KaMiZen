@@ -1,80 +1,125 @@
 <!DOCTYPE html>
-<html lang="{{lang}}">
+<html lang="{{ lang }}">
 <head>
 <meta charset="UTF-8">
+<title>KaMiZen Experience</title>
+
 <style>
-html,body{
-margin:0;height:100%;overflow:hidden;
-background:black;color:white;font-family:Georgia;
+html, body {
+    margin:0;
+    height:100%;
+    overflow:hidden;
+    background:black;
+    font-family:Georgia, serif;
+    color:white;
 }
-#bg{
-position:absolute;width:110%;height:110%;
-background-size:cover;
-background-position:center;
-transition:transform 10s ease, filter 5s ease;
-filter:brightness(.65);
+
+#bg {
+    position:absolute;
+    width:120%;
+    height:120%;
+    top:-10%;
+    left:-10%;
+    background-size:cover;
+    background-position:center;
+    transition:transform 12s ease, filter 6s ease;
+    filter:brightness(0.65);
+    z-index:1;
 }
-#walker{
-position:absolute;top:50%;left:50%;
-transform:translate(-50%,-50%);
-font-size:80px;z-index:2;
+
+#walker {
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    font-size:80px;
+    z-index:3;
 }
-#panel{
-position:absolute;bottom:0;width:100%;
-background:rgba(0,0,0,.85);
-padding:20px;text-align:center;
+
+#panel {
+    position:absolute;
+    bottom:0;
+    width:100%;
+    background:rgba(0,0,0,0.85);
+    padding:20px;
+    text-align:center;
+    z-index:4;
 }
-button{
-background:none;border:1px solid gold;
-color:white;padding:10px 20px;margin:5px;
+
+#choices button {
+    background:none;
+    border:1px solid gold;
+    color:white;
+    padding:10px 22px;
+    margin:6px;
+    cursor:pointer;
 }
 </style>
 </head>
+
 <body>
 
 <div id="bg"></div>
 <div id="walker">🚶‍♂️</div>
 
 <div id="panel">
-<div id="text"></div>
-<div id="choices"></div>
+    <div id="text">Preparing your journey…</div>
+    <div id="choices"></div>
 </div>
 
 <audio id="audio"></audio>
 
 <script>
-async function cycle(){
- const r=await fetch("/api/state");
- const d=await r.json();
+let active = true;
 
- const bg=document.getElementById("bg");
- bg.style.backgroundImage=`url(${d.bg})`;
- bg.style.transform="scale(1.15)";
+async function updateScene(){
+    if(!active) return;
 
- document.getElementById("text").innerText=d.text;
+    try{
+        const res = await fetch("/api/state");
+        const data = await res.json();
 
- if(d.voz && d.text){
-  const a=document.getElementById("audio");
-  a.src="/api/audio?text="+encodeURIComponent(d.text);
-  a.play();
- }
+        if(!data.texto){
+            data.texto = "You are accompanied. Everything is unfolding.";
+        }
 
- const ch=document.getElementById("choices");
- ch.innerHTML="";
- if(d.opciones){
-  d.opciones.forEach(o=>{
-   const b=document.createElement("button");
-   b.innerText=o.texto;
-   b.onclick=()=>ch.innerHTML="";
-   ch.appendChild(b);
-  });
- }
+        document.getElementById("bg").style.backgroundImage =
+            `url(${data.bg})`;
+        document.getElementById("bg").style.transform = "scale(1.15)";
 
- if(!d.final) setTimeout(cycle,6000);
- else setTimeout(()=>location.href="/logout",4000);
+        document.getElementById("text").innerText = data.texto;
+
+        const choices = document.getElementById("choices");
+        choices.innerHTML = "";
+
+        if(data.opciones){
+            data.opciones.forEach(o=>{
+                const b = document.createElement("button");
+                b.innerText = o.texto;
+                b.onclick = ()=>choices.innerHTML="";
+                choices.appendChild(b);
+            });
+        }
+
+        if(data.voz){
+            const audio = document.getElementById("audio");
+            audio.src = "/api/audio?text=" + encodeURIComponent(data.texto);
+            audio.play().catch(()=>{});
+        }
+
+        if(data.final){
+            active = false;
+            setTimeout(()=>location.href="/logout", 4000);
+        }
+
+    }catch(e){
+        console.error(e);
+    }
 }
 
-cycle();
+updateScene();
+setInterval(updateScene, 6000);
 </script>
+
 </body>
 </html>
