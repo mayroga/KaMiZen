@@ -2,106 +2,97 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>KaMiZen Experience</title>
     <style>
         body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #000; font-family: 'Georgia', serif; color: white; }
-        #mapa-fondo { position: absolute; width: 100%; height: 100vh; background-size: cover; background-position: center; transition: 5s ease-in-out; filter: brightness(0.4); }
-        #caminante { position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%); font-size: 100px; z-index: 10; filter: drop-shadow(0 0 20px rgba(212,175,55,0.6)); }
+        #mapa-fondo { position: absolute; width: 100%; height: 100vh; background-size: cover; background-position: center; transition: 5s ease; filter: brightness(0.4); }
+        #caminante { position: absolute; top: 45%; left: 10%; font-size: 80px; z-index: 10; transition: 3s linear; }
         
         #narrativa { 
             position: absolute; bottom: 0; width: 100%; background: rgba(0,0,0,0.85); 
-            padding: 40px; text-align: center; border-top: 2px solid #D4AF37; box-sizing: border-box; z-index: 20;
+            padding: 40px; text-align: center; border-top: 2px solid #D4AF37; z-index: 20;
         }
 
-        #texto-display { font-size: 1.7rem; line-height: 1.5; margin-bottom: 20px; min-height: 80px; transition: 0.5s; }
-        
-        .btn-opcion { 
-            background: none; border: 1px solid #D4AF37; color: white; padding: 12px 30px; 
-            margin: 10px; cursor: pointer; transition: 0.3s; font-size: 1rem;
-        }
-        .btn-opcion:hover { background: #D4AF37; color: black; }
-
-        /* Respuestas Ocultas */
-        .reveal-box { display: inline-block; margin-top: 15px; color: #777; font-size: 0.8rem; cursor: help; border-bottom: 1px dotted; }
-        .reveal-box:hover { color: #D4AF37; }
-
-        /* Partículas de Oro */
-        .particle { position: absolute; background: #D4AF37; border-radius: 50%; pointer-events: none; opacity: 0.8; z-index: 15; }
-        @keyframes fall { to { transform: translateY(100vh) rotate(360deg); opacity: 0; } }
-
-        input { background: none; border: 1px solid #D4AF37; color: white; padding: 10px; text-align: center; font-size: 1.2rem; width: 250px; }
+        #texto-display { font-size: 1.5rem; min-height: 60px; margin-bottom: 20px; }
+        .btn-opcion { background: none; border: 1px solid #D4AF37; color: white; padding: 10px 25px; margin: 5px; cursor: pointer; }
+        .particle { position: absolute; background: gold; border-radius: 50%; pointer-events: none; z-index: 100; }
+        @keyframes fall { to { transform: translateY(100vh); opacity: 0; } }
     </style>
 </head>
 <body>
     <div id="mapa-fondo"></div>
     <div id="caminante">🚶‍♂️</div>
-    <canvas id="particle-canvas" style="position:absolute; top:0; left:0; z-index:15; pointer-events:none;"></canvas>
 
     <div id="narrativa">
-        <div id="texto-display">Preparando tu ascenso...</div>
+        <div id="texto-display">Conectando...</div>
         <div id="interaccion"></div>
-        <div id="reveal-area" class="reveal-box" style="display:none;" onclick="alert('La sabiduría solo se revela a quien persiste.')">¿Curiosidad? Toca aquí</div>
     </div>
 
     <audio id="audio-player"></audio>
 
     <script>
-        function createParticles() {
-            for(let i=0; i<30; i++) {
+        let faseActual = 0;
+
+        function lluviaOro() {
+            for(let i=0; i<20; i++) {
                 let p = document.createElement('div');
                 p.className = 'particle';
-                let size = Math.random() * 4 + 2 + 'px';
-                p.style.width = size; p.style.height = size;
-                p.style.left = Math.random() * 100 + 'vw';
+                p.style.width = p.style.height = Math.random()*5+'px';
+                p.style.left = Math.random()*100+'vw';
                 p.style.top = '-10px';
-                p.style.animation = `fall ${Math.random()*3 + 2}s linear forwards`;
+                p.style.animation = `fall ${Math.random()*2+1}s linear forwards`;
                 document.body.appendChild(p);
-                setTimeout(() => p.remove(), 5000);
+                setTimeout(() => p.remove(), 2000);
             }
         }
 
         async function ciclo() {
-            const res = await fetch('/api/get_sequence');
-            const data = await res.json();
+            try {
+                const res = await fetch('/api/get_sequence');
+                const data = await res.json();
 
-            document.getElementById('mapa-fondo').style.backgroundImage = `url(${data.bg})`;
-            document.getElementById('texto-display').innerText = data.texto;
+                // Mover al caminante según la fase
+                faseActual = data.fase_n;
+                document.getElementById('caminante').style.left = (10 + (faseActual * 8)) + "%";
+                
+                document.getElementById('mapa-fondo').style.backgroundImage = `url(${data.bg})`;
+                document.getElementById('texto-display').innerText = data.texto;
 
-            const player = document.getElementById('audio-player');
-            player.src = `/api/get_audio?text=${encodeURIComponent(data.texto)}`;
-            player.play();
+                const player = document.getElementById('audio-player');
+                player.src = `/api/get_audio?text=${encodeURIComponent(data.texto)}`;
+                player.play();
 
-            const area = document.getElementById('interaccion');
-            area.innerHTML = '';
-            document.getElementById('reveal-area').style.display = 'none';
+                const area = document.getElementById('interaccion');
+                area.innerHTML = '';
 
-            if(data.input_requerido) {
-                const i = document.createElement('input');
-                i.placeholder = "...";
-                i.onkeypress = (e) => { if(e.key==='Enter') ciclo(); };
-                area.appendChild(i);
-            } else if(data.opciones) {
-                document.getElementById('reveal-area').style.display = 'block';
-                data.opciones.forEach(o => {
-                    const b = document.createElement('button');
-                    b.className = 'btn-opcion';
-                    b.innerText = o;
-                    b.onclick = async () => {
-                        createParticles();
-                        const r = await fetch('/api/verificar_respuesta');
-                        const d = await r.json();
-                        document.getElementById('texto-display').innerText = d.feedback;
-                        area.innerHTML = '';
-                        setTimeout(ciclo, 5000);
+                if(data.input_requerido) {
+                    const i = document.createElement('input');
+                    i.type = "text"; i.placeholder = "..."; i.style.padding="10px";
+                    i.onkeypress = async (e) => {
+                        if(e.key === 'Enter') {
+                            await fetch('/api/set_origen', {
+                                method: 'POST',
+                                headers: {'Content-Type': 'application/json'},
+                                body: JSON.stringify({origen: i.value})
+                            });
+                            ciclo();
+                        }
                     };
-                    area.appendChild(b);
-                });
-            }
+                    area.appendChild(i);
+                } else if(data.opciones) {
+                    data.opciones.forEach(o => {
+                        const b = document.createElement('button');
+                        b.className = 'btn-opcion';
+                        b.innerText = o;
+                        b.onclick = () => { lluviaOro(); ciclo(); };
+                        area.appendChild(b);
+                    });
+                }
 
-            player.onended = () => {
-                if(data.finalizado) window.location.href='/logout';
-                else if(!data.opciones && !data.input_requerido) setTimeout(ciclo, 7000);
-            };
+                player.onended = () => {
+                    if(data.finalizado) window.location.href='/logout';
+                    else if(!data.opciones && !data.input_requerido) setTimeout(ciclo, 5000);
+                };
+            } catch (e) { console.log("Error de conexión, reintentando..."); setTimeout(ciclo, 3000); }
         }
         window.onload = ciclo;
     </script>
