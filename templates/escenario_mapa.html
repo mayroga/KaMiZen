@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <style>
-    body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #000; font-family: 'Georgia', serif; color: #FFF; }
-    #mapa-fondo { position: absolute; width: 100%; height: 100vh; background-size: cover; background-position: center; transition: 3s ease-in-out; filter: brightness(0.6); }
-    #caminante { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 80px; z-index: 10; filter: drop-shadow(0 0 20px gold); }
-    #narrativa-container { position: absolute; bottom: 0; width: 100%; background: rgba(0,0,0,0.85); color: #FFF; padding: 20px; text-align: center; border-top: 2px solid #D4AF37; max-height: 35vh; overflow-y: auto; }
-    .botones-area { margin-top: 10px; display: none; gap: 10px; justify-content: center; flex-wrap: wrap; }
-    .btn-opcion { background: none; border: 1px solid #D4AF37; color: white; padding: 10px 20px; cursor: pointer; border-radius: 5px; }
-    .frase-flotante { position: absolute; font-size: 1.2rem; color: #FFD700; animation: floatText 8s ease-in-out infinite; pointer-events: none; }
-    @keyframes floatText { 0% {opacity:0; transform: translateY(50px);} 50% {opacity:1; transform: translateY(-20px);} 100% {opacity:0; transform: translateY(-80px);} }
-    #feedback { position: absolute; bottom: 40%; width: 100%; text-align: center; font-size: 1.3rem; color: #ADFF2F; pointer-events: none; }
+body, html{margin:0;padding:0;height:100%;overflow:hidden;background:#000;font-family:'Georgia',serif;color:#FFF;}
+#mapa-fondo{position:absolute;width:100%;height:100vh;background-size:cover;background-position:center;transition:3s ease-in-out;filter:brightness(0.6);}
+#caminante{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:80px;z-index:10;filter:drop-shadow(0 0 20px gold);}
+#narrativa-container{position:absolute;bottom:0;width:100%;background:rgba(0,0,0,0.85);color:#FFF;padding:20px;text-align:center;border-top:2px solid #D4AF37;max-height:35vh;overflow-y:auto;}
+.botones-area{margin-top:10px;display:none;gap:10px;justify-content:center;flex-wrap:wrap;}
+.btn-opcion{background:none;border:1px solid #D4AF37;color:white;padding:10px 20px;cursor:pointer;border-radius:5px;}
+.frase-flotante{position:absolute;font-size:1.2rem;color:#FFD700;animation:floatText 8s ease-in-out infinite;pointer-events:none;}
+@keyframes floatText{0%{opacity:0;transform:translateY(50px);}50%{opacity:1;transform:translateY(-20px);}100%{opacity:0;transform:translateY(-80px);}}
+#feedback{position:absolute;bottom:40%;width:100%;text-align:center;font-size:1.3rem;color:#ADFF2F;pointer-events:none;}
 </style>
 </head>
 <body>
@@ -25,67 +25,58 @@
 <audio id="audio-player"></audio>
 
 <script>
-let frasesFlotantes = [
-    "Perseverancia", "Astucia", "Riqueza", "Sabiduría", "Fuerza", "Alegría", "Emoción"
-];
-
-function mostrarFrase() {
-    const f = document.createElement('div');
-    f.className = 'frase-flotante';
-    f.innerText = frasesFlotantes[Math.floor(Math.random()*frasesFlotantes.length)];
-    f.style.left = Math.random() * 80 + "%";
-    f.style.top = Math.random() * 50 + "%";
+let frasesFlotantes=["Perseverancia","Astucia","Riqueza","Sabiduría","Fuerza","Alegría","Emoción"];
+function mostrarFrase(){
+    const f=document.createElement('div');
+    f.className='frase-flotante';
+    f.innerText=frasesFlotantes[Math.floor(Math.random()*frasesFlotantes.length)];
+    f.style.left=Math.random()*80+'%';
+    f.style.top=Math.random()*50+'%';
     document.body.appendChild(f);
-    setTimeout(()=>f.remove(), 8000);
+    setTimeout(()=>f.remove(),8000);
 }
-
-async function mostrarFeedback(opcion) {
-    const res = await fetch(`/api/decision?opcion=${encodeURIComponent(opcion)}`);
-    const data = await res.json();
-    const fb = document.getElementById('feedback');
-    fb.innerText = data.feedback;
-    setTimeout(()=>fb.innerText='', 5000);
+async function mostrarFeedback(opcion){
+    const res=await fetch(`/api/decision?opcion=${encodeURIComponent(opcion)}`);
+    const data=await res.json();
+    const fb=document.getElementById('feedback');
+    fb.innerText=data.feedback;
+    setTimeout(()=>fb.innerText='',5000);
 }
+async function ciclo(){
+    const res=await fetch('/api/get_sequence');
+    const data=await res.json();
 
-async function ciclo() {
-    const res = await fetch('/api/get_sequence');
-    const data = await res.json();
+    document.getElementById('mapa-fondo').style.backgroundImage=`url(${data.bg})`;
+    document.getElementById('texto-display').innerText=data.texto;
 
-    document.getElementById('mapa-fondo').style.backgroundImage = `url(${data.bg})`;
-    document.getElementById('texto-display').innerText = data.texto;
-
-    const player = document.getElementById('audio-player');
-    player.src = `/api/get_audio?text=${encodeURIComponent(data.texto)}`;
+    const player=document.getElementById('audio-player');
+    player.src=`/api/get_audio?text=${encodeURIComponent(data.texto)}`;
     player.play();
 
-    const btns = document.getElementById('botones-interaccion');
+    const btns=document.getElementById('botones-interaccion');
     if(data.opciones){
-        btns.style.display = 'flex';
-        btns.innerHTML = '';
+        btns.style.display='flex';
+        btns.innerHTML='';
         data.opciones.forEach(o=>{
-            const b = document.createElement('button');
-            b.className = 'btn-opcion';
-            b.innerText = o.texto;
-            b.onclick = async ()=>{
+            const b=document.createElement('button');
+            b.className='btn-opcion';
+            b.innerText=o.texto;
+            b.onclick=async ()=>{
                 btns.style.display='none';
                 await mostrarFeedback(o.valor);
-                setTimeout(ciclo, 1000);
+                setTimeout(ciclo,1000);
             };
             btns.appendChild(b);
         });
-    } else {
-        btns.style.display='none';
-    }
+    } else btns.style.display='none';
 
     mostrarFrase();
-
-    player.onended = () => {
+    player.onended=()=>{
         if(data.finalizado) window.location.href='/logout';
-        else if(!data.opciones) setTimeout(ciclo, 5000);
+        else if(!data.opciones) setTimeout(ciclo,5000);
     }
 }
-
-window.onload = ciclo;
+window.onload=ciclo;
 </script>
 </body>
 </html>
