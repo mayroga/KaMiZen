@@ -8,7 +8,6 @@ client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 ADMIN_USERNAME = os.getenv("ADMIN_USERNAME", "admin")
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "kmz_2026_prod")
 
-# Estructura de 10 minutos (Fases Biopsicosociales)
 FASES = [
     "punto_partida", "bienvenida_personal", "obstaculo_mental", "juego_logico", 
     "historia_riqueza", "desafio_astucia", "historia_poder", "decreto_salud", "bienestar_total", "cierre"
@@ -19,13 +18,13 @@ def generar_contenido_ia(prompt: str, lang: str):
         response = client.chat.completions.create(
             model="gpt-4o",
             messages=[
-                {"role": "system", "content": f"Eres KaMiZen, guía experto en bienestar y riqueza interior. Idioma: {lang}. Tu voz es profunda y mística. Sé breve pero impactante. Nunca menciones que eres una IA."},
+                {"role": "system", "content": f"Eres KaMiZen. Sabio y breve. Idioma: {lang}. Máximo 2 frases."},
                 {"role": "user", "content": prompt}
             ]
         )
         return response.choices[0].message.content
     except:
-        return "El silencio también es riqueza." if lang == "es" else "Silence is also wealth."
+        return "Respira profundamente."
 
 @app.route("/")
 def index():
@@ -48,7 +47,6 @@ def get_sequence():
     fase_idx = min(int(elapsed), len(FASES)-1)
     fase_actual = FASES[fase_idx]
 
-    # Paisajes dinámicos
     paisajes = [
         "https://images.unsplash.com/photo-1506744038136-46273834b3fb",
         "https://images.unsplash.com/photo-1470770841072-f978cf4d019e",
@@ -59,36 +57,34 @@ def get_sequence():
     
     texto, opciones, input_req = "", None, False
 
-    if fase_actual == "punto_partida":
-        texto = "¿Desde qué ciudad inicias tu ascenso a la riqueza hoy?" if lang=="es" else "From which city do you begin your ascent to wealth today?"
+    if fase_actual == "punto_partida" and not session.get('origen'):
+        texto = "¿Desde qué ciudad inicias tu ascenso?" if lang=="es" else "From which city do you start?"
         input_req = True
     elif "juego" in fase_actual or "desafio" in fase_actual:
-        texto = generar_contenido_ia("Plantea una adivinanza de sabiduría con una respuesta clara de una palabra.", lang)
-        opciones = ["A", "B", "C"] # Se barajan en el cliente
-    elif "historia" in fase_actual:
-        texto = generar_contenido_ia("Cuenta una historia mística sobre el poder mental de máximo 30 segundos.", lang)
+        texto = generar_contenido_ia("Plantea una adivinanza mística corta.", lang)
+        opciones = ["A", "B", "C"]
     else:
-        texto = generar_contenido_ia(f"Fase actual: {fase_actual}. Genera un mensaje de alto impacto biopsicosocial.", lang)
+        texto = generar_contenido_ia(f"Mensaje de {fase_actual}.", lang)
 
     return jsonify({
         "texto": texto, 
         "bg": paisajes[fase_idx % len(paisajes)], 
         "opciones": opciones, 
         "input_requerido": input_req,
-        "finalizado": elapsed >= 10
+        "finalizado": elapsed >= 10,
+        "fase_n": fase_idx
     })
+
+@app.route("/api/set_origen", methods=["POST"])
+def set_origen():
+    session['origen'] = request.json.get('origen', 'El Mundo')
+    return jsonify({"ok": True})
 
 @app.route("/api/get_audio")
 def get_audio():
     text = request.args.get('text', '')
     response = client.audio.speech.create(model="tts-1-hd", voice="onyx", input=text)
     return response.content, 200, {'Content-Type': 'audio/mpeg'}
-
-@app.route("/api/verificar_respuesta")
-def verificar():
-    lang = session.get('lang', 'es')
-    feedback = generar_contenido_ia("El usuario ha tomado una decisión. Dale un feedback sabio y corto sobre su elección.", lang)
-    return jsonify({"feedback": feedback})
 
 @app.route("/servicio")
 def servicio():
