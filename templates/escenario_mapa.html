@@ -1,82 +1,109 @@
 <!DOCTYPE html>
-<html lang="{{ lang }}">
+<html>
 <head>
-<meta charset="UTF-8">
-<style>
-body, html{margin:0;padding:0;height:100%;overflow:hidden;background:#000;font-family:'Georgia',serif;color:#FFF;}
-#mapa-fondo{position:absolute;width:100%;height:100vh;background-size:cover;background-position:center;transition:3s ease-in-out;filter:brightness(0.6);}
-#caminante{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:80px;z-index:10;filter:drop-shadow(0 0 20px gold);}
-#narrativa-container{position:absolute;bottom:0;width:100%;background:rgba(0,0,0,0.85);color:#FFF;padding:20px;text-align:center;border-top:2px solid #D4AF37;max-height:35vh;overflow-y:auto;}
-.botones-area{margin-top:10px;display:none;gap:10px;justify-content:center;flex-wrap:wrap;}
-.btn-opcion{background:none;border:1px solid #D4AF37;color:white;padding:10px 20px;cursor:pointer;border-radius:5px;}
-.frase-flotante{position:absolute;font-size:1.2rem;color:#FFD700;animation:floatText 8s ease-in-out infinite;pointer-events:none;}
-@keyframes floatText{0%{opacity:0;transform:translateY(50px);}50%{opacity:1;transform:translateY(-20px);}100%{opacity:0;transform:translateY(-80px);}}
-#feedback{position:absolute;bottom:40%;width:100%;text-align:center;font-size:1.3rem;color:#ADFF2F;pointer-events:none;}
-</style>
+    <meta charset="UTF-8">
+    <title>KaMiZen Experience</title>
+    <style>
+        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #000; font-family: 'Georgia', serif; color: white; }
+        #mapa-fondo { position: absolute; width: 100%; height: 100vh; background-size: cover; background-position: center; transition: 5s ease-in-out; filter: brightness(0.4); }
+        #caminante { position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%); font-size: 100px; z-index: 10; filter: drop-shadow(0 0 20px rgba(212,175,55,0.6)); }
+        
+        #narrativa { 
+            position: absolute; bottom: 0; width: 100%; background: rgba(0,0,0,0.85); 
+            padding: 40px; text-align: center; border-top: 2px solid #D4AF37; box-sizing: border-box; z-index: 20;
+        }
+
+        #texto-display { font-size: 1.7rem; line-height: 1.5; margin-bottom: 20px; min-height: 80px; transition: 0.5s; }
+        
+        .btn-opcion { 
+            background: none; border: 1px solid #D4AF37; color: white; padding: 12px 30px; 
+            margin: 10px; cursor: pointer; transition: 0.3s; font-size: 1rem;
+        }
+        .btn-opcion:hover { background: #D4AF37; color: black; }
+
+        /* Respuestas Ocultas */
+        .reveal-box { display: inline-block; margin-top: 15px; color: #777; font-size: 0.8rem; cursor: help; border-bottom: 1px dotted; }
+        .reveal-box:hover { color: #D4AF37; }
+
+        /* Partículas de Oro */
+        .particle { position: absolute; background: #D4AF37; border-radius: 50%; pointer-events: none; opacity: 0.8; z-index: 15; }
+        @keyframes fall { to { transform: translateY(100vh) rotate(360deg); opacity: 0; } }
+
+        input { background: none; border: 1px solid #D4AF37; color: white; padding: 10px; text-align: center; font-size: 1.2rem; width: 250px; }
+    </style>
 </head>
 <body>
-<div id="mapa-fondo"></div>
-<div id="caminante">🚶‍♂️</div>
-<div id="narrativa-container">
-    <div id="texto-display">Iniciando...</div>
-    <div id="botones-interaccion" class="botones-area"></div>
-</div>
-<div id="feedback"></div>
-<audio id="audio-player"></audio>
+    <div id="mapa-fondo"></div>
+    <div id="caminante">🚶‍♂️</div>
+    <canvas id="particle-canvas" style="position:absolute; top:0; left:0; z-index:15; pointer-events:none;"></canvas>
 
-<script>
-let frasesFlotantes=["Perseverancia","Astucia","Riqueza","Sabiduría","Fuerza","Alegría","Emoción"];
-function mostrarFrase(){
-    const f=document.createElement('div');
-    f.className='frase-flotante';
-    f.innerText=frasesFlotantes[Math.floor(Math.random()*frasesFlotantes.length)];
-    f.style.left=Math.random()*80+'%';
-    f.style.top=Math.random()*50+'%';
-    document.body.appendChild(f);
-    setTimeout(()=>f.remove(),8000);
-}
-async function mostrarFeedback(opcion){
-    const res=await fetch(`/api/decision?opcion=${encodeURIComponent(opcion)}`);
-    const data=await res.json();
-    const fb=document.getElementById('feedback');
-    fb.innerText=data.feedback;
-    setTimeout(()=>fb.innerText='',5000);
-}
-async function ciclo(){
-    const res=await fetch('/api/get_sequence');
-    const data=await res.json();
+    <div id="narrativa">
+        <div id="texto-display">Preparando tu ascenso...</div>
+        <div id="interaccion"></div>
+        <div id="reveal-area" class="reveal-box" style="display:none;" onclick="alert('La sabiduría solo se revela a quien persiste.')">¿Curiosidad? Toca aquí</div>
+    </div>
 
-    document.getElementById('mapa-fondo').style.backgroundImage=`url(${data.bg})`;
-    document.getElementById('texto-display').innerText=data.texto;
+    <audio id="audio-player"></audio>
 
-    const player=document.getElementById('audio-player');
-    player.src=`/api/get_audio?text=${encodeURIComponent(data.texto)}`;
-    player.play();
+    <script>
+        function createParticles() {
+            for(let i=0; i<30; i++) {
+                let p = document.createElement('div');
+                p.className = 'particle';
+                let size = Math.random() * 4 + 2 + 'px';
+                p.style.width = size; p.style.height = size;
+                p.style.left = Math.random() * 100 + 'vw';
+                p.style.top = '-10px';
+                p.style.animation = `fall ${Math.random()*3 + 2}s linear forwards`;
+                document.body.appendChild(p);
+                setTimeout(() => p.remove(), 5000);
+            }
+        }
 
-    const btns=document.getElementById('botones-interaccion');
-    if(data.opciones){
-        btns.style.display='flex';
-        btns.innerHTML='';
-        data.opciones.forEach(o=>{
-            const b=document.createElement('button');
-            b.className='btn-opcion';
-            b.innerText=o.texto;
-            b.onclick=async ()=>{
-                btns.style.display='none';
-                await mostrarFeedback(o.valor);
-                setTimeout(ciclo,1000);
+        async function ciclo() {
+            const res = await fetch('/api/get_sequence');
+            const data = await res.json();
+
+            document.getElementById('mapa-fondo').style.backgroundImage = `url(${data.bg})`;
+            document.getElementById('texto-display').innerText = data.texto;
+
+            const player = document.getElementById('audio-player');
+            player.src = `/api/get_audio?text=${encodeURIComponent(data.texto)}`;
+            player.play();
+
+            const area = document.getElementById('interaccion');
+            area.innerHTML = '';
+            document.getElementById('reveal-area').style.display = 'none';
+
+            if(data.input_requerido) {
+                const i = document.createElement('input');
+                i.placeholder = "...";
+                i.onkeypress = (e) => { if(e.key==='Enter') ciclo(); };
+                area.appendChild(i);
+            } else if(data.opciones) {
+                document.getElementById('reveal-area').style.display = 'block';
+                data.opciones.forEach(o => {
+                    const b = document.createElement('button');
+                    b.className = 'btn-opcion';
+                    b.innerText = o;
+                    b.onclick = async () => {
+                        createParticles();
+                        const r = await fetch('/api/verificar_respuesta');
+                        const d = await r.json();
+                        document.getElementById('texto-display').innerText = d.feedback;
+                        area.innerHTML = '';
+                        setTimeout(ciclo, 5000);
+                    };
+                    area.appendChild(b);
+                });
+            }
+
+            player.onended = () => {
+                if(data.finalizado) window.location.href='/logout';
+                else if(!data.opciones && !data.input_requerido) setTimeout(ciclo, 7000);
             };
-            btns.appendChild(b);
-        });
-    } else btns.style.display='none';
-
-    mostrarFrase();
-    player.onended=()=>{
-        if(data.finalizado) window.location.href='/logout';
-        else if(!data.opciones) setTimeout(ciclo,5000);
-    }
-}
-window.onload=ciclo;
-</script>
+        }
+        window.onload = ciclo;
+    </script>
 </body>
 </html>
