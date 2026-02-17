@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <style>
         body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #000; font-family: 'Georgia', serif; color: white; }
-        #mapa-fondo { position: absolute; width: 100%; height: 100vh; background-size: cover; background-position: center; transition: 4s ease; filter: brightness(0.4); }
-        #caminante { position: absolute; top: 42%; left: 0%; font-size: 85px; transition: 3s linear; z-index: 10; }
+        #mapa-fondo { position: absolute; width: 100%; height: 100vh; background-size: cover; background-position: center; transition: 2s ease; filter: brightness(0.4); }
+        #caminante { position: absolute; top: 42%; left: 0%; font-size: 85px; transition: 2s linear; z-index: 10; }
         
         #narrativa { 
             position: absolute; bottom: 0; width: 100%; background: rgba(0,0,0,0.85); 
@@ -41,7 +41,7 @@
             elemento.classList.remove('fade-out');
             elemento.classList.add('fade-in');
             let i = 0;
-            let speed = 30; 
+            const speed = 30;
             function type() {
                 if (i < texto.length) {
                     elemento.innerHTML += texto.charAt(i);
@@ -55,51 +55,66 @@
         async function ciclo() {
             const res = await fetch('/api/get_sequence');
             const data = await res.json();
+            if(data.error){ alert("Error: " + data.error); return; }
 
-            // Actualizar fondo y posición
+            // Actualizar fondo y posición caminante
             document.getElementById('mapa-fondo').style.backgroundImage = `url(${data.bg})`;
-            document.getElementById('caminante').style.left = (data.fase * 9) - 5 + "%";
+            const fase_total = 10;
+            document.getElementById('caminante').style.left = (data.fase / fase_total * 100) + "%";
 
+            // Mostrar texto
             const display = document.getElementById('texto-display');
             escribirRapido(display, data.texto);
 
+            // Reproducir audio
             const player = document.getElementById('audio-player');
             player.src = `/api/get_audio?text=${encodeURIComponent(data.texto)}`;
             player.play();
 
+            // Control dinámico
             const ctrl = document.getElementById('control');
             ctrl.innerHTML = '';
 
-            if(data.input_requerido) {
+            if(data.input_requerido){
                 const i = document.createElement('input');
                 i.placeholder = "Ciudad de origen...";
                 i.onkeypress = async (e) => {
-                    if(e.key==='Enter') {
-                        await fetch('/api/set_origen', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({origen:i.value})});
+                    if(e.key==='Enter' && i.value.trim() !== ''){
+                        await fetch('/api/set_origen', {
+                            method:'POST',
+                            headers:{'Content-Type':'application/json'},
+                            body:JSON.stringify({origen:i.value})
+                        });
                         ciclo();
                     }
                 };
                 ctrl.appendChild(i);
-            } else if(data.opciones) {
+                i.focus();
+            } else if(data.opciones){
                 data.opciones.forEach(o => {
                     const b = document.createElement('button');
                     b.className = 'btn-kmz';
                     b.innerText = o;
-                    b.onclick = () => ciclo();
+                    b.onclick = async () => {
+                        await fetch('/api/set_opcion', {
+                            method:'POST',
+                            headers:{'Content-Type':'application/json'},
+                            body:JSON.stringify({opcion: o})
+                        });
+                        ciclo();
+                    };
                     ctrl.appendChild(b);
                 });
             }
 
-            // Desvanecer letras antes de terminar el audio para dinamismo
-            setTimeout(() => {
-                display.classList.add('fade-out');
-            }, 12000); 
-
+            // Fade-out dinámico al terminar audio
             player.onended = () => {
+                display.classList.add('fade-out');
                 if(data.finalizado) window.location.href = '/logout';
-                else if(!data.opciones && !data.input_requerido) setTimeout(ciclo, 2000);
+                else if(!data.input_requerido && !data.opciones) setTimeout(ciclo, 1500);
             };
         }
+
         window.onload = ciclo;
     </script>
 </body>
