@@ -1,4 +1,4 @@
-import os, json, random, time, openai
+import os, time, openai
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 
 app = Flask(__name__)
@@ -8,7 +8,7 @@ client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 ADMIN_USERNAME = os.getenv("ADMIN_USERNAME", "admin")
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "kmz_2026_prod")
 
-# EL MANUAL INTEGRAL KAMIZEN - 10 FASES ÚNICAS
+# MANUAL KaMiZen - 10 FASES
 MANUAL_KAMIZEN = {
     1: {"fase": "Punto de Partida", "detalle": "Exploración del origen geográfico y energético. El usuario establece su base."},
     2: {"fase": "Apertura de Conciencia", "detalle": "Bienvenida mística conectando el lugar de origen con el campo de infinitas posibilidades."},
@@ -28,8 +28,8 @@ def generar_contenido_manual(fase_n, lang, origen):
     Eres el Asesor Experto KaMiZen. EJECUTA LA FASE {fase_n}: {config['fase']}.
     Contexto: {config['detalle']}. Usuario viene de: {origen}.
     Idioma: {lang}. 
-    REGLA: No seas repetitivo. Usa un lenguaje místico, de alto peso, profesional y motivador. 
-    Evita palabras como IA o ChatGPT. Habla como un guía de riqueza y bienestar.
+    REGLA: No seas repetitivo. Usa un lenguaje místico, profesional y motivador. 
+    Evita palabras como IA o ChatGPT.
     """
     try:
         response = client.chat.completions.create(
@@ -48,55 +48,78 @@ def index():
 def login():
     user, pw, lang = request.form.get("username"), request.form.get("password"), request.form.get("lang", "en")
     if user == ADMIN_USERNAME and pw == ADMIN_PASSWORD:
-        session.update({'access_granted': True, 'start_time': time.time(), 'lang': lang, 'origen': 'El Mundo'})
+        session.update({'access_granted': True, 'fase_actual': 1, 'lang': lang, 'origen': 'El Mundo'})
         return redirect(url_for("servicio"))
     return redirect(url_for("index"))
 
 @app.route("/api/get_sequence")
 def get_sequence():
-    if not session.get('start_time'): return jsonify({"error": "No session"}), 401
-    
-    elapsed = (time.time() - session['start_time']) / 60
-    fase_n = int(elapsed) + 1
-    if fase_n > 10: fase_n = 10
-    
+    if not session.get('access_granted'):
+        return jsonify({"error": "No session"}), 401
+
+    fase_n = session.get('fase_actual', 1)
     lang = session.get('lang', 'es')
     origen = session.get('origen')
-    
-    # Paisajes variados según fase
+
+    # Paisajes según fase
     paisajes = [
-        "https://images.unsplash.com/photo-1506744038136-46273834b3fb", "https://images.unsplash.com/photo-1470770841072-f978cf4d019e",
-        "https://images.unsplash.com/photo-1441974231531-c6227db76b6e", "https://images.unsplash.com/photo-1501854140801-50d01698950b",
-        "https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07", "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b",
-        "https://images.unsplash.com/photo-1500382017468-9049fed747ef", "https://images.unsplash.com/photo-1472214103451-9374bd1c798e",
-        "https://images.unsplash.com/photo-1433838552652-f9a46b332c40", "https://images.unsplash.com/photo-1490730141103-6cac27aaab94"
+        "https://images.unsplash.com/photo-1506744038136-46273834b3fb",
+        "https://images.unsplash.com/photo-1470770841072-f978cf4d019e",
+        "https://images.unsplash.com/photo-1441974231531-c6227db76b6e",
+        "https://images.unsplash.com/photo-1501854140801-50d01698950b",
+        "https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07",
+        "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b",
+        "https://images.unsplash.com/photo-1500382017468-9049fed747ef",
+        "https://images.unsplash.com/photo-1472214103451-9374bd1c798e",
+        "https://images.unsplash.com/photo-1433838552652-f9a46b332c40",
+        "https://images.unsplash.com/photo-1490730141103-6cac27aaab94"
     ]
 
-    input_req = True if fase_n == 1 and session.get('origen') == 'El Mundo' else False
-    opciones = ["Elegir Sabiduría", "Elegir Poder", "Elegir Paz"] if fase_n in [4, 6] else None
-    
+    input_req = True if fase_n == 1 and origen == 'El Mundo' else False
+    opciones = ["Elegir Sabiduría", "Elegir Poder", "Elegir Paz"] if fase_n in [4,6] else None
+
     texto = generar_contenido_manual(fase_n, lang, origen)
+
+    finalizado = fase_n >= 10
 
     return jsonify({
         "fase": fase_n, "texto": texto, "bg": paisajes[fase_n - 1],
-        "input_requerido": input_req, "opciones": opciones, "finalizado": elapsed >= 10
+        "input_requerido": input_req, "opciones": opciones, "finalizado": finalizado
     })
 
 @app.route("/api/set_origen", methods=["POST"])
 def set_origen():
     session['origen'] = request.json.get('origen', 'El Universo')
+    session['fase_actual'] = 2  # Avanza a siguiente fase
+    return jsonify({"ok": True})
+
+@app.route("/api/set_opcion", methods=["POST"])
+def set_opcion():
+    opcion = request.json.get('opcion', '')
+    session['ultima_opcion'] = opcion
+    session['fase_actual'] = session.get('fase_actual',1) + 1
+    if session['fase_actual'] > 10:
+        session['fase_actual'] = 10
     return jsonify({"ok": True})
 
 @app.route("/api/get_audio")
 def get_audio():
     text = request.args.get('text', '')
-    response = client.audio.speech.create(model="tts-1-hd", voice="onyx", input=text)
-    return response.content, 200, {'Content-Type': 'audio/mpeg'}
+    try:
+        response = client.audio.speech.create(model="tts-1-hd", voice="onyx", input=text)
+        return response.content, 200, {'Content-Type': 'audio/mpeg'}
+    except:
+        return '', 404
 
 @app.route("/servicio")
 def servicio():
     if not session.get('access_granted'): return redirect(url_for("index"))
     return render_template("escenario_mapa.html", lang=session.get('lang'))
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect(url_for("index"))
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 10000)))
