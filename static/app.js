@@ -1,114 +1,86 @@
-let level = 1;
-let xp = 0;
-let timeLeft = 600;
-let questionTime = 20;
-let questionTimer;
-let sessionTimer;
+let ws = new WebSocket(`ws://${window.location.host}/ws`);
+let timeRemaining = 10 * 60; // 10 minutos
+let timerInterval;
 
-let voices = [];
-window.speechSynthesis.onvoiceschanged = () => {
-    voices = window.speechSynthesis.getVoices();
+const participantsDiv = document.getElementById("participants");
+const rankingList = document.getElementById("rankingList");
+const questionBox = document.getElementById("questionBox");
+const answerInput = document.getElementById("answerInput");
+const feedbackDiv = document.getElementById("feedback");
+const chatBox = document.getElementById("chatBox");
+const chatInput = document.getElementById("chatInput");
+const sessionAudio = document.getElementById("sessionAudio");
+
+// ---------------------------
+// Temporizador sesión
+// ---------------------------
+function startTimer() {
+    timerInterval = setInterval(() => {
+        timeRemaining--;
+        let min = Math.floor(timeRemaining / 60).toString().padStart(2, "0");
+        let sec = (timeRemaining % 60).toString().padStart(2, "0");
+        document.getElementById("timeRemaining").innerText = `${min}:${sec}`;
+        if (timeRemaining <= 0) {
+            clearInterval(timerInterval);
+            questionBox.innerText = "⏰ Sesión finalizada. ¡Mañana subimos nivel!";
+            answerInput.disabled = true;
+            chatInput.disabled = true;
+        }
+    }, 1000);
+}
+
+// ---------------------------
+// WebSocket mensajes
+// ---------------------------
+ws.onmessage = (event) => {
+    let data = JSON.parse(event.data);
+    if (data.type === "update_participants") {
+        participantsDiv.innerText = `🔥 Conectados: ${data.count}/${data.max}`;
+    } else if (data.type === "update_ranking") {
+        rankingList.innerHTML = "";
+        data.ranking.forEach(u => {
+            let div = document.createElement("div");
+            div.innerHTML = `${u.name} - <span class="level">${u.level}</span>`;
+            rankingList.appendChild(div);
+        });
+    } else if (data.type === "question") {
+        questionBox.innerText = data.text;
+        sessionAudio.src = `/static/audio/monday.mp3`; // audio pregrabado fase inicial
+        sessionAudio.play();
+    } else if (data.type === "feedback") {
+        feedbackDiv.innerText = data.text;
+    } else if (data.type === "chat") {
+        let div = document.createElement("div");
+        div.className = `chatMessage ${data.simulated ? "simulated" : ""}`;
+        div.innerText = `${data.sender}: ${data.text}`;
+        chatBox.appendChild(div);
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
 };
 
-function speak(text){
-    const msg = new SpeechSynthesisUtterance(text);
-    msg.voice = voices.find(v => v.lang.includes("es")) || voices[0];
-    msg.rate = 1;
-    msg.pitch = 0.8;
-    window.speechSynthesis.speak(msg);
-}
-
-function startSession(){
-    document.getElementById("arenaStart").style.display = "none";
-    document.getElementById("gameUI").style.display = "block";
-
-    speak("Bienvenido a la arena KaMiZen. Hoy compites contra 500 mentes.");
-    startSessionTimer();
-    generateChallenge();
-    startFakeChat();
-}
-
-function startSessionTimer(){
-    sessionTimer = setInterval(()=>{
-        timeLeft--;
-        let min = Math.floor(timeLeft/60);
-        let sec = timeLeft%60;
-        document.getElementById("timeRemaining").innerText =
-            `${min}:${sec<10?'0':''}${sec}`;
-        if(timeLeft <= 0){
-            clearInterval(sessionTimer);
-            speak("Sesión terminada. Mañana subimos nivel.");
-        }
-    },1000);
-}
-
-function generateChallenge(){
-    clearInterval(questionTimer);
-
-    let a = Math.floor(Math.random()*20)+1;
-    let b = Math.floor(Math.random()*20)+1;
-
-    let correct = a * b;
-
-    document.getElementById("questionBox").innerText =
-        `Nivel ${level} → ¿Cuánto es ${a} x ${b}?`;
-
-    speak(`Nivel ${level}. Responde rápido. ¿Cuánto es ${a} por ${b}?`);
-
-    questionTime = 20;
-
-    questionTimer = setInterval(()=>{
-        questionTime--;
-        if(questionTime <= 0){
-            clearInterval(questionTimer);
-            xp -= 5;
-            updateRanking();
-            speak("Tiempo agotado. Pierdes puntos.");
-            generateChallenge();
-        }
-    },1000);
-
-    window.correctAnswer = correct;
-}
-
-function submitAnswer(){
-    const input = document.getElementById("answerInput");
-    let val = parseInt(input.value);
-    input.value = "";
-
-    if(val === window.correctAnswer){
-        xp += 10;
-        speak("Correcto. Sigues subiendo.");
-    } else {
-        xp -= 3;
-        speak("Incorrecto. Otros avanzan más rápido.");
+// ---------------------------
+// Enviar respuesta
+// ---------------------------
+function sendAnswer() {
+    let text = answerInput.value.trim();
+    if (text) {
+        ws.send(JSON.stringify({type: "answer", text}));
+        answerInput.value = "";
     }
+}
 
-    if(xp >= level * 50){
-        level++;
-        speak("Subes de nivel.");
-        document.getElementById("ranking").classList.add("levelUp");
-        setTimeout(()=> {
-            document.getElementById("ranking").classList.remove("levelUp");
-        },2000);
+// ---------------------------
+// Enviar chat
+// ---------------------------
+function sendChat() {
+    let text = chatInput.value.trim();
+    if (text) {
+        ws.send(JSON.stringify({type: "chat", text}));
+        chatInput.value = "";
     }
-
-    updateRanking();
-    generateChallenge();
 }
 
-function updateRanking(){
-    document.getElementById("ranking").innerText =
-        `🏆 Nivel: ${level} | XP: ${xp}`;
-}
-
-function startFakeChat(){
-    const chatBox = document.getElementById("chatBox");
-
-    setInterval(()=>{
-        let fakeXP = Math.floor(Math.random()*200);
-        let msg = `Jugador_${Math.floor(Math.random()*500)} acaba de llegar a ${fakeXP} XP`;
-        chatBox.innerHTML += `<div class="chatMessage">${msg}</div>`;
-        chatBox.scrollTop = chatBox.scrollHeight;
-    },3000);
-}
+// ---------------------------
+// Iniciar sesión
+// ---------------------------
+startTimer();
