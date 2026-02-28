@@ -7,17 +7,19 @@
 <style>
 body { background:#111; color:#eee; font-family: Arial, sans-serif; }
 #sessionContainer { max-width:800px; margin:auto; padding:20px; }
-#participants,#timeRemaining,#feedback,#ranking { margin-bottom:10px; }
-#questionBox { background:#222; padding:15px; border-radius:8px; margin-bottom:10px; font-size:1.2em; min-height:60px; }
+#participants,#timeRemaining,#feedback,#ranking,#miniGame,#stories { margin-bottom:10px; }
+#questionBox,#miniGame { background:#222; padding:15px; border-radius:8px; margin-bottom:10px; font-size:1.2em; }
 #answerInput,#chatInput { width:100%; padding:10px; margin-bottom:5px; border-radius:5px; border:none; }
 #chatBox { background:#222; padding:10px; height:200px; overflow-y:auto; border-radius:8px; margin-bottom:10px; }
-button { padding:10px 20px; border:none; border-radius:5px; background:#ff4d4d; color:#fff; font-weight:bold; cursor:pointer; }
+button { padding:10px 20px; border:none; border-radius:5px; background:#ff4d4d; color:#fff; font-weight:bold; cursor:pointer; margin-right:5px; }
 button:hover { background:#ff1a1a; }
 .timer { font-size:1.2em; font-weight:bold; }
 .chatMessage { margin-bottom:4px; }
 .simulated { color:#ffcc00; font-weight:bold; }
 #rankingList { margin-top:5px; }
 .level { font-weight:bold; color:#00ffcc; }
+.miniGameBtn { background:#00ccff; color:#111; font-weight:bold; }
+.story { background:#333; padding:10px; border-radius:5px; margin-bottom:5px; font-style:italic; color:#ffcc00; }
 </style>
 </head>
 <body>
@@ -36,6 +38,19 @@ button:hover { background:#ff1a1a; }
     <button onclick="sendAnswer()">Enviar</button>
     <div id="feedback"></div>
 
+    <!-- Mini-juegos mentales y adivinanzas -->
+    <div id="miniGame">
+        <strong>Mini-Juego Mental:</strong> <span id="miniGameQuestion">Cargando...</span><br>
+        <div id="miniGameButtons"></div>
+        <div id="miniGameFeedback"></div>
+    </div>
+
+    <!-- Historias cortas de éxito, poder y bienestar -->
+    <div id="stories">
+        <strong>Historias cortas:</strong>
+        <div id="storyBox">Cargando historias...</div>
+    </div>
+
     <h3>Chat en vivo (anónimo)</h3>
     <div id="chatBox">Cargando chat...</div>
     <input type="text" id="chatInput" placeholder="Escribe mensaje...">
@@ -44,97 +59,67 @@ button:hover { background:#ff1a1a; }
     <audio id="sessionAudio" autoplay></audio>
 </div>
 
+<script src="/static/app.js"></script>
 <script>
-let ws = new WebSocket(`ws://${window.location.host}/ws`);
-let timeRemaining = 10 * 60; // 10 minutos
-let timerInterval;
+// ==================================
+// Mini-juegos y adivinanzas
+// ==================================
+const miniGames = [
+    {question:"Vuelo sin alas, cruzo fronteras sin pasaporte y guardo tesoros sin ser cofre. ¿Qué soy?", options:["Conocimiento de embarque","Avión","Maleta"], answer:0},
+    {question:"Suma rápida: 45 + 32 = ?", options:["77","78","79"], answer:1},
+    {question:"¿Qué es lo único que sube y nunca baja, pero te hace sentir más ligero si lo compartes?", options:["Esperanza","Dinero","Éxito"], answer:0}
+];
+const miniGameQuestionEl = document.getElementById("miniGameQuestion");
+const miniGameButtonsEl = document.getElementById("miniGameButtons");
+const miniGameFeedbackEl = document.getElementById("miniGameFeedback");
 
-const participantsDiv = document.getElementById("participants");
-const rankingList = document.getElementById("rankingList");
-const questionBox = document.getElementById("questionBox");
-const answerInput = document.getElementById("answerInput");
-const feedbackDiv = document.getElementById("feedback");
-const chatBox = document.getElementById("chatBox");
-const chatInput = document.getElementById("chatInput");
-const sessionAudio = document.getElementById("sessionAudio");
-
-// ---------------------------
-// Temporizador sesión
-// ---------------------------
-function startTimer() {
-    timerInterval = setInterval(() => {
-        timeRemaining--;
-        let min = Math.floor(timeRemaining / 60).toString().padStart(2, "0");
-        let sec = (timeRemaining % 60).toString().padStart(2, "0");
-        document.getElementById("timeRemaining").innerText = `${min}:${sec}`;
-        if (timeRemaining <= 0) {
-            clearInterval(timerInterval);
-            questionBox.innerText = "⏰ Sesión finalizada. ¡Mañana subimos nivel!";
-            answerInput.disabled = true;
-            chatInput.disabled = true;
-            sessionAudio.pause();
-        }
-    }, 1000);
+function loadMiniGame() {
+    const game = miniGames[Math.floor(Math.random()*miniGames.length)];
+    miniGameQuestionEl.innerText = game.question;
+    miniGameButtonsEl.innerHTML = "";
+    game.options.forEach((opt,i)=>{
+        const btn = document.createElement("button");
+        btn.classList.add("miniGameBtn");
+        btn.innerText = opt;
+        btn.onclick = ()=>checkMiniGame(game,i);
+        miniGameButtonsEl.appendChild(btn);
+    });
 }
 
-// ---------------------------
-// WebSocket mensajes
-// ---------------------------
-ws.onmessage = (event) => {
-    let data = JSON.parse(event.data);
-    if (data.type === "update_participants") {
-        participantsDiv.innerText = `🔥 Conectados: ${data.count}/${data.max}`;
-    } else if (data.type === "update_ranking") {
-        rankingList.innerHTML = "";
-        data.ranking.forEach(u => {
-            let div = document.createElement("div");
-            div.innerHTML = `${u.name} - <span class="level">${u.level}</span>`;
-            rankingList.appendChild(div);
-        });
-    } else if (data.type === "question") {
-        questionBox.innerText = data.text;
-        // Audio pregrabado por fase
-        if(timeRemaining > 9*60) sessionAudio.src = "/static/audio/monday.mp3"; // Corte digital
-        else if(timeRemaining > 6*60) sessionAudio.src = "/static/audio/thursday.mp3"; // Activación mental / acción
-        else sessionAudio.src = "/static/audio/monday.mp3"; // Cierre y tensión
-        sessionAudio.play();
-    } else if (data.type === "feedback") {
-        feedbackDiv.innerText = data.text;
-    } else if (data.type === "chat") {
-        let div = document.createElement("div");
-        div.className = `chatMessage ${data.simulated ? "simulated" : ""}`;
-        div.innerText = `${data.sender}: ${data.text}`;
-        chatBox.appendChild(div);
-        chatBox.scrollTop = chatBox.scrollHeight;
+function checkMiniGame(game,index) {
+    if(index === game.answer){
+        miniGameFeedbackEl.innerText = "💥 Correcto! Dopamina activada!";
+    } else {
+        miniGameFeedbackEl.innerText = `❌ Incorrecto! La respuesta era "${game.options[game.answer]}"`;
     }
-};
-
-// ---------------------------
-// Enviar respuesta
-// ---------------------------
-function sendAnswer() {
-    let text = answerInput.value.trim();
-    if (text) {
-        ws.send(JSON.stringify({type: "answer", text}));
-        answerInput.value = "";
-    }
+    setTimeout(loadMiniGame,3000);
 }
 
-// ---------------------------
-// Enviar chat
-// ---------------------------
-function sendChat() {
-    let text = chatInput.value.trim();
-    if (text) {
-        ws.send(JSON.stringify({type: "chat", text}));
-        chatInput.value = "";
-    }
+// ==================================
+// Historias cortas motivadoras
+// ==================================
+const stories = [
+    "💰 Cerré un trato millonario hoy sin perder tiempo",
+    "🔥 Nadie me supera en decisión rápida",
+    "⚡ Cada segundo cuenta para subir de nivel",
+    "🏆 Subí un nivel gracias a mi disciplina",
+    "💥 Cada palabra cuenta, actúa ya"
+];
+const storyBox = document.getElementById("storyBox");
+
+function loadStory() {
+    const story = stories[Math.floor(Math.random()*stories.length)];
+    storyBox.innerText = story;
 }
 
-// ---------------------------
-// Iniciar sesión
-// ---------------------------
-startTimer();
+// ==================================
+// Inicializar mini-juego e historias
+// ==================================
+loadMiniGame();
+setInterval(loadMiniGame, 60000); // Cambia mini-juego cada 1 min
+loadStory();
+setInterval(loadStory, 45000); // Cambia historia cada 45s
+
 </script>
 </body>
 </html>
