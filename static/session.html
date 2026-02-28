@@ -1,25 +1,27 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-<title>KaMiZen Session</title>
-<link rel="stylesheet" href="/static/style.css">
+    <meta charset="UTF-8">
+    <title>KaMiZen – Sesión</title>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
+    <div class="container">
+        <h1>KaMiZen</h1>
+        <div id="participants" class="card">Cargando participantes...</div>
+        <div id="countdown" class="card">Tiempo restante: 10:00</div>
 
-<h2 id="phase-label"></h2>
-<h3 id="question"></h3>
-<input id="answer" placeholder="Responde en 60 segundos">
-<button onclick="submitAnswer()">Enviar</button>
-<div id="feedback"></div>
+        <audio id="session-audio" controls autoplay></audio>
 
-<hr>
+        <div id="question-card" class="card">
+            <p id="question-text">Cargando pregunta...</p>
+            <input type="text" id="answer-input" placeholder="Escribe tu respuesta aquí...">
+            <button id="submit-answer">Enviar</button>
+        </div>
 
-<audio id="audio" controls autoplay></audio>
+        <div id="chat-box" class="card"></div>
+    </div>
 
-<div id="chat-box" style="height:200px; overflow:auto;"></div>
-<input id="chat-input" placeholder="Mensaje anónimo">
-<button onclick="sendChat()">Enviar</button>
-
-<script src="/static/app.js"></script>
+    <script src="/static/scripts.js"></script>
 </body>
 </html>
