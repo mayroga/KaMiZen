@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>KaMiZen Session</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<h2 id="phase-label"></h2>
+<h3 id="question"></h3>
+<input id="answer" placeholder="Responde en 60 segundos">
+<button onclick="submitAnswer()">Enviar</button>
+<div id="feedback"></div>
+
+<hr>
+
+<audio id="audio" controls autoplay></audio>
+
+<div id="chat-box" style="height:200px; overflow:auto;"></div>
+<input id="chat-input" placeholder="Mensaje anónimo">
+<button onclick="sendChat()">Enviar</button>
+
+<script src="/static/app.js"></script>
+</body>
+</html>
