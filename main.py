@@ -27,7 +27,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.mount("/static", StaticFiles(directory="frontend"), name="static")
+# Montar carpeta correcta
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # -------------------------
 # VARIABLES GLOBALES
@@ -65,7 +66,7 @@ def verify_token(token: str) -> bool:
     return token in active_tokens
 
 def get_audio_file():
-    # Audio lunes/thursday solo como referencia, diario puede usar monday.mp3
+    # Audio diario: monday.mp3
     return "/static/audio/monday.mp3"
 
 def random_question_for_user():
@@ -82,7 +83,7 @@ def sanitize_message(msg: str) -> str:
 # -------------------------
 @app.get("/")
 def landing():
-    return FileResponse("frontend/index.html")
+    return FileResponse("static/index.html")
 
 # -------------------------
 # LOGIN ADMIN
@@ -99,7 +100,7 @@ def admin_login(username: str = Form(...), password: str = Form(...)):
 # -------------------------
 @app.post("/purchase")
 def purchase():
-    # Simulación pago Stripe
+    # Simulación de compra
     token = generate_token()
     return {"access_token": token}
 
@@ -120,7 +121,7 @@ def session_page(token: str = Query(...)):
         raise HTTPException(status_code=403, detail="Sesión terminada")
 
     active_users.add(token)
-    return FileResponse("frontend/session.html")
+    return FileResponse("static/session.html")
 
 # -------------------------
 # PREGUNTAS ALEATORIAS
