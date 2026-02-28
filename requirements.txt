@@ -1,5 +1,8 @@
 fastapi
 uvicorn
+gunicorn
 stripe
-python-multipart
 python-jose
+python-multipart
+requests
+pydantic
