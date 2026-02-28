@@ -1,95 +1,62 @@
 // -------------------------
-// KaMiZen – Sesión JS
+// KaMiZen – Landing JS
 // -------------------------
-const token = localStorage.getItem("token") || prompt("Ingresa tu token de prueba");
 
-const audioEl = document.getElementById("session-audio");
-const questionText = document.getElementById("question-text");
-const answerInput = document.getElementById("answer-input");
-const submitBtn = document.getElementById("submit-answer");
-const chatBox = document.getElementById("chat-box");
-const participantsEl = document.getElementById("participants");
+const buyBtn = document.getElementById("buy-entry");
+const adminBtn = document.getElementById("admin-login-btn");
 const countdownEl = document.getElementById("countdown");
 
-let sessionTime = 10 * 60; // 10 minutos
-
 // -------------------------
-// Audio dinámico
-// -------------------------
-async function loadAudio() {
-    const res = await fetch(`/audio?token=${token}`);
-    const data = await res.json();
-    audioEl.src = data.audio_file;
-    audioEl.play();
-}
-loadAudio();
-
-// -------------------------
-// Contador regresivo
+// Contador hasta la próxima sesión diaria
 // -------------------------
 function updateCountdown() {
-    let min = Math.floor(sessionTime / 60);
-    let sec = sessionTime % 60;
-    countdownEl.textContent = `Tiempo restante: ${String(min).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
-    if(sessionTime > 0) {
-        sessionTime--;
-    } else {
-        clearInterval(countdownInterval);
-        alert("Sesión finalizada!");
+    const now = new Date();
+    // Próxima sesión en cualquier momento diario (simulación 24h)
+    const nextSession = new Date(now.getTime() + 60*60*1000); // +1 hora para demo
+    const diff = nextSession - now;
+    const min = Math.floor(diff / 1000 / 60);
+    const sec = Math.floor(diff / 1000 % 60);
+    countdownEl.textContent = `Próxima sesión: ${min} min ${sec} seg`;
+}
+setInterval(updateCountdown, 1000);
+
+// -------------------------
+// Comprar entrada $9.99
+// -------------------------
+buyBtn.addEventListener("click", async () => {
+    try {
+        const res = await fetch("/purchase", {method: "POST"});
+        const data = await res.json();
+        const token = data.access_token;
+        localStorage.setItem("token", token);
+        alert("Compra exitosa! Accediendo a sesión...");
+        window.location.href = `/session?token=${token}`;
+    } catch (err) {
+        alert("Error al comprar entrada: " + err);
     }
-}
-const countdownInterval = setInterval(updateCountdown, 1000);
-
-// -------------------------
-// Preguntas aleatorias
-// -------------------------
-async function loadQuestion() {
-    const res = await fetch(`/submit-answer?token=${token}`);
-    const data = await res.json();
-    // Cada pregunta será aleatoria por usuario
-    const qRes = await fetch(`/audio?token=${token}`);
-    questionText.textContent = "Responde rápido: " + data.feedback;
-}
-loadQuestion();
-
-// -------------------------
-// Enviar respuesta
-// -------------------------
-submitBtn.addEventListener("click", async () => {
-    const answer = answerInput.value;
-    if(!answer) return alert("Escribe tu respuesta!");
-    const res = await fetch("/submit-answer", {
-        method: "POST",
-        headers: {"Content-Type":"application/json"},
-        body: JSON.stringify({token: token, answer: answer})
-    });
-    const data = await res.json();
-    questionText.textContent = data.feedback;
-    answerInput.value = "";
 });
 
 // -------------------------
-// Chat efímero
+// Login Admin
 // -------------------------
-async function updateChat() {
-    const res = await fetch(`/chat?token=${token}`);
-    const data = await res.json();
-    chatBox.innerHTML = "";
-    data.messages.forEach(msg => {
-        const div = document.createElement("div");
-        div.className = "chat-message";
-        div.textContent = msg;
-        chatBox.appendChild(div);
-    });
-}
-setInterval(updateChat, 2000);
+adminBtn.addEventListener("click", async () => {
+    const username = document.getElementById("admin-username").value;
+    const password = document.getElementById("admin-password").value;
 
-// -------------------------
-// Contador de usuarios
-// -------------------------
-async function updateParticipants() {
-    const res = await fetch(`/active-users?token=${token}`);
-    const data = await res.json();
-    participantsEl.textContent = `${data.count}/${data.max} dentro`;
-}
-setInterval(updateParticipants, 3000);
+    if (!username || !password) return alert("Completa usuario y contraseña");
+
+    try {
+        const formData = new FormData();
+        formData.append("username", username);
+        formData.append("password", password);
+
+        const res = await fetch("/admin-login", {method: "POST", body: formData});
+        const data = await res.json();
+        const token = data.token;
+        localStorage.setItem("token", token);
+        alert("Login Admin exitoso! Accediendo a sesión...");
+        window.location.href = `/session?token=${token}`;
+    } catch (err) {
+        alert("Error login admin: " + err);
+    }
+});
