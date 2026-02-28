@@ -2,117 +2,139 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>KaMiZen - Arena Mental</title>
+<title>KaMiZen - Sesión diaria</title>
 <link rel="stylesheet" href="/static/style.css">
-
 <style>
-body { background:#0a0a0f; color:#eee; font-family: Arial; }
-#sessionContainer { max-width:900px; margin:auto; padding:20px; }
-
-h1 { text-align:center; color:#ff2e2e; }
-
-#arenaStart {
-    background:#111;
-    padding:30px;
-    text-align:center;
-    border-radius:10px;
-    margin-top:50px;
-}
-
-#startBtn {
-    background:#ff2e2e;
-    padding:15px 30px;
-    border:none;
-    font-size:20px;
-    font-weight:bold;
-    color:#fff;
-    border-radius:8px;
-    cursor:pointer;
-}
-
-#startBtn:hover { background:#ff0000; }
-
-#gameUI { display:none; }
-
-#ranking { margin-bottom:10px; }
-
-.timer { font-size:1.3em; font-weight:bold; }
-
-#questionBox {
-    background:#1a1a22;
-    padding:20px;
-    border-radius:10px;
-    margin-bottom:10px;
-    font-size:1.3em;
-}
-
-#answerInput {
-    width:100%;
-    padding:10px;
-    border-radius:6px;
-    border:none;
-}
-
-button {
-    padding:10px 20px;
-    background:#ff2e2e;
-    border:none;
-    color:#fff;
-    font-weight:bold;
-    border-radius:6px;
-    cursor:pointer;
-}
-
-#chatBox {
-    background:#111;
-    height:200px;
-    overflow-y:auto;
-    padding:10px;
-    border-radius:8px;
-    margin-top:10px;
-}
-
-.chatMessage { margin-bottom:5px; }
-
-.levelUp {
-    animation: flash 1s infinite alternate;
-}
-
-@keyframes flash {
-    from { color:#fff; }
-    to { color:#ff2e2e; }
-}
+body { background:#111; color:#eee; font-family: Arial, sans-serif; }
+#sessionContainer { max-width:800px; margin:auto; padding:20px; }
+#participants,#timeRemaining,#feedback,#ranking { margin-bottom:10px; }
+#questionBox { background:#222; padding:15px; border-radius:8px; margin-bottom:10px; font-size:1.2em; min-height:60px; }
+#answerInput,#chatInput { width:100%; padding:10px; margin-bottom:5px; border-radius:5px; border:none; }
+#chatBox { background:#222; padding:10px; height:200px; overflow-y:auto; border-radius:8px; margin-bottom:10px; }
+button { padding:10px 20px; border:none; border-radius:5px; background:#ff4d4d; color:#fff; font-weight:bold; cursor:pointer; }
+button:hover { background:#ff1a1a; }
+.timer { font-size:1.2em; font-weight:bold; }
+.chatMessage { margin-bottom:4px; }
+.simulated { color:#ffcc00; font-weight:bold; }
+#rankingList { margin-top:5px; }
+.level { font-weight:bold; color:#00ffcc; }
 </style>
 </head>
-
 <body>
-
 <div id="sessionContainer">
+    <h1>KaMiZen - Sesión diaria</h1>
 
-<h1>🔥 KaMiZen Arena 🔥</h1>
+    <div id="participants">🔥 Conectados: 1/500</div>
+    <div class="timer">⏳ Tiempo restante: <span id="timeRemaining">10:00</span></div>
+    <div id="ranking">
+        🏆 Top 5 del momento
+        <div id="rankingList"></div>
+    </div>
 
-<div id="arenaStart">
-    <h2>ENTRA A LA ARENA MENTAL</h2>
-    <p>500 participantes compitiendo ahora mismo</p>
-    <button id="startBtn" onclick="startSession()">INICIAR SESIÓN</button>
+    <div id="questionBox">Cargando pregunta...</div>
+    <input type="text" id="answerInput" placeholder="Escribe tu respuesta aquí...">
+    <button onclick="sendAnswer()">Enviar</button>
+    <div id="feedback"></div>
+
+    <h3>Chat en vivo (anónimo)</h3>
+    <div id="chatBox">Cargando chat...</div>
+    <input type="text" id="chatInput" placeholder="Escribe mensaje...">
+    <button onclick="sendChat()">Enviar</button>
+
+    <audio id="sessionAudio" autoplay></audio>
 </div>
 
-<div id="gameUI">
+<script>
+let ws = new WebSocket(`ws://${window.location.host}/ws`);
+let timeRemaining = 10 * 60; // 10 minutos
+let timerInterval;
 
-<div class="timer">⏳ Tiempo restante: <span id="timeRemaining">10:00</span></div>
-<div id="ranking">🏆 Nivel: 1 | XP: 0</div>
+const participantsDiv = document.getElementById("participants");
+const rankingList = document.getElementById("rankingList");
+const questionBox = document.getElementById("questionBox");
+const answerInput = document.getElementById("answerInput");
+const feedbackDiv = document.getElementById("feedback");
+const chatBox = document.getElementById("chatBox");
+const chatInput = document.getElementById("chatInput");
+const sessionAudio = document.getElementById("sessionAudio");
 
-<div id="questionBox">Cargando reto...</div>
-<input type="text" id="answerInput" placeholder="Responde rápido...">
-<button onclick="submitAnswer()">Enviar</button>
+// ---------------------------
+// Temporizador sesión
+// ---------------------------
+function startTimer() {
+    timerInterval = setInterval(() => {
+        timeRemaining--;
+        let min = Math.floor(timeRemaining / 60).toString().padStart(2, "0");
+        let sec = (timeRemaining % 60).toString().padStart(2, "0");
+        document.getElementById("timeRemaining").innerText = `${min}:${sec}`;
+        if (timeRemaining <= 0) {
+            clearInterval(timerInterval);
+            questionBox.innerText = "⏰ Sesión finalizada. ¡Mañana subimos nivel!";
+            answerInput.disabled = true;
+            chatInput.disabled = true;
+            sessionAudio.pause();
+        }
+    }, 1000);
+}
 
-<h3>🔥 Chat Competitivo</h3>
-<div id="chatBox"></div>
+// ---------------------------
+// WebSocket mensajes
+// ---------------------------
+ws.onmessage = (event) => {
+    let data = JSON.parse(event.data);
+    if (data.type === "update_participants") {
+        participantsDiv.innerText = `🔥 Conectados: ${data.count}/${data.max}`;
+    } else if (data.type === "update_ranking") {
+        rankingList.innerHTML = "";
+        data.ranking.forEach(u => {
+            let div = document.createElement("div");
+            div.innerHTML = `${u.name} - <span class="level">${u.level}</span>`;
+            rankingList.appendChild(div);
+        });
+    } else if (data.type === "question") {
+        questionBox.innerText = data.text;
+        // Audio pregrabado por fase
+        if(timeRemaining > 9*60) sessionAudio.src = "/static/audio/monday.mp3"; // Corte digital
+        else if(timeRemaining > 6*60) sessionAudio.src = "/static/audio/thursday.mp3"; // Activación mental / acción
+        else sessionAudio.src = "/static/audio/monday.mp3"; // Cierre y tensión
+        sessionAudio.play();
+    } else if (data.type === "feedback") {
+        feedbackDiv.innerText = data.text;
+    } else if (data.type === "chat") {
+        let div = document.createElement("div");
+        div.className = `chatMessage ${data.simulated ? "simulated" : ""}`;
+        div.innerText = `${data.sender}: ${data.text}`;
+        chatBox.appendChild(div);
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+};
 
-</div>
+// ---------------------------
+// Enviar respuesta
+// ---------------------------
+function sendAnswer() {
+    let text = answerInput.value.trim();
+    if (text) {
+        ws.send(JSON.stringify({type: "answer", text}));
+        answerInput.value = "";
+    }
+}
 
-</div>
+// ---------------------------
+// Enviar chat
+// ---------------------------
+function sendChat() {
+    let text = chatInput.value.trim();
+    if (text) {
+        ws.send(JSON.stringify({type: "chat", text}));
+        chatInput.value = "";
+    }
+}
 
-<script src="/static/app.js"></script>
+// ---------------------------
+// Iniciar sesión
+// ---------------------------
+startTimer();
+</script>
 </body>
 </html>
