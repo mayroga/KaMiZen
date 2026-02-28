@@ -1,23 +1,23 @@
 // ===== CONFIGURACIÓN DE LA SESIÓN =====
 const sessionDuration = 10 * 60; // 10 minutos
 let sessionTime = sessionDuration;
-let questionIndex = 0;
 let level = 1;
 const maxLevel = 10;
+let questionIndex = 0;
 
-// Preguntas estratégicas por minuto
+// Preguntas estratégicas únicas
 const questionsBank = [
-    "💰 ¿Qué hiciste hoy que realmente produce dinero?",
-    "🔥 ¿Qué decisión difícil tomaste que te pone adelante?",
-    "⚡ ¿Qué acción concreta vas a hacer ahora para tu bienestar?",
-    "🏆 Describe un pequeño triunfo de hoy que otros no hicieron.",
-    "💥 ¿Qué obstáculo venciste hoy y cómo?",
-    "💡 Qué hábito financiero fortaleciste hoy?",
-    "🚀 Qué paso tomaste hoy que te acerca a tu meta más grande?",
-    "🎯 Qué decisión rápida tomaste que otros dudaron en hacer?"
+    {text:"💰 ¿Qué hiciste hoy que realmente produce dinero?", tts:"¡Rápido! ¿Qué hiciste hoy que realmente produce dinero?"},
+    {text:"🔥 ¿Qué decisión difícil tomaste que te pone adelante?", tts:"¡Decide rápido! ¿Qué decisión difícil tomaste que te pone adelante?"},
+    {text:"⚡ ¿Qué acción concreta vas a hacer ahora para tu bienestar?", tts:"¡Escribe ya! ¿Qué acción concreta vas a hacer ahora para tu bienestar?"},
+    {text:"🏆 Describe un pequeño triunfo de hoy que otros no hicieron.", tts:"¡Vamos! Describe un pequeño triunfo de hoy que otros no hicieron."},
+    {text:"💥 ¿Qué obstáculo venciste hoy y cómo?", tts:"¡Rápido! ¿Qué obstáculo venciste hoy y cómo?"},
+    {text:"💡 Qué hábito financiero fortaleciste hoy?", tts:"¡Decide ahora! Qué hábito financiero fortaleciste hoy?"},
+    {text:"🚀 Qué paso tomaste hoy que te acerca a tu meta más grande?", tts:"¡Escribe ya! Qué paso tomaste hoy que te acerca a tu meta más grande?"},
+    {text:"🎯 Qué decisión rápida tomaste que otros dudaron en hacer?", tts:"¡Rápido! Qué decisión rápida tomaste que otros dudaron en hacer?"}
 ];
 
-// Chat simulado constante (frases únicas)
+// Chat simulado dinámico
 const fakeChatMessages = [
     "💰 Cerré un trato millonario hoy",
     "🔥 Nadie me supera en decisión rápida",
@@ -29,143 +29,152 @@ const fakeChatMessages = [
     "🚀 No hay tiempo que perder"
 ];
 
-// Audios por etapa (pueden ser TTS o pregrabados)
-const audios = [
-    "audio/agresivo.mp3", // Minuto 1
-    "audio/estrategia.mp3", // Minuto 2-4
-    "audio/disciplina.mp3", // Minuto 5-7
-    "audio/espiritual.mp3", // Minuto 8-9
-    "audio/cierre.mp3" // Minuto 10
-];
-
-const sessionTimerEl = document.getElementById("session-timer");
-const questionTextEl = document.getElementById("question-text");
-const questionTimerEl = document.getElementById("question-timer");
-const answerInputEl = document.getElementById("answer-input");
+// ===== ELEMENTOS DOM =====
+const participantsEl = document.getElementById("participants");
+const timeRemainingEl = document.getElementById("timeRemaining");
+const questionBoxEl = document.getElementById("questionBox");
+const answerInputEl = document.getElementById("answerInput");
 const feedbackEl = document.getElementById("feedback");
-const chatBoxEl = document.getElementById("chat-box");
-const audioPlayer = document.getElementById("audio-player");
-const topRankingEl = document.getElementById("top-ranking");
+const chatBoxEl = document.getElementById("chatBox");
+const rankingEl = document.getElementById("ranking");
+const chatInput = document.getElementById("chatInput");
+const sessionAudio = document.getElementById("sessionAudio");
 
-let activeChatInterval;
-let questionInterval;
-let questionTime = 30;
-
-// ===== INICIO DE SESIÓN =====
+// ===== INICIO SESIÓN =====
 function startSession() {
-    playAudio(0); // audio agresivo inicial
-    startSessionCountdown();
-    startQuestionLoop();
+    participantsEl.innerText = "🔥 1/500 conectados";
+    chatBoxEl.innerText = "";
+    nextQuestion();
+    startSessionTimer();
     startFakeChat();
 }
 
-// ===== AUDIO =====
-function playAudio(index) {
-    audioPlayer.src = audios[index];
-    audioPlayer.play();
+// ===== AUDIO TTS =====
+function speakText(text) {
+    if('speechSynthesis' in window){
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = "es-ES";
+        utterance.rate = 1.1;
+        utterance.pitch = 1.2;
+        window.speechSynthesis.speak(utterance);
+    }
 }
 
-// ===== PREGUNTAS DINÁMICAS =====
-function getNextQuestion() {
+// ===== PREGUNTAS =====
+function nextQuestion() {
     if(questionIndex >= questionsBank.length) questionIndex = 0;
-    const question = questionsBank[questionIndex++];
-    questionTextEl.innerText = question;
-    playAudio(Math.min(Math.floor(sessionTime / 120), audios.length-1));
+    const q = questionsBank[questionIndex++];
+    questionBoxEl.innerText = q.text;
+    speakText(q.tts);
     startQuestionTimer();
 }
 
-// ===== TIMER PREGUNTA =====
+// ===== TIMER DE PREGUNTA =====
+let questionTime = 30;
+let questionInterval;
 function startQuestionTimer() {
     questionTime = 30;
-    questionTimerEl.innerText = `⏳ ${questionTime}s para responder`;
     clearInterval(questionInterval);
     questionInterval = setInterval(() => {
         questionTime--;
-        questionTimerEl.innerText = `⏳ ${questionTime}s para responder`;
-        if(questionTime <= 0) {
+        questionBoxEl.innerText = `${questionsBank[questionIndex-1].text} ⏳ ${questionTime}s`;
+        if(questionTime <= 0){
             clearInterval(questionInterval);
-            processAnswer(""); // si no respondió
-            getNextQuestion();
+            processAnswer("");
+            nextQuestion();
         }
-    }, 1000);
+    },1000);
 }
 
 // ===== PROCESAR RESPUESTA =====
-function processAnswer(answer) {
+function processAnswer(answer){
     answer = answer.trim();
-    if(!answer) {
+    if(!answer){
         feedbackEl.innerText = "Ejemplo: 'Hoy cerré un mini trato que otros no hicieron.'";
+        speakText("Si no sabes qué responder, aquí tienes un ejemplo: Hoy cerré un mini trato que otros no hicieron.");
     } else {
-        level = Math.min(level + 1, maxLevel);
-        feedbackEl.innerText = `Nivel +1 – Estás por encima de ${Math.floor(Math.random()*50+50)}% de los conectados`;
+        level = Math.min(level+1,maxLevel);
+        const perc = Math.floor(Math.random()*50+50);
+        feedbackEl.innerText = `Nivel +1 – Estás por encima de ${perc}% de los conectados`;
+        speakText(`💥 Excelente, eso te pone por delante de los demás.`);
         updateRanking();
+        microFeedbackWhileTyping();
     }
     answerInputEl.value = "";
 }
 
-// ===== RANKING =====
-function updateRanking() {
-    // Simple ranking simulado
-    topRankingEl.innerHTML = `
+// ===== MICRO FEEDBACK MIENTRAS ESCRIBE =====
+function microFeedbackWhileTyping(){
+    const messages = ["⏳ Otros avanzan más rápido", "💥 Cada palabra cuenta para subir nivel", "🔥 No te quedes atrás"];
+    setTimeout(()=> speakText(messages[Math.floor(Math.random()*messages.length)]), 500);
+}
+
+// ===== RANKING SIMULADO =====
+function updateRanking(){
+    rankingEl.innerHTML = `
+    🏆 Top 5 del momento
+    <ol>
         <li>Anónimo1 - Nivel ${Math.min(level+Math.floor(Math.random()*2), maxLevel)}</li>
         <li>Anónimo2 - Nivel ${Math.min(level+Math.floor(Math.random()*2), maxLevel)}</li>
         <li>Anónimo3 - Nivel ${Math.min(level+Math.floor(Math.random()*2), maxLevel)}</li>
         <li>Anónimo4 - Nivel ${Math.min(level+Math.floor(Math.random()*2), maxLevel)}</li>
         <li>Anónimo5 - Nivel ${Math.min(level+Math.floor(Math.random()*2), maxLevel)}</li>
+    </ol>
     `;
 }
 
 // ===== CHAT SIMULADO =====
-function startFakeChat() {
-    activeChatInterval = setInterval(() => {
+function startFakeChat(){
+    setInterval(()=>{
         const msg = fakeChatMessages[Math.floor(Math.random()*fakeChatMessages.length)];
         const p = document.createElement("p");
         p.innerText = msg;
+        p.classList.add("chatMessage","simulated");
         chatBoxEl.appendChild(p);
-        setTimeout(() => { p.remove(); }, 25000); // desaparece en 25s
+        setTimeout(()=> p.remove(), 25000);
         chatBoxEl.scrollTop = chatBoxEl.scrollHeight;
     }, Math.floor(Math.random()*5000+5000));
 }
 
 // ===== SESIÓN TOTAL =====
-function startSessionCountdown() {
-    const countdown = setInterval(() => {
+function startSessionTimer(){
+    const countdown = setInterval(()=>{
         sessionTime--;
         const min = Math.floor(sessionTime/60);
         const sec = sessionTime%60;
-        sessionTimerEl.innerText = `${min.toString().padStart(2,'0')}:${sec.toString().padStart(2,'0')}`;
-        if(sessionTime <= 0) {
+        timeRemainingEl.innerText = `${min.toString().padStart(2,'0')}:${sec.toString().padStart(2,'0')}`;
+        if(sessionTime <= 0){
             clearInterval(countdown);
-            clearInterval(activeChatInterval);
             clearInterval(questionInterval);
-            questionTextEl.innerText = "💥 Sesión finalizada. Mañana subimos nivel.";
-            questionTimerEl.innerText = "";
-            feedbackEl.innerText = "";
+            questionBoxEl.innerText = "💥 Sesión finalizada. Mañana subimos nivel.";
             answerInputEl.disabled = true;
+            feedbackEl.innerText = "";
+            speakText("💥 Sesión finalizada. Mañana subimos nivel.");
         }
-    }, 1000);
+    },1000);
 }
 
-// ===== EVENTOS =====
-document.getElementById("submit-answer").addEventListener("click", () => {
+// ===== ENVIAR RESPUESTA =====
+function sendAnswer(){
     processAnswer(answerInputEl.value);
-    getNextQuestion();
-});
+    nextQuestion();
+}
 
-document.getElementById("send-chat").addEventListener("click", () => {
-    const msg = document.getElementById("chat-input").value.trim();
-    if(msg) {
+// ===== ENVIAR CHAT =====
+function sendChat(){
+    const msg = chatInput.value.trim();
+    if(msg){
         const p = document.createElement("p");
         p.innerText = `Tú: ${msg}`;
+        p.classList.add("chatMessage");
         chatBoxEl.appendChild(p);
-        setTimeout(() => { p.remove(); }, 25000);
-        document.getElementById("chat-input").value = "";
+        setTimeout(()=> p.remove(),25000);
+        chatInput.value="";
         chatBoxEl.scrollTop = chatBoxEl.scrollHeight;
     }
-});
+}
 
-// ===== INICIAR SESIÓN AUTOMÁTICAMENTE =====
+// ===== INICIO AUTOMÁTICO =====
 window.onload = () => {
     startSession();
-    getNextQuestion();
 };
