@@ -8,20 +8,26 @@
 <body>
     <div class="container">
         <h1>KaMiZen</h1>
-        <div id="participants" class="card">Cargando participantes...</div>
-        <div id="countdown" class="card">Tiempo restante: 10:00</div>
 
-        <audio id="session-audio" controls autoplay></audio>
+        <div id="participants">Cargando participantes...</div>
+        <div id="countdown">Cargando sesión...</div>
 
-        <div id="question-card" class="card">
-            <p id="question-text">Cargando pregunta...</p>
-            <input type="text" id="answer-input" placeholder="Escribe tu respuesta aquí...">
+        <div id="question-box">
+            <p id="question">Cargando pregunta...</p>
+            <textarea id="answer" placeholder="Escribe tu respuesta aquí..."></textarea>
             <button id="submit-answer">Enviar</button>
         </div>
 
-        <div id="chat-box" class="card"></div>
+        <div id="feedback"></div>
+
+        <h3>Chat de participantes (anónimo)</h3>
+        <div id="chat-box"></div>
+        <input type="text" id="chat-input" placeholder="Escribe tu mensaje..." />
+        <button id="send-chat">Enviar</button>
+
+        <audio id="audio" controls autoplay></audio>
     </div>
 
-    <script src="/static/scripts.js"></script>
+    <script src="/static/session_scripts.js"></script>
 </body>
 </html>
