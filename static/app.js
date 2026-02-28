@@ -1,200 +1,152 @@
-// ===== CONFIGURACIÓN SESIÓN =====
-const sessionDuration = 10*60; // 10 minutos
-let sessionTime = sessionDuration;
-let level = 1;
+const sessionDuration = 10 * 60; // 10 minutos
+let timeLeft = sessionDuration;
+let currentQuestionIndex = 0;
+let userLevel = 1;
 const maxLevel = 10;
-let questionIndex = 0;
-
-// ===== AUDIOS PREGRABADOS POR FASE =====
-const audioFiles = {
-    1: "/static/audio/min1.mp3", // Corte digital
-    2: "/static/audio/min2.mp3", // Activación financiera
-    3: "/static/audio/min3.mp3",
-    4: "/static/audio/min4.mp3",
-    5: "/static/audio/min5.mp3", // Disciplina interna
-    6: "/static/audio/min6.mp3",
-    7: "/static/audio/min7.mp3",
-    8: "/static/audio/min8.mp3", // Espiritualidad práctica
-    9: "/static/audio/min9.mp3",
-    10:"/static/audio/min10.mp3" // Cierre y tensión
-};
-
-// ===== PREGUNTAS ESTRATÉGICAS =====
-const questionsBank = [
-    {text:"💰 ¿Qué hiciste hoy que realmente produce dinero?", tts:"¡Rápido! ¿Qué hiciste hoy que realmente produce dinero?"},
-    {text:"🔥 ¿Qué decisión difícil tomaste que te pone adelante?", tts:"¡Decide rápido! ¿Qué decisión difícil tomaste que te pone adelante?"},
-    {text:"⚡ ¿Qué acción concreta vas a hacer ahora para tu bienestar?", tts:"¡Escribe ya! ¿Qué acción concreta vas a hacer ahora para tu bienestar?"},
-    {text:"🏆 Describe un pequeño triunfo de hoy que otros no hicieron.", tts:"¡Vamos! Describe un pequeño triunfo de hoy que otros no hicieron."},
-    {text:"💥 ¿Qué obstáculo venciste hoy y cómo?", tts:"¡Rápido! ¿Qué obstáculo venciste hoy y cómo?"}
-];
-
-// ===== CHAT SIMULADO =====
-const fakeChatMessages = [
-    "💰 Cerré un mini trato millonario",
+const maxParticipants = 500;
+const fakeChats = [
+    "💰 Cerré un trato millonario hoy",
     "🔥 Nadie me supera en decisión rápida",
-    "⚡ Cada segundo cuenta",
-    "🏆 Avancé un nivel más",
-    "💥 Acción rápida = resultado rápido",
-    "🎯 Hoy elijo moverme",
-    "💡 Cada idea suma dinero",
-    "🚀 No hay tiempo que perder"
+    "⚡ Cada segundo cuenta para subir de nivel",
+    "💎 Hoy duplico mi rendimiento",
+    "🏆 Mantén tu mente enfocada, otros se quedan atrás"
 ];
+const questionBank = [
+    {text:"¿Qué hiciste hoy que realmente produce dinero?", audio:"/static/audio/minuto2.mp3"},
+    {text:"¿Cuál es la decisión que más rápido te acerca a tu meta?", audio:"/static/audio/minuto3.mp3"},
+    {text:"Escribe una acción concreta que hoy genere bienestar financiero", audio:"/static/audio/minuto5.mp3"},
+    {text:"Visualiza tu éxito y describe un logro pequeño de hoy", audio:"/static/audio/minuto8.mp3"},
+    {text:"Si no actúas ahora, otros avanzan: ¿qué harás hoy?", audio:"/static/audio/minuto9.mp3"},
+];
+let sessionQuestions = [];
+let chatMessages = [];
+let connected = 1;
 
-// ===== ELEMENTOS DOM =====
-const participantsEl = document.getElementById("participants");
-const timeRemainingEl = document.getElementById("timeRemaining");
-const questionBoxEl = document.getElementById("questionBox");
-const answerInputEl = document.getElementById("answerInput");
-const feedbackEl = document.getElementById("feedback");
-const chatBoxEl = document.getElementById("chatBox");
-const rankingEl = document.getElementById("ranking");
-const chatInput = document.getElementById("chatInput");
-const sessionAudio = document.getElementById("sessionAudio");
-
-// ===== INICIO SESIÓN =====
-function startSession(){
-    participantsEl.innerText = "🔥 1/500 conectados";
-    chatBoxEl.innerText = "";
-    playPhaseAudio();
-    nextQuestion();
-    startSessionTimer();
-    startFakeChat();
+// Inicialización de la sesión
+function initSession() {
+    generateSessionQuestions();
+    updateParticipants();
+    updateRanking();
+    showNextQuestion();
+    startTimers();
+    simulateChat();
 }
 
-// ===== REPRODUCIR AUDIO SEGÚN MINUTO =====
-function playPhaseAudio(){
-    const currentMinute = 10 - Math.ceil(sessionTime/60);
-    const audioFile = audioFiles[currentMinute+1];
-    if(audioFile){
-        sessionAudio.src = audioFile;
-        sessionAudio.play();
-    }
-    setTimeout(playPhaseAudio, 60000); // Cada minuto
-}
-
-// ===== TTS =====
-function speakText(text){
-    if('speechSynthesis' in window){
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = "es-ES";
-        utterance.rate = 1.1;
-        utterance.pitch = 1.2;
-        window.speechSynthesis.speak(utterance);
+// Generar preguntas únicas para la sesión
+function generateSessionQuestions() {
+    const copyBank = [...questionBank];
+    while(copyBank.length && sessionQuestions.length < 5){
+        const idx = Math.floor(Math.random()*copyBank.length);
+        sessionQuestions.push(copyBank.splice(idx,1)[0]);
     }
 }
 
-// ===== PREGUNTAS =====
-function nextQuestion(){
-    if(questionIndex >= questionsBank.length) questionIndex=0;
-    const q = questionsBank[questionIndex++];
-    questionBoxEl.innerText = q.text;
-    speakText(q.tts);
-    startQuestionTimer();
+// Mostrar pregunta y reproducir audio
+function showNextQuestion(){
+    if(currentQuestionIndex >= sessionQuestions.length) return;
+    const q = sessionQuestions[currentQuestionIndex];
+    document.getElementById("questionBox").innerText = q.text;
+    const audioEl = document.getElementById("sessionAudio");
+    audioEl.src = q.audio;
+    audioEl.play();
 }
 
-// ===== TIMER PREGUNTA =====
-let questionTime = 30;
-let questionInterval;
-function startQuestionTimer(){
-    questionTime = 30;
-    clearInterval(questionInterval);
-    questionInterval = setInterval(()=>{
-        questionTime--;
-        questionBoxEl.innerText = `${questionsBank[questionIndex-1].text} ⏳ ${questionTime}s`;
-        if(questionTime<=0){
-            clearInterval(questionInterval);
-            processAnswer("");
-            nextQuestion();
-        }
-    },1000);
-}
-
-// ===== PROCESAR RESPUESTA =====
-function processAnswer(answer){
-    answer = answer.trim();
-    if(!answer){
-        feedbackEl.innerText = "Ejemplo: 'Hoy cerré un mini trato que otros no hicieron.'";
-        speakText("Si no sabes qué responder, aquí tienes un ejemplo: Hoy cerré un mini trato que otros no hicieron.");
-    } else {
-        level = Math.min(level+1,maxLevel);
-        const perc = Math.floor(Math.random()*50+50);
-        feedbackEl.innerText = `Nivel +1 – Estás por encima de ${perc}% de los conectados`;
-        speakText("💥 Excelente, eso te pone por delante de los demás.");
-        updateRanking();
-        microFeedbackWhileTyping();
-    }
-    answerInputEl.value = "";
-}
-
-// ===== MICRO FEEDBACK =====
-function microFeedbackWhileTyping(){
-    const messages = ["⏳ Otros avanzan más rápido","💥 Cada palabra cuenta","🔥 No te quedes atrás"];
-    setTimeout(()=> speakText(messages[Math.floor(Math.random()*messages.length)]), 500);
-}
-
-// ===== RANKING SIMULADO =====
-function updateRanking(){
-    rankingEl.innerHTML = `
-    🏆 Top 5 del momento
-    <ol>
-        <li>Anónimo1 - Nivel ${Math.min(level+Math.floor(Math.random()*2), maxLevel)}</li>
-        <li>Anónimo2 - Nivel ${Math.min(level+Math.floor(Math.random()*2), maxLevel)}</li>
-        <li>Anónimo3 - Nivel ${Math.min(level+Math.floor(Math.random()*2), maxLevel)}</li>
-        <li>Anónimo4 - Nivel ${Math.min(level+Math.floor(Math.random()*2), maxLevel)}</li>
-        <li>Anónimo5 - Nivel ${Math.min(level+Math.floor(Math.random()*2), maxLevel)}</li>
-    </ol>`;
-}
-
-// ===== CHAT SIMULADO =====
-function startFakeChat(){
-    setInterval(()=>{
-        const msg = fakeChatMessages[Math.floor(Math.random()*fakeChatMessages.length)];
-        const p = document.createElement("p");
-        p.innerText = msg;
-        p.classList.add("chatMessage","simulated");
-        chatBoxEl.appendChild(p);
-        setTimeout(()=> p.remove(), 25000);
-        chatBoxEl.scrollTop = chatBoxEl.scrollHeight;
-    }, Math.floor(Math.random()*5000+5000));
-}
-
-// ===== SESIÓN TOTAL =====
-function startSessionTimer(){
-    const countdown = setInterval(()=>{
-        sessionTime--;
-        const min = Math.floor(sessionTime/60);
-        const sec = sessionTime%60;
-        timeRemainingEl.innerText = `${min.toString().padStart(2,'0')}:${sec.toString().padStart(2,'0')}`;
-        if(sessionTime<=0){
-            clearInterval(countdown);
-            clearInterval(questionInterval);
-            questionBoxEl.innerText = "💥 Sesión finalizada. Mañana subimos nivel.";
-            answerInputEl.disabled = true;
-            feedbackEl.innerText="";
-            speakText("💥 Sesión finalizada. Mañana subimos nivel.");
-        }
-    },1000);
-}
-
-// ===== ENVIAR RESPUESTA =====
+// Enviar respuesta
 function sendAnswer(){
-    processAnswer(answerInputEl.value);
-    nextQuestion();
+    const input = document.getElementById("answerInput");
+    const feedbackEl = document.getElementById("feedback");
+    let ans = input.value.trim();
+    input.value = "";
+    if(!ans) ans = "No supe que responder, tomo ejemplo de KaMiZen";
+    feedbackEl.innerText = generateFeedback(ans);
+    updateUserLevel(ans);
+    updateRanking();
+    currentQuestionIndex++;
+    showNextQuestion();
 }
 
-// ===== ENVIAR CHAT =====
+// Generar feedback lógico
+function generateFeedback(ans){
+    const positive = ["💥 Excelente, eso te pone por delante de los demás!",
+                      "🔥 Muy bien, nivel +1!",
+                      "⚡ Perfecto, avanzas rápido!"];
+    const neutral = ["🤔 Bien, considera actuar más rápido la próxima vez",
+                     "💡 Piensa en algo más concreto para subir nivel",
+                     "⚠️ Otros avanzan más rápido, no te quedes atrás"];
+    if(ans.length>5) return positive[Math.floor(Math.random()*positive.length)];
+    else return neutral[Math.floor(Math.random()*neutral.length)];
+}
+
+// Actualizar nivel
+function updateUserLevel(ans){
+    if(ans.length>3) userLevel = Math.min(userLevel+1,maxLevel);
+}
+
+// Actualizar ranking (Top5)
+function updateRanking(){
+    const rankingEl = document.getElementById("rankingList");
+    let top5 = [
+        {name:"Anónimo1",level:Math.min(userLevel+1,maxLevel)},
+        {name:"Anónimo2",level:Math.max(1,userLevel-1)},
+        {name:"Anónimo3",level:userLevel},
+        {name:"Anónimo4",level:Math.max(1,userLevel-2)},
+        {name:"Tú",level:userLevel}
+    ];
+    top5 = top5.sort((a,b)=>b.level-a.level).slice(0,5);
+    rankingEl.innerHTML = top5.map((p,i)=>`${i+1}. ${p.name} - <span class="level">${p.level}</span>`).join("<br>");
+}
+
+// Actualizar participantes conectados
+function updateParticipants(){
+    const participantsEl = document.getElementById("participants");
+    participantsEl.innerText = `🔥 Conectados: ${connected + fakeChats.length}/${maxParticipants}`;
+}
+
+// Simular chat dinámico
+function simulateChat(){
+    const chatBox = document.getElementById("chatBox");
+    setInterval(()=>{
+        const msg = fakeChats[Math.floor(Math.random()*fakeChats.length)];
+        chatBox.innerHTML += `<div class="chatMessage simulated">${msg}</div>`;
+        chatBox.scrollTop = chatBox.scrollHeight;
+        // Limitar chat a últimos 10 mensajes
+        if(chatBox.children.length>10) chatBox.removeChild(chatBox.firstChild);
+    }, Math.floor(Math.random()*5000)+5000); // 5-10s
+}
+
+// Enviar chat real
 function sendChat(){
-    const msg = chatInput.value.trim();
-    if(msg){
-        const p = document.createElement("p");
-        p.innerText = `Tú: ${msg}`;
-        p.classList.add("chatMessage");
-        chatBoxEl.appendChild(p);
-        setTimeout(()=> p.remove(),25000);
-        chatInput.value="";
-        chatBoxEl.scrollTop = chatBoxEl.scrollHeight;
-    }
+    const input = document.getElementById("chatInput");
+    const chatBox = document.getElementById("chatBox");
+    let msg = input.value.trim();
+    if(!msg) return;
+    chatBox.innerHTML += `<div class="chatMessage">${msg}</div>`;
+    chatBox.scrollTop = chatBox.scrollHeight;
+    input.value="";
 }
 
-// ===== INICIO AUTOMÁTICO =====
-window.onload = ()=> startSession();
+// Temporizador principal
+function startTimers(){
+    const timerEl = document.getElementById("timeRemaining");
+    const interval = setInterval(()=>{
+        if(timeLeft<=0){
+            clearInterval(interval);
+            endSession();
+            return;
+        }
+        timeLeft--;
+        const minutes = String(Math.floor(timeLeft/60)).padStart(2,"0");
+        const seconds = String(timeLeft%60).padStart(2,"0");
+        timerEl.innerText = `${minutes}:${seconds}`;
+    },1000);
+}
+
+// Fin de sesión
+function endSession(){
+    document.getElementById("questionBox").innerText = "⚡ Sesión finalizada. Mañana subimos nivel.";
+    document.getElementById("answerInput").disabled = true;
+    document.getElementById("chatInput").disabled = true;
+    document.getElementById("feedback").innerText = "💥 Mantén tu enfoque, prepárate para mañana!";
+}
+
+window.onload = initSession;
