@@ -1,0 +1,139 @@
+/* ===============================
+   KaMiZen – Production UI
+   Psicología: Dopamina + Urgencia + Competencia
+================================ */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #0f0f0f, #1a1a1a);
+    color: #fff;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+h1 {
+    font-size: 2.5rem;
+    text-align: center;
+    margin-top: 30px;
+    letter-spacing: 2px;
+    color: #ff2e63;
+    text-shadow: 0 0 10px rgba(255,46,99,0.6);
+}
+
+button {
+    background: #ff2e63;
+    border: none;
+    padding: 15px 25px;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: 0.3s ease;
+    margin-top: 20px;
+}
+
+button:hover {
+    background: #ff0040;
+    transform: scale(1.05);
+}
+
+.container {
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+    text-align: center;
+}
+
+.card {
+    background: rgba(255,255,255,0.05);
+    padding: 25px;
+    margin-top: 25px;
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(255,0,80,0.2);
+}
+
+#countdown {
+    font-size: 1.5rem;
+    margin-top: 15px;
+    color: #08d9d6;
+}
+
+#participants {
+    margin-top: 10px;
+    font-weight: bold;
+    color: #f9ed69;
+}
+
+.progress-bar {
+    height: 12px;
+    width: 100%;
+    background: #333;
+    border-radius: 10px;
+    margin-top: 15px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #ff2e63, #08d9d6);
+    transition: width 0.5s ease;
+}
+
+#chat-box {
+    height: 250px;
+    overflow-y: auto;
+    margin-top: 20px;
+    background: #111;
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 0.9rem;
+    text-align: left;
+}
+
+.chat-message {
+    margin-bottom: 8px;
+    opacity: 0.9;
+    animation: fadeIn 0.4s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 0.9; transform: translateY(0); }
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 12px;
+    border-radius: 6px;
+    border: none;
+    margin-top: 10px;
+}
+
+.final-screen {
+    text-align: center;
+    margin-top: 40px;
+}
+
+.final-screen h2 {
+    color: #ff2e63;
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+}
+
+.hidden {
+    display: none;
+}
+
+.admin-login {
+    margin-top: 30px;
+    background: rgba(255,255,255,0.08);
+    padding: 15px;
+    border-radius: 10px;
+}
