@@ -1,200 +1,214 @@
-from fastapi import FastAPI, Request, Form, HTTPException, Query
-from fastapi.responses import FileResponse, JSONResponse
-from fastapi.staticfiles import StaticFiles
-from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-from typing import List, Dict
-import random
-import datetime
 import os
+import time
+import random
+from datetime import datetime, timedelta
 
-# -------------------------
-# CONFIGURACIÓN ADMIN / PAGOS
-# -------------------------
+from fastapi import FastAPI, Request, HTTPException
+from fastapi.responses import HTMLResponse, JSONResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel
+from jose import jwt
+import stripe
+
+# =========================
+# CONFIG
+# =========================
+
+SECRET_KEY = "kamizen_secret_key"
+ALGORITHM = "HS256"
+
+stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
+
 ADMIN_USERNAME = os.getenv("ADMIN_USERNAME")
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
-STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
 
-# -------------------------
+MAX_USERS = 500
+SESSION_DURATION = 600  # 10 minutos
+
+active_users = {}
+chat_messages = []
+
+# =========================
 # APP
-# -------------------------
-app = FastAPI(title="KaMiZen Production")
+# =========================
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+app = FastAPI()
 
-# Montar carpeta correcta
 app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/audio", StaticFiles(directory="audio"), name="audio")
 
-# -------------------------
-# VARIABLES GLOBALES
-# -------------------------
-active_tokens = {}           # token -> True/False
-active_users = set()         # usuarios conectados en sesión
-placeholder_messages = [
-    "Usuario 42 ha subido nivel",
-    "Alguien respondió una pregunta",
-    "Usuario 87 avanzó rápido",
-]
-chat_messages: List[Dict] = []  # chat efímero en tiempo real
-banned_words = ["demand", "lawsuit", "illegal", "drugs"]
-session_start_times = {}  # token -> datetime de inicio
+# =========================
+# HELPERS
+# =========================
 
-# Banco de preguntas
-question_bank = [
-    "¿Qué hiciste ayer que te acerca a tu meta?",
-    "¿Qué estás evitando ahora mismo?",
-    "Si repites esta semana 52 veces, ¿estarías orgulloso de tu año?",
-    "¿Quién gana si tú fallas?",
-    "Si no actúas hoy, ¿quién sube nivel antes que tú?",
-]
+def create_token(username: str):
+    expire = datetime.utcnow() + timedelta(minutes=10)
+    payload = {"sub": username, "exp": expire}
+    return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
 
-# -------------------------
-# FUNCIONES AUXILIARES
-# -------------------------
-def generate_token() -> str:
-    import uuid
-    token = str(uuid.uuid4())
-    active_tokens[token] = True
-    return token
+def verify_token(token: str):
+    try:
+        return jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+    except:
+        return None
 
-def verify_token(token: str) -> bool:
-    return token in active_tokens
+# =========================
+# LANDING
+# =========================
 
-def get_audio_file():
-    # Audio diario: monday.mp3
-    return "/static/audio/monday.mp3"
-
-def random_question_for_user():
-    return random.choice(question_bank)
-
-def sanitize_message(msg: str) -> str:
-    for word in banned_words:
-        if word.lower() in msg.lower():
-            return "[mensaje bloqueado]"
-    return msg
-
-# -------------------------
-# ROUTES
-# -------------------------
-@app.get("/")
-def landing():
+@app.get("/", response_class=HTMLResponse)
+async def landing():
     return FileResponse("static/index.html")
 
-# -------------------------
-# LOGIN ADMIN
-# -------------------------
+# =========================
+# ADMIN LOGIN
+# =========================
+
+class AdminLogin(BaseModel):
+    username: str
+    password: str
+
 @app.post("/admin-login")
-def admin_login(username: str = Form(...), password: str = Form(...)):
-    if username != ADMIN_USERNAME or password != ADMIN_PASSWORD:
-        raise HTTPException(status_code=401)
-    token = generate_token()
-    return {"token": token, "admin": True}
+async def admin_login(data: AdminLogin):
+    if data.username == ADMIN_USERNAME and data.password == ADMIN_PASSWORD:
+        token = create_token("admin")
+        return {"token": token}
+    raise HTTPException(status_code=401, detail="Credenciales incorrectas")
 
-# -------------------------
-# COMPRA ENTRADA
-# -------------------------
-@app.post("/purchase")
-def purchase():
-    # Simulación de compra
-    token = generate_token()
-    return {"access_token": token}
+# =========================
+# STRIPE CHECKOUT
+# =========================
 
-# -------------------------
-# SESIÓN 10 MINUTOS DIARIA
-# -------------------------
-@app.get("/session")
-def session_page(token: str = Query(...)):
+@app.post("/create-checkout-session")
+async def create_checkout_session():
+    session = stripe.checkout.Session.create(
+        payment_method_types=["card"],
+        line_items=[{
+            "price_data": {
+                "currency": "usd",
+                "product_data": {"name": "KaMiZen Session"},
+                "unit_amount": 999,
+            },
+            "quantity": 1,
+        }],
+        mode="payment",
+        success_url="https://kamizen.onrender.com/success",
+        cancel_url="https://kamizen.onrender.com/",
+    )
+    return {"id": session.id}
+
+@app.get("/success")
+async def payment_success():
+    token = create_token("paid_user")
+    return JSONResponse({"token": token})
+
+# =========================
+# VALIDATE TOKEN
+# =========================
+
+@app.get("/validate-token")
+async def validate_token(token: str):
+    data = verify_token(token)
+    if not data:
+        raise HTTPException(status_code=401, detail="Token inválido")
+
+    username = data["sub"]
+
+    if username not in active_users:
+        if len(active_users) >= MAX_USERS:
+            raise HTTPException(status_code=403, detail="Sesión llena")
+        active_users[username] = time.time()
+
+    return {"status": "ok"}
+
+# =========================
+# PARTICIPANTES
+# =========================
+
+@app.get("/active-users")
+async def active(token: str):
     if not verify_token(token):
-        raise HTTPException(status_code=403)
+        raise HTTPException(status_code=401)
 
-    now = datetime.datetime.now()
-    # Inicia sesión si no existe
-    if token not in session_start_times:
-        session_start_times[token] = now
-    # Revisa duración 10 minutos
-    elif (now - session_start_times[token]).total_seconds() > 10*60:
-        raise HTTPException(status_code=403, detail="Sesión terminada")
+    return {"count": len(active_users), "max": MAX_USERS}
 
-    active_users.add(token)
-    return FileResponse("static/session.html")
+# =========================
+# AUDIO DINÁMICO
+# =========================
 
-# -------------------------
-# PREGUNTAS ALEATORIAS
-# -------------------------
-class AnswerRequest(BaseModel):
+@app.get("/audio-file")
+async def audio_file(token: str):
+    if not verify_token(token):
+        raise HTTPException(status_code=401)
+
+    day = datetime.utcnow().weekday()
+
+    if day in [0, 1, 2, 3, 4]:
+        return {"audio": "/audio/monday.mp3"}
+    else:
+        return {"audio": "/audio/thursday.mp3"}
+
+# =========================
+# PREGUNTAS
+# =========================
+
+questions_bank = [
+    "¿Qué hiciste hoy que otros no hicieron?",
+    "¿Qué excusa debes eliminar ahora mismo?",
+    "¿Qué acción te da miedo pero sabes que debes hacer?",
+    "¿Dónde estás perdiendo tiempo?"
+]
+
+class Answer(BaseModel):
     token: str
     answer: str
 
 @app.post("/submit-answer")
-def submit_answer(req: AnswerRequest):
-    if not verify_token(req.token):
-        raise HTTPException(status_code=403)
-    # Feedback único para usuario
-    return {"status": "ok", "feedback": f"Perfecto, hoy avanzaste más que ayer: {random_question_for_user()}"}
+async def submit_answer(data: Answer):
+    if not verify_token(data.token):
+        raise HTTPException(status_code=401)
 
-# -------------------------
-# CHAT EFÍMERO
-# -------------------------
+    feedback = random.choice([
+        "Bien. Pero puedes más.",
+        "Rápido. Eso es mentalidad ganadora.",
+        "Otros ya avanzaron más.",
+        "Sigue. No te detengas."
+    ])
+
+    return {
+        "feedback": feedback,
+        "next_question": random.choice(questions_bank)
+    }
+
+# =========================
+# CHAT
+# =========================
+
 class ChatMessage(BaseModel):
     token: str
     message: str
 
+blocked_words = ["demanda", "abogado", "ilegal"]
+
 @app.post("/chat")
-def chat(msg: ChatMessage):
-    if not verify_token(msg.token):
-        raise HTTPException(status_code=403)
-    sanitized = sanitize_message(msg.message)
-    chat_messages.append({"token": msg.token, "message": sanitized, "time": datetime.datetime.now()})
+async def send_chat(data: ChatMessage):
+    if not verify_token(data.token):
+        raise HTTPException(status_code=401)
+
+    for word in blocked_words:
+        if word in data.message.lower():
+            return {"status": "blocked"}
+
+    chat_messages.append(data.message)
+
     if len(chat_messages) > 50:
         chat_messages.pop(0)
+
     return {"status": "ok"}
 
 @app.get("/chat")
-def get_chat(token: str = Query(...)):
+async def get_chat(token: str):
     if not verify_token(token):
-        raise HTTPException(status_code=403)
-    now = datetime.datetime.now()
-    recent = [
-        m["message"] for m in chat_messages
-        if (now - m["time"]).total_seconds() <= 30
-    ]
-    while len(recent) < 10:
-        recent.append(random.choice(placeholder_messages))
-    random.shuffle(recent)
-    return {"messages": recent}
+        raise HTTPException(status_code=401)
 
-# -------------------------
-# CONTADOR DE USUARIOS
-# -------------------------
-@app.get("/active-users")
-def get_active_users(token: str = Query(...)):
-    if not verify_token(token):
-        raise HTTPException(status_code=403)
-    return {"count": len(active_users), "max": 500}
-
-# -------------------------
-# AUDIO DINÁMICO
-# -------------------------
-@app.get("/audio")
-def get_audio(token: str = Query(...)):
-    if not verify_token(token):
-        raise HTTPException(status_code=403)
-    return {"audio_file": get_audio_file()}
-
-# -------------------------
-# CIERRE DE SESIÓN
-# -------------------------
-@app.post("/logout")
-def logout(token: str = Form(...)):
-    if token in active_tokens:
-        active_tokens.pop(token)
-    if token in active_users:
-        active_users.remove(token)
-    if token in session_start_times:
-        session_start_times.pop(token)
-    return {"status": "ok", "message": "Sesión terminada. Los que no subieron nivel hoy, comienzan mañana en desventaja. Asegura tu lugar."}
+    return {"messages": chat_messages[-20:]}
