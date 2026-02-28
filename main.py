@@ -1,131 +1,124 @@
-import time
-import random
-from datetime import datetime
-
-from fastapi import FastAPI
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel
+import asyncio
+import random
+from typing import List
 
-app = FastAPI()
+app = FastAPI(title="KaMiZen")
 
+# Montar carpeta static
 app.mount("/static", StaticFiles(directory="static"), name="static")
-app.mount("/audio", StaticFiles(directory="audio"), name="audio")
 
-# =====================
-# VARIABLES EN MEMORIA
-# =====================
-
+# ---------------------------
+# Motor en memoria
+# ---------------------------
 MAX_USERS = 500
-SESSION_DURATION = 600  # 10 minutos
+clients: List[WebSocket] = []
+users_data = {}  # {websocket: {"name":..., "level":..., "answers":...}}
 
-session_start_time = time.time()
-active_users = set()
-chat_messages = []
-
-questions_bank = [
-    "¿Qué hiciste hoy que otros no hicieron?",
-    "¿Qué excusa debes eliminar ahora mismo?",
-    "¿Qué acción te da miedo pero sabes que debes hacer?",
-    "¿Dónde estás perdiendo tiempo?",
-    "¿Qué decisión cambiaría tu nivel hoy?"
+QUESTIONS = [
+    "💥 ¿Qué hiciste hoy que te pone por delante de otros?",
+    "🔥 Escribe una acción que te haga destacar en tu mercado.",
+    "💰 Menciona algo que generará dinero hoy.",
+    "⚡ ¿Qué decisión tomaste que nadie más tomó?",
+    "🌟 Comparte un logro de valor personal.",
+    "🚀 ¿Cuál es tu micro acción para aumentar tu poder hoy?",
+    "🎯 Visualiza algo que lograrás en las próximas 24h."
 ]
 
-feedback_bank = [
-    "Bien. Pero puedes más.",
-    "Rápido. Mentalidad ganadora.",
-    "Otros avanzaron más.",
-    "Sigue. No te detengas.",
-    "Eso te separa del promedio."
+SIMULATED_CHAT = [
+    "💰 Cerré un trato millonario hoy",
+    "🔥 Nadie me supera en decisión rápida",
+    "⚡ Cada segundo cuenta para subir de nivel",
+    "💥 Me adelanté a todos en mi estrategia",
+    "🌟 Acción concreta = ventaja competitiva",
+    "🚀 Hoy subí de nivel mental"
 ]
 
-# =====================
-# LANDING
-# =====================
+RANKING = [
+    {"name": "Anónimo1", "level": 5},
+    {"name": "Anónimo2", "level": 4},
+    {"name": "Anónimo3", "level": 3},
+    {"name": "Anónimo4", "level": 2},
+    {"name": "Anónimo5", "level": 1}
+]
 
-@app.get("/")
-async def landing():
-    return FileResponse("static/index.html")
+# ---------------------------
+# Funciones auxiliares
+# ---------------------------
+async def broadcast(message: dict):
+    to_remove = []
+    for client in clients:
+        try:
+            await client.send_json(message)
+        except:
+            to_remove.append(client)
+    for client in to_remove:
+        clients.remove(client)
+        if client in users_data:
+            del users_data[client]
 
-@app.get("/session")
-async def session():
-    return FileResponse("static/session.html")
+def get_ranking():
+    real_users = [{"name": users_data[c]["name"], "level": users_data[c]["level"]} for c in clients if c in users_data]
+    combined = RANKING.copy()
+    for u in real_users:
+        combined.append(u)
+    combined.sort(key=lambda x: x["level"], reverse=True)
+    return combined[:5]
 
-# =====================
-# SESSION INFO
-# =====================
+# ---------------------------
+# WebSocket endpoint
+# ---------------------------
+@app.websocket("/ws")
+async def websocket_endpoint(ws: WebSocket):
+    await ws.accept()
+    clients.append(ws)
+    users_data[ws] = {"name": f"Usuario{len(clients)}", "level": 1, "answers": []}
 
-@app.get("/session-info")
-async def session_info():
-    now = time.time()
-    elapsed = now - session_start_time
+    try:
+        await broadcast({"type": "update_participants", "count": len(clients), "max": MAX_USERS})
+        await broadcast({"type": "update_ranking", "ranking": get_ranking()})
 
-    remaining = SESSION_DURATION - elapsed
+        current_question = random.choice(QUESTIONS)
+        await ws.send_json({"type": "question", "text": current_question})
 
-    if remaining <= 0:
-        remaining = 0
+        while True:
+            data = await ws.receive_json()
+            if data["type"] == "answer":
+                answer = data["text"].strip()
+                if answer:
+                    users_data[ws]["answers"].append(answer)
+                    users_data[ws]["level"] = min(users_data[ws]["level"] + 1, 10)
+                    await ws.send_json({"type": "feedback", "text": "💥 Excelente, nivel +1!"})
+                else:
+                    await ws.send_json({"type": "feedback", "text": "⏳ No escribiste nada, intenta ser concreto."})
+                remaining_questions = [q for q in QUESTIONS if q != current_question]
+                if remaining_questions:
+                    current_question = random.choice(remaining_questions)
+                    await ws.send_json({"type": "question", "text": current_question})
+                await broadcast({"type": "update_ranking", "ranking": get_ranking()})
 
-    return {
-        "remaining": int(remaining),
-        "users": len(active_users),
-        "max_users": MAX_USERS
-    }
+            elif data["type"] == "chat":
+                chat_text = data["text"]
+                await broadcast({"type": "chat", "text": chat_text, "sender": users_data[ws]["name"], "simulated": False})
 
-@app.post("/join")
-async def join():
-    if len(active_users) < MAX_USERS:
-        user_id = str(time.time()) + str(random.randint(1,9999))
-        active_users.add(user_id)
-        return {"user_id": user_id}
-    return {"error": "Sesión llena"}
+    except WebSocketDisconnect:
+        clients.remove(ws)
+        if ws in users_data:
+            del users_data[ws]
+        await broadcast({"type": "update_participants", "count": len(clients), "max": MAX_USERS})
+        await broadcast({"type": "update_ranking", "ranking": get_ranking()})
 
-# =====================
-# AUDIO
-# =====================
+# ---------------------------
+# Chat simulado constante
+# ---------------------------
+async def simulated_chat_loop():
+    while True:
+        if clients:
+            msg = random.choice(SIMULATED_CHAT)
+            await broadcast({"type": "chat", "text": msg, "sender": "Simulado", "simulated": True})
+        await asyncio.sleep(random.randint(5, 10))
 
-@app.get("/audio-file")
-async def audio_file():
-    day = datetime.utcnow().weekday()
-
-    if day in [0,1,2,3,4]:
-        return {"audio": "/audio/monday.mp3"}
-    else:
-        return {"audio": "/audio/thursday.mp3"}
-
-# =====================
-# PREGUNTAS
-# =====================
-
-@app.get("/question")
-async def get_question():
-    return {"question": random.choice(questions_bank)}
-
-class Answer(BaseModel):
-    answer: str
-
-@app.post("/answer")
-async def submit_answer(data: Answer):
-    return {
-        "feedback": random.choice(feedback_bank),
-        "next_question": random.choice(questions_bank)
-    }
-
-# =====================
-# CHAT SIMPLE
-# =====================
-
-class ChatMessage(BaseModel):
-    message: str
-
-@app.post("/chat")
-async def send_chat(data: ChatMessage):
-    chat_messages.append(data.message)
-
-    if len(chat_messages) > 50:
-        chat_messages.pop(0)
-
-    return {"status": "ok"}
-
-@app.get("/chat")
-async def get_chat():
-    return {"messages": chat_messages[-20:]}
+@app.on_event("startup")
+async def startup_event():
+    asyncio.create_task(simulated_chat_loop())
