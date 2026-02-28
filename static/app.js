@@ -1,152 +1,147 @@
-let userId = null;
-let sessionDuration = 600;
-let timerInterval = null;
-let questionTimer = null;
-let level = 0;
-let simulatedChat = [
-  "💥 Acabo de superar mi límite.",
-  "⚡ Nadie me va a ganar hoy.",
-  "🔥 Cada segundo cuenta.",
-  "⚠️ Si no actúas, otros suben nivel.",
-  "💪 Voy por el top 5."
-];
-let topRanking = [
-  {name: "Anónimo1", lvl: 12},
-  {name: "Anónimo2", lvl: 10},
-  {name: "Anónimo3", lvl: 9},
-  {name: "Anónimo4", lvl: 7},
-  {name: "Anónimo5", lvl: 5}
+// ===== KaMiZen app.js =====
+let sessionDuration = 600; // 10 minutos
+let questionDuration = 60; // 60s por pregunta
+let participantsCount = 2; // inicial simulado
+let userLevel = 1;
+let ranking = [
+    {name:"Anónimo1",level:12},
+    {name:"Anónimo2",level:10},
+    {name:"Anónimo3",level:9},
+    {name:"Anónimo4",level:7},
+    {name:"Anónimo5",level:5}
 ];
 
-async function initSession() {
-  const joinRes = await fetch("/join", { method: "POST" });
-  const joinData = await joinRes.json();
-  if (joinData.error) { alert("Sesión llena."); return; }
-  userId = joinData.user_id;
+const questions = [
+    "¿Qué hiciste hoy que otros no hicieron?",
+    "Escribe tu pequeño triunfo de hoy",
+    "Decide algo rápido para ganar dinero imaginario",
+    "Escribe un momento de poder que hayas tenido",
+    "Menciona una acción que te acerque a ser millonario"
+];
 
-  loadAudio();
-  updateSessionInfo();
-  loadQuestion();
-  loadChat();
-  showRanking();
+const simulatedChats = [
+    "💥 Acabo de cerrar un trato millonario!",
+    "🔥 Hoy nadie me superó en ventas",
+    "💰 Tomé una decisión rápida y gané",
+    "⚡ Siempre un paso adelante de los demás",
+    "🏆 Cada minuto cuenta para subir de nivel"
+];
 
-  timerInterval = setInterval(updateTimer, 1000);
-  setInterval(updateSessionInfo, 5000);
-  setInterval(loadChat, 3000);
-  setInterval(addSimulatedChat, 10000);
-  setInterval(showRanking, 8000);
+let chatBox = document.getElementById("chatBox");
+let participantsEl = document.getElementById("participants");
+let timeEl = document.getElementById("timeRemaining");
+let questionBox = document.getElementById("questionBox");
+let feedbackEl = document.getElementById("feedback");
+let rankingEl = document.getElementById("ranking");
+let sessionAudio = document.getElementById("sessionAudio");
+
+let currentQuestionIndex = 0;
+let remainingTime = sessionDuration;
+
+// === Funciones ===
+function startSession(){
+    updateParticipants();
+    nextQuestion();
+    updateRanking();
+    playAudio();
+
+    setInterval(sessionCountdown,1000);
+    setInterval(simulateChat,8000);
 }
 
-async function updateSessionInfo() {
-  const res = await fetch("/session-info");
-  const data = await res.json();
-
-  let timerEl = document.getElementById("timeRemaining");
-  timerEl.innerText = formatTime(data.remaining);
-  if (data.remaining <= 120) timerEl.style.color = "red";
-
-  document.getElementById("userCount").innerHTML = `🔥 ${data.users} están dentro ahora mismo<br>⚠️ ${data.max_users - data.users} espacios restantes`;
-
-  if (data.remaining <= 0) {
-    clearInterval(timerInterval);
-    alert("SESION CERRADA.\nLos que actuaron hoy avanzaron.\nLos que dudaron empiezan mañana en desventaja.");
-    location.reload();
-  }
-}
-
-function formatTime(sec) {
-  let m = Math.floor(sec/60).toString().padStart(2,'0');
-  let s = (sec % 60).toString().padStart(2,'0');
-  return `${m}:${s}`;
-}
-
-async function loadAudio() {
-  const res = await fetch("/audio-file");
-  const data = await res.json();
-  const audio = document.getElementById("sessionAudio");
-  audio.src = data.audio;
-  audio.play();
-}
-
-async function loadQuestion() {
-  const res = await fetch("/question");
-  const data = await res.json();
-  document.getElementById("questionBox").innerText = `⏳ 60s para responder: ${data.question}`;
-  startQuestionTimer();
-}
-
-function startQuestionTimer() {
-  clearInterval(questionTimer);
-  let t = 60;
-  questionTimer = setInterval(() => {
-    t--;
-    let box = document.getElementById("questionBox");
-    box.innerText = `⏳ ${t}s para responder: ${box.innerText.split(': ')[1]}`;
-    if (t <= 0) {
-      clearInterval(questionTimer);
-      document.getElementById("feedback").innerText = "⚠️ Tiempo agotado. Otros avanzaron.";
-      level = Math.max(0, level - 1);
-      loadQuestion();
+function sessionCountdown(){
+    remainingTime--;
+    let minutes = Math.floor(remainingTime/60);
+    let seconds = remainingTime%60;
+    timeEl.textContent = `${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
+    if(remainingTime<=0){
+        questionBox.textContent = "💥 SESIÓN TERMINADA. Los que actuaron hoy avanzaron. Los que dudaron empiezan mañana en desventaja.";
+        feedbackEl.textContent="";
     }
-  },1000);
 }
 
-async function sendAnswer() {
-  const answer = document.getElementById("answerInput").value;
-  if (!answer) return;
-  const res = await fetch("/answer", {
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body: JSON.stringify({answer})
-  });
-  const data = await res.json();
-  level++;
-  document.getElementById("feedback").innerHTML = `⚡ Nivel +${level} - ${data.feedback}`;
-  document.getElementById("answerInput").value = "";
-  loadQuestion();
+function updateParticipants(){
+    participantsEl.textContent = `🔥 Participantes: ${participantsCount}/500`;
 }
 
-async function loadChat() {
-  const res = await fetch("/chat");
-  const data = await res.json();
-  const chatBox = document.getElementById("chatBox");
-  chatBox.innerHTML = "";
-  data.messages.forEach(msg => {
+function nextQuestion(){
+    currentQuestionIndex = Math.floor(Math.random()*questions.length);
+    questionBox.textContent = `⏳ ${questionDuration}s para responder: ${questions[currentQuestionIndex]}`;
+    speakText(questions[currentQuestionIndex]);
+    startQuestionTimer();
+}
+
+function startQuestionTimer(){
+    let timeLeft = questionDuration;
+    let questionInterval = setInterval(()=>{
+        timeLeft--;
+        questionBox.textContent = `⏳ ${timeLeft}s para responder: ${questions[currentQuestionIndex]}`;
+        if(timeLeft<=0){
+            clearInterval(questionInterval);
+            feedbackEl.textContent = "⚠️ Tiempo agotado. Otros avanzaron.";
+            nextQuestion();
+        }
+    },1000);
+}
+
+function sendAnswer(){
+    let ans = document.getElementById("answerInput").value;
+    if(ans.trim()==="") return;
+    feedbackEl.textContent = `💥 Perfecto! Nivel +1`;
+    userLevel++;
+    document.getElementById("answerInput").value="";
+    updateRanking();
+    nextQuestion();
+}
+
+function updateRanking(){
+    let top5 = ranking.slice(0,5);
+    let html = "🏆 Top 5 del momento<br>";
+    top5.forEach((r,i)=>{
+        html+= `${i+1}. ${r.name} - Nivel ${r.level}<br>`;
+    });
+    html+= `<strong>Tu Nivel: ${userLevel}</strong>`;
+    rankingEl.innerHTML = html;
+}
+
+function simulateChat(){
+    let msg = simulatedChats[Math.floor(Math.random()*simulatedChats.length)];
     let div = document.createElement("div");
-    div.innerText = msg;
+    div.className="chatMessage simulated";
+    div.textContent = msg;
     chatBox.appendChild(div);
-  });
+    chatBox.scrollTop = chatBox.scrollHeight;
+    setTimeout(()=>{div.remove()},25000);
 }
 
-async function sendChat() {
-  const message = document.getElementById("chatInput").value;
-  if (!message) return;
-  await fetch("/chat", {
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body: JSON.stringify({message})
-  });
-  document.getElementById("chatInput").value = "";
-  loadChat();
+function sendChat(){
+    let input = document.getElementById("chatInput");
+    let msg = input.value.trim();
+    if(msg==="") return;
+    let div = document.createElement("div");
+    div.className="chatMessage";
+    div.textContent = `💬 ${msg}`;
+    chatBox.appendChild(div);
+    chatBox.scrollTop = chatBox.scrollHeight;
+    input.value="";
+    setTimeout(()=>{div.remove()},25000);
 }
 
-function addSimulatedChat() {
-  const chatBox = document.getElementById("chatBox");
-  let msg = simulatedChat[Math.floor(Math.random()*simulatedChat.length)];
-  let div = document.createElement("div");
-  div.innerText = msg;
-  chatBox.appendChild(div);
-  if(chatBox.childElementCount>20) chatBox.removeChild(chatBox.firstChild);
-  chatBox.scrollTop = chatBox.scrollHeight;
+function playAudio(){
+    sessionAudio.src="/audio/monday.mp3";
+    sessionAudio.play();
 }
 
-function showRanking() {
-  const rankingEl = document.getElementById("ranking");
-  if(!rankingEl) return;
-  rankingEl.innerHTML = "<h3>🏆 Top 5 del momento</h3>";
-  topRanking.forEach((r,i)=>{
-    rankingEl.innerHTML += `${i+1}. ${r.name} - Nivel ${r.lvl}<br>`;
-  });
+// === Voz sintetizada ===
+function speakText(text){
+    if('speechSynthesis' in window){
+        let utter = new SpeechSynthesisUtterance(text);
+        utter.lang="es-ES";
+        utter.pitch=1.2;
+        utter.rate=1.1;
+        speechSynthesis.speak(utter);
+    }
 }
 
-window.onload = initSession;
+// === Inicia la sesión automáticamente ===
+window.onload = startSession;
