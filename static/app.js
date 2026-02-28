@@ -3,28 +3,33 @@ let sessionDuration = 600; // 10 minutos
 let questionDuration = 60; // 60s por pregunta
 let participantsCount = 2; // inicial simulado
 let userLevel = 1;
+const maxLevel = 10;
+
 let ranking = [
-    {name:"Anónimo1",level:12},
-    {name:"Anónimo2",level:10},
-    {name:"Anónimo3",level:9},
-    {name:"Anónimo4",level:7},
-    {name:"Anónimo5",level:5}
+    {name:"Anónimo1",level:5},
+    {name:"Anónimo2",level:4},
+    {name:"Anónimo3",level:3},
+    {name:"Anónimo4",level:2},
+    {name:"Anónimo5",level:1}
 ];
 
 const questions = [
-    "¿Qué hiciste hoy que otros no hicieron?",
-    "Escribe tu pequeño triunfo de hoy",
-    "Decide algo rápido para ganar dinero imaginario",
-    "Escribe un momento de poder que hayas tenido",
-    "Menciona una acción que te acerque a ser millonario"
+    "Escribe un pequeño triunfo personal de hoy",
+    "Menciona una acción de valor que realizaste",
+    "Escribe una decisión que te acerque al dinero",
+    "Comparte un momento de poder que tuviste",
+    "Describe algo que hiciste que otros no hicieron",
+    "Escribe una acción que mejora tu bienestar",
+    "Menciona un pequeño logro que te da ventaja",
+    "Describe cómo superaste un obstáculo hoy"
 ];
 
 const simulatedChats = [
-    "💥 Acabo de cerrar un trato millonario!",
-    "🔥 Hoy nadie me superó en ventas",
-    "💰 Tomé una decisión rápida y gané",
-    "⚡ Siempre un paso adelante de los demás",
-    "🏆 Cada minuto cuenta para subir de nivel"
+    "💰 Cerré un trato millonario hoy",
+    "🔥 Nadie me supera en decisión rápida",
+    "⚡ Cada segundo cuenta para subir de nivel",
+    "💥 Hoy tomé la acción que otros no tomaron",
+    "🏆 Cada minuto cuenta para estar por delante"
 ];
 
 let chatBox = document.getElementById("chatBox");
@@ -35,10 +40,11 @@ let feedbackEl = document.getElementById("feedback");
 let rankingEl = document.getElementById("ranking");
 let sessionAudio = document.getElementById("sessionAudio");
 
-let currentQuestionIndex = 0;
+let usedQuestions = [];
 let remainingTime = sessionDuration;
+let currentQuestionIndex = 0;
 
-// === Funciones ===
+// ===== Funciones =====
 function startSession(){
     updateParticipants();
     nextQuestion();
@@ -46,7 +52,7 @@ function startSession(){
     playAudio();
 
     setInterval(sessionCountdown,1000);
-    setInterval(simulateChat,8000);
+    setInterval(simulateChat,7000); // chat simulado constante
 }
 
 function sessionCountdown(){
@@ -65,10 +71,17 @@ function updateParticipants(){
 }
 
 function nextQuestion(){
-    currentQuestionIndex = Math.floor(Math.random()*questions.length);
-    questionBox.textContent = `⏳ ${questionDuration}s para responder: ${questions[currentQuestionIndex]}`;
-    speakText(questions[currentQuestionIndex]);
+    // Selección aleatoria de pregunta no repetida
+    if(usedQuestions.length === questions.length) usedQuestions = [];
+    let available = questions.filter((q)=>!usedQuestions.includes(q));
+    let question = available[Math.floor(Math.random()*available.length)];
+    usedQuestions.push(question);
+    currentQuestionIndex = questions.indexOf(question);
+
+    questionBox.textContent = `⏳ ${questionDuration}s para responder: ${question}`;
+    speakText(question);
     startQuestionTimer();
+    playAudioForQuestion();
 }
 
 function startQuestionTimer(){
@@ -85,10 +98,11 @@ function startQuestionTimer(){
 }
 
 function sendAnswer(){
-    let ans = document.getElementById("answerInput").value;
-    if(ans.trim()==="") return;
-    feedbackEl.textContent = `💥 Perfecto! Nivel +1`;
-    userLevel++;
+    let ans = document.getElementById("answerInput").value.trim();
+    if(ans==="") return;
+
+    if(userLevel < maxLevel) userLevel++;
+    feedbackEl.textContent = `💥 Nivel +1 – Estás por encima de 60% de los conectados`;
     document.getElementById("answerInput").value="";
     updateRanking();
     nextQuestion();
@@ -127,12 +141,20 @@ function sendChat(){
     setTimeout(()=>{div.remove()},25000);
 }
 
+// ===== Audio =====
 function playAudio(){
-    sessionAudio.src="/audio/monday.mp3";
+    sessionAudio.src="/audio/monday.mp3"; // ejemplo, puede cambiar
     sessionAudio.play();
 }
 
-// === Voz sintetizada ===
+function playAudioForQuestion(){
+    // Cambiar a audio pregrabado por pregunta
+    // Puedes poner audio dinámico diferente según el índice
+    sessionAudio.src="/audio/thursday.mp3";
+    sessionAudio.play();
+}
+
+// ===== Voz sintetizada =====
 function speakText(text){
     if('speechSynthesis' in window){
         let utter = new SpeechSynthesisUtterance(text);
@@ -143,5 +165,5 @@ function speakText(text){
     }
 }
 
-// === Inicia la sesión automáticamente ===
+// ===== Inicia sesión automáticamente =====
 window.onload = startSession;
