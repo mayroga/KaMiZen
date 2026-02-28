@@ -1,42 +1,47 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>KaMiZen - Sesión diaria</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <title>KaMiZen - Sesión diaria</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div id="kaMiZenApp">
-    <h1>KaMiZen - Sesión diaria</h1>
-    <div id="status">
-      <p id="participants">Participantes: 1/500</p>
-      <p id="sessionTimer">Tiempo restante: 10:00</p>
+    <div id="session-container">
+        <h1>KaMiZen - Sesión diaria</h1>
+        <div id="status">
+            🔥 Participantes: <span id="participant-count">1</span>/500
+            ⏳ Tiempo restante: <span id="session-timer">10:00</span>
+        </div>
+
+        <div id="ranking">
+            <h2>🏆 Top 5 del momento</h2>
+            <ol id="top-ranking">
+                <li>Anónimo1 - Nivel 5</li>
+                <li>Anónimo2 - Nivel 4</li>
+                <li>Anónimo3 - Nivel 3</li>
+                <li>Anónimo4 - Nivel 2</li>
+                <li>Anónimo5 - Nivel 1</li>
+            </ol>
+        </div>
+
+        <div id="question-section">
+            <div id="question-timer">⏳ 30s para responder</div>
+            <div id="question-text">Cargando pregunta...</div>
+            <textarea id="answer-input" placeholder="Escribe tu respuesta aquí..."></textarea>
+            <button id="submit-answer">Enviar</button>
+            <div id="feedback"></div>
+        </div>
+
+        <div id="chat-section">
+            <h3>Chat en vivo (anónimo)</h3>
+            <div id="chat-box"></div>
+            <input type="text" id="chat-input" placeholder="Escribe mensaje...">
+            <button id="send-chat">Enviar</button>
+        </div>
     </div>
 
-    <div id="ranking">
-      <h3>🏆 Top 5 del momento</h3>
-      <ol id="topRanking">
-        <!-- Ranking se actualiza dinámicamente -->
-      </ol>
-    </div>
+    <audio id="audio-player"></audio>
 
-    <div id="questionSection">
-      <p id="questionTimer">⏳ 00s para responder</p>
-      <p id="questionText">Cargando pregunta...</p>
-      <textarea id="answerInput" placeholder="Escribe tu respuesta aquí..." rows="2"></textarea>
-      <button id="submitAnswer">Enviar</button>
-    </div>
-
-    <div id="chatSection">
-      <h3>Chat en vivo (simulado y real)</h3>
-      <div id="chatBox"></div>
-      <input type="text" id="chatInput" placeholder="Escribe mensaje..." />
-      <button id="sendChat">Enviar</button>
-    </div>
-
-    <audio id="audioPlayer"></audio>
-  </div>
-
-  <script src="app.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>
