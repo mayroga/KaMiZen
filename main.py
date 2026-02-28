@@ -1,124 +1,142 @@
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 import asyncio
 import random
-from typing import List
+import json
 
-app = FastAPI(title="KaMiZen")
+app = FastAPI(title="KaMiZen WebSocket Backend")
 
+# ------------------------------
 # Montar carpeta static
+# ------------------------------
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-# ---------------------------
-# Motor en memoria
-# ---------------------------
-MAX_USERS = 500
-clients: List[WebSocket] = []
-users_data = {}  # {websocket: {"name":..., "level":..., "answers":...}}
-
-QUESTIONS = [
-    "💥 ¿Qué hiciste hoy que te pone por delante de otros?",
-    "🔥 Escribe una acción que te haga destacar en tu mercado.",
-    "💰 Menciona algo que generará dinero hoy.",
-    "⚡ ¿Qué decisión tomaste que nadie más tomó?",
-    "🌟 Comparte un logro de valor personal.",
-    "🚀 ¿Cuál es tu micro acción para aumentar tu poder hoy?",
-    "🎯 Visualiza algo que lograrás en las próximas 24h."
-]
-
-SIMULATED_CHAT = [
+# ------------------------------
+# Variables globales en memoria
+# ------------------------------
+MAX_PARTICIPANTS = 500
+clients = []
+ranking = []
+chat_simulated = [
     "💰 Cerré un trato millonario hoy",
     "🔥 Nadie me supera en decisión rápida",
     "⚡ Cada segundo cuenta para subir de nivel",
-    "💥 Me adelanté a todos en mi estrategia",
-    "🌟 Acción concreta = ventaja competitiva",
-    "🚀 Hoy subí de nivel mental"
+    "🏆 Subí un nivel gracias a mi disciplina",
+    "💥 Cada palabra cuenta, actúa ya"
+]
+questions_bank = [
+    "¿Qué hiciste hoy que realmente te pone por delante?",
+    "Describe un logro que otros no alcanzaron hoy",
+    "¿Qué decisión rápida tomaste que te generó ventaja?",
+    "Cita algo que aprendiste y aplicaste hoy",
+    "¿Qué acción concreta de hoy aumentó tu productividad?"
 ]
 
-RANKING = [
-    {"name": "Anónimo1", "level": 5},
-    {"name": "Anónimo2", "level": 4},
-    {"name": "Anónimo3", "level": 3},
-    {"name": "Anónimo4", "level": 2},
-    {"name": "Anónimo5", "level": 1}
-]
+# ------------------------------
+# Cliente WebSocket Manager
+# ------------------------------
+class ConnectionManager:
+    def __init__(self):
+        self.active_connections: list[WebSocket] = []
 
-# ---------------------------
-# Funciones auxiliares
-# ---------------------------
-async def broadcast(message: dict):
-    to_remove = []
-    for client in clients:
-        try:
-            await client.send_json(message)
-        except:
-            to_remove.append(client)
-    for client in to_remove:
-        clients.remove(client)
-        if client in users_data:
-            del users_data[client]
+    async def connect(self, websocket: WebSocket):
+        await websocket.accept()
+        self.active_connections.append(websocket)
+        await self.broadcast_participants()
 
-def get_ranking():
-    real_users = [{"name": users_data[c]["name"], "level": users_data[c]["level"]} for c in clients if c in users_data]
-    combined = RANKING.copy()
-    for u in real_users:
-        combined.append(u)
-    combined.sort(key=lambda x: x["level"], reverse=True)
-    return combined[:5]
+    def disconnect(self, websocket: WebSocket):
+        if websocket in self.active_connections:
+            self.active_connections.remove(websocket)
 
-# ---------------------------
+    async def broadcast(self, message: dict):
+        data = json.dumps(message)
+        for connection in self.active_connections:
+            await connection.send_text(data)
+
+    async def broadcast_participants(self):
+        msg = {"type": "update_participants", "count": len(self.active_connections), "max": MAX_PARTICIPANTS}
+        await self.broadcast(msg)
+
+manager = ConnectionManager()
+
+# ------------------------------
 # WebSocket endpoint
-# ---------------------------
+# ------------------------------
 @app.websocket("/ws")
-async def websocket_endpoint(ws: WebSocket):
-    await ws.accept()
-    clients.append(ws)
-    users_data[ws] = {"name": f"Usuario{len(clients)}", "level": 1, "answers": []}
+async def websocket_endpoint(websocket: WebSocket):
+    await manager.connect(websocket)
+    user_name = f"Anónimo{random.randint(1, 9999)}"
+    user_level = 1
+    ranking.append({"name": user_name, "level": user_level})
 
     try:
-        await broadcast({"type": "update_participants", "count": len(clients), "max": MAX_USERS})
-        await broadcast({"type": "update_ranking", "ranking": get_ranking()})
-
-        current_question = random.choice(QUESTIONS)
-        await ws.send_json({"type": "question", "text": current_question})
+        # Enviar ranking inicial
+        await manager.broadcast({"type": "update_ranking", "ranking": sorted(ranking, key=lambda x: -x["level"])[:5]})
+        # Enviar primera pregunta
+        question = random.choice(questions_bank)
+        await websocket.send_text(json.dumps({"type": "question", "text": question}))
 
         while True:
-            data = await ws.receive_json()
-            if data["type"] == "answer":
-                answer = data["text"].strip()
-                if answer:
-                    users_data[ws]["answers"].append(answer)
-                    users_data[ws]["level"] = min(users_data[ws]["level"] + 1, 10)
-                    await ws.send_json({"type": "feedback", "text": "💥 Excelente, nivel +1!"})
-                else:
-                    await ws.send_json({"type": "feedback", "text": "⏳ No escribiste nada, intenta ser concreto."})
-                remaining_questions = [q for q in QUESTIONS if q != current_question]
-                if remaining_questions:
-                    current_question = random.choice(remaining_questions)
-                    await ws.send_json({"type": "question", "text": current_question})
-                await broadcast({"type": "update_ranking", "ranking": get_ranking()})
+            data = await websocket.receive_text()
+            data_json = json.loads(data)
 
-            elif data["type"] == "chat":
-                chat_text = data["text"]
-                await broadcast({"type": "chat", "text": chat_text, "sender": users_data[ws]["name"], "simulated": False})
+            # -----------------------
+            # Respuesta del usuario
+            # -----------------------
+            if data_json["type"] == "answer":
+                text = data_json.get("text", "")
+                # Feedback sencillo y subida de nivel
+                if len(text.strip()) == 0:
+                    feedback = "No escribiste nada. Ejemplo: 'Hoy cerré un trato rápido y gané ventaja.'"
+                else:
+                    feedback = "💥 Excelente! Subes un nivel."
+                    user_level = min(user_level + 1, 10)
+                # Actualizar ranking
+                for u in ranking:
+                    if u["name"] == user_name:
+                        u["level"] = user_level
+                await websocket.send_text(json.dumps({"type": "feedback", "text": feedback}))
+                await manager.broadcast({"type": "update_ranking", "ranking": sorted(ranking, key=lambda x: -x["level"])[:5]})
+
+            # -----------------------
+            # Chat en vivo
+            # -----------------------
+            elif data_json["type"] == "chat":
+                text = data_json.get("text", "")
+                msg = {"type": "chat", "sender": user_name, "text": text, "simulated": False}
+                await manager.broadcast(msg)
+
+            # -----------------------
+            # Simular chat constante
+            # -----------------------
+            # Esto se hace en paralelo abajo
 
     except WebSocketDisconnect:
-        clients.remove(ws)
-        if ws in users_data:
-            del users_data[ws]
-        await broadcast({"type": "update_participants", "count": len(clients), "max": MAX_USERS})
-        await broadcast({"type": "update_ranking", "ranking": get_ranking()})
+        manager.disconnect(websocket)
+        ranking[:] = [u for u in ranking if u["name"] != user_name]
+        await manager.broadcast_participants()
+        await manager.broadcast({"type": "update_ranking", "ranking": sorted(ranking, key=lambda x: -x["level"])[:5]})
 
-# ---------------------------
-# Chat simulado constante
-# ---------------------------
-async def simulated_chat_loop():
+# ------------------------------
+# Chat simulado automático
+# ------------------------------
+async def chat_simulator():
     while True:
-        if clients:
-            msg = random.choice(SIMULATED_CHAT)
-            await broadcast({"type": "chat", "text": msg, "sender": "Simulado", "simulated": True})
-        await asyncio.sleep(random.randint(5, 10))
+        if manager.active_connections:
+            msg = {"type": "chat", "sender": "Simulado", "text": random.choice(chat_simulated), "simulated": True}
+            await manager.broadcast(msg)
+        await asyncio.sleep(random.randint(5,10))
 
 @app.on_event("startup")
 async def startup_event():
-    asyncio.create_task(simulated_chat_loop())
+    asyncio.create_task(chat_simulator())
+
+# ------------------------------
+# Página de prueba raíz
+# ------------------------------
+@app.get("/")
+async def get_root():
+    with open("static/session.html", "r", encoding="utf-8") as f:
+        html_content = f.read()
+    return HTMLResponse(content=html_content)
