@@ -1,7 +1,5 @@
-flask
-gunicorn
+fastapi
+uvicorn
 stripe
-openai>=1.0.0
-google-genai
-requests
-python-dotenv
+python-multipart
+python-jose
