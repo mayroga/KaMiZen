@@ -1,31 +1,42 @@
-// ===== CONFIGURACIÓN DE LA SESIÓN =====
-const sessionDuration = 10 * 60; // 10 minutos
+// ===== CONFIGURACIÓN SESIÓN =====
+const sessionDuration = 10*60; // 10 minutos
 let sessionTime = sessionDuration;
 let level = 1;
 const maxLevel = 10;
 let questionIndex = 0;
 
-// Preguntas estratégicas únicas
+// ===== AUDIOS PREGRABADOS POR FASE =====
+const audioFiles = {
+    1: "/static/audio/min1.mp3", // Corte digital
+    2: "/static/audio/min2.mp3", // Activación financiera
+    3: "/static/audio/min3.mp3",
+    4: "/static/audio/min4.mp3",
+    5: "/static/audio/min5.mp3", // Disciplina interna
+    6: "/static/audio/min6.mp3",
+    7: "/static/audio/min7.mp3",
+    8: "/static/audio/min8.mp3", // Espiritualidad práctica
+    9: "/static/audio/min9.mp3",
+    10:"/static/audio/min10.mp3" // Cierre y tensión
+};
+
+// ===== PREGUNTAS ESTRATÉGICAS =====
 const questionsBank = [
     {text:"💰 ¿Qué hiciste hoy que realmente produce dinero?", tts:"¡Rápido! ¿Qué hiciste hoy que realmente produce dinero?"},
     {text:"🔥 ¿Qué decisión difícil tomaste que te pone adelante?", tts:"¡Decide rápido! ¿Qué decisión difícil tomaste que te pone adelante?"},
     {text:"⚡ ¿Qué acción concreta vas a hacer ahora para tu bienestar?", tts:"¡Escribe ya! ¿Qué acción concreta vas a hacer ahora para tu bienestar?"},
     {text:"🏆 Describe un pequeño triunfo de hoy que otros no hicieron.", tts:"¡Vamos! Describe un pequeño triunfo de hoy que otros no hicieron."},
-    {text:"💥 ¿Qué obstáculo venciste hoy y cómo?", tts:"¡Rápido! ¿Qué obstáculo venciste hoy y cómo?"},
-    {text:"💡 Qué hábito financiero fortaleciste hoy?", tts:"¡Decide ahora! Qué hábito financiero fortaleciste hoy?"},
-    {text:"🚀 Qué paso tomaste hoy que te acerca a tu meta más grande?", tts:"¡Escribe ya! Qué paso tomaste hoy que te acerca a tu meta más grande?"},
-    {text:"🎯 Qué decisión rápida tomaste que otros dudaron en hacer?", tts:"¡Rápido! Qué decisión rápida tomaste que otros dudaron en hacer?"}
+    {text:"💥 ¿Qué obstáculo venciste hoy y cómo?", tts:"¡Rápido! ¿Qué obstáculo venciste hoy y cómo?"}
 ];
 
-// Chat simulado dinámico
+// ===== CHAT SIMULADO =====
 const fakeChatMessages = [
-    "💰 Cerré un trato millonario hoy",
+    "💰 Cerré un mini trato millonario",
     "🔥 Nadie me supera en decisión rápida",
-    "⚡ Cada segundo cuenta para subir de nivel",
-    "🏆 Avancé un nivel más, ¿y tú?",
+    "⚡ Cada segundo cuenta",
+    "🏆 Avancé un nivel más",
     "💥 Acción rápida = resultado rápido",
-    "🎯 Hoy elijo moverme, no esperar",
-    "💡 Cada idea que aplico suma dinero",
+    "🎯 Hoy elijo moverme",
+    "💡 Cada idea suma dinero",
     "🚀 No hay tiempo que perder"
 ];
 
@@ -41,16 +52,28 @@ const chatInput = document.getElementById("chatInput");
 const sessionAudio = document.getElementById("sessionAudio");
 
 // ===== INICIO SESIÓN =====
-function startSession() {
+function startSession(){
     participantsEl.innerText = "🔥 1/500 conectados";
     chatBoxEl.innerText = "";
+    playPhaseAudio();
     nextQuestion();
     startSessionTimer();
     startFakeChat();
 }
 
-// ===== AUDIO TTS =====
-function speakText(text) {
+// ===== REPRODUCIR AUDIO SEGÚN MINUTO =====
+function playPhaseAudio(){
+    const currentMinute = 10 - Math.ceil(sessionTime/60);
+    const audioFile = audioFiles[currentMinute+1];
+    if(audioFile){
+        sessionAudio.src = audioFile;
+        sessionAudio.play();
+    }
+    setTimeout(playPhaseAudio, 60000); // Cada minuto
+}
+
+// ===== TTS =====
+function speakText(text){
     if('speechSynthesis' in window){
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = "es-ES";
@@ -61,24 +84,24 @@ function speakText(text) {
 }
 
 // ===== PREGUNTAS =====
-function nextQuestion() {
-    if(questionIndex >= questionsBank.length) questionIndex = 0;
+function nextQuestion(){
+    if(questionIndex >= questionsBank.length) questionIndex=0;
     const q = questionsBank[questionIndex++];
     questionBoxEl.innerText = q.text;
     speakText(q.tts);
     startQuestionTimer();
 }
 
-// ===== TIMER DE PREGUNTA =====
+// ===== TIMER PREGUNTA =====
 let questionTime = 30;
 let questionInterval;
-function startQuestionTimer() {
+function startQuestionTimer(){
     questionTime = 30;
     clearInterval(questionInterval);
-    questionInterval = setInterval(() => {
+    questionInterval = setInterval(()=>{
         questionTime--;
         questionBoxEl.innerText = `${questionsBank[questionIndex-1].text} ⏳ ${questionTime}s`;
-        if(questionTime <= 0){
+        if(questionTime<=0){
             clearInterval(questionInterval);
             processAnswer("");
             nextQuestion();
@@ -96,16 +119,16 @@ function processAnswer(answer){
         level = Math.min(level+1,maxLevel);
         const perc = Math.floor(Math.random()*50+50);
         feedbackEl.innerText = `Nivel +1 – Estás por encima de ${perc}% de los conectados`;
-        speakText(`💥 Excelente, eso te pone por delante de los demás.`);
+        speakText("💥 Excelente, eso te pone por delante de los demás.");
         updateRanking();
         microFeedbackWhileTyping();
     }
     answerInputEl.value = "";
 }
 
-// ===== MICRO FEEDBACK MIENTRAS ESCRIBE =====
+// ===== MICRO FEEDBACK =====
 function microFeedbackWhileTyping(){
-    const messages = ["⏳ Otros avanzan más rápido", "💥 Cada palabra cuenta para subir nivel", "🔥 No te quedes atrás"];
+    const messages = ["⏳ Otros avanzan más rápido","💥 Cada palabra cuenta","🔥 No te quedes atrás"];
     setTimeout(()=> speakText(messages[Math.floor(Math.random()*messages.length)]), 500);
 }
 
@@ -119,8 +142,7 @@ function updateRanking(){
         <li>Anónimo3 - Nivel ${Math.min(level+Math.floor(Math.random()*2), maxLevel)}</li>
         <li>Anónimo4 - Nivel ${Math.min(level+Math.floor(Math.random()*2), maxLevel)}</li>
         <li>Anónimo5 - Nivel ${Math.min(level+Math.floor(Math.random()*2), maxLevel)}</li>
-    </ol>
-    `;
+    </ol>`;
 }
 
 // ===== CHAT SIMULADO =====
@@ -143,12 +165,12 @@ function startSessionTimer(){
         const min = Math.floor(sessionTime/60);
         const sec = sessionTime%60;
         timeRemainingEl.innerText = `${min.toString().padStart(2,'0')}:${sec.toString().padStart(2,'0')}`;
-        if(sessionTime <= 0){
+        if(sessionTime<=0){
             clearInterval(countdown);
             clearInterval(questionInterval);
             questionBoxEl.innerText = "💥 Sesión finalizada. Mañana subimos nivel.";
             answerInputEl.disabled = true;
-            feedbackEl.innerText = "";
+            feedbackEl.innerText="";
             speakText("💥 Sesión finalizada. Mañana subimos nivel.");
         }
     },1000);
@@ -175,6 +197,4 @@ function sendChat(){
 }
 
 // ===== INICIO AUTOMÁTICO =====
-window.onload = () => {
-    startSession();
-};
+window.onload = ()=> startSession();
