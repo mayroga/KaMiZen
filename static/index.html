@@ -2,24 +2,19 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>KaMiZen – Landing</title>
+    <title>KaMiZen</title>
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>KaMiZen</h1>
-        <p>Tu sesión de 10 minutos diaria. Solo los que pagan o admin pueden entrar.</p>
 
-        <div id="countdown">Cargando...</div>
+<div class="center">
+    <h1>KaMiZen</h1>
+    <p>Iniciando sesión...</p>
+</div>
 
-        <button id="buy-entry">Comprar Entrada $9.99</button>
+<script>
+    window.location.href = "/session";
+</script>
 
-        <h3>O entra como Admin</h3>
-        <input type="text" id="admin-username" placeholder="Usuario admin">
-        <input type="password" id="admin-password" placeholder="Contraseña admin">
-        <button id="admin-login-btn">Entrar como Admin</button>
-    </div>
-
-    <script src="/static/scripts.js"></script>
 </body>
 </html>
