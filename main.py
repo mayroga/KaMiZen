@@ -1,81 +1,262 @@
-import os, time, openai, random
-from flask import Flask, render_template, request, redirect, url_for, session, jsonify
+import os
+import uuid
+import random
+import stripe
+import asyncio
+from datetime import datetime, timedelta
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException, Form, Query
+from fastapi.responses import FileResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
+from jose import jwt, JWTError
 
-app = Flask(__name__)
-app.secret_key = os.getenv("ADMIN_PASSWORD","kmz_2026_prod")
-client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+# ================= CONFIG =================
 
-ADMIN_USERNAME = os.getenv("ADMIN_USERNAME","admin")
-ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD","kmz_2026_prod")
+SECRET_KEY = "kamizen-super-secret"
+ALGORITHM = "HS256"
+SESSION_LIMIT = 500
+SESSION_DURATION = 10
+PRICE = 999
 
-@app.route("/")
-def index():
-    return render_template("index.html")
+ADMIN_USERNAME = os.getenv("ADMIN_USERNAME")
+ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
+BASE_URL = os.getenv("BASE_URL")
 
-@app.route("/login", methods=["POST"])
-def login():
-    user = request.form.get("username")
-    pw = request.form.get("password")
-    lang = request.form.get("lang","es")
-    if user==ADMIN_USERNAME and pw==ADMIN_PASSWORD:
-        session.update({'access_granted':True,'lang':lang,'historial':[],'start_time':time.time()})
-        return redirect(url_for("servicio"))
-    return redirect(url_for("index"))
+stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
 
-@app.route("/servicio")
-def servicio():
-    if not session.get('access_granted'):
-        return redirect(url_for("index"))
-    return render_template("escenario_mapa.html", lang=session.get('lang'))
+app = FastAPI()
+app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/audio", StaticFiles(directory="audio"), name="audio")
 
-# Cada nodo decide acción y narrativa
-@app.route("/api/node_action")
-def node_action():
-    tipo = request.args.get('tipo','riqueza')
-    lang = session.get('lang','es')
-    texto = ""
-    opciones = None
-    input_field = None
+# ================= MEMORY =================
 
-    if tipo=="obstaculo":
-        texto="Un obstáculo aparece: miedo, duda o estrés. Respira profundo y decide cómo reaccionar."
-        opciones=["Respirar","Pausar","Reflexionar"]
-    else:
-        frases = [
-            "Has encontrado un nodo de riqueza: atención plena y gratitud.",
-            "Nodo de bienestar físico: estira y siente tu cuerpo.",
-            "Nodo de bienestar emocional: sonríe y respira profundo."
-        ]
-        texto=random.choice(frases)
-        if random.random()<0.3:
-            input_field="Escribe tu reflexión..."
+active_users = set()
+active_tokens = {}
+connections = {}
+user_progress = {}
 
-    return jsonify({"texto":texto,"opciones":opciones,"input":input_field})
+# ================= QUESTIONS =================
 
-@app.route("/api/micro_action", methods=["POST"])
-def micro_action():
-    accion = request.json.get('accion','')
-    session['historial'].append({'accion':accion,'time':time.time()})
-    return jsonify({"ok":True})
+PHASE_QUESTIONS = {
+    1: [
+        "¿Qué acción financiera ejecutarás en 24h?",
+        "¿Qué ingreso activarás hoy?",
+        "¿Qué decisión estás evitando?"
+    ],
+    2: [
+        "¿Qué gasto cortarás esta semana?",
+        "¿Qué sacrificio aceptarás?",
+        "¿Qué distracción eliminarás?"
+    ],
+    3: [
+        "¿Qué nivel financiero alcanzarás?",
+        "¿Quién serás en 90 días?",
+        "¿Qué te separa de los que ya ganan más?"
+    ]
+}
 
-@app.route("/api/get_audio")
-def get_audio():
-    text = request.args.get('text','')
+PLACEHOLDERS = [
+    "Hoy ejecuto sin excusas.",
+    "No me quedo atrás.",
+    "Activo ingresos ahora.",
+    "Disciplina total.",
+    "Subiendo nivel."
+]
+
+BANNED_WORDS = ["garantizado", "cura", "demanda", "abogado", "compensación"]
+
+# ================= TIME CONTROL =================
+
+def session_window():
+    now = datetime.utcnow()
+    weekday = now.weekday()
+
+    if weekday not in [0, 3]:
+        return None, None
+
+    start = now.replace(hour=20, minute=0, second=0, microsecond=0)
+    end = start + timedelta(minutes=SESSION_DURATION)
+
+    return start, end
+
+def is_live():
+    start, end = session_window()
+    if not start:
+        return False
+    return start <= datetime.utcnow() <= end
+
+def next_session():
+    now = datetime.utcnow()
+    days = [(0 - now.weekday()) % 7, (3 - now.weekday()) % 7]
+    next_dates = []
+    for d in days:
+        dt = now + timedelta(days=d)
+        dt = dt.replace(hour=20, minute=0, second=0, microsecond=0)
+        if dt > now:
+            next_dates.append(dt)
+    return min(next_dates) if next_dates else now
+
+# ================= TOKEN =================
+
+def generate_token():
+    payload = {
+        "exp": datetime.utcnow() + timedelta(minutes=20),
+        "id": str(uuid.uuid4())
+    }
+    return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
+
+def verify_token(token):
     try:
-        resp = client.audio.speech.create(model="tts-1-hd", voice="onyx", input=text)
-        return resp.content, 200, {'Content-Type':'audio/mpeg'}
-    except:
-        return '',404
+        jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        return True
+    except JWTError:
+        return False
 
-@app.route("/resumen")
-def resumen():
-    historial = session.get('historial',[])
-    return f"<h1>Resumen del Viaje KaMiZen</h1><pre>{historial}</pre>"
+# ================= ROUTES =================
 
-@app.route("/logout")
-def logout():
-    session.clear()
-    return redirect(url_for("index"))
+@app.get("/")
+def landing():
+    return FileResponse("static/index.html")
 
-if __name__=="__main__":
-    app.run(host="0.0.0.0", port=int(os.environ.get("PORT",10000)))
+@app.get("/next-session")
+def get_next():
+    return {"next": next_session().isoformat()}
+
+# ===== STRIPE =====
+
+@app.post("/create-checkout")
+def create_checkout():
+    session = stripe.checkout.Session.create(
+        payment_method_types=["card"],
+        line_items=[{
+            "price_data": {
+                "currency": "usd",
+                "product_data": {"name": "KaMiZen Entry"},
+                "unit_amount": PRICE,
+            },
+            "quantity": 1,
+        }],
+        mode="payment",
+        success_url=BASE_URL + "/success",
+        cancel_url=BASE_URL,
+    )
+    return {"url": session.url}
+
+@app.get("/success")
+def success():
+    if len(active_users) >= SESSION_LIMIT:
+        raise HTTPException(status_code=403, detail="Cupo lleno")
+
+    token = generate_token()
+    active_tokens[token] = True
+    return {"token": token}
+
+# ===== ADMIN =====
+
+@app.post("/admin-login")
+def admin_login(username: str = Form(...), password: str = Form(...)):
+    if username != ADMIN_USERNAME or password != ADMIN_PASSWORD:
+        raise HTTPException(status_code=401)
+
+    token = generate_token()
+    active_tokens[token] = True
+    return {"token": token}
+
+# ===== SESSION PAGE =====
+
+@app.get("/session")
+def session_page(token: str = Query(...)):
+    if not verify_token(token):
+        raise HTTPException(status_code=403)
+
+    if not is_live():
+        raise HTTPException(status_code=403)
+
+    active_users.add(token)
+    return FileResponse("static/session.html")
+
+# ===== AUDIO =====
+
+@app.get("/audio-file")
+def audio_file():
+    weekday = datetime.utcnow().weekday()
+    if weekday == 0:
+        return {"file": "/audio/monday.mp3"}
+    if weekday == 3:
+        return {"file": "/audio/thursday.mp3"}
+    return {"file": None}
+
+# ===== QUESTIONS ENGINE =====
+
+@app.get("/next-question")
+def next_question(token: str):
+
+    if not verify_token(token):
+        raise HTTPException(status_code=403)
+
+    start, _ = session_window()
+    if not start:
+        raise HTTPException(status_code=403)
+
+    minutes_passed = (datetime.utcnow() - start).seconds // 60
+
+    if minutes_passed < 3:
+        phase = 1
+    elif minutes_passed < 7:
+        phase = 2
+    else:
+        phase = 3
+
+    if token not in user_progress:
+        user_progress[token] = {"answered": []}
+
+    available = [
+        q for q in PHASE_QUESTIONS[phase]
+        if q not in user_progress[token]["answered"]
+    ]
+
+    if not available:
+        available = PHASE_QUESTIONS[phase]
+
+    question = random.choice(available)
+    user_progress[token]["answered"].append(question)
+
+    return {"phase": phase, "question": question}
+
+# ===== WEBSOCKET CHAT =====
+
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket, token: str):
+    if not verify_token(token):
+        await websocket.close()
+        return
+
+    await websocket.accept()
+    connections[token] = websocket
+
+    try:
+        while True:
+            data = await websocket.receive_json()
+            msg = data.get("message")
+
+            if any(b in msg.lower() for b in BANNED_WORDS):
+                continue
+
+            for conn in connections.values():
+                await conn.send_json({"message": msg})
+
+    except WebSocketDisconnect:
+        connections.pop(token, None)
+
+# ===== PLACEHOLDER ENGINE =====
+
+async def placeholder_loop():
+    while True:
+        await asyncio.sleep(random.randint(8, 15))
+        if is_live() and connections:
+            fake = random.choice(PLACEHOLDERS)
+            for conn in connections.values():
+                await conn.send_json({"message": fake})
+
+@app.on_event("startup")
+async def startup_event():
+    asyncio.create_task(placeholder_loop())
