@@ -1,169 +1,175 @@
-// ===== KaMiZen app.js =====
-let sessionDuration = 600; // 10 minutos
-let questionDuration = 60; // 60s por pregunta
-let participantsCount = 2; // inicial simulado
-let userLevel = 1;
-const maxLevel = 10;
+// ====== KA MIZEN SESSION JS ====== //
 
-let ranking = [
-    {name:"Anónimo1",level:5},
-    {name:"Anónimo2",level:4},
-    {name:"Anónimo3",level:3},
-    {name:"Anónimo4",level:2},
-    {name:"Anónimo5",level:1}
-];
-
-const questions = [
-    "Escribe un pequeño triunfo personal de hoy",
-    "Menciona una acción de valor que realizaste",
-    "Escribe una decisión que te acerque al dinero",
-    "Comparte un momento de poder que tuviste",
-    "Describe algo que hiciste que otros no hicieron",
-    "Escribe una acción que mejora tu bienestar",
-    "Menciona un pequeño logro que te da ventaja",
-    "Describe cómo superaste un obstáculo hoy"
-];
-
-const simulatedChats = [
-    "💰 Cerré un trato millonario hoy",
-    "🔥 Nadie me supera en decisión rápida",
-    "⚡ Cada segundo cuenta para subir de nivel",
-    "💥 Hoy tomé la acción que otros no tomaron",
-    "🏆 Cada minuto cuenta para estar por delante"
-];
-
-let chatBox = document.getElementById("chatBox");
-let participantsEl = document.getElementById("participants");
-let timeEl = document.getElementById("timeRemaining");
-let questionBox = document.getElementById("questionBox");
-let feedbackEl = document.getElementById("feedback");
-let rankingEl = document.getElementById("ranking");
-let sessionAudio = document.getElementById("sessionAudio");
-
-let usedQuestions = [];
-let remainingTime = sessionDuration;
+const sessionDuration = 10 * 60; // 10 minutos en segundos
+let timeLeft = sessionDuration;
+let questionInterval = 120; // cada 2 minutos cambio de pregunta
 let currentQuestionIndex = 0;
+let level = 1;
+let maxLevel = 10;
+let chatMessages = [];
+let ranking = [];
+let fakeParticipants = ["Anónimo1","Anónimo2","Anónimo3","Anónimo4","Anónimo5"];
+let fakeChatPool = [
+  "💰 Cerré un trato millonario hoy",
+  "🔥 Nadie me supera en decisión rápida",
+  "⚡ Cada segundo cuenta para subir de nivel",
+  "💎 Tomé acción antes que otros",
+  "🏆 Hoy rompí mis límites",
+  "💡 Idea brillante puesta en práctica",
+  "🧠 Control mental absoluto",
+  "💥 Subí un nivel en productividad"
+];
 
-// ===== Funciones =====
-function startSession(){
-    updateParticipants();
-    nextQuestion();
-    updateRanking();
-    playAudio();
+const questionsBank = [
+  {text:"¿Qué hiciste hoy que realmente produce dinero?", audio:"audio/activation1.mp3"},
+  {text:"Describe una acción de valor que otros no hicieron.", audio:"audio/activation2.mp3"},
+  {text:"Elige hoy una decisión que te acerque a tu objetivo principal.", audio:"audio/activation3.mp3"},
+  {text:"¿Qué mini-hábito implementaste hoy que te hace más fuerte?", audio:"audio/activation4.mp3"},
+  {text:"Visualiza tu mejor versión: ¿qué hiciste hoy para acercarte a ella?", audio:"audio/activation5.mp3"},
+  {text:"Acción concreta que generará dinero en 24h: ¿cuál es?", audio:"audio/action1.mp3"},
+  {text:"Define hoy un logro financiero o personal concreto.", audio:"audio/action2.mp3"},
+  {text:"Tu mente es herramienta. Tu disciplina es puente. Tu acción es destino.", audio:"audio/spiritual1.mp3"},
+  {text:"Escribe algo que te dé ventaja mañana sobre otros.", audio:"audio/closing1.mp3"}
+];
 
-    setInterval(sessionCountdown,1000);
-    setInterval(simulateChat,7000); // chat simulado constante
+// ===== DOM ELEMENTS =====
+const sessionTimerEl = document.getElementById("sessionTimer");
+const questionTextEl = document.getElementById("questionText");
+const questionTimerEl = document.getElementById("questionTimer");
+const answerInputEl = document.getElementById("answerInput");
+const submitAnswerBtn = document.getElementById("submitAnswer");
+const chatBoxEl = document.getElementById("chatBox");
+const chatInputEl = document.getElementById("chatInput");
+const sendChatBtn = document.getElementById("sendChat");
+const topRankingEl = document.getElementById("topRanking");
+const audioPlayer = document.getElementById("audioPlayer");
+
+// ====== SESSION LOGIC ======
+let sessionInterval, questionTimer, questionTimeLeft;
+
+function startSession() {
+  updateRanking();
+  nextQuestion();
+  sessionInterval = setInterval(updateSessionTimer, 1000);
+  startChatSimulation();
 }
 
-function sessionCountdown(){
-    remainingTime--;
-    let minutes = Math.floor(remainingTime/60);
-    let seconds = remainingTime%60;
-    timeEl.textContent = `${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
-    if(remainingTime<=0){
-        questionBox.textContent = "💥 SESIÓN TERMINADA. Los que actuaron hoy avanzaron. Los que dudaron empiezan mañana en desventaja.";
-        feedbackEl.textContent="";
+// ====== SESSION TIMER ======
+function updateSessionTimer() {
+  if(timeLeft <= 0){
+    endSession();
+    return;
+  }
+  timeLeft--;
+  let min = String(Math.floor(timeLeft/60)).padStart(2,'0');
+  let sec = String(timeLeft%60).padStart(2,'0');
+  sessionTimerEl.textContent = `Tiempo restante: ${min}:${sec}`;
+}
+
+// ====== QUESTIONS ======
+function nextQuestion() {
+  if(currentQuestionIndex >= questionsBank.length){
+    currentQuestionIndex = 0;
+  }
+  const question = questionsBank[currentQuestionIndex];
+  questionTextEl.textContent = question.text;
+  playAudio(question.audio);
+  startQuestionTimer(30);
+  currentQuestionIndex++;
+}
+
+// ====== QUESTION TIMER ======
+function startQuestionTimer(seconds){
+  questionTimeLeft = seconds;
+  questionTimerEl.textContent = `⏳ ${questionTimeLeft}s para responder`;
+  if(questionTimer) clearInterval(questionTimer);
+  questionTimer = setInterval(()=>{
+    questionTimeLeft--;
+    questionTimerEl.textContent = `⏳ ${questionTimeLeft}s para responder`;
+    if(questionTimeLeft <=0){
+      clearInterval(questionTimer);
+      handleAnswer(null); // tiempo agotado
     }
+  },1000);
 }
 
-function updateParticipants(){
-    participantsEl.textContent = `🔥 Participantes: ${participantsCount}/500`;
+// ====== HANDLE ANSWERS ======
+submitAnswerBtn.addEventListener("click", ()=>{
+  handleAnswer(answerInputEl.value);
+});
+
+function handleAnswer(answer){
+  let feedback="";
+  if(!answer || answer.trim().length<2){
+    feedback = "⚠️ Ejemplo: Hoy hice una llamada importante que generó ingreso.";
+  } else {
+    feedback = "💥 Excelente, eso te pone por delante de los demás.";
+    level = Math.min(level+1,maxLevel);
+  }
+  addChatMessage(`Sistema: ${feedback}`);
+  updateRanking();
+  answerInputEl.value = "";
+  nextQuestion();
 }
 
-function nextQuestion(){
-    // Selección aleatoria de pregunta no repetida
-    if(usedQuestions.length === questions.length) usedQuestions = [];
-    let available = questions.filter((q)=>!usedQuestions.includes(q));
-    let question = available[Math.floor(Math.random()*available.length)];
-    usedQuestions.push(question);
-    currentQuestionIndex = questions.indexOf(question);
-
-    questionBox.textContent = `⏳ ${questionDuration}s para responder: ${question}`;
-    speakText(question);
-    startQuestionTimer();
-    playAudioForQuestion();
+// ====== CHAT SIMULATION ======
+function startChatSimulation(){
+  setInterval(()=>{
+    let msg = fakeChatPool[Math.floor(Math.random()*fakeChatPool.length)];
+    addChatMessage(`${fakeParticipants[Math.floor(Math.random()*fakeParticipants.length)]}: ${msg}`,true);
+  }, 5000); // cada 5s mensaje simulado
 }
 
-function startQuestionTimer(){
-    let timeLeft = questionDuration;
-    let questionInterval = setInterval(()=>{
-        timeLeft--;
-        questionBox.textContent = `⏳ ${timeLeft}s para responder: ${questions[currentQuestionIndex]}`;
-        if(timeLeft<=0){
-            clearInterval(questionInterval);
-            feedbackEl.textContent = "⚠️ Tiempo agotado. Otros avanzaron.";
-            nextQuestion();
-        }
-    },1000);
+function addChatMessage(msg, isTemporary=false){
+  const p = document.createElement("p");
+  p.textContent = msg;
+  chatBoxEl.appendChild(p);
+  chatBoxEl.scrollTop = chatBoxEl.scrollHeight;
+  if(isTemporary){
+    setTimeout(()=>{p.remove()}, Math.random()*10000+10000); // 10-20s desaparece
+  }
 }
 
-function sendAnswer(){
-    let ans = document.getElementById("answerInput").value.trim();
-    if(ans==="") return;
-
-    if(userLevel < maxLevel) userLevel++;
-    feedbackEl.textContent = `💥 Nivel +1 – Estás por encima de 60% de los conectados`;
-    document.getElementById("answerInput").value="";
-    updateRanking();
-    nextQuestion();
-}
-
+// ====== RANKING ======
 function updateRanking(){
-    let top5 = ranking.slice(0,5);
-    let html = "🏆 Top 5 del momento<br>";
-    top5.forEach((r,i)=>{
-        html+= `${i+1}. ${r.name} - Nivel ${r.level}<br>`;
-    });
-    html+= `<strong>Tu Nivel: ${userLevel}</strong>`;
-    rankingEl.innerHTML = html;
+  topRankingEl.innerHTML = "";
+  let rankingList = fakeParticipants.slice(0,5).map((p,i)=>({
+    name:p,
+    level: Math.min(level-i,1)
+  }));
+  rankingList.push({name:"Tú", level:level});
+  rankingList.sort((a,b)=>b.level-a.level);
+  rankingList.slice(0,5).forEach(r=>{
+    const li = document.createElement("li");
+    li.textContent = `${r.name} - Nivel ${r.level}`;
+    topRankingEl.appendChild(li);
+  });
 }
 
-function simulateChat(){
-    let msg = simulatedChats[Math.floor(Math.random()*simulatedChats.length)];
-    let div = document.createElement("div");
-    div.className="chatMessage simulated";
-    div.textContent = msg;
-    chatBox.appendChild(div);
-    chatBox.scrollTop = chatBox.scrollHeight;
-    setTimeout(()=>{div.remove()},25000);
+// ====== AUDIO ======
+function playAudio(src){
+  audioPlayer.src = src;
+  audioPlayer.play().catch(e=>console.log("Audio error",e));
 }
 
-function sendChat(){
-    let input = document.getElementById("chatInput");
-    let msg = input.value.trim();
-    if(msg==="") return;
-    let div = document.createElement("div");
-    div.className="chatMessage";
-    div.textContent = `💬 ${msg}`;
-    chatBox.appendChild(div);
-    chatBox.scrollTop = chatBox.scrollHeight;
-    input.value="";
-    setTimeout(()=>{div.remove()},25000);
+// ====== SEND CHAT ======
+sendChatBtn.addEventListener("click", ()=>{
+  const msg = chatInputEl.value;
+  if(msg.trim().length>0){
+    addChatMessage(`Tú: ${msg}`);
+    chatInputEl.value="";
+  }
+});
+
+// ====== END SESSION ======
+function endSession(){
+  clearInterval(sessionInterval);
+  clearInterval(questionTimer);
+  questionTextEl.textContent = "⏳ Sesión finalizada. Mañana subimos nivel.";
+  questionTimerEl.textContent="";
+  addChatMessage("⚠️ Sesión finalizada. Prepárate para mañana!");
+  audioPlayer.src="";
 }
 
-// ===== Audio =====
-function playAudio(){
-    sessionAudio.src="/audio/monday.mp3"; // ejemplo, puede cambiar
-    sessionAudio.play();
-}
-
-function playAudioForQuestion(){
-    // Cambiar a audio pregrabado por pregunta
-    // Puedes poner audio dinámico diferente según el índice
-    sessionAudio.src="/audio/thursday.mp3";
-    sessionAudio.play();
-}
-
-// ===== Voz sintetizada =====
-function speakText(text){
-    if('speechSynthesis' in window){
-        let utter = new SpeechSynthesisUtterance(text);
-        utter.lang="es-ES";
-        utter.pitch=1.2;
-        utter.rate=1.1;
-        speechSynthesis.speak(utter);
-    }
-}
-
-// ===== Inicia sesión automáticamente =====
+// ====== START AUTOMATIC ======
 window.onload = startSession;
