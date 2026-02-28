@@ -16,32 +16,28 @@ button:hover { background:#ff1a1a; }
 .timer { font-size:1.2em; font-weight:bold; }
 .chatMessage { margin-bottom:4px; }
 .simulated { color:#ffcc00; font-weight:bold; }
-#rankingList { margin-top:5px; }
-.level { font-weight:bold; color:#00ffcc; }
+.level { font-weight:bold; color:#4dff4d; }
 </style>
 </head>
 <body>
 <div id="sessionContainer">
     <h1>KaMiZen - Sesión diaria</h1>
 
-    <div id="participants">🔥 Conectados: 1/500</div>
+    <div id="participants">🔥 Cargando participantes...</div>
     <div class="timer">⏳ Tiempo restante: <span id="timeRemaining">10:00</span></div>
-    <div id="ranking">
-        🏆 Top 5 del momento
-        <div id="rankingList"></div>
-    </div>
+    <div id="ranking">🏆 Top 5 del momento</div>
 
     <div id="questionBox">Cargando pregunta...</div>
     <input type="text" id="answerInput" placeholder="Escribe tu respuesta aquí...">
     <button onclick="sendAnswer()">Enviar</button>
     <div id="feedback"></div>
 
-    <h3>Chat en vivo (anónimo)</h3>
+    <h3>Chat en vivo (anonimizado)</h3>
     <div id="chatBox">Cargando chat...</div>
     <input type="text" id="chatInput" placeholder="Escribe mensaje...">
     <button onclick="sendChat()">Enviar</button>
 
-    <audio id="sessionAudio" autoplay></audio>
+    <audio id="sessionAudio" controls autoplay></audio>
 </div>
 
 <script src="/static/app.js"></script>
