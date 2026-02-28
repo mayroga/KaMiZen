@@ -1,262 +1,199 @@
-import os
-import uuid
-import random
-import stripe
-import asyncio
-from datetime import datetime, timedelta
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException, Form, Query
+from fastapi import FastAPI, Request, Form, HTTPException, Query
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
-from jose import jwt, JWTError
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+from typing import List, Dict
+import random
+import datetime
+import os
 
-# ================= CONFIG =================
-
-SECRET_KEY = "kamizen-super-secret"
-ALGORITHM = "HS256"
-SESSION_LIMIT = 500
-SESSION_DURATION = 10
-PRICE = 999
-
+# -------------------------
+# CONFIGURACIÓN ADMIN / PAGOS
+# -------------------------
 ADMIN_USERNAME = os.getenv("ADMIN_USERNAME")
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
-BASE_URL = os.getenv("BASE_URL")
+STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
 
-stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
+# -------------------------
+# APP
+# -------------------------
+app = FastAPI(title="KaMiZen Production")
 
-app = FastAPI()
-app.mount("/static", StaticFiles(directory="static"), name="static")
-app.mount("/audio", StaticFiles(directory="audio"), name="audio")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-# ================= MEMORY =================
+app.mount("/static", StaticFiles(directory="frontend"), name="static")
 
-active_users = set()
-active_tokens = {}
-connections = {}
-user_progress = {}
+# -------------------------
+# VARIABLES GLOBALES
+# -------------------------
+active_tokens = {}           # token -> True/False
+active_users = set()         # usuarios conectados en sesión
+placeholder_messages = [
+    "Usuario 42 ha subido nivel",
+    "Alguien respondió una pregunta",
+    "Usuario 87 avanzó rápido",
+]
+chat_messages: List[Dict] = []  # chat efímero en tiempo real
+banned_words = ["demand", "lawsuit", "illegal", "drugs"]
+session_start_times = {}  # token -> datetime de inicio
 
-# ================= QUESTIONS =================
-
-PHASE_QUESTIONS = {
-    1: [
-        "¿Qué acción financiera ejecutarás en 24h?",
-        "¿Qué ingreso activarás hoy?",
-        "¿Qué decisión estás evitando?"
-    ],
-    2: [
-        "¿Qué gasto cortarás esta semana?",
-        "¿Qué sacrificio aceptarás?",
-        "¿Qué distracción eliminarás?"
-    ],
-    3: [
-        "¿Qué nivel financiero alcanzarás?",
-        "¿Quién serás en 90 días?",
-        "¿Qué te separa de los que ya ganan más?"
-    ]
-}
-
-PLACEHOLDERS = [
-    "Hoy ejecuto sin excusas.",
-    "No me quedo atrás.",
-    "Activo ingresos ahora.",
-    "Disciplina total.",
-    "Subiendo nivel."
+# Banco de preguntas
+question_bank = [
+    "¿Qué hiciste ayer que te acerca a tu meta?",
+    "¿Qué estás evitando ahora mismo?",
+    "Si repites esta semana 52 veces, ¿estarías orgulloso de tu año?",
+    "¿Quién gana si tú fallas?",
+    "Si no actúas hoy, ¿quién sube nivel antes que tú?",
 ]
 
-BANNED_WORDS = ["garantizado", "cura", "demanda", "abogado", "compensación"]
+# -------------------------
+# FUNCIONES AUXILIARES
+# -------------------------
+def generate_token() -> str:
+    import uuid
+    token = str(uuid.uuid4())
+    active_tokens[token] = True
+    return token
 
-# ================= TIME CONTROL =================
+def verify_token(token: str) -> bool:
+    return token in active_tokens
 
-def session_window():
-    now = datetime.utcnow()
-    weekday = now.weekday()
+def get_audio_file():
+    # Audio lunes/thursday solo como referencia, diario puede usar monday.mp3
+    return "/static/audio/monday.mp3"
 
-    if weekday not in [0, 3]:
-        return None, None
+def random_question_for_user():
+    return random.choice(question_bank)
 
-    start = now.replace(hour=20, minute=0, second=0, microsecond=0)
-    end = start + timedelta(minutes=SESSION_DURATION)
+def sanitize_message(msg: str) -> str:
+    for word in banned_words:
+        if word.lower() in msg.lower():
+            return "[mensaje bloqueado]"
+    return msg
 
-    return start, end
-
-def is_live():
-    start, end = session_window()
-    if not start:
-        return False
-    return start <= datetime.utcnow() <= end
-
-def next_session():
-    now = datetime.utcnow()
-    days = [(0 - now.weekday()) % 7, (3 - now.weekday()) % 7]
-    next_dates = []
-    for d in days:
-        dt = now + timedelta(days=d)
-        dt = dt.replace(hour=20, minute=0, second=0, microsecond=0)
-        if dt > now:
-            next_dates.append(dt)
-    return min(next_dates) if next_dates else now
-
-# ================= TOKEN =================
-
-def generate_token():
-    payload = {
-        "exp": datetime.utcnow() + timedelta(minutes=20),
-        "id": str(uuid.uuid4())
-    }
-    return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
-
-def verify_token(token):
-    try:
-        jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        return True
-    except JWTError:
-        return False
-
-# ================= ROUTES =================
-
+# -------------------------
+# ROUTES
+# -------------------------
 @app.get("/")
 def landing():
-    return FileResponse("static/index.html")
+    return FileResponse("frontend/index.html")
 
-@app.get("/next-session")
-def get_next():
-    return {"next": next_session().isoformat()}
-
-# ===== STRIPE =====
-
-@app.post("/create-checkout")
-def create_checkout():
-    session = stripe.checkout.Session.create(
-        payment_method_types=["card"],
-        line_items=[{
-            "price_data": {
-                "currency": "usd",
-                "product_data": {"name": "KaMiZen Entry"},
-                "unit_amount": PRICE,
-            },
-            "quantity": 1,
-        }],
-        mode="payment",
-        success_url=BASE_URL + "/success",
-        cancel_url=BASE_URL,
-    )
-    return {"url": session.url}
-
-@app.get("/success")
-def success():
-    if len(active_users) >= SESSION_LIMIT:
-        raise HTTPException(status_code=403, detail="Cupo lleno")
-
-    token = generate_token()
-    active_tokens[token] = True
-    return {"token": token}
-
-# ===== ADMIN =====
-
+# -------------------------
+# LOGIN ADMIN
+# -------------------------
 @app.post("/admin-login")
 def admin_login(username: str = Form(...), password: str = Form(...)):
     if username != ADMIN_USERNAME or password != ADMIN_PASSWORD:
         raise HTTPException(status_code=401)
-
     token = generate_token()
-    active_tokens[token] = True
-    return {"token": token}
+    return {"token": token, "admin": True}
 
-# ===== SESSION PAGE =====
+# -------------------------
+# COMPRA ENTRADA
+# -------------------------
+@app.post("/purchase")
+def purchase():
+    # Simulación pago Stripe
+    token = generate_token()
+    return {"access_token": token}
 
+# -------------------------
+# SESIÓN 10 MINUTOS DIARIA
+# -------------------------
 @app.get("/session")
 def session_page(token: str = Query(...)):
     if not verify_token(token):
         raise HTTPException(status_code=403)
 
-    if not is_live():
-        raise HTTPException(status_code=403)
+    now = datetime.datetime.now()
+    # Inicia sesión si no existe
+    if token not in session_start_times:
+        session_start_times[token] = now
+    # Revisa duración 10 minutos
+    elif (now - session_start_times[token]).total_seconds() > 10*60:
+        raise HTTPException(status_code=403, detail="Sesión terminada")
 
     active_users.add(token)
-    return FileResponse("static/session.html")
+    return FileResponse("frontend/session.html")
 
-# ===== AUDIO =====
+# -------------------------
+# PREGUNTAS ALEATORIAS
+# -------------------------
+class AnswerRequest(BaseModel):
+    token: str
+    answer: str
 
-@app.get("/audio-file")
-def audio_file():
-    weekday = datetime.utcnow().weekday()
-    if weekday == 0:
-        return {"file": "/audio/monday.mp3"}
-    if weekday == 3:
-        return {"file": "/audio/thursday.mp3"}
-    return {"file": None}
+@app.post("/submit-answer")
+def submit_answer(req: AnswerRequest):
+    if not verify_token(req.token):
+        raise HTTPException(status_code=403)
+    # Feedback único para usuario
+    return {"status": "ok", "feedback": f"Perfecto, hoy avanzaste más que ayer: {random_question_for_user()}"}
 
-# ===== QUESTIONS ENGINE =====
+# -------------------------
+# CHAT EFÍMERO
+# -------------------------
+class ChatMessage(BaseModel):
+    token: str
+    message: str
 
-@app.get("/next-question")
-def next_question(token: str):
+@app.post("/chat")
+def chat(msg: ChatMessage):
+    if not verify_token(msg.token):
+        raise HTTPException(status_code=403)
+    sanitized = sanitize_message(msg.message)
+    chat_messages.append({"token": msg.token, "message": sanitized, "time": datetime.datetime.now()})
+    if len(chat_messages) > 50:
+        chat_messages.pop(0)
+    return {"status": "ok"}
 
+@app.get("/chat")
+def get_chat(token: str = Query(...)):
     if not verify_token(token):
         raise HTTPException(status_code=403)
-
-    start, _ = session_window()
-    if not start:
-        raise HTTPException(status_code=403)
-
-    minutes_passed = (datetime.utcnow() - start).seconds // 60
-
-    if minutes_passed < 3:
-        phase = 1
-    elif minutes_passed < 7:
-        phase = 2
-    else:
-        phase = 3
-
-    if token not in user_progress:
-        user_progress[token] = {"answered": []}
-
-    available = [
-        q for q in PHASE_QUESTIONS[phase]
-        if q not in user_progress[token]["answered"]
+    now = datetime.datetime.now()
+    recent = [
+        m["message"] for m in chat_messages
+        if (now - m["time"]).total_seconds() <= 30
     ]
+    while len(recent) < 10:
+        recent.append(random.choice(placeholder_messages))
+    random.shuffle(recent)
+    return {"messages": recent}
 
-    if not available:
-        available = PHASE_QUESTIONS[phase]
-
-    question = random.choice(available)
-    user_progress[token]["answered"].append(question)
-
-    return {"phase": phase, "question": question}
-
-# ===== WEBSOCKET CHAT =====
-
-@app.websocket("/ws")
-async def websocket_endpoint(websocket: WebSocket, token: str):
+# -------------------------
+# CONTADOR DE USUARIOS
+# -------------------------
+@app.get("/active-users")
+def get_active_users(token: str = Query(...)):
     if not verify_token(token):
-        await websocket.close()
-        return
+        raise HTTPException(status_code=403)
+    return {"count": len(active_users), "max": 500}
 
-    await websocket.accept()
-    connections[token] = websocket
+# -------------------------
+# AUDIO DINÁMICO
+# -------------------------
+@app.get("/audio")
+def get_audio(token: str = Query(...)):
+    if not verify_token(token):
+        raise HTTPException(status_code=403)
+    return {"audio_file": get_audio_file()}
 
-    try:
-        while True:
-            data = await websocket.receive_json()
-            msg = data.get("message")
-
-            if any(b in msg.lower() for b in BANNED_WORDS):
-                continue
-
-            for conn in connections.values():
-                await conn.send_json({"message": msg})
-
-    except WebSocketDisconnect:
-        connections.pop(token, None)
-
-# ===== PLACEHOLDER ENGINE =====
-
-async def placeholder_loop():
-    while True:
-        await asyncio.sleep(random.randint(8, 15))
-        if is_live() and connections:
-            fake = random.choice(PLACEHOLDERS)
-            for conn in connections.values():
-                await conn.send_json({"message": fake})
-
-@app.on_event("startup")
-async def startup_event():
-    asyncio.create_task(placeholder_loop())
+# -------------------------
+# CIERRE DE SESIÓN
+# -------------------------
+@app.post("/logout")
+def logout(token: str = Form(...)):
+    if token in active_tokens:
+        active_tokens.pop(token)
+    if token in active_users:
+        active_users.remove(token)
+    if token in session_start_times:
+        session_start_times.pop(token)
+    return {"status": "ok", "message": "Sesión terminada. Los que no subieron nivel hoy, comienzan mañana en desventaja. Asegura tu lugar."}
