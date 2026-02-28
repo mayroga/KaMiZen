@@ -1,44 +1,44 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>KaMiZen - Sesión</title>
-    <link rel="stylesheet" href="/static/style.css">
-    <style>
-        body { background: #111; color: #eee; font-family: Arial, sans-serif; }
-        #sessionContainer { max-width: 800px; margin: auto; padding: 20px; }
-        #participants, #timeRemaining { font-size: 1.2em; margin-bottom: 10px; }
-        #questionBox { background: #222; padding: 15px; border-radius: 8px; margin-bottom: 10px; font-size: 1.1em; }
-        #answerInput, #chatInput { width: 100%; padding: 10px; margin-bottom: 5px; border-radius: 5px; border: none; }
-        #feedback { color: #ff4d4d; font-weight: bold; margin-bottom: 10px; }
-        #chatBox { background: #222; padding: 10px; height: 200px; overflow-y: auto; border-radius: 8px; margin-bottom: 10px; }
-        #ranking { background: #333; padding: 10px; border-radius: 8px; margin-bottom: 15px; }
-        button { padding: 10px 20px; border: none; border-radius: 5px; background: #ff4d4d; color: #fff; cursor: pointer; font-weight: bold; }
-        button:hover { background: #ff1a1a; }
-        .timer { font-size: 1.2em; font-weight: bold; }
-    </style>
+<meta charset="UTF-8">
+<title>KaMiZen - Sesión diaria</title>
+<link rel="stylesheet" href="/static/style.css">
+<style>
+    body { background:#111; color:#eee; font-family: Arial, sans-serif; }
+    #sessionContainer { max-width:800px; margin:auto; padding:20px; }
+    #participants,#timeRemaining,#feedback,#ranking { margin-bottom:10px; }
+    #questionBox { background:#222; padding:15px; border-radius:8px; margin-bottom:10px; font-size:1.2em; }
+    #answerInput,#chatInput { width:100%; padding:10px; margin-bottom:5px; border-radius:5px; border:none; }
+    #chatBox { background:#222; padding:10px; height:200px; overflow-y:auto; border-radius:8px; margin-bottom:10px; }
+    button { padding:10px 20px; border:none; border-radius:5px; background:#ff4d4d; color:#fff; font-weight:bold; cursor:pointer; }
+    button:hover { background:#ff1a1a; }
+    .timer { font-size:1.2em; font-weight:bold; }
+    .chatMessage { margin-bottom:4px; }
+    .simulated { color:#ffcc00; font-weight:bold; }
+</style>
 </head>
 <body>
-    <div id="sessionContainer">
-        <h1>KaMiZen - Sesión diaria</h1>
+<div id="sessionContainer">
+    <h1>KaMiZen - Sesión diaria</h1>
 
-        <div id="participants">🔥 Cargando participantes...</div>
-        <div class="timer">⏳ Tiempo restante: <span id="timeRemaining">00:00</span></div>
-        <div id="ranking">🏆 Top 5 del momento</div>
+    <div id="participants">🔥 Cargando participantes...</div>
+    <div class="timer">⏳ Tiempo restante: <span id="timeRemaining">10:00</span></div>
+    <div id="ranking">🏆 Top 5 del momento</div>
 
-        <div id="questionBox">Cargando pregunta...</div>
-        <input type="text" id="answerInput" placeholder="Escribe tu respuesta aquí...">
-        <button onclick="sendAnswer()">Enviar</button>
-        <div id="feedback"></div>
+    <div id="questionBox">Cargando pregunta...</div>
+    <input type="text" id="answerInput" placeholder="Escribe tu respuesta aquí...">
+    <button onclick="sendAnswer()">Enviar</button>
+    <div id="feedback"></div>
 
-        <h3>Chat en vivo (anónimo)</h3>
-        <div id="chatBox">Cargando chat...</div>
-        <input type="text" id="chatInput" placeholder="Escribe mensaje...">
-        <button onclick="sendChat()">Enviar</button>
+    <h3>Chat en vivo (anónimo)</h3>
+    <div id="chatBox">Cargando chat...</div>
+    <input type="text" id="chatInput" placeholder="Escribe mensaje...">
+    <button onclick="sendChat()">Enviar</button>
 
-        <audio id="sessionAudio" controls autoplay></audio>
-    </div>
+    <audio id="sessionAudio" controls autoplay></audio>
+</div>
 
-    <script src="/static/app.js"></script>
+<script src="/static/app.js"></script>
 </body>
 </html>
