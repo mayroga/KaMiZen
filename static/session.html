@@ -2,32 +2,47 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>KaMiZen – Sesión</title>
+    <title>KaMiZen Session</title>
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>KaMiZen</h1>
 
-        <div id="participants">Cargando participantes...</div>
-        <div id="countdown">Cargando sesión...</div>
+<div class="container">
 
-        <div id="question-box">
-            <p id="question">Cargando pregunta...</p>
-            <textarea id="answer" placeholder="Escribe tu respuesta aquí..."></textarea>
-            <button id="submit-answer">Enviar</button>
-        </div>
+    <h1>KaMiZen</h1>
 
-        <div id="feedback"></div>
-
-        <h3>Chat de participantes (anónimo)</h3>
-        <div id="chat-box"></div>
-        <input type="text" id="chat-input" placeholder="Escribe tu mensaje..." />
-        <button id="send-chat">Enviar</button>
-
-        <audio id="audio" controls autoplay></audio>
+    <div id="participants">
+        Participantes: <span id="userCount">0</span>/500
     </div>
 
-    <script src="/static/session_scripts.js"></script>
+    <div id="timer">
+        Tiempo restante: <span id="timeRemaining">600</span> segundos
+    </div>
+
+    <hr>
+
+    <div id="questionBox">
+        Cargando pregunta...
+    </div>
+
+    <textarea id="answerInput" placeholder="Escribe tu respuesta aquí..."></textarea>
+    <button onclick="sendAnswer()">Enviar</button>
+
+    <div id="feedback"></div>
+
+    <hr>
+
+    <h3>Chat en vivo</h3>
+    <div id="chatBox"></div>
+
+    <input type="text" id="chatInput" placeholder="Escribe mensaje...">
+    <button onclick="sendChat()">Enviar</button>
+
+    <audio id="sessionAudio" autoplay></audio>
+
+</div>
+
+<script src="/static/app.js"></script>
+
 </body>
 </html>
