@@ -1,95 +1,108 @@
-let token = new URLSearchParams(window.location.search).get("token");
-let ws;
-let sessionEnd;
+let userId = null;
+let sessionDuration = 600;
+let timerInterval = null;
 
-async function buy(){
-    let res = await fetch("/create-checkout", {method:"POST"});
-    let data = await res.json();
-    window.location = data.url;
-}
+async function initSession() {
 
-async function adminAccess(){
-    let u = prompt("Username:");
-    let p = prompt("Password:");
-    let fd = new FormData();
-    fd.append("username", u);
-    fd.append("password", p);
+    // Unirse
+    const joinRes = await fetch("/join", { method: "POST" });
+    const joinData = await joinRes.json();
 
-    let res = await fetch("/admin-login",{method:"POST",body:fd});
-    if(res.ok){
-        let data = await res.json();
-        window.location="/session?token="+data.token;
-    } else alert("Acceso denegado");
-}
+    if (joinData.error) {
+        alert("Sesión llena.");
+        return;
+    }
 
-async function countdown(){
-    let res = await fetch("/next-session");
-    let data = await res.json();
-    let next = new Date(data.next);
+    userId = joinData.user_id;
 
-    setInterval(()=>{
-        let now = new Date();
-        let diff = next - now;
-        let h = Math.floor(diff/1000/60/60);
-        let m = Math.floor(diff/1000/60%60);
-        let s = Math.floor(diff/1000%60);
-        document.getElementById("countdown").innerText =
-        "Próxima sesión en: "+h+"h "+m+"m "+s+"s";
-    },1000);
-}
-
-async function initSession(){
-    let res = await fetch("/audio-file");
-    let data = await res.json();
-    document.getElementById("audio").src = data.file;
-
-    ws = new WebSocket("wss://" + window.location.host + "/ws?token="+token);
-
-    ws.onmessage = function(e){
-        let d = JSON.parse(e.data);
-        let box = document.getElementById("chat-box");
-        box.innerHTML += "<div>"+d.message+"</div>";
-        box.scrollTop = box.scrollHeight;
-    };
-
+    loadSessionInfo();
     loadQuestion();
-    startTimer();
+    loadChat();
+    loadAudio();
+
+    timerInterval = setInterval(updateTimer, 1000);
+    setInterval(loadSessionInfo, 5000);
+    setInterval(loadChat, 3000);
 }
 
-async function loadQuestion(){
-    let res = await fetch("/next-question?token="+token);
-    let data = await res.json();
-    document.getElementById("phase-label").innerText="Fase "+data.phase;
-    document.getElementById("question").innerText=data.question;
+async function loadSessionInfo() {
+    const res = await fetch("/session-info");
+    const data = await res.json();
+
+    document.getElementById("userCount").innerText = data.users;
+    document.getElementById("timeRemaining").innerText = data.remaining;
+
+    if (data.remaining <= 0) {
+        clearInterval(timerInterval);
+        alert("Sesión terminada.");
+        location.reload();
+    }
 }
 
-function submitAnswer(){
-    document.getElementById("feedback").innerText="Subiendo nivel...";
-    setTimeout(()=>{
-        loadQuestion();
-        document.getElementById("feedback").innerText=
-        "Perfecto. Hoy avanzaste más que muchos.";
-    },1500);
+function updateTimer() {
+    let timeElement = document.getElementById("timeRemaining");
+    let current = parseInt(timeElement.innerText);
+    if (current > 0) {
+        timeElement.innerText = current - 1;
+    }
 }
 
-function sendChat(){
-    let input=document.getElementById("chat-input");
-    ws.send(JSON.stringify({message:input.value}));
-    input.value="";
+async function loadQuestion() {
+    const res = await fetch("/question");
+    const data = await res.json();
+    document.getElementById("questionBox").innerText = data.question;
 }
 
-function startTimer(){
-    sessionEnd = new Date(new Date().getTime()+10*60000);
-    setInterval(()=>{
-        if(new Date()>sessionEnd){
-            document.body.innerHTML=`
-            <h1>Sesión terminada</h1>
-            <h2>Los que no subieron nivel hoy, comienzan mañana en desventaja.</h2>
-            <h3>Asegura tu lugar en la próxima sesión.</h3>
-            `;
-        }
-    },1000);
+async function sendAnswer() {
+    const answer = document.getElementById("answerInput").value;
+
+    const res = await fetch("/answer", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ answer: answer })
+    });
+
+    const data = await res.json();
+
+    document.getElementById("feedback").innerText = data.feedback;
+    document.getElementById("questionBox").innerText = data.next_question;
+    document.getElementById("answerInput").value = "";
 }
 
-if(document.getElementById("countdown")) countdown();
-if(document.getElementById("audio")) initSession();
+async function loadChat() {
+    const res = await fetch("/chat");
+    const data = await res.json();
+
+    const chatBox = document.getElementById("chatBox");
+    chatBox.innerHTML = "";
+
+    data.messages.forEach(msg => {
+        let div = document.createElement("div");
+        div.innerText = msg;
+        chatBox.appendChild(div);
+    });
+}
+
+async function sendChat() {
+    const message = document.getElementById("chatInput").value;
+
+    await fetch("/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: message })
+    });
+
+    document.getElementById("chatInput").value = "";
+    loadChat();
+}
+
+async function loadAudio() {
+    const res = await fetch("/audio-file");
+    const data = await res.json();
+
+    const audio = document.getElementById("sessionAudio");
+    audio.src = data.audio;
+    audio.play();
+}
+
+window.onload = initSession;
