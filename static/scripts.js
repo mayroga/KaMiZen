@@ -1,146 +1,100 @@
 // -------------------------
-// KaMiZen – Sesión JS
+// KaMiZen – Sesión JS (Unificado con WebSocket)
 // -------------------------
 
-const token = localStorage.getItem("token");
-if (!token) {
-    alert("No tienes acceso. Compra entrada o usa admin.");
-    window.location.href = "/";
-}
-// const token = localStorage.getItem("token");
-// if (!token) { window.location.href = "/"; }
-// DOM Elements
+// 1. Manejo de Acceso (Comentado para pruebas iniciales)
+const token = localStorage.getItem("token") || "invitado";
+
+// 2. Conexión WebSocket
+const ws = new WebSocket(`ws://${location.host}/ws`);
+
+// 3. Elementos DOM (Corregidos según session.html)
 const participantsEl = document.getElementById("participants");
-const countdownEl = document.getElementById("countdown");
+const timeEl = document.getElementById("time");
 const questionEl = document.getElementById("question");
-const answerEl = document.getElementById("answer");
-const submitBtn = document.getElementById("submit-answer");
+const answerInput = document.getElementById("answerInput"); // ID correcto
 const feedbackEl = document.getElementById("feedback");
-const chatBox = document.getElementById("chat-box");
-const chatInput = document.getElementById("chat-input");
-const sendChatBtn = document.getElementById("send-chat");
-const audioEl = document.getElementById("audio");
+const chatBox = document.getElementById("chatBox");
+const chatInput = document.getElementById("chatInput");
 
 // -------------------------
-// AUDIO DINÁMICO
+// EVENTOS WEBSOCKET
 // -------------------------
-async function loadAudio() {
-    try {
-        const res = await fetch(`/audio?token=${token}`);
-        const data = await res.json();
-        audioEl.src = data.audio_file;
-        audioEl.play();
-    } catch (err) {
-        console.log("Error cargando audio:", err);
+ws.onmessage = function(event) {
+    const data = JSON.parse(event.data);
+
+    if (data.type === "question") {
+        questionEl.innerText = data.text;
+        feedbackEl.innerText = "";
     }
+
+    if (data.type === "feedback") {
+        feedbackEl.innerText = data.text;
+    }
+
+    if (data.type === "update_participants") {
+        participantsEl.innerText = data.count;
+    }
+
+    if (data.type === "update_ranking") {
+        const rankingDiv = document.getElementById("ranking");
+        if (rankingDiv) {
+            rankingDiv.innerHTML = data.ranking.map(r => 
+                `<div class="rank-item">${r.name} - Nivel ${r.level}</div>`
+            ).join("");
+        }
+    }
+
+    if (data.type === "chat") {
+        const msg = document.createElement("div");
+        msg.innerHTML = `<strong>${data.sender}:</strong> ${data.text}`;
+        chatBox.appendChild(msg);
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+};
+
+// -------------------------
+// FUNCIONES DE ENVÍO
+// -------------------------
+function sendAnswer() {
+    const text = answerInput.value.trim();
+    if (!text) return;
+    
+    ws.send(JSON.stringify({
+        type: "answer",
+        text: text
+    }));
+    answerInput.value = "";
 }
-loadAudio();
 
-// -------------------------
-// PREGUNTA ALEATORIA
-// -------------------------
-async function loadQuestion() {
-    try {
-        // Simulación: tomar pregunta aleatoria usando submit endpoint
-        const res = await fetch("/submit-answer", {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({token, answer: ""})
-        });
-        const data = await res.json();
-        questionEl.textContent = data.feedback; // Feedback simula pregunta única
-    } catch (err) {
-        questionEl.textContent = "Error cargando pregunta.";
-    }
+function sendChat() {
+    const text = chatInput.value.trim();
+    if (!text) return;
+
+    ws.send(JSON.stringify({
+        type: "chat",
+        text: text
+    }));
+    chatInput.value = "";
 }
-loadQuestion();
 
 // -------------------------
-// ENVIAR RESPUESTA
+// TEMPORIZADOR 10 MIN
 // -------------------------
-submitBtn.addEventListener("click", async () => {
-    const answer = answerEl.value;
-    if (!answer) return alert("Escribe algo primero");
-    try {
-        const res = await fetch("/submit-answer", {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({token, answer})
-        });
-        const data = await res.json();
-        feedbackEl.textContent = data.feedback;
-        answerEl.value = "";
-        loadQuestion(); // nueva pregunta inmediata
-    } catch (err) {
-        alert("Error enviando respuesta: " + err);
-    }
-});
-
-// -------------------------
-// CHAT EFÍMERO
-// -------------------------
-async function loadChat() {
-    try {
-        const res = await fetch(`/chat?token=${token}`);
-        const data = await res.json();
-        chatBox.innerHTML = "";
-        data.messages.forEach(msg => {
-            const p = document.createElement("p");
-            p.textContent = msg;
-            chatBox.appendChild(p);
-        });
-    } catch (err) {
-        console.log("Error chat:", err);
-    }
-}
-setInterval(loadChat, 2000);
-
-// Enviar mensaje de chat
-sendChatBtn.addEventListener("click", async () => {
-    const msg = chatInput.value;
-    if (!msg) return;
-    try {
-        await fetch("/chat", {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({token, message: msg})
-        });
-        chatInput.value = "";
-        loadChat();
-    } catch (err) {
-        console.log("Error enviando chat:", err);
-    }
-});
-
-// -------------------------
-// CONTADOR DE PARTICIPANTES
-// -------------------------
-async function loadParticipants() {
-    try {
-        const res = await fetch(`/active-users?token=${token}`);
-        const data = await res.json();
-        participantsEl.textContent = `${data.count}/${data.max} participantes dentro`;
-    } catch (err) {
-        participantsEl.textContent = "Error cargando participantes";
-    }
-}
-setInterval(loadParticipants, 3000);
-
-// -------------------------
-// CONTADOR DE 10 MINUTOS
-// -------------------------
-let sessionStart = Date.now();
-function updateCountdown() {
-    const elapsed = Math.floor((Date.now() - sessionStart)/1000);
-    const remaining = 10*60 - elapsed;
-    if (remaining <= 0) {
-        alert("Sesión terminada. Los que no subieron nivel hoy, comienzan mañana en desventaja. Asegura tu lugar.");
-        localStorage.removeItem("token");
-        window.location.href = "/";
+let timeLeft = 600;
+const timer = setInterval(() => {
+    if (timeLeft <= 0) {
+        clearInterval(timer);
+        alert("Sesión KaMiZen finalizada.");
+        location.href = "/";
         return;
     }
-    const min = Math.floor(remaining/60);
-    const sec = remaining % 60;
-    countdownEl.textContent = `Tiempo restante: ${min} min ${sec} seg`;
-}
-setInterval(updateCountdown, 1000);
+    timeLeft--;
+    const min = Math.floor(timeLeft / 60);
+    const sec = timeLeft % 60;
+    timeEl.innerText = `${min}:${sec < 10 ? "0" : ""}${sec}`;
+}, 1000);
+
+// Escuchar tecla Enter para enviar
+answerInput.addEventListener("keypress", (e) => { if(e.key === "Enter") sendAnswer(); });
+chatInput.addEventListener("keypress", (e) => { if(e.key === "Enter") sendChat(); });
