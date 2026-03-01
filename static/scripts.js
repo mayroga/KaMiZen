@@ -7,7 +7,8 @@ if (!token) {
     alert("No tienes acceso. Compra entrada o usa admin.");
     window.location.href = "/";
 }
-
+// const token = localStorage.getItem("token");
+// if (!token) { window.location.href = "/"; }
 // DOM Elements
 const participantsEl = document.getElementById("participants");
 const countdownEl = document.getElementById("countdown");
