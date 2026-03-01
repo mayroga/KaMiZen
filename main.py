@@ -1,153 +1,95 @@
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
-from fastapi.responses import HTMLResponse
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
-import asyncio
+from fastapi.middleware.cors import CORSMiddleware
 import random
-import json
+import os
 
-app = FastAPI(title="KaMiZen NeuroGame Engine")
-
-# Montar archivos estáticos
-app.mount("/static", StaticFiles(directory="static"), name="static")
-
-MAX_PARTICIPANTS = 500
-ranking = []
+app = FastAPI(title="KaMiZen NeuroFinancial Game")
 
 # -----------------------------
-# RUTAS DE NAVEGACIÓN
+# CORS (si frontend se separa)
+# -----------------------------
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# -----------------------------
+# STATIC FILES (frontend, audio)
+# -----------------------------
+if not os.path.exists("frontend"):
+    os.makedirs("frontend")
+
+app.mount("/static", StaticFiles(directory="frontend"), name="static")
+
+# -----------------------------
+# DATA SIMULADA / RETOS
+# -----------------------------
+QUESTIONS = [
+    {"q": "Si hoy me siento 3 puntos feliz y mañana 5 más… ¿cuánto tendré?", "a": "8"},
+    {"q": "¿Cuánto es el doble de 12?", "a": "24"},
+    {"q": "3, 6, 9, ___", "a": "12"},
+    {"q": "Número par >10 y <20. Si me divides entre 2 da 7. ¿Quién soy?", "a": "14"},
+    {"q": "Si tengo 50 y pierdo 7, ¿cuánto queda?", "a": "43"},
+    {"q": "Cruzo fronteras sin pasaporte y guardo tesoros. ¿Qué soy?", "a": "conocimiento de embarque"}
+]
+
+RANKING_BOTS = ["TraderA", "TraderB", "TraderC", "TraderD"]
+
+MINI_STORIES = [
+    "💡 Ana duplicó su productividad con esta decisión.",
+    "🔥 Carlos avanzó 2 niveles resolviendo rápido.",
+    "🏆 Pedro aplicó la estrategia y subió de nivel.",
+    "⚡ Luisa resolvió el reto y siente dopamina."
+]
+
+AUDIO_FILES = [
+    "male1.mp3",
+    "male2.mp3"
+]
+
+# -----------------------------
+# ENDPOINTS
 # -----------------------------
 
 @app.get("/")
 async def root():
-    with open("static/session.html", "r", encoding="utf-8") as f:
-        return HTMLResponse(f.read())
+    # Servir el HTML principal
+    return FileResponse("frontend/session.html")
 
-@app.get("/session")
-async def get_session():
-    with open("static/session.html", "r", encoding="utf-8") as f:
-        return HTMLResponse(f.read())
+@app.get("/challenge")
+async def get_challenge():
+    game = random.choice(QUESTIONS)
+    return JSONResponse(content=game)
 
-# -----------------------------
-# GENERADOR DE RETOS
-# -----------------------------
-def generate_game():
-    game_types = ["emocional", "doble", "serie", "adivinanza", "resta", "financiero"]
-    game = random.choice(game_types)
+@app.get("/ranking")
+async def get_ranking(user_level: int = 1):
+    ranking = []
+    for bot in RANKING_BOTS:
+        level = user_level + random.randint(0, 2)
+        ranking.append({"name": bot, "level": level})
+    ranking.append({"name": "Tú", "level": user_level})
+    return JSONResponse(content=ranking)
 
-    if game == "emocional":
-        a, b = random.randint(1, 5), random.randint(3, 7)
-        return {"question": f"Si hoy me siento {a} puntos feliz y mañana {b} más… ¿cuánto tendré?", "answer": str(a+b)}
-    
-    if game == "doble":
-        n = random.randint(5, 40)
-        return {"question": f"¿Cuánto es el doble de {n}?", "answer": str(n*2)}
+@app.get("/mini-story")
+async def get_mini_story():
+    story = random.choice(MINI_STORIES)
+    return JSONResponse(content={"story": story})
 
-    if game == "serie":
-        s = random.randint(1, 5)
-        return {"question": f"{s}, {s*2}, {s*3}, ___", "answer": str(s*4)}
-
-    if game == "adivinanza":
-        return {"question": "Número par > 10 y < 20. Si me divides entre 2 da 7. ¿Quién soy?", "answer": "14"}
-
-    if game == "resta":
-        t, m = random.randint(20, 100), random.randint(5, 15)
-        return {"question": f"Si tengo {t} y pierdo {m}, ¿cuánto queda?", "answer": str(t-m)}
-
-    if game == "financiero":
-        return {"question": "Cruzo fronteras sin pasaporte y guardo tesoros. ¿Qué soy?", "answer": "conocimiento de embarque"}
+@app.get("/audio")
+async def get_audio():
+    clip = random.choice(AUDIO_FILES)
+    path = os.path.join("frontend", "audio", clip)
+    if os.path.exists(path):
+        return FileResponse(path)
+    return JSONResponse(content={"error": "Archivo no encontrado"}, status_code=404)
 
 # -----------------------------
-# GESTIÓN DE CONEXIONES
+# RUN
 # -----------------------------
-class Manager:
-    def __init__(self):
-        self.connections = []
-
-    async def connect(self, ws: WebSocket):
-        await ws.accept()
-        self.connections.append(ws)
-        await self.broadcast_participants()
-
-    def disconnect(self, ws: WebSocket):
-        if ws in self.connections:
-            self.connections.remove(ws)
-
-    async def broadcast(self, data):
-        for c in self.connections:
-            try:
-                await c.send_text(json.dumps(data))
-            except:
-                pass
-
-    async def broadcast_participants(self):
-        await self.broadcast({
-            "type": "update_participants",
-            "count": len(self.connections),
-            "max": MAX_PARTICIPANTS
-        })
-
-manager = Manager()
-
+# Este archivo se ejecuta con:
+# uvicorn main:app --host 0.0.0.0 --port 8000
 # -----------------------------
-# WEBSOCKET PRINCIPAL
-# -----------------------------
-@app.websocket("/ws")
-async def websocket_endpoint(ws: WebSocket):
-    await manager.connect(ws)
-    
-    user_name = f"Trader{random.randint(100, 999)}"
-    level = 1
-    user_data = {"name": user_name, "level": level}
-    ranking.append(user_data)
-
-    current_game = generate_game()
-    await ws.send_text(json.dumps({"type": "question", "text": current_game["question"]}))
-
-    try:
-        while True:
-            data = await ws.receive_text()
-            msg = json.loads(data)
-
-            if msg["type"] == "answer":
-                ans = msg["text"].strip().lower()
-                if ans == current_game["answer"]:
-                    level += 1
-                    user_data["level"] = level
-                    feedback = "💥 Correcto! Dopamina activada!"
-                else:
-                    feedback = f"Error. Era: {current_game['answer']}"
-
-                await ws.send_text(json.dumps({"type": "feedback", "text": feedback}))
-                
-                # Actualizar Ranking Global
-                await manager.broadcast({
-                    "type": "update_ranking",
-                    "ranking": sorted(ranking, key=lambda x: x["level"], reverse=True)[:5]
-                })
-
-                # Siguiente reto
-                current_game = generate_game()
-                await ws.send_text(json.dumps({"type": "question", "text": current_game["question"]}))
-
-            elif msg["type"] == "chat":
-                await manager.broadcast({"type": "chat", "sender": user_name, "text": msg["text"]})
-
-    except WebSocketDisconnect:
-        manager.disconnect(ws)
-        if user_data in ranking:
-            ranking.remove(user_data)
-        await manager.broadcast_participants()
-
-# -----------------------------
-# BOT DE CHAT
-# -----------------------------
-async def simulated_chat():
-    msgs = ["🔥 Trato cerrado", "💰 Cada decisión suma", "⚡ ¡Rápido!", "🏆 Subiendo nivel"]
-    while True:
-        await asyncio.sleep(random.randint(10, 20))
-        if manager.connections:
-            await manager.broadcast({"type": "chat", "sender": "AURA_BOT", "text": random.choice(msgs)})
-
-@app.on_event("startup")
-async def startup_event():
-    asyncio.create_task(simulated_chat())
