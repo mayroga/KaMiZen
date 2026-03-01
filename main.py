@@ -17,7 +17,10 @@ used_questions = set()
 # GENERADOR INFINITO DE RETOS
 # -----------------------------
 def generate_game():
-
+@app.get("/session")
+async def get_session():
+    with open("static/session.html", "r", encoding="utf-8") as f:
+        return HTMLResponse(f.read())
     game_types = ["emocional", "doble", "serie", "adivinanza", "resta", "financiero"]
 
     game = random.choice(game_types)
