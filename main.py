@@ -21,48 +21,71 @@ async def root():
     with open("static/session.html", "r", encoding="utf-8") as f:
         return HTMLResponse(f.read())
 
-@app.get("/session")
-async def get_session():
-    with open("static/session.html", "r", encoding="utf-8") as f:
-        return HTMLResponse(f.read())
-
 # -----------------------------
 # GENERADOR DE RETOS
 # -----------------------------
-def generate_game():
-    game_types = ["emocional", "doble", "serie", "adivinanza", "resta", "financiero", "historia"]
-    game = random.choice(game_types)
-
-    if game == "emocional":
-        a, b = random.randint(1, 5), random.randint(3, 7)
-        return {"question": f"Si hoy me siento {a} puntos feliz y mañana {b} más… ¿cuánto tendré?", "answer": str(a+b)}
+def generate_challenge():
+    """
+    Genera un minijuego mental: matemáticas, lógica, decisiones, obstáculos, mini-historias.
+    Devuelve pregunta y respuesta.
+    """
+    challenge_types = ["matematica", "logica", "historia", "decision", "bienestar", "poder"]
+    typ = random.choice(challenge_types)
     
-    if game == "doble":
-        n = random.randint(5, 40)
-        return {"question": f"¿Cuánto es el doble de {n}?", "answer": str(n*2)}
+    # Matemáticas simples
+    if typ == "matematica":
+        a = random.randint(1, 20)
+        b = random.randint(1, 20)
+        return {"question": f"Si sumas {a} + {b}, ¿cuál es el resultado?", "answer": str(a+b)}
     
-    if game == "serie":
-        s = random.randint(1, 5)
-        return {"question": f"{s}, {s*2}, {s*3}, ___", "answer": str(s*4)}
+    # Lógica / adivinanza
+    if typ == "logica":
+        r = random.randint(10, 50)
+        return {"question": f"Soy un número divisible por 5 entre 10 y 50. Si me divides entre 5 obtienes 6. ¿Quién soy?", "answer": "30"}
     
-    if game == "adivinanza":
-        return {"question": "Número par >10 y <20. Si me divides entre 2 da 7. ¿Quién soy?", "answer": "14"}
-    
-    if game == "resta":
-        t, m = random.randint(20, 100), random.randint(5, 15)
-        return {"question": f"Si tengo {t} y pierdo {m}, ¿cuánto queda?", "answer": str(t-m)}
-    
-    if game == "financiero":
-        return {"question": "Vuelo sin alas, cruzo fronteras sin pasaporte y guardo tesoros sin ser cofre. ¿Qué soy?", "answer": "conocimiento de embarque"}
-    
-    if game == "historia":
+    # Mini historia de éxito o poder
+    if typ == "historia":
         stories = [
-            "💎 Historia de éxito: Ana invirtió en sí misma y duplicó su productividad.",
-            "🚀 Poder: Cada decisión cuenta, ¡hoy subes un nivel!",
-            "🌱 Bienestar: Respirar profundo y resolver un desafío activa tu dopamina."
+            "💎 Historia de Éxito: Carlos enfrentó un desafío en su empresa y logró duplicar su productividad.",
+            "🚀 Camino al Poder: Marta tomó una decisión audaz y ahora lidera un equipo de alto impacto.",
+            "🌱 Bienestar: Juan decidió meditar 10 minutos cada mañana y su energía y claridad mental aumentaron."
         ]
         story = random.choice(stories)
         return {"question": story, "answer": ""}
+    
+    # Decisión y obstáculo
+    if typ == "decision":
+        decisions = [
+            {
+                "scenario": "Estás frente a un proyecto difícil. ¿Decides asumirlo o delegarlo?",
+                "options": {"asumir": "Valor y crecimiento", "delegar": "Aprender a confiar"}
+            },
+            {
+                "scenario": "Tienes una oportunidad de inversión incierta. ¿Arriesgas o conservas?",
+                "options": {"arriesgar": "Posible gran éxito", "conservar": "Seguridad y aprendizaje"}
+            }
+        ]
+        d = random.choice(decisions)
+        return {"question": d["scenario"] + " Escribe tu elección (arriesgar/asumir/delegar/conservar):", 
+                "answer": list(d["options"].keys())}
+    
+    # Bienestar y consejo de vida
+    if typ == "bienestar":
+        advice = [
+            "Respira profundo y enfrenta tu miedo, eso activa tu poder interno.",
+            "Organiza tu día: pequeñas victorias diarias conducen a grandes éxitos.",
+            "Ayuda a alguien hoy: mejorarás tu bienestar y el de otros."
+        ]
+        return {"question": random.choice(advice), "answer": ""}
+    
+    # Poder y estrategia
+    if typ == "poder":
+        challenges = [
+            "💡 Estrategia: Tienes dos caminos, uno seguro y otro arriesgado pero con alto potencial. ¿Cuál eliges? (seguro/arriesgado)",
+            "🏆 Liderazgo: Debes motivar a tu equipo en un momento crítico. ¿Actúas con firmeza o empatía? (firmeza/empatia)"
+        ]
+        c = random.choice(challenges)
+        return {"question": c, "answer": ["seguro","arriesgado","firmeza","empatia"]}
 
 # -----------------------------
 # GESTIÓN DE CONEXIONES
@@ -103,12 +126,12 @@ manager = Manager()
 async def websocket_endpoint(ws: WebSocket):
     await manager.connect(ws)
     
-    user_name = f"Trader{random.randint(100, 999)}"
+    user_name = f"Jugador{random.randint(100, 999)}"
     level = 1
     user_data = {"name": user_name, "level": level}
     ranking.append(user_data)
 
-    current_game = generate_game()
+    current_game = generate_challenge()
     await ws.send_text(json.dumps({"type": "question", "text": current_game["question"]}))
 
     try:
@@ -118,23 +141,27 @@ async def websocket_endpoint(ws: WebSocket):
 
             if msg["type"] == "answer":
                 ans = msg["text"].strip().lower()
-                if ans == current_game["answer"].lower():
+                correct = current_game["answer"]
+                if isinstance(correct, list):
+                    is_correct = ans in [x.lower() for x in correct]
+                else:
+                    is_correct = (ans == correct.lower())
+                
+                if is_correct or correct == "":
                     level += 1
                     user_data["level"] = level
-                    feedback = "💥 Correcto! Dopamina activada!"
+                    feedback = "💥 Correcto! Sigamos avanzando hacia el éxito!"
                 else:
-                    feedback = f"❌ Error. Era: {current_game['answer']}" if current_game['answer'] else "💡 Continúa al siguiente reto!"
+                    feedback = f"❌ Respuesta no correcta. Sigue intentándolo! " + (f"Era: {correct}" if correct else "")
                 
                 await ws.send_text(json.dumps({"type": "feedback", "text": feedback}))
-                
-                # Actualizar Ranking Global
+
                 await manager.broadcast({
                     "type": "update_ranking",
                     "ranking": sorted(ranking, key=lambda x: x["level"], reverse=True)[:5]
                 })
 
-                # Siguiente reto
-                current_game = generate_game()
+                current_game = generate_challenge()
                 await ws.send_text(json.dumps({"type": "question", "text": current_game["question"]}))
 
     except WebSocketDisconnect:
@@ -144,16 +171,14 @@ async def websocket_endpoint(ws: WebSocket):
         await manager.broadcast_participants()
 
 # -----------------------------
-# BOT DE CHAT SIMULADO
+# BOT SIMULADO
 # -----------------------------
 async def simulated_chat():
     msgs = [
-        "🔥 Trato cerrado con éxito",
-        "💰 Cada decisión suma",
-        "⚡ ¡Rápido, no pierdas tiempo!",
-        "🏆 Subiendo nivel",
-        "💡 Descubrí un patrón financiero",
-        "🌱 Respira, aprende y gana"
+        "🔥 Cada decisión cuenta",
+        "💡 Recuerda: pequeños pasos crean grandes logros",
+        "🏆 Subiendo de nivel en el camino al éxito",
+        "🌱 Bienestar activo, mente clara"
     ]
     while True:
         await asyncio.sleep(random.randint(8, 15))
