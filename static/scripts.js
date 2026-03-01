@@ -1,13 +1,8 @@
-// =============================
-// KaMiZen – Session JS
-// =============================
 let ws = new WebSocket(`ws://${location.host}/ws`);
-let timeLeft = 600; // 10 minutos
 let currentAnswer = "";
+let timeLeft = 900; // 15 minutos
 
-// ------------------
 // TIMER
-// ------------------
 setInterval(() => {
     if(timeLeft>0){
         timeLeft--;
@@ -17,16 +12,13 @@ setInterval(() => {
     }
 }, 1000);
 
-// ------------------
 // WEBSOCKET EVENTS
-// ------------------
 ws.onmessage = function(event){
     let data = JSON.parse(event.data);
 
     if(data.type==="question"){
         document.getElementById("question").innerText = data.text;
         document.getElementById("feedback").innerText = "";
-        currentAnswer = "";
     }
 
     if(data.type==="feedback"){
@@ -52,31 +44,11 @@ ws.onmessage = function(event){
     }
 };
 
-// ------------------
-// SEND ANSWER
-// ------------------
+// ENVIAR RESPUESTA
 function sendAnswer(){
     let input = document.getElementById("answerInput");
     let text = input.value.trim();
     if(text==="") return;
-
     ws.send(JSON.stringify({type:"answer", text:text}));
     input.value="";
-}
-
-// ------------------
-// SHOW ANSWER BUTTON
-// ------------------
-function showAnswer(){
-    document.getElementById("feedback").innerText =
-        "Responde para activar dopamina 💥";
-}
-
-// ------------------
-// BOT CHAT SIMULADO - NO REAL
-// ------------------
-function addSimulatedChat(msg){
-    let chatBox = document.getElementById("chatBox");
-    chatBox.innerHTML += `<div><strong>${msg.sender}:</strong> ${msg.text}</div>`;
-    chatBox.scrollTop = chatBox.scrollHeight;
 }
