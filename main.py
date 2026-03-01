@@ -5,138 +5,189 @@ import asyncio
 import random
 import json
 
-app = FastAPI(title="KaMiZen WebSocket Backend")
+app = FastAPI(title="KaMiZen NeuroGame Engine")
 
-# ------------------------------
-# Montar carpeta static
-# ------------------------------
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-# ------------------------------
-# Variables globales en memoria
-# ------------------------------
 MAX_PARTICIPANTS = 500
-clients = []
 ranking = []
-chat_simulated = [
-    "💰 Cerré un trato millonario hoy",
-    "🔥 Nadie me supera en decisión rápida",
-    "⚡ Cada segundo cuenta para subir de nivel",
-    "🏆 Subí un nivel gracias a mi disciplina",
-    "💥 Cada palabra cuenta, actúa ya"
-]
-questions_bank = [
-    "¿Qué hiciste hoy que realmente te pone por delante?",
-    "Describe un logro que otros no alcanzaron hoy",
-    "¿Qué decisión rápida tomaste que te generó ventaja?",
-    "Cita algo que aprendiste y aplicaste hoy",
-    "¿Qué acción concreta de hoy aumentó tu productividad?"
-]
+used_questions = set()
 
-# ------------------------------
-# Cliente WebSocket Manager
-# ------------------------------
-class ConnectionManager:
+# -----------------------------
+# GENERADOR INFINITO DE RETOS
+# -----------------------------
+def generate_game():
+
+    game_types = ["emocional", "doble", "serie", "adivinanza", "resta", "financiero"]
+
+    game = random.choice(game_types)
+
+    if game == "emocional":
+        a = random.randint(1,5)
+        b = random.randint(3,7)
+        return {
+            "question": f"Si hoy me siento {a} puntos feliz y mañana {b} puntos más… ¿cuánto tendré?",
+            "answer": str(a+b)
+        }
+
+    if game == "doble":
+        n = random.randint(5,40)
+        return {
+            "question": f"¿Cuánto es el doble de {n}?",
+            "answer": str(n*2)
+        }
+
+    if game == "serie":
+        start = random.randint(1,5)
+        return {
+            "question": f"{start}, {start*2}, {start*3}, ___",
+            "answer": str(start*4)
+        }
+
+    if game == "adivinanza":
+        return {
+            "question": "Soy un número mayor que 10 y menor que 20. Soy par. Si me divides entre 2 te da 7. ¿Quién soy?",
+            "answer": "14"
+        }
+
+    if game == "resta":
+        total = random.randint(20,100)
+        minus = random.randint(5,15)
+        return {
+            "question": f"Si tengo {total} y pierdo {minus}, ¿cuánto queda?",
+            "answer": str(total-minus)
+        }
+
+    if game == "financiero":
+        return {
+            "question": "Vuelo sin alas, cruzo fronteras sin pasaporte y guardo tesoros sin ser cofre. ¿Qué soy?",
+            "answer": "conocimiento de embarque"
+        }
+
+
+# -----------------------------
+# CONNECTION MANAGER
+# -----------------------------
+class Manager:
     def __init__(self):
-        self.active_connections: list[WebSocket] = []
+        self.connections = []
 
-    async def connect(self, websocket: WebSocket):
-        await websocket.accept()
-        self.active_connections.append(websocket)
+    async def connect(self, ws: WebSocket):
+        await ws.accept()
+        self.connections.append(ws)
         await self.broadcast_participants()
 
-    def disconnect(self, websocket: WebSocket):
-        if websocket in self.active_connections:
-            self.active_connections.remove(websocket)
+    def disconnect(self, ws: WebSocket):
+        if ws in self.connections:
+            self.connections.remove(ws)
 
-    async def broadcast(self, message: dict):
-        data = json.dumps(message)
-        for connection in self.active_connections:
-            await connection.send_text(data)
+    async def broadcast(self, data):
+        for c in self.connections:
+            await c.send_text(json.dumps(data))
 
     async def broadcast_participants(self):
-        msg = {"type": "update_participants", "count": len(self.active_connections), "max": MAX_PARTICIPANTS}
-        await self.broadcast(msg)
+        await self.broadcast({
+            "type":"update_participants",
+            "count": len(self.connections),
+            "max": MAX_PARTICIPANTS
+        })
 
-manager = ConnectionManager()
+manager = Manager()
 
-# ------------------------------
-# WebSocket endpoint
-# ------------------------------
+# -----------------------------
+# WEBSOCKET
+# -----------------------------
 @app.websocket("/ws")
-async def websocket_endpoint(websocket: WebSocket):
-    await manager.connect(websocket)
-    user_name = f"Anónimo{random.randint(1, 9999)}"
-    user_level = 1
-    ranking.append({"name": user_name, "level": user_level})
+async def websocket(ws: WebSocket):
+
+    await manager.connect(ws)
+
+    user_name = f"Trader{random.randint(100,999)}"
+    level = 1
+    ranking.append({"name":user_name,"level":level})
+
+    current_game = generate_game()
+
+    await ws.send_text(json.dumps({
+        "type":"question",
+        "text": current_game["question"]
+    }))
 
     try:
-        # Enviar ranking inicial
-        await manager.broadcast({"type": "update_ranking", "ranking": sorted(ranking, key=lambda x: -x["level"])[:5]})
-        # Enviar primera pregunta
-        question = random.choice(questions_bank)
-        await websocket.send_text(json.dumps({"type": "question", "text": question}))
-
         while True:
-            data = await websocket.receive_text()
-            data_json = json.loads(data)
 
-            # -----------------------
-            # Respuesta del usuario
-            # -----------------------
-            if data_json["type"] == "answer":
-                text = data_json.get("text", "")
-                # Feedback sencillo y subida de nivel
-                if len(text.strip()) == 0:
-                    feedback = "No escribiste nada. Ejemplo: 'Hoy cerré un trato rápido y gané ventaja.'"
+            data = await ws.receive_text()
+            data = json.loads(data)
+
+            if data["type"] == "answer":
+                user_answer = data["text"].strip().lower()
+
+                if user_answer == current_game["answer"]:
+                    level += 1
+                    feedback = "💥 Correcto! Dopamina activada!"
                 else:
-                    feedback = "💥 Excelente! Subes un nivel."
-                    user_level = min(user_level + 1, 10)
-                # Actualizar ranking
-                for u in ranking:
-                    if u["name"] == user_name:
-                        u["level"] = user_level
-                await websocket.send_text(json.dumps({"type": "feedback", "text": feedback}))
-                await manager.broadcast({"type": "update_ranking", "ranking": sorted(ranking, key=lambda x: -x["level"])[:5]})
+                    feedback = f"Respuesta correcta: {current_game['answer']}"
 
-            # -----------------------
-            # Chat en vivo
-            # -----------------------
-            elif data_json["type"] == "chat":
-                text = data_json.get("text", "")
-                msg = {"type": "chat", "sender": user_name, "text": text, "simulated": False}
-                await manager.broadcast(msg)
+                for r in ranking:
+                    if r["name"] == user_name:
+                        r["level"] = level
 
-            # -----------------------
-            # Simular chat constante
-            # -----------------------
-            # Esto se hace en paralelo abajo
+                await ws.send_text(json.dumps({
+                    "type":"feedback",
+                    "text":feedback
+                }))
+
+                await manager.broadcast({
+                    "type":"update_ranking",
+                    "ranking": sorted(ranking,key=lambda x:-x["level"])[:5]
+                })
+
+                # NUEVA PREGUNTA AUTOMÁTICA
+                current_game = generate_game()
+
+                await ws.send_text(json.dumps({
+                    "type":"question",
+                    "text":current_game["question"]
+                }))
+
+            if data["type"] == "chat":
+                await manager.broadcast({
+                    "type":"chat",
+                    "sender":user_name,
+                    "text":data["text"]
+                })
 
     except WebSocketDisconnect:
-        manager.disconnect(websocket)
-        ranking[:] = [u for u in ranking if u["name"] != user_name]
+        manager.disconnect(ws)
+        ranking[:] = [r for r in ranking if r["name"]!=user_name]
         await manager.broadcast_participants()
-        await manager.broadcast({"type": "update_ranking", "ranking": sorted(ranking, key=lambda x: -x["level"])[:5]})
 
-# ------------------------------
-# Chat simulado automático
-# ------------------------------
-async def chat_simulator():
+
+# -----------------------------
+# CHAT SIMULADO CONSTANTE
+# -----------------------------
+async def simulated_chat():
+    messages = [
+        "🔥 Cerré un trato importante hoy",
+        "💰 Cada decisión suma nivel",
+        "⚡ No pierdas segundos",
+        "🏆 Subiendo disciplina financiera"
+    ]
     while True:
-        if manager.active_connections:
-            msg = {"type": "chat", "sender": "Simulado", "text": random.choice(chat_simulated), "simulated": True}
-            await manager.broadcast(msg)
-        await asyncio.sleep(random.randint(5,10))
+        if manager.connections:
+            await manager.broadcast({
+                "type":"chat",
+                "sender":"BOT",
+                "text": random.choice(messages)
+            })
+        await asyncio.sleep(random.randint(6,10))
 
 @app.on_event("startup")
-async def startup_event():
-    asyncio.create_task(chat_simulator())
+async def start():
+    asyncio.create_task(simulated_chat())
 
-# ------------------------------
-# Página de prueba raíz
-# ------------------------------
+
 @app.get("/")
-async def get_root():
-    with open("static/session.html", "r", encoding="utf-8") as f:
-        html_content = f.read()
-    return HTMLResponse(content=html_content)
+async def root():
+    with open("static/session.html","r",encoding="utf-8") as f:
+        return HTMLResponse(f.read())
