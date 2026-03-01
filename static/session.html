@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <title>KaMiZen - NeuroFinancial Game</title>
-
 <style>
 body{
     margin:0;
@@ -11,7 +10,6 @@ body{
     background:#0f172a;
     color:white;
 }
-
 header{
     background:#111827;
     padding:15px;
@@ -20,35 +18,29 @@ header{
     font-weight:bold;
     color:#00ffcc;
 }
-
 .container{
     display:flex;
     flex-wrap:wrap;
 }
-
 .left, .right{
     padding:20px;
     box-sizing:border-box;
 }
-
 .left{
     flex:2;
     min-width:300px;
 }
-
 .right{
     flex:1;
     background:#1e293b;
     min-width:280px;
 }
-
 .box{
     background:#1e293b;
     padding:15px;
     margin-bottom:15px;
     border-radius:8px;
 }
-
 button{
     padding:8px 12px;
     border:none;
@@ -56,12 +48,10 @@ button{
     cursor:pointer;
     font-weight:bold;
 }
-
 .primary{
     background:#00ffcc;
     color:black;
 }
-
 .chat-box{
     height:250px;
     overflow-y:auto;
@@ -70,46 +60,62 @@ button{
     border-radius:6px;
     font-size:14px;
 }
-
 input{
     padding:8px;
     width:70%;
     border-radius:5px;
     border:none;
 }
-
 .status{
     display:flex;
     justify-content:space-between;
     font-size:14px;
     margin-bottom:10px;
 }
-
 .rank-item{
     font-size:14px;
     margin-bottom:5px;
 }
-
 .question{
     font-size:18px;
     margin-bottom:10px;
     min-height:50px;
 }
-
 .feedback{
     margin-top:10px;
     font-weight:bold;
     color:#00ffcc;
 }
-
 .timer{
     font-size:16px;
     color:#ffcc00;
 }
-
+.progress-container{
+    width:100%;
+    background:#333;
+    height:12px;
+    border-radius:6px;
+    margin-top:10px;
+}
+.progress-fill{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg,#00ffcc,#ffcc00);
+    border-radius:6px;
+    transition:width 0.3s ease;
+}
+.mini-story{
+    font-size:14px;
+    margin-top:10px;
+    color:#f9ed69;
+    min-height:20px;
+}
+.simulated{
+    opacity:0.7;
+    font-style:italic;
+}
 </style>
 </head>
-
 <body>
 
 <header>🔥 KaMiZen – 10 Min NeuroFinancial Game</header>
@@ -117,142 +123,234 @@ input{
 <div class="container">
 
 <div class="left">
-
 <div class="box">
 <div class="status">
 <div>🔥 Conectados: <span id="participants">0</span>/500</div>
 <div class="timer">⏳ <span id="time">10:00</span></div>
 </div>
+<div class="progress-container">
+<div class="progress-fill" id="progressFill"></div>
+</div>
 </div>
 
 <div class="box">
 <div class="question" id="question">Cargando desafío...</div>
-
 <input type="text" id="answerInput" placeholder="Escribe tu respuesta aquí...">
 <button class="primary" onclick="sendAnswer()">Enviar</button>
 <button onclick="showAnswer()">Ver respuesta</button>
-
 <div class="feedback" id="feedback"></div>
+<div class="mini-story" id="miniStory"></div>
+<audio id="audioClip"></audio>
 </div>
 
 <div class="box">
 <h3>🏆 Top 5 Traders</h3>
 <div id="ranking"></div>
 </div>
-
 </div>
 
 <div class="right">
-
 <div class="box">
-<h3>💬 Chat en vivo (anónimo)</h3>
+<h3>💬 Chat de Bots</h3>
 <div class="chat-box" id="chatBox"></div>
-<br>
-<input type="text" id="chatInput" placeholder="Escribe mensaje...">
-<button class="primary" onclick="sendChat()">Enviar</button>
 </div>
-
 </div>
 
 </div>
 
 <script>
+// -----------------------------
+// CONFIGURACIÓN
+// -----------------------------
+let sessionTime = 600; // 10 min
+let elapsedTime = 0;
+let userLevel = 1;
+let ranking = [];
+let askedQuestions = new Set();
+const participants = 1;
+const questionMinInterval = 8;
+const questionMaxInterval = 12;
 
-let ws = new WebSocket(`ws://${location.host}/ws`);
-let currentAnswer = "";
-let timeLeft = 600;
+// -----------------------------
+// ELEMENTOS
+// -----------------------------
+const questionEl = document.getElementById("question");
+const feedbackEl = document.getElementById("feedback");
+const answerInput = document.getElementById("answerInput");
+const timeEl = document.getElementById("time");
+const rankingEl = document.getElementById("ranking");
+const progressFill = document.getElementById("progressFill");
+const chatBox = document.getElementById("chatBox");
+const miniStoryEl = document.getElementById("miniStory");
+const audioClip = document.getElementById("audioClip");
 
-// ------------------
-// TIMER 10 MINUTOS
-// ------------------
-setInterval(()=>{
-    if(timeLeft>0){
-        timeLeft--;
-        let min = Math.floor(timeLeft/60);
-        let sec = timeLeft%60;
-        document.getElementById("time").innerText =
-            `${min}:${sec<10?"0":""}${sec}`;
+// -----------------------------
+// RETOS
+// -----------------------------
+function generateGame(){
+    const games = [
+        () => {
+            let a=Math.floor(Math.random()*5+1), b=Math.floor(Math.random()*7+3);
+            return {q:`Si hoy me siento ${a} puntos feliz y mañana ${b} más… ¿cuánto tendré?`,a:`${a+b}`};
+        },
+        () => {
+            let n=Math.floor(Math.random()*36+5);
+            return {q:`¿Cuánto es el doble de ${n}?`,a:`${n*2}`};
+        },
+        () => {
+            let s=Math.floor(Math.random()*5+1);
+            return {q:`${s}, ${s*2}, ${s*3}, ___`,a:`${s*4}`};
+        },
+        () => {
+            return {q:`Número par >10 y <20. Si me divides entre 2 da 7. ¿Quién soy?`,a:"14"};
+        },
+        () => {
+            let t=Math.floor(Math.random()*80+20), m=Math.floor(Math.random()*11+5);
+            return {q:`Si tengo ${t} y pierdo ${m}, ¿cuánto queda?`,a:`${t-m}`};
+        },
+        () => {
+            return {q:"Cruzo fronteras sin pasaporte y guardo tesoros. ¿Qué soy?",a:"conocimiento de embarque"};
+        }
+    ];
+    let game;
+    do {
+        game = games[Math.floor(Math.random()*games.length)]();
+    } while(askedQuestions.has(game.q));
+    askedQuestions.add(game.q);
+    return game;
+}
+
+// -----------------------------
+// BARRA DE PROGRESO
+// -----------------------------
+function updateProgress(){
+    let pct = (elapsedTime/sessionTime)*100;
+    progressFill.style.width = pct+"%";
+}
+
+// -----------------------------
+// RANKING SIMULADO
+// -----------------------------
+function updateRanking(){
+    ranking = [
+        {name:"TraderA",level:userLevel+Math.floor(Math.random()*2)},
+        {name:"TraderB",level:userLevel+Math.floor(Math.random()*2)},
+        {name:"TraderC",level:userLevel+Math.floor(Math.random()*2)},
+        {name:"TraderD",level:userLevel+Math.floor(Math.random()*2)},
+        {name:"Tú",level:userLevel}
+    ];
+    rankingEl.innerHTML = "";
+    ranking.forEach(r=>{
+        let div = document.createElement("div");
+        div.className="rank-item";
+        div.innerText = `${r.name} - Nivel ${r.level}`;
+        rankingEl.appendChild(div);
+    });
+}
+
+// -----------------------------
+// MINI HISTORIAS Y AUDIO
+// -----------------------------
+const miniStories = [
+    "💡 Ana duplicó su productividad con esta decisión.",
+    "🔥 Carlos avanzó 2 niveles resolviendo rápido.",
+    "🏆 Pedro aplicó la estrategia y subió de nivel.",
+    "⚡ Luisa resolvió el reto y siente dopamina."
+];
+const audioClips = [
+    "/static/audio/male1.mp3",
+    "/static/audio/male2.mp3"
+];
+
+function playAudio(){
+    let clip = audioClips[Math.floor(Math.random()*audioClips.length)];
+    audioClip.src = clip;
+    audioClip.play();
+}
+
+// -----------------------------
+// NUEVO RETO
+// -----------------------------
+let currentGame;
+function newChallenge(){
+    currentGame = generateGame();
+    questionEl.innerText = currentGame.q;
+    feedbackEl.innerText = "";
+    miniStoryEl.innerText = miniStories[Math.floor(Math.random()*miniStories.length)];
+    playAudio();
+}
+
+// -----------------------------
+// RESPONDER
+// -----------------------------
+function sendAnswer(){
+    let ans = answerInput.value.trim();
+    if(ans==="") return;
+    if(ans.toLowerCase()===currentGame.a.toLowerCase()){
+        userLevel++;
+        feedbackEl.innerText = "💥 Correcto! Dopamina activada!";
+    } else {
+        feedbackEl.innerText = `❌ Incorrecto. Era: ${currentGame.a}`;
     }
+    answerInput.value="";
+    updateRanking();
+    newChallenge();
+}
+
+// -----------------------------
+// SHOW ANSWER
+// -----------------------------
+function showAnswer(){
+    feedbackEl.innerText = "Responde para activar dopamina 💥";
+}
+
+// -----------------------------
+// BOTS SIMULADOS
+// -----------------------------
+const botMsgs = ["🔥 Otro trader sube nivel","💰 Cada decisión suma","⚡ Rápido!","🏆 Nivel aumentado"];
+function botChat(){
+    let msg = botMsgs[Math.floor(Math.random()*botMsgs.length)];
+    let div = document.createElement("div");
+    div.className="simulated";
+    div.innerText = `BOT: ${msg}`;
+    chatBox.appendChild(div);
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+// -----------------------------
+// TEMPORIZADOR PRINCIPAL
+// -----------------------------
+function formatTime(s){return `${Math.floor(s/60)}:${(s%60<10?"0":"")}${s%60}`;}
+let sessionInterval = setInterval(()=>{
+    if(elapsedTime>=sessionTime){
+        clearInterval(sessionInterval);
+        questionEl.innerText="⏳ Sesión finalizada. ¡Mañana subes de nivel!";
+        feedbackEl.innerText="";
+        return;
+    }
+    elapsedTime++;
+    timeEl.innerText = formatTime(sessionTime-elapsedTime);
+    updateProgress();
 },1000);
 
-// ------------------
-// WEBSOCKET EVENTS
-// ------------------
-ws.onmessage = function(event){
-
-    let data = JSON.parse(event.data);
-
-    if(data.type==="question"){
-        document.getElementById("question").innerText = data.text;
-        document.getElementById("feedback").innerText = "";
-        currentAnswer = "";
-    }
-
-    if(data.type==="feedback"){
-        document.getElementById("feedback").innerText = data.text;
-    }
-
-    if(data.type==="update_participants"){
-        document.getElementById("participants").innerText = data.count;
-    }
-
-    if(data.type==="update_ranking"){
-        let rankingDiv = document.getElementById("ranking");
-        rankingDiv.innerHTML = "";
-        data.ranking.forEach(r=>{
-            rankingDiv.innerHTML +=
-                `<div class="rank-item">${r.name} - Nivel ${r.level}</div>`;
-        });
-    }
-
-    if(data.type==="chat"){
-        let chatBox = document.getElementById("chatBox");
-        chatBox.innerHTML +=
-            `<div><strong>${data.sender}:</strong> ${data.text}</div>`;
-        chatBox.scrollTop = chatBox.scrollHeight;
-    }
-
-};
-
-// ------------------
-// SEND ANSWER
-// ------------------
-function sendAnswer(){
-    let input = document.getElementById("answerInput");
-    let text = input.value.trim();
-    if(text==="") return;
-
-    ws.send(JSON.stringify({
-        type:"answer",
-        text:text
-    }));
-
-    input.value="";
+// -----------------------------
+// RETOS AUTOMÁTICOS
+// -----------------------------
+function scheduleNextChallenge(){
+    let delay = Math.random()*(questionMaxInterval-questionMinInterval)+questionMinInterval;
+    setTimeout(()=>{
+        newChallenge();
+        scheduleNextChallenge();
+        botChat();
+    }, delay*1000);
 }
 
-// ------------------
-// SHOW ANSWER BUTTON
-// ------------------
-function showAnswer(){
-    document.getElementById("feedback").innerText =
-        "Responde para ver si activas dopamina 💥";
-}
-
-// ------------------
-// SEND CHAT
-// ------------------
-function sendChat(){
-    let input = document.getElementById("chatInput");
-    let text = input.value.trim();
-    if(text==="") return;
-
-    ws.send(JSON.stringify({
-        type:"chat",
-        text:text
-    }));
-
-    input.value="";
-}
+// -----------------------------
+// INICIO
+// -----------------------------
+updateRanking();
+newChallenge();
+scheduleNextChallenge();
 
 </script>
 
