@@ -2,211 +2,256 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>KaMiZen - Sesión diaria</title>
-<link rel="stylesheet" href="/static/style.css">
+<title>KaMiZen - NeuroFinancial Game</title>
+
 <style>
-body { background:#111; color:#eee; font-family: Arial, sans-serif; }
-#sessionContainer { max-width:800px; margin:auto; padding:20px; }
-#participants,#timeRemaining,#feedback,#ranking { margin-bottom:10px; }
-#questionBox { background:#222; padding:15px; border-radius:8px; margin-bottom:10px; font-size:1.2em; }
-#answerInput,#chatInput { width:100%; padding:10px; margin-bottom:5px; border-radius:5px; border:none; }
-#chatBox { background:#222; padding:10px; height:200px; overflow-y:auto; border-radius:8px; margin-bottom:10px; }
-button { padding:10px 20px; border:none; border-radius:5px; background:#ff4d4d; color:#fff; font-weight:bold; cursor:pointer; margin:3px; }
-button:hover { background:#ff1a1a; }
-.timer { font-size:1.2em; font-weight:bold; }
-.chatMessage { margin-bottom:4px; }
-.simulated { color:#ffcc00; font-weight:bold; }
-#rankingList { margin-top:5px; }
-.level { font-weight:bold; color:#00ffcc; }
-#miniGameBox {
-    background:#1a1a1a;
+body{
+    margin:0;
+    font-family:Arial, Helvetica, sans-serif;
+    background:#0f172a;
+    color:white;
+}
+
+header{
+    background:#111827;
     padding:15px;
+    text-align:center;
+    font-size:22px;
+    font-weight:bold;
+    color:#00ffcc;
+}
+
+.container{
+    display:flex;
+    flex-wrap:wrap;
+}
+
+.left, .right{
+    padding:20px;
+    box-sizing:border-box;
+}
+
+.left{
+    flex:2;
+    min-width:300px;
+}
+
+.right{
+    flex:1;
+    background:#1e293b;
+    min-width:280px;
+}
+
+.box{
+    background:#1e293b;
+    padding:15px;
+    margin-bottom:15px;
     border-radius:8px;
-    margin-top:15px;
 }
-.answerOption {
-    display:block;
-    width:100%;
-    margin-top:5px;
-    background:#333;
+
+button{
+    padding:8px 12px;
+    border:none;
+    border-radius:5px;
+    cursor:pointer;
+    font-weight:bold;
 }
-.answerOption:hover {
-    background:#444;
+
+.primary{
+    background:#00ffcc;
+    color:black;
 }
-.correct {
-    background:#00aa55 !important;
+
+.chat-box{
+    height:250px;
+    overflow-y:auto;
+    background:#0f172a;
+    padding:10px;
+    border-radius:6px;
+    font-size:14px;
 }
-.wrong {
-    background:#aa0000 !important;
+
+input{
+    padding:8px;
+    width:70%;
+    border-radius:5px;
+    border:none;
 }
+
+.status{
+    display:flex;
+    justify-content:space-between;
+    font-size:14px;
+    margin-bottom:10px;
+}
+
+.rank-item{
+    font-size:14px;
+    margin-bottom:5px;
+}
+
+.question{
+    font-size:18px;
+    margin-bottom:10px;
+    min-height:50px;
+}
+
+.feedback{
+    margin-top:10px;
+    font-weight:bold;
+    color:#00ffcc;
+}
+
+.timer{
+    font-size:16px;
+    color:#ffcc00;
+}
+
 </style>
 </head>
 
 <body>
-<div id="sessionContainer">
 
-    <h1>KaMiZen - Sesión diaria</h1>
+<header>🔥 KaMiZen – 10 Min NeuroFinancial Game</header>
 
-    <div id="participants">🔥 Conectados: 1/500</div>
+<div class="container">
 
-    <div class="timer">
-        ⏳ Tiempo restante: <span id="timeRemaining">10:00</span>
-    </div>
+<div class="left">
 
-    <div id="ranking">
-        🏆 Top 5 del momento
-        <div id="rankingList"></div>
-    </div>
+<div class="box">
+<div class="status">
+<div>🔥 Conectados: <span id="participants">0</span>/500</div>
+<div class="timer">⏳ <span id="time">10:00</span></div>
+</div>
+</div>
 
-    <div id="questionBox">
-        Bienvenido a KaMiZen. Prepárate para activar tu mente.
-    </div>
+<div class="box">
+<div class="question" id="question">Cargando desafío...</div>
 
-    <input type="text" id="answerInput" placeholder="Escribe tu respuesta aquí...">
-    <button onclick="sendAnswer()">Enviar</button>
+<input type="text" id="answerInput" placeholder="Escribe tu respuesta aquí...">
+<button class="primary" onclick="sendAnswer()">Enviar</button>
+<button onclick="showAnswer()">Ver respuesta</button>
 
-    <div id="feedback"></div>
+<div class="feedback" id="feedback"></div>
+</div>
 
-    <h3>Chat en vivo (anónimo)</h3>
-    <div id="chatBox">Cargando chat...</div>
+<div class="box">
+<h3>🏆 Top 5 Traders</h3>
+<div id="ranking"></div>
+</div>
 
-    <input type="text" id="chatInput" placeholder="Escribe mensaje...">
-    <button onclick="sendChat()">Enviar</button>
+</div>
 
-    <!-- MINI JUEGOS -->
-    <div id="miniGameBox">
-        <h3>🧠 Mini Juego Mental</h3>
-        <div id="miniGameQuestion">Presiona iniciar para activar el reto.</div>
-        <div id="miniGameOptions"></div>
-        <button onclick="generateMiniGame()">Activar Reto Mental</button>
-    </div>
+<div class="right">
 
-    <audio id="sessionAudio" autoplay></audio>
+<div class="box">
+<h3>💬 Chat en vivo (anónimo)</h3>
+<div class="chat-box" id="chatBox"></div>
+<br>
+<input type="text" id="chatInput" placeholder="Escribe mensaje...">
+<button class="primary" onclick="sendChat()">Enviar</button>
+</div>
+
+</div>
 
 </div>
 
 <script>
 
-// ------------------------------
-// MINI JUEGOS DINÁMICOS
-// ------------------------------
+let ws = new WebSocket(`ws://${location.host}/ws`);
+let currentAnswer = "";
+let timeLeft = 600;
 
-function generateMiniGame() {
+// ------------------
+// TIMER 10 MINUTOS
+// ------------------
+setInterval(()=>{
+    if(timeLeft>0){
+        timeLeft--;
+        let min = Math.floor(timeLeft/60);
+        let sec = timeLeft%60;
+        document.getElementById("time").innerText =
+            `${min}:${sec<10?"0":""}${sec}`;
+    }
+},1000);
 
-    const questionBox = document.getElementById("miniGameQuestion");
-    const optionsBox = document.getElementById("miniGameOptions");
-    optionsBox.innerHTML = "";
+// ------------------
+// WEBSOCKET EVENTS
+// ------------------
+ws.onmessage = function(event){
 
-    const gameType = Math.floor(Math.random() * 6);
+    let data = JSON.parse(event.data);
 
-    let question = "";
-    let correctAnswer = "";
-    let options = [];
-
-    // 1️⃣ Matemática emocional
-    if (gameType === 0) {
-        const base = Math.floor(Math.random() * 5) + 1;
-        const plus = Math.floor(Math.random() * 6) + 2;
-        correctAnswer = base + plus;
-        question = `Si hoy me siento ${base} puntos feliz y mañana ${plus} puntos más… ¿cuánto tendré?`;
-        options = [correctAnswer, correctAnswer+1, correctAnswer-1];
+    if(data.type==="question"){
+        document.getElementById("question").innerText = data.text;
+        document.getElementById("feedback").innerText = "";
+        currentAnswer = "";
     }
 
-    // 2️⃣ Problemas vs oportunidades
-    else if (gameType === 1) {
-        correctAnswer = "6 oportunidades";
-        question = "Si tengo 10 problemas y resuelvo 4, ¿qué me queda?";
-        options = ["6 problemas", "6 oportunidades", "4 problemas"];
+    if(data.type==="feedback"){
+        document.getElementById("feedback").innerText = data.text;
     }
 
-    // 3️⃣ Número escondido
-    else if (gameType === 2) {
-        correctAnswer = 14;
-        question = "Soy un número mayor que 10 y menor que 20. Soy par. Si me divides entre 2, te da 7. ¿Quién soy?";
-        options = [12, 14, 16];
+    if(data.type==="update_participants"){
+        document.getElementById("participants").innerText = data.count;
     }
 
-    // 4️⃣ Series divertidas
-    else if (gameType === 3) {
-        correctAnswer = 8;
-        question = "Completa la serie: 2, 4, 6, __";
-        options = [7, 8, 10];
+    if(data.type==="update_ranking"){
+        let rankingDiv = document.getElementById("ranking");
+        rankingDiv.innerHTML = "";
+        data.ranking.forEach(r=>{
+            rankingDiv.innerHTML +=
+                `<div class="rank-item">${r.name} - Nivel ${r.level}</div>`;
+        });
     }
 
-    // 5️⃣ Dobles fáciles
-    else if (gameType === 4) {
-        correctAnswer = 24;
-        question = "¿Cuánto es el doble de 12?";
-        options = [22, 24, 26];
+    if(data.type==="chat"){
+        let chatBox = document.getElementById("chatBox");
+        chatBox.innerHTML +=
+            `<div><strong>${data.sender}:</strong> ${data.text}</div>`;
+        chatBox.scrollTop = chatBox.scrollHeight;
     }
 
-    // 6️⃣ Adivinanza logística
-    else {
-        correctAnswer = "Conocimiento de embarque";
-        question = "Vuelo sin alas, cruzo fronteras sin pasaporte y guardo tesoros sin ser cofre. ¿Qué soy?";
-        options = ["Avión", "Maleta", "Conocimiento de embarque"];
-    }
+};
 
-    questionBox.innerText = question;
+// ------------------
+// SEND ANSWER
+// ------------------
+function sendAnswer(){
+    let input = document.getElementById("answerInput");
+    let text = input.value.trim();
+    if(text==="") return;
 
-    options.sort(() => Math.random() - 0.5);
+    ws.send(JSON.stringify({
+        type:"answer",
+        text:text
+    }));
 
-    options.forEach(option => {
-        const btn = document.createElement("button");
-        btn.className = "answerOption";
-        btn.innerText = option;
-        btn.onclick = function() {
-            if (option == correctAnswer) {
-                btn.classList.add("correct");
-                document.getElementById("feedback").innerText = "💥 Correcto! Dopamina activada!";
-                speak("Correcto. Tu mente está activa.");
-            } else {
-                btn.classList.add("wrong");
-                document.getElementById("feedback").innerText = "⚠️ Intenta nuevamente. Tu mente puede más.";
-                speak("Intenta otra vez.");
-            }
-        };
-        optionsBox.appendChild(btn);
-    });
-
-    speak(question);
+    input.value="";
 }
 
-// ------------------------------
-// VOZ AUTOMÁTICA LOCAL
-// ------------------------------
-
-function speak(text) {
-    const msg = new SpeechSynthesisUtterance(text);
-    msg.lang = "es-ES";
-    msg.rate = 1;
-    msg.pitch = 1;
-    window.speechSynthesis.speak(msg);
+// ------------------
+// SHOW ANSWER BUTTON
+// ------------------
+function showAnswer(){
+    document.getElementById("feedback").innerText =
+        "Responde para ver si activas dopamina 💥";
 }
 
-// ------------------------------
-// FUNCIONES EXISTENTES
-// ------------------------------
+// ------------------
+// SEND CHAT
+// ------------------
+function sendChat(){
+    let input = document.getElementById("chatInput");
+    let text = input.value.trim();
+    if(text==="") return;
 
-function sendAnswer() {
-    const input = document.getElementById("answerInput");
-    if(input.value.trim() === "") return;
-    document.getElementById("feedback").innerText = "💥 Respuesta enviada.";
-    input.value = "";
-}
+    ws.send(JSON.stringify({
+        type:"chat",
+        text:text
+    }));
 
-function sendChat() {
-    const input = document.getElementById("chatInput");
-    if(input.value.trim() === "") return;
-
-    const chatBox = document.getElementById("chatBox");
-    const msg = document.createElement("div");
-    msg.className = "chatMessage";
-    msg.innerText = input.value;
-    chatBox.appendChild(msg);
-
-    input.value = "";
-    chatBox.scrollTop = chatBox.scrollHeight;
+    input.value="";
 }
 
 </script>
