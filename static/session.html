@@ -7,119 +7,209 @@
 <style>
 body { background:#111; color:#eee; font-family: Arial, sans-serif; }
 #sessionContainer { max-width:800px; margin:auto; padding:20px; }
-#participants,#timeRemaining,#feedback,#ranking,#miniGame,#stories { margin-bottom:10px; }
-#questionBox,#miniGame { background:#222; padding:15px; border-radius:8px; margin-bottom:10px; font-size:1.2em; }
+#participants,#timeRemaining,#feedback,#ranking { margin-bottom:10px; }
+#questionBox { background:#222; padding:15px; border-radius:8px; margin-bottom:10px; font-size:1.2em; }
 #answerInput,#chatInput { width:100%; padding:10px; margin-bottom:5px; border-radius:5px; border:none; }
 #chatBox { background:#222; padding:10px; height:200px; overflow-y:auto; border-radius:8px; margin-bottom:10px; }
-button { padding:10px 20px; border:none; border-radius:5px; background:#ff4d4d; color:#fff; font-weight:bold; cursor:pointer; margin-right:5px; }
+button { padding:10px 20px; border:none; border-radius:5px; background:#ff4d4d; color:#fff; font-weight:bold; cursor:pointer; margin:3px; }
 button:hover { background:#ff1a1a; }
 .timer { font-size:1.2em; font-weight:bold; }
 .chatMessage { margin-bottom:4px; }
 .simulated { color:#ffcc00; font-weight:bold; }
 #rankingList { margin-top:5px; }
 .level { font-weight:bold; color:#00ffcc; }
-.miniGameBtn { background:#00ccff; color:#111; font-weight:bold; }
-.story { background:#333; padding:10px; border-radius:5px; margin-bottom:5px; font-style:italic; color:#ffcc00; }
+#miniGameBox {
+    background:#1a1a1a;
+    padding:15px;
+    border-radius:8px;
+    margin-top:15px;
+}
+.answerOption {
+    display:block;
+    width:100%;
+    margin-top:5px;
+    background:#333;
+}
+.answerOption:hover {
+    background:#444;
+}
+.correct {
+    background:#00aa55 !important;
+}
+.wrong {
+    background:#aa0000 !important;
+}
 </style>
 </head>
+
 <body>
 <div id="sessionContainer">
+
     <h1>KaMiZen - Sesión diaria</h1>
 
     <div id="participants">🔥 Conectados: 1/500</div>
-    <div class="timer">⏳ Tiempo restante: <span id="timeRemaining">10:00</span></div>
+
+    <div class="timer">
+        ⏳ Tiempo restante: <span id="timeRemaining">10:00</span>
+    </div>
+
     <div id="ranking">
         🏆 Top 5 del momento
         <div id="rankingList"></div>
     </div>
 
-    <div id="questionBox">Cargando pregunta...</div>
+    <div id="questionBox">
+        Bienvenido a KaMiZen. Prepárate para activar tu mente.
+    </div>
+
     <input type="text" id="answerInput" placeholder="Escribe tu respuesta aquí...">
     <button onclick="sendAnswer()">Enviar</button>
+
     <div id="feedback"></div>
-
-    <!-- Mini-juegos mentales y adivinanzas -->
-    <div id="miniGame">
-        <strong>Mini-Juego Mental:</strong> <span id="miniGameQuestion">Cargando...</span><br>
-        <div id="miniGameButtons"></div>
-        <div id="miniGameFeedback"></div>
-    </div>
-
-    <!-- Historias cortas de éxito, poder y bienestar -->
-    <div id="stories">
-        <strong>Historias cortas:</strong>
-        <div id="storyBox">Cargando historias...</div>
-    </div>
 
     <h3>Chat en vivo (anónimo)</h3>
     <div id="chatBox">Cargando chat...</div>
+
     <input type="text" id="chatInput" placeholder="Escribe mensaje...">
     <button onclick="sendChat()">Enviar</button>
 
+    <!-- MINI JUEGOS -->
+    <div id="miniGameBox">
+        <h3>🧠 Mini Juego Mental</h3>
+        <div id="miniGameQuestion">Presiona iniciar para activar el reto.</div>
+        <div id="miniGameOptions"></div>
+        <button onclick="generateMiniGame()">Activar Reto Mental</button>
+    </div>
+
     <audio id="sessionAudio" autoplay></audio>
+
 </div>
 
-<script src="/static/app.js"></script>
 <script>
-// ==================================
-// Mini-juegos y adivinanzas
-// ==================================
-const miniGames = [
-    {question:"Vuelo sin alas, cruzo fronteras sin pasaporte y guardo tesoros sin ser cofre. ¿Qué soy?", options:["Conocimiento de embarque","Avión","Maleta"], answer:0},
-    {question:"Suma rápida: 45 + 32 = ?", options:["77","78","79"], answer:1},
-    {question:"¿Qué es lo único que sube y nunca baja, pero te hace sentir más ligero si lo compartes?", options:["Esperanza","Dinero","Éxito"], answer:0}
-];
-const miniGameQuestionEl = document.getElementById("miniGameQuestion");
-const miniGameButtonsEl = document.getElementById("miniGameButtons");
-const miniGameFeedbackEl = document.getElementById("miniGameFeedback");
 
-function loadMiniGame() {
-    const game = miniGames[Math.floor(Math.random()*miniGames.length)];
-    miniGameQuestionEl.innerText = game.question;
-    miniGameButtonsEl.innerHTML = "";
-    game.options.forEach((opt,i)=>{
-        const btn = document.createElement("button");
-        btn.classList.add("miniGameBtn");
-        btn.innerText = opt;
-        btn.onclick = ()=>checkMiniGame(game,i);
-        miniGameButtonsEl.appendChild(btn);
-    });
-}
+// ------------------------------
+// MINI JUEGOS DINÁMICOS
+// ------------------------------
 
-function checkMiniGame(game,index) {
-    if(index === game.answer){
-        miniGameFeedbackEl.innerText = "💥 Correcto! Dopamina activada!";
-    } else {
-        miniGameFeedbackEl.innerText = `❌ Incorrecto! La respuesta era "${game.options[game.answer]}"`;
+function generateMiniGame() {
+
+    const questionBox = document.getElementById("miniGameQuestion");
+    const optionsBox = document.getElementById("miniGameOptions");
+    optionsBox.innerHTML = "";
+
+    const gameType = Math.floor(Math.random() * 6);
+
+    let question = "";
+    let correctAnswer = "";
+    let options = [];
+
+    // 1️⃣ Matemática emocional
+    if (gameType === 0) {
+        const base = Math.floor(Math.random() * 5) + 1;
+        const plus = Math.floor(Math.random() * 6) + 2;
+        correctAnswer = base + plus;
+        question = `Si hoy me siento ${base} puntos feliz y mañana ${plus} puntos más… ¿cuánto tendré?`;
+        options = [correctAnswer, correctAnswer+1, correctAnswer-1];
     }
-    setTimeout(loadMiniGame,3000);
+
+    // 2️⃣ Problemas vs oportunidades
+    else if (gameType === 1) {
+        correctAnswer = "6 oportunidades";
+        question = "Si tengo 10 problemas y resuelvo 4, ¿qué me queda?";
+        options = ["6 problemas", "6 oportunidades", "4 problemas"];
+    }
+
+    // 3️⃣ Número escondido
+    else if (gameType === 2) {
+        correctAnswer = 14;
+        question = "Soy un número mayor que 10 y menor que 20. Soy par. Si me divides entre 2, te da 7. ¿Quién soy?";
+        options = [12, 14, 16];
+    }
+
+    // 4️⃣ Series divertidas
+    else if (gameType === 3) {
+        correctAnswer = 8;
+        question = "Completa la serie: 2, 4, 6, __";
+        options = [7, 8, 10];
+    }
+
+    // 5️⃣ Dobles fáciles
+    else if (gameType === 4) {
+        correctAnswer = 24;
+        question = "¿Cuánto es el doble de 12?";
+        options = [22, 24, 26];
+    }
+
+    // 6️⃣ Adivinanza logística
+    else {
+        correctAnswer = "Conocimiento de embarque";
+        question = "Vuelo sin alas, cruzo fronteras sin pasaporte y guardo tesoros sin ser cofre. ¿Qué soy?";
+        options = ["Avión", "Maleta", "Conocimiento de embarque"];
+    }
+
+    questionBox.innerText = question;
+
+    options.sort(() => Math.random() - 0.5);
+
+    options.forEach(option => {
+        const btn = document.createElement("button");
+        btn.className = "answerOption";
+        btn.innerText = option;
+        btn.onclick = function() {
+            if (option == correctAnswer) {
+                btn.classList.add("correct");
+                document.getElementById("feedback").innerText = "💥 Correcto! Dopamina activada!";
+                speak("Correcto. Tu mente está activa.");
+            } else {
+                btn.classList.add("wrong");
+                document.getElementById("feedback").innerText = "⚠️ Intenta nuevamente. Tu mente puede más.";
+                speak("Intenta otra vez.");
+            }
+        };
+        optionsBox.appendChild(btn);
+    });
+
+    speak(question);
 }
 
-// ==================================
-// Historias cortas motivadoras
-// ==================================
-const stories = [
-    "💰 Cerré un trato millonario hoy sin perder tiempo",
-    "🔥 Nadie me supera en decisión rápida",
-    "⚡ Cada segundo cuenta para subir de nivel",
-    "🏆 Subí un nivel gracias a mi disciplina",
-    "💥 Cada palabra cuenta, actúa ya"
-];
-const storyBox = document.getElementById("storyBox");
+// ------------------------------
+// VOZ AUTOMÁTICA LOCAL
+// ------------------------------
 
-function loadStory() {
-    const story = stories[Math.floor(Math.random()*stories.length)];
-    storyBox.innerText = story;
+function speak(text) {
+    const msg = new SpeechSynthesisUtterance(text);
+    msg.lang = "es-ES";
+    msg.rate = 1;
+    msg.pitch = 1;
+    window.speechSynthesis.speak(msg);
 }
 
-// ==================================
-// Inicializar mini-juego e historias
-// ==================================
-loadMiniGame();
-setInterval(loadMiniGame, 60000); // Cambia mini-juego cada 1 min
-loadStory();
-setInterval(loadStory, 45000); // Cambia historia cada 45s
+// ------------------------------
+// FUNCIONES EXISTENTES
+// ------------------------------
+
+function sendAnswer() {
+    const input = document.getElementById("answerInput");
+    if(input.value.trim() === "") return;
+    document.getElementById("feedback").innerText = "💥 Respuesta enviada.";
+    input.value = "";
+}
+
+function sendChat() {
+    const input = document.getElementById("chatInput");
+    if(input.value.trim() === "") return;
+
+    const chatBox = document.getElementById("chatBox");
+    const msg = document.createElement("div");
+    msg.className = "chatMessage";
+    msg.innerText = input.value;
+    chatBox.appendChild(msg);
+
+    input.value = "";
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
 
 </script>
+
 </body>
 </html>
