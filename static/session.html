@@ -2,37 +2,76 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>KaMiZen – Asesoría de Éxito y Bienestar</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <title>KaMiZen NeuroGame</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #0f172a;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background: #111827;
+            padding: 20px;
+            text-align: center;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+        .container {
+            padding: 20px;
+        }
+        .section {
+            margin-bottom: 25px;
+            background: #1f2937;
+            padding: 15px;
+            border-radius: 10px;
+        }
+        .section h2 {
+            margin-top: 0;
+            color: #facc15;
+        }
+        .content {
+            font-size: 1.2em;
+            margin-top: 10px;
+        }
+        #refreshBtn {
+            margin-top: 10px;
+            padding: 8px 16px;
+            background: #f59e0b;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            color: #000;
+            font-weight: bold;
+        }
+        #refreshBtn:hover {
+            background: #d97706;
+        }
+    </style>
 </head>
 <body>
-
-<header>✨ KaMiZen – Tu Asesoría Personalizada</header>
-
-<div class="container">
-    <div class="main-content">
-        <div class="box">
-            <div class="status">
-                <div id="status">Preparando sesión...</div>
-                <div class="timer">⏳ <span id="time">10:00</span></div>
-            </div>
-            <div class="progress-container">
-                <div class="progress-fill" id="progressFill"></div>
-            </div>
+    <header>KaMiZen NeuroGame</header>
+    <div class="container">
+        <div class="section">
+            <h2>Historia del Día</h2>
+            <div id="historia" class="content">Cargando...</div>
         </div>
 
-        <div class="box">
-            <div class="content-area" id="content">
-                Iniciando tu sesión de éxito...
-            </div>
+        <div class="section">
+            <h2>Ejercicio del Día</h2>
+            <div id="ejercicio" class="content">Cargando...</div>
         </div>
 
-        <div class="box">
-            <button class="primary" onclick="resetSession()">Borrar Sesión / Reiniciar</button>
+        <div class="section">
+            <h2>Bienestar del Día</h2>
+            <div id="bienestar" class="content">Cargando...</div>
         </div>
+
+        <button id="refreshBtn">Siguiente Contenido</button>
     </div>
-</div>
 
-<script src="/static/scripts.js"></script>
+    <script src="/static/scripts.js"></script>
 </body>
 </html>
