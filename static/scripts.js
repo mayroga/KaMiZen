@@ -1,4 +1,5 @@
-let ws=new WebSocket(`ws://${location.host}/ws`);
+let protocol = location.protocol === "https:" ? "wss://" : "ws://";
+let ws = new WebSocket(protocol + location.host + "/ws");
 
 function sendAnswer(){
     let input=document.getElementById("answerInput");
@@ -52,10 +53,6 @@ ws.onmessage=function(event){
         chatBox.innerHTML+=`<div><strong>${data.sender}:</strong> ${data.text}</div>`;
 
         chatBox.scrollTop=chatBox.scrollHeight;
-    }
-
-    if(data.type==="timer"){
-        document.getElementById("time").innerText=data.time;
     }
 
 }
