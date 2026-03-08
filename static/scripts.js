@@ -1,93 +1,58 @@
-let ws = new WebSocket(`ws://${location.host}/ws`);
-let currentQuestion = "🎯 Cargando desafío...";
-let currentAnswer = "";
-let elapsedTime = 0;
-const sessionTime = 600; // 10 minutos
+// 1. Generar ID único persistente para el motor de no-repetición
+let uid = localStorage.getItem("aura_uid");
+if (!uid) {
+    uid = Math.random().toString(36).substring(2, 15);
+    localStorage.setItem("aura_uid", uid);
+}
 
-const questionEl = document.getElementById("question");
-const feedbackEl = document.getElementById("feedback");
-const answerInput = document.getElementById("answerInput");
-const timeEl = document.getElementById("time");
-const rankingEl = document.getElementById("ranking");
-const progressFill = document.getElementById("progressFill");
-const chatBox = document.getElementById("chatBox");
+// 2. Conectar al WebSocket pasando el ID
+let ws = new WebSocket(`ws://${location.host}/ws/${uid}`);
+let sessionData = {};
 
-// -----------------------------
-// Formatear tiempo
-// -----------------------------
-function formatTime(s){ return `${Math.floor(s/60)}:${(s%60<10?"0":"")}${s%60}`; }
-let sessionInterval = setInterval(()=>{
-    if(elapsedTime>=sessionTime){
-        clearInterval(sessionInterval);
-        questionEl.innerText="⏳ Sesión finalizada. ¡Mañana subes de nivel!";
-        feedbackEl.innerText="";
-        return;
-    }
-    elapsedTime++;
-    timeEl.innerText = formatTime(sessionTime-elapsedTime);
-    progressFill.style.width = (elapsedTime/sessionTime*100)+"%";
-},1000);
-
-// -----------------------------
-// WebSocket
-// -----------------------------
-ws.onmessage = function(event){
-    let data = JSON.parse(event.data);
-
-    if(data.type==="question"){
-        currentQuestion = data.text || "🎯 Cargando desafío...";
-        currentAnswer = data.answer || "";
-        questionEl.innerText = currentQuestion;
-        feedbackEl.innerText = "";
-    }
-    if(data.type==="feedback"){
-        feedbackEl.innerText = data.text;
-    }
-    if(data.type==="update_participants"){
-        document.getElementById("participants").innerText = data.count;
-    }
-    if(data.type==="update_ranking"){
-        rankingEl.innerHTML = "";
-        data.ranking.forEach(r=>{
-            rankingEl.innerHTML += `<div class="rank-item">${r.name} - Nivel ${r.level}</div>`;
-        });
-    }
-    if(data.type==="chat"){
-        chatBox.innerHTML += `<div><strong>${data.sender}:</strong> ${data.text}</div>`;
-        chatBox.scrollTop = chatBox.scrollHeight;
+ws.onmessage = (event) => {
+    let msg = JSON.parse(event.data);
+    if (msg.type === "init") {
+        sessionData = msg.content;
+        startSession();
     }
 };
 
-// -----------------------------
-// Enviar respuesta
-// -----------------------------
-function sendAnswer(){
-    let text = answerInput.value.trim();
-    if(text==="") return;
-    ws.send(JSON.stringify({type:"answer", text:text}));
-    answerInput.value="";
+// 3. Motor de Sesión de 10 Minutos
+function startSession() {
+    let timeLeft = 600; // 10 minutos
+    const timerEl = document.getElementById("time");
+    const contentEl = document.getElementById("content");
+    const statusEl = document.getElementById("status");
+
+    let interval = setInterval(() => {
+        timeLeft--;
+        let min = Math.floor(timeLeft / 60);
+        let sec = timeLeft % 60;
+        timerEl.innerText = `${min}:${sec < 10 ? '0' : ''}${sec}`;
+
+        // Flujo lógico de 10 minutos (bloques de 2.5 min)
+        if (timeLeft === 600) updateUI("Enfoque: Bienestar", sessionData.bienestar);
+        if (timeLeft === 450) updateUI("Estrategia: Éxito", sessionData.historia);
+        if (timeLeft === 300) updateUI("Agilidad: Reto Mental", sessionData.ejercicio);
+        if (timeLeft === 150) updateUI("Reflexión Final", "Analiza cómo aplicar esto hoy.");
+
+        if (timeLeft <= 0) {
+            clearInterval(interval);
+            statusEl.innerText = "Sesión Completada";
+        }
+    }, 1000);
 }
 
-// -----------------------------
-// Ver respuesta
-// -----------------------------
-function showAnswer(){
-    feedbackEl.innerText = currentAnswer || "🎯 Respuesta no disponible";
+function updateUI(title, content) {
+    document.getElementById("status").innerText = title;
+    document.getElementById("content").innerText = content;
 }
 
-// -----------------------------
-// Siguiente desafío
-// -----------------------------
-function nextChallenge(){
-    ws.send(JSON.stringify({type:"answer", text:""}));
-}
-
-// -----------------------------
-// Escuchar historia (SpeechSynthesis)
-function playAudioStory(){
-    if(currentQuestion==="") return;
-    let utterance = new SpeechSynthesisUtterance(currentQuestion);
-    utterance.lang = "es-ES";
-    utterance.rate = 1;
-    speechSynthesis.speak(utterance);
+// 4. Función de borrado profesional (Reseteo de sesión)
+function resetSession() {
+    if (confirm("¿Deseas reiniciar tu ciclo de Asesoría?")) {
+        localStorage.removeItem("aura_uid");
+        localStorage.clear();
+        location.reload();
+    }
 }
