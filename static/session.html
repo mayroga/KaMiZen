@@ -10,38 +10,40 @@
 <header>🔥 KaMiZen – 10 Min NeuroFinancial Game</header>
 
 <div class="container">
+
 <div class="left">
-    <div class="box">
-        <div class="status">
-            <div>🔥 Conectados: <span id="participants">0</span>/500</div>
-            <div class="timer">⏳ <span id="time">10:00</span></div>
-        </div>
-        <div class="progress-container">
-            <div class="progress-fill" id="progressFill"></div>
-        </div>
+  <div class="box">
+    <div class="status">
+      <div>🔥 Conectados: <span id="participants">0</span>/500</div>
+      <div class="timer">⏳ <span id="time">10:00</span></div>
     </div>
+    <div class="progress-container">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+  </div>
 
-    <div class="box">
-        <div class="question" id="question">Cargando desafío...</div>
-        <input type="text" id="answerInput" placeholder="Escribe tu respuesta aquí...">
-        <button class="primary" onclick="sendAnswer()">Enviar</button>
-        <button class="primary" onclick="nextChallenge()">Siguiente desafío</button>
-        <button class="primary" onclick="playAudio()">Escuchar historia</button>
-        <div class="feedback" id="feedback"></div>
-    </div>
+  <div class="box">
+    <div class="question" id="question">Cargando desafío...</div>
+    <input type="text" id="answerInput" placeholder="Escribe tu respuesta aquí...">
+    <button class="primary" onclick="sendAnswer()">Enviar</button>
+    <button onclick="showAnswer()">Ver respuesta</button>
+    <button onclick="nextChallenge()">Siguiente desafío ⏭</button>
+    <button onclick="playAudioStory()">Escuchar historia 🔊</button>
+    <div class="feedback" id="feedback"></div>
+    <div class="mini-story" id="miniStory"></div>
+  </div>
 
-    <div class="box">
-        <h3>🏆 Top 5 Traders</h3>
-        <div id="ranking"></div>
-    </div>
+  <div class="box">
+    <h3>🏆 Top 5 Traders</h3>
+    <div id="ranking"></div>
+  </div>
 </div>
 
 <div class="right">
-    <div class="box">
-        <h3>💬 Chat de Bots</h3>
-        <div class="chat-box" id="chatBox"></div>
-    </div>
-</div>
+  <div class="box">
+    <h3>💬 Chat de Bots</h3>
+    <div class="chat-box" id="chatBox"></div>
+  </div>
 </div>
 
 <script src="/static/scripts.js"></script>
