@@ -1,8 +1,9 @@
 let ws = new WebSocket(`ws://${location.host}/ws`);
-let currentQuestion = "";
+let currentQuestion = "🎯 Cargando desafío...";
 let currentAnswer = "";
 let elapsedTime = 0;
 const sessionTime = 600; // 10 minutos
+
 const questionEl = document.getElementById("question");
 const feedbackEl = document.getElementById("feedback");
 const answerInput = document.getElementById("answerInput");
