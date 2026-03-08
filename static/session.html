@@ -2,53 +2,76 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>KaMiZen - Bienestar y Poder</title>
+<title>KaMiZen - NeuroWellness Game</title>
 <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
 
-<header>🔥 KaMiZen – Mini Retos de Bienestar y Poder</header>
+<header>🔥 KaMiZen – 10 Min NeuroWellness Game</header>
 
 <div class="container">
 
-<div class="left">
-<div class="box">
-<div class="status">
-<div>🔥 Jugadores conectados: <span id="participants">1</span></div>
-<div class="timer">⏳ <span id="time">0:00</span></div>
-</div>
-<div class="progress-container">
-<div class="progress-fill" id="progressFill"></div>
-</div>
-</div>
+  <!-- LADO IZQUIERDO: RETOS -->
+  <div class="left">
 
-<div class="box">
-<div class="question" id="question">Cargando reto...</div>
-<input type="text" id="answerInput" placeholder="Escribe tu respuesta aquí...">
-<button class="primary" onclick="sendAnswer()">Enviar</button>
-<button onclick="skipChallenge()">Siguiente Reto</button>
-<div class="feedback" id="feedback"></div>
-<div class="mini-story" id="miniStory"></div>
-<audio id="audioClip"></audio>
-</div>
+    <!-- STATUS Y PROGRESO -->
+    <div class="box">
+      <div class="status">
+        <div>🔥 Nivel: <span id="userLevel">1</span></div>
+        <div class="timer">⏳ <span id="time">10:00</span></div>
+      </div>
+      <div class="progress-container">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+    </div>
 
-<div class="box">
-<h3>💬 Chat Motivador</h3>
-<div class="chat-box" id="chatBox"></div>
-</div>
-</div>
+    <!-- RETO -->
+    <div class="box">
+      <div class="question" id="question">Cargando desafío...</div>
+      <input type="text" id="answerInput" placeholder="Escribe tu respuesta aquí...">
+      <button class="primary" onclick="sendAnswer()">Enviar</button>
+      <button onclick="showAnswer()">Ver respuesta</button>
+      <button class="primary" onclick="nextChallenge()">Siguiente reto</button>
+      <div class="feedback" id="feedback"></div>
+      <div class="mini-story" id="miniStory"></div>
+      <audio id="audioClip"></audio>
+    </div>
 
-<div class="right">
-<div class="box">
-<h3>📖 Enseñanza / Poder</h3>
-<div class="mini-story" id="lessonBox"></div>
-</div>
-</div>
+    <!-- RANKING -->
+    <div class="box">
+      <h3>🏆 Top Traders</h3>
+      <div id="ranking"></div>
+    </div>
+
+  </div>
+
+  <!-- LADO DERECHO: CHAT BOT -->
+  <div class="right">
+    <div class="box">
+      <h3>💬 Chat Motivacional</h3>
+      <div class="chat-box" id="chatBox"></div>
+    </div>
+  </div>
 
 </div>
 
 <script src="/static/scripts.js"></script>
 <script src="/static/app.js"></script>
+
+<script>
+// ==============================
+// VARIABLES PRINCIPALES
+// ==============================
+let userLevelEl = document.getElementById("userLevel");
+
+// Actualizar nivel visual
+function updateLevel(){
+    userLevelEl.innerText = userLevel;
+}
+
+// Ejecutar inicialización
+updateLevel();
+</script>
 
 </body>
 </html>
