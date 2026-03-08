@@ -1,159 +1,82 @@
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
-import asyncio
 import json
 import os
 import random
-import httpx
 
-app = FastAPI(title="KaMiZen NeuroGame Engine")
-
+app = FastAPI(title="AURA NeuroGame Engine")
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-MAX_PARTICIPANTS = 500
-ranking = []
+DATA_FILE = "session_data.json"
 
-OPENAI_KEY = os.environ.get("OPENAI_API_KEY")
-GEMINI_KEY = os.environ.get("GEMINI_API_KEY")
+# --- BASE DE DATOS (AQUÍ RELLENARÁS LAS 300 FRASES) ---
+db = {
+    "historias": ["Frase éxito 1", "Frase éxito 2"], # Rellenar hasta 100
+    "ejercicios": ["Reto 1", "Reto 2"],             # Rellenar hasta 100
+    "bienestar": ["Consejo 1", "Consejo 2"]         # Rellenar hasta 100
+}
 
-# -----------------------------
-# IA: generar desafío único
-# -----------------------------
-async def generate_challenge_via_ai():
-    prompt = """Eres ayudante de KaMiZen. Genera un mini-desafío único de 1 a 2 frases, que sea:
-- Historia corta de éxito, poder, bienestar o dinero
-- Adivinanza o reto matemático
-Devuelve un JSON con:
-{"question":"Texto del reto o historia","answer":"Respuesta o texto que se revelará al cliente"}"""
-
-    # Fallback local
-    local_challenges = [
-        {"question":"Si sumas 7+5, ¿cuánto es?","answer":"12"},
-        {"question":"Adivina: Tiene dientes pero no muerde, ¿qué es?","answer":"Peine"},
-        {"question":"💡 Historia: Un emprendedor reinvirtió todo su primer ingreso y creció en 10 años.","answer":"Reinversión"},
-        {"question":"⚡ Reto: Completa la serie 2,4,6,___","answer":"8"}
-    ]
-
-    # Intentar Gemini primero
-    if GEMINI_KEY:
+# --- MOTOR DE PERSISTENCIA ---
+def cargar_historial():
+    if os.path.exists(DATA_FILE):
         try:
-            headers = {"Authorization": f"Bearer {GEMINI_KEY}"}
-            data = {"prompt": prompt, "temperature":0.8}
-            async with httpx.AsyncClient(timeout=10) as client:
-                r = await client.post("https://gemini.api.url/generate", headers=headers, json=data)
-                resp = r.json()
-                challenge = json.loads(resp.get("text","{}"))
-                if "question" in challenge and "answer" in challenge:
-                    return challenge
-        except Exception:
-            pass
+            with open(DATA_FILE, "r") as f: return json.load(f)
+        except: return {}
+    return {}
 
-    # Fallback OpenAI
-    if OPENAI_KEY:
-        try:
-            headers = {"Authorization": f"Bearer {OPENAI_KEY}"}
-            data = {
-                "model": "gpt-4",
-                "messages": [{"role":"user","content":prompt}],
-                "temperature":0.8
-            }
-            async with httpx.AsyncClient(timeout=15) as client:
-                r = await client.post("https://api.openai.com/v1/chat/completions", headers=headers, json=data)
-                resp = r.json()
-                text = resp['choices'][0]['message']['content'].strip()
-                challenge = json.loads(text)
-                if "question" in challenge and "answer" in challenge:
-                    return challenge
-        except Exception:
-            pass
+def guardar_historial(historial):
+    with open(DATA_FILE, "w") as f: json.dump(historial, f)
 
-    # Local fallback seguro
-    return random.choice(local_challenges)
+def obtener_siguiente_contenido(user_id, categoria):
+    historial = cargar_historial()
+    if user_id not in historial:
+        historial[user_id] = {"historias": [], "ejercicios": [], "bienestar": []}
+    
+    vistas = historial[user_id][categoria]
+    disponibles = [item for item in db[categoria] if item not in vistas]
+    
+    if not disponibles:
+        historial[user_id][categoria] = []
+        disponibles = db[categoria]
+        
+    seleccion = random.choice(disponibles)
+    historial[user_id][categoria].append(seleccion)
+    guardar_historial(historial)
+    return seleccion
 
-# -----------------------------
-# Gestor de conexiones
-# -----------------------------
+# --- GESTOR DE CONEXIONES ---
 class Manager:
-    def __init__(self):
-        self.connections = []
-
-    async def connect(self, ws: WebSocket):
+    def __init__(self): self.connections = {}
+    async def connect(self, ws: WebSocket, uid: str):
         await ws.accept()
-        self.connections.append(ws)
-        await self.broadcast_participants()
-
-    def disconnect(self, ws: WebSocket):
-        if ws in self.connections:
-            self.connections.remove(ws)
-
-    async def broadcast(self, data):
-        for c in self.connections:
-            try:
-                await c.send_text(json.dumps(data))
-            except:
-                pass
-
-    async def broadcast_participants(self):
-        await self.broadcast({"type":"update_participants","count":len(self.connections),"max":MAX_PARTICIPANTS})
+        self.connections[uid] = ws
+    def disconnect(self, uid: str):
+        if uid in self.connections: del self.connections[uid]
 
 manager = Manager()
 
-# -----------------------------
-# WebSocket principal
-# -----------------------------
-@app.websocket("/ws")
-async def websocket_endpoint(ws: WebSocket):
-    await manager.connect(ws)
-    user_name = f"Jugador{random.randint(100,999)}"
-    level = 1
-    user_data = {"name":user_name,"level":level}
-    ranking.append(user_data)
-
-    current_game = await generate_challenge_via_ai()
-    if "question" not in current_game or not current_game["question"]:
-        current_game["question"] = "🎯 Cargando desafío..."
-    if "answer" not in current_game:
-        current_game["answer"] = ""
-
-    await ws.send_text(json.dumps({"type":"question","text":current_game["question"],"answer":current_game["answer"]}))
-
+# --- ENDPOINT WEBSOCKET ---
+@app.websocket("/ws/{user_id}")
+async def websocket_endpoint(ws: WebSocket, user_id: str):
+    await manager.connect(ws, user_id)
+    
+    # Enviar contenido único del día
+    contenido = {
+        "historia": obtener_siguiente_contenido(user_id, "historias"),
+        "ejercicio": obtener_siguiente_contenido(user_id, "ejercicios"),
+        "bienestar": obtener_siguiente_contenido(user_id, "bienestar")
+    }
+    
+    await ws.send_json({"type": "init", "content": contenido})
+    
     try:
         while True:
-            data = await ws.receive_text()
-            msg = json.loads(data)
-
-            if msg["type"]=="answer":
-                ans = msg.get("text","").strip().lower()
-                correct = current_game.get("answer","")
-                if isinstance(correct,list):
-                    is_correct = ans in [x.lower() for x in correct]
-                else:
-                    is_correct = (ans==correct.lower()) or correct=="" 
-
-                feedback = "💥 Correcto! Sigue disfrutando KaMiZen!" if is_correct else f"❌ Incorrecto. Era: {correct}" if correct else "❌ Incorrecto"
-                await ws.send_text(json.dumps({"type":"feedback","text":feedback}))
-
-                top5 = sorted(ranking, key=lambda x:x["level"], reverse=True)[:5]
-                await manager.broadcast({"type":"update_ranking","ranking":top5})
-
-                current_game = await generate_challenge_via_ai()
-                if "question" not in current_game or not current_game["question"]:
-                    current_game["question"] = "🎯 Cargando desafío..."
-                if "answer" not in current_game:
-                    current_game["answer"] = ""
-                await ws.send_text(json.dumps({"type":"question","text":current_game["question"],"answer":current_game["answer"]}))
-
+            await ws.receive_text()
     except WebSocketDisconnect:
-        manager.disconnect(ws)
-        if user_data in ranking:
-            ranking.remove(user_data)
-        await manager.broadcast_participants()
+        manager.disconnect(user_id)
 
-# -----------------------------
-# Ruta principal
-# -----------------------------
 @app.get("/")
 async def root():
-    with open("static/session.html","r",encoding="utf-8") as f:
+    with open("static/session.html", "r", encoding="utf-8") as f:
         return HTMLResponse(f.read())
