@@ -1,4 +1,5 @@
-let ws = new WebSocket(`ws://${location.host}/ws`);
+const protocol = location.protocol === "https:" ? "wss" : "ws";
+let ws = new WebSocket(`${protocol}://${location.host}/ws`);
 let currentGame = null;
 let sessionTime = 600; // 10 minutos
 let elapsedTime = 0;
