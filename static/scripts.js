@@ -1,140 +1,126 @@
 // ============================
-// CONFIGURACIÓN
+// KaMiZen – Juegos Mentales y Historias
 // ============================
-let sessionTime = 600; // tiempo total opcional
-let elapsedTime = 0;
 
-// ELEMENTOS
+let currentGame;
+let userLevel = 1;
+let elapsedTime = 0;
+let sessionTime = 600; // 10 min
+let askedQuestions = new Set();
+
 const questionEl = document.getElementById("question");
 const feedbackEl = document.getElementById("feedback");
 const answerInput = document.getElementById("answerInput");
 const timeEl = document.getElementById("time");
 const progressFill = document.getElementById("progressFill");
-const chatBox = document.getElementById("chatBox");
+const rankingEl = document.getElementById("ranking");
 const miniStoryEl = document.getElementById("miniStory");
-const lessonBox = document.getElementById("lessonBox");
 const audioClip = document.getElementById("audioClip");
 
-let currentChallenge;
+// -----------------------------
+// RETOS
+// -----------------------------
+function generateGame(){
+    const games = [
+        // Matemáticas
+        () => {
+            let a=Math.floor(Math.random()*20+1), b=Math.floor(Math.random()*20+1);
+            return {q:`Si sumas ${a} + ${b}, ¿cuánto es?`, a:`${a+b}`};
+        },
+        // Adivinanzas
+        () => {
+            return {q:"Blanca por dentro, verde por fuera. Si quieres que te lo diga, espera la respuesta...", a:"pera"};
+        },
+        // Mini historias de éxito
+        () => {
+            const stories = [
+                "💎 Pedro duplicó su productividad haciendo 10 min de enfoque diario.",
+                "🌱 Ana mejoró su bienestar meditando 5 min cada mañana.",
+                "🚀 Marta tomó una decisión arriesgada y lidera un equipo exitoso."
+            ];
+            let s = stories[Math.floor(Math.random()*stories.length)];
+            return {q:s, a:""}; // sin respuesta concreta
+        },
+        // Decisiones tipo trading
+        () => {
+            return {q:"Tienes $100. Puedes arriesgar $50 con 50% chance de duplicarlo o mantenerlo seguro. ¿Qué eliges? (arriesgar/seguro)", a:["arriesgar","seguro"]};
+        }
+    ];
+    let game;
+    do {
+        game = games[Math.floor(Math.random()*games.length)]();
+    } while(askedQuestions.has(game.q));
+    askedQuestions.add(game.q);
+    return game;
+}
 
-// ============================
-// MINI HISTORIAS REALES Y ENSEÑANZAS
-// ============================
-const miniStories = [
-    "💡 Ana perdió su trabajo, inició un proyecto pequeño y ahora ayuda a 50 personas cada semana.",
-    "🏆 Carlos decidió meditar 10 minutos cada mañana y lidera su equipo con calma y seguridad.",
-    "🌱 Marta aprendió a organizar su día y duplicó su productividad sin estrés.",
-    "⚡ Pedro enfrenta retos diarios con resiliencia y se siente más fuerte cada día."
-];
-
-const lessons = [
-    "Enseñanza: Pequeños hábitos diarios generan grandes resultados.",
-    "Enseñanza: La calma y concentración multiplican tu poder interior.",
-    "Enseñanza: Ayudar a otros potencia tu bienestar y felicidad.",
-    "Enseñanza: Cada reto es una oportunidad de crecimiento."
-];
-
-// ============================
-// RETOS (acertijos, adivinanzas, consejos)
-// ============================
-const challenges = [
-    {q:"Adivina: Cuanto más quitas, más grande se vuelve. ¿Qué es?", a:"agujero"},
-    {q:"Si tienes 3 manzanas y pierdes 1, ¿cuántas te quedan?", a:"2"},
-    {q:"💡 Mini consejo: Sonríe y respira profundo antes de continuar.", a:""},
-    {q:"Reto de pensamiento: Soy tu amigo y nunca me ves. ¿Quién soy?", a:"aire"},
-    {q:"Mini historia: Lucía aprendió que 5 minutos de meditación diaria cambian su día.", a:""},
-    {q:"Adivina: Siempre va hacia arriba pero nunca se mueve. ¿Qué es?", a:"edad"}
-];
-
-// ============================
-// AUDIO
-// ============================
-const audioClips = [
-    "/static/audio/male1.mp3",
-    "/static/audio/male2.mp3"
-];
-
+// -----------------------------
+// AUDIO Y MINI HISTORIAS
+// -----------------------------
 function playAudio(){
-    let clip = audioClips[Math.floor(Math.random()*audioClips.length)];
-    audioClip.src = clip;
+    const clips = ["/static/audio/male1.mp3","/static/audio/male2.mp3"];
+    audioClip.src = clips[Math.floor(Math.random()*clips.length)];
     audioClip.play();
 }
 
-// ============================
-// NUEVO RETO
-// ============================
 function newChallenge(){
-    currentChallenge = challenges[Math.floor(Math.random()*challenges.length)];
-    questionEl.innerText = currentChallenge.q;
+    currentGame = generateGame();
+    questionEl.innerText = currentGame.q;
     feedbackEl.innerText = "";
-    miniStoryEl.innerText = miniStories[Math.floor(Math.random()*miniStories.length)];
-    lessonBox.innerText = lessons[Math.floor(Math.random()*lessons.length)];
+    miniStoryEl.innerText = currentGame.a=="" ? "💡 Reflexiona sobre esto y aprende algo nuevo!" : "";
     playAudio();
 }
 
-// ============================
-// ENVIAR RESPUESTA
-// ============================
+// -----------------------------
+// RESPONDER
+// -----------------------------
 function sendAnswer(){
     let ans = answerInput.value.trim().toLowerCase();
     if(ans==="") return;
 
-    if(currentChallenge.a===""){
-        feedbackEl.innerText = "💥 Excelente! Disfruta la experiencia y sigue aprendiendo.";
-    } else if(ans===currentChallenge.a.toLowerCase()){
-        feedbackEl.innerText = "💥 Correcto! Dopamina y bienestar activados!";
+    let correct = currentGame.a;
+    let isCorrect = (Array.isArray(correct) ? correct.map(x=>x.toLowerCase()).includes(ans) : ans === correct.toLowerCase());
+
+    if(isCorrect || correct===""){
+        userLevel++;
+        feedbackEl.innerText = "💥 Correcto! Dopamina activada!";
     } else {
-        feedbackEl.innerText = `❌ Incorrecto. La respuesta era: ${currentChallenge.a}`;
+        feedbackEl.innerText = `❌ Incorrecto. Era: ${Array.isArray(correct)?correct.join("/") : correct}`;
     }
-
     answerInput.value="";
+}
+
+// -----------------------------
+// VER RESPUESTA
+// -----------------------------
+function showAnswer(){
+    if(Array.isArray(currentGame.a)) feedbackEl.innerText = "Respuesta: " + currentGame.a.join("/");
+    else feedbackEl.innerText = "Respuesta: " + currentGame.a;
+}
+
+// -----------------------------
+// SIGUIENTE RETO
+// -----------------------------
+function nextChallenge(){
     newChallenge();
 }
 
-// ============================
-// BOT CHAT MOTIVADOR
-// ============================
-const botMsgs = [
-    "🔥 Respira, sonríe y continúa",
-    "💡 Cada reto es aprendizaje",
-    "🏆 Tu mente se fortalece con cada respuesta",
-    "🌱 Pequeños hábitos generan poder interior"
-];
-
-function botChat(){
-    let msg = botMsgs[Math.floor(Math.random()*botMsgs.length)];
-    let div = document.createElement("div");
-    div.className="simulated";
-    div.innerText = `AURA_BOT: ${msg}`;
-    chatBox.appendChild(div);
-    chatBox.scrollTop = chatBox.scrollHeight;
-}
-
-// ============================
-// BOT AUTOMÁTICO Y RITMO
-// ============================
-setInterval(botChat, 12000); // cada 12 segundos
-
-// ============================
-// TEMPORIZADOR OPCIONAL
-// ============================
-function formatTime(s){ return `${Math.floor(s/60)}:${(s%60<10?"0":"")}${s%60}`; }
-
+// -----------------------------
+// BARRA DE TIEMPO
+// -----------------------------
+function formatTime(s){return `${Math.floor(s/60)}:${(s%60<10?"0":"")}${s%60}`;}
 setInterval(()=>{
+    if(elapsedTime>=sessionTime) {
+        questionEl.innerText="⏳ Sesión finalizada. ¡Felicidades!";
+        feedbackEl.innerText="";
+        return;
+    }
     elapsedTime++;
-    timeEl.innerText = formatTime(elapsedTime);
-    let pct = Math.min((elapsedTime/sessionTime)*100,100);
-    progressFill.style.width = pct+"%";
-}, 1000);
+    timeEl.innerText = formatTime(sessionTime-elapsedTime);
+    progressFill.style.width = (elapsedTime/sessionTime*100)+"%";
+},1000);
 
-// ============================
-// BOTÓN ADELANTAR JUEGO
-// ============================
-function skipChallenge(){
-    newChallenge();
-}
-
-// ============================
+// -----------------------------
 // INICIO
-// ============================
+// -----------------------------
 newChallenge();
