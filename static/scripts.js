@@ -1,8 +1,7 @@
-const protocol = location.protocol === "https:" ? "wss" : "ws";
-let ws = new WebSocket(`${protocol}://${location.host}/ws`);
-
+let ws = new WebSocket(`ws://${location.host}/ws`);
 let currentQuestion = "";
-let sessionTime = 600; // 10 min
+let currentAnswer = "";
+let sessionTime = 600;
 let elapsedTime = 0;
 
 // ELEMENTOS
@@ -11,39 +10,47 @@ const feedbackEl = document.getElementById("feedback");
 const answerInput = document.getElementById("answerInput");
 const timeEl = document.getElementById("time");
 const rankingEl = document.getElementById("ranking");
+const progressFill = document.getElementById("progressFill");
 const chatBox = document.getElementById("chatBox");
 
-// -----------------------------
-// Temporizador
-// -----------------------------
-function formatTime(s){ return `${Math.floor(s/60)}:${(s%60<10?"0":"")}${s%60}`; }
-let timerInterval = setInterval(()=>{
-    if(elapsedTime >= sessionTime){
-        clearInterval(timerInterval);
-        questionEl.innerText = "⏳ Sesión finalizada. ¡Mañana subes de nivel!";
-        return;
-    }
-    elapsedTime++;
-    timeEl.innerText = formatTime(sessionTime-elapsedTime);
-}, 1000);
+// AUDIO
+function playAudio(){
+    if(!currentQuestion) return;
+    let msg = new SpeechSynthesisUtterance(currentQuestion);
+    window.speechSynthesis.speak(msg);
+}
 
-// -----------------------------
-// WebSocket
-// -----------------------------
-ws.onmessage = (event)=>{
-    const data = JSON.parse(event.data);
+// ENVIAR RESPUESTA
+function sendAnswer(){
+    let ans = answerInput.value.trim();
+    if(!ans) return;
+    ws.send(JSON.stringify({type:"answer", text:ans}));
+    answerInput.value="";
+}
+
+// SIGUIENTE DESAFÍO SIN RESPONDER
+function nextChallenge(){
+    ws.send(JSON.stringify({type:"answer", text:""}));
+}
+
+// WEBSOCKET EVENTS
+ws.onmessage = function(event){
+    let data = JSON.parse(event.data);
 
     if(data.type==="question"){
-        currentQuestion = data.text;
+        currentQuestion = data.text || "🎯 Cargando desafío...";
+        currentAnswer = data.answer || "";
         questionEl.innerText = currentQuestion;
-        feedbackEl.innerText = "";
     }
+
     if(data.type==="feedback"){
-        feedbackEl.innerText = data.text;
+        feedbackEl.innerText = data.text || "";
     }
+
     if(data.type==="update_participants"){
         document.getElementById("participants").innerText = data.count;
     }
+
     if(data.type==="update_ranking"){
         rankingEl.innerHTML = "";
         data.ranking.forEach(r=>{
@@ -53,6 +60,7 @@ ws.onmessage = (event)=>{
             rankingEl.appendChild(div);
         });
     }
+
     if(data.type==="chat"){
         let div = document.createElement("div");
         div.innerHTML = `<strong>${data.sender}:</strong> ${data.text}`;
@@ -61,31 +69,17 @@ ws.onmessage = (event)=>{
     }
 };
 
-// -----------------------------
-// Enviar respuesta
-// -----------------------------
-function sendAnswer(){
-    let ans = answerInput.value.trim();
-    if(ans==="") return;
-    ws.send(JSON.stringify({type:"answer", text: ans}));
-    answerInput.value="";
-}
-
-// -----------------------------
-// Siguiente desafío
-// -----------------------------
-function nextChallenge(){
-    feedbackEl.innerText = "⏳ Cargando próximo desafío...";
-    ws.send(JSON.stringify({type:"answer", text:""})); // Enviar vacío fuerza nuevo reto
-}
-
-// -----------------------------
-// Escuchar historia con voz del navegador
-// -----------------------------
-function playStory(){
-    if(currentQuestion.trim()==="") return;
-    const utterance = new SpeechSynthesisUtterance(currentQuestion);
-    utterance.rate = 1;
-    utterance.pitch = 1;
-    speechSynthesis.speak(utterance);
-}
+// TIMER
+function formatTime(s){return `${Math.floor(s/60)}:${(s%60<10?"0":"")}${s%60}`;}
+let sessionInterval = setInterval(()=>{
+    if(elapsedTime>=sessionTime){
+        clearInterval(sessionInterval);
+        questionEl.innerText="⏳ Sesión finalizada. ¡Mañana subes de nivel!";
+        feedbackEl.innerText="";
+        return;
+    }
+    elapsedTime++;
+    timeEl.innerText = formatTime(sessionTime-elapsedTime);
+    let pct = (elapsedTime/sessionTime)*100;
+    progressFill.style.width = pct+"%";
+},1000);
