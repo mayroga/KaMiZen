@@ -5,8 +5,8 @@ if (!uid) {
     localStorage.setItem("aura_uid", uid);
 }
 
-// 2. Conectar al WebSocket KaMiZen
-let ws = new WebSocket(`ws://${location.host}/ws/${uid}`);
+// 2. Conectar al WebSocket remoto KaMiZen
+let ws = new WebSocket(`wss://kamizen.onrender.com/ws/${uid}`);
 let sessionData = {};
 
 // 3. Recibir contenido inicial
@@ -50,23 +50,39 @@ function startSession() {
 function updateUI(title, content) {
     document.getElementById("status").innerText = title;
     if (content) {
-        if (title.includes("Historia")) document.getElementById("historia").innerText = content;
-        if (title.includes("Ejercicio")) document.getElementById("ejercicio").innerText = content;
-        if (title.includes("Bienestar")) document.getElementById("bienestar").innerText = content;
+        if (title.includes("Historia") || title.includes("Estrategia")) 
+            document.getElementById("historia").innerText = content;
+        if (title.includes("Ejercicio") || title.includes("Reto Mental")) 
+            document.getElementById("ejercicio").innerText = content;
+        if (title.includes("Bienestar") || title.includes("Enfoque")) 
+            document.getElementById("bienestar").innerText = content;
     }
 }
 
-// 6. Siguiente contenido manual
+// 6. Siguiente contenido automático desde servidor
 function nextContent() {
-    if (!sessionData.historia || !sessionData.ejercicio || !sessionData.bienestar) return;
+    if (!ws || ws.readyState !== WebSocket.OPEN) {
+        alert("WebSocket KaMiZen no conectado. Intenta recargar la página.");
+        return;
+    }
 
-    const newHistoria = prompt("Historia KaMiZen:", sessionData.historia);
-    const newEjercicio = prompt("Ejercicio KaMiZen:", sessionData.ejercicio);
-    const newBienestar = prompt("Bienestar KaMiZen:", sessionData.bienestar);
+    // Solicitar nuevo set de contenido al servidor
+    fetch(`/ws/${uid}`)
+        .then(res => res.json())
+        .then(data => {
+            sessionData = data;
+            updateUI("Historia del Día", sessionData.historia);
+            updateUI("Ejercicio del Día", sessionData.ejercicio);
+            updateUI("Bienestar del Día", sessionData.bienestar);
+            updateUI("KaMiZen Actualizado", "¡Sigue aplicando tus aprendizajes!");
+        })
+        .catch(err => console.log("Error al obtener nuevo contenido KaMiZen:", err));
+}
 
-    document.getElementById("historia").innerText = newHistoria || sessionData.historia;
-    document.getElementById("ejercicio").innerText = newEjercicio || sessionData.ejercicio;
-    document.getElementById("bienestar").innerText = newBienestar || sessionData.bienestar;
-
-    updateUI("Contenido KaMiZen Actualizado", "Sigue aplicando tus aprendizajes.");
+// 7. Función de reinicio KaMiZen (borrar UID)
+function resetSession() {
+    if (confirm("¿Deseas reiniciar tu ciclo KaMiZen?")) {
+        localStorage.removeItem("aura_uid");
+        location.reload();
+    }
 }
