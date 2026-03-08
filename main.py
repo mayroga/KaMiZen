@@ -5,7 +5,7 @@ import json
 import os
 import random
 
-app = FastAPI(title="AURA NeuroGame Engine")
+app = FastAPI(title="KaMiZen NeuroGame Engine")
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 DATA_FILE = "session_data.json"
