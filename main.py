@@ -27,40 +27,6 @@ async def generate_challenge_via_ai():
 Devuelve un JSON con:
 {"question":"Texto del reto o historia","answer":"Respuesta o texto que se revelará al cliente"}"""
 
-    headers = {}
-    data = {}
-    # Prioridad OpenAI
-    if OPENAI_KEY:
-        headers = {"Authorization": f"Bearer {OPENAI_KEY}"}
-        data = {
-            "model": "gpt-4",
-            "messages": [{"role":"user","content":prompt}],
-            "temperature":0.8
-        }
-        try:
-            async with httpx.AsyncClient(timeout=20) as client:
-                r = await client.post("https://api.openai.com/v1/chat/completions", headers=headers, json=data)
-                resp = r.json()
-                text = resp['choices'][0]['message']['content'].strip()
-                # Esperamos que IA devuelva JSON correcto
-                challenge = json.loads(text)
-                if "question" in challenge and "answer" in challenge:
-                    return challenge
-        except Exception:
-            pass
-    # Fallback Gemini
-    if GEMINI_KEY:
-        headers = {"Authorization": f"Bearer {GEMINI_KEY}"}
-        data = {"prompt": prompt, "temperature":0.8}
-        try:
-            async with httpx.AsyncClient(timeout=20) as client:
-                r = await client.post("https://gemini.api.url/generate", headers=headers, json=data)
-                resp = r.json()
-                challenge = json.loads(resp.get("text","{}"))
-                if "question" in challenge and "answer" in challenge:
-                    return challenge
-        except Exception:
-            pass
     # Fallback local
     local_challenges = [
         {"question":"Si sumas 7+5, ¿cuánto es?","answer":"12"},
@@ -68,6 +34,41 @@ Devuelve un JSON con:
         {"question":"💡 Historia: Un emprendedor reinvirtió todo su primer ingreso y creció en 10 años.","answer":"Reinversión"},
         {"question":"⚡ Reto: Completa la serie 2,4,6,___","answer":"8"}
     ]
+
+    # Intentar Gemini primero
+    if GEMINI_KEY:
+        try:
+            headers = {"Authorization": f"Bearer {GEMINI_KEY}"}
+            data = {"prompt": prompt, "temperature":0.8}
+            async with httpx.AsyncClient(timeout=10) as client:
+                r = await client.post("https://gemini.api.url/generate", headers=headers, json=data)
+                resp = r.json()
+                challenge = json.loads(resp.get("text","{}"))
+                if "question" in challenge and "answer" in challenge:
+                    return challenge
+        except Exception:
+            pass
+
+    # Fallback OpenAI
+    if OPENAI_KEY:
+        try:
+            headers = {"Authorization": f"Bearer {OPENAI_KEY}"}
+            data = {
+                "model": "gpt-4",
+                "messages": [{"role":"user","content":prompt}],
+                "temperature":0.8
+            }
+            async with httpx.AsyncClient(timeout=15) as client:
+                r = await client.post("https://api.openai.com/v1/chat/completions", headers=headers, json=data)
+                resp = r.json()
+                text = resp['choices'][0]['message']['content'].strip()
+                challenge = json.loads(text)
+                if "question" in challenge and "answer" in challenge:
+                    return challenge
+        except Exception:
+            pass
+
+    # Local fallback seguro
     return random.choice(local_challenges)
 
 # -----------------------------
@@ -109,8 +110,12 @@ async def websocket_endpoint(ws: WebSocket):
     user_data = {"name":user_name,"level":level}
     ranking.append(user_data)
 
-    # Generar primer desafío
     current_game = await generate_challenge_via_ai()
+    if "question" not in current_game or not current_game["question"]:
+        current_game["question"] = "🎯 Cargando desafío..."
+    if "answer" not in current_game:
+        current_game["answer"] = ""
+
     await ws.send_text(json.dumps({"type":"question","text":current_game["question"],"answer":current_game["answer"]}))
 
     try:
@@ -119,30 +124,26 @@ async def websocket_endpoint(ws: WebSocket):
             msg = json.loads(data)
 
             if msg["type"]=="answer":
-                ans = msg["text"].strip().lower()
-                correct = current_game["answer"]
+                ans = msg.get("text","").strip().lower()
+                correct = current_game.get("answer","")
                 if isinstance(correct,list):
                     is_correct = ans in [x.lower() for x in correct]
                 else:
-                    is_correct = (ans == correct.lower())
-                
-                feedback = ""
-                if is_correct or correct=="":
-                    level += 1
-                    user_data["level"] = level
-                    feedback = "💥 Correcto! Sigue disfrutando KaMiZen!"
-                else:
-                    feedback = f"❌ Incorrecto. Era: {correct}" if correct else "❌ Incorrecto"
+                    is_correct = (ans==correct.lower()) or correct=="" 
 
+                feedback = "💥 Correcto! Sigue disfrutando KaMiZen!" if is_correct else f"❌ Incorrecto. Era: {correct}" if correct else "❌ Incorrecto"
                 await ws.send_text(json.dumps({"type":"feedback","text":feedback}))
 
-                # Ranking top 5
                 top5 = sorted(ranking, key=lambda x:x["level"], reverse=True)[:5]
                 await manager.broadcast({"type":"update_ranking","ranking":top5})
 
-                # Generar siguiente desafío
                 current_game = await generate_challenge_via_ai()
+                if "question" not in current_game or not current_game["question"]:
+                    current_game["question"] = "🎯 Cargando desafío..."
+                if "answer" not in current_game:
+                    current_game["answer"] = ""
                 await ws.send_text(json.dumps({"type":"question","text":current_game["question"],"answer":current_game["answer"]}))
+
     except WebSocketDisconnect:
         manager.disconnect(ws)
         if user_data in ranking:
