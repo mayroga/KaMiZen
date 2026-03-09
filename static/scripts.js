@@ -1,3 +1,7 @@
+// ----------------------------------------------------
+// KaMiZen 20 bloques secuenciales - scripts.js
+// ----------------------------------------------------
+
 const startBtn = document.getElementById("start-btn");
 const nextBtn = document.createElement("button");
 const restartBtn = document.createElement("button");
@@ -6,89 +10,125 @@ const contentBox = document.getElementById("content-box");
 
 let sessionBlocks = [];
 let current = 0;
-let colors = ["#1e3a8a", "#2563eb", "#7dd3fc", "#facc15", "#dc2626", "#16a34a"];
 
+// Crear botones Siguiente y Reiniciar
+nextBtn.id = "next-btn";
 nextBtn.innerText = "Siguiente";
-restartBtn.innerText = "Reiniciar Sesión";
-nextBtn.style.marginTop = "20px";
-restartBtn.style.marginTop = "10px";
-nextBtn.style.padding = restartBtn.style.padding = "10px 20px";
-nextBtn.style.borderRadius = restartBtn.style.borderRadius = "8px";
-nextBtn.style.border = restartBtn.style.border = "none";
-nextBtn.style.fontSize = restartBtn.style.fontSize = "16px";
-nextBtn.style.cursor = restartBtn.style.cursor = "pointer";
-nextBtn.style.background = "#2563eb";
-restartBtn.style.background = "#f87171";
-nextBtn.style.color = restartBtn.style.color = "white";
-
-contentBox.appendChild(nextBtn);
-contentBox.appendChild(restartBtn);
 nextBtn.style.display = "none";
-restartBtn.style.display = "none";
+nextBtn.style.marginTop = "10px";
+nextBtn.style.padding = "10px 20px";
+nextBtn.style.fontSize = "16px";
+nextBtn.style.border = "none";
+nextBtn.style.borderRadius = "6px";
+nextBtn.style.background = "#10b981";
+nextBtn.style.color = "white";
+nextBtn.style.cursor = "pointer";
+contentBox.appendChild(nextBtn);
 
-// Función para leer en voz alta
+restartBtn.id = "restart-btn";
+restartBtn.innerText = "Reiniciar";
+restartBtn.style.display = "none";
+restartBtn.style.marginTop = "10px";
+restartBtn.style.padding = "10px 20px";
+restartBtn.style.fontSize = "16px";
+restartBtn.style.border = "none";
+restartBtn.style.borderRadius = "6px";
+restartBtn.style.background = "#ef4444";
+restartBtn.style.color = "white";
+restartBtn.style.cursor = "pointer";
+contentBox.appendChild(restartBtn);
+
+// Cambiar escena/colores según bloque
+const colors = [
+  "#1e3a8a","#2563eb","#7c3aed","#db2777","#f43f5e",
+  "#f59e0b","#10b981","#14b8a6","#22d3ee","#0ea5e9",
+  "#facc15","#84cc16","#4ade80","#34d399","#60a5fa",
+  "#3b82f6","#8b5cf6","#ec4899","#f97316","#14b8a6"
+];
+
+// Juegos mentales/adivinanzas opcionales
+const games = [
+  {question: "Si tienes 7 cajas con 15 artículos cada una, ¿cuántos artículos hay?", answer: "105"},
+  {question: "Si un inversor duplica $100 cada mes durante 3 meses, ¿cuánto tendrá?", answer: "800"},
+  {question: "Adivina el número: soy par y mayor que 8 pero menor que 14", answer: "10"},
+  {question: "Si caminas 2 km cada día durante 5 días, ¿cuántos km recorriste?", answer: "10"},
+  {question: "Si compras 3 manzanas a $2 cada una y das $10, ¿cuánto te dan de cambio?", answer: "4"}
+];
+
+// Función de voz masculina
 function speak(text) {
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = 'es-ES';
     utterance.rate = 0.9;
-    utterance.voice = speechSynthesis.getVoices().find(v => v.name.includes('Google') && v.lang === 'es-ES') || null;
+    utterance.pitch = 0.9; // voz más grave
     speechSynthesis.speak(utterance);
 }
 
-// Función para mostrar bloque con color aleatorio
-function showBlock(text) {
-    block.innerHTML = text;
-    block.style.background = colors[Math.floor(Math.random() * colors.length)];
-    block.style.padding = "15px";
-    block.style.borderRadius = "10px";
-    speak(text);
+// Función para mostrar un bloque
+function showBlock(blockObj, index) {
+    // Cambiar color de fondo
+    contentBox.style.backgroundColor = colors[index % colors.length];
+
+    // Construir contenido
+    let html = `
+        <div class="section-title">Apertura:</div>${blockObj.apertura}<br><br>
+        <div class="section-title">Historia:</div>${blockObj.historia}<br><br>
+        <div class="section-title">Ejercicio:</div>${blockObj.ejercicio}<br><br>
+        <div class="section-title">Respiración:</div>${blockObj.respiracion}<br><br>
+        <div class="section-title">Visualización:</div>${blockObj.visualizacion}<br><br>
+        <div class="section-title">Cierre:</div>${blockObj.cierre}<br><br>
+    `;
+
+    // Cada tercer bloque incluimos un juego mental aleatorio
+    if ((index+1) % 3 === 0) {
+        const game = games[index % games.length];
+        html += `<div class="section-title">Juego Mental:</div>
+                 ${game.question} 
+                 <button onclick="this.nextElementSibling.style.display='inline'; this.style.display='none';" 
+                         style="margin-left:5px;padding:2px 6px;">Mostrar Respuesta</button>
+                 <span style="display:none;color:#fbbf24;font-weight:bold;"> ${game.answer}</span><br><br>`;
+    }
+
+    block.innerHTML = html;
+    speak(`${blockObj.apertura} ${blockObj.historia} ${blockObj.ejercicio} ${blockObj.respiracion} ${blockObj.visualizacion} ${blockObj.cierre}`);
 }
 
-// Función para mostrar siguiente bloque
+// Función siguiente bloque
 function nextBlock() {
     if (current < sessionBlocks.length) {
-        showBlock(sessionBlocks[current].texto);
+        showBlock(sessionBlocks[current], current);
         current++;
-        if (current === sessionBlocks.length) {
-            nextBtn.style.display = "none";
-            restartBtn.style.display = "block";
-        }
+        nextBtn.style.display = (current < sessionBlocks.length) ? "inline" : "none";
+        restartBtn.style.display = (current >= sessionBlocks.length) ? "inline" : "none";
+        window.scrollTo(0,0); // subir al inicio del bloque
     }
 }
 
-// Función para reiniciar
+// Reiniciar sesión
 function restartSession() {
     current = 0;
+    nextBtn.style.display = "inline";
     restartBtn.style.display = "none";
-    nextBtn.style.display = "block";
-    nextBlock();
+    block.innerHTML = "Bienvenido a tu sesión de 10 minutos";
+    contentBox.style.backgroundColor = "#1e293b";
 }
 
-// Genera HTML para adivinanza con botón oculto
-function generatePuzzle(question, answer) {
-    return `${question} <button onclick="alert('${answer}')">Mostrar respuesta</button>`;
-}
+// Evento botón Siguiente
+nextBtn.addEventListener("click", nextBlock);
+
+// Evento botón Reiniciar
+restartBtn.addEventListener("click", restartSession);
 
 // Iniciar sesión
 startBtn.addEventListener("click", async () => {
     startBtn.style.display = "none";
-    nextBtn.style.display = "block";
 
+    // Obtener contenido de sesión
     const response = await fetch("/session_content");
     const data = await response.json();
 
-    // Bloques con interactividad
-    sessionBlocks = [
-        { texto: data.bloques[0] }, // Apertura
-        { texto: data.bloques[1] }, // Historia
-        { texto: generatePuzzle("Si inviertes $5 al día, ¿cuánto tendrás en 10 años?", "$5 diarios → ~ $22,000") }, // Ejercicio interactivo
-        { texto: data.bloques[3] }, // Respiración
-        { texto: data.bloques[4] }, // Visualización
-        { texto: data.bloques[5] }  // Cierre
-    ];
+    // Suponiendo que tu JSON tiene 20 bloques bajo "sesiones"
+    sessionBlocks = data.sesiones;
 
     nextBlock();
 });
-
-nextBtn.addEventListener("click", nextBlock);
-restartBtn.addEventListener("click", restartSession);
