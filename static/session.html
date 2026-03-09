@@ -1,98 +1,41 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<title>KaMiZen - Sesión de 10 Minutos</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
-<style>
-body {
-    font-family: Arial, sans-serif;
-    background: #0f172a;
-    color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-}
-#content-box {
-    background: linear-gradient(135deg, #1e3a8a, #2563eb);
-    padding: 30px;
-    border-radius: 20px;
-    width: 90%;
-    max-width: 600px;
-    text-align: center;
-    overflow-y: auto;
-    max-height: 90vh;
-    transition: background 1s ease;
-}
-h1 {
-    margin-bottom: 15px;
-}
-button {
-    padding: 12px 25px;
-    margin: 15px 5px 0 5px;
-    font-size: 16px;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    color: white;
-    transition: transform 0.2s, background 0.3s;
-}
-button:hover {
-    transform: scale(1.05);
-}
-#start-btn { background: #2563eb; }
-#next-btn { background: #10b981; display: none; }
-#restart-btn { background: #f87171; display: none; }
-#block {
-    margin: 20px 0;
-    font-size: 18px;
-    line-height: 1.6;
-    padding: 15px;
-    border-radius: 12px;
-    background: rgba(255,255,255,0.05);
-    transition: background 1s ease;
-}
-.section-title {
-    font-weight: bold;
-    color: #60a5fa;
-    margin-bottom: 5px;
-}
-</style>
-</head>
-<body>
-<div id="content-box">
-    <h1>KaMiZen</h1>
-    <p id="block">Bienvenido a tu sesión de 10 minutos</p>
-    <button id="start-btn">Iniciar Sesión</button>
-    <button id="next-btn">Siguiente</button>
-    <button id="restart-btn">Reiniciar Sesión</button>
-</div>
+from fastapi import FastAPI
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
+import json5  # JSON tolerante a errores
+import random
 
-<script src="scripts.js"></script>
-<script>
-/* Cambios de fondo suaves cada bloque */
-const colors = ["#1e3a8a", "#2563eb", "#7dd3fc", "#facc15", "#dc2626", "#16a34a"];
-function changeBackground() {
-    document.getElementById("content-box").style.background = colors[Math.floor(Math.random()*colors.length)];
-}
+app = FastAPI(title="KaMiZen NeuroGame Engine")
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
-/* Añadimos animación de fade-in a cada bloque */
-function fadeInBlock() {
-    const block = document.getElementById("block");
-    block.style.opacity = 0;
-    setTimeout(() => { block.style.transition = "opacity 1s"; block.style.opacity = 1; }, 50);
-}
+# Cargar sesiones
+with open("static/kamizen_content.json", "r", encoding="utf-8") as f:
+    try:
+        db = json5.load(f)
+    except Exception as e:
+        print("Error cargando JSON:", e)
+        db = {"sesiones": []}
 
-/* Modificar showBlock para integrar animación y cambio de color */
-function showBlock(text) {
-    const block = document.getElementById("block");
-    block.innerHTML = text;
-    changeBackground();
-    fadeInBlock();
-    speak(text);
-}
-</script>
-</body>
-</html>
+# Función para seleccionar la sesión del día (1 por día, no repetir hasta completar las 20)
+def obtener_sesion():
+    if not db.get("sesiones"):
+        return {
+            "apertura": "Contenido no disponible",
+            "historia": "Contenido no disponible",
+            "ejercicio": "Contenido no disponible",
+            "respiracion": "Contenido no disponible",
+            "visualizacion": "Contenido no disponible",
+            "cierre": "Contenido no disponible"
+        }
+    # Guardar índice en archivo simple o localStorage del cliente
+    # Aquí simulamos elegir la primera sesión disponible
+    return db["sesiones"][0]  # siempre devuelve 1 por día
+
+@app.get("/")
+async def root():
+    with open("static/session.html", "r", encoding="utf-8") as f:
+        return HTMLResponse(f.read())
+
+@app.get("/session_content")
+async def session_content():
+    sesion = obtener_sesion()
+    return sesion
