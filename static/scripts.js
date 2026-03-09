@@ -1,69 +1,53 @@
-const startBtn = document.getElementById("start-btn");
-const nextBtn = document.getElementById("next-btn");
-const restartBtn = document.getElementById("restart-btn");
-const block = document.getElementById("block");
+// Modifica estas funciones en tu scripts.js
 
-let sessionBlocks = [];
-let current = 0;
+async function showBlock(blockData) {
+    // Limpiamos la interfaz al empezar
+    nextBtn.style.display = "none";
+    restartBtn.style.display = "none";
+    gameBtn.style.display = "none";
+    gameAnswer.style.display = "none";
+    gameAnswer.innerHTML = "";
 
-// Función de voz
-function playVoice(text) {
-    return new Promise((resolve) => {
-        speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = 'es-ES';
-        utterance.rate = 0.9;
-        utterance.onend = resolve;
-        speechSynthesis.speak(utterance);
-    });
-}
+    const steps = ["apertura", "historia", "ejercicio", "respiracion", "visualizacion", "juego", "cierre"];
 
-// Mostrar bloque
-async function showBlock(blockData, id) {
-    const section = document.getElementById(id);
-    section.innerHTML = blockData;
-    section.style.opacity = 0;
-    let opacity = 0;
-    const fade = setInterval(() => {
-        if(opacity < 1) { opacity += 0.05; section.style.opacity = opacity; }
-        else clearInterval(fade);
-    }, 50);
-    await playVoice(blockData);
-}
+    for (let step of steps) {
+        if (!blockData[step]) continue; // Saltar si el paso no existe
 
-// Avanzar bloque
-async function nextBlock() {
-    if(current < sessionBlocks.length) {
-        const step = sessionBlocks[current];
-        current++;
-        for (let key in step) {
-            await showBlock(step[key], key);
-        }
-        if(current < sessionBlocks.length) {
-            nextBtn.style.display = "inline-block";
+        changeBackground();
+        
+        if (step === "juego") {
+            block.innerHTML = `<div class="section-title">Juego Mental:</div>${blockData[step].pregunta}`;
+            gameBtn.style.display = "inline-block";
+            gameBtn.onclick = () => {
+                gameAnswer.innerHTML = `<strong>Respuesta:</strong> ${blockData[step].respuesta}`;
+                gameAnswer.style.display = "block";
+                playVoice(blockData[step].respuesta);
+            };
+            await playVoice(blockData[step].pregunta);
         } else {
-            restartBtn.style.display = "inline-block";
+            block.innerHTML = `<div class="section-title">${step.toUpperCase()}:</div>${blockData[step]}`;
+            await playVoice(blockData[step]);
         }
+
+        // Pausa breve entre secciones
+        await new Promise(r => setTimeout(r, 1500));
+    }
+
+    // Al finalizar todos los pasos de la sesión
+    block.innerHTML = "¡Has completado la sesión de hoy!";
+    restartBtn.style.display = "inline-block";
+}
+
+// Simplifica el inicio
+async function startSession() {
+    startBtn.style.display = "none";
+    try {
+        const response = await fetch("/session_content");
+        const data = await response.json();
+        // IMPORTANTE: 'data' ya es el objeto de la sesión
+        showBlock(data); 
+    } catch (error) {
+        block.innerHTML = "Error al conectar con el servidor.";
+        startBtn.style.display = "inline-block";
     }
 }
-
-// Iniciar sesión
-startBtn.addEventListener("click", async () => {
-    startBtn.style.display = "none";
-    const response = await fetch("/session_content");
-    const data = await response.json();
-    if(!data) { block.innerText = "Error al cargar sesión"; return; }
-    
-    sessionBlocks = [data]; // 1 sesión por día
-    current = 0;
-    nextBtn.style.display = "inline-block";
-    nextBtn.addEventListener("click", async () => {
-        nextBtn.style.display = "none";
-        await nextBlock();
-    });
-});
-
-// Reiniciar
-restartBtn.addEventListener("click", () => {
-    location.reload();
-});
