@@ -1,96 +1,48 @@
-// UID persistente
-let uid = localStorage.getItem("aura_uid");
-if (!uid) {
-    uid = Math.random().toString(36).substring(2,15);
-    localStorage.setItem("aura_uid", uid);
+const startBtn = document.getElementById("start-btn");
+const block = document.getElementById("block");
+
+let sessionBlocks = [];
+let current = 0;
+
+// Función para leer en voz alta
+function speak(text) {
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'es-ES';
+    utterance.rate = 0.9;
+    speechSynthesis.speak(utterance);
 }
 
-let ws = new WebSocket(`wss://kamizen.onrender.com/ws/${uid}`);
-let sessionData = {};
-
-ws.onopen = () => {
-    console.log("KaMiZen conectado");
-};
-
-ws.onmessage = (event) => {
-
-    const msg = JSON.parse(event.data);
-
-    if(msg.type === "init"){
-        sessionData = msg.content;
-
-        // mostrar contenido inmediatamente
-        document.getElementById("historia").innerText = sessionData.historia;
-        document.getElementById("ejercicio").innerText = sessionData.ejercicio;
-        document.getElementById("bienestar").innerText = sessionData.bienestar;
-
-        startSession();
-    }
-
-    if(msg.type === "next"){
-        sessionData = msg.content;
-
-        document.getElementById("historia").innerText = sessionData.historia;
-        document.getElementById("ejercicio").innerText = sessionData.ejercicio;
-        document.getElementById("bienestar").innerText = sessionData.bienestar;
-
-        document.getElementById("status").innerText = "Nuevo contenido KaMiZen";
-    }
-
-};
-
-ws.onerror = (err)=>{
-    console.log("Error WS",err);
-};
-
-ws.onclose = ()=>{
-    console.log("WS cerrado");
-};
-
-
-
-// temporizador
-let timeLeft = 600;
-let timer;
-
-function startSession(){
-
-    document.getElementById("status").innerText="Sesión KaMiZen iniciada";
-
-    timer=setInterval(()=>{
-
-        timeLeft--;
-
-        const min=Math.floor(timeLeft/60);
-        const sec=timeLeft%60;
-
-        document.getElementById("time").innerText =
-        `${min}:${sec<10?"0":""}${sec}`;
-
-        if(timeLeft<=0){
-
-            clearInterval(timer);
-
-            document.getElementById("status").innerText=
-            "Sesión completada";
-
+// Función para mostrar siguiente bloque
+function nextBlock() {
+    if (current < sessionBlocks.length) {
+        block.innerText = sessionBlocks[current];
+        speak(sessionBlocks[current]);
+        current++;
+        // Avanza cada 2 minutos (120000 ms) para simular 10 minutos de sesión
+        if (current < sessionBlocks.length) {
+            setTimeout(nextBlock, 120000);
+        } else {
+            setTimeout(() => {
+                block.innerText = "Sesión finalizada. Gracias por participar.";
+                speak("Sesión finalizada. Gracias por participar.");
+            }, 2000);
         }
-
-    },1000);
-
-}
-
-
-
-// botón siguiente
-function nextContent(){
-
-    if(ws.readyState===1){
-
-        ws.send(JSON.stringify({
-            action:"next"
-        }));
-
     }
-
 }
+
+// Iniciar sesión
+startBtn.addEventListener("click", async () => {
+    startBtn.style.display = "none";
+    const response = await fetch("/session_content");
+    const data = await response.json();
+
+    sessionBlocks = [
+        "Historia de Poder:\n" + data.historia,
+        "Historia de Riqueza:\n" + data.historia_riqueza,
+        "Ejercicio Mental:\n" + data.ejercicio,
+        "Consejo de Bienestar:\n" + data.bienestar,
+        "Cierre Motivacional:\n" + data.cierre
+    ];
+
+    nextBlock();
+});
