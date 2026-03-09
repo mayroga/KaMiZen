@@ -4,93 +4,67 @@
 <meta charset="UTF-8">
 <title>KaMiZen - Sesión de 10 Minutos</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+
 <style>
-body {
+body{
     font-family: Arial, sans-serif;
-    background: #0f172a;
-    color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    text-align: center;
+    background:#0f172a;
+    color:white;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+    text-align:center;
 }
-#content-box {
-    background: #1e293b;
-    padding: 30px;
-    border-radius: 15px;
-    width: 90%;
-    max-width: 600px;
-    overflow-y: auto;
-    max-height: 90vh;
+
+#content-box{
+    background:#1e293b;
+    padding:40px;
+    border-radius:15px;
+    width:90%;
+    max-width:600px;
 }
-button {
-    padding: 10px 20px;
-    margin-top: 20px;
-    font-size: 18px;
-    border: none;
-    border-radius: 8px;
-    background: #2563eb;
-    color: white;
-    cursor: pointer;
+
+#block{
+    font-size:22px;
+    margin-top:20px;
+    line-height:1.6;
 }
-button:hover {
-    background: #1d4ed8;
+
+button{
+    padding:12px 25px;
+    margin-top:30px;
+    font-size:18px;
+    border:none;
+    border-radius:8px;
+    background:#2563eb;
+    color:white;
+    cursor:pointer;
 }
-p, div.section {
-    margin: 15px 0;
-    font-size: 18px;
-    text-align: left;
-}
-.section-title {
-    font-weight: bold;
-    margin-bottom: 5px;
-    color: #60a5fa;
+
+button:hover{
+    background:#1d4ed8;
 }
 </style>
 </head>
-<body>
-<div id="content-box">
-    <h1>KaMiZen</h1>
-    <p id="block">Bienvenido a tu sesión de 10 minutos</p>
-    <button id="start-btn">Iniciar Sesión</button>
 
-    <div id="historia" class="section"></div>
-    <div id="historia_riqueza" class="section"></div>
-    <div id="ejercicio" class="section"></div>
-    <div id="bienestar" class="section"></div>
-    <div id="cierre" class="section"></div>
+<body>
+
+<div id="content-box">
+
+<h1>KaMiZen</h1>
+
+<div id="block">
+Bienvenido a tu sesión de 10 minutos
 </div>
 
-<script>
-async function cargarContenido() {
-    try {
-        const response = await fetch('/session_content');
-        const data = await response.json();
+<button id="start-btn">
+Iniciar Sesión
+</button>
 
-        // Función para mostrar sección con título
-        function mostrarSeccion(id, titulo, contenido) {
-            document.getElementById(id).innerHTML = 
-                '<div class="section-title">' + titulo + ':</div>' +
-                '<div>' + contenido + '</div>';
-        }
+</div>
 
-        mostrarSeccion('historia', 'Historia', data.historia);
-        mostrarSeccion('historia_riqueza', 'Historia de Riqueza', data.historia_riqueza);
-        mostrarSeccion('ejercicio', 'Ejercicio', data.ejercicio);
-        mostrarSeccion('bienestar', 'Bienestar', data.bienestar);
-        mostrarSeccion('cierre', 'Cierre', data.cierre);
+<script src="/static/scripts.js"></script>
 
-        // Ocultar el mensaje de bienvenida al iniciar sesión
-        document.getElementById('block').style.display = 'none';
-    } catch (err) {
-        console.error('Error al cargar contenido:', err);
-        document.getElementById('block').innerText = 'Error al cargar la sesión. Intenta recargar.';
-    }
-}
-
-// Ejecutar al pulsar el botón
-document.getElementById('start-btn').addEventListener('click', cargarContenido);
-</script>
 </body>
 </html>
