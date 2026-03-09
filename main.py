@@ -1,8 +1,9 @@
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
-import json5  # JSON tolerante a errores
+import json5
 import random
+import os
 
 app = FastAPI(title="KaMiZen NeuroGame Engine")
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -15,26 +16,40 @@ with open("static/kamizen_content.json", "r", encoding="utf-8") as f:
         print("Error cargando JSON:", e)
         db = {"sesiones": []}
 
-# Función para seleccionar la sesión del día (1 por día, no repetir hasta completar las 20)
+LAST_SESSION_FILE = "last_session.txt"
+
+# Función para seleccionar la sesión del día (1 por día)
 def obtener_sesion():
     if not db.get("sesiones"):
-        return {
+        return { 
             "apertura": "Contenido no disponible",
             "historia": "Contenido no disponible",
             "ejercicio": "Contenido no disponible",
             "respiracion": "Contenido no disponible",
             "visualizacion": "Contenido no disponible",
-            "cierre": "Contenido no disponible"
+            "cierre": "Contenido no disponible",
+            "juego": {"pregunta": "No disponible", "respuesta": "No disponible"}
         }
-    # Guardar índice en archivo simple o localStorage del cliente
-    # Aquí simulamos elegir la primera sesión disponible
-    return db["sesiones"][0]  # siempre devuelve 1 por día
+    
+    total = len(db["sesiones"])
+    if os.path.exists(LAST_SESSION_FILE):
+        with open(LAST_SESSION_FILE, "r") as f:
+            idx = int(f.read())
+            idx = (idx + 1) % total
+    else:
+        idx = 0
+
+    with open(LAST_SESSION_FILE, "w") as f:
+        f.write(str(idx))
+
+    return db["sesiones"][idx]
+
+@app.get("/")
+async def root():
+    with open("static/session.html", "r", encoding="utf-8") as f:
+        return HTMLResponse(f.read())
 
 @app.get("/session_content")
 async def session_content():
-    try:
-        # Esto elige una sesión aleatoria cada vez que el usuario entra
-        sesion = random.choice(data["sesiones"])
-        return sesion
-    except Exception as e:
-        return {"error": "No se pudo cargar la sesión"}
+    sesion = obtener_sesion()
+    return sesion
