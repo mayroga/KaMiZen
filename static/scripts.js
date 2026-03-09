@@ -1,5 +1,5 @@
 // ----------------------------------------------------
-// KaMiZen 20 bloques secuenciales - scripts.js
+// KaMiZen - Sesión diaria secuencial
 // ----------------------------------------------------
 
 const startBtn = document.getElementById("start-btn");
@@ -9,9 +9,9 @@ const block = document.getElementById("block");
 const contentBox = document.getElementById("content-box");
 
 let sessionBlocks = [];
-let current = 0;
+let current = parseInt(localStorage.getItem("currentBlock") || "0");
 
-// Crear botones Siguiente y Reiniciar
+// Crear botón Siguiente
 nextBtn.id = "next-btn";
 nextBtn.innerText = "Siguiente";
 nextBtn.style.display = "none";
@@ -25,6 +25,7 @@ nextBtn.style.color = "white";
 nextBtn.style.cursor = "pointer";
 contentBox.appendChild(nextBtn);
 
+// Crear botón Reiniciar
 restartBtn.id = "restart-btn";
 restartBtn.innerText = "Reiniciar";
 restartBtn.style.display = "none";
@@ -38,7 +39,7 @@ restartBtn.style.color = "white";
 restartBtn.style.cursor = "pointer";
 contentBox.appendChild(restartBtn);
 
-// Colores llamativos por bloque
+// Colores por bloque
 const colors = [
   "#1e3a8a","#2563eb","#7c3aed","#db2777","#f43f5e",
   "#f59e0b","#10b981","#14b8a6","#22d3ee","#0ea5e9",
@@ -46,86 +47,74 @@ const colors = [
   "#3b82f6","#8b5cf6","#ec4899","#f97316","#14b8a6"
 ];
 
-// Juegos mentales/adivinanzas opcionales
-const games = [
-  {question: "Si tienes 7 cajas con 15 artículos cada una, ¿cuántos artículos hay?", answer: "105"},
-  {question: "Si un inversor duplica $100 cada mes durante 3 meses, ¿cuánto tendrá?", answer: "800"},
-  {question: "Adivina el número: soy par y mayor que 8 pero menor que 14", answer: "10"},
-  {question: "Si caminas 2 km cada día durante 5 días, ¿cuántos km recorriste?", answer: "10"},
-  {question: "Si compras 3 manzanas a $2 cada una y das $10, ¿cuánto te dan de cambio?", answer: "4"}
-];
-
-// Función de voz masculina
-function speak(text) {
+// Función de voz apasionada y relajante
+function speak(text, callback) {
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = 'es-ES';
-    utterance.rate = 0.9;
-    utterance.pitch = 0.9; // voz más grave
+    utterance.rate = 0.9;   // velocidad
+    utterance.pitch = 1.0;  // tono natural
+    utterance.volume = 1.0; // fuerte y clara
+    utterance.onend = callback;
     speechSynthesis.speak(utterance);
 }
 
-// Función para mostrar un bloque completo
-function showBlock(blockObj, index) {
-    contentBox.style.backgroundColor = colors[index % colors.length];
+// Función para mostrar paso por paso de un bloque
+function showBlockDaily(blockObj, step = 0) {
+    contentBox.style.backgroundColor = colors[current % colors.length];
 
-    let html = `
-        <div class="section-title">Apertura:</div>${blockObj.apertura}<br><br>
-        <div class="section-title">Historia:</div>${blockObj.historia}<br><br>
-        <div class="section-title">Ejercicio:</div>${blockObj.ejercicio}<br><br>
-        <div class="section-title">Respiración:</div>${blockObj.respiracion}<br><br>
-        <div class="section-title">Visualización:</div>${blockObj.visualizacion}<br><br>
-        <div class="section-title">Cierre:</div>${blockObj.cierre}<br><br>
-    `;
+    const steps = [
+        {title: "Apertura", text: blockObj.apertura},
+        {title: "Historia", text: blockObj.historia},
+        {title: "Ejercicio", text: blockObj.ejercicio},
+        {title: "Respiración", text: blockObj.respiracion},
+        {title: "Visualización", text: blockObj.visualizacion},
+        {title: "Cierre", text: blockObj.cierre}
+    ];
 
-    // Cada tercer bloque incluye un juego mental
-    if ((index+1) % 3 === 0) {
-        const game = games[index % games.length];
-        html += `<div class="section-title">Juego Mental:</div>
-                 ${game.question} 
-                 <button onclick="this.nextElementSibling.style.display='inline'; this.style.display='none';" 
-                         style="margin-left:5px;padding:2px 6px;">Mostrar Respuesta</button>
-                 <span style="display:none;color:#fbbf24;font-weight:bold;"> ${game.answer}</span><br><br>`;
+    if (step < steps.length) {
+        block.innerHTML = `<div class="section-title">${steps[step].title}:</div>${steps[step].text}`;
+        speak(steps[step].text, () => showBlockDaily(blockObj, step + 1));
+    } else {
+        nextBtn.style.display = "inline";
+        restartBtn.style.display = (current >= sessionBlocks.length-1) ? "inline" : "none";
+        localStorage.setItem("currentBlock", current + 1); // guardar siguiente bloque para mañana
     }
-
-    block.innerHTML = html;
-    speak(`${blockObj.apertura} ${blockObj.historia} ${blockObj.ejercicio} ${blockObj.respiracion} ${blockObj.visualizacion} ${blockObj.cierre}`);
 }
 
-// Función para pasar al siguiente bloque
+// Avanzar al siguiente bloque (día siguiente)
 function nextBlock() {
     if (current < sessionBlocks.length) {
-        showBlock(sessionBlocks[current], current);
+        showBlockDaily(sessionBlocks[current]);
         current++;
-        nextBtn.style.display = (current < sessionBlocks.length) ? "inline" : "none";
-        restartBtn.style.display = (current >= sessionBlocks.length) ? "inline" : "none";
-        window.scrollTo(0,0);
+    } else {
+        block.innerHTML = "Has completado todos los bloques por ahora.";
+        nextBtn.style.display = "none";
+        restartBtn.style.display = "inline";
     }
 }
 
-// Función para reiniciar la sesión
+// Reiniciar sesión completa
 function restartSession() {
     current = 0;
-    nextBtn.style.display = "inline";
-    restartBtn.style.display = "none";
+    localStorage.setItem("currentBlock", "0");
     block.innerHTML = "Bienvenido a tu sesión de 10 minutos";
     contentBox.style.backgroundColor = "#1e293b";
+    nextBtn.style.display = "inline";
+    restartBtn.style.display = "none";
 }
 
-// Evento botón Siguiente
+// Eventos
 nextBtn.addEventListener("click", nextBlock);
-
-// Evento botón Reiniciar
 restartBtn.addEventListener("click", restartSession);
 
-// Iniciar sesión
 startBtn.addEventListener("click", async () => {
     startBtn.style.display = "none";
 
     const response = await fetch("/session_content");
     const data = await response.json();
 
-    // Usamos los 20 bloques de "sesiones" de tu JSON
     sessionBlocks = data.sesiones;
 
+    // Mostrar bloque diario según índice actual
     nextBlock();
 });
