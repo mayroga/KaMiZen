@@ -6,8 +6,8 @@ let current = 0;
 
 function speak(text){
     const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang="es-ES";
-    utterance.rate=0.9;
+    utterance.lang = "es-ES";
+    utterance.rate = 0.9;
     speechSynthesis.speak(utterance);
 }
 
@@ -15,55 +15,37 @@ function nextBlock(){
 
     if(current < sessionBlocks.length){
 
-        const text=sessionBlocks[current];
+        const text = sessionBlocks[current];
 
-        block.innerText=text;
+        block.innerText = text;
 
         speak(text);
 
         current++;
 
         if(current < sessionBlocks.length){
-
-            setTimeout(nextBlock,120000);
-
+            setTimeout(nextBlock,120000); 
         }else{
-
             setTimeout(()=>{
-
-                block.innerText="Sesión finalizada.";
-                speak("Sesión finalizada");
-
+                block.innerText = "Sesión finalizada.";
+                speak("Sesión finalizada.");
             },3000)
-
         }
 
     }
 
 }
 
-startBtn.addEventListener("click",async()=>{
+startBtn.addEventListener("click", async ()=>{
 
-    startBtn.style.display="none"
+    startBtn.style.display="none";
 
-    const response=await fetch("/session_content")
+    const response = await fetch("/session_content");
 
-    const data=await response.json()
+    const data = await response.json();
 
-    sessionBlocks=[
+    sessionBlocks = data.bloques;
 
-        "Historia: "+data.historia,
+    nextBlock();
 
-        "Historia de riqueza: "+data.historia_riqueza,
-
-        "Ejercicio mental: "+data.ejercicio,
-
-        "Bienestar: "+data.bienestar,
-
-        "Cierre: "+data.cierre
-
-    ]
-
-    nextBlock()
-
-})
+});
