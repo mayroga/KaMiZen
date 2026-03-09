@@ -30,12 +30,11 @@ def obtener_sesion():
     # Aquí simulamos elegir la primera sesión disponible
     return db["sesiones"][0]  # siempre devuelve 1 por día
 
-@app.get("/")
-async def root():
-    with open("static/session.html", "r", encoding="utf-8") as f:
-        return HTMLResponse(f.read())
-
 @app.get("/session_content")
 async def session_content():
-    sesion = obtener_sesion()
-    return sesion
+    try:
+        # Esto elige una sesión aleatoria cada vez que el usuario entra
+        sesion = random.choice(data["sesiones"])
+        return sesion
+    except Exception as e:
+        return {"error": "No se pudo cargar la sesión"}
