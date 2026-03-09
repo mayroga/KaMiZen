@@ -2,230 +2,48 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>KaMiZen NeuroGame</title>
-<link rel="stylesheet" href="/static/style.css">
-
+<title>KaMiZen - Sesión de 10 Minutos</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
 <style>
-
-.answer-box{
-margin-top:10px;
+body {
+    font-family: Arial, sans-serif;
+    background: #0f172a;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    text-align: center;
 }
-
-.answer-box input{
-width:60%;
-padding:8px;
+#content-box {
+    background: #1e293b;
+    padding: 30px;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 600px;
 }
-
-.correct{
-color:#00ffcc;
-font-weight:bold;
+button {
+    padding: 10px 20px;
+    margin-top: 20px;
+    font-size: 18px;
+    border: none;
+    border-radius: 8px;
+    background: #2563eb;
+    color: white;
+    cursor: pointer;
 }
-
-.real-answer{
-margin-top:6px;
-font-size:13px;
-color:#9ca3af;
+button:hover {
+    background: #1d4ed8;
 }
-
-.voice{
-margin-top:8px;
-font-size:12px;
-color:#9ca3af;
-}
-
+p { margin: 15px 0; font-size: 18px; }
 </style>
-
 </head>
-
 <body>
-
-<header>KaMiZen NeuroGame</header>
-
-<div class="container">
-
-<div class="left">
-
-<div class="box">
-
-<h2>Historia del Día</h2>
-
-<div id="historia">Cargando...</div>
-
-<button onclick="speak(historia.innerText)">🔊 Escuchar</button>
-
+<div id="content-box">
+    <h1>KaMiZen</h1>
+    <p id="block">Bienvenido a tu sesión de 10 minutos</p>
+    <button id="start-btn">Iniciar Sesión</button>
 </div>
-
-
-<div class="box">
-
-<h2>Ejercicio del Día</h2>
-
-<div id="ejercicio">Cargando...</div>
-
-<div class="answer-box">
-
-<input id="respuestaUsuario" placeholder="Escribe tu respuesta">
-
-<button class="primary" onclick="verRespuesta()">Ver respuesta</button>
-
-<div id="feedback"></div>
-
-<div id="respuestaReal" class="real-answer"></div>
-
-</div>
-
-</div>
-
-
-<div class="box">
-
-<h2>Bienestar del Día</h2>
-
-<div id="bienestar">Cargando...</div>
-
-<button onclick="speak(bienestar.innerText)">🔊 Escuchar</button>
-
-</div>
-
-
-<button class="primary" onclick="nextContent();skipTime()">
-Siguiente Contenido
-</button>
-
-</div>
-
-
-<div class="right">
-
-<div class="box">
-
-<div class="status" id="status">
-Sesión KaMiZen
-</div>
-
-<div class="timer" id="time">
-10:00
-</div>
-
-</div>
-
-
-<div class="box chat-box" id="chatBox">
-
-<strong>AURA_BOT KaMiZen:</strong> Bienvenido a tu sesión.
-
-</div>
-
-</div>
-
-</div>
-
-
-<script src="/static/scripts.js"></script>
-<script src="/static/app.js"></script>
-
-
-<script>
-
-/* ======================
-   MOTOR DE VOZ
-====================== */
-
-function speak(text){
-
-const speech = new SpeechSynthesisUtterance(text);
-
-speech.lang="es-ES";
-speech.rate=0.9;
-
-speechSynthesis.cancel();
-speechSynthesis.speak(speech);
-
-}
-
-
-
-/* ======================
-   RESPUESTAS EJERCICIO
-====================== */
-
-function verRespuesta(){
-
-const respuestaUsuario =
-document.getElementById("respuestaUsuario").value;
-
-const ejercicio =
-document.getElementById("ejercicio").innerText;
-
-let respuestaCorrecta = calcularRespuesta(ejercicio);
-
-document.getElementById("respuestaReal").innerText =
-"Respuesta correcta: " + respuestaCorrecta;
-
-if(respuestaUsuario==""){
-document.getElementById("feedback").innerText =
-"Puedes intentar responder o ver la solución.";
-return;
-}
-
-if(respuestaUsuario == respuestaCorrecta){
-
-document.getElementById("feedback").innerHTML =
-"<span class='correct'>✔ Correcto</span>";
-
-}else{
-
-document.getElementById("feedback").innerHTML =
-"<span style='color:#ffcc00'>Respuesta diferente. Revisa la solución.</span>";
-
-}
-
-}
-
-
-
-/* ======================
-   CALCULO SIMPLE
-====================== */
-
-function calcularRespuesta(texto){
-
-texto = texto.replace(/[^\d\+\-\*\/\.]/g,'');
-
-try{
-
-return eval(texto);
-
-}catch{
-
-return "Requiere cálculo manual";
-
-}
-
-}
-
-
-
-/* ======================
-   SALTAR TIEMPO
-====================== */
-
-function skipTime(){
-
-if(typeof timeLeft !== "undefined"){
-
-timeLeft -= 60;
-
-if(timeLeft < 0){
-timeLeft = 0;
-}
-
-}
-
-}
-
-</script>
-
+<script src="scripts.js"></script>
 </body>
-
 </html>
