@@ -373,7 +373,26 @@ async def websocket_endpoint(ws: WebSocket, user_id: str):
     
     try:
         while True:
-            await ws.receive_text()
+
+    data = await ws.receive_text()
+
+    try:
+        msg = json.loads(data)
+    except:
+        continue
+
+    if msg.get("action") == "next":
+
+        contenido = {
+            "historia": obtener_siguiente_contenido(user_id, "historias"),
+            "ejercicio": obtener_siguiente_contenido(user_id, "ejercicios"),
+            "bienestar": obtener_siguiente_contenido(user_id, "bienestar")
+        }
+
+        await ws.send_json({
+            "type": "next",
+            "content": contenido
+        })
     except WebSocketDisconnect:
         manager.disconnect(user_id)
 
