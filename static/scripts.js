@@ -38,7 +38,7 @@ restartBtn.style.color = "white";
 restartBtn.style.cursor = "pointer";
 contentBox.appendChild(restartBtn);
 
-// Cambiar escena/colores según bloque
+// Colores llamativos por bloque
 const colors = [
   "#1e3a8a","#2563eb","#7c3aed","#db2777","#f43f5e",
   "#f59e0b","#10b981","#14b8a6","#22d3ee","#0ea5e9",
@@ -64,12 +64,10 @@ function speak(text) {
     speechSynthesis.speak(utterance);
 }
 
-// Función para mostrar un bloque
+// Función para mostrar un bloque completo
 function showBlock(blockObj, index) {
-    // Cambiar color de fondo
     contentBox.style.backgroundColor = colors[index % colors.length];
 
-    // Construir contenido
     let html = `
         <div class="section-title">Apertura:</div>${blockObj.apertura}<br><br>
         <div class="section-title">Historia:</div>${blockObj.historia}<br><br>
@@ -79,7 +77,7 @@ function showBlock(blockObj, index) {
         <div class="section-title">Cierre:</div>${blockObj.cierre}<br><br>
     `;
 
-    // Cada tercer bloque incluimos un juego mental aleatorio
+    // Cada tercer bloque incluye un juego mental
     if ((index+1) % 3 === 0) {
         const game = games[index % games.length];
         html += `<div class="section-title">Juego Mental:</div>
@@ -93,18 +91,18 @@ function showBlock(blockObj, index) {
     speak(`${blockObj.apertura} ${blockObj.historia} ${blockObj.ejercicio} ${blockObj.respiracion} ${blockObj.visualizacion} ${blockObj.cierre}`);
 }
 
-// Función siguiente bloque
+// Función para pasar al siguiente bloque
 function nextBlock() {
     if (current < sessionBlocks.length) {
         showBlock(sessionBlocks[current], current);
         current++;
         nextBtn.style.display = (current < sessionBlocks.length) ? "inline" : "none";
         restartBtn.style.display = (current >= sessionBlocks.length) ? "inline" : "none";
-        window.scrollTo(0,0); // subir al inicio del bloque
+        window.scrollTo(0,0);
     }
 }
 
-// Reiniciar sesión
+// Función para reiniciar la sesión
 function restartSession() {
     current = 0;
     nextBtn.style.display = "inline";
@@ -123,11 +121,10 @@ restartBtn.addEventListener("click", restartSession);
 startBtn.addEventListener("click", async () => {
     startBtn.style.display = "none";
 
-    // Obtener contenido de sesión
     const response = await fetch("/session_content");
     const data = await response.json();
 
-    // Suponiendo que tu JSON tiene 20 bloques bajo "sesiones"
+    // Usamos los 20 bloques de "sesiones" de tu JSON
     sessionBlocks = data.sesiones;
 
     nextBlock();
