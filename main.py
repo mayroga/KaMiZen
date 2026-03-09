@@ -1,11 +1,13 @@
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
-import json5
+import json5  # JSON tolerante a errores
 import random
 import os
 
 app = FastAPI(title="KaMiZen NeuroGame Engine")
+
+# Montar carpeta estática
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # Cargar sesiones
@@ -30,15 +32,18 @@ def obtener_sesion():
             "cierre": "Contenido no disponible",
             "juego": {"pregunta": "No disponible", "respuesta": "No disponible"}
         }
-    
+
     total = len(db["sesiones"])
+
+    # Leer índice previo
     if os.path.exists(LAST_SESSION_FILE):
         with open(LAST_SESSION_FILE, "r") as f:
             idx = int(f.read())
-            idx = (idx + 1) % total
+            idx = (idx + 1) % total  # siguiente sesión
     else:
         idx = 0
 
+    # Guardar índice
     with open(LAST_SESSION_FILE, "w") as f:
         f.write(str(idx))
 
