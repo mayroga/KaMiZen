@@ -1,53 +1,71 @@
-// Modifica estas funciones en tu scripts.js
+const startBtn = document.getElementById("start-btn");
+const block = document.getElementById("block");
+const restartBtn = document.getElementById("restart-btn");
 
-async function showBlock(blockData) {
-    // Limpiamos la interfaz al empezar
-    nextBtn.style.display = "none";
-    restartBtn.style.display = "none";
-    gameBtn.style.display = "none";
-    gameAnswer.style.display = "none";
-    gameAnswer.innerHTML = "";
+let sessionBlocks = [];
+let current = 0;
 
-    const steps = ["apertura", "historia", "ejercicio", "respiracion", "visualizacion", "juego", "cierre"];
-
-    for (let step of steps) {
-        if (!blockData[step]) continue; // Saltar si el paso no existe
-
-        changeBackground();
-        
-        if (step === "juego") {
-            block.innerHTML = `<div class="section-title">Juego Mental:</div>${blockData[step].pregunta}`;
-            gameBtn.style.display = "inline-block";
-            gameBtn.onclick = () => {
-                gameAnswer.innerHTML = `<strong>Respuesta:</strong> ${blockData[step].respuesta}`;
-                gameAnswer.style.display = "block";
-                playVoice(blockData[step].respuesta);
-            };
-            await playVoice(blockData[step].pregunta);
-        } else {
-            block.innerHTML = `<div class="section-title">${step.toUpperCase()}:</div>${blockData[step]}`;
-            await playVoice(blockData[step]);
-        }
-
-        // Pausa breve entre secciones
-        await new Promise(r => setTimeout(r, 1500));
-    }
-
-    // Al finalizar todos los pasos de la sesión
-    block.innerHTML = "¡Has completado la sesión de hoy!";
-    restartBtn.style.display = "inline-block";
+// Función de voz con pausa automática
+function playVoice(text) {
+    return new Promise((resolve) => {
+        speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'es-ES';
+        utterance.rate = 0.9;
+        utterance.onend = resolve;
+        speechSynthesis.speak(utterance);
+    });
 }
 
-// Simplifica el inicio
-async function startSession() {
+// Mostrar bloque
+async function showBlock(blockContent) {
+    block.innerHTML = blockContent.text;
+    document.body.style.background = blockContent.color; // cambia color
+
+    // Espera la voz
+    await playVoice(blockContent.text);
+
+    // Si hay interacción (ejercicio con respuesta)
+    if (blockContent.tipo === "ejercicio") {
+        const answerBtn = document.createElement("button");
+        answerBtn.innerText = "Mostrar Respuesta";
+        answerBtn.onclick = () => alert(blockContent.respuesta || "No hay respuesta");
+        block.appendChild(answerBtn);
+    }
+
+    current++;
+    if (current < sessionBlocks.length) {
+        nextBtn.style.display = "inline-block"; // botón siguiente
+    } else {
+        restartBtn.style.display = "inline-block";
+    }
+}
+
+// Botón iniciar
+startBtn.addEventListener("click", async () => {
     startBtn.style.display = "none";
-    try {
-        const response = await fetch("/session_content");
-        const data = await response.json();
-        // IMPORTANTE: 'data' ya es el objeto de la sesión
-        showBlock(data); 
-    } catch (error) {
-        block.innerHTML = "Error al conectar con el servidor.";
-        startBtn.style.display = "inline-block";
-    }
-}
+    const response = await fetch("/session_content");
+    const data = await response.json();
+
+    sessionBlocks = [
+        { text: data.apertura, color: "#2563eb", tipo: "apertura" },
+        { text: data.historia, color: "#34d399", tipo: "historia" },
+        { text: data.ejercicio, color: "#facc15", tipo: "ejercicio", respuesta: "La respuesta depende de tus cálculos." },
+        { text: data.respiracion, color: "#60a5fa", tipo: "respiracion" },
+        { text: data.visualizacion, color: "#a78bfa", tipo: "visualizacion" },
+        { text: data.cierre, color: "#f87171", tipo: "cierre" }
+    ];
+
+    current = 0;
+    showBlock(sessionBlocks[0]);
+});
+
+// Botón reiniciar
+restartBtn.addEventListener("click", () => location.reload());
+
+// Botón siguiente
+const nextBtn = document.getElementById("next-btn");
+nextBtn.addEventListener("click", () => {
+    nextBtn.style.display = "none";
+    showBlock(sessionBlocks[current]);
+});
