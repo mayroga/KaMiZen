@@ -1,15 +1,14 @@
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
-import json5
+import json
 import random
 
 app = FastAPI(title="KaMiZen NeuroGame Engine")
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-# cargar sesiones
-with open("static/kamizen_content.json","r",encoding="utf-8") as f:
-    db = json5.load(f)
+with open("static/kamizen_content.json", "r", encoding="utf-8") as f:
+    db = json.load(f)
 
 def obtener_sesion():
     return random.choice(db["sesiones"])
