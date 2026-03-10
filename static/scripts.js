@@ -1,6 +1,5 @@
 // static/scripts.js
 const startBtn = document.getElementById("start-btn");
-const stripeBtn = document.getElementById("stripe-btn");
 const nextBtn = document.getElementById("next-btn");
 const restartBtn = document.getElementById("restart-btn");
 const block = document.getElementById("block");
@@ -17,8 +16,7 @@ let userData = JSON.parse(localStorage.getItem("kamizenData")) || {
     nivel: 1,
     disciplina: 40,
     claridad: 50,
-    calma: 30,
-    pago: false  // indica si ya pagó
+    calma: 30
 };
 
 // PANEL MENTAL
@@ -150,50 +148,7 @@ function nextBlock() {
 // INICIO SESIÓN
 startBtn.addEventListener("click", async () => {
     startBtn.style.display = "none";
-
-    const urlParams = new URLSearchParams(window.location.search);
-    const adminKey = urlParams.get("admin_key");
-    const paymentSuccess = urlParams.get("payment");
-
-    // SI ADMIN, siempre permite sesión
-    if (adminKey && adminKey === "TU_CLAVE_ADMIN") {
-        userData.pago = true;
-        localStorage.setItem("kamizenData", JSON.stringify(userData));
-    }
-
-    // SI viene de Stripe con éxito
-    if (paymentSuccess === "success") {
-        userData.pago = true;
-        localStorage.setItem("kamizenData", JSON.stringify(userData));
-        stripeBtn.style.display = "none";
-        await loadSession();
-        return;
-    }
-
-    // SI YA PAGO, cargar sesión directamente
-    if (userData.pago) {
-        stripeBtn.style.display = "none";
-        await loadSession();
-    } else {
-        stripeBtn.style.display = "inline-block";
-    }
-});
-
-// BOTÓN DE STRIPE
-stripeBtn.addEventListener("click", async () => {
-    stripeBtn.disabled = true;
-    const res = await fetch("/create_checkout_session", { method: "POST" });
-    const data = await res.json();
-    if (data.id) {
-        const stripe = Stripe(data.stripe_key || "pk_test_12345");
-        // Redirigir a Stripe y agregar retorno al terminar
-        stripe.redirectToCheckout({ sessionId: data.id }).then((result) => {
-            if (result.error) alert(result.error.message);
-        });
-    } else {
-        alert("Error creando sesión de pago");
-        stripeBtn.disabled = false;
-    }
+    await loadSession();
 });
 
 // FUNCION PARA CARGAR SESIÓN
