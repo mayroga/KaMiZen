@@ -1,580 +1,655 @@
 {
   "sesiones": [
     {
-      "id": 1,
-      "categoria": "claridad",
-      "bloques": [
-        {"tipo":"voz","texto":"Bienvenido a KaMiZen. Hoy entrenarás claridad mental y disciplina financiera.","color":"#2563eb"},
-        {"tipo":"historia","texto":"Un inversor comenzó ahorrando apenas diez dólares por semana. Con el tiempo, ese pequeño hábito creó estabilidad y oportunidades.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Qué hábito financiero crea más riqueza a largo plazo?","opciones":["Gastar rápidamente","Invertir constantemente","Guardar dinero sin plan"],"correcta":1,"explicacion":"La inversión constante permite aprovechar el interés compuesto.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Siempre está delante de ti pero nunca puedes verlo.","opciones":["La sombra","El futuro","El aire"],"correcta":1,"explicacion":"El futuro siempre está delante.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Recibes 100 dólares inesperados.","opciones":["Gastarlo en ocio","Invertir o aprender algo","No pensar en ello"],"correcta":1,"explicacion":"Invertir en conocimiento o activos genera crecimiento.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"8 × 6 + 4 = ?","opciones":["52","44","48"],"correcta":0,"explicacion":"Primero multiplicación.","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Inhala profundo cuatro segundos y exhala lentamente seis segundos.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Visualiza tu mente tranquila tomando decisiones financieras inteligentes.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu claridad mental ha aumentado hoy.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"Hoy fortaleciste tu disciplina. Cada sesión construye una mente más fuerte.","color":"#f87171"}
-      ]
-    },
+  "id": 1,
+  "categoria": "claridad",
+  "bloques": [
     {
-      "id": 2,
-      "categoria": "disciplina",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy trabajarás disciplina mental.","color":"#2563eb"},
-        {"tipo":"historia","texto":"Un atleta entrena incluso cuando no tiene ganas. Esa constancia es lo que crea campeones.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Qué construye disciplina?","opciones":["Motivación ocasional","Repetición diaria","Inspiración momentánea"],"correcta":1,"explicacion":"La disciplina se crea con repetición.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Cuanto más tomas, más dejas atrás.","opciones":["Pasos","Dinero","Ideas"],"correcta":0,"explicacion":"Los pasos.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Tienes una hora libre.","opciones":["Aprender algo nuevo","Redes sociales","Dormir"],"correcta":0,"explicacion":"El aprendizaje crea valor futuro.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"15 + 15 ÷ 3 = ?","opciones":["20","25","30"],"correcta":0,"explicacion":"División primero.","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Respira profundo y relaja tus hombros.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Visualiza tu mente tomando decisiones disciplinadas.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu disciplina ha aumentado.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"La disciplina diaria crea resultados extraordinarios.","color":"#f87171"}
-      ]
+    "tipo":"tvid",
+      "tecnica":"TDB",
+      "nombre":"Explorando lo Positivo",
+      "descripcion":"Identifica algo que está bien en tu vida y siente gratitud.",
+      "respiracion":"Inhala 4 segundos, retén 2, exhala 6 segundos.",
+      "duracion":90,
+      "color":"#3b82f6"
     },
-    {
-      "id": 3,
-      "categoria": "calma",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy entrenarás calma mental.","color":"#2563eb"},
-        {"tipo":"historia","texto":"Las personas más exitosas toman decisiones desde la calma.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Qué ayuda a la mente a tomar mejores decisiones?","opciones":["Ansiedad","Calma","Prisa"],"correcta":1,"explicacion":"La calma mejora la claridad mental.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Tengo ciudades pero no casas.","opciones":["Mapa","Libro","Computadora"],"correcta":0,"explicacion":"El mapa.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Ante un problema financiero.","opciones":["Reaccionar rápido","Analizar con calma","Ignorar"],"correcta":1,"explicacion":"La calma mejora las decisiones.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"9 × 7 = ?","opciones":["56","63","72"],"correcta":1,"explicacion":"63.","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Respira profundo y suelta lentamente.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Imagina tu mente tranquila resolviendo desafíos.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu calma mental ha aumentado.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"La calma es una ventaja mental poderosa.","color":"#f87171"}
-      ]
+    {"tipo":"voz","texto":"Bienvenido a KaMiZen. Hoy entrenarás claridad mental y disciplina financiera.","color":"#2563eb"},
+    {"tipo":"historia","texto":"Un inversor comenzó ahorrando apenas diez dólares por semana. Con el tiempo, ese pequeño hábito creó estabilidad y oportunidades.","color":"#34d399"},
+    {"tipo":"quiz","pregunta":"¿Qué hábito financiero crea más riqueza a largo plazo?","opciones":["Gastar rápidamente","Invertir constantemente","Guardar dinero sin plan"],"correcta":1,"explicacion":"La inversión constante permite aprovechar el interés compuesto.","recompensa":10,"color":"#facc15"},
+    {"tipo":"acertijo","pregunta":"Siempre está delante de ti pero nunca puedes verlo.","opciones":["La sombra","El futuro","El aire"],"correcta":1,"explicacion":"El futuro siempre está delante.","recompensa":8,"color":"#f59e0b"},
+    {"tipo":"decision","pregunta":"Recibes 100 dólares inesperados.","opciones":["Gastarlo en ocio","Invertir o aprender algo","No pensar en ello"],"correcta":1,"explicacion":"Invertir en conocimiento o activos genera crecimiento.","recompensa":12,"color":"#22c55e"},
+    {"tipo":"juego_mental","pregunta":"8 × 6 + 4 = ?","opciones":["52","44","48"],"correcta":0,"explicacion":"Primero multiplicación.","recompensa":7,"color":"#38bdf8"},
+    {"tipo":"respiracion","texto":"Inhala profundo cuatro segundos y exhala lentamente seis segundos.","duracion":30,"color":"#60a5fa"},
+    {"tipo":"visualizacion","texto":"Visualiza tu mente tranquila tomando decisiones financieras inteligentes.","color":"#a78bfa"},
+    {"tipo":"recompensa","texto":"Tu claridad mental ha aumentado hoy.","puntos":20,"color":"#10b981"},
+    {"tipo":"cierre","texto":"Hoy fortaleciste tu disciplina. Cada sesión construye una mente más fuerte.","color":"#f87171"}
+  ]
+},
+{
+    "tipo":"tvid",
+    "tecnica":"TDM",
+    "nombre":"Aprendiendo del Mal",
+     "descripcion":"Piensa en algo negativo que pasó y encuentra un aprendizaje.",
+    "respiracion":"Inhala 4 segundos, retén 2, exhala 6 segundos.",
+     "duracion":105,
+    "color":"#3b82f6"
     },
+
+    {"tipo":"voz","texto":"Hoy trabajarás disciplina mental.","color":"#2563eb"},
+    {"tipo":"historia","texto":"Un atleta entrena incluso cuando no tiene ganas. Esa constancia es lo que crea campeones.","color":"#34d399"},
+    {"tipo":"quiz","pregunta":"¿Qué construye disciplina?","opciones":["Motivación ocasional","Repetición diaria","Inspiración momentánea"],"correcta":1,"explicacion":"La disciplina se crea con repetición.","recompensa":10,"color":"#facc15"},
+    {"tipo":"acertijo","pregunta":"Cuanto más tomas, más dejas atrás.","opciones":["Pasos","Dinero","Ideas"],"correcta":0,"explicacion":"Los pasos.","recompensa":8,"color":"#f59e0b"},
+    {"tipo":"decision","pregunta":"Tienes una hora libre.","opciones":["Aprender algo nuevo","Redes sociales","Dormir"],"correcta":0,"explicacion":"El aprendizaje crea valor futuro.","recompensa":12,"color":"#22c55e"},
+    {"tipo":"juego_mental","pregunta":"15 + 15 ÷ 3 = ?","opciones":["20","25","30"],"correcta":0,"explicacion":"División primero.","recompensa":7,"color":"#38bdf8"},
+    {"tipo":"respiracion","texto":"Respira profundo y relaja tus hombros.","duracion":30,"color":"#60a5fa"},
+    {"tipo":"visualizacion","texto":"Visualiza tu mente tomando decisiones disciplinadas.","color":"#a78bfa"},
+    {"tipo":"recompensa","texto":"Tu disciplina ha aumentado.","puntos":20,"color":"#10b981"},
+    {"tipo":"cierre","texto":"La disciplina diaria crea resultados extraordinarios.","color":"#f87171"}
+  ]
+},
+{
+  "id": 3,
+  "categoria": "calma",
+  "bloques": [
     {
-      "id": 4,
-      "categoria": "enfoque",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy entrenarás tu capacidad de enfoque.","color":"#2563eb"},
-        {"tipo":"historia","texto":"Las personas enfocadas terminan lo que empiezan.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Qué destruye más el enfoque?","opciones":["Multitarea","Planificación","Descanso"],"correcta":0,"explicacion":"La multitarea reduce la eficiencia.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Tiene llaves pero no abre puertas.","opciones":["Piano","Caja","Puerta"],"correcta":0,"explicacion":"El piano.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Quieres terminar un proyecto.","opciones":["Trabajar 10 minutos","Eliminar distracciones","Esperar motivación"],"correcta":1,"explicacion":"Eliminar distracciones aumenta el enfoque.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"6 × 6 = ?","opciones":["36","42","48"],"correcta":0,"explicacion":"36.","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Respira y enfoca tu mente.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Imagina terminar tareas importantes con facilidad.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu enfoque ha aumentado.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"El enfoque convierte esfuerzo en resultados.","color":"#f87171"}
-      ]
+      "tipo":"tvid",
+      "tecnica":"TDN",
+      "nombre":"Curiosidad Infantil",
+      "descripcion":"Recuerda un momento donde sentiste curiosidad pura, actívalo hoy.",
+      "respiracion":"Inhala 4 segundos y exhala 6 segundos mientras visualizas tu niño interior explorando.",
+      "duracion":90,
+      "color":"#3b82f6"
     },
+
+    {"tipo":"voz","texto":"Hoy entrenarás calma mental.","color":"#2563eb"},
+    {"tipo":"historia","texto":"Las personas más exitosas toman decisiones desde la calma.","color":"#34d399"},
+    {"tipo":"quiz","pregunta":"¿Qué ayuda a la mente a tomar mejores decisiones?","opciones":["Ansiedad","Calma","Prisa"],"correcta":1,"explicacion":"La calma mejora la claridad mental.","recompensa":10,"color":"#facc15"},
+    {"tipo":"acertijo","pregunta":"Tengo ciudades pero no casas.","opciones":["Mapa","Libro","Computadora"],"correcta":0,"explicacion":"El mapa.","recompensa":8,"color":"#f59e0b"},
+    {"tipo":"decision","pregunta":"Ante un problema financiero.","opciones":["Reaccionar rápido","Analizar con calma","Ignorar"],"correcta":1,"explicacion":"La calma mejora las decisiones.","recompensa":12,"color":"#22c55e"},
+    {"tipo":"juego_mental","pregunta":"9 × 7 = ?","opciones":["56","63","72"],"correcta":1,"explicacion":"63.","recompensa":7,"color":"#38bdf8"},
+    {"tipo":"respiracion","texto":"Respira profundo y suelta lentamente.","duracion":30,"color":"#60a5fa"},
+    {"tipo":"visualizacion","texto":"Imagina tu mente tranquila resolviendo desafíos.","color":"#a78bfa"},
+    {"tipo":"recompensa","texto":"Tu calma mental ha aumentado.","puntos":20,"color":"#10b981"},
+    {"tipo":"cierre","texto":"La calma es una ventaja mental poderosa.","color":"#f87171"}
+  ]
+},
+{
+  "id": 4,
+  "categoria": "enfoque",
+  "bloques": [
+    {"tipo":"tvid","id":4,"nombre":"Guía del Padre","tecnica":"TDP","descripcion":"Imagina que un padre te da un consejo para protegerte y crecer.","respiracion":"Inhala 4, retén 2, exhala 6 mientras sientes seguridad.","duracion":"1:50","color":"#38bdf8"},
+    {"tipo":"voz","texto":"Hoy entrenarás tu capacidad de enfoque.","color":"#2563eb"},
+    {"tipo":"historia","texto":"Las personas enfocadas terminan lo que empiezan.","color":"#34d399"},
+    {"tipo":"quiz","pregunta":"¿Qué destruye más el enfoque?","opciones":["Multitarea","Planificación","Descanso"],"correcta":0,"explicacion":"La multitarea reduce la eficiencia.","recompensa":10,"color":"#facc15"},
+    {"tipo":"acertijo","pregunta":"Tiene llaves pero no abre puertas.","opciones":["Piano","Caja","Puerta"],"correcta":0,"explicacion":"El piano.","recompensa":8,"color":"#f59e0b"},
+    {"tipo":"decision","pregunta":"Quieres terminar un proyecto.","opciones":["Trabajar 10 minutos","Eliminar distracciones","Esperar motivación"],"correcta":1,"explicacion":"Eliminar distracciones aumenta el enfoque.","recompensa":12,"color":"#22c55e"},
+    {"tipo":"juego_mental","pregunta":"6 × 6 = ?","opciones":["36","42","48"],"correcta":0,"explicacion":"36.","recompensa":7,"color":"#38bdf8"},
+    {"tipo":"respiracion","texto":"Respira y enfoca tu mente.","duracion":30,"color":"#60a5fa"},
+    {"tipo":"visualizacion","texto":"Imagina terminar tareas importantes con facilidad.","color":"#a78bfa"},
+    {"tipo":"recompensa","texto":"Tu enfoque ha aumentado.","puntos":20,"color":"#10b981"},
+    {"tipo":"cierre","texto":"El enfoque convierte esfuerzo en resultados.","color":"#f87171"}
+  ]
+},
+{
+  "id": 5,
+  "categoria": "mentalidad",
+  "bloques": [
+    {"tipo":"tvid","id":5,"nombre":"Abrazo Maternal","tecnica":"TMM","descripcion":"Siente amor y cuidado como si una madre te abrazara y guiara.","respiracion":"Inhala 4, retén 2, exhala 6. Siente calidez y protección.","duracion":"1:40","color":"#38bdf8"},
+    {"tipo":"voz","texto":"Hoy entrenarás mentalidad de crecimiento.","color":"#2563eb"},
+    {"tipo":"historia","texto":"Las personas exitosas ven oportunidades donde otros ven problemas.","color":"#34d399"},
+    {"tipo":"quiz","pregunta":"¿Qué caracteriza una mentalidad de crecimiento?","opciones":["Evitar retos","Aprender de errores","Rendirse rápido"],"correcta":1,"explicacion":"Aprender de errores fortalece la mente.","recompensa":10,"color":"#facc15"},
+    {"tipo":"acertijo","pregunta":"Mientras más le quitas, más grande se vuelve.","opciones":["Agujero","Montaña","Caja"],"correcta":0,"explicacion":"Un agujero.","recompensa":8,"color":"#f59e0b"},
+    {"tipo":"decision","pregunta":"Cometes un error.","opciones":["Culpar a otros","Aprender","Ignorar"],"correcta":1,"explicacion":"El aprendizaje mejora la mentalidad.","recompensa":12,"color":"#22c55e"},
+    {"tipo":"juego_mental","pregunta":"12 × 4 = ?","opciones":["36","48","60"],"correcta":1,"explicacion":"48.","recompensa":7,"color":"#38bdf8"},
+    {"tipo":"respiracion","texto":"Respira profundo y mantén la calma.","duracion":30,"color":"#60a5fa"},
+    {"tipo":"visualizacion","texto":"Visualiza tu crecimiento personal.","color":"#a78bfa"},
+    {"tipo":"recompensa","texto":"Tu mentalidad ha crecido.","puntos":20,"color":"#10b981"},
+    {"tipo":"cierre","texto":"Las personas que crecen mentalmente cambian su destino.","color":"#f87171"}
+  ]
+},
+{
+  "id": 6,
+  "categoria": "productividad",
+  "bloques": [
+    {"tipo":"tvid","id":6,"nombre":"Beso Energético","tecnica":"TDK","descripcion":"Visualiza recibir un beso lleno de energía positiva y motivación.","respiracion":"Inhala 4, exhala 6, siente la energía en tu pecho.","duracion":"1:30","color":"#38bdf8"},
+    {"tipo":"voz","texto":"Hoy trabajarás tu productividad.","color":"#2563eb"},
+    {"tipo":"historia","texto":"Las personas productivas hacen primero lo importante.","color":"#34d399"},
+    {"tipo":"quiz","pregunta":"¿Qué aumenta la productividad?","opciones":["Procrastinar","Priorizar","Evitar tareas"],"correcta":1,"explicacion":"Priorizar tareas importantes.","recompensa":10,"color":"#facc15"},
+    {"tipo":"acertijo","pregunta":"Tiene manos pero no puede aplaudir.","opciones":["Reloj","Silla","Libro"],"correcta":0,"explicacion":"El reloj.","recompensa":8,"color":"#f59e0b"},
+    {"tipo":"decision","pregunta":"Tienes muchas tareas.","opciones":["Hacer lo fácil","Hacer lo importante","Esperar"],"correcta":1,"explicacion":"Lo importante genera progreso.","recompensa":12,"color":"#22c55e"},
+    {"tipo":"juego_mental","pregunta":"7 × 8 = ?","opciones":["54","56","64"],"correcta":1,"explicacion":"56.","recompensa":7,"color":"#38bdf8"},
+    {"tipo":"respiracion","texto":"Respira y enfoca tu energía.","duracion":30,"color":"#60a5fa"},
+    {"tipo":"visualizacion","texto":"Imagina terminar tus tareas con eficiencia.","color":"#a78bfa"},
+    {"tipo":"recompensa","texto":"Tu productividad mental aumenta.","puntos":20,"color":"#10b981"},
+    {"tipo":"cierre","texto":"La productividad transforma tiempo en resultados.","color":"#f87171"}
+  ]
+},
+{
+  "id": 7,
+  "categoria": "confianza",
+  "bloques": [
+    {"tipo":"tvid","id":7,"nombre":"Estrategia de Guerra","tecnica":"TDG","descripcion":"Imagina enfrentar un desafío con fuerza, inteligencia y audacia.","respiracion":"Inhala 4, retén 2, exhala 6 mientras sientes poder interior.","duracion":"2:00","color":"#38bdf8"},
+    {"tipo":"voz","texto":"Hoy entrenarás confianza mental.","color":"#2563eb"},
+    {"tipo":"historia","texto":"La confianza nace de cumplir promesas personales.","color":"#34d399"},
+    {"tipo":"quiz","pregunta":"¿Qué construye confianza?","opciones":["Excusas","Acción constante","Evitar retos"],"correcta":1,"explicacion":"La acción crea confianza.","recompensa":10,"color":"#facc15"},
+    {"tipo":"acertijo","pregunta":"Cuanto más seco se vuelve, más moja.","opciones":["Toalla","Río","Nube"],"correcta":0,"explicacion":"La toalla.","recompensa":8,"color":"#f59e0b"},
+    {"tipo":"decision","pregunta":"Quieres ganar confianza.","opciones":["Actuar","Esperar","Evitar retos"],"correcta":0,"explicacion":"La acción fortalece la mente.","recompensa":12,"color":"#22c55e"},
+    {"tipo":"juego_mental","pregunta":"9 × 8 = ?","opciones":["64","72","81"],"correcta":1,"explicacion":"72.","recompensa":7,"color":"#38bdf8"},
+    {"tipo":"respiracion","texto":"Respira profundo.","duracion":30,"color":"#60a5fa"},
+    {"tipo":"visualizacion","texto":"Visualiza actuar con confianza.","color":"#a78bfa"},
+    {"tipo":"recompensa","texto":"Tu confianza aumenta.","puntos":20,"color":"#10b981"},
+    {"tipo":"cierre","texto":"La confianza crece con cada acción.","color":"#f87171"}
+  ]
+},
+{
+  "id": 8,
+  "categoria": "resiliencia",
+  "bloques": [
+    {"tipo":"tvid","id":8,"nombre":"Transformación de Obstáculos","tecnica":"TDM","descripcion":"Piensa en un problema actual y conviértelo en oportunidad.","respiracion":"Inhala 4, exhala 6, siente cómo la solución surge.","duracion":"1:50","color":"#38bdf8"},
+    {"tipo":"voz","texto":"Hoy entrenarás resiliencia mental.","color":"#2563eb"},
+    {"tipo":"historia","texto":"Cada desafío fortalece a quienes persisten.","color":"#34d399"},
+    {"tipo":"quiz","pregunta":"¿Qué fortalece la resiliencia?","opciones":["Rendirse","Persistir","Evitar retos"],"correcta":1,"explicacion":"Persistir fortalece la mente.","recompensa":10,"color":"#facc15"},
+    {"tipo":"acertijo","pregunta":"Vuelo sin alas.","opciones":["Tiempo","Pájaro","Avión"],"correcta":0,"explicacion":"El tiempo.","recompensa":8,"color":"#f59e0b"},
+    {"tipo":"decision","pregunta":"Fracaso temporal.","opciones":["Abandonar","Intentar de nuevo","Ignorar"],"correcta":1,"explicacion":"Intentar fortalece la resiliencia.","recompensa":12,"color":"#22c55e"},
+    {"tipo":"juego_mental","pregunta":"11 × 5 = ?","opciones":["55","50","60"],"correcta":0,"explicacion":"55.","recompensa":7,"color":"#38bdf8"},
+    {"tipo":"respiracion","texto":"Respira profundo.","duracion":30,"color":"#60a5fa"},
+    {"tipo":"visualizacion","texto":"Visualiza superar desafíos.","color":"#a78bfa"},
+    {"tipo":"recompensa","texto":"Tu resiliencia ha aumentado.","puntos":20,"color":"#10b981"},
+    {"tipo":"cierre","texto":"La resiliencia transforma obstáculos en crecimiento.","color":"#f87171"}
+  ]
+},
+{
+  "id": 9,
+  "categoria": "aprendizaje",
+  "bloques": [
+    {"tipo":"tvid","id":9,"nombre":"Fortaleza Interior","tecnica":"TDB","descripcion":"Identifica tu fuerza y visualízala expandiéndose.","respiracion":"Inhala 4, retén 2, exhala 6. Siente tu poder interno.","duracion":"1:40","color":"#38bdf8"},
+    {"tipo":"voz","texto":"Hoy entrenarás tu mente para aprender más rápido.","color":"#2563eb"},
+    {"tipo":"historia","texto":"Los mejores inversionistas nunca dejan de aprender.","color":"#34d399"},
+    {"tipo":"quiz","pregunta":"¿Qué acelera el aprendizaje?","opciones":["Practicar","Ignorar errores","Evitar estudio"],"correcta":0,"explicacion":"La práctica mejora el aprendizaje.","recompensa":10,"color":"#facc15"},
+    {"tipo":"acertijo","pregunta":"Siempre corre pero nunca camina.","opciones":["Río","Auto","Persona"],"correcta":0,"explicacion":"El río.","recompensa":8,"color":"#f59e0b"},
+    {"tipo":"decision","pregunta":"Quieres aprender.","opciones":["Leer","Esperar","Evitar esfuerzo"],"correcta":0,"explicacion":"Leer y estudiar fortalecen la mente.","recompensa":12,"color":"#22c55e"},
+    {"tipo":"juego_mental","pregunta":"14 × 3 = ?","opciones":["42","36","48"],"correcta":0,"explicacion":"42.","recompensa":7,"color":"#38bdf8"},
+    {"tipo":"respiracion","texto":"Respira profundo.","duracion":30,"color":"#60a5fa"},
+    {"tipo":"visualizacion","texto":"Visualiza tu mente aprendiendo rápidamente.","color":"#a78bfa"},
+    {"tipo":"recompensa","texto":"Tu capacidad de aprendizaje ha aumentado.","puntos":20,"color":"#10b981"},
+    {"tipo":"cierre","texto":"Aprender continuamente expande tu futuro.","color":"#f87171"}
+  ]
+},
+   {
+  "id": 10,
+  "categoria": "claridad",
+  "bloques": [
+    {"tipo":"tvid","id":10,"nombre":"Risa del Niño","tecnica":"TDN","descripcion":"Imita una risa de niño, siente ligereza y alegría.","respiracion":"Inhala 4, exhala 6 con cada carcajada imaginaria.","duracion":"1:30","color":"#38bdf8"},
+    {"tipo":"voz","texto":"Hoy entrenarás claridad estratégica.","color":"#2563eb"},
+    {"tipo":"historia","texto":"Las mejores decisiones nacen de la claridad mental.","color":"#34d399"},
+    {"tipo":"quiz","pregunta":"¿Qué mejora la claridad mental?","opciones":["Caos","Orden","Prisa"],"correcta":1,"explicacion":"El orden mental mejora la claridad.","recompensa":10,"color":"#facc15"},
+    {"tipo":"acertijo","pregunta":"Tiene un ojo pero no puede ver.","opciones":["Aguja","Pez","Persona"],"correcta":0,"explicacion":"La aguja.","recompensa":8,"color":"#f59e0b"},
+    {"tipo":"decision","pregunta":"Tienes muchas opciones.","opciones":["Elegir rápido","Analizar cuidadosamente","Ignorar"],"correcta":1,"explicacion":"Analizar con calma da mejores resultados.","recompensa":12,"color":"#22c55e"},
+    {"tipo":"juego_mental","pregunta":"18 ÷ 3 = ?","opciones":["6","9","5"],"correcta":0,"explicacion":"6.","recompensa":7,"color":"#38bdf8"},
+    {"tipo":"respiracion","texto":"Respira profundo.","duracion":30,"color":"#60a5fa"},
+    {"tipo":"visualizacion","texto":"Visualiza claridad en cada decisión.","color":"#a78bfa"},
+    {"tipo":"recompensa","texto":"Tu claridad mental ha aumentado.","puntos":20,"color":"#10b981"},
+    {"tipo":"cierre","texto":"La claridad transforma confusión en acción.","color":"#f87171"}
+  ]
+},
+{
+  "id": 11,
+  "categoria": "disciplina",
+  "bloques":[
+    {"tipo":"tvid","id":11,"nombre":"Decisión Paterna","tecnica":"TDP","descripcion":"Piensa en una decisión importante y actúa guiado por prudencia y amor paternal.","respiracion":"Inhala 4, retén 2, exhala 6 sintiendo claridad y responsabilidad.","duracion":"1:50","color":"#38bdf8"},
+    {"tipo":"voz","texto":"Entrena disciplina profunda hoy.","color":"#2563eb"},
+    {"tipo":"historia","texto":"La disciplina es lo que separa sueños de resultados.","color":"#34d399"},
+    {"tipo":"quiz","pregunta":"¿Cómo se fortalece la disciplina?","opciones":["Evitar esfuerzos","Persistir","Rendirse"],"correcta":1,"explicacion":"Persistir crea hábitos sólidos.","recompensa":10,"color":"#facc15"},
+    {"tipo":"acertijo","pregunta":"Cuanto más quitas, más grande se vuelve.","opciones":["Agujero","Montaña","Caja"],"correcta":0,"explicacion":"Agujero.","recompensa":8,"color":"#f59e0b"},
+    {"tipo":"decision","pregunta":"Quieres ser constante.","opciones":["Actuar","Esperar motivación","Evitar"],"correcta":0,"explicacion":"Actuar refuerza disciplina.","recompensa":12,"color":"#22c55e"},
+    {"tipo":"juego_mental","pregunta":"5 × 5 = ?","opciones":["20","25","30"],"correcta":1,"explicacion":"25.","recompensa":7,"color":"#38bdf8"},
+    {"tipo":"respiracion","texto":"Respira y enfoca tu mente.","duracion":30,"color":"#60a5fa"},
+    {"tipo":"visualizacion","texto":"Imagina tu disciplina sólida.","color":"#a78bfa"},
+    {"tipo":"recompensa","texto":"Tu disciplina ha crecido.","puntos":20,"color":"#10b981"},
+    {"tipo":"cierre","texto":"La disciplina crea libertad y resultados.","color":"#f87171"}
+  ]
+},
+{
+  "id": 12,
+  "categoria": "calma",
+  "bloques":[
+    {"tipo":"tvid","id":12,"nombre":"Cuidado Maternal","tecnica":"TMM","descripcion":"Visualiza recibir protección y amor incondicional.","respiracion":"Inhala 4, exhala 6, siente la calidez recorriendo tu cuerpo.","duracion":"1:40","color":"#38bdf8"},
+    {"tipo":"voz","texto":"Hoy entrenarás calma profunda.","color":"#2563eb"},
+    {"tipo":"historia","texto":"Los líderes actúan desde la calma y claridad.","color":"#34d399"},
+    {"tipo":"quiz","pregunta":"¿Qué genera mejores decisiones?","opciones":["Ansiedad","Calma","Prisa"],"correcta":1,"explicacion":"La calma permite reflexión.","recompensa":10,"color":"#facc15"},
+    {"tipo":"acertijo","pregunta":"Vuelo sin alas, lloro sin ojos.","opciones":["Nube","Río","Viento"],"correcta":2,"explicacion":"El viento.","recompensa":8,"color":"#f59e0b"},
+    {"tipo":"decision","pregunta":"Situación estresante.","opciones":["Reaccionar","Respirar y pensar","Ignorar"],"correcta":1,"explicacion":"Respirar calma la mente.","recompensa":12,"color":"#22c55e"},
+    {"tipo":"juego_mental","pregunta":"8 × 7 = ?","opciones":["54","56","58"],"correcta":1,"explicacion":"56.","recompensa":7,"color":"#38bdf8"},
+    {"tipo":"respiracion","texto":"Respira profundo.","duracion":30,"color":"#60a5fa"},
+    {"tipo":"visualizacion","texto":"Visualiza calma interna.","color":"#a78bfa"},
+    {"tipo":"recompensa","texto":"Tu calma aumenta.","puntos":20,"color":"#10b981"},
+    {"tipo":"cierre","texto":"La calma es fortaleza interna.","color":"#f87171"}
+  ]
+}, 
+   {
+  "id": 13,
+  "categoria": "enfoque",
+  "bloques":[
+    {"tipo":"tvid","id":13,"nombre":"Beso de Gratitud","tecnica":"TDK","descripcion":"Envía un beso imaginario de gratitud a alguien que te apoyó.","respiracion":"Inhala 4, exhala 6, siente la conexión positiva.","duracion":"1:30","color":"#38bdf8"},
+    {"tipo":"voz","texto":"Hoy entrenarás enfoque total.","color":"#2563eb"},
+    {"tipo":"historia","texto":"El enfoque dirige energía hacia resultados concretos.","color":"#34d399"},
+    {"tipo":"quiz","pregunta":"¿Qué mejora el enfoque?","opciones":["Distracciones","Eliminarlas","Multitarea"],"correcta":1,"explicacion":"Eliminar distracciones aumenta concentración.","recompensa":10,"color":"#facc15"},
+    {"tipo":"acertijo","pregunta":"Tiene ojos pero no puede ver.","opciones":["Pecho","Aguja","Pez"],"correcta":1,"explicacion":"La aguja.","recompensa":8,"color":"#f59e0b"},
+    {"tipo":"decision","pregunta":"Tarea importante.","opciones":["Ignorar","Concentrarse","Procrastinar"],"correcta":1,"explicacion":"Concentrarse termina la tarea.","recompensa":12,"color":"#22c55e"},
+    {"tipo":"juego_mental","pregunta":"13 × 3 = ?","opciones":["39","36","42"],"correcta":0,"explicacion":"39.","recompensa":7,"color":"#38bdf8"},
+    {"tipo":"respiracion","texto":"Respira profundo y enfoca tu mente.","duracion":30,"color":"#60a5fa"},
+    {"tipo":"visualizacion","texto":"Imagina completar todas tus tareas.","color":"#a78bfa"},
+    {"tipo":"recompensa","texto":"Tu enfoque ha mejorado.","puntos":20,"color":"#10b981"},
+    {"tipo":"cierre","texto":"El enfoque transforma esfuerzo en éxito.","color":"#f87171"}
+  ]
+},
+{
+  "id": 14,
+  "categoria": "mentalidad",
+  "bloques":[
+    {"tipo":"tvid","id":14,"nombre":"Guerra Pacífica","tecnica":"TDG","descripcion":"Visualiza enfrentando un miedo con valentía y calma.","respiracion":"Inhala 4, retén 2, exhala 6 sintiendo control y fuerza.","duracion":"2:00","color":"#38bdf8"},
+    {"tipo":"voz","texto":"Hoy entrenarás mentalidad positiva.","color":"#2563eb"},
+    {"tipo":"historia","texto":"Las oportunidades se presentan a los que buscan soluciones.","color":"#34d399"},
+    {"tipo":"quiz","pregunta":"¿Qué genera mentalidad positiva?","opciones":["Quejarse","Buscar soluciones","Evitar retos"],"correcta":1,"explicacion":"Buscar soluciones fortalece la mente.","recompensa":10,"color":"#facc15"},
+    {"tipo":"acertijo","pregunta":"Siempre avanza, nunca retrocede.","opciones":["Reloj","Persona","Animal"],"correcta":0,"explicacion":"El reloj.","recompensa":8,"color":"#f59e0b"},
+    {"tipo":"decision","pregunta":"Problema inesperado.","opciones":["Rendirse","Buscar solución","Ignorar"],"correcta":1,"explicacion":"Buscar soluciones fortalece mentalidad.","recompensa":12,"color":"#22c55e"},
+    {"tipo":"juego_mental","pregunta":"16 ÷ 4 = ?","opciones":["2","4","8"],"correcta":1,"explicacion":"4.","recompensa":7,"color":"#38bdf8"},
+    {"tipo":"respiracion","texto":"Respira profundo y relaja.","duracion":30,"color":"#60a5fa"},
+    {"tipo":"visualizacion","texto":"Visualiza soluciones creativas.","color":"#a78bfa"},
+    {"tipo":"recompensa","texto":"Tu mentalidad positiva ha aumentado.","puntos":20,"color":"#10b981"},
+    {"tipo":"cierre","texto":"La mentalidad positiva abre caminos.","color":"#f87171"}
+  ]
+},
+{
+  "id": 15,
+  "categoria": "productividad",
+  "bloques":[
+    {"tipo":"tvid","id":15,"nombre":"Aprendiendo del Error","tecnica":"TDM","descripcion":"Recuerda un error reciente y saca una lección positiva.","respiracion":"Inhala 4, exhala 6, transforma el error en aprendizaje.","duracion":"1:50","color":"#38bdf8"},
+    {"tipo":"voz","texto":"Hoy entrenarás productividad máxima.","color":"#2563eb"},
+    {"tipo":"historia","texto":"Los más productivos gestionan su tiempo y energía.","color":"#34d399"},
+    {"tipo":"quiz","pregunta":"¿Qué aumenta productividad?","opciones":["Planificación","Procrastinar","Multitarea"],"correcta":0,"explicacion":"Planificar prioriza tareas.","recompensa":10,"color":"#facc15"},
+    {"tipo":"acertijo","pregunta":"Sin moverse corre todo el día.","opciones":["Reloj","Agua","Viento"],"correcta":0,"explicacion":"El reloj.","recompensa":8,"color":"#f59e0b"},
+    {"tipo":"decision","pregunta":"Tareas múltiples.","opciones":["Priorizar","Hacer primero lo fácil","Esperar"],"correcta":0,"explicacion":"Priorizar genera resultados.","recompensa":12,"color":"#22c55e"},
+    {"tipo":"juego_mental","pregunta":"12 × 6 = ?","opciones":["72","68","70"],"correcta":0,"explicacion":"72.","recompensa":7,"color":"#38bdf8"},
+    {"tipo":"respiracion","texto":"Respira profundo y enfoca.","duracion":30,"color":"#60a5fa"},
+    {"tipo":"visualizacion","texto":"Imagina completar todas tus tareas sin estrés.","color":"#a78bfa"},
+    {"tipo":"recompensa","texto":"Tu productividad ha mejorado.","puntos":20,"color":"#10b981"},
+    {"tipo":"cierre","texto":"La productividad convierte esfuerzo en resultados.","color":"#f87171"}
+  ]
+},
+{
+  "id": 16,
+  "categoria": "confianza",
+  "bloques":[
+    {"tipo":"tvid","id":16,"nombre":"Enfoque en lo Bueno","tecnica":"TDB","descripcion":"Identifica algo que salió bien hoy y amplifica esa sensación.","respiracion":"Inhala 4, retén 2, exhala 6 sintiendo satisfacción.","duracion":"1:40","color":"#38bdf8"},
+    {"tipo":"voz","texto":"Hoy entrenarás confianza y seguridad interna.","color":"#2563eb"},
+    {"tipo":"historia","texto":"La confianza nace de pequeños logros diarios.","color":"#34d399"},
+    {"tipo":"quiz","pregunta":"¿Cómo aumentar confianza?","opciones":["Evitar retos","Actuar consistentemente","Quejarse"],"correcta":1,"explicacion":"Actuar consistentemente fortalece confianza.","recompensa":10,"color":"#facc15"},
+    {"tipo":"acertijo","pregunta":"Sin boca habla, sin alas vuela.","opciones":["Viento","Pájaro","Río"],"correcta":0,"explicacion":"El viento.","recompensa":8,"color":"#f59e0b"},
+    {"tipo":"decision","pregunta":"Situación difícil.","opciones":["Actuar","Ignorar","Quejarse"],"correcta":0,"explicacion":"Actuar genera confianza.","recompensa":12,"color":"#22c55e"},
+    {"tipo":"juego_mental","pregunta":"10 × 9 = ?","opciones":["90","80","100"],"correcta":0,"explicacion":"90.","recompensa":7,"color":"#38bdf8"},
+    {"tipo":"respiracion","texto":"Respira profundo y visualiza.","duracion":30,"color":"#60a5fa"},
+    {"tipo":"visualizacion","texto":"Visualiza tu confianza creciendo.","color":"#a78bfa"},
+    {"tipo":"recompensa","texto":"Tu confianza ha aumentado.","puntos":20,"color":"#10b981"},
+    {"tipo":"cierre","texto":"La confianza se construye cada día.","color":"#f87171"}
+   ]
+ },
+ {
+    "id": 17,
+    "categoria": "resiliencia",
+    "bloques":[
+      {"tipo":"tvid","id":17,"nombre":"Fortaleza del Niño","tecnica":"TDN","descripcion":"Siente la fuerza interior y alegría como un niño explorando el mundo.","respiracion":"Inhala 4, exhala 6 sintiendo ligereza y curiosidad.","duracion":"1:30","color":"#38bdf8"},
+      {"tipo":"voz","texto":"Hoy entrenarás resiliencia emocional.","color":"#2563eb"},
+      {"tipo":"historia","texto":"Las personas resilientes convierten obstáculos en oportunidades.","color":"#34d399"},
+      {"tipo":"quiz","pregunta":"¿Qué aumenta la resiliencia?","opciones":["Rendirse","Persistir","Ignorar problemas"],"correcta":1,"explicacion":"Persistir fortalece la mente.","recompensa":10,"color":"#facc15"},
+      {"tipo":"acertijo","pregunta":"Vuelo sin alas, lloro sin ojos.","opciones":["Río","Viento","Nube"],"correcta":1,"explicacion":"El viento.","recompensa":8,"color":"#f59e0b"},
+      {"tipo":"decision","pregunta":"Problema inesperado.","opciones":["Abandonar","Intentar de nuevo","Ignorar"],"correcta":1,"explicacion":"Intentar fortalece la resiliencia.","recompensa":12,"color":"#22c55e"},
+      {"tipo":"juego_mental","pregunta":"9 × 7 = ?","opciones":["63","56","72"],"correcta":0,"explicacion":"63.","recompensa":7,"color":"#38bdf8"},
+      {"tipo":"respiracion","texto":"Respira profundo y relaja.","duracion":30,"color":"#60a5fa"},
+      {"tipo":"visualizacion","texto":"Visualiza superar desafíos con facilidad.","color":"#a78bfa"},
+      {"tipo":"recompensa","texto":"Tu resiliencia ha aumentado.","puntos":20,"color":"#10b981"},
+      {"tipo":"cierre","texto":"La resiliencia te hace invencible ante dificultades.","color":"#f87171"}
+    ]
+  },
+  {
+    "id": 18,
+    "categoria": "aprendizaje",
+    "bloques":[
+      {"tipo":"tvid","id":18,"nombre":"Descubrimiento Maternal","tecnica":"TMM","descripcion":"Recibe guía y cuidado como lo haría una madre sabia.","respiracion":"Inhala 4, exhala 6 sintiendo protección y calma.","duracion":"1:40","color":"#38bdf8"},
+      {"tipo":"voz","texto":"Hoy entrenarás aprendizaje rápido.","color":"#2563eb"},
+      {"tipo":"historia","texto":"Quien aprende constantemente, avanza en la vida.","color":"#34d399"},
+      {"tipo":"quiz","pregunta":"¿Qué potencia el aprendizaje?","opciones":["Ignorar errores","Practicar","Evitar retos"],"correcta":1,"explicacion":"Practicar refuerza la memoria y habilidades.","recompensa":10,"color":"#facc15"},
+      {"tipo":"acertijo","pregunta":"Siempre corre pero nunca camina.","opciones":["Río","Persona","Auto"],"correcta":0,"explicacion":"El río.","recompensa":8,"color":"#f59e0b"},
+      {"tipo":"decision","pregunta":"Quieres aprender algo nuevo.","opciones":["Leer","Esperar motivación","Evitar"],"correcta":0,"explicacion":"Leer y practicar refuerza el aprendizaje.","recompensa":12,"color":"#22c55e"},
+      {"tipo":"juego_mental","pregunta":"15 × 4 = ?","opciones":["60","55","50"],"correcta":0,"explicacion":"60.","recompensa":7,"color":"#38bdf8"},
+      {"tipo":"respiracion","texto":"Respira profundo y centra tu mente.","duracion":30,"color":"#60a5fa"},
+      {"tipo":"visualizacion","texto":"Visualiza absorbiendo información fácilmente.","color":"#a78bfa"},
+      {"tipo":"recompensa","texto":"Tu aprendizaje se ha acelerado.","puntos":20,"color":"#10b981"},
+      {"tipo":"cierre","texto":"Aprender constantemente expande tu futuro.","color":"#f87171"}
+    ]
+  },
+  {
+    "id": 19,
+    "categoria": "claridad",
+    "bloques":[
+      {"tipo":"tvid","id":19,"nombre":"Guía del Padre","tecnica":"TDP","descripcion":"Imagina que un padre te da un consejo para protegerte y crecer.","respiracion":"Inhala 4, retén 2, exhala 6 mientras sientes seguridad.","duracion":"1:50","color":"#38bdf8"},
+      {"tipo":"voz","texto":"Hoy entrenarás claridad mental profunda.","color":"#2563eb"},
+      {"tipo":"historia","texto":"La claridad permite tomar decisiones acertadas.","color":"#34d399"},
+      {"tipo":"quiz","pregunta":"¿Qué favorece la claridad?","opciones":["Desorden","Organización","Prisa"],"correcta":1,"explicacion":"La organización mental mejora la claridad.","recompensa":10,"color":"#facc15"},
+      {"tipo":"acertijo","pregunta":"Tiene un ojo pero no puede ver.","opciones":["Aguja","Pez","Persona"],"correcta":0,"explicacion":"La aguja.","recompensa":8,"color":"#f59e0b"},
+      {"tipo":"decision","pregunta":"Tienes que tomar una decisión importante.","opciones":["Elegir rápido","Analizar con calma","Ignorar"],"correcta":1,"explicacion":"Analizar con calma da mejores resultados.","recompensa":12,"color":"#22c55e"},
+      {"tipo":"juego_mental","pregunta":"21 ÷ 3 = ?","opciones":["7","8","6"],"correcta":0,"explicacion":"7.","recompensa":7,"color":"#38bdf8"},
+      {"tipo":"respiracion","texto":"Respira profundo y enfoca tu mente.","duracion":30,"color":"#60a5fa"},
+      {"tipo":"visualizacion","texto":"Visualiza claridad en cada decisión.","color":"#a78bfa"},
+      {"tipo":"recompensa","texto":"Tu claridad ha aumentado.","puntos":20,"color":"#10b981"},
+      {"tipo":"cierre","texto":"La claridad convierte confusión en acción.","color":"#f87171"}
+    ]
+  },
+  {
+    "id": 20,
+    "categoria": "disciplina",
+    "bloques":[
+      {"tipo":"tvid","id":20,"nombre":"Risa del Niño","tecnica":"TDN","descripcion":"Imita una risa de niño, siente ligereza y alegría.","respiracion":"Inhala 4, exhala 6 con cada carcajada imaginaria.","duracion":"1:30","color":"#38bdf8"},
+      {"tipo":"voz","texto":"Hoy entrenarás disciplina profunda.","color":"#2563eb"},
+      {"tipo":"historia","texto":"La disciplina separa sueños de resultados.","color":"#34d399"},
+      {"tipo":"quiz","pregunta":"¿Cómo se fortalece la disciplina?","opciones":["Evitar esfuerzos","Persistir","Rendirse"],"correcta":1,"explicacion":"Persistir crea hábitos sólidos.","recompensa":10,"color":"#facc15"},
+      {"tipo":"acertijo","pregunta":"Cuanto más quitas, más grande se vuelve.","opciones":["Agujero","Montaña","Caja"],"correcta":0,"explicacion":"Agujero.","recompensa":8,"color":"#f59e0b"},
+      {"tipo":"decision","pregunta":"Quieres ser constante.","opciones":["Actuar","Esperar motivación","Evitar"],"correcta":0,"explicacion":"Actuar refuerza disciplina.","recompensa":12,"color":"#22c55e"},
+      {"tipo":"juego_mental","pregunta":"6 × 6 = ?","opciones":["36","42","30"],"correcta":0,"explicacion":"36.","recompensa":7,"color":"#38bdf8"},
+      {"tipo":"respiracion","texto":"Respira y enfoca tu mente.","duracion":30,"color":"#60a5fa"},
+      {"tipo":"visualizacion","texto":"Imagina tu disciplina sólida.","color":"#a78bfa"},
+      {"tipo":"recompensa","texto":"Tu disciplina ha crecido.","puntos":20,"color":"#10b981"},
+      {"tipo":"cierre","texto":"La disciplina crea libertad y resultados.","color":"#f87171"}
+    ]
+  },
+  {
+    "id": 21,
+    "categoria": "calma",
+    "bloques":[
+      {"tipo":"tvid","id":21,"nombre":"Abrazo Maternal","tecnica":"TMM","descripcion":"Siente amor y cuidado como si una madre te abrazara y guiara.","respiracion":"Inhala 4, retén 2, exhala 6. Siente calidez y protección.","duracion":"1:40","color":"#38bdf8"},
+      {"tipo":"voz","texto":"Hoy entrenarás calma interior.","color":"#2563eb"},
+      {"tipo":"historia","texto":"La calma permite tomar decisiones con claridad.","color":"#34d399"},
+      {"tipo":"quiz","pregunta":"¿Qué ayuda a mantener la calma?","opciones":["Respirar","Preocuparse","Ignorar"],"correcta":0,"explicacion":"Respirar profundo centra la mente.","recompensa":10,"color":"#facc15"},
+      {"tipo":"acertijo","pregunta":"Vuelo sin alas, lloro sin ojos.","opciones":["Viento","Río","Nube"],"correcta":0,"explicacion":"El viento.","recompensa":8,"color":"#f59e0b"},
+      {"tipo":"decision","pregunta":"Momento estresante.","opciones":["Reaccionar","Respirar y pensar","Ignorar"],"correcta":1,"explicacion":"Respirar calma la mente.","recompensa":12,"color":"#22c55e"},
+      {"tipo":"juego_mental","pregunta":"7 × 8 = ?","opciones":["54","56","58"],"correcta":1,"explicacion":"56.","recompensa":7,"color":"#38bdf8"},
+      {"tipo":"respiracion","texto":"Respira profundo y relaja.","duracion":30,"color":"#60a5fa"},
+      {"tipo":"visualizacion","texto":"Visualiza calma y tranquilidad en ti.","color":"#a78bfa"},
+      {"tipo":"recompensa","texto":"Tu calma ha aumentado.","puntos":20,"color":"#10b981"},
+      {"tipo":"cierre","texto":"La calma es fortaleza interna.","color":"#f87171"}
+    ]
+  },
+  {
+    "id": 22,
+    "categoria": "enfoque",
+    "bloques":[
+      {"tipo":"tvid","id":22,"nombre":"Beso Energético","tecnica":"TDK","descripcion":"Visualiza recibir un beso lleno de energía positiva y motivación.","respiracion":"Inhala 4, exhala 6, siente la energía en tu pecho.","duracion":"1:30","color":"#38bdf8"},
+      {"tipo":"voz","texto":"Hoy entrenarás enfoque total.","color":"#2563eb"},
+      {"tipo":"historia","texto":"El enfoque concentra tu energía hacia resultados concretos.","color":"#34d399"},
+      {"tipo":"quiz","pregunta":"¿Qué destruye el enfoque?","opciones":["Multitarea","Planificación","Descanso"],"correcta":0,"explicacion":"La multitarea reduce concentración.","recompensa":10,"color":"#facc15"},
+      {"tipo":"acertijo","pregunta":"Tiene llaves pero no abre puertas.","opciones":["Piano","Caja","Puerta"],"correcta":0,"explicacion":"El piano.","recompensa":8,"color":"#f59e0b"},
+      {"tipo":"decision","pregunta":"Tarea importante.","opciones":["Concentrarse","Esperar motivación","Procrastinar"],"correcta":0,"explicacion":"Concentrarse mejora resultados.","recompensa":12,"color":"#22c55e"},
+      {"tipo":"juego_mental","pregunta":"8 × 9 = ?","opciones":["72","64","81"],"correcta":0,"explicacion":"72.","recompensa":7,"color":"#38bdf8"},
+      {"tipo":"respiracion","texto":"Respira profundo y centra tu mente.","duracion":30,"color":"#60a5fa"},
+      {"tipo":"visualizacion","texto":"Visualiza completar todas tus tareas con éxito.","color":"#a78bfa"},
+      {"tipo":"recompensa","texto":"Tu enfoque ha mejorado.","puntos":20,"color":"#10b981"},
+      {"tipo":"cierre","texto":"El enfoque transforma esfuerzo en éxito.","color":"#f87171"}
+    ]
+  },
+  {
+    "id": 23,
+    "categoria": "mentalidad",
+    "bloques":[
+      {"tipo":"tvid","id":23,"nombre":"Fortaleza Interior","tecnica":"TDB","descripcion":"Identifica tu fuerza y visualízala expandiéndose.","respiracion":"Inhala 4, retén 2, exhala 6. Siente tu poder interno.","duracion":"1:40","color":"#38bdf8"},
+      {"tipo":"voz","texto":"Hoy entrenarás mentalidad positiva.","color":"#2563eb"},
+      {"tipo":"historia","texto":"La mentalidad positiva transforma problemas en oportunidades.","color":"#34d399"},
+      {"tipo":"quiz","pregunta":"¿Qué fortalece la mentalidad?","opciones":["Quejarse","Aprender de errores","Rendirse"],"correcta":1,"explicacion":"Aprender de errores fortalece la mente.","recompensa":10,"color":"#facc15"},
+      {"tipo":"acertijo","pregunta":"Mientras más le quitas, más grande se vuelve.","opciones":["Agujero","Montaña","Caja"],"correcta":0,"explicacion":"Un agujero.","recompensa":8,"color":"#f59e0b"},
+      {"tipo":"decision","pregunta":"Problema inesperado.","opciones":["Rendirse","Aprender","Ignorar"],"correcta":1,"explicacion":"Aprender mejora mentalidad.","recompensa":12,"color":"#22c55e"},
+      {"tipo":"juego_mental","pregunta":"12 × 5 = ?","opciones":["60","55","65"],"correcta":0,"explicacion":"60.","recompensa":7,"color":"#38bdf8"},
+      {"tipo":"respiracion","texto":"Respira profundo y relaja tu mente.","duracion":30,"color":"#60a5fa"},
+      {"tipo":"visualizacion","texto":"Visualiza pensamientos positivos en cada acción.","color":"#a78bfa"},
+      {"tipo":"recompensa","texto":"Tu mentalidad ha crecido.","puntos":20,"color":"#10b981"},
+      {"tipo":"cierre","texto":"La mentalidad positiva abre caminos y oportunidades.","color":"#f87171"}
+    ]
+  },
+  {
+    "id": 24,
+    "categoria": "productividad",
+    "bloques":[
+      {"tipo":"tvid","id":24,"nombre":"Estrategia de Guerra","tecnica":"TDG","descripcion":"Imagina enfrentar un desafío con fuerza, inteligencia y audacia.","respiracion":"Inhala 4, retén 2, exhala 6 mientras sientes poder interior.","duracion":"2:00","color":"#38bdf8"},
+      {"tipo":"voz","texto":"Hoy entrenarás productividad máxima.","color":"#2563eb"},
+      {"tipo":"historia","texto":"La productividad convierte ideas en resultados concretos.","color":"#34d399"},
+      {"tipo":"quiz","pregunta":"¿Qué incrementa la productividad?","opciones":["Procrastinar","Planificar","Evitar tareas"],"correcta":1,"explicacion":"Planificar prioriza tareas importantes.","recompensa":10,"color":"#facc15"},
+      {"tipo":"acertijo","pregunta":"Tiene manos pero no puede aplaudir.","opciones":["Reloj","Silla","Libro"],"correcta":0,"explicacion":"El reloj.","recompensa":8,"color":"#f59e0b"},
+      {"tipo":"decision","pregunta":"Tienes varias tareas.","opciones":["Hacer primero lo fácil","Priorizar","Esperar"],"correcta":1,"explicacion":"Priorizar genera resultados.","recompensa":12,"color":"#22c55e"},
+      {"tipo":"juego_mental","pregunta":"14 × 4 = ?","opciones":["56","50","60"],"correcta":0,"explicacion":"56.","recompensa":7,"color":"#38bdf8"},
+      {"tipo":"respiracion","texto":"Respira profundo y enfoca tu energía.","duracion":30,"color":"#60a5fa"},
+      {"tipo":"visualizacion","texto":"Visualiza completar tareas eficientemente.","color":"#a78bfa"},
+      {"tipo":"recompensa","texto":"Tu productividad ha aumentado.","puntos":20,"color":"#10b981"},
+      {"tipo":"cierre","texto":"La productividad transforma tiempo en resultados.","color":"#f87171"}
+    ]
+  },
     {
-      "id": 5,
-      "categoria": "mentalidad",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy entrenarás mentalidad de crecimiento.","color":"#2563eb"},
-        {"tipo":"historia","texto":"Las personas exitosas ven oportunidades donde otros ven problemas.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Qué caracteriza una mentalidad de crecimiento?","opciones":["Evitar retos","Aprender de errores","Rendirse rápido"],"correcta":1,"explicacion":"Aprender de errores fortalece la mente.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Mientras más le quitas, más grande se vuelve.","opciones":["Agujero","Montaña","Caja"],"correcta":0,"explicacion":"Un agujero.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Cometes un error.","opciones":["Culpar a otros","Aprender","Ignorar"],"correcta":1,"explicacion":"El aprendizaje mejora la mentalidad.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"12 × 4 = ?","opciones":["36","48","60"],"correcta":1,"explicacion":"48.","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Respira profundo y mantén la calma.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Visualiza tu crecimiento personal.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu mentalidad ha crecido.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"Las personas que crecen mentalmente cambian su destino.","color":"#f87171"}
-      ]
-    },
+    "id": 25,
+    "categoria": "confianza",
+    "bloques":[
+      {"tipo":"tvid","id":25,"nombre":"Beso de Gratitud","tecnica":"TDK","descripcion":"Envía un beso imaginario de gratitud a alguien que te apoyó.","respiracion":"Inhala 4, exhala 6, siente la conexión positiva.","duracion":"1:30","color":"#38bdf8"},
+      {"tipo":"voz","texto":"Hoy entrenarás confianza interna.","color":"#2563eb"},
+      {"tipo":"historia","texto":"La confianza crece cuando actuamos consistentemente.","color":"#34d399"},
+      {"tipo":"quiz","pregunta":"¿Qué genera confianza?","opciones":["Evitar retos","Actuar","Quejarse"],"correcta":1,"explicacion":"Actuar consistentemente fortalece confianza.","recompensa":10,"color":"#facc15"},
+      {"tipo":"acertijo","pregunta":"Sin boca habla, sin alas vuela.","opciones":["Viento","Pájaro","Río"],"correcta":0,"explicacion":"El viento.","recompensa":8,"color":"#f59e0b"},
+      {"tipo":"decision","pregunta":"Momento difícil.","opciones":["Actuar","Ignorar","Quejarse"],"correcta":0,"explicacion":"Actuar fortalece confianza.","recompensa":12,"color":"#22c55e"},
+      {"tipo":"juego_mental","pregunta":"9 × 7 = ?","opciones":["63","56","72"],"correcta":0,"explicacion":"63.","recompensa":7,"color":"#38bdf8"},
+      {"tipo":"respiracion","texto":"Respira profundo y visualiza.","duracion":30,"color":"#60a5fa"},
+      {"tipo":"visualizacion","texto":"Visualiza tu seguridad interna creciendo.","color":"#a78bfa"},
+      {"tipo":"recompensa","texto":"Tu confianza ha aumentado.","puntos":20,"color":"#10b981"},
+      {"tipo":"cierre","texto":"La confianza se construye con cada acción.","color":"#f87171"}
+    ]
+  },
+  {
+    "id": 26,
+    "categoria": "resiliencia",
+    "bloques":[
+      {"tipo":"tvid","id":26,"nombre":"Transformación de Obstáculos","tecnica":"TDM","descripcion":"Piensa en un problema actual y conviértelo en oportunidad.","respiracion":"Inhala 4, exhala 6, siente cómo la solución surge.","duracion":"1:50","color":"#38bdf8"},
+      {"tipo":"voz","texto":"Hoy entrenarás resiliencia mental.","color":"#2563eb"},
+      {"tipo":"historia","texto":"Cada desafío enfrentado fortalece tu mente.","color":"#34d399"},
+      {"tipo":"quiz","pregunta":"¿Qué fortalece la resiliencia?","opciones":["Rendirse","Persistir","Evitar retos"],"correcta":1,"explicacion":"Persistir fortalece la mente.","recompensa":10,"color":"#facc15"},
+      {"tipo":"acertijo","pregunta":"Vuelo sin alas.","opciones":["Tiempo","Pájaro","Avión"],"correcta":0,"explicacion":"El tiempo.","recompensa":8,"color":"#f59e0b"},
+      {"tipo":"decision","pregunta":"Fracaso temporal.","opciones":["Abandonar","Intentar de nuevo","Ignorar"],"correcta":1,"explicacion":"Intentar fortalece resiliencia.","recompensa":12,"color":"#22c55e"},
+      {"tipo":"juego_mental","pregunta":"11 × 6 = ?","opciones":["66","60","70"],"correcta":0,"explicacion":"66.","recompensa":7,"color":"#38bdf8"},
+      {"tipo":"respiracion","texto":"Respira profundo y mantén la calma.","duracion":30,"color":"#60a5fa"},
+      {"tipo":"visualizacion","texto":"Visualiza superar cualquier obstáculo.","color":"#a78bfa"},
+      {"tipo":"recompensa","texto":"Tu resiliencia ha aumentado.","puntos":20,"color":"#10b981"},
+      {"tipo":"cierre","texto":"La resiliencia transforma dificultades en aprendizaje.","color":"#f87171"}
+    ]
+  },
+  {
+    "id": 27,
+    "categoria": "aprendizaje",
+    "bloques":[
+      {"tipo":"tvid","id":27,"nombre":"Fortaleza Interior","tecnica":"TDB","descripcion":"Identifica tu fuerza y visualízala expandiéndose.","respiracion":"Inhala 4, retén 2, exhala 6. Siente tu poder interno.","duracion":"1:40","color":"#38bdf8"},
+      {"tipo":"voz","texto":"Hoy entrenarás tu mente para aprender más rápido.","color":"#2563eb"},
+      {"tipo":"historia","texto":"El aprendizaje continuo abre nuevas oportunidades.","color":"#34d399"},
+      {"tipo":"quiz","pregunta":"¿Qué acelera el aprendizaje?","opciones":["Practicar","Ignorar errores","Evitar estudio"],"correcta":0,"explicacion":"La práctica mejora el aprendizaje.","recompensa":10,"color":"#facc15"},
+      {"tipo":"acertijo","pregunta":"Siempre corre pero nunca camina.","opciones":["Río","Auto","Persona"],"correcta":0,"explicacion":"El río.","recompensa":8,"color":"#f59e0b"},
+      {"tipo":"decision","pregunta":"Quieres aprender.","opciones":["Leer","Esperar","Evitar esfuerzo"],"correcta":0,"explicacion":"Leer fortalece la mente.","recompensa":12,"color":"#22c55e"},
+      {"tipo":"juego_mental","pregunta":"15 × 2 = ?","opciones":["30","25","28"],"correcta":0,"explicacion":"30.","recompensa":7,"color":"#38bdf8"},
+      {"tipo":"respiracion","texto":"Respira profundo y enfoca tu mente.","duracion":30,"color":"#60a5fa"},
+      {"tipo":"visualizacion","texto":"Visualiza tu mente aprendiendo rápidamente.","color":"#a78bfa"},
+      {"tipo":"recompensa","texto":"Tu capacidad de aprendizaje ha aumentado.","puntos":20,"color":"#10b981"},
+      {"tipo":"cierre","texto":"Aprender continuamente expande tu futuro.","color":"#f87171"}
+    ]
+  },
+  {
+    "id": 28,
+    "categoria": "claridad",
+    "bloques":[
+      {"tipo":"tvid","id":28,"nombre":"Decisión Paterna","tecnica":"TDP","descripcion":"Piensa en una decisión importante y actúa guiado por prudencia y amor paternal.","respiracion":"Inhala 4, retén 2, exhala 6 sintiendo claridad y responsabilidad.","duracion":"1:50","color":"#38bdf8"},
+      {"tipo":"voz","texto":"Hoy entrenarás claridad estratégica.","color":"#2563eb"},
+      {"tipo":"historia","texto":"Las mejores decisiones nacen de la claridad mental.","color":"#34d399"},
+      {"tipo":"quiz","pregunta":"¿Qué mejora la claridad mental?","opciones":["Caos","Orden","Prisa"],"correcta":1,"explicacion":"El orden mental mejora la claridad.","recompensa":10,"color":"#facc15"},
+      {"tipo":"acertijo","pregunta":"Tiene un ojo pero no puede ver.","opciones":["Aguja","Pez","Persona"],"correcta":0,"explicacion":"La aguja.","recompensa":8,"color":"#f59e0b"},
+      {"tipo":"decision","pregunta":"Tienes muchas opciones.","opciones":["Elegir rápido","Analizar cuidadosamente","Ignorar"],"correcta":1,"explicacion":"Analizar con calma da mejores resultados.","recompensa":12,"color":"#22c55e"},
+      {"tipo":"juego_mental","pregunta":"21 ÷ 3 = ?","opciones":["7","9","5"],"correcta":0,"explicacion":"7.","recompensa":7,"color":"#38bdf8"},
+      {"tipo":"respiracion","texto":"Respira profundo y reflexiona.","duracion":30,"color":"#60a5fa"},
+      {"tipo":"visualizacion","texto":"Visualiza claridad en cada decisión.","color":"#a78bfa"},
+      {"tipo":"recompensa","texto":"Tu claridad mental ha aumentado.","puntos":20,"color":"#10b981"},
+      {"tipo":"cierre","texto":"La claridad transforma confusión en acción.","color":"#f87171"}
+    ]
+  },
     {
-      "id": 6,
-      "categoria": "productividad",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy trabajarás tu productividad.","color":"#2563eb"},
-        {"tipo":"historia","texto":"Las personas productivas hacen primero lo importante.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Qué aumenta la productividad?","opciones":["Procrastinar","Priorizar","Evitar tareas"],"correcta":1,"explicacion":"Priorizar tareas importantes.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Tiene manos pero no puede aplaudir.","opciones":["Reloj","Silla","Libro"],"correcta":0,"explicacion":"El reloj.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Tienes muchas tareas.","opciones":["Hacer lo fácil","Hacer lo importante","Esperar"],"correcta":1,"explicacion":"Lo importante genera progreso.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"7 × 8 = ?","opciones":["54","56","64"],"correcta":1,"explicacion":"56.","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Respira y enfoca tu energía.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Imagina terminar tus tareas con eficiencia.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu productividad mental aumenta.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"La productividad transforma tiempo en resultados.","color":"#f87171"}
-      ]
-    },
-    {
-      "id": 7,
-      "categoria": "confianza",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy entrenarás confianza mental.","color":"#2563eb"},
-        {"tipo":"historia","texto":"La confianza nace de cumplir promesas personales.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Qué construye confianza?","opciones":["Excusas","Acción constante","Evitar retos"],"correcta":1,"explicacion":"La acción crea confianza.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Cuanto más seco se vuelve, más moja.","opciones":["Toalla","Río","Nube"],"correcta":0,"explicacion":"La toalla.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Quieres ganar confianza.","opciones":["Actuar","Esperar","Evitar retos"],"correcta":0,"explicacion":"La acción fortalece la mente.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"9 × 8 = ?","opciones":["64","72","81"],"correcta":1,"explicacion":"72.","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Respira profundo.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Visualiza actuar con confianza.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu confianza aumenta.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"La confianza crece con cada acción.","color":"#f87171"}
-      ]
-    },
-    {
-      "id": 8,
-      "categoria": "resiliencia",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy entrenarás resiliencia mental.","color":"#2563eb"},
-        {"tipo":"historia","texto":"Cada desafío fortalece a quienes persisten.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Qué fortalece la resiliencia?","opciones":["Rendirse","Persistir","Evitar retos"],"correcta":1,"explicacion":"Persistir fortalece la mente.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Vuelo sin alas.","opciones":["Tiempo","Pájaro","Avión"],"correcta":0,"explicacion":"El tiempo.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Fracaso temporal.","opciones":["Abandonar","Intentar de nuevo","Ignorar"],"correcta":1,"explicacion":"Intentar fortalece la resiliencia.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"11 × 5 = ?","opciones":["55","50","60"],"correcta":0,"explicacion":"55.","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Respira profundo.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Visualiza superar desafíos.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu resiliencia ha aumentado.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"La resiliencia transforma obstáculos en crecimiento.","color":"#f87171"}
-      ]
-    },
-    {
-      "id": 9,
-      "categoria": "aprendizaje",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy entrenarás tu mente para aprender más rápido.","color":"#2563eb"},
-        {"tipo":"historia","texto":"Los mejores inversionistas nunca dejan de aprender.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Qué acelera el aprendizaje?","opciones":["Practicar","Ignorar errores","Evitar estudio"],"correcta":0,"explicacion":"La práctica mejora el aprendizaje.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Siempre corre pero nunca camina.","opciones":["Río","Auto","Persona"],"correcta":0,"explicacion":"El río.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Quieres aprender.","opciones":["Leer","Esperar","Evitar esfuerzo"],"correcta":0,"explicacion":"Leer y estudiar fortalecen la mente.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"14 × 3 = ?","opciones":["42","36","48"],"correcta":0,"explicacion":"42.","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Respira profundo.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Visualiza tu mente aprendiendo rápidamente.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu capacidad de aprendizaje ha aumentado.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"Aprender continuamente expande tu futuro.","color":"#f87171"}
-      ]
-    },
-    {
-      "id": 10,
-      "categoria": "claridad",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy entrenarás claridad estratégica.","color":"#2563eb"},
-        {"tipo":"historia","texto":"Las mejores decisiones nacen de la claridad mental.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Qué mejora la claridad mental?","opciones":["Caos","Orden","Prisa"],"correcta":1,"explicacion":"El orden mental mejora la claridad.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Tiene un ojo pero no puede ver.","opciones":["Aguja","Pez","Persona"],"correcta":0,"explicacion":"La aguja.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Tienes muchas opciones.","opciones":["Elegir rápido","Analizar cuidadosamente","Ignorar"],"correcta":1,"explicacion":"Analizar con calma da mejores resultados.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"18 ÷ 3 = ?","opciones":["6","9","5"],"correcta":0,"explicacion":"6.","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Respira profundo.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Visualiza claridad en cada decisión.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu claridad mental ha aumentado.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"La claridad transforma confusión en acción.","color":"#f87171"}
-      ]
-    },
-    {
-      "id": 11,
-      "categoria": "disciplina",
-      "bloques":[
-        {"tipo":"voz","texto":"Entrena disciplina profunda hoy.","color":"#2563eb"},
-        {"tipo":"historia","texto":"La disciplina es lo que separa sueños de resultados.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Cómo se fortalece la disciplina?","opciones":["Evitar esfuerzos","Persistir","Rendirse"],"correcta":1,"explicacion":"Persistir crea hábitos sólidos.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Cuanto más quitas, más grande se vuelve.","opciones":["Agujero","Montaña","Caja"],"correcta":0,"explicacion":"Agujero.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Quieres ser constante.","opciones":["Actuar","Esperar motivación","Evitar"],"correcta":0,"explicacion":"Actuar refuerza disciplina.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"5 × 5 = ?","opciones":["20","25","30"],"correcta":1,"explicacion":"25.","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Respira y enfoca tu mente.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Imagina tu disciplina sólida.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu disciplina ha crecido.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"La disciplina crea libertad y resultados.","color":"#f87171"}
-      ]
-    },
-    {
-      "id": 12,
-      "categoria": "calma",
-      "bloques":[
-        {"tipo":"voz","texto":"Hoy entrenarás calma profunda.","color":"#2563eb"},
-        {"tipo":"historia","texto":"Los líderes actúan desde la calma y claridad.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Qué genera mejores decisiones?","opciones":["Ansiedad","Calma","Prisa"],"correcta":1,"explicacion":"La calma permite reflexión.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Vuelo sin alas, lloro sin ojos.","opciones":["Nube","Río","Viento"],"correcta":2,"explicacion":"El viento.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Situación estresante.","opciones":["Reaccionar","Respirar y pensar","Ignorar"],"correcta":1,"explicacion":"Respirar calma la mente.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"8 × 7 = ?","opciones":["54","56","58"],"correcta":1,"explicacion":"56.","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Respira profundo.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Visualiza calma interna.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu calma aumenta.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"La calma es fortaleza interna.","color":"#f87171"}
-      ]
-    },
-    {
-      "id": 13,
-      "categoria": "enfoque",
-      "bloques":[
-        {"tipo":"voz","texto":"Hoy entrenarás enfoque total.","color":"#2563eb"},
-        {"tipo":"historia","texto":"El enfoque dirige energía hacia resultados concretos.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Qué mejora el enfoque?","opciones":["Distracciones","Eliminarlas","Multitarea"],"correcta":1,"explicacion":"Eliminar distracciones aumenta concentración.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Tiene ojos pero no puede ver.","opciones":["Pecho","Aguja","Pez"],"correcta":1,"explicacion":"La aguja.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Tarea importante.","opciones":["Ignorar","Concentrarse","Procrastinar"],"correcta":1,"explicacion":"Concentrarse termina la tarea.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"13 × 3 = ?","opciones":["39","36","42"],"correcta":0,"explicacion":"39.","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Respira profundo y enfoca tu mente.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Imagina completar todas tus tareas.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu enfoque ha mejorado.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"El enfoque transforma esfuerzo en éxito.","color":"#f87171"}
-      ]
-    },
-    {
-      "id": 14,
-      "categoria": "mentalidad",
-      "bloques":[
-        {"tipo":"voz","texto":"Hoy entrenarás mentalidad positiva.","color":"#2563eb"},
-        {"tipo":"historia","texto":"Las oportunidades se presentan a los que buscan soluciones.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Qué genera mentalidad positiva?","opciones":["Quejarse","Buscar soluciones","Evitar retos"],"correcta":1,"explicacion":"Buscar soluciones fortalece la mente.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Siempre avanza, nunca retrocede.","opciones":["Reloj","Persona","Animal"],"correcta":0,"explicacion":"El reloj.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Problema inesperado.","opciones":["Rendirse","Buscar solución","Ignorar"],"correcta":1,"explicacion":"Buscar soluciones fortalece mentalidad.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"16 ÷ 4 = ?","opciones":["2","4","8"],"correcta":1,"explicacion":"4.","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Respira profundo y relaja.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Visualiza soluciones creativas.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu mentalidad positiva ha aumentado.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"La mentalidad positiva abre caminos.","color":"#f87171"}
-      ]
-    },
-    {
-      "id": 15,
-      "categoria": "productividad",
-      "bloques":[
-        {"tipo":"voz","texto":"Hoy entrenarás productividad máxima.","color":"#2563eb"},
-        {"tipo":"historia","texto":"Los más productivos gestionan su tiempo y energía.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Qué aumenta productividad?","opciones":["Planificación","Procrastinar","Multitarea"],"correcta":0,"explicacion":"Planificar prioriza tareas.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Sin moverse corre todo el día.","opciones":["Reloj","Agua","Viento"],"correcta":0,"explicacion":"El reloj.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Tareas múltiples.","opciones":["Priorizar","Hacer primero lo fácil","Esperar"],"correcta":0,"explicacion":"Priorizar genera resultados.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"12 × 6 = ?","opciones":["72","68","70"],"correcta":0,"explicacion":"72.","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Respira profundo y enfoca.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Imagina completar todas tus tareas sin estrés.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu productividad ha mejorado.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"La productividad convierte esfuerzo en resultados.","color":"#f87171"}
-      ]
-    },
-    {
-      "id": 16,
-      "categoria": "confianza",
-      "bloques":[
-        {"tipo":"voz","texto":"Hoy entrenarás confianza y seguridad interna.","color":"#2563eb"},
-        {"tipo":"historia","texto":"La confianza nace de pequeños logros diarios.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Cómo aumentar confianza?","opciones":["Evitar retos","Actuar consistentemente","Quejarse"],"correcta":1,"explicacion":"Actuar consistentemente fortalece confianza.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Sin boca habla, sin alas vuela.","opciones":["Viento","Pájaro","Río"],"correcta":0,"explicacion":"El viento.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Situación difícil.","opciones":["Actuar","Ignorar","Quejarse"],"correcta":0,"explicacion":"Actuar genera confianza.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"10 × 9 = ?","opciones":["90","80","100"],"correcta":0,"explicacion":"90.","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Respira profundo y visualiza.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Visualiza tu confianza creciendo.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu confianza ha aumentado.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"La confianza se construye cada día.","color":"#f87171"}
-      ]
-    },
-    {
-      "id": 17,
-      "categoria": "resiliencia",
-      "bloques":[
-        {"tipo":"voz","texto":"Hoy entrenarás resiliencia profunda.","color":"#2563eb"},
-        {"tipo":"historia","texto":"Quien persiste frente a la adversidad, triunfa.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Qué fortalece resiliencia?","opciones":["Rendirse","Persistir","Ignorar"],"correcta":1,"explicacion":"Persistir frente a dificultades.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Vuelo sin alas, lloro sin ojos.","opciones":["Viento","Nube","Río"],"correcta":0,"explicacion":"El viento.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Fracaso temporal.","opciones":["Abandonar","Intentar de nuevo","Ignorar"],"correcta":1,"explicacion":"Intentar fortalece resiliencia.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"7 × 9 = ?","opciones":["63","64","65"],"correcta":0,"explicacion":"63.","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Respira profundo.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Visualiza superar obstáculos.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu resiliencia ha aumentado.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"La resiliencia convierte problemas en oportunidades.","color":"#f87171"}
-      ]
-    },
-    {
-      "id": 18,
-      "categoria": "aprendizaje",
-      "bloques":[
-        {"tipo":"voz","texto":"Hoy entrenarás aprendizaje efectivo.","color":"#2563eb"},
-        {"tipo":"historia","texto":"Quien aprende más, vive mejor.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Qué acelera aprendizaje?","opciones":["Práctica","Evitar errores","Ignorar"],"correcta":0,"explicacion":"Practicar fortalece la mente.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Corre sin piernas.","opciones":["Río","Viento","Reloj"],"correcta":0,"explicacion":"El río.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Aprendizaje diario.","opciones":["Leer","Esperar","Evitar"],"correcta":0,"explicacion":"Leer fortalece mente.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"8 × 8 = ?","opciones":["64","56","60"],"correcta":0,"explicacion":"64.","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Respira profundo y relaja.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Visualiza aprender fácilmente.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu aprendizaje ha mejorado.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"Aprender transforma tu futuro.","color":"#f87171"}
-      ]
-    },
-    {
-      "id": 19,
-      "categoria": "claridad",
-      "bloques":[
-        {"tipo":"voz","texto":"Hoy entrenarás claridad mental avanzada.","color":"#2563eb"},
-        {"tipo":"historia","texto":"Las decisiones claras generan resultados efectivos.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Qué genera claridad mental?","opciones":["Desorden","Organización","Prisa"],"correcta":1,"explicacion":"La organización fortalece la mente.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Siempre delante, nunca se ve.","opciones":["Futuro","Sombra","Aire"],"correcta":0,"explicacion":"El futuro.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Tienes opciones múltiples.","opciones":["Analizar","Reaccionar rápido","Ignorar"],"correcta":0,"explicacion":"Analizar da mejores resultados.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"9 × 9 = ?","opciones":["81","72","90"],"correcta":0,"explicacion":"81.","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Respira profundo y enfoca.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Visualiza claridad en decisiones.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu claridad ha aumentado.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"La claridad convierte confusión en acción.","color":"#f87171"}
-      ]
-    },
-    {
-      "id": 20,
-      "categoria": "disciplina",
-      "bloques":[
-        {"tipo":"voz","texto":"Hoy entrenarás disciplina y constancia.","color":"#2563eb"},
-        {"tipo":"historia","texto":"La constancia es la madre del éxito.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Qué fortalece la disciplina?","opciones":["Persistencia","Evitar retos","Excusas"],"correcta":0,"explicacion":"Persistencia genera hábitos sólidos.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Cuanto más lo tomas, más dejas atrás.","opciones":["Pasos","Dinero","Ideas"],"correcta":0,"explicacion":"Los pasos.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Quieres ser constante.","opciones":["Actuar","Esperar motivación","Evitar"],"correcta":0,"explicacion":"Actuar refuerza disciplina.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"6 × 7 = ?","opciones":["42","40","44"],"correcta":0,"explicacion":"42.","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Respira profundo y enfoca.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Visualiza constancia y disciplina.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu disciplina ha crecido.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"La disciplina transforma esfuerzo en éxito.","color":"#f87171"}
-      ]
-    },
-    {
-      "id": 21,
-      "categoria": "resiliencia",
-      "bloques":[
-        {"tipo":"voz","texto":"Hoy entrenarás resiliencia máxima.","color":"#2563eb"},
-        {"tipo":"historia","texto":"Cada obstáculo superado te hace más fuerte.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Qué fortalece resiliencia?","opciones":["Rendirse","Persistir","Ignorar"],"correcta":1,"explicacion":"Persistir frente a adversidades.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Vuelo sin alas, lloro sin ojos.","opciones":["Viento","Nube","Río"],"correcta":0,"explicacion":"El viento.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Fracasas temporalmente.","opciones":["Abandonar","Intentar de nuevo","Ignorar"],"correcta":1,"explicacion":"Intentar fortalece resiliencia.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"12 × 8 = ?","opciones":["96","98","100"],"correcta":0,"explicacion":"96.","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Respira profundo.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Visualiza superar obstáculos y crecer.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu resiliencia ha aumentado.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"La resiliencia transforma desafíos en fortaleza.","color":"#f87171"}
-      ]
-    },
-    {
-      "id": 22,
-      "bloques":[
-        {"tipo":"voz","texto":"Hoy enfocaremos tu mente en creatividad y resolución de problemas.","color":"#2563eb"},
-        {"tipo":"historia","texto":"Un inventor resolvió un problema cotidiano y su idea se convirtió en un negocio millonario.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Cuál es la mejor forma de estimular la creatividad?","opciones":["Esperar inspiración","Hacer ejercicios diarios","Copiar a otros"],"correcta":1,"explicacion":"La práctica diaria fortalece la creatividad.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Si cinco gatos atrapan cinco ratones en cinco minutos, ¿cuánto tardarán diez gatos?","opciones":["5 min","10 min","50 min"],"correcta":0,"explicacion":"La velocidad es proporcional al número de gatos.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Tienes tiempo libre. ¿Qué te ayuda más a crecer mentalmente?","opciones":["Ver redes sociales","Leer un libro","Dormir"],"correcta":1,"explicacion":"Leer desarrolla nuevas conexiones neuronales.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"Si 8×3−5= ?","opciones":["19","24","21"],"correcta":2,"explicacion":"8×3=24, 24−5=19.","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Respira profundo. Inhala 4, retén 2, exhala 6.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Imagina resolviendo un problema con facilidad y creatividad.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu mente creativa se ha fortalecido.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"Cada día que entrenas creatividad, encuentras soluciones más rápidas y efectivas.","color":"#f87171"}
-      ]
-    },
-    {
-      "id": 23,
-      "bloques":[
-        {"tipo":"voz","texto":"Hoy trabajaremos en concentración y enfoque prolongado.","color":"#2563eb"},
-        {"tipo":"historia","texto":"Un estudiante estudió todos los días 30 minutos más que los demás y logró ser el mejor de su clase.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Cuál es la mejor forma de mantener enfoque?","opciones":["Multitasking","Descansos programados","Escuchar música fuerte"],"correcta":1,"explicacion":"Los descansos ayudan a mantener la atención alta.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Un hombre tiene 3 sombreros rojos y 2 azules. Si se pone uno al azar, ¿cuál es la probabilidad de que sea rojo?","opciones":["60%","40%","50%"],"correcta":0,"explicacion":"3 de 5 son rojos → 60%.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Tienes varias tareas, ¿cómo actúas para terminar rápido y bien?","opciones":["Hacer todas a la vez","Priorizar y hacer una por una","Dejar para después"],"correcta":1,"explicacion":"Priorizar asegura calidad y rapidez.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"Si sumas los números del 1 al 10, ¿cuánto obtienes?","opciones":["55","45","50"],"correcta":0,"explicacion":"1+2+…+10=55","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Inhala contando 4, retén 4, exhala 8. Siente concentración.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Visualiza completando tareas con calma y eficiencia.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu enfoque y concentración han mejorado.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"Hoy entrenaste tu mente enfocada; cada día aumenta tu rendimiento.","color":"#f87171"}
-      ]
-    },
-    {
-      "id": 24,
-      "bloques":[
-        {"tipo":"voz","texto":"Hoy potenciarás tu motivación y disciplina personal.","color":"#2563eb"},
-        {"tipo":"historia","texto":"Un atleta se levantaba a entrenar incluso con frío y lluvia, logrando récords importantes.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Qué fortalece la disciplina diaria?","opciones":["Hacer sólo lo que te gusta","Rutina constante","Procrastinar"],"correcta":1,"explicacion":"La constancia fortalece la disciplina.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Si un tren sale a las 10 am y otro a las 10:30 am, viajando a la misma velocidad, ¿cuándo se encuentran?","opciones":["11 am","Depende del destino","Nunca"],"correcta":1,"explicacion":"Se necesita más información sobre distancia y velocidad.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Hoy tienes tiempo limitado, ¿qué haces para entrenar disciplina?","opciones":["Dejarlo para mañana","Seguir tu plan","Hacer solo la mitad"],"correcta":1,"explicacion":"Cumplir el plan fortalece disciplina.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"Resuelve: 15 − 3 × 2 = ?","opciones":["9","6","12"],"correcta":0,"explicacion":"Primero 3×2=6, luego 15−6=9","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Respira profundo, inhala 4, exhala 6, siente energía.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Imagina logrando tus metas con constancia y fuerza.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu motivación ha aumentado.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"Cada acción disciplinada te acerca a tus objetivos.","color":"#f87171"}
-      ]
-    },
-    {
-      "id": 25,
-      "bloques":[
-        {"tipo":"voz","texto":"Hoy entrenarás resiliencia frente a desafíos.","color":"#2563eb"},
-        {"tipo":"historia","texto":"Un emprendedor perdió todo y volvió a levantarse con más fuerza, logrando éxito mayor.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Qué desarrolla resiliencia?","opciones":["Evitar problemas","Aprender de errores","Criticar a otros"],"correcta":1,"explicacion":"Aprender y adaptarse fortalece la resiliencia.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Soy ligero como una pluma, pero ni la persona más fuerte me sostiene. ¿Qué soy?","opciones":["El aire","La sombra","El pensamiento"],"correcta":2,"explicacion":"El pensamiento no se puede sostener físicamente.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Ante un obstáculo grande, ¿qué haces primero?","opciones":["Rendirse","Analizar y actuar","Ignorar"],"correcta":1,"explicacion":"Analizar permite soluciones efectivas.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"Si 9 + 6 ÷ 3 = ?","opciones":["5","11","15"],"correcta":1,"explicacion":"6÷3=2, 9+2=11","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Inhala 4, retén 2, exhala 6. Siente calma interior.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Visualiza superando cualquier reto con fuerza y claridad.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu resiliencia ha crecido hoy.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"Cada desafío te hace más fuerte y sabio.","color":"#f87171"}
-      ]
-    },
-    {
-      "id": 26,
-      "bloques":[
-        {"tipo":"voz","texto":"Hoy entrenarás gratitud y actitud positiva.","color":"#2563eb"},
-        {"tipo":"historia","texto":"Un hombre agradecía cada pequeño logro y su vida mejoró notablemente en salud y relaciones.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Qué aumenta la felicidad diaria?","opciones":["Quejarse","Practicar gratitud","Compararse con otros"],"correcta":1,"explicacion":"La gratitud genera bienestar mental.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Si una caja contiene 3 rojas y 2 verdes, ¿probabilidad de sacar verde?","opciones":["2/5","3/5","1/2"],"correcta":0,"explicacion":"2 de 5 → 2/5","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Hoy algo salió mal, ¿cómo reaccionas?","opciones":["Quejarte","Aprender y seguir","Ignorar"],"correcta":1,"explicacion":"Aprender genera crecimiento personal.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"Resuelve: 7×2+5= ?","opciones":["19","20","21"],"correcta":0,"explicacion":"7×2=14+5=19","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Inhala 4, retén 3, exhala 6. Siente gratitud.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Imagina tu vida llena de momentos positivos y agradecimientos.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu actitud positiva ha crecido hoy.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"Agradecer diariamente transforma tu vida.","color":"#f87171"}
-      ]
-    },
-    {
-      "id": 27,
-      "bloques":[
-        {"tipo":"voz","texto":"Hoy fortalecerás memoria y agilidad mental.","color":"#2563eb"},
-        {"tipo":"historia","texto":"Una mujer practicaba ejercicios de memoria todos los días y logró aprender varios idiomas.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Qué mejora la memoria a corto plazo?","opciones":["Dormir bien","Mirar TV","Comer dulces"],"correcta":0,"explicacion":"El sueño consolida la memoria.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Si cinco lápices cuestan $10, ¿cuánto cuestan 8?","opciones":["16","15","12"],"correcta":1,"explicacion":"Cada lápiz cuesta $2, 8×2=16","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Tienes que memorizar algo importante, ¿cómo lo haces?","opciones":["Leer una vez","Repetir varias veces","Decirlo a alguien más"],"correcta":1,"explicacion":"Repetición fortalece la memoria.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"Resuelve: 3×(4+2)= ?","opciones":["18","20","14"],"correcta":0,"explicacion":"4+2=6, 6×3=18","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Inhala 4, exhala 6. Siente agilidad mental.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Visualiza recordando información rápida y claramente.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu memoria y agilidad mental han mejorado.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"Cada ejercicio de memoria fortalece tu cerebro.","color":"#f87171"}
-      ]
-    },
-    {
-      "id":28,
-      "bloques":[
-        {"tipo":"voz","texto":"Hoy trabajaremos en paciencia y manejo del estrés.","color":"#2563eb"},
-        {"tipo":"historia","texto":"Un jardinero cultivó su jardín durante años. La paciencia le dio frutos abundantes y hermosos.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Qué ayuda a reducir el estrés?","opciones":["Respirar profundo","Quejarse","Hacer todo rápido"],"correcta":0,"explicacion":"La respiración profunda calma el cuerpo y la mente.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Siempre corre pero nunca camina, ¿qué es?","opciones":["El río","El viento","El tiempo"],"correcta":2,"explicacion":"El tiempo siempre avanza.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Te enfrentas a un retraso importante, ¿qué haces primero?","opciones":["Entrar en pánico","Respirar y reorganizar","Ignorar el problema"],"correcta":1,"explicacion":"Calmarse y reorganizar permite mejores decisiones.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"Resuelve: 12 ÷ 4 + 3 = ?","opciones":["6","4","5"],"correcta":2,"explicacion":"12÷4=3, 3+3=6","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Inhala 4, retén 2, exhala 6. Siente tu mente tranquila.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Visualiza manteniendo la calma en situaciones difíciles.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu paciencia y calma se han fortalecido.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"Cada momento de calma aumenta tu resiliencia y bienestar.","color":"#f87171"}
-      ]
-    },
-    {
-      "id":29,
-      "bloques":[
-        {"tipo":"voz","texto":"Hoy potenciarás pensamiento estratégico y toma de decisiones.","color":"#2563eb"},
-        {"tipo":"historia","texto":"Un CEO tomó pequeñas decisiones estratégicas cada día y su empresa creció exponencialmente.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Qué fortalece la toma de decisiones estratégicas?","opciones":["Planificación diaria","Actuar sin pensar","Esperar suerte"],"correcta":0,"explicacion":"Planificar mejora decisiones y resultados.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Si tienes dos monedas que suman 30 centavos y una no es una moneda de 25, ¿qué monedas son?","opciones":["25+5","10+20","15+15"],"correcta":0,"explicacion":"Una moneda no es de 25, la otra sí es, sumando 30 centavos.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Debes elegir entre dos caminos inciertos, ¿qué haces?","opciones":["Elegir al azar","Evaluar pros y contras","Evitar decisión"],"correcta":1,"explicacion":"Analizar opciones mejora resultados.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"Resuelve: 7+5×2=?","opciones":["24","17","19"],"correcta":2,"explicacion":"Multiplicación primero: 5×2=10, 7+10=17","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Inhala 4, exhala 6. Siente claridad mental.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Visualiza tomando decisiones con seguridad y estrategia.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu mente estratégica se ha fortalecido.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"Cada decisión consciente fortalece tu capacidad estratégica.","color":"#f87171"}
-      ]
-    },
-    {
-      "id":30,
-      "bloques":[
-        {"tipo":"voz","texto":"Hoy entrenarás memoria y atención a los detalles.","color":"#2563eb"},
-        {"tipo":"historia","texto":"Un detective recordaba cada detalle y resolvía casos difíciles con precisión.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Qué mejora la memoria a largo plazo?","opciones":["Repetición activa","Leer una vez","Dormir poco"],"correcta":0,"explicacion":"Repetir activa y conscientemente fortalece la memoria.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Encuentra el patrón: 2, 4, 8, 16, ?","opciones":["24","32","20"],"correcta":1,"explicacion":"Cada número se multiplica por 2.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Debes memorizar información importante, ¿qué haces primero?","opciones":["Leer una vez","Repetir varias veces","Esperar a último momento"],"correcta":1,"explicacion":"La repetición consciente fortalece memoria.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"Resuelve: 9−(2+3)×2=?","opciones":["-1","2","-3"],"correcta":0,"explicacion":"2+3=5, 5×2=10, 9−10=-1","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Inhala 4, exhala 6. Siente concentración.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Visualiza recordando todo con claridad y rapidez.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu memoria ha mejorado hoy.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"Cada ejercicio de memoria fortalece tu mente.","color":"#f87171"}
-      ]
-    },
-    {
-      "id":31,
-      "bloques":[
-        {"tipo":"voz","texto":"Hoy trabajaremos en motivación y metas personales.","color":"#2563eb"},
-        {"tipo":"historia","texto":"Un joven fijó metas diarias y alcanzó logros que parecían imposibles.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Qué mantiene la motivación alta?","opciones":["Celebrar pequeños logros","Quejarse","Ignorar metas"],"correcta":0,"explicacion":"Reconocer avances refuerza motivación.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Cuanto más quitas, más grande se vuelve. ¿Qué es?","opciones":["Un agujero","Un sombrero","La paciencia"],"correcta":0,"explicacion":"Un agujero aumenta a medida que quitas material.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Tienes una meta difícil, ¿cómo la abordas?","opciones":["Rendirte","Dividirla en pasos","Esperar a que cambie"],"correcta":1,"explicacion":"Dividir facilita el progreso.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"Resuelve: (6+4)×2=?","opciones":["18","20","22"],"correcta":1,"explicacion":"6+4=10, 10×2=20","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Inhala 4, exhala 6. Siente energía y motivación.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Visualiza logrando tus metas con éxito y confianza.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu motivación ha aumentado.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"Cada acción enfocada te acerca a tus metas.","color":"#f87171"}
-      ]
-    },
-    {
-      "id":32,
-      "bloques":[
-        {"tipo":"voz","texto":"Hoy entrenarás confianza y autoestima.","color":"#2563eb"},
-        {"tipo":"historia","texto":"Una mujer superó dudas y logró hablar frente a miles con seguridad.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Qué fortalece la autoestima?","opciones":["Compararse","Aceptar logros","Ignorar esfuerzos"],"correcta":1,"explicacion":"Reconocer logros refuerza autoestima.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Cuanto más grande me haces, menos me ves. ¿Qué soy?","opciones":["Oscuridad","El ego","La luz"],"correcta":0,"explicacion":"La oscuridad crece a medida que bloqueas la luz.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Tienes miedo de hablar en público, ¿qué haces?","opciones":["Evitas","Prepararte y practicar","Quejarte"],"correcta":1,"explicacion":"Prepararse aumenta confianza.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"Resuelve: 5×(2+3)= ?","opciones":["20","25","15"],"correcta":1,"explicacion":"2+3=5, 5×5=25","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Inhala 4, exhala 6. Siente seguridad interior.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Visualiza caminando confiado y seguro en cualquier situación.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu confianza ha aumentado hoy.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"Cada día fortaleces tu autoestima y seguridad.","color":"#f87171"}
-      ]
-    },
-    {
-      "id":33,
-      "bloques":[
-        {"tipo":"voz","texto":"Hoy entrenaremos inteligencia emocional y manejo de emociones.","color":"#2563eb"},
-        {"tipo":"historia","texto":"Un líder escuchaba a su equipo y regulaba sus emociones para tomar mejores decisiones.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Qué ayuda a regular emociones?","opciones":["Reaccionar rápido","Reflexionar antes de actuar","Ignorar"],"correcta":1,"explicacion":"La reflexión permite control emocional.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Tengo ciudades pero no casas, ríos pero no agua, bosques pero no árboles. ¿Qué soy?","opciones":["Mapa","Libro","Juego"],"correcta":0,"explicacion":"Un mapa contiene símbolos, no reales.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Alguien te irrita, ¿cómo respondes?","opciones":["Gritar","Respirar y responder con calma","Ignorar todo"],"correcta":1,"explicacion":"Responder con calma regula emociones y relaciones.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"Resuelve: 10−(3+2)= ?","opciones":["5","3","4"],"correcta":0,"explicacion":"3+2=5, 10−5=5","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Inhala 4, retén 2, exhala 6. Siente tus emociones controladas.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Visualiza manejando situaciones difíciles con calma y claridad.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu inteligencia emocional ha mejorado.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"Cada día aprendes a regular tus emociones y relaciones.","color":"#f87171"}
-      ]
-    },
-    {
-      "id":34,
-      "bloques":[
-        {"tipo":"voz","texto":"Hoy entrenarás creatividad y pensamiento innovador.","color":"#2563eb"},
-        {"tipo":"historia","texto":"Un diseñador creó un producto innovador al combinar ideas de distintas áreas.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Qué potencia la creatividad?","opciones":["Prueba y error","Repetir siempre lo mismo","Evitar riesgos"],"correcta":0,"explicacion":"Probar ideas nuevas genera creatividad.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Cuanto más quitas, más grande se vuelve. ¿Qué es?","opciones":["Un agujero","Un pastel","Un globo"],"correcta":0,"explicacion":"Al quitar tierra, el agujero crece.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Debes resolver un problema de forma original, ¿qué haces?","opciones":["Hacer lo habitual","Explorar varias opciones","Esperar a otros"],"correcta":1,"explicacion":"Explorar ideas nuevas potencia innovación.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"Resuelve: 6×(3+2)= ?","opciones":["36","30","32"],"correcta":1,"explicacion":"3+2=5, 6×5=30","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Inhala 4, exhala 6. Siente tu mente creativa.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Visualiza ideas originales surgiendo con facilidad.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu creatividad ha aumentado hoy.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"Cada día fortaleces tu capacidad de innovar.","color":"#f87171"}
-      ]
-    },
-    {
-      "id":35,
-      "bloques":[
-        {"tipo":"voz","texto":"Hoy entrenarás resiliencia financiera y toma de decisiones con dinero.","color":"#2563eb"},
-        {"tipo":"historia","texto":"Un empresario reinvirtió pequeñas ganancias cada mes y creó un negocio sólido.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Qué hábito financiero es más efectivo a largo plazo?","opciones":["Gastar todo","Ahorrar e invertir","Dejar dinero en casa"],"correcta":1,"explicacion":"Invertir consistentemente multiplica tu dinero.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Si un billete se divide en 5 partes iguales, ¿cuánto vale cada parte?","opciones":["1/5","5","No se puede"],"correcta":0,"explicacion":"Cada parte es 1/5 del total.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Recibes un dinero extra, ¿qué haces?","opciones":["Gastar todo","Ahorrar","Invertir sabiamente"],"correcta":2,"explicacion":"Invertir fortalece crecimiento futuro.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"Resuelve: 50−(6×7)= ?","opciones":["8","12","20"],"correcta":1,"explicacion":"6×7=42, 50−42=8","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Inhala 4, exhala 6. Siente tranquilidad financiera.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Visualiza tus finanzas creciendo de manera segura y estable.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu resiliencia financiera ha aumentado hoy.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"Cada decisión inteligente te acerca a estabilidad y crecimiento.","color":"#f87171"}
-      ]
-    },
-    {
-      "id":36,
-      "bloques":[
-        {"tipo":"voz","texto":"Hoy entrenarás concentración y productividad.","color":"#2563eb"},
-        {"tipo":"historia","texto":"Un programador resolvía problemas complejos concentrándose una hora sin distracciones, logrando grandes avances.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Cómo mejorar productividad?","opciones":["Multitarea","Bloques de enfoque","Revisar redes sociales"],"correcta":1,"explicacion":"El enfoque en bloques aumenta productividad.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Cuanto más lo quitas, más grande se vuelve. ¿Qué es?","opciones":["Un agujero","El tiempo","El conocimiento"],"correcta":0,"explicacion":"Quitar tierra hace crecer el agujero.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Tienes múltiples tareas, ¿cómo actúas?","opciones":["Hacer todo a la vez","Priorizar y ejecutar","Dejar para mañana"],"correcta":1,"explicacion":"Priorizar mejora resultados y reduce estrés.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"Resuelve: 8+6÷2=?","opciones":["7","11","14"],"correcta":1,"explicacion":"6÷2=3, 8+3=11","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Inhala 4, exhala 6. Siente claridad y concentración.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Visualiza completando tareas con eficiencia y sin estrés.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu concentración y productividad han aumentado.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"Cada sesión de enfoque te hace más productivo y eficiente.","color":"#f87171"}
-      ]
-    },
-    {
-      "id":37,
-      "bloques":[
-        {"tipo":"voz","texto":"Hoy entrenarás autoconocimiento y claridad mental.","color":"#2563eb"},
-        {"tipo":"historia","texto":"Un pensador diario reflexionaba sobre sus acciones y emociones, desarrollando gran claridad interior.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Qué ayuda a tener claridad mental?","opciones":["Reflexión diaria","Ignorar emociones","Hacer solo lo urgente"],"correcta":0,"explicacion":"Reflexionar permite conocerse y tomar mejores decisiones.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Me puedes romper sin tocarme. ¿Qué soy?","opciones":["Promesa","Vaso","Silencio"],"correcta":0,"explicacion":"Una promesa puede romperse simbólicamente.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Sientes confusión, ¿qué haces primero?","opciones":["Actuar impulsivamente","Reflexionar y planificar","Ignorar"],"correcta":1,"explicacion":"Reflexionar aumenta claridad y evita errores.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"Resuelve: 15−(3×4)= ?","opciones":["3","0","-1"],"correcta":0,"explicacion":"3×4=12, 15−12=3","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Inhala 4, exhala 6. Siente claridad interior.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Visualiza tu mente clara y decisiones conscientes.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu autoconocimiento ha crecido hoy.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"Cada reflexión diaria aumenta tu claridad y sabiduría.","color":"#f87171"}
-      ]
+    "id": 29,
+    "categoria": "disciplina",
+    "bloques":[
+      {"tipo":"tvid","id":29,"nombre":"Cuidado Maternal","tecnica":"TMM","descripcion":"Visualiza recibir protección y amor incondicional.","respiracion":"Inhala 4, exhala 6, siente la calidez recorriendo tu cuerpo.","duracion":"1:40","color":"#38bdf8"},
+      {"tipo":"voz","texto":"Entrena disciplina profunda hoy.","color":"#2563eb"},
+      {"tipo":"historia","texto":"La disciplina es lo que separa sueños de resultados.","color":"#34d399"},
+      {"tipo":"quiz","pregunta":"¿Cómo se fortalece la disciplina?","opciones":["Evitar esfuerzos","Persistir","Rendirse"],"correcta":1,"explicacion":"Persistir crea hábitos sólidos.","recompensa":10,"color":"#facc15"},
+      {"tipo":"acertijo","pregunta":"Cuanto más quitas, más grande se vuelve.","opciones":["Agujero","Montaña","Caja"],"correcta":0,"explicacion":"Agujero.","recompensa":8,"color":"#f59e0b"},
+      {"tipo":"decision","pregunta":"Quieres ser constante.","opciones":["Actuar","Esperar motivación","Evitar"],"correcta":0,"explicacion":"Actuar refuerza disciplina.","recompensa":12,"color":"#22c55e"},
+      {"tipo":"juego_mental","pregunta":"6 × 7 = ?","opciones":["42","40","45"],"correcta":0,"explicacion":"42.","recompensa":7,"color":"#38bdf8"},
+      {"tipo":"respiracion","texto":"Respira y enfoca tu mente.","duracion":30,"color":"#60a5fa"},
+      {"tipo":"visualizacion","texto":"Imagina tu disciplina sólida.","color":"#a78bfa"},
+      {"tipo":"recompensa","texto":"Tu disciplina ha crecido.","puntos":20,"color":"#10b981"},
+      {"tipo":"cierre","texto":"La disciplina crea libertad y resultados.","color":"#f87171"}
+    ]
+  },
+  {
+    "id": 30,
+    "categoria": "calma",
+    "bloques":[
+      {"tipo":"tvid","id":30,"nombre":"Risa del Niño","tecnica":"TDN","descripcion":"Imita una risa de niño, siente ligereza y alegría.","respiracion":"Inhala 4, exhala 6 con cada carcajada imaginaria.","duracion":"1:30","color":"#38bdf8"},
+      {"tipo":"voz","texto":"Hoy entrenarás calma profunda.","color":"#2563eb"},
+      {"tipo":"historia","texto":"Los líderes actúan desde la calma y claridad.","color":"#34d399"},
+      {"tipo":"quiz","pregunta":"¿Qué genera mejores decisiones?","opciones":["Ansiedad","Calma","Prisa"],"correcta":1,"explicacion":"La calma permite reflexión.","recompensa":10,"color":"#facc15"},
+      {"tipo":"acertijo","pregunta":"Vuelo sin alas, lloro sin ojos.","opciones":["Nube","Río","Viento"],"correcta":2,"explicacion":"El viento.","recompensa":8,"color":"#f59e0b"},
+      {"tipo":"decision","pregunta":"Situación estresante.","opciones":["Reaccionar","Respirar y pensar","Ignorar"],"correcta":1,"explicacion":"Respirar calma la mente.","recompensa":12,"color":"#22c55e"},
+      {"tipo":"juego_mental","pregunta":"9 × 8 = ?","opciones":["72","70","64"],"correcta":0,"explicacion":"72.","recompensa":7,"color":"#38bdf8"},
+      {"tipo":"respiracion","texto":"Respira profundo y relaja tu mente.","duracion":30,"color":"#60a5fa"},
+      {"tipo":"visualizacion","texto":"Visualiza calma interna.","color":"#a78bfa"},
+      {"tipo":"recompensa","texto":"Tu calma aumenta.","puntos":20,"color":"#10b981"},
+      {"tipo":"cierre","texto":"La calma es fortaleza interna.","color":"#f87171"}
+    ]
+  },
+  {
+    "id": 31,
+    "categoria": "enfoque",
+    "bloques":[
+      {"tipo":"tvid","id":31,"nombre":"Enfoque en lo Bueno","tecnica":"TDB","descripcion":"Identifica algo que salió bien hoy y amplifica esa sensación.","respiracion":"Inhala 4, retén 2, exhala 6 sintiendo satisfacción.","duracion":"1:40","color":"#38bdf8"},
+      {"tipo":"voz","texto":"Hoy entrenarás enfoque total.","color":"#2563eb"},
+      {"tipo":"historia","texto":"El enfoque dirige energía hacia resultados concretos.","color":"#34d399"},
+      {"tipo":"quiz","pregunta":"¿Qué mejora el enfoque?","opciones":["Distracciones","Eliminarlas","Multitarea"],"correcta":1,"explicacion":"Eliminar distracciones aumenta concentración.","recompensa":10,"color":"#facc15"},
+      {"tipo":"acertijo","pregunta":"Tiene ojos pero no puede ver.","opciones":["Pecho","Aguja","Pez"],"correcta":1,"explicacion":"La aguja.","recompensa":8,"color":"#f59e0b"},
+      {"tipo":"decision","pregunta":"Tarea importante.","opciones":["Ignorar","Concentrarse","Procrastinar"],"correcta":1,"explicacion":"Concentrarse termina la tarea.","recompensa":12,"color":"#22c55e"},
+      {"tipo":"juego_mental","pregunta":"14 × 3 = ?","opciones":["42","36","45"],"correcta":0,"explicacion":"42.","recompensa":7,"color":"#38bdf8"},
+      {"tipo":"respiracion","texto":"Respira profundo y enfoca tu mente.","duracion":30,"color":"#60a5fa"},
+      {"tipo":"visualizacion","texto":"Imagina completar todas tus tareas.","color":"#a78bfa"},
+      {"tipo":"recompensa","texto":"Tu enfoque ha mejorado.","puntos":20,"color":"#10b981"},
+      {"tipo":"cierre","texto":"El enfoque transforma esfuerzo en éxito.","color":"#f87171"}
+    ]
+  },
+  {
+    "id": 32,
+    "categoria": "mentalidad",
+    "bloques":[
+      {"tipo":"tvid","id":32,"nombre":"Aprendiendo del Error","tecnica":"TDM","descripcion":"Recuerda un error reciente y saca una lección positiva.","respiracion":"Inhala 4, exhala 6, transforma el error en aprendizaje.","duracion":"1:50","color":"#38bdf8"},
+      {"tipo":"voz","texto":"Hoy entrenarás mentalidad positiva.","color":"#2563eb"},
+      {"tipo":"historia","texto":"Las oportunidades se presentan a los que buscan soluciones.","color":"#34d399"},
+      {"tipo":"quiz","pregunta":"¿Qué genera mentalidad positiva?","opciones":["Quejarse","Buscar soluciones","Evitar retos"],"correcta":1,"explicacion":"Buscar soluciones fortalece la mente.","recompensa":10,"color":"#facc15"},
+      {"tipo":"acertijo","pregunta":"Siempre avanza, nunca retrocede.","opciones":["Reloj","Persona","Animal"],"correcta":0,"explicacion":"El reloj.","recompensa":8,"color":"#f59e0b"},
+      {"tipo":"decision","pregunta":"Problema inesperado.","opciones":["Rendirse","Buscar solución","Ignorar"],"correcta":1,"explicacion":"Buscar soluciones fortalece mentalidad.","recompensa":12,"color":"#22c55e"},
+      {"tipo":"juego_mental","pregunta":"18 ÷ 3 = ?","opciones":["6","4","8"],"correcta":0,"explicacion":"6.","recompensa":7,"color":"#38bdf8"},
+      {"tipo":"respiracion","texto":"Respira profundo y relaja.","duracion":30,"color":"#60a5fa"},
+      {"tipo":"visualizacion","texto":"Visualiza soluciones creativas.","color":"#a78bfa"},
+      {"tipo":"recompensa","texto":"Tu mentalidad positiva ha aumentado.","puntos":20,"color":"#10b981"},
+      {"tipo":"cierre","texto":"La mentalidad positiva abre caminos.","color":"#f87171"}
+    ]
+  },
+  {
+    "id": 33,
+    "categoria": "productividad",
+    "bloques":[
+      {"tipo":"tvid","id":33,"nombre":"Guerra Pacífica","tecnica":"TDG","descripcion":"Visualiza enfrentando un miedo con valentía y calma.","respiracion":"Inhala 4, retén 2, exhala 6 sintiendo control y fuerza.","duracion":"2:00","color":"#38bdf8"},
+      {"tipo":"voz","texto":"Hoy entrenarás productividad máxima.","color":"#2563eb"},
+      {"tipo":"historia","texto":"Los más productivos gestionan su tiempo y energía.","color":"#34d399"},
+      {"tipo":"quiz","pregunta":"¿Qué aumenta productividad?","opciones":["Planificación","Procrastinar","Multitarea"],"correcta":0,"explicacion":"Planificar prioriza tareas.","recompensa":10,"color":"#facc15"},
+      {"tipo":"acertijo","pregunta":"Sin moverse corre todo el día.","opciones":["Reloj","Agua","Viento"],"correcta":0,"explicacion":"El reloj.","recompensa":8,"color":"#f59e0b"},
+      {"tipo":"decision","pregunta":"Tareas múltiples.","opciones":["Priorizar","Hacer primero lo fácil","Esperar"],"correcta":0,"explicacion":"Priorizar genera resultados.","recompensa":12,"color":"#22c55e"},
+      {"tipo":"juego_mental","pregunta":"13 × 6 = ?","opciones":["78","72","80"],"correcta":0,"explicacion":"78.","recompensa":7,"color":"#38bdf8"},
+      {"tipo":"respiracion","texto":"Respira profundo y enfoca.","duracion":30,"color":"#60a5fa"},
+      {"tipo":"visualizacion","texto":"Imagina completar todas tus tareas sin estrés.","color":"#a78bfa"},
+      {"tipo":"recompensa","texto":"Tu productividad ha mejorado.","puntos":20,"color":"#10b981"},
+      {"tipo":"cierre","texto":"La productividad convierte esfuerzo en resultados.","color":"#f87171"}
+    ]
+  },
+  {
+    "id": 34,
+    "categoria": "confianza",
+    "bloques":[
+      {"tipo":"tvid","id":34,"nombre":"Beso de Gratitud","tecnica":"TDK","descripcion":"Envía un beso imaginario de gratitud a alguien que te apoyó.","respiracion":"Inhala 4, exhala 6, siente la conexión positiva.","duracion":"1:30","color":"#38bdf8"},
+      {"tipo":"voz","texto":"Hoy entrenarás confianza y seguridad interna.","color":"#2563eb"},
+      {"tipo":"historia","texto":"La confianza nace de pequeños logros diarios.","color":"#34d399"},
+      {"tipo":"quiz","pregunta":"¿Cómo aumentar confianza?","opciones":["Evitar retos","Actuar consistentemente","Quejarse"],"correcta":1,"explicacion":"Actuar consistentemente fortalece confianza.","recompensa":10,"color":"#facc15"},
+      {"tipo":"acertijo","pregunta":"Sin boca habla, sin alas vuela.","opciones":["Viento","Pájaro","Río"],"correcta":0,"explicacion":"El viento.","recompensa":8,"color":"#f59e0b"},
+      {"tipo":"decision","pregunta":"Situación difícil.","opciones":["Actuar","Ignorar","Quejarse"],"correcta":0,"explicacion":"Actuar genera confianza.","recompensa":12,"color":"#22c55e"},
+      {"tipo":"juego_mental","pregunta":"11 × 8 = ?","opciones":["88","80","90"],"correcta":0,"explicacion":"88.","recompensa":7,"color":"#38bdf8"},
+      {"tipo":"respiracion","texto":"Respira profundo y visualiza.","duracion":30,"color":"#60a5fa"},
+      {"tipo":"visualizacion","texto":"Visualiza tu confianza creciendo.","color":"#a78bfa"},
+      {"tipo":"recompensa","texto":"Tu confianza ha aumentado.","puntos":20,"color":"#10b981"},
+      {"tipo":"cierre","texto":"La confianza se construye cada día.","color":"#f87171"}
+    ]
+  },
+  {
+    "id": 35,
+    "categoria": "resiliencia",
+    "bloques":[
+      {"tipo":"tvid","id":35,"nombre":"Fortaleza Interior","tecnica":"TDB","descripcion":"Identifica tu fuerza y visualízala expandiéndose.","respiracion":"Inhala 4, retén 2, exhala 6. Siente tu poder interno.","duracion":"1:40","color":"#38bdf8"},
+      {"tipo":"voz","texto":"Hoy entrenarás resiliencia mental.","color":"#2563eb"},
+      {"tipo":"historia","texto":"Cada desafío fortalece a quienes persisten.","color":"#34d399"},
+      {"tipo":"quiz","pregunta":"¿Qué fortalece la resiliencia?","opciones":["Rendirse","Persistir","Evitar retos"],"correcta":1,"explicacion":"Persistir fortalece la mente.","recompensa":10,"color":"#facc15"},
+      {"tipo":"acertijo","pregunta":"Vuelo sin alas.","opciones":["Tiempo","Pájaro","Avión"],"correcta":0,"explicacion":"El tiempo.","recompensa":8,"color":"#f59e0b"},
+      {"tipo":"decision","pregunta":"Fracaso temporal.","opciones":["Abandonar","Intentar de nuevo","Ignorar"],"correcta":1,"explicacion":"Intentar fortalece la resiliencia.","recompensa":12,"color":"#22c55e"},
+      {"tipo":"juego_mental","pregunta":"11 × 4 = ?","opciones":["44","40","48"],"correcta":0,"explicacion":"44.","recompensa":7,"color":"#38bdf8"},
+      {"tipo":"respiracion","texto":"Respira profundo.","duracion":30,"color":"#60a5fa"},
+      {"tipo":"visualizacion","texto":"Visualiza superar desafíos.","color":"#a78bfa"},
+      {"tipo":"recompensa","texto":"Tu resiliencia ha aumentado.","puntos":20,"color":"#10b981"},
+      {"tipo":"cierre","texto":"La resiliencia transforma obstáculos en crecimiento.","color":"#f87171"}
+    ]
+  },
+  {
+    "id": 36,
+    "categoria": "aprendizaje",
+    "bloques":[
+      {"tipo":"tvid","id":36,"nombre":"Transformación de Obstáculos","tecnica":"TDM","descripcion":"Piensa en un problema actual y conviértelo en oportunidad.","respiracion":"Inhala 4, exhala 6, siente cómo la solución surge.","duracion":"1:50","color":"#38bdf8"},
+      {"tipo":"voz","texto":"Hoy entrenarás tu mente para aprender más rápido.","color":"#2563eb"},
+      {"tipo":"historia","texto":"Los mejores inversionistas nunca dejan de aprender.","color":"#34d399"},
+      {"tipo":"quiz","pregunta":"¿Qué acelera el aprendizaje?","opciones":["Practicar","Ignorar errores","Evitar estudio"],"correcta":0,"explicacion":"La práctica mejora el aprendizaje.","recompensa":10,"color":"#facc15"},
+      {"tipo":"acertijo","pregunta":"Siempre corre pero nunca camina.","opciones":["Río","Auto","Persona"],"correcta":0,"explicacion":"El río.","recompensa":8,"color":"#f59e0b"},
+      {"tipo":"decision","pregunta":"Quieres aprender.","opciones":["Leer","Esperar","Evitar esfuerzo"],"correcta":0,"explicacion":"Leer y estudiar fortalecen la mente.","recompensa":12,"color":"#22c55e"},
+      {"tipo":"juego_mental","pregunta":"15 × 2 = ?","opciones":["30","25","32"],"correcta":0,"explicacion":"30.","recompensa":7,"color":"#38bdf8"},
+      {"tipo":"respiracion","texto":"Respira profundo.","duracion":30,"color":"#60a5fa"},
+      {"tipo":"visualizacion","texto":"Visualiza tu mente aprendiendo rápidamente.","color":"#a78bfa"},
+      {"tipo":"recompensa","texto":"Tu capacidad de aprendizaje ha aumentado.","puntos":20,"color":"#10b981"},
+      {"tipo":"cierre","texto":"Aprender continuamente expande tu futuro.","color":"#f87171"}
+    ]
+  },
+  {
+    "id": 37,
+    "categoria": "estrategia",
+    "bloques":[
+      {"tipo":"tvid","id":37,"nombre":"Estrategia de Guerra","tecnica":"TDG","descripcion":"Imagina enfrentar un desafío con fuerza, inteligencia y audacia.","respiracion":"Inhala 4, retén 2, exhala 6 mientras sientes poder interior.","duracion":"2:00","color":"#38bdf8"},
+      {"tipo":"voz","texto":"Hoy entrenarás pensamiento estratégico.","color":"#2563eb"},
+      {"tipo":"historia","texto":"Las mejores decisiones provienen de la planificación y la estrategia.","color":"#34d399"},
+      {"tipo":"quiz","pregunta":"¿Qué refuerza tu capacidad estratégica?","opciones":["Planificar"," improvisar siempre","Evitar decisiones"],"correcta":0,"explicacion":"Planificar fortalece tu estrategia.","recompensa":10,"color":"#facc15"},
+      {"tipo":"acertijo","pregunta":"Cuanto más comparto, más crezco.","opciones":["Conocimiento","Riqueza","Tiempo"],"correcta":0,"explicacion":"El conocimiento se multiplica al compartirlo.","recompensa":8,"color":"#f59e0b"},
+      {"tipo":"decision","pregunta":"Tienes un desafío complejo.","opciones":["Analizar y actuar","Esperar","Ignorar"],"correcta":0,"explicacion":"Analizar y actuar desarrolla estrategia.","recompensa":12,"color":"#22c55e"},
+      {"tipo":"juego_mental","pregunta":"9 × 9 = ?","opciones":["81","80","90"],"correcta":0,"explicacion":"81.","recompensa":7,"color":"#38bdf8"},
+      {"tipo":"respiracion","texto":"Respira profundo y visualiza tu estrategia.","duracion":30,"color":"#60a5fa"},
+      {"tipo":"visualizacion","texto":"Visualiza ganar con inteligencia y audacia.","color":"#a78bfa"},
+      {"tipo":"recompensa","texto":"Tu capacidad estratégica ha aumentado.","puntos":20,"color":"#10b981"},
+      {"tipo":"cierre","texto":"La estrategia convierte la fuerza en resultados inteligentes.","color":"#f87171"}
+     ]
     }
   ]
-}
+} 
