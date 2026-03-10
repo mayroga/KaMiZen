@@ -1,175 +1,205 @@
 {
-  "sesiones": [
-    {
-      "apertura": "Hoy vas a entrenar tu mente para pensar con claridad, disciplina y visión de riqueza.",
-      "historia": "Un inversor pasó ocho años construyendo su primer millón. Cada día hacía una pequeña acción: aprender, ahorrar, invertir, repetir.",
-      "ejercicio": "Si inviertes cinco dólares al día durante diez años, ¿cuánto podría crecer con interés compuesto?",
-      "respiracion": "Respira lento. Imagina tu mente como un lago. Cada pensamiento es una ola. Cuando el lago se calma, puedes ver el fondo.",
-      "visualizacion": "Imagina tu vida sin estrés financiero. Tus decisiones vienen desde la calma, no desde la urgencia.",
-      "juego": {"pregunta": "Adivina: ¿Qué sube pero nunca baja?", "respuesta": "La edad"},
-      "cierre": "La riqueza empieza como una forma de pensar. Hoy entrenaste esa mente."
-    },
-    {
-      "apertura": "Comienza el día enfocándote en tus metas y bienestar financiero.",
-      "historia": "Una mujer ahorró cada mes y compró su primer apartamento en cinco años gracias a la constancia.",
-      "ejercicio": "Piensa en una meta financiera para un año y divídela en pasos mensuales.",
-      "respiracion": "Respira profundamente contando hasta cinco y siente tu mente despejarse.",
-      "visualizacion": "Visualiza tu futuro libre de preocupaciones financieras y lleno de oportunidades.",
-      "juego": {"pregunta": "Si un tren eléctrico va de norte a sur a 100km/h y el viento sopla al este, ¿hacia dónde va el humo?", "respuesta": "Los trenes eléctricos no tienen humo"},
-      "cierre": "Pequeños hábitos diarios crean grandes resultados a largo plazo."
-    },
-    {
-      "apertura": "Hoy tu mente se prepara para pensar estratégicamente y actuar con disciplina.",
-      "historia": "Un empresario comenzó su negocio desde cero. Fracasó varias veces, pero aprendió algo crucial cada vez.",
-      "ejercicio": "Anota tres decisiones que podrías tomar hoy que te acerquen a tu objetivo financiero.",
-      "respiracion": "Cierra los ojos y haz respiraciones profundas, sintiendo cómo el estrés se disuelve.",
-      "visualizacion": "Imagina que cada acción correcta te acerca a tu meta financiera con claridad y calma.",
-      "juego": {"pregunta": "Si tienes 3 manzanas y tomas 2, ¿cuántas tienes?", "respuesta": "Las 2 que tomaste."},
-      "cierre": "El éxito es la suma de decisiones bien pensadas y consistentes."
-    },
-    {
-      "apertura": "Abre tu mente para nuevas posibilidades y soluciones creativas.",
-      "historia": "Un artista combinó su pasión con disciplina financiera y vendió sus primeras obras tras años de práctica.",
-      "ejercicio": "Piensa en una habilidad que puedas monetizar y planifica cómo empezar.",
-      "respiracion": "Respira contando hasta cuatro, mantén dos y exhala contando seis. Relaja tu cuerpo.",
-      "visualizacion": "Visualiza tu trabajo o pasión generando ingresos y libertad.",
-      "juego": {"pregunta": "Adivina: Siempre está delante de ti pero no puedes verlo.", "respuesta": "El futuro"},
-      "cierre": "La creatividad combinada con disciplina produce resultados sostenibles."
-    },
-    {
-      "apertura": "Enfócate hoy en la constancia y la paciencia como herramientas de riqueza.",
-      "historia": "Un inversor diversificó pequeñas cantidades durante años. La paciencia y constancia le permitieron generar un portafolio sólido.",
-      "ejercicio": "Haz una lista de tus ingresos y gastos y busca pequeñas formas de ahorro cada mes.",
-      "respiracion": "Inhala profundamente, exhala lentamente y siente tu mente más tranquila.",
-      "visualizacion": "Visualiza tus finanzas creciendo de manera estable y segura.",
-      "juego": {"pregunta": "Si un avión se estrella en la frontera entre dos países, ¿dónde entierran a los sobrevivientes?", "respuesta": "No se entierran los sobrevivientes"},
-      "cierre": "La disciplina constante es más poderosa que los grandes movimientos esporádicos."
-    },
-    {
-      "apertura": "Hoy la mente se prepara para aprender del pasado y planificar el futuro.",
-      "historia": "Un joven estudió cada error financiero y ajustó su estrategia. En cinco años duplicó su patrimonio.",
-      "ejercicio": "Anota un error financiero pasado y lo que aprendiste. Planea cómo evitarlo.",
-      "respiracion": "Respira con atención plena, sintiendo cada inhalación y exhalación.",
-      "visualizacion": "Imagina tus decisiones futuras tomando en cuenta la experiencia pasada.",
-      "juego": {"pregunta": "Adivina: Dos padres y dos hijos entran a una tienda, pero sólo compran tres helados. ¿Cómo es posible?", "respuesta": "Son abuelo, padre e hijo."},
-      "cierre": "Aprender del pasado te hace más fuerte para crear un futuro sólido."
-    },
-    {
-      "apertura": "Prepárate para una sesión de enfoque total y claridad mental.",
-      "historia": "Un profesional ahorró inteligentemente para su retiro. No tomó atajos ni apuestas riesgosas, solo decisiones seguras.",
-      "ejercicio": "Calcula cuánto necesitarías ahorrar cada mes para tu meta de largo plazo.",
-      "respiracion": "Haz respiraciones profundas, lentas y rítmicas, relajando hombros y cuello.",
-      "visualizacion": "Visualiza tu retiro cómodo y seguro, fruto de tu planificación actual.",
-      "juego": {"pregunta": "Adivina: ¿Qué tiene ciudades, pero no casas; ríos, pero no agua?", "respuesta": "Un mapa"},
-      "cierre": "La planificación inteligente de hoy asegura la libertad de mañana."
-    },
-    {
-      "apertura": "Hoy entrenaremos la paciencia, la estrategia y la visualización positiva.",
-      "historia": "Una pareja comenzó su negocio familiar sin dinero externo. Planificaron, redujeron gastos y reinvirtieron utilidades. Hoy tienen un negocio rentable.",
-      "ejercicio": "Anota tres acciones que puedas hacer hoy para mejorar tu situación financiera.",
-      "respiracion": "Respira profundamente mientras relajas tu cuerpo y tu mente.",
-      "visualizacion": "Imagina tu proyecto alcanzando éxito y estabilidad.",
-      "juego": {"pregunta": "Si tengo 6 huevos y rompo 2, cocino 2 y como 1, ¿cuántos quedan?", "respuesta": "Queda 1 huevo"},
-      "cierre": "Cada pequeña acción hoy te acerca a grandes resultados mañana."
-    },
-    {
-      "apertura": "Concéntrate en tu mente, emociones y objetivos financieros.",
-      "historia": "Un estudiante invirtió en educación financiera durante años. Aprendió estrategias y hoy maneja su dinero con eficacia.",
-      "ejercicio": "Investiga un concepto financiero nuevo y aplícalo a tu situación actual.",
-      "respiracion": "Inhala contando cuatro, mantén dos y exhala seis, siente calma y claridad.",
-      "visualizacion": "Visualiza tomando decisiones inteligentes y seguras cada día.",
-      "juego": {"pregunta": "Adivina: Siempre viene pero nunca llega.", "respuesta": "El mañana"},
-      "cierre": "El conocimiento aplicado es poder multiplicado en riqueza."
-    },
-    {
-      "apertura": "Hoy tu mente se centra en la acción consciente y el crecimiento constante.",
-      "historia": "Un agricultor diversificó cultivos y aprendió del mercado local. Su constancia lo hizo prosperar.",
-      "ejercicio": "Haz una acción hoy que te acerque a tu objetivo de ingresos o ahorro.",
-      "respiracion": "Respira profundamente y siente cada músculo relajarse.",
-      "visualizacion": "Visualiza tu futuro prosperando gracias a decisiones conscientes.",
-      "juego": {"pregunta": "Adivina: ¿Qué se rompe pero nunca se cae?", "respuesta": "Un récord"},
-      "cierre": "La acción diaria consistente es la clave del progreso."
-    },
-    {
-      "apertura": "Prepárate para reforzar tu mente y hábitos financieros positivos.",
-      "historia": "Un emprendedor digital comenzó con poco, creó contenido útil y creció su audiencia y sus ingresos gradualmente.",
-      "ejercicio": "Planifica tu acción más importante para hoy que impacte tus ingresos.",
-      "respiracion": "Respira lento, sintiendo cómo tu mente se despeja y se concentra.",
-      "visualizacion": "Visualiza tu trabajo produciendo resultados y satisfacción.",
-      "juego": {"pregunta": "Adivina: ¿Qué tiene orejas pero no oye?", "respuesta": "Una corneta"},
-      "cierre": "El crecimiento sostenible se construye día a día con acciones correctas."
-    },
-    {
-      "apertura": "Hoy enfocamos la mente en claridad, disciplina y decisión.",
-      "historia": "Un inversor compró propiedades consistentemente en momentos estratégicos. La disciplina le permitió acumular patrimonio sólido.",
-      "ejercicio": "Identifica una inversión segura que puedas empezar a planificar hoy.",
-      "respiracion": "Respira profundamente y siente cómo la calma inunda tu mente.",
-      "visualizacion": "Visualiza tus inversiones generando seguridad y libertad.",
-      "juego": {"pregunta": "Adivina: Entre más quitas, más grande se vuelve.", "respuesta": "Un agujero"},
-      "cierre": "La disciplina financiera construye libertad y tranquilidad."
-    },
-    {
-      "apertura": "Hoy tu mente se abre a la estrategia y la creatividad aplicada.",
-      "historia": "Una mujer comenzó su negocio de diseño. Aprendió marketing digital y ventas. Su constancia la hizo crecer rápido.",
-      "ejercicio": "Piensa en una idea de negocio o ingreso extra y anótala para analizarla.",
-      "respiracion": "Respira consciente y lentamente, despejando tensiones.",
-      "visualizacion": "Visualiza tu idea ejecutándose con éxito y seguridad.",
-      "juego": {"pregunta": "Adivina: ¿Qué tiene manos pero no puede aplaudir?", "respuesta": "Un reloj"},
-      "cierre": "La creatividad aplicada con disciplina produce resultados reales."
-    },
-    {
-      "apertura": "Concéntrate en la perseverancia y en la construcción de hábitos positivos.",
-      "historia": "Un escritor dedicaba una hora diaria a escribir. Tras años, publicó su primer libro y generó ingresos constantes.",
-      "ejercicio": "Anota un hábito financiero o de productividad que puedas practicar diariamente.",
-      "respiracion": "Respira profundamente y siente tu mente más clara y serena.",
-      "visualizacion": "Visualiza cómo ese hábito te acerca a tus objetivos.",
-      "juego": {"pregunta": "Adivina: ¿Qué tiene una sola voz pero dice muchas cosas?", "respuesta": "Un teléfono"},
-      "cierre": "La constancia y hábitos positivos multiplican tu potencial."
-    },
-    {
-      "apertura": "Hoy tu mente se centra en optimización y enfoque en resultados.",
-      "historia": "Un joven estudió métodos de ahorro e inversión. Aplicó uno nuevo cada mes. Al año, duplicó sus ahorros.",
-      "ejercicio": "Revisa tus finanzas y encuentra una optimización inmediata.",
-      "respiracion": "Respira y deja ir cualquier tensión o preocupación.",
-      "visualizacion": "Visualiza tus recursos creciendo de manera estable.",
-      "juego": {"pregunta": "Adivina: ¿Qué se puede romper pero nunca tocar?", "respuesta": "Una promesa"},
-      "cierre": "El enfoque inteligente multiplica resultados sin riesgos innecesarios."
-    },
-    {
-      "apertura": "Hoy tu sesión se dedica a fortalecer la claridad y confianza.",
-      "historia": "Una mujer negoció mejores condiciones laborales con preparación y calma. Logró beneficios a largo plazo.",
-      "ejercicio": "Identifica un área de tu vida financiera donde puedas negociar mejor y planifica la acción.",
-      "respiracion": "Respira profundo y deja que la calma guíe tu mente.",
-      "visualizacion": "Visualiza tu negociación resultando favorable.",
-      "juego": {"pregunta": "Adivina: ¿Qué se puede atrapar pero no lanzar?", "respuesta": "Un resfriado"},
-      "cierre": "La confianza y preparación son herramientas poderosas para el éxito."
-    },
-    {
-      "apertura": "Hoy la mente se enfoca en visión a largo plazo y decisión consciente.",
-      "historia": "Un inversor joven estudió mercados durante años y aplicó estrategias seguras. Hoy tiene libertad financiera.",
-      "ejercicio": "Escribe tu meta financiera de 5 años y los pasos para alcanzarla.",
-      "respiracion": "Respira consciente, siente cada inhalación llenándote de calma.",
-      "visualizacion": "Visualiza tu meta alcanzada con claridad y tranquilidad.",
-      "juego": {"pregunta": "Adivina: Cuanto más quitas, más grande se vuelve.", "respuesta": "Un agujero"},
-      "cierre": "Planificación y visión a largo plazo traen resultados reales."
-    },
-    {
-      "apertura": "Hoy entrenamos tu mente para detectar oportunidades y actuar rápido.",
-      "historia": "Un emprendedor identificó una necesidad en su comunidad y ofreció soluciones simples. Su constancia le permitió crecer rápido.",
-      "ejercicio": "Detecta una oportunidad hoy y escribe un plan de acción mínimo para aprovecharla.",
-      "respiracion": "Respira profundo y centra tu atención en tu meta.",
-      "visualizacion": "Visualiza tu acción dando resultados positivos inmediatos.",
-      "juego": {"pregunta": "Adivina: ¿Qué es tuyo, pero los demás lo usan más que tú?", "respuesta": "Tu nombre"},
-      "cierre": "La atención al detalle y la acción consciente crean resultados tangibles."
-    },
-    {
-      "apertura": "Hoy tu mente se centra en aprendizaje constante y mejora continua.",
-      "historia": "Un profesional dedicaba 30 minutos diarios a aprender sobre finanzas. En 2 años, aplicó conocimientos que duplicaron sus ingresos.",
-      "ejercicio": "Aprende algo nuevo sobre finanzas hoy y planifica cómo aplicarlo.",
-      "respiracion": "Respira con calma y claridad, dejando que la mente absorba la información.",
-      "visualizacion": "Visualiza el aprendizaje aplicándose a tu vida y finanzas.",
-      "juego": {"pregunta": "Adivina: ¿Qué siempre corre pero nunca camina?", "respuesta": "El agua"},
-      "cierre": "El aprendizaje constante transforma la realidad a largo plazo."
-    }
-  ]
+  "sesiones":[
+
+{
+"bloques":[
+
+{
+"tipo":"voz",
+"texto":"Bienvenido a tu entrenamiento mental KaMiZen. Hoy entrenarás claridad, disciplina y visión de riqueza.",
+"color":"#2563eb"
+},
+
+{
+"tipo":"historia",
+"texto":"Un inversor tardó ocho años en construir su primer millón. No hizo nada espectacular. Solo repitió pequeñas decisiones inteligentes cada día.",
+"color":"#34d399"
+},
+
+{
+"tipo":"quiz",
+"pregunta":"¿Cuál de estas acciones genera más riqueza a largo plazo?",
+"opciones":[
+"Gastar inmediatamente",
+"Ahorrar sin invertir",
+"Invertir consistentemente"
+],
+"correcta":2,
+"explicacion":"Invertir consistentemente permite que el interés compuesto multiplique tu dinero.",
+"recompensa":10,
+"color":"#facc15"
+},
+
+{
+"tipo":"acertijo",
+"pregunta":"Adivina: ¿Qué sube pero nunca baja?",
+"opciones":[
+"La montaña",
+"La edad",
+"La temperatura"
+],
+"correcta":1,
+"explicacion":"La edad siempre aumenta con el tiempo.",
+"recompensa":8,
+"color":"#f59e0b"
+},
+
+{
+"tipo":"decision",
+"pregunta":"Recibes 100 dólares inesperados. ¿Qué haces?",
+"opciones":[
+"Gastarlos en algo impulsivo",
+"Ahorrar una parte",
+"Invertir o aprender algo nuevo"
+],
+"correcta":2,
+"explicacion":"Invertir en conocimiento o activos genera crecimiento futuro.",
+"recompensa":12,
+"color":"#22c55e"
+},
+
+{
+"tipo":"juego_mental",
+"pregunta":"5 + 7 × 2 = ?",
+"opciones":[
+"24",
+"19",
+"17"
+],
+"correcta":1,
+"explicacion":"Primero se multiplica: 7×2 = 14, luego se suma 5.",
+"recompensa":7,
+"color":"#38bdf8"
+},
+
+{
+"tipo":"respiracion",
+"texto":"Respira profundo. Inhala contando cuatro. Mantén dos segundos. Exhala lentamente contando seis. Siente tu mente calmándose.",
+"duracion":30,
+"color":"#60a5fa"
+},
+
+{
+"tipo":"visualizacion",
+"texto":"Imagina tu vida con estabilidad financiera. Tomas decisiones con calma. Tu mente está clara. Tus recursos crecen cada año.",
+"color":"#a78bfa"
+},
+
+{
+"tipo":"recompensa",
+"texto":"Excelente trabajo. Tu disciplina mental ha aumentado hoy.",
+"puntos":20,
+"color":"#10b981"
+},
+
+{
+"tipo":"cierre",
+"texto":"Hoy entrenaste tu mente estratégica. Cada día que completas una sesión, te acercas más a tu objetivo de riqueza, claridad y bienestar.",
+"color":"#f87171"
+}
+
+]
+},
+
+{
+"bloques":[
+
+{
+"tipo":"voz",
+"texto":"Hoy fortalecerás tu paciencia y visión financiera.",
+"color":"#2563eb"
+},
+
+{
+"tipo":"historia",
+"texto":"Una mujer ahorró pequeñas cantidades cada mes durante años. Esa disciplina le permitió comprar su primer apartamento.",
+"color":"#34d399"
+},
+
+{
+"tipo":"quiz",
+"pregunta":"¿Qué hábito financiero es más poderoso?",
+"opciones":[
+"Ahorrar ocasionalmente",
+"Ahorrar e invertir constantemente",
+"Gastar solo cuando sea necesario"
+],
+"correcta":1,
+"explicacion":"La constancia es lo que crea crecimiento financiero.",
+"recompensa":10,
+"color":"#facc15"
+},
+
+{
+"tipo":"acertijo",
+"pregunta":"Siempre está delante de ti pero no puedes verlo.",
+"opciones":[
+"El aire",
+"El futuro",
+"La luz"
+],
+"correcta":1,
+"explicacion":"El futuro siempre está delante de nosotros.",
+"recompensa":8,
+"color":"#f59e0b"
+},
+
+{
+"tipo":"decision",
+"pregunta":"Tienes una hora libre hoy. ¿Qué decisión aumenta más tu riqueza futura?",
+"opciones":[
+"Ver televisión",
+"Aprender una habilidad",
+"Dormir más"
+],
+"correcta":1,
+"explicacion":"El conocimiento puede generar ingresos durante toda la vida.",
+"recompensa":12,
+"color":"#22c55e"
+},
+
+{
+"tipo":"juego_mental",
+"pregunta":"Si tienes 3 manzanas y tomas 2, ¿cuántas tienes?",
+"opciones":[
+"1",
+"2",
+"3"
+],
+"correcta":1,
+"explicacion":"Tienes las dos que tomaste.",
+"recompensa":7,
+"color":"#38bdf8"
+},
+
+{
+"tipo":"respiracion",
+"texto":"Respira lentamente. Inhala cuatro segundos. Exhala seis segundos. Relaja tus hombros.",
+"duracion":30,
+"color":"#60a5fa"
+},
+
+{
+"tipo":"visualizacion",
+"texto":"Visualiza tu disciplina diaria creando estabilidad y oportunidades.",
+"color":"#a78bfa"
+},
+
+{
+"tipo":"recompensa",
+"texto":"Tu claridad financiera ha aumentado hoy.",
+"puntos":20,
+"color":"#10b981"
+},
+
+{
+"tipo":"cierre",
+"texto":"Pequeñas decisiones inteligentes crean grandes resultados.",
+"color":"#f87171"
+}
+
+]
+}
+
+]
 }
