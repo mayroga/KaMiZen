@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, HTTPException, Form
+from fastapi import FastAPI, Request, HTTPException, Form 
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 import json5
@@ -61,11 +61,13 @@ def obtener_sesion_actual():
     dias_transcurridos = (ahora.date() - inicio.date()).days
     indice = dias_transcurridos % len(db["sesiones"])
 
-    # Control de repetición
+    # Sesión normal 10 AM, repetición 3 PM
     if ahora.time() >= time(15,0):
-        return db["sesiones"][indice], "repeticion"
+        tipo = "repeticion"
     else:
-        return db["sesiones"][indice], "normal"
+        tipo = "normal"
+
+    return db["sesiones"][indice], tipo
 
 # ----------------------
 # RUTAS
@@ -95,10 +97,9 @@ async def session_content():
     count = session_users.get(hoy.isoformat(), 0)
     if count >= SESSION_LIMIT:
         raise HTTPException(status_code=429, detail="Límite de usuarios alcanzado para la sesión de hoy")
-
     session_users[hoy.isoformat()] = count + 1
 
-    return {"sesion": sesion, "tipo": tipo, "stripe_publishable": STRIPE_PUBLISHABLE_KEY}
+    return {"sesiones": sesion, "tipo": tipo, "stripe_publishable": STRIPE_PUBLISHABLE_KEY}
 
 @app.post("/create_checkout_session")
 async def create_checkout_session():
@@ -132,7 +133,6 @@ async def stripe_webhook(request: Request):
     except Exception as e:
         return JSONResponse({'status': 'error', 'detail': str(e)}, status_code=400)
 
-    # Puedes manejar pagos completados
     if event['type'] == 'checkout.session.completed':
         session = event['data']['object']
         print(f"Pago completado: {session['id']}")
