@@ -1,116 +1,104 @@
-const startBtn = document.getElementById("start-btn")
-const nextBtn = document.getElementById("next-btn")
-const restartBtn = document.getElementById("restart-btn")
-const block = document.getElementById("block")
+const startBtn = document.getElementById("start-btn");
+const stripeBtn = document.getElementById("stripe-btn");
+const nextBtn = document.getElementById("next-btn");
+const restartBtn = document.getElementById("restart-btn");
+const block = document.getElementById("block");
 
-let bloques = []
-let current = 0
-let puntos = 0
+// BLOQUES DE LA SESIÓN
+let bloques = [];
+let current = 0;
+let puntos = 0;
 
-// -----------------------------
-// DATOS USUARIO
-// -----------------------------
+// DATOS DEL USUARIO LOCAL
 let userData = JSON.parse(localStorage.getItem("kamizenData")) || {
     streak: 0,
     lastDay: null,
     nivel: 1,
     disciplina: 40,
     claridad: 50,
-    calma: 30
-}
+    calma: 30,
+    pago: false  // NUEVO: indica si pagó
+};
 
-// -----------------------------
-// PANEL
-// -----------------------------
-const streakEl = document.getElementById("streak")
-const levelEl = document.getElementById("level")
-const discBar = document.getElementById("disciplina-bar")
-const clarBar = document.getElementById("claridad-bar")
-const calmBar = document.getElementById("calma-bar")
+// PANEL MENTAL
+const streakEl = document.getElementById("streak");
+const levelEl = document.getElementById("level");
+const discBar = document.getElementById("disciplina-bar");
+const clarBar = document.getElementById("claridad-bar");
+const calmBar = document.getElementById("calma-bar");
 
 function updatePanel() {
-    streakEl.innerHTML = " Racha: " + userData.streak + " días"
-    levelEl.innerHTML = "Nivel KaMiZen: " + userData.nivel
-    discBar.style.width = userData.disciplina + "%"
-    clarBar.style.width = userData.claridad + "%"
-    calmBar.style.width = userData.calma + "%"
+    streakEl.innerHTML = " Racha: " + userData.streak + " días";
+    levelEl.innerHTML = "Nivel KaMiZen: " + userData.nivel;
+    discBar.style.width = userData.disciplina + "%";
+    clarBar.style.width = userData.claridad + "%";
+    calmBar.style.width = userData.calma + "%";
 }
+updatePanel();
 
-updatePanel()
-
-// -----------------------------
-// RACHA DIARIA
-// -----------------------------
+// Racha diaria
 function updateStreak() {
-    let today = new Date().toDateString()
+    let today = new Date().toDateString();
     if (userData.lastDay !== today) {
-        userData.streak += 1
-        userData.lastDay = today
+        userData.streak += 1;
+        userData.lastDay = today;
     }
 }
 
-// -----------------------------
 // VOZ
-// -----------------------------
 function playVoice(text) {
     return new Promise(resolve => {
-        speechSynthesis.cancel()
-        let msg = new SpeechSynthesisUtterance(text)
-        msg.lang = "es-ES"
-        msg.rate = 0.9
-        msg.onend = resolve
-        speechSynthesis.speak(msg)
-    })
+        speechSynthesis.cancel();
+        let msg = new SpeechSynthesisUtterance(text);
+        msg.lang = "es-ES";
+        msg.rate = 0.9;
+        msg.onend = resolve;
+        speechSynthesis.speak(msg);
+    });
 }
 
-// -----------------------------
-// RESPIRACION
-// -----------------------------
+// RESPIRACIÓN
 function breathingAnimation() {
-    let circle = document.createElement("div")
-    circle.className = "breath-circle"
-    block.appendChild(circle)
-    let inhale = true
+    let circle = document.createElement("div");
+    circle.className = "breath-circle";
+    block.appendChild(circle);
+    let inhale = true;
     setInterval(() => {
-        circle.style.transform = inhale ? "scale(1.6)" : "scale(1)"
-        inhale = !inhale
-    }, 4000)
+        circle.style.transform = inhale ? "scale(1.6)" : "scale(1)";
+        inhale = !inhale;
+    }, 4000);
 }
 
-// -----------------------------
-// OPCIONES
-// -----------------------------
+// OPCIONES DE QUIZ, ACERTIJO, DECISIÓN, JUEGO MENTAL
 function createOptions(b) {
     b.opciones.forEach((op, i) => {
-        let btn = document.createElement("button")
-        btn.innerText = op
+        let btn = document.createElement("button");
+        btn.innerText = op;
         btn.onclick = () => {
             if (i === b.correcta) {
-                puntos += b.recompensa || 5
-                userData.disciplina += 2
-                userData.claridad += 2
-                alert("Correcto: " + b.explicacion)
+                puntos += b.recompensa || 5;
+                userData.disciplina += 2;
+                userData.claridad += 2;
+                alert("Correcto: " + b.explicacion);
             } else {
-                userData.calma += 1
-                alert("Respuesta: " + b.explicacion)
+                userData.calma += 1;
+                alert("Respuesta: " + b.explicacion);
             }
-            updatePanel()
-            nextBtn.style.display = "inline-block"
-        }
-        block.appendChild(btn)
-    })
+            updatePanel();
+            nextBtn.style.display = "inline-block";
+        };
+        block.appendChild(btn);
+    });
 }
 
-// -----------------------------
 // MOSTRAR BLOQUE
-// -----------------------------
 async function showBlock(b) {
-    block.innerHTML = ""
-    document.body.style.background = b.color || "#0f172a"
+    block.innerHTML = "";
+    document.body.style.background = b.color || "#0f172a";
 
     if (b.texto) {
-        block.innerHTML = "<p>" + b.texto + "</p>"
-        await playVoice(b.texto)
+        block.innerHTML = "<p>" + b.texto + "</p>";
+        await playVoice(b.texto);
     }
 
     switch (b.tipo) {
@@ -118,68 +106,95 @@ async function showBlock(b) {
         case "acertijo":
         case "decision":
         case "juego_mental":
-            block.innerHTML = "<h3>" + b.pregunta + "</h3>"
-            createOptions(b)
-            await playVoice(b.pregunta)
-            break
-
+            block.innerHTML = "<h3>" + b.pregunta + "</h3>";
+            createOptions(b);
+            await playVoice(b.pregunta);
+            break;
         case "respiracion":
-            breathingAnimation()
-            await playVoice(b.texto)
-            setTimeout(() => {
-                nextBtn.style.display = "inline-block"
-            }, 30000)
-            return
-
+            breathingAnimation();
+            await playVoice(b.texto);
+            setTimeout(() => { nextBtn.style.display = "inline-block"; }, 30000);
+            return;
         case "recompensa":
-            userData.disciplina += 3
-            userData.claridad += 3
-            userData.calma += 3
-            block.innerHTML = "<h2>" + b.texto + "</h2>"
-            await playVoice(b.texto)
-            break
-
+            userData.disciplina += 3;
+            userData.claridad += 3;
+            userData.calma += 3;
+            block.innerHTML = "<h2>" + b.texto + "</h2>";
+            await playVoice(b.texto);
+            break;
         case "cierre":
-            updateStreak()
-            puntos += 10
-            if (puntos > 50) userData.nivel += 1
-            localStorage.setItem("kamizenData", JSON.stringify(userData))
-            updatePanel()
-            restartBtn.style.display = "inline-block"
-            await playVoice(b.texto)
-            return
+            updateStreak();
+            puntos += 10;
+            if (puntos > 50) userData.nivel += 1;
+            localStorage.setItem("kamizenData", JSON.stringify(userData));
+            updatePanel();
+            restartBtn.style.display = "inline-block";
+            await playVoice(b.texto);
+            return;
     }
-
-    setTimeout(() => {
-        nextBtn.style.display = "inline-block"
-    }, 4000)
+    setTimeout(() => { nextBtn.style.display = "inline-block"; }, 4000);
 }
 
-// -----------------------------
 // SIGUIENTE BLOQUE
-// -----------------------------
 function nextBlock() {
-    nextBtn.style.display = "none"
-    current++
+    nextBtn.style.display = "none";
+    current++;
     if (current < bloques.length) {
-        showBlock(bloques[current])
+        showBlock(bloques[current]);
     } else {
-        restartBtn.style.display = "inline-block"
+        restartBtn.style.display = "inline-block";
     }
 }
 
-// -----------------------------
-// INICIO SESION
-// -----------------------------
+// INICIO SESIÓN
 startBtn.addEventListener("click", async () => {
-    startBtn.style.display = "none"
-    const res = await fetch("/session_content")
-    const data = await res.json()
-    bloques = data.sesion.bloques  // <--- importante, coincide con main.py
-    current = 0
-    updateStreak()
-    showBlock(bloques[0])
-})
+    startBtn.style.display = "none";
 
-nextBtn.addEventListener("click", nextBlock)
-restartBtn.addEventListener("click", () => location.reload())
+    const urlParams = new URLSearchParams(window.location.search);
+    const adminKey = urlParams.get("admin_key");
+
+    // SI ADMIN, siempre permite sesión
+    if (adminKey && adminKey === "TU_CLAVE_ADMIN") {
+        userData.pago = true;
+        localStorage.setItem("kamizenData", JSON.stringify(userData));
+    }
+
+    // SI YA PAGO, cargar sesión directamente
+    if (userData.pago) {
+        stripeBtn.style.display = "none";
+        await loadSession();
+    } else {
+        // Mostrar botón Stripe
+        stripeBtn.style.display = "inline-block";
+    }
+});
+
+// BOTÓN DE STRIPE
+stripeBtn.addEventListener("click", async () => {
+    stripeBtn.disabled = true;
+    const res = await fetch("/create_checkout_session", { method: "POST" });
+    const data = await res.json();
+    if (data.id) {
+        const stripe = Stripe(data.stripe_key || "pk_test_12345");
+        stripe.redirectToCheckout({ sessionId: data.id });
+    } else {
+        alert("Error creando sesión de pago");
+        stripeBtn.disabled = false;
+    }
+});
+
+// FUNCION PARA CARGAR SESIÓN
+async function loadSession() {
+    const res = await fetch("/session_content");
+    const data = await res.json();
+    bloques = data.sesion.bloques || [];
+    current = 0;
+    updateStreak();
+    showBlock(bloques[0]);
+}
+
+// SIGUIENTE BOTÓN
+nextBtn.addEventListener("click", nextBlock);
+
+// REINICIAR SESIÓN
+restartBtn.addEventListener("click", () => location.reload());
