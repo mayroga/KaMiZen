@@ -745,7 +745,13 @@
 {
       "id":90,
       "categoria":"creatividad",
-      "bloques":[{"tipo":"voz","texto":"Hoy explorarás tu creatividad sin límites ni barreras.","color":"#2563eb"}]
+      "bloques":[
+        {
+          "tipo":"voz",
+          "texto":"Hoy explorarás tu creatividad sin límites ni barreras.",
+          "color":"#2563eb"
+        }
+      ]
     }
   ]
 }
