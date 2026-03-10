@@ -1,54 +1,205 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KaMiZen</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-<style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:'Inter',sans-serif;}
-body{background:linear-gradient(180deg,#0f172a,#020617);color:white;display:flex;justify-content:center;align-items:center;height:100vh;transition:background 1s;overflow:hidden;}
-#app{width:95%;max-width:420px;background:#111827;border-radius:25px;padding:25px;box-shadow:0 20px 40px rgba(0,0,0,0.6),0 0 40px rgba(59,130,246,0.1);display:flex;flex-direction:column;align-items:center;position:relative;}
-#logo{font-size:30px;font-weight:600;margin-bottom:4px;letter-spacing:2px;background:linear-gradient(90deg,#60a5fa,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-#subtitle{font-size:13px;opacity:0.7;margin-bottom:10px;}
-#mental-panel{width:100%;background:#020617;padding:12px;border-radius:12px;margin-bottom:15px;font-size:14px;}
-.stat{margin:4px 0;}
-.bar{height:6px;background:#1e293b;border-radius:10px;margin-top:4px;}
-.bar-fill{height:6px;background:#22c55e;border-radius:10px;width:40%;}
-#block{font-size:20px;line-height:1.6;text-align:center;margin:20px 0;min-height:120px;}
-button{padding:14px 18px;margin:8px;font-size:16px;border:none;border-radius:12px;cursor:pointer;background:#2563eb;color:white;transition:all 0.2s;width:100%;max-width:260px;}
-button:hover{transform:scale(1.05);background:#3b82f6;}
-.secondary{background:#374151;}
-.breath-circle{width:140px;height:140px;border-radius:50%;background:radial-gradient(circle,#60a5fa,#2563eb);margin:20px auto;transition:transform 4s ease-in-out;}
-#footer{margin-top:15px;font-size:12px;opacity:0.5;}
-#promo{position:absolute;top:0;left:-100%;font-size:16px;font-weight:bold;white-space:nowrap;color:#ff0099;animation:moveText 8s linear infinite;}
-@keyframes moveText{0%{left:-100%;}100%{left:100%;}}
-</style>
-</head>
-<body>
-<div id="app">
-<div id="promo">🔥 KaMiZen Premium - Nueva sesión diaria a las 10 AM y 3 PM hora Miami, FL 🔥</div>
-<div id="logo">KaMiZen</div>
-<div id="subtitle">Entrenamiento mental diario</div>
-<div id="mental-panel">
-<div class="stat" id="streak">🔥 Racha: 0 días</div>
-<div class="stat" id="level">Nivel KaMiZen: 1</div>
-<div class="stat">Disciplina<div class="bar"><div id="disciplina-bar" class="bar-fill"></div></div></div>
-<div class="stat">Claridad<div class="bar"><div id="claridad-bar" class="bar-fill"></div></div></div>
-<div class="stat">Calma<div class="bar"><div id="calma-bar" class="bar-fill"></div></div></div>
-</div>
-<div id="block">Bienvenido a tu sesión KaMiZen</div>
-<input type="text" id="usernameInput" placeholder="Usuario">
-<input type="password" id="passwordInput" placeholder="Contraseña">
-<button id="login-btn">Iniciar Sesión / Pago</button>
-<button id="start-btn" style="display:none;">Iniciar Sesión KaMiZen</button>
-<button id="next-btn" style="display:none;">Siguiente</button>
-<button id="restart-btn" class="secondary" style="display:none;">Reiniciar</button>
-<div id="progress-bar-container" style="width:100%;height:12px;background:#555;border-radius:6px;margin-top:10px;overflow:hidden;">
-<div id="progress-bar" style="width:0%;height:100%;background:linear-gradient(90deg,#facc15,#34d399);border-radius:6px;"></div>
-</div>
-<div id="footer">Sesión diaria · 15 minutos 45 segundos</div>
-</div>
-<script src="/static/scripts.js"></script>
-</body>
-</html>
+{
+  "sesiones":[
+
+{
+"bloques":[
+
+{
+"tipo":"voz",
+"texto":"Bienvenido a tu entrenamiento mental KaMiZen. Hoy entrenarás claridad, disciplina y visión de riqueza.",
+"color":"#2563eb"
+},
+
+{
+"tipo":"historia",
+"texto":"Un inversor tardó ocho años en construir su primer millón. No hizo nada espectacular. Solo repitió pequeñas decisiones inteligentes cada día.",
+"color":"#34d399"
+},
+
+{
+"tipo":"quiz",
+"pregunta":"¿Cuál de estas acciones genera más riqueza a largo plazo?",
+"opciones":[
+"Gastar inmediatamente",
+"Ahorrar sin invertir",
+"Invertir consistentemente"
+],
+"correcta":2,
+"explicacion":"Invertir consistentemente permite que el interés compuesto multiplique tu dinero.",
+"recompensa":10,
+"color":"#facc15"
+},
+
+{
+"tipo":"acertijo",
+"pregunta":"Adivina: ¿Qué sube pero nunca baja?",
+"opciones":[
+"La montaña",
+"La edad",
+"La temperatura"
+],
+"correcta":1,
+"explicacion":"La edad siempre aumenta con el tiempo.",
+"recompensa":8,
+"color":"#f59e0b"
+},
+
+{
+"tipo":"decision",
+"pregunta":"Recibes 100 dólares inesperados. ¿Qué haces?",
+"opciones":[
+"Gastarlos en algo impulsivo",
+"Ahorrar una parte",
+"Invertir o aprender algo nuevo"
+],
+"correcta":2,
+"explicacion":"Invertir en conocimiento o activos genera crecimiento futuro.",
+"recompensa":12,
+"color":"#22c55e"
+},
+
+{
+"tipo":"juego_mental",
+"pregunta":"5 + 7 × 2 = ?",
+"opciones":[
+"24",
+"19",
+"17"
+],
+"correcta":1,
+"explicacion":"Primero se multiplica: 7×2 = 14, luego se suma 5.",
+"recompensa":7,
+"color":"#38bdf8"
+},
+
+{
+"tipo":"respiracion",
+"texto":"Respira profundo. Inhala contando cuatro. Mantén dos segundos. Exhala lentamente contando seis. Siente tu mente calmándose.",
+"duracion":30,
+"color":"#60a5fa"
+},
+
+{
+"tipo":"visualizacion",
+"texto":"Imagina tu vida con estabilidad financiera. Tomas decisiones con calma. Tu mente está clara. Tus recursos crecen cada año.",
+"color":"#a78bfa"
+},
+
+{
+"tipo":"recompensa",
+"texto":"Excelente trabajo. Tu disciplina mental ha aumentado hoy.",
+"puntos":20,
+"color":"#10b981"
+},
+
+{
+"tipo":"cierre",
+"texto":"Hoy entrenaste tu mente estratégica. Cada día que completas una sesión, te acercas más a tu objetivo de riqueza, claridad y bienestar.",
+"color":"#f87171"
+}
+
+]
+},
+
+{
+"bloques":[
+
+{
+"tipo":"voz",
+"texto":"Hoy fortalecerás tu paciencia y visión financiera.",
+"color":"#2563eb"
+},
+
+{
+"tipo":"historia",
+"texto":"Una mujer ahorró pequeñas cantidades cada mes durante años. Esa disciplina le permitió comprar su primer apartamento.",
+"color":"#34d399"
+},
+
+{
+"tipo":"quiz",
+"pregunta":"¿Qué hábito financiero es más poderoso?",
+"opciones":[
+"Ahorrar ocasionalmente",
+"Ahorrar e invertir constantemente",
+"Gastar solo cuando sea necesario"
+],
+"correcta":1,
+"explicacion":"La constancia es lo que crea crecimiento financiero.",
+"recompensa":10,
+"color":"#facc15"
+},
+
+{
+"tipo":"acertijo",
+"pregunta":"Siempre está delante de ti pero no puedes verlo.",
+"opciones":[
+"El aire",
+"El futuro",
+"La luz"
+],
+"correcta":1,
+"explicacion":"El futuro siempre está delante de nosotros.",
+"recompensa":8,
+"color":"#f59e0b"
+},
+
+{
+"tipo":"decision",
+"pregunta":"Tienes una hora libre hoy. ¿Qué decisión aumenta más tu riqueza futura?",
+"opciones":[
+"Ver televisión",
+"Aprender una habilidad",
+"Dormir más"
+],
+"correcta":1,
+"explicacion":"El conocimiento puede generar ingresos durante toda la vida.",
+"recompensa":12,
+"color":"#22c55e"
+},
+
+{
+"tipo":"juego_mental",
+"pregunta":"Si tienes 3 manzanas y tomas 2, ¿cuántas tienes?",
+"opciones":[
+"1",
+"2",
+"3"
+],
+"correcta":1,
+"explicacion":"Tienes las dos que tomaste.",
+"recompensa":7,
+"color":"#38bdf8"
+},
+
+{
+"tipo":"respiracion",
+"texto":"Respira lentamente. Inhala cuatro segundos. Exhala seis segundos. Relaja tus hombros.",
+"duracion":30,
+"color":"#60a5fa"
+},
+
+{
+"tipo":"visualizacion",
+"texto":"Visualiza tu disciplina diaria creando estabilidad y oportunidades.",
+"color":"#a78bfa"
+},
+
+{
+"tipo":"recompensa",
+"texto":"Tu claridad financiera ha aumentado hoy.",
+"puntos":20,
+"color":"#10b981"
+},
+
+{
+"tipo":"cierre",
+"texto":"Pequeñas decisiones inteligentes crean grandes resultados.",
+"color":"#f87171"
+}
+
+]
+}
+
+]
+}
