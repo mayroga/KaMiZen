@@ -196,8 +196,168 @@
 "tipo":"cierre",
 "texto":"Pequeñas decisiones inteligentes crean grandes resultados.",
 "color":"#f87171"
-}
-
+},
+{
+"bloques":[
+{"tipo":"texto","texto":"Bienvenido a tu entrenamiento KaMiZen del día","color":"#2563eb"},
+{"tipo":"respiracion","texto":"Respira profundo y suelta tensión","color":"#60a5fa"},
+{"tipo":"quiz","pregunta":"¿Cuál es tu prioridad hoy?","opciones":["Disciplina","Claridad","Calma"],"correcta":0,"recompensa":5,"explicacion":"Priorizar la disciplina mejora tu productividad."},
+{"tipo":"juego_mental","pregunta":"Encuentra el patrón: 2,4,8,16,?","opciones":["18","24","32"],"correcta":2,"recompensa":5,"explicacion":"El patrón es multiplicar por 2."},
+{"tipo":"decision","pregunta":"¿Respondes al correo difícil ahora o después?","opciones":["Ahora","Después"],"correcta":0,"recompensa":5,"explicacion":"Actuar ahora te da claridad y disciplina."},
+{"tipo":"recompensa","texto":"¡Excelente progreso!","color":"#22c55e"},
+{"tipo":"cierre","texto":"Cada acción positiva te acerca a tu meta.","color":"#f87171"}
+]
+},
+{
+"bloques":[
+{"tipo":"texto","texto":"Comienza tu sesión mental KaMiZen","color":"#a78bfa"},
+{"tipo":"respiracion","texto":"Inhala profundamente, exhala lentamente","color":"#60a5fa"},
+{"tipo":"quiz","pregunta":"Elige la emoción que más quieres potenciar hoy","opciones":["Felicidad","Calma","Concentración"],"correcta":2,"recompensa":5,"explicacion":"La concentración te ayuda a completar tareas importantes."},
+{"tipo":"juego_mental","pregunta":"¿Cuál número completa la serie: 1,1,2,3,5,?","opciones":["7","8","9"],"correcta":1,"recompensa":5,"explicacion":"Es la serie de Fibonacci, siguiente es 8."},
+{"tipo":"decision","pregunta":"¿Priorizarás una tarea difícil o varias pequeñas?","opciones":["Difícil","Pequeñas"],"correcta":0,"recompensa":5,"explicacion":"Enfocarse en lo difícil primero aumenta tu disciplina."},
+{"tipo":"recompensa","texto":"¡Muy bien, lo estás haciendo genial!","color":"#22c55e"},
+{"tipo":"cierre","texto":"La consistencia diaria construye resultados extraordinarios.","color":"#f87171"}
+]
+},
+{
+"bloques":[
+{"tipo":"texto","texto":"KaMiZen te da la bienvenida","color":"#2563eb"},
+{"tipo":"respiracion","texto":"Concéntrate en tu respiración y relájate","color":"#60a5fa"},
+{"tipo":"quiz","pregunta":"Selecciona la habilidad que más deseas mejorar","opciones":["Disciplina","Creatividad","Paciencia"],"correcta":1,"recompensa":5,"explicacion":"La creatividad te permitirá encontrar soluciones nuevas."},
+{"tipo":"juego_mental","pregunta":"Si 5x+3=23, ¿cuánto vale x?","opciones":["4","5","6"],"correcta":0,"recompensa":5,"explicacion":"5*4+3=23, x=4."},
+{"tipo":"decision","pregunta":"¿Actúas de inmediato o planeas antes?","opciones":["Actuar","Planear"],"correcta":1,"recompensa":5,"explicacion":"Planear con claridad reduce errores."},
+{"tipo":"recompensa","texto":"¡Buen trabajo!","color":"#22c55e"},
+{"tipo":"cierre","texto":"Lo que practicas cada día define tu futuro.","color":"#f87171"}
+]
+},
+{
+"bloques":[
+{"tipo":"texto","texto":"Inicio de sesión KaMiZen: energía y enfoque","color":"#a78bfa"},
+{"tipo":"respiracion","texto":"Respira con conciencia, suelta estrés","color":"#60a5fa"},
+{"tipo":"quiz","pregunta":"Elige la acción que más te beneficiará hoy","opciones":["Organizar","Descansar","Ejercitar"],"correcta":0,"recompensa":5,"explicacion":"Organizar tu día potencia disciplina y claridad."},
+{"tipo":"juego_mental","pregunta":"Resuelve: 12/4 + 3*2 = ?","opciones":["9","10","12"],"correcta":0,"recompensa":5,"explicacion":"12/4 + 3*2 = 3 + 6 = 9."},
+{"tipo":"decision","pregunta":"¿Responderás mensajes primero o trabajarás en tu proyecto?","opciones":["Mensajes","Proyecto"],"correcta":1,"recompensa":5,"explicacion":"Priorizar el proyecto fortalece concentración y resultados."},
+{"tipo":"recompensa","texto":"¡Estás progresando!","color":"#22c55e"},
+{"tipo":"cierre","texto":"Cada decisión consciente construye tu camino.","color":"#f87171"}
+]
+},
+{
+"bloques":[
+{"tipo":"texto","texto":"KaMiZen diario: potencia tu mente","color":"#2563eb"},
+{"tipo":"respiracion","texto":"Inhala positividad, exhala tensión","color":"#60a5fa"},
+{"tipo":"quiz","pregunta":"Elige tu enfoque principal hoy","opciones":["Disciplina","Claridad","Calma"],"correcta":1,"recompensa":5,"explicacion":"La claridad te ayuda a tomar mejores decisiones."},
+{"tipo":"juego_mental","pregunta":"Si hoy es lunes, ¿qué día será en 10 días?","opciones":["Miércoles","Jueves","Viernes"],"correcta":2,"recompensa":5,"explicacion":"10 días después de lunes es jueves."},
+{"tipo":"decision","pregunta":"¿Empiezas la tarea más difícil o la más fácil primero?","opciones":["Difícil","Fácil"],"correcta":0,"recompensa":5,"explicacion":"Empezar por lo difícil aumenta la confianza y disciplina."},
+{"tipo":"recompensa","texto":"¡Excelente enfoque!","color":"#22c55e"},
+{"tipo":"cierre","texto":"Los pequeños avances diarios suman grandes resultados.","color":"#f87171"}
+]
+},
+{
+"bloques":[
+{"tipo":"texto","texto":"Bienvenido a tu práctica KaMiZen","color":"#a78bfa"},
+{"tipo":"respiracion","texto":"Siente cada inhalación y exhalación","color":"#60a5fa"},
+{"tipo":"quiz","pregunta":"¿Qué emoción quieres fortalecer hoy?","opciones":["Paciencia","Valor","Optimismo"],"correcta":2,"recompensa":5,"explicacion":"El optimismo mejora tu percepción y energía diaria."},
+{"tipo":"juego_mental","pregunta":"Encuentra la suma correcta: 7+3*2","opciones":["13","17","20"],"correcta":0,"recompensa":5,"explicacion":"7+3*2=13."},
+{"tipo":"decision","pregunta":"¿Planeas tu día con agenda o improvisas?","opciones":["Agenda","Improvisar"],"correcta":0,"recompensa":5,"explicacion":"Planificar aumenta productividad y calma."},
+{"tipo":"recompensa","texto":"¡Fantástico progreso!","color":"#22c55e"},
+{"tipo":"cierre","texto":"La constancia diaria crea hábitos poderosos.","color":"#f87171"}
+]
+},
+{
+"bloques":[
+{"tipo":"texto","texto":"KaMiZen: empieza con energía positiva","color":"#2563eb"},
+{"tipo":"respiracion","texto":"Respira con intención y tranquilidad","color":"#60a5fa"},
+{"tipo":"quiz","pregunta":"Elige el hábito que mejorarás hoy","opciones":["Disciplina","Creatividad","Concentración"],"correcta":0,"recompensa":5,"explicacion":"La disciplina mantiene consistencia y enfoque."},
+{"tipo":"juego_mental","pregunta":"Resuelve: 5*3 - 4","opciones":["11","15","19"],"correcta":0,"recompensa":5,"explicacion":"5*3-4=11."},
+{"tipo":"decision","pregunta":"¿Comienzas con la tarea más urgente o la más importante?","opciones":["Urgente","Importante"],"correcta":1,"recompensa":5,"explicacion":"Priorizar lo importante genera resultados duraderos."},
+{"tipo":"recompensa","texto":"¡Lo estás haciendo genial!","color":"#22c55e"},
+{"tipo":"cierre","texto":"Cada decisión diaria construye tu éxito.","color":"#f87171"}
+]
+},
+{
+"bloques":[
+{"tipo":"texto","texto":"Bienvenido a KaMiZen diario","color":"#a78bfa"},
+{"tipo":"respiracion","texto":"Concéntrate en tu respiración y relájate","color":"#60a5fa"},
+{"tipo":"quiz","pregunta":"Selecciona tu meta principal del día","opciones":["Disciplina","Claridad","Calma"],"correcta":1,"recompensa":5,"explicacion":"La claridad te ayuda a actuar de forma efectiva."},
+{"tipo":"juego_mental","pregunta":"Completa la serie: 2,4,6,8,?","opciones":["9","10","12"],"correcta":1,"recompensa":5,"explicacion":"Suma 2 al anterior."},
+{"tipo":"decision","pregunta":"¿Terminas primero la tarea difícil o la rutinaria?","opciones":["Difícil","Rutinaria"],"correcta":0,"recompensa":5,"explicacion":"Atacar lo difícil primero fortalece disciplina."},
+{"tipo":"recompensa","texto":"¡Excelente trabajo!","color":"#22c55e"},
+{"tipo":"cierre","texto":"Cada día cuenta, haz que valga la pena.","color":"#f87171"}
+]
+},
+{
+"bloques":[
+{"tipo":"texto","texto":"KaMiZen: potencia tu mente","color":"#2563eb"},
+{"tipo":"respiracion","texto":"Respira con calma y concentración","color":"#60a5fa"},
+{"tipo":"quiz","pregunta":"Elige qué fortalecerás hoy","opciones":["Disciplina","Claridad","Calma"],"correcta":2,"recompensa":5,"explicacion":"La calma te permite actuar con claridad y concentración."},
+{"tipo":"juego_mental","pregunta":"Si x+5=12, ¿cuánto vale x?","opciones":["5","7","8"],"correcta":1,"recompensa":5,"explicacion":"x=7."},
+{"tipo":"decision","pregunta":"¿Trabajas primero en lo urgente o lo importante?","opciones":["Urgente","Importante"],"correcta":1,"recompensa":5,"explicacion":"Priorizar lo importante genera resultados sostenibles."},
+{"tipo":"recompensa","texto":"¡Muy bien!","color":"#22c55e"},
+{"tipo":"cierre","texto":"Tus hábitos diarios definen tu éxito.","color":"#f87171"}
+]
+},
+{
+"bloques":[
+{"tipo":"texto","texto":"Comienza tu sesión KaMiZen","color":"#a78bfa"},
+{"tipo":"respiracion","texto":"Siente tu respiración y enfócate","color":"#60a5fa"},
+{"tipo":"quiz","pregunta":"Selecciona la emoción que potenciarás hoy","opciones":["Felicidad","Concentración","Optimismo"],"correcta":2,"recompensa":5,"explicacion":"El optimismo genera energía positiva y claridad mental."},
+{"tipo":"juego_mental","pregunta":"Resuelve: 6*2 + 4","opciones":["12","16","18"],"correcta":1,"recompensa":5,"explicacion":"6*2+4=16."},
+{"tipo":"decision","pregunta":"¿Te enfocas primero en la meta principal o tareas secundarias?","opciones":["Meta principal","Secundarias"],"correcta":0,"recompensa":5,"explicacion":"Enfocarse en la meta principal maximiza resultados."},
+{"tipo":"recompensa","texto":"¡Excelente progreso!","color":"#22c55e"},
+{"tipo":"cierre","texto":"El esfuerzo diario trae grandes recompensas.","color":"#f87171"}
+]
+},
+{
+"bloques":[
+{"tipo":"texto","texto":"KaMiZen: tu entrenamiento diario","color":"#2563eb"},
+{"tipo":"respiracion","texto":"Respira profundo y relaja mente y cuerpo","color":"#60a5fa"},
+{"tipo":"quiz","pregunta":"¿Qué habilidad quieres fortalecer hoy?","opciones":["Disciplina","Creatividad","Paciencia"],"correcta":1,"recompensa":5,"explicacion":"La creatividad impulsa soluciones efectivas y originales."},
+{"tipo":"juego_mental","pregunta":"Encuentra el número faltante: 3,6,9,?,15","opciones":["11","12","13"],"correcta":1,"recompensa":5,"explicacion":"El patrón suma 3 cada vez."},
+{"tipo":"decision","pregunta":"¿Actúas primero o planificas antes?","opciones":["Actuar","Planificar"],"correcta":1,"recompensa":5,"explicacion":"Planificar te da claridad y seguridad."},
+{"tipo":"recompensa","texto":"¡Muy bien!","color":"#22c55e"},
+{"tipo":"cierre","texto":"Cada decisión consciente fortalece tu crecimiento.","color":"#f87171"}
+]
+},
+{
+"bloques":[
+{"tipo":"texto","texto":"Bienvenido a tu sesión KaMiZen","color":"#a78bfa"},
+{"tipo":"respiracion","texto":"Siente cada respiración y concéntrate","color":"#60a5fa"},
+{"tipo":"quiz","pregunta":"Selecciona tu enfoque principal hoy","opciones":["Disciplina","Claridad","Calma"],"correcta":0,"recompensa":5,"explicacion":"La disciplina ayuda a mantener el enfoque y la constancia."},
+{"tipo":"juego_mental","pregunta":"Resuelve: 9-3+2","opciones":["6","8","10"],"correcta":0,"recompensa":5,"explicacion":"9-3+2=8."},
+{"tipo":"decision","pregunta":"¿Terminas primero tareas difíciles o fáciles?","opciones":["Difíciles","Fáciles"],"correcta":0,"recompensa":5,"explicacion":"Empezar por lo difícil fortalece disciplina y confianza."},
+{"tipo":"recompensa","texto":"¡Excelente!","color":"#22c55e"},
+{"tipo":"cierre","texto":"La práctica diaria crea resultados sostenibles.","color":"#f87171"}
+]
+},
+{
+"bloques":[
+{"tipo":"texto","texto":"KaMiZen: potencia tu enfoque","color":"#2563eb"},
+{"tipo":"respiracion","texto":"Concéntrate y relaja tu mente","color":"#60a5fa"},
+{"tipo":"quiz","pregunta":"Elige qué potenciarás hoy","opciones":["Disciplina","Creatividad","Calma"],"correcta":1,"recompensa":5,"explicacion":"La creatividad mejora la resolución de problemas y la productividad."},
+{"tipo":"juego_mental","pregunta":"Si x*3=21, ¿cuánto vale x?","opciones":["6","7","8"],"correcta":1,"recompensa":5,"explicacion":"x=7."},
+{"tipo":"decision","pregunta":"¿Planeas primero o actúas inmediatamente?","opciones":["Planear","Actuar"],"correcta":0,"recompensa":5,"explicacion":"Planear reduce errores y aumenta efectividad."},
+{"tipo":"recompensa","texto":"¡Genial!","color":"#22c55e"},
+{"tipo":"cierre","texto":"Cada acción consciente fortalece tu mente.","color":"#f87171"}
+]
+},
+{
+"bloques":[
+{"tipo":"texto","texto":"KaMiZen diario: enfoque y disciplina","color":"#a78bfa"},
+{"tipo":"respiracion","texto":"Respira profundo, exhala lentamente","color":"#60a5fa"},
+{"tipo":"quiz","pregunta":"Selecciona la emoción que quieres fortalecer","opciones":["Felicidad","Concentración","Paciencia"],"correcta":1,"recompensa":5,"explicacion":"La concentración aumenta productividad y claridad."},
+{"tipo":"juego_mental","pregunta":"Encuentra el siguiente número: 1,2,4,8,?","opciones":["12","14","16"],"correcta":2,"recompensa":5,"explicacion":"El patrón es multiplicar por 2."},
+{"tipo":"decision","pregunta":"¿Actúas primero o piensas antes?","opciones":["Actuar","Pensar"],"correcta":1,"recompensa":5,"explicacion":"Pensar antes mejora la efectividad y claridad."},
+{"tipo":"recompensa","texto":"¡Muy bien!","color":"#22c55e"},
+{"tipo":"cierre","texto":"Cada día que entrenas tu mente suma progreso.","color":"#f87171"}
+]
+},
+{
+"bloques":[
+{"tipo":"texto","texto":"Bienvenido a KaMiZen","color":"#2563eb"},
+{"tipo":"respiracion","texto":"Inhala y exhala conscientemente","color":"#60a5fa"},
+{"tipo":"quiz","pregunta":"Elige tu prioridad principal hoy","opciones":["Disciplina","Claridad","Calma"],"correcta":2,"recompensa":5,"explicacion":"La calma permite mejores decisiones y claridad."},
+{"tipo":"juego_mental","pregunta":"Resuelve: 3+5*2","opciones":["10","13","16"],"correcta":1,"recompensa":5,"explicacion":"3+5*2=13."},
+{"tipo":"decision","pregunta":"¿Comienzas con tareas importantes o urgentes?","opciones":["Import
 ]
 }
 
