@@ -1,3 +1,4 @@
+// static/scripts.js
 const startBtn = document.getElementById("start-btn");
 const stripeBtn = document.getElementById("stripe-btn");
 const nextBtn = document.getElementById("next-btn");
@@ -17,7 +18,7 @@ let userData = JSON.parse(localStorage.getItem("kamizenData")) || {
     disciplina: 40,
     claridad: 50,
     calma: 30,
-    pago: false  // NUEVO: indica si pagó
+    pago: false  // indica si ya pagó
 };
 
 // PANEL MENTAL
@@ -152,6 +153,7 @@ startBtn.addEventListener("click", async () => {
 
     const urlParams = new URLSearchParams(window.location.search);
     const adminKey = urlParams.get("admin_key");
+    const paymentSuccess = urlParams.get("payment");
 
     // SI ADMIN, siempre permite sesión
     if (adminKey && adminKey === "TU_CLAVE_ADMIN") {
@@ -159,12 +161,20 @@ startBtn.addEventListener("click", async () => {
         localStorage.setItem("kamizenData", JSON.stringify(userData));
     }
 
+    // SI viene de Stripe con éxito
+    if (paymentSuccess === "success") {
+        userData.pago = true;
+        localStorage.setItem("kamizenData", JSON.stringify(userData));
+        stripeBtn.style.display = "none";
+        await loadSession();
+        return;
+    }
+
     // SI YA PAGO, cargar sesión directamente
     if (userData.pago) {
         stripeBtn.style.display = "none";
         await loadSession();
     } else {
-        // Mostrar botón Stripe
         stripeBtn.style.display = "inline-block";
     }
 });
@@ -176,7 +186,10 @@ stripeBtn.addEventListener("click", async () => {
     const data = await res.json();
     if (data.id) {
         const stripe = Stripe(data.stripe_key || "pk_test_12345");
-        stripe.redirectToCheckout({ sessionId: data.id });
+        // Redirigir a Stripe y agregar retorno al terminar
+        stripe.redirectToCheckout({ sessionId: data.id }).then((result) => {
+            if (result.error) alert(result.error.message);
+        });
     } else {
         alert("Error creando sesión de pago");
         stripeBtn.disabled = false;
