@@ -1,119 +1,78 @@
 from fastapi import FastAPI
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
-
-import json
-import datetime
-import os
+import json5
+from datetime import date
 
 app = FastAPI(title="KaMiZen NeuroGame Engine")
-
-# ==============================
-# STATIC FILES
-# ==============================
-
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
+# --------------------------
+# Cargar sesiones desde JSON
+# --------------------------
+try:
+    with open("static/kamizen_content.json", "r", encoding="utf-8") as f:
+        db = json5.load(f)
+except Exception as e:
+    print("Error cargando JSON:", e)
+    db = {"sesiones": []}
 
-# ==============================
-# CARGAR BASE DE CONTENIDO
-# ==============================
-
-DB_PATH = "static/kamizen_content.json"
-
-def cargar_db():
-    try:
-        with open(DB_PATH, "r", encoding="utf-8") as f:
-            data = json.load(f)
-
-            if "sesiones" not in data:
-                return {"sesiones": []}
-
-            return data
-
-    except Exception as e:
-        print("Error cargando kamizen_content.json:", e)
-        return {"sesiones": []}
-
-
-db = cargar_db()
-
-
-# ==============================
-# SESION DEL DIA
-# ==============================
-
-def obtener_sesion_del_dia():
-
-    sesiones = db.get("sesiones", [])
-
-    if not sesiones:
+# --------------------------
+# Función para obtener sesión del día automáticamente
+# --------------------------
+def obtener_sesion():
+    if not db.get("sesiones"):
         return {
-            "bloques":[
-                {
-                    "tipo":"voz",
-                    "texto":"No hay sesiones disponibles.",
-                    "color":"#ef4444"
-                }
-            ]
+            "apertura": "Contenido no disponible",
+            "historia": "Contenido no disponible",
+            "ejercicio": "Contenido no disponible",
+            "respiracion": "Contenido no disponible",
+            "visualizacion": "Contenido no disponible",
+            "cierre": "Contenido no disponible"
         }
 
-    # dia del año
-    dia = datetime.datetime.utcnow().timetuple().tm_yday
+    # Fecha base de inicio (puede ser la fecha de primer uso o definida manualmente)
+    inicio = date(2026, 3, 9)  # Ajusta esta fecha según tu lanzamiento
+    hoy = date.today()
+    dias_transcurridos = (hoy - inicio).days
 
-    indice = dia % len(sesiones)
+    # Selecciona índice de sesión según día transcurrido, usando módulo para repetir
+    indice = dias_transcurridos % len(db["sesiones"])
 
-    return sesiones[indice]
+    return db["sesiones"][indice]
 
+# --------------------------
+# Rutas FastAPI
+# --------------------------
 
-# ==============================
-# RUTA PRINCIPAL
-# ==============================
-
-@app.get("/", response_class=HTMLResponse)
-async def home():
-
+@app.get("/")
+async def root():
+    # Devuelve la página HTML principal
     try:
         with open("static/session.html", "r", encoding="utf-8") as f:
             return HTMLResponse(f.read())
-
     except Exception as e:
-        return HTMLResponse(f"<h1>Error cargando interfaz</h1><p>{e}</p>")
-
-
-# ==============================
-# CONTENIDO DE SESION
-# ==============================
+        return HTMLResponse(f"<h1>Error cargando session.html: {e}</h1>")
 
 @app.get("/session_content")
 async def session_content():
+    # Devuelve la sesión correspondiente al día
+    sesion = obtener_sesion()
+    return sesion
 
-    sesion = obtener_sesion_del_dia()
-
-    return JSONResponse(sesion)
-
-
-# ==============================
-# HEALTH CHECK (IMPORTANTE PARA RENDER)
-# ==============================
-
-@app.get("/health")
-async def health():
-    return {"status": "ok"}
-
-
-# ==============================
-# RECARGA DE CONTENIDO (FUTURO ADMIN)
-# ==============================
-
-@app.get("/reload_content")
-async def reload_content():
-
-    global db
-
-    db = cargar_db()
-
+# --------------------------
+# Info de debug
+# --------------------------
+@app.get("/debug_sessions")
+async def debug_sessions():
+    # Para revisar todas las sesiones y su índice de hoy
+    total = len(db.get("sesiones", []))
+    hoy = date.today()
+    dias_transcurridos = (hoy - date(2026, 3, 9)).days
+    indice = dias_transcurridos % total if total > 0 else 0
     return {
-        "status": "content reloaded",
-        "total_sessions": len(db.get("sesiones", []))
+        "total_sesiones": total,
+        "dias_transcurridos": dias_transcurridos,
+        "indice_hoy": indice,
+        "sesion_hoy": db["sesiones"][indice] if total > 0 else {}
     }
