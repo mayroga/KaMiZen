@@ -1,71 +1,75 @@
-const startBtn = document.getElementById("start-btn");
-const block = document.getElementById("block");
+// static/scripts.js
+const startBtn = document.getElementById("start-btn"); 
+const nextBtn = document.getElementById("next-btn"); // Movido arriba
 const restartBtn = document.getElementById("restart-btn");
+const block = document.getElementById("block");
 
 let sessionBlocks = [];
 let current = 0;
 
-// Función de voz con pausa automática
+// Función para reproducir la voz del bloque
 function playVoice(text) {
     return new Promise((resolve) => {
-        speechSynthesis.cancel();
+        speechSynthesis.cancel(); // detiene cualquier voz previa
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = 'es-ES';
-        utterance.rate = 0.9;
+        utterance.rate = 0.9; // velocidad de voz
         utterance.onend = resolve;
         speechSynthesis.speak(utterance);
     });
 }
 
-// Mostrar bloque
+// Mostrar el bloque actual
 async function showBlock(blockContent) {
+    if (!blockContent) return;
+
     block.innerHTML = blockContent.text;
-    document.body.style.background = blockContent.color; // cambia color
+    document.body.style.backgroundColor = blockContent.color; // cambia color de fondo
 
-    // Espera la voz
+    // Espera a que termine la voz
     await playVoice(blockContent.text);
-
-    // Si hay interacción (ejercicio con respuesta)
-    if (blockContent.tipo === "ejercicio") {
-        const answerBtn = document.createElement("button");
-        answerBtn.innerText = "Mostrar Respuesta";
-        answerBtn.onclick = () => alert(blockContent.respuesta || "No hay respuesta");
-        block.appendChild(answerBtn);
-    }
 
     current++;
     if (current < sessionBlocks.length) {
-        nextBtn.style.display = "inline-block"; // botón siguiente
+        nextBtn.style.display = "inline-block"; // mostrar botón siguiente
     } else {
-        restartBtn.style.display = "inline-block";
+        nextBtn.style.display = "none";
+        restartBtn.style.display = "inline-block"; // mostrar botón reiniciar al final
     }
 }
 
-// Botón iniciar
+// Evento de iniciar sesión
 startBtn.addEventListener("click", async () => {
-    startBtn.style.display = "none";
-    const response = await fetch("/session_content");
-    const data = await response.json();
+    try {
+        startBtn.style.display = "none";
+        const response = await fetch("/session_content");
+        if (!response.ok) throw new Error("Error en servidor");
+        const data = await response.json();
 
-    sessionBlocks = [
-        { text: data.apertura, color: "#2563eb", tipo: "apertura" },
-        { text: data.historia, color: "#34d399", tipo: "historia" },
-        { text: data.ejercicio, color: "#facc15", tipo: "ejercicio", respuesta: "La respuesta depende de tus cálculos." },
-        { text: data.respiracion, color: "#60a5fa", tipo: "respiracion" },
-        { text: data.visualizacion, color: "#a78bfa", tipo: "visualizacion" },
-        { text: data.cierre, color: "#f87171", tipo: "cierre" }
-    ];
+        // Convertimos la sesión en bloques para el frontend
+        sessionBlocks = [
+            { text: data.apertura, color: "#2563eb" },
+            { text: data.historia, color: "#34d399" },
+            { text: data.ejercicio, color: "#facc15" },
+            { text: data.respiracion, color: "#60a5fa" },
+            { text: data.visualizacion, color: "#a78bfa" },
+            { text: data.cierre, color: "#f87171" }
+        ];
 
-    current = 0;
-    showBlock(sessionBlocks[0]);
+        current = 0;
+        await showBlock(sessionBlocks[0]);
+    } catch (error) {
+        console.error("Error:", error);
+        block.innerText = "Error al cargar la sesión. Reintenta.";
+        startBtn.style.display = "inline-block";
+    }
 });
 
-// Botón reiniciar
-restartBtn.addEventListener("click", () => location.reload());
-
 // Botón siguiente
-const nextBtn = document.getElementById("next-btn");
 nextBtn.addEventListener("click", () => {
     nextBtn.style.display = "none";
     showBlock(sessionBlocks[current]);
 });
+
+// Botón reiniciar
+restartBtn.addEventListener("click", () => location.reload());
