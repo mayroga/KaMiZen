@@ -346,20 +346,90 @@
 {"tipo":"respiracion","texto":"Respira profundo, exhala lentamente","color":"#60a5fa"},
 {"tipo":"quiz","pregunta":"Selecciona la emoción que quieres fortalecer","opciones":["Felicidad","Concentración","Paciencia"],"correcta":1,"recompensa":5,"explicacion":"La concentración aumenta productividad y claridad."},
 {"tipo":"juego_mental","pregunta":"Encuentra el siguiente número: 1,2,4,8,?","opciones":["12","14","16"],"correcta":2,"recompensa":5,"explicacion":"El patrón es multiplicar por 2."},
-{"tipo":"decision","pregunta":"¿Actúas primero o piensas antes?","opciones":["Actuar","Pensar"],"correcta":1,"recompensa":5,"explicacion":"Pensar antes mejora la efectividad y claridad."},
-{"tipo":"recompensa","texto":"¡Muy bien!","color":"#22c55e"},
-{"tipo":"cierre","texto":"Cada día que entrenas tu mente suma progreso.","color":"#f87171"}
+{"tipo":"decision","pregunta":"¿Comienzas con tareas importantes o urgentes?","opciones":["Importantes","Urgentes"],"correcta":0,"recompensa":5,"explicacion":"Priorizar lo importante genera resultados a largo plazo."},
+{"tipo":"recompensa","texto":"¡Excelente disciplina mental!","color":"#22c55e"},
+{"tipo":"cierre","texto":"Cada día que entrenas tu mente, te acercas más a tu mejor versión.","color":"#f87171"}
 ]
 },
 {
 "bloques":[
-{"tipo":"texto","texto":"Bienvenido a KaMiZen","color":"#2563eb"},
-{"tipo":"respiracion","texto":"Inhala y exhala conscientemente","color":"#60a5fa"},
-{"tipo":"quiz","pregunta":"Elige tu prioridad principal hoy","opciones":["Disciplina","Claridad","Calma"],"correcta":2,"recompensa":5,"explicacion":"La calma permite mejores decisiones y claridad."},
-{"tipo":"juego_mental","pregunta":"Resuelve: 3+5*2","opciones":["10","13","16"],"correcta":1,"recompensa":5,"explicacion":"3+5*2=13."},
-{"tipo":"decision","pregunta":"¿Comienzas con tareas importantes o urgentes?","opciones":["Import
+{"tipo":"voz","texto":"Hoy entrenarás tu enfoque mental.","color":"#2563eb"},
+{"tipo":"quiz","pregunta":"¿Qué hábito fortalece la mente?","opciones":["Procrastinar","Practicar diariamente","Evitar retos"],"correcta":1,"recompensa":6},
+{"tipo":"juego_mental","pregunta":"2+2+2×2","opciones":["6","8","10"],"correcta":1,"recompensa":6},
+{"tipo":"decision","pregunta":"¿Empiezas con lo difícil o lo fácil?","opciones":["Difícil","Fácil"],"correcta":0,"recompensa":6},
+{"tipo":"recompensa","texto":"Progreso mental logrado.","color":"#22c55e"},
+{"tipo":"cierre","texto":"Entrenar tu mente cada día crea poder.","color":"#f87171"}
+]
+},
+{
+"bloques":[
+{"tipo":"voz","texto":"Hoy fortalecerás tu claridad mental.","color":"#2563eb"},
+{"tipo":"quiz","pregunta":"¿Qué mejora la claridad mental?","opciones":["Caos","Organización","Distracción"],"correcta":1,"recompensa":6},
+{"tipo":"juego_mental","pregunta":"3×3+3","opciones":["9","12","15"],"correcta":1,"recompensa":6},
+{"tipo":"decision","pregunta":"¿Planeas o improvisas?","opciones":["Planear","Improvisar"],"correcta":0,"recompensa":6},
+{"tipo":"recompensa","texto":"Claridad aumentada.","color":"#22c55e"},
+{"tipo":"cierre","texto":"La claridad produce decisiones poderosas.","color":"#f87171"}
+]
+},
+{
+"bloques":[
+{"tipo":"voz","texto":"Entrena tu disciplina mental.","color":"#2563eb"},
+{"tipo":"quiz","pregunta":"¿Qué fortalece la disciplina?","opciones":["Constancia","Excusas","Evitar esfuerzo"],"correcta":0,"recompensa":6},
+{"tipo":"juego_mental","pregunta":"5+5×2","opciones":["15","20","10"],"correcta":0,"recompensa":6},
+{"tipo":"decision","pregunta":"¿Trabajas ahora o luego?","opciones":["Ahora","Luego"],"correcta":0,"recompensa":6},
+{"tipo":"recompensa","texto":"Disciplina mejorada.","color":"#22c55e"},
+{"tipo":"cierre","texto":"La disciplina crea libertad.","color":"#f87171"}
+]
+},
+{
+"bloques":[
+{"tipo":"voz","texto":"Hoy potenciarás tu calma mental.","color":"#2563eb"},
+{"tipo":"respiracion","texto":"Respira lento y profundo.","duracion":30},
+{"tipo":"quiz","pregunta":"¿Qué mejora la calma?","opciones":["Respirar","Acelerar","Discutir"],"correcta":0,"recompensa":6},
+{"tipo":"juego_mental","pregunta":"8+4","opciones":["10","12","14"],"correcta":1,"recompensa":6},
+{"tipo":"recompensa","texto":"Calma fortalecida.","color":"#22c55e"},
+{"tipo":"cierre","texto":"Una mente calmada decide mejor.","color":"#f87171"}
+]
+},
+{
+"bloques":[
+{"tipo":"voz","texto":"Entrena tu pensamiento lógico.","color":"#2563eb"},
+{"tipo":"quiz","pregunta":"¿Qué habilidad mejora decisiones?","opciones":["Lógica","Impulsividad","Distracción"],"correcta":0,"recompensa":6},
+{"tipo":"juego_mental","pregunta":"10−3","opciones":["6","7","8"],"correcta":1,"recompensa":6},
+{"tipo":"decision","pregunta":"¿Analizas antes de actuar?","opciones":["Sí","No"],"correcta":0,"recompensa":6},
+{"tipo":"recompensa","texto":"Pensamiento lógico mejorado.","color":"#22c55e"},
+{"tipo":"cierre","texto":"Pensar antes de actuar crea éxito.","color":"#f87171"}
+]
+},
+{
+"bloques":[
+{"tipo":"voz","texto":"Hoy aumentarás tu concentración.","color":"#2563eb"},
+{"tipo":"quiz","pregunta":"¿Qué rompe la concentración?","opciones":["Distracciones","Enfoque","Disciplina"],"correcta":0,"recompensa":6},
+{"tipo":"juego_mental","pregunta":"6×2","opciones":["10","12","14"],"correcta":1,"recompensa":6},
+{"tipo":"decision","pregunta":"¿Apagas notificaciones?","opciones":["Sí","No"],"correcta":0,"recompensa":6},
+{"tipo":"recompensa","texto":"Concentración elevada.","color":"#22c55e"},
+{"tipo":"cierre","texto":"La concentración es poder.","color":"#f87171"}
+]
+},
+{
+"bloques":[
+{"tipo":"voz","texto":"Entrena tu resiliencia mental.","color":"#2563eb"},
+{"tipo":"quiz","pregunta":"¿Qué haces ante un error?","opciones":["Aprender","Rendirse","Evitar"],"correcta":0,"recompensa":6},
+{"tipo":"juego_mental","pregunta":"9−2","opciones":["6","7","8"],"correcta":1,"recompensa":6},
+{"tipo":"decision","pregunta":"¿Intentas de nuevo?","opciones":["Sí","No"],"correcta":0,"recompensa":6},
+{"tipo":"recompensa","texto":"Resiliencia aumentada.","color":"#22c55e"},
+{"tipo":"cierre","texto":"Cada intento te fortalece.","color":"#f87171"}
+]
+},
+{
+"bloques":[
+{"tipo":"voz","texto":"Hoy mejorarás tu enfoque estratégico.","color":"#2563eb"},
+{"tipo":"quiz","pregunta":"¿Qué crea progreso?","opciones":["Plan","Caos","Impulso"],"correcta":0,"recompensa":6},
+{"tipo":"juego_mental","pregunta":"4×4","opciones":["12","16","18"],"correcta":1,"recompensa":6},
+{"tipo":"decision","pregunta":"¿Planeas tu día?","opciones":["Sí","No"],"correcta":0,"recompensa":6},
+{"tipo":"recompensa","texto":"Estrategia mental mejorada.","color":"#22c55e"},
+{"tipo":"cierre","texto":"Planear te acerca a tus metas.","color":"#f87171"}
 ]
 }
-
 ]
 }
