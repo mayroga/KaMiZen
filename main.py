@@ -1,38 +1,119 @@
 from fastapi import FastAPI
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
-import json5
+
+import json
+import datetime
+import os
 
 app = FastAPI(title="KaMiZen NeuroGame Engine")
+
+# ==============================
+# STATIC FILES
+# ==============================
+
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-# Cargar sesiones
-with open("static/kamizen_content.json", "r", encoding="utf-8") as f:
+
+# ==============================
+# CARGAR BASE DE CONTENIDO
+# ==============================
+
+DB_PATH = "static/kamizen_content.json"
+
+def cargar_db():
     try:
-        db = json5.load(f)
+        with open(DB_PATH, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+            if "sesiones" not in data:
+                return {"sesiones": []}
+
+            return data
+
     except Exception as e:
-        print("Error cargando JSON:", e)
-        db = {"sesiones": []}
+        print("Error cargando kamizen_content.json:", e)
+        return {"sesiones": []}
 
-# Devuelve la sesión del día (solo una)
-def obtener_sesion():
-    if not db.get("sesiones"):
+
+db = cargar_db()
+
+
+# ==============================
+# SESION DEL DIA
+# ==============================
+
+def obtener_sesion_del_dia():
+
+    sesiones = db.get("sesiones", [])
+
+    if not sesiones:
         return {
-            "apertura": "Contenido no disponible",
-            "historia": "Contenido no disponible",
-            "ejercicio": "Contenido no disponible",
-            "respiracion": "Contenido no disponible",
-            "visualizacion": "Contenido no disponible",
-            "cierre": "Contenido no disponible"
+            "bloques":[
+                {
+                    "tipo":"voz",
+                    "texto":"No hay sesiones disponibles.",
+                    "color":"#ef4444"
+                }
+            ]
         }
-    return db["sesiones"][0]  # 1 por día
 
-@app.get("/")
-async def root():
-    with open("static/session.html", "r", encoding="utf-8") as f:
-        return HTMLResponse(f.read())
+    # dia del año
+    dia = datetime.datetime.utcnow().timetuple().tm_yday
+
+    indice = dia % len(sesiones)
+
+    return sesiones[indice]
+
+
+# ==============================
+# RUTA PRINCIPAL
+# ==============================
+
+@app.get("/", response_class=HTMLResponse)
+async def home():
+
+    try:
+        with open("static/session.html", "r", encoding="utf-8") as f:
+            return HTMLResponse(f.read())
+
+    except Exception as e:
+        return HTMLResponse(f"<h1>Error cargando interfaz</h1><p>{e}</p>")
+
+
+# ==============================
+# CONTENIDO DE SESION
+# ==============================
 
 @app.get("/session_content")
 async def session_content():
-    sesion = obtener_sesion()
-    return sesion
+
+    sesion = obtener_sesion_del_dia()
+
+    return JSONResponse(sesion)
+
+
+# ==============================
+# HEALTH CHECK (IMPORTANTE PARA RENDER)
+# ==============================
+
+@app.get("/health")
+async def health():
+    return {"status": "ok"}
+
+
+# ==============================
+# RECARGA DE CONTENIDO (FUTURO ADMIN)
+# ==============================
+
+@app.get("/reload_content")
+async def reload_content():
+
+    global db
+
+    db = cargar_db()
+
+    return {
+        "status": "content reloaded",
+        "total_sessions": len(db.get("sesiones", []))
+    }
