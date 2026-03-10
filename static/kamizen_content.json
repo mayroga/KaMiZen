@@ -196,8 +196,249 @@
 "tipo":"cierre",
 "texto":"Pequeñas decisiones inteligentes crean grandes resultados.",
 "color":"#f87171"
-}
-
+},
+{
+  "bloques":[
+    {"tipo":"voz","texto":"Hoy entrenarás tu mente para enfocarte y ganar claridad mental.","color":"#2563eb"},
+    {"tipo":"voz","texto":"Un empresario empezó con poco y, gracias a decisiones pequeñas diarias, construyó un negocio sólido.","color":"#34d399"},
+    {"tipo":"quiz","pregunta":"Adivina: ¿Qué puedes atrapar pero nunca lanzar?","opciones":["Un resfriado","Una pelota","El viento"],"respuesta":"Un resfriado","recompensa":"✨ +5 claridad","color":"#facc15"},
+    {"tipo":"respiracion","texto":"Inhala contando hasta cuatro, mantén dos, exhala seis. Relaja hombros y cuello.","color":"#60a5fa"},
+    {"tipo":"visualizacion","texto":"Visualiza tus ingresos creciendo y decisiones acertadas cada día.","color":"#a78bfa"},
+    {"tipo":"decision","texto":"Elige hoy ahorrar o invertir: ¿cuál harás?","opciones":["Ahorrar","Invertir"],"recompensa":"💰 +10 progreso","color":"#34d399"},
+    {"tipo":"cierre","texto":"Cada acción consciente de hoy te acerca a tu meta financiera.","color":"#f87171"}
+  ]
+},
+{
+  "bloques":[
+    {"tipo":"voz","texto":"Hoy te enfocas en paciencia y constancia para la riqueza mental.","color":"#2563eb"},
+    {"tipo":"voz","texto":"Un estudiante aplicó estrategias financieras diariamente y duplicó su patrimonio.","color":"#34d399"},
+    {"tipo":"quiz","pregunta":"Si rompes 2 huevos de 6, cocinas 2 y comes 1, ¿cuántos quedan?","opciones":["1","3","4"],"respuesta":"1","recompensa":"✨ +5 claridad","color":"#facc15"},
+    {"tipo":"respiracion","texto":"Respira profundo y siente cómo tu mente se calma y se centra.","color":"#60a5fa"},
+    {"tipo":"visualizacion","texto":"Imagina tus decisiones futuras generando seguridad y libertad.","color":"#a78bfa"},
+    {"tipo":"decision","texto":"Hoy dedícate a aprender o enseñar: ¿qué eliges?","opciones":["Aprender","Enseñar"],"recompensa":"💡 +10 sabiduría","color":"#34d399"},
+    {"tipo":"cierre","texto":"La constancia diaria multiplica tu poder y claridad mental.","color":"#f87171"}
+  ]
+},
+{
+  "bloques":[
+    {"tipo":"voz","texto":"Hoy tu mente se prepara para creatividad y resolución de problemas.","color":"#2563eb"},
+    {"tipo":"voz","texto":"Un artista combinó disciplina y pasión y logró monetizar su talento.","color":"#34d399"},
+    {"tipo":"quiz","pregunta":"Adivina: Siempre está delante de ti pero no puedes verlo.","opciones":["El futuro","El pasado","El presente"],"respuesta":"El futuro","recompensa":"✨ +5 claridad","color":"#facc15"},
+    {"tipo":"respiracion","texto":"Inhala cuatro, mantén dos, exhala seis. Relaja tu cuerpo y mente.","color":"#60a5fa"},
+    {"tipo":"visualizacion","texto":"Visualiza tu pasión generando ingresos y bienestar.","color":"#a78bfa"},
+    {"tipo":"decision","texto":"Hoy creas o analizas: ¿qué eliges?","opciones":["Crear","Analizar"],"recompensa":"🎨 +10 creatividad","color":"#34d399"},
+    {"tipo":"cierre","texto":"La creatividad disciplinada produce resultados sostenibles.","color":"#f87171"}
+  ]
+},
+{
+  "bloques":[
+    {"tipo":"voz","texto":"Hoy entrenamos enfoque y disciplina mental.","color":"#2563eb"},
+    {"tipo":"voz","texto":"Un inversor diversificó pequeñas cantidades y construyó un portafolio sólido.","color":"#34d399"},
+    {"tipo":"quiz","pregunta":"Si un avión se estrella en la frontera entre dos países, ¿dónde entierran a los sobrevivientes?","opciones":["País A","País B","No se entierran"],"respuesta":"No se entierran","recompensa":"✨ +5 claridad","color":"#facc15"},
+    {"tipo":"respiracion","texto":"Respira consciente y siente cada inhalación relajando tu mente.","color":"#60a5fa"},
+    {"tipo":"visualizacion","texto":"Visualiza estabilidad financiera y tranquilidad interior.","color":"#a78bfa"},
+    {"tipo":"decision","texto":"Hoy planificas o improvisas: ¿qué eliges?","opciones":["Planificar","Improvisar"],"recompensa":"📊 +10 estrategia","color":"#34d399"},
+    {"tipo":"cierre","texto":"La disciplina y la planificación diaria aseguran resultados sólidos.","color":"#f87171"}
+  ]
+},
+{
+  "bloques":[
+    {"tipo":"voz","texto":"Hoy tu mente se centra en aprender del pasado y proyectar el futuro.","color":"#2563eb"},
+    {"tipo":"voz","texto":"Un joven estudió sus errores financieros y mejoró sus decisiones.","color":"#34d399"},
+    {"tipo":"quiz","pregunta":"Dos padres y dos hijos compran tres helados, ¿cómo es posible?","opciones":["Son 3 hermanos","Son abuelo, padre e hijo","Es un error"],"respuesta":"Son abuelo, padre e hijo","recompensa":"✨ +5 claridad","color":"#facc15"},
+    {"tipo":"respiracion","texto":"Respira con atención plena y deja ir cualquier tensión.","color":"#60a5fa"},
+    {"tipo":"visualizacion","texto":"Visualiza tus decisiones futuras siendo acertadas y seguras.","color":"#a78bfa"},
+    {"tipo":"decision","texto":"Hoy reflexionas o actúas: ¿qué eliges?","opciones":["Reflexionar","Actuar"],"recompensa":"🧠 +10 sabiduría","color":"#34d399"},
+    {"tipo":"cierre","texto":"Aprender del pasado fortalece tu futuro y tus resultados.","color":"#f87171"}
+  ]
+},
+{
+  "bloques":[
+    {"tipo":"voz","texto":"Hoy entrenas paciencia y claridad para tomar decisiones conscientes.","color":"#2563eb"},
+    {"tipo":"voz","texto":"Una pareja reinvirtió utilidades y logró un negocio rentable.","color":"#34d399"},
+    {"tipo":"quiz","pregunta":"Si tienes 6 huevos y rompes 2, cocinas 2 y comes 1, ¿cuántos quedan?","opciones":["1","3","4"],"respuesta":"1","recompensa":"✨ +5 claridad","color":"#facc15"},
+    {"tipo":"respiracion","texto":"Inhala profundo, exhala lento, siente calma interior.","color":"#60a5fa"},
+    {"tipo":"visualizacion","texto":"Visualiza tus proyectos alcanzando éxito y estabilidad.","color":"#a78bfa"},
+    {"tipo":"decision","texto":"Hoy planificas a corto o largo plazo: ¿qué eliges?","opciones":["Corto plazo","Largo plazo"],"recompensa":"📈 +10 progreso","color":"#34d399"},
+    {"tipo":"cierre","texto":"Cada acción consciente hoy te acerca a grandes resultados mañana.","color":"#f87171"}
+  ]
+},
+{
+  "bloques":[
+    {"tipo":"voz","texto":"Hoy tu mente se centra en enfoque total y disciplina estratégica.","color":"#2563eb"},
+    {"tipo":"voz","texto":"Un profesional ahorró inteligentemente y logró retiro seguro.","color":"#34d399"},
+    {"tipo":"quiz","pregunta":"Adivina: ¿Qué tiene ciudades, pero no casas; ríos, pero no agua?","opciones":["Un mapa","Un libro","Una pintura"],"respuesta":"Un mapa","recompensa":"✨ +5 claridad","color":"#facc15"},
+    {"tipo":"respiracion","texto":"Respira profundo, siente calma y concentración.","color":"#60a5fa"},
+    {"tipo":"visualizacion","texto":"Visualiza tu futuro seguro y tranquilo gracias a tus decisiones.","color":"#a78bfa"},
+    {"tipo":"decision","texto":"Hoy ejecutas o revisas tu plan: ¿qué eliges?","opciones":["Ejecutar","Revisar"],"recompensa":"💪 +10 poder mental","color":"#34d399"},
+    {"tipo":"cierre","texto":"El enfoque inteligente asegura la libertad futura.","color":"#f87171"}
+  ]
+},
+{
+  "bloques":[
+    {"tipo":"voz","texto":"Hoy entrenamos paciencia, estrategia y visualización positiva.","color":"#2563eb"},
+    {"tipo":"voz","texto":"Una familia planificó y reinvirtió utilidades para crecer su negocio.","color":"#34d399"},
+    {"tipo":"quiz","pregunta":"Si rompes 2 huevos de 6, cocinas 2 y comes 1, ¿cuántos quedan?","opciones":["1","3","4"],"respuesta":"1","recompensa":"✨ +5 claridad","color":"#facc15"},
+    {"tipo":"respiracion","texto":"Inhala profundamente mientras relajas cuerpo y mente.","color":"#60a5fa"},
+    {"tipo":"visualizacion","texto":"Imagina tu proyecto alcanzando éxito y estabilidad.","color":"#a78bfa"},
+    {"tipo":"decision","texto":"Hoy decides delegar o hacer tú mismo: ¿qué eliges?","opciones":["Delegar","Hacer tú mismo"],"recompensa":"🧠 +10 control","color":"#34d399"},
+    {"tipo":"cierre","texto":"Cada pequeña acción te acerca a grandes resultados.","color":"#f87171"}
+  ]
+},
+{
+  "bloques":[
+    {"tipo":"voz","texto":"Hoy tu mente se centra en aprendizaje constante y mejora continua.","color":"#2563eb"},
+    {"tipo":"voz","texto":"Un profesional aprendía 30 minutos diarios sobre finanzas y duplicó ingresos en 2 años.","color":"#34d399"},
+    {"tipo":"quiz","pregunta":"Adivina: ¿Qué siempre corre pero nunca camina?","opciones":["El agua","El tiempo","El viento"],"respuesta":"El agua","recompensa":"✨ +5 claridad","color":"#facc15"},
+    {"tipo":"respiracion","texto":"Respira con calma y claridad, dejando que la mente absorba información.","color":"#60a5fa"},
+    {"tipo":"visualizacion","texto":"Visualiza el aprendizaje aplicándose a tu vida y finanzas.","color":"#a78bfa"},
+    {"tipo":"decision","texto":"Hoy practicas o enseñas lo aprendido: ¿qué eliges?","opciones":["Practicar","Enseñar"],"recompensa":"💡 +10 sabiduría","color":"#34d399"},
+    {"tipo":"cierre","texto":"El aprendizaje constante transforma tu realidad a largo plazo.","color":"#f87171"}
+  ]
+},
+{
+  "bloques":[
+    {"tipo":"voz","texto":"Hoy tu mente se centra en optimización y enfoque en resultados.","color":"#2563eb"},
+    {"tipo":"voz","texto":"Un joven estudió métodos de ahorro e inversión y duplicó sus ahorros al año.","color":"#34d399"},
+    {"tipo":"quiz","pregunta":"Adivina: ¿Qué se puede romper pero nunca tocar?","opciones":["Una promesa","Un cristal","Un récord"],"respuesta":"Una promesa","recompensa":"✨ +5 claridad","color":"#facc15"},
+    {"tipo":"respiracion","texto":"Respira y deja ir cualquier tensión o preocupación.","color":"#60a5fa"},
+    {"tipo":"visualizacion","texto":"Visualiza tus recursos creciendo de manera estable.","color":"#a78bfa"},
+    {"tipo":"decision","texto":"Hoy optimizas o improvisas: ¿qué eliges?","opciones":["Optimizar","Improvisar"],"recompensa":"📈 +10 progreso","color":"#34d399"},
+    {"tipo":"cierre","texto":"El enfoque inteligente multiplica resultados sin riesgos innecesarios.","color":"#f87171"}
+  ]
+},
+{
+  "bloques":[
+    {"tipo":"voz","texto":"Hoy fortalecemos claridad y confianza para decisiones importantes.","color":"#2563eb"},
+    {"tipo":"voz","texto":"Una mujer negoció con preparación y logró beneficios a largo plazo.","color":"#34d399"},
+    {"tipo":"quiz","pregunta":"Adivina: ¿Qué se puede atrapar pero no lanzar?","opciones":["Un resfriado","Una pelota","El viento"],"respuesta":"Un resfriado","recompensa":"✨ +5 claridad","color":"#facc15"},
+    {"tipo":"respiracion","texto":"Respira profundo y deja que la calma guíe tu mente.","color":"#60a5fa"},
+    {"tipo":"visualizacion","texto":"Visualiza tus negociaciones y decisiones siendo exitosas.","color":"#a78bfa"},
+    {"tipo":"decision","texto":"Hoy actúas con intuición o análisis: ¿qué eliges?","opciones":["Intuición","Análisis"],"recompensa":"🧠 +10 sabiduría","color":"#34d399"},
+    {"tipo":"cierre","texto":"La confianza y preparación son herramientas poderosas para el éxito.","color":"#f87171"}
+  ]
+},
+{
+  "bloques":[
+    {"tipo":"voz","texto":"Hoy entrenamos visión a largo plazo y toma de decisiones consciente.","color":"#2563eb"},
+    {"tipo":"voz","texto":"Un inversor joven estudió mercados durante años y logró libertad financiera.","color":"#34d399"},
+    {"tipo":"quiz","pregunta":"Adivina: Cuanto más quitas, más grande se vuelve.","opciones":["Un agujero","El tiempo","La deuda"],"respuesta":"Un agujero","recompensa":"✨ +5 claridad","color":"#facc15"},
+    {"tipo":"respiracion","texto":"Respira consciente, sintiendo cada inhalación y exhalación.","color":"#60a5fa"},
+    {"tipo":"visualizacion","texto":"Visualiza tu meta alcanzada con claridad y tranquilidad.","color":"#a78bfa"},
+    {"tipo":"decision","texto":"Hoy priorizas seguridad o crecimiento: ¿qué eliges?","opciones":["Seguridad","Crecimiento"],"recompensa":"💪 +10 poder mental","color":"#34d399"},
+    {"tipo":"cierre","texto":"Planificación y visión a largo plazo traen resultados reales.","color":"#f87171"}
+  ]
+},
+{
+  "bloques":[
+    {"tipo":"voz","texto":"Hoy entrenamos detección de oportunidades y acción rápida.","color":"#2563eb"},
+    {"tipo":"voz","texto":"Un emprendedor ofreció soluciones simples y su constancia le permitió crecer rápido.","color":"#34d399"},
+    {"tipo":"quiz","pregunta":"Adivina: ¿Qué es tuyo, pero los demás lo usan más que tú?","opciones":["Tu nombre","Tu dinero","Tu tiempo"],"respuesta":"Tu nombre","recompensa":"✨ +5 claridad","color":"#facc15"},
+    {"tipo":"respiracion","texto":"Respira profundo y centra tu atención en tu meta.","color":"#60a5fa"},
+    {"tipo":"visualizacion","texto":"Visualiza tu acción dando resultados positivos inmediatos.","color":"#a78bfa"},
+    {"tipo":"decision","texto":"Hoy decides arriesgar o asegurar: ¿qué eliges?","opciones":["Arriesgar","Asegurar"],"recompensa":"💡 +10 sabiduría","color":"#34d399"},
+    {"tipo":"cierre","texto":"La atención al detalle y la acción consciente crean resultados tangibles.","color":"#f87171"}
+  ]
+},
+{
+  "bloques":[
+    {"tipo":"voz","texto":"Hoy tu mente se centra en aprendizaje y mejora continua.","color":"#2563eb"},
+    {"tipo":"voz","texto":"Un profesional aplicaba lo aprendido diariamente y duplicó ingresos en 2 años.","color":"#34d399"},
+    {"tipo":"quiz","pregunta":"Adivina: ¿Qué siempre corre pero nunca camina?","opciones":["El agua","El tiempo","El viento"],"respuesta":"El agua","recompensa":"✨ +5 claridad","color":"#facc15"},
+    {"tipo":"respiracion","texto":"Respira con calma y claridad, dejando que la mente absorba información.","color":"#60a5fa"},
+    {"tipo":"visualizacion","texto":"Visualiza el aprendizaje aplicándose a tu vida y finanzas.","color":"#a78bfa"},
+    {"tipo":"decision","texto":"Hoy aprendes o enseñas: ¿qué eliges?","opciones":["Aprender","Enseñar"],"recompensa":"💡 +10 sabiduría","color":"#34d399"},
+    {"tipo":"cierre","texto":"El aprendizaje constante transforma la realidad a largo plazo.","color":"#f87171"}
+  ]
+},
+{
+  "bloques":[
+    {"tipo":"voz","texto":"Hoy entrenamos concentración y autocontrol mental.","color":"#2563eb"},
+    {"tipo":"voz","texto":"Un atleta mentalizó su éxito diariamente y logró metas extraordinarias.","color":"#34d399"},
+    {"tipo":"quiz","pregunta":"Adivina: ¿Qué sube pero nunca baja?","opciones":["La edad","El precio","El humo"],"respuesta":"La edad","recompensa":"✨ +5 claridad","color":"#facc15"},
+    {"tipo":"respiracion","texto":"Inhala, mantén, exhala lentamente y relaja tu cuerpo.","color":"#60a5fa"},
+    {"tipo":"visualizacion","texto":"Visualiza tu mente alcanzando equilibrio y control total.","color":"#a78bfa"},
+    {"tipo":"decision","texto":"Hoy priorizas mente o cuerpo: ¿qué eliges?","opciones":["Mente","Cuerpo"],"recompensa":"🧘 +10 bienestar","color":"#34d399"},
+    {"tipo":"cierre","texto":"El autocontrol diario potencia tus resultados y claridad mental.","color":"#f87171"}
+  ]
+},
+{
+  "bloques":[
+    {"tipo":"voz","texto":"Hoy entrenamos resiliencia y actitud positiva.","color":"#2563eb"},
+    {"tipo":"voz","texto":"Una persona convirtió obstáculos en oportunidades y fortaleció su mentalidad.","color":"#34d399"},
+    {"tipo":"quiz","pregunta":"Adivina: ¿Qué tiene manos pero no puede aplaudir?","opciones":["Un reloj","Una estatua","Una sombra"],"respuesta":"Un reloj","recompensa":"✨ +5 claridad","color":"#facc15"},
+    {"tipo":"respiracion","texto":"Respira profundo y siente cómo la positividad fluye.","color":"#60a5fa"},
+    {"tipo":"visualizacion","texto":"Visualiza cada desafío transformándose en oportunidad.","color":"#a78bfa"},
+    {"tipo":"decision","texto":"Hoy reaccionas o planificas: ¿qué eliges?","opciones":["Reaccionar","Planificar"],"recompensa":"💪 +10 fortaleza","color":"#34d399"},
+    {"tipo":"cierre","texto":"La resiliencia y actitud positiva generan éxito y bienestar.","color":"#f87171"}
+  ]
+},
+{
+  "bloques":[
+    {"tipo":"voz","texto":"Hoy tu mente se centra en estrategia y toma de decisiones inteligentes.","color":"#2563eb"},
+    {"tipo":"voz","texto":"Un empresario analizó oportunidades y duplicó su negocio en un año.","color":"#34d399"},
+    {"tipo":"quiz","pregunta":"Adivina: ¿Qué siempre viene pero nunca llega?","opciones":["El mañana","El pasado","El presente"],"respuesta":"El mañana","recompensa":"✨ +5 claridad","color":"#facc15"},
+    {"tipo":"respiracion","texto":"Respira profundo y siente claridad y enfoque en tus decisiones.","color":"#60a5fa"},
+    {"tipo":"visualizacion","texto":"Visualiza tus decisiones trayendo éxito y crecimiento.","color":"#a78bfa"},
+    {"tipo":"decision","texto":"Hoy planeas o ejecutas: ¿qué eliges?","opciones":["Planear","Ejecutar"],"recompensa":"📈 +10 estrategia","color":"#34d399"},
+    {"tipo":"cierre","texto":"La estrategia inteligente multiplica tus resultados diarios.","color":"#f87171"}
+  ]
+},
+{
+  "bloques":[
+    {"tipo":"voz","texto":"Hoy entrenamos enfoque y claridad para metas a largo plazo.","color":"#2563eb"},
+    {"tipo":"voz","texto":"Un inversor estudió cada inversión y alcanzó libertad financiera.","color":"#34d399"},
+    {"tipo":"quiz","pregunta":"Adivina: Entre más quitas, más grande se vuelve.","opciones":["Un agujero","La deuda","El tiempo"],"respuesta":"Un agujero","recompensa":"✨ +5 claridad","color":"#facc15"},
+    {"tipo":"respiracion","texto":"Respira consciente, sintiendo cada inhalación y exhalación.","color":"#60a5fa"},
+    {"tipo":"visualizacion","texto":"Visualiza tus metas alcanzadas con claridad y calma.","color":"#a78bfa"},
+    {"tipo":"decision","texto":"Hoy decides invertir en conocimiento o dinero: ¿qué eliges?","opciones":["Conocimiento","Dinero"],"recompensa":"💡 +10 sabiduría","color":"#34d399"},
+    {"tipo":"cierre","texto":"El enfoque en claridad y planificación asegura resultados duraderos.","color":"#f87171"}
+  ]
+},
+{
+  "bloques":[
+    {"tipo":"voz","texto":"Hoy tu mente se centra en disciplina y acción constante.","color":"#2563eb"},
+    {"tipo":"voz","texto":"Un profesional logró sus objetivos gracias a hábitos diarios constantes.","color":"#34d399"},
+    {"tipo":"quiz","pregunta":"Adivina: ¿Qué tiene una sola voz pero dice muchas cosas?","opciones":["Un teléfono","Una radio","Un libro"],"respuesta":"Un teléfono","recompensa":"✨ +5 claridad","color":"#facc15"},
+    {"tipo":"respiracion","texto":"Respira profundo y siente la disciplina llenándote de energía.","color":"#60a5fa"},
+    {"tipo":"visualizacion","texto":"Visualiza tus hábitos diarios construyendo éxito y estabilidad.","color":"#a78bfa"},
+    {"tipo":"decision","texto":"Hoy ejecutas o revisas hábitos: ¿qué eliges?","opciones":["Ejecutar","Revisar"],"recompensa":"💪 +10 poder","color":"#34d399"},
+    {"tipo":"cierre","texto":"La disciplina diaria crea hábitos que generan resultados positivos.","color":"#f87171"}
+  ]
+},
+{
+  "bloques":[
+    {"tipo":"voz","texto":"Hoy entrenamos claridad mental y enfoque en objetivos financieros.","color":"#2563eb"},
+    {"tipo":"voz","texto":"Un agricultor diversificó cultivos y prosperó gracias a decisiones conscientes.","color":"#34d399"},
+    {"tipo":"quiz","pregunta":"Adivina: ¿Qué se rompe pero nunca se cae?","opciones":["Un récord","Un vaso","Una promesa"],"respuesta":"Un récord","recompensa":"✨ +5 claridad","color":"#facc15"},
+    {"tipo":"respiracion","texto":"Respira profundo y siente cada músculo relajarse.","color":"#60a5fa"},
+    {"tipo":"visualizacion","texto":"Visualiza tu futuro prosperando gracias a decisiones conscientes.","color":"#a78bfa"},
+    {"tipo":"decision","texto":"Hoy tomas acción pequeña o grande: ¿qué eliges?","opciones":["Pequeña","Grande"],"recompensa":"📈 +10 progreso","color":"#34d399"},
+    {"tipo":"cierre","texto":"La acción diaria consistente es la clave del progreso.","color":"#f87171"}
+  ]
+},
+{
+  "bloques":[
+    {"tipo":"voz","texto":"Hoy reforzamos hábitos financieros positivos y crecimiento personal.","color":"#2563eb"},
+    {"tipo":"voz","texto":"Un emprendedor digital empezó con poco y creció su audiencia y ganancias.","color":"#34d399"},
+    {"tipo":"quiz","pregunta":"Adivina: ¿Qué tiene orejas pero no oye?","opciones":["Una corneta","Una estatua","Un libro"],"respuesta":"Una corneta","recompensa":"✨ +5 claridad","color":"#facc15"},
+    {"tipo":"respiracion","texto":"Respira lento y siente cómo tu mente se despeja y se concentra.","color":"#60a5fa"},
+    {"tipo":"visualizacion","texto":"Visualiza tu trabajo produciendo resultados y satisfacción.","color":"#a78bfa"},
+    {"tipo":"decision","texto":"Hoy refuerzas hábitos o creas nuevos: ¿qué eliges?","opciones":["Refuerzo","Nuevos"],"recompensa":"💡 +10 progreso","color":"#34d399"},
+    {"tipo":"cierre","texto":"El crecimiento sostenible se construye día a día con acciones correctas.","color":"#f87171"}
+  ]
+},
+{
+  "bloques":[
+    {"tipo":"voz","texto":"Hoy entrenamos claridad, disciplina y toma de decisiones estratégicas.","color":"#2563eb"},
+    {"tipo":"voz","texto":"Un inversor compró propiedades consistentemente y acumuló patrimonio sólido.","color":"#34d399"},
+    {"tipo":"quiz","pregunta":"Adivina: Entre más quitas, más grande se vuelve.","opciones":["Un agujero","Una deuda","El tiempo"],"respuesta":"Un agujero","recompensa":"✨ +5 claridad","color":"#facc15"},
+    {"tipo":"respiracion","texto":"Respira profundo y siente cómo la calma inunda tu mente.","color":"#60a5fa"},
+    {"tipo":"visualizacion","texto":"Visualiza tus inversiones generando seguridad y libertad.","color":"#a78bfa"},
+    {"tipo":"decision","texto":"Hoy decides arriesgar o esperar: ¿qué eliges?","opciones":["Arriesgar","Esperar"],"recompensa":"💪 +10 estrategia","color":"#34d399"},
+    {"tipo":"cierre","texto":"La disciplina financiera construye libertad y tranquilidad.","color":"#f87171"}
+  ]
+}  
 ]
 }
 
