@@ -1,15 +1,13 @@
-// static/scripts.js
 const startBtn = document.getElementById("start-btn");
 const nextBtn = document.getElementById("next-btn");
 const restartBtn = document.getElementById("restart-btn");
 const block = document.getElementById("block");
 
-// BLOQUES DE LA SESIÓN
 let bloques = [];
 let current = 0;
 let puntos = 0;
 
-// DATOS DEL USUARIO LOCAL
+/* DATOS USUARIO */
 let userData = JSON.parse(localStorage.getItem("kamizenData")) || {
     streak: 0,
     lastDay: null,
@@ -19,34 +17,34 @@ let userData = JSON.parse(localStorage.getItem("kamizenData")) || {
     calma: 30
 };
 
-// PANEL MENTAL
+/* PANEL */
 const streakEl = document.getElementById("streak");
 const levelEl = document.getElementById("level");
 const discBar = document.getElementById("disciplina-bar");
 const clarBar = document.getElementById("claridad-bar");
 const calmBar = document.getElementById("calma-bar");
 
-function updatePanel() {
-    streakEl.innerHTML = " Racha: " + userData.streak + " días";
-    levelEl.innerHTML = "Nivel KaMiZen: " + userData.nivel;
-    discBar.style.width = userData.disciplina + "%";
-    clarBar.style.width = userData.claridad + "%";
-    calmBar.style.width = userData.calma + "%";
+function updatePanel(){
+    streakEl.innerHTML = "🔥 Racha: "+userData.streak+" días";
+    levelEl.innerHTML = "Nivel KaMiZen: "+userData.nivel;
+    discBar.style.width = userData.disciplina+"%";
+    clarBar.style.width = userData.claridad+"%";
+    calmBar.style.width = userData.calma+"%";
 }
 updatePanel();
 
-// Racha diaria
-function updateStreak() {
+/* RACHA DIARIA */
+function updateStreak(){
     let today = new Date().toDateString();
-    if (userData.lastDay !== today) {
+    if(userData.lastDay !== today){
         userData.streak += 1;
         userData.lastDay = today;
     }
 }
 
-// VOZ
-function playVoice(text) {
-    return new Promise(resolve => {
+/* VOZ */
+function playVoice(text){
+    return new Promise(resolve=>{
         speechSynthesis.cancel();
         let msg = new SpeechSynthesisUtterance(text);
         msg.lang = "es-ES";
@@ -56,32 +54,32 @@ function playVoice(text) {
     });
 }
 
-// RESPIRACIÓN
-function breathingAnimation() {
+/* RESPIRACION */
+function breathingAnimation(){
     let circle = document.createElement("div");
     circle.className = "breath-circle";
     block.appendChild(circle);
-    let inhale = true;
-    setInterval(() => {
+    let inhale=true;
+    setInterval(()=>{
         circle.style.transform = inhale ? "scale(1.6)" : "scale(1)";
         inhale = !inhale;
-    }, 4000);
+    },4000);
 }
 
-// OPCIONES DE QUIZ, ACERTIJO, DECISIÓN, JUEGO MENTAL
-function createOptions(b) {
-    b.opciones.forEach((op, i) => {
+/* OPCIONES */
+function createOptions(b){
+    b.opciones.forEach((op,i)=>{
         let btn = document.createElement("button");
         btn.innerText = op;
-        btn.onclick = () => {
-            if (i === b.correcta) {
-                puntos += b.recompensa || 5;
+        btn.onclick = ()=>{
+            if(i === b.correcta){
+                puntos += b.recompensa||5;
                 userData.disciplina += 2;
                 userData.claridad += 2;
-                alert("Correcto: " + b.explicacion);
+                alert("Correcto: "+b.explicacion);
             } else {
                 userData.calma += 1;
-                alert("Respuesta: " + b.explicacion);
+                alert("Respuesta: "+b.explicacion);
             }
             updatePanel();
             nextBtn.style.display = "inline-block";
@@ -90,79 +88,98 @@ function createOptions(b) {
     });
 }
 
-// MOSTRAR BLOQUE
-async function showBlock(b) {
+/* BLOQUE */
+async function showBlock(b){
     block.innerHTML = "";
-    document.body.style.background = b.color || "#0f172a";
+    document.body.style.background = b.color||"#0f172a";
 
-    if (b.texto) {
-        block.innerHTML = "<p>" + b.texto + "</p>";
+    if(b.texto){
+        block.innerHTML = "<p>"+b.texto+"</p>";
         await playVoice(b.texto);
     }
 
-    switch (b.tipo) {
+    switch(b.tipo){
         case "quiz":
         case "acertijo":
         case "decision":
         case "juego_mental":
-            block.innerHTML = "<h3>" + b.pregunta + "</h3>";
+            block.innerHTML = "<h3>"+b.pregunta+"</h3>";
             createOptions(b);
             await playVoice(b.pregunta);
             break;
         case "respiracion":
             breathingAnimation();
             await playVoice(b.texto);
-            setTimeout(() => { nextBtn.style.display = "inline-block"; }, 30000);
+            setTimeout(()=>{ nextBtn.style.display = "inline-block"; },30000);
             return;
         case "recompensa":
-            userData.disciplina += 3;
-            userData.claridad += 3;
-            userData.calma += 3;
-            block.innerHTML = "<h2>" + b.texto + "</h2>";
+            userData.disciplina+=3;
+            userData.claridad+=3;
+            userData.calma+=3;
+            block.innerHTML="<h2>"+b.texto+"</h2>";
             await playVoice(b.texto);
             break;
         case "cierre":
             updateStreak();
             puntos += 10;
-            if (puntos > 50) userData.nivel += 1;
+            if(puntos > 50) userData.nivel +=1;
+
+            // Guardar sesión completada
+            let completed = JSON.parse(localStorage.getItem("completedSessions")) || [];
+            completed.push(currentSessionIndex); // nuevo índice
+            localStorage.setItem("completedSessions", JSON.stringify(completed));
+
             localStorage.setItem("kamizenData", JSON.stringify(userData));
             updatePanel();
             restartBtn.style.display = "inline-block";
             await playVoice(b.texto);
             return;
     }
-    setTimeout(() => { nextBtn.style.display = "inline-block"; }, 4000);
+
+    setTimeout(()=>{ nextBtn.style.display="inline-block"; },4000);
 }
 
-// SIGUIENTE BLOQUE
-function nextBlock() {
-    nextBtn.style.display = "none";
+/* SIGUIENTE */
+function nextBlock(){
+    nextBtn.style.display="none";
     current++;
-    if (current < bloques.length) {
+    if(current < bloques.length){
         showBlock(bloques[current]);
     } else {
-        restartBtn.style.display = "inline-block";
+        restartBtn.style.display="inline-block";
     }
 }
 
-// INICIO SESIÓN
-startBtn.addEventListener("click", async () => {
-    startBtn.style.display = "none";
-    await loadSession();
-});
+/* INICIO */
+let currentSessionIndex = 0;
 
-// FUNCION PARA CARGAR SESIÓN
-async function loadSession() {
+startBtn.addEventListener("click", async ()=>{
+    startBtn.style.display = "none";
+
     const res = await fetch("/session_content");
     const data = await res.json();
-    bloques = data.sesion.bloques || [];
+    const sesiones = data.sesiones;
+
+    // Recuperar sesiones completadas
+    let completed = JSON.parse(localStorage.getItem("completedSessions")) || [];
+
+    // Filtrar sesiones no completadas
+    let availableIndices = sesiones.map((_,i)=>i).filter(i => !completed.includes(i));
+
+    if(availableIndices.length === 0){
+        // Reiniciar todas las sesiones si ya completó todas
+        localStorage.removeItem("completedSessions");
+        availableIndices = sesiones.map((_,i)=>i);
+    }
+
+    // Elegir aleatoriamente una sesión disponible
+    currentSessionIndex = availableIndices[Math.floor(Math.random()*availableIndices.length)];
+    bloques = sesiones[currentSessionIndex].bloques;
     current = 0;
+
     updateStreak();
     showBlock(bloques[0]);
-}
+});
 
-// SIGUIENTE BOTÓN
 nextBtn.addEventListener("click", nextBlock);
-
-// REINICIAR SESIÓN
-restartBtn.addEventListener("click", () => location.reload());
+restartBtn.addEventListener("click", ()=>location.reload());
