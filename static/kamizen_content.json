@@ -172,23 +172,85 @@
 },
 
 {
-"id":11,"categoria":"disciplina","bloques":[{"tipo":"voz","texto":"Entrena tu disciplina.","color":"#2563eb"},{"tipo":"historia","texto":"La constancia vence al talento.","color":"#34d399"},{"tipo":"quiz","pregunta":"¿Qué crea progreso?","opciones":["Disciplina","Suerte","Excusas"],"correcta":0,"explicacion":"La disciplina.","recompensa":10,"color":"#facc15"},{"tipo":"acertijo","pregunta":"Tiene dientes pero no muerde.","opciones":["Peine","Perro","Persona"],"correcta":0,"explicacion":"El peine.","recompensa":8,"color":"#f59e0b"},{"tipo":"decision","pregunta":"Quieres avanzar.","opciones":["Actuar","Esperar","Evitar"],"correcta":0,"explicacion":"La acción.","recompensa":12,"color":"#22c55e"},{"tipo":"juego_mental","pregunta":"5×9=?","opciones":["45","40","50"],"correcta":0,"explicacion":"45.","recompensa":7,"color":"#38bdf8"},{"tipo":"respiracion","texto":"Respira profundo.","duracion":30,"color":"#60a5fa"},{"tipo":"visualizacion","texto":"Visualiza tu progreso.","color":"#a78bfa"},{"tipo":"recompensa","texto":"Disciplina fortalecida.","puntos":20,"color":"#10b981"},{"tipo":"cierre","texto":"La disciplina crea resultados.","color":"#f87171"}]},
-
-{
-"id":12,"categoria":"calma","bloques":[{"tipo":"voz","texto":"Entrena tu calma.","color":"#2563eb"},{"tipo":"historia","texto":"La calma precede decisiones sabias.","color":"#34d399"},{"tipo":"quiz","pregunta":"¿Qué mejora decisiones?","opciones":["Calma","Miedo","Prisa"],"correcta":0,"explicacion":"La calma.","recompensa":10,"color":"#facc15"},{"tipo":"acertijo","pregunta":"Cuanto más caliente, más se encoge.","opciones":["Suéter","Hielo","Metal"],"correcta":0,"explicacion":"El suéter.","recompensa":8,"color":"#f59e0b"},{"tipo":"decision","pregunta":"Ante estrés.","opciones":["Respirar","Gritar","Evitar"],"correcta":0,"explicacion":"Respirar calma la mente.","recompensa":12,"color":"#22c55e"},{"tipo":"juego_mental","pregunta":"6×7=?","opciones":["42","36","40"],"correcta":0,"explicacion":"42.","recompensa":7,"color":"#38bdf8"},{"tipo":"respiracion","texto":"Respira profundo.","duracion":30,"color":"#60a5fa"},{"tipo":"visualizacion","texto":"Imagina tranquilidad.","color":"#a78bfa"},{"tipo":"recompensa","texto":"Calma fortalecida.","puntos":20,"color":"#10b981"},{"tipo":"cierre","texto":"La calma protege tu mente.","color":"#f87171"}]},
-
-{
-"id":13,"categoria":"claridad","bloques":[{"tipo":"voz","texto":"Entrena claridad mental.","color":"#2563eb"},{"tipo":"historia","texto":"Las decisiones claras crean progreso.","color":"#34d399"},{"tipo":"quiz","pregunta":"¿Qué mejora la claridad?","opciones":["Orden","Caos","Prisa"],"correcta":0,"explicacion":"El orden mental.","recompensa":10,"color":"#facc15"},{"tipo":"acertijo","pregunta":"Tiene cuello pero no cabeza.","opciones":["Botella","Persona","Árbol"],"correcta":0,"explicacion":"La botella.","recompensa":8,"color":"#f59e0b"},{"tipo":"decision","pregunta":"Quieres decidir.","opciones":["Analizar","Ignorar","Actuar impulsivo"],"correcta":0,"explicacion":"Analizar.","recompensa":12,"color":"#22c55e"},{"tipo":"juego_mental","pregunta":"18÷3=?","opciones":["6","7","5"],"correcta":0,"explicacion":"6.","recompensa":7,"color":"#38bdf8"},{"tipo":"respiracion","texto":"Respira profundo.","duracion":30,"color":"#60a5fa"},{"tipo":"visualizacion","texto":"Imagina mente clara.","color":"#a78bfa"},{"tipo":"recompensa","texto":"Claridad fortalecida.","puntos":20,"color":"#10b981"},{"tipo":"cierre","texto":"La claridad guía tu futuro.","color":"#f87171"}]},
-
-{
-"id":14,"categoria":"productividad","bloques":[{"tipo":"voz","texto":"Entrena productividad.","color":"#2563eb"},{"tipo":"historia","texto":"Los productivos priorizan.","color":"#34d399"},{"tipo":"quiz","pregunta":"¿Qué mejora productividad?","opciones":["Priorizar","Procrastinar","Evitar"],"correcta":0,"explicacion":"Priorizar tareas.","recompensa":10,"color":"#facc15"},{"tipo":"acertijo","pregunta":"Tiene alas pero no vuela.","opciones":["Edificio","Pájaro","Avión"],"correcta":0,"explicacion":"Edificio.","recompensa":8,"color":"#f59e0b"},{"tipo":"decision","pregunta":"Tienes tareas.","opciones":["Priorizar","Evitar","Esperar"],"correcta":0,"explicacion":"Priorizar genera progreso.","recompensa":12,"color":"#22c55e"},{"tipo":"juego_mental","pregunta":"4×12=?","opciones":["48","36","44"],"correcta":0,"explicacion":"48.","recompensa":7,"color":"#38bdf8"},{"tipo":"respiracion","texto":"Respira profundo.","duracion":30,"color":"#60a5fa"},{"tipo":"visualizacion","texto":"Visualiza eficiencia.","color":"#a78bfa"},{"tipo":"recompensa","texto":"Productividad fortalecida.","puntos":20,"color":"#10b981"},{"tipo":"cierre","texto":"La productividad crea progreso.","color":"#f87171"}]},
-
-{
-"id":15,"categoria":"confianza","bloques":[{"tipo":"voz","texto":"Entrena confianza.","color":"#2563eb"},{"tipo":"historia","texto":"La confianza crece con acción.","color":"#34d399"},{"tipo":"quiz","pregunta":"¿Qué crea confianza?","opciones":["Acción","Excusas","Miedo"],"correcta":0,"explicacion":"La acción.","recompensa":10,"color":"#facc15"},{"tipo":"acertijo","pregunta":"Tiene cara y dos manos.","opciones":["Reloj","Persona","Libro"],"correcta":0,"explicacion":"Reloj.","recompensa":8,"color":"#f59e0b"},{"tipo":"decision","pregunta":"Quieres confianza.","opciones":["Actuar","Esperar","Evitar"],"correcta":0,"explicacion":"Actuar fortalece confianza.","recompensa":12,"color":"#22c55e"},{"tipo":"juego_mental","pregunta":"8×9=?","opciones":["72","64","81"],"correcta":0,"explicacion":"72.","recompensa":7,"color":"#38bdf8"},{"tipo":"respiracion","texto":"Respira profundo.","duracion":30,"color":"#60a5fa"},{"tipo":"visualizacion","texto":"Visualiza seguridad.","color":"#a78bfa"},{"tipo":"recompensa","texto":"Confianza fortalecida.","puntos":20,"color":"#10b981"},{"tipo":"cierre","texto":"La confianza se construye cada día.","color":"#f87171"}]}
-
-]
-},
-
+      "id": 11,
+      "categoria": "disciplina",
+      "bloques":[
+        {"tipo":"voz","texto":"Entrena disciplina profunda hoy.","color":"#2563eb"},
+        {"tipo":"historia","texto":"La disciplina es lo que separa sueños de resultados.","color":"#34d399"},
+        {"tipo":"quiz","pregunta":"¿Cómo se fortalece la disciplina?","opciones":["Evitar esfuerzos","Persistir","Rendirse"],"correcta":1,"explicacion":"Persistir crea hábitos sólidos.","recompensa":10,"color":"#facc15"},
+        {"tipo":"acertijo","pregunta":"Cuanto más quitas, más grande se vuelve.","opciones":["Agujero","Montaña","Caja"],"correcta":0,"explicacion":"Agujero.","recompensa":8,"color":"#f59e0b"},
+        {"tipo":"decision","pregunta":"Quieres ser constante.","opciones":["Actuar","Esperar motivación","Evitar"],"correcta":0,"explicacion":"Actuar refuerza disciplina.","recompensa":12,"color":"#22c55e"},
+        {"tipo":"juego_mental","pregunta":"5 × 5 = ?","opciones":["20","25","30"],"correcta":1,"explicacion":"25.","recompensa":7,"color":"#38bdf8"},
+        {"tipo":"respiracion","texto":"Respira y enfoca tu mente.","duracion":30,"color":"#60a5fa"},
+        {"tipo":"visualizacion","texto":"Imagina tu disciplina sólida.","color":"#a78bfa"},
+        {"tipo":"recompensa","texto":"Tu disciplina ha crecido.","puntos":20,"color":"#10b981"},
+        {"tipo":"cierre","texto":"La disciplina crea libertad y resultados.","color":"#f87171"}
+      ]
+    },
+    {
+      "id": 12,
+      "categoria": "calma",
+      "bloques":[
+        {"tipo":"voz","texto":"Hoy entrenarás calma profunda.","color":"#2563eb"},
+        {"tipo":"historia","texto":"Los líderes actúan desde la calma y claridad.","color":"#34d399"},
+        {"tipo":"quiz","pregunta":"¿Qué genera mejores decisiones?","opciones":["Ansiedad","Calma","Prisa"],"correcta":1,"explicacion":"La calma permite reflexión.","recompensa":10,"color":"#facc15"},
+        {"tipo":"acertijo","pregunta":"Vuelo sin alas, lloro sin ojos.","opciones":["Nube","Río","Viento"],"correcta":2,"explicacion":"El viento.","recompensa":8,"color":"#f59e0b"},
+        {"tipo":"decision","pregunta":"Situación estresante.","opciones":["Reaccionar","Respirar y pensar","Ignorar"],"correcta":1,"explicacion":"Respirar calma la mente.","recompensa":12,"color":"#22c55e"},
+        {"tipo":"juego_mental","pregunta":"8 × 7 = ?","opciones":["54","56","58"],"correcta":1,"explicacion":"56.","recompensa":7,"color":"#38bdf8"},
+        {"tipo":"respiracion","texto":"Respira profundo.","duracion":30,"color":"#60a5fa"},
+        {"tipo":"visualizacion","texto":"Visualiza calma interna.","color":"#a78bfa"},
+        {"tipo":"recompensa","texto":"Tu calma aumenta.","puntos":20,"color":"#10b981"},
+        {"tipo":"cierre","texto":"La calma es fortaleza interna.","color":"#f87171"}
+      ]
+    },
+    {
+      "id": 13,
+      "categoria": "enfoque",
+      "bloques":[
+        {"tipo":"voz","texto":"Hoy entrenarás enfoque total.","color":"#2563eb"},
+        {"tipo":"historia","texto":"El enfoque dirige energía hacia resultados concretos.","color":"#34d399"},
+        {"tipo":"quiz","pregunta":"¿Qué mejora el enfoque?","opciones":["Distracciones","Eliminarlas","Multitarea"],"correcta":1,"explicacion":"Eliminar distracciones aumenta concentración.","recompensa":10,"color":"#facc15"},
+        {"tipo":"acertijo","pregunta":"Tiene ojos pero no puede ver.","opciones":["Pecho","Aguja","Pez"],"correcta":1,"explicacion":"La aguja.","recompensa":8,"color":"#f59e0b"},
+        {"tipo":"decision","pregunta":"Tarea importante.","opciones":["Ignorar","Concentrarse","Procrastinar"],"correcta":1,"explicacion":"Concentrarse termina la tarea.","recompensa":12,"color":"#22c55e"},
+        {"tipo":"juego_mental","pregunta":"13 × 3 = ?","opciones":["39","36","42"],"correcta":0,"explicacion":"39.","recompensa":7,"color":"#38bdf8"},
+        {"tipo":"respiracion","texto":"Respira profundo y enfoca tu mente.","duracion":30,"color":"#60a5fa"},
+        {"tipo":"visualizacion","texto":"Imagina completar todas tus tareas.","color":"#a78bfa"},
+        {"tipo":"recompensa","texto":"Tu enfoque ha mejorado.","puntos":20,"color":"#10b981"},
+        {"tipo":"cierre","texto":"El enfoque transforma esfuerzo en éxito.","color":"#f87171"}
+      ]
+    },
+    {
+      "id": 14,
+      "categoria": "mentalidad",
+      "bloques":[
+        {"tipo":"voz","texto":"Hoy entrenarás mentalidad positiva.","color":"#2563eb"},
+        {"tipo":"historia","texto":"Las oportunidades se presentan a los que buscan soluciones.","color":"#34d399"},
+        {"tipo":"quiz","pregunta":"¿Qué genera mentalidad positiva?","opciones":["Quejarse","Buscar soluciones","Evitar retos"],"correcta":1,"explicacion":"Buscar soluciones fortalece la mente.","recompensa":10,"color":"#facc15"},
+        {"tipo":"acertijo","pregunta":"Siempre avanza, nunca retrocede.","opciones":["Reloj","Persona","Animal"],"correcta":0,"explicacion":"El reloj.","recompensa":8,"color":"#f59e0b"},
+        {"tipo":"decision","pregunta":"Problema inesperado.","opciones":["Rendirse","Buscar solución","Ignorar"],"correcta":1,"explicacion":"Buscar soluciones fortalece mentalidad.","recompensa":12,"color":"#22c55e"},
+        {"tipo":"juego_mental","pregunta":"16 ÷ 4 = ?","opciones":["2","4","8"],"correcta":1,"explicacion":"4.","recompensa":7,"color":"#38bdf8"},
+        {"tipo":"respiracion","texto":"Respira profundo y relaja.","duracion":30,"color":"#60a5fa"},
+        {"tipo":"visualizacion","texto":"Visualiza soluciones creativas.","color":"#a78bfa"},
+        {"tipo":"recompensa","texto":"Tu mentalidad positiva ha aumentado.","puntos":20,"color":"#10b981"},
+        {"tipo":"cierre","texto":"La mentalidad positiva abre caminos.","color":"#f87171"}
+      ]
+    },
+    {
+      "id": 15,
+      "categoria": "productividad",
+      "bloques":[
+        {"tipo":"voz","texto":"Hoy entrenarás productividad máxima.","color":"#2563eb"},
+        {"tipo":"historia","texto":"Los más productivos gestionan su tiempo y energía.","color":"#34d399"},
+        {"tipo":"quiz","pregunta":"¿Qué aumenta productividad?","opciones":["Planificación","Procrastinar","Multitarea"],"correcta":0,"explicacion":"Planificar prioriza tareas.","recompensa":10,"color":"#facc15"},
+        {"tipo":"acertijo","pregunta":"Sin moverse corre todo el día.","opciones":["Reloj","Agua","Viento"],"correcta":0,"explicacion":"El reloj.","recompensa":8,"color":"#f59e0b"},
+        {"tipo":"decision","pregunta":"Tareas múltiples.","opciones":["Priorizar","Hacer primero lo fácil","Esperar"],"correcta":0,"explicacion":"Priorizar genera resultados.","recompensa":12,"color":"#22c55e"},
+        {"tipo":"juego_mental","pregunta":"12 × 6 = ?","opciones":["72","68","70"],"correcta":0,"explicacion":"72.","recompensa":7,"color":"#38bdf8"},
+        {"tipo":"respiracion","texto":"Respira profundo y enfoca.","duracion":30,"color":"#60a5fa"},
+        {"tipo":"visualizacion","texto":"Imagina completar todas tus tareas sin estrés.","color":"#a78bfa"},
+        {"tipo":"recompensa","texto":"Tu productividad ha mejorado.","puntos":20,"color":"#10b981"},
+        {"tipo":"cierre","texto":"La productividad convierte esfuerzo en resultados.","color":"#f87171"}
+      ]
+    },
 {
 "id":16,
 "categoria":"disciplina",
