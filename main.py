@@ -1,58 +1,57 @@
-# main.py
 from fastapi import FastAPI
-from fastapi.responses import JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
+import json
+import os
 
-app = FastAPI(title="KaMiZen - Entrenamiento Mental Diario")
+app = FastAPI(title="KaMiZen NeuroGame Engine")
 
-# Montar carpeta de archivos estáticos (JS, CSS, HTML)
+# ==============================
+# STATIC FILES
+# ==============================
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-# Página principal (puedes usar session.html directamente)
-@app.get("/")
-async def root():
-    return JSONResponse({"mensaje": "KaMiZen app activa. Visita /static/session.html"})
+# ==============================
+# CARGAR BASE DE CONTENIDO
+# ==============================
+DB_PATH = "static/kamizen_content.json"
 
+def cargar_db():
+    try:
+        with open(DB_PATH, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        if "sesiones" not in data:
+            return {"sesiones": []}
+        return data
+    except Exception as e:
+        print("Error cargando kamizen_content.json:", e)
+        return {"sesiones": []}
 
-# SESIÓN DE KAMIZEN
+db = cargar_db()
+
+# ==============================
+# RUTA PRINCIPAL
+# ==============================
+@app.get("/", response_class=HTMLResponse)
+async def home():
+    try:
+        with open("static/session.html", "r", encoding="utf-8") as f:
+            return HTMLResponse(f.read())
+    except Exception as e:
+        return HTMLResponse(f"<h1>Error cargando interfaz</h1><p>{e}</p>")
+
+# ==============================
+# CONTENIDO DE SESION
+# ==============================
 @app.get("/session_content")
 async def session_content():
-    """
-    Devuelve la sesión completa de KaMiZen con bloques:
-    - recompensas
-    - quizzes
-    - respiración
-    - cierre de sesión
-    """
-    bloques = [
-        {"tipo":"recompensa","texto":"¡Bienvenido a KaMiZen! Vamos a entrenar tu mente y emociones."},
-        {"tipo":"quiz",
-         "pregunta":"¿Qué te hace sentir más feliz hoy?",
-         "opciones":["Reír","Dormir","Comer","Trabajar"],
-         "correcta":0,
-         "explicacion":"Reír siempre ayuda a la mente y al cuerpo",
-         "recompensa":5},
-        {"tipo":"acertijo",
-         "pregunta":"Tengo ciudades pero no casas, tengo montañas pero no árboles, tengo agua pero no peces. ¿Qué soy?",
-         "opciones":["Mapa","Libro","Juego","Pintura"],
-         "correcta":0,
-         "explicacion":"Un mapa representa ciudades y montañas pero no son reales",
-         "recompensa":5},
-        {"tipo":"decision",
-         "pregunta":"Elige una acción positiva para tu día:",
-         "opciones":["Meditar","Quejarme","Procrastinar","Revisar redes sociales"],
-         "correcta":0,
-         "explicacion":"Meditar ayuda a mantener la calma y claridad mental",
-         "recompensa":5},
-        {"tipo":"juego_mental",
-         "pregunta":"Recuerda la secuencia: Rojo, Azul, Verde. ¿Cuál fue el segundo color?",
-         "opciones":["Rojo","Azul","Verde","Amarillo"],
-         "correcta":1,
-         "explicacion":"El segundo color de la secuencia es Azul",
-         "recompensa":5},
-        {"tipo":"respiracion","texto":"Respira profundo: inhalar por la nariz, exhalar por la boca. Hazlo 5 veces."},
-        {"tipo":"recompensa","texto":"¡Excelente! Tu mente se está entrenando para el bienestar."},
-        {"tipo":"cierre","texto":"¡Felicidades! Has completado tu sesión KaMiZen. Nos vemos mañana para continuar tu progreso."}
-    ]
+    sesiones = db.get("sesiones", [])
+    # devolvemos todas las sesiones, el cliente decide cuál no ha completado
+    return JSONResponse({"sesiones": sesiones})
 
-    return JSONResponse({"sesion": {"bloques": bloques}})
+# ==============================
+# HEALTH CHECK
+# ==============================
+@app.get("/health")
+async def health():
+    return {"status": "ok"}
