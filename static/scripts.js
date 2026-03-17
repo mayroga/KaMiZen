@@ -7,179 +7,310 @@ let bloques = [];
 let current = 0;
 let puntos = 0;
 
-/* DATOS USUARIO */
 let userData = JSON.parse(localStorage.getItem("kamizenData")) || {
-    streak: 0,
-    lastDay: null,
-    nivel: 1,
-    disciplina: 40,
-    claridad: 50,
-    calma: 30
+
+    streak:0,
+    lastDay:null,
+    nivel:1,
+
+    disciplina:40,
+    claridad:40,
+    calma:40,
+
+    estrategia:20,
+    social:20,
+    recursos:20
+
 };
 
-/* PANEL */
+
 const streakEl = document.getElementById("streak");
 const levelEl = document.getElementById("level");
-const discBar = document.getElementById("disciplina-bar");
-const clarBar = document.getElementById("claridad-bar");
-const calmBar = document.getElementById("calma-bar");
+
+const bars = {
+
+disciplina:document.getElementById("disciplina-bar"),
+claridad:document.getElementById("claridad-bar"),
+calma:document.getElementById("calma-bar"),
+estrategia:document.getElementById("estrategia-bar"),
+social:document.getElementById("social-bar"),
+recursos:document.getElementById("recursos-bar")
+
+};
+
+
+function limit(v){
+
+if(v<0)return 0;
+if(v>100)return 100;
+return v;
+
+}
+
 
 function updatePanel(){
-    streakEl.innerHTML = "🔥 Racha: "+userData.streak+" días";
-    levelEl.innerHTML = "Nivel KaMiZen: "+userData.nivel;
-    discBar.style.width = userData.disciplina+"%";
-    clarBar.style.width = userData.claridad+"%";
-    calmBar.style.width = userData.calma+"%";
+
+streakEl.innerHTML="Racha: "+userData.streak;
+levelEl.innerHTML="Nivel: "+userData.nivel;
+
+for(let k in bars){
+
+userData[k]=limit(userData[k]);
+bars[k].style.width=userData[k]+"%";
+
 }
+
+}
+
+
 updatePanel();
 
-/* RACHA DIARIA */
+
+
 function updateStreak(){
-    let today = new Date().toDateString();
-    if(userData.lastDay !== today){
-        userData.streak += 1;
-        userData.lastDay = today;
-    }
+
+let today=new Date().toDateString();
+
+if(userData.lastDay!==today){
+
+userData.streak++;
+userData.lastDay=today;
+
 }
 
-/* VOZ */
+}
+
+
+
 function playVoice(text){
-    return new Promise(resolve=>{
-        speechSynthesis.cancel();
-        let msg = new SpeechSynthesisUtterance(text);
-        msg.lang = "es-ES";
-        msg.rate = 0.9;
-        msg.onend = resolve;
-        speechSynthesis.speak(msg);
-    });
-}
 
-/* RESPIRACION */
-function breathingAnimation(){
-    let circle = document.createElement("div");
-    circle.className = "breath-circle";
-    block.appendChild(circle);
-    let inhale=true;
-    setInterval(()=>{
-        circle.style.transform = inhale ? "scale(1.6)" : "scale(1)";
-        inhale = !inhale;
-    },4000);
-}
+return new Promise(resolve=>{
 
-/* OPCIONES */
-function createOptions(b){
-    b.opciones.forEach((op,i)=>{
-        let btn = document.createElement("button");
-        btn.innerText = op;
-        btn.onclick = ()=>{
-            if(i === b.correcta){
-                puntos += b.recompensa||5;
-                userData.disciplina += 2;
-                userData.claridad += 2;
-                alert("Correcto: "+b.explicacion);
-            } else {
-                userData.calma += 1;
-                alert("Respuesta: "+b.explicacion);
-            }
-            updatePanel();
-            nextBtn.style.display = "inline-block";
-        };
-        block.appendChild(btn);
-    });
-}
+speechSynthesis.cancel();
 
-/* BLOQUE */
-async function showBlock(b){
-    block.innerHTML = "";
-    document.body.style.background = b.color||"#0f172a";
+let msg=new SpeechSynthesisUtterance(text);
 
-    if(b.texto){
-        block.innerHTML = "<p>"+b.texto+"</p>";
-        await playVoice(b.texto);
-    }
+msg.lang="es-ES";
 
-    switch(b.tipo){
-        case "quiz":
-        case "acertijo":
-        case "decision":
-        case "juego_mental":
-            block.innerHTML = "<h3>"+b.pregunta+"</h3>";
-            createOptions(b);
-            await playVoice(b.pregunta);
-            break;
-        case "respiracion":
-            breathingAnimation();
-            await playVoice(b.texto);
-            setTimeout(()=>{ nextBtn.style.display = "inline-block"; },30000);
-            return;
-        case "recompensa":
-            userData.disciplina+=3;
-            userData.claridad+=3;
-            userData.calma+=3;
-            block.innerHTML="<h2>"+b.texto+"</h2>";
-            await playVoice(b.texto);
-            break;
-        case "cierre":
-            updateStreak();
-            puntos += 10;
-            if(puntos > 50) userData.nivel +=1;
+msg.rate=0.9;
 
-            // Guardar sesión completada
-            let completed = JSON.parse(localStorage.getItem("completedSessions")) || [];
-            completed.push(currentSessionIndex); // nuevo índice
-            localStorage.setItem("completedSessions", JSON.stringify(completed));
+msg.onend=resolve;
 
-            localStorage.setItem("kamizenData", JSON.stringify(userData));
-            updatePanel();
-            restartBtn.style.display = "inline-block";
-            await playVoice(b.texto);
-            return;
-    }
+speechSynthesis.speak(msg);
 
-    setTimeout(()=>{ nextBtn.style.display="inline-block"; },4000);
-}
-
-/* SIGUIENTE */
-function nextBlock(){
-    nextBtn.style.display="none";
-    current++;
-    if(current < bloques.length){
-        showBlock(bloques[current]);
-    } else {
-        restartBtn.style.display="inline-block";
-    }
-}
-
-/* INICIO */
-let currentSessionIndex = 0;
-
-startBtn.addEventListener("click", async ()=>{
-    startBtn.style.display = "none";
-
-    const res = await fetch("/session_content");
-    const data = await res.json();
-    const sesiones = data.sesiones;
-
-    // Recuperar sesiones completadas
-    let completed = JSON.parse(localStorage.getItem("completedSessions")) || [];
-
-    // Filtrar sesiones no completadas
-    let availableIndices = sesiones.map((_,i)=>i).filter(i => !completed.includes(i));
-
-    if(availableIndices.length === 0){
-        // Reiniciar todas las sesiones si ya completó todas
-        localStorage.removeItem("completedSessions");
-        availableIndices = sesiones.map((_,i)=>i);
-    }
-
-    // Elegir aleatoriamente una sesión disponible
-    currentSessionIndex = availableIndices[Math.floor(Math.random()*availableIndices.length)];
-    bloques = sesiones[currentSessionIndex].bloques;
-    current = 0;
-
-    updateStreak();
-    showBlock(bloques[0]);
 });
 
-nextBtn.addEventListener("click", nextBlock);
-restartBtn.addEventListener("click", ()=>location.reload());
+}
+
+
+
+function breathingAnimation(){
+
+let c=document.createElement("div");
+
+c.className="breath-circle";
+
+block.appendChild(c);
+
+let inhale=true;
+
+setInterval(()=>{
+
+c.style.transform= inhale?"scale(1.5)":"scale(1)";
+inhale=!inhale;
+
+},4000);
+
+}
+
+
+
+function createOptions(b){
+
+b.opciones.forEach((op,i)=>{
+
+let btn=document.createElement("button");
+
+btn.innerText=op;
+
+btn.onclick=()=>{
+
+if(i===b.correcta){
+
+puntos+=5;
+
+userData.disciplina+=2;
+userData.claridad+=2;
+userData.estrategia+=2;
+
+}else{
+
+userData.calma+=1;
+
+}
+
+updatePanel();
+
+nextBtn.style.display="inline-block";
+
+};
+
+block.appendChild(btn);
+
+});
+
+}
+
+
+
+async function showBlock(b){
+
+block.innerHTML="";
+
+document.body.style.background=b.color||"#0f172a";
+
+
+if(b.tipo==="historia"){
+
+block.innerHTML="<p>"+b.texto+"</p>";
+
+await playVoice(b.texto);
+
+nextBtn.style.display="inline-block";
+
+return;
+
+}
+
+
+if(b.tipo==="respiracion"){
+
+breathingAnimation();
+
+await playVoice(b.texto);
+
+setTimeout(()=>{
+
+nextBtn.style.display="inline-block";
+
+},20000);
+
+return;
+
+}
+
+
+if(b.tipo==="decision"){
+
+block.innerHTML="<h3>"+b.pregunta+"</h3>";
+
+createOptions(b);
+
+await playVoice(b.pregunta);
+
+return;
+
+}
+
+
+if(b.tipo==="texto"){
+
+block.innerHTML="<p>"+b.texto+"</p>";
+
+await playVoice(b.texto);
+
+nextBtn.style.display="inline-block";
+
+return;
+
+}
+
+
+if(b.tipo==="recompensa"){
+
+userData.disciplina+=3;
+userData.calma+=3;
+userData.social+=3;
+userData.recursos+=3;
+
+block.innerHTML="<h2>"+b.texto+"</h2>";
+
+await playVoice(b.texto);
+
+nextBtn.style.display="inline-block";
+
+return;
+
+}
+
+
+
+if(b.tipo==="cierre"){
+
+updateStreak();
+
+puntos+=10;
+
+if(puntos>50)userData.nivel++;
+
+localStorage.setItem("kamizenData",JSON.stringify(userData));
+
+updatePanel();
+
+restartBtn.style.display="inline-block";
+
+await playVoice(b.texto);
+
+return;
+
+}
+
+}
+
+
+
+function nextBlock(){
+
+nextBtn.style.display="none";
+
+current++;
+
+if(current<bloques.length){
+
+showBlock(bloques[current]);
+
+}
+
+}
+
+
+
+let currentSessionIndex=0;
+
+
+
+startBtn.addEventListener("click",async()=>{
+
+startBtn.style.display="none";
+
+const res=await fetch("/session_content");
+
+const data=await res.json();
+
+const sesiones=data.sesiones;
+
+currentSessionIndex=Math.floor(Math.random()*sesiones.length);
+
+bloques=sesiones[currentSessionIndex].bloques;
+
+current=0;
+
+showBlock(bloques[0]);
+
+});
+
+
+
+nextBtn.addEventListener("click",nextBlock);
+
+restartBtn.addEventListener("click",()=>location.reload());
