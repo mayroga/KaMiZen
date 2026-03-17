@@ -1,580 +1,678 @@
 {
-  "sesiones": [
-    {
-      "id": 1,
-      "categoria": "claridad",
-      "bloques": [
-        {"tipo":"voz","texto":"Bienvenido a KaMiZen. Hoy entrenarás claridad mental y disciplina financiera.","color":"#2563eb"},
-        {"tipo":"historia","texto":"Un inversor comenzó ahorrando apenas diez dólares por semana. Con el tiempo, ese pequeño hábito creó estabilidad y oportunidades.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Qué hábito financiero crea más riqueza a largo plazo?","opciones":["Gastar rápidamente","Invertir constantemente","Guardar dinero sin plan"],"correcta":1,"explicacion":"La inversión constante permite aprovechar el interés compuesto.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Siempre está delante de ti pero nunca puedes verlo.","opciones":["La sombra","El futuro","El aire"],"correcta":1,"explicacion":"El futuro siempre está delante.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Recibes 100 dólares inesperados.","opciones":["Gastarlo en ocio","Invertir o aprender algo","No pensar en ello"],"correcta":1,"explicacion":"Invertir en conocimiento o activos genera crecimiento.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"8 × 6 + 4 = ?","opciones":["52","44","48"],"correcta":0,"explicacion":"Primero multiplicación.","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Inhala profundo cuatro segundos y exhala lentamente seis segundos.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Visualiza tu mente tranquila tomando decisiones financieras inteligentes.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu claridad mental ha aumentado hoy.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"Hoy fortaleciste tu disciplina. Cada sesión construye una mente más fuerte.","color":"#f87171"}
-      ]
-    },
-    {
-      "id": 2,
-      "categoria": "disciplina",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy trabajarás disciplina mental.","color":"#2563eb"},
-        {"tipo":"historia","texto":"Un atleta entrena incluso cuando no tiene ganas. Esa constancia es lo que crea campeones.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Qué construye disciplina?","opciones":["Motivación ocasional","Repetición diaria","Inspiración momentánea"],"correcta":1,"explicacion":"La disciplina se crea con repetición.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Cuanto más tomas, más dejas atrás.","opciones":["Pasos","Dinero","Ideas"],"correcta":0,"explicacion":"Los pasos.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Tienes una hora libre.","opciones":["Aprender algo nuevo","Redes sociales","Dormir"],"correcta":0,"explicacion":"El aprendizaje crea valor futuro.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"15 + 15 ÷ 3 = ?","opciones":["20","25","30"],"correcta":0,"explicacion":"División primero.","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Respira profundo y relaja tus hombros.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Visualiza tu mente tomando decisiones disciplinadas.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu disciplina ha aumentado.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"La disciplina diaria crea resultados extraordinarios.","color":"#f87171"}
-      ]
-    },
-    {
-      "id": 3,
-      "categoria": "calma",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy entrenarás calma mental.","color":"#2563eb"},
-        {"tipo":"historia","texto":"Las personas más exitosas toman decisiones desde la calma.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Qué ayuda a la mente a tomar mejores decisiones?","opciones":["Ansiedad","Calma","Prisa"],"correcta":1,"explicacion":"La calma mejora la claridad mental.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Tengo ciudades pero no casas.","opciones":["Mapa","Libro","Computadora"],"correcta":0,"explicacion":"El mapa.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Ante un problema financiero.","opciones":["Reaccionar rápido","Analizar con calma","Ignorar"],"correcta":1,"explicacion":"La calma mejora las decisiones.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"9 × 7 = ?","opciones":["56","63","72"],"correcta":1,"explicacion":"63.","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Respira profundo y suelta lentamente.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Imagina tu mente tranquila resolviendo desafíos.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu calma mental ha aumentado.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"La calma es una ventaja mental poderosa.","color":"#f87171"}
-      ]
-    },
-    {
-      "id": 4,
-      "categoria": "enfoque",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy entrenarás tu capacidad de enfoque.","color":"#2563eb"},
-        {"tipo":"historia","texto":"Las personas enfocadas terminan lo que empiezan.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Qué destruye más el enfoque?","opciones":["Multitarea","Planificación","Descanso"],"correcta":0,"explicacion":"La multitarea reduce la eficiencia.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Tiene llaves pero no abre puertas.","opciones":["Piano","Caja","Puerta"],"correcta":0,"explicacion":"El piano.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Quieres terminar un proyecto.","opciones":["Trabajar 10 minutos","Eliminar distracciones","Esperar motivación"],"correcta":1,"explicacion":"Eliminar distracciones aumenta el enfoque.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"6 × 6 = ?","opciones":["36","42","48"],"correcta":0,"explicacion":"36.","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Respira y enfoca tu mente.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Imagina terminar tareas importantes con facilidad.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu enfoque ha aumentado.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"El enfoque convierte esfuerzo en resultados.","color":"#f87171"}
-      ]
-    },
-    {
-      "id": 5,
-      "categoria": "mentalidad",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy entrenarás mentalidad de crecimiento.","color":"#2563eb"},
-        {"tipo":"historia","texto":"Las personas exitosas ven oportunidades donde otros ven problemas.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Qué caracteriza una mentalidad de crecimiento?","opciones":["Evitar retos","Aprender de errores","Rendirse rápido"],"correcta":1,"explicacion":"Aprender de errores fortalece la mente.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Mientras más le quitas, más grande se vuelve.","opciones":["Agujero","Montaña","Caja"],"correcta":0,"explicacion":"Un agujero.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Cometes un error.","opciones":["Culpar a otros","Aprender","Ignorar"],"correcta":1,"explicacion":"El aprendizaje mejora la mentalidad.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"12 × 4 = ?","opciones":["36","48","60"],"correcta":1,"explicacion":"48.","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Respira profundo y mantén la calma.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Visualiza tu crecimiento personal.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu mentalidad ha crecido.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"Las personas que crecen mentalmente cambian su destino.","color":"#f87171"}
-      ]
-    },
-    {
-      "id": 6,
-      "categoria": "productividad",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy trabajarás tu productividad.","color":"#2563eb"},
-        {"tipo":"historia","texto":"Las personas productivas hacen primero lo importante.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Qué aumenta la productividad?","opciones":["Procrastinar","Priorizar","Evitar tareas"],"correcta":1,"explicacion":"Priorizar tareas importantes.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Tiene manos pero no puede aplaudir.","opciones":["Reloj","Silla","Libro"],"correcta":0,"explicacion":"El reloj.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Tienes muchas tareas.","opciones":["Hacer lo fácil","Hacer lo importante","Esperar"],"correcta":1,"explicacion":"Lo importante genera progreso.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"7 × 8 = ?","opciones":["54","56","64"],"correcta":1,"explicacion":"56.","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Respira y enfoca tu energía.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Imagina terminar tus tareas con eficiencia.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu productividad mental aumenta.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"La productividad transforma tiempo en resultados.","color":"#f87171"}
-      ]
-    },
-    {
-      "id": 7,
-      "categoria": "confianza",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy entrenarás confianza mental.","color":"#2563eb"},
-        {"tipo":"historia","texto":"La confianza nace de cumplir promesas personales.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Qué construye confianza?","opciones":["Excusas","Acción constante","Evitar retos"],"correcta":1,"explicacion":"La acción crea confianza.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Cuanto más seco se vuelve, más moja.","opciones":["Toalla","Río","Nube"],"correcta":0,"explicacion":"La toalla.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Quieres ganar confianza.","opciones":["Actuar","Esperar","Evitar retos"],"correcta":0,"explicacion":"La acción fortalece la mente.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"9 × 8 = ?","opciones":["64","72","81"],"correcta":1,"explicacion":"72.","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Respira profundo.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Visualiza actuar con confianza.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu confianza aumenta.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"La confianza crece con cada acción.","color":"#f87171"}
-      ]
-    },
-    {
-      "id": 8,
-      "categoria": "resiliencia",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy entrenarás resiliencia mental.","color":"#2563eb"},
-        {"tipo":"historia","texto":"Cada desafío fortalece a quienes persisten.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Qué fortalece la resiliencia?","opciones":["Rendirse","Persistir","Evitar retos"],"correcta":1,"explicacion":"Persistir fortalece la mente.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Vuelo sin alas.","opciones":["Tiempo","Pájaro","Avión"],"correcta":0,"explicacion":"El tiempo.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Fracaso temporal.","opciones":["Abandonar","Intentar de nuevo","Ignorar"],"correcta":1,"explicacion":"Intentar fortalece la resiliencia.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"11 × 5 = ?","opciones":["55","50","60"],"correcta":0,"explicacion":"55.","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Respira profundo.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Visualiza superar desafíos.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu resiliencia ha aumentado.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"La resiliencia transforma obstáculos en crecimiento.","color":"#f87171"}
-      ]
-    },
-    {
-      "id": 9,
-      "categoria": "aprendizaje",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy entrenarás tu mente para aprender más rápido.","color":"#2563eb"},
-        {"tipo":"historia","texto":"Los mejores inversionistas nunca dejan de aprender.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Qué acelera el aprendizaje?","opciones":["Practicar","Ignorar errores","Evitar estudio"],"correcta":0,"explicacion":"La práctica mejora el aprendizaje.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Siempre corre pero nunca camina.","opciones":["Río","Auto","Persona"],"correcta":0,"explicacion":"El río.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Quieres aprender.","opciones":["Leer","Esperar","Evitar esfuerzo"],"correcta":0,"explicacion":"Leer y estudiar fortalecen la mente.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"14 × 3 = ?","opciones":["42","36","48"],"correcta":0,"explicacion":"42.","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Respira profundo.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Visualiza tu mente aprendiendo rápidamente.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu capacidad de aprendizaje ha aumentado.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"Aprender continuamente expande tu futuro.","color":"#f87171"}
-      ]
-    },
-    {
-      "id": 10,
-      "categoria": "claridad",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy entrenarás claridad estratégica.","color":"#2563eb"},
-        {"tipo":"historia","texto":"Las mejores decisiones nacen de la claridad mental.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Qué mejora la claridad mental?","opciones":["Caos","Orden","Prisa"],"correcta":1,"explicacion":"El orden mental mejora la claridad.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Tiene un ojo pero no puede ver.","opciones":["Aguja","Pez","Persona"],"correcta":0,"explicacion":"La aguja.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Tienes muchas opciones.","opciones":["Elegir rápido","Analizar cuidadosamente","Ignorar"],"correcta":1,"explicacion":"Analizar con calma da mejores resultados.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"18 ÷ 3 = ?","opciones":["6","9","5"],"correcta":0,"explicacion":"6.","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Respira profundo.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Visualiza claridad en cada decisión.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu claridad mental ha aumentado.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"La claridad transforma confusión en acción.","color":"#f87171"}
-      ]
-    },
-    {
-      "id": 11,
-      "categoria": "disciplina",
-      "bloques":[
-        {"tipo":"voz","texto":"Entrena disciplina profunda hoy.","color":"#2563eb"},
-        {"tipo":"historia","texto":"La disciplina es lo que separa sueños de resultados.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Cómo se fortalece la disciplina?","opciones":["Evitar esfuerzos","Persistir","Rendirse"],"correcta":1,"explicacion":"Persistir crea hábitos sólidos.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Cuanto más quitas, más grande se vuelve.","opciones":["Agujero","Montaña","Caja"],"correcta":0,"explicacion":"Agujero.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Quieres ser constante.","opciones":["Actuar","Esperar motivación","Evitar"],"correcta":0,"explicacion":"Actuar refuerza disciplina.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"5 × 5 = ?","opciones":["20","25","30"],"correcta":1,"explicacion":"25.","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Respira y enfoca tu mente.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Imagina tu disciplina sólida.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu disciplina ha crecido.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"La disciplina crea libertad y resultados.","color":"#f87171"}
-      ]
-    },
-    {
-      "id": 12,
-      "categoria": "calma",
-      "bloques":[
-        {"tipo":"voz","texto":"Hoy entrenarás calma profunda.","color":"#2563eb"},
-        {"tipo":"historia","texto":"Los líderes actúan desde la calma y claridad.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Qué genera mejores decisiones?","opciones":["Ansiedad","Calma","Prisa"],"correcta":1,"explicacion":"La calma permite reflexión.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Vuelo sin alas, lloro sin ojos.","opciones":["Nube","Río","Viento"],"correcta":2,"explicacion":"El viento.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Situación estresante.","opciones":["Reaccionar","Respirar y pensar","Ignorar"],"correcta":1,"explicacion":"Respirar calma la mente.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"8 × 7 = ?","opciones":["54","56","58"],"correcta":1,"explicacion":"56.","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Respira profundo.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Visualiza calma interna.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu calma aumenta.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"La calma es fortaleza interna.","color":"#f87171"}
-      ]
-    },
-    {
-      "id": 13,
-      "categoria": "enfoque",
-      "bloques":[
-        {"tipo":"voz","texto":"Hoy entrenarás enfoque total.","color":"#2563eb"},
-        {"tipo":"historia","texto":"El enfoque dirige energía hacia resultados concretos.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Qué mejora el enfoque?","opciones":["Distracciones","Eliminarlas","Multitarea"],"correcta":1,"explicacion":"Eliminar distracciones aumenta concentración.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Tiene ojos pero no puede ver.","opciones":["Pecho","Aguja","Pez"],"correcta":1,"explicacion":"La aguja.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Tarea importante.","opciones":["Ignorar","Concentrarse","Procrastinar"],"correcta":1,"explicacion":"Concentrarse termina la tarea.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"13 × 3 = ?","opciones":["39","36","42"],"correcta":0,"explicacion":"39.","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Respira profundo y enfoca tu mente.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Imagina completar todas tus tareas.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu enfoque ha mejorado.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"El enfoque transforma esfuerzo en éxito.","color":"#f87171"}
-      ]
-    },
-    {
-      "id": 14,
-      "categoria": "mentalidad",
-      "bloques":[
-        {"tipo":"voz","texto":"Hoy entrenarás mentalidad positiva.","color":"#2563eb"},
-        {"tipo":"historia","texto":"Las oportunidades se presentan a los que buscan soluciones.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Qué genera mentalidad positiva?","opciones":["Quejarse","Buscar soluciones","Evitar retos"],"correcta":1,"explicacion":"Buscar soluciones fortalece la mente.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Siempre avanza, nunca retrocede.","opciones":["Reloj","Persona","Animal"],"correcta":0,"explicacion":"El reloj.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Problema inesperado.","opciones":["Rendirse","Buscar solución","Ignorar"],"correcta":1,"explicacion":"Buscar soluciones fortalece mentalidad.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"16 ÷ 4 = ?","opciones":["2","4","8"],"correcta":1,"explicacion":"4.","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Respira profundo y relaja.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Visualiza soluciones creativas.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu mentalidad positiva ha aumentado.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"La mentalidad positiva abre caminos.","color":"#f87171"}
-      ]
-    },
-    {
-      "id": 15,
-      "categoria": "productividad",
-      "bloques":[
-        {"tipo":"voz","texto":"Hoy entrenarás productividad máxima.","color":"#2563eb"},
-        {"tipo":"historia","texto":"Los más productivos gestionan su tiempo y energía.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Qué aumenta productividad?","opciones":["Planificación","Procrastinar","Multitarea"],"correcta":0,"explicacion":"Planificar prioriza tareas.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Sin moverse corre todo el día.","opciones":["Reloj","Agua","Viento"],"correcta":0,"explicacion":"El reloj.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Tareas múltiples.","opciones":["Priorizar","Hacer primero lo fácil","Esperar"],"correcta":0,"explicacion":"Priorizar genera resultados.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"12 × 6 = ?","opciones":["72","68","70"],"correcta":0,"explicacion":"72.","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Respira profundo y enfoca.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Imagina completar todas tus tareas sin estrés.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu productividad ha mejorado.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"La productividad convierte esfuerzo en resultados.","color":"#f87171"}
-      ]
-    },
-    {
-      "id": 16,
-      "categoria": "confianza",
-      "bloques":[
-        {"tipo":"voz","texto":"Hoy entrenarás confianza y seguridad interna.","color":"#2563eb"},
-        {"tipo":"historia","texto":"La confianza nace de pequeños logros diarios.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Cómo aumentar confianza?","opciones":["Evitar retos","Actuar consistentemente","Quejarse"],"correcta":1,"explicacion":"Actuar consistentemente fortalece confianza.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Sin boca habla, sin alas vuela.","opciones":["Viento","Pájaro","Río"],"correcta":0,"explicacion":"El viento.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Situación difícil.","opciones":["Actuar","Ignorar","Quejarse"],"correcta":0,"explicacion":"Actuar genera confianza.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"10 × 9 = ?","opciones":["90","80","100"],"correcta":0,"explicacion":"90.","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Respira profundo y visualiza.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Visualiza tu confianza creciendo.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu confianza ha aumentado.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"La confianza se construye cada día.","color":"#f87171"}
-      ]
-    },
-    {
-      "id": 17,
-      "categoria": "resiliencia",
-      "bloques":[
-        {"tipo":"voz","texto":"Hoy entrenarás resiliencia profunda.","color":"#2563eb"},
-        {"tipo":"historia","texto":"Quien persiste frente a la adversidad, triunfa.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Qué fortalece resiliencia?","opciones":["Rendirse","Persistir","Ignorar"],"correcta":1,"explicacion":"Persistir frente a dificultades.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Vuelo sin alas, lloro sin ojos.","opciones":["Viento","Nube","Río"],"correcta":0,"explicacion":"El viento.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Fracaso temporal.","opciones":["Abandonar","Intentar de nuevo","Ignorar"],"correcta":1,"explicacion":"Intentar fortalece resiliencia.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"7 × 9 = ?","opciones":["63","64","65"],"correcta":0,"explicacion":"63.","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Respira profundo.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Visualiza superar obstáculos.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu resiliencia ha aumentado.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"La resiliencia convierte problemas en oportunidades.","color":"#f87171"}
-      ]
-    },
-    {
-      "id": 18,
-      "categoria": "aprendizaje",
-      "bloques":[
-        {"tipo":"voz","texto":"Hoy entrenarás aprendizaje efectivo.","color":"#2563eb"},
-        {"tipo":"historia","texto":"Quien aprende más, vive mejor.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Qué acelera aprendizaje?","opciones":["Práctica","Evitar errores","Ignorar"],"correcta":0,"explicacion":"Practicar fortalece la mente.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Corre sin piernas.","opciones":["Río","Viento","Reloj"],"correcta":0,"explicacion":"El río.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Aprendizaje diario.","opciones":["Leer","Esperar","Evitar"],"correcta":0,"explicacion":"Leer fortalece mente.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"8 × 8 = ?","opciones":["64","56","60"],"correcta":0,"explicacion":"64.","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Respira profundo y relaja.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Visualiza aprender fácilmente.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu aprendizaje ha mejorado.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"Aprender transforma tu futuro.","color":"#f87171"}
-      ]
-    },
-    {
-      "id": 19,
-      "categoria": "claridad",
-      "bloques":[
-        {"tipo":"voz","texto":"Hoy entrenarás claridad mental avanzada.","color":"#2563eb"},
-        {"tipo":"historia","texto":"Las decisiones claras generan resultados efectivos.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Qué genera claridad mental?","opciones":["Desorden","Organización","Prisa"],"correcta":1,"explicacion":"La organización fortalece la mente.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Siempre delante, nunca se ve.","opciones":["Futuro","Sombra","Aire"],"correcta":0,"explicacion":"El futuro.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Tienes opciones múltiples.","opciones":["Analizar","Reaccionar rápido","Ignorar"],"correcta":0,"explicacion":"Analizar da mejores resultados.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"9 × 9 = ?","opciones":["81","72","90"],"correcta":0,"explicacion":"81.","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Respira profundo y enfoca.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Visualiza claridad en decisiones.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu claridad ha aumentado.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"La claridad convierte confusión en acción.","color":"#f87171"}
-      ]
-    },
-    {
-      "id": 20,
-      "categoria": "disciplina",
-      "bloques":[
-        {"tipo":"voz","texto":"Hoy entrenarás disciplina y constancia.","color":"#2563eb"},
-        {"tipo":"historia","texto":"La constancia es la madre del éxito.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Qué fortalece la disciplina?","opciones":["Persistencia","Evitar retos","Excusas"],"correcta":0,"explicacion":"Persistencia genera hábitos sólidos.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Cuanto más lo tomas, más dejas atrás.","opciones":["Pasos","Dinero","Ideas"],"correcta":0,"explicacion":"Los pasos.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Quieres ser constante.","opciones":["Actuar","Esperar motivación","Evitar"],"correcta":0,"explicacion":"Actuar refuerza disciplina.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"6 × 7 = ?","opciones":["42","40","44"],"correcta":0,"explicacion":"42.","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Respira profundo y enfoca.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Visualiza constancia y disciplina.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu disciplina ha crecido.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"La disciplina transforma esfuerzo en éxito.","color":"#f87171"}
-      ]
-    },
-    {
-      "id": 21,
-      "categoria": "resiliencia",
-      "bloques":[
-        {"tipo":"voz","texto":"Hoy entrenarás resiliencia máxima.","color":"#2563eb"},
-        {"tipo":"historia","texto":"Cada obstáculo superado te hace más fuerte.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Qué fortalece resiliencia?","opciones":["Rendirse","Persistir","Ignorar"],"correcta":1,"explicacion":"Persistir frente a adversidades.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Vuelo sin alas, lloro sin ojos.","opciones":["Viento","Nube","Río"],"correcta":0,"explicacion":"El viento.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Fracasas temporalmente.","opciones":["Abandonar","Intentar de nuevo","Ignorar"],"correcta":1,"explicacion":"Intentar fortalece resiliencia.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"12 × 8 = ?","opciones":["96","98","100"],"correcta":0,"explicacion":"96.","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Respira profundo.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Visualiza superar obstáculos y crecer.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu resiliencia ha aumentado.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"La resiliencia transforma desafíos en fortaleza.","color":"#f87171"}
-      ]
-    },
-    {
-      "id": 22,
-      "bloques":[
-        {"tipo":"voz","texto":"Hoy enfocaremos tu mente en creatividad y resolución de problemas.","color":"#2563eb"},
-        {"tipo":"historia","texto":"Un inventor resolvió un problema cotidiano y su idea se convirtió en un negocio millonario.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Cuál es la mejor forma de estimular la creatividad?","opciones":["Esperar inspiración","Hacer ejercicios diarios","Copiar a otros"],"correcta":1,"explicacion":"La práctica diaria fortalece la creatividad.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Si cinco gatos atrapan cinco ratones en cinco minutos, ¿cuánto tardarán diez gatos?","opciones":["5 min","10 min","50 min"],"correcta":0,"explicacion":"La velocidad es proporcional al número de gatos.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Tienes tiempo libre. ¿Qué te ayuda más a crecer mentalmente?","opciones":["Ver redes sociales","Leer un libro","Dormir"],"correcta":1,"explicacion":"Leer desarrolla nuevas conexiones neuronales.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"Si 8×3−5= ?","opciones":["19","24","21"],"correcta":2,"explicacion":"8×3=24, 24−5=19.","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Respira profundo. Inhala 4, retén 2, exhala 6.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Imagina resolviendo un problema con facilidad y creatividad.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu mente creativa se ha fortalecido.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"Cada día que entrenas creatividad, encuentras soluciones más rápidas y efectivas.","color":"#f87171"}
-      ]
-    },
-    {
-      "id": 23,
-      "bloques":[
-        {"tipo":"voz","texto":"Hoy trabajaremos en concentración y enfoque prolongado.","color":"#2563eb"},
-        {"tipo":"historia","texto":"Un estudiante estudió todos los días 30 minutos más que los demás y logró ser el mejor de su clase.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Cuál es la mejor forma de mantener enfoque?","opciones":["Multitasking","Descansos programados","Escuchar música fuerte"],"correcta":1,"explicacion":"Los descansos ayudan a mantener la atención alta.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Un hombre tiene 3 sombreros rojos y 2 azules. Si se pone uno al azar, ¿cuál es la probabilidad de que sea rojo?","opciones":["60%","40%","50%"],"correcta":0,"explicacion":"3 de 5 son rojos → 60%.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Tienes varias tareas, ¿cómo actúas para terminar rápido y bien?","opciones":["Hacer todas a la vez","Priorizar y hacer una por una","Dejar para después"],"correcta":1,"explicacion":"Priorizar asegura calidad y rapidez.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"Si sumas los números del 1 al 10, ¿cuánto obtienes?","opciones":["55","45","50"],"correcta":0,"explicacion":"1+2+…+10=55","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Inhala contando 4, retén 4, exhala 8. Siente concentración.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Visualiza completando tareas con calma y eficiencia.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu enfoque y concentración han mejorado.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"Hoy entrenaste tu mente enfocada; cada día aumenta tu rendimiento.","color":"#f87171"}
-      ]
-    },
-    {
-      "id": 24,
-      "bloques":[
-        {"tipo":"voz","texto":"Hoy potenciarás tu motivación y disciplina personal.","color":"#2563eb"},
-        {"tipo":"historia","texto":"Un atleta se levantaba a entrenar incluso con frío y lluvia, logrando récords importantes.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Qué fortalece la disciplina diaria?","opciones":["Hacer sólo lo que te gusta","Rutina constante","Procrastinar"],"correcta":1,"explicacion":"La constancia fortalece la disciplina.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Si un tren sale a las 10 am y otro a las 10:30 am, viajando a la misma velocidad, ¿cuándo se encuentran?","opciones":["11 am","Depende del destino","Nunca"],"correcta":1,"explicacion":"Se necesita más información sobre distancia y velocidad.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Hoy tienes tiempo limitado, ¿qué haces para entrenar disciplina?","opciones":["Dejarlo para mañana","Seguir tu plan","Hacer solo la mitad"],"correcta":1,"explicacion":"Cumplir el plan fortalece disciplina.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"Resuelve: 15 − 3 × 2 = ?","opciones":["9","6","12"],"correcta":0,"explicacion":"Primero 3×2=6, luego 15−6=9","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Respira profundo, inhala 4, exhala 6, siente energía.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Imagina logrando tus metas con constancia y fuerza.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu motivación ha aumentado.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"Cada acción disciplinada te acerca a tus objetivos.","color":"#f87171"}
-      ]
-    },
-    {
-      "id": 25,
-      "bloques":[
-        {"tipo":"voz","texto":"Hoy entrenarás resiliencia frente a desafíos.","color":"#2563eb"},
-        {"tipo":"historia","texto":"Un emprendedor perdió todo y volvió a levantarse con más fuerza, logrando éxito mayor.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Qué desarrolla resiliencia?","opciones":["Evitar problemas","Aprender de errores","Criticar a otros"],"correcta":1,"explicacion":"Aprender y adaptarse fortalece la resiliencia.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Soy ligero como una pluma, pero ni la persona más fuerte me sostiene. ¿Qué soy?","opciones":["El aire","La sombra","El pensamiento"],"correcta":2,"explicacion":"El pensamiento no se puede sostener físicamente.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Ante un obstáculo grande, ¿qué haces primero?","opciones":["Rendirse","Analizar y actuar","Ignorar"],"correcta":1,"explicacion":"Analizar permite soluciones efectivas.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"Si 9 + 6 ÷ 3 = ?","opciones":["5","11","15"],"correcta":1,"explicacion":"6÷3=2, 9+2=11","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Inhala 4, retén 2, exhala 6. Siente calma interior.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Visualiza superando cualquier reto con fuerza y claridad.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu resiliencia ha crecido hoy.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"Cada desafío te hace más fuerte y sabio.","color":"#f87171"}
-      ]
-    },
-    {
-      "id": 26,
-      "bloques":[
-        {"tipo":"voz","texto":"Hoy entrenarás gratitud y actitud positiva.","color":"#2563eb"},
-        {"tipo":"historia","texto":"Un hombre agradecía cada pequeño logro y su vida mejoró notablemente en salud y relaciones.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Qué aumenta la felicidad diaria?","opciones":["Quejarse","Practicar gratitud","Compararse con otros"],"correcta":1,"explicacion":"La gratitud genera bienestar mental.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Si una caja contiene 3 rojas y 2 verdes, ¿probabilidad de sacar verde?","opciones":["2/5","3/5","1/2"],"correcta":0,"explicacion":"2 de 5 → 2/5","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Hoy algo salió mal, ¿cómo reaccionas?","opciones":["Quejarte","Aprender y seguir","Ignorar"],"correcta":1,"explicacion":"Aprender genera crecimiento personal.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"Resuelve: 7×2+5= ?","opciones":["19","20","21"],"correcta":0,"explicacion":"7×2=14+5=19","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Inhala 4, retén 3, exhala 6. Siente gratitud.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Imagina tu vida llena de momentos positivos y agradecimientos.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu actitud positiva ha crecido hoy.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"Agradecer diariamente transforma tu vida.","color":"#f87171"}
-      ]
-    },
-    {
-      "id": 27,
-      "bloques":[
-        {"tipo":"voz","texto":"Hoy fortalecerás memoria y agilidad mental.","color":"#2563eb"},
-        {"tipo":"historia","texto":"Una mujer practicaba ejercicios de memoria todos los días y logró aprender varios idiomas.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Qué mejora la memoria a corto plazo?","opciones":["Dormir bien","Mirar TV","Comer dulces"],"correcta":0,"explicacion":"El sueño consolida la memoria.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Si cinco lápices cuestan $10, ¿cuánto cuestan 8?","opciones":["16","15","12"],"correcta":1,"explicacion":"Cada lápiz cuesta $2, 8×2=16","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Tienes que memorizar algo importante, ¿cómo lo haces?","opciones":["Leer una vez","Repetir varias veces","Decirlo a alguien más"],"correcta":1,"explicacion":"Repetición fortalece la memoria.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"Resuelve: 3×(4+2)= ?","opciones":["18","20","14"],"correcta":0,"explicacion":"4+2=6, 6×3=18","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Inhala 4, exhala 6. Siente agilidad mental.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Visualiza recordando información rápida y claramente.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu memoria y agilidad mental han mejorado.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"Cada ejercicio de memoria fortalece tu cerebro.","color":"#f87171"}
-      ]
-    },
-    {
-      "id":28,
-      "bloques":[
-        {"tipo":"voz","texto":"Hoy trabajaremos en paciencia y manejo del estrés.","color":"#2563eb"},
-        {"tipo":"historia","texto":"Un jardinero cultivó su jardín durante años. La paciencia le dio frutos abundantes y hermosos.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Qué ayuda a reducir el estrés?","opciones":["Respirar profundo","Quejarse","Hacer todo rápido"],"correcta":0,"explicacion":"La respiración profunda calma el cuerpo y la mente.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Siempre corre pero nunca camina, ¿qué es?","opciones":["El río","El viento","El tiempo"],"correcta":2,"explicacion":"El tiempo siempre avanza.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Te enfrentas a un retraso importante, ¿qué haces primero?","opciones":["Entrar en pánico","Respirar y reorganizar","Ignorar el problema"],"correcta":1,"explicacion":"Calmarse y reorganizar permite mejores decisiones.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"Resuelve: 12 ÷ 4 + 3 = ?","opciones":["6","4","5"],"correcta":2,"explicacion":"12÷4=3, 3+3=6","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Inhala 4, retén 2, exhala 6. Siente tu mente tranquila.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Visualiza manteniendo la calma en situaciones difíciles.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu paciencia y calma se han fortalecido.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"Cada momento de calma aumenta tu resiliencia y bienestar.","color":"#f87171"}
-      ]
-    },
-    {
-      "id":29,
-      "bloques":[
-        {"tipo":"voz","texto":"Hoy potenciarás pensamiento estratégico y toma de decisiones.","color":"#2563eb"},
-        {"tipo":"historia","texto":"Un CEO tomó pequeñas decisiones estratégicas cada día y su empresa creció exponencialmente.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Qué fortalece la toma de decisiones estratégicas?","opciones":["Planificación diaria","Actuar sin pensar","Esperar suerte"],"correcta":0,"explicacion":"Planificar mejora decisiones y resultados.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Si tienes dos monedas que suman 30 centavos y una no es una moneda de 25, ¿qué monedas son?","opciones":["25+5","10+20","15+15"],"correcta":0,"explicacion":"Una moneda no es de 25, la otra sí es, sumando 30 centavos.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Debes elegir entre dos caminos inciertos, ¿qué haces?","opciones":["Elegir al azar","Evaluar pros y contras","Evitar decisión"],"correcta":1,"explicacion":"Analizar opciones mejora resultados.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"Resuelve: 7+5×2=?","opciones":["24","17","19"],"correcta":2,"explicacion":"Multiplicación primero: 5×2=10, 7+10=17","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Inhala 4, exhala 6. Siente claridad mental.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Visualiza tomando decisiones con seguridad y estrategia.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu mente estratégica se ha fortalecido.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"Cada decisión consciente fortalece tu capacidad estratégica.","color":"#f87171"}
-      ]
-    },
-    {
-      "id":30,
-      "bloques":[
-        {"tipo":"voz","texto":"Hoy entrenarás memoria y atención a los detalles.","color":"#2563eb"},
-        {"tipo":"historia","texto":"Un detective recordaba cada detalle y resolvía casos difíciles con precisión.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Qué mejora la memoria a largo plazo?","opciones":["Repetición activa","Leer una vez","Dormir poco"],"correcta":0,"explicacion":"Repetir activa y conscientemente fortalece la memoria.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Encuentra el patrón: 2, 4, 8, 16, ?","opciones":["24","32","20"],"correcta":1,"explicacion":"Cada número se multiplica por 2.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Debes memorizar información importante, ¿qué haces primero?","opciones":["Leer una vez","Repetir varias veces","Esperar a último momento"],"correcta":1,"explicacion":"La repetición consciente fortalece memoria.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"Resuelve: 9−(2+3)×2=?","opciones":["-1","2","-3"],"correcta":0,"explicacion":"2+3=5, 5×2=10, 9−10=-1","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Inhala 4, exhala 6. Siente concentración.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Visualiza recordando todo con claridad y rapidez.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu memoria ha mejorado hoy.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"Cada ejercicio de memoria fortalece tu mente.","color":"#f87171"}
-      ]
-    },
-    {
-      "id":31,
-      "bloques":[
-        {"tipo":"voz","texto":"Hoy trabajaremos en motivación y metas personales.","color":"#2563eb"},
-        {"tipo":"historia","texto":"Un joven fijó metas diarias y alcanzó logros que parecían imposibles.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Qué mantiene la motivación alta?","opciones":["Celebrar pequeños logros","Quejarse","Ignorar metas"],"correcta":0,"explicacion":"Reconocer avances refuerza motivación.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Cuanto más quitas, más grande se vuelve. ¿Qué es?","opciones":["Un agujero","Un sombrero","La paciencia"],"correcta":0,"explicacion":"Un agujero aumenta a medida que quitas material.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Tienes una meta difícil, ¿cómo la abordas?","opciones":["Rendirte","Dividirla en pasos","Esperar a que cambie"],"correcta":1,"explicacion":"Dividir facilita el progreso.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"Resuelve: (6+4)×2=?","opciones":["18","20","22"],"correcta":1,"explicacion":"6+4=10, 10×2=20","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Inhala 4, exhala 6. Siente energía y motivación.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Visualiza logrando tus metas con éxito y confianza.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu motivación ha aumentado.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"Cada acción enfocada te acerca a tus metas.","color":"#f87171"}
-      ]
-    },
-    {
-      "id":32,
-      "bloques":[
-        {"tipo":"voz","texto":"Hoy entrenarás confianza y autoestima.","color":"#2563eb"},
-        {"tipo":"historia","texto":"Una mujer superó dudas y logró hablar frente a miles con seguridad.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Qué fortalece la autoestima?","opciones":["Compararse","Aceptar logros","Ignorar esfuerzos"],"correcta":1,"explicacion":"Reconocer logros refuerza autoestima.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Cuanto más grande me haces, menos me ves. ¿Qué soy?","opciones":["Oscuridad","El ego","La luz"],"correcta":0,"explicacion":"La oscuridad crece a medida que bloqueas la luz.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Tienes miedo de hablar en público, ¿qué haces?","opciones":["Evitas","Prepararte y practicar","Quejarte"],"correcta":1,"explicacion":"Prepararse aumenta confianza.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"Resuelve: 5×(2+3)= ?","opciones":["20","25","15"],"correcta":1,"explicacion":"2+3=5, 5×5=25","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Inhala 4, exhala 6. Siente seguridad interior.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Visualiza caminando confiado y seguro en cualquier situación.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu confianza ha aumentado hoy.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"Cada día fortaleces tu autoestima y seguridad.","color":"#f87171"}
-      ]
-    },
-    {
-      "id":33,
-      "bloques":[
-        {"tipo":"voz","texto":"Hoy entrenaremos inteligencia emocional y manejo de emociones.","color":"#2563eb"},
-        {"tipo":"historia","texto":"Un líder escuchaba a su equipo y regulaba sus emociones para tomar mejores decisiones.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Qué ayuda a regular emociones?","opciones":["Reaccionar rápido","Reflexionar antes de actuar","Ignorar"],"correcta":1,"explicacion":"La reflexión permite control emocional.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Tengo ciudades pero no casas, ríos pero no agua, bosques pero no árboles. ¿Qué soy?","opciones":["Mapa","Libro","Juego"],"correcta":0,"explicacion":"Un mapa contiene símbolos, no reales.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Alguien te irrita, ¿cómo respondes?","opciones":["Gritar","Respirar y responder con calma","Ignorar todo"],"correcta":1,"explicacion":"Responder con calma regula emociones y relaciones.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"Resuelve: 10−(3+2)= ?","opciones":["5","3","4"],"correcta":0,"explicacion":"3+2=5, 10−5=5","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Inhala 4, retén 2, exhala 6. Siente tus emociones controladas.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Visualiza manejando situaciones difíciles con calma y claridad.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu inteligencia emocional ha mejorado.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"Cada día aprendes a regular tus emociones y relaciones.","color":"#f87171"}
-      ]
-    },
-    {
-      "id":34,
-      "bloques":[
-        {"tipo":"voz","texto":"Hoy entrenarás creatividad y pensamiento innovador.","color":"#2563eb"},
-        {"tipo":"historia","texto":"Un diseñador creó un producto innovador al combinar ideas de distintas áreas.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Qué potencia la creatividad?","opciones":["Prueba y error","Repetir siempre lo mismo","Evitar riesgos"],"correcta":0,"explicacion":"Probar ideas nuevas genera creatividad.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Cuanto más quitas, más grande se vuelve. ¿Qué es?","opciones":["Un agujero","Un pastel","Un globo"],"correcta":0,"explicacion":"Al quitar tierra, el agujero crece.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Debes resolver un problema de forma original, ¿qué haces?","opciones":["Hacer lo habitual","Explorar varias opciones","Esperar a otros"],"correcta":1,"explicacion":"Explorar ideas nuevas potencia innovación.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"Resuelve: 6×(3+2)= ?","opciones":["36","30","32"],"correcta":1,"explicacion":"3+2=5, 6×5=30","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Inhala 4, exhala 6. Siente tu mente creativa.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Visualiza ideas originales surgiendo con facilidad.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu creatividad ha aumentado hoy.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"Cada día fortaleces tu capacidad de innovar.","color":"#f87171"}
-      ]
-    },
-    {
-      "id":35,
-      "bloques":[
-        {"tipo":"voz","texto":"Hoy entrenarás resiliencia financiera y toma de decisiones con dinero.","color":"#2563eb"},
-        {"tipo":"historia","texto":"Un empresario reinvirtió pequeñas ganancias cada mes y creó un negocio sólido.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Qué hábito financiero es más efectivo a largo plazo?","opciones":["Gastar todo","Ahorrar e invertir","Dejar dinero en casa"],"correcta":1,"explicacion":"Invertir consistentemente multiplica tu dinero.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Si un billete se divide en 5 partes iguales, ¿cuánto vale cada parte?","opciones":["1/5","5","No se puede"],"correcta":0,"explicacion":"Cada parte es 1/5 del total.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Recibes un dinero extra, ¿qué haces?","opciones":["Gastar todo","Ahorrar","Invertir sabiamente"],"correcta":2,"explicacion":"Invertir fortalece crecimiento futuro.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"Resuelve: 50−(6×7)= ?","opciones":["8","12","20"],"correcta":1,"explicacion":"6×7=42, 50−42=8","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Inhala 4, exhala 6. Siente tranquilidad financiera.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Visualiza tus finanzas creciendo de manera segura y estable.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu resiliencia financiera ha aumentado hoy.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"Cada decisión inteligente te acerca a estabilidad y crecimiento.","color":"#f87171"}
-      ]
-    },
-    {
-      "id":36,
-      "bloques":[
-        {"tipo":"voz","texto":"Hoy entrenarás concentración y productividad.","color":"#2563eb"},
-        {"tipo":"historia","texto":"Un programador resolvía problemas complejos concentrándose una hora sin distracciones, logrando grandes avances.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Cómo mejorar productividad?","opciones":["Multitarea","Bloques de enfoque","Revisar redes sociales"],"correcta":1,"explicacion":"El enfoque en bloques aumenta productividad.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Cuanto más lo quitas, más grande se vuelve. ¿Qué es?","opciones":["Un agujero","El tiempo","El conocimiento"],"correcta":0,"explicacion":"Quitar tierra hace crecer el agujero.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Tienes múltiples tareas, ¿cómo actúas?","opciones":["Hacer todo a la vez","Priorizar y ejecutar","Dejar para mañana"],"correcta":1,"explicacion":"Priorizar mejora resultados y reduce estrés.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"Resuelve: 8+6÷2=?","opciones":["7","11","14"],"correcta":1,"explicacion":"6÷2=3, 8+3=11","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Inhala 4, exhala 6. Siente claridad y concentración.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Visualiza completando tareas con eficiencia y sin estrés.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu concentración y productividad han aumentado.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"Cada sesión de enfoque te hace más productivo y eficiente.","color":"#f87171"}
-      ]
-    },
-    {
-      "id":37,
-      "bloques":[
-        {"tipo":"voz","texto":"Hoy entrenarás autoconocimiento y claridad mental.","color":"#2563eb"},
-        {"tipo":"historia","texto":"Un pensador diario reflexionaba sobre sus acciones y emociones, desarrollando gran claridad interior.","color":"#34d399"},
-        {"tipo":"quiz","pregunta":"¿Qué ayuda a tener claridad mental?","opciones":["Reflexión diaria","Ignorar emociones","Hacer solo lo urgente"],"correcta":0,"explicacion":"Reflexionar permite conocerse y tomar mejores decisiones.","recompensa":10,"color":"#facc15"},
-        {"tipo":"acertijo","pregunta":"Me puedes romper sin tocarme. ¿Qué soy?","opciones":["Promesa","Vaso","Silencio"],"correcta":0,"explicacion":"Una promesa puede romperse simbólicamente.","recompensa":8,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Sientes confusión, ¿qué haces primero?","opciones":["Actuar impulsivamente","Reflexionar y planificar","Ignorar"],"correcta":1,"explicacion":"Reflexionar aumenta claridad y evita errores.","recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"Resuelve: 15−(3×4)= ?","opciones":["3","0","-1"],"correcta":0,"explicacion":"3×4=12, 15−12=3","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Inhala 4, exhala 6. Siente claridad interior.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"visualizacion","texto":"Visualiza tu mente clara y decisiones conscientes.","color":"#a78bfa"},
-        {"tipo":"recompensa","texto":"Tu autoconocimiento ha crecido hoy.","puntos":20,"color":"#10b981"},
-        {"tipo":"cierre","texto":"Cada reflexión diaria aumenta tu claridad y sabiduría.","color":"#f87171"}
+  "sesiones":[
+
+{
+"id":1,
+"bloques":[
+{"tipo":"respiracion","texto":"Inhala 4, retén 2, exhala 6. Siente tu mente clara y enfocada.","duracion":30,"color":"#60a5fa"},
+{"tipo":"historia","texto":"El Valor del Silencio en la Mesa: Un joven empresario cerró un trato multimillonario usando el silencio estratégico.","color":"#fbbf24"},
+{"tipo":"voz","texto":"Hoy trabajaremos en inteligencia social y estrategia en decisiones diarias.","color":"#2563eb"},
+{"tipo":"quiz","pregunta":"¿Cuál es la mejor herramienta en negociaciones difíciles?","opciones":["Hablar primero","Escuchar y guardar silencio","Acelerar la decisión"],"correcta":1,"explicacion":"Escuchar y mantener el silencio puede aumentar tu poder de negociación.","recompensa":10,"color":"#22c55e"},
+{"tipo":"acertijo","pregunta":"Me muevo sin piernas y hablo sin boca, ¿qué soy?","opciones":["Río","Eco","Viento"],"correcta":1,"explicacion":"El eco se mueve y se escucha sin tener cuerpo.","recompensa":8,"color":"#f59e0b"},
+{"tipo":"decision","pregunta":"Debes priorizar un proyecto que puede fallar, ¿qué haces primero?","opciones":["Ignorarlo","Analizar riesgos y recursos","Decidir impulsivamente"],"correcta":1,"explicacion":"Evaluar riesgos y recursos permite tomar decisiones más seguras.","recompensa":12,"color":"#38bdf8"},
+{"tipo":"juego_mental","pregunta":"Resuelve: (8×2) - 5 = ?","opciones":["11","16","9"],"correcta":0,"explicacion":"8×2=16, 16-5=11","recompensa":7,"color":"#fbbf24"},
+{"tipo":"visualizacion","texto":"Visualiza superando obstáculos con calma y estrategia.","color":"#a78bfa"},
+{"tipo":"respiracion","texto":"Inhala 4, retén 2, exhala 6. Mantén tu mente enfocada y tus emociones estables.","duracion":30,"color":"#60a5fa"},
+{"tipo":"recompensa","texto":"Tu claridad y disciplina han aumentado gracias a la práctica.","puntos":20,"color":"#10b981"},
+{"tipo":"cierre","texto":"Cada decisión consciente fortalece tu inteligencia social y estratégica.","color":"#f87171"}
+]
+},
+{
+"id":2,
+"bloques":[
+{"tipo":"respiracion","texto":"Inhala 5, retén 3, exhala 7. Siente tu estrategia activa.","duracion":30,"color":"#60a5fa"},
+{"tipo":"historia","texto":"La Estiba de Oro: Un transportista evitó multas millonarias adaptando su carga a normativa internacional.","color":"#fbbf24"},
+{"tipo":"voz","texto":"Hoy nos enfocaremos en adaptabilidad y prevención de riesgos.","color":"#2563eb"},
+{"tipo":"decision","pregunta":"Tu carga peligrosa no cumple normas, ¿qué haces?","opciones":["Esperar inspección","Cambiar el embalaje inmediatamente","Ignorar advertencias"],"correcta":1,"explicacion":"Actuar preventivamente evita sanciones y pérdidas.","recompensa":12,"color":"#22c55e"},
+{"tipo":"quiz","pregunta":"¿Qué fortalece tu resiliencia en el trabajo?","opciones":["Planificación","Impulsividad","Ignorar reglas"],"correcta":0,"explicacion":"Planificar y prever aumenta tus probabilidades de éxito.","recompensa":10,"color":"#38bdf8"},
+{"tipo":"acertijo","pregunta":"Vuelo sin alas, lloro sin ojos. ¿Quién soy?","opciones":["Nube","Viento","Río"],"correcta":0,"explicacion":"La nube se mueve y produce lluvia sin ojos ni alas.","recompensa":8,"color":"#f59e0b"},
+{"tipo":"juego_mental","pregunta":"Resuelve: 15-3×2 = ?","opciones":["9","12","6"],"correcta":0,"explicacion":"15-3×2=15-6=9","recompensa":7,"color":"#fbbf24"},
+{"tipo":"visualizacion","texto":"Imagina resolviendo problemas antes de que ocurran.","color":"#a78bfa"},
+{"tipo":"respiracion","texto":"Inhala 5, retén 3, exhala 7. Refuerza tu calma estratégica.","duracion":30,"color":"#60a5fa"},
+{"tipo":"recompensa","texto":"Tu estrategia y recursos han mejorado gracias al enfoque preventivo.","puntos":20,"color":"#10b981"},
+{"tipo":"cierre","texto":"Prevenir y adaptarse fortalece tu posición en la selva de negocios.","color":"#f87171"}
+]
+},
+{
+"id":3,
+"bloques":[
+{"tipo":"respiracion","texto":"Inhala 4, retén 4, exhala 6. Siente control sobre tus decisiones.","duracion":30,"color":"#60a5fa"},
+{"tipo":"historia","texto":"El Filtro de la Prosperidad: Un inversionista separaba problemas que podía resolver con dinero de los que requerían tiempo.","color":"#fbbf24"},
+{"tipo":"voz","texto":"Hoy entrenaremos discernimiento y gestión del tiempo.","color":"#2563eb"},
+{"tipo":"quiz","pregunta":"¿Qué es más valioso para un líder estratégico?","opciones":["Tiempo","Dinero","Contacto"],"correcta":0,"explicacion":"El tiempo bien gestionado permite decisiones más efectivas.","recompensa":10,"color":"#22c55e"},
+{"tipo":"decision","pregunta":"Tienes varias tareas críticas, ¿cómo decides?","opciones":["Resolver todo al mismo tiempo","Delegar lo que sea posible","Ignorar algunas"],"correcta":1,"explicacion":"Delegar libera tu tiempo para decisiones de alto impacto.","recompensa":12,"color":"#38bdf8"},
+{"tipo":"acertijo","pregunta":"Cien hermanos tienen la misma madre, ninguno se ve. ¿Qué son?","opciones":["Días del año","Letras del alfabeto","Segundos del reloj"],"correcta":1,"explicacion":"Las letras son muchas y no se ven entre sí.","recompensa":8,"color":"#f59e0b"},
+{"tipo":"juego_mental","pregunta":"Resuelve: 9+6÷3 = ?","opciones":["5","11","7"],"correcta":1,"explicacion":"6÷3=2, 2+9=11","recompensa":7,"color":"#fbbf24"},
+{"tipo":"visualizacion","texto":"Visualiza resolviendo problemas complejos sin estrés.","color":"#a78bfa"},
+{"tipo":"respiracion","texto":"Inhala 4, retén 4, exhala 6. Siente control sobre tus emociones.","duracion":30,"color":"#60a5fa"},
+{"tipo":"recompensa","texto":"Tu claridad y disciplina han aumentado con la correcta gestión del tiempo.","puntos":20,"color":"#10b981"},
+{"tipo":"cierre","texto":"Cada minuto bien gestionado refuerza tu estrategia y bienestar social.","color":"#f87171"}
+]
+},
+{
+"id":4,
+"bloques":[
+{"tipo":"respiracion","texto":"Inhala 3, retén 2, exhala 5. Centra tu mente y emociones.","duracion":30,"color":"#60a5fa"},
+{"tipo":"historia","texto":"La Estrategia del Aliado Invisible: Ayudar primero a otros genera retornos inesperados.","color":"#fbbf24"},
+{"tipo":"voz","texto":"Hoy entrenaremos redes de poder y generosidad estratégica.","color":"#2563eb"},
+{"tipo":"decision","pregunta":"Un aliado necesita ayuda aunque no te beneficie ahora, ¿qué haces?","opciones":["Ayudar de inmediato","Esperar beneficio","Negar ayuda"],"correcta":0,"explicacion":"Ayudar estratégicamente construye relaciones sólidas a largo plazo.","recompensa":12,"color":"#22c55e"},
+{"tipo":"quiz","pregunta":"¿Qué genera confianza en los aliados?","opciones":["Atajos","Generosidad","Competencia"],"correcta":1,"explicacion":"La generosidad estratégica fortalece alianzas.","recompensa":10,"color":"#38bdf8"},
+{"tipo":"acertijo","pregunta":"Cuanto más quitas, más grande se vuelve. ¿Qué es?","opciones":["Hoy","Agujero","Tiempo"],"correcta":1,"explicacion":"Al quitar tierra de un agujero, este se hace más grande.","recompensa":8,"color":"#f59e0b"},
+{"tipo":"juego_mental","pregunta":"Resuelve: 5×3-4 = ?","opciones":["11","15","9"],"correcta":0,"explicacion":"5×3=15, 15-4=11","recompensa":7,"color":"#fbbf24"},
+{"tipo":"visualizacion","texto":"Visualiza tus redes de contactos beneficiándose mutuamente.","color":"#a78bfa"},
+{"tipo":"respiracion","texto":"Inhala 3, retén 2, exhala 5. Siente tu mente y emociones equilibradas.","duracion":30,"color":"#60a5fa"},
+{"tipo":"recompensa","texto":"Tu estrategia social se ha reforzado con inteligencia y generosidad.","puntos":20,"color":"#10b981"},
+{"tipo":"cierre","texto":"Tejer redes sólidas asegura ventajas estratégicas en la selva de negocios.","color":"#f87171"}
+]
+},
+{
+"id":5,
+"bloques":[
+{"tipo":"respiracion","texto":"Inhala 4, retén 3, exhala 6. Prepara tu mente para decisiones de alto nivel.","duracion":30,"color":"#60a5fa"},
+{"tipo":"historia","texto":"El Arquitecto de Decisiones: Un hombre contrató un asistente para proteger su tiempo y salud, aumentando su rendimiento financiero.","color":"#fbbf24"},
+{"tipo":"voz","texto":"Hoy entrenaremos gestión de tiempo y bienestar como activos estratégicos.","color":"#2563eb"},
+{"tipo":"decision","pregunta":"Tu agenda está saturada, ¿qué priorizas?","opciones":["Responder emails urgentes","Bloquear tiempo para salud y enfoque","Atender llamadas inmediatamente"],"correcta":1,"explicacion":"Proteger tu tiempo de calidad maximiza tus decisiones estratégicas.","recompensa":12,"color":"#22c55e"},
+{"tipo":"quiz","pregunta":"¿Cuál es el activo más importante para un líder?","opciones":["Dinero","Salud","Contactos"],"correcta":1,"explicacion":"La salud física y mental permite decisiones más acertadas.","recompensa":10,"color":"#38bdf8"},
+{"tipo":"acertijo","pregunta":"Entre más quitas, más grande se vuelve. ¿Qué es?","opciones":["Agujero","Sombra","Río"],"correcta":0,"explicacion":"Un agujero aumenta a medida que se quita material.","recompensa":8,"color":"#f59e0b"},
+{"tipo":"juego_mental","pregunta":"Resuelve: 18 ÷ 3 + 2 = ?","opciones":["8","6","5"],"correcta":0,"explicacion":"18÷3=6, 6+2=8","recompensa":7,"color":"#fbbf24"},
+{"tipo":"visualizacion","texto":"Visualiza bloqueando tu agenda para lo que realmente importa.","color":"#a78bfa"},
+{"tipo":"respiracion","texto":"Inhala 4, retén 3, exhala 6. Mantén tu calma y enfoque.","duracion":30,"color":"#60a5fa"},
+{"tipo":"recompensa","texto":"Tu estrategia de tiempo y bienestar ha aumentado.","puntos":20,"color":"#10b981"},
+{"tipo":"cierre","texto":"Proteger tu tiempo y salud multiplica tus resultados en la selva de negocios.","color":"#f87171"}
+]
+},
+{
+"id":6,
+"bloques":[
+{"tipo":"respiracion","texto":"Inhala 5, retén 2, exhala 5. Conecta tu mente con tu estrategia.","duracion":30,"color":"#60a5fa"},
+{"tipo":"historia","texto":"El Costo de la Indecisión: Elegir un seguro premium salvó la empresa de un desastre transatlántico.","color":"#fbbf24"},
+{"tipo":"voz","texto":"Hoy entrenaremos toma de decisiones y visión a futuro.","color":"#2563eb"},
+{"tipo":"decision","pregunta":"Ahorras en seguro o proteges tu inversión?","opciones":["Ahorrar","Proteger inversión","Ignorar el riesgo"],"correcta":1,"explicacion":"Blindar tus activos protege tu patrimonio y reduce estrés futuro.","recompensa":12,"color":"#22c55e"},
+{"tipo":"quiz","pregunta":"¿Qué genera seguridad financiera?","opciones":["Prevención","Ahorro impulsivo","Negligencia"],"correcta":0,"explicacion":"Prevenir y asegurar reduce riesgos financieros.","recompensa":10,"color":"#38bdf8"},
+{"tipo":"acertijo","pregunta":"Tiene llave pero no puerta. ¿Qué es?","opciones":["Caja fuerte","Candado","Piano"],"correcta":2,"explicacion":"El piano tiene teclas llamadas 'keys'.","recompensa":8,"color":"#f59e0b"},
+{"tipo":"juego_mental","pregunta":"Resuelve: 7×3-5 = ?","opciones":["16","21","10"],"correcta":0,"explicacion":"7×3=21, 21-5=16","recompensa":7,"color":"#fbbf24"},
+{"tipo":"visualizacion","texto":"Visualiza eligiendo siempre la opción que protege tu patrimonio y tiempo.","color":"#a78bfa"},
+{"tipo":"respiracion","texto":"Inhala 5, retén 2, exhala 5. Refuerza tu calma y claridad en decisiones.","duracion":30,"color":"#60a5fa"},
+{"tipo":"recompensa","texto":"Tu claridad y estrategia se fortalecen con cada decisión consciente.","puntos":20,"color":"#10b981"},
+{"tipo":"cierre","texto":"La toma de decisiones estratégicas protege tu riqueza y bienestar mental.","color":"#f87171"}
+]
+},
+{
+"id":7,
+"bloques":[
+{"tipo":"respiracion","texto":"Inhala 4, retén 3, exhala 6. Centra tu mente para la estrategia social.","duracion":30,"color":"#60a5fa"},
+{"tipo":"historia","texto":"El Poder del Reconocimiento Invisible: Un director mejoró la eficiencia facilitando soluciones, no imponiendo sanciones.","color":"#fbbf24"},
+{"tipo":"voz","texto":"Hoy entrenaremos inteligencia social y liderazgo indirecto.","color":"#2563eb"},
+{"tipo":"decision","pregunta":"Tu equipo falla en eficiencia, ¿qué haces primero?","opciones":["Regañar","Escuchar necesidades y facilitar recursos","Ignorar el problema"],"correcta":1,"explicacion":"Facilitar soluciones aumenta la eficiencia y confianza del equipo.","recompensa":12,"color":"#22c55e"},
+{"tipo":"quiz","pregunta":"¿Qué fomenta motivación en un equipo?","opciones":["Amenazas","Reconocimiento y apoyo","Competencia interna"],"correcta":1,"explicacion":"El reconocimiento y apoyo aumenta productividad y bienestar.","recompensa":10,"color":"#38bdf8"},
+{"tipo":"acertijo","pregunta":"Siempre va hacia arriba pero nunca baja. ¿Qué es?","opciones":["Edad","Humo","Sol"],"correcta":0,"explicacion":"La edad siempre aumenta.","recompensa":8,"color":"#f59e0b"},
+{"tipo":"juego_mental","pregunta":"Resuelve: 14 ÷ 2 + 3 = ?","opciones":["10","7","8"],"correcta":0,"explicacion":"14÷2=7, 7+3=10","recompensa":7,"color":"#fbbf24"},
+{"tipo":"visualizacion","texto":"Visualiza ayudando a otros estratégicamente para fortalecer relaciones.","color":"#a78bfa"},
+{"tipo":"respiracion","texto":"Inhala 4, retén 3, exhala 6. Siente tu control sobre la interacción social.","duracion":30,"color":"#60a5fa"},
+{"tipo":"recompensa","texto":"Tu inteligencia social y estrategia se fortalecen.","puntos":20,"color":"#10b981"},
+{"tipo":"cierre","texto":"Fomentar relaciones efectivas multiplica tu poder social y estratégico.","color":"#f87171"}
+]
+},
+{
+"id":8,
+"bloques":[
+{"tipo":"respiracion","texto":"Inhala 3, retén 3, exhala 5. Siente tu mente clara y tus decisiones firmes.","duracion":30,"color":"#60a5fa"},
+{"tipo":"historia","texto":"La Regla de los 60 Segundos: Un ejecutivo gestionó su atención para eliminar ruido mental y ganar eficiencia.","color":"#fbbf24"},
+{"tipo":"voz","texto":"Hoy entrenaremos gestión del enfoque y atención selectiva.","color":"#2563eb"},
+{"tipo":"decision","pregunta":"Debes responder cientos de emails, ¿qué haces?","opciones":["Responder todos","Priorizar menos de 60 segundos","Ignorar"],"correcta":1,"explicacion":"Resolver rápidamente tareas pequeñas permite enfoque en decisiones de alto valor.","recompensa":12,"color":"#22c55e"},
+{"tipo":"quiz","pregunta":"¿Qué aumenta productividad y claridad mental?","opciones":["Multitarea","Gestión de atención","Ignorar tareas"],"correcta":1,"explicacion":"Gestionar la atención evita dispersión y estrés.","recompensa":10,"color":"#38bdf8"},
+{"tipo":"acertijo","pregunta":"Tiene agujas pero no pincha. ¿Qué es?","opciones":["Reloj","Erizo","Brujula"],"correcta":0,"explicacion":"El reloj tiene agujas que indican el tiempo.","recompensa":8,"color":"#f59e0b"},
+{"tipo":"juego_mental","pregunta":"Resuelve: 20 ÷ 5 + 7 = ?","opciones":["11","15","13"],"correcta":2,"explicacion":"20÷5=4, 4+7=11","recompensa":7,"color":"#fbbf24"},
+{"tipo":"visualizacion","texto":"Visualiza resolviendo tareas con claridad y eficiencia.","color":"#a78bfa"},
+{"tipo":"respiracion","texto":"Inhala 3, retén 3, exhala 5. Mantén el enfoque y calma interior.","duracion":30,"color":"#60a5fa"},
+{"tipo":"recompensa","texto":"Tu claridad y disciplina mental aumentan.","puntos":20,"color":"#10b981"},
+{"tipo":"cierre","texto":"Gestionar tu atención multiplica eficiencia y bienestar estratégico.","color":"#f87171"}
+]
+},
+{
+"id":9,
+"bloques":[
+{"tipo":"respiracion","texto":"Inhala 4, retén 2, exhala 4. Siente tu poder y control mental.","duracion":30,"color":"#60a5fa"},
+{"tipo":"historia","texto":"La Inversión en el Entorno: Vivir cerca del centro logístico multiplicó oportunidades y ascensos de un joven profesional.","color":"#fbbf24"},
+{"tipo":"voz","texto":"Hoy entrenaremos ventajas estratégicas y ubicación del poder.","color":"#2563eb"},
+{"tipo":"decision","pregunta":"¿Dónde vivirías para maximizar tu eficiencia y oportunidades?","opciones":["Lejos del trabajo","Cerca del núcleo de acción","Indiferente"],"correcta":1,"explicacion":"La proximidad estratégica aumenta disponibilidad y ventaja competitiva.","recompensa":12,"color":"#22c55e"},
+{"tipo":"quiz","pregunta":"¿Qué genera ventaja competitiva personal?","opciones":["Ubicación","Suerte","Contactos"],"correcta":0,"explicacion":"Estar donde ocurren los hechos multiplica oportunidades.","recompensa":10,"color":"#38bdf8"},
+{"tipo":"acertijo","pregunta":"Siempre está delante de ti pero no puedes tocarlo. ¿Qué es?","opciones":["Futuro","Sombra","Sueño"],"correcta":0,"explicacion":"El futuro siempre se anticipa pero no se toca.","recompensa":8,"color":"#f59e0b"},
+{"tipo":"juego_mental","pregunta":"Resuelve: 6×6-10 = ?","opciones":["26","36","30"],"correcta":2,"explicacion":"6×6=36, 36-10=26","recompensa":7,"color":"#fbbf24"},
+{"tipo":"visualizacion","texto":"Visualiza tomando decisiones estratégicas con ventaja y rapidez.","color":"#a78bfa"},
+{"tipo":"respiracion","texto":"Inhala 4, retén 2, exhala 4. Refuerza tu enfoque y energía estratégica.","duracion":30,"color":"#60a5fa"},
+{"tipo":"recompensa","texto":"Tu posición estratégica y eficiencia se han fortalecido.","puntos":20,"color":"#10b981"},
+{"tipo":"cierre","texto":"Invertir en el entorno adecuado multiplica tus resultados y oportunidades.","color":"#f87171"}
+]
+},
+{
+"id":10,
+"bloques":[
+{"tipo":"respiracion","texto":"Inhala 3, retén 3, exhala 5. Centra tu mente y emociones para la sesión final.","duracion":30,"color":"#60a5fa"},
+{"tipo":"historia","texto":"El Escudo de la Especialización: Un transportista se especializó en material médico y triplicó tarifas durante una crisis sanitaria.","color":"#fbbf24"},
+{"tipo":"voz","texto":"Hoy entrenaremos enfoque, especialización y valor estratégico.","color":"#2563eb"},
+{"tipo":"decision","pregunta":"¿Te especializas en un nicho o eres generalista?","opciones":["Especialista","Generalista","Indiferente"],"correcta":0,"explicacion":"La especialización genera escasez de competencia y poder de mercado.","recompensa":12,"color":"#22c55e"},
+{"tipo":"quiz","pregunta":"¿Qué aumenta tu poder de mercado?","opciones":["Ser único en habilidades","Competir en todo","Ignorar especialización"],"correcta":0,"explicacion":"La escasez de competencia y especialización multiplica tu valor.","recompensa":10,"color":"#38bdf8"},
+{"tipo":"acertijo","pregunta":"Tiene raíces que no ves, crece sin sol, ¿qué es?","opciones":["Montaña","Conocimiento","Árbol subterráneo"],"correcta":1,"explicacion":"El conocimiento crece internamente y no siempre es visible.","recompensa":8,"color":"#f59e0b"},
+{"tipo":"juego_mental","pregunta":"Resuelve: 9×5-20 = ?","opciones":["25","45","30"],"correcta":0,"explicacion":"9×5=45, 45-20=25","recompensa":7,"color":"#fbbf24"},
+{"tipo":"visualizacion","texto":"Visualiza siendo único en tu especialización y multiplicando valor.","color":"#a78bfa"},
+{"tipo":"respiracion","texto":"Inhala 3, retén 3, exhala 5. Mantén tu enfoque y control.","duracion":30,"color":"#60a5fa"},
+{"tipo":"recompensa","texto":"Tu especialización y poder estratégico han aumentado.","puntos":20,"color":"#10b981"},
+{"tipo":"cierre","texto":"Especializarse y dominar un nicho garantiza seguridad y autoridad en tu mercado.","color":"#f87171"}
+]
+},
+{
+"id":11,
+"bloques":[
+{"tipo":"respiracion","texto":"Inhala 4, retén 3, exhala 6. Prepara tu mente para decisiones inteligentes.","duracion":30,"color":"#60a5fa"},
+{"tipo":"historia","texto":"La Estrategia de la Pregunta Correcta: Un consultor optimizó costos preguntando por fugas técnicas antes de despedir personal.","color":"#fbbf24"},
+{"tipo":"voz","texto":"Hoy trabajaremos en pensamiento crítico y toma de decisiones estratégicas.","color":"#2563eb"},
+{"tipo":"decision","pregunta":"Debes reducir costos, ¿qué priorizas?","opciones":["Despedir personal","Optimizar procesos","Ignorar"],"correcta":1,"explicacion":"Buscar fugas técnicas antes de medidas drásticas protege recursos y personas.","recompensa":12,"color":"#22c55e"},
+{"tipo":"quiz","pregunta":"¿Qué asegura eficiencia sin dañar al equipo?","opciones":["Preguntar y analizar","Imponer recortes","Ignorar problemas"],"correcta":0,"explicacion":"Analizar técnicamente evita decisiones precipitadas.","recompensa":10,"color":"#38bdf8"},
+{"tipo":"acertijo","pregunta":"Se llena de agujeros pero retiene agua, ¿qué es?","opciones":["Esponja","Red","Cubo"],"correcta":0,"explicacion":"Una esponja absorbe agua aunque tenga agujeros.","recompensa":8,"color":"#f59e0b"},
+{"tipo":"juego_mental","pregunta":"Resuelve: 12×2-8 = ?","opciones":["16","24","20"],"correcta":0,"explicacion":"12×2=24, 24-8=16","recompensa":7,"color":"#fbbf24"},
+{"tipo":"visualizacion","texto":"Visualiza encontrando soluciones inteligentes antes de actuar.","color":"#a78bfa"},
+{"tipo":"respiracion","texto":"Inhala 4, retén 3, exhala 6. Refuerza claridad y enfoque.","duracion":30,"color":"#60a5fa"},
+{"tipo":"recompensa","texto":"Tu capacidad de análisis y decisiones estratégicas ha mejorado.","puntos":20,"color":"#10b981"},
+{"tipo":"cierre","texto":"Hacer las preguntas correctas multiplica la eficiencia y protege recursos.","color":"#f87171"}
+]
+},
+{
+"id":12,
+"bloques":[
+{"tipo":"respiracion","texto":"Inhala 5, retén 2, exhala 5. Centra tu mente y cuerpo para la sesión.","duracion":30,"color":"#60a5fa"},
+{"tipo":"historia","texto":"El Filtro de Relaciones de Calidad: Un empresario dejó eventos masivos y organizó cenas privadas que multiplicaron su influencia.","color":"#fbbf24"},
+{"tipo":"voz","texto":"Hoy trabajaremos en redes sociales estratégicas y calidad sobre cantidad.","color":"#2563eb"},
+{"tipo":"decision","pregunta":"Participarías en networking masivo o en grupos selectos?","opciones":["Networking masivo","Grupos selectos","Evitar networking"],"correcta":1,"explicacion":"La calidad de relaciones estratégicas genera más oportunidades que la cantidad.","recompensa":12,"color":"#22c55e"},
+{"tipo":"quiz","pregunta":"¿Qué potencia la influencia personal?","opciones":["Cantidad de contactos","Relaciones de calidad","Suerte"],"correcta":1,"explicacion":"Conectar personas útiles fortalece tu influencia y oportunidades.","recompensa":10,"color":"#38bdf8"},
+{"tipo":"acertijo","pregunta":"Sube sin moverse, ¿qué es?","opciones":["Edad","Temperatura","Ascensor"],"correcta":0,"explicacion":"La edad siempre sube con el tiempo.","recompensa":8,"color":"#f59e0b"},
+{"tipo":"juego_mental","pregunta":"Resuelve: 18-6÷2 = ?","opciones":["15","12","21"],"correcta":1,"explicacion":"6÷2=3, 18-3=15","recompensa":7,"color":"#fbbf24"},
+{"tipo":"visualizacion","texto":"Visualiza relaciones estratégicas exitosas y beneficiosas.","color":"#a78bfa"},
+{"tipo":"respiracion","texto":"Inhala 5, retén 2, exhala 5. Siente tu calma y seguridad social.","duracion":30,"color":"#60a5fa"},
+{"tipo":"recompensa","texto":"Tus relaciones estratégicas se han fortalecido.","puntos":20,"color":"#10b981"},
+{"tipo":"cierre","texto":"La calidad de tus relaciones multiplica tu poder e influencia.","color":"#f87171"}
+]
+},
+{
+"id":13,
+"bloques":[
+{"tipo":"respiracion","texto":"Inhala 4, retén 4, exhala 6. Siente tu mente clara para la toma de decisiones.","duracion":30,"color":"#60a5fa"},
+{"tipo":"historia","texto":"El Activo de la Claridad Documental: Documentos impecables evitaron multas y retrasos a un agente de carga.","color":"#fbbf24"},
+{"tipo":"voz","texto":"Hoy trabajaremos en precisión, orden y control de detalles.","color":"#2563eb"},
+{"tipo":"decision","pregunta":"Cómo gestionas documentos importantes?","opciones":["Revisar cuidadosamente","Hacer rápido","Delegar sin supervisión"],"correcta":0,"explicacion":"La precisión evita errores costosos y estrés futuro.","recompensa":12,"color":"#22c55e"},
+{"tipo":"quiz","pregunta":"¿Qué previene sanciones y problemas operativos?","opciones":["Orden y detalle","Apresuramiento","Ignorar procesos"],"correcta":0,"explicacion":"La claridad y precisión evita multas y retrasos.","recompensa":10,"color":"#38bdf8"},
+{"tipo":"acertijo","pregunta":"Siempre está en el mismo lugar, pero cambia constantemente. ¿Qué es?","opciones":["Reloj","Agua","Luz"],"correcta":0,"explicacion":"El reloj cambia sus agujas constantemente aunque permanece en el mismo lugar.","recompensa":8,"color":"#f59e0b"},
+{"tipo":"juego_mental","pregunta":"Resuelve: 30÷5 + 7 = ?","opciones":["13","12","15"],"correcta":0,"explicacion":"30÷5=6, 6+7=13","recompensa":7,"color":"#fbbf24"},
+{"tipo":"visualizacion","texto":"Visualiza resolviendo problemas con precisión y orden.","color":"#a78bfa"},
+{"tipo":"respiracion","texto":"Inhala 4, retén 4, exhala 6. Mantén la calma y la atención al detalle.","duracion":30,"color":"#60a5fa"},
+{"tipo":"recompensa","texto":"Tu capacidad de precisión y control ha aumentado.","puntos":20,"color":"#10b981"},
+{"tipo":"cierre","texto":"El orden y la claridad en los detalles fortalecen tu poder estratégico.","color":"#f87171"}
+]
+},
+{
+"id":14,
+"bloques":[
+{"tipo":"respiracion","texto":"Inhala 3, retén 2, exhala 5. Centra tu mente para concentración máxima.","duracion":30,"color":"#60a5fa"},
+{"tipo":"historia","texto":"La Regla de los 60 Segundos: Gestionar tareas rápidas primero eliminó ruido mental a un ejecutivo de alto nivel.","color":"#fbbf24"},
+{"tipo":"voz","texto":"Hoy entrenaremos gestión de atención y eficiencia personal.","color":"#2563eb"},
+{"tipo":"decision","pregunta":"Tienes tareas que se resuelven en menos de un minuto, ¿qué haces?","opciones":["Ignorarlas","Resolverlas de inmediato","Delegar sin supervisión"],"correcta":1,"explicacion":"Resolver tareas rápidas reduce el ruido mental y aumenta productividad.","recompensa":12,"color":"#22c55e"},
+{"tipo":"quiz","pregunta":"¿Qué aumenta eficiencia personal?","opciones":["Gestionar tareas pequeñas","Acumular tareas","Evitar organización"],"correcta":0,"explicacion":"Gestionar tareas pequeñas libera mente para tareas de alto valor.","recompensa":10,"color":"#38bdf8"},
+{"tipo":"acertijo","pregunta":"Siempre avanza pero nunca retrocede. ¿Qué es?","opciones":["Tiempo","Río","Humo"],"correcta":0,"explicacion":"El tiempo siempre avanza sin retroceder.","recompensa":8,"color":"#f59e0b"},
+{"tipo":"juego_mental","pregunta":"Resuelve: 7+3×2 = ?","opciones":["20","13","17"],"correcta":1,"explicacion":"3×2=6, 7+6=13","recompensa":7,"color":"#fbbf24"},
+{"tipo":"visualizacion","texto":"Visualiza completando tareas eficientemente y sin estrés.","color":"#a78bfa"},
+{"tipo":"respiracion","texto":"Inhala 3, retén 2, exhala 5. Siente tu eficiencia y concentración.","duracion":30,"color":"#60a5fa"},
+{"tipo":"recompensa","texto":"Tu eficiencia y enfoque han aumentado significativamente.","puntos":20,"color":"#10b981"},
+{"tipo":"cierre","texto":"Gestionar la atención y tareas incrementa tu productividad y bienestar.","color":"#f87171"}
+]
+},
+{
+"id":15,
+"bloques":[
+{"tipo":"respiracion","texto":"Inhala 4, retén 3, exhala 6. Prepárate para tomar decisiones estratégicas.","duracion":30,"color":"#60a5fa"},
+{"tipo":"historia","texto":"El Escudo de la Especialización: Un transportista especializado fue el único confiable en crisis sanitaria, triplicando su tarifa.","color":"#fbbf24"},
+{"tipo":"voz","texto":"Hoy trabajaremos en especialización y enfoque estratégico.","color":"#2563eb"},
+{"tipo":"decision","pregunta":"¿Te especializas en un nicho o mantienes servicios generales?","opciones":["Especialización","Generalista","Indiferente"],"correcta":0,"explicacion":"Especializarse crea escasez de competencia y aumenta valor estratégico.","recompensa":12,"color":"#22c55e"},
+{"tipo":"quiz","pregunta":"¿Qué genera ventaja competitiva única?","opciones":["Especialización","Ser generalista","Ignorar"],"correcta":0,"explicacion":"Ser especialista en un nicho escaso multiplica tu autoridad y tarifas.","recompensa":10,"color":"#38bdf8"},
+{"tipo":"acertijo","pregunta":"Cuanto más quitas, más grande se vuelve. ¿Qué es?","opciones":["Agujero","Río","Sombra"],"correcta":0,"explicacion":"Un agujero se hace más grande a medida que se quita tierra.","recompensa":8,"color":"#f59e0b"},
+{"tipo":"juego_mental","pregunta":"Resuelve: 10×4-15 = ?","opciones":["25","35","40"],"correcta":0,"explicacion":"10×4=40, 40-15=25","recompensa":7,"color":"#fbbf24"},
+{"tipo":"visualizacion","texto":"Visualiza tu dominio en un nicho especializado.","color":"#a78bfa"},
+{"tipo":"respiracion","texto":"Inhala 4, retén 3, exhala 6. Refuerza tu enfoque y especialización.","duracion":30,"color":"#60a5fa"},
+{"tipo":"recompensa","texto":"Tu especialización y valor estratégico han aumentado.","puntos":20,"color":"#10b981"},
+{"tipo":"cierre","texto":"La especialización garantiza ventaja competitiva y poder de mercado.","color":"#f87171"}
+]
+},
+{
+"id":16,
+"bloques":[
+{"tipo":"respiracion","texto":"Inhala 3, retén 3, exhala 5. Siente tu mente alerta y serena.","duracion":30,"color":"#60a5fa"},
+{"tipo":"historia","texto":"La Estrategia del Aliado Invisible: Ayudar a otros primero generó oportunidades inesperadas.","color":"#fbbf24"},
+{"tipo":"voz","texto":"Hoy entrenaremos generosidad estratégica y networking de alto nivel.","color":"#2563eb"},
+{"tipo":"decision","pregunta":"Un aliado necesita ayuda sin beneficio inmediato, ¿qué haces?","opciones":["Ayudar","Esperar beneficio","Negar ayuda"],"correcta":0,"explicacion":"Ayudar estratégicamente fortalece relaciones y poder a largo plazo.","recompensa":12,"color":"#22c55e"},
+{"tipo":"quiz","pregunta":"¿Qué construye poder a largo plazo?","opciones":["Generosidad estratégica","Competencia feroz","Indiferencia"],"correcta":0,"explicacion":"Ayudar y tejer redes antes de necesitarlas multiplica tu influencia.","recompensa":10,"color":"#38bdf8"},
+{"tipo":"acertijo","pregunta":"Vuelo sin alas, lloro sin ojos. ¿Qué soy?","opciones":["Nube","Viento","Eco"],"correcta":0,"explicacion":"La nube se mueve y llueve sin ojos ni alas.","recompensa":8,"color":"#f59e0b"},
+{"tipo":"juego_mental","pregunta":"Resuelve: 16÷4+7 = ?","opciones":["11","10","9"],"correcta":0,"explicacion":"16÷4=4, 4+7=11","recompensa":7,"color":"#fbbf24"},
+{"tipo":"visualizacion","texto":"Visualiza generando oportunidades ayudando primero a otros.","color":"#a78bfa"},
+{"tipo":"respiracion","texto":"Inhala 3, retén 3, exhala 5. Refuerza tu calma y estrategia social.","duracion":30,"color":"#60a5fa"},
+{"tipo":"recompensa","texto":"Tu red de contactos y estrategia social se fortalecen.","puntos":20,"color":"#10b981"},
+{"tipo":"cierre","texto":"Ayudar primero multiplica tu poder e influencia estratégica.","color":"#f87171"}
+]
+},
+{
+"id":17,
+"bloques":[
+{"tipo":"respiracion","texto":"Inhala 4, retén 4, exhala 6. Centra tu mente para decisiones inteligentes.","duracion":30,"color":"#60a5fa"},
+{"tipo":"historia","texto":"La Inversión en el Entorno: Vivir cerca de la acción multiplicó oportunidades y ascensos para un joven profesional.","color":"#fbbf24"},
+{"tipo":"voz","texto":"Hoy trabajaremos en ventajas estratégicas de ubicación y entorno.","color":"#2563eb"},
+{"tipo":"decision","pregunta":"¿Dónde vivirías para maximizar oportunidades?","opciones":["Cerca del núcleo de acción","Lejos del trabajo","Indiferente"],"correcta":0,"explicacion":"Estar cerca del centro de acción multiplica tus oportunidades y energía.","recompensa":12,"color":"#22c55e"},
+{"tipo":"quiz","pregunta":"¿Qué genera ventaja competitiva personal?","opciones":["Ubicación estratégica","Suerte","Contactos"],"correcta":0,"explicacion":"Estar donde ocurre la acción multiplica tus oportunidades.","recompensa":10,"color":"#38bdf8"},
+{"tipo":"acertijo","pregunta":"Cuanto más quitas, más grande se vuelve. ¿Qué es?","opciones":["Agujero","Río","Sombra"],"correcta":0,"explicacion":"Un agujero aumenta a medida que se quita material.","recompensa":8,"color":"#f59e0b"},
+{"tipo":"juego_mental","pregunta":"Resuelve: 9×5-15 = ?","opciones":["30","25","40"],"correcta":0,"explicacion":"9×5=45, 45-15=30","recompensa":7,"color":"#fbbf24"},
+{"tipo":"visualizacion","texto":"Visualiza tomando decisiones rápidas y estratégicas en tu entorno.","color":"#a78bfa"},
+{"tipo":"respiracion","texto":"Inhala 4, retén 4, exhala 6. Siente tu enfoque y energía estratégica.","duracion":30,"color":"#60a5fa"},
+{"tipo":"recompensa","texto":"Tu ubicación y decisiones estratégicas han mejorado.","puntos":20,"color":"#10b981"},
+{"tipo":"cierre","texto":"Invertir en un entorno estratégico multiplica tus resultados y oportunidades.","color":"#f87171"}
+]
+},
+{
+"id":18,
+"bloques":[
+{"tipo":"respiracion","texto":"Inhala 5, retén 3, exhala 7. Siente tu mente clara y tu poder activo.","duracion":30,"color":"#60a5fa"},
+{"tipo":"historia","texto":"El Filtro de la Prosperidad: Separar problemas por tiempo y dinero liberó la mente de un inversionista.","color":"#fbbf24"},
+{"tipo":"voz","texto":"Hoy trabajaremos en gestión de recursos y tiempo para bienestar y estrategia.","color":"#2563eb"},
+{"tipo":"decision","pregunta":"Tienes varios problemas simultáneos, ¿cómo los organizas?","opciones":["Resolver todos a la vez","Separar según tiempo y dinero","Ignorar algunos"],"correcta":1,"explicacion":"Organizar por tipo y prioridad libera la mente para decisiones estratégicas.","recompensa":12,"color":"#22c55e"},
+{"tipo":"quiz","pregunta":"¿Qué libera la mente para pensar estratégicamente?","opciones":["Delegar y organizar","Acumular tareas","Ignorar problemas"],"correcta":0,"explicacion":"Delegar y organizar problemas permite enfocarse en decisiones de alto nivel.","recompensa":10,"color":"#38bdf8"},
+{"tipo":"acertijo","pregunta":"Tiene llaves pero no cerraduras, ¿qué es?","opciones":["Piano","Casa","Candado"],"correcta":0,"explicacion":"Un piano tiene teclas llamadas 'llaves'.","recompensa":8,"color":"#f59e0b"},
+{"tipo":"juego_mental","pregunta":"Resuelve: 25÷5 + 6 = ?","opciones":["11","12","10"],"correcta":1,"explicacion":"25÷5=5, 5+6=11","recompensa":7,"color":"#fbbf24"},
+{"tipo":"visualizacion","texto":"Visualiza usando dinero y tiempo de manera estratégica para maximizar resultados.","color":"#a78bfa"},
+{"tipo":"respiracion","texto":"Inhala 5, retén 3, exhala 7. Siente tu claridad y control sobre los recursos.","duracion":30,"color":"#60a5fa"},
+{"tipo":"recompensa","texto":"Tu capacidad de priorizar y usar recursos ha aumentado.","puntos":20,"color":"#10b981"},
+{"tipo":"cierre","texto":"Gestionar recursos y tiempo sabiamente multiplica tu prosperidad y bienestar.","color":"#f87171"}
+]
+},
+{
+"id":19,
+"bloques":[
+{"tipo":"respiracion","texto":"Inhala 4, retén 3, exhala 6. Prepara mente y cuerpo para decisiones estratégicas.","duracion":30,"color":"#60a5fa"},
+{"tipo":"historia","texto":"El Valor del Silencio en la Mesa: Un empresario dejó de hablar durante la negociación y obtuvo mejor trato.","color":"#fbbf24"},
+{"tipo":"voz","texto":"Hoy entrenaremos comunicación estratégica y control emocional.","color":"#2563eb"},
+{"tipo":"decision","pregunta":"Durante una negociación, te ofrecen menos de lo esperado, ¿qué haces?","opciones":["Rebatir inmediatamente","Mantener silencio","Aceptar sin discutir"],"correcta":1,"explicacion":"El silencio genera presión y puede revertir la oferta a tu favor.","recompensa":12,"color":"#22c55e"},
+{"tipo":"quiz","pregunta":"¿Qué es una herramienta de poder en negociación?","opciones":["Hablar primero","Mantener silencio","Mostrar enojo"],"correcta":1,"explicacion":"El silencio estratégico provoca que la otra parte ceda primero.","recompensa":10,"color":"#38bdf8"},
+{"tipo":"acertijo","pregunta":"Tiene ojos pero no ve, ¿qué es?","opciones":["Papel","Río","Agua"],"correcta":0,"explicacion":"El papel tiene 'ojos' de perforación o marcas pero no ve.","recompensa":8,"color":"#f59e0b"},
+{"tipo":"juego_mental","pregunta":"Resuelve: 14+6×2 = ?","opciones":["26","32","24"],"correcta":0,"explicacion":"6×2=12, 14+12=26","recompensa":7,"color":"#fbbf24"},
+{"tipo":"visualizacion","texto":"Visualiza manteniendo calma en negociaciones y situaciones de presión.","color":"#a78bfa"},
+{"tipo":"respiracion","texto":"Inhala 4, retén 3, exhala 6. Refuerza autocontrol y serenidad.","duracion":30,"color":"#60a5fa"},
+{"tipo":"recompensa","texto":"Tu control emocional y poder de negociación han mejorado.","puntos":20,"color":"#10b981"},
+{"tipo":"cierre","texto":"El silencio estratégico aumenta tu influencia y efectividad en decisiones críticas.","color":"#f87171"}
+]
+},
+{
+"id":20,
+"bloques":[
+{"tipo":"respiracion","texto":"Inhala 5, retén 2, exhala 5. Centra tu mente y respiración.","duracion":30,"color":"#60a5fa"},
+{"tipo":"historia","texto":"La Estiba de Oro: Cambiar madera por pallets plásticos evitó una multa costosa a un transportista.","color":"#fbbf24"},
+{"tipo":"voz","texto":"Hoy trabajaremos en prevención, adaptación y pensamiento técnico.","color":"#2563eb"},
+{"tipo":"decision","pregunta":"Tu carga incumple normativas, ¿qué haces?","opciones":["Esperar inspección","Adaptar según normas","Argumentar con la autoridad"],"correcta":1,"explicacion":"Adaptar la carga según las normas previene problemas y pérdidas.","recompensa":12,"color":"#22c55e"},
+{"tipo":"quiz","pregunta":"¿Qué protege mejor tu negocio?","opciones":["Prevención y adaptación","Negociación agresiva","Ignorar reglas"],"correcta":0,"explicacion":"Actuar preventivamente evita sanciones y pérdidas económicas.","recompensa":10,"color":"#38bdf8"},
+{"tipo":"acertijo","pregunta":"Blanca como la nieve, fría como el hielo, pero nunca se derrite. ¿Qué es?","opciones":["Papel","Nube","Marfil"],"correcta":2,"explicacion":"El marfil es blanco y frío al tacto pero sólido y duradero.","recompensa":8,"color":"#f59e0b"},
+{"tipo":"juego_mental","pregunta":"Resuelve: 20÷4+8 = ?","opciones":["13","18","10"],"correcta":1,"explicacion":"20÷4=5, 5+8=13","recompensa":7,"color":"#fbbf24"},
+{"tipo":"visualizacion","texto":"Visualiza resolviendo problemas técnicos y preservando recursos.","color":"#a78bfa"},
+{"tipo":"respiracion","texto":"Inhala 5, retén 2, exhala 5. Siente tu capacidad de adaptación.","duracion":30,"color":"#60a5fa"},
+{"tipo":"recompensa","texto":"Tu habilidad de prevención y adaptación se ha fortalecido.","puntos":20,"color":"#10b981"},
+{"tipo":"cierre","texto":"Prevenir y adaptarse técnicamente preserva recursos y genera éxito.","color":"#f87171"}
+]
+},
+{
+"id":21,
+"bloques":[
+{"tipo":"respiracion","texto":"Inhala 4, retén 4, exhala 6. Siente tu enfoque en cada decisión.","duracion":30,"color":"#60a5fa"},
+{"tipo":"historia","texto":"El Arquitecto de Decisiones: Bloquear la agenda de la mañana aseguró salud y claridad para un hombre de negocios.","color":"#fbbf24"},
+{"tipo":"voz","texto":"Hoy trabajaremos en bienestar físico y planificación de alta productividad.","color":"#2563eb"},
+{"tipo":"decision","pregunta":"Quieres ser más productivo, ¿qué haces con tu agenda?","opciones":["Bloquear horas para salud","Dejar todo abierto","Atender solo urgencias"],"correcta":0,"explicacion":"Priorizar bienestar aumenta claridad y efectividad en decisiones.","recompensa":12,"color":"#22c55e"},
+{"tipo":"quiz","pregunta":"¿Qué mejora la agudeza en decisiones?","opciones":["Salud y descanso","Suerte","Riesgo constante"],"correcta":0,"explicacion":"Un cuerpo y mente descansados permiten decisiones más agudas.","recompensa":10,"color":"#38bdf8"},
+{"tipo":"acertijo","pregunta":"Tengo ciudades pero no casas, ríos pero no agua. ¿Qué soy?","opciones":["Mapa","Libro","Puzzle"],"correcta":0,"explicacion":"Un mapa representa lugares sin contenerlos físicamente.","recompensa":8,"color":"#f59e0b"},
+{"tipo":"juego_mental","pregunta":"Resuelve: 50-8×5 = ?","opciones":["10","20","30"],"correcta":0,"explanation":"8×5=40, 50-40=10","recompensa":7,"color":"#fbbf24"},
+{"tipo":"visualizacion","texto":"Visualiza tu bienestar físico impactando tus decisiones de manera positiva.","color":"#a78bfa"},
+{"tipo":"respiracion","texto":"Inhala 4, retén 4, exhala 6. Refuerza tu claridad y energía.","duracion":30,"color":"#60a5fa"},
+{"tipo":"recompensa","texto":"Tu bienestar físico y capacidad de decisión se han fortalecido.","puntos":20,"color":"#10b981"},
+{"tipo":"cierre","texto":"Invertir en tu salud multiplica tu efectividad y éxito.","color":"#f87171"}
+]
+},
+{
+"id":22,
+"bloques":[
+{"tipo":"respiracion","texto":"Inhala 5, retén 3, exhala 5. Centra tu mente y cuerpo para análisis estratégico.","duracion":30,"color":"#60a5fa"},
+{"tipo":"historia","texto":"El Poder del Reconocimiento Invisible: Escuchar y facilitar herramientas aumentó la eficiencia de estibadores un 30%.","color":"#fbbf24"},
+{"tipo":"voz","texto":"Hoy trabajaremos en liderazgo silencioso y reconocimiento efectivo.","color":"#2563eb"},
+{"tipo":"decision","pregunta":"Notas bajo rendimiento en tu equipo, ¿qué haces primero?","opciones":["Emitir advertencia","Escuchar y facilitar recursos","Ignorar"],"correcta":1,"explicacion":"Escuchar primero y facilitar recursos motiva y mejora productividad sin conflictos.","recompensa":12,"color":"#22c55e"},
+{"tipo":"quiz","pregunta":"¿Qué mejora el rendimiento de tu equipo?","opciones":["Facilitar herramientas","Amenazas","Ignorar"],"correcta":0,"explicacion":"Proveer recursos adecuados y apoyo aumenta eficiencia y motivación.","recompensa":10,"color":"#38bdf8"},
+{"tipo":"acertijo","pregunta":"Tiene dientes pero no muerde, ¿qué es?","opciones":["Peine","Cuchillo","Sierra"],"correcta":0,"explicacion":"Un peine tiene dientes que no muerden.","recompensa":8,"color":"#f59e0b"},
+{"tipo":"juego_mental","pregunta":"Resuelve: 18+12÷3 = ?","opciones":["22","28","24"],"correcta":2,"explanation":"12÷3=4, 18+4=22","recompensa":7,"color":"#fbbf24"},
+{"tipo":"visualizacion","texto":"Visualiza liderando con apoyo y generando alto rendimiento.","color":"#a78bfa"},
+{"tipo":"respiracion","texto":"Inhala 5, retén 3, exhala 5. Siente tu calma y liderazgo efectivo.","duracion":30,"color":"#60a5fa"},
+{"tipo":"recompensa","texto":"Tu liderazgo silencioso y capacidad de reconocimiento ha mejorado.","puntos":20,"color":"#10b981"},
+{"tipo":"cierre","texto":"El reconocimiento estratégico y apoyo fortalece la productividad y relaciones.","color":"#f87171"}
+]
+},
+{
+"id":23,
+"bloques":[
+{"tipo":"respiracion","texto":"Inhala 4, retén 2, exhala 6. Centra tu energía en estrategia y decisiones.","duracion":30,"color":"#60a5fa"},
+{"tipo":"historia","texto":"La Estrategia del Aliado Invisible nuevamente: Ayudar sin pedir beneficio genera oportunidades futuras inesperadas.","color":"#fbbf24"},
+{"tipo":"voz","texto":"Hoy entrenaremos networking estratégico y generosidad anticipada.","color":"#2563eb"},
+{"tipo":"decision","pregunta":"Un socio necesita apoyo sin beneficio inmediato, ¿qué haces?","opciones":["Ayudar proactivamente","Esperar beneficio","Negar ayuda"],"correcta":0,"explicacion":"Ayudar antes de necesitarlo construye poder y redes fuertes.","recompensa":12,"color":"#22c55e"},
+{"tipo":"quiz","pregunta":"¿Qué genera oportunidades futuras?","opciones":["Ayudar sin esperar","Competir ferozmente","Ignorar relaciones"],"correcta":0,"explicacion":"Ayudar estratégicamente multiplica influencia y oportunidades.","recompensa":10,"color":"#38bdf8"},
+{"tipo":"acertijo","pregunta":"Cuanto más la tomas, más grande se hace. ¿Qué es?","opciones":["Foto","Agujero","Sombra"],"correcta":1,"explanation":"Un agujero se agranda a medida que se extrae material.","recompensa":8,"color":"#f59e0b"},
+{"tipo":"juego_mental","pregunta":"Resuelve: 9×6-8 = ?","opciones":["46","54","48"],"correcta":2,"explanation":"9×6=54, 54-8=46","recompensa":7,"color":"#fbbf24"},
+{"tipo":"visualizacion","texto":"Visualiza creando redes sólidas ayudando primero a otros.","color":"#a78bfa"},
+{"tipo":"respiracion","texto":"Inhala 4, retén 2, exhala 6. Refuerza tu serenidad y estrategia social.","duracion":30,"color":"#60a5fa"},
+{"tipo":"recompensa","texto":"Tu red de relaciones estratégicas y poder ha crecido.","puntos":20,"color":"#10b981"},
+{"tipo":"cierre","texto":"Generar valor antes de necesitarlo multiplica tu influencia y oportunidades.","color":"#f87171"}
+]
+},
+{
+"id":24,
+"bloques":[
+{"tipo":"respiracion","texto":"Inhala 3, retén 2, exhala 5. Prepara mente y cuerpo para decisiones críticas.","duracion":30,"color":"#60a5fa"},
+{"tipo":"historia","texto":"La Inversión en el Entorno nuevamente: Vivir cerca del centro logístico generó energía y ventajas competitivas.","color":"#fbbf24"},
+{"tipo":"voz","texto":"Hoy trabajaremos en ubicación estratégica y eficiencia personal.","color":"#2563eb"},
+{"tipo":"decision","pregunta":"Elegirías vivir cerca de tu trabajo para optimizar tiempo?","opciones":["Sí, cerca","No, lejos","Indiferente"],"correcta":0,"explicacion":"Estar cerca maximiza oportunidades y ahorro de energía.","recompensa":12,"color":"#22c55e"},
+{"tipo":"quiz","pregunta":"¿Qué optimiza productividad y ventajas competitivas?","opciones":["Ubicación estratégica","Suerte","Conexiones"],"correcta":0,"explicacion":"Ubicación cercana permite acción rápida y ascensos más rápidos.","recompensa":10,"color":"#38bdf8"},
+{"tipo":"acertijo","pregunta":"Tiene ciudades pero no casas, ríos pero no agua. ¿Qué es?","opciones":["Mapa","Libro","Puzzle"],"correcta":0,"explanacion":"Un mapa representa lugares sin contenerlos físicamente.","recompensa":8,"color":"#f59e0b"},
+{"tipo":"juego_mental","pregunta":"Resuelve: 8×7-20 = ?","opciones":["36","46","56"],"correcta":1,"explanacion":"8×7=56, 56-20=36","recompensa":7,"color":"#fbbf24"},
+{"tipo":"visualizacion","texto":"Visualiza aprovechando la ubicación para maximizar oportunidades.","color":"#a78bfa"},
+{"tipo":"respiracion","texto":"Inhala 3, retén 2, exhala 5. Siente tu enfoque y energía positiva.","duracion":30,"color":"#60a5fa"},
+{"tipo":"recompensa","texto":"Tu ubicación estratégica y eficiencia han mejorado.","puntos":20,"color":"#10b981"},
+{"tipo":"cierre","texto":"Invertir en entorno estratégico multiplica tu energía, oportunidades y éxito.","color":"#f87171"}
+]
+},
+{
+"id":25,
+"bloques":[
+{"tipo":"respiracion","texto":"Inhala 4, retén 3, exhala 6. Prepara tu mente para decisiones financieras y estratégicas.","duracion":30,"color":"#60a5fa"},
+{"tipo":"historia","texto":"El Filtro de la Prosperidad nuevamente: Separar problemas por tipo liberó mente de un inversionista.","color":"#fbbf24"},
+{"tipo":"voz","texto":"Hoy trabajaremos en gestión de recursos y tiempo para optimizar bienestar y resultados.","color":"#2563eb"},
+{"tipo":"decision","pregunta":"Debes manejar múltiples problemas, ¿cómo los clasificas?","opciones":["Todos a la vez","Por prioridad y recursos","Ignorarlos"],"correcta":1,"explicacion":"Separar por prioridad y recursos maximiza eficiencia y reduce estrés.","recompensa":12,"color":"#22c55e"},
+{"tipo":"quiz","pregunta":"¿Qué libera mente para decisiones estratégicas?","opciones":["Organización y delegación","Acumular","Ignorar"],"correcta":0,"explicacion":"Delegar y organizar problemas libera la mente para decisiones de alto nivel.","recompensa":10,"color":"#38bdf8"},
+{"tipo":"acertijo","pregunta":"Vuelo sin alas, lloro sin ojos. ¿Qué soy?","opciones":["Nube","Viento","Eco"],"correcta":0,"explanacion":"La nube se mueve y llueve sin ojos ni alas.","recompensa":8,"color":"#f59e0b"},
+{"tipo":"juego_mental","pregunta":"Resuelve: 15+9÷3 = ?","opciones":["18","20","21"],"correcta":0,"explanacion":"9÷3=3, 15+3=18","recompensa":7,"color":"#fbbf24"},
+{"tipo":"visualizacion","texto":"Visualiza usando tiempo y dinero estratégicamente.","color":"#a78bfa"},
+{"tipo":"respiracion","texto":"Inhala 4, retén 3, exhala 6. Siente tu claridad y control.","duracion":30,"color":"#60a5fa"},
+{"tipo":"recompensa","texto":"Tu capacidad de organización y gestión de recursos ha mejorado.","puntos":20,"color":"#10b981"},
+{"tipo":"cierre","texto":"Gestionar tiempo y recursos estratégicamente multiplica prosperidad y bienestar.","color":"#f87171"}
+]
+},
+{
+"id":126,
+"bloques":[
+{"tipo":"respiracion","texto":"Inhala 4, retén 2, exhala 6. Prepárate para pensar estratégicamente.","duracion":30,"color":"#60a5fa"},
+{"tipo":"historia","texto":"El Escudo de la Especialización: Un transportista especializado triplicó tarifas durante crisis sanitaria sin competencia.","color":"#fbbf24"},
+{"tipo":"voz","texto":"Hoy trabajaremos en especialización y posicionamiento estratégico.","color":"#2563eb"},
+{"tipo":"decision","pregunta":"Quieres proteger tu nicho de mercado, ¿qué haces?","opciones":["Especializarte","Aceptar todo tipo de clientes","Reducir calidad"],"correcta":0,"explicacion":"La especialización fortalece posición y permite tarifas premium.","recompensa":12,"color":"#22c55e"},
+{"tipo":"quiz","pregunta":"¿Qué genera escasez de competencia?","opciones":["Especialización","Competencia masiva","Precios bajos"],"correcta":0,"explanacion":"La especialización crea ventajas y reduce competencia directa.","recompensa":10,"color":"#38bdf8"},
+{"tipo":"acertijo","pregunta":"Tengo agujas pero no coso. ¿Qué soy?","opciones":["Reloj","Cactus","Pino"],"correcta":0,"explanacion":"El reloj tiene agujas que marcan el tiempo.","recompensa":8,"color":"#f59e0b"},
+{"tipo":"juego_mental","pregunta":"Resuelve: 7×8-15 = ?","opciones":["41","56","41"],"correcta":0,"explanacion":"7×8=56, 56-15=41","recompensa":7,"color":"#fbbf24"},
+{"tipo":"visualizacion","texto":"Visualiza tu éxito alcanzando el liderazgo por especialización.","color":"#a78bfa"},
+{"tipo":"respiracion","texto":"Inhala 4, retén 2, exhala 6. Siente tu concentración y estrategia.","duracion":30,"color":"#60a5fa"},
+{"tipo":"recompensa","texto":"Tu especialización y poder de mercado se han fortalecido.","puntos":20,"color":"#10b981"},
+{"tipo":"cierre","texto":"La especialización estratégica protege tu posición y multiplica oportunidades.","color":"#f87171"}
+]
+},
+{
+"id":27,
+"bloques":[
+{"tipo":"respiracion","texto":"Inhala 5, retén 3, exhala 5. Centra tu mente para decisiones de alto impacto.","duracion":30,"color":"#60a5fa"},
+{"tipo":"historia","texto":"La Estrategia de la Pregunta Correcta: Un consultor externo encontró la fuga de capital antes de despedir empleados.","color":"#fbbf24"},
+{"tipo":"voz","texto":"Hoy trabajaremos en análisis crítico y optimización de recursos.","color":"#2563eb"},
+{"tipo":"decision","pregunta":"Quieres reducir costos, ¿qué haces primero?","opciones":["Despedir personal","Analizar procesos","Recortar inversiones"],"correcta":1,"explicacion":"Analizar procesos identifica fugas antes de afectar capital humano.","recompensa":12,"color":"#22c55e"},
+{"tipo":"quiz","pregunta":"¿Qué evita decisiones costosas en empresas?","opciones":["Análisis detallado","Despedir rápido","Ignorar datos"],"correcta":0,"explanacion":"El análisis crítico detecta fugas y optimiza recursos sin perder talento.","recompensa":10,"color":"#38bdf8"},
+{"tipo":"acertijo","pregunta":"Cuanto más se quita, más grande se vuelve. ¿Qué es?","opciones":["Agujero","Papel","Tierra"],"correcta":0,"explanacion":"Un agujero crece a medida que se extrae material.","recompensa":8,"color":"#f59e0b"},
+{"tipo":"juego_mental","pregunta":"Resuelve: 36÷6+7 = ?","opciones":["13","15","17"],"correcta":1,"explanacion":"36÷6=6, 6+7=13","recompensa":7,"color":"#fbbf24"},
+{"tipo":"visualizacion","texto":"Visualiza detectando fugas y optimizando recursos de manera eficiente.","color":"#a78bfa"},
+{"tipo":"respiracion","texto":"Inhala 5, retén 3, exhala 5. Refuerza concentración y análisis.","duracion":30,"color":"#60a5fa"},
+{"tipo":"recompensa","texto":"Tu capacidad de análisis y optimización se ha fortalecido.","puntos":20,"color":"#10b981"},
+{"tipo":"cierre","texto":"Preguntar lo correcto y analizar procesos evita pérdidas y multiplica eficiencia.","color":"#f87171"}
+]
+},
+{
+"id":28,
+"bloques":[
+{"tipo":"respiracion","texto":"Inhala 4, retén 3, exhala 6. Prepara tu mente para decisiones estratégicas y relaciones.","duracion":30,"color":"#60a5fa"},
+{"tipo":"historia","texto":"El Filtro de Relaciones de Calidad: Elegir eventos estratégicos aumentó la influencia de un empresario exitoso.","color":"#fbbf24"},
+{"tipo":"voz","texto":"Hoy entrenaremos networking estratégico y selección de relaciones.","color":"#2563eb"},
+{"tipo":"decision","pregunta":"Debes asistir a un evento masivo, ¿qué haces?","opciones":["Evitar eventos grandes","Seleccionar personas clave","Asistir a todos"],"correcta":1,"explicacion":"Seleccionar relaciones estratégicas aumenta influencia y acceso a oportunidades.","recompensa":12,"color":"#22c55e"},
+{"tipo":"quiz","pregunta":"¿Qué multiplica influencia social?","opciones":["Relaciones estratégicas","Número de contactos","Asistencia masiva"],"correcta":0,"explanacion":"Conectar personas clave genera mayor influencia y oportunidades.","recompensa":10,"color":"#38bdf8"},
+{"tipo":"acertijo","pregunta":"Cuanto más quitas, más se hace. ¿Qué es?","opciones":["Agujero","Tiempo","Espacio"],"correcta":0,"explanacion":"Un agujero se hace más grande a medida que se quita material.","recompensa":8,"color":"#f59e0b"},
+{"tipo":"juego_mental","pregunta":"Resuelve: 9×5-18 = ?","opciones":["27","30","25"],"correcta":0,"explanacion":"9×5=45, 45-18=27","recompensa":7,"color":"#fbbf24"},
+{"tipo":"visualizacion","texto":"Visualiza relaciones estratégicas que te generan ventajas sostenibles.","color":"#a78bfa"},
+{"tipo":"respiracion","texto":"Inhala 4, retén 3, exhala 6. Refuerza calma y claridad en relaciones.","duracion":30,"color":"#60a5fa"},
+{"tipo":"recompensa","texto":"Tu networking estratégico y relaciones de calidad han mejorado.","puntos":20,"color":"#10b981"},
+{"tipo":"cierre","texto":"Conectar personas clave estratégicamente multiplica influencia y oportunidades.","color":"#f87171"}
+]
+},
+{
+"id":29,
+"bloques":[
+{"tipo":"respiracion","texto":"Inhala 5, retén 2, exhala 5. Prepárate para tomar decisiones de alto nivel.","duracion":30,"color":"#60a5fa"},
+{"tipo":"historia","texto":"El Activo de la Claridad Documental: Invertir tiempo en documentación impecable evitó inspecciones y multas.","color":"#fbbf24"},
+{"tipo":"voz","texto":"Hoy entrenaremos precisión y atención al detalle.","color":"#2563eb"},
+{"tipo":"decision","pregunta":"Debes preparar documentos críticos, ¿cómo actúas?","opciones":["Dedicar tiempo extra y revisar","Enviar rápido sin revisar","Delegar sin supervisión"],"correcta":0,"explicacion":"Revisar meticulosamente asegura eficiencia y evita sanciones.","recompensa":12,"color":"#22c55e"},
+{"tipo":"quiz","pregunta":"¿Qué protege tu operación de errores y multas?","opciones":["Claridad documental","Velocidad sin control","Descuidar detalles"],"correcta":0,"explanacion":"Documentación precisa evita problemas legales y pérdidas.","recompensa":10,"color":"#38bdf8"},
+{"tipo":"acertijo","pregunta":"Tiene ciudades pero no casas, ríos pero no agua. ¿Qué es?","opciones":["Mapa","Libro","Dibujo"],"correcta":0,"explanacion":"Un mapa representa lugares sin contenerlos físicamente.","recompensa":8,"color":"#f59e0b"},
+{"tipo":"juego_mental","pregunta":"Resuelve: 12×4-15 = ?","opciones":["33","28","35"],"correcta":0,"explanacion":"12×4=48, 48-15=33","recompensa":7,"color":"#fbbf24"},
+{"tipo":"visualizacion","texto":"Visualiza la eficiencia y éxito al mantener precisión y claridad en documentos.","color":"#a78bfa"},
+{"tipo":"respiracion","texto":"Inhala 5, retén 2, exhala 5. Refuerza atención y concentración.","duracion":30,"color":"#60a5fa"},
+{"tipo":"recompensa","texto":"Tu precisión y claridad documental se han fortalecido.","puntos":20,"color":"#10b981"},
+{"tipo":"cierre","texto":"La claridad y precisión en la documentación protege tus operaciones y aumenta tu éxito.","color":"#f87171"}
+]
+},
+{
+"id":30,
+"bloques":[
+{"tipo":"respiracion","texto":"Inhala 4, retén 3, exhala 6. Prepárate para decisiones financieras y estratégicas.","duracion":30,"color":"#60a5fa"},
+{"tipo":"historia","texto":"El Costo de la Indecisión: Escoger cobertura total de seguro evitó pérdidas durante tormenta.","color":"#fbbf24"},
+{"tipo":"voz","texto":"Hoy entrenaremos decisiones rápidas y protección de patrimonio.","color":"#2563eb"},
+{"tipo":"decision","pregunta":"Debes elegir entre seguro básico o premium, ¿qué haces?","opciones":["Elegir básico","Elegir premium","No contratar"],"correcta":1,"explicacion":"Elegir cobertura total protege ante imprevistos y evita pérdidas mayores.","recompensa":12,"color":"#22c55e"},
+{"tipo":"quiz","pregunta":"¿Qué protege mejor tu patrimonio?","opciones":["Seguros completos","Ahorro mínimo","No prever riesgos"],"correcta":0,"explanacion":"La cobertura completa previene riesgos que podrían afectar tu patrimonio.","recompensa":10,"color":"#38bdf8"},
+{"tipo":"acertijo","pregunta":"Vuelo sin alas, lloro sin ojos. ¿Qué soy?","opciones":["Nube","Viento","Eco"],"correcta":0,"explanacion":"La nube se mueve y llueve sin ojos ni alas.","recompensa":8,"color":"#f59e0b"},
+{"tipo":"juego_mental","pregunta":"Resuelve: 18÷3+7 = ?","opciones":["13","12","10"],"correcta":0,"explanacion":"18÷3=6, 6+7=13","recompensa":7,"color":"#fbbf24"},
+{"tipo":"visualizacion","texto":"Visualiza tomando decisiones que blindan tu patrimonio y bienestar.","color":"#a78bfa"},
+{"tipo":"respiracion","texto":"Inhala 4, retén 3, exhala 6. Refuerza seguridad y confianza en decisiones.","duracion":30,"color":"#60a5fa"},
+{"tipo":"recompensa","texto":"Tu capacidad de tomar decisiones financieras estratégicas ha mejorado.","puntos":20,"color":"#10b981"},
+{"tipo":"cierre","texto":"Tomar decisiones con visión y protección asegura prosperidad y bienestar.","color":"#f87171"}
+]
+},
+{
+"id":31,
+"bloques":[
+{"tipo":"respiracion","texto":"Inhala 5, retén 3, exhala 5. Centra mente y cuerpo para liderazgo efectivo.","duracion":30,"color":"#60a5fa"},
+{"tipo":"historia","texto":"La Regla de los 60 Segundos: Ejecutar decisiones rápidas eliminó ruido mental y aumentó productividad.","color":"#fbbf24"},
+{"tipo":"voz","texto":"Hoy trabajaremos en toma de decisiones rápida y manejo de atención.","color":"#2563eb"},
+{"tipo":"decision","pregunta":"Debes actuar sobre muchos correos, ¿qué haces?","opciones":["Resolver lo que toma <1 min","Leer todos","Ignorar"],"correcta":0,"explicacion":"Resolver problemas rápidos libera tiempo y reduce estrés.","recompensa":12,"color":"#22c55e"},
+{"tipo":"quiz","pregunta":"¿Qué maximiza la productividad diaria?","opciones":["Acciones rápidas y delegadas","Procrastinar","Ignorar problemas"],"correcta":0,"explanacion":"Tomar decisiones rápidas y delegar eficientemente permite enfoque en lo importante.","recompensa":10,"color":"#38bdf8"},
+{"tipo":"acertijo","pregunta":"Siempre llega pero nunca pasa. ¿Qué es?","opciones":["Tiempo","Reloj","Sombra"],"correcta":0,"explanacion":"El tiempo siempre avanza pero nunca se detiene.","recompensa":8,"color":"#f59e0b"},
+{"tipo":"juego_mental","pregunta":"Resuelve: 7×6+8 = ?","opciones":["50","55","49"],"correcta":1,"explanacion":"7×6=42, 42+8=50","recompensa":7,"color":"#fbbf24"},
+{"tipo":"visualizacion","texto":"Visualiza tomando decisiones rápidas y enfocadas con claridad.","color":"#a78bfa"},
+{"tipo":"respiracion","texto":"Inhala 5, retén 3, exhala 5. Refuerza concentración y rapidez mental.","duracion":30,"color":"#60a5fa"},
+{"tipo":"recompensa","texto":"Tu capacidad de tomar decisiones rápidas y efectivas ha mejorado.","puntos":20,"color":"#10b981"},
+{"tipo":"cierre","texto":"Gestionar tu tiempo con rapidez y enfoque multiplica productividad y bienestar.","color":"#f87171"}
+]
+},
+{
+"id":32,
+"bloques":[
+{"tipo":"respiracion","texto":"Inhala 4, retén 2, exhala 6. Prepárate para liderar con inteligencia social.","duracion":30,"color":"#60a5fa"},
+{"tipo":"historia","texto":"El Poder del Reconocimiento Invisible: Un director de operaciones incrementó eficiencia sin imponer sanciones.","color":"#fbbf24"},
+{"tipo":"voz","texto":"Hoy entrenaremos liderazgo sutil y motivación estratégica.","color":"#2563eb"},
+{"tipo":"decision","pregunta":"Quieres mejorar desempeño de tu equipo, ¿qué haces?","opciones":["Castigar errores","Reconocer necesidades","Ignorar"],"correcta":1,"explicacion":"Escuchar y facilitar soluciones aumenta eficiencia y compromiso.","recompensa":12,"color":"#22c55e"},
+{"tipo":"quiz","pregunta":"¿Qué potencia la autoridad efectiva?","opciones":["Facilitar soluciones","Imponer sanciones","Ignorar problemas"],"correcta":0,"explanacion":"La autoridad basada en apoyo y solución genera respeto y resultados.","recompensa":10,"color":"#38bdf8"},
+{"tipo":"acertijo","pregunta":"Tiene llaves pero no cerraduras. ¿Qué es?","opciones":["Piano","Puerta","Cofre"],"correcta":0,"explanacion":"El piano tiene teclas llamadas llaves, pero no cerraduras.","recompensa":8,"color":"#f59e0b"},
+{"tipo":"juego_mental","pregunta":"Resuelve: 15÷3+9 = ?","opciones":["14","14","10"],"correcta":0,"explanacion":"15÷3=5, 5+9=14","recompensa":7,"color":"#fbbf24"},
+{"tipo":"visualizacion","texto":"Visualiza motivando y resolviendo problemas de manera estratégica y calmada.","color":"#a78bfa"},
+{"tipo":"respiracion","texto":"Inhala 4, retén 2, exhala 6. Refuerza calma y claridad en liderazgo.","duracion":30,"color":"#60a5fa"},
+{"tipo":"recompensa","texto":"Tu liderazgo y capacidad de motivar estratégicamente se han fortalecido.","puntos":20,"color":"#10b981"},
+{"tipo":"cierre","texto":"Liderar con inteligencia social y motivación estratégica maximiza resultados y armonía.","color":"#f87171"}
+]
+},
+{
+"id":33,
+"bloques":[
+{"tipo":"respiracion","texto":"Inhala 5, retén 2, exhala 5. Centra mente para negociaciones y poder de influencia.","duracion":30,"color":"#60a5fa"},
+{"tipo":"historia","texto":"El Valor del Silencio en la Mesa: Un empresario cerró trato dejando que el silencio hablara.","color":"#fbbf24"},
+{"tipo":"voz","texto":"Hoy trabajaremos en negociación estratégica y control emocional.","color":"#2563eb"},
+{"tipo":"decision","pregunta":"Recibes una oferta baja en negociación, ¿cómo respondes?","opciones":["Discutes agresivamente","Mantienes silencio y observas","Aceptas de inmediato"],"correcta":1,"explanacion":"El silencio estratégico genera presión y ventaja en negociaciones.","recompensa":12,"color":"#22c55e"},
+{"tipo":"quiz","pregunta":"¿Cuál es la herramienta más poderosa en negociaciones?","opciones":["Silencio","Argumentos rápidos","Impaciencia"],"correcta":0,"explanacion":"Quien llena el silencio suele perder, mantener calma genera ventaja.","recompensa":10,"color":"#38bdf8"},
+{"tipo":"acertijo","pregunta":"Blanco como la nieve, negro como la noche, desaparece al calor. ¿Qué es?","opciones":["Humo","Carbón","Nieve"],"correcta":2,"explanacion":"La nieve se derrite con el calor.","recompensa":8,"color":"#f59e0b"},
+{"tipo":"juego_mental","pregunta":"Resuelve: 8×7-10 = ?","opciones":["46","46","50"],"correcta":0,"explanacion":"8×7=56, 56-10=46","recompensa":7,"color":"#fbbf24"},
+{"tipo":"visualizacion","texto":"Visualiza negociando con calma y obteniendo resultados favorables.","color":"#a78bfa"},
+{"tipo":"respiracion","texto":"Inhala 5, retén 2, exhala 5. Refuerza autocontrol y claridad mental.","duracion":30,"color":"#60a5fa"},
+{"tipo":"recompensa","texto":"Tu capacidad de negociar estratégicamente y mantener control se ha fortalecido.","puntos":20,"color":"#10b981"},
+{"tipo":"cierre","texto":"El silencio y control emocional son armas poderosas para influir y ganar.","color":"#f87171"}
+]
+},
+{
+"id":34,
+"bloques":[
+{"tipo":"respiracion","texto":"Inhala 4, retén 3, exhala 6. Prepara mente para adaptabilidad y resolución.","duracion":30,"color":"#60a5fa"},
+{"tipo":"historia","texto":"La Estiba de Oro: Cambiar madera por pallets plásticos permitió pasar inspección y ahorrar multa.","color":"#fbbf24"},
+{"tipo":"voz","texto":"Hoy entrenaremos adaptabilidad y toma de decisiones rápidas ante problemas técnicos.","color":"#2563eb"},
+{"tipo":"decision","pregunta":"Tu carga tiene problemas legales, ¿qué haces primero?","opciones":["Apelar al gobierno","Adaptar solución práctica","Ignorar el problema"],"correcta":1,"explanacion":"Soluciones adaptables y rápidas previenen pérdidas y problemas mayores.","recompensa":12,"color":"#22c55e"},
+{"tipo":"quiz","pregunta":"¿Qué permite superar obstáculos legales y técnicos?","opciones":["Adaptabilidad","Quejarse","Esperar instrucciones"],"correcta":0,"explanacion":"La adaptabilidad permite soluciones eficaces y oportunas.","recompensa":10,"color":"#38bdf8"},
+{"tipo":"acertijo","pregunta":"Siempre sube y baja pero nunca camina. ¿Qué es?","opciones":["Escalera","Ascensor","Montaña"],"correcta":1,"explanacion":"El ascensor sube y baja sin caminar.","recompensa":8,"color":"#f59e0b"},
+{"tipo":"juego_mental","pregunta":"Resuelve: 20-4×3 = ?","opciones":["8","12","14"],"correcta":0,"explanacion":"4×3=12, 20-12=8","recompensa":7,"color":"#fbbf24"},
+{"tipo":"visualizacion","texto":"Visualiza resolviendo problemas con rapidez y adaptabilidad.","color":"#a78bfa"},
+{"tipo":"respiracion","texto":"Inhala 4, retén 3, exhala 6. Refuerza calma y decisión en adaptación.","duracion":30,"color":"#60a5fa"},
+{"tipo":"recompensa","texto":"Tu adaptabilidad y resolución de problemas se han fortalecido.","puntos":20,"color":"#10b981"},
+{"tipo":"cierre","texto":"La adaptabilidad y soluciones rápidas te permiten superar obstáculos y conservar recursos.","color":"#f87171"}
+]
+},
+{
+"id":35,
+"bloques":[
+{"tipo":"respiracion","texto":"Inhala 5, retén 2, exhala 5. Prepárate para filtrar prioridades y recursos.","duracion":30,"color":"#60a5fa"},
+{"tipo":"historia","texto":"El Filtro de la Prosperidad: Usar dinero para eliminar problemas liberó tiempo para estrategia de alto nivel.","color":"#fbbf24"},
+{"tipo":"voz","texto":"Hoy entrenaremos gestión de recursos y toma de decisiones inteligentes.","color":"#2563eb"},
+{"tipo":"decision","pregunta":"Debes priorizar tareas y gastos, ¿qué haces?","opciones":["Atender todo","Filtrar según impacto","Ignorar planificación"],"correcta":1,"explanacion":"Filtrar según impacto permite mayor eficiencia y bienestar.","recompensa":12,"color":"#22c55e"},
+{"tipo":"quiz","pregunta":"¿Qué maximiza tu efectividad y reduce estrés?","opciones":["Priorizar y filtrar","Hacer todo rápido","Delegar sin control"],"correcta":0,"explanacion":"Priorizar tareas y recursos permite decisiones estratégicas y reduce sobrecarga.","recompensa":10,"color":"#38bdf8"},
+{"tipo":"acertijo","pregunta":"No camina pero avanza, ¿qué es?","opciones":["Reloj","Caracol","Sombra"],"correcta":0,"explanacion":"El reloj avanza constantemente sin caminar.","recompensa":8,"color":"#f59e0b"},
+{"tipo":"juego_mental","pregunta":"Resuelve: 25÷5+11 = ?","opciones":["16","15","12"],"correcta":0,"explanacion":"25÷5=5, 5+11=16","recompensa":7,"color":"#fbbf24"},
+{"tipo":"visualizacion","texto":"Visualiza gestionando recursos y tiempo de manera óptima.","color":"#a78bfa"},
+{"tipo":"respiracion","texto":"Inhala 5, retén 2, exhala 5. Refuerza claridad y enfoque en prioridades.","duracion":30,"color":"#60a5fa"},
+{"tipo":"recompensa","texto":"Tu capacidad de gestionar recursos y tomar decisiones estratégicas ha mejorado.","puntos":20,"color":"#10b981"},
+{"tipo":"cierre","texto":"Filtrar prioridades y gestionar recursos eficientemente maximiza resultados y bienestar.","color":"#f87171"}
+]
+},
+{
+"id":36,
+"bloques":[
+{"tipo":"respiracion","texto":"Inhala 4, retén 2, exhala 6. Prepárate para identificar oportunidades en la selva de negocios.","duracion":30,"color":"#60a5fa"},
+{"tipo":"historia","texto":"La Estrategia del Aliado Invisible: Resolver problemas de otros creó red de apoyo sin pedir nada a cambio.","color":"#fbbf24"},
+{"tipo":"voz","texto":"Hoy entrenaremos visión estratégica y construcción de redes de poder.","color":"#2563eb"},
+{"tipo":"decision","pregunta":"Tienes la opción de ayudar a un competidor clave, ¿qué haces?","opciones":["Ignorarlo","Ayudar estratégicamente","Competir agresivamente"],"correcta":1,"explanacion":"Ayudar estratégicamente fortalece tu red y posición a largo plazo.","recompensa":12,"color":"#22c55e"},
+{"tipo":"quiz","pregunta":"¿Qué genera poder real en relaciones sociales?","opciones":["Generosidad estratégica","Competencia agresiva","Indiferencia"],"correcta":0,"explanacion":"La generosidad anticipada crea alianzas y influencia duradera.","recompensa":10,"color":"#38bdf8"},
+{"tipo":"acertijo","pregunta":"Cuanto más quitas, más grande se hace. ¿Qué es?","opciones":["Hoyos","Río","Montaña"],"correcta":0,"explanacion":"Al quitar tierra se forma un hoyo más grande.","recompensa":8,"color":"#f59e0b"},
+{"tipo":"juego_mental","pregunta":"Resuelve: 9×6-15 = ?","opciones":["39","54","45"],"correcta":0,"explanacion":"9×6=54, 54-15=39","recompensa":7,"color":"#fbbf24"},
+{"tipo":"visualizacion","texto":"Visualiza creando redes sólidas y relaciones de apoyo estratégicas.","color":"#a78bfa"},
+{"tipo":"respiracion","texto":"Inhala 4, retén 2, exhala 6. Refuerza calma y claridad para decisiones estratégicas.","duracion":30,"color":"#60a5fa"},
+{"tipo":"recompensa","texto":"Tu capacidad para construir relaciones de influencia y poder se ha fortalecido.","puntos":20,"color":"#10b981"},
+{"tipo":"cierre","texto":"La estrategia social y generosidad calculada te posicionan como líder en la selva de negocios.","color":"#f87171"}
+]
+},
+{
+"id":37,
+"bloques":[
+{"tipo":"respiracion","texto":"Inhala 5, retén 3, exhala 5. Prepárate para decisiones de alto impacto financiero.","duracion":30,"color":"#60a5fa"},
+{"tipo":"historia","texto":"El Arquitecto de Decisiones: Delegar control sobre agenda mejoró salud y toma de decisiones financieras.","color":"#fbbf24"},
+{"tipo":"voz","texto":"Hoy entrenaremos delegación estratégica y manejo del bienestar para mejorar resultados.","color":"#2563eb"},
+{"tipo":"decision","pregunta":"Debes priorizar salud y negocios, ¿qué haces primero?","opciones":["Trabajar sin pausa","Delegar tareas clave","Ignorar descanso"],"correcta":1,"explanacion":"Delegar tareas permite enfoque en salud y decisiones estratégicas.","recompensa":12,"color":"#22c55e"},
+{"tipo":"quiz","pregunta":"¿Cuál es el activo con mayor retorno de inversión?","opciones":["Dinero","Salud","Equipo"],"correcta":1,"explanacion":"Sin salud, la gestión del dinero y decisiones estratégicas se vuelven erráticas.","recompensa":10,"color":"#38bdf8"},
+{"tipo":"acertijo","pregunta":"Siempre avanza, pero nunca retrocede. ¿Qué es?","opciones":["Reloj","Río","Aire"],"correcta":0,"explanacion":"El reloj avanza constantemente sin retroceder.","recompensa":8,"color":"#f59e0b"},
+{"tipo":"juego_mental","pregunta":"Resuelve: 18+12÷3 = ?","opciones":["22","24","28"],"correcta":1,"explanacion":"12÷3=4, 18+4=22","recompensa":7,"color":"#fbbf24"},
+{"tipo":"visualizacion","texto":"Visualiza delegando tareas y manteniendo salud y claridad mental.","color":"#a78bfa"},
+{"tipo":"respiracion","texto":"Inhala 5, retén 3, exhala 5. Refuerza equilibrio entre bienestar y decisiones estratégicas.","duracion":30,"color":"#60a5fa"},
+{"tipo":"recompensa","texto":"Tu capacidad de delegar y tomar decisiones inteligentes se ha fortalecido.","puntos":20,"color":"#10b981"},
+{"tipo":"cierre","texto":"Delegar estratégicamente y cuidar tu salud maximiza productividad y éxito financiero.","color":"#f87171"}
+]
+},
+{
+"id":38,
+"bloques":[
+{"tipo":"respiracion","texto":"Inhala 4, retén 2, exhala 6. Prepara mente para decisiones de seguro y riesgo.","duracion":30,"color":"#60a5fa"},
+{"tipo":"historia","texto":"El Costo de la Indecisión: Elegir seguro completo protegió empresa frente a tormenta y retrasos.","color":"#fbbf24"},
+{"tipo":"voz","texto":"Hoy trabajaremos gestión de riesgo y decisiones calculadas.","color":"#2563eb"},
+{"tipo":"decision","pregunta":"Debes elegir entre seguro básico o premium, ¿qué haces?","opciones":["Ahorro inmediato","Cobertura completa","Ignorar riesgos"],"correcta":1,"explanacion":"Elegir cobertura completa blinda patrimonio y reduce estrés futuro.","recompensa":12,"color":"#22c55e"},
+{"tipo":"quiz","pregunta":"¿Qué protege mejor tu riqueza?","opciones":["Prevención y planificación","Ahorrar sin pensar","Tomar riesgos innecesarios"],"correcta":0,"explanacion":"Planificación y prevención asegura patrimonio ante imprevistos.","recompensa":10,"color":"#38bdf8"},
+{"tipo":"acertijo","pregunta":"Vuelo sin alas, llora sin ojos, ¿qué es?","opciones":["Nube","Viento","Agua"],"correcta":0,"explanacion":"La nube vuela, se mueve y llora lluvia sin ojos ni alas.","recompensa":8,"color":"#f59e0b"},
+{"tipo":"juego_mental","pregunta":"Resuelve: 36÷6+9 = ?","opciones":["15","21","12"],"correcta":1,"explanacion":"36÷6=6, 6+9=15","recompensa":7,"color":"#fbbf24"},
+{"tipo":"visualizacion","texto":"Visualiza tomando decisiones seguras y evitando pérdidas innecesarias.","color":"#a78bfa"},
+{"tipo":"respiracion","texto":"Inhala 4, retén 2, exhala 6. Refuerza claridad y prudencia en decisiones financieras.","duracion":30,"color":"#60a5fa"},
+{"tipo":"recompensa","texto":"Tu capacidad de evaluar riesgos y proteger tu patrimonio se ha fortalecido.","puntos":20,"color":"#10b981"},
+{"tipo":"cierre","texto":"Decisiones calculadas y prevención maximizan seguridad y éxito a largo plazo.","color":"#f87171"}
+]
+},
+{
+"id":39,
+"bloques":[
+{"tipo":"respiracion","texto":"Inhala 5, retén 2, exhala 5. Prepárate para motivación e influencia social.","duracion":30,"color":"#60a5fa"},
+{"tipo":"historia","texto":"El Poder del Reconocimiento Invisible: Café y preguntas oportunas aumentaron eficiencia 30% sin amenazas.","color":"#fbbf24"},
+{"tipo":"voz","texto":"Hoy entrenaremos influencia sutil y motivación efectiva en equipos.","color":"#2563eb"},
+{"tipo":"decision","pregunta":"El equipo no rinde al nivel esperado, ¿qué haces?","opciones":["Amenazas","Escuchar y facilitar","Ignorar"],"correcta":1,"explanacion":"Facilitar soluciones y escuchar mejora rendimiento sin conflictos.","recompensa":12,"color":"#22c55e"},
+{"tipo":"quiz","pregunta":"¿Qué potencia la influencia social efectiva?","opciones":["Atención y soporte","Imposición","Indiferencia"],"correcta":0,"explanacion":"Escuchar y ayudar genera respeto y resultados duraderos.","recompensa":10,"color":"#38bdf8"},
+{"tipo":"acertijo","pregunta":"Ligero como pluma, pero ninguna fuerza lo detiene. ¿Qué es?","opciones":["Viento","Humo","Nube"],"correcta":0,"explanacion":"El viento es ligero y constante.","recompensa":8,"color":"#f59e0b"},
+{"tipo":"juego_mental","pregunta":"Resuelve: 14×2-8 = ?","opciones":["20","18","28"],"correcta":0,"explanacion":"14×2=28, 28-8=20","recompensa":7,"color":"#fbbf24"},
+{"tipo":"visualizacion","texto":"Visualiza motivando con tacto y logrando cooperación efectiva.","color":"#a78bfa"},
+{"tipo":"respiracion","texto":"Inhala 5, retén 2, exhala 5. Refuerza calma y claridad en influencia social.","duracion":30,"color":"#60a5fa"},
+{"tipo":"recompensa","texto":"Tu capacidad de motivar y guiar socialmente se ha fortalecido.","puntos":20,"color":"#10b981"},
+{"tipo":"cierre","texto":"La influencia social basada en apoyo y escucha crea resultados sostenibles y respeto.","color":"#f87171"}
+]
+},
+{
+"id":40,
+"bloques":[
+{"tipo":"respiracion","texto":"Inhala 4, retén 3, exhala 6. Prepárate para organizar y optimizar procesos.","duracion":30,"color":"#60a5fa"},
+{"tipo":"historia","texto":"La Regla de los 60 Segundos: Resolver o delegar tareas rápidas liberó tiempo para estrategia.","color":"#fbbf24"},
+{"tipo":"voz","texto":"Hoy entrenaremos eficiencia, enfoque y gestión del tiempo.","color":"#2563eb"},
+{"tipo":"decision","pregunta":"Recibes cientos de tareas, ¿cómo procedes?","opciones":["Hacer todo","Delegar o ejecutar según tiempo","Ignorar prioridad"],"correcta":1,"explanacion":"Evaluar y ejecutar según impacto permite máxima eficiencia.","recompensa":12,"color":"#22c55e"},
+{"tipo":"quiz","pregunta":"¿Qué optimiza tu tiempo y productividad?","opciones":["Filtrar tareas","Hacer todo rápido","Postergar decisiones"],"correcta":0,"explanacion":"Filtrar tareas según importancia y urgencia maximiza resultados.","recompensa":10,"color":"#38bdf8"},
+{"tipo":"acertijo","pregunta":"Cuanto más quitas, más se agranda. ¿Qué es?","opciones":["Hoyo","Río","Camino"],"correcta":0,"explanacion":"Al quitar tierra se forma un hoyo más grande.","recompensa":8,"color":"#f59e0b"},
+{"tipo":"juego_mental","pregunta":"Resuelve: 50÷5+7 = ?","opciones":["17","15","20"],"correcta":0,"explanacion":"50÷5=10, 10+7=17","recompensa":7,"color":"#fbbf24"},
+{"tipo":"visualizacion","texto":"Visualiza resolviendo y organizando tareas con eficiencia y claridad.","color":"#a78bfa"},
+{"tipo":"respiracion","texto":"Inhala 4, retén 3, exhala 6. Refuerza concentración y eficiencia.","duracion":30,"color":"#60a5fa"},
+{"tipo":"recompensa","texto":"Tu capacidad de gestión del tiempo y organización se ha fortalecido.","puntos":20,"color":"#10b981"},
+{"tipo":"cierre","texto":"Organizar y priorizar tareas permite maximizar productividad y bienestar mental.","color":"#f87171"}
+]
+},
+{
+"id":41,
+"bloques":[
+{"tipo":"respiracion","texto":"Inhala 5, retén 2, exhala 5. Prepárate para especialización y poder de mercado.","duracion":30,"color":"#60a5fa"},
+{"tipo":"historia","texto":"El Escudo de la Especialización: Focalizarse en transporte médico permitió triplicar tarifas durante crisis.","color":"#fbbf24"},
+{"tipo":"voz","texto":"Hoy entrenaremos especialización y ventaja competitiva.","color":"#2563eb"},
+{"tipo":"decision","pregunta":"Tienes opción de especializarte, ¿qué eliges?","opciones":["Cargas generales","Especialización técnica","Ignorar nicho"],"correcta":1,"explanacion":"La especialización genera escasez de competencia y poder de mercado.","recompensa":12,"color":"#22c55e"},
+{"tipo":"quiz","pregunta":"¿Qué crea ventaja competitiva sostenible?","opciones":["Especialización","Ser generalista","Hacer lo mismo que todos"],"correcta":0,"explanacion":"Focalizarse en un nicho genera control y autoridad en el mercado.","recompensa":10,"color":"#38bdf8"},
+{"tipo":"acertijo","pregunta":"Cuanto más grande, menos se ve. ¿Qué es?","opciones":["Oscuridad","Montaña","Nube"],"correcta":0,"explanacion":"La oscuridad reduce visibilidad a mayor intensidad.","recompensa":8,"color":"#f59e0b"},
+{"tipo":"juego_mental","pregunta":"Resuelve: 7×8-9 = ?","opciones":["47","49","55"],"correcta":0,"explanacion":"7×8=56, 56-9=47","recompensa":7,"color":"#fbbf24"},
+{"tipo":"visualizacion","texto":"Visualiza especializándote y dominando tu mercado con autoridad.","color":"#a78bfa"},
+{"tipo":"respiracion","texto":"Inhala 5, retén 2, exhala 5. Refuerza concentración y estrategia de mercado.","duracion":30,"color":"#60a5fa"},
+{"tipo":"recompensa","texto":"Tu especialización y ventaja competitiva se han fortalecido.","puntos":20,"color":"#10b981"},
+{"tipo":"cierre","texto":"Especializarse y dominar un nicho garantiza poder, ingresos y resiliencia en el mercado.","color":"#f87171"}
+]
+},
+{
+"id":42,
+"bloques":[
+{"tipo":"respiracion","texto":"Inhala 4, retén 2, exhala 6. Prepárate para sintetizar todo lo aprendido: estrategia, poder y bienestar.","duracion":30,"color":"#60a5fa"},
+{"tipo":"historia","texto":"El Filtro de Relaciones de Calidad: Conectar selectivamente con personas útiles multiplicó influencia y oportunidades.","color":"#fbbf24"},
+{"tipo":"voz","texto":"Hoy consolidaremos la inteligencia social, decisiones estratégicas y manejo del poder.","color":"#2563eb"},
+{"tipo":"decision","pregunta":"Debes elegir con quién colaborar para proyectos críticos, ¿qué haces?","opciones":["Colaborar con todos","Seleccionar relaciones de calidad","Evitar contactos"],"correcta":1,"explicacion":"Conectar estratégicamente con personas clave multiplica tu impacto y recursos.","recompensa":12,"color":"#22c55e"},
+{"tipo":"quiz","pregunta":"¿Qué potencia tu red de influencia a largo plazo?","opciones":["Relaciones de calidad","Cantidad de contactos","Imposición de autoridad"],"correcta":0,"explicacion":"Seleccionar relaciones útiles y estratégicas genera influencia duradera.","recompensa":10,"color":"#38bdf8"},
+{"tipo":"acertijo","pregunta":"Si lo compartes, lo pierdes; si lo guardas, lo mantienes. ¿Qué es?","opciones":["Secreto","Dinero","Conocimiento"],"correcta":0,"explicacion":"Un secreto se pierde al compartirlo, se mantiene si se guarda.","recompensa":8,"color":"#f59e0b"},
+{"tipo":"juego_mental","pregunta":"Resuelve: 25×4÷5 + 7 = ?","opciones":["27","27","20"],"correcta":0,"explicacion":"25×4=100, 100÷5=20, 20+7=27","recompensa":7,"color":"#fbbf24"},
+{"tipo":"visualizacion","texto":"Visualiza aplicando inteligencia social y decisiones estratégicas con claridad y poder.","color":"#a78bfa"},
+{"tipo":"respiracion","texto":"Inhala 4, retén 2, exhala 6. Refuerza calma y claridad para aplicar todo lo aprendido.","duracion":30,"color":"#60a5fa"},
+{"tipo":"recompensa","texto":"Has consolidado tu habilidad de estrategia, poder y relaciones de calidad.","puntos":20,"color":"#10b981"},
+{"tipo":"cierre","texto":"Inteligencia social, decisiones estratégicas y manejo del poder te posicionan para triunfar en la selva de negocios y la vida.","color":"#f87171"}
       ]
     }
   ]
 }
+     
