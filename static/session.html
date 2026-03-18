@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>KaMiZen</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
@@ -10,139 +11,116 @@
 <style>
 
 *{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
-    font-family:'Inter',sans-serif;
+box-sizing:border-box;
+margin:0;
+padding:0;
+font-family:Inter,sans-serif;
 }
 
 body{
-    background:#020617;
-    color:white;
-    min-height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:flex-start;
-    overflow-y:auto;
-    transition:background 1s;
+background:#020617;
+color:white;
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:flex-start;
+overflow-y:auto;
 }
 
 #app{
-    width:100%;
-    max-width:420px;
-    min-height:100vh;
-    background:#111827;
-    padding:15px;
-    display:flex;
-    flex-direction:column;
-}
-
-@media (min-width:600px){
-    #app{
-        margin-top:20px;
-        border-radius:25px;
-        box-shadow:0 20px 40px rgba(0,0,0,0.6);
-    }
+width:100%;
+max-width:420px;
+min-height:100vh;
+background:#111827;
+padding:15px;
+display:flex;
+flex-direction:column;
 }
 
 #logo{
-    font-size:26px;
-    font-weight:600;
-    background:linear-gradient(90deg,#60a5fa,#a78bfa);
-    -webkit-background-clip:text;
-    -webkit-text-fill-color:transparent;
+font-size:24px;
+font-weight:600;
+background:linear-gradient(90deg,#60a5fa,#a78bfa);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
 }
 
 #subtitle{
-    font-size:12px;
-    opacity:0.6;
-    margin-bottom:10px;
+font-size:12px;
+opacity:0.6;
+margin-bottom:10px;
 }
 
 #mental-panel{
-    width:100%;
-    background:#020617;
-    padding:10px;
-    border-radius:12px;
-    margin-bottom:10px;
-}
-
-.stat{
-    font-size:12px;
-    margin-bottom:6px;
+background:#020617;
+padding:10px;
+border-radius:10px;
+margin-bottom:10px;
 }
 
 .bar{
-    height:6px;
-    background:#1e293b;
-    border-radius:10px;
-    margin-top:4px;
-    overflow:hidden;
+height:6px;
+background:#1e293b;
+border-radius:10px;
+overflow:hidden;
+margin-top:4px;
 }
 
 .bar-fill{
-    height:100%;
-    background:#3b82f6;
-    width:0%;
-    transition:width 0.5s;
+height:100%;
+background:#3b82f6;
+width:0%;
 }
 
 #block{
-    font-size:18px;
-    line-height:1.4;
-    text-align:center;
-    margin:15px 0;
-    min-height:120px;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
+font-size:18px;
+text-align:center;
+margin:15px 0;
+min-height:120px;
+}
+
+textarea{
+width:100%;
+height:120px;
+margin-top:10px;
+background:#020617;
+color:white;
+border:1px solid #334155;
+border-radius:8px;
+padding:10px;
+resize:none;
 }
 
 button{
-    padding:14px;
-    margin:6px 0;
-    font-size:16px;
-    border:none;
-    border-radius:10px;
-    cursor:pointer;
-    background:#2563eb;
-    color:white;
-    width:100%;
-}
-
-button:hover{
-    background:#3b82f6;
-}
-
-.option-btn{
-    background:#374151;
+padding:14px;
+margin:6px 0;
+font-size:16px;
+border:none;
+border-radius:10px;
+cursor:pointer;
+background:#2563eb;
+color:white;
+width:100%;
 }
 
 #skip-btn{
-    background:transparent;
-    color:#64748b;
-    font-size:12px;
-    border:1px solid #334155;
+background:#334155;
 }
 
 #back-btn{
-    background:#334155;
+background:#334155;
+}
+
+#clear-btn{
+background:#7c2d12;
 }
 
 .breath-circle{
-    width:100px;
-    height:100px;
-    border-radius:50%;
-    background:radial-gradient(circle,#60a5fa,#1d4ed8);
-    margin:15px auto;
-}
-
-#footer{
-    font-size:10px;
-    opacity:0.4;
-    margin-top:10px;
-    text-align:center;
+width:100px;
+height:100px;
+border-radius:50%;
+background:radial-gradient(circle,#60a5fa,#1d4ed8);
+margin:15px auto;
 }
 
 </style>
@@ -153,55 +131,46 @@ button:hover{
 <div id="app">
 
 <div id="logo">KaMiZen</div>
-<div id="subtitle">Entrenamiento mental diario</div>
+<div id="subtitle">Entrenamiento mental</div>
 
 <div id="mental-panel">
 
-<div id="streak" class="stat">🔥 Racha: 0 días</div>
-<div id="level" class="stat">Nivel KaMiZen: 1</div>
+<div id="streak">Racha 0</div>
 
-<div class="stat">
 Disciplina
 <div class="bar">
 <div id="disciplina-bar" class="bar-fill"></div>
 </div>
-</div>
 
-<div class="stat">
 Claridad
 <div class="bar">
 <div id="claridad-bar" class="bar-fill"></div>
 </div>
-</div>
 
-<div class="stat">
 Calma
 <div class="bar">
 <div id="calma-bar" class="bar-fill"></div>
-</div>
 </div>
 
 </div>
 
 <div id="block">
+
 Listo para iniciar
+
 </div>
 
-<button id="start-btn">Iniciar Sesión</button>
+<button id="start-btn">Iniciar sesión</button>
 
-<button id="next-btn" style="display:none;">Siguiente</button>
+<button id="next-btn" style="display:none">Siguiente</button>
 
-<button id="back-btn" style="display:none;">Atrás</button>
+<button id="back-btn" style="display:none">Atrás</button>
 
-<button id="skip-btn" style="display:none;">Saltar bloque</button>
+<button id="skip-btn" style="display:none">Continuar</button>
 
-<button id="restart-btn" style="display:none;background:#475569;">
-Finalizar sesión
-</button>
+<button id="clear-btn" style="display:none">Borrar lo escrito</button>
 
-<div id="footer">
-Sistema KaMiZen
-</div>
+<button id="restart-btn" style="display:none">Finalizar sesión</button>
 
 </div>
 
