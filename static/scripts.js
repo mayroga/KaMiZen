@@ -1,71 +1,70 @@
 const startBtn = document.getElementById("start-btn");
 const nextBtn = document.getElementById("next-btn");
-const skipBtn = document.getElementById("skip-btn");
 const restartBtn = document.getElementById("restart-btn");
-const backBtn = document.getElementById("back-btn");
 const block = document.getElementById("block");
 
 let bloques = [];
-let currentIdx = 0;
-let sesionActualData = null;
-let skipFlag = false;
-let activeInterval = null;
+let current = 0;
+let puntos = 0;
 
-
-/* =========================
-PERSISTENCIA
-========================= */
+let currentSessionIndex = 0;
 
 let userData = JSON.parse(localStorage.getItem("kamizenData")) || {
-
     streak: 0,
     lastDay: null,
     nivel: 1,
     disciplina: 40,
     claridad: 50,
-    calma: 30,
-    lastSessionId: 0
-
+    calma: 30
 };
 
+const streakEl = document.getElementById("streak");
+const levelEl = document.getElementById("level");
+const discBar = document.getElementById("disciplina-bar");
+const clarBar = document.getElementById("claridad-bar");
+const calmBar = document.getElementById("calma-bar");
 
 function updatePanel(){
 
-    userData.disciplina = Math.max(0, Math.min(userData.disciplina, 100));
-    userData.claridad = Math.max(0, Math.min(userData.claridad, 100));
-    userData.calma = Math.max(0, Math.min(userData.calma, 100));
+    streakEl.innerHTML = "🔥 Racha: " + userData.streak + " días";
+    levelEl.innerHTML = "Nivel KaMiZen: " + userData.nivel;
 
-    document.getElementById("streak").innerHTML =
-        "🔥 Racha: " + userData.streak + " días";
+    discBar.style.width = userData.disciplina + "%";
+    clarBar.style.width = userData.claridad + "%";
+    calmBar.style.width = userData.calma + "%";
+}
 
-    document.getElementById("level").innerHTML =
-        "Nivel KaMiZen: " + userData.nivel;
+updatePanel();
 
-    document.getElementById("disciplina-bar").style.width =
-        userData.disciplina + "%";
 
-    document.getElementById("claridad-bar").style.width =
-        userData.claridad + "%";
+function updateStreak(){
 
-    document.getElementById("calma-bar").style.width =
-        userData.calma + "%";
+    let today = new Date().toDateString();
 
-    localStorage.setItem("kamizenData", JSON.stringify(userData));
+    if(userData.lastDay !== today){
+
+        userData.streak++;
+
+        userData.lastDay = today;
+
+    }
 
 }
 
 
-/* =========================
-VOZ
-========================= */
-
 function playVoice(text){
 
-    return new Promise(resolve => {
+    return new Promise(resolve=>{
+
+        if(!text){
+
+            resolve();
+
+            return;
+
+        }
 
         speechSynthesis.cancel();
-
-        if(skipFlag) return resolve();
 
         let msg = new SpeechSynthesisUtterance(text);
 
@@ -73,9 +72,9 @@ function playVoice(text){
 
         msg.rate = 0.9;
 
-        msg.pitch = 0.8;
+        msg.onend = ()=>resolve();
 
-        msg.onend = resolve;
+        msg.onerror = ()=>resolve();
 
         speechSynthesis.speak(msg);
 
@@ -84,203 +83,242 @@ function playVoice(text){
 }
 
 
-/* =========================
-WAIT
-========================= */
+function breathingAnimation(){
 
-function wait(ms){
+    let circle = document.createElement("div");
 
-    return new Promise(resolve => {
+    circle.className = "breath-circle";
 
-        const start = Date.now();
+    block.appendChild(circle);
 
-        const check = setInterval(() => {
+    let inhale = true;
 
-            if(Date.now() - start >= ms || skipFlag){
+    setInterval(()=>{
 
-                clearInterval(check);
+        circle.style.transform = inhale ? "scale(1.6)" : "scale(1)";
 
-                resolve();
+        inhale = !inhale;
+
+    },4000);
+
+}
+
+
+function createOptions(b){
+
+    if(!b.opciones) return;
+
+    b.opciones.forEach((op,i)=>{
+
+        let btn = document.createElement("button");
+
+        btn.innerText = op;
+
+        btn.onclick = ()=>{
+
+            if(i === b.correcta){
+
+                puntos += b.recompensa || 5;
+
+                userData.disciplina += 2;
+                userData.claridad += 2;
+
+                alert(b.explicacion || "Correcto");
+
+            }else{
+
+                userData.calma += 1;
+
+                alert(b.explicacion || "Respuesta");
 
             }
 
-        }, 50);
+            updatePanel();
+
+            nextBtn.style.display = "inline-block";
+
+        };
+
+        block.appendChild(btn);
 
     });
 
 }
 
 
-/* =========================
-MOSTRAR BLOQUE
-========================= */
-
 async function showBlock(b){
-
-    skipFlag = false;
-
-    if(activeInterval) clearInterval(activeInterval);
 
     block.innerHTML = "";
 
     nextBtn.style.display = "none";
 
-    skipBtn.style.display = "block";
+    document.body.style.background = b.color || "#0f172a";
 
-    if(currentIdx > 0){
+    if(b.texto){
 
-        backBtn.style.display = "block";
+        block.innerHTML = "<p>" + b.texto + "</p>";
 
-    } else {
-
-        backBtn.style.display = "none";
+        await playVoice(b.texto);
 
     }
 
-    document.body.style.background =
-        b.color || "#020617";
+    switch(b.tipo){
+
+        case "decision":
+        case "juego_mental":
+
+            block.innerHTML = "<h3>" + (b.pregunta || "") + "</h3>";
+
+            createOptions(b);
+
+            await playVoice(b.pregunta);
+
+            break;
 
 
-    if(b.tipo === "respiracion"){
+        case "respiracion":
 
-        block.innerHTML =
-            "<p>" + b.instrucciones + "</p>" +
-            "<div class='breath-circle' id='circle'></div>" +
-            "<p id='breath-label'></p>";
+            breathingAnimation();
 
-        const circle = document.getElementById("circle");
+            await playVoice(b.instrucciones || b.texto);
 
-        const label = document.getElementById("breath-label");
+            setTimeout(()=>{
 
-        const reps = b.repeticiones || 3;
+                nextBtn.style.display = "inline-block";
 
-        for(let i=0;i<reps;i++){
+            },8000);
 
-            if(skipFlag) break;
+            return;
 
-            label.innerText = "Inhala";
 
-            playVoice("Inhala");
+        case "recompensa":
 
-            circle.style.transform = "scale(1.8)";
+            userData.disciplina += 3;
+            userData.claridad += 3;
+            userData.calma += 3;
 
-            await wait(3000);
+            block.innerHTML = "<h2>" + b.texto + "</h2>";
 
-            if(skipFlag) break;
+            await playVoice(b.texto);
 
-            label.innerText = "Exhala";
+            break;
 
-            playVoice("Exhala");
 
-            circle.style.transform = "scale(1)";
+        case "cierre":
 
-            await wait(3000);
+            updateStreak();
 
-        }
+            puntos += 10;
 
-        finishBlock();
+            if(puntos > 50){
+
+                userData.nivel++;
+
+            }
+
+            let completed = JSON.parse(
+                localStorage.getItem("completedSessions")
+            ) || [];
+
+            completed.push(currentSessionIndex);
+
+            localStorage.setItem(
+                "completedSessions",
+                JSON.stringify(completed)
+            );
+
+            localStorage.setItem(
+                "kamizenData",
+                JSON.stringify(userData)
+            );
+
+            updatePanel();
+
+            restartBtn.style.display = "inline-block";
+
+            await playVoice(b.texto);
+
+            return;
 
     }
 
-    else{
+    setTimeout(()=>{
 
-        block.innerHTML =
-            b.texto
-            ? "<p>" + b.texto + "</p>"
-            : "<p>" + b.titulo + "</p>";
+        nextBtn.style.display = "inline-block";
 
-        await playVoice(b.texto || b.titulo);
+    },2000);
 
-        finishBlock();
+}
+
+
+
+function nextBlock(){
+
+    nextBtn.style.display = "none";
+
+    current++;
+
+    if(current < bloques.length){
+
+        showBlock(bloques[current]);
+
+    }else{
+
+        restartBtn.style.display = "inline-block";
 
     }
 
 }
 
 
-function finishBlock(){
 
-    skipBtn.style.display = "none";
-
-    nextBtn.style.display = "block";
-
-}
-
-
-/* =========================
-ATRAS
-========================= */
-
-backBtn.addEventListener("click", () => {
-
-    if(currentIdx > 0){
-
-        currentIdx--;
-
-        showBlock(bloques[currentIdx]);
-
-    }
-
-});
-
-
-/* =========================
-SIGUIENTE
-========================= */
-
-nextBtn.addEventListener("click", () => {
-
-    currentIdx++;
-
-    if(currentIdx < bloques.length){
-
-        showBlock(bloques[currentIdx]);
-
-    } else {
-
-        block.innerHTML =
-            "<h2>Sesión completada</h2>";
-
-        restartBtn.style.display = "block";
-
-        nextBtn.style.display = "none";
-
-        skipBtn.style.display = "none";
-
-        backBtn.style.display = "none";
-
-    }
-
-});
-
-
-/* =========================
-INICIAR
-========================= */
-
-startBtn.addEventListener("click", async () => {
+startBtn.addEventListener("click", async ()=>{
 
     startBtn.style.display = "none";
-
-    backBtn.style.display = "none";
-
-    block.innerHTML = "Cargando...";
 
     const res = await fetch("/session_content");
 
     const data = await res.json();
 
-    sesionActualData = data.sesiones[0];
+    const sesiones = data.sesiones || [];
 
-    bloques = sesionActualData.bloques;
+    let completed =
+        JSON.parse(
+            localStorage.getItem("completedSessions")
+        ) || [];
 
-    currentIdx = 0;
+    let availableIndices =
+        sesiones
+        .map((_,i)=>i)
+        .filter(i => !completed.includes(i));
+
+    if(availableIndices.length === 0){
+
+        localStorage.removeItem("completedSessions");
+
+        availableIndices = sesiones.map((_,i)=>i);
+
+    }
+
+    currentSessionIndex =
+        availableIndices[
+            Math.floor(Math.random() * availableIndices.length)
+        ];
+
+    bloques = sesiones[currentSessionIndex].bloques || [];
+
+    current = 0;
+
+    updateStreak();
 
     showBlock(bloques[0]);
 
 });
 
 
-restartBtn.addEventListener("click", () => location.reload());
+nextBtn.addEventListener("click", nextBlock);
 
-updatePanel();
+restartBtn.addEventListener(
+    "click",
+    ()=>location.reload()
+);
