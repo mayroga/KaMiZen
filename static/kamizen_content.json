@@ -1,138 +1,139 @@
 {
   "sesiones": [
     {
-      "id": 83,
-      "categoria": "Poder y Disciplina",
+      "id": 1,
+      "categoria": "Disciplina y Poder",
       "bloques": [
-        {"tipo":"voz","texto":"Hoy forjarás tu temple de voluntad. Cada decisión cuenta, cada acción refleja tu poder.","color":"#2563eb"},
-        {"tipo":"respiracion","texto":"Inhala 5 segundos, retén 2, exhala 7. Concéntrate en sentir tu fuerza interior.","duracion":40,"color":"#60a5fa"},
-        {"tipo":"escenario","texto":"Estás en una junta importante. Todos esperan tu opinión y presionan con críticas. ¿Cómo reaccionas?","color":"#34d399"},
-        {"tipo":"juego_mental","pregunta":"Disonancia cognitiva: Indica el color, no la palabra: <span style='color:red'>AZUL</span>","opciones":["Rojo","Azul","Verde"],"correcta":1,"recompensa":10,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Recibes un mensaje que te distrae de tu tarea crucial. ¿Lo revisas ahora o lo ignoras?","opciones":["Reviso","Ignoro"],"correcta":1,"recompensa":12,"color":"#22c55e"},
-        {"tipo":"tdb","texto":"Técnica del Observador: Realiza tu próximo bloque como si tu mentor más respetado te estuviera evaluando.","color":"#a78bfa"},
-        {"tipo":"acertijo","pregunta":"Siempre corre pero nunca llega. ¿Qué es?","opciones":["Río","Tiempo","Viento"],"correcta":1,"recompensa":8,"color":"#facc15"},
-        {"tipo":"respiracion","texto":"Exhala lento 8 segundos, inhala rápido 4. Siente el control en tu mente y cuerpo.","duracion":35,"color":"#2563eb"},
-        {"tipo":"cierre","texto":"Tu rapidez para tomar decisiones refleja tu voluntad. Cada día que repites esta práctica, tu poder crece.","color":"#f87171"}
+        {"tipo":"voz","texto":"Hoy forjarás el temple de tu voluntad. Cada decisión, cada pensamiento y cada acción cuentan.","color":"#2563eb"},
+        {"tipo":"respiracion","texto":"Inhala profundamente durante cinco segundos y exhala lentamente siete segundos mientras cierras los ojos y sientes tu centro de poder.","duracion":35,"color":"#60a5fa"},
+        {"tipo":"escenario","texto":"Estás en una reunión importante. Alguien te desafía públicamente. Tu teléfono vibra con mensajes distractores. ¿Cómo respondes sin perder autoridad?","color":"#34d399"},
+        {"tipo":"decision","pregunta":"Ignoras la provocación y mantienes tu postura o respondes impulsivamente","opciones":["Mantengo la calma","Respondo de inmediato"],"correcta":0,"explicacion":"Mantener la calma protege tu autoridad y te permite influir con respeto. Responder impulsivamente reduce tu poder y puede afectar tus relaciones.","recompensa":15,"color":"#facc15"},
+        {"tipo":"juego_mental","pregunta":"Indica el color de la palabra, no lo que dice: <span style='color:red'>VERDE</span> <span style='color:blue'>AMARILLO</span> <span style='color:green'>ROJO</span>","opciones":["Rojo Azul Verde","Verde Amarillo Rojo","Amarillo Rojo Verde"],"correcta":0,"explicacion":"Identificar el color real y no leer la palabra exige control de impulsos, clave en decisiones estratégicas.","recompensa":12,"color":"#f59e0b"},
+        {"tipo":"acertijo","pregunta":"Siempre avanza, nunca retrocede, y aunque no lo veas, marca tu destino. ¿Qué es?","opciones":["El tiempo","La sombra","El viento"],"correcta":0,"explicacion":"El tiempo define tus oportunidades. Ignorarlo disminuye tu poder de acción y dirección.","recompensa":10,"color":"#22c55e"},
+        {"tipo":"respiracion","texto":"Respira 4 segundos y exhala 6 mientras visualizas tu mente enfocada, clara y con autoridad.","duracion":30,"color":"#3b82f6"},
+        {"tipo":"cierre","texto":"La disciplina no es castigo, es el precio de la excelencia. Hoy decidiste tu poder, y mañana te desafiará aún más.","color":"#f87171"}
       ]
     },
     {
-      "id": 84,
-      "categoria": "Riqueza y Abundancia",
+      "id": 2,
+      "categoria": "Éxito y Claridad",
       "bloques": [
-        {"tipo":"voz","texto":"El dinero y la abundancia fluyen a quien controla su mente. Hoy ejercitarás tu temple financiero y mental.","color":"#2563eb"},
-        {"tipo":"escenario","texto":"Tienes una oportunidad de inversión arriesgada. Todos dudan menos tú. ¿Qué decides?","color":"#34d399"},
-        {"tipo":"respiracion","texto":"Inhala profundo 4s, retén 4s, exhala 6s. Visualiza abundancia entrando en tu vida.","duracion":40,"color":"#60a5fa"},
-        {"tipo":"decision","pregunta":"Una oferta tentadora aparece, pero compromete tu planificación. ¿Aceptas o esperas?","opciones":["Acepto","Espero"],"correcta":1,"recompensa":12,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"Indica el color, no la palabra: <span style='color:green'>ROJO</span>","opciones":["Verde","Rojo","Azul"],"correcta":0,"recompensa":10,"color":"#f59e0b"},
-        {"tipo":"tdn","texto":"Técnica del Niño: Imagina la emoción de recibir tus metas alcanzadas y actúa con esa alegría al resolver este bloque.","color":"#a78bfa"},
-        {"tipo":"acertijo","pregunta":"Tiene ciudades, pero no casas; ríos, pero no agua. ¿Qué es?","opciones":["Mapa","Imaginación","Libro"],"correcta":0,"recompensa":8,"color":"#facc15"},
-        {"tipo":"respiracion","texto":"Exhala 6s, inhala 5s, retén 3s. Siente la claridad para tomar decisiones importantes.","duracion":35,"color":"#2563eb"},
-        {"tipo":"cierre","texto":"La paciencia y control reflejan tu capacidad de atraer abundancia. Tu compromiso diario construye riqueza mental y financiera.","color":"#f87171"}
+        {"tipo":"voz","texto":"Cada decisión define tu vida. Hoy aprenderás a elegir caminos que te lleven a la abundancia y la claridad.","color":"#2563eb"},
+        {"tipo":"escenario","texto":"Tienes dos oportunidades: una inmediata, fácil y tentadora, otra requiere esfuerzo, paciencia y estrategia. Tu intuición te dice que tomes la rápida. ¿Qué haces?","color":"#34d399"},
+        {"tipo":"decision","pregunta":"Elegir el camino fácil o el camino estratégico","opciones":["Camino fácil","Camino estratégico"],"correcta":1,"explicacion":"El esfuerzo consciente y estratégico genera resultados duraderos y poder real. Tomar el atajo limita tu crecimiento.","recompensa":15,"color":"#facc15"},
+        {"tipo":"respiracion","texto":"Inhala contando hasta seis y exhala contando hasta ocho mientras imaginas la abundancia entrando en tu vida.","duracion":40,"color":"#60a5fa"},
+        {"tipo":"juego_mental","pregunta":"Encuentra la secuencia que no encaja: rojo, verde, azul, azul, rojo, verde","opciones":["Rojo","Verde","Azul"],"correcta":2,"explicacion":"Identificar patrones falsos requiere atención al detalle y fortalece tu capacidad de análisis bajo presión.","recompensa":12,"color":"#f59e0b"},
+        {"tipo":"acertijo","pregunta":"Se multiplica al compartir, aunque no puedas tocarlo. ¿Qué es?","opciones":["Conocimiento","Dinero","Tiempo"],"correcta":0,"explicacion":"El conocimiento se expande al aplicarlo y compartirlo. Ignorarlo limita tu poder y oportunidades.","recompensa":10,"color":"#22c55e"},
+        {"tipo":"cierre","texto":"Elegiste el camino de la estrategia. La claridad y la paciencia fortalecen tu posición y tu visión de éxito.","color":"#f87171"}
       ]
     },
     {
-      "id": 85,
-      "categoria": "Alta Sociedad y Estatus",
+      "id": 3,
+      "categoria": "Poder y Control",
       "bloques": [
-        {"tipo":"voz","texto":"Hoy dominarás la gracia y el estatus que solo el control de la mente otorga. Tu comportamiento define tu legado.","color":"#2563eb"},
-        {"tipo":"respiracion","texto":"Respira en 4-7-8: Inhala 4, retén 7, exhala 8. Siente la calma que precede al poder.","duracion":45,"color":"#60a5fa"},
-        {"tipo":"escenario","texto":"Estás en un evento exclusivo y alguien busca humillarte. ¿Cómo mantienes tu compostura y autoridad?","color":"#34d399"},
-        {"tipo":"juego_mental","pregunta":"Disonancia: <span style='color:blue'>VERDE</span>, ¿color correcto?","opciones":["Rojo","Verde","Azul"],"correcta":2,"recompensa":10,"color":"#f59e0b"},
-        {"tipo":"tdg","texto":"Técnica de la Guerra: Combina estrategia y calma. Evalúa cada movimiento antes de actuar.","color":"#a78bfa"},
-        {"tipo":"decision","pregunta":"Un competidor intenta desprestigiarte públicamente. ¿Respondes o ignoras?","opciones":["Respondo","Ignoro"],"correcta":1,"recompensa":12,"color":"#22c55e"},
-        {"tipo":"acertijo","pregunta":"Sube pero nunca baja. ¿Qué es?","opciones":["Edad","Humo","Sol"],"correcta":0,"recompensa":8,"color":"#facc15"},
-        {"tipo":"respiracion","texto":"Inhala 6s, exhala 6s, retén 2s. Siente tu temple frente a la presión.","duracion":40,"color":"#2563eb"},
-        {"tipo":"cierre","texto":"El poder real es silencioso. Quien controla su mente, controla su mundo.","color":"#f87171"}
+        {"tipo":"voz","texto":"El verdadero poder se ejerce controlando la mente y las emociones. Hoy dominarás ambos.","color":"#2563eb"},
+        {"tipo":"respiracion","texto":"Inhala lentamente durante cuatro segundos y exhala durante siete segundos, sintiendo cómo tu autoridad interior crece.","duracion":35,"color":"#60a5fa"},
+        {"tipo":"escenario","texto":"Alguien interrumpe tu presentación con críticas agresivas. Tienes 10 segundos para responder con calma y eficacia.","color":"#34d399"},
+        {"tipo":"decision","pregunta":"Responder con serenidad o defenderte con fuerza","opciones":["Serenidad","Fuerza"],"correcta":0,"explicacion":"Responder con calma demuestra autoridad y control. Reaccionar con fuerza puede disminuir tu prestigio y poder frente al grupo.","recompensa":15,"color":"#facc15"},
+        {"tipo":"juego_mental","pregunta":"Si rojo es 1, azul es 2 y verde es 3, suma el valor de azul + verde - rojo","opciones":["4","5","6"],"correcta":1,"explicacion":"Este ejercicio entrena tu atención y capacidad de procesar información bajo presión, esencial para decisiones de alto impacto.","recompensa":12,"color":"#f59e0b"},
+        {"tipo":"acertijo","pregunta":"No lo puedes ver ni tocar, pero determina tus oportunidades y pérdidas. ¿Qué es?","opciones":["Reputación","Tiempo","Dinero"],"correcta":0,"explicacion":"Tu reputación define tu influencia. Descuidarla afecta tu poder y relaciones estratégicas.","recompensa":10,"color":"#22c55e"},
+        {"tipo":"respiracion","texto":"Respira profundamente tres veces mientras visualizas tu energía fluyendo y tu control intacto.","duracion":30,"color":"#3b82f6"},
+        {"tipo":"cierre","texto":"Hoy ejerciste control y autoridad. La mente serena domina los resultados, y la fuerza sin control pierde valor.","color":"#f87171"}
       ]
     },
     {
-      "id": 86,
-      "categoria": "Felicidad y Plenitud",
+      "id": 4,
+      "categoria": "Riqueza y Estrategia",
       "bloques": [
-        {"tipo":"voz","texto":"La felicidad no es suerte, es disciplina de la mente. Hoy cultivarás plenitud y serenidad.","color":"#2563eb"},
-        {"tipo":"respiracion","texto":"Inhala 5, exhala 5, retén 3. Conecta con gratitud y alegría en cada célula.","duracion":35,"color":"#60a5fa"},
-        {"tipo":"escenario","texto":"Estás rodeado de personas que generan estrés. ¿Cómo mantienes tu equilibrio interno?","color":"#34d399"},
-        {"tipo":"tdb","texto":"Técnica del Bien: Agradece cada acción positiva y enfócate en tu mejor versión.","color":"#a78bfa"},
-        {"tipo":"juego_mental","pregunta":"Indica color: <span style='color:red'>VERDE</span>","opciones":["Rojo","Verde","Azul"],"correcta":1,"recompensa":10,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Te ofrecen una salida que promete diversión inmediata pero interfiere en tu crecimiento. ¿Qué eliges?","opciones":["Diversión","Crecimiento"],"correcta":1,"recompensa":12,"color":"#22c55e"},
-        {"tipo":"acertijo","pregunta":"Tiene agujas pero no pincha. ¿Qué es?","opciones":["Reloj","Cactus","Manecilla"],"correcta":0,"recompensa":8,"color":"#facc15"},
-        {"tipo":"respiracion","texto":"Exhala 8s, inhala 4s. Conecta con serenidad y enfoque en tu bienestar.","duracion":40,"color":"#2563eb"},
-        {"tipo":"cierre","texto":"La verdadera plenitud surge de la constancia en tu entrenamiento mental. Hoy avanzaste en tu felicidad.","color":"#f87171"}
+        {"tipo":"voz","texto":"Hoy expandirás tu capacidad de atraer abundancia y crear oportunidades de poder.","color":"#2563eb"},
+        {"tipo":"escenario","texto":"Recibes una oferta financiera arriesgada pero con gran potencial. Tu intuición y análisis se contraponen.","color":"#34d399"},
+        {"tipo":"decision","pregunta":"Tomar el riesgo con estrategia o evitar la oportunidad","opciones":["Tomar riesgo","Evitar"],"correcta":0,"explicacion":"El riesgo calculado bien gestionado multiplica tu poder y riqueza. Evitarlo limita tu progreso.","recompensa":15,"color":"#facc15"},
+        {"tipo":"respiracion","texto":"Inhala cinco segundos y exhala siete, sintiendo confianza y claridad mientras evalúas tu decisión.","duracion":40,"color":"#60a5fa"},
+        {"tipo":"juego_mental","pregunta":"Si cada letra de EXITO vale su posición en el alfabeto, suma las letras E+X+I","opciones":["29","33","25"],"correcta":0,"explicacion":"Este tipo de ejercicio entrena la atención y la memoria activa, reforzando control mental y estrategia.","recompensa":12,"color":"#f59e0b"},
+        {"tipo":"acertijo","pregunta":"Crece cuando se comparte, disminuye si se oculta. ¿Qué es?","opciones":["Influencia","Poder","Dinero"],"correcta":0,"explicacion":"Tu influencia aumenta al actuar con visión y transparencia. Ocultarla te hace perder oportunidades y prestigio.","recompensa":10,"color":"#22c55e"},
+        {"tipo":"cierre","texto":"Hoy evaluaste riesgos y aumentaste tu poder. La estrategia consciente multiplica resultados y protege tu energía.","color":"#f87171"}
       ]
     },
     {
-      "id": 87,
-      "categoria": "Éxito y Poder",
+      "id": 5,
+      "categoria": "Plenitud y Bienestar",
       "bloques": [
-        {"tipo":"voz","texto":"El éxito se gana controlando tu mente y tus acciones. Hoy entrenarás poder y estrategia.","color":"#2563eb"},
-        {"tipo":"respiracion","texto":"Inhala 4, retén 4, exhala 6. Siente tu poder estabilizarte ante desafíos.","duracion":35,"color":"#60a5fa"},
-        {"tipo":"escenario","texto":"Te asignan un proyecto de alto riesgo que todos evitan. ¿Aceptas con confianza?","color":"#34d399"},
-        {"tipo":"tdn","texto":"Técnica del Niño: Visualiza la emoción del éxito y mantén la alegría en cada acción.","color":"#a78bfa"},
-        {"tipo":"juego_mental","pregunta":"Disonancia: <span style='color:green'>AZUL</span>","opciones":["Rojo","Verde","Azul"],"correcta":2,"recompensa":10,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Recibes una recompensa inmediata si abandonas la meta principal. ¿Qué haces?","opciones":["Abandonar","Seguir"],"correcta":1,"recompensa":12,"color":"#22c55e"},
-        {"tipo":"acertijo","pregunta":"Llega pero nunca está aquí, ¿qué es?","opciones":["Futuro","Sombra","Viento"],"correcta":0,"recompensa":8,"color":"#facc15"},
-        {"tipo":"respiracion","texto":"Exhala 7, inhala 5, retén 3. Fortalece tu enfoque y disciplina.","duracion":40,"color":"#2563eb"},
-        {"tipo":"cierre","texto":"El poder es la disciplina de la mente aplicada a cada decisión. Hoy aumentaste tu autoridad interior.","color":"#f87171"}
+        {"tipo":"voz","texto":"La plenitud real proviene del equilibrio entre mente, cuerpo y emociones. Hoy fortalecerás tu bienestar integral.","color":"#2563eb"},
+        {"tipo":"respiracion","texto":"Respira cinco segundos, mantén dos y exhala ocho, visualizando energía positiva y calma absoluta.","duracion":35,"color":"#60a5fa"},
+        {"tipo":"escenario","texto":"Estás estresado y varias responsabilidades te presionan. Una notificación distrae tu atención. ¿Cómo reaccionas?","color":"#34d399"},
+        {"tipo":"decision","pregunta":"Ignorar distracciones y concentrarte o ceder a ellas","opciones":["Concentrarme","Ceder"],"correcta":0,"explicacion":"Concentrarte protege tu claridad mental y fortalece tu capacidad de enfoque bajo presión. Ceder disminuye tu energía y control.","recompensa":15,"color":"#facc15"},
+        {"tipo":"juego_mental","pregunta":"Encuentra la palabra que no encaja: ÉXITO, FELICIDAD, DINERO, RIQUEZA, PELUSA","opciones":["Pelusa","Riqueza","Dinero"],"correcta":0,"explicacion":"Detectar elementos extraños mejora atención selectiva y pensamiento estratégico, esencial para bienestar real.","recompensa":12,"color":"#f59e0b"},
+        {"tipo":"acertijo","pregunta":"No tiene forma, pero influye en tu estado de ánimo y decisiones. ¿Qué es?","opciones":["Emoción","Poder","Tiempo"],"correcta":0,"explicacion":"Gestionar tus emociones correctamente permite éxito, bienestar y relaciones sólidas. Ignorarlas cuesta control y energía.","recompensa":10,"color":"#22c55e"},
+        {"tipo":"respiracion","texto":"Inhala profundo durante seis segundos y exhala lentamente ocho, mientras visualizas plenitud y control sobre tus emociones.","duracion":40,"color":"#3b82f6"},
+        {"tipo":"cierre","texto":"Hoy elegiste calma y enfoque. El bienestar no es pasivo, se construye con atención y disciplina.","color":"#f87171"}
       ]
     },
     {
-      "id": 88,
-      "categoria": "Abundancia y Bienestar",
+      "id": 6,
+      "categoria": "Poder y Abundancia",
       "bloques": [
-        {"tipo":"voz","texto":"Quien controla su mente controla su abundancia. Hoy practicarás enfoque y bienestar.","color":"#2563eb"},
-        {"tipo":"escenario","texto":"Tienes múltiples tareas, pero la más importante define tu éxito. ¿Cuál priorizas?","color":"#34d399"},
-        {"tipo":"respiracion","texto":"Inhala 6s, exhala 6s, retén 2. Siente calma y claridad para tomar la mejor decisión.","duracion":35,"color":"#60a5fa"},
-        {"tipo":"tdg","texto":"Técnica de la Guerra: Combina estrategia y paciencia para resolver la tarea principal.","color":"#a78bfa"},
-        {"tipo":"juego_mental","pregunta":"Disonancia: <span style='color:red'>AZUL</span>","opciones":["Rojo","Azul","Verde"],"correcta":1,"recompensa":10,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Una oportunidad de inversión aparece. ¿Arriesgas para crecer o esperas?","opciones":["Arriesgo","Espero"],"correcta":1,"recompensa":12,"color":"#22c55e"},
-        {"tipo":"acertijo","pregunta":"Vuelo sin alas, lloro sin ojos. ¿Qué soy?","opciones":["Nube","Río","Viento"],"correcta":2,"recompensa":8,"color":"#facc15"},
-        {"tipo":"respiracion","texto":"Exhala 5, inhala 4, retén 3. Refuerza control emocional y enfoque en la abundancia.","duracion":40,"color":"#2563eb"},
-        {"tipo":"cierre","texto":"Quien practica control y enfoque diario, atrae bienestar y abundancia. Hoy avanzaste en tu vida plena.","color":"#f87171"}
+        {"tipo":"voz","texto":"El poder real se manifiesta en decisiones conscientes y en atraer abundancia a tu vida. Hoy incrementarás tu influencia.","color":"#2563eb"},
+        {"tipo":"respiracion","texto":"Respira cuatro segundos, retén dos y exhala seis, imaginando que tu energía positiva se expande.","duracion":30,"color":"#60a5fa"},
+        {"tipo":"escenario","texto":"Un socio propone un acuerdo que aumenta tu influencia pero requiere sacrificio de tiempo. ¿Aceptas?","color":"#34d399"},
+        {"tipo":"decision","pregunta":"Aceptar el sacrificio o rechazar la oportunidad","opciones":["Aceptar","Rechazar"],"correcta":0,"explicacion":"Aceptar desafíos estratégicos aumenta tu poder y oportunidades futuras. Rechazar limita tu crecimiento y potencial de influencia.","recompensa":15,"color":"#facc15"},
+        {"tipo":"juego_mental","pregunta":"Si azul es el doble de rojo y rojo es 3, ¿cuánto vale azul menos rojo?","opciones":["3","4","6"],"correcta":0,"explicacion":"Entrena la rapidez mental y la resolución bajo presión, habilidades necesarias para decisiones de alto impacto.","recompensa":12,"color":"#f59e0b"},
+        {"tipo":"acertijo","pregunta":"Se multiplica al compartir y se pierde si no se aplica. ¿Qué es?","opciones":["Influencia","Tiempo","Energía"],"correcta":0,"explicacion":"La influencia aumenta con acción consciente. Ignorarla reduce oportunidades y prestigio.","recompensa":10,"color":"#22c55e"},
+        {"tipo":"cierre","texto":"Hoy tomaste decisiones estratégicas que expanden tu poder. La abundancia sigue a quienes actúan con claridad y disciplina.","color":"#f87171"}
       ]
     },
     {
-      "id": 89,
-      "categoria": "Alta Performance Mental",
+      "id": 7,
+      "categoria": "Disciplina Estratégica",
       "bloques": [
-        {"tipo":"voz","texto":"Hoy entrenarás agudeza mental y claridad para tomar decisiones que pocos se atreven a enfrentar.","color":"#2563eb"},
-        {"tipo":"respiracion","texto":"Inhala 5, retén 3, exhala 7. Siente claridad y concentración.","duracion":35,"color":"#60a5fa"},
-        {"tipo":"escenario","texto":"Estás bajo presión: un error puede costar mucho. Mantén la calma y decide rápido.","color":"#34d399"},
-        {"tipo":"tdb","texto":"Técnica del Bien: Observa cada pensamiento y filtra lo que no sirve.","color":"#a78bfa"},
-        {"tipo":"juego_mental","pregunta":"Disonancia: <span style='color:green'>ROJO</span>","opciones":["Rojo","Azul","Verde"],"correcta":1,"recompensa":10,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Te ofrecen un atajo que puede fallar. ¿Arriesgas o mantienes tu camino?","opciones":["Arriesgo","Mantengo"],"correcta":1,"recompensa":12,"color":"#22c55e"},
-        {"tipo":"acertijo","pregunta":"Tiene raíces pero no árbol. ¿Qué es?","opciones":["Palabra","Montaña","Río"],"correcta":0,"recompensa":8,"color":"#facc15"},
-        {"tipo":"respiracion","texto":"Exhala 6s, inhala 5s. Recupera enfoque y calma tras la presión.","duracion":40,"color":"#2563eb"},
-        {"tipo":"cierre","texto":"La agudeza mental requiere práctica diaria y compromiso. Hoy fortaleciste tu mente elite.","color":"#f87171"}
+        {"tipo":"voz","texto":"Hoy forjarás hábitos que te conviertan en una fuerza imparable. Cada acción cuenta y define tu poder futuro.","color":"#2563eb"},
+        {"tipo":"respiracion","texto":"Inhala cinco segundos y exhala siete mientras sientes tu fuerza interior crecer.","duracion":35,"color":"#60a5fa"},
+        {"tipo":"escenario","texto":"Estás frente a un desafío importante y la presión aumenta. Una distracción externa intenta romper tu concentración. ¿Cómo actúas?","color":"#34d399"},
+        {"tipo":"decision","pregunta":"Mantener enfoque absoluto o ceder a la distracción","opciones":["Mantener enfoque","Ceder"],"correcta":0,"explicacion":"El enfoque absoluto fortalece tu disciplina y aumenta resultados. Ceder reduce control y puede provocar errores.","recompensa":15,"color":"#facc15"},
+        {"tipo":"juego_mental","pregunta":"Señala la palabra que no coincide con las demás: ÉXITO, PODER, PLENITUD, CIELO","opciones":["Cielo","Plenitud","Poder"],"correcta":0,"explicacion":"Detectar elementos que rompen el patrón refuerza atención y análisis estratégico, fundamentales en decisiones importantes.","recompensa":12,"color":"#f59e0b"},
+        {"tipo":"acertijo","pregunta":"Se mueve sin que lo veas, influye en tu camino y oportunidades. ¿Qué es?","opciones":["Tiempo","Influencia","Dinero"],"correcta":0,"explicacion":"Gestionar tu tiempo correctamente maximiza resultados y poder. Descuidarlo disminuye autoridad y control.","recompensa":10,"color":"#22c55e"},
+        {"tipo":"respiracion","texto":"Respira tres veces profundo mientras visualizas disciplina y éxito consolidado.","duracion":30,"color":"#3b82f6"},
+        {"tipo":"cierre","texto":"Hoy fortaleciste tu disciplina estratégica. La constancia en decisiones difíciles define tu poder real.","color":"#f87171"}
       ]
     },
     {
-      "id": 90,
-      "categoria": "Liderazgo y Poder",
+      "id": 8,
+      "categoria": "Éxito y Influencia",
       "bloques": [
-        {"tipo":"voz","texto":"Hoy desarrollarás liderazgo y control absoluto de tu mente y entorno. Tu autoridad se refleja en tus acciones.","color":"#2563eb"},
-        {"tipo":"respiracion","texto":"Inhala 4s, retén 6s, exhala 6s. Conecta con tu autoridad interior.","duracion":35,"color":"#60a5fa"},
-        {"tipo":"escenario","texto":"Tu equipo duda de tu plan. Tienes que convencerlos con seguridad. ¿Cómo actúas?","color":"#34d399"},
-        {"tipo":"tdg","texto":"Técnica de la Guerra: Evalúa riesgos y actúa con estrategia y calma.","color":"#a78bfa"},
-        {"tipo":"juego_mental","pregunta":"Disonancia: <span style='color:blue'>ROJO</span>","opciones":["Rojo","Azul","Verde"],"correcta":1,"recompensa":10,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Un miembro del equipo intenta sabotear tu objetivo. ¿Reaccionas inmediatamente o planificas?","opciones":["Reacciono","Planifico"],"correcta":1,"recompensa":12,"color":"#22c55e"},
-        {"tipo":"acertijo","pregunta":"Siempre va hacia adelante pero nunca se detiene. ¿Qué es?","opciones":["Tiempo","Río","Humo"],"correcta":0,"recompensa":8,"color":"#facc15"},
-        {"tipo":"respiracion","texto":"Exhala 5s, inhala 5s, retén 5s. Siente calma y control mientras lideras.","duracion":40,"color":"#2563eb"},
-        {"tipo":"cierre","texto":"El liderazgo verdadero proviene del control interior. Hoy aumentaste tu presencia y autoridad.","color":"#f87171"}
+        {"tipo":"voz","texto":"El éxito verdadero combina acción, claridad y control sobre las oportunidades. Hoy trabajarás en influir y avanzar.","color":"#2563eb"},
+        {"tipo":"respiracion","texto":"Inhala cuatro segundos y exhala seis visualizando tu influencia creciendo y atrayendo oportunidades.","duracion":35,"color":"#60a5fa"},
+        {"tipo":"escenario","texto":"Un aliado propone un plan que podría beneficiarte, pero requiere decisión rápida. Tienes 5 segundos. ¿Qué haces?","color":"#34d399"},
+        {"tipo":"decision","pregunta":"Tomar el plan sin analizar o evaluar estratégicamente","opciones":["Tomar sin analizar","Evaluar estratégicamente"],"correcta":1,"explicacion":"Evaluar cuidadosamente protege tu poder, maximiza beneficios y evita errores costosos.","recompensa":15,"color":"#facc15"},
+        {"tipo":"juego_mental","pregunta":"Si cada número representa una emoción positiva: rojo 1, azul 2, verde 3. Calcula azul+verde-rojo.","opciones":["4","3","5"],"correcta":0,"explicacion":"Resuelve rápido y sin error bajo presión, fortaleciendo control mental y capacidad de respuesta estratégica.","recompensa":12,"color":"#f59e0b"},
+        {"tipo":"acertijo","pregunta":"Es intangible, se comparte y multiplica cuando actúas con intención. ¿Qué es?","opciones":["Influencia","Dinero","Tiempo"],"correcta":0,"explicacion":"Tu influencia crece con acción consciente y decisión. Ignorarla reduce poder y oportunidades.","recompensa":10,"color":"#22c55e"},
+        {"tipo":"respiracion","texto":"Inhala profundamente y exhala lentamente mientras sientes tu confianza y claridad incrementarse.","duracion":30,"color":"#3b82f6"},
+        {"tipo":"cierre","texto":"Hoy aumentaste tu influencia y éxito. Las decisiones estratégicas de hoy son la base de tu poder mañana.","color":"#f87171"}
       ]
     },
     {
-      "id": 91,
-      "categoria": "Transformación Personal",
+      "id": 9,
+      "categoria": "Concentración y Control",
       "bloques": [
-        {"tipo":"voz","texto":"Hoy transformarás hábitos y decisiones. Tu mente es el instrumento de tu poder y bienestar.","color":"#2563eb"},
-        {"tipo":"respiracion","texto":"Inhala 5, retén 4, exhala 6. Siente la claridad para actuar con propósito.","duracion":35,"color":"#60a5fa"},
-        {"tipo":"escenario","texto":"Te presentan una oportunidad que desafía tus límites. ¿Aceptas y avanzas?","color":"#34d399"},
-        {"tipo":"tdn","texto":"Técnica del Niño: Mantén entusiasmo y curiosidad al enfrentar el desafío.","color":"#a78bfa"},
-        {"tipo":"juego_mental","pregunta":"Disonancia: <span style='color:red'>AZUL</span>","opciones":["Rojo","Azul","Verde"],"correcta":1,"recompensa":10,"color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"Una decisión rápida puede ganar mucho o arriesgarlo todo. ¿Qué haces?","opciones":["Rápido","Preciso"],"correcta":1,"recompensa":12,"color":"#22c55e"},
-        {"tipo":"acertijo","pregunta":"Tiene ojos pero no ve. ¿Qué es?","opciones":["Huracán","Cactus","Reloj"],"correcta":0,"recompensa":8,"color":"#facc15"},
-        {"tipo":"respiracion","texto":"Exhala 7, inhala 4. Conecta con tu capacidad de decidir y transformar.","duracion":40,"color":"#2563eb"},
-        {"tipo":"cierre","texto":"La transformación personal requiere acción, disciplina y enfoque. Hoy diste pasos sólidos hacia tu mejor versión.","color":"#f87171"}
+        {"tipo":"voz","texto":"Hoy fortalecerás tu concentración y control mental. Cada bloque entrenará tu capacidad de enfoque y reacción.","color":"#2563eb"},
+        {"tipo":"escenario","texto":"Estás resolviendo un problema crítico. Tu teléfono y colegas intentan distraerte. ¿Qué haces?","color":"#34d399"},
+        {"tipo":"decision","pregunta":"Mantener enfoque absoluto o ceder a distracciones","opciones":["Mantener enfoque","Ceder"],"correcta":0,"explicacion":"Mantener foco protege resultados y poder. Ceder disminuye tu eficiencia y autoridad.","recompensa":15,"color":"#facc15"},
+        {"tipo":"respiracion","texto":"Respira cuatro segundos, retén dos y exhala seis mientras visualizas concentración y claridad absoluta.","duracion":35,"color":"#60a5fa"},
+        {"tipo":"juego_mental","pregunta":"Si azul=3, rojo=5, verde=2, calcula azul+verde-rojo.","opciones":["0","1","2"],"correcta":1,"explicacion":"Ejercicios numéricos entrenan atención y procesamiento rápido, fundamentales para decisiones críticas.","recompensa":12,"color":"#f59e0b"},
+        {"tipo":"acertijo","pregunta":"Se multiplica cuando actúas con intención y disminuye si no lo haces. ¿Qué es?","opciones":["Influencia","Tiempo","Concentración"],"correcta":2,"explicacion":"La concentración activa tu capacidad de control y decisión. Descuidarla genera errores y disminuye poder.","recompensa":10,"color":"#22c55e"},
+        {"tipo":"cierre","texto":"Hoy fortaleciste tu concentración y control mental. La claridad y enfoque son armas de poder insustituibles.","color":"#f87171"}
+      ]
+    },
+    {
+      "id": 10,
+      "categoria": "Resiliencia y Disciplina",
+      "bloques": [
+        {"tipo":"voz","texto":"La resiliencia se construye con disciplina y práctica diaria. Hoy pondrás a prueba tu temple.","color":"#2563eb"},
+        {"tipo":"respiracion","texto":"Inhala cinco segundos y exhala siete mientras sientes fuerza, calma y determinación fluyendo por tu cuerpo.","duracion":40,"color":"#60a5fa"},
+        {"tipo":"escenario","texto":"Te enfrentas a un error que podría costarte una oportunidad. Respiras, analizas y decides. ¿Qué haces?","color":"#34d399"},
+        {"tipo":"decision","pregunta":"Aceptar el error y corregirlo o ignorarlo","opciones":["Aceptar y corregir","Ignorar"],"correcta":0,"explicacion":"Aceptar y corregir fortalece resiliencia y aprendizaje. Ignorar genera consecuencias negativas y pérdida de poder.","recompensa":15,"color":"#facc15"},
+        {"tipo":"juego_mental","pregunta":"Si la palabra 'PODER' está escrita en verde, azul, rojo, indica el color real de la letra 'O'","opciones":["Verde","Azul","Rojo"],"correcta":1,"explicacion":"Controlar la respuesta bajo disonancia cognitiva fortalece la mente y capacidad de reacción bajo presión.","recompensa":12,"color":"#f59e0b"},
+        {"tipo":"acertijo","pregunta":"Siempre avanza y nunca retrocede, aunque no lo veas. ¿Qué es?","opciones":["Tiempo","Influencia","Éxito"],"correcta":0,"explicacion":"El tiempo es irreversible. Gestionarlo bien aumenta poder y resultados. Desperdiciarlo cuesta oportunidades y autoridad.","recompensa":10,"color":"#22c55e"},
+        {"tipo":"respiracion","texto":"Respira profundamente tres veces mientras visualizas resiliencia y disciplina consolidadas.","duracion":30,"color":"#3b82f6"},
+        {"tipo":"cierre","texto":"Hoy enfrentaste dificultades con disciplina. La resiliencia se construye con práctica, atención y decisiones conscientes.","color":"#f87171"}
       ]
     }
   ]
