@@ -4,178 +4,133 @@ const restartBtn = document.getElementById("restart-btn");
 const block = document.getElementById("block");
 
 let bloques = [];
-let current = 0;
-let puntos = 0;
+let currentIdx = 0;
+let sesionActualData = null;
 
-/* DATOS USUARIO */
+/* PERSISTENCIA DE DATOS */
 let userData = JSON.parse(localStorage.getItem("kamizenData")) || {
     streak: 0,
     lastDay: null,
     nivel: 1,
     disciplina: 40,
     claridad: 50,
-    calma: 30
+    calma: 30,
+    lastSessionId: 0 // Rastrea la última sesión completada
 };
 
-/* PANEL */
-const streakEl = document.getElementById("streak");
-const levelEl = document.getElementById("level");
-const discBar = document.getElementById("disciplina-bar");
-const clarBar = document.getElementById("claridad-bar");
-const calmBar = document.getElementById("calma-bar");
-
 function updatePanel(){
-    streakEl.innerHTML = "🔥 Racha: "+userData.streak+" días";
-    levelEl.innerHTML = "Nivel KaMiZen: "+userData.nivel;
-    discBar.style.width = userData.disciplina+"%";
-    clarBar.style.width = userData.claridad+"%";
-    calmBar.style.width = userData.calma+"%";
-}
-updatePanel();
-
-/* RACHA DIARIA */
-function updateStreak(){
-    let today = new Date().toDateString();
-    if(userData.lastDay !== today){
-        userData.streak += 1;
-        userData.lastDay = today;
-    }
+    document.getElementById("streak").innerHTML = "🔥 Racha: " + userData.streak + " días";
+    document.getElementById("level").innerHTML = "Nivel KaMiZen: " + userData.nivel;
+    document.getElementById("disciplina-bar").style.width = Math.min(userData.disciplina, 100) + "%";
+    document.getElementById("claridad-bar").style.width = Math.min(userData.claridad, 100) + "%";
+    document.getElementById("calma-bar").style.width = Math.min(userData.calma, 100) + "%";
+    localStorage.setItem("kamizenData", JSON.stringify(userData));
 }
 
-/* VOZ */
 function playVoice(text){
-    return new Promise(resolve=>{
+    return new Promise(resolve => {
         speechSynthesis.cancel();
         let msg = new SpeechSynthesisUtterance(text);
         msg.lang = "es-ES";
-        msg.rate = 0.9;
+        msg.rate = 0.95;
         msg.onend = resolve;
         speechSynthesis.speak(msg);
     });
 }
 
-/* RESPIRACION */
-function breathingAnimation(){
-    let circle = document.createElement("div");
-    circle.className = "breath-circle";
-    block.appendChild(circle);
-    let inhale=true;
-    const interval = setInterval(()=>{
-        if(current >= bloques.length) { clearInterval(interval); return; }
-        circle.style.transform = inhale ? "scale(1.6)" : "scale(1)";
-        inhale = !inhale;
-    },4000);
-}
-
-/* OPCIONES */
-function createOptions(b){
-    b.opciones.forEach((op,i)=>{
-        let btn = document.createElement("button");
-        btn.innerText = op;
-        btn.onclick = ()=>{
-            if(i === b.correcta){
-                puntos += b.recompensa||5;
-                userData.disciplina += 2;
-                userData.claridad += 2;
-                alert("✅ Correcto: "+b.explicacion);
-            } else {
-                userData.calma += 1;
-                alert("❌ Respuesta: "+b.explicacion);
-            }
-            updatePanel();
-            nextBtn.style.display = "inline-block";
-        };
-        block.appendChild(btn);
-    });
-}
-
-/* BLOQUE */
 async function showBlock(b){
     block.innerHTML = "";
-    document.body.style.background = b.color||"#0f172a";
+    nextBtn.style.display = "none";
+    document.body.style.background = b.color || "#020617";
 
-    if(b.texto && !["quiz","acertijo","decision","juego_mental"].includes(b.tipo)){
-        block.innerHTML = "<p>"+b.texto+"</p>";
-        await playVoice(b.texto);
+    if(b.tipo === "respiracion"){
+        block.innerHTML = `<p>${b.instrucciones || "Respira..."}</p><div class="breath-circle" id="circle"></div>`;
+        const circle = document.getElementById("circle");
+        await playVoice(b.voz_guia ? b.voz_guia.join(". ") : "Sigue el ritmo");
+        
+        let reps = b.repeticiones || 3;
+        for(let i=0; i<reps; i++){
+            circle.style.transition = `transform ${b.tiempos.inhalar}s ease-in-out`;
+            circle.style.transform = "scale(1.8)";
+            await new Promise(r => setTimeout(r, b.tiempos.inhalar * 1000));
+            
+            circle.style.transform = "scale(1.8)"; // Retener
+            await new Promise(r => setTimeout(r, b.tiempos.retener * 1000));
+            
+            circle.style.transition = `transform ${b.tiempos.exhalar}s ease-in-out`;
+            circle.style.transform = "scale(1)";
+            await new Promise(r => setTimeout(r, b.tiempos.exhalar * 1000));
+        }
+        nextBtn.style.display = "block";
+    } 
+    else if(["decision", "juego_mental", "acertijo"].includes(b.tipo)){
+        block.innerHTML = `<h3>${b.pregunta}</h3>`;
+        b.opciones.forEach((opt, i) => {
+            let btn = document.createElement("button");
+            btn.className = "option-btn";
+            btn.innerText = opt;
+            btn.onclick = async () => {
+                const esCorrecto = i === b.correcta;
+                block.innerHTML = `<p>${esCorrecto ? "✅" : "❌"} ${b.explicacion}</p>`;
+                userData.disciplina += esCorrecto ? 5 : 1;
+                updatePanel();
+                await playVoice(b.explicacion);
+                nextBtn.style.display = "block";
+            };
+            block.appendChild(btn);
+        });
+        await playVoice(b.pregunta);
     }
-
-    switch(b.tipo){
-        case "quiz":
-        case "acertijo":
-        case "decision":
-        case "juego_mental":
-            block.innerHTML = "<h3>"+b.pregunta+"</h3>";
-            createOptions(b);
-            await playVoice(b.pregunta);
-            break;
-        case "respiracion":
-            breathingAnimation();
-            await playVoice(b.texto);
-            setTimeout(()=>{ nextBtn.style.display = "inline-block"; },30000);
-            return;
-        case "recompensa":
-            userData.disciplina+=3;
-            userData.claridad+=3;
-            userData.calma+=3;
-            block.innerHTML="<h2>"+b.texto+"</h2>";
-            await playVoice(b.texto);
-            break;
-        case "cierre":
-            updateStreak();
-            puntos += 10;
-            if(puntos > 50) userData.nivel +=1;
-
-            // Guardar sesión completada
-            let completed = JSON.parse(localStorage.getItem("completedSessions")) || [];
-            completed.push(currentSessionIndex);
-            localStorage.setItem("completedSessions", JSON.stringify(completed));
-
-            localStorage.setItem("kamizenData", JSON.stringify(userData));
-            updatePanel();
-            restartBtn.style.display="inline-block";
-            await playVoice(b.texto);
-            return;
-    }
-
-    setTimeout(()=>{ nextBtn.style.display="inline-block"; },4000);
-}
-
-/* SIGUIENTE */
-function nextBlock(){
-    nextBtn.style.display="none";
-    current++;
-    if(current < bloques.length){
-        showBlock(bloques[current]);
-    } else {
-        restartBtn.style.display="inline-block";
+    else {
+        block.innerHTML = `<p>${b.texto || b.titulo || ""}</p>`;
+        await playVoice(b.texto || b.titulo);
+        nextBtn.style.display = "block";
     }
 }
 
-/* INICIO */
-let currentSessionIndex = 0;
-
-startBtn.addEventListener("click", async ()=>{
+startBtn.addEventListener("click", async () => {
     startBtn.style.display = "none";
-
     const res = await fetch("/session_content");
     const data = await res.json();
     const sesiones = data.sesiones;
 
-    let completed = JSON.parse(localStorage.getItem("completedSessions")) || [];
-    let availableIndices = sesiones.map((_,i)=>i).filter(i => !completed.includes(i));
+    // Lógica Secuencial: Buscar la siguiente sesión por ID
+    let nextId = userData.lastSessionId + 1;
+    let sesion = sesiones.find(s => s.id === nextId);
 
-    if(availableIndices.length === 0){
-        localStorage.removeItem("completedSessions");
-        availableIndices = sesiones.map((_,i)=>i);
+    // Si no existe (llegamos al final), volver a la sesión con el ID más bajo
+    if(!sesion) {
+        sesion = sesiones[0];
     }
 
-    currentSessionIndex = availableIndices[Math.floor(Math.random()*availableIndices.length)];
-    bloques = sesiones[currentSessionIndex].bloques;
-    current = 0;
+    sesionActualData = sesion;
+    bloques = sesion.bloques;
+    currentIdx = 0;
+    
+    // Actualizar Racha
+    let today = new Date().toDateString();
+    if(userData.lastDay !== today){
+        userData.streak++;
+        userData.lastDay = today;
+    }
 
-    updateStreak();
-    showBlock(bloques[0]);
+    showBlock(bloques[currentIdx]);
 });
 
-nextBtn.addEventListener("click", nextBlock);
-restartBtn.addEventListener("click", ()=>location.reload());
+nextBtn.addEventListener("click", () => {
+    currentIdx++;
+    if(currentIdx < bloques.length){
+        showBlock(bloques[currentIdx]);
+    } else {
+        block.innerHTML = "<h2>Sesión Completada</h2><p>Tu mente está ahora más afilada.</p>";
+        userData.lastSessionId = sesionActualData.id;
+        userData.nivel = Math.floor(userData.disciplina / 20) + 1;
+        updatePanel();
+        restartBtn.style.display = "block";
+        nextBtn.style.display = "none";
+    }
+});
+
+restartBtn.addEventListener("click", () => location.reload());
+
+updatePanel();
