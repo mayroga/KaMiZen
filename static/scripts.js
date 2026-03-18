@@ -35,16 +35,32 @@ function updatePanel(){
     localStorage.setItem("kamizenData", JSON.stringify(userData));
 }
 
-/* MOTOR DE VOZ */
+/* MOTOR DE VOZ CON FAIL-SAFE */
 function playVoice(text){
     return new Promise(resolve => {
+        if (!text) return resolve();
         speechSynthesis.cancel();
-        if(skipFlag) return resolve(); 
+        
         let msg = new SpeechSynthesisUtterance(text);
         msg.lang = "es-ES";
         msg.rate = 0.9;
-        msg.pitch = 0.8;
-        msg.onend = resolve;
+        
+        // Si la voz falla o se bloquea, resolvemos en 3.5 segundos para no congelar la app
+        const forceContinue = setTimeout(() => {
+            console.warn("Voz bloqueada, continuando...");
+            resolve();
+        }, 3500);
+
+        msg.onend = () => {
+            clearTimeout(forceContinue);
+            resolve();
+        };
+        
+        msg.onerror = () => {
+            clearTimeout(forceContinue);
+            resolve();
+        };
+
         speechSynthesis.speak(msg);
     });
 }
@@ -61,8 +77,9 @@ function wait(ms) {
     });
 }
 
-/* LÓGICA DE BLOQUES */
+/* MOSTRAR BLOQUE */
 async function showBlock(b){
+    if(!b) return;
     skipFlag = false;
     if(activeInterval) clearInterval(activeInterval);
     
@@ -72,10 +89,7 @@ async function showBlock(b){
     document.body.style.background = b.color || "#020617";
 
     if(b.tipo === "respiracion"){
-        block.innerHTML = `<p style="margin-bottom:10px;">${b.instrucciones}</p>
-                           <div class="breath-circle" id="circle"></div>
-                           <p id="breath-label" style="font-size:16px; margin-top:10px; opacity:0.8;"></p>`;
-        
+        block.innerHTML = `<p>${b.instrucciones}</p><div class="breath-circle" id="circle"></div><p id="breath-label"></p>`;
         const circle = document.getElementById("circle");
         const label = document.getElementById("breath-label");
         const reps = b.repeticiones || 3;
@@ -84,7 +98,6 @@ async function showBlock(b){
             if(skipFlag) break;
             label.innerText = b.voz_guia ? b.voz_guia[0] : "Inhala";
             playVoice(label.innerText);
-            circle.style.transition = `transform ${b.tiempos.inhalar}s ease-in-out`;
             circle.style.transform = "scale(1.8)";
             await wait(b.tiempos.inhalar * 1000);
             
@@ -96,7 +109,6 @@ async function showBlock(b){
             if(skipFlag) break;
             label.innerText = b.voz_guia ? b.voz_guia[2] : "Exhala";
             playVoice(label.innerText);
-            circle.style.transition = `transform ${b.tiempos.exhalar}s ease-in-out`;
             circle.style.transform = "scale(1)";
             await wait(b.tiempos.exhalar * 1000);
         }
@@ -104,16 +116,15 @@ async function showBlock(b){
     } 
     else if(["decision", "juego_mental", "acertijo"].includes(b.tipo)){
         skipBtn.style.display = "none"; 
-        block.innerHTML = `<h3 style="margin-bottom:15px;">${b.pregunta}</h3>`;
+        block.innerHTML = `<h3>${b.pregunta}</h3>`;
         b.opciones.forEach((opt, i) => {
             let btn = document.createElement("button");
             btn.className = "option-btn";
             btn.innerText = opt;
             btn.onclick = async () => {
                 const esCorrecto = i === b.correcta;
-                block.innerHTML = `<p style="font-size:24px;">${esCorrecto ? "✅" : "❌"}</p><p>${b.explicacion}</p>`;
-                if(esCorrecto){ userData.disciplina += 5; userData.claridad += 2; } 
-                else { userData.calma += 2; userData.disciplina -= 2; }
+                block.innerHTML = `<p>${esCorrecto ? "✅" : "❌"}</p><p>${b.explicacion}</p>`;
+                userData.disciplina += esCorrecto ? 5 : -2;
                 updatePanel();
                 await playVoice(b.explicacion);
                 finishBlock();
@@ -129,18 +140,14 @@ async function showBlock(b){
         activeInterval = setInterval(() => {
             timeLeft--;
             if(document.getElementById("timer")) document.getElementById("timer").innerText = timeLeft + "s";
-            if(timeLeft <= 0 || skipFlag){
-                clearInterval(activeInterval);
-                finishBlock();
-            }
+            if(timeLeft <= 0 || skipFlag) { clearInterval(activeInterval); finishBlock(); }
         }, 1000);
     }
     else {
-        // Voz, historia, reflexion, tvid
-        block.innerHTML = b.titulo ? `<h3>${b.titulo}</h3><p>${b.texto || b.instrucciones}</p>` : `<p>${b.texto || b.instrucciones}</p>`;
-        playVoice(b.texto || b.titulo || b.instrucciones).then(() => {
-            if(!skipFlag) finishBlock();
-        });
+        const contenido = b.texto || b.instrucciones || b.titulo;
+        block.innerHTML = b.titulo ? `<h3>${b.titulo}</h3><p>${contenido}</p>` : `<p>${contenido}</p>`;
+        await playVoice(contenido);
+        if(!skipFlag) finishBlock();
     }
 }
 
@@ -149,25 +156,26 @@ function finishBlock() {
     nextBtn.style.display = "block";
 }
 
-/* EVENTO SALTAR (PENALIZACIÓN) */
 skipBtn.addEventListener("click", () => {
     skipFlag = true;
     speechSynthesis.cancel();
     if(activeInterval) clearInterval(activeInterval);
-    userData.disciplina = Math.floor(userData.disciplina * 0.2); // Pierde 80%
+    userData.disciplina = Math.floor(userData.disciplina * 0.2);
     updatePanel();
-    block.innerHTML = `<p style="color:#ef4444; font-weight:bold;">DISCIPLINA QUEBRANTADA</p>`;
-    playVoice("Disciplina quebrantada.");
-    setTimeout(() => { finishBlock(); }, 1500);
+    block.innerHTML = `<p style="color:#ef4444;">DISCIPLINA QUEBRANTADA</p>`;
+    setTimeout(() => { finishBlock(); }, 1000);
 });
 
-/* FLUJO DE SESIÓN */
+/* INICIO SEGURO */
 startBtn.addEventListener("click", async () => {
     startBtn.style.display = "none";
-    block.innerHTML = "Estableciendo conexión...";
+    block.innerHTML = "Sincronizando Mente...";
+    
     try {
-        const res = await fetch("/session_content");
-        const data = await res.json();
+        const response = await fetch("/session_content");
+        if(!response.ok) throw new Error("Error en red");
+        const data = await response.json();
+        
         let nextId = userData.lastSessionId + 1;
         sesionActualData = data.sesiones.find(s => s.id === nextId) || data.sesiones[0];
         bloques = sesionActualData.bloques;
@@ -178,16 +186,21 @@ startBtn.addEventListener("click", async () => {
             userData.streak++;
             userData.lastDay = today;
         }
+        updatePanel();
         showBlock(bloques[currentIdx]);
-    } catch (err) { block.innerHTML = "Error de sistema."; }
+    } catch (err) { 
+        console.error(err);
+        block.innerHTML = "Error de conexión. Revisa el servidor."; 
+        startBtn.style.display = "block";
+    }
 });
 
 nextBtn.addEventListener("click", () => {
     currentIdx++;
-    if(currentIdx < bloques.length){
+    if(currentIdx < bloques.length) {
         showBlock(bloques[currentIdx]);
     } else {
-        block.innerHTML = `<h2>Sesión ${sesionActualData.id} Completada</h2><p>Vuelve mañana para continuar.</p>`;
+        block.innerHTML = `<h2>Mente Forjada</h2><p>Sesión ${sesionActualData.id} terminada.</p>`;
         userData.lastSessionId = sesionActualData.id;
         userData.nivel = Math.floor(userData.disciplina / 20) + 1;
         updatePanel();
