@@ -1,126 +1,143 @@
 {
   "sesiones": [
     {
-      "id": 56,
-      "categoria": "Mentalidad de Dueño",
+      "id": 66,
+      "categoria": "El Código del Respeto",
       "bloques": [
-        {"tipo":"voz","texto":"No trabajes para el dinero, haz que el dinero trabaje para ti. Hoy vas a pensar como el jefe.","color":"#1e1b4b"},
-        {"tipo":"escenario","texto":"Tienes un poco de dinero ahorrado. Sale un televisor nuevo en oferta y también un curso para ganar más.","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Compras el televisor para descansar o el curso para crecer?","opciones":["Comprar el curso","Comprar el televisor"],"correcta":0,"explicacion":"La gente pobre compra cosas; la gente rica compra activos. El curso te dará para 10 televisores después.","recompensa":20,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si guardas $5 cada día, ¿cuánto tienes en un mes de 30 días?","opciones":["$150","$100","$200"],"correcta":0,"explicacion":"Los granos de arena hacen una montaña. No menosprecies lo poco.","recompensa":15,"color":"#0ea5e9"},
-        {"tipo":"acertijo","pregunta":"Tiene dientes pero no muerde. ¿Qué es?","opciones":["Un Peine","Un Perro","Una Sierra"],"correcta":0,"explicacion":"Como el peine, ordena tus ideas antes de salir a la calle.","recompensa":10,"color":"#8b5cf6"},
-        {"tipo":"cierre","texto":"Hoy has dado un paso para salir de la carrera de ratas.","color":"#ef4444"}
+        {"tipo":"voz","texto":"El respeto no se pide, se impone con tu presencia. Hoy entenderás por qué los leones no necesitan rugir para que la selva sepa quién manda.","color":"#1e1b4b"},
+        {"tipo":"respiracion","instrucciones":"Inhala (el círculo se expande), Retén (el círculo se queda fijo), Exhala (el círculo se contrae)","tiempos":{"inhalar":6, "retener":6, "exhalar":6}, "repeticiones":5, "color":"#3b82f6"},
+        {"tipo":"historia","titulo":"El Silencio de Rockefeller","texto":"Cuentan que en las reuniones, John D. Rockefeller permanecía en silencio absoluto mientras los demás discutían. Cuando todos terminaban, él decía una sola frase que cambiaba todo el rumbo del negocio. No hablaba más, hablaba mejor.","color":"#1e3a8a"},
+        {"tipo":"escenario","texto":"Estás en una mesa de negocios. Alguien intenta interrumpirte constantemente para demostrar que sabe más que tú.","color":"#f59e0b"},
+        {"tipo":"decision","pregunta":"¿Te callas y lo dejas quedar en evidencia solo, o lo cortas de inmediato con autoridad?","opciones":["Dejar que se hunda solo","Cortarlo con autoridad"],"correcta":0,"explicacion":"El que mucho habla, mucho yerra. Deja que agote su munición. Tu silencio lo pondrá nervioso y te dará el control.","recompensa":40,"color":"#10b981"},
+        {"tipo":"juego_mental","pregunta":"Si en una sala hay 5 personas y tú eres el que menos habla pero el que más anota, ¿quién tiene el mapa de la situación?","opciones":["Yo","El que más habla"],"correcta":0,"explicacion":"La información es poder. Escuchar es espiar con permiso.","recompensa":25,"color":"#0ea5e9"},
+        {"tipo":"ejercicio_fisico","texto":"Ponte de pie. Estira la espalda y mantén la barbilla paralela al suelo por 60 segundos. Siente cómo cambia tu química interna.","duracion":60,"color":"#8b5cf6"},
+        {"tipo":"reflexion","texto":"La gente recuerda cómo los hiciste sentir, no lo que dijiste. Proyecta seguridad y el mundo se apartará para dejarte pasar.","color":"#ef4444"}
       ]
     },
     {
-      "id": 57,
-      "categoria": "El Valor de tu Palabra",
+      "id": 67,
+      "categoria": "La Ley del Dinero Rápido",
       "bloques": [
-        {"tipo":"voz","texto":"Tu palabra es tu contrato. Si dices que vas a hacer algo, hazlo.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Llegas tarde a una cita importante por el tráfico. Sabías que habría tráfico.","color":"#34d399"},
-        {"tipo":"decision","pregunta":"¿Pides perdón y aceptas tu culpa o culpas al tráfico?","opciones":["Aceptar mi culpa","Culpar al tráfico"],"correcta":0,"explicacion":"Culpar al tráfico te hace ver débil. Aceptar tu error te hace ver como un hombre responsable.","recompensa":25,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"¿Qué es más valioso?: TU TIEMPO, TU DINERO, TU CARRO","opciones":["TU TIEMPO","TU DINERO","TU CARRO"],"correcta":0,"explicacion":"El dinero vuelve, el tiempo no. Úsalo bien.","recompensa":20,"color":"#38bdf8"},
-        {"tipo":"acertijo","pregunta":"Se rompe si no se cuida, y una vez roto, no pega igual. ¿Qué es?","opciones":["La Confianza","Un Plato","Un Espejo"],"correcta":0,"explicacion":"Cuida la confianza que los demás te tienen. Es tu mayor tesoro.","recompensa":15,"color":"#f59e0b"},
-        {"tipo":"cierre","texto":"Eres un hombre de palabra. Eso vale más que el oro.","color":"#ef4444"}
+        {"tipo":"voz","texto":"El dinero ama la velocidad, pero la riqueza ama el orden. No corras tras el billete, construye el camino para que el billete llegue a ti.","color":"#064e3b"},
+        {"tipo":"respiracion","instrucciones":"Inhala (expandir), Retén (mantener), Exhala (contraer)","tiempos":{"inhalar":5, "retener":8, "exhalar":5}, "repeticiones":6, "color":"#10b981"},
+        {"tipo":"historia","titulo":"El Gran Pescador","texto":"Un joven quería pescar con las manos para ir rápido. Un viejo tejía una red. El joven pescó dos peces y se cansó. El viejo terminó su red y sacó cien. La red es tu sistema; tejerla toma tiempo, pero te hace rico.","color":"#065f46"},
+        {"tipo":"escenario","texto":"Te ofrecen un negocio donde ganas mucho dinero hoy, pero podrías tener problemas legales en dos años.","color":"#ef4444"},
+        {"tipo":"decision","pregunta":"¿Tomas el dinero ahora o rechazas para proteger tu paz futura?","opciones":["Proteger mi paz","Tomar el dinero"],"correcta":0,"explicacion":"El dinero fácil sale caro. Un asesor de verdad no busca el éxito de un día, sino la tranquilidad de una vida.","recompensa":50,"color":"#22c55e"},
+        {"tipo":"juego_mental","pregunta":"¿Qué es mejor?: $1,000 hoy o $1 que se duplica cada día durante un mes?","opciones":["El dólar que se duplica","$1,000 hoy"],"correcta":0,"explicacion":"Al final de 30 días, ese dólar serán millones. Aprende a ver el futuro, no solo el presente.","recompensa":30,"color":"#06b6d4"},
+        {"tipo":"acertijo","pregunta":"Viene de la mano de otros, pero solo se queda si tú eres el dueño. ¿Qué es?","opciones":["El Capital","La Suerte","El Viento"],"correcta":0,"explicacion":"El capital busca manos inteligentes. Hazte inteligente y el dinero te buscará.","recompensa":20,"color":"#f59e0b"},
+        {"tipo":"reflexion","texto":"No gastes lo que no tienes para impresionar a gente que no te importa. El verdadero poder es no tener que demostrar nada.","color":"#ef4444"}
       ]
     },
     {
-      "id": 58,
-      "categoria": "Control de Gastos",
+      "id": 68,
+      "categoria": "Blindaje contra la Crítica",
       "bloques": [
-        {"tipo":"voz","texto":"No es cuánto ganas, es cuánto te queda en el bolsillo al final del mes.","color":"#064e3b"},
-        {"tipo":"respiracion","texto":"Inhala calma, exhala deudas. Siente el control de tu dinero.","duracion":30,"color":"#10b981"},
-        {"tipo":"escenario","texto":"Tus amigos te invitan a una fiesta cara, pero ya te pasaste de tu presupuesto este mes.","color":"#ef4444"},
-        {"tipo":"decision","pregunta":"¿Dices que no puedes ir o pides prestado para no quedar mal?","opciones":["Decir que no","Pedir prestado"],"correcta":0,"explicacion":"Pedir prestado para aparentar es el camino a la ruina. Decir 'no' es el camino a la libertad.","recompensa":30,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si algo cuesta $100 y tiene el 50% de descuento, pero no lo necesitas, ¿cuánto ahorras si lo compras?","opciones":["Nada","50 dólares","100 dólares"],"correcta":0,"explicacion":"No ahorras nada si compras algo que no necesitas. Gastaste $50 innecesarios.","recompensa":20,"color":"#06b6d4"},
-        {"tipo":"acertijo","pregunta":"Cuanto más le quitas, más grande se hace. ¿Qué es?","opciones":["Un Hueco","Una Caja","Una Cuenta"],"correcta":0,"explicacion":"A veces, quitar gastos es lo que hace crecer tu cuenta bancaria.","recompensa":15,"color":"#8b5cf6"},
-        {"tipo":"cierre","texto":"Has tomado las riendas de tus finanzas.","color":"#ef4444"}
+        {"tipo":"voz","texto":"Si caminas hacia la cima, los de abajo te van a gritar. Hoy aprenderás a que los insultos sean el combustible de tu motor.","color":"#450a0a"},
+        {"tipo":"respiracion","instrucciones":"Inhala (expandir), Retén (mantener), Exhala (contraer)","tiempos":{"inhalar":4, "retener":10, "exhalar":4}, "repeticiones":4, "color":"#f87171"},
+        {"tipo":"historia","titulo":"El Perro y la Luna","texto":"Un perro le ladraba a la luna cada noche. La luna seguía brillando y moviéndose, sin responder. Al final, el perro se cansó, pero la luna nunca dejó de ser luz. No bajes a pelear con quien no está a tu nivel.","color":"#7f1d1d"},
+        {"tipo":"escenario","texto":"Un amigo cercano te dice que tu nuevo proyecto es una locura y que vas a fracasar.","color":"#f59e0b"},
+        {"tipo":"decision","pregunta":"¿Le das explicaciones para convencerlo o le dices 'ya veremos' y sigues trabajando?","opciones":["Decir 'ya veremos'","Dar explicaciones"],"correcta":0,"explicacion":"Explicar tus sueños a mentes pequeñas es perder el tiempo. Los resultados son la única explicación que el mundo respeta.","recompensa":35,"color":"#10b981"},
+        {"tipo":"juego_mental","pregunta":"Si 100 personas te dicen que no, pero tú solo necesitas un 'sí' para ganar, ¿cuántos intentos te quedan?","opciones":["Infinitos","Ninguno"],"correcta":0,"explicacion":"El juego no se acaba hasta que tú ganas. El resto es solo práctica.","recompensa":20,"color":"#38bdf8"},
+        {"tipo":"ejercicio_fisico","texto":"Mírate al espejo o a la cámara. Mantén la mirada fija sin parpadear por 45 segundos. Eres el dueño de tu destino.","duracion":45,"color":"#ef4444"},
+        {"tipo":"reflexion","texto":"La opinión de los demás es un problema de ellos, no tuyo. Sigue moviéndote.","color":"#ef4444"}
       ]
     },
     {
-      "id": 59,
-      "categoria": "Saber Escuchar",
+      "id": 69,
+      "categoria": "La Disciplina del Acero",
       "bloques": [
-        {"tipo":"voz","texto":"Tienes dos oídos y una boca por una razón: para escuchar el doble de lo que hablas.","color":"#4c1d95"},
-        {"tipo":"escenario","texto":"Un cliente te está reclamando algo y está muy molesto.","color":"#0ea5e9"},
-        {"tipo":"decision","pregunta":"¿Lo dejas hablar hasta que se desahogue o lo interrumpes para defenderte?","opciones":["Dejarlo hablar","Interrumpirlo"],"correcta":0,"explicacion":"Cuando la gente habla, suelta información. Si escuchas, sabrás exactamente cómo ganar la pelea después.","recompensa":20,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"¿Cuántas veces aparece la letra 'A' aquí?: M A N Z A N A","opciones":["3","2","4"],"correcta":0,"explicacion":"Poner atención a los detalles evita que cometas errores tontos.","recompensa":15,"color":"#38bdf8"},
-        {"tipo":"acertijo","pregunta":"Vuela sin alas y silba sin boca. ¿Qué es?","opciones":["El Viento","Un Pájaro","Un Avión"],"correcta":0,"explicacion":"Las palabras son como el viento: asegúrate de que las tuyas construyan y no destruyan.","recompensa":12,"color":"#a78bfa"},
-        {"tipo":"cierre","texto":"Hoy has aprendido el poder del silencio.","color":"#ef4444"}
+        {"tipo":"voz","texto":"La motivación te hace empezar, pero la disciplina es la que te mantiene cuando todo se pone difícil. Hoy vamos a forjar tu carácter.","color":"#1e1b4b"},
+        {"tipo":"respiracion","instrucciones":"Inhala (expandir), Retén (mantener), Exhala (contraer)","tiempos":{"inhalar":7, "retener":7, "exhalar":7}, "repeticiones":5, "color":"#60a5fa"},
+        {"tipo":"historia","titulo":"El Herrero Japones","texto":"Para hacer una espada famosa, el herrero golpea el metal miles de veces. El fuego lo quema, el agua lo enfría y el martillo lo aplasta. Al final, el metal no se queja, se vuelve una katana que corta todo. Tú eres ese metal.","color":"#1e293b"},
+        {"tipo":"escenario","texto":"Es lunes por la mañana, está lloviendo y no tienes ganas de cumplir con tu rutina de ejercicios.","color":"#34d399"},
+        {"tipo":"decision","pregunta":"¿Lo haces de todas formas aunque sea a media intensidad o lo dejas para mañana?","opciones":["Hacerlo de todas formas","Dejarlo para mañana"],"correcta":0,"explicacion":"Cumplir cuando no tienes ganas es lo que separa a los hombres de los niños. La disciplina no conoce el clima.","recompensa":45,"color":"#22c55e"},
+        {"tipo":"juego_mental","pregunta":"¿Qué es más pesado?: El dolor de la disciplina o el dolor del arrepentimiento?","opciones":["Arrepentimiento","Disciplina"],"correcta":0,"explicacion":"La disciplina pesa gramos, el arrepentimiento pesa toneladas. Elige tu peso hoy.","recompensa":25,"color":"#0ea5e9"},
+        {"tipo":"acertijo","pregunta":"Cuanto más se entrena, más suerte parece tener. ¿Qué es?","opciones":["El Ganador","El Apostador","El Suertudo"],"correcta":0,"explicacion":"La suerte es donde la preparación se encuentra con la oportunidad. Prepárate.","recompensa":15,"color":"#f59e0b"},
+        {"tipo":"reflexion","texto":"No te detengas cuando estés cansado. Detente cuando hayas terminado.","color":"#ef4444"}
       ]
     },
     {
-      "id": 60,
-      "categoria": "Cero Excusas",
+      "id": 70,
+      "categoria": "El Arte de la Guerra Diaria",
       "bloques": [
-        {"tipo":"voz","texto":"Las excusas no pagan las cuentas. O tienes resultados, o tienes cuentos.","color":"#450a0a"},
-        {"tipo":"respiracion","texto":"Inhala fuerza, exhala flojera. Levántate y haz lo que toca.","duracion":30,"color":"#60a5fa"},
-        {"tipo":"escenario","texto":"Te sientes cansado hoy y no quieres ir a trabajar en tu proyecto personal.","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Trabajas al menos 15 minutos o te vas a ver televisión?","opciones":["Trabajar 15 minutos","Ver televisión"],"correcta":0,"explicacion":"La disciplina es hacer lo que debes, cuando debes, aunque no quieras. Los 15 minutos se volverán una hora.","recompensa":25,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si haces una tarea hoy y otra mañana, ¿cuántas llevas?","opciones":["2","1","Ninguna"],"correcta":0,"explicacion":"El éxito es sumar cosas pequeñas todos los días. No te detengas.","recompensa":15,"color":"#0ea5e9"},
-        {"tipo":"acertijo","pregunta":"Siempre está delante de ti pero no puedes verlo. ¿Qué es?","opciones":["El Futuro","El Aire","Tu Espalda"],"correcta":0,"explicacion":"El futuro se construye con lo que haces ahora mismo.","recompensa":15,"color":"#8b5cf6"},
-        {"tipo":"cierre","texto":"Has vencido a la flojera. Eres un ganador.","color":"#ef4444"}
+        {"tipo":"voz","texto":"Cada día es una batalla por tu tiempo y tu enfoque. Si no tienes un plan, eres parte del plan de otro.","color":"#1e3a8a"},
+        {"tipo":"respiracion","instrucciones":"Inhala (expandir), Retén (mantener), Exhala (contraer)","tiempos":{"inhalar":5, "retener":5, "exhalar":10}, "repeticiones":5, "color":"#3b82f6"},
+        {"tipo":"historia","titulo":"El General sin Mapa","texto":"Un general salió a la guerra con el mejor ejército pero sin saber a dónde iba. Se perdió en el desierto y sus hombres se rindieron sin disparar una bala. El éxito sin dirección es solo un camino al fracaso.","color":"#1e3a8a"},
+        {"tipo":"escenario","texto":"Al despertar, lo primero que haces es mirar el teléfono y responder mensajes de otras personas.","color":"#f59e0b"},
+        {"tipo":"decision","pregunta":"¿Sigues haciendo eso o dejas el teléfono lejos la primera hora para planear TU día?","opciones":["Planear mi día primero","Mirar mensajes"],"correcta":0,"explicacion":"Si miras el teléfono al despertar, dejas que el mundo decida tus prioridades. Tú eres el capitán, toma el timón primero.","recompensa":40,"color":"#10b981"},
+        {"tipo":"juego_mental","pregunta":"Si una distracción te quita 10 min, pero tu cerebro tarda 20 en volver a enfocarse, ¿cuánto tiempo real perdiste?","opciones":["30 minutos","10 minutos"],"correcta":0,"explicacion":"Las distracciones son ladrones de vida. Protégete de ellas.","recompensa":20,"color":"#0ea5e9"},
+        {"tipo":"ejercicio_fisico","texto":"Cierra los puños con fuerza durante 30 segundos mientras visualizas tu meta más grande. Siente esa energía.","duracion":30,"color":"#8b5cf6"},
+        {"tipo":"reflexion","texto":"Domina tu mañana y dominarás tu vida. El orden empieza en tu almohada.","color":"#ef4444"}
       ]
     },
     {
-      "id": 61,
-      "categoria": "Trato con la Gente",
+      "id": 71,
+      "categoria": "Hambre de Crecimiento",
       "bloques": [
-        {"tipo":"voz","texto":"Trata a todos con respeto, desde el que limpia hasta el que manda.","color":"#1e1b4b"},
-        {"tipo":"escenario","texto":"Un mesero se equivoca con tu orden en un restaurante.","color":"#34d399"},
-        {"tipo":"decision","pregunta":"¿Le pides el cambio con educación o le gritas por su error?","opciones":["Pedir con educación","Gritarle"],"correcta":0,"explicacion":"La clase de una persona se ve en cómo trata a los que no pueden darle nada a cambio. Sé un caballero.","recompensa":20,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"Si ayudas a 2 personas hoy, ¿cuántas manos de ayuda diste?","opciones":["2","4","1"],"correcta":0,"explicacion":"Lo que das, regresa. Ayudar te hace un líder.","recompensa":15,"color":"#0ea5e9"},
-        {"tipo":"acertijo","pregunta":"Tiene manos pero no puede aplaudir. ¿Qué es?","opciones":["Un Reloj","Un Maniquí","Una Estatua"],"correcta":0,"explicacion":"No seas como el reloj, que solo da vueltas. Haz que tu tiempo valga.","recompensa":15,"color":"#f59e0b"},
-        {"tipo":"cierre","texto":"Tu humildad te hará llegar más lejos que tu orgullo.","color":"#ef4444"}
+        {"tipo":"voz","texto":"El que cree que ya lo sabe todo, ha dejado de crecer. Hoy vamos a abrir tu mente para nuevas victorias.","color":"#064e3b"},
+        {"tipo":"respiracion","instrucciones":"Inhala (expandir), Retén (mantener), Exhala (contraer)","tiempos":{"inhalar":8, "retener":4, "exhalar":8}, "repeticiones":4, "color":"#10b981"},
+        {"tipo":"historia","titulo":"La Taza Llena","texto":"Un sabio le servía té a un hombre soberbio. Siguió sirviendo hasta que el té se desbordó. 'Eres como esta taza', dijo el sabio, 'no cabe nada nuevo si ya estás lleno de ti mismo'. Vacía tu orgullo para llenarte de saber.","color":"#065f46"},
+        {"tipo":"escenario","texto":"Te dan un consejo sobre algo que crees que ya dominas, pero el consejo viene de alguien con más éxito que tú.","color":"#34d399"},
+        {"tipo":"decision","pregunta":"¿Escuchas con humildad y anotas o le dices que ya lo sabías?","opciones":["Escuchar y anotar","Decir que ya lo sabía"],"correcta":0,"explicacion":"El sabio siempre es un estudiante. El necio siempre quiere ser el maestro. Escucha y ganarás.","recompensa":35,"color":"#22c55e"},
+        {"tipo":"juego_mental","pregunta":"¿Cuál es la palabra más peligrosa para tu éxito?: YA LO SÉ, DIME MÁS, INTENTARÉ","opciones":["YA LO SÉ","INTENTARÉ","DIME MÁS"],"correcta":0,"explicacion":"'Ya lo sé' cierra la puerta al aprendizaje. Nunca la uses.","recompensa":20,"color":"#38bdf8"},
+        {"tipo":"acertijo","pregunta":"Cuanto más se tiene, menos se ve. ¿Qué es?","opciones":["La Oscuridad","La Riqueza","La Inteligencia"],"correcta":0,"explicacion":"No dejes que el éxito te ciegue. Mantén los ojos abiertos.","recompensa":15,"color":"#f59e0b"},
+        {"tipo":"reflexion","texto":"Mantente hambriento, mantente humilde. La cima es solo el principio de otra montaña.","color":"#ef4444"}
       ]
     },
     {
-      "id": 62,
-      "categoria": "Orden es Progreso",
+      "id": 72,
+      "categoria": "Economía del Tiempo",
       "bloques": [
-        {"tipo":"voz","texto":"Una casa sucia es una mente sucia. Ordena tu espacio para ordenar tu vida.","color":"#14532d"},
-        {"tipo":"escenario","texto":"Tu escritorio está lleno de papeles y basura, pero tienes mucho trabajo pendiente.","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Limpias tu espacio 5 minutos antes de empezar o trabajas en el desorden?","opciones":["Limpiar 5 minutos","Trabajar así"],"correcta":0,"explicacion":"El orden te da claridad. Si tu entorno está limpio, tu cerebro trabaja mejor y más rápido.","recompensa":20,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"¿Qué palabra sobra aquí?: LIMPIEZA, ORDEN, BASURA, ÉXITO","opciones":["BASURA","ORDEN","LIMPIEZA"],"correcta":0,"explicacion":"Saca la basura de tu vida, tanto de tu cuarto como de tu mente.","recompensa":15,"color":"#38bdf8"},
-        {"tipo":"acertijo","pregunta":"Se llena de cosas pero no tiene estómago. ¿Qué es?","opciones":["Una Maleta","Una Caja","Una Casa"],"correcta":0,"explicacion":"No llenes tu vida de cosas que no sirven. Viaja ligero.","recompensa":15,"color":"#a78bfa"},
-        {"tipo":"cierre","texto":"Has puesto orden en el caos. Ahora puedes avanzar.","color":"#ef4444"}
+        {"tipo":"voz","texto":"El tiempo es la única moneda que no puedes recuperar. No la malgastes en gente o cosas que no te den valor.","color":"#1e1b4b"},
+        {"tipo":"respiracion","instrucciones":"Inhala (expandir), Retén (mantener), Exhala (contraer)","tiempos":{"inhalar":6, "retener":3, "exhalar":9}, "repeticiones":5, "color":"#60a5fa"},
+        {"tipo":"historia","titulo":"El Banquero de Segundos","texto":"Imagina que cada mañana recibes $86,400, pero al final del día lo que no usaste desaparece. Así es el tiempo. No puedes ahorrarlo para mañana. Úsalo hoy en lo que importa o lo habrás perdido para siempre.","color":"#1e293b"},
+        {"tipo":"escenario","texto":"Te invitan a una reunión 'social' de negocios que dura 4 horas, pero sabes que solo se hablará de tonterías.","color":"#ef4444"},
+        {"tipo":"decision","pregunta":"¿Inventas una excusa educada y no vas o asistes por compromiso social?","opciones":["Excusarse y no ir","Ir por compromiso"],"correcta":0,"explicacion":"Tu tiempo es sagrado. Aprender a decir 'no' a lo que no suma es decir 'sí' a tus metas. No regales tu vida.","recompensa":45,"color":"#10b981"},
+        {"tipo":"juego_mental","pregunta":"Si duermes 8 horas, trabajas 8 y desperdicias 4, ¿cuántas te quedan para construir tu imperio?","opciones":["4","8","0"],"correcta":0,"explicacion":"Esas 4 horas son la diferencia entre ser un jefe o un empleado. Úsalas bien.","recompensa":25,"color":"#0ea5e9"},
+        {"tipo":"ejercicio_fisico","texto":"Siéntate derecho y no te muevas absolutamente nada por 2 minutos. Controla tus impulsos. El tiempo es tuyo.","duracion":120,"color":"#8b5cf6"},
+        {"tipo":"reflexion","texto":"No es que tengamos poco tiempo, es que perdemos mucho. Sé un guardián de tus horas.","color":"#ef4444"}
       ]
     },
     {
-      "id": 63,
-      "categoria": "Saber Decir No",
+      "id": 73,
+      "categoria": "Poder de la Imagen",
       "bloques": [
-        {"tipo":"voz","texto":"Decir 'no' a los demás es decirte 'sí' a ti mismo. No seas un monigote de nadie.","color":"#7f1d1d"},
-        {"tipo":"escenario","texto":"Un conocido te pide un préstamo de dinero que sabes que no te va a devolver.","color":"#ef4444"},
-        {"tipo":"decision","pregunta":"¿Le dices que no puedes con firmeza o le prestas por pena?","opciones":["Decir que no con firmeza","Prestar por pena"],"correcta":0,"explicacion":"Es mejor que se enojen contigo un día por decir no, a que tú estés enojado meses porque no te pagan.","recompensa":30,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si tienes $10 y regalas $10, ¿cuánto tienes para tu comida?","opciones":["$0","$5","$10"],"correcta":0,"explicacion":"No puedes ayudar a nadie si tú estás en el suelo. Primero asegúrate tú.","recompensa":15,"color":"#0ea5e9"},
-        {"tipo":"acertijo","pregunta":"Es tuya, pero los demás la usan más que tú. ¿Qué es?","opciones":["Tu Nombre","Tu Ropa","Tu Casa"],"correcta":0,"explicacion":"Tu nombre es tu marca. Haz que signifique respeto.","recompensa":15,"color":"#f59e0b"},
-        {"tipo":"cierre","texto":"Hoy has puesto un límite. Eso es carácter.","color":"#ef4444"}
+        {"tipo":"voz","texto":"Como te ven, te tratan. Si te ven mal, te maltratan. Si te ven bien, te respetan. Tu imagen es tu primera venta.","color":"#1e3a8a"},
+        {"tipo":"respiracion","instrucciones":"Inhala (expandir), Retén (mantener), Exhala (contraer)","tiempos":{"inhalar":5, "retener":5, "exhalar":5}, "repeticiones":6, "color":"#3b82f6"},
+        {"tipo":"historia","titulo":"El Mendigo en el Trono","texto":"Un rey se vistió de mendigo y nadie le abrió la puerta de su propio palacio. Cuando volvió con su corona, todos se arrodillaron. El hombre era el mismo, pero el respeto cambió por lo que veían sus ojos.","color":"#1e3a8a"},
+        {"tipo":"escenario","texto":"Tienes una reunión por Zoom y piensas que no hace falta vestirse bien porque solo se ve la cara.","color":"#f59e0b"},
+        {"tipo":"decision","pregunta":"¿Te vistes completo como si fuera en persona o te quedas en pijama de la cintura abajo?","opciones":["Vestirse completo","Quedarse en pijama"],"correcta":0,"explicacion":"Vestirse bien es para TI, no para ellos. Si te sientes como un profesional de pies a cabeza, actuarás como uno.","recompensa":30,"color":"#22c55e"},
+        {"tipo":"juego_mental","pregunta":"¿Cuánto tarda una persona en hacerse una idea de quién eres al verte?","opciones":["7 segundos","5 minutos"],"correcta":0,"explicacion":"La primera impresión es casi imposible de borrar. No desperdicies esos 7 segundos.","recompensa":20,"color":"#38bdf8"},
+        {"tipo":"acertijo","pregunta":"Te hace ver mejor, pero no se compra en tiendas. ¿Qué es?","opciones":["La Postura","La Ropa","El Dinero"],"correcta":0,"explicacion":"Camina derecho y mira a los ojos. Eso no cuesta dinero y vale millones.","recompensa":15,"color":"#f59e0b"},
+        {"tipo":"reflexion","texto":"La elegancia es una herramienta de guerra. Úsala para que el mundo se rinda ante ti.","color":"#ef4444"}
       ]
     },
     {
-      "id": 64,
-      "categoria": "Aprender del Error",
+      "id": 74,
+      "categoria": "Maestría en Crisis",
       "bloques": [
-        {"tipo":"voz","texto":"El único que no se equivoca es el que no hace nada. No le tengas miedo a fallar.","color":"#064e3b"},
-        {"tipo":"respiracion","texto":"Inhala aprendizaje, exhala miedo al fallo. Sigue intentando.","duracion":30,"color":"#10b981"},
-        {"tipo":"escenario","texto":"Intentaste un negocio y perdiste un poco de dinero. Te sientes mal.","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Anotaste por qué fallaste para no repetirlo o piensas dejar de intentarlo?","opciones":["Anotar y aprender","Dejar de intentar"],"correcta":0,"explicacion":"Perder dinero es pagar una clase. Si aprendes la lección, la inversión valió la pena.","recompensa":25,"color":"#22c55e"},
-        {"tipo":"juego_mental","pregunta":"¿Cuántos errores necesitas para aprender?: LOS QUE SEAN NECESARIOS, UNO, NINGUNO","opciones":["LOS QUE SEAN NECESARIOS","UNO","NINGUNO"],"correcta":0,"explicacion":"El camino al éxito está empedrado de errores bien aprovechados.","recompensa":20,"color":"#06b6d4"},
-        {"tipo":"acertijo","pregunta":"Sube y baja pero siempre está en el mismo lugar. ¿Qué es?","opciones":["La Escalera","El Sol","El Ascensor"],"correcta":0,"explicacion":"Usa los escalones para subir, no para sentarte a llorar.","recompensa":15,"color":"#8b5cf6"},
-        {"tipo":"cierre","texto":"Hoy eres más sabio que ayer porque lo intentaste.","color":"#ef4444"}
+        {"tipo":"voz","texto":"Cuando el barco se hunde, el capitán es el último en saltar. Hoy aprenderás a mantener la calma cuando todos gritan.","color":"#450a0a"},
+        {"tipo":"respiracion","instrucciones":"Inhala (expandir), Retén (mantener), Exhala (contraer)","tiempos":{"inhalar":4, "retener":12, "exhalar":4}, "repeticiones":4, "color":"#ef4444"},
+        {"tipo":"historia","titulo":"El Incendio de la Fábrica","texto":"Edison vio cómo su fábrica se quemaba por completo. Sus amigos lloraban. Él dijo: 'Vayan por mi esposa, nunca verá un fuego así de nuevo. Mañana empezamos de cero'. No lloró por lo perdido, planeó lo que vendría.","color":"#7f1d1d"},
+        {"tipo":"escenario","texto":"Cometes un error que le cuesta dinero a tu negocio y tus socios están furiosos.","color":"#ef4444"},
+        {"tipo":"decision","pregunta":"¿Buscas a quién culpar o asumes el error y presentas un plan de solución inmediato?","opciones":["Asumir y presentar solución","Buscar culpables"],"correcta":0,"explicacion":"Culpar a otros es de cobardes. El líder asume la carga y arregla el desastre. Eso genera un respeto indestructible.","recompensa":50,"color":"#10b981"},
+        {"tipo":"juego_mental","pregunta":"¿Qué es lo más importante en una crisis?: LA CALMA, EL DINERO, LA VELOCIDAD","opciones":["LA CALMA","LA VELOCIDAD","EL DINERO"],"correcta":0,"explicacion":"Sin calma no puedes pensar. Si no piensas, el dinero y la velocidad no sirven de nada.","recompensa":25,"color":"#0ea5e9"},
+        {"tipo":"ejercicio_fisico","texto":"Mantén una plancha abdominal o sostente en un pie por 60 segundos. Controla el temblor. La crisis está en tu mente.","duracion":60,"color":"#8b5cf6"},
+        {"tipo":"reflexion","texto":"Tu carácter no se ve en los buenos tiempos, se ve cuando todo sale mal. Mantente firme.","color":"#ef4444"}
       ]
     },
     {
-      "id": 65,
-      "categoria": "Cuerpo Sano",
+      "id": 75,
+      "categoria": "El Trono del Legado",
       "bloques": [
-        {"tipo":"voz","texto":"Tu cuerpo es tu máquina. Si no la aceitas y la cuidas, se va a romper.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Tienes mucha hambre y puedes elegir entre una hamburguesa grasosa o un plato de comida real.","color":"#34d399"},
-        {"tipo":"decision","pregunta":"¿Eliges la comida que te da energía o la que te da sueño?","opciones":["Comida real","Hamburguesa grasosa"],"correcta":0,"explicacion":"Lo que comes hoy es el combustible de tus metas de mañana. No le eches basura a tu motor.","recompensa":20,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si caminas 10 minutos cada día, ¿cuántos minutos hiciste en una semana?","opciones":["70 minutos","50 minutos","100 minutos"],"correcta":0,"explicacion":"Moverse un poco es mejor que estar sentado todo el día. Cuida tu salud.","recompensa":15,"color":"#38bdf8"},
-        {"tipo":"acertijo","pregunta":"Blanco por dentro, verde por fuera. Si quieres que te lo diga, espera. ¿Qué es?","opciones":["La Pera","La Manzana","El Limón"],"correcta":0,"explicacion":"La paciencia es clave en la salud y en los negocios.","recompensa":15,"color":"#a78bfa"},
-        {"tipo":"cierre","texto":"Has cuidado tu templo. Mañana tendrás más fuerza.","color":"#ef4444"}
+        {"tipo":"voz","texto":"No estamos aquí solo para sobrevivir, sino para dejar una marca. Hoy vas a decidir qué dirán de ti cuando ya no estés.","color":"#1e1b4b"},
+        {"tipo":"respiracion","instrucciones":"Inhala (expandir), Retén (mantener), Exhala (contraer)","tiempos":{"inhalar":10, "retener":5, "exhalar":10}, "repeticiones":3, "color":"#60a5fa"},
+        {"tipo":"historia","titulo":"El Testamento de Alfred Nobel","texto":"Alfred Nobel leyó su propio obituario por error en el periódico; lo llamaban 'el mercader de la muerte'. Se horrorizó tanto que usó su fortuna para crear los Premios Nobel. Cambió su historia antes de morir. Tú también puedes.","color":"#1e293b"},
+        {"tipo":"escenario","texto":"Tienes la oportunidad de ganar dinero engañando a alguien que confía en ti. Nadie se enteraría.","color":"#34d399"},
+        {"tipo":"decision","pregunta":"¿Lo haces o proteges tu honor aunque pierdas el dinero?","opciones":["Proteger mi honor","Ganar el dinero"],"correcta":0,"explicacion":"El dinero va y viene, el honor es para siempre. Tu nombre es lo único que tus hijos heredarán con orgullo.","recompensa":60,"color":"#22c55e"},
+        {"tipo":"juego_mental","pregunta":"¿Cómo quieres ser recordado?: COMO ALGUIEN GRANDE, COMO ALGUIEN RICO, COMO ALGUIEN BUENO","opciones":["COMO ALGUIEN GRANDE","COMO ALGUIEN BUENO","COMO ALGUIEN RICO"],"correcta":0,"explicacion":"La grandeza incluye la bondad y atrae la riqueza. Aspira a lo más alto.","recompensa":30,"color":"#0ea5e9"},
+        {"tipo":"acertijo","pregunta":"Es más valioso que el oro, pero no se puede comprar. Se construye cada día. ¿Qué es?","opciones":["Tu Legado","Tu Tiempo","Tu Casa"],"correcta":0,"explicacion":"Tu legado es la suma de todas tus decisiones. Haz que valgan la pena.","recompensa":20,"color":"#f59e0b"},
+        {"tipo":"reflexion","texto":"Vive de tal manera que el mundo llore cuando tú ya no estés, pero tú te vayas sonriendo.","color":"#ef4444"}
       ]
     }
   ]
