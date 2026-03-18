@@ -60,7 +60,8 @@ function breathingAnimation(){
     circle.className = "breath-circle";
     block.appendChild(circle);
     let inhale=true;
-    setInterval(()=>{
+    const interval = setInterval(()=>{
+        if(current >= bloques.length) { clearInterval(interval); return; }
         circle.style.transform = inhale ? "scale(1.6)" : "scale(1)";
         inhale = !inhale;
     },4000);
@@ -76,10 +77,10 @@ function createOptions(b){
                 puntos += b.recompensa||5;
                 userData.disciplina += 2;
                 userData.claridad += 2;
-                alert("Correcto: "+b.explicacion);
+                alert("✅ Correcto: "+b.explicacion);
             } else {
                 userData.calma += 1;
-                alert("Respuesta: "+b.explicacion);
+                alert("❌ Respuesta: "+b.explicacion);
             }
             updatePanel();
             nextBtn.style.display = "inline-block";
@@ -93,7 +94,7 @@ async function showBlock(b){
     block.innerHTML = "";
     document.body.style.background = b.color||"#0f172a";
 
-    if(b.texto){
+    if(b.texto && !["quiz","acertijo","decision","juego_mental"].includes(b.tipo)){
         block.innerHTML = "<p>"+b.texto+"</p>";
         await playVoice(b.texto);
     }
@@ -126,12 +127,12 @@ async function showBlock(b){
 
             // Guardar sesión completada
             let completed = JSON.parse(localStorage.getItem("completedSessions")) || [];
-            completed.push(currentSessionIndex); // nuevo índice
+            completed.push(currentSessionIndex);
             localStorage.setItem("completedSessions", JSON.stringify(completed));
 
             localStorage.setItem("kamizenData", JSON.stringify(userData));
             updatePanel();
-            restartBtn.style.display = "inline-block";
+            restartBtn.style.display="inline-block";
             await playVoice(b.texto);
             return;
     }
@@ -160,19 +161,14 @@ startBtn.addEventListener("click", async ()=>{
     const data = await res.json();
     const sesiones = data.sesiones;
 
-    // Recuperar sesiones completadas
     let completed = JSON.parse(localStorage.getItem("completedSessions")) || [];
-
-    // Filtrar sesiones no completadas
     let availableIndices = sesiones.map((_,i)=>i).filter(i => !completed.includes(i));
 
     if(availableIndices.length === 0){
-        // Reiniciar todas las sesiones si ya completó todas
         localStorage.removeItem("completedSessions");
         availableIndices = sesiones.map((_,i)=>i);
     }
 
-    // Elegir aleatoriamente una sesión disponible
     currentSessionIndex = availableIndices[Math.floor(Math.random()*availableIndices.length)];
     bloques = sesiones[currentSessionIndex].bloques;
     current = 0;
