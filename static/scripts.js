@@ -7,7 +7,7 @@ const block = document.getElementById("block");
 let bloques = [];
 let currentIdx = 0;
 let sesionActualData = null;
-let skipFlag = false; 
+let skipFlag = false; // Interruptor para saltar
 let activeInterval = null;
 
 /* PERSISTENCIA DE DATOS */
@@ -22,17 +22,11 @@ let userData = JSON.parse(localStorage.getItem("kamizenData")) || {
 };
 
 function updatePanel(){
-    // Asegurar que los valores no bajen de cero ni suban de 100
-    userData.disciplina = Math.max(0, Math.min(userData.disciplina, 100));
-    userData.claridad = Math.max(0, Math.min(userData.claridad, 100));
-    userData.calma = Math.max(0, Math.min(userData.calma, 100));
-
     document.getElementById("streak").innerHTML = "🔥 Racha: " + userData.streak + " días";
     document.getElementById("level").innerHTML = "Nivel KaMiZen: " + userData.nivel;
-    document.getElementById("disciplina-bar").style.width = userData.disciplina + "%";
-    document.getElementById("claridad-bar").style.width = userData.claridad + "%";
-    document.getElementById("calma-bar").style.width = userData.calma + "%";
-    
+    document.getElementById("disciplina-bar").style.width = Math.min(userData.disciplina, 100) + "%";
+    document.getElementById("claridad-bar").style.width = Math.min(userData.claridad, 100) + "%";
+    document.getElementById("calma-bar").style.width = Math.min(userData.calma, 100) + "%";
     localStorage.setItem("kamizenData", JSON.stringify(userData));
 }
 
@@ -40,11 +34,11 @@ function updatePanel(){
 function playVoice(text){
     return new Promise(resolve => {
         speechSynthesis.cancel();
-        if(skipFlag) return resolve(); 
+        if(skipFlag) return resolve(); // No hablar si estamos saltando
         let msg = new SpeechSynthesisUtterance(text);
         msg.lang = "es-ES";
         msg.rate = 0.9;
-        msg.pitch = 0.8; // Un poco más profundo
+        msg.pitch = 0.9;
         msg.onend = resolve;
         speechSynthesis.speak(msg);
     });
@@ -70,7 +64,7 @@ async function showBlock(b){
     
     block.innerHTML = "";
     nextBtn.style.display = "none";
-    skipBtn.style.display = "block"; 
+    skipBtn.style.display = "block"; // Mostrar siempre el botón saltar
     document.body.style.background = b.color || "#020617";
 
     if(b.tipo === "respiracion"){
@@ -84,6 +78,8 @@ async function showBlock(b){
 
         for(let i=0; i < reps; i++){
             if(skipFlag) break;
+
+            // 1. INHALAR
             label.innerText = b.voz_guia ? b.voz_guia[0] : "Inhala";
             playVoice(label.innerText);
             circle.style.transition = `transform ${b.tiempos.inhalar}s ease-in-out`;
@@ -91,11 +87,15 @@ async function showBlock(b){
             await wait(b.tiempos.inhalar * 1000);
             
             if(skipFlag) break;
+
+            // 2. RETENER
             label.innerText = b.voz_guia ? b.voz_guia[1] : "Retén";
             playVoice(label.innerText);
             await wait(b.tiempos.retener * 1000);
             
             if(skipFlag) break;
+
+            // 3. EXHALAR
             label.innerText = b.voz_guia ? b.voz_guia[2] : "Exhala";
             playVoice(label.innerText);
             circle.style.transition = `transform ${b.tiempos.exhalar}s ease-in-out`;
@@ -105,7 +105,7 @@ async function showBlock(b){
         finishBlock();
     } 
     else if(["decision", "juego_mental", "acertijo"].includes(b.tipo)){
-        skipBtn.style.display = "none"; 
+        skipBtn.style.display = "none"; // En decisiones no se salta, hay que elegir
         block.innerHTML = `<h3 style="margin-bottom:15px;">${b.pregunta}</h3>`;
         b.opciones.forEach((opt, i) => {
             let btn = document.createElement("button");
@@ -114,8 +114,7 @@ async function showBlock(b){
             btn.onclick = async () => {
                 const esCorrecto = i === b.correcta;
                 block.innerHTML = `<p style="font-size:24px;">${esCorrecto ? "✅" : "❌"}</p><p>${b.explicacion}</p>`;
-                if(esCorrecto){ userData.disciplina += 5; userData.claridad += 2; } 
-                else { userData.calma += 2; userData.disciplina -= 2; }
+                if(esCorrecto){ userData.disciplina += 5; } else { userData.calma += 2; }
                 updatePanel();
                 await playVoice(b.explicacion);
                 finishBlock();
@@ -150,33 +149,17 @@ function finishBlock() {
     nextBtn.style.display = "block";
 }
 
-/* EVENTO SALTAR (PENALIZACIÓN CRÍTICA) */
+/* EVENTOS */
 skipBtn.addEventListener("click", () => {
     skipFlag = true;
     speechSynthesis.cancel();
     if(activeInterval) clearInterval(activeInterval);
-    
-    // Penalización drástica: Pierde el 80% de su disciplina actual
-    userData.disciplina = Math.floor(userData.disciplina * 0.2);
-    userData.calma -= 5;
-    
-    updatePanel();
-    
-    // Feedback visual de la penalización
-    block.innerHTML = `<p style="color:#ef4444; font-weight:bold;">DISCIPLINA QUEBRANTADA</p>
-                       <p style="font-size:14px;">Saltar el entrenamiento debilita tu carácter.</p>`;
-    
-    playVoice("Disciplina quebrantada. El camino fácil no lleva a la cima.");
-    
-    setTimeout(() => {
-        finishBlock();
-    }, 2000);
+    finishBlock();
 });
 
-/* EVENTOS DE FLUJO */
 startBtn.addEventListener("click", async () => {
     startBtn.style.display = "none";
-    block.innerHTML = "Estableciendo conexión...";
+    block.innerHTML = "Cargando...";
     try {
         const res = await fetch("/session_content");
         const data = await res.json();
@@ -184,15 +167,8 @@ startBtn.addEventListener("click", async () => {
         sesionActualData = data.sesiones.find(s => s.id === nextId) || data.sesiones[0];
         bloques = sesionActualData.bloques;
         currentIdx = 0;
-        
-        let today = new Date().toDateString();
-        if(userData.lastDay !== today){
-            userData.streak++;
-            userData.lastDay = today;
-        }
-        
         showBlock(bloques[currentIdx]);
-    } catch (err) { block.innerHTML = "Error de sistema."; }
+    } catch (err) { block.innerHTML = "Error de conexión."; }
 });
 
 nextBtn.addEventListener("click", () => {
@@ -200,10 +176,8 @@ nextBtn.addEventListener("click", () => {
     if(currentIdx < bloques.length){
         showBlock(bloques[currentIdx]);
     } else {
-        block.innerHTML = `<h2>Sesión ${sesionActualData.id} Completada</h2>
-                           <p>Has forjado tu mente un día más.</p>`;
+        block.innerHTML = `<h2>Sesión ${sesionActualData.id} Completada</h2>`;
         userData.lastSessionId = sesionActualData.id;
-        userData.nivel = Math.floor(userData.disciplina / 20) + 1;
         updatePanel();
         restartBtn.style.display = "block";
         nextBtn.style.display = "none";
