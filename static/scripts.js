@@ -22,6 +22,7 @@ let userData = JSON.parse(localStorage.getItem("kamizenData")) || {
 };
 
 function updatePanel(){
+    // Asegurar que los valores no bajen de cero ni suban de 100
     userData.disciplina = Math.max(0, Math.min(userData.disciplina, 100));
     userData.claridad = Math.max(0, Math.min(userData.claridad, 100));
     userData.calma = Math.max(0, Math.min(userData.calma, 100));
@@ -43,12 +44,13 @@ function playVoice(text){
         let msg = new SpeechSynthesisUtterance(text);
         msg.lang = "es-ES";
         msg.rate = 0.9;
-        msg.pitch = 0.8;
+        msg.pitch = 0.8; // Un poco más profundo
         msg.onend = resolve;
         speechSynthesis.speak(msg);
     });
 }
 
+/* FUNCION DE ESPERA INTERRUMPIBLE */
 function wait(ms) {
     return new Promise(resolve => {
         const start = Date.now();
@@ -148,34 +150,33 @@ function finishBlock() {
     nextBtn.style.display = "block";
 }
 
-/* EVENTO SALTAR */
+/* EVENTO SALTAR (PENALIZACIÓN CRÍTICA) */
 skipBtn.addEventListener("click", () => {
     skipFlag = true;
     speechSynthesis.cancel();
     if(activeInterval) clearInterval(activeInterval);
+    
+    // Penalización drástica: Pierde el 80% de su disciplina actual
     userData.disciplina = Math.floor(userData.disciplina * 0.2);
     userData.calma -= 5;
+    
     updatePanel();
-    block.innerHTML = `<p style="color:#ef4444; font-weight:bold;">DISCIPLINA QUEBRANTADA</p>`;
-    playVoice("Disciplina quebrantada.");
-    setTimeout(() => { finishBlock(); }, 2000);
+    
+    // Feedback visual de la penalización
+    block.innerHTML = `<p style="color:#ef4444; font-weight:bold;">DISCIPLINA QUEBRANTADA</p>
+                       <p style="font-size:14px;">Saltar el entrenamiento debilita tu carácter.</p>`;
+    
+    playVoice("Disciplina quebrantada. El camino fácil no lleva a la cima.");
+    
+    setTimeout(() => {
+        finishBlock();
+    }, 2000);
 });
 
-/* LÓGICA DE INICIO CON BLOQUEO DIARIO */
+/* EVENTOS DE FLUJO */
 startBtn.addEventListener("click", async () => {
-    let today = new Date().toDateString();
-
-    // Si ya hizo la sesión hoy, no dejarlo entrar
-    if(userData.lastDay === today){
-        block.innerHTML = `<h3>Acceso Denegado</h3><p>La sabiduría requiere tiempo para ser digerida. Regresa mañana para tu próxima lección.</p>`;
-        playVoice("Regresa mañana. No satures tu mente.");
-        startBtn.style.display = "none";
-        return;
-    }
-
     startBtn.style.display = "none";
     block.innerHTML = "Estableciendo conexión...";
-    
     try {
         const res = await fetch("/session_content");
         const data = await res.json();
@@ -184,10 +185,11 @@ startBtn.addEventListener("click", async () => {
         bloques = sesionActualData.bloques;
         currentIdx = 0;
         
-        // Actualizamos el día al INICIAR para bloquear repeticiones
-        userData.streak++;
-        userData.lastDay = today;
-        updatePanel();
+        let today = new Date().toDateString();
+        if(userData.lastDay !== today){
+            userData.streak++;
+            userData.lastDay = today;
+        }
         
         showBlock(bloques[currentIdx]);
     } catch (err) { block.innerHTML = "Error de sistema."; }
