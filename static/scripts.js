@@ -33,7 +33,7 @@ function updatePanel(){
 }
 updatePanel();
 
-/* RACHA */
+/* RACHA DIARIA */
 function updateStreak(){
     let today = new Date().toDateString();
     if(userData.lastDay !== today){
@@ -42,256 +42,140 @@ function updateStreak(){
     }
 }
 
-/* VOZ SEGURA */
+/* VOZ */
 function playVoice(text){
     return new Promise(resolve=>{
-
-        if(!text){
-            resolve();
-            return;
-        }
-
-        try{
-
-            speechSynthesis.cancel();
-
-            let msg = new SpeechSynthesisUtterance(text);
-            msg.lang = "es-ES";
-            msg.rate = 0.9;
-
-            msg.onend = ()=>{
-                resolve();
-            };
-
-            msg.onerror = ()=>{
-                resolve();
-            };
-
-            speechSynthesis.speak(msg);
-
-        }catch(e){
-            resolve();
-        }
-
+        speechSynthesis.cancel();
+        let msg = new SpeechSynthesisUtterance(text);
+        msg.lang = "es-ES";
+        msg.rate = 0.9;
+        msg.onend = resolve;
+        speechSynthesis.speak(msg);
     });
 }
 
 /* RESPIRACION */
 function breathingAnimation(){
-
     let circle = document.createElement("div");
     circle.className = "breath-circle";
-
     block.appendChild(circle);
-
-    let inhale = true;
-
-    setInterval(()=>{
-
+    let inhale=true;
+    const interval = setInterval(()=>{
+        if(current >= bloques.length) { clearInterval(interval); return; }
         circle.style.transform = inhale ? "scale(1.6)" : "scale(1)";
-
         inhale = !inhale;
-
     },4000);
-
 }
 
-/* OPCIONES SEGURAS */
+/* OPCIONES */
 function createOptions(b){
-
-    if(!b.opciones) return;
-
     b.opciones.forEach((op,i)=>{
-
         let btn = document.createElement("button");
-
         btn.innerText = op;
-
         btn.onclick = ()=>{
-
             if(i === b.correcta){
-
-                puntos += b.recompensa || 5;
-
+                puntos += b.recompensa||5;
                 userData.disciplina += 2;
                 userData.claridad += 2;
-
-                alert("Correcto: " + (b.explicacion || ""));
-
-            }else{
-
+                alert("✅ Correcto: "+b.explicacion);
+            } else {
                 userData.calma += 1;
-
-                alert("Respuesta: " + (b.explicacion || ""));
-
+                alert("❌ Respuesta: "+b.explicacion);
             }
-
             updatePanel();
-
             nextBtn.style.display = "inline-block";
-
         };
-
         block.appendChild(btn);
-
     });
-
 }
 
-/* MOSTRAR BLOQUE */
-
+/* BLOQUE */
 async function showBlock(b){
-
     block.innerHTML = "";
+    document.body.style.background = b.color||"#0f172a";
 
-    nextBtn.style.display = "none";
-
-    document.body.style.background = b.color || "#0f172a";
-
-    if(b.texto){
-
+    if(b.texto && !["quiz","acertijo","decision","juego_mental"].includes(b.tipo)){
         block.innerHTML = "<p>"+b.texto+"</p>";
-
         await playVoice(b.texto);
-
     }
 
     switch(b.tipo){
-
         case "quiz":
         case "acertijo":
         case "decision":
         case "juego_mental":
-
-            block.innerHTML = "<h3>"+(b.pregunta || "")+"</h3>";
-
+            block.innerHTML = "<h3>"+b.pregunta+"</h3>";
             createOptions(b);
-
             await playVoice(b.pregunta);
-
             break;
-
         case "respiracion":
-
             breathingAnimation();
-
             await playVoice(b.texto);
-
-            setTimeout(()=>{
-                nextBtn.style.display="inline-block";
-            },8000);
-
+            setTimeout(()=>{ nextBtn.style.display = "inline-block"; },30000);
             return;
-
         case "recompensa":
-
             userData.disciplina+=3;
             userData.claridad+=3;
             userData.calma+=3;
-
             block.innerHTML="<h2>"+b.texto+"</h2>";
-
             await playVoice(b.texto);
-
             break;
-
         case "cierre":
-
             updateStreak();
-
             puntos += 10;
+            if(puntos > 50) userData.nivel +=1;
 
-            if(puntos > 50){
-                userData.nivel += 1;
-            }
-
+            // Guardar sesión completada
             let completed = JSON.parse(localStorage.getItem("completedSessions")) || [];
-
             completed.push(currentSessionIndex);
-
             localStorage.setItem("completedSessions", JSON.stringify(completed));
 
             localStorage.setItem("kamizenData", JSON.stringify(userData));
-
             updatePanel();
-
             restartBtn.style.display="inline-block";
-
             await playVoice(b.texto);
-
             return;
-
     }
 
-    setTimeout(()=>{
-        nextBtn.style.display="inline-block";
-    },2000);
-
+    setTimeout(()=>{ nextBtn.style.display="inline-block"; },4000);
 }
 
 /* SIGUIENTE */
-
 function nextBlock(){
-
     nextBtn.style.display="none";
-
     current++;
-
     if(current < bloques.length){
-
         showBlock(bloques[current]);
-
-    }else{
-
+    } else {
         restartBtn.style.display="inline-block";
-
     }
-
 }
 
 /* INICIO */
-
 let currentSessionIndex = 0;
 
 startBtn.addEventListener("click", async ()=>{
-
     startBtn.style.display = "none";
 
     const res = await fetch("/session_content");
-
     const data = await res.json();
-
     const sesiones = data.sesiones;
 
     let completed = JSON.parse(localStorage.getItem("completedSessions")) || [];
-
-    let availableIndices = sesiones
-        .map((_,i)=>i)
-        .filter(i => !completed.includes(i));
+    let availableIndices = sesiones.map((_,i)=>i).filter(i => !completed.includes(i));
 
     if(availableIndices.length === 0){
-
         localStorage.removeItem("completedSessions");
-
         availableIndices = sesiones.map((_,i)=>i);
-
     }
 
-    currentSessionIndex =
-        availableIndices[
-            Math.floor(Math.random()*availableIndices.length)
-        ];
-
+    currentSessionIndex = availableIndices[Math.floor(Math.random()*availableIndices.length)];
     bloques = sesiones[currentSessionIndex].bloques;
-
     current = 0;
 
     updateStreak();
-
     showBlock(bloques[0]);
-
 });
 
 nextBtn.addEventListener("click", nextBlock);
-
 restartBtn.addEventListener("click", ()=>location.reload());
