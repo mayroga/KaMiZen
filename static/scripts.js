@@ -15,7 +15,7 @@ let userData = JSON.parse(localStorage.getItem("kamizenData")) || {
     disciplina: 40,
     claridad: 50,
     calma: 30,
-    lastSessionId: 0 // Rastrea la última sesión completada
+    lastSessionId: 0 
 };
 
 function updatePanel(){
@@ -27,52 +27,79 @@ function updatePanel(){
     localStorage.setItem("kamizenData", JSON.stringify(userData));
 }
 
+/* MOTOR DE VOZ */
 function playVoice(text){
     return new Promise(resolve => {
         speechSynthesis.cancel();
         let msg = new SpeechSynthesisUtterance(text);
         msg.lang = "es-ES";
-        msg.rate = 0.95;
+        msg.rate = 0.9; // Velocidad con peso profesional
+        msg.pitch = 0.9; // Tono más serio
         msg.onend = resolve;
         speechSynthesis.speak(msg);
     });
 }
 
+/* LÓGICA DE BLOQUES */
 async function showBlock(b){
     block.innerHTML = "";
     nextBtn.style.display = "none";
     document.body.style.background = b.color || "#020617";
 
     if(b.tipo === "respiracion"){
-        block.innerHTML = `<p>${b.instrucciones || "Respira..."}</p><div class="breath-circle" id="circle"></div>`;
-        const circle = document.getElementById("circle");
-        await playVoice(b.voz_guia ? b.voz_guia.join(". ") : "Sigue el ritmo");
+        block.innerHTML = `<p style="margin-bottom:10px;">${b.instrucciones}</p>
+                           <div class="breath-circle" id="circle"></div>
+                           <p id="breath-label" style="font-size:16px; margin-top:10px; opacity:0.8;"></p>`;
         
-        let reps = b.repeticiones || 3;
-        for(let i=0; i<reps; i++){
+        const circle = document.getElementById("circle");
+        const label = document.getElementById("breath-label");
+        const reps = b.repeticiones || 3;
+
+        for(let i=0; i < reps; i++){
+            // 1. INHALAR
+            label.innerText = b.voz_guia ? b.voz_guia[0] : "Inhala";
+            playVoice(label.innerText);
             circle.style.transition = `transform ${b.tiempos.inhalar}s ease-in-out`;
             circle.style.transform = "scale(1.8)";
             await new Promise(r => setTimeout(r, b.tiempos.inhalar * 1000));
             
-            circle.style.transform = "scale(1.8)"; // Retener
+            // 2. RETENER
+            label.innerText = b.voz_guia ? b.voz_guia[1] : "Retén";
+            playVoice(label.innerText);
+            // Sin cambio de escala, solo pausa
             await new Promise(r => setTimeout(r, b.tiempos.retener * 1000));
             
+            // 3. EXHALAR
+            label.innerText = b.voz_guia ? b.voz_guia[2] : "Exhala";
+            playVoice(label.innerText);
             circle.style.transition = `transform ${b.tiempos.exhalar}s ease-in-out`;
             circle.style.transform = "scale(1)";
             await new Promise(r => setTimeout(r, b.tiempos.exhalar * 1000));
         }
+        
+        label.innerText = "Ciclo completado.";
         nextBtn.style.display = "block";
     } 
     else if(["decision", "juego_mental", "acertijo"].includes(b.tipo)){
-        block.innerHTML = `<h3>${b.pregunta}</h3>`;
+        block.innerHTML = `<h3 style="margin-bottom:15px;">${b.pregunta}</h3>`;
         b.opciones.forEach((opt, i) => {
             let btn = document.createElement("button");
             btn.className = "option-btn";
+            btn.style.background = "#1e293b";
             btn.innerText = opt;
             btn.onclick = async () => {
                 const esCorrecto = i === b.correcta;
-                block.innerHTML = `<p>${esCorrecto ? "✅" : "❌"} ${b.explicacion}</p>`;
-                userData.disciplina += esCorrecto ? 5 : 1;
+                block.innerHTML = `<p style="font-size:24px;">${esCorrecto ? "✅" : "❌"}</p>
+                                   <p>${b.explicacion}</p>`;
+                
+                // Actualizar stats según resultado
+                if(esCorrecto){
+                    userData.disciplina += 5;
+                    userData.claridad += 3;
+                } else {
+                    userData.calma += 2;
+                }
+                
                 updatePanel();
                 await playVoice(b.explicacion);
                 nextBtn.style.display = "block";
@@ -81,40 +108,63 @@ async function showBlock(b){
         });
         await playVoice(b.pregunta);
     }
+    else if(b.tipo === "ejercicio_fisico"){
+        block.innerHTML = `<h3>Acción Física</h3><p>${b.texto}</p><h2 id="timer">${b.duracion}s</h2>`;
+        await playVoice(b.texto);
+        let timeLeft = b.duracion;
+        const timerInterval = setInterval(() => {
+            timeLeft--;
+            document.getElementById("timer").innerText = timeLeft + "s";
+            if(timeLeft <= 0){
+                clearInterval(timerInterval);
+                nextBtn.style.display = "block";
+            }
+        }, 1000);
+    }
     else {
-        block.innerHTML = `<p>${b.texto || b.titulo || ""}</p>`;
+        // Tipos: voz, historia, reflexion
+        block.innerHTML = b.titulo ? `<h3>${b.titulo}</h3><p>${b.texto}</p>` : `<p>${b.texto}</p>`;
         await playVoice(b.texto || b.titulo);
         nextBtn.style.display = "block";
     }
 }
 
+/* EVENTOS PRINCIPALES */
 startBtn.addEventListener("click", async () => {
     startBtn.style.display = "none";
-    const res = await fetch("/session_content");
-    const data = await res.json();
-    const sesiones = data.sesiones;
+    block.innerHTML = "Cargando sesión...";
 
-    // Lógica Secuencial: Buscar la siguiente sesión por ID
-    let nextId = userData.lastSessionId + 1;
-    let sesion = sesiones.find(s => s.id === nextId);
+    try {
+        const res = await fetch("/session_content");
+        const data = await res.json();
+        const sesiones = data.sesiones;
 
-    // Si no existe (llegamos al final), volver a la sesión con el ID más bajo
-    if(!sesion) {
-        sesion = sesiones[0];
+        // Lógica Secuencial Estricta (1 al 125)
+        let nextId = userData.lastSessionId + 1;
+        let sesion = sesiones.find(s => s.id === nextId);
+
+        // Si se acaba la lista (ej. terminaste la 125), vuelve a la 1
+        if(!sesion) {
+            sesion = sesiones[0];
+            userData.lastSessionId = 0; // Reinicio de contador
+        }
+
+        sesionActualData = sesion;
+        bloques = sesion.bloques;
+        currentIdx = 0;
+        
+        // Racha Diaria
+        let today = new Date().toDateString();
+        if(userData.lastDay !== today){
+            userData.streak++;
+            userData.lastDay = today;
+        }
+
+        showBlock(bloques[currentIdx]);
+    } catch (err) {
+        block.innerHTML = "Error al conectar con el servidor.";
+        startBtn.style.display = "block";
     }
-
-    sesionActualData = sesion;
-    bloques = sesion.bloques;
-    currentIdx = 0;
-    
-    // Actualizar Racha
-    let today = new Date().toDateString();
-    if(userData.lastDay !== today){
-        userData.streak++;
-        userData.lastDay = today;
-    }
-
-    showBlock(bloques[currentIdx]);
 });
 
 nextBtn.addEventListener("click", () => {
@@ -122,9 +172,11 @@ nextBtn.addEventListener("click", () => {
     if(currentIdx < bloques.length){
         showBlock(bloques[currentIdx]);
     } else {
-        block.innerHTML = "<h2>Sesión Completada</h2><p>Tu mente está ahora más afilada.</p>";
+        block.innerHTML = `<h2>Sesión ${sesionActualData.id} Completada</h2>
+                           <p>Tu disciplina ha subido. El legado continúa.</p>`;
         userData.lastSessionId = sesionActualData.id;
-        userData.nivel = Math.floor(userData.disciplina / 20) + 1;
+        // Subir nivel cada 50 puntos de disciplina
+        userData.nivel = Math.floor(userData.disciplina / 50) + 1;
         updatePanel();
         restartBtn.style.display = "block";
         nextBtn.style.display = "none";
@@ -133,4 +185,5 @@ nextBtn.addEventListener("click", () => {
 
 restartBtn.addEventListener("click", () => location.reload());
 
+// Inicialización de UI
 updatePanel();
