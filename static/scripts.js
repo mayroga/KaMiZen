@@ -3,284 +3,197 @@ const nextBtn = document.getElementById("next-btn");
 const skipBtn = document.getElementById("skip-btn");
 const restartBtn = document.getElementById("restart-btn");
 const backBtn = document.getElementById("back-btn");
+const clearBtn = document.getElementById("clear-btn");
+
 const block = document.getElementById("block");
 
 let bloques = [];
 let currentIdx = 0;
-let sesionActualData = null;
+
+let tempText = "";
+
 let skipFlag = false;
-let activeInterval = null;
 
 
-/* =========================
-PERSISTENCIA
-========================= */
-
-let userData = JSON.parse(localStorage.getItem("kamizenData")) || {
-
-    streak: 0,
-    lastDay: null,
-    nivel: 1,
-    disciplina: 40,
-    claridad: 50,
-    calma: 30,
-    lastSessionId: 0
-
-};
-
-
-function updatePanel(){
-
-    userData.disciplina = Math.max(0, Math.min(userData.disciplina, 100));
-    userData.claridad = Math.max(0, Math.min(userData.claridad, 100));
-    userData.calma = Math.max(0, Math.min(userData.calma, 100));
-
-    document.getElementById("streak").innerHTML =
-        "🔥 Racha: " + userData.streak + " días";
-
-    document.getElementById("level").innerHTML =
-        "Nivel KaMiZen: " + userData.nivel;
-
-    document.getElementById("disciplina-bar").style.width =
-        userData.disciplina + "%";
-
-    document.getElementById("claridad-bar").style.width =
-        userData.claridad + "%";
-
-    document.getElementById("calma-bar").style.width =
-        userData.calma + "%";
-
-    localStorage.setItem("kamizenData", JSON.stringify(userData));
-
-}
-
-
-/* =========================
-VOZ
-========================= */
 
 function playVoice(text){
 
-    return new Promise(resolve => {
+return new Promise(resolve=>{
 
-        speechSynthesis.cancel();
+speechSynthesis.cancel();
 
-        if(skipFlag) return resolve();
+let msg = new SpeechSynthesisUtterance(text);
 
-        let msg = new SpeechSynthesisUtterance(text);
+msg.lang="es-ES";
 
-        msg.lang = "es-ES";
+msg.rate=0.9;
 
-        msg.rate = 0.9;
+msg.onend=resolve;
 
-        msg.pitch = 0.8;
+speechSynthesis.speak(msg);
 
-        msg.onend = resolve;
-
-        speechSynthesis.speak(msg);
-
-    });
+});
 
 }
 
 
-/* =========================
-WAIT
-========================= */
 
 function wait(ms){
 
-    return new Promise(resolve => {
-
-        const start = Date.now();
-
-        const check = setInterval(() => {
-
-            if(Date.now() - start >= ms || skipFlag){
-
-                clearInterval(check);
-
-                resolve();
-
-            }
-
-        }, 50);
-
-    });
+return new Promise(r=>setTimeout(r,ms));
 
 }
 
 
-/* =========================
-MOSTRAR BLOQUE
-========================= */
 
 async function showBlock(b){
 
-    skipFlag = false;
+skipFlag=false;
 
-    if(activeInterval) clearInterval(activeInterval);
+block.innerHTML="";
 
-    block.innerHTML = "";
+nextBtn.style.display="none";
+skipBtn.style.display="block";
+clearBtn.style.display="none";
 
-    nextBtn.style.display = "none";
-
-    skipBtn.style.display = "block";
-
-    if(currentIdx > 0){
-
-        backBtn.style.display = "block";
-
-    } else {
-
-        backBtn.style.display = "none";
-
-    }
-
-    document.body.style.background =
-        b.color || "#020617";
+if(currentIdx>0)
+backBtn.style.display="block";
+else
+backBtn.style.display="none";
 
 
-    if(b.tipo === "respiracion"){
+document.body.style.background=b.color || "#020617";
 
-        block.innerHTML =
-            "<p>" + b.instrucciones + "</p>" +
-            "<div class='breath-circle' id='circle'></div>" +
-            "<p id='breath-label'></p>";
 
-        const circle = document.getElementById("circle");
 
-        const label = document.getElementById("breath-label");
+if(b.tipo==="texto"){
 
-        const reps = b.repeticiones || 3;
+block.innerHTML="<p>"+b.texto+"</p>";
 
-        for(let i=0;i<reps;i++){
+await playVoice(b.texto);
 
-            if(skipFlag) break;
-
-            label.innerText = "Inhala";
-
-            playVoice("Inhala");
-
-            circle.style.transform = "scale(1.8)";
-
-            await wait(3000);
-
-            if(skipFlag) break;
-
-            label.innerText = "Exhala";
-
-            playVoice("Exhala");
-
-            circle.style.transform = "scale(1)";
-
-            await wait(3000);
-
-        }
-
-        finishBlock();
-
-    }
-
-    else{
-
-        block.innerHTML =
-            b.texto
-            ? "<p>" + b.texto + "</p>"
-            : "<p>" + b.titulo + "</p>";
-
-        await playVoice(b.texto || b.titulo);
-
-        finishBlock();
-
-    }
+finishBlock();
 
 }
+
+
+
+else if(b.tipo==="escribir"){
+
+block.innerHTML=
+
+"<p>"+b.texto+"</p>"+
+
+"<textarea id='userInput' placeholder='"+(b.placeholder||"Escribe si deseas")+"'></textarea>";
+
+clearBtn.style.display="block";
+
+await playVoice(b.texto);
+
+finishBlock();
+
+}
+
+
+
+else if(b.tipo==="respiracion"){
+
+block.innerHTML=
+
+"<p>"+b.instrucciones+"</p>"+
+
+"<div class='breath-circle' id='circle'></div>";
+
+let circle=document.getElementById("circle");
+
+for(let i=0;i<3;i++){
+
+circle.style.transform="scale(1.8)";
+await wait(3000);
+
+circle.style.transform="scale(1)";
+await wait(3000);
+
+}
+
+finishBlock();
+
+}
+
+
+
+}
+
 
 
 function finishBlock(){
 
-    skipBtn.style.display = "none";
-
-    nextBtn.style.display = "block";
+nextBtn.style.display="block";
 
 }
 
 
-/* =========================
-ATRAS
-========================= */
 
-backBtn.addEventListener("click", () => {
+nextBtn.onclick=()=>{
 
-    if(currentIdx > 0){
+currentIdx++;
 
-        currentIdx--;
+if(currentIdx<bloques.length){
 
-        showBlock(bloques[currentIdx]);
+showBlock(bloques[currentIdx]);
 
-    }
+}else{
 
-});
+block.innerHTML="Sesión terminada";
 
+restartBtn.style.display="block";
 
-/* =========================
-SIGUIENTE
-========================= */
+}
 
-nextBtn.addEventListener("click", () => {
-
-    currentIdx++;
-
-    if(currentIdx < bloques.length){
-
-        showBlock(bloques[currentIdx]);
-
-    } else {
-
-        block.innerHTML =
-            "<h2>Sesión completada</h2>";
-
-        restartBtn.style.display = "block";
-
-        nextBtn.style.display = "none";
-
-        skipBtn.style.display = "none";
-
-        backBtn.style.display = "none";
-
-    }
-
-});
+};
 
 
-/* =========================
-INICIAR
-========================= */
 
-startBtn.addEventListener("click", async () => {
+backBtn.onclick=()=>{
 
-    startBtn.style.display = "none";
+if(currentIdx>0){
 
-    backBtn.style.display = "none";
+currentIdx--;
 
-    block.innerHTML = "Cargando...";
+showBlock(bloques[currentIdx]);
 
-    const res = await fetch("/session_content");
+}
 
-    const data = await res.json();
-
-    sesionActualData = data.sesiones[0];
-
-    bloques = sesionActualData.bloques;
-
-    currentIdx = 0;
-
-    showBlock(bloques[0]);
-
-});
+};
 
 
-restartBtn.addEventListener("click", () => location.reload());
 
-updatePanel();
+clearBtn.onclick=()=>{
+
+let t=document.getElementById("userInput");
+
+if(t) t.value="";
+
+};
+
+
+
+startBtn.onclick=async()=>{
+
+startBtn.style.display="none";
+
+let res=await fetch("/session_content");
+
+let data=await res.json();
+
+bloques=data.sesiones[0].bloques;
+
+currentIdx=0;
+
+showBlock(bloques[0]);
+
+};
+
+
+
+restartBtn.onclick=()=>location.reload();
