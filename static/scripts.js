@@ -1,199 +1,103 @@
-const startBtn = document.getElementById("start-btn");
-const nextBtn = document.getElementById("next-btn");
-const skipBtn = document.getElementById("skip-btn");
-const restartBtn = document.getElementById("restart-btn");
-const backBtn = document.getElementById("back-btn");
-const clearBtn = document.getElementById("clear-btn");
+// Variables de sesión
+let currentId = 0;
+let sessions = []; // Aquí se cargará tu kamizen_content.json
+let sessionData = []; // Guarda temporalmente inputs del usuario
 
-const block = document.getElementById("block");
+// Cargar JSON de sesiones al iniciar
+fetch('kamizen_content.json')
+    .then(response => response.json())
+    .then(data => {
+        sessions = data;
+        // Inicializar sessionData vacío
+        sessionData = sessions.map(s => ({ id: s.id, userInput: '' }));
+        renderSession(currentId);
+    })
+    .catch(error => console.error('Error cargando sesiones:', error));
 
-let bloques = [];
-let currentIdx = 0;
+// Función para renderizar una sesión
+function renderSession(id) {
+    if (id < 0 || id >= sessions.length) return;
 
-let tempText = "";
+    const session = sessions[id];
+    const container = document.getElementById('sessionContent');
+    container.innerHTML = ''; // Limpiar contenido previo
 
-let skipFlag = false;
+    // Mostrar categoría
+    const cat = document.createElement('h2');
+    cat.textContent = session.categoria;
+    container.appendChild(cat);
 
+    // Renderizar cada bloque de la sesión
+    session.bloques.forEach(bloque => {
+        const div = document.createElement('div');
+        div.classList.add('session-text');
+        div.style.color = bloque.color || '#000';
 
+        switch(bloque.tipo) {
+            case 'voz':
+            case 'historia':
+            case 'escenario':
+            case 'reflexion':
+                div.textContent = bloque.texto || bloque.titulo || '';
+                break;
+            case 'respiracion':
+                div.innerHTML = `<strong>Respiración:</strong> ${bloque.instrucciones} (${bloque.repeticiones} repeticiones)`;
+                break;
+            case 'decision':
+                div.innerHTML = `<strong>Decisión:</strong> ${bloque.pregunta} Opciones: ${bloque.opciones.join(', ')}`;
+                break;
+            case 'juego_mental':
+                div.innerHTML = `<strong>Juego Mental:</strong> ${bloque.pregunta} Opciones: ${bloque.opciones.join(', ')}`;
+                break;
+            case 'ejercicio_fisico':
+                div.innerHTML = `<strong>Ejercicio Físico:</strong> ${bloque.texto} Duración: ${bloque.duracion} segundos`;
+                break;
+            default:
+                div.textContent = bloque.texto || '';
+        }
 
-function playVoice(text){
+        container.appendChild(div);
+    });
 
-return new Promise(resolve=>{
+    // Cargar texto previo si existe
+    document.getElementById('userInput').value = sessionData[id].userInput || '';
+}
 
-speechSynthesis.cancel();
+// Botón Siguiente
+document.getElementById('btnSiguiente').addEventListener('click', () => {
+    const input = document.getElementById('userInput');
+    
+    // Guardar solo si escribió algo
+    if (input.value.trim() !== '') {
+        sessionData[currentId].userInput = input.value.trim();
+    } else {
+        sessionData[currentId].userInput = '';
+    }
 
-let msg = new SpeechSynthesisUtterance(text);
+    input.value = ''; // Limpiar input para la siguiente sesión
+    currentId++;
 
-msg.lang="es-ES";
-
-msg.rate=0.9;
-
-msg.onend=resolve;
-
-speechSynthesis.speak(msg);
-
+    if (currentId < sessions.length) {
+        renderSession(currentId);
+    } else {
+        alert("Has completado la sesión KaMiZen. Todos los datos escritos se eliminarán.");
+        // Borrar todos los inputs
+        sessionData = sessionData.map(s => ({ id: s.id, userInput: '' }));
+        currentId = 0;
+        renderSession(currentId);
+    }
 });
 
-}
-
-
-
-function wait(ms){
-
-return new Promise(r=>setTimeout(r,ms));
-
-}
-
-
-
-async function showBlock(b){
-
-skipFlag=false;
-
-block.innerHTML="";
-
-nextBtn.style.display="none";
-skipBtn.style.display="block";
-clearBtn.style.display="none";
-
-if(currentIdx>0)
-backBtn.style.display="block";
-else
-backBtn.style.display="none";
-
-
-document.body.style.background=b.color || "#020617";
-
-
-
-if(b.tipo==="texto"){
-
-block.innerHTML="<p>"+b.texto+"</p>";
-
-await playVoice(b.texto);
-
-finishBlock();
-
-}
-
-
-
-else if(b.tipo==="escribir"){
-
-block.innerHTML=
-
-"<p>"+b.texto+"</p>"+
-
-"<textarea id='userInput' placeholder='"+(b.placeholder||"Escribe si deseas")+"'></textarea>";
-
-clearBtn.style.display="block";
-
-await playVoice(b.texto);
-
-finishBlock();
-
-}
-
-
-
-else if(b.tipo==="respiracion"){
-
-block.innerHTML=
-
-"<p>"+b.instrucciones+"</p>"+
-
-"<div class='breath-circle' id='circle'></div>";
-
-let circle=document.getElementById("circle");
-
-for(let i=0;i<3;i++){
-
-circle.style.transform="scale(1.8)";
-await wait(3000);
-
-circle.style.transform="scale(1)";
-await wait(3000);
-
-}
-
-finishBlock();
-
-}
-
-
-
-}
-
-
-
-function finishBlock(){
-
-nextBtn.style.display="block";
-
-}
-
-
-
-nextBtn.onclick=()=>{
-
-currentIdx++;
-
-if(currentIdx<bloques.length){
-
-showBlock(bloques[currentIdx]);
-
-}else{
-
-block.innerHTML="Sesión terminada";
-
-restartBtn.style.display="block";
-
-}
-
-};
-
-
-
-backBtn.onclick=()=>{
-
-if(currentIdx>0){
-
-currentIdx--;
-
-showBlock(bloques[currentIdx]);
-
-}
-
-};
-
-
-
-clearBtn.onclick=()=>{
-
-let t=document.getElementById("userInput");
-
-if(t) t.value="";
-
-};
-
-
-
-startBtn.onclick=async()=>{
-
-startBtn.style.display="none";
-
-let res=await fetch("/session_content");
-
-let data=await res.json();
-
-bloques=data.sesiones[0].bloques;
-
-currentIdx=0;
-
-showBlock(bloques[0]);
-
-};
-
-
-
-restartBtn.onclick=()=>location.reload();
+// Botón Regresar
+document.getElementById('btnRegresar').addEventListener('click', () => {
+    if (currentId > 0) {
+        currentId--;
+        renderSession(currentId);
+    }
+});
+
+// Botón Borrar
+document.getElementById('btnBorrar').addEventListener('click', () => {
+    document.getElementById('userInput').value = '';
+    sessionData[currentId].userInput = '';
+});
