@@ -22,7 +22,6 @@ let userData = JSON.parse(localStorage.getItem("kamizenData")) || {
 };
 
 function updatePanel(){
-    // Asegurar que los valores no bajen de cero ni suban de 100
     userData.disciplina = Math.max(0, Math.min(userData.disciplina, 100));
     userData.claridad = Math.max(0, Math.min(userData.claridad, 100));
     userData.calma = Math.max(0, Math.min(userData.calma, 100));
@@ -44,13 +43,12 @@ function playVoice(text){
         let msg = new SpeechSynthesisUtterance(text);
         msg.lang = "es-ES";
         msg.rate = 0.9;
-        msg.pitch = 0.8; // Un poco más profundo
+        msg.pitch = 0.8;
         msg.onend = resolve;
         speechSynthesis.speak(msg);
     });
 }
 
-/* FUNCION DE ESPERA INTERRUMPIBLE */
 function wait(ms) {
     return new Promise(resolve => {
         const start = Date.now();
@@ -138,8 +136,9 @@ async function showBlock(b){
         }, 1000);
     }
     else {
-        block.innerHTML = b.titulo ? `<h3>${b.titulo}</h3><p>${b.texto}</p>` : `<p>${b.texto}</p>`;
-        playVoice(b.texto || b.titulo).then(() => {
+        // Voz, historia, reflexion, tvid
+        block.innerHTML = b.titulo ? `<h3>${b.titulo}</h3><p>${b.texto || b.instrucciones}</p>` : `<p>${b.texto || b.instrucciones}</p>`;
+        playVoice(b.texto || b.titulo || b.instrucciones).then(() => {
             if(!skipFlag) finishBlock();
         });
     }
@@ -150,30 +149,19 @@ function finishBlock() {
     nextBtn.style.display = "block";
 }
 
-/* EVENTO SALTAR (PENALIZACIÓN CRÍTICA) */
+/* EVENTO SALTAR (PENALIZACIÓN) */
 skipBtn.addEventListener("click", () => {
     skipFlag = true;
     speechSynthesis.cancel();
     if(activeInterval) clearInterval(activeInterval);
-    
-    // Penalización drástica: Pierde el 80% de su disciplina actual
-    userData.disciplina = Math.floor(userData.disciplina * 0.2);
-    userData.calma -= 5;
-    
+    userData.disciplina = Math.floor(userData.disciplina * 0.2); // Pierde 80%
     updatePanel();
-    
-    // Feedback visual de la penalización
-    block.innerHTML = `<p style="color:#ef4444; font-weight:bold;">DISCIPLINA QUEBRANTADA</p>
-                       <p style="font-size:14px;">Saltar el entrenamiento debilita tu carácter.</p>`;
-    
-    playVoice("Disciplina quebrantada. El camino fácil no lleva a la cima.");
-    
-    setTimeout(() => {
-        finishBlock();
-    }, 2000);
+    block.innerHTML = `<p style="color:#ef4444; font-weight:bold;">DISCIPLINA QUEBRANTADA</p>`;
+    playVoice("Disciplina quebrantada.");
+    setTimeout(() => { finishBlock(); }, 1500);
 });
 
-/* EVENTOS DE FLUJO */
+/* FLUJO DE SESIÓN */
 startBtn.addEventListener("click", async () => {
     startBtn.style.display = "none";
     block.innerHTML = "Estableciendo conexión...";
@@ -190,7 +178,6 @@ startBtn.addEventListener("click", async () => {
             userData.streak++;
             userData.lastDay = today;
         }
-        
         showBlock(bloques[currentIdx]);
     } catch (err) { block.innerHTML = "Error de sistema."; }
 });
@@ -200,14 +187,12 @@ nextBtn.addEventListener("click", () => {
     if(currentIdx < bloques.length){
         showBlock(bloques[currentIdx]);
     } else {
-        block.innerHTML = `<h2>Sesión ${sesionActualData.id} Completada</h2>
-                           <p>Has forjado tu mente un día más.</p>`;
+        block.innerHTML = `<h2>Sesión ${sesionActualData.id} Completada</h2><p>Vuelve mañana para continuar.</p>`;
         userData.lastSessionId = sesionActualData.id;
         userData.nivel = Math.floor(userData.disciplina / 20) + 1;
         updatePanel();
         restartBtn.style.display = "block";
         nextBtn.style.display = "none";
-        skipBtn.style.display = "none";
     }
 });
 
