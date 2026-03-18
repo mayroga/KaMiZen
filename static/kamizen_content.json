@@ -5,7 +5,7 @@
       "categoria": "El Código del Respeto",
       "bloques": [
         {"tipo":"voz","texto":"El respeto no se pide, se impone con tu presencia. Hoy entenderás por qué los leones no necesitan rugir para que la selva sepa quién manda.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala (el círculo se expande), Retén (el círculo se queda fijo), Exhala (el círculo se contrae)","tiempos":{"inhalar":6, "retener":6, "exhalar":6}, "repeticiones":5, "color":"#3b82f6"},
+        {"tipo":"respiracion","instrucciones":"Inhala (expandir), Retén (fijo), Exhala (contraer)","tiempos":{"inhalar":6, "retener":6, "exhalar":6}, "repeticiones":5, "voz_guia":["Inhala autoridad","Retén presencia","Exhala calma"], "color":"#3b82f6"},
         {"tipo":"historia","titulo":"El Silencio de Rockefeller","texto":"Cuentan que en las reuniones, John D. Rockefeller permanecía en silencio absoluto mientras los demás discutían. Cuando todos terminaban, él decía una sola frase que cambiaba todo el rumbo del negocio. No hablaba más, hablaba mejor.","color":"#1e3a8a"},
         {"tipo":"escenario","texto":"Estás en una mesa de negocios. Alguien intenta interrumpirte constantemente para demostrar que sabe más que tú.","color":"#f59e0b"},
         {"tipo":"decision","pregunta":"¿Te callas y lo dejas quedar en evidencia solo, o lo cortas de inmediato con autoridad?","opciones":["Dejar que se hunda solo","Cortarlo con autoridad"],"correcta":0,"explicacion":"El que mucho habla, mucho yerra. Deja que agote su munición. Tu silencio lo pondrá nervioso y te dará el control.","recompensa":40,"color":"#10b981"},
@@ -19,7 +19,7 @@
       "categoria": "La Ley del Dinero Rápido",
       "bloques": [
         {"tipo":"voz","texto":"El dinero ama la velocidad, pero la riqueza ama el orden. No corras tras el billete, construye el camino para que el billete llegue a ti.","color":"#064e3b"},
-        {"tipo":"respiracion","instrucciones":"Inhala (expandir), Retén (mantener), Exhala (contraer)","tiempos":{"inhalar":5, "retener":8, "exhalar":5}, "repeticiones":6, "color":"#10b981"},
+        {"tipo":"respiracion","instrucciones":"Inhala (expandir), Retén (mantener), Exhala (contraer)","tiempos":{"inhalar":5, "retener":8, "exhalar":5}, "repeticiones":6, "voz_guia":["Inhala visión","Retén capital","Exhala gasto"],"color":"#10b981"},
         {"tipo":"historia","titulo":"El Gran Pescador","texto":"Un joven quería pescar con las manos para ir rápido. Un viejo tejía una red. El joven pescó dos peces y se cansó. El viejo terminó su red y sacó cien. La red es tu sistema; tejerla toma tiempo, pero te hace rico.","color":"#065f46"},
         {"tipo":"escenario","texto":"Te ofrecen un negocio donde ganas mucho dinero hoy, pero podrías tener problemas legales en dos años.","color":"#ef4444"},
         {"tipo":"decision","pregunta":"¿Tomas el dinero ahora o rechazas para proteger tu paz futura?","opciones":["Proteger mi paz","Tomar el dinero"],"correcta":0,"explicacion":"El dinero fácil sale caro. Un asesor de verdad no busca el éxito de un día, sino la tranquilidad de una vida.","recompensa":50,"color":"#22c55e"},
@@ -33,7 +33,7 @@
       "categoria": "Blindaje contra la Crítica",
       "bloques": [
         {"tipo":"voz","texto":"Si caminas hacia la cima, los de abajo te van a gritar. Hoy aprenderás a que los insultos sean el combustible de tu motor.","color":"#450a0a"},
-        {"tipo":"respiracion","instrucciones":"Inhala (expandir), Retén (mantener), Exhala (contraer)","tiempos":{"inhalar":4, "retener":10, "exhalar":4}, "repeticiones":4, "color":"#f87171"},
+        {"tipo":"respiracion","instrucciones":"Inhala (expandir), Retén (mantener), Exhala (contraer)","tiempos":{"inhalar":4, "retener":10, "exhalar":4}, "repeticiones":4, "voz_guia":["Inhala enfoque","Retén blindaje","Exhala ruido"],"color":"#f87171"},
         {"tipo":"historia","titulo":"El Perro y la Luna","texto":"Un perro le ladraba a la luna cada noche. La luna seguía brillando y moviéndose, sin responder. Al final, el perro se cansó, pero la luna nunca dejó de ser luz. No bajes a pelear con quien no está a tu nivel.","color":"#7f1d1d"},
         {"tipo":"escenario","texto":"Un amigo cercano te dice que tu nuevo proyecto es una locura y que vas a fracasar.","color":"#f59e0b"},
         {"tipo":"decision","pregunta":"¿Le das explicaciones para convencerlo o le dices 'ya veremos' y sigues trabajando?","opciones":["Decir 'ya veremos'","Dar explicaciones"],"correcta":0,"explicacion":"Explicar tus sueños a mentes pequeñas es perder el tiempo. Los resultados son la única explicación que el mundo respeta.","recompensa":35,"color":"#10b981"},
@@ -47,8 +47,8 @@
       "categoria": "La Disciplina del Acero",
       "bloques": [
         {"tipo":"voz","texto":"La motivación te hace empezar, pero la disciplina es la que te mantiene cuando todo se pone difícil. Hoy vamos a forjar tu carácter.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala (expandir), Retén (mantener), Exhala (contraer)","tiempos":{"inhalar":7, "retener":7, "exhalar":7}, "repeticiones":5, "color":"#60a5fa"},
-        {"tipo":"historia","titulo":"El Herrero Japones","texto":"Para hacer una espada famosa, el herrero golpea el metal miles de veces. El fuego lo quema, el agua lo enfría y el martillo lo aplasta. Al final, el metal no se queja, se vuelve una katana que corta todo. Tú eres ese metal.","color":"#1e293b"},
+        {"tipo":"respiracion","instrucciones":"Inhala (fuerza), Retén (forjar), Exhala (templar)","tiempos":{"inhalar":7, "retener":7, "exhalar":7}, "repeticiones":5, "voz_guia":["Inhala metal","Retén el fuego","Exhala la espada"],"color":"#60a5fa"},
+        {"tipo":"historia","titulo":"El Herrero Japonés","texto":"Para hacer una espada famosa, el herrero golpea el metal miles de veces. El fuego lo quema, el agua lo enfría y el martillo lo aplasta. Al final, el metal no se queja, se vuelve una katana que corta todo. Tú eres ese metal.","color":"#1e293b"},
         {"tipo":"escenario","texto":"Es lunes por la mañana, está lloviendo y no tienes ganas de cumplir con tu rutina de ejercicios.","color":"#34d399"},
         {"tipo":"decision","pregunta":"¿Lo haces de todas formas aunque sea a media intensidad o lo dejas para mañana?","opciones":["Hacerlo de todas formas","Dejarlo para mañana"],"correcta":0,"explicacion":"Cumplir cuando no tienes ganas es lo que separa a los hombres de los niños. La disciplina no conoce el clima.","recompensa":45,"color":"#22c55e"},
         {"tipo":"juego_mental","pregunta":"¿Qué es más pesado?: El dolor de la disciplina o el dolor del arrepentimiento?","opciones":["Arrepentimiento","Disciplina"],"correcta":0,"explicacion":"La disciplina pesa gramos, el arrepentimiento pesa toneladas. Elige tu peso hoy.","recompensa":25,"color":"#0ea5e9"},
@@ -61,7 +61,7 @@
       "categoria": "El Arte de la Guerra Diaria",
       "bloques": [
         {"tipo":"voz","texto":"Cada día es una batalla por tu tiempo y tu enfoque. Si no tienes un plan, eres parte del plan de otro.","color":"#1e3a8a"},
-        {"tipo":"respiracion","instrucciones":"Inhala (expandir), Retén (mantener), Exhala (contraer)","tiempos":{"inhalar":5, "retener":5, "exhalar":10}, "repeticiones":5, "color":"#3b82f6"},
+        {"tipo":"respiracion","instrucciones":"Inhala (orden), Retén (fijar), Exhala (ejecutar)","tiempos":{"inhalar":5, "retener":5, "exhalar":10}, "repeticiones":5, "voz_guia":["Inhala el mapa","Retén el objetivo","Exhala el caos"],"color":"#3b82f6"},
         {"tipo":"historia","titulo":"El General sin Mapa","texto":"Un general salió a la guerra con el mejor ejército pero sin saber a dónde iba. Se perdió en el desierto y sus hombres se rindieron sin disparar una bala. El éxito sin dirección es solo un camino al fracaso.","color":"#1e3a8a"},
         {"tipo":"escenario","texto":"Al despertar, lo primero que haces es mirar el teléfono y responder mensajes de otras personas.","color":"#f59e0b"},
         {"tipo":"decision","pregunta":"¿Sigues haciendo eso o dejas el teléfono lejos la primera hora para planear TU día?","opciones":["Planear mi día primero","Mirar mensajes"],"correcta":0,"explicacion":"Si miras el teléfono al despertar, dejas que el mundo decida tus prioridades. Tú eres el capitán, toma el timón primero.","recompensa":40,"color":"#10b981"},
@@ -75,7 +75,7 @@
       "categoria": "Hambre de Crecimiento",
       "bloques": [
         {"tipo":"voz","texto":"El que cree que ya lo sabe todo, ha dejado de crecer. Hoy vamos a abrir tu mente para nuevas victorias.","color":"#064e3b"},
-        {"tipo":"respiracion","instrucciones":"Inhala (expandir), Retén (mantener), Exhala (contraer)","tiempos":{"inhalar":8, "retener":4, "exhalar":8}, "repeticiones":4, "color":"#10b981"},
+        {"tipo":"respiracion","instrucciones":"Inhala (aprender), Retén (absorber), Exhala (vaciar)","tiempos":{"inhalar":8, "retener":4, "exhalar":8}, "repeticiones":4, "voz_guia":["Inhala saber","Retén sabiduría","Exhala orgullo"],"color":"#10b981"},
         {"tipo":"historia","titulo":"La Taza Llena","texto":"Un sabio le servía té a un hombre soberbio. Siguió sirviendo hasta que el té se desbordó. 'Eres como esta taza', dijo el sabio, 'no cabe nada nuevo si ya estás lleno de ti mismo'. Vacía tu orgullo para llenarte de saber.","color":"#065f46"},
         {"tipo":"escenario","texto":"Te dan un consejo sobre algo que crees que ya dominas, pero el consejo viene de alguien con más éxito que tú.","color":"#34d399"},
         {"tipo":"decision","pregunta":"¿Escuchas con humildad y anotas o le dices que ya lo sabías?","opciones":["Escuchar y anotar","Decir que ya lo sabía"],"correcta":0,"explicacion":"El sabio siempre es un estudiante. El necio siempre quiere ser el maestro. Escucha y ganarás.","recompensa":35,"color":"#22c55e"},
@@ -89,7 +89,7 @@
       "categoria": "Economía del Tiempo",
       "bloques": [
         {"tipo":"voz","texto":"El tiempo es la única moneda que no puedes recuperar. No la malgastes en gente o cosas que no te den valor.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala (expandir), Retén (mantener), Exhala (contraer)","tiempos":{"inhalar":6, "retener":3, "exhalar":9}, "repeticiones":5, "color":"#60a5fa"},
+        {"tipo":"respiracion","instrucciones":"Inhala (vida), Retén (valor), Exhala (desperdicio)","tiempos":{"inhalar":6, "retener":3, "exhalar":9}, "repeticiones":5, "voz_guia":["Inhala el presente","Retén la moneda","Exhala lo inútil"],"color":"#60a5fa"},
         {"tipo":"historia","titulo":"El Banquero de Segundos","texto":"Imagina que cada mañana recibes $86,400, pero al final del día lo que no usaste desaparece. Así es el tiempo. No puedes ahorrarlo para mañana. Úsalo hoy en lo que importa o lo habrás perdido para siempre.","color":"#1e293b"},
         {"tipo":"escenario","texto":"Te invitan a una reunión 'social' de negocios que dura 4 horas, pero sabes que solo se hablará de tonterías.","color":"#ef4444"},
         {"tipo":"decision","pregunta":"¿Inventas una excusa educada y no vas o asistes por compromiso social?","opciones":["Excusarse y no ir","Ir por compromiso"],"correcta":0,"explicacion":"Tu tiempo es sagrado. Aprender a decir 'no' a lo que no suma es decir 'sí' a tus metas. No regales tu vida.","recompensa":45,"color":"#10b981"},
@@ -103,7 +103,7 @@
       "categoria": "Poder de la Imagen",
       "bloques": [
         {"tipo":"voz","texto":"Como te ven, te tratan. Si te ven mal, te maltratan. Si te ven bien, te respetan. Tu imagen es tu primera venta.","color":"#1e3a8a"},
-        {"tipo":"respiracion","instrucciones":"Inhala (expandir), Retén (mantener), Exhala (contraer)","tiempos":{"inhalar":5, "retener":5, "exhalar":5}, "repeticiones":6, "color":"#3b82f6"},
+        {"tipo":"respiracion","instrucciones":"Inhala (estilo), Retén (postura), Exhala (impacto)","tiempos":{"inhalar":5, "retener":5, "exhalar":5}, "repeticiones":6, "voz_guia":["Inhala elegancia","Retén respeto","Exhala confianza"],"color":"#3b82f6"},
         {"tipo":"historia","titulo":"El Mendigo en el Trono","texto":"Un rey se vistió de mendigo y nadie le abrió la puerta de su propio palacio. Cuando volvió con su corona, todos se arrodillaron. El hombre era el mismo, pero el respeto cambió por lo que veían sus ojos.","color":"#1e3a8a"},
         {"tipo":"escenario","texto":"Tienes una reunión por Zoom y piensas que no hace falta vestirse bien porque solo se ve la cara.","color":"#f59e0b"},
         {"tipo":"decision","pregunta":"¿Te vistes completo como si fuera en persona o te quedas en pijama de la cintura abajo?","opciones":["Vestirse completo","Quedarse en pijama"],"correcta":0,"explicacion":"Vestirse bien es para TI, no para ellos. Si te sientes como un profesional de pies a cabeza, actuarás como uno.","recompensa":30,"color":"#22c55e"},
@@ -117,12 +117,12 @@
       "categoria": "Maestría en Crisis",
       "bloques": [
         {"tipo":"voz","texto":"Cuando el barco se hunde, el capitán es el último en saltar. Hoy aprenderás a mantener la calma cuando todos gritan.","color":"#450a0a"},
-        {"tipo":"respiracion","instrucciones":"Inhala (expandir), Retén (mantener), Exhala (contraer)","tiempos":{"inhalar":4, "retener":12, "exhalar":4}, "repeticiones":4, "color":"#ef4444"},
+        {"tipo":"respiracion","instrucciones":"Inhala (frío), Retén (paciencia), Exhala (fuego)","tiempos":{"inhalar":4, "retener":12, "exhalar":4}, "repeticiones":4, "voz_guia":["Inhala hielo","Congela el pánico","Exhala claridad"],"color":"#ef4444"},
         {"tipo":"historia","titulo":"El Incendio de la Fábrica","texto":"Edison vio cómo su fábrica se quemaba por completo. Sus amigos lloraban. Él dijo: 'Vayan por mi esposa, nunca verá un fuego así de nuevo. Mañana empezamos de cero'. No lloró por lo perdido, planeó lo que vendría.","color":"#7f1d1d"},
         {"tipo":"escenario","texto":"Cometes un error que le cuesta dinero a tu negocio y tus socios están furiosos.","color":"#ef4444"},
         {"tipo":"decision","pregunta":"¿Buscas a quién culpar o asumes el error y presentas un plan de solución inmediato?","opciones":["Asumir y presentar solución","Buscar culpables"],"correcta":0,"explicacion":"Culpar a otros es de cobardes. El líder asume la carga y arregla el desastre. Eso genera un respeto indestructible.","recompensa":50,"color":"#10b981"},
         {"tipo":"juego_mental","pregunta":"¿Qué es lo más importante en una crisis?: LA CALMA, EL DINERO, LA VELOCIDAD","opciones":["LA CALMA","LA VELOCIDAD","EL DINERO"],"correcta":0,"explicacion":"Sin calma no puedes pensar. Si no piensas, el dinero y la velocidad no sirven de nada.","recompensa":25,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"Mantén una plancha abdominal o sostente en un pie por 60 segundos. Controla el temblor. La crisis está en tu mente.","duracion":60,"color":"#8b5cf6"},
+        {"tipo":"ejercicio_fisico","texto":"Mantén una plancha abdominal o sostente en un pie por 60 segundos. Controla el temblor. La crisis está en tu mente.","duracion":60,"color":"#8b5cf6"},
         {"tipo":"reflexion","texto":"Tu carácter no se ve en los buenos tiempos, se ve cuando todo sale mal. Mantente firme.","color":"#ef4444"}
       ]
     },
@@ -131,7 +131,7 @@
       "categoria": "El Trono del Legado",
       "bloques": [
         {"tipo":"voz","texto":"No estamos aquí solo para sobrevivir, sino para dejar una marca. Hoy vas a decidir qué dirán de ti cuando ya no estés.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala (expandir), Retén (mantener), Exhala (contraer)","tiempos":{"inhalar":10, "retener":5, "exhalar":10}, "repeticiones":3, "color":"#60a5fa"},
+        {"tipo":"respiracion","instrucciones":"Inhala (grandeza), Retén (honor), Exhala (legado)","tiempos":{"inhalar":10, "retener":5, "exhalar":10}, "repeticiones":3, "voz_guia":["Inhala tu futuro","Retén tu nombre","Exhala tu huella"],"color":"#60a5fa"},
         {"tipo":"historia","titulo":"El Testamento de Alfred Nobel","texto":"Alfred Nobel leyó su propio obituario por error en el periódico; lo llamaban 'el mercader de la muerte'. Se horrorizó tanto que usó su fortuna para crear los Premios Nobel. Cambió su historia antes de morir. Tú también puedes.","color":"#1e293b"},
         {"tipo":"escenario","texto":"Tienes la oportunidad de ganar dinero engañando a alguien que confía en ti. Nadie se enteraría.","color":"#34d399"},
         {"tipo":"decision","pregunta":"¿Lo haces o proteges tu honor aunque pierdas el dinero?","opciones":["Proteger mi honor","Ganar el dinero"],"correcta":0,"explicacion":"El dinero va y viene, el honor es para siempre. Tu nombre es lo único que tus hijos heredarán con orgullo.","recompensa":60,"color":"#22c55e"},
