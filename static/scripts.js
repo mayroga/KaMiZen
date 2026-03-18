@@ -1,181 +1,286 @@
 const startBtn = document.getElementById("start-btn");
 const nextBtn = document.getElementById("next-btn");
+const skipBtn = document.getElementById("skip-btn");
 const restartBtn = document.getElementById("restart-btn");
+const backBtn = document.getElementById("back-btn");
 const block = document.getElementById("block");
 
 let bloques = [];
-let current = 0;
-let puntos = 0;
+let currentIdx = 0;
+let sesionActualData = null;
+let skipFlag = false;
+let activeInterval = null;
 
-/* DATOS USUARIO */
+
+/* =========================
+PERSISTENCIA
+========================= */
+
 let userData = JSON.parse(localStorage.getItem("kamizenData")) || {
+
     streak: 0,
     lastDay: null,
     nivel: 1,
     disciplina: 40,
     claridad: 50,
-    calma: 30
+    calma: 30,
+    lastSessionId: 0
+
 };
 
-/* PANEL */
-const streakEl = document.getElementById("streak");
-const levelEl = document.getElementById("level");
-const discBar = document.getElementById("disciplina-bar");
-const clarBar = document.getElementById("claridad-bar");
-const calmBar = document.getElementById("calma-bar");
 
 function updatePanel(){
-    streakEl.innerHTML = "🔥 Racha: "+userData.streak+" días";
-    levelEl.innerHTML = "Nivel KaMiZen: "+userData.nivel;
-    discBar.style.width = userData.disciplina+"%";
-    clarBar.style.width = userData.claridad+"%";
-    calmBar.style.width = userData.calma+"%";
-}
-updatePanel();
 
-/* RACHA DIARIA */
-function updateStreak(){
-    let today = new Date().toDateString();
-    if(userData.lastDay !== today){
-        userData.streak += 1;
-        userData.lastDay = today;
-    }
+    userData.disciplina = Math.max(0, Math.min(userData.disciplina, 100));
+    userData.claridad = Math.max(0, Math.min(userData.claridad, 100));
+    userData.calma = Math.max(0, Math.min(userData.calma, 100));
+
+    document.getElementById("streak").innerHTML =
+        "🔥 Racha: " + userData.streak + " días";
+
+    document.getElementById("level").innerHTML =
+        "Nivel KaMiZen: " + userData.nivel;
+
+    document.getElementById("disciplina-bar").style.width =
+        userData.disciplina + "%";
+
+    document.getElementById("claridad-bar").style.width =
+        userData.claridad + "%";
+
+    document.getElementById("calma-bar").style.width =
+        userData.calma + "%";
+
+    localStorage.setItem("kamizenData", JSON.stringify(userData));
+
 }
 
-/* VOZ */
+
+/* =========================
+VOZ
+========================= */
+
 function playVoice(text){
-    return new Promise(resolve=>{
+
+    return new Promise(resolve => {
+
         speechSynthesis.cancel();
+
+        if(skipFlag) return resolve();
+
         let msg = new SpeechSynthesisUtterance(text);
+
         msg.lang = "es-ES";
+
         msg.rate = 0.9;
+
+        msg.pitch = 0.8;
+
         msg.onend = resolve;
+
         speechSynthesis.speak(msg);
+
     });
+
 }
 
-/* RESPIRACION */
-function breathingAnimation(){
-    let circle = document.createElement("div");
-    circle.className = "breath-circle";
-    block.appendChild(circle);
-    let inhale=true;
-    const interval = setInterval(()=>{
-        if(current >= bloques.length) { clearInterval(interval); return; }
-        circle.style.transform = inhale ? "scale(1.6)" : "scale(1)";
-        inhale = !inhale;
-    },4000);
-}
 
-/* OPCIONES */
-function createOptions(b){
-    b.opciones.forEach((op,i)=>{
-        let btn = document.createElement("button");
-        btn.innerText = op;
-        btn.onclick = ()=>{
-            if(i === b.correcta){
-                puntos += b.recompensa||5;
-                userData.disciplina += 2;
-                userData.claridad += 2;
-                alert("✅ Correcto: "+b.explicacion);
-            } else {
-                userData.calma += 1;
-                alert("❌ Respuesta: "+b.explicacion);
+/* =========================
+WAIT
+========================= */
+
+function wait(ms){
+
+    return new Promise(resolve => {
+
+        const start = Date.now();
+
+        const check = setInterval(() => {
+
+            if(Date.now() - start >= ms || skipFlag){
+
+                clearInterval(check);
+
+                resolve();
+
             }
-            updatePanel();
-            nextBtn.style.display = "inline-block";
-        };
-        block.appendChild(btn);
+
+        }, 50);
+
     });
+
 }
 
-/* BLOQUE */
+
+/* =========================
+MOSTRAR BLOQUE
+========================= */
+
 async function showBlock(b){
+
+    skipFlag = false;
+
+    if(activeInterval) clearInterval(activeInterval);
+
     block.innerHTML = "";
-    document.body.style.background = b.color||"#0f172a";
 
-    if(b.texto && !["quiz","acertijo","decision","juego_mental"].includes(b.tipo)){
-        block.innerHTML = "<p>"+b.texto+"</p>";
-        await playVoice(b.texto);
-    }
+    nextBtn.style.display = "none";
 
-    switch(b.tipo){
-        case "quiz":
-        case "acertijo":
-        case "decision":
-        case "juego_mental":
-            block.innerHTML = "<h3>"+b.pregunta+"</h3>";
-            createOptions(b);
-            await playVoice(b.pregunta);
-            break;
-        case "respiracion":
-            breathingAnimation();
-            await playVoice(b.texto);
-            setTimeout(()=>{ nextBtn.style.display = "inline-block"; },30000);
-            return;
-        case "recompensa":
-            userData.disciplina+=3;
-            userData.claridad+=3;
-            userData.calma+=3;
-            block.innerHTML="<h2>"+b.texto+"</h2>";
-            await playVoice(b.texto);
-            break;
-        case "cierre":
-            updateStreak();
-            puntos += 10;
-            if(puntos > 50) userData.nivel +=1;
+    skipBtn.style.display = "block";
 
-            // Guardar sesión completada
-            let completed = JSON.parse(localStorage.getItem("completedSessions")) || [];
-            completed.push(currentSessionIndex);
-            localStorage.setItem("completedSessions", JSON.stringify(completed));
+    if(currentIdx > 0){
 
-            localStorage.setItem("kamizenData", JSON.stringify(userData));
-            updatePanel();
-            restartBtn.style.display="inline-block";
-            await playVoice(b.texto);
-            return;
-    }
+        backBtn.style.display = "block";
 
-    setTimeout(()=>{ nextBtn.style.display="inline-block"; },4000);
-}
-
-/* SIGUIENTE */
-function nextBlock(){
-    nextBtn.style.display="none";
-    current++;
-    if(current < bloques.length){
-        showBlock(bloques[current]);
     } else {
-        restartBtn.style.display="inline-block";
+
+        backBtn.style.display = "none";
+
     }
+
+    document.body.style.background =
+        b.color || "#020617";
+
+
+    if(b.tipo === "respiracion"){
+
+        block.innerHTML =
+            "<p>" + b.instrucciones + "</p>" +
+            "<div class='breath-circle' id='circle'></div>" +
+            "<p id='breath-label'></p>";
+
+        const circle = document.getElementById("circle");
+
+        const label = document.getElementById("breath-label");
+
+        const reps = b.repeticiones || 3;
+
+        for(let i=0;i<reps;i++){
+
+            if(skipFlag) break;
+
+            label.innerText = "Inhala";
+
+            playVoice("Inhala");
+
+            circle.style.transform = "scale(1.8)";
+
+            await wait(3000);
+
+            if(skipFlag) break;
+
+            label.innerText = "Exhala";
+
+            playVoice("Exhala");
+
+            circle.style.transform = "scale(1)";
+
+            await wait(3000);
+
+        }
+
+        finishBlock();
+
+    }
+
+    else{
+
+        block.innerHTML =
+            b.texto
+            ? "<p>" + b.texto + "</p>"
+            : "<p>" + b.titulo + "</p>";
+
+        await playVoice(b.texto || b.titulo);
+
+        finishBlock();
+
+    }
+
 }
 
-/* INICIO */
-let currentSessionIndex = 0;
 
-startBtn.addEventListener("click", async ()=>{
-    startBtn.style.display = "none";
+function finishBlock(){
 
-    const res = await fetch("/session_content");
-    const data = await res.json();
-    const sesiones = data.sesiones;
+    skipBtn.style.display = "none";
 
-    let completed = JSON.parse(localStorage.getItem("completedSessions")) || [];
-    let availableIndices = sesiones.map((_,i)=>i).filter(i => !completed.includes(i));
+    nextBtn.style.display = "block";
 
-    if(availableIndices.length === 0){
-        localStorage.removeItem("completedSessions");
-        availableIndices = sesiones.map((_,i)=>i);
+}
+
+
+/* =========================
+ATRAS
+========================= */
+
+backBtn.addEventListener("click", () => {
+
+    if(currentIdx > 0){
+
+        currentIdx--;
+
+        showBlock(bloques[currentIdx]);
+
     }
 
-    currentSessionIndex = availableIndices[Math.floor(Math.random()*availableIndices.length)];
-    bloques = sesiones[currentSessionIndex].bloques;
-    current = 0;
-
-    updateStreak();
-    showBlock(bloques[0]);
 });
 
-nextBtn.addEventListener("click", nextBlock);
-restartBtn.addEventListener("click", ()=>location.reload());
+
+/* =========================
+SIGUIENTE
+========================= */
+
+nextBtn.addEventListener("click", () => {
+
+    currentIdx++;
+
+    if(currentIdx < bloques.length){
+
+        showBlock(bloques[currentIdx]);
+
+    } else {
+
+        block.innerHTML =
+            "<h2>Sesión completada</h2>";
+
+        restartBtn.style.display = "block";
+
+        nextBtn.style.display = "none";
+
+        skipBtn.style.display = "none";
+
+        backBtn.style.display = "none";
+
+    }
+
+});
+
+
+/* =========================
+INICIAR
+========================= */
+
+startBtn.addEventListener("click", async () => {
+
+    startBtn.style.display = "none";
+
+    backBtn.style.display = "none";
+
+    block.innerHTML = "Cargando...";
+
+    const res = await fetch("/session_content");
+
+    const data = await res.json();
+
+    sesionActualData = data.sesiones[0];
+
+    bloques = sesionActualData.bloques;
+
+    currentIdx = 0;
+
+    showBlock(bloques[0]);
+
+});
+
+
+restartBtn.addEventListener("click", () => location.reload());
+
+updatePanel();
