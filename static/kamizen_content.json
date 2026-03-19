@@ -765,8 +765,788 @@
 {"tipo":"recompensa","texto":"Tu poder mental aumenta.","puntos":20},
 
 {"tipo":"cierre","texto":"Sesion terminada"}
+  
+]
+},
+{
+"id":21,
+"categoria":"optimismo",
+"bloques":[
+
+{"tipo":"voz","texto":"Hoy entrenaremos optimismo y actitud positiva."},
+
+{"tipo":"historia","texto":"Las personas felices buscan lo bueno de cada situación."},
+
+{"tipo":"tvid","texto":"Tecnica del Bien. Centrarte en lo positivo."},
+
+{"tipo":"ejercicio","texto":"Piensa en tres cosas que te hagan sentir bien."},
+
+{"tipo":"estrategia","texto":"Agradece mentalmente cada una de ellas."},
+
+{"tipo":"inteligencia_social","texto":"Compartir lo positivo mejora relaciones."},
+
+{"tipo":"decision","pregunta":"Momento dificil","opciones":["Quejarse","Buscar lo bueno","Ignorar"],"correcta":1,"recompensa":10},
+
+{"tipo":"quiz","pregunta":"Que aumenta felicidad","opciones":["Gratitud","Envidia","Ira"],"correcta":0,"recompensa":8},
+
+{"tipo":"acertijo","pregunta":"Siempre va hacia arriba pero nunca baja","opciones":["Esperanza","Globos","Sol"],"correcta":0,"recompensa":8},
+
+{"tipo":"juego_mental","pregunta":"17 mas 19","opciones":["36","35","37"],"correcta":0,"recompensa":7},
+
+{"tipo":"respiracion","texto":"Respira con alegria.","duracion":45},
+
+{"tipo":"visualizacion","texto":"Imagina un dia lleno de felicidad."},
+
+{"tipo":"accion","texto":"Hoy enfocate en algo positivo."},
+
+{"tipo":"reflexion","texto":"Lo positivo atrae mas positivo."},
+
+{"tipo":"recompensa","texto":"Tu optimismo aumenta.","puntos":20},
+
+{"tipo":"cierre","texto":"Sesion terminada"}
 
 ]
-}
+},
+{
+"id":22,
+"categoria":"resiliencia",
+"bloques":[
+
+{"tipo":"voz","texto":"Hoy entrenaremos resiliencia frente a lo negativo."},
+
+{"tipo":"historia","texto":"Aceptar lo negativo te hace mas fuerte."},
+
+{"tipo":"tvid","texto":"Tecnica del Mal. Transformar lo malo en fuerza."},
+
+{"tipo":"ejercicio","texto":"Piensa en un error reciente y extrae una leccion."},
+
+{"tipo":"estrategia","texto":"No te juzgues, observa y aprende."},
+
+{"tipo":"inteligencia_social","texto":"Quien se conoce se fortalece."},
+
+{"tipo":"decision","pregunta":"Fracaso","opciones":["Rendirse","Aprender","Culpar"],"correcta":1,"recompensa":10},
+
+{"tipo":"quiz","pregunta":"Que ayuda crecer","opciones":["Errores","Miedo","Excusas"],"correcta":0,"recompensa":8},
+
+{"tipo":"acertijo","pregunta":"Cuanto mas lo compartes, mas pesa","opciones":["Problema","Dinero","Secreto"],"correcta":0,"recompensa":8},
+
+{"tipo":"juego_mental","pregunta":"9 por 9","opciones":["81","80","90"],"correcta":0,"recompensa":7},
+
+{"tipo":"respiracion","texto":"Respira profundo.","duracion":45},
+
+{"tipo":"visualizacion","texto":"Imagina superar dificultades."},
+
+{"tipo":"accion","texto":"Hoy transforma un obstaculo."},
+
+{"tipo":"reflexion","texto":"Los retos te fortalecen."},
+
+{"tipo":"recompensa","texto":"Tu resiliencia aumenta.","puntos":20},
+
+{"tipo":"cierre","texto":"Sesion terminada"}
+
+]
+},
+{
+"id":23,
+"categoria":"liderazgo",
+"bloques":[
+
+{"tipo":"voz","texto":"Hoy entrenaremos liderazgo personal."},
+
+{"tipo":"historia","texto":"Los lideres no esperan, actuan."},
+
+{"tipo":"tvid","texto":"Tecnica del Padre. Guiar tu vida con seguridad."},
+
+{"tipo":"ejercicio","texto":"Escribe mentalmente un objetivo claro para hoy."},
+
+{"tipo":"estrategia","texto":"Decide y ejecuta con seguridad."},
+
+{"tipo":"inteligencia_social","texto":"El liderazgo inspira a otros."},
+
+{"tipo":"decision","pregunta":"Nuevo proyecto","opciones":["Evitar","Intentar","Criticar"],"correcta":1,"recompensa":10},
+
+{"tipo":"quiz","pregunta":"Que genera respeto","opciones":["Confianza","Excusas","Miedo"],"correcta":0,"recompensa":8},
+
+{"tipo":"acertijo","pregunta":"Siempre delante pero nunca detrás","opciones":["Futuro","Sombras","Dia"],"correcta":0,"recompensa":8},
+
+{"tipo":"juego_mental","pregunta":"14 por 7","opciones":["98","96","100"],"correcta":0,"recompensa":7},
+
+{"tipo":"respiracion","texto":"Respira con firmeza.","duracion":45},
+
+{"tipo":"visualizacion","texto":"Imagina liderando exitosamente."},
+
+{"tipo":"accion","texto":"Hoy lidera una decision."},
+
+{"tipo":"reflexion","texto":"Liderar tu vida es poder."},
+
+{"tipo":"recompensa","texto":"Tu liderazgo se fortalece.","puntos":20},
+
+{"tipo":"cierre","texto":"Sesion terminada"}
+
+]
+},
+{
+"id":24,
+"categoria":"empatía",
+"bloques":[
+
+{"tipo":"voz","texto":"Hoy entrenaremos empatia y comprensión."},
+
+{"tipo":"historia","texto":"La paciencia y cuidado generan confianza."},
+
+{"tipo":"tvid","texto":"Tecnica de la Madre. Escuchar con amor."},
+
+{"tipo":"ejercicio","texto":"Piensa en alguien y escucha mentalmente sus emociones."},
+
+{"tipo":"estrategia","texto":"No juzgues, solo comprende."},
+
+{"tipo":"inteligencia_social","texto":"La empatia une a las personas."},
+
+{"tipo":"decision","pregunta":"Conflicto","opciones":["Ignorar","Escuchar","Gritar"],"correcta":1,"recompensa":10},
+
+{"tipo":"quiz","pregunta":"Que fortalece relaciones","opciones":["Comprensión","Ira","Desconfianza"],"correcta":0,"recompensa":8},
+
+{"tipo":"acertijo","pregunta":"Siempre sigue pero nunca alcanza","opciones":["Tiempo","Viento","Onda"],"correcta":0,"recompensa":8},
+
+{"tipo":"juego_mental","pregunta":"19 menos 7","opciones":["12","11","13"],"correcta":0,"recompensa":7},
+
+{"tipo":"respiracion","texto":"Respira suave.","duracion":45},
+
+{"tipo":"visualizacion","texto":"Imagina dar apoyo a alguien."},
+
+{"tipo":"accion","texto":"Hoy escucha atentamente."},
+
+{"tipo":"reflexion","texto":"La empatía genera paz."},
+
+{"tipo":"recompensa","texto":"Tu comprensión aumenta.","puntos":20},
+
+{"tipo":"cierre","texto":"Sesion terminada"}
+
+]
+};
+{
+"id":25,
+"categoria":"imaginacion",
+"bloques":[
+
+{"tipo":"voz","texto":"Hoy entrenaremos imaginación y curiosidad."},
+
+{"tipo":"historia","texto":"La creatividad impulsa soluciones nuevas."},
+
+{"tipo":"tvid","texto":"Tecnica del Niño. Explorar y crear."},
+
+{"tipo":"ejercicio","texto":"Piensa en una historia o idea loca y detallala."},
+
+{"tipo":"estrategia","texto":"Deja fluir tu mente libremente."},
+
+{"tipo":"inteligencia_social","texto":"La creatividad inspira a otros."},
+
+{"tipo":"decision","pregunta":"Quieres innovar","opciones":["Crear","Copiar","Quejar"],"correcta":0,"recompensa":10},
+
+{"tipo":"quiz","pregunta":"Que potencia creatividad","opciones":["Curiosidad","Rutina","Miedo"],"correcta":0,"recompensa":8},
+
+{"tipo":"acertijo","pregunta":"Tiene hojas pero no árbol","opciones":["Libro","Planta","Cuaderno"],"correcta":0,"recompensa":8},
+
+{"tipo":"juego_mental","pregunta":"22 menos 9","opciones":["13","12","14"],"correcta":0,"recompensa":7},
+
+{"tipo":"respiracion","texto":"Respira animado.","duracion":45},
+
+{"tipo":"visualizacion","texto":"Imagina tu idea hecha realidad."},
+
+{"tipo":"accion","texto":"Hoy crea algo nuevo."},
+
+{"tipo":"reflexion","texto":"La imaginación da libertad."},
+
+{"tipo":"recompensa","texto":"Tu creatividad aumenta.","puntos":20},
+
+{"tipo":"cierre","texto":"Sesion terminada"}
+
+]
+},
+{
+"id":26,
+"categoria":"disciplina",
+"bloques":[
+
+{"tipo":"voz","texto":"Hoy entrenaremos disciplina y fuerza interior."},
+
+{"tipo":"historia","texto":"El que persevera alcanza sus metas."},
+
+{"tipo":"tvid","texto":"Tecnica de la Guerra. Persistencia y determinacion."},
+
+{"tipo":"ejercicio","texto":"Define un reto y completa mentalmente cada paso."},
+
+{"tipo":"estrategia","texto":"No te rindas ante la primera dificultad."},
+
+{"tipo":"inteligencia_social","texto":"La firmeza inspira respeto."},
+
+{"tipo":"decision","pregunta":"Obstaculo","opciones":["Rendirse","Seguir","Quejar"],"correcta":1,"recompensa":10},
+
+{"tipo":"quiz","pregunta":"Que genera poder interior","opciones":["Disciplina","Excusas","Miedo"],"correcta":0,"recompensa":8},
+
+{"tipo":"acertijo","pregunta":"Se rompe pero no se ve","opciones":["Confianza","Vidrio","Roca"],"correcta":0,"recompensa":8},
+
+{"tipo":"juego_mental","pregunta":"16 por 5","opciones":["80","75","85"],"correcta":0,"recompensa":7},
+
+{"tipo":"respiracion","texto":"Respira firme.","duracion":45},
+
+{"tipo":"visualizacion","texto":"Imagina lograr lo dificil."},
+
+{"tipo":"accion","texto":"Hoy completa un reto."},
+
+{"tipo":"reflexion","texto":"La disciplina crea poder."},
+
+{"tipo":"recompensa","texto":"Tu fuerza aumenta.","puntos":20},
+
+{"tipo":"cierre","texto":"Sesion terminada"}
+
+]
+},
+{
+"id":27,
+"categoria":"gratitud",
+"bloques":[
+
+{"tipo":"voz","texto":"Hoy entrenaremos gratitud y bienestar."},
+
+{"tipo":"historia","texto":"Apreciar lo que tenemos nos hace felices."},
+
+{"tipo":"tvid","texto":"Tecnica del Bien. Valorar lo que ya es bueno."},
+
+{"tipo":"ejercicio","texto":"Escribe mentalmente cinco cosas por las que estas agradecido."},
+
+{"tipo":"estrategia","texto":"Siente gratitud profundamente."},
+
+{"tipo":"inteligencia_social","texto":"Compartir gratitud aumenta conexiones."},
+
+{"tipo":"decision","pregunta":"Momento actual","opciones":["Quejarse","Agradecer","Ignorar"],"correcta":1,"recompensa":10},
+
+{"tipo":"quiz","pregunta":"Que mejora estado de animo","opciones":["Gratitud","Ira","Envidia"],"correcta":0,"recompensa":8},
+
+{"tipo":"acertijo","pregunta":"Siempre avanza y no vuelve","opciones":["Tiempo","Rio","Sol"],"correcta":0,"recompensa":8},
+
+{"tipo":"juego_mental","pregunta":"18 menos 7","opciones":["11","10","12"],"correcta":0,"recompensa":7},
+
+{"tipo":"respiracion","texto":"Respira agradecido.","duracion":45},
+
+{"tipo":"visualizacion","texto":"Imagina todo lo bueno de tu vida."},
+
+{"tipo":"accion","texto":"Hoy agradece algo concreto."},
+
+{"tipo":"reflexion","texto":"La gratitud atrae mas bienestar."},
+
+{"tipo":"recompensa","texto":"Tu bienestar crece.","puntos":20},
+
+{"tipo":"cierre","texto":"Sesion terminada"}
+
+]
+},
+{
+"id":28,
+"categoria":"adaptacion",
+"bloques":[
+
+{"tipo":"voz","texto":"Hoy entrenaremos adaptacion frente a lo negativo."},
+
+{"tipo":"historia","texto":"Aceptar lo inesperado te hace flexible."},
+
+{"tipo":"tvid","texto":"Tecnica del Mal. Transformar dificultades."},
+
+{"tipo":"ejercicio","texto":"Identifica algo que no salió como planeaste y busca utilidad."},
+
+{"tipo":"estrategia","texto":"No resistas, adapta."},
+
+{"tipo":"inteligencia_social","texto":"La adaptacion crea oportunidades."},
+
+{"tipo":"decision","pregunta":"Situacion inesperada","opciones":["Quejarse","Adaptarse","Ignorar"],"correcta":1,"recompensa":10},
+
+{"tipo":"quiz","pregunta":"Que genera resiliencia","opciones":["Aceptar","Evitar","Miedo"],"correcta":0,"recompensa":8},
+
+{"tipo":"acertijo","pregunta":"Nunca se detiene pero siempre avanza","opciones":["Tiempo","Rio","Sol"],"correcta":0,"recompensa":8},
+
+{"tipo":"juego_mental","pregunta":"12 mas 15","opciones":["27","28","26"],"correcta":0,"recompensa":7},
+
+{"tipo":"respiracion","texto":"Respira y suelta tension.","duracion":45},
+
+{"tipo":"visualizacion","texto":"Imagina adaptarte con exito."},
+
+{"tipo":"accion","texto":"Hoy ajusta tu plan."},
+
+{"tipo":"reflexion","texto":"La flexibilidad da poder."},
+
+{"tipo":"recompensa","texto":"Tu adaptacion aumenta.","puntos":20},
+
+{"tipo":"cierre","texto":"Sesion terminada"}
+
+]
+},
+{
+"id":29,
+"categoria":"disciplina",
+"bloques":[
+
+{"tipo":"voz","texto":"Hoy entrenaremos disciplina y toma de decisiones."},
+
+{"tipo":"historia","texto":"El que actua con disciplina alcanza metas."},
+
+{"tipo":"tvid","texto":"Tecnica del Padre. Lidera con acciones."},
+
+{"tipo":"ejercicio","texto":"Decide una tarea y completala mentalmente paso a paso."},
+
+{"tipo":"estrategia","texto":"Cumple cada paso con atencion."},
+
+{"tipo":"inteligencia_social","texto":"La disciplina inspira confianza."},
+
+{"tipo":"decision","pregunta":"Tarea importante","opciones":["Evitar","Realizar","Quejar"],"correcta":1,"recompensa":10},
+
+{"tipo":"quiz","pregunta":"Que crea respeto","opciones":["Disciplina","Excusas","Miedo"],"correcta":0,"recompensa":8},
+
+{"tipo":"acertijo","pregunta":"Tiene llave pero no abre puerta","opciones":["Piano","Casa","Coche"],"correcta":0,"recompensa":8},
+
+{"tipo":"juego_mental","pregunta":"7 por 13","opciones":["91","90","92"],"correcta":0,"recompensa":7},
+
+{"tipo":"respiracion","texto":"Respira firme.","duracion":45},
+
+{"tipo":"visualizacion","texto":"Imagina completar todo con exito."},
+
+{"tipo":"accion","texto":"Hoy cumple lo que decidiste."},
+
+{"tipo":"reflexion","texto":"La disciplina crea poder."},
+
+{"tipo":"recompensa","texto":"Tu liderazgo se fortalece.","puntos":20},
+
+{"tipo":"cierre","texto":"Sesion terminada"}
+
+]
+},
+{
+"id":30,
+"categoria":"cuidado",
+"bloques":[
+
+{"tipo":"voz","texto":"Hoy entrenaremos cuidado y apoyo a otros."},
+
+{"tipo":"historia","texto":"Cuidar de otros fortalece relaciones."},
+
+{"tipo":"tvid","texto":"Tecnica de la Madre. Dar y proteger con amor."},
+
+{"tipo":"ejercicio","texto":"Piensa en alguien que necesite apoyo y envia buena energia."},
+
+{"tipo":"estrategia","texto":"No juzgues, solo ofrece ayuda."},
+
+{"tipo":"inteligencia_social","texto":"El cuidado crea confianza y respeto."},
+
+{"tipo":"decision","pregunta":"Alguien necesita ayuda","opciones":["Ignorar","Ayudar","Criticar"],"correcta":1,"recompensa":10},
+
+{"tipo":"quiz","pregunta":"Que genera conexion","opciones":["Cuidado","Desinteres","Ira"],"correcta":0,"recompensa":8},
+
+{"tipo":"acertijo","pregunta":"Siempre se mueve pero nunca se cansa","opciones":["Agua","Viento","Sol"],"correcta":0,"recompensa":8},
+
+{"tipo":"juego_mental","pregunta":"20 menos 8","opciones":["12","11","13"],"correcta":0,"recompensa":7},
+
+{"tipo":"respiracion","texto":"Respira suave y calmado.","duracion":45},
+
+{"tipo":"visualizacion","texto":"Imagina protegiendo con amor."},
+
+{"tipo":"accion","texto":"Hoy ayuda a alguien."},
+
+{"tipo":"reflexion","texto":"Dar genera bienestar."},
+
+{"tipo":"recompensa","texto":"Tu cuidado aumenta.","puntos":20},
+
+{"tipo":"cierre","texto":"Sesion terminada"}
+
+]
+},
+{
+"id":31,
+"categoria":"creatividad",
+"bloques":[
+
+{"tipo":"voz","texto":"Hoy entrenaremos creatividad y curiosidad."},
+
+{"tipo":"historia","texto":"Explorar nuevas ideas abre oportunidades."},
+
+{"tipo":"tvid","texto":"Tecnica del Niño. Dejar fluir la imaginacion."},
+
+{"tipo":"ejercicio","texto":"Crea mentalmente un invento divertido que resuelva un problema."},
+
+{"tipo":"estrategia","texto":"No limites tus ideas, deja que fluyan libremente."},
+
+{"tipo":"inteligencia_social","texto":"La creatividad inspira a quienes te rodean."},
+
+{"tipo":"decision","pregunta":"Idea loca","opciones":["Descartar","Desarrollar","Ignorar"],"correcta":1,"recompensa":10},
+
+{"tipo":"quiz","pregunta":"Que potencia la creatividad","opciones":["Curiosidad","Rutina","Miedo"],"correcta":0,"recompensa":8},
+
+{"tipo":"acertijo","pregunta":"Tiene hojas pero no es arbol","opciones":["Libro","Cuaderno","Planta"],"correcta":0,"recompensa":8},
+
+{"tipo":"juego_mental","pregunta":"15 mas 18","opciones":["33","34","32"],"correcta":0,"recompensa":7},
+
+{"tipo":"respiracion","texto":"Respira alegremente.","duracion":45},
+
+{"tipo":"visualizacion","texto":"Imagina tu invento funcionando."},
+
+{"tipo":"accion","texto":"Hoy crea algo nuevo y practico."},
+
+{"tipo":"reflexion","texto":"La imaginacion da libertad y poder."},
+
+{"tipo":"recompensa","texto":"Tu creatividad aumenta.","puntos":20},
+
+{"tipo":"cierre","texto":"Sesion terminada"}
+
+]
+},
+{
+"id":32,
+"categoria":"fuerza",
+"bloques":[
+
+{"tipo":"voz","texto":"Hoy entrenaremos fuerza interior y perseverancia."},
+
+{"tipo":"historia","texto":"El que persiste logra lo que desea."},
+
+{"tipo":"tvid","texto":"Tecnica de la Guerra. Persistencia y determinacion."},
+
+{"tipo":"ejercicio","texto":"Identifica un desafio y define pasos para superarlo."},
+
+{"tipo":"estrategia","texto":"Enfrenta cada paso con firmeza y sin rendirte."},
+
+{"tipo":"inteligencia_social","texto":"La perseverancia inspira respeto y confianza."},
+
+{"tipo":"decision","pregunta":"Reto dificil","opciones":["Rendirse","Seguir","Quejar"],"correcta":1,"recompensa":10},
+
+{"tipo":"quiz","pregunta":"Que fortalece el caracter","opciones":["Persistencia","Excusas","Miedo"],"correcta":0,"recompensa":8},
+
+{"tipo":"acertijo","pregunta":"Se rompe sin tocarse","opciones":["Confianza","Vidrio","Roca"],"correcta":0,"recompensa":8},
+
+{"tipo":"juego_mental","pregunta":"18 por 4","opciones":["72","70","74"],"correcta":0,"recompensa":7},
+
+{"tipo":"respiracion","texto":"Respira firme y constante.","duracion":45},
+
+{"tipo":"visualizacion","texto":"Imagina superar cualquier dificultad."},
+
+{"tipo":"accion","texto":"Hoy enfrenta un reto con determinacion."},
+
+{"tipo":"reflexion","texto":"La disciplina genera poder interior."},
+
+{"tipo":"recompensa","texto":"Tu fuerza aumenta.","puntos":20},
+
+{"tipo":"cierre","texto":"Sesion terminada"}
+
+]
+},
+{
+"id":33,
+"categoria":"optimismo",
+"bloques":[
+
+{"tipo":"voz","texto":"Hoy entrenaremos actitud positiva y bienestar."},
+
+{"tipo":"historia","texto":"Quien enfoca su mente en lo bueno se siente mas feliz."},
+
+{"tipo":"tvid","texto":"Tecnica del Bien. Centrar la mente en lo positivo."},
+
+{"tipo":"ejercicio","texto":"Identifica tres cosas que hoy te hacen sonreir."},
+
+{"tipo":"estrategia","texto":"Siente gratitud por ellas."},
+
+{"tipo":"inteligencia_social","texto":"Compartir lo positivo mejora relaciones."},
+
+{"tipo":"decision","pregunta":"Situacion dificil","opciones":["Quejarse","Buscar lo bueno","Ignorar"],"correcta":1,"recompensa":10},
+
+{"tipo":"quiz","pregunta":"Que aumenta felicidad","opciones":["Gratitud","Envidia","Ira"],"correcta":0,"recompensa":8},
+
+{"tipo":"acertijo","pregunta":"Siempre hacia arriba pero nunca baja","opciones":["Esperanza","Globos","Sol"],"correcta":0,"recompensa":8},
+
+{"tipo":"juego_mental","pregunta":"23 menos 9","opciones":["14","13","15"],"correcta":0,"recompensa":7},
+
+{"tipo":"respiracion","texto":"Respira con alegria.","duracion":45},
+
+{"tipo":"visualizacion","texto":"Imagina un dia lleno de felicidad."},
+
+{"tipo":"accion","texto":"Hoy enfocate en algo positivo."},
+
+{"tipo":"reflexion","texto":"Lo positivo atrae mas positivo."},
+
+{"tipo":"recompensa","texto":"Tu optimismo aumenta.","puntos":20},
+
+{"tipo":"cierre","texto":"Sesion terminada"}
+
+]
+},
+{
+"id":34,
+"categoria":"resiliencia",
+"bloques":[
+
+{"tipo":"voz","texto":"Hoy entrenaremos resiliencia y aprendizaje del error."},
+
+{"tipo":"historia","texto":"Aprender de lo negativo te hace mas fuerte."},
+
+{"tipo":"tvid","texto":"Tecnica del Mal. Convertir dificultades en crecimiento."},
+
+{"tipo":"ejercicio","texto":"Piensa en una dificultad reciente y extrae una leccion."},
+
+{"tipo":"estrategia","texto":"Observa sin juzgar, aprende."},
+
+{"tipo":"inteligencia_social","texto":"Quien se conoce se fortalece y ayuda a otros."},
+
+{"tipo":"decision","pregunta":"Fracaso","opciones":["Rendirse","Aprender","Culpar"],"correcta":1,"recompensa":10},
+
+{"tipo":"quiz","pregunta":"Que ayuda crecer","opciones":["Errores","Miedo","Excusas"],"correcta":0,"recompensa":8},
+
+{"tipo":"acertijo","pregunta":"Cuanto mas lo compartes, mas pesa","opciones":["Problema","Dinero","Secreto"],"correcta":0,"recompensa":8},
+
+{"tipo":"juego_mental","pregunta":"21 menos 6","opciones":["15","16","14"],"correcta":0,"recompensa":7},
+
+{"tipo":"respiracion","texto":"Respira profundo y suelta tension.","duracion":45},
+
+{"tipo":"visualizacion","texto":"Imagina superar dificultades facilmente."},
+
+{"tipo":"accion","texto":"Hoy transforma un obstaculo en aprendizaje."},
+
+{"tipo":"reflexion","texto":"Los retos fortalecen tu mente."},
+
+{"tipo":"recompensa","texto":"Tu resiliencia aumenta.","puntos":20},
+
+{"tipo":"cierre","texto":"Sesion terminada"}
+
+]
+},
+{
+"id":35,
+"categoria":"liderazgo",
+"bloques":[
+
+{"tipo":"voz","texto":"Hoy entrenaremos liderazgo y decision."},
+
+{"tipo":"historia","texto":"Quien actua con seguridad inspira a los demas."},
+
+{"tipo":"tvid","texto":"Tecnica del Padre. Guiar con acciones claras."},
+
+{"tipo":"ejercicio","texto":"Define un objetivo y visualiza cada paso para lograrlo."},
+
+{"tipo":"estrategia","texto":"Decide y ejecuta con confianza."},
+
+{"tipo":"inteligencia_social","texto":"El liderazgo genera respeto y admiracion."},
+
+{"tipo":"decision","pregunta":"Nuevo proyecto","opciones":["Evitar","Intentar","Criticar"],"correcta":1,"recompensa":10},
+
+{"tipo":"quiz","pregunta":"Que genera respeto","opciones":["Confianza","Excusas","Miedo"],"correcta":0,"recompensa":8},
+
+{"tipo":"acertijo","pregunta":"Siempre delante pero nunca detras","opciones":["Futuro","Sombras","Dia"],"correcta":0,"recompensa":8},
+
+{"tipo":"juego_mental","pregunta":"13 por 8","opciones":["104","102","105"],"correcta":0,"recompensa":7},
+
+{"tipo":"respiracion","texto":"Respira con firmeza.","duracion":45},
+
+{"tipo":"visualizacion","texto":"Imagina liderando exitosamente."},
+
+{"tipo":"accion","texto":"Hoy lidera una decision importante."},
+
+{"tipo":"reflexion","texto":"Liderar tu vida es poder."},
+
+{"tipo":"recompensa","texto":"Tu liderazgo se fortalece.","puntos":20},
+
+{"tipo":"cierre","texto":"Sesion terminada"}
+
+]
+},
+{
+"id":36,
+"categoria":"empatía",
+"bloques":[
+
+{"tipo":"voz","texto":"Hoy entrenaremos empatia y cuidado."},
+
+{"tipo":"historia","texto":"Escuchar con amor genera confianza y paz."},
+
+{"tipo":"tvid","texto":"Tecnica de la Madre. Comprender con amor."},
+
+{"tipo":"ejercicio","texto":"Piensa en alguien que necesita apoyo y mentalmente brindale ayuda."},
+
+{"tipo":"estrategia","texto":"No juzgues, solo comprende y acompaña."},
+
+{"tipo":"inteligencia_social","texto":"La empatia mejora todas las relaciones."},
+
+{"tipo":"decision","pregunta":"Conflicto","opciones":["Ignorar","Escuchar","Gritar"],"correcta":1,"recompensa":10},
+
+{"tipo":"quiz","pregunta":"Que fortalece relaciones","opciones":["Comprension","Ira","Desconfianza"],"correcta":0,"recompensa":8},
+
+{"tipo":"acertijo","pregunta":"Siempre sigue pero nunca alcanza","opciones":["Tiempo","Viento","Onda"],"correcta":0,"recompensa":8},
+
+{"tipo":"juego_mental","pregunta":"24 menos 7","opciones":["17","16","18"],"correcta":0,"recompensa":7},
+
+{"tipo":"respiracion","texto":"Respira suave y calmado.","duracion":45},
+
+{"tipo":"visualizacion","texto":"Imagina dar apoyo con amor."},
+
+{"tipo":"accion","texto":"Hoy escucha atentamente a alguien."},
+
+{"tipo":"reflexion","texto":"La empatia genera paz y bienestar."},
+
+{"tipo":"recompensa","texto":"Tu comprension aumenta.","puntos":20},
+
+{"tipo":"cierre","texto":"Sesion terminada"}
+
+]
+},
+{
+"id":37,
+"categoria":"imaginacion",
+"bloques":[
+
+{"tipo":"voz","texto":"Hoy entrenaremos creatividad y exploracion."},
+
+{"tipo":"historia","texto":"La imaginacion abre nuevas posibilidades."},
+
+{"tipo":"tvid","texto":"Tecnica del Niño. Explorar ideas libremente."},
+
+{"tipo":"ejercicio","texto":"Crea mentalmente una historia fantastica y detallala."},
+
+{"tipo":"estrategia","texto":"Deja que la mente fluya sin limites."},
+
+{"tipo":"inteligencia_social","texto":"La creatividad inspira y conecta."},
+
+{"tipo":"decision","pregunta":"Idea creativa","opciones":["Ignorar","Desarrollar","Criticar"],"correcta":1,"recompensa":10},
+
+{"tipo":"quiz","pregunta":"Que potencia imaginacion","opciones":["Curiosidad","Rutina","Miedo"],"correcta":0,"recompensa":8},
+
+{"tipo":"acertijo","pregunta":"Tiene hojas pero no arbol","opciones":["Libro","Cuaderno","Planta"],"correcta":0,"recompensa":8},
+
+{"tipo":"juego_mental","pregunta":"26 menos 9","opciones":["17","16","18"],"correcta":0,"recompensa":7},
+
+{"tipo":"respiracion","texto":"Respira animado y ligero.","duracion":45},
+
+{"tipo":"visualizacion","texto":"Imagina tu historia hecha realidad."},
+
+{"tipo":"accion","texto":"Hoy crea algo unico."},
+
+{"tipo":"reflexion","texto":"La imaginacion nos hace libres."},
+
+{"tipo":"recompensa","texto":"Tu creatividad aumenta.","puntos":20},
+
+{"tipo":"cierre","texto":"Sesion terminada"}
+
+]
+},
+{
+"id":38,
+"categoria":"disciplina",
+"bloques":[
+
+{"tipo":"voz","texto":"Hoy entrenaremos fuerza y perseverancia."},
+
+{"tipo":"historia","texto":"La disciplina te lleva a cumplir metas grandes."},
+
+{"tipo":"tvid","texto":"Tecnica de la Guerra. Persistencia constante."},
+
+{"tipo":"ejercicio","texto":"Define un desafio y sigue los pasos para superarlo mentalmente."},
+
+{"tipo":"estrategia","texto":"Mantente firme y sin rendirte ante la primera dificultad."},
+
+{"tipo":"inteligencia_social","texto":"La determinacion inspira respeto y confianza."},
+
+{"tipo":"decision","pregunta":"Reto","opciones":["Rendirse","Seguir","Quejar"],"correcta":1,"recompensa":10},
+
+{"tipo":"quiz","pregunta":"Que genera poder interior","opciones":["Disciplina","Excusas","Miedo"],"correcta":0,"recompensa":8},
+
+{"tipo":"acertijo","pregunta":"Se rompe pero no se ve","opciones":["Confianza","Vidrio","Roca"],"correcta":0,"recompensa":8},
+
+{"tipo":"juego_mental","pregunta":"17 por 6","opciones":["102","101","103"],"correcta":0,"recompensa":7},
+
+{"tipo":"respiracion","texto":"Respira firme y constante.","duracion":45},
+
+{"tipo":"visualizacion","texto":"Imagina superar retos con exito."},
+
+{"tipo":"accion","texto":"Hoy enfrenta un reto dificil."},
+
+{"tipo":"reflexion","texto":"La disciplina da fuerza interior."},
+
+{"tipo":"recompensa","texto":"Tu fuerza aumenta.","puntos":20},
+
+{"tipo":"cierre","texto":"Sesion terminada"}
+
+]
+},
+{
+"id":39,
+"categoria":"gratitud",
+"bloques":[
+
+{"tipo":"voz","texto":"Hoy entrenaremos gratitud y bienestar interior."},
+
+{"tipo":"historia","texto":"Valorar lo que tenemos nos hace felices y positivos."},
+
+{"tipo":"tvid","texto":"Tecnica del Bien. Enfocarse en lo positivo."},
+
+{"tipo":"ejercicio","texto":"Piensa en cinco cosas por las que estas agradecido hoy."},
+
+{"tipo":"estrategia","texto":"Siente gratitud profundamente."},
+
+{"tipo":"inteligencia_social","texto":"Compartir gratitud mejora relaciones y conexion."},
+
+{"tipo":"decision","pregunta":"Momento actual","opciones":["Quejarse","Agradecer","Ignorar"],"correcta":1,"recompensa":10},
+
+{"tipo":"quiz","pregunta":"Que aumenta felicidad","opciones":["Gratitud","Ira","Envidia"],"correcta":0,"recompensa":8},
+
+{"tipo":"acertijo","pregunta":"Siempre avanza y no vuelve","opciones":["Tiempo","Rio","Sol"],"correcta":0,"recompensa":8},
+
+{"tipo":"juego_mental","pregunta":"29 menos 7","opciones":["22","21","23"],"correcta":0,"recompensa":7},
+
+{"tipo":"respiracion","texto":"Respira agradecido.","duracion":45},
+
+{"tipo":"visualizacion","texto":"Imagina todo lo bueno de tu vida."},
+
+{"tipo":"accion","texto":"Hoy agradece algo concreto."},
+
+{"tipo":"reflexion","texto":"La gratitud atrae mas bienestar."},
+
+{"tipo":"recompensa","texto":"Tu bienestar crece.","puntos":20},
+
+{"tipo":"cierre","texto":"Sesion terminada"}
+
+]
+},
+{
+"id":40,
+"categoria":"adaptacion",
+"bloques":[
+
+{"tipo":"voz","texto":"Hoy entrenaremos adaptacion y flexibilidad."},
+
+{"tipo":"historia","texto":"Aceptar lo inesperado te hace mas fuerte y flexible."},
+
+{"tipo":"tvid","texto":"Tecnica del Mal. Transformar dificultades en oportunidades."},
+
+{"tipo":"ejercicio","texto":"Piensa en algo que no salio como esperabas y busca utilidad."},
+
+{"tipo":"estrategia","texto":"No resistas, adapta y aprende."},
+
+{"tipo":"inteligencia_social","texto":"La adaptacion genera nuevas oportunidades y conexiones."},
+
+{"tipo":"decision","pregunta":"Situacion inesperada","opciones":["Quejarse","Adaptarse","Ignorar"],"correcta":1,"recompensa":10},
+
+{"tipo":"quiz","pregunta":"Que genera resiliencia","opciones":["Aceptar","Evitar","Miedo"],"correcta":0,"recompensa":8},
+
+{"tipo":"acertijo","pregunta":"Nunca se detiene pero siempre avanza","opciones":["Tiempo","Rio","Sol"],"correcta":0,"recompensa":8},
+
+{"tipo":"juego_mental","pregunta":"18 mas 7","opciones":["25","24","26"],"correcta":0,"recompensa":7},
+
+{"tipo":"respiracion","texto":"Respira y suelta tension.","duracion":45},
+
+{"tipo":"visualizacion","texto":"Imagina adaptarte con exito."},
+
+{"tipo":"accion","texto":"Hoy ajusta tu plan."},
+
+{"tipo":"reflexion","texto":"La flexibilidad da poder."},
+
+{"tipo":"recompensa","texto":"Tu adaptacion aumenta.","puntos":20},
+
+{"tipo":"cierre","texto":"Sesion terminada"}
+
+]
+}    
 ]
 }
