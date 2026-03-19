@@ -1,63 +1,211 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>KaMiZen Elite - AL CIELO</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
-    <style>
-        :root { --success-green: #10b981; --power-blue: #2563eb; --deep-black: #020617; }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
-        body { background: var(--deep-black); color: white; height: 100vh; display: flex; flex-direction: column; transition: background 1.5s ease; overflow: hidden; }
-        
-        #app { width: 95%; max-width: 440px; background: #000; border-radius: 30px; padding: 30px; border: 1px solid #1e293b; box-shadow: 0 0 50px rgba(16, 185, 129, 0.1); margin: auto; }
-        #logo { font-size: 34px; font-weight: 900; text-align: center; background: linear-gradient(90deg, #10b981, #60a5fa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 3px; }
-        #subtitle { font-size: 11px; text-transform: uppercase; text-align: center; opacity: 0.6; margin-bottom: 20px; letter-spacing: 1px; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KaMiZen</title>
 
-        /* Panel de Poder y Sabiduría */
-        #mental-panel { background: #0a0a0a; padding: 15px; border-radius: 15px; margin-bottom: 20px; border: 1px solid #222; }
-        .stat { font-size: 11px; font-weight: 700; text-transform: uppercase; color: #888; margin-bottom: 8px; }
-        .bar { height: 8px; background: #111; border-radius: 10px; overflow: hidden; margin-top: 4px; border: 1px solid #222; }
-        .bar-fill { height: 100%; width: 0%; transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 10px var(--success-green); }
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 
-        #block { min-height: 160px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 10px; }
-        #block p { font-size: 20px; line-height: 1.5; color: #f8fafc; font-weight: 400; }
-        #block h3 { color: var(--success-green); font-size: 24px; font-weight: 900; margin-bottom: 15px; }
+<style>
 
-        .btn-container { width: 100%; display: flex; flex-direction: column; gap: 10px; }
-        button { width: 100%; padding: 18px; border-radius: 15px; border: none; font-size: 16px; font-weight: 800; cursor: pointer; transition: 0.3s; }
-        #start-btn { background: var(--power-blue); color: white; }
-        #next-btn { background: var(--success-green); color: black; display: none; }
-        .option-btn { background: #111; color: white; border: 1px solid #333; text-align: left; padding: 15px; font-weight: 400; }
-        .option-btn:hover { border-color: var(--success-green); background: #052e16; }
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    font-family:'Inter',sans-serif;
+}
 
-        .breath-circle { width: 120px; height: 120px; border-radius: 50%; background: radial-gradient(circle, #10b981, #064e3b); margin: 20px auto; transition: transform 4s ease-in-out; box-shadow: 0 0 30px var(--success-green); }
-        #footer { margin-top: 20px; font-size: 9px; opacity: 0.4; text-align: center; text-transform: uppercase; }
-    </style>
+body{
+    background:#020617;
+    color:white;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+    overflow-y:auto;
+    transition:background 1s;
+}
+
+#app{
+    width:100%;
+    max-width:420px;
+    min-height:100vh;
+    background:#111827;
+    padding:15px;
+    display:flex;
+    flex-direction:column;
+}
+
+@media (min-width:600px){
+    #app{
+        margin-top:20px;
+        border-radius:25px;
+        box-shadow:0 20px 40px rgba(0,0,0,0.6);
+    }
+}
+
+#logo{
+    font-size:26px;
+    font-weight:600;
+    background:linear-gradient(90deg,#60a5fa,#a78bfa);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+}
+
+#subtitle{
+    font-size:12px;
+    opacity:0.6;
+    margin-bottom:10px;
+}
+
+#mental-panel{
+    width:100%;
+    background:#020617;
+    padding:10px;
+    border-radius:12px;
+    margin-bottom:10px;
+}
+
+.stat{
+    font-size:12px;
+    margin-bottom:6px;
+}
+
+.bar{
+    height:6px;
+    background:#1e293b;
+    border-radius:10px;
+    margin-top:4px;
+    overflow:hidden;
+}
+
+.bar-fill{
+    height:100%;
+    background:#3b82f6;
+    width:0%;
+    transition:width 0.5s;
+}
+
+#block{
+    font-size:18px;
+    line-height:1.4;
+    text-align:center;
+    margin:15px 0;
+    min-height:120px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+}
+
+button{
+    padding:14px;
+    margin:6px 0;
+    font-size:16px;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    background:#2563eb;
+    color:white;
+    width:100%;
+}
+
+button:hover{
+    background:#3b82f6;
+}
+
+.option-btn{
+    background:#374151;
+}
+
+#skip-btn{
+    background:transparent;
+    color:#64748b;
+    font-size:12px;
+    border:1px solid #334155;
+}
+
+#back-btn{
+    background:#334155;
+}
+
+.breath-circle{
+    width:100px;
+    height:100px;
+    border-radius:50%;
+    background:radial-gradient(circle,#60a5fa,#1d4ed8);
+    margin:15px auto;
+}
+
+#footer{
+    font-size:10px;
+    opacity:0.4;
+    margin-top:10px;
+    text-align:center;
+}
+
+</style>
 </head>
+
 <body>
-    <div id="app">
-        <div id="logo">KaMiZen</div>
-        <div id="subtitle">Asesoría de Alto Impacto · May Roga LLC</div>
-        
-        <div id="mental-panel">
-            <div class="stat" id="streak">🔥 Racha: 0 días</div>
-            <div class="stat" id="level">Nivel: 1</div>
-            <div class="stat">Disciplina <div class="bar"><div id="disciplina-bar" class="bar-fill" style="background: #10b981;"></div></div></div>
-            <div class="stat">Calidad <div class="bar"><div id="claridad-bar" class="bar-fill" style="background: #3b82f6;"></div></div></div>
-            <div class="stat">Calma <div class="bar"><div id="calma-bar" class="bar-fill" style="background: #a78bfa;"></div></div></div>
-        </div>
 
-        <div id="block">Bienvenido al Entrenamiento de Poder.</div>
+<div id="app">
 
-        <div class="btn-container">
-            <button id="start-btn">INICIAR SESIÓN</button>
-            <button id="next-btn">CONTINUAR</button>
-            <button id="restart-btn" style="display:none; background:#374151; color:white;">NUEVA SESIÓN</button>
-        </div>
-        
-        <div id="footer">AURA BY MAY ROGA LLC · USA</div>
-    </div>
-    <script src="/static/scripts.js"></script>
+<div id="logo">KaMiZen</div>
+<div id="subtitle">Entrenamiento mental diario</div>
+
+<div id="mental-panel">
+
+<div id="streak" class="stat">🔥 Racha: 0 días</div>
+<div id="level" class="stat">Nivel KaMiZen: 1</div>
+
+<div class="stat">
+Disciplina
+<div class="bar">
+<div id="disciplina-bar" class="bar-fill"></div>
+</div>
+</div>
+
+<div class="stat">
+Claridad
+<div class="bar">
+<div id="claridad-bar" class="bar-fill"></div>
+</div>
+</div>
+
+<div class="stat">
+Calma
+<div class="bar">
+<div id="calma-bar" class="bar-fill"></div>
+</div>
+</div>
+
+</div>
+
+<div id="block">
+Listo para iniciar
+</div>
+
+<button id="start-btn">Iniciar Sesión</button>
+
+<button id="next-btn" style="display:none;">Siguiente</button>
+
+<button id="back-btn" style="display:none;">Atrás</button>
+
+<button id="skip-btn" style="display:none;">Saltar bloque</button>
+
+<button id="restart-btn" style="display:none;background:#475569;">
+Finalizar sesión
+</button>
+
+<div id="footer">
+Sistema KaMiZen
+</div>
+
+</div>
+
+<script src="/static/scripts.js"></script>
+
 </body>
 </html>
