@@ -1,58 +1,57 @@
-from fastapi import FastAPI, Query
+from fastapi import FastAPI
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 import json
 import os
 
-app = FastAPI()
+app = FastAPI(title="KaMiZen NeuroGame Engine")
 
+# ==============================
+# STATIC FILES
+# ==============================
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-FILES = [
-    "static/kamizen_content_1.json",
-    "static/kamizen_content_2.json",
-    "static/kamizen_content_3.json",
-    "static/kamizen_content_4.json",
-]
+# ==============================
+# CARGAR BASE DE CONTENIDO
+# ==============================
+DB_PATH = "static/kamizen_content.json"
 
+def cargar_db():
+    try:
+        with open(DB_PATH, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        if "sesiones" not in data:
+            return {"sesiones": []}
+        return data
+    except Exception as e:
+        print("Error cargando kamizen_content.json:", e)
+        return {"sesiones": []}
 
+db = cargar_db()
+
+# ==============================
+# RUTA PRINCIPAL
+# ==============================
 @app.get("/", response_class=HTMLResponse)
 async def home():
-    with open("static/session.html", "r", encoding="utf-8") as f:
-        return f.read()
-
-
-@app.get("/session_content")
-async def session_content(
-    file_idx: int = Query(0),
-    sesion_idx: int = Query(0),
-):
-
     try:
-
-        if file_idx >= len(FILES):
-            return {"bloques": [], "total": 0}
-
-        path = FILES[file_idx]
-
-        with open(path, "r", encoding="utf-8") as f:
-            data = json.load(f)
-
-        sesiones = data["sesiones"]
-
-        if sesion_idx >= len(sesiones):
-            return {
-                "bloques": [],
-                "total": len(sesiones),
-            }
-
-        return {
-            "bloques": sesiones[sesion_idx]["bloques"],
-            "total": len(sesiones),
-        }
-
+        with open("static/session.html", "r", encoding="utf-8") as f:
+            return HTMLResponse(f.read())
     except Exception as e:
+        return HTMLResponse(f"<h1>Error cargando interfaz</h1><p>{e}</p>")
 
-        print(e)
+# ==============================
+# CONTENIDO DE SESION
+# ==============================
+@app.get("/session_content")
+async def session_content():
+    sesiones = db.get("sesiones", [])
+    # devolvemos todas las sesiones, el cliente decide cuál no ha completado
+    return JSONResponse({"sesiones": sesiones})
 
-        return {"bloques": [], "total": 0}
+# ==============================
+# HEALTH CHECK
+# ==============================
+@app.get("/health")
+async def health():
+    return {"status": "ok"}
