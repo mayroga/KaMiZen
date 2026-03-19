@@ -4,82 +4,77 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>KaMiZen Elite</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        :root { --black: #000000; --card: #0a0a0a; --accent: #2563eb; }
-        *{box-sizing:border-box; margin:0; padding:0; font-family:'Inter', sans-serif;}
+        :root { --black: #000000; --accent: #2563eb; }
+        *{box-sizing:border-box; margin:0; padding:0; font-family: sans-serif; -webkit-tap-highlight-color: transparent;}
+        body { background: #020617; color: white; height: 100vh; display: flex; flex-direction: column; overflow: hidden; transition: background 1s; }
         
-        /* El fondo cambia, pero el contenido se mantiene legible */
-        body { background: #020617; color: white; height: 100vh; display: flex; flex-direction: column; overflow: hidden; transition: background 1.5s ease; }
-        
-        #banner { width: 100%; background: #1e40af; padding: 14px 0; white-space: nowrap; overflow: hidden; z-index: 100; border-bottom: 2px solid rgba(255,255,255,0.1); }
-        .track { display: inline-block; animation: scroll 20s linear infinite; font-weight: 900; font-size: 12px; text-transform: uppercase; }
+        #banner { width: 100%; background: #1e40af; padding: 12px 0; white-space: nowrap; overflow: hidden; z-index: 100; border-bottom: 2px solid rgba(255,255,255,0.1); }
+        .track { display: inline-block; animation: scroll 20s linear infinite; font-weight: 900; font-size: 11px; text-transform: uppercase; }
         @keyframes scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
-        #app { flex: 1; display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 450px; margin: 0 auto; padding: 15px; }
+        #app { flex: 1; display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 480px; margin: 0 auto; padding: 10px; }
 
-        /* CONTENEDOR NEGRO PURO PARA LEGIBILIDAD */
         #main-card {
-            width: 100%; background: var(--black); border-radius: 30px; padding: 25px;
+            width: 100%; background: var(--black); border-radius: 25px; padding: 20px;
             display: flex; flex-direction: column; border: 1px solid #1e293b;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.9); flex: 1; max-height: 85vh;
+            box-shadow: 0 20px 50px rgba(0,0,0,1); flex: 1; overflow: hidden;
         }
 
-        #logo { font-size: 32px; font-weight: 900; text-align: center; background: linear-gradient(90deg,#60a5fa,#a78bfa); -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin-bottom: 5px; }
-        
-        #mental-panel { background: #111; padding: 12px; border-radius: 15px; margin-bottom: 15px; border: 1px solid #222; }
-        .stat { font-size: 11px; font-weight: 700; text-transform: uppercase; color: #94a3b8; margin-bottom: 5px; }
-        .bar { height: 8px; background: #000; border-radius: 10px; overflow: hidden; border: 1px solid #333; }
-        .bar-fill { height: 100%; background: var(--accent); width: 50%; transition: width 1s ease; }
+        #logo { font-size: 28px; font-weight: 900; text-align: center; background: linear-gradient(90deg,#60a5fa,#a78bfa); -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin-bottom: 5px; cursor: pointer; }
+        #subtitle { font-size: 10px; opacity: 0.5; text-align: center; margin-bottom: 10px; text-transform: uppercase; }
 
-        /* AREA DE TEXTO Y GLOBO */
-        #block { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; overflow-y: auto; padding: 10px 0; }
-        #text-content { font-size: 19px; line-height: 1.4; text-align: center; width: 100%; font-weight: 400; }
-        #text-content h3 { font-size: 24px; color: #60a5fa; margin-bottom: 15px; font-weight: 900; }
+        #mental-panel { background: #0a0a0a; padding: 10px; border-radius: 15px; margin-bottom: 15px; border: 1px solid #222; }
+        .stat { font-size: 10px; font-weight: 700; text-transform: uppercase; color: #64748b; margin-bottom: 4px; display: flex; justify-content: space-between;}
+        .bar { height: 6px; background: #111; border-radius: 10px; overflow: hidden; margin-top: 2px; }
+        .bar-fill { height: 100%; background: var(--accent); width: 0%; transition: width 1s ease; }
 
-        .breath-circle { width: 140px; height: 140px; border-radius: 50%; background: radial-gradient(circle, #3b82f6, #1d4ed8); display: none; margin: 20px auto; transition: transform 4s ease-in-out; box-shadow: 0 0 30px #1d4ed8; }
+        #block { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 10px; }
+        #block p, #block h3 { font-size: 20px; line-height: 1.5; color: #f8fafc; margin-bottom: 10px; }
+        #block h3 { color: #60a5fa; font-weight: 900; font-size: 24px; text-transform: uppercase; }
 
-        /* BOTONES DE RESPUESTA Y ACCIÓN */
-        .btn-group { width: 100%; margin-top: 15px; }
-        button { width: 100%; padding: 18px; border-radius: 15px; border: none; font-size: 17px; font-weight: 800; cursor: pointer; margin-bottom: 10px; transition: 0.2s; }
+        .breath-circle { width: 130px; height: 130px; border-radius: 50%; background: radial-gradient(circle, #3b82f6, #1d4ed8); margin: 20px auto; transition: transform 4s ease-in-out; box-shadow: 0 0 40px #1d4ed8; }
+
+        .btn-group { width: 100%; margin-top: 10px; }
+        button { width: 100%; padding: 18px; border-radius: 15px; border: none; font-size: 16px; font-weight: 800; cursor: pointer; margin-bottom: 8px; transition: 0.2s; }
         #start-btn { background: var(--accent); color: white; }
-        #next-btn { background: #059669; color: white; display: none; }
-        .option-btn { background: #1a1a1a; color: #e2e8f0; border: 1px solid #333; text-align: left; padding: 15px; font-size: 15px; }
-        .option-btn:active { background: #333; }
+        #next-btn, #restart-btn { background: #059669; color: white; display: none; }
+        #skip-btn { background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid #ef4444; font-size: 12px; display: none; }
+        .option-btn { background: #111; color: white; border: 1px solid #333; text-align: left; padding: 15px; font-size: 15px; }
         
-        #footer { font-size: 10px; opacity: 0.5; text-align: center; padding: 10px 0; text-transform: uppercase; letter-spacing: 1px; }
+        #footer { font-size: 9px; opacity: 0.4; text-align: center; padding: 10px 0; text-transform: uppercase; }
     </style>
 </head>
 <body>
     <div id="banner">
         <div class="track">
-            <span> • KaMiZen Elite • $5.99 Pago Único • Forja tu Mente • 10:00 AM / 06:00 PM Miami • Cupo 500 Personas • </span>
-            <span> • KaMiZen Elite • $5.99 Pago Único • Forja tu Mente • 10:00 AM / 06:00 PM Miami • Cupo 500 Personas • </span>
+            <span> • KaMiZen Elite • $5.99 Pago Único • Forja tu Mente • 10:00 AM / 06:00 PM • Solo 30 Minutos • </span>
+            <span> • KaMiZen Elite • $5.99 Pago Único • Forja tu Mente • 10:00 AM / 06:00 PM • Solo 30 Minutos • </span>
         </div>
     </div>
-
     <div id="app">
         <div id="main-card">
-            <div id="logo" onclick="location.reload()">KaMiZen</div>
+            <div id="logo">KaMiZen</div>
+            <div id="subtitle">Asesoría Mental de Alto Peso</div>
             
             <div id="mental-panel">
-                <div class="stat">Disciplina <div class="bar"><div id="d-bar" class="bar-fill"></div></div></div>
-                <div class="stat">Claridad <div class="bar"><div id="cl-bar" class="bar-fill" style="background:#a78bfa;"></div></div></div>
-                <div class="stat">Calma <div class="bar"><div id="ca-bar" class="bar-fill" style="background:#10b981;"></div></div></div>
+                <div id="streak" class="stat">Racha: 0 días</div>
+                <div id="level" class="stat">Nivel: 1</div>
+                <div class="stat">Disciplina <div class="bar"><div id="disciplina-bar" class="bar-fill"></div></div></div>
+                <div class="stat">Claridad <div class="bar"><div id="claridad-bar" class="bar-fill" style="background:#a78bfa;"></div></div></div>
+                <div class="stat">Calma <div class="bar"><div id="calma-bar" class="bar-fill" style="background:#10b981;"></div></div></div>
             </div>
 
-            <div id="block">
-                <div id="text-content">Estableciendo conexión segura con el Asesor...</div>
-                <div id="breath-glob" class="breath-circle"></div>
-            </div>
+            <div id="block">Bienvenido al Entrenamiento</div>
 
             <div class="btn-group">
-                <button id="start-btn">INICIAR ENTRENAMIENTO</button>
-                <div id="options-container"></div>
+                <button id="start-btn">INICIAR SESIÓN</button>
                 <button id="next-btn">CONTINUAR</button>
+                <button id="skip-btn">SALTAR BLOQUE</button>
+                <button id="restart-btn">FINALIZAR</button>
             </div>
         </div>
-        <div id="footer">KaMiZen BY MAY ROGA LLC · SISTEMA DE ALTO PESO</div>
+        <div id="footer">KaMiZen BY MAY ROGA LLC</div>
     </div>
     <script src="/static/scripts.js"></script>
 </body>
