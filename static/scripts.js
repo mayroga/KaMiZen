@@ -1,170 +1,142 @@
 const startBtn = document.getElementById("start-btn");
 const nextBtn = document.getElementById("next-btn");
-const skipBtn = document.getElementById("skip-btn");
+const restartBtn = document.getElementById("restart-btn");
 const block = document.getElementById("block");
-const logo = document.getElementById("logo");
 
 let bloques = [];
-let currentIdx = 0;
-let skipFlag = false;
+let current = 0;
+let puntos = 0;
+let currentSessionIndex = 0;
 
+/* PERSISTENCIA PROFESIONAL */
 let userData = JSON.parse(localStorage.getItem("kamizenData")) || {
-    lastSessionId: 0,
+    streak: 0,
+    lastDay: null,
+    nivel: 1,
     disciplina: 50,
     claridad: 50,
     calma: 50
 };
 
-function updateUI() {
-    // Líneas verdes y progreso
-    const stats = [
-        {id: "disciplina-bar", val: userData.disciplina, text: "val-disp"},
-        {id: "claridad-bar", val: userData.claridad, text: "val-clar"},
-        {id: "calma-bar", val: userData.calma, text: "val-calm"}
-    ];
-    
-    stats.forEach(s => {
-        const value = Math.min(100, Math.max(0, s.val));
-        document.getElementById(s.id).style.width = value + "%";
-        document.getElementById(s.text).innerText = value + "%";
-    });
-    
+function updatePanel(){
+    document.getElementById("streak").innerHTML = "🔥 Racha: " + userData.streak + " días";
+    document.getElementById("level").innerHTML = "Nivel KaMiZen: " + userData.nivel;
+    document.getElementById("disciplina-bar").style.width = userData.disciplina + "%";
+    document.getElementById("claridad-bar").style.width = userData.claridad + "%";
+    document.getElementById("calma-bar").style.width = userData.calma + "%";
     localStorage.setItem("kamizenData", JSON.stringify(userData));
 }
 
-async function hablar(texto) {
+/* EL ARMA DE VOZ: COOPERATIVA Y POTENTE */
+function playVoice(text){
     return new Promise(resolve => {
-        if (!texto) return resolve();
         speechSynthesis.cancel();
-        const msg = new SpeechSynthesisUtterance(texto);
-        msg.lang = 'es-US';
+        let msg = new SpeechSynthesisUtterance(text);
+        msg.lang = "es-US";
         msg.rate = 0.95;
         msg.pitch = 1.0;
-        msg.onend = () => resolve();
+        msg.onend = resolve;
         speechSynthesis.speak(msg);
-        // Backup por si falla el evento onend
-        setTimeout(resolve, texto.length * 100); 
+        setTimeout(resolve, text.length * 85); // Seguro por si falla onend
     });
 }
 
-logo.ondblclick = async () => {
-    const u = prompt("Admin User:");
-    const p = prompt("Password:");
-    const res = await fetch("/admin_auth", {
-        method: "POST", headers: {"Content-Type":"application/json"},
-        body: JSON.stringify({user:u, pass_word:p})
-    });
-    if (res.ok) {
-        const targetId = prompt("SALTO DE SESIÓN (1-70):");
-        if (targetId) {
-            userData.lastSessionId = parseInt(targetId) - 1;
-            updateUI();
-            location.reload();
-        }
-    }
-};
-
-startBtn.onclick = async () => {
-    startBtn.style.display = "none";
-    block.innerHTML = "<h3>SINCRONIZANDO...</h3>";
-    
-    const res = await fetch("/session_content");
-    const data = await res.json();
-    
-    let proximoId = userData.lastSessionId + 1;
-    let sesion = data.sesiones.find(s => s.id === proximoId) || data.sesiones[0];
-
-    if (sesion) {
-        bloques = sesion.bloques;
-        currentIdx = 0;
-        userData.lastSessionId = sesion.id;
-        updateUI();
-        renderBloque();
-    }
-};
-
-async function renderBloque() {
-    const b = bloques[currentIdx];
-    if (!b) return finalizarSesion();
-
-    skipFlag = false;
+async function showBlock(b){
     block.innerHTML = "";
     nextBtn.style.display = "none";
-    skipBtn.style.display = "block";
+    document.body.style.background = b.color || "#020617";
 
-    if (b.titulo) block.innerHTML += `<h3>${b.titulo}</h3>`;
-    const textoPrincipal = b.texto || b.pregunta || "";
-    block.innerHTML += `<p>${textoPrincipal}</p>`;
+    // 1. Mostrar texto principal y hablarlo
+    if(b.texto) {
+        block.innerHTML = `<p>${b.texto}</p>`;
+        await playVoice(b.texto);
+    }
 
-    // El arma de voz inicia la instrucción
-    await hablar(textoPrincipal);
+    // 2. Lógica por tipo de bloque
+    switch(b.tipo){
+        case "quiz":
+        case "decision":
+        case "juego_mental":
+            block.innerHTML += `<h3>${b.pregunta}</h3>`;
+            await playVoice(b.pregunta);
+            createOptions(b);
+            break;
 
-    if (b.tipo === "decision") {
-        skipBtn.style.display = "none";
-        b.opciones.forEach((opt, i) => {
-            const btn = document.createElement("button");
-            btn.className = "option-btn";
-            btn.innerText = opt;
-            btn.onclick = () => procesarDecision(i, b);
-            block.appendChild(btn);
-        });
-    } else {
-        // Bloque informativo o respiración
-        setTimeout(() => {
+        case "respiracion":
+            let circle = document.createElement("div");
+            circle.className = "breath-circle";
+            block.appendChild(circle);
+            await playVoice("Inhala calma, exhala debilidad.");
+            setTimeout(() => { circle.style.transform = "scale(1.7)"; }, 100);
+            setTimeout(() => { 
+                circle.style.transform = "scale(1)"; 
+                nextBtn.style.display = "block";
+            }, 8000);
+            break;
+
+        case "cierre":
+            userData.streak += 1;
+            userData.nivel += 1;
+            block.innerHTML = `<h3>SABIDURÍA ALCANZADA</h3><p>${b.texto}</p>`;
+            await playVoice(b.texto);
+            await playVoice("Felicidades. Has aumentado tu nivel de consciencia.");
+            restartBtn.style.display = "block";
+            updatePanel();
+            break;
+    }
+}
+
+function createOptions(b){
+    b.opciones.forEach((op, i) => {
+        let btn = document.createElement("button");
+        btn.className = "option-btn";
+        btn.innerText = op;
+        btn.onclick = async () => {
+            const esCorrecto = (i === b.correcta);
+            
+            // Lógica de coaching: Explicar SIEMPRE por qué
+            const feedback = esCorrecto 
+                ? `CORRECTO. ${b.explicacion}` 
+                : `PIENSA MEJOR. La respuesta acertada era: ${b.opciones[b.correcta]}. ${b.explicacion}`;
+            
+            block.innerHTML = `<h3>${esCorrecto ? '¡ÉXITO!' : 'APRENDIZAJE'}</h3><p>${feedback}</p>`;
+            
+            // Subir o bajar niveles (Línea verde)
+            if(esCorrecto){
+                userData.disciplina = Math.min(100, userData.disciplina + 5);
+                userData.claridad = Math.min(100, userData.claridad + 5);
+            } else {
+                userData.disciplina = Math.max(0, userData.disciplina - 3);
+                userData.calma = Math.min(100, userData.calma + 2);
+            }
+            
+            updatePanel();
+            await playVoice(feedback);
             nextBtn.style.display = "block";
-            skipBtn.style.display = "none";
-        }, 2000);
-    }
+        };
+        block.appendChild(btn);
+    });
 }
 
-async function procesarDecision(idxSeleccionado, bloque) {
-    const esCorrecto = (idxSeleccionado === bloque.correcta);
-    const feedbackClase = esCorrecto ? "feedback-correct" : "feedback-wrong";
+startBtn.addEventListener("click", async () => {
+    startBtn.style.display = "none";
+    const res = await fetch("/session_content");
+    const data = await res.json();
+    const sesiones = data.sesiones;
     
-    // Ajuste de niveles (Línea verde)
-    if (esCorrecto) {
-        userData.disciplina += 10;
-        userData.claridad += 5;
-    } else {
-        userData.disciplina -= 15;
-        userData.calma -= 10;
-    }
-    updateUI();
-
-    // Explicación detallada
-    const respuestaCorrectaTexto = bloque.opciones[bloque.correcta];
-    const mensajeExplicativo = `${esCorrecto ? 'EXCELENTE. ' : 'ERROR DE JUICIO. '} La opción correcta es: ${respuestaCorrectaTexto}. Por qué: ${bloque.explicacion}`;
+    // Selección inteligente: Aleatoria de las 70 disponibles
+    currentSessionIndex = Math.floor(Math.random() * sesiones.length);
+    bloques = sesiones[currentSessionIndex].bloques;
+    current = 0;
     
-    block.innerHTML = `
-        <h3 class="${feedbackClase}">${esCorrecto ? 'NIVEL LOGRADO' : 'NIVEL DISMINUIDO'}</h3>
-        <p style="font-size:16px;">${mensajeExplicativo}</p>
-    `;
-
-    // El arma de voz explica la razón del éxito o fallo
-    await hablar(mensajeExplicativo);
-    
-    nextBtn.style.display = "block";
-}
-
-function finalizarSesion() {
-    block.innerHTML = "<h3>SESIÓN COMPLETADA</h3><p>Tu mente está más afilada hoy.</p>";
-    hablar("Sesión completada. Tu mente está más afilada hoy. Sigue así.");
-    setTimeout(() => location.reload(), 5000);
-}
+    showBlock(bloques[0]);
+});
 
 nextBtn.onclick = () => {
-    currentIdx++;
-    renderBloque();
+    current++;
+    if(current < bloques.length) showBlock(bloques[current]);
 };
 
-skipBtn.onclick = async () => {
-    skipFlag = true;
-    speechSynthesis.cancel();
-    userData.disciplina = Math.max(0, userData.disciplina - 30);
-    updateUI();
-    block.innerHTML = "<h3 style='color:#ef4444;'>DISCIPLINA ROTA</h3><p>Saltar el entrenamiento debilita el carácter.</p>";
-    await hablar("Disciplina rota. Saltar el entrenamiento debilita el carácter.");
-    setTimeout(() => { currentIdx++; renderBloque(); }, 2000);
-};
+restartBtn.onclick = () => location.reload();
 
-updateUI();
+updatePanel();
