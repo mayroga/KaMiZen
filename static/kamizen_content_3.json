@@ -1,0 +1,284 @@
+{
+  "sesiones": [
+    {
+      "id": 21,
+      "categoria": "resiliencia",
+      "bloques": [
+        {"tipo":"voz","texto":"Hoy entrenarás resiliencia y fuerza interna.","color":"#2563eb"},
+        {"tipo":"historia","texto":"Una persona superó adversidades y fortaleció su resiliencia y confianza.","color":"#34d399"},
+        {"tipo":"quiz","pregunta":"¿Qué fortalece resiliencia?","opciones":["Adaptarse a retos","Evitar problemas","Criticar"],"correcta":0,"explicacion":"Adaptarse y aprender de los retos fortalece resiliencia.","recompensa":10,"color":"#facc15"},
+        {"tipo":"acertijo","pregunta":"Se rompe fácilmente pero se puede reconstruir, ¿qué es?","opciones":["Confianza","Roca","Vidrio"],"correcta":0,"explicacion":"La confianza.","recompensa":8,"color":"#f59e0b"},
+        {"tipo":"decision","pregunta":"Ante un obstáculo, ¿qué eliges?","opciones":["Buscar solución y aprender","Rendirse","Ignorar"],"correcta":0,"explicacion":"Buscar soluciones fortalece resiliencia y aprendizaje.","recompensa":12,"color":"#22c55e"},
+        {"tipo":"juego_mental","pregunta":"14 × 6 = ?","opciones":["84","80","90"],"correcta":0,"explicacion":"14 × 6 = 84","recompensa":7,"color":"#38bdf8"},
+        {
+          "tipo":"respiracion",
+          "texto":"Respira profundo y conecta con tu fuerza interna.",
+          "duracion":30,
+          "color":"#60a5fa",
+          "tvid":{
+            "nombre":"Técnica de la Madre (TDMM)",
+            "descripcion":"Fomenta resiliencia y fortaleza emocional consciente.",
+            "objetivo":"Incrementar capacidad de superar adversidades.",
+            "instrucciones":"Inhala 4 segundos sintiendo fuerza interior. Exhala 6 segundos liberando miedo y dudas. Repite mientras visualizas superar retos con éxito.",
+            "duracion":30
+          }
+        },
+        {"tipo":"visualizacion","texto":"Visualiza enfrentando desafíos con confianza y resiliencia.","color":"#a78bfa"},
+        {"tipo":"recompensa","texto":"Tu resiliencia ha aumentado.","puntos":20,"color":"#10b981"},
+        {"tipo":"cierre","texto":"Cada respiración consciente fortalece tu capacidad de superar adversidades.","color":"#f87171"}
+      ]
+    },
+    {
+      "id": 22,
+      "categoria": "equilibrio_emocional",
+      "bloques": [
+        {"tipo":"voz","texto":"Hoy reforzarás equilibrio emocional y serenidad.","color":"#2563eb"},
+        {"tipo":"historia","texto":"Una persona aprendió a regular emociones y mantener calma ante conflictos.","color":"#34d399"},
+        {"tipo":"quiz","pregunta":"¿Qué mejora equilibrio emocional?","opciones":["Respirar y reflexionar","Reaccionar impulsivamente","Ignorar sentimientos"],"correcta":0,"explicacion":"Respirar y reflexionar fortalece regulación emocional y equilibrio.","recompensa":10,"color":"#facc15"},
+        {"tipo":"acertijo","pregunta":"Siempre presente y cambia constantemente, ¿qué es?","opciones":["Emoción","Tiempo","Viento"],"correcta":0,"explicacion":"La emoción.","recompensa":8,"color":"#f59e0b"},
+        {"tipo":"decision","pregunta":"Te sientes abrumado, ¿qué eliges?","opciones":["Respirar y centrarte","Gritar","Ignorar"],"correcta":0,"explicacion":"Respirar y centrarte mejora equilibrio emocional y calma.","recompensa":12,"color":"#22c55e"},
+        {"tipo":"juego_mental","pregunta":"16 × 5 = ?","opciones":["80","75","85"],"correcta":0,"explicacion":"16 × 5 = 80","recompensa":7,"color":"#38bdf8"},
+        {
+          "tipo":"respiracion",
+          "texto":"Respira profundo y conecta con tu calma interna.",
+          "duracion":30,
+          "color":"#60a5fa",
+          "tvid":{
+            "nombre":"Técnica del Beso (TDK)",
+            "descripcion":"Fomenta equilibrio y serenidad emocional consciente.",
+            "objetivo":"Mantener estabilidad emocional en situaciones desafiantes.",
+            "instrucciones":"Inhala 4 segundos sintiendo calma. Exhala 6 segundos liberando tensión. Repite mientras visualizas serenidad y control emocional.",
+            "duracion":30
+          }
+        },
+        {"tipo":"visualizacion","texto":"Visualiza manejando emociones con serenidad y equilibrio.","color":"#a78bfa"},
+        {"tipo":"recompensa","texto":"Tu equilibrio emocional ha mejorado.","puntos":20,"color":"#10b981"},
+        {"tipo":"cierre","texto":"Cada respiración consciente fortalece estabilidad y paz interna.","color":"#f87171"}
+      ]
+    },
+    {
+      "id": 23,
+      "categoria": "autoconfianza",
+      "bloques": [
+        {"tipo":"voz","texto":"Hoy aumentarás autoconfianza y seguridad personal.","color":"#2563eb"},
+        {"tipo":"historia","texto":"Una persona enfrentó desafíos con confianza y logró metas importantes.","color":"#34d399"},
+        {"tipo":"quiz","pregunta":"¿Qué fortalece autoconfianza?","opciones":["Recordar logros","Compararse","Criticarte"],"correcta":0,"explicacion":"Recordar logros refuerza seguridad y autoconfianza.","recompensa":10,"color":"#facc15"},
+        {"tipo":"acertijo","pregunta":"Todos lo buscan pero pocos lo tienen, ¿qué es?","opciones":["Valor","Dinero","Fama"],"correcta":0,"explicacion":"El valor personal.","recompensa":8,"color":"#f59e0b"},
+        {"tipo":"decision","pregunta":"Duda de ti mismo, ¿qué eliges?","opciones":["Recordar habilidades","Ignorar","Quejarse"],"correcta":0,"explicacion":"Recordar habilidades aumenta autoconfianza y seguridad personal.","recompensa":12,"color":"#22c55e"},
+        {"tipo":"juego_mental","pregunta":"11 × 8 = ?","opciones":["88","85","90"],"correcta":0,"explicacion":"11 × 8 = 88","recompensa":7,"color":"#38bdf8"},
+        {
+          "tipo":"respiracion",
+          "texto":"Respira profundo y conecta con tu seguridad interna.",
+          "duracion":30,
+          "color":"#60a5fa",
+          "tvid":{
+            "nombre":"Técnica del Padre (TDP)",
+            "descripcion":"Fomenta seguridad y autoconfianza consciente.",
+            "objetivo":"Incrementar seguridad y confianza en decisiones personales.",
+            "instrucciones":"Inhala 4 segundos sintiendo fuerza y valor. Exhala 6 segundos liberando dudas. Repite mientras visualizas confianza plena.",
+            "duracion":30
+          }
+        },
+        {"tipo":"visualizacion","texto":"Visualiza enfrentando desafíos con confianza y éxito.","color":"#a78bfa"},
+        {"tipo":"recompensa","texto":"Tu autoconfianza ha aumentado.","puntos":20,"color":"#10b981"},
+        {"tipo":"cierre","texto":"Cada respiración consciente fortalece tu seguridad y confianza interna.","color":"#f87171"}
+      ]
+    },
+    {
+      "id": 24,
+      "categoria": "gestion_miedo",
+      "bloques": [
+        {"tipo":"voz","texto":"Hoy aprenderás a gestionar el miedo y la ansiedad.","color":"#2563eb"},
+        {"tipo":"historia","texto":"Una persona enfrentó miedos y redujo ansiedad con técnicas de respiración y visualización.","color":"#34d399"},
+        {"tipo":"quiz","pregunta":"¿Qué ayuda a gestionar miedo?","opciones":["Respiración y enfoque","Evitarlo","Quejarse"],"correcta":0,"explicacion":"Respiración y enfoque ayuda a regular miedo y ansiedad.","recompensa":10,"color":"#facc15"},
+        {"tipo":"acertijo","pregunta":"Siempre presente y nos frena, ¿qué es?","opciones":["Miedo","Tiempo","Río"],"correcta":0,"explicacion":"El miedo.","recompensa":8,"color":"#f59e0b"},
+        {"tipo":"decision","pregunta":"Sientes miedo, ¿qué eliges?","opciones":["Respirar y enfrentar","Huir","Ignorar"],"correcta":0,"explicacion":"Respirar y enfrentar reduce miedo y fortalece confianza.","recompensa":12,"color":"#22c55e"},
+        {"tipo":"juego_mental","pregunta":"10 × 9 = ?","opciones":["90","85","95"],"correcta":0,"explicacion":"10 × 9 = 90","recompensa":7,"color":"#38bdf8"},
+        {
+          "tipo":"respiracion",
+          "texto":"Respira profundo y enfrenta el miedo con calma.",
+          "duracion":30,
+          "color":"#60a5fa",
+          "tvid":{
+            "nombre":"Técnica de la Guerra (TDG)",
+            "descripcion":"Fomenta valentía y control emocional ante miedos.",
+            "objetivo":"Reducir miedo y aumentar seguridad interna.",
+            "instrucciones":"Inhala 4 segundos sintiendo valor. Exhala 6 segundos liberando ansiedad y miedo. Repite mientras visualizas seguridad y control.",
+            "duracion":30
+          }
+        },
+        {"tipo":"visualizacion","texto":"Visualiza enfrentando miedos con éxito y calma.","color":"#a78bfa"},
+        {"tipo":"recompensa","texto":"Tu capacidad para gestionar miedo ha aumentado.","puntos":20,"color":"#10b981"},
+        {"tipo":"cierre","texto":"Cada respiración consciente fortalece coraje y control emocional.","color":"#f87171"}
+      ]
+    },
+    {
+      "id": 25,
+      "categoria": "creatividad",
+      "bloques": [
+        {"tipo":"voz","texto":"Hoy potenciarás tu creatividad y pensamiento innovador.","color":"#2563eb"},
+        {"tipo":"historia","texto":"Una persona desarrolló creatividad aplicando técnicas de respiración y visualización.","color":"#34d399"},
+        {"tipo":"quiz","pregunta":"¿Qué aumenta creatividad?","opciones":["Explorar ideas nuevas","Repetir lo mismo","Ignorar"],"correcta":0,"explicacion":"Explorar ideas nuevas y técnicas de visualización potencia creatividad.","recompensa":10,"color":"#facc15"},
+        {"tipo":"acertijo","pregunta":"Nunca se repite exactamente igual, ¿qué es?","opciones":["Idea","Tiempo","Río"],"correcta":0,"explicacion":"La idea.","recompensa":8,"color":"#f59e0b"},
+        {"tipo":"decision","pregunta":"Necesitas resolver un problema, ¿qué eliges?","opciones":["Buscar soluciones creativas","Seguir el camino usual","Ignorar"],"correcta":0,"explicacion":"Buscar soluciones creativas potencia innovación y creatividad.","recompensa":12,"color":"#22c55e"},
+        {"tipo":"juego_mental","pregunta":"15 × 7 = ?","opciones":["105","100","110"],"correcta":0,"explicacion":"15 × 7 = 105","recompensa":7,"color":"#38bdf8"},
+        {
+          "tipo":"respiracion",
+          "texto":"Respira profundo y conecta con tu creatividad interna.",
+          "duracion":30,
+          "color":"#60a5fa",
+          "tvid":{
+            "nombre":"Técnica del Niño (TDN)",
+            "descripcion":"Fomenta imaginación y pensamiento creativo consciente.",
+            "objetivo":"Incrementar creatividad y generación de ideas.",
+            "instrucciones":"Inhala 4 segundos sintiendo inspiración. Exhala 6 segundos liberando bloqueos mentales. Repite mientras visualizas ideas fluyendo libremente.",
+            "duracion":30
+          }
+        },
+        {"tipo":"visualizacion","texto":"Visualiza resolviendo problemas con creatividad e innovación.","color":"#a78bfa"},
+        {"tipo":"recompensa","texto":"Tu creatividad ha aumentado.","puntos":20,"color":"#10b981"},
+        {"tipo":"cierre","texto":"Cada respiración consciente potencia imaginación y pensamiento creativo.","color":"#f87171"}
+      ]
+    },
+    {
+      "id": 26,
+      "categoria": "relaciones_sociales",
+      "bloques": [
+        {"tipo":"voz","texto":"Hoy mejorarás relaciones sociales y comunicación.","color":"#2563eb"},
+        {"tipo":"historia","texto":"Una persona fortaleció relaciones aplicando empatía, escucha activa y respiración consciente.","color":"#34d399"},
+        {"tipo":"quiz","pregunta":"¿Qué mejora relaciones sociales?","opciones":["Escucha activa y empatía","Ignorar otros","Criticar"],"correcta":0,"explicacion":"Escucha activa y empatía fortalecen vínculos y comunicación.","recompensa":10,"color":"#facc15"},
+        {"tipo":"acertijo","pregunta":"Es invisible pero une personas, ¿qué es?","opciones":["Empatía","Dinero","Tiempo"],"correcta":0,"explicacion":"La empatía.","recompensa":8,"color":"#f59e0b"},
+        {"tipo":"decision","pregunta":"Discusión con alguien, ¿qué eliges?","opciones":["Escuchar y dialogar","Gritar","Ignorar"],"correcta":0,"explicacion":"Escuchar y dialogar fortalece relaciones y comunicación.","recompensa":12,"color":"#22c55e"},
+        {"tipo":"juego_mental","pregunta":"12 × 12 = ?","opciones":["144","140","150"],"correcta":0,"explicacion":"12 × 12 = 144","recompensa":7,"color":"#38bdf8"},
+        {
+          "tipo":"respiracion",
+          "texto":"Respira profundo y conecta con empatía y comunicación.",
+          "duracion":30,
+          "color":"#60a5fa",
+          "tvid":{
+            "nombre":"Técnica del Beso (TDK)",
+            "descripcion":"Fomenta relaciones saludables y comunicación consciente.",
+            "objetivo":"Mejorar empatía, escucha y conexión con otros.",
+            "instrucciones":"Inhala 4 segundos sintiendo empatía. Exhala 6 segundos liberando tensión y juicio. Repite mientras visualizas relaciones armoniosas.",
+            "duracion":30
+          }
+        },
+        {"tipo":"visualizacion","texto":"Visualiza interactuando con personas con respeto, empatía y conexión.","color":"#a78bfa"},
+        {"tipo":"recompensa","texto":"Tus habilidades sociales han mejorado.","puntos":20,"color":"#10b981"},
+        {"tipo":"cierre","texto":"Cada respiración consciente fortalece empatía y relaciones positivas.","color":"#f87171"}
+      ]
+    },
+    {
+      "id": 27,
+      "categoria": "gestion_frustracion",
+      "bloques": [
+        {"tipo":"voz","texto":"Hoy aprenderás a gestionar la frustración de manera efectiva.","color":"#2563eb"},
+        {"tipo":"historia","texto":"Una persona controló frustraciones y logró objetivos sin perder calma ni motivación.","color":"#34d399"},
+        {"tipo":"quiz","pregunta":"¿Qué ayuda a manejar frustración?","opciones":["Respirar y reflexionar","Explotar","Ignorar"],"correcta":0,"explicacion":"Respirar y reflexionar reduce frustración y mejora control emocional.","recompensa":10,"color":"#facc15"},
+        {"tipo":"acertijo","pregunta":"Todos lo sienten, pocos lo controlan, ¿qué es?","opciones":["Frustración","Tiempo","Río"],"correcta":0,"explicacion":"La frustración.","recompensa":8,"color":"#f59e0b"},
+        {"tipo":"decision","pregunta":"Algo no sale como esperas, ¿qué eliges?","opciones":["Respirar y reorganizar","Gritar","Ignorar"],"correcta":0,"explicacion":"Respirar y reorganizar reduce frustración y fortalece control emocional.","recompensa":12,"color":"#22c55e"},
+        {"tipo":"juego_mental","pregunta":"17 × 5 = ?","opciones":["85","80","90"],"correcta":0,"explicacion":"17 × 5 = 85","recompensa":7,"color":"#38bdf8"},
+        {
+          "tipo":"respiracion",
+          "texto":"Respira profundo y libera frustración interna.",
+          "duracion":30,
+          "color":"#60a5fa",
+          "tvid":{
+            "nombre":"Técnica del Bien (TDB)",
+            "descripcion":"Fomenta control emocional y reducción de frustración.",
+            "objetivo":"Gestionar emociones negativas y mantener calma.",
+            "instrucciones":"Inhala 4 segundos sintiendo calma. Exhala 6 segundos liberando frustración y tensión. Repite mientras visualizas serenidad y control.",
+            "duracion":30
+          }
+        },
+        {"tipo":"visualizacion","texto":"Visualiza transformando frustración en calma y aprendizaje.","color":"#a78bfa"},
+        {"tipo":"recompensa","texto":"Tu gestión de frustración ha mejorado.","puntos":20,"color":"#10b981"},
+        {"tipo":"cierre","texto":"Cada respiración consciente fortalece control y paciencia interna.","color":"#f87171"}
+      ]
+    },
+    {
+      "id": 28,
+      "categoria": "paciencia",
+      "bloques": [
+        {"tipo":"voz","texto":"Hoy entrenarás paciencia y tolerancia.","color":"#2563eb"},
+        {"tipo":"historia","texto":"Una persona cultivó paciencia y obtuvo mejores resultados en sus metas y relaciones.","color":"#34d399"},
+        {"tipo":"quiz","pregunta":"¿Qué desarrolla paciencia?","opciones":["Respiración y reflexión","Impulsividad","Quejarse"],"correcta":0,"explicacion":"Respiración y reflexión desarrollan paciencia y tolerancia.","recompensa":10,"color":"#facc15"},
+        {"tipo":"acertijo","pregunta":"Lento pero constante, ¿qué es?","opciones":["Paciencia","Río","Viento"],"correcta":0,"explicacion":"La paciencia.","recompensa":8,"color":"#f59e0b"},
+        {"tipo":"decision","pregunta":"Esperas resultados, ¿qué eliges?","opciones":["Mantener calma y esperar","Impacientarte","Ignorar"],"correcta":0,"explicacion":"Mantener calma fortalece paciencia y tolerancia.","recompensa":12,"color":"#22c55e"},
+        {"tipo":"juego_mental","pregunta":"9 × 9 = ?","opciones":["81","80","85"],"correcta":0,"explicacion":"9 × 9 = 81","recompensa":7,"color":"#38bdf8"},
+        {
+          "tipo":"respiracion",
+          "texto":"Respira profundo y cultiva paciencia interna.",
+          "duracion":30,
+          "color":"#60a5fa",
+          "tvid":{
+            "nombre":"Técnica de la Madre (TDMM)",
+            "descripcion":"Fomenta paciencia y tolerancia consciente.",
+            "objetivo":"Incrementar paciencia y control ante situaciones difíciles.",
+            "instrucciones":"Inhala 4 segundos sintiendo calma. Exhala 6 segundos liberando impaciencia. Repite mientras visualizas paciencia y serenidad.",
+            "duracion":30
+          }
+        },
+        {"tipo":"visualizacion","texto":"Visualiza actuando con paciencia y tolerancia.","color":"#a78bfa"},
+        {"tipo":"recompensa","texto":"Tu paciencia ha mejorado.","puntos":20,"color":"#10b981"},
+        {"tipo":"cierre","texto":"Cada respiración consciente fortalece tolerancia y calma interna.","color":"#f87171"}
+      ]
+    },
+    {
+      "id": 29,
+      "categoria": "motivacion",
+      "bloques": [
+        {"tipo":"voz","texto":"Hoy reforzarás motivación y energía para lograr objetivos.","color":"#2563eb"},
+        {"tipo":"historia","texto":"Una persona aumentó motivación y alcanzó metas aplicando respiración y enfoque positivo.","color":"#34d399"},
+        {"tipo":"quiz","pregunta":"¿Qué aumenta motivación?","opciones":["Visualización y enfoque","Procrastinar","Quejarse"],"correcta":0,"explicacion":"Visualización y enfoque refuerzan motivación y energía para metas.","recompensa":10,"color":"#facc15"},
+        {"tipo":"acertijo","pregunta":"Impulsa acción y persistencia, ¿qué es?","opciones":["Motivación","Miedo","Tiempo"],"correcta":0,"explicacion":"La motivación.","recompensa":8,"color":"#f59e0b"},
+        {"tipo":"decision","pregunta":"Te sientes desmotivado, ¿qué eliges?","opciones":["Visualizar objetivos y respirar","Rendirse","Ignorar"],"correcta":0,"explicacion":"Visualizar objetivos y respirar aumenta motivación y energía.","recompensa":12,"color":"#22c55e"},
+        {"tipo":"juego_mental","pregunta":"13 × 6 = ?","opciones":["78","75","80"],"correcta":0,"explicacion":"13 × 6 = 78","recompensa":7,"color":"#38bdf8"},
+        {
+          "tipo":"respiracion",
+          "texto":"Respira profundo y conecta con motivación interna.",
+          "duracion":30,
+          "color":"#60a5fa",
+          "tvid":{
+            "nombre":"Técnica del Bien (TDB)",
+            "descripcion":"Fomenta motivación y energía consciente.",
+            "objetivo":"Incrementar fuerza de voluntad y persistencia.",
+            "instrucciones":"Inhala 4 segundos sintiendo energía y determinación. Exhala 6 segundos liberando dudas y flojera. Repite mientras visualizas logros y objetivos alcanzados.",
+            "duracion":30
+          }
+        },
+        {"tipo":"visualizacion","texto":"Visualiza alcanzando tus metas con energía y entusiasmo.","color":"#a78bfa"},
+        {"tipo":"recompensa","texto":"Tu motivación ha aumentado.","puntos":20,"color":"#10b981"},
+        {"tipo":"cierre","texto":"Cada respiración consciente fortalece energía, enfoque y voluntad.","color":"#f87171"}
+      ]
+    },
+    {
+      "id": 30,
+      "categoria": "gratitud",
+      "bloques": [
+        {"tipo":"voz","texto":"Hoy practicarás gratitud y apreciación.","color":"#2563eb"},
+        {"tipo":"historia","texto":"Una persona incrementó bienestar y felicidad practicando gratitud diariamente.","color":"#34d399"},
+        {"tipo":"quiz","pregunta":"¿Qué refuerza gratitud?","opciones":["Apreciar y agradecer","Quejarse","Ignorar"],"correcta":0,"explicacion":"Apreciar y agradecer fortalece gratitud y bienestar emocional.","recompensa":10,"color":"#facc15"},
+        {"tipo":"acertijo","pregunta":"Invisibles pero valiosos, ¿qué son?","opciones":["Momentos de gratitud","Dinero","Fama"],"correcta":0,"explicacion":"Los momentos de gratitud.","recompensa":8,"color":"#f59e0b"},
+        {"tipo":"decision","pregunta":"Día complicado, ¿qué eliges?","opciones":["Agradecer lo bueno","Quejarse","Ignorar"],"correcta":0,"explicacion":"Agradecer fortalece gratitud y bienestar.","recompensa":12,"color":"#22c55e"},
+        {"tipo":"juego_mental","pregunta":"18 × 4 = ?","opciones":["72","70","75"],"correcta":0,"explicacion":"18 × 4 = 72","recompensa":7,"color":"#38bdf8"},
+        {
+          "tipo":"respiracion",
+          "texto":"Respira profundo y conecta con gratitud interna.",
+          "duracion":30,
+          "color":"#60a5fa",
+          "tvid":{
+            "nombre":"Técnica del Niño (TDN)",
+            "descripcion":"Fomenta gratitud y apreciación consciente.",
+            "objetivo":"Incrementar bienestar y felicidad interna.",
+            "instrucciones":"Inhala 4 segundos sintiendo agradecimiento. Exhala 6 segundos liberando quejas. Repite mientras visualizas todo lo positivo en tu vida.",
+            "duracion":30
+          }
+        },
+        {"tipo":"visualizacion","texto":"Visualiza apreciando cada momento y experiencia positiva.","color":"#a78bfa"},
+        {"tipo":"recompensa","texto":"Tu gratitud ha aumentado.","puntos":20,"color":"#10b981"},
+        {"tipo":"cierre","texto":"Cada respiración consciente fortalece gratitud y bienestar interno.","color":"#f87171"}
+      ]
+    }
+  ]
+}
