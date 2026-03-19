@@ -5,6 +5,7 @@
       "categoria": "claridad",
       "bloques": [
         {"tipo":"voz","texto":"Bienvenido a KaMiZen. Hoy entrenarás claridad mental y disciplina financiera.","color":"#2563eb"},
+        {"tipo":"respiracion","texto":"Respira profundo y relaja tus hombros.","duracion":20,"color":"#60a5fa"},
         {"tipo":"historia","texto":"Un inversor comenzó ahorrando apenas diez dólares por semana. Con el tiempo, ese pequeño hábito creó estabilidad y oportunidades.","color":"#34d399"},
         {"tipo":"quiz","pregunta":"¿Qué hábito financiero crea más riqueza a largo plazo?","opciones":["Gastar rápidamente","Invertir constantemente","Guardar dinero sin plan"],"correcta":1,"explicacion":"La inversión constante permite aprovechar el interés compuesto.","recompensa":10,"color":"#facc15"},
         {"tipo":"acertijo","pregunta":"Siempre está delante de ti pero nunca puedes verlo.","opciones":["La sombra","El futuro","El aire"],"correcta":1,"explicacion":"El futuro siempre está delante.","recompensa":8,"color":"#f59e0b"},
@@ -22,6 +23,7 @@
       "bloques": [
         {"tipo":"voz","texto":"Hoy trabajarás disciplina mental.","color":"#2563eb"},
         {"tipo":"historia","texto":"Un atleta entrena incluso cuando no tiene ganas. Esa constancia es lo que crea campeones.","color":"#34d399"},
+        {"tipo":"respiracion","texto":"Inhala profundo tres segundos y exhala lentamente cuatro segundos.","duracion":20,"color":"#60a5fa"},
         {"tipo":"quiz","pregunta":"¿Qué construye disciplina?","opciones":["Motivación ocasional","Repetición diaria","Inspiración momentánea"],"correcta":1,"explicacion":"La disciplina se crea con repetición.","recompensa":10,"color":"#facc15"},
         {"tipo":"acertijo","pregunta":"Cuanto más tomas, más dejas atrás.","opciones":["Pasos","Dinero","Ideas"],"correcta":0,"explicacion":"Los pasos.","recompensa":8,"color":"#f59e0b"},
         {"tipo":"decision","pregunta":"Tienes una hora libre.","opciones":["Aprender algo nuevo","Redes sociales","Dormir"],"correcta":0,"explicacion":"El aprendizaje crea valor futuro.","recompensa":12,"color":"#22c55e"},
@@ -37,12 +39,13 @@
       "categoria": "calma",
       "bloques": [
         {"tipo":"voz","texto":"Hoy entrenarás calma mental.","color":"#2563eb"},
+        {"tipo":"respiracion","texto":"Inhala profundo unos segundos,reten dos y exhala tres segundos.","duracion":30,"color":"#60a5fa"},
         {"tipo":"historia","texto":"Las personas más exitosas toman decisiones desde la calma.","color":"#34d399"},
         {"tipo":"quiz","pregunta":"¿Qué ayuda a la mente a tomar mejores decisiones?","opciones":["Ansiedad","Calma","Prisa"],"correcta":1,"explicacion":"La calma mejora la claridad mental.","recompensa":10,"color":"#facc15"},
         {"tipo":"acertijo","pregunta":"Tengo ciudades pero no casas.","opciones":["Mapa","Libro","Computadora"],"correcta":0,"explicacion":"El mapa.","recompensa":8,"color":"#f59e0b"},
         {"tipo":"decision","pregunta":"Ante un problema financiero.","opciones":["Reaccionar rápido","Analizar con calma","Ignorar"],"correcta":1,"explicacion":"La calma mejora las decisiones.","recompensa":12,"color":"#22c55e"},
         {"tipo":"juego_mental","pregunta":"9 × 7 = ?","opciones":["56","63","72"],"correcta":1,"explicacion":"63.","recompensa":7,"color":"#38bdf8"},
-        {"tipo":"respiracion","texto":"Respira profundo y suelta lentamente.","duracion":30,"color":"#60a5fa"},
+        {"tipo":"respiracion","texto":"Respira profundo y suelta lentamente.","duracion":20,"color":"#60a5fa"},
         {"tipo":"visualizacion","texto":"Imagina tu mente tranquila resolviendo desafíos.","color":"#a78bfa"},
         {"tipo":"recompensa","texto":"Tu calma mental ha aumentado.","puntos":20,"color":"#10b981"},
         {"tipo":"cierre","texto":"La calma es una ventaja mental poderosa.","color":"#f87171"}
@@ -53,6 +56,7 @@
       "categoria": "enfoque",
       "bloques": [
         {"tipo":"voz","texto":"Hoy entrenarás tu capacidad de enfoque.","color":"#2563eb"},
+        {"tipo":"respiracion","texto":"Respira profundo y suelta lentamente.","duracion":10,"color":"#60a5fa"},
         {"tipo":"historia","texto":"Las personas enfocadas terminan lo que empiezan.","color":"#34d399"},
         {"tipo":"quiz","pregunta":"¿Qué destruye más el enfoque?","opciones":["Multitarea","Planificación","Descanso"],"correcta":0,"explicacion":"La multitarea reduce la eficiencia.","recompensa":10,"color":"#facc15"},
         {"tipo":"acertijo","pregunta":"Tiene llaves pero no abre puertas.","opciones":["Piano","Caja","Puerta"],"correcta":0,"explicacion":"El piano.","recompensa":8,"color":"#f59e0b"},
@@ -69,6 +73,7 @@
       "categoria": "mentalidad",
       "bloques": [
         {"tipo":"voz","texto":"Hoy entrenarás mentalidad de crecimiento.","color":"#2563eb"},
+        {"tipo":"respiracion","texto":"Respira profundo y suelta lentamente.","duracion":30,"color":"#60a5fa"},
         {"tipo":"historia","texto":"Las personas exitosas ven oportunidades donde otros ven problemas.","color":"#34d399"},
         {"tipo":"quiz","pregunta":"¿Qué caracteriza una mentalidad de crecimiento?","opciones":["Evitar retos","Aprender de errores","Rendirse rápido"],"correcta":1,"explicacion":"Aprender de errores fortalece la mente.","recompensa":10,"color":"#facc15"},
         {"tipo":"acertijo","pregunta":"Mientras más le quitas, más grande se vuelve.","opciones":["Agujero","Montaña","Caja"],"correcta":0,"explicacion":"Un agujero.","recompensa":8,"color":"#f59e0b"},
@@ -86,6 +91,7 @@
       "bloques": [
         {"tipo":"voz","texto":"Hoy trabajarás tu productividad.","color":"#2563eb"},
         {"tipo":"historia","texto":"Las personas productivas hacen primero lo importante.","color":"#34d399"},
+        {"tipo":"respiracion","texto":"Respira profundo y mantén la calma.","duracion":15,"color":"#60a5fa"},
         {"tipo":"quiz","pregunta":"¿Qué aumenta la productividad?","opciones":["Procrastinar","Priorizar","Evitar tareas"],"correcta":1,"explicacion":"Priorizar tareas importantes.","recompensa":10,"color":"#facc15"},
         {"tipo":"acertijo","pregunta":"Tiene manos pero no puede aplaudir.","opciones":["Reloj","Silla","Libro"],"correcta":0,"explicacion":"El reloj.","recompensa":8,"color":"#f59e0b"},
         {"tipo":"decision","pregunta":"Tienes muchas tareas.","opciones":["Hacer lo fácil","Hacer lo importante","Esperar"],"correcta":1,"explicacion":"Lo importante genera progreso.","recompensa":12,"color":"#22c55e"},
