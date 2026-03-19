@@ -6,7 +6,7 @@ const block = document.getElementById("block");
 let bloques = [];
 let current = 0;
 let puntos = 0;
-let breathingInterval = null; // Para manejar animación respiratoria
+let breathingInterval = null;
 
 /* DATOS USUARIO */
 let userData = JSON.parse(localStorage.getItem("kamizenData")) || {
@@ -26,19 +26,19 @@ const clarBar = document.getElementById("claridad-bar");
 const calmBar = document.getElementById("calma-bar");
 
 function updatePanel() {
-    streakEl.innerHTML = "🔥 Racha: " + userData.streak + " días";
-    levelEl.innerHTML = "Nivel KaMiZen: " + userData.nivel;
-    discBar.style.width = userData.disciplina + "%";
-    clarBar.style.width = userData.claridad + "%";
-    calmBar.style.width = userData.calma + "%";
+    streakEl.innerHTML = `🔥 Racha: ${userData.streak} días`;
+    levelEl.innerHTML = `Nivel: ${userData.nivel}`;
+    discBar.style.width = `${userData.disciplina}%`;
+    clarBar.style.width = `${userData.claridad}%`;
+    calmBar.style.width = `${userData.calma}%`;
 }
 updatePanel();
 
 /* RACHA DIARIA */
 function updateStreak() {
-    let today = new Date().toDateString();
+    const today = new Date().toDateString();
     if (userData.lastDay !== today) {
-        userData.streak += 1;
+        userData.streak++;
         userData.lastDay = today;
     }
 }
@@ -57,15 +57,11 @@ function playVoice(text) {
 
 /* RESPIRACION */
 function breathingAnimation(duracion = 30) {
-    // Limpiar cualquier animación previa
-    if (breathingInterval) {
-        clearInterval(breathingInterval);
-        breathingInterval = null;
-    }
+    if (breathingInterval) clearInterval(breathingInterval);
     const existingCircle = document.querySelector(".breath-circle");
     if (existingCircle) existingCircle.remove();
 
-    let circle = document.createElement("div");
+    const circle = document.createElement("div");
     circle.className = "breath-circle";
     block.appendChild(circle);
 
@@ -75,7 +71,6 @@ function breathingAnimation(duracion = 30) {
         inhale = !inhale;
     }, 4000);
 
-    // Detener después de la duración
     setTimeout(() => {
         clearInterval(breathingInterval);
         breathingInterval = null;
@@ -87,17 +82,17 @@ function breathingAnimation(duracion = 30) {
 /* OPCIONES */
 function createOptions(b) {
     b.opciones.forEach((op, i) => {
-        let btn = document.createElement("button");
+        const btn = document.createElement("button");
         btn.innerText = op;
         btn.onclick = () => {
             if (i === b.correcta) {
                 puntos += b.recompensa || 5;
                 userData.disciplina += 2;
                 userData.claridad += 2;
-                alert("✅ Correcto: " + b.explicacion);
+                alert(`✅ Correcto: ${b.explicacion}`);
             } else {
                 userData.calma += 1;
-                alert("❌ Respuesta: " + b.explicacion);
+                alert(`❌ Respuesta: ${b.explicacion}`);
             }
             updatePanel();
             nextBtn.style.display = "inline-block";
@@ -106,14 +101,19 @@ function createOptions(b) {
     });
 }
 
-/* BLOQUE */
+/* MOSTRAR BLOQUE */
 async function showBlock(b) {
+    if (!b) {
+        block.innerHTML = "<p>⚠️ Bloque vacío o inexistente</p>";
+        restartBtn.style.display = "inline-block";
+        return;
+    }
+
     block.innerHTML = "";
     document.body.style.background = b.color || "#0f172a";
 
-    // Texto o mensaje general
     if (b.texto) {
-        block.innerHTML = "<p>" + b.texto + "</p>";
+        block.innerHTML = `<p>${b.texto}</p>`;
         await playVoice(b.texto);
     }
 
@@ -122,7 +122,8 @@ async function showBlock(b) {
         case "acertijo":
         case "decision":
         case "juego_mental":
-            block.innerHTML = "<h3>" + b.pregunta + "</h3>";
+            if (!b.pregunta || !b.opciones) break;
+            block.innerHTML = `<h3>${b.pregunta}</h3>`;
             createOptions(b);
             await playVoice(b.pregunta);
             break;
@@ -130,13 +131,13 @@ async function showBlock(b) {
         case "respiracion":
             await playVoice(b.texto);
             breathingAnimation(b.duracion || 30);
-            return; // El siguiente botón se activa al terminar respiración
+            return;
 
         case "recompensa":
             userData.disciplina += 3;
             userData.claridad += 3;
             userData.calma += 3;
-            block.innerHTML = "<h2>" + b.texto + "</h2>";
+            block.innerHTML = `<h2>${b.texto}</h2>`;
             await playVoice(b.texto);
             break;
 
@@ -145,7 +146,6 @@ async function showBlock(b) {
             puntos += 10;
             if (puntos > 50) userData.nivel += 1;
 
-            // Guardar sesión completada
             let completed = JSON.parse(localStorage.getItem("completedSessions")) || [];
             completed.push(currentSessionIndex);
             localStorage.setItem("completedSessions", JSON.stringify(completed));
@@ -156,34 +156,11 @@ async function showBlock(b) {
             await playVoice(b.texto);
             return;
 
-        case "visualizacion":
-            await playVoice(b.texto);
-            block.innerHTML = "<p>" + b.texto + "</p>";
-            setTimeout(() => {
-                nextBtn.style.display = "inline-block";
-            }, 3000);
-            break;
-
-        case "historia":
-        case "voz":
-            // Bloques informativos solo muestran texto y voz
-            await playVoice(b.texto);
-            block.innerHTML = "<p>" + b.texto + "</p>";
-            setTimeout(() => {
-                nextBtn.style.display = "inline-block";
-            }, 3000);
-            break;
-
         default:
-            // Bloque desconocido
-            block.innerHTML = "<p>" + (b.texto || "Contenido desconocido") + "</p>";
-            setTimeout(() => {
-                nextBtn.style.display = "inline-block";
-            }, 2000);
+            block.innerHTML = `<p>${b.texto || "Contenido desconocido"}</p>`;
+            setTimeout(() => nextBtn.style.display = "inline-block", 2000);
             break;
     }
-    // Mostrar botón siguiente después de animación
-    setTimeout(() => { nextBtn.style.display = "inline-block"; }, 4000);
 }
 
 /* SIGUIENTE BLOQUE */
@@ -202,34 +179,41 @@ let currentSessionIndex = 0;
 
 startBtn.addEventListener("click", async () => {
     startBtn.style.display = "none";
+    block.innerHTML = "Cargando sesión...";
 
     try {
-        const res = await fetch("/session_content");
+        const res = await fetch(`${window.location.origin}/session_content`);
         const data = await res.json();
-        const sesiones = data.sesiones;
+        const sesiones = data.sesiones || [];
 
-        // Recuperar sesiones completadas
+        if (sesiones.length === 0) {
+            block.innerHTML = "<p>⚠️ No hay sesiones disponibles</p>";
+            return;
+        }
+
         let completed = JSON.parse(localStorage.getItem("completedSessions")) || [];
-
-        // Filtrar sesiones no completadas
         let availableIndices = sesiones.map((_, i) => i).filter(i => !completed.includes(i));
 
         if (availableIndices.length === 0) {
-            // Reiniciar todas las sesiones si ya completó todas
             localStorage.removeItem("completedSessions");
             availableIndices = sesiones.map((_, i) => i);
         }
 
-        // Elegir aleatoriamente una sesión disponible
         currentSessionIndex = availableIndices[Math.floor(Math.random() * availableIndices.length)];
         bloques = sesiones[currentSessionIndex].bloques || [];
         current = 0;
 
+        if (!bloques || bloques.length === 0) {
+            block.innerHTML = "<p>⚠️ Bloques vacíos en esta sesión</p>";
+            return;
+        }
+
         updateStreak();
         showBlock(bloques[0]);
+
     } catch (e) {
-        block.innerHTML = "<p>Error cargando sesión.</p>";
         console.error(e);
+        block.innerHTML = "<p>❌ Error cargando sesión.</p>";
     }
 });
 
