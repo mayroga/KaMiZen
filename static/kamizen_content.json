@@ -827,7 +827,7 @@
         {"tipo":"recompensa","texto":"Tu concentración ha aumentado.","puntos":20,"color":"#10b981"},
         {"tipo":"cierre","texto":"Cada momento de concentración fortalece tu mente.","color":"#f87171"}
       ]
-    }
+    },
     {
       "id": 31,
       "categoria": "confianza",
