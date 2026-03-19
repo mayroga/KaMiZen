@@ -11,31 +11,40 @@ DB_PATH = "static/kamizen_content.json"
 
 
 def cargar_db():
+
     try:
+
         with open(DB_PATH, "r", encoding="utf-8") as f:
+
             data = json.load(f)
 
         if "sesiones" not in data:
+
             return {"sesiones": []}
 
         return data
 
     except Exception as e:
+
         print("Error JSON:", e)
+
         return {"sesiones": []}
+
 
 
 @app.get("/", response_class=HTMLResponse)
 async def home():
 
     with open("static/session.html", "r", encoding="utf-8") as f:
+
         return HTMLResponse(f.read())
+
 
 
 @app.get("/session_content")
 async def session_content():
 
-    db = cargar_db()  # ← IMPORTANTE
+    db = cargar_db()
 
     sesiones = db.get("sesiones", [])
 
@@ -45,6 +54,8 @@ async def session_content():
     })
 
 
+
 @app.get("/health")
 async def health():
+
     return {"status": "ok"}
