@@ -1,353 +1,225 @@
 const startBtn = document.getElementById("start-btn");
 const nextBtn = document.getElementById("next-btn");
-const prevBtn = document.getElementById("prev-btn");
 const restartBtn = document.getElementById("restart-btn");
 const block = document.getElementById("block");
 
-let currentFileIdx = 0;
-let currentSessionIdx = 0;
+let fileIdx = 0;
+let sesionIdx = 0;
+
 let bloques = [];
-let currentBloque = 0;
+let i = 0;
 
-const MAX_SESSIONS_PER_FILE = 10;
+const MAX = 10;
 
-// =========================
-// USER DATA
-// =========================
 
-let userData = JSON.parse(localStorage.getItem("kamizenData")) || {
-    streak: 0,
-    lastDay: null,
-    nivel: 1,
-    disciplina: 40,
-    claridad: 50,
-    calma: 30
-};
 
-function saveUser() {
-    localStorage.setItem("kamizenData", JSON.stringify(userData));
-}
+function playVoice(t) {
 
-// =========================
-// VOZ
-// =========================
-
-function playVoice(text) {
-
-    return new Promise(resolve => {
+    return new Promise(r => {
 
         speechSynthesis.cancel();
 
-        let msg = new SpeechSynthesisUtterance(text);
-        msg.lang = "es-ES";
-        msg.rate = 0.9;
+        let m = new SpeechSynthesisUtterance(t);
 
-        msg.onend = () => {
-            resolve();
-        };
+        m.lang = "es-ES";
 
-        speechSynthesis.speak(msg);
+        m.onend = r;
+
+        speechSynthesis.speak(m);
 
     });
 
 }
 
-// =========================
-// RESPIRACION
-// =========================
 
-let breathingInterval = null;
 
-function breathingAnimation(duracion = 30) {
-
-    if (breathingInterval) clearInterval(breathingInterval);
-
-    const circle = document.createElement("div");
-    circle.className = "breath-circle";
+function breathing(sec = 20) {
 
     block.innerHTML = "";
-    block.appendChild(circle);
 
-    let inhale = true;
+    let c = document.createElement("div");
 
-    breathingInterval = setInterval(() => {
+    c.className = "breath-circle";
 
-        circle.style.transform =
-            inhale ? "scale(1.6)" : "scale(1)";
+    block.appendChild(c);
 
-        inhale = !inhale;
+    let b = true;
+
+    let inter = setInterval(() => {
+
+        c.style.transform =
+            b ? "scale(1.6)" : "scale(1)";
+
+        b = !b;
 
     }, 4000);
 
     setTimeout(() => {
 
-        clearInterval(breathingInterval);
+        clearInterval(inter);
 
-        nextBtn.style.display = "inline-block";
+        nextBtn.style.display = "block";
 
-    }, duracion * 1000);
-
-}
-
-// =========================
-// OPCIONES
-// =========================
-
-function createOptions(b) {
-
-    b.opciones.forEach((op, i) => {
-
-        const btn = document.createElement("button");
-
-        btn.innerText = op;
-
-        btn.onclick = () => {
-
-            if (i === b.correcta) {
-
-                userData.disciplina += 2;
-                userData.claridad += 2;
-
-            } else {
-
-                userData.calma += 1;
-
-            }
-
-            saveUser();
-
-            nextBtn.style.display = "inline-block";
-
-        };
-
-        block.appendChild(btn);
-
-    });
+    }, sec * 1000);
 
 }
 
-// =========================
-// MOSTRAR BLOQUE
-// =========================
 
-async function showBlock(b) {
 
-    if (!b) {
+async function show(b) {
 
-        block.innerHTML = "⚠️ Bloque vacío";
-        restartBtn.style.display = "inline-block";
-        return;
-
-    }
+    nextBtn.style.display = "none";
+    restartBtn.style.display = "none";
 
     block.innerHTML = "";
 
-    nextBtn.style.display = "none";
-    prevBtn.style.display = "none";
-    restartBtn.style.display = "none";
+    if (!b) {
 
-    if (b.color) {
-
-        document.body.style.background = b.color;
-
-    }
-
-    // =========================
-    // TEXTO NORMAL
-    // =========================
-
-    if (!b.tipo) {
-
-        block.innerHTML = b.texto || "Contenido desconocido";
-
-        await playVoice(b.texto || "");
-
-        nextBtn.style.display = "inline-block";
+        restartBtn.style.display = "block";
 
         return;
 
     }
 
-    // =========================
-    // QUIZ / DECISION / JUEGO
-    // =========================
+    let t = b.texto || "";
 
-    if (
-        b.tipo === "quiz" ||
-        b.tipo === "decision" ||
-        b.tipo === "juego_mental"
-    ) {
 
-        block.innerHTML = `<h3>${b.pregunta}</h3>`;
-
-        await playVoice(b.pregunta);
-
-        createOptions(b);
-
-        return;
-
-    }
-
-    // =========================
-    // RESPIRACION (TVid)
-    // =========================
 
     if (b.tipo === "respiracion") {
 
-        await playVoice(b.texto || "");
+        block.innerHTML = t;
 
-        breathingAnimation(b.duracion || 20);
+        await playVoice(t);
 
-        return;
-
-    }
-
-    // =========================
-    // RECOMPENSA
-    // =========================
-
-    if (b.tipo === "recompensa") {
-
-        userData.disciplina += 3;
-        userData.claridad += 3;
-        userData.calma += 3;
-
-        saveUser();
-
-        block.innerHTML = b.texto;
-
-        await playVoice(b.texto);
-
-        nextBtn.style.display = "inline-block";
+        breathing(b.duracion || 20);
 
         return;
 
     }
 
-    // =========================
-    // CIERRE
-    // =========================
+
+
+    if (b.tipo === "quiz" ||
+        b.tipo === "decision" ||
+        b.tipo === "juego_mental") {
+
+        block.innerHTML = "<h3>" + b.pregunta + "</h3>";
+
+        await playVoice(b.pregunta);
+
+        b.opciones.forEach((o, k) => {
+
+            let btn = document.createElement("button");
+
+            btn.innerText = o;
+
+            btn.onclick = () => {
+
+                nextBtn.style.display = "block";
+
+            };
+
+            block.appendChild(btn);
+
+        });
+
+        return;
+
+    }
+
+
 
     if (b.tipo === "cierre") {
 
-        block.innerHTML = b.texto;
+        block.innerHTML = t;
 
-        await playVoice(b.texto);
+        await playVoice(t);
 
-        restartBtn.style.display = "inline-block";
+        restartBtn.style.display = "block";
 
         return;
 
     }
 
-    // =========================
-    // DEFAULT
-    // =========================
 
-    block.innerHTML = b.texto || "Contenido desconocido";
 
-    await playVoice(b.texto || "");
+    block.innerHTML = t;
 
-    nextBtn.style.display = "inline-block";
+    if (t) {
+
+        await playVoice(t);
+
+    }
+
+    nextBtn.style.display = "block";
 
 }
 
-// =========================
-// NEXT BLOQUE
-// =========================
 
-function nextBlock() {
 
-    currentBloque++;
+function next() {
 
-    if (currentBloque < bloques.length) {
+    i++;
 
-        showBlock(bloques[currentBloque]);
+    if (i < bloques.length) {
+
+        show(bloques[i]);
 
     } else {
 
-        loadNextSession();
+        nextSession();
 
     }
 
 }
 
-// =========================
-// NEXT SESSION
-// =========================
 
-function loadNextSession() {
 
-    currentSessionIdx++;
+function nextSession() {
 
-    if (currentSessionIdx >= MAX_SESSIONS_PER_FILE) {
+    sesionIdx++;
 
-        currentSessionIdx = 0;
-        currentFileIdx++;
+    if (sesionIdx >= MAX) {
+
+        sesionIdx = 0;
+        fileIdx++;
 
     }
 
-    loadSession(currentFileIdx, currentSessionIdx);
+    load();
 
 }
 
-// =========================
-// LOAD SESSION
-// =========================
 
-async function loadSession(fileIdx, sessionIdx) {
 
-    block.innerHTML = "Cargando sesión...";
+async function load() {
 
-    try {
+    block.innerHTML = "Cargando...";
 
-        const res = await fetch(
-            `/session_content?file_idx=${fileIdx}&sesion_idx=${sessionIdx}`
-        );
+    let r = await fetch(
+        `/session_content?file_idx=${fileIdx}&sesion_idx=${sesionIdx}`
+    );
 
-        const data = await res.json();
+    let d = await r.json();
 
-        bloques = data.bloques || [];
+    bloques = d.bloques;
 
-        currentBloque = 0;
+    i = 0;
 
-        if (bloques.length === 0) {
-
-            block.innerHTML = "⚠️ No hay bloques";
-
-            return;
-
-        }
-
-        showBlock(bloques[0]);
-
-    } catch (e) {
-
-        block.innerHTML = "❌ Error cargando sesión";
-
-    }
+    show(bloques[0]);
 
 }
 
-// =========================
-// BOTONES
-// =========================
+
 
 startBtn.onclick = () => {
 
     startBtn.style.display = "none";
 
-    currentFileIdx = 0;
-    currentSessionIdx = 0;
-
-    loadSession(0, 0);
+    load();
 
 };
 
-nextBtn.onclick = nextBlock;
+nextBtn.onclick = next;
 
-restartBtn.onclick = () => {
-
-    location.reload();
-
-};
+restartBtn.onclick = () => location.reload();
