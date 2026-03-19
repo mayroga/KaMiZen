@@ -6,7 +6,6 @@ const block = document.getElementById("block");
 let bloques = [];
 let current = 0;
 let puntos = 0;
-
 let currentSessionIndex = 0;
 
 let userData = JSON.parse(localStorage.getItem("kamizenData")) || {
@@ -24,17 +23,20 @@ const discBar = document.getElementById("disciplina-bar");
 const clarBar = document.getElementById("claridad-bar");
 const calmBar = document.getElementById("calma-bar");
 
+
 function updatePanel(){
 
-    streakEl.innerHTML = "🔥 Racha: " + userData.streak + " días";
+    streakEl.innerHTML = "Racha: " + userData.streak + " días";
     levelEl.innerHTML = "Nivel KaMiZen: " + userData.nivel;
 
     discBar.style.width = userData.disciplina + "%";
     clarBar.style.width = userData.claridad + "%";
     calmBar.style.width = userData.calma + "%";
+
 }
 
 updatePanel();
+
 
 
 function updateStreak(){
@@ -50,6 +52,7 @@ function updateStreak(){
     }
 
 }
+
 
 
 function playVoice(text){
@@ -83,6 +86,7 @@ function playVoice(text){
 }
 
 
+
 function breathingAnimation(){
 
     let circle = document.createElement("div");
@@ -102,6 +106,7 @@ function breathingAnimation(){
     },4000);
 
 }
+
 
 
 function createOptions(b){
@@ -146,6 +151,7 @@ function createOptions(b){
 }
 
 
+
 async function showBlock(b){
 
     block.innerHTML = "";
@@ -153,6 +159,7 @@ async function showBlock(b){
     nextBtn.style.display = "none";
 
     document.body.style.background = b.color || "#0f172a";
+
 
     if(b.texto){
 
@@ -162,7 +169,9 @@ async function showBlock(b){
 
     }
 
+
     switch(b.tipo){
+
 
         case "decision":
         case "juego_mental":
@@ -174,6 +183,7 @@ async function showBlock(b){
             await playVoice(b.pregunta);
 
             break;
+
 
 
         case "respiracion":
@@ -191,6 +201,7 @@ async function showBlock(b){
             return;
 
 
+
         case "recompensa":
 
             userData.disciplina += 3;
@@ -202,6 +213,7 @@ async function showBlock(b){
             await playVoice(b.texto);
 
             break;
+
 
 
         case "cierre":
@@ -241,6 +253,7 @@ async function showBlock(b){
             return;
 
     }
+
 
     setTimeout(()=>{
 
