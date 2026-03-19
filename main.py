@@ -30,6 +30,9 @@ async def session_content(
 
     try:
 
+        if file_idx >= len(FILES):
+            return {"bloques": [], "total": 0}
+
         path = FILES[file_idx]
 
         with open(path, "r", encoding="utf-8") as f:
@@ -37,12 +40,19 @@ async def session_content(
 
         sesiones = data["sesiones"]
 
-        sesion = sesiones[sesion_idx]
+        if sesion_idx >= len(sesiones):
+            return {
+                "bloques": [],
+                "total": len(sesiones),
+            }
 
-        return {"bloques": sesion["bloques"]}
+        return {
+            "bloques": sesiones[sesion_idx]["bloques"],
+            "total": len(sesiones),
+        }
 
     except Exception as e:
 
-        print("ERROR:", e)
+        print(e)
 
-        return {"bloques": []}
+        return {"bloques": [], "total": 0}
