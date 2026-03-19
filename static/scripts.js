@@ -5,25 +5,45 @@ const block = document.getElementById("block");
 
 let bloques = [];
 let current = 0;
-let currentSessionId = 1;
+let puntos = 0;
+let breathingInterval = null; // Para manejar animación respiratoria
 
-/* PERSISTENCIA DE DATOS */
+/* DATOS USUARIO */
 let userData = JSON.parse(localStorage.getItem("kamizenData")) || {
-    streak: 0, lastDay: null, nivel: 1,
-    disciplina: 30, claridad: 30, calma: 30,
-    lastSessionId: 0
+    streak: 0,
+    lastDay: null,
+    nivel: 1,
+    disciplina: 40,
+    claridad: 50,
+    calma: 30
 };
 
+/* PANEL */
+const streakEl = document.getElementById("streak");
+const levelEl = document.getElementById("level");
+const discBar = document.getElementById("disciplina-bar");
+const clarBar = document.getElementById("claridad-bar");
+const calmBar = document.getElementById("calma-bar");
+
 function updatePanel() {
-    document.getElementById("streak").innerText = `🔥 Racha: ${userData.streak} días`;
-    document.getElementById("level").innerText = `Nivel KaMiZen: ${userData.nivel}`;
-    document.getElementById("disciplina-bar").style.width = `${userData.disciplina}%`;
-    document.getElementById("claridad-bar").style.width = `${userData.claridad}%`;
-    document.getElementById("calma-bar").style.width = `${userData.calma}%`;
+    streakEl.innerHTML = "🔥 Racha: " + userData.streak + " días";
+    levelEl.innerHTML = "Nivel KaMiZen: " + userData.nivel;
+    discBar.style.width = userData.disciplina + "%";
+    clarBar.style.width = userData.claridad + "%";
+    calmBar.style.width = userData.calma + "%";
 }
 updatePanel();
 
-/* MOTOR DE VOZ */
+/* RACHA DIARIA */
+function updateStreak() {
+    let today = new Date().toDateString();
+    if (userData.lastDay !== today) {
+        userData.streak += 1;
+        userData.lastDay = today;
+    }
+}
+
+/* VOZ */
 function playVoice(text) {
     return new Promise(resolve => {
         speechSynthesis.cancel();
@@ -35,92 +55,183 @@ function playVoice(text) {
     });
 }
 
-/* ANIMACIÓN RESPIRACIÓN AL COMPÁS */
-function startBreathing(duracion) {
-    const circle = document.createElement("div");
+/* RESPIRACION */
+function breathingAnimation(duracion = 30) {
+    // Limpiar cualquier animación previa
+    if (breathingInterval) {
+        clearInterval(breathingInterval);
+        breathingInterval = null;
+    }
+    const existingCircle = document.querySelector(".breath-circle");
+    if (existingCircle) existingCircle.remove();
+
+    let circle = document.createElement("div");
     circle.className = "breath-circle";
     block.appendChild(circle);
 
     let inhale = true;
-    // El compás es de 4 segundos por fase
-    const interval = setInterval(() => {
-        if (!document.querySelector(".breath-circle")) {
-            clearInterval(interval);
-            return;
-        }
-        circle.style.transform = inhale ? "scale(1.8)" : "scale(1)";
+    breathingInterval = setInterval(() => {
+        circle.style.transform = inhale ? "scale(1.6)" : "scale(1)";
         inhale = !inhale;
     }, 4000);
 
-    // Detener después del tiempo del JSON
+    // Detener después de la duración
     setTimeout(() => {
-        clearInterval(interval);
-        nextBtn.style.display = "block";
+        clearInterval(breathingInterval);
+        breathingInterval = null;
+        circle.remove();
+        nextBtn.style.display = "inline-block";
     }, duracion * 1000);
 }
 
-/* RENDERIZADO DE BLOQUES */
+/* OPCIONES */
+function createOptions(b) {
+    b.opciones.forEach((op, i) => {
+        let btn = document.createElement("button");
+        btn.innerText = op;
+        btn.onclick = () => {
+            if (i === b.correcta) {
+                puntos += b.recompensa || 5;
+                userData.disciplina += 2;
+                userData.claridad += 2;
+                alert("✅ Correcto: " + b.explicacion);
+            } else {
+                userData.calma += 1;
+                alert("❌ Respuesta: " + b.explicacion);
+            }
+            updatePanel();
+            nextBtn.style.display = "inline-block";
+        };
+        block.appendChild(btn);
+    });
+}
+
+/* BLOQUE */
 async function showBlock(b) {
     block.innerHTML = "";
-    nextBtn.style.display = "none";
-    if (b.color) document.body.style.background = b.color;
+    document.body.style.background = b.color || "#0f172a";
 
-    if (b.tipo === "respiracion") {
-        block.innerHTML = `<p>${b.texto}</p>`;
-        playVoice(b.texto);
-        startBreathing(b.duracion || 30);
-    } 
-    else if (b.pregunta) {
-        block.innerHTML = `<h3>${b.pregunta}</h3>`;
-        playVoice(b.pregunta);
-        b.opciones.forEach((op, i) => {
-            let btn = document.createElement("button");
-            btn.innerText = op;
-            btn.onclick = () => {
-                alert(i === b.correcta ? "Correcto: " + b.explicacion : "Respuesta: " + b.explicacion);
-                nextBtn.style.display = "block";
-            };
-            block.appendChild(btn);
-        });
-    } 
-    else {
-        block.innerHTML = `<p>${b.texto || ""}</p>`;
-        if (b.texto) await playVoice(b.texto);
-        
-        if (b.tipo === "cierre") {
-            userData.lastSessionId = currentSessionId;
+    // Texto o mensaje general
+    if (b.texto) {
+        block.innerHTML = "<p>" + b.texto + "</p>";
+        await playVoice(b.texto);
+    }
+
+    switch (b.tipo) {
+        case "quiz":
+        case "acertijo":
+        case "decision":
+        case "juego_mental":
+            block.innerHTML = "<h3>" + b.pregunta + "</h3>";
+            createOptions(b);
+            await playVoice(b.pregunta);
+            break;
+
+        case "respiracion":
+            await playVoice(b.texto);
+            breathingAnimation(b.duracion || 30);
+            return; // El siguiente botón se activa al terminar respiración
+
+        case "recompensa":
+            userData.disciplina += 3;
+            userData.claridad += 3;
+            userData.calma += 3;
+            block.innerHTML = "<h2>" + b.texto + "</h2>";
+            await playVoice(b.texto);
+            break;
+
+        case "cierre":
+            updateStreak();
+            puntos += 10;
+            if (puntos > 50) userData.nivel += 1;
+
+            // Guardar sesión completada
+            let completed = JSON.parse(localStorage.getItem("completedSessions")) || [];
+            completed.push(currentSessionIndex);
+            localStorage.setItem("completedSessions", JSON.stringify(completed));
+
             localStorage.setItem("kamizenData", JSON.stringify(userData));
-            restartBtn.style.display = "block";
-        } else {
-            setTimeout(() => { nextBtn.style.display = "block"; }, 3000);
-        }
+            updatePanel();
+            restartBtn.style.display = "inline-block";
+            await playVoice(b.texto);
+            return;
+
+        case "visualizacion":
+            await playVoice(b.texto);
+            block.innerHTML = "<p>" + b.texto + "</p>";
+            setTimeout(() => {
+                nextBtn.style.display = "inline-block";
+            }, 3000);
+            break;
+
+        case "historia":
+        case "voz":
+            // Bloques informativos solo muestran texto y voz
+            await playVoice(b.texto);
+            block.innerHTML = "<p>" + b.texto + "</p>";
+            setTimeout(() => {
+                nextBtn.style.display = "inline-block";
+            }, 3000);
+            break;
+
+        default:
+            // Bloque desconocido
+            block.innerHTML = "<p>" + (b.texto || "Contenido desconocido") + "</p>";
+            setTimeout(() => {
+                nextBtn.style.display = "inline-block";
+            }, 2000);
+            break;
+    }
+    // Mostrar botón siguiente después de animación
+    setTimeout(() => { nextBtn.style.display = "inline-block"; }, 4000);
+}
+
+/* SIGUIENTE BLOQUE */
+function nextBlock() {
+    nextBtn.style.display = "none";
+    current++;
+    if (current < bloques.length) {
+        showBlock(bloques[current]);
+    } else {
+        restartBtn.style.display = "inline-block";
     }
 }
 
-/* INICIO Y CONTROL DE FLUJO */
+/* INICIO SESIÓN */
+let currentSessionIndex = 0;
+
 startBtn.addEventListener("click", async () => {
     startBtn.style.display = "none";
-    const res = await fetch("/session_content");
-    const data = await res.json();
-    
-    // Ordenar por ID y buscar la siguiente sesión
-    let sesiones = data.sesiones.sort((a, b) => a.id - b.id);
-    currentSessionId = userData.lastSessionId + 1;
-    
-    let sesionActual = sesiones.find(s => s.id === currentSessionId);
-    if (!sesionActual) {
-        currentSessionId = 1; // Reiniciar ciclo tras la sesión 40
-        sesionActual = sesiones[0];
+
+    try {
+        const res = await fetch("/session_content");
+        const data = await res.json();
+        const sesiones = data.sesiones;
+
+        // Recuperar sesiones completadas
+        let completed = JSON.parse(localStorage.getItem("completedSessions")) || [];
+
+        // Filtrar sesiones no completadas
+        let availableIndices = sesiones.map((_, i) => i).filter(i => !completed.includes(i));
+
+        if (availableIndices.length === 0) {
+            // Reiniciar todas las sesiones si ya completó todas
+            localStorage.removeItem("completedSessions");
+            availableIndices = sesiones.map((_, i) => i);
+        }
+
+        // Elegir aleatoriamente una sesión disponible
+        currentSessionIndex = availableIndices[Math.floor(Math.random() * availableIndices.length)];
+        bloques = sesiones[currentSessionIndex].bloques || [];
+        current = 0;
+
+        updateStreak();
+        showBlock(bloques[0]);
+    } catch (e) {
+        block.innerHTML = "<p>Error cargando sesión.</p>";
+        console.error(e);
     }
-
-    bloques = sesionActual.bloques;
-    current = 0;
-    showBlock(bloques[current]);
 });
 
-nextBtn.addEventListener("click", () => {
-    current++;
-    if (current < bloques.length) showBlock(bloques[current]);
-});
-
+nextBtn.addEventListener("click", nextBlock);
 restartBtn.addEventListener("click", () => location.reload());
