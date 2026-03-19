@@ -346,6 +346,7 @@
       "id": 22,
       "bloques":[
         {"tipo":"voz","texto":"Hoy enfocaremos tu mente en creatividad y resolución de problemas.","color":"#2563eb"},
+        {"tipo":"respiracion","texto":"Respira profundo y mantén la calma.","duracion":30,"color":"#60a5fa"},
         {"tipo":"historia","texto":"Un inventor resolvió un problema cotidiano y su idea se convirtió en un negocio millonario.","color":"#34d399"},
         {"tipo":"quiz","pregunta":"¿Cuál es la mejor forma de estimular la creatividad?","opciones":["Esperar inspiración","Hacer ejercicios diarios","Copiar a otros"],"correcta":1,"explicacion":"La práctica diaria fortalece la creatividad.","recompensa":10,"color":"#facc15"},
         {"tipo":"acertijo","pregunta":"Si cinco gatos atrapan cinco ratones en cinco minutos, ¿cuánto tardarán diez gatos?","opciones":["5 min","10 min","50 min"],"correcta":0,"explicacion":"La velocidad es proporcional al número de gatos.","recompensa":8,"color":"#f59e0b"},
