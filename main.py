@@ -3,7 +3,7 @@ from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 import json
 
-app = FastAPI(title="KaMiZen NeuroGame Engine")
+app = FastAPI(title="KaMiZen Engine")
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
@@ -26,7 +26,7 @@ def cargar_db():
 
     except Exception as e:
 
-        print("Error JSON:", e)
+        print("ERROR JSON", e)
 
         return {"sesiones": []}
 
@@ -49,13 +49,9 @@ async def session_content():
     sesiones = db.get("sesiones", [])
 
     return JSONResponse({
+
         "sesiones": sesiones,
+
         "total": len(sesiones)
+
     })
-
-
-
-@app.get("/health")
-async def health():
-
-    return {"status": "ok"}
