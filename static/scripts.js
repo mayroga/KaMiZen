@@ -3,35 +3,35 @@ const blockText = document.getElementById("text-content");
 const glob = document.getElementById("breath-glob");
 const startBtn = document.getElementById("start-btn");
 const nextBtn = document.getElementById("next-btn");
-const optContainer = document.getElementById("options-container");
+const skipBtn = document.getElementById("skip-btn"); // Asegúrate que este ID exista en tu HTML
 const banner = document.getElementById("banner");
 
 let bloques = [];
 let currentIdx = 0;
 let isAdmin = false;
-let stats = { disciplina: 60, claridad: 50, calma: 50 };
+let stats = { disciplina: 50, claridad: 50, calma: 50 };
 
+// MOTOR DE VOZ CON EVENTOS DE FASE
 function hablar(texto) {
     return new Promise((resolve) => {
         speechSynthesis.cancel();
         const msg = new SpeechSynthesisUtterance(texto);
         msg.lang = 'es-US';
-        msg.rate = 0.9;
+        msg.rate = 0.85; // Voz con peso y autoridad
         msg.onend = () => resolve();
-        msg.onerror = () => resolve();
         speechSynthesis.speak(msg);
-        setTimeout(resolve, 8000); // Fail-safe
     });
 }
 
-function updateUI() {
-    document.getElementById("d-bar").style.width = stats.disciplina + "%";
-    document.getElementById("cl-bar").style.width = stats.claridad + "%";
-    document.getElementById("ca-bar").style.width = stats.calma + "%";
+// ACTUALIZAR BARRAS DE ESTADO
+function updateStats() {
+    document.getElementById("disciplina-bar").style.width = stats.disciplina + "%";
+    document.getElementById("claridad-bar").style.width = stats.claridad + "%";
+    document.getElementById("calma-bar").style.width = stats.calma + "%";
 }
 
-// LOGIN ADMIN
-document.getElementById("logo").addEventListener('dblclick', async () => {
+// ADMINISTRADOR DISCRETO
+document.getElementById("logo").ondblclick = async () => {
     const u = prompt("User:"), p = prompt("Pass:");
     const res = await fetch("/admin_auth", {
         method: "POST", headers: {"Content-Type":"application/json"},
@@ -40,89 +40,100 @@ document.getElementById("logo").addEventListener('dblclick', async () => {
     if(res.ok) { 
         isAdmin = true; 
         banner.style.background = "#059669"; 
-        blockText.innerHTML = "<h3>MODO ADMIN</h3><p>Sesión desbloqueada.</p>";
+        alert("MODO ADMIN: ACCESO ILIMITADO ACTIVADO"); 
+        checkSystem(); 
     }
-});
+};
 
-async function checkStatus() {
-    if (isAdmin) return;
+async function checkSystem() {
+    if (isAdmin) { startBtn.style.display = "block"; return; }
     const res = await fetch("/api/status");
     const st = await res.json();
     if (st.is_open && st.mins_left <= 10) banner.style.background = "#ef4444";
     if (!st.is_open) {
         startBtn.style.display = "none";
-        blockText.innerHTML = `<h3>SISTEMA CERRADO</h3><p>Próximo acceso: ${st.next}</p>`;
+        blockText.innerHTML = `<h3>SISTEMA EN ESPERA</h3><p>Próximo Pulso: ${st.next}</p>`;
     }
 }
 
+// INICIAR SESIÓN
 startBtn.onclick = async () => {
-    const pago = new URLSearchParams(window.location.search).get("pago") === "exito";
-    if (!pago && !isAdmin) { window.location.href = STRIPE_URL; return; }
-
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("pago") !== "exito" && !isAdmin) {
+        window.location.href = STRIPE_URL;
+        return;
+    }
     const res = await fetch("/session_content", { headers: {"X-Admin-Access": isAdmin ? "true" : "false"} });
     const data = await res.json();
     bloques = data.sesiones[0].bloques;
+    currentIdx = 0;
     startBtn.style.display = "none";
     renderBloque();
 };
 
+// MOTOR DE BLOQUES CON CAMBIO DE COLOR Y SINCRONÍA
 async function renderBloque() {
     const b = bloques[currentIdx];
     if (!b) return;
 
-    // AMBIENTE
-    document.body.style.background = b.color || "#020617";
-    blockText.innerHTML = b.titulo ? `<h3>${b.titulo}</h3>` : "";
-    blockText.innerHTML += `<p>${b.texto || b.instrucciones}</p>`;
+    // 1. Limpieza y Cambio de Atmósfera (Color de Fondo)
+    document.body.style.background = b.color || "#020617"; 
+    blockText.innerHTML = "";
     nextBtn.style.display = "none";
+    skipBtn.style.display = "block";
     glob.style.display = "none";
-    optContainer.innerHTML = "";
 
-    // VOZ
-    await hablar(b.texto || b.instrucciones);
+    // 2. Renderizar Contenido
+    if (b.titulo) blockText.innerHTML = `<h3>${b.titulo}</h3>`;
+    if (b.texto) blockText.innerHTML += `<p>${b.texto}</p>`;
 
+    // 3. Lógica de Respiración (Sincronía con el Globo)
     if (b.tipo === "respiracion") {
         glob.style.display = "block";
         for (let i = 0; i < (b.repeticiones || 1); i++) {
-            glob.style.transform = "scale(1.7)";
-            await hablar("Inhala...");
+            // INHALA
+            glob.style.transform = "scale(1.8)";
+            glob.style.opacity = "1";
+            await hablar("Inhala profundamente...");
+            
+            // RETÉN
+            glob.style.boxShadow = "0 0 50px #60a5fa";
+            await hablar("Mantén el aire, siente el poder...");
+            
+            // EXHALA
             glob.style.transform = "scale(1)";
-            await hablar("Exhala...");
+            glob.style.opacity = "0.6";
+            await hablar("Exhala todo el estrés.");
         }
-        nextBtn.style.display = "block";
-    } 
-    else if (b.tipo === "decision") {
-        b.opciones.forEach((opt, i) => {
-            const btn = document.createElement("button");
-            btn.className = "option-btn";
-            btn.innerText = opt;
-            btn.onclick = async () => {
-                optContainer.innerHTML = "";
-                const esCorrecto = (i === b.correcta);
-                stats.disciplina += esCorrecto ? 10 : -20;
-                updateUI();
-                
-                blockText.innerHTML = `<h3>${esCorrecto ? 'EXCELENTE' : 'ERROR'}</h3><p>${b.explicacion}</p>`;
-                await hablar(b.explicacion);
-                nextBtn.style.display = "block";
-            };
-            optContainer.appendChild(btn);
-        });
-    } 
-    else {
-        setTimeout(() => { nextBtn.style.display = "block"; }, 3000);
+    } else {
+        await hablar(b.texto || b.instrucciones);
     }
+
+    // 4. Finalizar Bloque
+    skipBtn.style.display = "none";
+    nextBtn.style.display = "block";
 }
+
+// BOTÓN SALTAR CON PENALIZACIÓN AGRESIVA
+skipBtn.onclick = async () => {
+    speechSynthesis.cancel();
+    stats.disciplina = Math.max(0, stats.disciplina - 80); // Quita el 80% de disciplina
+    updateStats();
+    blockText.innerHTML = "<h3 style='color:#ef4444;'>DISCIPLINA ROTA</h3><p>Te estoy observando. La evasión tiene un costo.</p>";
+    await hablar("La disciplina es el único camino al éxito. Has fallado.");
+    setTimeout(renderBloque, 2000);
+};
 
 nextBtn.onclick = () => {
     currentIdx++;
-    if (currentIdx < bloques.length) renderBloque();
-    else {
-        blockText.innerHTML = "<h3>FORJA COMPLETADA</h3><p>Tu racha ha aumentado.</p>";
+    if (currentIdx < bloques.length) {
+        renderBloque();
+    } else {
+        blockText.innerHTML = "<h3>SESIÓN FINALIZADA</h3><p>Has forjado tu mente hoy.</p>";
         nextBtn.style.display = "none";
         setTimeout(() => location.reload(), 5000);
     }
 };
 
-checkStatus();
-updateUI();
+updateStats();
+checkSystem();
