@@ -1,55 +1,131 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KaMiZen Elite</title>
-    <style>
-        *{box-sizing:border-box;margin:0;padding:0;font-family:sans-serif;}
-        body{background:#020617;color:white;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;overflow:hidden;}
+const STRIPE_URL = "https://buy.stripe.com/dRmaEW53V3XB3cH7Dt7Vm0l";
+const blockText = document.getElementById("text-content");
+const glob = document.getElementById("breath-glob");
+const startBtn = document.getElementById("start-btn");
+const nextBtn = document.getElementById("next-btn");
+const banner = document.getElementById("banner");
+
+let bloques = [];
+let currentIdx = 0;
+let isAdmin = false;
+
+// MOTOR DE VOZ
+function hablar(texto) {
+    if (!texto) return;
+    speechSynthesis.cancel();
+    const msg = new SpeechSynthesisUtterance(texto);
+    msg.lang = 'es-US';
+    msg.rate = 0.9;
+    speechSynthesis.speak(msg);
+}
+
+// ESTADO DEL SISTEMA
+async function checkSystem() {
+    if (isAdmin) return;
+    try {
+        const res = await fetch("/api/status");
+        const st = await res.json();
         
-        /* BANNER PROPAGANDA AZUL */
-        #banner {
-            width: 100%; background: #1e40af; padding: 12px 0; position: fixed; top: 0;
-            white-space: nowrap; overflow: hidden; border-bottom: 1px solid #3b82f6; z-index: 100;
+        if (st.is_open && st.mins_left <= 10) banner.style.background = "#ef4444";
+
+        if (!st.is_open) {
+            startBtn.style.display = "none";
+            blockText.innerHTML = `
+                <div style="text-align:left; font-size:14px;">
+                    <h3 style="color:#ef4444; margin-bottom:10px;">SISTEMA BLOQUEADO</h3>
+                    <p><b>Qué hace:</b> Hackea tu disciplina en 30 min.</p>
+                    <p><b>Resuelve:</b> Debilidad mental y falta de enfoque.</p>
+                    <p style="margin-top:10px; color:#60a5fa;"><b>Próximo Pulso:</b> ${st.next} (Miami)</p>
+                    <button onclick="window.location.href='${STRIPE_URL}'" style="background:#10b981; margin-top:20px;">PAGAR SESIÓN ($5.99)</button>
+                </div>`;
+        } else {
+            blockText.innerHTML = "<h3>SISTEMA ABIERTO</h3><p>Presiona para iniciar tu forja mental.</p>";
         }
-        .track { display: inline-block; animation: scroll 20s linear infinite; font-weight: 800; font-size: 13px; text-transform: uppercase; }
-        @keyframes scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+    } catch (e) { blockText.innerText = "Error de conexión."; }
+}
 
-        #app{width:90%; max-width:400px; background:#111827; border-radius:20px; padding:20px; text-align:center; box-shadow: 0 10px 30px rgba(0,0,0,0.5);}
-        #logo{font-size:26px; font-weight:bold; background:linear-gradient(90deg,#60a5fa,#a78bfa); -webkit-background-clip:text; -webkit-text-fill-color:transparent; cursor:pointer;}
-        
-        #panel{background:#020617; padding:15px; border-radius:12px; margin:15px 0; text-align:left; font-size:12px;}
-        .bar{height:6px; background:#1e293b; border-radius:10px; margin:4px 0 10px 0; overflow:hidden;}
-        .fill{height:100%; background:#3b82f6; width:50%; transition: 0.5s;}
-        
-        #block{min-height:150px; display:flex; flex-direction:column; justify-content:center; font-size:17px; line-height:1.4;}
-        button{width:100%; padding:15px; border-radius:10px; border:none; background:#2563eb; color:white; font-weight:bold; cursor:pointer; margin-top:10px;}
-        .opt{background:#374151; margin-top:5px;}
-    </style>
-</head>
-<body>
-    <div id="banner">
-        <div class="track">
-            <span> • PRÓXIMA SESIÓN: 10:00 AM / 06:00 PM • CUPO LIMITADO: 500 PERSONAS • $5.99 ACCESO • SOLO 30 MINUTOS DE PODER • FORJA TU MENTE • </span>
-            <span> • PRÓXIMA SESIÓN: 10:00 AM / 06:00 PM • CUPO LIMITADO: 500 PERSONAS • $5.99 ACCESO • SOLO 30 MINUTOS DE PODER • FORJA TU MENTE • </span>
-        </div>
-    </div>
+// ADMIN BYPASS
+document.getElementById("logo").ondblclick = async () => {
+    const u = prompt("Admin User:"), p = prompt("Pass:");
+    const res = await fetch("/admin_auth", {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({user:u, pass_word:p})
+    });
+    if(res.ok) { 
+        isAdmin = true; 
+        banner.style.background = "#059669"; 
+        alert("MODO ADMIN: ACCESO LIBRE"); 
+        checkSystem(); 
+        startBtn.style.display = "block";
+    }
+};
 
-    <div id="app">
-        <div id="logo">KaMiZen</div>
-        <p style="font-size:10px; opacity:0.5;">Asesoría Mental de Alto Peso</p>
-        
-        <div id="panel">
-            <div>Disciplina <div class="bar"><div id="d-bar" class="fill"></div></div></div>
-            <div>Claridad <div class="bar"><div id="cl-bar" class="fill" style="background:#a78bfa;"></div></div></div>
-            <div>Calma <div class="bar"><div id="ca-bar" class="fill" style="background:#10b981;"></div></div></div>
-        </div>
+// INICIO DE SESIÓN
+startBtn.onclick = async () => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("pago") !== "exito" && !isAdmin) {
+        window.location.href = STRIPE_URL;
+        return;
+    }
 
-        <div id="block">Cargando sistema...</div>
-        
-        <button id="start-btn">Iniciar Sesión</button>
-        <button id="next-btn" style="display:none;">Continuar</button>
-    </div>
-</body>
-</html>
+    blockText.innerText = "Sincronizando Mente...";
+    const res = await fetch("/session_content", {
+        headers: {"X-Admin-Access": isAdmin ? "true" : "false"}
+    });
+    const data = await res.json();
+    
+    if (!isAdmin) window.history.replaceState({}, "", "/");
+    
+    bloques = data.sesiones[0].bloques;
+    currentIdx = 0;
+    startBtn.style.display = "none";
+    renderBloque();
+};
+
+function renderBloque() {
+    const b = bloques[currentIdx];
+    nextBtn.style.display = "none";
+    glob.style.display = "none";
+    
+    blockText.innerHTML = `<h3>${b.titulo || ""}</h3><p>${b.texto || b.instrucciones}</p>`;
+    hablar(b.texto || b.instrucciones);
+
+    if (b.tipo === "respiracion") {
+        glob.style.display = "block";
+        blockText.innerHTML = `<p>${b.instrucciones}</p>`;
+        // Animación del globo azul
+        setTimeout(() => { glob.style.transform = "scale(1.8)"; }, 100);
+        setTimeout(() => { 
+            glob.style.transform = "scale(1)"; 
+            setTimeout(() => { nextBtn.style.display = "block"; }, 4000);
+        }, 4000);
+
+    } else if (b.tipo === "decision") {
+        b.opciones.forEach((opt, i) => {
+            const btn = document.createElement("button");
+            btn.className = "opt-btn";
+            btn.innerText = opt;
+            btn.onclick = () => {
+                blockText.innerHTML = `<p>${b.explicacion}</p>`;
+                hablar(b.explicacion);
+                nextBtn.style.display = "block";
+            };
+            block.appendChild(btn);
+        });
+    } else {
+        setTimeout(() => { nextBtn.style.display = "block"; }, 5000);
+    }
+}
+
+nextBtn.onclick = () => {
+    currentIdx++;
+    if (currentIdx < bloques.length) renderBloque();
+    else {
+        blockText.innerHTML = "<h3>SESIÓN COMPLETADA</h3><p>Vuelve en la próxima ventana.</p>";
+        nextBtn.style.display = "none";
+        setTimeout(() => location.reload(), 5000);
+    }
+};
+
+checkSystem();
