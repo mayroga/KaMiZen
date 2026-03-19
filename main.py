@@ -2,17 +2,27 @@ from fastapi import FastAPI
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 import json
+import os
 
 app = FastAPI(title="KaMiZen Engine")
 
-app.mount("/static", StaticFiles(directory="static"), name="static")
+STATIC_DIR = "static"
+DB_PATH = os.path.join(STATIC_DIR, "kamizen_content.json")
 
-DB_PATH = "static/kamizen_content.json"
+app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
+
+# -------------------------
+# CARGAR JSON SIEMPRE NUEVO
+# -------------------------
 
 def cargar_db():
 
     try:
+
+        if not os.path.exists(DB_PATH):
+
+            return {"sesiones": []}
 
         with open(DB_PATH, "r", encoding="utf-8") as f:
 
@@ -26,20 +36,38 @@ def cargar_db():
 
     except Exception as e:
 
-        print("ERROR JSON", e)
+        print("ERROR JSON:", e)
 
         return {"sesiones": []}
 
 
+# -------------------------
+# HOME
+# -------------------------
 
 @app.get("/", response_class=HTMLResponse)
 async def home():
 
-    with open("static/session.html", "r", encoding="utf-8") as f:
+    try:
 
-        return HTMLResponse(f.read())
+        with open(
+            os.path.join(STATIC_DIR, "session.html"),
+            "r",
+            encoding="utf-8"
+        ) as f:
+
+            return HTMLResponse(f.read())
+
+    except:
+
+        return HTMLResponse(
+            "<h1>Error cargando session.html</h1>"
+        )
 
 
+# -------------------------
+# API SESIONES
+# -------------------------
 
 @app.get("/session_content")
 async def session_content():
@@ -55,3 +83,23 @@ async def session_content():
         "total": len(sesiones)
 
     })
+
+
+# -------------------------
+# HEALTH CHECK
+# -------------------------
+
+@app.get("/health")
+async def health():
+
+    return {
+
+        "status": "ok",
+
+        "engine": "kamizen",
+
+        "sesiones": len(
+            cargar_db().get("sesiones", [])
+        )
+
+    }
