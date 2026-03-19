@@ -3,240 +3,194 @@ const nextBtn = document.getElementById("next-btn");
 const restartBtn = document.getElementById("restart-btn");
 const block = document.getElementById("block");
 
-let fileIdx = 0;
-let sesionIdx = 0;
-
 let bloques = [];
 let i = 0;
 
-const MAX = 10;
+let fileIdx = 0;
+let sesionIdx = 0;
+
+let totalSesiones = 0;
 
 
-// =========================
-// VOZ
-// =========================
 
-function speak(t) {
+function speak(t){
+return new Promise(r=>{
+speechSynthesis.cancel()
+let m=new SpeechSynthesisUtterance(t)
+m.lang="es-ES"
+m.onend=r
+speechSynthesis.speak(m)
+})
+}
 
-    return new Promise(r => {
 
-        speechSynthesis.cancel();
 
-        let m = new SpeechSynthesisUtterance(t);
+function respirar(sec){
 
-        m.lang = "es-ES";
+let c=document.createElement("div")
+c.className="breath-circle"
 
-        m.onend = r;
+block.appendChild(c)
 
-        speechSynthesis.speak(m);
+let b=true
 
-    });
+let inter=setInterval(()=>{
+
+c.style.transform=b?"scale(1.6)":"scale(1)"
+
+b=!b
+
+},4000)
+
+setTimeout(()=>{
+
+clearInterval(inter)
+
+nextBtn.style.display="block"
+
+},sec*1000)
 
 }
 
 
-// =========================
-// RESPIRACION
-// =========================
 
-function respirar(sec) {
+async function show(b){
 
-    block.innerHTML = "";
+block.innerHTML=""
 
-    let c = document.createElement("div");
+nextBtn.style.display="none"
+restartBtn.style.display="none"
 
-    c.className = "breath-circle";
+if(!b){
+restartBtn.style.display="block"
+return
+}
 
-    block.appendChild(c);
+if(b.color){
+document.body.style.background=b.color
+}
 
-    let b = true;
+if(b.texto){
 
-    let inter = setInterval(() => {
+let p=document.createElement("p")
+p.innerText=b.texto
+block.appendChild(p)
 
-        c.style.transform =
-            b ? "scale(1.6)" : "scale(1)";
+await speak(b.texto)
+}
 
-        b = !b;
+if(b.pregunta){
 
-    }, 4000);
+let h=document.createElement("h3")
+h.innerText=b.pregunta
+block.appendChild(h)
 
-    setTimeout(() => {
+await speak(b.pregunta)
+}
 
-        clearInterval(inter);
+if(b.opciones){
 
-        nextBtn.style.display = "block";
+b.opciones.forEach(o=>{
 
-    }, sec * 1000);
+let btn=document.createElement("button")
+
+btn.innerText=o
+
+btn.onclick=()=>{
+nextBtn.style.display="block"
+}
+
+block.appendChild(btn)
+
+})
+
+return
+}
+
+if(b.tipo==="respiracion"){
+
+respirar(b.duracion || 20)
+
+return
+}
+
+if(b.tipo==="cierre"){
+
+restartBtn.style.display="block"
+
+return
+}
+
+nextBtn.style.display="block"
 
 }
 
 
-// =========================
-// MOSTRAR BLOQUE UNIVERSAL
-// =========================
 
-async function show(b) {
+function nextBlock(){
 
-    nextBtn.style.display = "none";
-    restartBtn.style.display = "none";
+i++
 
-    block.innerHTML = "";
+if(i < bloques.length){
 
-    if (!b) {
+show(bloques[i])
 
-        restartBtn.style.display = "block";
-        return;
+}else{
 
-    }
+nextSession()
 
-    if (b.color) {
-
-        document.body.style.background = b.color;
-
-    }
-
-    // TEXTO
-
-    if (b.texto) {
-
-        block.innerHTML += `<p>${b.texto}</p>`;
-
-        await speak(b.texto);
-
-    }
-
-    // PREGUNTA
-
-    if (b.pregunta) {
-
-        block.innerHTML += `<h3>${b.pregunta}</h3>`;
-
-        await speak(b.pregunta);
-
-    }
-
-    // OPCIONES
-
-    if (b.opciones) {
-
-        b.opciones.forEach((o, k) => {
-
-            let btn = document.createElement("button");
-
-            btn.innerText = o;
-
-            btn.onclick = () => {
-
-                nextBtn.style.display = "block";
-
-            };
-
-            block.appendChild(btn);
-
-        });
-
-        return;
-    }
-
-    // RESPIRACION
-
-    if (b.duracion) {
-
-        respirar(b.duracion);
-
-        return;
-    }
-
-    // CIERRE
-
-    if (b.tipo === "cierre") {
-
-        restartBtn.style.display = "block";
-
-        return;
-    }
-
-    nextBtn.style.display = "block";
+}
 
 }
 
 
-// =========================
-// NEXT BLOQUE
-// =========================
 
-function next() {
+function nextSession(){
 
-    i++;
+sesionIdx++
 
-    if (i < bloques.length) {
+if(sesionIdx >= totalSesiones){
 
-        show(bloques[i]);
+sesionIdx = 0
+fileIdx++
 
-    } else {
+}
 
-        nextSession();
-
-    }
+load()
 
 }
 
 
-// =========================
-// NEXT SESSION
-// =========================
 
-function nextSession() {
+async function load(){
 
-    sesionIdx++;
+block.innerHTML="Cargando..."
 
-    if (sesionIdx >= MAX) {
+let r = await fetch(
+`/session_content?file_idx=${fileIdx}&sesion_idx=${sesionIdx}`
+)
 
-        sesionIdx = 0;
-        fileIdx++;
+let d = await r.json()
 
-    }
+bloques = d.bloques
+totalSesiones = d.total
 
-    load();
+i = 0
 
-}
-
-
-// =========================
-// LOAD SESSION
-// =========================
-
-async function load() {
-
-    block.innerHTML = "Cargando...";
-
-    let r = await fetch(
-        `/session_content?file_idx=${fileIdx}&sesion_idx=${sesionIdx}`
-    );
-
-    let d = await r.json();
-
-    bloques = d.bloques;
-
-    i = 0;
-
-    show(bloques[0]);
+show(bloques[0])
 
 }
 
 
-// =========================
-// BOTONES
-// =========================
 
-startBtn.onclick = () => {
+startBtn.onclick=()=>{
 
-    startBtn.style.display = "none";
+startBtn.style.display="none"
 
-    load();
+load()
 
-};
+}
 
-nextBtn.onclick = next;
+nextBtn.onclick=nextBlock
 
-restartBtn.onclick = () => location.reload();
+restartBtn.onclick=()=>location.reload()
