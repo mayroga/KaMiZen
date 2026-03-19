@@ -1,101 +1,55 @@
-const STRIPE_URL = "https://buy.stripe.com/dRmaEW53V3XB3cH7Dt7Vm0l";
-const block = document.getElementById("block");
-const startBtn = document.getElementById("start-btn");
-const nextBtn = document.getElementById("next-btn");
-const banner = document.getElementById("banner");
-
-let bloques = [];
-let currentIdx = 0;
-let isAdmin = false;
-
-// 1. Verificar Estado al Iniciar
-async function init() {
-    try {
-        const res = await fetch("/api/status");
-        const st = await res.json();
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KaMiZen Elite</title>
+    <style>
+        *{box-sizing:border-box;margin:0;padding:0;font-family:sans-serif;}
+        body{background:#020617;color:white;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;overflow:hidden;}
         
-        // Cambio de color por urgencia (Rojo si quedan < 10 min)
-        if (st.is_open && st.mins_left <= 10) banner.style.background = "#ef4444";
-
-        if (!st.is_open && !isAdmin) {
-            renderExplicacion(st.next);
-        } else {
-            block.innerHTML = "<h3>SISTEMA ABIERTO</h3><p>Listo para forjar tu mente.</p>";
+        /* BANNER PROPAGANDA AZUL */
+        #banner {
+            width: 100%; background: #1e40af; padding: 12px 0; position: fixed; top: 0;
+            white-space: nowrap; overflow: hidden; border-bottom: 1px solid #3b82f6; z-index: 100;
         }
-    } catch (e) { block.innerHTML = "Error de red. Reintenta."; }
-}
+        .track { display: inline-block; animation: scroll 20s linear infinite; font-weight: 800; font-size: 13px; text-transform: uppercase; }
+        @keyframes scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
-function renderExplicacion(proxima) {
-    block.innerHTML = `
-        <div style="text-align:left; font-size:14px;">
-            <p><b>¿Qué es?</b> Asesoría neuro-mental de élite.</p>
-            <p><b>Resuelve:</b> Falta de enfoque y debilidad disciplinaria.</p>
-            <p><b>Reglas:</b> $5.99 por sesión. Solo 30 min. Cupo: 500.</p>
-            <p style="margin-top:10px; color:#60a5fa;">Abre: ${proxima}</p>
-        </div>`;
-}
+        #app{width:90%; max-width:400px; background:#111827; border-radius:20px; padding:20px; text-align:center; box-shadow: 0 10px 30px rgba(0,0,0,0.5);}
+        #logo{font-size:26px; font-weight:bold; background:linear-gradient(90deg,#60a5fa,#a78bfa); -webkit-background-clip:text; -webkit-text-fill-color:transparent; cursor:pointer;}
+        
+        #panel{background:#020617; padding:15px; border-radius:12px; margin:15px 0; text-align:left; font-size:12px;}
+        .bar{height:6px; background:#1e293b; border-radius:10px; margin:4px 0 10px 0; overflow:hidden;}
+        .fill{height:100%; background:#3b82f6; width:50%; transition: 0.5s;}
+        
+        #block{min-height:150px; display:flex; flex-direction:column; justify-content:center; font-size:17px; line-height:1.4;}
+        button{width:100%; padding:15px; border-radius:10px; border:none; background:#2563eb; color:white; font-weight:bold; cursor:pointer; margin-top:10px;}
+        .opt{background:#374151; margin-top:5px;}
+    </style>
+</head>
+<body>
+    <div id="banner">
+        <div class="track">
+            <span> • PRÓXIMA SESIÓN: 10:00 AM / 06:00 PM • CUPO LIMITADO: 500 PERSONAS • $5.99 ACCESO • SOLO 30 MINUTOS DE PODER • FORJA TU MENTE • </span>
+            <span> • PRÓXIMA SESIÓN: 10:00 AM / 06:00 PM • CUPO LIMITADO: 500 PERSONAS • $5.99 ACCESO • SOLO 30 MINUTOS DE PODER • FORJA TU MENTE • </span>
+        </div>
+    </div>
 
-// 2. Login Admin (Doble clic en Logo)
-document.getElementById("logo").ondblclick = async () => {
-    const u = prompt("User:"), p = prompt("Pass:");
-    const res = await fetch("/admin_auth", {
-        method: "POST",
-        headers: {"Content-Type":"application/json"},
-        body: JSON.stringify({user:u, pass_word:p})
-    });
-    if(res.ok) { isAdmin = true; alert("Admin Activo"); init(); }
-};
+    <div id="app">
+        <div id="logo">KaMiZen</div>
+        <p style="font-size:10px; opacity:0.5;">Asesoría Mental de Alto Peso</p>
+        
+        <div id="panel">
+            <div>Disciplina <div class="bar"><div id="d-bar" class="fill"></div></div></div>
+            <div>Claridad <div class="bar"><div id="cl-bar" class="fill" style="background:#a78bfa;"></div></div></div>
+            <div>Calma <div class="bar"><div id="ca-bar" class="fill" style="background:#10b981;"></div></div></div>
+        </div>
 
-// 3. Iniciar Sesión (Validar Pago)
-startBtn.onclick = async () => {
-    const pagoExitoso = new URLSearchParams(window.location.search).get("pago") === "exito";
-    
-    if (!pagoExitoso && !isAdmin) {
-        window.location.href = STRIPE_URL;
-        return;
-    }
-
-    block.innerHTML = "Sincronizando...";
-    const res = await fetch("/session_content", {
-        headers: {"X-Admin-Access": isAdmin ? "true" : "false"}
-    });
-    const data = await res.json();
-    
-    if (!isAdmin) window.history.replaceState({}, "", "/"); // Limpiar URL
-    
-    bloques = data.sesiones[0].bloques;
-    currentIdx = 0;
-    startBtn.style.display = "none";
-    mostrarBloque();
-};
-
-function mostrarBloque() {
-    const b = bloques[currentIdx];
-    block.innerHTML = `<h3>${b.titulo || "Fase"}</h3><p>${b.texto || b.instrucciones}</p>`;
-    nextBtn.style.display = "none";
-    
-    // Si es decisión, crear botones
-    if (b.tipo === "decision") {
-        b.opciones.forEach(opt => {
-            const btn = document.createElement("button");
-            btn.className = "opt";
-            btn.innerText = opt;
-            btn.onclick = () => { nextBtn.style.display = "block"; };
-            block.appendChild(btn);
-        });
-    } else {
-        setTimeout(() => { nextBtn.style.display = "block"; }, 3000);
-    }
-}
-
-nextBtn.onclick = () => {
-    currentIdx++;
-    if (currentIdx < bloques.length) mostrarBloque();
-    else {
-        block.innerHTML = "<h3>SESIÓN FINALIZADA</h3>";
-        nextBtn.style.display = "none";
-        setTimeout(() => location.reload(), 3000);
-    }
-};
-
-init();
+        <div id="block">Cargando sistema...</div>
+        
+        <button id="start-btn">Iniciar Sesión</button>
+        <button id="next-btn" style="display:none;">Continuar</button>
+    </div>
+</body>
+</html>
