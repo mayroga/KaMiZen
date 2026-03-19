@@ -1,213 +1,104 @@
+const STRIPE_LINK = "https://buy.stripe.com/dRmaEW53V3XB3cH7Dt7Vm0l";
 const startBtn = document.getElementById("start-btn");
-const nextBtn = document.getElementById("next-btn");
-const skipBtn = document.getElementById("skip-btn");
-const restartBtn = document.getElementById("restart-btn");
 const block = document.getElementById("block");
+const logo = document.getElementById("logo");
 
 let bloques = [];
 let currentIdx = 0;
-let sesionActualData = null;
-let skipFlag = false; 
-let activeInterval = null;
+let isAdmin = false;
 
-/* PERSISTENCIA DE DATOS */
-let userData = JSON.parse(localStorage.getItem("kamizenData")) || {
-    streak: 0,
-    lastDay: null,
-    nivel: 1,
-    disciplina: 40,
-    claridad: 50,
-    calma: 30,
-    lastSessionId: 0 
-};
-
-function updatePanel(){
-    userData.disciplina = Math.max(0, Math.min(userData.disciplina, 100));
-    userData.claridad = Math.max(0, Math.min(userData.claridad, 100));
-    userData.calma = Math.max(0, Math.min(userData.calma, 100));
-
-    document.getElementById("streak").innerHTML = "🔥 Racha: " + userData.streak + " días";
-    document.getElementById("level").innerHTML = "Nivel KaMiZen: " + userData.nivel;
-    document.getElementById("disciplina-bar").style.width = userData.disciplina + "%";
-    document.getElementById("claridad-bar").style.width = userData.claridad + "%";
-    document.getElementById("calma-bar").style.width = userData.calma + "%";
+// COMANDO SECRETO: Doble clic en el Logo para Login Admin
+logo.addEventListener("dblclick", async () => {
+    const user = prompt("Usuario Administrador:");
+    const pass = prompt("Contraseña:");
     
-    localStorage.setItem("kamizenData", JSON.stringify(userData));
-}
-
-/* MOTOR DE VOZ CON FAIL-SAFE */
-function playVoice(text){
-    return new Promise(resolve => {
-        if (!text) return resolve();
-        speechSynthesis.cancel();
-        
-        let msg = new SpeechSynthesisUtterance(text);
-        msg.lang = "es-ES";
-        msg.rate = 0.9;
-        
-        // Si la voz falla o se bloquea, resolvemos en 3.5 segundos para no congelar la app
-        const forceContinue = setTimeout(() => {
-            console.warn("Voz bloqueada, continuando...");
-            resolve();
-        }, 3500);
-
-        msg.onend = () => {
-            clearTimeout(forceContinue);
-            resolve();
-        };
-        
-        msg.onerror = () => {
-            clearTimeout(forceContinue);
-            resolve();
-        };
-
-        speechSynthesis.speak(msg);
+    const res = await fetch("/admin_auth", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ user: user, pass_word: pass })
     });
-}
 
-function wait(ms) {
-    return new Promise(resolve => {
-        const start = Date.now();
-        const check = setInterval(() => {
-            if (Date.now() - start >= ms || skipFlag) {
-                clearInterval(check);
-                resolve();
-            }
-        }, 50);
-    });
-}
-
-/* MOSTRAR BLOQUE */
-async function showBlock(b){
-    if(!b) return;
-    skipFlag = false;
-    if(activeInterval) clearInterval(activeInterval);
-    
-    block.innerHTML = "";
-    nextBtn.style.display = "none";
-    skipBtn.style.display = "block"; 
-    document.body.style.background = b.color || "#020617";
-
-    if(b.tipo === "respiracion"){
-        block.innerHTML = `<p>${b.instrucciones}</p><div class="breath-circle" id="circle"></div><p id="breath-label"></p>`;
-        const circle = document.getElementById("circle");
-        const label = document.getElementById("breath-label");
-        const reps = b.repeticiones || 3;
-
-        for(let i=0; i < reps; i++){
-            if(skipFlag) break;
-            label.innerText = b.voz_guia ? b.voz_guia[0] : "Inhala";
-            playVoice(label.innerText);
-            circle.style.transform = "scale(1.8)";
-            await wait(b.tiempos.inhalar * 1000);
-            
-            if(skipFlag) break;
-            label.innerText = b.voz_guia ? b.voz_guia[1] : "Retén";
-            playVoice(label.innerText);
-            await wait(b.tiempos.retener * 1000);
-            
-            if(skipFlag) break;
-            label.innerText = b.voz_guia ? b.voz_guia[2] : "Exhala";
-            playVoice(label.innerText);
-            circle.style.transform = "scale(1)";
-            await wait(b.tiempos.exhalar * 1000);
-        }
-        finishBlock();
-    } 
-    else if(["decision", "juego_mental", "acertijo"].includes(b.tipo)){
-        skipBtn.style.display = "none"; 
-        block.innerHTML = `<h3>${b.pregunta}</h3>`;
-        b.opciones.forEach((opt, i) => {
-            let btn = document.createElement("button");
-            btn.className = "option-btn";
-            btn.innerText = opt;
-            btn.onclick = async () => {
-                const esCorrecto = i === b.correcta;
-                block.innerHTML = `<p>${esCorrecto ? "✅" : "❌"}</p><p>${b.explicacion}</p>`;
-                userData.disciplina += esCorrecto ? 5 : -2;
-                updatePanel();
-                await playVoice(b.explicacion);
-                finishBlock();
-            };
-            block.appendChild(btn);
-        });
-        await playVoice(b.pregunta);
-    }
-    else if(b.tipo === "ejercicio_fisico"){
-        block.innerHTML = `<h3>Acción Física</h3><p>${b.texto}</p><h2 id="timer">${b.duracion}s</h2>`;
-        playVoice(b.texto);
-        let timeLeft = b.duracion;
-        activeInterval = setInterval(() => {
-            timeLeft--;
-            if(document.getElementById("timer")) document.getElementById("timer").innerText = timeLeft + "s";
-            if(timeLeft <= 0 || skipFlag) { clearInterval(activeInterval); finishBlock(); }
-        }, 1000);
-    }
-    else {
-        const contenido = b.texto || b.instrucciones || b.titulo;
-        block.innerHTML = b.titulo ? `<h3>${b.titulo}</h3><p>${contenido}</p>` : `<p>${contenido}</p>`;
-        await playVoice(contenido);
-        if(!skipFlag) finishBlock();
-    }
-}
-
-function finishBlock() {
-    skipBtn.style.display = "none";
-    nextBtn.style.display = "block";
-}
-
-skipBtn.addEventListener("click", () => {
-    skipFlag = true;
-    speechSynthesis.cancel();
-    if(activeInterval) clearInterval(activeInterval);
-    userData.disciplina = Math.floor(userData.disciplina * 0.2);
-    updatePanel();
-    block.innerHTML = `<p style="color:#ef4444;">DISCIPLINA QUEBRANTADA</p>`;
-    setTimeout(() => { finishBlock(); }, 1000);
-});
-
-/* INICIO SEGURO */
-startBtn.addEventListener("click", async () => {
-    startBtn.style.display = "none";
-    block.innerHTML = "Sincronizando Mente...";
-    
-    try {
-        const response = await fetch("/session_content");
-        if(!response.ok) throw new Error("Error en red");
-        const data = await response.json();
-        
-        let nextId = userData.lastSessionId + 1;
-        sesionActualData = data.sesiones.find(s => s.id === nextId) || data.sesiones[0];
-        bloques = sesionActualData.bloques;
-        currentIdx = 0;
-        
-        let today = new Date().toDateString();
-        if(userData.lastDay !== today){
-            userData.streak++;
-            userData.lastDay = today;
-        }
-        updatePanel();
-        showBlock(bloques[currentIdx]);
-    } catch (err) { 
-        console.error(err);
-        block.innerHTML = "Error de conexión. Revisa el servidor."; 
-        startBtn.style.display = "block";
-    }
-});
-
-nextBtn.addEventListener("click", () => {
-    currentIdx++;
-    if(currentIdx < bloques.length) {
-        showBlock(bloques[currentIdx]);
+    if (res.ok) {
+        isAdmin = true;
+        alert("MODO ADMINISTRADOR ACTIVADO: Acceso libre total.");
+        renderAdminReady();
     } else {
-        block.innerHTML = `<h2>Mente Forjada</h2><p>Sesión ${sesionActualData.id} terminada.</p>`;
-        userData.lastSessionId = sesionActualData.id;
-        userData.nivel = Math.floor(userData.disciplina / 20) + 1;
-        updatePanel();
-        restartBtn.style.display = "block";
-        nextBtn.style.display = "none";
+        alert("Credenciales incorrectas.");
     }
 });
 
-restartBtn.addEventListener("click", () => location.reload());
-updatePanel();
+function renderAdminReady() {
+    block.innerHTML = `<h3>MODO ADMIN ACTIVO</h3><p>Horario y Pago ignorados.</p>`;
+    startBtn.style.display = "block";
+    startBtn.innerText = "Iniciar Sesión (Modo Libre)";
+}
+
+async function checkSystem() {
+    if (isAdmin) return; // Si ya es admin, no bloqueamos nada
+
+    const res = await fetch("/api/status");
+    const st = await res.json();
+
+    if (!st.abierto) {
+        renderCerrado(st.proxima);
+    } else {
+        iniciarTemporizadorCierre(st.minutos_restantes);
+    }
+}
+
+function renderCerrado(proxima) {
+    block.innerHTML = `
+        <div style="border:1px solid #3b82f6; padding:20px; border-radius:15px;">
+            <h3 style="color:#60a5fa;">SISTEMA EN ESPERA</h3>
+            <p>Próximo acceso: ${proxima}</p>
+            <button onclick="window.location.href='${STRIPE_LINK}'" style="background:#22c55e; margin-top:15px;">Pagar Sesión ($5.99)</button>
+        </div>
+    `;
+    startBtn.style.display = "none";
+}
+
+function iniciarTemporizadorCierre(minutos) {
+    let segs = minutos * 60;
+    const countdown = setInterval(() => {
+        segs--;
+        if (segs <= 0 && !isAdmin) {
+            clearInterval(countdown);
+            location.href = "/"; // Auto-cierre
+        }
+    }, 1000);
+}
+
+startBtn.addEventListener("click", async () => {
+    const params = new URLSearchParams(window.location.search);
+    const haPagado = params.get('pago') === 'exito';
+
+    if (!haPagado && !isAdmin) {
+        window.location.href = STRIPE_LINK;
+        return;
+    }
+
+    // Petición de contenido enviando bandera de admin si aplica
+    const res = await fetch("/session_content", {
+        headers: { "X-Admin-Access": isAdmin ? "true" : "false" }
+    });
+    
+    const data = await res.json();
+    if (data.error) {
+        alert(data.error);
+        return;
+    }
+
+    // Limpiar rastro de pago si no es admin
+    if (!isAdmin) window.history.replaceState({}, document.title, "/");
+
+    bloques = data.sesiones[0].bloques; // Ejemplo carga sesión 1
+    ejecutarEntrenamiento();
+});
+
+function ejecutarEntrenamiento() {
+    startBtn.style.display = "none";
+    // Aquí sigue tu motor de bloques (voz, respiración, etc.)
+    block.innerHTML = `<h3>Iniciando...</h3><p>Prepárate para la sesión.</p>`;
+}
+
+checkSystem();
