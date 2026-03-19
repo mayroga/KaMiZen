@@ -7,168 +7,164 @@ const logo = document.getElementById("logo");
 let bloques = [];
 let currentIdx = 0;
 let skipFlag = false;
-let isAdmin = false;
 
-/* PERSISTENCIA: Control de Sesión del 1 al 70 */
 let userData = JSON.parse(localStorage.getItem("kamizenData")) || {
-    lastSessionId: 0, // 0 significa que la próxima es la 1
+    lastSessionId: 0,
     disciplina: 50,
     claridad: 50,
     calma: 50
 };
 
 function updateUI() {
-    document.getElementById("disciplina-bar").style.width = userData.disciplina + "%";
-    document.getElementById("claridad-bar").style.width = userData.claridad + "%";
-    document.getElementById("calma-bar").style.width = userData.calma + "%";
+    // Líneas verdes y progreso
+    const stats = [
+        {id: "disciplina-bar", val: userData.disciplina, text: "val-disp"},
+        {id: "claridad-bar", val: userData.claridad, text: "val-clar"},
+        {id: "calma-bar", val: userData.calma, text: "val-calm"}
+    ];
+    
+    stats.forEach(s => {
+        const value = Math.min(100, Math.max(0, s.val));
+        document.getElementById(s.id).style.width = value + "%";
+        document.getElementById(s.text).innerText = value + "%";
+    });
+    
     localStorage.setItem("kamizenData", JSON.stringify(userData));
 }
 
-// MOTOR DE VOZ
-function hablar(texto) {
+async function hablar(texto) {
     return new Promise(resolve => {
         if (!texto) return resolve();
         speechSynthesis.cancel();
         const msg = new SpeechSynthesisUtterance(texto);
         msg.lang = 'es-US';
-        msg.rate = 0.9;
+        msg.rate = 0.95;
+        msg.pitch = 1.0;
         msg.onend = () => resolve();
-        msg.onerror = () => resolve();
         speechSynthesis.speak(msg);
-        setTimeout(resolve, 8000); 
+        // Backup por si falla el evento onend
+        setTimeout(resolve, texto.length * 100); 
     });
 }
 
-// PANEL ADMIN: DOBLE CLICK EN LOGO
 logo.ondblclick = async () => {
-    const u = prompt("User:");
-    const p = prompt("Pass:");
+    const u = prompt("Admin User:");
+    const p = prompt("Password:");
     const res = await fetch("/admin_auth", {
         method: "POST", headers: {"Content-Type":"application/json"},
         body: JSON.stringify({user:u, pass_word:p})
     });
-
     if (res.ok) {
-        isAdmin = true;
-        const targetId = prompt("MODO ADMIN: ¿A qué ID de sesión quieres saltar? (1-70)");
+        const targetId = prompt("SALTO DE SESIÓN (1-70):");
         if (targetId) {
             userData.lastSessionId = parseInt(targetId) - 1;
             updateUI();
-            alert(`Sesión ajustada. Pulsa INICIAR para entrar a la ID ${targetId}`);
             location.reload();
         }
     }
 };
 
-// INICIAR SESIÓN (Lógica de Progresión)
 startBtn.onclick = async () => {
     startBtn.style.display = "none";
-    block.innerHTML = "<h3>SINCRONIZANDO SESIÓN...</h3>";
+    block.innerHTML = "<h3>SINCRONIZANDO...</h3>";
     
-    try {
-        const res = await fetch("/session_content");
-        const data = await res.json();
-        
-        // Determinar ID correlativa
-        let proximoId = userData.lastSessionId + 1;
-        let sesion = data.sesiones.find(s => s.id === proximoId);
+    const res = await fetch("/session_content");
+    const data = await res.json();
+    
+    let proximoId = userData.lastSessionId + 1;
+    let sesion = data.sesiones.find(s => s.id === proximoId) || data.sesiones[0];
 
-        // Si se acaban las sesiones (ej. llegas a la 71), vuelve a la 1
-        if (!sesion) {
-            sesion = data.sesiones[0];
-            userData.lastSessionId = 0;
-        }
-
-        if (sesion) {
-            bloques = sesion.bloques;
-            currentIdx = 0;
-            userData.lastSessionId = sesion.id;
-            updateUI();
-            
-            block.innerHTML = `<h3>SESIÓN ${sesion.id}</h3><p>Preparando entorno...</p>`;
-            setTimeout(renderBloque, 2000);
-        }
-    } catch (e) {
-        block.innerHTML = "<h3>ERROR DE CONEXIÓN</h3>";
-        startBtn.style.display = "block";
+    if (sesion) {
+        bloques = sesion.bloques;
+        currentIdx = 0;
+        userData.lastSessionId = sesion.id;
+        updateUI();
+        renderBloque();
     }
 };
 
 async function renderBloque() {
     const b = bloques[currentIdx];
-    if (!b) return;
+    if (!b) return finalizarSesion();
 
     skipFlag = false;
     block.innerHTML = "";
     nextBtn.style.display = "none";
     skipBtn.style.display = "block";
-    document.body.style.background = b.color || "#020617";
 
-    // Lector Universal (JSON Friendly)
-    const texto = b.texto || b.instrucciones || b.pregunta || "";
     if (b.titulo) block.innerHTML += `<h3>${b.titulo}</h3>`;
-    block.innerHTML += `<p>${texto}</p>`;
+    const textoPrincipal = b.texto || b.pregunta || "";
+    block.innerHTML += `<p>${textoPrincipal}</p>`;
 
-    await hablar(texto);
+    // El arma de voz inicia la instrucción
+    await hablar(textoPrincipal);
 
-    if (b.tipo === "respiracion") {
-        block.innerHTML += `<div class="breath-circle" id="circle"></div><h2 id="label"></h2>`;
-        const circle = document.getElementById("circle");
-        const label = document.getElementById("label");
-        for (let i = 0; i < (b.repeticiones || 2); i++) {
-            if (skipFlag) break;
-            label.innerText = "INHALA"; circle.style.transform = "scale(1.8)";
-            await hablar("Inhala"); await new Promise(r => setTimeout(r, 3000));
-            label.innerText = "RETÉN";
-            await hablar("Retén"); await new Promise(r => setTimeout(r, 2000));
-            label.innerText = "EXHALA"; circle.style.transform = "scale(1)";
-            await hablar("Exhala"); await new Promise(r => setTimeout(r, 3000));
-        }
-    } 
-    else if (b.tipo === "decision") {
+    if (b.tipo === "decision") {
         skipBtn.style.display = "none";
         b.opciones.forEach((opt, i) => {
             const btn = document.createElement("button");
             btn.className = "option-btn";
             btn.innerText = opt;
-            btn.onclick = async () => {
-                const esCorrecto = (i === b.correcta);
-                userData.disciplina += esCorrecto ? 10 : -15;
-                updateUI();
-                block.innerHTML = `<h3>${esCorrecto ? 'LOGRADO' : 'ERROR'}</h3><p>${b.explicacion}</p>`;
-                await hablar(b.explicacion);
-                finalizarPaso();
-            };
+            btn.onclick = () => procesarDecision(i, b);
             block.appendChild(btn);
         });
-        return;
+    } else {
+        // Bloque informativo o respiración
+        setTimeout(() => {
+            nextBtn.style.display = "block";
+            skipBtn.style.display = "none";
+        }, 2000);
     }
-
-    finalizarPaso();
 }
 
-function finalizarPaso() {
-    skipBtn.style.display = "none";
+async function procesarDecision(idxSeleccionado, bloque) {
+    const esCorrecto = (idxSeleccionado === bloque.correcta);
+    const feedbackClase = esCorrecto ? "feedback-correct" : "feedback-wrong";
+    
+    // Ajuste de niveles (Línea verde)
+    if (esCorrecto) {
+        userData.disciplina += 10;
+        userData.claridad += 5;
+    } else {
+        userData.disciplina -= 15;
+        userData.calma -= 10;
+    }
+    updateUI();
+
+    // Explicación detallada
+    const respuestaCorrectaTexto = bloque.opciones[bloque.correcta];
+    const mensajeExplicativo = `${esCorrecto ? 'EXCELENTE. ' : 'ERROR DE JUICIO. '} La opción correcta es: ${respuestaCorrectaTexto}. Por qué: ${bloque.explicacion}`;
+    
+    block.innerHTML = `
+        <h3 class="${feedbackClase}">${esCorrecto ? 'NIVEL LOGRADO' : 'NIVEL DISMINUIDO'}</h3>
+        <p style="font-size:16px;">${mensajeExplicativo}</p>
+    `;
+
+    // El arma de voz explica la razón del éxito o fallo
+    await hablar(mensajeExplicativo);
+    
     nextBtn.style.display = "block";
+}
+
+function finalizarSesion() {
+    block.innerHTML = "<h3>SESIÓN COMPLETADA</h3><p>Tu mente está más afilada hoy.</p>";
+    hablar("Sesión completada. Tu mente está más afilada hoy. Sigue así.");
+    setTimeout(() => location.reload(), 5000);
 }
 
 nextBtn.onclick = () => {
     currentIdx++;
-    if (currentIdx < bloques.length) renderBloque();
-    else {
-        block.innerHTML = "<h3>SESIÓN FINALIZADA</h3><p>Mente forjada.</p>";
-        nextBtn.style.display = "none";
-        setTimeout(() => location.reload(), 4000);
-    }
+    renderBloque();
 };
 
-skipBtn.onclick = () => {
+skipBtn.onclick = async () => {
     skipFlag = true;
     speechSynthesis.cancel();
     userData.disciplina = Math.max(0, userData.disciplina - 30);
     updateUI();
-    block.innerHTML = "<h3 style='color:red;'>DISCIPLINA ROTA</h3>";
-    setTimeout(finalizarPaso, 1500);
+    block.innerHTML = "<h3 style='color:#ef4444;'>DISCIPLINA ROTA</h3><p>Saltar el entrenamiento debilita el carácter.</p>";
+    await hablar("Disciplina rota. Saltar el entrenamiento debilita el carácter.");
+    setTimeout(() => { currentIdx++; renderBloque(); }, 2000);
 };
 
 updateUI();
