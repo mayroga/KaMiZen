@@ -1,0 +1,284 @@
+{
+  "sesiones": [
+    {
+      "id": 11,
+      "categoria": "gestion_estres",
+      "bloques": [
+        {"tipo":"voz","texto":"Hoy aprenderás a manejar el estrés de manera efectiva.","color":"#2563eb"},
+        {"tipo":"historia","texto":"Una persona aprendió a controlar su estrés y mejorar su calidad de vida.","color":"#34d399"},
+        {"tipo":"quiz","pregunta":"¿Qué ayuda a manejar el estrés?","opciones":["Respirar profundo","Ignorar problemas","Quejarse"],"correcta":0,"explicacion":"Respirar profundo activa relajación y control emocional.","recompensa":10,"color":"#facc15"},
+        {"tipo":"acertijo","pregunta":"Siempre corre pero nunca se cansa, ¿qué es?","opciones":["Río","Reloj","Viento"],"correcta":1,"explicacion":"El reloj.","recompensa":8,"color":"#f59e0b"},
+        {"tipo":"decision","pregunta":"Estás bajo presión, ¿qué eliges?","opciones":["Respirar y organizar","Reaccionar impulsivamente","Ignorar"],"correcta":0,"explicacion":"Respirar y organizar calma la mente y reduce estrés.","recompensa":12,"color":"#22c55e"},
+        {"tipo":"juego_mental","pregunta":"16 ÷ 4 = ?","opciones":["4","5","3"],"correcta":0,"explicacion":"16 ÷ 4 = 4","recompensa":7,"color":"#38bdf8"},
+        {
+          "tipo":"respiracion",
+          "texto":"Respira profundo y libera tensión interna.",
+          "duracion":30,
+          "color":"#60a5fa",
+          "tvid":{
+            "nombre":"Técnica del Beso (TDK)",
+            "descripcion":"Libera tensión emocional y fortalece equilibrio interno.",
+            "objetivo":"Reducir estrés y ansiedad de manera consciente.",
+            "instrucciones":"Inhala 4 segundos sintiendo paz interna. Exhala 6 segundos liberando tensión y estrés. Repite mientras visualizas calma y control.",
+            "duracion":30
+          }
+        },
+        {"tipo":"visualizacion","texto":"Visualiza situaciones estresantes transformadas en calma y control.","color":"#a78bfa"},
+        {"tipo":"recompensa","texto":"Tu manejo del estrés ha mejorado.","puntos":20,"color":"#10b981"},
+        {"tipo":"cierre","texto":"Cada respiración consciente reduce estrés y fortalece tu mente.","color":"#f87171"}
+      ]
+    },
+    {
+      "id": 12,
+      "categoria": "autoestima",
+      "bloques": [
+        {"tipo":"voz","texto":"Hoy reforzarás tu autoestima y amor propio.","color":"#2563eb"},
+        {"tipo":"historia","texto":"Una persona aceptó sus fortalezas y limitaciones y aumentó su confianza y autoestima.","color":"#34d399"},
+        {"tipo":"quiz","pregunta":"¿Qué mejora autoestima?","opciones":["Compararse","Aceptar fortalezas y debilidades","Criticarse"],"correcta":1,"explicacion":"Aceptar fortalezas y debilidades fortalece autoestima.","recompensa":10,"color":"#facc15"},
+        {"tipo":"acertijo","pregunta":"Lo tienes aunque no lo uses, ¿qué es?","opciones":["Talento","Nombre","Tiempo"],"correcta":1,"explicacion":"El nombre.","recompensa":8,"color":"#f59e0b"},
+        {"tipo":"decision","pregunta":"Te sientes inseguro, ¿qué haces?","opciones":["Recordar logros","Quejarte","Ignorar"],"correcta":0,"explicacion":"Recordar logros refuerza autoestima y seguridad.","recompensa":12,"color":"#22c55e"},
+        {"tipo":"juego_mental","pregunta":"18 ÷ 6 = ?","opciones":["3","2","4"],"correcta":0,"explicacion":"18 ÷ 6 = 3","recompensa":7,"color":"#38bdf8"},
+        {
+          "tipo":"respiracion",
+          "texto":"Respira profundo y conecta con tu valor interno.",
+          "duracion":30,
+          "color":"#60a5fa",
+          "tvid":{
+            "nombre":"Técnica del Padre (TDP)",
+            "descripcion":"Fortalece seguridad y confianza en uno mismo.",
+            "objetivo":"Incrementar autoestima y autovaloración.",
+            "instrucciones":"Inhala 4 segundos sintiendo tu fuerza y valor. Exhala 6 segundos liberando dudas e inseguridades. Repite mientras visualizas seguridad y confianza plena.",
+            "duracion":30
+          }
+        },
+        {"tipo":"visualizacion","texto":"Visualiza enfrentando desafíos con seguridad y confianza.","color":"#a78bfa"},
+        {"tipo":"recompensa","texto":"Tu autoestima ha crecido.","puntos":20,"color":"#10b981"},
+        {"tipo":"cierre","texto":"Cada acción de autovaloración fortalece tu confianza interna.","color":"#f87171"}
+      ]
+    },
+    {
+      "id": 13,
+      "categoria": "motivacion_salud",
+      "bloques": [
+        {"tipo":"voz","texto":"Hoy aumentarás motivación para hábitos saludables.","color":"#2563eb"},
+        {"tipo":"historia","texto":"Una persona cambió hábitos diarios y mejoró su salud y energía vital.","color":"#34d399"},
+        {"tipo":"quiz","pregunta":"¿Qué ayuda a mantener hábitos saludables?","opciones":["Constancia","Procrastinar","Ignorar"],"correcta":0,"explicacion":"La constancia refuerza hábitos saludables y bienestar.","recompensa":10,"color":"#facc15"},
+        {"tipo":"acertijo","pregunta":"Siempre llega pero nunca vuelve, ¿qué es?","opciones":["Mañana","Tiempo","Río"],"correcta":0,"explicacion":"El mañana.","recompensa":8,"color":"#f59e0b"},
+        {"tipo":"decision","pregunta":"Quieres mejorar salud, ¿qué eliges?","opciones":["Ejercicio diario","Evitar hábitos","Procrastinar"],"correcta":0,"explicacion":"El ejercicio diario mantiene energía y salud.","recompensa":12,"color":"#22c55e"},
+        {"tipo":"juego_mental","pregunta":"7 × 9 = ?","opciones":["63","65","60"],"correcta":0,"explicacion":"7 × 9 = 63","recompensa":7,"color":"#38bdf8"},
+        {
+          "tipo":"respiracion",
+          "texto":"Respira profundo y conecta con energía vital y bienestar.",
+          "duracion":30,
+          "color":"#60a5fa",
+          "tvid":{
+            "nombre":"Técnica del Niño (TDN)",
+            "descripcion":"Fomenta vitalidad, alegría y motivación para hábitos saludables.",
+            "objetivo":"Incrementar energía y motivación diaria.",
+            "instrucciones":"Inhala 4 segundos sintiendo vitalidad. Exhala 6 segundos liberando pereza y desmotivación. Repite mientras visualizas hábitos saludables y energía positiva.",
+            "duracion":30
+          }
+        },
+        {"tipo":"visualizacion","texto":"Visualiza hábitos saludables integrados a tu vida.","color":"#a78bfa"},
+        {"tipo":"recompensa","texto":"Tu motivación para la salud ha aumentado.","puntos":20,"color":"#10b981"},
+        {"tipo":"cierre","texto":"Cada acción positiva fortalece tu energía y bienestar.","color":"#f87171"}
+      ]
+    },
+    {
+      "id": 14,
+      "categoria": "gratitud",
+      "bloques": [
+        {"tipo":"voz","texto":"Hoy entrenarás gratitud y apreciación de la vida.","color":"#2563eb"},
+        {"tipo":"historia","texto":"Una persona enfocada en gratitud notó mayor felicidad y relaciones más sanas.","color":"#34d399"},
+        {"tipo":"quiz","pregunta":"¿Qué fortalece gratitud?","opciones":["Apreciar logros","Quejarse","Compararse"],"correcta":0,"explicacion":"Apreciar fortalezas y logros aumenta gratitud y felicidad.","recompensa":10,"color":"#facc15"},
+        {"tipo":"acertijo","pregunta":"Todos lo buscan pero pocos lo valoran, ¿qué es?","opciones":["Felicidad","Amor","Dinero"],"correcta":0,"explicacion":"La felicidad.","recompensa":8,"color":"#f59e0b"},
+        {"tipo":"decision","pregunta":"Recibes ayuda, ¿qué eliges?","opciones":["Agradecer sinceramente","Ignorar","Criticar"],"correcta":0,"explicacion":"Agradecer fortalece gratitud y relaciones.","recompensa":12,"color":"#22c55e"},
+        {"tipo":"juego_mental","pregunta":"20 ÷ 5 = ?","opciones":["4","5","3"],"correcta":0,"explicacion":"20 ÷ 5 = 4","recompensa":7,"color":"#38bdf8"},
+        {
+          "tipo":"respiracion",
+          "texto":"Respira profundo y conecta con gratitud interna.",
+          "duracion":30,
+          "color":"#60a5fa",
+          "tvid":{
+            "nombre":"Técnica del Beso (TDK)",
+            "descripcion":"Fomenta gratitud y emociones positivas conscientes.",
+            "objetivo":"Aumentar bienestar y apreciación de la vida.",
+            "instrucciones":"Inhala 4 segundos sintiendo gratitud por todo. Exhala 6 segundos liberando quejas y descontentos. Repite mientras visualizas agradecimiento profundo.",
+            "duracion":30
+          }
+        },
+        {"tipo":"visualizacion","texto":"Visualiza todos los aspectos positivos de tu vida y aprecia cada uno.","color":"#a78bfa"},
+        {"tipo":"recompensa","texto":"Tu gratitud ha aumentado.","puntos":20,"color":"#10b981"},
+        {"tipo":"cierre","texto":"Cada acto de gratitud fortalece felicidad y bienestar.","color":"#f87171"}
+      ]
+    },
+    {
+      "id": 15,
+      "categoria": "crecimiento_personal",
+      "bloques": [
+        {"tipo":"voz","texto":"Hoy entrenarás crecimiento personal y desarrollo continuo.","color":"#2563eb"},
+        {"tipo":"historia","texto":"Una persona aprendió diariamente y creció en habilidades, mente y carácter.","color":"#34d399"},
+        {"tipo":"quiz","pregunta":"¿Qué fortalece crecimiento personal?","opciones":["Aprender y reflexionar","Ignorar errores","Repetir lo mismo"],"correcta":0,"explicacion":"Aprender y reflexionar fortalece desarrollo personal.","recompensa":10,"color":"#facc15"},
+        {"tipo":"acertijo","pregunta":"Siempre crece pero nunca envejece, ¿qué es?","opciones":["Conocimiento","Planta","Edad"],"correcta":0,"explicacion":"El conocimiento.","recompensa":8,"color":"#f59e0b"},
+        {"tipo":"decision","pregunta":"Quieres mejorar habilidades, ¿qué eliges?","opciones":["Estudiar y practicar","Ignorar","Quejarte"],"correcta":0,"explicacion":"Estudiar y practicar fortalece crecimiento y desarrollo personal.","recompensa":12,"color":"#22c55e"},
+        {"tipo":"juego_mental","pregunta":"9 × 8 = ?","opciones":["72","70","74"],"correcta":0,"explicacion":"9 × 8 = 72","recompensa":7,"color":"#38bdf8"},
+        {
+          "tipo":"respiracion",
+          "texto":"Respira profundo y conecta con tu desarrollo personal.",
+          "duracion":30,
+          "color":"#60a5fa",
+          "tvid":{
+            "nombre":"Técnica del Niño (TDN)",
+            "descripcion":"Fomenta curiosidad, aprendizaje y crecimiento consciente.",
+            "objetivo":"Incrementar desarrollo personal y habilidades internas.",
+            "instrucciones":"Inhala 4 segundos sintiendo deseo de aprender. Exhala 6 segundos liberando dudas y bloqueos. Repite mientras visualizas crecimiento personal constante.",
+            "duracion":30
+          }
+        },
+        {"tipo":"visualizacion","texto":"Visualiza aprendiendo y mejorando cada día.","color":"#a78bfa"},
+        {"tipo":"recompensa","texto":"Tu crecimiento personal ha aumentado.","puntos":20,"color":"#10b981"},
+        {"tipo":"cierre","texto":"Cada acción de aprendizaje fortalece tu desarrollo y carácter.","color":"#f87171"}
+      ]
+    },
+    {
+      "id": 16,
+      "categoria": "gestion_tiempo",
+      "bloques": [
+        {"tipo":"voz","texto":"Hoy mejorarás tu gestión del tiempo y productividad.","color":"#2563eb"},
+        {"tipo":"historia","texto":"Una persona organizó su tiempo eficientemente y logró objetivos importantes.","color":"#34d399"},
+        {"tipo":"quiz","pregunta":"¿Qué mejora gestión del tiempo?","opciones":["Planificar tareas","Procrastinar","Ignorar prioridades"],"correcta":0,"explicacion":"Planificar y organizar mejora productividad y gestión del tiempo.","recompensa":10,"color":"#facc15"},
+        {"tipo":"acertijo","pregunta":"Lo tienes 24 horas al día pero debes administrarlo, ¿qué es?","opciones":["Tiempo","Dinero","Energía"],"correcta":0,"explicacion":"El tiempo.","recompensa":8,"color":"#f59e0b"},
+        {"tipo":"decision","pregunta":"Tienes muchas tareas, ¿qué eliges?","opciones":["Priorizar y planificar","Hacer todo sin orden","Ignorar"],"correcta":0,"explicacion":"Priorizar y planificar fortalece eficiencia y control.","recompensa":12,"color":"#22c55e"},
+        {"tipo":"juego_mental","pregunta":"15 × 3 = ?","opciones":["45","40","50"],"correcta":0,"explicacion":"15 × 3 = 45","recompensa":7,"color":"#38bdf8"},
+        {
+          "tipo":"respiracion",
+          "texto":"Respira profundo y organiza tu mente para el tiempo.",
+          "duracion":30,
+          "color":"#60a5fa",
+          "tvid":{
+            "nombre":"Técnica del Bien (TDB)",
+            "descripcion":"Fomenta claridad mental y control del tiempo.",
+            "objetivo":"Mejorar planificación y gestión eficiente de tareas.",
+            "instrucciones":"Inhala 4 segundos sintiendo claridad. Exhala 6 segundos liberando distracciones. Repite mientras visualizas tiempo organizado y eficiente.",
+            "duracion":30
+          }
+        },
+        {"tipo":"visualizacion","texto":"Visualiza tus tareas organizadas y ejecutadas eficientemente.","color":"#a78bfa"},
+        {"tipo":"recompensa","texto":"Tu gestión del tiempo ha mejorado.","puntos":20,"color":"#10b981"},
+        {"tipo":"cierre","texto":"Cada planificación consciente fortalece eficiencia y control de tiempo.","color":"#f87171"}
+      ]
+    },
+    {
+      "id": 17,
+      "categoria": "autocontrol",
+      "bloques": [
+        {"tipo":"voz","texto":"Hoy reforzarás autocontrol y regulación emocional.","color":"#2563eb"},
+        {"tipo":"historia","texto":"Una persona aprendió a regular impulsos y emociones, mejorando relaciones y decisiones.","color":"#34d399"},
+        {"tipo":"quiz","pregunta":"¿Qué fortalece autocontrol?","opciones":["Respirar y reflexionar","Reaccionar impulsivamente","Ignorar emociones"],"correcta":0,"explicacion":"Respirar y reflexionar refuerza autocontrol y decisiones conscientes.","recompensa":10,"color":"#facc15"},
+        {"tipo":"acertijo","pregunta":"Siempre presente pero no se toca, ¿qué es?","opciones":["Emoción","Tiempo","Pensamiento"],"correcta":0,"explicacion":"La emoción.","recompensa":8,"color":"#f59e0b"},
+        {"tipo":"decision","pregunta":"Te enojas fácilmente, ¿qué haces?","opciones":["Respirar y calmar","Gritar","Ignorar"],"correcta":0,"explicacion":"Respirar y calmar regula emociones y fortalece autocontrol.","recompensa":12,"color":"#22c55e"},
+        {"tipo":"juego_mental","pregunta":"13 × 5 = ?","opciones":["65","60","70"],"correcta":0,"explicacion":"13 × 5 = 65","recompensa":7,"color":"#38bdf8"},
+        {
+          "tipo":"respiracion",
+          "texto":"Respira profundo y conecta con tu autocontrol interno.",
+          "duracion":30,
+          "color":"#60a5fa",
+          "tvid":{
+            "nombre":"Técnica de la Madre (TDMM)",
+            "descripcion":"Fomenta control emocional y serenidad consciente.",
+            "objetivo":"Mejorar regulación de impulsos y emociones.",
+            "instrucciones":"Inhala 4 segundos sintiendo calma. Exhala 6 segundos liberando impulsos negativos. Repite mientras visualizas autocontrol y serenidad.",
+            "duracion":30
+          }
+        },
+        {"tipo":"visualizacion","texto":"Visualiza reaccionando con calma y control ante cualquier situación.","color":"#a78bfa"},
+        {"tipo":"recompensa","texto":"Tu autocontrol ha mejorado.","puntos":20,"color":"#10b981"},
+        {"tipo":"cierre","texto":"Cada respiración consciente fortalece tu regulación emocional.","color":"#f87171"}
+      ]
+    },
+    {
+      "id": 18,
+      "categoria": "flexibilidad_mental",
+      "bloques": [
+        {"tipo":"voz","texto":"Hoy entrenarás flexibilidad mental y adaptabilidad.","color":"#2563eb"},
+        {"tipo":"historia","texto":"Una persona se adaptó a cambios inesperados y mejoró su resiliencia y creatividad.","color":"#34d399"},
+        {"tipo":"quiz","pregunta":"¿Qué aumenta flexibilidad mental?","opciones":["Aceptar cambios","Resistirse","Ignorar"],"correcta":0,"explicacion":"Aceptar cambios y adaptarse fortalece flexibilidad y resiliencia.","recompensa":10,"color":"#facc15"},
+        {"tipo":"acertijo","pregunta":"Se mueve pero no tiene patas, ¿qué es?","opciones":["Río","Tiempo","Viento"],"correcta":0,"explicacion":"El río.","recompensa":8,"color":"#f59e0b"},
+        {"tipo":"decision","pregunta":"Situación inesperada, ¿qué eliges?","opciones":["Adaptarte y buscar soluciones","Quejarte","Ignorar"],"correcta":0,"explicacion":"Adaptarte y buscar soluciones refuerza resiliencia y creatividad.","recompensa":12,"color":"#22c55e"},
+        {"tipo":"juego_mental","pregunta":"12 × 7 = ?","opciones":["84","82","85"],"correcta":0,"explicacion":"12 × 7 = 84","recompensa":7,"color":"#38bdf8"},
+        {
+          "tipo":"respiracion",
+          "texto":"Respira profundo y conecta con flexibilidad mental.",
+          "duracion":30,
+          "color":"#60a5fa",
+          "tvid":{
+            "nombre":"Técnica de la Guerra (TDG)",
+            "descripcion":"Potencia adaptabilidad y control emocional frente a cambios.",
+            "objetivo":"Incrementar resiliencia y creatividad.",
+            "instrucciones":"Inhala 4 segundos sintiendo apertura mental. Exhala 6 segundos liberando rigidez. Repite mientras visualizas flexibilidad y soluciones creativas.",
+            "duracion":30
+          }
+        },
+        {"tipo":"visualizacion","texto":"Visualiza adaptándote con éxito a situaciones inesperadas.","color":"#a78bfa"},
+        {"tipo":"recompensa","texto":"Tu flexibilidad mental ha aumentado.","puntos":20,"color":"#10b981"},
+        {"tipo":"cierre","texto":"Cada respiración consciente fortalece adaptabilidad y resiliencia.","color":"#f87171"}
+      ]
+    },
+    {
+      "id": 19,
+      "categoria": "concentracion",
+      "bloques": [
+        {"tipo":"voz","texto":"Hoy mejorarás concentración y enfoque.","color":"#2563eb"},
+        {"tipo":"historia","texto":"Una persona enfocó su atención y logró objetivos con mayor rapidez y precisión.","color":"#34d399"},
+        {"tipo":"quiz","pregunta":"¿Qué aumenta concentración?","opciones":["Meditación y enfoque","Distracciones","Procrastinar"],"correcta":0,"explicacion":"Meditación y enfoque fortalece concentración y rendimiento.","recompensa":10,"color":"#facc15"},
+        {"tipo":"acertijo","pregunta":"Se enfoca pero no ve, ¿qué es?","opciones":["Lente","Tiempo","Río"],"correcta":0,"explicacion":"El lente.","recompensa":8,"color":"#f59e0b"},
+        {"tipo":"decision","pregunta":"Tarea importante, ¿qué eliges?","opciones":["Concentrarte plenamente","Hacerlo a medias","Ignorar"],"correcta":0,"explicacion":"Concentrarse plenamente asegura mejores resultados y eficiencia.","recompensa":12,"color":"#22c55e"},
+        {"tipo":"juego_mental","pregunta":"8 × 9 = ?","opciones":["72","70","74"],"correcta":0,"explicacion":"8 × 9 = 72","recompensa":7,"color":"#38bdf8"},
+        {
+          "tipo":"respiracion",
+          "texto":"Respira profundo y conecta con tu concentración interna.",
+          "duracion":30,
+          "color":"#60a5fa",
+          "tvid":{
+            "nombre":"Técnica del Bien (TDB)",
+            "descripcion":"Fomenta enfoque y atención consciente.",
+            "objetivo":"Mejorar concentración y eficiencia en tareas.",
+            "instrucciones":"Inhala 4 segundos sintiendo foco interno. Exhala 6 segundos liberando distracciones. Repite mientras visualizas atención plena y claridad.",
+            "duracion":30
+          }
+        },
+        {"tipo":"visualizacion","texto":"Visualiza completando tareas con máxima concentración.","color":"#a78bfa"},
+        {"tipo":"recompensa","texto":"Tu concentración ha mejorado.","puntos":20,"color":"#10b981"},
+        {"tipo":"cierre","texto":"Cada respiración consciente fortalece tu enfoque y claridad mental.","color":"#f87171"}
+      ]
+    },
+    {
+      "id": 20,
+      "categoria": "optimismo",
+      "bloques": [
+        {"tipo":"voz","texto":"Hoy entrenarás optimismo y pensamiento positivo.","color":"#2563eb"},
+        {"tipo":"historia","texto":"Una persona enfocó su mente en aspectos positivos y mejoró su bienestar general y relaciones.","color":"#34d399"},
+        {"tipo":"quiz","pregunta":"¿Qué refuerza optimismo?","opciones":["Pensamiento positivo","Criticar","Quejarse"],"correcta":0,"explicacion":"Pensamiento positivo refuerza optimismo y bienestar.","recompensa":10,"color":"#facc15"},
+        {"tipo":"acertijo","pregunta":"Se busca para ser feliz pero no se compra, ¿qué es?","opciones":["Actitud","Dinero","Fama"],"correcta":0,"explicacion":"La actitud positiva.","recompensa":8,"color":"#f59e0b"},
+        {"tipo":"decision","pregunta":"Día difícil, ¿qué eliges?","opciones":["Ver lo positivo","Quejarse","Ignorar"],"correcta":0,"explicacion":"Ver lo positivo fortalece optimismo y bienestar.","recompensa":12,"color":"#22c55e"},
+        {"tipo":"juego_mental","pregunta":"6 × 12 = ?","opciones":["72","70","74"],"correcta":0,"explicacion":"6 × 12 = 72","recompensa":7,"color":"#38bdf8"},
+        {
+          "tipo":"respiracion",
+          "texto":"Respira profundo y conecta con optimismo interno.",
+          "duracion":30,
+          "color":"#60a5fa",
+          "tvid":{
+            "nombre":"Técnica del Padre (TDP)",
+            "descripcion":"Fomenta actitud positiva y optimismo consciente.",
+            "objetivo":"Incrementar pensamiento positivo y bienestar emocional.",
+            "instrucciones":"Inhala 4 segundos sintiendo alegría y optimismo. Exhala 6 segundos liberando negatividad. Repite mientras visualizas éxito y bienestar.",
+            "duracion":30
+          }
+        },
+        {"tipo":"visualizacion","texto":"Visualiza cada día con optimismo y positividad.","color":"#a78bfa"},
+        {"tipo":"recompensa","texto":"Tu optimismo ha aumentado.","puntos":20,"color":"#10b981"},
+        {"tipo":"cierre","texto":"Cada respiración consciente fortalece tu actitud positiva y bienestar.","color":"#f87171"}
+      ]
+    }
+  ]
+}
