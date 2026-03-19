@@ -12,8 +12,11 @@ let i = 0;
 const MAX = 10;
 
 
+// =========================
+// VOZ
+// =========================
 
-function playVoice(t) {
+function speak(t) {
 
     return new Promise(r => {
 
@@ -32,8 +35,11 @@ function playVoice(t) {
 }
 
 
+// =========================
+// RESPIRACION
+// =========================
 
-function breathing(sec = 20) {
+function respirar(sec) {
 
     block.innerHTML = "";
 
@@ -65,6 +71,9 @@ function breathing(sec = 20) {
 }
 
 
+// =========================
+// MOSTRAR BLOQUE UNIVERSAL
+// =========================
 
 async function show(b) {
 
@@ -76,36 +85,39 @@ async function show(b) {
     if (!b) {
 
         restartBtn.style.display = "block";
-
         return;
 
     }
 
-    let t = b.texto || "";
+    if (b.color) {
 
-
-
-    if (b.tipo === "respiracion") {
-
-        block.innerHTML = t;
-
-        await playVoice(t);
-
-        breathing(b.duracion || 20);
-
-        return;
+        document.body.style.background = b.color;
 
     }
 
+    // TEXTO
 
+    if (b.texto) {
 
-    if (b.tipo === "quiz" ||
-        b.tipo === "decision" ||
-        b.tipo === "juego_mental") {
+        block.innerHTML += `<p>${b.texto}</p>`;
 
-        block.innerHTML = "<h3>" + b.pregunta + "</h3>";
+        await speak(b.texto);
 
-        await playVoice(b.pregunta);
+    }
+
+    // PREGUNTA
+
+    if (b.pregunta) {
+
+        block.innerHTML += `<h3>${b.pregunta}</h3>`;
+
+        await speak(b.pregunta);
+
+    }
+
+    // OPCIONES
+
+    if (b.opciones) {
 
         b.opciones.forEach((o, k) => {
 
@@ -124,31 +136,24 @@ async function show(b) {
         });
 
         return;
-
     }
 
+    // RESPIRACION
 
+    if (b.duracion) {
+
+        respirar(b.duracion);
+
+        return;
+    }
+
+    // CIERRE
 
     if (b.tipo === "cierre") {
-
-        block.innerHTML = t;
-
-        await playVoice(t);
 
         restartBtn.style.display = "block";
 
         return;
-
-    }
-
-
-
-    block.innerHTML = t;
-
-    if (t) {
-
-        await playVoice(t);
-
     }
 
     nextBtn.style.display = "block";
@@ -156,6 +161,9 @@ async function show(b) {
 }
 
 
+// =========================
+// NEXT BLOQUE
+// =========================
 
 function next() {
 
@@ -174,6 +182,9 @@ function next() {
 }
 
 
+// =========================
+// NEXT SESSION
+// =========================
 
 function nextSession() {
 
@@ -191,6 +202,9 @@ function nextSession() {
 }
 
 
+// =========================
+// LOAD SESSION
+// =========================
 
 async function load() {
 
@@ -211,6 +225,9 @@ async function load() {
 }
 
 
+// =========================
+// BOTONES
+// =========================
 
 startBtn.onclick = () => {
 
