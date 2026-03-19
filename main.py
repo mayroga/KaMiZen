@@ -9,8 +9,6 @@ import pytz
 from pathlib import Path
 
 app = FastAPI()
-
-# Configuración de Rutas
 BASE_DIR = Path(__file__).resolve().parent
 STATIC_DIR = BASE_DIR / "static"
 DB_PATH = STATIC_DIR / "kamizen_content.json"
@@ -25,14 +23,9 @@ class AdminAuth(BaseModel):
 def get_status():
     ahora = datetime.now(MIAMI_TZ)
     h, m = ahora.hour, ahora.minute
-    # Ventanas: 10:00-10:30 y 18:00-18:30
     is_open = (h == 10 and 0 <= m < 30) or (h == 18 and 0 <= m < 30)
     proxima = "10:00 AM" if h < 10 else ("06:00 PM" if h < 18 else "Mañana 10:00 AM")
-    return {
-        "is_open": is_open,
-        "next": proxima,
-        "mins_left": 30 - m if is_open else 0
-    }
+    return {"is_open": is_open, "next": proxima, "mins_left": 30 - m if is_open else 0}
 
 @app.get("/", response_class=HTMLResponse)
 async def home():
@@ -41,6 +34,7 @@ async def home():
 
 @app.post("/admin_auth")
 async def admin_login(auth: AdminAuth):
+    # Asegúrate de configurar estas variables en Render
     if auth.user == os.getenv("ADMIN_USERNAME") and auth.pass_word == os.getenv("ADMIN_PASSWORD"):
         return {"status": "authorized"}
     raise HTTPException(status_code=401)
