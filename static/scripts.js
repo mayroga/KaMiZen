@@ -4,196 +4,182 @@ const restartBtn = document.getElementById("restart-btn");
 const block = document.getElementById("block");
 
 let bloques = [];
-let i = 0;
+let current = 0;
+let puntos = 0;
 
-let fileIdx = 0;
-let sesionIdx = 0;
+/* DATOS USUARIO */
+let userData = JSON.parse(localStorage.getItem("kamizenData")) || {
+    streak: 0,
+    lastDay: null,
+    nivel: 1,
+    disciplina: 40,
+    claridad: 50,
+    calma: 30
+};
 
-let totalSesiones = 0;
+/* PANEL */
+const streakEl = document.getElementById("streak");
+const levelEl = document.getElementById("level");
+const discBar = document.getElementById("disciplina-bar");
+const clarBar = document.getElementById("claridad-bar");
+const calmBar = document.getElementById("calma-bar");
 
+function updatePanel(){
+    streakEl.innerHTML = "🔥 Racha: "+userData.streak+" días";
+    levelEl.innerHTML = "Nivel KaMiZen: "+userData.nivel;
+    discBar.style.width = userData.disciplina+"%";
+    clarBar.style.width = userData.claridad+"%";
+    calmBar.style.width = userData.calma+"%";
+}
+updatePanel();
 
-
-function speak(t){
-return new Promise(r=>{
-speechSynthesis.cancel()
-let m=new SpeechSynthesisUtterance(t)
-m.lang="es-ES"
-m.onend=r
-speechSynthesis.speak(m)
-})
+/* RACHA DIARIA */
+function updateStreak(){
+    let today = new Date().toDateString();
+    if(userData.lastDay !== today){
+        userData.streak += 1;
+        userData.lastDay = today;
+    }
 }
 
-
-
-function respirar(sec){
-
-let c=document.createElement("div")
-c.className="breath-circle"
-
-block.appendChild(c)
-
-let b=true
-
-let inter=setInterval(()=>{
-
-c.style.transform=b?"scale(1.6)":"scale(1)"
-
-b=!b
-
-},4000)
-
-setTimeout(()=>{
-
-clearInterval(inter)
-
-nextBtn.style.display="block"
-
-},sec*1000)
-
+/* VOZ */
+function playVoice(text){
+    return new Promise(resolve=>{
+        speechSynthesis.cancel();
+        let msg = new SpeechSynthesisUtterance(text);
+        msg.lang = "es-ES";
+        msg.rate = 0.9;
+        msg.onend = resolve;
+        speechSynthesis.speak(msg);
+    });
 }
 
-
-
-async function show(b){
-
-block.innerHTML=""
-
-nextBtn.style.display="none"
-restartBtn.style.display="none"
-
-if(!b){
-restartBtn.style.display="block"
-return
+/* RESPIRACION */
+function breathingAnimation(){
+    let circle = document.createElement("div");
+    circle.className = "breath-circle";
+    block.appendChild(circle);
+    let inhale=true;
+    setInterval(()=>{
+        circle.style.transform = inhale ? "scale(1.6)" : "scale(1)";
+        inhale = !inhale;
+    },4000);
 }
 
-if(b.color){
-document.body.style.background=b.color
+/* OPCIONES */
+function createOptions(b){
+    b.opciones.forEach((op,i)=>{
+        let btn = document.createElement("button");
+        btn.innerText = op;
+        btn.onclick = ()=>{
+            if(i === b.correcta){
+                puntos += b.recompensa||5;
+                userData.disciplina += 2;
+                userData.claridad += 2;
+                alert("Correcto: "+b.explicacion);
+            } else {
+                userData.calma += 1;
+                alert("Respuesta: "+b.explicacion);
+            }
+            updatePanel();
+            nextBtn.style.display = "inline-block";
+        };
+        block.appendChild(btn);
+    });
 }
 
-if(b.texto){
+/* BLOQUE */
+async function showBlock(b){
+    block.innerHTML = "";
+    document.body.style.background = b.color||"#0f172a";
 
-let p=document.createElement("p")
-p.innerText=b.texto
-block.appendChild(p)
+    if(b.texto){
+        block.innerHTML = "<p>"+b.texto+"</p>";
+        await playVoice(b.texto);
+    }
 
-await speak(b.texto)
+    switch(b.tipo){
+        case "quiz":
+        case "acertijo":
+        case "decision":
+        case "juego_mental":
+            block.innerHTML = "<h3>"+b.pregunta+"</h3>";
+            createOptions(b);
+            await playVoice(b.pregunta);
+            break;
+        case "respiracion":
+            breathingAnimation();
+            await playVoice(b.texto);
+            setTimeout(()=>{ nextBtn.style.display = "inline-block"; },30000);
+            return;
+        case "recompensa":
+            userData.disciplina+=3;
+            userData.claridad+=3;
+            userData.calma+=3;
+            block.innerHTML="<h2>"+b.texto+"</h2>";
+            await playVoice(b.texto);
+            break;
+        case "cierre":
+            updateStreak();
+            puntos += 10;
+            if(puntos > 50) userData.nivel +=1;
+
+            // Guardar sesión completada
+            let completed = JSON.parse(localStorage.getItem("completedSessions")) || [];
+            completed.push(currentSessionIndex); // nuevo índice
+            localStorage.setItem("completedSessions", JSON.stringify(completed));
+
+            localStorage.setItem("kamizenData", JSON.stringify(userData));
+            updatePanel();
+            restartBtn.style.display = "inline-block";
+            await playVoice(b.texto);
+            return;
+    }
+
+    setTimeout(()=>{ nextBtn.style.display="inline-block"; },4000);
 }
 
-if(b.pregunta){
-
-let h=document.createElement("h3")
-h.innerText=b.pregunta
-block.appendChild(h)
-
-await speak(b.pregunta)
-}
-
-if(b.opciones){
-
-b.opciones.forEach(o=>{
-
-let btn=document.createElement("button")
-
-btn.innerText=o
-
-btn.onclick=()=>{
-nextBtn.style.display="block"
-}
-
-block.appendChild(btn)
-
-})
-
-return
-}
-
-if(b.tipo==="respiracion"){
-
-respirar(b.duracion || 20)
-
-return
-}
-
-if(b.tipo==="cierre"){
-
-restartBtn.style.display="block"
-
-return
-}
-
-nextBtn.style.display="block"
-
-}
-
-
-
+/* SIGUIENTE */
 function nextBlock(){
-
-i++
-
-if(i < bloques.length){
-
-show(bloques[i])
-
-}else{
-
-nextSession()
-
+    nextBtn.style.display="none";
+    current++;
+    if(current < bloques.length){
+        showBlock(bloques[current]);
+    } else {
+        restartBtn.style.display="inline-block";
+    }
 }
 
-}
+/* INICIO */
+let currentSessionIndex = 0;
 
+startBtn.addEventListener("click", async ()=>{
+    startBtn.style.display = "none";
 
+    const res = await fetch("/session_content");
+    const data = await res.json();
+    const sesiones = data.sesiones;
 
-function nextSession(){
+    // Recuperar sesiones completadas
+    let completed = JSON.parse(localStorage.getItem("completedSessions")) || [];
 
-sesionIdx++
+    // Filtrar sesiones no completadas
+    let availableIndices = sesiones.map((_,i)=>i).filter(i => !completed.includes(i));
 
-if(sesionIdx >= totalSesiones){
+    if(availableIndices.length === 0){
+        // Reiniciar todas las sesiones si ya completó todas
+        localStorage.removeItem("completedSessions");
+        availableIndices = sesiones.map((_,i)=>i);
+    }
 
-sesionIdx = 0
-fileIdx++
+    // Elegir aleatoriamente una sesión disponible
+    currentSessionIndex = availableIndices[Math.floor(Math.random()*availableIndices.length)];
+    bloques = sesiones[currentSessionIndex].bloques;
+    current = 0;
 
-}
+    updateStreak();
+    showBlock(bloques[0]);
+});
 
-load()
-
-}
-
-
-
-async function load(){
-
-block.innerHTML="Cargando..."
-
-let r = await fetch(
-`/session_content?file_idx=${fileIdx}&sesion_idx=${sesionIdx}`
-)
-
-let d = await r.json()
-
-bloques = d.bloques
-totalSesiones = d.total
-
-i = 0
-
-show(bloques[0])
-
-}
-
-
-
-startBtn.onclick=()=>{
-
-startBtn.style.display="none"
-
-fileIdx = 0
-sesionIdx = 0
-
-load()
-
-}
-
-nextBtn.onclick=nextBlock
-
-restartBtn.onclick=()=>location.reload()
+nextBtn.addEventListener("click", nextBlock);
+restartBtn.addEventListener("click", ()=>location.reload());
