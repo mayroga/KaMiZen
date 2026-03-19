@@ -362,6 +362,7 @@
       "id": 23,
       "bloques":[
         {"tipo":"voz","texto":"Hoy trabajaremos en concentración y enfoque prolongado.","color":"#2563eb"},
+        {"tipo":"respiracion","texto":"Respira profundo y relaja.","duracion":30,"color":"#60a5fa"},
         {"tipo":"historia","texto":"Un estudiante estudió todos los días 30 minutos más que los demás y logró ser el mejor de su clase.","color":"#34d399"},
         {"tipo":"quiz","pregunta":"¿Cuál es la mejor forma de mantener enfoque?","opciones":["Multitasking","Descansos programados","Escuchar música fuerte"],"correcta":1,"explicacion":"Los descansos ayudan a mantener la atención alta.","recompensa":10,"color":"#facc15"},
         {"tipo":"acertijo","pregunta":"Un hombre tiene 3 sombreros rojos y 2 azules. Si se pone uno al azar, ¿cuál es la probabilidad de que sea rojo?","opciones":["60%","40%","50%"],"correcta":0,"explicacion":"3 de 5 son rojos → 60%.","recompensa":8,"color":"#f59e0b"},
