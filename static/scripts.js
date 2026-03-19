@@ -187,6 +187,9 @@ startBtn.onclick=()=>{
 
 startBtn.style.display="none"
 
+fileIdx = 0
+sesionIdx = 0
+
 load()
 
 }
