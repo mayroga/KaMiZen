@@ -4,102 +4,54 @@ from fastapi.staticfiles import StaticFiles
 import json
 import os
 
-app = FastAPI(title="KaMiZen Engine")
+app = FastAPI(title="KaMiZen NeuroGame Engine")
 
-STATIC_DIR = "static"
-DB_PATH = os.path.join(STATIC_DIR, "kamizen_content.json")
+# ==============================
+# STATIC FILES
+# ==============================
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
-app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
-
-
-# -------------------------
-# CARGAR JSON SIEMPRE NUEVO
-# -------------------------
+# ==============================
+# CARGAR BASE DE CONTENIDO
+# ==============================
+DB_PATH = "static/kamizen_content.json"
 
 def cargar_db():
-
     try:
-
-        if not os.path.exists(DB_PATH):
-
-            return {"sesiones": []}
-
         with open(DB_PATH, "r", encoding="utf-8") as f:
-
             data = json.load(f)
-
         if "sesiones" not in data:
-
             return {"sesiones": []}
-
         return data
-
     except Exception as e:
-
-        print("ERROR JSON:", e)
-
+        print("Error cargando kamizen_content.json:", e)
         return {"sesiones": []}
 
+db = cargar_db()
 
-# -------------------------
-# HOME
-# -------------------------
-
+# ==============================
+# RUTA PRINCIPAL
+# ==============================
 @app.get("/", response_class=HTMLResponse)
 async def home():
-
     try:
-
-        with open(
-            os.path.join(STATIC_DIR, "session.html"),
-            "r",
-            encoding="utf-8"
-        ) as f:
-
+        with open("static/session.html", "r", encoding="utf-8") as f:
             return HTMLResponse(f.read())
+    except Exception as e:
+        return HTMLResponse(f"<h1>Error cargando interfaz</h1><p>{e}</p>")
 
-    except:
-
-        return HTMLResponse(
-            "<h1>Error cargando session.html</h1>"
-        )
-
-
-# -------------------------
-# API SESIONES
-# -------------------------
-
+# ==============================
+# CONTENIDO DE SESION
+# ==============================
 @app.get("/session_content")
 async def session_content():
-
-    db = cargar_db()
-
     sesiones = db.get("sesiones", [])
+    # devolvemos todas las sesiones, el cliente decide cuál no ha completado
+    return JSONResponse({"sesiones": sesiones})
 
-    return JSONResponse({
-
-        "sesiones": sesiones,
-
-        "total": len(sesiones)
-
-    })
-
-
-# -------------------------
+# ==============================
 # HEALTH CHECK
-# -------------------------
-
+# ==============================
 @app.get("/health")
 async def health():
-
-    return {
-
-        "status": "ok",
-
-        "engine": "kamizen",
-
-        "sesiones": len(
-            cargar_db().get("sesiones", [])
-        )
-
-    }
+    return {"status": "ok"}
