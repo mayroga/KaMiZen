@@ -1,1045 +1,772 @@
 {
   "sesiones": [
-    {
-      "id": 1,
-      "categoria": "El Código del Respeto",
-      "bloques": [
-        {"tipo":"voz","texto":"El respeto no se pide, se impone con tu presencia. Hoy entenderás por qué los leones no necesitan rugir para que la selva sepa quién manda.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala autoridad, retén presencia, exhala calma","tiempos":{"inhalar":6,"retener":6,"exhalar":6},"repeticiones":5,"voz_guia":["Inhala autoridad","Retén presencia","Exhala calma"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"El Silencio de Rockefeller","texto":"Cuentan que en las reuniones, John D. Rockefeller permanecía en silencio absoluto mientras los demás discutían. Cuando todos terminaban, él decía una sola frase que cambiaba todo el rumbo del negocio. No hablaba más, hablaba mejor.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Estás en una mesa de negocios. Alguien intenta interrumpirte constantemente para demostrar que sabe más que tú.","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Te callas y lo dejas quedar en evidencia solo, o lo cortas de inmediato con autoridad?","opciones":["Dejar que se hunda solo","Cortarlo con autoridad"],"correcta":0,"explicacion":"El que mucho habla, mucho yerra. Deja que agote su munición. Tu silencio lo pondrá nervioso y te dará el control.","recompensa":40,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si en una sala hay 5 personas y tú eres el que menos habla pero el que más anota, ¿quién tiene el mapa de la situación?","opciones":["Yo","El que más habla"],"correcta":0,"explicacion":"La información es poder. Escuchar es espiar con permiso.","recompensa":25,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"Ponte de pie. Estira la espalda y mantén la barbilla paralela al suelo por 60 segundos. Siente cómo cambia tu química interna.","duracion":60,"color":"#8b5cf6"},
-        {"tipo":"escribir","texto":"Reflexiona y escribe sobre una situación reciente donde sentiste que tu autoridad fue cuestionada. No se guardará, solo para ti.","placeholder":"Escribe si deseas...","color":"#f97316"},
-        {"tipo":"tvid","nombre":"Técnica del Bien","instrucciones":"Identifica un pensamiento positivo que te haya dado fuerza hoy y respáldalo con una acción concreta.","color":"#14b8a6"},
-        {"tipo":"reflexion","texto":"La gente recuerda cómo los hiciste sentir, no lo que dijiste. Proyecta seguridad y el mundo se apartará para dejarte pasar.","color":"#ef4444"}
-      ]
-    },
-    {
-      "id": 2,
-      "categoria": "Dominio de la Voluntad",
-      "bloques": [
-        {"tipo":"voz","texto":"Tu fuerza interior es invisible pero palpable. Hoy aprenderás a proyectarla sin necesidad de demostración.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala control, retén firmeza, exhala tranquilidad","tiempos":{"inhalar":5,"retener":5,"exhalar":5},"repeticiones":6,"voz_guia":["Inhala control","Retén firmeza","Exhala tranquilidad"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"La Fortaleza de Churchill","texto":"Winston Churchill enfrentó las decisiones más difíciles con calma y resolución. Su secreto: la voluntad de mantener la postura, aunque el mundo entero dudara.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Un colega intenta persuadirte para cambiar de opinión rápidamente. ¿Cómo respondes?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Cedes y aceptas la presión o mantienes tu postura con calma?","opciones":["Ceder momentáneamente","Mantener postura"],"correcta":1,"explicacion":"La firmeza interior define la autoridad. No todo impulso externo requiere reacción.","recompensa":45,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si te proponen 3 opciones, y solo una coincide con tus valores, ¿cuál eliges sin vacilar?","opciones":["La que coincide","Cualquiera"],"correcta":0,"explicacion":"Tomar decisiones alineadas con tus principios refuerza tu poder interno.","recompensa":30,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"Cierra los ojos, mantén la espalda recta y lleva los hombros hacia atrás lentamente durante 1 minuto. Siente la fuerza interior.","duracion":60,"color":"#8b5cf6"},
-        {"tipo":"escribir","texto":"Anota un momento reciente donde cederías ante presión externa. Reflexiona cómo podrías haber mantenido tu postura.","placeholder":"Escribe si deseas...","color":"#f97316"},
-        {"tipo":"tvid","nombre":"Técnica del Mal","instrucciones":"Reconoce un error o situación negativa que enfrentaste y analiza qué aprendizaje útil obtuviste de ella.","color":"#f43f5e"},
-        {"tipo":"reflexion","texto":"La verdadera fuerza se mide cuando nadie observa. Mantén tu autoridad interna intacta.","color":"#ef4444"}
-      ]
-    },
-    {
-      "id": 3,
-      "categoria": "Empatía Estratégica",
-      "bloques": [
-        {"tipo":"voz","texto":"Comprender a los demás sin perder tu esencia te da ventaja. Hoy aprenderás a leer a las personas como libros abiertos.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala observación, retén atención, exhala comprensión","tiempos":{"inhalar":6,"retener":6,"exhalar":6},"repeticiones":5,"voz_guia":["Inhala observación","Retén atención","Exhala comprensión"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"La Astucia de Sun Tzu","texto":"Sun Tzu enseñó que el conocimiento del adversario y de uno mismo es la clave de la victoria. Observar es más fuerte que actuar sin pensar.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Tu compañero de trabajo parece tener una estrategia que aún no comprendes. ¿Cómo reaccionas?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Interrumpes para mostrar superioridad o esperas a comprender primero?","opciones":["Interrumpir","Esperar y observar"],"correcta":1,"explicacion":"La paciencia estratégica te da ventaja y control.","recompensa":35,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si notas una discrepancia en lo que dicen y hacen, ¿cómo decides actuar?","opciones":["Actuar de inmediato","Analizar antes"],"correcta":1,"explicacion":"Observar la coherencia antes de actuar aumenta tu eficacia.","recompensa":30,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"Inclínate hacia adelante, lleva tus brazos abiertos y respira profundo. Siente cómo tu cuerpo se alinea con tu mente.","duracion":60,"color":"#8b5cf6"},
-        {"tipo":"escribir","texto":"Escribe un momento reciente donde podrías haber comprendido más antes de actuar. No se guardará.","placeholder":"Escribe si deseas...","color":"#f97316"},
-        {"tipo":"tvid","nombre":"Técnica del Padre","instrucciones":"Imagina que estás guiando a alguien menor que tú en esa situación. ¿Qué consejo le darías para manejarlo con calma y autoridad?","color":"#eab308"},
-        {"tipo":"reflexion","texto":"Leer a las personas correctamente te permite actuar con eficacia y armonía.","color":"#ef4444"}
-      ]
-    },
-    {
-      "id": 4,
-      "categoria": "Comunicación Persuasiva",
-      "bloques": [
-        {"tipo":"voz","texto":"Tu palabra tiene poder. Hoy aprenderás a comunicar con fuerza y claridad sin alzar la voz.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala claridad, retén intención, exhala firmeza","tiempos":{"inhalar":5,"retener":5,"exhalar":5},"repeticiones":6,"voz_guia":["Inhala claridad","Retén intención","Exhala firmeza"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"El Arte de Kennedy","texto":"John F. Kennedy sabía que la forma en que se comunica importa tanto como lo que dice. Su pausa, su tono, su mirada: todo contaba.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Debes presentar un proyecto y todos esperan que seas convincente. ¿Cómo estructurarás tu mensaje?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Hablas mucho para impresionar o eliges palabras precisas y efectivas?","opciones":["Hablar mucho","Palabras precisas"],"correcta":1,"explicacion":"La economía de palabras transmite autoridad y claridad.","recompensa":40,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si solo tienes 2 minutos para persuadir, ¿qué estrategia empleas?","opciones":["Enumerar todo","Elegir puntos clave"],"correcta":1,"explicacion":"Seleccionar lo esencial es más persuasivo que saturar de información.","recompensa":35,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"Colócate frente a un espejo, mantén la postura erguida y pronuncia frases en voz baja pero segura durante 1 minuto.","duracion":60,"color":"#8b5cf6"},
-        {"tipo":"escribir","texto":"Escribe un ejemplo donde tus palabras cambiaron el resultado de una situación. Reflexiona sobre ello.","placeholder":"Escribe si deseas...","color":"#f97316"},
-        {"tipo":"tvid","nombre":"Técnica de la Madre","instrucciones":"Visualiza cómo una figura maternal te apoyaría para mantener tu calma y tu presencia imponente al mismo tiempo.","color":"#f97316"},
-        {"tipo":"reflexion","texto":"Hablar con precisión y empatía multiplica tu influencia.","color":"#ef4444"}
-      ]
-    },
-    {
-      "id": 5,
-      "categoria": "Autocontrol Emocional",
-      "bloques": [
-        {"tipo":"voz","texto":"El control de tus emociones define tu libertad. Hoy aprenderás a no reaccionar de manera impulsiva.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala calma, retén serenidad, exhala control","tiempos":{"inhalar":6,"retener":6,"exhalar":6},"repeticiones":5,"voz_guia":["Inhala calma","Retén serenidad","Exhala control"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"La Serenidad de Mandela","texto":"Nelson Mandela aprendió a responder con paciencia ante provocaciones y adversidades, transformando situaciones difíciles en oportunidades de aprendizaje.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Alguien te provoca intencionalmente durante una reunión. ¿Cuál es tu respuesta?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Reaccionas de inmediato o mantienes la calma para analizar la situación?","opciones":["Reaccionar","Mantener calma"],"correcta":1,"explicacion":"La calma frente a la provocación demuestra madurez y control.","recompensa":45,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si te sientes frustrado, ¿cómo canalizas esa emoción sin perder autoridad?","opciones":["Expresarla impulsivamente","Respiración y análisis"],"correcta":1,"explicacion":"Canalizar emociones fortalece tu autocontrol y decisión.","recompensa":35,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"Aprieta los puños y suéltalos lentamente mientras respiras profundo 10 veces, concentrándote en la liberación de tensión.","duracion":60,"color":"#8b5cf6"},
-        {"tipo":"escribir","texto":"Escribe un momento reciente donde reaccionaste impulsivamente y cómo podrías haberlo manejado mejor.","placeholder":"Escribe si deseas...","color":"#f97316"},
-        {"tipo":"tvid","nombre":"Técnica del Niño","instrucciones":"Permítete un instante de ingenuidad: observa la situación con curiosidad y sin prejuicios, para encontrar una solución creativa.","color":"#60a5fa"},
-        {"tipo":"reflexion","texto":"El control emocional te hace dueño de tus acciones y de tu destino.","color":"#ef4444"}
-      ]
-    },
-    {
-      "id": 6,
-      "categoria": "Resiliencia Mental",
-      "bloques": [
-        {"tipo":"voz","texto":"La adversidad no es un obstáculo, es un maestro. Hoy fortalecerás tu resiliencia mental.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala fortaleza, retén seguridad, exhala estabilidad","tiempos":{"inhalar":6,"retener":6,"exhalar":6},"repeticiones":5,"voz_guia":["Inhala fortaleza","Retén seguridad","Exhala estabilidad"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"El Camino de Edison","texto":"Thomas Edison fracasó miles de veces antes de inventar la bombilla. Cada intento fallido fue un paso hacia su éxito, demostrando resiliencia y perseverancia.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Tu proyecto enfrenta múltiples obstáculos y críticas. ¿Cómo actúas?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Te desanimas ante la dificultad o sigues buscando soluciones?","opciones":["Desanimarse","Seguir adelante"],"correcta":1,"explicacion":"La resiliencia consiste en persistir frente a la adversidad.","recompensa":50,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si un plan falla, ¿cómo evalúas la situación para aprender y mejorar?","opciones":["Ignorar el fallo","Analizar y ajustar"],"correcta":1,"explicacion":"Analizar errores fortalece tu capacidad de respuesta ante retos futuros.","recompensa":40,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"Haz sentadillas lentas y controladas durante 1 minuto, concentrándote en tu respiración y resistencia.","duracion":60,"color":"#8b5cf6"},
-        {"tipo":"escribir","texto":"Escribe un momento reciente donde superaste un obstáculo y cómo te fortaleció mentalmente.","placeholder":"Escribe si deseas...","color":"#f97316"},
-        {"tipo":"tvid","nombre":"Técnica del Beso","instrucciones":"Envía un pensamiento de gratitud o afecto hacia alguien que valoras. Siente cómo eso te fortalece internamente.","color":"#db2777"},
-        {"tipo":"reflexion","texto":"Cada adversidad es una oportunidad de crecimiento y fortaleza.","color":"#ef4444"}
-      ]
-    },
-    {
-      "id": 7,
-      "categoria": "Liderazgo Silencioso",
-      "bloques": [
-        {"tipo":"voz","texto":"Liderar no siempre es alzar la voz, sino mostrar el camino con coherencia y ejemplo.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala autoridad, retén firmeza, exhala serenidad","tiempos":{"inhalar":5,"retener":5,"exhalar":5},"repeticiones":6,"voz_guia":["Inhala autoridad","Retén firmeza","Exhala serenidad"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"La Sabiduría de Lincoln","texto":"Abraham Lincoln inspiraba respeto por su coherencia y serenidad, no por imponerse. Su liderazgo silencioso transformó a toda una nación.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Debes guiar un equipo ante un proyecto complejo. Algunos dudan de tu método. ¿Cómo procedes?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Te impones con autoridad o lideras con paciencia y ejemplo?","opciones":["Imponerse","Liderar con ejemplo"],"correcta":1,"explicacion":"El liderazgo silencioso genera respeto y confianza duradera.","recompensa":45,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si alguien desafía tu liderazgo, ¿cómo respondes estratégicamente?","opciones":["Reaccionar impulsivamente","Analizar y guiar"],"correcta":1,"explicacion":"La observación y la calma consolidan tu autoridad.","recompensa":35,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"Camina despacio y erguido mientras respiras profundo, sintiendo tu autoridad interna.","duracion":60,"color":"#8b5cf6"},
-        {"tipo":"escribir","texto":"Anota un momento donde lideraste efectivamente sin imponer. Reflexiona sobre ello.","placeholder":"Escribe si deseas...","color":"#f97316"},
-        {"tipo":"tvid","nombre":"Técnica de la Guerra","instrucciones":"Identifica un momento en que sentiste tensión o confrontación. Analízalo y transforma la emoción negativa en control, satisfacción y aprendizaje.","color":"#f87171"},
-        {"tipo":"reflexion","texto":"Liderar con coherencia y calma genera resultados sostenibles y respeto genuino.","color":"#ef4444"}
-      ]
-    },
-    {
-      "id": 8,
-      "categoria": "Creatividad Aplicada",
-      "bloques": [
-        {"tipo":"voz","texto":"Tu mente es un laboratorio. Hoy aprenderás a transformar ideas en resultados concretos.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala inspiración, retén concentración, exhala creatividad","tiempos":{"inhalar":6,"retener":6,"exhalar":6},"repeticiones":5,"voz_guia":["Inhala inspiración","Retén concentración","Exhala creatividad"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"La Creatividad de Da Vinci","texto":"Leonardo da Vinci combinaba observación y curiosidad para generar inventos y obras maestras. La creatividad aplicada cambia la realidad.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Debes resolver un problema complejo con recursos limitados. ¿Cómo abordas la situación?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Sigues métodos tradicionales o experimentas nuevas soluciones?","opciones":["Métodos tradicionales","Nuevas soluciones"],"correcta":1,"explicacion":"Innovar con estrategia multiplica las posibilidades de éxito.","recompensa":40,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si la primera idea falla, ¿cómo generas alternativas rápidamente?","opciones":["Forzar la primera idea","Explorar opciones creativas"],"correcta":1,"explicacion":"La flexibilidad mental potencia la creatividad efectiva.","recompensa":35,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"Dibuja un círculo con los brazos extendidos mientras giras lentamente y respiras profundamente, visualizando soluciones.","duracion":60,"color":"#8b5cf6"},
-        {"tipo":"escribir","texto":"Escribe una idea creativa para un problema actual. No se guardará.","placeholder":"Escribe si deseas...","color":"#f97316"},
-        {"tipo":"tvid","nombre":"Técnica del Bien","instrucciones":"Identifica un pensamiento positivo que te haya dado fuerza hoy y respáldalo con una acción concreta.","color":"#14b8a6"},
-        {"tipo":"reflexion","texto":"La creatividad aplicada con disciplina transforma ideas en resultados reales.","color":"#ef4444"}
-      ]
-    },
-    {
-      "id": 9,
-      "categoria": "Conexión Humana",
-      "bloques": [
-        {"tipo":"voz","texto":"La calidad de tus relaciones define tu bienestar. Hoy aprenderás a conectar genuinamente con los demás.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala empatía, retén atención, exhala comprensión","tiempos":{"inhalar":6,"retener":6,"exhalar":6},"repeticiones":5,"voz_guia":["Inhala empatía","Retén atención","Exhala comprensión"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"La Empatía de Gandhi","texto":"Mahatma Gandhi inspiró a millones por su capacidad de escuchar y comprender sin juzgar. La conexión humana verdadera transforma sociedades.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Alguien cercano parece desconectado de ti. ¿Cómo respondes?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Ignoras la situación o intentas comprender profundamente?","opciones":["Ignorar","Comprender"],"correcta":1,"explicacion":"La conexión se construye con atención y empatía.","recompensa":40,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si notas tensión en una relación, ¿cómo actúas para mejorar la conexión?","opciones":["Reaccionar","Analizar y acercar"],"correcta":1,"explicacion":"La comprensión activa fortalece los vínculos.","recompensa":35,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"Haz contacto visual con alguien mientras respiras profundo y mantienes postura abierta por 1 minuto.","duracion":60,"color":"#8b5cf6"},
-        {"tipo":"escribir","texto":"Escribe cómo podrías mejorar una relación reciente. No se guardará.","placeholder":"Escribe si deseas...","color":"#f97316"},
-        {"tipo":"tvid","nombre":"Técnica del Mal","instrucciones":"Reconoce un error o situación negativa que enfrentaste y analiza qué aprendizaje útil obtuviste de ella.","color":"#f43f5e"},
-        {"tipo":"reflexion","texto":"La verdadera conexión se basa en atención, comprensión y autenticidad.","color":"#ef4444"}
-      ]
-    },
-    {
-      "id": 10,
-      "categoria": "Autenticidad y Poder",
-      "bloques": [
-        {"tipo":"voz","texto":"Ser auténtico es tu mayor fortaleza. Hoy aprenderás a proyectar poder sin perder tu esencia.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala confianza, retén autenticidad, exhala poder","tiempos":{"inhalar":6,"retener":6,"exhalar":6},"repeticiones":5,"voz_guia":["Inhala confianza","Retén autenticidad","Exhala poder"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"La Esencia de Oprah","texto":"Oprah Winfrey se hizo líder por ser auténtica y consistente. Su poder radica en mostrarse tal como es y conectar con otros genuinamente.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Debes tomar decisiones importantes sin perder tu esencia personal. ¿Cómo actúas?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Sigues tendencias externas o mantienes tu estilo propio?","opciones":["Seguir tendencias","Mantener estilo propio"],"correcta":1,"explicacion":"El poder auténtico se construye siendo fiel a ti mismo.","recompensa":50,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si alguien cuestiona tu estilo, ¿cómo respondes para mantener autoridad y autenticidad?","opciones":["Ceder","Mantener autenticidad"],"correcta":1,"explicacion":"Defender tu esencia proyecta seguridad y respeto.","recompensa":40,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"Mantén postura firme y respira profundo mientras caminas lentamente durante 1 minuto, sintiendo tu poder interno.","duracion":60,"color":"#8b5cf6"},
-        {"tipo":"escribir","texto":"Reflexiona sobre una decisión reciente donde mantuviste tu autenticidad. No se guardará.","placeholder":"Escribe si deseas...","color":"#f97316"},
-        {"tipo":"tvid","nombre":"Técnica del Niño","instrucciones":"Permítete un instante de ingenuidad: observa la situación con curiosidad y sin prejuicios, para encontrar una solución creativa.","color":"#60a5fa"},
-        {"tipo":"reflexion","texto":"El poder real surge de la autenticidad y coherencia con tu esencia.","color":"#ef4444"}
-      ]
-    },
-    {
-      "id": 11,
-      "categoria": "Tvid: Técnica del Bien",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy aprenderás a identificar lo que es verdaderamente bueno para ti, sin que nadie te diga qué hacer. Tu bienestar comienza por tus decisiones conscientes.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala agradecimiento, Retén conciencia, Exhala tensión","tiempos":{"inhalar":5,"retener":5,"exhalar":7},"repeticiones":5,"voz_guia":["Inhala calma","Retén claridad","Exhala tensión"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"El Maestro y el Alfarero","texto":"Un maestro enseñaba a sus alumnos a escoger siempre la mejor arcilla para moldear. Decía: 'El barro malo da formas débiles, el bueno, formas fuertes'. Así es tu vida: elige lo que te nutre.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Imagina que alguien te ofrece una oportunidad que parece atractiva pero te resta energía y paz. ¿Qué haces?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Aceptas lo que te hace sentir bien a largo plazo o lo que parece fácil ahora?","opciones":["Lo que me nutre a largo plazo","Lo fácil y rápido"],"correcta":0,"explicacion":"La verdadera fuerza viene de elegir lo que te fortalece, no lo que entretiene momentáneamente.","recompensa":50,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si tu mente es un jardín, ¿qué eliges plantar?","opciones":["Flores que crecen","Hierbas que marchitan"],"correcta":0,"explicacion":"Tu atención determina tu bienestar. Plantar lo correcto asegura frutos positivos.","recompensa":35,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"Levántate y estira los brazos hacia el cielo. Mantén la postura durante 90 segundos, sintiendo cómo tu energía se expande.","duracion":90,"color":"#8b5cf6"},
-        {"tipo":"reflexion","texto":"Hoy comprendiste que elegir lo bueno para ti no es egoísmo, es respeto propio. Cada decisión consciente fortalece tu bienestar.","color":"#ef4444"},
-        {"tipo":"tvid","nombre":"Técnica del Bien","instrucciones":"Enfócate en identificar lo que te nutre y fortalece. Evalúa cada acción y decisión bajo esta perspectiva.","color":"#6366f1"}
-      ]
-    },
-    {
-      "id": 12,
-      "categoria": "Tvid: Técnica del Mal",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy trabajaremos en descubrir lo que, aunque malo en apariencia, puede enseñarte y darte ventaja. La vida no siempre es lo que parece.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala observación, Retén análisis, Exhala control","tiempos":{"inhalar":6,"retener":6,"exhalar":6},"repeticiones":5,"voz_guia":["Inhala atención","Retén juicio","Exhala control"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"El ladrón que enseñó lecciones","texto":"Un joven aprendió de un ladrón que entró a su casa: observando su estrategia descubrió cómo protegerse mejor y tomar decisiones más inteligentes. Lo que parecía malo, fue aprendizaje.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Imagina que enfrentas un problema que parece negativo. ¿Qué haces con él?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Lo evitas y sufres, o lo enfrentas y aprendes de él?","opciones":["Enfrento y aprendo","Evito y espero que pase"],"correcta":0,"explicacion":"El enfrentamiento consciente de lo negativo genera fuerza y sabiduría, mientras huir solo genera miedo y debilidad.","recompensa":50,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si el obstáculo es un maestro disfrazado, ¿lo ignoras o aprendes de él?","opciones":["Aprender","Ignorar"],"correcta":0,"explicacion":"Cada desafío negativo puede convertirse en ventaja si se analiza correctamente.","recompensa":30,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"Realiza 10 sentadillas lentas, concentrándote en cada movimiento y sintiendo la fuerza que generas al enfrentarte a la resistencia.","duracion":60,"color":"#8b5cf6"},
-        {"tipo":"reflexion","texto":"Hoy comprendiste que lo negativo puede ser aliado. La vida te da lecciones disfrazadas de problemas.","color":"#ef4444"},
-        {"tipo":"tvid","nombre":"Técnica del Mal","instrucciones":"Identifica elementos negativos y descubre cómo pueden beneficiarte o enseñarte. Conviértelos en ventaja estratégica.","color":"#6366f1"}
-      ]
-    },
-    {
-      "id": 13,
-      "categoria": "Inteligencia Social: Leer a los demás",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy aprenderás a observar el lenguaje corporal y las señales no verbales para comprender mejor a las personas a tu alrededor.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala atención, Retén calma, Exhala percepción","tiempos":{"inhalar":5,"retener":5,"exhalar":5},"repeticiones":5,"voz_guia":["Inhala atención","Retén calma","Exhala percepción"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"El observador silencioso","texto":"Un negociador ganaba ventaja en las reuniones observando pequeños gestos de sus interlocutores y ajustando su estrategia en consecuencia.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Estás en una reunión y alguien parece nervioso. ¿Qué señales buscas?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Actúas inmediatamente o esperas a observar más información?","opciones":["Observar más","Actuar inmediatamente"],"correcta":0,"explicacion":"Esperar y observar permite tomar decisiones estratégicas más acertadas.","recompensa":40,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si un gesto cambia el sentido de una conversación, ¿cómo lo aprovechas?","opciones":["Analizo y ajusto","Ignoro"],"correcta":0,"explicacion":"Interpretar señales mejora tu capacidad de influir y comunicar.","recompensa":30,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"Mantén postura firme y relajada 60 segundos mientras observas a los demás, alineando mente y cuerpo.","duracion":60,"color":"#8b5cf6"},
-        {"tipo":"reflexion","texto":"Hoy comprendiste que la inteligencia social comienza con la observación consciente y la interpretación de señales no verbales.","color":"#ef4444"}
-      ]
-    },
-    {
-      "id": 14,
-      "categoria": "Tvid: Técnica del Padre",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy veremos cómo actuar con autoridad y amor, guiando hacia el éxito sin dañar, como un padre guía a su hijo.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala calma, Retén paciencia, Exhala control","tiempos":{"inhalar":5,"retener":5,"exhalar":5},"repeticiones":5,"voz_guia":["Inhala calma","Retén paciencia","Exhala control"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"El padre del sabio","texto":"Un padre enseñaba a su hijo a pescar, pero solo lo observaba desde lejos. Intervenía solo para corregir suavemente. Así nacía la independencia con amor.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Tienes un equipo que depende de tus instrucciones. ¿Cómo guías sin sobrecargar ni imponer?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Actúas corrigiendo con amor o dejando que cometan errores sin guía?","opciones":["Corregir con amor","Dejar sin intervenir"],"correcta":0,"explicacion":"El liderazgo efectivo combina autoridad y cuidado. La guía sin presión produce resultados duraderos.","recompensa":50,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si un aprendiz tropieza, ¿lo corriges inmediatamente o esperas que descubra solo la solución?","opciones":["Corregir con guía","Esperar que descubra"],"correcta":0,"explicacion":"Intervenir estratégicamente fomenta aprendizaje y confianza.","recompensa":30,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"Levántate y haz 5 respiraciones profundas con los brazos abiertos, sintiendo cómo tu liderazgo se proyecta con tranquilidad y firmeza.","duracion":45,"color":"#8b5cf6"},
-        {"tipo":"reflexion","texto":"Hoy aprendiste que guiar con amor y autoridad permite crecer a otros y fortalecer tu presencia.","color":"#ef4444"},
-        {"tipo":"tvid","nombre":"Técnica del Padre","instrucciones":"Combina autoridad con empatía en cada acción. Observa, corrige suavemente y deja que otros crezcan bajo tu guía.","color":"#6366f1"}
-      ]
-    },
-    {
-      "id": 15,
-      "categoria": "Estrategia: Tomar decisiones rápidas",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy entrenaremos tu capacidad de decidir rápido bajo presión, equilibrando intuición y análisis.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala enfoque, Retén claridad, Exhala confianza","tiempos":{"inhalar":5,"retener":5,"exhalar":5},"repeticiones":5,"voz_guia":["Inhala enfoque","Retén claridad","Exhala confianza"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"El líder decisivo","texto":"En una emergencia, un líder tomó decisiones rápidas basadas en información parcial y su intuición, evitando errores y logrando resultados positivos.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Debes actuar ante un imprevisto en el trabajo. ¿Cómo tomas tu decisión?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Confías en tu intuición o esperas más datos?","opciones":["Intuición","Esperar datos"],"correcta":0,"explicacion":"Equilibrar intuición y análisis permite decisiones rápidas y efectivas.","recompensa":50,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si cada segundo cuenta, ¿cómo priorizas tus opciones?","opciones":["Rápido y seguro","Lento y detallista"],"correcta":0,"explicacion":"Priorizar bajo presión fortalece resolución de problemas y liderazgo.","recompensa":35,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"Respira profundo 7 veces mientras visualizas tomar decisiones correctas rápidamente.","duracion":60,"color":"#8b5cf6"},
-        {"tipo":"reflexion","texto":"Hoy comprendiste que la combinación de intuición y análisis permite decisiones efectivas en situaciones de presión.","color":"#ef4444"}
-      ]
-    },
-    {
-      "id": 16,
-      "categoria": "Tvid: Técnica de la Madre",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy exploraremos el cuidado activo y amoroso, combinando protección y libertad, como una madre hace con su hijo.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala amor, Retén empatía, Exhala comprensión","tiempos":{"inhalar":5,"retener":5,"exhalar":6},"repeticiones":5,"voz_guia":["Inhala amor","Retén empatía","Exhala comprensión"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"La madre sabia","texto":"Una madre enseñaba a su hijo a caminar sin tomarlo de la mano. Siempre cerca, pero dejando espacio para que descubriera sus propios pasos.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Alguien a tu cargo comete errores por miedo o inseguridad. ¿Cómo actúas?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Corriges con amor o permites que se frustre solo?","opciones":["Corregir con amor","Dejar frustrar"],"correcta":0,"explicacion":"La guía maternal combina paciencia y protección. Permite aprender sin daño y con seguridad.","recompensa":50,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si el miedo bloquea a tu aprendiz, ¿lo sostienes y lo guías o lo dejas solo?","opciones":["Guiar","Dejar solo"],"correcta":0,"explicacion":"El acompañamiento amoroso genera confianza y aprendizaje sostenible.","recompensa":35,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"Cierra los ojos, lleva las manos al corazón y respira profundamente 7 veces, sintiendo el amor y la protección que emanas.","duracion":60,"color":"#8b5cf6"},
-        {"tipo":"reflexion","texto":"Hoy comprendiste que guiar con amor y protección fortalece la confianza y el bienestar de los demás.","color":"#ef4444"},
-        {"tipo":"tvid","nombre":"Técnica de la Madre","instrucciones":"Combina amor, paciencia y protección en cada acción. Observa, corrige suavemente y fortalece a los que te rodean.","color":"#6366f1"}
-      ]
-    },
-    {
-      "id": 17,
-      "categoria": "Tvid: Técnica del Niño",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy activaremos tu creatividad, ingenuidad y curiosidad. El niño interior es fuente de alegría, aprendizaje y descubrimiento.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala curiosidad, Retén asombro, Exhala libertad","tiempos":{"inhalar":5,"retener":5,"exhalar":5},"repeticiones":5,"voz_guia":["Inhala curiosidad","Retén asombro","Exhala libertad"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"El niño que preguntaba todo","texto":"Un niño cuestionaba cada cosa en su pueblo. Gracias a su curiosidad, encontró soluciones que los adultos ignoraban. La inocencia abre caminos de sabiduría.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Frente a un problema complejo, ¿te atreves a explorar soluciones sin miedo al error?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Actúas con creatividad infantil o te limitas al miedo al fracaso?","opciones":["Creatividad","Miedo al fracaso"],"correcta":0,"explicacion":"El valor de explorar y equivocarse nos permite descubrir soluciones únicas y efectivas.","recompensa":50,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si el mundo fuera un juego, ¿lo juegas con ingenio o con rigidez?","opciones":["Con ingenio","Con rigidez"],"correcta":0,"explicacion":"El juego consciente fomenta aprendizaje, adaptabilidad y alegría.","recompensa":35,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"Salta en el lugar 20 veces, sintiendo la libertad, la energía y la alegría del niño interior.","duracion":60,"color":"#8b5cf6"},
-        {"tipo":"reflexion","texto":"Hoy recordaste que explorar con curiosidad y alegría transforma la vida y multiplica oportunidades.","color":"#ef4444"},
-        {"tipo":"tvid","nombre":"Técnica del Niño","instrucciones":"Activa tu creatividad, curiosidad y alegría. Permítete explorar soluciones sin miedo, como un niño inteligente y libre.","color":"#6366f1"}
-      ]
-    },
-    {
-      "id": 18,
-      "categoria": "Inteligencia Social: Persuasión ética",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy aprenderás a influir positivamente en los demás usando argumentos claros, empatía y comunicación asertiva.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala empatía, Retén claridad, Exhala convicción","tiempos":{"inhalar":5,"retener":5,"exhalar":6},"repeticiones":5,"voz_guia":["Inhala empatía","Retén claridad","Exhala convicción"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"El negociador ético","texto":"Un vendedor lograba acuerdos sólidos no con engaños, sino escuchando y mostrando beneficios reales para todos, generando confianza y reputación.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Quieres convencer a alguien de una idea importante. ¿Qué estrategias usas?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Usas persuasión ética o manipulación?","opciones":["Persuasión ética","Manipulación"],"correcta":0,"explicacion":"La persuasión ética fortalece relaciones y credibilidad, mientras la manipulación genera rechazo.","recompensa":50,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si las palabras pueden generar cambio, ¿cómo las eliges?","opciones":["Con empatía y claridad","Con presión y manipulación"],"correcta":0,"explicacion":"Elegir palabras con ética y claridad aumenta la influencia positiva.","recompensa":35,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"Mantén postura erguida y respira profundo 60 segundos imaginando comunicar con impacto positivo.","duracion":60,"color":"#8b5cf6"},
-        {"tipo":"reflexion","texto":"Hoy comprendiste que la persuasión ética genera resultados efectivos y relaciones sólidas.","color":"#ef4444"}
-      ]
-    },
-    {
-      "id": 19,
-      "categoria": "Tvid: Técnica del Beso",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy exploraremos la importancia de los gestos de afecto, como un beso, y su impacto físico, emocional y espiritual.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala afecto, Retén conexión, Exhala gratitud","tiempos":{"inhalar":5,"retener":5,"exhalar":6},"repeticiones":5,"voz_guia":["Inhala afecto","Retén conexión","Exhala gratitud"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"El beso que cambió la decisión","texto":"En una negociación, un gesto de aprecio sincero calmó tensiones y abrió caminos que ninguna palabra habría logrado. El afecto transforma situaciones.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Tienes que transmitir confianza y cercanía sin palabras. ¿Cómo lo haces?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Usas un gesto afectuoso o te limitas a lo verbal?","opciones":["Gestos afectuosos","Solo verbal"],"correcta":0,"explicacion":"El lenguaje no verbal tiene gran poder. Un gesto sincero puede abrir puertas y corazones.","recompensa":50,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si el respeto se transmite con acciones, ¿qué eliges mostrar hoy?","opciones":["Afecto y respeto","Solo palabras"],"correcta":0,"explicacion":"La acción siempre habla más que la teoría. El gesto sincero genera confianza y conexión.","recompensa":35,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"Coloca tus manos sobre el corazón y respira profundamente 7 veces, sintiendo la energía del afecto y conexión.","duracion":60,"color":"#8b5cf6"},
-        {"tipo":"reflexion","texto":"Hoy aprendiste que un gesto afectuoso sincero puede transformar relaciones y situaciones.","color":"#ef4444"},
-        {"tipo":"tvid","nombre":"Técnica del Beso","instrucciones":"Valora y usa gestos afectuosos que transmitan amor y conexión. Observa cómo impactan positivamente en tus relaciones y tu bienestar.","color":"#6366f1"}
-      ]
-    },
-    {
-      "id": 20,
-      "categoria": "Estrategia: Manejo de conflictos",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy entrenaremos cómo enfrentar conflictos de manera constructiva, equilibrando emociones y comunicación clara.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala calma, Retén control, Exhala resolución","tiempos":{"inhalar":6,"retener":6,"exhalar":6},"repeticiones":5,"voz_guia":["Inhala calma","Retén control","Exhala resolución"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"El mediador inteligente","texto":"Un gerente resolvía conflictos escuchando a todas las partes, proponiendo soluciones justas y evitando escaladas de tensión.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Dos compañeros discuten acaloradamente. ¿Cómo intervienes?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Intervienes mediando o dejas que se enfrenten?","opciones":["Medio con estrategia","Dejo pelear"],"correcta":0,"explicacion":"Mediar con inteligencia social evita conflictos mayores y fortalece relaciones.","recompensa":50,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si el conflicto puede escalar, ¿cómo lo neutralizas?","opciones":["Con escucha y estrategia","Con confrontación"],"correcta":0,"explicacion":"Escucha y estrategia convierten conflictos en oportunidades de entendimiento.","recompensa":35,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"Respira profundo 60 segundos imaginando calma y resolución equilibrada.","duracion":60,"color":"#8b5cf6"},
-        {"tipo":"reflexion","texto":"Hoy comprendiste que manejar conflictos con estrategia y empatía fortalece relaciones y genera soluciones constructivas.","color":"#ef4444"}
-      ]
-    },
-    {
-      "id": 21,
-      "categoria": "Tvid: Técnica de la Guerra",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy trabajaremos cómo canalizar agresividad y miedo en energía positiva que genere éxito, satisfacción y relaciones humanas saludables.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala fuerza, Retén control, Exhala determinación","tiempos":{"inhalar":6,"retener":6,"exhalar":6},"repeticiones":5,"voz_guia":["Inhala fuerza","Retén control","Exhala determinación"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"El general pacífico","texto":"Un general entrenaba a su ejército para pelear solo cuando era necesario y siempre con estrategia, enfocando su energía en la victoria justa y la protección de su gente.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Alguien intenta intimidarte en una negociación importante. ¿Cómo reaccionas?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Respondes con miedo o canalizas tu agresividad para ganar con inteligencia?","opciones":["Canalizar agresividad","Miedo"],"correcta":0,"explicacion":"Transformar emociones fuertes en acción estratégica permite controlar la situación y lograr resultados positivos.","recompensa":50,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si tu rival utiliza presión, ¿lo igualas con estrés o con estrategia inteligente?","opciones":["Estrategia inteligente","Estrés"],"correcta":0,"explicacion":"La mente controlada transforma presión en ventaja. El estrés solo debilita.","recompensa":35,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"Realiza 15 golpes al aire, concentrándote en canalizar la energía y no la violencia. Siente fuerza y control.","duracion":60,"color":"#8b5cf6"},
-        {"tipo":"reflexion","texto":"Hoy entendiste que la agresividad y miedo pueden transformarse en energía productiva y positiva.","color":"#ef4444"},
-        {"tipo":"tvid","nombre":"Técnica de la Guerra","instrucciones":"Canaliza emociones negativas de manera estratégica. Convierte agresión y miedo en fuerza controlada y éxito positivo.","color":"#6366f1"}
-      ]
-    },
-    {
-      "id": 22,
-      "categoria": "Inteligencia Social: Comunicación efectiva",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy reforzaremos la capacidad de transmitir ideas con claridad, escuchando activamente y ajustando el mensaje a la audiencia.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala claridad, Retén enfoque, Exhala confianza","tiempos":{"inhalar":5,"retener":5,"exhalar":5},"repeticiones":5,"voz_guia":["Inhala claridad","Retén enfoque","Exhala confianza"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"El comunicador consciente","texto":"Un líder adaptaba su mensaje según la audiencia, escuchando antes de hablar y generando conexión y comprensión inmediata.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Debes presentar una idea importante. ¿Cómo la comunicas?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Escuchas primero y luego comunicas o solo hablas?","opciones":["Escucho primero","Solo hablo"],"correcta":0,"explicacion":"Escuchar permite adaptar el mensaje y aumentar impacto y comprensión.","recompensa":50,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si tu mensaje puede generar aceptación o rechazo, ¿cómo eliges comunicarlo?","opciones":["Con claridad y empatía","Sin estrategia"],"correcta":0,"explicacion":"La comunicación efectiva maximiza impacto positivo y entendimiento mutuo.","recompensa":35,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"Mantén postura firme, respira profundo y visualiza conectar con todos al comunicar tu idea.","duracion":60,"color":"#8b5cf6"},
-        {"tipo":"reflexion","texto":"Hoy comprendiste que escuchar, observar y ajustar tu mensaje genera comunicación efectiva y relaciones sólidas.","color":"#ef4444"}
-      ]
-    },
-    {
-      "id": 23,
-      "categoria": "Tvid: Técnica del Bien",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy reforzaremos la habilidad de elegir lo que es correcto y nutritivo para tu vida, integrando bienestar físico, emocional y mental.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala energía positiva, Retén seguridad, Exhala dudas","tiempos":{"inhalar":6,"retener":6,"exhalar":6},"repeticiones":5,"voz_guia":["Inhala energía","Retén seguridad","Exhala dudas"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"El sabio y la encrucijada","texto":"Un sabio se encontraba en un cruce de caminos. Observaba cada sendero, evaluando qué le aportaba y qué le restaba. Al final, eligió el que lo fortalecía, y prosperó mientras los demás se desviaban por lo fácil y efímero.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Te ofrecen un camino que parece rápido y atractivo, pero a largo plazo puede dañarte. ¿Cómo decides?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Escoges lo correcto aunque sea más difícil, o lo fácil que te ofrece placer inmediato?","opciones":["Escoger lo correcto","Lo fácil y atractivo"],"correcta":0,"explicacion":"La verdadera fortaleza viene de decisiones conscientes que priorizan tu bienestar integral.","recompensa":50,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si tu mente fuera un espejo, ¿qué reflejaría hoy?","opciones":["Decisiones conscientes","Impulsos momentáneos"],"correcta":0,"explicacion":"El autocontrol y la claridad reflejan sabiduría y fortalecen tu vida.","recompensa":35,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"De pie, estira brazos y espalda, respira profundamente y visualiza tu decisión correcta fortaleciendo tu cuerpo y mente por 90 segundos.","duracion":90,"color":"#8b5cf6"},
-        {"tipo":"reflexion","texto":"Hoy entendiste que elegir lo correcto fortalece tu vida en todos los aspectos y te prepara para desafíos futuros.","color":"#ef4444"},
-        {"tipo":"tvid","nombre":"Técnica del Bien","instrucciones":"Evalúa cada situación desde lo que te beneficia integralmente. Actúa con claridad y fuerza para cultivar tu bienestar.","color":"#6366f1"}
-      ]
-    },
-    {
-      "id": 24,
-      "categoria": "Tvid: Técnica del Mal",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy aprenderemos a reconocer lo que parece negativo y transformarlo en oportunidad de crecimiento y ventaja estratégica.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala análisis, Retén observación, Exhala control","tiempos":{"inhalar":6,"retener":6,"exhalar":6},"repeticiones":5,"voz_guia":["Inhala análisis","Retén observación","Exhala control"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"El adversario que enseñó","texto":"Un joven empresario enfrentó un rival que parecía desleal. Analizando sus movimientos, aprendió tácticas que le ayudaron a proteger su negocio y ganar ventaja. Lo malo se convirtió en enseñanza.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Una situación complicada te presenta riesgos. ¿Cómo la enfrentas?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿La evitas por miedo o la analizas para sacar provecho?","opciones":["Analizo y aprendo","Evito y temo"],"correcta":0,"explicacion":"El desafío se convierte en ventaja cuando se enfrenta con inteligencia y estrategia.","recompensa":50,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si cada obstáculo es un maestro disfrazado, ¿lo ignoras o aprendes de él?","opciones":["Aprender","Ignorar"],"correcta":0,"explicacion":"Aprender de lo negativo fortalece la mente y crea ventajas inesperadas.","recompensa":35,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"Realiza 10 sentadillas conscientes, sintiendo la fuerza que generas al enfrentar y controlar desafíos.","duracion":60,"color":"#8b5cf6"},
-        {"tipo":"reflexion","texto":"Hoy comprendiste que lo negativo, bien interpretado, es una fuente de fuerza, sabiduría y oportunidad.","color":"#ef4444"},
-        {"tipo":"tvid","nombre":"Técnica del Mal","instrucciones":"Identifica elementos negativos y utilízalos como aprendizaje y ventaja estratégica. Convierte el desafío en oportunidad.","color":"#6366f1"}
-      ]
-    },
-    {
-      "id": 25,
-      "categoria": "Estrategia: Manejo del tiempo",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy aprenderás a organizar tareas y prioridades para maximizar productividad sin generar estrés innecesario.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala enfoque, Retén claridad, Exhala eficiencia","tiempos":{"inhalar":5,"retener":5,"exhalar":5},"repeticiones":5,"voz_guia":["Inhala enfoque","Retén claridad","Exhala eficiencia"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"El estratega del tiempo","texto":"Un profesional organizaba su jornada según prioridades y urgencias, logrando objetivos sin perder energía ni calidad de trabajo.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Tienes múltiples tareas y poco tiempo. ¿Cómo priorizas?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Empiezas por lo importante o por lo urgente?","opciones":["Importante","Urgente"],"correcta":0,"explicacion":"Priorizar lo importante asegura resultados estratégicos y menos estrés.","recompensa":50,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si el tiempo es limitado, ¿cómo lo distribuyes?","opciones":["Según impacto","Al azar"],"correcta":0,"explicacion":"Distribuir tiempo según impacto maximiza resultados y eficiencia personal.","recompensa":35,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"Respira profundo 60 segundos visualizando cada tarea completada con éxito y eficiencia.","duracion":60,"color":"#8b5cf6"},
-        {"tipo":"reflexion","texto":"Hoy comprendiste que gestionar tiempo estratégicamente incrementa productividad y reduce estrés.","color":"#ef4444"}
-      ]
-    },
-    {
-      "id": 26,
-      "categoria": "Tvid: Técnica del Padre",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy profundizamos en cómo guiar con autoridad y amor, asegurando que quienes dependen de ti crezcan seguros y fuertes.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala autoridad, Retén paciencia, Exhala calma","tiempos":{"inhalar":5,"retener":5,"exhalar":5},"repeticiones":5,"voz_guia":["Inhala autoridad","Retén paciencia","Exhala calma"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"El mentor prudente","texto":"Un mentor observaba a su aprendiz, interviniendo solo cuando era necesario, combinando guía firme y afecto, logrando que el aprendiz creciera independiente y exitoso.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Debes liderar un equipo novato. ¿Cómo manejas la instrucción y corrección?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Corriges con paciencia y firmeza o dejas que fallen sin guía?","opciones":["Firme y paciente","Dejar sin intervenir"],"correcta":0,"explicacion":"El liderazgo efectivo combina autoridad y empatía. La guía estratégica fortalece y genera confianza.","recompensa":50,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si tu aprendiz se equivoca, ¿lo corriges inmediatamente o esperas que descubra solo la solución?","opciones":["Corregir con guía","Esperar que descubra"],"correcta":0,"explicacion":"La intervención estratégica fomenta aprendizaje sólido y confianza en sí mismo.","recompensa":35,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"De pie, respira profundamente 7 veces con los brazos abiertos, sintiendo autoridad y calma combinadas.","duracion":60,"color":"#8b5cf6"},
-        {"tipo":"reflexion","texto":"Hoy entendiste que guiar con amor y firmeza permite crecer y fortalecer a los demás.","color":"#ef4444"},
-        {"tipo":"tvid","nombre":"Técnica del Padre","instrucciones":"Combina autoridad y empatía en tus acciones. Observa, corrige y guía con firmeza y afecto.","color":"#6366f1"}
-      ]
-    },
-    {
-      "id": 27,
-      "categoria": "Inteligencia Social: Empatía activa",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy entrenaremos la habilidad de comprender emociones y perspectivas de otros, fomentando relaciones auténticas y confiables.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala comprensión, Retén calma, Exhala conexión","tiempos":{"inhalar":5,"retener":5,"exhalar":5},"repeticiones":5,"voz_guia":["Inhala comprensión","Retén calma","Exhala conexión"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"El oyente empático","texto":"Una líder fortalecía equipos escuchando activamente, entendiendo emociones y ajustando su apoyo según necesidades reales.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Un amigo está angustiado. ¿Cómo reaccionas?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Escuchas y validas emociones o das soluciones rápidas?","opciones":["Escucho y valido","Doy soluciones"],"correcta":0,"explicacion":"Escuchar y validar genera confianza y relaciones auténticas.","recompensa":50,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si cada emoción tiene un mensaje, ¿cómo lo interpretas?","opciones":["Con atención y empatía","Lo ignoro"],"correcta":0,"explicacion":"Interpretar emociones fortalece relaciones y comunicación social.","recompensa":35,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"Respira 7 veces imaginando transmitir calma y comprensión a la otra persona.","duracion":60,"color":"#8b5cf6"},
-        {"tipo":"reflexion","texto":"Hoy comprendiste que la empatía activa fortalece relaciones y genera confianza auténtica.","color":"#ef4444"}
-      ]
-    },
-    {
-      "id": 28,
-      "categoria": "Tvid: Técnica de la Madre",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy fortaleceremos la capacidad de cuidar, proteger y guiar con amor, dejando libertad para aprender y crecer.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala amor, Retén comprensión, Exhala serenidad","tiempos":{"inhalar":5,"retener":5,"exhalar":5},"repeticiones":5,"voz_guia":["Inhala amor","Retén comprensión","Exhala serenidad"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"La cuidadora sabia","texto":"Una madre enseñaba a su hijo a caminar solo, estando siempre cerca para sostenerlo solo cuando era necesario, fomentando independencia y confianza.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Un aprendiz se siente inseguro. ¿Cómo lo apoyas sin sobreprotegerlo?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Ofreces guía amorosa o lo dejas experimentar solo?","opciones":["Guía amorosa","Dejar solo"],"correcta":0,"explicacion":"El acompañamiento amoroso genera seguridad y fortalece la confianza y aprendizaje sostenible.","recompensa":50,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si tu cuidado permite libertad, ¿lo aprovechas estratégicamente o lo controlas excesivamente?","opciones":["Permitir libertad","Controlar"],"correcta":0,"explicacion":"El equilibrio entre cuidado y libertad fomenta crecimiento y confianza.","recompensa":35,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"Respira profundo, coloca manos en corazón y siente protección y amor 7 veces, transmitiendo seguridad y paz.","duracion":60,"color":"#8b5cf6"},
-        {"tipo":"reflexion","texto":"Hoy aprendiste que cuidar con amor y permitir libertad fortalece la confianza y bienestar de los demás.","color":"#ef4444"},
-        {"tipo":"tvid","nombre":"Técnica de la Madre","instrucciones":"Aplica amor, protección y paciencia. Observa, corrige suavemente y fortalece a quienes dependen de ti.","color":"#6366f1"}
-      ]
-    },
-    {
-      "id": 29,
-      "categoria": "Tvid: Técnica del Niño",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy activaremos la creatividad, curiosidad e ingenio del niño interior para resolver problemas y explorar oportunidades.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala asombro, Retén alegría, Exhala libertad","tiempos":{"inhalar":5,"retener":5,"exhalar":5},"repeticiones":5,"voz_guia":["Inhala asombro","Retén alegría","Exhala libertad"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"El inventor curioso","texto":"Un niño transformaba objetos cotidianos en inventos. Su curiosidad le permitió descubrir soluciones que los adultos ignoraban, demostrando que la ingenuidad activa la creatividad.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Frente a un problema complejo, ¿te atreves a explorar soluciones creativas?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Exploras con curiosidad o te limitas al miedo al error?","opciones":["Explorar con curiosidad","Limitación por miedo"],"correcta":0,"explicacion":"Explorar sin miedo genera aprendizaje, innovación y nuevas oportunidades.","recompensa":50,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si el mundo fuera un juego, ¿lo juegas con ingenio o rigidez?","opciones":["Ingenio","Rigidez"],"correcta":0,"explicacion":"El juego consciente fomenta aprendizaje, adaptabilidad y alegría.","recompensa":35,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"Salta 20 veces, sintiendo libertad y energía, activando el niño interior en cada movimiento.","duracion":60,"color":"#8b5cf6"},
-        {"tipo":"reflexion","texto":"Hoy recordaste que la creatividad y la curiosidad transforman la vida y abren oportunidades únicas.","color":"#ef4444"},
-        {"tipo":"tvid","nombre":"Técnica del Niño","instrucciones":"Permítete explorar soluciones sin miedo, usando la creatividad, alegría y curiosidad del niño interior.","color":"#6366f1"}
-      ]
-    },
-    {
-      "id": 30,
-      "categoria": "Estrategia: Superar adversidades",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy aprenderás a enfrentar desafíos con resiliencia, transformando obstáculos en oportunidades de crecimiento.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala fortaleza, Retén calma, Exhala determinación","tiempos":{"inhalar":6,"retener":6,"exhalar":6},"repeticiones":5,"voz_guia":["Inhala fortaleza","Retén calma","Exhala determinación"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"El resiliente","texto":"Un emprendedor transformaba fracasos en aprendizaje y nuevas oportunidades, desarrollando resistencia y confianza en su capacidad.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Fracasaste en un proyecto importante. ¿Cómo reaccionas?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Te rindes o buscas aprendizaje y mejora?","opciones":["Aprendizaje y mejora","Rendirse"],"correcta":0,"explicacion":"Enfrentar adversidades con resiliencia fortalece carácter y habilidades.","recompensa":50,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si un error es una lección, ¿cómo lo aplicas?","opciones":["Aprendo y ajusto","Ignoro"],"correcta":0,"explicacion":"Transformar errores en aprendizaje potencia crecimiento personal y profesional.","recompensa":35,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"Respira 7 veces imaginando transformar obstáculos en oportunidades y fuerza interior.","duracion":60,"color":"#8b5cf6"},
-        {"tipo":"reflexion","texto":"Hoy comprendiste que superar adversidades con resiliencia fortalece mente, carácter y resultados.","color":"#ef4444"}
-      ]
-    },
-    {
-      "id": 31,
-      "categoria": "Inteligencia Social: Adaptabilidad",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy desarrollaremos la capacidad de adaptarnos a distintas personas y situaciones, manteniendo equilibrio y efectividad.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala flexibilidad, Retén calma, Exhala confianza","tiempos":{"inhalar":5,"retener":5,"exhalar":5},"repeticiones":5,"voz_guia":["Inhala flexibilidad","Retén calma","Exhala confianza"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"El camaleón social","texto":"Un profesional cambiaba su enfoque según la situación y las personas, logrando aceptación, cooperación y resultados óptimos.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Debes integrarte a un grupo con dinámicas desconocidas. ¿Qué haces?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Te adaptas observando primero o impones tu estilo?","opciones":["Observo y adapto","Imponer"],"correcta":0,"explicacion":"Adaptarse y observar permite integración y efectividad social.","recompensa":50,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si cada grupo tiene reglas implícitas, ¿cómo las descubres?","opciones":["Observación y prueba","Ignoro reglas"],"correcta":0,"explicacion":"Descubrir reglas y adaptarse incrementa éxito social y profesional.","recompensa":35,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"Respira profundo 60 segundos imaginando moverte con armonía y adaptabilidad.","duracion":60,"color":"#8b5cf6"},
-        {"tipo":"reflexion","texto":"Hoy comprendiste que la adaptabilidad social fortalece relaciones y resultados en cualquier entorno.","color":"#ef4444"}
-      ]
-    },
-    {
-      "id": 32,
-      "categoria": "Tvid: Técnica del Beso",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy exploraremos el impacto del afecto y la conexión emocional, como un beso o gesto significativo, en tus relaciones y bienestar.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala afecto, Retén conexión, Exhala gratitud","tiempos":{"inhalar":5,"retener":5,"exhalar":6},"repeticiones":5,"voz_guia":["Inhala afecto","Retén conexión","Exhala gratitud"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"El gesto que cambió todo","texto":"Un pequeño gesto de afecto sincero en un momento crítico logró desactivar tensiones y abrir diálogos que ninguna palabra podría haber hecho.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Debes generar confianza sin palabras. ¿Cómo actúas?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Usas un gesto afectuoso o solo la palabra?","opciones":["Gesto afectuoso","Solo palabra"],"correcta":0,"explicacion":"El lenguaje no verbal transmite confianza y cercanía de manera más profunda que las palabras.","recompensa":50,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si el respeto se muestra en acciones, ¿qué eliges demostrar hoy?","opciones":["Afecto y respeto","Solo palabras"],"correcta":0,"explicacion":"Un gesto sincero genera confianza y fortalece vínculos.","recompensa":35,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"Coloca las manos sobre el corazón, respira 7 veces y siente la energía del afecto y conexión.","duracion":60,"color":"#8b5cf6"},
-        {"tipo":"reflexion","texto":"Hoy comprendiste que un gesto afectuoso sincero transforma relaciones y genera bienestar.","color":"#ef4444"},
-        {"tipo":"tvid","nombre":"Técnica del Beso","instrucciones":"Usa gestos afectuosos que transmitan amor y cercanía. Observa cómo impactan positivamente en relaciones y bienestar.","color":"#6366f1"}
-      ]
-    },
-    {
-      "id": 33,
-      "categoria": "Tvid: Técnica de la Guerra",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy aprenderemos a transformar emociones fuertes como miedo y agresividad en energía positiva y resultados constructivos.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala fuerza, Retén control, Exhala decisión","tiempos":{"inhalar":6,"retener":6,"exhalar":6},"repeticiones":5,"voz_guia":["Inhala fuerza","Retén control","Exhala decisión"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"El líder estratégico","texto":"Un líder enseñaba a canalizar la ira y el miedo en decisiones calculadas, convirtiendo momentos de presión en victorias estratégicas y relaciones fortalecidas.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Te enfrentan en una negociación intensa. ¿Cómo manejas tu agresividad y miedo?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Respondes con miedo o canalizas tu agresividad estratégicamente?","opciones":["Canalizo agresividad","Miedo"],"correcta":0,"explicacion":"Transformar emociones fuertes en estrategia permite controlar situaciones y obtener resultados positivos.","recompensa":50,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si la presión es intensa, ¿la igualas con estrés o con control inteligente?","opciones":["Control inteligente","Estrés"],"correcta":0,"explicacion":"La mente controlada transforma presión en ventaja. El estrés solo debilita.","recompensa":35,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"Realiza 15 movimientos controlados de fuerza imaginaria, sintiendo la energía transformada en acción constructiva.","duracion":60,"color":"#8b5cf6"},
-        {"tipo":"reflexion","texto":"Hoy entendiste que canalizar emociones fuertes adecuadamente genera fuerza, éxito y relaciones saludables.","color":"#ef4444"},
-        {"tipo":"tvid","nombre":"Técnica de la Guerra","instrucciones":"Convierte agresividad y miedo en energía estratégica y positiva. Utiliza el control emocional para éxito y bienestar.","color":"#6366f1"}
-      ]
-    },
-    {
-      "id": 34,
-      "categoria": "Estrategia: Planificación a largo plazo",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy trabajaremos la visión estratégica, estableciendo metas a largo plazo y pasos concretos para alcanzarlas.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala visión, Retén claridad, Exhala determinación","tiempos":{"inhalar":6,"retener":6,"exhalar":6},"repeticiones":5,"voz_guia":["Inhala visión","Retén claridad","Exhala determinación"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"El planificador visionario","texto":"Un empresario organizaba metas a 5 años, estableciendo hitos concretos y revisando progreso regularmente, logrando grandes resultados sostenibles.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Quieres iniciar un proyecto que genere resultados en 3 años. ¿Cómo lo planificas?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Diseñas un plan detallado o improvisas sobre la marcha?","opciones":["Plan detallado","Improvisar"],"correcta":0,"explicacion":"La planificación estratégica aumenta probabilidades de éxito y reduce riesgos.","recompensa":50,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si cada decisión afecta el futuro, ¿cómo eliges tus pasos?","opciones":["Con visión y estrategia","Al azar"],"correcta":0,"explicacion":"Pensar en el futuro y planificar permite resultados sostenibles y efectividad personal.","recompensa":35,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"Respira profundo 60 segundos mientras visualizas los pasos y logros futuros.","duracion":60,"color":"#8b5cf6"},
-        {"tipo":"reflexion","texto":"Hoy comprendiste que planificar estratégicamente a largo plazo permite alcanzar metas importantes con seguridad y eficacia.","color":"#ef4444"}
-      ]
-    },
-    {
-      "id": 35,
-      "categoria": "Tvid: Técnica del Bien",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy reforzaremos la capacidad de elegir acciones y pensamientos que fomenten bienestar integral, claridad y fortaleza personal.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala claridad, Retén enfoque, Exhala dudas","tiempos":{"inhalar":5,"retener":5,"exhalar":5},"repeticiones":5,"voz_guia":["Inhala claridad","Retén enfoque","Exhala dudas"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"El arquitecto de su vida","texto":"Un hombre diseñaba cada paso de su vida como un arquitecto planifica un edificio. Evaluaba cuidadosamente cada decisión, eligiendo lo que fortalecía su bienestar integral.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Debes decidir entre dos caminos: uno placentero pero superficial, otro desafiante pero enriquecedor. ¿Qué haces?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Escoges lo que te fortalece a largo plazo o lo que brinda placer inmediato?","opciones":["Fortalecimiento a largo plazo","Placer inmediato"],"correcta":0,"explicacion":"La elección consciente del bien genera resultados duraderos y bienestar integral.","recompensa":50,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si tu mente es un jardín, ¿qué decides plantar hoy?","opciones":["Semillas de bienestar","Semillas de distracción"],"correcta":0,"explicacion":"Cada acción consciente nutre tu vida y fortalece tu futuro.","recompensa":35,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"Estira brazos y espalda, respira profundo y visualiza cómo cada decisión correcta fortalece tu cuerpo y mente durante 90 segundos.","duracion":90,"color":"#8b5cf6"},
-        {"tipo":"reflexion","texto":"Hoy comprendiste que cada decisión consciente que busca el bien te acerca a un bienestar pleno y duradero.","color":"#ef4444"},
-        {"tipo":"tvid","nombre":"Técnica del Bien","instrucciones":"Evalúa todas tus acciones desde lo que fortalece tu vida integralmente. Actúa con claridad, fuerza y conciencia.","color":"#6366f1"}
-      ]
-    },
-    {
-      "id": 36,
-      "categoria": "Tvid: Técnica del Mal",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy identificaremos elementos negativos en tu vida y aprenderemos a transformarlos en lecciones y ventajas estratégicas.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala observación, Retén análisis, Exhala control","tiempos":{"inhalar":6,"retener":6,"exhalar":6},"repeticiones":5,"voz_guia":["Inhala observación","Retén análisis","Exhala control"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"El maestro del contratiempo","texto":"Un empresario enfrentaba constantes obstáculos en su camino. En lugar de frustrarse, analizó cada contratiempo y descubrió nuevas oportunidades que otros no veían.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Te presentan un obstáculo inesperado en un proyecto importante. ¿Cómo lo enfrentas?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Lo ves como problema o como oportunidad de aprendizaje?","opciones":["Oportunidad de aprendizaje","Problema"],"correcta":0,"explicacion":"Cada desafío bien analizado se convierte en una ventaja estratégica.","recompensa":50,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si cada dificultad oculta un tesoro, ¿lo buscas o lo evitas?","opciones":["Lo busco","Lo evito"],"correcta":0,"explicacion":"El que enfrenta lo negativo con estrategia se fortalece y progresa.","recompensa":35,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"Haz 10 flexiones conscientes, imaginando que cada esfuerzo convierte un obstáculo en energía positiva.","duracion":60,"color":"#8b5cf6"},
-        {"tipo":"reflexion","texto":"Hoy comprendiste que lo negativo, bien interpretado, se transforma en sabiduría, fuerza y oportunidades.","color":"#ef4444"},
-        {"tipo":"tvid","nombre":"Técnica del Mal","instrucciones":"Reconoce y analiza lo negativo. Convierte cada obstáculo en aprendizaje y ventaja estratégica.","color":"#6366f1"}
-      ]
-    },
-    {
-      "id": 37,
-      "categoria": "Tvid: Técnica del Padre",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy reforzaremos cómo guiar con autoridad y amor, combinando firmeza y empatía para fortalecer a quienes dependen de ti.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala autoridad, Retén paciencia, Exhala calma","tiempos":{"inhalar":5,"retener":5,"exhalar":5},"repeticiones":5,"voz_guia":["Inhala autoridad","Retén paciencia","Exhala calma"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"El líder prudente","texto":"Un líder observaba, intervenía solo cuando era necesario y guiaba con firmeza y afecto. Su equipo crecía confiado y competente, demostrando que la autoridad combinada con amor genera éxito.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Debes corregir a un equipo que falla sin desmotivarlos. ¿Cómo actúas?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Intervienes con paciencia y firmeza o lo ignoras dejando que fallen solos?","opciones":["Paciente y firme","Dejar que fallen"],"correcta":0,"explicacion":"El liderazgo efectivo combina autoridad y empatía, fortaleciendo la confianza y habilidades del equipo.","recompensa":50,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si tu corrección genera confianza o resentimiento, ¿qué eliges cultivar?","opciones":["Confianza","Resentimiento"],"correcta":0,"explicacion":"Corregir con guía estratégica fortalece relaciones y resultados.","recompensa":35,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"Estira brazos y espalda, respirando profundo 7 veces, sintiendo autoridad y calma fusionadas.","duracion":60,"color":"#8b5cf6"},
-        {"tipo":"reflexion","texto":"Hoy aprendiste que liderar con amor y firmeza fortalece a los demás y genera resultados sostenibles.","color":"#ef4444"},
-        {"tipo":"tvid","nombre":"Técnica del Padre","instrucciones":"Guía observando, corrigiendo con firmeza y afecto. Combina autoridad y empatía para fortalecer y enseñar.","color":"#6366f1"}
-      ]
-    },
-    {
-      "id": 38,
-      "categoria": "Tvid: Técnica de la Madre",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy trabajaremos en cómo brindar cuidado, amor y protección, permitiendo libertad para que otros crezcan y aprendan.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala amor, Retén comprensión, Exhala serenidad","tiempos":{"inhalar":5,"retener":5,"exhalar":5},"repeticiones":5,"voz_guia":["Inhala amor","Retén comprensión","Exhala serenidad"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"La protectora sabia","texto":"Una madre enseñaba sin sobreproteger, interviniendo solo cuando era necesario. Su hijo creció seguro, confiado y capaz de tomar decisiones responsables.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Un aprendiz necesita apoyo para avanzar. ¿Cómo equilibras ayuda y libertad?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Lo guías con afecto o lo dejas experimentar solo?","opciones":["Guía afectuosa","Dejar solo"],"correcta":0,"explicacion":"El equilibrio entre cuidado y libertad genera confianza y aprendizaje efectivo.","recompensa":50,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si tu cuidado permite libertad, ¿la aprovechas para enseñar o controlas todo?","opciones":["Permitir libertad","Controlar"],"correcta":0,"explicacion":"Cuidar sin sobreproteger fomenta autonomía y crecimiento seguro.","recompensa":35,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"Manos sobre el corazón, respira profundo 7 veces sintiendo amor, cuidado y serenidad.","duracion":60,"color":"#8b5cf6"},
-        {"tipo":"reflexion","texto":"Hoy comprendiste que cuidar con amor y permitir libertad genera confianza y fortalece el aprendizaje.","color":"#ef4444"},
-        {"tipo":"tvid","nombre":"Técnica de la Madre","instrucciones":"Ofrece cuidado, protección y paciencia. Observa, corrige suavemente y fortalece a los demás sin controlar excesivamente.","color":"#6366f1"}
-      ]
-    },
-    {
-      "id": 39,
-      "categoria": "Tvid: Técnica del Niño",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy activaremos la creatividad, alegría e ingenio del niño interior para afrontar desafíos con curiosidad y alegría.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala asombro, Retén alegría, Exhala libertad","tiempos":{"inhalar":5,"retener":5,"exhalar":5},"repeticiones":5,"voz_guia":["Inhala asombro","Retén alegría","Exhala libertad"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"El niño inventor","texto":"Un niño transformaba problemas en juegos, encontrando soluciones que los adultos no veían. Su curiosidad activa la creatividad y abre nuevas oportunidades.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Frente a un reto inesperado, ¿cómo reaccionas?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Exploras con curiosidad o te dejas limitar por el miedo?","opciones":["Exploro con curiosidad","Me limito por miedo"],"correcta":0,"explicacion":"El niño interior activa la creatividad y permite encontrar soluciones innovadoras.","recompensa":50,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si el mundo es un juego, ¿cómo lo juegas?","opciones":["Con ingenio y alegría","Con rigidez y miedo"],"correcta":0,"explicacion":"Jugar conscientemente fomenta aprendizaje, adaptabilidad y bienestar emocional.","recompensa":35,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"Salta y mueve brazos 15 veces, activando energía y creatividad del niño interior.","duracion":60,"color":"#8b5cf6"},
-        {"tipo":"reflexion","texto":"Hoy comprendiste que la curiosidad y creatividad del niño interior abren caminos únicos y generan oportunidades.","color":"#ef4444"},
-        {"tipo":"tvid","nombre":"Técnica del Niño","instrucciones":"Permítete explorar soluciones sin miedo, usando la creatividad, alegría y curiosidad del niño interior.","color":"#6366f1"}
-      ]
-    },
-    {
-      "id": 40,
-      "categoria": "Inteligencia Social: Construcción de redes",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy aprenderás a construir relaciones sólidas y auténticas, conectando con personas que aporten valor mutuo a tu vida.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala apertura, Retén confianza, Exhala conexión","tiempos":{"inhalar":5,"retener":5,"exhalar":5},"repeticiones":5,"voz_guia":["Inhala apertura","Retén confianza","Exhala conexión"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"El arquitecto de relaciones","texto":"Un profesional ampliaba su red participando activamente, escuchando y ofreciendo apoyo genuino, creando conexiones duraderas y oportunidades inesperadas.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Estás en un evento y deseas hacer contactos valiosos. ¿Qué haces primero?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Inicias conversación con sinceridad o esperas que otros se acerquen?","opciones":["Iniciar con sinceridad","Esperar"],"correcta":0,"explicacion":"Tomar iniciativa y mostrar autenticidad fortalece las relaciones y genera oportunidades.","recompensa":50,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si cada contacto puede abrir puertas, ¿cómo eliges relacionarte?","opciones":["Con estrategia y empatía","Sin estrategia"],"correcta":0,"explicacion":"Relacionarse con propósito y respeto genera redes sólidas y beneficios mutuos.","recompensa":35,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"Respira 7 veces manteniendo postura firme mientras visualizas interacciones exitosas y sinceras.","duracion":60,"color":"#8b5cf6"},
-        {"tipo":"reflexion","texto":"Hoy comprendiste que construir redes sólidas requiere autenticidad, atención y reciprocidad.","color":"#ef4444"}
-      ]
-    },
-    {
-      "id": 41,
-      "categoria": "Estrategia: Manejo de críticas",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy aprenderás a recibir críticas constructivas sin perder el equilibrio emocional, transformándolas en aprendizaje y mejora.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala calma, Retén objetividad, Exhala aprendizaje","tiempos":{"inhalar":6,"retener":6,"exhalar":6},"repeticiones":5,"voz_guia":["Inhala calma","Retén objetividad","Exhala aprendizaje"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"El receptor inteligente","texto":"Un profesional escuchaba críticas sin defenderse, analizaba la información y aplicaba cambios que mejoraban su desempeño y relaciones.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Recibes un comentario negativo sobre tu trabajo. ¿Cómo reaccionas?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Analizas la crítica o te lo tomas personal?","opciones":["Analizo objetivamente","Me lo tomo personal"],"correcta":0,"explicacion":"Analizar críticamente permite mejorar habilidades y fortalecer relaciones.","recompensa":50,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si una crítica tiene un grano de verdad, ¿qué haces?","opciones":["Aplico aprendizaje","Ignoro"],"correcta":0,"explicacion":"Sacar lecciones de críticas constructivas potencia desarrollo personal y profesional.","recompensa":35,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"Respira profundo 60 segundos visualizando recibir críticas con calma y claridad.","duracion":60,"color":"#8b5cf6"},
-        {"tipo":"reflexion","texto":"Hoy comprendiste que manejar críticas con madurez fortalece habilidades y relaciones, convirtiéndolas en oportunidades de crecimiento.","color":"#ef4444"}
-      ]
-    },
-    {
-      "id": 42,
-      "categoria": "Tvid: Técnica del Beso",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy exploraremos cómo los gestos afectivos y la conexión emocional generan bienestar y fortalecen relaciones.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala afecto, Retén conexión, Exhala gratitud","tiempos":{"inhalar":5,"retener":5,"exhalar":6},"repeticiones":5,"voz_guia":["Inhala afecto","Retén conexión","Exhala gratitud"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"El gesto poderoso","texto":"Un pequeño gesto afectivo logró abrir un diálogo imposible con palabras, mostrando cómo el amor y la conexión crean puentes insustituibles.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Debes generar confianza y cercanía sin hablar. ¿Qué haces?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Usas un gesto afectuoso o solo palabras?","opciones":["Gesto afectuoso","Solo palabras"],"correcta":0,"explicacion":"El lenguaje no verbal comunica más que las palabras y fortalece relaciones.","recompensa":50,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si cada acción transmite energía, ¿cómo actúas?","opciones":["Con afecto y respeto","Solo palabras"],"correcta":0,"explicacion":"El gesto sincero genera confianza, conexión y bienestar.","recompensa":35,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"Manos sobre el corazón, respira 7 veces sintiendo conexión y afecto.","duracion":60,"color":"#8b5cf6"},
-        {"tipo":"reflexion","texto":"Hoy aprendiste que un gesto afectuoso sincero fortalece vínculos y bienestar emocional.","color":"#ef4444"},
-        {"tipo":"tvid","nombre":"Técnica del Beso","instrucciones":"Usa gestos afectuosos que transmitan amor y cercanía, impactando positivamente en relaciones y bienestar.","color":"#6366f1"}
-      ]
-    },
-    {
-      "id": 43,
-      "categoria": "Tvid: Técnica de la Guerra",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy aprenderemos a canalizar agresividad y miedo en energía positiva para lograr resultados y mantener relaciones saludables.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala fuerza, Retén control, Exhala decisión","tiempos":{"inhalar":6,"retener":6,"exhalar":6},"repeticiones":5,"voz_guia":["Inhala fuerza","Retén control","Exhala decisión"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"El estratega emocional","texto":"Un líder usaba presión y conflicto para enseñar, transformando miedo y agresividad en decisiones inteligentes y relaciones fuertes.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Te enfrentas a una situación intensa que despierta miedo y tensión. ¿Cómo actúas?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Respondes impulsivamente o transformas la energía en acción positiva?","opciones":["Transformo en acción positiva","Impulsiva"],"correcta":0,"explicacion":"Canalizar emociones intensas estratégicamente genera fuerza y resultados positivos.","recompensa":50,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si la presión es fuerte, ¿cómo respondes?","opciones":["Con control estratégico","Con estrés y miedo"],"correcta":0,"explicacion":"El control mental permite convertir desafíos en ventaja, mientras el estrés debilita.","recompensa":35,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"15 movimientos controlados imaginando canalizar energía agresiva en acciones constructivas.","duracion":60,"color":"#8b5cf6"},
-        {"tipo":"reflexion","texto":"Hoy entendiste que canalizar emociones intensas fortalece tu mente, resultados y relaciones.","color":"#ef4444"},
-        {"tipo":"tvid","nombre":"Técnica de la Guerra","instrucciones":"Transforma miedo y agresividad en energía positiva y estratégica para lograr éxito y bienestar.","color":"#6366f1"}
-      ]
-    },
-    {
-      "id": 44,
-      "categoria": "Tvid: Técnica del Bien",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy reforzaremos la capacidad de tomar decisiones conscientes que favorezcan tu bienestar integral y fortalezcan tu vida.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala claridad, Retén enfoque, Exhala dudas","tiempos":{"inhalar":5,"retener":5,"exhalar":5},"repeticiones":5,"voz_guia":["Inhala claridad","Retén enfoque","Exhala dudas"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"El constructor de su destino","texto":"Un hombre planificaba cada decisión valorando sus efectos a largo plazo. Escogía lo que fortalecía su bienestar integral y evitaba lo que lo debilitaba.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Debes elegir entre una opción placentera a corto plazo y otra que fortalece tu vida a largo plazo. ¿Qué haces?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Optas por bienestar duradero o placer inmediato?","opciones":["Bienestar duradero","Placer inmediato"],"correcta":0,"explicacion":"La elección consciente del bien genera resultados sostenibles y bienestar integral.","recompensa":50,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si tu vida es un jardín, ¿qué decides cultivar hoy?","opciones":["Semillas de bienestar","Semillas de distracción"],"correcta":0,"explicacion":"Cada acción consciente nutre tu vida y fortalece tu futuro.","recompensa":35,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"Estira brazos y espalda, respira profundo y visualiza cómo cada acción correcta fortalece tu cuerpo y mente durante 90 segundos.","duracion":90,"color":"#8b5cf6"},
-        {"tipo":"reflexion","texto":"Hoy comprendiste que decisiones conscientes a favor del bien te acercan a un bienestar pleno y duradero.","color":"#ef4444"},
-        {"tipo":"tvid","nombre":"Técnica del Bien","instrucciones":"Evalúa todas tus acciones desde lo que fortalece tu vida integralmente. Actúa con claridad, fuerza y conciencia.","color":"#6366f1"}
-      ]
-    },
-    {
-      "id": 45,
-      "categoria": "Tvid: Técnica del Mal",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy aprenderemos a observar lo negativo y transformarlo en aprendizaje y ventaja estratégica.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala análisis, Retén observación, Exhala control","tiempos":{"inhalar":6,"retener":6,"exhalar":6},"repeticiones":5,"voz_guia":["Inhala análisis","Retén observación","Exhala control"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"El aprendiz del conflicto","texto":"Un joven enfrentaba críticas y obstáculos constantes. En lugar de frustrarse, los estudió, aprendió y transformó los retos en oportunidades de éxito.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Te enfrentas a una situación complicada que parece injusta. ¿Cómo actúas?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Lo ves como problema o como oportunidad de aprendizaje?","opciones":["Oportunidad de aprendizaje","Problema"],"correcta":0,"explicacion":"Cada dificultad bien analizada se convierte en una ventaja estratégica.","recompensa":50,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si cada obstáculo es un maestro disfrazado, ¿lo aprovechas o lo evitas?","opciones":["Lo aprovecho","Lo evito"],"correcta":0,"explicacion":"El que enfrenta lo negativo con estrategia se fortalece y progresa.","recompensa":35,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"Haz 10 flexiones controladas, imaginando que cada esfuerzo convierte un obstáculo en aprendizaje y ventaja.","duracion":60,"color":"#8b5cf6"},
-        {"tipo":"reflexion","texto":"Hoy comprendiste que lo negativo, bien interpretado, se transforma en sabiduría y oportunidades.","color":"#ef4444"},
-        {"tipo":"tvid","nombre":"Técnica del Mal","instrucciones":"Reconoce y analiza lo negativo. Convierte cada obstáculo en aprendizaje y ventaja estratégica.","color":"#6366f1"}
-      ]
-    },
-    {
-      "id": 46,
-      "categoria": "Tvid: Técnica del Padre",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy practicaremos la guía firme y amorosa, equilibrando autoridad y afecto para fortalecer la confianza y el crecimiento de quienes dependen de ti.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala autoridad, Retén paciencia, Exhala serenidad","tiempos":{"inhalar":6,"retener":6,"exhalar":6},"repeticiones":5,"voz_guia":["Inhala autoridad","Retén paciencia","Exhala serenidad"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"El mentor estratégico","texto":"Un mentor enseñaba a su equipo con firmeza y amor. Intervenía solo cuando era necesario y cada corrección fortalecía habilidades y confianza.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Un miembro del equipo comete un error. ¿Cómo lo abordas?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Corriges con firmeza y apoyo o lo dejas aprender solo?","opciones":["Firme y apoyo","Dejar solo"],"correcta":0,"explicacion":"El equilibrio entre autoridad y afecto fortalece habilidades y confianza.","recompensa":50,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si tu corrección puede motivar o desanimar, ¿qué eliges generar?","opciones":["Motivación","Desánimo"],"correcta":0,"explicacion":"Corregir con estrategia y afecto genera crecimiento y confianza.","recompensa":35,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"Estira brazos y espalda, respira 7 veces, sintiendo autoridad y calma fusionadas.","duracion":60,"color":"#8b5cf6"},
-        {"tipo":"reflexion","texto":"Hoy comprendiste que guiar con autoridad y amor fortalece el desarrollo y la confianza de otros.","color":"#ef4444"},
-        {"tipo":"tvid","nombre":"Técnica del Padre","instrucciones":"Observa, corrige con firmeza y afecto, combinando autoridad y empatía para fortalecer y enseñar.","color":"#6366f1"}
-      ]
-    },
-    {
-      "id": 47,
-      "categoria": "Inteligencia Social: Escucha activa",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy entrenarás la escucha activa, comprendiendo a los demás y detectando mensajes explícitos e implícitos.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala atención, Retén calma, Exhala comprensión","tiempos":{"inhalar":5,"retener":5,"exhalar":5},"repeticiones":5,"voz_guia":["Inhala atención","Retén calma","Exhala comprensión"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"El oyente estratégico","texto":"Un líder aumentaba la confianza del equipo escuchando activamente, captando necesidades no expresadas y ajustando su comunicación.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Alguien te explica un problema complejo. ¿Qué haces primero?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Escuchas atentamente o interrumpes para dar tu opinión?","opciones":["Escucho atentamente","Interrumpo"],"correcta":0,"explicacion":"Escuchar primero permite comprender y responder adecuadamente, aumentando influencia y respeto.","recompensa":50,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si la persona no dice todo directamente, ¿cómo captas la información?","opciones":["Observando lenguaje y tono","Solo palabras"],"correcta":0,"explicacion":"Interpretar lenguaje verbal y no verbal incrementa comprensión y efectividad social.","recompensa":35,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"Mantén postura firme y respira profundo 60 segundos mientras practicas atención plena.","duracion":60,"color":"#8b5cf6"},
-        {"tipo":"reflexion","texto":"Hoy comprendiste que la escucha activa genera comprensión profunda y fortalece relaciones sociales y profesionales.","color":"#ef4444"}
-      ]
-    },
-    {
-      "id": 48,
-      "categoria": "Tvid: Técnica de la Madre",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy aprenderemos a cuidar con amor y paciencia, ofreciendo apoyo y libertad para que otros crezcan de manera autónoma.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala amor, Retén comprensión, Exhala serenidad","tiempos":{"inhalar":6,"retener":6,"exhalar":6},"repeticiones":5,"voz_guia":["Inhala amor","Retén comprensión","Exhala serenidad"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"La guía protectora","texto":"Una madre enseñaba a su hijo a tomar decisiones mientras lo cuidaba. Intervenía solo cuando era necesario, permitiendo autonomía y confianza.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Alguien necesita apoyo para avanzar. ¿Cómo equilibras ayuda y libertad?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Guias afectuosamente o lo dejas experimentar solo?","opciones":["Guía afectuosa","Dejar solo"],"correcta":0,"explicacion":"Cuidar con afecto y permitir libertad fomenta confianza y aprendizaje.","recompensa":50,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si tu apoyo permite libertad, ¿cómo lo aplicas?","opciones":["Permitir libertad","Controlar"],"correcta":0,"explicacion":"Cuidar sin sobreproteger desarrolla autonomía y seguridad.","recompensa":35,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"Manos sobre el corazón, respira profundo 7 veces sintiendo amor y serenidad.","duracion":60,"color":"#8b5cf6"},
-        {"tipo":"reflexion","texto":"Hoy comprendiste que ofrecer cuidado con libertad fortalece confianza y crecimiento personal.","color":"#ef4444"},
-        {"tipo":"tvid","nombre":"Técnica de la Madre","instrucciones":"Ofrece cuidado, protección y paciencia, fortaleciendo sin controlar excesivamente.","color":"#6366f1"}
-      ]
-    },
-    {
-      "id": 49,
-      "categoria": "Tvid: Técnica del Niño",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy activaremos la creatividad y alegría del niño interior, usando curiosidad para resolver problemas con ingenio y entusiasmo.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala asombro, Retén alegría, Exhala libertad","tiempos":{"inhalar":5,"retener":5,"exhalar":5},"repeticiones":5,"voz_guia":["Inhala asombro","Retén alegría","Exhala libertad"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"El pequeño inventor","texto":"Un niño transformaba problemas en juegos, descubriendo soluciones que los adultos no veían. Su curiosidad activa creatividad y abre oportunidades.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Frente a un desafío, ¿cómo reaccionas?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Exploras con curiosidad o te limitas por miedo?","opciones":["Exploro con curiosidad","Me limito por miedo"],"correcta":0,"explicacion":"La curiosidad y creatividad del niño interior permite soluciones innovadoras.","recompensa":50,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si el mundo es un juego, ¿cómo lo juegas?","opciones":["Con ingenio y alegría","Con rigidez y miedo"],"correcta":0,"explicacion":"Jugar conscientemente fomenta aprendizaje y adaptabilidad.","recompensa":35,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"Salta y mueve brazos 15 veces, activando energía y creatividad interior.","duracion":60,"color":"#8b5cf6"},
-        {"tipo":"reflexion","texto":"Hoy comprendiste que la creatividad y alegría del niño interior generan soluciones y oportunidades únicas.","color":"#ef4444"},
-        {"tipo":"tvid","nombre":"Técnica del Niño","instrucciones":"Explora soluciones con creatividad y alegría, usando la curiosidad del niño interior.","color":"#6366f1"}
-      ]
-    },
-    {
-      "id": 50,
-      "categoria": "Tvid: Técnica del Beso",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy exploraremos la fuerza de la conexión afectiva y los gestos que fortalecen vínculos y bienestar emocional.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala afecto, Retén conexión, Exhala gratitud","tiempos":{"inhalar":5,"retener":5,"exhalar":6},"repeticiones":5,"voz_guia":["Inhala afecto","Retén conexión","Exhala gratitud"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"El gesto transformador","texto":"Un pequeño gesto afectivo abrió un diálogo imposible, mostrando que el amor y la conexión crean puentes sólidos e insustituibles.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Debes generar confianza sin palabras. ¿Qué haces?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Usas un gesto afectuoso o solo palabras?","opciones":["Gesto afectuoso","Solo palabras"],"correcta":0,"explicacion":"El lenguaje no verbal comunica más y fortalece relaciones.","recompensa":50,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si cada acción transmite energía, ¿cómo actúas?","opciones":["Con afecto","Solo palabras"],"correcta":0,"explicacion":"El gesto sincero genera confianza y bienestar emocional.","recompensa":35,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"Manos sobre el corazón, respira 7 veces sintiendo conexión y afecto.","duracion":60,"color":"#8b5cf6"},
-        {"tipo":"reflexion","texto":"Hoy aprendiste que un gesto afectuoso sincero fortalece vínculos y bienestar emocional.","color":"#ef4444"},
-        {"tipo":"tvid","nombre":"Técnica del Beso","instrucciones":"Usa gestos afectuosos que transmitan amor y cercanía, impactando positivamente en relaciones y bienestar.","color":"#6366f1"}
-      ]
-    },
-    {
-      "id": 51,
-      "categoria": "Tvid: Técnica de la Guerra",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy aprenderemos a canalizar emociones intensas en energía positiva para lograr resultados y mantener relaciones saludables.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala fuerza, Retén control, Exhala decisión","tiempos":{"inhalar":6,"retener":6,"exhalar":6},"repeticiones":5,"voz_guia":["Inhala fuerza","Retén control","Exhala decisión"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"El estratega emocional","texto":"Un líder transformaba miedo y agresividad en decisiones inteligentes y relaciones fuertes, usando presión de manera constructiva.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Te enfrentas a una situación intensa que despierta miedo y tensión. ¿Qué haces?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Respondes impulsivamente o transformas la energía en acción positiva?","opciones":["Transformo en acción positiva","Impulsiva"],"correcta":0,"explicacion":"Canalizar emociones estratégicamente genera fuerza y resultados positivos.","recompensa":50,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si la presión es fuerte, ¿cómo respondes?","opciones":["Con control estratégico","Con estrés y miedo"],"correcta":0,"explicacion":"El control mental convierte desafíos en ventaja, mientras el estrés debilita.","recompensa":35,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"15 movimientos controlados, canalizando energía agresiva en acciones constructivas.","duracion":60,"color":"#8b5cf6"},
-        {"tipo":"reflexion","texto":"Hoy comprendiste que canalizar emociones intensas fortalece mente, resultados y relaciones.","color":"#ef4444"},
-        {"tipo":"tvid","nombre":"Técnica de la Guerra","instrucciones":"Transforma miedo y agresividad en energía positiva y estratégica para éxito y bienestar.","color":"#6366f1"}
-      ]
-    },
-    {
-      "id": 52,
-      "categoria": "Tvid: Técnica del Bien",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy reforzaremos la capacidad de tomar decisiones conscientes que favorezcan tu bienestar integral.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala claridad, Retén enfoque, Exhala dudas","tiempos":{"inhalar":5,"retener":5,"exhalar":5},"repeticiones":5,"voz_guia":["Inhala claridad","Retén enfoque","Exhala dudas"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"El constructor de su destino","texto":"Un hombre valoraba cada decisión, escogiendo lo que fortalecía su bienestar integral y evitando lo que lo debilitaba.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Debes elegir entre placer inmediato y bienestar duradero. ¿Qué eliges?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Optas por bienestar duradero o placer inmediato?","opciones":["Bienestar duradero","Placer inmediato"],"correcta":0,"explicacion":"Elegir el bien genera resultados sostenibles y bienestar integral.","recompensa":50,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si tu vida es un jardín, ¿qué decides cultivar?","opciones":["Semillas de bienestar","Semillas de distracción"],"correcta":0,"explicacion":"Cada acción consciente nutre tu vida y fortalece tu futuro.","recompensa":35,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"Estira brazos y espalda, respira profundo 90 segundos visualizando cómo cada acción correcta fortalece tu cuerpo y mente.","duracion":90,"color":"#8b5cf6"},
-        {"tipo":"reflexion","texto":"Hoy comprendiste que decisiones conscientes a favor del bien te acercan a bienestar pleno y duradero.","color":"#ef4444"},
-        {"tipo":"tvid","nombre":"Técnica del Bien","instrucciones":"Evalúa acciones desde lo que fortalece tu vida integralmente. Actúa con claridad y conciencia.","color":"#6366f1"}
-      ]
-    },
-    {
-      "id": 53,
-      "categoria": "Estrategia: Negociación efectiva",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy entrenaremos técnicas de negociación efectiva, buscando acuerdos beneficiosos para todas las partes.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala calma, Retén enfoque, Exhala persuasión","tiempos":{"inhalar":6,"retener":6,"exhalar":6},"repeticiones":5,"voz_guia":["Inhala calma","Retén enfoque","Exhala persuasión"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"El negociador exitoso","texto":"Un gerente obtenía acuerdos sólidos comprendiendo intereses, proponiendo soluciones creativas y manteniendo comunicación clara y ética.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Estás en una negociación compleja. ¿Cuál es tu primera acción?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Escuchas intereses o impones tus condiciones?","opciones":["Escucho intereses","Imponer condiciones"],"correcta":0,"explicacion":"Escuchar y buscar soluciones conjuntas aumenta probabilidad de éxito y relaciones duraderas.","recompensa":50,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si la otra parte se resiste, ¿cómo ajustas tu estrategia?","opciones":["Adaptando y proponiendo opciones","Presionando"],"correcta":0,"explicacion":"Flexibilidad y creatividad aumentan eficacia en negociación y percepción de confianza.","recompensa":35,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"Respira profundo 60 segundos visualizando un acuerdo satisfactorio y equilibrado.","duracion":60,"color":"#8b5cf6"},
-        {"tipo":"reflexion","texto":"Hoy comprendiste que negociar con ética, creatividad y empatía genera resultados sostenibles y relaciones fuertes.","color":"#ef4444"}
-      ]
-    },
-    {
-      "id": 54,
-      "categoria": "Inteligencia Social: Manejo de impresiones",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy aprenderás a gestionar cómo te perciben los demás, proyectando seguridad, coherencia y profesionalismo.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala confianza, Retén calma, Exhala seguridad","tiempos":{"inhalar":5,"retener":5,"exhalar":5},"repeticiones":5,"voz_guia":["Inhala confianza","Retén calma","Exhala seguridad"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"El profesional consciente","texto":"Un ejecutivo proyectaba seguridad en cada interacción ajustando postura, tono y actitud, generando respeto y credibilidad inmediata.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Tienes una presentación importante. ¿Cómo quieres que te perciban?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Proyectas seguridad auténtica o tratas de impresionar?","opciones":["Seguridad auténtica","Impresionar"],"correcta":0,"explicacion":"La autenticidad proyecta confianza y fortalece reputación profesional.","recompensa":50,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si tu imagen genera confianza, ¿cómo la mantienes consistente?","opciones":["Con coherencia y preparación","Al azar"],"correcta":0,"explicacion":"Mantener coherencia en palabras y acciones fortalece percepción y relaciones.","recompensa":35,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"Respira profundo 60 segundos ajustando postura y expresión para transmitir seguridad y coherencia.","duracion":60,"color":"#8b5cf6"},
-        {"tipo":"reflexion","texto":"Hoy comprendiste que manejar tus impresiones con autenticidad genera respeto, influencia y confianza.","color":"#ef4444"}
-      ]
-    },
-    {
-      "id": 55,
-      "categoria": "Tvid: Técnica del Mal",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy observaremos lo negativo para transformarlo en aprendizaje y ventaja estratégica.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala análisis, Retén observación, Exhala control","tiempos":{"inhalar":6,"retener":6,"exhalar":6},"repeticiones":5,"voz_guia":["Inhala análisis","Retén observación","Exhala control"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"El aprendiz del conflicto","texto":"Un joven analizaba críticas y obstáculos, convirtiéndolos en oportunidades y ventajas estratégicas.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Te enfrentas a una situación injusta. ¿Cómo actúas?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Lo ves como problema o como oportunidad de aprendizaje?","opciones":["Oportunidad de aprendizaje","Problema"],"correcta":0,"explicacion":"Cada dificultad analizada se convierte en ventaja estratégica.","recompensa":50,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si cada obstáculo es un maestro disfrazado, ¿lo aprovechas o lo evitas?","opciones":["Lo aprovecho","Lo evito"],"correcta":0,"explicacion":"Enfrentar lo negativo con estrategia fortalece y genera progreso.","recompensa":35,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"10 flexiones imaginando que cada esfuerzo convierte un obstáculo en aprendizaje.","duracion":60,"color":"#8b5cf6"},
-        {"tipo":"reflexion","texto":"Hoy comprendiste que lo negativo, bien interpretado, se transforma en sabiduría y oportunidades.","color":"#ef4444"},
-        {"tipo":"tvid","nombre":"Técnica del Mal","instrucciones":"Reconoce y analiza lo negativo. Convierte cada obstáculo en aprendizaje y ventaja estratégica.","color":"#6366f1"}
-      ]
-    },
-    {
-      "id": 56,
-      "categoria": "Tvid: Técnica del Padre",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy reforzaremos la autoridad combinada con amor y empatía para guiar y fortalecer a otros.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala autoridad, Retén paciencia, Exhala calma","tiempos":{"inhalar":6,"retener":6,"exhalar":6},"repeticiones":5,"voz_guia":["Inhala autoridad","Retén paciencia","Exhala calma"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"El guía estratégico","texto":"Un padre enseñaba con firmeza y afecto, interviniendo solo cuando era necesario, fortaleciendo confianza y autonomía.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Un aprendiz necesita corrección. ¿Cómo lo abordas?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Corriges con firmeza y amor o lo dejas aprender solo?","opciones":["Firme y amor","Dejar solo"],"correcta":0,"explicacion":"Corregir con autoridad y afecto fortalece aprendizaje y confianza.","recompensa":50,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si tu corrección puede motivar o desanimar, ¿qué eliges generar?","opciones":["Motivación","Desánimo"],"correcta":0,"explicacion":"Corregir con estrategia y afecto genera crecimiento y confianza.","recompensa":35,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"Estira brazos y espalda, respira 7 veces sintiendo autoridad y calma fusionadas.","duracion":60,"color":"#8b5cf6"},
-        {"tipo":"reflexion","texto":"Hoy aprendiste que guiar con autoridad y amor fortalece el desarrollo de los demás.","color":"#ef4444"},
-        {"tipo":"tvid","nombre":"Técnica del Padre","instrucciones":"Corrige con firmeza y afecto, combinando autoridad y empatía para enseñar y fortalecer.","color":"#6366f1"}
-      ]
-    },
-    {
-      "id": 57,
-      "categoria": "Tvid: Técnica de la Madre",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy fortaleceremos la capacidad de cuidar con amor y paciencia, ofreciendo apoyo y libertad para que otros crezcan con seguridad.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala afecto, Retén comprensión, Exhala serenidad","tiempos":{"inhalar":6,"retener":6,"exhalar":6},"repeticiones":5,"voz_guia":["Inhala afecto","Retén comprensión","Exhala serenidad"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"El cuidado consciente","texto":"Una madre enseñaba con afecto, permitiendo que su hijo tomara decisiones mientras se sentía protegido y seguro, fomentando autonomía y confianza.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Alguien necesita apoyo pero también espacio para decidir. ¿Cómo actúas?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Ofreces apoyo con libertad o intervienes demasiado?","opciones":["Apoyo con libertad","Intervengo demasiado"],"correcta":0,"explicacion":"Cuidar con libertad y afecto fortalece confianza y desarrollo personal.","recompensa":50,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si el equilibrio es clave, ¿cómo lo mantienes?","opciones":["Libertad con afecto","Control excesivo"],"correcta":0,"explicacion":"El equilibrio entre cuidado y autonomía genera bienestar y crecimiento.","recompensa":35,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"Manos sobre el corazón, respira profundo 7 veces sintiendo amor y paciencia.","duracion":60,"color":"#8b5cf6"},
-        {"tipo":"reflexion","texto":"Hoy comprendiste que cuidar con libertad y afecto fortalece la autonomía y confianza de otros.","color":"#ef4444"},
-        {"tipo":"tvid","nombre":"Técnica de la Madre","instrucciones":"Ofrece cuidado y apoyo con amor, fortaleciendo sin sobreproteger ni controlar.","color":"#6366f1"}
-      ]
-    },
-    {
-      "id": 58,
-      "categoria": "Tvid: Técnica del Niño",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy activaremos la alegría, curiosidad y creatividad del niño interior para resolver problemas y generar soluciones únicas.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala asombro, Retén entusiasmo, Exhala libertad","tiempos":{"inhalar":5,"retener":5,"exhalar":5},"repeticiones":5,"voz_guia":["Inhala asombro","Retén entusiasmo","Exhala libertad"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"El creador juguetón","texto":"Un niño veía el mundo como un juego y transformaba problemas complejos en soluciones simples y creativas, sorprendiendo a los adultos.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Enfrentas un reto inesperado. ¿Cómo reaccionas?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Usas creatividad e imaginación o te limitas al miedo?","opciones":["Creatividad e imaginación","Miedo y limitación"],"correcta":0,"explicacion":"La curiosidad y creatividad del niño interior generan soluciones inesperadas y efectivas.","recompensa":50,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si cada reto es un juego, ¿cómo lo juegas?","opciones":["Con alegría y creatividad","Con miedo y rigidez"],"correcta":0,"explicacion":"Jugar con estrategia y alegría desarrolla habilidades y resiliencia.","recompensa":35,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"Salta y mueve brazos 15 veces activando energía, alegría y creatividad interior.","duracion":60,"color":"#8b5cf6"},
-        {"tipo":"reflexion","texto":"Hoy comprendiste que el niño interior potencia creatividad, entusiasmo y resolución de problemas.","color":"#ef4444"},
-        {"tipo":"tvid","nombre":"Técnica del Niño","instrucciones":"Explora soluciones con creatividad, curiosidad y alegría del niño interior.","color":"#6366f1"}
-      ]
-    },
-    {
-      "id": 59,
-      "categoria": "Estrategia: Resolución de problemas",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy entrenaremos la capacidad de analizar problemas y encontrar soluciones creativas y efectivas rápidamente.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala claridad, Retén enfoque, Exhala resolución","tiempos":{"inhalar":5,"retener":5,"exhalar":5},"repeticiones":5,"voz_guia":["Inhala claridad","Retén enfoque","Exhala resolución"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"El solucionador estratégico","texto":"Un líder abordaba problemas complejos descomponiéndolos en partes, priorizando acciones y generando resultados eficientes.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Encuentras un obstáculo inesperado en tu proyecto. ¿Cómo procedes?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Analizas antes de actuar o improvisas inmediatamente?","opciones":["Analizo antes","Improviso"],"correcta":0,"explicacion":"Analizar permite tomar decisiones más acertadas y eficientes.","recompensa":50,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si cada problema tiene múltiples soluciones, ¿cómo eliges la mejor?","opciones":["Evaluando impacto y riesgo","Al azar"],"correcta":0,"explicacion":"Elegir soluciones estratégicamente maximiza resultados y reduce errores.","recompensa":35,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"Respira profundo 60 segundos visualizando encontrar la mejor solución con calma y claridad.","duracion":60,"color":"#8b5cf6"},
-        {"tipo":"reflexion","texto":"Hoy comprendiste que resolver problemas estratégicamente fortalece habilidades, confianza y resultados positivos.","color":"#ef4444"}
-      ]
-    },
-    {
-      "id": 60,
-      "categoria": "Inteligencia Social: Manejo de relaciones difíciles",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy aprenderás a relacionarte con personas complicadas de manera efectiva, manteniendo calma, respeto y límites claros.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala calma, Retén control, Exhala equilibrio","tiempos":{"inhalar":5,"retener":5,"exhalar":5},"repeticiones":5,"voz_guia":["Inhala calma","Retén control","Exhala equilibrio"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"El experto en relaciones difíciles","texto":"Un gerente manejaba personas conflictivas escuchando, estableciendo límites claros y buscando puntos de acuerdo sin perder autoridad.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Debes trabajar con un compañero difícil. ¿Cómo interactúas?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Intentas comprenderlo o lo evitas completamente?","opciones":["Comprender y manejar","Evitar"],"correcta":0,"explicacion":"Entender y gestionar relaciones difíciles fortalece resultados y reduce conflictos.","recompensa":50,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si sus actitudes cambian constantemente, ¿cómo respondes?","opciones":["Con paciencia y estrategia","Con reacciones impulsivas"],"correcta":0,"explicacion":"Responder con estrategia mantiene control y efectividad social.","recompensa":35,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"Respira 60 segundos visualizando interacción calmada y efectiva con esta persona.","duracion":60,"color":"#8b5cf6"},
-        {"tipo":"reflexion","texto":"Hoy comprendiste que manejar relaciones difíciles con estrategia y calma protege resultados y bienestar emocional.","color":"#ef4444"}
-      ]
-    },
-    {
-      "id": 61,
-      "categoria": "Tvid: Técnica del Beso",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy exploraremos cómo un gesto afectuoso y sincero puede fortalecer vínculos y generar bienestar emocional profundo.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala afecto, Retén conexión, Exhala gratitud","tiempos":{"inhalar":5,"retener":5,"exhalar":6},"repeticiones":5,"voz_guia":["Inhala afecto","Retén conexión","Exhala gratitud"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"El gesto transformador","texto":"Un beso en la frente o una caricia silenciosa abrió un puente de comunicación y confianza, mostrando el poder de la cercanía afectiva.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Debes generar confianza y cercanía sin palabras. ¿Qué haces?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Usas un gesto afectuoso o solo palabras?","opciones":["Gesto afectuoso","Solo palabras"],"correcta":0,"explicacion":"El lenguaje no verbal transmite emociones profundas y fortalece relaciones.","recompensa":50,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si cada acción transmite energía, ¿cómo actúas?","opciones":["Con afecto","Solo palabras"],"correcta":0,"explicacion":"Un gesto sincero genera confianza y bienestar emocional inmediato.","recompensa":35,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"Manos sobre el corazón, respira profundo 7 veces sintiendo conexión y amor.","duracion":60,"color":"#8b5cf6"},
-        {"tipo":"reflexion","texto":"Hoy comprendiste que un gesto afectuoso sincero impacta relaciones y bienestar emocional.","color":"#ef4444"},
-        {"tipo":"tvid","nombre":"Técnica del Beso","instrucciones":"Usa gestos afectuosos para fortalecer vínculos y bienestar emocional.","color":"#6366f1"}
-      ]
-    },
-    {
-      "id": 62,
-      "categoria": "Tvid: Técnica de la Guerra",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy aprenderemos a canalizar emociones intensas en energía positiva, transformando tensión y miedo en resultados y bienestar.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala fuerza, Retén control, Exhala decisión","tiempos":{"inhalar":6,"retener":6,"exhalar":6},"repeticiones":5,"voz_guia":["Inhala fuerza","Retén control","Exhala decisión"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"El estratega emocional","texto":"Un líder transformaba agresividad y miedo en decisiones inteligentes, convirtiendo presión en ventaja estratégica y fortaleciendo relaciones.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Te enfrentas a una situación intensa que despierta tensión y miedo. ¿Qué haces?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Respondes impulsivamente o transformas la energía en acción positiva?","opciones":["Transformo en acción positiva","Impulsiva"],"correcta":0,"explicacion":"Canalizar emociones estratégicamente genera fuerza, resultados y relaciones saludables.","recompensa":50,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si la presión aumenta, ¿cómo actúas?","opciones":["Con control estratégico","Con estrés y miedo"],"correcta":0,"explicacion":"El control mental convierte desafíos en ventaja, mientras el estrés debilita.","recompensa":35,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"15 movimientos controlados, transformando energía intensa en acciones constructivas.","duracion":60,"color":"#8b5cf6"},
-        {"tipo":"reflexion","texto":"Hoy comprendiste que canalizar emociones intensas fortalece mente, resultados y relaciones.","color":"#ef4444"},
-        {"tipo":"tvid","nombre":"Técnica de la Guerra","instrucciones":"Transforma miedo y agresividad en energía positiva y estratégica para éxito y bienestar.","color":"#6366f1"}
-      ]
-    },
-    {
-      "id": 63,
-      "categoria": "Tvid: Técnica del Bien",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy reforzaremos la capacidad de elegir conscientemente lo que favorece tu bienestar integral, proyectando seguridad y equilibrio.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala claridad, Retén enfoque, Exhala dudas","tiempos":{"inhalar":5,"retener":5,"exhalar":5},"repeticiones":5,"voz_guia":["Inhala claridad","Retén enfoque","Exhala dudas"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"El constructor consciente","texto":"Un hombre evaluaba cada decisión desde lo que fortalecía su bienestar integral, evitando lo que lo debilitaba, y construyendo una vida estable y positiva.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Debes elegir entre gratificación inmediata o bienestar duradero. ¿Qué eliges?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Optas por bienestar duradero o placer momentáneo?","opciones":["Bienestar duradero","Placer momentáneo"],"correcta":0,"explicacion":"Escoger conscientemente lo que es bueno genera resultados sostenibles y estabilidad emocional.","recompensa":50,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si tu vida es un jardín, ¿qué cultivas?","opciones":["Semillas de bienestar","Semillas de distracción"],"correcta":0,"explicacion":"Cada acción consciente nutre tu vida y fortalece tu futuro.","recompensa":35,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"Estira brazos y espalda, respira profundo 90 segundos visualizando cómo cada acción correcta fortalece cuerpo y mente.","duracion":90,"color":"#8b5cf6"},
-        {"tipo":"reflexion","texto":"Hoy comprendiste que decisiones conscientes a favor del bien acercan a bienestar pleno y duradero.","color":"#ef4444"},
-        {"tipo":"tvid","nombre":"Técnica del Bien","instrucciones":"Evalúa acciones desde lo que fortalece tu vida integralmente. Actúa con claridad y conciencia.","color":"#6366f1"}
-      ]
-    },
-    {
-      "id": 64,
-      "categoria": "Estrategia: Preparación ante imprevistos",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy aprenderás a anticipar problemas y planificar contingencias, reduciendo estrés y aumentando control sobre resultados.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala alerta, Retén calma, Exhala preparación","tiempos":{"inhalar":5,"retener":5,"exhalar":5},"repeticiones":5,"voz_guia":["Inhala alerta","Retén calma","Exhala preparación"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"El planificador prudente","texto":"Un líder mantenía alternativas listas para imprevistos, ajustando decisiones y evitando pérdidas y errores graves.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Se presenta un imprevisto crítico en tu trabajo. ¿Qué haces primero?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Actúas improvisando o aplicas un plan de contingencia?","opciones":["Aplico plan","Improviso"],"correcta":0,"explicacion":"Prepararse ante imprevistos aumenta seguridad, control y efectividad.","recompensa":50,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si cada imprevisto tiene riesgos, ¿cómo los minimizas?","opciones":["Anticipando y planificando","Ignorando"],"correcta":0,"explicacion":"La previsión y planificación reduce riesgos y mejora resultados.","recompensa":35,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"Respira profundo 60 segundos visualizando ejecución de plan ante posibles imprevistos.","duracion":60,"color":"#8b5cf6"},
-        {"tipo":"reflexion","texto":"Hoy comprendiste que anticipar y prepararse ante imprevistos fortalece control, seguridad y resultados positivos.","color":"#ef4444"}
-      ]
-    },
-    {
-      "id": 65,
-      "categoria": "Tvid: Técnica del Mal",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy observaremos lo negativo para transformarlo en aprendizaje y ventaja estratégica, potenciando resiliencia y juicio.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala análisis, Retén observación, Exhala control","tiempos":{"inhalar":6,"retener":6,"exhalar":6},"repeticiones":5,"voz_guia":["Inhala análisis","Retén observación","Exhala control"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"El aprendiz del conflicto","texto":"Un joven analizaba cada crítica y dificultad, convirtiéndolas en oportunidades estratégicas para mejorar su vida y decisiones futuras.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Te enfrentas a una situación injusta o conflictiva. ¿Cómo reaccionas?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Lo ves como problema o como oportunidad de aprendizaje?","opciones":["Oportunidad de aprendizaje","Problema"],"correcta":0,"explicacion":"Cada dificultad analizada puede transformarse en ventaja estratégica y crecimiento personal.","recompensa":50,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si cada obstáculo es un maestro disfrazado, ¿lo aprovechas o lo evitas?","opciones":["Lo aprovecho","Lo evito"],"correcta":0,"explicacion":"Enfrentar lo negativo con estrategia fortalece y genera progreso.","recompensa":35,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"10 flexiones imaginando que cada esfuerzo convierte un obstáculo en aprendizaje.","duracion":60,"color":"#8b5cf6"},
-        {"tipo":"reflexion","texto":"Hoy comprendiste que lo negativo, bien interpretado, se transforma en sabiduría y oportunidades.","color":"#ef4444"},
-        {"tipo":"tvid","nombre":"Técnica del Mal","instrucciones":"Reconoce y analiza lo negativo. Convierte cada obstáculo en aprendizaje y ventaja estratégica.","color":"#6366f1"}
-      ]
-    },
-    {
-      "id": 66,
-      "categoria": "Tvid: Técnica del Padre",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy reforzaremos la autoridad combinada con amor y empatía, guiando y fortaleciendo el desarrollo de otros con confianza.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala autoridad, Retén paciencia, Exhala calma","tiempos":{"inhalar":6,"retener":6,"exhalar":6},"repeticiones":5,"voz_guia":["Inhala autoridad","Retén paciencia","Exhala calma"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"El guía estratégico","texto":"Un padre enseñaba con firmeza y afecto, interviniendo solo cuando era necesario, fortaleciendo confianza y autonomía.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Un aprendiz necesita corrección. ¿Cómo lo abordas?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Corriges con firmeza y amor o lo dejas aprender solo?","opciones":["Firme y amor","Dejar solo"],"correcta":0,"explicacion":"Corregir con autoridad y afecto fortalece aprendizaje y confianza.","recompensa":50,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si tu corrección puede motivar o desanimar, ¿qué eliges generar?","opciones":["Motivación","Desánimo"],"correcta":0,"explicacion":"Corregir con estrategia y afecto genera crecimiento y confianza.","recompensa":35,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"Estira brazos y espalda, respira 7 veces sintiendo autoridad y calma fusionadas.","duracion":60,"color":"#8b5cf6"},
-        {"tipo":"reflexion","texto":"Hoy aprendiste que guiar con autoridad y amor fortalece el desarrollo de los demás.","color":"#ef4444"},
-        {"tipo":"tvid","nombre":"Técnica del Padre","instrucciones":"Corrige con firmeza y afecto, combinando autoridad y empatía para enseñar y fortalecer.","color":"#6366f1"}
-      ]
-    },
-    {
-      "id": 67,
-      "categoria": "Inteligencia Social: Influencia positiva",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy aprenderás a generar influencia positiva en tu entorno, motivando y guiando sin manipular ni imponer.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala influencia, Retén calma, Exhala motivación","tiempos":{"inhalar":5,"retener":5,"exhalar":5},"repeticiones":5,"voz_guia":["Inhala influencia","Retén calma","Exhala motivación"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"El líder inspirador","texto":"Un gerente aumentaba productividad y compromiso motivando, reconociendo esfuerzos y mostrando ejemplo, generando entusiasmo genuino.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Deseas influir positivamente en tu equipo. ¿Qué haces primero?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Predicas con el ejemplo o solo das instrucciones?","opciones":["Predico con ejemplo","Solo instruyo"],"correcta":0,"explicacion":"Predicar con el ejemplo genera influencia auténtica y respeto duradero.","recompensa":50,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si cada acción tiene impacto, ¿cómo maximizas efecto positivo?","opciones":["Actuando con coherencia y respeto","Sin planificación"],"correcta":0,"explicacion":"Ser coherente y respetuoso maximiza influencia y genera relaciones positivas.","recompensa":35,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"Respira 60 segundos visualizando inspirar y motivar con cada acción y palabra.","duracion":60,"color":"#8b5cf6"},
-        {"tipo":"reflexion","texto":"Hoy comprendiste que la influencia positiva construye confianza, compromiso y relaciones sólidas.","color":"#ef4444"}
-      ]
-    },
-    {
-      "id": 68,
-      "categoria": "Estrategia: Toma de decisiones bajo presión",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy entrenarás la habilidad de tomar decisiones efectivas bajo presión, manteniendo claridad, enfoque y control emocional.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala calma, Retén enfoque, Exhala certeza","tiempos":{"inhalar":6,"retener":6,"exhalar":6},"repeticiones":5,"voz_guia":["Inhala calma","Retén enfoque","Exhala certeza"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"El decisor seguro","texto":"Un líder enfrentaba situaciones críticas evaluando información, priorizando opciones y manteniendo control emocional, logrando decisiones acertadas bajo presión.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Debes tomar una decisión importante en pocos minutos. ¿Qué haces?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Analizas cuidadosamente o actúas impulsivamente?","opciones":["Analizo cuidadosamente","Actúo impulsivamente"],"correcta":0,"explicacion":"Evaluar información y mantener calma permite decisiones acertadas y seguras.","recompensa":50,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si el tiempo apremia, ¿cómo priorizas opciones?","opciones":["Considerando impacto y riesgo","Al azar"],"correcta":0,"explicacion":"Priorizar basado en impacto y riesgo maximiza efectividad y minimiza errores.","recompensa":35,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"Respira 60 segundos visualizando tomar decisiones claras, rápidas y efectivas bajo presión.","duracion":60,"color":"#8b5cf6"},
-        {"tipo":"reflexion","texto":"Hoy comprendiste que tomar decisiones bajo presión con calma y análisis fortalece resultados y confianza personal.","color":"#ef4444"}
-      ]
-    },
-    {
-      "id": 69,
-      "categoria": "Tvid: Técnica de la Madre",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy reforzaremos el cuidado consciente, combinando amor y libertad para fomentar crecimiento y confianza en otros.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala afecto, Retén comprensión, Exhala serenidad","tiempos":{"inhalar":6,"retener":6,"exhalar":6},"repeticiones":5,"voz_guia":["Inhala afecto","Retén comprensión","Exhala serenidad"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"El cuidado equilibrado","texto":"Una madre enseñaba con afecto, permitiendo decisiones y autonomía, fortaleciendo confianza y seguridad en el crecimiento.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Debes apoyar a alguien que necesita guía pero también libertad. ¿Cómo actúas?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Ofreces apoyo con libertad o intervienes demasiado?","opciones":["Apoyo con libertad","Intervengo demasiado"],"correcta":0,"explicacion":"Cuidar con libertad y afecto fomenta autonomía y confianza.","recompensa":50,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si tu apoyo genera confianza, ¿cómo lo aplicas?","opciones":["Con libertad y afecto","Con control excesivo"],"correcta":0,"explicacion":"Equilibrio entre cuidado y autonomía genera bienestar y crecimiento.","recompensa":35,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"Manos sobre el corazón, respira profundo 7 veces sintiendo amor y paciencia.","duracion":60,"color":"#8b5cf6"},
-        {"tipo":"reflexion","texto":"Hoy comprendiste que cuidar con amor y libertad fortalece la autonomía y confianza de otros.","color":"#ef4444"},
-        {"tipo":"tvid","nombre":"Técnica de la Madre","instrucciones":"Ofrece cuidado con libertad y afecto, fomentando autonomía y desarrollo seguro.","color":"#6366f1"}
-      ]
-    },
-    {
-      "id": 70,
-      "categoria": "Tvid: Técnica del Niño",
-      "bloques": [
-        {"tipo":"voz","texto":"Hoy conectaremos con la creatividad, curiosidad y alegría del niño interior para potenciar innovación y resolución de problemas.","color":"#1e1b4b"},
-        {"tipo":"respiracion","instrucciones":"Inhala asombro, Retén entusiasmo, Exhala libertad","tiempos":{"inhalar":5,"retener":5,"exhalar":5},"repeticiones":5,"voz_guia":["Inhala asombro","Retén entusiasmo","Exhala libertad"],"color":"#3b82f6"},
-        {"tipo":"historia","titulo":"El niño creativo","texto":"Un niño resolvía problemas complejos con juegos y creatividad, inspirando soluciones innovadoras y efectivas.","color":"#1e3a8a"},
-        {"tipo":"escenario","texto":"Frente a un reto inesperado, ¿cómo actúas?","color":"#f59e0b"},
-        {"tipo":"decision","pregunta":"¿Usas imaginación y creatividad o te limitas al miedo?","opciones":["Imaginación y creatividad","Miedo"],"correcta":0,"explicacion":"La alegría y creatividad del niño interior generan soluciones únicas y efectivas.","recompensa":50,"color":"#10b981"},
-        {"tipo":"juego_mental","pregunta":"Si cada reto es un juego, ¿cómo lo enfrentas?","opciones":["Con creatividad y diversión","Con rigidez y miedo"],"correcta":0,"explicacion":"Jugar con estrategia y alegría fortalece habilidades y resiliencia.","recompensa":35,"color":"#0ea5e9"},
-        {"tipo":"ejercicio_fisico","texto":"Salta y mueve brazos 15 veces activando energía, creatividad y entusiasmo interior.","duracion":60,"color":"#8b5cf6"},
-        {"tipo":"reflexion","texto":"Hoy comprendiste que el niño interior potencia creatividad, alegría y resolución de problemas.","color":"#ef4444"},
-        {"tipo":"tvid","nombre":"Técnica del Niño","instrucciones":"Explora soluciones con alegría, curiosidad y creatividad del niño interior.","color":"#6366f1"}
-      ]
-    }
-  ]
+{
+"id":1,
+"categoria":"claridad",
+"bloques":[
+
+{"tipo":"voz","texto":"Bienvenido. Hoy comenzamos entrenamiento profundo de mente y vida. Yo soy tu coach. Tu solo sigue las instrucciones con calma.","color":"#2563eb"},
+
+{"tipo":"historia","texto":"Las personas que entrenan su mente cada dia toman mejores decisiones y crean mejores resultados en su vida.","color":"#34d399"},
+
+{"tipo":"tvid","texto":"Hoy usaremos la Tecnica del Bien. Vas a practicar elegir lo que te hace bien. Cierra los ojos unos segundos y piensa en algo bueno que quieres para tu vida.","color":"#06b6d4"},
+
+{"tipo":"ejercicio","texto":"Ahora respira profundo y repite en tu mente. Yo elijo lo que me hace bien. Yo elijo lo que me fortalece.","color":"#0ea5e9"},
+
+{"tipo":"estrategia","texto":"Estrategia real. Antes de tomar una decision hoy, preguntate si eso te hace bien a largo plazo.","color":"#22c55e"},
+
+{"tipo":"inteligencia_social","texto":"Inteligencia social. Las personas exitosas piensan antes de reaccionar. Practica escuchar antes de hablar.","color":"#14b8a6"},
+
+{"tipo":"decision","pregunta":"Te ofrecen algo que sabes que no te conviene.","opciones":["Aceptarlo","Pensar primero","Ignorar"],"correcta":1,"explicacion":"Pensar antes fortalece el control mental.","recompensa":10,"color":"#22c55e"},
+
+{"tipo":"quiz","pregunta":"Que crea una vida estable","opciones":["Impulsos","Buenas decisiones","Suerte"],"correcta":1,"explicacion":"Las decisiones crean resultados.","recompensa":8,"color":"#facc15"},
+
+{"tipo":"acertijo","pregunta":"Siempre esta delante pero no se ve","opciones":["Futuro","Sombra","Aire"],"correcta":0,"explicacion":"El futuro.","recompensa":8,"color":"#f59e0b"},
+
+{"tipo":"juego_mental","pregunta":"8 por 5 mas 6","opciones":["46","40","36"],"correcta":0,"explicacion":"8 por 5 es 40 mas 6 es 46","recompensa":7,"color":"#38bdf8"},
+
+{"tipo":"respiracion","texto":"Respira profundo cuatro segundos y suelta lento seis segundos.","duracion":40,"color":"#60a5fa"},
+
+{"tipo":"visualizacion","texto":"Imagina que tomas buenas decisiones y tu vida mejora cada dia.","color":"#a78bfa"},
+
+{"tipo":"accion","texto":"Accion real. Hoy evita una decision que sabes que no te conviene.","color":"#6366f1"},
+
+{"tipo":"reflexion","texto":"Cada vez que eliges bien, tu mente se hace mas fuerte.","color":"#a855f7"},
+
+{"tipo":"recompensa","texto":"Tu mente ha mejorado hoy.","puntos":20,"color":"#10b981"},
+
+{"tipo":"cierre","texto":"Sesion terminada. Hoy comenzaste a controlar tu vida.","color":"#f87171"}
+
+]
+},
+{
+"id":2,
+"categoria":"disciplina",
+"bloques":[
+
+{"tipo":"voz","texto":"Hoy entrenaremos control mental. Yo guio. Tu sigues con calma.","color":"#2563eb"},
+
+{"tipo":"historia","texto":"Las personas fuertes reconocen lo malo sin miedo y lo transforman.","color":"#34d399"},
+
+{"tipo":"tvid","texto":"Hoy usamos la Tecnica del Mal. Vas a reconocer algo que sabes que no te hace bien.","color":"#06b6d4"},
+
+{"tipo":"ejercicio","texto":"Piensa en un habito que quieres cambiar. Solo obsérvalo sin juzgar.","color":"#0ea5e9"},
+
+{"tipo":"estrategia","texto":"Estrategia. Cuando veas algo negativo, no huyas. Analiza y decide.","color":"#22c55e"},
+
+{"tipo":"inteligencia_social","texto":"Las personas inteligentes no reaccionan con ira. Piensan primero.","color":"#14b8a6"},
+
+{"tipo":"decision","pregunta":"Algo te molesta.","opciones":["Reaccionar","Pensar","Gritar"],"correcta":1,"explicacion":"Pensar da control.","recompensa":10,"color":"#22c55e"},
+
+{"tipo":"quiz","pregunta":"Que da poder mental","opciones":["Control","Impulso","Miedo"],"correcta":0,"explicacion":"Control mental.","recompensa":8,"color":"#facc15"},
+
+{"tipo":"acertijo","pregunta":"Cuanto mas lo usas mas se gasta","opciones":["Tiempo","Dinero","Energia"],"correcta":0,"explicacion":"Tiempo.","recompensa":8,"color":"#f59e0b"},
+
+{"tipo":"juego_mental","pregunta":"9 por 4 mas 3","opciones":["39","36","33"],"correcta":0,"explicacion":"36 mas 3","recompensa":7,"color":"#38bdf8"},
+
+{"tipo":"respiracion","texto":"Respira lento y suelta tension.","duracion":40,"color":"#60a5fa"},
+
+{"tipo":"visualizacion","texto":"Imagina que controlas tus emociones.","color":"#a78bfa"},
+
+{"tipo":"accion","texto":"Hoy evita reaccionar rapido ante un problema.","color":"#6366f1"},
+
+{"tipo":"reflexion","texto":"Controlar lo negativo es poder.","color":"#a855f7"},
+
+{"tipo":"recompensa","texto":"Tu control mental aumento.","puntos":20,"color":"#10b981"},
+
+{"tipo":"cierre","texto":"Hoy entrenaste fuerza mental.","color":"#f87171"}
+
+]
+},
+{
+"id":3,
+"categoria":"calma",
+"bloques":[
+
+{"tipo":"voz","texto":"Hoy entrenaremos responsabilidad y guia interna.","color":"#2563eb"},
+
+{"tipo":"tvid","texto":"Tecnica del Padre. Actua como si fueras responsable de tu propia vida.","color":"#06b6d4"},
+
+{"tipo":"ejercicio","texto":"Piensa que debes guiar tu vida como un padre guia a su hijo.","color":"#0ea5e9"},
+
+{"tipo":"estrategia","texto":"Antes de actuar pregunta. Esto ayuda o perjudica.","color":"#22c55e"},
+
+{"tipo":"inteligencia_social","texto":"Los lideres cuidan sus palabras.","color":"#14b8a6"},
+
+{"tipo":"decision","pregunta":"Debes elegir.","opciones":["Impulso","Responsabilidad","Evitar"],"correcta":1,"explicacion":"Responsabilidad.","recompensa":10,"color":"#22c55e"},
+
+{"tipo":"quiz","pregunta":"Que crea respeto","opciones":["Control","Gritos","Miedo"],"correcta":0,"recompensa":8,"color":"#facc15"},
+
+{"tipo":"acertijo","pregunta":"Tiene manos pero no toca","opciones":["Reloj","Mesa","Libro"],"correcta":0,"recompensa":8,"color":"#f59e0b"},
+
+{"tipo":"juego_mental","pregunta":"7 por 6","opciones":["42","36","48"],"correcta":0,"recompensa":7,"color":"#38bdf8"},
+
+{"tipo":"respiracion","texto":"Respira profundo.","duracion":40,"color":"#60a5fa"},
+
+{"tipo":"visualizacion","texto":"Imagina que guias tu vida con firmeza.","color":"#a78bfa"},
+
+{"tipo":"accion","texto":"Hoy toma una decision responsable.","color":"#6366f1"},
+
+{"tipo":"reflexion","texto":"Ser responsable te hace fuerte.","color":"#a855f7"},
+
+{"tipo":"recompensa","texto":"Tu liderazgo crece.","puntos":20,"color":"#10b981"},
+
+{"tipo":"cierre","texto":"Hoy entrenaste liderazgo.","color":"#f87171"}
+
+]
+},
+{
+"id":4,
+"categoria":"enfoque",
+"bloques":[
+
+{"tipo":"voz","texto":"Hoy entrenaremos cuidado y equilibrio.","color":"#2563eb"},
+
+{"tipo":"tvid","texto":"Tecnica de la Madre. Actua con paciencia y cuidado contigo.","color":"#06b6d4"},
+
+{"tipo":"ejercicio","texto":"Respira y piensa en tratarte con respeto.","color":"#0ea5e9"},
+
+{"tipo":"estrategia","texto":"No te critiques demasiado. Mejora poco a poco.","color":"#22c55e"},
+
+{"tipo":"inteligencia_social","texto":"Las personas calmadas generan confianza.","color":"#14b8a6"},
+
+{"tipo":"decision","pregunta":"Cometes error","opciones":["Criticarte","Aprender","Ignorar"],"correcta":1,"recompensa":10,"color":"#22c55e"},
+
+{"tipo":"quiz","pregunta":"Que mejora relaciones","opciones":["Paciencia","Ira","Prisa"],"correcta":0,"recompensa":8,"color":"#facc15"},
+
+{"tipo":"acertijo","pregunta":"Tiene ojos pero no ve","opciones":["Aguja","Persona","Pez"],"correcta":0,"recompensa":8,"color":"#f59e0b"},
+
+{"tipo":"juego_mental","pregunta":"5 por 9","opciones":["45","40","50"],"correcta":0,"recompensa":7,"color":"#38bdf8"},
+
+{"tipo":"respiracion","texto":"Respira lento.","duracion":40,"color":"#60a5fa"},
+
+{"tipo":"visualizacion","texto":"Imagina paz interior.","color":"#a78bfa"},
+
+{"tipo":"accion","texto":"Hoy trata bien a alguien.","color":"#6366f1"},
+
+{"tipo":"reflexion","texto":"La paciencia da poder.","color":"#a855f7"},
+
+{"tipo":"recompensa","texto":"Tu calma aumenta.","puntos":20,"color":"#10b981"},
+
+{"tipo":"cierre","texto":"Hoy entrenaste equilibrio.","color":"#f87171"}
+
+]
+},
+{
+"id":5,
+"categoria":"mentalidad",
+"bloques":[
+
+{"tipo":"voz","texto":"Hoy entrenaremos creatividad y energia.","color":"#2563eb"},
+
+{"tipo":"tvid","texto":"Tecnica del Niño. Usa curiosidad y alegria.","color":"#06b6d4"},
+
+{"tipo":"ejercicio","texto":"Piensa en algo que te gustaba cuando eras niño.","color":"#0ea5e9"},
+
+{"tipo":"estrategia","texto":"Aprende algo nuevo hoy.","color":"#22c55e"},
+
+{"tipo":"inteligencia_social","texto":"Las personas curiosas aprenden mas.","color":"#14b8a6"},
+
+{"tipo":"decision","pregunta":"Quieres crecer","opciones":["Aprender","Quejarte","Esperar"],"correcta":0,"recompensa":10,"color":"#22c55e"},
+
+{"tipo":"quiz","pregunta":"Que aumenta inteligencia","opciones":["Practica","Evitar","Dormir poco"],"correcta":0,"recompensa":8,"color":"#facc15"},
+
+{"tipo":"acertijo","pregunta":"Cuanto mas quitas mas grande","opciones":["Agujero","Caja","Sombra"],"correcta":0,"recompensa":8,"color":"#f59e0b"},
+
+{"tipo":"juego_mental","pregunta":"6 por 8","opciones":["48","42","54"],"correcta":0,"recompensa":7,"color":"#38bdf8"},
+
+{"tipo":"respiracion","texto":"Respira profundo.","duracion":40,"color":"#60a5fa"},
+
+{"tipo":"visualizacion","texto":"Imagina aprender rapido.","color":"#a78bfa"},
+
+{"tipo":"accion","texto":"Hoy prueba algo nuevo.","color":"#6366f1"},
+
+{"tipo":"reflexion","texto":"Aprender te hace libre.","color":"#a855f7"},
+
+{"tipo":"recompensa","texto":"Tu mente crece.","puntos":20,"color":"#10b981"},
+
+{"tipo":"cierre","texto":"Sesion terminada.","color":"#f87171"}
+
+]
+},
+{
+"id":6,
+"categoria":"emociones",
+"bloques":[
+
+{"tipo":"voz","texto":"Hoy entrenaremos conexion emocional y energia positiva. Sigue mi voz con calma.","color":"#2563eb"},
+
+{"tipo":"historia","texto":"Las personas que saben expresar afecto crean mejores relaciones y viven con menos estres.","color":"#34d399"},
+
+{"tipo":"tvid","texto":"Hoy usamos la Tecnica del Beso. El beso representa conexion, respeto y energia positiva.","color":"#06b6d4"},
+
+{"tipo":"ejercicio","texto":"Coloca tu mano en el pecho y respira lento. Siente tu propia energia.","color":"#0ea5e9"},
+
+{"tipo":"estrategia","texto":"Estrategia real. Habla con respeto incluso cuando no estes de acuerdo.","color":"#22c55e"},
+
+{"tipo":"inteligencia_social","texto":"Las personas que muestran respeto generan confianza.","color":"#14b8a6"},
+
+{"tipo":"decision","pregunta":"Alguien te habla mal","opciones":["Responder mal","Responder calmado","Ignorar con ira"],"correcta":1,"explicacion":"Responder calmado da poder.","recompensa":10,"color":"#22c55e"},
+
+{"tipo":"quiz","pregunta":"Que mejora relaciones","opciones":["Respeto","Gritos","Orgullo"],"correcta":0,"recompensa":8,"color":"#facc15"},
+
+{"tipo":"acertijo","pregunta":"Cuanto mas das mas tienes","opciones":["Amor","Dinero","Tiempo"],"correcta":0,"recompensa":8,"color":"#f59e0b"},
+
+{"tipo":"juego_mental","pregunta":"12 mas 15","opciones":["27","25","30"],"correcta":0,"recompensa":7,"color":"#38bdf8"},
+
+{"tipo":"respiracion","texto":"Respira profundo y suelta lento.","duracion":45,"color":"#60a5fa"},
+
+{"tipo":"visualizacion","texto":"Imagina que tus relaciones mejoran cada dia.","color":"#a78bfa"},
+
+{"tipo":"accion","texto":"Hoy habla con respeto a todos.","color":"#6366f1"},
+
+{"tipo":"reflexion","texto":"La buena energia vuelve a ti.","color":"#a855f7"},
+
+{"tipo":"recompensa","texto":"Tu energia emocional aumento.","puntos":20,"color":"#10b981"},
+
+{"tipo":"cierre","texto":"Sesion terminada. Hoy entrenaste conexion.","color":"#f87171"}
+
+]
+},
+{
+"id":7,
+"categoria":"fuerza",
+"bloques":[
+
+{"tipo":"voz","texto":"Hoy entrenaremos fuerza mental y valentia.","color":"#2563eb"},
+
+{"tipo":"historia","texto":"Las personas fuertes enfrentan dificultades sin rendirse.","color":"#34d399"},
+
+{"tipo":"tvid","texto":"Hoy usamos la Tecnica de la Guerra. No es violencia. Es fuerza interior.","color":"#06b6d4"},
+
+{"tipo":"ejercicio","texto":"Aprieta tus manos fuerte cinco segundos y suelta.","color":"#0ea5e9"},
+
+{"tipo":"estrategia","texto":"Cuando algo sea dificil, no huyas. Piensa y actua.","color":"#22c55e"},
+
+{"tipo":"inteligencia_social","texto":"El control da respeto.","color":"#14b8a6"},
+
+{"tipo":"decision","pregunta":"Problema dificil","opciones":["Rendirse","Intentar","Quejarse"],"correcta":1,"recompensa":10,"color":"#22c55e"},
+
+{"tipo":"quiz","pregunta":"Que crea fuerza","opciones":["Disciplina","Excusas","Miedo"],"correcta":0,"recompensa":8,"color":"#facc15"},
+
+{"tipo":"acertijo","pregunta":"Siempre cae pero no se rompe","opciones":["Noche","Vidrio","Piedra"],"correcta":0,"recompensa":8,"color":"#f59e0b"},
+
+{"tipo":"juego_mental","pregunta":"7 por 7","opciones":["49","42","56"],"correcta":0,"recompensa":7,"color":"#38bdf8"},
+
+{"tipo":"respiracion","texto":"Respira fuerte y lento.","duracion":45,"color":"#60a5fa"},
+
+{"tipo":"visualizacion","texto":"Imagina que superas dificultades.","color":"#a78bfa"},
+
+{"tipo":"accion","texto":"Hoy enfrenta algo que evitas.","color":"#6366f1"},
+
+{"tipo":"reflexion","texto":"La fuerza crece cuando luchas.","color":"#a855f7"},
+
+{"tipo":"recompensa","texto":"Tu fuerza mental aumento.","puntos":20,"color":"#10b981"},
+
+{"tipo":"cierre","texto":"Sesion terminada.","color":"#f87171"}
+
+]
+},
+{
+"id":8,
+"categoria":"claridad",
+"bloques":[
+
+{"tipo":"voz","texto":"Hoy entrenaremos decisiones inteligentes.","color":"#2563eb"},
+
+{"tipo":"tvid","texto":"Tecnica del Bien. Elegir lo correcto aunque sea dificil.","color":"#06b6d4"},
+
+{"tipo":"ejercicio","texto":"Piensa en una decision que debes tomar.","color":"#0ea5e9"},
+
+{"tipo":"estrategia","texto":"Lo facil no siempre es lo mejor.","color":"#22c55e"},
+
+{"tipo":"inteligencia_social","texto":"Pensar antes da ventaja.","color":"#14b8a6"},
+
+{"tipo":"decision","pregunta":"Elegir rapido o pensar","opciones":["Rapido","Pensar","Evitar"],"correcta":1,"recompensa":10,"color":"#22c55e"},
+
+{"tipo":"quiz","pregunta":"Que crea futuro","opciones":["Decision","Suerte","Otros"],"correcta":0,"recompensa":8,"color":"#facc15"},
+
+{"tipo":"acertijo","pregunta":"Tiene llave pero no abre","opciones":["Piano","Puerta","Caja"],"correcta":0,"recompensa":8,"color":"#f59e0b"},
+
+{"tipo":"juego_mental","pregunta":"15 mas 9","opciones":["24","23","25"],"correcta":0,"recompensa":7,"color":"#38bdf8"},
+
+{"tipo":"respiracion","texto":"Respira y piensa.","duracion":40,"color":"#60a5fa"},
+
+{"tipo":"visualizacion","texto":"Imagina tomar buenas decisiones.","color":"#a78bfa"},
+
+{"tipo":"accion","texto":"Hoy piensa antes de actuar.","color":"#6366f1"},
+
+{"tipo":"reflexion","texto":"Elegir bien cambia la vida.","color":"#a855f7"},
+
+{"tipo":"recompensa","texto":"Tu mente mejora.","puntos":20,"color":"#10b981"},
+
+{"tipo":"cierre","texto":"Sesion terminada.","color":"#f87171"}
+
+]
+},
+{
+"id":9,
+"categoria":"control",
+"bloques":[
+
+{"tipo":"voz","texto":"Hoy entrenaremos control emocional.","color":"#2563eb"},
+
+{"tipo":"tvid","texto":"Tecnica del Mal. Reconocer errores sin miedo.","color":"#06b6d4"},
+
+{"tipo":"ejercicio","texto":"Recuerda un error y obsérvalo sin culpa.","color":"#0ea5e9"},
+
+{"tipo":"estrategia","texto":"El error enseña.","color":"#22c55e"},
+
+{"tipo":"inteligencia_social","texto":"Las personas maduras aceptan errores.","color":"#14b8a6"},
+
+{"tipo":"decision","pregunta":"Error cometido","opciones":["Negar","Aprender","Culpar"],"correcta":1,"recompensa":10},
+
+{"tipo":"quiz","pregunta":"Que da experiencia","opciones":["Error","Miedo","Evitar"],"correcta":0,"recompensa":8},
+
+{"tipo":"acertijo","pregunta":"Sube y baja sin moverse","opciones":["Escalera","Temperatura","Precio"],"correcta":1,"recompensa":8},
+
+{"tipo":"juego_mental","pregunta":"9 por 8","opciones":["72","64","81"],"correcta":0,"recompensa":7},
+
+{"tipo":"respiracion","texto":"Respira lento.","duracion":40},
+
+{"tipo":"visualizacion","texto":"Imagina mejorar.","color":"#a78bfa"},
+
+{"tipo":"accion","texto":"Hoy aprende de un error.","color":"#6366f1"},
+
+{"tipo":"reflexion","texto":"El error educa.","color":"#a855f7"},
+
+{"tipo":"recompensa","texto":"Tu control crece.","puntos":20},
+
+{"tipo":"cierre","texto":"Sesion terminada."}
+
+]
+},
+{
+"id":10,
+"categoria":"liderazgo",
+"bloques":[
+
+{"tipo":"voz","texto":"Hoy entrenaremos liderazgo personal.","color":"#2563eb"},
+
+{"tipo":"tvid","texto":"Tecnica del Padre. Guiar tu propia vida.","color":"#06b6d4"},
+
+{"tipo":"ejercicio","texto":"Piensa como quieres vivir.","color":"#0ea5e9"},
+
+{"tipo":"estrategia","texto":"Actua como lider de tu vida.","color":"#22c55e"},
+
+{"tipo":"inteligencia_social","texto":"Los lideres escuchan.","color":"#14b8a6"},
+
+{"tipo":"decision","pregunta":"Problema","opciones":["Evitar","Resolver","Quejarse"],"correcta":1,"recompensa":10},
+
+{"tipo":"quiz","pregunta":"Que crea respeto","opciones":["Responsabilidad","Miedo","Gritos"],"correcta":0,"recompensa":8},
+
+{"tipo":"acertijo","pregunta":"Tiene dientes pero no come","opciones":["Peine","Perro","Tiburon"],"correcta":0,"recompensa":8},
+
+{"tipo":"juego_mental","pregunta":"11 mas 13","opciones":["24","23","25"],"correcta":0,"recompensa":7},
+
+{"tipo":"respiracion","texto":"Respira firme.","duracion":40},
+
+{"tipo":"visualizacion","texto":"Imagina liderar tu vida."},
+
+{"tipo":"accion","texto":"Hoy toma control."},
+
+{"tipo":"reflexion","texto":"Tu decides tu camino."},
+
+{"tipo":"recompensa","texto":"Tu liderazgo aumenta.","puntos":20},
+
+{"tipo":"cierre","texto":"Sesion terminada."}
+
+]
+},
+{
+"id":11,
+"categoria":"equilibrio",
+"bloques":[
+
+{"tipo":"voz","texto":"Hoy entrenaremos equilibrio mental. Sigue mi voz con calma."},
+
+{"tipo":"historia","texto":"Las personas que se tratan con respeto viven con menos estres."},
+
+{"tipo":"tvid","texto":"Tecnica de la Madre. Aprende a cuidarte sin debilitarte."},
+
+{"tipo":"ejercicio","texto":"Respira lento y piensa. Hoy voy a tratarme con respeto."},
+
+{"tipo":"estrategia","texto":"No te critiques todo el tiempo. Corrige sin destruirte."},
+
+{"tipo":"inteligencia_social","texto":"Las personas tranquilas generan confianza."},
+
+{"tipo":"decision","pregunta":"Cometes error","opciones":["Criticarte","Aprender","Ignorar"],"correcta":1,"recompensa":10},
+
+{"tipo":"quiz","pregunta":"Que crea estabilidad","opciones":["Calma","Prisa","Ira"],"correcta":0,"recompensa":8},
+
+{"tipo":"acertijo","pregunta":"Tiene cara y manos pero no habla","opciones":["Reloj","Persona","Robot"],"correcta":0,"recompensa":8},
+
+{"tipo":"juego_mental","pregunta":"14 mas 6","opciones":["20","18","22"],"correcta":0,"recompensa":7},
+
+{"tipo":"respiracion","texto":"Respira profundo y suelta lento.","duracion":45},
+
+{"tipo":"visualizacion","texto":"Imagina que controlas tu mente."},
+
+{"tipo":"accion","texto":"Hoy habla contigo con respeto."},
+
+{"tipo":"reflexion","texto":"El equilibrio crea fuerza."},
+
+{"tipo":"recompensa","texto":"Tu mente esta mas estable.","puntos":20},
+
+{"tipo":"cierre","texto":"Sesion terminada"}
+
+]
+},
+{
+"id":12,
+"categoria":"energia",
+"bloques":[
+
+{"tipo":"voz","texto":"Hoy entrenaremos energia mental."},
+
+{"tipo":"historia","texto":"Las personas curiosas aprenden mas rapido."},
+
+{"tipo":"tvid","texto":"Tecnica del Niño. Usa curiosidad y alegria."},
+
+{"tipo":"ejercicio","texto":"Piensa en algo nuevo que quieras aprender."},
+
+{"tipo":"estrategia","texto":"Haz preguntas. La curiosidad da inteligencia."},
+
+{"tipo":"inteligencia_social","texto":"Las personas abiertas conectan mejor."},
+
+{"tipo":"decision","pregunta":"Quieres mejorar","opciones":["Aprender","Esperar","Quejarte"],"correcta":0,"recompensa":10},
+
+{"tipo":"quiz","pregunta":"Que aumenta inteligencia","opciones":["Practica","Miedo","Evitar"],"correcta":0,"recompensa":8},
+
+{"tipo":"acertijo","pregunta":"Mientras mas lo usas mas crece","opciones":["Cerebro","Dinero","Peso"],"correcta":0,"recompensa":8},
+
+{"tipo":"juego_mental","pregunta":"16 mas 8","opciones":["24","22","26"],"correcta":0,"recompensa":7},
+
+{"tipo":"respiracion","texto":"Respira fuerte y lento.","duracion":45},
+
+{"tipo":"visualizacion","texto":"Imagina aprender rapido."},
+
+{"tipo":"accion","texto":"Hoy aprende algo nuevo."},
+
+{"tipo":"reflexion","texto":"La curiosidad te hace libre."},
+
+{"tipo":"recompensa","texto":"Tu mente crece.","puntos":20},
+
+{"tipo":"cierre","texto":"Sesion terminada"}
+
+]
+},
+{
+"id":13,
+"categoria":"conexion",
+"bloques":[
+
+{"tipo":"voz","texto":"Hoy entrenaremos conexion emocional."},
+
+{"tipo":"historia","texto":"Las buenas relaciones crean bienestar."},
+
+{"tipo":"tvid","texto":"Tecnica del Beso. Respeto y energia positiva."},
+
+{"tipo":"ejercicio","texto":"Respira y piensa en alguien que respetas."},
+
+{"tipo":"estrategia","texto":"Habla con respeto incluso cuando no estes de acuerdo."},
+
+{"tipo":"inteligencia_social","texto":"El respeto crea puertas."},
+
+{"tipo":"decision","pregunta":"Discusion","opciones":["Gritar","Escuchar","Ignorar"],"correcta":1,"recompensa":10},
+
+{"tipo":"quiz","pregunta":"Que mejora relaciones","opciones":["Respeto","Orgullo","Ira"],"correcta":0,"recompensa":8},
+
+{"tipo":"acertijo","pregunta":"Se rompe sin tocar","opciones":["Silencio","Vidrio","Hielo"],"correcta":0,"recompensa":8},
+
+{"tipo":"juego_mental","pregunta":"18 menos 5","opciones":["13","12","14"],"correcta":0,"recompensa":7},
+
+{"tipo":"respiracion","texto":"Respira y relaja.","duracion":45},
+
+{"tipo":"visualizacion","texto":"Imagina buenas relaciones."},
+
+{"tipo":"accion","texto":"Hoy habla con respeto."},
+
+{"tipo":"reflexion","texto":"La energia positiva vuelve."},
+
+{"tipo":"recompensa","texto":"Tu conexion mejora.","puntos":20},
+
+{"tipo":"cierre","texto":"Sesion terminada"}
+
+]
+},
+{
+"id":14,
+"categoria":"disciplina",
+"bloques":[
+
+{"tipo":"voz","texto":"Hoy entrenaremos disciplina mental."},
+
+{"tipo":"historia","texto":"La fuerza nace cuando no te rindes."},
+
+{"tipo":"tvid","texto":"Tecnica de la Guerra. Fuerza interior."},
+
+{"tipo":"ejercicio","texto":"Aprieta tus manos y suelta."},
+
+{"tipo":"estrategia","texto":"No huyas de lo dificil."},
+
+{"tipo":"inteligencia_social","texto":"El control da respeto."},
+
+{"tipo":"decision","pregunta":"Dificultad","opciones":["Rendirse","Intentar","Quejarse"],"correcta":1,"recompensa":10},
+
+{"tipo":"quiz","pregunta":"Que crea poder","opciones":["Disciplina","Excusas","Miedo"],"correcta":0,"recompensa":8},
+
+{"tipo":"acertijo","pregunta":"Siempre llega pero nunca se queda","opciones":["Mañana","Noche","Sol"],"correcta":0,"recompensa":8},
+
+{"tipo":"juego_mental","pregunta":"9 por 9","opciones":["81","72","90"],"correcta":0,"recompensa":7},
+
+{"tipo":"respiracion","texto":"Respira fuerte.","duracion":45},
+
+{"tipo":"visualizacion","texto":"Imagina ganar."},
+
+{"tipo":"accion","texto":"Hoy enfrenta algo."},
+
+{"tipo":"reflexion","texto":"La lucha te hace fuerte."},
+
+{"tipo":"recompensa","texto":"Tu fuerza aumenta.","puntos":20},
+
+{"tipo":"cierre","texto":"Sesion terminada"}
+
+]
+},
+{
+"id":15,
+"categoria":"decision",
+"bloques":[
+
+{"tipo":"voz","texto":"Hoy entrenaremos decisiones correctas."},
+
+{"tipo":"historia","texto":"Tu vida cambia con tus decisiones."},
+
+{"tipo":"tvid","texto":"Tecnica del Bien. Elegir lo correcto."},
+
+{"tipo":"ejercicio","texto":"Piensa en una decision importante."},
+
+{"tipo":"estrategia","texto":"Lo correcto no siempre es facil."},
+
+{"tipo":"inteligencia_social","texto":"Pensar antes da ventaja."},
+
+{"tipo":"decision","pregunta":"Elegir","opciones":["Impulso","Pensar","Evitar"],"correcta":1,"recompensa":10},
+
+{"tipo":"quiz","pregunta":"Que crea futuro","opciones":["Decision","Suerte","Otros"],"correcta":0,"recompensa":8},
+
+{"tipo":"acertijo","pregunta":"Tiene hojas pero no es arbol","opciones":["Libro","Planta","Mesa"],"correcta":0,"recompensa":8},
+
+{"tipo":"juego_mental","pregunta":"20 menos 7","opciones":["13","12","14"],"correcta":0,"recompensa":7},
+
+{"tipo":"respiracion","texto":"Respira lento.","duracion":45},
+
+{"tipo":"visualizacion","texto":"Imagina elegir bien."},
+
+{"tipo":"accion","texto":"Hoy decide con calma."},
+
+{"tipo":"reflexion","texto":"Elegir bien es poder."},
+
+{"tipo":"recompensa","texto":"Tu mente mejora.","puntos":20},
+
+{"tipo":"cierre","texto":"Sesion terminada"}
+
+]
+},
+{
+"id":16,
+"categoria":"control",
+"bloques":[
+
+{"tipo":"voz","texto":"Hoy entrenaremos control sobre pensamientos negativos."},
+
+{"tipo":"historia","texto":"Las personas fuertes observan sus errores sin miedo."},
+
+{"tipo":"tvid","texto":"Tecnica del Mal. Reconocer lo negativo para transformarlo."},
+
+{"tipo":"ejercicio","texto":"Piensa en algo que te molesta y obsérvalo sin reaccionar."},
+
+{"tipo":"estrategia","texto":"No luches contra el pensamiento. Analizalo."},
+
+{"tipo":"inteligencia_social","texto":"El que se controla domina la situacion."},
+
+{"tipo":"decision","pregunta":"Algo te molesta","opciones":["Reaccionar","Pensar","Ignorar"],"correcta":1,"recompensa":10},
+
+{"tipo":"quiz","pregunta":"Que da control","opciones":["Pensar","Gritar","Huir"],"correcta":0,"recompensa":8},
+
+{"tipo":"acertijo","pregunta":"No se ve pero pesa","opciones":["Preocupacion","Roca","Metal"],"correcta":0,"recompensa":8},
+
+{"tipo":"juego_mental","pregunta":"21 menos 9","opciones":["12","11","13"],"correcta":0,"recompensa":7},
+
+{"tipo":"respiracion","texto":"Respira profundo y suelta lento.","duracion":45},
+
+{"tipo":"visualizacion","texto":"Imagina que controlas tu mente."},
+
+{"tipo":"accion","texto":"Hoy no reacciones rapido."},
+
+{"tipo":"reflexion","texto":"Controlar lo negativo es poder."},
+
+{"tipo":"recompensa","texto":"Tu control aumenta.","puntos":20},
+
+{"tipo":"cierre","texto":"Sesion terminada"}
+
+]
+},
+{
+"id":17,
+"categoria":"responsabilidad",
+"bloques":[
+
+{"tipo":"voz","texto":"Hoy entrenaremos responsabilidad personal."},
+
+{"tipo":"historia","texto":"Los lideres aceptan sus decisiones."},
+
+{"tipo":"tvid","texto":"Tecnica del Padre. Guiar tu vida con firmeza."},
+
+{"tipo":"ejercicio","texto":"Piensa que eres responsable de tu futuro."},
+
+{"tipo":"estrategia","texto":"No culpes. Decide."},
+
+{"tipo":"inteligencia_social","texto":"La responsabilidad crea respeto."},
+
+{"tipo":"decision","pregunta":"Problema","opciones":["Culpar","Resolver","Evitar"],"correcta":1,"recompensa":10},
+
+{"tipo":"quiz","pregunta":"Que crea liderazgo","opciones":["Responsabilidad","Miedo","Excusas"],"correcta":0,"recompensa":8},
+
+{"tipo":"acertijo","pregunta":"Tiene cabeza y cola pero no cuerpo","opciones":["Moneda","Serpiente","Pez"],"correcta":0,"recompensa":8},
+
+{"tipo":"juego_mental","pregunta":"6 por 11","opciones":["66","60","72"],"correcta":0,"recompensa":7},
+
+{"tipo":"respiracion","texto":"Respira firme.","duracion":45},
+
+{"tipo":"visualizacion","texto":"Imagina liderar tu vida."},
+
+{"tipo":"accion","texto":"Hoy asume una responsabilidad."},
+
+{"tipo":"reflexion","texto":"Ser responsable te hace fuerte."},
+
+{"tipo":"recompensa","texto":"Tu liderazgo crece.","puntos":20},
+
+{"tipo":"cierre","texto":"Sesion terminada"}
+
+]
+},
+{
+"id":18,
+"categoria":"calma",
+"bloques":[
+
+{"tipo":"voz","texto":"Hoy entrenaremos calma interior."},
+
+{"tipo":"historia","texto":"La mente tranquila decide mejor."},
+
+{"tipo":"tvid","texto":"Tecnica de la Madre. Paciencia y cuidado."},
+
+{"tipo":"ejercicio","texto":"Respira lento y relaja el cuerpo."},
+
+{"tipo":"estrategia","texto":"No respondas con prisa."},
+
+{"tipo":"inteligencia_social","texto":"La calma da confianza."},
+
+{"tipo":"decision","pregunta":"Discusion","opciones":["Gritar","Escuchar","Irse"],"correcta":1,"recompensa":10},
+
+{"tipo":"quiz","pregunta":"Que da equilibrio","opciones":["Paciencia","Ira","Miedo"],"correcta":0,"recompensa":8},
+
+{"tipo":"acertijo","pregunta":"Corre pero no se mueve","opciones":["Tiempo","Rio","Auto"],"correcta":0,"recompensa":8},
+
+{"tipo":"juego_mental","pregunta":"25 menos 8","opciones":["17","18","16"],"correcta":0,"recompensa":7},
+
+{"tipo":"respiracion","texto":"Respira lento.","duracion":45},
+
+{"tipo":"visualizacion","texto":"Imagina paz."},
+
+{"tipo":"accion","texto":"Hoy responde con calma."},
+
+{"tipo":"reflexion","texto":"La calma es poder."},
+
+{"tipo":"recompensa","texto":"Tu mente se estabiliza.","puntos":20},
+
+{"tipo":"cierre","texto":"Sesion terminada"}
+
+]
+},
+{
+"id":19,
+"categoria":"creatividad",
+"bloques":[
+
+{"tipo":"voz","texto":"Hoy entrenaremos creatividad mental."},
+
+{"tipo":"historia","texto":"La mente curiosa encuentra soluciones."},
+
+{"tipo":"tvid","texto":"Tecnica del Niño. Curiosidad y energia."},
+
+{"tipo":"ejercicio","texto":"Piensa en una idea nueva."},
+
+{"tipo":"estrategia","texto":"Pregunta mas. Aprende mas."},
+
+{"tipo":"inteligencia_social","texto":"Las personas abiertas crecen."},
+
+{"tipo":"decision","pregunta":"Quieres mejorar","opciones":["Aprender","Esperar","Quejarte"],"correcta":0,"recompensa":10},
+
+{"tipo":"quiz","pregunta":"Que crea progreso","opciones":["Practica","Miedo","Evitar"],"correcta":0,"recompensa":8},
+
+{"tipo":"acertijo","pregunta":"Cuanto mas lo llenas mas pesa","opciones":["Cerebro","Bolsa","Libro"],"correcta":0,"recompensa":8},
+
+{"tipo":"juego_mental","pregunta":"13 mas 14","opciones":["27","26","28"],"correcta":0,"recompensa":7},
+
+{"tipo":"respiracion","texto":"Respira fuerte.","duracion":45},
+
+{"tipo":"visualizacion","texto":"Imagina aprender rapido."},
+
+{"tipo":"accion","texto":"Hoy intenta algo nuevo."},
+
+{"tipo":"reflexion","texto":"La curiosidad te hace crecer."},
+
+{"tipo":"recompensa","texto":"Tu mente se activa.","puntos":20},
+
+{"tipo":"cierre","texto":"Sesion terminada"}
+
+]
+},
+{
+"id":20,
+"categoria":"fuerza",
+"bloques":[
+
+{"tipo":"voz","texto":"Hoy entrenaremos fuerza mental profunda."},
+
+{"tipo":"historia","texto":"Las dificultades hacen fuerte al que no se rinde."},
+
+{"tipo":"tvid","texto":"Tecnica de la Guerra. Determinacion interior."},
+
+{"tipo":"ejercicio","texto":"Aprieta tus manos fuerte y suelta."},
+
+{"tipo":"estrategia","texto":"Cuando algo sea dificil sigue."},
+
+{"tipo":"inteligencia_social","texto":"La firmeza genera respeto."},
+
+{"tipo":"decision","pregunta":"Problema dificil","opciones":["Rendirse","Intentar","Quejarse"],"correcta":1,"recompensa":10},
+
+{"tipo":"quiz","pregunta":"Que crea fuerza","opciones":["Disciplina","Excusas","Miedo"],"correcta":0,"recompensa":8},
+
+{"tipo":"acertijo","pregunta":"Tiene piernas pero no camina","opciones":["Mesa","Persona","Perro"],"correcta":0,"recompensa":8},
+
+{"tipo":"juego_mental","pregunta":"8 por 12","opciones":["96","88","92"],"correcta":0,"recompensa":7},
+
+{"tipo":"respiracion","texto":"Respira firme.","duracion":45},
+
+{"tipo":"visualizacion","texto":"Imagina vencer dificultades."},
+
+{"tipo":"accion","texto":"Hoy enfrenta algo dificil."},
+
+{"tipo":"reflexion","texto":"La fuerza se entrena."},
+
+{"tipo":"recompensa","texto":"Tu poder mental aumenta.","puntos":20},
+
+{"tipo":"cierre","texto":"Sesion terminada"}
+
+]
 }
-    
+]
+}
