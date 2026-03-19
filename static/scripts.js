@@ -1,337 +1,173 @@
 const startBtn = document.getElementById("start-btn");
 const nextBtn = document.getElementById("next-btn");
 const restartBtn = document.getElementById("restart-btn");
+
 const block = document.getElementById("block");
+
+const circle = document.getElementById("circle");
 
 let bloques = [];
 let current = 0;
-let puntos = 0;
-let currentSessionIndex = 0;
 
-let userData = JSON.parse(localStorage.getItem("kamizenData")) || {
-    streak: 0,
-    lastDay: null,
-    nivel: 1,
-    disciplina: 40,
-    claridad: 50,
-    calma: 30
+let userData = JSON.parse(localStorage.getItem("kamizen")) || {
+
+streak:0,
+nivel:1,
+disciplina:40,
+claridad:50,
+calma:30
+
 };
 
-const streakEl = document.getElementById("streak");
-const levelEl = document.getElementById("level");
-const discBar = document.getElementById("disciplina-bar");
-const clarBar = document.getElementById("claridad-bar");
-const calmBar = document.getElementById("calma-bar");
+function breathe(){
 
+let inhale=true;
 
-function updatePanel(){
+setInterval(()=>{
 
-    streakEl.innerHTML = "Racha: " + userData.streak + " días";
-    levelEl.innerHTML = "Nivel KaMiZen: " + userData.nivel;
+circle.style.transform = inhale ? "scale(1.5)" : "scale(1)";
 
-    discBar.style.width = userData.disciplina + "%";
-    clarBar.style.width = userData.claridad + "%";
-    calmBar.style.width = userData.calma + "%";
+inhale=!inhale;
+
+},4000);
 
 }
 
-updatePanel();
+breathe();
 
 
+function speak(text){
 
-function updateStreak(){
+return new Promise(resolve=>{
 
-    let today = new Date().toDateString();
+if(!text){
 
-    if(userData.lastDay !== today){
+resolve();
 
-        userData.streak++;
-
-        userData.lastDay = today;
-
-    }
+return;
 
 }
 
+speechSynthesis.cancel();
 
+let msg = new SpeechSynthesisUtterance(text);
 
-function playVoice(text){
+msg.lang="es-ES";
 
-    return new Promise(resolve=>{
+msg.rate=0.9;
 
-        if(!text){
+msg.onend=()=>resolve();
 
-            resolve();
+msg.onerror=()=>resolve();
 
-            return;
+speechSynthesis.speak(msg);
 
-        }
-
-        speechSynthesis.cancel();
-
-        let msg = new SpeechSynthesisUtterance(text);
-
-        msg.lang = "es-ES";
-
-        msg.rate = 0.9;
-
-        msg.onend = ()=>resolve();
-
-        msg.onerror = ()=>resolve();
-
-        speechSynthesis.speak(msg);
-
-    });
+});
 
 }
 
 
+function updateBars(){
 
-function breathingAnimation(){
+document.getElementById("disciplina-bar").style.width=userData.disciplina+"%";
 
-    let circle = document.createElement("div");
+document.getElementById("claridad-bar").style.width=userData.claridad+"%";
 
-    circle.className = "breath-circle";
-
-    block.appendChild(circle);
-
-    let inhale = true;
-
-    setInterval(()=>{
-
-        circle.style.transform = inhale ? "scale(1.6)" : "scale(1)";
-
-        inhale = !inhale;
-
-    },4000);
+document.getElementById("calma-bar").style.width=userData.calma+"%";
 
 }
 
-
-
-function createOptions(b){
-
-    if(!b.opciones) return;
-
-    b.opciones.forEach((op,i)=>{
-
-        let btn = document.createElement("button");
-
-        btn.innerText = op;
-
-        btn.onclick = ()=>{
-
-            if(i === b.correcta){
-
-                puntos += b.recompensa || 5;
-
-                userData.disciplina += 2;
-                userData.claridad += 2;
-
-                alert(b.explicacion || "Correcto");
-
-            }else{
-
-                userData.calma += 1;
-
-                alert(b.explicacion || "Respuesta");
-
-            }
-
-            updatePanel();
-
-            nextBtn.style.display = "inline-block";
-
-        };
-
-        block.appendChild(btn);
-
-    });
-
-}
-
+updateBars();
 
 
 async function showBlock(b){
 
-    block.innerHTML = "";
+nextBtn.style.display="none";
 
-    nextBtn.style.display = "none";
+block.innerHTML="";
 
-    document.body.style.background = b.color || "#0f172a";
+if(!b){
 
+block.innerHTML="Continuar";
 
-    if(b.texto){
+nextBtn.style.display="block";
 
-        block.innerHTML = "<p>" + b.texto + "</p>";
-
-        await playVoice(b.texto);
-
-    }
-
-
-    switch(b.tipo){
-
-
-        case "decision":
-        case "juego_mental":
-
-            block.innerHTML = "<h3>" + (b.pregunta || "") + "</h3>";
-
-            createOptions(b);
-
-            await playVoice(b.pregunta);
-
-            break;
-
-
-
-        case "respiracion":
-
-            breathingAnimation();
-
-            await playVoice(b.instrucciones || b.texto);
-
-            setTimeout(()=>{
-
-                nextBtn.style.display = "inline-block";
-
-            },8000);
-
-            return;
-
-
-
-        case "recompensa":
-
-            userData.disciplina += 3;
-            userData.claridad += 3;
-            userData.calma += 3;
-
-            block.innerHTML = "<h2>" + b.texto + "</h2>";
-
-            await playVoice(b.texto);
-
-            break;
-
-
-
-        case "cierre":
-
-            updateStreak();
-
-            puntos += 10;
-
-            if(puntos > 50){
-
-                userData.nivel++;
-
-            }
-
-            let completed = JSON.parse(
-                localStorage.getItem("completedSessions")
-            ) || [];
-
-            completed.push(currentSessionIndex);
-
-            localStorage.setItem(
-                "completedSessions",
-                JSON.stringify(completed)
-            );
-
-            localStorage.setItem(
-                "kamizenData",
-                JSON.stringify(userData)
-            );
-
-            updatePanel();
-
-            restartBtn.style.display = "inline-block";
-
-            await playVoice(b.texto);
-
-            return;
-
-    }
-
-
-    setTimeout(()=>{
-
-        nextBtn.style.display = "inline-block";
-
-    },2000);
+return;
 
 }
 
+let text = b.texto || b.pregunta || "Continuar";
+
+block.innerHTML="<p>"+text+"</p>";
+
+await speak(text);
+
+
+if(b.opciones){
+
+b.opciones.forEach(op=>{
+
+let btn=document.createElement("button");
+
+btn.innerText=op;
+
+btn.onclick=()=>{
+
+nextBtn.style.display="block";
+
+};
+
+block.appendChild(btn);
+
+});
+
+}else{
+
+nextBtn.style.display="block";
+
+}
+
+}
 
 
 function nextBlock(){
 
-    nextBtn.style.display = "none";
+current++;
 
-    current++;
+if(current<bloques.length){
 
-    if(current < bloques.length){
+showBlock(bloques[current]);
 
-        showBlock(bloques[current]);
+}else{
 
-    }else{
+restartBtn.style.display="block";
 
-        restartBtn.style.display = "inline-block";
-
-    }
+}
 
 }
 
 
+startBtn.onclick=async()=>{
 
-startBtn.addEventListener("click", async ()=>{
+startBtn.style.display="none";
 
-    startBtn.style.display = "none";
+const res = await fetch("/session_content");
 
-    const res = await fetch("/session_content");
+const data = await res.json();
 
-    const data = await res.json();
+let sesiones=data.sesiones;
 
-    const sesiones = data.sesiones || [];
+let s = sesiones[Math.floor(Math.random()*sesiones.length)];
 
-    let completed =
-        JSON.parse(
-            localStorage.getItem("completedSessions")
-        ) || [];
+bloques=s.bloques;
 
-    let availableIndices =
-        sesiones
-        .map((_,i)=>i)
-        .filter(i => !completed.includes(i));
+current=0;
 
-    if(availableIndices.length === 0){
+showBlock(bloques[0]);
 
-        localStorage.removeItem("completedSessions");
-
-        availableIndices = sesiones.map((_,i)=>i);
-
-    }
-
-    currentSessionIndex =
-        availableIndices[
-            Math.floor(Math.random() * availableIndices.length)
-        ];
-
-    bloques = sesiones[currentSessionIndex].bloques || [];
-
-    current = 0;
-
-    updateStreak();
-
-    showBlock(bloques[0]);
-
-});
+};
 
 
-nextBtn.addEventListener("click", nextBlock);
+nextBtn.onclick=nextBlock;
 
-restartBtn.addEventListener(
-    "click",
-    ()=>location.reload()
-);
+restartBtn.onclick=()=>location.reload();
