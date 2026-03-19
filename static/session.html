@@ -3,97 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>KaMiZen</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;900&display=swap" rel="stylesheet">
+    <title>KaMiZen Elite</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        *{box-sizing:border-box; margin:0; padding:0; font-family:'Inter',sans-serif;}
-        body{background:#020617; color:white; height:100vh; display:flex; flex-direction:column; overflow:hidden; transition: background 1s ease;}
+        :root { --black: #000000; --card: #0a0a0a; --accent: #2563eb; }
+        *{box-sizing:border-box; margin:0; padding:0; font-family:'Inter', sans-serif;}
         
-        /* BANNER DINÁMICO */
-        #banner {
-            width: 100%; background: #1e40af; padding: 12px 0;
-            white-space: nowrap; overflow: hidden; border-bottom: 2px solid rgba(255,255,255,0.1); z-index: 100;
-        }
-        .track { display: inline-block; animation: scroll 20s linear infinite; font-weight: 900; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
+        /* El fondo cambia, pero el contenido se mantiene legible */
+        body { background: #020617; color: white; height: 100vh; display: flex; flex-direction: column; overflow: hidden; transition: background 1.5s ease; }
+        
+        #banner { width: 100%; background: #1e40af; padding: 14px 0; white-space: nowrap; overflow: hidden; z-index: 100; border-bottom: 2px solid rgba(255,255,255,0.1); }
+        .track { display: inline-block; animation: scroll 20s linear infinite; font-weight: 900; font-size: 12px; text-transform: uppercase; }
         @keyframes scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
-        #app {
-            flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: space-between;
-            padding: 20px; width: 100%; max-width: 420px; margin: 0 auto;
+        #app { flex: 1; display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 450px; margin: 0 auto; padding: 15px; }
+
+        /* CONTENEDOR NEGRO PURO PARA LEGIBILIDAD */
+        #main-card {
+            width: 100%; background: var(--black); border-radius: 30px; padding: 25px;
+            display: flex; flex-direction: column; border: 1px solid #1e293b;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.9); flex: 1; max-height: 85vh;
         }
 
-        #logo { font-size: 28px; font-weight: 900; background: linear-gradient(90deg,#60a5fa,#a78bfa); -webkit-background-clip:text; -webkit-text-fill-color:transparent; cursor:pointer; }
-        #subtitle { font-size: 11px; opacity: 0.6; margin-bottom: 10px; text-transform: uppercase; }
+        #logo { font-size: 32px; font-weight: 900; text-align: center; background: linear-gradient(90deg,#60a5fa,#a78bfa); -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin-bottom: 5px; }
+        
+        #mental-panel { background: #111; padding: 12px; border-radius: 15px; margin-bottom: 15px; border: 1px solid #222; }
+        .stat { font-size: 11px; font-weight: 700; text-transform: uppercase; color: #94a3b8; margin-bottom: 5px; }
+        .bar { height: 8px; background: #000; border-radius: 10px; overflow: hidden; border: 1px solid #333; }
+        .bar-fill { height: 100%; background: var(--accent); width: 50%; transition: width 1s ease; }
 
-        /* PANEL ESTADÍSTICAS */
-        #mental-panel { width: 100%; background: rgba(15, 23, 42, 0.8); padding: 15px; border-radius: 20px; border: 1px solid #1e293b; }
-        .stat { font-size: 12px; margin-bottom: 8px; font-weight: 600; }
-        .bar { height: 6px; background: #0f172a; border-radius: 10px; margin-top: 4px; overflow: hidden; border: 1px solid #334155; }
-        .bar-fill { height: 100%; background: #3b82f6; width: 50%; transition: width 0.8s ease; }
+        /* AREA DE TEXTO Y GLOBO */
+        #block { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; overflow-y: auto; padding: 10px 0; }
+        #text-content { font-size: 19px; line-height: 1.4; text-align: center; width: 100%; font-weight: 400; }
+        #text-content h3 { font-size: 24px; color: #60a5fa; margin-bottom: 15px; font-weight: 900; }
 
-        /* AREA CENTRAL: DINÁMICA */
-        #block {
-            flex: 1; width: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center;
-            text-align: center; padding: 20px 0; min-height: 250px;
-        }
-        #text-content { font-size: 18px; line-height: 1.5; font-weight: 400; max-width: 90%; }
-        #text-content h3 { margin-bottom: 10px; color: #60a5fa; font-size: 22px; }
+        .breath-circle { width: 140px; height: 140px; border-radius: 50%; background: radial-gradient(circle, #3b82f6, #1d4ed8); display: none; margin: 20px auto; transition: transform 4s ease-in-out; box-shadow: 0 0 30px #1d4ed8; }
 
-        .breath-circle {
-            width: 140px; height: 140px; border-radius: 50%;
-            background: radial-gradient(circle, #60a5fa, #1d4ed8);
-            box-shadow: 0 0 40px rgba(59,130,246,0.6);
-            transition: transform 4s ease-in-out, box-shadow 2s;
-            display: none; margin-top: 20px;
-        }
-
-        /* BOTONES */
-        .controls { width: 100%; padding-bottom: 20px; }
-        button {
-            width: 100%; padding: 18px; margin: 8px 0; font-size: 16px; font-weight: 800;
-            border: none; border-radius: 15px; cursor: pointer; transition: 0.3s;
-        }
-        #start-btn { background: #2563eb; color: white; box-shadow: 0 4px 15px rgba(37,99,235,0.4); }
-        #next-btn { background: #10b981; color: white; }
-        #skip-btn { background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid #ef4444; font-size: 12px; display: none; }
-
-        #footer { font-size: 10px; opacity: 0.4; text-align: center; padding-bottom: 10px; }
+        /* BOTONES DE RESPUESTA Y ACCIÓN */
+        .btn-group { width: 100%; margin-top: 15px; }
+        button { width: 100%; padding: 18px; border-radius: 15px; border: none; font-size: 17px; font-weight: 800; cursor: pointer; margin-bottom: 10px; transition: 0.2s; }
+        #start-btn { background: var(--accent); color: white; }
+        #next-btn { background: #059669; color: white; display: none; }
+        .option-btn { background: #1a1a1a; color: #e2e8f0; border: 1px solid #333; text-align: left; padding: 15px; font-size: 15px; }
+        .option-btn:active { background: #333; }
+        
+        #footer { font-size: 10px; opacity: 0.5; text-align: center; padding: 10px 0; text-transform: uppercase; letter-spacing: 1px; }
     </style>
 </head>
 <body>
     <div id="banner">
         <div class="track">
-            <span> • KaMiZen: Forja tu Disciplina • $5.99 Acceso Elite • Próxima Sesión: 10:00 AM / 06:00 PM • Cupo Limitado: 500 • </span>
-            <span> • KaMiZen: Forja tu Disciplina • $5.99 Acceso Elite • Próxima Sesión: 10:00 AM / 06:00 PM • Cupo Limitado: 500 • </span>
+            <span> • KaMiZen Elite • $5.99 Pago Único • Forja tu Mente • 10:00 AM / 06:00 PM Miami • Cupo 500 Personas • </span>
+            <span> • KaMiZen Elite • $5.99 Pago Único • Forja tu Mente • 10:00 AM / 06:00 PM Miami • Cupo 500 Personas • </span>
         </div>
     </div>
 
     <div id="app">
-        <header style="text-align: center;">
-            <div id="logo">KaMiZen</div>
-            <div id="subtitle">Asesoría Mental de Alto Peso</div>
-        </header>
+        <div id="main-card">
+            <div id="logo" onclick="location.reload()">KaMiZen</div>
+            
+            <div id="mental-panel">
+                <div class="stat">Disciplina <div class="bar"><div id="d-bar" class="bar-fill"></div></div></div>
+                <div class="stat">Claridad <div class="bar"><div id="cl-bar" class="bar-fill" style="background:#a78bfa;"></div></div></div>
+                <div class="stat">Calma <div class="bar"><div id="ca-bar" class="bar-fill" style="background:#10b981;"></div></div></div>
+            </div>
 
-        <div id="mental-panel">
-            <div class="stat">Disciplina <div class="bar"><div id="disciplina-bar" class="bar-fill"></div></div></div>
-            <div class="stat">Claridad <div class="bar"><div id="claridad-bar" class="bar-fill" style="background:#a78bfa;"></div></div></div>
-            <div class="stat">Calma <div class="bar"><div id="calma-bar" class="bar-fill" style="background:#10b981;"></div></div></div>
+            <div id="block">
+                <div id="text-content">Estableciendo conexión segura con el Asesor...</div>
+                <div id="breath-glob" class="breath-circle"></div>
+            </div>
+
+            <div class="btn-group">
+                <button id="start-btn">INICIAR ENTRENAMIENTO</button>
+                <div id="options-container"></div>
+                <button id="next-btn">CONTINUAR</button>
+            </div>
         </div>
-
-        <div id="block">
-            <div id="text-content">Iniciando sistema...</div>
-            <div id="breath-glob" class="breath-circle"></div>
-        </div>
-
-        <div class="controls">
-            <button id="start-btn">ENTRAR AL SISTEMA</button>
-            <button id="next-btn" style="display:none;">CONTINUAR</button>
-            <button id="skip-btn">SALTAR BLOQUE (PENALIZADO)</button>
-        </div>
-
-        <div id="footer">AURA BY MAY ROGA LLC · SEGURIDAD ENCRIPTADA</div>
+        <div id="footer">AURA BY MAY ROGA LLC · SISTEMA DE ALTO PESO</div>
     </div>
-
     <script src="/static/scripts.js"></script>
 </body>
 </html>
