@@ -378,6 +378,7 @@
       "id": 24,
       "bloques":[
         {"tipo":"voz","texto":"Hoy potenciarás tu motivación y disciplina personal.","color":"#2563eb"},
+        {"tipo":"respiracion","texto":"Respira profundo. Inhala 4, retén 2, exhala 6.","duracion":30,"color":"#60a5fa"},
         {"tipo":"historia","texto":"Un atleta se levantaba a entrenar incluso con frío y lluvia, logrando récords importantes.","color":"#34d399"},
         {"tipo":"quiz","pregunta":"¿Qué fortalece la disciplina diaria?","opciones":["Hacer sólo lo que te gusta","Rutina constante","Procrastinar"],"correcta":1,"explicacion":"La constancia fortalece la disciplina.","recompensa":10,"color":"#facc15"},
         {"tipo":"acertijo","pregunta":"Si un tren sale a las 10 am y otro a las 10:30 am, viajando a la misma velocidad, ¿cuándo se encuentran?","opciones":["11 am","Depende del destino","Nunca"],"correcta":1,"explicacion":"Se necesita más información sobre distancia y velocidad.","recompensa":8,"color":"#f59e0b"},
