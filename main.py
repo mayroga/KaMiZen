@@ -5,7 +5,7 @@ from pydantic import BaseModel
 import json
 from pathlib import Path
 
-app = FastAPI(title="KaMiZen Engine")
+app = FastAPI(title="KaMiZen Elite Engine")
 
 BASE_DIR = Path(__file__).resolve().parent
 STATIC_DIR = BASE_DIR / "static"
@@ -22,26 +22,22 @@ async def home():
     try:
         with open(STATIC_DIR / "session.html", "r", encoding="utf-8") as f:
             return HTMLResponse(f.read())
-    except:
-        return HTMLResponse("<h1>Error: session.html no encontrado</h1>")
+    except Exception:
+        return HTMLResponse("<h1 style='color:white;background:black;'>Error: Archivos de sistema no encontrados.</h1>")
 
 @app.get("/session_content")
 async def session_content():
-    try:
-        if not DB_PATH.exists():
-            return JSONResponse({"sesiones": []})
-        with open(DB_PATH, "r", encoding="utf-8") as f:
-            data = json.load(f)
-            # Ordenar sesiones por ID para evitar errores de salto
-            if "sesiones" in data:
-                data["sesiones"].sort(key=lambda x: x.get('id', 0))
-            return JSONResponse(content=data)
-    except Exception as e:
-        return JSONResponse({"error": str(e)}, status_code=500)
+    if not DB_PATH.exists():
+        return JSONResponse({"sesiones": []})
+    with open(DB_PATH, "r", encoding="utf-8") as f:
+        data = json.load(f)
+        if "sesiones" in data:
+            data["sesiones"].sort(key=lambda x: x.get('id', 0))
+        return JSONResponse(content=data)
 
 @app.post("/admin_auth")
 async def admin_auth(auth: AdminAuth):
-    # Credenciales de acceso rápido
+    # Acceso administrativo de May Roga LLC
     if auth.user == "admin" and auth.pass_word == "1234":
         return {"status": "authorized"}
     raise HTTPException(status_code=401)
