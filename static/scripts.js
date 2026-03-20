@@ -68,27 +68,39 @@ function playVoice(text){
     });
 }
 
-/* RESPIRACION CON VOZ Y GLOBO REALISTA */
+/* RESPIRACION CON GLOBO VISUAL Y MENSAJES */
 async function breathingAnimation(){
     block.innerHTML = "";
+
+    // Crear globo azul
     let circle = document.createElement("div");
     circle.className = "breath-circle";
-    circle.style.transform = "scale(0.5)"; // siempre comienza pequeño
+    circle.style.transform = "scale(0.3)"; // comienza pequeño
     circle.style.transition = "transform 3s ease-in-out";
     block.appendChild(circle);
 
+    // Crear mensaje visual de respiración
+    let msgText = document.createElement("div");
+    msgText.className = "breath-message";
+    msgText.style.color = "#ffffff";
+    msgText.style.fontSize = "1.5rem";
+    msgText.style.textAlign = "center";
+    msgText.style.marginTop = "20px";
+    block.appendChild(msgText);
+
+    // Secuencia de respiración con mensaje
     let fases = [
-        {t:"Inhala", scale:1.6},
-        {t:"Retiene", scale:1.6},
-        {t:"Exhala", scale:0.5},
-        {t:"Retiene", scale:0.5}
+        {t:"Inhala", scale:1.6, msg:"Inhala calma"},
+        {t:"Retiene", scale:1.6, msg:"Retén calma"},
+        {t:"Exhala", scale:0.3, msg:"Exhala stress"},
+        {t:"Retiene", scale:0.3, msg:"Mantén calma"}
     ];
 
     for(let i=0; i<8; i++){
         let f = fases[i%4];
+        msgText.innerText = f.msg;
         circle.style.transform = "scale("+f.scale+")";
         await playVoice(f.t);
-        // esperar 3 segundos para dar sensación de respiración lenta y real
         await new Promise(r=>setTimeout(r,3000));
     }
 }
