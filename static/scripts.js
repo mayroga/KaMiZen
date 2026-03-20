@@ -25,6 +25,14 @@ function getComando(tipo) {
     return lista[Math.floor(Math.random() * lista.length)];
 }
 
+/* =================== SEGURIDAD: ADVERTENCIA DE CIERRE =================== */
+window.addEventListener('beforeunload', (e) => {
+    if (isBreathing) {
+        e.preventDefault();
+        e.returnValue = '⚠ ATENCIÓN: Interrumpir el ciclo de respiración puede afectar su estabilidad biológica. Complete el proceso antes de salir.';
+    }
+});
+
 /* =================== MOTOR DE VOZ PROFESIONAL =================== */
 function playVoice(text){
     return new Promise(resolve => {
@@ -66,98 +74,116 @@ async function breathingAnimation(b){
     container.appendChild(circle);
     block.appendChild(container);
 
-    // Variabilidad de tiempo por sesión (Entre 3 y 6 segundos por fase)
-    const duracionFase = Math.floor(Math.random() * (6 - 3 + 1)) + 3;
-    const totalRounds = 4; // Asegura ciclo completo: Inhala, Retiene, Exhala, Retiene
+    // Variabilidad de tiempo: Entre 3 y 6 segundos por fase
+    const durFase = Math.floor(Math.random() * (6 - 3 + 1)) + 3;
+    const fases = [
+        { tipo: "inhala", s: 2.2 },
+        { tipo: "retiene", s: 2.2 },
+        { tipo: "exhala", s: 1.0 },
+        { tipo: "retiene", s: 1.0 }
+    ];
 
-    for(let i=0; i < totalRounds; i++){
-        const faseActual = i % 4;
-        let config;
-
-        if(faseActual === 0) config = { t: getComando("inhala"), s: 2.2 };
-        else if(faseActual === 1) config = { t: getComando("retiene"), s: 2.2 };
-        else if(faseActual === 2) config = { t: getComando("exhala"), s: 1.0 };
-        else config = { t: getComando("retiene"), s: 1.0 };
-
-        playVoice(config.t);
-        uiLabel.innerText = config.t;
+    for(let f de fases){
+        let txt = getComando(f.tipo);
+        playVoice(txt);
+        uiLabel.innerText = txt;
         
         setTimeout(() => {
-            circle.style.transition = `transform ${duracionFase}s ease-in-out`;
-            circle.style.transform = `scale(${config.s})`;
+            circle.style.transition = `transform ${durFase}s ease-in-out`;
+            circle.style.transform = `scale(${f.s})`;
+            // Cambio de brillo en retención
+            circle.style.boxShadow = (f.tipo === "retiene") ? "0 0 70px rgba(255, 255, 255, 0.8)" : "0 0 50px rgba(0, 210, 255, 0.6)";
         }, 50);
 
-        for(let s = duracionFase; s > 0; s--){
+        for(let s = durFase; s > 0; s--){
             uiTimer.innerText = `${s}s`;
             await new Promise(r => setTimeout(r, 1000));
         }
     }
 
     isBreathing = false;
-    uiLabel.innerText = "SESIÓN COMPLETADA CON ÉXITO";
+    uiLabel.innerText = "ENTRENAMIENTO EXITOSO";
     uiTimer.innerText = "";
     nextBtn.style.display = "inline-block";
 }
 
-/* =================== GESTIÓN DE BLOQUES Y PREVENCIÓN DE UNDEFINED =================== */
+/* =================== GESTIÓN DE BLOQUES E INTERACTIVIDAD =================== */
 async function showBlock(b){
     block.innerHTML = "";
     document.body.style.background = b.color || "#070b14";
     nextBtn.style.display = "none";
 
-    // Reemplazo de Undefined por mensajes de poder
-    const defaultText = "En la siguiente sesión lo harás mejor. Siente poder, éxito y bienestar.";
-    const textToShow = b.texto || b.pregunta || defaultText;
+    const defaultMsg = "En la siguiente sesión lo harás mejor. Siente poder, éxito y bienestar.";
 
     if(b.tipo === "respiracion"){
         await breathingAnimation(b);
         return;
     }
 
-    // Mostrar texto principal
-    block.innerHTML = `<p style='font-size:1.6em; text-align:center; padding:40px;'>${textToShow}</p>`;
-    await playVoice(textToShow);
+    // Texto o Pregunta Principal
+    const msgPrincipal = b.texto || b.pregunta || defaultMsg;
+    block.innerHTML = `<p style='font-size:1.6em; text-align:center; padding:40px; font-weight:300;'>${msgPrincipal}</p>`;
+    await playVoice(msgPrincipal);
 
+    // Lógica de Validación para Quizzes / Decisiones
     if(["quiz","acertijo","decision"].includes(b.tipo)){
-        const opciones = b.opciones || ["Continuar con éxito", "Reflexionar"];
+        const opciones = b.opciones || ["Continuar con éxito"];
         opciones.forEach((op, i) => {
             let btn = document.createElement("button");
-            btn.style.cssText = "display:block; width:80%; margin:10px auto; padding:15px; border-radius:10px; border:1px solid #00d2ff; background:transparent; color:white; font-size:1.1em;";
+            btn.style.cssText = "display:block; width:85%; margin:12px auto; padding:18px; border-radius:12px; border:1px solid #00d2ff; background:rgba(0, 210, 255, 0.05); color:white; cursor:pointer; font-size:1.1em; transition: 0.3s;";
             btn.innerText = op;
+            
             btn.onclick = () => {
-                userData.disciplina += (i === b.correcta) ? 5 : 1;
+                // Validación estricta
+                if(i === b.correcta){
+                    userData.disciplina += 5;
+                    alert("✅ Sabiduría aplicada.");
+                } else {
+                    userData.calma += 2;
+                    // Si no hay explicación, usamos el mensaje por defecto concordante
+                    alert(`Reflexión: ${b.explicacion || defaultMsg}`);
+                }
                 localStorage.setItem("kamizenData", JSON.stringify(userData));
                 nextBtn.style.display = "inline-block";
+                
+                // Deshabilitar botones para evitar multi-clic
+                Array.from(block.getElementsByTagName('button')).forEach(b => b.disabled = true);
             };
             block.appendChild(btn);
         });
     } else if(b.tipo === "cierre"){
         completedSessions.push(currentSessionIndex);
         localStorage.setItem("completedSessions", JSON.stringify(completedSessions));
+        localStorage.setItem("kamizenData", JSON.stringify(userData));
         restartBtn.style.display = "inline-block";
     } else {
+        // Bloque informativo simple
         setTimeout(() => { nextBtn.style.display = "inline-block"; }, 3000);
     }
 }
 
-/* =================== INICIO SIN REPETICIÓN =================== */
+/* =================== FLUJO DE SESIONES EXPERTO =================== */
 let currentSessionIndex = 0;
 startBtn.addEventListener("click", async () => {
     startBtn.style.display = "none";
-    const res = await fetch("/session_content");
-    const data = await res.json();
-    const sesiones = data.sesiones;
+    try {
+        const res = await fetch("/session_content");
+        const data = await res.json();
+        const sesiones = data.sesiones;
 
-    let available = sesiones.map((_,i) => i).filter(i => !completedSessions.includes(i));
-    if(available.length === 0){
-        completedSessions = [];
-        available = sesiones.map((_,i) => i);
+        let available = sesiones.map((_,i) => i).filter(i => !completedSessions.includes(i));
+        if(available.length === 0){
+            completedSessions = [];
+            available = sesiones.map((_,i) => i);
+        }
+
+        currentSessionIndex = available[Math.floor(Math.random() * available.length)];
+        bloques = sesiones[currentSessionIndex].bloques;
+        current = 0;
+        showBlock(bloques[0]);
+    } catch (e) {
+        console.error("Error cargando sesión:", e);
     }
-
-    currentSessionIndex = available[Math.floor(Math.random() * available.length)];
-    bloques = sesiones[currentSessionIndex].bloques;
-    current = 0;
-    showBlock(bloques[0]);
 });
 
 nextBtn.addEventListener("click", () => {
