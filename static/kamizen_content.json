@@ -1,5 +1,6 @@
 {
   "sesiones": [
+
 {
 "id":43,
 "categoria":"disciplina",
@@ -11,11 +12,17 @@
 {"tipo":"historia","texto":"Un atleta entrenaba cuando nadie lo miraba. Años después todos miraban sus victorias.","color":"#34d399"},
 {"tipo":"quiz","pregunta":"¿Qué crea disciplina?","opciones":["Motivación","Repetición","Suerte"],"correcta":1,"explicacion":"La repetición crea hábitos.","recompensa":10,"color":"#facc15"},
 {"tipo":"acertijo","pregunta":"Cuanto más lo usas, más fuerte se vuelve.","opciones":["Músculo","Dinero","Sueño"],"correcta":0,"explicacion":"El músculo crece con uso.","recompensa":8,"color":"#f59e0b"},
-{"tipo":"decision","pregunta":"Debes estudiar o ver el teléfono.","opciones":["Teléfono","Estudiar","Dormir"],"correcta":1,"explicacion":"La disciplina elige lo difícil.","recompensa":12,"color":"#22c55e"},
+{"tipo":"decision","pregunta":"Debes estudiar o ver el teléfono.","opciones":["Teléfono","Estudiar","Dormir"],"correcta":1,"explanacion":"La disciplina elige lo difícil.","recompensa":12,"color":"#22c55e"},
 {"tipo":"juego_mental","pregunta":"7×7+3","opciones":["52","49","58"],"correcta":0,"explicacion":"49+3=52","recompensa":7,"color":"#38bdf8"},
-{"tipo":"respiracion","texto":"Respira profundo y lento durante treinta segundos.","duracion":30,"color":"#60a5fa"},
-{"tipo":"visualizacion","texto":"Visualiza que controlas tu mente aunque el teléfono te distraiga.","color":"#a78bfa"},
-{"tipo":"recompensa","texto":"Tu disciplina ha aumentado.","puntos":20,"color":"#10b981"},
+{"tipo":"voz","texto":"Respira concentración y fuerza.","color":"#2563eb"},
+{"tipo":"tvid","tecnica":"TDB","titulo":"Respiración del Bien","texto":"Inhala disciplina, exhala dudas.","color":"#06b6d4"},
+{"tipo":"respiracion","texto":"Inhala disciplina.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Mantén el aire y visualiza tu objetivo.","duracion":5,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Exhala distracciones y dudas.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Otra vez, inhala disciplina y exhala dudas.","duracion":6,"color":"#60a5fa"},
+{"tipo":"decision","pregunta":"¿Sientes fuerza para mantener la disciplina?","opciones":["Sí","Un poco","No"],"correcta":0,"explanacion":"La práctica fortalece la disciplina.","recompensa":10,"color":"#22c55e"},
+{"tipo":"visualizacion","texto":"Visualiza cumplir tus objetivos sin rendirte.","color":"#a78bfa"},
+{"tipo":"recompensa","texto":"Disciplina reforzada.","puntos":20,"color":"#10b981"},
 {"tipo":"cierre","texto":"La disciplina te hace libre.","color":"#f87171"}
 ]
 },
@@ -30,11 +37,17 @@
 {"tipo":"historia","texto":"Un líder aprendió a escuchar y todos comenzaron a seguirlo.","color":"#34d399"},
 {"tipo":"quiz","pregunta":"¿Qué crea respeto?","opciones":["Gritar","Escuchar","Mandar"],"correcta":1,"explicacion":"Escuchar crea respeto.","recompensa":10,"color":"#facc15"},
 {"tipo":"acertijo","pregunta":"No habla pero dice mucho.","opciones":["Mirada","Libro","Sol"],"correcta":0,"explicacion":"La mirada comunica.","recompensa":8,"color":"#f59e0b"},
-{"tipo":"decision","pregunta":"Alguien habla contigo y miras el teléfono.","opciones":["Mirar teléfono","Escuchar","Irte"],"correcta":1,"explicacion":"Escuchar crea relaciones.","recompensa":12,"color":"#22c55e"},
+{"tipo":"decision","pregunta":"Alguien habla contigo y miras el teléfono.","opciones":["Mirar teléfono","Escuchar","Irte"],"correcta":1,"explanacion":"Escuchar crea relaciones.","recompensa":12,"color":"#22c55e"},
 {"tipo":"juego_mental","pregunta":"9×5","opciones":["45","40","50"],"correcta":0,"explicacion":"9×5=45","recompensa":7,"color":"#38bdf8"},
-{"tipo":"respiracion","texto":"Respira y relaja tu rostro.","duracion":30,"color":"#60a5fa"},
-{"tipo":"visualizacion","texto":"Visualiza que hablas con seguridad.","color":"#a78bfa"},
-{"tipo":"recompensa","texto":"Tu inteligencia social creció.","puntos":20,"color":"#10b981"},
+{"tipo":"voz","texto":"Respira empatía y apertura.","color":"#2563eb"},
+{"tipo":"tvid","tecnica":"TDN","titulo":"Respiración del Niño","texto":"Inhala curiosidad, exhala prejuicios.","color":"#06b6d4"},
+{"tipo":"respiracion","texto":"Inhala curiosidad.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Mantén el aire y siente conexión.","duracion":5,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Exhala prejuicios y juicios.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Otra vez, inhala curiosidad y exhala prejuicios.","duracion":6,"color":"#60a5fa"},
+{"tipo":"decision","pregunta":"¿Sientes más conexión con los demás?","opciones":["Sí","Un poco","No"],"correcta":0,"explanacion":"La práctica mejora inteligencia social.","recompensa":10,"color":"#22c55e"},
+{"tipo":"visualizacion","texto":"Visualiza conversaciones positivas y seguras.","color":"#a78bfa"},
+{"tipo":"recompensa","texto":"Inteligencia social fortalecida.","puntos":20,"color":"#10b981"},
 {"tipo":"cierre","texto":"El que entiende a las personas avanza.","color":"#f87171"}
 ]
 },
@@ -49,31 +62,43 @@
 {"tipo":"historia","texto":"Un hombre evitó una pelea solo guardando silencio.","color":"#34d399"},
 {"tipo":"quiz","pregunta":"¿Qué evita errores?","opciones":["Pensar","Gritar","Correr"],"correcta":0,"explicacion":"Pensar antes de actuar.","recompensa":10,"color":"#facc15"},
 {"tipo":"acertijo","pregunta":"Si lo pierdes, pierdes todo.","opciones":["Control","Zapato","Sombrero"],"correcta":0,"explicacion":"Sin control hay problemas.","recompensa":8,"color":"#f59e0b"},
-{"tipo":"decision","pregunta":"Te insultan.","opciones":["Responder","Ignorar","Golpear"],"correcta":1,"explicacion":"Ignorar es control.","recompensa":12,"color":"#22c55e"},
+{"tipo":"decision","pregunta":"Te insultan.","opciones":["Responder","Ignorar","Golpear"],"correcta":1,"explanacion":"Ignorar es control.","recompensa":12,"color":"#22c55e"},
 {"tipo":"juego_mental","pregunta":"6×6","opciones":["36","30","42"],"correcta":0,"explicacion":"6×6=36","recompensa":7,"color":"#38bdf8"},
-{"tipo":"respiracion","texto":"Respira lento.","duracion":30,"color":"#60a5fa"},
-{"tipo":"visualizacion","texto":"Te ves tranquilo aunque te provoquen.","color":"#a78bfa"},
-{"tipo":"recompensa","texto":"Tu control aumentó.","puntos":20,"color":"#10b981"},
+{"tipo":"voz","texto":"Respira calma y control.","color":"#2563eb"},
+{"tipo":"tvid","tecnica":"TDM","titulo":"Respiración del Mal","texto":"Inhala calma, exhala impulsos.","color":"#06b6d4"},
+{"tipo":"respiracion","texto":"Inhala calma.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Mantén el aire y observa tus emociones.","duracion":5,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Exhala impulsos y tensión.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Otra vez, inhala calma y exhala impulsos.","duracion":6,"color":"#60a5fa"},
+{"tipo":"decision","pregunta":"¿Sientes control sobre tus reacciones?","opciones":["Sí","Un poco","No"],"correcta":0,"explanacion":"La práctica refuerza control mental.","recompensa":10,"color":"#22c55e"},
+{"tipo":"visualizacion","texto":"Visualiza manejar emociones con calma y claridad.","color":"#a78bfa"},
+{"tipo":"recompensa","texto":"Control mental aumentado.","puntos":20,"color":"#10b981"},
 {"tipo":"cierre","texto":"El fuerte se controla.","color":"#f87171"}
 ]
 },
 {
 "id":46,
-"categoria":"enfoque",
+"categoria":"resiliencia",
 "bloques":[
-{"tipo":"voz","texto":"Hoy entrenarás concentración.","color":"#2563eb"},
-{"tipo":"tvid","tecnica":"TDP","titulo":"Técnica del Padre","texto":"Guía tu mente como un padre guía a su hijo.","color":"#06b6d4"},
-{"tipo":"inteligencia_social","texto":"La gente respeta a quien se enfoca.","color":"#0ea5e9"},
-{"tipo":"estrategia","texto":"Haz una cosa a la vez.","color":"#14b8a6"},
-{"tipo":"historia","texto":"Un estudiante dejó el teléfono y mejoró todo.","color":"#34d399"},
-{"tipo":"quiz","pregunta":"¿Qué mata el enfoque?","opciones":["Teléfono","Leer","Dormir"],"correcta":0,"explicacion":"La distracción rompe el enfoque.","recompensa":10,"color":"#facc15"},
-{"tipo":"acertijo","pregunta":"Cuanto más lo divides menos vale.","opciones":["Tiempo","Pan","Agua"],"correcta":0,"explicacion":"El tiempo dividido no rinde.","recompensa":8,"color":"#f59e0b"},
-{"tipo":"decision","pregunta":"Estudias y llega notificación.","opciones":["Mirar","Seguir","Responder"],"correcta":1,"explicacion":"Seguir crea enfoque.","recompensa":12,"color":"#22c55e"},
-{"tipo":"juego_mental","pregunta":"10×4","opciones":["40","30","50"],"correcta":0,"explicacion":"10×4=40","recompensa":7,"color":"#38bdf8"},
-{"tipo":"respiracion","texto":"Respira lento.","duracion":30,"color":"#60a5fa"},
-{"tipo":"visualizacion","texto":"Te ves concentrado.","color":"#a78bfa"},
-{"tipo":"recompensa","texto":"Tu enfoque creció.","puntos":20,"color":"#10b981"},
-{"tipo":"cierre","texto":"La concentración crea poder.","color":"#f87171"}
+{"tipo":"voz","texto":"Hoy entrenarás resiliencia.","color":"#2563eb"},
+{"tipo":"tvid","tecnica":"TDM","titulo":"Técnica del Mal","texto":"Aprende a levantarte ante dificultades.","color":"#06b6d4"},
+{"tipo":"inteligencia_social","texto":"Resilientes inspiran confianza y motivan a otros.","color":"#0ea5e9"},
+{"tipo":"estrategia","texto":"Identifica soluciones y sigue adelante sin rendirte.","color":"#14b8a6"},
+{"tipo":"historia","texto":"Un joven superó un fracaso académico y logró su meta.","color":"#34d399"},
+{"tipo":"quiz","pregunta":"¿Qué ayuda a superar retos?","opciones":["Resiliencia","Quejarse","Rendirse"],"correcta":0,"explicacion":"Persistir y aprender fortalece resiliencia.","recompensa":10,"color":"#facc15"},
+{"tipo":"acertijo","pregunta":"Se construye con experiencias y actitud.","opciones":["Resiliencia","Mesa","Libro"],"correcta":0,"explicacion":"Aprender de dificultades crea resiliencia.","recompensa":8,"color":"#f59e0b"},
+{"tipo":"decision","pregunta":"Fracasaste en algo.","opciones":["Aprender y seguir","Rendirse","Ignorar"],"correcta":0,"explanacion":"Seguir fortalece la resiliencia.","recompensa":12,"color":"#22c55e"},
+{"tipo":"juego_mental","pregunta":"11×4","opciones":["44","42","40"],"correcta":0,"explicacion":"44","recompensa":7,"color":"#38bdf8"},
+{"tipo":"voz","texto":"Respira fuerza y calma.","color":"#2563eb"},
+{"tipo":"tvid","tecnica":"TDM","titulo":"Respiración del Mal","texto":"Inhala fuerza, exhala debilidad.","color":"#06b6d4"},
+{"tipo":"respiracion","texto":"Inhala fuerza.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Mantén el aire y visualiza superación.","duracion":5,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Exhala miedo y duda.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Otra vez, inhala fuerza y exhala debilidad.","duracion":6,"color":"#60a5fa"},
+{"tipo":"decision","pregunta":"¿Sientes resiliencia?","opciones":["Sí","Un poco","No"],"correcta":0,"explanacion":"La práctica refuerza resiliencia.","recompensa":10,"color":"#22c55e"},
+{"tipo":"visualizacion","texto":"Visualiza superarte y lograr tus metas.","color":"#a78bfa"},
+{"tipo":"recompensa","texto":"Resiliencia aumentada.","puntos":20,"color":"#10b981"},
+{"tipo":"cierre","texto":"Cada desafío te hace más fuerte.","color":"#f87171"}
 ]
 },
 {
@@ -87,10 +112,16 @@
 {"tipo":"historia","texto":"Un joven dijo la verdad y ganó respeto.","color":"#34d399"},
 {"tipo":"quiz","pregunta":"¿Qué crea respeto?","opciones":["Mentir","Valentía","Miedo"],"correcta":1,"explicacion":"La valentía inspira.","recompensa":10,"color":"#facc15"},
 {"tipo":"acertijo","pregunta":"No pesa pero se siente.","opciones":["Miedo","Piedra","Mesa"],"correcta":0,"explicacion":"El miedo no pesa.","recompensa":8,"color":"#f59e0b"},
-{"tipo":"decision","pregunta":"Debes decir verdad.","opciones":["Mentir","Decir","Callar"],"correcta":1,"explicacion":"La verdad fortalece.","recompensa":12,"color":"#22c55e"},
+{"tipo":"decision","pregunta":"Debes decir verdad.","opciones":["Mentir","Decir","Callar"],"correcta":1,"explanacion":"La verdad fortalece.","recompensa":12,"color":"#22c55e"},
 {"tipo":"juego_mental","pregunta":"12×3","opciones":["36","30","24"],"correcta":0,"explicacion":"36","recompensa":7,"color":"#38bdf8"},
-{"tipo":"respiracion","texto":"Respira profundo.","duracion":30,"color":"#60a5fa"},
-{"tipo":"visualizacion","texto":"Te ves valiente.","color":"#a78bfa"},
+{"tipo":"voz","texto":"Respira valentía y fuerza.","color":"#2563eb"},
+{"tipo":"tvid","tecnica":"TDG","titulo":"Respiración de la Guerra","texto":"Inhala valentía, exhala miedo.","color":"#06b6d4"},
+{"tipo":"respiracion","texto":"Inhala valentía.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Mantén el aire y siente fuerza interior.","duracion":5,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Exhala miedo y dudas.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Otra vez, inhala valentía y exhala miedo.","duracion":6,"color":"#60a5fa"},
+{"tipo":"decision","pregunta":"¿Sientes más coraje para enfrentar retos?","opciones":["Sí","Un poco","No"],"correcta":0,"explanacion":"La práctica fortalece el valor.","recompensa":10,"color":"#22c55e"},
+{"tipo":"visualizacion","texto":"Visualiza actuar con valentía y seguridad.","color":"#a78bfa"},
 {"tipo":"recompensa","texto":"Tu valor subió.","puntos":20,"color":"#10b981"},
 {"tipo":"cierre","texto":"El valiente vive mejor.","color":"#f87171"}
 ]
@@ -106,10 +137,16 @@
 {"tipo":"historia","texto":"Un hombre evitó perder amigos controlando sus palabras.","color":"#34d399"},
 {"tipo":"quiz","pregunta":"¿Qué evita problemas?","opciones":["Callar","Gritar","Correr"],"correcta":0,"explicacion":"Callar a tiempo ayuda.","recompensa":10,"color":"#facc15"},
 {"tipo":"acertijo","pregunta":"Si lo rompes no se ve.","opciones":["Silencio","Mesa","Vaso"],"correcta":0,"explicacion":"El silencio se rompe.","recompensa":8,"color":"#f59e0b"},
-{"tipo":"decision","pregunta":"Estás molesto.","opciones":["Hablar","Esperar","Gritar"],"correcta":1,"explicacion":"Esperar da control.","recompensa":12,"color":"#22c55e"},
+{"tipo":"decision","pregunta":"Estás molesto.","opciones":["Hablar","Esperar","Gritar"],"correcta":1,"explanacion":"Esperar da control.","recompensa":12,"color":"#22c55e"},
 {"tipo":"juego_mental","pregunta":"15−5","opciones":["10","12","8"],"correcta":0,"explicacion":"10","recompensa":7,"color":"#38bdf8"},
-{"tipo":"respiracion","texto":"Respira lento.","duracion":30,"color":"#60a5fa"},
-{"tipo":"visualizacion","texto":"Tu mente tranquila.","color":"#a78bfa"},
+{"tipo":"voz","texto":"Respira calma y claridad mental.","color":"#2563eb"},
+{"tipo":"tvid","tecnica":"TDMM","titulo":"Respiración de la Madre","texto":"Inhala tranquilidad, exhala tensión.","color":"#06b6d4"},
+{"tipo":"respiracion","texto":"Inhala tranquilidad.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Mantén el aire y siente control.","duracion":5,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Exhala tensión y estrés.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Otra vez, inhala tranquilidad y exhala tensión.","duracion":6,"color":"#60a5fa"},
+{"tipo":"decision","pregunta":"¿Sientes tu mente más clara?","opciones":["Sí","Un poco","No"],"correcta":0,"explanacion":"La práctica refuerza mente fuerte.","recompensa":10,"color":"#22c55e"},
+{"tipo":"visualizacion","texto":"Visualiza mantener calma ante problemas.","color":"#a78bfa"},
 {"tipo":"recompensa","texto":"Mente fuerte.","puntos":20,"color":"#10b981"},
 {"tipo":"cierre","texto":"Controlar la mente es poder.","color":"#f87171"}
 ]
@@ -125,10 +162,16 @@
 {"tipo":"historia","texto":"Un saludo abrió una oportunidad.","color":"#34d399"},
 {"tipo":"quiz","pregunta":"¿Qué abre puertas?","opciones":["Respeto","Grito","Pelea"],"correcta":0,"explicacion":"Respeto abre puertas.","recompensa":10,"color":"#facc15"},
 {"tipo":"acertijo","pregunta":"Se da y vuelve.","opciones":["Respeto","Piedra","Luz"],"correcta":0,"explicacion":"Respeto vuelve.","recompensa":8,"color":"#f59e0b"},
-{"tipo":"decision","pregunta":"Alguien te habla.","opciones":["Ignorar","Responder","Irte"],"correcta":1,"explicacion":"Responder muestra respeto.","recompensa":12,"color":"#22c55e"},
+{"tipo":"decision","pregunta":"Alguien te habla.","opciones":["Ignorar","Responder","Irte"],"correcta":1,"explanacion":"Responder muestra respeto.","recompensa":12,"color":"#22c55e"},
 {"tipo":"juego_mental","pregunta":"5×8","opciones":["40","35","45"],"correcta":0,"explicacion":"40","recompensa":7,"color":"#38bdf8"},
-{"tipo":"respiracion","texto":"Respira.","duracion":30,"color":"#60a5fa"},
-{"tipo":"visualizacion","texto":"Te ven respetuoso.","color":"#a78bfa"},
+{"tipo":"voz","texto":"Respira respeto y cordialidad.","color":"#2563eb"},
+{"tipo":"tvid","tecnica":"TDK","titulo":"Respiración del Beso","texto":"Inhala respeto, exhala indiferencia.","color":"#06b6d4"},
+{"tipo":"respiracion","texto":"Inhala respeto.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Mantén el aire y siente cortesía.","duracion":5,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Exhala indiferencia.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Otra vez, inhala respeto y exhala indiferencia.","duracion":6,"color":"#60a5fa"},
+{"tipo":"decision","pregunta":"¿Sientes respeto hacia otros?","opciones":["Sí","Un poco","No"],"correcta":0,"explanacion":"La práctica refuerza respeto.","recompensa":10,"color":"#22c55e"},
+{"tipo":"visualizacion","texto":"Visualiza actuar con respeto y cortesía.","color":"#a78bfa"},
 {"tipo":"recompensa","texto":"Respeto ganado.","puntos":20,"color":"#10b981"},
 {"tipo":"cierre","texto":"Respeto crea oportunidades.","color":"#f87171"}
 ]
@@ -144,10 +187,16 @@
 {"tipo":"historia","texto":"Un joven dejó redes y cambió su vida.","color":"#34d399"},
 {"tipo":"quiz","pregunta":"¿Qué se pierde usando el teléfono sin control?","opciones":["Tiempo","Dinero","Zapatos"],"correcta":0,"explicacion":"El tiempo no vuelve.","recompensa":10,"color":"#facc15"},
 {"tipo":"acertijo","pregunta":"Corre sin piernas.","opciones":["Tiempo","Perro","Viento"],"correcta":0,"explicacion":"El tiempo corre.","recompensa":8,"color":"#f59e0b"},
-{"tipo":"decision","pregunta":"Tienes tarea.","opciones":["Redes","Hacerla","Dormir"],"correcta":1,"explicacion":"Primero lo importante.","recompensa":12,"color":"#22c55e"},
+{"tipo":"decision","pregunta":"Tienes tarea.","opciones":["Redes","Hacerla","Dormir"],"correcta":1,"explanacion":"Primero lo importante.","recompensa":12,"color":"#22c55e"},
 {"tipo":"juego_mental","pregunta":"20÷5","opciones":["4","5","3"],"correcta":0,"explicacion":"4","recompensa":7,"color":"#38bdf8"},
-{"tipo":"respiracion","texto":"Respira.","duracion":30,"color":"#60a5fa"},
-{"tipo":"visualizacion","texto":"Usas bien tu tiempo.","color":"#a78bfa"},
+{"tipo":"voz","texto":"Respira y concentra tu tiempo.","color":"#2563eb"},
+{"tipo":"tvid","tecnica":"TDB","titulo":"Respiración del Bien","texto":"Inhala concentración, exhala distracciones.","color":"#06b6d4"},
+{"tipo":"respiracion","texto":"Inhala concentración.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Mantén el aire y visualiza tus prioridades.","duracion":5,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Exhala distracciones.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Otra vez, inhala concentración y exhala distracciones.","duracion":6,"color":"#60a5fa"},
+{"tipo":"decision","pregunta":"¿Sientes más control de tu tiempo?","opciones":["Sí","Un poco","No"],"correcta":0,"explanacion":"El enfoque refuerza gestión del tiempo.","recompensa":10,"color":"#22c55e"},
+{"tipo":"visualizacion","texto":"Visualiza aprovechar cada momento.","color":"#a78bfa"},
 {"tipo":"recompensa","texto":"Tiempo ganado.","puntos":20,"color":"#10b981"},
 {"tipo":"cierre","texto":"El tiempo es vida.","color":"#f87171"}
 ]
@@ -162,11 +211,17 @@
 {"tipo":"estrategia","texto":"Haz lo que dices.","color":"#14b8a6"},
 {"tipo":"historia","texto":"Un hombre cumplía siempre y todos confiaban en él.","color":"#34d399"},
 {"tipo":"quiz","pregunta":"¿Qué crea carácter?","opciones":["Cumplir","Prometer","Hablar"],"correcta":0,"explicacion":"Cumplir forma carácter.","recompensa":10,"color":"#facc15"},
-{"tipo":"acertijo","pregunta":"No se compra.","opciones":["Carácter","Pan","Ropa"],"correcta":0,"explicacion":"Se forma.","recompensa":8,"color":"#f59e0b"},
-{"tipo":"decision","pregunta":"Prometes algo.","opciones":["Cumplir","Olvidar","Mentir"],"correcta":0,"explicacion":"Cumplir te hace fuerte.","recompensa":12,"color":"#22c55e"},
+{"tipo":"acertijo","pregunta":"No se compra.","opciones":["Carácter","Pan","Ropa"],"correcta":0,"explicacion":"Se forma con acciones.","recompensa":8,"color":"#f59e0b"},
+{"tipo":"decision","pregunta":"Prometes algo.","opciones":["Cumplir","Olvidar","Mentir"],"correcta":0,"explanacion":"Cumplir te hace fuerte.","recompensa":12,"color":"#22c55e"},
 {"tipo":"juego_mental","pregunta":"3×9","opciones":["27","21","24"],"correcta":0,"explicacion":"27","recompensa":7,"color":"#38bdf8"},
-{"tipo":"respiracion","texto":"Respira.","duracion":30,"color":"#60a5fa"},
-{"tipo":"visualizacion","texto":"Eres firme.","color":"#a78bfa"},
+{"tipo":"voz","texto":"Respira firmeza y determinación.","color":"#2563eb"},
+{"tipo":"tvid","tecnica":"TDG","titulo":"Respiración de la Guerra","texto":"Inhala firmeza, exhala dudas.","color":"#06b6d4"},
+{"tipo":"respiracion","texto":"Inhala firmeza.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Mantén el aire y siente tu fuerza interior.","duracion":5,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Exhala dudas e inseguridad.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Otra vez, inhala firmeza y exhala dudas.","duracion":6,"color":"#60a5fa"},
+{"tipo":"decision","pregunta":"¿Sientes tu carácter fortalecido?","opciones":["Sí","Un poco","No"],"correcta":0,"explanacion":"La práctica refuerza carácter.","recompensa":10,"color":"#22c55e"},
+{"tipo":"visualizacion","texto":"Visualiza actuar con integridad.","color":"#a78bfa"},
 {"tipo":"recompensa","texto":"Carácter fuerte.","puntos":20,"color":"#10b981"},
 {"tipo":"cierre","texto":"El carácter decide tu destino.","color":"#f87171"}
 ]
@@ -182,10 +237,16 @@
 {"tipo":"historia","texto":"Un hombre mejoró un poco cada día y cambió su vida.","color":"#34d399"},
 {"tipo":"quiz","pregunta":"¿Cómo se mejora?","opciones":["Poco a poco","De golpe","Nunca"],"correcta":0,"explicacion":"Paso a paso.","recompensa":10,"color":"#facc15"},
 {"tipo":"acertijo","pregunta":"Sube sin escaleras.","opciones":["Nivel","Mesa","Casa"],"correcta":0,"explicacion":"Nivel sube.","recompensa":8,"color":"#f59e0b"},
-{"tipo":"decision","pregunta":"Hoy puedes mejorar.","opciones":["Sí","No","Después"],"correcta":0,"explicacion":"Hoy es el día.","recompensa":12,"color":"#22c55e"},
+{"tipo":"decision","pregunta":"Hoy puedes mejorar.","opciones":["Sí","No","Después"],"correcta":0,"explanacion":"Hoy es el día.","recompensa":12,"color":"#22c55e"},
 {"tipo":"juego_mental","pregunta":"18÷3","opciones":["6","5","7"],"correcta":0,"explicacion":"6","recompensa":7,"color":"#38bdf8"},
-{"tipo":"respiracion","texto":"Respira.","duracion":30,"color":"#60a5fa"},
-{"tipo":"visualizacion","texto":"Te ves mejorando.","color":"#a78bfa"},
+{"tipo":"voz","texto":"Respira fuerza y motivación.","color":"#2563eb"},
+{"tipo":"tvid","tecnica":"TDP","titulo":"Respiración del Padre","texto":"Inhala motivación, exhala dudas.","color":"#06b6d4"},
+{"tipo":"respiracion","texto":"Inhala motivación.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Mantén el aire y siente tu progreso.","duracion":5,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Exhala dudas y temores.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Otra vez, inhala motivación y exhala dudas.","duracion":6,"color":"#60a5fa"},
+{"tipo":"decision","pregunta":"¿Sientes impulso de superarte?","opciones":["Sí","Un poco","No"],"correcta":0,"explanacion":"La práctica refuerza superación.","recompensa":10,"color":"#22c55e"},
+{"tipo":"visualizacion","texto":"Visualiza tu mejor versión.","color":"#a78bfa"},
 {"tipo":"recompensa","texto":"Nivel aumentado.","puntos":20,"color":"#10b981"},
 {"tipo":"cierre","texto":"Siempre puedes ser mejor.","color":"#f87171"}
 ]
@@ -201,10 +262,16 @@
 {"tipo":"historia","texto":"Un estudiante que prestaba atención avanzaba más rápido que todos.","color":"#34d399"},
 {"tipo":"quiz","pregunta":"¿Qué mejora la memoria?","opciones":["Atención","Sueño","Ruido"],"correcta":0,"explicacion":"La atención guarda información.","recompensa":10,"color":"#facc15"},
 {"tipo":"acertijo","pregunta":"Lo tienes pero no lo ves cuando te distraes.","opciones":["Tiempo","Atención","Mesa"],"correcta":1,"explicacion":"Sin atención no ves nada.","recompensa":8,"color":"#f59e0b"},
-{"tipo":"decision","pregunta":"Alguien te habla.","opciones":["Escuchar","Mirar teléfono","Ignorar"],"correcta":0,"explicacion":"Escuchar aumenta inteligencia social.","recompensa":12,"color":"#22c55e"},
+{"tipo":"decision","pregunta":"Alguien te habla.","opciones":["Escuchar","Mirar teléfono","Ignorar"],"correcta":0,"explanacion":"Escuchar aumenta inteligencia social.","recompensa":12,"color":"#22c55e"},
 {"tipo":"juego_mental","pregunta":"11×3","opciones":["33","30","36"],"correcta":0,"explicacion":"33","recompensa":7,"color":"#38bdf8"},
-{"tipo":"respiracion","texto":"Respira lento y enfócate.","duracion":30,"color":"#60a5fa"},
-{"tipo":"visualizacion","texto":"Te ves atento y concentrado.","color":"#a78bfa"},
+{"tipo":"voz","texto":"Respira atención y claridad.","color":"#2563eb"},
+{"tipo":"tvid","tecnica":"TDN","titulo":"Respiración del Niño","texto":"Inhala concentración, exhala distracción.","color":"#06b6d4"},
+{"tipo":"respiracion","texto":"Inhala concentración.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Mantén el aire y enfócate.","duracion":5,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Exhala distracción.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Otra vez, inhala concentración y exhala distracción.","duracion":6,"color":"#60a5fa"},
+{"tipo":"decision","pregunta":"¿Te sientes más atento?","opciones":["Sí","Un poco","No"],"correcta":0,"explanacion":"La práctica refuerza atención.","recompensa":10,"color":"#22c55e"},
+{"tipo":"visualizacion","texto":"Visualiza tu enfoque total.","color":"#a78bfa"},
 {"tipo":"recompensa","texto":"Tu atención creció.","puntos":20,"color":"#10b981"},
 {"tipo":"cierre","texto":"La atención te hace diferente.","color":"#f87171"}
 ]
@@ -220,10 +287,16 @@
 {"tipo":"historia","texto":"Un hombre esperó el momento correcto y ganó.","color":"#34d399"},
 {"tipo":"quiz","pregunta":"¿Qué evita errores?","opciones":["Paciencia","Prisa","Miedo"],"correcta":0,"explicacion":"La paciencia permite pensar.","recompensa":10,"color":"#facc15"},
 {"tipo":"acertijo","pregunta":"Llega a todos pero nunca corre.","opciones":["Tiempo","Paciencia","Sol"],"correcta":1,"explicacion":"La paciencia espera.","recompensa":8,"color":"#f59e0b"},
-{"tipo":"decision","pregunta":"Estás molesto.","opciones":["Responder","Esperar","Gritar"],"correcta":1,"explicacion":"Esperar da control.","recompensa":12,"color":"#22c55e"},
+{"tipo":"decision","pregunta":"Estás molesto.","opciones":["Responder","Esperar","Gritar"],"correcta":1,"explanacion":"Esperar da control.","recompensa":12,"color":"#22c55e"},
 {"tipo":"juego_mental","pregunta":"14+6","opciones":["20","18","22"],"correcta":0,"explicacion":"20","recompensa":7,"color":"#38bdf8"},
-{"tipo":"respiracion","texto":"Respira despacio.","duracion":30,"color":"#60a5fa"},
-{"tipo":"visualizacion","texto":"Te ves tranquilo.","color":"#a78bfa"},
+{"tipo":"voz","texto":"Respira paciencia y calma.","color":"#2563eb"},
+{"tipo":"tvid","tecnica":"TDMM","titulo":"Respiración de la Madre","texto":"Inhala calma, exhala prisa.","color":"#06b6d4"},
+{"tipo":"respiracion","texto":"Inhala calma.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Mantén el aire y siente paciencia interior.","duracion":5,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Exhala prisa e impulsos.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Otra vez, inhala calma y exhala prisa.","duracion":6,"color":"#60a5fa"},
+{"tipo":"decision","pregunta":"¿Te sientes más paciente?","opciones":["Sí","Un poco","No"],"correcta":0,"explanacion":"La práctica refuerza paciencia.","recompensa":10,"color":"#22c55e"},
+{"tipo":"visualizacion","texto":"Visualiza tu calma ante retos.","color":"#a78bfa"},
 {"tipo":"recompensa","texto":"Paciencia aumentada.","puntos":20,"color":"#10b981"},
 {"tipo":"cierre","texto":"La paciencia vence al impulso.","color":"#f87171"}
 ]
@@ -239,9 +312,15 @@
 {"tipo":"historia","texto":"Un joven eligió estudiar y cambió su destino.","color":"#34d399"},
 {"tipo":"quiz","pregunta":"¿Qué guía una buena decisión?","opciones":["Pensar","Impulso","Rabia"],"correcta":0,"explicacion":"Pensar primero.","recompensa":10,"color":"#facc15"},
 {"tipo":"acertijo","pregunta":"Abre caminos.","opciones":["Decisión","Puerta","Mesa"],"correcta":0,"explicacion":"Decidir abre caminos.","recompensa":8,"color":"#f59e0b"},
-{"tipo":"decision","pregunta":"Estudiar o distraerte.","opciones":["Estudiar","Teléfono","Dormir"],"correcta":0,"explicacion":"Elegir bien cambia la vida.","recompensa":12,"color":"#22c55e"},
+{"tipo":"decision","pregunta":"Estudiar o distraerte.","opciones":["Estudiar","Teléfono","Dormir"],"correcta":0,"explanacion":"Elegir bien cambia la vida.","recompensa":12,"color":"#22c55e"},
 {"tipo":"juego_mental","pregunta":"16÷4","opciones":["4","5","6"],"correcta":0,"explicacion":"4","recompensa":7,"color":"#38bdf8"},
-{"tipo":"respiracion","texto":"Respira antes de decidir.","duracion":30,"color":"#60a5fa"},
+{"tipo":"voz","texto":"Respira antes de decidir.","color":"#2563eb"},
+{"tipo":"tvid","tecnica":"TDP","titulo":"Respiración del Padre","texto":"Inhala claridad, exhala dudas.","color":"#06b6d4"},
+{"tipo":"respiracion","texto":"Inhala claridad.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Mantén el aire y visualiza tu decisión.","duracion":5,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Exhala dudas.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Otra vez, inhala claridad y exhala dudas.","duracion":6,"color":"#60a5fa"},
+{"tipo":"decision","pregunta":"¿Sientes seguridad al decidir?","opciones":["Sí","Un poco","No"],"correcta":0,"explanacion":"La práctica refuerza tu capacidad de decidir.","recompensa":10,"color":"#22c55e"},
 {"tipo":"visualizacion","texto":"Te ves decidiendo bien.","color":"#a78bfa"},
 {"tipo":"recompensa","texto":"Decisión fuerte.","puntos":20,"color":"#10b981"},
 {"tipo":"cierre","texto":"Tu futuro depende de tus decisiones.","color":"#f87171"}
@@ -258,10 +337,16 @@
 {"tipo":"historia","texto":"Un hombre evitó problemas controlándose.","color":"#34d399"},
 {"tipo":"quiz","pregunta":"¿Qué demuestra fuerza?","opciones":["Control","Grito","Rabia"],"correcta":0,"explicacion":"Control es fuerza.","recompensa":10,"color":"#facc15"},
 {"tipo":"acertijo","pregunta":"Se pierde en un segundo.","opciones":["Control","Sombrero","Libro"],"correcta":0,"explicacion":"Perder control trae problemas.","recompensa":8,"color":"#f59e0b"},
-{"tipo":"decision","pregunta":"Te provocan.","opciones":["Ignorar","Pelear","Gritar"],"correcta":0,"explicacion":"Ignorar es control.","recompensa":12,"color":"#22c55e"},
+{"tipo":"decision","pregunta":"Te provocan.","opciones":["Ignorar","Pelear","Gritar"],"correcta":0,"explanacion":"Ignorar es control.","recompensa":12,"color":"#22c55e"},
 {"tipo":"juego_mental","pregunta":"9×6","opciones":["54","56","60"],"correcta":0,"explicacion":"54","recompensa":7,"color":"#38bdf8"},
-{"tipo":"respiracion","texto":"Respira profundo.","duracion":30,"color":"#60a5fa"},
-{"tipo":"visualizacion","texto":"Te ves tranquilo.","color":"#a78bfa"},
+{"tipo":"voz","texto":"Respira antes de reaccionar.","color":"#2563eb"},
+{"tipo":"tvid","tecnica":"TDM","titulo":"Respiración del Mal","texto":"Inhala calma, exhala impulsos.","color":"#06b6d4"},
+{"tipo":"respiracion","texto":"Inhala calma.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Mantén el aire y siente control interior.","duracion":5,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Exhala impulsos.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Otra vez, inhala calma y exhala impulsos.","duracion":6,"color":"#60a5fa"},
+{"tipo":"decision","pregunta":"¿Sientes autocontrol?","opciones":["Sí","Un poco","No"],"correcta":0,"explanacion":"Practicar fortalece el autocontrol.","recompensa":10,"color":"#22c55e"},
+{"tipo":"visualizacion","texto":"Te ves tranquilo y controlado.","color":"#a78bfa"},
 {"tipo":"recompensa","texto":"Autocontrol alto.","puntos":20,"color":"#10b981"},
 {"tipo":"cierre","texto":"Controlar tu mente te hace fuerte.","color":"#f87171"}
 ]
@@ -277,10 +362,16 @@
 {"tipo":"historia","texto":"Un joven preguntaba todo y llegó lejos.","color":"#34d399"},
 {"tipo":"quiz","pregunta":"¿Qué acelera aprender?","opciones":["Preguntar","Callar","Dormir"],"correcta":0,"explicacion":"Preguntar ayuda.","recompensa":10,"color":"#facc15"},
 {"tipo":"acertijo","pregunta":"Cuanto más lo usas más sabes.","opciones":["Cerebro","Zapato","Mesa"],"correcta":0,"explicacion":"El cerebro aprende.","recompensa":8,"color":"#f59e0b"},
-{"tipo":"decision","pregunta":"No entiendes algo.","opciones":["Preguntar","Ignorar","Salir"],"correcta":0,"explicacion":"Preguntar es inteligencia.","recompensa":12,"color":"#22c55e"},
+{"tipo":"decision","pregunta":"No entiendes algo.","opciones":["Preguntar","Ignorar","Salir"],"correcta":0,"explanacion":"Preguntar es inteligencia.","recompensa":12,"color":"#22c55e"},
 {"tipo":"juego_mental","pregunta":"7×8","opciones":["56","54","58"],"correcta":0,"explicacion":"56","recompensa":7,"color":"#38bdf8"},
-{"tipo":"respiracion","texto":"Respira y enfócate.","duracion":30,"color":"#60a5fa"},
-{"tipo":"visualizacion","texto":"Aprendes rápido.","color":"#a78bfa"},
+{"tipo":"voz","texto":"Respira y enfócate.","color":"#2563eb"},
+{"tipo":"tvid","tecnica":"TDN","titulo":"Respiración del Niño","texto":"Inhala curiosidad, exhala confusión.","color":"#06b6d4"},
+{"tipo":"respiracion","texto":"Inhala curiosidad.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Mantén el aire y enfócate.","duracion":5,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Exhala confusión.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Otra vez, inhala curiosidad y exhala confusión.","duracion":6,"color":"#60a5fa"},
+{"tipo":"decision","pregunta":"¿Te sientes más capaz de aprender?","opciones":["Sí","Un poco","No"],"correcta":0,"explanacion":"La práctica fortalece el aprendizaje.","recompensa":10,"color":"#22c55e"},
+{"tipo":"visualizacion","texto":"Te ves aprendiendo rápido.","color":"#a78bfa"},
 {"tipo":"recompensa","texto":"Aprendizaje alto.","puntos":20,"color":"#10b981"},
 {"tipo":"cierre","texto":"El que aprende siempre gana.","color":"#f87171"}
 ]
@@ -298,8 +389,14 @@
 {"tipo":"acertijo","pregunta":"Se pierde si no lo usas.","opciones":["Energía","Zapato","Libro"],"correcta":0,"explicacion":"La energía se usa.","recompensa":8,"color":"#f59e0b"},
 {"tipo":"decision","pregunta":"No quieres hacer algo.","opciones":["Hacerlo","Dormir","Dejar"],"correcta":0,"explicacion":"Acción crea energía.","recompensa":12,"color":"#22c55e"},
 {"tipo":"juego_mental","pregunta":"5×9","opciones":["45","40","50"],"correcta":0,"explicacion":"45","recompensa":7,"color":"#38bdf8"},
-{"tipo":"respiracion","texto":"Respira fuerte.","duracion":30,"color":"#60a5fa"},
-{"tipo":"visualizacion","texto":"Te ves activo.","color":"#a78bfa"},
+{"tipo":"voz","texto":"Respira y activa tu energía.","color":"#2563eb"},
+{"tipo":"tvid","tecnica":"TDG","titulo":"Respiración de la Guerra","texto":"Inhala fuerza, exhala pereza.","color":"#06b6d4"},
+{"tipo":"respiracion","texto":"Inhala fuerza.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Mantén el aire y siente tu energía crecer.","duracion":5,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Exhala pereza.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Otra vez, inhala fuerza y exhala pereza.","duracion":6,"color":"#60a5fa"},
+{"tipo":"decision","pregunta":"¿Listo para actuar?","opciones":["Sí","Un poco","No"],"correcta":0,"explanacion":"La práctica aumenta tu energía.","recompensa":10,"color":"#22c55e"},
+{"tipo":"visualizacion","texto":"Te ves activo y con energía.","color":"#a78bfa"},
 {"tipo":"recompensa","texto":"Energía alta.","puntos":20,"color":"#10b981"},
 {"tipo":"cierre","texto":"La acción crea fuerza.","color":"#f87171"}
 ]
@@ -308,190 +405,505 @@
 "id":59,
 "categoria":"orden",
 "bloques":[
+
 {"tipo":"voz","texto":"Hoy entrenarás orden.","color":"#2563eb"},
+
 {"tipo":"tvid","tecnica":"TDB","titulo":"Técnica del Bien","texto":"El orden crea tranquilidad.","color":"#06b6d4"},
+
 {"tipo":"inteligencia_social","texto":"Las personas ordenadas inspiran confianza.","color":"#0ea5e9"},
+
 {"tipo":"estrategia","texto":"Pon cada cosa en su lugar.","color":"#14b8a6"},
+
 {"tipo":"historia","texto":"Un hombre ordenó su vida y mejoró todo.","color":"#34d399"},
+
 {"tipo":"quiz","pregunta":"¿Qué da claridad?","opciones":["Orden","Caos","Ruido"],"correcta":0,"explicacion":"Orden aclara.","recompensa":10,"color":"#facc15"},
+
 {"tipo":"acertijo","pregunta":"Todo encaja cuando existe.","opciones":["Orden","Caja","Mesa"],"correcta":0,"explicacion":"El orden organiza.","recompensa":8,"color":"#f59e0b"},
+
 {"tipo":"decision","pregunta":"Tu cuarto está desordenado.","opciones":["Ordenar","Salir","Ignorar"],"correcta":0,"explicacion":"Orden crea control.","recompensa":12,"color":"#22c55e"},
+
 {"tipo":"juego_mental","pregunta":"18+2","opciones":["20","21","19"],"correcta":0,"explicacion":"20","recompensa":7,"color":"#38bdf8"},
-{"tipo":"respiracion","texto":"Respira tranquilo.","duracion":30,"color":"#60a5fa"},
-{"tipo":"visualizacion","texto":"Todo ordenado.","color":"#a78bfa"},
-{"tipo":"recompensa","texto":"Orden mental.","puntos":20,"color":"#10b981"},
+
+
+{"tipo":"voz","texto":"Ahora entrenaremos el orden con la respiración.","color":"#2563eb"},
+
+{"tipo":"tvid","tecnica":"TDB","titulo":"Respiración del Bien","texto":"Respirar con orden fortalece tu mente.","color":"#06b6d4"},
+
+{"tipo":"respiracion","texto":"Inhala lento por la nariz.","duracion":6,"color":"#60a5fa"},
+
+{"tipo":"respiracion","texto":"Mantén el aire y siente control.","duracion":4,"color":"#60a5fa"},
+
+{"tipo":"respiracion","texto":"Exhala despacio por la boca.","duracion":6,"color":"#60a5fa"},
+
+{"tipo":"respiracion","texto":"Repite y ordena tu mente.","duracion":6,"color":"#60a5fa"},
+
+{"tipo":"decision",
+"pregunta":"¿Qué sientes después de respirar?",
+"opciones":["Calma","Control","Nada"],
+"correcta":1,
+"explicacion":"Respirar con orden da control.",
+"recompensa":10,
+"color":"#22c55e"},
+
+{"tipo":"visualizacion","texto":"Imagina tu mente ordenada y tranquila.","color":"#a78bfa"},
+
+{"tipo":"recompensa","texto":"Has ganado orden mental.","puntos":20,"color":"#10b981"},
+
 {"tipo":"cierre","texto":"Orden es poder.","color":"#f87171"}
+
 ]
 },
 {
 "id":60,
 "categoria":"seguridad",
 "bloques":[
+
 {"tipo":"voz","texto":"Hoy entrenarás seguridad.","color":"#2563eb"},
+
 {"tipo":"tvid","tecnica":"TDP","titulo":"Técnica del Padre","texto":"Actúa con firmeza.","color":"#06b6d4"},
+
 {"tipo":"inteligencia_social","texto":"La seguridad atrae respeto.","color":"#0ea5e9"},
+
 {"tipo":"estrategia","texto":"Habla claro y despacio.","color":"#14b8a6"},
+
 {"tipo":"historia","texto":"Un hombre seguro convencía a todos.","color":"#34d399"},
+
 {"tipo":"quiz","pregunta":"¿Qué inspira confianza?","opciones":["Seguridad","Duda","Miedo"],"correcta":0,"explicacion":"La seguridad transmite fuerza.","recompensa":10,"color":"#facc15"},
+
 {"tipo":"acertijo","pregunta":"Se nota sin tocar.","opciones":["Seguridad","Silla","Mesa"],"correcta":0,"explicacion":"Se siente.","recompensa":8,"color":"#f59e0b"},
+
 {"tipo":"decision","pregunta":"Debes hablar.","opciones":["Hablar claro","Callar","Dudar"],"correcta":0,"explicacion":"Hablar claro muestra seguridad.","recompensa":12,"color":"#22c55e"},
+
 {"tipo":"juego_mental","pregunta":"6×7","opciones":["42","40","36"],"correcta":0,"explicacion":"42","recompensa":7,"color":"#38bdf8"},
-{"tipo":"respiracion","texto":"Respira profundo.","duracion":30,"color":"#60a5fa"},
-{"tipo":"visualizacion","texto":"Te ves seguro.","color":"#a78bfa"},
-{"tipo":"recompensa","texto":"Seguridad alta.","puntos":20,"color":"#10b981"},
+
+
+
+{"tipo":"voz","texto":"Ahora entrenaremos la seguridad con la respiración.","color":"#2563eb"},
+
+{"tipo":"tvid","tecnica":"TDP","titulo":"Respiración del Padre","texto":"Respirar con firmeza fortalece tu carácter.","color":"#06b6d4"},
+
+{"tipo":"respiracion","texto":"Inhala profundo por la nariz.","duracion":6,"color":"#60a5fa"},
+
+{"tipo":"respiracion","texto":"Mantén el aire con firmeza.","duracion":4,"color":"#60a5fa"},
+
+{"tipo":"respiracion","texto":"Exhala lento sin perder control.","duracion":6,"color":"#60a5fa"},
+
+{"tipo":"respiracion","texto":"Repite y siente seguridad en tu cuerpo.","duracion":6,"color":"#60a5fa"},
+
+{"tipo":"decision",
+"pregunta":"¿Cómo te sientes ahora?",
+"opciones":["Más seguro","Igual","Inseguro"],
+"correcta":0,
+"explicacion":"La seguridad se entrena.",
+"recompensa":10,
+"color":"#22c55e"},
+
+{"tipo":"visualizacion","texto":"Imagina que hablas con firmeza y todos escuchan.","color":"#a78bfa"},
+
+{"tipo":"recompensa","texto":"Tu seguridad ha aumentado.","puntos":20,"color":"#10b981"},
+
 {"tipo":"cierre","texto":"La seguridad abre caminos.","color":"#f87171"}
+
 ]
 },
 {
 "id":61,
 "categoria":"resistencia",
 "bloques":[
+
 {"tipo":"voz","texto":"Hoy entrenarás resistencia mental.","color":"#2563eb"},
+
 {"tipo":"tvid","tecnica":"TDG","titulo":"Técnica de la Guerra","texto":"Resiste aunque sea difícil.","color":"#06b6d4"},
+
 {"tipo":"inteligencia_social","texto":"El que resiste gana.","color":"#0ea5e9"},
+
 {"tipo":"estrategia","texto":"No abandones rápido.","color":"#14b8a6"},
+
 {"tipo":"historia","texto":"Un hombre siguió intentando hasta lograrlo.","color":"#34d399"},
+
 {"tipo":"quiz","pregunta":"¿Qué crea éxito?","opciones":["Resistir","Rendirse","Esperar"],"correcta":0,"explicacion":"Resistir crea éxito.","recompensa":10,"color":"#facc15"},
+
 {"tipo":"acertijo","pregunta":"Sigue aunque duela.","opciones":["Resistencia","Mesa","Libro"],"correcta":0,"explicacion":"Resistir es seguir.","recompensa":8,"color":"#f59e0b"},
+
 {"tipo":"decision","pregunta":"Es difícil.","opciones":["Seguir","Dejar","Dormir"],"correcta":0,"explicacion":"Seguir te hace fuerte.","recompensa":12,"color":"#22c55e"},
+
 {"tipo":"juego_mental","pregunta":"8×8","opciones":["64","60","56"],"correcta":0,"explicacion":"64","recompensa":7,"color":"#38bdf8"},
-{"tipo":"respiracion","texto":"Respira y sigue.","duracion":30,"color":"#60a5fa"},
-{"tipo":"visualizacion","texto":"Resistes.","color":"#a78bfa"},
-{"tipo":"recompensa","texto":"Resistencia alta.","puntos":20,"color":"#10b981"},
+
+
+
+{"tipo":"voz","texto":"Ahora entrenaremos la resistencia con la respiración.","color":"#2563eb"},
+
+{"tipo":"tvid","tecnica":"TDG","titulo":"Respiración de la Guerra","texto":"Respirar fuerte te hace resistir.","color":"#06b6d4"},
+
+{"tipo":"respiracion","texto":"Inhala profundo.","duracion":6,"color":"#60a5fa"},
+
+{"tipo":"respiracion","texto":"Mantén el aire aunque cueste.","duracion":5,"color":"#60a5fa"},
+
+{"tipo":"respiracion","texto":"Exhala lento sin rendirte.","duracion":6,"color":"#60a5fa"},
+
+{"tipo":"respiracion","texto":"Otra vez, resiste y controla.","duracion":6,"color":"#60a5fa"},
+
+{"tipo":"decision",
+"pregunta":"¿Qué sientes ahora?",
+"opciones":["Más fuerte","Igual","Cansado"],
+"correcta":0,
+"explicacion":"La resistencia se entrena.",
+"recompensa":10,
+"color":"#22c55e"},
+
+{"tipo":"visualizacion","texto":"Te ves resistiendo sin rendirte.","color":"#a78bfa"},
+
+{"tipo":"recompensa","texto":"Resistencia aumentada.","puntos":20,"color":"#10b981"},
+
 {"tipo":"cierre","texto":"El que resiste vence.","color":"#f87171"}
+
 ]
 },
 {
 "id":62,
 "categoria":"avance",
 "bloques":[
+
 {"tipo":"voz","texto":"Hoy entrenarás avanzar siempre.","color":"#2563eb"},
+
 {"tipo":"tvid","tecnica":"TDB","titulo":"Técnica del Bien","texto":"Avanza cada día un poco.","color":"#06b6d4"},
+
 {"tipo":"inteligencia_social","texto":"Los que avanzan inspiran.","color":"#0ea5e9"},
+
 {"tipo":"estrategia","texto":"Un paso cada día.","color":"#14b8a6"},
+
 {"tipo":"historia","texto":"Un hombre mejoró poco a poco y ganó todo.","color":"#34d399"},
+
 {"tipo":"quiz","pregunta":"¿Cómo se avanza?","opciones":["Paso a paso","De golpe","Nunca"],"correcta":0,"explicacion":"Paso a paso.","recompensa":10,"color":"#facc15"},
+
 {"tipo":"acertijo","pregunta":"Sube sin parar.","opciones":["Nivel","Mesa","Casa"],"correcta":0,"explicacion":"El nivel sube.","recompensa":8,"color":"#f59e0b"},
+
 {"tipo":"decision","pregunta":"Hoy puedes mejorar.","opciones":["Sí","No","Después"],"correcta":0,"explicacion":"Hoy es el día.","recompensa":12,"color":"#22c55e"},
+
 {"tipo":"juego_mental","pregunta":"25÷5","opciones":["5","4","6"],"correcta":0,"explicacion":"5","recompensa":7,"color":"#38bdf8"},
-{"tipo":"respiracion","texto":"Respira.","duracion":30,"color":"#60a5fa"},
-{"tipo":"visualizacion","texto":"Avanzas.","color":"#a78bfa"},
+
+
+
+{"tipo":"voz","texto":"Ahora avanzaremos con la respiración.","color":"#2563eb"},
+
+{"tipo":"tvid","tecnica":"TDB","titulo":"Respiración del Bien","texto":"Cada respiración es un paso adelante.","color":"#06b6d4"},
+
+{"tipo":"respiracion","texto":"Inhala lento.","duracion":6,"color":"#60a5fa"},
+
+{"tipo":"respiracion","texto":"Mantén el aire y siente progreso.","duracion":4,"color":"#60a5fa"},
+
+{"tipo":"respiracion","texto":"Exhala y suelta lo viejo.","duracion":6,"color":"#60a5fa"},
+
+{"tipo":"respiracion","texto":"Otra vez, avanza respirando.","duracion":6,"color":"#60a5fa"},
+
+{"tipo":"decision",
+"pregunta":"¿Te sientes mejor que antes?",
+"opciones":["Sí","Un poco","No"],
+"correcta":0,
+"explicacion":"Avanzar poco es avanzar.",
+"recompensa":10,
+"color":"#22c55e"},
+
+{"tipo":"visualizacion","texto":"Te ves subiendo de nivel.","color":"#a78bfa"},
+
 {"tipo":"recompensa","texto":"Nivel aumentado.","puntos":20,"color":"#10b981"},
+
 {"tipo":"cierre","texto":"Siempre adelante.","color":"#f87171"}
+
 ]
 },
 {
 "id":63,
 "categoria":"mentalidad",
 "bloques":[
+
 {"tipo":"voz","texto":"Hoy entrenarás mentalidad fuerte.","color":"#2563eb"},
+
 {"tipo":"tvid","tecnica":"TDG","titulo":"Técnica de la Guerra","texto":"La mente fuerte se crea luchando contra la comodidad.","color":"#06b6d4"},
+
 {"tipo":"inteligencia_social","texto":"Las personas con mentalidad fuerte no se quejan, actúan.","color":"#0ea5e9"},
+
 {"tipo":"estrategia","texto":"Haz lo que debes aunque no tengas ganas.","color":"#14b8a6"},
+
 {"tipo":"historia","texto":"Un joven cambió su vida cuando dejó de quejarse y empezó a actuar.","color":"#34d399"},
+
 {"tipo":"quiz","pregunta":"¿Qué crea mentalidad fuerte?","opciones":["Acción","Queja","Miedo"],"correcta":0,"explicacion":"Actuar fortalece la mente.","recompensa":10,"color":"#facc15"},
+
 {"tipo":"acertijo","pregunta":"No se ve pero decide todo.","opciones":["Mente","Mesa","Ropa"],"correcta":0,"explicacion":"La mente decide.","recompensa":8,"color":"#f59e0b"},
+
 {"tipo":"decision","pregunta":"No quieres hacerlo.","opciones":["Hacerlo","Dejarlo","Dormir"],"correcta":0,"explicacion":"Hacerlo te hace fuerte.","recompensa":12,"color":"#22c55e"},
+
 {"tipo":"juego_mental","pregunta":"13×3","opciones":["39","36","42"],"correcta":0,"explicacion":"39","recompensa":7,"color":"#38bdf8"},
-{"tipo":"respiracion","texto":"Respira profundo.","duracion":30,"color":"#60a5fa"},
-{"tipo":"visualizacion","texto":"Te ves fuerte mentalmente.","color":"#a78bfa"},
+
+
+{"tipo":"voz","texto":"Ahora entrenaremos la mente con la respiración.","color":"#2563eb"},
+
+{"tipo":"tvid","tecnica":"TDG","titulo":"Respiración de la Guerra","texto":"Respirar con control fortalece tu mente.","color":"#06b6d4"},
+
+{"tipo":"respiracion","texto":"Inhala profundo.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Mantén el aire sin rendirte.","duracion":5,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Exhala lento con control.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Otra vez, domina tu mente.","duracion":6,"color":"#60a5fa"},
+
+{"tipo":"decision",
+"pregunta":"¿Te sientes más fuerte?",
+"opciones":["Sí","Un poco","No"],
+"correcta":0,
+"explicacion":"La mente se entrena.",
+"recompensa":10,
+"color":"#22c55e"},
+
+{"tipo":"visualizacion","texto":"Te ves actuando sin dudar.","color":"#a78bfa"},
+
 {"tipo":"recompensa","texto":"Mentalidad aumentada.","puntos":20,"color":"#10b981"},
+
 {"tipo":"cierre","texto":"Tu mente decide tu destino.","color":"#f87171"}
+
 ]
 },
 {
 "id":64,
 "categoria":"voluntad",
 "bloques":[
+
 {"tipo":"voz","texto":"Hoy entrenarás voluntad.","color":"#2563eb"},
+
 {"tipo":"tvid","tecnica":"TDP","titulo":"Técnica del Padre","texto":"La voluntad guía tus acciones.","color":"#06b6d4"},
+
 {"tipo":"inteligencia_social","texto":"Las personas con voluntad cumplen lo que dicen.","color":"#0ea5e9"},
+
 {"tipo":"estrategia","texto":"Empieza aunque no tengas motivación.","color":"#14b8a6"},
+
 {"tipo":"historia","texto":"Un hombre sin ganas entrenó igual y ganó.","color":"#34d399"},
+
 {"tipo":"quiz","pregunta":"¿Qué vence la pereza?","opciones":["Voluntad","Sueño","Excusa"],"correcta":0,"explicacion":"La voluntad manda.","recompensa":10,"color":"#facc15"},
+
 {"tipo":"acertijo","pregunta":"Hace que empieces.","opciones":["Voluntad","Silla","Libro"],"correcta":0,"explicacion":"Sin voluntad no empiezas.","recompensa":8,"color":"#f59e0b"},
+
 {"tipo":"decision","pregunta":"No tienes ganas.","opciones":["Hacerlo","Dejar","Esperar"],"correcta":0,"explicacion":"La voluntad actúa.","recompensa":12,"color":"#22c55e"},
+
 {"tipo":"juego_mental","pregunta":"21÷3","opciones":["7","6","8"],"correcta":0,"explicacion":"7","recompensa":7,"color":"#38bdf8"},
-{"tipo":"respiracion","texto":"Respira lento.","duracion":30,"color":"#60a5fa"},
-{"tipo":"visualizacion","texto":"Te ves decidido.","color":"#a78bfa"},
+
+
+{"tipo":"voz","texto":"Ahora entrenaremos la voluntad con la respiración.","color":"#2563eb"},
+
+{"tipo":"tvid","tecnica":"TDP","titulo":"Respiración del Padre","texto":"Respirar con firmeza fortalece tu voluntad.","color":"#06b6d4"},
+
+{"tipo":"respiracion","texto":"Inhala profundo.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Mantén el aire con decisión.","duracion":4,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Exhala lento sin perder control.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Otra vez, decide respirar.","duracion":6,"color":"#60a5fa"},
+
+{"tipo":"decision",
+"pregunta":"¿Actuarás aunque no tengas ganas?",
+"opciones":["Sí","Tal vez","No"],
+"correcta":0,
+"explicacion":"La voluntad decide.",
+"recompensa":10,
+"color":"#22c55e"},
+
+{"tipo":"visualizacion","texto":"Te ves cumpliendo lo que dices.","color":"#a78bfa"},
+
 {"tipo":"recompensa","texto":"Voluntad fuerte.","puntos":20,"color":"#10b981"},
+
 {"tipo":"cierre","texto":"La voluntad te mueve.","color":"#f87171"}
+
 ]
 },
 {
 "id":65,
 "categoria":"claridad",
 "bloques":[
+
 {"tipo":"voz","texto":"Hoy entrenarás claridad mental.","color":"#2563eb"},
+
 {"tipo":"tvid","tecnica":"TDB","titulo":"Técnica del Bien","texto":"La claridad aparece cuando eliminas distracciones.","color":"#06b6d4"},
+
 {"tipo":"inteligencia_social","texto":"La mente clara decide mejor.","color":"#0ea5e9"},
+
 {"tipo":"estrategia","texto":"Menos teléfono, más atención.","color":"#14b8a6"},
+
 {"tipo":"historia","texto":"Un estudiante apagó el móvil y mejoró todo.","color":"#34d399"},
+
 {"tipo":"quiz","pregunta":"¿Qué da claridad?","opciones":["Silencio","Ruido","Prisa"],"correcta":0,"explicacion":"El silencio ayuda a pensar.","recompensa":10,"color":"#facc15"},
+
 {"tipo":"acertijo","pregunta":"Se pierde con distracción.","opciones":["Enfoque","Mesa","Luz"],"correcta":0,"explicacion":"El enfoque se pierde.","recompensa":8,"color":"#f59e0b"},
+
 {"tipo":"decision","pregunta":"Estudias y llega mensaje.","opciones":["Seguir","Responder","Mirar"],"correcta":0,"explicacion":"Seguir crea claridad.","recompensa":12,"color":"#22c55e"},
+
 {"tipo":"juego_mental","pregunta":"12×5","opciones":["60","50","55"],"correcta":0,"explicacion":"60","recompensa":7,"color":"#38bdf8"},
-{"tipo":"respiracion","texto":"Respira lento.","duracion":30,"color":"#60a5fa"},
-{"tipo":"visualizacion","texto":"Tu mente clara.","color":"#a78bfa"},
+
+
+{"tipo":"voz","texto":"Ahora entrenaremos la claridad con la respiración.","color":"#2563eb"},
+
+{"tipo":"tvid","tecnica":"TDB","titulo":"Respiración del Bien","texto":"Respirar en calma aclara tu mente.","color":"#06b6d4"},
+
+{"tipo":"respiracion","texto":"Inhala lento.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Mantén el aire en silencio.","duracion":4,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Exhala despacio.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Otra vez, calma tu mente.","duracion":6,"color":"#60a5fa"},
+
+{"tipo":"decision",
+"pregunta":"¿Tu mente está más clara?",
+"opciones":["Sí","Un poco","No"],
+"correcta":0,
+"explicacion":"La calma da claridad.",
+"recompensa":10,
+"color":"#22c55e"},
+
+{"tipo":"visualizacion","texto":"Tu mente está limpia y tranquila.","color":"#a78bfa"},
+
 {"tipo":"recompensa","texto":"Claridad alta.","puntos":20,"color":"#10b981"},
+
 {"tipo":"cierre","texto":"La claridad da poder.","color":"#f87171"}
+
 ]
 },
 {
 "id":66,
 "categoria":"control",
 "bloques":[
+
 {"tipo":"voz","texto":"Hoy entrenarás control total.","color":"#2563eb"},
+
 {"tipo":"tvid","tecnica":"TDM","titulo":"Técnica del Mal","texto":"Reconoce el impulso y no lo sigas.","color":"#06b6d4"},
+
 {"tipo":"inteligencia_social","texto":"El que se controla no pierde.","color":"#0ea5e9"},
+
 {"tipo":"estrategia","texto":"Respira antes de reaccionar.","color":"#14b8a6"},
+
 {"tipo":"historia","texto":"Un hombre evitó perder todo controlándose.","color":"#34d399"},
+
 {"tipo":"quiz","pregunta":"¿Qué demuestra fuerza?","opciones":["Control","Rabia","Grito"],"correcta":0,"explicacion":"Control es fuerza.","recompensa":10,"color":"#facc15"},
+
 {"tipo":"acertijo","pregunta":"Se pierde rápido.","opciones":["Control","Sombrero","Libro"],"correcta":0,"explicacion":"Perder control trae problemas.","recompensa":8,"color":"#f59e0b"},
+
 {"tipo":"decision","pregunta":"Te insultan.","opciones":["Ignorar","Responder","Gritar"],"correcta":0,"explicacion":"Ignorar es control.","recompensa":12,"color":"#22c55e"},
+
 {"tipo":"juego_mental","pregunta":"9×7","opciones":["63","56","54"],"correcta":0,"explicacion":"63","recompensa":7,"color":"#38bdf8"},
-{"tipo":"respiracion","texto":"Respira profundo.","duracion":30,"color":"#60a5fa"},
-{"tipo":"visualizacion","texto":"Controlas todo.","color":"#a78bfa"},
+
+
+{"tipo":"voz","texto":"Ahora entrenaremos el control con la respiración.","color":"#2563eb"},
+
+{"tipo":"tvid","tecnica":"TDM","titulo":"Respiración del Mal","texto":"Respira y controla tus impulsos.","color":"#06b6d4"},
+
+{"tipo":"respiracion","texto":"Inhala profundo.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Mantén el aire y siente el control.","duracion":5,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Exhala lento sin perder la calma.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Otra vez, domina tus impulsos.","duracion":6,"color":"#60a5fa"},
+
+{"tipo":"decision",
+"pregunta":"¿Sientes más control?",
+"opciones":["Sí","Un poco","No"],
+"correcta":0,
+"explicacion":"El control se fortalece con práctica.",
+"recompensa":10,
+"color":"#22c55e"},
+
+{"tipo":"visualizacion","texto":"Controlas tus emociones y acciones.","color":"#a78bfa"},
+
 {"tipo":"recompensa","texto":"Control alto.","puntos":20,"color":"#10b981"},
+
 {"tipo":"cierre","texto":"El control es poder.","color":"#f87171"}
+
 ]
 },
 {
 "id":67,
 "categoria":"objetivo",
 "bloques":[
+
 {"tipo":"voz","texto":"Hoy entrenarás enfoque en objetivos.","color":"#2563eb"},
+
 {"tipo":"tvid","tecnica":"TDP","titulo":"Técnica del Padre","texto":"Guía tu vida hacia un objetivo.","color":"#06b6d4"},
+
 {"tipo":"inteligencia_social","texto":"El que tiene objetivo no se pierde.","color":"#0ea5e9"},
+
 {"tipo":"estrategia","texto":"Haz algo cada día por tu meta.","color":"#14b8a6"},
+
 {"tipo":"historia","texto":"Un joven con meta clara avanzó más rápido.","color":"#34d399"},
+
 {"tipo":"quiz","pregunta":"¿Qué da dirección?","opciones":["Objetivo","Suerte","Excusa"],"correcta":0,"explicacion":"El objetivo guía.","recompensa":10,"color":"#facc15"},
+
 {"tipo":"acertijo","pregunta":"Te muestra el camino.","opciones":["Meta","Mesa","Casa"],"correcta":0,"explicacion":"La meta guía.","recompensa":8,"color":"#f59e0b"},
+
 {"tipo":"decision","pregunta":"Tienes meta.","opciones":["Trabajar","Dormir","Esperar"],"correcta":0,"explicacion":"Trabajar acerca.","recompensa":12,"color":"#22c55e"},
+
 {"tipo":"juego_mental","pregunta":"24÷6","opciones":["4","5","6"],"correcta":0,"explicacion":"4","recompensa":7,"color":"#38bdf8"},
-{"tipo":"respiracion","texto":"Respira.","duracion":30,"color":"#60a5fa"},
-{"tipo":"visualizacion","texto":"Vas hacia tu meta.","color":"#a78bfa"},
+
+
+{"tipo":"voz","texto":"Ahora entrenaremos tu enfoque con respiración.","color":"#2563eb"},
+
+{"tipo":"tvid","tecnica":"TDP","titulo":"Respiración del Padre","texto":"Respirar con propósito acerca tu objetivo.","color":"#06b6d4"},
+
+{"tipo":"respiracion","texto":"Inhala mientras visualizas tu meta.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Mantén el aire y siente dirección.","duracion":5,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Exhala dejando dudas atrás.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Otra vez, enfócate respirando.","duracion":6,"color":"#60a5fa"},
+
+{"tipo":"decision",
+"pregunta":"¿Sientes más claridad hacia tu objetivo?",
+"opciones":["Sí","Un poco","No"],
+"correcta":0,
+"explicacion":"Respirar con intención fortalece enfoque.",
+"recompensa":10,
+"color":"#22c55e"},
+
+{"tipo":"visualizacion","texto":"Vas hacia tu meta con confianza.","color":"#a78bfa"},
+
 {"tipo":"recompensa","texto":"Objetivo claro.","puntos":20,"color":"#10b981"},
+
 {"tipo":"cierre","texto":"El objetivo da dirección.","color":"#f87171"}
+
 ]
 },
 {
 "id":68,
 "categoria":"habitos",
 "bloques":[
+
 {"tipo":"voz","texto":"Hoy entrenarás hábitos fuertes.","color":"#2563eb"},
+
 {"tipo":"tvid","tecnica":"TDB","titulo":"Técnica del Bien","texto":"Lo que repites te forma.","color":"#06b6d4"},
+
 {"tipo":"inteligencia_social","texto":"Los hábitos muestran quién eres.","color":"#0ea5e9"},
+
 {"tipo":"estrategia","texto":"Hazlo todos los días.","color":"#14b8a6"},
+
 {"tipo":"historia","texto":"Un pequeño hábito cambió una vida.","color":"#34d399"},
+
 {"tipo":"quiz","pregunta":"¿Qué crea resultados?","opciones":["Hábitos","Sueños","Excusas"],"correcta":0,"explicacion":"Los hábitos crean todo.","recompensa":10,"color":"#facc15"},
+
 {"tipo":"acertijo","pregunta":"Se repite y te cambia.","opciones":["Hábito","Mesa","Luz"],"correcta":0,"explicacion":"El hábito forma.","recompensa":8,"color":"#f59e0b"},
+
 {"tipo":"decision","pregunta":"Hoy puedes entrenar.","opciones":["Sí","No","Después"],"correcta":0,"explicacion":"Repetir crea hábito.","recompensa":12,"color":"#22c55e"},
+
 {"tipo":"juego_mental","pregunta":"4×12","opciones":["48","44","46"],"correcta":0,"explicacion":"48","recompensa":7,"color":"#38bdf8"},
-{"tipo":"respiracion","texto":"Respira lento.","duracion":30,"color":"#60a5fa"},
-{"tipo":"visualizacion","texto":"Repites lo correcto.","color":"#a78bfa"},
+
+
+{"tipo":"voz","texto":"Ahora entrenaremos hábitos con respiración.","color":"#2563eb"},
+
+{"tipo":"tvid","tecnica":"TDB","titulo":"Respiración del Bien","texto":"Respirar cada día fortalece hábitos.","color":"#06b6d4"},
+
+{"tipo":"respiracion","texto":"Inhala y recuerda tu hábito.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Mantén el aire y visualiza repetirlo.","duracion":5,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Exhala liberando excusas.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Otra vez, respira y reafirma tu hábito.","duracion":6,"color":"#60a5fa"},
+
+{"tipo":"decision",
+"pregunta":"¿Te comprometes a repetirlo?",
+"opciones":["Sí","Un poco","No"],
+"correcta":0,
+"explicacion":"Repetir fortalece hábito.",
+"recompensa":10,
+"color":"#22c55e"},
+
+{"tipo":"visualizacion","texto":"Repites lo correcto y mejoras cada día.","color":"#a78bfa"},
+
 {"tipo":"recompensa","texto":"Hábito fuerte.","puntos":20,"color":"#10b981"},
+
 {"tipo":"cierre","texto":"Tus hábitos crean tu vida.","color":"#f87171"}
+
 ]
 },
 {
@@ -507,8 +919,17 @@
 {"tipo":"acertijo","pregunta":"Crece con presión.","opciones":["Carácter","Mesa","Ropa"],"correcta":0,"explicacion":"La presión forma carácter.","recompensa":8,"color":"#f59e0b"},
 {"tipo":"decision","pregunta":"Es difícil.","opciones":["Hacerlo","Dejar","Dormir"],"correcta":0,"explicacion":"Hacerlo fortalece.","recompensa":12,"color":"#22c55e"},
 {"tipo":"juego_mental","pregunta":"8×9","opciones":["72","70","64"],"correcta":0,"explicacion":"72","recompensa":7,"color":"#38bdf8"},
-{"tipo":"respiracion","texto":"Respira fuerte.","duracion":30,"color":"#60a5fa"},
-{"tipo":"visualizacion","texto":"Eres fuerte.","color":"#a78bfa"},
+
+{"tipo":"voz","texto":"Vamos a fortalecer la mente con respiración.","color":"#2563eb"},
+{"tipo":"tvid","tecnica":"TDG","titulo":"Respiración de la Guerra","texto":"Respira y enfrenta la dificultad.","color":"#06b6d4"},
+{"tipo":"respiracion","texto":"Inhala profundo sintiendo fuerza.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Mantén el aire y visualiza superar obstáculos.","duracion":5,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Exhala soltando dudas y miedo.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Otra vez, inhala fortaleza y exhala miedo.","duracion":6,"color":"#60a5fa"},
+
+{"tipo":"decision","pregunta":"¿Sientes tu fortaleza aumentada?","opciones":["Sí","Un poco","No"],"correcta":0,"explicacion":"La práctica fortalece la mente.","recompensa":10,"color":"#22c55e"},
+
+{"tipo":"visualizacion","texto":"Eres fuerte mentalmente y enfrentas dificultades.","color":"#a78bfa"},
 {"tipo":"recompensa","texto":"Fortaleza alta.","puntos":20,"color":"#10b981"},
 {"tipo":"cierre","texto":"La dificultad te hace fuerte.","color":"#f87171"}
 ]
@@ -525,9 +946,18 @@
 {"tipo":"quiz","pregunta":"¿Qué crea resultados?","opciones":["Constancia","Duda","Miedo"],"correcta":0,"explicacion":"Constancia gana.","recompensa":10,"color":"#facc15"},
 {"tipo":"acertijo","pregunta":"No se detiene.","opciones":["Determinación","Mesa","Libro"],"correcta":0,"explicacion":"Sigue.","recompensa":8,"color":"#f59e0b"},
 {"tipo":"decision","pregunta":"Quieres cambiar.","opciones":["Seguir","Dejar","Esperar"],"correcta":0,"explicacion":"Seguir gana.","recompensa":12,"color":"#22c55e"},
-{"tipo":"juego_mental","pregunta":"30÷5","opciones":["6","5","7"],"correcta":0,"explicacion":"6","recompensa":7,"color":"#38bdf8"},
-{"tipo":"respiracion","texto":"Respira.","duracion":30,"color":"#60a5fa"},
-{"tipo":"visualizacion","texto":"Sigues adelante.","color":"#a78bfa"},
+{"tipo":"juego_mental","pregunta":"30÷5","opciones":["6","5","7"],"correcta":0,"explanacion":"6","recompensa":7,"color":"#38bdf8"},
+
+{"tipo":"voz","texto":"Fortalece tu determinación con respiración.","color":"#2563eb"},
+{"tipo":"tvid","tecnica":"TDP","titulo":"Respiración del Padre","texto":"Respira y confirma tu determinación.","color":"#06b6d4"},
+{"tipo":"respiracion","texto":"Inhala sintiendo firmeza.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Mantén el aire y visualiza tu meta alcanzada.","duracion":5,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Exhala dejando dudas atrás.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Otra vez, inhala decisión y exhala miedo.","duracion":6,"color":"#60a5fa"},
+
+{"tipo":"decision","pregunta":"¿Sientes más determinación?","opciones":["Sí","Un poco","No"],"correcta":0,"explicacion":"La determinación se fortalece con práctica.","recompensa":10,"color":"#22c55e"},
+
+{"tipo":"visualizacion","texto":"Sigues adelante con fuerza y decisión.","color":"#a78bfa"},
 {"tipo":"recompensa","texto":"Determinación alta.","puntos":20,"color":"#10b981"},
 {"tipo":"cierre","texto":"La determinación vence.","color":"#f87171"}
 ]
@@ -545,8 +975,17 @@
 {"tipo":"acertijo","pregunta":"No se compra.","opciones":["Confianza","Mesa","Libro"],"correcta":0,"explicacion":"Se gana.","recompensa":8,"color":"#f59e0b"},
 {"tipo":"decision","pregunta":"Prometes algo.","opciones":["Cumplir","Olvidar","Mentir"],"correcta":0,"explicacion":"Cumplir te hace fuerte.","recompensa":12,"color":"#22c55e"},
 {"tipo":"juego_mental","pregunta":"6×8","opciones":["48","46","44"],"correcta":0,"explicacion":"48","recompensa":7,"color":"#38bdf8"},
-{"tipo":"respiracion","texto":"Respira.","duracion":30,"color":"#60a5fa"},
-{"tipo":"visualizacion","texto":"Cumples todo.","color":"#a78bfa"},
+
+{"tipo":"voz","texto":"Ahora respiraremos para reforzar la responsabilidad.","color":"#2563eb"},
+{"tipo":"tvid","tecnica":"TDMM","titulo":"Respiración Maternal","texto":"Respira cuidando tus compromisos.","color":"#06b6d4"},
+{"tipo":"respiracion","texto":"Inhala pensando en tus responsabilidades.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Mantén el aire y visualiza cumplirlas.","duracion":5,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Exhala dejando excusas atrás.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Otra vez, inhala compromiso y exhala dudas.","duracion":6,"color":"#60a5fa"},
+
+{"tipo":"decision","pregunta":"¿Te comprometes a cumplir?","opciones":["Sí","Un poco","No"],"correcta":0,"explicacion":"Cumplir fortalece la responsabilidad.","recompensa":10,"color":"#22c55e"},
+
+{"tipo":"visualizacion","texto":"Cumples todo lo que prometes.","color":"#a78bfa"},
 {"tipo":"recompensa","texto":"Responsabilidad alta.","puntos":20,"color":"#10b981"},
 {"tipo":"cierre","texto":"Ser responsable te hace grande.","color":"#f87171"}
 ]
@@ -560,12 +999,21 @@
 {"tipo":"inteligencia_social","texto":"El que se domina no se pierde.","color":"#0ea5e9"},
 {"tipo":"estrategia","texto":"Controla tus impulsos.","color":"#14b8a6"},
 {"tipo":"historia","texto":"Un hombre dominó sus hábitos y cambió su destino.","color":"#34d399"},
-{"tipo":"quiz","pregunta":"¿Qué es poder?","opciones":["Dominio","Dinero","Fuerza"],"correcta":0,"explicacion":"Dominarte es poder.","recompensa":10,"color":"#facc15"},
-{"tipo":"acertijo","pregunta":"Si lo tienes, mandas.","opciones":["Control","Mesa","Ropa"],"correcta":0,"explicacion":"Control manda.","recompensa":8,"color":"#f59e0b"},
-{"tipo":"decision","pregunta":"Te distraes.","opciones":["Controlar","Seguir","Dejar"],"correcta":0,"explicacion":"Controlar es dominar.","recompensa":12,"color":"#22c55e"},
-{"tipo":"juego_mental","pregunta":"9×9","opciones":["81","72","90"],"correcta":0,"explicacion":"81","recompensa":7,"color":"#38bdf8"},
-{"tipo":"respiracion","texto":"Respira profundo.","duracion":30,"color":"#60a5fa"},
-{"tipo":"visualizacion","texto":"Dominas tu mente.","color":"#a78bfa"},
+{"tipo":"quiz","pregunta":"¿Qué es poder?","opciones":["Dominio","Dinero","Fuerza"],"correcta":0,"explanacion":"Dominarte es poder.","recompensa":10,"color":"#facc15"},
+{"tipo":"acertijo","pregunta":"Si lo tienes, mandas.","opciones":["Control","Mesa","Ropa"],"correcta":0,"explanacion":"Control manda.","recompensa":8,"color":"#f59e0b"},
+{"tipo":"decision","pregunta":"Te distraes.","opciones":["Controlar","Seguir","Dejar"],"correcta":0,"explanacion":"Controlar es dominar.","recompensa":12,"color":"#22c55e"},
+{"tipo":"juego_mental","pregunta":"9×9","opciones":["81","72","90"],"correcta":0,"explanacion":"81","recompensa":7,"color":"#38bdf8"},
+
+{"tipo":"voz","texto":"Refuerza tu dominio con respiración.","color":"#2563eb"},
+{"tipo":"tvid","tecnica":"TDG","titulo":"Respiración de Dominio","texto":"Respira controlando tu mente y hábitos.","color":"#06b6d4"},
+{"tipo":"respiracion","texto":"Inhala controlando pensamientos.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Mantén el aire y visualiza tus hábitos dominados.","duracion":5,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Exhala dejando impulsos fuera de control.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Otra vez, inhala y exhala dominio.","duracion":6,"color":"#60a5fa"},
+
+{"tipo":"decision","pregunta":"¿Sientes dominio personal?","opciones":["Sí","Un poco","No"],"correcta":0,"explanacion":"El dominio se fortalece con práctica.","recompensa":10,"color":"#22c55e"},
+
+{"tipo":"visualizacion","texto":"Dominas tu mente y acciones.","color":"#a78bfa"},
 {"tipo":"recompensa","texto":"Dominio alto.","puntos":20,"color":"#10b981"},
 {"tipo":"cierre","texto":"El dominio personal lo cambia todo.","color":"#f87171"}
 ]
@@ -579,11 +1027,20 @@
 {"tipo":"inteligencia_social","texto":"Las mentes creativas conectan mejor con otros.","color":"#0ea5e9"},
 {"tipo":"estrategia","texto":"Escribe cualquier idea que te venga a la mente.","color":"#14b8a6"},
 {"tipo":"historia","texto":"Un joven dibujaba todos los días y hoy es diseñador exitoso.","color":"#34d399"},
-{"tipo":"quiz","pregunta":"¿Qué alimenta la creatividad?","opciones":["Jugar","Quejarse","Dormir mucho"],"correcta":0,"explicacion":"Jugar y explorar ideas despierta la creatividad.","recompensa":10,"color":"#facc15"},
-{"tipo":"acertijo","pregunta":"No tiene límites y te hace volar.","opciones":["Imaginación","Mesa","Libro"],"correcta":0,"explicacion":"La imaginación no tiene fronteras.","recompensa":8,"color":"#f59e0b"},
-{"tipo":"decision","pregunta":"Tienes una idea loca.","opciones":["Probarla","Ignorar","Criticar"],"correcta":0,"explicacion":"Probarla genera creatividad.","recompensa":12,"color":"#22c55e"},
-{"tipo":"juego_mental","pregunta":"Si 1+2=3, 2+3=?","opciones":["5","6","4"],"correcta":0,"explicacion":"Suma básica","recompensa":7,"color":"#38bdf8"},
-{"tipo":"respiracion","texto":"Inhala creatividad, exhala dudas.","duracion":30,"color":"#60a5fa"},
+{"tipo":"quiz","pregunta":"¿Qué alimenta la creatividad?","opciones":["Jugar","Quejarse","Dormir mucho"],"correcta":0,"explanacion":"Jugar y explorar ideas despierta la creatividad.","recompensa":10,"color":"#facc15"},
+{"tipo":"acertijo","pregunta":"No tiene límites y te hace volar.","opciones":["Imaginación","Mesa","Libro"],"correcta":0,"explanacion":"La imaginación no tiene fronteras.","recompensa":8,"color":"#f59e0b"},
+{"tipo":"decision","pregunta":"Tienes una idea loca.","opciones":["Probarla","Ignorar","Criticar"],"correcta":0,"explanacion":"Probarla genera creatividad.","recompensa":12,"color":"#22c55e"},
+{"tipo":"juego_mental","pregunta":"Si 1+2=3, 2+3=?","opciones":["5","6","4"],"correcta":0,"explanacion":"Suma básica","recompensa":7,"color":"#38bdf8"},
+
+{"tipo":"voz","texto":"Potencia tu creatividad con respiración.","color":"#2563eb"},
+{"tipo":"tvid","tecnica":"TDN","titulo":"Respiración del Niño","texto":"Inhala ideas, exhala miedo a crear.","color":"#06b6d4"},
+{"tipo":"respiracion","texto":"Inhala imaginación.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Mantén el aire y visualiza nuevas ideas.","duracion":5,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Exhala bloqueos y dudas.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Otra vez, inhala creatividad y exhala miedo.","duracion":6,"color":"#60a5fa"},
+
+{"tipo":"decision","pregunta":"¿Sientes creatividad fluyendo?","opciones":["Sí","Un poco","No"],"correcta":0,"explanacion":"La práctica despierta creatividad.","recompensa":10,"color":"#22c55e"},
+
 {"tipo":"visualizacion","texto":"Te ves creando sin límites.","color":"#a78bfa"},
 {"tipo":"recompensa","texto":"Creatividad aumentada.","puntos":20,"color":"#10b981"},
 {"tipo":"cierre","texto":"Tu imaginación abre caminos.","color":"#f87171"}
@@ -600,9 +1057,17 @@
 {"tipo":"historia","texto":"Una joven cambió de carrera y encontró éxito y felicidad.","color":"#34d399"},
 {"tipo":"quiz","pregunta":"¿Qué permite avanzar cuando todo cambia?","opciones":["Adaptabilidad","Rigidez","Miedo"],"correcta":0,"explicacion":"Adaptarse permite progresar.","recompensa":10,"color":"#facc15"},
 {"tipo":"acertijo","pregunta":"Se dobla pero no se rompe.","opciones":["Adaptabilidad","Árbol","Acero"],"correcta":0,"explicacion":"Adaptarse es doblarse sin romperse.","recompensa":8,"color":"#f59e0b"},
-{"tipo":"decision","pregunta":"Todo cambia.","opciones":["Ajustar","Rebelarse","Ignorar"],"correcta":0,"explicacion":"Ajustar te mantiene en camino.","recompensa":12,"color":"#22c55e"},
+{"tipo":"decision","pregunta":"Todo cambia.","opciones":["Ajustar","Rebelarse","Ignorar"],"correcta":0,"explanacion":"Ajustar te mantiene en camino.","recompensa":12,"color":"#22c55e"},
 {"tipo":"juego_mental","pregunta":"15÷3","opciones":["5","4","6"],"correcta":0,"explicacion":"5","recompensa":7,"color":"#38bdf8"},
-{"tipo":"respiracion","texto":"Respira y adapta.","duracion":30,"color":"#60a5fa"},
+
+{"tipo":"voz","texto":"Potencia tu adaptabilidad con respiración.","color":"#2563eb"},
+{"tipo":"tvid","tecnica":"TDM","titulo":"Respiración del Mal","texto":"Inhala flexibilidad, exhala resistencia.","color":"#06b6d4"},
+{"tipo":"respiracion","texto":"Inhala adaptabilidad.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Mantén el aire y visualiza soluciones nuevas.","duracion":5,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Exhala resistencia al cambio.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Otra vez, inhala flexibilidad y exhala rigidez.","duracion":6,"color":"#60a5fa"},
+{"tipo":"decision","pregunta":"¿Sientes que te adaptas mejor?","opciones":["Sí","Un poco","No"],"correcta":0,"explanacion":"La práctica mejora adaptabilidad.","recompensa":10,"color":"#22c55e"},
+
 {"tipo":"visualizacion","texto":"Te adaptas fácilmente.","color":"#a78bfa"},
 {"tipo":"recompensa","texto":"Adaptabilidad alta.","puntos":20,"color":"#10b981"},
 {"tipo":"cierre","texto":"Adaptarse es crecer.","color":"#f87171"}
@@ -619,9 +1084,17 @@
 {"tipo":"historia","texto":"Un emprendedor fracasó tres veces y luego triunfó mundialmente.","color":"#34d399"},
 {"tipo":"quiz","pregunta":"¿Qué hace fuerte a una persona?","opciones":["Resiliencia","Queja","Miedo"],"correcta":0,"explicacion":"Levantarse te hace fuerte.","recompensa":10,"color":"#facc15"},
 {"tipo":"acertijo","pregunta":"Se muestra cuando todo falla.","opciones":["Resiliencia","Mesa","Libro"],"correcta":0,"explicacion":"Resiliencia es persistencia.","recompensa":8,"color":"#f59e0b"},
-{"tipo":"decision","pregunta":"Fracasaste hoy.","opciones":["Seguir","Rendirse","Quejarse"],"correcta":0,"explicacion":"Seguir te fortalece.","recompensa":12,"color":"#22c55e"},
+{"tipo":"decision","pregunta":"Fracasaste hoy.","opciones":["Seguir","Rendirse","Quejarse"],"correcta":0,"explanacion":"Seguir te fortalece.","recompensa":12,"color":"#22c55e"},
 {"tipo":"juego_mental","pregunta":"7×8","opciones":["56","54","50"],"correcta":0,"explicacion":"56","recompensa":7,"color":"#38bdf8"},
-{"tipo":"respiracion","texto":"Respira y sigue.","duracion":30,"color":"#60a5fa"},
+
+{"tipo":"voz","texto":"Potencia tu resiliencia con respiración.","color":"#2563eb"},
+{"tipo":"tvid","tecnica":"TDG","titulo":"Respiración de la Guerra","texto":"Inhala fuerza, exhala miedo.","color":"#06b6d4"},
+{"tipo":"respiracion","texto":"Inhala resiliencia.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Mantén el aire y recuerda que puedes levantarte.","duracion":5,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Exhala dudas y derrotas.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Otra vez, inhala fuerza y exhala miedo.","duracion":6,"color":"#60a5fa"},
+{"tipo":"decision","pregunta":"¿Sientes más fuerza interior?","opciones":["Sí","Un poco","No"],"correcta":0,"explanacion":"Practicar refuerza resiliencia.","recompensa":10,"color":"#22c55e"},
+
 {"tipo":"visualizacion","texto":"Te levantas cada vez más fuerte.","color":"#a78bfa"},
 {"tipo":"recompensa","texto":"Resiliencia alta.","puntos":20,"color":"#10b981"},
 {"tipo":"cierre","texto":"La resiliencia nunca falla.","color":"#f87171"}
@@ -636,11 +1109,19 @@
 {"tipo":"inteligencia_social","texto":"Escuchar y entender fortalece relaciones.","color":"#0ea5e9"},
 {"tipo":"estrategia","texto":"Haz preguntas para comprender.","color":"#14b8a6"},
 {"tipo":"historia","texto":"Un niño escuchaba y ayudaba, y se convirtió en líder querido.","color":"#34d399"},
-{"tipo":"quiz","pregunta":"¿Qué crea relaciones fuertes?","opciones":["Empatía","Dinero","Poder"],"correcta":0,"explicacion":"Entender a otros une.","recompensa":10,"color":"#facc15"},
-{"tipo":"acertijo","pregunta":"Se da sin hablar.","opciones":["Empatía","Mesa","Libro"],"correcta":0,"explicacion":"Se siente, no se compra.","recompensa":8,"color":"#f59e0b"},
-{"tipo":"decision","pregunta":"Alguien triste.","opciones":["Escuchar","Ignorar","Criticar"],"correcta":0,"explicacion":"Escuchar es empatía.","recompensa":12,"color":"#22c55e"},
-{"tipo":"juego_mental","pregunta":"18÷3","opciones":["6","5","7"],"correcta":0,"explicacion":"6","recompensa":7,"color":"#38bdf8"},
-{"tipo":"respiracion","texto":"Respira y siente al otro.","duracion":30,"color":"#60a5fa"},
+{"tipo":"quiz","pregunta":"¿Qué crea relaciones fuertes?","opciones":["Empatía","Dinero","Poder"],"correcta":0,"explanacion":"Entender a otros une.","recompensa":10,"color":"#facc15"},
+{"tipo":"acertijo","pregunta":"Se da sin hablar.","opciones":["Empatía","Mesa","Libro"],"correcta":0,"explanacion":"Se siente, no se compra.","recompensa":8,"color":"#f59e0b"},
+{"tipo":"decision","pregunta":"Alguien triste.","opciones":["Escuchar","Ignorar","Criticar"],"correcta":0,"explanacion":"Escuchar es empatía.","recompensa":12,"color":"#22c55e"},
+{"tipo":"juego_mental","pregunta":"18÷3","opciones":["6","5","7"],"correcta":0,"explanacion":"6","recompensa":7,"color":"#38bdf8"},
+
+{"tipo":"voz","texto":"Potencia tu empatía con respiración.","color":"#2563eb"},
+{"tipo":"tvid","tecnica":"TDMM","titulo":"Respiración Maternal","texto":"Inhala comprensión, exhala juicio.","color":"#06b6d4"},
+{"tipo":"respiracion","texto":"Inhala empatía.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Mantén el aire y siente al otro.","duracion":5,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Exhala indiferencia y prejuicios.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Otra vez, inhala comprensión y exhala juicio.","duracion":6,"color":"#60a5fa"},
+{"tipo":"decision","pregunta":"¿Sientes conexión con otros?","opciones":["Sí","Un poco","No"],"correcta":0,"explanacion":"La práctica aumenta empatía.","recompensa":10,"color":"#22c55e"},
+
 {"tipo":"visualizacion","texto":"Te conectas con otros.","color":"#a78bfa"},
 {"tipo":"recompensa","texto":"Empatía elevada.","puntos":20,"color":"#10b981"},
 {"tipo":"cierre","texto":"Comprender une.","color":"#f87171"}
@@ -655,11 +1136,19 @@
 {"tipo":"inteligencia_social","texto":"Los concentrados logran más en equipo.","color":"#0ea5e9"},
 {"tipo":"estrategia","texto":"Elimina distracciones, incluso el teléfono.","color":"#14b8a6"},
 {"tipo":"historia","texto":"Un estudiante desconectó el móvil y duplicó su rendimiento.","color":"#34d399"},
-{"tipo":"quiz","pregunta":"¿Qué aumenta la concentración?","opciones":["Silencio","Multitarea","Prisa"],"correcta":0,"explicacion":"Silencio y enfoque potencian la concentración.","recompensa":10,"color":"#facc15"},
-{"tipo":"acertijo","pregunta":"Se pierde fácilmente.","opciones":["Concentración","Mesa","Libro"],"correcta":0,"explicacion":"La mente se dispersa sin cuidado.","recompensa":8,"color":"#f59e0b"},
-{"tipo":"decision","pregunta":"Te distraen.","opciones":["Ignorar","Responder","Jugar"],"correcta":0,"explicacion":"Ignorar fortalece concentración.","recompensa":12,"color":"#22c55e"},
-{"tipo":"juego_mental","pregunta":"14×2","opciones":["28","26","30"],"correcta":0,"explicacion":"28","recompensa":7,"color":"#38bdf8"},
-{"tipo":"respiracion","texto":"Respira profundo y enfócate.","duracion":30,"color":"#60a5fa"},
+{"tipo":"quiz","pregunta":"¿Qué aumenta la concentración?","opciones":["Silencio","Multitarea","Prisa"],"correcta":0,"explanacion":"Silencio y enfoque potencian la concentración.","recompensa":10,"color":"#facc15"},
+{"tipo":"acertijo","pregunta":"Se pierde fácilmente.","opciones":["Concentración","Mesa","Libro"],"correcta":0,"explanacion":"La mente se dispersa sin cuidado.","recompensa":8,"color":"#f59e0b"},
+{"tipo":"decision","pregunta":"Te distraen.","opciones":["Ignorar","Responder","Jugar"],"correcta":0,"explanacion":"Ignorar fortalece concentración.","recompensa":12,"color":"#22c55e"},
+{"tipo":"juego_mental","pregunta":"14×2","opciones":["28","26","30"],"correcta":0,"explanacion":"28","recompensa":7,"color":"#38bdf8"},
+
+{"tipo":"voz","texto":"Potencia tu concentración con respiración.","color":"#2563eb"},
+{"tipo":"tvid","tecnica":"TDB","titulo":"Respiración del Bien","texto":"Inhala enfoque, exhala distracción.","color":"#06b6d4"},
+{"tipo":"respiracion","texto":"Inhala concentración.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Mantén el aire y visualiza tu objetivo.","duracion":5,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Exhala distracciones.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Otra vez, inhala enfoque y exhala dispersión.","duracion":6,"color":"#60a5fa"},
+{"tipo":"decision","pregunta":"¿Sientes tu mente enfocada?","opciones":["Sí","Un poco","No"],"correcta":0,"explanacion":"La práctica refuerza la concentración.","recompensa":10,"color":"#22c55e"},
+
 {"tipo":"visualizacion","texto":"Tu mente enfocada.","color":"#a78bfa"},
 {"tipo":"recompensa","texto":"Concentración alta.","puntos":20,"color":"#10b981"},
 {"tipo":"cierre","texto":"Concentrarte cambia resultados.","color":"#f87171"}
@@ -674,11 +1163,19 @@
 {"tipo":"inteligencia_social","texto":"El que se respeta genera respeto.","color":"#0ea5e9"},
 {"tipo":"estrategia","texto":"Reconoce tus logros diarios.","color":"#14b8a6"},
 {"tipo":"historia","texto":"Una joven anotaba sus éxitos y se volvió segura y líder.","color":"#34d399"},
-{"tipo":"quiz","pregunta":"¿Qué fortalece la autoestima?","opciones":["Reconocimiento","Crítica","Comparación"],"correcta":0,"explicacion":"Reconocer logros fortalece autoestima.","recompensa":10,"color":"#facc15"},
-{"tipo":"acertijo","pregunta":"Se construye día a día.","opciones":["Autoestima","Mesa","Libro"],"correcta":0,"explicacion":"Cada logro suma.","recompensa":8,"color":"#f59e0b"},
-{"tipo":"decision","pregunta":"Dudas de ti.","opciones":["Reconocer","Ignorar","Criticar"],"correcta":0,"explicacion":"Reconocer fortalece.","recompensa":12,"color":"#22c55e"},
-{"tipo":"juego_mental","pregunta":"16÷4","opciones":["4","5","3"],"correcta":0,"explicacion":"4","recompensa":7,"color":"#38bdf8"},
-{"tipo":"respiracion","texto":"Respira confianza.","duracion":30,"color":"#60a5fa"},
+{"tipo":"quiz","pregunta":"¿Qué fortalece la autoestima?","opciones":["Reconocimiento","Crítica","Comparación"],"correcta":0,"explanacion":"Reconocer logros fortalece autoestima.","recompensa":10,"color":"#facc15"},
+{"tipo":"acertijo","pregunta":"Se construye día a día.","opciones":["Autoestima","Mesa","Libro"],"correcta":0,"explanacion":"Cada logro suma.","recompensa":8,"color":"#f59e0b"},
+{"tipo":"decision","pregunta":"Dudas de ti.","opciones":["Reconocer","Ignorar","Criticar"],"correcta":0,"explanacion":"Reconocer fortalece.","recompensa":12,"color":"#22c55e"},
+{"tipo":"juego_mental","pregunta":"16÷4","opciones":["4","5","3"],"correcta":0,"explanacion":"4","recompensa":7,"color":"#38bdf8"},
+
+{"tipo":"voz","texto":"Potencia tu autoestima con respiración.","color":"#2563eb"},
+{"tipo":"tvid","tecnica":"TDN","titulo":"Respiración del Niño","texto":"Inhala confianza, exhala inseguridad.","color":"#06b6d4"},
+{"tipo":"respiracion","texto":"Inhala autoestima.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Mantén el aire y visualiza tu valor.","duracion":5,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Exhala dudas y comparaciones.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Otra vez, inhala confianza y exhala inseguridad.","duracion":6,"color":"#60a5fa"},
+{"tipo":"decision","pregunta":"¿Sientes más seguridad en ti mismo?","opciones":["Sí","Un poco","No"],"correcta":0,"explanacion":"Practicar refuerza autoestima.","recompensa":10,"color":"#22c55e"},
+
 {"tipo":"visualizacion","texto":"Te sientes valioso.","color":"#a78bfa"},
 {"tipo":"recompensa","texto":"Autoestima alta.","puntos":20,"color":"#10b981"},
 {"tipo":"cierre","texto":"Valorarte te hace fuerte.","color":"#f87171"}
@@ -693,11 +1190,19 @@
 {"tipo":"inteligencia_social","texto":"Motivar a otros multiplica tu energía.","color":"#0ea5e9"},
 {"tipo":"estrategia","texto":"Escribe tus razones de levantarte cada día.","color":"#14b8a6"},
 {"tipo":"historia","texto":"Un joven sin ganas recordaba su sueño y logró grandes cosas.","color":"#34d399"},
-{"tipo":"quiz","pregunta":"¿Qué impulsa a actuar?","opciones":["Motivación","Excusas","Sueño"],"correcta":0,"explicacion":"La motivación mueve.","recompensa":10,"color":"#facc15"},
-{"tipo":"acertijo","pregunta":"Se enciende desde adentro.","opciones":["Motivación","Mesa","Libro"],"correcta":0,"explicacion":"Motivación interna.","recompensa":8,"color":"#f59e0b"},
-{"tipo":"decision","pregunta":"No quieres hacerlo.","opciones":["Recordar meta","Dormir","Quejarte"],"correcta":0,"explicacion":"Recordar la meta motiva.","recompensa":12,"color":"#22c55e"},
-{"tipo":"juego_mental","pregunta":"7×6","opciones":["42","40","48"],"correcta":0,"explicacion":"42","recompensa":7,"color":"#38bdf8"},
-{"tipo":"respiracion","texto":"Respira motivación.","duracion":30,"color":"#60a5fa"},
+{"tipo":"quiz","pregunta":"¿Qué impulsa a actuar?","opciones":["Motivación","Excusas","Sueño"],"correcta":0,"explanacion":"La motivación mueve.","recompensa":10,"color":"#facc15"},
+{"tipo":"acertijo","pregunta":"Se enciende desde adentro.","opciones":["Motivación","Mesa","Libro"],"correcta":0,"explanacion":"Motivación interna.","recompensa":8,"color":"#f59e0b"},
+{"tipo":"decision","pregunta":"No quieres hacerlo.","opciones":["Recordar meta","Dormir","Quejarte"],"correcta":0,"explanacion":"Recordar la meta motiva.","recompensa":12,"color":"#22c55e"},
+{"tipo":"juego_mental","pregunta":"7×6","opciones":["42","40","48"],"correcta":0,"explanacion":"42","recompensa":7,"color":"#38bdf8"},
+
+{"tipo":"voz","texto":"Potencia tu motivación con respiración.","color":"#2563eb"},
+{"tipo":"tvid","tecnica":"TDB","titulo":"Respiración del Bien","texto":"Inhala energía, exhala pereza.","color":"#06b6d4"},
+{"tipo":"respiracion","texto":"Inhala motivación.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Mantén el aire y visualiza tu meta.","duracion":5,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Exhala flojera y dudas.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Otra vez, inhala energía y exhala pereza.","duracion":6,"color":"#60a5fa"},
+{"tipo":"decision","pregunta":"¿Sientes impulso interno?","opciones":["Sí","Un poco","No"],"correcta":0,"explanacion":"Practicar despierta motivación.","recompensa":10,"color":"#22c55e"},
+
 {"tipo":"visualizacion","texto":"Te levantas con energía.","color":"#a78bfa"},
 {"tipo":"recompensa","texto":"Motivación alta.","puntos":20,"color":"#10b981"},
 {"tipo":"cierre","texto":"La motivación te impulsa.","color":"#f87171"}
@@ -712,11 +1217,19 @@
 {"tipo":"inteligencia_social","texto":"Los disciplinados cumplen compromisos.","color":"#0ea5e9"},
 {"tipo":"estrategia","texto":"Cumple lo que planificaste hoy.","color":"#14b8a6"},
 {"tipo":"historia","texto":"Un estudiante disciplinado siempre completaba tareas y hoy lidera su empresa.","color":"#34d399"},
-{"tipo":"quiz","pregunta":"¿Qué genera resultados consistentes?","opciones":["Disciplina","Suerte","Inspiración"],"correcta":0,"explicacion":"La disciplina genera consistencia.","recompensa":10,"color":"#facc15"},
-{"tipo":"acertijo","pregunta":"Se mantiene día a día.","opciones":["Disciplina","Mesa","Libro"],"correcta":0,"explicacion":"La disciplina es constante.","recompensa":8,"color":"#f59e0b"},
-{"tipo":"decision","pregunta":"Tienes tarea pendiente.","opciones":["Hacerla","Dejar","Olvidar"],"correcta":0,"explicacion":"Cumplir fortalece disciplina.","recompensa":12,"color":"#22c55e"},
-{"tipo":"juego_mental","pregunta":"11×3","opciones":["33","30","36"],"correcta":0,"explicacion":"33","recompensa":7,"color":"#38bdf8"},
-{"tipo":"respiracion","texto":"Respira disciplina.","duracion":30,"color":"#60a5fa"},
+{"tipo":"quiz","pregunta":"¿Qué genera resultados consistentes?","opciones":["Disciplina","Suerte","Inspiración"],"correcta":0,"explanacion":"La disciplina genera consistencia.","recompensa":10,"color":"#facc15"},
+{"tipo":"acertijo","pregunta":"Se mantiene día a día.","opciones":["Disciplina","Mesa","Libro"],"correcta":0,"explanacion":"La disciplina es constante.","recompensa":8,"color":"#f59e0b"},
+{"tipo":"decision","pregunta":"Tienes tarea pendiente.","opciones":["Hacerla","Dejar","Olvidar"],"correcta":0,"explanacion":"Cumplir fortalece disciplina.","recompensa":12,"color":"#22c55e"},
+{"tipo":"juego_mental","pregunta":"11×3","opciones":["33","30","36"],"correcta":0,"explanacion":"33","recompensa":7,"color":"#38bdf8"},
+
+{"tipo":"voz","texto":"Potencia tu disciplina con respiración.","color":"#2563eb"},
+{"tipo":"tvid","tecnica":"TDP","titulo":"Respiración del Padre","texto":"Inhala control, exhala descuido.","color":"#06b6d4"},
+{"tipo":"respiracion","texto":"Inhala disciplina.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Mantén el aire y visualiza tus hábitos.","duracion":5,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Exhala distracciones y procrastinación.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Otra vez, inhala orden y exhala descuido.","duracion":6,"color":"#60a5fa"},
+{"tipo":"decision","pregunta":"¿Sientes disciplina interior?","opciones":["Sí","Un poco","No"],"correcta":0,"explanacion":"Practicar refuerza disciplina.","recompensa":10,"color":"#22c55e"},
+
 {"tipo":"visualizacion","texto":"Te ves disciplinado.","color":"#a78bfa"},
 {"tipo":"recompensa","texto":"Disciplina alta.","puntos":20,"color":"#10b981"},
 {"tipo":"cierre","texto":"La disciplina construye éxito.","color":"#f87171"}
@@ -731,11 +1244,17 @@
 {"tipo":"inteligencia_social","texto":"Gestionar tu tiempo ayuda a respetar los compromisos de otros.","color":"#0ea5e9"},
 {"tipo":"estrategia","texto":"Prioriza lo importante sobre lo urgente.","color":"#14b8a6"},
 {"tipo":"historia","texto":"Un trabajador planificó su semana y logró todo sin estrés.","color":"#34d399"},
-{"tipo":"quiz","pregunta":"¿Qué maximiza tu día?","opciones":["Gestión del tiempo","Procrastinación","Multitarea"],"correcta":0,"explicacion":"Organizar tiempo aumenta resultados.","recompensa":10,"color":"#facc15"},
-{"tipo":"acertijo","pregunta":"No se recupera si lo pierdes.","opciones":["Tiempo","Mesa","Libro"],"correcta":0,"explicacion":"El tiempo perdido no vuelve.","recompensa":8,"color":"#f59e0b"},
-{"tipo":"decision","pregunta":"Tienes muchas tareas.","opciones":["Priorizar","Hacer todo a la vez","Olvidar"],"correcta":0,"explicacion":"Priorizar te hace eficiente.","recompensa":12,"color":"#22c55e"},
-{"tipo":"juego_mental","pregunta":"20÷4","opciones":["5","6","4"],"correcta":0,"explicacion":"5","recompensa":7,"color":"#38bdf8"},
-{"tipo":"respiracion","texto":"Respira y organiza tu mente.","duracion":30,"color":"#60a5fa"},
+{"tipo":"quiz","pregunta":"¿Qué maximiza tu día?","opciones":["Gestión del tiempo","Procrastinación","Multitarea"],"correcta":0,"explanacion":"Organizar tiempo aumenta resultados.","recompensa":10,"color":"#facc15"},
+{"tipo":"acertijo","pregunta":"No se recupera si lo pierdes.","opciones":["Tiempo","Mesa","Libro"],"correcta":0,"explanacion":"El tiempo perdido no vuelve.","recompensa":8,"color":"#f59e0b"},
+{"tipo":"decision","pregunta":"Tienes muchas tareas.","opciones":["Priorizar","Hacer todo a la vez","Olvidar"],"correcta":0,"explanacion":"Priorizar te hace eficiente.","recompensa":12,"color":"#22c55e"},
+{"tipo":"juego_mental","pregunta":"20÷4","opciones":["5","6","4"],"correcta":0,"explanacion":"5","recompensa":7,"color":"#38bdf8"},
+{"tipo":"voz","texto":"Potencia tu gestión del tiempo con respiración.","color":"#2563eb"},
+{"tipo":"tvid","tecnica":"TDB","titulo":"Respiración del Bien","texto":"Inhala organización, exhala dispersión.","color":"#06b6d4"},
+{"tipo":"respiracion","texto":"Inhala planificación.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Mantén el aire y visualiza tu día organizado.","duracion":5,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Exhala distracciones.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Otra vez, inhala enfoque y exhala dispersión.","duracion":6,"color":"#60a5fa"},
+{"tipo":"decision","pregunta":"¿Sientes tu día organizado?","opciones":["Sí","Un poco","No"],"correcta":0,"explanacion":"La práctica refuerza la gestión del tiempo.","recompensa":10,"color":"#22c55e"},
 {"tipo":"visualizacion","texto":"Tu día fluye organizado.","color":"#a78bfa"},
 {"tipo":"recompensa","texto":"Tiempo gestionado.","puntos":20,"color":"#10b981"},
 {"tipo":"cierre","texto":"El tiempo bien usado es poder.","color":"#f87171"}
@@ -750,11 +1269,17 @@
 {"tipo":"inteligencia_social","texto":"Los proactivos lideran con ejemplo.","color":"#0ea5e9"},
 {"tipo":"estrategia","texto":"Haz lo que puedes hoy sin esperar instrucciones.","color":"#14b8a6"},
 {"tipo":"historia","texto":"Un joven resolvió problemas antes de que fueran graves y ganó confianza.","color":"#34d399"},
-{"tipo":"quiz","pregunta":"¿Qué te hace avanzar más rápido?","opciones":["Proactividad","Esperar","Quejarse"],"correcta":0,"explicacion":"Actuar antes que esperar multiplica resultados.","recompensa":10,"color":"#facc15"},
-{"tipo":"acertijo","pregunta":"No espera a que le digan.","opciones":["Proactividad","Mesa","Libro"],"correcta":0,"explicacion":"Toma iniciativa.","recompensa":8,"color":"#f59e0b"},
-{"tipo":"decision","pregunta":"Ves un problema.","opciones":["Resolverlo","Ignorar","Quejarse"],"correcta":0,"explicacion":"Resolver fortalece proactividad.","recompensa":12,"color":"#22c55e"},
-{"tipo":"juego_mental","pregunta":"5×9","opciones":["45","50","40"],"correcta":0,"explicacion":"45","recompensa":7,"color":"#38bdf8"},
-{"tipo":"respiracion","texto":"Respira iniciativa.","duracion":30,"color":"#60a5fa"},
+{"tipo":"quiz","pregunta":"¿Qué te hace avanzar más rápido?","opciones":["Proactividad","Esperar","Quejarse"],"correcta":0,"explanacion":"Actuar antes que esperar multiplica resultados.","recompensa":10,"color":"#facc15"},
+{"tipo":"acertijo","pregunta":"No espera a que le digan.","opciones":["Proactividad","Mesa","Libro"],"correcta":0,"explanacion":"Toma iniciativa.","recompensa":8,"color":"#f59e0b"},
+{"tipo":"decision","pregunta":"Ves un problema.","opciones":["Resolverlo","Ignorar","Quejarse"],"correcta":0,"explanacion":"Resolver fortalece proactividad.","recompensa":12,"color":"#22c55e"},
+{"tipo":"juego_mental","pregunta":"5×9","opciones":["45","50","40"],"correcta":0,"explanacion":"45","recompensa":7,"color":"#38bdf8"},
+{"tipo":"voz","texto":"Potencia tu proactividad con respiración.","color":"#2563eb"},
+{"tipo":"tvid","tecnica":"TDP","titulo":"Respiración del Padre","texto":"Inhala iniciativa, exhala pasividad.","color":"#06b6d4"},
+{"tipo":"respiracion","texto":"Inhala iniciativa.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Mantén el aire y visualiza tus acciones proactivas.","duracion":5,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Exhala dudas y espera.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Otra vez, inhala acción y exhala pasividad.","duracion":6,"color":"#60a5fa"},
+{"tipo":"decision","pregunta":"¿Actúas sin que te lo pidan?","opciones":["Sí","Un poco","No"],"correcta":0,"explanacion":"La práctica refuerza proactividad.","recompensa":10,"color":"#22c55e"},
 {"tipo":"visualizacion","texto":"Actúas antes de que te lo pidan.","color":"#a78bfa"},
 {"tipo":"recompensa","texto":"Proactividad alta.","puntos":20,"color":"#10b981"},
 {"tipo":"cierre","texto":"Quien actúa primero gana.","color":"#f87171"}
@@ -769,11 +1294,17 @@
 {"tipo":"inteligencia_social","texto":"Cuestionar con respeto fortalece relaciones y decisiones.","color":"#0ea5e9"},
 {"tipo":"estrategia","texto":"Antes de actuar, pregunta: ¿es esto correcto?","color":"#14b8a6"},
 {"tipo":"historia","texto":"Un joven cuestionó un consejo financiero y evitó una pérdida.","color":"#34d399"},
-{"tipo":"quiz","pregunta":"¿Qué fortalece tu juicio?","opciones":["Analizar","Aceptar todo","Ignorar"],"correcta":0,"explicacion":"Analizar antes de decidir fortalece el juicio.","recompensa":10,"color":"#facc15"},
-{"tipo":"acertijo","pregunta":"Es tu mejor herramienta para decidir bien.","opciones":["Pensamiento crítico","Mesa","Libro"],"correcta":0,"explicacion":"El análisis reflexivo ayuda a tomar mejores decisiones.","recompensa":8,"color":"#f59e0b"},
-{"tipo":"decision","pregunta":"Te ofrecen un consejo dudoso.","opciones":["Analizarlo","Aceptar","Rechazar sin pensar"],"correcta":0,"explicacion":"Analizar genera mejores resultados.","recompensa":12,"color":"#22c55e"},
-{"tipo":"juego_mental","pregunta":"9×6","opciones":["54","56","50"],"correcta":0,"explicacion":"54","recompensa":7,"color":"#38bdf8"},
-{"tipo":"respiracion","texto":"Respira claridad y juicio.","duracion":30,"color":"#60a5fa"},
+{"tipo":"quiz","pregunta":"¿Qué fortalece tu juicio?","opciones":["Analizar","Aceptar todo","Ignorar"],"correcta":0,"explanacion":"Analizar antes de decidir fortalece el juicio.","recompensa":10,"color":"#facc15"},
+{"tipo":"acertijo","pregunta":"Es tu mejor herramienta para decidir bien.","opciones":["Pensamiento crítico","Mesa","Libro"],"correcta":0,"explanacion":"El análisis reflexivo ayuda a tomar mejores decisiones.","recompensa":8,"color":"#f59e0b"},
+{"tipo":"decision","pregunta":"Te ofrecen un consejo dudoso.","opciones":["Analizarlo","Aceptar","Rechazar sin pensar"],"correcta":0,"explanacion":"Analizar genera mejores resultados.","recompensa":12,"color":"#22c55e"},
+{"tipo":"juego_mental","pregunta":"9×6","opciones":["54","56","50"],"correcta":0,"explanacion":"54","recompensa":7,"color":"#38bdf8"},
+{"tipo":"voz","texto":"Potencia tu pensamiento crítico con respiración.","color":"#2563eb"},
+{"tipo":"tvid","tecnica":"TDM","titulo":"Respiración del Mal","texto":"Inhala claridad, exhala confusión.","color":"#06b6d4"},
+{"tipo":"respiracion","texto":"Inhala análisis.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Mantén el aire y visualiza decisiones correctas.","duracion":5,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Exhala duda y aceptación ciega.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Otra vez, inhala claridad y exhala confusión.","duracion":6,"color":"#60a5fa"},
+{"tipo":"decision","pregunta":"¿Analizas antes de decidir?","opciones":["Sí","Un poco","No"],"correcta":0,"explanacion":"La práctica refuerza pensamiento crítico.","recompensa":10,"color":"#22c55e"},
 {"tipo":"visualizacion","texto":"Tomas decisiones claras y acertadas.","color":"#a78bfa"},
 {"tipo":"recompensa","texto":"Pensamiento crítico aumentado.","puntos":20,"color":"#10b981"},
 {"tipo":"cierre","texto":"Analizar fortalece tu mente.","color":"#f87171"}
@@ -788,11 +1319,17 @@
 {"tipo":"inteligencia_social","texto":"Quien gestiona emociones conecta mejor con los demás.","color":"#0ea5e9"},
 {"tipo":"estrategia","texto":"Cuando estés molesto, respira y piensa antes de actuar.","color":"#14b8a6"},
 {"tipo":"historia","texto":"Un joven controló su ira y ganó respeto en su trabajo.","color":"#34d399"},
-{"tipo":"quiz","pregunta":"¿Qué ayuda a relacionarse mejor?","opciones":["Inteligencia emocional","Ignorar emociones","Explosiones"],"correcta":0,"explicacion":"Gestionar emociones mejora relaciones.","recompensa":10,"color":"#facc15"},
-{"tipo":"acertijo","pregunta":"Invisible, pero potente en relaciones.","opciones":["Emoción","Mesa","Libro"],"correcta":0,"explicacion":"Las emociones guían interacción social.","recompensa":8,"color":"#f59e0b"},
-{"tipo":"decision","pregunta":"Alguien te critica.","opciones":["Escuchar y pensar","Responder agresivo","Ignorar"],"correcta":0,"explicacion":"Escuchar regula emociones y relaciones.","recompensa":12,"color":"#22c55e"},
-{"tipo":"juego_mental","pregunta":"12÷3","opciones":["4","5","3"],"correcta":0,"explicacion":"4","recompensa":7,"color":"#38bdf8"},
-{"tipo":"respiracion","texto":"Respira emociones equilibradas.","duracion":30,"color":"#60a5fa"},
+{"tipo":"quiz","pregunta":"¿Qué ayuda a relacionarse mejor?","opciones":["Inteligencia emocional","Ignorar emociones","Explosiones"],"correcta":0,"explanacion":"Gestionar emociones mejora relaciones.","recompensa":10,"color":"#facc15"},
+{"tipo":"acertijo","pregunta":"Invisible, pero potente en relaciones.","opciones":["Emoción","Mesa","Libro"],"correcta":0,"explanacion":"Las emociones guían interacción social.","recompensa":8,"color":"#f59e0b"},
+{"tipo":"decision","pregunta":"Alguien te critica.","opciones":["Escuchar y pensar","Responder agresivo","Ignorar"],"correcta":0,"explanacion":"Escuchar regula emociones y relaciones.","recompensa":12,"color":"#22c55e"},
+{"tipo":"juego_mental","pregunta":"12÷3","opciones":["4","5","3"],"correcta":0,"explanacion":"4","recompensa":7,"color":"#38bdf8"},
+{"tipo":"voz","texto":"Potencia tu inteligencia emocional con respiración.","color":"#2563eb"},
+{"tipo":"tvid","tecnica":"TDMM","titulo":"Respiración de la Madre","texto":"Inhala calma, exhala tensión.","color":"#06b6d4"},
+{"tipo":"respiracion","texto":"Inhala emociones equilibradas.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Mantén el aire y visualiza paz interior.","duracion":5,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Exhala ira y ansiedad.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Otra vez, inhala calma y exhala tensión.","duracion":6,"color":"#60a5fa"},
+{"tipo":"decision","pregunta":"¿Sientes control sobre tus emociones?","opciones":["Sí","Un poco","No"],"correcta":0,"explanacion":"La práctica refuerza inteligencia emocional.","recompensa":10,"color":"#22c55e"},
 {"tipo":"visualizacion","texto":"Te ves tranquilo y equilibrado.","color":"#a78bfa"},
 {"tipo":"recompensa","texto":"Inteligencia emocional aumentada.","puntos":20,"color":"#10b981"},
 {"tipo":"cierre","texto":"Gestionar emociones da poder social.","color":"#f87171"}
@@ -807,11 +1344,17 @@
 {"tipo":"inteligencia_social","texto":"Quien resuelve problemas ayuda a otros y gana confianza.","color":"#0ea5e9"},
 {"tipo":"estrategia","texto":"Divide los problemas en partes pequeñas y resuelve paso a paso.","color":"#14b8a6"},
 {"tipo":"historia","texto":"Un grupo resolvió un conflicto dividiendo tareas y evitando discusiones.","color":"#34d399"},
-{"tipo":"quiz","pregunta":"¿Qué mejora la resolución de problemas?","opciones":["Analizar pasos","Ignorar","Culpar"],"correcta":0,"explicacion":"Analizar pasos ayuda a resolver eficazmente.","recompensa":10,"color":"#facc15"},
-{"tipo":"acertijo","pregunta":"Se encuentra al pensar con claridad.","opciones":["Solución","Mesa","Libro"],"correcta":0,"explicacion":"La claridad genera solución.","recompensa":8,"color":"#f59e0b"},
-{"tipo":"decision","pregunta":"Hay un problema complejo.","opciones":["Dividirlo","Quejarse","Esperar"],"correcta":0,"explicacion":"Dividir facilita resolución.","recompensa":12,"color":"#22c55e"},
-{"tipo":"juego_mental","pregunta":"18×2","opciones":["36","34","32"],"correcta":0,"explicacion":"36","recompensa":7,"color":"#38bdf8"},
-{"tipo":"respiracion","texto":"Respira y analiza el problema.","duracion":30,"color":"#60a5fa"},
+{"tipo":"quiz","pregunta":"¿Qué mejora la resolución de problemas?","opciones":["Analizar pasos","Ignorar","Culpar"],"correcta":0,"explanacion":"Analizar pasos ayuda a resolver eficazmente.","recompensa":10,"color":"#facc15"},
+{"tipo":"acertijo","pregunta":"Se encuentra al pensar con claridad.","opciones":["Solución","Mesa","Libro"],"correcta":0,"explanacion":"La claridad genera solución.","recompensa":8,"color":"#f59e0b"},
+{"tipo":"decision","pregunta":"Hay un problema complejo.","opciones":["Dividirlo","Quejarse","Esperar"],"correcta":0,"explanacion":"Dividir facilita resolución.","recompensa":12,"color":"#22c55e"},
+{"tipo":"juego_mental","pregunta":"18×2","opciones":["36","34","32"],"correcta":0,"explanacion":"36","recompensa":7,"color":"#38bdf8"},
+{"tipo":"voz","texto":"Potencia tu resolución de problemas con respiración.","color":"#2563eb"},
+{"tipo":"tvid","tecnica":"TDG","titulo":"Respiración de la Guerra","texto":"Inhala claridad, exhala bloqueo.","color":"#06b6d4"},
+{"tipo":"respiracion","texto":"Inhala enfoque.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Mantén el aire y visualiza soluciones.","duracion":5,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Exhala confusión y bloqueo mental.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Otra vez, inhala claridad y exhala bloqueo.","duracion":6,"color":"#60a5fa"},
+{"tipo":"decision","pregunta":"¿Visualizas soluciones efectivas?","opciones":["Sí","Un poco","No"],"correcta":0,"explanacion":"La práctica refuerza resolución de problemas.","recompensa":10,"color":"#22c55e"},
 {"tipo":"visualizacion","texto":"Visualiza soluciones efectivas.","color":"#a78bfa"},
 {"tipo":"recompensa","texto":"Resolución de problemas aumentada.","puntos":20,"color":"#10b981"},
 {"tipo":"cierre","texto":"Resolver problemas fortalece tu mente.","color":"#f87171"}
@@ -830,7 +1373,13 @@
 {"tipo":"acertijo","pregunta":"Se gana con respeto y ejemplo.","opciones":["Liderazgo","Mesa","Libro"],"correcta":0,"explicacion":"El liderazgo real es ejemplo y guía.","recompensa":8,"color":"#f59e0b"},
 {"tipo":"decision","pregunta":"Tu equipo duda.","opciones":["Guiar con ejemplo","Ignorar","Regañar"],"correcta":0,"explicacion":"Ejemplo y guía inspiran confianza.","recompensa":12,"color":"#22c55e"},
 {"tipo":"juego_mental","pregunta":"13×3","opciones":["39","36","42"],"correcta":0,"explicacion":"39","recompensa":7,"color":"#38bdf8"},
-{"tipo":"respiracion","texto":"Respira seguridad y claridad.","duracion":30,"color":"#60a5fa"},
+{"tipo":"voz","texto":"Potencia tu liderazgo con respiración.","color":"#2563eb"},
+{"tipo":"tvid","tecnica":"TDP","titulo":"Respiración del Padre","texto":"Inhala confianza, exhala dudas.","color":"#06b6d4"},
+{"tipo":"respiracion","texto":"Inhala seguridad y claridad.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Mantén el aire y visualiza tu equipo unido.","duracion":5,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Exhala incertidumbre y miedo.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Otra vez, inhala confianza y exhala dudas.","duracion":6,"color":"#60a5fa"},
+{"tipo":"decision","pregunta":"¿Sientes que puedes liderar?","opciones":["Sí","Un poco","No"],"correcta":0,"explicacion":"La práctica refuerza liderazgo.","recompensa":10,"color":"#22c55e"},
 {"tipo":"visualizacion","texto":"Te ves guiando con respeto.","color":"#a78bfa"},
 {"tipo":"recompensa","texto":"Liderazgo aumentado.","puntos":20,"color":"#10b981"},
 {"tipo":"cierre","texto":"Liderar es servir y guiar.","color":"#f87171"}
@@ -849,7 +1398,13 @@
 {"tipo":"acertijo","pregunta":"Nace de la curiosidad y la creatividad.","opciones":["Innovación","Mesa","Libro"],"correcta":0,"explicacion":"La innovación requiere creatividad.","recompensa":8,"color":"#f59e0b"},
 {"tipo":"decision","pregunta":"Tienes una idea arriesgada.","opciones":["Probar","Ignorar","Criticar"],"correcta":0,"explicacion":"Probar fomenta innovación.","recompensa":12,"color":"#22c55e"},
 {"tipo":"juego_mental","pregunta":"17×2","opciones":["34","36","32"],"correcta":0,"explicacion":"34","recompensa":7,"color":"#38bdf8"},
-{"tipo":"respiracion","texto":"Respira inspiración.","duracion":30,"color":"#60a5fa"},
+{"tipo":"voz","texto":"Potencia tu innovación con respiración.","color":"#2563eb"},
+{"tipo":"tvid","tecnica":"TDN","titulo":"Respiración del Niño","texto":"Inhala creatividad, exhala miedo.","color":"#06b6d4"},
+{"tipo":"respiracion","texto":"Inhala ideas nuevas.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Mantén el aire y visualiza soluciones originales.","duracion":5,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Exhala dudas y temor.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Otra vez, inhala creatividad y exhala miedo.","duracion":6,"color":"#60a5fa"},
+{"tipo":"decision","pregunta":"¿Sientes tu mente abierta a nuevas ideas?","opciones":["Sí","Un poco","No"],"correcta":0,"explicacion":"La práctica refuerza innovación.","recompensa":10,"color":"#22c55e"},
 {"tipo":"visualizacion","texto":"Visualiza soluciones innovadoras.","color":"#a78bfa"},
 {"tipo":"recompensa","texto":"Innovación aumentada.","puntos":20,"color":"#10b981"},
 {"tipo":"cierre","texto":"Innovar cambia vidas.","color":"#f87171"}
@@ -868,7 +1423,13 @@
 {"tipo":"acertijo","pregunta":"Se ejercita cada día con práctica.","opciones":["Autocontrol","Mesa","Libro"],"correcta":0,"explicacion":"Se aprende y mejora con práctica.","recompensa":8,"color":"#f59e0b"},
 {"tipo":"decision","pregunta":"Te enojas.","opciones":["Respirar y pensar","Gritar","Ignorar"],"correcta":0,"explicacion":"Respirar controla emociones.","recompensa":12,"color":"#22c55e"},
 {"tipo":"juego_mental","pregunta":"21÷3","opciones":["7","6","8"],"correcta":0,"explicacion":"7","recompensa":7,"color":"#38bdf8"},
-{"tipo":"respiracion","texto":"Respira calma y control.","duracion":30,"color":"#60a5fa"},
+{"tipo":"voz","texto":"Potencia tu autocontrol con respiración.","color":"#2563eb"},
+{"tipo":"tvid","tecnica":"TDM","titulo":"Respiración del Mal","texto":"Inhala calma, exhala impulsos.","color":"#06b6d4"},
+{"tipo":"respiracion","texto":"Inhala autocontrol.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Mantén el aire y visualiza serenidad.","duracion":5,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Exhala tensión e impulsos negativos.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Otra vez, inhala calma y exhala impulsos.","duracion":6,"color":"#60a5fa"},
+{"tipo":"decision","pregunta":"¿Sientes control sobre ti mismo?","opciones":["Sí","Un poco","No"],"correcta":0,"explicacion":"La práctica refuerza autocontrol.","recompensa":10,"color":"#22c55e"},
 {"tipo":"visualizacion","texto":"Te ves sereno y en control.","color":"#a78bfa"},
 {"tipo":"recompensa","texto":"Autocontrol aumentado.","puntos":20,"color":"#10b981"},
 {"tipo":"cierre","texto":"Dominar impulsos es libertad.","color":"#f87171"}
@@ -887,7 +1448,13 @@
 {"tipo":"acertijo","pregunta":"Se multiplica cuando todos participan.","opciones":["Colaboración","Mesa","Libro"],"correcta":0,"explicacion":"Juntos se logra más.","recompensa":8,"color":"#f59e0b"},
 {"tipo":"decision","pregunta":"Tu equipo necesita apoyo.","opciones":["Participar","Ignorar","Criticar"],"correcta":0,"explicacion":"Participar fortalece colaboración.","recompensa":12,"color":"#22c55e"},
 {"tipo":"juego_mental","pregunta":"15×3","opciones":["45","40","50"],"correcta":0,"explicacion":"45","recompensa":7,"color":"#38bdf8"},
-{"tipo":"respiracion","texto":"Respira cooperación.","duracion":30,"color":"#60a5fa"},
+{"tipo":"voz","texto":"Potencia la colaboración con respiración.","color":"#2563eb"},
+{"tipo":"tvid","tecnica":"TDG","titulo":"Respiración de la Guerra","texto":"Inhala cooperación, exhala egoísmo.","color":"#06b6d4"},
+{"tipo":"respiracion","texto":"Inhala colaboración.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Mantén el aire y visualiza equipo unido.","duracion":5,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Exhala tensiones y conflictos.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Otra vez, inhala colaboración y exhala egoísmo.","duracion":6,"color":"#60a5fa"},
+{"tipo":"decision","pregunta":"¿Sientes unión con tu equipo?","opciones":["Sí","Un poco","No"],"correcta":0,"explicacion":"La práctica refuerza colaboración.","recompensa":10,"color":"#22c55e"},
 {"tipo":"visualizacion","texto":"Visualiza equipo unido y exitoso.","color":"#a78bfa"},
 {"tipo":"recompensa","texto":"Colaboración elevada.","puntos":20,"color":"#10b981"},
 {"tipo":"cierre","texto":"Juntos logramos más.","color":"#f87171"}
@@ -906,7 +1473,13 @@
 {"tipo":"acertijo","pregunta":"Se proyecta antes de actuar.","opciones":["Visión","Mesa","Libro"],"correcta":0,"explicacion":"Ver el futuro permite actuar mejor.","recompensa":8,"color":"#f59e0b"},
 {"tipo":"decision","pregunta":"Tienes opciones de carrera.","opciones":["Planificar","Improvisar","Quejarse"],"correcta":0,"explicacion":"Planificar da claridad y dirección.","recompensa":12,"color":"#22c55e"},
 {"tipo":"juego_mental","pregunta":"19×2","opciones":["38","36","40"],"correcta":0,"explicacion":"38","recompensa":7,"color":"#38bdf8"},
-{"tipo":"respiracion","texto":"Respira y proyecta tu futuro.","duracion":30,"color":"#60a5fa"},
+{"tipo":"voz","texto":"Potencia la visión de futuro con respiración.","color":"#2563eb"},
+{"tipo":"tvid","tecnica":"TDB","titulo":"Respiración del Bien","texto":"Inhala claridad, exhala dudas.","color":"#06b6d4"},
+{"tipo":"respiracion","texto":"Inhala visión y enfoque.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Mantén el aire y visualiza metas alcanzadas.","duracion":5,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Exhala incertidumbre y miedo.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Otra vez, inhala visión y exhala dudas.","duracion":6,"color":"#60a5fa"},
+{"tipo":"decision","pregunta":"¿Sientes claridad sobre tu futuro?","opciones":["Sí","Un poco","No"],"correcta":0,"explicacion":"La práctica refuerza visión futura.","recompensa":10,"color":"#22c55e"},
 {"tipo":"visualizacion","texto":"Visualiza logros futuros.","color":"#a78bfa"},
 {"tipo":"recompensa","texto":"Visión de futuro fortalecida.","puntos":20,"color":"#10b981"},
 {"tipo":"cierre","texto":"Quien visualiza, avanza.","color":"#f87171"}
@@ -925,7 +1498,13 @@
 {"tipo":"acertijo","pregunta":"Se logra entendiendo al otro.","opciones":["Gestión de conflictos","Mesa","Libro"],"correcta":0,"explicacion":"Comprender reduce problemas.","recompensa":8,"color":"#f59e0b"},
 {"tipo":"decision","pregunta":"Alguien discute contigo.","opciones":["Escuchar y negociar","Ignorar","Regañar"],"correcta":0,"explicacion":"Negociar y escuchar evita conflictos.","recompensa":12,"color":"#22c55e"},
 {"tipo":"juego_mental","pregunta":"14×3","opciones":["42","40","45"],"correcta":0,"explicacion":"42","recompensa":7,"color":"#38bdf8"},
-{"tipo":"respiracion","texto":"Respira empatía y calma.","duracion":30,"color":"#60a5fa"},
+{"tipo":"voz","texto":"Potencia la gestión de conflictos con respiración.","color":"#2563eb"},
+{"tipo":"tvid","tecnica":"TDMM","titulo":"Respiración de la Madre","texto":"Inhala calma y exhala tensión.","color":"#06b6d4"},
+{"tipo":"respiracion","texto":"Inhala empatía.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Mantén el aire y visualiza paz interior.","duracion":5,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Exhala tensión y conflictos.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Otra vez, inhala calma y exhala tensión.","duracion":6,"color":"#60a5fa"},
+{"tipo":"decision","pregunta":"¿Sientes control en conflictos?","opciones":["Sí","Un poco","No"],"correcta":0,"explanacion":"La práctica refuerza gestión de conflictos.","recompensa":10,"color":"#22c55e"},
 {"tipo":"visualizacion","texto":"Visualiza soluciones pacíficas.","color":"#a78bfa"},
 {"tipo":"recompensa","texto":"Conflictos gestionados.","puntos":20,"color":"#10b981"},
 {"tipo":"cierre","texto":"La calma resuelve conflictos.","color":"#f87171"}
@@ -942,9 +1521,15 @@
 {"tipo":"historia","texto":"Un joven inventó un juego educativo usando objetos cotidianos.","color":"#34d399"},
 {"tipo":"quiz","pregunta":"¿Qué potencia la creatividad?","opciones":["Experimentar y combinar","Seguir siempre igual","Ignorar"],"correcta":0,"explicacion":"Experimentar y combinar ideas genera creatividad.","recompensa":10,"color":"#facc15"},
 {"tipo":"acertijo","pregunta":"Nace de la curiosidad y práctica.","opciones":["Creatividad","Mesa","Libro"],"correcta":0,"explicacion":"La creatividad requiere curiosidad y práctica.","recompensa":8,"color":"#f59e0b"},
-{"tipo":"decision","pregunta":"Quieres mejorar un proyecto.","opciones":["Agregar ideas nuevas","Ignorar","Copiar"],"correcta":0,"explicacion":"Probar nuevas ideas mejora resultados.","recompensa":12,"color":"#22c55e"},
+{"tipo":"decision","pregunta":"Quieres mejorar un proyecto.","opciones":["Agregar ideas nuevas","Ignorar","Copiar"],"correcta":0,"explanacion":"Probar nuevas ideas mejora resultados.","recompensa":12,"color":"#22c55e"},
 {"tipo":"juego_mental","pregunta":"16×2","opciones":["32","34","30"],"correcta":0,"explicacion":"32","recompensa":7,"color":"#38bdf8"},
-{"tipo":"respiracion","texto":"Respira inspiración y creatividad.","duracion":30,"color":"#60a5fa"},
+{"tipo":"voz","texto":"Potencia tu creatividad con respiración.","color":"#2563eb"},
+{"tipo":"tvid","tecnica":"TDN","titulo":"Respiración del Niño","texto":"Inhala ideas, exhala bloqueos.","color":"#06b6d4"},
+{"tipo":"respiracion","texto":"Inhala inspiración.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Mantén el aire y visualiza ideas nuevas.","duracion":5,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Exhala dudas y miedos.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Otra vez, inhala creatividad y exhala bloqueos.","duracion":6,"color":"#60a5fa"},
+{"tipo":"decision","pregunta":"¿Sientes ideas fluyendo?","opciones":["Sí","Un poco","No"],"correcta":0,"explanacion":"La práctica refuerza creatividad.","recompensa":10,"color":"#22c55e"},
 {"tipo":"visualizacion","texto":"Visualiza soluciones creativas.","color":"#a78bfa"},
 {"tipo":"recompensa","texto":"Creatividad aumentada.","puntos":20,"color":"#10b981"},
 {"tipo":"cierre","texto":"Crear transforma la vida.","color":"#f87171"}
@@ -961,9 +1546,15 @@
 {"tipo":"historia","texto":"Un estudiante planificó su semana y logró todo sin estrés.","color":"#34d399"},
 {"tipo":"quiz","pregunta":"¿Qué maximiza tu día?","opciones":["Gestión del tiempo","Procrastinación","Multitarea"],"correcta":0,"explicacion":"Organizar tiempo aumenta resultados.","recompensa":10,"color":"#facc15"},
 {"tipo":"acertijo","pregunta":"No se recupera si lo pierdes.","opciones":["Tiempo","Mesa","Libro"],"correcta":0,"explicacion":"El tiempo perdido no vuelve.","recompensa":8,"color":"#f59e0b"},
-{"tipo":"decision","pregunta":"Tienes muchas tareas.","opciones":["Priorizar","Hacer todo a la vez","Olvidar"],"correcta":0,"explicacion":"Priorizar te hace eficiente.","recompensa":12,"color":"#22c55e"},
+{"tipo":"decision","pregunta":"Tienes muchas tareas.","opciones":["Priorizar","Hacer todo a la vez","Olvidar"],"correcta":0,"explanacion":"Priorizar te hace eficiente.","recompensa":12,"color":"#22c55e"},
 {"tipo":"juego_mental","pregunta":"24÷6","opciones":["4","5","6"],"correcta":0,"explicacion":"4","recompensa":7,"color":"#38bdf8"},
-{"tipo":"respiracion","texto":"Respira y organiza tu mente.","duracion":30,"color":"#60a5fa"},
+{"tipo":"voz","texto":"Respira y organiza tu tiempo.","color":"#2563eb"},
+{"tipo":"tvid","tecnica":"TDB","titulo":"Respiración del Bien","texto":"Inhala organización, exhala desorden.","color":"#06b6d4"},
+{"tipo":"respiracion","texto":"Inhala claridad.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Mantén el aire y visualiza prioridades.","duracion":5,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Exhala distracciones.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Otra vez, inhala organización y exhala desorden.","duracion":6,"color":"#60a5fa"},
+{"tipo":"decision","pregunta":"¿Sientes control sobre tu tiempo?","opciones":["Sí","Un poco","No"],"correcta":0,"explanacion":"La práctica refuerza gestión del tiempo.","recompensa":10,"color":"#22c55e"},
 {"tipo":"visualizacion","texto":"Visualiza tu día productivo.","color":"#a78bfa"},
 {"tipo":"recompensa","texto":"Tiempo bien gestionado.","puntos":20,"color":"#10b981"},
 {"tipo":"cierre","texto":"El tiempo bien usado es poder.","color":"#f87171"}
@@ -980,9 +1571,15 @@
 {"tipo":"historia","texto":"Un joven superó un fracaso académico y logró su meta.","color":"#34d399"},
 {"tipo":"quiz","pregunta":"¿Qué ayuda a superar retos?","opciones":["Resiliencia","Quejarse","Rendirse"],"correcta":0,"explicacion":"Persistir y aprender fortalece resiliencia.","recompensa":10,"color":"#facc15"},
 {"tipo":"acertijo","pregunta":"Se construye con experiencias y actitud.","opciones":["Resiliencia","Mesa","Libro"],"correcta":0,"explicacion":"Aprender de dificultades crea resiliencia.","recompensa":8,"color":"#f59e0b"},
-{"tipo":"decision","pregunta":"Fracasaste en algo.","opciones":["Aprender y seguir","Rendirse","Ignorar"],"correcta":0,"explicacion":"Seguir fortalece la resiliencia.","recompensa":12,"color":"#22c55e"},
+{"tipo":"decision","pregunta":"Fracasaste en algo.","opciones":["Aprender y seguir","Rendirse","Ignorar"],"correcta":0,"explanacion":"Seguir fortalece la resiliencia.","recompensa":12,"color":"#22c55e"},
 {"tipo":"juego_mental","pregunta":"11×4","opciones":["44","42","40"],"correcta":0,"explicacion":"44","recompensa":7,"color":"#38bdf8"},
-{"tipo":"respiracion","texto":"Respira fuerza y calma.","duracion":30,"color":"#60a5fa"},
+{"tipo":"voz","texto":"Respira fuerza y calma.","color":"#2563eb"},
+{"tipo":"tvid","tecnica":"TDM","titulo":"Respiración del Mal","texto":"Inhala fuerza, exhala debilidad.","color":"#06b6d4"},
+{"tipo":"respiracion","texto":"Inhala fortaleza.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Mantén el aire y visualiza superación.","duracion":5,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Exhala miedo y duda.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Otra vez, inhala fuerza y exhala debilidad.","duracion":6,"color":"#60a5fa"},
+{"tipo":"decision","pregunta":"¿Sientes resiliencia?","opciones":["Sí","Un poco","No"],"correcta":0,"explanacion":"La práctica refuerza resiliencia.","recompensa":10,"color":"#22c55e"},
 {"tipo":"visualizacion","texto":"Visualiza superarte y lograr tus metas.","color":"#a78bfa"},
 {"tipo":"recompensa","texto":"Resiliencia aumentada.","puntos":20,"color":"#10b981"},
 {"tipo":"cierre","texto":"Cada desafío te hace más fuerte.","color":"#f87171"}
@@ -997,11 +1594,17 @@
 {"tipo":"inteligencia_social","texto":"Quien se conoce mejora decisiones y relaciones.","color":"#0ea5e9"},
 {"tipo":"estrategia","texto":"Reflexiona sobre tus acciones y emociones.","color":"#14b8a6"},
 {"tipo":"historia","texto":"Una joven descubrió su pasión y mejoró su rendimiento.","color":"#34d399"},
-{"tipo":"quiz","pregunta":"¿Qué mejora tu crecimiento personal?","opciones":["Autoconocimiento","Ignorar","Seguir a otros"],"correcta":0,"explicacion":"Conocerte permite mejores decisiones y relaciones.","recompensa":10,"color":"#facc15"},
-{"tipo":"acertijo","pregunta":"Te acompaña siempre y te guía.","opciones":["Autoconocimiento","Mesa","Libro"],"correcta":0,"explicacion":"Conocerte a ti mismo dirige tu vida.","recompensa":8,"color":"#f59e0b"},
-{"tipo":"decision","pregunta":"Dudas de ti mismo.","opciones":["Reflexionar y mejorar","Ignorar","Culpar"],"correcta":0,"explicacion":"Reflexionar aumenta autoconocimiento.","recompensa":12,"color":"#22c55e"},
-{"tipo":"juego_mental","pregunta":"15×2","opciones":["30","28","32"],"correcta":0,"explicacion":"30","recompensa":7,"color":"#38bdf8"},
-{"tipo":"respiracion","texto":"Respira y conecta contigo.","duracion":30,"color":"#60a5fa"},
+{"tipo":"quiz","pregunta":"¿Qué mejora tu crecimiento personal?","opciones":["Autoconocimiento","Ignorar","Seguir a otros"],"correcta":0,"explanacion":"Conocerte permite mejores decisiones y relaciones.","recompensa":10,"color":"#facc15"},
+{"tipo":"acertijo","pregunta":"Te acompaña siempre y te guía.","opciones":["Autoconocimiento","Mesa","Libro"],"correcta":0,"explanacion":"Conocerte a ti mismo dirige tu vida.","recompensa":8,"color":"#f59e0b"},
+{"tipo":"decision","pregunta":"Dudas de ti mismo.","opciones":["Reflexionar y mejorar","Ignorar","Culpar"],"correcta":0,"explanacion":"Reflexionar aumenta autoconocimiento.","recompensa":12,"color":"#22c55e"},
+{"tipo":"juego_mental","pregunta":"15×2","opciones":["30","28","32"],"correcta":0,"explanacion":"30","recompensa":7,"color":"#38bdf8"},
+{"tipo":"voz","texto":"Respira y conecta contigo.","color":"#2563eb"},
+{"tipo":"tvid","tecnica":"TDB","titulo":"Respiración del Bien","texto":"Inhala autoconocimiento, exhala dudas.","color":"#06b6d4"},
+{"tipo":"respiracion","texto":"Inhala claridad interna.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Mantén el aire y visualiza fortalezas.","duracion":5,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Exhala miedos y bloqueos.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Otra vez, inhala autoconocimiento y exhala dudas.","duracion":6,"color":"#60a5fa"},
+{"tipo":"decision","pregunta":"¿Sientes comprensión de ti mismo?","opciones":["Sí","Un poco","No"],"correcta":0,"explanacion":"La práctica refuerza autoconocimiento.","recompensa":10,"color":"#22c55e"},
 {"tipo":"visualizacion","texto":"Visualiza tus fortalezas y metas.","color":"#a78bfa"},
 {"tipo":"recompensa","texto":"Autoconocimiento fortalecido.","puntos":20,"color":"#10b981"},
 {"tipo":"cierre","texto":"Conocerte te hace fuerte y libre.","color":"#f87171"}
@@ -1020,8 +1623,14 @@
 {"tipo":"acertijo","pregunta":"Se fortalece practicando y reflexionando.","opciones":["Decisión","Mesa","Libro"],"correcta":0,"explicacion":"Decidir con análisis da mejores resultados.","recompensa":8,"color":"#f59e0b"},
 {"tipo":"decision","pregunta":"Dudas de qué hacer.","opciones":["Analizar y decidir","Esperar","Ignorar"],"correcta":0,"explicacion":"Decidir con análisis mejora resultados.","recompensa":12,"color":"#22c55e"},
 {"tipo":"juego_mental","pregunta":"18÷2","opciones":["9","8","10"],"correcta":0,"explicacion":"9","recompensa":7,"color":"#38bdf8"},
-{"tipo":"respiracion","texto":"Respira claridad antes de decidir.","duracion":30,"color":"#60a5fa"},
-{"tipo":"visualizacion","texto":"Visualiza la mejor opción y actúa.","color":"#a78bfa"},
+{"tipo":"voz","texto":"Respira claridad antes de decidir.","color":"#2563eb"},
+{"tipo":"tvid","tecnica":"TDP","titulo":"Respiración del Padre","texto":"Inhala enfoque, exhala dudas.","color":"#06b6d4"},
+{"tipo":"respiracion","texto":"Inhala enfoque.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Mantén el aire y visualiza la mejor decisión.","duracion":5,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Exhala incertidumbre.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Otra vez, inhala enfoque y exhala dudas.","duracion":6,"color":"#60a5fa"},
+{"tipo":"decision","pregunta":"¿Sientes claridad para decidir?","opciones":["Sí","Un poco","No"],"correcta":0,"explanacion":"La práctica refuerza la toma de decisiones.","recompensa":10,"color":"#22c55e"},
+{"tipo":"visualizacion","texto":"Visualiza tus decisiones correctas y resultados positivos.","color":"#a78bfa"},
 {"tipo":"recompensa","texto":"Decisiones acertadas.","puntos":20,"color":"#10b981"},
 {"tipo":"cierre","texto":"Decidir con claridad fortalece tu vida.","color":"#f87171"}
 ]
@@ -1037,10 +1646,16 @@
 {"tipo":"historia","texto":"Un joven manejó su estrés antes de un examen importante y rindió mejor.","color":"#34d399"},
 {"tipo":"quiz","pregunta":"¿Qué reduce el estrés eficazmente?","opciones":["Respirar y planificar","Ignorar","Gritar"],"correcta":0,"explicacion":"Respirar y organizar reduce estrés.","recompensa":10,"color":"#facc15"},
 {"tipo":"acertijo","pregunta":"Se controla respirando y organizando.","opciones":["Estrés","Mesa","Libro"],"correcta":0,"explicacion":"Respirar y planificar ayuda a controlarlo.","recompensa":8,"color":"#f59e0b"},
-{"tipo":"decision","pregunta":"Tienes muchas tareas urgentes.","opciones":["Priorizar y respirar","Ignorar","Reaccionar impulsivamente"],"correcta":0,"explicacion":"Priorizar y respirar reduce estrés.","recompensa":12,"color":"#22c55e"},
+{"tipo":"decision","pregunta":"Tienes muchas tareas urgentes.","opciones":["Priorizar y respirar","Ignorar","Reaccionar impulsivamente"],"correcta":0,"explanacion":"Priorizar y respirar reduce estrés.","recompensa":12,"color":"#22c55e"},
 {"tipo":"juego_mental","pregunta":"12×3","opciones":["36","34","38"],"correcta":0,"explicacion":"36","recompensa":7,"color":"#38bdf8"},
-{"tipo":"respiracion","texto":"Respira y relaja tu mente.","duracion":30,"color":"#60a5fa"},
-{"tipo":"visualizacion","texto":"Visualiza calma y control.","color":"#a78bfa"},
+{"tipo":"voz","texto":"Respira y relaja tu mente.","color":"#2563eb"},
+{"tipo":"tvid","tecnica":"TDMM","titulo":"Respiración de la Madre","texto":"Inhala calma, exhala tensión.","color":"#06b6d4"},
+{"tipo":"respiracion","texto":"Inhala calma.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Mantén el aire y visualiza tranquilidad.","duracion":5,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Exhala estrés y ansiedad.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Otra vez, inhala calma y exhala tensión.","duracion":6,"color":"#60a5fa"},
+{"tipo":"decision","pregunta":"¿Sientes control del estrés?","opciones":["Sí","Un poco","No"],"correcta":0,"explanacion":"La práctica refuerza control emocional.","recompensa":10,"color":"#22c55e"},
+{"tipo":"visualizacion","texto":"Visualiza calma y control en situaciones difíciles.","color":"#a78bfa"},
 {"tipo":"recompensa","texto":"Estrés controlado.","puntos":20,"color":"#10b981"},
 {"tipo":"cierre","texto":"La calma fortalece tu vida.","color":"#f87171"}
 ]
@@ -1056,10 +1671,16 @@
 {"tipo":"historia","texto":"Un joven persistió y alcanzó metas que antes creía imposibles.","color":"#34d399"},
 {"tipo":"quiz","pregunta":"¿Qué aumenta tu motivación?","opciones":["Metas claras y logros","Quejarse","Ignorar"],"correcta":0,"explicacion":"Ver progreso aumenta motivación.","recompensa":10,"color":"#facc15"},
 {"tipo":"acertijo","pregunta":"Se alimenta con logros y visión.","opciones":["Motivación","Mesa","Libro"],"correcta":0,"explicacion":"Reconocer logros mantiene motivación.","recompensa":8,"color":"#f59e0b"},
-{"tipo":"decision","pregunta":"Te sientes desanimado.","opciones":["Visualizar logros","Ignorar","Rendirse"],"correcta":0,"explicacion":"Visualizar refuerza motivación.","recompensa":12,"color":"#22c55e"},
+{"tipo":"decision","pregunta":"Te sientes desanimado.","opciones":["Visualizar logros","Ignorar","Rendirse"],"correcta":0,"explanacion":"Visualizar refuerza motivación.","recompensa":12,"color":"#22c55e"},
 {"tipo":"juego_mental","pregunta":"10×5","opciones":["50","45","55"],"correcta":0,"explicacion":"50","recompensa":7,"color":"#38bdf8"},
-{"tipo":"respiracion","texto":"Respira energía y motivación.","duracion":30,"color":"#60a5fa"},
-{"tipo":"visualizacion","texto":"Visualiza tus metas logradas.","color":"#a78bfa"},
+{"tipo":"voz","texto":"Respira energía y motivación.","color":"#2563eb"},
+{"tipo":"tvid","tecnica":"TDB","titulo":"Respiración del Bien","texto":"Inhala energía, exhala dudas.","color":"#06b6d4"},
+{"tipo":"respiracion","texto":"Inhala motivación.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Mantén el aire y visualiza tus metas alcanzadas.","duracion":5,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Exhala desánimo.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Otra vez, inhala energía y exhala dudas.","duracion":6,"color":"#60a5fa"},
+{"tipo":"decision","pregunta":"¿Sientes motivación?","opciones":["Sí","Un poco","No"],"correcta":0,"explanacion":"La práctica refuerza motivación.","recompensa":10,"color":"#22c55e"},
+{"tipo":"visualizacion","texto":"Visualiza tus metas logradas y el progreso.","color":"#a78bfa"},
 {"tipo":"recompensa","texto":"Motivación elevada.","puntos":20,"color":"#10b981"},
 {"tipo":"cierre","texto":"Motivación impulsa tu vida.","color":"#f87171"}
 ]
@@ -1075,10 +1696,16 @@
 {"tipo":"historia","texto":"Un estudiante mejoró relaciones en su equipo usando comunicación clara.","color":"#34d399"},
 {"tipo":"quiz","pregunta":"¿Qué fortalece tus relaciones?","opciones":["Comunicación efectiva","Callar siempre","Ignorar"],"correcta":0,"explicacion":"Expresarte y escuchar fortalece relaciones.","recompensa":10,"color":"#facc15"},
 {"tipo":"acertijo","pregunta":"Se da y se recibe para entenderse.","opciones":["Comunicación","Mesa","Libro"],"correcta":0,"explicacion":"Comunicar crea entendimiento.","recompensa":8,"color":"#f59e0b"},
-{"tipo":"decision","pregunta":"Tu mensaje no es claro.","opciones":["Reexplicar con calma","Ignorar","Gritar"],"correcta":0,"explicacion":"Reexplicar mejora comunicación.","recompensa":12,"color":"#22c55e"},
+{"tipo":"decision","pregunta":"Tu mensaje no es claro.","opciones":["Reexplicar con calma","Ignorar","Gritar"],"correcta":0,"explanacion":"Reexplicar mejora comunicación.","recompensa":12,"color":"#22c55e"},
 {"tipo":"juego_mental","pregunta":"9×7","opciones":["63","64","65"],"correcta":0,"explicacion":"63","recompensa":7,"color":"#38bdf8"},
-{"tipo":"respiracion","texto":"Respira antes de hablar.","duracion":30,"color":"#60a5fa"},
-{"tipo":"visualizacion","texto":"Visualiza conversación clara y efectiva.","color":"#a78bfa"},
+{"tipo":"voz","texto":"Respira antes de hablar.","color":"#2563eb"},
+{"tipo":"tvid","tecnica":"TDP","titulo":"Respiración del Padre","texto":"Inhala claridad, exhala confusión.","color":"#06b6d4"},
+{"tipo":"respiracion","texto":"Inhala claridad.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Mantén el aire y visualiza conversación efectiva.","duracion":5,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Exhala confusión y dudas.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Otra vez, inhala claridad y exhala confusión.","duracion":6,"color":"#60a5fa"},
+{"tipo":"decision","pregunta":"¿Sientes comunicación efectiva?","opciones":["Sí","Un poco","No"],"correcta":0,"explanacion":"La práctica refuerza comunicación.","recompensa":10,"color":"#22c55e"},
+{"tipo":"visualizacion","texto":"Visualiza conversaciones claras y relaciones fortalecidas.","color":"#a78bfa"},
 {"tipo":"recompensa","texto":"Comunicación fortalecida.","puntos":20,"color":"#10b981"},
 {"tipo":"cierre","texto":"Comunicar bien transforma relaciones.","color":"#f87171"}
 ]
@@ -1094,10 +1721,16 @@
 {"tipo":"historia","texto":"Una persona logró su meta al mejorar día a día con pequeños pasos.","color":"#34d399"},
 {"tipo":"quiz","pregunta":"¿Qué fortalece tu crecimiento?","opciones":["Disciplina y práctica","Ignorar","Esperar"],"correcta":0,"explicacion":"La mejora continua genera resultados duraderos.","recompensa":10,"color":"#facc15"},
 {"tipo":"acertijo","pregunta":"Se construye con pequeños pasos cada día.","opciones":["Autodesarrollo","Mesa","Libro"],"correcta":0,"explicacion":"La constancia fortalece el crecimiento.","recompensa":8,"color":"#f59e0b"},
-{"tipo":"decision","pregunta":"Quieres mejorar una habilidad.","opciones":["Practicar diariamente","Esperar","Ignorar"],"correcta":0,"explicacion":"La práctica diaria genera mejora.","recompensa":12,"color":"#22c55e"},
+{"tipo":"decision","pregunta":"Quieres mejorar una habilidad.","opciones":["Practicar diariamente","Esperar","Ignorar"],"correcta":0,"explanacion":"La práctica diaria genera mejora.","recompensa":12,"color":"#22c55e"},
 {"tipo":"juego_mental","pregunta":"20×3","opciones":["60","63","58"],"correcta":0,"explicacion":"60","recompensa":7,"color":"#38bdf8"},
-{"tipo":"respiracion","texto":"Respira disciplina y enfoque.","duracion":30,"color":"#60a5fa"},
-{"tipo":"visualizacion","texto":"Visualiza tu mejor versión cada día.","color":"#a78bfa"},
+{"tipo":"voz","texto":"Respira disciplina y enfoque.","color":"#2563eb"},
+{"tipo":"tvid","tecnica":"TDG","titulo":"Respiración de la Guerra","texto":"Inhala disciplina, exhala distracciones.","color":"#06b6d4"},
+{"tipo":"respiracion","texto":"Inhala disciplina.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Mantén el aire y visualiza tu mejor versión.","duracion":5,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Exhala distracciones y dudas.","duracion":6,"color":"#60a5fa"},
+{"tipo":"respiracion","texto":"Otra vez, inhala disciplina y exhala distracciones.","duracion":6,"color":"#60a5fa"},
+{"tipo":"decision","pregunta":"¿Sientes motivación para mejorar?","opciones":["Sí","Un poco","No"],"correcta":0,"explanacion":"La práctica refuerza autodesarrollo.","recompensa":10,"color":"#22c55e"},
+{"tipo":"visualizacion","texto":"Visualiza tu crecimiento diario y habilidades mejoradas.","color":"#a78bfa"},
 {"tipo":"recompensa","texto":"Autodesarrollo completado.","puntos":20,"color":"#10b981"},
 {"tipo":"cierre","texto":"Cada día mejor es un día ganado.","color":"#f87171"}
 ]
