@@ -48,7 +48,6 @@ function penalizar(){
     userData.claridad = Math.floor(userData.claridad * 0.1);
 
     alert("⚠ No debes adelantar o retroceder.\nDisciplina y claridad reducidas");
-
     updatePanel();
 }
 
@@ -77,19 +76,44 @@ function playVoice(text){
 async function breathingAnimation(b){
     block.innerHTML = "";
 
-    // Crear globo azul
+    // Crear globo azul con tamaño inicial pequeño
     let circle = document.createElement("div");
     circle.className = "breath-circle";
+    circle.style.width = "50px";
+    circle.style.height = "50px";
+    circle.style.borderRadius = "50%";
     circle.style.backgroundColor = "#60a5fa";
-    circle.style.transition = "transform 3s ease-in-out"; // animación suave
+    circle.style.margin = "20px auto";
+    circle.style.transition = "all 2s ease-in-out"; // suavidad
     block.appendChild(circle);
+
+    // Texto objetivo del bloque siempre visible
+    let objetivo = document.createElement("p");
+    objetivo.style.fontSize = "1.2em";
+    objetivo.style.textAlign = "center";
+    objetivo.style.marginBottom = "10px";
+    objetivo.innerText = b.texto || "En la siguiente sesión lo harás mejor. Siente poder, éxito y bienestar.";
+    block.appendChild(objetivo);
+
+    // Texto fase
+    let faseText = document.createElement("p");
+    faseText.style.fontSize = "1.5em";
+    faseText.style.textAlign = "center";
+    faseText.style.marginTop = "10px";
+    block.appendChild(faseText);
+
+    // Contador regresivo
+    let contador = document.createElement("p");
+    contador.style.fontSize = "1.2em";
+    contador.style.textAlign = "center";
+    block.appendChild(contador);
 
     // Fases de respiración
     let fases = [
-        {t:"Inhala", scale:1.6, dur:4000},
-        {t:"Retiene", scale:1.6, dur:4000},
-        {t:"Exhala", scale:1, dur:4000},
-        {t:"Retiene", scale:1, dur:4000}
+        {t:"Inhala", scale:2.0, dur:4000},
+        {t:"Retiene", scale:2.0, dur:4000},
+        {t:"Exhala", scale:1.0, dur:4000},
+        {t:"Retiene", scale:1.0, dur:4000}
     ];
 
     // Número de repeticiones según duración del bloque
@@ -98,19 +122,21 @@ async function breathingAnimation(b){
     for(let i=0; i<repeticiones; i++){
         let f = fases[i % 4];
 
+        // Mostrar fase y objetivo
+        faseText.innerText = f.t;
+
         // Animar globo
-        circle.style.transform = "scale(" + f.scale + ")";
+        circle.style.transform = `scale(${f.scale})`;
 
-        // Mostrar texto fase
-        block.innerHTML = "<p style='font-size:1.5em; text-align:center; margin-bottom:20px;'>"+f.t+"</p>";
-        block.appendChild(circle);
-
-        // Texto de voz
+        // Voz del ciclo
         let voiceText = f.t || "En la siguiente sesión lo harás mejor. Siente poder, éxito y bienestar.";
         await playVoice(voiceText);
 
-        // Esperar duración de fase
-        await new Promise(r => setTimeout(r, f.dur));
+        // Contador regresivo
+        for(let t=f.dur/1000; t>0; t--){
+            contador.innerText = `Tiempo: ${t}s`;
+            await new Promise(r => setTimeout(r, 1000));
+        }
     }
 
     nextBtn.style.display = "inline-block";
@@ -143,7 +169,6 @@ async function showBlock(b){
     block.innerHTML = "";
     document.body.style.background = b.color || "#0f172a";
 
-    // Manejo de texto undefined
     if(b.texto === undefined){
         b.texto = "En la siguiente sesión lo harás mejor. Siente poder, éxito y bienestar.";
     }
