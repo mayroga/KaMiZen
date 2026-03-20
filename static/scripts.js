@@ -35,7 +35,6 @@ function updatePanel(){
     clarBar.style.width = userData.claridad+"%";
     calmBar.style.width = userData.calma+"%";
 }
-
 updatePanel();
 
 /* CASTIGO */
@@ -68,40 +67,48 @@ function playVoice(text){
     });
 }
 
-/* RESPIRACION CON GLOBO VISUAL Y MENSAJES */
-async function breathingAnimation(){
+/* RESPIRACION PROFESIONAL CON GLOBO AZUL */
+async function breathingAnimation(mandoText){
     block.innerHTML = "";
 
-    // Crear globo azul
+    // Mostrar el globo azul
     let circle = document.createElement("div");
     circle.className = "breath-circle";
-    circle.style.transform = "scale(0.3)"; // comienza pequeño
+    circle.style.width = "50px";
+    circle.style.height = "50px";
+    circle.style.background = "#3b82f6";
+    circle.style.borderRadius = "50%";
+    circle.style.margin = "50px auto";
     circle.style.transition = "transform 3s ease-in-out";
     block.appendChild(circle);
 
-    // Crear mensaje visual de respiración
-    let msgText = document.createElement("div");
-    msgText.className = "breath-message";
-    msgText.style.color = "#ffffff";
-    msgText.style.fontSize = "1.5rem";
-    msgText.style.textAlign = "center";
-    msgText.style.marginTop = "20px";
-    block.appendChild(msgText);
+    // Mostrar el texto del mando en pantalla
+    let instruction = document.createElement("p");
+    instruction.style.textAlign = "center";
+    instruction.style.fontSize = "1.2em";
+    instruction.style.color = "#ffffff";
+    instruction.style.marginTop = "20px";
+    instruction.innerText = mandoText || "Inhala y exhala con calma";
+    block.appendChild(instruction);
 
-    // Secuencia de respiración con mensaje
+    // Fases de respiración: Inhala, Retiene, Exhala, Retiene
     let fases = [
-        {t:"Inhala", scale:1.6, msg:"Inhala calma"},
-        {t:"Retiene", scale:1.6, msg:"Retén calma"},
-        {t:"Exhala", scale:0.3, msg:"Exhala stress"},
-        {t:"Retiene", scale:0.3, msg:"Mantén calma"}
+        {t:"Inhala", scale:2.0},
+        {t:"Retiene", scale:2.0},
+        {t:"Exhala", scale:0.5},
+        {t:"Retiene", scale:0.5}
     ];
 
-    for(let i=0; i<8; i++){
-        let f = fases[i%4];
-        msgText.innerText = f.msg;
-        circle.style.transform = "scale("+f.scale+")";
-        await playVoice(f.t);
-        await new Promise(r=>setTimeout(r,3000));
+    // Hacer 4 ciclos de respiración (modificable)
+    for(let i=0; i<4; i++){
+        for(let f of fases){
+            // Animación del globo
+            circle.style.transform = `scale(${f.scale})`;
+            // Texto dinámico del mando
+            instruction.innerText = `${f.t} - ${mandoText || ""}`;
+            await playVoice(`${f.t} - ${mandoText || ""}`);
+            await new Promise(r=>setTimeout(r,3000));
+        }
     }
 }
 
@@ -149,7 +156,7 @@ async function showBlock(b){
             break;
 
         case "respiracion":
-            await breathingAnimation();
+            await breathingAnimation(b.texto);
             nextBtn.style.display = "inline-block";
             return;
 
