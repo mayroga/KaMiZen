@@ -1,266 +1,222 @@
 /* =================== VARIABLES PRINCIPALES =================== */
 const startBtn = document.getElementById("start-btn");
 const nextBtn = document.getElementById("next-btn");
+const skipBtn = document.getElementById("skip-btn");
 const restartBtn = document.getElementById("restart-btn");
-const backBtn = document.getElementById("back-btn");
-const forwardBtn = document.getElementById("forward-btn");
 const block = document.getElementById("block");
 
 let bloques = [];
-let current = 0;
-let puntos = 0;
+let currentIdx = 0;
+let sesionActualData = null;
+let skipFlag = false;
+let activeInterval = null;
 
-/* =================== DATOS USUARIO =================== */
+/* PERSISTENCIA DE DATOS */
 let userData = JSON.parse(localStorage.getItem("kamizenData")) || {
     streak: 0,
     lastDay: null,
     nivel: 1,
     disciplina: 40,
     claridad: 50,
-    calma: 30
+    calma: 30,
+    lastSessionId: 0
 };
 
-/* =================== PANEL =================== */
-const streakEl = document.getElementById("streak");
-const levelEl = document.getElementById("level");
-const discBar = document.getElementById("disciplina-bar");
-const clarBar = document.getElementById("claridad-bar");
-const calmBar = document.getElementById("calma-bar");
-
 function updatePanel(){
-    if(userData.disciplina < 0) userData.disciplina = 0;
-    if(userData.claridad < 0) userData.claridad = 0;
-    if(userData.calma < 0) userData.calma = 0;
+    userData.disciplina = Math.max(0, Math.min(userData.disciplina, 100));
+    userData.claridad = Math.max(0, Math.min(userData.claridad, 100));
+    userData.calma = Math.max(0, Math.min(userData.calma, 100));
 
-    streakEl.innerHTML = "🔥 Racha: " + userData.streak + " días";
-    levelEl.innerHTML = "Nivel KaMiZen: " + userData.nivel;
-
-    discBar.style.width = userData.disciplina + "%";
-    clarBar.style.width = userData.claridad + "%";
-    calmBar.style.width = userData.calma + "%";
+    document.getElementById("streak").innerHTML = "🔥 Racha: " + userData.streak + " días";
+    document.getElementById("level").innerHTML = "Nivel KaMiZen: " + userData.nivel;
+    document.getElementById("disciplina-bar").style.width = userData.disciplina + "%";
+    document.getElementById("claridad-bar").style.width = userData.claridad + "%";
+    document.getElementById("calma-bar").style.width = userData.calma + "%";
+   
+    localStorage.setItem("kamizenData", JSON.stringify(userData));
 }
 
-updatePanel();
-
-/* =================== PENALIZACION =================== */
-function penalizar(){
-    userData.disciplina = Math.floor(userData.disciplina * 0.8);
-    userData.claridad = Math.floor(userData.claridad * 0.1);
-
-    alert("⚠ No debes adelantar o retroceder.\nDisciplina y claridad reducidas");
-    updatePanel();
-}
-
-/* =================== RACHA =================== */
-function updateStreak(){
-    let today = new Date().toDateString();
-    if(userData.lastDay !== today){
-        userData.streak += 1;
-        userData.lastDay = today;
-    }
-}
-
-/* =================== VOZ =================== */
+/* MOTOR DE VOZ CON FAIL-SAFE */
 function playVoice(text){
-    return new Promise(resolve=>{
+    return new Promise(resolve => {
+        if (!text) return resolve();
         speechSynthesis.cancel();
+       
         let msg = new SpeechSynthesisUtterance(text);
         msg.lang = "es-ES";
         msg.rate = 0.9;
-        msg.onend = resolve;
+       
+        const forceContinue = setTimeout(() => { resolve(); }, 3500);
+        msg.onend = () => { clearTimeout(forceContinue); resolve(); };
+        msg.onerror = () => { clearTimeout(forceContinue); resolve(); };
+
         speechSynthesis.speak(msg);
     });
 }
 
-/* =================== RESPIRACION PROFESIONAL =================== */
-async function breathingAnimation(b){
-    block.innerHTML = "";
-
-    // Crear globo azul con tamaño inicial pequeño
-    let circle = document.createElement("div");
-    circle.className = "breath-circle";
-    circle.style.width = "50px";
-    circle.style.height = "50px";
-    circle.style.borderRadius = "50%";
-    circle.style.backgroundColor = "#60a5fa";
-    circle.style.margin = "20px auto";
-    circle.style.transition = "all 2s ease-in-out"; // suavidad
-    block.appendChild(circle);
-
-    // Texto objetivo del bloque siempre visible
-    let objetivo = document.createElement("p");
-    objetivo.style.fontSize = "1.2em";
-    objetivo.style.textAlign = "center";
-    objetivo.style.marginBottom = "10px";
-    objetivo.innerText = b.texto || "En la siguiente sesión lo harás mejor. Siente poder, éxito y bienestar.";
-    block.appendChild(objetivo);
-
-    // Texto fase
-    let faseText = document.createElement("p");
-    faseText.style.fontSize = "1.5em";
-    faseText.style.textAlign = "center";
-    faseText.style.marginTop = "10px";
-    block.appendChild(faseText);
-
-    // Contador regresivo
-    let contador = document.createElement("p");
-    contador.style.fontSize = "1.2em";
-    contador.style.textAlign = "center";
-    block.appendChild(contador);
-
-    // Fases de respiración
-    let fases = [
-        {t:"Inhala", scale:2.0, dur:4000},
-        {t:"Retiene", scale:2.0, dur:4000},
-        {t:"Exhala", scale:1.0, dur:4000},
-        {t:"Retiene", scale:1.0, dur:4000}
-    ];
-
-    // Número de repeticiones según duración del bloque
-    let repeticiones = Math.ceil((b.duracion || 32) / 4);
-
-    for(let i=0; i<repeticiones; i++){
-        let f = fases[i % 4];
-
-        // Mostrar fase y objetivo
-        faseText.innerText = f.t;
-
-        // Animar globo
-        circle.style.transform = `scale(${f.scale})`;
-
-        // Voz del ciclo
-        let voiceText = f.t || "En la siguiente sesión lo harás mejor. Siente poder, éxito y bienestar.";
-        await playVoice(voiceText);
-
-        // Contador regresivo
-        for(let t=f.dur/1000; t>0; t--){
-            contador.innerText = `Tiempo: ${t}s`;
-            await new Promise(r => setTimeout(r, 1000));
-        }
-    }
-
-    nextBtn.style.display = "inline-block";
-}
-
-/* =================== OPCIONES =================== */
-function createOptions(b){
-    b.opciones.forEach((op,i)=>{
-        let btn = document.createElement("button");
-        btn.innerText = op;
-        btn.onclick = ()=>{
-            if(i === b.correcta){
-                puntos += b.recompensa||5;
-                userData.disciplina += 2;
-                userData.claridad += 2;
-                alert("✅ Correcto");
-            }else{
-                userData.calma += 1;
-                alert("ℹ Respuesta: "+(b.explicacion || "En la siguiente sesión lo harás mejor. Siente poder, éxito y bienestar."));
+function wait(ms) {
+    return new Promise(resolve => {
+        const start = Date.now();
+        const check = setInterval(() => {
+            if (Date.now() - start >= ms || skipFlag) {
+                clearInterval(check);
+                resolve();
             }
-            updatePanel();
-            nextBtn.style.display = "inline-block";
-        };
-        block.appendChild(btn);
+        }, 50);
     });
 }
 
 /* =================== MOSTRAR BLOQUE =================== */
 async function showBlock(b){
+    if(!b) return;
+    skipFlag = false;
+    if(activeInterval) clearInterval(activeInterval);
+   
     block.innerHTML = "";
-    document.body.style.background = b.color || "#0f172a";
+    nextBtn.style.display = "none";
+    skipBtn.style.display = "block";
+    document.body.style.background = b.color || "#020617";
 
-    if(b.texto === undefined){
-        b.texto = "En la siguiente sesión lo harás mejor. Siente poder, éxito y bienestar.";
+    if(b.tipo === "respiracion"){
+        // Contenedor y globo
+        block.innerHTML = `<p id="breath-objetivo">${b.objetivo || "Respira con atención"}</p>
+                           <div class="breath-circle" id="circle"></div>
+                           <p id="breath-label"></p>`;
+        const circle = document.getElementById("circle");
+        const label = document.getElementById("breath-label");
+        const objetivo = document.getElementById("breath-objetivo");
+
+        // Tamaño inicial pequeño (como exhalando)
+        circle.style.width = "50px";
+        circle.style.height = "50px";
+        circle.style.borderRadius = "50%";
+        circle.style.backgroundColor = "#60a5fa";
+        circle.style.margin = "20px auto";
+        circle.style.transition = "transform 2s ease-in-out";
+
+        const reps = b.repeticiones || 3;
+
+        for(let i=0; i<reps; i++){
+            if(skipFlag) break;
+
+            // INHALA
+            label.innerText = b.voz_guia ? b.voz_guia[0] : "Inhala";
+            await playVoice(label.innerText);
+            circle.style.transform = "scale(1.8)";
+            await wait(b.tiempos.inhalar*1000);
+
+            if(skipFlag) break;
+
+            // RETEN
+            label.innerText = b.voz_guia ? b.voz_guia[1] : "Retén";
+            await playVoice(label.innerText);
+            circle.style.transform = "scale(1.8)";
+            await wait(b.tiempos.retener*1000);
+
+            if(skipFlag) break;
+
+            // EXHALA
+            label.innerText = b.voz_guia ? b.voz_guia[2] : "Exhala";
+            await playVoice(label.innerText);
+            circle.style.transform = "scale(1)";
+            await wait(b.tiempos.exhalar*1000);
+        }
+        finishBlock();
     }
-
-    if(b.texto && !["quiz","acertijo","decision","juego_mental","respiracion"].includes(b.tipo)){
-        block.innerHTML = "<p>"+b.texto+"</p>";
-        await playVoice(b.texto);
+    else if(["decision", "juego_mental", "acertijo"].includes(b.tipo)){
+        skipBtn.style.display = "none";
+        block.innerHTML = `<h3>${b.pregunta}</h3>`;
+        b.opciones.forEach((opt, i) => {
+            let btn = document.createElement("button");
+            btn.className = "option-btn";
+            btn.innerText = opt;
+            btn.onclick = async () => {
+                const esCorrecto = i === b.correcta;
+                block.innerHTML = `<p>${esCorrecto ? "✅" : "❌"}</p><p>${b.explicacion}</p>`;
+                userData.disciplina += esCorrecto ? 5 : -2;
+                updatePanel();
+                await playVoice(b.explicacion);
+                finishBlock();
+            };
+            block.appendChild(btn);
+        });
+        await playVoice(b.pregunta);
     }
-
-    switch(b.tipo){
-        case "quiz":
-        case "acertijo":
-        case "decision":
-        case "juego_mental":
-            block.innerHTML = "<h3>"+(b.pregunta || "En la siguiente sesión lo harás mejor. Siente poder, éxito y bienestar.")+"</h3>";
-            createOptions(b);
-            await playVoice(b.pregunta || "En la siguiente sesión lo harás mejor. Siente poder, éxito y bienestar.");
-            break;
-
-        case "respiracion":
-            await breathingAnimation(b);
-            return;
-
-        case "recompensa":
-            userData.disciplina += 3;
-            userData.claridad += 3;
-            userData.calma += 3;
-            block.innerHTML = "<h2>"+b.texto+"</h2>";
-            await playVoice(b.texto);
-            break;
-
-        case "cierre":
-            updateStreak();
-            puntos += 10;
-            if(puntos > 50) userData.nivel +=1;
-            localStorage.setItem("kamizenData", JSON.stringify(userData));
-            updatePanel();
-            restartBtn.style.display="inline-block";
-            await playVoice(b.texto);
-            return;
+    else if(b.tipo === "ejercicio_fisico"){
+        block.innerHTML = `<h3>Acción Física</h3><p>${b.texto}</p><h2 id="timer">${b.duracion}s</h2>`;
+        playVoice(b.texto);
+        let timeLeft = b.duracion;
+        activeInterval = setInterval(() => {
+            timeLeft--;
+            if(document.getElementById("timer")) document.getElementById("timer").innerText = timeLeft + "s";
+            if(timeLeft <= 0 || skipFlag) { clearInterval(activeInterval); finishBlock(); }
+        }, 1000);
     }
-
-    setTimeout(()=>{ nextBtn.style.display="inline-block"; },3000);
+    else {
+        const contenido = b.texto || b.instrucciones || b.titulo;
+        block.innerHTML = b.titulo ? `<h3>${b.titulo}</h3><p>${contenido}</p>` : `<p>${contenido}</p>`;
+        await playVoice(contenido);
+        if(!skipFlag) finishBlock();
+    }
 }
 
-/* =================== SIGUIENTE BLOQUE =================== */
-function nextBlock(){
-    nextBtn.style.display="none";
-    current++;
-    if(current < bloques.length){
-        showBlock(bloques[current]);
-    }
+function finishBlock() {
+    skipBtn.style.display = "none";
+    nextBtn.style.display = "block";
 }
 
-/* =================== ATRAS =================== */
-function backBlock(){
-    penalizar();
-    if(current>0){
-        current--;
-        showBlock(bloques[current]);
-    }
-}
-
-/* =================== ADELANTE =================== */
-function forwardBlock(){
-    penalizar();
-    if(current<bloques.length-1){
-        current++;
-        showBlock(bloques[current]);
-    }
-}
-
-/* =================== INICIO SESION =================== */
-let currentSessionIndex = 0;
-
-startBtn.addEventListener("click", async ()=>{
-    startBtn.style.display="none";
-
-    const res = await fetch("/session_content");
-    const data = await res.json();
-    const sesiones = data.sesiones;
-
-    currentSessionIndex = Math.floor(Math.random()*sesiones.length);
-    bloques = sesiones[currentSessionIndex].bloques;
-    current=0;
-
-    updateStreak();
-    showBlock(bloques[0]);
+skipBtn.addEventListener("click", () => {
+    skipFlag = true;
+    speechSynthesis.cancel();
+    if(activeInterval) clearInterval(activeInterval);
+    userData.disciplina = Math.floor(userData.disciplina * 0.2);
+    updatePanel();
+    block.innerHTML = `<p style="color:#ef4444;">DISCIPLINA QUEBRANTADA</p>`;
+    setTimeout(() => { finishBlock(); }, 1000);
 });
 
-/* =================== EVENTOS =================== */
-nextBtn.addEventListener("click", nextBlock);
-backBtn.addEventListener("click", backBlock);
-forwardBtn.addEventListener("click", forwardBlock);
-restartBtn.addEventListener("click", ()=>location.reload());
+/* INICIO SEGURO */
+startBtn.addEventListener("click", async () => {
+    startBtn.style.display = "none";
+    block.innerHTML = "Sincronizando Mente...";
+
+    try {
+        const response = await fetch("/session_content");
+        if(!response.ok) throw new Error("Error en red");
+        const data = await response.json();
+
+        let nextId = userData.lastSessionId + 1;
+        sesionActualData = data.sesiones.find(s => s.id === nextId) || data.sesiones[0];
+        bloques = sesionActualData.bloques;
+        currentIdx = 0;
+
+        let today = new Date().toDateString();
+        if(userData.lastDay !== today){
+            userData.streak++;
+            userData.lastDay = today;
+        }
+        updatePanel();
+        showBlock(bloques[currentIdx]);
+    } catch (err) {
+        console.error(err);
+        block.innerHTML = "Error de conexión. Revisa el servidor.";
+        startBtn.style.display = "block";
+    }
+});
+
+nextBtn.addEventListener("click", () => {
+    currentIdx++;
+    if(currentIdx < bloques.length) {
+        showBlock(bloques[currentIdx]);
+    } else {
+        block.innerHTML = `<h2>Mente Forjada</h2><p>Sesión ${sesionActualData.id} terminada.</p>`;
+        userData.lastSessionId = sesionActualData.id;
+        userData.nivel = Math.floor(userData.disciplina / 20) + 1;
+        updatePanel();
+        restartBtn.style.display = "block";
+        nextBtn.style.display = "none";
+    }
+});
+
+restartBtn.addEventListener("click", () => location.reload());
+updatePanel();
