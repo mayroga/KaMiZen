@@ -1,66 +1,73 @@
-/* =================== VARIABLES PRINCIPALES =================== */
+/* =================== VARIABLES Y PERSISTENCIA =================== */
 const startBtn = document.getElementById("start-btn");
 const nextBtn = document.getElementById("next-btn");
 const restartBtn = document.getElementById("restart-btn");
-const backBtn = document.getElementById("back-btn");
-const forwardBtn = document.getElementById("forward-btn");
 const block = document.getElementById("block");
 
 let bloques = [];
 let current = 0;
-let puntos = 0;
-let currentSessionIndex = 0;
+let isBreathing = false; // Flag para seguridad biológica
 
-/* =================== DATOS Y PERSISTENCIA =================== */
 let userData = JSON.parse(localStorage.getItem("kamizenData")) || {
     streak: 0, lastDay: null, nivel: 1, disciplina: 40, claridad: 50, calma: 30
 };
 let completedSessions = JSON.parse(localStorage.getItem("completedSessions")) || [];
 
-function updatePanel(){
-    document.getElementById("streak").innerHTML = `🔥 Racha: ${userData.streak} días`;
-    document.getElementById("level").innerHTML = `Nivel KaMiZen: ${userData.nivel}`;
-    document.getElementById("disciplina-bar").style.width = (userData.disciplina || 0) + "%";
-    document.getElementById("claridad-bar").style.width = (userData.claridad || 0) + "%";
-    document.getElementById("calma-bar").style.width = (userData.calma || 0) + "%";
-}
-updatePanel();
+/* =================== DICCIONARIO DINÁMICO DE PODER =================== */
+const comandos = {
+    inhala: ["Absorbe energía", "Inhala poder", "Llénate de vida", "Recibe fuerza", "Toma el control"],
+    retiene: ["Sostén tu éxito", "Conserva el enfoque", "Mantén la calma", "Retén la sabiduría", "Congela el momento"],
+    exhala: ["Libera tensión", "Suelta el pasado", "Exhala con fuerza", "Despeja tu mente", "Expulsa lo innecesario"]
+};
 
-/* =================== VOZ =================== */
+function getComando(tipo) {
+    const lista = comandos[tipo];
+    return lista[Math.floor(Math.random() * lista.length)];
+}
+
+/* =================== SEGURIDAD: ADVERTENCIA DE CIERRE =================== */
+window.addEventListener('beforeunload', (e) => {
+    if (isBreathing) {
+        // Mensaje estándar del navegador (el texto personalizado varía según el browser)
+        e.preventDefault();
+        e.returnValue = '⚠ ATENCIÓN: Interrumpir el ciclo de respiración puede afectar su estabilidad. Complete el proceso de exhalación antes de salir.';
+    }
+});
+
+/* =================== MOTOR DE VOZ PROFESIONAL =================== */
 function playVoice(text){
     return new Promise(resolve => {
         speechSynthesis.cancel();
         let msg = new SpeechSynthesisUtterance(text);
         msg.lang = "es-ES";
-        msg.rate = 0.85;
+        msg.rate = 0.85; // Un poco más pausado para dar peso a la instrucción
         msg.onend = resolve;
         speechSynthesis.speak(msg);
     });
 }
 
-/* =================== RESPIRACIÓN PROFESIONAL (CORREGIDA) =================== */
+/* =================== RESPIRACIÓN DINÁMICA DE ALTO NIVEL =================== */
 async function breathingAnimation(b){
     block.innerHTML = "";
+    isBreathing = true;
     
-    // Contenedor para que nada se tape
     const container = document.createElement("div");
-    container.style.cssText = "display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:300px;";
+    container.style.cssText = "display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:400px; width:100%;";
 
     const uiLabel = document.createElement("div");
-    uiLabel.style.cssText = "font-size:2.2em; font-weight:bold; color:white; margin-bottom:10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);";
+    uiLabel.style.cssText = "font-size:2.3em; font-weight:900; color:#ffffff; margin-bottom:15px; text-align:center; text-transform:uppercase; letter-spacing:2px; transition: all 0.5s ease;";
     
     const uiTimer = document.createElement("div");
-    uiTimer.style.cssText = "font-size:1.5em; color:#00d2ff; margin-bottom:40px; font-family:monospace;";
+    uiTimer.style.cssText = "font-size:1.8em; color:#00d2ff; margin-bottom:40px; font-weight:bold; font-family: 'Courier New', monospace;";
     
-    // Globo Azul Eléctrico - Tamaño Proporcional
     const circle = document.createElement("div");
     circle.style.cssText = `
-        width: 100px; 
-        height: 100px; 
-        background: radial-gradient(circle, #00d2ff, #3a86ff);
+        width: 130px; 
+        height: 130px; 
+        background: radial-gradient(circle, #00d2ff, #0077ff);
         border-radius: 50%; 
-        box-shadow: 0 0 30px rgba(0, 210, 255, 0.8), inset 0 0 15px rgba(255,255,255,0.5);
-        transition: transform 4s cubic-bezier(0.42, 0, 0.58, 1);
+        box-shadow: 0 0 50px rgba(0, 210, 255, 0.6), inset 0 0 20px rgba(255,255,255,0.4);
+        transition: transform 4s cubic-bezier(0.4, 0, 0.2, 1);
         transform: scale(1);
     `;
 
@@ -69,44 +76,44 @@ async function breathingAnimation(b){
     container.appendChild(circle);
     block.appendChild(container);
 
-    const fases = [
-        {t:"Inhala", scale:2.2, dur:4},
-        {t:"Retiene", scale:2.2, dur:4},
-        {t:"Exhala", scale:1.0, dur:4},
-        {t:"Retiene", scale:1.0, dur:4}
-    ];
-
     let totalRounds = Math.ceil((b.duracion || 32) / 4);
 
     for(let i=0; i < totalRounds; i++){
-        let f = fases[i % 4];
+        const faseActual = i % 4;
+        let config;
+
+        // Lógica de fases con variaciones de texto
+        if(faseActual === 0) config = { t: getComando("inhala"), s: 2.1 };
+        else if(faseActual === 1) config = { t: getComando("retiene"), s: 2.1 };
+        else if(faseActual === 2) config = { t: getComando("exhala"), s: 1.0 };
+        else config = { t: getComando("retiene"), s: 1.0 };
+
+        playVoice(config.t);
+        uiLabel.innerText = config.t;
         
-        // Ejecución inmediata de voz y escala
-        playVoice(f.t);
-        uiLabel.innerText = f.t;
-        
-        // Forzar al navegador a procesar la escala
+        // Ejecución visual inmediata
         setTimeout(() => {
-            circle.style.transition = `transform ${f.dur}s ease-in-out`;
-            circle.style.transform = `scale(${f.scale})`;
+            circle.style.transform = `scale(${config.s})`;
+            if(faseActual === 1 || faseActual === 3) circle.style.boxShadow = "0 0 70px rgba(255, 255, 255, 0.8)";
+            else circle.style.boxShadow = "0 0 50px rgba(0, 210, 255, 0.6)";
         }, 50);
 
-        // Contador visual
-        for(let s = f.dur; s > 0; s--){
-            uiTimer.innerText = `Sostén: ${s}s`;
+        for(let s = 4; s > 0; s--){
+            uiTimer.innerText = `${s}s`;
             await new Promise(r => setTimeout(r, 1000));
         }
     }
 
-    uiLabel.innerText = "Sesión Completa";
+    isBreathing = false;
+    uiLabel.innerText = "ENTRENAMIENTO EXITOSO";
     uiTimer.innerText = "";
     nextBtn.style.display = "inline-block";
 }
 
-/* =================== GESTIÓN DE BLOQUES =================== */
+/* =================== LÓGICA DE FLUJO SIN REPETICIÓN =================== */
 async function showBlock(b){
     block.innerHTML = "";
-    document.body.style.background = b.color || "#0f172a";
+    document.body.style.background = b.color || "#070b14";
     nextBtn.style.display = "none";
 
     if(b.tipo === "respiracion"){
@@ -115,20 +122,20 @@ async function showBlock(b){
     }
 
     if(b.texto){
-        block.innerHTML = `<p style='font-size:1.4em; padding:20px; text-align:center;'>${b.texto}</p>`;
+        block.innerHTML = `<p style='font-size:1.6em; text-align:center; padding:40px; font-weight:300;'>${b.texto}</p>`;
         await playVoice(b.texto);
     }
 
     if(["quiz","acertijo","decision"].includes(b.tipo)){
-        block.innerHTML = `<h3 style='margin-bottom:20px;'>${b.pregunta}</h3>`;
+        block.innerHTML = `<h3 style='margin-bottom:30px; text-align:center; font-size:1.8em;'>${b.pregunta}</h3>`;
         b.opciones.forEach((op, i) => {
             let btn = document.createElement("button");
-            btn.className = "option-btn";
+            btn.style.cssText = "display:block; width:80%; margin:10px auto; padding:15px; border-radius:10px; border:1px solid #00d2ff; background:transparent; color:white; cursor:pointer; font-size:1.1em;";
             btn.innerText = op;
             btn.onclick = () => {
-                if(i === b.correcta){ userData.disciplina += 2; alert("✅ Correcto"); }
-                else { userData.calma += 1; alert(`Info: ${b.explicacion}`); }
-                updatePanel();
+                if(i === b.correcta){ userData.disciplina += 5; alert("✅ Sabiduría aplicada."); }
+                else { userData.calma += 2; alert(`Reflexión: ${b.explicacion}`); }
+                localStorage.setItem("kamizenData", JSON.stringify(userData));
                 nextBtn.style.display = "inline-block";
             };
             block.appendChild(btn);
@@ -144,7 +151,8 @@ async function showBlock(b){
     }
 }
 
-/* =================== INICIO SESIÓN =================== */
+/* =================== INICIO DE SESIÓN EXPERTO =================== */
+let currentSessionIndex = 0;
 startBtn.addEventListener("click", async () => {
     startBtn.style.display = "none";
     const res = await fetch("/session_content");
@@ -163,6 +171,9 @@ startBtn.addEventListener("click", async () => {
     showBlock(bloques[0]);
 });
 
-/* =================== EVENTOS =================== */
-nextBtn.addEventListener("click", () => { current++; if(current < bloques.length) showBlock(bloques[current]); });
+nextBtn.addEventListener("click", () => {
+    current++;
+    if(current < bloques.length) showBlock(bloques[current]);
+});
+
 restartBtn.addEventListener("click", () => location.reload());
