@@ -1,5 +1,4 @@
-/* =================== VARIABLES PRINCIPALES =================== */
-const startBtn = document.getElementById("start-btn");
+const startBtn = document.getElementById("start-btn"); 
 const nextBtn = document.getElementById("next-btn");
 const restartBtn = document.getElementById("restart-btn");
 const backBtn = document.getElementById("back-btn");
@@ -10,7 +9,7 @@ let bloques = [];
 let current = 0;
 let puntos = 0;
 
-/* =================== DATOS USUARIO =================== */
+/* DATOS USUARIO */
 let userData = JSON.parse(localStorage.getItem("kamizenData")) || {
     streak: 0,
     lastDay: null,
@@ -20,7 +19,7 @@ let userData = JSON.parse(localStorage.getItem("kamizenData")) || {
     calma: 30
 };
 
-/* =================== PANEL =================== */
+/* PANEL */
 const streakEl = document.getElementById("streak");
 const levelEl = document.getElementById("level");
 const discBar = document.getElementById("disciplina-bar");
@@ -30,29 +29,24 @@ const calmBar = document.getElementById("calma-bar");
 function updatePanel(){
     if(userData.disciplina < 0) userData.disciplina = 0;
     if(userData.claridad < 0) userData.claridad = 0;
-    if(userData.calma < 0) userData.calma = 0;
-
-    streakEl.innerHTML = "🔥 Racha: " + userData.streak + " días";
-    levelEl.innerHTML = "Nivel KaMiZen: " + userData.nivel;
-
-    discBar.style.width = userData.disciplina + "%";
-    clarBar.style.width = userData.claridad + "%";
-    calmBar.style.width = userData.calma + "%";
+    streakEl.innerHTML = "🔥 Racha: "+userData.streak+" días";
+    levelEl.innerHTML = "Nivel KaMiZen: "+userData.nivel;
+    discBar.style.width = userData.disciplina+"%";
+    clarBar.style.width = userData.claridad+"%";
+    calmBar.style.width = userData.calma+"%";
 }
 
 updatePanel();
 
-/* =================== PENALIZACION =================== */
+/* CASTIGO */
 function penalizar(){
     userData.disciplina = Math.floor(userData.disciplina * 0.8);
     userData.claridad = Math.floor(userData.claridad * 0.1);
-
     alert("⚠ No debes adelantar o retroceder.\nDisciplina y claridad reducidas");
-
     updatePanel();
 }
 
-/* =================== RACHA =================== */
+/* RACHA */
 function updateStreak(){
     let today = new Date().toDateString();
     if(userData.lastDay !== today){
@@ -61,10 +55,11 @@ function updateStreak(){
     }
 }
 
-/* =================== VOZ =================== */
+/* VOZ */
 function playVoice(text){
     return new Promise(resolve=>{
         speechSynthesis.cancel();
+        if(!text) text = "En la siguiente sesión lo harás mejor. Siente poder, éxito y bienestar.";
         let msg = new SpeechSynthesisUtterance(text);
         msg.lang = "es-ES";
         msg.rate = 0.9;
@@ -73,51 +68,34 @@ function playVoice(text){
     });
 }
 
-/* =================== RESPIRACION PROFESIONAL =================== */
-async function breathingAnimation(b){
+/* RESPIRACION CON VOZ Y GLOBO REALISTA */
+async function breathingAnimation(){
     block.innerHTML = "";
-
-    // Crear globo azul
     let circle = document.createElement("div");
     circle.className = "breath-circle";
-    circle.style.backgroundColor = "#60a5fa";
-    circle.style.transition = "transform 3s ease-in-out"; // animación suave
+    circle.style.transform = "scale(0.5)"; // siempre comienza pequeño
+    circle.style.transition = "transform 3s ease-in-out";
     block.appendChild(circle);
 
-    // Fases de respiración
     let fases = [
-        {t:"Inhala", scale:1.6, dur:4000},
-        {t:"Retiene", scale:1.6, dur:4000},
-        {t:"Exhala", scale:1, dur:4000},
-        {t:"Retiene", scale:1, dur:4000}
+        {t:"Inhala", scale:1.6},
+        {t:"Retiene", scale:1.6},
+        {t:"Exhala", scale:0.5},
+        {t:"Retiene", scale:0.5}
     ];
 
-    // Número de repeticiones según duración del bloque
-    let repeticiones = Math.ceil((b.duracion || 32) / 4);
-
-    for(let i=0; i<repeticiones; i++){
-        let f = fases[i % 4];
-
-        // Animar globo
-        circle.style.transform = "scale(" + f.scale + ")";
-
-        // Mostrar texto fase
-        block.innerHTML = "<p style='font-size:1.5em; text-align:center; margin-bottom:20px;'>"+f.t+"</p>";
-        block.appendChild(circle);
-
-        // Texto de voz
-        let voiceText = f.t || "En la siguiente sesión lo harás mejor. Siente poder, éxito y bienestar.";
-        await playVoice(voiceText);
-
-        // Esperar duración de fase
-        await new Promise(r => setTimeout(r, f.dur));
+    for(let i=0; i<8; i++){
+        let f = fases[i%4];
+        circle.style.transform = "scale("+f.scale+")";
+        await playVoice(f.t);
+        // esperar 3 segundos para dar sensación de respiración lenta y real
+        await new Promise(r=>setTimeout(r,3000));
     }
-
-    nextBtn.style.display = "inline-block";
 }
 
-/* =================== OPCIONES =================== */
+/* OPCIONES */
 function createOptions(b){
+    if(!b.opciones) return;
     b.opciones.forEach((op,i)=>{
         let btn = document.createElement("button");
         btn.innerText = op;
@@ -126,10 +104,10 @@ function createOptions(b){
                 puntos += b.recompensa||5;
                 userData.disciplina += 2;
                 userData.claridad += 2;
-                alert("✅ Correcto");
+                alert("Correcto");
             }else{
                 userData.calma += 1;
-                alert("ℹ Respuesta: "+(b.explicacion || "En la siguiente sesión lo harás mejor. Siente poder, éxito y bienestar."));
+                alert("Respuesta: "+(b.explicacion||"En la siguiente sesión lo harás mejor. Siente poder, éxito y bienestar."));
             }
             updatePanel();
             nextBtn.style.display = "inline-block";
@@ -138,17 +116,12 @@ function createOptions(b){
     });
 }
 
-/* =================== MOSTRAR BLOQUE =================== */
+/* BLOQUE */
 async function showBlock(b){
     block.innerHTML = "";
-    document.body.style.background = b.color || "#0f172a";
+    document.body.style.background = b.color||"#0f172a";
 
-    // Manejo de texto undefined
-    if(b.texto === undefined){
-        b.texto = "En la siguiente sesión lo harás mejor. Siente poder, éxito y bienestar.";
-    }
-
-    if(b.texto && !["quiz","acertijo","decision","juego_mental","respiracion"].includes(b.tipo)){
+    if(b.texto){
         block.innerHTML = "<p>"+b.texto+"</p>";
         await playVoice(b.texto);
     }
@@ -158,20 +131,21 @@ async function showBlock(b){
         case "acertijo":
         case "decision":
         case "juego_mental":
-            block.innerHTML = "<h3>"+(b.pregunta || "En la siguiente sesión lo harás mejor. Siente poder, éxito y bienestar.")+"</h3>";
+            block.innerHTML = "<h3>"+(b.pregunta||"En la siguiente sesión lo harás mejor. Siente poder, éxito y bienestar.")+"</h3>";
             createOptions(b);
-            await playVoice(b.pregunta || "En la siguiente sesión lo harás mejor. Siente poder, éxito y bienestar.");
+            await playVoice(b.pregunta);
             break;
 
         case "respiracion":
-            await breathingAnimation(b);
+            await breathingAnimation();
+            nextBtn.style.display = "inline-block";
             return;
 
         case "recompensa":
-            userData.disciplina += 3;
-            userData.claridad += 3;
-            userData.calma += 3;
-            block.innerHTML = "<h2>"+b.texto+"</h2>";
+            userData.disciplina+=3;
+            userData.claridad+=3;
+            userData.calma+=3;
+            block.innerHTML="<h2>"+b.texto+"</h2>";
             await playVoice(b.texto);
             break;
 
@@ -189,7 +163,7 @@ async function showBlock(b){
     setTimeout(()=>{ nextBtn.style.display="inline-block"; },3000);
 }
 
-/* =================== SIGUIENTE BLOQUE =================== */
+/* SIGUIENTE */
 function nextBlock(){
     nextBtn.style.display="none";
     current++;
@@ -198,7 +172,7 @@ function nextBlock(){
     }
 }
 
-/* =================== ATRAS =================== */
+/* ATRAS */
 function backBlock(){
     penalizar();
     if(current>0){
@@ -207,7 +181,7 @@ function backBlock(){
     }
 }
 
-/* =================== ADELANTE =================== */
+/* ADELANTE */
 function forwardBlock(){
     penalizar();
     if(current<bloques.length-1){
@@ -216,25 +190,20 @@ function forwardBlock(){
     }
 }
 
-/* =================== INICIO SESION =================== */
+/* INICIO */
 let currentSessionIndex = 0;
-
 startBtn.addEventListener("click", async ()=>{
     startBtn.style.display="none";
-
     const res = await fetch("/session_content");
     const data = await res.json();
     const sesiones = data.sesiones;
-
     currentSessionIndex = Math.floor(Math.random()*sesiones.length);
     bloques = sesiones[currentSessionIndex].bloques;
     current=0;
-
     updateStreak();
     showBlock(bloques[0]);
 });
 
-/* =================== EVENTOS =================== */
 nextBtn.addEventListener("click", nextBlock);
 backBtn.addEventListener("click", backBlock);
 forwardBtn.addEventListener("click", forwardBlock);
