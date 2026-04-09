@@ -1,155 +1,212 @@
-/* =================== KA MIZEN GLOBAL STATE =================== */
-const startBtn = document.getElementById("start-btn");
-const nextBtn = document.getElementById("next-btn");
-const restartBtn = document.getElementById("restart-btn");
-const backBtn = document.getElementById("back-btn");
-const forwardBtn = document.getElementById("forward-btn");
-const block = document.getElementById("block");
-const langBtn = document.getElementById("lang-btn");
+/* ============================================================
+   AL CIELO - INMERSIVE ENGINE (v3.0)
+   Branding: AURA BY MAY ROGA LLC
+   ============================================================ */
 
-let bloques = [];
-let current = 0;
-let currentLang = localStorage.getItem("kamizenLang") || "en";
-
-/* =================== AUDIO ENGINE (3 LEVELS) =================== */
-const bgMusic = new Audio();
-bgMusic.loop = true;
-const musicTracks = {
-    1: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-    2: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
-    3: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3"
+const UI = {
+    startBtn: document.getElementById("start-btn"),
+    nextBtn: document.getElementById("next-btn"),
+    backBtn: document.getElementById("back-btn"),
+    forwardBtn: document.getElementById("forward-btn"),
+    restartBtn: document.getElementById("restart-btn"),
+    langBtn: document.getElementById("lang-btn"),
+    block: document.getElementById("block"),
+    bgLayer: document.getElementById("bg-layer"),
+    streak: document.getElementById("streak"),
+    level: document.getElementById("level")
 };
 
-function updateMusic(level) {
-    const track = musicTracks[level] || musicTracks[1];
-    if (bgMusic.src !== track) {
-        bgMusic.src = track;
-        bgMusic.play().catch(() => console.log("Interacción requerida para audio"));
+let state = {
+    bloques: [],
+    current: 0,
+    lang: localStorage.getItem("kamizenLang") || "en",
+    userData: JSON.parse(localStorage.getItem("kamizenData")) || { streak: 0, level: 1, discipline: 0 },
+    bgIndex: 0
+};
+
+/* =================== IMÁGENES INMERSIVAS (40) =================== */
+const keywords = [
+    "forest", "mountain", "ocean", "river", "glacier", "waterfall", "desert", "nebula",
+    "valley", "sunset", "cliffs", "autumn", "island", "field", "cave", "aurora",
+    "zen-garden", "peaks", "space", "bamboo", "volcano", "tundra", "coast", "lake",
+    "meadow", "rainforest", "canyon", "fjords", "mist", "underwater", "stars", "cosmos",
+    "redwoods", "savanna", "oasis", "spring", "winter", "dunes", "reef", "paradise"
+];
+
+function createImmersiveBackground() {
+    UI.bgLayer.innerHTML = "";
+    keywords.forEach((word, i) => {
+        const div = document.createElement('div');
+        div.className = 'slide' + (i === 0 ? ' active' : '');
+        div.style.backgroundImage = `url('https://images.unsplash.com/photo-${i}?auto=format&fit=crop&w=1920&q=80&q=${word}')`;
+        // Nota: En producción usar URLs fijas de Unsplash para evitar variaciones
+        div.style.backgroundImage = `url('https://source.unsplash.com/1920x1080/?${word}')`;
+        UI.bgLayer.appendChild(div);
+    });
+}
+
+function rotateBackground() {
+    const slides = document.querySelectorAll('.slide');
+    if (slides.length === 0) return;
+    slides[state.bgIndex].classList.remove('active');
+    state.bgIndex = (state.bgIndex + 1) % slides.length;
+    slides[state.bgIndex].classList.add('active');
+}
+
+/* =================== AUDIO MOTOR (3 LEVELS) =================== */
+const bgAudio = new Audio();
+bgAudio.loop = true;
+const musicMap = {
+    1: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3", // Calm
+    2: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3", // Focus
+    3: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3"  // Intense/Scientific
+};
+
+function setMusic(level) {
+    const track = musicMap[level] || musicMap[1];
+    if (bgAudio.src !== track) {
+        bgAudio.src = track;
+        bgAudio.play().catch(() => console.log("Audio waiting for user..."));
     }
 }
 
-/* =================== TRANSLATIONS =================== */
-const translations = {
-    en: { start: "Start Session", next: "Next", correct: "Correct!", wrong: "Incorrect", levelUp: "Level Up!", explain: "Why?" },
-    es: { start: "Iniciar Sesión", next: "Siguiente", correct: "¡Correcto!", wrong: "Incorrecto", levelUp: "¡Nivel Superior!", explain: "Explicación" }
-};
-
-let userData = JSON.parse(localStorage.getItem("kamizenData")) || {
-    streak: 0, level: 1, discipline: 0
-};
-
-function updatePanel() {
-    document.getElementById("streak").innerHTML = `🔥 Streak: ${userData.streak}`;
-    document.getElementById("level").innerHTML = `Level: ${userData.level}`;
-    localStorage.setItem("kamizenData", JSON.stringify(userData));
-}
+/* =================== CORE LOGIC =================== */
 
 async function playVoice(text) {
     return new Promise(resolve => {
         speechSynthesis.cancel();
         const msg = new SpeechSynthesisUtterance(text);
-        msg.lang = currentLang === "en" ? "en-US" : "es-ES";
-        msg.rate = 0.95;
+        msg.lang = state.lang === "en" ? "en-US" : "es-ES";
+        msg.rate = 0.9;
         msg.onend = resolve;
         speechSynthesis.speak(msg);
     });
 }
 
-/* =================== RENDER MOTOR =================== */
-async function showBlock(b) {
-    block.innerHTML = "";
-    nextBtn.style.display = "none";
+async function renderBlock(b) {
+    UI.block.innerHTML = "";
+    UI.nextBtn.style.display = "none";
     
-    // Cambio de fondo dinámico
-    document.body.style.background = b.color || "#0f172a";
+    const text = typeof b.text === "object" ? b.text[state.lang] : b.text;
+    const title = b.title ? (typeof b.title === "object" ? b.title[state.lang] : b.title) : "";
 
-    const textToShow = typeof b.text === "object" ? b.text[currentLang] : b.text;
-
-    // BLOQUES DE TEXTO / VOZ / HISTORIA
-    if (["voice", "strategy", "story", "reward", "closing"].includes(b.type)) {
-        block.innerHTML = `<div class="fade-in">${textToShow}</div>`;
-        await playVoice(textToShow);
-        nextBtn.style.display = "inline-block";
+    // Tipos de bloque: Story, Strategy, Power, etc.
+    if (["voice", "story", "strategy", "power", "reward"].includes(b.type)) {
+        UI.block.innerHTML = `<div class="fade-in">
+            ${title ? `<h2 style="color:#60a5fa;margin-bottom:10px;">${title}</h2>` : ""}
+            <p style="font-size:1.2em;">${text}</p>
+        </div>`;
+        await playVoice(text);
+        UI.nextBtn.style.display = "inline-block";
     }
 
-    // BLOQUE DE RESPIRACIÓN (CÍRCULO ANIMADO)
+    // Bloque T-VID: Respiración Extendida
     if (b.type === "breathing") {
-        block.innerHTML = `
-            <div class="fade-in">
-                <p>${textToShow}</p>
-                <div class="breath-circle" id="circle"></div>
-            </div>`;
-        const circle = document.getElementById("circle");
-        await playVoice(textToShow);
+        const goal = b.goal ? (typeof b.goal === "object" ? b.goal[state.lang] : b.goal) : "";
+        UI.block.innerHTML = `<div class="fade-in">
+            <h3>${title || "T-VID COACH"}</h3>
+            <p style="font-size:0.9em;color:#94a3b8;margin-bottom:10px;">${goal}</p>
+            <div class="breath-circle" id="circle"></div>
+            <p id="breath-status" style="font-weight:bold;margin-top:10px;"></p>
+        </div>`;
         
-        circle.style.transform = "scale(1.5)";
-        setTimeout(() => {
-            circle.style.transform = "scale(1)";
-            nextBtn.style.display = "inline-block";
-        }, b.duration * 1000);
+        await playVoice(text + ". " + goal);
+        const circle = document.getElementById("circle");
+        const statusText = document.getElementById("breath-status");
+        
+        let timeLeft = b.duration || 120; // Default 2 min
+        const interval = setInterval(() => {
+            if (timeLeft <= 0) {
+                clearInterval(interval);
+                UI.nextBtn.style.display = "inline-block";
+                statusText.innerText = state.lang === "en" ? "Session Complete" : "Sesión Completada";
+                return;
+            }
+            // Ciclo de animación cada 8s (4 in, 4 out)
+            const cycle = timeLeft % 8;
+            if (cycle > 4) {
+                circle.style.transform = "scale(1.5)";
+                statusText.innerText = state.lang === "en" ? "INHALE..." : "INHALA...";
+            } else {
+                circle.style.transform = "scale(1)";
+                statusText.innerText = state.lang === "en" ? "EXHALE..." : "EXHALA...";
+            }
+            timeLeft--;
+        }, 1000);
     }
 
-    // BLOQUE DE QUIZ / ADIVINANZAS
+    // Bloque Quiz / Riddle
     if (b.type === "quiz") {
-        const question = typeof b.question === "object" ? b.question[currentLang] : b.question;
-        const options = Array.isArray(b.options) ? b.options : b.options[currentLang];
-        const explanation = b.explanation ? (typeof b.explanation === "object" ? b.explanation[currentLang] : b.explanation) : null;
+        const question = typeof b.question === "object" ? b.question[state.lang] : b.question;
+        const options = Array.isArray(b.options) ? b.options : b.options[state.lang];
+        const feedback = b.explanation ? (typeof b.explanation === "object" ? b.explanation[state.lang] : b.explanation) : "";
 
-        block.innerHTML = `<h3>${question}</h3><div id="options-grid"></div>`;
+        UI.block.innerHTML = `<h3 class="fade-in">${question}</h3><div class="options-grid" id="q-grid"></div>`;
         await playVoice(question);
 
-        const grid = document.getElementById("options-grid");
-        options.forEach((op, i) => {
+        options.forEach((opt, i) => {
             const btn = document.createElement("button");
-            btn.innerText = op;
+            btn.innerText = opt;
             btn.onclick = async () => {
                 const isCorrect = i === b.correct;
-                const feedback = isCorrect ? translations[currentLang].correct : translations[currentLang].wrong;
-                
-                // Mostrar explicación si existe
-                block.innerHTML = `<h3>${isCorrect ? "✅" : "❌"} ${feedback}</h3>`;
-                if (explanation) block.innerHTML += `<p style="font-size:16px; margin-top:10px;">${explanation}</p>`;
-                
-                await playVoice(feedback + (explanation ? ". " + explanation : ""));
-                
+                UI.block.innerHTML = `<h3>${isCorrect ? "✅" : "❌"}</h3><p>${feedback}</p>`;
+                await playVoice(feedback);
                 if (isCorrect) {
-                    userData.discipline += 10;
-                    if(userData.discipline >= 100 && userData.level < 3) {
-                        userData.level++;
-                        userData.discipline = 0;
-                    }
-                    updatePanel();
+                    state.userData.discipline += 15;
+                    updateProgress();
                 }
-                nextBtn.style.display = "inline-block";
+                UI.nextBtn.style.display = "inline-block";
             };
-            grid.appendChild(btn);
+            document.getElementById("q-grid").appendChild(btn);
         });
     }
 }
 
-/* =================== CONTROLES =================== */
-startBtn.onclick = async () => {
-    startBtn.style.display = "none";
+function updateProgress() {
+    if (state.userData.discipline >= 150 && state.userData.level < 3) {
+        state.userData.level++;
+        state.userData.discipline = 0;
+    }
+    UI.streak.innerText = `🔥 Streak: ${state.userData.streak}`;
+    UI.level.innerText = `Level: ${state.userData.level}`;
+    localStorage.setItem("kamizenData", JSON.stringify(state.userData));
+}
+
+/* =================== EVENTOS =================== */
+
+UI.startBtn.onclick = async () => {
+    UI.startBtn.style.display = "none";
     const res = await fetch("/session_content");
     const data = await res.json();
-    const filtered = data.sessions.filter(s => s.level <= userData.level);
-    const session = filtered[Math.floor(Math.random() * filtered.length)];
     
-    updateMusic(session.level);
-    bloques = session.blocks;
-    current = 0;
-    showBlock(bloques[0]);
+    // Filtro por nivel
+    const pool = data.sessions.filter(s => s.level <= state.userData.level);
+    const session = pool[Math.floor(Math.random() * pool.length)];
+    
+    setMusic(session.level);
+    state.bloques = session.blocks;
+    state.current = 0;
+    renderBlock(state.bloques[0]);
 };
 
-nextBtn.onclick = () => {
-    current++;
-    if (current < bloques.length) showBlock(bloques[current]);
+UI.nextBtn.onclick = () => {
+    state.current++;
+    if (state.current < state.bloques.length) {
+        renderBlock(state.bloques[state.current]);
+    } else {
+        UI.block.innerHTML = "<h2>Session Complete. You are stronger now.</h2>";
+        UI.restartBtn.style.display = "block";
+    }
 };
 
-langBtn.onclick = () => {
-    currentLang = currentLang === "en" ? "es" : "en";
-    localStorage.setItem("kamizenLang", currentLang);
-    location.reload(); 
+UI.langBtn.onclick = () => {
+    state.lang = state.lang === "en" ? "es" : "en";
+    localStorage.setItem("kamizenLang", state.lang);
+    location.reload();
 };
 
-updatePanel();
+/* INIT */
+createImmersiveBackground();
+setInterval(rotateBackground, 7000); // Cambio de imagen cada 7s
+updateProgress();
+UI.langBtn.innerText = state.lang.toUpperCase();
