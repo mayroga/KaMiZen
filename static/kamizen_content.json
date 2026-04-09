@@ -196,10 +196,10 @@
           "type": "reward",
           "points": 100,
           "text": { "en": "GENIUS LEVEL REACHED. Go and manifest your reality.", "es": "NIVEL DE GENIO ALCANZADO. Ve y manifiesta tu realidad." }
-        },
-      {
-     },
-     { 
+        }
+      ]
+    },
+    {
        "id": 7,
        "level": 1,
        "category": "Energy & Vitality Architecture",
