@@ -15,42 +15,33 @@ let currentLang = localStorage.getItem("kamizenLang") || "en";
 const bgMusic = new Audio();
 bgMusic.loop = true;
 const musicTracks = {
-    1: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3", // Nivel 1: Relajante
-    2: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3", // Nivel 2: Enfoque
-    3: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3"  // Nivel 3: Intenso
+    1: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+    2: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+    3: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3"
 };
 
 function updateMusic(level) {
     const track = musicTracks[level] || musicTracks[1];
     if (bgMusic.src !== track) {
         bgMusic.src = track;
-        bgMusic.play().catch(() => console.log("Waiting for interaction..."));
+        bgMusic.play().catch(() => console.log("Interacción requerida para audio"));
     }
 }
 
-/* =================== TRANSLATIONS UI =================== */
+/* =================== TRANSLATIONS =================== */
 const translations = {
-    en: { start: "Start Session", next: "Next", back: "Back", forward: "Forward", restart: "Restart", correct: "Correct", wrong: "Wrong", levelUp: "Level Up!" },
-    es: { start: "Iniciar Sesión", next: "Siguiente", back: "Atrás", forward: "Adelantar", restart: "Reiniciar", correct: "Correcto", wrong: "Incorrecto", levelUp: "¡Nivel Superado!" }
+    en: { start: "Start Session", next: "Next", correct: "Correct!", wrong: "Incorrect", levelUp: "Level Up!", explain: "Why?" },
+    es: { start: "Iniciar Sesión", next: "Siguiente", correct: "¡Correcto!", wrong: "Incorrecto", levelUp: "¡Nivel Superior!", explain: "Explicación" }
 };
 
 let userData = JSON.parse(localStorage.getItem("kamizenData")) || {
-    streak: 0, level: 1, discipline: 0, clarity: 50, calm: 30
+    streak: 0, level: 1, discipline: 0
 };
 
 function updatePanel() {
     document.getElementById("streak").innerHTML = `🔥 Streak: ${userData.streak}`;
-    document.getElementById("level").innerHTML = `KaMiZen Level: ${userData.level}`;
+    document.getElementById("level").innerHTML = `Level: ${userData.level}`;
     localStorage.setItem("kamizenData", JSON.stringify(userData));
-}
-
-function updateLanguageUI() {
-    startBtn.innerText = translations[currentLang].start;
-    nextBtn.innerText = translations[currentLang].next;
-    backBtn.innerText = translations[currentLang].back;
-    forwardBtn.innerText = translations[currentLang].forward;
-    restartBtn.innerText = translations[currentLang].restart;
-    langBtn.innerText = currentLang === "en" ? "ES" : "EN";
 }
 
 async function playVoice(text) {
@@ -58,71 +49,92 @@ async function playVoice(text) {
         speechSynthesis.cancel();
         const msg = new SpeechSynthesisUtterance(text);
         msg.lang = currentLang === "en" ? "en-US" : "es-ES";
-        msg.rate = 0.9;
+        msg.rate = 0.95;
         msg.onend = resolve;
         speechSynthesis.speak(msg);
     });
 }
 
-/* =================== BLOCK RENDERER =================== */
+/* =================== RENDER MOTOR =================== */
 async function showBlock(b) {
     block.innerHTML = "";
     nextBtn.style.display = "none";
-    document.body.style.background = b.color || "#070b14";
+    
+    // Cambio de fondo dinámico
+    document.body.style.background = b.color || "#0f172a";
 
-    const content = typeof b.text === "object" ? b.text[currentLang] : b.text;
+    const textToShow = typeof b.text === "object" ? b.text[currentLang] : b.text;
 
+    // BLOQUES DE TEXTO / VOZ / HISTORIA
     if (["voice", "strategy", "story", "reward", "closing"].includes(b.type)) {
-        block.innerHTML = `<div style="text-align:center; padding:10px;">${content}</div>`;
-        await playVoice(content);
-
-        if (b.type === "reward") {
-            userData.discipline += (b.points || 10);
-            if(userData.discipline >= 100 && userData.level < 3) {
-                userData.level++;
-                userData.discipline = 0;
-                await playVoice(translations[currentLang].levelUp);
-            }
-            updatePanel();
-        }
+        block.innerHTML = `<div class="fade-in">${textToShow}</div>`;
+        await playVoice(textToShow);
         nextBtn.style.display = "inline-block";
     }
 
+    // BLOQUE DE RESPIRACIÓN (CÍRCULO ANIMADO)
+    if (b.type === "breathing") {
+        block.innerHTML = `
+            <div class="fade-in">
+                <p>${textToShow}</p>
+                <div class="breath-circle" id="circle"></div>
+            </div>`;
+        const circle = document.getElementById("circle");
+        await playVoice(textToShow);
+        
+        circle.style.transform = "scale(1.5)";
+        setTimeout(() => {
+            circle.style.transform = "scale(1)";
+            nextBtn.style.display = "inline-block";
+        }, b.duration * 1000);
+    }
+
+    // BLOQUE DE QUIZ / ADIVINANZAS
     if (b.type === "quiz") {
         const question = typeof b.question === "object" ? b.question[currentLang] : b.question;
-        const options = typeof b.options === "object" ? b.options[currentLang] : b.options;
+        const options = Array.isArray(b.options) ? b.options : b.options[currentLang];
+        const explanation = b.explanation ? (typeof b.explanation === "object" ? b.explanation[currentLang] : b.explanation) : null;
 
-        block.innerHTML = `<h3 style="margin-bottom:15px;">${question}</h3>`;
+        block.innerHTML = `<h3>${question}</h3><div id="options-grid"></div>`;
         await playVoice(question);
 
+        const grid = document.getElementById("options-grid");
         options.forEach((op, i) => {
             const btn = document.createElement("button");
             btn.innerText = op;
             btn.onclick = async () => {
-                if (i === b.correct) {
-                    await playVoice(translations[currentLang].correct);
-                    userData.discipline += 5;
+                const isCorrect = i === b.correct;
+                const feedback = isCorrect ? translations[currentLang].correct : translations[currentLang].wrong;
+                
+                // Mostrar explicación si existe
+                block.innerHTML = `<h3>${isCorrect ? "✅" : "❌"} ${feedback}</h3>`;
+                if (explanation) block.innerHTML += `<p style="font-size:16px; margin-top:10px;">${explanation}</p>`;
+                
+                await playVoice(feedback + (explanation ? ". " + explanation : ""));
+                
+                if (isCorrect) {
+                    userData.discipline += 10;
+                    if(userData.discipline >= 100 && userData.level < 3) {
+                        userData.level++;
+                        userData.discipline = 0;
+                    }
                     updatePanel();
-                    nextBtn.style.display = "inline-block";
-                } else {
-                    await playVoice(translations[currentLang].wrong);
                 }
+                nextBtn.style.display = "inline-block";
             };
-            block.appendChild(btn);
+            grid.appendChild(btn);
         });
     }
 }
 
-/* =================== EVENTS =================== */
+/* =================== CONTROLES =================== */
 startBtn.onclick = async () => {
     startBtn.style.display = "none";
     const res = await fetch("/session_content");
     const data = await res.json();
+    const filtered = data.sessions.filter(s => s.level <= userData.level);
+    const session = filtered[Math.floor(Math.random() * filtered.length)];
     
-    // Filtrar sesiones por nivel del usuario
-    const filtered = data.sessions.filter(s => s.level === userData.level);
-    const session = filtered[Math.floor(Math.random() * filtered.length)] || data.sessions[0];
-
     updateMusic(session.level);
     bloques = session.blocks;
     current = 0;
@@ -137,8 +149,7 @@ nextBtn.onclick = () => {
 langBtn.onclick = () => {
     currentLang = currentLang === "en" ? "es" : "en";
     localStorage.setItem("kamizenLang", currentLang);
-    updateLanguageUI();
+    location.reload(); 
 };
 
 updatePanel();
-updateLanguageUI();
