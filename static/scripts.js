@@ -1,64 +1,48 @@
 /* =================== KA MIZEN GLOBAL STATE =================== */
-
 const startBtn = document.getElementById("start-btn");
 const nextBtn = document.getElementById("next-btn");
 const restartBtn = document.getElementById("restart-btn");
 const backBtn = document.getElementById("back-btn");
 const forwardBtn = document.getElementById("forward-btn");
 const block = document.getElementById("block");
+const langBtn = document.getElementById("lang-btn");
 
 let bloques = [];
 let current = 0;
-let isBreathing = false;
-
 let currentLang = localStorage.getItem("kamizenLang") || "en";
 
-/* =================== TRANSLATIONS =================== */
+/* =================== AUDIO ENGINE (3 LEVELS) =================== */
+const bgMusic = new Audio();
+bgMusic.loop = true;
+const musicTracks = {
+    1: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3", // Nivel 1: Relajante
+    2: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3", // Nivel 2: Enfoque
+    3: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3"  // Nivel 3: Intenso
+};
 
-const translations = {
-    en: {
-        start: "Start Session",
-        next: "Next",
-        back: "Back",
-        forward: "Forward",
-        restart: "Restart"
-    },
-    es: {
-        start: "Iniciar sesión",
-        next: "Siguiente",
-        back: "Atrás",
-        forward: "Adelantar",
-        restart: "Reiniciar"
+function updateMusic(level) {
+    const track = musicTracks[level] || musicTracks[1];
+    if (bgMusic.src !== track) {
+        bgMusic.src = track;
+        bgMusic.play().catch(() => console.log("Waiting for interaction..."));
     }
-};
-
-/* =================== USER DATA =================== */
-
-let userData = JSON.parse(localStorage.getItem("kamizenData")) || {
-    streak: 0,
-    lastDay: null,
-    level: 1,
-    discipline: 40,
-    clarity: 50,
-    calm: 30
-};
-
-let completedSessions = JSON.parse(localStorage.getItem("completedSessions")) || [];
-
-/* =================== PANEL =================== */
-
-function updatePanel() {
-    document.getElementById("streak").innerHTML = `🔥 Streak: ${userData.streak} days`;
-    document.getElementById("level").innerHTML = `KaMiZen Level: ${userData.level}`;
-
-    document.getElementById("disciplina-bar").style.width = (userData.discipline || 0) + "%";
-    document.getElementById("claridad-bar").style.width = (userData.clarity || 0) + "%";
-    document.getElementById("calma-bar").style.width = (userData.calm || 0) + "%";
-
-    localStorage.setItem("kamizenData", JSON.stringify(userData));
 }
 
-/* =================== LANGUAGE UI =================== */
+/* =================== TRANSLATIONS UI =================== */
+const translations = {
+    en: { start: "Start Session", next: "Next", back: "Back", forward: "Forward", restart: "Restart", correct: "Correct", wrong: "Wrong", levelUp: "Level Up!" },
+    es: { start: "Iniciar Sesión", next: "Siguiente", back: "Atrás", forward: "Adelantar", restart: "Reiniciar", correct: "Correcto", wrong: "Incorrecto", levelUp: "¡Nivel Superado!" }
+};
+
+let userData = JSON.parse(localStorage.getItem("kamizenData")) || {
+    streak: 0, level: 1, discipline: 0, clarity: 50, calm: 30
+};
+
+function updatePanel() {
+    document.getElementById("streak").innerHTML = `🔥 Streak: ${userData.streak}`;
+    document.getElementById("level").innerHTML = `KaMiZen Level: ${userData.level}`;
+    localStorage.setItem("kamizenData", JSON.stringify(userData));
+}
 
 function updateLanguageUI() {
     startBtn.innerText = translations[currentLang].start;
@@ -66,182 +50,95 @@ function updateLanguageUI() {
     backBtn.innerText = translations[currentLang].back;
     forwardBtn.innerText = translations[currentLang].forward;
     restartBtn.innerText = translations[currentLang].restart;
+    langBtn.innerText = currentLang === "en" ? "ES" : "EN";
 }
 
-/* =================== VOICE ENGINE =================== */
-
-function playVoice(text) {
+async function playVoice(text) {
     return new Promise(resolve => {
         speechSynthesis.cancel();
-
         const msg = new SpeechSynthesisUtterance(text);
-
         msg.lang = currentLang === "en" ? "en-US" : "es-ES";
-        msg.rate = 0.85;
-
+        msg.rate = 0.9;
         msg.onend = resolve;
         speechSynthesis.speak(msg);
     });
 }
 
-/* =================== PENALTY SYSTEM =================== */
-
-function applyPenalty() {
-    userData.calm = Math.max(0, userData.calm * 0.8);
-    userData.discipline = Math.max(0, userData.discipline * 0.8);
-    userData.clarity = Math.max(0, userData.clarity * 0.9);
-
-    updatePanel();
-}
-
-/* =================== BLOCK RENDER =================== */
-
+/* =================== BLOCK RENDERER =================== */
 async function showBlock(b) {
-
     block.innerHTML = "";
     nextBtn.style.display = "none";
-
     document.body.style.background = b.color || "#070b14";
 
-    /* FIX: VOICE / STORY / STRATEGY */
-    if (["voice", "tvid", "strategy", "story", "visualization", "reward", "closing"].includes(b.type)) {
+    const content = typeof b.text === "object" ? b.text[currentLang] : b.text;
 
-        const text = b.text || "";
-
-        block.innerHTML = `<div style="text-align:center;font-size:1.4em">${text}</div>`;
-
-        await playVoice(text);
+    if (["voice", "strategy", "story", "reward", "closing"].includes(b.type)) {
+        block.innerHTML = `<div style="text-align:center; padding:10px;">${content}</div>`;
+        await playVoice(content);
 
         if (b.type === "reward") {
-            userData.discipline += b.points || 10;
+            userData.discipline += (b.points || 10);
+            if(userData.discipline >= 100 && userData.level < 3) {
+                userData.level++;
+                userData.discipline = 0;
+                await playVoice(translations[currentLang].levelUp);
+            }
             updatePanel();
         }
-
-        setTimeout(() => {
-            nextBtn.style.display = "inline-block";
-        }, 800);
-
-        return;
+        nextBtn.style.display = "inline-block";
     }
 
-    /* BREATHING */
-    if (b.type === "breathing") {
+    if (b.type === "quiz") {
+        const question = typeof b.question === "object" ? b.question[currentLang] : b.question;
+        const options = typeof b.options === "object" ? b.options[currentLang] : b.options;
 
-        block.innerHTML = `<div style="font-size:1.6em;text-align:center">${b.text}</div>`;
-
-        await playVoice(b.text);
-
-        setTimeout(() => {
-            nextBtn.style.display = "inline-block";
-        }, (b.duration || 6) * 1000);
-
-        return;
-    }
-
-    /* QUIZ / GAME */
-    if (["quiz", "mental_game", "decision"].includes(b.type)) {
-
-        const question = b.question;
-
-        block.innerHTML = `<h3>${question}</h3>`;
-
+        block.innerHTML = `<h3 style="margin-bottom:15px;">${question}</h3>`;
         await playVoice(question);
 
-        b.options.forEach((op, i) => {
-
+        options.forEach((op, i) => {
             const btn = document.createElement("button");
             btn.innerText = op;
-
             btn.onclick = async () => {
-
-                const correct = i === b.correct;
-
-                const msg = correct ? "Correct" : "Wrong";
-
-                await playVoice(msg);
-
-                if (correct) {
-                    userData.discipline += b.reward || 5;
+                if (i === b.correct) {
+                    await playVoice(translations[currentLang].correct);
+                    userData.discipline += 5;
                     updatePanel();
                     nextBtn.style.display = "inline-block";
                 } else {
-                    userData.calm += 2;
-                    updatePanel();
+                    await playVoice(translations[currentLang].wrong);
                 }
             };
-
             block.appendChild(btn);
         });
-
-        return;
-    }
-
-    /* CLOSE */
-    if (b.type === "closing") {
-
-        block.innerHTML = `<div style="font-size:1.6em;text-align:center">${b.text}</div>`;
-
-        await playVoice(b.text);
-
-        restartBtn.style.display = "inline-block";
     }
 }
 
-/* =================== START SESSION =================== */
-
-let currentSessionIndex = 0;
-
-startBtn.addEventListener("click", async () => {
-
+/* =================== EVENTS =================== */
+startBtn.onclick = async () => {
     startBtn.style.display = "none";
-
     const res = await fetch("/session_content");
     const data = await res.json();
+    
+    // Filtrar sesiones por nivel del usuario
+    const filtered = data.sessions.filter(s => s.level === userData.level);
+    const session = filtered[Math.floor(Math.random() * filtered.length)] || data.sessions[0];
 
-    const sessions = data.sessions;
-
-    currentSessionIndex = Math.floor(Math.random() * sessions.length);
-
-    bloques = sessions[currentSessionIndex].blocks;
-
+    updateMusic(session.level);
+    bloques = session.blocks;
     current = 0;
-
     showBlock(bloques[0]);
-});
-
-/* =================== NAVIGATION =================== */
+};
 
 nextBtn.onclick = () => {
     current++;
     if (current < bloques.length) showBlock(bloques[current]);
 };
 
-backBtn.onclick = () => {
-    if (current > 0) {
-        applyPenalty();
-        current--;
-        showBlock(bloques[current]);
-    }
-};
-
-forwardBtn.onclick = () => {
-    if (current < bloques.length - 1) {
-        applyPenalty();
-        current++;
-        showBlock(bloques[current]);
-    }
-};
-
-restartBtn.onclick = () => location.reload();
-
-/* =================== LANGUAGE SWITCH =================== */
-
-document.getElementById("lang-btn").addEventListener("click", () => {
+langBtn.onclick = () => {
     currentLang = currentLang === "en" ? "es" : "en";
     localStorage.setItem("kamizenLang", currentLang);
     updateLanguageUI();
-});
+};
 
-/* INIT */
 updatePanel();
 updateLanguageUI();
