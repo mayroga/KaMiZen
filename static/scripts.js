@@ -1,4 +1,5 @@
-/* =================== VARIABLES Y PERSISTENCIA =================== */
+/* =================== KAMIZEN ENGINE V4 =================== */
+
 const startBtn = document.getElementById("start-btn");
 const nextBtn = document.getElementById("next-btn");
 const restartBtn = document.getElementById("restart-btn");
@@ -8,218 +9,244 @@ const block = document.getElementById("block");
 
 let bloques = [];
 let current = 0;
-let isBreathing = false; 
+let currentSessionIndex = 0;
+
+let lang = localStorage.getItem("kamizenLang") || "en";
+
+/* =================== USER DATA =================== */
 
 let userData = JSON.parse(localStorage.getItem("kamizenData")) || {
-    streak: 0, lastDay: null, nivel: 1, disciplina: 40, claridad: 50, calma: 30
+    streak: 0,
+    nivel: 1,
+    disciplina: 40,
+    claridad: 50,
+    calma: 30
 };
+
 let completedSessions = JSON.parse(localStorage.getItem("completedSessions")) || [];
 
-/* =================== ACTUALIZACIÓN DE PANEL Y PENALIZACIÓN =================== */
+/* =================== UI TEXT =================== */
+
+const t = {
+    en: {
+        start: "Start Session",
+        next: "Next",
+        back: "Back",
+        forward: "Forward",
+        restart: "Restart",
+        warning: "Skipping breaks your discipline."
+    },
+    es: {
+        start: "Iniciar sesión",
+        next: "Siguiente",
+        back: "Atrás",
+        forward: "Adelantar",
+        restart: "Reiniciar",
+        warning: "Saltar pasos rompe tu disciplina."
+    }
+};
+
+/* =================== BACKGROUND SYSTEM =================== */
+
+let bgEnabled = true;
+let bgIndex = 0;
+let bgSlides = [];
+
+const keywords = [
+"forest","mountain","ocean","river","desert","waterfall","canyon","lake",
+"valley","sunset","cliffs","snow","autumn","tropical","island","field",
+"mist","aurora","jungle","beach","sky","clouds","zen","glacier","cave"
+];
+
+function initBackground(){
+    const container = document.getElementById("bg-gallery");
+    if(!container) return;
+
+    container.innerHTML = "";
+
+    keywords.forEach((w,i)=>{
+        const div = document.createElement("div");
+        div.className = "bg-slide" + (i===0 ? " active" : "");
+        div.style.backgroundImage =
+        `url('https://source.unsplash.com/1920x1080/?${w}')`;
+        container.appendChild(div);
+    });
+
+    bgSlides = document.querySelectorAll(".bg-slide");
+
+    setInterval(()=>{
+        if(!bgEnabled) return;
+
+        bgSlides[bgIndex].classList.remove("active");
+        bgIndex = (bgIndex + 1) % bgSlides.length;
+        bgSlides[bgIndex].classList.add("active");
+
+    },7000);
+}
+
+function toggleBG(){
+    bgEnabled = !bgEnabled;
+}
+
+/* =================== LEVEL SYSTEM =================== */
+
+function levelName(n){
+    return n===1?"Easy":n===2?"Medium":"Hard";
+}
+
+function multiplier(){
+    return userData.nivel===1?1:userData.nivel===2?1.5:2.2;
+}
+
+/* =================== PANEL =================== */
+
 function updatePanel(){
-    document.getElementById("streak").innerHTML = `🔥 Racha: ${userData.streak} días`;
-    document.getElementById("level").innerHTML = `Nivel KaMiZen: ${userData.nivel}`;
-    document.getElementById("disciplina-bar").style.width = (userData.disciplina || 0) + "%";
-    document.getElementById("claridad-bar").style.width = (userData.claridad || 0) + "%";
-    document.getElementById("calma-bar").style.width = (userData.calma || 0) + "%";
-    localStorage.setItem("kamizenData", JSON.stringify(userData));
+    document.getElementById("streak").innerText =
+    `🔥 Streak: ${userData.streak}`;
+
+    document.getElementById("level").innerText =
+    `Level: ${levelName(userData.nivel)}`;
+
+    document.getElementById("disciplina-bar").style.width = userData.disciplina+"%";
+    document.getElementById("claridad-bar").style.width = userData.claridad+"%";
+    document.getElementById("calma-bar").style.width = userData.calma+"%";
+
+    localStorage.setItem("kamizenData",JSON.stringify(userData));
 }
 
-function aplicarPenalizacion() {
-    // Penalización drástica por saltar pasos: 80% menos de Calma y Disciplina, 40% menos de Claridad
-    userData.calma = Math.max(0, userData.calma * 0.20); 
-    userData.disciplina = Math.max(0, userData.disciplina * 0.20);
-    userData.claridad = Math.max(0, userData.claridad * 0.60);
-    updatePanel();
-    playVoice("Advertencia: El atajo destruye la formación de tu carácter.");
-}
+/* =================== VOICE =================== */
 
-updatePanel();
-
-/* =================== MOTOR DE VOZ (COACH MENTOR) =================== */
-function playVoice(text){
-    return new Promise(resolve => {
+function speak(text){
+    return new Promise(res=>{
         speechSynthesis.cancel();
-        let msg = new SpeechSynthesisUtterance(text);
-        msg.lang = "es-ES";
-        msg.rate = 0.85; 
-        msg.onend = resolve;
+        const msg = new SpeechSynthesisUtterance(text);
+        msg.lang = lang==="es"?"es-ES":"en-US";
+        msg.rate = 0.9;
+        msg.onend = res;
         speechSynthesis.speak(msg);
     });
 }
 
-/* =================== RESPIRACIÓN PROFESIONAL: EL GLOBO VIVO =================== */
-async function breathingAnimation(b){
-    block.innerHTML = "";
-    isBreathing = true;
-    
-    const instruccion = b.texto || "Inicia tu ciclo de poder.";
-    
-    const container = document.createElement("div");
-    container.style.cssText = "display:flex; flex-direction:column; align-items:center; justify-content:space-between; height:480px; width:100%; padding:10px;";
+/* =================== SHOW BLOCK =================== */
 
-    // Texto achicado para no estorbar
-    const uiLabel = document.createElement("div");
-    uiLabel.style.cssText = "font-size:1.4em; font-weight:700; color:#ffffff; text-align:center; text-transform:uppercase; min-height:60px;";
-    uiLabel.innerText = instruccion;
-    
-    // Timer fuera del área del globo
-    const uiTimer = document.createElement("div");
-    uiTimer.style.cssText = "font-size:2em; color:#00d2ff; font-weight:bold; margin-top:10px;";
-    
-    const circle = document.createElement("div");
-    circle.style.cssText = "width:100px; height:100px; background:radial-gradient(circle, #00d2ff, #0077ff); border-radius:50%; box-shadow:0 0 50px #00d2ff; transition:transform 1s ease-in-out;";
-
-    container.appendChild(uiLabel);
-    container.appendChild(circle);
-    container.appendChild(uiTimer);
-    block.appendChild(container);
-
-    playVoice(instruccion);
-
-    const duracion = b.duracion || 6;
-    const esExpansion = (instruccion.toLowerCase().includes("inhala") || instruccion.toLowerCase().includes("mantén"));
-    
-    // El globo empieza a moverse de inmediato (Sincronización total)
-    setTimeout(() => {
-        circle.style.transition = `transform ${duracion}s cubic-bezier(0.42, 0, 0.58, 1)`;
-        circle.style.transform = esExpansion ? "scale(2.5)" : "scale(0.8)";
-    }, 100);
-
-    for(let s = duracion; s > 0; s--){
-        uiTimer.innerText = `${s}s`;
-        await new Promise(r => setTimeout(r, 1000));
-    }
-
-    uiLabel.innerText = "Ciclo integrado. Presiona siguiente.";
-    isBreathing = false;
-    nextBtn.style.display = "inline-block";
-}
-
-/* =================== PROCESADOR DE BLOQUES MULTIFORMATO =================== */
 async function showBlock(b){
-    block.innerHTML = "";
-    document.body.style.background = b.color || "#070b14";
-    nextBtn.style.display = "none";
 
-    // 1. Bloques de Información / Voz
-    if(["voz", "tvid", "inteligencia_social", "estrategia", "historia", "visualizacion", "recompensa"].includes(b.tipo)){
-        const titulo = b.titulo ? `<h2 style='color:#00d2ff; font-size:1.5em;'>${b.titulo}</h2>` : "";
-        const texto = b.texto || "Continúa.";
-        
-        block.innerHTML = `
-            <div style='text-align:center; padding:20px;'>
-                ${titulo}
-                <p style='font-size:1.4em; font-weight:300; line-height:1.4;'>${texto}</p>
-            </div>`;
-        
-        if(b.tipo === "recompensa") { userData.disciplina += (b.puntos || 10); updatePanel(); }
-        
-        await playVoice(texto);
-        setTimeout(() => { nextBtn.style.display = "inline-block"; }, 1500);
-        return;
+    block.innerHTML="";
+    nextBtn.style.display="none";
+    document.body.style.background="#000";
+
+    const type = b.type;
+
+    /* TEXT */
+    if(["voice","tvid","strategy","story","visualization","reward","closing"].includes(type)){
+        const text = b.text || "";
+        block.innerHTML=`<div>${text}</div>`;
+        await speak(text);
+
+        if(type==="reward"){
+            userData.disciplina += (b.points||10)*multiplier();
+            updatePanel();
+        }
+
+        setTimeout(()=>nextBtn.style.display="block",800);
     }
 
-    // 2. Respiración (Desde que aparece, ya actúa)
-    if(b.tipo === "respiracion"){
-        await breathingAnimation(b);
-        return;
+    /* BREATHING */
+    if(type==="breathing"){
+        block.innerHTML=`<div>${b.text}</div>`;
+        await speak(b.text);
+        setTimeout(()=>nextBtn.style.display="block",800);
     }
 
-    // 3. Bloques Interactivos y Juegos Mentales
-    if(["quiz", "acertijo", "decision", "juego_mental"].includes(b.tipo)){
-        const pregunta = b.pregunta || "¿Qué decides?";
-        block.innerHTML = `<h3 style='font-size:1.6em; text-align:center; color:#ffffff;'>${pregunta}</h3>`;
-        await playVoice(pregunta);
+    /* QUIZ */
+    if(["quiz","mental_game","decision"].includes(type)){
+        const q = b.question||"";
+        block.innerHTML=`<h3>${q}</h3>`;
+        await speak(q);
 
-        const feedbackArea = document.createElement("div");
-        feedbackArea.style.cssText = "margin:15px auto; width:90%; padding:10px; border-radius:8px; background:rgba(255,255,255,0.05); color:#00d2ff; text-align:center; font-size:1.1em; min-height:50px;";
-        feedbackArea.innerText = "Tu elección define tu progreso.";
+        const area = document.createElement("div");
 
-        b.opciones.forEach((op, i) => {
-            let btn = document.createElement("button");
-            btn.style.cssText = "display:block; width:85%; margin:10px auto; padding:12px; border-radius:10px; border:1px solid #00d2ff; background:transparent; color:white; cursor:pointer;";
-            btn.innerText = op;
-            
-            btn.onclick = async () => {
-                const esCorrecto = (i === b.correcta);
-                const explicacion = b.explicacion || b.explanacion || "Sigue adelante.";
-                
-                // Lógica de respuesta inteligente según contexto
-                let msgFeedback = "";
-                if(b.pregunta.includes("¿Sientes fuerza?") || b.pregunta.includes("mejoró")){
-                    msgFeedback = esCorrecto ? `Excelente. ${explicacion}` : `Entiendo. En la próxima sesión será mejor para ti, avanzarás y lograrás tu objetivo.`;
-                } else {
-                    msgFeedback = esCorrecto ? `Correcto. ${explicacion}` : `Incorrecto. ${explicacion}`;
-                }
-                
-                feedbackArea.innerHTML = `<strong>${esCorrecto ? "✅" : "ℹ️"}</strong> ${msgFeedback}`;
-                await playVoice(msgFeedback);
+        (b.options||[]).forEach((o,i)=>{
+            const btn=document.createElement("button");
+            btn.innerText=o;
 
-                if(esCorrecto){
-                    userData.disciplina += (b.recompensa || 5);
+            btn.onclick=async()=>{
+                const ok = i===b.correct;
+                const msg = ok?"Correct":"Incorrect";
+
+                await speak(msg);
+
+                if(ok){
+                    userData.disciplina += (b.reward||5)*multiplier();
                     updatePanel();
-                    nextBtn.style.display = "inline-block";
+                    nextBtn.style.display="block";
                 } else {
-                    userData.calma += 2;
+                    userData.calma+=2;
                     updatePanel();
-                    // Permite que el alumno siga explorando opciones para aprender
                 }
             };
-            block.appendChild(btn);
-        });
-        block.appendChild(feedbackArea);
-    } 
 
-    if(b.tipo === "cierre"){
-        block.innerHTML = `<p style='font-size:1.8em; text-align:center; padding:40px;'>${b.texto}</p>`;
-        await playVoice(b.texto);
+            area.appendChild(btn);
+        });
+
+        block.appendChild(area);
+    }
+
+    /* CLOSING */
+    if(type==="closing"){
+        block.innerHTML=`<h2>${b.text}</h2>`;
+        await speak(b.text);
+
         completedSessions.push(currentSessionIndex);
-        localStorage.setItem("completedSessions", JSON.stringify(completedSessions));
-        restartBtn.style.display = "inline-block";
+        localStorage.setItem("completedSessions",JSON.stringify(completedSessions));
+
+        restartBtn.style.display="block";
     }
 }
 
-/* =================== NAVEGACIÓN Y CARGA =================== */
-let currentSessionIndex = 0;
-startBtn.addEventListener("click", async () => {
-    startBtn.style.display = "none";
-    try {
-        const res = await fetch("/session_content");
-        const data = await res.json();
-        const sesiones = data.sesiones;
-        let available = sesiones.map((_,i) => i).filter(i => !completedSessions.includes(i));
-        if(available.length === 0) { completedSessions = []; available = sesiones.map((_,i) => i); }
-        currentSessionIndex = available[Math.floor(Math.random() * available.length)];
-        bloques = sesiones[currentSessionIndex].bloques;
-    } catch (e) {
-        // Fallback robusto
-        bloques = [{ tipo: "voz", texto: "Iniciando AL CIELO.", color: "#070b14" }, { tipo: "respiracion", texto: "Inhala disciplina.", duracion: 5 }];
-    }
-    current = 0;
-    showBlock(bloques[0]);
+/* =================== START =================== */
+
+startBtn.addEventListener("click",async()=>{
+
+initBackground();
+
+const res = await fetch("/session_content");
+const data = await res.json();
+
+const sessions = data.sessions||[];
+
+let available = sessions.map((_,i)=>i)
+.filter(i=>!completedSessions.includes(i));
+
+if(available.length===0){
+completedSessions=[];
+available=sessions.map((_,i)=>i);
+}
+
+currentSessionIndex = available[Math.floor(Math.random()*available.length)];
+bloques = sessions[currentSessionIndex].blocks;
+
+current=0;
+showBlock(bloques[0]);
+
+startBtn.style.display="none";
 });
 
-nextBtn.addEventListener("click", () => {
-    current++;
-    if(current < bloques.length) showBlock(bloques[current]);
-});
+/* =================== NAV =================== */
 
-// Botones de Navegación con Penalización Drástica
-backBtn.addEventListener("click", () => {
-    if(current > 0) {
-        aplicarPenalizacion();
-        current--;
-        showBlock(bloques[current]);
-    }
-});
+nextBtn.onclick=()=>{current++;showBlock(bloques[current]);};
 
-forwardBtn.addEventListener("click", () => {
-    if(current < bloques.length - 1) {
-        aplicarPenalizacion();
-        current++;
-        showBlock(bloques[current]);
-    }
-});
+backBtn.onclick=()=>{
+if(current>0){current--;showBlock(bloques[current]);}
+};
 
-restartBtn.addEventListener("click", () => location.reload());
+forwardBtn.onclick=()=>{
+if(current<bloques.length-1){
+current++;showBlock(bloques[current]);
+}
+};
+
+restartBtn.onclick=()=>location.reload();
+
+/* INIT */
+updatePanel();
