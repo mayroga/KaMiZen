@@ -3,61 +3,73 @@
     {
       "id": 1,
       "level": 1,
-      "category": "Mindset Reset",
+      "category": "Mindset & Power",
       "blocks": [
         {
           "type": "voice",
           "text": {
-            "en": "MISSION 1: The Invisible Leash. Reclaim your thumb, reclaim your life.",
-            "es": "MISIÓN 1: La Correa Invisible. Recupera tu pulgar, recupera tu vida."
+            "en": "MISSION 1: The Dopamine Trap. Reclaim your focus to reclaim your wealth.",
+            "es": "MISIÓN 1: La Trampa de la Dopamina. Recupera tu enfoque para recuperar tu riqueza."
           },
           "color": "#1e3a8a"
         },
         {
           "type": "story",
           "text": {
-            "en": "Teaching: A monk carried a heavy stone thinking it was gold. When he dropped it, he finally could climb the mountain. Your phone is that stone.",
-            "es": "Enseñanza: Un monje cargaba una piedra pensando que era oro. Al soltarla, pudo subir la montaña. Tu teléfono es esa piedra."
+            "en": "Teaching: A king spent all day looking at a mirror instead of his kingdom. The mirror broke, and he realized he had no kingdom left. The mirror is your phone.",
+            "es": "Enseñanza: Un rey pasaba el día mirando un espejo en vez de su reino. El espejo se rompió y notó que ya no tenía reino. El espejo es tu teléfono."
           }
         },
         {
           "type": "quiz",
-          "question": { "en": "Math Rush: 15 + 25?", "es": "Reto Veloz: 15 + 25?" },
-          "options": ["35", "40", "45"],
+          "question": {
+            "en": "Level 1 Math: If you invest $100 and it grows 10% each month, how much do you have after 2 months (simple)?",
+            "es": "Matemática Nivel 1: Si inviertes $100 y crece 10% cada mes, ¿cuánto tienes tras 2 meses (simple)?"
+          },
+          "options": ["$110", "$120", "$121"],
           "correct": 1,
-          "reward": 10
+          "explanation": {
+            "en": "$10 profit per month. Focus on steady growth.",
+            "es": "$10 de ganancia por mes. Enfócate en el crecimiento constante."
+          }
         },
-        { "type": "breathing", "text": { "en": "T-VID Level 1: Inhale for 4s, Exhale for 4s.", "es": "T-VID Nivel 1: Inhala 4s, Exhala 4s." }, "duration": 4 }
+        {
+          "type": "breathing",
+          "text": {
+            "en": "T-VID 1: Simple Reset. Inhale peace, exhale noise.",
+            "es": "T-VID 1: Reset Simple. Inhala paz, exhala ruido."
+          },
+          "duration": 4,
+          "color": "#065f46"
+        }
       ]
     },
     {
       "id": 2,
       "level": 1,
-      "category": "Financial Focus",
+      "category": "Basic Social Strategy",
       "blocks": [
         {
-          "type": "voice",
+          "type": "strategy",
           "text": {
-            "en": "MISSION 2: Wealth is Quiet. Distraction is Expensive.",
-            "es": "MISIÓN 2: La Riqueza es Silenciosa. La Distracción es Cara."
-          },
-          "color": "#065f46"
+            "en": "Social Power: To be interesting, be interested. Listen 80%, talk 20%.",
+            "es": "Poder Social: Para ser interesante, muestra interés. Escucha el 80%, habla el 20%."
+          }
         },
         {
           "type": "quiz",
           "question": {
-            "en": "Money Quiz: If you spend 4 hours daily on apps instead of working at $20/hr, how much 'invisible money' do you lose in a 5-day week?",
-            "es": "Quiz de Dinero: Si pasas 4 horas al día en apps en vez de producir a $20/hr, ¿cuánto 'dinero invisible' pierdes en una semana de 5 días?"
+            "en": "Riddle: I have keys but no locks. I have a space but no room. You can enter but never leave. What am I?",
+            "es": "Adivinanza: Tengo teclas pero no cerraduras. Tengo espacio pero no habitación. Puedes entrar pero nunca salir. ¿Qué soy?"
           },
-          "options": ["$100", "$400", "$200"],
+          "options": {
+            "en": ["A Map", "A Keyboard", "The Mind"],
+            "es": ["Un Mapa", "Un Teclado", "La Mente"]
+          },
           "correct": 1,
-          "reward": 20
-        },
-        {
-          "type": "strategy",
-          "text": {
-            "en": "Power Secret: Rich people buy assets. Poor people buy distractions. Your attention is your primary asset.",
-            "es": "Secreto de Poder: Los ricos compran activos. Los pobres compran distracciones. Tu atención es tu activo principal."
+          "explanation": {
+            "en": "The keyboard is your gateway to the digital world. Use it wisely.",
+            "es": "El teclado es tu puerta al mundo digital. Úsalo con sabiduría."
           }
         }
       ]
@@ -65,55 +77,66 @@
     {
       "id": 3,
       "level": 2,
-      "category": "Mental Mastery",
+      "category": "Economic Intelligence",
       "blocks": [
         {
           "type": "voice",
           "text": {
-            "en": "MISSION 3: The Architecture of Happiness. Logic vs. Emotion.",
-            "es": "MISIÓN 3: La Arquitectura de la Felicidad. Lógica vs. Emoción."
+            "en": "MISSION 3: The Architecture of Wealth. Only the disciplined are free.",
+            "es": "MISIÓN 3: La Arquitectura de la Riqueza. Solo los disciplinados son libres."
           },
-          "color": "#b45309"
+          "color": "#7c3aed"
         },
         {
           "type": "quiz",
           "question": {
-            "en": "Riddle: I am always in front of you but you cannot see me. I hold your potential. What am I?",
-            "es": "Adivinanza: Siempre estoy frente a ti pero no me puedes ver. Guardo tu potencial. ¿Qué soy?"
+            "en": "Strategic Math: (25 x 4) / 2 + 50?",
+            "es": "Matemática Estratégica: (25 x 4) / 2 + 50?"
           },
-          "options": { "en": ["The Past", "The Future", "The Phone"], "es": ["El Pasado", "El Futuro", "El Teléfono"] },
+          "options": ["75", "100", "125"],
           "correct": 1,
-          "reward": 30
+          "explanation": {
+            "en": "100 / 2 = 50. 50 + 50 = 100. Logic over impulse.",
+            "es": "100 / 2 = 50. 50 + 50 = 100. Lógica sobre impulso."
+          }
         },
         {
           "type": "breathing",
-          "text": { "en": "T-VID Level 2: Box Breathing (5-5-5-5). Resetting the nervous system.", "es": "T-VID Nivel 2: Respiración Cuadrada (5-5-5-5). Reseteando el sistema nervioso." },
-          "duration": 5
+          "text": {
+            "en": "T-VID 2: Box Breathing. Hold the power within.",
+            "es": "T-VID 2: Respiración de Caja. Mantén el poder dentro."
+          },
+          "duration": 6,
+          "color": "#1e40af"
         }
       ]
     },
     {
       "id": 4,
       "level": 2,
-      "category": "The Alchemist",
+      "category": "Social Astuteness",
       "blocks": [
         {
-          "type": "voice",
-          "text": { "en": "MISSION 4: Converting Time into Power.", "es": "MISIÓN 4: Convirtiendo Tiempo en Poder." },
-          "color": "#7c3aed"
+          "type": "strategy",
+          "text": {
+            "en": "Advanced Strategy: Never outshine the master. Let others feel smart while you win.",
+            "es": "Estrategia Avanzada: Nunca opaques al maestro. Deja que otros se sientan listos mientras tú ganas."
+          }
         },
         {
           "type": "quiz",
-          "question": { "en": "Math Mastery: (12 x 3) + 4?", "es": "Maestría Matemática: (12 x 3) + 4?" },
-          "options": ["36", "40", "44"],
+          "question": {
+            "en": "Social Quiz: Someone crosses their arms while talking to you. This usually indicates:",
+            "es": "Quiz Social: Alguien cruza los brazos mientras te habla. Esto suele indicar:"
+          },
+          "options": {
+            "en": ["Comfort", "Defensiveness", "Agreement"],
+            "es": ["Comodidad", "Defensiva", "Acuerdo"]
+          },
           "correct": 1,
-          "reward": 25
-        },
-        {
-          "type": "story",
-          "text": {
-            "en": "Teaching: The lion does not hunt flies. The flies are the notifications. The gazelle is your dream. Focus on the gazelle.",
-            "es": "Enseñanza: El león no caza moscas. Las moscas son las notificaciones. La gacela es tu sueño. Enfócate en la gacela."
+          "explanation": {
+            "en": "Body language reveals the subconscious. Watch the torso.",
+            "es": "El lenguaje corporal revela el subconsciente. Observa el torso."
           }
         }
       ]
@@ -121,63 +144,68 @@
     {
       "id": 5,
       "level": 3,
-      "category": "Quantum Biology",
+      "category": "Quantum Biology & Power",
       "blocks": [
         {
           "type": "voice",
           "text": {
-            "en": "MISSION 5: Neuroplasticity. Wiring the brain for success.",
-            "es": "MISIÓN 5: Neuroplasticidad. Cableando el cerebro para el éxito."
+            "en": "MISSION 5: Quantum Supremacy. You define the reality you observe.",
+            "es": "MISIÓN 5: Supremacía Cuántica. Tú defines la realidad que observas."
           },
-          "color": "#991b1b"
+          "color": "#4c1d95"
         },
         {
           "type": "strategy",
           "text": {
-            "en": "Science: Every time you resist a notification, your Prefrontal Cortex grows stronger. You are literally evolving.",
-            "es": "Ciencia: Cada vez que resistes una notificación, tu Corteza Prefrontal se fortalece. Estás evolucionando literalmente."
+            "en": "Scientific Power: Neuroplasticity means your brain changes with every choice. Choosing the phone over work literally rewires you for failure.",
+            "es": "Poder Científico: La neuroplasticidad significa que tu cerebro cambia con cada elección. Elegir el móvil sobre el trabajo te reprograma para el fracaso."
           }
         },
         {
           "type": "quiz",
           "question": {
-            "en": "Quantum Riddle: If energy equals mass times the speed of light squared ($E=mc^2$), and your Focus is Energy, what happens when you reduce your 'Mental Mass' (clutter)?",
-            "es": "Acertijo Cuántico: Si la energía es igual a la masa por la velocidad de la luz al cuadrado ($E=mc^2$), y tu Enfoque es Energía, ¿qué pasa cuando reduces tu 'Masa Mental' (caos)?"
+            "en": "Quantum Math: If a particle can be in two states until observed, and your Success is the particle, what is the 'Observer'?",
+            "es": "Matemática Cuántica: Si una partícula está en dos estados hasta ser observada, y tu éxito es la partícula, ¿qué es el 'Observador'?"
           },
-          "options": { "en": ["Energy increases", "Mass increases", "Nothing"], "es": ["La energía aumenta", "La masa aumenta", "Nada"] },
-          "correct": 0,
-          "reward": 50
+          "options": {
+            "en": ["The Universe", "Your Focus", "Time"],
+            "es": ["El Universo", "Tu Enfoque", "El Tiempo"]
+          },
+          "correct": 1,
+          "explanation": {
+            "en": "Where attention goes, energy flows and reality solidifies.",
+            "es": "Donde va la atención, la energía fluye y la realidad se solidifica."
+          }
         }
       ]
     },
     {
       "id": 6,
       "level": 3,
-      "category": "God Mode",
+      "category": "High Stakes Execution",
       "blocks": [
         {
-          "type": "voice",
-          "text": { "en": "MISSION 6: The Super-User. Dominating the 3D Reality.", "es": "MISIÓN 6: El Super-Usuario. Dominando la Realidad 3D." },
-          "color": "#000000"
+          "type": "story",
+          "text": {
+            "en": "The Science of Wealth: Compound interest is the 8th wonder. If you master your focus, your brain compounds intelligence like a bank.",
+            "es": "La Ciencia de la Riqueza: El interés compuesto es la 8va maravilla. Si dominas tu enfoque, tu cerebro acumula inteligencia como un banco."
+          }
         },
         {
           "type": "breathing",
-          "text": { "en": "Advanced T-VID: 10s Inhale, 10s Hold, 10s Exhale. Pure control.", "es": "T-VID Avanzado: 10s Inhala, 10s Mantén, 10s Exhala. Control puro." },
-          "duration": 10
-        },
-        {
-          "type": "quiz",
-          "question": { "en": "Final Logic: Prime numbers between 1 and 10?", "es": "Lógica Final: ¿Números primos entre 1 y 10?" },
-          "options": ["1, 3, 5, 7", "2, 3, 5, 7", "2, 4, 6, 8"],
-          "correct": 1,
-          "reward": 100
+          "text": {
+            "en": "T-VID 3: High Tension Release. 10s Inhale, 10s Hold, 10s Exhale.",
+            "es": "T-VID 3: Liberación de Alta Tensión. 10s Inhala, 10s Mantén, 10s Exhala."
+          },
+          "duration": 10,
+          "color": "#000000"
         },
         {
           "type": "reward",
-          "points": 100,
+          "points": 50,
           "text": {
-            "en": "ULTIMATE POWER: You have mastered the dopamine loop. Go create a kingdom.",
-            "es": "PODER SUPREMO: Has dominado el ciclo de la dopamina. Ve a crear un reino."
+            "en": "GENIUS LEVEL REACHED: Your Prefrontal Cortex is now in command.",
+            "es": "NIVEL DE GENIO ALCANZADO: Tu Corteza Prefrontal ahora tiene el mando."
           }
         }
       ]
