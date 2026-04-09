@@ -3,158 +3,210 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>KaMiZen - Al Cielo</title>
+    <title>AL CIELO | Inmersive Coach</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 
     <style>
-        /* Reset y Base */
+        /* Reset & Base */
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
         
-        body {
-            background: #020617;
+        body, html {
+            height: 100%;
+            background: #000;
             color: white;
+            overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            overflow: hidden;
-            transition: background 1.5s ease; /* Para el cambio de fondo por bloque */
         }
 
+        /* CAPA INMERSIVA (Ken Burns Effect) */
+        #bg-layer {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 1;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 2s ease-in-out;
+            transform: scale(1.1); /* Inicio del zoom */
+        }
+
+        .slide.active {
+            opacity: 0.6; /* Opacidad para que el texto sea legible */
+            animation: kenburns 15s infinite alternate ease-in-out;
+        }
+
+        @keyframes kenburns {
+            from { transform: scale(1); }
+            to { transform: scale(1.2); }
+        }
+
+        /* Overlay para legibilidad */
+        #overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.8) 100%);
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        /* App Container */
         #app {
-            width: 95%;
-            max-width: 420px;
-            background: rgba(17, 24, 39, 0.95);
-            border-radius: 30px;
-            padding: 30px;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.8);
+            width: 90%;
+            max-width: 450px;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(15px);
+            border-radius: 35px;
+            padding: 40px 30px;
+            box-shadow: 0 0 60px rgba(0,0,0,0.9);
             text-align: center;
             position: relative;
-            backdrop-filter: blur(10px);
+            z-index: 3;
             border: 1px solid rgba(255, 255, 255, 0.1);
-            z-index: 2;
         }
 
-        /* Cabecera y Status */
+        /* Cabecera */
         #logo {
-            font-size: 32px;
+            font-size: 28px;
             font-weight: 600;
+            letter-spacing: 4px;
             background: linear-gradient(90deg, #60a5fa, #a78bfa);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 20px;
+            margin-bottom: 5px;
+        }
+
+        #brand-sub {
+            font-size: 10px;
+            letter-spacing: 2px;
+            color: #94a3b8;
+            margin-bottom: 25px;
+            text-transform: uppercase;
         }
 
         #lang-btn {
             position: absolute;
             top: 25px;
             right: 25px;
-            padding: 6px 14px;
-            border-radius: 10px;
-            border: 1px solid #60a5fa;
             background: transparent;
+            border: 1px solid rgba(96, 165, 250, 0.5);
             color: #60a5fa;
+            padding: 5px 12px;
+            border-radius: 8px;
+            font-size: 11px;
             cursor: pointer;
             font-weight: 600;
-            font-size: 12px;
-            transition: 0.3s;
         }
 
-        #lang-btn:hover { background: rgba(96, 165, 250, 0.1); }
-
+        /* Mental Status */
         #mental-panel {
-            background: rgba(2, 6, 23, 0.6);
-            padding: 15px;
-            border-radius: 15px;
-            margin-bottom: 25px;
             display: flex;
             justify-content: space-between;
-            font-size: 14px;
+            background: rgba(2, 6, 23, 0.5);
+            padding: 12px 20px;
+            border-radius: 15px;
+            font-size: 13px;
+            margin-bottom: 30px;
             border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        /* Contenido Dinámico */
+        /* Bloque Dinámico */
         #block {
-            font-size: 20px;
-            line-height: 1.5;
-            min-height: 240px;
+            min-height: 280px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
         }
 
-        .fade-in { animation: fadeIn 0.6s forwards; }
+        .fade-in { animation: fadeIn 1s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Círculo de Respiración T-VID */
+        /* Respiración T-VID */
         .breath-circle {
-            width: 130px;
-            height: 130px;
+            width: 140px;
+            height: 140px;
             border-radius: 50%;
             background: radial-gradient(circle, #60a5fa, #2563eb);
-            margin: 25px auto;
-            transition: transform 4s ease-in-out; /* Controlado por JS */
-            box-shadow: 0 0 40px rgba(37, 99, 235, 0.6);
-            border: 4px solid rgba(255, 255, 255, 0.2);
+            margin: 20px auto;
+            transition: transform 4s ease-in-out;
+            box-shadow: 0 0 50px rgba(37, 99, 235, 0.5);
+            border: 5px solid rgba(255, 255, 255, 0.1);
         }
 
-        /* Botones y Grid de Quiz */
-        .options-grid {
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-            gap: 10px;
-            margin-top: 15px;
-        }
-
+        /* Botones Profesionales */
         button {
-            padding: 16px;
+            padding: 18px;
+            width: 100%;
+            border-radius: 18px;
             border: none;
-            border-radius: 15px;
+            font-size: 16px;
+            font-weight: 600;
             cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 10px;
+        }
+
+        #start-btn {
             background: #2563eb;
             color: white;
-            width: 100%;
-            font-weight: 600;
-            font-size: 16px;
-            transition: 0.3s;
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);
         }
 
-        button:hover { 
-            transform: scale(1.02); 
-            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4); 
+        #next-btn {
+            background: #6366f1;
+            color: white;
+            display: none;
         }
 
-        .secondary { 
-            background: #374151; 
+        .secondary-controls {
+            display: flex;
+            gap: 12px;
             margin-top: 10px;
         }
 
-        .nav-controls {
-            display: flex;
-            gap: 10px;
+        .btn-sec {
+            background: #334155;
+            color: #f1f5f9;
+            padding: 12px;
+            font-size: 14px;
+        }
+
+        button:hover { transform: translateY(-3px); filter: brightness(1.2); }
+        button:active { transform: translateY(0); }
+
+        .options-grid {
             width: 100%;
-            margin-top: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
         }
 
-        /* Capa de fondo para profundidad */
-        #bg-layer {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.4) 100%);
-            z-index: 1;
-            pointer-events: none;
+        /* Estilo para las historias y estrategias */
+        .coach-text {
+            font-size: 18px;
+            line-height: 1.6;
+            color: #e2e8f0;
         }
 
-        .explanation-text {
-            font-size: 15px;
+        .explanation {
+            font-size: 14px;
             color: #94a3b8;
             margin-top: 15px;
-            font-style: italic;
+            padding: 15px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
         }
     </style>
 </head>
@@ -162,11 +214,13 @@
 <body>
 
     <div id="bg-layer"></div>
+    <div id="overlay"></div>
 
     <div id="app">
-        <button id="lang-btn">ES</button>
+        <button id="lang-btn">EN</button>
         
-        <div id="logo">KaMiZen</div>
+        <div id="logo">AL CIELO</div>
+        <div id="brand-sub">By May Roga LLC</div>
 
         <div id="mental-panel">
             <div id="streak">🔥 Streak: 0</div>
@@ -174,19 +228,20 @@
         </div>
 
         <div id="block">
-            <div class="fade-in">Ready to master your reality?</div>
+            <div class="fade-in coach-text">
+                Prepare to break the digital chains.
+            </div>
         </div>
 
         <button id="start-btn">Start Session</button>
-        
-        <button id="next-btn" style="display:none;">Next</button>
+        <button id="next-btn">Next Step</button>
 
-        <div class="nav-controls">
-            <button id="back-btn" class="secondary">Back</button>
-            <button id="forward-btn" class="secondary">Forward</button>
+        <div class="secondary-controls">
+            <button id="back-btn" class="btn-sec">Back</button>
+            <button id="forward-btn" class="btn-sec">Forward</button>
         </div>
 
-        <button id="restart-btn" class="secondary" style="display:none;">Restart</button>
+        <button id="restart-btn" class="btn-sec" style="display:none; margin-top: 15px;">Restart Journey</button>
     </div>
 
     <script src="/static/scripts.js"></script>
