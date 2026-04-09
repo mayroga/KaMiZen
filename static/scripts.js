@@ -1,4 +1,4 @@
-/* =================== KAMIZEN ENGINE V4 =================== */
+/* =================== KA MIZEN GLOBAL STATE =================== */
 
 const startBtn = document.getElementById("start-btn");
 const nextBtn = document.getElementById("next-btn");
@@ -9,244 +9,239 @@ const block = document.getElementById("block");
 
 let bloques = [];
 let current = 0;
-let currentSessionIndex = 0;
+let isBreathing = false;
 
-let lang = localStorage.getItem("kamizenLang") || "en";
+let currentLang = localStorage.getItem("kamizenLang") || "en";
 
-/* =================== USER DATA =================== */
+/* =================== TRANSLATIONS =================== */
 
-let userData = JSON.parse(localStorage.getItem("kamizenData")) || {
-    streak: 0,
-    nivel: 1,
-    disciplina: 40,
-    claridad: 50,
-    calma: 30
-};
-
-let completedSessions = JSON.parse(localStorage.getItem("completedSessions")) || [];
-
-/* =================== UI TEXT =================== */
-
-const t = {
+const translations = {
     en: {
         start: "Start Session",
         next: "Next",
         back: "Back",
         forward: "Forward",
-        restart: "Restart",
-        warning: "Skipping breaks your discipline."
+        restart: "Restart"
     },
     es: {
         start: "Iniciar sesión",
         next: "Siguiente",
         back: "Atrás",
         forward: "Adelantar",
-        restart: "Reiniciar",
-        warning: "Saltar pasos rompe tu disciplina."
+        restart: "Reiniciar"
     }
 };
 
-/* =================== BACKGROUND SYSTEM =================== */
+/* =================== USER DATA =================== */
 
-let bgEnabled = true;
-let bgIndex = 0;
-let bgSlides = [];
+let userData = JSON.parse(localStorage.getItem("kamizenData")) || {
+    streak: 0,
+    lastDay: null,
+    level: 1,
+    discipline: 40,
+    clarity: 50,
+    calm: 30
+};
 
-const keywords = [
-"forest","mountain","ocean","river","desert","waterfall","canyon","lake",
-"valley","sunset","cliffs","snow","autumn","tropical","island","field",
-"mist","aurora","jungle","beach","sky","clouds","zen","glacier","cave"
-];
-
-function initBackground(){
-    const container = document.getElementById("bg-gallery");
-    if(!container) return;
-
-    container.innerHTML = "";
-
-    keywords.forEach((w,i)=>{
-        const div = document.createElement("div");
-        div.className = "bg-slide" + (i===0 ? " active" : "");
-        div.style.backgroundImage =
-        `url('https://source.unsplash.com/1920x1080/?${w}')`;
-        container.appendChild(div);
-    });
-
-    bgSlides = document.querySelectorAll(".bg-slide");
-
-    setInterval(()=>{
-        if(!bgEnabled) return;
-
-        bgSlides[bgIndex].classList.remove("active");
-        bgIndex = (bgIndex + 1) % bgSlides.length;
-        bgSlides[bgIndex].classList.add("active");
-
-    },7000);
-}
-
-function toggleBG(){
-    bgEnabled = !bgEnabled;
-}
-
-/* =================== LEVEL SYSTEM =================== */
-
-function levelName(n){
-    return n===1?"Easy":n===2?"Medium":"Hard";
-}
-
-function multiplier(){
-    return userData.nivel===1?1:userData.nivel===2?1.5:2.2;
-}
+let completedSessions = JSON.parse(localStorage.getItem("completedSessions")) || [];
 
 /* =================== PANEL =================== */
 
-function updatePanel(){
-    document.getElementById("streak").innerText =
-    `🔥 Streak: ${userData.streak}`;
+function updatePanel() {
+    document.getElementById("streak").innerHTML = `🔥 Streak: ${userData.streak} days`;
+    document.getElementById("level").innerHTML = `KaMiZen Level: ${userData.level}`;
 
-    document.getElementById("level").innerText =
-    `Level: ${levelName(userData.nivel)}`;
+    document.getElementById("disciplina-bar").style.width = (userData.discipline || 0) + "%";
+    document.getElementById("claridad-bar").style.width = (userData.clarity || 0) + "%";
+    document.getElementById("calma-bar").style.width = (userData.calm || 0) + "%";
 
-    document.getElementById("disciplina-bar").style.width = userData.disciplina+"%";
-    document.getElementById("claridad-bar").style.width = userData.claridad+"%";
-    document.getElementById("calma-bar").style.width = userData.calma+"%";
-
-    localStorage.setItem("kamizenData",JSON.stringify(userData));
+    localStorage.setItem("kamizenData", JSON.stringify(userData));
 }
 
-/* =================== VOICE =================== */
+/* =================== LANGUAGE UI =================== */
 
-function speak(text){
-    return new Promise(res=>{
+function updateLanguageUI() {
+    startBtn.innerText = translations[currentLang].start;
+    nextBtn.innerText = translations[currentLang].next;
+    backBtn.innerText = translations[currentLang].back;
+    forwardBtn.innerText = translations[currentLang].forward;
+    restartBtn.innerText = translations[currentLang].restart;
+}
+
+/* =================== VOICE ENGINE =================== */
+
+function playVoice(text) {
+    return new Promise(resolve => {
         speechSynthesis.cancel();
+
         const msg = new SpeechSynthesisUtterance(text);
-        msg.lang = lang==="es"?"es-ES":"en-US";
-        msg.rate = 0.9;
-        msg.onend = res;
+
+        msg.lang = currentLang === "en" ? "en-US" : "es-ES";
+        msg.rate = 0.85;
+
+        msg.onend = resolve;
         speechSynthesis.speak(msg);
     });
 }
 
-/* =================== SHOW BLOCK =================== */
+/* =================== PENALTY SYSTEM =================== */
 
-async function showBlock(b){
+function applyPenalty() {
+    userData.calm = Math.max(0, userData.calm * 0.8);
+    userData.discipline = Math.max(0, userData.discipline * 0.8);
+    userData.clarity = Math.max(0, userData.clarity * 0.9);
 
-    block.innerHTML="";
-    nextBtn.style.display="none";
-    document.body.style.background="#000";
+    updatePanel();
+}
 
-    const type = b.type;
+/* =================== BLOCK RENDER =================== */
 
-    /* TEXT */
-    if(["voice","tvid","strategy","story","visualization","reward","closing"].includes(type)){
+async function showBlock(b) {
+
+    block.innerHTML = "";
+    nextBtn.style.display = "none";
+
+    document.body.style.background = b.color || "#070b14";
+
+    /* FIX: VOICE / STORY / STRATEGY */
+    if (["voice", "tvid", "strategy", "story", "visualization", "reward", "closing"].includes(b.type)) {
+
         const text = b.text || "";
-        block.innerHTML=`<div>${text}</div>`;
-        await speak(text);
 
-        if(type==="reward"){
-            userData.disciplina += (b.points||10)*multiplier();
+        block.innerHTML = `<div style="text-align:center;font-size:1.4em">${text}</div>`;
+
+        await playVoice(text);
+
+        if (b.type === "reward") {
+            userData.discipline += b.points || 10;
             updatePanel();
         }
 
-        setTimeout(()=>nextBtn.style.display="block",800);
+        setTimeout(() => {
+            nextBtn.style.display = "inline-block";
+        }, 800);
+
+        return;
     }
 
     /* BREATHING */
-    if(type==="breathing"){
-        block.innerHTML=`<div>${b.text}</div>`;
-        await speak(b.text);
-        setTimeout(()=>nextBtn.style.display="block",800);
+    if (b.type === "breathing") {
+
+        block.innerHTML = `<div style="font-size:1.6em;text-align:center">${b.text}</div>`;
+
+        await playVoice(b.text);
+
+        setTimeout(() => {
+            nextBtn.style.display = "inline-block";
+        }, (b.duration || 6) * 1000);
+
+        return;
     }
 
-    /* QUIZ */
-    if(["quiz","mental_game","decision"].includes(type)){
-        const q = b.question||"";
-        block.innerHTML=`<h3>${q}</h3>`;
-        await speak(q);
+    /* QUIZ / GAME */
+    if (["quiz", "mental_game", "decision"].includes(b.type)) {
 
-        const area = document.createElement("div");
+        const question = b.question;
 
-        (b.options||[]).forEach((o,i)=>{
-            const btn=document.createElement("button");
-            btn.innerText=o;
+        block.innerHTML = `<h3>${question}</h3>`;
 
-            btn.onclick=async()=>{
-                const ok = i===b.correct;
-                const msg = ok?"Correct":"Incorrect";
+        await playVoice(question);
 
-                await speak(msg);
+        b.options.forEach((op, i) => {
 
-                if(ok){
-                    userData.disciplina += (b.reward||5)*multiplier();
+            const btn = document.createElement("button");
+            btn.innerText = op;
+
+            btn.onclick = async () => {
+
+                const correct = i === b.correct;
+
+                const msg = correct ? "Correct" : "Wrong";
+
+                await playVoice(msg);
+
+                if (correct) {
+                    userData.discipline += b.reward || 5;
                     updatePanel();
-                    nextBtn.style.display="block";
+                    nextBtn.style.display = "inline-block";
                 } else {
-                    userData.calma+=2;
+                    userData.calm += 2;
                     updatePanel();
                 }
             };
 
-            area.appendChild(btn);
+            block.appendChild(btn);
         });
 
-        block.appendChild(area);
+        return;
     }
 
-    /* CLOSING */
-    if(type==="closing"){
-        block.innerHTML=`<h2>${b.text}</h2>`;
-        await speak(b.text);
+    /* CLOSE */
+    if (b.type === "closing") {
 
-        completedSessions.push(currentSessionIndex);
-        localStorage.setItem("completedSessions",JSON.stringify(completedSessions));
+        block.innerHTML = `<div style="font-size:1.6em;text-align:center">${b.text}</div>`;
 
-        restartBtn.style.display="block";
+        await playVoice(b.text);
+
+        restartBtn.style.display = "inline-block";
     }
 }
 
-/* =================== START =================== */
+/* =================== START SESSION =================== */
 
-startBtn.addEventListener("click",async()=>{
+let currentSessionIndex = 0;
 
-initBackground();
+startBtn.addEventListener("click", async () => {
 
-const res = await fetch("/session_content");
-const data = await res.json();
+    startBtn.style.display = "none";
 
-const sessions = data.sessions||[];
+    const res = await fetch("/session_content");
+    const data = await res.json();
 
-let available = sessions.map((_,i)=>i)
-.filter(i=>!completedSessions.includes(i));
+    const sessions = data.sessions;
 
-if(available.length===0){
-completedSessions=[];
-available=sessions.map((_,i)=>i);
-}
+    currentSessionIndex = Math.floor(Math.random() * sessions.length);
 
-currentSessionIndex = available[Math.floor(Math.random()*available.length)];
-bloques = sessions[currentSessionIndex].blocks;
+    bloques = sessions[currentSessionIndex].blocks;
 
-current=0;
-showBlock(bloques[0]);
+    current = 0;
 
-startBtn.style.display="none";
+    showBlock(bloques[0]);
 });
 
-/* =================== NAV =================== */
+/* =================== NAVIGATION =================== */
 
-nextBtn.onclick=()=>{current++;showBlock(bloques[current]);};
-
-backBtn.onclick=()=>{
-if(current>0){current--;showBlock(bloques[current]);}
+nextBtn.onclick = () => {
+    current++;
+    if (current < bloques.length) showBlock(bloques[current]);
 };
 
-forwardBtn.onclick=()=>{
-if(current<bloques.length-1){
-current++;showBlock(bloques[current]);
-}
+backBtn.onclick = () => {
+    if (current > 0) {
+        applyPenalty();
+        current--;
+        showBlock(bloques[current]);
+    }
 };
 
-restartBtn.onclick=()=>location.reload();
+forwardBtn.onclick = () => {
+    if (current < bloques.length - 1) {
+        applyPenalty();
+        current++;
+        showBlock(bloques[current]);
+    }
+};
+
+restartBtn.onclick = () => location.reload();
+
+/* =================== LANGUAGE SWITCH =================== */
+
+document.getElementById("lang-btn").addEventListener("click", () => {
+    currentLang = currentLang === "en" ? "es" : "en";
+    localStorage.setItem("kamizenLang", currentLang);
+    updateLanguageUI();
+});
 
 /* INIT */
 updatePanel();
+updateLanguageUI();
