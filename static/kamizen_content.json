@@ -3,179 +3,170 @@
     {
       "id": 1,
       "level": 1,
-      "category": "Mindset & Power",
+      "category": "Mindset & Power Foundation",
       "blocks": [
         {
           "type": "voice",
+          "title": { "en": "The Awakening", "es": "El Despertar" },
           "text": {
-            "en": "MISSION 1: The Dopamine Trap. Reclaim your focus to reclaim your wealth.",
-            "es": "MISIÓN 1: La Trampa de la Dopamina. Recupera tu enfoque para recuperar tu riqueza."
-          },
-          "color": "#1e3a8a"
-        },
-        {
-          "type": "story",
-          "text": {
-            "en": "Teaching: A king spent all day looking at a mirror instead of his kingdom. The mirror broke, and he realized he had no kingdom left. The mirror is your phone.",
-            "es": "Enseñanza: Un rey pasaba el día mirando un espejo en vez de su reino. El espejo se rompió y notó que ya no tenía reino. El espejo es tu teléfono."
+            "en": "MISSION 1: The Dopamine Trap. Reclaim your focus to reclaim your wealth. Every notification is a tax on your future self.",
+            "es": "MISIÓN 1: La Trampa de la Dopamina. Recupera tu enfoque para recuperar tu riqueza. Cada notificación es un impuesto a tu yo futuro."
           }
         },
         {
-          "type": "quiz",
-          "question": {
-            "en": "Level 1 Math: If you invest $100 and it grows 10% each month, how much do you have after 2 months (simple)?",
-            "es": "Matemática Nivel 1: Si inviertes $100 y crece 10% cada mes, ¿cuánto tienes tras 2 meses (simple)?"
-          },
-          "options": ["$110", "$120", "$121"],
-          "correct": 1,
-          "explanation": {
-            "en": "$10 profit per month. Focus on steady growth.",
-            "es": "$10 de ganancia por mes. Enfócate en el crecimiento constante."
+          "type": "story",
+          "title": { "en": "The Broken Mirror", "es": "El Espejo Roto" },
+          "text": {
+            "en": "A king spent all day looking at a mirror instead of his kingdom. He admired his reflection while his walls crumbled. When the mirror broke, he realized he had no kingdom left. The mirror is your phone; the kingdom is your potential.",
+            "es": "Un rey pasaba el día mirando un espejo en vez de su reino. Admiraba su reflejo mientras sus muros caían. Cuando el espejo se rompió, notó que ya no tenía reino. El espejo es tu teléfono; el reino es tu potencial."
           }
         },
         {
           "type": "breathing",
+          "title": { "en": "T-VID Phase 1: Cortisol Flush", "es": "T-VID Fase 1: Limpieza de Cortisol" },
+          "goal": { "en": "Lower heart rate and eliminate scroll-anxiety.", "es": "Bajar el ritmo cardíaco y eliminar la ansiedad del scroll." },
+          "text": { "en": "Inhale peace, exhale digital noise.", "es": "Inhala paz, exhala ruido digital." },
+          "duration": 120
+        },
+        {
+          "type": "story",
+          "title": { "en": "The Silent Wealth", "es": "La Riqueza Silenciosa" },
           "text": {
-            "en": "T-VID 1: Simple Reset. Inhale peace, exhale noise.",
-            "es": "T-VID 1: Reset Simple. Inhala paz, exhala ruido."
-          },
-          "duration": 4,
-          "color": "#065f46"
+            "en": "Wealth isn't just money; it's the energy you don't waste. A man who stops to argue with every barking dog never reaches his destination. Silence the noise.",
+            "es": "La riqueza no es solo dinero; es la energía que no desperdicias. Un hombre que se detiene a discutir con cada perro que ladra nunca llega a su destino."
+          }
+        },
+        {
+          "type": "quiz",
+          "question": { "en": "If you save 2 hours a day from your phone, how many days do you gain in a year?", "es": "Si ahorras 2 horas al día del móvil, ¿cuántos días ganas en un año?" },
+          "options": ["15 days", "30 days", "45 days"],
+          "correct": 1,
+          "explanation": { "en": "730 hours / 24 = 30.4 days. A whole month of life recovered.", "es": "730 horas / 24 = 30.4 días. Un mes entero de vida recuperado." }
         }
       ]
     },
     {
       "id": 2,
       "level": 1,
-      "category": "Basic Social Strategy",
+      "category": "Emotional Stability",
       "blocks": [
         {
-          "type": "strategy",
-          "text": {
-            "en": "Social Power: To be interesting, be interested. Listen 80%, talk 20%.",
-            "es": "Poder Social: Para ser interesante, muestra interés. Escucha el 80%, habla el 20%."
-          }
+          "type": "voice",
+          "title": { "en": "The Unshakable Pillar", "es": "El Pilar Inquebrantable" },
+          "text": { "en": "Happiness is a choice made in the present. If you depend on external validation, you are a slave.", "es": "La felicidad es una elección del presente. Si dependes de la validación externa, eres un esclavo." }
+        },
+        {
+          "type": "story",
+          "title": { "en": "The Master of Waves", "es": "El Maestro de las Olas" },
+          "text": { "en": "A monk stood in the ocean. The waves hit him, but he did not move. He didn't fight the water; he became the mountain beneath it.", "es": "Un monje estaba en el océano. Las olas lo golpeaban, pero no se movía. No luchaba contra el agua; era la montaña debajo de ella." },
+          "color": "#0ea5e9"
+        },
+        {
+          "type": "breathing",
+          "title": { "en": "T-VID Phase 2: Joy Activation", "es": "T-VID Fase 2: Activación de Alegría" },
+          "goal": { "en": "Oxigenate the brain to release natural endorphins.", "es": "Oxigenar el cerebro para liberar endorfinas naturales." },
+          "text": { "en": "Smile while you inhale. Feel the energy expanding.", "es": "Sonríe mientras inhalas. Siente la energía expandiéndose." },
+          "duration": 150
         },
         {
           "type": "quiz",
-          "question": {
-            "en": "Riddle: I have keys but no locks. I have a space but no room. You can enter but never leave. What am I?",
-            "es": "Adivinanza: Tengo teclas pero no cerraduras. Tengo espacio pero no habitación. Puedes entrar pero nunca salir. ¿Qué soy?"
-          },
-          "options": {
-            "en": ["A Map", "A Keyboard", "The Mind"],
-            "es": ["Un Mapa", "Un Teclado", "La Mente"]
-          },
+          "question": { "en": "Riddle: I can be shared but never bought. I am light but have weight in the heart. What am I?", "es": "Acertijo: Puedo compartirse pero nunca comprarse. Soy ligera pero peso en el corazón. ¿Qué soy?" },
+          "options": { "en": ["Money", "A Smile", "A Phone"], "es": ["Dinero", "Una Sonrisa", "Un Teléfono"] },
           "correct": 1,
-          "explanation": {
-            "en": "The keyboard is your gateway to the digital world. Use it wisely.",
-            "es": "El teclado es tu puerta al mundo digital. Úsalo con sabiduría."
-          }
+          "explanation": { "en": "Joy is the only currency that increases when shared.", "es": "La alegría es la única moneda que aumenta al compartirse." }
         }
       ]
     },
     {
       "id": 3,
       "level": 2,
-      "category": "Economic Intelligence",
+      "category": "Economic Strategy",
       "blocks": [
         {
           "type": "voice",
-          "text": {
-            "en": "MISSION 3: The Architecture of Wealth. Only the disciplined are free.",
-            "es": "MISIÓN 3: La Arquitectura de la Riqueza. Solo los disciplinados son libres."
-          },
-          "color": "#7c3aed"
+          "title": { "en": "Architect of Wealth", "es": "Arquitecto de Riqueza" },
+          "text": { "en": "Money follows focus. If your focus is scattered, your bank account will be empty.", "es": "El dinero sigue al enfoque. Si tu enfoque está disperso, tu cuenta estará vacía." }
         },
         {
-          "type": "quiz",
-          "question": {
-            "en": "Strategic Math: (25 x 4) / 2 + 50?",
-            "es": "Matemática Estratégica: (25 x 4) / 2 + 50?"
-          },
-          "options": ["75", "100", "125"],
-          "correct": 1,
-          "explanation": {
-            "en": "100 / 2 = 50. 50 + 50 = 100. Logic over impulse.",
-            "es": "100 / 2 = 50. 50 + 50 = 100. Lógica sobre impulso."
-          }
+          "type": "strategy",
+          "title": { "en": "The Law of Value", "es": "La Ley del Valor" },
+          "text": { "en": "You don't get paid for your time; you get paid for the value you bring to the hour. Multiply your value, not your hours.", "es": "No se te paga por tu tiempo; se te paga por el valor que aportas a la hora. Multiplica tu valor, no tus horas." }
         },
         {
           "type": "breathing",
-          "text": {
-            "en": "T-VID 2: Box Breathing. Hold the power within.",
-            "es": "T-VID 2: Respiración de Caja. Mantén el poder dentro."
-          },
-          "duration": 6,
-          "color": "#1e40af"
+          "title": { "en": "T-VID: Flow State", "es": "T-VID: Estado de Flujo" },
+          "goal": { "en": "Prepare the mind for high-level decision making.", "es": "Preparar la mente para la toma de decisiones de alto nivel." },
+          "text": { "en": "Box Breathing: 4s In, 4s Hold, 4s Out, 4s Hold.", "es": "Respiración de Caja: 4s In, 4s Mantén, 4s Out, 4s Mantén." },
+          "duration": 180
+        },
+        {
+          "type": "quiz",
+          "question": { "en": "Strategic Math: (50 x 2) + (100 / 4)?", "es": "Matemática Estratégica: (50 x 2) + (100 / 4)?" },
+          "options": ["125", "150", "110"],
+          "correct": 0,
+          "explanation": { "en": "100 + 25 = 125. Speed and accuracy define the elite.", "es": "100 + 25 = 125. La velocidad y precisión definen a la élite." }
         }
       ]
     },
     {
       "id": 4,
       "level": 2,
-      "category": "Social Astuteness",
+      "category": "Social Mastery",
       "blocks": [
         {
           "type": "strategy",
-          "text": {
-            "en": "Advanced Strategy: Never outshine the master. Let others feel smart while you win.",
-            "es": "Estrategia Avanzada: Nunca opaques al maestro. Deja que otros se sientan listos mientras tú ganas."
-          }
+          "title": { "en": "Social Stealth", "es": "Sigilo Social" },
+          "text": { "en": "Never tell people your plans. Show them your results. Privacy is power.", "es": "Nunca digas tus planes. Muestra tus resultados. La privacidad es poder." }
+        },
+        {
+          "type": "story",
+          "title": { "en": "The Two Ears", "es": "Las Dos Orejas" },
+          "text": { "en": "We have two ears and one mouth to listen twice as much as we speak. Information is the ultimate weapon.", "es": "Tenemos dos oídos y una boca para escuchar el doble de lo que hablamos. La información es el arma definitiva." }
+        },
+        {
+          "type": "breathing",
+          "title": { "en": "T-VID: Calm Dominance", "es": "T-VID: Dominio Calmo" },
+          "goal": { "en": "Eliminate social anxiety and reactive talking.", "es": "Eliminar la ansiedad social y el habla reactiva." },
+          "text": { "en": "Exhale longer than you inhale to trigger the vagus nerve.", "es": "Exhala más largo de lo que inhalas para activar el nervio vago." },
+          "duration": 120
         },
         {
           "type": "quiz",
-          "question": {
-            "en": "Social Quiz: Someone crosses their arms while talking to you. This usually indicates:",
-            "es": "Quiz Social: Alguien cruza los brazos mientras te habla. Esto suele indicar:"
-          },
-          "options": {
-            "en": ["Comfort", "Defensiveness", "Agreement"],
-            "es": ["Comodidad", "Defensiva", "Acuerdo"]
-          },
+          "question": { "en": "When a person looks up and to the right, they are usually:", "es": "Cuando una persona mira arriba y a la derecha, suele estar:" },
+          "options": { "en": ["Remembering", "Constructing/Lying", "Angry"], "es": ["Recordando", "Construyendo/Mintiendo", "Enojado"] },
           "correct": 1,
-          "explanation": {
-            "en": "Body language reveals the subconscious. Watch the torso.",
-            "es": "El lenguaje corporal revela el subconsciente. Observa el torso."
-          }
+          "explanation": { "en": "The brain accesses the creative center for visual construction.", "es": "El cerebro accede al centro creativo para la construcción visual." }
         }
       ]
     },
     {
       "id": 5,
       "level": 3,
-      "category": "Quantum Biology & Power",
+      "category": "Quantum Supremacy",
       "blocks": [
         {
           "type": "voice",
-          "text": {
-            "en": "MISSION 5: Quantum Supremacy. You define the reality you observe.",
-            "es": "MISIÓN 5: Supremacía Cuántica. Tú defines la realidad que observas."
-          },
-          "color": "#4c1d95"
+          "title": { "en": "Quantum Observation", "es": "Observación Cuántica" },
+          "text": { "en": "You define reality by where you look. If you look at lack, you create lack. If you look at power, you become it.", "es": "Defines la realidad según dónde miras. Si miras la carencia, creas carencia. Si miras el poder, te conviertes en él." }
         },
         {
           "type": "strategy",
-          "text": {
-            "en": "Scientific Power: Neuroplasticity means your brain changes with every choice. Choosing the phone over work literally rewires you for failure.",
-            "es": "Poder Científico: La neuroplasticidad significa que tu cerebro cambia con cada elección. Elegir el móvil sobre el trabajo te reprograma para el fracaso."
-          }
+          "title": { "en": "Neuroplastic Dominance", "es": "Dominancia Neuroplástica" },
+          "text": { "en": "Science: Your brain is plastic. Every second you stay focused, you are building a biological super-computer.", "es": "Ciencia: Tu cerebro es plástico. Cada segundo de enfoque construye una supercomputadora biológica." }
+        },
+        {
+          "type": "breathing",
+          "title": { "en": "T-VID: Neuro-Regeneration", "es": "T-VID: Neuro-Regeneración" },
+          "goal": { "en": "Maximum oxygenation for cellular repair.", "es": "Máxima oxigenación para reparación celular." },
+          "text": { "en": "Inhale 8s, Hold 8s, Exhale 8s. Master the oxygen, master the mind.", "es": "Inhala 8s, Mantén 8s, Exhala 8s. Domina el oxígeno, domina la mente." },
+          "duration": 180
         },
         {
           "type": "quiz",
-          "question": {
-            "en": "Quantum Math: If a particle can be in two states until observed, and your Success is the particle, what is the 'Observer'?",
-            "es": "Matemática Cuántica: Si una partícula está en dos estados hasta ser observada, y tu éxito es la partícula, ¿qué es el 'Observador'?"
-          },
-          "options": {
-            "en": ["The Universe", "Your Focus", "Time"],
-            "es": ["El Universo", "Tu Enfoque", "El Tiempo"]
-          },
+          "question": { "en": "Quantum Math: If focus is energy (E) and distraction is resistance (R), what is the result of E/R when R approaches zero?", "es": "Matemática Cuántica: Si el enfoque es energía (E) y la distracción es resistencia (R), ¿qué pasa con E/R cuando R se acerca a cero?" },
+          "options": ["Zero", "Infinite Power", "One"],
           "correct": 1,
-          "explanation": {
-            "en": "Where attention goes, energy flows and reality solidifies.",
-            "es": "Donde va la atención, la energía fluye y la realidad se solidifica."
-          }
+          "explanation": { "en": "Zero resistance creates infinite flow. You are now limitless.", "es": "La resistencia cero crea un flujo infinito. Ahora eres ilimitado." }
         }
       ]
     },
@@ -186,29 +177,413 @@
       "blocks": [
         {
           "type": "story",
-          "text": {
-            "en": "The Science of Wealth: Compound interest is the 8th wonder. If you master your focus, your brain compounds intelligence like a bank.",
-            "es": "La Ciencia de la Riqueza: El interés compuesto es la 8va maravilla. Si dominas tu enfoque, tu cerebro acumula inteligencia como un banco."
+          "title": { "en": "The Alchemist", "es": "El Alquimista" },
+          "text": { "en": "He didn't turn lead into gold; he turned chaos into order. Gold was the natural byproduct of his internal discipline.", "es": "No convertía plomo en oro; convertía el caos en orden. El oro era el subproducto de su disciplina interna." }
+        },
+        {
+          "type": "strategy",
+          "title": { "en": "The 1% Rule", "es": "La Regla del 1%" },
+          "text": { "en": "If you improve 1% every day, in a year you are 37 times better. Discipline is compound interest for the soul.", "es": "Si mejoras 1% cada día, en un año eres 37 veces mejor. La disciplina es el interés compuesto del alma." }
+        },
+        {
+          "type": "breathing",
+          "title": { "en": "T-VID: Absolute Stillness", "es": "T-VID: Quietud Absoluta" },
+          "goal": { "en": "Complete nervous system override.", "es": "Control total del sistema nervioso." },
+          "text": { "en": "Very slow inhale, hold, and silence. Be the void.", "es": "Inhalación muy lenta, mantén, y silencio. Sé el vacío." },
+          "duration": 180
+        },
+        {
+          "type": "reward",
+          "points": 100,
+          "text": { "en": "GENIUS LEVEL REACHED. Go and manifest your reality.", "es": "NIVEL DE GENIO ALCANZADO. Ve y manifiesta tu realidad." }
+        },
+      {
+     },
+     { 
+       "id": 7,
+       "level": 1,
+       "category": "Energy & Vitality Architecture",
+       "blocks": [
+         {
+           "type": "voice",
+           "title": { "en": "The Biological Battery", "es": "La Batería Biológica" },
+           "text": {
+           "en": "MISSION 7: Your energy is your primary currency. If you spend it on cheap dopamine, you will be bankrupt when opportunity knocks.",
+           "es": "MISIÓN 7: Tu energía es tu moneda principal. Si la gastas en dopamina barata, estarás en quiebra cuando la oportunidad llame."
+          }
+        },
+        {
+           "type": "story",
+           "title": { "en": "The Two Campfires", "es": "Las Dos Hogueras" },
+           "text": {
+            "en": "One man feeds his fire with dry wood (purpose); it burns steady and warm. Another feeds it with paper (scrolling); it flashes bright but dies in seconds, leaving him in the cold. Feed your fire with wood.",
+            "es": "Un hombre alimenta su fuego con leña (propósito); arde constante. Otro lo alimenta con papel (redes); brilla un segundo y se apaga, dejándolo en el frío. Alimenta tu fuego con leña."
           }
         },
         {
           "type": "breathing",
+          "title": { "en": "T-VID Phase 4: Energy Charging", "es": "T-VID Fase 4: Carga de Energía" },
+          "goal": { "en": "Alkalize the blood and spark mitochondria.", "es": "Alcalinizar la sangre y activar las mitocondrias." },
+          "text": { "en": "Coach: Powerful inhale through the nose, quick exhale. Feel the heat rising in your chest.", "es": "Coach: Inhala fuerte por la nariz, exhala rápido. Siente el calor subiendo por tu pecho." },
+          "duration": 150
+        },
+        {
+          "type": "story",
+          "title": { "en": "The Eagle's Longevity", "es": "La Longevidad del Águila" },
           "text": {
-            "en": "T-VID 3: High Tension Release. 10s Inhale, 10s Hold, 10s Exhale.",
-            "es": "T-VID 3: Liberación de Alta Tensión. 10s Inhala, 10s Mantén, 10s Exhala."
-          },
-          "duration": 10,
-          "color": "#000000"
+            "en": "At 40, an eagle must break its old beak against a rock to grow a new one. Growth requires pain and the shedding of old habits. Break your digital beak today.",
+            "es": "A los 40, el águila debe romper su pico viejo contra una roca para que crezca uno nuevo. Crecer requiere dolor y soltar viejos hábitos. Rompe tu pico digital hoy."
+          }
+        },
+        {
+          "type": "quiz",
+          "question": { "en": "If you drink 500ml of water and increase your focus by 15%, how much faster do you finish a 4-hour task?", "es": "Si bebes 500ml de agua y aumentas tu enfoque un 15%, ¿qué tan rápido terminas una tarea de 4 horas?" },
+          "options": ["24 minutes faster", "36 minutes faster", "50 minutes faster"],
+          "correct": 1,
+          "explanation": { "en": "4h = 240min. 240 / 1.15 = ~204min. You save 36 minutes of your life.", "es": "4h = 240min. 240 / 1.15 = ~204min. Ahorras 36 minutos de tu vida." }
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "level": 1,
+      "category": "Happiness & Emotional Flow",
+      "blocks": [
+        {
+          "type": "voice",
+          "title": { "en": "The Joy Protocol", "es": "El Protocolo de la Alegría" },
+          "text": { "en": "Happiness is not a destination; it is the frequency of your vibration. If you vibrate in fear, you attract fear.", "es": "La felicidad no es un destino; es la frecuencia de tu vibración. Si vibras en miedo, atraes miedo." }
+        },
+        {
+          "type": "story",
+          "title": { "en": "The Empty Cup", "es": "La Taza Vacía" },
+          "text": { "en": "A scholar asked a master for wisdom. The master kept pouring tea into a full cup until it overflowed. 'You are like this cup,' he said. 'Empty your mind of digital trash to receive true light.'", "es": "Un sabio pidió sabiduría a un maestro. El maestro vertió té en una taza llena hasta que desbordó. 'Eres como esta taza', dijo. 'Vacía tu mente de basura digital para recibir luz'." }
+        },
+        {
+          "type": "breathing",
+          "title": { "en": "T-VID: Serotonin Expansion", "es": "T-VID: Expansión de Serotonina" },
+          "goal": { "en": "Activate the parasympathetic system for deep peace.", "es": "Activar el sistema parasimpático para una paz profunda." },
+          "text": { "en": "Soft, circular breathing. No pauses. Just flow like water.", "es": "Respiración suave y circular. Sin pausas. Fluye como el agua." },
+          "duration": 180
+        },
+        {
+          "type": "quiz",
+          "question": { "en": "Riddle: I am always coming but never arrive. I am the place where people park their dreams and die. What am I?", "es": "Acertijo: Siempre vengo pero nunca llego. Soy el lugar donde la gente aparca sus sueños y muere. ¿Qué soy?" },
+          "options": { "en": ["Tomorrow", "The Past", "The Phone"], "es": ["El Mañana", "El Pasado", "El Teléfono"] },
+          "correct": 0,
+          "explanation": { "en": "Tomorrow is the graveyard of initiative. Do it now.", "es": "El mañana es el cementerio de la iniciativa. Hazlo ahora." }
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "level": 2,
+      "category": "Wealth & Assets Intelligence",
+      "blocks": [
+        {
+          "type": "voice",
+          "title": { "en": "The Investor Mindset", "es": "Mente de Inversionista" },
+          "text": { "en": "Poor people work for money. Rich people make money work for them. Your first asset is your attention.", "es": "La gente pobre trabaja por dinero. Los ricos hacen que el dinero trabaje por ellos. Tu primer activo es tu atención." }
+        },
+        {
+          "type": "strategy",
+          "title": { "en": "The Multiplier Effect", "es": "El Efecto Multiplicador" },
+          "text": { "en": "If you buy things you don't need, soon you will sell things you do need. Every dollar is a soldier; don't let your soldiers die in useless apps.", "es": "Si compras cosas que no necesitas, pronto venderás las que sí necesitas. Cada dólar es un soldado; no dejes que mueran en apps inútiles." }
+        },
+        {
+          "type": "breathing",
+          "title": { "en": "T-VID: Executive Focus", "es": "T-VID: Enfoque Ejecutivo" },
+          "goal": { "en": "Prefrontal cortex activation for asset management.", "es": "Activación de la corteza prefrontal para gestión de activos." },
+          "text": { "en": "Inhale 6s, Hold 2s, Exhale 8s. Discipline the lungs, discipline the wallet.", "es": "Inhala 6s, Mantén 2s, Exhala 8s. Disciplina los pulmones, disciplina la billetera." },
+          "duration": 180
+        },
+        {
+          "type": "quiz",
+          "question": { "en": "Math: An asset pays you 5% annually. Inflation is 7%. How much value are you actually gaining or losing?", "es": "Mates: Un activo te paga 5% anual. La inflación es 7%. ¿Cuánto valor estás ganando o perdiendo realmente?" },
+          "options": ["Gaining 2%", "Losing 2%", "Losing 12%"],
+          "correct": 1,
+          "explanation": { "en": "5% - 7% = -2%. If you aren't growing faster than the noise, you are shrinking.", "es": "5% - 7% = -2%. Si no creces más rápido que el ruido, te estás encogiendo." }
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "level": 2,
+      "category": "Social Engineering & Influence",
+      "blocks": [
+        {
+          "type": "strategy",
+          "title": { "en": "The Mirror Technique", "es": "La Técnica del Espejo" },
+          "text": { "en": "Subtly mimic the body language of your counterpart. It builds subconscious trust. But never mimic their weaknesses.", "es": "Imita sutilmente el lenguaje corporal de tu contraparte. Genera confianza subconsciente. Pero nunca imites sus debilidades." }
+        },
+        {
+          "type": "story",
+          "title": { "en": "The Silent Negotiator", "es": "El Negociador Silencioso" },
+          "text": { "en": "The first person to speak after a long silence in a negotiation usually loses. Silence is a vacuum that others feel forced to fill with secrets.", "es": "La primera persona en hablar tras un largo silencio en una negociación suele perder. El silencio es un vacío que otros se ven obligados a llenar con secretos." }
+        },
+        {
+          "type": "breathing",
+          "title": { "en": "T-VID: Cold Blood", "es": "T-VID: Sangre Fría" },
+          "goal": { "en": "Lowering the 'vibe' to remain unreadable and calm.", "es": "Bajar la 'vibra' para ser ilegible y mantener la calma." },
+          "text": { "en": "Deep belly breathing. Inhale for 4, exhale for 8. You are the eye of the storm.", "es": "Respiración abdominal profunda. Inhala 4, exhala 8. Eres el ojo de la tormenta." },
+          "duration": 150
+        },
+        {
+          "type": "quiz",
+          "question": { "en": "Which part of the face is the most difficult to fake in an emotion?", "es": "¿Qué parte de la cara es la más difícil de fingir en una emoción?" },
+          "options": { "en": ["The Mouth", "The Eyes (Crow's feet)", "The Nose"], "es": ["La Boca", "Los Ojos (patas de gallo)", "La Nariz"] },
+          "correct": 1,
+          "explanation": { "en": "The orbicularis oculi muscles only contract in genuine joy.", "es": "Los músculos orbicularis oculi solo se contraen en la alegría genuina." }
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "level": 3,
+      "category": "The God-Mode: Mastery of Time",
+      "blocks": [
+        {
+          "type": "voice",
+          "title": { "en": "Temporal Sovereignty", "es": "Soberanía Temporal" },
+          "text": { "en": "Time is the only thing you can't buy back. To waste it on a screen is a form of slow suicide. Reclaim your life.", "es": "El tiempo es lo único que no puedes recuperar. Gastarlo en una pantalla es una forma de suicidio lento. Recupera tu vida." }
+        },
+        {
+          "type": "strategy",
+          "title": { "en": "The 80/20 Paradox", "es": "La Paradoja 80/20" },
+          "text": { "en": "20% of your habits create 80% of your results. Identify the 20% that makes you a god and delete the rest.", "es": "El 20% de tus hábitos crea el 80% de tus resultados. Identifica el 20% que te hace un dios y borra el resto." }
+        },
+        {
+          "type": "breathing",
+          "title": { "en": "T-VID: Time Dilation", "es": "T-VID: Dilatación Temporal" },
+          "goal": { "en": "Slowing the perception of time through ultra-low breath rate.", "es": "Ralentizar la percepción del tiempo mediante una tasa respiratoria ultra baja." },
+          "text": { "en": "1 breath per minute. 30s In, 30s Out. Reach the state of 'No-Mind'.", "es": "1 respiración por minuto. 30s In, 30s Out. Alcanza el estado de 'No-Mente'." },
+          "duration": 180
+        },
+        {
+          "type": "quiz",
+          "question": { "en": "Scientific Math: If you increase your productivity by 2x, how many 'years' of work do you do in a 40-year career?", "es": "Mates Científicas: Si aumentas tu productividad x2, ¿cuántos 'años' de trabajo haces en una carrera de 40 años?" },
+          "options": ["40 years", "80 years", "120 years"],
+          "correct": 1,
+          "explanation": { "en": "You collapse time. You achieve in 40 years what others do in 80.", "es": "Colapsas el tiempo. Logras en 40 años lo que otros hacen en 80." }
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "level": 3,
+      "category": "High-Frequency Manifestation",
+      "blocks": [
+        {
+          "type": "story",
+          "title": { "en": "The Architect's Dream", "es": "El Sueño del Arquitecto" },
+          "text": { "en": "An architect didn't build a tower with stones; he built it in his mind first. The world just filled in the gaps. Your mind is the blueprint; stop letting social media draw on it.", "es": "Un arquitecto no construyó una torre con piedras; la construyó en su mente primero. El mundo solo llenó los huecos. Tu mente es el plano; deja de dejar que las redes dibujen en él." }
+        },
+        {
+          "type": "strategy",
+          "title": { "en": "The Vibration of Wealth", "es": "La Vibración de la Riqueza" },
+          "text": { "en": "Wealth is attracted to order and repelled by chaos. Clean your digital desk, clean your mind, and the money will find a home in you.", "es": "La riqueza es atraída por el orden y repelida por el caos. Limpia tu escritorio digital, limpia tu mente, y el dinero encontrará un hogar en ti." }
+        },
+        {
+          "type": "breathing",
+          "title": { "en": "T-VID: Pure Potential", "es": "T-VID: Potencial Puro" },
+          "goal": { "en": "Connecting with the quantum field of all possibilities.", "es": "Conectar con el campo cuántico de todas las posibilidades." },
+          "text": { "en": "Inhale the future, exhale the chains of the past. You are the creator.", "es": "Inhala el futuro, exhala las cadenas del pasado. Tú eres el creador." },
+          "duration": 180
         },
         {
           "type": "reward",
-          "points": 50,
+          "points": 200,
+          "text": { "en": "MASTER ARCHITECT STATUS: You have transcended the digital noise. The world is yours to shape.", "es": "ESTADO DE MAESTRO ARQUITECTO: Has trascendido el ruido digital. El mundo es tuyo para darle forma." }
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "level": 1,
+      "category": "Biological Sovereignty",
+      "blocks": [
+        {
+          "type": "voice",
+          "title": { "en": "The Dopamine Fast", "es": "El Ayuno de Dopamina" },
           "text": {
-            "en": "GENIUS LEVEL REACHED: Your Prefrontal Cortex is now in command.",
-            "es": "NIVEL DE GENIO ALCANZADO: Tu Corteza Prefrontal ahora tiene el mando."
+            "en": "MISSION 13: To rule your world, you must first rule your cravings. If you can't sit in silence for 10 minutes, you are not free.",
+            "es": "MISIÓN 13: Para gobernar tu mundo, primero debes gobernar tus antojos. Si no puedes sentarte en silencio 10 minutos, no eres libre."
           }
+        },
+        {
+          "type": "story",
+          "title": { "en": "The Golden Handcuffs", "es": "Las Esposas de Oro" },
+          "text": {
+            "en": "A prisoner was given a cell made of gold and a screen that showed him everything he desired. He forgot he was a prisoner until the screen turned off. Your phone is a golden cell. Wake up.",
+            "es": "A un prisionero le dieron una celda de oro y una pantalla que le mostraba todo lo que deseaba. Olvidó que era prisionero hasta que la pantalla se apagó. Tu móvil es una celda de oro. Despierta."
+          }
+        },
+        {
+          "type": "breathing",
+          "title": { "en": "T-VID Phase 5: Sensory Reset", "es": "T-VID Fase 5: Reset Sensorial" },
+          "goal": { "en": "Desensitize the brain from over-stimulation.", "es": "Desensibilizar el cerebro de la sobreestimulación." },
+          "text": { "en": "Slow inhale through the nose. Hold. Exhale as if through a straw. Slow down the world.", "es": "Inhala lento por la nariz. Mantén. Exhala como si fuera a través de un sorbete. Desacelera el mundo." },
+          "duration": 180
+        },
+        {
+          "type": "quiz",
+          "question": { "en": "Which hormone is released when you check a notification, creating a cycle of addiction?", "es": "¿Qué hormona se libera al revisar una notificación, creando un ciclo de adicción?" },
+          "options": { "en": ["Oxytocin", "Dopamine", "Melatonin"], "es": ["Oxitocina", "Dopamina", "Melatonina"] },
+          "correct": 1,
+          "explanation": { "en": "Dopamine creates the 'search' urge. Breaking the loop is the only way to focus.", "es": "La dopamina crea el impulso de 'búsqueda'. Romper el bucle es la única forma de enfocarse." }
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "level": 1,
+      "category": "Emotional Resilience",
+      "blocks": [
+        {
+          "type": "voice",
+          "title": { "en": "The Shield of Peace", "es": "El Escudo de la Paz" },
+          "text": { "en": "Your internal state should be independent of external chaos. Be the lighthouse, not the ship tossed by the waves.", "es": "Tu estado interno debe ser independiente del caos externo. Sé el faro, no el barco sacudido por las olas." }
+        },
+        {
+          "type": "story",
+          "title": { "en": "The Two Travelers", "es": "Los Dos Viajeros" },
+          "text": { "en": "Two men walked through mud. One cursed the dirt; the other looked at the stars. Both arrived at the same place, but one arrived bitter and the other inspired. Choose your view.", "es": "Dos hombres caminaban por el lodo. Uno maldecía la tierra; el otro miraba las estrellas. Ambos llegaron al mismo lugar, pero uno llegó amargado y el otro inspirado." }
+        },
+        {
+          "type": "breathing",
+          "title": { "en": "T-VID: Gratitude Flow", "es": "T-VID: Flujo de Gratitud" },
+          "goal": { "en": "Rewiring the brain for abundance perception.", "es": "Reprogramar el cerebro para la percepción de abundancia." },
+          "text": { "en": "With every inhale, visualize one thing you are grateful for. Exhale the feeling of lack.", "es": "Con cada inhalación, visualiza algo por lo que estés agradecido. Exhala la sensación de carencia." },
+          "duration": 150
+        },
+        {
+          "type": "quiz",
+          "question": { "en": "What is the fastest way to change your emotional state?", "es": "¿Cuál es la forma más rápida de cambiar tu estado emocional?" },
+          "options": { "en": ["Thinking", "Physical Movement", "Complaining"], "es": ["Pensar", "Movimiento Físico", "Quejarse"] },
+          "correct": 1,
+          "explanation": { "en": "Motion creates emotion. Change your posture, change your life.", "es": "El movimiento crea emoción. Cambia tu postura, cambia tu vida." }
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "level": 2,
+      "category": "Financial Engineering",
+      "blocks": [
+        {
+          "type": "strategy",
+          "title": { "en": "The Seed and the Fruit", "es": "La Semilla y el Fruto" },
+          "text": { "en": "A dollar spent is a seed eaten. A dollar invested is a tree planted. Don't eat your future trees for temporary shadows.", "es": "Un dólar gastado es una semilla comida. Un dólar invertido es un árbol plantado. No te comas tus árboles futuros por sombras temporales." }
+        },
+        {
+          "type": "quiz",
+          "question": { "en": "Financial Math: If you save $10 a day instead of coffee/apps, and invest it at 8% annually, how much do you have after 30 years (approx)?", "es": "Mates: Si ahorras $10 al día en vez de café/apps e inviertes al 8% anual, ¿cuánto tienes tras 30 años (aprox)?" },
+          "options": ["$100,000", "$250,000", "$430,000"],
+          "correct": 2,
+          "explanation": { "en": "Compound interest turns small discipline into a fortune. Over $430k.", "es": "El interés compuesto convierte la pequeña disciplina en fortuna. Más de $430k." }
+        },
+        {
+          "type": "breathing",
+          "title": { "en": "T-VID: Abundance Expansion", "es": "T-VID: Expansión de Abundancia" },
+          "goal": { "en": "Vibrational alignment with financial goals.", "es": "Alineación vibratoria con metas financieras." },
+          "text": { "en": "Inhale the feeling of security. Exhale the fear of bills. You are a magnet for value.", "es": "Inhala la sensación de seguridad. Exhala el miedo a las deudas. Eres un imán de valor." },
+          "duration": 180
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "level": 2,
+      "category": "Cognitive Influence",
+      "blocks": [
+        {
+          "type": "strategy",
+          "title": { "en": "The Power of Framing", "es": "El Poder del Encuadre" },
+          "text": { "en": "He who defines the problem, controls the solution. In any conversation, the one with the most calm 'frames' the reality.", "es": "Quien define el problema, controla la solución. En cualquier charla, el que tiene más calma 'encuadra' la realidad." }
+        },
+        {
+          "type": "story",
+          "title": { "en": "The Sword and the Fan", "es": "La Espada y el Abanico" },
+          "text": { "en": "A samurai attacked a master with a sword. The master simply moved a fan. The samurai fell because he used too much force; the master used none. Win with elegance, not aggression.", "es": "Un samurái atacó a un maestro con una espada. El maestro movió un abanico. El samurái cayó por usar mucha fuerza; el maestro no usó ninguna." }
+        },
+        {
+          "type": "breathing",
+          "title": { "en": "T-VID: Mental Sharpness", "es": "T-VID: Agudeza Mental" },
+          "goal": { "en": "Oxygenating the frontal lobes for strategic thinking.", "es": "Oxigenar los lóbulos frontales para el pensamiento estratégico." },
+          "text": { "en": "Fast, rhythmic breathing. Ignite the fire of the mind.", "es": "Respiración rápida y rítmica. Enciende el fuego de la mente." },
+          "duration": 120
+        },
+        {
+          "type": "quiz",
+          "question": { "en": "What is 'Social Proof' in influence?", "es": "¿Qué es la 'Prueba Social' en la influencia?" },
+          "options": { "en": ["Being nice", "Others doing it", "Having money"], "es": ["Ser amable", "Que otros lo hagan", "Tener dinero"] },
+          "correct": 1,
+          "explanation": { "en": "People look to others to define 'correct' behavior. Lead, don't follow.", "es": "La gente mira a otros para definir lo 'correcto'. Lidera, no sigas." }
+        }
+      ]
+    },
+    {
+      "id": 17,
+      "level": 3,
+      "category": "High-Density Existence",
+      "blocks": [
+        {
+          "type": "voice",
+          "title": { "en": "The 1% Threshold", "es": "El Umbral del 1%" },
+          "text": { "en": "Most people live in the 99%—the zone of reaction. The 1% live in the zone of action. Which one are you choosing right now?", "es": "La mayoría vive en el 99%: la zona de reacción. El 1% vive en la zona de acción. ¿Cuál eliges ahora mismo?" }
+        },
+        {
+          "type": "strategy",
+          "title": { "en": "The Law of Reciprocity", "es": "La Ley de Reciprocidad" },
+          "text": { "en": "Give value first, and the universe (and people) will feel a psychological debt to return it. Generosity is a high-level power move.", "es": "Da valor primero y el universo (y la gente) sentirá la deuda de devolverlo. La generosidad es un movimiento de poder." }
+        },
+        {
+          "type": "breathing",
+          "title": { "en": "T-VID: Cell Regeneration", "es": "T-VID: Regeneración Celular" },
+          "goal": { "en": "Inducing deep autophagy through breath retention.", "es": "Inducir autofagia profunda mediante retención de aire." },
+          "text": { "en": "Inhale deeply. Hold for as long as comfortable. In the silence, your body heals.", "es": "Inhala profundo. Mantén lo que puedas. En el silencio, tu cuerpo sana." },
+          "duration": 180
+        },
+        {
+          "type": "quiz",
+          "question": { "en": "Quantum Riddle: If you observe your own thoughts, who is the one doing the observing?", "es": "Acertijo Cuántico: Si observas tus propios pensamientos, ¿quién es el que está observando?" },
+          "options": { "en": ["The Ego", "The True Self", "The Brain"], "es": ["El Ego", "El Ser Real", "El Cerebro"] },
+          "correct": 1,
+          "explanation": { "en": "You are the consciousness behind the noise. Master the observer, master the world.", "es": "Eres la conciencia tras el ruido. Domina al observador, domina el mundo." }
+        }
+      ]
+    },
+    {
+      "id": 18,
+      "level": 3,
+      "category": "Universal Command",
+      "blocks": [
+        {
+          "type": "story",
+          "title": { "en": "The Sculptor of Reality", "es": "El Escultor de la Realidad" },
+          "text": { "en": "Michelangelo said he didn't carve the David; he just removed the extra marble. Success is removing the distractions until only your greatness remains.", "es": "Miguel Ángel dijo que no talló al David; solo quitó el mármol sobrante. El éxito es quitar distracciones hasta que solo quede tu grandeza." }
+        },
+        {
+          "type": "strategy",
+          "title": { "en": "The Silence of Power", "es": "El Silencio del Poder" },
+          "text": { "en": "A true king doesn't need to shout. His presence is enough. Build your character until your silence is louder than others' screams.", "es": "Un rey real no necesita gritar. Su presencia basta. Construye tu carácter hasta que tu silencio sea más fuerte que los gritos ajenos." }
+        },
+        {
+          "type": "breathing",
+          "title": { "en": "T-VID: Total Union", "es": "T-VID: Unión Total" },
+          "goal": { "en": "Merging intent with physical reality.", "es": "Fusionar la intención con la realidad física." },
+          "text": { "en": "No effort. No technique. Just be. You are the universe experiencing itself.", "es": "Sin esfuerzo. Sin técnica. Solo sé. Eres el universo experimentándose a sí mismo." },
+          "duration": 180
+        },
+        {
+          "type": "reward",
+          "points": 300,
+          "text": { "en": "SUPREME ARCHITECT STATUS: You are now the master of your time and destiny. Go and manifest.", "es": "ESTADO DE ARQUITECTO SUPREMO: Eres el dueño de tu tiempo y destino. Ve y manifiesta." }
         }
       ]
     }
   ]
 }
+
+    
+  
