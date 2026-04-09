@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,73 +9,43 @@
 
 <style>
 
-body{
+*{
+box-sizing:border-box;
 margin:0;
 padding:0;
-font-family:Inter;
+font-family:'Inter',sans-serif;
+}
+
+body{
+background:#0b1020;
 color:white;
 display:flex;
 justify-content:center;
 align-items:center;
 height:100vh;
-overflow:hidden;
-background:black;
 }
-
-/* =================== BACKGROUND =================== */
-
-#bg-gallery{
-position:fixed;
-top:0;
-left:0;
-width:100vw;
-height:100vh;
-z-index:-1;
-overflow:hidden;
-}
-
-.bg-slide{
-position:absolute;
-width:100%;
-height:100%;
-opacity:0;
-transition:opacity 2s ease-in-out;
-background-size:cover;
-background-position:center;
-transform:scale(1.1);
-}
-
-.bg-slide.active{
-opacity:1;
-animation:kenburns 12s infinite alternate;
-}
-
-@keyframes kenburns{
-from{transform:scale(1);}
-to{transform:scale(1.15);}
-}
-
-/* =================== APP =================== */
 
 #app{
 width:95%;
 max-width:420px;
-background:rgba(17,24,39,0.82);
-backdrop-filter:blur(10px);
-border-radius:20px;
+background:#111827;
 padding:20px;
-text-align:center;
-box-shadow:0 20px 50px rgba(0,0,0,0.6);
+border-radius:20px;
 }
 
-/* =================== BUTTONS =================== */
+#block{
+text-align:center;
+font-size:1.4em;
+min-height:120px;
+margin:20px 0;
+}
 
 button{
 width:100%;
 padding:14px;
 margin:6px 0;
 border:none;
-border-radius:12px;
+border-radius:10px;
 background:#2563eb;
 color:white;
 font-size:16px;
@@ -87,13 +56,10 @@ cursor:pointer;
 background:#374151;
 }
 
-/* =================== BARS =================== */
-
 .bar{
 height:8px;
-background:#1e293b;
+background:#222;
 border-radius:10px;
-margin-top:5px;
 }
 
 .bar-fill{
@@ -103,76 +69,40 @@ width:40%;
 border-radius:10px;
 }
 
-/* =================== BLOCK =================== */
-
-#block{
-margin:20px 0;
-font-size:20px;
-min-height:140px;
+#lang-btn{
+background:#9333ea;
 }
 
 </style>
+
 </head>
 
 <body>
 
-<!-- 🌄 BACKGROUND -->
-<div id="bg-gallery"></div>
-
-<!-- APP -->
 <div id="app">
 
-<div style="font-size:28px;font-weight:bold;">KaMiZen</div>
+<h2>KaMiZen</h2>
 
-<select id="langSelect">
-<option value="en">English</option>
-<option value="es">Español</option>
-</select>
+<button id="lang-btn">EN/ES</button>
 
-<div id="mental-panel">
+<div id="streak"></div>
+<div id="level"></div>
 
-<div id="streak">Streak: 0</div>
-<div id="level">Level: 1</div>
+<div>Discipline<div class="bar"><div id="disciplina-bar" class="bar-fill"></div></div></div>
+<div>Clarity<div class="bar"><div id="claridad-bar" class="bar-fill"></div></div></div>
+<div>Calm<div class="bar"><div id="calma-bar" class="bar-fill"></div></div></div>
 
-<div>Disciplina
-<div class="bar"><div id="disciplina-bar" class="bar-fill"></div></div>
-</div>
-
-<div>Claridad
-<div class="bar"><div id="claridad-bar" class="bar-fill"></div></div>
-</div>
-
-<div>Calma
-<div class="bar"><div id="calma-bar" class="bar-fill"></div></div>
-</div>
-
-</div>
-
-<div id="block">Welcome to KaMiZen</div>
+<div id="block">Loading...</div>
 
 <button id="start-btn">Start</button>
 <button id="next-btn" style="display:none;">Next</button>
 <button id="back-btn">Back</button>
 <button id="forward-btn">Forward</button>
-<button id="restart-btn" style="display:none;">Restart</button>
-
-<button onclick="toggleBG()" class="secondary">Toggle Background</button>
-
-<audio id="bgmusic" loop></audio>
+<button id="restart-btn" class="secondary" style="display:none;">Restart</button>
 
 </div>
 
 <script src="/static/scripts.js"></script>
-
-<script>
-document.getElementById("langSelect").value =
-localStorage.getItem("kamizenLang") || "en";
-
-document.getElementById("langSelect").addEventListener("change",(e)=>{
-localStorage.setItem("kamizenLang",e.target.value);
-location.reload();
-});
-</script>
 
 </body>
 </html>
