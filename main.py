@@ -4,7 +4,7 @@ from fastapi.staticfiles import StaticFiles
 import json
 from pathlib import Path
 
-app = FastAPI(title="KaMiZen Engine V3")
+app = FastAPI(title="KaMiZen Engine Professional")
 
 BASE_DIR = Path(__file__).resolve().parent
 STATIC_DIR = BASE_DIR / "static"
@@ -14,23 +14,18 @@ app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
 def cargar_db():
     try:
-        if not DB_PATH.exists():
-            return {"sessions": []}
-
         with open(DB_PATH, "r", encoding="utf-8") as f:
-            data = json.load(f)
-
-        return data
-
+            return json.load(f)
     except Exception:
         return {"sessions": []}
 
 @app.get("/", response_class=HTMLResponse)
 async def home():
     try:
-        return HTMLResponse((STATIC_DIR / "session.html").read_text(encoding="utf-8"))
+        content = (STATIC_DIR / "session.html").read_text(encoding="utf-8")
+        return HTMLResponse(content)
     except:
-        return HTMLResponse("<h1>Error loading app</h1>")
+        return HTMLResponse("<h1>Error: session.html not found in static/</h1>")
 
 @app.get("/session_content")
 async def session_content():
@@ -38,4 +33,4 @@ async def session_content():
 
 @app.get("/health")
 async def health():
-    return {"status": "ok"}
+    return {"status": "active", "engine": "KaMiZen V3"}
