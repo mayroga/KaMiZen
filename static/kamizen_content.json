@@ -5,14 +5,36 @@
       "level": 1,
       "category": "easy_mind",
       "blocks": [
-        { "type": "voice", "text": "Welcome. Today you train calm focus.", "color": "#2563eb" },
-        { "type": "strategy", "text": "Take everything one step at a time.", "color": "#14b8a6" },
-        { "type": "story", "text": "A student improved focus by removing distractions.", "color": "#34d399" },
-        { "type": "quiz", "question": "What improves focus?", "options": ["Distraction", "Discipline", "Noise"], "correct": 1, "explanation": "Discipline builds focus.", "reward": 10, "color": "#facc15" },
-        { "type": "breathing", "text": "Inhale calm.", "duration": 6, "color": "#60a5fa" },
-        { "type": "breathing", "text": "Exhale stress.", "duration": 6, "color": "#60a5fa" },
-        { "type": "reward", "text": "Calm mind activated.", "points": 10, "color": "#10b981" },
-        { "type": "closing", "text": "You are in control of your mind.", "color": "#f87171" }
+        {
+          "type": "voice",
+          "text": "Welcome. Today you train calm focus.\nBienvenido. Hoy entrenas enfoque y calma.",
+          "color": "#2563eb"
+        },
+        {
+          "type": "strategy",
+          "text": "Take one step at a time.\nDa un paso a la vez.",
+          "color": "#14b8a6"
+        },
+        {
+          "type": "quiz",
+          "question": "What improves focus?\n¿Qué mejora el enfoque?",
+          "options": ["Distraction / Distracción", "Discipline / Disciplina", "Noise / Ruido"],
+          "correct": 1,
+          "explanation": "Discipline builds focus.\nLa disciplina construye el enfoque.",
+          "reward": 10,
+          "color": "#facc15"
+        },
+        {
+          "type": "breathing",
+          "text": "Inhale calm. Exhale stress.\nInhala calma. Exhala estrés.",
+          "duration": 6,
+          "color": "#60a5fa"
+        },
+        {
+          "type": "closing",
+          "text": "You are in control of your mind.\nTú controlas tu mente.",
+          "color": "#f87171"
+        }
       ]
     },
 
@@ -21,12 +43,36 @@
       "level": 1,
       "category": "easy_emotions",
       "blocks": [
-        { "type": "voice", "text": "Today you learn emotional balance.", "color": "#2563eb" },
-        { "type": "story", "text": "A deep breath prevented a conflict.", "color": "#34d399" },
-        { "type": "quiz", "question": "What helps emotional control?", "options": ["Reaction", "Breathing", "Anger"], "correct": 1, "explanation": "Breathing gives control.", "reward": 10, "color": "#facc15" },
-        { "type": "breathing", "text": "Inhale peace.", "duration": 6, "color": "#60a5fa" },
-        { "type": "breathing", "text": "Exhale anger.", "duration": 6, "color": "#60a5fa" },
-        { "type": "closing", "text": "Peace starts inside you.", "color": "#f87171" }
+        {
+          "type": "voice",
+          "text": "Today you learn emotional balance.\nHoy aprendes equilibrio emocional.",
+          "color": "#2563eb"
+        },
+        {
+          "type": "story",
+          "text": "A deep breath prevented a conflict.\nUna respiración profunda evitó un conflicto.",
+          "color": "#34d399"
+        },
+        {
+          "type": "quiz",
+          "question": "What helps emotional control?\n¿Qué ayuda al control emocional?",
+          "options": ["Reaction / Reacción", "Breathing / Respiración", "Anger / Ira"],
+          "correct": 1,
+          "explanation": "Breathing gives control.\nRespirar da control.",
+          "reward": 10,
+          "color": "#facc15"
+        },
+        {
+          "type": "breathing",
+          "text": "Inhale peace. Exhale anger.\nInhala paz. Exhala ira.",
+          "duration": 6,
+          "color": "#60a5fa"
+        },
+        {
+          "type": "closing",
+          "text": "Peace starts inside you.\nLa paz comienza dentro de ti.",
+          "color": "#f87171"
+        }
       ]
     },
 
@@ -35,25 +81,70 @@
       "level": 1,
       "category": "easy_habits",
       "blocks": [
-        { "type": "voice", "text": "Build small daily habits.", "color": "#2563eb" },
-        { "type": "strategy", "text": "Start with simple actions every day.", "color": "#14b8a6" },
-        { "type": "quiz", "question": "What builds habits?", "options": ["Consistency", "Luck", "Chaos"], "correct": 0, "explanation": "Consistency builds habits.", "reward": 10, "color": "#facc15" },
-        { "type": "closing", "text": "Small steps create big results.", "color": "#f87171" }
+        {
+          "type": "voice",
+          "text": "Small habits create big change.\nPequeños hábitos crean grandes cambios.",
+          "color": "#2563eb"
+        },
+        {
+          "type": "strategy",
+          "text": "Repeat small actions daily.\nRepite acciones pequeñas cada día.",
+          "color": "#14b8a6"
+        },
+        {
+          "type": "quiz",
+          "question": "What builds habits?\n¿Qué construye hábitos?",
+          "options": ["Consistency / Constancia", "Luck / Suerte", "Chaos / Caos"],
+          "correct": 0,
+          "explanation": "Consistency builds habits.\nLa constancia construye hábitos.",
+          "reward": 10,
+          "color": "#facc15"
+        },
+        {
+          "type": "closing",
+          "text": "Small steps create big results.\nPequeños pasos crean grandes resultados.",
+          "color": "#f87171"
+        }
       ]
     },
+
+    /* ===================== LEVEL 2 ===================== */
 
     {
       "id": 4,
       "level": 2,
       "category": "medium_focus",
       "blocks": [
-        { "type": "voice", "text": "Focus is a trained skill.", "color": "#2563eb" },
-        { "type": "strategy", "text": "Eliminate digital distractions consciously.", "color": "#14b8a6" },
-        { "type": "story", "text": "A man doubled productivity by controlling attention.", "color": "#34d399" },
-        { "type": "quiz", "question": "What destroys focus?", "options": ["Multitasking", "Discipline", "Reading"], "correct": 0, "explanation": "Multitasking reduces focus.", "reward": 10, "color": "#facc15" },
-        { "type": "breathing", "text": "Inhale focus.", "duration": 6, "color": "#60a5fa" },
-        { "type": "breathing", "text": "Exhale distraction.", "duration": 6, "color": "#60a5fa" },
-        { "type": "closing", "text": "Your attention is your power.", "color": "#f87171" }
+        {
+          "type": "voice",
+          "text": "Focus is a trained mental skill.\nEl enfoque es una habilidad entrenada.",
+          "color": "#2563eb"
+        },
+        {
+          "type": "strategy",
+          "text": "Remove digital distractions.\nElimina distracciones digitales.",
+          "color": "#14b8a6"
+        },
+        {
+          "type": "quiz",
+          "question": "What destroys focus?\n¿Qué destruye el enfoque?",
+          "options": ["Multitasking / Multitarea", "Discipline / Disciplina", "Reading / Lectura"],
+          "correct": 0,
+          "explanation": "Multitasking reduces performance.\nLa multitarea reduce el rendimiento.",
+          "reward": 10,
+          "color": "#facc15"
+        },
+        {
+          "type": "breathing",
+          "text": "Inhale focus. Exhale distraction.\nInhala enfoque. Exhala distracción.",
+          "duration": 6,
+          "color": "#60a5fa"
+        },
+        {
+          "type": "closing",
+          "text": "Your attention is your power.\nTu atención es tu poder.",
+          "color": "#f87171"
+        }
       ]
     },
 
@@ -62,84 +153,117 @@
       "level": 2,
       "category": "medium_discipline",
       "blocks": [
-        { "type": "voice", "text": "Discipline builds your future self.", "color": "#2563eb" },
-        { "type": "strategy", "text": "Act even without motivation.", "color": "#14b8a6" },
-        { "type": "story", "text": "Success came from repeated effort, not feelings.", "color": "#34d399" },
-        { "type": "quiz", "question": "What creates success?", "options": ["Excuses", "Discipline", "Fear"], "correct": 1, "explanation": "Discipline creates results.", "reward": 10, "color": "#facc15" },
-        { "type": "closing", "text": "Do it even when you don't feel like it.", "color": "#f87171" }
+        {
+          "type": "voice",
+          "text": "Discipline builds your future self.\nLa disciplina construye tu futuro.",
+          "color": "#2563eb"
+        },
+        {
+          "type": "strategy",
+          "text": "Act without motivation.\nActúa sin motivación.",
+          "color": "#14b8a6"
+        },
+        {
+          "type": "quiz",
+          "question": "What creates success?\n¿Qué crea el éxito?",
+          "options": ["Excuses / Excusas", "Discipline / Disciplina", "Fear / Miedo"],
+          "correct": 1,
+          "explanation": "Discipline creates results.\nLa disciplina crea resultados.",
+          "reward": 10,
+          "color": "#facc15"
+        },
+        {
+          "type": "closing",
+          "text": "Do it even without motivation.\nHazlo incluso sin motivación.",
+          "color": "#f87171"
+        }
       ]
     },
 
+    /* ===================== LEVEL 3 SCIENCE ===================== */
+
     {
       "id": 6,
-      "level": 2,
-      "category": "medium_emotions",
+      "level": 3,
+      "category": "neuroscience_focus",
       "blocks": [
-        { "type": "voice", "text": "Emotions must be understood, not controlled by force.", "color": "#2563eb" },
-        { "type": "story", "text": "Awareness prevented an emotional explosion.", "color": "#34d399" },
-        { "type": "quiz", "question": "Best emotional skill?", "options": ["Awareness", "Anger", "Impulse"], "correct": 0, "explanation": "Awareness gives control.", "reward": 10, "color": "#facc15" },
-        { "type": "breathing", "text": "Inhale awareness.", "duration": 6, "color": "#60a5fa" },
-        { "type": "breathing", "text": "Exhale reaction.", "duration": 6, "color": "#60a5fa" },
-        { "type": "closing", "text": "You are not your emotions.", "color": "#f87171" }
+        {
+          "type": "voice",
+          "text": "Neuroscience training activated.\nEntrenamiento de neurociencia activado.",
+          "color": "#2563eb"
+        },
+        {
+          "type": "story",
+          "text": "Dopamine regulation improves attention stability (Nature Neuroscience).\nLa dopamina regula la atención según estudios científicos.",
+          "color": "#34d399"
+        },
+        {
+          "type": "quiz",
+          "question": "What chemical affects focus?\n¿Qué químico afecta el enfoque?",
+          "options": ["Dopamine / Dopamina", "Oxygen / Oxígeno", "Water / Agua"],
+          "correct": 0,
+          "explanation": "Dopamine regulates attention circuits.\nLa dopamina regula la atención.",
+          "reward": 15,
+          "color": "#facc15"
+        },
+        {
+          "type": "mental_game",
+          "question": "12×8",
+          "options": ["96", "88", "108"],
+          "correct": 0,
+          "explanation": "12×8 = 96",
+          "reward": 10,
+          "color": "#38bdf8"
+        },
+        {
+          "type": "breathing",
+          "text": "Inhale precision. Exhale chaos.\nInhala precisión. Exhala caos.",
+          "duration": 5,
+          "color": "#60a5fa"
+        },
+        {
+          "type": "closing",
+          "text": "Brain optimization mode active.\nModo de optimización cerebral activo.",
+          "color": "#f87171"
+        }
       ]
     },
 
     {
       "id": 7,
       "level": 3,
-      "category": "hard_neuroscience_focus",
+      "category": "stress_adaptation",
       "blocks": [
-        { "type": "voice", "text": "Advanced training: neural focus activation.", "color": "#2563eb" },
-        { "type": "strategy", "text": "Dopamine control increases attention stability.", "color": "#14b8a6" },
-        { "type": "story", "text": "Studies show attention improves with dopamine regulation (Nature Neuroscience).", "color": "#34d399" },
-        { "type": "quiz", "question": "What regulates focus chemically?", "options": ["Dopamine", "Sleep only", "Noise"], "correct": 0, "explanation": "Dopamine regulates attention circuits.", "reward": 15, "color": "#facc15" },
-        { "type": "mental_game", "question": "12×7", "options": ["84", "72", "96"], "correct": 0, "explanation": "12×7 = 84", "reward": 10, "color": "#38bdf8" },
-        { "type": "breathing", "text": "Inhale precision.", "duration": 5, "color": "#60a5fa" },
-        { "type": "breathing", "text": "Exhale chaos.", "duration": 5, "color": "#60a5fa" },
-        { "type": "closing", "text": "Your brain is now in optimization mode.", "color": "#f87171" }
-      ]
-    },
-
-    {
-      "id": 8,
-      "level": 3,
-      "category": "hard_stress_control",
-      "blocks": [
-        { "type": "voice", "text": "Stress simulation training activated.", "color": "#2563eb" },
-        { "type": "strategy", "text": "Controlled stress improves cognitive performance.", "color": "#14b8a6" },
-        { "type": "story", "text": "Military studies show stress exposure builds resilience.", "color": "#34d399" },
-        { "type": "quiz", "question": "What improves resilience?", "options": ["Avoid stress", "Controlled exposure", "Rest only"], "correct": 1, "explanation": "Controlled stress builds adaptation.", "reward": 15, "color": "#facc15" },
-        { "type": "breathing", "text": "Inhale pressure.", "duration": 5, "color": "#60a5fa" },
-        { "type": "breathing", "text": "Exhale panic.", "duration": 5, "color": "#60a5fa" },
-        { "type": "closing", "text": "You operate under pressure now.", "color": "#f87171" }
-      ]
-    },
-
-    {
-      "id": 9,
-      "level": 3,
-      "category": "hard_decision_making",
-      "blocks": [
-        { "type": "voice", "text": "Decision speed under uncertainty training.", "color": "#2563eb" },
-        { "type": "strategy", "text": "Fast decisions improve survival efficiency.", "color": "#14b8a6" },
-        { "type": "quiz", "question": "Best decision skill?", "options": ["Delay", "Analysis paralysis", "Rapid evaluation"], "correct": 2, "explanation": "Rapid evaluation is key.", "reward": 15, "color": "#facc15" },
-        { "type": "mental_game", "question": "9×9", "options": ["81", "72", "99"], "correct": 0, "explanation": "9×9 = 81", "reward": 10, "color": "#38bdf8" },
-        { "type": "closing", "text": "Decide. Act. Adapt.", "color": "#f87171" }
-      ]
-    },
-
-    {
-      "id": 10,
-      "level": 3,
-      "category": "hard_mind_resistance",
-      "blocks": [
-        { "type": "voice", "text": "Mental resistance under fatigue conditions.", "color": "#2563eb" },
-        { "type": "strategy", "text": "The brain adapts under controlled fatigue exposure.", "color": "#14b8a6" },
-        { "type": "story", "text": "Elite performers train under discomfort intentionally.", "color": "#34d399" },
-        { "type": "quiz", "question": "What builds mental resistance?", "options": ["Comfort", "Avoidance", "Exposure"], "correct": 2, "explanation": "Exposure builds adaptation.", "reward": 15, "color": "#facc15" },
-        { "type": "breathing", "text": "Inhale strength.", "duration": 5, "color": "#60a5fa" },
-        { "type": "breathing", "text": "Exhale weakness.", "duration": 5, "color": "#60a5fa" },
-        { "type": "closing", "text": "You adapt or you break. Choose adaptation.", "color": "#f87171" }
+        {
+          "type": "voice",
+          "text": "Stress adaptation training begins.\nEntrenamiento de adaptación al estrés.",
+          "color": "#2563eb"
+        },
+        {
+          "type": "story",
+          "text": "Controlled stress improves performance (Yerkes-Dodson law).\nEl estrés controlado mejora el rendimiento.",
+          "color": "#34d399"
+        },
+        {
+          "type": "quiz",
+          "question": "What improves resilience?\n¿Qué mejora la resiliencia?",
+          "options": ["Avoid stress / Evitar estrés", "Controlled stress / Estrés controlado", "Rest only / Solo descanso"],
+          "correct": 1,
+          "explanation": "Controlled stress builds adaptation.\nEl estrés controlado construye adaptación.",
+          "reward": 15,
+          "color": "#facc15"
+        },
+        {
+          "type": "breathing",
+          "text": "Inhale pressure. Exhale panic.\nInhala presión. Exhala pánico.",
+          "duration": 5,
+          "color": "#60a5fa"
+        },
+        {
+          "type": "closing",
+          "text": "You operate under pressure.\nOperas bajo presión.",
+          "color": "#f87171"
+        }
       ]
     }
   ]
