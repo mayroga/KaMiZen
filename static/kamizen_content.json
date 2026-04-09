@@ -1,375 +1,145 @@
 {
   "sessions": [
     {
-      "id": 48,
-      "category": "focus",
+      "id": 1,
+      "level": 1,
+      "category": "easy_mind",
       "blocks": [
-        { "type": "voice", "text": "Hoy entrenarás enfoque mental total.", "color": "#2563eb" },
-        { "type": "tvid", "technique": "TDB", "title": "Técnica del Bien", "text": "El enfoque es la puerta del éxito. Sin enfoque no hay avance.", "color": "#06b6d4" },
-        { "type": "strategy", "text": "Elimina distracciones antes de comenzar cualquier tarea.", "color": "#14b8a6" },
-        { "type": "story", "text": "Un estudiante mejoró su vida solo apagando su teléfono mientras estudiaba.", "color": "#34d399" },
-        { "type": "quiz", "question": "¿Qué mejora el enfoque?", "options": ["Multitarea", "Disciplina", "Distracción"], "correct": 1, "explanation": "La disciplina mantiene el enfoque.", "reward": 10, "color": "#facc15" },
-        { "type": "mental_game", "question": "8×8", "options": ["64", "60", "68"], "correct": 0, "explanation": "8×8 = 64", "reward": 7, "color": "#38bdf8" },
-        { "type": "breathing", "text": "Inhala enfoque.", "duration": 6, "color": "#60a5fa" },
-        { "type": "breathing", "text": "Exhala distracción.", "duration": 6, "color": "#60a5fa" },
-        { "type": "visualization", "text": "Visualiza completar tareas sin interrupciones.", "color": "#a78bfa" },
-        { "type": "reward", "text": "Enfoque fortalecido.", "points": 20, "color": "#10b981" },
-        { "type": "closing", "text": "El enfoque crea resultados reales.", "color": "#f87171" }
+        { "type": "voice", "text": "Welcome. Today you train calm focus.", "color": "#2563eb" },
+        { "type": "strategy", "text": "Take everything one step at a time.", "color": "#14b8a6" },
+        { "type": "story", "text": "A student improved focus by removing distractions.", "color": "#34d399" },
+        { "type": "quiz", "question": "What improves focus?", "options": ["Distraction", "Discipline", "Noise"], "correct": 1, "explanation": "Discipline builds focus.", "reward": 10, "color": "#facc15" },
+        { "type": "breathing", "text": "Inhale calm.", "duration": 6, "color": "#60a5fa" },
+        { "type": "breathing", "text": "Exhale stress.", "duration": 6, "color": "#60a5fa" },
+        { "type": "reward", "text": "Calm mind activated.", "points": 10, "color": "#10b981" },
+        { "type": "closing", "text": "You are in control of your mind.", "color": "#f87171" }
       ]
     },
+
     {
-      "id": 49,
-      "category": "digital_detox",
+      "id": 2,
+      "level": 1,
+      "category": "easy_emotions",
       "blocks": [
-        { "type": "voice", "text": "Hoy reducirás tu dependencia del teléfono.", "color": "#2563eb" },
-        { "type": "tvid", "technique": "TDM", "title": "Técnica del Mal", "text": "Reconoce cómo el teléfono roba tu atención.", "color": "#06b6d4" },
-        { "type": "strategy", "text": "Usa el teléfono solo con propósito definido.", "color": "#14b8a6" },
-        { "type": "story", "text": "Un joven recuperó su tiempo al limitar redes sociales.", "color": "#34d399" },
-        { "type": "quiz", "question": "¿Qué roba más tiempo?", "options": ["Lectura", "Redes sociales", "Dormir"], "correct": 1, "explanation": "Las redes sociales consumen atención.", "reward": 10, "color": "#facc15" },
-        { "type": "decision", "question": "Te llega una notificación.", "options": ["Verla", "Ignorarla", "Responder todo"], "correct": 1, "explanation": "Ignorar mejora control mental.", "reward": 12, "color": "#22c55e" },
-        { "type": "breathing", "text": "Inhala control.", "duration": 6, "color": "#60a5fa" },
-        { "type": "breathing", "text": "Exhala dependencia.", "duration": 6, "color": "#60a5fa" },
-        { "type": "visualization", "text": "Visualiza libertad digital.", "color": "#a78bfa" },
-        { "type": "reward", "text": "Control digital mejorado.", "points": 20, "color": "#10b981" },
-        { "type": "closing", "text": "Tu mente vale más que una pantalla.", "color": "#f87171" }
+        { "type": "voice", "text": "Today you learn emotional balance.", "color": "#2563eb" },
+        { "type": "story", "text": "A deep breath prevented a conflict.", "color": "#34d399" },
+        { "type": "quiz", "question": "What helps emotional control?", "options": ["Reaction", "Breathing", "Anger"], "correct": 1, "explanation": "Breathing gives control.", "reward": 10, "color": "#facc15" },
+        { "type": "breathing", "text": "Inhale peace.", "duration": 6, "color": "#60a5fa" },
+        { "type": "breathing", "text": "Exhale anger.", "duration": 6, "color": "#60a5fa" },
+        { "type": "closing", "text": "Peace starts inside you.", "color": "#f87171" }
       ]
     },
+
     {
-      "id": 50,
-      "category": "sleep_discipline",
+      "id": 3,
+      "level": 1,
+      "category": "easy_habits",
       "blocks": [
-        { "type": "voice", "text": "Hoy entrenarás disciplina del sueño.", "color": "#2563eb" },
-        { "type": "tvid", "technique": "TDB", "title": "Técnica del Bien", "text": "Dormir bien es construir una mente fuerte.", "color": "#06b6d4" },
-        { "type": "strategy", "text": "Apaga pantallas 30 minutos antes de dormir.", "color": "#14b8a6" },
-        { "type": "story", "text": "Un atleta mejoró su rendimiento al dormir mejor.", "color": "#34d399" },
-        { "type": "quiz", "question": "¿Qué mejora el sueño?", "options": ["Luz azul", "Rutina", "Ruido"], "correct": 1, "explanation": "La rutina mejora el descanso.", "reward": 10, "color": "#facc15" },
-        { "type": "breathing", "text": "Inhala calma.", "duration": 6, "color": "#60a5fa" },
-        { "type": "breathing", "text": "Exhala estrés.", "duration": 6, "color": "#60a5fa" },
-        { "type": "visualization", "text": "Visualiza un descanso profundo.", "color": "#a78bfa" },
-        { "type": "reward", "text": "Sueño optimizado.", "points": 20, "color": "#10b981" },
-        { "type": "closing", "text": "Dormir bien es vivir mejor.", "color": "#f87171" }
+        { "type": "voice", "text": "Build small daily habits.", "color": "#2563eb" },
+        { "type": "strategy", "text": "Start with simple actions every day.", "color": "#14b8a6" },
+        { "type": "quiz", "question": "What builds habits?", "options": ["Consistency", "Luck", "Chaos"], "correct": 0, "explanation": "Consistency builds habits.", "reward": 10, "color": "#facc15" },
+        { "type": "closing", "text": "Small steps create big results.", "color": "#f87171" }
       ]
     },
+
     {
-      "id": 51,
-      "category": "learning",
+      "id": 4,
+      "level": 2,
+      "category": "medium_focus",
       "blocks": [
-        { "type": "voice", "text": "Hoy entrenarás aprendizaje rápido.", "color": "#2563eb" },
-        { "type": "strategy", "text": "Aprende algo nuevo cada día.", "color": "#14b8a6" },
-        { "type": "story", "text": "Un hombre cambió su vida aprendiendo todos los días.", "color": "#34d399" },
-        { "type": "quiz", "question": "¿Qué mejora el aprendizaje?", "options": ["Repetición", "Olvido", "Distracción"], "correct": 0, "explanation": "La repetición fija conocimiento.", "reward": 10, "color": "#facc15" },
-        { "type": "mental_game", "question": "5×9", "options": ["45", "40", "50"], "correct": 0, "explanation": "5×9 = 45", "reward": 7, "color": "#38bdf8" },
-        { "type": "breathing", "text": "Inhala conocimiento.", "duration": 6, "color": "#60a5fa" },
-        { "type": "breathing", "text": "Exhala duda.", "duration": 6, "color": "#60a5fa" },
-        { "type": "visualization", "text": "Visualiza aprender rápido y fácil.", "color": "#a78bfa" },
-        { "type": "reward", "text": "Aprendizaje activado.", "points": 20, "color": "#10b981" },
-        { "type": "closing", "text": "Saber es poder.", "color": "#f87171" }
+        { "type": "voice", "text": "Focus is a trained skill.", "color": "#2563eb" },
+        { "type": "strategy", "text": "Eliminate digital distractions consciously.", "color": "#14b8a6" },
+        { "type": "story", "text": "A man doubled productivity by controlling attention.", "color": "#34d399" },
+        { "type": "quiz", "question": "What destroys focus?", "options": ["Multitasking", "Discipline", "Reading"], "correct": 0, "explanation": "Multitasking reduces focus.", "reward": 10, "color": "#facc15" },
+        { "type": "breathing", "text": "Inhale focus.", "duration": 6, "color": "#60a5fa" },
+        { "type": "breathing", "text": "Exhale distraction.", "duration": 6, "color": "#60a5fa" },
+        { "type": "closing", "text": "Your attention is your power.", "color": "#f87171" }
       ]
     },
+
     {
-      "id": 52,
-      "category": "emotional_control",
+      "id": 5,
+      "level": 2,
+      "category": "medium_discipline",
       "blocks": [
-        { "type": "voice", "text": "Hoy entrenarás control emocional.", "color": "#2563eb" },
-        { "type": "strategy", "text": "Respira antes de reaccionar.", "color": "#14b8a6" },
-        { "type": "story", "text": "Un conflicto se evitó por una respiración profunda.", "color": "#34d399" },
-        { "type": "quiz", "question": "¿Qué evita errores emocionales?", "options": ["Reacción rápida", "Respirar", "Gritar"], "correct": 1, "explanation": "Respirar da control.", "reward": 10, "color": "#facc15" },
-        { "type": "decision", "question": "Te provocan.", "options": ["Responder", "Respirar", "Ignorar todo"], "correct": 1, "explanation": "Respirar evita conflicto.", "reward": 12, "color": "#22c55e" },
-        { "type": "breathing", "text": "Inhala calma.", "duration": 6, "color": "#60a5fa" },
-        { "type": "breathing", "text": "Exhala reacción.", "duration": 6, "color": "#60a5fa" },
-        { "type": "visualization", "text": "Visualiza control total de emociones.", "color": "#a78bfa" },
-        { "type": "reward", "text": "Control emocional mejorado.", "points": 20, "color": "#10b981" },
-        { "type": "closing", "text": "Controlarte es poder.", "color": "#f87171" }
+        { "type": "voice", "text": "Discipline builds your future self.", "color": "#2563eb" },
+        { "type": "strategy", "text": "Act even without motivation.", "color": "#14b8a6" },
+        { "type": "story", "text": "Success came from repeated effort, not feelings.", "color": "#34d399" },
+        { "type": "quiz", "question": "What creates success?", "options": ["Excuses", "Discipline", "Fear"], "correct": 1, "explanation": "Discipline creates results.", "reward": 10, "color": "#facc15" },
+        { "type": "closing", "text": "Do it even when you don't feel like it.", "color": "#f87171" }
       ]
     },
+
     {
-      "id": 53,
-      "category": "gratitude",
+      "id": 6,
+      "level": 2,
+      "category": "medium_emotions",
       "blocks": [
-        { "type": "voice", "text": "Hoy entrenarás gratitud consciente.", "color": "#2563eb" },
-        { "type": "strategy", "text": "Agradece 3 cosas cada día.", "color": "#14b8a6" },
-        { "type": "story", "text": "Una persona cambió su vida enfocándose en lo positivo.", "color": "#34d399" },
-        { "type": "quiz", "question": "¿Qué genera gratitud?", "options": ["Enojo", "Bienestar", "Confusión"], "correct": 1, "explanation": "La gratitud mejora bienestar.", "reward": 10, "color": "#facc15" },
-        { "type": "breathing", "text": "Inhala agradecimiento.", "duration": 6, "color": "#60a5fa" },
-        { "type": "breathing", "text": "Exhala queja.", "duration": 6, "color": "#60a5fa" },
-        { "type": "visualization", "text": "Visualiza tu vida en abundancia.", "color": "#a78bfa" },
-        { "type": "reward", "text": "Gratitud activada.", "points": 20, "color": "#10b981" },
-        { "type": "closing", "text": "Agradecer cambia tu mente.", "color": "#f87171" }
+        { "type": "voice", "text": "Emotions must be understood, not controlled by force.", "color": "#2563eb" },
+        { "type": "story", "text": "Awareness prevented an emotional explosion.", "color": "#34d399" },
+        { "type": "quiz", "question": "Best emotional skill?", "options": ["Awareness", "Anger", "Impulse"], "correct": 0, "explanation": "Awareness gives control.", "reward": 10, "color": "#facc15" },
+        { "type": "breathing", "text": "Inhale awareness.", "duration": 6, "color": "#60a5fa" },
+        { "type": "breathing", "text": "Exhale reaction.", "duration": 6, "color": "#60a5fa" },
+        { "type": "closing", "text": "You are not your emotions.", "color": "#f87171" }
       ]
     },
+
     {
-      "id": 54,
-      "category": "productivity",
+      "id": 7,
+      "level": 3,
+      "category": "hard_neuroscience_focus",
       "blocks": [
-        { "type": "voice", "text": "Hoy entrenarás productividad extrema.", "color": "#2563eb" },
-        { "type": "strategy", "text": "Haz primero lo importante.", "color": "#14b8a6" },
-        { "type": "story", "text": "Un empresario cambió su vida priorizando tareas clave.", "color": "#34d399" },
-        { "type": "quiz", "question": "¿Qué mejora productividad?", "options": ["Procrastinar", "Priorizar", "Distracción"], "correct": 1, "explanation": "Priorizar aumenta resultados.", "reward": 10, "color": "#facc15" },
-        { "type": "mental_game", "question": "10×2", "options": ["20", "18", "22"], "correct": 0, "explanation": "10×2 = 20", "reward": 7, "color": "#38bdf8" },
-        { "type": "breathing", "text": "Inhala acción.", "duration": 6, "color": "#60a5fa" },
-        { "type": "breathing", "text": "Exhala procrastinación.", "duration": 6, "color": "#60a5fa" },
-        { "type": "visualization", "text": "Visualiza completar todo tu trabajo.", "color": "#a78bfa" },
-        { "type": "reward", "text": "Productividad activada.", "points": 20, "color": "#10b981" },
-        { "type": "closing", "text": "La acción crea resultados.", "color": "#f87171" }
+        { "type": "voice", "text": "Advanced training: neural focus activation.", "color": "#2563eb" },
+        { "type": "strategy", "text": "Dopamine control increases attention stability.", "color": "#14b8a6" },
+        { "type": "story", "text": "Studies show attention improves with dopamine regulation (Nature Neuroscience).", "color": "#34d399" },
+        { "type": "quiz", "question": "What regulates focus chemically?", "options": ["Dopamine", "Sleep only", "Noise"], "correct": 0, "explanation": "Dopamine regulates attention circuits.", "reward": 15, "color": "#facc15" },
+        { "type": "mental_game", "question": "12×7", "options": ["84", "72", "96"], "correct": 0, "explanation": "12×7 = 84", "reward": 10, "color": "#38bdf8" },
+        { "type": "breathing", "text": "Inhale precision.", "duration": 5, "color": "#60a5fa" },
+        { "type": "breathing", "text": "Exhale chaos.", "duration": 5, "color": "#60a5fa" },
+        { "type": "closing", "text": "Your brain is now in optimization mode.", "color": "#f87171" }
       ]
     },
+
     {
-      "id": 55,
-      "category": "confidence",
+      "id": 8,
+      "level": 3,
+      "category": "hard_stress_control",
       "blocks": [
-        { "type": "voice", "text": "Hoy entrenarás confianza personal.", "color": "#2563eb" },
-        { "type": "strategy", "text": "Habla con seguridad, aunque tengas miedo.", "color": "#14b8a6" },
-        { "type": "story", "text": "Un joven ganó respeto al confiar en sí mismo.", "color": "#34d399" },
-        { "type": "quiz", "question": "¿Qué construye confianza?", "options": ["Duda", "Acción", "Miedo"], "correct": 1, "explanation": "La acción construye confianza.", "reward": 10, "color": "#facc15" },
-        { "type": "breathing", "text": "Inhala seguridad.", "duration": 6, "color": "#60a5fa" },
-        { "type": "breathing", "text": "Exhala inseguridad.", "duration": 6, "color": "#60a5fa" },
-        { "type": "visualization", "text": "Visualiza hablar con confianza total.", "color": "#a78bfa" },
-        { "type": "reward", "text": "Confianza aumentada.", "points": 20, "color": "#10b981" },
-        { "type": "closing", "text": "Confía en ti mismo.", "color": "#f87171" }
+        { "type": "voice", "text": "Stress simulation training activated.", "color": "#2563eb" },
+        { "type": "strategy", "text": "Controlled stress improves cognitive performance.", "color": "#14b8a6" },
+        { "type": "story", "text": "Military studies show stress exposure builds resilience.", "color": "#34d399" },
+        { "type": "quiz", "question": "What improves resilience?", "options": ["Avoid stress", "Controlled exposure", "Rest only"], "correct": 1, "explanation": "Controlled stress builds adaptation.", "reward": 15, "color": "#facc15" },
+        { "type": "breathing", "text": "Inhale pressure.", "duration": 5, "color": "#60a5fa" },
+        { "type": "breathing", "text": "Exhale panic.", "duration": 5, "color": "#60a5fa" },
+        { "type": "closing", "text": "You operate under pressure now.", "color": "#f87171" }
       ]
     },
+
     {
-      "id": 56,
-      "category": "communication",
+      "id": 9,
+      "level": 3,
+      "category": "hard_decision_making",
       "blocks": [
-        { "type": "voice", "text": "Hoy entrenarás comunicación efectiva.", "color": "#2563eb" },
-        { "type": "strategy", "text": "Escucha más de lo que hablas.", "color": "#14b8a6" },
-        { "type": "story", "text": "Un líder mejoró escuchando a su equipo.", "color": "#34d399" },
-        { "type": "quiz", "question": "¿Qué mejora relaciones?", "options": ["Interrumpir", "Escuchar", "Ignorar"], "correct": 1, "explanation": "Escuchar mejora relaciones.", "reward": 10, "color": "#facc15" },
-        { "type": "decision", "question": "Alguien te habla.", "options": ["Interrumpir", "Escuchar", "Irte"], "correct": 1, "explanation": "Escuchar es clave.", "reward": 12, "color": "#22c55e" },
-        { "type": "breathing", "text": "Inhala atención.", "duration": 6, "color": "#60a5fa" },
-        { "type": "breathing", "text": "Exhala juicio.", "duration": 6, "color": "#60a5fa" },
-        { "type": "visualization", "text": "Visualiza conversaciones positivas.", "color": "#a78bfa" },
-        { "type": "reward", "text": "Comunicación mejorada.", "points": 20, "color": "#10b981" },
-        { "type": "closing", "text": "Hablar bien abre puertas.", "color": "#f87171" }
+        { "type": "voice", "text": "Decision speed under uncertainty training.", "color": "#2563eb" },
+        { "type": "strategy", "text": "Fast decisions improve survival efficiency.", "color": "#14b8a6" },
+        { "type": "quiz", "question": "Best decision skill?", "options": ["Delay", "Analysis paralysis", "Rapid evaluation"], "correct": 2, "explanation": "Rapid evaluation is key.", "reward": 15, "color": "#facc15" },
+        { "type": "mental_game", "question": "9×9", "options": ["81", "72", "99"], "correct": 0, "explanation": "9×9 = 81", "reward": 10, "color": "#38bdf8" },
+        { "type": "closing", "text": "Decide. Act. Adapt.", "color": "#f87171" }
       ]
     },
+
     {
-      "id": 57,
-      "category": "fitness",
+      "id": 10,
+      "level": 3,
+      "category": "hard_mind_resistance",
       "blocks": [
-        { "type": "voice", "text": "Hoy entrenarás disciplina física.", "color": "#2563eb" },
-        { "type": "strategy", "text": "Muévete al menos 20 minutos al día.", "color": "#14b8a6" },
-        { "type": "story", "text": "Un hombre mejoró su vida con ejercicio diario.", "color": "#34d399" },
-        { "type": "quiz", "question": "¿Qué mejora la energía?", "options": ["Ejercicio", "Dormir tarde", "Sedentarismo"], "correct": 0, "explanation": "El ejercicio aumenta energía.", "reward": 10, "color": "#facc15" },
-        { "type": "breathing", "text": "Inhala fuerza.", "duration": 6, "color": "#60a5fa" },
-        { "type": "breathing", "text": "Exhala fatiga.", "duration": 6, "color": "#60a5fa" },
-        { "type": "visualization", "text": "Visualiza un cuerpo fuerte y sano.", "color": "#a78bfa" },
-        { "type": "reward", "text": "Condición física mejorada.", "points": 20, "color": "#10b981" },
-        { "type": "closing", "text": "Tu cuerpo es tu motor.", "color": "#f87171" }
-      ]
-    },
-    {
-      "id": 58,
-      "category": "mindfulness",
-      "blocks": [
-        { "type": "voice", "text": "Hoy entrenarás atención plena.", "color": "#2563eb" },
-        { "type": "strategy", "text": "Vive el presente sin distracciones.", "color": "#14b8a6" },
-        { "type": "story", "text": "Una persona redujo su ansiedad viviendo el presente.", "color": "#34d399" },
-        { "type": "quiz", "question": "¿Qué reduce ansiedad?", "options": ["Preocupación", "Presente", "Caos"], "correct": 1, "explanation": "El presente calma la mente.", "reward": 10, "color": "#facc15" },
-        { "type": "breathing", "text": "Inhala presente.", "duration": 6, "color": "#60a5fa" },
-        { "type": "breathing", "text": "Exhala pasado.", "duration": 6, "color": "#60a5fa" },
-        { "type": "visualization", "text": "Visualiza calma total.", "color": "#a78bfa" },
-        { "type": "reward", "text": "Mindfulness activado.", "points": 20, "color": "#10b981" },
-        { "type": "closing", "text": "El presente es poder.", "color": "#f87171" }
-      ]
-    },
-    {
-      "id": 59,
-      "category": "purpose",
-      "blocks": [
-        { "type": "voice", "text": "Hoy conectarás con tu propósito.", "color": "#2563eb" },
-        { "type": "strategy", "text": "Define qué quieres lograr en tu vida.", "color": "#14b8a6" },
-        { "type": "story", "text": "Una persona encontró éxito al seguir su propósito.", "color": "#34d399" },
-        { "type": "quiz", "question": "¿Qué guía la vida?", "options": ["Propósito", "Suerte", "Caos"], "correct": 0, "explanation": "El propósito da dirección.", "reward": 10, "color": "#facc15" },
-        { "type": "breathing", "text": "Inhala claridad.", "duration": 6, "color": "#60a5fa" },
-        { "type": "breathing", "text": "Exhala duda.", "duration": 6, "color": "#60a5fa" },
-        { "type": "visualization", "text": "Visualiza tu vida con propósito claro.", "color": "#a78bfa" },
-        { "type": "reward", "text": "Propósito activado.", "points": 20, "color": "#10b981" },
-        { "type": "closing", "text": "Vivir con propósito es vivir completo.", "color": "#f87171" }
-      ]
-    },
-    {
-      "id": 60,
-      "category": "self_control",
-      "blocks": [
-        { "type": "voice", "text": "Hoy entrenarás autocontrol total.", "color": "#2563eb" },
-        { "type": "tvid", "technique": "TDM", "title": "Técnica del Mal", "text": "El impulso rápido casi siempre crea errores.", "color": "#06b6d4" },
-        { "type": "strategy", "text": "Antes de actuar, respira 3 segundos.", "color": "#14b8a6" },
-        { "type": "story", "text": "Un error evitado por una simple pausa cambió una vida.", "color": "#34d399" },
-        { "type": "quiz", "question": "¿Qué mejora el autocontrol?", "options": ["Impulso", "Pausa", "Caos"], "correct": 1, "explanation": "La pausa permite decidir mejor.", "reward": 10, "color": "#facc15" },
-        { "type": "breathing", "text": "Inhala control.", "duration": 6, "color": "#60a5fa" },
-        { "type": "breathing", "text": "Exhala impulso.", "duration": 6, "color": "#60a5fa" },
-        { "type": "visualization", "text": "Visualiza decisiones inteligentes.", "color": "#a78bfa" },
-        { "type": "reward", "text": "Autocontrol fortalecido.", "points": 20, "color": "#10b981" },
-        { "type": "closing", "text": "El que se controla, gana.", "color": "#f87171" }
-      ]
-    },
-    {
-      "id": 61,
-      "category": "energy",
-      "blocks": [
-        { "type": "voice", "text": "Hoy entrenarás tu energía vital.", "color": "#2563eb" },
-        { "type": "strategy", "text": "Muévete cuando sientas cansancio.", "color": "#14b8a6" },
-        { "type": "story", "text": "Una persona cambió su vida activando su cuerpo cada mañana.", "color": "#34d399" },
-        { "type": "quiz", "question": "¿Qué aumenta energía?", "options": ["Movimiento", "Sedentarismo", "Estrés"], "correct": 0, "explanation": "El movimiento activa el cuerpo.", "reward": 10, "color": "#facc15" },
-        { "type": "breathing", "text": "Inhala energía.", "duration": 6, "color": "#60a5fa" },
-        { "type": "breathing", "text": "Exhala cansancio.", "duration": 6, "color": "#60a5fa" },
-        { "type": "visualization", "text": "Visualiza vitalidad total.", "color": "#a78bfa" },
-        { "type": "reward", "text": "Energía activada.", "points": 20, "color": "#10b981" },
-        { "type": "closing", "text": "Tu energía define tu día.", "color": "#f87171" }
-      ]
-    },
-    {
-      "id": 62,
-      "category": "self_respect",
-      "blocks": [
-        { "type": "voice", "text": "Hoy entrenarás respeto propio.", "color": "#2563eb" },
-        { "type": "strategy", "text": "No aceptes lo que te hace daño.", "color": "#14b8a6" },
-        { "type": "story", "text": "Alguien cambió su vida al empezar a decir NO.", "color": "#34d399" },
-        { "type": "quiz", "question": "¿Qué es respeto propio?", "options": ["Decir sí a todo", "Poner límites", "Ignorar todo"], "correct": 1, "explanation": "Los límites protegen tu valor.", "reward": 10, "color": "#facc15" },
-        { "type": "breathing", "text": "Inhala valor.", "duration": 6, "color": "#60a5fa" },
-        { "type": "breathing", "text": "Exhala miedo social.", "duration": 6, "color": "#60a5fa" },
-        { "type": "visualization", "text": "Visualiza respeto total hacia ti mismo.", "color": "#a78bfa" },
-        { "type": "reward", "text": "Respeto propio fortalecido.", "points": 20, "color": "#10b981" },
-        { "type": "closing", "text": "Si no te respetas, nadie lo hará.", "color": "#f87171" }
-      ]
-    },
-    {
-      "id": 63,
-      "category": "discipline_advanced",
-      "blocks": [
-        { "type": "voice", "text": "Hoy subirás tu disciplina al siguiente nivel.", "color": "#2563eb" },
-        { "type": "strategy", "text": "Haz lo que debes aunque no tengas ganas.", "color": "#14b8a6" },
-        { "type": "story", "text": "El éxito nace cuando haces lo difícil todos los días.", "color": "#34d399" },
-        { "type": "quiz", "question": "¿Qué crea éxito?", "options": ["Excusas", "Disciplina", "Suerte"], "correct": 1, "explanation": "La disciplina constante crea resultados.", "reward": 10, "color": "#facc15" },
-        { "type": "mental_game", "question": "15×2", "options": ["30", "28", "32"], "correct": 0, "explanation": "15×2 = 30", "reward": 7, "color": "#38bdf8" },
-        { "type": "breathing", "text": "Inhala disciplina.", "duration": 6, "color": "#60a5fa" },
-        { "type": "breathing", "text": "Exhala pereza.", "duration": 6, "color": "#60a5fa" },
-        { "type": "visualization", "text": "Visualiza constancia diaria.", "color": "#a78bfa" },
-        { "type": "reward", "text": "Disciplina avanzada activada.", "points": 20, "color": "#10b981" },
-        { "type": "closing", "text": "La disciplina te transforma.", "color": "#f87171" }
-      ]
-    },
-    {
-      "id": 64,
-      "category": "mental_clarity",
-      "blocks": [
-        { "type": "voice", "text": "Hoy entrenarás claridad mental.", "color": "#2563eb" },
-        { "type": "strategy", "text": "Ordena tus pensamientos antes de actuar.", "color": "#14b8a6" },
-        { "type": "story", "text": "Una mente clara tomó mejores decisiones en momentos difíciles.", "color": "#34d399" },
-        { "type": "quiz", "question": "¿Qué ayuda a la claridad?", "options": ["Confusión", "Orden", "Caos"], "correct": 1, "explanation": "El orden mental mejora decisiones.", "reward": 10, "color": "#facc15" },
-        { "type": "breathing", "text": "Inhala claridad.", "duration": 6, "color": "#60a5fa" },
-        { "type": "breathing", "text": "Exhala ruido mental.", "duration": 6, "color": "#60a5fa" },
-        { "type": "visualization", "text": "Visualiza pensamiento claro y ordenado.", "color": "#a78bfa" },
-        { "type": "reward", "text": "Claridad mental aumentada.", "points": 20, "color": "#10b981" },
-        { "type": "closing", "text": "La claridad crea dirección.", "color": "#f87171" }
-      ]
-    },
-    {
-      "id": 65,
-      "category": "emotional_strength",
-      "blocks": [
-        { "type": "voice", "text": "Hoy fortalecerás tu mente emocional.", "color": "#2563eb" },
-        { "type": "strategy", "text": "No dejes que las emociones te controlen.", "color": "#14b8a6" },
-        { "type": "story", "text": "Alguien superó crisis al aprender a regular emociones.", "color": "#34d399" },
-        { "type": "quiz", "question": "¿Qué es fuerza emocional?", "options": ["Reacción", "Control", "Evasión"], "correct": 1, "explanation": "El control emocional es clave.", "reward": 10, "color": "#facc15" },
-        { "type": "breathing", "text": "Inhala estabilidad.", "duration": 6, "color": "#60a5fa" },
-        { "type": "breathing", "text": "Exhala impulsos.", "duration": 6, "color": "#60a5fa" },
-        { "type": "visualization", "text": "Visualiza estabilidad emocional total.", "color": "#a78bfa" },
-        { "type": "reward", "text": "Fuerza emocional activada.", "points": 20, "color": "#10b981" },
-        { "type": "closing", "text": "Domina tus emociones.", "color": "#f87171" }
-      ]
-    },
-    {
-      "id": 66,
-      "category": "leadership",
-      "blocks": [
-        { "type": "voice", "text": "Hoy entrenarás liderazgo interno.", "color": "#2563eb" },
-        { "type": "strategy", "text": "Guíate a ti mismo antes de guiar a otros.", "color": "#14b8a6" },
-        { "type": "story", "text": "Un líder nació cuando dejó de seguir excusas.", "color": "#34d399" },
-        { "type": "quiz", "question": "¿Qué es liderazgo?", "options": ["Seguir", "Guiar", "Evitar"], "correct": 1, "explanation": "El líder guía con acciones.", "reward": 10, "color": "#facc15" },
-        { "type": "breathing", "text": "Inhala liderazgo.", "duration": 6, "color": "#60a5fa" },
-        { "type": "breathing", "text": "Exhala duda.", "duration": 6, "color": "#60a5fa" },
-        { "type": "visualization", "text": "Visualiza liderazgo fuerte y claro.", "color": "#a78bfa" },
-        { "type": "reward", "text": "Liderazgo activado.", "points": 20, "color": "#10b981" },
-        { "type": "closing", "text": "El líder se forma a sí mismo.", "color": "#f87171" }
-      ]
-    },
-    {
-      "id": 67,
-      "category": "anti_procrastination",
-      "blocks": [
-        { "type": "voice", "text": "Hoy eliminarás la procrastinación.", "color": "#2563eb" },
-        { "type": "strategy", "text": "Empieza aunque no tengas ganas.", "color": "#14b8a6" },
-        { "type": "story", "text": "Un cambio de vida comenzó con una sola acción inmediata.", "color": "#34d399" },
-        { "type": "quiz", "question": "¿Qué vence la procrastinación?", "options": ["Esperar", "Acción", "Dormir"], "correct": 1, "explanation": "La acción inmediata rompe la inercia.", "reward": 10, "color": "#facc15" },
-        { "type": "mental_game", "question": "3×7", "options": ["21", "24", "18"], "correct": 0, "explanation": "3×7 = 21", "reward": 7, "color": "#38bdf8" },
-        { "type": "breathing", "text": "Inhala acción.", "duration": 6, "color": "#60a5fa" },
-        { "type": "breathing", "text": "Exhala demora.", "duration": 6, "color": "#60a5fa" },
-        { "type": "visualization", "text": "Visualiza actuar sin retrasos.", "color": "#a78bfa" },
-        { "type": "reward", "text": "Procrastinación eliminada.", "points": 20, "color": "#10b981" },
-        { "type": "closing", "text": "La acción vence al tiempo.", "color": "#f87171" }
-      ]
-    },
-    {
-      "id": 68,
-      "category": "self_awareness",
-      "blocks": [
-        { "type": "voice", "text": "Hoy desarrollarás autoconciencia.", "color": "#2563eb" },
-        { "type": "strategy", "text": "Observa tus pensamientos sin juzgar.", "color": "#14b8a6" },
-        { "type": "story", "text": "Una persona cambió su vida al entenderse mejor.", "color": "#34d399" },
-        { "type": "quiz", "question": "¿Qué es autoconciencia?", "options": ["Ignorarse", "Observarse", "Reaccionar"], "correct": 1, "explanation": "Es observar tu mente.", "reward": 10, "color": "#facc15" },
-        { "type": "breathing", "text": "Inhala observación.", "duration": 6, "color": "#60a5fa" },
-        { "type": "breathing", "text": "Exhala juicio.", "duration": 6, "color": "#60a5fa" },
-        { "type": "visualization", "text": "Visualiza comprensión interna profunda.", "color": "#a78bfa" },
-        { "type": "reward", "text": "Autoconciencia activada.", "points": 20, "color": "#10b981" },
-        { "type": "closing", "text": "Conocerte es evolucionar.", "color": "#f87171" }
-      ]
-    },
-    {
-      "id": 69,
-      "category": "focus_power",
-      "blocks": [
-        { "type": "voice", "text": "Hoy desbloquearás poder de enfoque extremo.", "color": "#2563eb" },
-        { "type": "strategy", "text": "Haz una sola cosa a la vez.", "color": "#14b8a6" },
-        { "type": "story", "text": "La concentración total cambió el destino de un atleta.", "color": "#34d399" },
-        { "type": "quiz", "question": "¿Qué aumenta resultados?", "options": ["Multitarea", "Enfoque", "Ruido"], "correct": 1, "explanation": "El enfoque total multiplica resultados.", "reward": 10, "color": "#facc15" },
-        { "type": "breathing", "text": "Inhala enfoque total.", "duration": 6, "color": "#60a5fa" },
-        { "type": "breathing", "text": "Exhala distracción total.", "duration": 6, "color": "#60a5fa" },
-        { "type": "visualization", "text": "Visualiza atención absoluta.", "color": "#a78bfa" },
-        { "type": "reward", "text": "Enfoque máximo activado.", "points": 20, "color": "#10b981" },
-        { "type": "closing", "text": "El enfoque crea dominio.", "color": "#f87171" }
-      ]
-    },
-    {
-      "id": 70,
-      "category": "mental_resistance",
-      "blocks": [
-        { "type": "voice", "text": "Hoy entrenarás resistencia mental.", "color": "#2563eb" },
-        { "type": "strategy", "text": "Sigue incluso cuando quieras parar.", "color": "#14b8a6" },
-        { "type": "story", "text": "Un campeón nació de no rendirse nunca.", "color": "#34d399" },
-        { "type": "quiz", "question": "¿Qué crea resistencia mental?", "options": ["Rendirse", "Persistir", "Evitar"], "correct": 1, "explanation": "Persistir fortalece la mente.", "reward": 10, "color": "#facc15" },
-        { "type": "breathing", "text": "Inhala fuerza mental.", "duration": 6, "color": "#60a5fa" },
-        { "type": "breathing", "text": "Exhala debilidad.", "duration": 6, "color": "#60a5fa" },
-        { "type": "visualization", "text": "Visualiza mente fuerte e imparable.", "color": "#a78bfa" },
-        { "type": "reward", "text": "Resistencia mental aumentada.", "points": 20, "color": "#10b981" },
-        { "type": "closing", "text": "No te detengas.", "color": "#f87171" }
-      ]
-    },
-    {
-      "id": 71,
-      "category": "life_direction",
-      "blocks": [
-        { "type": "voice", "text": "Hoy definirás tu dirección de vida.", "color": "#2563eb" },
-        { "type": "strategy", "text": "Elige lo que te acerca a tu mejor versión.", "color": "#14b8a6" },
-        { "type": "story", "text": "Un cambio de dirección cambió una vida entera.", "color": "#34d399" },
-        { "type": "quiz", "question": "¿Qué guía la vida?", "options": ["Caos", "Dirección", "Suerte"], "correct": 1, "explanation": "La dirección consciente cambia todo.", "reward": 10, "color": "#facc15" },
-        { "type": "breathing", "text": "Inhala claridad de vida.", "duration": 6, "color": "#60a5fa" },
-        { "type": "breathing", "text": "Exhala confusión.", "duration": 6, "color": "#60a5fa" },
-        { "type": "visualization", "text": "Visualiza un futuro claro y fuerte.", "color": "#a78bfa" },
-        { "type": "reward", "text": "Dirección activada.", "points": 20, "color": "#10b981" },
-        { "type": "closing", "text": "Tu dirección crea tu destino.", "color": "#f87171" }
+        { "type": "voice", "text": "Mental resistance under fatigue conditions.", "color": "#2563eb" },
+        { "type": "strategy", "text": "The brain adapts under controlled fatigue exposure.", "color": "#14b8a6" },
+        { "type": "story", "text": "Elite performers train under discomfort intentionally.", "color": "#34d399" },
+        { "type": "quiz", "question": "What builds mental resistance?", "options": ["Comfort", "Avoidance", "Exposure"], "correct": 2, "explanation": "Exposure builds adaptation.", "reward": 15, "color": "#facc15" },
+        { "type": "breathing", "text": "Inhale strength.", "duration": 5, "color": "#60a5fa" },
+        { "type": "breathing", "text": "Exhale weakness.", "duration": 5, "color": "#60a5fa" },
+        { "type": "closing", "text": "You adapt or you break. Choose adaptation.", "color": "#f87171" }
       ]
     }
   ]
