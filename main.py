@@ -5,7 +5,7 @@ import json
 from pathlib import Path
 import os
 
-app = FastAPI(title="KaMiZen Engine Professional")
+app = FastAPI(title="AURA - KaMiZen Engine")
 
 BASE_DIR = Path(__file__).resolve().parent
 STATIC_DIR = BASE_DIR / "static"
@@ -15,29 +15,24 @@ app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
 def cargar_db():
     try:
-        if not DB_PATH.exists():
-            return {"sessions": []}
-        with open(DB_PATH, "r", encoding="utf-8") as f:
-            return json.load(f)
+        if os.path.exists(DB_PATH):
+            with open(DB_PATH, "r", encoding="utf-8") as f:
+                return json.load(f)
+        return {"sessions": []}
     except Exception:
         return {"sessions": []}
 
 @app.get("/", response_class=HTMLResponse)
 async def home():
     try:
-        # Busca el archivo en static/session.html como estaba originalmente
         session_file = STATIC_DIR / "session.html"
         return HTMLResponse(content=session_file.read_text(encoding="utf-8"))
-    except Exception as e:
-        return HTMLResponse(f"<h1>Error: session.html not found in static/</h1><p>{str(e)}</p>")
+    except Exception:
+        return HTMLResponse("<h1>Error: session.html no encontrado en static/</h1>")
 
 @app.get("/session_content")
 async def session_content():
     return JSONResponse(content=cargar_db())
-
-@app.get("/health")
-async def health():
-    return {"status": "active", "engine": "KaMiZen V3"}
 
 if __name__ == "__main__":
     import uvicorn
