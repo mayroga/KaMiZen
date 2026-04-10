@@ -3,23 +3,83 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MaykaMi | Neural Jet</title>
+<title>MaykaMi | Neural Jet LIFE</title>
+
 <style>
-body { margin:0; background:#000; color:#00f2ff; overflow:hidden; }
-#ui { position:absolute; top:20px; left:20px; display:flex; gap:20px; }
-.box { border:1px solid #00f2ff; padding:10px; }
-#exit { position:absolute; bottom:20px; right:20px; padding:10px; cursor:pointer; }
+body {
+    margin:0;
+    background: radial-gradient(circle, #001a1a, #000);
+    color:#00f2ff;
+    font-family: Arial;
+    overflow:hidden;
+}
+
+/* HUD */
+#ui {
+    position:absolute;
+    top:10px;
+    left:10px;
+    display:flex;
+    gap:15px;
+}
+
+.box {
+    background:rgba(0,0,0,0.6);
+    border:1px solid #00f2ff;
+    padding:10px;
+    font-size:12px;
+}
+
+#exit {
+    position:absolute;
+    bottom:20px;
+    right:20px;
+    padding:10px 20px;
+    background:#00f2ff;
+    color:#000;
+    border:none;
+    cursor:pointer;
+}
+
+/* DECISION PANEL */
+#decisionBox{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.9);
+    display:none;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+}
+
+.decision-btn{
+    margin:10px;
+    padding:12px 20px;
+    border:1px solid #00f2ff;
+    background:transparent;
+    color:#00f2ff;
+    cursor:pointer;
+}
 </style>
 </head>
+
 <body>
 
 <div id="ui">
 <div class="box">SYNC: <span id="sync">100</span>%</div>
 <div class="box">ALT: <span id="dist">0</span></div>
+<div class="box">MENTAL: <span id="mental">100</span></div>
 </div>
 
 <canvas id="c"></canvas>
 <button id="exit">EXIT</button>
+
+<div id="decisionBox">
+    <h2 id="eventTitle"></h2>
+    <p id="eventDesc"></p>
+    <div id="choices"></div>
+</div>
 
 <script>
 const canvas = document.getElementById("c");
@@ -27,41 +87,89 @@ const ctx = canvas.getContext("2d");
 canvas.width = innerWidth;
 canvas.height = innerHeight;
 
-let sync = parseInt(localStorage.getItem("syncScore")) || 100;
-let score = 0;
+// =====================
+// STATE VIDA REAL
+// =====================
+let state = {
+    sync: 100,
+    mental: 100,
+    money: 1000
+};
 
-document.getElementById("sync").innerText = sync;
-
-let jet = {x:50, y:200};
+let jet = {x:80, y:200};
 let obstacles = [];
+let score = 0;
+let playing = true;
+
+// EVENTOS HUMANOS
+const EVENTS = [
+    {
+        name:"CRÍTICA",
+        desc:"Alguien te falta el respeto",
+        color:"#ff0033",
+        decisions:[
+            {text:"Reaccionar", effect:{mental:-10}},
+            {text:"Ignorar", effect:{mental:-2}},
+            {text:"Controlar", effect:{mental:+5}}
+        ]
+    },
+    {
+        name:"PÉRDIDA",
+        desc:"Pierdes dinero inesperadamente",
+        color:"#ff8800",
+        decisions:[
+            {text:"Entrar en pánico", effect:{mental:-10, money:-50}},
+            {text:"Adaptarte", effect:{mental:+5}},
+            {text:"Ignorar", effect:{mental:-5}}
+        ]
+    },
+    {
+        name:"RECHAZO",
+        desc:"Te ignoran completamente",
+        color:"#ff00aa",
+        decisions:[
+            {text:"Insistir", effect:{mental:-5}},
+            {text:"Retirarte", effect:{mental:+2}},
+            {text:"Mejorar", effect:{mental:+5}}
+        ]
+    }
+];
 
 window.onmousemove = e => jet.y = e.clientY;
 
+// =====================
+// LOOP
+// =====================
 function loop(){
+    if(!playing) return;
+
     ctx.clearRect(0,0,canvas.width,canvas.height);
 
+    // jugador
     ctx.fillStyle="#00f2ff";
     ctx.fillRect(jet.x, jet.y, 20, 20);
 
+    // spawn
     if(Math.random()<0.03){
-        obstacles.push({x:canvas.width, y:Math.random()*canvas.height});
+        const ev = EVENTS[Math.floor(Math.random()*EVENTS.length)];
+        obstacles.push({x:canvas.width, y:Math.random()*canvas.height, event:ev});
     }
 
     obstacles.forEach((o,i)=>{
         o.x -= 5;
-        ctx.fillStyle="red";
-        ctx.fillRect(o.x,o.y,20,20);
 
+        // cuadro rojo con significado
+        ctx.strokeStyle = o.event.color;
+        ctx.strokeRect(o.x,o.y,30,30);
+
+        ctx.fillStyle=o.event.color;
+        ctx.font="10px Arial";
+        ctx.fillText(o.event.name,o.x,o.y-5);
+
+        // colisión
         if(Math.abs(o.x-jet.x)<20 && Math.abs(o.y-jet.y)<20){
-            sync -= 10;
-            document.getElementById("sync").innerText = sync;
-
-            // RESPIRACIÓN FORZADA
-            alert("Respira... recupera control");
-
-            if(sync <= 0){
-                exitGame();
-            }
+            triggerDecision(o.event);
+            obstacles.splice(i,1);
         }
 
         if(o.x<0) obstacles.splice(i,1);
@@ -69,16 +177,65 @@ function loop(){
 
     score++;
     document.getElementById("dist").innerText = score;
+    document.getElementById("sync").innerText = state.sync;
+    document.getElementById("mental").innerText = state.mental;
 
     requestAnimationFrame(loop);
 }
 
-function exitGame(){
-    localStorage.setItem("syncScore", sync);
-    window.location.href = "/";
+// =====================
+// DECISION SYSTEM
+// =====================
+function triggerDecision(event){
+    playing = false;
+
+    const box = document.getElementById("decisionBox");
+    const choices = document.getElementById("choices");
+
+    box.style.display="flex";
+    document.getElementById("eventTitle").innerText = event.name;
+    document.getElementById("eventDesc").innerText = event.desc;
+
+    choices.innerHTML="";
+
+    event.decisions.forEach(d=>{
+        const btn = document.createElement("button");
+        btn.className="decision-btn";
+        btn.innerText=d.text;
+
+        btn.onclick=()=>{
+            applyEffect(d.effect);
+            box.style.display="none";
+            playing=true;
+            loop();
+        };
+
+        choices.appendChild(btn);
+    });
 }
 
-document.getElementById("exit").onclick = exitGame;
+// =====================
+// EFECTOS VIDA
+// =====================
+function applyEffect(effect){
+    if(effect.mental) state.mental += effect.mental;
+    if(effect.money) state.money += effect.money;
+
+    state.sync = Math.max(0, state.mental);
+
+    // IA JUDGE
+    fetch("/judge", {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({decision:"engage", effect})
+    });
+}
+
+// =====================
+document.getElementById("exit").onclick = ()=>{
+    localStorage.setItem("syncScore", state.sync);
+    window.location.href="/";
+};
 
 loop();
 </script>
