@@ -20,28 +20,38 @@
             overflow: hidden;
             background-position: center;
             background-repeat: no-repeat;
-            background-size: 110%;
-            /* Transición fluida para el imageBank */
+            background-size: cover; /* Optimización para móviles: evita estiramiento */
             transition: background-image 3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* Efecto de Zoom Infinito */
-        .zoom-active {
-            animation: infiniteZoom 25s ease-in-out infinite alternate;
-        }
-
+        /* Animación de Zoom por defecto (Móvil: Muy sutil para mantener nitidez) */
         @keyframes infiniteZoom {
-            from { background-size: 110%; }
-            to { background-size: 155%; }
+            from { background-size: 100%; }
+            to { background-size: 110%; }
         }
 
-        /* Contenedor Principal (Glassmorphism) */
+        /* --- MEDIA QUERY: Solo para Computadoras/Pantallas Grandes --- */
+        @media (min-width: 1024px) {
+            body {
+                background-size: 110%;
+            }
+            @keyframes infiniteZoom {
+                from { background-size: 110%; }
+                to { background-size: 150%; }
+            }
+        }
+
+        .zoom-active {
+            animation: infiniteZoom 30s ease-in-out infinite alternate;
+        }
+
+        /* Contenedor Principal (Glassmorphism optimizado) */
         #app {
             width: 92%;
             max-width: 400px;
-            background: rgba(0, 0, 0, 0.25);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            background: rgba(0, 0, 0, 0.35); /* Un poco más oscuro para mejor contraste */
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 35px;
             padding: 35px 25px;
@@ -51,7 +61,7 @@
             flex-direction: column;
             justify-content: space-between;
             min-height: 75vh;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
         }
 
         #logo {
@@ -87,7 +97,7 @@
             font-size: 20px; 
             font-weight: 300; 
             line-height: 1.5;
-            text-shadow: 0 2px 15px rgba(0,0,0,0.6);
+            text-shadow: 0 2px 15px rgba(0,0,0,0.8);
             min-height: 80px;
             display: flex;
             align-items: center;
@@ -99,7 +109,7 @@
             width: 140px; 
             height: 140px;
             border-radius: 50%;
-            border: 1px solid rgba(96, 165, 250, 0.4);
+            border: 2px solid rgba(96, 165, 250, 0.4);
             background: rgba(96, 165, 250, 0.05);
             display: none; 
             justify-content: center; 
@@ -135,11 +145,7 @@
             text-transform: uppercase;
         }
 
-        /* Botones y Acciones */
-        #action-area {
-            margin-top: 30px;
-        }
-
+        /* Botones */
         button {
             padding: 18px; 
             border: none; 
@@ -155,12 +161,10 @@
         }
 
         button:active { transform: scale(0.98); }
-
         button:disabled { 
             background: rgba(255,255,255,0.05); 
             color: rgba(255,255,255,0.2);
             box-shadow: none;
-            cursor: not-allowed;
         }
 
         .secondary { 
@@ -171,46 +175,20 @@
         }
 
         #lang-btn {
-            width: auto; 
-            position: absolute; 
-            top: 20px; 
-            right: 20px; 
-            padding: 6px 14px; 
-            font-size: 11px;
-            background: rgba(0,0,0,0.3);
-            border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 12px;
-            z-index: 20;
+            width: auto; position: absolute; top: 20px; right: 20px; 
+            padding: 6px 14px; font-size: 11px;
+            background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 12px; z-index: 20;
         }
 
         /* Modal de Inactividad */
         #warning-modal {
-            display: none; 
-            position: fixed; 
-            inset: 0; 
-            background: rgba(0,0,0,0.95);
-            backdrop-filter: blur(15px);
-            z-index: 1000; 
-            justify-content: center; 
-            align-items: center; 
-            padding: 20px;
+            display: none; position: fixed; inset: 0; 
+            background: rgba(0,0,0,0.95); backdrop-filter: blur(15px);
+            z-index: 1000; justify-content: center; align-items: center; padding: 20px;
         }
 
-        .modal-content {
-            text-align: center;
-            max-width: 300px;
-        }
-
-        /* Animación para Quizzes */
-        #quiz-options button {
-            animation: fadeIn 0.5s ease forwards;
-            margin-top: 10px;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        .modal-content { text-align: center; max-width: 300px; }
 
         /* Ajustes Mobile */
         @media (max-height: 700px) {
@@ -218,7 +196,6 @@
             #logo { font-size: 26px; }
             #text-content { font-size: 17px; }
             #breath-circle { width: 110px; height: 110px; }
-            #timer-display { font-size: 32px; }
         }
     </style>
 </head>
@@ -228,14 +205,13 @@
     <div id="warning-modal">
         <div class="modal-content">
             <h2 style="color:#ef4444; margin-bottom:10px; letter-spacing: 2px;">INACTIVITY</h2>
-            <p style="margin-bottom: 25px; font-weight: 300; color: rgba(255,255,255,0.7);">Tap the screen to continue the session.</p>
+            <p style="margin-bottom: 25px; font-weight: 300; color: rgba(255,255,255,0.7);">Tap the screen to continue.</p>
             <button onclick="resetInactivity()">I AM HERE</button>
         </div>
     </div>
 
     <div id="app">
         <button id="lang-btn">EN</button>
-        
         <div id="header-meta">
             <div id="logo">KaMiZen</div>
             <div id="mental-panel">
@@ -243,25 +219,21 @@
                 <span id="level-display">Lv. 1</span>
             </div>
         </div>
-
         <div id="block-container">
-            <div id="text-content">Loading Wisdom...</div>
-            
+            <div id="text-content">Iniciando...</div>
             <div id="breath-circle">
                 <div id="timer-display" style="display:none;">0</div>
                 <span id="breathe-text">Breathe</span>
             </div>
         </div>
-        
         <div id="action-area">
             <button id="main-btn">START</button>
             <div style="display: flex; gap: 10px; margin-top: 12px;">
-                <button id="back-btn" class="secondary" style="font-size: 11px; letter-spacing: 1px;">BACK</button>
-                <button id="fwd-btn" class="secondary" style="font-size: 11px; letter-spacing: 1px;">SKIP</button>
+                <button id="back-btn" class="secondary" style="font-size: 11px;">BACK</button>
+                <button id="fwd-btn" class="secondary" style="font-size: 11px;">SKIP</button>
             </div>
         </div>
     </div>
-
     <script src="/static/scripts.js"></script>
 </body>
 </html>
