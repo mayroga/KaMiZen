@@ -8,12 +8,12 @@
       "image_config": { "zoom_speed": "0.06", "interval_sec": 7, "total_unique_images": 82 },
       "blocks": [
         { "type": "voice", "text": { "es": "MISIÓN 1: La Trampa de la Dopamina. Recupera tu enfoque para recuperar tu riqueza.", "en": "MISSION 1: The Dopamine Trap. Reclaim your focus." } },
-        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Limpieza inicial", "en": "Initial flush" }, "voice_guidance": ["Inhala el silencio", "Exhala el ruido digital"] },
+        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Limpieza inicial", "en": "Initial flush" }, "voice_guidance": { "es": ["Inhala el silencio", "Exhala el ruido digital"], "en": ["Inhale the silence", "Exhale digital noise"] } },
         { "type": "story", "text": { "es": "El espejo es tu teléfono; el reino es tu potencial.", "en": "The mirror is your phone; the kingdom is your potential." } },
-        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Enfoque profundo", "en": "Deep focus" }, "voice_guidance": ["Mantén la quietud", "Siente tu poder"] },
-        { "type": "silence_challenge", "duration_min": 10, "on_skip": { "punishment": "rollback_2_questions", "power_advice": "La impaciencia es pobreza. Vuelve al origen." } },
-        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Sellado de energía", "en": "Energy seal" }, "voice_guidance": ["Dominio total", "Tú mandas"] },
-        { "type": "quiz", "question": { "es": "¿Cuántos días ganas al año si ahorras 2h de móvil al día?", "en": "How many days do you gain if you save 2h/day?" }, "options": ["15", "30", "45"], "correct": 1 }
+        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Enfoque profundo", "en": "Deep focus" }, "voice_guidance": { "es": ["Mantén la quietud", "Siente tu poder"], "en": ["Maintain stillness", "Feel your power"] } },
+        { "type": "silence_challenge", "duration_min": 10, "on_skip": { "punishment": "rollback_2_questions", "power_advice": { "es": "La impaciencia es pobreza. Vuelve al origen.", "en": "Impatience is poverty. Return to the source." } } },
+        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Sellado de energía", "en": "Energy seal" }, "voice_guidance": { "es": ["Dominio total", "Tú mandas"], "en": ["Total dominance", "You are in command"] } },
+        { "type": "quiz", "question": { "es": "¿Cuántos días ganas al año si ahorras 2h de móvil al día?", "en": "How many days do you gain if you save 2h/day?" }, "options": { "es": ["15", "30", "45"], "en": ["15", "30", "45"] }, "correct": 1 }
       ]
     },
     {
@@ -24,11 +24,11 @@
       "image_config": { "zoom_speed": "0.05", "interval_sec": 8, "total_unique_images": 85 },
       "blocks": [
         { "type": "voice", "text": { "es": "La felicidad es una elección. Si dependes de otros, eres un esclavo.", "en": "Happiness is a choice. Depend on others and be a slave." } },
-        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Activación de alegría", "en": "Joy activation" }, "voice_guidance": ["Sonríe al inhalar", "Expande tu luz"] },
+        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Activación de alegría", "en": "Joy activation" }, "voice_guidance": { "es": ["Sonríe al inhalar", "Expande tu luz"], "en": ["Smile as you inhale", "Expand your light"] } },
         { "type": "story", "text": { "es": "No luchaba contra el agua; era la montaña debajo de ella.", "en": "He didn't fight the water; he was the mountain beneath it." } },
-        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Pilar inquebrantable", "en": "Unshakable pillar" }, "voice_guidance": ["Nada te mueve", "Eres roca"] },
-        { "type": "silence_challenge", "duration_min": 10, "on_skip": { "punishment": "rollback_2_questions", "power_advice": "El que no domina su mente, no domina su destino." } },
-        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Calma absoluta", "en": "Absolute calm" }, "voice_guidance": ["Paz profunda", "Control total"] },
+        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Pilar inquebrantable", "en": "Unshakable pillar" }, "voice_guidance": { "es": ["Nada te mueve", "Eres roca"], "en": ["Nothing moves you", "You are rock"] } },
+        { "type": "silence_challenge", "duration_min": 10, "on_skip": { "punishment": "rollback_2_questions", "power_advice": { "es": "El que no domina su mente, no domina su destino.", "en": "He who masters not his mind, masters not his destiny." } } },
+        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Calma absoluta", "en": "Absolute calm" }, "voice_guidance": { "es": ["Paz profunda", "Control total"], "en": ["Deep peace", "Total control"] } },
         { "type": "quiz", "question": { "es": "Acertijo: Soy ligera pero peso en el corazón. ¿Qué soy?", "en": "Riddle: I am light but heavy in the heart. What am I?" }, "options": { "es": ["Dinero", "Sonrisa", "Móvil"], "en": ["Money", "Smile", "Phone"] }, "correct": 1 }
       ]
     },
@@ -40,12 +40,12 @@
       "image_config": { "zoom_speed": "0.07", "interval_sec": 7, "total_unique_images": 90 },
       "blocks": [
         { "type": "voice", "text": { "es": "El dinero sigue al enfoque. Cuenta vacía es mente dispersa.", "en": "Money follows focus. Empty account means scattered mind." } },
-        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Estado de Flujo", "en": "Flow State" }, "voice_guidance": ["Inhala valor", "Exhala mediocridad"] },
+        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Estado de Flujo", "en": "Flow State" }, "voice_guidance": { "es": ["Inhala valor", "Exhala mediocridad"], "en": ["Inhale value", "Exhale mediocrity"] } },
         { "type": "strategy", "text": { "es": "Multiplica tu valor, no tus horas.", "en": "Multiply your value, not your hours." } },
-        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Decisión ejecutiva", "en": "Executive decision" }, "voice_guidance": ["Mente clara", "Visión de águila"] },
-        { "type": "silence_challenge", "duration_min": 15, "on_skip": { "punishment": "rollback_2_questions", "power_advice": "La prisa es el enemigo de la estrategia." } },
-        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Sellado de riqueza", "en": "Wealth seal" }, "voice_guidance": ["Eres un imán de valor", "Siente el éxito"] },
-        { "type": "quiz", "question": { "es": "(50 x 2) + (100 / 4) = ?", "en": "(50 x 2) + (100 / 4) = ?" }, "options": ["125", "150", "110"], "correct": 0 }
+        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Decisión ejecutiva", "en": "Executive decision" }, "voice_guidance": { "es": ["Mente clara", "Visión de águila"], "en": ["Clear mind", "Eagle vision"] } },
+        { "type": "silence_challenge", "duration_min": 15, "on_skip": { "punishment": "rollback_2_questions", "power_advice": { "es": "La prisa es el enemigo de la estrategia.", "en": "Haste is the enemy of strategy." } } },
+        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Sellado de riqueza", "en": "Wealth seal" }, "voice_guidance": { "es": ["Eres un imán de valor", "Siente el éxito"], "en": ["You are a magnet for value", "Feel the success"] } },
+        { "type": "quiz", "question": { "es": "(50 x 2) + (100 / 4) = ?", "en": "(50 x 2) + (100 / 4) = ?" }, "options": { "es": ["125", "150", "110"], "en": ["125", "150", "110"] }, "correct": 0 }
       ]
     },
     {
@@ -56,11 +56,11 @@
       "image_config": { "zoom_speed": "0.06", "interval_sec": 9, "total_unique_images": 88 },
       "blocks": [
         { "type": "strategy", "text": { "es": "La privacidad es poder. Muestra resultados, no planes.", "en": "Privacy is power. Show results, not plans." } },
-        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Dominio Calmo", "en": "Calm Dominance" }, "voice_guidance": ["Escucha el doble", "Habla la mitad"] },
+        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Dominio Calmo", "en": "Calm Dominance" }, "voice_guidance": { "es": ["Escucha el doble", "Habla la mitad"], "en": ["Listen twice as much", "Speak half as much"] } },
         { "type": "story", "text": { "es": "La información es el arma definitiva.", "en": "Information is the ultimate weapon." } },
-        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Nervio vago", "en": "Vagus nerve" }, "voice_guidance": ["Exhala largo", "Controla el pulso"] },
-        { "type": "silence_challenge", "duration_min": 10, "on_skip": { "punishment": "rollback_2_questions", "power_advice": "El silencio es la mejor respuesta para los necios." } },
-        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Sigilo Social", "en": "Social Stealth" }, "voice_guidance": ["Invisibilidad", "Observación pura"] },
+        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Nervio vago", "en": "Vagus nerve" }, "voice_guidance": { "es": ["Exhala largo", "Controla el pulso"], "en": ["Long exhale", "Control the pulse"] } },
+        { "type": "silence_challenge", "duration_min": 10, "on_skip": { "punishment": "rollback_2_questions", "power_advice": { "es": "El silencio es la mejor respuesta para los necios.", "en": "Silence is the best answer for fools." } } },
+        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Sigilo Social", "en": "Social Stealth" }, "voice_guidance": { "es": ["Invisibilidad", "Observación pura"], "en": ["Invisibility", "Pure observation"] } },
         { "type": "quiz", "question": { "es": "Mirar arriba y a la derecha indica:", "en": "Looking up and to the right indicates:" }, "options": { "es": ["Recuerdo", "Mentira", "Enojo"], "en": ["Memory", "Lying", "Anger"] }, "correct": 1 }
       ]
     },
@@ -72,12 +72,12 @@
       "image_config": { "zoom_speed": "0.08", "interval_sec": 6, "total_unique_images": 95 },
       "blocks": [
         { "type": "voice", "text": { "es": "Defines la realidad según dónde miras. Conviértete en poder.", "en": "You define reality by where you look. Become power." } },
-        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Neuro-Regeneración", "en": "Neuro-Regeneration" }, "voice_guidance": ["Oxigena tu genio", "Repara tu ADN"] },
+        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Neuro-Regeneración", "en": "Neuro-Regeneration" }, "voice_guidance": { "es": ["Oxigena tu genio", "Repara tu ADN"], "en": ["Oxygenate your genius", "Repair your DNA"] } },
         { "type": "strategy", "text": { "es": "Tu cerebro es una supercomputadora biológica.", "en": "Your brain is a biological super-computer." } },
-        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Salto Cuántico", "en": "Quantum Leap" }, "voice_guidance": ["Rompe el límite", "Crea el futuro"] },
-        { "type": "silence_challenge", "duration_min": 20, "on_skip": { "punishment": "rollback_2_questions", "power_advice": "En el vacío está toda la creación." } },
-        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Unión con el todo", "en": "Union with all" }, "voice_guidance": ["Sin tiempo", "Sin espacio"] },
-        { "type": "quiz", "question": { "es": "¿Qué pasa con E/R cuando R se acerca a cero?", "en": "What happens to E/R when R approaches zero?" }, "options": ["Cero", "Poder Infinito", "Uno"], "correct": 1 }
+        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Salto Cuántico", "en": "Quantum Leap" }, "voice_guidance": { "es": ["Rompe el límite", "Crea el futuro"], "en": ["Break the limit", "Create the future"] } },
+        { "type": "silence_challenge", "duration_min": 20, "on_skip": { "punishment": "rollback_2_questions", "power_advice": { "es": "En el vacío está toda la creación.", "en": "In the void lies all creation." } } },
+        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Unión con el todo", "en": "Union with all" }, "voice_guidance": { "es": ["Sin tiempo", "Sin espacio"], "en": ["No time", "No space"] } },
+        { "type": "quiz", "question": { "es": "¿Qué pasa con E/R cuando R se acerca a cero?", "en": "What happens to E/R when R approaches zero?" }, "options": { "es": ["Cero", "Poder Infinito", "Uno"], "en": ["Zero", "Infinite Power", "One"] }, "correct": 1 }
       ]
     },
     {
@@ -88,11 +88,11 @@
       "image_config": { "zoom_speed": "0.09", "interval_sec": 7, "total_unique_images": 100 },
       "blocks": [
         { "type": "story", "text": { "es": "El oro es el subproducto de tu disciplina interna.", "en": "Gold is the byproduct of your internal discipline." } },
-        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Quietud Absoluta", "en": "Absolute Stillness" }, "voice_guidance": ["Sé el vacío", "Cero reacción"] },
+        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Quietud Absoluta", "en": "Absolute Stillness" }, "voice_guidance": { "es": ["Sé el vacío", "Cero reacción"], "en": ["Be the void", "Zero reaction"] } },
         { "type": "strategy", "text": { "es": "Disciplina es el interés compuesto del alma.", "en": "Discipline is compound interest for the soul." } },
-        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Regla del 1%", "en": "1% Rule" }, "voice_guidance": ["Mejora constante", "Enfoque letal"] },
-        { "type": "silence_challenge", "duration_min": 30, "on_skip": { "punishment": "rollback_2_questions", "power_advice": "Si no puedes estar quieto, no puedes ser libre." } },
-        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Maestría Final", "en": "Final Mastery" }, "voice_guidance": ["Poder absoluto", "Manifiesta ahora"] },
+        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Regla del 1%", "en": "1% Rule" }, "voice_guidance": { "es": ["Mejora constante", "Enfoque letal"], "en": ["Constant improvement", "Lethal focus"] } },
+        { "type": "silence_challenge", "duration_min": 30, "on_skip": { "punishment": "rollback_2_questions", "power_advice": { "es": "Si no puedes estar quieto, no puedes ser libre.", "en": "If you cannot be still, you cannot be free." } } },
+        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Maestría Final", "en": "Final Mastery" }, "voice_guidance": { "es": ["Poder absoluto", "Manifiesta ahora"], "en": ["Absolute power", "Manifest now"] } },
         { "type": "reward", "points": 100, "text": { "es": "NIVEL DE GENIO ALCANZADO.", "en": "GENIUS LEVEL REACHED." } }
       ]
     },
@@ -104,12 +104,12 @@
       "image_config": { "zoom_speed": "0.06", "interval_sec": 8, "total_unique_images": 84 },
       "blocks": [
         { "type": "voice", "text": { "es": "Tu energía es tu moneda. No la gastes en basura.", "en": "Your energy is your currency. Don't waste it on trash." } },
-        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Carga mitocondrial", "en": "Mitochondrial charge" }, "voice_guidance": ["Inhala fuego", "Exhala ceniza"] },
+        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Carga mitocondrial", "en": "Mitochondrial charge" }, "voice_guidance": { "es": ["Inhala fuego", "Exhala ceniza"], "en": ["Inhale fire", "Exhale ash"] } },
         { "type": "story", "text": { "es": "Alimenta tu fuego con leña, no con papel.", "en": "Feed your fire with wood, not paper." } },
-        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Alcalinización", "en": "Alkalization" }, "voice_guidance": ["Sangre limpia", "Mente fuerte"] },
-        { "type": "silence_challenge", "duration_min": 12, "on_skip": { "punishment": "rollback_2_questions", "power_advice": "Cuidar tu cuerpo es cuidar tu imperio." } },
-        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Reseteo Vital", "en": "Vital Reset" }, "voice_guidance": ["Células nuevas", "Energía pura"] },
-        { "type": "quiz", "question": { "es": "¿Cuántos minutos ahorras al beber agua y enfocarte?", "en": "How many minutes do you save by drinking water?" }, "options": ["24", "36", "50"], "correct": 1 }
+        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Alcalinización", "en": "Alkalization" }, "voice_guidance": { "es": ["Sangre limpia", "Mente fuerte"], "en": ["Clean blood", "Strong mind"] } },
+        { "type": "silence_challenge", "duration_min": 12, "on_skip": { "punishment": "rollback_2_questions", "power_advice": { "es": "Cuidar tu cuerpo es cuidar tu imperio.", "en": "Caring for your body is caring for your empire." } } },
+        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Reseteo Vital", "en": "Vital Reset" }, "voice_guidance": { "es": ["Células nuevas", "Energía pura"], "en": ["New cells", "Pure energy"] } },
+        { "type": "quiz", "question": { "es": "¿Cuántos minutos ahorras al beber agua y enfocarte?", "en": "How many minutes do you save by drinking water?" }, "options": { "es": ["24", "36", "50"], "en": ["24", "36", "50"] }, "correct": 1 }
       ]
     },
     {
@@ -120,240 +120,146 @@
       "image_config": { "zoom_speed": "0.05", "interval_sec": 7, "total_unique_images": 81 },
       "blocks": [
         { "type": "voice", "text": { "es": "Si vibras en miedo, atraes miedo. Eleva tu frecuencia.", "en": "Vibrate in fear, attract fear. Raise your frequency." } },
-        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Flujo de Serotonina", "en": "Serotonin Flow" }, "voice_guidance": ["Circular y suave", "Sin pausas"] },
+        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Flujo de Serotonina", "en": "Serotonin Flow" }, "voice_guidance": { "es": ["Circular y suave", "Sin pausas"], "en": ["Circular and smooth", "No pauses"] } },
         { "type": "story", "text": { "es": "Vacía tu taza de basura digital.", "en": "Empty your cup of digital trash." } },
-        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Paz Profunda", "en": "Deep Peace" }, "voice_guidance": ["Fluye como agua", "Luz pura"] },
-        { "type": "silence_challenge", "duration_min": 10, "on_skip": { "punishment": "rollback_2_questions", "power_advice": "La gratitud es el imán de los milagros." } },
-        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Activación Final", "en": "Final Activation" }, "voice_guidance": ["Alegre", "Poderoso", "Libre"] },
+        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Paz Profunda", "en": "Deep Peace" }, "voice_guidance": { "es": ["Fluye como agua", "Luz pura"], "en": ["Flow like water", "Pure light"] } },
+        { "type": "silence_challenge", "duration_min": 10, "on_skip": { "punishment": "rollback_2_questions", "power_advice": { "es": "La gratitud es el imán de los milagros.", "en": "Gratitude is the magnet for miracles." } } },
+        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Activación Final", "en": "Final Activation" }, "voice_guidance": { "es": ["Alegre", "Poderoso", "Libre"], "en": ["Joyful", "Powerful", "Free"] } },
         { "type": "quiz", "question": { "es": "Acertijo: Siempre vengo pero nunca llego. ¿Qué soy?", "en": "Riddle: I am always coming but never arrive. What am I?" }, "options": { "es": ["El Mañana", "El Pasado", "El Teléfono"], "en": ["Tomorrow", "Past", "Phone"] }, "correct": 0 }
       ]
     },
     {
-  "id": 9,
-  "level": 2,
-  "category": "Wealth & Assets Intelligence",
-  "transparency_alpha": 0.38,
-  "image_config": { 
-    "zoom_speed": "0.07", 
-    "interval_sec": 7, 
-    "total_unique_images": 88 
-  },
-  "blocks": [
-    { 
-      "type": "voice", 
-      "text": { 
-        "es": "Misión 9: Tu primer activo es tu atención. La gente pobre trabaja por dinero; los ricos hacen que el dinero trabaje para ellos.", 
-        "en": "Mission 9: Your first asset is your attention. Poor people work for money; rich people make money work for them." 
-      } 
-    },
-    { 
-      "type": "t_vid_part", 
-      "duration": 20, 
-      "goal": { "es": "Enfoque Ejecutivo", "en": "Executive Focus" }, 
-      "voice_guidance": {
-        "es": ["Disciplina los pulmones", "Disciplina la billetera", "Activa el centro de mando"],
-        "en": ["Discipline the lungs", "Discipline the wallet", "Activate the command center"]
-      }
-    },
-    { 
-      "type": "strategy", 
-      "title": { "es": "El Efecto Multiplicador", "en": "The Multiplier Effect" },
-      "text": { 
-        "es": "Cada dólar es un soldado. Si los envías a morir en apps inútiles o pasivos, pierdes la guerra. Haz que conquisten territorio.", 
-        "en": "Every dollar is a soldier. If you send them to die in useless apps or liabilities, you lose the war. Make them conquer territory." 
-      } 
-    },
-    { 
-      "type": "t_vid_part", 
-      "duration": 20, 
-      "goal": { "es": "Activación Prefrontal", "en": "Prefrontal Activation" }, 
-      "voice_guidance": {
-        "es": ["Mente clara", "Visión de activos", "Inhala riqueza"],
-        "en": ["Clear mind", "Asset vision", "Inhale wealth"]
-      }
-    },
-    { 
-      "type": "silence_challenge", 
-      "duration_min": 10, 
-      "on_skip": { 
-        "punishment": "rollback_2_questions", 
-        "power_advice": {
-          "es": "El que no puede dominar su paciencia por 10 minutos, jamás dominará un mercado de 10 años.",
-          "en": "He who cannot master his patience for 10 minutes will never master a 10-year market."
-        }
-      } 
-    },
-    { 
-      "type": "t_vid_part", 
-      "duration": 20, 
-      "goal": { "es": "Sellado de Inversión", "en": "Investment Seal" }, 
-      "voice_guidance": {
-        "es": ["Eres dueño de tu tiempo", "Poder financiero real", "Exhala el gasto innecesario"],
-        "en": ["You own your time", "Real financial power", "Exhale useless spending"]
-      }
-    },
-    { 
-      "type": "quiz", 
-      "question": { 
-        "es": "Mates de Valor: Un activo te paga 5% anual, pero la inflación es del 7%. ¿Cuál es el resultado real?", 
-        "en": "Value Math: An asset pays you 5% annually, but inflation is 7%. What is the real result?" 
-      }, 
-      "options": {
-        "es": ["Ganando 2%", "Perdiendo 2%", "Perdiendo 12%"],
-        "en": ["Gaining 2%", "Losing 2%", "Losing 12%"]
-      },
-      "correct": 1,
-      "explanation": {
-        "es": "5% - 7% = -2%. Si tu retorno no supera la inflación, tu riqueza se está encogiendo silenciosamente.",
-        "en": "5% - 7% = -2%. If your return doesn't beat inflation, your wealth is silently shrinking."
-      }
+      "id": 9,
+      "level": 2,
+      "category": "Wealth & Assets Intelligence",
+      "transparency_alpha": 0.38,
+      "image_config": { "zoom_speed": "0.07", "interval_sec": 7, "total_unique_images": 88 },
+      "blocks": [
+        { "type": "voice", "text": { "es": "Misión 9: Tu primer activo es tu atención. La gente pobre trabaja por dinero; los ricos hacen que el dinero trabaje para ellos.", "en": "Mission 9: Your first asset is your attention. Poor people work for money; rich people make money work for them." } },
+        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Enfoque Ejecutivo", "en": "Executive Focus" }, "voice_guidance": { "es": ["Disciplina los pulmones", "Disciplina la billetera", "Activa el centro de mando"], "en": ["Discipline the lungs", "Discipline the wallet", "Activate the command center"] } },
+        { "type": "strategy", "text": { "es": "Cada dólar es un soldado. Si los envías a morir en apps inútiles o pasivos, pierdes la guerra. Haz que conquisten territorio.", "en": "Every dollar is a soldier. If you send them to die in useless apps or liabilities, you lose the war. Make them conquer territory." } },
+        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Activación Prefrontal", "en": "Prefrontal Activation" }, "voice_guidance": { "es": ["Mente clara", "Visión de activos", "Inhala riqueza"], "en": ["Clear mind", "Asset vision", "Inhale wealth"] } },
+        { "type": "silence_challenge", "duration_min": 10, "on_skip": { "punishment": "rollback_2_questions", "power_advice": { "es": "El que no puede dominar su paciencia por 10 minutos, jamás dominará un mercado de 10 años.", "en": "He who cannot master his patience for 10 minutes will never master a 10-year market." } } },
+        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Sellado de Inversión", "en": "Investment Seal" }, "voice_guidance": { "es": ["Eres dueño de tu tiempo", "Poder financiero real", "Exhala el gasto innecesario"], "en": ["You own your time", "Real financial power", "Exhale useless spending"] } },
+        { "type": "quiz", "question": { "es": "Mates de Valor: Un activo te paga 5% anual, pero la inflación es del 7%. ¿Cuál es el resultado real?", "en": "Value Math: An asset pays you 5% annually, but inflation is 7%. What is the real result?" }, "options": { "es": ["Ganando 2%", "Perdiendo 2%", "Perdiendo 12%"], "en": ["Gaining 2%", "Losing 2%", "Losing 12%"] }, "correct": 1 }
+      ]
     },
     {
       "id": 10,
       "level": 2,
-      "category": "Social Engineering & Influence",
-      "transparency_alpha": 0.4,
-      "image_config": { "zoom_speed": "0.06", "interval_sec": 8, "total_unique_images": 85 },
+      "category": "Time Alchemy",
+      "transparency_alpha": 0.35,
+      "image_config": { "zoom_speed": "0.06", "interval_sec": 8, "total_unique_images": 90 },
       "blocks": [
-        { "type": "strategy", "text": { "es": "El silencio es un vacío que otros se ven obligados a llenar.", "en": "Silence is a vacuum that others feel forced to fill." } },
-        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Sangre Fría", "en": "Cold Blood" }, "voice_guidance": ["Baja la vibra", "Sé ilegible"] },
-        { "type": "story", "text": { "es": "La primera persona en hablar tras un largo silencio suele perder.", "en": "The first to speak after a long silence usually loses." } },
-        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Ojo de la tormenta", "en": "Eye of the storm" }, "voice_guidance": ["Calma absoluta", "Nada te altera"] },
-        { "type": "silence_challenge", "duration_min": 15, "on_skip": { "punishment": "rollback_2_questions", "power_advice": "Tu mayor arma social es tu capacidad de no reaccionar." } },
-        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Dominio sutil", "en": "Subtle dominance" }, "voice_guidance": ["Tú diriges la charla", "Eres el observador"] },
-        { "type": "quiz", "question": { "es": "¿Qué parte de la cara es más difícil de fingir?", "en": "Which facial part is hardest to fake?" }, "options": { "es": ["Boca", "Ojos", "Nariz"], "en": ["Mouth", "Eyes", "Nose"] }, "correct": 1 }
+        { "type": "voice", "text": { "es": "MISIÓN 10: El tiempo no se gestiona, se protege. Eres el guardián de tus horas.", "en": "MISSION 10: Time is not managed, it is protected. You are the guardian of your hours." } },
+        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Cronos Control", "en": "Cronos Control" }, "voice_guidance": { "es": ["Detén el reloj mental", "Inhala el ahora"], "en": ["Stop the mental clock", "Inhale the now"] } },
+        { "type": "strategy", "text": { "es": "Elimina lo no esencial. La perfección se alcanza cuando no queda nada que quitar.", "en": "Eliminate the non-essential. Perfection is reached when there is nothing left to take away." } },
+        { "type": "silence_challenge", "duration_min": 10, "on_skip": { "punishment": "rollback_2_questions", "power_advice": { "es": "Correr no es avanzar.", "en": "Running is not advancing." } } },
+        { "type": "quiz", "question": { "es": "Si eliminas una interrupción de 5 min que ocurre 5 veces al día, ¿cuántas horas libres ganas al mes?", "en": "If you eliminate a 5-min interruption that happens 5 times a day, how many free hours do you gain per month?" }, "options": { "es": ["6 horas", "12.5 horas", "20 horas"], "en": ["6 hours", "12.5 hours", "20 hours"] }, "correct": 1 }
       ]
     },
     {
       "id": 11,
-      "level": 3,
-      "category": "The God-Mode: Mastery of Time",
-      "transparency_alpha": 0.32,
-      "image_config": { "zoom_speed": "0.08", "interval_sec": 6, "total_unique_images": 92 },
+      "level": 2,
+      "category": "Social Engineering",
+      "transparency_alpha": 0.4,
+      "image_config": { "zoom_speed": "0.07", "interval_sec": 7, "total_unique_images": 85 },
       "blocks": [
-        { "type": "voice", "text": { "es": "Gastar el tiempo en una pantalla es un suicidio lento. Recupéralo.", "en": "Wasting time on a screen is slow suicide. Reclaim it." } },
-        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Dilatación Temporal", "en": "Time Dilation" }, "voice_guidance": ["Alcanza la No-Mente", "Ralentiza el mundo"] },
-        { "type": "strategy", "text": { "es": "Identifica el 20% que te hace un dios y borra el resto.", "en": "Identify the 20% that makes you a god and delete the rest." } },
-        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Colapso temporal", "en": "Time collapse" }, "voice_guidance": ["Vive en el ahora", "Elimina el ruido"] },
-        { "type": "silence_challenge", "duration_min": 20, "on_skip": { "punishment": "rollback_2_questions", "power_advice": "Si no eres dueño de tu tiempo, eres esclavo de otros." } },
-        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Soberanía total", "en": "Total sovereignty" }, "voice_guidance": ["Tú eres el tiempo", "Cero distracciones"] },
-        { "type": "quiz", "question": { "es": "Si duplicas tu productividad, ¿cuánto logras en 40 años?", "en": "If you double productivity, what do you achieve in 40 years?" }, "options": ["40 años", "80 años", "120 años"], "correct": 1 }
+        { "type": "voice", "text": { "es": "MISIÓN 11: Ingeniería de Influencia. El respeto se gana con resultados, no con palabras.", "en": "MISSION 11: Influence Engineering. Respect is earned with results, not words." } },
+        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Presencia de Poder", "en": "Power Presence" }, "voice_guidance": { "es": ["Hombros atrás", "Mirada de acero"], "en": ["Shoulders back", "Steely gaze"] } },
+        { "type": "story", "text": { "es": "El león no necesita rugir para que sepan que está ahí.", "en": "The lion doesn't need to roar for others to know he's there." } },
+        { "type": "quiz", "question": { "es": "¿Qué proyecta un silencio de 3 segundos antes de responder?", "en": "What does a 3-second silence before responding project?" }, "options": { "es": ["Duda", "Autoridad", "Olvido"], "en": ["Doubt", "Authority", "Forgetfulness"] }, "correct": 1 }
       ]
     },
     {
       "id": 12,
-      "level": 3,
-      "category": "High-Frequency Manifestation",
-      "transparency_alpha": 0.3,
-      "image_config": { "zoom_speed": "0.1", "interval_sec": 5, "total_unique_images": 100 },
+      "level": 2,
+      "category": "Risk Management",
+      "transparency_alpha": 0.38,
+      "image_config": { "zoom_speed": "0.08", "interval_sec": 6, "total_unique_images": 92 },
       "blocks": [
-        { "type": "story", "text": { "es": "Tu mente es el plano; no dejes que las redes dibujen en él.", "en": "Your mind is the blueprint; don't let media draw on it." } },
-        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Potencial Puro", "en": "Pure Potential" }, "voice_guidance": ["Inhala el futuro", "Suelta las cadenas"] },
-        { "type": "strategy", "text": { "es": "La riqueza es atraída por el orden. Limpia tu mente.", "en": "Wealth is attracted to order. Clean your mind." } },
-        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Campo Cuántico", "en": "Quantum Field" }, "voice_guidance": ["Eres el creador", "Manifiesta ahora"] },
-        { "type": "silence_challenge", "duration_min": 25, "on_skip": { "punishment": "rollback_2_questions", "power_advice": "El caos mental aleja la abundancia." } },
-        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Maestro Arquitecto", "en": "Master Architect" }, "voice_guidance": ["Unión total", "El mundo es tuyo"] },
-        { "type": "reward", "points": 200, "text": { "es": "ESTADO DE MAESTRO ARQUITECTO.", "en": "MASTER ARCHITECT STATUS." } }
+        { "type": "voice", "text": { "es": "MISIÓN 12: Gestión del Caos. El riesgo es para los que no tienen un plan.", "en": "MISSION 12: Chaos Management. Risk is for those without a plan." } },
+        { "type": "strategy", "text": { "es": "Calcula el peor escenario. Si puedes sobrevivir a eso, adelante.", "en": "Calculate the worst-case scenario. If you can survive that, go ahead." } },
+        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Mente Fría", "en": "Cold Mind" }, "voice_guidance": { "es": ["Baja el pulso", "Analiza el tablero"], "en": ["Lower the pulse", "Analyze the board"] } },
+        { "type": "quiz", "question": { "es": "En negocios, ¿cuál es el riesgo más peligroso?", "en": "In business, what is the most dangerous risk?" }, "options": { "es": ["Perder dinero", "No tomar acción", "La competencia"], "en": ["Losing money", "Not taking action", "Competition"] }, "correct": 1 }
       ]
     },
     {
       "id": 13,
-      "level": 1,
-      "category": "Biological Sovereignty",
-      "transparency_alpha": 0.45,
-      "image_config": { "zoom_speed": "0.06", "interval_sec": 8, "total_unique_images": 80 },
+      "level": 3,
+      "category": "Deep Work Mastery",
+      "transparency_alpha": 0.3,
+      "image_config": { "zoom_speed": "0.09", "interval_sec": 5, "total_unique_images": 95 },
       "blocks": [
-        { "type": "voice", "text": { "es": "Si no puedes estar en silencio 10 minutos, no eres libre.", "en": "If you can't be in silence for 10 minutes, you are not free." } },
-        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Reset Sensorial", "en": "Sensory Reset" }, "voice_guidance": ["Desacelera el mundo", "Inhala paz"] },
-        { "type": "story", "text": { "es": "Tu móvil es una celda de oro. Despierta.", "en": "Your phone is a golden cell. Wake up." } },
-        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Dominio biológico", "en": "Biological mastery" }, "voice_guidance": ["Rompe el ciclo", "Tú mandas"] },
-        { "type": "silence_challenge", "duration_min": 10, "on_skip": { "punishment": "rollback_2_questions", "power_advice": "Gobernar tus antojos es el primer paso al trono." } },
-        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Soberanía real", "en": "Real sovereignty" }, "voice_guidance": ["Mente sobre materia", "Libertad pura"] },
-        { "type": "quiz", "question": { "es": "¿Qué hormona crea el ciclo de adicción al móvil?", "en": "Which hormone creates phone addiction?" }, "options": { "es": ["Oxitocina", "Dopamina", "Melatonina"], "en": ["Oxytocin", "Dopamine", "Melatonin"] }, "correct": 1 }
+        { "type": "voice", "text": { "es": "MISIÓN 13: Trabajo Profundo. Una hora de enfoque total vale por un día de distracciones.", "en": "MISSION 13: Deep Work. One hour of total focus is worth a day of distractions." } },
+        { "type": "t_vid_part", "duration": 30, "goal": { "es": "Inmersión Total", "en": "Total Immersion" }, "voice_guidance": { "es": ["Solo existe la tarea", "Cero ruidos"], "en": ["Only the task exists", "Zero noise"] } },
+        { "type": "silence_challenge", "duration_min": 15, "on_skip": { "punishment": "rollback_2_questions", "power_advice": { "es": "La profundidad crea valor; la superficialidad crea deudas.", "en": "Depth creates value; shallowness creates debt." } } }
       ]
     },
     {
       "id": 14,
-      "level": 1,
-      "category": "Emotional Resilience",
-      "transparency_alpha": 0.48,
-      "image_config": { "zoom_speed": "0.05", "interval_sec": 9, "total_unique_images": 82 },
+      "level": 3,
+      "category": "Biological Optimization",
+      "transparency_alpha": 0.42,
+      "image_config": { "zoom_speed": "0.06", "interval_sec": 8, "total_unique_images": 88 },
       "blocks": [
-        { "type": "voice", "text": { "es": "Sé el faro, no el barco sacudido por las olas.", "en": "Be the lighthouse, not the tossed ship." } },
-        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Flujo de Gratitud", "en": "Gratitude Flow" }, "voice_guidance": ["Visualiza abundancia", "Suelta la carencia"] },
-        { "type": "story", "text": { "es": "Uno maldecía la tierra; el otro miraba las estrellas. Elige tu vista.", "en": "One cursed the dirt; the other saw stars. Choose your view." } },
-        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Escudo de Paz", "en": "Shield of Peace" }, "voice_guidance": ["Eres inquebrantable", "Paz interna"] },
-        { "type": "silence_challenge", "duration_min": 12, "on_skip": { "punishment": "rollback_2_questions", "power_advice": "La queja es la voz de la derrota." } },
-        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Resiliencia final", "en": "Final resilience" }, "voice_guidance": ["Luz constante", "Fuerza suave"] },
-        { "type": "quiz", "question": { "es": "¿Forma más rápida de cambiar tu estado emocional?", "en": "Fastest way to change emotional state?" }, "options": { "es": ["Pensar", "Movimiento", "Quejarse"], "en": ["Thinking", "Movement", "Complaining"] }, "correct": 1 }
+        { "type": "voice", "text": { "es": "MISIÓN 14: Bio-Hacking. Tu cuerpo es el hardware que corre el software de tu éxito.", "en": "MISSION 14: Bio-Hacking. Your body is the hardware running the software of your success." } },
+        { "type": "strategy", "text": { "es": "Dormir no es un lujo, es el mantenimiento de tu procesador.", "en": "Sleep is not a luxury, it's the maintenance of your processor." } },
+        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Recuperación Celular", "en": "Cellular Recovery" }, "voice_guidance": { "es": ["Repara el sistema", "Inhala vida"], "en": ["Repair the system", "Inhale life"] } },
+        { "type": "quiz", "question": { "es": "¿Qué luz inhibe la melatonina antes de dormir?", "en": "What light inhibits melatonin before sleep?" }, "options": { "es": ["Roja", "Azul", "Cálida"], "en": ["Red", "Blue", "Warm"] }, "correct": 1 }
       ]
     },
     {
       "id": 15,
-      "level": 2,
-      "category": "Financial Engineering",
+      "level": 3,
+      "category": "Negotiation Tactics",
       "transparency_alpha": 0.35,
-      "image_config": { "zoom_speed": "0.07", "interval_sec": 7, "total_unique_images": 89 },
+      "image_config": { "zoom_speed": "0.07", "interval_sec": 7, "total_unique_images": 90 },
       "blocks": [
-        { "type": "strategy", "text": { "es": "Un dólar gastado es una semilla comida. Inviértelo.", "en": "A dollar spent is an eaten seed. Invest it." } },
-        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Expansión de Abundancia", "en": "Abundance Expansion" }, "voice_guidance": ["Inhala seguridad", "Siente el flujo"] },
-        { "type": "quiz", "question": { "es": "$10/día al 8% en 30 años, ¿cuánto tienes?", "en": "$10/day at 8% in 30 years, how much?" }, "options": ["$100k", "$250k", "$430k"], "correct": 2 },
-        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Imán de valor", "en": "Value magnet" }, "voice_guidance": ["Atrae riqueza", "Suelta el miedo"] },
-        { "type": "silence_challenge", "duration_min": 15, "on_skip": { "punishment": "rollback_2_questions", "power_advice": "El ahorro sin inversión es una muerte lenta." } },
-        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Sellado financiero", "en": "Financial seal" }, "voice_guidance": ["Eres próspero", "Control total"] }
+        { "type": "voice", "text": { "es": "MISIÓN 15: El Arte del Trato. Obtienes lo que negocias, no lo que mereces.", "en": "MISSION 15: The Art of the Deal. You get what you negotiate, not what you deserve." } },
+        { "type": "story", "text": { "es": "El primero que habla, pierde el anclaje.", "en": "The first one to speak loses the anchor." } },
+        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Póker Face", "en": "Poker Face" }, "voice_guidance": { "es": ["Neutralidad", "Control emocional"], "en": ["Neutrality", "Emotional control"] } },
+        { "type": "quiz", "question": { "es": "Si el otro dice 'No', ¿qué es lo primero que debes hacer?", "en": "If the other says 'No', what's the first thing you should do?" }, "options": { "es": ["Rendirse", "Preguntar '¿Por qué?'", "Escuchar el silencio"], "en": ["Give up", "Ask 'Why?'", "Listen to the silence"] }, "correct": 2 }
       ]
     },
     {
       "id": 16,
-      "level": 2,
-      "category": "Cognitive Influence",
-      "transparency_alpha": 0.39,
-      "image_config": { "zoom_speed": "0.06", "interval_sec": 8, "total_unique_images": 86 },
+      "level": 3,
+      "category": "The Investor Mind",
+      "transparency_alpha": 0.32,
+      "image_config": { "zoom_speed": "0.1", "interval_sec": 6, "total_unique_images": 100 },
       "blocks": [
-        { "type": "strategy", "text": { "es": "Quien define el problema, controla la solución.", "en": "He who defines the problem, controls the solution." } },
-        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Agudeza Mental", "en": "Mental Sharpness" }, "voice_guidance": ["Enciende el fuego mental", "Oxigena el genio"] },
-        { "type": "story", "text": { "es": "Gana con elegancia, no con agresión.", "en": "Win with elegance, not aggression." } },
-        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Poder del Encuadre", "en": "Framing Power" }, "voice_guidance": ["Mantén la calma", "Tú defines la realidad"] },
-        { "type": "silence_challenge", "duration_min": 10, "on_skip": { "punishment": "rollback_2_questions", "power_advice": "La rabia es la pérdida del marco." } },
-        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Influencia pura", "en": "Pure influence" }, "voice_guidance": ["Lidera, no sigas", "Sé el referente"] },
-        { "type": "quiz", "question": { "es": "¿Qué es la 'Prueba Social'?", "en": "What is 'Social Proof'?" }, "options": { "es": ["Ser amable", "Que otros lo hagan", "Dinero"], "en": ["Being nice", "Others doing it", "Money"] }, "correct": 1 }
+        { "type": "voice", "text": { "es": "MISIÓN 16: Interés Compuesto. Las pequeñas acciones diarias crean imperios.", "en": "MISSION 16: Compound Interest. Small daily actions create empires." } },
+        { "type": "strategy", "text": { "es": "Busca retornos asimétricos: riesgo bajo, recompensa infinita.", "en": "Seek asymmetric returns: low risk, infinite reward." } },
+        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Visión de Largo Plazo", "en": "Long-Term Vision" }, "voice_guidance": { "es": ["Mira más allá del año", "Inhala paciencia"], "en": ["Look beyond the year", "Inhale patience"] } }
       ]
     },
     {
       "id": 17,
       "level": 3,
-      "category": "High-Density Existence",
-      "transparency_alpha": 0.33,
-      "image_config": { "zoom_speed": "0.08", "interval_sec": 6, "total_unique_images": 98 },
+      "category": "Anti-Fragility",
+      "transparency_alpha": 0.3,
+      "image_config": { "zoom_speed": "0.08", "interval_sec": 7, "total_unique_images": 98 },
       "blocks": [
-        { "type": "voice", "text": { "es": "El 1% vive en la zona de acción. El 99% en reacción.", "en": "The 1% live in action. The 99% in reaction." } },
-        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Regeneración Celular", "en": "Cell Regeneration" }, "voice_guidance": ["En el silencio, sanas", "Retén la luz"] },
-        { "type": "strategy", "text": { "es": "Da valor primero. La generosidad es poder.", "en": "Give value first. Generosity is power." } },
-        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Umbral del 1%", "en": "1% Threshold" }, "voice_guidance": ["Tú eres la acción", "Cero excusas"] },
-        { "type": "silence_challenge", "duration_min": 30, "on_skip": { "punishment": "rollback_2_questions", "power_advice": "El sacrificio de hoy es el imperio de mañana." } },
-        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Ser Real", "en": "True Self" }, "voice_guidance": ["Eres la conciencia", "Domina al observador"] },
-        { "type": "quiz", "question": { "es": "Si observas tus pensamientos, ¿quién observa?", "en": "If you observe thoughts, who observes?" }, "options": { "es": ["Ego", "Ser Real", "Cerebro"], "en": ["Ego", "True Self", "Brain"] }, "correct": 1 }
+        { "type": "voice", "text": { "es": "MISIÓN 17: Anti-Fragilidad. El fuego se alimenta del viento; tú te alimentas del caos.", "en": "MISSION 17: Anti-Fragility. Fire feeds on the wind; you feed on chaos." } },
+        { "type": "story", "text": { "es": "No evites el golpe, conviértelo en impulso.", "en": "Don't avoid the blow, turn it into momentum." } },
+        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Fortaleza Nuclear", "en": "Nuclear Strength" }, "voice_guidance": { "es": ["Eres irrompible", "Creces en la crisis"], "en": ["You are unbreakable", "You grow in crisis"] } }
       ]
     },
     {
       "id": 18,
       "level": 3,
-      "category": "Universal Command",
-      "transparency_alpha": 0.28,
-      "image_config": { "zoom_speed": "0.1", "interval_sec": 5, "total_unique_images": 110 },
+      "category": "Grand Design Mastery",
+      "transparency_alpha": 0.25,
+      "image_config": { "zoom_speed": "0.12", "interval_sec": 5, "total_unique_images": 110 },
       "blocks": [
-        { "type": "story", "text": { "es": "El éxito es quitar distracciones hasta que solo quede tu grandeza.", "en": "Success is removing distractions until greatness remains." } },
-        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Unión Total", "en": "Total Union" }, "voice_guidance": ["Sin esfuerzo", "Solo sé"] },
-        { "type": "strategy", "text": { "es": "Construye tu carácter hasta que tu silencio sea más fuerte que gritos.", "en": "Build character until your silence is louder than screams." } },
-        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Fusión con la intención", "en": "Intent fusion" }, "voice_guidance": ["Eres el universo", "Experimenta el poder"] },
-        { "type": "silence_challenge", "duration_min": 40, "on_skip": { "punishment": "rollback_2_questions", "power_advice": "El dominio supremo es el dominio de uno mismo." } },
-        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Arquitecto Supremo", "en": "Supreme Architect" }, "voice_guidance": ["Manifiesta tu destino", "Ejerce el mando"] },
-        { "type": "reward", "points": 300, "text": { "es": "ESTADO DE ARQUITECTO SUPREMO.", "en": "SUPREME ARCHITECT STATUS." } }
-        }
+        { "type": "voice", "text": { "es": "MISIÓN 18: El Maestro del Juego. Ya no juegas para ganar, juegas para diseñar las reglas.", "en": "MISSION 18: The Game Master. You no longer play to win, you play to design the rules." } },
+        { "type": "t_vid_part", "duration": 40, "goal": { "es": "Consciencia de Creador", "en": "Creator Consciousness" }, "voice_guidance": { "es": ["Tú eres el arquitecto", "Todo es posible"], "en": ["You are the architect", "Everything is possible"] } },
+        { "type": "reward", "points": 500, "text": { "es": "ILUMINACIÓN FINANCIERA Y MENTAL COMPLETADA.", "en": "FINANCIAL AND MENTAL ENLIGHTENMENT COMPLETED." } }
       ]
     }
   ]
 }
+    
 
     
-  
