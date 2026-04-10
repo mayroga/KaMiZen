@@ -1,40 +1,30 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 import json
-from pathlib import Path
 import os
 
-app = FastAPI(title="AURA - KaMiZen Engine")
+app = FastAPI(title="AL CIELO - Aura by May Roga")
+app.mount("/static", StaticFiles(directory="static"), name="static")
+templates = Jinja2Templates(directory="templates")
 
-BASE_DIR = Path(__file__).resolve().parent
-STATIC_DIR = BASE_DIR / "static"
-DB_PATH = STATIC_DIR / "kamizen_content.json"
-
-app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
-
-def cargar_db():
-    try:
-        if os.path.exists(DB_PATH):
-            with open(DB_PATH, "r", encoding="utf-8") as f:
-                return json.load(f)
-        return {"sessions": []}
-    except Exception:
-        return {"sessions": []}
+def load_kamizen():
+    with open("static/kamizen_content.json", "r", encoding="utf-8") as f:
+        return json.load(f)
 
 @app.get("/", response_class=HTMLResponse)
-async def home():
-    try:
-        session_file = STATIC_DIR / "session.html"
-        return HTMLResponse(content=session_file.read_text(encoding="utf-8"))
-    except Exception:
-        return HTMLResponse("<h1>Error: session.html no encontrado en static/</h1>")
+async def read_root(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
 
-@app.get("/session_content")
-async def session_content():
-    return JSONResponse(content=cargar_db())
+@app.get("/session/{mission_id}", response_class=HTMLResponse)
+async def start_session(request: Request, mission_id: int):
+    content = load_kamizen()
+    mission = next((m for m in content["missions"] if m["id"] == mission_id), None)
+    if not mission:
+        raise HTTPException(status_code=404, detail="Misión no encontrada")
+    return templates.TemplateResponse("session.html", {"request": request, "mission": mission})
 
-if __name__ == "__main__":
-    import uvicorn
-    port = int(os.environ.get("PORT", 8000))
-    uvicorn.run(app, host="0.0.0.0", port=port)
+@app.get("/api/content")
+async def get_content():
+    return JSONResponse(content=load_kamizen())
