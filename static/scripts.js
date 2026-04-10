@@ -1,168 +1,133 @@
-/* =================== KA MIZEN GLOBAL STATE =================== */
-const startBtn = document.getElementById("start-btn");
-const nextBtn = document.getElementById("next-btn");
-const block = document.getElementById("block");
-const langBtn = document.getElementById("lang-btn");
+let currentBlockIndex = 0;
+let missionData = null;
+let inactivityCounter = 0;
+const WARNING_TIME = 59;
+const KICK_TIME = 240; // 4 minutos
 
-let bloques = [];
-let current = 0;
-let currentLang = localStorage.getItem("kamizenLang") || "en";
+// Cargar datos inyectados por el server o fetch
+async function initSession() {
+    const pathParts = window.location.pathname.split('/');
+    const mId = pathParts[pathParts.length - 1];
+    const response = await fetch('/api/content');
+    const data = await response.json();
+    missionData = data.missions.find(m => m.id == mId);
+    
+    document.getElementById('category-label').innerText = missionData.category;
+    renderBlock();
+    startInactivityTimer();
+}
 
-/* =================== PROGRESS TRACKER =================== */
-// Recupera la última misión jugada o empieza en la primera (índice 0)
-let missionIndex = parseInt(localStorage.getItem("kamizenMissionIndex")) || 0;
+function renderBlock() {
+    const block = missionData.blocks[currentBlockIndex];
+    const display = document.getElementById('text-display');
+    const actionBtn = document.getElementById('action-btn');
+    const timerDisp = document.getElementById('timer-display');
+    const visual = document.getElementById('visual-element');
 
-/* =================== AUDIO ENGINE =================== */
-const bgMusic = new Audio();
-bgMusic.loop = true;
+    // Reset view
+    actionBtn.classList.add('hidden');
+    timerDisp.classList.add('hidden');
+    visual.innerHTML = '';
+    
+    // Aplicar Color si existe
+    if(block.color) document.body.style.backgroundColor = block.color;
 
-const musicTracks = {
-    1: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-    2: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
-    3: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3"
-};
+    // Lógica por tipo
+    switch(block.type) {
+        case 'voice':
+        case 'story':
+        case 'strategy':
+            display.innerText = block.text.es; // Default a Español
+            actionBtn.classList.remove('hidden');
+            break;
 
-function updateMusic(level) {
-    const track = musicTracks[level] || musicTracks[1];
-    if (bgMusic.src !== track) {
-        bgMusic.src = track;
-        bgMusic.volume = 0.3;
-        bgMusic.play().catch(e => console.log("Interacción requerida para audio"));
+        case 'breathing':
+            display.innerText = block.text.es;
+            startChallengeTimer(block.duration);
+            break;
+
+        case 'quiz':
+            renderQuiz(block);
+            break;
+
+        case 'reward':
+            display.innerHTML = `<span class="text-yellow-400">★ ${block.text.es}</span><br><small>+${block.points} pts</small>`;
+            actionBtn.innerText = "Finalizar Misión";
+            actionBtn.classList.remove('hidden');
+            actionBtn.onclick = () => window.location.href = '/';
+            break;
     }
 }
 
-/* =================== BACKGROUND ZOOM (KEN BURNS) =================== */
-const bgImages = [
-    "https://images.unsplash.com/photo-1506126613408-eca07ce68773?q=80&w=1920",
-    "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1920",
-    "https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1920",
-    "https://images.unsplash.com/photo-1478760329108-5c3ed9d495a0?q=80&w=1920"
-];
+function startChallengeTimer(seconds) {
+    const timerDisp = document.getElementById('timer-display');
+    timerDisp.classList.remove('hidden');
+    let remaining = seconds;
 
-function initBackground() {
-    let idx = 0;
-    const changeBg = () => {
-        document.body.style.backgroundImage = `url(${bgImages[idx]})`;
-        document.body.style.backgroundSize = "110%";
-        setTimeout(() => { document.body.style.backgroundSize = "130%"; }, 100);
-        idx = (idx + 1) % bgImages.length;
-    };
-    changeBg();
-    setInterval(changeBg, 10000);
+    const interval = setInterval(() => {
+        const mins = Math.floor(remaining / 60);
+        const secs = remaining % 60;
+        timerDisp.innerText = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        
+        if (remaining <= 0) {
+            clearInterval(interval);
+            timerDisp.classList.add('text-green-500');
+            document.getElementById('action-btn').classList.remove('hidden');
+        }
+        remaining--;
+    }, 1000);
 }
 
-/* =================== VOICE ENGINE =================== */
-async function playVoice(text) {
-    return new Promise(resolve => {
-        window.speechSynthesis.cancel();
-        const msg = new SpeechSynthesisUtterance(text);
-        msg.lang = currentLang === "en" ? "en-US" : "es-ES";
-        msg.rate = 0.9;
-        msg.onend = resolve;
-        window.speechSynthesis.speak(msg);
+function renderQuiz(block) {
+    const display = document.getElementById('text-display');
+    display.innerText = block.question.es;
+    const visual = document.getElementById('visual-element');
+    
+    block.options.es.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.className = "block w-full mb-2 p-4 bg-zinc-900 rounded-lg hover:bg-zinc-800 transition";
+        btn.innerText = opt;
+        btn.onclick = () => {
+            if(idx === block.correct) {
+                alert(block.explanation.es.correct);
+                nextBlock();
+            } else {
+                alert(block.explanation.es.wrong);
+            }
+        };
+        visual.appendChild(btn);
     });
 }
 
-/* =================== RENDERER =================== */
-async function showBlock(b) {
-    block.innerHTML = "";
-    nextBtn.style.display = "none";
-
-    const content = typeof b.text === "object" ? b.text[currentLang] : b.text;
-
-    // Tipos de bloque estándar + respiración (breathing)
-    if (["voice", "strategy", "story", "reward", "breathing"].includes(b.type)) {
-        block.innerHTML = `<div class="content-fade">${content}</div>`;
-        
-        if (b.type === "breathing" && b.duration) {
-            block.innerHTML += `<div style="margin-top:20px; font-size:1.5rem;">⏳ ${b.duration}s</div>`;
-        }
-
-        await playVoice(content);
-        nextBtn.style.display = "block";
-    }
-
-    if (b.type === "quiz") {
-        const question = b.question[currentLang];
-        const options = b.options[currentLang];
-        block.innerHTML = `<h3 style="margin-bottom:25px;">${question}</h3>`;
-        await playVoice(question);
-
-        options.forEach((op, i) => {
-            const btn = document.createElement("button");
-            btn.innerText = op;
-            btn.className = "secondary quiz-option";
-            btn.onclick = async () => {
-                if (i === b.correct) {
-                    btn.style.backgroundColor = "#059669";
-                    await playVoice(currentLang === "en" ? "Correct" : "Correcto");
-                    nextBtn.style.display = "block";
-                } else {
-                    btn.style.backgroundColor = "#dc2626";
-                    await playVoice(currentLang === "en" ? "Try again" : "Intenta de nuevo");
-                }
-            };
-            block.appendChild(btn);
-        });
+function nextBlock() {
+    currentBlockIndex++;
+    if(currentBlockIndex < missionData.blocks.length) {
+        renderBlock();
     }
 }
 
-/* =================== EVENTS =================== */
-startBtn.onclick = async () => {
-    startBtn.style.display = "none";
-    try {
-        const res = await fetch("/session_content");
-        const data = await res.json();
-        
-        // Verifica si ya se completaron todas las misiones (del 1 al 20)
-        if (missionIndex >= data.missions.length) {
-            block.innerHTML = `
-                <h2 style="color:#fbbf24">Soberanía Total Alcanzada</h2>
-                <p>Bienvenido Al Cielo. El sistema ha sido completado.</p>
-            `;
-            // Si quieres que el usuario pueda reiniciar, descomenta la siguiente línea:
-            // missionIndex = 0; localStorage.setItem("kamizenMissionIndex", 0);
-            return;
+document.getElementById('action-btn').onclick = nextBlock;
+
+// --- GESTIÓN DE INACTIVIDAD ---
+function startInactivityTimer() {
+    setInterval(() => {
+        inactivityCounter++;
+        if(inactivityCounter === WARNING_TIME) {
+            document.getElementById('warning-modal').classList.remove('hidden');
         }
+        if(inactivityCounter >= KICK_TIME) {
+            window.location.href = "/?msg=session_expired";
+        }
+    }, 1000);
+}
 
-        const mission = data.missions[missionIndex];
-        
-        updateMusic(mission.level);
-        bloques = mission.blocks;
-        current = 0;
-        showBlock(bloques[0]);
+function resetInactivity() {
+    inactivityCounter = 0;
+    document.getElementById('warning-modal').classList.add('hidden');
+}
 
-        // Avanzamos el índice para la próxima sesión y guardamos en el navegador
-        missionIndex++;
-        localStorage.setItem("kamizenMissionIndex", missionIndex);
-        
-    } catch (e) {
-        console.error(e);
-        block.innerText = "Error loading content.";
-        startBtn.style.display = "block";
-    }
-};
+// Escuchar toques para resetear
+window.onclick = resetInactivity;
+window.onkeypress = resetInactivity;
 
-nextBtn.onclick = () => {
-    current++;
-    if (current < bloques.length) {
-        showBlock(bloques[current]);
-    } else {
-        block.innerHTML = "<h2>Misión Finalizada</h2><p>Prepárate para el siguiente nivel.</p>";
-        startBtn.innerText = "Siguiente Misión";
-        startBtn.style.display = "block";
-        nextBtn.style.display = "none";
-    }
-};
-
-langBtn.onclick = () => {
-    currentLang = currentLang === "en" ? "es" : "en";
-    localStorage.setItem("kamizenLang", currentLang);
-    langBtn.innerText = currentLang.toUpperCase();
-    location.reload();
-};
-
-/* =================== INITIALIZATION =================== */
-initBackground();
-langBtn.innerText = currentLang.toUpperCase();
-document.getElementById("streak").innerText = `🔥 Streak: ${missionIndex > 0 ? missionIndex : 1}`;
+initSession();
