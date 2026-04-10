@@ -1,250 +1,158 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>AL CIELO | Inmersive Coach</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AL CIELO - AURA BY MAY ROGA LLC</title>
+    <link rel="stylesheet" href="/static/style.css">
     <style>
-        /* Reset & Base */
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
-        
+        :root {
+            --aura-gold: #d4af37;
+            --aura-bg: #0a0a0a;
+        }
         body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
             height: 100%;
-            background: #000;
+            background-color: var(--aura-bg);
             color: white;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
         }
-
-        /* CAPA INMERSIVA (Ken Burns Effect) */
-        #bg-layer {
+        /* Capa de Imágenes con Zoom (Ken Burns) */
+        #bg-canvas {
             position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: 1;
-        }
-
-        .slide {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
             background-size: cover;
             background-position: center;
-            opacity: 0;
-            transition: opacity 2s ease-in-out;
-            transform: scale(1.1); /* Inicio del zoom */
+            transition: transform 7s linear, opacity 2s ease-in-out;
         }
-
-        .slide.active {
-            opacity: 0.6; /* Opacidad para que el texto sea legible */
-            animation: kenburns 15s infinite alternate ease-in-out;
-        }
-
-        @keyframes kenburns {
-            from { transform: scale(1); }
-            to { transform: scale(1.2); }
-        }
-
-        /* Overlay para legibilidad */
-        #overlay {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.8) 100%);
-            z-index: 2;
-            pointer-events: none;
-        }
-
-        /* App Container */
-        #app {
-            width: 90%;
-            max-width: 450px;
-            background: rgba(15, 23, 42, 0.85);
-            backdrop-filter: blur(15px);
-            border-radius: 35px;
-            padding: 40px 30px;
-            box-shadow: 0 0 60px rgba(0,0,0,0.9);
-            text-align: center;
+        /* Contenedor Principal con Transparencia Dinámica */
+        #main-container {
             position: relative;
-            z-index: 3;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        /* Cabecera */
-        #logo {
-            font-size: 28px;
-            font-weight: 600;
-            letter-spacing: 4px;
-            background: linear-gradient(90deg, #60a5fa, #a78bfa);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 5px;
-        }
-
-        #brand-sub {
-            font-size: 10px;
-            letter-spacing: 2px;
-            color: #94a3b8;
-            margin-bottom: 25px;
-            text-transform: uppercase;
-        }
-
-        #lang-btn {
-            position: absolute;
-            top: 25px;
-            right: 25px;
-            background: transparent;
-            border: 1px solid rgba(96, 165, 250, 0.5);
-            color: #60a5fa;
-            padding: 5px 12px;
-            border-radius: 8px;
-            font-size: 11px;
-            cursor: pointer;
-            font-weight: 600;
-        }
-
-        /* Mental Status */
-        #mental-panel {
-            display: flex;
-            justify-content: space-between;
-            background: rgba(2, 6, 23, 0.5);
-            padding: 12px 20px;
-            border-radius: 15px;
-            font-size: 13px;
-            margin-bottom: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        /* Bloque Dinámico */
-        #block {
-            min-height: 280px;
             display: flex;
             flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.4); /* Base inicial */
+            transition: background 1s ease;
+        }
+        #content-display {
+            text-align: center;
+            max-width: 80%;
+            padding: 20px;
+        }
+        .fade-in-text {
+            font-size: 2.5rem;
+            font-weight: 300;
+            letter-spacing: 2px;
+            animation: fadeIn 2s ease-in-out;
+        }
+        /* Controles Inferiores */
+        #controls {
+            position: absolute;
+            bottom: 40px;
+            display: flex;
+            gap: 20px;
+            z-index: 10;
+        }
+        .aura-btn {
+            background: transparent;
+            border: 1px solid var(--aura-gold);
+            color: var(--aura-gold);
+            padding: 10px 25px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+        }
+        .aura-btn:hover {
+            background: var(--aura-gold);
+            color: black;
+        }
+        #lang-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+        /* Advertencia de Inactividad */
+        #warning-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 0, 0, 0.7);
+            z-index: 100;
             justify-content: center;
             align-items: center;
-            margin-bottom: 30px;
+            text-align: center;
         }
-
-        .fade-in { animation: fadeIn 1s ease-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* Respiración T-VID */
-        .breath-circle {
-            width: 140px;
-            height: 140px;
-            border-radius: 50%;
-            background: radial-gradient(circle, #60a5fa, #2563eb);
-            margin: 20px auto;
-            transition: transform 4s ease-in-out;
-            box-shadow: 0 0 50px rgba(37, 99, 235, 0.5);
-            border: 5px solid rgba(255, 255, 255, 0.1);
-        }
-
-        /* Botones Profesionales */
-        button {
-            padding: 18px;
-            width: 100%;
-            border-radius: 18px;
-            border: none;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            margin-bottom: 10px;
-        }
-
-        #start-btn {
-            background: #2563eb;
-            color: white;
-            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);
-        }
-
-        #next-btn {
-            background: #6366f1;
-            color: white;
-            display: none;
-        }
-
-        .secondary-controls {
-            display: flex;
-            gap: 12px;
-            margin-top: 10px;
-        }
-
-        .btn-sec {
-            background: #334155;
-            color: #f1f5f9;
-            padding: 12px;
-            font-size: 14px;
-        }
-
-        button:hover { transform: translateY(-3px); filter: brightness(1.2); }
-        button:active { transform: translateY(0); }
-
-        .options-grid {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        /* Estilo para las historias y estrategias */
-        .coach-text {
-            font-size: 18px;
-            line-height: 1.6;
-            color: #e2e8f0;
-        }
-
-        .explanation {
-            font-size: 14px;
-            color: #94a3b8;
-            margin-top: 15px;
-            padding: 15px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 12px;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
-
 <body>
 
-    <div id="bg-layer"></div>
-    <div id="overlay"></div>
+    <div id="bg-canvas"></div>
 
-    <div id="app">
-        <button id="lang-btn">EN</button>
-        
-        <div id="logo">AL CIELO</div>
-        <div id="brand-sub">By May Roga LLC</div>
+    <div id="lang-toggle">
+        <button class="aura-btn" id="btn-en">English</button>
+        <button class="aura-btn" id="btn-es">Español</button>
+    </div>
 
-        <div id="mental-panel">
-            <div id="streak">🔥 Streak: 0</div>
-            <div id="level">Level: 1</div>
+    <main id="main-container">
+        <div id="content-display">
+            <h1 class="fade-in-text">AL CIELO</h1>
+            <p id="sub-title">AURA BY MAY ROGA LLC</p>
         </div>
 
-        <div id="block">
-            <div class="fade-in coach-text">
-                Prepare to break the digital chains.
-            </div>
+        <div id="controls">
+            <button class="aura-btn" id="start-btn">Iniciar Sesión</button>
+            <button class="aura-btn" id="next-btn" style="display:none;">Continuar</button>
+            <button class="aura-btn" id="pdf-btn" style="display:none;">Reporte PDF</button>
+            <button class="aura-btn" id="clear-btn">Borrar Datos</button>
         </div>
+    </main>
 
-        <button id="start-btn">Start Session</button>
-        <button id="next-btn">Next Step</button>
-
-        <div class="secondary-controls">
-            <button id="back-btn" class="btn-sec">Back</button>
-            <button id="forward-btn" class="btn-sec">Forward</button>
+    <div id="warning-overlay">
+        <div>
+            <h1>¡ATENCIÓN!</h1>
+            <p>Toca la pantalla para mantener la conexión con AURA.</p>
         </div>
-
-        <button id="restart-btn" class="btn-sec" style="display:none; margin-top: 15px;">Restart Journey</button>
     </div>
 
     <script src="/static/scripts.js"></script>
+    <script>
+        // Lógica simple para mostrar controles tras el inicio
+        document.getElementById('start-btn').onclick = function() {
+            this.style.display = 'none';
+            document.getElementById('next-btn').style.display = 'block';
+            document.getElementById('sub-title').style.display = 'none';
+        };
 
+        // Detector de inactividad para advertencia
+        let timeout;
+        function resetTimer() {
+            document.getElementById('warning-overlay').style.display = 'none';
+            clearTimeout(timeout);
+            timeout = setTimeout(() => {
+                document.getElementById('warning-overlay').style.display = 'flex';
+            }, 59000); // 59 segundos
+        }
+        window.onmousemove = resetTimer;
+        window.onclick = resetTimer;
+        window.onkeydown = resetTimer;
+    </script>
 </body>
 </html>
