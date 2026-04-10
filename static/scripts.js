@@ -4,74 +4,84 @@ let missions = [];
 let currentLang = 'en';
 let inactivitySeconds = 0;
 let timerInterval = null;
-let musicLevel = 0;
+let musicPlayer = document.getElementById('bg-music');
 
-// 80 Fondos Dinámicos (Ejemplos representativos para evitar repetición)
-const imageBank = Array.from({length: 80}, (_, i) => `https://picsum.photos/seed/${i + 120}/1600/900`);
+// 80 Imágenes para evitar repetición rápida
+const imageBank = Array.from({length: 80}, (_, i) => `https://picsum.photos/seed/kzen${i}/1600/900`);
 
-// Configuración de Música por Niveles
 const musicTracks = [
-    "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3", // Level 1: Paz
-    "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3", // Level 2: Energía
-    "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-15.mp3" // Level 3: Poder/Adrenalina
+    "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3", 
+    "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3", 
+    "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3"
 ];
 
 function updateMusic(level) {
-    const audio = document.getElementById('bg-music');
-    let trackIndex = level - 1;
-    if (trackIndex > 2) trackIndex = 2;
-    
-    if (musicLevel !== level) {
-        audio.src = musicTracks[trackIndex];
-        audio.play().catch(() => console.log("User must interact first"));
-        musicLevel = level;
+    let track = Math.min(level - 1, 2);
+    if (musicPlayer.src !== musicTracks[track]) {
+        musicPlayer.src = musicTracks[track];
+        musicPlayer.volume = 0.2; // MÚSICA BAJITA (20%)
+        musicPlayer.play().catch(() => {});
     }
 }
 
 function speak(text) {
     window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = currentLang === 'en' ? 'en-US' : 'es-ES';
-    utterance.rate = 0.9;
-    window.speechSynthesis.speak(utterance);
+    const msg = new SpeechSynthesisUtterance(text);
+    msg.lang = currentLang === 'en' ? 'en-US' : 'es-ES';
+    msg.volume = 1.0; // VOZ FUERTE (100%)
+    msg.rate = 0.95;
+    window.speechSynthesis.speak(msg);
 }
 
 function changeBg() {
-    const randomImg = imageBank[Math.floor(Math.random() * imageBank.length)];
-    document.body.style.backgroundImage = `url('${randomImg}')`;
+    const img = new Image();
+    const url = imageBank[Math.floor(Math.random() * imageBank.length)];
+    img.src = url;
+    img.onload = () => {
+        document.body.style.backgroundImage = `url('${url}')`;
+    };
 }
 
-function startInactivityMonitor() {
-    setInterval(() => {
-        inactivitySeconds++;
-        if (inactivitySeconds === 59) document.getElementById('warning-modal').style.display = 'flex';
-        if (inactivitySeconds >= 240) location.reload();
+// SISTEMA DE CASTIGO POR INTENTAR SALTAR
+function applyPunishment() {
+    const text = currentLang === 'en' ? 
+        "Discipline is key. 3 seconds of forced meditation for trying to bypass the lesson." : 
+        "La disciplina es clave. 3 segundos de meditación forzada por intentar saltar la lección.";
+    
+    const display = document.getElementById('text-content');
+    const mainBtn = document.getElementById('main-btn');
+    const backBtn = document.getElementById('back-btn');
+    const fwdBtn = document.getElementById('fwd-btn');
+
+    [mainBtn, backBtn, fwdBtn].forEach(b => b.disabled = true);
+    display.innerText = text;
+    speak(text);
+    
+    let time = 3;
+    const pInterval = setInterval(() => {
+        time--;
+        if (time <= 0) {
+            clearInterval(pInterval);
+            [mainBtn, backBtn, fwdBtn].forEach(b => b.disabled = false);
+            renderBlock();
+        }
     }, 1000);
-}
-
-function resetInactivity() {
-    inactivitySeconds = 0;
-    document.getElementById('warning-modal').style.display = 'none';
 }
 
 async function loadData() {
     try {
         const response = await fetch('/session_content');
         const data = await response.json();
-        // Ordenamos estrictamente del 1 al 40
         missions = data.missions.sort((a, b) => a.id - b.id);
         initApp();
-    } catch (e) {
-        document.getElementById('text-content').innerText = "Engine Error. Check Connection.";
-    }
+    } catch (e) { console.error("Data error"); }
 }
 
 function initApp() {
-    document.getElementById('main-btn').onclick = () => {
-        document.getElementById('bg-music').play();
-        renderBlock();
-    };
-
+    document.getElementById('main-btn').onclick = () => renderBlock();
+    document.getElementById('back-btn').onclick = () => applyPunishment();
+    document.getElementById('fwd-btn').onclick = () => applyPunishment();
+    
     document.getElementById('lang-btn').onclick = () => {
         currentLang = currentLang === 'en' ? 'es' : 'en';
         document.getElementById('lang-btn').innerText = currentLang === 'en' ? 'ES' : 'EN';
@@ -79,8 +89,14 @@ function initApp() {
     };
 
     changeBg();
-    setInterval(changeBg, 10000);
-    startInactivityMonitor();
+    setInterval(changeBg, 12000); // Cambio lento cada 12s
+    updateMusic(1);
+    
+    setInterval(() => {
+        inactivitySeconds++;
+        if (inactivitySeconds === 59) document.getElementById('warning-modal').style.display = 'flex';
+        if (inactivitySeconds >= 240) location.reload();
+    }, 1000);
 }
 
 function renderBlock() {
@@ -92,7 +108,7 @@ function renderBlock() {
     const circle = document.getElementById('breath-circle');
 
     updateMusic(mission.level);
-    document.getElementById('level-display').innerText = `Level: ${mission.level}`;
+    document.getElementById('level-display').innerText = `Lv. ${mission.level}`;
     
     if (timerInterval) clearInterval(timerInterval);
     timerDisplay.style.display = 'none';
@@ -101,66 +117,40 @@ function renderBlock() {
     mainBtn.disabled = false;
     mainBtn.style.display = 'block';
 
-    // Eliminar opciones de quiz previas
     const oldQuiz = document.getElementById('quiz-options');
     if (oldQuiz) oldQuiz.remove();
 
     textDisplay.innerText = block.text[currentLang];
 
-    // LÓGICA POR TIPO
-    if (block.type === 'voice' || block.type === 'story' || block.type === 'strategy') {
-        speak(block.text[currentLang]);
-    } 
-    
-    else if (block.type === 'breathing') {
-        // En ejercicio de respiración SI hay voz y círculo
-        speak(block.text[currentLang]);
+    if (block.type === 'breathing') {
         mainBtn.disabled = true;
         circle.style.display = 'flex';
         circle.classList.add('breathing-anim');
         timerDisplay.style.display = 'block';
-        startCountdown(block.duration, true);
-    } 
-    
-    else if (block.type === 'quiz') {
+        speak(block.text[currentLang]);
+        startCountdown(block.duration);
+    } else if (block.type === 'quiz') {
         renderQuiz(block);
+    } else {
+        speak(block.text[currentLang]);
     }
 
     mainBtn.onclick = () => nextStep();
 }
 
-function startCountdown(seconds, isBreathing) {
+function startCountdown(seconds) {
     let remaining = seconds;
     const display = document.getElementById('timer-display');
     const mainBtn = document.getElementById('main-btn');
-    const circle = document.getElementById('breath-circle');
-    const breathText = document.getElementById('breath-text');
 
     timerInterval = setInterval(() => {
         const mins = Math.floor(remaining / 60);
         const secs = remaining % 60;
         display.innerText = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
-
-        // Lógica de ayuda aleatoria en retos largos (> 3 min)
-        if (!isBreathing && seconds >= 180) {
-            // Aparece el círculo de respiración aleatoriamente para ayudar
-            if (remaining % 60 === 0 && remaining > 0) {
-                circle.style.display = 'flex';
-                circle.classList.add('breathing-anim');
-                breathText.innerText = currentLang === 'en' ? "BREATHE" : "RESPIRA";
-                speak(breathText.innerText);
-                setTimeout(() => { 
-                    circle.style.display = 'none'; 
-                    circle.classList.remove('breathing-anim');
-                }, 30000);
-            }
-        }
-
         if (remaining <= 0) {
             clearInterval(timerInterval);
             mainBtn.disabled = false;
-            circle.style.display = 'none';
-            mainBtn.innerText = currentLang === 'en' ? 'Complete - Next' : 'Cumplido - Siguiente';
+            mainBtn.innerText = currentLang === 'en' ? 'CONTINUE' : 'CONTINUAR';
         }
         remaining--;
     }, 1000);
@@ -181,13 +171,16 @@ function renderQuiz(block) {
         btn.innerText = opt;
         btn.className = "secondary";
         btn.onclick = () => {
-            if (idx === block.correct) {
-                speak(block.explanation ? block.explanation[currentLang].correct : "Correct");
+            const isCorrect = idx === block.correct;
+            const explanation = isCorrect ? block.explanation[currentLang].correct : block.explanation[currentLang].wrong;
+            
+            document.getElementById('text-content').innerText = explanation;
+            speak(explanation);
+
+            if (isCorrect) {
                 quizDiv.remove();
                 mainBtn.style.display = 'block';
-                mainBtn.innerText = "Next";
             } else {
-                speak(block.explanation ? block.explanation[currentLang].wrong : "Try again");
                 btn.style.borderColor = "#ef4444";
             }
         };
@@ -199,18 +192,17 @@ function renderQuiz(block) {
 function nextStep() {
     const mission = missions[currentMissionIndex];
     currentBlockIndex++;
-
     if (currentBlockIndex >= mission.blocks.length) {
         currentMissionIndex++;
         currentBlockIndex = 0;
     }
-
-    // CICLO INFINITO: Si llega al final del 40, vuelve al 1
-    if (currentMissionIndex >= missions.length) {
-        currentMissionIndex = 0;
-    }
-
+    if (currentMissionIndex >= missions.length) currentMissionIndex = 0;
     renderBlock();
+}
+
+function resetInactivity() {
+    inactivitySeconds = 0;
+    document.getElementById('warning-modal').style.display = 'none';
 }
 
 document.addEventListener('DOMContentLoaded', loadData);
