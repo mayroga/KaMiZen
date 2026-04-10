@@ -8,7 +8,6 @@
         { "type": "voice", "text": { "en": "MISSION 1: The Dopamine Trap. Reclaim your focus to reclaim your wealth. Every notification is a tax on your future self.", "es": "MISIÓN 1: La Trampa de la Dopamina. Recupera tu enfoque para recuperar tu riqueza. Cada notificación es un impuesto a tu yo futuro." }, "color": "#1e3a8a" },
         { "type": "story", "text": { "en": "A king spent all day looking at a mirror instead of his kingdom. He admired his reflection while his walls crumbled. When the mirror broke, he realized he had no kingdom left. The mirror is your phone; the kingdom is your potential.", "es": "Un rey pasaba el día mirando un espejo en vez de su reino. Admiraba su reflejo mientras sus muros caían. Cuando el espejo se rompió, notó que ya no tenía reino. El espejo es tu teléfono; el reino es tu potencial." } },
         { "type": "breathing", "text": { "en": "T-VID Phase 1: Cortisol Flush. Inhale peace, exhale digital noise.", "es": "T-VID Fase 1: Limpieza de Cortisol. Inhala paz, exhala ruido digital." }, "duration": 6 },
-        { "type": "story", "text": { "en": "Wealth isn't just money; it's the energy you don't waste. A man who stops to argue with every barking dog never reaches his destination. Silence the noise.", "es": "La riqueza no es solo dinero; es la energía que no desperdicias. Un hombre que se detiene a discutir con cada perro que ladra nunca llega a su destino. Silencia el ruido." } },
         { "type": "quiz", "question": { "en": "If you save 2 hours a day from your phone, how many days do you gain in a year?", "es": "Si ahorras 2 horas al día del móvil, ¿cuántos días ganas en un año?" }, "options": { "en": ["15 days", "30 days", "45 days"], "es": ["15 días", "30 días", "45 días"] }, "correct": 1, "reward": 15 }
       ]
     },
@@ -73,8 +72,8 @@
       "blocks": [
         { "type": "voice", "text": { "es": "Tu energía es tu moneda. No la gastes en basura.", "en": "Your energy is your currency. Don't waste it on trash." }, "color": "#065f46" },
         { "type": "breathing", "text": { "es": "T-VID: Carga mitocondrial. Inhala fuego, exhala ceniza.", "en": "T-VID: Mitochondrial charge. Inhale fire, exhale ash." }, "duration": 20 },
-        { "type": "story", "text": { "es": "Alimenta tu fuego con leña, no con papel. La constancia supera al entusiasmo momentáneo.", "en": "Feed your fire with wood, not paper. Consistency beats momentary enthusiasm." } },
-        { "type": "quiz", "question": { "es": "¿Cuántos minutos ahorras al beber agua y enfocarte en lugar de buscar dopamina?", "en": "How many minutes do you save by drinking water and focusing instead of seeking dopamine?" }, "options": { "es": ["24", "36", "50"], "en": ["24", "36", "50"] }, "correct": 1, "reward": 15 }
+        { "type": "story", "text": { "es": "Ciencia del Vigor: La mitocondria no genera energía si el cuerpo está en modo 'supervivencia'. Relájate para encender el motor.", "en": "Vigor Science: Mitochondria don't generate energy if the body is in 'survival' mode. Relax to ignite the engine." } },
+        { "type": "quiz", "question": { "es": "¿Cuál es el combustible principal de una célula de alto rendimiento?", "en": "What is the primary fuel for a high-performance cell?" }, "options": { "es": ["Azúcar", "ATP (Oxígeno/Glucosa)", "Cafeína"], "en": ["Sugar", "ATP (Oxygen/Glucose)", "Caffeine"] }, "correct": 1, "reward": 15 }
       ]
     },
     {
@@ -85,7 +84,7 @@
         { "type": "voice", "text": { "es": "Si vibras en miedo, atraes miedo. Eleva tu frecuencia ahora mismo.", "en": "Vibrate in fear, attract fear. Raise your frequency right now." }, "color": "#8b5cf6" },
         { "type": "breathing", "text": { "es": "T-VID: Flujo de Serotonina. Respiración circular y suave, sin pausas.", "en": "T-VID: Serotonin Flow. Circular and smooth breathing, no pauses." }, "duration": 20 },
         { "type": "story", "text": { "es": "Vacía tu taza de basura digital. La gratitud es el imán de los milagros.", "en": "Empty your cup of digital trash. Gratitude is the magnet for miracles." } },
-        { "type": "quiz", "question": { "es": "Acertijo: Siempre vengo pero nunca llego. ¿Qué soy?", "en": "Riddle: I am always coming but never arrive. What am I?" }, "options": { "es": ["El Mañana", "El Pasado", "El Teléfono"], "en": ["Tomorrow", "Past", "Phone"] }, "correct": 0, "reward": 15 }
+        { "type": "quiz", "question": { "es": "Acertijo: Siempre vengo pero nunca llego. ¿Qué soy?", "en": "Riddle: I am always coming but never arrive. What am I?" }, "options": { "es": ["El Mañana", "El Pasado", "El Éxito"], "en": ["Tomorrow", "Past", "Success"] }, "correct": 0, "reward": 15 }
       ]
     },
     {
@@ -96,7 +95,7 @@
         { "type": "voice", "text": { "es": "Misión 9: Tu primer activo es tu atención. Los ricos hacen que el dinero trabaje para ellos.", "en": "Mission 9: Your first asset is your attention. Rich people make money work for them." }, "color": "#1e40af" },
         { "type": "strategy", "text": { "es": "Cada dólar es un soldado. Si los envías a morir en apps inútiles, pierdes la guerra.", "en": "Every dollar is a soldier. If you send them to die in useless apps, you lose the war." } },
         { "type": "breathing", "text": { "es": "T-VID: Enfoque Ejecutivo. Disciplina los pulmones, disciplina la billetera.", "en": "T-VID: Executive Focus. Discipline the lungs, discipline the wallet." }, "duration": 20 },
-        { "type": "quiz", "question": { "es": "Mates de Valor: Un activo te paga 5% anual, pero la inflación es del 7%. ¿Cuál es el resultado real?", "en": "Value Math: An asset pays you 5% annually, but inflation is 7%. What is the real result?" }, "options": { "es": ["Ganando 2%", "Perdiendo 2%", "Perdiendo 12%"], "en": ["Gaining 2%", "Losing 2%", "Losing 12%"] }, "correct": 1, "reward": 25 }
+        { "type": "quiz", "question": { "es": "Mates de Valor: Un activo te paga 5% anual, pero la inflación es del 7%. ¿Cuál es el resultado real?", "en": "Value Math: An asset pays you 5% annually, but inflation is 7%. What is the real result?" }, "options": { "es": ["Ganando 2%", "Perdiendo 2%", "Quedando igual"], "en": ["Gaining 2%", "Losing 2%", "Staying even"] }, "correct": 1, "reward": 25 }
       ]
     },
     {
@@ -105,7 +104,7 @@
       "category": "Time Alchemy",
       "blocks": [
         { "type": "voice", "text": { "es": "MISIÓN 10: El tiempo no se gestiona, se protege. Eres el guardián de tus horas.", "en": "MISSION 10: Time is not managed, it is protected. You are the guardian of your hours." }, "color": "#374151" },
-        { "type": "strategy", "text": { "es": "Elimina lo no esencial. La perfección se alcanza cuando no queda nada que quitar.", "en": "Eliminate the non-essential. Perfection is reached when there is nothing left to take away." } },
+        { "type": "strategy", "text": { "es": "La Regla de Pareto: El 20% de tus acciones genera el 80% de tu riqueza. Identifica ese 20% ahora.", "en": "The Pareto Principle: 20% of your actions generate 80% of your wealth. Identify that 20% now." } },
         { "type": "breathing", "text": { "es": "T-VID: Cronos Control. Detén el reloj mental e inhala el ahora.", "en": "T-VID: Cronos Control. Stop the mental clock and inhale the now." }, "duration": 20 },
         { "type": "quiz", "question": { "es": "Si eliminas una interrupción de 5 min que ocurre 5 veces al día, ¿cuántas horas libres ganas al mes?", "en": "If you eliminate a 5-min interruption that happens 5 times a day, how many free hours do you gain per month?" }, "options": { "es": ["6 horas", "12.5 horas", "20 horas"], "en": ["6 hours", "12.5 hours", "20 hours"] }, "correct": 1, "reward": 25 }
       ]
@@ -116,7 +115,7 @@
       "category": "Social Engineering",
       "blocks": [
         { "type": "voice", "text": { "es": "MISIÓN 11: Ingeniería de Influencia. El respeto se gana con resultados, no con palabras.", "en": "MISSION 11: Influence Engineering. Respect is earned with results, not words." }, "color": "#1e3a8a" },
-        { "type": "story", "text": { "es": "El león no necesita rugir para que sepan que está ahí. Tu presencia debe hablar por ti.", "en": "The lion doesn't need to roar for others to know he's there. Your presence must speak for you." } },
+        { "type": "story", "text": { "es": "El efecto espejo: La gente tiende a imitar tu lenguaje corporal. Si estás tranquilo, ellos se calmarán. Si eres poderoso, ellos te respetarán.", "en": "Mirror Effect: People tend to imitate your body language. If you are calm, they will calm down. If you are powerful, they will respect you." } },
         { "type": "quiz", "question": { "es": "¿Qué proyecta un silencio de 3 segundos antes de responder a una pregunta difícil?", "en": "What does a 3-second silence before responding to a difficult question project?" }, "options": { "es": ["Duda", "Autoridad", "Olvido"], "en": ["Doubt", "Authority", "Forgetfulness"] }, "correct": 1, "reward": 25 }
       ]
     },
@@ -126,9 +125,9 @@
       "category": "Risk Management",
       "blocks": [
         { "type": "voice", "text": { "es": "MISIÓN 12: Gestión del Caos. El riesgo es para los que no tienen un plan.", "en": "MISSION 12: Chaos Management. Risk is for those without a plan." }, "color": "#7f1d1d" },
-        { "type": "strategy", "text": { "es": "Calcula el peor escenario. Si puedes sobrevivir a eso y seguir adelante, toma el riesgo.", "en": "Calculate the worst-case scenario. If you can survive that and move forward, take the risk." } },
+        { "type": "strategy", "text": { "es": "Asimetría de Riesgo: Solo toma riesgos donde la pérdida sea limitada y la ganancia sea infinita.", "en": "Risk Asymmetry: Only take risks where the loss is limited and the gain is infinite." } },
         { "type": "breathing", "text": { "es": "T-VID: Mente Fría. Baja el pulso y analiza el tablero antes de actuar.", "en": "T-VID: Cold Mind. Lower the pulse and analyze the board before acting." }, "duration": 20 },
-        { "type": "quiz", "question": { "es": "En negocios de alto nivel, ¿cuál es el riesgo más peligroto?", "en": "In high-level business, what is the most dangerous risk?" }, "options": { "es": ["Perder dinero", "No tomar acción", "La competencia"], "en": ["Losing money", "Not taking action", "Competition"] }, "correct": 1, "reward": 25 }
+        { "type": "quiz", "question": { "es": "En negocios de alto nivel, ¿cuál es el riesgo más peligroso?", "en": "In high-level business, what is the most dangerous risk?" }, "options": { "es": ["Perder dinero", "La inacción", "La competencia"], "en": ["Losing money", "Inaction", "Competition"] }, "correct": 1, "reward": 25 }
       ]
     },
     {
@@ -138,7 +137,7 @@
       "blocks": [
         { "type": "voice", "text": { "es": "MISIÓN 13: Trabajo Profundo. Una hora de enfoque total vale por un día de distracciones.", "en": "MISSION 13: Deep Work. One hour of total focus is worth a day of distractions." }, "color": "#4c1d95" },
         { "type": "breathing", "text": { "es": "T-VID: Inmersión Total. Solo existe la tarea, inhala el vacío del ruido.", "en": "T-VID: Total Immersion. Only the task exists, inhale the void of noise." }, "duration": 30 },
-        { "type": "strategy", "text": { "es": "La profundidad crea valor; la superficialidad crea deudas. Protege tu santuario de trabajo.", "en": "Depth creates value; shallowness creates debt. Protect your work sanctuary." } },
+        { "type": "strategy", "text": { "es": "Estado de Flujo: La dopamina natural se libera cuando el desafío es alto pero tus habilidades están a la par.", "en": "Flow State: Natural dopamine is released when the challenge is high but your skills are a match." } },
         { "type": "reward", "points": 50, "text": { "es": "MAESTRÍA LOGRADA: Has desbloqueado el estado de flujo profundo.", "en": "MASTERY ACHIEVED: You have unlocked the deep flow state." } }
       ]
     },
@@ -148,7 +147,7 @@
       "category": "Biological Optimization",
       "blocks": [
         { "type": "voice", "text": { "es": "MISIÓN 14: Bio-Hacking. Tu cuerpo es el hardware que corre el software de tu éxito.", "en": "MISSION 14: Bio-Hacking. Your body is the hardware running the software of your success." }, "color": "#064e3b" },
-        { "type": "strategy", "text": { "es": "Dormir no es un lujo, es el mantenimiento de tu procesador. Sin descanso, la estrategia falla.", "en": "Sleep is not a luxury, it's the maintenance of your processor. Without rest, strategy fails." } },
+        { "type": "strategy", "text": { "es": "Ritmo Circadiano: Tu cerebro limpia toxinas solo durante el sueño profundo. Si no duermes, tu IQ baja 10 puntos mañana.", "en": "Circadian Rhythm: Your brain flushes toxins only during deep sleep. If you don't sleep, your IQ drops 10 points tomorrow." } },
         { "type": "breathing", "text": { "es": "T-VID: Recuperación Celular. Repara el sistema, inhala vida pura.", "en": "T-VID: Cellular Recovery. Repair the system, inhale pure life." }, "duration": 20 },
         { "type": "quiz", "question": { "es": "¿Qué tipo de luz inhibe la producción de melatonina antes de dormir?", "en": "What type of light inhibits melatonin production before sleep?" }, "options": { "es": ["Roja", "Azul", "Cálida"], "en": ["Red", "Blue", "Warm"] }, "correct": 1, "reward": 50 }
       ]
@@ -159,9 +158,9 @@
       "category": "Negotiation Tactics",
       "blocks": [
         { "type": "voice", "text": { "es": "MISIÓN 15: El Arte del Trato. Obtienes lo que negocias, no lo que mereces.", "en": "MISSION 15: The Art of the Deal. You get what you negotiate, not what you deserve." }, "color": "#111827" },
-        { "type": "story", "text": { "es": "En una mesa de negociación, el primero que habla suele perder el anclaje del precio.", "en": "At a negotiation table, the first one to speak usually loses the price anchor." } },
+        { "type": "story", "text": { "es": "Anclaje Psicológico: El primer número que se lanza a la mesa se convierte en el centro de gravedad de toda la negociación.", "en": "Psychological Anchoring: The first number thrown on the table becomes the center of gravity for the entire negotiation." } },
         { "type": "breathing", "text": { "es": "T-VID: Póker Face. Mantén la neutralidad y el control emocional absoluto.", "en": "T-VID: Poker Face. Maintain neutrality and absolute emotional control." }, "duration": 20 },
-        { "type": "quiz", "question": { "es": "Si la otra parte dice 'No', ¿qué es lo primero que un experto debe hacer?", "en": "If the other party says 'No', what is the first thing an expert should do?" }, "options": { "es": ["Rendirse", "Preguntar ¿Por qué?", "Escuchar el silencio"], "en": ["Give up", "Ask Why?", "Listen to the silence"] }, "correct": 2, "reward": 50 }
+        { "type": "quiz", "question": { "es": "Si la otra parte dice 'No', ¿qué es lo primero que un experto debe hacer?", "en": "If the other party says 'No', what is the first thing an expert should do?" }, "options": { "es": ["Contraofertar", "Preguntar ¿Por qué?", "Escuchar el silencio"], "en": ["Counteroffer", "Ask Why?", "Listen to the silence"] }, "correct": 2, "reward": 50 }
       ]
     },
     {
@@ -170,7 +169,7 @@
       "category": "The Investor Mind",
       "blocks": [
         { "type": "voice", "text": { "es": "MISIÓN 16: Interés Compuesto. Las pequeñas acciones diarias crean imperios masivos.", "en": "MISSION 16: Compound Interest. Small daily actions create massive empires." }, "color": "#1e3a8a" },
-        { "type": "strategy", "text": { "es": "Busca retornos asimétricos: situaciones de riesgo bajo con recompensa potencial infinita.", "en": "Seek asymmetric returns: low-risk situations with infinite potential reward." } },
+        { "type": "strategy", "text": { "es": "Ley de los 72: Divide 72 por tu tasa de retorno para saber en cuántos años duplicarás tu dinero.", "en": "Rule of 72: Divide 72 by your return rate to know in how many years you will double your money." } },
         { "type": "breathing", "text": { "es": "T-VID: Visión de Largo Plazo. Mira más allá del año e inhala paciencia estratégica.", "en": "T-VID: Long-Term Vision. Look beyond the year and inhale strategic patience." }, "duration": 20 }
       ]
     },
@@ -180,7 +179,7 @@
       "category": "Anti-Fragility",
       "blocks": [
         { "type": "voice", "text": { "es": "MISIÓN 17: Anti-Fragilidad. El fuego se alimenta del viento; tú te alimentas del caos.", "en": "MISSION 17: Anti-Fragility. Fire feeds on the wind; you feed on chaos." }, "color": "#450a0a" },
-        { "type": "story", "text": { "es": "No evites el golpe de la vida, úsalo como impulso para saltar más alto.", "en": "Don't avoid life's blow, use it as momentum to jump higher." } },
+        { "type": "story", "text": { "es": "Resiliencia es aguantar el golpe; Anti-fragilidad es volverse más fuerte gracias al golpe. Usa la crisis como combustible.", "en": "Resilience is taking the hit; Anti-fragility is becoming stronger because of the hit. Use the crisis as fuel." } },
         { "type": "breathing", "text": { "es": "T-VID: Fortaleza Nuclear. Eres irrompible y creces en medio de la crisis.", "en": "T-VID: Nuclear Strength. You are unbreakable and grow in the midst of crisis." }, "duration": 20 }
       ]
     },
@@ -199,8 +198,8 @@
       "level": 3,
       "category": "Legacy Building",
       "blocks": [
-        { "type": "strategy", "text": { "es": "El éxito sin legado es solo ruido. Construye algo que te sobreviva.", "en": "Success without legacy is just noise. Build something that outlasts you." } },
-        { "type": "quiz", "question": { "es": "¿Cuál es la verdadera marca de un líder de Nivel 3?", "en": "What is the true mark of a Level 3 leader?" }, "options": { "es": ["Poder", "Dinero", "Sucesión y Legado"], "en": ["Power", "Money", "Succession and Legacy"] }, "correct": 2, "reward": 100 }
+        { "type": "strategy", "text": { "es": "El éxito sin legado es solo ruido. Construye sistemas que funcionen sin ti.", "en": "Success without legacy is just noise. Build systems that work without you." } },
+        { "type": "quiz", "question": { "es": "¿Cuál es la verdadera marca de un líder de Nivel 3?", "en": "What is the true mark of a Level 3 leader?" }, "options": { "es": ["Poder absoluto", "Fama mundial", "Sucesión y Legado"], "en": ["Absolute power", "World fame", "Succession and Legacy"] }, "correct": 2, "reward": 100 }
       ]
     },
     {
@@ -212,7 +211,7 @@
         { "type": "story", "text": { "es": "El camino termina aquí, pero tu imperio apenas comienza. Mantente Zen, mantente KaMi.", "en": "The path ends here, but your empire is just beginning. Stay Zen, stay KaMi." } },
         { "type": "reward", "points": 1000, "text": { "es": "SISTEMA COMPLETADO. BIENVENIDO AL CIELO.", "en": "SYSTEM COMPLETED. WELCOME TO AL CIELO." } }
       ]
-    },     
+    },
     {
       "id": 21,
       "level": 2,
@@ -230,7 +229,9 @@
       "category": "Wealth Magnetism",
       "blocks": [
         { "type": "strategy", "text": { "es": "El dinero es un invitado tímido. Solo se queda donde se le respeta.", "en": "Money is a shy guest. It only stays where it is respected." }, "color": "#166534" },
-        { "type": "breathing", "text": { "es": "RETO DE SILENCIO 2: Visualiza tu gestión del primer millón.", "en": "SILENCE RETO 2: Visualize your management of the first million." }, "duration": 300 }
+        { "type": "story", "text": { "es": "Si tratas al dinero como una carga, se irá con quien lo vea como una herramienta de libertad.", "en": "If you treat money as a burden, it will leave for someone who sees it as a tool for freedom." } },
+        { "type": "breathing", "text": { "es": "RETO DE SILENCIO 2: Visualiza tu gestión del primer millón.", "en": "SILENCE RETO 2: Visualize your management of the first million." }, "duration": 300 },
+        { "type": "quiz", "question": { "es": "¿Cuál es la base del magnetismo financiero?", "en": "What is the basis of financial magnetism?" }, "options": { "es": ["Gastar", "Orden y Respeto", "Suerte"], "en": ["Spending", "Order and Respect", "Luck"] }, "correct": 1, "reward": 50 }
       ]
     },
     {
@@ -239,7 +240,9 @@
       "category": "Emotional Fortress",
       "blocks": [
         { "type": "strategy", "text": { "es": "Quien te enfada, te conquista. Domina tu reacción.", "en": "He who angers you, conquers you. Master your reaction." }, "color": "#7f1d1d" },
-        { "type": "breathing", "text": { "es": "RETO DE SILENCIO 3: Disuelve tu último enojo en el vacío.", "en": "SILENCE RETO 3: Dissolve your last anger in the void." }, "duration": 420 }
+        { "type": "story", "text": { "es": "Un volcán no pide permiso para estallar, pero el hombre sabio sabe enfriar la lava antes de que toque su reino.", "en": "A volcano doesn't ask permission to erupt, but the wise man knows how to cool the lava before it touches his kingdom." } },
+        { "type": "breathing", "text": { "es": "RETO DE SILENCIO 3: Disuelve tu último enojo en el vacío.", "en": "SILENCE RETO 3: Dissolve your last anger in the void." }, "duration": 420 },
+        { "type": "quiz", "question": { "es": "Si alguien te insulta y no reaccionas, ¿a quién le pertenece el insulto?", "en": "If someone insults you and you don't react, who does the insult belong to?" }, "options": { "es": ["A ti", "A nadie", "Al que lo lanzó"], "en": ["To you", "To no one", "To the one who threw it"] }, "correct": 2, "reward": 50 }
       ]
     },
     {
@@ -248,7 +251,9 @@
       "category": "Astuteness & Negotiation",
       "blocks": [
         { "type": "strategy", "text": { "es": "El mejor trato es donde ellos creen que ganaron.", "en": "The best deal is where they think they won." }, "color": "#4338ca" },
-        { "type": "breathing", "text": { "es": "RETO DE SILENCIO 4: Repasa dónde debiste callar en tu última venta.", "en": "SILENCE RETO 4: Replay where you should have been silent." }, "duration": 540 }
+        { "type": "story", "text": { "es": "En la mesa de negociación, el que más información tiene es el que menos habla.", "en": "At the negotiation table, the one with the most information is the one who speaks the least." } },
+        { "type": "breathing", "text": { "es": "RETO DE SILENCIO 4: Repasa dónde debiste callar en tu última venta.", "en": "SILENCE RETO 4: Replay where you should have been silent." }, "duration": 540 },
+        { "type": "quiz", "question": { "es": "¿Cuál es el arma más fuerte en una venta?", "en": "What is the strongest weapon in a sale?" }, "options": { "es": ["La persuasión", "La escucha activa", "El descuento"], "en": ["Persuasion", "Active listening", "Discount"] }, "correct": 1, "reward": 50 }
       ]
     },
     {
@@ -257,7 +262,9 @@
       "category": "The Art of Love & Power",
       "blocks": [
         { "type": "strategy", "text": { "es": "Ama con poder, no por necesidad.", "en": "Love with power, not from need." }, "color": "#be123c" },
-        { "type": "breathing", "text": { "es": "RETO DE SILENCIO 5: ¿Tus relaciones construyen tu imperio?", "en": "SILENCE RETO 5: Do your relationships build your empire?" }, "duration": 660 }
+        { "type": "story", "text": { "es": "Dos pilares sostienen un templo; si están pegados, el templo cae. Mantén tu individualidad para fortalecer la unión.", "en": "Two pillars hold up a temple; if they are stuck together, the temple falls. Maintain your individuality to strengthen the union." } },
+        { "type": "breathing", "text": { "es": "RETO DE SILENCIO 5: ¿Tus relaciones construyen tu imperio?", "en": "SILENCE RETO 5: Do your relationships build your empire?" }, "duration": 660 },
+        { "type": "quiz", "question": { "es": "La base de una relación de alto nivel es:", "en": "The basis of a high-level relationship is:" }, "options": { "es": ["Dependencia", "Admisión mutua", "Soberanía compartida"], "en": ["Dependency", "Mutual admission", "Shared sovereignty"] }, "correct": 2, "reward": 50 }
       ]
     },
     {
@@ -266,7 +273,9 @@
       "category": "Joy as a Weapon",
       "blocks": [
         { "type": "strategy", "text": { "es": "Un guerrero feliz es invencible.", "en": "A happy warrior is invincible." }, "color": "#ca8a04" },
-        { "type": "breathing", "text": { "es": "RETO DE SILENCIO 6: Llena tus células con frecuencia de risa.", "en": "SILENCE RETO 6: Fill your cells with laughter frequency." }, "duration": 780 }
+        { "type": "story", "text": { "es": "La risa rompe la rigidez del miedo. Si puedes reírte en la crisis, ya has ganado.", "en": "Laughter breaks the rigidity of fear. If you can laugh in a crisis, you have already won." } },
+        { "type": "breathing", "text": { "es": "RETO DE SILENCIO 6: Llena tus células con frecuencia de risa.", "en": "SILENCE RETO 6: Fill your cells with laughter frequency." }, "duration": 780 },
+        { "type": "quiz", "question": { "es": "¿Qué hormona se libera al sonreír, incluso si es forzado?", "en": "What hormone is released when smiling, even if forced?" }, "options": { "es": ["Cortisol", "Endorfina", "Adrenalina"], "en": ["Cortisol", "Endorphin", "Adrenaline"] }, "correct": 1, "reward": 50 }
       ]
     },
     {
@@ -275,7 +284,9 @@
       "category": "Strategic Happiness",
       "blocks": [
         { "type": "strategy", "text": { "es": "La felicidad es una mente sin conflictos internos.", "en": "Happiness is a mind with no internal conflicts." }, "color": "#0891b2" },
-        { "type": "breathing", "text": { "es": "RETO DE SILENCIO 7: Resuelve el conflicto interno en el vacío.", "en": "SILENCE RETO 7: Resolve internal conflict in the void." }, "duration": 900 }
+        { "type": "story", "text": { "es": "El conflicto interno es una fuga de energía. Cierra la grieta y el poder se acumulará solo.", "en": "Internal conflict is an energy leak. Close the crack and power will accumulate on its own." } },
+        { "type": "breathing", "text": { "es": "RETO DE SILENCIO 7: Resuelve el conflicto interno en el vacío.", "en": "SILENCE RETO 7: Resolve internal conflict in the void." }, "duration": 900 },
+        { "type": "quiz", "question": { "es": "¿Qué genera más fatiga mental?", "en": "What generates more mental fatigue?" }, "options": { "es": ["El trabajo físico", "La indecisión", "Dormir mucho"], "en": ["Physical work", "Indecision", "Sleeping too much"] }, "correct": 1, "reward": 50 }
       ]
     },
     {
@@ -284,7 +295,9 @@
       "category": "Quantum Fun & Creativity",
       "blocks": [
         { "type": "strategy", "text": { "es": "Jugar es la forma más alta de investigación.", "en": "Play is the highest form of research." }, "color": "#db2777" },
-        { "type": "breathing", "text": { "es": "RETO DE SILENCIO 8: Imagina la solución como un juego.", "en": "SILENCE RETO 8: Imagine the solution as a game." }, "duration": 1020 }
+        { "type": "story", "text": { "es": "El universo no fue creado con esfuerzo, sino con expansión. Crea desde el juego, no desde la carencia.", "en": "The universe was not created with effort, but with expansion. Create from play, not from lack." } },
+        { "type": "breathing", "text": { "es": "RETO DE SILENCIO 8: Imagina la solución como un juego.", "en": "SILENCE RETO 8: Imagine the solution as a game." }, "duration": 1020 },
+        { "type": "quiz", "question": { "es": "¿Cuándo es más creativa la mente?", "en": "When is the mind most creative?" }, "options": { "es": ["Bajo presión", "En estado alfa/relajado", "Enojada"], "en": ["Under pressure", "In alpha/relaxed state", "Angry"] }, "correct": 1, "reward": 50 }
       ]
     },
     {
@@ -293,7 +306,9 @@
       "category": "The Alchemist's Wellbeing",
       "blocks": [
         { "type": "strategy", "text": { "es": "Tu cuerpo es un laboratorio. Tú eres el oro.", "en": "Your body is a laboratory. You are the gold." }, "color": "#059669" },
-        { "type": "breathing", "text": { "es": "RETO DE SILENCIO 9: Envía gratitud y orden a tus órganos.", "en": "SILENCE RETO 9: Send gratitude and order to your organs." }, "duration": 1140 }
+        { "type": "story", "text": { "es": "No puedes construir un rascacielos sobre arena. Tu salud es la roca sobre la que se asienta tu fortuna.", "en": "You cannot build a skyscraper on sand. Your health is the rock upon which your fortune sits." } },
+        { "type": "breathing", "text": { "es": "RETO DE SILENCIO 9: Envía gratitud y orden a tus órganos.", "en": "SILENCE RETO 9: Send gratitude and order to your organs." }, "duration": 1140 },
+        { "type": "quiz", "question": { "es": "¿Cuál es el órgano que más energía consume en reposo?", "en": "Which organ consumes the most energy at rest?" }, "options": { "es": ["Corazón", "Cerebro", "Hígado"], "en": ["Heart", "Brain", "Liver"] }, "correct": 1, "reward": 50 }
       ]
     },
     {
@@ -302,6 +317,7 @@
       "category": "Total Conquest",
       "blocks": [
         { "type": "strategy", "text": { "es": "Conquista tu mente y el mundo se inclinará.", "en": "Conquer your mind and the world bows." }, "color": "#000000" },
+        { "type": "story", "text": { "es": "El fin del Nivel 2 es el inicio de tu soberanía. Has dominado tus emociones; ahora dominarás tu destino.", "en": "The end of Level 2 is the beginning of your sovereignty. You have mastered your emotions; now you will master your destiny." } },
         { "type": "breathing", "text": { "es": "RETO DE SILENCIO 10: 20 Minutos de Vacío Puro.", "en": "SILENCE RETO 10: 20 Minutes of Pure Void." }, "duration": 1200 },
         { "type": "reward", "points": 1000, "text": { "es": "NIVEL 2 COMPLETADO.", "en": "LEVEL 2 COMPLETE." } }
       ]
@@ -312,7 +328,9 @@
       "category": "High-Stakes Power",
       "blocks": [
         { "type": "strategy", "text": { "es": "El poder no se pide, se toma.", "en": "Power is taken." }, "color": "#450a0a" },
-        { "type": "breathing", "text": { "es": "RETO DE SILENCIO 11: Medita en tu legado.", "en": "SILENCE RETO 11: Meditate on your legacy." }, "duration": 1260 }
+        { "type": "story", "text": { "es": "Los leones no piden permiso para liderar la manada. Su naturaleza dicta su posición.", "en": "Lions don't ask for permission to lead the pack. Their nature dictates their position." } },
+        { "type": "breathing", "text": { "es": "RETO DE SILENCIO 11: Medita en tu legado.", "en": "SILENCE RETO 11: Meditate on your legacy." }, "duration": 1260 },
+        { "type": "quiz", "question": { "es": "¿Cuál es la cualidad principal de un líder de Nivel 3?", "en": "What is the primary quality of a Level 3 leader?" }, "options": { "es": ["Crueldad", "Determinación absoluta", "Carisma"], "en": ["Cruelty", "Absolute determination", "Charisma"] }, "correct": 1, "reward": 100 }
       ]
     },
     {
@@ -321,7 +339,9 @@
       "category": "Financial Alchemy",
       "blocks": [
         { "type": "strategy", "text": { "es": "La riqueza es transgeneracional.", "en": "Wealth is transgenerational." }, "color": "#064e3b" },
-        { "type": "breathing", "text": { "es": "RETO DE SILENCIO 12: Flujo de capital sin esfuerzo.", "en": "SILENCE RETO 12: Effortless capital flow." }, "duration": 1320 }
+        { "type": "story", "text": { "es": "No trabajes por dinero; construye sistemas que capturen el valor del tiempo de otros.", "en": "Don't work for money; build systems that capture the value of others' time." } },
+        { "type": "breathing", "text": { "es": "RETO DE SILENCIO 12: Flujo de capital sin esfuerzo.", "en": "SILENCE RETO 12: Effortless capital flow." }, "duration": 1320 },
+        { "type": "quiz", "question": { "es": "En finanzas cuánticas, ¿qué es un activo?", "en": "In quantum finance, what is an asset?" }, "options": { "es": ["Lo que te da estatus", "Lo que pone dinero en tu bolsillo", "Tu casa"], "en": ["What gives you status", "What puts money in your pocket", "Your house"] }, "correct": 1, "reward": 100 }
       ]
     },
     {
@@ -330,7 +350,9 @@
       "category": "The Master of Chaos",
       "blocks": [
         { "type": "strategy", "text": { "es": "Sé el viento que usa la tormenta.", "en": "Be the wind using the storm." }, "color": "#000000" },
-        { "type": "breathing", "text": { "es": "RETO DE SILENCIO 13: Orden en el caos.", "en": "SILENCE RETO 13: Order in chaos." }, "duration": 1380 }
+        { "type": "story", "text": { "es": "Donde otros ven destrucción, el maestro ve una oportunidad para reorganizar las piezas a su favor.", "en": "Where others see destruction, the master sees an opportunity to rearrange the pieces in their favor." } },
+        { "type": "breathing", "text": { "es": "RETO DE SILENCIO 13: Orden en el caos.", "en": "SILENCE RETO 13: Order in chaos." }, "duration": 1380 },
+        { "type": "quiz", "question": { "es": "Ante una crisis financiera mundial, ¿qué hace un estratega?", "en": "In the face of a global financial crisis, what does a strategist do?" }, "options": { "es": ["Entra en pánico", "Busca activos subvalorados", "Ahorra"], "en": ["Panics", "Looks for undervalued assets", "Saves"] }, "correct": 1, "reward": 100 }
       ]
     },
     {
@@ -339,7 +361,9 @@
       "category": "Absolute Autonomy",
       "blocks": [
         { "type": "strategy", "text": { "es": "Tu paz es el activo más caro.", "en": "Your peace is the most expensive asset." }, "color": "#1e3a8a" },
-        { "type": "breathing", "text": { "es": "RETO DE SILENCIO 14: Corta lazos que te anclan.", "en": "SILENCE RETO 14: Cut ties that anchor you." }, "duration": 1440 }
+        { "type": "story", "text": { "es": "Si alguien puede alterar tu paz sin tu permiso, esa persona es tu dueña. Corta los hilos.", "en": "If someone can disturb your peace without your permission, that person owns you. Cut the strings." } },
+        { "type": "breathing", "text": { "es": "RETO DE SILENCIO 14: Corta lazos que te anclan.", "en": "SILENCE RETO 14: Cut ties that anchor you." }, "duration": 1440 },
+        { "type": "quiz", "question": { "es": "¿Qué define la verdadera libertad?", "en": "What defines true freedom?" }, "options": { "es": ["Tener mucho dinero", "Poder decir NO", "Viajar"], "en": ["Having a lot of money", "Being able to say NO", "Traveling"] }, "correct": 1, "reward": 100 }
       ]
     },
     {
@@ -348,7 +372,9 @@
       "category": "Influence",
       "blocks": [
         { "type": "strategy", "text": { "es": "Un rey susurra y el mundo se detiene.", "en": "A king whispers and the world stops." }, "color": "#000000" },
-        { "type": "breathing", "text": { "es": "RETO DE SILENCIO 15: Observa la energía ajena.", "en": "SILENCE RETO 15: Observe others' energy." }, "duration": 1500 }
+        { "type": "story", "text": { "es": "La autoridad real no grita. La fuerza de tu mirada y la precisión de tus pocas palabras son suficientes.", "en": "Real authority doesn't shout. The strength of your gaze and the precision of your few words are enough." } },
+        { "type": "breathing", "text": { "es": "RETO DE SILENCIO 15: Observa la energía ajena.", "en": "SILENCE RETO 15: Observe others' energy." }, "duration": 1500 },
+        { "type": "quiz", "question": { "es": "Para influir en una masa, debes:", "en": "To influence a mass, you must:" }, "options": { "es": ["Hablarles de ti", "Entender sus deseos", "Gritar más"], "en": ["Talk to them about you", "Understand their desires", "Shout louder"] }, "correct": 1, "reward": 100 }
       ]
     },
     {
@@ -357,7 +383,9 @@
       "category": "Strategic Love",
       "blocks": [
         { "type": "strategy", "text": { "es": "La pareja correcta multiplica tu imperio.", "en": "The right partner multiplies your empire." }, "color": "#9f1239" },
-        { "type": "breathing", "text": { "es": "RETO DE SILENCIO 16: Medita en la lealtad.", "en": "SILENCE RETO 16: Meditate on loyalty." }, "duration": 1560 }
+        { "type": "story", "text": { "es": "Una alianza de poder no es romance ciego; es la unión de dos visiones que se impulsan hacia el cielo.", "en": "A power alliance is not blind romance; it's the union of two visions driving toward the sky." } },
+        { "type": "breathing", "text": { "es": "RETO DE SILENCIO 16: Medita en la lealtad.", "en": "SILENCE RETO 16: Meditate on loyalty." }, "duration": 1560 },
+        { "type": "quiz", "question": { "es": "¿Qué buscas en un socio de vida?", "en": "What do you look for in a life partner?" }, "options": { "es": ["Entretenimiento", "Alineación de valores", "Compañía"], "en": ["Entertainment", "Value alignment", "Company"] }, "correct": 1, "reward": 100 }
       ]
     },
     {
@@ -366,7 +394,9 @@
       "category": "Transcendence",
       "blocks": [
         { "type": "strategy", "text": { "es": "Mente arquitecto, cuerpo constructor.", "en": "Mind architect, body builder." }, "color": "#14532d" },
-        { "type": "breathing", "text": { "es": "RETO DE SILENCIO 17: Sincroniza voluntad y biología.", "en": "SILENCE RETO 17: Sync will and biology." }, "duration": 1620 }
+        { "type": "story", "text": { "es": "Diseña en lo invisible lo que manifestarás en lo visible. Tu voluntad es el puente.", "en": "Design in the invisible what you will manifest in the visible. Your will is the bridge." } },
+        { "type": "breathing", "text": { "es": "RETO DE SILENCIO 17: Sincroniza voluntad y biología.", "en": "SILENCE RETO 17: Sync will and biology." }, "duration": 1620 },
+        { "type": "quiz", "question": { "es": "La materia es...", "en": "Matter is..." }, "options": { "es": ["Sólida", "Energía densa", "Inerte"], "en": ["Solid", "Dense energy", "Inert"] }, "correct": 1, "reward": 100 }
       ]
     },
     {
@@ -375,7 +405,9 @@
       "category": "Joy of Victory",
       "blocks": [
         { "type": "strategy", "text": { "es": "Diviértete en la batalla.", "en": "Have fun in the battle." }, "color": "#000000" },
-        { "type": "breathing", "text": { "es": "RETO DE SILENCIO 18: Sonríe en el silencio.", "en": "SILENCE RETO 18: Smile in silence." }, "duration": 1680 }
+        { "type": "story", "text": { "es": "Si el camino a la cima es un martirio, el éxito será amargo. Disfruta cada paso del ascenso.", "en": "If the path to the top is a martyrdom, success will be bitter. Enjoy every step of the climb." } },
+        { "type": "breathing", "text": { "es": "RETO DE SILENCIO 18: Sonríe en el silencio.", "en": "SILENCE RETO 18: Smile in silence." }, "duration": 1680 },
+        { "type": "quiz", "question": { "es": "¿Cuál es el mejor momento para celebrar?", "en": "When is the best time to celebrate?" }, "options": { "es": ["Al final", "Ahora", "Cuando ganes"], "en": ["At the end", "Now", "When you win"] }, "correct": 1, "reward": 100 }
       ]
     },
     {
@@ -384,7 +416,9 @@
       "category": "Grand Strategy",
       "blocks": [
         { "type": "strategy", "text": { "es": "Anticípate 10 pasos.", "en": "Anticipate 10 steps." }, "color": "#000000" },
-        { "type": "breathing", "text": { "es": "RETO DE SILENCIO 19: Diseña tu gran movimiento.", "en": "SILENCE RETO 19: Design your big move." }, "duration": 1740 }
+        { "type": "story", "text": { "es": "El gran maestro no juega la jugada actual; juega la conclusión de la partida desde el primer movimiento.", "en": "The grandmaster doesn't play the current move; they play the conclusion of the game from the first move." } },
+        { "type": "breathing", "text": { "es": "RETO DE SILENCIO 19: Diseña tu gran movimiento.", "en": "SILENCE RETO 19: Design your big move." }, "duration": 1740 },
+        { "type": "quiz", "question": { "es": "¿Qué cualidad permite la anticipación?", "en": "What quality allows for anticipation?" }, "options": { "es": ["Velocidad", "Observación profunda", "Fuerza"], "en": ["Speed", "Deep observation", "Strength"] }, "correct": 1, "reward": 100 }
       ]
     },
     {
@@ -393,6 +427,7 @@
       "category": "Enlightenment",
       "blocks": [
         { "type": "strategy", "text": { "es": "Tú eres la voz que dicta la realidad.", "en": "You are the voice that dictates reality." }, "color": "#000000" },
+        { "type": "story", "text": { "es": "Bienvenido al final del camino y al inicio de tu nueva existencia. Ahora eres un arquitecto de realidades.", "en": "Welcome to the end of the path and the beginning of your new existence. You are now an architect of realities." } },
         { "type": "breathing", "text": { "es": "RETO FINAL: 30 Minutos de Silencio Absoluto.", "en": "FINAL RETO: 30 Minutes of Absolute Silence." }, "duration": 1800 },
         { "type": "reward", "points": 5000, "text": { "es": "MAESTRÍA SUPREMA LOGRADA. ERES AL CIELO.", "en": "SUPREME MASTERY ACHIEVED. YOU ARE AL CIELO." } }
       ]
