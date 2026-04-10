@@ -1,64 +1,76 @@
-from fastapi import Request
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse, HTMLResponse
+from fastapi.staticfiles import StaticFiles
+import random
 
-# 🔥 MEMORIA DEL SISTEMA (puedes luego guardar en DB)
-game_state = {
-    "mental": 100,
-    "social": 50,
-    "money": 1000,
-    "stress": 0,
-    "karma": 0
-}
+# =========================
+# APP INIT (ESTO ES LO PRIMERO)
+# =========================
+app = FastAPI()
 
+# =========================
+# STATIC FILES
+# =========================
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+
+# =========================
+# FRONTEND ROUTES
+# =========================
+@app.get("/", response_class=HTMLResponse)
+def home():
+    with open("static/session.html", "r", encoding="utf-8") as f:
+        return f.read()
+
+
+@app.get("/jet", response_class=HTMLResponse)
+def jet():
+    with open("static/jet.html", "r", encoding="utf-8") as f:
+        return f.read()
+
+
+@app.get("/life", response_class=HTMLResponse)
+def life():
+    with open("static/life.html", "r", encoding="utf-8") as f:
+        return f.read()
+
+
+# =========================
+# IA JUDGE ENGINE (PYTHON)
+# =========================
 @app.post("/judge")
 async def judge(request: Request):
     data = await request.json()
-    action = data.get("action")
 
-    result = {
-        "reaction": "",
-        "effects": {},
-        "emotion": ""
-    }
+    decision = data.get("decision", "none")
+    context = data.get("context", {})
 
     # =========================
-    # 🧠 MOTOR DE JUICIO REAL
+    # LÓGICA DE "JUEZ IA"
     # =========================
 
-    if action == "avoid_conflict":
-        game_state["social"] += 5
-        game_state["stress"] -= 5
-        result["reaction"] = "You avoided conflict. Safety increased."
-        result["emotion"] = "calm"
+    base_score = random.randint(-5, 5)
 
-    elif action == "face_conflict":
-        game_state["stress"] += 10
-        game_state["social"] += 10
-        game_state["karma"] += 5
-        result["reaction"] = "You faced the conflict. Growth achieved."
-        result["emotion"] = "intense"
+    # reglas simples de juicio
+    if decision == "avoid":
+        score = base_score + 3
+        msg = "CONTROL EMOCIONAL +1"
+    elif decision == "engage":
+        score = base_score - 2
+        msg = "CONFLICTO DETECTADO"
+    elif decision == "adapt":
+        score = base_score + 5
+        msg = "INTELIGENCIA SOCIAL ACTIVA"
+    else:
+        score = base_score
+        msg = "DECISION NEUTRAL"
 
-    elif action == "ignore":
-        game_state["mental"] -= 10
-        game_state["karma"] -= 5
-        result["reaction"] = "You ignored the situation. Consequence delayed."
-        result["emotion"] = "uncertain"
+    # impacto emocional simulado
+    stress = random.randint(-3, 6)
 
-    elif action == "lie":
-        game_state["social"] -= 15
-        game_state["stress"] += 15
-        result["reaction"] = "You lied. System instability detected."
-        result["emotion"] = "danger"
-
-    elif action == "truth":
-        game_state["social"] += 10
-        game_state["mental"] += 5
-        result["reaction"] = "Truth accepted. Stability increased."
-        result["emotion"] = "stable"
-
-    # clamp values
-    for k in game_state:
-        game_state[k] = max(0, min(1000, game_state[k]))
-
-    result["state"] = game_state
-
-    return JSONResponse(result)
+    return JSONResponse({
+        "score": score,
+        "stress": stress,
+        "message": msg,
+        "state": "processed"
+    })
