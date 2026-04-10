@@ -115,11 +115,11 @@
 <body>
 
     <div id="app-container">
-        <div class="header" id="mission-tag">KaMiZen Architecture</div>
+        <div class="header" id="mission-tag">AURA BY MAY ROGA</div>
         
         <div id="content-area">
-            <h1 id="title">Preparando sistema...</h1>
-            <p id="description">Sincronizando frecuencia de éxito.</p>
+            <h1 id="title">Sincronizando...</h1>
+            <p id="description">Cargando frecuencia de éxito transgeneracional.</p>
         </div>
 
         <div id="breath-indicator">
@@ -130,13 +130,12 @@
             </div>
 
         <div class="controls">
-            <button id="main-action" class="btn-primary" onclick="engine.next()">Comenzar Misión</button>
+            <button id="main-action" class="btn-primary" onclick="engine.next()">Continuar</button>
             <button id="translate-btn" onclick="engine.toggleLanguage()">Español / English</button>
-            <button id="delete-btn" style="opacity: 0.4; font-size: 12px;" onclick="location.reload()">Borrar Sesión</button>
+            <button id="delete-btn" style="opacity: 0.4; font-size: 12px;" onclick="location.reload()">Reiniciar</button>
         </div>
     </div>
 
-    <audio id="voice-player"></audio>
     <audio id="bg-music" loop></audio>
 
     <script>
@@ -147,30 +146,39 @@
             missions: [],
             
             async init() {
-                const response = await fetch('/api/missions');
-                const data = await response.json();
-                this.missions = data.missions;
-                this.updateUI();
-                this.setupAudio();
+                try {
+                    const response = await fetch('/api/missions');
+                    const data = await response.json();
+                    this.missions = data.missions;
+                    this.setupAudio();
+                    this.updateUI();
+                } catch (error) {
+                    console.error("Error cargando misiones:", error);
+                }
             },
 
             setupAudio() {
                 const music = document.getElementById('bg-music');
-                // Configuración estricta de volumen: Música siempre al 20%
-                music.volume = 0.2; 
+                music.volume = 0.2; // Volumen de fondo constante al 20%
             },
 
             updateUI() {
+                if (!this.missions.length) return;
+                
                 const mission = this.missions[this.currentMission];
                 const block = mission.blocks[this.currentBlock];
                 
                 document.getElementById('mission-tag').innerText = mission.category;
                 
-                if (block.type === 'voice' || block.type === 'story' || block.type === 'strategy') {
+                // Manejo de música por nivel
+                this.handleMusic(mission.level);
+
+                // Renderizado según tipo de bloque
+                if (block.type === 'strategy' || block.type === 'story') {
                     document.getElementById('title').innerText = mission.category;
                     document.getElementById('description').innerText = block.text[this.lang];
                     document.getElementById('breath-indicator').style.display = 'none';
-                    this.playAudio(block.type, mission.level);
+                    document.getElementById('quiz-options').classList.add('hidden');
                 }
 
                 if (block.type === 'breathing') {
@@ -185,20 +193,28 @@
                 if (block.type === 'quiz') {
                     this.showQuiz(block);
                 }
+
+                if (block.type === 'reward') {
+                    document.getElementById('title').innerText = "Logro Desbloqueado";
+                    document.getElementById('description').innerText = block.text[this.lang];
+                    document.getElementById('breath-indicator').style.display = 'none';
+                }
             },
 
-            playAudio(type, level) {
+            handleMusic(level) {
                 const music = document.getElementById('bg-music');
-                // Cambia la música según el nivel: Poder, Dopamina, Riqueza
                 const tracks = {
-                    1: 'https://assets.mixkit.co/music/preview/mixkit-tech-house-vibes-130.mp3', // Dopamina/Energía
-                    2: 'https://assets.mixkit.co/music/preview/mixkit-deep-urban-623.mp3',      // Estrategia/Poder
-                    3: 'https://assets.mixkit.co/music/preview/mixkit-complex-772.mp3'       // Maestría/Al Cielo
+                    1: 'https://assets.mixkit.co/music/preview/mixkit-tech-house-vibes-130.mp3', // Dopamina
+                    2: 'https://assets.mixkit.co/music/preview/mixkit-deep-urban-623.mp3',      // Poder
+                    3: 'https://assets.mixkit.co/music/preview/mixkit-complex-772.mp3'       // Al Cielo
                 };
                 
-                if (music.src !== tracks[level]) {
-                    music.src = tracks[level];
-                    music.play();
+                const selectedTrack = tracks[level] || tracks[1];
+                
+                if (music.getAttribute('data-current-level') !== level.toString()) {
+                    music.src = selectedTrack;
+                    music.setAttribute('data-current-level', level);
+                    music.play().catch(e => console.log("Interacción requerida para audio"));
                 }
             },
 
@@ -206,6 +222,7 @@
                 const container = document.getElementById('quiz-options');
                 container.innerHTML = '';
                 container.classList.remove('hidden');
+                document.getElementById('breath-indicator').style.display = 'none';
                 document.getElementById('description').innerText = block.question[this.lang];
 
                 block.options[this.lang].forEach((opt, idx) => {
@@ -218,34 +235,46 @@
 
             checkAnswer(selected, correct) {
                 if (selected === correct) {
-                    alert("Correcto. Elevando frecuencia.");
+                    alert(this.lang === 'es' ? "Frecuencia Sincronizada." : "Frequency Synced.");
                     document.getElementById('quiz-options').classList.add('hidden');
                     this.next();
                 } else {
-                    alert("Reenfoca. Inténtalo de nuevo.");
+                    alert(this.lang === 'es' ? "Reenfoca tu mente." : "Refocus your mind.");
                 }
             },
 
             startTimer(seconds) {
                 let timeLeft = seconds;
                 const timerDisplay = document.getElementById('timer');
+                document.getElementById('main-action').disabled = true; // Bloquear botón durante respiración
+                
                 const interval = setInterval(() => {
                     timerDisplay.innerText = timeLeft;
                     timeLeft--;
                     if (timeLeft < 0) {
                         clearInterval(interval);
                         document.getElementById('breath-indicator').classList.remove('breathing-animation');
+                        document.getElementById('main-action').disabled = false;
                         this.next();
                     }
                 }, 1000);
             },
 
             next() {
+                const mission = this.missions[this.currentMission];
                 this.currentBlock++;
-                if (this.currentBlock >= this.missions[this.currentMission].blocks.length) {
+                
+                if (this.currentBlock >= mission.blocks.length) {
                     this.currentBlock = 0;
                     this.currentMission++;
                 }
+
+                if (this.currentMission >= this.missions.length) {
+                    alert(this.lang === 'es' ? "Has alcanzado AL CIELO." : "You have reached AL CIELO.");
+                    location.reload();
+                    return;
+                }
+
                 this.updateUI();
             },
 
