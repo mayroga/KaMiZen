@@ -60,12 +60,37 @@
       "level": 3,
       "category": "High Stakes Execution",
       "blocks": [
-        { "type": "story", "text": { "en": "The Alchemist didn't turn lead into gold; he turned chaos into order. Gold was the byproduct of his discipline.", "es": "El Alquimista no convertía plomo en oro; convertía el caos en orden. El oro era el subproducto de su disciplina." }, "color": "#701a75" },
-        { "type": "strategy", "text": { "en": "The 1% Rule: If you improve 1% every day, in a year you are 37 times better. Discipline is compound interest.", "es": "La Regla del 1%: Si mejoras 1% cada día, en un año eres 37 veces mejor. La disciplina es interés compuesto." } },
-        { "type": "breathing", "text": { "en": "Apply Life Techniques now. T-VID: Neural Reset Protocol. Inhale 6s, Hold 6s, Exhale 6s. Recalibrate your nervous system.", "es": "Aplica Técnicas de Vida ahora. T-VID: Protocolo de Reinicio Neural. Inhala 6s, Mantén 6s, Exhala 6s. Recalibra tu sistema nervioso." 
+        { 
+          "type": "story", 
+          "text": { 
+            "en": "The Alchemist didn't turn lead into gold; he turned chaos into order. Gold was the byproduct of his discipline.", 
+            "es": "El Alquimista no convertía plomo en oro; convertía el caos en orden. El oro era el subproducto de su disciplina." 
           }, 
-          "duration": 18
-        { "type": "reward", "points": 100, "text": { "en": "GENIUS LEVEL REACHED. Go and manifest your reality.", "es": "NIVEL DE GENIO ALCANZADO. Ve y manifiesta tu realidad." } }
+          "color": "#701a75" 
+        },
+        { 
+          "type": "strategy", 
+          "text": { 
+            "en": "The 1% Rule: If you improve 1% every day, in a year you are 37 times better. Discipline is compound interest.", 
+            "es": "La Regla del 1%: Si mejoras 1% cada día, en un año eres 37 veces mejor. La disciplina es interés compuesto." 
+          } 
+        },
+        { 
+          "type": "breathing", 
+          "text": { 
+            "en": "Apply Life Techniques now. T-VID: Neural Reset Protocol. Inhale 6s, Hold 6s, Exhale 6s. Recalibrate your nervous system.", 
+            "es": "Aplica Técnicas de Vida ahora. T-VID: Protocolo de Reinicio Neural. Inhala 6s, Mantén 6s, Exhala 6s. Recalibra tu sistema nervioso." 
+          }, 
+          "duration": 18 
+        },
+        { 
+          "type": "reward", 
+          "points": 100, 
+          "text": { 
+            "en": "GENIUS LEVEL REACHED. Go and manifest your reality.", 
+            "es": "NIVEL DE GENIO ALCANZADO. Ve y manifiesta tu realidad." 
+          } 
+        }
       ]
     },
     {
