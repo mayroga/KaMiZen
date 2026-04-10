@@ -1,39 +1,64 @@
-from fastapi import FastAPI
-from fastapi.responses import HTMLResponse, JSONResponse
-from fastapi.staticfiles import StaticFiles
-from pathlib import Path
-import json
-import os
+from fastapi import Request
 
-app = FastAPI(title="MaykaMi Neural Life Engine")
+# 🔥 MEMORIA DEL SISTEMA (puedes luego guardar en DB)
+game_state = {
+    "mental": 100,
+    "social": 50,
+    "money": 1000,
+    "stress": 0,
+    "karma": 0
+}
 
-BASE_DIR = Path(__file__).resolve().parent
-STATIC_DIR = BASE_DIR / "static"
-DB_PATH = STATIC_DIR / "kamizen_content.json"
+@app.post("/judge")
+async def judge(request: Request):
+    data = await request.json()
+    action = data.get("action")
 
-app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
+    result = {
+        "reaction": "",
+        "effects": {},
+        "emotion": ""
+    }
 
+    # =========================
+    # 🧠 MOTOR DE JUICIO REAL
+    # =========================
 
-def load_game_data():
-    try:
-        if DB_PATH.exists():
-            with open(DB_PATH, "r", encoding="utf-8") as f:
-                return json.load(f)
-        return {"missions": []}
-    except:
-        return {"missions": []}
+    if action == "avoid_conflict":
+        game_state["social"] += 5
+        game_state["stress"] -= 5
+        result["reaction"] = "You avoided conflict. Safety increased."
+        result["emotion"] = "calm"
 
+    elif action == "face_conflict":
+        game_state["stress"] += 10
+        game_state["social"] += 10
+        game_state["karma"] += 5
+        result["reaction"] = "You faced the conflict. Growth achieved."
+        result["emotion"] = "intense"
 
-@app.get("/", response_class=HTMLResponse)
-async def home():
-    return HTMLResponse((STATIC_DIR / "session.html").read_text(encoding="utf-8"))
+    elif action == "ignore":
+        game_state["mental"] -= 10
+        game_state["karma"] -= 5
+        result["reaction"] = "You ignored the situation. Consequence delayed."
+        result["emotion"] = "uncertain"
 
+    elif action == "lie":
+        game_state["social"] -= 15
+        game_state["stress"] += 15
+        result["reaction"] = "You lied. System instability detected."
+        result["emotion"] = "danger"
 
-@app.get("/session_content")
-async def session_content():
-    return JSONResponse(load_game_data())
+    elif action == "truth":
+        game_state["social"] += 10
+        game_state["mental"] += 5
+        result["reaction"] = "Truth accepted. Stability increased."
+        result["emotion"] = "stable"
 
+    # clamp values
+    for k in game_state:
+        game_state[k] = max(0, min(1000, game_state[k]))
 
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", 8000)))
+    result["state"] = game_state
+
+    return JSONResponse(result)
