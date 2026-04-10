@@ -1,209 +1,96 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-    <title>KAMIZEN | Neural Architect</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MaykaMi | Sistema</title>
 
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+body{
+    margin:0;
+    background:#0a0f14;
+    color:#ffffff;
+    font-family:Arial;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+}
 
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'JetBrains Mono', monospace;
-            -webkit-tap-highlight-color: transparent;
-        }
+#app{
+    width:90%;
+    max-width:420px;
+    background:#111a22;
+    border-radius:15px;
+    padding:25px;
+    text-align:center;
+}
 
-        body {
-            background: #000;
-            color: #00f2ff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            width: 100vw;
-            overflow: hidden;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-size: cover;
-            transition: background-image 2s ease-in-out;
-        }
+h1{
+    color:#00f2ff;
+}
 
-        /* Scan effect */
-        body::before {
-            content: " ";
-            position: absolute;
-            inset: 0;
-            background:
-                linear-gradient(rgba(18,16,16,0) 50%, rgba(0,0,0,0.25) 50%),
-                linear-gradient(90deg, rgba(255,0,0,0.06), rgba(0,255,0,0.02), rgba(0,0,255,0.06));
-            background-size: 100% 2px, 3px 100%;
-            z-index: 100;
-            pointer-events: none;
-        }
+#text-content{
+    margin:20px 0;
+    font-size:18px;
+}
 
-        @keyframes infiniteZoom {
-            from { background-size: 100%; filter: brightness(0.4) grayscale(0.5); }
-            to { background-size: 115%; filter: brightness(0.6) grayscale(0); }
-        }
+button{
+    padding:15px;
+    margin-top:10px;
+    width:100%;
+    border:none;
+    background:#00f2ff;
+    color:#000;
+    font-weight:bold;
+    cursor:pointer;
+}
 
-        .zoom-active {
-            animation: infiniteZoom 40s linear infinite alternate;
-        }
+.secondary{
+    background:#333;
+    color:#fff;
+}
 
-        #app {
-            width: 90%;
-            max-width: 400px;
-            background: rgba(0, 15, 20, 0.85);
-            backdrop-filter: blur(20px);
-            border: 1px solid #00f2ff55;
-            border-radius: 20px;
-            padding: 30px 20px;
-            text-align: center;
-            z-index: 10;
-            min-height: 80vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            box-shadow: 0 0 30px rgba(0, 242, 255, 0.2);
-        }
+#breath-circle{
+    width:120px;
+    height:120px;
+    border-radius:50%;
+    border:3px solid #00f2ff;
+    margin:20px auto;
+    display:none;
+    align-items:center;
+    justify-content:center;
+}
 
-        #logo {
-            font-size: 24px;
-            font-weight: 700;
-            color: #00f2ff;
-            letter-spacing: 4px;
-            text-shadow: 0 0 10px #00f2ff;
-        }
+.breathing-anim{
+    animation: breathe 4s infinite;
+}
 
-        #mental-panel {
-            display: flex;
-            justify-content: space-around;
-            font-size: 10px;
-            color: #00f2ffaa;
-            margin-top: 10px;
-        }
-
-        #block-container {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            gap: 20px;
-        }
-
-        #text-content {
-            font-size: 18px;
-            line-height: 1.4;
-            color: #fff;
-            text-shadow: 0 0 5px rgba(255,255,255,0.5);
-            min-height: 120px;
-        }
-
-        /* Breathing */
-        #breath-circle {
-            width: 130px;
-            height: 130px;
-            border-radius: 50%;
-            border: 2px solid #00f2ff;
-            box-shadow: 0 0 15px #00f2ff;
-            display: none;
-            justify-content: center;
-            align-items: center;
-            margin: 20px auto;
-        }
-
-        .breathing-anim {
-            animation: cyberBreathe 4s ease-in-out infinite;
-        }
-
-        @keyframes cyberBreathe {
-            0%, 100% { transform: scale(0.85); opacity: 0.5; }
-            50% { transform: scale(1.15); opacity: 1; box-shadow: 0 0 30px #00f2ff; }
-        }
-
-        #timer-display {
-            font-size: 38px;
-            font-weight: 700;
-        }
-
-        button {
-            padding: 16px;
-            border: 1px solid #00f2ff;
-            background: transparent;
-            color: #00f2ff;
-            font-weight: 700;
-            cursor: pointer;
-            transition: 0.2s;
-            clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%);
-        }
-
-        button:active {
-            background: #00f2ff;
-            color: #000;
-        }
-
-        .secondary {
-            font-size: 10px;
-            border-color: #00f2ff55;
-            color: #00f2ffaa;
-        }
-
-        .glitch-effect {
-            animation: glitch 0.2s infinite;
-        }
-
-        @keyframes glitch {
-            0% { transform: translate(2px, 0); }
-            50% { transform: translate(-2px, -2px); }
-            100% { transform: translate(0, 2px); }
-        }
-
-        /* 🔥 NUEVO: Indicador de modo */
-        #mode-indicator {
-            font-size: 9px;
-            margin-top: 5px;
-            color: #00f2ff88;
-            letter-spacing: 2px;
-        }
-    </style>
+@keyframes breathe{
+    0%{transform:scale(0.8);}
+    50%{transform:scale(1.2);}
+    100%{transform:scale(0.8);}
+}
+</style>
 </head>
 
-<body class="zoom-active">
-
-<audio id="bg-music" loop preload="auto"></audio>
+<body>
 
 <div id="app">
 
-    <header>
-        <div id="logo">MaykaMi v3.0</div>
+<h1>MAYKAMI</h1>
 
-        <div id="mental-panel">
-            <span id="streak-display">SYNC: 0%</span>
-            <span id="level-display">NODE: 01</span>
-        </div>
+<div id="streak-display">SYNC: 100%</div>
+<div id="level-display">LEVEL 1</div>
 
-        <div id="mode-indicator">MENTAL TRAINING MODE</div>
-    </header>
+<div id="text-content">INICIANDO...</div>
 
-    <div id="block-container">
-        <div id="text-content">INITIALIZING NEURAL LINK...</div>
+<div id="breath-circle">
+<div id="timer-display">0</div>
+</div>
 
-        <div id="breath-circle">
-            <div id="timer-display">0</div>
-        </div>
-    </div>
-
-    <div id="action-area">
-        <button id="main-btn">ESTABLISH LINK</button>
-
-        <div style="display: flex; gap: 10px; margin-top: 15px;">
-            <button id="lang-btn" class="secondary">EN/ES</button>
-            <button id="back-btn" class="secondary">REBOOT</button>
-        </div>
-    </div>
+<button id="main-btn">START</button>
+<button onclick="location.reload()" class="secondary">RESET</button>
 
 </div>
 
