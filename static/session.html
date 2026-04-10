@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>KaMiZen - AL CIELO</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <title>KaMiZen - Al Cielo</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
         
         body {
             background: #000;
@@ -20,152 +20,264 @@
             background-position: center;
             background-repeat: no-repeat;
             background-size: 110%;
-            transition: background-image 2s ease-in-out;
+            transition: background-image 3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .zoom-active {
-            animation: infiniteZoom 15s linear infinite alternate;
+            animation: infiniteZoom 25s ease-in-out infinite alternate;
         }
 
         @keyframes infiniteZoom {
             from { background-size: 110%; }
-            to { background-size: 160%; }
+            to { background-size: 155%; }
         }
 
         #app {
-            width: 90%;
-            max-width: 450px;
-            background: rgba(2, 6, 23, 0.7);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 32px;
-            padding: 40px;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.9);
+            width: 92%;
+            max-width: 400px;
+            background: rgba(0, 0, 0, 0.25);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 35px;
+            padding: 30px 20px;
             text-align: center;
-            position: relative;
             z-index: 10;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 70vh;
+            position: relative;
         }
 
         #logo {
-            font-size: 42px;
+            font-size: 32px;
             font-weight: 600;
-            background: linear-gradient(90deg, #60a5fa, #a78bfa);
+            background: linear-gradient(135deg, #ffffff, #60a5fa);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 20px;
-            letter-spacing: -2px;
-        }
-
-        #lang-btn {
-            position: absolute; top: 25px; right: 25px;
-            padding: 6px 14px; border-radius: 10px;
-            border: 1px solid #60a5fa; background: transparent;
-            color: #60a5fa; cursor: pointer; font-weight: 600;
+            letter-spacing: -1.5px;
+            margin-bottom: 10px;
         }
 
         #mental-panel {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 12px 20px; border-radius: 15px; margin-bottom: 25px;
-            display: flex; justify-content: space-between; font-size: 14px;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-
-        #block-container {
-            min-height: 280px;
-            display: flex; flex-direction: column;
-            justify-content: center; align-items: center;
+            display: flex; justify-content: space-around;
+            font-size: 12px; text-transform: uppercase; letter-spacing: 1px;
+            color: rgba(255,255,255,0.6); margin-bottom: 20px;
         }
 
         #text-content {
-            font-size: 22px; font-weight: 300; line-height: 1.5;
-            margin-bottom: 20px; min-height: 80px;
+            font-size: 19px; font-weight: 300; line-height: 1.4;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            min-height: 100px;
+            display: flex; align-items: center; justify-content: center;
         }
 
-        /* Círculo Respiratorio */
         #breath-circle {
             width: 120px; height: 120px;
             border-radius: 50%;
-            background: rgba(96, 165, 250, 0.2);
-            border: 4px solid #60a5fa;
+            border: 2px solid #60a5fa;
+            background: rgba(96, 165, 250, 0.1);
+            margin: 20px auto;
             display: none;
             justify-content: center; align-items: center;
-            margin: 20px 0;
             position: relative;
-            box-shadow: 0 0 30px rgba(96, 165, 250, 0.4);
         }
 
         .breathing-anim {
-            animation: breathe 5s ease-in-out infinite;
+            animation: breathe 4s ease-in-out infinite;
         }
 
         @keyframes breathe {
-            0%, 100% { transform: scale(0.8); background: rgba(96, 165, 250, 0.1); }
-            50% { transform: scale(1.3); background: rgba(96, 165, 250, 0.4); }
+            0%, 100% { transform: scale(0.9); box-shadow: 0 0 15px rgba(96,165,250,0.2); }
+            50% { transform: scale(1.3); box-shadow: 0 0 50px rgba(96,165,250,0.6); }
         }
 
         #timer-display {
-            font-size: 52px; font-weight: 600; color: #60a5fa;
-            margin: 15px 0; text-shadow: 0 0 15px rgba(96,165,250,0.5);
+            font-size: 35px; font-weight: 600; color: #60a5fa;
         }
 
         button {
-            padding: 20px; margin: 10px 0; border: none; border-radius: 18px;
+            padding: 16px; border: none; border-radius: 20px;
             cursor: pointer; background: #2563eb; color: white;
-            width: 100%; font-weight: 600; font-size: 18px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 600; font-size: 16px; width: 100%;
+            transition: 0.3s;
         }
 
-        button:hover:not(:disabled) { background: #3b82f6; transform: scale(1.02); }
-        button:disabled { background: #1e293b; color: #475569; cursor: not-allowed; }
+        button:disabled { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.3); }
 
-        .secondary { background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255,255,255,0.1); }
+        .secondary { background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.2); margin-top: 10px; }
 
         #warning-modal {
-            display: none; position: fixed; inset: 0;
-            background: rgba(0,0,0,0.98); z-index: 1000;
-            justify-content: center; align-items: center; text-align: center;
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9);
+            z-index: 1000; justify-content: center; align-items: center; padding: 20px;
+        }
+
+        @media (max-height: 700px) {
+            #app { padding: 20px; min-height: 85vh; }
+            #logo { font-size: 26px; }
+            #text-content { font-size: 17px; }
         }
     </style>
 </head>
 <body class="zoom-active">
     <audio id="bg-music" loop></audio>
+    <audio id="voice-player"></audio>
     
     <div id="warning-modal">
-        <div style="padding:40px;">
-            <h2 style="color:#ef4444; font-size: 38px; margin-bottom:20px;">INACTIVITY</h2>
-            <p style="font-size: 20px; margin-bottom:30px;">Wake up. Tap to stay Al Cielo.</p>
-            <button onclick="resetInactivity()" style="width: auto; padding: 15px 50px;">I AM HERE</button>
+        <div style="text-align: center;">
+            <h2 style="color:#ef4444; margin-bottom:15px;">ALERTA DE INACTIVIDAD</h2>
+            <button onclick="resetInactivity()">ESTOY AQUÍ</button>
         </div>
     </div>
 
     <div id="app">
-        <button id="lang-btn">ES</button>
-        <div id="logo">KaMiZen</div>
+        <button id="lang-btn" style="width: auto; position: absolute; top: 15px; right: 15px; padding: 5px 12px; font-size: 12px;">ES</button>
+        <div id="logo">AL CIELO</div>
         
         <div id="mental-panel">
-            <div id="streak">Streak: 0</div>
-            <div id="level-display">Level: 1</div>
+            <span id="streak-display">Puntos: 0</span>
+            <span id="level-display">Nivel 1</span>
         </div>
 
         <div id="block-container">
-            <div id="text-content">The journey begins now. Focus.</div>
-            
+            <div id="text-content">Sincronizando...</div>
             <div id="breath-circle">
-                <span id="breath-text" style="font-size: 14px; font-weight: 600;">BREATHE</span>
+                <span id="timer-display">00</span>
             </div>
-
-            <div id="timer-display" style="display:none;">00:00</div>
         </div>
         
-        <button id="main-btn">Start Session</button>
-        
-        <div style="display: flex; gap: 10px; margin-top: 15px;">
-            <button id="back-btn" class="secondary" style="font-size: 12px; padding: 10px;">Back</button>
-            <button id="fwd-btn" class="secondary" style="font-size: 12px; padding: 10px;">Forward</button>
+        <div id="action-area">
+            <button id="main-btn">COMENZAR</button>
+            <div style="display: flex; gap: 8px; margin-top: 10px;">
+                <button id="back-btn" class="secondary" style="font-size: 11px;">ATRÁS</button>
+                <button id="fwd-btn" class="secondary" style="font-size: 11px;">SALTAR</button>
+            </div>
         </div>
     </div>
 
-    <script src="/static/scripts.js"></script>
+    <script>
+        const engine = {
+            lang: 'es',
+            currentMission: 0,
+            currentBlock: 0,
+            missions: [],
+            points: 0,
+
+            async init() {
+                try {
+                    const res = await fetch('/api/missions');
+                    const data = await res.json();
+                    this.missions = data.missions;
+                    this.setupUIListeners();
+                    this.updateUI();
+                } catch (e) { console.error("Error cargando misiones", e); }
+            },
+
+            setupUIListeners() {
+                document.getElementById('main-btn').onclick = () => this.next();
+                document.getElementById('lang-btn').onclick = () => this.toggleLanguage();
+                document.getElementById('fwd-btn').onclick = () => this.next();
+                const music = document.getElementById('bg-music');
+                music.volume = 0.2; // Música siempre suave (20%)
+            },
+
+            updateUI() {
+                if (!this.missions.length) return;
+                const mission = this.missions[this.currentMission];
+                const block = mission.blocks[this.currentBlock];
+
+                document.getElementById('level-display').innerText = `Lv. ${mission.level}`;
+                document.getElementById('streak-display').innerText = `Pts: ${this.points}`;
+                this.handleAudio(mission.level, mission.category);
+
+                if (block.type === 'strategy' || block.type === 'story') {
+                    document.getElementById('text-content').innerText = block.text[this.lang];
+                    document.getElementById('breath-circle').style.display = 'none';
+                    document.getElementById('text-content').style.display = 'flex';
+                }
+
+                if (block.type === 'breathing') {
+                    document.getElementById('text-content').style.display = 'none';
+                    const circle = document.getElementById('breath-circle');
+                    circle.style.display = 'flex';
+                    circle.classList.add('breathing-anim');
+                    this.startTimer(block.duration);
+                }
+            },
+
+            handleAudio(level, category) {
+                const music = document.getElementById('bg-music');
+                const cat = category.toLowerCase();
+                let track = '';
+
+                // Selección de música por Nivel y Categoría (Emociones)
+                if (level === 1) track = 'https://assets.mixkit.co/music/preview/mixkit-tech-house-vibes-130.mp3'; // Dopamina
+                else if (level === 2) {
+                    if (cat.includes('wealth') || cat.includes('money')) track = 'https://assets.mixkit.co/music/preview/mixkit-deep-urban-623.mp3'; // Dinero
+                    else if (cat.includes('love')) track = 'https://assets.mixkit.co/music/preview/mixkit-serene-view-443.mp3'; // Amor
+                    else track = 'https://assets.mixkit.co/music/preview/mixkit-glitchy-reverb-764.mp3'; // Estrategia
+                } else {
+                    track = 'https://assets.mixkit.co/music/preview/mixkit-complex-772.mp3'; // Maestría / Al Cielo
+                }
+
+                if (music.src !== track) {
+                    music.src = track;
+                    music.play().catch(() => console.log("Click para activar audio"));
+                }
+            },
+
+            startTimer(seconds) {
+                let timeLeft = seconds;
+                document.getElementById('main-btn').disabled = true;
+                const timerDisplay = document.getElementById('timer-display');
+                
+                const interval = setInterval(() => {
+                    timerDisplay.innerText = timeLeft;
+                    timeLeft--;
+                    if (timeLeft < 0) {
+                        clearInterval(interval);
+                        document.getElementById('main-btn').disabled = false;
+                        document.getElementById('breath-circle').classList.remove('breathing-anim');
+                        this.next();
+                    }
+                }, 1000);
+            },
+
+            next() {
+                this.currentBlock++;
+                if (this.currentBlock >= this.missions[this.currentMission].blocks.length) {
+                    this.currentBlock = 0;
+                    this.currentMission++;
+                    this.points += 100;
+                }
+                if (this.currentMission >= this.missions.length) {
+                    alert("FELICIDADES: HAS ALCANZADO EL CIELO.");
+                    location.reload();
+                    return;
+                }
+                this.updateUI();
+            },
+
+            toggleLanguage() {
+                this.lang = this.lang === 'es' ? 'en' : 'es';
+                document.getElementById('lang-btn').innerText = this.lang.toUpperCase();
+                this.updateUI();
+            }
+        };
+
+        window.onload = () => engine.init();
+
+        // Inactividad
+        let inactivityTimer;
+        function resetInactivity() {
+            document.getElementById('warning-modal').style.display = 'none';
+            clearTimeout(inactivityTimer);
+            inactivityTimer = setTimeout(() => {
+                document.getElementById('warning-modal').style.display = 'flex';
+            }, 60000); // 60 segundos
+        }
+        document.body.onclick = resetInactivity;
+    </script>
 </body>
 </html>
