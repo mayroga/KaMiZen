@@ -9,17 +9,30 @@ let musicPlayer = document.getElementById('bg-music');
 // 80 Imágenes para evitar repetición rápida
 const imageBank = Array.from({length: 80}, (_, i) => `https://picsum.photos/seed/kzen${i}/1600/900`);
 
-const musicTracks = [
-    "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3", 
-    "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3", 
-    "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3"
-];
+// Librería de música categorizada por "vibe" según el JSON
+const musicLibrary = {
+    dopamine: "https://assets.mixkit.co/music/preview/mixkit-tech-house-vibes-130.mp3",
+    power: "https://assets.mixkit.co/music/preview/mixkit-deep-urban-623.mp3",
+    wealth: "https://assets.mixkit.co/music/preview/mixkit-complex-772.mp3",
+    love: "https://assets.mixkit.co/music/preview/mixkit-serene-view-443.mp3",
+    zen: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+};
 
-function updateMusic(level) {
-    let track = Math.min(level - 1, 2);
-    if (musicPlayer.src !== musicTracks[track]) {
-        musicPlayer.src = musicTracks[track];
-        musicPlayer.volume = 0.2; // MÚSICA BAJITA (20%)
+function updateMusic(level, category = "") {
+    let selectedTrack = musicLibrary.zen;
+    const cat = category.toLowerCase();
+
+    if (level === 1) {
+        selectedTrack = cat.includes("stability") ? musicLibrary.love : musicLibrary.dopamine;
+    } else if (level === 2) {
+        selectedTrack = cat.includes("economic") ? musicLibrary.wealth : musicLibrary.power;
+    } else {
+        selectedTrack = musicLibrary.wealth;
+    }
+
+    if (musicPlayer.src !== selectedTrack) {
+        musicPlayer.src = selectedTrack;
+        musicPlayer.volume = 0.2; // Música de fondo al 20%
         musicPlayer.play().catch(() => {});
     }
 }
@@ -28,21 +41,21 @@ function speak(text) {
     window.speechSynthesis.cancel();
     const msg = new SpeechSynthesisUtterance(text);
     msg.lang = currentLang === 'en' ? 'en-US' : 'es-ES';
-    msg.volume = 1.0; // VOZ FUERTE (100%)
+    
+    // Bajamos música para que la voz tenga peso
+    musicPlayer.volume = 0.05; 
+    msg.volume = 1.0; 
     msg.rate = 0.95;
+
+    msg.onend = () => { musicPlayer.volume = 0.2; };
     window.speechSynthesis.speak(msg);
 }
 
 function changeBg() {
-    const img = new Image();
     const url = imageBank[Math.floor(Math.random() * imageBank.length)];
-    img.src = url;
-    img.onload = () => {
-        document.body.style.backgroundImage = `url('${url}')`;
-    };
+    document.body.style.backgroundImage = `url('${url}')`;
 }
 
-// SISTEMA DE CASTIGO POR INTENTAR SALTAR
 function applyPunishment() {
     const text = currentLang === 'en' ? 
         "Discipline is key. 3 seconds of forced meditation for trying to bypass the lesson." : 
@@ -68,13 +81,16 @@ function applyPunishment() {
     }, 1000);
 }
 
+// CARGA DESDE EL NUEVO JSON
 async function loadData() {
     try {
-        const response = await fetch('/session_content');
+        const response = await fetch('/static/kamizen_content.json');
         const data = await response.json();
-        missions = data.missions.sort((a, b) => a.id - b.id);
+        missions = data.missions;
         initApp();
-    } catch (e) { console.error("Data error"); }
+    } catch (e) { 
+        console.error("Error cargando kamizen_content.json", e); 
+    }
 }
 
 function initApp() {
@@ -89,7 +105,7 @@ function initApp() {
     };
 
     changeBg();
-    setInterval(changeBg, 12000); // Cambio lento cada 12s
+    setInterval(changeBg, 12000);
     updateMusic(1);
     
     setInterval(() => {
@@ -100,6 +116,8 @@ function initApp() {
 }
 
 function renderBlock() {
+    if (!missions.length) return;
+    
     const mission = missions[currentMissionIndex];
     const block = mission.blocks[currentBlockIndex];
     const textDisplay = document.getElementById('text-content');
@@ -107,7 +125,7 @@ function renderBlock() {
     const mainBtn = document.getElementById('main-btn');
     const circle = document.getElementById('breath-circle');
 
-    updateMusic(mission.level);
+    updateMusic(mission.level, mission.category);
     document.getElementById('level-display').innerText = `Lv. ${mission.level}`;
     
     if (timerInterval) clearInterval(timerInterval);
@@ -116,11 +134,15 @@ function renderBlock() {
     circle.classList.remove('breathing-anim');
     mainBtn.disabled = false;
     mainBtn.style.display = 'block';
+    mainBtn.innerText = currentLang === 'en' ? 'NEXT' : 'SIGUIENTE';
 
     const oldQuiz = document.getElementById('quiz-options');
     if (oldQuiz) oldQuiz.remove();
 
+    // Lógica para tipos de bloques: voice, story, strategy, breathing
     textDisplay.innerText = block.text[currentLang];
+    if (block.color) textDisplay.style.color = block.color;
+    else textDisplay.style.color = "white";
 
     if (block.type === 'breathing') {
         mainBtn.disabled = true;
@@ -144,9 +166,7 @@ function startCountdown(seconds) {
     const mainBtn = document.getElementById('main-btn');
 
     timerInterval = setInterval(() => {
-        const mins = Math.floor(remaining / 60);
-        const secs = remaining % 60;
-        display.innerText = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        display.innerText = remaining;
         if (remaining <= 0) {
             clearInterval(timerInterval);
             mainBtn.disabled = false;
@@ -159,6 +179,8 @@ function startCountdown(seconds) {
 function renderQuiz(block) {
     const mainBtn = document.getElementById('main-btn');
     mainBtn.style.display = 'none';
+    const textDisplay = document.getElementById('text-content');
+    textDisplay.innerText = block.question[currentLang];
     speak(block.question[currentLang]);
 
     const container = document.getElementById('block-container');
@@ -170,18 +192,16 @@ function renderQuiz(block) {
         const btn = document.createElement('button');
         btn.innerText = opt;
         btn.className = "secondary";
+        btn.style.marginTop = "8px";
         btn.onclick = () => {
-            const isCorrect = idx === block.correct;
-            const explanation = isCorrect ? block.explanation[currentLang].correct : block.explanation[currentLang].wrong;
-            
-            document.getElementById('text-content').innerText = explanation;
-            speak(explanation);
-
-            if (isCorrect) {
+            if (idx === block.correct) {
+                speak(currentLang === 'en' ? "Correct." : "Correcto.");
                 quizDiv.remove();
                 mainBtn.style.display = 'block';
+                nextStep();
             } else {
                 btn.style.borderColor = "#ef4444";
+                speak(currentLang === 'en' ? "Try again." : "Intenta de nuevo.");
             }
         };
         quizDiv.appendChild(btn);
@@ -190,13 +210,14 @@ function renderQuiz(block) {
 }
 
 function nextStep() {
-    const mission = missions[currentMissionIndex];
     currentBlockIndex++;
-    if (currentBlockIndex >= mission.blocks.length) {
+    if (currentBlockIndex >= missions[currentMissionIndex].blocks.length) {
         currentMissionIndex++;
         currentBlockIndex = 0;
     }
-    if (currentMissionIndex >= missions.length) currentMissionIndex = 0;
+    if (currentMissionIndex >= missions.length) {
+        currentMissionIndex = 0; // Reinicia el ciclo
+    }
     renderBlock();
 }
 
