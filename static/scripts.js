@@ -6,15 +6,13 @@ let inactivitySeconds = 0;
 let timerInterval = null;
 let musicPlayer = document.getElementById('bg-music');
 
-// 80 Imágenes para evitar repetición rápida
-const imageBank = Array.from({length: 80}, (_, i) => `https://picsum.photos/seed/kzen${i}/1600/900`);
-
-// Librería de música categorizada por "vibe" según el JSON
+// Librería de música por categoría/vibe
 const musicLibrary = {
     dopamine: "https://assets.mixkit.co/music/preview/mixkit-tech-house-vibes-130.mp3",
     power: "https://assets.mixkit.co/music/preview/mixkit-deep-urban-623.mp3",
     wealth: "https://assets.mixkit.co/music/preview/mixkit-complex-772.mp3",
     love: "https://assets.mixkit.co/music/preview/mixkit-serene-view-443.mp3",
+    action: "https://assets.mixkit.co/music/preview/mixkit-glitchy-reverb-764.mp3",
     zen: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
 };
 
@@ -22,92 +20,71 @@ function updateMusic(level, category = "") {
     let selectedTrack = musicLibrary.zen;
     const cat = category.toLowerCase();
 
-    if (level === 1) {
-        selectedTrack = cat.includes("stability") ? musicLibrary.love : musicLibrary.dopamine;
-    } else if (level === 2) {
-        selectedTrack = cat.includes("economic") ? musicLibrary.wealth : musicLibrary.power;
+    if (level === 1) selectedTrack = musicLibrary.dopamine;
+    else if (level === 2) {
+        if (cat.includes('wealth') || cat.includes('economic')) selectedTrack = musicLibrary.wealth;
+        else if (cat.includes('stability') || cat.includes('love')) selectedTrack = musicLibrary.love;
+        else selectedTrack = musicLibrary.power;
     } else {
-        selectedTrack = musicLibrary.wealth;
+        selectedTrack = musicLibrary.action;
     }
 
     if (musicPlayer.src !== selectedTrack) {
         musicPlayer.src = selectedTrack;
-        musicPlayer.volume = 0.2; // Música de fondo al 20%
+        musicPlayer.volume = 0.15; // Música suave (15%) para que la voz mande
         musicPlayer.play().catch(() => {});
     }
 }
 
-function speak(text) {
+function speak(text, callback) {
     window.speechSynthesis.cancel();
     const msg = new SpeechSynthesisUtterance(text);
     msg.lang = currentLang === 'en' ? 'en-US' : 'es-ES';
-    
-    // Bajamos música para que la voz tenga peso
-    musicPlayer.volume = 0.05; 
     msg.volume = 1.0; 
     msg.rate = 0.95;
 
-    msg.onend = () => { musicPlayer.volume = 0.2; };
+    // Ducking: Baja la música mientras habla la voz
+    musicPlayer.volume = 0.05;
+    msg.onend = () => {
+        musicPlayer.volume = 0.15;
+        if (callback) callback();
+    };
     window.speechSynthesis.speak(msg);
 }
 
-function changeBg() {
-    const url = imageBank[Math.floor(Math.random() * imageBank.length)];
-    document.body.style.backgroundImage = `url('${url}')`;
-}
-
-function applyPunishment() {
-    const text = currentLang === 'en' ? 
-        "Discipline is key. 3 seconds of forced meditation for trying to bypass the lesson." : 
-        "La disciplina es clave. 3 segundos de meditación forzada por intentar saltar la lección.";
-    
-    const display = document.getElementById('text-content');
-    const mainBtn = document.getElementById('main-btn');
-    const backBtn = document.getElementById('back-btn');
-    const fwdBtn = document.getElementById('fwd-btn');
-
-    [mainBtn, backBtn, fwdBtn].forEach(b => b.disabled = true);
-    display.innerText = text;
-    speak(text);
-    
-    let time = 3;
-    const pInterval = setInterval(() => {
-        time--;
-        if (time <= 0) {
-            clearInterval(pInterval);
-            [mainBtn, backBtn, fwdBtn].forEach(b => b.disabled = false);
-            renderBlock();
-        }
-    }, 1000);
-}
-
-// CARGA DESDE EL NUEVO JSON
+// Carga el JSON desde el servidor
 async function loadData() {
     try {
-        const response = await fetch('/static/kamizen_content.json');
+        const response = await fetch('/session_content'); // O '/static/kamizen_content.json'
         const data = await response.json();
         missions = data.missions;
         initApp();
-    } catch (e) { 
-        console.error("Error cargando kamizen_content.json", e); 
-    }
+    } catch (e) { console.error("Error cargando JSON"); }
 }
 
 function initApp() {
     document.getElementById('main-btn').onclick = () => renderBlock();
-    document.getElementById('back-btn').onclick = () => applyPunishment();
-    document.getElementById('fwd-btn').onclick = () => applyPunishment();
     
+    // El castigo por saltar ahora también es hablado
+    const punishBtn = (id) => {
+        document.getElementById(id).onclick = () => {
+            const msg = currentLang === 'en' ? "Discipline is required. Wait." : "Se requiere disciplina. Espera.";
+            speak(msg);
+            applyPunishment();
+        };
+    };
+    punishBtn('back-btn');
+    punishBtn('fwd-btn');
+
     document.getElementById('lang-btn').onclick = () => {
         currentLang = currentLang === 'en' ? 'es' : 'en';
-        document.getElementById('lang-btn').innerText = currentLang === 'en' ? 'ES' : 'EN';
+        document.getElementById('lang-btn').innerText = currentLang.toUpperCase();
         renderBlock();
     };
 
-    changeBg();
-    setInterval(changeBg, 12000);
     updateMusic(1);
     
+    // Inactividad
     setInterval(() => {
         inactivitySeconds++;
         if (inactivitySeconds === 59) document.getElementById('warning-modal').style.display = 'flex';
@@ -117,53 +94,91 @@ function initApp() {
 
 function renderBlock() {
     if (!missions.length) return;
-    
     const mission = missions[currentMissionIndex];
     const block = mission.blocks[currentBlockIndex];
     const textDisplay = document.getElementById('text-content');
-    const timerDisplay = document.getElementById('timer-display');
-    const mainBtn = document.getElementById('main-btn');
     const circle = document.getElementById('breath-circle');
+    const mainBtn = document.getElementById('main-btn');
 
     updateMusic(mission.level, mission.category);
     document.getElementById('level-display').innerText = `Lv. ${mission.level}`;
     
+    // Limpieza de estados previos
     if (timerInterval) clearInterval(timerInterval);
-    timerDisplay.style.display = 'none';
     circle.style.display = 'none';
-    circle.classList.remove('breathing-anim');
     mainBtn.disabled = false;
-    mainBtn.style.display = 'block';
-    mainBtn.innerText = currentLang === 'en' ? 'NEXT' : 'SIGUIENTE';
-
     const oldQuiz = document.getElementById('quiz-options');
     if (oldQuiz) oldQuiz.remove();
 
-    // Lógica para tipos de bloques: voice, story, strategy, breathing
-    textDisplay.innerText = block.text[currentLang];
-    if (block.color) textDisplay.style.color = block.color;
-    else textDisplay.style.color = "white";
-
-    if (block.type === 'breathing') {
-        mainBtn.disabled = true;
+    // Lógica por tipo de bloque
+    if (block.type === 'quiz') {
+        renderQuiz(block);
+    } else if (block.type === 'breathing') {
+        textDisplay.innerText = block.text[currentLang];
         circle.style.display = 'flex';
         circle.classList.add('breathing-anim');
-        timerDisplay.style.display = 'block';
-        speak(block.text[currentLang]);
-        startCountdown(block.duration);
-    } else if (block.type === 'quiz') {
-        renderQuiz(block);
+        mainBtn.disabled = true;
+        speak(block.text[currentLang], () => {
+            startCountdown(block.duration);
+        });
     } else {
+        // Bloques de voz, historia o estrategia
+        textDisplay.innerText = block.text[currentLang];
         speak(block.text[currentLang]);
     }
 
     mainBtn.onclick = () => nextStep();
 }
 
+function renderQuiz(block) {
+    const mainBtn = document.getElementById('main-btn');
+    const textDisplay = document.getElementById('text-content');
+    mainBtn.style.display = 'none';
+
+    // Construcción de la lectura completa del quiz: Pregunta + Opciones
+    let fullQuizText = block.question[currentLang] + ". ";
+    const options = block.options[currentLang];
+    options.forEach((opt, i) => {
+        fullQuizText += (currentLang === 'en' ? "Option " : "Opción ") + (i + 1) + ": " + opt + ". ";
+    });
+
+    textDisplay.innerText = block.question[currentLang];
+    speak(fullQuizText);
+
+    const container = document.getElementById('block-container');
+    const quizDiv = document.createElement('div');
+    quizDiv.id = "quiz-options";
+    quizDiv.style.width = "100%";
+
+    options.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.innerText = opt;
+        btn.className = "secondary";
+        btn.style.marginTop = "10px";
+        btn.onclick = () => {
+            if (idx === block.correct) {
+                const winMsg = currentLang === 'en' ? "Correct. Well done." : "Correcto. Bien hecho.";
+                speak(winMsg, () => {
+                    quizDiv.remove();
+                    mainBtn.style.display = 'block';
+                    nextStep();
+                });
+            } else {
+                const failMsg = currentLang === 'en' ? "Incorrect. Focus and try again." : "Incorrecto. Enfócate e intenta de nuevo.";
+                speak(failMsg);
+                btn.style.borderColor = "#ef4444";
+            }
+        };
+        quizDiv.appendChild(btn);
+    });
+    container.appendChild(quizDiv);
+}
+
 function startCountdown(seconds) {
     let remaining = seconds;
     const display = document.getElementById('timer-display');
     const mainBtn = document.getElementById('main-btn');
+    display.style.display = 'block';
 
     timerInterval = setInterval(() => {
         display.innerText = remaining;
@@ -171,42 +186,16 @@ function startCountdown(seconds) {
             clearInterval(timerInterval);
             mainBtn.disabled = false;
             mainBtn.innerText = currentLang === 'en' ? 'CONTINUE' : 'CONTINUAR';
+            speak(currentLang === 'en' ? "Done. Continue." : "Listo. Continúa.");
         }
         remaining--;
     }, 1000);
 }
 
-function renderQuiz(block) {
+function applyPunishment() {
     const mainBtn = document.getElementById('main-btn');
-    mainBtn.style.display = 'none';
-    const textDisplay = document.getElementById('text-content');
-    textDisplay.innerText = block.question[currentLang];
-    speak(block.question[currentLang]);
-
-    const container = document.getElementById('block-container');
-    const quizDiv = document.createElement('div');
-    quizDiv.id = "quiz-options";
-    quizDiv.style.width = "100%";
-
-    block.options[currentLang].forEach((opt, idx) => {
-        const btn = document.createElement('button');
-        btn.innerText = opt;
-        btn.className = "secondary";
-        btn.style.marginTop = "8px";
-        btn.onclick = () => {
-            if (idx === block.correct) {
-                speak(currentLang === 'en' ? "Correct." : "Correcto.");
-                quizDiv.remove();
-                mainBtn.style.display = 'block';
-                nextStep();
-            } else {
-                btn.style.borderColor = "#ef4444";
-                speak(currentLang === 'en' ? "Try again." : "Intenta de nuevo.");
-            }
-        };
-        quizDiv.appendChild(btn);
-    });
-    container.appendChild(quizDiv);
+    mainBtn.disabled = true;
+    setTimeout(() => { mainBtn.disabled = false; }, 3000);
 }
 
 function nextStep() {
@@ -216,7 +205,8 @@ function nextStep() {
         currentBlockIndex = 0;
     }
     if (currentMissionIndex >= missions.length) {
-        currentMissionIndex = 0; // Reinicia el ciclo
+        speak(currentLang === 'en' ? "You have reached the sky." : "Has alcanzado el cielo.");
+        currentMissionIndex = 0;
     }
     renderBlock();
 }
