@@ -7,7 +7,7 @@
       "blocks": [
         { "type": "voice", "text": { "en": "MISSION 1: The Dopamine Trap. Reclaim your focus to reclaim your wealth. Every notification is a tax on your future self.", "es": "MISIÓN 1: La Trampa de la Dopamina. Recupera tu enfoque para recuperar tu riqueza. Cada notificación es un impuesto a tu yo futuro." }, "color": "#1e3a8a" },
         { "type": "story", "text": { "en": "A king spent all day looking at a mirror instead of his kingdom. He admired his reflection while his walls crumbled. When the mirror broke, he realized he had no kingdom left. The mirror is your phone; the kingdom is your potential.", "es": "Un rey pasaba el día mirando un espejo en vez de su reino. Admiraba su reflejo mientras sus muros caían. Cuando el espejo se rompió, notó que ya no tenía reino. El espejo es tu teléfono; el reino es tu potencial." } },
-        { "type": "breathing", "text": { "en": "T-VID Phase 1: Cortisol Flush. Inhale peace, exhale digital noise.", "es": "T-VID Fase 1: Limpieza de Cortisol. Inhala paz, exhala ruido digital." }, "duration": 6 },
+        { "type": "breathing", "text": { "en": "Apply Life Techniques now. T-VID.  Phase 1: Cortisol Flush. Inhale peace, exhale digital noise.", "es": "T-VID Fase 1: Limpieza de Cortisol. Inhala paz, exhala ruido digital." }, "duration": 6 },
         { "type": "quiz", "question": { "en": "If you save 2 hours a day from your phone, how many days do you gain in a year?", "es": "Si ahorras 2 horas al día del móvil, ¿cuántos días ganas en un año?" }, "options": { "en": ["15 days", "30 days", "45 days"], "es": ["15 días", "30 días", "45 días"] }, "correct": 1, "reward": 15 }
       ]
     },
@@ -18,7 +18,7 @@
       "blocks": [
         { "type": "voice", "text": { "en": "The Unshakable Pillar. Happiness is a choice made in the present. If you depend on external validation, you are a slave.", "es": "El Pilar Inquebrantable. La felicidad es una elección del presente. Si dependes de la validación externa, eres un esclavo." }, "color": "#0ea5e9" },
         { "type": "story", "text": { "en": "A monk stood in the ocean. The waves hit him, but he did not move. He didn't fight the water; he became the mountain beneath it.", "es": "Un monje estaba en el océano. Las olas lo golpeaban, pero no se movía. No luchaba contra el agua; era la montaña debajo de ella." } },
-        { "type": "breathing", "text": { "en": "T-VID Phase 2: Joy Activation. Smile while you inhale. Feel the energy expanding.", "es": "T-VID Phase 2: Activación de Alegría. Sonríe mientras inhalas. Siente la energía expandiéndose." }, "duration": 6 },
+        { "type": "breathing", "text": { "en": "Apply Life Techniques now. T-VID Phase 2: Joy Activation. Smile while you inhale. Feel the energy expanding.", "es": "T-VID Phase 2: Activación de Alegría. Sonríe mientras inhalas. Siente la energía expandiéndose." }, "duration": 6 },
         { "type": "quiz", "question": { "en": "Riddle: I can be shared but never bought. I am light but have weight in the heart. What am I?", "es": "Acertijo: Puedo compartirse pero nunca comprarse. Soy ligera pero peso en el corazón. ¿Qué soy?" }, "options": { "en": ["Money", "A Smile", "A Phone"], "es": ["Dinero", "Una Sonrisa", "Un Teléfono"] }, "correct": 1, "reward": 15 }
       ]
     },
