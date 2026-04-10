@@ -129,20 +129,84 @@
       ]
     },
     {
-      "id": 9,
-      "level": 2,
-      "category": "Wealth & Assets Intelligence",
-      "transparency_alpha": 0.38,
-      "image_config": { "zoom_speed": "0.07", "interval_sec": 7, "total_unique_images": 88 },
-      "blocks": [
-        { "type": "voice", "text": { "es": "Tu primer activo es tu atención. Los ricos hacen que el dinero trabaje.", "en": "Your first asset is your attention. The rich make money work." } },
-        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Enfoque Ejecutivo", "en": "Executive Focus" }, "voice_guidance": ["Disciplina los pulmones", "Disciplina la billetera"] },
-        { "type": "strategy", "text": { "es": "Cada dólar es un soldado; no dejes que mueran en apps inútiles.", "en": "Every dollar is a soldier; don't let them die in useless apps." } },
-        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Corteza prefrontal", "en": "Prefrontal cortex" }, "voice_guidance": ["Activa el centro de mando", "Mente clara"] },
-        { "type": "silence_challenge", "duration_min": 10, "on_skip": { "punishment": "rollback_2_questions", "power_advice": "El que no puede esperar por su dinero, no sabrá qué hacer con él." } },
-        { "type": "t_vid_part", "duration": 20, "goal": { "es": "Sellado de inversión", "en": "Investment seal" }, "voice_guidance": ["Eres dueño de tu tiempo", "Poder financiero"] },
-        { "type": "quiz", "question": { "es": "Pago 5%, inflación 7%. ¿Ganas o pierdes?", "en": "5% gain, 7% inflation. Win or lose?" }, "options": ["Ganas 2%", "Pierdes 2%", "Pierdes 12%"], "correct": 1 }
-      ]
+  "id": 9,
+  "level": 2,
+  "category": "Wealth & Assets Intelligence",
+  "transparency_alpha": 0.38,
+  "image_config": { 
+    "zoom_speed": "0.07", 
+    "interval_sec": 7, 
+    "total_unique_images": 88 
+  },
+  "blocks": [
+    { 
+      "type": "voice", 
+      "text": { 
+        "es": "Misión 9: Tu primer activo es tu atención. La gente pobre trabaja por dinero; los ricos hacen que el dinero trabaje para ellos.", 
+        "en": "Mission 9: Your first asset is your attention. Poor people work for money; rich people make money work for them." 
+      } 
+    },
+    { 
+      "type": "t_vid_part", 
+      "duration": 20, 
+      "goal": { "es": "Enfoque Ejecutivo", "en": "Executive Focus" }, 
+      "voice_guidance": {
+        "es": ["Disciplina los pulmones", "Disciplina la billetera", "Activa el centro de mando"],
+        "en": ["Discipline the lungs", "Discipline the wallet", "Activate the command center"]
+      }
+    },
+    { 
+      "type": "strategy", 
+      "title": { "es": "El Efecto Multiplicador", "en": "The Multiplier Effect" },
+      "text": { 
+        "es": "Cada dólar es un soldado. Si los envías a morir en apps inútiles o pasivos, pierdes la guerra. Haz que conquisten territorio.", 
+        "en": "Every dollar is a soldier. If you send them to die in useless apps or liabilities, you lose the war. Make them conquer territory." 
+      } 
+    },
+    { 
+      "type": "t_vid_part", 
+      "duration": 20, 
+      "goal": { "es": "Activación Prefrontal", "en": "Prefrontal Activation" }, 
+      "voice_guidance": {
+        "es": ["Mente clara", "Visión de activos", "Inhala riqueza"],
+        "en": ["Clear mind", "Asset vision", "Inhale wealth"]
+      }
+    },
+    { 
+      "type": "silence_challenge", 
+      "duration_min": 10, 
+      "on_skip": { 
+        "punishment": "rollback_2_questions", 
+        "power_advice": {
+          "es": "El que no puede dominar su paciencia por 10 minutos, jamás dominará un mercado de 10 años.",
+          "en": "He who cannot master his patience for 10 minutes will never master a 10-year market."
+        }
+      } 
+    },
+    { 
+      "type": "t_vid_part", 
+      "duration": 20, 
+      "goal": { "es": "Sellado de Inversión", "en": "Investment Seal" }, 
+      "voice_guidance": {
+        "es": ["Eres dueño de tu tiempo", "Poder financiero real", "Exhala el gasto innecesario"],
+        "en": ["You own your time", "Real financial power", "Exhale useless spending"]
+      }
+    },
+    { 
+      "type": "quiz", 
+      "question": { 
+        "es": "Mates de Valor: Un activo te paga 5% anual, pero la inflación es del 7%. ¿Cuál es el resultado real?", 
+        "en": "Value Math: An asset pays you 5% annually, but inflation is 7%. What is the real result?" 
+      }, 
+      "options": {
+        "es": ["Ganando 2%", "Perdiendo 2%", "Perdiendo 12%"],
+        "en": ["Gaining 2%", "Losing 2%", "Losing 12%"]
+      },
+      "correct": 1,
+      "explanation": {
+        "es": "5% - 7% = -2%. Si tu retorno no supera la inflación, tu riqueza se está encogiendo silenciosamente.",
+        "en": "5% - 7% = -2%. If your return doesn't beat inflation, your wealth is silently shrinking."
+      }
     },
     {
       "id": 10,
