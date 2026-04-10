@@ -9,22 +9,7 @@
         { "type": "story", "text": { "en": "A king spent all day looking at a mirror instead of his kingdom. He admired his reflection while his walls crumbled. When the mirror broke, he realized he had no kingdom left. The mirror is your phone; the kingdom is your potential.", "es": "Un rey pasaba el día mirando un espejo en vez de su reino. Admiraba su reflejo mientras sus muros caían. Cuando el espejo se rompió, notó que ya no tenía reino. El espejo es tu teléfono; el reino es tu potencial." } },
         { "type": "breathing", "text": { "en": "T-VID Phase 1: Cortisol Flush. Inhale peace, exhale digital noise.", "es": "T-VID Fase 1: Limpieza de Cortisol. Inhala paz, exhala ruido digital." }, "duration": 6 },
         { "type": "story", "text": { "en": "Wealth isn't just money; it's the energy you don't waste. A man who stops to argue with every barking dog never reaches his destination. Silence the noise.", "es": "La riqueza no es solo dinero; es la energía que no desperdicias. Un hombre que se detiene a discutir con cada perro que ladra nunca llega a su destino. Silencia el ruido." } },
-        { 
-          "type": "quiz", 
-          "question": { "en": "If you save 2 hours a day from your phone, how many days do you gain in a year?", "es": "Si ahorras 2 horas al día del móvil, ¿cuántos días ganas en un año?" }, 
-          "options": { "en": ["15 days", "30 days", "45 days"], "es": ["15 días", "30 días", "45 días"] }, 
-          "correct": 1, 
-          "explanation": {
-            "en": {
-              "correct": "Correct. 730 hours equals roughly 30 full days. You just gained a leap month of pure productivity.",
-              "wrong": "Incorrect. Math doesn't lie. 2 hours x 365 days = 730 hours. That's a full month of life you are throwing away."
-            },
-            "es": {
-              "correct": "Correcto. 730 horas equivalen a unos 30 días completos. Acabas de ganar un mes bisiesto de productividad pura.",
-              "wrong": "Incorrecto. La matemática no miente. 2h x 365 días = 730 horas. Es un mes entero de vida que estás tirando a la basura."
-            }
-          }
-        }
+        { "type": "quiz", "question": { "en": "If you save 2 hours a day from your phone, how many days do you gain in a year?", "es": "Si ahorras 2 horas al día del móvil, ¿cuántos días ganas en un año?" }, "options": { "en": ["15 days", "30 days", "45 days"], "es": ["15 días", "30 días", "45 días"] }, "correct": 1, "reward": 15 }
       ]
     },
     {
@@ -35,22 +20,7 @@
         { "type": "voice", "text": { "en": "The Unshakable Pillar. Happiness is a choice made in the present. If you depend on external validation, you are a slave.", "es": "El Pilar Inquebrantable. La felicidad es una elección del presente. Si dependes de la validación externa, eres un esclavo." }, "color": "#0ea5e9" },
         { "type": "story", "text": { "en": "A monk stood in the ocean. The waves hit him, but he did not move. He didn't fight the water; he became the mountain beneath it.", "es": "Un monje estaba en el océano. Las olas lo golpeaban, pero no se movía. No luchaba contra el agua; era la montaña debajo de ella." } },
         { "type": "breathing", "text": { "en": "T-VID Phase 2: Joy Activation. Smile while you inhale. Feel the energy expanding.", "es": "T-VID Phase 2: Activación de Alegría. Sonríe mientras inhalas. Siente la energía expandiéndose." }, "duration": 6 },
-        { 
-          "type": "quiz", 
-          "question": { "en": "Riddle: I can be shared but never bought. I am light but have weight in the heart. What am I?", "es": "Acertijo: Puedo compartirse pero nunca comprarse. Soy ligera pero peso en el corazón. ¿Qué soy?" }, 
-          "options": { "en": ["Money", "A Smile", "A Phone"], "es": ["Dinero", "Una Sonrisa", "Un Teléfono"] }, 
-          "correct": 1, 
-          "explanation": {
-            "en": {
-              "correct": "Correct. A smile costs nothing but changes the internal chemistry of everyone involved.",
-              "wrong": "Incorrect. Material objects can be bought. True emotional power is intrinsic and free."
-            },
-            "es": {
-              "correct": "Correcto. Una sonrisa no cuesta nada pero cambia la química interna de todos los involucrados.",
-              "wrong": "Incorrecto. Los objetos materiales se compran. El verdadero poder emocional es intrínseco y gratuito."
-            }
-          }
-        }
+        { "type": "quiz", "question": { "en": "Riddle: I can be shared but never bought. I am light but have weight in the heart. What am I?", "es": "Acertijo: Puedo compartirse pero nunca comprarse. Soy ligera pero peso en el corazón. ¿Qué soy?" }, "options": { "en": ["Money", "A Smile", "A Phone"], "es": ["Dinero", "Una Sonrisa", "Un Teléfono"] }, "correct": 1, "reward": 15 }
       ]
     },
     {
@@ -61,22 +31,7 @@
         { "type": "voice", "text": { "en": "Architect of Wealth. Money follows focus. If your focus is scattered, your bank account will be empty.", "es": "Arquitecto de Riqueza. El dinero sigue al enfoque. Si tu enfoque está disperso, tu cuenta estará vacía." }, "color": "#1e40af" },
         { "type": "strategy", "text": { "en": "The Law of Value: You don't get paid for your time; you get paid for the value you bring to the hour. Multiply your value.", "es": "La Ley del Valor: No se te paga por tu tiempo; se te paga por el valor que aportas a la hora. Multiplica tu valor." } },
         { "type": "breathing", "text": { "en": "T-VID: Flow State. Box Breathing: 4s In, 4s Hold, 4s Out, 4s Hold.", "es": "T-VID: Estado de Flujo. Respiración de Caja: 4s In, 4s Mantén, 4s Out, 4s Mantén." }, "duration": 10 },
-        { 
-          "type": "quiz", 
-          "question": { "en": "Strategic Math: (50 x 2) + (100 / 4)?", "es": "Matemática Estratégica: (50 x 2) + (100 / 4)?" }, 
-          "options": { "en": ["125", "150", "110"], "es": ["125", "150", "110"] }, 
-          "correct": 0,
-          "explanation": {
-            "en": {
-              "correct": "Correct. 100 + 25 = 125. Precision in numbers leads to precision in destiny.",
-              "wrong": "Incorrect. In wealth, a small error in calculation leads to a massive loss over time. Focus on the math."
-            },
-            "es": {
-              "correct": "Correcto. 100 + 25 = 125. La precisión en los números conduce a la precisión en el destino.",
-              "wrong": "Incorrecto. En la riqueza, un pequeño error de cálculo conduce a una pérdida masiva con el tiempo. Enfócate."
-            }
-          }
-        }
+        { "type": "quiz", "question": { "en": "Strategic Math: (50 x 2) + (100 / 4)?", "es": "Matemática Estratégica: (50 x 2) + (100 / 4)?" }, "options": { "en": ["125", "150", "110"], "es": ["125", "150", "110"] }, "correct": 0, "reward": 25 }
       ]
     },
     {
@@ -87,22 +42,7 @@
         { "type": "strategy", "text": { "en": "Social Stealth: Never tell people your plans. Show them your results. Privacy is power.", "es": "Sigilo Social: Nunca digas tus planes. Muestra tus resultados. La privacidad es poder." }, "color": "#334155" },
         { "type": "story", "text": { "en": "We have two ears and one mouth to listen twice as much as we speak. Information is the ultimate weapon.", "es": "Tenemos dos oídos y una boca para escuchar el doble de lo que hablamos. La información es el arma definitiva." } },
         { "type": "breathing", "text": { "en": "T-VID: Calm Dominance. Exhale longer than you inhale to trigger the vagus nerve.", "es": "T-VID: Dominio Calmo. Exhala más largo de lo que inhalas para activar el nervio vago." }, "duration": 8 },
-        { 
-          "type": "quiz", 
-          "question": { "en": "When a person looks up and to the right, they are usually:", "es": "Cuando una persona mira arriba y a la derecha, suele estar:" }, 
-          "options": { "en": ["Remembering", "Constructing/Lying", "Angry"], "es": ["Recordando", "Construyendo/Mintiendo", "Enojado"] }, 
-          "correct": 1,
-          "explanation": {
-            "en": {
-              "correct": "Correct. Looking right (their right) often signals visual construction or imagination. Watch the eyes, hear the truth.",
-              "wrong": "Incorrect. Looking left is typically accessing memory. Looking right is creating. Know the difference to master the room."
-            },
-            "es": {
-              "correct": "Correcto. Mirar a la derecha (su derecha) suele señalar construcción visual o imaginación. Mira los ojos, oye la verdad.",
-              "wrong": "Incorrecto. Mirar a la izquierda suele ser acceder a la memoria. Mirar a la derecha es crear. Conoce la diferencia para dominar."
-            }
-          }
-        }
+        { "type": "quiz", "question": { "en": "When a person looks up and to the right, they are usually:", "es": "Cuando una persona mira arriba y a la derecha, suele estar:" }, "options": { "en": ["Remembering", "Constructing/Lying", "Angry"], "es": ["Recordando", "Construyendo/Mintiendo", "Enojado"] }, "correct": 1, "reward": 30 }
       ]
     },
     {
@@ -113,22 +53,7 @@
         { "type": "voice", "text": { "en": "Quantum Observation. You define reality by where you look. Look at power, and you become it.", "es": "Observación Cuántica. Defines la realidad según dónde miras. Mira el poder, y te conviertes en él." }, "color": "#4c1d95" },
         { "type": "strategy", "text": { "en": "Neuroplastic Dominance: Every second you stay focused, you are building a biological super-computer.", "es": "Dominancia Neuroplástica: Cada segundo de enfoque construye una supercomputadora biológica." } },
         { "type": "breathing", "text": { "en": "T-VID: Neuro-Regeneration. Inhale 8s, Hold 8s, Exhale 8s. Master the oxygen.", "es": "T-VID: Neuro-Regeneración. Inhala 8s, Mantén 8s, Exhala 8s. Domina el oxígeno." }, "duration": 12 },
-        { 
-          "type": "quiz", 
-          "question": { "en": "Quantum Math: If focus is energy (E) and distraction is resistance (R), what is E/R when R approaches zero?", "es": "Matemática Cuántica: Si el enfoque es energía (E) y la distracción es resistencia (R), ¿qué es E/R cuando R se acerca a cero?" }, 
-          "options": { "en": ["Zero", "Infinite Power", "One"], "es": ["Cero", "Poder Infinito", "Uno"] }, 
-          "correct": 1,
-          "explanation": {
-            "en": {
-              "correct": "Correct. Dividing by zero (no resistance) creates infinity. Zero distraction equals infinite potential.",
-              "wrong": "Incorrect. If resistance vanishes, energy becomes limitless. You are still letting 'R' (distraction) exist."
-            },
-            "es": {
-              "correct": "Correcto. Dividir por cero (sin resistencia) crea el infinito. Cero distracción equivale a potencial infinito.",
-              "wrong": "Incorrecto. Si la resistencia desaparece, la energía se vuelve ilimitada. Aún dejas que la distracción exista."
-            }
-          }
-        }
+        { "type": "quiz", "question": { "en": "Quantum Math: If focus is energy (E) and distraction is resistance (R), what is E/R when R approaches zero?", "es": "Matemática Cuántica: Si el enfoque es energía (E) y la distracción es resistencia (R), ¿qué es E/R cuando R se acerca a cero?" }, "options": { "en": ["Zero", "Infinite Power", "One"], "es": ["Cero", "Poder Infinito", "Uno"] }, "correct": 1, "reward": 50 }
       ]
     },
     {
@@ -149,22 +74,7 @@
         { "type": "voice", "text": { "es": "Tu energía es tu moneda. No la gastes en basura.", "en": "Your energy is your currency. Don't waste it on trash." }, "color": "#065f46" },
         { "type": "breathing", "text": { "es": "T-VID: Carga mitocondrial. Inhala fuego, exhala ceniza.", "en": "T-VID: Mitochondrial charge. Inhale fire, exhale ash." }, "duration": 20 },
         { "type": "story", "text": { "es": "Alimenta tu fuego con leña, no con papel. La constancia supera al entusiasmo momentáneo.", "en": "Feed your fire with wood, not paper. Consistency beats momentary enthusiasm." } },
-        { 
-          "type": "quiz", 
-          "question": { "es": "¿Cuántos minutos ahorras al beber agua y enfocarte en lugar de buscar dopamina?", "en": "How many minutes do you save by drinking water and focusing instead of seeking dopamine?" }, 
-          "options": { "es": ["24", "36", "50"], "en": ["24", "36", "50"] }, 
-          "correct": 1,
-          "explanation": {
-            "en": {
-              "correct": "Correct. Research shows it takes about 23 minutes to refocus after one distraction. Saving two 'loops' saves 36+ mins.",
-              "wrong": "Incorrect. You underestimate the 'switching cost' of your brain. Every distraction costs you more than you think."
-            },
-            "es": {
-              "correct": "Correcto. La ciencia muestra que toma 23 minutos reenfocarse tras una distracción. Evitar dos distracciones te ahorra 36+ min.",
-              "wrong": "Incorrecto. Subestimas el 'costo de cambio' de tu cerebro. Cada distracción te cuesta más de lo que crees."
-            }
-          }
-        }
+        { "type": "quiz", "question": { "es": "¿Cuántos minutos ahorras al beber agua y enfocarte en lugar de buscar dopamina?", "en": "How many minutes do you save by drinking water and focusing instead of seeking dopamine?" }, "options": { "es": ["24", "36", "50"], "en": ["24", "36", "50"] }, "correct": 1, "reward": 15 }
       ]
     },
     {
@@ -175,22 +85,7 @@
         { "type": "voice", "text": { "es": "Si vibras en miedo, atraes miedo. Eleva tu frecuencia ahora mismo.", "en": "Vibrate in fear, attract fear. Raise your frequency right now." }, "color": "#8b5cf6" },
         { "type": "breathing", "text": { "es": "T-VID: Flujo de Serotonina. Respiración circular y suave, sin pausas.", "en": "T-VID: Serotonin Flow. Circular and smooth breathing, no pauses." }, "duration": 20 },
         { "type": "story", "text": { "es": "Vacía tu taza de basura digital. La gratitud es el imán de los milagros.", "en": "Empty your cup of digital trash. Gratitude is the magnet for miracles." } },
-        { 
-          "type": "quiz", 
-          "question": { "es": "Acertijo: Siempre vengo pero nunca llego. ¿Qué soy?", "en": "Riddle: I am always coming but never arrive. What am I?" }, 
-          "options": { "es": ["El Mañana", "El Pasado", "El Teléfono"], "en": ["Tomorrow", "Past", "Phone"] }, 
-          "correct": 0,
-          "explanation": {
-            "en": {
-              "correct": "Correct. Tomorrow is a concept. Only the Now exists. Focus your power here.",
-              "wrong": "Incorrect. The past has already arrived and gone. It is 'Tomorrow' that keeps you in an anxious loop."
-            },
-            "es": {
-              "correct": "Correcto. El mañana es un concepto. Solo existe el Ahora. Enfoca tu poder aquí.",
-              "wrong": "Incorrecto. El pasado ya llegó y se fue. Es el 'Mañana' lo que te mantiene en un bucle de ansiedad."
-            }
-          }
-        }
+        { "type": "quiz", "question": { "es": "Acertijo: Siempre vengo pero nunca llego. ¿Qué soy?", "en": "Riddle: I am always coming but never arrive. What am I?" }, "options": { "es": ["El Mañana", "El Pasado", "El Teléfono"], "en": ["Tomorrow", "Past", "Phone"] }, "correct": 0, "reward": 15 }
       ]
     },
     {
@@ -201,22 +96,7 @@
         { "type": "voice", "text": { "es": "Misión 9: Tu primer activo es tu atención. Los ricos hacen que el dinero trabaje para ellos.", "en": "Mission 9: Your first asset is your attention. Rich people make money work for them." }, "color": "#1e40af" },
         { "type": "strategy", "text": { "es": "Cada dólar es un soldado. Si los envías a morir en apps inútiles, pierdes la guerra.", "en": "Every dollar is a soldier. If you send them to die in useless apps, you lose the war." } },
         { "type": "breathing", "text": { "es": "T-VID: Enfoque Ejecutivo. Disciplina los pulmones, disciplina la billetera.", "en": "T-VID: Executive Focus. Discipline the lungs, discipline the wallet." }, "duration": 20 },
-        { 
-          "type": "quiz", 
-          "question": { "es": "Mates de Valor: Un activo te paga 5% anual, pero la inflación es del 7%. ¿Cuál es el resultado real?", "en": "Value Math: An asset pays you 5% annually, but inflation is 7%. What is the real result?" }, 
-          "options": { "es": ["Ganando 2%", "Perdiendo 2%", "Perdiendo 12%"], "en": ["Gaining 2%", "Losing 2%", "Losing 12%"] }, 
-          "correct": 1,
-          "explanation": {
-            "en": {
-              "correct": "Correct. You are losing purchasing power. Nominal gains are a trap for the uneducated.",
-              "wrong": "Incorrect. 5 - 7 = -2. You are becoming poorer while feeling like you are winning. Wake up."
-            },
-            "es": {
-              "correct": "Correcto. Estás perdiendo poder adquisitivo. Las ganancias nominales son una trampa para los no educados.",
-              "wrong": "Incorrecto. 5 - 7 = -2. Te estás volviendo más pobre mientras sientes que ganas. Despierta."
-            }
-          }
-        }
+        { "type": "quiz", "question": { "es": "Mates de Valor: Un activo te paga 5% anual, pero la inflación es del 7%. ¿Cuál es el resultado real?", "en": "Value Math: An asset pays you 5% annually, but inflation is 7%. What is the real result?" }, "options": { "es": ["Ganando 2%", "Perdiendo 2%", "Perdiendo 12%"], "en": ["Gaining 2%", "Losing 2%", "Losing 12%"] }, "correct": 1, "reward": 25 }
       ]
     },
     {
@@ -227,22 +107,7 @@
         { "type": "voice", "text": { "es": "MISIÓN 10: El tiempo no se gestiona, se protege. Eres el guardián de tus horas.", "en": "MISSION 10: Time is not managed, it is protected. You are the guardian of your hours." }, "color": "#374151" },
         { "type": "strategy", "text": { "es": "Elimina lo no esencial. La perfección se alcanza cuando no queda nada que quitar.", "en": "Eliminate the non-essential. Perfection is reached when there is nothing left to take away." } },
         { "type": "breathing", "text": { "es": "T-VID: Cronos Control. Detén el reloj mental e inhala el ahora.", "en": "T-VID: Cronos Control. Stop the mental clock and inhale the now." }, "duration": 20 },
-        { 
-          "type": "quiz", 
-          "question": { "es": "Si eliminas una interrupción de 5 min que ocurre 5 veces al día, ¿cuántas horas libres ganas al mes?", "en": "If you eliminate a 5-min interruption that happens 5 times a day, how many free hours do you gain per month?" }, 
-          "options": { "es": ["6 horas", "12.5 horas", "20 horas"], "en": ["6 hours", "12.5 hours", "20 hours"] }, 
-          "correct": 1,
-          "explanation": {
-            "en": {
-              "correct": "Correct. 25 min/day x 30 days = 750 min = 12.5 hours. That is more than a full working day gained.",
-              "wrong": "Incorrect. Small leaks sink great ships. 25 minutes daily adds up to 12.5 hours monthly. Value your time."
-            },
-            "es": {
-              "correct": "Correcto. 25 min/día x 30 días = 750 min = 12.5 horas. Has ganado más de una jornada laboral completa.",
-              "wrong": "Incorrecto. Pequeñas fugas hunden grandes barcos. 25 min diarios suman 12.5 horas al mes. Valora tu tiempo."
-            }
-          }
-        }
+        { "type": "quiz", "question": { "es": "Si eliminas una interrupción de 5 min que ocurre 5 veces al día, ¿cuántas horas libres ganas al mes?", "en": "If you eliminate a 5-min interruption that happens 5 times a day, how many free hours do you gain per month?" }, "options": { "es": ["6 horas", "12.5 horas", "20 horas"], "en": ["6 hours", "12.5 hours", "20 hours"] }, "correct": 1, "reward": 25 }
       ]
     },
     {
@@ -252,22 +117,7 @@
       "blocks": [
         { "type": "voice", "text": { "es": "MISIÓN 11: Ingeniería de Influencia. El respeto se gana con resultados, no con palabras.", "en": "MISSION 11: Influence Engineering. Respect is earned with results, not words." }, "color": "#1e3a8a" },
         { "type": "story", "text": { "es": "El león no necesita rugir para que sepan que está ahí. Tu presencia debe hablar por ti.", "en": "The lion doesn't need to roar for others to know he's there. Your presence must speak for you." } },
-        { 
-          "type": "quiz", 
-          "question": { "es": "¿Qué proyecta un silencio de 3 segundos antes de responder a una pregunta difícil?", "en": "What does a 3-second silence before responding to a difficult question project?" }, 
-          "options": { "es": ["Duda", "Autoridad", "Olvido"], "en": ["Doubt", "Authority", "Forgetfulness"] }, 
-          "correct": 1,
-          "explanation": {
-            "en": {
-              "correct": "Correct. Silence shows you are in control of your emotions and processing with depth. It intimidates the weak and impresses the strong.",
-              "wrong": "Incorrect. Fast answers often look defensive or desperate. Silence is the ultimate power move in negotiation."
-            },
-            "es": {
-              "correct": "Correcto. El silencio muestra que controlas tus emociones y procesas con profundidad. Intimida al débil e impresiona al fuerte.",
-              "wrong": "Incorrecto. Las respuestas rápidas parecen defensivas o desesperadas. El silencio es el movimiento de poder definitivo."
-            }
-          }
-        }
+        { "type": "quiz", "question": { "es": "¿Qué proyecta un silencio de 3 segundos antes de responder a una pregunta difícil?", "en": "What does a 3-second silence before responding to a difficult question project?" }, "options": { "es": ["Duda", "Autoridad", "Olvido"], "en": ["Doubt", "Authority", "Forgetfulness"] }, "correct": 1, "reward": 25 }
       ]
     },
     {
@@ -278,22 +128,7 @@
         { "type": "voice", "text": { "es": "MISIÓN 12: Gestión del Caos. El riesgo es para los que no tienen un plan.", "en": "MISSION 12: Chaos Management. Risk is for those without a plan." }, "color": "#7f1d1d" },
         { "type": "strategy", "text": { "es": "Calcula el peor escenario. Si puedes sobrevivir a eso y seguir adelante, toma el riesgo.", "en": "Calculate the worst-case scenario. If you can survive that and move forward, take the risk." } },
         { "type": "breathing", "text": { "es": "T-VID: Mente Fría. Baja el pulso y analiza el tablero antes de actuar.", "en": "T-VID: Cold Mind. Lower the pulse and analyze the board before acting." }, "duration": 20 },
-        { 
-          "type": "quiz", 
-          "question": { "es": "En negocios de alto nivel, ¿cuál es el riesgo más peligroso?", "en": "In high-level business, what is the most dangerous risk?" }, 
-          "options": { "es": ["Perder dinero", "No tomar acción", "La competencia"], "en": ["Losing money", "Not taking action", "Competition"] }, 
-          "correct": 1,
-          "explanation": {
-            "en": {
-              "correct": "Correct. Opportunity cost is the silent killer. Money can be regained; time and momentum cannot.",
-              "wrong": "Incorrect. Money is just a tool. The real failure is paralysis. Standing still in a moving world is the fastest way to die."
-            },
-            "es": {
-              "correct": "Correcto. El costo de oportunidad es el asesino silencioso. El dinero se recupera; el tiempo y el impulso no.",
-              "wrong": "Incorrecto. El dinero es solo una herramienta. El verdadero fallo es la parálisis. Quedarse quieto es la forma más rápida de morir."
-            }
-          }
-        }
+        { "type": "quiz", "question": { "es": "En negocios de alto nivel, ¿cuál es el riesgo más peligroto?", "en": "In high-level business, what is the most dangerous risk?" }, "options": { "es": ["Perder dinero", "No tomar acción", "La competencia"], "en": ["Losing money", "Not taking action", "Competition"] }, "correct": 1, "reward": 25 }
       ]
     },
     {
@@ -315,22 +150,7 @@
         { "type": "voice", "text": { "es": "MISIÓN 14: Bio-Hacking. Tu cuerpo es el hardware que corre el software de tu éxito.", "en": "MISSION 14: Bio-Hacking. Your body is the hardware running the software of your success." }, "color": "#064e3b" },
         { "type": "strategy", "text": { "es": "Dormir no es un lujo, es el mantenimiento de tu procesador. Sin descanso, la estrategia falla.", "en": "Sleep is not a luxury, it's the maintenance of your processor. Without rest, strategy fails." } },
         { "type": "breathing", "text": { "es": "T-VID: Recuperación Celular. Repara el sistema, inhala vida pura.", "en": "T-VID: Cellular Recovery. Repair the system, inhale pure life." }, "duration": 20 },
-        { 
-          "type": "quiz", 
-          "question": { "es": "¿Qué tipo de luz inhibe la producción de melatonina antes de dormir?", "en": "What type of light inhibits melatonin production before sleep?" }, 
-          "options": { "es": ["Roja", "Azul", "Cálida"], "en": ["Red", "Blue", "Warm"] }, 
-          "correct": 1,
-          "explanation": {
-            "en": {
-              "correct": "Correct. Blue light from screens mimics daylight, tricking your brain into staying awake. Kill the screens, save the sleep.",
-              "wrong": "Incorrect. Red light is actually beneficial for night vision and sleep. Blue light is the enemy of your circadian rhythm."
-            },
-            "es": {
-              "correct": "Correcto. La luz azul de las pantallas imita la luz del día, engañando al cerebro para seguir despierto. Apaga las pantallas.",
-              "wrong": "Incorrecto. La luz roja es beneficiosa. La luz azul es el enemigo de tu ritmo circadiano."
-            }
-          }
-        }
+        { "type": "quiz", "question": { "es": "¿Qué tipo de luz inhibe la producción de melatonina antes de dormir?", "en": "What type of light inhibits melatonin production before sleep?" }, "options": { "es": ["Roja", "Azul", "Cálida"], "en": ["Red", "Blue", "Warm"] }, "correct": 1, "reward": 50 }
       ]
     },
     {
@@ -341,22 +161,7 @@
         { "type": "voice", "text": { "es": "MISIÓN 15: El Arte del Trato. Obtienes lo que negocias, no lo que mereces.", "en": "MISSION 15: The Art of the Deal. You get what you negotiate, not what you deserve." }, "color": "#111827" },
         { "type": "story", "text": { "es": "En una mesa de negociación, el primero que habla suele perder el anclaje del precio.", "en": "At a negotiation table, the first one to speak usually loses the price anchor." } },
         { "type": "breathing", "text": { "es": "T-VID: Póker Face. Mantén la neutralidad y el control emocional absoluto.", "en": "T-VID: Poker Face. Maintain neutrality and absolute emotional control." }, "duration": 20 },
-        { 
-          "type": "quiz", 
-          "question": { "es": "Si la otra parte dice 'No', ¿qué es lo primero que un experto debe hacer?", "en": "If the other party says 'No', what is the first thing an expert should do?" }, 
-          "options": { "es": ["Rendirse", "Preguntar ¿Por qué?", "Escuchar el silencio"], "en": ["Give up", "Ask Why?", "Listen to the silence"] }, 
-          "correct": 2,
-          "explanation": {
-            "en": {
-              "correct": "Correct. Silence after a 'No' forces the other party to explain their position, often revealing their weaknesses or true limits.",
-              "wrong": "Incorrect. Asking 'Why' puts them on the defensive. Silence invites them to fill the gap. Master the silence to master the deal."
-            },
-            "es": {
-              "correct": "Correcto. El silencio tras un 'No' obliga a la otra parte a explicar su posición, revelando a menudo sus debilidades.",
-              "wrong": "Incorrecto. Preguntar 'Por qué' los pone a la defensiva. El silencio los invita a llenar el vacío. Domina el trato."
-            }
-          }
-        }
+        { "type": "quiz", "question": { "es": "Si la otra parte dice 'No', ¿qué es lo primero que un experto debe hacer?", "en": "If the other party says 'No', what is the first thing an expert should do?" }, "options": { "es": ["Rendirse", "Preguntar ¿Por qué?", "Escuchar el silencio"], "en": ["Give up", "Ask Why?", "Listen to the silence"] }, "correct": 2, "reward": 50 }
       ]
     },
     {
@@ -395,22 +200,7 @@
       "category": "Legacy Building",
       "blocks": [
         { "type": "strategy", "text": { "es": "El éxito sin legado es solo ruido. Construye algo que te sobreviva.", "en": "Success without legacy is just noise. Build something that outlasts you." } },
-        { 
-          "type": "quiz", 
-          "question": { "es": "¿Cuál es la verdadera marca de un líder de Nivel 3?", "en": "What is the true mark of a Level 3 leader?" }, 
-          "options": { "es": ["Poder", "Dinero", "Sucesión y Legado"], "en": ["Power", "Money", "Succession and Legacy"] }, 
-          "correct": 2,
-          "explanation": {
-            "en": {
-              "correct": "Correct. Power and money are temporary tools. Legacy is the only way to achieve true immortality through impact.",
-              "wrong": "Incorrect. Power and money are Level 1 and 2 motivations. A Level 3 mind builds for a time after they are gone."
-            },
-            "es": {
-              "correct": "Correcto. El poder y el dinero son herramientas temporales. El legado es la única forma de inmortalidad verdadera.",
-              "wrong": "Incorrecto. El poder y el dinero son motivaciones de niveles bajos. Una mente Nivel 3 construye para el futuro."
-            }
-          }
-        }
+        { "type": "quiz", "question": { "es": "¿Cuál es la verdadera marca de un líder de Nivel 3?", "en": "What is the true mark of a Level 3 leader?" }, "options": { "es": ["Poder", "Dinero", "Sucesión y Legado"], "en": ["Power", "Money", "Succession and Legacy"] }, "correct": 2, "reward": 100 }
       ]
     },
     {
@@ -422,7 +212,7 @@
         { "type": "story", "text": { "es": "El camino termina aquí, pero tu imperio apenas comienza. Mantente Zen, mantente KaMi.", "en": "The path ends here, but your empire is just beginning. Stay Zen, stay KaMi." } },
         { "type": "reward", "points": 1000, "text": { "es": "SISTEMA COMPLETADO. BIENVENIDO AL CIELO.", "en": "SYSTEM COMPLETED. WELCOME TO AL CIELO." } }
       ]
-    },
+    },     
     {
       "id": 21,
       "level": 2,
