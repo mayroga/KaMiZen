@@ -1,270 +1,253 @@
-/* =========================================
-   KAMIZEN / VIA REAL - FULL ENGINE STABLE
-========================================= */
-
-const mainBtn = document.getElementById("main-btn");
-const textContent = document.getElementById("text-content");
-const breathCircle = document.getElementById("breath-circle");
-const timerDisplay = document.getElementById("timer-display");
-const syncDisplay = document.getElementById("streak-display");
-const levelDisplay = document.getElementById("level-display");
+// =====================================
+// MAYKAMI V2 - LIFE REALITY ENGINE
+// Simulador de vida + decisiones humanas
+// =====================================
 
 let missions = [];
-let currentMission = 0;
-let currentBlock = 0;
+let lang = "en";
 
 let state = {
-    sync: 100,
+    money: 1000,
+    mental: 100,
+    moral: 50,
     stress: 0,
-    focus: 100,
-    karma: 0,
-    level: 1,
-    language: "es"
+    streak: 0,
+    level: 1
 };
 
-/* =========================
-   INIT LOAD
-========================= */
-async function loadContent() {
+let iMission = 0;
+let iBlock = 0;
+
+// UI
+const textContent = document.getElementById("text-content");
+const mainBtn = document.getElementById("main-btn");
+const breathCircle = document.getElementById("breath-circle");
+const timerDisplay = document.getElementById("timer-display");
+const streakDisplay = document.getElementById("streak-display");
+const levelDisplay = document.getElementById("level-display");
+
+// ===============================
+// LOAD SYSTEM
+// ===============================
+async function loadGame() {
     try {
         const res = await fetch("/static/kamizen_content.json");
         const data = await res.json();
         missions = data.missions || [];
-
-        textContent.innerText = "PRESS START TO BEGIN SIMULATION";
-        mainBtn.innerText = "START";
-        mainBtn.onclick = startGame;
-
+        render();
     } catch (e) {
-        textContent.innerText = "SYSTEM ERROR: CONTENT NOT FOUND";
-        console.error(e);
+        textContent.innerText = "SYSTEM ERROR - MAYKAMI CORE FAILED";
     }
 }
 
-function startGame() {
-    currentMission = 0;
-    currentBlock = 0;
-    state.level = 1;
+// ===============================
+// CORE RENDER
+// ===============================
+function render() {
+    const m = missions[iMission];
+    if (!m) return endGame();
 
-    mainBtn.innerText = "NEXT";
-    mainBtn.onclick = nextBlock;
-
-    renderBlock();
-}
-
-/* =========================
-   CORE RENDER ENGINE
-========================= */
-function renderBlock() {
-    const mission = missions[currentMission];
-
-    if (!mission) {
-        finishGame();
-        return;
+    const b = m.blocks[iBlock];
+    if (!b) {
+        iMission++;
+        iBlock = 0;
+        return render();
     }
 
-    const block = mission.blocks[currentBlock];
+    levelDisplay.innerText = "LEVEL " + m.level;
 
-    if (!block) {
-        currentMission++;
-        currentBlock = 0;
-        state.level++;
-        updateHUD();
-        return renderBlock();
-    }
-
-    levelDisplay.innerText = "NODE: " + state.level;
-
-    switch (block.type) {
+    switch (b.type) {
 
         case "voice":
-            showVoice(block);
+        case "story":
+        case "strategy":
+            textContent.innerText = b.text?.[lang] || "NO DATA";
+            setBtn("CONTINUE");
             break;
 
         case "breathing":
-            showBreathing(block);
+            runBreathing(b);
             break;
 
         case "quiz":
-            showQuiz(block);
-            break;
-
-        case "strategy":
-            showStrategy(block);
-            break;
-
-        case "story":
-            showStory(block);
+            runQuiz(b);
             break;
 
         default:
-            showUnknown(block);
+            textContent.innerText = "UNKNOWN EVENT → AUTO FIXED";
+            setBtn("CONTINUE");
+            break;
     }
 }
 
-/* =========================
-   VOICE
-========================= */
-function showVoice(block) {
-    textContent.innerText = block.text?.[state.language] || "";
-
-    mainBtn.style.display = "block";
-    mainBtn.innerText = "CONTINUE";
-    mainBtn.onclick = nextBlock;
+// ===============================
+// BUTTON CONTROL
+// ===============================
+function setBtn(t) {
+    if (mainBtn) mainBtn.innerText = t;
 }
 
-/* =========================
-   BREATHING
-========================= */
-function showBreathing(block) {
+// ===============================
+// NEXT FLOW
+// ===============================
+function next() {
+    iBlock++;
+    render();
+}
+
+// ===============================
+// BREATHING SYSTEM
+// ===============================
+function runBreathing(b) {
+    let t = b.duration || 5;
+
     breathCircle.style.display = "flex";
+    timerDisplay.innerText = t;
+    textContent.innerText = b.text?.[lang] || "";
 
-    let time = block.duration || 5;
-    timerDisplay.innerText = time;
+    setBtn("BREATH CONTROL");
 
-    mainBtn.innerText = "SKIP";
-    mainBtn.onclick = () => {
-        endBreathing();
-        nextBlock();
-    };
+    let interval = setInterval(() => {
+        t--;
+        timerDisplay.innerText = t;
 
-    const interval = setInterval(() => {
-        time--;
-        timerDisplay.innerText = time;
-
-        state.stress = Math.max(0, state.stress - 2);
-        state.sync = Math.min(100, state.sync + 1);
-
-        updateHUD();
-
-        if (time <= 0) {
+        if (t <= 0) {
             clearInterval(interval);
-            endBreathing();
-            nextBlock();
+            breathCircle.style.display = "none";
+            next();
         }
     }, 1000);
 }
 
-function endBreathing() {
-    breathCircle.style.display = "none";
-}
-
-/* =========================
-   QUIZ (DECISION ENGINE)
-========================= */
-function showQuiz(block) {
-    textContent.innerText = block.question?.[state.language];
-
-    mainBtn.innerText = "CHOOSE";
-    mainBtn.onclick = () => renderOptions(block);
-}
-
-function renderOptions(block) {
-    const options = block.options?.[state.language] || [];
-
+// ===============================
+// QUIZ + LIFE DECISION ENGINE
+// ===============================
+function runQuiz(b) {
     textContent.innerHTML = "";
 
-    options.forEach((opt, i) => {
-        const btn = document.createElement("button");
-        btn.innerText = opt.toUpperCase();
-        btn.style.margin = "8px 0";
-        btn.style.width = "100%";
-        btn.style.padding = "14px";
+    const q = document.createElement("div");
+    q.innerText = b.question?.[lang];
+    textContent.appendChild(q);
 
-        btn.onclick = () => evaluateQuiz(block, i);
+    (b.options?.[lang] || []).forEach((opt, idx) => {
+        const btn = document.createElement("button");
+        btn.innerText = opt;
+        btn.style.margin = "8px";
+        btn.onclick = () => judge(idx === b.correct, b);
         textContent.appendChild(btn);
     });
 
-    mainBtn.style.display = "none";
+    setBtn("DECIDE");
 }
 
-function evaluateQuiz(block, index) {
-    mainBtn.style.display = "block";
+// ===============================
+// JUDGE ENGINE (MAYKAMI CORE)
+// ===============================
+function judge(success, block) {
 
-    if (index === block.correct) {
-        state.sync += 5;
-        state.focus += 3;
-        state.karma += 2;
-        textContent.innerText = "✔ CORRECT DECISION";
-    } else {
-        state.sync -= 10;
+    let eventType = success ? "SUCCESS" : "FAIL";
+
+    // --- PSYCHOLOGICAL IMPACT SYSTEM ---
+    if (!success) {
         state.stress += 10;
-        state.karma -= 3;
-        textContent.innerText = "✖ IMPACT DETECTED";
+        state.mental -= 5;
+        state.moral -= 2;
+        logEvent("CRITICAL FAILURE → Emotional impact detected");
+    } else {
+        state.money += 20;
+        state.streak += 5;
+        state.mental += 2;
+        logEvent("STABLE DECISION → Adaptation successful");
     }
 
-    clamp();
-    updateHUD();
+    applyStressEffects();
+    syncHUD();
 
-    mainBtn.innerText = "NEXT";
-    mainBtn.onclick = nextBlock;
+    // SEND TO BACKEND IA JUDGE
+    fetch("/judge", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            success,
+            blockType: block.type,
+            level: iMission,
+            state
+        })
+    }).catch(() => {});
+
+    next();
 }
 
-/* =========================
-   STRATEGY NODE
-========================= */
-function showStrategy(block) {
-    textContent.innerText = block.text?.[state.language];
+// ===============================
+// STRESS SYSTEM (REAL LIFE LOGIC)
+// ===============================
+function applyStressEffects() {
+    if (state.stress > 70) {
+        state.mental -= 5;
+        logEvent("HIGH STRESS → Cognitive distortion active");
+    }
 
-    mainBtn.innerText = "ACKNOWLEDGE";
-    mainBtn.onclick = () => {
-        state.sync += 2;
-        state.stress = Math.max(0, state.stress - 1);
-        nextBlock();
+    if (state.mental <= 0) {
+        logEvent("SYSTEM COLLAPSE → Mental reset required");
+        resetGame();
+    }
+}
+
+// ===============================
+// HUD
+// ===============================
+function syncHUD() {
+    if (streakDisplay) {
+        streakDisplay.innerText = "SYNC " + Math.max(0, state.streak) + "%";
+    }
+}
+
+// ===============================
+// LOG SYSTEM
+// ===============================
+function logEvent(msg) {
+    console.log("[MAYKAMI]", msg);
+}
+
+// ===============================
+// RESET
+// ===============================
+function resetGame() {
+    state = {
+        money: 1000,
+        mental: 100,
+        moral: 50,
+        stress: 0,
+        streak: 0,
+        level: 1
     };
+
+    iMission = 0;
+    iBlock = 0;
+
+    render();
 }
 
-/* =========================
-   STORY NODE
-========================= */
-function showStory(block) {
-    textContent.innerText = block.text?.[state.language];
+// ===============================
+// BUTTON ACTION
+// ===============================
+mainBtn.onclick = () => next();
 
-    mainBtn.innerText = "CONTINUE STORY";
-    mainBtn.onclick = () => {
-        state.karma += 1;
-        nextBlock();
-    };
+// ===============================
+// INIT
+// ===============================
+loadGame();
+
+// ===============================
+// END GAME
+// ===============================
+function endGame() {
+    textContent.innerText =
+        lang === "en"
+            ? "SIMULATION COMPLETE - YOU HAVE BEEN EVALUATED"
+            : "SIMULACIÓN COMPLETA - HAS SIDO EVALUADO";
+
+    setBtn("RESTART");
+
+    mainBtn.onclick = resetGame;
 }
-
-/* =========================
-   UNKNOWN SAFE FALLBACK
-========================= */
-function showUnknown(block) {
-    textContent.innerText = "UNKNOWN NODE: " + block.type;
-
-    mainBtn.innerText = "CONTINUE";
-    mainBtn.onclick = nextBlock;
-}
-
-/* =========================
-   FLOW CONTROL
-========================= */
-function nextBlock() {
-    currentBlock++;
-    renderBlock();
-}
-
-function finishGame() {
-    textContent.innerText = "SIMULATION COMPLETE";
-    mainBtn.innerText = "RESTART";
-    mainBtn.onclick = () => location.reload();
-}
-
-/* =========================
-   HUD
-========================= */
-function updateHUD() {
-    syncDisplay.innerText = "SYNC: " + state.sync + "%";
-}
-
-function clamp() {
-    state.sync = Math.max(0, Math.min(100, state.sync));
-    state.stress = Math.max(0, Math.min(100, state.stress));
-    state.focus = Math.max(0, Math.min(100, state.focus));
-}
-
-/* =========================
-   START
-========================= */
-loadContent();
