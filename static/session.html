@@ -3,15 +3,14 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-    <title>KaMiZen | Al Cielo</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <title>MaykaMi | Neural Architect</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
-        /* Estilos Globales */
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'JetBrains Mono', monospace; -webkit-tap-highlight-color: transparent; }
         
         body {
             background: #000;
-            color: white;
+            color: #00f2ff;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -20,220 +19,137 @@
             overflow: hidden;
             background-position: center;
             background-repeat: no-repeat;
-            background-size: cover; /* Optimización para móviles: evita estiramiento */
-            transition: background-image 3s cubic-bezier(0.4, 0, 0.2, 1);
+            background-size: cover;
+            transition: background-image 2s ease-in-out;
         }
 
-        /* Animación de Zoom por defecto (Móvil: Muy sutil para mantener nitidez) */
+        /* Efecto de escaneo de terminal */
+        body::before {
+            content: " ";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 2px, 3px 100%;
+            z-index: 100;
+            pointer-events: none;
+        }
+
         @keyframes infiniteZoom {
-            from { background-size: 100%; }
-            to { background-size: 110%; }
+            from { background-size: 100%; filter: brightness(0.4) grayscale(0.5); }
+            to { background-size: 115%; filter: brightness(0.6) grayscale(0); }
         }
 
-        /* --- MEDIA QUERY: Solo para Computadoras/Pantallas Grandes --- */
-        @media (min-width: 1024px) {
-            body {
-                background-size: 110%;
-            }
-            @keyframes infiniteZoom {
-                from { background-size: 110%; }
-                to { background-size: 150%; }
-            }
-        }
+        .zoom-active { animation: infiniteZoom 40s linear infinite alternate; }
 
-        .zoom-active {
-            animation: infiniteZoom 30s ease-in-out infinite alternate;
-        }
-
-        /* Contenedor Principal (Glassmorphism optimizado) */
         #app {
-            width: 92%;
+            width: 90%;
             max-width: 400px;
-            background: rgba(0, 0, 0, 0.35); /* Un poco más oscuro para mejor contraste */
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 35px;
-            padding: 35px 25px;
+            background: rgba(0, 15, 20, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid #00f2ff55;
+            border-radius: 20px;
+            padding: 30px 20px;
             text-align: center;
             z-index: 10;
+            min-height: 80vh;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            min-height: 75vh;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+            box-shadow: 0 0 30px rgba(0, 242, 255, 0.2);
         }
 
         #logo {
-            font-size: 32px;
-            font-weight: 600;
-            background: linear-gradient(135deg, #ffffff, #60a5fa);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: -1.5px;
-            margin-bottom: 5px;
+            font-size: 24px;
+            font-weight: 700;
+            color: #00f2ff;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            text-shadow: 0 0 10px #00f2ff;
         }
 
         #mental-panel {
-            display: flex; 
-            justify-content: space-around;
-            font-size: 12px; 
-            text-transform: uppercase; 
-            letter-spacing: 1px;
-            color: rgba(255,255,255,0.5); 
-            margin-bottom: 25px;
+            display: flex; justify-content: space-around;
+            font-size: 10px; color: #00f2ffaa; margin-top: 10px;
         }
 
-        #block-container {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            gap: 20px;
-        }
+        #block-container { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; gap: 20px; }
 
         #text-content {
-            font-size: 20px; 
-            font-weight: 300; 
-            line-height: 1.5;
-            text-shadow: 0 2px 15px rgba(0,0,0,0.8);
-            min-height: 80px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            font-size: 18px; line-height: 1.4; color: #fff;
+            text-shadow: 0 0 5px rgba(255,255,255,0.5);
+            min-height: 120px;
         }
 
-        /* Dinámica de Respiración */
+        /* Respiración "Cibernética" */
         #breath-circle {
-            width: 140px; 
-            height: 140px;
-            border-radius: 50%;
-            border: 2px solid rgba(96, 165, 250, 0.4);
-            background: rgba(96, 165, 250, 0.05);
-            display: none; 
-            justify-content: center; 
-            align-items: center;
-            position: relative;
-            margin: 10px auto;
+            width: 130px; height: 130px; border-radius: 50%;
+            border: 2px solid #00f2ff;
+            box-shadow: 0 0 15px #00f2ff;
+            display: none; justify-content: center; align-items: center;
+            margin: 20px auto; position: relative;
         }
 
-        .breathing-anim {
-            animation: breathe 4s ease-in-out infinite;
+        .breathing-anim { animation: cyberBreathe 4s ease-in-out infinite; }
+
+        @keyframes cyberBreathe {
+            0%, 100% { transform: scale(0.85); opacity: 0.5; box-shadow: 0 0 5px #00f2ff; }
+            50% { transform: scale(1.15); opacity: 1; box-shadow: 0 0 30px #00f2ff; }
         }
 
-        @keyframes breathe {
-            0%, 100% { transform: scale(0.9); background: rgba(96, 165, 250, 0.05); }
-            50% { transform: scale(1.2); background: rgba(96, 165, 250, 0.2); box-shadow: 0 0 50px rgba(96,165,250,0.3); }
-        }
+        #timer-display { font-size: 38px; font-weight: 700; color: #00f2ff; }
 
-        #timer-display {
-            font-size: 42px; 
-            font-weight: 600; 
-            color: #60a5fa;
-            position: absolute;
-            z-index: 5;
-        }
-
-        #breathe-text {
-            position: absolute;
-            bottom: 25px;
-            font-size: 9px;
-            letter-spacing: 2px;
-            color: rgba(255,255,255,0.6);
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        /* Botones */
+        /* Botones estilo UI de juego */
         button {
-            padding: 18px; 
-            border: none; 
-            border-radius: 22px;
-            cursor: pointer; 
-            background: #2563eb; 
-            color: white;
-            font-weight: 600; 
-            font-size: 16px; 
-            width: 100%;
-            transition: all 0.3s ease;
-            box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3);
+            padding: 16px; border: 1px solid #00f2ff; border-radius: 4px;
+            background: transparent; color: #00f2ff; font-weight: 700;
+            text-transform: uppercase; cursor: pointer; transition: all 0.2s;
+            clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%);
         }
 
-        button:active { transform: scale(0.98); }
-        button:disabled { 
-            background: rgba(255,255,255,0.05); 
-            color: rgba(255,255,255,0.2);
-            box-shadow: none;
-        }
+        button:active { background: #00f2ff; color: #000; }
+        button:disabled { border-color: #333; color: #333; }
 
-        .secondary { 
-            background: rgba(255, 255, 255, 0.05); 
-            border: 1px solid rgba(255, 255, 255, 0.1); 
-            margin-top: 10px;
-            box-shadow: none;
-        }
+        .secondary { font-size: 10px; border-color: #00f2ff55; color: #00f2ffaa; }
 
-        #lang-btn {
-            width: auto; position: absolute; top: 20px; right: 20px; 
-            padding: 6px 14px; font-size: 11px;
-            background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 12px; z-index: 20;
-        }
-
-        /* Modal de Inactividad */
-        #warning-modal {
-            display: none; position: fixed; inset: 0; 
-            background: rgba(0,0,0,0.95); backdrop-filter: blur(15px);
-            z-index: 1000; justify-content: center; align-items: center; padding: 20px;
-        }
-
-        .modal-content { text-align: center; max-width: 300px; }
-
-        /* Ajustes Mobile */
-        @media (max-height: 700px) {
-            #app { padding: 25px 20px; min-height: 90vh; }
-            #logo { font-size: 26px; }
-            #text-content { font-size: 17px; }
-            #breath-circle { width: 110px; height: 110px; }
+        /* Efecto Glitch para errores */
+        .glitch-effect { animation: glitch 0.2s infinite; }
+        @keyframes glitch {
+            0% { transform: translate(2px, 0); }
+            50% { transform: translate(-2px, -2px); filter: hue-rotate(90deg); }
+            100% { transform: translate(0, 2px); }
         }
     </style>
 </head>
 <body class="zoom-active">
     <audio id="bg-music" loop preload="auto"></audio>
     
-    <div id="warning-modal">
-        <div class="modal-content">
-            <h2 style="color:#ef4444; margin-bottom:10px; letter-spacing: 2px;">INACTIVITY</h2>
-            <p style="margin-bottom: 25px; font-weight: 300; color: rgba(255,255,255,0.7);">Tap the screen to continue.</p>
-            <button onclick="resetInactivity()">I AM HERE</button>
+    <div id="app">
+        <header>
+            <div id="logo">MaykaMi v3.0</div>
+            <div id="mental-panel">
+                <span id="streak-display">SYNC: 0%</span>
+                <span id="level-display">NODE: 01</span>
+            </div>
+        </header>
+
+        <div id="block-container">
+            <div id="text-content">INITIALIZING NEURAL LINK...</div>
+            <div id="breath-circle">
+                <div id="timer-display">0</div>
+            </div>
+        </div>
+
+        <div id="action-area">
+            <button id="main-btn">ESTABLISH LINK</button>
+            <div style="display: flex; gap: 10px; margin-top: 15px;">
+                <button id="lang-btn" class="secondary">EN/ES</button>
+                <button id="back-btn" class="secondary">REBOOT</button>
+            </div>
         </div>
     </div>
 
-    <div id="app">
-        <button id="lang-btn">EN</button>
-        <div id="header-meta">
-            <div id="logo">KaMiZen</div>
-            <div id="mental-panel">
-                <span id="streak">Streak: 0</span>
-                <span id="level-display">Lv. 1</span>
-            </div>
-        </div>
-        <div id="block-container">
-            <div id="text-content">Iniciando...</div>
-            <div id="breath-circle">
-                <div id="timer-display" style="display:none;">0</div>
-                <span id="breathe-text">Breathe</span>
-            </div>
-        </div>
-        <div id="action-area">
-            <button id="main-btn">START</button>
-            <div style="display: flex; gap: 10px; margin-top: 12px;">
-                <button id="back-btn" class="secondary" style="font-size: 11px;">BACK</button>
-                <button id="fwd-btn" class="secondary" style="font-size: 11px;">SKIP</button>
-            </div>
-        </div>
-    </div>
     <script src="/static/scripts.js"></script>
 </body>
 </html>
