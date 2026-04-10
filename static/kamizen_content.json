@@ -1,5 +1,5 @@
 {
-  "sessions": [
+  "missions": [
     {
       "id": 1,
       "level": 1,
@@ -19,7 +19,7 @@
       "blocks": [
         { "type": "voice", "text": { "en": "The Unshakable Pillar. Happiness is a choice made in the present. If you depend on external validation, you are a slave.", "es": "El Pilar Inquebrantable. La felicidad es una elección del presente. Si dependes de la validación externa, eres un esclavo." }, "color": "#0ea5e9" },
         { "type": "story", "text": { "en": "A monk stood in the ocean. The waves hit him, but he did not move. He didn't fight the water; he became the mountain beneath it.", "es": "Un monje estaba en el océano. Las olas lo golpeaban, pero no se movía. No luchaba contra el agua; era la montaña debajo de ella." } },
-        { "type": "breathing", "text": { "en": "T-VID Phase 2: Joy Activation. Smile while you inhale. Feel the energy expanding.", "es": "T-VID Fase 2: Activación de Alegría. Sonríe mientras inhalas. Siente la energía expandiéndose." }, "duration": 6 },
+        { "type": "breathing", "text": { "en": "T-VID Phase 2: Joy Activation. Smile while you inhale. Feel the energy expanding.", "es": "T-VID Phase 2: Activación de Alegría. Sonríe mientras inhalas. Siente la energía expandiéndose." }, "duration": 6 },
         { "type": "quiz", "question": { "en": "Riddle: I can be shared but never bought. I am light but have weight in the heart. What am I?", "es": "Acertijo: Puedo compartirse pero nunca comprarse. Soy ligera pero peso en el corazón. ¿Qué soy?" }, "options": { "en": ["Money", "A Smile", "A Phone"], "es": ["Dinero", "Una Sonrisa", "Un Teléfono"] }, "correct": 1, "reward": 15 }
       ]
     },
@@ -215,6 +215,3 @@
     }
   ]
 }
-    
-
-    
