@@ -1,5 +1,5 @@
 /* =========================================
-   MAYKAMI / VIA REAL - FULL ENGINE STABLE
+   KAMIZEN / VIA REAL - FULL ENGINE STABLE
 ========================================= */
 
 const mainBtn = document.getElementById("main-btn");
