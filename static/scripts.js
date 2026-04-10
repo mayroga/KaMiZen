@@ -1,263 +1,218 @@
-let currentMissionIndex = 0;
-let currentBlockIndex = 0;
 let missions = [];
-let currentLang = 'en';
-let syncScore = 0;
-let timerInterval = null;
-let isProcessing = false;
+let missionIndex = 0;
+let blockIndex = 0;
 
-const musicPlayer = document.getElementById('bg-music');
-
-// MÉTRICAS
-let stats = {
-    correct: 0,
-    wrong: 0,
-    breathingCompleted: 0
+let life = {
+    mental: 100,
+    focus: 100,
+    social: 50,
+    money: 1000,
+    stress: 0
 };
 
-// FONDOS
-const imageBank = Array.from({length: 30}, (_, i) => `https://picsum.photos/seed/cyber-${i}/1920/1080`);
+let mode = "narrative"; 
+let entities = [];
+let frame = 0;
 
-function changeBg() {
-    const url = imageBank[Math.floor(Math.random() * imageBank.length)];
-    const img = new Image();
-    img.src = url;
-    img.onload = () => {
-        document.body.style.backgroundImage =
-            `linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('${url}')`;
-    };
+const canvas = document.createElement("canvas");
+const ctx = canvas.getContext("2d");
+document.body.appendChild(canvas);
+
+canvas.style.position = "fixed";
+canvas.style.top = 0;
+canvas.style.left = 0;
+canvas.style.zIndex = 0;
+
+function resize(){
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+window.addEventListener("resize", resize);
+resize();
+
+// ==========================
+// LOAD DATA
+// ==========================
+async function load() {
+    const res = await fetch("/session_content");
+    const data = await res.json();
+    missions = data.missions;
+    startMission();
 }
 
-// VOZ
-function speak(text, callback) {
-    window.speechSynthesis.cancel();
-
+// ==========================
+// SYSTEM RENDER TEXT + VOICE
+// ==========================
+function speak(text){
     const msg = new SpeechSynthesisUtterance(text);
-    msg.lang = currentLang === 'en' ? 'en-US' : 'es-ES';
-    msg.rate = 1.0;
+    msg.rate = 1;
     msg.pitch = 0.8;
-
-    musicPlayer.volume = 0.05;
-
-    msg.onend = () => {
-        musicPlayer.volume = 0.15;
-        isProcessing = false;
-        if (callback) callback();
-    };
-
     window.speechSynthesis.speak(msg);
 }
 
-// UI
-function updateUI() {
-    document.getElementById('streak-display').innerText = `SYNC: ${syncScore}%`;
-    document.getElementById('level-display').innerText = `NODE: 0${currentMissionIndex + 1}`;
-}
-
-// CARGAR DATA
-async function loadData() {
-    try {
-        const res = await fetch('/session_content');
-        const data = await res.json();
-        missions = data.missions || [];
-        initApp();
-    } catch {
-        document.getElementById('text-content').innerText = "CONNECTION ERROR";
+// ==========================
+// APPLY CONSEQUENCES
+// ==========================
+function applyImpact(type){
+    switch(type){
+        case "critica":
+            life.stress += 10;
+            life.mental -= 5;
+            break;
+        case "perdida":
+            life.money -= 100;
+            life.focus -= 10;
+            break;
+        case "rechazo":
+            life.social -= 10;
+            life.mental -= 8;
+            break;
+        case "conflicto":
+            life.stress += 20;
+            life.social -= 15;
+            break;
     }
 }
 
-// INIT
-function initApp() {
-    const mainBtn = document.getElementById('main-btn');
+// ==========================
+// LIFE SIM EVENTS (JET STYLE)
+// ==========================
+class EventBox {
+    constructor(){
+        this.x = canvas.width + 50;
+        this.y = Math.random() * canvas.height;
+        this.size = 40;
+        this.speed = 3 + (life.stress / 20);
 
-    // 🔥 RECUPERAR SYNC DESDE JUEGO
-    const savedSync = localStorage.getItem("syncScore");
-    if (savedSync) {
-        syncScore = parseInt(savedSync);
+        const types = ["critica","perdida","rechazo","conflicto"];
+        this.type = types[Math.floor(Math.random()*types.length)];
     }
 
-    // IDIOMA
-    document.getElementById('lang-btn').onclick = () => {
-        currentLang = currentLang === 'en' ? 'es' : 'en';
-        renderBlock();
-    };
+    update(){
+        this.x -= this.speed;
+        return this.x > -50;
+    }
 
-    // REBOOT
-    document.getElementById('back-btn').onclick = () => {
-        resetSystem();
-    };
+    draw(){
+        ctx.fillStyle = "red";
+        ctx.fillRect(this.x, this.y, this.size, this.size);
+    }
+}
 
-    // BOTÓN PRINCIPAL
-    mainBtn.onclick = () => {
-        if (isProcessing) return;
+// ==========================
+// PLAYER (REFLEJO + DECISION)
+// ==========================
+let player = {
+    x: 80,
+    y: 200,
+    targetY: 200
+};
 
-        if (currentMissionIndex === 0 && currentBlockIndex === 0) {
-            musicPlayer.src = "https://assets.mixkit.co/music/preview/mixkit-tech-house-vibes-130.mp3";
-            musicPlayer.play();
-        }
+window.addEventListener("mousemove", e => player.targetY = e.clientY);
 
-        nextStep();
-    };
+// ==========================
+// MISSION ENGINE
+// ==========================
+function startMission(){
+    missionIndex = 0;
+    blockIndex = 0;
+    renderBlock();
+}
 
-    changeBg();
-    setInterval(changeBg, 20000);
+function renderBlock(){
+    const mission = missions[missionIndex];
+    if(!mission) return;
+
+    const block = mission.blocks[blockIndex];
+
+    let text = block.text?.en || block.question?.en || "";
+
+    speak(text);
+
+    // detect gameplay type
+    if(block.type === "strategy"){
+        mode = "decision";
+    } else if(block.type === "quiz"){
+        mode = "decision";
+    } else {
+        mode = "narrative";
+    }
+
+    console.log("BLOCK:", block.type, text);
+}
+
+// ==========================
+// DECISION SYSTEM (SOCIAL + PSYCHOLOGY)
+// ==========================
+function decision(result){
+    if(result === "avoid"){
+        applyImpact("rechazo");
+    }
+    if(result === "face"){
+        life.focus += 5;
+        life.mental += 3;
+    }
+    if(result === "ignore"){
+        applyImpact("critica");
+    }
+
+    next();
+}
+
+// ==========================
+// NEXT STEP
+// ==========================
+function next(){
+    blockIndex++;
+
+    if(blockIndex >= missions[missionIndex].blocks.length){
+        missionIndex++;
+        blockIndex = 0;
+    }
+
+    if(missionIndex >= missions.length){
+        missionIndex = 0;
+    }
 
     renderBlock();
 }
 
-// RESET
-function resetSystem() {
-    window.speechSynthesis.cancel();
-    if (timerInterval) clearInterval(timerInterval);
+// ==========================
+// GAME LOOP (JET + LIFE MIX)
+// ==========================
+function loop(){
+    ctx.fillStyle = "rgba(0,0,0,0.3)";
+    ctx.fillRect(0,0,canvas.width,canvas.height);
 
-    currentMissionIndex = 0;
-    currentBlockIndex = 0;
-    syncScore = 0;
+    // player
+    player.y += (player.targetY - player.y) * 0.1;
 
-    stats = { correct: 0, wrong: 0, breathingCompleted: 0 };
+    ctx.fillStyle = "#00f2ff";
+    ctx.beginPath();
+    ctx.arc(player.x, player.y, 10, 0, Math.PI*2);
+    ctx.fill();
 
-    musicPlayer.pause();
-    musicPlayer.currentTime = 0;
-
-    localStorage.removeItem("syncScore");
-
-    document.getElementById('text-content').innerText = "SYSTEM REBOOTED";
-
-    setTimeout(() => renderBlock(), 1000);
-}
-
-// RENDER
-function renderBlock() {
-    const mission = missions[currentMissionIndex];
-    if (!mission) return;
-
-    const block = mission.blocks[currentBlockIndex];
-    if (!block) return;
-
-    const textDisplay = document.getElementById('text-content');
-    const circle = document.getElementById('breath-circle');
-    const mainBtn = document.getElementById('main-btn');
-
-    updateUI();
-
-    if (timerInterval) clearInterval(timerInterval);
-
-    circle.style.display = 'none';
-    mainBtn.style.display = 'block';
-    mainBtn.disabled = true;
-
-    isProcessing = true;
-
-    const oldQuiz = document.getElementById('quiz-options');
-    if (oldQuiz) oldQuiz.remove();
-
-    // SEGURIDAD JSON
-    if (block.text && block.text[currentLang]) {
-        textDisplay.innerText = block.text[currentLang];
-    } else if (block.question && block.question[currentLang]) {
-        textDisplay.innerText = block.question[currentLang];
-    } else {
-        textDisplay.innerText = "DATA ERROR";
+    // spawn life events
+    if(frame % Math.max(20, 100 - life.stress) === 0){
+        entities.push(new EventBox());
     }
 
-    // TIPOS
-    if (block.type === 'breathing') {
-        circle.style.display = 'flex';
-        circle.classList.add('breathing-anim');
-        mainBtn.style.display = 'none';
+    entities = entities.filter(e => {
+        e.update();
+        e.draw();
 
-        speak(textDisplay.innerText, () => startCountdown(block.duration || 5));
+        // collision
+        if(Math.abs(e.x - player.x) < 30 && Math.abs(e.y - player.y) < 30){
+            applyImpact(e.type);
+            return false;
+        }
 
-    } else if (block.type === 'quiz') {
-        renderQuiz(block);
-
-    } else {
-        speak(textDisplay.innerText, () => {
-            mainBtn.disabled = false;
-        });
-    }
-}
-
-// QUIZ
-function renderQuiz(block) {
-    const container = document.getElementById('block-container');
-    isProcessing = false;
-
-    const quizDiv = document.createElement('div');
-    quizDiv.id = "quiz-options";
-
-    block.options[currentLang].forEach((opt, idx) => {
-        const btn = document.createElement('button');
-        btn.innerText = opt;
-
-        btn.onclick = () => {
-            if (isProcessing) return;
-            isProcessing = true;
-
-            if (idx === block.correct) {
-                syncScore += 10;
-                stats.correct++;
-
-                nextStep();
-            } else {
-                stats.wrong++;
-                syncScore = Math.max(0, syncScore - 5);
-
-                speak(currentLang === 'en' ? "Wrong. Focus." : "Error. Enfócate.", () => {
-                    isProcessing = false;
-                });
-            }
-        };
-
-        quizDiv.appendChild(btn);
+        return e.x > -100;
     });
 
-    container.appendChild(quizDiv);
+    frame++;
+    requestAnimationFrame(loop);
 }
 
-// RESPIRACIÓN
-function startCountdown(seconds) {
-    let remaining = seconds;
-    const timerDisplay = document.getElementById('timer-display');
-
-    timerInterval = setInterval(() => {
-        remaining--;
-        timerDisplay.innerText = remaining;
-
-        if (remaining <= 0) {
-            clearInterval(timerInterval);
-
-            stats.breathingCompleted++;
-            syncScore += 15;
-
-            isProcessing = false;
-            nextStep();
-        }
-    }, 1000);
-}
-
-// FLUJO
-function nextStep() {
-    currentBlockIndex++;
-
-    if (currentBlockIndex >= missions[currentMissionIndex].blocks.length) {
-        currentMissionIndex++;
-        currentBlockIndex = 0;
-    }
-
-    // 🔥 AQUÍ CONECTA CON EL JUEGO
-    if (currentMissionIndex >= missions.length) {
-
-        localStorage.setItem("syncScore", syncScore);
-
-        speak("Entering neural simulation.", () => {
-            window.location.href = "/jet";
-        });
-
-        return;
-    }
-
-    renderBlock();
-}
-
-document.addEventListener('DOMContentLoaded', loadData);
+load();
+loop();
