@@ -1,154 +1,41 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>KaMiZen - AURA</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
-        
-        body {
-            background: #020617;
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            overflow: hidden;
-            background-position: center;
-            background-repeat: no-repeat;
-            /* Suavidad en la transición de las 88 imágenes */
-            transition: background-image 2s ease-in-out, background-size 10s linear;
-        }
-
-        #app {
-            width: 90%;
-            max-width: 420px;
-            /* Transparencia equilibrada para ver el fondo con zoom */
-            background: rgba(15, 23, 42, 0.7); 
-            backdrop-filter: blur(12px); 
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 28px;
-            padding: 40px;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.6);
-            text-align: center;
-            position: relative;
-            z-index: 10;
-        }
-
-        #logo {
-            font-size: 38px;
-            font-weight: 600;
-            background: linear-gradient(90deg, #60a5fa, #a78bfa);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 25px;
-            letter-spacing: -1px;
-        }
-
-        #lang-btn {
-            position: absolute;
-            top: 25px;
-            right: 25px;
-            padding: 6px 14px;
-            border-radius: 10px;
-            border: 1px solid #60a5fa;
-            background: rgba(96, 165, 250, 0.1);
-            color: #60a5fa;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        #lang-btn:hover {
-            background: rgba(96, 165, 250, 0.2);
-        }
-
-        #mental-panel {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 12px;
-            border-radius: 15px;
-            margin-bottom: 25px;
-            display: flex;
-            justify-content: space-between;
-            font-size: 14px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        #block {
-            font-size: 22px;
-            font-weight: 300;
-            line-height: 1.5;
-            min-height: 220px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        button {
-            padding: 16px;
-            margin: 8px 0;
-            border: none;
-            border-radius: 14px;
-            cursor: pointer;
-            background: #2563eb;
-            color: white;
-            width: 100%;
-            font-weight: 600;
-            font-size: 16px;
-            /* Transición suave solicitada */
-            transition: all 0.3s ease; 
-        }
-
-        button:hover { 
-            transform: translateY(-3px); 
-            box-shadow: 0 10px 20px rgba(37,99,235,0.4); 
-            background: #3b82f6;
-        }
-
-        .secondary { 
-            background: rgba(255, 255, 255, 0.1); 
-            color: white; 
-        }
-        
-        .secondary:hover { 
-            background: rgba(255, 255, 255, 0.2); 
-        }
-
-        #controls-row { 
-            display: flex; 
-            gap: 15px; 
-            width: 100%; 
-            margin-top: 20px;
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AL CIELO - Sesión en Curso</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
-<body>
-    <div id="app">
-        <button id="lang-btn">ES</button>
-        <div id="logo">KaMiZen</div>
-        
-        <div id="mental-panel">
-            <div id="streak">🔥 Streak: 0</div>
-            <div id="level">Level: 1</div>
+<body class="bg-black text-white font-sans overflow-hidden">
+    <div id="app-container" class="h-screen flex flex-col p-6">
+        <div class="flex justify-between items-center mb-8">
+            <h2 id="category-label" class="text-blue-400 font-bold tracking-widest uppercase text-sm"></h2>
+            <div id="inactivity-timer" class="text-red-500 text-xs font-mono"></div>
         </div>
 
-        <div id="block">Ready for your session?</div>
-        
-        <button id="start-btn">Start Session</button>
-        <button id="next-btn" style="display:none;">Next</button>
-        
-        <div id="controls-row">
-            <button id="back-btn" class="secondary">Back</button>
-            <button id="forward-btn" class="secondary">Forward</button>
+        <div id="content-area" class="flex-1 flex flex-col justify-center items-center text-center space-y-8">
+            <div id="visual-element" class="w-full max-w-2xl">
+                </div>
+            <div id="text-display" class="text-2xl md:text-4xl font-light leading-relaxed px-4"></div>
         </div>
-        
-        <button id="restart-btn" class="secondary" style="display:none; margin-top: 12px;">Restart</button>
+
+        <div class="h-32 flex flex-col items-center justify-center space-y-4">
+            <button id="action-btn" class="hidden bg-white text-black px-8 py-3 rounded-full font-bold hover:bg-blue-500 transition-all uppercase tracking-tighter">
+                Continuar
+            </button>
+            <div id="timer-display" class="hidden text-5xl font-mono text-blue-500 tracking-tighter"></div>
+        </div>
     </div>
-    <script src="/static/scripts.js"></script>
+
+    <div id="warning-modal" class="hidden fixed inset-0 bg-red-900/90 flex justify-center items-center z-50 p-10">
+        <div class="text-center">
+            <h1 class="text-4xl font-bold mb-4">¿SIGUES AHÍ?</h1>
+            <p class="mb-6">Toca la pantalla para no perder la sesión.</p>
+            <button onclick="resetInactivity()" class="bg-white text-black px-6 py-2 rounded-full font-bold">ESTOY AQUÍ</button>
+        </div>
+    </div>
+
+    <script src="/static/script.js"></script>
 </body>
 </html>
