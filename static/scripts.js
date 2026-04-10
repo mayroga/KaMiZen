@@ -6,6 +6,9 @@ let inactivitySeconds = 0;
 let timerInterval = null;
 let musicPlayer = document.getElementById('bg-music');
 
+// Banco de 80 imágenes naturales para evitar repetición rápida
+const imageBank = Array.from({length: 80}, (_, i) => `https://picsum.photos/seed/al-cielo-${i}/1600/900`);
+
 // Librería de música por categoría/vibe
 const musicLibrary = {
     dopamine: "https://assets.mixkit.co/music/preview/mixkit-tech-house-vibes-130.mp3",
@@ -15,6 +18,15 @@ const musicLibrary = {
     action: "https://assets.mixkit.co/music/preview/mixkit-glitchy-reverb-764.mp3",
     zen: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
 };
+
+function changeBg() {
+    const img = new Image();
+    const url = imageBank[Math.floor(Math.random() * imageBank.length)];
+    img.src = url;
+    img.onload = () => {
+        document.body.style.backgroundImage = `url('${url}')`;
+    };
+}
 
 function updateMusic(level, category = "") {
     let selectedTrack = musicLibrary.zen;
@@ -31,7 +43,7 @@ function updateMusic(level, category = "") {
 
     if (musicPlayer.src !== selectedTrack) {
         musicPlayer.src = selectedTrack;
-        musicPlayer.volume = 0.15; // Música suave (15%) para que la voz mande
+        musicPlayer.volume = 0.15; 
         musicPlayer.play().catch(() => {});
     }
 }
@@ -43,8 +55,7 @@ function speak(text, callback) {
     msg.volume = 1.0; 
     msg.rate = 0.95;
 
-    // Ducking: Baja la música mientras habla la voz
-    musicPlayer.volume = 0.05;
+    musicPlayer.volume = 0.05; // Ducking
     msg.onend = () => {
         musicPlayer.volume = 0.15;
         if (callback) callback();
@@ -52,10 +63,9 @@ function speak(text, callback) {
     window.speechSynthesis.speak(msg);
 }
 
-// Carga el JSON desde el servidor
 async function loadData() {
     try {
-        const response = await fetch('/session_content'); // O '/static/kamizen_content.json'
+        const response = await fetch('/session_content');
         const data = await response.json();
         missions = data.missions;
         initApp();
@@ -65,7 +75,6 @@ async function loadData() {
 function initApp() {
     document.getElementById('main-btn').onclick = () => renderBlock();
     
-    // El castigo por saltar ahora también es hablado
     const punishBtn = (id) => {
         document.getElementById(id).onclick = () => {
             const msg = currentLang === 'en' ? "Discipline is required. Wait." : "Se requiere disciplina. Espera.";
@@ -82,9 +91,11 @@ function initApp() {
         renderBlock();
     };
 
+    // Inicializar visual y musicalmente
+    changeBg();
+    setInterval(changeBg, 12000); // Fondo cambia cada 12s
     updateMusic(1);
     
-    // Inactividad
     setInterval(() => {
         inactivitySeconds++;
         if (inactivitySeconds === 59) document.getElementById('warning-modal').style.display = 'flex';
@@ -103,14 +114,12 @@ function renderBlock() {
     updateMusic(mission.level, mission.category);
     document.getElementById('level-display').innerText = `Lv. ${mission.level}`;
     
-    // Limpieza de estados previos
     if (timerInterval) clearInterval(timerInterval);
     circle.style.display = 'none';
     mainBtn.disabled = false;
     const oldQuiz = document.getElementById('quiz-options');
     if (oldQuiz) oldQuiz.remove();
 
-    // Lógica por tipo de bloque
     if (block.type === 'quiz') {
         renderQuiz(block);
     } else if (block.type === 'breathing') {
@@ -122,7 +131,6 @@ function renderBlock() {
             startCountdown(block.duration);
         });
     } else {
-        // Bloques de voz, historia o estrategia
         textDisplay.innerText = block.text[currentLang];
         speak(block.text[currentLang]);
     }
@@ -135,7 +143,6 @@ function renderQuiz(block) {
     const textDisplay = document.getElementById('text-content');
     mainBtn.style.display = 'none';
 
-    // Construcción de la lectura completa del quiz: Pregunta + Opciones
     let fullQuizText = block.question[currentLang] + ". ";
     const options = block.options[currentLang];
     options.forEach((opt, i) => {
