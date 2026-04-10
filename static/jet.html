@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MaykaMi | Neural Jet</title>
+<style>
+body { margin:0; background:#000; color:#00f2ff; overflow:hidden; }
+#ui { position:absolute; top:20px; left:20px; display:flex; gap:20px; }
+.box { border:1px solid #00f2ff; padding:10px; }
+#exit { position:absolute; bottom:20px; right:20px; padding:10px; cursor:pointer; }
+</style>
+</head>
+<body>
+
+<div id="ui">
+<div class="box">SYNC: <span id="sync">100</span>%</div>
+<div class="box">ALT: <span id="dist">0</span></div>
+</div>
+
+<canvas id="c"></canvas>
+<button id="exit">EXIT</button>
+
+<script>
+const canvas = document.getElementById("c");
+const ctx = canvas.getContext("2d");
+canvas.width = innerWidth;
+canvas.height = innerHeight;
+
+let sync = parseInt(localStorage.getItem("syncScore")) || 100;
+let score = 0;
+
+document.getElementById("sync").innerText = sync;
+
+let jet = {x:50, y:200};
+let obstacles = [];
+
+window.onmousemove = e => jet.y = e.clientY;
+
+function loop(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    ctx.fillStyle="#00f2ff";
+    ctx.fillRect(jet.x, jet.y, 20, 20);
+
+    if(Math.random()<0.03){
+        obstacles.push({x:canvas.width, y:Math.random()*canvas.height});
+    }
+
+    obstacles.forEach((o,i)=>{
+        o.x -= 5;
+        ctx.fillStyle="red";
+        ctx.fillRect(o.x,o.y,20,20);
+
+        if(Math.abs(o.x-jet.x)<20 && Math.abs(o.y-jet.y)<20){
+            sync -= 10;
+            document.getElementById("sync").innerText = sync;
+
+            // RESPIRACIÓN FORZADA
+            alert("Respira... recupera control");
+
+            if(sync <= 0){
+                exitGame();
+            }
+        }
+
+        if(o.x<0) obstacles.splice(i,1);
+    });
+
+    score++;
+    document.getElementById("dist").innerText = score;
+
+    requestAnimationFrame(loop);
+}
+
+function exitGame(){
+    localStorage.setItem("syncScore", sync);
+    window.location.href = "/";
+}
+
+document.getElementById("exit").onclick = exitGame;
+
+loop();
+</script>
+
+</body>
+</html>
