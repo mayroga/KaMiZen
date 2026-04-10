@@ -6,16 +6,17 @@ let inactivitySeconds = 0;
 let timerInterval = null;
 const musicPlayer = document.getElementById('bg-music');
 
-// Banco de imágenes naturales (Éxito y Bienestar)
+// Banco de imágenes naturales (PICSUM con seed para consistencia)
 const imageBank = Array.from({length: 80}, (_, i) => `https://picsum.photos/seed/al-cielo-${i}/1600/900`);
 
-// Librería de música optimizada: Antiestrés, Dopamina, Poder, Dinero y Amor
+// Librería de música optimizada
 const musicLibrary = {
-    dopamine: "https://assets.mixkit.co/music/preview/mixkit-sunshine-radio-28.mp3",
-    power: "https://assets.mixkit.co/music/preview/mixkit-driving-ambition-32.mp3",
-    wealth: "https://assets.mixkit.co/music/preview/mixkit-motivating-morning-33.mp3",
-    love: "https://assets.mixkit.co/music/preview/mixkit-beautiful-dream-493.mp3",
-    zen: "https://assets.mixkit.co/music/preview/mixkit-soft-ambient-611.mp3"
+    dopamine: "https://assets.mixkit.co/music/preview/mixkit-tech-house-vibes-130.mp3",
+    power: "https://assets.mixkit.co/music/preview/mixkit-deep-urban-623.mp3",
+    wealth: "https://assets.mixkit.co/music/preview/mixkit-complex-772.mp3",
+    love: "https://assets.mixkit.co/music/preview/mixkit-serene-view-443.mp3",
+    action: "https://assets.mixkit.co/music/preview/mixkit-glitchy-reverb-764.mp3",
+    zen: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
 };
 
 function changeBg() {
@@ -29,25 +30,21 @@ function changeBg() {
 
 function updateMusic(level, category = "") {
     let selectedTrack = musicLibrary.zen;
-    const cat = (category || "").toLowerCase();
+    const cat = category.toLowerCase();
 
-    // Lógica de selección temática
-    if (cat.includes('money') || cat.includes('wealth') || cat.includes('dinero')) {
-        selectedTrack = musicLibrary.wealth;
-    } else if (cat.includes('love') || cat.includes('amor') || cat.includes('paz')) {
-        selectedTrack = musicLibrary.love;
-    } else if (cat.includes('power') || cat.includes('poder') || level >= 3) {
-        selectedTrack = musicLibrary.power;
-    } else if (level === 1 || cat.includes('alegria')) {
-        selectedTrack = musicLibrary.dopamine;
-    } else {
-        selectedTrack = musicLibrary.zen;
+    if (level === 1) selectedTrack = musicLibrary.dopamine;
+    else if (level === 2) {
+        if (cat.includes('wealth') || cat.includes('economic')) selectedTrack = musicLibrary.wealth;
+        else if (cat.includes('stability') || cat.includes('love')) selectedTrack = musicLibrary.love;
+        else selectedTrack = musicLibrary.power;
+    } else if (level >= 3) {
+        selectedTrack = musicLibrary.action;
     }
 
     if (musicPlayer.src !== selectedTrack) {
         musicPlayer.src = selectedTrack;
-        musicPlayer.volume = 0.12; // Volumen de fondo equilibrado
-        musicPlayer.play().catch(() => console.log("Interacción requerida"));
+        musicPlayer.volume = 0.15;
+        musicPlayer.play().catch(() => console.log("Interacción requerida para audio"));
     }
 }
 
@@ -58,11 +55,10 @@ function speak(text, callback) {
     msg.volume = 1.0;
     msg.rate = 0.95;
 
-    // Ducking: Baja la música casi al silencio mientras la voz habla
-    musicPlayer.volume = 0.04; 
+    // Ducking: Baja el volumen de la música mientras habla
+    musicPlayer.volume = 0.05;
     msg.onend = () => {
-        // La música vuelve a su nivel de fondo agradable si no hay silencio total
-        musicPlayer.volume = 0.12; 
+        musicPlayer.volume = 0.15;
         if (callback) callback();
     };
     window.speechSynthesis.speak(msg);
@@ -84,11 +80,12 @@ function initApp() {
     const mainBtn = document.getElementById('main-btn');
     mainBtn.onclick = () => {
         if (currentMissionIndex === 0 && currentBlockIndex === 0) {
-            updateMusic(1); 
+            updateMusic(1); // Inicia música al primer clic
         }
         renderBlock();
     };
 
+    // Botones de penalización (Disciplina)
     const setupPunish = (id) => {
         document.getElementById(id).onclick = () => {
             const msg = currentLang === 'en' ? "Discipline is focus. Stay here." : "La disciplina es enfoque. Quédate aquí.";
@@ -105,8 +102,9 @@ function initApp() {
         renderBlock();
     };
 
+    // Fondo y Temporizadores
     changeBg();
-    setInterval(changeBg, 15000);
+    setInterval(changeBg, 12000);
 
     setInterval(() => {
         inactivitySeconds++;
@@ -127,6 +125,7 @@ function renderBlock() {
     const timerDisplay = document.getElementById('timer-display');
     const mainBtn = document.getElementById('main-btn');
 
+    // Actualizar UI
     updateMusic(mission.level, mission.category);
     document.getElementById('level-display').innerText = `Lv. ${mission.level}`;
     
@@ -139,6 +138,7 @@ function renderBlock() {
     const oldQuiz = document.getElementById('quiz-options');
     if (oldQuiz) oldQuiz.remove();
 
+    // Lógica por tipo de bloque
     if (block.type === 'quiz') {
         renderQuiz(block);
     } else if (block.type === 'breathing') {
@@ -182,7 +182,7 @@ function renderQuiz(block) {
         btn.className = "secondary";
         btn.onclick = () => {
             if (idx === block.correct) {
-                const winMsg = currentLang === 'en' ? "Correct." : "Correcto.";
+                const winMsg = currentLang === 'en' ? "Correct. Next step." : "Correcto. Siguiente paso.";
                 speak(winMsg, () => {
                     quizDiv.remove();
                     mainBtn.style.display = 'block';
@@ -216,7 +216,7 @@ function startCountdown(seconds) {
             document.getElementById('breath-circle').classList.remove('breathing-anim');
             mainBtn.disabled = false;
             mainBtn.innerText = currentLang === 'en' ? 'CONTINUE' : 'CONTINUAR';
-            speak(currentLang === 'en' ? "Complete." : "Completado.");
+            speak(currentLang === 'en' ? "Complete. Let's move on." : "Completado. Continuemos.");
         }
     }, 1000);
 }
@@ -224,8 +224,10 @@ function startCountdown(seconds) {
 function applyPunishment() {
     const mainBtn = document.getElementById('main-btn');
     mainBtn.disabled = true;
+    mainBtn.innerText = currentLang === 'en' ? "WAIT..." : "ESPERA...";
     setTimeout(() => { 
         mainBtn.disabled = false;
+        mainBtn.innerText = currentLang === 'en' ? "CONTINUE" : "CONTINUAR";
     }, 4000);
 }
 
@@ -239,7 +241,7 @@ function nextStep() {
     }
     
     if (currentMissionIndex >= missions.length) {
-        speak(currentLang === 'en' ? "You reached the sky." : "Has llegado al cielo.");
+        speak(currentLang === 'en' ? "You have reached the sky." : "Has alcanzado el cielo.");
         currentMissionIndex = 0;
         currentBlockIndex = 0;
     }
