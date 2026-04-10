@@ -428,10 +428,10 @@
       "level": 2,
       "category": "Social Intelligence & Stealth",
       "blocks": [
-        { "type": "strategy", "text": { "en": "The Law of the Ghost: Presence is felt more in absence. Speak little, do much.", "es": "La Ley del Fantasma: La presencia se siente más en la ausencia. Habla poco, haz mucho." }, "color": "#1e293b" },
-        { "type": "story", "text": { "en": "A strategist won a war without a single soldier. He simply sat at the city gate playing a flute. The enemy, fearing a trap in his calm, retreated. Silence is your best armor.", "es": "Un estratega ganó una guerra sin un solo soldado. Se sentó a la puerta de la ciudad a tocar la flauta. El enemigo, temiendo una trampa en su calma, se retiró. El silencio es tu mejor armadura." } },
-        { "type": "breathing", "text": { "en": "SILENCE RETO 1: Meditate on your social circle. Who drains you? Who fuels you?", "es": "RETO DE SILENCIO 1: Medita en tu círculo social. ¿Quién te drena? ¿Quién te impulsa?" }, "duration": 180 },
-        { "type": "quiz", "question": { "en": "In a high-level meeting, who has more power?", "es": "En una reunión de alto nivel, ¿quién tiene más poder?" }, "options": { "en": ["The one talking most", "The one observing most", "The one standing"], "es": ["El que más habla", "El que más observa", "El que está de pie"] }, "correct": 1, "explanation": { "en": { "correct": "Correct. Observation is data. Data is power.", "wrong": "Incorrect. Talking is often a leak of information." }, "es": { "correct": "Correcto. La observación es información. La información es poder.", "wrong": "Incorrecto. Hablar es a menudo una fuga de información." } } }
+        { "type": "strategy", "text": { "en": "The Law of the Ghost: Presence is felt more in absence.", "es": "La Ley del Fantasma: La presencia se siente más en la ausencia." }, "color": "#1e293b" },
+        { "type": "story", "text": { "en": "A strategist won a war with silence. Silence is your best armor.", "es": "Un estratega ganó una guerra con silencio. El silencio es tu mejor armadura." } },
+        { "type": "breathing", "text": { "en": "SILENCE RETO 1: Meditate on your social circle.", "es": "RETO DE SILENCIO 1: Medita en tu círculo social." }, "duration": 180 },
+        { "type": "quiz", "question": { "en": "Who has more power?", "es": "¿Quién tiene más poder?" }, "options": { "en": ["The talker", "The observer", "The loud"], "es": ["El que habla", "El que observa", "El ruidoso"] }, "correct": 1, "explanation": { "en": { "correct": "Correct.", "wrong": "Incorrect." }, "es": { "correct": "Correcto.", "wrong": "Incorrecto." } } }
       ]
     },
     {
@@ -439,10 +439,8 @@
       "level": 2,
       "category": "Wealth Magnetism",
       "blocks": [
-        { "type": "strategy", "text": { "en": "Money is a shy guest. It only stays where it is respected and focused upon.", "es": "El dinero es un invitado tímido. Solo se queda donde se le respeta y se le presta atención." }, "color": "#166534" },
-        { "type": "story", "text": { "en": "A merchant chased a coin into a dark cave and got lost. Another waited at the entrance with a light; the coins eventually found their way to his chest. Don't chase; attract.", "es": "Un mercader persiguió una moneda en una cueva oscura y se perdió. Otro esperó en la entrada con una luz; las monedas eventualmente llegaron a su arca. No persigas; atrae." } },
-        { "type": "breathing", "text": { "en": "SILENCE RETO 2: Visualize your first million. Not the spending, but the management of it.", "es": "RETO DE SILENCIO 2: Visualiza tu primer millón. No el gasto, sino la gestión del mismo." }, "duration": 300 },
-        { "type": "quiz", "question": { "en": "What is the true purpose of an asset?", "es": "¿Cuál es el verdadero propósito de un activo?" }, "options": { "en": ["To look rich", "To buy freedom", "To show off"], "es": ["Parecer rico", "Comprar libertad", "Presumir"] }, "correct": 1, "explanation": { "en": { "correct": "Correct. Assets buy your time back.", "wrong": "Incorrect. Looking rich is for the insecure; being free is for the Al Cielo level." }, "es": { "correct": "Correcto. Los activos compran tu tiempo de vuelta.", "wrong": "Incorrecto. Parecer rico es para inseguros; ser libre es para el nivel Al Cielo." } } }
+        { "type": "strategy", "text": { "es": "El dinero es un invitado tímido. Solo se queda donde se le respeta.", "en": "Money is a shy guest. It only stays where it is respected." }, "color": "#166534" },
+        { "type": "breathing", "text": { "es": "RETO DE SILENCIO 2: Visualiza tu gestión del primer millón.", "en": "SILENCE RETO 2: Visualize your management of the first million." }, "duration": 300 }
       ]
     },
     {
@@ -450,9 +448,8 @@
       "level": 2,
       "category": "Emotional Fortress",
       "blocks": [
-        { "type": "strategy", "text": { "en": "He who angers you, conquers you. Master your reaction, master the world.", "es": "Quien te enfada, te conquista. Domina tu reacción, domina el mundo." }, "color": "#7f1d1d" },
-        { "type": "story", "text": { "en": "The ocean doesn't care about the storm on the surface. Deep down, it is always still. Be the depth, not the surface.", "es": "Al océano no le importa la tormenta en la superficie. En el fondo, siempre está quieto. Sé la profundidad, no la superficie." } },
-        { "type": "breathing", "text": { "en": "SILENCE RETO 3: Find the source of your last anger. Dissolve it in the void.", "es": "RETO DE SILENCIO 3: Busca la fuente de tu último enojo. Disuélvela en el vacío." }, "duration": 420 }
+        { "type": "strategy", "text": { "es": "Quien te enfada, te conquista. Domina tu reacción.", "en": "He who angers you, conquers you. Master your reaction." }, "color": "#7f1d1d" },
+        { "type": "breathing", "text": { "es": "RETO DE SILENCIO 3: Disuelve tu último enojo en el vacío.", "en": "SILENCE RETO 3: Dissolve your last anger in the void." }, "duration": 420 }
       ]
     },
     {
@@ -460,9 +457,8 @@
       "level": 2,
       "category": "Astuteness & Negotiation",
       "blocks": [
-        { "type": "strategy", "text": { "en": "The best deal is the one where they think they won, but you got exactly what you wanted.", "es": "El mejor trato es aquel donde ellos creen que ganaron, pero tú obtuviste exactamente lo que querías." }, "color": "#4338ca" },
-        { "type": "story", "text": { "en": "A fox offered to divide a piece of cheese for two bears. He kept nibbling each side to 'even it out' until he ate it all. Negotiation requires a sharp mind, not just a loud voice.", "es": "Un zorro ofreció dividir un queso para dos osos. Mordisqueó cada lado para 'equilibrarlo' hasta que se lo comió todo. Negociar requiere mente aguda, no voz alta." } },
-        { "type": "breathing", "text": { "en": "SILENCE RETO 4: Replay your last negotiation. Where did you speak when you should have been silent?", "es": "RETO DE SILENCIO 4: Repasa tu última negociación. ¿Dónde hablaste cuando debiste callar?" }, "duration": 540 }
+        { "type": "strategy", "text": { "es": "El mejor trato es donde ellos creen que ganaron.", "en": "The best deal is where they think they won." }, "color": "#4338ca" },
+        { "type": "breathing", "text": { "es": "RETO DE SILENCIO 4: Repasa dónde debiste callar en tu última venta.", "en": "SILENCE RETO 4: Replay where you should have been silent." }, "duration": 540 }
       ]
     },
     {
@@ -470,9 +466,8 @@
       "level": 2,
       "category": "The Art of Love & Power",
       "blocks": [
-        { "type": "strategy", "text": { "en": "Love is the ultimate fuel, but obsession is a cage. Love with power, not from need.", "es": "El amor es el combustible supremo, pero la obsesión es una jaula. Ama con poder, no por necesidad." }, "color": "#be123c" },
-        { "type": "story", "text": { "en": "The sun loves the moon so much he dies every night to let her breathe. True power is knowing when to shine and when to yield.", "es": "El sol ama tanto a la luna que muere cada noche para dejarla respirar. El verdadero poder es saber cuándo brillar y cuándo ceder." } },
-        { "type": "breathing", "text": { "en": "SILENCE RETO 5: Meditate on your relationships. Do they build your empire or burn it?", "es": "RETO DE SILENCIO 5: Medita en tus relaciones. ¿Construyen tu imperio o lo incendian?" }, "duration": 660 }
+        { "type": "strategy", "text": { "es": "Ama con poder, no por necesidad.", "en": "Love with power, not from need." }, "color": "#be123c" },
+        { "type": "breathing", "text": { "es": "RETO DE SILENCIO 5: ¿Tus relaciones construyen tu imperio?", "en": "SILENCE RETO 5: Do your relationships build your empire?" }, "duration": 660 }
       ]
     },
     {
@@ -480,9 +475,8 @@
       "level": 2,
       "category": "Joy as a Weapon",
       "blocks": [
-        { "type": "strategy", "text": { "en": "A happy warrior is invincible. Joy confuses the enemy and heals the self.", "es": "Un guerrero feliz es invencible. La alegría confunde al enemigo y sana al yo." }, "color": "#ca8a04" },
-        { "type": "story", "text": { "en": "In the middle of a siege, the general threw a feast with music. The attackers fled, thinking he had infinite resources. Your joy is a sign of abundance.", "es": "En medio de un asedio, el general dio un banquete con música. Los atacantes huyeron pensando que él tenía recursos infinitos. Tu alegría es signo de abundancia." } },
-        { "type": "breathing", "text": { "en": "SILENCE RETO 6: Recall a moment of pure laughter. Fill your cells with that frequency.", "es": "RETO DE SILENCIO 6: Recuerda un momento de risa pura. Llena tus células con esa frecuencia." }, "duration": 780 }
+        { "type": "strategy", "text": { "es": "Un guerrero feliz es invencible.", "en": "A happy warrior is invincible." }, "color": "#ca8a04" },
+        { "type": "breathing", "text": { "es": "RETO DE SILENCIO 6: Llena tus células con frecuencia de risa.", "en": "SILENCE RETO 6: Fill your cells with laughter frequency." }, "duration": 780 }
       ]
     },
     {
@@ -490,9 +484,8 @@
       "level": 2,
       "category": "Strategic Happiness",
       "blocks": [
-        { "type": "strategy", "text": { "en": "Happiness is not a destination; it's the state of a mind that has no internal conflicts.", "es": "La felicidad no es un destino; es el estado de una mente que no tiene conflictos internos." }, "color": "#0891b2" },
-        { "type": "story", "text": { "en": "The bird doesn't trust the branch, but its own wings. Be happy because of your strength, not your circumstances.", "es": "El pájaro no confía en la rama, sino en sus propias alas. Sé feliz por tu fortaleza, no por tus circunstancias." } },
-        { "type": "breathing", "text": { "en": "SILENCE RETO 7: Find the conflict within. Resolve it in the silence.", "es": "RETO DE SILENCIO 7: Busca el conflicto interno. Resuélvelo en el silencio." }, "duration": 900 }
+        { "type": "strategy", "text": { "es": "La felicidad es una mente sin conflictos internos.", "en": "Happiness is a mind with no internal conflicts." }, "color": "#0891b2" },
+        { "type": "breathing", "text": { "es": "RETO DE SILENCIO 7: Resuelve el conflicto interno en el vacío.", "en": "SILENCE RETO 7: Resolve internal conflict in the void." }, "duration": 900 }
       ]
     },
     {
@@ -500,9 +493,8 @@
       "level": 2,
       "category": "Quantum Fun & Creativity",
       "blocks": [
-        { "type": "strategy", "text": { "en": "Play is the highest form of research. If you stop having fun, you stop growing.", "es": "Jugar es la forma más alta de investigación. Si dejas de divertirte, dejas de crecer." }, "color": "#db2777" },
-        { "type": "story", "text": { "en": "An inventor failed 1000 times. He said: 'I didn't fail; I discovered 1000 ways how not to do it'. He was having fun with the puzzle.", "es": "Un inventor falló 1000 veces. Dijo: 'No fallé; descubrí 1000 formas de cómo no hacerlo'. Se estaba divirtiendo con el acertijo." } },
-        { "type": "breathing", "text": { "en": "SILENCE RETO 8: Imagine a solution to your biggest problem that feels like a game.", "es": "RETO DE SILENCIO 8: Imagina una solución a tu gran problema que se sienta como un juego." }, "duration": 1020 }
+        { "type": "strategy", "text": { "es": "Jugar es la forma más alta de investigación.", "en": "Play is the highest form of research." }, "color": "#db2777" },
+        { "type": "breathing", "text": { "es": "RETO DE SILENCIO 8: Imagina la solución como un juego.", "en": "SILENCE RETO 8: Imagine the solution as a game." }, "duration": 1020 }
       ]
     },
     {
@@ -510,9 +502,8 @@
       "level": 2,
       "category": "The Alchemist's Wellbeing",
       "blocks": [
-        { "type": "strategy", "text": { "en": "Your body is a temple, but also a laboratory. Treat it with the precision of a scientist.", "es": "Tu cuerpo es un templo, pero también un laboratorio. Trátalo con la precisión de un científico." }, "color": "#059669" },
-        { "type": "story", "text": { "en": "The alchemist didn't look for the elixir outside. He purified his own blood through breath and thought. You are the gold.", "es": "El alquimista no buscó el elixir fuera. Purificó su propia sangre a través del aliento y el pensamiento. Tú eres el oro." } },
-        { "type": "breathing", "text": { "en": "SILENCE RETO 9: Feel every organ in your body. Send them gratitude and order.", "es": "RETO DE SILENCIO 9: Siente cada órgano. Enviales gratitud y orden." }, "duration": 1140 }
+        { "type": "strategy", "text": { "es": "Tu cuerpo es un laboratorio. Tú eres el oro.", "en": "Your body is a laboratory. You are the gold." }, "color": "#059669" },
+        { "type": "breathing", "text": { "es": "RETO DE SILENCIO 9: Envía gratitud y orden a tus órganos.", "en": "SILENCE RETO 9: Send gratitude and order to your organs." }, "duration": 1140 }
       ]
     },
     {
@@ -520,19 +511,18 @@
       "level": 2,
       "category": "Total Conquest",
       "blocks": [
-        { "type": "strategy", "text": { "en": "The final battle is always against yourself. Conquer your mind, and the world bows.", "es": "La batalla final siempre es contra ti mismo. Conquista tu mente y el mundo se inclinará." }, "color": "#000000" },
-        { "type": "story", "text": { "en": "The mountain doesn't ask for respect; it is just there. Be so solid that your existence is your victory.", "es": "La montaña no pide respeto; simplemente está ahí. Sé tan sólido que tu existencia sea tu victoria." } },
-        { "type": "breathing", "text": { "en": "SILENCE RETO 10: 20 Minutes of Pure Void. No thoughts, only Being.", "es": "RETO DE SILENCIO 10: 20 Minutos de Vacío Puro. Sin pensamientos, solo Ser." }, "duration": 1200 },
-        { "type": "reward", "points": 1000, "text": { "en": "LEVEL 2 COMPLETE. You have mastered the 20-minute void.", "es": "NIVEL 2 COMPLETADO. Has dominado el vacío de 20 minutos." } }
+        { "type": "strategy", "text": { "es": "Conquista tu mente y el mundo se inclinará.", "en": "Conquer your mind and the world bows." }, "color": "#000000" },
+        { "type": "breathing", "text": { "es": "RETO DE SILENCIO 10: 20 Minutos de Vacío Puro.", "en": "SILENCE RETO 10: 20 Minutes of Pure Void." }, "duration": 1200 },
+        { "type": "reward", "points": 1000, "text": { "es": "NIVEL 2 COMPLETADO.", "en": "LEVEL 2 COMPLETE." } }
       ]
     },
     {
       "id": 31,
       "level": 3,
-      "category": "High-Stakes Power Play",
+      "category": "High-Stakes Power",
       "blocks": [
-        { "type": "strategy", "text": { "es": "El poder no se pide, se toma. La autoridad emana de quien no necesita permiso para existir.", "en": "Power is not given, it is taken. Authority flows from those who need no permission to exist." }, "color": "#450a0a" },
-        { "type": "breathing", "text": { "es": "RETO DE SILENCIO 11: Medita en tu imperio. Si hoy desaparecieras, ¿qué quedaría construido?", "en": "SILENCE RETO 11: Meditate on your empire. If you vanished today, what would remain built?" }, "duration": 1260 }
+        { "type": "strategy", "text": { "es": "El poder no se pide, se toma.", "en": "Power is taken." }, "color": "#450a0a" },
+        { "type": "breathing", "text": { "es": "RETO DE SILENCIO 11: Medita en tu legado.", "en": "SILENCE RETO 11: Meditate on your legacy." }, "duration": 1260 }
       ]
     },
     {
@@ -540,8 +530,8 @@
       "level": 3,
       "category": "Financial Alchemy",
       "blocks": [
-        { "type": "strategy", "text": { "es": "No trabajes por dinero; haz que el sistema trabaje para tu linaje. La riqueza es transgeneracional.", "en": "Don't work for money; make the system work for your lineage. Wealth is transgenerational." }, "color": "#064e3b" },
-        { "type": "breathing", "text": { "es": "RETO DE SILENCIO 12: Visualiza el flujo de capital moviéndose hacia ti sin esfuerzo físico.", "en": "SILENCE RETO 12: Visualize capital flow moving toward you without physical effort." }, "duration": 1320 }
+        { "type": "strategy", "text": { "es": "La riqueza es transgeneracional.", "en": "Wealth is transgenerational." }, "color": "#064e3b" },
+        { "type": "breathing", "text": { "es": "RETO DE SILENCIO 12: Flujo de capital sin esfuerzo.", "en": "SILENCE RETO 12: Effortless capital flow." }, "duration": 1320 }
       ]
     },
     {
@@ -549,53 +539,53 @@
       "level": 3,
       "category": "The Master of Chaos",
       "blocks": [
-        { "type": "story", "text": { "es": "En la tormenta, el roble se rompe mientras el bambú se dobla. Pero el Alquimista no es ninguno; él es el viento que usa la tormenta para viajar más rápido.", "en": "In the storm, the oak breaks while the bamboo bends. But the Alchemist is neither; he is the wind using the storm to travel faster." } },
-        { "type": "breathing", "text": { "es": "RETO DE SILENCIO 13: Encuentra el orden dentro del caos actual de tu vida.", "en": "SILENCE RETO 13: Find order within the current chaos of your life." }, "duration": 1380 }
+        { "type": "strategy", "text": { "es": "Sé el viento que usa la tormenta.", "en": "Be the wind using the storm." }, "color": "#000000" },
+        { "type": "breathing", "text": { "es": "RETO DE SILENCIO 13: Orden en el caos.", "en": "SILENCE RETO 13: Order in chaos." }, "duration": 1380 }
       ]
     },
     {
       "id": 34,
       "level": 3,
-      "category": "Absolute Emotional Autonomy",
+      "category": "Absolute Autonomy",
       "blocks": [
-        { "type": "strategy", "text": { "es": "Tu paz es el activo más caro del mercado. No permitas que nadie la compre con drama barato.", "en": "Your peace is the most expensive asset on the market. Don't let anyone buy it with cheap drama." }, "color": "#1e3a8a" },
-        { "type": "breathing", "text": { "es": "RETO DE SILENCIO 14: Corta los lazos emocionales que te mantienen anclado al suelo.", "en": "SILENCE RETO 14: Cut the emotional ties that keep you anchored to the ground." }, "duration": 1440 }
+        { "type": "strategy", "text": { "es": "Tu paz es el activo más caro.", "en": "Your peace is the most expensive asset." }, "color": "#1e3a8a" },
+        { "type": "breathing", "text": { "es": "RETO DE SILENCIO 14: Corta lazos que te anclan.", "en": "SILENCE RETO 14: Cut ties that anchor you." }, "duration": 1440 }
       ]
     },
     {
       "id": 35,
       "level": 3,
-      "category": "Influence & Social Engineering",
+      "category": "Influence",
       "blocks": [
-        { "type": "story", "text": { "es": "Un rey no grita. Un rey susurra y el mundo se detiene para escuchar. El volumen es inversamente proporcional a la autoridad.", "en": "A king does not shout. A king whispers and the world stops to listen. Volume is inversely proportional to authority." } },
-        { "type": "breathing", "text": { "es": "RETO DE SILENCIO 15: Practica la presencia total. No hables, solo observa la energía de otros.", "en": "SILENCE RETO 15: Practice total presence. Do not speak, only observe others' energy." }, "duration": 1500 }
+        { "type": "strategy", "text": { "es": "Un rey susurra y el mundo se detiene.", "en": "A king whispers and the world stops." }, "color": "#000000" },
+        { "type": "breathing", "text": { "es": "RETO DE SILENCIO 15: Observa la energía ajena.", "en": "SILENCE RETO 15: Observe others' energy." }, "duration": 1500 }
       ]
     },
     {
       "id": 36,
       "level": 3,
-      "category": "Wealth & Love Harmony",
+      "category": "Strategic Love",
       "blocks": [
-        { "type": "strategy", "text": { "es": "La pareja correcta multiplica tu imperio; la incorrecta lo divide. El amor es una decisión estratégica.", "en": "The right partner multiplies your empire; the wrong one divides it. Love is a strategic decision." }, "color": "#9f1239" },
-        { "type": "breathing", "text": { "es": "RETO DE SILENCIO 16: Medita en la lealtad. ¿Quién merece estar en tu mesa en el nivel Al Cielo?", "en": "SILENCE RETO 16: Meditate on loyalty. Who deserves to be at your table at the Al Cielo level?" }, "duration": 1560 }
+        { "type": "strategy", "text": { "es": "La pareja correcta multiplica tu imperio.", "en": "The right partner multiplies your empire." }, "color": "#9f1239" },
+        { "type": "breathing", "text": { "es": "RETO DE SILENCIO 16: Medita en la lealtad.", "en": "SILENCE RETO 16: Meditate on loyalty." }, "duration": 1560 }
       ]
     },
     {
       "id": 37,
       "level": 3,
-      "category": "Biological Transcendence",
+      "category": "Transcendence",
       "blocks": [
-        { "type": "strategy", "text": { "es": "Tu mente es el arquitecto; tu cuerpo es el constructor. Si el constructor está cansado, el plano no se realiza.", "en": "Your mind is the architect; your body is the builder. If the builder is tired, the plan isn't realized." }, "color": "#14532d" },
-        { "type": "breathing", "text": { "es": "RETO DE SILENCIO 17: Escucha los latidos de tu corazón. Sincroniza tu voluntad con tu biología.", "en": "SILENCE RETO 17: Listen to your heartbeat. Synchronize your will with your biology." }, "duration": 1620 }
+        { "type": "strategy", "text": { "es": "Mente arquitecto, cuerpo constructor.", "en": "Mind architect, body builder." }, "color": "#14532d" },
+        { "type": "breathing", "text": { "es": "RETO DE SILENCIO 17: Sincroniza voluntad y biología.", "en": "SILENCE RETO 17: Sync will and biology." }, "duration": 1620 }
       ]
     },
     {
       "id": 38,
       "level": 3,
-      "category": "The Joy of Victory",
+      "category": "Joy of Victory",
       "blocks": [
-        { "type": "story", "text": { "es": "El triunfo sin risa es una victoria vacía. Diviértete en la batalla, pues el juego es eterno.", "en": "Triumph without laughter is a hollow victory. Have fun in the battle, for the game is eternal." } },
-        { "type": "breathing", "text": { "es": "RETO DE SILENCIO 18: Sonríe en el silencio. Siente la victoria antes de que ocurra.", "en": "SILENCE RETO 18: Smile in the silence. Feel the victory before it happens." }, "duration": 1680 }
+        { "type": "strategy", "text": { "es": "Diviértete en la batalla.", "en": "Have fun in the battle." }, "color": "#000000" },
+        { "type": "breathing", "text": { "es": "RETO DE SILENCIO 18: Sonríe en el silencio.", "en": "SILENCE RETO 18: Smile in silence." }, "duration": 1680 }
       ]
     },
     {
@@ -603,17 +593,17 @@
       "level": 3,
       "category": "Grand Strategy",
       "blocks": [
-        { "type": "strategy", "text": { "es": "Anticípate 10 pasos. Mientras otros juegan ajedrez, tú estás diseñando el tablero.", "en": "Anticipate 10 steps ahead. While others play chess, you are designing the board." }, "color": "#000000" },
-        { "type": "breathing", "text": { "es": "RETO DE SILENCIO 19: Diseña tu siguiente gran movimiento en el vacío total.", "en": "SILENCE RETO 19: Design your next big move in the total void." }, "duration": 1740 }
+        { "type": "strategy", "text": { "es": "Anticípate 10 pasos.", "en": "Anticipate 10 steps." }, "color": "#000000" },
+        { "type": "breathing", "text": { "es": "RETO DE SILENCIO 19: Diseña tu gran movimiento.", "en": "SILENCE RETO 19: Design your big move." }, "duration": 1740 }
       ]
     },
     {
       "id": 40,
       "level": 3,
-      "category": "Sovereign Enlightenment",
+      "category": "Enlightenment",
       "blocks": [
-        { "type": "strategy", "text": { "es": "Has llegado al final del silencio. Ahora, tú eres la voz que dicta la realidad.", "en": "You have reached the end of silence. Now, you are the voice that dictates reality." }, "color": "#000000" },
-        { "type": "breathing", "text": { "es": "RETO FINAL: 30 Minutos de Silencio Absoluto. Bienvenido a la cima.", "en": "FINAL RETO: 30 Minutes of Absolute Silence. Welcome to the summit." }, "duration": 1800 },
+        { "type": "strategy", "text": { "es": "Tú eres la voz que dicta la realidad.", "en": "You are the voice that dictates reality." }, "color": "#000000" },
+        { "type": "breathing", "text": { "es": "RETO FINAL: 30 Minutos de Silencio Absoluto.", "en": "FINAL RETO: 30 Minutes of Absolute Silence." }, "duration": 1800 },
         { "type": "reward", "points": 5000, "text": { "es": "MAESTRÍA SUPREMA LOGRADA. ERES AL CIELO.", "en": "SUPREME MASTERY ACHIEVED. YOU ARE AL CIELO." } }
       ]
     }
