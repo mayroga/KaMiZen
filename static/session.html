@@ -1,159 +1,261 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-    <title>KaMiZen</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>KaMiZen - Al Cielo</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        :root {
+            --bg-blur: rgba(0, 0, 0, 0.4);
+            --accent-blue: #0ea5e9;
+            --text-main: #ffffff;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
         
         body {
             background: #000;
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            color: var(--text-main);
             height: 100vh;
             width: 100vw;
             overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-size: cover;
             background-position: center;
-            background-repeat: no-repeat;
-            background-size: 110%;
-            /* Transición suave para evitar parpadeo negro */
-            transition: background-image 3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: background-image 2s ease-in-out;
         }
 
-        .zoom-active {
-            animation: infiniteZoom 25s ease-in-out infinite alternate;
-        }
-
-        @keyframes infiniteZoom {
-            from { background-size: 110%; }
-            to { background-size: 155%; }
-        }
-
-        #app {
-            width: 92%;
-            max-width: 400px;
-            /* Panel ultra transparente */
-            background: rgba(0, 0, 0, 0.25);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 35px;
-            padding: 30px 20px;
+        #app-container {
+            width: 90%;
+            max-width: 420px;
+            background: var(--bg-blur);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 32px;
+            padding: 40px 24px;
             text-align: center;
-            z-index: 10;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
-            min-height: 70vh;
+            gap: 20px;
         }
 
-        #logo {
-            font-size: 32px;
+        .header {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            opacity: 0.6;
             font-weight: 600;
-            background: linear-gradient(135deg, #ffffff, #60a5fa);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: -1.5px;
-            margin-bottom: 10px;
         }
 
-        #mental-panel {
-            display: flex; justify-content: space-around;
-            font-size: 12px; text-transform: uppercase; letter-spacing: 1px;
-            color: rgba(255,255,255,0.6); margin-bottom: 20px;
+        #content-area {
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
-        #text-content {
-            font-size: 19px; font-weight: 300; line-height: 1.4;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
-        }
+        h1 { font-size: 24px; font-weight: 600; margin-bottom: 12px; line-height: 1.2; }
+        p { font-size: 18px; font-weight: 300; opacity: 0.9; line-height: 1.6; }
 
-        #breath-circle {
-            width: 100px; height: 100px;
-            border-radius: 50%;
-            border: 2px solid #60a5fa;
-            background: rgba(96, 165, 250, 0.1);
+        /* Círculo de Respiración Neuro-Sincronizado */
+        #breath-indicator {
+            width: 120px;
+            height: 120px;
             margin: 20px auto;
+            border-radius: 50%;
+            border: 2px solid var(--accent-blue);
             display: none;
-            justify-content: center; align-items: center;
+            align-items: center;
+            justify-content: center;
             position: relative;
         }
 
-        .breathing-anim {
-            animation: breathe 4s ease-in-out infinite;
+        .breathing-animation {
+            animation: breathe 4s infinite ease-in-out;
         }
 
         @keyframes breathe {
-            0%, 100% { transform: scale(0.9); box-shadow: 0 0 10px rgba(96,165,250,0.2); }
-            50% { transform: scale(1.25); box-shadow: 0 0 40px rgba(96,165,250,0.6); }
+            0%, 100% { transform: scale(0.8); opacity: 0.3; background: rgba(14, 165, 233, 0); }
+            50% { transform: scale(1.2); opacity: 1; background: rgba(14, 165, 233, 0.2); }
         }
 
-        #timer-display {
-            font-size: 45px; font-weight: 600; color: #60a5fa;
+        /* Controles de Interacción */
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 20px;
         }
 
         button {
-            padding: 16px; border: none; border-radius: 20px;
-            cursor: pointer; background: #2563eb; color: white;
-            font-weight: 600; font-size: 16px; width: 100%;
-            transition: 0.3s;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 16px;
+            border-radius: 16px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
         }
 
-        button:disabled { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.3); }
+        button:active { transform: scale(0.98); background: rgba(255, 255, 255, 0.2); }
+        
+        .btn-primary { background: var(--accent-blue); border: none; font-weight: 600; }
 
-        .secondary { background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.2); margin-top: 10px; }
-
-        #warning-modal {
-            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9);
-            z-index: 1000; justify-content: center; align-items: center; padding: 20px;
-        }
-
-        /* Responsive Fixes */
-        @media (max-height: 700px) {
-            #app { padding: 20px; min-height: 85vh; }
-            #logo { font-size: 26px; }
-            #text-content { font-size: 17px; }
-        }
+        /* Utilidades */
+        .hidden { display: none !important; }
+        #timer { font-family: monospace; font-size: 14px; opacity: 0.5; }
     </style>
 </head>
-<body class="zoom-active">
-    <audio id="bg-music" loop></audio>
-    
-    <div id="warning-modal">
-        <div style="text-align: center;">
-            <h2 style="color:#ef4444; margin-bottom:15px;">INACTIVITY</h2>
-            <button onclick="resetInactivity()">I AM AWAKE</button>
-        </div>
-    </div>
+<body>
 
-    <div id="app">
-        <button id="lang-btn" style="width: auto; position: absolute; top: 15px; right: 15px; padding: 5px 12px; font-size: 12px;">ES</button>
-        <div id="logo">KaMiZen</div>
+    <div id="app-container">
+        <div class="header" id="mission-tag">KaMiZen Architecture</div>
         
-        <div id="mental-panel">
-            <span id="streak">Streak: 0</span>
-            <span id="level-display">Lv. 1</span>
+        <div id="content-area">
+            <h1 id="title">Preparando sistema...</h1>
+            <p id="description">Sincronizando frecuencia de éxito.</p>
         </div>
 
-        <div id="block-container">
-            <div id="text-content">Focus your mind...</div>
-            <div id="breath-circle"><span style="font-size: 10px;">BREATHE</span></div>
-            <div id="timer-display" style="display:none;">00:00</div>
+        <div id="breath-indicator">
+            <span id="timer">00</span>
         </div>
-        
-        <div id="action-area">
-            <button id="main-btn">START</button>
-            <div style="display: flex; gap: 8px; margin-top: 10px;">
-                <button id="back-btn" class="secondary" style="font-size: 11px;">BACK</button>
-                <button id="fwd-btn" class="secondary" style="font-size: 11px;">SKIP</button>
+
+        <div id="quiz-options" class="controls hidden">
             </div>
+
+        <div class="controls">
+            <button id="main-action" class="btn-primary" onclick="engine.next()">Comenzar Misión</button>
+            <button id="translate-btn" onclick="engine.toggleLanguage()">Español / English</button>
+            <button id="delete-btn" style="opacity: 0.4; font-size: 12px;" onclick="location.reload()">Borrar Sesión</button>
         </div>
     </div>
 
-    <script src="/static/scripts.js"></script>
+    <audio id="voice-player"></audio>
+    <audio id="bg-music" loop></audio>
+
+    <script>
+        const engine = {
+            lang: 'es',
+            currentMission: 0,
+            currentBlock: 0,
+            missions: [],
+            
+            async init() {
+                const response = await fetch('/api/missions');
+                const data = await response.json();
+                this.missions = data.missions;
+                this.updateUI();
+                this.setupAudio();
+            },
+
+            setupAudio() {
+                const music = document.getElementById('bg-music');
+                // Configuración estricta de volumen: Música siempre al 20%
+                music.volume = 0.2; 
+            },
+
+            updateUI() {
+                const mission = this.missions[this.currentMission];
+                const block = mission.blocks[this.currentBlock];
+                
+                document.getElementById('mission-tag').innerText = mission.category;
+                
+                if (block.type === 'voice' || block.type === 'story' || block.type === 'strategy') {
+                    document.getElementById('title').innerText = mission.category;
+                    document.getElementById('description').innerText = block.text[this.lang];
+                    document.getElementById('breath-indicator').style.display = 'none';
+                    this.playAudio(block.type, mission.level);
+                }
+
+                if (block.type === 'breathing') {
+                    document.getElementById('title').innerText = "Respiración T-VID";
+                    document.getElementById('description').innerText = block.text[this.lang];
+                    const circle = document.getElementById('breath-indicator');
+                    circle.style.display = 'flex';
+                    circle.classList.add('breathing-animation');
+                    this.startTimer(block.duration);
+                }
+
+                if (block.type === 'quiz') {
+                    this.showQuiz(block);
+                }
+            },
+
+            playAudio(type, level) {
+                const music = document.getElementById('bg-music');
+                // Cambia la música según el nivel: Poder, Dopamina, Riqueza
+                const tracks = {
+                    1: 'https://assets.mixkit.co/music/preview/mixkit-tech-house-vibes-130.mp3', // Dopamina/Energía
+                    2: 'https://assets.mixkit.co/music/preview/mixkit-deep-urban-623.mp3',      // Estrategia/Poder
+                    3: 'https://assets.mixkit.co/music/preview/mixkit-complex-772.mp3'       // Maestría/Al Cielo
+                };
+                
+                if (music.src !== tracks[level]) {
+                    music.src = tracks[level];
+                    music.play();
+                }
+            },
+
+            showQuiz(block) {
+                const container = document.getElementById('quiz-options');
+                container.innerHTML = '';
+                container.classList.remove('hidden');
+                document.getElementById('description').innerText = block.question[this.lang];
+
+                block.options[this.lang].forEach((opt, idx) => {
+                    const btn = document.createElement('button');
+                    btn.innerText = opt;
+                    btn.onclick = () => this.checkAnswer(idx, block.correct);
+                    container.appendChild(btn);
+                });
+            },
+
+            checkAnswer(selected, correct) {
+                if (selected === correct) {
+                    alert("Correcto. Elevando frecuencia.");
+                    document.getElementById('quiz-options').classList.add('hidden');
+                    this.next();
+                } else {
+                    alert("Reenfoca. Inténtalo de nuevo.");
+                }
+            },
+
+            startTimer(seconds) {
+                let timeLeft = seconds;
+                const timerDisplay = document.getElementById('timer');
+                const interval = setInterval(() => {
+                    timerDisplay.innerText = timeLeft;
+                    timeLeft--;
+                    if (timeLeft < 0) {
+                        clearInterval(interval);
+                        document.getElementById('breath-indicator').classList.remove('breathing-animation');
+                        this.next();
+                    }
+                }, 1000);
+            },
+
+            next() {
+                this.currentBlock++;
+                if (this.currentBlock >= this.missions[this.currentMission].blocks.length) {
+                    this.currentBlock = 0;
+                    this.currentMission++;
+                }
+                this.updateUI();
+            },
+
+            toggleLanguage() {
+                this.lang = this.lang === 'es' ? 'en' : 'es';
+                this.updateUI();
+            }
+        };
+
+        window.onload = () => engine.init();
+    </script>
 </body>
 </html>
