@@ -9,38 +9,18 @@ let musicPlayer = document.getElementById('bg-music');
 // 80 Imágenes para evitar repetición rápida
 const imageBank = Array.from({length: 80}, (_, i) => `https://picsum.photos/seed/kzen${i}/1600/900`);
 
-// Librería de música categorizada por "vibe"
-const musicLibrary = {
-    dopamine: "https://assets.mixkit.co/music/preview/mixkit-tech-house-vibes-130.mp3",
-    power: "https://assets.mixkit.co/music/preview/mixkit-deep-urban-623.mp3",
-    wealth: "https://assets.mixkit.co/music/preview/mixkit-complex-772.mp3",
-    love: "https://assets.mixkit.co/music/preview/mixkit-serene-view-443.mp3",
-    action: "https://assets.mixkit.co/music/preview/mixkit-glitchy-reverb-764.mp3",
-    zen: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
-};
+const musicTracks = [
+    "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3", 
+    "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3", 
+    "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3"
+];
 
-function updateMusic(level, category = "") {
-    let selectedTrack = musicLibrary.zen; // Default
-    const cat = category.toLowerCase();
-
-    // Lógica de selección por Nivel y "Sabor" de la misión
-    if (level === 1) {
-        selectedTrack = musicLibrary.dopamine;
-    } else if (level === 2) {
-        if (cat.includes('amor') || cat.includes('love')) selectedTrack = musicLibrary.love;
-        else if (cat.includes('poder') || cat.includes('power')) selectedTrack = musicLibrary.power;
-        else if (cat.includes('accion') || cat.includes('action')) selectedTrack = musicLibrary.action;
-        else selectedTrack = musicLibrary.action;
-    } else if (level >= 3) {
-        selectedTrack = musicLibrary.wealth; // Nivel máximo: Riqueza/Al Cielo
-    }
-
-    if (musicPlayer.src !== selectedTrack) {
-        musicPlayer.src = selectedTrack;
-        musicPlayer.volume = 0.2; // Mantenemos la música al 20% para no tapar la voz
-        musicPlayer.play().catch(() => {
-            console.log("Esperando interacción para iniciar música...");
-        });
+function updateMusic(level) {
+    let track = Math.min(level - 1, 2);
+    if (musicPlayer.src !== musicTracks[track]) {
+        musicPlayer.src = musicTracks[track];
+        musicPlayer.volume = 0.2; // MÚSICA BAJITA (20%)
+        musicPlayer.play().catch(() => {});
     }
 }
 
@@ -48,17 +28,8 @@ function speak(text) {
     window.speechSynthesis.cancel();
     const msg = new SpeechSynthesisUtterance(text);
     msg.lang = currentLang === 'en' ? 'en-US' : 'es-ES';
-    
-    // Ducking de audio: Bajamos la música mientras la voz habla
-    musicPlayer.volume = 0.05; 
-    
-    msg.volume = 1.0; 
+    msg.volume = 1.0; // VOZ FUERTE (100%)
     msg.rate = 0.95;
-
-    msg.onend = () => {
-        musicPlayer.volume = 0.2; // Restauramos volumen al terminar la voz
-    };
-
     window.speechSynthesis.speak(msg);
 }
 
@@ -71,6 +42,7 @@ function changeBg() {
     };
 }
 
+// SISTEMA DE CASTIGO POR INTENTAR SALTAR
 function applyPunishment() {
     const text = currentLang === 'en' ? 
         "Discipline is key. 3 seconds of forced meditation for trying to bypass the lesson." : 
@@ -117,9 +89,7 @@ function initApp() {
     };
 
     changeBg();
-    setInterval(changeBg, 12000);
-    
-    // Iniciamos música nivel 1 por defecto
+    setInterval(changeBg, 12000); // Cambio lento cada 12s
     updateMusic(1);
     
     setInterval(() => {
@@ -130,8 +100,6 @@ function initApp() {
 }
 
 function renderBlock() {
-    if (!missions.length) return;
-    
     const mission = missions[currentMissionIndex];
     const block = mission.blocks[currentBlockIndex];
     const textDisplay = document.getElementById('text-content');
@@ -139,9 +107,7 @@ function renderBlock() {
     const mainBtn = document.getElementById('main-btn');
     const circle = document.getElementById('breath-circle');
 
-    // Actualizamos música pasando nivel Y categoría
-    updateMusic(mission.level, mission.category || "");
-    
+    updateMusic(mission.level);
     document.getElementById('level-display').innerText = `Lv. ${mission.level}`;
     
     if (timerInterval) clearInterval(timerInterval);
@@ -204,7 +170,6 @@ function renderQuiz(block) {
         const btn = document.createElement('button');
         btn.innerText = opt;
         btn.className = "secondary";
-        btn.style.marginTop = "8px";
         btn.onclick = () => {
             const isCorrect = idx === block.correct;
             const explanation = isCorrect ? block.explanation[currentLang].correct : block.explanation[currentLang].wrong;
@@ -231,10 +196,7 @@ function nextStep() {
         currentMissionIndex++;
         currentBlockIndex = 0;
     }
-    if (currentMissionIndex >= missions.length) {
-        alert(currentLang === 'en' ? "Mission Accomplished. You are AL CIELO." : "Misión Cumplida. Estás AL CIELO.");
-        currentMissionIndex = 0;
-    }
+    if (currentMissionIndex >= missions.length) currentMissionIndex = 0;
     renderBlock();
 }
 
