@@ -3,58 +3,73 @@
     {
       "id": 1,
       "level": 1,
-      "category": "Neural Breach",
+      "category": "Neural Breach - Survival of Attention",
       "blocks": [
         {
           "type": "voice",
           "text": {
-            "en": "SYSTEM ONLINE. You are not the user. You are the product.",
-            "es": "SISTEMA ONLINE. No eres el usuario. Eres el producto."
+            "en": "SYSTEM ONLINE. You are not the user. You are the environment being tested.",
+            "es": "SISTEMA ONLINE. No eres el usuario. Eres el entorno siendo probado."
+          }
+        },
+        {
+          "type": "strategy",
+          "text": {
+            "en": "Reality test: every distraction is a stolen second of your future identity.",
+            "es": "Prueba de realidad: cada distracción es un segundo robado de tu futuro."
           }
         },
         {
           "type": "breathing",
           "duration": 5,
           "text": {
-            "en": "Stabilize your mind. Breathe.",
-            "es": "Estabiliza tu mente. Respira."
+            "en": "Stabilize neural load. Breath resets impulsive behavior.",
+            "es": "Estabiliza la carga neural. La respiración reinicia impulsos."
           }
         },
         {
           "type": "quiz",
           "question": {
-            "en": "What controls your focus?",
-            "es": "¿Qué controla tu enfoque?"
+            "en": "What truly controls your attention?",
+            "es": "¿Qué controla realmente tu atención?"
           },
           "options": {
-            "en": ["External noise", "Your awareness", "Random thoughts"],
-            "es": ["Ruido externo", "Tu conciencia", "Pensamientos aleatorios"]
+            "en": ["External noise", "Internal discipline", "Random impulses"],
+            "es": ["Ruido externo", "Disciplina interna", "Impulsos aleatorios"]
           },
           "correct": 1
         }
       ]
     },
+
     {
       "id": 2,
-      "level": 2,
-      "category": "Focus Control",
+      "level": 1,
+      "category": "Focus Pressure Simulation",
       "blocks": [
         {
           "type": "voice",
           "text": {
-            "en": "Distractions are not enemies. They are tests.",
-            "es": "Las distracciones no son enemigas. Son pruebas."
+            "en": "Distractions are no longer enemies. They are intelligent tests of resistance.",
+            "es": "Las distracciones ya no son enemigas. Son pruebas inteligentes de resistencia."
+          }
+        },
+        {
+          "type": "strategy",
+          "text": {
+            "en": "Social pressure detected: ignore or respond. Both have consequences.",
+            "es": "Presión social detectada: ignorar o responder. Ambas tienen consecuencias."
           }
         },
         {
           "type": "quiz",
           "question": {
-            "en": "What is a distraction?",
-            "es": "¿Qué es una distracción?"
+            "en": "A distraction appears under pressure. Your best move is:",
+            "es": "Aparece una distracción bajo presión. Tu mejor movimiento es:"
           },
           "options": {
-            "en": ["A failure", "A test", "A punishment"],
-            "es": ["Un fracaso", "Una prueba", "Un castigo"]
+            "en": ["React emotionally", "Observe before acting", "Ignore blindly"],
+            "es": ["Reaccionar emocionalmente", "Observar antes de actuar", "Ignorar sin pensar"]
           },
           "correct": 1
         },
@@ -62,67 +77,82 @@
           "type": "breathing",
           "duration": 6,
           "text": {
-            "en": "Reset your focus through breath.",
-            "es": "Reinicia tu enfoque con la respiración."
+            "en": "Slow reaction improves strategic survival.",
+            "es": "La reacción lenta mejora la supervivencia estratégica."
           }
         }
       ]
     },
+
     {
       "id": 3,
-      "level": 3,
-      "category": "Duality Awareness",
+      "level": 2,
+      "category": "Social Intelligence Layer",
       "blocks": [
         {
           "type": "voice",
           "text": {
-            "en": "Inside you, good and bad coexist.",
-            "es": "Dentro de ti, el bien y el mal coexisten."
+            "en": "Every person is a system. Every system has weaknesses.",
+            "es": "Cada persona es un sistema. Cada sistema tiene debilidades."
+          }
+        },
+        {
+          "type": "strategy",
+          "text": {
+            "en": "Critical scenario: someone criticizes you in public.",
+            "es": "Escenario crítico: alguien te critica en público."
           }
         },
         {
           "type": "quiz",
           "question": {
-            "en": "What defines you?",
-            "es": "¿Qué te define?"
+            "en": "Best response in social pressure:",
+            "es": "Mejor respuesta bajo presión social:"
           },
           "options": {
-            "en": ["Only the good", "Only the bad", "Your balance"],
-            "es": ["Solo lo bueno", "Solo lo malo", "Tu equilibrio"]
+            "en": ["Attack back", "Stay calm and redirect", "Leave instantly"],
+            "es": ["Atacar", "Mantener calma y redirigir", "Irte inmediatamente"]
           },
-          "correct": 2
+          "correct": 1
         },
         {
-          "type": "breathing",
-          "duration": 5,
+          "type": "story",
           "text": {
-            "en": "Balance both sides. Breathe.",
-            "es": "Equilibra ambos lados. Respira."
+            "en": "A silent leader is often more powerful than a loud one.",
+            "es": "Un líder silencioso es más poderoso que uno ruidoso."
           }
         }
       ]
     },
+
     {
       "id": 4,
-      "level": 4,
-      "category": "Emotional Control",
+      "level": 3,
+      "category": "Economic Pressure Reality",
       "blocks": [
         {
           "type": "voice",
           "text": {
-            "en": "Emotion is energy. You decide its direction.",
-            "es": "La emoción es energía. Tú decides su dirección."
+            "en": "Money is delayed energy. Decisions determine your future time.",
+            "es": "El dinero es energía retrasada. Las decisiones determinan tu futuro."
+          }
+        },
+        {
+          "type": "strategy",
+          "text": {
+            "en": "You lose $200 unexpectedly. Choose your reaction path.",
+            "es": "Pierdes $200 inesperadamente. Elige tu reacción."
           }
         },
         {
           "type": "quiz",
           "question": {
-            "en": "What should you do with negative emotion?",
-            "es": "¿Qué debes hacer con la emoción negativa?"
+            "en": "Best mindset after financial loss:",
+            "es": "Mejor mentalidad tras una pérdida económica:"
           },
           "options": {
-            "en": ["Suppress it", "Transform it", "Ignore it"],
-            "es": ["Suprimirla", "Transformarla", "Ignorarla"]
+            "en": ["Panic", "Adaptation", "Denial"],
+            "es": ["Pánico", "Adaptación", "Negación"]
           },
           "correct": 1
         },
@@ -130,76 +160,83 @@
           "type": "breathing",
           "duration": 7,
           "text": {
-            "en": "Transform emotion through breath.",
-            "es": "Transforma la emoción con la respiración."
+            "en": "Financial control begins with emotional control.",
+            "es": "El control financiero comienza con el emocional."
           }
         }
       ]
     },
+
     {
       "id": 5,
-      "level": 5,
-      "category": "Mental Discipline",
+      "level": 4,
+      "category": "Emotional Warfare System",
       "blocks": [
         {
           "type": "voice",
           "text": {
-            "en": "Discipline is doing what is needed, not what is easy.",
-            "es": "La disciplina es hacer lo necesario, no lo fácil."
+            "en": "Emotion is weaponized energy. Learn control or be controlled.",
+            "es": "La emoción es energía armada. Aprende control o serás controlado."
+          }
+        },
+        {
+          "type": "story",
+          "text": {
+            "en": "A man lost love, but gained himself. That was the real victory.",
+            "es": "Un hombre perdió el amor, pero se ganó a sí mismo. Esa fue la verdadera victoria."
           }
         },
         {
           "type": "quiz",
           "question": {
-            "en": "What builds discipline?",
-            "es": "¿Qué construye disciplina?"
+            "en": "Strongest emotional response:",
+            "es": "Respuesta emocional más fuerte:"
           },
           "options": {
-            "en": ["Comfort", "Repetition", "Avoidance"],
-            "es": ["Comodidad", "Repetición", "Evitación"]
+            "en": ["Control", "Repression", "Explosion"],
+            "es": ["Control", "Represión", "Explosión"]
+          },
+          "correct": 0
+        }
+      ]
+    },
+
+    {
+      "id": 6,
+      "level": 5,
+      "category": "Life Master Simulation",
+      "blocks": [
+        {
+          "type": "voice",
+          "text": {
+            "en": "You are now inside the real simulation of human decisions.",
+            "es": "Ahora estás dentro de la simulación real de decisiones humanas."
+          }
+        },
+        {
+          "type": "strategy",
+          "text": {
+            "en": "Final layer unlocked: every choice now affects identity evolution.",
+            "es": "Capa final desbloqueada: cada decisión afecta tu evolución."
+          }
+        },
+        {
+          "type": "quiz",
+          "question": {
+            "en": "Who are you becoming?",
+            "es": "¿En quién te estás convirtiendo?"
+          },
+          "options": {
+            "en": ["Reactive human", "Strategic mind", "Lost identity"],
+            "es": ["Humano reactivo", "Mente estratégica", "Identidad perdida"]
           },
           "correct": 1
         },
         {
-          "type": "breathing",
-          "duration": 6,
+          "type": "story",
           "text": {
-            "en": "Stay present. Stay disciplined.",
-            "es": "Permanece presente. Mantente disciplinado."
-          }
-        }
-      ]
-    },
-    {
-      "id": 6,
-      "level": 6,
-      "category": "Neural Mastery",
-      "blocks": [
-        {
-          "type": "voice",
-          "text": {
-            "en": "You are now aware. Control is yours.",
-            "es": "Ahora eres consciente. El control es tuyo."
-          }
-        },
-        {
-          "type": "quiz",
-          "question": {
-            "en": "Who controls your mind?",
-            "es": "¿Quién controla tu mente?"
-          },
-          "options": {
-            "en": ["Others", "Circumstances", "You"],
-            "es": ["Otros", "Circunstancias", "Tú"]
-          },
-          "correct": 2
-        },
-        {
-          "type": "breathing",
-          "duration": 8,
-          "text": {
-            "en": "Integrate everything. Breathe deeply.",
-            "es": "Integra todo. Respira profundamente."
+            "en": "The final boss is not the system. It is your own unconscious reaction.",
+            "es": "El jefe final no es el sistema. Es tu propia reacción inconsciente."
           }
         }
       ]
