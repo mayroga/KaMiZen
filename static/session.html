@@ -34,7 +34,7 @@
             to { background-size: 135%; }
         }
 
-        /* Contenedor Principal */
+        /* Contenedor Principal (Glassmorphism) */
         #app {
             width: 92%;
             max-width: 400px;
@@ -73,7 +73,7 @@
         }
 
         #streak { color: rgba(255,255,255,0.6); }
-        #level-display { color: #fbbf24; font-weight: 600; text-shadow: 0 0 10px rgba(251,191,36,0.3); }
+        #level-display { color: #fbbf24; font-weight: 600; text-shadow: 0 0 10px rgba(251, 191, 36, 0.3); }
 
         #block-container {
             flex-grow: 1;
@@ -90,6 +90,9 @@
             line-height: 1.5;
             text-shadow: 0 2px 15px rgba(0,0,0,0.8);
             min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         /* Dinámica de Respiración */
@@ -103,20 +106,40 @@
             justify-content: center; 
             align-items: center;
             position: relative;
+            margin: 10px auto;
         }
 
-        .breathing-anim { animation: breathe 4s ease-in-out infinite; }
+        .breathing-anim {
+            animation: breathe 4s ease-in-out infinite;
+        }
 
         @keyframes breathe {
             0%, 100% { transform: scale(0.9); background: rgba(96, 165, 250, 0.05); }
             50% { transform: scale(1.2); background: rgba(96, 165, 250, 0.15); box-shadow: 0 0 40px rgba(96,165,250,0.2); }
         }
 
-        #timer-display { font-size: 42px; font-weight: 600; color: #60a5fa; position: absolute; }
-        #breathe-text { position: absolute; bottom: 25px; font-size: 9px; letter-spacing: 2px; color: rgba(255,255,255,0.5); text-transform: uppercase; }
+        #timer-display {
+            font-size: 42px; 
+            font-weight: 600; 
+            color: #60a5fa;
+            position: absolute;
+            z-index: 5;
+        }
 
-        /* Botones */
-        #action-area { margin-top: 30px; }
+        #breathe-text {
+            position: absolute;
+            bottom: 25px;
+            font-size: 9px;
+            letter-spacing: 2px;
+            color: rgba(255,255,255,0.5);
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        /* Botones y Acciones */
+        #action-area {
+            margin-top: 30px;
+        }
 
         button {
             padding: 18px; 
@@ -133,7 +156,13 @@
         }
 
         button:active { transform: scale(0.97); }
-        button:disabled { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.3); box-shadow: none; }
+
+        button:disabled { 
+            background: rgba(255,255,255,0.1); 
+            color: rgba(255,255,255,0.3);
+            box-shadow: none;
+            cursor: not-allowed;
+        }
 
         .secondary { 
             background: rgba(255, 255, 255, 0.08); 
@@ -143,17 +172,35 @@
         }
 
         #lang-btn {
-            width: auto; position: absolute; top: 20px; right: 20px; padding: 6px 14px; font-size: 11px;
-            background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px;
+            width: auto; 
+            position: absolute; 
+            top: 20px; 
+            right: 20px; 
+            padding: 6px 14px; 
+            font-size: 11px;
+            background: rgba(0,0,0,0.4);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 12px;
+            z-index: 20;
         }
 
-        /* Modal */
+        /* Modal de Inactividad */
         #warning-modal {
-            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9);
-            backdrop-filter: blur(15px); z-index: 1000; justify-content: center; align-items: center;
+            display: none; 
+            position: fixed; 
+            inset: 0; 
+            background: rgba(0,0,0,0.9);
+            backdrop-filter: blur(15px);
+            z-index: 1000; 
+            justify-content: center; 
+            align-items: center; 
+            padding: 20px;
         }
 
-        .modal-content { text-align: center; max-width: 300px; }
+        .modal-content {
+            text-align: center;
+            max-width: 300px;
+        }
     </style>
 </head>
 <body class="zoom-active">
@@ -161,9 +208,9 @@
     
     <div id="warning-modal">
         <div class="modal-content">
-            <h2 style="color:#ef4444; margin-bottom:10px; letter-spacing: 1px;">INACTIVIDAD</h2>
-            <p style="margin-bottom: 25px; font-weight: 300; color: rgba(255,255,255,0.8);">Toca para continuar la asesoría.</p>
-            <button onclick="resetInactivity()">ESTOY AQUÍ</button>
+            <h2 style="color:#ef4444; margin-bottom:10px; letter-spacing: 1px;">INACTIVITY</h2>
+            <p style="margin-bottom: 25px; font-weight: 300; color: rgba(255,255,255,0.8);">Tap to continue the consultation.</p>
+            <button onclick="resetInactivity()">I AM HERE</button>
         </div>
     </div>
 
@@ -179,19 +226,19 @@
         </div>
 
         <div id="block-container">
-            <div id="text-content">Cargando Sabiduría...</div>
+            <div id="text-content">Loading Wisdom...</div>
             
             <div id="breath-circle">
                 <div id="timer-display" style="display:none;">0</div>
-                <span id="breathe-text">Respira</span>
+                <span id="breathe-text">Breathe</span>
             </div>
         </div>
         
         <div id="action-area">
-            <button id="main-btn">COMENZAR</button>
+            <button id="main-btn">START</button>
             <div style="display: flex; gap: 10px; margin-top: 12px;">
-                <button id="back-btn" class="secondary" style="font-size: 11px;">ATRÁS</button>
-                <button id="fwd-btn" class="secondary" style="font-size: 11px;">SALTAR</button>
+                <button id="back-btn" class="secondary" style="font-size: 11px; letter-spacing: 1px;">BACK</button>
+                <button id="fwd-btn" class="secondary" style="font-size: 11px; letter-spacing: 1px;">SKIP</button>
             </div>
         </div>
     </div>
