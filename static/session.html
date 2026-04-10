@@ -18,20 +18,21 @@
             overflow: hidden;
             background-position: center;
             background-repeat: no-repeat;
+            /* Suavidad en la transición de las 88 imágenes */
             transition: background-image 2s ease-in-out, background-size 10s linear;
         }
 
         #app {
             width: 90%;
-            max-width: 450px;
-            /* Cristal Transparente */
-            background: rgba(15, 23, 42, 0.65);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
+            max-width: 420px;
+            /* Transparencia equilibrada para ver el fondo con zoom */
+            background: rgba(15, 23, 42, 0.7); 
+            backdrop-filter: blur(12px); 
+            -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 30px;
+            border-radius: 28px;
             padding: 40px;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.6);
             text-align: center;
             position: relative;
             z-index: 10;
@@ -58,6 +59,11 @@
             color: #60a5fa;
             cursor: pointer;
             font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        #lang-btn:hover {
+            background: rgba(96, 165, 250, 0.2);
         }
 
         #mental-panel {
@@ -80,7 +86,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
 
         button {
@@ -94,7 +100,8 @@
             width: 100%;
             font-weight: 600;
             font-size: 16px;
-            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            /* Transición suave solicitada */
+            transition: all 0.3s ease; 
         }
 
         button:hover { 
@@ -103,20 +110,33 @@
             background: #3b82f6;
         }
 
-        .secondary { background: rgba(255, 255, 255, 0.1); color: white; }
-        .secondary:hover { background: rgba(255, 255, 255, 0.2); }
+        .secondary { 
+            background: rgba(255, 255, 255, 0.1); 
+            color: white; 
+        }
+        
+        .secondary:hover { 
+            background: rgba(255, 255, 255, 0.2); 
+        }
 
-        #controls-row { display: flex; gap: 12px; width: 100%; }
+        #controls-row { 
+            display: flex; 
+            gap: 15px; 
+            width: 100%; 
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
     <div id="app">
         <button id="lang-btn">ES</button>
         <div id="logo">KaMiZen</div>
+        
         <div id="mental-panel">
             <div id="streak">🔥 Streak: 0</div>
             <div id="level">Level: 1</div>
         </div>
+
         <div id="block">Ready for your session?</div>
         
         <button id="start-btn">Start Session</button>
@@ -126,6 +146,7 @@
             <button id="back-btn" class="secondary">Back</button>
             <button id="forward-btn" class="secondary">Forward</button>
         </div>
+        
         <button id="restart-btn" class="secondary" style="display:none; margin-top: 12px;">Restart</button>
     </div>
     <script src="/static/scripts.js"></script>
