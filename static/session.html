@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>AL CIELO - AURA</title>
+    <title>KaMiZen - AL CIELO</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
         
         body {
-            background: #020617;
+            background: #000;
             color: white;
             display: flex;
             justify-content: center;
@@ -23,124 +23,138 @@
             transition: background-image 2s ease-in-out;
         }
 
-        /* Efecto de Zoom Continuo */
         .zoom-active {
-            animation: infiniteZoom 20s linear infinite alternate;
+            animation: infiniteZoom 15s linear infinite alternate;
         }
 
         @keyframes infiniteZoom {
             from { background-size: 110%; }
-            to { background-size: 150%; }
+            to { background-size: 160%; }
         }
 
         #app {
             width: 90%;
-            max-width: 420px;
-            background: rgba(15, 23, 42, 0.75);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
+            max-width: 450px;
+            background: rgba(2, 6, 23, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 28px;
+            border-radius: 32px;
             padding: 40px;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.8);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.9);
             text-align: center;
             position: relative;
             z-index: 10;
         }
 
         #logo {
-            font-size: 38px;
+            font-size: 42px;
             font-weight: 600;
             background: linear-gradient(90deg, #60a5fa, #a78bfa);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 25px;
-            letter-spacing: -1px;
+            margin-bottom: 20px;
+            letter-spacing: -2px;
         }
 
         #lang-btn {
             position: absolute; top: 25px; right: 25px;
             padding: 6px 14px; border-radius: 10px;
-            border: 1px solid #60a5fa; background: rgba(96, 165, 250, 0.1);
+            border: 1px solid #60a5fa; background: transparent;
             color: #60a5fa; cursor: pointer; font-weight: 600;
         }
 
         #mental-panel {
             background: rgba(255, 255, 255, 0.05);
-            padding: 12px; border-radius: 15px; margin-bottom: 25px;
+            padding: 12px 20px; border-radius: 15px; margin-bottom: 25px;
             display: flex; justify-content: space-between; font-size: 14px;
+            border: 1px solid rgba(255,255,255,0.05);
         }
 
         #block-container {
-            min-height: 240px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 20px;
+            min-height: 280px;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
         }
 
         #text-content {
-            font-size: 20px;
-            font-weight: 300;
-            line-height: 1.6;
-            margin-bottom: 15px;
+            font-size: 22px; font-weight: 300; line-height: 1.5;
+            margin-bottom: 20px; min-height: 80px;
+        }
+
+        /* Círculo Respiratorio */
+        #breath-circle {
+            width: 120px; height: 120px;
+            border-radius: 50%;
+            background: rgba(96, 165, 250, 0.2);
+            border: 4px solid #60a5fa;
+            display: none;
+            justify-content: center; align-items: center;
+            margin: 20px 0;
+            position: relative;
+            box-shadow: 0 0 30px rgba(96, 165, 250, 0.4);
+        }
+
+        .breathing-anim {
+            animation: breathe 5s ease-in-out infinite;
+        }
+
+        @keyframes breathe {
+            0%, 100% { transform: scale(0.8); background: rgba(96, 165, 250, 0.1); }
+            50% { transform: scale(1.3); background: rgba(96, 165, 250, 0.4); }
         }
 
         #timer-display {
-            font-size: 48px;
-            font-weight: 600;
-            color: #60a5fa;
-            text-shadow: 0 0 20px rgba(96, 165, 250, 0.5);
+            font-size: 52px; font-weight: 600; color: #60a5fa;
+            margin: 15px 0; text-shadow: 0 0 15px rgba(96,165,250,0.5);
         }
 
         button {
-            padding: 18px; margin: 8px 0; border: none; border-radius: 16px;
+            padding: 20px; margin: 10px 0; border: none; border-radius: 18px;
             cursor: pointer; background: #2563eb; color: white;
-            width: 100%; font-weight: 600; font-size: 16px;
-            transition: all 0.3s ease;
+            width: 100%; font-weight: 600; font-size: 18px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        button:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(37,99,235,0.4);
-        }
+        button:hover:not(:disabled) { background: #3b82f6; transform: scale(1.02); }
+        button:disabled { background: #1e293b; color: #475569; cursor: not-allowed; }
 
-        button:disabled {
-            background: #1e293b;
-            color: #64748b;
-            cursor: not-allowed;
-        }
-
-        .secondary { background: rgba(255, 255, 255, 0.1); }
+        .secondary { background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255,255,255,0.1); }
 
         #warning-modal {
             display: none; position: fixed; inset: 0;
-            background: rgba(0,0,0,0.95); z-index: 1000;
+            background: rgba(0,0,0,0.98); z-index: 1000;
             justify-content: center; align-items: center; text-align: center;
         }
     </style>
 </head>
 <body class="zoom-active">
+    <audio id="bg-music" loop></audio>
+    
     <div id="warning-modal">
         <div style="padding:40px;">
-            <h2 style="color:#ef4444; font-size: 32px; margin-bottom:20px;">INACTIVITY</h2>
-            <p style="font-size: 18px; margin-bottom:30px;">Tap to maintain your focus.</p>
-            <button onclick="resetInactivity()" style="width: auto; padding: 15px 40px;">CONTINUE</button>
+            <h2 style="color:#ef4444; font-size: 38px; margin-bottom:20px;">INACTIVITY</h2>
+            <p style="font-size: 20px; margin-bottom:30px;">Wake up. Tap to stay Al Cielo.</p>
+            <button onclick="resetInactivity()" style="width: auto; padding: 15px 50px;">I AM HERE</button>
         </div>
     </div>
 
     <div id="app">
         <button id="lang-btn">ES</button>
-        <div id="logo">AURA</div>
+        <div id="logo">KaMiZen</div>
         
         <div id="mental-panel">
             <div id="streak">Streak: 0</div>
-            <div id="level">Level: 1</div>
+            <div id="level-display">Level: 1</div>
         </div>
 
         <div id="block-container">
-            <div id="text-content">Welcome to AL CIELO. Ready to begin?</div>
+            <div id="text-content">The journey begins now. Focus.</div>
+            
+            <div id="breath-circle">
+                <span id="breath-text" style="font-size: 14px; font-weight: 600;">BREATHE</span>
+            </div>
+
             <div id="timer-display" style="display:none;">00:00</div>
         </div>
         
