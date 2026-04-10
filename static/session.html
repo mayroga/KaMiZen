@@ -21,6 +21,7 @@
             background-position: center;
             background-repeat: no-repeat;
             background-size: 110%;
+            /* Transición fluida para el imageBank */
             transition: background-image 3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
@@ -31,18 +32,18 @@
 
         @keyframes infiniteZoom {
             from { background-size: 110%; }
-            to { background-size: 135%; }
+            to { background-size: 155%; }
         }
 
         /* Contenedor Principal (Glassmorphism) */
         #app {
             width: 92%;
             max-width: 400px;
-            background: rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 40px;
+            background: rgba(0, 0, 0, 0.25);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 35px;
             padding: 35px 25px;
             text-align: center;
             z-index: 10;
@@ -50,7 +51,7 @@
             flex-direction: column;
             justify-content: space-between;
             min-height: 75vh;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
         }
 
         #logo {
@@ -69,11 +70,9 @@
             font-size: 12px; 
             text-transform: uppercase; 
             letter-spacing: 1px;
+            color: rgba(255,255,255,0.5); 
             margin-bottom: 25px;
         }
-
-        #streak { color: rgba(255,255,255,0.6); }
-        #level-display { color: #fbbf24; font-weight: 600; text-shadow: 0 0 10px rgba(251, 191, 36, 0.3); }
 
         #block-container {
             flex-grow: 1;
@@ -88,7 +87,7 @@
             font-size: 20px; 
             font-weight: 300; 
             line-height: 1.5;
-            text-shadow: 0 2px 15px rgba(0,0,0,0.8);
+            text-shadow: 0 2px 15px rgba(0,0,0,0.6);
             min-height: 80px;
             display: flex;
             align-items: center;
@@ -100,7 +99,7 @@
             width: 140px; 
             height: 140px;
             border-radius: 50%;
-            border: 2px solid rgba(96, 165, 250, 0.3);
+            border: 1px solid rgba(96, 165, 250, 0.4);
             background: rgba(96, 165, 250, 0.05);
             display: none; 
             justify-content: center; 
@@ -115,7 +114,7 @@
 
         @keyframes breathe {
             0%, 100% { transform: scale(0.9); background: rgba(96, 165, 250, 0.05); }
-            50% { transform: scale(1.2); background: rgba(96, 165, 250, 0.15); box-shadow: 0 0 40px rgba(96,165,250,0.2); }
+            50% { transform: scale(1.2); background: rgba(96, 165, 250, 0.2); box-shadow: 0 0 50px rgba(96,165,250,0.3); }
         }
 
         #timer-display {
@@ -131,7 +130,7 @@
             bottom: 25px;
             font-size: 9px;
             letter-spacing: 2px;
-            color: rgba(255,255,255,0.5);
+            color: rgba(255,255,255,0.6);
             font-weight: 600;
             text-transform: uppercase;
         }
@@ -144,28 +143,28 @@
         button {
             padding: 18px; 
             border: none; 
-            border-radius: 25px;
+            border-radius: 22px;
             cursor: pointer; 
-            background: linear-gradient(135deg, #2563eb, #1d4ed8); 
+            background: #2563eb; 
             color: white;
             font-weight: 600; 
             font-size: 16px; 
             width: 100%;
             transition: all 0.3s ease;
-            box-shadow: 0 10px 20px -5px rgba(37, 99, 235, 0.4);
+            box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3);
         }
 
-        button:active { transform: scale(0.97); }
+        button:active { transform: scale(0.98); }
 
         button:disabled { 
-            background: rgba(255,255,255,0.1); 
-            color: rgba(255,255,255,0.3);
+            background: rgba(255,255,255,0.05); 
+            color: rgba(255,255,255,0.2);
             box-shadow: none;
             cursor: not-allowed;
         }
 
         .secondary { 
-            background: rgba(255, 255, 255, 0.08); 
+            background: rgba(255, 255, 255, 0.05); 
             border: 1px solid rgba(255, 255, 255, 0.1); 
             margin-top: 10px;
             box-shadow: none;
@@ -178,7 +177,7 @@
             right: 20px; 
             padding: 6px 14px; 
             font-size: 11px;
-            background: rgba(0,0,0,0.4);
+            background: rgba(0,0,0,0.3);
             border: 1px solid rgba(255,255,255,0.2);
             border-radius: 12px;
             z-index: 20;
@@ -189,7 +188,7 @@
             display: none; 
             position: fixed; 
             inset: 0; 
-            background: rgba(0,0,0,0.9);
+            background: rgba(0,0,0,0.95);
             backdrop-filter: blur(15px);
             z-index: 1000; 
             justify-content: center; 
@@ -201,6 +200,26 @@
             text-align: center;
             max-width: 300px;
         }
+
+        /* Animación para Quizzes */
+        #quiz-options button {
+            animation: fadeIn 0.5s ease forwards;
+            margin-top: 10px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Ajustes Mobile */
+        @media (max-height: 700px) {
+            #app { padding: 25px 20px; min-height: 90vh; }
+            #logo { font-size: 26px; }
+            #text-content { font-size: 17px; }
+            #breath-circle { width: 110px; height: 110px; }
+            #timer-display { font-size: 32px; }
+        }
     </style>
 </head>
 <body class="zoom-active">
@@ -208,8 +227,8 @@
     
     <div id="warning-modal">
         <div class="modal-content">
-            <h2 style="color:#ef4444; margin-bottom:10px; letter-spacing: 1px;">INACTIVITY</h2>
-            <p style="margin-bottom: 25px; font-weight: 300; color: rgba(255,255,255,0.8);">Tap to continue the consultation.</p>
+            <h2 style="color:#ef4444; margin-bottom:10px; letter-spacing: 2px;">INACTIVITY</h2>
+            <p style="margin-bottom: 25px; font-weight: 300; color: rgba(255,255,255,0.7);">Tap the screen to continue the session.</p>
             <button onclick="resetInactivity()">I AM HERE</button>
         </div>
     </div>
@@ -218,9 +237,9 @@
         <button id="lang-btn">EN</button>
         
         <div id="header-meta">
-            <div id="logo">AL CIELO</div>
+            <div id="logo">KaMiZen</div>
             <div id="mental-panel">
-                <span id="streak">Progreso</span>
+                <span id="streak">Streak: 0</span>
                 <span id="level-display">Lv. 1</span>
             </div>
         </div>
