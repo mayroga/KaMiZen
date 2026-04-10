@@ -5,37 +5,54 @@ import json
 from pathlib import Path
 import os
 
-app = FastAPI(title="AURA - KaMiZen Engine")
+app = FastAPI(title="MaykaMi Neural System")
 
 BASE_DIR = Path(__file__).resolve().parent
 STATIC_DIR = BASE_DIR / "static"
 DB_PATH = STATIC_DIR / "kamizen_content.json"
 
+# Archivos estáticos
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
+# Cargar JSON
 def cargar_db():
     try:
-        if os.path.exists(DB_PATH):
+        if DB_PATH.exists():
             with open(DB_PATH, "r", encoding="utf-8") as f:
-                # Retornamos el JSON tal cual para que el JS lo procese
                 return json.load(f)
         return {"missions": []}
-    except Exception:
+    except Exception as e:
+        print("ERROR DB:", e)
         return {"missions": []}
 
+# APP PRINCIPAL
 @app.get("/", response_class=HTMLResponse)
 async def home():
-    try:
-        session_file = STATIC_DIR / "session.html"
-        return HTMLResponse(content=session_file.read_text(encoding="utf-8"))
-    except Exception:
-        return HTMLResponse("<h1>Error: session.html not found in static/</h1>")
+    file = STATIC_DIR / "session.html"
+    if file.exists():
+        return HTMLResponse(file.read_text(encoding="utf-8"))
+    return HTMLResponse("<h1>ERROR: session.html not found</h1>")
 
-# Mantenemos tu endpoint original
+# JUEGO
+@app.get("/jet", response_class=HTMLResponse)
+async def jet():
+    file = STATIC_DIR / "jet.html"
+    if file.exists():
+        return HTMLResponse(file.read_text(encoding="utf-8"))
+    return HTMLResponse("<h1>ERROR: jet.html not found</h1>")
+
+# CONTENIDO
 @app.get("/session_content")
 async def session_content():
     return JSONResponse(content=cargar_db())
 
+# GUARDAR MÉTRICAS (futuro uso)
+@app.post("/save_stats")
+async def save_stats(data: dict):
+    print("STATS RECIBIDOS:", data)
+    return {"status": "ok"}
+
+# RUN
 if __name__ == "__main__":
     import uvicorn
     port = int(os.environ.get("PORT", 8000))
