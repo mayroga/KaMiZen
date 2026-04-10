@@ -6,17 +6,16 @@ let inactivitySeconds = 0;
 let timerInterval = null;
 const musicPlayer = document.getElementById('bg-music');
 
-// Banco de imágenes naturales (PICSUM con seed para consistencia)
+// Banco de imágenes (Naturales y de Éxito)
 const imageBank = Array.from({length: 80}, (_, i) => `https://picsum.photos/seed/al-cielo-${i}/1600/900`);
 
-// Librería de música optimizada
+// Librería de Música con Enfoque: Dopamina, Dinero, Amor, Poder y Antiestrés
 const musicLibrary = {
-    dopamine: "https://assets.mixkit.co/music/preview/mixkit-tech-house-vibes-130.mp3",
-    power: "https://assets.mixkit.co/music/preview/mixkit-deep-urban-623.mp3",
-    wealth: "https://assets.mixkit.co/music/preview/mixkit-complex-772.mp3",
-    love: "https://assets.mixkit.co/music/preview/mixkit-serene-view-443.mp3",
-    action: "https://assets.mixkit.co/music/preview/mixkit-glitchy-reverb-764.mp3",
-    zen: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+    dopamine: "https://assets.mixkit.co/music/preview/mixkit-sunshine-radio-28.mp3",
+    power: "https://assets.mixkit.co/music/preview/mixkit-driving-ambition-32.mp3",
+    wealth: "https://assets.mixkit.co/music/preview/mixkit-motivating-morning-33.mp3",
+    love: "https://assets.mixkit.co/music/preview/mixkit-beautiful-dream-493.mp3",
+    zen: "https://assets.mixkit.co/music/preview/mixkit-soft-ambient-611.mp3"
 };
 
 function changeBg() {
@@ -30,21 +29,25 @@ function changeBg() {
 
 function updateMusic(level, category = "") {
     let selectedTrack = musicLibrary.zen;
-    const cat = category.toLowerCase();
+    const cat = (category || "").toLowerCase();
 
-    if (level === 1) selectedTrack = musicLibrary.dopamine;
-    else if (level === 2) {
-        if (cat.includes('wealth') || cat.includes('economic')) selectedTrack = musicLibrary.wealth;
-        else if (cat.includes('stability') || cat.includes('love')) selectedTrack = musicLibrary.love;
-        else selectedTrack = musicLibrary.power;
-    } else if (level >= 3) {
-        selectedTrack = musicLibrary.action;
+    // Lógica de asignación por intención
+    if (cat.includes('dinero') || cat.includes('wealth') || cat.includes('money')) {
+        selectedTrack = musicLibrary.wealth;
+    } else if (cat.includes('amor') || cat.includes('love') || cat.includes('paz')) {
+        selectedTrack = musicLibrary.love;
+    } else if (cat.includes('poder') || cat.includes('power') || level >= 3) {
+        selectedTrack = musicLibrary.power;
+    } else if (level === 1 || cat.includes('alegria') || cat.includes('happy')) {
+        selectedTrack = musicLibrary.dopamine;
+    } else {
+        selectedTrack = musicLibrary.zen;
     }
 
     if (musicPlayer.src !== selectedTrack) {
         musicPlayer.src = selectedTrack;
-        musicPlayer.volume = 0.15;
-        musicPlayer.play().catch(() => console.log("Interacción requerida para audio"));
+        musicPlayer.volume = 0.12; // Volumen ambiente (no supera la voz)
+        musicPlayer.play().catch(() => console.log("Interacción requerida"));
     }
 }
 
@@ -52,13 +55,15 @@ function speak(text, callback) {
     window.speechSynthesis.cancel();
     const msg = new SpeechSynthesisUtterance(text);
     msg.lang = currentLang === 'en' ? 'en-US' : 'es-ES';
-    msg.volume = 1.0;
+    msg.volume = 1.0; 
     msg.rate = 0.95;
 
-    // Ducking: Baja el volumen de la música mientras habla
-    musicPlayer.volume = 0.05;
+    // Ducking: Baja la música casi al silencio para que la voz tenga peso
+    musicPlayer.volume = 0.03; 
+    
     msg.onend = () => {
-        musicPlayer.volume = 0.15;
+        // La música vuelve a nivel de fondo agradable
+        musicPlayer.volume = 0.12; 
         if (callback) callback();
     };
     window.speechSynthesis.speak(msg);
@@ -71,7 +76,6 @@ async function loadData() {
         missions = data.missions;
         initApp();
     } catch (e) {
-        console.error("Error cargando misiones");
         document.getElementById('text-content').innerText = "Error: Connection failed";
     }
 }
@@ -79,16 +83,13 @@ async function loadData() {
 function initApp() {
     const mainBtn = document.getElementById('main-btn');
     mainBtn.onclick = () => {
-        if (currentMissionIndex === 0 && currentBlockIndex === 0) {
-            updateMusic(1); // Inicia música al primer clic
-        }
+        if (currentMissionIndex === 0 && currentBlockIndex === 0) updateMusic(1);
         renderBlock();
     };
 
-    // Botones de penalización (Disciplina)
     const setupPunish = (id) => {
         document.getElementById(id).onclick = () => {
-            const msg = currentLang === 'en' ? "Discipline is focus. Stay here." : "La disciplina es enfoque. Quédate aquí.";
+            const msg = currentLang === 'en' ? "Discipline is focus. Stay present." : "La disciplina es enfoque. Mantente presente.";
             speak(msg);
             applyPunishment();
         };
@@ -102,15 +103,12 @@ function initApp() {
         renderBlock();
     };
 
-    // Fondo y Temporizadores
     changeBg();
-    setInterval(changeBg, 12000);
+    setInterval(changeBg, 15000);
 
     setInterval(() => {
         inactivitySeconds++;
-        if (inactivitySeconds === 59) {
-            document.getElementById('warning-modal').style.display = 'flex';
-        }
+        if (inactivitySeconds === 59) document.getElementById('warning-modal').style.display = 'flex';
         if (inactivitySeconds >= 240) location.reload();
     }, 1000);
 }
@@ -125,7 +123,6 @@ function renderBlock() {
     const timerDisplay = document.getElementById('timer-display');
     const mainBtn = document.getElementById('main-btn');
 
-    // Actualizar UI
     updateMusic(mission.level, mission.category);
     document.getElementById('level-display').innerText = `Lv. ${mission.level}`;
     
@@ -138,7 +135,6 @@ function renderBlock() {
     const oldQuiz = document.getElementById('quiz-options');
     if (oldQuiz) oldQuiz.remove();
 
-    // Lógica por tipo de bloque
     if (block.type === 'quiz') {
         renderQuiz(block);
     } else if (block.type === 'breathing') {
@@ -146,15 +142,11 @@ function renderBlock() {
         circle.style.display = 'flex';
         circle.classList.add('breathing-anim');
         mainBtn.disabled = true;
-        speak(block.text[currentLang], () => {
-            startCountdown(block.duration);
-        });
+        speak(block.text[currentLang], () => startCountdown(block.duration));
     } else {
         textDisplay.innerText = block.text[currentLang];
         speak(block.text[currentLang]);
     }
-
-    mainBtn.onclick = () => nextStep();
 }
 
 function renderQuiz(block) {
@@ -163,60 +155,52 @@ function renderQuiz(block) {
     mainBtn.style.display = 'none';
 
     let fullQuizText = block.question[currentLang] + ". ";
-    const options = block.options[currentLang];
-    options.forEach((opt, i) => {
+    block.options[currentLang].forEach((opt, i) => {
         fullQuizText += (currentLang === 'en' ? "Option " : "Opción ") + (i + 1) + ": " + opt + ". ";
     });
 
     textDisplay.innerText = block.question[currentLang];
     speak(fullQuizText);
 
-    const container = document.getElementById('block-container');
     const quizDiv = document.createElement('div');
     quizDiv.id = "quiz-options";
     quizDiv.style.width = "100%";
 
-    options.forEach((opt, idx) => {
+    block.options[currentLang].forEach((opt, idx) => {
         const btn = document.createElement('button');
         btn.innerText = opt;
         btn.className = "secondary";
         btn.onclick = () => {
             if (idx === block.correct) {
-                const winMsg = currentLang === 'en' ? "Correct. Next step." : "Correcto. Siguiente paso.";
-                speak(winMsg, () => {
+                speak(currentLang === 'en' ? "Correct." : "Correcto.", () => {
                     quizDiv.remove();
                     mainBtn.style.display = 'block';
                     nextStep();
                 });
             } else {
-                const failMsg = currentLang === 'en' ? "Focus. Try again." : "Enfócate. Intenta de nuevo.";
-                speak(failMsg);
+                speak(currentLang === 'en' ? "Focus. Try again." : "Enfócate. Intenta de nuevo.");
                 btn.style.borderColor = "#ef4444";
             }
         };
         quizDiv.appendChild(btn);
     });
-    container.appendChild(quizDiv);
+    document.getElementById('block-container').appendChild(quizDiv);
 }
 
 function startCountdown(seconds) {
     let remaining = seconds;
     const timerDisplay = document.getElementById('timer-display');
-    const mainBtn = document.getElementById('main-btn');
-    
     timerDisplay.style.display = 'block';
     timerDisplay.innerText = remaining;
 
     timerInterval = setInterval(() => {
         remaining--;
         timerDisplay.innerText = remaining;
-        
         if (remaining <= 0) {
             clearInterval(timerInterval);
             document.getElementById('breath-circle').classList.remove('breathing-anim');
-            mainBtn.disabled = false;
-            mainBtn.innerText = currentLang === 'en' ? 'CONTINUE' : 'CONTINUAR';
-            speak(currentLang === 'en' ? "Complete. Let's move on." : "Completado. Continuemos.");
+            document.getElementById('main-btn').disabled = false;
+            speak(currentLang === 'en' ? "Complete." : "Completado.");
         }
     }, 1000);
 }
@@ -224,26 +208,18 @@ function startCountdown(seconds) {
 function applyPunishment() {
     const mainBtn = document.getElementById('main-btn');
     mainBtn.disabled = true;
-    mainBtn.innerText = currentLang === 'en' ? "WAIT..." : "ESPERA...";
-    setTimeout(() => { 
-        mainBtn.disabled = false;
-        mainBtn.innerText = currentLang === 'en' ? "CONTINUE" : "CONTINUAR";
-    }, 4000);
+    setTimeout(() => mainBtn.disabled = false, 4000);
 }
 
 function nextStep() {
     currentBlockIndex++;
-    const mission = missions[currentMissionIndex];
-    
-    if (currentBlockIndex >= mission.blocks.length) {
+    if (currentBlockIndex >= missions[currentMissionIndex].blocks.length) {
         currentMissionIndex++;
         currentBlockIndex = 0;
     }
-    
     if (currentMissionIndex >= missions.length) {
-        speak(currentLang === 'en' ? "You have reached the sky." : "Has alcanzado el cielo.");
+        speak(currentLang === 'en' ? "You reached the sky." : "Has llegado al cielo.");
         currentMissionIndex = 0;
-        currentBlockIndex = 0;
     }
     renderBlock();
 }
