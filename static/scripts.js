@@ -6,10 +6,9 @@ let inactivitySeconds = 0;
 let timerInterval = null;
 const musicPlayer = document.getElementById('bg-music');
 
-// Banco de imágenes naturales (PICSUM con seed para consistencia)
-const imageBank = Array.from({length: 80}, (_, i) => `https://picsum.photos/seed/al-cielo-${i}/1600/900`);
+// Aumentamos resolución para que en el teléfono se vea perfecto (Full HD)
+const imageBank = Array.from({length: 80}, (_, i) => `https://picsum.photos/seed/kamizen-${i}/1920/1080`);
 
-// Librería de música optimizada
 const musicLibrary = {
     dopamine: "https://assets.mixkit.co/music/preview/mixkit-tech-house-vibes-130.mp3",
     power: "https://assets.mixkit.co/music/preview/mixkit-deep-urban-623.mp3",
@@ -24,6 +23,7 @@ function changeBg() {
     const img = new Image();
     img.src = url;
     img.onload = () => {
+        // Solo cambiamos el fondo cuando la imagen de alta resolución esté cargada
         document.body.style.backgroundImage = `url('${url}')`;
     };
 }
@@ -44,7 +44,7 @@ function updateMusic(level, category = "") {
     if (musicPlayer.src !== selectedTrack) {
         musicPlayer.src = selectedTrack;
         musicPlayer.volume = 0.15;
-        musicPlayer.play().catch(() => console.log("Interacción requerida para audio"));
+        musicPlayer.play().catch(() => console.log("Audio requiere interacción"));
     }
 }
 
@@ -55,8 +55,7 @@ function speak(text, callback) {
     msg.volume = 1.0;
     msg.rate = 0.95;
 
-    // Ducking: Baja el volumen de la música mientras habla
-    musicPlayer.volume = 0.05;
+    musicPlayer.volume = 0.05; // Ducking
     msg.onend = () => {
         musicPlayer.volume = 0.15;
         if (callback) callback();
@@ -71,7 +70,6 @@ async function loadData() {
         missions = data.missions;
         initApp();
     } catch (e) {
-        console.error("Error cargando misiones");
         document.getElementById('text-content').innerText = "Error: Connection failed";
     }
 }
@@ -80,15 +78,14 @@ function initApp() {
     const mainBtn = document.getElementById('main-btn');
     mainBtn.onclick = () => {
         if (currentMissionIndex === 0 && currentBlockIndex === 0) {
-            updateMusic(1); // Inicia música al primer clic
+            updateMusic(1);
         }
         renderBlock();
     };
 
-    // Botones de penalización (Disciplina)
     const setupPunish = (id) => {
         document.getElementById(id).onclick = () => {
-            const msg = currentLang === 'en' ? "Discipline is focus. Stay here." : "La disciplina es enfoque. Quédate aquí.";
+            const msg = currentLang === 'en' ? "Discipline is focus." : "La disciplina es enfoque.";
             speak(msg);
             applyPunishment();
         };
@@ -102,15 +99,12 @@ function initApp() {
         renderBlock();
     };
 
-    // Fondo y Temporizadores
     changeBg();
-    setInterval(changeBg, 12000);
+    setInterval(changeBg, 15000); // Cambiamos cada 15s para dar calma
 
     setInterval(() => {
         inactivitySeconds++;
-        if (inactivitySeconds === 59) {
-            document.getElementById('warning-modal').style.display = 'flex';
-        }
+        if (inactivitySeconds === 59) document.getElementById('warning-modal').style.display = 'flex';
         if (inactivitySeconds >= 240) location.reload();
     }, 1000);
 }
@@ -125,7 +119,6 @@ function renderBlock() {
     const timerDisplay = document.getElementById('timer-display');
     const mainBtn = document.getElementById('main-btn');
 
-    // Actualizar UI
     updateMusic(mission.level, mission.category);
     document.getElementById('level-display').innerText = `Lv. ${mission.level}`;
     
@@ -138,7 +131,6 @@ function renderBlock() {
     const oldQuiz = document.getElementById('quiz-options');
     if (oldQuiz) oldQuiz.remove();
 
-    // Lógica por tipo de bloque
     if (block.type === 'quiz') {
         renderQuiz(block);
     } else if (block.type === 'breathing') {
@@ -146,9 +138,7 @@ function renderBlock() {
         circle.style.display = 'flex';
         circle.classList.add('breathing-anim');
         mainBtn.disabled = true;
-        speak(block.text[currentLang], () => {
-            startCountdown(block.duration);
-        });
+        speak(block.text[currentLang], () => startCountdown(block.duration));
     } else {
         textDisplay.innerText = block.text[currentLang];
         speak(block.text[currentLang]);
@@ -163,8 +153,7 @@ function renderQuiz(block) {
     mainBtn.style.display = 'none';
 
     let fullQuizText = block.question[currentLang] + ". ";
-    const options = block.options[currentLang];
-    options.forEach((opt, i) => {
+    block.options[currentLang].forEach((opt, i) => {
         fullQuizText += (currentLang === 'en' ? "Option " : "Opción ") + (i + 1) + ": " + opt + ". ";
     });
 
@@ -176,21 +165,19 @@ function renderQuiz(block) {
     quizDiv.id = "quiz-options";
     quizDiv.style.width = "100%";
 
-    options.forEach((opt, idx) => {
+    block.options[currentLang].forEach((opt, idx) => {
         const btn = document.createElement('button');
         btn.innerText = opt;
         btn.className = "secondary";
         btn.onclick = () => {
             if (idx === block.correct) {
-                const winMsg = currentLang === 'en' ? "Correct. Next step." : "Correcto. Siguiente paso.";
-                speak(winMsg, () => {
+                speak(currentLang === 'en' ? "Correct." : "Correcto.", () => {
                     quizDiv.remove();
                     mainBtn.style.display = 'block';
                     nextStep();
                 });
             } else {
-                const failMsg = currentLang === 'en' ? "Focus. Try again." : "Enfócate. Intenta de nuevo.";
-                speak(failMsg);
+                speak(currentLang === 'en' ? "Focus." : "Enfócate.");
                 btn.style.borderColor = "#ef4444";
             }
         };
@@ -203,20 +190,18 @@ function startCountdown(seconds) {
     let remaining = seconds;
     const timerDisplay = document.getElementById('timer-display');
     const mainBtn = document.getElementById('main-btn');
-    
     timerDisplay.style.display = 'block';
     timerDisplay.innerText = remaining;
 
     timerInterval = setInterval(() => {
         remaining--;
         timerDisplay.innerText = remaining;
-        
         if (remaining <= 0) {
             clearInterval(timerInterval);
             document.getElementById('breath-circle').classList.remove('breathing-anim');
             mainBtn.disabled = false;
             mainBtn.innerText = currentLang === 'en' ? 'CONTINUE' : 'CONTINUAR';
-            speak(currentLang === 'en' ? "Complete. Let's move on." : "Completado. Continuemos.");
+            speak(currentLang === 'en' ? "Done." : "Hecho.");
         }
     }, 1000);
 }
@@ -224,7 +209,7 @@ function startCountdown(seconds) {
 function applyPunishment() {
     const mainBtn = document.getElementById('main-btn');
     mainBtn.disabled = true;
-    mainBtn.innerText = currentLang === 'en' ? "WAIT..." : "ESPERA...";
+    mainBtn.innerText = "WAIT...";
     setTimeout(() => { 
         mainBtn.disabled = false;
         mainBtn.innerText = currentLang === 'en' ? "CONTINUE" : "CONTINUAR";
@@ -234,14 +219,12 @@ function applyPunishment() {
 function nextStep() {
     currentBlockIndex++;
     const mission = missions[currentMissionIndex];
-    
     if (currentBlockIndex >= mission.blocks.length) {
         currentMissionIndex++;
         currentBlockIndex = 0;
     }
-    
     if (currentMissionIndex >= missions.length) {
-        speak(currentLang === 'en' ? "You have reached the sky." : "Has alcanzado el cielo.");
+        speak(currentLang === 'en' ? "Zen Master." : "Maestro Zen.");
         currentMissionIndex = 0;
         currentBlockIndex = 0;
     }
