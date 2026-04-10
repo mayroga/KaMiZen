@@ -4,30 +4,48 @@ let missions = [];
 let currentLang = 'en';
 let inactivitySeconds = 0;
 let timerInterval = null;
+let musicLevel = 0;
 
-// Configuración de fondos
-const images = [
-    "https://images.unsplash.com/photo-1470770841072-f978cf4d019e",
-    "https://images.unsplash.com/photo-1501854140801-50d01698950b",
-    "https://images.unsplash.com/photo-1441974231531-c6227db76b6e",
-    "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b"
+// 80 Fondos Dinámicos (Ejemplos representativos para evitar repetición)
+const imageBank = Array.from({length: 80}, (_, i) => `https://picsum.photos/seed/${i + 120}/1600/900`);
+
+// Configuración de Música por Niveles
+const musicTracks = [
+    "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3", // Level 1: Paz
+    "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3", // Level 2: Energía
+    "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-15.mp3" // Level 3: Poder/Adrenalina
 ];
 
-function changeBg() {
-    const randomImg = images[Math.floor(Math.random() * images.length)];
-    document.body.style.backgroundImage = `url('${randomImg}?auto=format&fit=crop&w=1600&q=80')`;
+function updateMusic(level) {
+    const audio = document.getElementById('bg-music');
+    let trackIndex = level - 1;
+    if (trackIndex > 2) trackIndex = 2;
+    
+    if (musicLevel !== level) {
+        audio.src = musicTracks[trackIndex];
+        audio.play().catch(() => console.log("User must interact first"));
+        musicLevel = level;
+    }
 }
 
-// Monitor de inactividad (Regla de 59s / 4min)
+function speak(text) {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = currentLang === 'en' ? 'en-US' : 'es-ES';
+    utterance.rate = 0.9;
+    window.speechSynthesis.speak(utterance);
+}
+
+function changeBg() {
+    const randomImg = imageBank[Math.floor(Math.random() * imageBank.length)];
+    document.body.style.backgroundImage = `url('${randomImg}')`;
+}
+
 function startInactivityMonitor() {
     setInterval(() => {
         inactivitySeconds++;
-        if (inactivitySeconds === 59) {
-            document.getElementById('warning-modal').style.display = 'flex';
-        }
-        if (inactivitySeconds >= 240) {
-            location.reload(); 
-        }
+        if (inactivitySeconds === 59) document.getElementById('warning-modal').style.display = 'flex';
+        if (inactivitySeconds >= 240) location.reload();
     }, 1000);
 }
 
@@ -40,24 +58,23 @@ async function loadData() {
     try {
         const response = await fetch('/session_content');
         const data = await response.json();
-        missions = data.missions;
+        // Ordenamos estrictamente del 1 al 40
+        missions = data.missions.sort((a, b) => a.id - b.id);
         initApp();
     } catch (e) {
-        document.getElementById('text-content').innerText = "Error loading AURA Engine.";
+        document.getElementById('text-content').innerText = "Engine Error. Check Connection.";
     }
 }
 
 function initApp() {
-    const mainBtn = document.getElementById('main-btn');
-    const langBtn = document.getElementById('lang-btn');
-
-    mainBtn.onclick = () => {
+    document.getElementById('main-btn').onclick = () => {
+        document.getElementById('bg-music').play();
         renderBlock();
     };
 
-    langBtn.onclick = () => {
+    document.getElementById('lang-btn').onclick = () => {
         currentLang = currentLang === 'en' ? 'es' : 'en';
-        langBtn.innerText = currentLang === 'en' ? 'ES' : 'EN';
+        document.getElementById('lang-btn').innerText = currentLang === 'en' ? 'ES' : 'EN';
         renderBlock();
     };
 
@@ -72,55 +89,78 @@ function renderBlock() {
     const textDisplay = document.getElementById('text-content');
     const timerDisplay = document.getElementById('timer-display');
     const mainBtn = document.getElementById('main-btn');
+    const circle = document.getElementById('breath-circle');
 
-    // Actualizar Panel
-    document.getElementById('level').innerText = `Level: ${mission.level}`;
+    updateMusic(mission.level);
+    document.getElementById('level-display').innerText = `Level: ${mission.level}`;
     
-    // Limpiar estados previos
     if (timerInterval) clearInterval(timerInterval);
     timerDisplay.style.display = 'none';
+    circle.style.display = 'none';
+    circle.classList.remove('breathing-anim');
     mainBtn.disabled = false;
-    mainBtn.innerText = currentLang === 'en' ? 'Next' : 'Siguiente';
+    mainBtn.style.display = 'block';
 
-    // Mostrar Contenido
+    // Eliminar opciones de quiz previas
+    const oldQuiz = document.getElementById('quiz-options');
+    if (oldQuiz) oldQuiz.remove();
+
     textDisplay.innerText = block.text[currentLang];
 
-    // Lógica de Reto de Silencio
-    if (block.type === 'breathing') {
-        mainBtn.disabled = true; // BLOQUEO MECÁNICO
-        const alertMsg = currentLang === 'en' ? 
-            "SILENCE CHALLENGE: Stay still. Button will appear when done." : 
-            "RETO DE SILENCIO: Mantente presente. El botón aparecerá al finalizar.";
-        
-        textDisplay.innerText = `${block.text[currentLang]}\n\n${alertMsg}`;
-        timerDisplay.style.display = 'block';
-        startSilenceTimer(block.duration);
+    // LÓGICA POR TIPO
+    if (block.type === 'voice' || block.type === 'story' || block.type === 'strategy') {
+        speak(block.text[currentLang]);
     } 
     
-    // Lógica de Quizzes
+    else if (block.type === 'breathing') {
+        // En ejercicio de respiración SI hay voz y círculo
+        speak(block.text[currentLang]);
+        mainBtn.disabled = true;
+        circle.style.display = 'flex';
+        circle.classList.add('breathing-anim');
+        timerDisplay.style.display = 'block';
+        startCountdown(block.duration, true);
+    } 
+    
     else if (block.type === 'quiz') {
         renderQuiz(block);
     }
 
-    mainBtn.onclick = () => {
-        nextStep();
-    };
+    mainBtn.onclick = () => nextStep();
 }
 
-function startSilenceTimer(seconds) {
+function startCountdown(seconds, isBreathing) {
     let remaining = seconds;
     const display = document.getElementById('timer-display');
     const mainBtn = document.getElementById('main-btn');
+    const circle = document.getElementById('breath-circle');
+    const breathText = document.getElementById('breath-text');
 
     timerInterval = setInterval(() => {
         const mins = Math.floor(remaining / 60);
         const secs = remaining % 60;
         display.innerText = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
-        
+
+        // Lógica de ayuda aleatoria en retos largos (> 3 min)
+        if (!isBreathing && seconds >= 180) {
+            // Aparece el círculo de respiración aleatoriamente para ayudar
+            if (remaining % 60 === 0 && remaining > 0) {
+                circle.style.display = 'flex';
+                circle.classList.add('breathing-anim');
+                breathText.innerText = currentLang === 'en' ? "BREATHE" : "RESPIRA";
+                speak(breathText.innerText);
+                setTimeout(() => { 
+                    circle.style.display = 'none'; 
+                    circle.classList.remove('breathing-anim');
+                }, 30000);
+            }
+        }
+
         if (remaining <= 0) {
             clearInterval(timerInterval);
-            mainBtn.disabled = false; // SE LIBERA EL RETO
-            mainBtn.innerText = currentLang === 'en' ? 'Challenge Completed - Next' : 'Reto Cumplido - Siguiente';
+            mainBtn.disabled = false;
+            circle.style.display = 'none';
+            mainBtn.innerText = currentLang === 'en' ? 'Complete - Next' : 'Cumplido - Siguiente';
         }
         remaining--;
     }, 1000);
@@ -128,29 +168,30 @@ function startSilenceTimer(seconds) {
 
 function renderQuiz(block) {
     const mainBtn = document.getElementById('main-btn');
-    mainBtn.style.display = 'none'; // Ocultar hasta que responda
-    
+    mainBtn.style.display = 'none';
+    speak(block.question[currentLang]);
+
     const container = document.getElementById('block-container');
     const quizDiv = document.createElement('div');
     quizDiv.id = "quiz-options";
-    quizDiv.style.marginTop = "20px";
+    quizDiv.style.width = "100%";
 
     block.options[currentLang].forEach((opt, idx) => {
-        const optBtn = document.createElement('button');
-        optBtn.innerText = opt;
-        optBtn.className = "secondary";
-        optBtn.onclick = () => {
+        const btn = document.createElement('button');
+        btn.innerText = opt;
+        btn.className = "secondary";
+        btn.onclick = () => {
             if (idx === block.correct) {
-                document.getElementById('text-content').innerText = currentLang === 'en' ? "Correct!" : "¡Correcto!";
+                speak(block.explanation ? block.explanation[currentLang].correct : "Correct");
                 quizDiv.remove();
                 mainBtn.style.display = 'block';
-                mainBtn.disabled = false;
+                mainBtn.innerText = "Next";
             } else {
-                optBtn.style.background = "#7f1d1d";
-                document.getElementById('text-content').innerText = currentLang === 'en' ? "Try again." : "Intenta de nuevo.";
+                speak(block.explanation ? block.explanation[currentLang].wrong : "Try again");
+                btn.style.borderColor = "#ef4444";
             }
         };
-        quizDiv.appendChild(optBtn);
+        quizDiv.appendChild(btn);
     });
     container.appendChild(quizDiv);
 }
@@ -164,14 +205,13 @@ function nextStep() {
         currentBlockIndex = 0;
     }
 
-    if (currentMissionIndex < missions.length) {
-        renderBlock();
-    } else {
-        document.getElementById('text-content').innerText = "CONGRATULATIONS. ALL MISSIONS COMPLETE.";
-        document.getElementById('main-btn').style.display = 'none';
+    // CICLO INFINITO: Si llega al final del 40, vuelve al 1
+    if (currentMissionIndex >= missions.length) {
+        currentMissionIndex = 0;
     }
+
+    renderBlock();
 }
 
-// Iniciar
 document.addEventListener('DOMContentLoaded', loadData);
 window.onclick = resetInactivity;
