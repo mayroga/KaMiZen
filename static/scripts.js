@@ -1,13 +1,13 @@
-/* static/scripts.js — MAYKAMI / VIA REAL / NEURAL SIMULATOR CORE ENGINE */
+/* =========================================
+   MAYKAMI / VIA REAL - FULL ENGINE STABLE
+========================================= */
 
-const sessionApp = document.getElementById("app");
 const mainBtn = document.getElementById("main-btn");
 const textContent = document.getElementById("text-content");
 const breathCircle = document.getElementById("breath-circle");
 const timerDisplay = document.getElementById("timer-display");
 const syncDisplay = document.getElementById("streak-display");
 const levelDisplay = document.getElementById("level-display");
-const bgMusic = document.getElementById("bg-music");
 
 let missions = [];
 let currentMission = 0;
@@ -15,36 +15,56 @@ let currentBlock = 0;
 
 let state = {
     sync: 100,
-    level: 1,
     stress: 0,
     focus: 100,
     karma: 0,
-    mode: "idle",
+    level: 1,
     language: "es"
 };
 
+/* =========================
+   INIT LOAD
+========================= */
 async function loadContent() {
     try {
         const res = await fetch("/static/kamizen_content.json");
         const data = await res.json();
         missions = data.missions || [];
-        renderBlock();
+
+        textContent.innerText = "PRESS START TO BEGIN SIMULATION";
+        mainBtn.innerText = "START";
+        mainBtn.onclick = startGame;
+
     } catch (e) {
-        textContent.innerText = "SYSTEM ERROR: CONTENT NOT LOADED";
+        textContent.innerText = "SYSTEM ERROR: CONTENT NOT FOUND";
         console.error(e);
     }
 }
 
+function startGame() {
+    currentMission = 0;
+    currentBlock = 0;
+    state.level = 1;
+
+    mainBtn.innerText = "NEXT";
+    mainBtn.onclick = nextBlock;
+
+    renderBlock();
+}
+
+/* =========================
+   CORE RENDER ENGINE
+========================= */
 function renderBlock() {
     const mission = missions[currentMission];
+
     if (!mission) {
-        textContent.innerText = "SIMULATION COMPLETE";
-        mainBtn.innerText = "RESTART";
-        mainBtn.onclick = restartSystem;
+        finishGame();
         return;
     }
 
     const block = mission.blocks[currentBlock];
+
     if (!block) {
         currentMission++;
         currentBlock = 0;
@@ -53,32 +73,51 @@ function renderBlock() {
         return renderBlock();
     }
 
-    levelDisplay.innerText = `NODE: ${state.level}`;
+    levelDisplay.innerText = "NODE: " + state.level;
 
     switch (block.type) {
+
         case "voice":
             showVoice(block);
             break;
+
         case "breathing":
-            startBreathing(block);
+            showBreathing(block);
             break;
+
         case "quiz":
             showQuiz(block);
             break;
+
+        case "strategy":
+            showStrategy(block);
+            break;
+
+        case "story":
+            showStory(block);
+            break;
+
         default:
-            textContent.innerText = "UNKNOWN BLOCK TYPE";
+            showUnknown(block);
     }
 }
 
+/* =========================
+   VOICE
+========================= */
 function showVoice(block) {
     textContent.innerText = block.text?.[state.language] || "";
+
+    mainBtn.style.display = "block";
     mainBtn.innerText = "CONTINUE";
     mainBtn.onclick = nextBlock;
 }
 
-function startBreathing(block) {
+/* =========================
+   BREATHING
+========================= */
+function showBreathing(block) {
     breathCircle.style.display = "flex";
-    breathCircle.classList.add("breathing-anim");
 
     let time = block.duration || 5;
     timerDisplay.innerText = time;
@@ -95,6 +134,7 @@ function startBreathing(block) {
 
         state.stress = Math.max(0, state.stress - 2);
         state.sync = Math.min(100, state.sync + 1);
+
         updateHUD();
 
         if (time <= 0) {
@@ -107,44 +147,41 @@ function startBreathing(block) {
 
 function endBreathing() {
     breathCircle.style.display = "none";
-    breathCircle.classList.remove("breathing-anim");
 }
 
+/* =========================
+   QUIZ (DECISION ENGINE)
+========================= */
 function showQuiz(block) {
-    textContent.innerText = block.question?.[state.language] || "";
+    textContent.innerText = block.question?.[state.language];
 
-    mainBtn.innerText = "ANSWER";
-
-    mainBtn.onclick = () => {
-        renderOptions(block);
-    };
+    mainBtn.innerText = "CHOOSE";
+    mainBtn.onclick = () => renderOptions(block);
 }
 
 function renderOptions(block) {
     const options = block.options?.[state.language] || [];
 
-    const container = document.createElement("div");
-    container.style.display = "flex";
-    container.style.flexDirection = "column";
-    container.style.gap = "10px";
+    textContent.innerHTML = "";
 
-    options.forEach((opt, index) => {
+    options.forEach((opt, i) => {
         const btn = document.createElement("button");
-        btn.innerText = opt;
+        btn.innerText = opt.toUpperCase();
+        btn.style.margin = "8px 0";
+        btn.style.width = "100%";
+        btn.style.padding = "14px";
 
-        btn.onclick = () => evaluateAnswer(block, index);
-
-        container.appendChild(btn);
+        btn.onclick = () => evaluateQuiz(block, i);
+        textContent.appendChild(btn);
     });
 
-    textContent.innerHTML = "";
-    textContent.appendChild(container);
+    mainBtn.style.display = "none";
 }
 
-function evaluateAnswer(block, index) {
-    const correct = block.correct;
+function evaluateQuiz(block, index) {
+    mainBtn.style.display = "block";
 
-    if (index === correct) {
+    if (index === block.correct) {
         state.sync += 5;
         state.focus += 3;
         state.karma += 2;
@@ -152,81 +189,82 @@ function evaluateAnswer(block, index) {
     } else {
         state.sync -= 10;
         state.stress += 10;
-        state.karma -= 5;
-        textContent.innerText = "✖ WRONG DECISION — SYSTEM PENALTY";
+        state.karma -= 3;
+        textContent.innerText = "✖ IMPACT DETECTED";
     }
 
-    clampState();
+    clamp();
     updateHUD();
 
-    setTimeout(nextBlock, 1200);
+    mainBtn.innerText = "NEXT";
+    mainBtn.onclick = nextBlock;
 }
 
+/* =========================
+   STRATEGY NODE
+========================= */
+function showStrategy(block) {
+    textContent.innerText = block.text?.[state.language];
+
+    mainBtn.innerText = "ACKNOWLEDGE";
+    mainBtn.onclick = () => {
+        state.sync += 2;
+        state.stress = Math.max(0, state.stress - 1);
+        nextBlock();
+    };
+}
+
+/* =========================
+   STORY NODE
+========================= */
+function showStory(block) {
+    textContent.innerText = block.text?.[state.language];
+
+    mainBtn.innerText = "CONTINUE STORY";
+    mainBtn.onclick = () => {
+        state.karma += 1;
+        nextBlock();
+    };
+}
+
+/* =========================
+   UNKNOWN SAFE FALLBACK
+========================= */
+function showUnknown(block) {
+    textContent.innerText = "UNKNOWN NODE: " + block.type;
+
+    mainBtn.innerText = "CONTINUE";
+    mainBtn.onclick = nextBlock;
+}
+
+/* =========================
+   FLOW CONTROL
+========================= */
 function nextBlock() {
     currentBlock++;
     renderBlock();
 }
 
-function updateHUD() {
-    syncDisplay.innerText = `SYNC: ${state.sync}%`;
-}
-
-function clampState() {
-    state.sync = Math.max(0, Math.min(100, state.sync));
-    state.focus = Math.max(0, Math.min(100, state.focus));
-    state.stress = Math.max(0, Math.min(100, state.stress));
-}
-
-function restartSystem() {
-    currentMission = 0;
-    currentBlock = 0;
-    state.sync = 100;
-    state.stress = 0;
-    state.focus = 100;
-    state.karma = 0;
-    state.level = 1;
-    loadContent();
+function finishGame() {
+    textContent.innerText = "SIMULATION COMPLETE";
+    mainBtn.innerText = "RESTART";
+    mainBtn.onclick = () => location.reload();
 }
 
 /* =========================
-   IA JUDGE ENGINE (CORE IDEA)
-   =========================
-   Esto simula el "juez IA":
-   - Python backend puede validar decisiones reales
-   - Frontend simula consecuencias inmediatas
-*/
-
-async function judgeDecision(payload) {
-    try {
-        // futuro backend (FastAPI / Python)
-        const res = await fetch("/judge", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
-        });
-
-        if (!res.ok) throw new Error("No judge response");
-
-        return await res.json();
-    } catch (e) {
-        // fallback local judge (simulación)
-        return {
-            score: Math.random() > 0.5 ? 1 : -1,
-            message: "LOCAL JUDGE MODE"
-        };
-    }
+   HUD
+========================= */
+function updateHUD() {
+    syncDisplay.innerText = "SYNC: " + state.sync + "%";
 }
 
-/* integración futura:
-   cada quiz puede llamar judgeDecision()
-   para evaluación real del backend Python
-*/
+function clamp() {
+    state.sync = Math.max(0, Math.min(100, state.sync));
+    state.stress = Math.max(0, Math.min(100, state.stress));
+    state.focus = Math.max(0, Math.min(100, state.focus));
+}
 
-mainBtn.addEventListener("click", () => {
-    if (state.mode === "idle") {
-        state.mode = "running";
-    }
-});
-
-/* INIT */
+/* =========================
+   START
+========================= */
 loadContent();
