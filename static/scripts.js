@@ -2,113 +2,70 @@ let currentBlockIndex = 0;
 let missionData = null;
 let inactivityCounter = 0;
 let challengeInterval = null;
-
-const WARNING_TIME = 59; 
-const KICK_TIME = 240; 
+let currentLang = 'en'; // Default language is English
 
 async function initSession() {
     try {
-        const pathParts = window.location.pathname.split('/');
-        const mId = pathParts[pathParts.length - 1] || 1;
-        
-        const response = await fetch('/api/content');
+        const response = await fetch('/session_content');
         const data = await response.json();
         
-        missionData = data.missions.find(m => m.id == mId);
+        // Asumiendo que quieres cargar la primera misión o una específica
+        missionData = data.missions[0]; 
         
-        if (missionData) {
-            document.getElementById('category-label').innerText = missionData.category;
-            document.getElementById('level-display').innerText = `Misión: ${missionData.id}`;
+        document.getElementById('start-btn').onclick = () => {
+            document.getElementById('start-btn').style.display = 'none';
+            document.getElementById('next-btn').style.display = 'block';
             renderBlock();
-            startInactivityClock();
-        }
-    } catch (e) {
-        console.error("Error en enlace:", e);
-    }
+            startInactivityMonitor();
+        };
+
+        // Botón de idioma
+        document.getElementById('lang-btn').onclick = () => {
+            currentLang = currentLang === 'en' ? 'es' : 'en';
+            document.getElementById('lang-btn').innerText = currentLang === 'en' ? 'ES' : 'EN';
+            renderBlock();
+        };
+
+    } catch (e) { console.error("Load error:", e); }
 }
 
 function renderBlock() {
+    if (!missionData) return;
     const block = missionData.blocks[currentBlockIndex];
-    const display = document.getElementById('text-display');
-    const actionBtn = document.getElementById('action-btn');
-    const timerDisp = document.getElementById('timer-display');
-    const visual = document.getElementById('visual-element');
+    const textDisplay = document.getElementById('text-content');
+    const timerDisplay = document.getElementById('timer-display');
+    const nextBtn = document.getElementById('next-btn');
 
-    actionBtn.style.display = 'none';
-    timerDisp.style.display = 'none';
-    visual.innerHTML = '';
+    // Limpiar estados
+    timerDisplay.style.display = 'none';
     if (challengeInterval) clearInterval(challengeInterval);
 
-    switch (block.type) {
-        case 'strategy':
-        case 'story':
-        case 'voice':
-            display.innerText = block.text.es;
-            actionBtn.innerText = "Continuar";
-            actionBtn.style.display = 'block';
-            actionBtn.onclick = nextBlock;
-            break;
+    // Idioma
+    textDisplay.innerText = block.text[currentLang];
 
-        case 'breathing':
-            display.innerText = block.text.es;
-            startChallengeTimer(block.duration);
-            break;
-
-        case 'quiz':
-            renderQuiz(block);
-            break;
-
-        case 'reward':
-            display.innerHTML = `<span style="color:#fbbf24; font-size:40px;">★</span><br>${block.text.es}`;
-            actionBtn.innerText = "Finalizar";
-            actionBtn.style.display = 'block';
-            actionBtn.onclick = () => window.location.href = '/';
-            break;
+    if (block.type === 'breathing') {
+        nextBtn.style.display = 'none'; // BLOQUEO: Oculta el botón
+        timerDisplay.style.display = 'block';
+        startTimer(block.duration);
+    } else {
+        nextBtn.style.display = 'block';
+        nextBtn.onclick = nextBlock;
     }
 }
 
-function startChallengeTimer(seconds) {
-    const timerDisp = document.getElementById('timer-display');
-    const actionBtn = document.getElementById('action-btn');
-    
-    timerDisp.style.display = 'block';
-    actionBtn.style.display = 'none'; // BLOQUEO ABSOLUTO
-    
+function startTimer(seconds) {
     let remaining = seconds;
+    const timerDisplay = document.getElementById('timer-display');
     challengeInterval = setInterval(() => {
         const mins = Math.floor(remaining / 60);
         const secs = remaining % 60;
-        timerDisp.innerText = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
-        
+        timerDisplay.innerText = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
         if (remaining <= 0) {
             clearInterval(challengeInterval);
-            timerDisp.style.color = "#10b981";
-            actionBtn.innerText = "Reto Cumplido";
-            actionBtn.style.display = 'block'; // DESBLOQUEO
-            actionBtn.onclick = nextBlock;
+            document.getElementById('next-btn').style.display = 'block'; // DESBLOQUEO
         }
         remaining--;
     }, 1000);
-}
-
-function renderQuiz(block) {
-    const visual = document.getElementById('visual-element');
-    document.getElementById('text-display').innerText = block.question.es;
-    
-    block.options.es.forEach((opt, idx) => {
-        const btn = document.createElement('button');
-        btn.innerText = opt;
-        btn.style.background = "rgba(255,255,255,0.05)";
-        btn.onclick = () => {
-            if (idx === block.correct) {
-                nextBlock();
-            } else {
-                btn.style.background = "#7f1d1d";
-                setTimeout(() => btn.style.background = "rgba(255,255,255,0.05)", 500);
-            }
-        };
-        visual.appendChild(btn);
-    });
 }
 
 function nextBlock() {
@@ -116,14 +73,14 @@ function nextBlock() {
     if (currentBlockIndex < missionData.blocks.length) renderBlock();
 }
 
-function startInactivityClock() {
+function startInactivityMonitor() {
     setInterval(() => {
         inactivityCounter++;
-        if (inactivityCounter === WARNING_TIME) {
+        if (inactivityCounter === 59) {
             document.getElementById('warning-modal').style.display = 'flex';
         }
-        if (inactivityCounter >= KICK_TIME) {
-            window.location.href = "/?expired=true";
+        if (inactivityCounter >= 240) {
+            window.location.reload(); // Reiniciar por inactividad 4 min
         }
     }, 1000);
 }
