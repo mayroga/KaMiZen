@@ -6,11 +6,12 @@ let inactivitySeconds = 0;
 let timerInterval = null;
 let musicPlayer = document.getElementById('bg-music');
 
-// Banco de 80 imágenes naturales para evitar repetición rápida
 const imageBank = Array.from({length: 80}, (_, i) => `https://picsum.photos/seed/al-cielo-${i}/1600/900`);
 
-// Librería de música por categoría/vibe
+// Librería de música optimizada para sensaciones antiestrés y misterio
 const musicLibrary = {
+    // Misterio / Introducción (Desde el inicio)
+    intro: "https://assets.mixkit.co/music/preview/mixkit-mysterious-pensive-beautiful-73.mp3",
     dopamine: "https://assets.mixkit.co/music/preview/mixkit-tech-house-vibes-130.mp3",
     power: "https://assets.mixkit.co/music/preview/mixkit-deep-urban-623.mp3",
     wealth: "https://assets.mixkit.co/music/preview/mixkit-complex-772.mp3",
@@ -29,11 +30,15 @@ function changeBg() {
 }
 
 function updateMusic(level, category = "") {
-    let selectedTrack = musicLibrary.zen;
+    let selectedTrack;
     const cat = category.toLowerCase();
 
-    if (level === 1) selectedTrack = musicLibrary.dopamine;
-    else if (level === 2) {
+    // Lógica de inicio (Nivel 0 o pre-carga)
+    if (level === 0) {
+        selectedTrack = musicLibrary.intro;
+    } else if (level === 1) {
+        selectedTrack = musicLibrary.dopamine;
+    } else if (level === 2) {
         if (cat.includes('wealth') || cat.includes('economic')) selectedTrack = musicLibrary.wealth;
         else if (cat.includes('stability') || cat.includes('love')) selectedTrack = musicLibrary.love;
         else selectedTrack = musicLibrary.power;
@@ -44,7 +49,9 @@ function updateMusic(level, category = "") {
     if (musicPlayer.src !== selectedTrack) {
         musicPlayer.src = selectedTrack;
         musicPlayer.volume = 0.15; 
-        musicPlayer.play().catch(() => {});
+        musicPlayer.play().catch(() => {
+            console.log("Esperando interacción para iniciar música...");
+        });
     }
 }
 
@@ -55,7 +62,7 @@ function speak(text, callback) {
     msg.volume = 1.0; 
     msg.rate = 0.95;
 
-    musicPlayer.volume = 0.05; // Ducking
+    musicPlayer.volume = 0.05; // Ducking suave
     msg.onend = () => {
         musicPlayer.volume = 0.15;
         if (callback) callback();
@@ -73,7 +80,14 @@ async function loadData() {
 }
 
 function initApp() {
-    document.getElementById('main-btn').onclick = () => renderBlock();
+    // Iniciar con música de misterio agradable
+    updateMusic(0); 
+
+    document.getElementById('main-btn').onclick = () => {
+        // Asegurar que la música empiece si el navegador la bloqueó al inicio
+        musicPlayer.play(); 
+        renderBlock();
+    };
     
     const punishBtn = (id) => {
         document.getElementById(id).onclick = () => {
@@ -91,10 +105,8 @@ function initApp() {
         renderBlock();
     };
 
-    // Inicializar visual y musicalmente
     changeBg();
-    setInterval(changeBg, 12000); // Fondo cambia cada 12s
-    updateMusic(1);
+    setInterval(changeBg, 12000); 
     
     setInterval(() => {
         inactivitySeconds++;
@@ -224,4 +236,8 @@ function resetInactivity() {
 }
 
 document.addEventListener('DOMContentLoaded', loadData);
+// IMPORTANTE: Al hacer clic en cualquier lugar por primera vez, se activa el audio
+window.addEventListener('click', () => {
+    if (musicPlayer.paused) musicPlayer.play();
+}, { once: true });
 window.onclick = resetInactivity;
