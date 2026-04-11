@@ -1,170 +1,311 @@
 let currentLang = 'en';
 let music = document.getElementById("bg-music");
 
+let currentEvent = null;
+let gameState = null;
+
 const translations = {
     en: {
-        start: "START SESSION", langBtn: "ESPAÑOL", back: "← BACK",
-        inhale: "Breathe In", exhale: "Exhale",
-        estres: "You feel pressure in your chest. Your mind doesn't stop.",
-        soledad: "Today no one called. The silence feels heavier than usual.",
-        perdida: "You think of someone who is no longer here. The void appears.",
-        confusion: "Everything seems blurred. You don't know where to go.",
-        tdb: "Breathe... and smile softly. Everything is fine for now.",
-        tdm: "Even when escaping... smile. Observe without judging.",
-        tdn: "Remember something simple... smile like a child.",
-        continue: "CONTINUE", finish: "FINISH SESSION"
+        start: "START SESSION",
+        langBtn: "ESPAÑOL",
+        back: "← BACK",
+        inhale: "Breathe In",
+        exhale: "Exhale",
+        continue: "CONTINUE",
+        finish: "FINISH SESSION"
     },
     es: {
-        start: "INICIAR SESIÓN", langBtn: "ENGLISH", back: "← ATRÁS",
-        inhale: "Inhala", exhale: "Exhala",
-        estres: "Sientes presión en el pecho. Tu mente no se detiene.",
-        soledad: "Hoy nadie te llamó. El silencio pesa más de lo normal.",
-        perdida: "Piensas en alguien que ya no está. El vacío aparece.",
-        confusion: "Todo parece borroso. No sabes qué camino tomar.",
-        tdb: "Respira… y sonríe suave. Todo está bien por ahora.",
-        tdm: "Incluso escapando… sonríe. Observa sin juzgar.",
-        tdn: "Recuerda algo simple… sonríe como niño.",
-        continue: "CONTINUAR", finish: "FINALIZAR SESIÓN"
+        start: "INICIAR SESIÓN",
+        langBtn: "ENGLISH",
+        back: "← ATRÁS",
+        inhale: "Inhala",
+        exhale: "Exhala",
+        continue: "CONTINUAR",
+        finish: "FINALIZAR SESIÓN"
     }
 };
 
-const natureImages = Array.from({length: 100}, (_, i) => `https://picsum.photos/id/${i + 20}/1200/800`);
+const natureImages = Array.from(
+    { length: 100 },
+    (_, i) => `https://picsum.photos/id/${i + 20}/1200/800`
+);
 
+// =========================
+// 🔊 VOZ
+// =========================
 function speak(text) {
     window.speechSynthesis.cancel();
     music.volume = 0.1;
+
     const ut = new SpeechSynthesisUtterance(text);
     ut.lang = currentLang === 'en' ? 'en-US' : 'es-ES';
-    ut.onend = () => { music.volume = 0.4; };
+
+    ut.onend = () => {
+        music.volume = 0.4;
+    };
+
     window.speechSynthesis.speak(ut);
 }
 
+// =========================
+// 🌄 BACKGROUND
+// =========================
 function updateBackground() {
     const container = document.getElementById("bg-container");
+
     const imgUrl = natureImages[Math.floor(Math.random() * natureImages.length)];
+
     const slide = document.createElement("div");
     slide.className = "bg-slide";
     slide.style.backgroundImage = `url('${imgUrl}')`;
+
     container.appendChild(slide);
+
     setTimeout(() => slide.style.opacity = "0.7", 100);
-    if (container.children.length > 2) container.removeChild(container.children[0]);
+
+    if (container.children.length > 2) {
+        container.removeChild(container.children[0]);
+    }
 }
 
-function toggleLanguage() {
-    currentLang = currentLang === 'en' ? 'es' : 'en';
-    document.getElementById("btn-start").innerText = translations[currentLang].start;
-    document.getElementById("lang-toggle").innerText = translations[currentLang].langBtn;
-    document.getElementById("back-btn").innerText = translations[currentLang].back;
-}
-
+// =========================
+// ▶️ INICIO
+// =========================
 function start() {
     music.play();
     music.volume = 0.4;
+
     document.getElementById("setup").style.display = "none";
     document.getElementById("game").style.display = "block";
     document.getElementById("back-btn").style.display = "block";
+
     updateBackground();
-    nextScene();
+
+    requestNextEvent(); // 🔥 empieza el motor real
 }
 
+// =========================
+// 🔙 RESET
+// =========================
 function resetApp() {
     window.speechSynthesis.cancel();
+
     document.getElementById("game").style.display = "none";
     document.getElementById("setup").style.display = "block";
     document.getElementById("back-btn").style.display = "none";
+
+    currentEvent = null;
+    gameState = null;
 }
 
-function nextScene() {
-    const stateVal = document.getElementById("state").value;
-    const text = translations[currentLang][stateVal];
-    const opts = [
-        {txt: "TDB", tvid: "TDB"},
-        {txt: "TDM", tvid: "TDM"},
-        {txt: "TDN", tvid: "TDN"}
-    ];
-    renderScene(text, opts);
+// =========================
+// 🌍 PEDIR EVENTO INICIAL
+// =========================
+function requestNextEvent() {
+    fetch("/judge", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            decision: "INIT",
+            context: "start"
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        gameState = data.state;
+        loadEvent(data.next_event);
+    });
 }
 
-function renderScene(text, options) {
+// =========================
+// 🔥 CARGAR EVENTO
+// =========================
+function loadEvent(eventName) {
+
+    currentEvent = eventName;
+
+    let eventData = buildEvent(eventName);
+
+    document.getElementById("text-content").innerText = eventData.desc;
+    speak(eventData.desc);
+
+    renderOptions(eventData);
+}
+
+// =========================
+// 🧩 CONSTRUCTOR DE EVENTOS
+// =========================
+function buildEvent(name) {
+
+    switch(name) {
+
+        case "rechazo":
+            return {
+                name: "RECHAZO",
+                desc: currentLang === 'en'
+                    ? "Someone ignores you completely."
+                    : "Alguien te ignora completamente.",
+                context: "rechazo",
+                decisions: ["TDB", "TDM", "TDG"]
+            };
+
+        case "conflicto":
+            return {
+                name: "CONFLICTO",
+                desc: currentLang === 'en'
+                    ? "A direct confrontation happens."
+                    : "Ocurre un conflicto directo.",
+                context: "conflicto",
+                decisions: ["TDB", "TDM", "TDG"]
+            };
+
+        case "perdida":
+            return {
+                name: "PÉRDIDA",
+                desc: currentLang === 'en'
+                    ? "You lose something valuable."
+                    : "Pierdes algo importante.",
+                context: "perdida",
+                decisions: ["TDB", "TDM", "TDN"]
+            };
+
+        case "oportunidad":
+            return {
+                name: "OPORTUNIDAD",
+                desc: currentLang === 'en'
+                    ? "A new opportunity appears."
+                    : "Aparece una oportunidad.",
+                context: "oportunidad",
+                decisions: ["TDB", "TDG"]
+            };
+
+        case "tentacion":
+            return {
+                name: "TENTACIÓN",
+                desc: currentLang === 'en'
+                    ? "You feel an impulse toward a vice."
+                    : "Sientes una tentación o impulso.",
+                context: "tentacion",
+                decisions: ["TDB", "TDM", "TDN"]
+            };
+
+        default:
+            return {
+                name: "NEUTRAL",
+                desc: "Life continues...",
+                context: "neutral",
+                decisions: ["TDB", "TDM", "TDN"]
+            };
+    }
+}
+
+// =========================
+// 🎮 RENDER OPCIONES
+// =========================
+function renderOptions(eventData) {
+
     const container = document.getElementById("options");
     container.innerHTML = "";
-    document.getElementById("text-content").innerText = text;
-    speak(text);
 
-    options.forEach(opt => {
+    eventData.decisions.forEach(dec => {
+
         const btn = document.createElement("button");
         btn.className = "action-btn";
-        btn.innerText = opt.txt;
-        btn.onclick = () => runTherapy(opt.tvid);
+        btn.innerText = dec;
+
+        btn.onclick = () => sendDecision(dec, eventData.context);
+
         container.appendChild(btn);
     });
 }
 
-function runTherapy(tvid) {
+// =========================
+// 🧠 MOTOR REAL CONECTADO
+// =========================
+function sendDecision(decision, context) {
+
     document.getElementById("options").innerHTML = "";
-    updateBackground();
-    
+
     fetch("/judge", {
         method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({ decision: tvid })
-    });
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            decision: decision,
+            context: context
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
 
-    const msg = translations[currentLang][tvid.toLowerCase()];
-    showTherapy(msg);
+        gameState = data.state;
+
+        updateBackground();
+
+        // 💀 FINAL
+        if (data.status === "end") {
+            showFinalScreen(data.type);
+            return;
+        }
+
+        // 🔄 SIGUIENTE EVENTO
+        loadEvent(data.next_event);
+    });
 }
 
-function showTherapy(msg) {
-    document.getElementById("text-content").innerText = msg;
-    speak(msg);
+// =========================
+// 💀 FINAL DEL SISTEMA
+// =========================
+function showFinalScreen(type) {
+
+    document.getElementById("text-content").innerText =
+        "END: " + type;
+
+    document.getElementById("options").innerHTML = "";
+
+    speak("System ended: " + type);
+}
+
+// =========================
+// 🌬️ UI BREATH (OPCIONAL)
+// =========================
+function showBreathCycle() {
 
     const circle = document.getElementById("breath-circle");
     const instruction = document.getElementById("breath-instruction");
     const timerDisp = document.getElementById("timer");
-    
+
     circle.style.display = "flex";
-    instruction.innerText = translations[currentLang].inhale;
-    circle.classList.add("inhale");
-    circle.classList.remove("exhale");
-    
+
     let time = 4;
-    timerDisp.innerText = time;
+    let inhale = true;
 
-    let interval = setInterval(() => {
-        time--;
-        timerDisp.innerText = time;
-        if (time <= 0) {
-            if (circle.classList.contains("inhale")) {
-                instruction.innerText = translations[currentLang].exhale;
-                circle.classList.add("exhale");
-                circle.classList.remove("inhale");
-                time = 4;
-            } else {
+    function cycle() {
+
+        instruction.innerText = inhale
+            ? translations[currentLang].inhale
+            : translations[currentLang].exhale;
+
+        let interval = setInterval(() => {
+
+            time--;
+            timerDisp.innerText = time;
+
+            if (time <= 0) {
                 clearInterval(interval);
-                circle.style.display = "none";
-                showFinalOptions();
+
+                inhale = !inhale;
+                time = 4;
+
+                if (!circle.isConnected) return;
+
+                circle.classList.toggle("inhale");
+                circle.classList.toggle("exhale");
+
+                cycle();
             }
-        }
-    }, 1000);
-}
 
-function showFinalOptions() {
-    const container = document.getElementById("options");
-    container.innerHTML = "";
-    
-    const btnNext = document.createElement("button");
-    btnNext.className = "action-btn";
-    btnNext.innerText = translations[currentLang].continue;
-    btnNext.onclick = () => { updateBackground(); nextScene(); };
+        }, 1000);
+    }
 
-    const btnFinish = document.createElement("button");
-    btnFinish.className = "action-btn";
-    btnFinish.style.background = "rgba(255,255,255,0.1)";
-    btnFinish.style.color = "#00f2ff";
-    btnFinish.style.border = "1px solid #00f2ff";
-    btnFinish.innerText = translations[currentLang].finish;
-    btnFinish.onclick = resetApp;
-
-    container.appendChild(btnNext);
-    container.appendChild(btnFinish);
+    cycle();
 }
