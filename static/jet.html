@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MAYKAMI | Vida Real</title>
+<title>MAYKAMI | VIDA SIM REAL</title>
 
 <style>
 body{
@@ -25,10 +25,11 @@ body{
 }
 
 .box{
-    padding:8px;
+    padding:10px;
     border:1px solid #00f2ff;
-    background:rgba(0,0,0,0.5);
-    font-size:12px;
+    background:rgba(0,0,0,0.6);
+    font-size:13px;
+    min-width:120px;
 }
 
 /* CONTROLES */
@@ -41,7 +42,7 @@ body{
 }
 
 button{
-    padding:10px;
+    padding:10px 14px;
     border:1px solid #00f2ff;
     background:transparent;
     color:#00f2ff;
@@ -52,31 +53,53 @@ button{
 #decisionBox{
     position:fixed;
     inset:0;
-    background:rgba(0,0,0,0.95);
+    background:rgba(0,0,0,0.96);
     display:none;
     flex-direction:column;
     justify-content:center;
     align-items:center;
     text-align:center;
+    z-index:999;
+}
+
+#decisionBox h2{
+    font-size:28px;
+}
+
+#decisionBox p{
+    font-size:18px;
+    max-width:500px;
+}
+
+#choices button{
+    margin:8px;
+    padding:12px 16px;
+    font-size:16px;
 }
 </style>
 </head>
 
 <body>
 
+<!-- HUD -->
 <div id="ui">
 <div class="box">MENTAL: <span id="mental">100</span></div>
-<div class="box">MONEY: <span id="money">1000</span></div>
+<div class="box">SALUD: <span id="health">100</span></div>
+<div class="box">DINERO: <span id="money">1000</span></div>
 <div class="box">SOCIAL: <span id="social">50</span></div>
+<div class="box">EDAD: <span id="age">25</span></div>
 </div>
 
+<!-- CANVAS -->
 <canvas id="game"></canvas>
 
+<!-- CONTROLES -->
 <div id="controls">
 <button onclick="restart()">🔄 RESTART</button>
-<button onclick="forceEvent()">▶ CONTINUE</button>
+<button onclick="forceEvent()">⚡ CONTINUE</button>
 </div>
 
+<!-- DECISION -->
 <div id="decisionBox">
 <h2 id="eventTitle"></h2>
 <p id="eventDesc"></p>
@@ -84,11 +107,19 @@ button{
 </div>
 
 <script>
+
 // =========================
-// 🧠 CARGAR PERFIL REAL
+// 🧠 ESTADO REAL
 // =========================
-let profile = JSON.parse(localStorage.getItem("profile"));
-let state = JSON.parse(localStorage.getItem("state"));
+let state = {
+    mental:100,
+    health:100,
+    money:1000,
+    social:50,
+    age:25
+};
+
+let profile = { stage:"adulto" };
 
 // =========================
 // 🎮 CANVAS
@@ -100,9 +131,9 @@ canvas.width = innerWidth;
 canvas.height = innerHeight;
 
 // =========================
-// 🎮 PLAYER
+// 👤 PLAYER
 // =========================
-let player = {x:100, y:200};
+let player = {x:120, y:200};
 
 // =========================
 // 🔴 EVENTOS
@@ -112,9 +143,20 @@ let currentEvent = null;
 let playing = true;
 
 // =========================
-// 🎮 MOVIMIENTO
+// 🧠 MOVIMIENTO
 // =========================
 window.onmousemove = e => player.y = e.clientY;
+
+// =========================
+// 📊 UI
+// =========================
+function updateUI(){
+    document.getElementById("mental").innerText = state.mental;
+    document.getElementById("health").innerText = state.health;
+    document.getElementById("money").innerText = state.money;
+    document.getElementById("social").innerText = state.social;
+    document.getElementById("age").innerText = state.age;
+}
 
 // =========================
 // 🔥 GENERAR EVENTO
@@ -126,7 +168,7 @@ async function getEvent(){
         headers:{"Content-Type":"application/json"},
         body:JSON.stringify({
             decision:"INIT",
-            context:"start"
+            context:"life"
         })
     });
 
@@ -140,19 +182,21 @@ async function getEvent(){
 }
 
 // =========================
-// 🔴 CREAR CUADRO ROJO
+// 🔴 EVENTO VISUAL (CUADRO GRANDE)
 // =========================
 function spawnEvent(type){
 
     obstacles.push({
         x: canvas.width,
         y: Math.random()*canvas.height,
-        type: type
+        type: type,
+        size: 60 + Math.random()*40,
+        color: "#ff0033"
     });
 }
 
 // =========================
-// 🎮 LOOP
+// 🎮 LOOP VIDA
 // =========================
 function loop(){
 
@@ -162,33 +206,38 @@ function loop(){
 
     // jugador
     ctx.fillStyle="#00f2ff";
-    ctx.fillRect(player.x, player.y, 20, 20);
+    ctx.fillRect(player.x,player.y,25,25);
 
     // eventos
     obstacles.forEach((o,i)=>{
 
-        o.x -= 4;
+        o.x -= 5;
 
-        ctx.strokeStyle="red";
-        ctx.strokeRect(o.x,o.y,40,40);
+        ctx.strokeStyle = o.color;
+        ctx.lineWidth = 3;
+        ctx.strokeRect(o.x,o.y,o.size,o.size);
 
-        ctx.fillStyle="red";
-        ctx.fillText(o.type,o.x,o.y-5);
+        ctx.fillStyle = "#ff0033";
+        ctx.font = "14px Arial";
+        ctx.fillText(o.type, o.x, o.y - 10);
 
-        // colisión
-        if(Math.abs(o.x-player.x)<20 && Math.abs(o.y-player.y)<20){
+        // colisión REAL
+        if(
+            Math.abs(o.x-player.x)<30 &&
+            Math.abs(o.y-player.y)<30
+        ){
             openDecision(o.type);
             obstacles.splice(i,1);
         }
 
-        if(o.x < -50) obstacles.splice(i,1);
+        if(o.x < -100) obstacles.splice(i,1);
     });
 
     requestAnimationFrame(loop);
 }
 
 // =========================
-// ⚖️ DECISION
+// ⚖️ DECISIONES
 // =========================
 function openDecision(event){
 
@@ -197,10 +246,10 @@ function openDecision(event){
     document.getElementById("decisionBox").style.display="flex";
     document.getElementById("eventTitle").innerText = event;
 
-    const desc = buildDescription(event);
-    document.getElementById("eventDesc").innerText = desc;
+    document.getElementById("eventDesc").innerText =
+        getDescriptionByAge(event);
 
-    const choices = ["TDB","TDM","TDN","TDG"];
+    const choices = ["TDB","TDM","TDN","TDP","TDG"];
     const box = document.getElementById("choices");
 
     box.innerHTML="";
@@ -217,7 +266,8 @@ function openDecision(event){
                 headers:{"Content-Type":"application/json"},
                 body:JSON.stringify({
                     decision:c,
-                    context:event
+                    context:event,
+                    age: state.age
                 })
             });
 
@@ -226,6 +276,8 @@ function openDecision(event){
             state = data.state;
 
             document.getElementById("decisionBox").style.display="none";
+
+            state.age += 1; // tiempo real
 
             spawnEvent(data.next_event);
             updateUI();
@@ -239,36 +291,27 @@ function openDecision(event){
 }
 
 // =========================
-// 🧠 DESCRIPCION INTELIGENTE
+// 🧠 DESCRIPCIÓN POR EDAD REAL
 // =========================
-function buildDescription(event){
+function getDescriptionByAge(event){
 
-    if(profile.stage === "nino"){
-        return "Algo pasó... ¿qué haces?"
+    if(state.age < 13){
+        return "Algo ocurre... elige con intuición.";
     }
 
-    if(profile.stage === "adulto"){
-        return "Situación crítica detectada. Decide."
+    if(state.age < 25){
+        return "Situación emocional y social activa.";
     }
 
-    if(profile.stage === "anciano"){
-        return "Este momento tiene peso emocional..."
+    if(state.age < 60){
+        return "Decisión con impacto en tu futuro.";
     }
 
-    return "Toma una decisión.";
+    return "Momento crítico de vida avanzada.";
 }
 
 // =========================
-// 📊 UI
-// =========================
-function updateUI(){
-    document.getElementById("mental").innerText = state.mental;
-    document.getElementById("money").innerText = state.money;
-    document.getElementById("social").innerText = state.social;
-}
-
-// =========================
-// 🔄 CONTINUE
+// ⚡ CONTINUE
 // =========================
 function forceEvent(){
     spawnEvent(currentEvent || "conflicto");
@@ -279,7 +322,7 @@ function forceEvent(){
 // =========================
 function restart(){
     localStorage.clear();
-    location.href="/";
+    location.reload();
 }
 
 // =========================
