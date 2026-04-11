@@ -9,23 +9,23 @@
         {
           "type": "voice",
           "text": {
-            "en": "You enter life without control. Everything begins reacting.",
-            "es": "Entras en la vida sin control. Todo comienza reaccionando."
+            "en": "You are born into a system you did not choose.",
+            "es": "Naces en un sistema que no elegiste."
           }
         },
         {
           "type": "strategy",
           "text": {
-            "en": "Every stimulus creates a response. Awareness is your first power.",
-            "es": "Cada estímulo crea una respuesta. La conciencia es tu primer poder."
+            "en": "Everything you experience will shape your identity.",
+            "es": "Todo lo que experimentas define tu identidad."
           }
         },
         {
           "type": "breathing",
           "duration": 5,
           "text": {
-            "en": "Breath connects you with existence.",
-            "es": "La respiración te conecta con la existencia."
+            "en": "Control your breath. You control your reaction.",
+            "es": "Controla tu respiración. Controlas tu reacción."
           }
         }
       ]
@@ -34,33 +34,33 @@
     {
       "id": 2,
       "level": 1,
-      "category": "Relaciones Iniciales",
+      "category": "Infancia y Formación",
       "blocks": [
         {
           "type": "voice",
           "text": {
-            "en": "Family, friends, strangers. All influence your identity.",
-            "es": "Familia, amigos, desconocidos. Todos influyen en tu identidad."
+            "en": "A child learns by imitation, not instruction.",
+            "es": "Un niño aprende por imitación, no por instrucciones."
+          }
+        },
+        {
+          "type": "strategy",
+          "text": {
+            "en": "Habits formed now define future power or weakness.",
+            "es": "Los hábitos definen tu futuro poder o debilidad."
           }
         },
         {
           "type": "quiz",
           "question": {
-            "en": "Someone rejects you. What defines you?",
-            "es": "Alguien te rechaza. ¿Qué te define?"
+            "en": "What shapes you most?",
+            "es": "¿Qué te forma más?"
           },
           "options": {
-            "en": ["Their opinion", "Your reaction", "The moment"],
-            "es": ["Su opinión", "Tu reacción", "El momento"]
+            "en": ["Environment", "Choices", "Luck"],
+            "es": ["Entorno", "Decisiones", "Suerte"]
           },
           "correct": 1
-        },
-        {
-          "type": "story",
-          "text": {
-            "en": "Rejection is not the end. It is a mirror.",
-            "es": "El rechazo no es el final. Es un espejo."
-          }
         }
       ]
     },
@@ -68,31 +68,31 @@
     {
       "id": 3,
       "level": 2,
-      "category": "Presión Social y Conflictos",
+      "category": "Amor, Relaciones y Conexión",
       "blocks": [
         {
           "type": "voice",
           "text": {
-            "en": "Conflict is inevitable. Reaction is optional.",
-            "es": "El conflicto es inevitable. La reacción es opcional."
+            "en": "Love can build you or break you.",
+            "es": "El amor puede construirte o destruirte."
           }
         },
         {
-          "type": "strategy",
+          "type": "story",
           "text": {
-            "en": "Every confrontation tests your internal structure.",
-            "es": "Cada confrontación prueba tu estructura interna."
+            "en": "Someone who leaves you teaches you who you are without them.",
+            "es": "Quien te deja te enseña quién eres sin esa persona."
           }
         },
         {
           "type": "quiz",
           "question": {
-            "en": "Best reaction under pressure:",
-            "es": "Mejor reacción bajo presión:"
+            "en": "After rejection you:",
+            "es": "Después del rechazo tú:"
           },
           "options": {
-            "en": ["Explode", "Control", "Escape"],
-            "es": ["Explotar", "Controlar", "Escapar"]
+            "en": ["Collapse", "Grow", "React aggressively"],
+            "es": ["Colapsas", "Creces", "Reaccionas agresivo"]
           },
           "correct": 1
         }
@@ -101,41 +101,34 @@
 
     {
       "id": 4,
-      "level": 3,
-      "category": "Trabajo y Dinero",
+      "level": 2,
+      "category": "Dinero y Poder",
       "blocks": [
         {
           "type": "voice",
           "text": {
-            "en": "Work is survival. Strategy turns it into power.",
-            "es": "El trabajo es supervivencia. La estrategia lo convierte en poder."
+            "en": "Money is a reflection of decisions.",
+            "es": "El dinero es reflejo de decisiones."
           }
         },
         {
           "type": "strategy",
           "text": {
-            "en": "Money flows where discipline exists.",
-            "es": "El dinero fluye donde existe disciplina."
+            "en": "Power is not control over others, but over yourself.",
+            "es": "El poder no es controlar otros, sino a ti mismo."
           }
         },
         {
           "type": "quiz",
           "question": {
-            "en": "You lose money. Your best response:",
-            "es": "Pierdes dinero. Tu mejor respuesta:"
+            "en": "You receive unexpected income. You:",
+            "es": "Recibes dinero inesperado. Tú:"
           },
           "options": {
-            "en": ["Panic", "Adapt", "Blame"],
-            "es": ["Pánico", "Adaptarse", "Culpar"]
+            "en": ["Waste it", "Invest it", "Hide it"],
+            "es": ["Lo gastas", "Lo inviertes", "Lo ocultas"]
           },
           "correct": 1
-        },
-        {
-          "type": "story",
-          "text": {
-            "en": "Wealth is not money. It is control over decisions.",
-            "es": "La riqueza no es dinero. Es control sobre decisiones."
-          }
         }
       ]
     },
@@ -143,31 +136,31 @@
     {
       "id": 5,
       "level": 3,
-      "category": "Salud y Cuerpo",
+      "category": "Salud, Cuerpo y Energía",
       "blocks": [
         {
           "type": "voice",
           "text": {
-            "en": "Your body reflects your decisions.",
-            "es": "Tu cuerpo refleja tus decisiones."
+            "en": "Your body stores your decisions.",
+            "es": "Tu cuerpo almacena tus decisiones."
           }
         },
         {
           "type": "strategy",
           "text": {
-            "en": "Neglect accumulates. So does discipline.",
-            "es": "El descuido se acumula. La disciplina también."
+            "en": "Neglect becomes illness. Discipline becomes strength.",
+            "es": "El descuido se convierte en enfermedad. La disciplina en fuerza."
           }
         },
         {
           "type": "quiz",
           "question": {
-            "en": "Health crisis appears. You:",
-            "es": "Aparece una crisis de salud. Tú:"
+            "en": "You feel exhaustion. You:",
+            "es": "Sientes agotamiento. Tú:"
           },
           "options": {
-            "en": ["Ignore", "Act", "Delay"],
-            "es": ["Ignorar", "Actuar", "Posponer"]
+            "en": ["Ignore", "Rest", "Push harder"],
+            "es": ["Ignoras", "Descansas", "Forzas más"]
           },
           "correct": 1
         }
@@ -176,21 +169,21 @@
 
     {
       "id": 6,
-      "level": 4,
+      "level": 3,
       "category": "Vicios y Tentaciones",
       "blocks": [
         {
           "type": "voice",
           "text": {
-            "en": "Pleasure can become a trap.",
-            "es": "El placer puede convertirse en una trampa."
+            "en": "Pleasure without control becomes dependency.",
+            "es": "El placer sin control se convierte en dependencia."
           }
         },
         {
           "type": "strategy",
           "text": {
-            "en": "Short-term relief vs long-term damage.",
-            "es": "Alivio corto vs daño largo."
+            "en": "Every impulse is a test of discipline.",
+            "es": "Cada impulso es una prueba de disciplina."
           }
         },
         {
@@ -200,8 +193,8 @@
             "es": "Aparece una tentación. Tú:"
           },
           "options": {
-            "en": ["Give in", "Control", "Escape"],
-            "es": ["Ceder", "Controlar", "Escapar"]
+            "en": ["Give in", "Control", "Replace habit"],
+            "es": ["Cedes", "Controlas", "Sustituyes hábito"]
           },
           "correct": 1
         }
@@ -211,31 +204,31 @@
     {
       "id": 7,
       "level": 4,
-      "category": "Amor y Desamor",
+      "category": "Conflicto y Estrés Social",
       "blocks": [
         {
           "type": "voice",
           "text": {
-            "en": "Love builds. Attachment can destroy.",
-            "es": "El amor construye. El apego puede destruir."
+            "en": "Conflict reveals your emotional intelligence.",
+            "es": "El conflicto revela tu inteligencia emocional."
           }
         },
         {
-          "type": "story",
+          "type": "strategy",
           "text": {
-            "en": "Losing someone reveals who you are without them.",
-            "es": "Perder a alguien revela quién eres sin esa persona."
+            "en": "Reaction defines consequences more than events.",
+            "es": "La reacción define más que el evento."
           }
         },
         {
           "type": "quiz",
           "question": {
-            "en": "After heartbreak you:",
-            "es": "Después de una ruptura tú:"
+            "en": "Someone insults you. You:",
+            "es": "Alguien te insulta. Tú:"
           },
           "options": {
-            "en": ["Collapse", "Grow", "Escape"],
-            "es": ["Colapsar", "Crecer", "Escapar"]
+            "en": ["Attack", "Stay calm", "Walk away"],
+            "es": ["Atacas", "Te calmas", "Te vas"]
           },
           "correct": 1
         }
@@ -245,31 +238,31 @@
     {
       "id": 8,
       "level": 5,
-      "category": "Incertidumbre y Existencia",
+      "category": "Destino y Existencia",
       "blocks": [
         {
           "type": "voice",
           "text": {
-            "en": "Uncertainty is constant. Control is internal.",
-            "es": "La incertidumbre es constante. El control es interno."
+            "en": "Life does not give meaning. You create it.",
+            "es": "La vida no da significado. Tú lo creas."
           }
         },
         {
-          "type": "strategy",
+          "type": "story",
           "text": {
-            "en": "You cannot control events. Only your response.",
-            "es": "No puedes controlar eventos. Solo tu respuesta."
+            "en": "The strongest people are not those who avoid pain, but those who transform it.",
+            "es": "Los fuertes no evitan el dolor, lo transforman."
           }
         },
         {
           "type": "quiz",
           "question": {
-            "en": "Unknown future appears. You:",
-            "es": "Futuro incierto aparece. Tú:"
+            "en": "Your future depends on:",
+            "es": "Tu futuro depende de:"
           },
           "options": {
-            "en": ["Fear", "Prepare", "Avoid"],
-            "es": ["Miedo", "Prepararse", "Evitar"]
+            "en": ["Luck", "Choices", "Others"],
+            "es": ["Suerte", "Decisiones", "Otros"]
           },
           "correct": 1
         }
@@ -279,31 +272,31 @@
     {
       "id": 9,
       "level": 6,
-      "category": "Muerte y Significado",
+      "category": "Vida Final y Legado",
       "blocks": [
         {
           "type": "voice",
           "text": {
-            "en": "Life ends. Meaning is built before that moment.",
-            "es": "La vida termina. El significado se construye antes."
+            "en": "Your life is your final message to the world.",
+            "es": "Tu vida es tu último mensaje al mundo."
           }
         },
         {
           "type": "story",
           "text": {
-            "en": "It was never about avoiding death. It was about how you lived.",
-            "es": "Nunca fue evitar la muerte. Fue cómo viviste."
+            "en": "What you become is more important than what you had.",
+            "es": "Lo que eres vale más que lo que tienes."
           }
         },
         {
           "type": "quiz",
           "question": {
-            "en": "What matters most?",
-            "es": "¿Qué importa más?"
+            "en": "At the end, you are remembered for:",
+            "es": "Al final eres recordado por:"
           },
           "options": {
-            "en": ["Control", "Experience", "Avoidance"],
-            "es": ["Control", "Experiencia", "Evitar"]
+            "en": ["Money", "Impact", "Fear"],
+            "es": ["Dinero", "Impacto", "Miedo"]
           },
           "correct": 1
         }
