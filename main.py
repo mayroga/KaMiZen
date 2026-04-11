@@ -1,156 +1,208 @@
 from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse, HTMLResponse
-from fastapi.staticfiles import StaticFiles
-import os
+from fastapi.responses import JSONResponse
 import random
 
 app = FastAPI()
 
-BASE_DIR = os.path.dirname(__file__)
-app.mount("/static", StaticFiles(directory="static"), name="static")
-
 # =========================
-# 👤 PERFIL
+# 🧠 ESTADO GLOBAL VIDA
 # =========================
-player_profile = {
-    "age": 25,
-    "stage": "adulto"
-}
-
-# =========================
-# 🧠 ESTADO
-# =========================
-player_state = {
+state = {
     "mental": 100,
+    "health": 100,
     "money": 1000,
     "social": 50,
-    "health": 100,
+    "discipline": 50,
     "addiction": 0,
-    "experience": 0,
+    "age": 18,
     "history": []
 }
 
 # =========================
-# 🎯 START REAL
+# 🌍 EVENTOS VIDA REAL
 # =========================
-@app.post("/start")
-async def start(request: Request):
-
-    data = await request.json()
-    age = int(data.get("age", 25))
-
-    if age <= 12:
-        stage = "nino"
-    elif age <= 25:
-        stage = "joven"
-    elif age <= 60:
-        stage = "adulto"
-    else:
-        stage = "anciano"
-
-    global player_profile, player_state
-
-    player_profile = {"age": age, "stage": stage}
-
-    player_state = {
-        "mental": 100,
-        "money": 500 if stage == "joven" else 1000,
-        "social": 60,
-        "health": 100,
-        "addiction": 0,
-        "experience": 0,
-        "history": []
-    }
-
-    return {"profile": player_profile, "state": player_state}
+EVENTS = [
+    "rechazo",
+    "amor",
+    "dinero",
+    "crisis",
+    "tentacion",
+    "oportunidad",
+    "soledad",
+    "conflicto",
+    "salud"
+]
 
 # =========================
-# 🌍 EVENTOS
+# 🧠 GENERADOR INTELIGENTE
 # =========================
-EVENT_POOL = ["rechazo","conflicto","perdida","oportunidad","tentacion"]
-
 def generate_event(state):
 
-    if state["addiction"] > 60:
-        return "tentacion"
+    if state["mental"] < 25:
+        return "ansiedad"
 
-    if state["money"] < 100:
-        return "perdida"
+    if state["health"] < 30:
+        return "enfermedad"
+
+    if state["money"] < 200:
+        return "crisis"
 
     if state["social"] < 20:
-        return "rechazo"
+        return "soledad"
 
-    return random.choice(EVENT_POOL)
+    if state["addiction"] > 60:
+        return "recaida"
+
+    return random.choice(EVENTS)
 
 # =========================
-# 🧠 IA EMOCIONAL REAL
+# ⚖️ MOTOR TVID (REAL IMPACTO)
 # =========================
-def emotional_engine(decision, context, state, profile):
+def apply_decision(decision, context):
 
-    stage = profile["stage"]
+    global state
 
-    sensitivity = {
-        "nino": 1.5,
-        "joven": 1.2,
-        "adulto": 1.0,
-        "anciano": 1.3
-    }[stage]
+    impact = {
+        "mental": 0,
+        "health": 0,
+        "money": 0,
+        "social": 0,
+        "discipline": 0,
+        "addiction": 0
+    }
+
+    # =====================
+    # 🧠 TVID SYSTEM
+    # =====================
+
+    if decision == "TDB":  # Bien consciente
+        impact["mental"] += 4
+        impact["discipline"] += 3
+        impact["social"] += 2
+
+    elif decision == "TDM":  # Distorsión / escape
+        impact["mental"] -= 5
+        impact["addiction"] += 4
+
+    elif decision == "TDN":  # Niño creativo
+        impact["mental"] += 2
+        impact["social"] += 1
+
+    elif decision == "TDP":  # Padre guía
+        impact["discipline"] += 5
+        impact["social"] += 3
+        impact["mental"] += 1
+
+    elif decision == "TDG":  # Guerra / control
+        impact["social"] -= 6
+        impact["mental"] -= 3
+
+    elif decision == "TDK":  # Amor / conexión
+        impact["mental"] += 5
+        impact["social"] += 5
+
+    # =====================
+    # 🌍 CONTEXTO VIDA
+    # =====================
 
     if context == "rechazo":
-        if decision == "TDB":
-            state["mental"] += int(5 * sensitivity)
-        elif decision == "TDM":
-            state["mental"] -= int(4 * sensitivity)
-            state["addiction"] += 2
-        elif decision == "TDG":
-            state["social"] -= int(8 * sensitivity)
+        impact["social"] -= 4 if decision == "TDG" else +2
 
-    if context == "perdida":
-        state["money"] -= random.randint(20, 80)
+    if context == "amor":
+        impact["mental"] += 3
+
+    if context == "crisis":
+        impact["money"] -= 50 if decision == "TDM" else +10
+
+    if context == "dinero":
+        impact["money"] += 100 if decision in ["TDB","TDP"] else -20
 
     if context == "tentacion":
-        if decision == "TDM":
-            state["addiction"] += int(10 * sensitivity)
+        impact["addiction"] += 10 if decision == "TDM" else -3
 
+    # =====================
+    # 🔁 APLICAR IMPACTO
+    # =====================
+    for k in impact:
+        state[k] += impact[k]
+
+    # =====================
+    # 🧬 REGLAS DE VIDA
+    # =====================
     state["mental"] = max(0, min(100, state["mental"]))
-    state["social"] = max(0, min(100, state["social"]))
     state["health"] = max(0, min(100, state["health"]))
+    state["social"] = max(0, min(100, state["social"]))
+    state["discipline"] = max(0, min(100, state["discipline"]))
 
-    state["experience"] += 1
+    # ⏳ TIEMPO REAL
+    state["age"] += 0.1
 
-    return state
+    # 📜 MEMORIA
+    state["history"].append({
+        "event": context,
+        "decision": decision,
+        "impact": impact
+    })
 
 # =========================
-# 🏠 HOME
+# 💀 FINAL CONDITIONS
 # =========================
-@app.get("/", response_class=HTMLResponse)
-def home():
-    return open(os.path.join(BASE_DIR, "static/session.html"), encoding="utf-8").read()
+def check_end():
+
+    if state["health"] <= 0:
+        return "muerte_fisica"
+
+    if state["mental"] <= 0:
+        return "colapso_mental"
+
+    if state["social"] <= 0:
+        return "aislamiento_total"
+
+    return None
 
 # =========================
-# 🧠 JUDGE
+# 🎮 JUEGO PRINCIPAL
 # =========================
 @app.post("/judge")
-async def judge(request: Request):
+async def judge(req: Request):
 
-    data = await request.json()
+    data = await req.json()
 
-    decision = data.get("decision")
-    context = data.get("context")
+    decision = data.get("decision", "TDM")
+    context = data.get("context", "neutral")
 
-    global player_state
+    apply_decision(decision, context)
 
-    player_state = emotional_engine(
-        decision,
-        context,
-        player_state,
-        player_profile
-    )
+    end = check_end()
 
-    next_event = generate_event(player_state)
+    if end:
+        return {
+            "status": "end",
+            "type": end,
+            "state": state
+        }
 
     return {
-        "state": player_state,
-        "next_event": next_event,
-        "profile": player_profile
+        "status": "continue",
+        "state": state,
+        "next_event": generate_event(state)
+    }
+
+# =========================
+# 🚀 START GAME (OBLIGATORIO)
+# =========================
+@app.post("/start")
+async def start(req: Request):
+
+    data = await req.json()
+    age = data.get("age", 18)
+
+    state["age"] = age
+
+    return {
+        "profile": {
+            "stage": "child" if age < 13 else "young" if age < 30 else "adult"
+        },
+        "state": state,
+        "next_event": generate_event(state)
     }
