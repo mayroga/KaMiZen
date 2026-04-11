@@ -48,7 +48,7 @@
 <div id="age-display">EDAD: <span id="a">18.0</span></div>
 <div id="timer-display">SESIÓN: <span id="clock">00:00</span></div>
 
-<div id="text-content">Estabilizando frecuencia neural...</div>
+<div id="text-content">Sincronizando con May Roga LLC...</div>
 <div id="options"></div>
 
 <div id="recovery-screen">
@@ -74,26 +74,31 @@ let frame = 0;
 let gameActive = true;
 let startTime = Date.now();
 
-// Interfaz de actualización Global
+// Actualización de UI Global
 window.updateSimState = (newState) => {
     if(!newState) return;
-    if(newState.mental !== undefined) document.getElementById("m").innerText = Math.floor(newState.mental);
-    if(newState.health !== undefined) document.getElementById("h").innerText = Math.floor(newState.health);
-    if(newState.money !== undefined) document.getElementById("d").innerText = Math.floor(newState.money);
-    if(newState.social !== undefined) document.getElementById("s").innerText = Math.floor(newState.social);
-    if(newState.addiction !== undefined) document.getElementById("v").innerText = Math.floor(newState.addiction);
-    if(newState.age !== undefined) document.getElementById("a").innerText = (newState.age).toFixed(1);
+    const update = (id, val) => {
+        const el = document.getElementById(id);
+        if(el && val !== undefined) el.innerText = Math.floor(val);
+    };
+    
+    update("m", newState.mental);
+    update("h", newState.health);
+    update("d", newState.money);
+    update("s", newState.social);
+    update("v", newState.addiction);
+    
+    const ageEl = document.getElementById("a");
+    if(ageEl && newState.age) ageEl.innerText = newState.age.toFixed(1);
     
     if(newState.status === "recovery") startRecoveryPhase();
 };
 
-// Movimiento
 window.addEventListener("mousemove", e => { if(gameActive) player.y = e.clientY; });
 
-// Acción de Poder (Disparo)
 window.addEventListener("mousedown", () => {
     if(gameActive) {
-        projectiles.push({ x: player.x + 25, y: player.y, speed: 15, owner: 'player', color: '#fff' });
+        projectiles.push({ x: player.x + 25, y: player.y, speed: 15, owner: 'player' });
     }
 });
 
@@ -130,13 +135,13 @@ function loop() {
     ctx.fillStyle = "rgba(0, 0, 0, 0.25)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Reloj
+    // Reloj de sesión
     let elapsed = Math.floor((Date.now() - startTime) / 1000);
     let mins = Math.floor(elapsed / 60).toString().padStart(2, '0');
     let secs = (elapsed % 60).toString().padStart(2, '0');
     document.getElementById("clock").innerText = `${mins}:${secs}`;
 
-    // Dibujar Jugador (Aura Neón)
+    // Dibujar Jugador
     ctx.shadowBlur = 20; ctx.shadowColor = "#0ff";
     ctx.beginPath();
     ctx.arc(player.x, player.y, player.size/2, 0, Math.PI*2);
@@ -147,10 +152,8 @@ function loop() {
     projectiles.forEach((p, pi) => {
         p.x += p.speed;
         ctx.fillStyle = p.owner === 'player' ? "#fff" : "#ff0055";
-        ctx.shadowBlur = 10; ctx.shadowColor = ctx.fillStyle;
         ctx.fillRect(p.x, p.y - 3, 15, 6);
-        ctx.shadowBlur = 0;
-
+        
         if(p.owner === 'enemy' && Math.hypot(p.x - player.x, p.y - player.y) < 25) {
             if(typeof handleCollision === "function") handleCollision("ataque_enemigo");
             projectiles.splice(pi, 1);
@@ -158,19 +161,17 @@ function loop() {
         if(p.x > canvas.width || p.x < 0) projectiles.splice(pi, 1);
     });
 
-    // Entidades de la Vía Real
+    // Entidades (Vía Real)
     enemies.forEach((e, i) => {
         e.x -= e.speed;
         ctx.font = "50px Arial";
         ctx.textAlign = "center";
         ctx.fillText(e.icon, e.x, e.y);
 
-        // Disparo enemigo (Fricción del sistema)
         if(["enfermedad", "conflicto", "crisis"].includes(e.type) && frame % 110 === 0) {
             projectiles.push({ x: e.x, y: e.y, speed: -10, owner: 'enemy' });
         }
 
-        // Colisión Proyectil -> Enemigo
         projectiles.forEach((p, pi) => {
             if(p.owner === 'player' && Math.hypot(p.x - e.x, p.y - e.y) < 40) {
                 if(typeof handleCollision === "function") handleCollision(e.type);
@@ -179,7 +180,6 @@ function loop() {
             }
         });
 
-        // Colisión Directa
         if(Math.hypot(e.x - player.x, e.y - player.y) < 45) {
             if(typeof handleCollision === "function") handleCollision(e.type);
             enemies.splice(i, 1);
@@ -192,24 +192,25 @@ function loop() {
     requestAnimationFrame(loop);
 }
 
-// ARRANQUE SEGURO
+// INICIALIZACIÓN BLINDADA
 window.onload = () => {
-    console.log("Sistema cargado. Despertando Motor...");
-    loop();
+    console.log("AL CIELO Engine: Iniciando componentes...");
+    loop(); // Inicia el renderizado aunque no haya datos aún
     
-    let initAttempts = 0;
-    const initCheck = setInterval(() => {
+    let attempts = 0;
+    const checkBrain = setInterval(() => {
         if (typeof startLifeFlow === "function") {
+            console.log("Cerebro conectado. Lanzando flujo de vida.");
             startLifeFlow();
-            clearInterval(initCheck);
+            clearInterval(checkBrain);
         } else {
-            initAttempts++;
-            if(initAttempts > 10) {
-                document.getElementById("text-content").innerText = "Fallo de conexión neural (scripts.js).";
-                clearInterval(initCheck);
+            attempts++;
+            if(attempts > 20) {
+                document.getElementById("text-content").innerText = "ERROR: No se detecta scripts.js";
+                clearInterval(checkBrain);
             }
         }
-    }, 500);
+    }, 300);
 };
 
 window.addEventListener('resize', () => {
