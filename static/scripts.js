@@ -1,35 +1,23 @@
-// =====================================
-// CONFIGURACIÓN INICIAL
-// =====================================
-let currentLang = 'en'; // Inglés por defecto
+let currentLang = 'en';
 let music = document.getElementById("bg-music");
-let voiceEnabled = true;
 
 const translations = {
     en: {
-        start: "START SESSION",
-        langBtn: "ESPAÑOL",
-        inhale: "Breathe In",
-        exhale: "Exhale",
-        hold: "Hold",
+        start: "START SESSION", langBtn: "ESPAÑOL", inhale: "Breathe In", exhale: "Exhale",
+        estres: "You feel pressure in your chest. Your mind doesn't stop.",
         soledad: "Today no one called. The silence feels heavier than usual.",
         perdida: "You think of someone who is no longer here. The void appears.",
-        estres: "You feel pressure in your chest. Your mind doesn't stop.",
-        confusion: "Everything seems blurred. You don't know which way to go.",
+        confusion: "Everything seems blurred. You don't know where to go.",
         tdb: "Breathe... and smile softly. Everything is fine for now.",
         tdm: "Even when escaping... smile. Observe without judging.",
         tdn: "Remember something simple... smile like a child.",
         tdg: "Feel the intensity... now release it with a short laugh."
     },
     es: {
-        start: "INICIAR SESIÓN",
-        langBtn: "ENGLISH",
-        inhale: "Inhala",
-        exhale: "Exhala",
-        hold: "Retén",
+        start: "INICIAR SESIÓN", langBtn: "ENGLISH", inhale: "Inhala", exhale: "Exhala",
+        estres: "Sientes presión en el pecho. Tu mente no se detiene.",
         soledad: "Hoy nadie te llamó. El silencio pesa más de lo normal.",
         perdida: "Piensas en alguien que ya no está. El vacío aparece.",
-        estres: "Sientes presión en el pecho. Tu mente no se detiene.",
         confusion: "Todo parece borroso. No sabes qué camino tomar.",
         tdb: "Respira… y sonríe suave. Todo está bien por ahora.",
         tdm: "Incluso escapando… sonríe. Observa sin juzgar.",
@@ -38,52 +26,32 @@ const translations = {
     }
 };
 
-// Generador de 100 imágenes naturales (Unsplash Nature)
-const natureImages = Array.from({length: 100}, (_, i) => `https://picsum.photos/id/${i + 10}/1200/800`);
+const natureImages = Array.from({length: 100}, (_, i) => `https://picsum.photos/id/${i + 15}/1200/800`);
 
-// ===============================
-// SISTEMA DE VOZ Y AUDIO
-// ===============================
 function speak(text) {
-    if (!voiceEnabled) return;
-    
-    // Bajar música mientras habla
-    music.volume = 0.15;
-    
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = currentLang === 'en' ? 'en-US' : 'es-ES';
-    utterance.rate = 0.9;
-    
-    utterance.onend = () => {
-        music.volume = 0.4; // Sube volumen al terminar
-    };
-    
-    window.speechSynthesis.speak(utterance);
+    window.speechSynthesis.cancel();
+    music.volume = 0.1;
+    const ut = new SpeechSynthesisUtterance(text);
+    ut.lang = currentLang === 'en' ? 'en-US' : 'es-ES';
+    ut.onend = () => music.volume = 0.4;
+    window.speechSynthesis.speak(ut);
+}
+
+function updateBackground() {
+    const container = document.getElementById("bg-container");
+    const imgUrl = natureImages[Math.floor(Math.random() * natureImages.length)];
+    const slide = document.createElement("div");
+    slide.className = "bg-slide";
+    slide.style.backgroundImage = `url('${imgUrl}')`;
+    container.appendChild(slide);
+    setTimeout(() => slide.style.opacity = "0.7", 100);
+    if (container.children.length > 2) container.removeChild(container.children[0]);
 }
 
 function toggleLanguage() {
     currentLang = currentLang === 'en' ? 'es' : 'en';
     document.getElementById("btn-start").innerText = translations[currentLang].start;
     document.getElementById("lang-toggle").innerText = translations[currentLang].langBtn;
-}
-
-// ===============================
-// LÓGICA DEL JUEGO
-// ===============================
-function updateBackground() {
-    const container = document.getElementById("bg-container");
-    const imgUrl = natureImages[Math.floor(Math.random() * natureImages.length)];
-    
-    const slide = document.createElement("div");
-    slide.className = "bg-slide";
-    slide.style.backgroundImage = `url('${imgUrl}')`;
-    container.appendChild(slide);
-    
-    setTimeout(() => slide.style.opacity = "0.7", 100);
-    
-    if (container.children.length > 2) {
-        container.removeChild(container.children[0]);
-    }
 }
 
 function start() {
@@ -98,14 +66,12 @@ function start() {
 function nextScene() {
     const stateVal = document.getElementById("state").value;
     const text = translations[currentLang][stateVal];
-    
-    const options = [
-        {txt: "TDB", tvid: "TDB", good: true},
-        {txt: "TDM", tvid: "TDM", good: false},
-        {txt: "TDN", tvid: "TDN", good: true}
+    const opts = [
+        {txt: "TDB", tvid: "TDB"},
+        {txt: "TDM", tvid: "TDM"},
+        {txt: "TDN", tvid: "TDN"}
     ];
-
-    renderScene(text, options);
+    renderScene(text, opts);
 }
 
 function renderScene(text, options) {
@@ -117,24 +83,27 @@ function renderScene(text, options) {
     options.forEach(opt => {
         const btn = document.createElement("button");
         btn.innerText = opt.txt;
-        btn.onclick = () => {
-            updateBackground();
-            runTherapy(opt.tvid);
-        };
+        btn.onclick = () => runTherapy(opt.tvid);
         container.appendChild(btn);
     });
 }
 
 function runTherapy(tvid) {
+    document.getElementById("options").innerHTML = "";
+    updateBackground();
+    
+    // Enviar al servidor para el juicio de la IA
+    fetch("/judge", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ decision: tvid })
+    });
+
     const msg = translations[currentLang][tvid.toLowerCase()];
     showTherapy(msg);
 }
 
-// ===============================
-// CÍRCULO RESPIRATORIO AUTO
-// ===============================
 function showTherapy(msg) {
-    document.getElementById("options").innerHTML = "";
     document.getElementById("text-content").innerText = msg;
     speak(msg);
 
@@ -144,31 +113,29 @@ function showTherapy(msg) {
     
     circle.style.display = "flex";
     
-    // Fase 1: INHALA (4s)
+    // FASE: INHALA
     instruction.innerText = translations[currentLang].inhale;
-    circle.classList.remove("exhale");
     circle.classList.add("inhale");
+    circle.classList.remove("exhale");
     
-    let count = 4;
-    timerDisp.innerText = count;
+    let time = 4;
+    timerDisp.innerText = time;
 
-    let breathInterval = setInterval(() => {
-        count--;
-        timerDisp.innerText = count;
-
-        if (count <= 0) {
+    let interval = setInterval(() => {
+        time--;
+        timerDisp.innerText = time;
+        if (time <= 0) {
             if (circle.classList.contains("inhale")) {
-                // Fase 2: EXHALA (4s)
+                // FASE: EXHALA
                 instruction.innerText = translations[currentLang].exhale;
-                circle.classList.remove("inhale");
                 circle.classList.add("exhale");
-                count = 4;
-                timerDisp.innerText = count;
+                circle.classList.remove("inhale");
+                time = 4;
+                timerDisp.innerText = time;
             } else {
-                // Fin de respiración
-                clearInterval(breathInterval);
+                clearInterval(interval);
                 circle.style.display = "none";
-                nextScene();
+                nextScene(); // AHORA SÍ AVANZA A LA SIGUIENTE ESCENA
             }
         }
     }, 1000);
