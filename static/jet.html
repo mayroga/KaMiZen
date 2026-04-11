@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MaykaMi | LIFE SIM REAL</title>
+<title>MAYKAMI | Vida Real</title>
 
 <style>
 body{
@@ -31,7 +31,7 @@ body{
     font-size:12px;
 }
 
-/* BOTONES CONTROL */
+/* CONTROLES */
 #controls{
     position:absolute;
     bottom:20px;
@@ -48,11 +48,6 @@ button{
     cursor:pointer;
 }
 
-/* CANVAS */
-canvas{
-    display:block;
-}
-
 /* DECISION */
 #decisionBox{
     position:fixed;
@@ -62,6 +57,7 @@ canvas{
     flex-direction:column;
     justify-content:center;
     align-items:center;
+    text-align:center;
 }
 </style>
 </head>
@@ -76,14 +72,11 @@ canvas{
 
 <canvas id="game"></canvas>
 
-<!-- CONTROLES -->
 <div id="controls">
-<button onclick="goBack()">⬅ BACK</button>
 <button onclick="restart()">🔄 RESTART</button>
-<button onclick="continueGame()">▶ CONTINUE</button>
+<button onclick="forceEvent()">▶ CONTINUE</button>
 </div>
 
-<!-- DECISION -->
 <div id="decisionBox">
 <h2 id="eventTitle"></h2>
 <p id="eventDesc"></p>
@@ -91,6 +84,15 @@ canvas{
 </div>
 
 <script>
+// =========================
+// 🧠 CARGAR PERFIL REAL
+// =========================
+let profile = JSON.parse(localStorage.getItem("profile"));
+let state = JSON.parse(localStorage.getItem("state"));
+
+// =========================
+// 🎮 CANVAS
+// =========================
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
@@ -98,59 +100,55 @@ canvas.width = innerWidth;
 canvas.height = innerHeight;
 
 // =========================
-// 🧠 ESTADO
-// =========================
-let state = {
-    mental:100,
-    money:1000,
-    social:50
-};
-
-// =========================
-// 🔴 EVENTOS REALES (CUADROS ROJOS)
-// =========================
-let obstacles = [];
-let currentScene = [];
-let history = [];
-
-// =========================
-// 🎮 JUGADOR
+// 🎮 PLAYER
 // =========================
 let player = {x:100, y:200};
 
 // =========================
-// 🧠 EVENTOS DESDE BACKEND
+// 🔴 EVENTOS
+// =========================
+let obstacles = [];
+let currentEvent = null;
+let playing = true;
+
+// =========================
+// 🎮 MOVIMIENTO
+// =========================
+window.onmousemove = e => player.y = e.clientY;
+
+// =========================
+// 🔥 GENERAR EVENTO
 // =========================
 async function getEvent(){
-    const res = await fetch("/judge", {
+
+    const res = await fetch("/judge",{
         method:"POST",
         headers:{"Content-Type":"application/json"},
-        body: JSON.stringify({
-            decision:"NEXT",
-            context:"flow"
+        body:JSON.stringify({
+            decision:"INIT",
+            context:"start"
         })
     });
 
     const data = await res.json();
 
-    updateState(data.state);
+    state = data.state;
+    currentEvent = data.next_event;
 
-    spawnEvent(data.next_event);
+    spawnEvent(currentEvent);
+    updateUI();
 }
 
 // =========================
-// 🔴 CREAR CUADRO ROJO REAL
+// 🔴 CREAR CUADRO ROJO
 // =========================
 function spawnEvent(type){
 
     obstacles.push({
         x: canvas.width,
         y: Math.random()*canvas.height,
-        type: type,
-        color:"#ff0033"
+        type: type
     });
-
-    currentScene.push(type);
 }
 
 // =========================
@@ -158,21 +156,23 @@ function spawnEvent(type){
 // =========================
 function loop(){
 
+    if(!playing) return;
+
     ctx.clearRect(0,0,canvas.width,canvas.height);
 
     // jugador
     ctx.fillStyle="#00f2ff";
-    ctx.fillRect(player.x,player.y,20,20);
+    ctx.fillRect(player.x, player.y, 20, 20);
 
     // eventos
     obstacles.forEach((o,i)=>{
 
         o.x -= 4;
 
-        ctx.strokeStyle = o.color;
+        ctx.strokeStyle="red";
         ctx.strokeRect(o.x,o.y,40,40);
 
-        ctx.fillStyle="#ff0033";
+        ctx.fillStyle="red";
         ctx.fillText(o.type,o.x,o.y-5);
 
         // colisión
@@ -188,17 +188,21 @@ function loop(){
 }
 
 // =========================
-// ⚖️ DECISIONES
+// ⚖️ DECISION
 // =========================
 function openDecision(event){
 
+    playing = false;
+
     document.getElementById("decisionBox").style.display="flex";
     document.getElementById("eventTitle").innerText = event;
-    document.getElementById("eventDesc").innerText = "Evento de vida activo";
+
+    const desc = buildDescription(event);
+    document.getElementById("eventDesc").innerText = desc;
 
     const choices = ["TDB","TDM","TDN","TDG"];
-
     const box = document.getElementById("choices");
+
     box.innerHTML="";
 
     choices.forEach(c=>{
@@ -208,10 +212,10 @@ function openDecision(event){
 
         btn.onclick = async ()=>{
 
-            const res = await fetch("/judge", {
+            const res = await fetch("/judge",{
                 method:"POST",
                 headers:{"Content-Type":"application/json"},
-                body: JSON.stringify({
+                body:JSON.stringify({
                     decision:c,
                     context:event
                 })
@@ -219,13 +223,15 @@ function openDecision(event){
 
             const data = await res.json();
 
-            updateState(data.state);
-
-            history.push(event);
+            state = data.state;
 
             document.getElementById("decisionBox").style.display="none";
 
             spawnEvent(data.next_event);
+            updateUI();
+
+            playing = true;
+            loop();
         };
 
         box.appendChild(btn);
@@ -233,38 +239,51 @@ function openDecision(event){
 }
 
 // =========================
-// 📊 ACTUALIZAR ESTADO
+// 🧠 DESCRIPCION INTELIGENTE
 // =========================
-function updateState(s){
-    state = s;
-    document.getElementById("mental").innerText = s.mental;
-    document.getElementById("money").innerText = s.money;
-    document.getElementById("social").innerText = s.social;
+function buildDescription(event){
+
+    if(profile.stage === "nino"){
+        return "Algo pasó... ¿qué haces?"
+    }
+
+    if(profile.stage === "adulto"){
+        return "Situación crítica detectada. Decide."
+    }
+
+    if(profile.stage === "anciano"){
+        return "Este momento tiene peso emocional..."
+    }
+
+    return "Toma una decisión.";
 }
 
 // =========================
-// ⬅ BACK
+// 📊 UI
 // =========================
-function goBack(){
-    history.pop();
+function updateUI(){
+    document.getElementById("mental").innerText = state.mental;
+    document.getElementById("money").innerText = state.money;
+    document.getElementById("social").innerText = state.social;
+}
+
+// =========================
+// 🔄 CONTINUE
+// =========================
+function forceEvent(){
+    spawnEvent(currentEvent || "conflicto");
 }
 
 // =========================
 // 🔄 RESTART
 // =========================
 function restart(){
-    location.reload();
+    localStorage.clear();
+    location.href="/";
 }
 
 // =========================
-// ▶ CONTINUE
-// =========================
-function continueGame(){
-    getEvent();
-}
-
-// =========================
-// INICIO
+// 🚀 START
 // =========================
 getEvent();
 loop();
