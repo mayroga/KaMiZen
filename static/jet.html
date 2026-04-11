@@ -2,12 +2,62 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>LIFE AI ENGINE</title>
+<title>LIFE AI ENGINE - MAYKAMI</title>
+
 <style>
-body{margin:0;background:#000;overflow:hidden;color:#0ff}
+body{
+    margin:0;
+    background:#000;
+    overflow:hidden;
+    color:#0ff;
+    font-family:Arial;
+}
+
 canvas{display:block}
-#ui{position:absolute;top:10px;left:10px;z-index:10}
-.box{margin:5px;padding:5px;border:1px solid #0ff}
+
+#ui{
+    position:absolute;
+    top:10px;
+    left:10px;
+    z-index:10;
+}
+
+.box{
+    margin:5px;
+    padding:6px;
+    border:1px solid #0ff;
+    background:rgba(0,0,0,0.5);
+    font-size:12px;
+}
+
+#text-content{
+    position:absolute;
+    bottom:20px;
+    left:20px;
+    color:#0ff;
+    z-index:20;
+    font-size:14px;
+}
+
+#options{
+    position:absolute;
+    bottom:60px;
+    left:20px;
+    z-index:20;
+}
+
+button{
+    margin:3px;
+    padding:8px;
+    background:black;
+    border:1px solid #0ff;
+    color:#0ff;
+    cursor:pointer;
+}
+button:hover{
+    background:#0ff;
+    color:black;
+}
 </style>
 </head>
 
@@ -21,161 +71,207 @@ canvas{display:block}
 <div class="box">CHOQUES <span id="c">0</span></div>
 </div>
 
+<div id="text-content"></div>
+<div id="options"></div>
+
 <canvas id="game"></canvas>
 
 <script>
-const canvas=document.getElementById("game")
-const ctx=canvas.getContext("2d")
-canvas.width=innerWidth
-canvas.height=innerHeight
 
-let state={
+// =========================
+// CANVAS
+// =========================
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+
+canvas.width = innerWidth;
+canvas.height = innerHeight;
+
+// =========================
+// ESTADO
+// =========================
+let state = {
     mental:100,
     social:50,
     money:1000,
     age:18
-}
+};
 
-let player={x:100,y:200}
-let bullets=[]
-let enemies=[]
+let player = {x:100,y:200};
+let bullets = [];
+let enemies = [];
 
-let collisions=0
-let frame=0
-let eventNow="conflicto"
+let collisions = 0;
+let frame = 0;
+let eventNow = "conflicto";
 
-// 🎮 CONTROL REAL (MOVIMIENTO TOTAL)
-addEventListener("mousemove",e=>{
-    player.y=e.clientY
-})
+// =========================
+// CONTROL REAL
+// =========================
+addEventListener("mousemove", e=>{
+    player.y = e.clientY;
+});
 
-addEventListener("click",()=>{
+addEventListener("click", ()=>{
     bullets.push({
         x:player.x+30,
         y:player.y,
         speed:10,
         type:"TDB"
-    })
-})
+    });
+});
 
-// 🔥 SPAWN ENEMIGOS (EVENTOS VIDA)
+// =========================
+// EVENTOS IA BACKEND
+// =========================
+async function nextEvent(){
+
+    try{
+        const r = await fetch("/judge",{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({
+                decision:"AUTO",
+                context:eventNow
+            })
+        });
+
+        const d = await r.json();
+
+        state = d.state;
+        eventNow = d.next_event;
+
+    }catch(e){
+        console.log("backend error",e);
+    }
+}
+
+// =========================
+// SPAWN ENEMIGOS
+// =========================
 function spawn(){
     enemies.push({
         x:innerWidth,
         y:Math.random()*innerHeight,
         type:eventNow,
         size:40
-    })
+    });
 }
 
-// 🧠 IA SIMPLE DE EVENTOS
-async function nextEvent(){
-
-    let r=await fetch("/judge",{
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({
-            decision:"AUTO",
-            context:eventNow
-        })
-    })
-
-    let d=await r.json()
-    state=d.state
-    eventNow=d.next_event
-}
-
-// 💀 CASTIGO POR CHOQUES
+// =========================
+// CASTIGO POR CHOQUES
+// =========================
 function damage(){
-    collisions++
+
+    collisions++;
 
     if(collisions === 1){
-        state.mental -= 5
+        state.mental -= 5;
     }
 
     if(collisions === 2){
-        state.mental -= 10
-        state.social -= 5
+        state.mental -= 10;
+        state.social -= 5;
     }
 
     if(collisions >= 3){
-        state.mental -= 25
-        state.money -= 200
+        state.mental -= 25;
+        state.money -= 200;
     }
 }
 
-// 🔄 LOOP PRINCIPAL
+// =========================
+// LOOP PRINCIPAL
+// =========================
 function loop(){
 
-    ctx.clearRect(0,0,canvas.width,canvas.height)
+    ctx.fillStyle="rgba(0,0,0,0.4)";
+    ctx.fillRect(0,0,canvas.width,canvas.height);
 
+    // =====================
     // PLAYER
-    ctx.fillStyle="#0ff"
-    ctx.fillRect(player.x,player.y,20,20)
+    // =====================
+    ctx.fillStyle="#0ff";
+    ctx.fillRect(player.x,player.y,20,20);
 
-    // BULLETS (DISPARO TVID)
+    // =====================
+    // BULLETS
+    // =====================
     bullets.forEach((b,i)=>{
-        b.x+=b.speed
-        ctx.fillStyle="yellow"
-        ctx.fillRect(b.x,b.y,6,6)
+        b.x += b.speed;
+
+        ctx.fillStyle="yellow";
+        ctx.fillRect(b.x,b.y,6,6);
 
         enemies.forEach((e,j)=>{
 
             if(Math.abs(b.x-e.x)<20 && Math.abs(b.y-e.y)<20){
-                enemies.splice(j,1)
-                bullets.splice(i,1)
+                enemies.splice(j,1);
+                bullets.splice(i,1);
 
-                state.money += 10   // recompensa
-                state.mental += 1
+                state.money += 10;
+                state.mental += 1;
             }
-        })
+        });
 
-        if(b.x>innerWidth) bullets.splice(i,1)
-    })
+        if(b.x > innerWidth) bullets.splice(i,1);
+    });
 
-    // ENEMIGOS (EVENTOS VIDA)
+    // =====================
+    // ENEMIGOS
+    // =====================
     enemies.forEach((e,i)=>{
-        e.x-=3
 
-        ctx.fillStyle="red"
-        ctx.fillRect(e.x,e.y,e.size,e.size)
+        e.x -= 3;
 
-        ctx.fillStyle="#fff"
-        ctx.fillText(e.type,e.x,e.y-5)
+        ctx.fillStyle="red";
+        ctx.fillRect(e.x,e.y,e.size,e.size);
+
+        ctx.fillStyle="#fff";
+        ctx.fillText(e.type,e.x,e.y-5);
 
         // COLISIÓN REAL
         if(Math.abs(e.x-player.x)<30 && Math.abs(e.y-player.y)<30){
-            damage()
-            enemies.splice(i,1)
+            damage();
+            enemies.splice(i,1);
         }
 
-        if(e.x<0) enemies.splice(i,1)
-    })
+        if(e.x < 0) enemies.splice(i,1);
+    });
 
+    // =====================
     // SPAWN DINÁMICO
-    if(Math.random()<0.02) spawn()
+    // =====================
+    if(Math.random()<0.03) spawn();
 
-    // IA EVENTO
-    if(frame%300===0) nextEvent()
+    // =====================
+    // IA EVENTOS
+    // =====================
+    if(frame % 200 === 0) nextEvent();
 
+    // =====================
     // UI
-    document.getElementById("m").innerText=state.mental
-    document.getElementById("s").innerText=state.social
-    document.getElementById("d").innerText=state.money
-    document.getElementById("a").innerText=state.age
-    document.getElementById("c").innerText=collisions
+    // =====================
+    document.getElementById("m").innerText = Math.floor(state.mental);
+    document.getElementById("s").innerText = Math.floor(state.social);
+    document.getElementById("d").innerText = Math.floor(state.money);
+    document.getElementById("a").innerText = state.age;
+    document.getElementById("c").innerText = collisions;
 
-    // 💀 FINAL
-    if(state.mental<=0){
-        alert("COLAPSO MENTAL")
-        location.reload()
+    // =====================
+    // FINAL
+    // =====================
+    if(state.mental <= 0){
+        alert("COLAPSO MENTAL");
+        location.reload();
     }
 
-    frame++
-    requestAnimationFrame(loop)
+    frame++;
+    requestAnimationFrame(loop);
 }
 
-loop()
+loop();
+
 </script>
 
 </body>
