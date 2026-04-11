@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MaykaMi | Sistema</title>
+<title>MaykaMi | Vida Real</title>
 
 <style>
 body{
     margin:0;
-    background:#0a0f14;
-    color:#ffffff;
+    background:#0f1720;
+    color:#fff;
     font-family:Arial;
     display:flex;
     justify-content:center;
@@ -18,37 +18,35 @@ body{
 }
 
 #app{
-    width:90%;
+    width:95%;
     max-width:420px;
-    background:#111a22;
+    background:#1b2735;
     border-radius:15px;
-    padding:25px;
+    padding:20px;
     text-align:center;
 }
 
-h1{
-    color:#00f2ff;
+h1{color:#00f2ff;}
+
+input, select{
+    width:100%;
+    padding:12px;
+    margin:10px 0;
+}
+
+button{
+    padding:14px;
+    width:100%;
+    margin-top:10px;
+    background:#00f2ff;
+    border:none;
+    font-weight:bold;
+    cursor:pointer;
 }
 
 #text-content{
     margin:20px 0;
     font-size:18px;
-}
-
-button{
-    padding:15px;
-    margin-top:10px;
-    width:100%;
-    border:none;
-    background:#00f2ff;
-    color:#000;
-    font-weight:bold;
-    cursor:pointer;
-}
-
-.secondary{
-    background:#333;
-    color:#fff;
 }
 
 #breath-circle{
@@ -62,7 +60,7 @@ button{
     justify-content:center;
 }
 
-.breathing-anim{
+.breathing{
     animation: breathe 4s infinite;
 }
 
@@ -80,17 +78,30 @@ button{
 
 <h1>MAYKAMI</h1>
 
-<div id="streak-display">SYNC: 100%</div>
-<div id="level-display">LEVEL 1</div>
+<div id="setup">
+<input id="age" placeholder="Edad">
+<select id="state">
+<option value="estres">Estrés</option>
+<option value="soledad">Soledad</option>
+<option value="perdida">Pérdida</option>
+<option value="confusion">Confusión</option>
+</select>
 
-<div id="text-content">INICIANDO...</div>
-
-<div id="breath-circle">
-<div id="timer-display">0</div>
+<button onclick="start()">START</button>
 </div>
 
-<button id="main-btn">START</button>
-<button onclick="location.reload()" class="secondary">RESET</button>
+<div id="game" style="display:none;">
+<div id="profile"></div>
+<div id="text-content"></div>
+
+<div id="breath-circle">
+<div id="timer">0</div>
+</div>
+
+<div id="options"></div>
+
+<button id="main-btn">CONTINUE</button>
+</div>
 
 </div>
 
