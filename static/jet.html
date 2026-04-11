@@ -3,61 +3,65 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MaykaMi | Neural Jet LIFE</title>
+<title>MaykaMi | LIFE SIM REAL</title>
 
 <style>
-body {
+body{
     margin:0;
-    background: radial-gradient(circle, #001a1a, #000);
+    background:black;
     color:#00f2ff;
-    font-family: Arial;
+    font-family:Arial;
     overflow:hidden;
 }
 
-#ui {
+/* HUD */
+#ui{
     position:absolute;
     top:10px;
     left:10px;
     display:flex;
-    gap:15px;
+    gap:10px;
+    flex-wrap:wrap;
 }
 
-.box {
-    background:rgba(0,0,0,0.6);
+.box{
+    padding:8px;
     border:1px solid #00f2ff;
-    padding:10px;
+    background:rgba(0,0,0,0.5);
     font-size:12px;
 }
 
-#exit {
+/* BOTONES CONTROL */
+#controls{
     position:absolute;
     bottom:20px;
-    right:20px;
-    padding:10px 20px;
-    background:#00f2ff;
-    color:#000;
-    border:none;
-    cursor:pointer;
+    left:20px;
+    display:flex;
+    gap:10px;
 }
 
-#decisionBox{
-    position:fixed;
-    inset:0;
-    background:rgba(0,0,0,0.92);
-    display:none;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
-    text-align:center;
-}
-
-.decision-btn{
-    margin:10px;
-    padding:12px 20px;
+button{
+    padding:10px;
     border:1px solid #00f2ff;
     background:transparent;
     color:#00f2ff;
     cursor:pointer;
+}
+
+/* CANVAS */
+canvas{
+    display:block;
+}
+
+/* DECISION */
+#decisionBox{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.95);
+    display:none;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
 }
 </style>
 </head>
@@ -65,134 +69,142 @@ body {
 <body>
 
 <div id="ui">
-<div class="box">SYNC: <span id="sync">100</span>%</div>
-<div class="box">MONEY: <span id="money">1000</span></div>
 <div class="box">MENTAL: <span id="mental">100</span></div>
+<div class="box">MONEY: <span id="money">1000</span></div>
+<div class="box">SOCIAL: <span id="social">50</span></div>
 </div>
 
-<canvas id="c"></canvas>
-<button id="exit">EXIT</button>
+<canvas id="game"></canvas>
 
+<!-- CONTROLES -->
+<div id="controls">
+<button onclick="goBack()">⬅ BACK</button>
+<button onclick="restart()">🔄 RESTART</button>
+<button onclick="continueGame()">▶ CONTINUE</button>
+</div>
+
+<!-- DECISION -->
 <div id="decisionBox">
-    <h2 id="eventTitle"></h2>
-    <p id="eventDesc"></p>
-    <div id="choices"></div>
+<h2 id="eventTitle"></h2>
+<p id="eventDesc"></p>
+<div id="choices"></div>
 </div>
 
 <script>
-const canvas = document.getElementById("c");
+const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
 canvas.width = innerWidth;
 canvas.height = innerHeight;
 
-// =====================
-// 🧠 ESTADO LOCAL UI
-// =====================
+// =========================
+// 🧠 ESTADO
+// =========================
 let state = {
-    sync: 100,
-    mental: 100,
-    money: 1000
+    mental:100,
+    money:1000,
+    social:50
 };
 
-let jet = {x:80, y:200};
+// =========================
+// 🔴 EVENTOS REALES (CUADROS ROJOS)
+// =========================
 let obstacles = [];
-let playing = true;
+let currentScene = [];
+let history = [];
 
-// =====================
-// 🔥 EVENTO ACTUAL (DEL BACKEND)
-// =====================
-let currentEvent = null;
+// =========================
+// 🎮 JUGADOR
+// =========================
+let player = {x:100, y:200};
 
-// =====================
-// 🎮 MOVIMIENTO
-// =====================
-window.onmousemove = e => jet.y = e.clientY;
-
-// =====================
-// 🔄 OBTENER PRIMER EVENTO
-// =====================
-async function getNextEvent(){
+// =========================
+// 🧠 EVENTOS DESDE BACKEND
+// =========================
+async function getEvent(){
     const res = await fetch("/judge", {
         method:"POST",
         headers:{"Content-Type":"application/json"},
         body: JSON.stringify({
-            decision: "START",
-            context: "init"
+            decision:"NEXT",
+            context:"flow"
         })
     });
 
     const data = await res.json();
-    currentEvent = data.next_event;
-    syncState(data.state);
+
+    updateState(data.state);
+
+    spawnEvent(data.next_event);
 }
 
-// =====================
-// 🔴 LOOP PRINCIPAL
-// =====================
+// =========================
+// 🔴 CREAR CUADRO ROJO REAL
+// =========================
+function spawnEvent(type){
+
+    obstacles.push({
+        x: canvas.width,
+        y: Math.random()*canvas.height,
+        type: type,
+        color:"#ff0033"
+    });
+
+    currentScene.push(type);
+}
+
+// =========================
+// 🎮 LOOP
+// =========================
 function loop(){
-    if(!playing) return;
 
     ctx.clearRect(0,0,canvas.width,canvas.height);
 
     // jugador
     ctx.fillStyle="#00f2ff";
-    ctx.fillRect(jet.x, jet.y, 20, 20);
+    ctx.fillRect(player.x,player.y,20,20);
 
-    // spawn eventos desde backend
-    if(Math.random()<0.02 && currentEvent){
-        obstacles.push({
-            x: canvas.width,
-            y: Math.random()*canvas.height,
-            event: currentEvent
-        });
-    }
-
+    // eventos
     obstacles.forEach((o,i)=>{
-        o.x -= 5;
 
-        ctx.strokeStyle = "#ff0033";
-        ctx.strokeRect(o.x,o.y,30,30);
+        o.x -= 4;
+
+        ctx.strokeStyle = o.color;
+        ctx.strokeRect(o.x,o.y,40,40);
 
         ctx.fillStyle="#ff0033";
-        ctx.fillText(o.event,o.x,o.y-5);
+        ctx.fillText(o.type,o.x,o.y-5);
 
         // colisión
-        if(Math.abs(o.x-jet.x)<20 && Math.abs(o.y-jet.y)<20){
-            triggerDecision(o.event);
+        if(Math.abs(o.x-player.x)<20 && Math.abs(o.y-player.y)<20){
+            openDecision(o.type);
             obstacles.splice(i,1);
         }
 
-        if(o.x<0) obstacles.splice(i,1);
+        if(o.x < -50) obstacles.splice(i,1);
     });
 
     requestAnimationFrame(loop);
 }
 
-// =====================
-// ⚖️ DECISIÓN
-// =====================
-function triggerDecision(event){
+// =========================
+// ⚖️ DECISIONES
+// =========================
+function openDecision(event){
 
-    playing = false;
-
-    const box = document.getElementById("decisionBox");
-    const choices = document.getElementById("choices");
-
-    box.style.display="flex";
-
-    document.getElementById("eventTitle").innerText = event.toUpperCase();
+    document.getElementById("decisionBox").style.display="flex";
+    document.getElementById("eventTitle").innerText = event;
     document.getElementById("eventDesc").innerText = "Evento de vida activo";
 
-    const options = ["TDB","TDM","TDN","TDG"];
+    const choices = ["TDB","TDM","TDN","TDG"];
 
-    choices.innerHTML="";
+    const box = document.getElementById("choices");
+    box.innerHTML="";
 
-    options.forEach(opt=>{
+    choices.forEach(c=>{
 
         const btn = document.createElement("button");
-        btn.className="decision-btn";
-        btn.innerText = opt;
+        btn.innerText = c;
 
         btn.onclick = async ()=>{
 
@@ -200,51 +212,61 @@ function triggerDecision(event){
                 method:"POST",
                 headers:{"Content-Type":"application/json"},
                 body: JSON.stringify({
-                    decision: opt,
-                    context: event
+                    decision:c,
+                    context:event
                 })
             });
 
             const data = await res.json();
 
-            syncState(data.state);
+            updateState(data.state);
 
-            box.style.display="none";
-            playing = true;
+            history.push(event);
 
-            // 🔥 nuevo evento REAL del backend
-            currentEvent = data.next_event;
+            document.getElementById("decisionBox").style.display="none";
 
-            loop();
+            spawnEvent(data.next_event);
         };
 
-        choices.appendChild(btn);
+        box.appendChild(btn);
     });
 }
 
-// =====================
-// 📊 ACTUALIZAR UI
-// =====================
-function syncState(newState){
-    state = newState;
-
-    document.getElementById("sync").innerText = state.mental;
-    document.getElementById("mental").innerText = state.mental;
-    document.getElementById("money").innerText = state.money;
+// =========================
+// 📊 ACTUALIZAR ESTADO
+// =========================
+function updateState(s){
+    state = s;
+    document.getElementById("mental").innerText = s.mental;
+    document.getElementById("money").innerText = s.money;
+    document.getElementById("social").innerText = s.social;
 }
 
-// =====================
-// 🚪 SALIDA
-// =====================
-document.getElementById("exit").onclick = ()=>{
-    localStorage.setItem("final_state", JSON.stringify(state));
-    window.location.href="/";
-};
+// =========================
+// ⬅ BACK
+// =========================
+function goBack(){
+    history.pop();
+}
 
-// =====================
-// 🚀 INICIO
-// =====================
-getNextEvent();
+// =========================
+// 🔄 RESTART
+// =========================
+function restart(){
+    location.reload();
+}
+
+// =========================
+// ▶ CONTINUE
+// =========================
+function continueGame(){
+    getEvent();
+}
+
+// =========================
+// INICIO
+// =========================
+getEvent();
 loop();
 
 </script>
