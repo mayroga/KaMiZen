@@ -1,118 +1,162 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
     <meta charset="utf-8">
     <title>AL CIELO - LIFE ENGINE</title>
     <style>
         body { margin: 0; background: #000; overflow: hidden; color: #0ff; font-family: 'JetBrains Mono', monospace; }
-        canvas { display: block; filter: contrast(1.2) brightness(1.1); }
-        #ui { position: absolute; top: 10px; left: 10px; z-index: 10; display: flex; flex-wrap: wrap; }
-        .box { margin: 5px; padding: 10px; border: 1px solid #0ff; background: rgba(0,0,0,0.7); font-size: 13px; border-radius: 4px; box-shadow: 0 0 10px rgba(0,242,255,0.2); }
-        #text-content { position: absolute; bottom: 120px; left: 20px; color: #fff; z-index: 20; font-size: 18px; text-shadow: 2px 2px #000; max-width: 600px; font-weight: bold; }
-        #options { position: absolute; bottom: 40px; left: 20px; z-index: 20; display: flex; gap: 10px; }
-        button { padding: 12px 20px; background: black; border: 1px solid #0ff; color: #0ff; cursor: pointer; font-weight: bold; transition: 0.3s; }
-        button:hover { background: #0ff; color: black; box-shadow: 0 0 15px #0ff; }
-        #age-display { position: absolute; top: 10px; right: 20px; font-size: 24px; color: #0ff; }
+        canvas { display: block; filter: contrast(1.2) brightness(1.1); cursor: none; }
+        
+        /* INTERFAZ DE ESTADO */
+        #ui { position: absolute; top: 10px; left: 10px; z-index: 10; display: flex; flex-wrap: wrap; pointer-events: none; }
+        .box { margin: 5px; padding: 10px; border: 1px solid #0ff; background: rgba(0,0,0,0.8); font-size: 13px; border-radius: 4px; box-shadow: 0 0 10px rgba(0,242,255,0.2); min-width: 80px; text-align: center; }
+        .box span { display: block; font-size: 16px; font-weight: bold; color: #fff; }
+
+        /* TEXTO DE ASESORÍA */
+        #text-content { position: absolute; bottom: 140px; left: 30px; color: #fff; z-index: 20; font-size: 20px; text-shadow: 2px 2px 4px #000; max-width: 70%; font-weight: bold; line-height: 1.4; pointer-events: none; }
+        
+        /* BOTONES DE DECISIÓN TVID */
+        #options { position: absolute; bottom: 50px; left: 30px; z-index: 20; display: flex; gap: 15px; }
+        button { padding: 15px 25px; background: rgba(0,0,0,0.9); border: 2px solid #0ff; color: #0ff; cursor: pointer; font-weight: bold; font-size: 16px; transition: 0.3s; border-radius: 8px; text-transform: uppercase; }
+        button:hover { background: #0ff; color: black; box-shadow: 0 0 20px #0ff; transform: translateY(-3px); }
+        
+        #age-display { position: absolute; top: 15px; right: 25px; font-size: 28px; color: #0ff; text-shadow: 0 0 10px #0ff; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div id="ui">
-    <div class="box">MENTAL: <span id="m">100</span>%</div>
-    <div class="box">SALUD: <span id="h">100</span>%</div>
-    <div class="box">DINERO: $<span id="d">1000</span></div>
-    <div class="box">SOCIAL: <span id="s">50</span></div>
-    <div class="box">VICIO: <span id="v">0</span>%</div>
+    <div class="box">MENTAL <span id="m">100</span>%</div>
+    <div class="box">SALUD <span id="h">100</span>%</div>
+    <div class="box">DINERO <span id="d">1000</span></div>
+    <div class="box">SOCIAL <span id="s">50</span></div>
+    <div class="box">VICIO <span id="v">0</span>%</div>
 </div>
 
-<div id="age-display">EDAD: <span id="a">18.0</span></div>
-<div id="text-content">Iniciando sistema...</div>
+<div id="age-display">EDAD: <span id="a">0.0</span></div>
+<div id="text-content">Estabilizando parámetros de vida...</div>
 <div id="options"></div>
 
 <canvas id="game"></canvas>
 
 <script src="/static/scripts.js"></script>
+
 <script>
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-let player = { x: 100, y: 300, size: 30 };
+let player = { x: 120, y: canvas.height / 2, size: 40 };
 let enemies = [];
 let frame = 0;
 
-// Sincronización de estado con scripts.js
+// SINCRONIZACIÓN DE INTERFAZ CON EL MOTOR
 window.updateSimState = (newState) => {
-    document.getElementById("m").innerText = Math.floor(newState.mental);
-    document.getElementById("h").innerText = Math.floor(newState.health);
-    document.getElementById("d").innerText = Math.floor(newState.money);
-    document.getElementById("s").innerText = Math.floor(newState.social);
-    document.getElementById("v").innerText = Math.floor(newState.addiction);
-    document.getElementById("a").innerText = newState.age.toFixed(1);
+    if(!newState) return;
+    document.getElementById("m").innerText = Math.floor(newState.mental || 0);
+    document.getElementById("h").innerText = Math.floor(newState.health || 0);
+    document.getElementById("d").innerText = Math.floor(newState.money || 0);
+    document.getElementById("s").innerText = Math.floor(newState.social || 0);
+    document.getElementById("v").innerText = Math.floor(newState.addiction || 0);
+    document.getElementById("a").innerText = (newState.age || 0).toFixed(1);
 };
 
-// Control del Jugador
-addEventListener("mousemove", e => { player.y = e.clientY; });
+// CONTROL DE MOVIMIENTO (MOUSE / TOUCH)
+addEventListener("mousemove", e => { 
+    player.y = e.clientY; 
+});
 
 function spawnEnemy(type) {
+    if(!type) return;
     enemies.push({
         x: canvas.width,
-        y: Math.random() * (canvas.height - 100) + 50,
+        y: Math.random() * (canvas.height - 150) + 75,
         type: type,
-        speed: 3 + (Math.random() * 2)
+        speed: 4 + (Math.random() * 3)
     });
 }
 
 function loop() {
-    ctx.fillStyle = "rgba(0, 0, 0, 0.15)";
+    // Fondo con estela de movimiento
+    ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Dibujar Jugador (Esfera de Conciencia)
+    // DIBUJAR JUGADOR (EL OBSERVADOR)
+    ctx.shadowBlur = 15;
+    ctx.shadowColor = "#0ff";
     ctx.beginPath();
     ctx.arc(player.x, player.y, player.size/2, 0, Math.PI*2);
     ctx.fillStyle = "#0ff";
     ctx.fill();
-    ctx.strokeStyle = "#fff";
-    ctx.stroke();
+    ctx.shadowBlur = 0;
 
-    // Dibujar Enemigos (Eventos de la Vía Real)
+    // PROCESAR ENEMIGOS (EVENTOS DE LA VÍA REAL)
     enemies.forEach((e, i) => {
         e.x -= e.speed;
         
-        let icon = "🚁"; 
+        let icon = "🚁"; // Default: Conflicto
         if(e.type === "dinero") icon = "💰";
         if(e.type === "amor") icon = "❤️";
         if(e.type === "enfermedad") icon = "🚜";
         if(e.type === "oportunidad") icon = "💠";
         if(e.type === "tentacion") icon = "🍺";
+        if(e.type === "crisis") icon = "📉";
 
-        ctx.font = "40px Arial";
+        ctx.font = "45px Arial";
+        ctx.textAlign = "center";
         ctx.fillText(icon, e.x, e.y);
 
-        // Colisión con el Jugador
+        // DETECCIÓN DE IMPACTO
         let dist = Math.hypot(e.x - player.x, e.y - player.y);
-        if(dist < 35) {
-            handleCollision(e.type);
+        if(dist < 40) {
+            if (typeof handleCollision === "function") {
+                handleCollision(e.type);
+            }
             enemies.splice(i, 1);
         }
 
-        if(e.x < -50) enemies.splice(i, 1);
+        // Eliminar si sale de pantalla
+        if(e.x < -100) enemies.splice(i, 1);
     });
 
-    if(frame % 120 === 0 && window.currentEvent) spawnEnemy(window.currentEvent);
+    // Spawn basado en el evento actual del motor
+    if(frame % 90 === 0 && window.currentEvent) {
+        spawnEnemy(window.currentEvent);
+    }
 
     frame++;
     requestAnimationFrame(loop);
 }
 
-// Iniciar
+// ARRANQUE SEGURO DEL SISTEMA
 window.onload = () => {
+    console.log("AL CIELO: Cargando módulos...");
+    
+    // 1. Cargar estado inicial del Storage
     const savedState = JSON.parse(localStorage.getItem("state"));
-    if(savedState) window.updateSimState(savedState);
+    if(savedState) {
+        window.updateSimState(savedState);
+    }
+
+    // 2. Iniciar bucle visual
     loop();
-    startLifeFlow(); // Función en scripts.js
+    
+    // 3. Iniciar flujo de datos con el servidor (scripts.js)
+    setTimeout(() => {
+        if (typeof startLifeFlow === "function") {
+            startLifeFlow();
+        } else {
+            document.getElementById("text-content").innerText = "ERROR: Fallo en scripts.js";
+        }
+    }, 800);
 };
+
+// Ajustar canvas si cambia el tamaño de ventana
+window.addEventListener('resize', () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+});
 </script>
 </body>
 </html>
