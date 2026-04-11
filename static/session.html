@@ -3,69 +3,116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MAYKAMI | Life Session</title>
+    <title>MAYKAMI | Al Cielo</title>
     <style>
         body {
             margin: 0;
             background: #000;
             color: #fff;
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             overflow: hidden;
             height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
-        /* Fondo Dinámico con Zoom */
+        /* Contenedor de Fondos Naturales */
         #bg-container {
             position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             z-index: -1;
-            overflow: hidden;
         }
 
         .bg-slide {
             position: absolute;
-            width: 110%; height: 110%;
-            top: -5%; left: -5%;
+            width: 110%;
+            height: 110%;
+            top: -5%;
+            left: -5%;
             background-size: cover;
             background-position: center;
             opacity: 0;
             transition: opacity 2s ease-in-out;
-            animation: slowZoom 20s infinite alternate linear;
+            animation: slowZoom 30s infinite alternate linear;
         }
 
         @keyframes slowZoom {
             from { transform: scale(1); }
-            to { transform: scale(1.15); }
+            to { transform: scale(1.1); }
         }
 
+        /* Interfaz Principal */
         #app {
             position: relative;
             z-index: 10;
-            width: 90%; max-width: 450px;
-            margin: 5vh auto;
-            background: rgba(15, 23, 32, 0.85);
-            backdrop-filter: blur(10px);
+            width: 90%;
+            max-width: 420px;
+            background: rgba(15, 23, 32, 0.8);
+            backdrop-filter: blur(12px);
             border-radius: 20px;
-            padding: 25px;
+            padding: 30px;
             text-align: center;
             border: 1px solid rgba(0, 242, 255, 0.3);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
         #lang-toggle {
             position: absolute;
-            top: 15px; right: 15px;
-            padding: 5px 10px;
+            top: 15px;
+            right: 15px;
+            padding: 6px 12px;
             background: #00f2ff;
             color: #000;
+            border: none;
             border-radius: 5px;
             cursor: pointer;
             font-weight: bold;
             font-size: 12px;
+            text-transform: uppercase;
         }
 
+        h1 { color: #00f2ff; letter-spacing: 2px; margin-bottom: 25px; }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid #00f2ff;
+            color: #fff;
+            border-radius: 8px;
+        }
+
+        button {
+            padding: 14px;
+            width: 100%;
+            margin-top: 15px;
+            background: #00f2ff;
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover { background: #00d4e0; transform: translateY(-2px); }
+
+        #text-content {
+            margin: 25px 0;
+            font-size: 1.1em;
+            line-height: 1.4;
+            min-height: 60px;
+        }
+
+        /* Círculo Respiratorio Automático */
         #breath-circle {
-            width: 150px; height: 150px;
+            width: 140px;
+            height: 140px;
             border-radius: 50%;
             border: 4px solid #00f2ff;
             margin: 20px auto;
@@ -73,54 +120,59 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            background: rgba(0, 242, 255, 0.1);
+            background: rgba(0, 242, 255, 0.05);
+            transition: all 4s linear;
         }
 
         #breath-instruction {
             font-size: 14px;
             font-weight: bold;
             text-transform: uppercase;
+            color: #00f2ff;
         }
 
-        .breathing-in { animation: expand 4s forwards linear; }
-        .breathing-out { animation: contract 4s forwards linear; }
+        #timer { font-size: 24px; margin-top: 5px; }
 
-        @keyframes expand { from { transform: scale(0.8); } to { transform: scale(1.3); } }
-        @keyframes contract { from { transform: scale(1.3); } to { transform: scale(0.8); } }
+        .inhale { transform: scale(1.3); background: rgba(0, 242, 255, 0.2); }
+        .exhale { transform: scale(0.9); background: rgba(0, 242, 255, 0.05); }
+
     </style>
 </head>
 <body>
 
-<div id="bg-container"></div>
+    <div id="bg-container"></div>
 
-<div id="app">
-    <div id="lang-toggle" onclick="toggleLanguage()">EN / ES</div>
-    <h1 id="title">MAYKAMI</h1>
+    <div id="app">
+        <button id="lang-toggle" onclick="toggleLanguage()">ESPAÑOL</button>
+        <h1 id="title">MAYKAMI</h1>
 
-    <div id="setup">
-        <input id="age" type="number" placeholder="Age / Edad">
-        <select id="state">
-            <option value="estres" data-en="Stress" data-es="Estrés">Stress / Estrés</option>
-            <option value="soledad" data-en="Loneliness" data-es="Soledad">Loneliness / Soledad</option>
-            <option value="perdida" data-en="Loss" data-es="Pérdida">Loss / Pérdida</option>
-        </select>
-        <button onclick="start()" id="start-btn">START</button>
-    </div>
-
-    <div id="game" style="display:none;">
-        <div id="text-content"></div>
-        <div id="breath-circle">
-            <div id="breath-instruction"></div>
-            <div id="timer">4</div>
+        <div id="setup">
+            <input id="age" type="number" placeholder="Age / Edad">
+            <select id="state">
+                <option value="estres">Stress / Estrés</option>
+                <option value="soledad">Loneliness / Soledad</option>
+                <option value="perdida">Loss / Pérdida</option>
+                <option value="confusion">Confusion / Confusión</option>
+            </select>
+            <button onclick="start()" id="btn-start">START SESSION</button>
         </div>
-        <div id="options"></div>
+
+        <div id="game" style="display:none;">
+            <div id="text-content"></div>
+            
+            <div id="breath-circle">
+                <div id="breath-instruction"></div>
+                <div id="timer">4</div>
+            </div>
+
+            <div id="options"></div>
+        </div>
     </div>
-</div>
 
-<audio id="bg-music" loop>
-    <source src="https://www.chosic.com/wp-content/uploads/2021/04/Rain-And-Thunder-Nature-Sounds.mp3" type="audio/mpeg">
-</audio>
+    <audio id="bg-music" loop>
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-17.mp3" type="audio/mpeg">
+    </audio>
 
-<script src="/static/scripts.js"></script>
+    <script src="/static/scripts.js"></script>
 </body>
 </html>
