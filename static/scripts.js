@@ -1,33 +1,7 @@
-// =========================
-// 🌍 ESTADO GLOBAL
-// =========================
-let currentLang = 'es';
-let music = document.getElementById("bg-music");
-
 let currentEvent = null;
 let gameState = null;
-let playerAge = 25;
-let decisionTimer = null;
-
-// =========================
-// 🌐 TRADUCCIÓN
-// =========================
-const translations = {
-    es: {
-        start: "INICIAR VIDA",
-        back: "← ATRÁS",
-        continue: "CONTINUAR",
-        finish: "FINALIZAR",
-        noDecision: "No decidiste... la vida decidió por ti."
-    },
-    en: {
-        start: "START LIFE",
-        back: "← BACK",
-        continue: "CONTINUE",
-        finish: "FINISH",
-        noDecision: "You didn't choose... life chose for you."
-    }
-};
+let playerAge = 18;
+let timer = null;
 
 // =========================
 // 🔊 VOZ
@@ -35,265 +9,181 @@ const translations = {
 function speak(text){
     window.speechSynthesis.cancel();
 
-    const ut = new SpeechSynthesisUtterance(text);
-    ut.lang = currentLang === 'es' ? 'es-ES' : 'en-US';
-
-    window.speechSynthesis.speak(ut);
+    let u = new SpeechSynthesisUtterance(text);
+    u.lang = "es-ES";
+    window.speechSynthesis.speak(u);
 }
 
 // =========================
-// 🎯 CLASIFICACIÓN POR EDAD
-// =========================
-function getAgeGroup(age){
-    if(age < 13) return "child";
-    if(age < 25) return "young";
-    if(age < 60) return "adult";
-    return "elder";
-}
-
-// =========================
-// ▶️ INICIO REAL
+// 🚀 INICIO
 // =========================
 function start(){
 
-    playerAge = parseInt(document.getElementById("age").value) || 25;
+    playerAge = parseInt(document.getElementById("age").value || 18);
 
-    music.play().catch(()=>{});
-    music.volume = 0.4;
-
-    document.getElementById("setup").style.display = "none";
-    document.getElementById("game").style.display = "block";
-    document.getElementById("back-btn").style.display = "block";
-
-    requestNextEvent();
-}
-
-// =========================
-// 🔁 RESET
-// =========================
-function resetApp(){
-
-    window.speechSynthesis.cancel();
-
-    clearTimeout(decisionTimer);
-
-    document.getElementById("game").style.display = "none";
-    document.getElementById("setup").style.display = "block";
-
-    currentEvent = null;
-    gameState = null;
-}
-
-// =========================
-// 🌍 PEDIR EVENTO AL BACKEND
-// =========================
-function requestNextEvent(){
-
-    fetch("/judge",{
+    fetch("/start",{
         method:"POST",
         headers:{"Content-Type":"application/json"},
-        body: JSON.stringify({
-            decision:"INIT",
-            context:"life"
-        })
+        body:JSON.stringify({age:playerAge})
     })
-    .then(res=>res.json())
+    .then(r=>r.json())
     .then(data=>{
+
         gameState = data.state;
         loadEvent(data.next_event);
     });
 }
 
 // =========================
-// 🧠 CREAR EVENTO DINÁMICO
-// =========================
-function buildEvent(name){
-
-    const ageGroup = getAgeGroup(playerAge);
-
-    const base = {
-        context:name,
-        decisions:["TDB","TDM","TDN","TDP","TDG"]
-    };
-
-    // =========================
-    // EVENTOS POSITIVOS + NEGATIVOS
-    // =========================
-
-    if(name === "oportunidad"){
-        return {
-            ...base,
-            desc: ageGroup === "child"
-                ? "Una oportunidad divertida aparece."
-                : ageGroup === "young"
-                ? "Una oportunidad puede cambiar tu futuro."
-                : "Una oportunidad económica aparece.",
-        };
-    }
-
-    if(name === "amor"){
-        return {
-            ...base,
-            desc: "Sientes conexión emocional con alguien."
-        };
-    }
-
-    if(name === "dinero"){
-        return {
-            ...base,
-            desc: "Posibilidad de ganar dinero aparece."
-        };
-    }
-
-    if(name === "rechazo"){
-        return {
-            ...base,
-            desc: "Alguien te ignora completamente."
-        };
-    }
-
-    if(name === "crisis"){
-        return {
-            ...base,
-            desc: "Problema fuerte afecta tu estabilidad."
-        };
-    }
-
-    if(name === "tentacion"){
-        return {
-            ...base,
-            desc: "Aparece una tentación peligrosa."
-        };
-    }
-
-    return {
-        ...base,
-        desc: "La vida continúa..."
-    };
-}
-
-// =========================
-// 🎮 MOSTRAR EVENTO
+// 🎮 CARGAR EVENTO
 // =========================
 function loadEvent(eventName){
 
-    currentEvent = buildEvent(eventName);
+    currentEvent = eventName;
 
-    document.getElementById("text-content").innerText = currentEvent.desc;
+    let desc = buildEvent(eventName);
 
-    speak(currentEvent.desc);
+    document.getElementById("text-content").innerText = desc;
 
-    renderOptions(currentEvent);
+    speak(desc);
 
-    startDecisionTimer();
+    renderOptions();
+
+    startTimer();
 }
 
 // =========================
-// ⏳ DECISIÓN AUTOMÁTICA
+// 🧠 EVENTOS DINÁMICOS
 // =========================
-function startDecisionTimer(){
+function buildEvent(name){
 
-    clearTimeout(decisionTimer);
+    switch(name){
 
-    decisionTimer = setTimeout(()=>{
+        case "rechazo":
+            return "Alguien te ignora. Tu reacción define tu futuro.";
 
-        document.getElementById("text-content").innerText =
-            translations[currentLang].noDecision;
+        case "amor":
+            return "Una conexión emocional aparece en tu vida.";
 
-        speak(translations[currentLang].noDecision);
+        case "dinero":
+            return "Oportunidad económica detectada.";
 
-        sendDecision("TDM", currentEvent.context);
+        case "crisis":
+            return "Problema financiero crítico aparece.";
 
-    }, 5000); // 5 segundos para decidir
+        case "tentacion":
+            return "Una tentación intenta controlarte.";
+
+        case "soledad":
+            return "Sientes aislamiento social profundo.";
+
+        case "ansiedad":
+            return "Tu mente entra en presión interna.";
+
+        case "enfermedad":
+            return "Tu cuerpo muestra debilidad.";
+
+        default:
+            return "La vida continúa...";
+    }
 }
 
 // =========================
-// 🎮 OPCIONES (7 TVid)
+// 🎯 OPCIONES TVID
 // =========================
-function renderOptions(eventData){
+function renderOptions(){
 
-    const container = document.getElementById("options");
-    container.innerHTML = "";
+    const box = document.getElementById("options");
+    box.innerHTML = "";
 
-    eventData.decisions.forEach(dec=>{
+    const choices = ["TDB","TDM","TDN","TDP","TDG","TDK"];
 
-        const btn = document.createElement("button");
-        btn.className = "action-btn";
-        btn.innerText = dec;
+    choices.forEach(c=>{
+
+        let btn = document.createElement("button");
+        btn.innerText = c;
 
         btn.onclick = ()=>{
-            clearTimeout(decisionTimer);
-            sendDecision(dec, eventData.context);
+
+            clearTimeout(timer);
+            sendDecision(c);
         };
 
-        container.appendChild(btn);
+        box.appendChild(btn);
     });
+}
+
+// =========================
+// ⏳ TIMER (DECIDE POR TI)
+// =========================
+function startTimer(){
+
+    clearTimeout(timer);
+
+    timer = setTimeout(()=>{
+
+        speak("No decidiste. La vida decide por ti.");
+
+        sendDecision("TDM");
+
+    }, 6000);
 }
 
 // =========================
 // 🧠 MOTOR REAL
 // =========================
-function sendDecision(decision, context){
-
-    document.getElementById("options").innerHTML = "";
+function sendDecision(decision){
 
     fetch("/judge",{
         method:"POST",
         headers:{"Content-Type":"application/json"},
-        body: JSON.stringify({
+        body:JSON.stringify({
             decision:decision,
-            context:context,
-            age: playerAge
+            context:currentEvent
         })
     })
-    .then(res=>res.json())
+    .then(r=>r.json())
     .then(data=>{
 
         gameState = data.state;
 
-        showImpact(data.state);
+        showState(data.state);
 
         if(data.status === "end"){
-            showFinal(data.type);
+            endGame(data.type);
             return;
         }
 
-        // ⏳ tiempo avanza
-        playerAge++;
-
         setTimeout(()=>{
             loadEvent(data.next_event);
-        },1500);
-
+        }, 1200);
     });
 }
 
 // =========================
-// 📊 CONSECUENCIAS VISUALES
+// 📊 UI VIDA
 // =========================
-function showImpact(state){
+function showState(s){
 
-    const text = `
-    Mental: ${state.mental}
-    Salud: ${state.health}
-    Dinero: ${state.money}
-    Social: ${state.social}
-    Disciplina: ${state.discipline}
-    `;
-
-    document.getElementById("text-content").innerText = text;
+    document.getElementById("text-content").innerText =
+        `MENTAL:${s.mental}
+SALUD:${s.health}
+DINERO:${s.money}
+SOCIAL:${s.social}
+DISCIPLINA:${s.discipline}
+EDAD:${s.age.toFixed(1)}`;
 }
 
 // =========================
 // 💀 FINAL
 // =========================
-function showFinal(type){
+function endGame(type){
 
     let msg = "";
 
-    if(type === "muerte_fisica") msg = "Tu cuerpo no resistió.";
-    if(type === "colapso_mental") msg = "Tu mente colapsó.";
-    if(type === "equilibrio") msg = "Lograste equilibrio en la vida.";
+    if(type==="muerte_fisica") msg="Tu vida terminó.";
+    if(type==="colapso_mental") msg="Tu mente colapsó.";
+    if(type==="aislamiento_total") msg="Te desconectaste del mundo.";
 
     document.getElementById("text-content").innerText = msg;
 
@@ -301,9 +191,9 @@ function showFinal(type){
 
     document.getElementById("options").innerHTML = "";
 
-    const btn = document.createElement("button");
-    btn.innerText = translations[currentLang].finish;
-    btn.onclick = resetApp;
+    let btn = document.createElement("button");
+    btn.innerText = "REINICIAR";
+    btn.onclick = ()=>location.reload();
 
     document.getElementById("options").appendChild(btn);
 }
