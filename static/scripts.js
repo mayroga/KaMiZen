@@ -19,21 +19,26 @@ async function setupAudio(profile, phase = "action") {
 
     let mood = "ambient_tech";
     if (phase === "recovery") {
-        mood = "reflective_piano"; // Música para los 8 min de calma
+        mood = "reflective_piano";
     } else {
         const age = parseInt(profile.age || 25);
         if (profile.emotion === "stress") mood = "dark_industrial";
         else if (age > 60) mood = "reflective_piano";
     }
 
-    console.log(`May Roga Audio: Cargando atmósfera [${mood}]`);
+    console.log(`May Roga Audio: Sincronizando atmósfera [${mood}]`);
     bgMusic = new Audio(`/static/audio/${mood}.mp3`);
     bgMusic.loop = true;
-    bgMusic.volume = 0.4;
+    bgMusic.volume = 0.3;
 
-    document.addEventListener('click', () => {
-        if (bgMusic && bgMusic.paused) bgMusic.play().catch(e => console.log("Audio Init..."));
-    }, { once: true });
+    // El audio requiere interacción del usuario para iniciar
+    const startAudio = () => {
+        if (bgMusic && bgMusic.paused) {
+            bgMusic.play().catch(e => console.log("Audio en espera de interacción..."));
+        }
+    };
+    document.addEventListener('click', startAudio, { once: true });
+    document.addEventListener('keydown', startAudio, { once: true });
 }
 
 /**
@@ -62,7 +67,8 @@ async function startLifeFlow() {
             processEventUI(data.next_event);
         }
     } catch (error) {
-        document.getElementById("text-content").innerText = "ERROR DE ENLACE CON EL MOTOR.";
+        console.error("Error al conectar con el servidor:", error);
+        document.getElementById("text-content").innerText = "ERROR: No hay respuesta del Motor Neural.";
     }
 }
 
@@ -72,7 +78,7 @@ async function startLifeFlow() {
 function handleCollision(eventType) {
     if (isRecoveryActive) return;
     
-    // Si el evento cambia, actualizamos UI y sonido
+    // Evita bucles infinitos de la misma colisión
     if (window.currentEvent !== eventType) {
         window.currentEvent = eventType;
         const msg = `Evento Detectado: ${eventType.toUpperCase()}`;
@@ -103,7 +109,10 @@ async function sendDecision(decisionType) {
         });
 
         const data = await response.json();
-        window.updateSimState(data);
+        
+        // Actualizar UI con la respuesta del Juez
+        if(data.state) window.updateSimState(data.state);
+        else window.updateSimState(data);
 
         if (data.status === "recovery") {
             initRecoveryPhase();
@@ -114,7 +123,7 @@ async function sendDecision(decisionType) {
             processEventUI(data.next_event);
         }
     } catch (error) {
-        console.error("Fallo en el Juez:", error);
+        console.error("Error en el Motor de Decisión:", error);
     }
 }
 
@@ -126,6 +135,7 @@ function initRecoveryPhase() {
     const profile = JSON.parse(localStorage.getItem("profile")) || {};
     setupAudio(profile, "recovery");
     
+    // Cambiar vista en HTML
     if (typeof startRecoveryPhase === "function") {
         startRecoveryPhase();
     }
@@ -134,50 +144,60 @@ function initRecoveryPhase() {
         "La riqueza no es lo que tienes, es lo que eres cuando el dinero no está. Respira.",
         "El poder real es el control absoluto de tu propia reacción. Inhala éxito.",
         "Astucia social: En el silencio se escuchan las mejores oportunidades. Exhala miedo.",
-        "Tu bienestar es la inversión con mayor retorno de tu vida. Retiene la calma."
+        "Tu bienestar es la inversión con mayor retorno de tu vida. Retiene la calma.",
+        "Tú no eres tus circunstancias, eres el arquitecto de tu respuesta. Respira hondo."
     ];
 
     let storyIndex = 0;
     const storyBox = document.getElementById("story-box");
     
-    // Ciclo de historias de poder cada 30 segundos durante los 8 minutos
+    // Ciclo de reprogramación cada 45 segundos
     const storyInterval = setInterval(() => {
         if (!isRecoveryActive) { clearInterval(storyInterval); return; }
-        storyBox.innerText = stories[storyIndex];
-        speak(stories[storyIndex]);
+        const text = stories[storyIndex];
+        if(storyBox) storyBox.innerText = text;
+        speak(text);
         storyIndex = (storyIndex + 1) % stories.length;
-    }, 30000);
+    }, 45000);
 
-    // Cierre automático tras los 8 minutos de recuperación
+    // Cierre automático tras los 8 minutos (480000ms)
     setTimeout(() => {
-        document.getElementById("recovery-text").innerText = "CICLO COMPLETADO";
-        speak("Asesoría de recuperación finalizada. Has fortalecido tu red neural.");
+        const finMsg = "Ciclo de recuperación completado. Has fortalecido tu red neural.";
+        document.getElementById("recovery-text").innerText = "SISTEMA RECALIBRADO";
+        speak(finMsg);
+        // Aquí podrías redirigir o reiniciar el juego
     }, 480000); 
 }
 
 function processEventUI(nextEvent) {
     const messages = {
-        "crisis": "Amenaza financiera detectada. Protege tus activos.",
-        "amor": "Frecuencia emocional en aumento. Decide tu inversión.",
-        "tentacion": "Señal de evasión detectada. Mantén la disciplina.",
-        "oportunidad": "Vórtice de crecimiento abierto. Actúa ahora.",
-        "conflicto": "Fricción externa en curso. ¿Guerra o Poder?",
-        "enfermedad": "Vulnerabilidad biológica activa. Rectifica hábitos."
+        "crisis": "Inestabilidad detectada. Protege tus activos.",
+        "amor": "Vínculo emocional presente. Evalúa la inversión.",
+        "tentacion": "Pulso de evasión activo. Mantén la disciplina.",
+        "oportunidad": "Ventana de crecimiento abierta. Actúa rápido.",
+        "conflicto": "Fricción externa detectada. ¿Acción o Poder?",
+        "enfermedad": "Vulnerabilidad biológica. Rectifica el hábito.",
+        "dinero": "Recurso disponible. Gestiona con astucia."
     };
 
-    const txt = messages[nextEvent] || "El sistema genera una nueva variable.";
+    const txt = messages[nextEvent] || "El simulador genera una nueva variable de vida.";
     document.getElementById("text-content").innerText = txt;
     speak(txt);
     renderDecisionButtons();
 
-    // Inacción (TDM) automática tras 7 segundos
+    // Castigo por inacción (TDM) tras 8 segundos de duda
     decisionTimer = setTimeout(() => {
-        if (!isRecoveryActive) sendDecision("TDM");
-    }, 7000);
+        if (!isRecoveryActive && window.currentEvent) {
+            speak("Duda detectada. El miedo toma el control.");
+            sendDecision("TDM");
+        }
+    }, 8000);
 }
 
 function renderDecisionButtons() {
     const container = document.getElementById("options");
+    if(!container) return;
+    
     container.innerHTML = "";
     const types = ["TDB", "TDM", "TDN", "TDP", "TDG"];
     
@@ -197,15 +217,15 @@ function speak(text) {
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = 'es-ES';
-    utterance.rate = 0.9;
+    utterance.rate = 0.95; // Velocidad profesional y clara
     window.speechSynthesis.speak(utterance);
 }
 
 function handleGameOver(reason) {
     if (bgMusic) bgMusic.pause();
     isRecoveryActive = false;
-    const reasonText = reason.replace(/_/g, " ").toUpperCase();
+    const reasonText = reason ? reason.replace(/_/g, " ").toUpperCase() : "SISTEMA DESCONOCIDO";
     document.getElementById("text-content").innerText = `COLAPSO: ${reasonText}`;
-    document.getElementById("options").innerHTML = '<button onclick="location.href=\'/\'">REINICIAR VIDA</button>';
+    document.getElementById("options").innerHTML = '<button onclick="location.reload()">REINTENTAR VIDA</button>';
     speak(`Simulación finalizada por ${reasonText}. Analiza tus decisiones.`);
 }
