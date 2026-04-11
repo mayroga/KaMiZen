@@ -7,30 +7,12 @@ app = FastAPI()
 
 BASE_DIR = os.path.dirname(__file__)
 
-# =====================
-# STATIC
-# =====================
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-# =====================
-# HOME
-# =====================
 @app.get("/", response_class=HTMLResponse)
 def home():
-    path = os.path.join(BASE_DIR, "static/session.html")
-    return open(path, encoding="utf-8").read()
+    return open(os.path.join(BASE_DIR,"static/session.html"),encoding="utf-8").read()
 
-# =====================
-# JET MODE
-# =====================
-@app.get("/jet", response_class=HTMLResponse)
-def jet():
-    path = os.path.join(BASE_DIR, "static/jet.html")
-    return open(path, encoding="utf-8").read()
-
-# =====================
-# IA JUDGE
-# =====================
 @app.post("/judge")
 async def judge(request: Request):
 
@@ -39,19 +21,34 @@ async def judge(request: Request):
     except:
         data = {}
 
-    decision = data.get("decision", "neutral")
+    decision = data.get("decision","")
 
-    if decision == "avoid":
+    # 🔥 IA REAL BASADA EN TVID
+    if decision == "TDB":
+        msg = "Has elegido el bien consciente"
         score = 10
-        message = "GOOD CONTROL"
-    elif decision == "engage":
+
+    elif decision == "TDM":
+        msg = "Estás evitando la realidad"
+        score = -5
+
+    elif decision == "TDN":
+        msg = "Tu niño interior responde"
+        score = 8
+
+    elif decision == "TDP":
+        msg = "Estás actuando con guía"
+        score = 9
+
+    elif decision == "TDG":
+        msg = "Estás en modo guerra emocional"
         score = -10
-        message = "RISKY DECISION"
+
     else:
+        msg = "Decisión neutra"
         score = 0
-        message = "NEUTRAL"
 
     return JSONResponse({
-        "score": score,
-        "message": message
+        "message": msg,
+        "score": score
     })
