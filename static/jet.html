@@ -1,318 +1,118 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="utf-8">
-<title>LIFE AI ENGINE - MAYKAMI</title>
-
-<style>
-body{
-    margin:0;
-    background:#000;
-    overflow:hidden;
-    color:#0ff;
-    font-family:Arial;
-}
-
-canvas{display:block}
-
-#ui{
-    position:absolute;
-    top:10px;
-    left:10px;
-    z-index:10;
-}
-
-.box{
-    margin:5px;
-    padding:6px;
-    border:1px solid #0ff;
-    background:rgba(0,0,0,0.5);
-    font-size:12px;
-}
-
-#text-content{
-    position:absolute;
-    bottom:20px;
-    left:20px;
-    color:#0ff;
-    z-index:20;
-    font-size:14px;
-}
-
-#options{
-    position:absolute;
-    bottom:60px;
-    left:20px;
-    z-index:20;
-}
-
-button{
-    margin:3px;
-    padding:8px;
-    background:black;
-    border:1px solid #0ff;
-    color:#0ff;
-    cursor:pointer;
-}
-button:hover{
-    background:#0ff;
-    color:black;
-}
-</style>
+    <meta charset="utf-8">
+    <title>AL CIELO - LIFE ENGINE</title>
+    <style>
+        body { margin: 0; background: #000; overflow: hidden; color: #0ff; font-family: 'JetBrains Mono', monospace; }
+        canvas { display: block; filter: contrast(1.2) brightness(1.1); }
+        #ui { position: absolute; top: 10px; left: 10px; z-index: 10; display: flex; flex-wrap: wrap; }
+        .box { margin: 5px; padding: 10px; border: 1px solid #0ff; background: rgba(0,0,0,0.7); font-size: 13px; border-radius: 4px; box-shadow: 0 0 10px rgba(0,242,255,0.2); }
+        #text-content { position: absolute; bottom: 120px; left: 20px; color: #fff; z-index: 20; font-size: 18px; text-shadow: 2px 2px #000; max-width: 600px; font-weight: bold; }
+        #options { position: absolute; bottom: 40px; left: 20px; z-index: 20; display: flex; gap: 10px; }
+        button { padding: 12px 20px; background: black; border: 1px solid #0ff; color: #0ff; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        button:hover { background: #0ff; color: black; box-shadow: 0 0 15px #0ff; }
+        #age-display { position: absolute; top: 10px; right: 20px; font-size: 24px; color: #0ff; }
+    </style>
 </head>
-
 <body>
 
 <div id="ui">
-<div class="box">MENTAL <span id="m">100</span></div>
-<div class="box">SOCIAL <span id="s">50</span></div>
-<div class="box">DINERO <span id="d">1000</span></div>
-<div class="box">EDAD <span id="a">18</span></div>
-<div class="box">CHOQUES <span id="c">0</span></div>
-
-<button onclick="pauseGame()">PAUSA</button>
-<button onclick="resumeGame()">SEGUIR</button>
-<button onclick="location.reload()">REINICIAR</button>
+    <div class="box">MENTAL: <span id="m">100</span>%</div>
+    <div class="box">SALUD: <span id="h">100</span>%</div>
+    <div class="box">DINERO: $<span id="d">1000</span></div>
+    <div class="box">SOCIAL: <span id="s">50</span></div>
+    <div class="box">VICIO: <span id="v">0</span>%</div>
 </div>
 
-<div id="text-content"></div>
+<div id="age-display">EDAD: <span id="a">18.0</span></div>
+<div id="text-content">Iniciando sistema...</div>
 <div id="options"></div>
 
 <canvas id="game"></canvas>
 
+<script src="/static/scripts.js"></script>
 <script>
-
-// =========================
-// CANVAS
-// =========================
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
-canvas.width = innerWidth;
-canvas.height = innerHeight;
+let player = { x: 100, y: 300, size: 30 };
+let enemies = [];
+let frame = 0;
 
-// =========================
-// ESTADO VIDA
-// =========================
-let state = {
-    mental:100,
-    social:50,
-    money:1000,
-    age:18
+// Sincronización de estado con scripts.js
+window.updateSimState = (newState) => {
+    document.getElementById("m").innerText = Math.floor(newState.mental);
+    document.getElementById("h").innerText = Math.floor(newState.health);
+    document.getElementById("d").innerText = Math.floor(newState.money);
+    document.getElementById("s").innerText = Math.floor(newState.social);
+    document.getElementById("v").innerText = Math.floor(newState.addiction);
+    document.getElementById("a").innerText = newState.age.toFixed(1);
 };
 
-let player = {x:100,y:200};
-let bullets = [];
-let enemies = [];
+// Control del Jugador
+addEventListener("mousemove", e => { player.y = e.clientY; });
 
-let collisions = 0;
-let frame = 0;
-let eventNow = "conflicto";
-let paused = false;
-
-// =========================
-// PAUSA
-// =========================
-function pauseGame(){
-    paused = true;
-}
-
-function resumeGame(){
-    paused = false;
-}
-
-// =========================
-// MOVIMIENTO REAL
-// =========================
-addEventListener("mousemove", e=>{
-    player.y = e.clientY;
-});
-
-// DISPARO TVID
-addEventListener("click", ()=>{
-    bullets.push({
-        x:player.x+30,
-        y:player.y,
-        speed:10,
-        type:"TDB"
-    });
-});
-
-// =========================
-// BACKEND EVENTOS
-// =========================
-async function nextEvent(){
-    try{
-        const r = await fetch("/judge",{
-            method:"POST",
-            headers:{"Content-Type":"application/json"},
-            body:JSON.stringify({
-                decision:"AUTO",
-                context:eventNow
-            })
-        });
-
-        const d = await r.json();
-        state = d.state;
-        eventNow = d.next_event;
-    }catch(e){}
-}
-
-// =========================
-// SPAWN
-// =========================
-function spawn(){
+function spawnEnemy(type) {
     enemies.push({
-        x:innerWidth,
-        y:Math.random()*innerHeight,
-        type:eventNow,
-        size:40
+        x: canvas.width,
+        y: Math.random() * (canvas.height - 100) + 50,
+        type: type,
+        speed: 3 + (Math.random() * 2)
     });
 }
 
-// =========================
-// DAÑO CONTEXTUAL REAL
-// =========================
-function damage(type){
+function loop() {
+    ctx.fillStyle = "rgba(0, 0, 0, 0.15)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    collisions++;
+    // Dibujar Jugador (Esfera de Conciencia)
+    ctx.beginPath();
+    ctx.arc(player.x, player.y, player.size/2, 0, Math.PI*2);
+    ctx.fillStyle = "#0ff";
+    ctx.fill();
+    ctx.strokeStyle = "#fff";
+    ctx.stroke();
 
-    // 🔴 impacto por choques
-    if(type === "dinero"){
-        state.money -= 100;
-        state.mental -= 5;
-    }
-
-    if(type === "amor"){
-        state.social -= 10;
-        state.mental -= 5;
-    }
-
-    if(type === "enfermedad"){
-        state.mental -= 15;
-    }
-
-    if(type === "oportunidad"){
-        state.money -= 20;
-        state.mental += 5;
-    }
-
-    if(type === "conflicto"){
-        state.social -= 8;
-        state.mental -= 10;
-    }
-
-    // 🔥 castigo acumulativo
-    if(collisions >= 3){
-        state.mental -= 20;
-        state.money -= 200;
-    }
-}
-
-// =========================
-// LOOP
-// =========================
-function loop(){
-
-    if(paused){
-        requestAnimationFrame(loop);
-        return;
-    }
-
-    ctx.fillStyle="rgba(0,0,0,0.4)";
-    ctx.fillRect(0,0,canvas.width,canvas.height);
-
-    // =====================
-    // PLAYER
-    // =====================
-    ctx.fillStyle="#0ff";
-    ctx.fillRect(player.x,player.y,20,20);
-
-    // =====================
-    // BULLETS
-    // =====================
-    bullets.forEach((b,i)=>{
-        b.x += b.speed;
-
-        ctx.fillStyle="yellow";
-        ctx.fillRect(b.x,b.y,6,6);
-
-        enemies.forEach((e,j)=>{
-            if(Math.abs(b.x-e.x)<20 && Math.abs(b.y-e.y)<20){
-                enemies.splice(j,1);
-                bullets.splice(i,1);
-
-                state.money += 20;
-                state.mental += 2;
-            }
-        });
-
-        if(b.x > innerWidth) bullets.splice(i,1);
-    });
-
-    // =====================
-    // ENEMIGOS (VIDA REAL VISUAL)
-    // =====================
-    enemies.forEach((e,i)=>{
-
-        e.x -= 3;
-
-        let icon = "🚁";
+    // Dibujar Enemigos (Eventos de la Vía Real)
+    enemies.forEach((e, i) => {
+        e.x -= e.speed;
+        
+        let icon = "🚁"; 
         if(e.type === "dinero") icon = "💰";
         if(e.type === "amor") icon = "❤️";
-        if(e.type === "enfermedad") icon = "🚑";
+        if(e.type === "enfermedad") icon = "🚜";
         if(e.type === "oportunidad") icon = "💠";
-        if(e.type === "conflicto") icon = "⚔️";
+        if(e.type === "tentacion") icon = "🍺";
 
-        ctx.font = "30px Arial";
+        ctx.font = "40px Arial";
         ctx.fillText(icon, e.x, e.y);
 
-        ctx.font = "10px Arial";
-        ctx.fillText(e.type.toUpperCase(), e.x, e.y+15);
-
-        // COLISIÓN REAL
-        if(Math.abs(e.x-player.x)<30 && Math.abs(e.y-player.y)<30){
-            damage(e.type);
-            enemies.splice(i,1);
+        // Colisión con el Jugador
+        let dist = Math.hypot(e.x - player.x, e.y - player.y);
+        if(dist < 35) {
+            handleCollision(e.type);
+            enemies.splice(i, 1);
         }
 
-        if(e.x < 0) enemies.splice(i,1);
+        if(e.x < -50) enemies.splice(i, 1);
     });
 
-    // =====================
-    // SPAWN
-    // =====================
-    if(Math.random()<0.03) spawn();
-
-    // =====================
-    // IA EVENTO
-    // =====================
-    if(frame % 200 === 0) nextEvent();
-
-    // =====================
-    // UI
-    // =====================
-    document.getElementById("m").innerText = Math.floor(state.mental);
-    document.getElementById("s").innerText = Math.floor(state.social);
-    document.getElementById("d").innerText = Math.floor(state.money);
-    document.getElementById("a").innerText = state.age;
-    document.getElementById("c").innerText = collisions;
-
-    // =====================
-    // FINAL
-    // =====================
-    if(state.mental <= 0){
-        alert("COLAPSO MENTAL");
-        location.reload();
-    }
+    if(frame % 120 === 0 && window.currentEvent) spawnEnemy(window.currentEvent);
 
     frame++;
     requestAnimationFrame(loop);
 }
 
-loop();
-
+// Iniciar
+window.onload = () => {
+    const savedState = JSON.parse(localStorage.getItem("state"));
+    if(savedState) window.updateSimState(savedState);
+    loop();
+    startLifeFlow(); // Función en scripts.js
+};
 </script>
-
 </body>
 </html>
