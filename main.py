@@ -5,19 +5,9 @@ import random
 
 app = FastAPI()
 
-# =========================
-# 📁 SERVIR FRONTEND
-# =========================
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-@app.get("/")
-def home():
-    return FileResponse("static/session.html")
-
-
-# =========================
-# 🧠 ESTADO GLOBAL
-# =========================
+# ESTADO INICIAL (PASO 1)
 state = {
     "mental": 100,
     "health": 100,
@@ -29,165 +19,77 @@ state = {
     "history": []
 }
 
-profile = {
-    "stage": "young"
-}
+@app.get("/")
+def home():
+    return FileResponse("static/session.html")
 
-# =========================
-# 🌍 EVENTOS
-# =========================
-EVENTS = [
-    "rechazo", "amor", "dinero", "crisis",
-    "tentacion", "soledad", "conflicto",
-    "ansiedad", "enfermedad", "oportunidad"
-]
-
-# =========================
-# 🎮 GENERADOR INTELIGENTE
-# =========================
+# GENERADOR INTELIGENTE (PASO 6)
 def generate_event():
-    if state["mental"] < 25:
-        return "ansiedad"
-    if state["health"] < 30:
-        return "enfermedad"
-    if state["money"] < 200:
-        return "crisis"
-    if state["social"] < 20:
-        return "soledad"
-    if state["addiction"] > 60:
-        return "tentacion"
-    return random.choice(EVENTS)
+    # El sistema te persigue según tus debilidades
+    if state["addiction"] > 60: return "tentacion"
+    if state["money"] < 200: return "crisis"
+    if state["mental"] < 30: return "ansiedad"
+    if state["social"] < 20: return "soledad"
+    
+    return random.choice(["rechazo", "amor", "dinero", "conflicto", "oportunidad", "enfermedad"])
 
-# =========================
-# ⚖️ MOTOR TVID
-# =========================
-def apply_decision(decision, context):
-
+# MOTOR DE PROCESAMIENTO TVID (PASO 3 y 4)
+def apply_impact(decision, context):
     global state
+    impact = {k: 0 for k in ["mental", "health", "money", "social", "discipline", "addiction"]}
 
-    impact = {
-        "mental": 0,
-        "health": 0,
-        "money": 0,
-        "social": 0,
-        "discipline": 0,
-        "addiction": 0
-    }
+    # Lógica de Decisiones TVID
+    if decision == "TDB": # Bien consciente
+        impact["mental"] += 5; impact["discipline"] += 5
+    elif decision == "TDM": # Evitación/Vicio
+        impact["mental"] -= 5; impact["addiction"] += 8
+    elif decision == "TDG": # Guerra/Agresión
+        impact["social"] -= 10; impact["mental"] -= 5
+    elif decision == "TDP": # Guía/Responsabilidad
+        impact["discipline"] += 10; impact["money"] += 5
+    elif decision == "TDN": # Niño/Emoción
+        impact["social"] += 5; impact["discipline"] -= 2
 
-    # TVID
-    if decision == "TDB":
-        impact["mental"] += 4
-        impact["discipline"] += 3
-        impact["social"] += 2
+    # Lógica de Contexto (PASO 4)
+    if context == "crisis" and decision == "TDM":
+        impact["money"] -= 100
+    if context == "enfermedad":
+        impact["health"] -= 10
+    if context == "oportunidad" and decision == "TDP":
+        impact["money"] += 200
 
-    elif decision == "TDM":
-        impact["mental"] -= 5
-        impact["addiction"] += 4
+    # Aplicar y Limitar
+    for k, v in impact.items():
+        state[k] = max(0, min(100, state[k] + v))
+    
+    # Envejecimiento (PASO 7)
+    state["age"] += 0.2
+    state["history"].append({"event": context, "decision": decision})
 
-    elif decision == "TDN":
-        impact["mental"] += 2
-        impact["social"] += 1
-
-    elif decision == "TDP":
-        impact["discipline"] += 5
-        impact["social"] += 3
-
-    elif decision == "TDG":
-        impact["social"] -= 6
-        impact["mental"] -= 3
-
-    elif decision == "TDK":
-        impact["mental"] += 5
-        impact["social"] += 5
-
-    # CONTEXTO
-    if context == "rechazo":
-        impact["social"] -= 4 if decision == "TDG" else 2
-
-    if context == "dinero":
-        impact["money"] += 100 if decision in ["TDB","TDP"] else -20
-
-    if context == "crisis":
-        impact["money"] -= 50 if decision == "TDM" else 10
-
-    if context == "tentacion":
-        impact["addiction"] += 10 if decision == "TDM" else -3
-
-    for k in impact:
-        state[k] += impact[k]
-
-    # límites
-    state["mental"] = max(0, min(100, state["mental"]))
-    state["health"] = max(0, min(100, state["health"]))
-    state["social"] = max(0, min(100, state["social"]))
-    state["discipline"] = max(0, min(100, state["discipline"]))
-
-    state["age"] += 0.1
-    state["history"].append({
-        "event": context,
-        "decision": decision,
-        "impact": impact
-    })
-
-# =========================
-# 💀 FINAL
-# =========================
-def check_end():
-    if state["health"] <= 0:
-        return "muerte_fisica"
-    if state["mental"] <= 0:
-        return "colapso_mental"
-    if state["social"] <= 0:
-        return "aislamiento_total"
-    return None
-
-# =========================
-# 🚀 START
-# =========================
 @app.post("/start")
 async def start(req: Request):
-    global profile
-
+    global state
     data = await req.json()
+    state["age"] = data.get("age", 18)
+    return {"status": "ready", "state": state, "next_event": generate_event()}
 
-    age = data.get("age", 18)
-
-    state["age"] = age
-
-    profile = {
-        "stage": "child" if age < 13 else "young" if age < 30 else "adult"
-    }
-
-    return {
-        "profile": profile,
-        "state": state,
-        "next_event": generate_event()
-    }
-
-# =========================
-# 🎮 JUEGO
-# =========================
 @app.post("/judge")
 async def judge(req: Request):
-
     data = await req.json()
-
-    decision = data.get("decision", "TDM")
+    decision = data.get("decision", "TDM") # Si no decide, la vida elige TDM
     context = data.get("context", "neutral")
-
-    apply_decision(decision, context)
-
-    end = check_end()
-
-    if end:
-        return {
-            "status": "end",
-            "type": end,
-            "state": state
-        }
+    
+    apply_impact(decision, context)
+    
+    # Comprobar Finales (PASO 8)
+    end_type = None
+    if state["health"] <= 0: end_type = "muerte_fisica"
+    if state["mental"] <= 0: end_type = "colapso_mental"
+    if state["money"] <= 0: end_type = "quiebra_total"
 
     return {
-        "status": "continue",
+        "status": "end" if end_type else "continue",
+        "type": end_type,
         "state": state,
         "next_event": generate_event()
     }
