@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MAYKAMI | VIDA SIM REAL</title>
+<title>JET LIFE AI | Predictive System</title>
 
 <style>
 body{
     margin:0;
     background:black;
+    overflow:hidden;
     color:#00f2ff;
     font-family:Arial;
-    overflow:hidden;
 }
 
 /* HUD */
@@ -28,21 +28,34 @@ body{
     padding:10px;
     border:1px solid #00f2ff;
     background:rgba(0,0,0,0.6);
-    font-size:13px;
-    min-width:120px;
 }
 
-/* CONTROLES */
+/* CANVAS */
+canvas{
+    display:block;
+}
+
+/* CROSSHAIR */
+#crosshair{
+    position:fixed;
+    left:50%;
+    top:50%;
+    width:20px;
+    height:20px;
+    border:2px solid #00f2ff;
+    transform:translate(-50%,-50%);
+    border-radius:50%;
+}
+
+/* CONTROLS */
 #controls{
     position:absolute;
     bottom:20px;
     left:20px;
-    display:flex;
-    gap:10px;
 }
 
 button{
-    padding:10px 14px;
+    padding:10px;
     border:1px solid #00f2ff;
     background:transparent;
     color:#00f2ff;
@@ -53,28 +66,11 @@ button{
 #decisionBox{
     position:fixed;
     inset:0;
-    background:rgba(0,0,0,0.96);
+    background:rgba(0,0,0,0.95);
     display:none;
     flex-direction:column;
     justify-content:center;
     align-items:center;
-    text-align:center;
-    z-index:999;
-}
-
-#decisionBox h2{
-    font-size:28px;
-}
-
-#decisionBox p{
-    font-size:18px;
-    max-width:500px;
-}
-
-#choices button{
-    margin:8px;
-    padding:12px 16px;
-    font-size:16px;
 }
 </style>
 </head>
@@ -84,42 +80,48 @@ button{
 <!-- HUD -->
 <div id="ui">
 <div class="box">MENTAL: <span id="mental">100</span></div>
-<div class="box">SALUD: <span id="health">100</span></div>
-<div class="box">DINERO: <span id="money">1000</span></div>
 <div class="box">SOCIAL: <span id="social">50</span></div>
-<div class="box">EDAD: <span id="age">25</span></div>
+<div class="box">MONEY: <span id="money">1000</span></div>
+<div class="box">AGE: <span id="age">25</span></div>
+<div class="box">THREAT: <span id="threat">0</span></div>
 </div>
 
-<!-- CANVAS -->
+<div id="crosshair"></div>
+
 <canvas id="game"></canvas>
 
-<!-- CONTROLES -->
 <div id="controls">
-<button onclick="restart()">🔄 RESTART</button>
-<button onclick="forceEvent()">⚡ CONTINUE</button>
-</div>
-
-<!-- DECISION -->
-<div id="decisionBox">
-<h2 id="eventTitle"></h2>
-<p id="eventDesc"></p>
-<div id="choices"></div>
+<button onclick="restart()">RESTART</button>
+<button onclick="shoot()">SHOOT 🔫</button>
 </div>
 
 <script>
 
 // =========================
-// 🧠 ESTADO REAL
+// 🧠 ESTADO
 // =========================
 let state = {
     mental:100,
-    health:100,
-    money:1000,
     social:50,
-    age:25
+    money:1000,
+    age:25,
+    discipline:50
 };
 
-let profile = { stage:"adulto" };
+// =========================
+// 🎯 IA PREDICTIVA
+// =========================
+function predictThreat(){
+
+    let base = Math.random()*100;
+
+    if(state.mental < 40) base += 30;
+    if(state.social < 30) base += 20;
+    if(state.money < 200) base += 25;
+    if(state.age > 60) base += 15;
+
+    return Math.min(100, base);
+}
 
 // =========================
 // 🎮 CANVAS
@@ -133,202 +135,123 @@ canvas.height = innerHeight;
 // =========================
 // 👤 PLAYER
 // =========================
-let player = {x:120, y:200};
+let player = {x: innerWidth/2, y: innerHeight/2};
 
 // =========================
-// 🔴 EVENTOS
-// =========================
-let obstacles = [];
-let currentEvent = null;
-let playing = true;
+// 🔴 ENEMIGOS (EVENTOS)
+ // =========================
+let threats = [];
 
 // =========================
-// 🧠 MOVIMIENTO
+// 🎯 CLICK MOUSE
 // =========================
-window.onmousemove = e => player.y = e.clientY;
-
-// =========================
-// 📊 UI
-// =========================
-function updateUI(){
-    document.getElementById("mental").innerText = state.mental;
-    document.getElementById("health").innerText = state.health;
-    document.getElementById("money").innerText = state.money;
-    document.getElementById("social").innerText = state.social;
-    document.getElementById("age").innerText = state.age;
-}
+window.onclick = shoot;
 
 // =========================
-// 🔥 GENERAR EVENTO
+// 🔫 DISPARO REAL
 // =========================
-async function getEvent(){
+function shoot(){
 
-    const res = await fetch("/judge",{
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({
-            decision:"INIT",
-            context:"life"
-        })
-    });
+    threats.forEach((t,i)=>{
 
-    const data = await res.json();
+        if(
+            Math.abs(t.x - player.x) < 50 &&
+            Math.abs(t.y - player.y) < 50
+        ){
+            threats.splice(i,1);
 
-    state = data.state;
-    currentEvent = data.next_event;
-
-    spawnEvent(currentEvent);
-    updateUI();
-}
-
-// =========================
-// 🔴 EVENTO VISUAL (CUADRO GRANDE)
-// =========================
-function spawnEvent(type){
-
-    obstacles.push({
-        x: canvas.width,
-        y: Math.random()*canvas.height,
-        type: type,
-        size: 60 + Math.random()*40,
-        color: "#ff0033"
+            state.discipline += 2;
+            state.mental += 1;
+        }
     });
 }
 
 // =========================
-// 🎮 LOOP VIDA
+// 🔥 SPAWN IA
+// =========================
+function spawnThreat(){
+
+    let level = predictThreat();
+
+    document.getElementById("threat").innerText = level.toFixed(0);
+
+    let type =
+        level > 70 ? "CRISIS" :
+        level > 40 ? "EVENT" :
+        "OPPORTUNITY";
+
+    threats.push({
+        x: innerWidth,
+        y: Math.random()*innerHeight,
+        speed: 2 + level/25,
+        type:type,
+        size: 40 + level/10
+    });
+}
+
+// =========================
+// 🎮 LOOP
 // =========================
 function loop(){
 
-    if(!playing) return;
-
     ctx.clearRect(0,0,canvas.width,canvas.height);
 
-    // jugador
+    // PLAYER
     ctx.fillStyle="#00f2ff";
-    ctx.fillRect(player.x,player.y,25,25);
+    ctx.fillRect(player.x, player.y, 20, 20);
 
-    // eventos
-    obstacles.forEach((o,i)=>{
+    // THREATS
+    threats.forEach((t,i)=>{
 
-        o.x -= 5;
+        t.x -= t.speed;
 
-        ctx.strokeStyle = o.color;
+        ctx.strokeStyle =
+            t.type === "CRISIS" ? "red" :
+            t.type === "EVENT" ? "orange" :
+            "lime";
+
         ctx.lineWidth = 3;
-        ctx.strokeRect(o.x,o.y,o.size,o.size);
+        ctx.strokeRect(t.x,t.y,t.size,t.size);
 
-        ctx.fillStyle = "#ff0033";
-        ctx.font = "14px Arial";
-        ctx.fillText(o.type, o.x, o.y - 10);
+        ctx.fillStyle="#fff";
+        ctx.fillText(t.type, t.x, t.y - 5);
 
-        // colisión REAL
-        if(
-            Math.abs(o.x-player.x)<30 &&
-            Math.abs(o.y-player.y)<30
-        ){
-            openDecision(o.type);
-            obstacles.splice(i,1);
+        // COLISIÓN (FAIL SI NO DISPARAS)
+        if(t.x < player.x + 10){
+
+            state.mental -= 5;
+            state.social -= 2;
+
+            threats.splice(i,1);
         }
-
-        if(o.x < -100) obstacles.splice(i,1);
     });
+
+    // UI
+    document.getElementById("mental").innerText = state.mental;
+    document.getElementById("social").innerText = state.social;
+    document.getElementById("money").innerText = state.money;
+    document.getElementById("age").innerText = state.age;
 
     requestAnimationFrame(loop);
 }
 
 // =========================
-// ⚖️ DECISIONES
+// ⚡ GENERADOR IA
 // =========================
-function openDecision(event){
-
-    playing = false;
-
-    document.getElementById("decisionBox").style.display="flex";
-    document.getElementById("eventTitle").innerText = event;
-
-    document.getElementById("eventDesc").innerText =
-        getDescriptionByAge(event);
-
-    const choices = ["TDB","TDM","TDN","TDP","TDG"];
-    const box = document.getElementById("choices");
-
-    box.innerHTML="";
-
-    choices.forEach(c=>{
-
-        const btn = document.createElement("button");
-        btn.innerText = c;
-
-        btn.onclick = async ()=>{
-
-            const res = await fetch("/judge",{
-                method:"POST",
-                headers:{"Content-Type":"application/json"},
-                body:JSON.stringify({
-                    decision:c,
-                    context:event,
-                    age: state.age
-                })
-            });
-
-            const data = await res.json();
-
-            state = data.state;
-
-            document.getElementById("decisionBox").style.display="none";
-
-            state.age += 1; // tiempo real
-
-            spawnEvent(data.next_event);
-            updateUI();
-
-            playing = true;
-            loop();
-        };
-
-        box.appendChild(btn);
-    });
-}
-
-// =========================
-// 🧠 DESCRIPCIÓN POR EDAD REAL
-// =========================
-function getDescriptionByAge(event){
-
-    if(state.age < 13){
-        return "Algo ocurre... elige con intuición.";
-    }
-
-    if(state.age < 25){
-        return "Situación emocional y social activa.";
-    }
-
-    if(state.age < 60){
-        return "Decisión con impacto en tu futuro.";
-    }
-
-    return "Momento crítico de vida avanzada.";
-}
-
-// =========================
-// ⚡ CONTINUE
-// =========================
-function forceEvent(){
-    spawnEvent(currentEvent || "conflicto");
-}
+setInterval(()=>{
+    spawnThreat();
+}, 1500);
 
 // =========================
 // 🔄 RESTART
 // =========================
 function restart(){
-    localStorage.clear();
     location.reload();
 }
 
 // =========================
-// 🚀 START
+// START
 // =========================
-getEvent();
 loop();
 
 </script>
