@@ -5,21 +5,14 @@
     <title>AL CIELO - LIFE ENGINE</title>
     <style>
         body { margin: 0; background: #000; overflow: hidden; color: #0ff; font-family: 'JetBrains Mono', monospace; }
-        canvas { display: block; filter: contrast(1.2) brightness(1.1); cursor: none; }
-        
-        /* INTERFAZ DE ESTADO */
+        canvas { display: block; filter: contrast(1.2) brightness(1.1); cursor: crosshair; }
         #ui { position: absolute; top: 10px; left: 10px; z-index: 10; display: flex; flex-wrap: wrap; pointer-events: none; }
         .box { margin: 5px; padding: 10px; border: 1px solid #0ff; background: rgba(0,0,0,0.8); font-size: 13px; border-radius: 4px; box-shadow: 0 0 10px rgba(0,242,255,0.2); min-width: 80px; text-align: center; }
         .box span { display: block; font-size: 16px; font-weight: bold; color: #fff; }
-
-        /* TEXTO DE ASESORÍA */
         #text-content { position: absolute; bottom: 140px; left: 30px; color: #fff; z-index: 20; font-size: 20px; text-shadow: 2px 2px 4px #000; max-width: 70%; font-weight: bold; line-height: 1.4; pointer-events: none; }
-        
-        /* BOTONES DE DECISIÓN TVID */
         #options { position: absolute; bottom: 50px; left: 30px; z-index: 20; display: flex; gap: 15px; }
         button { padding: 15px 25px; background: rgba(0,0,0,0.9); border: 2px solid #0ff; color: #0ff; cursor: pointer; font-weight: bold; font-size: 16px; transition: 0.3s; border-radius: 8px; text-transform: uppercase; }
         button:hover { background: #0ff; color: black; box-shadow: 0 0 20px #0ff; transform: translateY(-3px); }
-        
         #age-display { position: absolute; top: 15px; right: 25px; font-size: 28px; color: #0ff; text-shadow: 0 0 10px #0ff; font-weight: bold; }
     </style>
 </head>
@@ -49,9 +42,9 @@ canvas.height = window.innerHeight;
 
 let player = { x: 120, y: canvas.height / 2, size: 40 };
 let enemies = [];
+let projectiles = []; 
 let frame = 0;
 
-// SINCRONIZACIÓN DE INTERFAZ CON EL MOTOR
 window.updateSimState = (newState) => {
     if(!newState) return;
     document.getElementById("m").innerText = Math.floor(newState.mental || 0);
@@ -62,97 +55,96 @@ window.updateSimState = (newState) => {
     document.getElementById("a").innerText = (newState.age || 0).toFixed(1);
 };
 
-// CONTROL DE MOVIMIENTO (MOUSE / TOUCH)
-addEventListener("mousemove", e => { 
-    player.y = e.clientY; 
+addEventListener("mousemove", e => { player.y = e.clientY; });
+
+// SISTEMA DE DISPARO (ACCIONAR VOLUNTAD)
+addEventListener("mousedown", () => {
+    projectiles.push({ x: player.x + 20, y: player.y, speed: 12 });
 });
 
 function spawnEnemy(type) {
     if(!type) return;
+    const icons = { "dinero":"💰", "amor":"❤️", "enfermedad":"🚜", "oportunidad":"💠", "tentacion":"🍺", "conflicto":"🚁", "crisis":"📉" };
     enemies.push({
         x: canvas.width,
         y: Math.random() * (canvas.height - 150) + 75,
         type: type,
-        speed: 4 + (Math.random() * 3)
+        icon: icons[type] || "❓",
+        speed: 4 + (Math.random() * 2)
     });
 }
 
 function loop() {
-    // Fondo con estela de movimiento
     ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // DIBUJAR JUGADOR (EL OBSERVADOR)
-    ctx.shadowBlur = 15;
-    ctx.shadowColor = "#0ff";
+    // DIBUJAR JUGADOR
+    ctx.shadowBlur = 15; ctx.shadowColor = "#0ff";
     ctx.beginPath();
     ctx.arc(player.x, player.y, player.size/2, 0, Math.PI*2);
-    ctx.fillStyle = "#0ff";
-    ctx.fill();
+    ctx.fillStyle = "#0ff"; ctx.fill();
     ctx.shadowBlur = 0;
 
-    // PROCESAR ENEMIGOS (EVENTOS DE LA VÍA REAL)
+    // PROCESAR DISPAROS
+    projectiles.forEach((p, pi) => {
+        p.x += p.speed;
+        ctx.fillStyle = "#fff";
+        ctx.fillRect(p.x, p.y - 2, 10, 4);
+        if(p.x > canvas.width) projectiles.splice(pi, 1);
+    });
+
+    // PROCESAR ENTIDADES
     enemies.forEach((e, i) => {
         e.x -= e.speed;
-        
-        let icon = "🚁"; // Default: Conflicto
-        if(e.type === "dinero") icon = "💰";
-        if(e.type === "amor") icon = "❤️";
-        if(e.type === "enfermedad") icon = "🚜";
-        if(e.type === "oportunidad") icon = "💠";
-        if(e.type === "tentacion") icon = "🍺";
-        if(e.type === "crisis") icon = "📉";
-
         ctx.font = "45px Arial";
         ctx.textAlign = "center";
-        ctx.fillText(icon, e.x, e.y);
+        ctx.fillText(e.icon, e.x, e.y);
 
-        // DETECCIÓN DE IMPACTO
-        let dist = Math.hypot(e.x - player.x, e.y - player.y);
-        if(dist < 40) {
-            if (typeof handleCollision === "function") {
-                handleCollision(e.type);
+        // Impacto de disparo sobre evento (Acción positiva)
+        projectiles.forEach((p, pi) => {
+            if(Math.hypot(p.x - e.x, p.y - e.y) < 30) {
+                handleCollision(e.type); 
+                enemies.splice(i, 1);
+                projectiles.splice(pi, 1);
             }
+        });
+
+        // Colisión directa (Choque con la realidad)
+        if(Math.hypot(e.x - player.x, e.y - player.y) < 40) {
+            handleCollision(e.type);
             enemies.splice(i, 1);
         }
 
-        // Eliminar si sale de pantalla
         if(e.x < -100) enemies.splice(i, 1);
     });
 
-    // Spawn basado en el evento actual del motor
-    if(frame % 90 === 0 && window.currentEvent) {
-        spawnEnemy(window.currentEvent);
-    }
+    if(frame % 90 === 0 && window.currentEvent) spawnEnemy(window.currentEvent);
 
     frame++;
     requestAnimationFrame(loop);
 }
 
-// ARRANQUE SEGURO DEL SISTEMA
+// ARRANQUE CON REINTENTO AUTOMÁTICO
 window.onload = () => {
-    console.log("AL CIELO: Cargando módulos...");
-    
-    // 1. Cargar estado inicial del Storage
-    const savedState = JSON.parse(localStorage.getItem("state"));
-    if(savedState) {
-        window.updateSimState(savedState);
-    }
-
-    // 2. Iniciar bucle visual
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
     loop();
-    
-    // 3. Iniciar flujo de datos con el servidor (scripts.js)
-    setTimeout(() => {
+
+    let retryCount = 0;
+    const charger = setInterval(() => {
         if (typeof startLifeFlow === "function") {
             startLifeFlow();
+            clearInterval(charger);
         } else {
-            document.getElementById("text-content").innerText = "ERROR: Fallo en scripts.js";
+            retryCount++;
+            if(retryCount > 5) {
+                document.getElementById("text-content").innerText = "Error: scripts.js no detectado.";
+                clearInterval(charger);
+            }
         }
-    }, 800);
+    }, 1000);
 };
 
-// Ajustar canvas si cambia el tamaño de ventana
 window.addEventListener('resize', () => {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
