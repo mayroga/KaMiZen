@@ -69,6 +69,10 @@ button:hover{
 <div class="box">DINERO <span id="d">1000</span></div>
 <div class="box">EDAD <span id="a">18</span></div>
 <div class="box">CHOQUES <span id="c">0</span></div>
+
+<button onclick="pauseGame()">PAUSA</button>
+<button onclick="resumeGame()">SEGUIR</button>
+<button onclick="location.reload()">REINICIAR</button>
 </div>
 
 <div id="text-content"></div>
@@ -88,7 +92,7 @@ canvas.width = innerWidth;
 canvas.height = innerHeight;
 
 // =========================
-// ESTADO
+// ESTADO VIDA
 // =========================
 let state = {
     mental:100,
@@ -104,14 +108,27 @@ let enemies = [];
 let collisions = 0;
 let frame = 0;
 let eventNow = "conflicto";
+let paused = false;
 
 // =========================
-// CONTROL REAL
+// PAUSA
+// =========================
+function pauseGame(){
+    paused = true;
+}
+
+function resumeGame(){
+    paused = false;
+}
+
+// =========================
+// MOVIMIENTO REAL
 // =========================
 addEventListener("mousemove", e=>{
     player.y = e.clientY;
 });
 
+// DISPARO TVID
 addEventListener("click", ()=>{
     bullets.push({
         x:player.x+30,
@@ -122,10 +139,9 @@ addEventListener("click", ()=>{
 });
 
 // =========================
-// EVENTOS IA BACKEND
+// BACKEND EVENTOS
 // =========================
 async function nextEvent(){
-
     try{
         const r = await fetch("/judge",{
             method:"POST",
@@ -137,17 +153,13 @@ async function nextEvent(){
         });
 
         const d = await r.json();
-
         state = d.state;
         eventNow = d.next_event;
-
-    }catch(e){
-        console.log("backend error",e);
-    }
+    }catch(e){}
 }
 
 // =========================
-// SPAWN ENEMIGOS
+// SPAWN
 // =========================
 function spawn(){
     enemies.push({
@@ -159,31 +171,53 @@ function spawn(){
 }
 
 // =========================
-// CASTIGO POR CHOQUES
+// DAÑO CONTEXTUAL REAL
 // =========================
-function damage(){
+function damage(type){
 
     collisions++;
 
-    if(collisions === 1){
+    // 🔴 impacto por choques
+    if(type === "dinero"){
+        state.money -= 100;
         state.mental -= 5;
     }
 
-    if(collisions === 2){
-        state.mental -= 10;
-        state.social -= 5;
+    if(type === "amor"){
+        state.social -= 10;
+        state.mental -= 5;
     }
 
+    if(type === "enfermedad"){
+        state.mental -= 15;
+    }
+
+    if(type === "oportunidad"){
+        state.money -= 20;
+        state.mental += 5;
+    }
+
+    if(type === "conflicto"){
+        state.social -= 8;
+        state.mental -= 10;
+    }
+
+    // 🔥 castigo acumulativo
     if(collisions >= 3){
-        state.mental -= 25;
+        state.mental -= 20;
         state.money -= 200;
     }
 }
 
 // =========================
-// LOOP PRINCIPAL
+// LOOP
 // =========================
 function loop(){
+
+    if(paused){
+        requestAnimationFrame(loop);
+        return;
+    }
 
     ctx.fillStyle="rgba(0,0,0,0.4)";
     ctx.fillRect(0,0,canvas.width,canvas.height);
@@ -204,13 +238,12 @@ function loop(){
         ctx.fillRect(b.x,b.y,6,6);
 
         enemies.forEach((e,j)=>{
-
             if(Math.abs(b.x-e.x)<20 && Math.abs(b.y-e.y)<20){
                 enemies.splice(j,1);
                 bullets.splice(i,1);
 
-                state.money += 10;
-                state.mental += 1;
+                state.money += 20;
+                state.mental += 2;
             }
         });
 
@@ -218,21 +251,28 @@ function loop(){
     });
 
     // =====================
-    // ENEMIGOS
+    // ENEMIGOS (VIDA REAL VISUAL)
     // =====================
     enemies.forEach((e,i)=>{
 
         e.x -= 3;
 
-        ctx.fillStyle="red";
-        ctx.fillRect(e.x,e.y,e.size,e.size);
+        let icon = "🚁";
+        if(e.type === "dinero") icon = "💰";
+        if(e.type === "amor") icon = "❤️";
+        if(e.type === "enfermedad") icon = "🚑";
+        if(e.type === "oportunidad") icon = "💠";
+        if(e.type === "conflicto") icon = "⚔️";
 
-        ctx.fillStyle="#fff";
-        ctx.fillText(e.type,e.x,e.y-5);
+        ctx.font = "30px Arial";
+        ctx.fillText(icon, e.x, e.y);
+
+        ctx.font = "10px Arial";
+        ctx.fillText(e.type.toUpperCase(), e.x, e.y+15);
 
         // COLISIÓN REAL
         if(Math.abs(e.x-player.x)<30 && Math.abs(e.y-player.y)<30){
-            damage();
+            damage(e.type);
             enemies.splice(i,1);
         }
 
@@ -240,12 +280,12 @@ function loop(){
     });
 
     // =====================
-    // SPAWN DINÁMICO
+    // SPAWN
     // =====================
     if(Math.random()<0.03) spawn();
 
     // =====================
-    // IA EVENTOS
+    // IA EVENTO
     // =====================
     if(frame % 200 === 0) nextEvent();
 
