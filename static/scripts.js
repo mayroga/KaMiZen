@@ -1,74 +1,94 @@
+// =====================================
+// CONFIGURACIÓN INICIAL
+// =====================================
 let currentLang = 'en'; // Inglés por defecto
 let music = document.getElementById("bg-music");
+let voiceEnabled = true;
 
 const translations = {
     en: {
-        breath_in: "Breathe In",
-        breath_out: "Exhale",
+        start: "START SESSION",
+        langBtn: "ESPAÑOL",
+        inhale: "Breathe In",
+        exhale: "Exhale",
         hold: "Hold",
-        start: "START",
         soledad: "Today no one called. The silence feels heavier than usual.",
         perdida: "You think of someone who is no longer here. The void appears.",
         estres: "You feel pressure in your chest. Your mind doesn't stop.",
-        tdb_msg: "Breathe... and smile softly. Everything is fine for now.",
-        tdm_msg: "Even when escaping... smile. Observe without judging.",
-        tdn_msg: "Remember something simple... smile like a child."
+        confusion: "Everything seems blurred. You don't know which way to go.",
+        tdb: "Breathe... and smile softly. Everything is fine for now.",
+        tdm: "Even when escaping... smile. Observe without judging.",
+        tdn: "Remember something simple... smile like a child.",
+        tdg: "Feel the intensity... now release it with a short laugh."
     },
     es: {
-        breath_in: "Inhala",
-        breath_out: "Exhala",
+        start: "INICIAR SESIÓN",
+        langBtn: "ENGLISH",
+        inhale: "Inhala",
+        exhale: "Exhala",
         hold: "Retén",
-        start: "INICIAR",
         soledad: "Hoy nadie te llamó. El silencio pesa más de lo normal.",
         perdida: "Piensas en alguien que ya no está. El vacío aparece.",
         estres: "Sientes presión en el pecho. Tu mente no se detiene.",
-        tdb_msg: "Respira… y sonríe suave. Todo está bien por ahora.",
-        tdm_msg: "Incluso escapando… sonríe. Observa sin juzgar.",
-        tdn_msg: "Recuerda algo simple… sonríe como niño."
+        confusion: "Todo parece borroso. No sabes qué camino tomar.",
+        tdb: "Respira… y sonríe suave. Todo está bien por ahora.",
+        tdm: "Incluso escapando… sonríe. Observa sin juzgar.",
+        tdn: "Recuerda algo simple… sonríe como niño.",
+        tdg: "Siente la intensidad… ahora suéltala con una risa corta."
     }
 };
 
-// --- Sistema de Imágenes (Simulación de 100 imágenes) ---
-const natureImages = [
-    "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05",
-    "https://images.unsplash.com/photo-1441974231531-c6227db76b6e",
-    "https://images.unsplash.com/photo-1501854140801-50d01698950b",
-    "https://images.unsplash.com/photo-1447752875215-b2761acb3c5d"
-    // Añadir hasta 100 URLs aquí
-];
+// Generador de 100 imágenes naturales (Unsplash Nature)
+const natureImages = Array.from({length: 100}, (_, i) => `https://picsum.photos/id/${i + 10}/1200/800`);
 
-function updateBackground() {
-    const container = document.getElementById("bg-container");
-    const imgUrl = natureImages[Math.floor(Math.random() * natureImages.length)];
-    const div = document.createElement("div");
-    div.className = "bg-slide";
-    div.style.backgroundImage = `url('${imgUrl}?auto=format&fit=crop&w=1200&q=80')`;
-    div.style.opacity = 0;
-    container.appendChild(div);
-    
-    setTimeout(() => { div.style.opacity = 0.6; }, 100);
-    if(container.children.length > 2) container.removeChild(container.children[0]);
-}
-
-// --- Voz y Audio ---
+// ===============================
+// SISTEMA DE VOZ Y AUDIO
+// ===============================
 function speak(text) {
-    const msg = new SpeechSynthesisUtterance();
-    msg.text = text;
-    msg.lang = currentLang === 'en' ? 'en-US' : 'es-ES';
-    msg.volume = 1.0; 
-    music.volume = 0.2; // Música siempre por debajo de la voz
+    if (!voiceEnabled) return;
     
-    msg.onend = () => { music.volume = 0.4; }; // Sube música al terminar de hablar
-    window.speechSynthesis.speak(msg);
+    // Bajar música mientras habla
+    music.volume = 0.15;
+    
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = currentLang === 'en' ? 'en-US' : 'es-ES';
+    utterance.rate = 0.9;
+    
+    utterance.onend = () => {
+        music.volume = 0.4; // Sube volumen al terminar
+    };
+    
+    window.speechSynthesis.speak(utterance);
 }
 
 function toggleLanguage() {
     currentLang = currentLang === 'en' ? 'es' : 'en';
-    document.getElementById("start-btn").innerText = translations[currentLang].start;
+    document.getElementById("btn-start").innerText = translations[currentLang].start;
+    document.getElementById("lang-toggle").innerText = translations[currentLang].langBtn;
+}
+
+// ===============================
+// LÓGICA DEL JUEGO
+// ===============================
+function updateBackground() {
+    const container = document.getElementById("bg-container");
+    const imgUrl = natureImages[Math.floor(Math.random() * natureImages.length)];
+    
+    const slide = document.createElement("div");
+    slide.className = "bg-slide";
+    slide.style.backgroundImage = `url('${imgUrl}')`;
+    container.appendChild(slide);
+    
+    setTimeout(() => slide.style.opacity = "0.7", 100);
+    
+    if (container.children.length > 2) {
+        container.removeChild(container.children[0]);
+    }
 }
 
 function start() {
     music.play();
+    music.volume = 0.4;
     document.getElementById("setup").style.display = "none";
     document.getElementById("game").style.display = "block";
     updateBackground();
@@ -76,10 +96,10 @@ function start() {
 }
 
 function nextScene() {
-    let stateVal = document.getElementById("state").value;
-    let text = translations[currentLang][stateVal];
+    const stateVal = document.getElementById("state").value;
+    const text = translations[currentLang][stateVal];
     
-    let options = [
+    const options = [
         {txt: "TDB", tvid: "TDB", good: true},
         {txt: "TDM", tvid: "TDM", good: false},
         {txt: "TDN", tvid: "TDN", good: true}
@@ -106,36 +126,47 @@ function renderScene(text, options) {
 }
 
 function runTherapy(tvid) {
-    let msgKey = tvid.toLowerCase() + "_msg";
-    let text = translations[currentLang][msgKey];
-    showTherapy(text);
+    const msg = translations[currentLang][tvid.toLowerCase()];
+    showTherapy(msg);
 }
 
+// ===============================
+// CÍRCULO RESPIRATORIO AUTO
+// ===============================
 function showTherapy(msg) {
+    document.getElementById("options").innerHTML = "";
     document.getElementById("text-content").innerText = msg;
     speak(msg);
 
-    let circle = document.getElementById("breath-circle");
-    let instruction = document.getElementById("breath-instruction");
-    let timerDisp = document.getElementById("timer");
+    const circle = document.getElementById("breath-circle");
+    const instruction = document.getElementById("breath-instruction");
+    const timerDisp = document.getElementById("timer");
     
     circle.style.display = "flex";
-    let t = 4;
     
-    // Ciclo automático Inhala/Exhala
-    instruction.innerText = translations[currentLang].breath_in;
-    circle.className = "breathing-in";
+    // Fase 1: INHALA (4s)
+    instruction.innerText = translations[currentLang].inhale;
+    circle.classList.remove("exhale");
+    circle.classList.add("inhale");
+    
+    let count = 4;
+    timerDisp.innerText = count;
 
-    let interval = setInterval(() => {
-        t--;
-        timerDisp.innerText = t;
-        if(t === 0) {
-            if(circle.className === "breathing-in") {
-                instruction.innerText = translations[currentLang].breath_out;
-                circle.className = "breathing-out";
-                t = 4;
+    let breathInterval = setInterval(() => {
+        count--;
+        timerDisp.innerText = count;
+
+        if (count <= 0) {
+            if (circle.classList.contains("inhale")) {
+                // Fase 2: EXHALA (4s)
+                instruction.innerText = translations[currentLang].exhale;
+                circle.classList.remove("inhale");
+                circle.classList.add("exhale");
+                count = 4;
+                timerDisp.innerText = count;
             } else {
-                clearInterval(interval);
+                // Fin de respiración
+                clearInterval(breathInterval);
                 circle.style.display = "none";
                 nextScene();
             }
