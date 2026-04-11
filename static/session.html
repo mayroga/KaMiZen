@@ -3,53 +3,76 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MAYKAMI | Inicio</title>
+<title>MAYKAMI | LIFE ENTRY SYSTEM</title>
 
 <style>
 body{
     margin:0;
-    background:#000;
-    color:#fff;
+    background: radial-gradient(circle, #000, #050505);
+    color:#00f2ff;
     font-family:Arial;
     display:flex;
     justify-content:center;
     align-items:center;
     height:100vh;
+    overflow:hidden;
 }
 
+/* CONTENEDOR */
 #app{
-    width:90%;
-    max-width:400px;
+    width:92%;
+    max-width:420px;
     padding:25px;
-    background:rgba(0,0,0,0.8);
+    background:rgba(0,0,0,0.85);
     border:1px solid #00f2ff;
-    border-radius:15px;
+    border-radius:18px;
     text-align:center;
+    box-shadow:0 0 25px rgba(0,242,255,0.2);
 }
 
-h1{color:#00f2ff;}
-
-input,select{
-    width:100%;
-    padding:12px;
-    margin:10px 0;
-    background:#111;
-    border:1px solid #00f2ff;
-    color:#fff;
+/* TITULO */
+h1{
+    color:#00f2ff;
+    font-size:26px;
+    margin-bottom:10px;
 }
 
-button{
+/* INPUTS */
+input, select{
     width:100%;
     padding:14px;
-    background:#00f2ff;
+    margin:10px 0;
+    background:#0a0a0a;
+    border:1px solid #00f2ff;
+    color:#fff;
+    border-radius:8px;
+    outline:none;
+    font-size:14px;
+}
+
+/* BOTÓN PRINCIPAL */
+button{
+    width:100%;
+    padding:16px;
+    background:linear-gradient(90deg,#00f2ff,#0077ff);
     border:none;
     color:#000;
     font-weight:bold;
     cursor:pointer;
+    border-radius:10px;
+    margin-top:10px;
+    font-size:15px;
 }
 
 button:hover{
-    background:#00c8d6;
+    filter:brightness(1.2);
+}
+
+/* INFO EXTRA */
+.small{
+    font-size:12px;
+    opacity:0.7;
+    margin-top:10px;
 }
 </style>
 </head>
@@ -57,37 +80,101 @@ button:hover{
 <body>
 
 <div id="app">
-<h1>MAYKAMI</h1>
 
-<input id="age" type="number" placeholder="Edad / Age">
+<h1>🧠 MAYKAMI LIFE AI</h1>
 
-<select id="state">
-<option value="estres">Estrés</option>
-<option value="soledad">Soledad</option>
-<option value="perdida">Pérdida</option>
+<p class="small">
+Sistema de simulación adaptativa de vida real con decisiones TVid
+</p>
+
+<!-- EDAD -->
+<input id="age" type="number" placeholder="Edad (Age)" min="5" max="99">
+
+<!-- ESTADO INICIAL -->
+<select id="emotion">
+    <option value="neutral">Neutral</option>
+    <option value="stress">Estrés</option>
+    <option value="lonely">Soledad</option>
+    <option value="loss">Pérdida</option>
+    <option value="motivated">Motivado</option>
 </select>
 
-<button onclick="start()">INICIAR VIDA</button>
+<!-- NIVEL DE VIDA -->
+<select id="difficulty">
+    <option value="1">Vida normal</option>
+    <option value="2">Vida difícil</option>
+    <option value="3">Vida extrema</option>
+</select>
+
+<!-- TVID INICIAL -->
+<select id="tvideMode">
+    <option value="balanced">Equilibrio (TDB + TDP)</option>
+    <option value="survival">Supervivencia (TDM + TDG)</option>
+    <option value="creative">Creativo (TDN + TDK)</option>
+</select>
+
+<button onclick="startLife()">🚀 INICIAR VIDA SIMULADA</button>
+
+<p class="small">
+Cada decisión tendrá consecuencias acumulativas. No hay pausa en la vida real.
+</p>
+
 </div>
 
 <script>
-async function start(){
+async function startLife(){
 
-    const age = document.getElementById("age").value || 25;
+    const age = parseInt(document.getElementById("age").value || 25);
+    const emotion = document.getElementById("emotion").value;
+    const difficulty = document.getElementById("difficulty").value;
+    const tvideMode = document.getElementById("tvideMode").value;
 
+    // 🔥 PERFIL COMPLETO (BASE DE IA REAL)
+    const profile = {
+        age,
+        emotion,
+        difficulty,
+        tvideMode,
+        stage:
+            age < 13 ? "child" :
+            age < 25 ? "young" :
+            age < 60 ? "adult" : "elder",
+        created: Date.now()
+    };
+
+    // 🧠 ESTADO INICIAL COMPLETO
+    const state = {
+        mental: 100,
+        health: 100,
+        money: 500,
+        social: 50,
+        discipline: 50,
+        addiction: 0,
+        experience: 0,
+        age: age,
+        history: []
+    };
+
+    // 🔥 ENVIAR AL BACKEND (IA ENGINE)
     const res = await fetch("/start",{
         method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({age})
+        headers:{
+            "Content-Type":"application/json"
+        },
+        body: JSON.stringify({
+            profile,
+            state
+        })
     });
 
     const data = await res.json();
 
-    localStorage.setItem("profile", JSON.stringify(data.profile));
-    localStorage.setItem("state", JSON.stringify(data.state));
+    // 💾 GUARDAR EN LOCAL
+    localStorage.setItem("profile", JSON.stringify(data.profile || profile));
+    localStorage.setItem("state", JSON.stringify(data.state || state));
 
-    // 👉 pasa al simulador real
-    window.location.href="/static/jet.html";
+    // 🚀 IR AL SIMULADOR REAL
+    window.location.href = "/static/jet.html";
 }
 </script>
 
