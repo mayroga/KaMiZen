@@ -1,9 +1,16 @@
+// =========================
+// 🌐 CONFIG GLOBAL
+// =========================
 let currentLang = 'en';
 let music = document.getElementById("bg-music");
 
 let currentEvent = null;
 let gameState = null;
+let profile = null;
 
+// =========================
+// 🌍 TRADUCCIONES
+// =========================
 const translations = {
     en: {
         start: "START SESSION",
@@ -25,6 +32,9 @@ const translations = {
     }
 };
 
+// =========================
+// 🌄 IMÁGENES DINÁMICAS
+// =========================
 const natureImages = Array.from(
     { length: 100 },
     (_, i) => `https://picsum.photos/id/${i + 20}/1200/800`
@@ -34,14 +44,18 @@ const natureImages = Array.from(
 // 🔊 VOZ
 // =========================
 function speak(text) {
+
+    if (!window.speechSynthesis) return;
+
     window.speechSynthesis.cancel();
-    music.volume = 0.1;
+
+    if (music) music.volume = 0.1;
 
     const ut = new SpeechSynthesisUtterance(text);
     ut.lang = currentLang === 'en' ? 'en-US' : 'es-ES';
 
     ut.onend = () => {
-        music.volume = 0.4;
+        if (music) music.volume = 0.4;
     };
 
     window.speechSynthesis.speak(ut);
@@ -51,7 +65,9 @@ function speak(text) {
 // 🌄 BACKGROUND
 // =========================
 function updateBackground() {
+
     const container = document.getElementById("bg-container");
+    if (!container) return;
 
     const imgUrl = natureImages[Math.floor(Math.random() * natureImages.length)];
 
@@ -69,25 +85,62 @@ function updateBackground() {
 }
 
 // =========================
-// ▶️ INICIO
+// 🌐 CAMBIO DE IDIOMA
 // =========================
-function start() {
-    music.play();
-    music.volume = 0.4;
+function toggleLanguage() {
 
+    currentLang = currentLang === 'en' ? 'es' : 'en';
+
+    document.getElementById("btn-start").innerText = translations[currentLang].start;
+    document.getElementById("lang-toggle").innerText = translations[currentLang].langBtn;
+    document.getElementById("back-btn").innerText = translations[currentLang].back;
+
+    if (currentEvent) loadEvent(currentEvent);
+}
+
+// =========================
+// ▶️ START REAL (CONECTA CON BACKEND)
+// =========================
+async function start() {
+
+    const age = document.getElementById("age").value || 25;
+
+    const res = await fetch("/start", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ age })
+    });
+
+    const data = await res.json();
+
+    profile = data.profile;
+    gameState = data.state;
+
+    localStorage.setItem("profile", JSON.stringify(profile));
+    localStorage.setItem("state", JSON.stringify(gameState));
+
+    // música
+    if (music) {
+        music.play();
+        music.volume = 0.4;
+    }
+
+    // UI
     document.getElementById("setup").style.display = "none";
     document.getElementById("game").style.display = "block";
     document.getElementById("back-btn").style.display = "block";
 
     updateBackground();
 
-    requestNextEvent(); // 🔥 empieza el motor real
+    // 🔥 iniciar flujo real
+    requestNextEvent();
 }
 
 // =========================
 // 🔙 RESET
 // =========================
 function resetApp() {
+
     window.speechSynthesis.cancel();
 
     document.getElementById("game").style.display = "none";
@@ -96,12 +149,16 @@ function resetApp() {
 
     currentEvent = null;
     gameState = null;
+    profile = null;
+
+    localStorage.clear();
 }
 
 // =========================
-// 🌍 PEDIR EVENTO INICIAL
+// 🌍 PEDIR EVENTO
 // =========================
 function requestNextEvent() {
+
     fetch("/judge", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -112,7 +169,15 @@ function requestNextEvent() {
     })
     .then(res => res.json())
     .then(data => {
+
         gameState = data.state;
+
+        if (data.profile) {
+            profile = data.profile;
+        }
+
+        localStorage.setItem("state", JSON.stringify(gameState));
+
         loadEvent(data.next_event);
     });
 }
@@ -124,83 +189,86 @@ function loadEvent(eventName) {
 
     currentEvent = eventName;
 
-    let eventData = buildEvent(eventName);
+    const eventData = buildEvent(eventName);
 
     document.getElementById("text-content").innerText = eventData.desc;
+
     speak(eventData.desc);
 
     renderOptions(eventData);
 }
 
 // =========================
-// 🧩 CONSTRUCTOR DE EVENTOS
+// 🧩 EVENTOS REALES
 // =========================
 function buildEvent(name) {
 
-    switch(name) {
+    let stage = profile?.stage || "adulto";
+
+    // 🔥 descripciones adaptadas por edad
+    const adapt = {
+        nino: {
+            rechazo: "Alguien no quiere jugar contigo.",
+            conflicto: "Alguien discute contigo.",
+        },
+        adulto: {
+            rechazo: "Alguien te ignora completamente.",
+            conflicto: "Se genera una confrontación directa.",
+        },
+        anciano: {
+            rechazo: "Sientes abandono emocional.",
+            conflicto: "Una tensión emocional aparece.",
+        }
+    };
+
+    switch(name){
 
         case "rechazo":
             return {
-                name: "RECHAZO",
-                desc: currentLang === 'en'
-                    ? "Someone ignores you completely."
-                    : "Alguien te ignora completamente.",
+                desc: adapt[stage]?.rechazo || "Rechazo social detectado.",
                 context: "rechazo",
-                decisions: ["TDB", "TDM", "TDG"]
+                decisions: ["TDB","TDM","TDG"]
             };
 
         case "conflicto":
             return {
-                name: "CONFLICTO",
-                desc: currentLang === 'en'
-                    ? "A direct confrontation happens."
-                    : "Ocurre un conflicto directo.",
+                desc: adapt[stage]?.conflicto || "Conflicto detectado.",
                 context: "conflicto",
-                decisions: ["TDB", "TDM", "TDG"]
+                decisions: ["TDB","TDM","TDG"]
             };
 
         case "perdida":
             return {
-                name: "PÉRDIDA",
-                desc: currentLang === 'en'
-                    ? "You lose something valuable."
-                    : "Pierdes algo importante.",
+                desc: "Pierdes algo importante.",
                 context: "perdida",
-                decisions: ["TDB", "TDM", "TDN"]
+                decisions: ["TDB","TDM","TDN"]
             };
 
         case "oportunidad":
             return {
-                name: "OPORTUNIDAD",
-                desc: currentLang === 'en'
-                    ? "A new opportunity appears."
-                    : "Aparece una oportunidad.",
+                desc: "Una oportunidad aparece.",
                 context: "oportunidad",
-                decisions: ["TDB", "TDG"]
+                decisions: ["TDB","TDG"]
             };
 
         case "tentacion":
             return {
-                name: "TENTACIÓN",
-                desc: currentLang === 'en'
-                    ? "You feel an impulse toward a vice."
-                    : "Sientes una tentación o impulso.",
+                desc: "Sientes una tentación o vicio.",
                 context: "tentacion",
-                decisions: ["TDB", "TDM", "TDN"]
+                decisions: ["TDB","TDM","TDN"]
             };
 
         default:
             return {
-                name: "NEUTRAL",
-                desc: "Life continues...",
+                desc: "La vida continúa...",
                 context: "neutral",
-                decisions: ["TDB", "TDM", "TDN"]
+                decisions: ["TDB","TDM","TDN"]
             };
     }
 }
 
 // =========================
-// 🎮 RENDER OPCIONES
+// 🎮 BOTONES
 // =========================
 function renderOptions(eventData) {
 
@@ -220,7 +288,7 @@ function renderOptions(eventData) {
 }
 
 // =========================
-// 🧠 MOTOR REAL CONECTADO
+// 🧠 IA CONECTADA
 // =========================
 function sendDecision(decision, context) {
 
@@ -230,47 +298,31 @@ function sendDecision(decision, context) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-            decision: decision,
-            context: context
+            decision,
+            context
         })
     })
     .then(res => res.json())
     .then(data => {
 
         gameState = data.state;
+        localStorage.setItem("state", JSON.stringify(gameState));
 
         updateBackground();
 
-        // 💀 FINAL
-        if (data.status === "end") {
-            showFinalScreen(data.type);
-            return;
-        }
-
-        // 🔄 SIGUIENTE EVENTO
+        // siguiente evento
         loadEvent(data.next_event);
     });
 }
 
 // =========================
-// 💀 FINAL DEL SISTEMA
-// =========================
-function showFinalScreen(type) {
-
-    document.getElementById("text-content").innerText =
-        "END: " + type;
-
-    document.getElementById("options").innerHTML = "";
-
-    speak("System ended: " + type);
-}
-
-// =========================
-// 🌬️ UI BREATH (OPCIONAL)
+// 🌬️ RESPIRACIÓN
 // =========================
 function showBreathCycle() {
 
     const circle = document.getElementById("breath-circle");
+    if (!circle) return;
+
     const instruction = document.getElementById("breath-instruction");
     const timerDisp = document.getElementById("timer");
 
@@ -279,24 +331,23 @@ function showBreathCycle() {
     let time = 4;
     let inhale = true;
 
-    function cycle() {
+    function cycle(){
 
         instruction.innerText = inhale
             ? translations[currentLang].inhale
             : translations[currentLang].exhale;
 
-        let interval = setInterval(() => {
+        let interval = setInterval(()=>{
 
             time--;
             timerDisp.innerText = time;
 
-            if (time <= 0) {
+            if(time <= 0){
+
                 clearInterval(interval);
 
                 inhale = !inhale;
                 time = 4;
-
-                if (!circle.isConnected) return;
 
                 circle.classList.toggle("inhale");
                 circle.classList.toggle("exhale");
@@ -304,7 +355,7 @@ function showBreathCycle() {
                 cycle();
             }
 
-        }, 1000);
+        },1000);
     }
 
     cycle();
