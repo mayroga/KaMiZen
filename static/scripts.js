@@ -1,199 +1,80 @@
 let currentEvent = null;
-let gameState = null;
-let playerAge = 18;
 let timer = null;
 
-// =========================
-// 🔊 VOZ
-// =========================
-function speak(text){
+// VOZ PROFESIONAL (Asesoría)
+function speak(text) {
     window.speechSynthesis.cancel();
-
-    let u = new SpeechSynthesisUtterance(text);
-    u.lang = "es-ES";
-    window.speechSynthesis.speak(u);
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = "es-ES";
+    utterance.rate = 0.9; 
+    window.speechSynthesis.speak(utterance);
 }
 
-// =========================
-// 🚀 INICIO
-// =========================
-function start(){
+// SINCRONIZACIÓN CON EL SIMULADOR
+async function sendDecision(decision) {
+    clearTimeout(timer);
 
-    playerAge = parseInt(document.getElementById("age").value || 18);
-
-    fetch("/start",{
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({age:playerAge})
-    })
-    .then(r=>r.json())
-    .then(data=>{
-
-        gameState = data.state;
-        loadEvent(data.next_event);
+    const response = await fetch("/judge", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            decision: decision,
+            context: currentEvent
+        })
     });
-}
 
-// =========================
-// 🎮 CARGAR EVENTO
-// =========================
-function loadEvent(eventName){
+    const data = await response.json();
+    
+    // Actualizar estado global en el simulador
+    if (window.updateSimState) window.updateSimState(data.state);
 
-    currentEvent = eventName;
-
-    let desc = buildEvent(eventName);
-
-    document.getElementById("text-content").innerText = desc;
-
-    speak(desc);
-
-    renderOptions();
-
-    startTimer();
-}
-
-// =========================
-// 🧠 EVENTOS DINÁMICOS
-// =========================
-function buildEvent(name){
-
-    switch(name){
-
-        case "rechazo":
-            return "Alguien te ignora. Tu reacción define tu futuro.";
-
-        case "amor":
-            return "Una conexión emocional aparece en tu vida.";
-
-        case "dinero":
-            return "Oportunidad económica detectada.";
-
-        case "crisis":
-            return "Problema financiero crítico aparece.";
-
-        case "tentacion":
-            return "Una tentación intenta controlarte.";
-
-        case "soledad":
-            return "Sientes aislamiento social profundo.";
-
-        case "ansiedad":
-            return "Tu mente entra en presión interna.";
-
-        case "enfermedad":
-            return "Tu cuerpo muestra debilidad.";
-
-        default:
-            return "La vida continúa...";
+    if (data.status === "end") {
+        handleGameOver(data.type);
+    } else {
+        processNewEvent(data.next_event);
     }
 }
 
-// =========================
-// 🎯 OPCIONES TVID
-// =========================
-function renderOptions(){
+function processNewEvent(eventName) {
+    currentEvent = eventName;
+    const descriptions = {
+        "crisis": "Situación financiera crítica. ¿Cómo respondes?",
+        "amor": "Conexión emocional detectada. Evalúa tu prioridad.",
+        "enfermedad": "Tu cuerpo reclama atención inmediata.",
+        "tentacion": "Un impulso de evasión intenta controlarte.",
+        "oportunidad": "Puerta abierta al crecimiento. Requiere decisión.",
+        "rechazo": "Interacción social fallida. Controla tu reacción."
+    };
 
+    const msg = descriptions[eventName] || "La vida te presenta un nuevo desafío.";
+    document.getElementById("text-content").innerText = msg;
+    speak(msg);
+
+    renderDecisionButtons();
+    
+    // REGLA: Si no decides en 6 seg, la vida decide (PASO 10)
+    timer = setTimeout(() => {
+        speak("El tiempo se agotó. La evitación es tu decisión.");
+        sendDecision("TDM");
+    }, 6000);
+}
+
+function renderDecisionButtons() {
     const box = document.getElementById("options");
     box.innerHTML = "";
+    const choices = ["TDB", "TDM", "TDN", "TDP", "TDG"];
 
-    const choices = ["TDB","TDM","TDN","TDP","TDG","TDK"];
-
-    choices.forEach(c=>{
-
-        let btn = document.createElement("button");
+    choices.forEach(c => {
+        const btn = document.createElement("button");
         btn.innerText = c;
-
-        btn.onclick = ()=>{
-
-            clearTimeout(timer);
-            sendDecision(c);
-        };
-
+        btn.onclick = () => sendDecision(c);
         box.appendChild(btn);
     });
 }
 
-// =========================
-// ⏳ TIMER (DECIDE POR TI)
-// =========================
-function startTimer(){
-
-    clearTimeout(timer);
-
-    timer = setTimeout(()=>{
-
-        speak("No decidiste. La vida decide por ti.");
-
-        sendDecision("TDM");
-
-    }, 6000);
-}
-
-// =========================
-// 🧠 MOTOR REAL
-// =========================
-function sendDecision(decision){
-
-    fetch("/judge",{
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({
-            decision:decision,
-            context:currentEvent
-        })
-    })
-    .then(r=>r.json())
-    .then(data=>{
-
-        gameState = data.state;
-
-        showState(data.state);
-
-        if(data.status === "end"){
-            endGame(data.type);
-            return;
-        }
-
-        setTimeout(()=>{
-            loadEvent(data.next_event);
-        }, 1200);
-    });
-}
-
-// =========================
-// 📊 UI VIDA
-// =========================
-function showState(s){
-
-    document.getElementById("text-content").innerText =
-        `MENTAL:${s.mental}
-SALUD:${s.health}
-DINERO:${s.money}
-SOCIAL:${s.social}
-DISCIPLINA:${s.discipline}
-EDAD:${s.age.toFixed(1)}`;
-}
-
-// =========================
-// 💀 FINAL
-// =========================
-function endGame(type){
-
-    let msg = "";
-
-    if(type==="muerte_fisica") msg="Tu vida terminó.";
-    if(type==="colapso_mental") msg="Tu mente colapsó.";
-    if(type==="aislamiento_total") msg="Te desconectaste del mundo.";
-
+function handleGameOver(type) {
+    const msg = `Simulación terminada: ${type.replace("_", " ").toUpperCase()}`;
     document.getElementById("text-content").innerText = msg;
-
     speak(msg);
-
-    document.getElementById("options").innerHTML = "";
-
-    let btn = document.createElement("button");
-    btn.innerText = "REINICIAR";
-    btn.onclick = ()=>location.reload();
-
-    document.getElementById("options").appendChild(btn);
+    document.getElementById("options").innerHTML = '<button onclick="location.reload()">REENCARNAR</button>';
 }
