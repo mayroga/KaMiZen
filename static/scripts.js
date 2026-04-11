@@ -1,80 +1,120 @@
-let currentEvent = null;
-let timer = null;
+// CONFIGURACIÓN DE MÚSICA ADAPTATIVA (LYRIA 3 CONCEPT)
+let bgMusic = null;
+window.currentEvent = null;
+let decisionTimer = null;
 
-// VOZ PROFESIONAL (Asesoría)
-function speak(text) {
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = "es-ES";
-    utterance.rate = 0.9; 
-    window.speechSynthesis.speak(utterance);
+async function setupAudio(profile) {
+    // Definir atmósfera según EDAD y ESTADO
+    let mood = "ambient_tech"; 
+    if(profile.age < 18) mood = "energetic_lofi";
+    if(profile.age > 60) mood = "reflective_piano";
+    if(profile.emotion === "stress") mood = "dark_industrial";
+
+    console.log(`Lyria 3 generando atmósfera: ${mood}`);
+    
+    // Simulación de carga de audio dinámico
+    bgMusic = new Audio(`/static/audio/${mood}.mp3`);
+    bgMusic.loop = true;
+    bgMusic.volume = 0.4;
+    
+    // Iniciar al primer click
+    document.addEventListener('click', () => {
+        bgMusic.play().catch(() => {});
+    }, { once: true });
 }
 
-// SINCRONIZACIÓN CON EL SIMULADOR
-async function sendDecision(decision) {
-    clearTimeout(timer);
-
-    const response = await fetch("/judge", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            decision: decision,
-            context: currentEvent
-        })
-    });
-
-    const data = await response.json();
+// FLUJO DE VIDA
+async function startLifeFlow() {
+    const profile = JSON.parse(localStorage.getItem("profile"));
+    if(profile) setupAudio(profile);
     
-    // Actualizar estado global en el simulador
-    if (window.updateSimState) window.updateSimState(data.state);
+    // Primer evento
+    const state = JSON.parse(localStorage.getItem("state"));
+    processNewEvent("oportunidad"); 
+}
 
-    if (data.status === "end") {
-        handleGameOver(data.type);
+async function handleCollision(eventType) {
+    // Si chocas, la vida te obliga a una decisión rápida o daño automático
+    window.currentEvent = eventType;
+    const msg = `¡IMPACTO! Evento de ${eventType.toUpperCase()} detectado.`;
+    document.getElementById("text-content").innerText = msg;
+    
+    // Si es enfermedad (tractor), daño directo
+    if(eventType === "enfermedad") {
+        sendDecision("TDM"); // La evitación en enfermedad cuesta salud
     } else {
-        processNewEvent(data.next_event);
+        renderDecisionButtons();
     }
 }
 
-function processNewEvent(eventName) {
-    currentEvent = eventName;
-    const descriptions = {
-        "crisis": "Situación financiera crítica. ¿Cómo respondes?",
-        "amor": "Conexión emocional detectada. Evalúa tu prioridad.",
-        "enfermedad": "Tu cuerpo reclama atención inmediata.",
-        "tentacion": "Un impulso de evasión intenta controlarte.",
-        "oportunidad": "Puerta abierta al crecimiento. Requiere decisión.",
-        "rechazo": "Interacción social fallida. Controla tu reacción."
-    };
-
-    const msg = descriptions[eventName] || "La vida te presenta un nuevo desafío.";
-    document.getElementById("text-content").innerText = msg;
-    speak(msg);
-
-    renderDecisionButtons();
+async function sendDecision(decisionType) {
+    clearTimeout(decisionTimer);
     
-    // REGLA: Si no decides en 6 seg, la vida decide (PASO 10)
-    timer = setTimeout(() => {
-        speak("El tiempo se agotó. La evitación es tu decisión.");
+    const res = await fetch("/judge", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            decision: decisionType,
+            context: window.currentEvent
+        })
+    });
+
+    const data = await res.json();
+    window.updateSimState(data.state);
+    
+    if(data.status === "end") {
+        gameOver(data.type);
+    } else {
+        window.currentEvent = data.next_event;
+        updateUI(data.next_event);
+    }
+}
+
+function updateUI(nextEvent) {
+    const messages = {
+        "crisis": "La presión financiera aumenta. ¿Qué sacrificas?",
+        "amor": "Una conexión requiere tiempo. ¿Lo das?",
+        "tentacion": "El vacío busca llenarse con vicios.",
+        "oportunidad": "Un camino nuevo aparece delante de ti.",
+        "conflicto": "Helicópteros en el cielo. El entorno es hostil."
+    };
+    
+    const txt = messages[nextEvent] || "La vida sigue su curso...";
+    document.getElementById("text-content").innerText = txt;
+    speak(txt);
+    renderDecisionButtons();
+
+    // PASO 10: No decidir es decidir (TDM)
+    decisionTimer = setTimeout(() => {
+        speak("Inacción detectada. La vida decide por ti.");
         sendDecision("TDM");
-    }, 6000);
+    }, 8000);
 }
 
 function renderDecisionButtons() {
-    const box = document.getElementById("options");
-    box.innerHTML = "";
-    const choices = ["TDB", "TDM", "TDN", "TDP", "TDG"];
-
-    choices.forEach(c => {
+    const container = document.getElementById("options");
+    container.innerHTML = "";
+    const types = ["TDB", "TDM", "TDN", "TDP", "TDG"];
+    
+    types.forEach(t => {
         const btn = document.createElement("button");
-        btn.innerText = c;
-        btn.onclick = () => sendDecision(c);
-        box.appendChild(btn);
+        btn.innerText = t;
+        btn.onclick = () => sendDecision(t);
+        container.appendChild(btn);
     });
 }
 
-function handleGameOver(type) {
-    const msg = `Simulación terminada: ${type.replace("_", " ").toUpperCase()}`;
-    document.getElementById("text-content").innerText = msg;
-    speak(msg);
-    document.getElementById("options").innerHTML = '<button onclick="location.reload()">REENCARNAR</button>';
+function speak(text) {
+    window.speechSynthesis.cancel();
+    const msg = new SpeechSynthesisUtterance(text);
+    msg.lang = 'es-ES';
+    msg.rate = 0.9;
+    window.speechSynthesis.speak(msg);
+}
+
+function gameOver(reason) {
+    if(bgMusic) bgMusic.pause();
+    document.getElementById("text-content").innerText = `COLAPSO: ${reason.replace("_", " ").toUpperCase()}`;
+    document.getElementById("options").innerHTML = '<button onclick="location.href=\'/\'">REINTENTAR</button>';
+    speak("La simulación ha terminado. Tu legado ha sido procesado.");
 }
