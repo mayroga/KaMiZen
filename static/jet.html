@@ -14,7 +14,6 @@ body {
     overflow:hidden;
 }
 
-/* HUD */
 #ui {
     position:absolute;
     top:10px;
@@ -41,11 +40,10 @@ body {
     cursor:pointer;
 }
 
-/* DECISION PANEL */
 #decisionBox{
     position:fixed;
     inset:0;
-    background:rgba(0,0,0,0.9);
+    background:rgba(0,0,0,0.92);
     display:none;
     flex-direction:column;
     justify-content:center;
@@ -68,7 +66,7 @@ body {
 
 <div id="ui">
 <div class="box">SYNC: <span id="sync">100</span>%</div>
-<div class="box">ALT: <span id="dist">0</span></div>
+<div class="box">MONEY: <span id="money">1000</span></div>
 <div class="box">MENTAL: <span id="mental">100</span></div>
 </div>
 
@@ -84,11 +82,12 @@ body {
 <script>
 const canvas = document.getElementById("c");
 const ctx = canvas.getContext("2d");
+
 canvas.width = innerWidth;
 canvas.height = innerHeight;
 
 // =====================
-// STATE VIDA REAL
+// 🧠 ESTADO LOCAL UI
 // =====================
 let state = {
     sync: 100,
@@ -98,47 +97,38 @@ let state = {
 
 let jet = {x:80, y:200};
 let obstacles = [];
-let score = 0;
 let playing = true;
 
-// EVENTOS HUMANOS
-const EVENTS = [
-    {
-        name:"CRÍTICA",
-        desc:"Alguien te falta el respeto",
-        color:"#ff0033",
-        decisions:[
-            {text:"Reaccionar", effect:{mental:-10}},
-            {text:"Ignorar", effect:{mental:-2}},
-            {text:"Controlar", effect:{mental:+5}}
-        ]
-    },
-    {
-        name:"PÉRDIDA",
-        desc:"Pierdes dinero inesperadamente",
-        color:"#ff8800",
-        decisions:[
-            {text:"Entrar en pánico", effect:{mental:-10, money:-50}},
-            {text:"Adaptarte", effect:{mental:+5}},
-            {text:"Ignorar", effect:{mental:-5}}
-        ]
-    },
-    {
-        name:"RECHAZO",
-        desc:"Te ignoran completamente",
-        color:"#ff00aa",
-        decisions:[
-            {text:"Insistir", effect:{mental:-5}},
-            {text:"Retirarte", effect:{mental:+2}},
-            {text:"Mejorar", effect:{mental:+5}}
-        ]
-    }
-];
+// =====================
+// 🔥 EVENTO ACTUAL (DEL BACKEND)
+// =====================
+let currentEvent = null;
 
+// =====================
+// 🎮 MOVIMIENTO
+// =====================
 window.onmousemove = e => jet.y = e.clientY;
 
 // =====================
-// LOOP
+// 🔄 OBTENER PRIMER EVENTO
+// =====================
+async function getNextEvent(){
+    const res = await fetch("/judge", {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({
+            decision: "START",
+            context: "init"
+        })
+    });
+
+    const data = await res.json();
+    currentEvent = data.next_event;
+    syncState(data.state);
+}
+
+// =====================
+// 🔴 LOOP PRINCIPAL
 // =====================
 function loop(){
     if(!playing) return;
@@ -149,22 +139,23 @@ function loop(){
     ctx.fillStyle="#00f2ff";
     ctx.fillRect(jet.x, jet.y, 20, 20);
 
-    // spawn
-    if(Math.random()<0.03){
-        const ev = EVENTS[Math.floor(Math.random()*EVENTS.length)];
-        obstacles.push({x:canvas.width, y:Math.random()*canvas.height, event:ev});
+    // spawn eventos desde backend
+    if(Math.random()<0.02 && currentEvent){
+        obstacles.push({
+            x: canvas.width,
+            y: Math.random()*canvas.height,
+            event: currentEvent
+        });
     }
 
     obstacles.forEach((o,i)=>{
         o.x -= 5;
 
-        // cuadro rojo con significado
-        ctx.strokeStyle = o.event.color;
+        ctx.strokeStyle = "#ff0033";
         ctx.strokeRect(o.x,o.y,30,30);
 
-        ctx.fillStyle=o.event.color;
-        ctx.font="10px Arial";
-        ctx.fillText(o.event.name,o.x,o.y-5);
+        ctx.fillStyle="#ff0033";
+        ctx.fillText(o.event,o.x,o.y-5);
 
         // colisión
         if(Math.abs(o.x-jet.x)<20 && Math.abs(o.y-jet.y)<20){
@@ -175,38 +166,55 @@ function loop(){
         if(o.x<0) obstacles.splice(i,1);
     });
 
-    score++;
-    document.getElementById("dist").innerText = score;
-    document.getElementById("sync").innerText = state.sync;
-    document.getElementById("mental").innerText = state.mental;
-
     requestAnimationFrame(loop);
 }
 
 // =====================
-// DECISION SYSTEM
+// ⚖️ DECISIÓN
 // =====================
 function triggerDecision(event){
+
     playing = false;
 
     const box = document.getElementById("decisionBox");
     const choices = document.getElementById("choices");
 
     box.style.display="flex";
-    document.getElementById("eventTitle").innerText = event.name;
-    document.getElementById("eventDesc").innerText = event.desc;
+
+    document.getElementById("eventTitle").innerText = event.toUpperCase();
+    document.getElementById("eventDesc").innerText = "Evento de vida activo";
+
+    const options = ["TDB","TDM","TDN","TDG"];
 
     choices.innerHTML="";
 
-    event.decisions.forEach(d=>{
+    options.forEach(opt=>{
+
         const btn = document.createElement("button");
         btn.className="decision-btn";
-        btn.innerText=d.text;
+        btn.innerText = opt;
 
-        btn.onclick=()=>{
-            applyEffect(d.effect);
+        btn.onclick = async ()=>{
+
+            const res = await fetch("/judge", {
+                method:"POST",
+                headers:{"Content-Type":"application/json"},
+                body: JSON.stringify({
+                    decision: opt,
+                    context: event
+                })
+            });
+
+            const data = await res.json();
+
+            syncState(data.state);
+
             box.style.display="none";
-            playing=true;
+            playing = true;
+
+            // 🔥 nuevo evento REAL del backend
+            currentEvent = data.next_event;
+
             loop();
         };
 
@@ -215,29 +223,30 @@ function triggerDecision(event){
 }
 
 // =====================
-// EFECTOS VIDA
+// 📊 ACTUALIZAR UI
 // =====================
-function applyEffect(effect){
-    if(effect.mental) state.mental += effect.mental;
-    if(effect.money) state.money += effect.money;
+function syncState(newState){
+    state = newState;
 
-    state.sync = Math.max(0, state.mental);
-
-    // IA JUDGE
-    fetch("/judge", {
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({decision:"engage", effect})
-    });
+    document.getElementById("sync").innerText = state.mental;
+    document.getElementById("mental").innerText = state.mental;
+    document.getElementById("money").innerText = state.money;
 }
 
 // =====================
+// 🚪 SALIDA
+// =====================
 document.getElementById("exit").onclick = ()=>{
-    localStorage.setItem("syncScore", state.sync);
+    localStorage.setItem("final_state", JSON.stringify(state));
     window.location.href="/";
 };
 
+// =====================
+// 🚀 INICIO
+// =====================
+getNextEvent();
 loop();
+
 </script>
 
 </body>
