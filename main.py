@@ -10,7 +10,15 @@ BASE_DIR = os.path.dirname(__file__)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # =========================
-# 🧠 ESTADO GLOBAL (VIDA)
+# 👤 PERFIL
+# =========================
+player_profile = {
+    "age": 25,
+    "stage": "adulto"
+}
+
+# =========================
+# 🧠 ESTADO
 # =========================
 player_state = {
     "mental": 100,
@@ -23,171 +31,94 @@ player_state = {
 }
 
 # =========================
-# 🌍 EVENTOS BASE
+# 🎯 START REAL
 # =========================
-EVENT_POOL = [
-    "rechazo",
-    "conflicto",
-    "oportunidad",
-    "perdida",
-    "critica",
-    "soledad",
-    "enfermedad",
-    "tentacion"
-]
+@app.post("/start")
+async def start(request: Request):
+
+    data = await request.json()
+    age = int(data.get("age", 25))
+
+    if age <= 12:
+        stage = "nino"
+    elif age <= 25:
+        stage = "joven"
+    elif age <= 60:
+        stage = "adulto"
+    else:
+        stage = "anciano"
+
+    global player_profile, player_state
+
+    player_profile = {"age": age, "stage": stage}
+
+    player_state = {
+        "mental": 100,
+        "money": 500 if stage == "joven" else 1000,
+        "social": 60,
+        "health": 100,
+        "addiction": 0,
+        "experience": 0,
+        "history": []
+    }
+
+    return {"profile": player_profile, "state": player_state}
 
 # =========================
-# 🧠 GENERADOR DE EVENTOS
+# 🌍 EVENTOS
 # =========================
+EVENT_POOL = ["rechazo","conflicto","perdida","oportunidad","tentacion"]
+
 def generate_event(state):
 
-    if state["health"] <= 20:
-        return "enfermedad"
-
     if state["addiction"] > 60:
-        return "problema_adiccion"
+        return "tentacion"
 
     if state["money"] < 100:
-        return "crisis_economica"
+        return "perdida"
 
     if state["social"] < 20:
-        return "soledad_profunda"
+        return "rechazo"
 
     return random.choice(EVENT_POOL)
 
 # =========================
-# ⚖️ MOTOR DE DECISIONES (TVID)
+# 🧠 IA EMOCIONAL REAL
 # =========================
-def apply_decision(decision, context, state):
+def emotional_engine(decision, context, state, profile):
 
-    # COPIA PARA MODIFICAR
-    new_state = state.copy()
+    stage = profile["stage"]
 
-    # =====================
-    # 🔴 CONTEXTO: RECHAZO
-    # =====================
+    sensitivity = {
+        "nino": 1.5,
+        "joven": 1.2,
+        "adulto": 1.0,
+        "anciano": 1.3
+    }[stage]
+
     if context == "rechazo":
-
         if decision == "TDB":
-            new_state["mental"] += 5
-            new_state["social"] += 2
-
+            state["mental"] += int(5 * sensitivity)
         elif decision == "TDM":
-            new_state["mental"] -= 3
-            new_state["addiction"] += 2
-
-        elif decision == "TDN":
-            new_state["mental"] += 4
-
+            state["mental"] -= int(4 * sensitivity)
+            state["addiction"] += 2
         elif decision == "TDG":
-            new_state["mental"] -= 6
-            new_state["social"] -= 8
+            state["social"] -= int(8 * sensitivity)
 
-    # =====================
-    # 💸 CONTEXTO: PERDIDA
-    # =====================
-    elif context == "perdida":
+    if context == "perdida":
+        state["money"] -= random.randint(20, 80)
 
-        if decision == "TDB":
-            new_state["mental"] += 3
+    if context == "tentacion":
+        if decision == "TDM":
+            state["addiction"] += int(10 * sensitivity)
 
-        elif decision == "TDM":
-            new_state["mental"] -= 5
-            new_state["addiction"] += 3
+    state["mental"] = max(0, min(100, state["mental"]))
+    state["social"] = max(0, min(100, state["social"]))
+    state["health"] = max(0, min(100, state["health"]))
 
-        elif decision == "TDN":
-            new_state["mental"] += 2
+    state["experience"] += 1
 
-        elif decision == "TDG":
-            new_state["mental"] -= 4
-
-        new_state["money"] -= random.randint(20, 100)
-
-    # =====================
-    # 😡 CONFLICTO
-    # =====================
-    elif context == "conflicto":
-
-        if decision == "TDB":
-            new_state["social"] += 3
-
-        elif decision == "TDM":
-            new_state["social"] -= 3
-
-        elif decision == "TDG":
-            new_state["social"] -= 10
-            new_state["mental"] -= 5
-
-    # =====================
-    # 🍷 TENTACIÓN / VICIOS
-    # =====================
-    elif context == "tentacion":
-
-        if decision == "TDB":
-            new_state["addiction"] -= 5
-
-        elif decision == "TDM":
-            new_state["addiction"] += 10
-            new_state["health"] -= 3
-
-        elif decision == "TDN":
-            new_state["addiction"] -= 2
-
-    # =====================
-    # 🏥 ENFERMEDAD
-    # =====================
-    elif context == "enfermedad":
-
-        if decision == "TDB":
-            new_state["health"] += 5
-
-        elif decision == "TDM":
-            new_state["health"] -= 5
-
-        elif decision == "TDN":
-            new_state["mental"] += 2
-
-    # =====================
-    # 📈 OPORTUNIDAD
-    # =====================
-    elif context == "oportunidad":
-
-        if decision == "TDB":
-            new_state["money"] += random.randint(50, 150)
-
-        elif decision == "TDG":
-            new_state["money"] += random.randint(100, 300)
-            new_state["social"] -= 5
-
-    # =====================
-    # 🧠 NORMALIZAR VALORES
-    # =====================
-    for key in ["mental", "health", "social"]:
-        new_state[key] = max(0, min(100, new_state[key]))
-
-    # EXPERIENCIA
-    new_state["experience"] += 1
-
-    # HISTORIAL
-    new_state["history"].append({
-        "event": context,
-        "decision": decision
-    })
-
-    return new_state
-
-# =========================
-# 💀 CHECK FINAL
-# =========================
-def check_end(state):
-
-    if state["health"] <= 0:
-        return "muerte_fisica"
-
-    if state["mental"] <= 0:
-        return "colapso_mental"
-
-    return None
+    return state
 
 # =========================
 # 🏠 HOME
@@ -197,39 +128,29 @@ def home():
     return open(os.path.join(BASE_DIR, "static/session.html"), encoding="utf-8").read()
 
 # =========================
-# 🧠 JUDGE REAL
+# 🧠 JUDGE
 # =========================
 @app.post("/judge")
 async def judge(request: Request):
 
-    try:
-        data = await request.json()
-    except:
-        data = {}
+    data = await request.json()
 
-    decision = data.get("decision", "")
-    context = data.get("context", "neutral")
+    decision = data.get("decision")
+    context = data.get("context")
 
     global player_state
 
-    # 🔥 APLICAR DECISIÓN REAL
-    player_state = apply_decision(decision, context, player_state)
+    player_state = emotional_engine(
+        decision,
+        context,
+        player_state,
+        player_profile
+    )
 
-    # 💀 VERIFICAR FINAL
-    end = check_end(player_state)
-
-    if end:
-        return JSONResponse({
-            "status": "end",
-            "type": end,
-            "state": player_state
-        })
-
-    # 🔄 GENERAR SIGUIENTE EVENTO
     next_event = generate_event(player_state)
 
-    return JSONResponse({
-        "status": "continue",
+    return {
         "state": player_state,
-        "next_event": next_event
-    })
+        "next_event": next_event,
+        "profile": player_profile
+    }
