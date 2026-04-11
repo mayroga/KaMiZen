@@ -1,43 +1,32 @@
 {
   "missions": [
+
     {
       "id": 1,
       "level": 1,
-      "category": "Neural Breach - Survival of Attention",
+      "category": "Nacimiento y Conciencia Inicial",
       "blocks": [
         {
           "type": "voice",
           "text": {
-            "en": "SYSTEM ONLINE. You are not the user. You are the environment being tested.",
-            "es": "SISTEMA ONLINE. No eres el usuario. Eres el entorno siendo probado."
+            "en": "You enter life without control. Everything begins reacting.",
+            "es": "Entras en la vida sin control. Todo comienza reaccionando."
           }
         },
         {
           "type": "strategy",
           "text": {
-            "en": "Reality test: every distraction is a stolen second of your future identity.",
-            "es": "Prueba de realidad: cada distracción es un segundo robado de tu futuro."
+            "en": "Every stimulus creates a response. Awareness is your first power.",
+            "es": "Cada estímulo crea una respuesta. La conciencia es tu primer poder."
           }
         },
         {
           "type": "breathing",
           "duration": 5,
           "text": {
-            "en": "Stabilize neural load. Breath resets impulsive behavior.",
-            "es": "Estabiliza la carga neural. La respiración reinicia impulsos."
+            "en": "Breath connects you with existence.",
+            "es": "La respiración te conecta con la existencia."
           }
-        },
-        {
-          "type": "quiz",
-          "question": {
-            "en": "What truly controls your attention?",
-            "es": "¿Qué controla realmente tu atención?"
-          },
-          "options": {
-            "en": ["External noise", "Internal discipline", "Random impulses"],
-            "es": ["Ruido externo", "Disciplina interna", "Impulsos aleatorios"]
-          },
-          "correct": 1
         }
       ]
     },
@@ -45,40 +34,32 @@
     {
       "id": 2,
       "level": 1,
-      "category": "Focus Pressure Simulation",
+      "category": "Relaciones Iniciales",
       "blocks": [
         {
           "type": "voice",
           "text": {
-            "en": "Distractions are no longer enemies. They are intelligent tests of resistance.",
-            "es": "Las distracciones ya no son enemigas. Son pruebas inteligentes de resistencia."
-          }
-        },
-        {
-          "type": "strategy",
-          "text": {
-            "en": "Social pressure detected: ignore or respond. Both have consequences.",
-            "es": "Presión social detectada: ignorar o responder. Ambas tienen consecuencias."
+            "en": "Family, friends, strangers. All influence your identity.",
+            "es": "Familia, amigos, desconocidos. Todos influyen en tu identidad."
           }
         },
         {
           "type": "quiz",
           "question": {
-            "en": "A distraction appears under pressure. Your best move is:",
-            "es": "Aparece una distracción bajo presión. Tu mejor movimiento es:"
+            "en": "Someone rejects you. What defines you?",
+            "es": "Alguien te rechaza. ¿Qué te define?"
           },
           "options": {
-            "en": ["React emotionally", "Observe before acting", "Ignore blindly"],
-            "es": ["Reaccionar emocionalmente", "Observar antes de actuar", "Ignorar sin pensar"]
+            "en": ["Their opinion", "Your reaction", "The moment"],
+            "es": ["Su opinión", "Tu reacción", "El momento"]
           },
           "correct": 1
         },
         {
-          "type": "breathing",
-          "duration": 6,
+          "type": "story",
           "text": {
-            "en": "Slow reaction improves strategic survival.",
-            "es": "La reacción lenta mejora la supervivencia estratégica."
+            "en": "Rejection is not the end. It is a mirror.",
+            "es": "El rechazo no es el final. Es un espejo."
           }
         }
       ]
@@ -87,40 +68,33 @@
     {
       "id": 3,
       "level": 2,
-      "category": "Social Intelligence Layer",
+      "category": "Presión Social y Conflictos",
       "blocks": [
         {
           "type": "voice",
           "text": {
-            "en": "Every person is a system. Every system has weaknesses.",
-            "es": "Cada persona es un sistema. Cada sistema tiene debilidades."
+            "en": "Conflict is inevitable. Reaction is optional.",
+            "es": "El conflicto es inevitable. La reacción es opcional."
           }
         },
         {
           "type": "strategy",
           "text": {
-            "en": "Critical scenario: someone criticizes you in public.",
-            "es": "Escenario crítico: alguien te critica en público."
+            "en": "Every confrontation tests your internal structure.",
+            "es": "Cada confrontación prueba tu estructura interna."
           }
         },
         {
           "type": "quiz",
           "question": {
-            "en": "Best response in social pressure:",
-            "es": "Mejor respuesta bajo presión social:"
+            "en": "Best reaction under pressure:",
+            "es": "Mejor reacción bajo presión:"
           },
           "options": {
-            "en": ["Attack back", "Stay calm and redirect", "Leave instantly"],
-            "es": ["Atacar", "Mantener calma y redirigir", "Irte inmediatamente"]
+            "en": ["Explode", "Control", "Escape"],
+            "es": ["Explotar", "Controlar", "Escapar"]
           },
           "correct": 1
-        },
-        {
-          "type": "story",
-          "text": {
-            "en": "A silent leader is often more powerful than a loud one.",
-            "es": "Un líder silencioso es más poderoso que uno ruidoso."
-          }
         }
       ]
     },
@@ -128,40 +102,39 @@
     {
       "id": 4,
       "level": 3,
-      "category": "Economic Pressure Reality",
+      "category": "Trabajo y Dinero",
       "blocks": [
         {
           "type": "voice",
           "text": {
-            "en": "Money is delayed energy. Decisions determine your future time.",
-            "es": "El dinero es energía retrasada. Las decisiones determinan tu futuro."
+            "en": "Work is survival. Strategy turns it into power.",
+            "es": "El trabajo es supervivencia. La estrategia lo convierte en poder."
           }
         },
         {
           "type": "strategy",
           "text": {
-            "en": "You lose $200 unexpectedly. Choose your reaction path.",
-            "es": "Pierdes $200 inesperadamente. Elige tu reacción."
+            "en": "Money flows where discipline exists.",
+            "es": "El dinero fluye donde existe disciplina."
           }
         },
         {
           "type": "quiz",
           "question": {
-            "en": "Best mindset after financial loss:",
-            "es": "Mejor mentalidad tras una pérdida económica:"
+            "en": "You lose money. Your best response:",
+            "es": "Pierdes dinero. Tu mejor respuesta:"
           },
           "options": {
-            "en": ["Panic", "Adaptation", "Denial"],
-            "es": ["Pánico", "Adaptación", "Negación"]
+            "en": ["Panic", "Adapt", "Blame"],
+            "es": ["Pánico", "Adaptarse", "Culpar"]
           },
           "correct": 1
         },
         {
-          "type": "breathing",
-          "duration": 7,
+          "type": "story",
           "text": {
-            "en": "Financial control begins with emotional control.",
-            "es": "El control financiero comienza con el emocional."
+            "en": "Wealth is not money. It is control over decisions.",
+            "es": "La riqueza no es dinero. Es control sobre decisiones."
           }
         }
       ]
@@ -169,77 +142,173 @@
 
     {
       "id": 5,
-      "level": 4,
-      "category": "Emotional Warfare System",
+      "level": 3,
+      "category": "Salud y Cuerpo",
       "blocks": [
         {
           "type": "voice",
           "text": {
-            "en": "Emotion is weaponized energy. Learn control or be controlled.",
-            "es": "La emoción es energía armada. Aprende control o serás controlado."
+            "en": "Your body reflects your decisions.",
+            "es": "Tu cuerpo refleja tus decisiones."
           }
         },
         {
-          "type": "story",
+          "type": "strategy",
           "text": {
-            "en": "A man lost love, but gained himself. That was the real victory.",
-            "es": "Un hombre perdió el amor, pero se ganó a sí mismo. Esa fue la verdadera victoria."
+            "en": "Neglect accumulates. So does discipline.",
+            "es": "El descuido se acumula. La disciplina también."
           }
         },
         {
           "type": "quiz",
           "question": {
-            "en": "Strongest emotional response:",
-            "es": "Respuesta emocional más fuerte:"
+            "en": "Health crisis appears. You:",
+            "es": "Aparece una crisis de salud. Tú:"
           },
           "options": {
-            "en": ["Control", "Repression", "Explosion"],
-            "es": ["Control", "Represión", "Explosión"]
+            "en": ["Ignore", "Act", "Delay"],
+            "es": ["Ignorar", "Actuar", "Posponer"]
           },
-          "correct": 0
+          "correct": 1
         }
       ]
     },
 
     {
       "id": 6,
-      "level": 5,
-      "category": "Life Master Simulation",
+      "level": 4,
+      "category": "Vicios y Tentaciones",
       "blocks": [
         {
           "type": "voice",
           "text": {
-            "en": "You are now inside the real simulation of human decisions.",
-            "es": "Ahora estás dentro de la simulación real de decisiones humanas."
+            "en": "Pleasure can become a trap.",
+            "es": "El placer puede convertirse en una trampa."
           }
         },
         {
           "type": "strategy",
           "text": {
-            "en": "Final layer unlocked: every choice now affects identity evolution.",
-            "es": "Capa final desbloqueada: cada decisión afecta tu evolución."
+            "en": "Short-term relief vs long-term damage.",
+            "es": "Alivio corto vs daño largo."
           }
         },
         {
           "type": "quiz",
           "question": {
-            "en": "Who are you becoming?",
-            "es": "¿En quién te estás convirtiendo?"
+            "en": "Temptation appears. You:",
+            "es": "Aparece una tentación. Tú:"
           },
           "options": {
-            "en": ["Reactive human", "Strategic mind", "Lost identity"],
-            "es": ["Humano reactivo", "Mente estratégica", "Identidad perdida"]
+            "en": ["Give in", "Control", "Escape"],
+            "es": ["Ceder", "Controlar", "Escapar"]
           },
           "correct": 1
+        }
+      ]
+    },
+
+    {
+      "id": 7,
+      "level": 4,
+      "category": "Amor y Desamor",
+      "blocks": [
+        {
+          "type": "voice",
+          "text": {
+            "en": "Love builds. Attachment can destroy.",
+            "es": "El amor construye. El apego puede destruir."
+          }
         },
         {
           "type": "story",
           "text": {
-            "en": "The final boss is not the system. It is your own unconscious reaction.",
-            "es": "El jefe final no es el sistema. Es tu propia reacción inconsciente."
+            "en": "Losing someone reveals who you are without them.",
+            "es": "Perder a alguien revela quién eres sin esa persona."
           }
+        },
+        {
+          "type": "quiz",
+          "question": {
+            "en": "After heartbreak you:",
+            "es": "Después de una ruptura tú:"
+          },
+          "options": {
+            "en": ["Collapse", "Grow", "Escape"],
+            "es": ["Colapsar", "Crecer", "Escapar"]
+          },
+          "correct": 1
+        }
+      ]
+    },
+
+    {
+      "id": 8,
+      "level": 5,
+      "category": "Incertidumbre y Existencia",
+      "blocks": [
+        {
+          "type": "voice",
+          "text": {
+            "en": "Uncertainty is constant. Control is internal.",
+            "es": "La incertidumbre es constante. El control es interno."
+          }
+        },
+        {
+          "type": "strategy",
+          "text": {
+            "en": "You cannot control events. Only your response.",
+            "es": "No puedes controlar eventos. Solo tu respuesta."
+          }
+        },
+        {
+          "type": "quiz",
+          "question": {
+            "en": "Unknown future appears. You:",
+            "es": "Futuro incierto aparece. Tú:"
+          },
+          "options": {
+            "en": ["Fear", "Prepare", "Avoid"],
+            "es": ["Miedo", "Prepararse", "Evitar"]
+          },
+          "correct": 1
+        }
+      ]
+    },
+
+    {
+      "id": 9,
+      "level": 6,
+      "category": "Muerte y Significado",
+      "blocks": [
+        {
+          "type": "voice",
+          "text": {
+            "en": "Life ends. Meaning is built before that moment.",
+            "es": "La vida termina. El significado se construye antes."
+          }
+        },
+        {
+          "type": "story",
+          "text": {
+            "en": "It was never about avoiding death. It was about how you lived.",
+            "es": "Nunca fue evitar la muerte. Fue cómo viviste."
+          }
+        },
+        {
+          "type": "quiz",
+          "question": {
+            "en": "What matters most?",
+            "es": "¿Qué importa más?"
+          },
+          "options": {
+            "en": ["Control", "Experience", "Avoidance"],
+            "es": ["Control", "Experiencia", "Evitar"]
+          },
+          "correct": 1
         }
       ]
     }
+
   ]
 }
