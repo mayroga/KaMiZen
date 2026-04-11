@@ -48,13 +48,13 @@
 <div id="age-display">EDAD: <span id="a">18.0</span></div>
 <div id="timer-display">SESIÓN: <span id="clock">00:00</span></div>
 
-<div id="text-content">Iniciando simulador de vida...</div>
+<div id="text-content">Estabilizando frecuencia neural...</div>
 <div id="options"></div>
 
 <div id="recovery-screen">
     <h2 id="recovery-text">RESPIRA</h2>
     <div id="breathing-circle"></div>
-    <div id="story-box">El éxito no es el destino, es la calma con la que manejas la tormenta.</div>
+    <div id="story-box">El éxito es la calma con la que manejas la tormenta.</div>
 </div>
 
 <canvas id="game"></canvas>
@@ -74,134 +74,148 @@ let frame = 0;
 let gameActive = true;
 let startTime = Date.now();
 
-// Actualizar UI desde el Backend
+// Interfaz de actualización Global
 window.updateSimState = (newState) => {
     if(!newState) return;
-    document.getElementById("m").innerText = Math.floor(newState.mental);
-    document.getElementById("h").innerText = Math.floor(newState.health);
-    document.getElementById("d").innerText = Math.floor(newState.money);
-    document.getElementById("s").innerText = Math.floor(newState.social);
-    document.getElementById("v").innerText = Math.floor(newState.addiction);
-    document.getElementById("a").innerText = (newState.age).toFixed(1);
+    if(newState.mental !== undefined) document.getElementById("m").innerText = Math.floor(newState.mental);
+    if(newState.health !== undefined) document.getElementById("h").innerText = Math.floor(newState.health);
+    if(newState.money !== undefined) document.getElementById("d").innerText = Math.floor(newState.money);
+    if(newState.social !== undefined) document.getElementById("s").innerText = Math.floor(newState.social);
+    if(newState.addiction !== undefined) document.getElementById("v").innerText = Math.floor(newState.addiction);
+    if(newState.age !== undefined) document.getElementById("a").innerText = (newState.age).toFixed(1);
     
-    // Si el backend envía estatus de recuperación
     if(newState.status === "recovery") startRecoveryPhase();
 };
 
-addEventListener("mousemove", e => { if(gameActive) player.y = e.clientY; });
+// Movimiento
+window.addEventListener("mousemove", e => { if(gameActive) player.y = e.clientY; });
 
-// Disparar (Poder/Acción)
-addEventListener("mousedown", () => {
-    if(gameActive) projectiles.push({ x: player.x + 25, y: player.y, speed: 15, owner: 'player' });
+// Acción de Poder (Disparo)
+window.addEventListener("mousedown", () => {
+    if(gameActive) {
+        projectiles.push({ x: player.x + 25, y: player.y, speed: 15, owner: 'player', color: '#fff' });
+    }
 });
 
 function spawnEnemy(type) {
+    if(!gameActive) return;
     const icons = { "dinero":"💰", "amor":"❤️", "enfermedad":"🚜", "oportunidad":"💠", "tentacion":"🍺", "conflicto":"🚁", "crisis":"📉" };
     enemies.push({
         x: canvas.width,
         y: Math.random() * (canvas.height - 200) + 100,
         type: type,
         icon: icons[type] || "❓",
-        speed: 5 + (frame / 5000) // Dificultad progresiva en velocidad
+        speed: 5 + (frame / 6000)
     });
 }
 
-// Fase de Recuperación (8 Minutos)
 function startRecoveryPhase() {
+    if(!gameActive) return;
     gameActive = false;
     document.getElementById("recovery-screen").style.display = "flex";
     const circle = document.getElementById("breathing-circle");
     const text = document.getElementById("recovery-text");
     
-    let state = 0; // 0:Inhala, 1:Retiene, 2:Exhala
+    let step = 0;
     setInterval(() => {
-        if(state === 0) {
-            circle.style.transform = "scale(1.8)";
-            text.innerText = "INHALA"; state = 1;
-        } else if(state === 1) {
-            text.innerText = "RETIENE"; state = 2;
-        } else {
-            circle.style.transform = "scale(1)";
-            text.innerText = "EXHALA"; state = 0;
-        }
+        if(step === 0) { circle.style.transform = "scale(1.8)"; text.innerText = "INHALA"; step = 1; }
+        else if(step === 1) { text.innerText = "RETIENE"; step = 2; }
+        else { circle.style.transform = "scale(1)"; text.innerText = "EXHALA"; step = 0; }
     }, 4000);
 }
 
 function loop() {
     if(!gameActive) return;
 
-    ctx.fillStyle = "rgba(0, 5, 10, 0.3)";
+    ctx.fillStyle = "rgba(0, 0, 0, 0.25)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Cronómetro
+    // Reloj
     let elapsed = Math.floor((Date.now() - startTime) / 1000);
     let mins = Math.floor(elapsed / 60).toString().padStart(2, '0');
     let secs = (elapsed % 60).toString().padStart(2, '0');
     document.getElementById("clock").innerText = `${mins}:${secs}`;
 
-    // Dibujar Jugador
+    // Dibujar Jugador (Aura Neón)
     ctx.shadowBlur = 20; ctx.shadowColor = "#0ff";
     ctx.beginPath();
     ctx.arc(player.x, player.y, player.size/2, 0, Math.PI*2);
     ctx.fillStyle = "#0ff"; ctx.fill();
     ctx.shadowBlur = 0;
 
-    // Proyectiles (Aliados y Enemigos)
+    // Proyectiles
     projectiles.forEach((p, pi) => {
         p.x += p.speed;
         ctx.fillStyle = p.owner === 'player' ? "#fff" : "#ff0055";
+        ctx.shadowBlur = 10; ctx.shadowColor = ctx.fillStyle;
         ctx.fillRect(p.x, p.y - 3, 15, 6);
-        
-        // Colisión Proyectil Enemigo -> Jugador
+        ctx.shadowBlur = 0;
+
         if(p.owner === 'enemy' && Math.hypot(p.x - player.x, p.y - player.y) < 25) {
-            handleCollision("ataque_enemigo");
+            if(typeof handleCollision === "function") handleCollision("ataque_enemigo");
             projectiles.splice(pi, 1);
         }
         if(p.x > canvas.width || p.x < 0) projectiles.splice(pi, 1);
     });
 
-    // Entidades (Vía Real)
+    // Entidades de la Vía Real
     enemies.forEach((e, i) => {
         e.x -= e.speed;
         ctx.font = "50px Arial";
         ctx.textAlign = "center";
         ctx.fillText(e.icon, e.x, e.y);
 
-        // Enemigos disparan (Tractores, Helis, Crisis)
-        if(["enfermedad", "conflicto", "crisis"].includes(e.type) && frame % 120 === 0) {
+        // Disparo enemigo (Fricción del sistema)
+        if(["enfermedad", "conflicto", "crisis"].includes(e.type) && frame % 110 === 0) {
             projectiles.push({ x: e.x, y: e.y, speed: -10, owner: 'enemy' });
         }
 
-        // Colisión Proyectil Jugador -> Entidad
+        // Colisión Proyectil -> Enemigo
         projectiles.forEach((p, pi) => {
             if(p.owner === 'player' && Math.hypot(p.x - e.x, p.y - e.y) < 40) {
-                handleCollision(e.type); // Disparar a la oportunidad
+                if(typeof handleCollision === "function") handleCollision(e.type);
                 enemies.splice(i, 1);
                 projectiles.splice(pi, 1);
             }
         });
 
-        // Colisión Directa (Choque)
+        // Colisión Directa
         if(Math.hypot(e.x - player.x, e.y - player.y) < 45) {
-            handleCollision(e.type);
+            if(typeof handleCollision === "function") handleCollision(e.type);
             enemies.splice(i, 1);
         }
-
         if(e.x < -100) enemies.splice(i, 1);
     });
 
-    if(frame % 80 === 0 && window.currentEvent) spawnEnemy(window.currentEvent);
-    
+    if(frame % 85 === 0 && window.currentEvent) spawnEnemy(window.currentEvent);
     frame++;
     requestAnimationFrame(loop);
 }
 
+// ARRANQUE SEGURO
 window.onload = () => {
+    console.log("Sistema cargado. Despertando Motor...");
     loop();
-    setTimeout(() => { if(typeof startLifeFlow === "function") startLifeFlow(); }, 1000);
+    
+    let initAttempts = 0;
+    const initCheck = setInterval(() => {
+        if (typeof startLifeFlow === "function") {
+            startLifeFlow();
+            clearInterval(initCheck);
+        } else {
+            initAttempts++;
+            if(initAttempts > 10) {
+                document.getElementById("text-content").innerText = "Fallo de conexión neural (scripts.js).";
+                clearInterval(initCheck);
+            }
+        }
+    }, 500);
 };
 
-window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
+window.addEventListener('resize', () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+});
 </script>
 </body>
 </html>
