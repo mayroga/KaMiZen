@@ -1,8 +1,14 @@
 from fastapi import FastAPI, Request
+from fastapi.staticfiles import StaticFiles
 from fastapi.responses import JSONResponse
 import random
 
 app = FastAPI()
+
+# =========================
+# 📁 SERVIR FRONTEND
+# =========================
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # =========================
 # 🧠 ESTADO GLOBAL VIDA
@@ -19,7 +25,7 @@ state = {
 }
 
 # =========================
-# 🌍 EVENTOS VIDA REAL
+# 🌍 EVENTOS DINÁMICOS
 # =========================
 EVENTS = [
     "rechazo",
@@ -38,25 +44,25 @@ EVENTS = [
 # =========================
 def generate_event(state):
 
-    if state["mental"] < 25:
+    if state["health"] <= 20:
+        return "crisis_salud"
+
+    if state["mental"] <= 25:
         return "ansiedad"
 
-    if state["health"] < 30:
-        return "enfermedad"
+    if state["social"] <= 20:
+        return "soledad_profunda"
 
-    if state["money"] < 200:
-        return "crisis"
+    if state["money"] <= 100:
+        return "crisis_dinero"
 
-    if state["social"] < 20:
-        return "soledad"
-
-    if state["addiction"] > 60:
+    if state["addiction"] >= 60:
         return "recaida"
 
     return random.choice(EVENTS)
 
 # =========================
-# ⚖️ MOTOR TVID (REAL IMPACTO)
+# ⚖️ MOTOR TVID
 # =========================
 def apply_decision(decision, context):
 
@@ -71,73 +77,59 @@ def apply_decision(decision, context):
         "addiction": 0
     }
 
-    # =====================
-    # 🧠 TVID SYSTEM
-    # =====================
-
-    if decision == "TDB":  # Bien consciente
-        impact["mental"] += 4
+    # 🧠 TVid reales
+    if decision == "TDB":
+        impact["mental"] += 5
         impact["discipline"] += 3
+
+    elif decision == "TDM":
+        impact["mental"] -= 6
+        impact["addiction"] += 5
+
+    elif decision == "TDN":
+        impact["mental"] += 2
         impact["social"] += 2
 
-    elif decision == "TDM":  # Distorsión / escape
-        impact["mental"] -= 5
-        impact["addiction"] += 4
-
-    elif decision == "TDN":  # Niño creativo
-        impact["mental"] += 2
-        impact["social"] += 1
-
-    elif decision == "TDP":  # Padre guía
+    elif decision == "TDP":
         impact["discipline"] += 5
         impact["social"] += 3
-        impact["mental"] += 1
 
-    elif decision == "TDG":  # Guerra / control
+    elif decision == "TDG":
         impact["social"] -= 6
         impact["mental"] -= 3
 
-    elif decision == "TDK":  # Amor / conexión
-        impact["mental"] += 5
+    elif decision == "TDK":
+        impact["mental"] += 6
         impact["social"] += 5
 
-    # =====================
-    # 🌍 CONTEXTO VIDA
-    # =====================
-
+    # 🌍 CONTEXTO REAL
     if context == "rechazo":
-        impact["social"] -= 4 if decision == "TDG" else +2
+        impact["social"] -= 5 if decision == "TDG" else 2
 
     if context == "amor":
         impact["mental"] += 3
 
-    if context == "crisis":
-        impact["money"] -= 50 if decision == "TDM" else +10
-
     if context == "dinero":
-        impact["money"] += 100 if decision in ["TDB","TDP"] else -20
+        impact["money"] += 120 if decision in ["TDB","TDP"] else -30
+
+    if context == "crisis":
+        impact["mental"] -= 5
 
     if context == "tentacion":
-        impact["addiction"] += 10 if decision == "TDM" else -3
+        impact["addiction"] += 10 if decision == "TDM" else -4
 
-    # =====================
-    # 🔁 APLICAR IMPACTO
-    # =====================
+    # 🔁 aplicar
     for k in impact:
         state[k] += impact[k]
 
-    # =====================
-    # 🧬 REGLAS DE VIDA
-    # =====================
+    # 🔒 límites
     state["mental"] = max(0, min(100, state["mental"]))
     state["health"] = max(0, min(100, state["health"]))
     state["social"] = max(0, min(100, state["social"]))
     state["discipline"] = max(0, min(100, state["discipline"]))
 
-    # ⏳ TIEMPO REAL
     state["age"] += 0.1
 
-    # 📜 MEMORIA
     state["history"].append({
         "event": context,
         "decision": decision,
@@ -145,7 +137,7 @@ def apply_decision(decision, context):
     })
 
 # =========================
-# 💀 FINAL CONDITIONS
+# 💀 FINAL
 # =========================
 def check_end():
 
@@ -161,13 +153,12 @@ def check_end():
     return None
 
 # =========================
-# 🎮 JUEGO PRINCIPAL
+# 🎮 JUEGO
 # =========================
 @app.post("/judge")
 async def judge(req: Request):
 
     data = await req.json()
-
     decision = data.get("decision", "TDM")
     context = data.get("context", "neutral")
 
@@ -189,7 +180,7 @@ async def judge(req: Request):
     }
 
 # =========================
-# 🚀 START GAME (OBLIGATORIO)
+# 🚀 START
 # =========================
 @app.post("/start")
 async def start(req: Request):
