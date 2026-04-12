@@ -1,211 +1,258 @@
 // ==========================================
-// AL CIELO - MOTOR DE LÓGICA NEURAL (SCRIPTS.JS)
+// MAYKAMI - MOTOR NEURAL LIMPIO Y ESTABLE
 // ==========================================
 
+// ESTADO GLOBAL
 window.currentEvent = null;
 let decisionTimer = null;
-let bgMusic = null;
 let startTime = null;
-let isRecoveryActive = false;
+let paused = false;
+let isGameOver = false;
 
-/**
- * CONFIGURACIÓN DE AUDIO DINÁMICO
- */
-async function setupAudio(profile, phase = "action") {
-    if (bgMusic) {
-        bgMusic.pause();
-        bgMusic = null;
-    }
+// ==========================================
+// INICIO DEL SISTEMA
+// ==========================================
+async function startLifeFlow(){
 
-    let mood = "ambient_tech";
-    if (phase === "recovery") {
-        mood = "reflective_piano";
-    } else {
-        const age = parseInt(profile.age || 25);
-        if (profile.emotion === "stress") mood = "dark_industrial";
-        else if (age > 60) mood = "reflective_piano";
-    }
+    console.log("Iniciando sistema MAYKAMI...");
 
-    console.log(`May Roga Audio: Cargando atmósfera [${mood}]`);
-    bgMusic = new Audio(`/static/audio/${mood}.mp3`);
-    bgMusic.loop = true;
-    bgMusic.volume = 0.4;
-
-    // Activación por interacción para cumplir políticas de navegador
-    const startAudio = () => {
-        if (bgMusic && bgMusic.paused) bgMusic.play().catch(e => console.log("Audio Buffer..."));
-        document.removeEventListener('click', startAudio);
+    let profile = JSON.parse(localStorage.getItem("profile")) || {
+        age:18,
+        difficulty:1,
+        emotion:"neutral"
     };
-    document.addEventListener('click', startAudio);
-}
 
-/**
- * INICIO DEL FLUJO DE VIDA
- */
-async function startLifeFlow() {
-    console.log("Despertando Motor Neural...");
-    const profile = JSON.parse(localStorage.getItem("profile")) || { age: 18, difficulty: 1, emotion: "neutral" };
-    
     startTime = Date.now();
-    setupAudio(profile, "action");
 
-    try {
-        const response = await fetch("/start", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ profile: profile })
+    try{
+
+        const res = await fetch("/start",{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({profile})
         });
 
-        const data = await response.json();
-        
-        if (data.status === "ready") {
+        const data = await res.json();
+
+        if(data.state){
+            localStorage.setItem("state", JSON.stringify(data.state));
             if(window.updateSimState) window.updateSimState(data.state);
-            window.currentEvent = data.next_event;
-            document.getElementById("text-content").innerText = "Sincronización completa. Bienvenido a la Vía Real.";
-            processEventUI(data.next_event);
         }
-    } catch (error) {
-        document.getElementById("text-content").innerText = "ERROR DE ENLACE CON EL MOTOR.";
+
+        window.currentEvent = data.next_event;
+
+        showMessage("Sistema activo. La vida comienza ahora.");
+        processEvent(data.next_event);
+
+    }catch(e){
+        showMessage("ERROR CONECTANDO CON MOTOR");
+        console.error(e);
     }
 }
 
-/**
- * PROCESADOR DE EVENTOS
- */
-function processEventUI(nextEvent) {
-    if (isRecoveryActive) return;
+// ==========================================
+// PROCESAR EVENTO
+// ==========================================
+function processEvent(event){
+
+    if(paused || isGameOver) return;
+
+    window.currentEvent = event;
 
     const messages = {
-        "crisis": "Amenaza financiera detectada. Protege tus activos.",
-        "amor": "Frecuencia emocional en aumento. Decide tu inversión.",
-        "tentacion": "Señal de evasión detectada. Mantén la disciplina.",
-        "oportunidad": "Vórtice de crecimiento abierto. Actúa ahora.",
-        "conflicto": "Fricción externa en curso. ¿Guerra o Poder?",
-        "enfermedad": "Vulnerabilidad biológica activa. Rectifica hábitos."
+        crisis:"Presión económica detectada",
+        amor:"Interacción emocional activa",
+        enfermedad:"Alerta física del sistema",
+        oportunidad:"Momento de crecimiento",
+        conflicto:"Tensión externa detectada",
+        tentacion:"Impulso de evasión",
+        dinero:"Flujo financiero activo"
     };
 
-    const txt = messages[nextEvent] || "El sistema genera una nueva variable.";
-    const display = document.getElementById("text-content");
-    if (display) display.innerText = txt;
-    
-    speak(txt);
-    renderDecisionButtons();
+    showMessage(messages[event] || "Evento desconocido");
 
-    // Temporizador de Inacción (TDM) tras 7 segundos
+    renderButtons();
+
+    // TIMER DE DECISIÓN (EVITA FREEZE)
     clearTimeout(decisionTimer);
-    decisionTimer = setTimeout(() => {
-        if (!isRecoveryActive) sendDecision("TDM");
-    }, 7000);
+
+    decisionTimer = setTimeout(()=>{
+        if(!paused && !isGameOver){
+            sendDecision("TDM"); // inacción
+        }
+    },8000);
 }
 
-/**
- * ENVÍO DE DECISIÓN AL JUEZ (TVID)
- */
-async function sendDecision(decisionType) {
-    if (isRecoveryActive) return;
-    clearTimeout(decisionTimer);
-    
-    const elapsed = Math.floor((Date.now() - startTime) / 1000);
+// ==========================================
+// ENVIAR DECISIÓN
+// ==========================================
+async function sendDecision(decision){
 
-    try {
-        const response = await fetch("/judge", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                decision: decisionType,
-                context: window.currentEvent || "neutral",
-                elapsed_time: elapsed
+    if(paused || isGameOver) return;
+
+    clearTimeout(decisionTimer);
+
+    try{
+
+        const res = await fetch("/judge",{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({
+                decision:decision,
+                context:window.currentEvent || "neutral"
             })
         });
 
-        const data = await response.json();
-        if(window.updateSimState) window.updateSimState(data);
+        const data = await res.json();
 
-        if (data.status === "recovery") {
-            initRecoveryPhase();
-        } else if (data.status === "end") {
-            handleGameOver(data.type);
-        } else {
-            window.currentEvent = data.next_event;
-            processEventUI(data.next_event);
+        if(data.state){
+            localStorage.setItem("state", JSON.stringify(data.state));
+            if(window.updateSimState) window.updateSimState(data.state);
         }
-    } catch (error) {
-        console.error("Fallo en el Juez:", error);
+
+        if(data.status === "end"){
+            gameOver(data.type);
+            return;
+        }
+
+        processEvent(data.next_event);
+
+    }catch(e){
+        console.error("Error juez:",e);
     }
 }
 
-/**
- * FASE DE RECUPERACIÓN (8 MINUTOS)
- */
-function initRecoveryPhase() {
-    isRecoveryActive = true;
-    const profile = JSON.parse(localStorage.getItem("profile")) || {};
-    setupAudio(profile, "recovery");
-    
-    const storyBox = document.getElementById("text-content");
-    const optionsBox = document.getElementById("options");
-    
-    if (optionsBox) optionsBox.innerHTML = '<div class="recovery-loader">REGENERANDO...</div>';
+// ==========================================
+// COLISIONES DESDE EL CANVAS
+// ==========================================
+function handleCollision(type){
 
-    const stories = [
-        "La riqueza no es lo que tienes, es lo que eres cuando el dinero no está. Respira.",
-        "El poder real es el control absoluto de tu propia reacción. Inhala éxito.",
-        "Astucia social: En el silencio se escuchan las mejores oportunidades. Exhala miedo.",
-        "Tu bienestar es la inversión con mayor retorno de tu vida. Retiene la calma."
-    ];
+    if(paused || isGameOver) return;
 
-    let storyIndex = 0;
-    const storyInterval = setInterval(() => {
-        if (!isRecoveryActive) { clearInterval(storyInterval); return; }
-        if (storyBox) storyBox.innerText = stories[storyIndex];
-        speak(stories[storyIndex]);
-        storyIndex = (storyIndex + 1) % stories.length;
-    }, 30000);
+    // impacto directo
+    showMessage("Impacto: " + type);
 
-    setTimeout(() => {
-        isRecoveryActive = false;
-        clearInterval(storyInterval);
-        document.getElementById("text-content").innerText = "CICLO COMPLETADO";
-        speak("Asesoría de recuperación finalizada. Has fortalecido tu red neural.");
-        startLifeFlow(); // Reinicia el flujo normal
-    }, 480000); 
+    // ENVÍA COMO EVENTO REAL
+    sendDecision("ataque_enemigo");
 }
 
-function renderDecisionButtons() {
+// ==========================================
+// BOTONES TVID + CONTROL
+// ==========================================
+function renderButtons(){
+
     const container = document.getElementById("options");
-    if (!container) return;
+    if(!container) return;
+
     container.innerHTML = "";
-    
-    const types = ["TDB", "TDM", "TDN", "TDP", "TDG"];
-    types.forEach(t => {
+
+    const decisions = ["TDB","TDM","TDN","TDP","TDG"];
+
+    decisions.forEach(d=>{
         const btn = document.createElement("button");
-        btn.innerText = t;
-        btn.className = "decision-btn";
-        btn.onclick = (e) => {
-            e.stopPropagation();
-            sendDecision(t);
-        };
+        btn.innerText = d;
+        btn.onclick = ()=>sendDecision(d);
         container.appendChild(btn);
     });
+
+    // CONTROL
+    const pauseBtn = document.createElement("button");
+    pauseBtn.innerText = "PARAR";
+    pauseBtn.onclick = ()=>paused = true;
+
+    const resumeBtn = document.createElement("button");
+    resumeBtn.innerText = "SEGUIR";
+    resumeBtn.onclick = ()=>{
+        if(paused){
+            paused = false;
+            processEvent(window.currentEvent);
+        }
+    };
+
+    const resetBtn = document.createElement("button");
+    resetBtn.innerText = "REINICIAR";
+    resetBtn.onclick = ()=>location.reload();
+
+    container.appendChild(pauseBtn);
+    container.appendChild(resumeBtn);
+    container.appendChild(resetBtn);
 }
 
-function speak(text) {
-    if (!window.speechSynthesis) return;
+// ==========================================
+// MENSAJES
+// ==========================================
+function showMessage(text){
+
+    const el = document.getElementById("text-content");
+    if(el) el.innerText = text;
+
+    speak(text);
+}
+
+// ==========================================
+// VOZ (SIN BLOQUEAR)
+// ==========================================
+function speak(text){
+
+    if(!window.speechSynthesis) return;
+
     window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'es-ES';
-    utterance.rate = 0.9;
-    window.speechSynthesis.speak(utterance);
+
+    const msg = new SpeechSynthesisUtterance(text);
+    msg.lang = "es-ES";
+    msg.rate = 1;
+
+    window.speechSynthesis.speak(msg);
 }
 
-function handleGameOver(reason) {
-    if (bgMusic) bgMusic.pause();
-    isRecoveryActive = false;
-    const reasonText = reason ? reason.replace(/_/g, " ").toUpperCase() : "DESCONOCIDO";
-    document.getElementById("text-content").innerText = `COLAPSO: ${reasonText}`;
-    document.getElementById("options").innerHTML = '<button class="start-btn" onclick="location.href=\'/\'">REINICIAR VIDA</button>';
-    speak(`Simulación finalizada por ${reasonText}. Analiza tus decisiones.`);
+// ==========================================
+// GAME OVER
+// ==========================================
+function gameOver(reason){
+
+    isGameOver = true;
+
+    showMessage("COLAPSO: " + (reason || "FIN"));
+
+    const container = document.getElementById("options");
+    if(container){
+        container.innerHTML = '<button onclick="location.reload()">REINICIAR</button>';
+    }
 }
 
-// Iniciar al cargar
-window.onload = startLifeFlow;
+// ==========================================
+// TIEMPO REAL (EVITA CONGELAMIENTO)
+// ==========================================
+setInterval(()=>{
+    if(paused || isGameOver) return;
+
+    let state = JSON.parse(localStorage.getItem("state"));
+    if(!state) return;
+
+    state.age += 0.01;
+    localStorage.setItem("state", JSON.stringify(state));
+
+},2000);
+
+// ==========================================
+// AUTO INICIO
+// ==========================================
+window.onload = ()=>{
+
+    let tries = 0;
+
+    const wait = setInterval(()=>{
+
+        if(typeof startLifeFlow === "function"){
+            startLifeFlow();
+            clearInterval(wait);
+        }
+
+        tries++;
+        if(tries > 10){
+            console.error("No se pudo iniciar");
+            clearInterval(wait);
+        }
+
+    },300);
+};
