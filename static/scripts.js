@@ -5,6 +5,17 @@ let currentPhase = 1;
 let sessionActive = false;
 
 // =========================================
+// TVID TACTICAL GUIDE (NUEVO)
+// =========================================
+const TacticalGuide = {
+    "crisis": "TDP",
+    "conflicto": "TDG",
+    "amor": "TDK",
+    "enfermedad": "TDMM",
+    "oportunidad": "TDB"
+};
+
+// =========================================
 // START SYSTEM
 // =========================================
 async function startLifeFlow(){
@@ -32,19 +43,22 @@ async function startLifeFlow(){
         localStorage.setItem("state", JSON.stringify(data.state));
 
         window.currentEvent = data.next_event;
-
         sessionActive = true;
 
         showMessage("Sistema activo. Iniciando simulación de vida.");
 
         processEvent(data.next_event);
 
-        // 🔥 FASE 2 AUTOMÁTICA (7 min)
+        // ================================
+        // FASE 2 (7 min)
+        // ================================
         setTimeout(()=>{
             activatePhase2();
         }, 7 * 60 * 1000);
 
-        // 🔥 FASE 3 AUTOMÁTICA (12 min total)
+        // ================================
+        // FASE 3 (12 min total)
+        // ================================
         setTimeout(()=>{
             activatePhase3();
         }, 12 * 60 * 1000);
@@ -78,7 +92,6 @@ function processEvent(event){
 
     renderButtons();
 
-    // 🔥 INACCIÓN = DECISIÓN AUTOMÁTICA
     clearTimeout(window.autoDecision);
 
     window.autoDecision = setTimeout(()=>{
@@ -89,7 +102,56 @@ function processEvent(event){
 }
 
 // =========================================
-// JUEZ (BACKEND TVID ENGINE)
+// HANDLE ACTION (TVID INTELIGENTE)
+// =========================================
+async function handleAction(userDecision){
+
+    const event = window.currentEvent;
+    const session_id = localStorage.getItem("session_id");
+
+    let finalDecision = userDecision;
+
+    if (TacticalGuide[event] === userDecision) {
+        console.log("TVID sincronizado: +Karma");
+    }
+
+    const res = await fetch("/judge", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            session_id,
+            decision: finalDecision,
+            context: event
+        })
+    });
+
+    const data = await res.json();
+
+    if(data.state){
+        localStorage.setItem("state", JSON.stringify(data.state));
+    }
+
+    if(data.status === "end"){
+        gameOver(data.type);
+        return;
+    }
+
+    if(data.status === "recovery"){
+        showMessage("FASE DE RECUPERACIÓN ACTIVA");
+        return;
+    }
+
+    window.currentEvent = data.next_event;
+    processEvent(data.next_event);
+
+    // FASE 3 trigger opcional desde backend
+    if(data.phase_alert === 3){
+        startMeditationPhase();
+    }
+}
+
+// =========================================
+// SEND DECISION NORMAL
 // =========================================
 async function sendDecision(decision){
 
@@ -115,20 +177,12 @@ async function sendDecision(decision){
             localStorage.setItem("state", JSON.stringify(data.state));
         }
 
-        if(data.status === "cooldown") return;
-
-        if(data.status === "recovery"){
-            showMessage("FASE DE RECUPERACIÓN ACTIVA");
-            return;
-        }
-
         if(data.status === "end"){
             gameOver(data.type);
             return;
         }
 
         window.currentEvent = data.next_event;
-
         processEvent(data.next_event);
 
     }catch(e){
@@ -147,26 +201,22 @@ function renderButtons(){
 
     container.innerHTML = "";
 
-    const decisions = ["TDB","TDM","TDN","TDP","TDG"];
+    const decisions = ["TDB","TDM","TDN","TDP","TDG","TDMM","TDK"];
 
     decisions.forEach(d=>{
         const btn = document.createElement("button");
         btn.innerText = d;
-        btn.onclick = ()=>sendDecision(d);
+        btn.onclick = ()=>handleAction(d);
         container.appendChild(btn);
     });
 
-    // CONTROL SYSTEM
     const pauseBtn = document.createElement("button");
     pauseBtn.innerText = "PAUSA";
     pauseBtn.onclick = ()=>paused = true;
 
     const resumeBtn = document.createElement("button");
     resumeBtn.innerText = "CONTINUAR";
-    resumeBtn.onclick = ()=>{
-        paused = false;
-        processEvent(window.currentEvent);
-    };
+    resumeBtn.onclick = ()=>{ paused = false; processEvent(window.currentEvent); };
 
     const resetBtn = document.createElement("button");
     resetBtn.innerText = "REINICIAR";
@@ -178,13 +228,11 @@ function renderButtons(){
 }
 
 // =========================================
-// MENSAJES
+// UI
 // =========================================
 function showMessage(text){
-
     const el = document.getElementById("text-content");
     if(el) el.innerText = text;
-
     speak(text);
 }
 
@@ -192,15 +240,11 @@ function showMessage(text){
 // VOZ
 // =========================================
 function speak(text){
-
     if(!window.speechSynthesis) return;
-
     window.speechSynthesis.cancel();
-
     const msg = new SpeechSynthesisUtterance(text);
     msg.lang = "es-ES";
     msg.rate = 1;
-
     window.speechSynthesis.speak(msg);
 }
 
@@ -220,13 +264,13 @@ function gameOver(reason){
 }
 
 // =========================================
-// FASE 2: RESPIRACIÓN GUIADA (7 min)
+// FASE 2: RESPIRACIÓN (7 min)
 // =========================================
 function activatePhase2(){
 
     currentPhase = 2;
 
-    showMessage("FASE 2 ACTIVADA: RESPIRACIÓN CONSCIENTE");
+    showMessage("FASE 2: RESPIRACIÓN CONSCIENTE");
 
     let cycle = 0;
 
@@ -235,49 +279,47 @@ function activatePhase2(){
         if(isGameOver) return clearInterval(window.phase2Interval);
 
         const steps = [
-            "INSPIRA... control interno",
-            "RETÉN... conciencia plena",
-            "EXHALA... libera tensión",
-            "OBSERVA... sin juicio"
+            "INSPIRA... control",
+            "RETÉN... conciencia",
+            "EXHALA... libera",
+            "OBSERVA... calma"
         ];
 
         showMessage(steps[cycle % steps.length]);
-
         cycle++;
 
     }, 4000);
 }
 
 // =========================================
-// FASE 3: SILENCIO + MEDITACIÓN (5 min)
+// FASE 3: MEDITACIÓN (5–9 min)
 // =========================================
 function activatePhase3(){
 
     currentPhase = 3;
 
-    showMessage("FASE 3 ACTIVADA: SILENCIO INTERNO");
+    showMessage("FASE 3: SILENCIO Y MEDITACIÓN");
 
     clearInterval(window.phase2Interval);
 
-    let silenceTime = 0;
+    let t = 0;
 
     window.phase3Interval = setInterval(()=>{
 
         if(isGameOver) return clearInterval(window.phase3Interval);
 
-        const meditations = [
-            "SILENCIO... solo observas",
+        const steps = [
+            "SILENCIO",
             "RESPIRA LENTO",
             "NO REACCIONES",
-            "ESTÁS PRESENTE",
-            "TU MENTE SE CALMA"
+            "OBSERVA TU MENTE",
+            "PAZ INTERNA"
         ];
 
-        showMessage(meditations[silenceTime % meditations.length]);
+        showMessage(steps[t % steps.length]);
+        t++;
 
-        silenceTime++;
-
-        if(silenceTime > 75){
+        if(t > 75){
             endCycle();
         }
 
@@ -285,17 +327,15 @@ function activatePhase3(){
 }
 
 // =========================================
-// FIN DEL CICLO Y REINICIO
+// FIN CICLO
 // =========================================
 function endCycle(){
 
     clearInterval(window.phase3Interval);
 
-    showMessage("CICLO COMPLETADO. REINICIO DE VIDA.");
+    showMessage("CICLO COMPLETO. REINICIO.");
 
-    setTimeout(()=>{
-        location.reload();
-    }, 5000);
+    setTimeout(()=>location.reload(), 5000);
 }
 
 // =========================================
