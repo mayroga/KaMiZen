@@ -1,5 +1,32 @@
 {
+  "meta": {
+    "system": "MAYKAMI - KAMIZEN LIFE ENGINE",
+    "version": "3.0",
+    "description": "Sistema de misiones basado en TVid, respiración consciente, decisiones y evolución de comportamiento humano.",
+    "core_principle": "Pensamiento → Emoción → Acción → Hábitos → Carácter → Destino"
+  },
+
+  "global_philosophy": {
+    "voice": {
+      "es": "Cuida tus pensamientos, porque se convertirán en tus palabras. Cuida tus palabras, porque se convertirán en tus acciones. Cuida tus acciones, porque se convertirán en tus hábitos. Cuida tus hábitos, porque se convertirán en tu carácter. Y tu carácter será quien determine tu destino.",
+      "en": "Watch your thoughts, they become your words. Watch your words, they become your actions. Watch your actions, they become your habits. Watch your habits, they become your character. Your character becomes your destiny."
+    },
+    "biological_link": {
+      "es": "El pensamiento repetido modifica tu sistema nervioso: estrés (cortisol) o bienestar (dopamina/serotonina).",
+      "en": "Repeated thoughts reshape your nervous system: stress (cortisol) or wellbeing (dopamine/serotonin)."
+    },
+    "tvid_connection": {
+      "TDB": "Construcción mental consciente",
+      "TDM": "Reconocimiento de sombra emocional",
+      "TDN": "Creatividad y resiliencia infantil",
+      "TDP": "Dirección y estructura",
+      "TDG": "Control de impulso y conflicto interno",
+      "TDK": "Conexión emocional profunda"
+    }
+  },
+
   "missions": [
+
     {
       "id": 1,
       "level": 1,
@@ -114,18 +141,6 @@
             "en": "Feel the emotion without losing control.",
             "es": "Siente la emoción sin perder el control."
           }
-        },
-        {
-          "type": "quiz",
-          "question": {
-            "en": "After rejection you:",
-            "es": "Después del rechazo tú:"
-          },
-          "options": {
-            "en": ["Collapse", "Grow", "Attack"],
-            "es": ["Colapsas", "Creces", "Atacas"]
-          },
-          "correct": 1
         }
       ]
     },
@@ -145,37 +160,25 @@
         {
           "type": "strategy",
           "text": {
-            "en": "Bad decisions repeat. Good decisions compound.",
-            "es": "Las malas decisiones se repiten. Las buenas se acumulan."
+            "en": "Good decisions compound over time. Bad ones collapse systems.",
+            "es": "Las buenas decisiones se acumulan. Las malas colapsan sistemas."
           }
         },
         {
           "type": "breathing",
           "duration": 5,
           "text": {
-            "en": "Pause before spending. Control impulse.",
-            "es": "Pausa antes de gastar. Controla el impulso."
+            "en": "Pause before action. Regain control.",
+            "es": "Pausa antes de actuar. Recupera el control."
           }
         },
         {
           "type": "tvid",
           "mode": "TDP",
           "text": {
-            "en": "Act with intention, not emotion.",
-            "es": "Actúa con intención, no con emoción."
+            "en": "Act with structure, not impulse.",
+            "es": "Actúa con estructura, no con impulso."
           }
-        },
-        {
-          "type": "quiz",
-          "question": {
-            "en": "You receive money. You:",
-            "es": "Recibes dinero. Tú:"
-          },
-          "options": {
-            "en": ["Spend", "Invest", "Ignore"],
-            "es": ["Gastas", "Inviertes", "Ignoras"]
-          },
-          "correct": 1
         }
       ]
     },
@@ -188,36 +191,25 @@
         {
           "type": "voice",
           "text": {
-            "en": "Your body reflects your discipline.",
-            "es": "Tu cuerpo refleja tu disciplina."
-          }
-        },
-        {
-          "type": "strategy",
-          "text": {
-            "en": "Ignoring signals creates long-term damage.",
-            "es": "Ignorar señales crea daño a largo plazo."
+            "en": "Your body reflects your mental discipline.",
+            "es": "Tu cuerpo refleja tu disciplina mental."
           }
         },
         {
           "type": "breathing",
           "duration": 7,
           "text": {
-            "en": "Deep breathing restores internal balance.",
-            "es": "Respirar profundo restaura el equilibrio interno."
+            "en": "Deep breathing resets your nervous system.",
+            "es": "La respiración profunda reinicia tu sistema nervioso."
           }
         },
         {
-          "type": "quiz",
-          "question": {
-            "en": "You feel exhausted:",
-            "es": "Te sientes agotado:"
-          },
-          "options": {
-            "en": ["Ignore", "Rest", "Force"],
-            "es": ["Ignoras", "Descansas", "Forzas"]
-          },
-          "correct": 1
+          "type": "tvid",
+          "mode": "TDB",
+          "text": {
+            "en": "Build stability through awareness.",
+            "es": "Construye estabilidad a través de la conciencia."
+          }
         }
       ]
     },
@@ -230,44 +222,25 @@
         {
           "type": "voice",
           "text": {
-            "en": "Pleasure without limits becomes dependency.",
-            "es": "El placer sin límites se vuelve dependencia."
-          }
-        },
-        {
-          "type": "strategy",
-          "text": {
-            "en": "Discipline is built in small resisted impulses.",
-            "es": "La disciplina se construye en pequeños impulsos resistidos."
+            "en": "Pleasure without control becomes dependency.",
+            "es": "El placer sin control se vuelve dependencia."
           }
         },
         {
           "type": "breathing",
           "duration": 6,
           "text": {
-            "en": "Pause. The urge passes.",
-            "es": "Pausa. El impulso pasa."
+            "en": "Observe the urge. Let it pass.",
+            "es": "Observa el impulso. Déjalo pasar."
           }
         },
         {
           "type": "tvid",
           "mode": "TDG",
           "text": {
-            "en": "Fight the impulse. Do not negotiate with it.",
-            "es": "Lucha contra el impulso. No negocies con él."
+            "en": "Control impulse before it controls you.",
+            "es": "Controla el impulso antes de que te controle a ti."
           }
-        },
-        {
-          "type": "quiz",
-          "question": {
-            "en": "Temptation appears:",
-            "es": "Aparece una tentación:"
-          },
-          "options": {
-            "en": ["Give in", "Control", "Replace"],
-            "es": ["Cedes", "Controlas", "Sustituyes"]
-          },
-          "correct": 1
         }
       ]
     },
@@ -280,36 +253,25 @@
         {
           "type": "voice",
           "text": {
-            "en": "Conflict reveals your level of control.",
-            "es": "El conflicto revela tu nivel de control."
-          }
-        },
-        {
-          "type": "strategy",
-          "text": {
-            "en": "Your reaction creates the real consequence.",
-            "es": "Tu reacción crea la verdadera consecuencia."
+            "en": "Your reaction defines your intelligence.",
+            "es": "Tu reacción define tu inteligencia."
           }
         },
         {
           "type": "breathing",
           "duration": 5,
           "text": {
-            "en": "Control breath before response.",
-            "es": "Controla la respiración antes de responder."
+            "en": "Pause before response.",
+            "es": "Pausa antes de responder."
           }
         },
         {
-          "type": "quiz",
-          "question": {
-            "en": "Someone attacks you:",
-            "es": "Alguien te ataca:"
-          },
-          "options": {
-            "en": ["Attack", "Control", "Avoid"],
-            "es": ["Atacas", "Controlas", "Evitas"]
-          },
-          "correct": 1
+          "type": "tvid",
+          "mode": "TDM",
+          "text": {
+            "en": "Transform reaction into awareness.",
+            "es": "Transforma la reacción en conciencia."
+          }
         }
       ]
     },
@@ -322,36 +284,25 @@
         {
           "type": "voice",
           "text": {
-            "en": "Your life is the result of repeated decisions.",
-            "es": "Tu vida es el resultado de decisiones repetidas."
-          }
-        },
-        {
-          "type": "story",
-          "text": {
-            "en": "Consistency builds identity over time.",
-            "es": "La consistencia construye identidad con el tiempo."
+            "en": "Your life is built from repeated decisions.",
+            "es": "Tu vida se construye con decisiones repetidas."
           }
         },
         {
           "type": "breathing",
           "duration": 6,
           "text": {
-            "en": "Stay present. Build step by step.",
-            "es": "Mantente presente. Construye paso a paso."
+            "en": "Consistency creates identity.",
+            "es": "La consistencia crea identidad."
           }
         },
         {
-          "type": "quiz",
-          "question": {
-            "en": "Your future depends on:",
-            "es": "Tu futuro depende de:"
-          },
-          "options": {
-            "en": ["Luck", "Decisions", "Others"],
-            "es": ["Suerte", "Decisiones", "Otros"]
-          },
-          "correct": 1
+          "type": "tvid",
+          "mode": "TDP",
+          "text": {
+            "en": "Build your structure daily.",
+            "es": "Construye tu estructura cada día."
+          }
         }
       ]
     },
@@ -364,38 +315,28 @@
         {
           "type": "voice",
           "text": {
-            "en": "What you become is your final message.",
-            "es": "En lo que te conviertes es tu mensaje final."
-          }
-        },
-        {
-          "type": "story",
-          "text": {
-            "en": "Impact remains longer than possessions.",
-            "es": "El impacto dura más que las posesiones."
+            "en": "What you become is your legacy.",
+            "es": "En lo que te conviertes es tu legado."
           }
         },
         {
           "type": "breathing",
           "duration": 8,
           "text": {
-            "en": "Reflect. Accept. Release.",
-            "es": "Reflexiona. Acepta. Suelta."
+            "en": "Release. Accept. End cycle.",
+            "es": "Suelta. Acepta. Cierra el ciclo."
           }
         },
         {
-          "type": "quiz",
-          "question": {
-            "en": "You are remembered for:",
-            "es": "Eres recordado por:"
-          },
-          "options": {
-            "en": ["Money", "Impact", "Fear"],
-            "es": ["Dinero", "Impacto", "Miedo"]
-          },
-          "correct": 1
+          "type": "tvid",
+          "mode": "TDK",
+          "text": {
+            "en": "Connection completes the journey.",
+            "es": "La conexión completa el viaje."
+          }
         }
       ]
     }
+
   ]
 }
