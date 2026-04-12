@@ -1,87 +1,209 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MAYKAMI | LIFE ENTRY SYSTEM</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAYKAMI | LIFE ENTRY SYSTEM</title>
 
-<style>
-body{
-    margin:0;
-    background:#000;
-    color:#0ff;
-    font-family:Arial;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    height:100vh;
-}
+    <style>
+        body {
+            margin: 0;
+            background: radial-gradient(circle, #000, #050505);
+            color: #00f2ff;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
 
-#app{
-    width:90%;
-    max-width:400px;
-    padding:20px;
-    border:1px solid #0ff;
-    background:#000;
-}
+        #app {
+            width: 92%;
+            max-width: 420px;
+            padding: 30px;
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid #00f2ff;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(0, 242, 255, 0.3);
+            backdrop-filter: blur(10px);
+        }
 
-input,select,button{
-    width:100%;
-    margin:8px 0;
-    padding:10px;
-    background:black;
-    border:1px solid #0ff;
-    color:#0ff;
-}
-</style>
+        h1 {
+            color: #00f2ff;
+            font-size: 28px;
+            margin-bottom: 5px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .subtitle {
+            font-size: 11px;
+            color: #0077ff;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        label {
+            display: block;
+            text-align: left;
+            font-size: 12px;
+            margin: 10px 0 5px 5px;
+            color: rgba(0, 242, 255, 0.7);
+        }
+
+        input, select {
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 15px;
+            background: #0a0a0a;
+            border: 1px solid #0077ff;
+            color: #fff;
+            border-radius: 10px;
+            outline: none;
+            font-size: 14px;
+            box-sizing: border-box;
+            transition: 0.3s;
+        }
+
+        input:focus, select:focus {
+            border-color: #00f2ff;
+            box-shadow: 0 0 10px rgba(0, 242, 255, 0.2);
+        }
+
+        button {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(90deg, #00f2ff, #0077ff);
+            border: none;
+            color: #000;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 12px;
+            margin-top: 15px;
+            font-size: 16px;
+            text-transform: uppercase;
+            transition: transform 0.2s, filter 0.3s;
+        }
+
+        button:hover {
+            filter: brightness(1.2);
+            transform: scale(1.02);
+        }
+
+        .small {
+            font-size: 11px;
+            opacity: 0.6;
+            margin-top: 15px;
+            line-height: 1.4;
+        }
+
+        .footer-brand {
+            margin-top: 20px;
+            font-size: 10px;
+            letter-spacing: 3px;
+            color: #0077ff;
+        }
+    </style>
 </head>
 
 <body>
 
 <div id="app">
-<h2>MAYKAMI</h2>
+    <h1>MAYKAMI</h1>
+    <div class="subtitle">Asesoría Preventiva de Vida Real</div>
 
-<input id="age" type="number" value="25">
+    <label>EDAD CRONOLÓGICA</label>
+    <input id="age" type="number" placeholder="Ej. 25" min="5" max="99" value="25">
 
-<select id="emotion">
-<option value="neutral">Neutral</option>
-<option value="stress">Stress</option>
-</select>
+    <label>ESTADO EMOCIONAL DOMINANTE</label>
+    <select id="emotion">
+        <option value="neutral">Neutral / Estable</option>
+        <option value="stress">Bajo Presión (Estrés)</option>
+        <option value="lonely">Aislamiento (Soledad)</option>
+        <option value="loss">Duelo / Pérdida</option>
+        <option value="motivated">Alta Motivación</option>
+    </select>
 
-<select id="difficulty">
-<option value="1">Normal</option>
-<option value="2">Difícil</option>
-<option value="3">Extremo</option>
-</select>
+    <label>COMPLEJIDAD DEL ENTORNO</label>
+    <select id="difficulty">
+        <option value="1">Entorno Favorable (Normal)</option>
+        <option value="2">Entorno Hostil (Difícil)</option>
+        <option value="3">Entorno Crítico (Extremo)</option>
+    </select>
 
-<button onclick="startLife()">INICIAR</button>
+    <label>MODO DE PROCESAMIENTO INICIAL</label>
+    <select id="tvideMode">
+        <option value="balanced">Equilibrio (TDB + TDP)</option>
+        <option value="survival">Supervivencia (TDM + TDG)</option>
+        <option value="creative">Exploración (TDN + TDK)</option>
+    </select>
+
+    <button onclick="startLife()">🚀 INICIAR PROCESAMIENTO</button>
+
+    <p class="small">
+        ADVERTENCIA: El sistema simula consecuencias acumulativas.<br>
+        La inacción se procesará como una decisión automática.
+    </p>
+
+    <div class="footer-brand">MAY ROGA LLC</div>
 </div>
 
 <script>
 async function startLife(){
+    const ageValue = parseInt(document.getElementById("age").value || 25);
+    const emotion = document.getElementById("emotion").value;
+    const difficulty = document.getElementById("difficulty").value;
+    const tvideMode = document.getElementById("tvideMode").value;
 
+    // DETERMINAR ETAPA (PASO 7)
+    let stage = "adult";
+    if (ageValue < 13) stage = "child";
+    else if (ageValue < 25) stage = "young";
+    else if (ageValue >= 60) stage = "elder";
+
+    // PERFIL DE ENTRADA
     const profile = {
-        age: parseInt(document.getElementById("age").value),
-        emotion: document.getElementById("emotion").value,
-        difficulty: parseInt(document.getElementById("difficulty").value)
+        age: ageValue,
+        emotion: emotion,
+        difficulty: difficulty,
+        tvideMode: tvideMode,
+        stage: stage,
+        created: Date.now()
     };
 
-    try{
-        const res = await fetch("/start",{
-            method:"POST",
-            headers:{"Content-Type":"application/json"},
-            body:JSON.stringify({profile})
+    // ESTADO BASE DE LAS VARIABLES (PASO 1)
+    const state = {
+        mental: 100,
+        health: 100,
+        money: difficulty == "3" ? 200 : 500, // Menos dinero en modo extremo
+        social: 50,
+        discipline: 50,
+        addiction: emotion == "stress" ? 15 : 0, // El estrés inicia con carga de vicios
+        age: ageValue,
+        history: []
+    };
+
+    try {
+        // SINCRONIZAR CON MOTOR IA
+        const res = await fetch("/start", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ profile, age: ageValue })
         });
 
         const data = await res.json();
 
+        // PERSISTENCIA LOCAL
         localStorage.setItem("profile", JSON.stringify(profile));
-        localStorage.setItem("state", JSON.stringify(data.state));
+        localStorage.setItem("state", JSON.stringify(data.state || state));
 
-        window.location.href = "/simulador";
-
-    }catch(e){
-        alert("ERROR CONECTANDO");
+        // TRANSICIÓN AL SIMULADOR
+        window.location.href = "/static/jet.html";
+    } catch (error) {
+        console.error("Error de conexión con el motor:", error);
+        alert("Error al iniciar el sistema. Verifique el servidor.");
     }
 }
 </script>
