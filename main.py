@@ -17,12 +17,14 @@ if not os.path.exists("static"):
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # ===============================
-# SESIONES (SOLUCIÓN CRÍTICA)
+# SESIONES
 # ===============================
 sessions = {}
 
 def create_state(profile):
     difficulty = int(profile.get("difficulty", 1))
+    emotion = profile.get("emotion", "neutral")
+    age = float(profile.get("age", 18))
 
     return {
         "mental": 100,
@@ -30,8 +32,8 @@ def create_state(profile):
         "money": 1500 if difficulty == 1 else 800,
         "social": 50,
         "discipline": 50,
-        "addiction": 15 if profile.get("emotion") == "stress" else 0,
-        "age": float(profile.get("age", 18)),
+        "addiction": 15 if emotion == "stress" else 0,
+        "age": age,
         "difficulty": difficulty,
         "start_time": time.time(),
         "last_update": time.time(),
@@ -50,7 +52,7 @@ def sim():
     return FileResponse("static/jet.html")
 
 # ===============================
-# START LIFE
+# START
 # ===============================
 @app.post("/start")
 async def start(req: Request):
@@ -91,13 +93,17 @@ def generate_event(state):
         return "conflicto"
 
     return random.choice([
-        "dinero", "amor", "oportunidad",
-        "conflicto", "enfermedad",
-        "crisis", "tentacion"
+        "dinero",
+        "amor",
+        "oportunidad",
+        "conflicto",
+        "enfermedad",
+        "crisis",
+        "tentacion"
     ])
 
 # ===============================
-# JUEZ (CORE ENGINE)
+# JUEZ PRINCIPAL (TVID ENGINE)
 # ===============================
 @app.post("/judge")
 async def judge(req: Request):
@@ -112,24 +118,24 @@ async def judge(req: Request):
             return JSONResponse(status_code=404, content={"error": "session not found"})
 
         state = sessions[session_id]
-
         now = time.time()
 
-        # 🔥 PROTECCIÓN ANTI-SPAM (EVITA FREEZE)
-        if now - state["last_update"] < 0.2:
+        # ===============================
+        # ANTI-SPAM / CONTROL DE FLUJO
+        # ===============================
+        if now - state["last_update"] < 0.15:
             return {
                 "status": "cooldown",
                 "state": state
             }
 
         state["last_update"] = now
-
         elapsed = now - state["start_time"]
 
         # ===============================
-        # FASE RECOVERY
+        # MODO RECUPERACIÓN
         # ===============================
-        if elapsed > 420:
+        if elapsed > 600:
             state["is_recovery"] = True
             return {
                 "status": "recovery",
@@ -137,7 +143,7 @@ async def judge(req: Request):
             }
 
         # ===============================
-        # IMPACTO BASE
+        # IMPACTO TVID SYSTEM
         # ===============================
         impact = {
             "mental": 0,
@@ -148,62 +154,92 @@ async def judge(req: Request):
             "discipline": 0
         }
 
+        # TDB - Técnica del Bien
         if decision == "TDB":
-            impact["mental"] += 15
-            impact["addiction"] -= 10
-            impact["discipline"] += 5
+            impact["mental"] += 18
+            impact["discipline"] += 6
+            impact["addiction"] -= 8
 
+        # TDM - Técnica del Mal
         elif decision == "TDM":
-            impact["mental"] -= 20
-            impact["addiction"] += 15
+            impact["mental"] -= 22
+            impact["addiction"] += 18
 
+        # TDN - Técnica del Niño
         elif decision == "TDN":
-            impact["social"] += 15
-            impact["money"] -= 150
+            impact["social"] += 18
+            impact["money"] -= 120
 
+        # TDP - Técnica del Padre
         elif decision == "TDP":
-            impact["money"] += 400
-            impact["discipline"] += 15
+            impact["money"] += 350
+            impact["discipline"] += 18
 
+        # TDMM - Técnica Madre (AGREGADA)
+        elif decision == "TDMM":
+            impact["mental"] += 15
+            impact["social"] += 10
+            impact["addiction"] -= 5
+
+        # TDK - Técnica del Beso (CONEXIÓN)
+        elif decision == "TDK":
+            impact["mental"] += 10
+            impact["social"] += 15
+            impact["discipline"] -= 3
+
+        # TDG - Técnica de Guerra Emocional
         elif decision == "TDG":
             impact["health"] -= 15
             impact["mental"] += 10
+            impact["discipline"] += 5
 
+        # ATAQUE DEL SISTEMA (enemigo del juego)
         elif decision == "ataque_enemigo":
-            impact["health"] -= 10
-            impact["mental"] -= 5
+            impact["health"] -= 12
+            impact["mental"] -= 6
 
         # ===============================
-        # CONTEXTO
+        # CONTEXTO DINÁMICO
         # ===============================
         if context in ["crisis", "enfermedad", "conflicto"]:
-            if decision not in ["TDB", "TDP"]:
+            if decision not in ["TDB", "TDP", "TDMM"]:
                 impact["mental"] -= 10
-                impact["money"] -= 100
+                impact["money"] -= 80
 
         if context == "oportunidad":
-            if decision in ["TDB", "TDP"]:
-                impact["money"] += 500
+            if decision in ["TDB", "TDP", "TDMM"]:
+                impact["money"] += 450
 
         # ===============================
-        # APLICAR
+        # APLICACIÓN DE ESTADO
         # ===============================
         for key in impact:
-            state[key] = max(0, min(100 if key != "money" else 999999, state[key] + impact[key]))
+            if key == "money":
+                state[key] = max(0, min(999999, state[key] + impact[key]))
+            else:
+                state[key] = max(0, min(100, state[key] + impact[key]))
 
-        state["age"] += 0.2
+        state["age"] += 0.15
 
         # ===============================
-        # GAME OVER
+        # GAME OVER CONDITIONS
         # ===============================
         if state["mental"] <= 0:
-            return {"status": "end", "type": "colapso_mental", "state": state}
+            return {
+                "status": "end",
+                "type": "colapso_mental",
+                "state": state
+            }
 
         if state["health"] <= 0:
-            return {"status": "end", "type": "muerte_fisica", "state": state}
+            return {
+                "status": "end",
+                "type": "muerte_fisica",
+                "state": state
+            }
 
         # ===============================
-        # RESPUESTA
+        # RESPUESTA FINAL
         # ===============================
         return {
             "status": "continue",
@@ -216,7 +252,7 @@ async def judge(req: Request):
         return JSONResponse(status_code=500, content={"error": str(e)})
 
 # ===============================
-# RUN
+# RUN SERVER
 # ===============================
 if __name__ == "__main__":
     import uvicorn
