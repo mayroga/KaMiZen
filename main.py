@@ -3,193 +3,222 @@ from fastapi.responses import JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 import random
 import os
+import time
+import uuid
 
 app = FastAPI()
 
-# Asegurar existencia de carpeta static y montar para servir archivos front-end
+# ===============================
+# STATIC
+# ===============================
 if not os.path.exists("static"):
     os.makedirs("static")
+
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-# ==========================================
-# ESTADO GLOBAL DEL MOTOR (ESTRUCTURA TVID)
-# ==========================================
-# Nota: En producción con múltiples usuarios, esto debería ir en una DB o sesión.
-state = {
-    "mental": 100,
-    "health": 100,
-    "money": 1000,
-    "social": 50,
-    "discipline": 50,
-    "addiction": 0,
-    "age": 25.0,
-    "difficulty": 1,
-    "history": []
-}
+# ===============================
+# SESIONES (SOLUCIÓN CRÍTICA)
+# ===============================
+sessions = {}
 
-# ==========================================
-# RUTAS DE NAVEGACIÓN
-# ==========================================
+def create_state(profile):
+    difficulty = int(profile.get("difficulty", 1))
+
+    return {
+        "mental": 100,
+        "health": 100,
+        "money": 1500 if difficulty == 1 else 800,
+        "social": 50,
+        "discipline": 50,
+        "addiction": 15 if profile.get("emotion") == "stress" else 0,
+        "age": float(profile.get("age", 18)),
+        "difficulty": difficulty,
+        "start_time": time.time(),
+        "last_update": time.time(),
+        "is_recovery": False
+    }
+
+# ===============================
+# ROUTES
+# ===============================
 @app.get("/")
-def read_index():
-    # Pantalla de configuración inicial
-    return FileResponse("static/jet.html")
-
-@app.get("/simulador")
-def read_sim():
-    # Pantalla del flujo de vida real (requiere session.html o el template del simulador)
+def index():
     return FileResponse("static/session.html")
 
-# ==========================================
-# GESTIÓN DE INICIO (DESPERTAR)
-# ==========================================
+@app.get("/simulador")
+def sim():
+    return FileResponse("static/jet.html")
+
+# ===============================
+# START LIFE
+# ===============================
 @app.post("/start")
-async def start_life(req: Request):
-    global state
+async def start(req: Request):
     try:
         data = await req.json()
         profile = data.get("profile", {})
-        
-        # Sincronización con el perfil configurado en jet.html
-        state["age"] = float(profile.get("age", 25.0))
-        state["difficulty"] = int(profile.get("difficulty", 1))
-        state["mental"] = 100
-        state["health"] = 100
-        
-        # Lógica de dinero inicial según entorno
-        if state["difficulty"] == 3:
-            state["money"] = 200
-        elif state["difficulty"] == 2:
-            state["money"] = 500
-        else:
-            state["money"] = 1000
 
-        state["addiction"] = 15 if profile.get("emotion") == "stress" else 0
-        state["social"] = 50
-        state["discipline"] = 50
-        state["history"] = []
+        session_id = str(uuid.uuid4())
+        state = create_state(profile)
 
-        # Configuración de Atmósfera Sonora
-        audio_config = {
-            "mood": "dark_industrial" if profile.get("emotion") == "stress" else "ambient_tech",
-            "intensity": "high" if state["difficulty"] >= 2 else "normal"
-        }
+        sessions[session_id] = state
 
         return {
             "status": "ready",
+            "session_id": session_id,
             "state": state,
-            "audio_config": audio_config,
-            "next_event": generate_next_event()
+            "next_event": generate_event(state)
         }
+
     except Exception as e:
         return JSONResponse(status_code=400, content={"error": str(e)})
 
-# ==========================================
-# GENERADOR DE LA VÍA REAL (LA CAZA)
-# ==========================================
-def generate_next_event():
-    # Prioridad por estado crítico (El sistema detecta debilidades)
-    if state["addiction"] > 60: return "tentacion"
-    if state["money"] < 100: return "crisis"
-    if state["health"] < 30: return "enfermedad"
-    if state["mental"] < 25: return "conflicto"
-    
-    # Eventos aleatorios de la Vía Real
-    events = ["dinero", "amor", "oportunidad", "conflicto", "enfermedad", "crisis"]
-    return random.choice(events)
+# ===============================
+# GENERADOR DE EVENTOS
+# ===============================
+def generate_event(state):
 
-# ==========================================
-# PROCESADOR TVID (EL JUEZ)
-# ==========================================
+    if state["addiction"] > 65:
+        return "tentacion"
+
+    if state["money"] < 300:
+        return "crisis"
+
+    if state["health"] < 45:
+        return "enfermedad"
+
+    if state["mental"] < 35:
+        return "conflicto"
+
+    return random.choice([
+        "dinero", "amor", "oportunidad",
+        "conflicto", "enfermedad",
+        "crisis", "tentacion"
+    ])
+
+# ===============================
+# JUEZ (CORE ENGINE)
+# ===============================
 @app.post("/judge")
-async def judge_decision(req: Request):
-    global state
+async def judge(req: Request):
     try:
         data = await req.json()
-        decision = data.get("decision", "TDM") # TDM (Inacción) por defecto tras timeout
+
+        session_id = data.get("session_id")
+        decision = data.get("decision", "TDM")
         context = data.get("context", "neutral")
 
-        # 1. Matriz de Impacto Base por tipo de Decisión
-        impact = {"mental": 0, "health": 0, "money": 0, "social": 0, "addiction": 0, "discipline": 0}
+        if session_id not in sessions:
+            return JSONResponse(status_code=404, content={"error": "session not found"})
 
-        if decision == "TDB": # Bien Consciente (Sabiduría)
-            impact["mental"] += 8; impact["addiction"] -= 10; impact["social"] += 5; impact["discipline"] += 5
-        elif decision == "TDM": # Miedo / Inacción (El golpe entra limpio)
-            impact["mental"] -= 15; impact["addiction"] += 12; impact["health"] -= 8; impact["discipline"] -= 5
-        elif decision == "TDN": # Niño / Emoción (Visceral)
-            impact["social"] += 20; impact["money"] -= 150; impact["mental"] += 10; impact["discipline"] -= 10
-        elif decision == "TDP": # Poder / Acción (Estrategia)
-            impact["money"] += 250; impact["mental"] -= 10; impact["discipline"] += 15; impact["social"] -= 5
-        elif decision == "TDG": # Guerra / Agresión (Destrucción)
-            impact["social"] -= 30; impact["health"] -= 20; impact["mental"] += 15; impact["money"] -= 100
+        state = sessions[session_id]
 
-        # 2. Modificadores por Contexto (Choque con la Realidad)
-        if context == "enfermedad":
-            impact["health"] -= 25; impact["money"] -= 200
-        elif context == "crisis":
-            impact["money"] -= 300; impact["mental"] -= 25
-        elif context == "oportunidad":
-            if decision in ["TDP", "TDB"]:
-                impact["money"] += 400; impact["mental"] += 15; impact["discipline"] += 10
-            else: # Perder la oportunidad por miedo o juego
-                impact["mental"] -= 10
-        elif context == "conflicto":
-            if decision == "TDG":
-                impact["health"] -= 30; impact["social"] -= 40
-            elif decision == "TDB":
-                impact["social"] += 10; impact["mental"] -= 5
-        elif context == "amor":
-            if decision == "TDN": impact["mental"] += 20; impact["social"] += 15
-            if decision == "TDP": impact["money"] -= 200; impact["social"] += 10
+        now = time.time()
 
-        # 3. Factor de Dificultad (Multiplicador de daño)
-        mult = state["difficulty"]
-        for key in impact:
-            if impact[key] < 0:
-                impact[key] *= mult
+        # 🔥 PROTECCIÓN ANTI-SPAM (EVITA FREEZE)
+        if now - state["last_update"] < 0.2:
+            return {
+                "status": "cooldown",
+                "state": state
+            }
 
-        # 4. Actualización Atómica de Variables
-        state["mental"] = max(0, min(100, state["mental"] + impact.get("mental", 0)))
-        state["health"] = max(0, min(100, state["health"] + impact.get("health", 0)))
-        state["money"] = max(0, state["money"] + impact.get("money", 0))
-        state["social"] = max(0, min(100, state["social"] + impact.get("social", 0)))
-        state["discipline"] = max(0, min(100, state["discipline"] + impact.get("discipline", 0)))
-        state["addiction"] = max(0, min(100, state["addiction"] + impact.get("addiction", 0)))
-        
-        # 5. Envejecimiento (3 meses por cada decisión tomada)
-        state["age"] += 0.25
+        state["last_update"] = now
 
-        # 6. Verificación de Ciclo de Recuperación (TVID)
-        # Si la disciplina es baja o la adicción alta, entra en recuperación
-        status = "continue"
-        if state["addiction"] > 80 or state["mental"] < 20:
-            status = "recovery"
+        elapsed = now - state["start_time"]
 
-        # 7. Verificación de Colapso (Game Over)
-        reason = ""
-        if state["mental"] <= 0:
-            status = "end"; reason = "quiebra_emocional"
-        elif state["health"] <= 0:
-            status = "end"; reason = "muerte_fisica"
-        elif state["money"] <= 0 and state["difficulty"] > 1:
-            status = "end"; reason = "insolvencia_social"
-        elif state["age"] >= 90:
-            status = "end"; reason = "ciclo_natural_completado"
+        # ===============================
+        # FASE RECOVERY
+        # ===============================
+        if elapsed > 420:
+            state["is_recovery"] = True
+            return {
+                "status": "recovery",
+                "state": state
+            }
 
-        return {
-            "status": status,
-            "type": reason,
-            "state": state,
-            "next_event": generate_next_event()
+        # ===============================
+        # IMPACTO BASE
+        # ===============================
+        impact = {
+            "mental": 0,
+            "health": 0,
+            "money": 0,
+            "social": 0,
+            "addiction": 0,
+            "discipline": 0
         }
-    except Exception as e:
-        return JSONResponse(status_code=500, content={"error": "Fallo en el procesamiento neural."})
 
-# ==========================================
-# EJECUCIÓN DEL SERVIDOR
-# ==========================================
+        if decision == "TDB":
+            impact["mental"] += 15
+            impact["addiction"] -= 10
+            impact["discipline"] += 5
+
+        elif decision == "TDM":
+            impact["mental"] -= 20
+            impact["addiction"] += 15
+
+        elif decision == "TDN":
+            impact["social"] += 15
+            impact["money"] -= 150
+
+        elif decision == "TDP":
+            impact["money"] += 400
+            impact["discipline"] += 15
+
+        elif decision == "TDG":
+            impact["health"] -= 15
+            impact["mental"] += 10
+
+        elif decision == "ataque_enemigo":
+            impact["health"] -= 10
+            impact["mental"] -= 5
+
+        # ===============================
+        # CONTEXTO
+        # ===============================
+        if context in ["crisis", "enfermedad", "conflicto"]:
+            if decision not in ["TDB", "TDP"]:
+                impact["mental"] -= 10
+                impact["money"] -= 100
+
+        if context == "oportunidad":
+            if decision in ["TDB", "TDP"]:
+                impact["money"] += 500
+
+        # ===============================
+        # APLICAR
+        # ===============================
+        for key in impact:
+            state[key] = max(0, min(100 if key != "money" else 999999, state[key] + impact[key]))
+
+        state["age"] += 0.2
+
+        # ===============================
+        # GAME OVER
+        # ===============================
+        if state["mental"] <= 0:
+            return {"status": "end", "type": "colapso_mental", "state": state}
+
+        if state["health"] <= 0:
+            return {"status": "end", "type": "muerte_fisica", "state": state}
+
+        # ===============================
+        # RESPUESTA
+        # ===============================
+        return {
+            "status": "continue",
+            "state": state,
+            "next_event": generate_event(state)
+        }
+
+    except Exception as e:
+        print("ERROR:", e)
+        return JSONResponse(status_code=500, content={"error": str(e)})
+
+# ===============================
+# RUN
+# ===============================
 if __name__ == "__main__":
     import uvicorn
-    # Configuración de puerto para despliegue en la nube
     port = int(os.environ.get("PORT", 10000))
     uvicorn.run(app, host="0.0.0.0", port=port)
