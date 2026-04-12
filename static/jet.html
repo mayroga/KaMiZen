@@ -1,199 +1,212 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-<meta charset="utf-8">
-<title>LIFE ENGINE</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KAMIZEN | Tactical Balance</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --cyan: #00f2ff; --red: #ff3b3b; --gold: #ffcc00; --bg: #030303; --green: #00ff88; }
+        body { margin: 0; background: var(--bg); overflow: hidden; font-family: 'JetBrains Mono', monospace; color: var(--cyan); }
+        
+        #ui { position: absolute; top: 10px; left: 10px; display: flex; gap: 10px; flex-wrap: wrap; z-index: 100; pointer-events: none; }
+        .box { padding: 8px 12px; border: 1px solid var(--cyan); background: rgba(0, 0, 0, 0.8); font-size: 11px; }
+        .box span { font-weight: bold; color: #fff; }
 
-<style>
-body{margin:0;background:#000;color:#0ff;font-family:Arial;overflow:hidden;}
-canvas{display:block;}
+        #menu-btn { position: absolute; top: 10px; right: 10px; z-index: 1100; padding: 10px 20px; background: black; border: 1px solid var(--cyan); color: var(--cyan); cursor: pointer; }
+        
+        canvas { display: block; }
 
-#ui{position:absolute;top:10px;left:10px;}
-.box{margin:5px;padding:5px;border:1px solid #0ff;}
-
-#controls{
-position:absolute;
-top:10px;
-right:10px;
-}
-
-button{
-margin:5px;
-padding:10px;
-background:black;
-border:1px solid #0ff;
-color:#0ff;
-cursor:pointer;
-}
-
-#text-content{
-position:absolute;
-bottom:20px;
-left:20px;
-}
-</style>
+        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 1000; text-align: center; }
+        .hidden { display: none !important; }
+        
+        .shield-active { box-shadow: 0 0 20px var(--green); border-radius: 50%; }
+        button { padding: 15px 30px; background: none; border: 1px solid var(--cyan); color: var(--cyan); cursor: pointer; font-family: inherit; margin: 10px; }
+        button:hover { background: var(--cyan); color: #000; }
+    </style>
 </head>
-
 <body>
 
 <div id="ui">
-<div class="box">MENTAL <span id="m">100</span></div>
-<div class="box">SALUD <span id="h">100</span></div>
-<div class="box">DINERO <span id="d">1000</span></div>
-<div class="box">SOCIAL <span id="s">50</span></div>
+    <div class="box">ENFOQUE: <span id="mental">100</span>%</div>
+    <div class="box">PODER: <span id="social">50</span></div>
+    <div class="box">ESCUDO: <span id="shield-status">INACTIVO</span></div>
+    <div class="box">AMENAZA: <span id="diff">1.0</span></div>
 </div>
 
-<div id="controls">
-<button onclick="resume()">SEGUIR</button>
-<button onclick="pause()">PARAR</button>
-<button onclick="reset()">REINICIAR</button>
+<button id="menu-btn" onclick="togglePause()">PAUSA / MENÚ</button>
+
+<div id="pause-screen" class="overlay hidden">
+    <h1>SISTEMA EN PAUSA</h1>
+    <p>La vida no se detiene, pero tu mente necesita calibración.</p>
+    <button onclick="togglePause()">REANUDAR VUELO</button>
+    <button onclick="location.reload()">REINICIAR MISIÓN</button>
 </div>
 
-<div id="text-content"></div>
+<div id="game-over" class="overlay hidden">
+    <h1 id="over-title">SISTEMA COLAPSADO</h1>
+    <p id="over-msg"></p>
+    <button onclick="location.reload()">REENCARNAR</button>
+</div>
 
 <canvas id="game"></canvas>
 
 <script>
-
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
-canvas.width = innerWidth;
-canvas.height = innerHeight;
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
-// =====================
-// ESTADO
-// =====================
-let state = JSON.parse(localStorage.getItem("state")) || {
-    mental:100,health:100,money:1000,social:50
-};
-
-let running = true;
-let player = {x:100,y:200};
-let enemies = [];
+let state = { mental: 100, social: 50, shield: 0, difficulty: 1, active: true, paused: false };
+let player = { x: 80, y: canvas.height/2, w: 50, h: 30, speed: 7 };
+let threats = [];
+let projectiles = [];
 let frame = 0;
+let keys = {};
 
-// =====================
-// CONTROL
-// =====================
-function pause(){running=false;}
-function resume(){running=true;loop();}
-function reset(){location.reload();}
+const NEGATIVE_WORDS = ["POBREZA", "ESTRÉS", "CALAMIDAD", "BRUTALIDAD", "NO-PODER", "AMBICIÓN"];
+const POSITIVE_WORDS = ["SABIDURÍA", "BIENESTAR", "DINERO", "AMOR", "PODER", "INTELIGENCIA"];
 
-addEventListener("mousemove",e=>{
-    player.y = e.clientY;
-});
+window.addEventListener('keydown', e => keys[e.code] = true);
+window.addEventListener('keyup', e => keys[e.code] = false);
+window.onclick = shoot;
 
-// =====================
-// EVENTOS BACKEND
-// =====================
-async function nextEvent(){
-    try{
-        const r = await fetch("/judge",{
-            method:"POST",
-            headers:{"Content-Type":"application/json"},
-            body:JSON.stringify({
-                decision:"TDM",
-                context:"auto"
-            })
-        });
-
-        const d = await r.json();
-        state = d.state;
-
-    }catch(e){}
+function togglePause() {
+    state.paused = !state.paused;
+    document.getElementById('pause-screen').classList.toggle('hidden');
+    if(!state.paused) loop();
 }
 
-// =====================
-// SPAWN
-// =====================
-function spawn(){
-    enemies.push({
-        x:canvas.width,
-        y:Math.random()*canvas.height,
-        type:["dinero","amor","crisis"][Math.floor(Math.random()*3)]
+function shoot() {
+    if(!state.active || state.paused) return;
+    // El jugador dispara "SABIDURÍA" (bolas cian)
+    projectiles.push({ x: player.x + 40, y: player.y, speed: 10, type: 'PLAYER', word: 'ENFOQUE', color: '#00f2ff' });
+}
+
+class Entity {
+    constructor(isGood = false) {
+        this.isGood = isGood;
+        this.x = canvas.width + 100;
+        this.y = Math.random() * (canvas.height - 150) + 75;
+        this.speed = (2 + Math.random() * 3) * (isGood ? 1.5 : state.difficulty);
+        this.life = isGood ? 1 : 3;
+        this.sym = isGood ? '💠' : (Math.random() > 0.5 ? '🚁' : '🚜');
+        this.color = isGood ? '#00ff88' : '#ff3b3b';
+        this.lastShot = 0;
+    }
+
+    draw() {
+        ctx.fillStyle = this.color;
+        ctx.font = "30px Arial";
+        ctx.fillText(this.sym, this.x, this.y);
+    }
+
+    update() {
+        this.x -= this.speed;
+        // Los enemigos disparan cada 120 frames según dificultad
+        if(!this.isGood && frame % Math.max(20, Math.floor(100/state.difficulty)) === 0 && Math.random() > 0.95) {
+            projectiles.push({
+                x: this.x, y: this.y, speed: -7, 
+                type: 'ENEMY', 
+                word: NEGATIVE_WORDS[Math.floor(Math.random()*NEGATIVE_WORDS.length)],
+                color: '#ff3b3b'
+            });
+        }
+        // Los aliados disparan equilibrio
+        if(this.isGood && frame % 150 === 0) {
+            projectiles.push({
+                x: this.x, y: this.y, speed: -5, 
+                type: 'HELP', 
+                word: POSITIVE_WORDS[Math.floor(Math.random()*POSITIVE_WORDS.length)],
+                color: '#00ff88'
+            });
+        }
+    }
+}
+
+function loop() {
+    if(!state.active || state.paused) return;
+    ctx.fillStyle = "rgba(3, 3, 3, 0.4)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Controles
+    if (keys['ArrowUp'] || keys['KeyW']) player.y -= player.speed;
+    if (keys['ArrowDown'] || keys['KeyS']) player.y += player.speed;
+
+    // Dibujar Jugador
+    ctx.shadowBlur = state.shield > 0 ? 20 : 0;
+    ctx.shadowColor = "#00ff88";
+    ctx.fillStyle = "#fff";
+    ctx.beginPath();
+    ctx.moveTo(player.x, player.y - 15); ctx.lineTo(player.x + 40, player.y); ctx.lineTo(player.x, player.y + 15);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+
+    // Spawn
+    if(frame % 100 === 0) threats.push(new Entity(false));
+    if(frame % 400 === 0) threats.push(new Entity(true)); // Los buenos son raros
+
+    // Procesar Proyectiles
+    projectiles.forEach((p, pi) => {
+        p.x += p.speed;
+        ctx.fillStyle = p.color;
+        ctx.font = "10px 'JetBrains Mono'";
+        ctx.fillText(p.word, p.x, p.y);
+
+        // Colisión Proyectil Enemigo -> Jugador
+        if(p.type !== 'PLAYER' && Math.abs(p.x - player.x) < 30 && Math.abs(p.y - player.y) < 30) {
+            if(state.shield > 0 && p.type === 'ENEMY') {
+                state.shield--;
+                state.social += 2;
+            } else if(p.type === 'HELP') {
+                state.mental = Math.min(100, state.mental + 5);
+                state.social += 10;
+            } else {
+                state.mental -= 10;
+            }
+            projectiles.splice(pi, 1);
+        }
+
+        if(p.x < -200 || p.x > canvas.width + 200) projectiles.splice(pi, 1);
     });
-}
 
-// =====================
-// DAÑO
-// =====================
-function damage(type){
+    // Procesar Entidades
+    threats.forEach((t, ti) => {
+        t.update();
+        t.draw();
 
-    if(type==="crisis"){
-        state.mental -=10;
-        state.money -=100;
+        // Colisión Jugador -> Entidad
+        if(Math.abs(t.x - player.x) < 40 && Math.abs(t.y - player.y) < 30) {
+            if(t.isGood) {
+                state.shield += 5; // Obtienes escudo
+                state.mental = 100;
+            } else {
+                state.mental -= 20;
+            }
+            threats.splice(ti, 1);
+        }
+
+        if(t.x < -100) threats.splice(ti, 1);
+    });
+
+    // UI & State
+    state.difficulty = 1 + (frame / 2000);
+    document.getElementById('mental').innerText = Math.max(0, Math.floor(state.mental));
+    document.getElementById('social').innerText = state.social;
+    document.getElementById('shield-status').innerText = state.shield > 0 ? `ACTIVO (${state.shield})` : "INACTIVO";
+    document.getElementById('diff').innerText = state.difficulty.toFixed(1);
+
+    if(state.mental <= 0) {
+        state.active = false;
+        document.getElementById('game-over').classList.remove('hidden');
+        document.getElementById('over-msg').innerText = `Tu resiliencia social llegó a ${state.social}. El caos te superó.`;
     }
 
-    if(type==="amor"){
-        state.social +=5;
-    }
-
-    if(type==="dinero"){
-        state.money +=50;
-    }
-
-    document.getElementById("text-content").innerText = "Impacto: "+type;
-}
-
-// =====================
-// LOOP
-// =====================
-function loop(){
-
-if(!running) return;
-
-ctx.fillStyle="rgba(0,0,0,0.3)";
-ctx.fillRect(0,0,canvas.width,canvas.height);
-
-// PLAYER
-ctx.fillStyle="#0ff";
-ctx.fillRect(player.x,player.y,20,20);
-
-// ENEMIGOS
-enemies.forEach((e,i)=>{
-
-    e.x -=3;
-
-    let icon="🚁";
-    if(e.type==="dinero") icon="💰";
-    if(e.type==="amor") icon="❤️";
-    if(e.type==="crisis") icon="📉";
-
-    ctx.font="30px Arial";
-    ctx.fillText(icon,e.x,e.y);
-
-    if(Math.abs(e.x-player.x)<30 && Math.abs(e.y-player.y)<30){
-        damage(e.type);
-        enemies.splice(i,1);
-    }
-
-});
-
-// SPAWN
-if(frame%60===0) spawn();
-
-// BACKEND
-if(frame%200===0) nextEvent();
-
-// UI
-document.getElementById("m").innerText=Math.floor(state.mental);
-document.getElementById("h").innerText=Math.floor(state.health);
-document.getElementById("d").innerText=Math.floor(state.money);
-document.getElementById("s").innerText=Math.floor(state.social);
-
-// FINAL
-if(state.mental<=0){
-    alert("COLAPSO");
-    location.reload();
-}
-
-frame++;
-requestAnimationFrame(loop);
+    frame++;
+    requestAnimationFrame(loop);
 }
 
 loop();
-
 </script>
-
 </body>
 </html>
