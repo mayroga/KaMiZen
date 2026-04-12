@@ -9,12 +9,12 @@
 body { margin:0; background:#020202; overflow:hidden; font-family:'Arial Black', sans-serif; color:#00f2ff; }
 canvas { display:block; }
 
-/* UI */
 #ui {
     position:absolute; top:10px; left:10px;
     display:grid; grid-template-columns: repeat(2, 1fr);
     gap:10px; z-index:10;
 }
+
 .box {
     padding:8px 12px;
     border:2px solid #00f2ff;
@@ -23,13 +23,13 @@ canvas { display:block; }
     font-weight:bold;
 }
 
-/* MENÚ TVID */
 #tactic-menu {
     position:absolute; bottom:20px; left:50%;
     transform:translateX(-50%);
     display:flex; gap:10px;
     z-index:20;
 }
+
 .tvid-btn {
     padding:10px 15px;
     background:black;
@@ -38,13 +38,9 @@ canvas { display:block; }
     cursor:pointer;
 }
 
-/* VIDA */
-.life {
-    color:#ff3b3b;
-}
-
-/* CANVAS */
 canvas { display:block; }
+
+.life { color:#ff3b3b; }
 </style>
 </head>
 
@@ -68,6 +64,10 @@ canvas { display:block; }
 <canvas id="game"></canvas>
 
 <script>
+
+// 🔥 ESTADO REAL SINCRONIZADO
+let realState = JSON.parse(localStorage.getItem("state") || "{}");
+
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
@@ -99,9 +99,36 @@ window.addEventListener("keyup",e=>keys[e.code]=false);
 window.onclick = ()=>executeTVID("TDB");
 
 // =========================
-// PLAYER SHOOT
+// TVID CONECTADO A BACKEND
+// =========================
+function sendDecision(type){
+
+    const session_id = localStorage.getItem("session_id");
+
+    fetch("/judge",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+            session_id,
+            decision:type,
+            context:"accion"
+        })
+    })
+    .then(res=>res.json())
+    .then(data=>{
+        if(data.state){
+            localStorage.setItem("state", JSON.stringify(data.state));
+            realState = data.state;
+        }
+    });
+}
+
+// =========================
+// PLAYER TVID (REAL)
 // =========================
 function executeTVID(type){
+
+    sendDecision(type); // 🔥 conecta con backend
 
     bullets.push({
         x:player.x+30,
@@ -139,7 +166,7 @@ function spawnEnemy(){
 }
 
 // =========================
-// GIFTS / REWARDS
+// GIFTS
 // =========================
 function spawnGift(){
     gifts.push({
@@ -162,9 +189,18 @@ function loop(){
     if(keys["ArrowUp"]) player.y -= 6;
     if(keys["ArrowDown"]) player.y += 6;
 
-    // PLAYER (más visible)
     ctx.font="50px Arial";
     ctx.fillText("🧘",player.x,player.y);
+
+    // =====================
+    // REAL STATE EFFECTS
+    // =====================
+    let mental = realState.mental ?? state.mental;
+
+    // 🔥 MENTE BAJA = MÁS CAOS
+    if(mental < 40){
+        if(frame % 60 === 0) spawnEnemy();
+    }
 
     // =====================
     // PLAYER BULLETS
@@ -180,14 +216,16 @@ function loop(){
             if(Math.abs(b.x-e.x)<40 && Math.abs(b.y-e.y)<40){
                 e.life--;
                 bullets.splice(i,1);
-                state.karma++;
+
+                realState.karma = (realState.karma || 0) + 1;
+
                 if(e.life<=0) enemies.splice(j,1);
             }
         });
     });
 
     // =====================
-    // ENEMIES (IA + SHOOT)
+    // ENEMIES + IA
     // =====================
     enemies.forEach((e,i)=>{
 
@@ -196,16 +234,14 @@ function loop(){
         ctx.font="70px Arial";
         ctx.fillText("🚁",e.x,e.y);
 
-        // ENEMY SHOOT
         e.shootTimer++;
         if(e.shootTimer > 80){
             enemyShoot(e);
             e.shootTimer = 0;
         }
 
-        // COLLISION PLAYER
         if(Math.abs(e.x-player.x)<40 && Math.abs(e.y-player.y)<40){
-            state.life--;
+            realState.life = (realState.life ?? 3) - 1;
             enemies.splice(i,1);
         }
 
@@ -223,7 +259,7 @@ function loop(){
         ctx.fillText("💥",b.x,b.y);
 
         if(Math.abs(b.x-player.x)<30){
-            state.life--;
+            realState.life = (realState.life ?? 3) - 1;
             enemyBullets.splice(i,1);
         }
     });
@@ -239,8 +275,8 @@ function loop(){
 
         if(Math.abs(g.x-player.x)<40){
 
-            if(g.type==="life" && state.life<3) state.life++;
-            if(g.type==="karma") state.karma++;
+            if(g.type==="life") realState.life = Math.min(3, (realState.life ?? 3) + 1);
+            if(g.type==="karma") realState.karma = (realState.karma ?? 0) + 1;
 
             gifts.splice(i,1);
         }
@@ -255,24 +291,25 @@ function loop(){
     // =====================
     // GAME OVER
     // =====================
-    if(state.life <= 0){
-        alert("GAME OVER - SISTEMA COLAPSADO");
+    if((realState.life ?? 3) <= 0){
+        alert("GAME OVER - SISTEMA REAL COLAPSADO");
         location.reload();
     }
 
     // =====================
-    // UI
+    // UI UPDATE
     // =====================
-    document.getElementById("mental").innerText = state.mental;
-    document.getElementById("social").innerText = state.social;
-    document.getElementById("karma").innerText = state.karma;
-    document.getElementById("life").innerText = state.life;
+    document.getElementById("mental").innerText = realState.mental ?? 100;
+    document.getElementById("social").innerText = realState.social ?? 50;
+    document.getElementById("karma").innerText = realState.karma ?? 0;
+    document.getElementById("life").innerText = realState.life ?? 3;
 
     frame++;
     requestAnimationFrame(loop);
 }
 
 loop();
+
 </script>
 
 </body>
