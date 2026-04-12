@@ -19,7 +19,7 @@ async function setupAudio(profile, phase = "action") {
 
     let mood = "ambient_tech";
     if (phase === "recovery") {
-        mood = "reflective_piano"; // Música para los 8 min de calma
+        mood = "reflective_piano";
     } else {
         const age = parseInt(profile.age || 25);
         if (profile.emotion === "stress") mood = "dark_industrial";
@@ -31,9 +31,12 @@ async function setupAudio(profile, phase = "action") {
     bgMusic.loop = true;
     bgMusic.volume = 0.4;
 
-    document.addEventListener('click', () => {
-        if (bgMusic && bgMusic.paused) bgMusic.play().catch(e => console.log("Audio Init..."));
-    }, { once: true });
+    // Activación por interacción para cumplir políticas de navegador
+    const startAudio = () => {
+        if (bgMusic && bgMusic.paused) bgMusic.play().catch(e => console.log("Audio Buffer..."));
+        document.removeEventListener('click', startAudio);
+    };
+    document.addEventListener('click', startAudio);
 }
 
 /**
@@ -56,7 +59,7 @@ async function startLifeFlow() {
         const data = await response.json();
         
         if (data.status === "ready") {
-            window.updateSimState(data.state);
+            if(window.updateSimState) window.updateSimState(data.state);
             window.currentEvent = data.next_event;
             document.getElementById("text-content").innerText = "Sincronización completa. Bienvenido a la Vía Real.";
             processEventUI(data.next_event);
@@ -67,19 +70,32 @@ async function startLifeFlow() {
 }
 
 /**
- * PROCESADOR DE EVENTOS Y COLISIONES
+ * PROCESADOR DE EVENTOS
  */
-function handleCollision(eventType) {
+function processEventUI(nextEvent) {
     if (isRecoveryActive) return;
+
+    const messages = {
+        "crisis": "Amenaza financiera detectada. Protege tus activos.",
+        "amor": "Frecuencia emocional en aumento. Decide tu inversión.",
+        "tentacion": "Señal de evasión detectada. Mantén la disciplina.",
+        "oportunidad": "Vórtice de crecimiento abierto. Actúa ahora.",
+        "conflicto": "Fricción externa en curso. ¿Guerra o Poder?",
+        "enfermedad": "Vulnerabilidad biológica activa. Rectifica hábitos."
+    };
+
+    const txt = messages[nextEvent] || "El sistema genera una nueva variable.";
+    const display = document.getElementById("text-content");
+    if (display) display.innerText = txt;
     
-    // Si el evento cambia, actualizamos UI y sonido
-    if (window.currentEvent !== eventType) {
-        window.currentEvent = eventType;
-        const msg = `Evento Detectado: ${eventType.toUpperCase()}`;
-        document.getElementById("text-content").innerText = msg;
-        speak(msg);
-        renderDecisionButtons();
-    }
+    speak(txt);
+    renderDecisionButtons();
+
+    // Temporizador de Inacción (TDM) tras 7 segundos
+    clearTimeout(decisionTimer);
+    decisionTimer = setTimeout(() => {
+        if (!isRecoveryActive) sendDecision("TDM");
+    }, 7000);
 }
 
 /**
@@ -103,7 +119,7 @@ async function sendDecision(decisionType) {
         });
 
         const data = await response.json();
-        window.updateSimState(data);
+        if(window.updateSimState) window.updateSimState(data);
 
         if (data.status === "recovery") {
             initRecoveryPhase();
@@ -119,16 +135,17 @@ async function sendDecision(decisionType) {
 }
 
 /**
- * FASE DE RECUPERACIÓN TVID (8 MINUTOS)
+ * FASE DE RECUPERACIÓN (8 MINUTOS)
  */
 function initRecoveryPhase() {
     isRecoveryActive = true;
     const profile = JSON.parse(localStorage.getItem("profile")) || {};
     setupAudio(profile, "recovery");
     
-    if (typeof startRecoveryPhase === "function") {
-        startRecoveryPhase();
-    }
+    const storyBox = document.getElementById("text-content");
+    const optionsBox = document.getElementById("options");
+    
+    if (optionsBox) optionsBox.innerHTML = '<div class="recovery-loader">REGENERANDO...</div>';
 
     const stories = [
         "La riqueza no es lo que tienes, es lo que eres cuando el dinero no está. Respira.",
@@ -138,52 +155,32 @@ function initRecoveryPhase() {
     ];
 
     let storyIndex = 0;
-    const storyBox = document.getElementById("story-box");
-    
-    // Ciclo de historias de poder cada 30 segundos durante los 8 minutos
     const storyInterval = setInterval(() => {
         if (!isRecoveryActive) { clearInterval(storyInterval); return; }
-        storyBox.innerText = stories[storyIndex];
+        if (storyBox) storyBox.innerText = stories[storyIndex];
         speak(stories[storyIndex]);
         storyIndex = (storyIndex + 1) % stories.length;
     }, 30000);
 
-    // Cierre automático tras los 8 minutos de recuperación
     setTimeout(() => {
-        document.getElementById("recovery-text").innerText = "CICLO COMPLETADO";
+        isRecoveryActive = false;
+        clearInterval(storyInterval);
+        document.getElementById("text-content").innerText = "CICLO COMPLETADO";
         speak("Asesoría de recuperación finalizada. Has fortalecido tu red neural.");
+        startLifeFlow(); // Reinicia el flujo normal
     }, 480000); 
-}
-
-function processEventUI(nextEvent) {
-    const messages = {
-        "crisis": "Amenaza financiera detectada. Protege tus activos.",
-        "amor": "Frecuencia emocional en aumento. Decide tu inversión.",
-        "tentacion": "Señal de evasión detectada. Mantén la disciplina.",
-        "oportunidad": "Vórtice de crecimiento abierto. Actúa ahora.",
-        "conflicto": "Fricción externa en curso. ¿Guerra o Poder?",
-        "enfermedad": "Vulnerabilidad biológica activa. Rectifica hábitos."
-    };
-
-    const txt = messages[nextEvent] || "El sistema genera una nueva variable.";
-    document.getElementById("text-content").innerText = txt;
-    speak(txt);
-    renderDecisionButtons();
-
-    // Inacción (TDM) automática tras 7 segundos
-    decisionTimer = setTimeout(() => {
-        if (!isRecoveryActive) sendDecision("TDM");
-    }, 7000);
 }
 
 function renderDecisionButtons() {
     const container = document.getElementById("options");
+    if (!container) return;
     container.innerHTML = "";
-    const types = ["TDB", "TDM", "TDN", "TDP", "TDG"];
     
+    const types = ["TDB", "TDM", "TDN", "TDP", "TDG"];
     types.forEach(t => {
         const btn = document.createElement("button");
         btn.innerText = t;
+        btn.className = "decision-btn";
         btn.onclick = (e) => {
             e.stopPropagation();
             sendDecision(t);
@@ -204,8 +201,11 @@ function speak(text) {
 function handleGameOver(reason) {
     if (bgMusic) bgMusic.pause();
     isRecoveryActive = false;
-    const reasonText = reason.replace(/_/g, " ").toUpperCase();
+    const reasonText = reason ? reason.replace(/_/g, " ").toUpperCase() : "DESCONOCIDO";
     document.getElementById("text-content").innerText = `COLAPSO: ${reasonText}`;
-    document.getElementById("options").innerHTML = '<button onclick="location.href=\'/\'">REINICIAR VIDA</button>';
+    document.getElementById("options").innerHTML = '<button class="start-btn" onclick="location.href=\'/\'">REINICIAR VIDA</button>';
     speak(`Simulación finalizada por ${reasonText}. Analiza tus decisiones.`);
 }
+
+// Iniciar al cargar
+window.onload = startLifeFlow;
