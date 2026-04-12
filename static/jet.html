@@ -1,207 +1,210 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="utf-8">
-    <title>AL CIELO - LIFE ENGINE</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AL CIELO | LIFE ENTRY SYSTEM</title>
+
     <style>
-        body { margin: 0; background: #000; overflow: hidden; color: #0ff; font-family: 'JetBrains Mono', monospace; }
-        canvas { display: block; filter: contrast(1.2) brightness(1.1); cursor: crosshair; }
-        
-        #ui { position: absolute; top: 10px; left: 10px; z-index: 10; display: flex; flex-wrap: wrap; pointer-events: none; }
-        .box { margin: 5px; padding: 10px; border: 1px solid #0ff; background: rgba(0,0,0,0.8); font-size: 13px; border-radius: 4px; box-shadow: 0 0 10px rgba(0,242,255,0.2); min-width: 80px; text-align: center; }
-        .box span { display: block; font-size: 16px; font-weight: bold; color: #fff; }
-        
-        #age-display { position: absolute; top: 15px; right: 25px; font-size: 28px; color: #0ff; text-shadow: 0 0 10px #0ff; font-weight: bold; }
-        #timer-display { position: absolute; top: 60px; right: 25px; font-size: 18px; color: #fff; }
-
-        #text-content { position: absolute; bottom: 140px; left: 30px; color: #fff; z-index: 20; font-size: 20px; text-shadow: 2px 2px 4px #000; max-width: 70%; font-weight: bold; line-height: 1.4; pointer-events: none; }
-        #options { position: absolute; bottom: 50px; left: 30px; z-index: 20; display: flex; gap: 15px; }
-        
-        button { padding: 15px 25px; background: rgba(0,0,0,0.9); border: 2px solid #0ff; color: #0ff; cursor: pointer; font-weight: bold; font-size: 16px; transition: 0.3s; border-radius: 8px; text-transform: uppercase; }
-        button:hover { background: #0ff; color: black; box-shadow: 0 0 20px #0ff; transform: translateY(-3px); }
-
-        /* PANTALLA DE RECUPERACIÓN TVID */
-        #recovery-screen { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: radial-gradient(circle, #001a33 0%, #000 100%); 
-            z-index: 100; display: none; flex-direction: column; align-items: center; justify-content: center; 
+        body {
+            margin: 0;
+            background: radial-gradient(circle, #00121a, #000);
+            color: #00f2ff;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
         }
-        #breathing-circle { 
-            width: 250px; height: 250px; border-radius: 50%; 
-            border: 8px solid #007bff; box-shadow: 0 0 60px #007bff; 
-            transition: transform 4s ease-in-out; 
+
+        #app {
+            width: 92%;
+            max-width: 420px;
+            padding: 30px;
+            background: rgba(0, 15, 20, 0.8);
+            border: 2px solid #00f2ff;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 0 40px rgba(0, 242, 255, 0.2);
+            backdrop-filter: blur(15px);
         }
-        #recovery-text { color: #0ff; font-size: 32px; margin-bottom: 40px; text-transform: uppercase; letter-spacing: 5px; }
-        #story-box { color: #fff; max-width: 700px; text-align: center; margin-top: 50px; font-size: 22px; font-style: italic; line-height: 1.6; }
+
+        h1 {
+            color: #00f2ff;
+            font-size: 32px;
+            margin-bottom: 2px;
+            letter-spacing: 4px;
+            text-shadow: 0 0 10px #00f2ff;
+        }
+
+        .subtitle {
+            font-size: 12px;
+            color: #0077ff;
+            margin-bottom: 25px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        label {
+            display: block;
+            text-align: left;
+            font-size: 11px;
+            margin: 12px 0 5px 5px;
+            color: rgba(0, 242, 255, 0.8);
+            letter-spacing: 1px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 14px;
+            background: #050a0c;
+            border: 1px solid #0077ff;
+            color: #fff;
+            border-radius: 10px;
+            outline: none;
+            font-size: 14px;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            border-color: #00f2ff;
+            box-shadow: 0 0 15px rgba(0, 242, 255, 0.3);
+        }
+
+        .start-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(90deg, #00f2ff, #0077ff);
+            border: none;
+            color: #000;
+            font-weight: 900;
+            cursor: pointer;
+            border-radius: 12px;
+            margin-top: 25px;
+            font-size: 16px;
+            text-transform: uppercase;
+            box-shadow: 0 5px 15px rgba(0, 119, 255, 0.4);
+            transition: transform 0.2s, filter 0.3s;
+        }
+
+        .start-btn:hover {
+            filter: brightness(1.2);
+            transform: translateY(-2px);
+        }
+
+        .small {
+            font-size: 10px;
+            opacity: 0.5;
+            margin-top: 20px;
+            line-height: 1.5;
+            color: #fff;
+        }
+
+        .footer-brand {
+            margin-top: 25px;
+            font-size: 10px;
+            letter-spacing: 5px;
+            color: #0077ff;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
 
-<div id="ui">
-    <div class="box">MENTAL <span id="m">100</span>%</div>
-    <div class="box">SALUD <span id="h">100</span>%</div>
-    <div class="box">DINERO <span id="d">1000</span></div>
-    <div class="box">SOCIAL <span id="s">50</span></div>
-    <div class="box">VICIO <span id="v">0</span>%</div>
+<div id="app">
+    <h1>AL CIELO</h1>
+    <div class="subtitle">Asesoría de Vida Real</div>
+
+    <label>EDAD CRONOLÓGICA</label>
+    <input id="age" type="number" placeholder="Ej. 25" min="5" max="99" value="25">
+
+    <label>ESTADO EMOCIONAL DOMINANTE</label>
+    <select id="emotion">
+        <option value="neutral">Neutral / Estable</option>
+        <option value="stress">Bajo Presión (Estrés)</option>
+        <option value="lonely">Aislamiento (Soledad)</option>
+        <option value="loss">Duelo / Pérdida</option>
+        <option value="motivated">Alta Motivación</option>
+    </select>
+
+    <label>COMPLEJIDAD DEL ENTORNO</label>
+    <select id="difficulty">
+        <option value="1">Entorno Favorable (Normal)</option>
+        <option value="2">Entorno Hostil (Difícil)</option>
+        <option value="3">Entorno Crítico (Extremo)</option>
+    </select>
+
+    <label>MODO DE PROCESAMIENTO INICIAL (TVIDE)</label>
+    <select id="tvideMode">
+        <option value="balanced">Equilibrio (TDB + TDP)</option>
+        <option value="survival">Supervivencia (TDM + TDG)</option>
+        <option value="creative">Exploración (TDN + TDK)</option>
+    </select>
+
+    <button class="start-btn" onclick="startLife()">🚀 INICIAR PROCESAMIENTO</button>
+
+    <p class="small">
+        ESTA ASESORÍA SIMULA CONSECUENCIAS ACUMULATIVAS.<br>
+        LA INACCIÓN SE PROCESARÁ COMO UNA DECISIÓN AUTOMÁTICA.
+    </p>
+
+    <div class="footer-brand">AURA BY MAY ROGA LLC</div>
 </div>
-
-<div id="age-display">EDAD: <span id="a">18.0</span></div>
-<div id="timer-display">SESIÓN: <span id="clock">00:00</span></div>
-
-<div id="text-content">Iniciando simulador de vida...</div>
-<div id="options"></div>
-
-<div id="recovery-screen">
-    <h2 id="recovery-text">RESPIRA</h2>
-    <div id="breathing-circle"></div>
-    <div id="story-box">El éxito no es el destino, es la calma con la que manejas la tormenta.</div>
-</div>
-
-<canvas id="game"></canvas>
-
-<script src="/static/scripts.js"></script>
 
 <script>
-const canvas = document.getElementById("game");
-const ctx = canvas.getContext("2d");
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+async function startLife(){
+    const ageValue = parseInt(document.getElementById("age").value || 25);
+    const emotion = document.getElementById("emotion").value;
+    const difficulty = document.getElementById("difficulty").value;
+    const tvideMode = document.getElementById("tvideMode").value;
 
-let player = { x: 120, y: canvas.height / 2, size: 45 };
-let enemies = [];
-let projectiles = []; 
-let frame = 0;
-let gameActive = true;
-let startTime = Date.now();
+    let stage = "adult";
+    if (ageValue < 13) stage = "child";
+    else if (ageValue < 25) stage = "young";
+    else if (ageValue >= 60) stage = "elder";
 
-// Actualizar UI desde el Backend
-window.updateSimState = (newState) => {
-    if(!newState) return;
-    document.getElementById("m").innerText = Math.floor(newState.mental);
-    document.getElementById("h").innerText = Math.floor(newState.health);
-    document.getElementById("d").innerText = Math.floor(newState.money);
-    document.getElementById("s").innerText = Math.floor(newState.social);
-    document.getElementById("v").innerText = Math.floor(newState.addiction);
-    document.getElementById("a").innerText = (newState.age).toFixed(1);
-    
-    // Si el backend envía estatus de recuperación
-    if(newState.status === "recovery") startRecoveryPhase();
-};
+    const profile = {
+        age: ageValue,
+        emotion: emotion,
+        difficulty: difficulty,
+        tvideMode: tvideMode,
+        stage: stage,
+        created: Date.now()
+    };
 
-addEventListener("mousemove", e => { if(gameActive) player.y = e.clientY; });
+    // Estado inicial basado en la configuración del usuario
+    const state = {
+        mental: 100,
+        health: 100,
+        money: difficulty === "3" ? 200 : 500,
+        social: 50,
+        discipline: 50,
+        addiction: emotion === "stress" ? 15 : 0,
+        age: ageValue
+    };
 
-// Disparar (Poder/Acción)
-addEventListener("mousedown", () => {
-    if(gameActive) projectiles.push({ x: player.x + 25, y: player.y, speed: 15, owner: 'player' });
-});
-
-function spawnEnemy(type) {
-    const icons = { "dinero":"💰", "amor":"❤️", "enfermedad":"🚜", "oportunidad":"💠", "tentacion":"🍺", "conflicto":"🚁", "crisis":"📉" };
-    enemies.push({
-        x: canvas.width,
-        y: Math.random() * (canvas.height - 200) + 100,
-        type: type,
-        icon: icons[type] || "❓",
-        speed: 5 + (frame / 5000) // Dificultad progresiva en velocidad
-    });
-}
-
-// Fase de Recuperación (8 Minutos)
-function startRecoveryPhase() {
-    gameActive = false;
-    document.getElementById("recovery-screen").style.display = "flex";
-    const circle = document.getElementById("breathing-circle");
-    const text = document.getElementById("recovery-text");
-    
-    let state = 0; // 0:Inhala, 1:Retiene, 2:Exhala
-    setInterval(() => {
-        if(state === 0) {
-            circle.style.transform = "scale(1.8)";
-            text.innerText = "INHALA"; state = 1;
-        } else if(state === 1) {
-            text.innerText = "RETIENE"; state = 2;
-        } else {
-            circle.style.transform = "scale(1)";
-            text.innerText = "EXHALA"; state = 0;
-        }
-    }, 4000);
-}
-
-function loop() {
-    if(!gameActive) return;
-
-    ctx.fillStyle = "rgba(0, 5, 10, 0.3)";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // Cronómetro
-    let elapsed = Math.floor((Date.now() - startTime) / 1000);
-    let mins = Math.floor(elapsed / 60).toString().padStart(2, '0');
-    let secs = (elapsed % 60).toString().padStart(2, '0');
-    document.getElementById("clock").innerText = `${mins}:${secs}`;
-
-    // Dibujar Jugador
-    ctx.shadowBlur = 20; ctx.shadowColor = "#0ff";
-    ctx.beginPath();
-    ctx.arc(player.x, player.y, player.size/2, 0, Math.PI*2);
-    ctx.fillStyle = "#0ff"; ctx.fill();
-    ctx.shadowBlur = 0;
-
-    // Proyectiles (Aliados y Enemigos)
-    projectiles.forEach((p, pi) => {
-        p.x += p.speed;
-        ctx.fillStyle = p.owner === 'player' ? "#fff" : "#ff0055";
-        ctx.fillRect(p.x, p.y - 3, 15, 6);
-        
-        // Colisión Proyectil Enemigo -> Jugador
-        if(p.owner === 'enemy' && Math.hypot(p.x - player.x, p.y - player.y) < 25) {
-            handleCollision("ataque_enemigo");
-            projectiles.splice(pi, 1);
-        }
-        if(p.x > canvas.width || p.x < 0) projectiles.splice(pi, 1);
-    });
-
-    // Entidades (Vía Real)
-    enemies.forEach((e, i) => {
-        e.x -= e.speed;
-        ctx.font = "50px Arial";
-        ctx.textAlign = "center";
-        ctx.fillText(e.icon, e.x, e.y);
-
-        // Enemigos disparan (Tractores, Helis, Crisis)
-        if(["enfermedad", "conflicto", "crisis"].includes(e.type) && frame % 120 === 0) {
-            projectiles.push({ x: e.x, y: e.y, speed: -10, owner: 'enemy' });
-        }
-
-        // Colisión Proyectil Jugador -> Entidad
-        projectiles.forEach((p, pi) => {
-            if(p.owner === 'player' && Math.hypot(p.x - e.x, p.y - e.y) < 40) {
-                handleCollision(e.type); // Disparar a la oportunidad
-                enemies.splice(i, 1);
-                projectiles.splice(pi, 1);
-            }
+    try {
+        const res = await fetch("/start", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ profile, age: ageValue })
         });
 
-        // Colisión Directa (Choque)
-        if(Math.hypot(e.x - player.x, e.y - player.y) < 45) {
-            handleCollision(e.type);
-            enemies.splice(i, 1);
-        }
+        const data = await res.json();
 
-        if(e.x < -100) enemies.splice(i, 1);
-    });
+        localStorage.setItem("profile", JSON.stringify(profile));
+        localStorage.setItem("state", JSON.stringify(data.state || state));
 
-    if(frame % 80 === 0 && window.currentEvent) spawnEnemy(window.currentEvent);
-    
-    frame++;
-    requestAnimationFrame(loop);
+        // Redirige al simulador real (donde se carga el motor de scripts.js)
+        window.location.href = "/simulador"; 
+    } catch (error) {
+        console.error("Error de conexión:", error);
+        alert("Error al sincronizar con el motor neural.");
+    }
 }
-
-window.onload = () => {
-    loop();
-    setTimeout(() => { if(typeof startLifeFlow === "function") startLifeFlow(); }, 1000);
-};
-
-window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
 </script>
+
 </body>
 </html>
