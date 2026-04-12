@@ -5,17 +5,6 @@ let currentPhase = 1;
 let sessionActive = false;
 
 // =========================================
-// TVID TACTICAL GUIDE (NUEVO)
-// =========================================
-const TacticalGuide = {
-    "crisis": "TDP",
-    "conflicto": "TDG",
-    "amor": "TDK",
-    "enfermedad": "TDMM",
-    "oportunidad": "TDB"
-};
-
-// =========================================
 // START SYSTEM
 // =========================================
 async function startLifeFlow(){
@@ -43,22 +32,19 @@ async function startLifeFlow(){
         localStorage.setItem("state", JSON.stringify(data.state));
 
         window.currentEvent = data.next_event;
+
         sessionActive = true;
 
         showMessage("Sistema activo. Iniciando simulación de vida.");
 
         processEvent(data.next_event);
 
-        // ================================
-        // FASE 2 (7 min)
-        // ================================
+        // 🔥 FASE 2 AUTOMÁTICA (7 min)
         setTimeout(()=>{
             activatePhase2();
         }, 7 * 60 * 1000);
 
-        // ================================
-        // FASE 3 (12 min total)
-        // ================================
+        // 🔥 FASE 3 AUTOMÁTICA (12 min total)
         setTimeout(()=>{
             activatePhase3();
         }, 12 * 60 * 1000);
@@ -102,56 +88,7 @@ function processEvent(event){
 }
 
 // =========================================
-// HANDLE ACTION (TVID INTELIGENTE)
-// =========================================
-async function handleAction(userDecision){
-
-    const event = window.currentEvent;
-    const session_id = localStorage.getItem("session_id");
-
-    let finalDecision = userDecision;
-
-    if (TacticalGuide[event] === userDecision) {
-        console.log("TVID sincronizado: +Karma");
-    }
-
-    const res = await fetch("/judge", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({
-            session_id,
-            decision: finalDecision,
-            context: event
-        })
-    });
-
-    const data = await res.json();
-
-    if(data.state){
-        localStorage.setItem("state", JSON.stringify(data.state));
-    }
-
-    if(data.status === "end"){
-        gameOver(data.type);
-        return;
-    }
-
-    if(data.status === "recovery"){
-        showMessage("FASE DE RECUPERACIÓN ACTIVA");
-        return;
-    }
-
-    window.currentEvent = data.next_event;
-    processEvent(data.next_event);
-
-    // FASE 3 trigger opcional desde backend
-    if(data.phase_alert === 3){
-        startMeditationPhase();
-    }
-}
-
-// =========================================
-// SEND DECISION NORMAL
+// JUEZ (BACKEND TVID ENGINE)
 // =========================================
 async function sendDecision(decision){
 
@@ -177,12 +114,20 @@ async function sendDecision(decision){
             localStorage.setItem("state", JSON.stringify(data.state));
         }
 
+        if(data.status === "cooldown") return;
+
+        if(data.status === "recovery"){
+            showMessage("FASE DE RECUPERACIÓN ACTIVA");
+            return;
+        }
+
         if(data.status === "end"){
             gameOver(data.type);
             return;
         }
 
         window.currentEvent = data.next_event;
+
         processEvent(data.next_event);
 
     }catch(e){
@@ -201,12 +146,12 @@ function renderButtons(){
 
     container.innerHTML = "";
 
-    const decisions = ["TDB","TDM","TDN","TDP","TDG","TDMM","TDK"];
+    const decisions = ["TDB","TDM","TDN","TDP","TDG"];
 
     decisions.forEach(d=>{
         const btn = document.createElement("button");
         btn.innerText = d;
-        btn.onclick = ()=>handleAction(d);
+        btn.onclick = ()=>sendDecision(d);
         container.appendChild(btn);
     });
 
@@ -228,7 +173,7 @@ function renderButtons(){
 }
 
 // =========================================
-// UI
+// MENSAJES
 // =========================================
 function showMessage(text){
     const el = document.getElementById("text-content");
@@ -270,7 +215,7 @@ function activatePhase2(){
 
     currentPhase = 2;
 
-    showMessage("FASE 2: RESPIRACIÓN CONSCIENTE");
+    showMessage("FASE 2 ACTIVADA: RESPIRACIÓN CONSCIENTE");
 
     let cycle = 0;
 
@@ -292,7 +237,7 @@ function activatePhase2(){
 }
 
 // =========================================
-// FASE 3: MEDITACIÓN (5–9 min)
+// FASE 3: SILENCIO + MEDITACIÓN (5–9 min)
 // =========================================
 function activatePhase3(){
 
@@ -342,3 +287,63 @@ function endCycle(){
 // AUTO START
 // =========================================
 window.onload = ()=>startLifeFlow();
+
+
+// ===================================================================
+// ===================== 🔥 AGREGADO TVID SYSTEM 🔥 ===================
+// ===================================================================
+
+// TVID TACTICAL GUIDE (NUEVO)
+const TacticalGuide = {
+    "crisis": "TDP",
+    "conflicto": "TDG",
+    "amor": "TDK",
+    "enfermedad": "TDMM",
+    "oportunidad": "TDB"
+};
+
+// HANDLE ACTION (TVID INTELIGENTE)
+async function handleAction(userDecision){
+
+    const event = window.currentEvent;
+    const session_id = localStorage.getItem("session_id");
+
+    let finalDecision = userDecision;
+
+    if (TacticalGuide[event] === userDecision) {
+        console.log("TVID sincronizado: +Karma");
+    }
+
+    const res = await fetch("/judge", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            session_id,
+            decision: finalDecision,
+            context: event
+        })
+    });
+
+    const data = await res.json();
+
+    if(data.state){
+        localStorage.setItem("state", JSON.stringify(data.state));
+    }
+
+    if(data.status === "end"){
+        gameOver(data.type);
+        return;
+    }
+
+    if(data.status === "recovery"){
+        showMessage("FASE DE RECUPERACIÓN ACTIVA");
+        return;
+    }
+
+    window.currentEvent = data.next_event;
+    processEvent(data.next_event);
+
+    if(data.phase_alert === 3){
+        activatePhase3();
+    }
+}
