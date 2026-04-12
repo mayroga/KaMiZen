@@ -1,55 +1,198 @@
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AL CIELO | SIMULADOR</title>
-    <link rel="stylesheet" href="/static/style.css"> <style>
-        body { background: #000; color: #00f2ff; font-family: sans-serif; text-align: center; }
-        #interface { max-width: 500px; margin: auto; padding: 20px; border: 1px solid #0077ff; border-radius: 15px; margin-top: 50px; }
-        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
-        .stat-box { background: #050a0c; padding: 10px; border: 1px solid #004466; }
-        #text-content { font-size: 1.2rem; margin: 20px 0; min-height: 60px; color: #fff; }
-        #options button { margin: 5px; padding: 10px 20px; background: #0077ff; color: #000; border: none; cursor: pointer; font-weight: bold; }
-        .recovery-mode { border-color: #ff00ff !important; box-shadow: 0 0 20px #ff00ff; }
-    </style>
+<meta charset="utf-8">
+<title>LIFE ENGINE</title>
+
+<style>
+body{margin:0;background:#000;color:#0ff;font-family:Arial;overflow:hidden;}
+canvas{display:block;}
+
+#ui{position:absolute;top:10px;left:10px;}
+.box{margin:5px;padding:5px;border:1px solid #0ff;}
+
+#controls{
+position:absolute;
+top:10px;
+right:10px;
+}
+
+button{
+margin:5px;
+padding:10px;
+background:black;
+border:1px solid #0ff;
+color:#0ff;
+cursor:pointer;
+}
+
+#text-content{
+position:absolute;
+bottom:20px;
+left:20px;
+}
+</style>
 </head>
+
 <body>
 
-<div id="interface">
-    <h2>AL CIELO</h2>
-    
-    <div class="stat-grid">
-        <div class="stat-box">SALUD: <span id="val-health">100</span>%</div>
-        <div class="stat-box">MENTAL: <span id="val-mental">100</span>%</div>
-        <div class="stat-box">DINERO: $<span id="val-money">0</span></div>
-        <div class="stat-box">EDAD: <span id="val-age">0</span></div>
-    </div>
-
-    <div id="text-content">Iniciando sistema...</div>
-    
-    <div id="options">
-        </div>
+<div id="ui">
+<div class="box">MENTAL <span id="m">100</span></div>
+<div class="box">SALUD <span id="h">100</span></div>
+<div class="box">DINERO <span id="d">1000</span></div>
+<div class="box">SOCIAL <span id="s">50</span></div>
 </div>
 
-<script src="/static/scripts.js"></script>
+<div id="controls">
+<button onclick="resume()">SEGUIR</button>
+<button onclick="pause()">PARAR</button>
+<button onclick="reset()">REINICIAR</button>
+</div>
+
+<div id="text-content"></div>
+
+<canvas id="game"></canvas>
 
 <script>
-    // ESTA FUNCIÓN CONECTA EL BACKEND CON LA INTERFAZ
-    window.updateSimState = function(data) {
-        const s = data.state || data;
-        document.getElementById("val-health").innerText = Math.round(s.health);
-        document.getElementById("val-mental").innerText = Math.round(s.mental);
-        document.getElementById("val-money").innerText = Math.round(s.money);
-        document.getElementById("val-age").innerText = s.age.toFixed(1);
 
-        // Si entramos en recuperación, cambiamos el color de la interfaz
-        if (data.status === "recovery") {
-            document.getElementById("interface").classList.add("recovery-mode");
-        } else {
-            document.getElementById("interface").classList.remove("recovery-mode");
-        }
-    };
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+canvas.width = innerWidth;
+canvas.height = innerHeight;
+
+// =====================
+// ESTADO
+// =====================
+let state = JSON.parse(localStorage.getItem("state")) || {
+    mental:100,health:100,money:1000,social:50
+};
+
+let running = true;
+let player = {x:100,y:200};
+let enemies = [];
+let frame = 0;
+
+// =====================
+// CONTROL
+// =====================
+function pause(){running=false;}
+function resume(){running=true;loop();}
+function reset(){location.reload();}
+
+addEventListener("mousemove",e=>{
+    player.y = e.clientY;
+});
+
+// =====================
+// EVENTOS BACKEND
+// =====================
+async function nextEvent(){
+    try{
+        const r = await fetch("/judge",{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({
+                decision:"TDM",
+                context:"auto"
+            })
+        });
+
+        const d = await r.json();
+        state = d.state;
+
+    }catch(e){}
+}
+
+// =====================
+// SPAWN
+// =====================
+function spawn(){
+    enemies.push({
+        x:canvas.width,
+        y:Math.random()*canvas.height,
+        type:["dinero","amor","crisis"][Math.floor(Math.random()*3)]
+    });
+}
+
+// =====================
+// DAÑO
+// =====================
+function damage(type){
+
+    if(type==="crisis"){
+        state.mental -=10;
+        state.money -=100;
+    }
+
+    if(type==="amor"){
+        state.social +=5;
+    }
+
+    if(type==="dinero"){
+        state.money +=50;
+    }
+
+    document.getElementById("text-content").innerText = "Impacto: "+type;
+}
+
+// =====================
+// LOOP
+// =====================
+function loop(){
+
+if(!running) return;
+
+ctx.fillStyle="rgba(0,0,0,0.3)";
+ctx.fillRect(0,0,canvas.width,canvas.height);
+
+// PLAYER
+ctx.fillStyle="#0ff";
+ctx.fillRect(player.x,player.y,20,20);
+
+// ENEMIGOS
+enemies.forEach((e,i)=>{
+
+    e.x -=3;
+
+    let icon="🚁";
+    if(e.type==="dinero") icon="💰";
+    if(e.type==="amor") icon="❤️";
+    if(e.type==="crisis") icon="📉";
+
+    ctx.font="30px Arial";
+    ctx.fillText(icon,e.x,e.y);
+
+    if(Math.abs(e.x-player.x)<30 && Math.abs(e.y-player.y)<30){
+        damage(e.type);
+        enemies.splice(i,1);
+    }
+
+});
+
+// SPAWN
+if(frame%60===0) spawn();
+
+// BACKEND
+if(frame%200===0) nextEvent();
+
+// UI
+document.getElementById("m").innerText=Math.floor(state.mental);
+document.getElementById("h").innerText=Math.floor(state.health);
+document.getElementById("d").innerText=Math.floor(state.money);
+document.getElementById("s").innerText=Math.floor(state.social);
+
+// FINAL
+if(state.mental<=0){
+    alert("COLAPSO");
+    location.reload();
+}
+
+frame++;
+requestAnimationFrame(loop);
+}
+
+loop();
+
 </script>
 
 </body>
