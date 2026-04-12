@@ -22,27 +22,26 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 sessions = {}
 
 # ===============================
-# CREAR ESTADO INICIAL
+# ESTADO INICIAL
 # ===============================
 def create_state(profile):
-    difficulty = int(profile.get("difficulty", 1))
+    diff = int(profile.get("difficulty", 1))
     emotion = profile.get("emotion", "neutral")
-    age = float(profile.get("age", 18))
 
     return {
         "mental": 100,
         "health": 100,
-        "money": 1500 if difficulty == 1 else 800,
+        "money": 1500 if diff == 1 else 600,
         "social": 50,
-        "discipline": 50,
+        "discipline": 40,
         "addiction": 15 if emotion == "stress" else 0,
-        "age": age,
-        "difficulty": difficulty,
+        "karma": 0,
+        "phase": 1,
+        "age": float(profile.get("age", 18)),
+        "difficulty": diff,
         "start_time": time.time(),
         "last_update": time.time(),
-        "is_recovery": False,
-        "phase": 1,
-        "karma": 0
+        "is_recovery": False
     }
 
 # ===============================
@@ -57,7 +56,7 @@ def sim():
     return FileResponse("static/jet.html")
 
 # ===============================
-# START SYSTEM
+# START
 # ===============================
 @app.post("/start")
 async def start(req: Request):
@@ -81,11 +80,10 @@ async def start(req: Request):
         return JSONResponse(status_code=400, content={"error": str(e)})
 
 # ===============================
-# EVENT GENERATOR (VIVO)
+# EVENT GENERATOR
 # ===============================
 def generate_event(state):
 
-    # eventos críticos primero
     if state["addiction"] > 65:
         return "tentacion"
 
@@ -98,14 +96,8 @@ def generate_event(state):
     if state["mental"] < 35:
         return "conflicto"
 
-    # fase progresiva del sistema
-    if state.get("phase", 1) >= 2:
-        return random.choice([
-            "oportunidad",
-            "conflicto",
-            "dinero",
-            "amor"
-        ])
+    if state.get("phase", 1) >= 3:
+        return random.choice(["oportunidad", "conflicto", "amor", "dinero"])
 
     return random.choice([
         "dinero",
@@ -118,7 +110,7 @@ def generate_event(state):
     ])
 
 # ===============================
-# JUEZ TVID ENGINE
+# JUEZ TVID + FASE SYSTEM
 # ===============================
 @app.post("/judge")
 async def judge(req: Request):
@@ -134,29 +126,25 @@ async def judge(req: Request):
 
         state = sessions[session_id]
         now = time.time()
-
-        # ===============================
-        # ANTI-SPAM CONTROL
-        # ===============================
-        if now - state["last_update"] < 0.15:
-            return {
-                "status": "cooldown",
-                "state": state
-            }
-
-        state["last_update"] = now
         elapsed = now - state["start_time"]
 
         # ===============================
-        # RECOVERY MODE (MEDITACIÓN FUTURA)
+        # CONTROL ANTI-SPAM
         # ===============================
-        if elapsed > 600:
-            state["is_recovery"] = True
-            state["phase"] = 3
-            return {
-                "status": "recovery",
-                "state": state
-            }
+        if now - state["last_update"] < 0.15:
+            return {"status": "cooldown", "state": state}
+
+        state["last_update"] = now
+
+        # ===============================
+        # FASES POR TIEMPO (MEDICIÓN REAL)
+        # ===============================
+        if elapsed > 720:
+            state["phase"] = 4   # Renacimiento
+        elif elapsed > 420:
+            state["phase"] = 3   # Meditación
+        elif elapsed > 180:
+            state["phase"] = 2   # Crisis
 
         # ===============================
         # IMPACTO TVID SYSTEM
@@ -166,99 +154,86 @@ async def judge(req: Request):
             "health": 0,
             "money": 0,
             "social": 0,
-            "addiction": 0,
             "discipline": 0,
+            "addiction": 0,
             "karma": 0
         }
 
-        # ===============================
         # TVID CORE
-        # ===============================
-
-        # TDB - Bien
         if decision == "TDB":
-            impact["mental"] += 18
-            impact["discipline"] += 6
-            impact["addiction"] -= 8
+            impact["mental"] += 15
+            impact["discipline"] += 10
             impact["karma"] += 2
 
-        # TDM - Sombra
         elif decision == "TDM":
-            impact["mental"] -= 22
-            impact["addiction"] += 18
+            impact["mental"] -= 20
+            impact["addiction"] += 15
             impact["karma"] -= 3
 
-        # TDN - Niño
         elif decision == "TDN":
-            impact["social"] += 18
-            impact["money"] -= 120
+            impact["social"] += 15
+            impact["money"] -= 50
             impact["karma"] += 1
 
-        # TDP - Padre
         elif decision == "TDP":
-            impact["money"] += 350
-            impact["discipline"] += 18
+            impact["money"] += 200
+            impact["discipline"] += 15
             impact["karma"] += 3
 
-        # TDMM - Madre (NUEVO BALANCE)
         elif decision == "TDMM":
             impact["mental"] += 15
             impact["social"] += 10
-            impact["addiction"] -= 5
+            impact["health"] += 10
             impact["karma"] += 2
 
-        # TDK - Beso (CONEXIÓN EMOCIONAL)
         elif decision == "TDK":
+            impact["social"] += 20
             impact["mental"] += 10
-            impact["social"] += 15
-            impact["discipline"] -= 3
-            impact["karma"] += 2
+            impact["karma"] += 3
 
-        # TDG - Guerra emocional
         elif decision == "TDG":
-            impact["health"] -= 15
-            impact["mental"] += 10
-            impact["discipline"] += 5
+            impact["discipline"] += 20
+            impact["health"] -= 10
+            impact["mental"] += 5
             impact["karma"] -= 2
 
-        # ATAQUE EXTERNO
         elif decision == "ataque_enemigo":
             impact["health"] -= 12
             impact["mental"] -= 6
             impact["karma"] -= 1
 
         # ===============================
-        # CONTEXTO DINÁMICO
+        # CONTEXTO
         # ===============================
-        if context in ["crisis", "enfermedad", "conflicto"]:
+        if context in ["crisis", "conflicto", "enfermedad"]:
             if decision not in ["TDB", "TDP", "TDMM"]:
                 impact["mental"] -= 10
                 impact["money"] -= 80
 
         if context == "oportunidad":
             if decision in ["TDB", "TDP", "TDMM"]:
-                impact["money"] += 450
+                impact["money"] += 300
                 impact["karma"] += 1
 
         # ===============================
         # APLICAR ESTADO
         # ===============================
-        for key in impact:
-            if key == "money":
-                state[key] = max(0, min(999999, state[key] + impact[key]))
+        for k, v in impact.items():
+            if k == "money":
+                state[k] = max(0, min(999999, state[k] + v))
             else:
-                state[key] = max(0, min(100, state[key] + impact[key]))
+                state[k] = max(0, min(100, state[k] + v))
 
         state["age"] += 0.15
 
         # ===============================
-        # EVOLUCIÓN DE FASE
+        # EVOLUCIÓN DE FASE POR KARMA
         # ===============================
         if state["karma"] > 10:
-            state["phase"] = 2
+            state["phase"] = max(state["phase"], 2)
 
         if state["karma"] > 25:
-            state["phase"] = 3
+            state["phase"] = max(state["phase"], 3)
 
         # ===============================
         # GAME OVER
@@ -283,11 +258,12 @@ async def judge(req: Request):
         return {
             "status": "continue",
             "state": state,
-            "next_event": generate_event(state)
+            "phase_alert": state["phase"],
+            "next_event": "meditacion_obligatoria" if state["phase"] == 3
+            else generate_event(state)
         }
 
     except Exception as e:
-        print("ERROR:", e)
         return JSONResponse(status_code=500, content={"error": str(e)})
 
 # ===============================
