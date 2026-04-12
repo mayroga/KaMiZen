@@ -44,13 +44,24 @@ def create_state(profile):
         "phase": 1,
 
         # ===============================
-        # KARMA SYSTEM (NUEVO)
+        # KARMA SYSTEM
         # ===============================
         "karma": 0,
         "karma_level": 0,
         "powers": [],
         "meditation_unlocked": False,
-        "shield": 0
+        "shield": 0,
+
+        # ===============================
+        # FASE 1 — INTELIGENCIA REAL
+        # ===============================
+        "patterns": {
+            "impulsivity": 0,
+            "consistency": 0,
+            "avoidance": 0,
+            "clarity": 0
+        },
+        "history": []
     }
 
 # ===============================
@@ -79,25 +90,22 @@ def update_karma(state):
         state["powers"] = []
 
 # ===============================
-# GENERADOR DE EVENTOS DINÁMICOS
+# GENERADOR DE EVENTOS DINÁMICOS (FASE 1 PERSONALIZADA)
 # ===============================
 def generate_event(state):
-    if state["addiction"] > 65: return "tentacion"
-    if state["money"] < 300: return "crisis"
-    if state["health"] < 45: return "enfermedad"
-    if state["mental"] < 35: return "conflicto"
 
-    if state["phase"] >= 3:
-        return "meditacion_obligatoria"
+    p = state.get("patterns", {})
 
-    if state["phase"] >= 2:
-        return random.choice(["oportunidad", "conflicto", "dinero", "amor"])
+    if p.get("impulsivity", 0) > 60:
+        return "tentacion"
 
-    return random.choice([
-        "dinero", "amor", "oportunidad",
-        "conflicto", "enfermedad",
-        "crisis", "tentacion"
-    ])
+    if p.get("avoidance", 0) > 50:
+        return "crisis"
+
+    if state["mental"] < 30:
+        return "conflicto"
+
+    return random.choice(["dinero", "amor", "oportunidad", "conflicto"])
 
 # ===============================
 # RUTAS
@@ -207,7 +215,30 @@ async def judge(req: Request):
         state["age"] += 0.15
 
         # ===============================
-        # KARMA UPDATE (NUEVO)
+        # DETECCIÓN DE PATRONES (NUEVO)
+        # ===============================
+        state["history"].append({
+            "decision": decision,
+            "context": context,
+            "time": now
+        })
+
+        if decision == "TDM":
+            state["patterns"]["impulsivity"] += 2
+
+        if decision in ["TDB", "TDP"]:
+            state["patterns"]["clarity"] += 2
+            state["patterns"]["consistency"] += 1
+
+        if decision == "TDN":
+            state["patterns"]["avoidance"] += 1
+
+        # NORMALIZAR
+        for k in state["patterns"]:
+            state["patterns"][k] = max(0, min(100, state["patterns"][k]))
+
+        # ===============================
+        # KARMA UPDATE
         # ===============================
         update_karma(state)
 
