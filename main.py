@@ -90,7 +90,7 @@ def update_karma(state):
         state["powers"] = []
 
 # ===============================
-# GENERADOR DE EVENTOS DINÁMICOS (FASE 1 PERSONALIZADA)
+# GENERADOR DE EVENTOS DINÁMICOS (INTELIGENCIA REAL)
 # ===============================
 def generate_event(state):
 
@@ -201,7 +201,9 @@ async def judge(req: Request):
             else:
                 state[key] = max(0, min(100, state.get(key, 0) + val))
 
+        # ===============================
         # CONTEXT
+        # ===============================
         if context in ["crisis", "enfermedad", "conflicto"]:
             if decision not in ["TDB", "TDP", "TDMM"]:
                 state["mental"] -= 10
@@ -215,7 +217,7 @@ async def judge(req: Request):
         state["age"] += 0.15
 
         # ===============================
-        # DETECCIÓN DE PATRONES (NUEVO)
+        # DETECCIÓN DE PATRONES (FASE 1 REAL)
         # ===============================
         state["history"].append({
             "decision": decision,
