@@ -61,7 +61,24 @@ def create_state(profile):
             "avoidance": 0,
             "clarity": 0
         },
-        "history": []
+        "history": [],
+
+        # ===============================
+        # 🧠 MOTOR PSICOLÓGICO PROFUNDO (NUEVO)
+        # ===============================
+        "emotional_memory": {
+            "stress": 0,
+            "loneliness": 0,
+            "trauma": 0,
+            "anxiety": 0,
+            "self_esteem": 70
+        },
+
+        "identity_profile": {
+            "archetype": "undefined",
+            "stability": 50,
+            "reaction_type": "neutral"
+        }
     }
 
 # ===============================
@@ -90,11 +107,36 @@ def update_karma(state):
         state["powers"] = []
 
 # ===============================
+# 🧬 IDENTIDAD DINÁMICA
+# ===============================
+def update_identity(state):
+    p = state["patterns"]
+    e = state["emotional_memory"]
+
+    if p["impulsivity"] > 60:
+        state["identity_profile"]["archetype"] = "reactivo"
+    elif p["clarity"] > 60:
+        state["identity_profile"]["archetype"] = "consciente"
+    elif e["loneliness"] > 60:
+        state["identity_profile"]["archetype"] = "aislado"
+    else:
+        state["identity_profile"]["archetype"] = "equilibrio"
+
+    state["identity_profile"]["stability"] = max(
+        0,
+        100 - p["impulsivity"] - e["stress"]
+    )
+
+# ===============================
 # GENERADOR DE EVENTOS DINÁMICOS (INTELIGENCIA REAL)
 # ===============================
 def generate_event(state):
 
     p = state.get("patterns", {})
+    e = state.get("emotional_memory", {})
+
+    if e.get("stress", 0) > 70:
+        return "crisis"
 
     if p.get("impulsivity", 0) > 60:
         return "tentacion"
@@ -159,16 +201,12 @@ async def judge(req: Request):
         state = sessions[session_id]
         now = time.time()
 
-        # ANTI-SPAM
         if now - state["last_update"] < 0.15:
             return {"status": "cooldown", "state": state}
 
         state["last_update"] = now
         elapsed = now - state["start_time"]
 
-        # ===============================
-        # FASES
-        # ===============================
         if elapsed > 720:
             state["phase"] = 4
         elif elapsed > 420:
@@ -178,9 +216,6 @@ async def judge(req: Request):
         elif elapsed > 180:
             state["phase"] = 2
 
-        # ===============================
-        # TVID IMPACT
-        # ===============================
         impacts = {
             "TDB": {"mental": 18, "discipline": 10, "addiction": -8, "karma": 3},
             "TDP": {"money": 350, "discipline": 18, "mental": -5, "karma": 4},
@@ -188,13 +223,11 @@ async def judge(req: Request):
             "TDMM": {"health": 12, "mental": 15, "social": 10, "karma": 3},
             "TDK": {"social": 20, "mental": 10, "karma": 4},
             "TDG": {"discipline": 20, "health": -15, "mental": 10, "karma": -2},
-            "TDN": {"social": 18, "money": -120, "mental": 10, "karma": 2},
-            "ataque_enemigo": {"health": -12, "mental": -6, "karma": -1}
+            "TDN": {"social": 18, "money": -120, "mental": 10, "karma": 2}
         }
 
         res = impacts.get(decision, impacts["TDM"])
 
-        # APPLY IMPACT
         for key, val in res.items():
             if key == "money":
                 state[key] = max(0, min(999999, state[key] + val))
@@ -202,22 +235,36 @@ async def judge(req: Request):
                 state[key] = max(0, min(100, state.get(key, 0) + val))
 
         # ===============================
-        # CONTEXT
+        # 🧠 EMOTIONAL MEMORY UPDATE
         # ===============================
-        if context in ["crisis", "enfermedad", "conflicto"]:
-            if decision not in ["TDB", "TDP", "TDMM"]:
-                state["mental"] -= 10
-                state["money"] -= 80
+        em = state["emotional_memory"]
 
-        if context == "oportunidad":
-            if decision in ["TDB", "TDP", "TDMM"]:
-                state["money"] += 450
-                state["karma"] += 2
+        if context == "crisis":
+            em["stress"] += 5
+            em["anxiety"] += 3
 
-        state["age"] += 0.15
+        if context == "amor":
+            em["loneliness"] = max(0, em["loneliness"] - 2)
+
+        if decision == "TDM":
+            em["stress"] += 2
+            em["self_esteem"] -= 1
+
+        if decision in ["TDB", "TDP"]:
+            em["self_esteem"] += 2
+
+        if state["mental"] < 40:
+            em["stress"] += 3
+
+        if state["social"] < 30:
+            em["loneliness"] += 3
+
+        # clamp emotional values
+        for k in em:
+            em[k] = max(0, min(100, em[k]))
 
         # ===============================
-        # DETECCIÓN DE PATRONES (FASE 1 REAL)
+        # PATTERNS
         # ===============================
         state["history"].append({
             "decision": decision,
@@ -235,37 +282,29 @@ async def judge(req: Request):
         if decision == "TDN":
             state["patterns"]["avoidance"] += 1
 
-        # NORMALIZAR
         for k in state["patterns"]:
             state["patterns"][k] = max(0, min(100, state["patterns"][k]))
 
         # ===============================
-        # KARMA UPDATE
+        # IDENTITY UPDATE
         # ===============================
+        update_identity(state)
+
         update_karma(state)
 
-        # SHIELD SYSTEM
-        if "BASIC_SHIELD" in state["powers"]:
-            state["shield"] = min(100, state["shield"] + 2)
-
-        # ===============================
-        # GAME OVER
-        # ===============================
         if state["mental"] <= 0:
             return {"status": "end", "type": "colapso_mental", "state": state}
 
         if state["health"] <= 0:
             return {"status": "end", "type": "muerte_fisica", "state": state}
 
-        # ===============================
-        # RESPONSE FINAL
-        # ===============================
         return {
             "status": "continue",
             "state": state,
             "phase_alert": state["phase"],
             "karma_level": state["karma_level"],
             "powers": state["powers"],
+            "identity": state["identity_profile"],
             "next_event": generate_event(state)
         }
 
