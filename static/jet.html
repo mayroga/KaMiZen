@@ -48,13 +48,13 @@
 <div id="age-display">EDAD: <span id="a">18.0</span></div>
 <div id="timer-display">SESIÓN: <span id="clock">00:00</span></div>
 
-<div id="text-content">Sincronizando con May Roga LLC...</div>
+<div id="text-content">Iniciando simulador de vida...</div>
 <div id="options"></div>
 
 <div id="recovery-screen">
     <h2 id="recovery-text">RESPIRA</h2>
     <div id="breathing-circle"></div>
-    <div id="story-box">El éxito es la calma con la que manejas la tormenta.</div>
+    <div id="story-box">El éxito no es el destino, es la calma con la que manejas la tormenta.</div>
 </div>
 
 <canvas id="game"></canvas>
@@ -74,68 +74,66 @@ let frame = 0;
 let gameActive = true;
 let startTime = Date.now();
 
-// Actualización de UI Global
+// Actualizar UI desde el Backend
 window.updateSimState = (newState) => {
     if(!newState) return;
-    const update = (id, val) => {
-        const el = document.getElementById(id);
-        if(el && val !== undefined) el.innerText = Math.floor(val);
-    };
+    document.getElementById("m").innerText = Math.floor(newState.mental);
+    document.getElementById("h").innerText = Math.floor(newState.health);
+    document.getElementById("d").innerText = Math.floor(newState.money);
+    document.getElementById("s").innerText = Math.floor(newState.social);
+    document.getElementById("v").innerText = Math.floor(newState.addiction);
+    document.getElementById("a").innerText = (newState.age).toFixed(1);
     
-    update("m", newState.mental);
-    update("h", newState.health);
-    update("d", newState.money);
-    update("s", newState.social);
-    update("v", newState.addiction);
-    
-    const ageEl = document.getElementById("a");
-    if(ageEl && newState.age) ageEl.innerText = newState.age.toFixed(1);
-    
+    // Si el backend envía estatus de recuperación
     if(newState.status === "recovery") startRecoveryPhase();
 };
 
-window.addEventListener("mousemove", e => { if(gameActive) player.y = e.clientY; });
+addEventListener("mousemove", e => { if(gameActive) player.y = e.clientY; });
 
-window.addEventListener("mousedown", () => {
-    if(gameActive) {
-        projectiles.push({ x: player.x + 25, y: player.y, speed: 15, owner: 'player' });
-    }
+// Disparar (Poder/Acción)
+addEventListener("mousedown", () => {
+    if(gameActive) projectiles.push({ x: player.x + 25, y: player.y, speed: 15, owner: 'player' });
 });
 
 function spawnEnemy(type) {
-    if(!gameActive) return;
     const icons = { "dinero":"💰", "amor":"❤️", "enfermedad":"🚜", "oportunidad":"💠", "tentacion":"🍺", "conflicto":"🚁", "crisis":"📉" };
     enemies.push({
         x: canvas.width,
         y: Math.random() * (canvas.height - 200) + 100,
         type: type,
         icon: icons[type] || "❓",
-        speed: 5 + (frame / 6000)
+        speed: 5 + (frame / 5000) // Dificultad progresiva en velocidad
     });
 }
 
+// Fase de Recuperación (8 Minutos)
 function startRecoveryPhase() {
-    if(!gameActive) return;
     gameActive = false;
     document.getElementById("recovery-screen").style.display = "flex";
     const circle = document.getElementById("breathing-circle");
     const text = document.getElementById("recovery-text");
     
-    let step = 0;
+    let state = 0; // 0:Inhala, 1:Retiene, 2:Exhala
     setInterval(() => {
-        if(step === 0) { circle.style.transform = "scale(1.8)"; text.innerText = "INHALA"; step = 1; }
-        else if(step === 1) { text.innerText = "RETIENE"; step = 2; }
-        else { circle.style.transform = "scale(1)"; text.innerText = "EXHALA"; step = 0; }
+        if(state === 0) {
+            circle.style.transform = "scale(1.8)";
+            text.innerText = "INHALA"; state = 1;
+        } else if(state === 1) {
+            text.innerText = "RETIENE"; state = 2;
+        } else {
+            circle.style.transform = "scale(1)";
+            text.innerText = "EXHALA"; state = 0;
+        }
     }, 4000);
 }
 
 function loop() {
     if(!gameActive) return;
 
-    ctx.fillStyle = "rgba(0, 0, 0, 0.25)";
+    ctx.fillStyle = "rgba(0, 5, 10, 0.3)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Reloj de sesión
+    // Cronómetro
     let elapsed = Math.floor((Date.now() - startTime) / 1000);
     let mins = Math.floor(elapsed / 60).toString().padStart(2, '0');
     let secs = (elapsed % 60).toString().padStart(2, '0');
@@ -148,14 +146,15 @@ function loop() {
     ctx.fillStyle = "#0ff"; ctx.fill();
     ctx.shadowBlur = 0;
 
-    // Proyectiles
+    // Proyectiles (Aliados y Enemigos)
     projectiles.forEach((p, pi) => {
         p.x += p.speed;
         ctx.fillStyle = p.owner === 'player' ? "#fff" : "#ff0055";
         ctx.fillRect(p.x, p.y - 3, 15, 6);
         
+        // Colisión Proyectil Enemigo -> Jugador
         if(p.owner === 'enemy' && Math.hypot(p.x - player.x, p.y - player.y) < 25) {
-            if(typeof handleCollision === "function") handleCollision("ataque_enemigo");
+            handleCollision("ataque_enemigo");
             projectiles.splice(pi, 1);
         }
         if(p.x > canvas.width || p.x < 0) projectiles.splice(pi, 1);
@@ -168,55 +167,41 @@ function loop() {
         ctx.textAlign = "center";
         ctx.fillText(e.icon, e.x, e.y);
 
-        if(["enfermedad", "conflicto", "crisis"].includes(e.type) && frame % 110 === 0) {
+        // Enemigos disparan (Tractores, Helis, Crisis)
+        if(["enfermedad", "conflicto", "crisis"].includes(e.type) && frame % 120 === 0) {
             projectiles.push({ x: e.x, y: e.y, speed: -10, owner: 'enemy' });
         }
 
+        // Colisión Proyectil Jugador -> Entidad
         projectiles.forEach((p, pi) => {
             if(p.owner === 'player' && Math.hypot(p.x - e.x, p.y - e.y) < 40) {
-                if(typeof handleCollision === "function") handleCollision(e.type);
+                handleCollision(e.type); // Disparar a la oportunidad
                 enemies.splice(i, 1);
                 projectiles.splice(pi, 1);
             }
         });
 
+        // Colisión Directa (Choque)
         if(Math.hypot(e.x - player.x, e.y - player.y) < 45) {
-            if(typeof handleCollision === "function") handleCollision(e.type);
+            handleCollision(e.type);
             enemies.splice(i, 1);
         }
+
         if(e.x < -100) enemies.splice(i, 1);
     });
 
-    if(frame % 85 === 0 && window.currentEvent) spawnEnemy(window.currentEvent);
+    if(frame % 80 === 0 && window.currentEvent) spawnEnemy(window.currentEvent);
+    
     frame++;
     requestAnimationFrame(loop);
 }
 
-// INICIALIZACIÓN BLINDADA
 window.onload = () => {
-    console.log("AL CIELO Engine: Iniciando componentes...");
-    loop(); // Inicia el renderizado aunque no haya datos aún
-    
-    let attempts = 0;
-    const checkBrain = setInterval(() => {
-        if (typeof startLifeFlow === "function") {
-            console.log("Cerebro conectado. Lanzando flujo de vida.");
-            startLifeFlow();
-            clearInterval(checkBrain);
-        } else {
-            attempts++;
-            if(attempts > 20) {
-                document.getElementById("text-content").innerText = "ERROR: No se detecta scripts.js";
-                clearInterval(checkBrain);
-            }
-        }
-    }, 300);
+    loop();
+    setTimeout(() => { if(typeof startLifeFlow === "function") startLifeFlow(); }, 1000);
 };
 
-window.addEventListener('resize', () => {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-});
+window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
 </script>
 </body>
 </html>
