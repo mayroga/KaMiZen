@@ -338,5 +338,54 @@
       ]
     }
 
-  ]
+  ],
+
+  "karma_system": {
+    "enabled": true,
+    "max_karma": 100,
+
+    "levels": {
+      "0": "Sin control",
+      "10": "Despertar inicial",
+      "25": "Conciencia activa",
+      "50": "Dominio mental",
+      "75": "Maestro del sistema",
+      "100": "Estado trascendente"
+    },
+
+    "rewards": {
+      "10": {
+        "unlock": ["TDB_boost"],
+        "description": "Aumento de estabilidad mental"
+      },
+      "25": {
+        "unlock": ["auto_TDB", "shield_basic"],
+        "description": "Protección contra eventos negativos"
+      },
+      "50": {
+        "unlock": ["slow_time", "karma_multiplier_x2"],
+        "description": "Control del ritmo de decisiones"
+      },
+      "75": {
+        "unlock": ["auto_recovery", "event_prediction"],
+        "description": "Anticipación de eventos del sistema"
+      },
+      "100": {
+        "unlock": ["full_control_mode"],
+        "description": "Dominio total del sistema TVID"
+      }
+    },
+
+    "penalties": {
+      "negative_karma_threshold": -10,
+      "effects": ["random_events_increase", "mental_decay_boost"]
+    },
+
+    "visualization": {
+      "ui_display": true,
+      "show_bar": true,
+      "show_level_text": true,
+      "color_gradient": ["#ff3b3b", "#ffcc00", "#00ff88", "#00f2ff"]
+    }
+  }
 }
