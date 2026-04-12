@@ -21,6 +21,9 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 # ===============================
 sessions = {}
 
+# ===============================
+# CREAR ESTADO INICIAL
+# ===============================
 def create_state(profile):
     difficulty = int(profile.get("difficulty", 1))
     emotion = profile.get("emotion", "neutral")
@@ -37,7 +40,9 @@ def create_state(profile):
         "difficulty": difficulty,
         "start_time": time.time(),
         "last_update": time.time(),
-        "is_recovery": False
+        "is_recovery": False,
+        "phase": 1,
+        "karma": 0
     }
 
 # ===============================
@@ -52,7 +57,7 @@ def sim():
     return FileResponse("static/jet.html")
 
 # ===============================
-# START
+# START SYSTEM
 # ===============================
 @app.post("/start")
 async def start(req: Request):
@@ -76,10 +81,11 @@ async def start(req: Request):
         return JSONResponse(status_code=400, content={"error": str(e)})
 
 # ===============================
-# GENERADOR DE EVENTOS
+# EVENT GENERATOR (VIVO)
 # ===============================
 def generate_event(state):
 
+    # eventos críticos primero
     if state["addiction"] > 65:
         return "tentacion"
 
@@ -92,6 +98,15 @@ def generate_event(state):
     if state["mental"] < 35:
         return "conflicto"
 
+    # fase progresiva del sistema
+    if state.get("phase", 1) >= 2:
+        return random.choice([
+            "oportunidad",
+            "conflicto",
+            "dinero",
+            "amor"
+        ])
+
     return random.choice([
         "dinero",
         "amor",
@@ -103,7 +118,7 @@ def generate_event(state):
     ])
 
 # ===============================
-# JUEZ PRINCIPAL (TVID ENGINE)
+# JUEZ TVID ENGINE
 # ===============================
 @app.post("/judge")
 async def judge(req: Request):
@@ -121,7 +136,7 @@ async def judge(req: Request):
         now = time.time()
 
         # ===============================
-        # ANTI-SPAM / CONTROL DE FLUJO
+        # ANTI-SPAM CONTROL
         # ===============================
         if now - state["last_update"] < 0.15:
             return {
@@ -133,10 +148,11 @@ async def judge(req: Request):
         elapsed = now - state["start_time"]
 
         # ===============================
-        # MODO RECUPERACIÓN
+        # RECOVERY MODE (MEDITACIÓN FUTURA)
         # ===============================
         if elapsed > 600:
             state["is_recovery"] = True
+            state["phase"] = 3
             return {
                 "status": "recovery",
                 "state": state
@@ -151,52 +167,65 @@ async def judge(req: Request):
             "money": 0,
             "social": 0,
             "addiction": 0,
-            "discipline": 0
+            "discipline": 0,
+            "karma": 0
         }
 
-        # TDB - Técnica del Bien
+        # ===============================
+        # TVID CORE
+        # ===============================
+
+        # TDB - Bien
         if decision == "TDB":
             impact["mental"] += 18
             impact["discipline"] += 6
             impact["addiction"] -= 8
+            impact["karma"] += 2
 
-        # TDM - Técnica del Mal
+        # TDM - Sombra
         elif decision == "TDM":
             impact["mental"] -= 22
             impact["addiction"] += 18
+            impact["karma"] -= 3
 
-        # TDN - Técnica del Niño
+        # TDN - Niño
         elif decision == "TDN":
             impact["social"] += 18
             impact["money"] -= 120
+            impact["karma"] += 1
 
-        # TDP - Técnica del Padre
+        # TDP - Padre
         elif decision == "TDP":
             impact["money"] += 350
             impact["discipline"] += 18
+            impact["karma"] += 3
 
-        # TDMM - Técnica Madre (AGREGADA)
+        # TDMM - Madre (NUEVO BALANCE)
         elif decision == "TDMM":
             impact["mental"] += 15
             impact["social"] += 10
             impact["addiction"] -= 5
+            impact["karma"] += 2
 
-        # TDK - Técnica del Beso (CONEXIÓN)
+        # TDK - Beso (CONEXIÓN EMOCIONAL)
         elif decision == "TDK":
             impact["mental"] += 10
             impact["social"] += 15
             impact["discipline"] -= 3
+            impact["karma"] += 2
 
-        # TDG - Técnica de Guerra Emocional
+        # TDG - Guerra emocional
         elif decision == "TDG":
             impact["health"] -= 15
             impact["mental"] += 10
             impact["discipline"] += 5
+            impact["karma"] -= 2
 
-        # ATAQUE DEL SISTEMA (enemigo del juego)
+        # ATAQUE EXTERNO
         elif decision == "ataque_enemigo":
             impact["health"] -= 12
             impact["mental"] -= 6
+            impact["karma"] -= 1
 
         # ===============================
         # CONTEXTO DINÁMICO
@@ -209,9 +238,10 @@ async def judge(req: Request):
         if context == "oportunidad":
             if decision in ["TDB", "TDP", "TDMM"]:
                 impact["money"] += 450
+                impact["karma"] += 1
 
         # ===============================
-        # APLICACIÓN DE ESTADO
+        # APLICAR ESTADO
         # ===============================
         for key in impact:
             if key == "money":
@@ -222,7 +252,16 @@ async def judge(req: Request):
         state["age"] += 0.15
 
         # ===============================
-        # GAME OVER CONDITIONS
+        # EVOLUCIÓN DE FASE
+        # ===============================
+        if state["karma"] > 10:
+            state["phase"] = 2
+
+        if state["karma"] > 25:
+            state["phase"] = 3
+
+        # ===============================
+        # GAME OVER
         # ===============================
         if state["mental"] <= 0:
             return {
