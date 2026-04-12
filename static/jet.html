@@ -1,351 +1,183 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KAMIZEN | Tactical Balance LIVE</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KAMIZEN | Life Simulation</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --cyan: #00f2ff; --red: #ff3b3b; --green: #00ff88; --bg: #030303; --yellow: #f1c40f; --purple: #a29bfe; }
+        body { margin: 0; background: var(--bg); overflow: hidden; font-family: 'JetBrains Mono'; color: var(--cyan); }
+        
+        /* HUD */
+        #ui { position: absolute; top: 10px; left: 10px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; z-index: 1000; pointer-events: none; }
+        .box { padding: 8px 12px; border: 1px solid var(--cyan); background: rgba(0,0,0,0.8); font-size: 11px; text-transform: uppercase; }
+        .critical { border-color: var(--red); color: var(--red); animation: blink 0.5s infinite; }
+        
+        /* CONTROLES TÁCTICOS TVID */
+        #tactic-menu { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; z-index: 2000; }
+        .tvid-btn { padding: 10px; border: 1px solid var(--cyan); background: black; color: var(--cyan); font-size: 12px; cursor: pointer; transition: 0.3s; }
+        .tvid-btn:hover { background: var(--cyan); color: black; }
+        .tvid-btn span { display: block; font-size: 8px; opacity: 0.7; }
 
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+        #menu-btn { position: absolute; top: 10px; right: 10px; z-index: 2000; padding: 10px; border: 1px solid var(--cyan); background: black; color: var(--cyan); }
+        canvas { display: block; }
 
-<style>
-:root{
-    --cyan:#00f2ff;
-    --red:#ff3b3b;
-    --green:#00ff88;
-    --bg:#030303;
-}
+        /* OVERLAYS */
+        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 3000; text-align: center; }
+        .hidden { display: none; }
+        
+        /* MEDITACIÓN */
+        #breath-circle { width: 150px; height: 150px; border: 5px solid var(--cyan); border-radius: 50%; transition: transform 4s ease-in-out; margin: 20px; }
+        .breathing-in { transform: scale(1.6); box-shadow: 0 0 50px var(--cyan); }
+        .breathing-out { transform: scale(0.8); opacity: 0.5; }
 
-body{
-    margin:0;
-    background:var(--bg);
-    overflow:hidden;
-    font-family:'JetBrains Mono';
-    color:var(--cyan);
-}
-
-#ui{
-    position:absolute;
-    top:10px;
-    left:10px;
-    display:flex;
-    gap:10px;
-    z-index:1000;
-    pointer-events:none;
-}
-
-.box{
-    padding:8px 12px;
-    border:1px solid var(--cyan);
-    background:rgba(0,0,0,0.8);
-    font-size:11px;
-}
-
-#menu-btn{
-    position:absolute;
-    top:10px;
-    right:10px;
-    z-index:2000;
-    padding:10px 20px;
-    border:1px solid var(--cyan);
-    background:black;
-    color:var(--cyan);
-}
-
-canvas{display:block;}
-
-.overlay{
-    position:fixed;
-    inset:0;
-    background:rgba(0,0,0,0.95);
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
-    z-index:3000;
-}
-
-.hidden{display:none;}
-
-button{
-    padding:12px 20px;
-    margin:5px;
-    border:1px solid var(--cyan);
-    background:none;
-    color:var(--cyan);
-}
-
-button:hover{
-    background:var(--cyan);
-    color:black;
-}
-
-/* ===================== */
-/* MEDITATION SYSTEM */
-/* ===================== */
-
-#breath-circle {
-    width: 150px;
-    height: 150px;
-    border: 5px solid var(--cyan);
-    border-radius: 50%;
-    transition: transform 4s ease-in-out;
-}
-
-.breathing-in { transform: scale(1.5); }
-.breathing-out { transform: scale(0.8); }
-
-</style>
+        @keyframes blink { 50% { opacity: 0.3; } }
+    </style>
 </head>
-
 <body>
 
 <div id="ui">
     <div class="box">ENFOQUE: <span id="mental">100</span></div>
+    <div class="box">SALUD: <span id="health">100</span></div>
+    <div class="box">DINERO: $<span id="money">0</span></div>
     <div class="box">SOCIAL: <span id="social">50</span></div>
-    <div class="box">ESCUDO: <span id="shield">0</span></div>
-    <div class="box">EVENTO: <span id="event">---</span></div>
+    <div class="box">DISCIPLINA: <span id="discipline">40</span></div>
+    <div class="box">KARMA: <span id="karma">0</span></div>
+    <div class="box" style="grid-column: span 3; text-align: center;">EVENTO: <span id="event" style="color:var(--yellow)">CONECTANDO...</span></div>
 </div>
 
 <button id="menu-btn" onclick="togglePause()">PAUSA</button>
 
-<div id="pause-screen" class="overlay hidden">
-    <h1>PAUSA CONSCIENTE</h1>
-    <p>Respira. Observa. Controla tu reacción.</p>
-    <button onclick="togglePause()">CONTINUAR</button>
-    <button onclick="location.reload()">REINICIAR</button>
+<div id="tactic-menu">
+    <button class="tvid-btn" onclick="executeTVID('TDB')">TDB<span>BIEN</span></button>
+    <button class="tvid-btn" onclick="executeTVID('TDP')">TDP<span>PADRE</span></button>
+    <button class="tvid-btn" onclick="executeTVID('TDMM')">TDMM<span>MADRE</span></button>
+    <button class="tvid-btn" onclick="executeTVID('TDK')">TDK<span>BESO</span></button>
+    <button class="tvid-btn" onclick="executeTVID('TDN')">TDN<span>NIÑO</span></button>
+    <button class="tvid-btn" onclick="executeTVID('TDG')">TDG<span>GUERRA</span></button>
+</div>
+
+<div id="meditation-overlay" class="overlay hidden">
+    <h1 id="breath-instruction">INHALA</h1>
+    <div id="breath-circle"></div>
+    <p>FASE 3: MEDITACIÓN CONSCIENTE<br>Recuperando sistema nervioso...</p>
+    <div class="box">KARMA ACTUAL: <span id="karma-med">0</span></div>
 </div>
 
 <div id="game-over" class="overlay hidden">
-    <h1>COLAPSO TOTAL</h1>
+    <h1 id="over-title">SISTEMA APAGADO</h1>
     <p id="over-msg"></p>
-    <button onclick="location.reload()">REENCARNAR</button>
-</div>
-
-<!-- ===================== -->
-<!-- MEDITATION OVERLAY -->
-<!-- ===================== -->
-<div id="meditation-overlay" class="overlay hidden">
-    <h1 id="breath-instruction">INHALA</h1>
-
-    <div id="breath-circle"></div>
-
-    <p>Fase de Meditación Consciente: Recuperando Sistema Nervioso</p>
-
-    <div class="box">
-        Karma Acumulado: <span id="karma-med">0</span>
-    </div>
+    <button onclick="location.href='/'">REINICIAR CICLO</button>
 </div>
 
 <canvas id="game"></canvas>
 
 <script>
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
-const canvas=document.getElementById("game");
-const ctx=canvas.getContext("2d");
+let session_id = localStorage.getItem("session_id");
+let currentEvent = "neutral";
+let state = { active: true, paused: false };
 
-canvas.width=window.innerWidth;
-canvas.height=window.innerHeight;
-
-// ================= BACKEND =================
-let session_id=localStorage.getItem("session_id");
-
-async function judge(decision,context){
-
-    if(!session_id) return;
-
-    try{
-        const res=await fetch("/judge",{
-            method:"POST",
-            headers:{"Content-Type":"application/json"},
-            body:JSON.stringify({session_id,decision,context})
+// --- MOTOR DE JUICIO (Llamada al main.py) ---
+async function executeTVID(decision) {
+    if (!state.active || state.paused) return;
+    
+    try {
+        const res = await fetch("/judge", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ session_id, decision, context: currentEvent })
         });
-
-        const data=await res.json();
-
-        if(data.state){
-            state.mental=data.state.mental;
-            state.social=data.state.social;
-            state.shield=data.state.discipline||state.shield;
+        const data = await res.json();
+        
+        if (data.status === "continue" || data.status === "ready") {
+            updateUI(data.state);
+            currentEvent = data.next_event;
+            if (data.phase_alert === 3) startMeditation();
+        } else if (data.status === "end") {
+            showGameOver(data.type);
         }
-
-        if(data.next_event){
-            currentEvent=data.next_event;
-            document.getElementById("event").innerText=currentEvent;
-        }
-
-        if(data.status==="end"){
-            gameOver(data.type);
-        }
-
-        // 🔥 ACTIVACIÓN MEDITACIÓN
-        if(data.phase_alert === 3){
-            startMeditationPhase();
-        }
-
-    }catch(e){
-        console.log("judge error",e);
-    }
+    } catch (e) { console.error("Error táctico:", e); }
 }
 
-// ================= STATE =================
-let state={
-    mental:100,
-    social:50,
-    shield:0,
-    active:true,
-    paused:false
-};
-
-let player={x:80,y:window.innerHeight/2};
-let keys={};
-let projectiles=[];
-let threats=[];
-let frame=0;
-let currentEvent="neutral";
-
-// ================= INPUT =================
-window.addEventListener("keydown",e=>keys[e.code]=true);
-window.addEventListener("keyup",e=>keys[e.code]=false);
-
-// ================= PAUSE =================
-function togglePause(){
-    state.paused=!state.paused;
-    document.getElementById("pause-screen").classList.toggle("hidden");
+function updateUI(s) {
+    document.getElementById("mental").innerText = Math.floor(s.mental);
+    document.getElementById("health").innerText = Math.floor(s.health);
+    document.getElementById("money").innerText = Math.floor(s.money);
+    document.getElementById("social").innerText = s.social;
+    document.getElementById("discipline").innerText = s.discipline;
+    document.getElementById("karma").innerText = s.karma;
+    document.getElementById("event").innerText = currentEvent.toUpperCase();
+    
+    // Alerta visual si el enfoque es bajo
+    document.getElementById("mental").parentElement.classList.toggle("critical", s.mental < 30);
 }
 
-// ================= SHOOT =================
-window.onclick=function(){
-
-    if(state.paused||!state.active) return;
-
-    let decision="TDB";
-
-    judge(decision,currentEvent);
-};
-
-// ================= ENEMY =================
-class Entity{
-
-    constructor(){
-        this.x=canvas.width+100;
-        this.y=Math.random()*canvas.height;
-        this.speed=2+Math.random()*2;
-    }
-
-    update(){
-        this.x-=this.speed;
-
-        if(Math.random()>0.98){
-            projectiles.push({
-                x:this.x,
-                y:this.y,
-                speed:-6,
-                type:"ENEMY",
-                word:["POBREZA","ESTRÉS","MIEDO","DUDA"][Math.floor(Math.random()*4)],
-                color:"#ff3b3b"
-            });
-        }
-    }
-
-    draw(){
-        ctx.fillStyle="#ff3b3b";
-        ctx.font="20px Arial";
-        ctx.fillText("🚁",this.x,this.y);
-    }
-}
-
-// ================= LOOP =================
-function loop(){
-
-    if(!state.active||state.paused) return;
-
-    ctx.fillStyle="rgba(0,0,0,0.4)";
-    ctx.fillRect(0,0,canvas.width,canvas.height);
-
-    if(keys["ArrowUp"]) player.y-=6;
-    if(keys["ArrowDown"]) player.y+=6;
-
-    ctx.fillStyle="#fff";
-    ctx.beginPath();
-    ctx.arc(player.x,player.y,12,0,Math.PI*2);
-    ctx.fill();
-
-    if(frame%120===0) threats.push(new Entity());
-
-    projectiles.forEach((p,i)=>{
-
-        p.x+=p.speed;
-
-        ctx.fillStyle=p.color;
-        ctx.fillText(p.word,p.x,p.y);
-
-        if(Math.abs(p.x-player.x)<20 && Math.abs(p.y-player.y)<20){
-            if(p.type==="ENEMY") state.mental-=10;
-            projectiles.splice(i,1);
-        }
-
-        if(p.x<-100||p.x>canvas.width+100) projectiles.splice(i,1);
-    });
-
-    threats.forEach((t,i)=>{
-        t.update();
-        t.draw();
-
-        if(Math.abs(t.x-player.x)<30){
-            state.mental-=20;
-            threats.splice(i,1);
-        }
-    });
-
-    document.getElementById("mental").innerText=Math.floor(state.mental);
-    document.getElementById("social").innerText=state.social;
-    document.getElementById("shield").innerText=state.shield;
-    document.getElementById("event").innerText=currentEvent;
-
-    if(state.mental<=0){
-        gameOver("Colapso mental total");
-    }
-
-    frame++;
-    requestAnimationFrame(loop);
-}
-
-// ================= GAME OVER =================
-function gameOver(msg){
-    state.active=false;
-    document.getElementById("game-over").classList.remove("hidden");
-    document.getElementById("over-msg").innerText=msg;
-}
-
-// ================= MEDITATION PHASE =================
-function startMeditationPhase(){
-
+// --- FASE DE MEDITACIÓN ---
+function startMeditation() {
+    state.active = false;
     document.getElementById("meditation-overlay").classList.remove("hidden");
-
-    let stateBreath="inhale";
-
-    let cycle=setInterval(()=>{
-
-        const circle=document.getElementById("breath-circle");
-        const text=document.getElementById("breath-instruction");
-
-        if(stateBreath==="inhale"){
-            circle.className="breathing-in";
-            text.innerText="INHALA CONTROL";
-            stateBreath="exhale";
-        }else{
-            circle.className="breathing-out";
-            text.innerText="EXHALA REACCIÓN";
-            stateBreath="inhale";
+    let mode = "inhale";
+    
+    const interval = setInterval(() => {
+        const circle = document.getElementById("breath-circle");
+        const text = document.getElementById("breath-instruction");
+        if (mode === "inhale") {
+            circle.className = "breathing-in";
+            text.innerText = "INHALA CONTROL";
+            mode = "exhale";
+        } else {
+            circle.className = "breathing-out";
+            text.innerText = "EXHALA REACCIÓN";
+            mode = "inhale";
         }
-
-    },4000);
+    }, 4000);
 }
 
-// ================= START =================
-loop();
+function togglePause() {
+    state.paused = !state.paused;
+    document.getElementById("game-over").classList.toggle("hidden", !state.paused);
+    document.getElementById("over-title").innerText = "PAUSA";
+    document.getElementById("over-msg").innerText = "Respira. Evalúa tu próxima TVID.";
+}
 
+function showGameOver(type) {
+    state.active = false;
+    document.getElementById("game-over").classList.remove("hidden");
+    document.getElementById("over-msg").innerText = type.replace("_", " ").toUpperCase();
+}
+
+// --- SIMULACIÓN VISUAL (FONDO) ---
+let particles = [];
+function initParticles() {
+    for(let i=0; i<50; i++) particles.push({x: Math.random()*canvas.width, y: Math.random()*canvas.height, s: Math.random()*2});
+}
+
+function draw() {
+    if (state.paused) return requestAnimationFrame(draw);
+    ctx.fillStyle = "black";
+    ctx.fillRect(0,0,canvas.width, canvas.height);
+    
+    ctx.fillStyle = "#00f2ff33";
+    particles.forEach(p => {
+        p.y += p.s;
+        if (p.y > canvas.height) p.y = 0;
+        ctx.fillRect(p.x, p.y, 2, 2);
+    });
+    
+    requestAnimationFrame(draw);
+}
+
+initParticles();
+draw();
+
+// Primer evento al cargar
+setTimeout(() => executeTVID("TDB"), 1000);
 </script>
-
 </body>
 </html>
