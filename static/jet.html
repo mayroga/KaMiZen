@@ -68,6 +68,11 @@ canvas { display:block; }
 // 🔥 ESTADO REAL SINCRONIZADO
 let realState = JSON.parse(localStorage.getItem("state") || "{}");
 
+// 🔥 NUEVO: seguridad de estado (evita freeze por undefined)
+function safeState(){
+    return realState && typeof realState === "object" ? realState : {};
+}
+
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
@@ -120,7 +125,8 @@ function sendDecision(type){
             localStorage.setItem("state", JSON.stringify(data.state));
             realState = data.state;
         }
-    });
+    })
+    .catch(()=>{});
 }
 
 // =========================
@@ -128,7 +134,7 @@ function sendDecision(type){
 // =========================
 function executeTVID(type){
 
-    sendDecision(type); // 🔥 conecta con backend
+    sendDecision(type);
 
     bullets.push({
         x:player.x+30,
@@ -193,9 +199,11 @@ function loop(){
     ctx.fillText("🧘",player.x,player.y);
 
     // =====================
-    // REAL STATE EFFECTS
+    // REAL STATE EFFECTS (SAFE)
     // =====================
-    let mental = realState.mental ?? state.mental;
+    let s = safeState();
+    let mental = s.mental ?? state.mental;
+    let life = s.life ?? state.life ?? 3;
 
     // 🔥 MENTE BAJA = MÁS CAOS
     if(mental < 40){
@@ -206,6 +214,7 @@ function loop(){
     // PLAYER BULLETS
     // =====================
     bullets.forEach((b,i)=>{
+
         b.x += b.speed;
 
         ctx.font="20px Arial";
@@ -213,11 +222,14 @@ function loop(){
         ctx.fillText("⚡",b.x,b.y);
 
         enemies.forEach((e,j)=>{
+
             if(Math.abs(b.x-e.x)<40 && Math.abs(b.y-e.y)<40){
                 e.life--;
+
                 bullets.splice(i,1);
 
-                realState.karma = (realState.karma || 0) + 1;
+                s.karma = (s.karma || 0) + 1;
+                realState = s;
 
                 if(e.life<=0) enemies.splice(j,1);
             }
@@ -241,7 +253,8 @@ function loop(){
         }
 
         if(Math.abs(e.x-player.x)<40 && Math.abs(e.y-player.y)<40){
-            realState.life = (realState.life ?? 3) - 1;
+            s.life = (s.life ?? 3) - 1;
+            realState = s;
             enemies.splice(i,1);
         }
 
@@ -252,6 +265,7 @@ function loop(){
     // ENEMY BULLETS
     // =====================
     enemyBullets.forEach((b,i)=>{
+
         b.x -= b.speed;
 
         ctx.font="18px Arial";
@@ -259,7 +273,8 @@ function loop(){
         ctx.fillText("💥",b.x,b.y);
 
         if(Math.abs(b.x-player.x)<30){
-            realState.life = (realState.life ?? 3) - 1;
+            s.life = (s.life ?? 3) - 1;
+            realState = s;
             enemyBullets.splice(i,1);
         }
     });
@@ -268,6 +283,7 @@ function loop(){
     // GIFTS
     // =====================
     gifts.forEach((g,i)=>{
+
         g.x -= 2;
 
         ctx.font="45px Arial";
@@ -275,9 +291,10 @@ function loop(){
 
         if(Math.abs(g.x-player.x)<40){
 
-            if(g.type==="life") realState.life = Math.min(3, (realState.life ?? 3) + 1);
-            if(g.type==="karma") realState.karma = (realState.karma ?? 0) + 1;
+            if(g.type==="life") s.life = Math.min(3, (s.life ?? 3) + 1);
+            if(g.type==="karma") s.karma = (s.karma ?? 0) + 1;
 
+            realState = s;
             gifts.splice(i,1);
         }
     });
@@ -289,20 +306,21 @@ function loop(){
     if(frame % 500 === 0) spawnGift();
 
     // =====================
-    // GAME OVER
+    // GAME OVER (SAFE FIX)
     // =====================
-    if((realState.life ?? 3) <= 0){
+    if((life ?? 3) <= 0){
         alert("GAME OVER - SISTEMA REAL COLAPSADO");
         location.reload();
+        return;
     }
 
     // =====================
     // UI UPDATE
     // =====================
-    document.getElementById("mental").innerText = realState.mental ?? 100;
-    document.getElementById("social").innerText = realState.social ?? 50;
-    document.getElementById("karma").innerText = realState.karma ?? 0;
-    document.getElementById("life").innerText = realState.life ?? 3;
+    document.getElementById("mental").innerText = mental ?? 100;
+    document.getElementById("social").innerText = s.social ?? 50;
+    document.getElementById("karma").innerText = s.karma ?? 0;
+    document.getElementById("life").innerText = life ?? 3;
 
     frame++;
     requestAnimationFrame(loop);
