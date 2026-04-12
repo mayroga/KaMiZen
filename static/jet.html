@@ -78,6 +78,22 @@ button:hover{
     background:var(--cyan);
     color:black;
 }
+
+/* ===================== */
+/* MEDITATION SYSTEM */
+/* ===================== */
+
+#breath-circle {
+    width: 150px;
+    height: 150px;
+    border: 5px solid var(--cyan);
+    border-radius: 50%;
+    transition: transform 4s ease-in-out;
+}
+
+.breathing-in { transform: scale(1.5); }
+.breathing-out { transform: scale(0.8); }
+
 </style>
 </head>
 
@@ -103,6 +119,21 @@ button:hover{
     <h1>COLAPSO TOTAL</h1>
     <p id="over-msg"></p>
     <button onclick="location.reload()">REENCARNAR</button>
+</div>
+
+<!-- ===================== -->
+<!-- MEDITATION OVERLAY -->
+<!-- ===================== -->
+<div id="meditation-overlay" class="overlay hidden">
+    <h1 id="breath-instruction">INHALA</h1>
+
+    <div id="breath-circle"></div>
+
+    <p>Fase de Meditación Consciente: Recuperando Sistema Nervioso</p>
+
+    <div class="box">
+        Karma Acumulado: <span id="karma-med">0</span>
+    </div>
 </div>
 
 <canvas id="game"></canvas>
@@ -146,6 +177,11 @@ async function judge(decision,context){
             gameOver(data.type);
         }
 
+        // 🔥 ACTIVACIÓN MEDITACIÓN
+        if(data.phase_alert === 3){
+            startMeditationPhase();
+        }
+
     }catch(e){
         console.log("judge error",e);
     }
@@ -160,7 +196,7 @@ let state={
     paused:false
 };
 
-let player={x:80,y:canvas.height/2};
+let player={x:80,y:window.innerHeight/2};
 let keys={};
 let projectiles=[];
 let threats=[];
@@ -183,15 +219,6 @@ window.onclick=function(){
     if(state.paused||!state.active) return;
 
     let decision="TDB";
-
-    projectiles.push({
-        x:player.x+30,
-        y:player.y,
-        speed:10,
-        type:"PLAYER",
-        word:"ENFOQUE",
-        color:"#00f2ff"
-    });
 
     judge(decision,currentEvent);
 };
@@ -245,7 +272,6 @@ function loop(){
 
     if(frame%120===0) threats.push(new Entity());
 
-    // PROJECTILES
     projectiles.forEach((p,i)=>{
 
         p.x+=p.speed;
@@ -254,19 +280,14 @@ function loop(){
         ctx.fillText(p.word,p.x,p.y);
 
         if(Math.abs(p.x-player.x)<20 && Math.abs(p.y-player.y)<20){
-
             if(p.type==="ENEMY") state.mental-=10;
-            if(p.type==="HELP") state.mental+=5;
-
             projectiles.splice(i,1);
         }
 
         if(p.x<-100||p.x>canvas.width+100) projectiles.splice(i,1);
     });
 
-    // THREATS
     threats.forEach((t,i)=>{
-
         t.update();
         t.draw();
 
@@ -276,7 +297,6 @@ function loop(){
         }
     });
 
-    // UI
     document.getElementById("mental").innerText=Math.floor(state.mental);
     document.getElementById("social").innerText=state.social;
     document.getElementById("shield").innerText=state.shield;
@@ -295,6 +315,31 @@ function gameOver(msg){
     state.active=false;
     document.getElementById("game-over").classList.remove("hidden");
     document.getElementById("over-msg").innerText=msg;
+}
+
+// ================= MEDITATION PHASE =================
+function startMeditationPhase(){
+
+    document.getElementById("meditation-overlay").classList.remove("hidden");
+
+    let stateBreath="inhale";
+
+    let cycle=setInterval(()=>{
+
+        const circle=document.getElementById("breath-circle");
+        const text=document.getElementById("breath-instruction");
+
+        if(stateBreath==="inhale"){
+            circle.className="breathing-in";
+            text.innerText="INHALA CONTROL";
+            stateBreath="exhale";
+        }else{
+            circle.className="breathing-out";
+            text.innerText="EXHALA REACCIÓN";
+            stateBreath="inhale";
+        }
+
+    },4000);
 }
 
 // ================= START =================
