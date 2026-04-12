@@ -185,8 +185,8 @@ async function startLife(){
         history: []
     };
 
+    // ... (dentro de startLife())
     try {
-        // SINCRONIZAR CON MOTOR IA
         const res = await fetch("/start", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -195,15 +195,13 @@ async function startLife(){
 
         const data = await res.json();
 
-        // PERSISTENCIA LOCAL
         localStorage.setItem("profile", JSON.stringify(profile));
-        localStorage.setItem("state", JSON.stringify(data.state || state));
+        localStorage.setItem("state", JSON.stringify(data.state));
 
-        // TRANSICIÓN AL SIMULADOR
-        window.location.href = "/static/jet.html";
+        // CAMBIO AQUÍ: Vamos a la ruta del simulador, no al archivo físico
+        window.location.href = "/simulador"; 
     } catch (error) {
-        console.error("Error de conexión con el motor:", error);
-        alert("Error al iniciar el sistema. Verifique el servidor.");
+        alert("Error de conexión");
     }
 }
 </script>
