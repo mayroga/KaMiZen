@@ -1,5 +1,5 @@
 // ===============================
-// scripts.js (ACTUALIZADO COMPLETO)
+// scripts.js (FASE 3 + MOTOR PSICOLÓGICO + NARRATIVA REAL)
 // ===============================
 
 window.currentEvent = null;
@@ -8,9 +8,9 @@ let isGameOver = false;
 let currentPhase = 1;
 let sessionActive = false;
 
-// =========================================
+// ===============================
 // START SYSTEM
-// =========================================
+// ===============================
 async function startLifeFlow(){
 
     try{
@@ -38,7 +38,7 @@ async function startLifeFlow(){
         window.currentEvent = data.next_event;
         sessionActive = true;
 
-        showMessage("Sistema activo. Iniciando simulación humana...");
+        showMessage(data.narrative || "Sistema activo. Iniciando simulación humana...");
 
         processEvent(data.next_event);
 
@@ -47,36 +47,56 @@ async function startLifeFlow(){
     }
 }
 
+
 // =========================================
-// 🧠 PROCESS EVENT (HUMANO DINÁMICO)
+// 🧠 PROCESS EVENT (FASE 3 - PSICOLOGÍA REAL)
 // =========================================
 function processEvent(event){
 
     if(paused || isGameOver || !sessionActive) return;
 
     const state = JSON.parse(localStorage.getItem("state") || "{}");
-    const identity = state.identity_profile || {};
-    const em = state.emotional_memory || {};
+
+    const identity = state.identity || {};
+    const psychology = state.psychology || {};
+    const memory = state.memory || {};
 
     let msg = "";
 
-    if(em.stress > 70){
-        msg = "Tu mente está bajo presión constante... no estás descansando internamente.";
+    // ===============================
+    // 🧠 ESTADO PSICOLÓGICO REAL
+    // ===============================
+
+    if(psychology.stress_memory > 70){
+        msg = "Tu sistema nervioso está saturado. No es el evento: eres tú acumulando presión.";
     }
-    else if(em.loneliness > 60){
-        msg = "Hay un patrón silencioso en ti: te estás alejando emocionalmente.";
+    else if(psychology.trauma_index > 60){
+        msg = "Hay experiencias que aún no has procesado. Tu mente las repite sin control.";
     }
-    else if(identity.archetype === "reactivo"){
-        msg = "Tu forma de reaccionar está dominando tus decisiones.";
+    else if(psychology.self_control < 40){
+        msg = "Estás reaccionando más de lo que decides. El impulso está ganando.";
     }
+    else if(identity.core_state === "fragmentado"){
+        msg = "Tu identidad está operando en partes separadas. No hay una sola versión de ti.";
+    }
+    else if(identity.core_state === "colapsando"){
+        msg = "Estás en modo supervivencia emocional. Todo se siente más intenso de lo real.";
+    }
+
+    // ===============================
+    // EVENTOS VIVOS
+    // ===============================
     else if(event === "crisis"){
-        msg = "No es el evento... eres tú frente al evento.";
+        msg = "La presión externa está activando tu mundo interno.";
     }
     else if(event === "tentacion"){
-        msg = "No es deseo... es impulso sin control.";
+        msg = "No es deseo. Es un patrón repetido buscando control.";
+    }
+    else if(event === "conflicto"){
+        msg = "Tu respuesta emocional está definiendo el resultado más que el evento.";
     }
     else{
-        msg = "El sistema está reconstruyendo tu patrón interno...";
+        msg = "El sistema está observando cómo te conviertes en tu patrón.";
     }
 
     showMessage(msg);
@@ -91,8 +111,9 @@ function processEvent(event){
     }, 8000);
 }
 
+
 // =========================================
-// RESTO SIN CAMBIOS (COMPATIBILIDAD)
+// DECISION ENGINE
 // =========================================
 async function sendDecision(decision){
 
@@ -118,33 +139,57 @@ async function sendDecision(decision){
 
     if(data.status === "end"){
         isGameOver = true;
-        showMessage("SISTEMA COLAPSADO");
+        showMessage("SISTEMA COLAPSADO: fin del ciclo humano");
         return;
+    }
+
+    if(data.narrative){
+        showMessage(data.narrative);
     }
 
     window.currentEvent = data.next_event;
     processEvent(data.next_event);
 }
 
-// UI
+
+// =========================================
+// UI SISTEMA
+// =========================================
 function showMessage(text){
     const el = document.getElementById("text-content");
     if(el) el.innerText = text;
 }
 
 function renderButtons(){
+
     const container = document.getElementById("options");
     if(!container) return;
 
     container.innerHTML = "";
 
-    ["TDB","TDM","TDN","TDP","TDG"].forEach(d=>{
+    const decisions = ["TDB","TDM","TDN","TDP","TDG","TDMM"];
+
+    decisions.forEach(d=>{
         const btn = document.createElement("button");
         btn.innerText = d;
         btn.onclick = ()=>sendDecision(d);
         container.appendChild(btn);
     });
+
+    const pauseBtn = document.createElement("button");
+    pauseBtn.innerText = "PAUSA";
+    pauseBtn.onclick = ()=>paused = true;
+
+    const resumeBtn = document.createElement("button");
+    resumeBtn.innerText = "CONTINUAR";
+    resumeBtn.onclick = ()=>paused = false;
+
+    container.appendChild(pauseBtn);
+    container.appendChild(resumeBtn);
 }
 
+
+// =========================================
 // AUTO START
+// =========================================
 window.onload = ()=>startLifeFlow();
