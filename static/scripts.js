@@ -1,30 +1,21 @@
-// ==========================================
-// MAYKAMI - MOTOR NEURAL LIMPIO Y ESTABLE
-// ==========================================
-
-// ESTADO GLOBAL
 window.currentEvent = null;
-let decisionTimer = null;
-let startTime = null;
 let paused = false;
 let isGameOver = false;
+let currentPhase = 1;
+let sessionActive = false;
 
-// ==========================================
-// INICIO DEL SISTEMA
-// ==========================================
+// =========================================
+// START SYSTEM
+// =========================================
 async function startLifeFlow(){
 
-    console.log("Iniciando sistema MAYKAMI...");
-
-    let profile = JSON.parse(localStorage.getItem("profile")) || {
-        age:18,
-        difficulty:1,
-        emotion:"neutral"
-    };
-
-    startTime = Date.now();
-
     try{
+
+        let profile = JSON.parse(localStorage.getItem("profile")) || {
+            age:18,
+            difficulty:1,
+            emotion:"neutral"
+        };
 
         const res = await fetch("/start",{
             method:"POST",
@@ -34,63 +25,77 @@ async function startLifeFlow(){
 
         const data = await res.json();
 
-        if(data.state){
-            localStorage.setItem("state", JSON.stringify(data.state));
-            if(window.updateSimState) window.updateSimState(data.state);
+        if(data.session_id){
+            localStorage.setItem("session_id", data.session_id);
         }
+
+        localStorage.setItem("state", JSON.stringify(data.state));
 
         window.currentEvent = data.next_event;
 
-        showMessage("Sistema activo. La vida comienza ahora.");
+        sessionActive = true;
+
+        showMessage("Sistema activo. Iniciando simulación de vida.");
+
         processEvent(data.next_event);
 
+        // 🔥 FASE 2 AUTOMÁTICA (7 min)
+        setTimeout(()=>{
+            activatePhase2();
+        }, 7 * 60 * 1000);
+
+        // 🔥 FASE 3 AUTOMÁTICA (12 min total)
+        setTimeout(()=>{
+            activatePhase3();
+        }, 12 * 60 * 1000);
+
     }catch(e){
-        showMessage("ERROR CONECTANDO CON MOTOR");
-        console.error(e);
+        console.error("Error inicio:", e);
+        showMessage("ERROR: No se pudo iniciar el sistema");
     }
 }
 
-// ==========================================
-// PROCESAR EVENTO
-// ==========================================
+// =========================================
+// EVENT SYSTEM
+// =========================================
 function processEvent(event){
 
-    if(paused || isGameOver) return;
+    if(paused || isGameOver || !sessionActive) return;
 
     window.currentEvent = event;
 
-    const messages = {
+    const msg = {
         crisis:"Presión económica detectada",
         amor:"Interacción emocional activa",
-        enfermedad:"Alerta física del sistema",
-        oportunidad:"Momento de crecimiento",
-        conflicto:"Tensión externa detectada",
-        tentacion:"Impulso de evasión",
-        dinero:"Flujo financiero activo"
+        tentacion:"Impulso de control interno",
+        oportunidad:"Momento de expansión",
+        conflicto:"Tensión externa activa",
+        enfermedad:"Alerta biológica del sistema",
+        dinero:"Flujo de recursos activo"
     };
 
-    showMessage(messages[event] || "Evento desconocido");
+    showMessage(msg[event] || "Evento activo en el sistema");
 
     renderButtons();
 
-    // TIMER DE DECISIÓN (EVITA FREEZE)
-    clearTimeout(decisionTimer);
+    // 🔥 INACCIÓN = DECISIÓN AUTOMÁTICA
+    clearTimeout(window.autoDecision);
 
-    decisionTimer = setTimeout(()=>{
+    window.autoDecision = setTimeout(()=>{
         if(!paused && !isGameOver){
-            sendDecision("TDM"); // inacción
+            sendDecision("TDM");
         }
-    },8000);
+    }, 8000);
 }
 
-// ==========================================
-// ENVIAR DECISIÓN
-// ==========================================
+// =========================================
+// JUEZ (BACKEND TVID ENGINE)
+// =========================================
 async function sendDecision(decision){
 
-    if(paused || isGameOver) return;
+    if(paused || isGameOver || !sessionActive) return;
 
-    clearTimeout(decisionTimer);
+    const session_id = localStorage.getItem("session_id");
 
     try{
 
@@ -98,7 +103,8 @@ async function sendDecision(decision){
             method:"POST",
             headers:{"Content-Type":"application/json"},
             body:JSON.stringify({
-                decision:decision,
+                session_id,
+                decision,
                 context:window.currentEvent || "neutral"
             })
         });
@@ -107,7 +113,13 @@ async function sendDecision(decision){
 
         if(data.state){
             localStorage.setItem("state", JSON.stringify(data.state));
-            if(window.updateSimState) window.updateSimState(data.state);
+        }
+
+        if(data.status === "cooldown") return;
+
+        if(data.status === "recovery"){
+            showMessage("FASE DE RECUPERACIÓN ACTIVA");
+            return;
         }
 
         if(data.status === "end"){
@@ -115,30 +127,19 @@ async function sendDecision(decision){
             return;
         }
 
+        window.currentEvent = data.next_event;
+
         processEvent(data.next_event);
 
     }catch(e){
-        console.error("Error juez:",e);
+        console.error("Error juez:", e);
+        showMessage("ERROR DE CONEXIÓN CON EL JUEZ");
     }
 }
 
-// ==========================================
-// COLISIONES DESDE EL CANVAS
-// ==========================================
-function handleCollision(type){
-
-    if(paused || isGameOver) return;
-
-    // impacto directo
-    showMessage("Impacto: " + type);
-
-    // ENVÍA COMO EVENTO REAL
-    sendDecision("ataque_enemigo");
-}
-
-// ==========================================
-// BOTONES TVID + CONTROL
-// ==========================================
+// =========================================
+// BOTONES TVID
+// =========================================
 function renderButtons(){
 
     const container = document.getElementById("options");
@@ -155,18 +156,16 @@ function renderButtons(){
         container.appendChild(btn);
     });
 
-    // CONTROL
+    // CONTROL SYSTEM
     const pauseBtn = document.createElement("button");
-    pauseBtn.innerText = "PARAR";
+    pauseBtn.innerText = "PAUSA";
     pauseBtn.onclick = ()=>paused = true;
 
     const resumeBtn = document.createElement("button");
-    resumeBtn.innerText = "SEGUIR";
+    resumeBtn.innerText = "CONTINUAR";
     resumeBtn.onclick = ()=>{
-        if(paused){
-            paused = false;
-            processEvent(window.currentEvent);
-        }
+        paused = false;
+        processEvent(window.currentEvent);
     };
 
     const resetBtn = document.createElement("button");
@@ -178,9 +177,9 @@ function renderButtons(){
     container.appendChild(resetBtn);
 }
 
-// ==========================================
+// =========================================
 // MENSAJES
-// ==========================================
+// =========================================
 function showMessage(text){
 
     const el = document.getElementById("text-content");
@@ -189,9 +188,9 @@ function showMessage(text){
     speak(text);
 }
 
-// ==========================================
-// VOZ (SIN BLOQUEAR)
-// ==========================================
+// =========================================
+// VOZ
+// =========================================
 function speak(text){
 
     if(!window.speechSynthesis) return;
@@ -205,54 +204,101 @@ function speak(text){
     window.speechSynthesis.speak(msg);
 }
 
-// ==========================================
+// =========================================
 // GAME OVER
-// ==========================================
+// =========================================
 function gameOver(reason){
 
     isGameOver = true;
 
-    showMessage("COLAPSO: " + (reason || "FIN"));
+    showMessage("SISTEMA COLAPSADO: " + reason);
 
     const container = document.getElementById("options");
     if(container){
-        container.innerHTML = '<button onclick="location.reload()">REINICIAR</button>';
+        container.innerHTML = '<button onclick="location.reload()">REINICIAR SISTEMA</button>';
     }
 }
 
-// ==========================================
-// TIEMPO REAL (EVITA CONGELAMIENTO)
-// ==========================================
-setInterval(()=>{
-    if(paused || isGameOver) return;
+// =========================================
+// FASE 2: RESPIRACIÓN GUIADA (7 min)
+// =========================================
+function activatePhase2(){
 
-    let state = JSON.parse(localStorage.getItem("state"));
-    if(!state) return;
+    currentPhase = 2;
 
-    state.age += 0.01;
-    localStorage.setItem("state", JSON.stringify(state));
+    showMessage("FASE 2 ACTIVADA: RESPIRACIÓN CONSCIENTE");
 
-},2000);
+    let cycle = 0;
 
-// ==========================================
-// AUTO INICIO
-// ==========================================
-window.onload = ()=>{
+    window.phase2Interval = setInterval(()=>{
 
-    let tries = 0;
+        if(isGameOver) return clearInterval(window.phase2Interval);
 
-    const wait = setInterval(()=>{
+        const steps = [
+            "INSPIRA... control interno",
+            "RETÉN... conciencia plena",
+            "EXHALA... libera tensión",
+            "OBSERVA... sin juicio"
+        ];
 
-        if(typeof startLifeFlow === "function"){
-            startLifeFlow();
-            clearInterval(wait);
+        showMessage(steps[cycle % steps.length]);
+
+        cycle++;
+
+    }, 4000);
+}
+
+// =========================================
+// FASE 3: SILENCIO + MEDITACIÓN (5 min)
+// =========================================
+function activatePhase3(){
+
+    currentPhase = 3;
+
+    showMessage("FASE 3 ACTIVADA: SILENCIO INTERNO");
+
+    clearInterval(window.phase2Interval);
+
+    let silenceTime = 0;
+
+    window.phase3Interval = setInterval(()=>{
+
+        if(isGameOver) return clearInterval(window.phase3Interval);
+
+        const meditations = [
+            "SILENCIO... solo observas",
+            "RESPIRA LENTO",
+            "NO REACCIONES",
+            "ESTÁS PRESENTE",
+            "TU MENTE SE CALMA"
+        ];
+
+        showMessage(meditations[silenceTime % meditations.length]);
+
+        silenceTime++;
+
+        if(silenceTime > 75){
+            endCycle();
         }
 
-        tries++;
-        if(tries > 10){
-            console.error("No se pudo iniciar");
-            clearInterval(wait);
-        }
+    }, 4000);
+}
 
-    },300);
-};
+// =========================================
+// FIN DEL CICLO Y REINICIO
+// =========================================
+function endCycle(){
+
+    clearInterval(window.phase3Interval);
+
+    showMessage("CICLO COMPLETADO. REINICIO DE VIDA.");
+
+    setTimeout(()=>{
+        location.reload();
+    }, 5000);
+}
+
+// =========================================
+// AUTO START
+// =========================================
+window.onload = ()=>startLifeFlow();
