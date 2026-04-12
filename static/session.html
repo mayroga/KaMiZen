@@ -133,11 +133,11 @@
         <option value="3">Entorno Crítico (Extremo)</option>
     </select>
 
-    <label>MODO DE PROCESAMIENTO INICIAL</label>
+    <label>MODO DE PROCESAMIENTO TVID</label>
     <select id="tvideMode">
         <option value="balanced">Equilibrio (TDB + TDP)</option>
         <option value="survival">Supervivencia (TDM + TDG)</option>
-        <option value="creative">Exploración (TDN + TDK)</option>
+        <option value="creative">Exploración (TDN + TDK - BESO)</option>
     </select>
 
     <button onclick="startLife()">🚀 INICIAR PROCESAMIENTO</button>
@@ -157,13 +157,13 @@ async function startLife(){
     const difficulty = document.getElementById("difficulty").value;
     const tvideMode = document.getElementById("tvideMode").value;
 
-    // DETERMINAR ETAPA (PASO 7)
+    // ETAPA DE VIDA
     let stage = "adult";
     if (ageValue < 13) stage = "child";
     else if (ageValue < 25) stage = "young";
     else if (ageValue >= 60) stage = "elder";
 
-    // PERFIL DE ENTRADA
+    // PERFIL DEL USUARIO
     const profile = {
         age: ageValue,
         emotion: emotion,
@@ -173,20 +173,19 @@ async function startLife(){
         created: Date.now()
     };
 
-    // ESTADO BASE DE LAS VARIABLES (PASO 1)
+    // ESTADO INICIAL
     const state = {
         mental: 100,
         health: 100,
-        money: difficulty == "3" ? 200 : 500, // Menos dinero en modo extremo
+        money: difficulty == "3" ? 200 : 500,
         social: 50,
         discipline: 50,
-        addiction: emotion == "stress" ? 15 : 0, // El estrés inicia con carga de vicios
+        addiction: emotion == "stress" ? 15 : 0,
         age: ageValue,
         history: []
     };
 
     try {
-        // SINCRONIZAR CON MOTOR IA
         const res = await fetch("/start", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -195,12 +194,11 @@ async function startLife(){
 
         const data = await res.json();
 
-        // PERSISTENCIA LOCAL
         localStorage.setItem("profile", JSON.stringify(profile));
         localStorage.setItem("state", JSON.stringify(data.state || state));
 
-        // TRANSICIÓN AL SIMULADOR
         window.location.href = "/static/jet.html";
+
     } catch (error) {
         console.error("Error de conexión con el motor:", error);
         alert("Error al iniciar el sistema. Verifique el servidor.");
