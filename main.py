@@ -24,11 +24,10 @@ state = {
     "addiction": 0,
     "age": 18.0,
     "difficulty": 1,
-    "start_time": 0,
-    "is_recovery": False
+    "start_time": 0
 }
 
-# Rutas de navegación principales
+# Rutas de navegación
 @app.get("/")
 def read_index():
     return FileResponse("static/session.html")
@@ -47,21 +46,14 @@ async def start_life(req: Request):
         data = await req.json()
         profile = data.get("profile", {})
         
-        # Reinicio total y blindado de estado para nueva sesión
-        difficulty = int(profile.get("difficulty", 1))
-        
-        state = {
-            "age": float(profile.get("age", 18.0)),
-            "difficulty": difficulty,
-            "mental": 100,
-            "health": 100,
-            "money": 1500 if difficulty == 1 else 800,
-            "addiction": 15 if profile.get("emotion") == "stress" else 0,
-            "social": 50,
-            "discipline": 50,
-            "is_recovery": False,
-            "start_time": time.time() 
-        }
+        state["age"] = float(profile.get("age", 18.0))
+        state["difficulty"] = int(profile.get("difficulty", 1))
+        state["mental"] = 100
+        state["health"] = 100
+        state["money"] = 1000 if state["difficulty"] == 1 else 500
+        state["addiction"] = 15 if profile.get("emotion") == "stress" else 0
+        state["social"] = 50
+        state["start_time"] = time.time() # Registro para control de 15 min
 
         return {
             "status": "ready",
@@ -69,20 +61,18 @@ async def start_life(req: Request):
             "next_event": generate_next_event()
         }
     except Exception as e:
-        print(f"Error en Inicio Neural: {e}")
         return JSONResponse(status_code=400, content={"error": str(e)})
 
 # ==========================================
 # GENERADOR DE LA VÍA REAL
 # ==========================================
 def generate_next_event():
-    # El motor prioriza crisis según el estado actual
-    if state["addiction"] > 65: return "tentacion"
-    if state["money"] < 300: return "crisis"
-    if state["health"] < 45: return "enfermedad"
-    if state["mental"] < 35: return "conflicto"
+    if state["addiction"] > 50: return "tentacion"
+    if state["money"] < 200: return "crisis"
+    if state["health"] < 40: return "enfermedad"
+    if state["mental"] < 30: return "conflicto"
     
-    events = ["dinero", "amor", "oportunidad", "conflicto", "enfermedad", "crisis", "tentacion"]
+    events = ["dinero", "amor", "oportunidad", "conflicto", "enfermedad", "crisis"]
     return random.choice(events)
 
 # ==========================================
@@ -96,74 +86,56 @@ async def judge_decision(req: Request):
         decision = data.get("decision", "TDM")
         context = data.get("context", "neutral")
         
-        # 1. CONTROL DE TIEMPO (7 min acción + 8 min calma = 15 min total)
+        # 1. CONTROL DE TIEMPO (Ciclo de 15 Minutos)
         elapsed_seconds = time.time() - state["start_time"]
         
-        # Transición automática a fase de recuperación
-        if elapsed_seconds > 420: # 7 minutos
-            state["is_recovery"] = True
-            return {
-                "status": "recovery", 
-                "state": state,
-                "message": "Fase de Acción agotada. Iniciando Calma Neural."
-            }
+        # Dificultad Progresiva: Aumenta el daño según el reloj (Curva hacia el minuto 7)
+        # Multiplicador que va de 1.0 a 2.5 a medida que pasan los 7 minutos
+        time_pressure = 1.0 + (min(elapsed_seconds, 420) / 420.0) * 1.5
 
-        # Dificultad Progresiva: El multiplicador sube conforme avanza el tiempo
-        time_pressure = 1.0 + (min(elapsed_seconds, 420) / 420.0) * 2.0
+        if elapsed_seconds > 420: # Pasaron los 7 minutos de acción
+            return {"status": "recovery", "state": state}
 
-        # 2. Matriz de Impacto Base (Valores TVID)
-        impact = {"mental": 0, "health": 0, "money": 0, "social": 0, "addiction": 0, "discipline": 0}
+        # 2. Matriz de Impacto Base
+        impact = {"mental": 0, "health": 0, "money": 0, "social": 0, "addiction": 0}
 
         if decision == "TDB": # Bien Consciente
-            impact["mental"] += 15; impact["addiction"] -= 12; impact["social"] += 10; impact["discipline"] += 5
-        elif decision == "TDM": # Miedo (Inacción) - Es el más castigado
-            impact["mental"] -= 25; impact["addiction"] += 20; impact["health"] -= 12; impact["discipline"] -= 15
-        elif decision == "TDN": # Niño (Emoción/Impulso)
-            impact["social"] += 20; impact["money"] -= 200; impact["discipline"] -= 8
-        elif decision == "TDP": # Poder (Acción Directa)
-            impact["money"] += 450; impact["mental"] -= 15; impact["discipline"] += 20
-        elif decision == "TDG": # Guerra (Defensa Agresiva)
-            impact["social"] -= 30; impact["health"] -= 20; impact["mental"] += 20; impact["discipline"] += 12
-        elif decision == "ataque_enemigo": # Colisión de proyectiles
-            impact["health"] -= 15; impact["mental"] -= 10
+            impact["mental"] += 10; impact["addiction"] -= 5; impact["social"] += 5
+        elif decision == "TDM": # Miedo / Inacción (Aumenta daño por tiempo)
+            impact["mental"] -= 15; impact["addiction"] += 20; impact["health"] -= 5
+        elif decision == "TDN": # Niño / Emoción
+            impact["social"] += 15; impact["money"] -= 100
+        elif decision == "TDP": # Poder / Acción (Frena la crisis)
+            impact["money"] += 250; impact["mental"] -= 5; impact["discipline"] = 10
+        elif decision == "TDG": # Guerra
+            impact["social"] -= 30; impact["health"] -= 20; impact["mental"] += 10
 
-        # 3. Modificadores por Contexto (Sincronía con Vía Real)
+        # 3. Modificadores de Contexto (Enemigos Disparan)
         if context in ["enfermedad", "crisis", "conflicto"]:
-            if decision not in ["TDP", "TDB"]: # Si no se usa Poder o Bien, el contexto daña
-                impact["health"] -= 15; impact["money"] -= 150; impact["mental"] -= 15
-        
-        elif context == "oportunidad":
-            if decision in ["TDP", "TDB"]:
-                impact["money"] += 600; impact["discipline"] += 15
-            else:
-                impact["mental"] -= 15 # Frustración por inacción
+            # El daño de estos eventos es potenciado por la presión temporal
+            impact["health"] -= 15; impact["money"] -= 100; impact["mental"] -= 10
+        elif context == "oportunidad" and decision in ["TDP", "TDB"]:
+            impact["money"] += 400; impact["mental"] += 15 # Éxito por astucia
 
-        # 4. Aplicar Multiplicadores (Presión del Entorno vs Disciplina)
+        # 4. Aplicar Dificultad y Presión Temporal
         mult = state["difficulty"] * time_pressure
         for key in impact:
-            if impact[key] < 0:
-                # La disciplina mitiga el daño (hasta un 50%)
-                mitigation = 1.0 - (state["discipline"] / 200.0)
-                impact[key] *= (mult * mitigation)
-            elif impact[key] > 0:
-                # La disciplina potencia las ganancias
-                impact[key] *= (1 + (state["discipline"] / 100.0))
+            if impact[key] < 0: impact[key] *= mult
 
-        # 5. Actualización de Estado (Atómica y Limitada)
-        state["mental"] = max(0, min(100, state["mental"] + impact["mental"]))
-        state["health"] = max(0, min(100, state["health"] + impact["health"]))
-        state["money"] = max(0, state["money"] + impact["money"])
-        state["social"] = max(0, min(100, state["social"] + impact["social"]))
-        state["addiction"] = max(0, min(100, state["addiction"] + impact["addiction"]))
-        state["discipline"] = max(0, min(100, state["discipline"] + impact["discipline"]))
-        state["age"] += 0.4 # Envejecimiento progresivo
+        # 5. Actualización Atómica
+        state["mental"] = max(0, min(100, state["mental"] + impact.get("mental", 0)))
+        state["health"] = max(0, min(100, state["health"] + impact.get("health", 0)))
+        state["money"] = max(0, state["money"] + impact.get("money", 0))
+        state["social"] = max(0, min(100, state["social"] + impact.get("social", 0)))
+        state["addiction"] = max(0, min(100, state["addiction"] + impact.get("addiction", 0)))
+        state["age"] += 0.25 
 
-        # 6. Verificación de Colapso (Game Over)
+        # 6. Verificación de Estado
         status = "continue"
         reason = ""
         if state["mental"] <= 0: status = "end"; reason = "quiebra_emocional"
         elif state["health"] <= 0: status = "end"; reason = "muerte_fisica"
-        elif state["money"] <= 0 and state["difficulty"] > 1: status = "end"; reason = "insolvencia_total"
+        elif state["money"] <= 0 and state["difficulty"] > 1: status = "end"; reason = "insolvencia"
         
         return {
             "status": status,
@@ -174,11 +146,9 @@ async def judge_decision(req: Request):
             "elapsed": int(elapsed_seconds)
         }
     except Exception as e:
-        print(f"Error Crítico en Juez: {e}")
         return JSONResponse(status_code=500, content={"error": str(e)})
 
 if __name__ == "__main__":
     import uvicorn
-    # Puerto dinámico para Render o local
     port = int(os.environ.get("PORT", 10000))
     uvicorn.run(app, host="0.0.0.0", port=port)
