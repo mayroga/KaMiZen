@@ -32,22 +32,14 @@ async function startLifeFlow(){
         localStorage.setItem("state", JSON.stringify(data.state));
 
         window.currentEvent = data.next_event;
-
         sessionActive = true;
 
         showMessage("Sistema activo. Iniciando simulación de vida.");
 
         processEvent(data.next_event);
 
-        // 🔥 FASE 2 AUTOMÁTICA (7 min)
-        setTimeout(()=>{
-            activatePhase2();
-        }, 7 * 60 * 1000);
-
-        // 🔥 FASE 3 AUTOMÁTICA (12 min total)
-        setTimeout(()=>{
-            activatePhase3();
-        }, 12 * 60 * 1000);
+        setTimeout(()=>activatePhase2(), 7 * 60 * 1000);
+        setTimeout(()=>activatePhase3(), 12 * 60 * 1000);
 
     }catch(e){
         console.error("Error inicio:", e);
@@ -56,7 +48,21 @@ async function startLifeFlow(){
 }
 
 // =========================================
-// EVENT SYSTEM
+// NORMALIZADOR DE ESTADO (🔥 FIX CLAVE)
+// =========================================
+function getState(){
+    let state = JSON.parse(localStorage.getItem("state") || "{}");
+
+    return {
+        mental: state.mental ?? 100,
+        social: state.social ?? 50,
+        karma: state.karma ?? 0,
+        life: state.life ?? 3
+    };
+}
+
+// =========================================
+// EVENT SYSTEM (FIXED)
 // =========================================
 function processEvent(event){
 
@@ -64,7 +70,7 @@ function processEvent(event){
 
     window.currentEvent = event;
 
-    const state = JSON.parse(localStorage.getItem("state") || "{}");
+    const state = getState();
 
     let msg = "";
 
@@ -97,7 +103,7 @@ function processEvent(event){
 }
 
 // =========================================
-// JUEZ (BACKEND TVID ENGINE)
+// JUEZ (BACKEND TVID ENGINE) - FIXED STABILITY
 // =========================================
 async function sendDecision(decision){
 
@@ -135,9 +141,8 @@ async function sendDecision(decision){
             return;
         }
 
-        window.currentEvent = data.next_event;
-
-        processEvent(data.next_event);
+        window.currentEvent = data.next_event || "neutral";
+        processEvent(window.currentEvent);
 
     }catch(e){
         console.error("Error juez:", e);
@@ -146,7 +151,7 @@ async function sendDecision(decision){
 }
 
 // =========================================
-// BOTONES TVID
+// BOTONES TVID (FIX NO DUPLICACIÓN)
 // =========================================
 function renderButtons(){
 
@@ -164,21 +169,20 @@ function renderButtons(){
         container.appendChild(btn);
     });
 
-    const pauseBtn = document.createElement("button");
-    pauseBtn.innerText = "PAUSA";
-    pauseBtn.onclick = ()=>paused = true;
+    container.appendChild(makeBtn("PAUSA", ()=>paused = true));
+    container.appendChild(makeBtn("CONTINUAR", ()=>{
+        paused = false;
+        processEvent(window.currentEvent);
+    }));
+    container.appendChild(makeBtn("REINICIAR", ()=>location.reload()));
+}
 
-    const resumeBtn = document.createElement("button");
-    resumeBtn.innerText = "CONTINUAR";
-    resumeBtn.onclick = ()=>{ paused = false; processEvent(window.currentEvent); };
-
-    const resetBtn = document.createElement("button");
-    resetBtn.innerText = "REINICIAR";
-    resetBtn.onclick = ()=>location.reload();
-
-    container.appendChild(pauseBtn);
-    container.appendChild(resumeBtn);
-    container.appendChild(resetBtn);
+// helper FIX
+function makeBtn(text, fn){
+    const b = document.createElement("button");
+    b.innerText = text;
+    b.onclick = fn;
+    return b;
 }
 
 // =========================================
@@ -218,12 +222,11 @@ function gameOver(reason){
 }
 
 // =========================================
-// FASE 2: RESPIRACIÓN (7 min)
+// FASE 2
 // =========================================
 function activatePhase2(){
 
     currentPhase = 2;
-
     showMessage("FASE 2 ACTIVADA: RESPIRACIÓN CONSCIENTE");
 
     let cycle = 0;
@@ -246,12 +249,11 @@ function activatePhase2(){
 }
 
 // =========================================
-// FASE 3: SILENCIO + MEDITACIÓN (5–9 min)
+// FASE 3
 // =========================================
 function activatePhase3(){
 
     currentPhase = 3;
-
     showMessage("FASE 3: SILENCIO Y MEDITACIÓN");
 
     clearInterval(window.phase2Interval);
@@ -273,9 +275,7 @@ function activatePhase3(){
         showMessage(steps[t % steps.length]);
         t++;
 
-        if(t > 75){
-            endCycle();
-        }
+        if(t > 75) endCycle();
 
     }, 4000);
 }
@@ -284,11 +284,8 @@ function activatePhase3(){
 // FIN CICLO
 // =========================================
 function endCycle(){
-
     clearInterval(window.phase3Interval);
-
     showMessage("CICLO COMPLETO. REINICIO.");
-
     setTimeout(()=>location.reload(), 5000);
 }
 
@@ -298,11 +295,9 @@ function endCycle(){
 window.onload = ()=>startLifeFlow();
 
 
-// ===================================================================
-// ===================== 🔥 AGREGADO TVID SYSTEM 🔥 ===================
-// ===================================================================
-
-// TVID TACTICAL GUIDE (NUEVO)
+// =========================================
+// TVID SYSTEM
+// =========================================
 const TacticalGuide = {
     "crisis": "TDP",
     "conflicto": "TDG",
@@ -311,24 +306,18 @@ const TacticalGuide = {
     "oportunidad": "TDB"
 };
 
-// HANDLE ACTION (TVID INTELIGENTE)
+// FIXED ACTION HANDLER
 async function handleAction(userDecision){
 
     const event = window.currentEvent;
     const session_id = localStorage.getItem("session_id");
-
-    let finalDecision = userDecision;
-
-    if (TacticalGuide[event] === userDecision) {
-        console.log("TVID sincronizado: +Karma");
-    }
 
     const res = await fetch("/judge", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({
             session_id,
-            decision: finalDecision,
+            decision: userDecision,
             context: event
         })
     });
@@ -349,8 +338,8 @@ async function handleAction(userDecision){
         return;
     }
 
-    window.currentEvent = data.next_event;
-    processEvent(data.next_event);
+    window.currentEvent = data.next_event || "neutral";
+    processEvent(window.currentEvent);
 
     if(data.phase_alert === 3){
         activatePhase3();
