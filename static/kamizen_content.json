@@ -15,20 +15,29 @@
         {
           "type": "strategy",
           "text": {
-            "en": "Everything you experience will shape your identity.",
-            "es": "Todo lo que experimentas define tu identidad."
+            "en": "Everything you experience begins shaping your identity immediately.",
+            "es": "Todo lo que experimentas comienza a moldear tu identidad desde el inicio."
           }
         },
         {
           "type": "breathing",
-          "duration": 5,
+          "duration": 6,
           "text": {
-            "en": "Control your breath. You control your reaction.",
-            "es": "Controla tu respiración. Controlas tu reacción."
+            "en": "Inhale control. Exhale reaction.",
+            "es": "Inhala control. Exhala reacción."
+          }
+        },
+        {
+          "type": "tvid",
+          "mode": "TDB",
+          "text": {
+            "en": "Observe without reacting. Awareness is your first power.",
+            "es": "Observa sin reaccionar. La conciencia es tu primer poder."
           }
         }
       ]
     },
+
     {
       "id": 2,
       "level": 1,
@@ -37,15 +46,23 @@
         {
           "type": "voice",
           "text": {
-            "en": "A child learns by imitation, not instruction.",
-            "es": "Un niño aprende por imitación, no por instrucciones."
+            "en": "A child learns by observing, not by listening.",
+            "es": "Un niño aprende observando, no escuchando."
           }
         },
         {
           "type": "strategy",
           "text": {
-            "en": "Habits formed now define future power or weakness.",
-            "es": "Los hábitos definen tu futuro poder o debilidad."
+            "en": "Patterns formed early become automatic behaviors later.",
+            "es": "Los patrones tempranos se convierten en comportamientos automáticos."
+          }
+        },
+        {
+          "type": "breathing",
+          "duration": 5,
+          "text": {
+            "en": "Slow your breath. You slow your impulses.",
+            "es": "Reduce tu respiración. Reduces tus impulsos."
           }
         },
         {
@@ -62,23 +79,40 @@
         }
       ]
     },
+
     {
       "id": 3,
       "level": 2,
-      "category": "Amor, Relaciones y Conexión",
+      "category": "Amor y Relaciones",
       "blocks": [
         {
           "type": "voice",
           "text": {
-            "en": "Love can build you or break you.",
-            "es": "El amor puede construirte o destruirte."
+            "en": "Attachment creates vulnerability.",
+            "es": "El apego crea vulnerabilidad."
           }
         },
         {
           "type": "story",
           "text": {
-            "en": "Someone who leaves you teaches you who you are without them.",
-            "es": "Quien te deja te enseña quién eres sin esa persona."
+            "en": "Losing someone forces you to face yourself.",
+            "es": "Perder a alguien te obliga a enfrentarte a ti mismo."
+          }
+        },
+        {
+          "type": "breathing",
+          "duration": 6,
+          "text": {
+            "en": "Breathe through pain. Do not escape it.",
+            "es": "Respira el dolor. No escapes de él."
+          }
+        },
+        {
+          "type": "tvid",
+          "mode": "TDN",
+          "text": {
+            "en": "Feel the emotion without losing control.",
+            "es": "Siente la emoción sin perder el control."
           }
         },
         {
@@ -88,162 +122,223 @@
             "es": "Después del rechazo tú:"
           },
           "options": {
-            "en": ["Collapse", "Grow", "React aggressively"],
-            "es": ["Colapsas", "Creces", "Reaccionas agresivo"]
+            "en": ["Collapse", "Grow", "Attack"],
+            "es": ["Colapsas", "Creces", "Atacas"]
           },
           "correct": 1
         }
       ]
     },
+
     {
       "id": 4,
       "level": 2,
-      "category": "Dinero y Poder",
+      "category": "Dinero y Decisiones",
       "blocks": [
         {
           "type": "voice",
           "text": {
-            "en": "Money is a reflection of decisions.",
-            "es": "El dinero es reflejo de decisiones."
+            "en": "Money amplifies who you already are.",
+            "es": "El dinero amplifica lo que ya eres."
           }
         },
         {
           "type": "strategy",
           "text": {
-            "en": "Power is not control over others, but over yourself.",
-            "es": "El poder no es controlar otros, sino a ti mismo."
+            "en": "Bad decisions repeat. Good decisions compound.",
+            "es": "Las malas decisiones se repiten. Las buenas se acumulan."
+          }
+        },
+        {
+          "type": "breathing",
+          "duration": 5,
+          "text": {
+            "en": "Pause before spending. Control impulse.",
+            "es": "Pausa antes de gastar. Controla el impulso."
+          }
+        },
+        {
+          "type": "tvid",
+          "mode": "TDP",
+          "text": {
+            "en": "Act with intention, not emotion.",
+            "es": "Actúa con intención, no con emoción."
           }
         },
         {
           "type": "quiz",
           "question": {
-            "en": "You receive unexpected income. You:",
-            "es": "Recibes dinero inesperado. Tú:"
+            "en": "You receive money. You:",
+            "es": "Recibes dinero. Tú:"
           },
           "options": {
-            "en": ["Waste it", "Invest it", "Hide it"],
-            "es": ["Lo gastas", "Lo inviertes", "Lo ocultas"]
+            "en": ["Spend", "Invest", "Ignore"],
+            "es": ["Gastas", "Inviertes", "Ignoras"]
           },
           "correct": 1
         }
       ]
     },
+
     {
       "id": 5,
       "level": 3,
-      "category": "Salud, Cuerpo y Energía",
+      "category": "Salud y Cuerpo",
       "blocks": [
         {
           "type": "voice",
           "text": {
-            "en": "Your body stores your decisions.",
-            "es": "Tu cuerpo almacena tus decisiones."
+            "en": "Your body reflects your discipline.",
+            "es": "Tu cuerpo refleja tu disciplina."
           }
         },
         {
           "type": "strategy",
           "text": {
-            "en": "Neglect becomes illness. Discipline becomes strength.",
-            "es": "El descuido se convierte en enfermedad. La disciplina en fuerza."
+            "en": "Ignoring signals creates long-term damage.",
+            "es": "Ignorar señales crea daño a largo plazo."
+          }
+        },
+        {
+          "type": "breathing",
+          "duration": 7,
+          "text": {
+            "en": "Deep breathing restores internal balance.",
+            "es": "Respirar profundo restaura el equilibrio interno."
           }
         },
         {
           "type": "quiz",
           "question": {
-            "en": "You feel exhaustion. You:",
-            "es": "Sientes agotamiento. Tú:"
+            "en": "You feel exhausted:",
+            "es": "Te sientes agotado:"
           },
           "options": {
-            "en": ["Ignore", "Rest", "Push harder"],
-            "es": ["Ignoras", "Descansas", "Forzas más"]
+            "en": ["Ignore", "Rest", "Force"],
+            "es": ["Ignoras", "Descansas", "Forzas"]
           },
           "correct": 1
         }
       ]
     },
+
     {
       "id": 6,
       "level": 3,
-      "category": "Vicios y Tentaciones",
+      "category": "Vicios y Control",
       "blocks": [
         {
           "type": "voice",
           "text": {
-            "en": "Pleasure without control becomes dependency.",
-            "es": "El placer sin control se convierte en dependencia."
+            "en": "Pleasure without limits becomes dependency.",
+            "es": "El placer sin límites se vuelve dependencia."
           }
         },
         {
           "type": "strategy",
           "text": {
-            "en": "Every impulse is a test of discipline.",
-            "es": "Cada impulso es una prueba de disciplina."
+            "en": "Discipline is built in small resisted impulses.",
+            "es": "La disciplina se construye en pequeños impulsos resistidos."
+          }
+        },
+        {
+          "type": "breathing",
+          "duration": 6,
+          "text": {
+            "en": "Pause. The urge passes.",
+            "es": "Pausa. El impulso pasa."
+          }
+        },
+        {
+          "type": "tvid",
+          "mode": "TDG",
+          "text": {
+            "en": "Fight the impulse. Do not negotiate with it.",
+            "es": "Lucha contra el impulso. No negocies con él."
           }
         },
         {
           "type": "quiz",
           "question": {
-            "en": "Temptation appears. You:",
-            "es": "Aparece una tentación. Tú:"
+            "en": "Temptation appears:",
+            "es": "Aparece una tentación:"
           },
           "options": {
-            "en": ["Give in", "Control", "Replace habit"],
-            "es": ["Cedes", "Controlas", "Sustituyes hábito"]
+            "en": ["Give in", "Control", "Replace"],
+            "es": ["Cedes", "Controlas", "Sustituyes"]
           },
           "correct": 1
         }
       ]
     },
+
     {
       "id": 7,
       "level": 4,
-      "category": "Conflicto y Estrés Social",
+      "category": "Conflicto y Reacción",
       "blocks": [
         {
           "type": "voice",
           "text": {
-            "en": "Conflict reveals your emotional intelligence.",
-            "es": "El conflicto revela tu inteligencia emocional."
+            "en": "Conflict reveals your level of control.",
+            "es": "El conflicto revela tu nivel de control."
           }
         },
         {
           "type": "strategy",
           "text": {
-            "en": "Reaction defines consequences more than events.",
-            "es": "La reacción define más que el evento."
+            "en": "Your reaction creates the real consequence.",
+            "es": "Tu reacción crea la verdadera consecuencia."
+          }
+        },
+        {
+          "type": "breathing",
+          "duration": 5,
+          "text": {
+            "en": "Control breath before response.",
+            "es": "Controla la respiración antes de responder."
           }
         },
         {
           "type": "quiz",
           "question": {
-            "en": "Someone insults you. You:",
-            "es": "Alguien te insulta. Tú:"
+            "en": "Someone attacks you:",
+            "es": "Alguien te ataca:"
           },
           "options": {
-            "en": ["Attack", "Stay calm", "Walk away"],
-            "es": ["Atacas", "Te calmas", "Te vas"]
+            "en": ["Attack", "Control", "Avoid"],
+            "es": ["Atacas", "Controlas", "Evitas"]
           },
           "correct": 1
         }
       ]
     },
+
     {
       "id": 8,
       "level": 5,
-      "category": "Destino y Existencia",
+      "category": "Destino y Construcción",
       "blocks": [
         {
           "type": "voice",
           "text": {
-            "en": "Life does not give meaning. You create it.",
-            "es": "La vida no da significado. Tú lo creas."
+            "en": "Your life is the result of repeated decisions.",
+            "es": "Tu vida es el resultado de decisiones repetidas."
           }
         },
         {
           "type": "story",
           "text": {
-            "en": "The strongest people are not those who avoid pain, but those who transform it.",
-            "es": "Los fuertes no evitan el dolor, lo transforman."
+            "en": "Consistency builds identity over time.",
+            "es": "La consistencia construye identidad con el tiempo."
+          }
+        },
+        {
+          "type": "breathing",
+          "duration": 6,
+          "text": {
+            "en": "Stay present. Build step by step.",
+            "es": "Mantente presente. Construye paso a paso."
           }
         },
         {
@@ -253,37 +348,46 @@
             "es": "Tu futuro depende de:"
           },
           "options": {
-            "en": ["Luck", "Choices", "Others"],
+            "en": ["Luck", "Decisions", "Others"],
             "es": ["Suerte", "Decisiones", "Otros"]
           },
           "correct": 1
         }
       ]
     },
+
     {
       "id": 9,
       "level": 6,
-      "category": "Vida Final y Legado",
+      "category": "Final y Legado",
       "blocks": [
         {
           "type": "voice",
           "text": {
-            "en": "Your life is your final message to the world.",
-            "es": "Tu vida es tu último mensaje al mundo."
+            "en": "What you become is your final message.",
+            "es": "En lo que te conviertes es tu mensaje final."
           }
         },
         {
           "type": "story",
           "text": {
-            "en": "What you become is more important than what you had.",
-            "es": "Lo que eres vale más que lo que tienes."
+            "en": "Impact remains longer than possessions.",
+            "es": "El impacto dura más que las posesiones."
+          }
+        },
+        {
+          "type": "breathing",
+          "duration": 8,
+          "text": {
+            "en": "Reflect. Accept. Release.",
+            "es": "Reflexiona. Acepta. Suelta."
           }
         },
         {
           "type": "quiz",
           "question": {
-            "en": "At the end, you are remembered for:",
-            "es": "Al final eres recordado por:"
+            "en": "You are remembered for:",
+            "es": "Eres recordado por:"
           },
           "options": {
             "en": ["Money", "Impact", "Fear"],
