@@ -9,17 +9,15 @@ let startTime = null;
 let isRecoveryActive = false;
 
 /**
- * INICIO DEL FLUJO DE VIDA - BLINDADO
+ * INICIO DEL FLUJO DE VIDA - REFORZADO
  */
 async function startLifeFlow() {
     console.log("Despertando Motor Neural de May Roga...");
     
-    // Obtener perfil o crear uno por defecto si no existe (Evita el bloqueo)
+    // 1. Validar Perfil
     let profileStr = localStorage.getItem("profile");
     let profile;
-    
     if (!profileStr) {
-        console.log("Perfil no detectado. Creando configuración base...");
         profile = { age: 18, difficulty: 1, emotion: "neutral" };
         localStorage.setItem("profile", JSON.stringify(profile));
     } else {
@@ -27,88 +25,96 @@ async function startLifeFlow() {
     }
     
     startTime = Date.now();
-    
-    // Intentar configurar audio (fallará silenciosamente si no hay interacción, es normal)
-    try { setupAudio(profile, "action"); } catch(e) { console.log("Audio en espera."); }
 
+    // 2. Conectar con el Servidor (Ruta absoluta para evitar 404)
     try {
-        const response = await fetch("/start", {
+        const response = await fetch(window.location.origin + "/start", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ profile: profile })
         });
 
-        if (!response.ok) throw new Error("Error en respuesta del servidor");
+        if (!response.ok) {
+            throw new Error(`Error de red: ${response.status}`);
+        }
         
         const data = await response.json();
+        console.log("Datos recibidos:", data);
         
         if (data.status === "ready") {
-            console.log("Conexión Exitosa. Sincronizando UI...");
-            window.updateSimState(data.state);
+            // Actualizar interfaz
+            if (window.updateSimState) window.updateSimState(data.state);
             window.currentEvent = data.next_event;
+            
             document.getElementById("text-content").innerText = "Sincronización completa. Bienvenido a la Vía Real.";
+            
+            // Iniciar flujo visual y de audio
+            try { setupAudio(profile, "action"); } catch(e) {}
             processEventUI(data.next_event);
         }
     } catch (error) {
-        console.error("Fallo Crítico:", error);
-        document.getElementById("text-content").innerText = "ERROR: Motor Neural fuera de línea. Reintente.";
+        console.error("Fallo Crítico de Sincronización:", error);
+        document.getElementById("text-content").innerText = "ERROR: No se pudo conectar con el Motor Neural.";
     }
 }
 
 /**
- * CONFIGURACIÓN DE AUDIO
+ * AUDIO DINÁMICO
  */
 async function setupAudio(profile, phase = "action") {
     if (bgMusic) { bgMusic.pause(); bgMusic = null; }
-
-    let mood = "ambient_tech";
-    if (phase === "recovery") mood = "reflective_piano";
-    else {
-        if (profile.emotion === "stress") mood = "dark_industrial";
-        else if (profile.age > 60) mood = "reflective_piano";
-    }
-
+    let mood = (phase === "recovery") ? "reflective_piano" : "ambient_tech";
+    
     bgMusic = new Audio(`/static/audio/${mood}.mp3`);
     bgMusic.loop = true;
     bgMusic.volume = 0.2;
-
-    const playAudio = () => {
-        if (bgMusic && bgMusic.paused) bgMusic.play().catch(() => {});
-    };
-    document.addEventListener('click', playAudio, { once: true });
-}
-
-/**
- * PROCESADOR DE COLISIONES (Desde jet.html)
- */
-function handleCollision(eventType) {
-    if (isRecoveryActive) return;
     
-    // Solo procesar si el evento es nuevo o es un ataque directo
-    if (window.currentEvent !== eventType || eventType === "ataque_enemigo") {
-        window.currentEvent = eventType;
-        if (eventType === "ataque_enemigo") {
-            sendDecision("ataque_enemigo");
-        } else {
-            const msg = `Evento Detectado: ${eventType.toUpperCase()}`;
-            document.getElementById("text-content").innerText = msg;
-            speak(msg);
-            renderDecisionButtons();
-        }
-    }
+    const playAudio = () => { if (bgMusic && bgMusic.paused) bgMusic.play().catch(() => {}); };
+    document.addEventListener('mousedown', playAudio, { once: true });
 }
 
 /**
- * ENVÍO DE DECISIÓN AL JUEZ
+ * PROCESADOR DE EVENTOS
+ */
+function processEventUI(nextEvent) {
+    if (!nextEvent || isRecoveryActive) return;
+
+    const messages = {
+        "crisis": "Inestabilidad detectada. Protege tus activos.",
+        "amor": "Vínculo emocional presente. Evalúa la inversión.",
+        "tentacion": "Pulso de evasión activo. Mantén la disciplina.",
+        "oportunidad": "Ventana de crecimiento abierta. Actúa rápido.",
+        "conflicto": "Fricción externa detectada. ¿Acción o Poder?",
+        "enfermedad": "Vulnerabilidad biológica. Rectifica el hábito.",
+        "dinero": "Recurso disponible. Gestiona con astucia."
+    };
+
+    const txt = messages[nextEvent] || "El sistema genera una nueva variable de vida.";
+    document.getElementById("text-content").innerText = txt;
+    speak(txt);
+    renderDecisionButtons();
+
+    // Limpiar timer previo antes de iniciar uno nuevo
+    if (decisionTimer) clearTimeout(decisionTimer);
+    decisionTimer = setTimeout(() => {
+        if (!isRecoveryActive && window.currentEvent) {
+            console.log("Inacción detectada (TDM)");
+            sendDecision("TDM");
+        }
+    }, 10000); // 10 segundos de tolerancia
+}
+
+/**
+ * ENVÍO AL JUEZ (TVID)
  */
 async function sendDecision(decisionType) {
     if (isRecoveryActive) return;
-    clearTimeout(decisionTimer);
+    if (decisionTimer) clearTimeout(decisionTimer);
     
     const elapsed = Math.floor((Date.now() - startTime) / 1000);
 
     try {
-        const response = await fetch("/judge", {
+        const response = await fetch(window.location.origin + "/judge", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -120,7 +126,9 @@ async function sendDecision(decisionType) {
 
         const data = await response.json();
         
-        if(data.state) window.updateSimState(data.state);
+        if (data.state && window.updateSimState) {
+            window.updateSimState(data.state);
+        }
 
         if (data.status === "recovery") {
             initRecoveryPhase();
@@ -131,67 +139,37 @@ async function sendDecision(decisionType) {
             processEventUI(data.next_event);
         }
     } catch (error) {
-        console.error("Error en Juez:", error);
+        console.error("Error en el Juez:", error);
     }
 }
 
 /**
- * RECUPERACIÓN (8 MINUTOS)
+ * COLISIONES DESDE EL RADAR
  */
-function initRecoveryPhase() {
-    isRecoveryActive = true;
-    document.getElementById("options").innerHTML = "";
-    if (typeof startRecoveryPhase === "function") startRecoveryPhase();
-
-    const stories = [
-        "La riqueza no es lo que tienes, es lo que eres cuando el dinero no está.",
-        "El poder real es el control absoluto de tu propia reacción.",
-        "En el silencio se escuchan las mejores oportunidades.",
-        "Tu bienestar es la inversión con mayor retorno de tu vida."
-    ];
-
-    let i = 0;
-    const storyBox = document.getElementById("story-box");
-    const interval = setInterval(() => {
-        if (!isRecoveryActive) { clearInterval(interval); return; }
-        if(storyBox) {
-            storyBox.innerText = stories[i];
-            speak(stories[i]);
-            i = (i + 1) % stories.length;
-        }
-    }, 45000);
+function handleCollision(eventType) {
+    if (isRecoveryActive) return;
+    if (eventType === "ataque_enemigo") {
+        sendDecision("ataque_enemigo");
+    } else if (window.currentEvent !== eventType) {
+        window.currentEvent = eventType;
+        processEventUI(eventType);
+    }
 }
 
-function processEventUI(nextEvent) {
-    const messages = {
-        "crisis": "Inestabilidad detectada. Protege tus activos.",
-        "amor": "Vínculo emocional presente. Evalúa la inversión.",
-        "tentacion": "Pulso de evasión activo. Mantén la disciplina.",
-        "oportunidad": "Ventana de crecimiento abierta. Actúa rápido.",
-        "conflicto": "Fricción externa detectada. ¿Acción o Poder?",
-        "enfermedad": "Vulnerabilidad biológica. Rectifica el hábito.",
-        "dinero": "Recurso disponible. Gestiona con astucia."
-    };
-
-    const txt = messages[nextEvent] || "El sistema genera una nueva variable.";
-    document.getElementById("text-content").innerText = txt;
-    speak(txt);
-    renderDecisionButtons();
-
-    // TDM automático por inacción
-    decisionTimer = setTimeout(() => {
-        if (!isRecoveryActive) sendDecision("TDM");
-    }, 8000);
-}
-
+/**
+ * BOTONES TVID
+ */
 function renderDecisionButtons() {
     const container = document.getElementById("options");
-    if(!container) return;
+    if (!container) return;
     container.innerHTML = "";
     ["TDB", "TDM", "TDN", "TDP", "TDG"].forEach(t => {
         const btn = document.createElement("button");
         btn.innerText = t;
-        btn.onclick = (e) => { e.stopPropagation(); sendDecision(t); };
+        btn.onclick = (e) => { 
+            e.stopPropagation(); 
+            sendDecision(t); 
+        };
         container.appendChild(btn);
     });
 }
@@ -205,10 +183,16 @@ function speak(text) {
     window.speechSynthesis.speak(utterance);
 }
 
+function initRecoveryPhase() {
+    isRecoveryActive = true;
+    document.getElementById("options").innerHTML = "";
+    if (typeof startRecoveryPhase === "function") startRecoveryPhase();
+}
+
 function handleGameOver(reason) {
     isRecoveryActive = false;
-    const msg = reason ? reason.replace(/_/g, " ").toUpperCase() : "COLAPSO";
+    const msg = reason ? reason.replace(/_/g, " ").toUpperCase() : "SISTEMA APAGADO";
     document.getElementById("text-content").innerText = `COLAPSO: ${msg}`;
-    document.getElementById("options").innerHTML = '<button onclick="location.reload()">REINICIAR VIDA</button>';
+    document.getElementById("options").innerHTML = '<button onclick="location.reload()">REINICIAR</button>';
     speak(`Simulación finalizada por ${msg}`);
 }
