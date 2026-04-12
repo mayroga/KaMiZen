@@ -64,18 +64,27 @@ function processEvent(event){
 
     window.currentEvent = event;
 
-    const msg = {
-        crisis:"Presión económica detectada",
-        amor:"Interacción emocional activa",
-        tentacion:"Impulso de control interno",
-        oportunidad:"Momento de expansión",
-        conflicto:"Tensión externa activa",
-        enfermedad:"Alerta biológica del sistema",
-        dinero:"Flujo de recursos activo"
-    };
+    const state = JSON.parse(localStorage.getItem("state") || "{}");
 
-    showMessage(msg[event] || "Evento activo en el sistema");
+    let msg = "";
 
+    if(state.mental < 40){
+        msg = "Tu mente está saturada... estás reaccionando más de lo que piensas.";
+    }
+    else if(state.social < 30){
+        msg = "Te estás aislando... incluso cuando no lo notas.";
+    }
+    else if(event === "crisis"){
+        msg = "Sientes presión... pero no es el problema, es cómo lo estás enfrentando.";
+    }
+    else if(event === "tentacion"){
+        msg = "No es deseo... es pérdida de control.";
+    }
+    else{
+        msg = "El sistema está observando tu comportamiento...";
+    }
+
+    showMessage(msg);
     renderButtons();
 
     clearTimeout(window.autoDecision);
