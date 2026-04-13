@@ -1,6 +1,6 @@
 # ===============================
 # KAMIZEN LIFE ENGINE - CINEMATIC CORE v4.1
-# STORY-DRIVEN + SYNCHRONIZED FLOW ENGINE
+# STORY-DRIVEN + SYNCHRONIZED FLOW ENGINE + STABLE PROGRESSION
 # ===============================
 
 from fastapi import FastAPI, Request
@@ -23,24 +23,24 @@ DB_PATH = "kamizen.db"
 CONTENT_PATH = "static/kamizen_content.json"
 
 # ===============================
-# LOAD STORY CONTENT (SAFE)
+# LOAD STORY CONTENT (SAFE + ROBUST)
 # ===============================
 def load_content():
     if not os.path.exists(CONTENT_PATH):
         return {"sessions": []}
 
-    with open(CONTENT_PATH, "r", encoding="utf-8") as f:
-        try:
+    try:
+        with open(CONTENT_PATH, "r", encoding="utf-8") as f:
             data = json.load(f)
-            return data
-        except:
-            return {"sessions": []}
+            return data if isinstance(data, dict) else {"sessions": []}
+    except:
+        return {"sessions": []}
 
 CONTENT = load_content()
 STORIES = CONTENT.get("sessions", [])
 
 # ===============================
-# DB INIT
+# INIT DATABASE
 # ===============================
 def init_db():
     conn = sqlite3.connect(DB_PATH)
@@ -51,7 +51,7 @@ def init_db():
         session_id TEXT PRIMARY KEY,
         created REAL,
         state TEXT,
-        story_index INTEGER,
+        story_index INTEGER DEFAULT 0,
         locked INTEGER DEFAULT 0
     )
     """)
@@ -62,7 +62,7 @@ def init_db():
 init_db()
 
 # ===============================
-# STATE CREATION
+# STATE CREATION ENGINE
 # ===============================
 def create_state(profile):
     return {
@@ -72,9 +72,10 @@ def create_state(profile):
         "karma": 0,
         "age": profile.get("age", 18),
 
+        # 🔥 STORY CONTROL (CRITICAL FIX)
         "progress": 0,
-        "story_locked": False,
 
+        # PSYCHOLOGY SYSTEM (TVID CORE)
         "psychology": {
             "stress": 0,
             "trauma": 0,
@@ -82,15 +83,16 @@ def create_state(profile):
             "resilience": 50
         },
 
+        # IDENTITY EVOLUTION
         "identity": {
             "core": "neutral"
         }
     }
 
 # ===============================
-# DB HELPERS
+# DATABASE HELPERS
 # ===============================
-def save_user(session_id, state, index=0, locked=False):
+def save_user(session_id, state, index=0):
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
 
@@ -102,7 +104,7 @@ def save_user(session_id, state, index=0, locked=False):
         time.time(),
         json.dumps(state),
         index,
-        1 if locked else 0
+        0
     ))
 
     conn.commit()
@@ -113,8 +115,9 @@ def load_user(session_id):
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
 
-    c.execute("SELECT state, story_index, locked FROM users WHERE session_id=?", (session_id,))
+    c.execute("SELECT state, story_index FROM users WHERE session_id=?", (session_id,))
     row = c.fetchone()
+
     conn.close()
 
     if not row:
@@ -122,14 +125,14 @@ def load_user(session_id):
 
     return {
         "state": json.loads(row[0]),
-        "index": row[1],
-        "locked": bool(row[2])
+        "index": row[1]
     }
 
 # ===============================
-# PSYCHOLOGY ENGINE
+# PSYCHOLOGY ENGINE (TVID EVOLUTION)
 # ===============================
 def update_psychology(state, decision):
+
     psy = state["psychology"]
 
     if decision == "TDM":
@@ -150,9 +153,11 @@ def update_psychology(state, decision):
     elif decision == "TDK":
         psy["resilience"] += 3
 
+    # LIMIT VALUES
     for k in psy:
         psy[k] = max(0, min(100, psy[k]))
 
+    # IDENTITY STATE MACHINE
     if psy["stress"] > 70:
         state["identity"]["core"] = "survival"
     elif psy["trauma"] > 60:
@@ -163,11 +168,16 @@ def update_psychology(state, decision):
         state["identity"]["core"] = "neutral"
 
 # ===============================
-# STORY ENGINE (CONTROLLED FLOW)
+# STORY ENGINE (STRICT SEQUENTIAL FLOW)
 # ===============================
 def get_story(index):
+
+    if index is None:
+        index = 0
+
     if index >= len(STORIES):
         return None
+
     return STORIES[index]
 
 # ===============================
@@ -178,7 +188,7 @@ def home():
     return FileResponse("static/session.html")
 
 # ===============================
-# START SESSION
+# START SESSION (ONLY FIRST STORY)
 # ===============================
 @app.post("/start")
 async def start(req: Request):
@@ -191,19 +201,18 @@ async def start(req: Request):
 
     story = get_story(0)
 
-    save_user(session_id, state, 0, False)
+    save_user(session_id, state, 0)
 
     return {
         "session_id": session_id,
         "state": state,
         "story": story,
         "story_index": 0,
-        "locked": False,
         "end": False
     }
 
 # ===============================
-# JUDGE ENGINE (SYNCED FLOW)
+# JUDGE ENGINE (FULL SYNCHRONIZATION FIX)
 # ===============================
 @app.post("/judge")
 async def judge(req: Request):
@@ -222,7 +231,7 @@ async def judge(req: Request):
     index = user["index"]
 
     # ===============================
-    # EFFECTS
+    # EFFECTS SYSTEM
     # ===============================
     effects = {
         "TDB": {"mental": 8, "discipline": 5, "karma": 2},
@@ -236,22 +245,24 @@ async def judge(req: Request):
     for k, v in effects.get(decision, {}).items():
         state[k] = state.get(k, 0) + v
 
-    # LIMITS
+    # LIMIT VALUES
     state["mental"] = max(0, min(100, state["mental"]))
     state["social"] = max(0, min(100, state["social"]))
     state["discipline"] = max(0, min(100, state["discipline"]))
 
-    # PSYCHOLOGY
+    # PSYCHOLOGY UPDATE
     update_psychology(state, decision)
 
     # ===============================
-    # STORY CONTROL (ONLY ADVANCE HERE)
+    # STORY FLOW CONTROL (CRITICAL FIX)
     # ===============================
     next_index = index + 1
     next_story = get_story(next_index)
 
     if next_story:
-        save_user(session_id, state, next_index, False)
+
+        save_user(session_id, state, next_index)
+
         return {
             "state": state,
             "story": next_story,
@@ -259,7 +270,8 @@ async def judge(req: Request):
             "end": False
         }
 
-    save_user(session_id, state, index, True)
+    # END OF STORY FLOW
+    save_user(session_id, state, index)
 
     return {
         "state": state,
