@@ -785,16 +785,19 @@
           },
           "options": [
             {
+              "code": "TDM",
               "text": { "en": "Working 20 hours a day without rest.", "es": "Trabajar 20 horas al día sin descanso." },
               "correct": false,
               "feedback": { "en": "False. Hard work is the engine, but without a map, you just burn fuel.", "es": "Falso. El trabajo duro es el motor, pero sin un mapa, solo quemas combustible." }
             },
             {
+              "code": "TDP",
               "text": { "en": "Delayed gratification: Trading today's 'want' for tomorrow's 'freedom'.", "es": "Gratificación diferida: Cambiar el 'deseo' de hoy por la 'libertad' de mañana." },
               "correct": true,
               "feedback": { "en": "True. He who can wait for his reward owns the world. Compounding interest applies to habits too.", "es": "Verdadero. Quien puede esperar por su recompensa es dueño del mundo. El interés compuesto también se aplica a los hábitos." }
             },
             {
+              "code": "TDM",
               "text": { "en": "Winning the lottery or a big inheritance.", "es": "Ganar la lotería o una gran herencia." },
               "correct": false,
               "feedback": { "en": "False. Wealth without character to manage it disappears in 3 years.", "es": "Falso. La riqueza sin carácter para manejarla desaparece en 3 años." }
