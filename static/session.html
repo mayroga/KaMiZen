@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KAMIZEN | LIFE SIMULATOR</title>
+<title>KAMIZEN | LIFE ENGINE</title>
 
 <style>
 body {
@@ -24,9 +24,7 @@ body {
     align-items:center;
 }
 
-/* ===============================
-   📖 STORY DISPLAY (LOCKED FLOW)
-=============================== */
+/* STORY */
 #message {
     width:80%;
     max-width:800px;
@@ -37,12 +35,9 @@ body {
     font-size:20px;
     line-height:1.6;
     min-height:120px;
-    transition: all 0.4s ease;
 }
 
-/* ===============================
-   📊 STATS
-=============================== */
+/* STATS */
 #stats {
     display:grid;
     grid-template-columns: repeat(4, 1fr);
@@ -58,9 +53,7 @@ body {
     text-align:center;
 }
 
-/* ===============================
-   🎮 BUTTONS
-=============================== */
+/* BUTTONS */
 #options {
     display:flex;
     flex-wrap:wrap;
@@ -97,7 +90,6 @@ button:hover {
     </div>
 
     <div id="message">Inicializando sistema...</div>
-
     <div id="options"></div>
 
 </div>
@@ -105,16 +97,16 @@ button:hover {
 <script>
 
 // ===============================
-// STATE CORE
+// STATE
 // ===============================
 let session_id = localStorage.getItem("session_id");
 let state = JSON.parse(localStorage.getItem("state") || "{}");
 
 let locked = false;
-let currentStory = null;
+let lastNarrative = "";
 
 // ===============================
-// INIT FLOW
+// INIT
 // ===============================
 window.onload = async function () {
 
@@ -123,15 +115,15 @@ window.onload = async function () {
     if (!session_id) {
         await startSession();
     } else {
-        show("Reconectando flujo de vida...");
-        await requestNext("TDM");
+        show("Reconectando sistema...");
+        await next("TDM");
     }
 
     renderButtons();
 };
 
 // ===============================
-// START SESSION
+// START
 // ===============================
 async function startSession() {
 
@@ -151,15 +143,15 @@ async function startSession() {
     localStorage.setItem("session_id", session_id);
     localStorage.setItem("state", JSON.stringify(state));
 
-    if (data.story) {
-        playStory(data.story);
-    }
+    show(data.narrative);
+    speak(data.narrative);
+    updateUI();
 }
 
 // ===============================
-// NEXT STORY (ONLY BACKEND CONTROL)
+// NEXT STEP (ONLY BACKEND CONTROL)
 // ===============================
-async function requestNext(decision) {
+async function next(decision) {
 
     if (locked) return;
     locked = true;
@@ -171,7 +163,8 @@ async function requestNext(decision) {
             headers: {"Content-Type":"application/json"},
             body: JSON.stringify({
                 session_id,
-                decision
+                decision,
+                context: "flow"
             })
         });
 
@@ -190,68 +183,36 @@ async function requestNext(decision) {
         localStorage.setItem("state", JSON.stringify(state));
         updateUI();
 
-        if (data.end || !data.story) {
-            playStory({
-                blocks: [
-                    { text: "FIN DEL CICLO HUMANO. TU IDENTIDAD HA SIDO REGISTRADA." }
-                ]
-            });
+        // =========================
+        // 🔴 END FIX (NO FAKE END)
+        // =========================
+        if (data.status === "end") {
+            const endMsg = "FIN DEL CICLO HUMANO. TU IDENTIDAD HA SIDO REGISTRADA.";
+            show(endMsg);
+            speak(endMsg);
             locked = false;
             return;
         }
 
-        playStory(data.story);
+        const narrative = data.narrative || "Procesando decisión...";
+        lastNarrative = narrative;
+
+        show(narrative);
+        speak(narrative);
+
+        const delay = Math.max(6000, narrative.length * 60);
+
+        clearTimeout(window.auto);
+        window.auto = setTimeout(() => {
+            next("TDM");
+        }, delay);
 
     } catch (e) {
         console.error(e);
         show("ERROR DE CONEXIÓN");
     }
 
-    locked = false;
-}
-
-// ===============================
-// STORY PLAYER (NO CUTTING)
-// ===============================
-function playStory(story) {
-
-    if (!story) return;
-
-    const text = extractText(story);
-
-    currentStory = story;
-
-    show(text);
-    speak(text);
-    updateUI();
-
-    // 🔥 CRITICAL FIX: WAIT FULL READING BEFORE NEXT ACTION
-    const duration = Math.max(7000, text.length * 75);
-
-    clearTimeout(window.auto);
-    window.auto = setTimeout(() => {
-        requestNext("TDM");
-    }, duration);
-}
-
-// ===============================
-// EXTRACT TEXT (SAFE MULTI FORMAT)
-// ===============================
-function extractText(story) {
-
-    if (!story.blocks) return "Historia sin contenido";
-
-    let out = "";
-
-    for (let b of story.blocks) {
-        if (typeof b.text === "string") {
-            out += b.text + " ";
-        } else if (b.text?.es) {
-            out += b.text.es + " ";
-        }
-    }
-
-    return out.trim();
+    setTimeout(() => locked = false, 800);
 }
 
 // ===============================
@@ -269,7 +230,7 @@ function updateUI() {
 }
 
 // ===============================
-// VOICE SYSTEM (ANTI-CUT)
+// VOICE (ANTI CUT PERFECT SYNC)
 // ===============================
 function speak(text) {
 
@@ -286,7 +247,7 @@ function speak(text) {
 }
 
 // ===============================
-// BUTTONS (SOFT OVERRIDE ONLY)
+// BUTTONS
 // ===============================
 function renderButtons() {
 
@@ -303,14 +264,9 @@ function renderButtons() {
     ];
 
     for (let [k,label] of list) {
-
         const b = document.createElement("button");
         b.innerText = label;
-
-        b.onclick = () => {
-            if (!locked) requestNext(k);
-        };
-
+        b.onclick = () => next(k);
         c.appendChild(b);
     }
 }
