@@ -687,97 +687,97 @@
       ]
     },
     {
-      "id": 18,
-      "level": 6,
-      "category": "THE LEGACY: FAMILY AND BLOOD",
-      "blocks": [
-        {
-          "type": "breathing",
-          "duration_sec": 180,
-          "mode": "focus",
-          "text": {
-            "en": "Deep belly breathing. As the circle expands, feel the strength of your ancestors. As it shrinks, let go of their mistakes. (3 Minutes)",
-            "es": "Respiración abdominal profunda. Mientras el círculo se expande, siente la fuerza de tus ancestros. Mientras encoge, suelta sus errores. (3 Minutos)"
-          }
-        },
-        {
-          "type": "story",
-          "text": {
-            "en": "You have finally achieved success. Your father, who was always tough on you, asks for a loan to start a business he's failed at twice before. You know he will likely lose it again.",
-            "es": "Finalmente has alcanzado el éxito. Tu padre, que siempre fue duro contigo, te pide un préstamo para un negocio en el que ya fracasó dos veces. Sabes que probablemente lo perderá de nuevo."
-          }
-        },
-        {
-          "type": "tvid",
-          "mode": "tension",
-          "options": [
-            {
-              "code": "TDG",
-              "text": { "en": "Offer to pay his living expenses instead of giving cash.", "es": "Ofrecer pagar sus gastos de vida en lugar de darle efectivo." }
-            },
-            {
-              "code": "TDM",
-              "text": { "en": "Give him the money; he is your blood and you owe him.", "es": "Darle el dinero; es tu sangre y se lo debes." }
-            }
-          ]
-        },
-        {
-          "type": "psychological_insight",
-          "text": {
-            "en": "THE BALANCE: Giving cash to a sinkhole isn't love, it's enabling. By securing his needs without fueling his failure, you protect the family capital and his dignity. Wisdom is tougher than emotion.",
-            "es": "EL BALANCE: Dar efectivo a un pozo sin fondo no es amor, es alcahuetería. Al asegurar sus necesidades sin alimentar su fracaso, proteges el capital familiar y su dignidad. La sabiduría es más dura que la emoción."
-          }
-        },
-        {
-          "type": "silence_challenge",
-          "duration_sec": 280,
-          "quotes": [
-            { "en": "A man who does not spend time with his family can never be a real man.", "es": "Un hombre que no pasa tiempo con su familia nunca puede ser un hombre de verdad." }
-          ]
+    "id": 18,
+    "level": 6,
+    "category": "THE LEGACY: FAMILY AND BLOOD",
+    "blocks": [
+      {
+        "type": "breathing",
+        "duration_sec": 180,
+        "mode": "focus",
+        "text": {
+          "en": "Deep belly breathing. As the circle expands, feel the strength of your ancestors. As it shrinks, let go of their mistakes. (3 Minutes)",
+          "es": "Respiración abdominal profunda. Mientras el círculo se expande, siente la fuerza de tus ancestros. Mientras encoge, suelta sus errores. (3 Minutos)"
         }
-      ]
-    },
-    {
-      "id": 19,
-      "level": 7,
-      "category": "THE SUPREME TEST: THE TABLET",
-      "blocks": [
-        {
-          "type": "story",
-          "text": {
+      },
+      {
+        "type": "story",
+        "text": {
+          "en": "You have finally achieved success. Your father, who was always tough on you, asks for a loan to start a business he's failed at twice before. You know he will likely lose it again.",
+          "es": "Finalmente has alcanzado el éxito. Tu padre, que siempre fue duro contigo, te pide un préstamo para un negocio en el que ya fracasó dos veces. Sabes que probablemente lo perderá de nuevo."
+        }
+      },
+      {
+        "type": "tvid",
+        "mode": "tension",
+        "options": [
+          {
+            "code": "TDG",
+            "text": { "en": "Offer to pay his living expenses instead of giving cash.", "es": "Ofrecer pagar sus gastos de vida en lugar de darle efectivo." }
+          },
+          {
+            "code": "TDM",
+            "text": { "en": "Give him the money; he is your blood and you owe him.", "es": "Darle el dinero; es tu sangre y se lo debes." }
+          }
+        ]
+      },
+      {
+        "type": "psychological_insight",
+        "text": {
+          "en": "THE BALANCE: Giving cash to a sinkhole isn't love, it's enabling. By securing his needs without fueling his failure, you protect the family capital and his dignity. Wisdom is tougher than emotion.",
+          "es": "EL BALANCE: Dar efectivo a un pozo sin fondo no es amor, es alcahuetería. Al asegurar sus necesidades sin alimentar su fracaso, proteges el capital familiar y su dignidad. La sabiduría es más dura que la emoción."
+        }
+      },
+      {
+        "type": "silence_challenge",
+        "duration_sec": 280,
+        "quotes": [
+          { "en": "A man who does not spend time with his family can never be a real man.", "es": "Un hombre que no pasa tiempo con su familia nunca puede ser un hombre de verdad." }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 19,
+    "level": 7,
+    "category": "THE SUPREME TEST: THE TABLET",
+    "blocks": [
+      {
+        "type": "story",
+        "text": {
           "en": "You accidentally broke your little sister's tablet—the one she saved for a year to buy. Your mother enters the room and blames her for being 'careless'. Your sister is crying silently.",
           "es": "Rompiste por accidente la tablet de tu hermanita; la que ella ahorró por un año para comprar. Tu madre entra al cuarto y la culpa a ella por ser 'descuidada'. Tu hermana llora en silencio."
-          }
-        },
-        {
-          "type": "tvid",
-          "mode": "agitation",
-          "options": [
-            {
-              "code": "TDK",
-              "text": { "en": "Step in: 'Mom, it was me. I will work to buy her a new one.'", "es": "Intervenir: 'Mamá, fui yo. Trabajaré para comprarle una nueva'." }
-            },
-            {
-              "code": "TDM",
-              "text": { "en": "Stay quiet; it was an accident and you can't afford a new one.", "es": "Cállate; fue un accidente y no puedes pagar una nueva." }
-            }
-          ]
-        },
-        {
-          "type": "psychological_insight",
-          "text": {
-            "en": "THE HERO'S CHOICE: If you spoke up, you lost your free time and money, but you won a sister's eternal loyalty and your mother's secret respect. If you stayed quiet, you are a ghost in your own home. Integrity costs money, but cowardice costs your soul.",
-            "es": "LA ELECCIÓN DEL HÉROE: Si hablaste, perdiste tu tiempo libre y dinero, pero ganaste la lealtad eterna de una hermana y el respeto secreto de tu madre. Si callaste, eres un fantasma en tu propia casa. La integridad cuesta dinero, pero la cobardía cuesta el alma."
-          }
         }
-      ]
-    },
-    {
-      "id": 20,
-      "level": 7,
-      "category": "MENTAL FORTRESS: RIDDLES OF POWER",
-      "blocks": [
-        {
+      },
+      {
+        "type": "tvid",
+        "mode": "agitation",
+        "options": [
+          {
+            "code": "TDK",
+            "text": { "en": "Step in: 'Mom, it was me. I will work to buy her a new one.'", "es": "Intervenir: 'Mamá, fui yo. Trabajaré para comprarle una nueva'." }
+          },
+          {
+            "code": "TDM",
+            "text": { "en": "Stay quiet; it was an accident and you can't afford a new one.", "es": "Cállate; fue un accidente y no puedes pagar una nueva." }
+          }
+        ]
+      },
+      {
+        "type": "psychological_insight",
+        "text": {
+          "en": "THE HERO'S CHOICE: If you spoke up, you lost your free time and money, but you won a sister's eternal loyalty and your mother's secret respect. If you stayed quiet, you are a ghost in your own home. Integrity costs money, but cowardice costs your soul.",
+          "es": "LA ELECCIÓN DEL HÉROE: Si hablaste, perdiste tu tiempo libre y dinero, pero ganaste la lealtad eterna de una hermana y el respeto secreto de tu madre. Si callaste, eres un fantasma en tu propia casa. La integridad cuesta dinero, pero la cobardía cuesta el alma."
+        }
+      }
+    ]
+  },
+  {
+    "id": 20,
+    "level": 7,
+    "category": "MENTAL FORTRESS: RIDDLES OF POWER",
+    "blocks": [
+      {
         "type": "quiz",
         "question": {
           "en": "What is the ultimate secret to long-term wealth?",
@@ -878,8 +878,8 @@
       {
         "type": "win",
         "text": {
-          "en": "CONGRATULATIONS. You have completed the 21 levels of AURA BY MAY ROGA. Your certificate of character is ready in your mind. Go and lead.",
-          "es": "FELICIDADES. Has completado los 21 niveles de AURA BY MAY ROGA. Tu certificado de carácter está listo en tu mente. Ve y lidera."
+          "en": "CONGRATULATIONS. You have completed the 22 levels of AURA BY MAY ROGA. Your certificate of character is ready in your mind. Go and lead.",
+          "es": "FELICIDADES. Has completado los 22 niveles de AURA BY MAY ROGA. Tu certificado de carácter está listo en tu mente. Ve y lidera."
         }
       }
     ]
