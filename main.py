@@ -1,6 +1,6 @@
 # ===============================
-# KAMIZEN LIFE ENGINE - CINEMATIC CORE v4.0
-# STORY-DRIVEN + TVID + PROGRESSION SYSTEM
+# KAMIZEN LIFE ENGINE - CINEMATIC CORE v4.1
+# STORY-DRIVEN + SYNCHRONIZED FLOW ENGINE
 # ===============================
 
 from fastapi import FastAPI, Request
@@ -23,19 +23,24 @@ DB_PATH = "kamizen.db"
 CONTENT_PATH = "static/kamizen_content.json"
 
 # ===============================
-# LOAD STORY CONTENT
+# LOAD STORY CONTENT (SAFE)
 # ===============================
 def load_content():
     if not os.path.exists(CONTENT_PATH):
-        return []
-    with open(CONTENT_PATH, "r", encoding="utf-8") as f:
-        data = json.load(f)
-        return data.get("sessions", [])
+        return {"sessions": []}
 
-STORIES = load_content()
+    with open(CONTENT_PATH, "r", encoding="utf-8") as f:
+        try:
+            data = json.load(f)
+            return data
+        except:
+            return {"sessions": []}
+
+CONTENT = load_content()
+STORIES = CONTENT.get("sessions", [])
 
 # ===============================
-# INIT DATABASE
+# DB INIT
 # ===============================
 def init_db():
     conn = sqlite3.connect(DB_PATH)
@@ -45,7 +50,9 @@ def init_db():
     CREATE TABLE IF NOT EXISTS users (
         session_id TEXT PRIMARY KEY,
         created REAL,
-        state TEXT
+        state TEXT,
+        story_index INTEGER,
+        locked INTEGER DEFAULT 0
     )
     """)
 
@@ -55,7 +62,7 @@ def init_db():
 init_db()
 
 # ===============================
-# CREATE STATE
+# STATE CREATION
 # ===============================
 def create_state(profile):
     return {
@@ -65,7 +72,8 @@ def create_state(profile):
         "karma": 0,
         "age": profile.get("age", 18),
 
-        "progress": 0,  # 🔥 CONTROL DE HISTORIA
+        "progress": 0,
+        "story_locked": False,
 
         "psychology": {
             "stress": 0,
@@ -80,38 +88,48 @@ def create_state(profile):
     }
 
 # ===============================
-# DATABASE HELPERS
+# DB HELPERS
 # ===============================
-def save_user(session_id, state):
+def save_user(session_id, state, index=0, locked=False):
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
 
     c.execute("""
-    INSERT OR REPLACE INTO users (session_id, created, state)
-    VALUES (?, ?, ?)
-    """, (session_id, time.time(), json.dumps(state)))
+    INSERT OR REPLACE INTO users (session_id, created, state, story_index, locked)
+    VALUES (?, ?, ?, ?, ?)
+    """, (
+        session_id,
+        time.time(),
+        json.dumps(state),
+        index,
+        1 if locked else 0
+    ))
 
     conn.commit()
     conn.close()
+
 
 def load_user(session_id):
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
 
-    c.execute("SELECT state FROM users WHERE session_id=?", (session_id,))
+    c.execute("SELECT state, story_index, locked FROM users WHERE session_id=?", (session_id,))
     row = c.fetchone()
-
     conn.close()
 
-    if row:
-        return json.loads(row[0])
-    return None
+    if not row:
+        return None
+
+    return {
+        "state": json.loads(row[0]),
+        "index": row[1],
+        "locked": bool(row[2])
+    }
 
 # ===============================
 # PSYCHOLOGY ENGINE
 # ===============================
 def update_psychology(state, decision):
-
     psy = state["psychology"]
 
     if decision == "TDM":
@@ -132,11 +150,9 @@ def update_psychology(state, decision):
     elif decision == "TDK":
         psy["resilience"] += 3
 
-    # LIMITES
     for k in psy:
         psy[k] = max(0, min(100, psy[k]))
 
-    # IDENTIDAD
     if psy["stress"] > 70:
         state["identity"]["core"] = "survival"
     elif psy["trauma"] > 60:
@@ -147,24 +163,15 @@ def update_psychology(state, decision):
         state["identity"]["core"] = "neutral"
 
 # ===============================
-# GET NEXT STORY
+# STORY ENGINE (CONTROLLED FLOW)
 # ===============================
-def get_next_story(state):
-
-    index = state.get("progress", 0)
-
+def get_story(index):
     if index >= len(STORIES):
         return None
-
-    story = STORIES[index]
-
-    # 🔥 avanzar progreso
-    state["progress"] += 1
-
-    return story
+    return STORIES[index]
 
 # ===============================
-# ROUTES
+# HOME
 # ===============================
 @app.get("/")
 def home():
@@ -182,19 +189,21 @@ async def start(req: Request):
     session_id = str(uuid.uuid4())
     state = create_state(profile)
 
-    first_story = get_next_story(state)
+    story = get_story(0)
 
-    save_user(session_id, state)
+    save_user(session_id, state, 0, False)
 
     return {
         "session_id": session_id,
         "state": state,
-        "story": first_story,
+        "story": story,
+        "story_index": 0,
+        "locked": False,
         "end": False
     }
 
 # ===============================
-# DECISION ENGINE
+# JUDGE ENGINE (SYNCED FLOW)
 # ===============================
 @app.post("/judge")
 async def judge(req: Request):
@@ -204,10 +213,13 @@ async def judge(req: Request):
     session_id = data.get("session_id")
     decision = data.get("decision", "TDM")
 
-    state = load_user(session_id)
+    user = load_user(session_id)
 
-    if not state:
+    if not user:
         return JSONResponse({"error": "session not found"}, status_code=404)
+
+    state = user["state"]
+    index = user["index"]
 
     # ===============================
     # EFFECTS
@@ -224,29 +236,36 @@ async def judge(req: Request):
     for k, v in effects.get(decision, {}).items():
         state[k] = state.get(k, 0) + v
 
-    # LIMITES
+    # LIMITS
     state["mental"] = max(0, min(100, state["mental"]))
     state["social"] = max(0, min(100, state["social"]))
     state["discipline"] = max(0, min(100, state["discipline"]))
 
-    # PSICOLOGÍA
+    # PSYCHOLOGY
     update_psychology(state, decision)
 
-    # SIGUIENTE HISTORIA
-    next_story = get_next_story(state)
+    # ===============================
+    # STORY CONTROL (ONLY ADVANCE HERE)
+    # ===============================
+    next_index = index + 1
+    next_story = get_story(next_index)
 
-    save_user(session_id, state)
-
-    if not next_story:
+    if next_story:
+        save_user(session_id, state, next_index, False)
         return {
             "state": state,
-            "end": True
+            "story": next_story,
+            "story_index": next_index,
+            "end": False
         }
+
+    save_user(session_id, state, index, True)
 
     return {
         "state": state,
-        "story": next_story,
-        "end": False
+        "story": None,
+        "story_index": index,
+        "end": True
     }
 
 # ===============================
