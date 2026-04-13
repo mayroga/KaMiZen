@@ -6,10 +6,6 @@
 <title>KAMIZEN | LIFE SIMULATOR</title>
 
 <style>
-
-/* ===============================
-   GLOBAL SYSTEM
-=============================== */
 body {
     margin:0;
     font-family: Arial Black, sans-serif;
@@ -18,13 +14,8 @@ body {
     overflow:hidden;
 }
 
-/* ===============================
-   MAIN APP CONTAINER
-=============================== */
 #app {
     position:absolute;
-    top:0;
-    left:0;
     width:100%;
     height:100%;
     display:flex;
@@ -33,86 +24,51 @@ body {
     align-items:center;
 }
 
-/* ===============================
-   MESSAGE PANEL (CINEMATIC TEXT)
-=============================== */
 #message {
-    width:85%;
-    max-width:850px;
-    padding:22px;
+    width:80%;
+    max-width:800px;
+    padding:20px;
     border:2px solid #00f2ff;
-    background:rgba(0,0,0,0.88);
+    background:rgba(0,0,0,0.85);
     text-align:center;
     font-size:18px;
     margin-bottom:20px;
-    min-height:80px;
-    transition:0.3s ease-in-out;
 }
 
-/* ===============================
-   STATS PANEL (LIFE STATE)
-=============================== */
 #stats {
     display:grid;
     grid-template-columns: repeat(4, 1fr);
     gap:10px;
-    width:85%;
-    max-width:850px;
+    width:80%;
+    max-width:800px;
     margin-bottom:20px;
 }
 
 .box {
     border:1px solid #00f2ff;
-    padding:12px;
+    padding:10px;
     text-align:center;
-    background:rgba(0,0,0,0.5);
-    font-size:14px;
 }
 
-/* ===============================
-   BUTTON SYSTEM (TVID INTERFACE)
-=============================== */
 #options {
     display:flex;
     flex-wrap:wrap;
     justify-content:center;
     gap:10px;
-    width:85%;
-    max-width:850px;
+    width:80%;
 }
 
-/* ===============================
-   BUTTON STYLE
-=============================== */
 button {
-    padding:12px 14px;
+    padding:12px;
     border:2px solid #00f2ff;
     background:black;
     color:#00f2ff;
-    font-weight:bold;
     cursor:pointer;
-    transition:0.2s ease-in-out;
 }
-
 button:hover {
     background:#00f2ff;
     color:black;
-    transform:scale(1.05);
 }
-
-/* ===============================
-   SMALL SYSTEM ANIMATION FEEL
-=============================== */
-@keyframes pulse {
-    0% { opacity:1; }
-    50% { opacity:0.7; }
-    100% { opacity:1; }
-}
-
-#message {
-    animation:pulse 4s infinite;
-}
-
 </style>
 </head>
 
@@ -120,9 +76,6 @@ button:hover {
 
 <div id="app">
 
-    <!-- ===============================
-         STATS HUD
-    =============================== -->
     <div id="stats">
         <div class="box">MENTAL <div id="mental">100</div></div>
         <div class="box">SOCIAL <div id="social">50</div></div>
@@ -130,27 +83,18 @@ button:hover {
         <div class="box">DISCIPLINE <div id="disc">50</div></div>
     </div>
 
-    <!-- ===============================
-         CINEMATIC MESSAGE
-    =============================== -->
-    <div id="message">INITIALIZING KAMIZEN LIFE ENGINE...</div>
+    <div id="message">Inicializando sistema...</div>
 
-    <!-- ===============================
-         TVID OPTIONS
-    =============================== -->
     <div id="options"></div>
 
 </div>
 
-<!-- ===============================
-     AUDIO ENGINE
-=============================== -->
 <audio id="audio" loop></audio>
 
 <script>
 
 // ===============================
-// STATE SYSTEM
+// STATE SAFE SYSTEM (AUTO RECOVERY)
 // ===============================
 let session_id = localStorage.getItem("session_id");
 let state = JSON.parse(localStorage.getItem("state") || "{}");
@@ -158,61 +102,80 @@ let state = JSON.parse(localStorage.getItem("state") || "{}");
 let currentEvent = null;
 let locked = false;
 let paused = false;
-let autoMode = true;
 
 // ===============================
-// AUDIO ENGINE (EMOTIONAL LAYERS)
+// AUTO START (CRITICAL FIX)
 // ===============================
-function playMood(type) {
+window.onload = async function init() {
 
-    const audio = document.getElementById("audio");
-
-    const tracks = {
-        calm: "https://cdn.pixabay.com/audio/2022/03/15/audio_c8c8a6.mp3",
-        stress: "https://cdn.pixabay.com/audio/2022/10/16/audio_7b3b6a.mp3",
-        chaos: "https://cdn.pixabay.com/audio/2022/08/02/audio_5c8f7c.mp3",
-        focus: "https://cdn.pixabay.com/audio/2021/11/25/audio_7b9d0d.mp3"
-    };
-
-    audio.src = tracks[type] || tracks.calm;
-    audio.volume = 0.4;
-
-    audio.play().catch(() => {});
-}
-
-// ===============================
-// UI UPDATE SYSTEM
-// ===============================
-function updateUI() {
-
-    const s = state || {};
-
-    document.getElementById("mental").innerText = s.mental ?? 100;
-    document.getElementById("social").innerText = s.social ?? 50;
-    document.getElementById("karma").innerText = s.karma ?? 0;
-    document.getElementById("disc").innerText = s.discipline ?? 50;
-}
-
-// ===============================
-// MESSAGE SYSTEM
-// ===============================
-function showMessage(text) {
-    document.getElementById("message").innerText = text;
-}
-
-// ===============================
-// INIT SYSTEM
-// ===============================
-async function init() {
+    showMessage("Verificando sesión...");
 
     if (!session_id) {
-        showMessage("ERROR: SESSION NOT FOUND. START FROM HOME SCREEN.");
-        return;
+        await startSession();   // 🔥 CREA SESIÓN SI NO EXISTE
+    } else {
+        showMessage("Sesión encontrada. Cargando mundo...");
     }
 
-    showMessage("KAMIZEN SYSTEM ONLINE... BUILDING LIFE SIMULATION.");
-
     updateUI();
+    renderButtons();
+
+    setTimeout(() => {
+        processEvent("start");
+    }, 800);
+};
+
+// ===============================
+// START SESSION (FIXED CALL)
+// ===============================
+async function startSession() {
+
+    try {
+
+        const profile = {
+            age: 18,
+            difficulty: 1,
+            emotion: "neutral"
+        };
+
+        const res = await fetch("/start", {
+            method: "POST",
+            headers: {"Content-Type":"application/json"},
+            body: JSON.stringify({ profile })
+        });
+
+        const data = await res.json();
+
+        if (!data.session_id) {
+            showMessage("ERROR: no se pudo iniciar sesión");
+            return;
+        }
+
+        session_id = data.session_id;
+        localStorage.setItem("session_id", session_id);
+
+        state = data.state || {};
+        localStorage.setItem("state", JSON.stringify(state));
+
+        showMessage(data.narrative || "Sistema iniciado");
+
+    } catch (e) {
+        console.error(e);
+        showMessage("ERROR CONECTANDO CON SERVIDOR");
+    }
+}
+
+// ===============================
+// UI
+// ===============================
+function showMessage(t) {
+    document.getElementById("message").innerText = t;
+}
+
+function updateUI() {
+    document.getElementById("mental").innerText = state.mental ?? 100;
+    document.getElementById("social").innerText = state.social ?? 50;
+    document.getElementById("karma").innerText = state.karma ?? 0;
+    document.getElementById("disc").innerText = state.discipline ?? 50;
 }
 
 // ===============================
@@ -222,86 +185,48 @@ function processEvent(event) {
 
     if (paused) return;
 
-    let msg = "";
+    currentEvent = event;
+
+    let msg = "Decisión en progreso...";
 
     switch(event) {
-
         case "tentacion":
-            msg = "Someone requests something small… but it affects your balance.";
-            playMood("stress");
+            msg = "Algo intenta desviarte del camino.";
             break;
-
         case "crisis":
-            msg = "Environmental pressure increases. Stability is tested.";
-            playMood("chaos");
+            msg = "Presión inmediata en tu entorno.";
             break;
-
-        case "conflicto":
-            msg = "A social decision demands immediate response.";
-            playMood("stress");
-            break;
-
         case "dinero":
-            msg = "A financial opportunity appears in your system.";
-            playMood("focus");
+            msg = "Oportunidad financiera detectada.";
             break;
-
         case "amor":
-            msg = "An emotional connection activates internal response.";
-            playMood("calm");
+            msg = "Conexión emocional activa.";
             break;
-
-        case "oportunidad":
-            msg = "System detects potential growth pathway.";
-            playMood("focus");
-            break;
-
         default:
-            msg = "A decision is shaping your identity structure.";
-            playMood("calm");
-    }
-
-    // ===============================
-    // PSYCHOLOGICAL LAYER OVERRIDE
-    // ===============================
-    const psy = state.psychology || {};
-
-    if (psy.stress_memory > 70) {
-        msg = "MENTAL OVERLOAD: Your reaction is stronger than reality.";
-        playMood("chaos");
-    }
-
-    if (psy.trauma_index > 60) {
-        msg = "PAST TRAUMA ACTIVE: Emotional memory influencing present.";
-    }
-
-    if (psy.self_control < 30) {
-        msg = "LOW CONTROL STATE: Decisions become impulsive.";
-        playMood("stress");
+            msg = "Tu vida responde a tus decisiones.";
     }
 
     showMessage(msg);
-    renderButtons();
 
-    // ===============================
-    // AUTO DECISION SYSTEM
-    // ===============================
-    clearTimeout(window.autoLoop);
+    clearTimeout(window.auto);
 
-    if (autoMode) {
-        window.autoLoop = setTimeout(() => {
-            if (!locked) sendDecision("TDM");
-        }, 8500);
-    }
+    window.auto = setTimeout(() => {
+        if (!locked) sendDecision("TDM");
+    }, 8000);
 }
 
 // ===============================
-// DECISION ENGINE
+// DECISION ENGINE (FIXED + SAFE)
 // ===============================
 async function sendDecision(decision) {
 
     if (locked) return;
     locked = true;
+
+    // 🔴 AUTO FIX: SI NO HAY SESIÓN → RECREAR
+    if (!session_id) {
+        await startSession();
+    }
 
     try {
 
@@ -317,6 +242,15 @@ async function sendDecision(decision) {
 
         const data = await res.json();
 
+        if (data.error) {
+            showMessage("ERROR: reiniciando sesión...");
+            localStorage.removeItem("session_id");
+            session_id = null;
+            await startSession();
+            locked = false;
+            return;
+        }
+
         if (data.state) {
             state = data.state;
             localStorage.setItem("state", JSON.stringify(state));
@@ -325,25 +259,24 @@ async function sendDecision(decision) {
         updateUI();
 
         if (data.status === "end") {
-            showMessage("SYSTEM TERMINATED: LIFE CYCLE COMPLETED");
+            showMessage("SISTEMA TERMINADO");
             return;
         }
 
-        showMessage(data.narrative || "Continuing simulation...");
+        showMessage(data.narrative);
 
-        currentEvent = data.next_event;
-        processEvent(currentEvent);
+        processEvent(data.next_event || "scene");
 
     } catch (err) {
         console.error(err);
-        showMessage("ERROR: CONNECTION LOST WITH KAMIZEN ENGINE");
+        showMessage("ERROR DE CONEXIÓN");
     }
 
-    setTimeout(() => locked = false, 650);
+    setTimeout(() => locked = false, 600);
 }
 
 // ===============================
-// TVID BUTTON SYSTEM
+// BUTTONS TVID
 // ===============================
 function renderButtons() {
 
@@ -351,26 +284,21 @@ function renderButtons() {
     c.innerHTML = "";
 
     const map = [
-        ["TDB","🧘 Awareness"],
-        ["TDM","⚠️ Emotion"],
-        ["TDN","🧠 Creativity"],
-        ["TDP","📌 Structure"],
-        ["TDG","🔥 Control"],
-        ["TDK","❤️ Connection"]
+        ["TDB","Equilibrio"],
+        ["TDM","Impulso"],
+        ["TDN","Creatividad"],
+        ["TDP","Estructura"],
+        ["TDG","Control"],
+        ["TDK","Conexión"]
     ];
 
-    map.forEach(([key,label]) => {
+    map.forEach(([k,label]) => {
         const b = document.createElement("button");
         b.innerText = label;
-        b.onclick = () => sendDecision(key);
+        b.onclick = () => sendDecision(k);
         c.appendChild(b);
     });
 }
-
-// ===============================
-// START
-// ===============================
-window.onload = init;
 
 </script>
 
