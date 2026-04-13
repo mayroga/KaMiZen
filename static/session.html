@@ -5,123 +5,312 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KAMIZEN | LIFE SIMULATOR</title>
     <style>
-        body { margin:0; font-family: 'Courier New', monospace; background:#000; color:#00f2ff; overflow:hidden; }
-        #app { position:absolute; width:100%; height:100%; display:flex; flex-direction:column; justify-content:center; align-items:center; }
-        #stats { display:grid; grid-template-columns: repeat(4, 1fr); gap:10px; width:90%; max-width:800px; margin-bottom:20px; }
-        .box { border:1px solid #00f2ff; padding:10px; text-align:center; font-size: 12px; }
-        .val { font-size: 18px; display: block; color: #fff; }
-        #message { width:85%; max-width:800px; padding:25px; border:2px solid #00f2ff; background:rgba(0,15,30,0.9); text-align:center; font-size:20px; min-height:150px; display:flex; align-items:center; justify-content:center; margin-bottom: 20px; }
-        #options { display:flex; flex-wrap:wrap; justify-content:center; gap:10px; width:90%; }
-        button { padding:15px 25px; border:2px solid #00f2ff; background:black; color:#00f2ff; cursor:pointer; font-weight:bold; transition: 0.3s; }
-        button:hover { background:#00f2ff; color:black; }
-        button:disabled { border-color: #004444; color: #004444; cursor: not-allowed; }
+        :root {
+            --neon: #00f2ff;
+            --bg: #000;
+            --accent: #ff00ff;
+            --panel: rgba(0, 15, 30, 0.95);
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: var(--bg);
+            color: var(--neon);
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-transform: uppercase;
+        }
+
+        #app {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(circle, #001a1a 0%, #000 80%);
+        }
+
+        /* HEADER & STATS */
+        #header {
+            position: absolute;
+            top: 20px;
+            width: 90%;
+            max-width: 900px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #category-tag {
+            font-size: 12px;
+            letter-spacing: 5px;
+            margin-bottom: 15px;
+            color: var(--accent);
+            text-shadow: 0 0 10px var(--accent);
+        }
+
+        #stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            width: 100%;
+        }
+
+        .box {
+            border: 1px solid var(--neon);
+            background: rgba(0, 242, 255, 0.05);
+            padding: 10px;
+            text-align: center;
+            box-shadow: inset 0 0 10px rgba(0, 242, 255, 0.1);
+        }
+
+        .label {
+            font-size: 9px;
+            display: block;
+            margin-bottom: 5px;
+            opacity: 0.7;
+        }
+
+        .val {
+            font-size: 22px;
+            font-weight: bold;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        /* MAIN TERMINAL */
+        #message-container {
+            width: 85%;
+            max-width: 850px;
+            margin: 40px 0;
+            position: relative;
+        }
+
+        #message {
+            min-height: 200px;
+            padding: 40px;
+            border: 2px solid var(--neon);
+            background: var(--panel);
+            font-size: 24px;
+            line-height: 1.4;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 30px rgba(0, 242, 255, 0.15);
+            position: relative;
+            z-index: 2;
+        }
+
+        #message::before {
+            content: "";
+            position: absolute;
+            top: -5px; left: -5px; right: -5px; bottom: -5px;
+            border: 1px solid var(--accent);
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        /* ACTIONS */
+        #options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            width: 85%;
+            max-width: 850px;
+        }
+
+        button {
+            padding: 18px;
+            border: 1px solid var(--neon);
+            background: transparent;
+            color: var(--neon);
+            font-weight: bold;
+            font-size: 13px;
+            cursor: pointer;
+            transition: 0.2s;
+            letter-spacing: 2px;
+        }
+
+        button:hover:not(:disabled) {
+            background: var(--neon);
+            color: var(--bg);
+            box-shadow: 0 0 20px var(--neon);
+        }
+
+        button:disabled {
+            opacity: 0.2;
+            cursor: not-allowed;
+            filter: grayscale(1);
+        }
+
+        /* AUDIO VISUALIZER (DECORATIVE) */
+        #audio-hint {
+            position: absolute;
+            bottom: 20px;
+            font-size: 10px;
+            opacity: 0.5;
+        }
     </style>
 </head>
 <body>
 
 <div id="app">
-    <div id="stats">
-        <div class="box">MENTAL <span id="mental" class="val">100</span></div>
-        <div class="box">SOCIAL <span id="social" class="val">50</span></div>
-        <div class="box">KARMA <span id="karma" class="val">0</span></div>
-        <div class="box">DISCIPLINE <span id="disc" class="val">50</span></div>
+    <div id="header">
+        <div id="category-tag">CORE SYSTEM ONLINE</div>
+        <div id="stats">
+            <div class="box"><span class="label">MENTAL</span><span id="mental" class="val">--</span></div>
+            <div class="box"><span class="label">SOCIAL</span><span id="social" class="val">--</span></div>
+            <div class="box"><span class="label">KARMA</span><span id="karma" class="val">--</span></div>
+            <div class="box"><span class="label">DISCIPLINA</span><span id="disc" class="val">--</span></div>
+        </div>
     </div>
 
-    <div id="message">INICIALIZANDO CONEXIÓN...</div>
-    <div id="options"></div>
+    <div id="message-container">
+        <div id="message">INICIALIZANDO PROTOCOLO KAMIZEN...</div>
+    </div>
+
+    <div id="options">
+        <button onclick="handleAction('TDB')">Equilibrio</button>
+        <button onclick="handleAction('TDM')">Impulso</button>
+        <button onclick="handleAction('TDN')">Creatividad</button>
+        <button onclick="handleAction('TDP')">Estructura</button>
+        <button onclick="handleAction('TDG')">Control</button>
+        <button onclick="handleAction('TDK')">Conexión</button>
+    </div>
+
+    <div id="audio-hint">AUDIO DINÁMICO ACTIVADO</div>
 </div>
 
 <script>
-let session_id = localStorage.getItem("session_id");
-let locked = false;
+    let session_id = localStorage.getItem("kamizen_sid");
+    let is_busy = false;
 
-async function start() {
-    try {
-        const res = await fetch("/start", {
-            method: "POST",
-            headers: {"Content-Type":"application/json"},
-            body: JSON.stringify({ profile: { age: 18 } })
-        });
-        const data = await res.json();
-        session_id = data.session_id;
-        localStorage.setItem("session_id", session_id);
-        updateDisplay(data);
-    } catch (e) {
-        document.getElementById("message").innerText = "ERROR DE SERVIDOR";
-    }
-}
+    // --- MOTOR DE AUDIO ---
+    const audioManager = {
+        currentTrack: null,
+        moods: {
+            ambient: "https://assets.mixkit.co/music/preview/mixkit-mysterious-bass-pulse-2298.mp3",
+            suspense: "https://assets.mixkit.co/music/preview/mixkit-deep-urban-623.mp3",
+            tension: "https://assets.mixkit.co/music/preview/mixkit-complex-tension-pulse-background-2495.mp3",
+            discovery: "https://assets.mixkit.co/music/preview/mixkit-game-level-music-689.mp3",
+            power: "https://assets.mixkit.co/music/preview/mixkit-driving-force-353.mp3",
+            victory: "https://assets.mixkit.co/music/preview/mixkit-winning-an-extra-life-2550.mp3",
+            focus: "https://assets.mixkit.co/music/preview/mixkit-ethereal-fairy-win-sound-2019.mp3"
+        },
+        play(mood) {
+            const url = this.moods[mood] || this.moods.ambient;
+            if (this.currentTrack && this.currentTrack.src === url) return;
 
-async function sendDecision(code) {
-    if (locked) return;
-    locked = true;
-    toggleButtons(true);
+            if (this.currentTrack) {
+                const old = this.currentTrack;
+                let v = 0.5;
+                const fade = setInterval(() => {
+                    v -= 0.05;
+                    if (v <= 0) { clearInterval(fade); old.pause(); }
+                    else { old.volume = v; }
+                }, 50);
+            }
 
-    try {
-        const res = await fetch("/judge", {
-            method: "POST",
-            headers: {"Content-Type":"application/json"},
-            body: JSON.stringify({ session_id, decision: code })
-        });
-        const data = await res.json();
-        if (data.error) {
-            localStorage.clear();
-            location.reload();
-        } else {
-            updateDisplay(data);
+            this.currentTrack = new Audio(url);
+            this.currentTrack.loop = (mood !== 'victory');
+            this.currentTrack.volume = 0.5;
+            this.currentTrack.play().catch(() => console.log("Click para activar audio"));
         }
-    } catch (e) {
-        console.error(e);
-    } finally {
-        setTimeout(() => { 
-            locked = false; 
-            toggleButtons(false);
-        }, 800);
+    };
+
+    // --- LÓGICA DE APLICACIÓN ---
+    async function init() {
+        try {
+            const res = await fetch("/start", {
+                method: "POST",
+                headers: {"Content-Type":"application/json"},
+                body: JSON.stringify({ profile: { age: 18 } })
+            });
+            const data = await res.json();
+            session_id = data.session_id;
+            localStorage.setItem("kamizen_sid", session_id);
+            updateUI(data);
+        } catch (e) {
+            document.getElementById("message").innerText = "ERROR DE CONEXIÓN CON EL SERVIDOR";
+        }
     }
-}
 
-function updateDisplay(data) {
-    const s = data.state;
-    document.getElementById("mental").innerText = s.mental;
-    document.getElementById("social").innerText = s.social;
-    document.getElementById("karma").innerText = s.karma;
-    document.getElementById("disc").innerText = s.discipline;
-    
-    const text = data.story.text;
-    document.getElementById("message").innerText = text;
-    speak(text);
-}
+    async function handleAction(code) {
+        if (is_busy) return;
+        is_busy = true;
+        toggleButtons(true);
 
-function toggleButtons(status) {
-    document.querySelectorAll("#options button").forEach(b => b.disabled = status);
-}
+        try {
+            const res = await fetch("/judge", {
+                method: "POST",
+                headers: {"Content-Type":"application/json"},
+                body: JSON.stringify({ session_id, decision: code })
+            });
+            const data = await res.json();
+            
+            if (data.error) {
+                init(); // Reiniciar si la sesión expiró
+            } else if (data.status === "cooldown") {
+                console.log("Sistema procesando...");
+            } else {
+                updateUI(data);
+            }
+        } catch (e) {
+            console.error(e);
+        } finally {
+            setTimeout(() => {
+                is_busy = false;
+                toggleButtons(false);
+            }, 600);
+        }
+    }
 
-function speak(text) {
-    if (!window.speechSynthesis) return;
-    speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = "es-ES";
-    u.rate = 1.0;
-    speechSynthesis.speak(u);
-}
+    function updateUI(data) {
+        // Actualizar Stats
+        const s = data.state;
+        document.getElementById("mental").innerText = s.mental;
+        document.getElementById("social").innerText = s.social;
+        document.getElementById("karma").innerText = s.karma;
+        document.getElementById("disc").innerText = s.discipline;
 
-function renderInterface() {
-    const container = document.getElementById("options");
-    const actions = [
-        ["TDB","EQUILIBRIO"], ["TDM","IMPULSO"], ["TDN","MENTE"],
-        ["TDP","ORDEN"], ["TDG","CONTROL"], ["TDK","UNIÓN"]
-    ];
-    actions.forEach(([code, label]) => {
-        const btn = document.createElement("button");
-        btn.innerText = label;
-        btn.onclick = () => sendDecision(code);
-        container.appendChild(btn);
-    });
-}
+        // Actualizar Narrativa
+        const story = data.story;
+        document.getElementById("message").innerText = story.text;
+        document.getElementById("category-tag").innerText = story.category || "KAMIZEN CORE";
 
-window.onload = () => {
-    renderInterface();
-    start();
-};
+        // Lanzar Audio y Voz
+        audioManager.play(story.mood);
+        speak(story.text);
+    }
+
+    function toggleButtons(state) {
+        document.querySelectorAll("#options button").forEach(b => b.disabled = state);
+    }
+
+    function speak(text) {
+        if (!window.speechSynthesis) return;
+        speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = "es-ES";
+        utterance.rate = 0.95;
+        utterance.pitch = 0.8; // Voz un poco más grave y robótica
+        speechSynthesis.speak(utterance);
+    }
+
+    // Iniciar al interactuar para permitir audio
+    window.onclick = () => {
+        if (!session_id) init();
+    };
+
+    window.onload = () => {
+        if (session_id) init();
+    };
 </script>
+
 </body>
 </html>
