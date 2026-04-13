@@ -32,7 +32,7 @@ body {
     font-size:13px;
 }
 
-/* ================= MESSAGE PANEL ================= */
+/* ================= MESSAGE ================= */
 #messageBox {
     position:absolute;
     bottom:120px;
@@ -48,7 +48,7 @@ body {
     z-index:20;
 }
 
-/* ================= TVID MENU ================= */
+/* ================= TVID ================= */
 #tvidMenu {
     position:absolute;
     bottom:20px;
@@ -85,12 +85,12 @@ button:hover {
     <div class="box">DISCIPLINA: <span id="disc">50</span></div>
 </div>
 
-<!-- ================= CINEMATIC MESSAGE ================= -->
+<!-- ================= MESSAGE ================= -->
 <div id="messageBox">
     Cargando sistema...
 </div>
 
-<!-- ================= TVID ACTIONS ================= -->
+<!-- ================= TVID ================= -->
 <div id="tvidMenu">
     <button onclick="sendDecision('TDB')">TDB</button>
     <button onclick="sendDecision('TDM')">TDM</button>
@@ -108,48 +108,63 @@ button:hover {
 let session_id = localStorage.getItem("session_id");
 let state = JSON.parse(localStorage.getItem("state") || "{}");
 
-let currentEvent = null;
+let currentEvent = "start";
 let isLocked = false;
 
 // ===============================
-// UPDATE UI
+// SAFE DEFAULT STATE
 // ===============================
-function updateUI() {
-    document.getElementById("mental").innerText = state.mental ?? 100;
-    document.getElementById("social").innerText = state.social ?? 50;
-    document.getElementById("karma").innerText = state.karma ?? 0;
-    document.getElementById("disc").innerText = state.discipline ?? 50;
+function safeState() {
+    return {
+        mental: 100,
+        social: 50,
+        karma: 0,
+        discipline: 50,
+        ...state
+    };
 }
 
 // ===============================
-// SHOW MESSAGE
+// UI UPDATE
+// ===============================
+function updateUI() {
+
+    const s = safeState();
+
+    document.getElementById("mental").innerText = s.mental;
+    document.getElementById("social").innerText = s.social;
+    document.getElementById("karma").innerText = s.karma;
+    document.getElementById("disc").innerText = s.discipline;
+}
+
+// ===============================
+// MESSAGE
 // ===============================
 function showMessage(text) {
     document.getElementById("messageBox").innerText = text;
 }
 
 // ===============================
-// START EVENT LOOP
+// INIT
 // ===============================
 async function init() {
 
     if (!session_id) {
-        showMessage("ERROR: No session found");
+        showMessage("❌ ERROR: No session activa. Regresa a session.html");
         return;
     }
 
-    showMessage("Sistema activado. Iniciando experiencia humana...");
+    showMessage("🧠 Sistema Kamizen activo. Simulación iniciada.");
 
-    // primer estado visual
     updateUI();
 }
 
 // ===============================
-// DECISION ENGINE
+// DECISION ENGINE (FIXED)
 // ===============================
 async function sendDecision(decision) {
 
-    if (isLocked) return;
+    if (isLocked || !session_id) return;
     isLocked = true;
 
     try {
@@ -174,7 +189,7 @@ async function sendDecision(decision) {
         updateUI();
 
         if (data.status === "end") {
-            showMessage("🔴 SISTEMA TERMINADO: ciclo humano cerrado");
+            showMessage("🔴 SISTEMA COLAPSADO: fin del ciclo humano");
             return;
         }
 
@@ -182,38 +197,37 @@ async function sendDecision(decision) {
             showMessage(data.narrative);
         }
 
-        currentEvent = data.next_event;
+        currentEvent = data.next_event || "neutral";
 
-        // pequeña pausa cinematográfica
         setTimeout(() => {
             isLocked = false;
-        }, 800);
+        }, 600);
 
-    } catch (e) {
-        console.error(e);
+    } catch (err) {
+        console.error("ERROR:", err);
+        showMessage("⚠️ Error de conexión con el sistema");
         isLocked = false;
     }
 }
 
 // ===============================
-// AUTO EVENT SYNC (ATMOSFERA CINEMÁTICA)
+// ATMOSPHERE ENGINE
 // ===============================
 setInterval(() => {
 
-    if (!session_id) return;
+    const s = safeState();
 
-    // micro-feedback psicológico visual
-    const mood = state?.psychology?.stress_memory || 0;
-
-    if (mood > 70) {
+    if (s.psychology?.stress > 70 || s.psychology?.stress_memory > 70) {
         document.body.style.background = "#120000";
-    } else if (state?.karma > 50) {
+    } 
+    else if (s.karma > 50) {
         document.body.style.background = "#001a12";
-    } else {
+    } 
+    else {
         document.body.style.background = "#000";
     }
 
-}, 2000);
+}, 1500);
 
 // ===============================
 window.onload = init;
