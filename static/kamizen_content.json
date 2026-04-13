@@ -3,42 +3,28 @@
     {
       "id": 1,
       "level": 1,
-      "category": "SESSION 1: THE $10 AT MIAMI SCHOOL",
+      "category": "THE $10 TRAP",
       "blocks": [
-        {
-          "type": "voice",
-          "text": {
-            "en": "You are in your classroom in Miami. Your backpack is on the floor. Your money is in your pocket. Breathe in for 4 seconds, hold for 2, exhale for 6. Repeat 4 times.",
-            "es": "Estás en tu salón en Miami. Tu mochila está en el piso. Tu dinero está en tu bolsillo. Inhala por 4 segundos, sostén 2, exhala 6. Repite 4 veces."
-          }
-        },
         {
           "type": "story",
           "text": {
-            "en": "Mateo is in elementary school. His mom gave him $10. In line at the cafeteria, he smells fries and candy. Without thinking, he spends it all on chips and soda. He feels great. He laughs.",
-            "es": "Mateo está en la escuela primaria. Su mamá le dio $10. En la fila de la cafetería, huele papas fritas y dulces. Sin pensar, lo gasta todo en chips y soda. Se siente genial. Ríe."
+            "en": "You have $10. You are at the school cafeteria. You smell the hot pizza and see the cold sodas. Your friends are buying everything. What do you do?",
+            "es": "Tienes $10. Estás en la cafetería. Huele a pizza y ves sodas frías. Tus amigos compran todo. ¿Qué haces?"
           }
         },
         {
-          "type": "turning_point",
+          "type": "tvid",
+          "mode": "tension",
           "text": {
-            "en": "Saturday at home. The fridge is empty. Mom is tired. Mateo asks for donut money. Mom looks down. 'There is no money today, son.' Mateo yells: 'But you gave me yesterday!'",
-            "es": "Sábado en casa. La nevera está vacía. Mamá está cansada. Mateo pide dinero para donas. Mamá baja la mirada. 'Hoy no hay dinero, hijo'. Mateo grita: '¡Pero ayer me diste!'"
+            "en": "CHOOSE: [TDM] Buy it all now (Dopamine!) OR [TDG] Save it for later (Control).",
+            "es": "ELIGE: [TDM] Comprar todo ya (¡Dopamina!) o [TDG] Guardarlo (Control)."
           }
         },
         {
           "type": "psychological_insight",
           "text": {
-            "en": "That night he hears: 'We don't even have money for food this week, and we still gave him those last $10.' Mateo stays still. His stomach turns. It’s not hunger. It’s understanding.",
-            "es": "Esa noche escucha: 'No tenemos ni para la comida de la semana, y aun así le dimos los últimos $10'. Mateo se queda quieto. Su estómago cambia. No es hambre. Es comprensión."
-          }
-        },
-        {
-          "type": "tvid",
-          "mode": "TDB",
-          "text": {
-            "en": "What I have has effort behind it. I respect the work I cannot see. Before spending... I stop.",
-            "es": "Lo que tengo tiene esfuerzo detrás. Respeto el trabajo que no puedo ver. Antes de gastar... me detengo."
+            "en": "RESULT: If you chose [TDM], your money is GONE. Saturday comes, your mom is crying because there's no milk. You feel the weight of your soda in your empty stomach. [TDG] users have the power to help their mom today.",
+            "es": "RESULTADO: Si elegiste [TDM], tu dinero se FUE. Llega el sábado, tu mamá llora porque no hay leche. Sientes el peso de la soda en tu estómago vacío. Usuarios [TDG] tienen el poder de ayudar a mamá hoy."
           }
         }
       ]
@@ -46,28 +32,28 @@
     {
       "id": 2,
       "level": 1,
-      "category": "SESSION 2: THE BLACK CAR IN MIAMI",
+      "category": "THE SHADOW CAR",
       "blocks": [
-        {
-          "type": "voice",
-          "text": {
-            "en": "You walk alone in Miami. The sun is strong. Your backpack is heavy. Breathe slowly. Stay alert.",
-            "es": "Caminas solo por Miami. El sol está fuerte. Tu mochila pesa. Respira lento. Mantente alerta."
-          }
-        },
         {
           "type": "story",
           "text": {
-            "en": "A black car stops beside Sofia. The man says: 'Your mom told me to pick you up. Get in, it's urgent.' Sofia's stomach tightens. She remembers: 'If I doubt, I don't go near.'",
-            "es": "Un carro negro se detiene junto a Sofía. El hombre dice: 'Tu mamá me dijo que te recogiera. Sube, es urgente'. El estómago de Sofía se aprieta. Ella recuerda: 'Si dudo, no me acerco'."
+            "en": "3:00 PM. Miami heat. A black SUV slows down. The window drops. 'Hey kid, your dad is in the hospital. He sent me to get you. Jump in!'",
+            "es": "3:00 PM. Calor de Miami. Un SUV negro frena. Baja la ventana. 'Oye niño, tu papá está en el hospital. Me mandó a buscarte. ¡Sube!'"
           }
         },
         {
           "type": "tvid",
-          "mode": "TDG",
+          "mode": "tension",
           "text": {
-            "en": "NO. I don't know you. I walk away. Doubt is my survival system. I listen to my instinct.",
-            "es": "NO. No te conozco. Me alejo. La duda es mi sistema de supervivencia. Escucho mi instinto."
+            "en": "CHOOSE: [TDB] Ask for the secret code OR [TDN] Run and scream 'STAY AWAY!'.",
+            "es": "ELIGE: [TDB] Pedir el código secreto o [TDN] Correr y gritar '¡ALÉJATE!'."
+          }
+        },
+        {
+          "type": "psychological_insight",
+          "text": {
+            "en": "REWARD: You are safe. If you did nothing, the door opens. Fear is a signal, not a cage. Use it to move fast!",
+            "es": "RECOMPENSA: Estás a salvo. Si no hiciste nada, la puerta se abre. El miedo es una señal, no una jaula. ¡Úsalo para moverte!"
           }
         }
       ]
@@ -75,21 +61,28 @@
     {
       "id": 3,
       "level": 1,
-      "category": "SESSION 3: THE FRIEND WHO ASKS FOR EVERYTHING",
+      "category": "THE FAKE FRIEND",
       "blocks": [
         {
           "type": "story",
           "text": {
-            "en": "Kevin always has money. Jason asks: 'Lend me $5, I'll pay you back tomorrow.' Tomorrow never comes. Next week, Kevin has no lunch money. Jason ignores him.",
-            "es": "Kevin siempre tiene dinero. Jason le pide: 'Préstame $5, te pago mañana'. El mañana nunca llega. La semana siguiente, Kevin no tiene para el almuerzo. Jason lo ignora."
+            "en": "Jason says: 'If you are my real friend, you'll let me copy your homework. If not, don't talk to me anymore.' Everyone is watching.",
+            "es": "Jason dice: 'Si eres mi amigo, me dejas copiar la tarea. Si no, no me hables más'. Todos están mirando."
           }
         },
         {
           "type": "tvid",
-          "mode": "TDP",
+          "mode": "discovery",
           "text": {
-            "en": "I can help without losing myself. Saying yes to everything empties me. Today, I set boundaries. I respect myself.",
-            "es": "Puedo ayudar sin perderme. Decir sí a todo me vacía. Hoy, pongo límites. Me respeto."
+            "en": "CHOOSE: [TDK] Give in to be liked OR [TDP] Say 'No, I can help you study but not copy'.",
+            "es": "ELIGE: [TDK] Ceder para caer bien o [TDP] Decir 'No, te ayudo a estudiar pero no a copiar'."
+          }
+        },
+        {
+          "type": "psychological_insight",
+          "text": {
+            "en": "CONSEQUENCE: [TDK] users just bought a master, not a friend. Jason will ask for more tomorrow. [TDP] users feel a sting now, but they own their respect.",
+            "es": "CONSECUENCIA: Usuarios [TDK] compraron un amo, no un amigo. Jason pedirá más mañana. Usuarios [TDP] sienten el golpe ahora, pero son dueños de su respeto."
           }
         }
       ]
@@ -97,21 +90,28 @@
     {
       "id": 4,
       "level": 1,
-      "category": "SESSION 4: THE BOY WHO HIT AND WAS LEFT ALONE",
+      "category": "THE LUNCHROOM BULLY",
       "blocks": [
         {
           "type": "story",
           "text": {
-            "en": "Luis pushes a kid in the lunch line. The kid falls. Next day, nobody plays with Luis. He is alone. He understands: 'Being strong is not enough.'",
-            "es": "Luis empuja a un niño en la fila del lunch. El niño cae. Al día siguiente, nadie juega con Luis. Está solo. Entiende: 'Ser fuerte no es suficiente'."
+            "en": "A bully trips you. Your tray hits the floor. Everyone laughs. Your face is burning red. You want to hit him.",
+            "es": "Un bully te hace tropezar. Tu bandeja cae al suelo. Todos ríen. Tu cara arde de vergüenza. Quieres pegarle."
           }
         },
         {
           "type": "tvid",
-          "mode": "TDG",
+          "mode": "agitation",
           "text": {
-            "en": "Force without control pushes people away. I control my impulses. I can be strong and respected.",
-            "es": "La fuerza sin control aleja a la gente. Controlo mis impulsos. Puedo ser fuerte y respetado."
+            "en": "CHOOSE: [TDM] Punch him (Chaos) OR [TDG] Stand up, look him in the eye, and walk away (Power).",
+            "es": "ELIGE: [TDM] Golpearlo (Caos) o [TDG] Levantarte, mirarlo a los ojos y alejarte (Poder)."
+          }
+        },
+        {
+          "type": "psychological_insight",
+          "text": {
+            "en": "PUNISHMENT: If you punch him [TDM], you are suspended. He wins. If you use [TDG], you controlled the room. Silence is the ultimate weapon.",
+            "es": "CASTIGO: Si le pegas [TDM], te suspenden. Él gana. Si usas [TDG], tú controlaste el lugar. El silencio es el arma definitiva."
           }
         }
       ]
@@ -119,351 +119,492 @@
     {
       "id": 5,
       "level": 1,
-      "category": "SESSION 5: MONEY YOU DIDN'T UNDERSTAND",
+      "category": "THE PHONE ADDICT",
       "blocks": [
         {
           "type": "story",
           "text": {
-            "en": "A kid gets $20 for the week. He buys candy and chips. In two days, it's gone. Then he sees his mom counting coins for food. Silence.",
-            "es": "Un niño recibe $20 para la semana. Compra dulces y chips. En dos días, se acabó. Luego ve a su mamá contando monedas para la comida. Silencio."
+            "en": "It's 10:00 PM. Your phone is buzzing. One more video? Just one more? Your brain is screaming for dopamine.",
+            "es": "Son las 10:00 PM. Tu teléfono vibra. ¿Un video más? ¿Solo uno? Tu cerebro grita por dopamina."
           }
         },
         {
           "type": "tvid",
-          "mode": "TDB",
+          "mode": "focus",
           "text": {
-            "en": "Money is not paper; it is decisions. I wait 10 seconds before buying. I take control.",
-            "es": "El dinero no es papel; son decisiones. Espero 10 segundos antes de comprar. Tomo el control."
+            "en": "CHOOSE: [TDM] Keep scrolling OR [TDP] Put it in the kitchen and sleep.",
+            "es": "ELIGE: [TDM] Seguir mirando o [TDP] Ponerlo en la cocina y dormir."
+          }
+        },
+        {
+          "type": "psychological_insight",
+          "text": {
+            "en": "RESULT: [TDM] Tomorrow you'll have a headache and fail your math quiz. [TDP] You wake up like a shark, ready to hunt. Your future is built at night.",
+            "es": "RESULTADO: [TDM] Mañana tendrás dolor de cabeza y fallarás el examen. [TDP] Despiertas como un tiburón, listo para cazar. Tu futuro se construye de noche."
           }
         }
       ]
     },
     {
       "id": 6,
-      "level": 1,
-      "category": "SESSION 6: THE CAR THAT STOPPED",
+      "level": 2,
+      "category": "THE SNEAKY PROMISE",
       "blocks": [
         {
           "type": "story",
           "text": {
-            "en": "Miami, 3:30 pm. Girl walking alone. A car stops. 'Your mom sent me.' She doesn't know him. She runs. The car leaves.",
-            "es": "Miami, 3:30 pm. Niña caminando sola. Un carro se detiene. 'Tu mamá me mandó'. Ella no lo conoce. Ella corre. El carro se va."
+            "en": "Your older cousin says: 'Try this vape, it tastes like mango. Don't tell your parents, it's our secret.' He looks cool. You want to be cool too.",
+            "es": "Tu primo mayor dice: 'Prueba este vape, sabe a mango. No le digas a tus padres, es nuestro secreto'. Él se ve cool. Tú también quieres serlo."
           }
         },
         {
           "type": "tvid",
-          "mode": "TDG",
+          "mode": "agitation",
           "text": {
-            "en": "NO. I protect myself. I practice saying NO loudly. Without doubt.",
-            "es": "NO. Me protejo. Practico decir NO fuerte. Sin dudas."
+            "en": "CHOOSE: [TDM] Take a hit (Fake Status) OR [TDG] Say 'No thanks' and walk away (Real Integrity).",
+            "es": "ELIGE: [TDM] Darle un toque (Estatus falso) o [TDG] Decir 'No gracias' y alejarte (Integridad real)."
+          }
+        },
+        {
+          "type": "psychological_insight",
+          "text": {
+            "en": "STRESS RESULT: If you chose [TDM], you just gave your lungs to a chemical. Now you're hiding, paranoid about your breath. [TDG] users breathe clean air and keep their word. You don't need a cloud to be a leader.",
+            "es": "RESULTADO DE ESTRÉS: Si elegiste [TDM], acabas de entregar tus pulmones a un químico. Ahora te escondes, paranoico por tu aliento. Usuarios [TDG] respiran aire limpio y mantienen su palabra. No necesitas una nube para ser un líder."
           }
         }
       ]
     },
     {
       "id": 7,
-      "level": 1,
-      "category": "SESSION 7: THE LITTLE LIE",
+      "level": 2,
+      "category": "THE LOST WALLET AT PUBLIX",
       "blocks": [
         {
           "type": "story",
           "text": {
-            "en": "A kid breaks something at home. He says: 'It wasn't me.' Someone else is blamed. He loses his family's trust. A small lie breaks something big.",
-            "es": "Un niño rompe algo en casa. Dice: 'No fui yo'. Culpan a otro. Pierde la confianza de su familia. Una mentira pequeña rompe algo grande."
+            "en": "You find a wallet on the floor at Publix. $50 is sticking out. No one is watching. You could buy those sneakers you saw on TikTok.",
+            "es": "Encuentras una billetera en el piso de Publix. Sobresalen $50. Nadie mira. Podrías comprar esos tenis que viste en TikTok."
           }
         },
         {
           "type": "tvid",
-          "mode": "TDB",
+          "mode": "tension",
           "text": {
-            "en": "The truth sustains me. Today, I tell the truth even if it's uncomfortable.",
-            "es": "La verdad me sostiene. Hoy, digo la verdad aunque sea incómodo."
+            "en": "CHOOSE: [TDM] Keep the cash (Instant Reward) OR [TDB] Give it to the manager (Karma/Balance).",
+            "es": "ELIGE: [TDM] Quedarte el efectivo (Recompensa instantánea) o [TDB] Dársela al manager (Karma/Equilibrio)."
+          }
+        },
+        {
+          "type": "psychological_insight",
+          "text": {
+            "en": "KARMA CHECK: [TDM] You buy the shoes, but you feel like a thief every time you wear them. That money belonged to someone’s rent. [TDB] You leave with a clean soul. Character is what you do when no one is looking.",
+            "es": "CHEQUEO DE KARMA: [TDM] Compras los tenis, pero te sientes como un ladrón cada vez que los usas. Ese dinero era para la renta de alguien. [TDB] Te vas con el alma limpia. El carácter es lo que haces cuando nadie mira."
           }
         }
       ]
     },
     {
       "id": 8,
-      "level": 1,
-      "category": "SESSION 8: THE INVISIBLE BOY IN CLASS",
+      "level": 2,
+      "category": "THE VIDEO GAME TRAP",
       "blocks": [
         {
           "type": "story",
           "text": {
-            "en": "In class in Miami, nobody looks at him. He feels invisible. One day he raises his hand. He makes a mistake, but he tried. Someone notices him.",
-            "es": "En clase en Miami, nadie lo mira. Se siente invisible. Un día levanta la mano. Se equivoca, pero lo intentó. Alguien lo nota."
+            "en": "Your squad is online. 'One more game of Fortnite!' they yell. It's 11 PM. You have a science project due tomorrow morning.",
+            "es": "Tu equipo está online. '¡Una partida más de Fortnite!', gritan. Son las 11 PM. Tienes un proyecto de ciencias para mañana temprano."
           }
         },
         {
           "type": "tvid",
-          "mode": "TDN",
+          "mode": "agitation",
           "text": {
-            "en": "If you don't show yourself, you don't exist. I make myself visible. I speak up today.",
-            "es": "Si no te muestras, no existes. Me hago visible. Hoy hablo."
+            "en": "CHOOSE: [TDM] Play one more (Dopamine Spike) OR [TDP] Log off and finish the project (Structure).",
+            "es": "ELIGE: [TDM] Jugar una más (Pico de dopamina) o [TDP] Desconectarte y terminar el proyecto (Estructura)."
+          }
+        },
+        {
+          "type": "psychological_insight",
+          "text": {
+            "en": "REWARD: [TDP] You finish the project. You feel like a professional. [TDM] You stayed up, lost the game anyway, and tomorrow you will feel like a failure in front of the teacher. Discipline is choosing between what you want now and what you want most.",
+            "es": "RECOMPENSA: [TDP] Terminas el proyecto. Te sientes como un profesional. [TDM] Te desvelaste, perdiste el juego igual, y mañana te sentirás como un fracaso ante el profesor. La disciplina es elegir entre lo que quieres ahora y lo que más deseas."
           }
         }
       ]
     },
     {
       "id": 9,
-      "level": 1,
-      "category": "SESSION 9: ANGER AT HOME",
+      "level": 2,
+      "category": "THE ANGRY FATHER",
       "blocks": [
         {
           "type": "story",
           "text": {
-            "en": "A kid comes home from school and yells. His mom is tired. Later, his friend walks away because of his attitude. Anger without control leaves you alone.",
-            "es": "Un niño llega de la escuela y grita. Su mamá está cansada. Después, su amigo se aleja por su actitud. El enojo sin control te deja solo."
+            "en": "Your dad comes home. He's yelling because he had a bad day at work. You didn't do your chores. He looks at the mess. The tension is real.",
+            "es": "Tu papá llega a casa. Está gritando porque tuvo un mal día en el trabajo. No hiciste tus quehaceres. Él mira el desorden. La tensión es real."
           }
         },
         {
           "type": "tvid",
-          "mode": "TDG",
+          "mode": "tension",
           "text": {
-            "en": "I feel, but I control. I breathe before responding. I protect my relationships.",
-            "es": "Siento, pero controlo. Respiro antes de responder. Protejo mis relaciones."
+            "en": "CHOOSE: [TDM] Yell back (Explosion) OR [TDG] Say 'Sorry Dad, I'll fix it now' and start cleaning (Control).",
+            "es": "ELIGE: [TDM] Gritarle también (Explosión) o [TDG] Decir 'Lo siento papá, lo arreglo ahora' y empezar a limpiar (Control)."
+          }
+        },
+        {
+          "type": "psychological_insight",
+          "text": {
+            "en": "PUNISHMENT/REWARD: [TDM] The house becomes a war zone. You lose your phone for a month. [TDG] Your dad calms down. He respects your maturity. You just learned how to de-escalate a bomb.",
+            "es": "CASTIGO/RECOMPENSA: [TDM] La casa se vuelve zona de guerra. Te quitan el teléfono un mes. [TDG] Tu papá se calma. Respeta tu madurez. Acabas de aprender a desactivar una bomba."
           }
         }
       ]
     },
     {
       "id": 10,
-      "level": 1,
-      "category": "SESSION 10: THE BOY WHO LEARNED TO WIN",
+      "level": 2,
+      "category": "THE FAKE NEWS/RUMOR",
       "blocks": [
         {
           "type": "story",
           "text": {
-            "en": "A kid loses at sports. He wants to quit. He keeps practicing. Day after day. One day he wins. Not by luck, but by repetition.",
-            "es": "Un niño pierde en los deportes. Quiere rendirse. Sigue practicando. Día tras día. Un día gana. No por suerte, sino por repetición."
+            "en": "A group chat is roasting a kid in your class. They send a fake photo. Everyone is adding 'LOL'. They ask you: 'What do you think? Is he a loser or what?'",
+            "es": "Un chat grupal se burla de un niño de tu clase. Envían una foto falsa. Todos ponen 'LOL'. Te preguntan: '¿Qué piensas? ¿Es un perdedor o qué?'"
           }
         },
         {
           "type": "tvid",
-          "mode": "win",
+          "mode": "agitation",
           "text": {
-            "en": "I can improve. I keep going even if I fail. I do not quit. I change my story.",
-            "es": "Puedo mejorar. Sigo aunque falle. No me rindo. Cambio mi historia."
+            "en": "CHOOSE: [TDM] Type 'LOL' to fit in OR [TDK] Exit the chat or stand up for him (Connection/Values).",
+            "es": "ELIGE: [TDM] Escribir 'LOL' para encajar o [TDK] Salir del chat o defenderlo (Conexión/Valores)."
+          }
+        },
+        {
+          "type": "psychological_insight",
+          "text": {
+            "en": "CONSEQUENCE: [TDM] You are a follower. You just helped destroy someone's day for 3 seconds of dopamine. [TDK] You are a protector. People might talk, but deep down, everyone knows you are the one with real courage.",
+            "es": "CONSECUENCIA: [TDM] Eres un seguidor. Ayudaste a destruir el día de alguien por 3 segundos de dopamina. [TDK] Eres un protector. La gente hablará, pero en el fondo, todos saben que tú tienes el valor real."
           }
         }
       ]
     },
     {
       "id": 11,
-      "level": 2,
-      "category": "SESSION 11: THE PRESSURE TO BE COOL",
+      "level": 3,
+      "category": "THE MIAMI STREET TEST",
       "blocks": [
         {
           "type": "story",
           "text": {
-            "en": "At a party in Doral, older kids are vaping. They look at you. 'Don't be a baby, just one hit,' they say. You want to fit in. Your heart beats fast.",
-            "es": "En una fiesta en Doral, los niños grandes están vapeando. Te miran. 'No seas un bebé, solo un toque', dicen. Quieres encajar. Tu corazón late rápido."
+            "en": "You are at a gas station. A stranger offers you a ride in a fast car. 'Come on, let's go get some snacks, I'll show you how fast this thing is.'",
+            "es": "Estás en una gasolinera. Un extraño te ofrece llevarte en un carro rápido. 'Vamos por snacks, te mostraré qué tan rápido corre esto'."
           }
         },
         {
           "type": "tvid",
-          "mode": "TDG",
+          "mode": "tension",
           "text": {
-            "en": "I don't need to poison my lungs to be cool. My health is my power. I say: 'I'm good,' and walk away. Real leaders don't follow the crowd.",
-            "es": "No necesito envenenar mis pulmones para ser cool. Mi salud es mi poder. Digo: 'Estoy bien' y me alejo. Los verdaderos líderes no siguen a la masa."
+            "en": "CHOOSE: [TDM] Get in (Danger/Rush) OR [TDN] Say 'I'm waiting for my ride' and stay in the light (Survival).",
+            "es": "ELIGE: [TDM] Subirte (Peligro/Adrenalina) o [TDN] Decir 'Estoy esperando a que me recojan' y quedarte en la luz (Supervivencia)."
+          }
+        },
+        {
+          "type": "psychological_insight",
+          "text": {
+            "en": "SURVIVAL RESULT: [TDM] You are in a car with a ghost. You don't know where you are going. High risk of never coming back. [TDN] You are a survivor. You used your brain over your curiosity. The street didn't win today.",
+            "es": "RESULTADO DE VIDA: [TDM] Estás en un carro con un fantasma. No sabes a dónde vas. Alto riesgo de no volver. [TDN] Eres un sobreviviente. Usaste tu cerebro sobre tu curiosidad. La calle no ganó hoy."
           }
         }
       ]
     },
     {
       "id": 12,
-      "level": 2,
-      "category": "SESSION 12: THE SIBLING FIGHT",
+      "level": 3,
+      "category": "THE EXAM LEAK",
       "blocks": [
         {
           "type": "story",
           "text": {
-            "en": "Your little brother breaks your favorite headset. You want to scream and hit him. You see your mom coming home from work, already stressed.",
-            "es": "Tu hermano pequeño rompe tus audífonos favoritos. Quieres gritar y pegarle. Ves a tu mamá llegando del trabajo, ya está estresada."
+            "en": "Your best friend sent you a photo of the Math Final Exam. He stole it from the teacher's desk. 'Study this and we both get A's,' he says.",
+            "es": "Tu mejor amigo te envió una foto del examen final de matemáticas. Lo robó del escritorio del profesor. 'Estudia esto y ambos sacamos A', dice."
           }
         },
         {
           "type": "tvid",
-          "mode": "TDB",
+          "mode": "tension",
           "text": {
-            "en": "One broken thing doesn't justify a broken home. I breathe. I count to ten. I choose peace over being right. I protect my family's energy.",
-            "es": "Una cosa rota no justifica un hogar roto. Respiro. Cuento hasta diez. Elijo la paz sobre tener la razón. Protejo la energía de mi familia."
+            "en": "CHOOSE: [TDM] Look at the answers (Easy win) OR [TDP] Delete the photo and study for real (Structure).",
+            "es": "ELIGE: [TDM] Mirar las respuestas (Ganancia fácil) o [TDP] Borrar la foto y estudiar de verdad (Estructura)."
+          }
+        },
+        {
+          "type": "psychological_insight",
+          "text": {
+            "en": "RESULT: [TDM] You get the grade, but you are a fraud. If the teacher changes one question, you fail because you learned nothing. [TDP] You own your intelligence. A grade is a number; integrity is your identity.",
+            "es": "RESULTADO: [TDM] Sacas la nota, pero eres un fraude. Si el profesor cambia una pregunta, fallas porque no aprendiste nada. [TDP] Eres dueño de tu inteligencia. Una nota es un número; la integridad es tu identidad."
           }
         }
       ]
     },
     {
       "id": 13,
-      "level": 2,
-      "category": "SESSION 13: THE SOCIAL MEDIA TRAP",
+      "level": 3,
+      "category": "THE PARTY INVITE",
       "blocks": [
         {
           "type": "story",
           "text": {
-            "en": "You see your classmates on Instagram at the beach. You are at home helping with chores. You feel poor. You feel like a loser. You stop working.",
-            "es": "Ves a tus compañeros en Instagram en la playa. Tú estás en casa ayudando con los quehaceres. Te sientes pobre. Te sientes un perdedor. Dejas de trabajar."
+            "en": "There is a house party in Hialeah. Your parents said NO. Your friends are outside in a car, honking. 'Just climb out the window, they'll never know!'",
+            "es": "Hay una fiesta en una casa en Hialeah. Tus padres dijeron que NO. Tus amigos están afuera en un carro, tocando bocina. '¡Sal por la ventana, nunca lo sabrán!'"
           }
         },
         {
           "type": "tvid",
-          "mode": "TDN",
+          "mode": "agitation",
           "text": {
-            "en": "Screens show filters, not reality. My chores build discipline; their photos build ego. I put the phone down. I finish my mission. I win in real life.",
-            "es": "Las pantallas muestran filtros, no realidad. Mis tareas construyen disciplina; sus fotos construyen ego. Suelto el teléfono. Termino mi misión. Gano en la vida real."
+            "en": "CHOOSE: [TDM] Jump out the window (Rush) OR [TDG] Text them 'I'm out' and stay home (Control).",
+            "es": "ELIGE: [TDM] Saltar por la ventana (Adrenalina) o [TDG] Escribirles 'No voy' y quedarte en casa (Control)."
+          }
+        },
+        {
+          "type": "psychological_insight",
+          "text": {
+            "en": "PUNISHMENT: [TDM] The police raid the party. Your parents find out. You lose their trust for years. [TDG] You slept like a king. Trust is like a mirror: once broken, it never looks the same. You kept yours whole.",
+            "es": "CASTIGO: [TDM] La policía hace una redada en la fiesta. Tus padres se enteran. Pierdes su confianza por años. [TDG] Dormiste como un rey. La confianza es como un espejo: una vez roto, no vuelve a ser igual. Mantuviste el tuyo intacto."
           }
         }
       ]
     },
     {
       "id": 14,
-      "level": 2,
-      "category": "SESSION 14: THE SMARTPHONE DISTRACTION",
+      "level": 3,
+      "category": "THE GYM FLEX",
       "blocks": [
         {
           "type": "story",
           "text": {
-            "en": "You have a big test tomorrow. Every 2 minutes, your phone buzzes. TikTok is calling. You tell yourself: 'Just five more minutes.' Two hours pass.",
-            "es": "Tienes un examen importante mañana. Cada 2 minutos, tu teléfono suena. TikTok te llama. Te dices: 'Solo cinco minutos más'. Pasan dos horas."
+            "en": "You are at the gym. Everyone is lifting heavy. You feel small. Someone offers you a 'supplement' that will make you huge in two weeks. 'It's what the pros use,' they whisper.",
+            "es": "Estás en el gimnasio. Todos levantan mucho peso. Te sientes pequeño. Alguien te ofrece un 'suplemento' que te pondrá gigante en dos semanas. 'Es lo que usan los pros', susurran."
           }
         },
         {
           "type": "tvid",
-          "mode": "TDP",
+          "mode": "focus",
           "text": {
-            "en": "The phone is a tool, not my master. I turn it off. I lock it in another room. I focus for 25 minutes. I own my time. I own my future.",
-            "es": "El teléfono es una herramienta, no mi amo. Lo apago. Lo encierro en otro cuarto. Me concentro 25 minutos. Soy dueño de mi tiempo. Soy dueño de mi futuro."
+            "en": "CHOOSE: [TDM] Buy the shortcut (Dopamine) OR [TDG] Keep training naturally (Control).",
+            "es": "ELIGE: [TDM] Comprar el atajo (Dopamina) o [TDG] Seguir entrenando natural (Control)."
+          }
+        },
+        {
+          "type": "psychological_insight",
+          "text": {
+            "en": "HEALTH CHECK: [TDM] Your muscles grow, but your heart and organs suffer. You bought a fake body. [TDG] Your progress is slow but real. You are building a temple, not a movie set. Warriors don't take shortcuts.",
+            "es": "CHEQUEO DE SALUD: [TDM] Tus músculos crecen, pero tu corazón y órganos sufren. Compraste un cuerpo falso. [TDG] Tu progreso es lento pero real. Construyes un templo, no un set de película. Los guerreros no toman atajos."
           }
         }
       ]
     },
     {
       "id": 15,
-      "level": 2,
-      "category": "SESSION 15: THE BULLY'S WEAKNESS",
+      "level": 3,
+      "category": "THE ONLINE ARGUMENT",
       "blocks": [
         {
           "type": "story",
           "text": {
-            "en": "A kid makes fun of your shoes at lunch. Everyone laughs. You feel the heat in your face. You want to cry or fight him in the hallway.",
-            "es": "Un niño se burla de tus zapatos en el almuerzo. Todos se ríen. Sientes el calor en tu cara. Quieres llorar o pelear con él en el pasillo."
+            "en": "Someone is talking trash about your mom on Discord. Your blood is boiling. You have his home address. You want to post it and ruin him.",
+            "es": "Alguien está hablando basura de tu mamá en Discord. Tu sangre hierve. Tienes la dirección de su casa. Quieres publicarla y arruinarlo."
           }
         },
         {
           "type": "tvid",
-          "mode": "suspense",
+          "mode": "agitation",
           "text": {
-            "en": "He attacks because he is weak inside. My value is not in my shoes. I look him in the eyes and say nothing. My silence is louder than his joke.",
-            "es": "Él ataca porque es débil por dentro. Mi valor no está en mis zapatos. Lo miro a los ojos y no digo nada. Mi silencio es más fuerte que su broma."
+            "en": "CHOOSE: [TDM] Dox him and attack (Chaos) OR [TDG] Block and ignore (Power).",
+            "es": "ELIGE: [TDM] Publicar sus datos y atacar (Caos) o [TDG] Bloquear e ignorar (Poder)."
+          }
+        },
+        {
+          "type": "psychological_insight",
+          "text": {
+            "en": "CONSEQUENCE: [TDM] You are now a criminal. The police are at your door for cyberbullying. [TDG] You didn't give him your energy. Lions don't turn around when a small dog barks. You are the lion.",
+            "es": "CONSECUENCIA: [TDM] Ahora eres un criminal. La policía está en tu puerta por ciberacoso. [TDG] No le diste tu energía. Los leones no se dan vuelta cuando un perro pequeño ladra. Tú eres el león."
           }
         }
       ]
     },
     {
       "id": 16,
-      "level": 2,
-      "category": "SESSION 16: THE FOUND WALLET",
+      "level": 4,
+      "category": "THE JOB OPPORTUNITY",
       "blocks": [
         {
           "type": "story",
           "text": {
-            "en": "You find a wallet at Publix. It has $50 and an ID. Nobody is looking. You could buy that game you want. You think about how much your family needs money.",
-            "es": "Encuentras una billetera en Publix. Tiene $50 y un ID. Nadie está mirando. Podrías comprar ese juego que quieres. Piensas en cuánto necesita el dinero tu familia."
+            "en": "A neighbor offers you $200 to 'just watch the street' while they move some boxes into a garage at night. 'If you see a cop, just whistle,' he says.",
+            "es": "Un vecino te ofrece $200 por 'solo vigilar la calle' mientras mueven unas cajas a un garaje de noche. 'Si ves un policía, solo silba', dice."
           }
         },
         {
           "type": "tvid",
-          "mode": "TDB",
+          "mode": "tension",
           "text": {
-            "en": "Stolen money has a curse; honest money has power. I give it to the manager. I keep my integrity. I am a man of my word, even when alone.",
-            "es": "El dinero robado tiene una maldición; el dinero honesto tiene poder. Se la doy al manager. Mantengo mi integridad. Soy un hombre de palabra, aun cuando estoy solo."
+            "en": "CHOOSE: [TDM] Take the easy money OR [TDN] Say 'I'm busy' and go home (Survival).",
+            "es": "ELIGE: [TDM] Aceptar el dinero fácil o [TDN] Decir 'Estoy ocupado' e irte a casa (Supervivencia)."
+          }
+        },
+        {
+          "type": "psychological_insight",
+          "text": {
+            "en": "STREET CHECK: [TDM] Those boxes had drugs. You are now an accomplice. $200 is not worth a prison sentence. [TDN] You are smart. You smelled the trap. Real wealth is built with work, not with 'whistling'.",
+            "es": "CHEQUEO DE CALLE: [TDM] Esas cajas tenían drogas. Ahora eres cómplice. $200 no valen una condena de prisión. [TDN] Eres inteligente. Olfateaste la trampa. La riqueza real se construye con trabajo, no 'silbando'."
           }
         }
       ]
     },
     {
       "id": 17,
-      "level": 2,
-      "category": "SESSION 17: THE STREET STRANGER",
+      "level": 4,
+      "category": "THE BROKEN WINDOW",
       "blocks": [
         {
           "type": "story",
           "text": {
-            "en": "You are at the park. A teenager offers you a 'special' candy for free. He says it makes everything fun. He tells you not to tell your parents.",
-            "es": "Estás en el parque. Un adolescente te ofrece un dulce 'especial' gratis. Dice que hace todo divertido. Te dice que no se lo digas a tus padres."
+            "en": "You were playing ball and broke a neighbor's expensive window. No one saw you. Your friends say: 'Run! Let's get out of here before they check the cameras!'",
+            "es": "Estabas jugando y rompiste la ventana cara de un vecino. Nadie te vio. Tus amigos dicen: '¡Corre! ¡Vámonos de aquí antes de que revisen las cámaras!'"
           }
         },
         {
           "type": "tvid",
-          "mode": "TDG",
+          "mode": "agitation",
           "text": {
-            "en": "If it's a secret from my parents, it's a trap for my life. Nothing free is that good. I say NO. I leave the park immediately. I protect my brain.",
-            "es": "Si es un secreto para mis padres, es una trampa para mi vida. Nada gratis es tan bueno. Digo NO. Me voy del parque de inmediato. Protejo mi cerebro."
+            "en": "CHOOSE: [TDM] Run away (Fear) OR [TDB] Knock on the door and apologize (Karma).",
+            "es": "ELIGE: [TDM] Escapar (Miedo) o [TDB] Tocar la puerta y pedir disculpas (Karma)."
+          }
+        },
+        {
+          "type": "psychological_insight",
+          "text": {
+            "en": "REWARD: [TDB] The neighbor is impressed by your honesty. He lets you work it off by washing his car. You earned a mentor. [TDM] You live in fear every time you see him. You lost your peace for a piece of glass.",
+            "es": "RECOMPENSA: [TDB] El vecino queda impresionado por tu honestidad. Te deja pagarlo lavando su carro. Ganaste un mentor. [TDM] Vives con miedo cada vez que lo ves. Perdiste tu paz por un pedazo de vidrio."
           }
         }
       ]
     },
     {
       "id": 18,
-      "level": 2,
-      "category": "SESSION 18: THE MESSY ROOM",
+      "level": 4,
+      "category": "THE INFLUENCER LIFESTYLE",
       "blocks": [
         {
           "type": "story",
           "text": {
-            "en": "Your room is a disaster. Clothes on the floor, trash on the desk. You feel lazy and tired. You decide to play video games instead of cleaning.",
-            "es": "Tu cuarto es un desastre. Ropa en el piso, basura en el escritorio. Te sientes perezoso y cansado. Decides jugar videojuegos en lugar de limpiar."
+            "en": "You want to be a YouTuber. Your friends say you need a $2000 camera and a designer outfit first. You don't have the money. You feel depressed and stop creating content.",
+            "es": "Quieres ser YouTuber. Tus amigos dicen que necesitas una cámara de $2000 y ropa de diseñador primero. No tienes el dinero. Te deprimes y dejas de crear contenido."
           }
         },
         {
           "type": "tvid",
-          "mode": "TDP",
+          "mode": "discovery",
           "text": {
-            "en": "External chaos reflects internal chaos. I clean for 10 minutes. I organize my space to organize my mind. I am the commander of my environment.",
-            "es": "El caos externo refleja el caos interno. Limpio por 10 minutos. Organizo mi espacio para organizar mi mente. Soy el comandante de mi entorno."
+            "en": "CHOOSE: [TDM] Wait until you are 'rich' OR [TDN] Start today with your cheap phone (Creativity).",
+            "es": "ELIGE: [TDM] Esperar hasta ser 'rico' o [TDN] Empezar hoy con tu teléfono barato (Creatividad)."
+          }
+        },
+        {
+          "type": "psychological_insight",
+          "text": {
+            "en": "RESULT: [TDN] In six months, you have 1000 followers because of your talent. [TDM] You are still sitting on the couch, waiting for a miracle. The gear doesn't make the master; the master makes the gear work.",
+            "es": "RESULTADO: [TDN] En seis meses, tienes 1000 seguidores por tu talento. [TDM] Sigues sentado en el sofá, esperando un milagro. El equipo no hace al maestro; el maestro hace que el equipo funcione."
           }
         }
       ]
     },
     {
       "id": 19,
-      "level": 2,
-      "category": "SESSION 19: THE GROUP PROJECT",
+      "level": 4,
+      "category": "THE SIBLING RIVALRY",
       "blocks": [
         {
           "type": "story",
           "text": {
-            "en": "In class, your group is doing nothing. They are talking about influencers. The project is due in 30 minutes. You are afraid to look like a 'nerd' if you start working.",
-            "es": "En clase, tu grupo no hace nada. Hablan de influencers. El proyecto vence en 30 minutos. Tienes miedo de parecer un 'nerd' si empiezas a trabajar."
+            "en": "Your little sister is crying because she broke her tablet. It's your fault, but your mom thinks she dropped it. Your sister is going to get grounded for a week.",
+            "es": "Tu hermana pequeña llora porque rompió su tablet. Fue tu culpa, pero tu mamá cree que a ella se le cayó. A tu hermana la van a castigar una semana."
           }
         },
         {
           "type": "tvid",
-          "mode": "TDN",
+          "mode": "tension",
           "text": {
-            "en": "I am not a nerd; I am an achiever. I take the lead. I give orders. I get the grade while they stay stagnant. I lead, I don't follow.",
-            "es": "No soy un nerd; soy un triunfador. Tomo el mando. Doy órdenes. Saco la nota mientras ellos se estancan. Yo lidero, no sigo."
+            "en": "CHOOSE: [TDM] Stay silent (Safety) OR [TDK] Tell the truth and take the blame (Connection).",
+            "es": "ELIGE: [TDM] Quedarte callado (Seguridad) o [TDK] Decir la verdad y aceptar la culpa (Conexión)."
+          }
+        },
+        {
+          "type": "psychological_insight",
+          "text": {
+            "en": "REWARD: [TDK] Your sister looks at you like a hero. Your mom is mad about the tablet but proud of your manliness. [TDM] You save your skin but you sold your sister's heart. You are a small person in a big body.",
+            "es": "RECOMPENSA: [TDK] Tu hermana te mira como a un héroe. Tu mamá está enojada por la tablet pero orgullosa de tu hombría. [TDM] Salvas tu pellejo pero vendiste el corazón de tu hermana. Eres una persona pequeña en un cuerpo grande."
           }
         }
       ]
     },
     {
       "id": 20,
-      "level": 2,
-      "category": "SESSION 20: THE VICTORY OF HABIT",
+      "level": 5,
+      "category": "THE STREET FIGHT",
       "blocks": [
         {
           "type": "story",
           "text": {
-            "en": "You have finished 20 training sessions. You feel different. You stop and breathe. You look at your hands. You are the owner of your decisions now.",
-            "es": "Has terminado 20 sesiones de entrenamiento. Te sientes diferente. Te detienes y respiras. Miras tus manos. Ahora eres el dueño de tus decisiones."
+            "en": "A group is cornering a kid at the park. They tell you: 'Record this on your phone, we're gonna show him who's boss.' They expect you to join the circle.",
+            "es": "Un grupo tiene acorralado a un niño en el parque. Te dicen: 'Graba esto con tu cel, vamos a enseñarle quién manda'. Esperan que te unas al círculo."
+          }
+        },
+        {
+          "type": "tvid",
+          "mode": "agitation",
+          "text": {
+            "en": "CHOOSE: [TDM] Record the fight (Dopamine) OR [TDG] Walk away and call for help (Control/Power).",
+            "es": "ELIGE: [TDM] Grabar la pelea (Dopamina) o [TDG] Alejarte y pedir ayuda (Control/Poder)."
+          }
+        },
+        {
+          "type": "psychological_insight",
+          "text": {
+            "en": "CONSEQUENCE: [TDM] You are a coward with a camera. You are part of the problem. [TDG] You have the balls to stand for what is right. Real power isn't in the fist; it's in the character that refuses to follow the pack.",
+            "es": "CONSECUENCIA: [TDM] Eres un cobarde con una cámara. Eres parte del problema. [TDG] Tienes los pantalones para defender lo correcto. El poder real no está en el puño; está en el carácter que se niega a seguir a la manada."
+          }
+        }
+      ]
+    },
+    {
+      "id": 21,
+      "level": 5,
+      "category": "THE ULTIMATE TEST: THE MIRROR",
+      "blocks": [
+        {
+          "type": "story",
+          "text": {
+            "en": "You look at yourself in the mirror after 21 days of Kamizen. You see a warrior. You see a leader. But a voice in your head says: 'You haven't changed, you're still the same weak kid.'",
+            "es": "Te miras al espejo después de 21 días de Kamizen. Ves a un guerrero. Ves a un líder. Pero una voz en tu cabeza dice: 'No has cambiado, sigues siendo el mismo niño débil'."
           }
         },
         {
           "type": "tvid",
           "mode": "victory",
           "text": {
-            "en": "I am a warrior of Kamizen. I am prepared for the street, the school, and the future. I do not react; I respond. I am in control. I have won.",
-            "es": "Soy un guerrero de Kamizen. Estoy preparado para la calle, la escuela y el futuro. No reacciono; respondo. Tengo el control. He ganado."
+            "en": "CHOOSE: [TDM] Believe the voice OR [TDP] Silence the voice and keep training (Structure/Win).",
+            "es": "ELIGE: [TDM] Creerle a la voz o [TDP] Silenciar la voz y seguir entrenando (Estructura/Victoria)."
+          }
+        },
+        {
+          "type": "psychological_insight",
+          "text": {
+            "en": "FINAL VICTORY: [TDP] You just won the hardest battle: the one against yourself. You are no longer a victim of your environment. You are the architect of your destiny. Welcome to the elite.",
+            "es": "VICTORIA FINAL: [TDP] Acabas de ganar la batalla más difícil: la batalla contra ti mismo. Ya no eres una víctima de tu entorno. Eres el arquitecto de tu destino. Bienvenido a la élite."
           }
         }
       ]
