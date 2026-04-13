@@ -33,7 +33,26 @@ body {
     text-align:center;
     font-size:20px;
     margin-bottom:20px;
-    min-height:80px;
+    min-height:120px;
+}
+
+/* ===============================
+   🫁 RESPIRATION CIRCLE
+=============================== */
+#breath {
+    width:120px;
+    height:120px;
+    border-radius:50%;
+    border:3px solid #00f2ff;
+    margin-bottom:20px;
+    animation: breathe 6s infinite ease-in-out;
+    opacity:0.6;
+}
+
+@keyframes breathe {
+    0%   { transform: scale(0.8); opacity:0.3; }
+    50%  { transform: scale(1.3); opacity:1; }
+    100% { transform: scale(0.8); opacity:0.3; }
 }
 
 #stats {
@@ -85,6 +104,9 @@ button:hover {
         <div class="box">DISCIPLINE <div id="disc">50</div></div>
     </div>
 
+    <!-- 🫁 RESPIRACIÓN TVID -->
+    <div id="breath"></div>
+
     <div id="message">Inicializando sistema...</div>
 
     <div id="options"></div>
@@ -121,7 +143,7 @@ window.onload = async function () {
 
     setTimeout(() => {
         processEvent("start");
-    }, 1000);
+    }, 1200);
 };
 
 // ===============================
@@ -151,6 +173,9 @@ async function startSession() {
         state = data.state || {};
         localStorage.setItem("state", JSON.stringify(state));
 
+        // 🔊 VOZ INICIAL
+        speak("Sistema Kamizen activado. Tu vida ha comenzado.");
+
         showMessage(data.narrative || "Sistema iniciado");
 
     } catch (e) {
@@ -164,6 +189,8 @@ async function startSession() {
 // ===============================
 function showMessage(t) {
     document.getElementById("message").innerText = t;
+
+    speak(t); // 🔊 VOZ AUTOMÁTICA
 }
 
 function updateUI() {
@@ -171,6 +198,22 @@ function updateUI() {
     document.getElementById("social").innerText = state.social ?? 50;
     document.getElementById("karma").innerText = state.karma ?? 0;
     document.getElementById("disc").innerText = state.discipline ?? 50;
+}
+
+// ===============================
+// 🔊 VOZ SYSTEM
+// ===============================
+function speak(text) {
+
+    if (!window.speechSynthesis) return;
+
+    let msg = new SpeechSynthesisUtterance(text);
+    msg.lang = "es-ES";
+    msg.rate = 1;
+    msg.pitch = 1;
+
+    speechSynthesis.cancel();
+    speechSynthesis.speak(msg);
 }
 
 // ===============================
@@ -187,31 +230,27 @@ function processEvent(event) {
     switch(event) {
 
         case "start":
-            msg = "Todo parece normal… pero algo en tu vida no está avanzando.";
+            msg = "Todo parece normal… pero algo dentro de ti ya cambió.";
             break;
 
         case "tentacion":
-            msg = "Algo pequeño intenta desviarte… pero sabes que no es tan pequeño.";
+            msg = "Una decisión pequeña puede cambiar todo tu sistema.";
             break;
 
         case "crisis":
-            msg = "La presión aumenta. No puedes ignorarlo más.";
+            msg = "La presión se vuelve real. No puedes ignorarlo.";
             break;
 
         case "dinero":
-            msg = "Una oportunidad aparece… pero no es tan limpia como parece.";
+            msg = "Oportunidad detectada… pero tiene consecuencias ocultas.";
             break;
 
         case "amor":
-            msg = "Sientes conexión… pero también incertidumbre.";
-            break;
-
-        case "scene":
-            msg = "Estás en una decisión que define quién te estás convirtiendo.";
+            msg = "Conexión emocional activa. Riesgo de apego detectado.";
             break;
 
         default:
-            msg = "Algo está cambiando… aunque aún no lo entiendes.";
+            msg = "Estás dentro de un momento que define tu identidad.";
     }
 
     showMessage(msg);
@@ -267,18 +306,14 @@ async function sendDecision(decision) {
 
         if (data.status === "end") {
             showMessage("FIN DEL CICLO HUMANO");
+            speak("Sistema finalizado");
             return;
         }
 
-        // 🔥 narrativa backend + emoción
-        showMessage(data.narrative || "Tu decisión ha cambiado algo dentro de ti.");
-
-        // siguiente evento dinámico
-        const events = ["tentacion","crisis","dinero","amor","scene"];
-        const next = events[Math.floor(Math.random() * events.length)];
+        showMessage(data.narrative || "Tu decisión ha cambiado tu camino.");
 
         setTimeout(() => {
-            processEvent(next);
+            processEvent("scene");
         }, 1500);
 
     } catch (err) {
