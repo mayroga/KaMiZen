@@ -25,38 +25,19 @@ body {
 }
 
 /* ===============================
-   📖 STORY BOX (NETFLIX LOCKED FLOW)
+   📖 STORY DISPLAY (LOCKED FLOW)
 =============================== */
 #message {
     width:80%;
-    max-width:850px;
-    padding:30px;
+    max-width:800px;
+    padding:25px;
     border:2px solid #00f2ff;
     background:rgba(0,0,0,0.92);
     text-align:center;
-    font-size:22px;
+    font-size:20px;
     line-height:1.6;
-    min-height:160px;
-    transition: all 0.5s ease;
-}
-
-/* ===============================
-   🫁 BREATH SYNC (MASTER CLOCK VISUAL)
-=============================== */
-#breath {
-    width:120px;
-    height:120px;
-    border-radius:50%;
-    border:3px solid #00f2ff;
-    margin-bottom:20px;
-    opacity:0.5;
-    animation: breathe 8s infinite ease-in-out;
-}
-
-@keyframes breathe {
-    0%   { transform: scale(0.8); opacity:0.2; }
-    50%  { transform: scale(1.4); opacity:1; }
-    100% { transform: scale(0.8); opacity:0.2; }
+    min-height:120px;
+    transition: all 0.4s ease;
 }
 
 /* ===============================
@@ -67,7 +48,7 @@ body {
     grid-template-columns: repeat(4, 1fr);
     gap:10px;
     width:80%;
-    max-width:850px;
+    max-width:800px;
     margin-bottom:20px;
 }
 
@@ -78,7 +59,7 @@ body {
 }
 
 /* ===============================
-   🎮 BUTTONS (SOFT CONTROL ONLY)
+   🎮 BUTTONS
 =============================== */
 #options {
     display:flex;
@@ -94,8 +75,9 @@ button {
     background:black;
     color:#00f2ff;
     cursor:pointer;
-    min-width:130px;
+    min-width:120px;
 }
+
 button:hover {
     background:#00f2ff;
     color:black;
@@ -114,8 +96,6 @@ button:hover {
         <div class="box">DISCIPLINE <div id="disc">50</div></div>
     </div>
 
-    <div id="breath"></div>
-
     <div id="message">Inicializando sistema...</div>
 
     <div id="options"></div>
@@ -130,11 +110,11 @@ button:hover {
 let session_id = localStorage.getItem("session_id");
 let state = JSON.parse(localStorage.getItem("state") || "{}");
 
-let currentStory = null;
 let locked = false;
+let currentStory = null;
 
 // ===============================
-// INIT (BACKEND DRIVEN)
+// INIT FLOW
 // ===============================
 window.onload = async function () {
 
@@ -143,7 +123,7 @@ window.onload = async function () {
     if (!session_id) {
         await startSession();
     } else {
-        show("Reconectando flujo narrativo...");
+        show("Reconectando flujo de vida...");
         await requestNext("TDM");
     }
 
@@ -177,44 +157,61 @@ async function startSession() {
 }
 
 // ===============================
-// MAIN FLOW REQUEST (IMPORTANT FIX)
+// NEXT STORY (ONLY BACKEND CONTROL)
 // ===============================
 async function requestNext(decision) {
 
     if (locked) return;
     locked = true;
 
-    const res = await fetch("/judge", {
-        method: "POST",
-        headers: {"Content-Type":"application/json"},
-        body: JSON.stringify({
-            session_id,
-            decision
-        })
-    });
+    try {
 
-    const data = await res.json();
-
-    state = data.state;
-    localStorage.setItem("state", JSON.stringify(state));
-    updateUI();
-
-    if (data.end || !data.story) {
-        playStory({
-            blocks: [{ text: "FIN DEL CICLO HUMANO. TU IDENTIDAD HA SIDO REGISTRADA." }]
+        const res = await fetch("/judge", {
+            method: "POST",
+            headers: {"Content-Type":"application/json"},
+            body: JSON.stringify({
+                session_id,
+                decision
+            })
         });
-        locked = false;
-        return;
-    }
 
-    // 🔥 ONLY AFTER BACKEND CONFIRMS FULL STORY BLOCK
-    playStory(data.story);
+        const data = await res.json();
+
+        if (data.error) {
+            show("ERROR DE SESIÓN - REINICIANDO");
+            localStorage.removeItem("session_id");
+            session_id = null;
+            await startSession();
+            locked = false;
+            return;
+        }
+
+        state = data.state;
+        localStorage.setItem("state", JSON.stringify(state));
+        updateUI();
+
+        if (data.end || !data.story) {
+            playStory({
+                blocks: [
+                    { text: "FIN DEL CICLO HUMANO. TU IDENTIDAD HA SIDO REGISTRADA." }
+                ]
+            });
+            locked = false;
+            return;
+        }
+
+        playStory(data.story);
+
+    } catch (e) {
+        console.error(e);
+        show("ERROR DE CONEXIÓN");
+    }
 
     locked = false;
 }
 
 // ===============================
-// STORY PLAYER (NO CUTTING EVER)
+// STORY PLAYER (NO CUTTING)
 // ===============================
 function playStory(story) {
 
@@ -226,21 +223,19 @@ function playStory(story) {
 
     show(text);
     speak(text);
+    updateUI();
 
-    // 🔥 IMPORTANT FIX: WAIT FULL AUDIO BEFORE NEXT FLOW
-    const duration = Math.max(8000, text.length * 80);
+    // 🔥 CRITICAL FIX: WAIT FULL READING BEFORE NEXT ACTION
+    const duration = Math.max(7000, text.length * 75);
 
     clearTimeout(window.auto);
     window.auto = setTimeout(() => {
-
-        // auto decision only AFTER FULL STORY FINISH
         requestNext("TDM");
-
     }, duration);
 }
 
 // ===============================
-// TEXT EXTRACTOR (SAFE)
+// EXTRACT TEXT (SAFE MULTI FORMAT)
 // ===============================
 function extractText(story) {
 
@@ -274,7 +269,7 @@ function updateUI() {
 }
 
 // ===============================
-// VOICE (ANTI-CUT ENGINE)
+// VOICE SYSTEM (ANTI-CUT)
 // ===============================
 function speak(text) {
 
@@ -285,6 +280,7 @@ function speak(text) {
     const u = new SpeechSynthesisUtterance(text);
     u.lang = "es-ES";
     u.rate = 0.95;
+    u.pitch = 1;
 
     speechSynthesis.speak(u);
 }
@@ -307,6 +303,7 @@ function renderButtons() {
     ];
 
     for (let [k,label] of list) {
+
         const b = document.createElement("button");
         b.innerText = label;
 
