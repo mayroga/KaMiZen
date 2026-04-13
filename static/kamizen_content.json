@@ -22,9 +22,10 @@
         },
         {
           "type": "psychological_insight",
+          "mode": "agitation",
           "text": {
-            "en": "RESULT: If you chose [TDM], your money is GONE. Saturday comes, your mom is crying because there's no milk. You feel the weight of your soda in your empty stomach. [TDG] users have the power to help their mom today.",
-            "es": "RESULTADO: Si elegiste [TDM], tu dinero se FUE. Llega el sábado, tu mamá llora porque no hay leche. Sientes el peso de la soda en tu estómago vacío. Usuarios [TDG] tienen el poder de ayudar a mamá hoy."
+            "en": "PUNISHMENT: If you chose [TDM], your money is GONE. Saturday comes, your mom is crying because there's no milk. You feel the weight of the soda in your empty stomach. [TDG] users have the power to help their family today.",
+            "es": "CASTIGO: Si elegiste [TDM], tu dinero se FUE. Llega el sábado, tu mamá llora porque no hay leche. Sientes el peso de la soda en tu estómago vacío. Usuarios [TDG] tienen el poder de ayudar a su familia hoy."
           }
         }
       ]
@@ -43,7 +44,7 @@
         },
         {
           "type": "tvid",
-          "mode": "tension",
+          "mode": "agitation",
           "text": {
             "en": "CHOOSE: [TDB] Ask for the secret code OR [TDN] Run and scream 'STAY AWAY!'.",
             "es": "ELIGE: [TDB] Pedir el código secreto o [TDN] Correr y gritar '¡ALÉJATE!'."
@@ -51,9 +52,10 @@
         },
         {
           "type": "psychological_insight",
+          "mode": "victory",
           "text": {
-            "en": "REWARD: You are safe. If you did nothing, the door opens. Fear is a signal, not a cage. Use it to move fast!",
-            "es": "RECOMPENSA: Estás a salvo. Si no hiciste nada, la puerta se abre. El miedo es una señal, no una jaula. ¡Úsalo para moverte!"
+            "en": "PREMIUM REWARD: You are safe. You used your brain over your fear. A ghost car just lost its prey. Survival is the ultimate win. Never trust a stranger's rush.",
+            "es": "RECOMPENSA PREMIUM: Estás a salvo. Usaste tu cerebro sobre tu miedo. Un carro fantasma acaba de perder su presa. Sobrevivir es la victoria máxima. Nunca confíes en la prisa de un extraño."
           }
         }
       ]
@@ -72,7 +74,7 @@
         },
         {
           "type": "tvid",
-          "mode": "discovery",
+          "mode": "tension",
           "text": {
             "en": "CHOOSE: [TDK] Give in to be liked OR [TDP] Say 'No, I can help you study but not copy'.",
             "es": "ELIGE: [TDK] Ceder para caer bien o [TDP] Decir 'No, te ayudo a estudiar pero no a copiar'."
@@ -80,9 +82,10 @@
         },
         {
           "type": "psychological_insight",
+          "mode": "power",
           "text": {
-            "en": "CONSEQUENCE: [TDK] users just bought a master, not a friend. Jason will ask for more tomorrow. [TDP] users feel a sting now, but they own their respect.",
-            "es": "CONSECUENCIA: Usuarios [TDK] compraron un amo, no un amigo. Jason pedirá más mañana. Usuarios [TDP] sienten el golpe ahora, pero son dueños de su respeto."
+            "en": "CONSEQUENCE: [TDK] users just bought a master, not a friend. Jason will use you again. [TDP] users feel a sting now, but they earn respect. Real friends build you up, they don't use you.",
+            "es": "CONSECUENCIA: Usuarios [TDK] compraron un amo, no un amigo. Jason te usará de nuevo. Usuarios [TDP] sienten el golpe ahora, pero ganan respeto. Los amigos reales te elevan, no te usan."
           }
         }
       ]
@@ -109,9 +112,10 @@
         },
         {
           "type": "psychological_insight",
+          "mode": "discovery",
           "text": {
-            "en": "PUNISHMENT: If you punch him [TDM], you are suspended. He wins. If you use [TDG], you controlled the room. Silence is the ultimate weapon.",
-            "es": "CASTIGO: Si le pegas [TDM], te suspenden. Él gana. Si usas [TDG], tú controlaste el lugar. El silencio es el arma definitiva."
+            "en": "PUNISHMENT/WIN: If you punch him [TDM], you are suspended. He wins. If you use [TDG], you controlled the room. Silence is a weapon that scares the weak. You are the master of your hands.",
+            "es": "CASTIGO/VICTORIA: Si le pegas [TDM], te suspenden. Él gana. Si usas [TDG], tú controlaste el lugar. El silencio es un arma que asusta a los débiles. Eres el dueño de tus manos."
           }
         }
       ]
@@ -138,9 +142,10 @@
         },
         {
           "type": "psychological_insight",
+          "mode": "focus",
           "text": {
-            "en": "RESULT: [TDM] Tomorrow you'll have a headache and fail your math quiz. [TDP] You wake up like a shark, ready to hunt. Your future is built at night.",
-            "es": "RESULTADO: [TDM] Mañana tendrás dolor de cabeza y fallarás el examen. [TDP] Despiertas como un tiburón, listo para cazar. Tu futuro se construye de noche."
+            "en": "RESULT: [TDM] Tomorrow you'll have a headache and feel like a zombie. [TDP] You wake up like a shark, sharp and ready. Your empire is built while others are scrolling.",
+            "es": "RESULTADO: [TDM] Mañana tendrás dolor de cabeza y te sentirás como un zombie. [TDP] Despiertas como un tiburón, afilado y listo. Tu imperio se construye mientras otros hacen scroll."
           }
         }
       ]
@@ -167,9 +172,10 @@
         },
         {
           "type": "psychological_insight",
+          "mode": "tension",
           "text": {
-            "en": "STRESS RESULT: If you chose [TDM], you just gave your lungs to a chemical. Now you're hiding, paranoid about your breath. [TDG] users breathe clean air and keep their word. You don't need a cloud to be a leader.",
-            "es": "RESULTADO DE ESTRÉS: Si elegiste [TDM], acabas de entregar tus pulmones a un químico. Ahora te escondes, paranoico por tu aliento. Usuarios [TDG] respiran aire limpio y mantienen su palabra. No necesitas una nube para ser un líder."
+            "en": "STRESS RESULT: [TDM] You just sold your lungs for a flavor. Now you're hiding, paranoid. [TDG] users breathe clean air and keep their word. A real leader doesn't need a cloud to be respected.",
+            "es": "RESULTADO DE ESTRÉS: [TDM] Acabas de vender tus pulmones por un sabor. Ahora te escondes, paranoico. Usuarios [TDG] respiran aire limpio y cumplen su palabra. Un líder real no necesita una nube para ser respetado."
           }
         }
       ]
@@ -196,9 +202,10 @@
         },
         {
           "type": "psychological_insight",
+          "mode": "agitation",
           "text": {
-            "en": "KARMA CHECK: [TDM] You buy the shoes, but you feel like a thief every time you wear them. That money belonged to someone’s rent. [TDB] You leave with a clean soul. Character is what you do when no one is looking.",
-            "es": "CHEQUEO DE KARMA: [TDM] Compras los tenis, pero te sientes como un ladrón cada vez que los usas. Ese dinero era para la renta de alguien. [TDB] Te vas con el alma limpia. El carácter es lo que haces cuando nadie mira."
+            "en": "KARMA CHECK: [TDM] You buy the shoes, but you feel like a thief every time you wear them. That money was someone's rent. [TDB] You leave with a clean soul. Character is what you do when no one is looking.",
+            "es": "CHEQUEO DE KARMA: [TDM] Compras los tenis, pero te sientes como un ladrón cada vez que los usas. Ese dinero era la renta de alguien. [TDB] Te vas con el alma limpia. El carácter es lo que haces cuando nadie mira."
           }
         }
       ]
@@ -225,9 +232,10 @@
         },
         {
           "type": "psychological_insight",
+          "mode": "focus",
           "text": {
-            "en": "REWARD: [TDP] You finish the project. You feel like a professional. [TDM] You stayed up, lost the game anyway, and tomorrow you will feel like a failure in front of the teacher. Discipline is choosing between what you want now and what you want most.",
-            "es": "RECOMPENSA: [TDP] Terminas el proyecto. Te sientes como un profesional. [TDM] Te desvelaste, perdiste el juego igual, y mañana te sentirás como un fracaso ante el profesor. La disciplina es elegir entre lo que quieres ahora y lo que más deseas."
+            "en": "REWARD: [TDP] You finish the project. You feel like a professional. [TDM] You stayed up, lost the game anyway, and tomorrow you will feel like a failure. Discipline is choosing between what you want now and what you want most.",
+            "es": "RECOMPENSA: [TDP] Terminas el proyecto. Te sientes como un profesional. [TDM] Te desvelaste, perdiste el juego igual, y mañana te sentirás como un fracaso. La disciplina es elegir entre lo que quieres ahora y lo que más deseas."
           }
         }
       ]
@@ -254,6 +262,7 @@
         },
         {
           "type": "psychological_insight",
+          "mode": "victory",
           "text": {
             "en": "PUNISHMENT/REWARD: [TDM] The house becomes a war zone. You lose your phone for a month. [TDG] Your dad calms down. He respects your maturity. You just learned how to de-escalate a bomb.",
             "es": "CASTIGO/RECOMPENSA: [TDM] La casa se vuelve zona de guerra. Te quitan el teléfono un mes. [TDG] Tu papá se calma. Respeta tu madurez. Acabas de aprender a desactivar una bomba."
@@ -283,8 +292,9 @@
         },
         {
           "type": "psychological_insight",
+          "mode": "power",
           "text": {
-            "en": "CONSEQUENCE: [TDM] You are a follower. You just helped destroy someone's day for 3 seconds of dopamine. [TDK] You are a protector. People might talk, but deep down, everyone knows you are the one with real courage.",
+            "en": "CONSEQUENCE: [TDM] You are a follower. You helped destroy someone's day for 3 seconds of dopamine. [TDK] You are a protector. People might talk, but deep down, everyone knows you have the real courage.",
             "es": "CONSECUENCIA: [TDM] Eres un seguidor. Ayudaste a destruir el día de alguien por 3 segundos de dopamina. [TDK] Eres un protector. La gente hablará, pero en el fondo, todos saben que tú tienes el valor real."
           }
         }
@@ -312,9 +322,10 @@
         },
         {
           "type": "psychological_insight",
+          "mode": "victory",
           "text": {
-            "en": "SURVIVAL RESULT: [TDM] You are in a car with a ghost. You don't know where you are going. High risk of never coming back. [TDN] You are a survivor. You used your brain over your curiosity. The street didn't win today.",
-            "es": "RESULTADO DE VIDA: [TDM] Estás en un carro con un fantasma. No sabes a dónde vas. Alto riesgo de no volver. [TDN] Eres un sobreviviente. Usaste tu cerebro sobre tu curiosidad. La calle no ganó hoy."
+            "en": "SURVIVAL RESULT: [TDM] You are in a car with a ghost. High risk of never coming back. [TDN] You are a survivor. You used your brain over your curiosity. The street didn't win today.",
+            "es": "RESULTADO DE VIDA: [TDM] Estás en un carro con un fantasma. Alto riesgo de no volver. [TDN] Eres un sobreviviente. Usaste tu cerebro sobre tu curiosidad. La calle no ganó hoy."
           }
         }
       ]
@@ -341,9 +352,10 @@
         },
         {
           "type": "psychological_insight",
+          "mode": "discovery",
           "text": {
-            "en": "RESULT: [TDM] You get the grade, but you are a fraud. If the teacher changes one question, you fail because you learned nothing. [TDP] You own your intelligence. A grade is a number; integrity is your identity.",
-            "es": "RESULTADO: [TDM] Sacas la nota, pero eres un fraude. Si el profesor cambia una pregunta, fallas porque no aprendiste nada. [TDP] Eres dueño de tu inteligencia. Una nota es un número; la integridad es tu identidad."
+            "en": "RESULT: [TDM] You get the grade, but you are a fraud. If the teacher changes one question, you fail. [TDP] You own your intelligence. A grade is a number; integrity is your identity.",
+            "es": "RESULTADO: [TDM] Sacas la nota, pero eres un fraude. Si el profesor cambia una pregunta, fallas. [TDP] Eres dueño de tu inteligencia. Una nota es un número; la integridad es tu identidad."
           }
         }
       ]
@@ -370,9 +382,10 @@
         },
         {
           "type": "psychological_insight",
+          "mode": "agitation",
           "text": {
-            "en": "PUNISHMENT: [TDM] The police raid the party. Your parents find out. You lose their trust for years. [TDG] You slept like a king. Trust is like a mirror: once broken, it never looks the same. You kept yours whole.",
-            "es": "CASTIGO: [TDM] La policía hace una redada en la fiesta. Tus padres se enteran. Pierdes su confianza por años. [TDG] Dormiste como un rey. La confianza es como un espejo: una vez roto, no vuelve a ser igual. Mantuviste el tuyo intacto."
+            "en": "PUNISHMENT: [TDM] The police raid the party. Your parents find out. You lose their trust for years. [TDG] You slept like a king. Trust is like a mirror: once broken, it never looks the same.",
+            "es": "CASTIGO: [TDM] La policía hace una redada en la fiesta. Tus padres se enteran. Pierdes su confianza por años. [TDG] Dormiste como un rey. La confianza es como un espejo: una vez roto, no vuelve a ser igual."
           }
         }
       ]
@@ -399,9 +412,10 @@
         },
         {
           "type": "psychological_insight",
+          "mode": "agitation",
           "text": {
-            "en": "HEALTH CHECK: [TDM] Your muscles grow, but your heart and organs suffer. You bought a fake body. [TDG] Your progress is slow but real. You are building a temple, not a movie set. Warriors don't take shortcuts.",
-            "es": "CHEQUEO DE SALUD: [TDM] Tus músculos crecen, pero tu corazón y órganos sufren. Compraste un cuerpo falso. [TDG] Tu progreso es lento pero real. Construyes un templo, no un set de película. Los guerreros no toman atajos."
+            "en": "HEALTH CHECK: [TDM] Your muscles grow, but your heart suffers. You bought a fake body. [TDG] Your progress is real. You are building a temple, not a movie set. Warriors don't take shortcuts.",
+            "es": "CHEQUEO DE SALUD: [TDM] Tus músculos crecen, pero tu corazón sufre. Compraste un cuerpo falso. [TDG] Tu progreso es real. Construyes un templo, no un set de película. Los guerreros no toman atajos."
           }
         }
       ]
@@ -428,9 +442,10 @@
         },
         {
           "type": "psychological_insight",
+          "mode": "power",
           "text": {
-            "en": "CONSEQUENCE: [TDM] You are now a criminal. The police are at your door for cyberbullying. [TDG] You didn't give him your energy. Lions don't turn around when a small dog barks. You are the lion.",
-            "es": "CONSECUENCIA: [TDM] Ahora eres un criminal. La policía está en tu puerta por ciberacoso. [TDG] No le diste tu energía. Los leones no se dan vuelta cuando un perro pequeño ladra. Tú eres el león."
+            "en": "CONSEQUENCE: [TDM] You are now a criminal. The police are at your door. [TDG] You didn't give him your energy. Lions don't turn around when a small dog barks. You are the lion.",
+            "es": "CONSECUENCIA: [TDM] Ahora eres un criminal. La policía está en tu puerta. [TDG] No le diste tu energía. Los leones no se dan vuelta cuando un perro pequeño ladra. Tú eres el león."
           }
         }
       ]
@@ -457,9 +472,10 @@
         },
         {
           "type": "psychological_insight",
+          "mode": "agitation",
           "text": {
-            "en": "STREET CHECK: [TDM] Those boxes had drugs. You are now an accomplice. $200 is not worth a prison sentence. [TDN] You are smart. You smelled the trap. Real wealth is built with work, not with 'whistling'.",
-            "es": "CHEQUEO DE CALLE: [TDM] Esas cajas tenían drogas. Ahora eres cómplice. $200 no valen una condena de prisión. [TDN] Eres inteligente. Olfateaste la trampa. La riqueza real se construye con trabajo, no 'silbando'."
+            "en": "STREET CHECK: [TDM] Those boxes had drugs. You are now an accomplice. $200 isn't worth prison. [TDN] You smelled the trap. Real wealth is built with work, not with 'whistling'.",
+            "es": "CHEQUEO DE CALLE: [TDM] Esas cajas tenían drogas. Ahora eres cómplice. $200 no valen la prisión. [TDN] Olfateaste la trampa. La riqueza real se construye con trabajo, no 'silbando'."
           }
         }
       ]
@@ -486,9 +502,10 @@
         },
         {
           "type": "psychological_insight",
+          "mode": "victory",
           "text": {
-            "en": "REWARD: [TDB] The neighbor is impressed by your honesty. He lets you work it off by washing his car. You earned a mentor. [TDM] You live in fear every time you see him. You lost your peace for a piece of glass.",
-            "es": "RECOMPENSA: [TDB] El vecino queda impresionado por tu honestidad. Te deja pagarlo lavando su carro. Ganaste un mentor. [TDM] Vives con miedo cada vez que lo ves. Perdiste tu paz por un pedazo de vidrio."
+            "en": "REWARD: [TDB] The neighbor is impressed. He lets you work it off. You earned a mentor. [TDM] You live in fear every time you see him. You lost your peace for a piece of glass.",
+            "es": "RECOMPENSA: [TDB] El vecino queda impresionado. Te deja pagarlo trabajando. Ganaste un mentor. [TDM] Vives con miedo cada vez que lo ves. Perdiste tu paz por un pedazo de vidrio."
           }
         }
       ]
@@ -501,8 +518,8 @@
         {
           "type": "story",
           "text": {
-            "en": "You want to be a YouTuber. Your friends say you need a $2000 camera and a designer outfit first. You don't have the money. You feel depressed and stop creating content.",
-            "es": "Quieres ser YouTuber. Tus amigos dicen que necesitas una cámara de $2000 y ropa de diseñador primero. No tienes el dinero. Te deprimes y dejas de crear contenido."
+            "en": "You want to be a YouTuber. Your friends say you need a $2000 camera first. You don't have the money. You feel depressed and stop creating content.",
+            "es": "Quieres ser YouTuber. Tus amigos dicen que necesitas una cámara de $2000 primero. No tienes el dinero. Te deprimes y dejas de crear contenido."
           }
         },
         {
@@ -515,9 +532,10 @@
         },
         {
           "type": "psychological_insight",
+          "mode": "power",
           "text": {
-            "en": "RESULT: [TDN] In six months, you have 1000 followers because of your talent. [TDM] You are still sitting on the couch, waiting for a miracle. The gear doesn't make the master; the master makes the gear work.",
-            "es": "RESULTADO: [TDN] En seis meses, tienes 1000 seguidores por tu talento. [TDM] Sigues sentado en el sofá, esperando un milagro. El equipo no hace al maestro; el maestro hace que el equipo funcione."
+            "en": "RESULT: [TDN] In six months, you have followers because of your talent. [TDM] You are still on the couch, waiting. The gear doesn't make the master; the master makes the gear work.",
+            "es": "RESULTADO: [TDN] En seis meses, tienes seguidores por tu talento. [TDM] Sigues en el sofá, esperando. El equipo no hace al maestro; el maestro hace que el equipo funcione."
           }
         }
       ]
@@ -530,8 +548,8 @@
         {
           "type": "story",
           "text": {
-            "en": "Your little sister is crying because she broke her tablet. It's your fault, but your mom thinks she dropped it. Your sister is going to get grounded for a week.",
-            "es": "Tu hermana pequeña llora porque rompió su tablet. Fue tu culpa, pero tu mamá cree que a ella se le cayó. A tu hermana la van a castigar una semana."
+            "en": "Your little sister is crying because she broke her tablet. It's your fault, but your mom thinks she dropped it. Your sister is going to get grounded.",
+            "es": "Tu hermana pequeña llora porque rompió su tablet. Fue tu culpa, pero tu mamá cree que a ella se le cayó. A tu hermana la van a castigar."
           }
         },
         {
@@ -544,9 +562,10 @@
         },
         {
           "type": "psychological_insight",
+          "mode": "victory",
           "text": {
-            "en": "REWARD: [TDK] Your sister looks at you like a hero. Your mom is mad about the tablet but proud of your manliness. [TDM] You save your skin but you sold your sister's heart. You are a small person in a big body.",
-            "es": "RECOMPENSA: [TDK] Tu hermana te mira como a un héroe. Tu mamá está enojada por la tablet pero orgullosa de tu hombría. [TDM] Salvas tu pellejo pero vendiste el corazón de tu hermana. Eres una persona pequeña en un cuerpo grande."
+            "en": "REWARD: [TDK] Your sister looks at you like a hero. Your mom is proud of your manliness. [TDM] You save your skin but sold your sister's heart. You are a small person in a big body.",
+            "es": "RECOMPENSA: [TDK] Tu hermana te mira como a un héroe. Tu mamá está orgullosa de tu hombría. [TDM] Salvas tu pellejo pero vendiste el corazón de tu hermana. Eres una persona pequeña."
           }
         }
       ]
@@ -559,8 +578,8 @@
         {
           "type": "story",
           "text": {
-            "en": "A group is cornering a kid at the park. They tell you: 'Record this on your phone, we're gonna show him who's boss.' They expect you to join the circle.",
-            "es": "Un grupo tiene acorralado a un niño en el parque. Te dicen: 'Graba esto con tu cel, vamos a enseñarle quién manda'. Esperan que te unas al círculo."
+            "en": "A group is cornering a kid at the park. They tell you: 'Record this on your phone, we're gonna show him who's boss.' They expect you to join.",
+            "es": "Un grupo tiene acorralado a un niño en el parque. Te dicen: 'Graba esto con tu cel, vamos a enseñarle quién manda'. Esperan que te unas."
           }
         },
         {
@@ -573,9 +592,10 @@
         },
         {
           "type": "psychological_insight",
+          "mode": "power",
           "text": {
-            "en": "CONSEQUENCE: [TDM] You are a coward with a camera. You are part of the problem. [TDG] You have the balls to stand for what is right. Real power isn't in the fist; it's in the character that refuses to follow the pack.",
-            "es": "CONSECUENCIA: [TDM] Eres un cobarde con una cámara. Eres parte del problema. [TDG] Tienes los pantalones para defender lo correcto. El poder real no está en el puño; está en el carácter que se niega a seguir a la manada."
+            "en": "CONSEQUENCE: [TDM] You are a coward with a camera. [TDG] You have the balls to stand for what is right. Real power isn't in the fist; it's in the character that refuses to follow the pack.",
+            "es": "CONSECUENCIA: [TDM] Eres un cobarde con una cámara. [TDG] Tienes los pantalones para defender lo correcto. El poder real no está en el puño; está en el carácter que no sigue a la manada."
           }
         }
       ]
@@ -588,13 +608,13 @@
         {
           "type": "story",
           "text": {
-            "en": "You look at yourself in the mirror after 21 days of Kamizen. You see a warrior. You see a leader. But a voice in your head says: 'You haven't changed, you're still the same weak kid.'",
-            "es": "Te miras al espejo después de 21 días de Kamizen. Ves a un guerrero. Ves a un líder. Pero una voz en tu cabeza dice: 'No has cambiado, sigues siendo el mismo niño débil'."
+            "en": "You look at yourself in the mirror after 21 days of Kamizen. You see a warrior. But a voice says: 'You haven't changed, you're still weak.'",
+            "es": "Te miras al espejo después de 21 días de Kamizen. Ves a un guerrero. Pero una voz dice: 'No has cambiado, sigues siendo débil'."
           }
         },
         {
           "type": "tvid",
-          "mode": "victory",
+          "mode": "tension",
           "text": {
             "en": "CHOOSE: [TDM] Believe the voice OR [TDP] Silence the voice and keep training (Structure/Win).",
             "es": "ELIGE: [TDM] Creerle a la voz o [TDP] Silenciar la voz y seguir entrenando (Estructura/Victoria)."
@@ -602,9 +622,10 @@
         },
         {
           "type": "psychological_insight",
+          "mode": "victory",
           "text": {
-            "en": "FINAL VICTORY: [TDP] You just won the hardest battle: the one against yourself. You are no longer a victim of your environment. You are the architect of your destiny. Welcome to the elite.",
-            "es": "VICTORIA FINAL: [TDP] Acabas de ganar la batalla más difícil: la batalla contra ti mismo. Ya no eres una víctima de tu entorno. Eres el arquitecto de tu destino. Bienvenido a la élite."
+            "en": "FINAL VICTORY: [TDP] You won the hardest battle: the one against yourself. You are no longer a victim. You are the architect of your destiny. Welcome to the elite.",
+            "es": "VICTORIA FINAL: [TDP] Ganaste la batalla más difícil: contra ti mismo. Ya no eres una víctima. Eres el arquitecto de tu destino. Bienvenido a la élite."
           }
         }
       ]
