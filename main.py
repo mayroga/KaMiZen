@@ -1,3 +1,9 @@
+# ===============================
+# KAMIZEN LIFE ENGINE - FULL CORE v3.3
+# PERSISTENT PSYCHOLOGICAL SIMULATOR
+# FASTAPI + SQLITE + NARRATIVE ENGINE
+# ===============================
+
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -9,6 +15,9 @@ import json
 
 app = FastAPI()
 
+# ===============================
+# STATIC FILES
+# ===============================
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 DB_PATH = "kamizen.db"
@@ -17,7 +26,6 @@ DB_PATH = "kamizen.db"
 # INIT DATABASE
 # ===============================
 def init_db():
-
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
 
@@ -45,7 +53,7 @@ def init_db():
 init_db()
 
 # ===============================
-# STATE CREATION
+# STATE CREATION ENGINE
 # ===============================
 def create_state(profile):
 
@@ -55,6 +63,7 @@ def create_state(profile):
         "discipline": 50,
         "karma": 0,
         "money": 500,
+        "health": 100,
         "age": profile.get("age", 18),
 
         "psychology": {
@@ -66,21 +75,26 @@ def create_state(profile):
 
         "identity": {
             "core": "neutral",
-            "archetype": profile.get("emotion", "neutral")
+            "archetype": profile.get("emotion", "neutral"),
+            "narrative": []
         },
 
         "patterns": {
             "impulsivity": 0,
             "consistency": 0,
             "avoidance": 0
+        },
+
+        "meta": {
+            "created": time.time(),
+            "phase": 1
         }
     }
 
 # ===============================
-# DB HELPERS
+# DATABASE HELPERS
 # ===============================
 def save_user(session_id, state):
-
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
 
@@ -94,7 +108,6 @@ def save_user(session_id, state):
 
 
 def load_user(session_id):
-
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
 
@@ -105,12 +118,10 @@ def load_user(session_id):
 
     if row:
         return json.loads(row[0])
-
     return None
 
 
 def save_history(session_id, decision, context):
-
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
 
@@ -123,33 +134,59 @@ def save_history(session_id, decision, context):
     conn.close()
 
 # ===============================
-# PSYCHOLOGY ENGINE
+# PSYCHOLOGY ENGINE (TVID CORE EVOLUTION)
 # ===============================
 def update_psychology(state, decision):
 
     psy = state["psychology"]
 
+    # ===============================
+    # DECISION IMPACTS
+    # ===============================
     if decision == "TDM":
-        psy["stress"] += 5
-        psy["control"] -= 3
+        psy["stress"] += 6
+        psy["control"] -= 4
+        state["patterns"]["impulsivity"] += 2
 
     if decision in ["TDB", "TDP"]:
-        psy["resilience"] += 2
+        psy["resilience"] += 3
         psy["control"] += 2
+        state["patterns"]["consistency"] += 2
 
     if decision == "TDN":
-        psy["trauma"] += 2
+        psy["trauma"] += 3
+        state["patterns"]["avoidance"] += 2
 
+    if decision == "TDG":
+        psy["control"] += 3
+        psy["stress"] += 2
+
+    if decision == "TDK":
+        psy["resilience"] += 2
+
+    # ===============================
+    # CLAMP VALUES
+    # ===============================
     for k in psy:
         psy[k] = max(0, min(100, psy[k]))
 
-    # identity evolution
-    if psy["stress"] > 70:
+    for k in state["patterns"]:
+        state["patterns"][k] = max(0, min(100, state["patterns"][k]))
+
+    # ===============================
+    # IDENTITY EVOLUTION SYSTEM
+    # ===============================
+    if psy["stress"] > 75:
         state["identity"]["core"] = "survival"
-    elif psy["trauma"] > 60:
+
+    elif psy["trauma"] > 65:
         state["identity"]["core"] = "fragmented"
-    elif psy["resilience"] > 70:
+
+    elif psy["resilience"] > 75:
         state["identity"]["core"] = "stable"
+
+    else:
+        state["identity"]["core"] = "neutral"
 
 # ===============================
 # ROUTES
@@ -172,7 +209,6 @@ async def start(req: Request):
     profile = data.get("profile", {})
 
     session_id = str(uuid.uuid4())
-
     state = create_state(profile)
 
     save_user(session_id, state)
@@ -180,12 +216,12 @@ async def start(req: Request):
     return {
         "session_id": session_id,
         "state": state,
-        "narrative": "Sistema iniciado en modo persistente.",
+        "narrative": "KAMIZEN system initialized. Life simulation active.",
         "next_event": "start"
     }
 
 # ===============================
-# GET RANKINGS
+# RANKINGS SYSTEM
 # ===============================
 @app.get("/rankings")
 def rankings():
@@ -202,21 +238,18 @@ def rankings():
 
     for r in rows:
         try:
-            s = json.loads(r[0])
-            users.append(s)
+            users.append(json.loads(r[0]))
         except:
             pass
 
-    top_karma = sorted(users, key=lambda x: x.get("karma",0), reverse=True)[:10]
-    top_discipline = sorted(users, key=lambda x: x.get("discipline",0), reverse=True)[:10]
-
     return {
-        "top_karma": top_karma,
-        "top_discipline": top_discipline
+        "top_karma": sorted(users, key=lambda x: x.get("karma",0), reverse=True)[:10],
+        "top_discipline": sorted(users, key=lambda x: x.get("discipline",0), reverse=True)[:10],
+        "top_mental": sorted(users, key=lambda x: x.get("mental",0), reverse=True)[:10]
     }
 
 # ===============================
-# JUDGE ENGINE
+# JUDGE ENGINE (CORE SIMULATION)
 # ===============================
 @app.post("/judge")
 async def judge(req: Request):
@@ -233,7 +266,7 @@ async def judge(req: Request):
         return JSONResponse({"error": "session not found"}, status_code=404)
 
     # ===============================
-    # APPLY DECISIONS
+    # GLOBAL EFFECTS
     # ===============================
     effects = {
         "TDB": {"mental": 8, "discipline": 5, "karma": 2},
@@ -249,31 +282,46 @@ async def judge(req: Request):
     for k, v in e.items():
         state[k] = state.get(k, 0) + v
 
-    # clamp
-    state["mental"] = max(0, min(100, state["mental"]))
-    state["social"] = max(0, min(100, state["social"]))
-    state["discipline"] = max(0, min(100, state["discipline"]))
+    # ===============================
+    # CLAMP CORE VALUES
+    # ===============================
+    state["mental"] = max(0, min(100, state.get("mental", 100)))
+    state["social"] = max(0, min(100, state.get("social", 50)))
+    state["discipline"] = max(0, min(100, state.get("discipline", 50)))
     state["karma"] = state.get("karma", 0)
 
-    # psychology
+    # ===============================
+    # PSYCHOLOGY UPDATE
+    # ===============================
     update_psychology(state, decision)
 
-    # save history
+    # ===============================
+    # HISTORY LOG
+    # ===============================
     save_history(session_id, decision, context)
 
-    # save state
+    # ===============================
+    # SAVE STATE
+    # ===============================
     save_user(session_id, state)
 
-    # narrative
+    # ===============================
+    # NARRATIVE ENGINE
+    # ===============================
     core = state["identity"]["core"]
 
     if core == "survival":
-        text = "Tu mente opera bajo presión constante."
+        text = "Your mind operates under constant pressure."
     elif core == "fragmented":
-        text = "Tu identidad se divide entre impulsos y control."
+        text = "Your identity splits between impulse and control."
+    elif core == "stable":
+        text = "Your system shows increasing coherence and stability."
     else:
-        text = "Tu sistema evoluciona con tus decisiones."
+        text = "Your system evolves through each decision."
 
+    # ===============================
+    # RESPONSE
+    # ===============================
     return {
         "state": state,
         "narrative": text,
@@ -281,7 +329,7 @@ async def judge(req: Request):
     }
 
 # ===============================
-# RUN
+# RUN SERVER
 # ===============================
 if __name__ == "__main__":
     import uvicorn
