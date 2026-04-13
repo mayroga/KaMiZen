@@ -3,128 +3,374 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KAMIZEN | ENTRY SYSTEM</title>
+<title>KAMIZEN | LIFE SIMULATOR</title>
 
 <style>
-body{
+
+/* ===============================
+   GLOBAL SYSTEM
+=============================== */
+body {
     margin:0;
-    background:black;
+    font-family: Arial Black, sans-serif;
+    background:#000;
     color:#00f2ff;
-    font-family:Arial;
+    overflow:hidden;
+}
+
+/* ===============================
+   MAIN APP CONTAINER
+=============================== */
+#app {
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
     display:flex;
+    flex-direction:column;
     justify-content:center;
     align-items:center;
-    height:100vh;
 }
 
-#app{
-    width:90%;
-    max-width:450px;
-    padding:25px;
+/* ===============================
+   MESSAGE PANEL (CINEMATIC TEXT)
+=============================== */
+#message {
+    width:85%;
+    max-width:850px;
+    padding:22px;
     border:2px solid #00f2ff;
-    border-radius:15px;
-    background:rgba(0,0,0,0.9);
+    background:rgba(0,0,0,0.88);
     text-align:center;
+    font-size:18px;
+    margin-bottom:20px;
+    min-height:80px;
+    transition:0.3s ease-in-out;
 }
 
-h1{
-    margin:0;
-    font-size:30px;
+/* ===============================
+   STATS PANEL (LIFE STATE)
+=============================== */
+#stats {
+    display:grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap:10px;
+    width:85%;
+    max-width:850px;
+    margin-bottom:20px;
 }
 
-input,select{
-    width:100%;
-    padding:12px;
-    margin-top:10px;
-    margin-bottom:15px;
-    background:#111;
+.box {
     border:1px solid #00f2ff;
-    color:white;
+    padding:12px;
+    text-align:center;
+    background:rgba(0,0,0,0.5);
+    font-size:14px;
 }
 
-button{
-    width:100%;
-    padding:15px;
-    background:#00f2ff;
-    border:none;
+/* ===============================
+   BUTTON SYSTEM (TVID INTERFACE)
+=============================== */
+#options {
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:10px;
+    width:85%;
+    max-width:850px;
+}
+
+/* ===============================
+   BUTTON STYLE
+=============================== */
+button {
+    padding:12px 14px;
+    border:2px solid #00f2ff;
+    background:black;
+    color:#00f2ff;
     font-weight:bold;
     cursor:pointer;
-    margin-top:10px;
+    transition:0.2s ease-in-out;
 }
-</style>
 
+button:hover {
+    background:#00f2ff;
+    color:black;
+    transform:scale(1.05);
+}
+
+/* ===============================
+   SMALL SYSTEM ANIMATION FEEL
+=============================== */
+@keyframes pulse {
+    0% { opacity:1; }
+    50% { opacity:0.7; }
+    100% { opacity:1; }
+}
+
+#message {
+    animation:pulse 4s infinite;
+}
+
+</style>
 </head>
 
 <body>
 
 <div id="app">
 
-<h1>KAMIZEN</h1>
-<p>Sistema de Entrenamiento Humano</p>
+    <!-- ===============================
+         STATS HUD
+    =============================== -->
+    <div id="stats">
+        <div class="box">MENTAL <div id="mental">100</div></div>
+        <div class="box">SOCIAL <div id="social">50</div></div>
+        <div class="box">KARMA <div id="karma">0</div></div>
+        <div class="box">DISCIPLINE <div id="disc">50</div></div>
+    </div>
 
-<label>EDAD</label>
-<input id="age" type="number" value="18">
+    <!-- ===============================
+         CINEMATIC MESSAGE
+    =============================== -->
+    <div id="message">INITIALIZING KAMIZEN LIFE ENGINE...</div>
 
-<label>EMOCIÓN</label>
-<select id="emotion">
-    <option value="neutral">Neutral</option>
-    <option value="stress">Estrés</option>
-    <option value="lonely">Soledad</option>
-    <option value="motivated">Motivado</option>
-</select>
-
-<label>DIFICULTAD</label>
-<select id="difficulty">
-    <option value="1">Normal</option>
-    <option value="2">Difícil</option>
-    <option value="3">Extremo</option>
-</select>
-
-<label>MODO TVID</label>
-<select id="mode">
-    <option value="balanced">Equilibrio</option>
-    <option value="survival">Supervivencia</option>
-    <option value="creative">Creativo</option>
-</select>
-
-<button onclick="startLife()">INICIAR SIMULACIÓN</button>
+    <!-- ===============================
+         TVID OPTIONS
+    =============================== -->
+    <div id="options"></div>
 
 </div>
 
+<!-- ===============================
+     AUDIO ENGINE
+=============================== -->
+<audio id="audio" loop></audio>
+
 <script>
 
-async function startLife(){
+// ===============================
+// STATE SYSTEM
+// ===============================
+let session_id = localStorage.getItem("session_id");
+let state = JSON.parse(localStorage.getItem("state") || "{}");
 
-    const profile = {
-        age: parseInt(document.getElementById("age").value),
-        emotion: document.getElementById("emotion").value,
-        difficulty: document.getElementById("difficulty").value,
-        tvideMode: document.getElementById("mode").value,
-        stage: "user",
-        created: Date.now()
+let currentEvent = null;
+let locked = false;
+let paused = false;
+let autoMode = true;
+
+// ===============================
+// AUDIO ENGINE (EMOTIONAL LAYERS)
+// ===============================
+function playMood(type) {
+
+    const audio = document.getElementById("audio");
+
+    const tracks = {
+        calm: "https://cdn.pixabay.com/audio/2022/03/15/audio_c8c8a6.mp3",
+        stress: "https://cdn.pixabay.com/audio/2022/10/16/audio_7b3b6a.mp3",
+        chaos: "https://cdn.pixabay.com/audio/2022/08/02/audio_5c8f7c.mp3",
+        focus: "https://cdn.pixabay.com/audio/2021/11/25/audio_7b9d0d.mp3"
     };
 
-    const state = {
-        mental: 100,
-        social: 50,
-        karma: 0,
-        discipline: 50
-    };
+    audio.src = tracks[type] || tracks.calm;
+    audio.volume = 0.4;
 
-    const res = await fetch("/start", {
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body: JSON.stringify({ profile })
-    });
-
-    const data = await res.json();
-
-    localStorage.setItem("session_id", data.session_id);
-    localStorage.setItem("profile", JSON.stringify(profile));
-    localStorage.setItem("state", JSON.stringify(data.state || state));
-
-    window.location.href = "/static/jet.html";
+    audio.play().catch(() => {});
 }
+
+// ===============================
+// UI UPDATE SYSTEM
+// ===============================
+function updateUI() {
+
+    const s = state || {};
+
+    document.getElementById("mental").innerText = s.mental ?? 100;
+    document.getElementById("social").innerText = s.social ?? 50;
+    document.getElementById("karma").innerText = s.karma ?? 0;
+    document.getElementById("disc").innerText = s.discipline ?? 50;
+}
+
+// ===============================
+// MESSAGE SYSTEM
+// ===============================
+function showMessage(text) {
+    document.getElementById("message").innerText = text;
+}
+
+// ===============================
+// INIT SYSTEM
+// ===============================
+async function init() {
+
+    if (!session_id) {
+        showMessage("ERROR: SESSION NOT FOUND. START FROM HOME SCREEN.");
+        return;
+    }
+
+    showMessage("KAMIZEN SYSTEM ONLINE... BUILDING LIFE SIMULATION.");
+
+    updateUI();
+}
+
+// ===============================
+// EVENT ENGINE
+// ===============================
+function processEvent(event) {
+
+    if (paused) return;
+
+    let msg = "";
+
+    switch(event) {
+
+        case "tentacion":
+            msg = "Someone requests something small… but it affects your balance.";
+            playMood("stress");
+            break;
+
+        case "crisis":
+            msg = "Environmental pressure increases. Stability is tested.";
+            playMood("chaos");
+            break;
+
+        case "conflicto":
+            msg = "A social decision demands immediate response.";
+            playMood("stress");
+            break;
+
+        case "dinero":
+            msg = "A financial opportunity appears in your system.";
+            playMood("focus");
+            break;
+
+        case "amor":
+            msg = "An emotional connection activates internal response.";
+            playMood("calm");
+            break;
+
+        case "oportunidad":
+            msg = "System detects potential growth pathway.";
+            playMood("focus");
+            break;
+
+        default:
+            msg = "A decision is shaping your identity structure.";
+            playMood("calm");
+    }
+
+    // ===============================
+    // PSYCHOLOGICAL LAYER OVERRIDE
+    // ===============================
+    const psy = state.psychology || {};
+
+    if (psy.stress_memory > 70) {
+        msg = "MENTAL OVERLOAD: Your reaction is stronger than reality.";
+        playMood("chaos");
+    }
+
+    if (psy.trauma_index > 60) {
+        msg = "PAST TRAUMA ACTIVE: Emotional memory influencing present.";
+    }
+
+    if (psy.self_control < 30) {
+        msg = "LOW CONTROL STATE: Decisions become impulsive.";
+        playMood("stress");
+    }
+
+    showMessage(msg);
+    renderButtons();
+
+    // ===============================
+    // AUTO DECISION SYSTEM
+    // ===============================
+    clearTimeout(window.autoLoop);
+
+    if (autoMode) {
+        window.autoLoop = setTimeout(() => {
+            if (!locked) sendDecision("TDM");
+        }, 8500);
+    }
+}
+
+// ===============================
+// DECISION ENGINE
+// ===============================
+async function sendDecision(decision) {
+
+    if (locked) return;
+    locked = true;
+
+    try {
+
+        const res = await fetch("/judge", {
+            method: "POST",
+            headers: {"Content-Type":"application/json"},
+            body: JSON.stringify({
+                session_id,
+                decision,
+                context: currentEvent || "neutral"
+            })
+        });
+
+        const data = await res.json();
+
+        if (data.state) {
+            state = data.state;
+            localStorage.setItem("state", JSON.stringify(state));
+        }
+
+        updateUI();
+
+        if (data.status === "end") {
+            showMessage("SYSTEM TERMINATED: LIFE CYCLE COMPLETED");
+            return;
+        }
+
+        showMessage(data.narrative || "Continuing simulation...");
+
+        currentEvent = data.next_event;
+        processEvent(currentEvent);
+
+    } catch (err) {
+        console.error(err);
+        showMessage("ERROR: CONNECTION LOST WITH KAMIZEN ENGINE");
+    }
+
+    setTimeout(() => locked = false, 650);
+}
+
+// ===============================
+// TVID BUTTON SYSTEM
+// ===============================
+function renderButtons() {
+
+    const c = document.getElementById("options");
+    c.innerHTML = "";
+
+    const map = [
+        ["TDB","🧘 Awareness"],
+        ["TDM","⚠️ Emotion"],
+        ["TDN","🧠 Creativity"],
+        ["TDP","📌 Structure"],
+        ["TDG","🔥 Control"],
+        ["TDK","❤️ Connection"]
+    ];
+
+    map.forEach(([key,label]) => {
+        const b = document.createElement("button");
+        b.innerText = label;
+        b.onclick = () => sendDecision(key);
+        c.appendChild(b);
+    });
+}
+
+// ===============================
+// START
+// ===============================
+window.onload = init;
 
 </script>
 
