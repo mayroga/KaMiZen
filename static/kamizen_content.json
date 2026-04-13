@@ -1,67 +1,252 @@
 {
-  "meta": {
-    "system": "MAYKAMI - KAMIZEN LIFE ENGINE",
-    "version": "3.1",
-    "description": "Sistema de misiones basado en TVid, respiración consciente, decisiones y evolución de comportamiento humano.",
-    "core_principle": "Pensamiento → Emoción → Acción → Hábitos → Carácter → Destino"
-  },
-
-  "global_philosophy": {
-    "voice": {
-      "es": "Cuida tus pensamientos, porque se convertirán en tus palabras. Cuida tus palabras, porque se convertirán en tus acciones. Cuida tus acciones, porque se convertirán en tus hábitos. Cuida tus hábitos, porque se convertirán en tu carácter. Y tu carácter será quien determine tu destino.",
-      "en": "Watch your thoughts, they become your words. Watch your words, they become your actions. Watch your actions, they become your habits. Your character becomes your destiny."
-    },
-    "biological_link": {
-      "es": "El pensamiento repetido modifica tu sistema nervioso: estrés (cortisol) o bienestar (dopamina/serotonina).",
-      "en": "Repeated thoughts reshape your nervous system: stress or wellbeing chemistry."
-    },
-    "tvid_connection": {
-      "TDB": "Construcción mental consciente",
-      "TDM": "Reconocimiento de sombra emocional",
-      "TDN": "Creatividad y resiliencia infantil",
-      "TDP": "Dirección y estructura",
-      "TDG": "Control de impulso y conflicto interno",
-      "TDK": "Conexión emocional profunda"
-    }
-  },
-
   "missions": [
-
+    
     {
-      "id": 3,
+      "id": 1,
       "level": 1,
-      "category": "EL AMIGO QUE TE PIDE TODO",
+      "category": "THE BOY AND THE $10 THAT CARRIED A FAMILY",
       "blocks": [
         {
           "type": "voice",
           "text": {
-            "es": "Estás en un recreo en Miami. Un amigo se acerca con peticiones constantes."
+            "en": "Mateo is 9 years old. He lives in a small apartment in Miami where the air conditioner barely works and silence is heavy at night.",
+            "es": "Mateo tiene 9 años. Vive en un pequeño apartamento en Miami donde el aire acondicionado apenas funciona y el silencio pesa por las noches."
           }
         },
         {
           "type": "story",
           "text": {
-            "es": "Kevin presta dinero una vez. Luego otra. Luego otra. Hasta que un día no tiene nada para sí mismo."
+            "en": "His mother gives him $10. She does not smile. It is not a gift. It is survival.",
+            "es": "Su madre le da 10 dólares. No sonríe. No es un regalo. Es supervivencia."
           }
         },
         {
-          "type": "breathing",
-          "duration": 4,
+          "type": "story_continued",
           "text": {
-            "es": "Respira 4–2–6. Estás en el momento. Puedes decidir."
+            "en": "Mateo spends everything in less than one hour: soda, chips, candy. Each choice feels like freedom.",
+            "es": "Mateo gasta todo en menos de una hora: soda, chips, dulces. Cada decisión se siente como libertad."
+          }
+        },
+        {
+          "type": "turning_point",
+          "text": {
+            "en": "The next day, he asks for donuts. There is nothing left. Not anger. Not explanation. Just silence.",
+            "es": "Al día siguiente pide donas. No hay nada. No hay enojo. No hay explicación. Solo silencio."
+          }
+        },
+        {
+          "type": "psychological_insight",
+          "text": {
+            "en": "He slowly realizes money is not paper. It is hours of work, pain, sacrifice, and invisible effort.",
+            "es": "Comprende lentamente que el dinero no es papel. Es horas de trabajo, dolor, sacrificio y esfuerzo invisible."
+          }
+        },
+        {
+          "type": "tvid",
+          "mode": "TDB",
+          "text": {
+            "en": "What I have carries value. I respect what I cannot see behind it.",
+            "es": "Lo que tengo tiene valor. Respeto lo que no puedo ver detrás de ello."
+          }
+        },
+        {
+          "type": "exercise_1",
+          "text": {
+            "en": "Pause before any spending. Count to 10. Ask: 'What did this cost beyond money?'",
+            "es": "Pausa antes de gastar. Cuenta hasta 10. Pregunta: '¿Qué costó esto más allá del dinero?'"
+          }
+        },
+        {
+          "type": "exercise_2",
+          "text": {
+            "en": "Hold an object you like and imagine the effort behind it.",
+            "es": "Sostén un objeto que te guste e imagina el esfuerzo detrás de él."
+          }
+        },
+        {
+          "type": "exercise_3",
+          "text": {
+            "en": "Say slowly: 'I do not waste what carries effort.'",
+            "es": "Di lentamente: 'No desperdicio lo que lleva esfuerzo.'"
+          }
+        },
+        {
+          "type": "exercise_4",
+          "text": {
+            "en": "Write 3 things you bought before that you did not need.",
+            "es": "Escribe 3 cosas que compraste antes y no necesitabas."
+          }
+        },
+        {
+          "type": "exercise_5",
+          "text": {
+            "en": "Take 5 deep breaths and feel discomfort without reacting.",
+            "es": "Respira 5 veces profundo y siente la incomodidad sin reaccionar."
+          }
+        }
+      ]
+    },
+
+    {
+      "id": 2,
+      "level": 1,
+      "category": "THE BLACK CAR THAT TESTED TRUST",
+      "blocks": [
+        {
+          "type": "voice",
+          "text": {
+            "en": "Sofia is 10 years old. She walks alone in Miami after school, headphones on, world muted.",
+            "es": "Sofía tiene 10 años. Camina sola en Miami después de la escuela, con audífonos, mundo apagado."
+          }
+        },
+        {
+          "type": "story",
+          "text": {
+            "en": "A black car slows down beside her. The window opens. A man speaks calmly.",
+            "es": "Un carro negro reduce la velocidad. La ventana baja. Un hombre habla con calma."
+          }
+        },
+        {
+          "type": "story_continued",
+          "text": {
+            "en": "He says: 'Your mother sent me.' His voice is too perfect. Too controlled.",
+            "es": "Dice: 'Tu mamá me envió.' Su voz es demasiado perfecta. Demasiado controlada."
+          }
+        },
+        {
+          "type": "internal_conflict",
+          "text": {
+            "en": "Her mind hesitates: 'What if it's true?' Her body says: 'Something is wrong.'",
+            "es": "Su mente duda: '¿Y si es verdad?' Su cuerpo dice: 'Algo no está bien.'"
+          }
+        },
+        {
+          "type": "decision_point",
+          "text": {
+            "en": "She steps back. The man insists. The engine stays running.",
+            "es": "Ella da un paso atrás. El hombre insiste. El motor sigue encendido."
+          }
+        },
+        {
+          "type": "resolution",
+          "text": {
+            "en": "She chooses uncertainty over danger. She runs. The car leaves.",
+            "es": "Elige la incertidumbre sobre el peligro. Corre. El carro se va."
+          }
+        },
+        {
+          "type": "psychological_insight",
+          "text": {
+            "en": "Doubt is not weakness. It is a biological survival system speaking clearly.",
+            "es": "La duda no es debilidad. Es un sistema biológico de supervivencia hablando claro."
           }
         },
         {
           "type": "tvid",
           "mode": "TDG",
           "text": {
-            "es": "Poner límites no es perder amistad, es mantener identidad."
+            "en": "If I feel doubt, I do NOT proceed.",
+            "es": "Si siento duda, NO continúo."
           }
         },
         {
-          "type": "action",
+          "type": "exercise_1",
           "text": {
-            "es": "Hoy dices NO una vez sin explicación."
+            "en": "Practice saying 'NO' firmly in front of a mirror.",
+            "es": "Practica decir 'NO' con firmeza frente a un espejo."
+          }
+        },
+        {
+          "type": "exercise_2",
+          "text": {
+            "en": "Imagine a stranger calling you. What do you do first?",
+            "es": "Imagina un desconocido llamándote. ¿Qué haces primero?"
+          }
+        },
+        {
+          "type": "exercise_3",
+          "text": {
+            "en": "Take 3 fast breaths, then 3 slow breaths. Feel alertness.",
+            "es": "Respira 3 veces rápido, luego 3 lento. Siente alerta."
+          }
+        }
+      ]
+    },
+
+    {
+      "id": 3,
+      "level": 2,
+      "category": "THE BOY WHO LOST EVERYONE WITH ONE ACTION",
+      "blocks": [
+        {
+          "type": "voice",
+          "text": {
+            "en": "Lucas is strong. He wins physical fights. He believes strength is control.",
+            "es": "Lucas es fuerte. Gana peleas físicas. Cree que la fuerza es control."
+          }
+        },
+        {
+          "type": "story",
+          "text": {
+            "en": "One day he pushes a child in front of everyone. The child stands up silently and walks away.",
+            "es": "Un día empuja a un niño delante de todos. El niño se levanta en silencio y se va."
+          }
+        },
+        {
+          "type": "reaction",
+          "text": {
+            "en": "No one laughs. No one defends Lucas. Something shifts socially.",
+            "es": "Nadie ríe. Nadie defiende a Lucas. Algo cambia socialmente."
+          }
+        },
+        {
+          "type": "consequence",
+          "text": {
+            "en": "Days later, Lucas realizes nobody chooses him anymore. Not fear. Distance.",
+            "es": "Días después, Lucas se da cuenta que nadie lo elige. No es miedo. Es distancia."
+          }
+        },
+        {
+          "type": "psychological_break",
+          "text": {
+            "en": "For the first time, strength feels empty when it has no connection.",
+            "es": "Por primera vez, la fuerza se siente vacía cuando no tiene conexión."
+          }
+        },
+        {
+          "type": "insight",
+          "text": {
+            "en": "Power without control destroys belonging.",
+            "es": "El poder sin control destruye la pertenencia."
+          }
+        },
+        {
+          "type": "tvid",
+          "mode": "TDG",
+          "text": {
+            "en": "I control my strength before it controls my life.",
+            "es": "Controlo mi fuerza antes de que controle mi vida."
+          }
+        },
+        {
+          "type": "exercise_1",
+          "text": {
+            "en": "Clench your fists. Release slowly. Repeat 5 times.",
+            "es": "Aprieta los puños. Suelta lentamente. Repite 5 veces."
+          }
+        },
+        {
+          "type": "exercise_2",
+          "text": {
+            "en": "Say: 'I do not need force to be respected.'",
+            "es": "Di: 'No necesito fuerza para ser respetado.'"
+          }
+        },
+        {
+          "type": "exercise_3",
+          "text": {
+            "en": "Walk slowly and observe your body control each step.",
+            "es": "Camina lento y observa tu control en cada paso."
           }
         }
       ]
@@ -69,32 +254,64 @@
 
     {
       "id": 4,
-      "level": 1,
-      "category": "EL NIÑO QUE PEGÓ Y QUEDÓ SOLO",
+      "level": 2,
+      "category": "THE MOMENT MONEY BECOMES REAL",
       "blocks": [
         {
           "type": "voice",
           "text": {
-            "es": "Un niño empuja a otro en la fila del lunch en Miami."
+            "en": "A child receives $20 in Miami. It feels like power in his hand.",
+            "es": "Un niño recibe 20 dólares en Miami. Se siente poder en su mano."
           }
         },
         {
           "type": "story",
           "text": {
-            "es": "Nadie responde con violencia, pero todos se alejan. El agresor queda solo."
+            "en": "He spends it in two days on pleasure items. No planning. Only impulse.",
+            "es": "Lo gasta en dos días en placer. Sin plan. Solo impulso."
+          }
+        },
+        {
+          "type": "reflection",
+          "text": {
+            "en": "Later he sees his mother counting coins for food. The contrast hits him.",
+            "es": "Luego ve a su madre contando monedas para comida. El contraste lo golpea."
+          }
+        },
+        {
+          "type": "insight",
+          "text": {
+            "en": "Money is not disappearing. It is being converted into choices.",
+            "es": "El dinero no desaparece. Se convierte en decisiones."
           }
         },
         {
           "type": "tvid",
-          "mode": "TDM",
+          "mode": "TDB",
           "text": {
-            "es": "La fuerza sin control genera aislamiento."
+            "en": "Every dollar I spend carries consequence.",
+            "es": "Cada dólar que gasto tiene consecuencia."
           }
         },
         {
-          "type": "action",
+          "type": "exercise_1",
           "text": {
-            "es": "Hoy no interrumpes, no empujas, observas tu fuerza."
+            "en": "Wait 10 seconds before any purchase decision.",
+            "es": "Espera 10 segundos antes de cualquier compra."
+          }
+        },
+        {
+          "type": "exercise_2",
+          "text": {
+            "en": "Imagine your money shrinking every time you spend impulsively.",
+            "es": "Imagina tu dinero reduciéndose cada vez que gastas sin pensar."
+          }
+        },
+        {
+          "type": "exercise_3",
+          "text": {
+            "en": "Write one thing you truly need vs one you only want.",
+            "es": "Escribe algo que realmente necesitas vs algo que solo deseas."
           }
         }
       ]
@@ -102,32 +319,78 @@
 
     {
       "id": 5,
-      "level": 2,
-      "category": "EL DINERO QUE NO ENTENDISTE",
+      "level": 3,
+      "category": "THE TEEN WHO STARTED TO FAKE HIMSELF",
       "blocks": [
         {
           "type": "voice",
           "text": {
-            "es": "Un niño recibe dinero para toda la semana."
+            "en": "Daniel is 14 years old. Miami feels louder now. People are not just people anymore. They are comparisons.",
+            "es": "Daniel tiene 14 años. Miami ahora se siente más ruidoso. Las personas ya no son solo personas. Son comparaciones."
           }
         },
         {
           "type": "story",
           "text": {
-            "es": "Lo gasta rápido en placer inmediato. Luego no tiene nada."
+            "en": "At school, he laughs differently depending on who is watching. He changes his voice in different groups.",
+            "es": "En la escuela, se ríe distinto según quién lo mire. Cambia su voz según el grupo."
+          }
+        },
+        {
+          "type": "story_continued",
+          "text": {
+            "en": "At home, silence. Online, confidence. In reality, confusion.",
+            "es": "En casa, silencio. En redes, confianza. En la realidad, confusión."
+          }
+        },
+        {
+          "type": "psychological_split",
+          "text": {
+            "en": "He no longer knows which version is real. He only knows which version is accepted.",
+            "es": "Ya no sabe cuál versión es real. Solo sabe cuál versión es aceptada."
+          }
+        },
+        {
+          "type": "insight",
+          "text": {
+            "en": "When identity is based on approval, the self begins to fracture.",
+            "es": "Cuando la identidad depende de aprobación, el yo empieza a fracturarse."
           }
         },
         {
           "type": "tvid",
-          "mode": "TDB",
+          "mode": "TDM",
           "text": {
-            "es": "El dinero es decisión convertida en valor."
+            "en": "I stop performing. I start existing.",
+            "es": "Dejo de actuar. Empiezo a existir."
           }
         },
         {
-          "type": "action",
+          "type": "exercise_1",
           "text": {
-            "es": "Hoy esperas 10 segundos antes de comprar algo."
+            "en": "Sit alone for 2 minutes without phone. Observe who you are without audience.",
+            "es": "Siéntate 2 minutos sin teléfono. Observa quién eres sin audiencia."
+          }
+        },
+        {
+          "type": "exercise_2",
+          "text": {
+            "en": "Say: 'I am not my audience's expectation.'",
+            "es": "Di: 'No soy la expectativa de los demás.'"
+          }
+        },
+        {
+          "type": "exercise_3",
+          "text": {
+            "en": "Notice when you change behavior around different people today.",
+            "es": "Observa cuándo cambias tu comportamiento según las personas hoy."
+          }
+        },
+        {
+          "type": "exercise_4",
+          "text": {
+            "en": "Take a slow breath and ask: 'Who am I when nobody is watching?'",
+            "es": "Respira lento y pregunta: '¿Quién soy cuando nadie me mira?'"
           }
         }
       ]
@@ -135,32 +398,78 @@
 
     {
       "id": 6,
-      "level": 2,
-      "category": "EL CARRO QUE SE DETUVO",
+      "level": 3,
+      "category": "THE FRIENDSHIP THAT DRAINED EVERYTHING",
       "blocks": [
         {
           "type": "voice",
           "text": {
-            "es": "Una niña camina sola en Miami. Un carro se detiene."
+            "en": "Kevin is 15. He is always available. Always helpful. Always giving.",
+            "es": "Kevin tiene 15. Siempre está disponible. Siempre ayuda. Siempre da."
           }
         },
         {
           "type": "story",
           "text": {
-            "es": "No conoce al conductor. Decide correr. Se salva por su intuición."
+            "en": "His friends only call him when they need something. He never notices the pattern at first.",
+            "es": "Sus amigos solo lo llaman cuando necesitan algo. Al inicio no nota el patrón."
+          }
+        },
+        {
+          "type": "story_continued",
+          "text": {
+            "en": "When he says no for the first time, silence replaces attention.",
+            "es": "Cuando dice no por primera vez, el silencio reemplaza la atención."
+          }
+        },
+        {
+          "type": "emotional_shift",
+          "text": {
+            "en": "He realizes he was not part of the group. He was a resource inside it.",
+            "es": "Se da cuenta de que no era parte del grupo. Era un recurso dentro de él."
+          }
+        },
+        {
+          "type": "insight",
+          "text": {
+            "en": "People do not always value you. They sometimes use your availability.",
+            "es": "Las personas no siempre te valoran. A veces usan tu disponibilidad."
           }
         },
         {
           "type": "tvid",
           "mode": "TDG",
           "text": {
-            "es": "No todo lo que se ofrece es seguro."
+            "en": "My value increases when I set limits.",
+            "es": "Mi valor aumenta cuando pongo límites."
           }
         },
         {
-          "type": "action",
+          "type": "exercise_1",
           "text": {
-            "es": "Practica decir NO con firmeza."
+            "en": "Say NO once today without explaining yourself.",
+            "es": "Di NO una vez hoy sin dar explicaciones."
+          }
+        },
+        {
+          "type": "exercise_2",
+          "text": {
+            "en": "Identify who contacts you only when they need something.",
+            "es": "Identifica quién te contacta solo cuando necesita algo."
+          }
+        },
+        {
+          "type": "exercise_3",
+          "text": {
+            "en": "Sit in silence for 90 seconds and resist the urge to respond to anything.",
+            "es": "Quédate en silencio 90 segundos sin responder a nada."
+          }
+        },
+        {
+          "type": "exercise_4",
+          "text": {
+            "en": "Write: 'I am not a tool. I am a person.'",
+            "es": "Escribe: 'No soy una herramienta. Soy una persona.'"
           }
         }
       ]
@@ -168,32 +477,78 @@
 
     {
       "id": 7,
-      "level": 3,
-      "category": "LA MENTIRA PEQUEÑA",
+      "level": 4,
+      "category": "THE DAY ANGER STOLE HIS FUTURE MOMENT",
       "blocks": [
         {
           "type": "voice",
           "text": {
-            "es": "Un niño rompe algo y niega su responsabilidad."
+            "en": "Marcus is 16. He reacts before he thinks. Every emotion becomes action immediately.",
+            "es": "Marcus tiene 16. Reacciona antes de pensar. Cada emoción se vuelve acción inmediata."
           }
         },
         {
           "type": "story",
           "text": {
-            "es": "La confianza familiar se rompe poco a poco."
+            "en": "In class, someone jokes about him. He stands up instantly.",
+            "es": "En clase, alguien bromea sobre él. Se levanta inmediatamente."
+          }
+        },
+        {
+          "type": "story_continued",
+          "text": {
+            "en": "The moment escalates. Not because of the joke. Because of his reaction.",
+            "es": "El momento escala. No por la broma. Por su reacción."
+          }
+        },
+        {
+          "type": "consequence",
+          "text": {
+            "en": "He gets suspended. But the real loss is not school. It is trust.",
+            "es": "Es suspendido. Pero la pérdida real no es la escuela. Es la confianza."
+          }
+        },
+        {
+          "type": "insight",
+          "text": {
+            "en": "Impulse creates moments you cannot undo.",
+            "es": "El impulso crea momentos que no puedes deshacer."
           }
         },
         {
           "type": "tvid",
-          "mode": "TDB",
+          "mode": "TDG",
           "text": {
-            "es": "La verdad sostiene lo que la mentira destruye."
+            "en": "I respond after I understand, not before.",
+            "es": "Respondo después de entender, no antes."
           }
         },
         {
-          "type": "action",
+          "type": "exercise_1",
           "text": {
-            "es": "Hoy dices la verdad aunque incomode."
+            "en": "Pause for 3 seconds before responding to anything today.",
+            "es": "Pausa 3 segundos antes de responder hoy."
+          }
+        },
+        {
+          "type": "exercise_2",
+          "text": {
+            "en": "Clench your fists and release slowly when feeling anger.",
+            "es": "Aprieta los puños y suelta lentamente cuando sientas enojo."
+          }
+        },
+        {
+          "type": "exercise_3",
+          "text": {
+            "en": "Say: 'Reaction is optional. Control is mine.'",
+            "es": "Di: 'La reacción es opcional. El control es mío.'"
+          }
+        },
+        {
+          "type": "exercise_4",
+          "text": {
+            "en": "Replay a past angry moment and imagine responding calmly.",
+            "es": "Repite un momento de enojo pasado y responde con calma en tu mente."
           }
         }
       ]
@@ -201,65 +556,131 @@
 
     {
       "id": 8,
-      "level": 3,
-      "category": "EL NIÑO INVISIBLE EN EL SALÓN",
+      "level": 4,
+      "category": "THE GIRL WHO STARTED TO DISAPPEAR INSIDE HER PHONE",
       "blocks": [
         {
           "type": "voice",
           "text": {
-            "es": "En clase nadie lo mira ni lo elige."
+            "en": "Elena is 15. Her phone is always in her hand. Even when she is with people.",
+            "es": "Elena tiene 15. Su teléfono siempre está en su mano. Incluso cuando está con personas."
           }
         },
         {
           "type": "story",
           "text": {
-            "es": "Un día habla, se equivoca, pero es visto por primera vez."
+            "en": "She scrolls while conversations happen around her. She is physically present but mentally absent.",
+            "es": "Desliza el teléfono mientras las conversaciones ocurren a su alrededor. Está presente físicamente pero ausente mentalmente."
+          }
+        },
+        {
+          "type": "story_continued",
+          "text": {
+            "en": "One day she looks up and realizes nobody is speaking to her anymore.",
+            "es": "Un día levanta la mirada y se da cuenta de que nadie le habla ya."
+          }
+        },
+        {
+          "type": "psychological_insight",
+          "text": {
+            "en": "Attention is the currency of connection. She stopped paying attention to reality.",
+            "es": "La atención es la moneda de la conexión. Dejó de pagar atención a la realidad."
+          }
+        },
+        {
+          "type": "insight",
+          "text": {
+            "en": "You lose life in small distractions, not big decisions.",
+            "es": "Pierdes la vida en pequeñas distracciones, no en grandes decisiones."
           }
         },
         {
           "type": "tvid",
-          "mode": "TDN",
+          "mode": "TDB",
           "text": {
-            "es": "Si no te muestras, no existes."
+            "en": "I return my attention to what is real.",
+            "es": "Devuelvo mi atención a lo real."
           }
         },
         {
-          "type": "action",
+          "type": "exercise_1",
           "text": {
-            "es": "Hoy hablas al menos una vez."
+            "en": "Put your phone down for 3 minutes and observe your surroundings.",
+            "es": "Deja el teléfono 3 minutos y observa tu entorno."
+          }
+        },
+        {
+          "type": "exercise_2",
+          "text": {
+            "en": "Look at one person and maintain eye contact for 5 seconds.",
+            "es": "Mira a una persona y mantén contacto visual 5 segundos."
+          }
+        },
+        {
+          "type": "exercise_3",
+          "text": {
+            "en": "Say: 'I choose presence over distraction.'",
+            "es": "Di: 'Elijo presencia sobre distracción.'"
+          }
+        },
+        {
+          "type": "exercise_4",
+          "text": {
+            "en": "Notice how many times you check your phone in 1 hour.",
+            "es": "Observa cuántas veces revisas tu teléfono en 1 hora."
           }
         }
       ]
     },
 
     {
+  
+    {
       "id": 9,
-      "level": 4,
-      "category": "EL ENOJO EN LA CASA",
+      "level": 3,
+      "category": "THE BOY WHO STARTED TO DISAPPEAR ONLINE",
       "blocks": [
         {
           "type": "voice",
           "text": {
-            "es": "Un niño llega de la escuela lleno de enojo."
+            "en": "Daniel is 13 years old. Miami. Middle school. Everyone is online all the time.",
+            "es": "Daniel tiene 13 años. Miami. Escuela intermedia. Todos están siempre en línea."
           }
         },
         {
           "type": "story",
           "text": {
-            "es": "Su reacción lo aleja de los demás."
+            "en": "At first, Daniel posts videos. People laugh. People like. Then one day… they stop responding. No likes. No comments. Just silence.",
+            "es": "Al principio Daniel sube videos. La gente ríe. La gente reacciona. Luego un día… dejan de responder. Sin likes. Sin comentarios. Solo silencio."
+          }
+        },
+        {
+          "type": "story_continued",
+          "text": {
+            "en": "He checks his phone every 2 minutes. Nothing changes. He starts deleting posts. Then he stops posting at all.",
+            "es": "Revisa el teléfono cada 2 minutos. Nada cambia. Empieza a borrar publicaciones. Luego deja de publicar."
+          }
+        },
+        {
+          "type": "insight",
+          "text": {
+            "en": "He realizes something painful: attention can disappear without warning.",
+            "es": "Entiende algo doloroso: la atención puede desaparecer sin aviso."
           }
         },
         {
           "type": "tvid",
-          "mode": "TDG",
+          "mode": "TDM",
           "text": {
-            "es": "El enojo sin control destruye conexión."
+            "en": "My value does not depend on reactions.",
+            "es": "Mi valor no depende de las reacciones."
           }
         },
         {
           "type": "action",
           "text": {
-            "es": "Hoy respiras antes de responder."
+            "en": "Today you do not check validation for 1 hour.",
+            "es": "Hoy no buscas validación por 1 hora."
           }
         }
       ]
@@ -267,40 +688,567 @@
 
     {
       "id": 10,
-      "level": 5,
-      "category": "EL NIÑO QUE APRENDIÓ A GANAR",
+      "level": 3,
+      "category": "THE FRIEND GROUP THAT EXCLUDED HIM WITHOUT SAYING IT",
       "blocks": [
         {
           "type": "voice",
           "text": {
-            "es": "Un niño pierde en deportes repetidamente."
+            "en": "Kevin is 14. He thought he had friends. But slowly, he is no longer included.",
+            "es": "Kevin tiene 14. Creía que tenía amigos. Pero poco a poco ya no lo incluyen."
           }
         },
         {
           "type": "story",
           "text": {
-            "es": "Sigue entrenando. Día tras día. Hasta que gana por disciplina."
+            "en": "They make group chats without him. They sit together without calling him. He notices… but nobody explains anything.",
+            "es": "Hacen grupos sin él. Se sientan juntos sin llamarlo. Él lo nota… pero nadie explica nada."
+          }
+        },
+        {
+          "type": "story_continued",
+          "text": {
+            "en": "One day he walks toward them. They go quiet. Someone changes topic. He understands he is not part of it anymore.",
+            "es": "Un día se acerca. Se quedan en silencio. Cambian de tema. Entiende que ya no es parte."
+          }
+        },
+        {
+          "type": "insight",
+          "text": {
+            "en": "Exclusion is not always loud. Sometimes it is silence that teaches the lesson.",
+            "es": "La exclusión no siempre es ruidosa. A veces es el silencio el que enseña la lección."
+          }
+        },
+        {
+          "type": "tvid",
+          "mode": "TDP",
+          "text": {
+            "en": "I do not chase spaces where I am not respected.",
+            "es": "No persigo espacios donde no me respetan."
+          }
+        },
+        {
+          "type": "action",
+          "text": {
+            "en": "Today you observe who includes you without forcing it.",
+            "es": "Hoy observas quién te incluye sin forzarlo."
+          }
+        }
+      ]
+    },
+
+    {
+      "id": 11,
+      "level": 4,
+      "category": "THE ANGER THAT COST HIM EVERYTHING IN ONE MINUTE",
+      "blocks": [
+        {
+          "type": "voice",
+          "text": {
+            "en": "Jason is 15. He feels everything strongly. Especially anger.",
+            "es": "Jason tiene 15. Siente todo intensamente. Especialmente el enojo."
+          }
+        },
+        {
+          "type": "story",
+          "text": {
+            "en": "In class, someone jokes about him. Jason stands up. The room goes silent.",
+            "es": "En clase alguien se burla de él. Jason se levanta. El salón se queda en silencio."
+          }
+        },
+        {
+          "type": "story_continued",
+          "text": {
+            "en": "He pushes the desk. The teacher intervenes. He gets suspended. That same day, messages start disappearing from friends.",
+            "es": "Empuja el escritorio. Interviene el profesor. Lo suspenden. Ese mismo día los amigos dejan de escribirle."
+          }
+        },
+        {
+          "type": "insight",
+          "text": {
+            "en": "One uncontrolled moment can rewrite how others see you.",
+            "es": "Un momento sin control puede cambiar cómo los demás te ven."
+          }
+        },
+        {
+          "type": "tvid",
+          "mode": "TDG",
+          "text": {
+            "en": "I feel anger, but I do not become it.",
+            "es": "Siento enojo, pero no me convierto en él."
+          }
+        },
+        {
+          "type": "action",
+          "text": {
+            "en": "Today you pause 3 seconds before reacting.",
+            "es": "Hoy esperas 3 segundos antes de reaccionar."
+          }
+        }
+      ]
+    },
+
+    {
+      "id": 12,
+      "level": 4,
+      "category": "THE BOY WHO REALIZED HE WAS COPYING EVERYONE",
+      "blocks": [
+        {
+          "type": "voice",
+          "text": {
+            "en": "Ethan is 16. He thinks he is being himself. But he is not.",
+            "es": "Ethan tiene 16. Cree que es él mismo. Pero no lo es."
+          }
+        },
+        {
+          "type": "story",
+          "text": {
+            "en": "He laughs like his friends. Talks like his group. Even argues like them. He starts noticing he has no real voice.",
+            "es": "Ríe como sus amigos. Habla como su grupo. Incluso discute como ellos. Empieza a notar que no tiene voz propia."
+          }
+        },
+        {
+          "type": "story_continued",
+          "text": {
+            "en": "One day he is alone. No one to copy. Silence hits him differently. He realizes he does not know who he is without others.",
+            "es": "Un día está solo. Sin nadie a quien copiar. El silencio lo golpea distinto. Entiende que no sabe quién es sin otros."
+          }
+        },
+        {
+          "type": "insight",
+          "text": {
+            "en": "Identity is not what you imitate. It is what remains when everything is removed.",
+            "es": "La identidad no es lo que imitas. Es lo que queda cuando todo lo demás desaparece."
+          }
+        },
+        {
+          "type": "tvid",
+          "mode": "TDN",
+          "text": {
+            "en": "I choose who I am becoming.",
+            "es": "Elijo en quién me estoy convirtiendo."
+          }
+        },
+        {
+          "type": "action",
+          "text": {
+            "en": "Today you do one thing without copying anyone.",
+            "es": "Hoy haces una cosa sin copiar a nadie."
+          }
+        }
+      ]
+    },
+
+    {
+      "id": 13,
+      "level": 5,
+      "category": "THE DAY HE REALIZED ADULTHOOD DOES NOT WAIT FOR ANYONE",
+      "blocks": [
+        {
+          "type": "voice",
+          "text": {
+            "en": "Alex is 17. Miami feels different now. Everything is faster, heavier, and less forgiving.",
+            "es": "Alex tiene 17. Miami ahora se siente diferente. Todo es más rápido, más pesado y menos perdonador."
+          }
+        },
+        {
+          "type": "story",
+          "text": {
+            "en": "He wakes up thinking there is still time. School. Friends. Plans. But reality is already asking questions he cannot avoid anymore.",
+            "es": "Despierta pensando que aún hay tiempo. Escuela. Amigos. Planes. Pero la realidad ya le está haciendo preguntas que no puede evitar."
+          }
+        },
+        {
+          "type": "story_continued",
+          "text": {
+            "en": "A teacher tells him: 'You need to decide what you are doing with your life.' It sounds simple. It is not.",
+            "es": "Un profesor le dice: 'Tienes que decidir qué harás con tu vida.' Suena simple. No lo es."
+          }
+        },
+        {
+          "type": "insight",
+          "text": {
+            "en": "Avoiding decisions is still a decision. And time does not pause for confusion.",
+            "es": "Evitar decisiones también es una decisión. Y el tiempo no se detiene por confusión."
+          }
+        },
+        {
+          "type": "tvid",
+          "mode": "TDP",
+          "text": {
+            "en": "I take responsibility for my direction.",
+            "es": "Asumo responsabilidad por mi dirección."
+          }
+        },
+        {
+          "type": "action",
+          "text": {
+            "en": "Today you choose one direction and commit to it for 24 hours.",
+            "es": "Hoy eliges una dirección y la mantienes por 24 horas."
+          }
+        }
+      ]
+    },
+
+    {
+      "id": 14,
+      "level": 5,
+      "category": "THE FRIEND WHO BECAME A WARNING",
+      "blocks": [
+        {
+          "type": "voice",
+          "text": {
+            "en": "Brian is 18. He used to sit next to you in class. Now he is not in school anymore.",
+            "es": "Brian tiene 18. Solía sentarse contigo en clase. Ahora ya no está en la escuela."
+          }
+        },
+        {
+          "type": "story",
+          "text": {
+            "en": "At first it was small things. Missing class. Bad decisions. Ignoring advice. Everyone thought it was temporary.",
+            "es": "Al principio eran cosas pequeñas. Faltar a clase. Malas decisiones. Ignorar consejos. Todos pensaban que era temporal."
+          }
+        },
+        {
+          "type": "story_continued",
+          "text": {
+            "en": "Then one day… he stopped showing up completely. No explanation. Just absence that became permanent.",
+            "es": "Luego un día… dejó de aparecer por completo. Sin explicación. Solo una ausencia que se volvió permanente."
+          }
+        },
+        {
+          "type": "insight",
+          "text": {
+            "en": "People do not collapse in one moment. They collapse in ignored patterns.",
+            "es": "Las personas no colapsan en un momento. Colapsan en patrones ignorados."
+          }
+        },
+        {
+          "type": "tvid",
+          "mode": "TDM",
+          "text": {
+            "en": "I do not ignore my patterns.",
+            "es": "No ignoro mis patrones."
+          }
+        },
+        {
+          "type": "action",
+          "text": {
+            "en": "Today you identify one habit that is shaping your future silently.",
+            "es": "Hoy identificas un hábito que está moldeando tu futuro en silencio."
+          }
+        }
+      ]
+    },
+
+    {
+      "id": 15,
+      "level": 6,
+      "category": "THE MOMENT HE REALIZED MONEY CONTROLS BEHAVIOR",
+      "blocks": [
+        {
+          "type": "voice",
+          "text": {
+            "en": "Daniel is 19. He works his first real job in Miami.",
+            "es": "Daniel tiene 19. Tiene su primer trabajo real en Miami."
+          }
+        },
+        {
+          "type": "story",
+          "text": {
+            "en": "He receives his first paycheck. For a moment, he feels powerful. Then everything disappears faster than expected.",
+            "es": "Recibe su primer pago. Por un momento se siente poderoso. Luego todo desaparece más rápido de lo esperado."
+          }
+        },
+        {
+          "type": "story_continued",
+          "text": {
+            "en": "Rent. Food. Transport. Small spending. One week later, the money is gone. The cycle begins again.",
+            "es": "Renta. Comida. Transporte. Gastos pequeños. Una semana después, el dinero desaparece. El ciclo comienza otra vez."
+          }
+        },
+        {
+          "type": "insight",
+          "text": {
+            "en": "Money does not change you instantly. It exposes your lack of structure.",
+            "es": "El dinero no te cambia instantáneamente. Expone tu falta de estructura."
+          }
+        },
+        {
+          "type": "tvid",
+          "mode": "TDP",
+          "text": {
+            "en": "I control my structure before I control money.",
+            "es": "Controlo mi estructura antes de controlar el dinero."
+          }
+        },
+        {
+          "type": "action",
+          "text": {
+            "en": "Today you track every expense mentally before spending anything.",
+            "es": "Hoy registras mentalmente cada gasto antes de comprar algo."
+          }
+        }
+      ]
+    },
+
+    {
+      "id": 16,
+      "level": 6,
+      "category": "THE IDENTITY FRACTURE THAT NO ONE SEES",
+      "blocks": [
+        {
+          "type": "voice",
+          "text": {
+            "en": "Ethan is 20. On the outside, he looks normal. On the inside, he is multiple versions of himself.",
+            "es": "Ethan tiene 20. Por fuera parece normal. Por dentro es varias versiones de sí mismo."
+          }
+        },
+        {
+          "type": "story",
+          "text": {
+            "en": "At home he is quiet. With friends he is loud. Alone he feels disconnected from both versions.",
+            "es": "En casa es callado. Con amigos es ruidoso. Solo se siente desconectado de ambas versiones."
+          }
+        },
+        {
+          "type": "story_continued",
+          "text": {
+            "en": "One night he looks in the mirror and does not recognize the person looking back. Not physically. Mentally.",
+            "es": "Una noche se mira al espejo y no reconoce a la persona frente a él. No físicamente. Mentalmente."
+          }
+        },
+        {
+          "type": "insight",
+          "text": {
+            "en": "Identity fracture happens when you live to adapt instead of choosing who you are.",
+            "es": "La fractura de identidad ocurre cuando vives para adaptarte en vez de elegir quién eres."
+          }
+        },
+        {
+          "type": "tvid",
+          "mode": "TDN",
+          "text": {
+            "en": "I unify my identity through awareness.",
+            "es": "Unifico mi identidad a través de la conciencia."
+          }
+        },
+        {
+          "type": "action",
+          "text": {
+            "en": "Today you act the same way in private and in public.",
+            "es": "Hoy actúas igual en privado y en público."
+          }
+        }
+      ]
+    },
+
+    {
+  "missions": [
+
+    {
+      "id": 17,
+      "level": 7,
+      "category": "THE DAY EVERYTHING STARTED COLLAPSING AT ONCE",
+      "blocks": [
+        {
+          "type": "voice",
+          "text": {
+            "en": "Marcus is 21. Nothing dramatic happened today. That is what makes it worse.",
+            "es": "Marcus tiene 21. Nada dramático pasó hoy. Eso es lo que lo empeora."
+          }
+        },
+        {
+          "type": "story",
+          "text": {
+            "en": "He wakes up tired even after sleeping. Messages are unanswered. Bills are pending. Life continues anyway.",
+            "es": "Despierta cansado incluso después de dormir. Mensajes sin respuesta. Cuentas pendientes. La vida sigue igual."
+          }
+        },
+        {
+          "type": "story_continued",
+          "text": {
+            "en": "He sits on the edge of the bed and realizes: nothing is breaking suddenly… everything is slowly failing at the same time.",
+            "es": "Se sienta en la cama y entiende: nada se rompe de golpe… todo está fallando lentamente al mismo tiempo."
+          }
+        },
+        {
+          "type": "insight",
+          "text": {
+            "en": "Emotional collapse is not an explosion. It is accumulation without release.",
+            "es": "El colapso emocional no es una explosión. Es acumulación sin liberación."
+          }
+        },
+        {
+          "type": "tvid",
+          "mode": "TDM",
+          "text": {
+            "en": "I acknowledge what I have been avoiding.",
+            "es": "Reconozco lo que he estado evitando."
+          }
+        },
+        {
+          "type": "action",
+          "text": {
+            "en": "Today you name one thing you have been ignoring for too long.",
+            "es": "Hoy nombras una cosa que has estado ignorando demasiado tiempo."
+          }
+        }
+      ]
+    },
+
+    {
+      "id": 18,
+      "level": 7,
+      "category": "THE RELATIONSHIP THAT ENDED WITHOUT A FINAL CONVERSATION",
+      "blocks": [
+        {
+          "type": "voice",
+          "text": {
+            "en": "Elena is 22. She thought silence meant everything was fine.",
+            "es": "Elena tiene 22. Pensaba que el silencio significaba que todo estaba bien."
+          }
+        },
+        {
+          "type": "story",
+          "text": {
+            "en": "Messages became shorter. Calls became rare. Presence slowly disappeared without explanation.",
+            "es": "Los mensajes se hicieron más cortos. Las llamadas más raras. La presencia desapareció sin explicación."
+          }
+        },
+        {
+          "type": "story_continued",
+          "text": {
+            "en": "One day she checks the phone and realizes there is nothing left to say… because everything already ended silently.",
+            "es": "Un día revisa el teléfono y entiende que ya no hay nada que decir… porque todo terminó en silencio."
+          }
+        },
+        {
+          "type": "insight",
+          "text": {
+            "en": "Some endings do not announce themselves. They just stop continuing.",
+            "es": "Algunos finales no se anuncian. Simplemente dejan de continuar."
+          }
+        },
+        {
+          "type": "tvid",
+          "mode": "TDG",
+          "text": {
+            "en": "I face endings instead of avoiding them.",
+            "es": "Enfrento los finales en lugar de evitarlos."
+          }
+        },
+        {
+          "type": "action",
+          "text": {
+            "en": "Today you stop avoiding one conversation you already know is needed.",
+            "es": "Hoy dejas de evitar una conversación que sabes que es necesaria."
+          }
+        }
+      ]
+    },
+
+    {
+      "id": 19,
+      "level": 8,
+      "category": "THE CHOICE THAT PERMANENTLY DIVIDED HIS LIFE",
+      "blocks": [
+        {
+          "type": "voice",
+          "text": {
+            "en": "Jordan is 23. Standing at a crossroads that looks normal, but is not.",
+            "es": "Jordan tiene 23. Está en una encrucijada que parece normal, pero no lo es."
+          }
+        },
+        {
+          "type": "story",
+          "text": {
+            "en": "One path is comfort. The same routine. Familiar people. Predictable life.",
+            "es": "Un camino es comodidad. La misma rutina. Personas conocidas. Vida predecible."
+          }
+        },
+        {
+          "type": "story_continued",
+          "text": {
+            "en": "The other path is uncertainty. No guarantee. No safety net. Only responsibility and growth.",
+            "es": "El otro camino es incertidumbre. Sin garantías. Sin red de seguridad. Solo responsabilidad y crecimiento."
+          }
+        },
+        {
+          "type": "insight",
+          "text": {
+            "en": "Life does not change when you feel ready. It changes when you choose despite fear.",
+            "es": "La vida no cambia cuando te sientes listo. Cambia cuando eliges a pesar del miedo."
+          }
+        },
+        {
+          "type": "tvid",
+          "mode": "TDP",
+          "text": {
+            "en": "I choose growth over comfort.",
+            "es": "Elijo crecimiento sobre comodidad."
+          }
+        },
+        {
+          "type": "action",
+          "text": {
+            "en": "Today you make one uncomfortable decision on purpose.",
+            "es": "Hoy tomas una decisión incómoda a propósito."
+          }
+        }
+      ]
+    },
+
+    {
+      "id": 20,
+      "level": 8,
+      "category": "THE FINAL FRACTURE BEFORE REBUILDING IDENTITY",
+      "blocks": [
+        {
+          "type": "voice",
+          "text": {
+            "en": "Noah is 24. He has survived everything so far. But survival is not the same as living.",
+            "es": "Noah tiene 24. Ha sobrevivido a todo hasta ahora. Pero sobrevivir no es lo mismo que vivir."
+          }
+        },
+        {
+          "type": "story",
+          "text": {
+            "en": "He looks at his life and sees versions of himself he no longer connects with. Friend. Worker. Son. Stranger.",
+            "es": "Mira su vida y ve versiones de sí mismo con las que ya no se conecta. Amigo. Trabajador. Hijo. Extraño."
+          }
+        },
+        {
+          "type": "story_continued",
+          "text": {
+            "en": "For the first time, he stops asking 'who am I?' and starts asking 'what am I choosing to become from now on?'",
+            "es": "Por primera vez deja de preguntarse 'quién soy' y empieza a preguntarse 'en qué me estoy convirtiendo desde ahora'."
+          }
+        },
+        {
+          "type": "insight",
+          "text": {
+            "en": "Identity is not found. It is rebuilt through conscious decisions under pressure.",
+            "es": "La identidad no se encuentra. Se reconstruye con decisiones conscientes bajo presión."
           }
         },
         {
           "type": "tvid",
           "mode": "TDB",
           "text": {
-            "es": "La repetición cambia el destino."
+            "en": "I rebuild myself through awareness and choice.",
+            "es": "Me reconstruyo a través de la conciencia y la elección."
           }
         },
         {
           "type": "action",
           "text": {
-            "es": "Hoy haces algo difícil por 10 minutos sin rendirte."
+            "en": "Today you act as the person you are becoming, not the one you were.",
+            "es": "Hoy actúas como la persona en la que te estás convirtiendo, no la que eras."
           }
         }
       ]
     }
-  ],
 
-  "karma_system": {
-    "enabled": true,
-    "max_karma": 100
-  }
+  ]
 }
