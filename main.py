@@ -17,7 +17,7 @@ if not os.path.exists("static"):
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # ===============================
-# LOAD KAMIZEN CONTENT
+# LOAD CONTENT
 # ===============================
 with open("static/kamizen_content.json", "r", encoding="utf-8") as f:
     CONTENT = json.load(f)["missions"]
@@ -28,7 +28,7 @@ with open("static/kamizen_content.json", "r", encoding="utf-8") as f:
 sessions = {}
 
 # ===============================
-# CREATE STATE
+# STATE
 # ===============================
 def create_state(profile):
     return {
@@ -46,7 +46,7 @@ def create_state(profile):
     }
 
 # ===============================
-# TVID IMPACTS (SIMPLE)
+# IMPACT SYSTEM
 # ===============================
 IMPACTS = {
     "TDB": {"mental": 5, "discipline": 2, "karma": 1},
@@ -67,38 +67,45 @@ def apply(state, decision):
         state[k] = max(0, min(100, state[k] + v))
 
 # ===============================
-# GET CURRENT BLOCK
+# RESET FLOW (ONLY WHEN FINISHED ALL MISSIONS)
 # ===============================
-def get_current_block(state):
-    missions = CONTENT
-
-    if state["mission_index"] >= len(missions):
+def reset_if_needed(state):
+    if state["mission_index"] >= len(CONTENT):
         state["mission_index"] = 0
         state["block_index"] = 0
 
-    mission = missions[state["mission_index"]]
+# ===============================
+# GET CURRENT BLOCK SAFE
+# ===============================
+def get_current_block(state):
+
+    reset_if_needed(state)
+
+    mission = CONTENT[state["mission_index"]]
     blocks = mission["blocks"]
 
     if state["block_index"] >= len(blocks):
         state["mission_index"] += 1
         state["block_index"] = 0
 
-        if state["mission_index"] >= len(missions):
-            state["mission_index"] = 0
+        reset_if_needed(state)
 
-        mission = missions[state["mission_index"]]
+        mission = CONTENT[state["mission_index"]]
         blocks = mission["blocks"]
 
-    return mission, blocks[state["block_index"]]
+    block = blocks[state["block_index"]]
+
+    return mission, block
 
 # ===============================
-# FORMAT BLOCK TEXT
+# TEXT EXTRACTOR
 # ===============================
 def extract_text(block):
+
     text = block.get("text", "")
 
     if isinstance(text, dict):
-        return text.get("es") or text.get("en")
+        return text.get("es") or text.get("en") or ""
 
     return str(text)
 
@@ -123,13 +130,15 @@ async def start(req: Request):
         "state": state,
         "story": {
             "mission_id": mission["id"],
+            "level": mission["level"],
             "category": mission["category"],
-            "blocks": [block]
+            "blocks": [block],
+            "text": extract_text(block)
         }
     }
 
 # ===============================
-# JUDGE (CORE ENGINE)
+# JUDGE ENGINE
 # ===============================
 @app.post("/judge")
 async def judge(req: Request):
@@ -144,44 +153,38 @@ async def judge(req: Request):
 
     state = sessions[session_id]
 
-    # anti spam
+    # COOLDOWN ANTI-SPAM
     now = time.time()
-    if now - state["last_update"] < 0.1:
+    if now - state["last_update"] < 0.10:
         return {"status": "cooldown", "state": state}
 
     state["last_update"] = now
 
-    # ===============================
-    # APPLY IMPACTS
-    # ===============================
+    # APPLY EFFECTS
     apply(state, decision)
 
-    # ===============================
     # SAVE HISTORY
-    # ===============================
-    state["history"].append(decision)
+    state["history"].append({
+        "decision": decision,
+        "time": now
+    })
 
-    # ===============================
-    # MOVE STORY FORWARD
-    # ===============================
+    # ADVANCE STORY
     state["block_index"] += 1
 
     mission, block = get_current_block(state)
 
-    # ===============================
-    # FORMAT STORY OUTPUT
-    # ===============================
-    story = {
-        "mission_id": mission["id"],
-        "level": mission["level"],
-        "category": mission["category"],
-        "blocks": [block]
-    }
-
+    # RESPONSE CLEAN
     return {
         "status": "continue",
         "state": state,
-        "story": story
+        "story": {
+            "mission_id": mission["id"],
+            "level": mission["level"],
+            "category": mission["category"],
+            "blocks": [block],
+            "text": extract_text(block)
+        }
     }
 
 # ===============================
