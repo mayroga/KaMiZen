@@ -24,20 +24,24 @@ body {
     align-items:center;
 }
 
+/* ===============================
+   📖 STORY BOX (NETFLIX LOCKED FLOW)
+=============================== */
 #message {
     width:80%;
-    max-width:800px;
-    padding:25px;
+    max-width:850px;
+    padding:30px;
     border:2px solid #00f2ff;
-    background:rgba(0,0,0,0.9);
+    background:rgba(0,0,0,0.92);
     text-align:center;
-    font-size:20px;
-    margin-bottom:20px;
-    min-height:120px;
+    font-size:22px;
+    line-height:1.6;
+    min-height:160px;
+    transition: all 0.5s ease;
 }
 
 /* ===============================
-   🫁 RESPIRATION CIRCLE
+   🫁 BREATH SYNC (MASTER CLOCK VISUAL)
 =============================== */
 #breath {
     width:120px;
@@ -45,22 +49,25 @@ body {
     border-radius:50%;
     border:3px solid #00f2ff;
     margin-bottom:20px;
-    animation: breathe 6s infinite ease-in-out;
-    opacity:0.6;
+    opacity:0.5;
+    animation: breathe 8s infinite ease-in-out;
 }
 
 @keyframes breathe {
-    0%   { transform: scale(0.8); opacity:0.3; }
-    50%  { transform: scale(1.3); opacity:1; }
-    100% { transform: scale(0.8); opacity:0.3; }
+    0%   { transform: scale(0.8); opacity:0.2; }
+    50%  { transform: scale(1.4); opacity:1; }
+    100% { transform: scale(0.8); opacity:0.2; }
 }
 
+/* ===============================
+   📊 STATS
+=============================== */
 #stats {
     display:grid;
     grid-template-columns: repeat(4, 1fr);
     gap:10px;
     width:80%;
-    max-width:800px;
+    max-width:850px;
     margin-bottom:20px;
 }
 
@@ -70,6 +77,9 @@ body {
     text-align:center;
 }
 
+/* ===============================
+   🎮 BUTTONS (SOFT CONTROL ONLY)
+=============================== */
 #options {
     display:flex;
     flex-wrap:wrap;
@@ -84,7 +94,7 @@ button {
     background:black;
     color:#00f2ff;
     cursor:pointer;
-    min-width:120px;
+    min-width:130px;
 }
 button:hover {
     background:#00f2ff;
@@ -104,7 +114,6 @@ button:hover {
         <div class="box">DISCIPLINE <div id="disc">50</div></div>
     </div>
 
-    <!-- 🫁 RESPIRACIÓN TVID -->
     <div id="breath"></div>
 
     <div id="message">Inicializando sistema...</div>
@@ -116,34 +125,29 @@ button:hover {
 <script>
 
 // ===============================
-// STATE
+// STATE CORE
 // ===============================
 let session_id = localStorage.getItem("session_id");
 let state = JSON.parse(localStorage.getItem("state") || "{}");
 
-let currentEvent = null;
+let currentStory = null;
 let locked = false;
-let paused = false;
 
 // ===============================
-// INIT
+// INIT (BACKEND DRIVEN)
 // ===============================
 window.onload = async function () {
 
-    showMessage("Verificando sistema...");
+    show("Verificando sistema...");
 
     if (!session_id) {
         await startSession();
     } else {
-        showMessage("Reconectando con tu vida...");
+        show("Reconectando flujo narrativo...");
+        await requestNext("TDM");
     }
 
-    updateUI();
     renderButtons();
-
-    setTimeout(() => {
-        processEvent("start");
-    }, 1200);
 };
 
 // ===============================
@@ -151,46 +155,115 @@ window.onload = async function () {
 // ===============================
 async function startSession() {
 
-    try {
+    const res = await fetch("/start", {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({
+            profile: { age: 18, emotion: "neutral" }
+        })
+    });
 
-        const profile = {
-            age: 18,
-            difficulty: 1,
-            emotion: "neutral"
-        };
+    const data = await res.json();
 
-        const res = await fetch("/start", {
-            method: "POST",
-            headers: {"Content-Type":"application/json"},
-            body: JSON.stringify({ profile })
-        });
+    session_id = data.session_id;
+    state = data.state;
 
-        const data = await res.json();
+    localStorage.setItem("session_id", session_id);
+    localStorage.setItem("state", JSON.stringify(state));
 
-        session_id = data.session_id;
-        localStorage.setItem("session_id", session_id);
-
-        state = data.state || {};
-        localStorage.setItem("state", JSON.stringify(state));
-
-        // 🔊 VOZ INICIAL
-        speak("Sistema Kamizen activado. Tu vida ha comenzado.");
-
-        showMessage(data.narrative || "Sistema iniciado");
-
-    } catch (e) {
-        console.error(e);
-        showMessage("ERROR: servidor no responde");
+    if (data.story) {
+        playStory(data.story);
     }
+}
+
+// ===============================
+// MAIN FLOW REQUEST (IMPORTANT FIX)
+// ===============================
+async function requestNext(decision) {
+
+    if (locked) return;
+    locked = true;
+
+    const res = await fetch("/judge", {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({
+            session_id,
+            decision
+        })
+    });
+
+    const data = await res.json();
+
+    state = data.state;
+    localStorage.setItem("state", JSON.stringify(state));
+    updateUI();
+
+    if (data.end || !data.story) {
+        playStory({
+            blocks: [{ text: "FIN DEL CICLO HUMANO. TU IDENTIDAD HA SIDO REGISTRADA." }]
+        });
+        locked = false;
+        return;
+    }
+
+    // 🔥 ONLY AFTER BACKEND CONFIRMS FULL STORY BLOCK
+    playStory(data.story);
+
+    locked = false;
+}
+
+// ===============================
+// STORY PLAYER (NO CUTTING EVER)
+// ===============================
+function playStory(story) {
+
+    if (!story) return;
+
+    const text = extractText(story);
+
+    currentStory = story;
+
+    show(text);
+    speak(text);
+
+    // 🔥 IMPORTANT FIX: WAIT FULL AUDIO BEFORE NEXT FLOW
+    const duration = Math.max(8000, text.length * 80);
+
+    clearTimeout(window.auto);
+    window.auto = setTimeout(() => {
+
+        // auto decision only AFTER FULL STORY FINISH
+        requestNext("TDM");
+
+    }, duration);
+}
+
+// ===============================
+// TEXT EXTRACTOR (SAFE)
+// ===============================
+function extractText(story) {
+
+    if (!story.blocks) return "Historia sin contenido";
+
+    let out = "";
+
+    for (let b of story.blocks) {
+        if (typeof b.text === "string") {
+            out += b.text + " ";
+        } else if (b.text?.es) {
+            out += b.text.es + " ";
+        }
+    }
+
+    return out.trim();
 }
 
 // ===============================
 // UI
 // ===============================
-function showMessage(t) {
+function show(t) {
     document.getElementById("message").innerText = t;
-
-    speak(t); // 🔊 VOZ AUTOMÁTICA
 }
 
 function updateUI() {
@@ -201,138 +274,30 @@ function updateUI() {
 }
 
 // ===============================
-// 🔊 VOZ SYSTEM
+// VOICE (ANTI-CUT ENGINE)
 // ===============================
 function speak(text) {
 
     if (!window.speechSynthesis) return;
 
-    let msg = new SpeechSynthesisUtterance(text);
-    msg.lang = "es-ES";
-    msg.rate = 1;
-    msg.pitch = 1;
-
     speechSynthesis.cancel();
-    speechSynthesis.speak(msg);
+
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = "es-ES";
+    u.rate = 0.95;
+
+    speechSynthesis.speak(u);
 }
 
 // ===============================
-// 🎬 EVENT ENGINE (CINEMÁTICO)
-// ===============================
-function processEvent(event) {
-
-    if (paused) return;
-
-    currentEvent = event;
-
-    let msg = "";
-
-    switch(event) {
-
-        case "start":
-            msg = "Todo parece normal… pero algo dentro de ti ya cambió.";
-            break;
-
-        case "tentacion":
-            msg = "Una decisión pequeña puede cambiar todo tu sistema.";
-            break;
-
-        case "crisis":
-            msg = "La presión se vuelve real. No puedes ignorarlo.";
-            break;
-
-        case "dinero":
-            msg = "Oportunidad detectada… pero tiene consecuencias ocultas.";
-            break;
-
-        case "amor":
-            msg = "Conexión emocional activa. Riesgo de apego detectado.";
-            break;
-
-        default:
-            msg = "Estás dentro de un momento que define tu identidad.";
-    }
-
-    showMessage(msg);
-
-    clearTimeout(window.auto);
-
-    window.auto = setTimeout(() => {
-        if (!locked) sendDecision("TDM");
-    }, 9000);
-}
-
-// ===============================
-// DECISION ENGINE
-// ===============================
-async function sendDecision(decision) {
-
-    if (locked) return;
-    locked = true;
-
-    if (!session_id) {
-        await startSession();
-    }
-
-    try {
-
-        const res = await fetch("/judge", {
-            method: "POST",
-            headers: {"Content-Type":"application/json"},
-            body: JSON.stringify({
-                session_id,
-                decision,
-                context: currentEvent || "neutral"
-            })
-        });
-
-        const data = await res.json();
-
-        if (data.error) {
-            showMessage("Reiniciando sistema...");
-            localStorage.removeItem("session_id");
-            session_id = null;
-            await startSession();
-            locked = false;
-            return;
-        }
-
-        if (data.state) {
-            state = data.state;
-            localStorage.setItem("state", JSON.stringify(state));
-        }
-
-        updateUI();
-
-        if (data.status === "end") {
-            showMessage("FIN DEL CICLO HUMANO");
-            speak("Sistema finalizado");
-            return;
-        }
-
-        showMessage(data.narrative || "Tu decisión ha cambiado tu camino.");
-
-        setTimeout(() => {
-            processEvent("scene");
-        }, 1500);
-
-    } catch (err) {
-        console.error(err);
-        showMessage("ERROR DE CONEXIÓN");
-    }
-
-    setTimeout(() => locked = false, 700);
-}
-
-// ===============================
-// BUTTONS
+// BUTTONS (SOFT OVERRIDE ONLY)
 // ===============================
 function renderButtons() {
 
     const c = document.getElementById("options");
     c.innerHTML = "";
 
-    const map = [
+    const list = [
         ["TDB","Equilibrio"],
         ["TDM","Impulso"],
         ["TDN","Creatividad"],
@@ -341,12 +306,16 @@ function renderButtons() {
         ["TDK","Conexión"]
     ];
 
-    map.forEach(([k,label]) => {
+    for (let [k,label] of list) {
         const b = document.createElement("button");
         b.innerText = label;
-        b.onclick = () => sendDecision(k);
+
+        b.onclick = () => {
+            if (!locked) requestNext(k);
+        };
+
         c.appendChild(b);
-    });
+    }
 }
 
 </script>
