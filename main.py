@@ -1,183 +1,155 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
-import random
-import os
-import time
+import sqlite3
 import uuid
+import time
+import os
+import json
 
 app = FastAPI()
 
-# ===============================
-# STATIC FILES
-# ===============================
-if not os.path.exists("static"):
-    os.makedirs("static")
-
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-# ===============================
-# SESSIONS MEMORY
-# ===============================
-sessions = {}
+DB_PATH = "kamizen.db"
 
 # ===============================
-# CREATE INITIAL STATE
+# INIT DATABASE
+# ===============================
+def init_db():
+
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS users (
+        session_id TEXT PRIMARY KEY,
+        created REAL,
+        state TEXT
+    )
+    """)
+
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS history (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        session_id TEXT,
+        decision TEXT,
+        context TEXT,
+        timestamp REAL
+    )
+    """)
+
+    conn.commit()
+    conn.close()
+
+init_db()
+
+# ===============================
+# STATE CREATION
 # ===============================
 def create_state(profile):
 
-    difficulty = int(profile.get("difficulty", 1))
-    emotion = profile.get("emotion", "neutral")
-    age = profile.get("age", 18)
-
     return {
-        # CORE HUMAN STATE
         "mental": 100,
-        "health": 100,
         "social": 50,
         "discipline": 50,
         "karma": 0,
-        "age": age,
-        "difficulty": difficulty,
+        "money": 500,
+        "age": profile.get("age", 18),
 
-        # TIMING
-        "start_time": time.time(),
-        "last_update": time.time(),
-        "phase": 1,
-
-        # IDENTITY SYSTEM
-        "identity": {
-            "core_state": "neutral",
-            "emotion": emotion,
-            "life_narrative": []
-        },
-
-        # PSYCHOLOGY ENGINE
         "psychology": {
-            "stress_memory": 0,
-            "trauma_index": 0,
-            "self_control": 50,
+            "stress": 0,
+            "trauma": 0,
+            "control": 50,
             "resilience": 50
         },
 
-        # PATTERNS
-        "patterns": {
-            "impulsivity": 0,
-            "avoidance": 0,
-            "clarity": 0
+        "identity": {
+            "core": "neutral",
+            "archetype": profile.get("emotion", "neutral")
         },
 
-        "history": []
+        "patterns": {
+            "impulsivity": 0,
+            "consistency": 0,
+            "avoidance": 0
+        }
     }
 
-
 # ===============================
-# KARMA SYSTEM
+# DB HELPERS
 # ===============================
-def update_karma(state):
+def save_user(session_id, state):
 
-    k = state["karma"]
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
 
-    if k >= 100:
-        state["powers"] = ["FULL_CONTROL"]
-    elif k >= 75:
-        state["powers"] = ["PREDICTION"]
-    elif k >= 50:
-        state["powers"] = ["TIME_SLOW"]
-    elif k >= 25:
-        state["powers"] = ["SHIELD"]
-    else:
-        state["powers"] = []
+    c.execute("""
+    INSERT OR REPLACE INTO users (session_id, created, state)
+    VALUES (?, ?, ?)
+    """, (session_id, time.time(), json.dumps(state)))
 
+    conn.commit()
+    conn.close()
+
+
+def load_user(session_id):
+
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+
+    c.execute("SELECT state FROM users WHERE session_id=?", (session_id,))
+    row = c.fetchone()
+
+    conn.close()
+
+    if row:
+        return json.loads(row[0])
+
+    return None
+
+
+def save_history(session_id, decision, context):
+
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+
+    c.execute("""
+    INSERT INTO history (session_id, decision, context, timestamp)
+    VALUES (?, ?, ?, ?)
+    """, (session_id, decision, context, time.time()))
+
+    conn.commit()
+    conn.close()
 
 # ===============================
 # PSYCHOLOGY ENGINE
 # ===============================
-def update_psychology(state, decision, context):
+def update_psychology(state, decision):
 
     psy = state["psychology"]
 
     if decision == "TDM":
-        psy["stress_memory"] += 4
-        psy["self_control"] -= 3
+        psy["stress"] += 5
+        psy["control"] -= 3
 
     if decision in ["TDB", "TDP"]:
-        psy["self_control"] += 2
         psy["resilience"] += 2
+        psy["control"] += 2
 
     if decision == "TDN":
-        psy["trauma_index"] += 2
-        psy["self_control"] -= 2
+        psy["trauma"] += 2
 
-    if context in ["crisis", "conflict", "tentacion"]:
-        psy["stress_memory"] += 2
-
-    # clamp
     for k in psy:
         psy[k] = max(0, min(100, psy[k]))
 
-    # identity state
-    if psy["stress_memory"] > 75:
-        state["identity"]["core_state"] = "colapsando"
-    elif psy["trauma_index"] > 65:
-        state["identity"]["core_state"] = "fragmentado"
+    # identity evolution
+    if psy["stress"] > 70:
+        state["identity"]["core"] = "survival"
+    elif psy["trauma"] > 60:
+        state["identity"]["core"] = "fragmented"
     elif psy["resilience"] > 70:
-        state["identity"]["core_state"] = "estable"
-    else:
-        state["identity"]["core_state"] = "neutral"
-
-
-# ===============================
-# NARRATIVE ENGINE (SESIONES 3–10)
-# ===============================
-def generate_narrative(state, event, decision):
-
-    core = state["identity"]["core_state"]
-
-    if core == "colapsando":
-        return "Tu mente está saturada. Estás reaccionando, no decidiendo."
-
-    if core == "fragmentado":
-        return "Tu identidad está dividida en patrones automáticos."
-
-    if event == "tentacion":
-        return "Alguien te pide algo. Parece pequeño… pero no lo es."
-
-    if event == "crisis":
-        return "La presión externa está activando tu mundo interno."
-
-    if event == "conflict":
-        return "Tu reacción definirá el resultado más que el evento."
-
-    if decision == "TDM":
-        return "Decidiste desde impulso. El sistema registra consecuencia."
-
-    return "Estás entrenando tu carácter en tiempo real."
-
-
-# ===============================
-# EVENT GENERATOR (BASED ON KAMIZEN CONTENT)
-# ===============================
-def generate_event(state):
-
-    p = state["patterns"]
-
-    if p["impulsivity"] > 60:
-        return "tentacion"
-
-    if p["avoidance"] > 50:
-        return "crisis"
-
-    if state["mental"] < 40:
-        return "conflict"
-
-    return random.choice([
-        "tentacion",
-        "crisis",
-        "conflict",
-        "neutral"
-    ])
-
+        state["identity"]["core"] = "stable"
 
 # ===============================
 # ROUTES
@@ -186,14 +158,12 @@ def generate_event(state):
 def home():
     return FileResponse("static/session.html")
 
-
 @app.get("/simulador")
 def sim():
     return FileResponse("static/jet.html")
 
-
 # ===============================
-# START SYSTEM
+# START SESSION
 # ===============================
 @app.post("/start")
 async def start(req: Request):
@@ -202,20 +172,51 @@ async def start(req: Request):
     profile = data.get("profile", {})
 
     session_id = str(uuid.uuid4())
+
     state = create_state(profile)
 
-    sessions[session_id] = state
+    save_user(session_id, state)
 
     return {
         "session_id": session_id,
         "state": state,
-        "next_event": generate_event(state),
-        "narrative": "Sistema activado. Iniciando experiencia humana..."
+        "narrative": "Sistema iniciado en modo persistente.",
+        "next_event": "start"
     }
 
+# ===============================
+# GET RANKINGS
+# ===============================
+@app.get("/rankings")
+def rankings():
+
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+
+    c.execute("SELECT state FROM users")
+    rows = c.fetchall()
+
+    conn.close()
+
+    users = []
+
+    for r in rows:
+        try:
+            s = json.loads(r[0])
+            users.append(s)
+        except:
+            pass
+
+    top_karma = sorted(users, key=lambda x: x.get("karma",0), reverse=True)[:10]
+    top_discipline = sorted(users, key=lambda x: x.get("discipline",0), reverse=True)[:10]
+
+    return {
+        "top_karma": top_karma,
+        "top_discipline": top_discipline
+    }
 
 # ===============================
-# JUDGE ENGINE (CORE LOGIC)
+# JUDGE ENGINE
 # ===============================
 @app.post("/judge")
 async def judge(req: Request):
@@ -226,104 +227,61 @@ async def judge(req: Request):
     decision = data.get("decision", "TDM")
     context = data.get("context", "neutral")
 
-    if session_id not in sessions:
-        return JSONResponse(status_code=404, content={"error": "session expired"})
+    state = load_user(session_id)
 
-    state = sessions[session_id]
-    now = time.time()
-
-    # anti spam
-    if now - state["last_update"] < 0.12:
-        return {"status": "cooldown", "state": state}
-
-    state["last_update"] = now
+    if not state:
+        return JSONResponse({"error": "session not found"}, status_code=404)
 
     # ===============================
-    # CORE IMPACTS TVID
+    # APPLY DECISIONS
     # ===============================
-    impacts = {
-        "TDB": {"mental": 10, "discipline": 5, "karma": 3},
-        "TDP": {"social": 10, "discipline": 8, "karma": 4},
-        "TDM": {"mental": -15, "karma": -2},
-        "TDN": {"social": 8, "karma": 2},
-        "TDG": {"discipline": 10, "mental": 5, "karma": -1},
-        "TDK": {"social": 12, "mental": 5, "karma": 4}
+    effects = {
+        "TDB": {"mental": 8, "discipline": 5, "karma": 2},
+        "TDP": {"money": 40, "discipline": 6, "karma": 3},
+        "TDM": {"mental": -10, "karma": -2},
+        "TDN": {"social": 6, "karma": 1},
+        "TDG": {"mental": 5, "discipline": 4},
+        "TDK": {"social": 8, "karma": 2}
     }
 
-    effect = impacts.get(decision, impacts["TDM"])
+    e = effects.get(decision, {})
 
-    for k, v in effect.items():
-        state[k] = max(0, min(100, state.get(k, 0) + v))
+    for k, v in e.items():
+        state[k] = state.get(k, 0) + v
 
-    # ===============================
-    # CONTEXT EFFECTS
-    # ===============================
-    if context == "crisis" and decision in ["TDM", "TDG"]:
-        state["mental"] -= 5
+    # clamp
+    state["mental"] = max(0, min(100, state["mental"]))
+    state["social"] = max(0, min(100, state["social"]))
+    state["discipline"] = max(0, min(100, state["discipline"]))
+    state["karma"] = state.get("karma", 0)
 
-    if context == "tentacion" and decision == "TDM":
-        state["mental"] -= 3
+    # psychology
+    update_psychology(state, decision)
 
-    state["age"] += 0.01
+    # save history
+    save_history(session_id, decision, context)
 
-    # ===============================
-    # HISTORY
-    # ===============================
-    state["history"].append({
-        "decision": decision,
-        "context": context,
-        "time": now
-    })
+    # save state
+    save_user(session_id, state)
 
-    state["identity"]["life_narrative"].append(
-        f"{decision} frente a {context}"
-    )
+    # narrative
+    core = state["identity"]["core"]
 
-    # ===============================
-    # PATTERNS
-    # ===============================
-    if decision == "TDM":
-        state["patterns"]["impulsivity"] += 2
+    if core == "survival":
+        text = "Tu mente opera bajo presión constante."
+    elif core == "fragmented":
+        text = "Tu identidad se divide entre impulsos y control."
+    else:
+        text = "Tu sistema evoluciona con tus decisiones."
 
-    if decision in ["TDB", "TDP"]:
-        state["patterns"]["clarity"] += 2
-
-    # clamp patterns
-    for k in state["patterns"]:
-        state["patterns"][k] = max(0, min(100, state["patterns"][k]))
-
-    # ===============================
-    # PSYCHOLOGY + KARMA
-    # ===============================
-    update_psychology(state, decision, context)
-
-    state["karma"] += effect.get("karma", 0)
-    update_karma(state)
-
-    # ===============================
-    # GAME OVER
-    # ===============================
-    if state["mental"] <= 0:
-        return {"status": "end", "type": "mental_break", "state": state}
-
-    if state["health"] <= 0:
-        return {"status": "end", "type": "physical_end", "state": state}
-
-    # ===============================
-    # RESPONSE
-    # ===============================
     return {
-        "status": "continue",
         "state": state,
-        "next_event": generate_event(state),
-        "narrative": generate_narrative(state, context, decision),
-        "karma": state["karma"],
-        "phase": state["phase"]
+        "narrative": text,
+        "next_event": "scene"
     }
-
 
 # ===============================
-# RUN SERVER
+# RUN
 # ===============================
 if __name__ == "__main__":
     import uvicorn
