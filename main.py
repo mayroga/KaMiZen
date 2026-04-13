@@ -1,6 +1,6 @@
 # ===============================
-# KAMIZEN LIFE ENGINE - CORE v4.0
-# CINEMATIC + PSYCHOLOGICAL SYSTEM
+# KAMIZEN LIFE ENGINE - CINEMATIC CORE v4.0
+# STORY-DRIVEN + TVID + PROGRESSION SYSTEM
 # ===============================
 
 from fastapi import FastAPI, Request
@@ -11,19 +11,31 @@ import uuid
 import time
 import os
 import json
-import random
 
 app = FastAPI()
 
 # ===============================
-# STATIC
+# STATIC FILES
 # ===============================
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 DB_PATH = "kamizen.db"
+CONTENT_PATH = "static/kamizen_content.json"
 
 # ===============================
-# INIT DB
+# LOAD STORY CONTENT
+# ===============================
+def load_content():
+    if not os.path.exists(CONTENT_PATH):
+        return []
+    with open(CONTENT_PATH, "r", encoding="utf-8") as f:
+        data = json.load(f)
+        return data.get("sessions", [])
+
+STORIES = load_content()
+
+# ===============================
+# INIT DATABASE
 # ===============================
 def init_db():
     conn = sqlite3.connect(DB_PATH)
@@ -37,34 +49,23 @@ def init_db():
     )
     """)
 
-    c.execute("""
-    CREATE TABLE IF NOT EXISTS history (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        session_id TEXT,
-        decision TEXT,
-        context TEXT,
-        timestamp REAL
-    )
-    """)
-
     conn.commit()
     conn.close()
 
 init_db()
 
 # ===============================
-# STATE CREATION
+# CREATE STATE
 # ===============================
 def create_state(profile):
-
     return {
         "mental": 100,
         "social": 50,
         "discipline": 50,
         "karma": 0,
-        "money": 500,
-        "health": 100,
         "age": profile.get("age", 18),
+
+        "progress": 0,  # 🔥 CONTROL DE HISTORIA
 
         "psychology": {
             "stress": 0,
@@ -74,24 +75,12 @@ def create_state(profile):
         },
 
         "identity": {
-            "core": "neutral",
-            "archetype": profile.get("emotion", "neutral")
-        },
-
-        "patterns": {
-            "impulsivity": 0,
-            "consistency": 0,
-            "avoidance": 0
-        },
-
-        "meta": {
-            "created": time.time(),
-            "phase": 1
+            "core": "neutral"
         }
     }
 
 # ===============================
-# DB HELPERS
+# DATABASE HELPERS
 # ===============================
 def save_user(session_id, state):
     conn = sqlite3.connect(DB_PATH)
@@ -105,31 +94,18 @@ def save_user(session_id, state):
     conn.commit()
     conn.close()
 
-
 def load_user(session_id):
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
 
     c.execute("SELECT state FROM users WHERE session_id=?", (session_id,))
     row = c.fetchone()
+
     conn.close()
 
     if row:
         return json.loads(row[0])
     return None
-
-
-def save_history(session_id, decision, context):
-    conn = sqlite3.connect(DB_PATH)
-    c = conn.cursor()
-
-    c.execute("""
-    INSERT INTO history (session_id, decision, context, timestamp)
-    VALUES (?, ?, ?, ?)
-    """, (session_id, decision, context, time.time()))
-
-    conn.commit()
-    conn.close()
 
 # ===============================
 # PSYCHOLOGY ENGINE
@@ -141,79 +117,51 @@ def update_psychology(state, decision):
     if decision == "TDM":
         psy["stress"] += 6
         psy["control"] -= 4
-        state["patterns"]["impulsivity"] += 2
 
     elif decision in ["TDB", "TDP"]:
         psy["resilience"] += 4
         psy["control"] += 3
-        state["patterns"]["consistency"] += 2
 
     elif decision == "TDN":
-        psy["trauma"] += 4
-        state["patterns"]["avoidance"] += 2
+        psy["trauma"] += 3
 
     elif decision == "TDG":
-        psy["control"] += 4
+        psy["control"] += 5
         psy["stress"] += 2
 
     elif decision == "TDK":
         psy["resilience"] += 3
 
-    # LIMITS
+    # LIMITES
     for k in psy:
         psy[k] = max(0, min(100, psy[k]))
 
-    for k in state["patterns"]:
-        state["patterns"][k] = max(0, min(100, state["patterns"][k]))
-
-    # IDENTITY
-    if psy["stress"] > 75:
+    # IDENTIDAD
+    if psy["stress"] > 70:
         state["identity"]["core"] = "survival"
-    elif psy["trauma"] > 65:
+    elif psy["trauma"] > 60:
         state["identity"]["core"] = "fragmented"
-    elif psy["resilience"] > 75:
+    elif psy["resilience"] > 70:
         state["identity"]["core"] = "stable"
     else:
         state["identity"]["core"] = "neutral"
 
 # ===============================
-# 🎬 NARRATIVE ENGINE (REAL)
+# GET NEXT STORY
 # ===============================
-def generate_narrative(state, decision):
+def get_next_story(state):
 
-    core = state["identity"]["core"]
-    mental = state["mental"]
+    index = state.get("progress", 0)
 
-    if core == "survival":
-        return "Sientes presión constante. No decides… reaccionas."
+    if index >= len(STORIES):
+        return None
 
-    if core == "fragmented":
-        return "Una parte de ti quiere avanzar… otra te detiene."
+    story = STORIES[index]
 
-    if core == "stable":
-        return "Empiezas a sentir control real sobre tu vida."
+    # 🔥 avanzar progreso
+    state["progress"] += 1
 
-    if mental < 30:
-        return "Tu energía mental está baja. Todo pesa más de lo normal."
-
-    if decision == "TDM":
-        return "Actuaste por impulso. Algo dentro de ti lo sabe."
-
-    if decision == "TDB":
-        return "Elegiste equilibrio. No es fácil, pero es correcto."
-
-    if decision == "TDG":
-        return "Tomaste control. Ahora debes sostenerlo."
-
-    return "Cada decisión cambia tu dirección, aunque no lo notes aún."
-
-# ===============================
-# EVENT ENGINE
-# ===============================
-def next_event():
-
-    events = ["tentacion", "crisis", "dinero", "amor", "scene"]
-    return random.choice(events)
+    return story
 
 # ===============================
 # ROUTES
@@ -223,7 +171,7 @@ def home():
     return FileResponse("static/session.html")
 
 # ===============================
-# START
+# START SESSION
 # ===============================
 @app.post("/start")
 async def start(req: Request):
@@ -234,17 +182,19 @@ async def start(req: Request):
     session_id = str(uuid.uuid4())
     state = create_state(profile)
 
+    first_story = get_next_story(state)
+
     save_user(session_id, state)
 
     return {
         "session_id": session_id,
         "state": state,
-        "narrative": "Tu vida comienza ahora. Nada cambia… hasta que decides.",
-        "next_event": "start"
+        "story": first_story,
+        "end": False
     }
 
 # ===============================
-# JUDGE
+# DECISION ENGINE
 # ===============================
 @app.post("/judge")
 async def judge(req: Request):
@@ -253,17 +203,18 @@ async def judge(req: Request):
 
     session_id = data.get("session_id")
     decision = data.get("decision", "TDM")
-    context = data.get("context", "neutral")
 
     state = load_user(session_id)
 
     if not state:
         return JSONResponse({"error": "session not found"}, status_code=404)
 
+    # ===============================
     # EFFECTS
+    # ===============================
     effects = {
         "TDB": {"mental": 8, "discipline": 5, "karma": 2},
-        "TDP": {"money": 40, "discipline": 6, "karma": 3},
+        "TDP": {"discipline": 6, "karma": 3},
         "TDM": {"mental": -10, "karma": -2},
         "TDN": {"social": 6, "karma": 1},
         "TDG": {"mental": 5, "discipline": 4},
@@ -273,27 +224,33 @@ async def judge(req: Request):
     for k, v in effects.get(decision, {}).items():
         state[k] = state.get(k, 0) + v
 
-    # CLAMP
+    # LIMITES
     state["mental"] = max(0, min(100, state["mental"]))
     state["social"] = max(0, min(100, state["social"]))
     state["discipline"] = max(0, min(100, state["discipline"]))
 
-    # UPDATE SYSTEMS
+    # PSICOLOGÍA
     update_psychology(state, decision)
-    save_history(session_id, decision, context)
+
+    # SIGUIENTE HISTORIA
+    next_story = get_next_story(state)
+
     save_user(session_id, state)
 
-    # NARRATIVE
-    text = generate_narrative(state, decision)
+    if not next_story:
+        return {
+            "state": state,
+            "end": True
+        }
 
     return {
         "state": state,
-        "narrative": text,
-        "next_event": next_event()
+        "story": next_story,
+        "end": False
     }
 
 # ===============================
-# RUN
+# RUN SERVER
 # ===============================
 if __name__ == "__main__":
     import uvicorn
