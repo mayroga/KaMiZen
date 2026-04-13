@@ -27,12 +27,13 @@ body {
 #message {
     width:80%;
     max-width:800px;
-    padding:20px;
+    padding:25px;
     border:2px solid #00f2ff;
-    background:rgba(0,0,0,0.85);
+    background:rgba(0,0,0,0.9);
     text-align:center;
-    font-size:18px;
+    font-size:20px;
     margin-bottom:20px;
+    min-height:80px;
 }
 
 #stats {
@@ -64,6 +65,7 @@ button {
     background:black;
     color:#00f2ff;
     cursor:pointer;
+    min-width:120px;
 }
 button:hover {
     background:#00f2ff;
@@ -89,12 +91,10 @@ button:hover {
 
 </div>
 
-<audio id="audio" loop></audio>
-
 <script>
 
 // ===============================
-// STATE SAFE SYSTEM (AUTO RECOVERY)
+// STATE
 // ===============================
 let session_id = localStorage.getItem("session_id");
 let state = JSON.parse(localStorage.getItem("state") || "{}");
@@ -104,16 +104,16 @@ let locked = false;
 let paused = false;
 
 // ===============================
-// AUTO START (CRITICAL FIX)
+// INIT
 // ===============================
-window.onload = async function init() {
+window.onload = async function () {
 
-    showMessage("Verificando sesión...");
+    showMessage("Verificando sistema...");
 
     if (!session_id) {
-        await startSession();   // 🔥 CREA SESIÓN SI NO EXISTE
+        await startSession();
     } else {
-        showMessage("Sesión encontrada. Cargando mundo...");
+        showMessage("Reconectando con tu vida...");
     }
 
     updateUI();
@@ -121,11 +121,11 @@ window.onload = async function init() {
 
     setTimeout(() => {
         processEvent("start");
-    }, 800);
+    }, 1000);
 };
 
 // ===============================
-// START SESSION (FIXED CALL)
+// START SESSION
 // ===============================
 async function startSession() {
 
@@ -145,11 +145,6 @@ async function startSession() {
 
         const data = await res.json();
 
-        if (!data.session_id) {
-            showMessage("ERROR: no se pudo iniciar sesión");
-            return;
-        }
-
         session_id = data.session_id;
         localStorage.setItem("session_id", session_id);
 
@@ -160,7 +155,7 @@ async function startSession() {
 
     } catch (e) {
         console.error(e);
-        showMessage("ERROR CONECTANDO CON SERVIDOR");
+        showMessage("ERROR: servidor no responde");
     }
 }
 
@@ -179,7 +174,7 @@ function updateUI() {
 }
 
 // ===============================
-// EVENT ENGINE
+// 🎬 EVENT ENGINE (CINEMÁTICO)
 // ===============================
 function processEvent(event) {
 
@@ -187,23 +182,36 @@ function processEvent(event) {
 
     currentEvent = event;
 
-    let msg = "Decisión en progreso...";
+    let msg = "";
 
     switch(event) {
+
+        case "start":
+            msg = "Todo parece normal… pero algo en tu vida no está avanzando.";
+            break;
+
         case "tentacion":
-            msg = "Algo intenta desviarte del camino.";
+            msg = "Algo pequeño intenta desviarte… pero sabes que no es tan pequeño.";
             break;
+
         case "crisis":
-            msg = "Presión inmediata en tu entorno.";
+            msg = "La presión aumenta. No puedes ignorarlo más.";
             break;
+
         case "dinero":
-            msg = "Oportunidad financiera detectada.";
+            msg = "Una oportunidad aparece… pero no es tan limpia como parece.";
             break;
+
         case "amor":
-            msg = "Conexión emocional activa.";
+            msg = "Sientes conexión… pero también incertidumbre.";
             break;
+
+        case "scene":
+            msg = "Estás en una decisión que define quién te estás convirtiendo.";
+            break;
+
         default:
-            msg = "Tu vida responde a tus decisiones.";
+            msg = "Algo está cambiando… aunque aún no lo entiendes.";
     }
 
     showMessage(msg);
@@ -212,18 +220,17 @@ function processEvent(event) {
 
     window.auto = setTimeout(() => {
         if (!locked) sendDecision("TDM");
-    }, 8000);
+    }, 9000);
 }
 
 // ===============================
-// DECISION ENGINE (FIXED + SAFE)
+// DECISION ENGINE
 // ===============================
 async function sendDecision(decision) {
 
     if (locked) return;
     locked = true;
 
-    // 🔴 AUTO FIX: SI NO HAY SESIÓN → RECREAR
     if (!session_id) {
         await startSession();
     }
@@ -243,7 +250,7 @@ async function sendDecision(decision) {
         const data = await res.json();
 
         if (data.error) {
-            showMessage("ERROR: reiniciando sesión...");
+            showMessage("Reiniciando sistema...");
             localStorage.removeItem("session_id");
             session_id = null;
             await startSession();
@@ -259,24 +266,31 @@ async function sendDecision(decision) {
         updateUI();
 
         if (data.status === "end") {
-            showMessage("SISTEMA TERMINADO");
+            showMessage("FIN DEL CICLO HUMANO");
             return;
         }
 
-        showMessage(data.narrative);
+        // 🔥 narrativa backend + emoción
+        showMessage(data.narrative || "Tu decisión ha cambiado algo dentro de ti.");
 
-        processEvent(data.next_event || "scene");
+        // siguiente evento dinámico
+        const events = ["tentacion","crisis","dinero","amor","scene"];
+        const next = events[Math.floor(Math.random() * events.length)];
+
+        setTimeout(() => {
+            processEvent(next);
+        }, 1500);
 
     } catch (err) {
         console.error(err);
         showMessage("ERROR DE CONEXIÓN");
     }
 
-    setTimeout(() => locked = false, 600);
+    setTimeout(() => locked = false, 700);
 }
 
 // ===============================
-// BUTTONS TVID
+// BUTTONS
 // ===============================
 function renderButtons() {
 
