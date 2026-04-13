@@ -1,319 +1,127 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KAMIZEN | LIFE SIMULATOR</title>
-
-<style>
-body {
-    margin:0;
-    font-family: Arial Black, sans-serif;
-    background:#000;
-    color:#00f2ff;
-    overflow:hidden;
-}
-
-#app {
-    position:absolute;
-    width:100%;
-    height:100%;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
-}
-
-/* STATS */
-#stats {
-    display:grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap:10px;
-    width:80%;
-    max-width:800px;
-    margin-bottom:20px;
-}
-
-.box {
-    border:1px solid #00f2ff;
-    padding:10px;
-    text-align:center;
-}
-
-/* MESSAGE */
-#message {
-    width:80%;
-    max-width:800px;
-    padding:25px;
-    border:2px solid #00f2ff;
-    background:rgba(0,0,0,0.92);
-    text-align:center;
-    font-size:18px;
-    line-height:1.6;
-    min-height:120px;
-}
-
-/* BUTTONS */
-#options {
-    display:flex;
-    flex-wrap:wrap;
-    justify-content:center;
-    gap:10px;
-    width:80%;
-}
-
-button {
-    padding:12px;
-    border:2px solid #00f2ff;
-    background:black;
-    color:#00f2ff;
-    cursor:pointer;
-}
-
-button:hover {
-    background:#00f2ff;
-    color:black;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KAMIZEN | LIFE SIMULATOR</title>
+    <style>
+        body { margin:0; font-family: 'Courier New', monospace; background:#000; color:#00f2ff; overflow:hidden; }
+        #app { position:absolute; width:100%; height:100%; display:flex; flex-direction:column; justify-content:center; align-items:center; }
+        #stats { display:grid; grid-template-columns: repeat(4, 1fr); gap:10px; width:90%; max-width:800px; margin-bottom:20px; }
+        .box { border:1px solid #00f2ff; padding:10px; text-align:center; font-size: 12px; }
+        .val { font-size: 18px; display: block; color: #fff; }
+        #message { width:85%; max-width:800px; padding:25px; border:2px solid #00f2ff; background:rgba(0,15,30,0.9); text-align:center; font-size:20px; min-height:150px; display:flex; align-items:center; justify-content:center; margin-bottom: 20px; }
+        #options { display:flex; flex-wrap:wrap; justify-content:center; gap:10px; width:90%; }
+        button { padding:15px 25px; border:2px solid #00f2ff; background:black; color:#00f2ff; cursor:pointer; font-weight:bold; transition: 0.3s; }
+        button:hover { background:#00f2ff; color:black; }
+        button:disabled { border-color: #004444; color: #004444; cursor: not-allowed; }
+    </style>
 </head>
-
 <body>
 
 <div id="app">
-
     <div id="stats">
-        <div class="box">MENTAL <div id="mental">100</div></div>
-        <div class="box">SOCIAL <div id="social">50</div></div>
-        <div class="box">KARMA <div id="karma">0</div></div>
-        <div class="box">DISCIPLINE <div id="disc">50</div></div>
+        <div class="box">MENTAL <span id="mental" class="val">100</span></div>
+        <div class="box">SOCIAL <span id="social" class="val">50</span></div>
+        <div class="box">KARMA <span id="karma" class="val">0</span></div>
+        <div class="box">DISCIPLINE <span id="disc" class="val">50</span></div>
     </div>
 
-    <div id="message">Inicializando sistema...</div>
+    <div id="message">INICIALIZANDO CONEXIÓN...</div>
     <div id="options"></div>
-
 </div>
 
 <script>
-
-// ===============================
-// STATE
-// ===============================
 let session_id = localStorage.getItem("session_id");
-let state = JSON.parse(localStorage.getItem("state") || "{}");
-
 let locked = false;
 
-// CONTROL DE MISIONES (EVITA REPETICIÓN)
-let missions = [];
-let currentIndex = parseInt(localStorage.getItem("mission_index") || "0");
-
-// ===============================
-// INIT
-// ===============================
-window.onload = async function () {
-
-    show("Cargando sistema Kamizen...");
-
-    await loadMissions();
-
-    if (!session_id) {
-        await startSession();
-    } else {
-        await nextStory("TDB");
+async function start() {
+    try {
+        const res = await fetch("/start", {
+            method: "POST",
+            headers: {"Content-Type":"application/json"},
+            body: JSON.stringify({ profile: { age: 18 } })
+        });
+        const data = await res.json();
+        session_id = data.session_id;
+        localStorage.setItem("session_id", session_id);
+        updateDisplay(data);
+    } catch (e) {
+        document.getElementById("message").innerText = "ERROR DE SERVIDOR";
     }
-
-    renderButtons();
-};
-
-// ===============================
-// LOAD JSON STORY
-// ===============================
-async function loadMissions() {
-    const res = await fetch("/static/kamizen_content.json");
-    const data = await res.json();
-    missions = data.missions || [];
 }
 
-// ===============================
-// START SESSION
-// ===============================
-async function startSession() {
-
-    const res = await fetch("/start", {
-        method: "POST",
-        headers: {"Content-Type":"application/json"},
-        body: JSON.stringify({
-            profile: { age: 18, emotion: "neutral" }
-        })
-    });
-
-    const data = await res.json();
-
-    session_id = data.session_id;
-    state = data.state;
-
-    localStorage.setItem("session_id", session_id);
-    localStorage.setItem("state", JSON.stringify(state));
-
-    currentIndex = 0;
-    localStorage.setItem("mission_index", "0");
-
-    await playMission();
-}
-
-// ===============================
-// MAIN FLOW CONTROL
-// ===============================
-async function nextStory(decision) {
-
+async function sendDecision(code) {
     if (locked) return;
     locked = true;
+    toggleButtons(true);
 
     try {
-
         const res = await fetch("/judge", {
             method: "POST",
             headers: {"Content-Type":"application/json"},
-            body: JSON.stringify({
-                session_id,
-                decision,
-                context: "neutral"
-            })
+            body: JSON.stringify({ session_id, decision: code })
         });
-
         const data = await res.json();
-
-        state = data.state;
-        localStorage.setItem("state", JSON.stringify(state));
-
-        updateUI();
-
-        await playMission();
-
+        if (data.error) {
+            localStorage.clear();
+            location.reload();
+        } else {
+            updateDisplay(data);
+        }
     } catch (e) {
         console.error(e);
-        show("ERROR DE CONEXIÓN");
+    } finally {
+        setTimeout(() => { 
+            locked = false; 
+            toggleButtons(false);
+        }, 800);
     }
-
-    locked = false;
 }
 
-// ===============================
-// PLAY MISSION SEQUENCE
-// ===============================
-async function playMission() {
-
-    if (missions.length === 0) return;
-
-    // 🔥 FIN DEL CICLO -> SOLO CUANDO TERMINA TODO
-    if (currentIndex >= missions.length) {
-        show("FIN DEL CICLO HUMANO. REINICIANDO EXPERIENCIA...");
-        currentIndex = 0;
-        localStorage.setItem("mission_index", "0");
-        return;
-    }
-
-    const mission = missions[currentIndex];
-
-    const text = extractMissionText(mission);
-
-    show(text);
+function updateDisplay(data) {
+    const s = data.state;
+    document.getElementById("mental").innerText = s.mental;
+    document.getElementById("social").innerText = s.social;
+    document.getElementById("karma").innerText = s.karma;
+    document.getElementById("disc").innerText = s.discipline;
+    
+    const text = data.story.text;
+    document.getElementById("message").innerText = text;
     speak(text);
-    updateUI();
-
-    currentIndex++;
-    localStorage.setItem("mission_index", currentIndex);
-
-    // 🔥 control anti-spam narrativo
-    clearTimeout(window.auto);
-    window.auto = setTimeout(() => {
-        nextStory("TDB");
-    }, Math.max(6000, text.length * 60));
 }
 
-// ===============================
-// TEXT EXTRACTION (JSON SAFE)
-// ===============================
-function extractMissionText(mission) {
-
-    if (!mission.blocks) return "Sin contenido";
-
-    let out = "";
-
-    for (let b of mission.blocks) {
-
-        if (typeof b.text === "string") {
-            out += b.text + " ";
-        } else if (b.text?.es) {
-            out += b.text.es + " ";
-        } else if (b.text?.en) {
-            out += b.text.en + " ";
-        }
-    }
-
-    return out.trim();
+function toggleButtons(status) {
+    document.querySelectorAll("#options button").forEach(b => b.disabled = status);
 }
 
-// ===============================
-// UI
-// ===============================
-function show(t) {
-    document.getElementById("message").innerText = t;
-}
-
-function updateUI() {
-    document.getElementById("mental").innerText = state.mental ?? 100;
-    document.getElementById("social").innerText = state.social ?? 50;
-    document.getElementById("karma").innerText = state.karma ?? 0;
-    document.getElementById("disc").innerText = state.discipline ?? 50;
-}
-
-// ===============================
-// VOICE
-// ===============================
 function speak(text) {
     if (!window.speechSynthesis) return;
-
     speechSynthesis.cancel();
-
     const u = new SpeechSynthesisUtterance(text);
     u.lang = "es-ES";
-    u.rate = 0.95;
-
+    u.rate = 1.0;
     speechSynthesis.speak(u);
 }
 
-// ===============================
-// BUTTONS
-// ===============================
-function renderButtons() {
-
-    const c = document.getElementById("options");
-    c.innerHTML = "";
-
-    const list = [
-        ["TDB","Equilibrio"],
-        ["TDM","Impulso"],
-        ["TDN","Creatividad"],
-        ["TDP","Estructura"],
-        ["TDG","Control"],
-        ["TDK","Conexión"]
+function renderInterface() {
+    const container = document.getElementById("options");
+    const actions = [
+        ["TDB","EQUILIBRIO"], ["TDM","IMPULSO"], ["TDN","MENTE"],
+        ["TDP","ORDEN"], ["TDG","CONTROL"], ["TDK","UNIÓN"]
     ];
-
-    for (let [k,label] of list) {
-
-        const b = document.createElement("button");
-        b.innerText = label;
-
-        b.onclick = () => {
-            if (!locked) nextStory(k);
-        };
-
-        c.appendChild(b);
-    }
+    actions.forEach(([code, label]) => {
+        const btn = document.createElement("button");
+        btn.innerText = label;
+        btn.onclick = () => sendDecision(code);
+        container.appendChild(btn);
+    });
 }
 
+window.onload = () => {
+    renderInterface();
+    start();
+};
 </script>
-
 </body>
 </html>
