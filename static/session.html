@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KAMIZEN | LIFE ENGINE</title>
+<title>KAMIZEN | LIFE SIMULATOR</title>
 
 <style>
 body {
@@ -24,19 +24,6 @@ body {
     align-items:center;
 }
 
-/* STORY */
-#message {
-    width:80%;
-    max-width:800px;
-    padding:25px;
-    border:2px solid #00f2ff;
-    background:rgba(0,0,0,0.92);
-    text-align:center;
-    font-size:20px;
-    line-height:1.6;
-    min-height:120px;
-}
-
 /* STATS */
 #stats {
     display:grid;
@@ -51,6 +38,19 @@ body {
     border:1px solid #00f2ff;
     padding:10px;
     text-align:center;
+}
+
+/* MESSAGE */
+#message {
+    width:80%;
+    max-width:800px;
+    padding:25px;
+    border:2px solid #00f2ff;
+    background:rgba(0,0,0,0.92);
+    text-align:center;
+    font-size:18px;
+    line-height:1.6;
+    min-height:120px;
 }
 
 /* BUTTONS */
@@ -68,7 +68,6 @@ button {
     background:black;
     color:#00f2ff;
     cursor:pointer;
-    min-width:120px;
 }
 
 button:hover {
@@ -103,27 +102,40 @@ let session_id = localStorage.getItem("session_id");
 let state = JSON.parse(localStorage.getItem("state") || "{}");
 
 let locked = false;
-let lastNarrative = "";
+
+// CONTROL DE MISIONES (EVITA REPETICIÓN)
+let missions = [];
+let currentIndex = parseInt(localStorage.getItem("mission_index") || "0");
 
 // ===============================
 // INIT
 // ===============================
 window.onload = async function () {
 
-    show("Verificando sistema...");
+    show("Cargando sistema Kamizen...");
+
+    await loadMissions();
 
     if (!session_id) {
         await startSession();
     } else {
-        show("Reconectando sistema...");
-        await next("TDM");
+        await nextStory("TDB");
     }
 
     renderButtons();
 };
 
 // ===============================
-// START
+// LOAD JSON STORY
+// ===============================
+async function loadMissions() {
+    const res = await fetch("/static/kamizen_content.json");
+    const data = await res.json();
+    missions = data.missions || [];
+}
+
+// ===============================
+// START SESSION
 // ===============================
 async function startSession() {
 
@@ -143,15 +155,16 @@ async function startSession() {
     localStorage.setItem("session_id", session_id);
     localStorage.setItem("state", JSON.stringify(state));
 
-    show(data.narrative);
-    speak(data.narrative);
-    updateUI();
+    currentIndex = 0;
+    localStorage.setItem("mission_index", "0");
+
+    await playMission();
 }
 
 // ===============================
-// NEXT STEP (ONLY BACKEND CONTROL)
+// MAIN FLOW CONTROL
 // ===============================
-async function next(decision) {
+async function nextStory(decision) {
 
     if (locked) return;
     locked = true;
@@ -164,55 +177,81 @@ async function next(decision) {
             body: JSON.stringify({
                 session_id,
                 decision,
-                context: "flow"
+                context: "neutral"
             })
         });
 
         const data = await res.json();
 
-        if (data.error) {
-            show("ERROR DE SESIÓN - REINICIANDO");
-            localStorage.removeItem("session_id");
-            session_id = null;
-            await startSession();
-            locked = false;
-            return;
-        }
-
         state = data.state;
         localStorage.setItem("state", JSON.stringify(state));
+
         updateUI();
 
-        // =========================
-        // 🔴 END FIX (NO FAKE END)
-        // =========================
-        if (data.status === "end") {
-            const endMsg = "FIN DEL CICLO HUMANO. TU IDENTIDAD HA SIDO REGISTRADA.";
-            show(endMsg);
-            speak(endMsg);
-            locked = false;
-            return;
-        }
-
-        const narrative = data.narrative || "Procesando decisión...";
-        lastNarrative = narrative;
-
-        show(narrative);
-        speak(narrative);
-
-        const delay = Math.max(6000, narrative.length * 60);
-
-        clearTimeout(window.auto);
-        window.auto = setTimeout(() => {
-            next("TDM");
-        }, delay);
+        await playMission();
 
     } catch (e) {
         console.error(e);
         show("ERROR DE CONEXIÓN");
     }
 
-    setTimeout(() => locked = false, 800);
+    locked = false;
+}
+
+// ===============================
+// PLAY MISSION SEQUENCE
+// ===============================
+async function playMission() {
+
+    if (missions.length === 0) return;
+
+    // 🔥 FIN DEL CICLO -> SOLO CUANDO TERMINA TODO
+    if (currentIndex >= missions.length) {
+        show("FIN DEL CICLO HUMANO. REINICIANDO EXPERIENCIA...");
+        currentIndex = 0;
+        localStorage.setItem("mission_index", "0");
+        return;
+    }
+
+    const mission = missions[currentIndex];
+
+    const text = extractMissionText(mission);
+
+    show(text);
+    speak(text);
+    updateUI();
+
+    currentIndex++;
+    localStorage.setItem("mission_index", currentIndex);
+
+    // 🔥 control anti-spam narrativo
+    clearTimeout(window.auto);
+    window.auto = setTimeout(() => {
+        nextStory("TDB");
+    }, Math.max(6000, text.length * 60));
+}
+
+// ===============================
+// TEXT EXTRACTION (JSON SAFE)
+// ===============================
+function extractMissionText(mission) {
+
+    if (!mission.blocks) return "Sin contenido";
+
+    let out = "";
+
+    for (let b of mission.blocks) {
+
+        if (typeof b.text === "string") {
+            out += b.text + " ";
+        } else if (b.text?.es) {
+            out += b.text.es + " ";
+        } else if (b.text?.en) {
+            out += b.text.en + " ";
+        }
+    }
+
+    return out.trim();
 }
 
 // ===============================
@@ -230,10 +269,9 @@ function updateUI() {
 }
 
 // ===============================
-// VOICE (ANTI CUT PERFECT SYNC)
+// VOICE
 // ===============================
 function speak(text) {
-
     if (!window.speechSynthesis) return;
 
     speechSynthesis.cancel();
@@ -241,7 +279,6 @@ function speak(text) {
     const u = new SpeechSynthesisUtterance(text);
     u.lang = "es-ES";
     u.rate = 0.95;
-    u.pitch = 1;
 
     speechSynthesis.speak(u);
 }
@@ -264,9 +301,14 @@ function renderButtons() {
     ];
 
     for (let [k,label] of list) {
+
         const b = document.createElement("button");
         b.innerText = label;
-        b.onclick = () => next(k);
+
+        b.onclick = () => {
+            if (!locked) nextStory(k);
+        };
+
         c.appendChild(b);
     }
 }
