@@ -772,114 +772,116 @@
         }
       ]
     },
-    {
-      "id": 20,
-      "level": 7,
-      "category": "MENTAL FORTRESS: RIDDLES OF POWER",
-      "blocks": [
-        {
-          "type": "quiz",
-          "question": {
-            "en": "What is the ultimate secret to long-term wealth?",
-            "es": "¿Cuál es el secreto definitivo de la riqueza a largo plazo?"
+  {
+    "id": 20,
+    "level": 7,
+    "category": "MENTAL FORTRESS: RIDDLES OF POWER",
+    "blocks": [
+      {
+        "type": "quiz",
+        "question": {
+          "en": "What is the ultimate secret to long-term wealth?",
+          "es": "¿Cuál es el secreto definitivo de la riqueza a largo plazo?"
+        },
+        "options": [
+          {
+            "code": "TDM",
+            "text": { "en": "Working 20 hours a day without rest.", "es": "Trabajar 20 horas al día sin descanso." },
+            "correct": false,
+            "feedback": { "en": "False. Hard work is the engine, but without a map, you just burn fuel.", "es": "Falso. El trabajo duro es el motor, pero sin un mapa, solo quemas combustible." }
           },
-          "options": [
-            {
-              "code": "TDM",
-              "text": { "en": "Working 20 hours a day without rest.", "es": "Trabajar 20 horas al día sin descanso." },
-              "correct": false,
-              "feedback": { "en": "False. Hard work is the engine, but without a map, you just burn fuel.", "es": "Falso. El trabajo duro es el motor, pero sin un mapa, solo quemas combustible." }
-            },
-            {
-              "code": "TDP",
-              "text": { "en": "Delayed gratification: Trading today's 'want' for tomorrow's 'freedom'.", "es": "Gratificación diferida: Cambiar el 'deseo' de hoy por la 'libertad' de mañana." },
-              "correct": true,
-              "feedback": { "en": "True. He who can wait for his reward owns the world. Compounding interest applies to habits too.", "es": "Verdadero. Quien puede esperar por su recompensa es dueño del mundo. El interés compuesto también se aplica a los hábitos." }
-            },
-            {
-              "code": "TDM",
-              "text": { "en": "Winning the lottery or a big inheritance.", "es": "Ganar la lotería o una gran herencia." },
-              "correct": false,
-              "feedback": { "en": "False. Wealth without character to manage it disappears in 3 years.", "es": "Falso. La riqueza sin carácter para manejarla desaparece en 3 años." }
-            }
-          ]
-        },
-        {
-          "type": "riddle",
-          "text": {
-            "en": "I am not alive, but I grow. I don't have lungs, but I need air. I have no mouth, but water kills me. What am I?",
-            "es": "No estoy vivo, pero crezco. No tengo pulmones, pero necesito aire. No tengo boca, pero el agua me mata. ¿Qué soy?"
+          {
+            "code": "TDP",
+            "text": { "en": "Delayed gratification: Trading today's 'want' for tomorrow's 'freedom'.", "es": "Gratificación diferida: Cambiar el 'deseo' de hoy por la 'libertad' de mañana." },
+            "correct": true,
+            "feedback": { "en": "True. He who can wait for his reward owns the world. Compounding interest applies to habits too.", "es": "Verdadero. Quien puede esperar por su recompensa es dueño del mundo. El interés compuesto también se aplica a los hábitos." }
           },
-          "answer": { "en": "Fire", "es": "El Fuego" },
-          "insight": {
-            "en": "Your ambition is a fire. Feed it with discipline (air), but don't let the 'water' of comfort extinguish it.",
-            "es": "Tu ambición es un fuego. Aliméntalo con disciplina (aire), pero no dejes que el 'agua' de la comodidad lo extinga."
+          {
+            "code": "TDM",
+            "text": { "en": "Winning the lottery or a big inheritance.", "es": "Ganar la lotería o una gran herencia." },
+            "correct": false,
+            "feedback": { "en": "False. Wealth without character to manage it disappears in 3 years.", "es": "Falso. La riqueza sin carácter para manejarla desaparece en 3 años." }
           }
-      ]
-    },
-    {
-      "id": 21,
-      "level": 7,
-      "category": "THE ASCENSION: FINAL SILENCE",
-      "blocks": [
-        {
-          "type": "laughter_therapy",
-          "text": {
-            "en": "Stand up. Laugh at the version of you that started this journey. You are no longer that person. (1 Minute)",
-            "es": "Ponte de pie. Ríete de la versión de ti que empezó este viaje. Ya no eres esa persona. (1 Minuto)"
-          }
-        },
-        {
-          "type": "silence_challenge",
-          "duration_sec": 300,
-          "quotes": [
-            { "en": "The final battle is always against yourself. If you win here, you win everywhere.", "es": "La batalla final es siempre contra ti mismo. Si ganas aquí, ganas en todas partes." },
-            { "en": "Silence is the language of God, all else is poor translation.", "es": "El silencio es el lenguaje de Dios, todo lo demás es una pobre traducción." }
-          ]
-        },
-        {
-          "type": "story",
-          "text": {
-            "en": "You have reached the peak. Aura asks you: 'Now that you have the power, will you use it to build a throne for yourself, or a school for others?'",
-            "es": "Has llegado a la cima. Aura te pregunta: 'Ahora que tienes el poder, ¿lo usarás para construir un trono para ti, o una escuela para otros?'"
-          }
-        },
-        {
-          "type": "tvid",
-          "mode": "power",
-          "options": [
-            {
-              "code": "TDK",
-              "text": { "en": "I will build for others (Connection).", "es": "Construiré para otros (Conexión)." }
-            },
-            {
-              "code": "TDG",
-              "text": { "en": "I will build my own empire first (Control).", "es": "Construiré mi propio imperio primero (Control)." }
-             }
         ]
-    },
-    {
-      "id": 22,
-      "level": 7,
-      "category": "THE ARCHITECT'S SEAL",
-      "blocks": [
-        {
-          "type": "breathing",
-          "duration_sec": 180,
-          "mode": "victory",
-          "text": {
-            "en": "Final Breath. You are now AL CIELO. Take this peace into the real world. (3 Minutes)",
-            "es": "Respiración Final. Ahora estás AL CIELO. Lleva esta paz al mundo real. (3 Minutos)"
-          }
+      },
+      {
+        "type": "riddle",
+        "text": {
+          "en": "I am not alive, but I grow. I don't have lungs, but I need air. I have no mouth, but water kills me. What am I?",
+          "es": "No estoy vivo, pero crezco. No tengo pulmones, pero necesito aire. No tengo boca, pero el agua me mata. ¿Qué soy?"
         },
-        {
-          "type": "win",
-          "text": {
-            "en": "CONGRATULATIONS. You have completed the 21 levels of AURA BY MAY ROGA. Your certificate of character is ready in your mind. Go and lead.",
-            "es": "FELICIDADES. Has completado los 21 niveles de AURA BY MAY ROGA. Tu certificado de carácter está listo en tu mente. Ve y lidera."
-          }
+        "answer": { "en": "Fire", "es": "El Fuego" },
+        "insight": {
+          "en": "Your ambition is a fire. Feed it with discipline (air), but don't let the 'water' of comfort extinguish it.",
+          "es": "Tu ambición es un fuego. Aliméntalo con disciplina (aire), pero no dejes que el 'agua' de la comodidad lo extinga."
         }
-      ]
-    }
-  ]
-}
+      }
+    ]
+  },
+  {
+    "id": 21,
+    "level": 7,
+    "category": "THE ASCENSION: FINAL SILENCE",
+    "blocks": [
+      {
+        "type": "laughter_therapy",
+        "text": {
+          "en": "Stand up. Laugh at the version of you that started this journey. You are no longer that person. (1 Minute)",
+          "es": "Ponte de pie. Ríete de la versión de ti que empezó este viaje. Ya no eres esa persona. (1 Minuto)"
+        }
+      },
+      {
+        "type": "silence_challenge",
+        "duration_sec": 300,
+        "quotes": [
+          { "en": "The final battle is always against yourself. If you win here, you win everywhere.", "es": "La batalla final es siempre contra ti mismo. Si ganas aquí, ganas en todas partes." },
+          { "en": "Silence is the language of God, all else is poor translation.", "es": "El silencio es el lenguaje de Dios, todo lo demás es una pobre traducción." }
+        ]
+      },
+      {
+        "type": "story",
+        "text": {
+          "en": "You have reached the peak. Aura asks you: 'Now that you have the power, will you use it to build a throne for yourself, or a school for others?'",
+          "es": "Has llegado a la cima. Aura te pregunta: 'Ahora que tienes el poder, ¿lo usarás para construir un trono para ti, o una escuela para otros?'"
+        }
+      },
+      {
+        "type": "tvid",
+        "mode": "power",
+        "options": [
+          {
+            "code": "TDK",
+            "text": { "en": "I will build for others (Connection).", "es": "Construiré para otros (Conexión)." }
+          },
+          {
+            "code": "TDG",
+            "text": { "en": "I will build my own empire first (Control).", "es": "Construiré mi propio imperio primero (Control)." }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 22,
+    "level": 7,
+    "category": "THE ARCHITECT'S SEAL",
+    "blocks": [
+      {
+        "type": "breathing",
+        "duration_sec": 180,
+        "mode": "victory",
+        "text": {
+          "en": "Final Breath. You are now AL CIELO. Take this peace into the real world. (3 Minutes)",
+          "es": "Respiración Final. Ahora estás AL CIELO. Lleva esta paz al mundo real. (3 Minutos)"
+        }
+      },
+      {
+        "type": "win",
+        "text": {
+          "en": "CONGRATULATIONS. You have completed the 21 levels of AURA BY MAY ROGA. Your certificate of character is ready in your mind. Go and lead.",
+          "es": "FELICIDADES. Has completado los 21 niveles de AURA BY MAY ROGA. Tu certificado de carácter está listo en tu mente. Ve y lidera."
+        }
+      }
+    ]
+  }
+]
