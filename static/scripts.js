@@ -1,5 +1,5 @@
 // ===============================
-// KAMIZEN LIFE ENGINE - CINEMATIC CORE v3.1
+// KAMIZEN LIFE ENGINE - CINEMATIC CORE v3.1 (FIXED)
 // ===============================
 
 window.currentEvent = null;
@@ -11,7 +11,9 @@ let sessionActive = false;
 // START SYSTEM
 // ===============================
 async function startLifeFlow() {
+
     try {
+
         const profile = JSON.parse(localStorage.getItem("profile")) || {
             age: 18,
             difficulty: 1,
@@ -26,18 +28,24 @@ async function startLifeFlow() {
 
         const data = await res.json();
 
-        localStorage.setItem("session_id", data.session_id);
-        localStorage.setItem("state", JSON.stringify(data.state));
+        if (!data.session_id) {
+            console.error("No session_id received");
+            return;
+        }
 
-        window.currentEvent = data.next_event;
+        localStorage.setItem("session_id", data.session_id);
+        localStorage.setItem("state", JSON.stringify(data.state || {}));
+
+        window.currentEvent = data.next_event || "start";
         sessionActive = true;
 
-        showMessage(data.narrative);
+        showMessage(data.narrative || "Sistema iniciado");
 
-        processEvent(data.next_event);
+        processEvent(window.currentEvent);
 
     } catch (e) {
         console.error("START ERROR:", e);
+        showMessage("Error al iniciar sistema");
     }
 }
 
@@ -53,21 +61,32 @@ function processEvent(event) {
     let msg = "";
 
     // ===============================
-    // EVENTOS DEL NUEVO KAMIZEN CONTENT
+    // EVENTOS PRINCIPALES TVID
     // ===============================
-
     switch (event) {
 
         case "tentacion":
-            msg = "Alguien te pide algo que parece pequeño… pero no lo es.";
+            msg = "Alguien te pide algo que parece pequeño… pero puede cambiar tu equilibrio.";
             break;
 
         case "crisis":
-            msg = "Un momento de presión aparece en tu entorno.";
+            msg = "El entorno se vuelve tenso. Sientes presión inmediata.";
             break;
 
         case "conflicto":
-            msg = "Una situación social exige una reacción inmediata.";
+            msg = "Una decisión social exige reacción inmediata.";
+            break;
+
+        case "dinero":
+            msg = "Una oportunidad financiera aparece frente a ti.";
+            break;
+
+        case "amor":
+            msg = "Una conexión emocional se activa en tu entorno.";
+            break;
+
+        case "oportunidad":
+            msg = "El sistema detecta una posibilidad de avance.";
             break;
 
         default:
@@ -75,30 +94,46 @@ function processEvent(event) {
     }
 
     // ===============================
-    // FILTRO PSICOLÓGICO
+    // FILTRO PSICOLÓGICO (FASE 6 BACKEND)
     // ===============================
-    if (state.psychology?.stress_memory > 70) {
-        msg = "Tu mente está saturada. Este no es el evento… eres tú reaccionando.";
+    const psy = state.psychology || {};
+    const identity = state.identity || {};
+
+    if (psy.stress_memory > 70 || psy.stress > 70) {
+        msg = "Tu mente está saturada. No es el evento… eres tu reacción acumulada.";
     }
 
-    if (state.identity?.core_state === "fragmentado") {
-        msg = "Tu identidad no es una sola. Estás actuando por partes.";
+    if (psy.trauma_index > 60) {
+        msg = "Experiencias pasadas están influyendo en tu decisión actual.";
+    }
+
+    if (identity.core_state === "fragmentado") {
+        msg = "Tu identidad se está dividiendo en múltiples respuestas automáticas.";
+    }
+
+    if (identity.core_state === "colapsando" || identity.core === "survival") {
+        msg = "Estás en modo supervivencia emocional.";
     }
 
     showMessage(msg);
     renderButtons();
 
+    // ===============================
+    // AUTO DECISION (IA SIMULADA)
+    // ===============================
     clearTimeout(window.autoDecision);
 
     window.autoDecision = setTimeout(() => {
-        if (!paused && !isGameOver) {
+
+        if (!paused && !isGameOver && sessionActive) {
             sendDecision("TDM");
         }
+
     }, 8000);
 }
 
 // ===============================
-// DECISION ENGINE
+// DECISION ENGINE (BACKEND REAL)
 // ===============================
 async function sendDecision(decision) {
 
@@ -106,44 +141,60 @@ async function sendDecision(decision) {
 
     const session_id = localStorage.getItem("session_id");
 
-    const res = await fetch("/judge", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            session_id,
-            decision,
-            context: window.currentEvent || "neutral"
-        })
-    });
-
-    const data = await res.json();
-
-    if (data.state) {
-        localStorage.setItem("state", JSON.stringify(data.state));
-    }
-
-    if (data.status === "end") {
-        isGameOver = true;
-        showMessage("SISTEMA TERMINADO: CICLO CERRADO");
+    if (!session_id) {
+        showMessage("Error: sesión no encontrada");
         return;
     }
 
-    if (data.narrative) {
-        showMessage(data.narrative);
-    }
+    try {
 
-    window.currentEvent = data.next_event;
-    processEvent(data.next_event);
+        const res = await fetch("/judge", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                session_id,
+                decision,
+                context: window.currentEvent || "neutral"
+            })
+        });
+
+        const data = await res.json();
+
+        if (data.state) {
+            localStorage.setItem("state", JSON.stringify(data.state));
+        }
+
+        if (data.status === "end") {
+            isGameOver = true;
+            showMessage("🔴 SISTEMA TERMINADO: CICLO HUMANO CERRADO");
+            return;
+        }
+
+        if (data.narrative) {
+            showMessage(data.narrative);
+        }
+
+        window.currentEvent = data.next_event || "neutral";
+
+        processEvent(window.currentEvent);
+
+    } catch (err) {
+        console.error("DECISION ERROR:", err);
+        showMessage("Error de conexión con el sistema");
+    }
 }
 
 // ===============================
-// UI
+// UI SYSTEM
 // ===============================
 function showMessage(text) {
     const el = document.getElementById("text-content");
     if (el) el.innerText = text;
 }
 
+// ===============================
+// BUTTON RENDER (TVID SYSTEM)
+// ===============================
 function renderButtons() {
 
     const container = document.getElementById("options");
@@ -151,7 +202,7 @@ function renderButtons() {
 
     container.innerHTML = "";
 
-    // TVID SYSTEM COHERENTE CON TU JSON
+    // TVID CORE SYSTEM
     const decisions = ["TDB", "TDM", "TDN", "TDP", "TDG", "TDK"];
 
     decisions.forEach(d => {
@@ -161,6 +212,7 @@ function renderButtons() {
         container.appendChild(btn);
     });
 
+    // CONTROL BUTTONS
     const pauseBtn = document.createElement("button");
     pauseBtn.innerText = "PAUSA";
     pauseBtn.onclick = () => paused = true;
@@ -173,5 +225,7 @@ function renderButtons() {
     container.appendChild(resumeBtn);
 }
 
+// ===============================
+// INIT
 // ===============================
 window.onload = () => startLifeFlow();
