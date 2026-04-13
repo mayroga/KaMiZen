@@ -1,7 +1,6 @@
 # ===============================
-# KAMIZEN LIFE ENGINE - FULL CORE v3.3
-# PERSISTENT PSYCHOLOGICAL SIMULATOR
-# FASTAPI + SQLITE + NARRATIVE ENGINE
+# KAMIZEN LIFE ENGINE - CORE v4.0
+# CINEMATIC + PSYCHOLOGICAL SYSTEM
 # ===============================
 
 from fastapi import FastAPI, Request
@@ -12,18 +11,19 @@ import uuid
 import time
 import os
 import json
+import random
 
 app = FastAPI()
 
 # ===============================
-# STATIC FILES
+# STATIC
 # ===============================
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 DB_PATH = "kamizen.db"
 
 # ===============================
-# INIT DATABASE
+# INIT DB
 # ===============================
 def init_db():
     conn = sqlite3.connect(DB_PATH)
@@ -53,7 +53,7 @@ def init_db():
 init_db()
 
 # ===============================
-# STATE CREATION ENGINE
+# STATE CREATION
 # ===============================
 def create_state(profile):
 
@@ -75,8 +75,7 @@ def create_state(profile):
 
         "identity": {
             "core": "neutral",
-            "archetype": profile.get("emotion", "neutral"),
-            "narrative": []
+            "archetype": profile.get("emotion", "neutral")
         },
 
         "patterns": {
@@ -92,7 +91,7 @@ def create_state(profile):
     }
 
 # ===============================
-# DATABASE HELPERS
+# DB HELPERS
 # ===============================
 def save_user(session_id, state):
     conn = sqlite3.connect(DB_PATH)
@@ -113,7 +112,6 @@ def load_user(session_id):
 
     c.execute("SELECT state FROM users WHERE session_id=?", (session_id,))
     row = c.fetchone()
-
     conn.close()
 
     if row:
@@ -134,59 +132,88 @@ def save_history(session_id, decision, context):
     conn.close()
 
 # ===============================
-# PSYCHOLOGY ENGINE (TVID CORE EVOLUTION)
+# PSYCHOLOGY ENGINE
 # ===============================
 def update_psychology(state, decision):
 
     psy = state["psychology"]
 
-    # ===============================
-    # DECISION IMPACTS
-    # ===============================
     if decision == "TDM":
         psy["stress"] += 6
         psy["control"] -= 4
         state["patterns"]["impulsivity"] += 2
 
-    if decision in ["TDB", "TDP"]:
-        psy["resilience"] += 3
-        psy["control"] += 2
+    elif decision in ["TDB", "TDP"]:
+        psy["resilience"] += 4
+        psy["control"] += 3
         state["patterns"]["consistency"] += 2
 
-    if decision == "TDN":
-        psy["trauma"] += 3
+    elif decision == "TDN":
+        psy["trauma"] += 4
         state["patterns"]["avoidance"] += 2
 
-    if decision == "TDG":
-        psy["control"] += 3
+    elif decision == "TDG":
+        psy["control"] += 4
         psy["stress"] += 2
 
-    if decision == "TDK":
-        psy["resilience"] += 2
+    elif decision == "TDK":
+        psy["resilience"] += 3
 
-    # ===============================
-    # CLAMP VALUES
-    # ===============================
+    # LIMITS
     for k in psy:
         psy[k] = max(0, min(100, psy[k]))
 
     for k in state["patterns"]:
         state["patterns"][k] = max(0, min(100, state["patterns"][k]))
 
-    # ===============================
-    # IDENTITY EVOLUTION SYSTEM
-    # ===============================
+    # IDENTITY
     if psy["stress"] > 75:
         state["identity"]["core"] = "survival"
-
     elif psy["trauma"] > 65:
         state["identity"]["core"] = "fragmented"
-
     elif psy["resilience"] > 75:
         state["identity"]["core"] = "stable"
-
     else:
         state["identity"]["core"] = "neutral"
+
+# ===============================
+# 🎬 NARRATIVE ENGINE (REAL)
+# ===============================
+def generate_narrative(state, decision):
+
+    core = state["identity"]["core"]
+    mental = state["mental"]
+
+    if core == "survival":
+        return "Sientes presión constante. No decides… reaccionas."
+
+    if core == "fragmented":
+        return "Una parte de ti quiere avanzar… otra te detiene."
+
+    if core == "stable":
+        return "Empiezas a sentir control real sobre tu vida."
+
+    if mental < 30:
+        return "Tu energía mental está baja. Todo pesa más de lo normal."
+
+    if decision == "TDM":
+        return "Actuaste por impulso. Algo dentro de ti lo sabe."
+
+    if decision == "TDB":
+        return "Elegiste equilibrio. No es fácil, pero es correcto."
+
+    if decision == "TDG":
+        return "Tomaste control. Ahora debes sostenerlo."
+
+    return "Cada decisión cambia tu dirección, aunque no lo notes aún."
+
+# ===============================
+# EVENT ENGINE
+# ===============================
+def next_event():
+
+    events = ["tentacion", "crisis", "dinero", "amor", "scene"]
+    return random.choice(events)
 
 # ===============================
 # ROUTES
@@ -195,12 +222,8 @@ def update_psychology(state, decision):
 def home():
     return FileResponse("static/session.html")
 
-@app.get("/simulador")
-def sim():
-    return FileResponse("static/jet.html")
-
 # ===============================
-# START SESSION
+# START
 # ===============================
 @app.post("/start")
 async def start(req: Request):
@@ -216,40 +239,12 @@ async def start(req: Request):
     return {
         "session_id": session_id,
         "state": state,
-        "narrative": "KAMIZEN system initialized. Life simulation active.",
+        "narrative": "Tu vida comienza ahora. Nada cambia… hasta que decides.",
         "next_event": "start"
     }
 
 # ===============================
-# RANKINGS SYSTEM
-# ===============================
-@app.get("/rankings")
-def rankings():
-
-    conn = sqlite3.connect(DB_PATH)
-    c = conn.cursor()
-
-    c.execute("SELECT state FROM users")
-    rows = c.fetchall()
-
-    conn.close()
-
-    users = []
-
-    for r in rows:
-        try:
-            users.append(json.loads(r[0]))
-        except:
-            pass
-
-    return {
-        "top_karma": sorted(users, key=lambda x: x.get("karma",0), reverse=True)[:10],
-        "top_discipline": sorted(users, key=lambda x: x.get("discipline",0), reverse=True)[:10],
-        "top_mental": sorted(users, key=lambda x: x.get("mental",0), reverse=True)[:10]
-    }
-
-# ===============================
-# JUDGE ENGINE (CORE SIMULATION)
+# JUDGE
 # ===============================
 @app.post("/judge")
 async def judge(req: Request):
@@ -265,9 +260,7 @@ async def judge(req: Request):
     if not state:
         return JSONResponse({"error": "session not found"}, status_code=404)
 
-    # ===============================
-    # GLOBAL EFFECTS
-    # ===============================
+    # EFFECTS
     effects = {
         "TDB": {"mental": 8, "discipline": 5, "karma": 2},
         "TDP": {"money": 40, "discipline": 6, "karma": 3},
@@ -277,59 +270,30 @@ async def judge(req: Request):
         "TDK": {"social": 8, "karma": 2}
     }
 
-    e = effects.get(decision, {})
-
-    for k, v in e.items():
+    for k, v in effects.get(decision, {}).items():
         state[k] = state.get(k, 0) + v
 
-    # ===============================
-    # CLAMP CORE VALUES
-    # ===============================
-    state["mental"] = max(0, min(100, state.get("mental", 100)))
-    state["social"] = max(0, min(100, state.get("social", 50)))
-    state["discipline"] = max(0, min(100, state.get("discipline", 50)))
-    state["karma"] = state.get("karma", 0)
+    # CLAMP
+    state["mental"] = max(0, min(100, state["mental"]))
+    state["social"] = max(0, min(100, state["social"]))
+    state["discipline"] = max(0, min(100, state["discipline"]))
 
-    # ===============================
-    # PSYCHOLOGY UPDATE
-    # ===============================
+    # UPDATE SYSTEMS
     update_psychology(state, decision)
-
-    # ===============================
-    # HISTORY LOG
-    # ===============================
     save_history(session_id, decision, context)
-
-    # ===============================
-    # SAVE STATE
-    # ===============================
     save_user(session_id, state)
 
-    # ===============================
-    # NARRATIVE ENGINE
-    # ===============================
-    core = state["identity"]["core"]
+    # NARRATIVE
+    text = generate_narrative(state, decision)
 
-    if core == "survival":
-        text = "Your mind operates under constant pressure."
-    elif core == "fragmented":
-        text = "Your identity splits between impulse and control."
-    elif core == "stable":
-        text = "Your system shows increasing coherence and stability."
-    else:
-        text = "Your system evolves through each decision."
-
-    # ===============================
-    # RESPONSE
-    # ===============================
     return {
         "state": state,
         "narrative": text,
-        "next_event": "scene"
+        "next_event": next_event()
     }
 
 # ===============================
-# RUN SERVER
+# RUN
 # ===============================
 if __name__ == "__main__":
     import uvicorn
