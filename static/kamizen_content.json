@@ -745,8 +745,8 @@
         {
           "type": "story",
           "text": {
-            "en": "You accidentally broke your little sister's tablet—the one she saved for a year to buy. Your mother enters the room and blames her for being 'careless'. Your sister is crying silently.",
-            "es": "Rompiste por accidente la tablet de tu hermanita; la que ella ahorró por un año para comprar. Tu madre entra al cuarto y la culpa a ella por ser 'descuidada'. Tu hermana llora en silencio."
+          "en": "You accidentally broke your little sister's tablet—the one she saved for a year to buy. Your mother enters the room and blames her for being 'careless'. Your sister is crying silently.",
+          "es": "Rompiste por accidente la tablet de tu hermanita; la que ella ahorró por un año para comprar. Tu madre entra al cuarto y la culpa a ella por ser 'descuidada'. Tu hermana llora en silencio."
           }
         },
         {
@@ -772,12 +772,12 @@
         }
       ]
     },
-  {
-    "id": 20,
-    "level": 7,
-    "category": "MENTAL FORTRESS: RIDDLES OF POWER",
-    "blocks": [
-      {
+    {
+      "id": 20,
+      "level": 7,
+      "category": "MENTAL FORTRESS: RIDDLES OF POWER",
+      "blocks": [
+        {
         "type": "quiz",
         "question": {
           "en": "What is the ultimate secret to long-term wealth?",
