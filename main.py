@@ -1,44 +1,29 @@
-# ===============================
-# KAMIZEN LIFE ENGINE - JSON STORY CORE v5.0
-# BLOCK-DRIVEN SEQUENTIAL SYSTEM (NO REPEAT UNTIL END)
-# ===============================
-
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
-import json
-import os
 import uuid
 import time
+import os
+import json
 
 app = FastAPI()
 
 # ===============================
-# STATIC FILES
+# STATIC
 # ===============================
+if not os.path.exists("static"):
+    os.makedirs("static")
+
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-DB_PATH = "kamizen.db"
-CONTENT_PATH = "static/kamizen_content.json"
+# ===============================
+# LOAD KAMIZEN CONTENT
+# ===============================
+with open("static/kamizen_content.json", "r", encoding="utf-8") as f:
+    CONTENT = json.load(f)["missions"]
 
 # ===============================
-# LOAD JSON CONTENT
-# ===============================
-def load_content():
-    if not os.path.exists(CONTENT_PATH):
-        return {"sessions": []}
-
-    with open(CONTENT_PATH, "r", encoding="utf-8") as f:
-        try:
-            return json.load(f)
-        except:
-            return {"sessions": []}
-
-CONTENT = load_content()
-STORIES = CONTENT.get("sessions", [])
-
-# ===============================
-# SESSION MEMORY
+# SESSIONS
 # ===============================
 sessions = {}
 
@@ -46,7 +31,6 @@ sessions = {}
 # CREATE STATE
 # ===============================
 def create_state(profile):
-
     return {
         "mental": 100,
         "social": 50,
@@ -54,92 +38,69 @@ def create_state(profile):
         "karma": 0,
         "age": profile.get("age", 18),
 
-        "story_index": 0,
+        "mission_index": 0,
+        "block_index": 0,
 
-        "psychology": {
-            "stress": 0,
-            "trauma": 0,
-            "control": 50,
-            "resilience": 50
-        },
-
-        "identity": {
-            "core": "neutral"
-        }
+        "last_update": time.time(),
+        "history": []
     }
 
 # ===============================
-# FIND STORY BY INDEX (NO REPEAT SYSTEM)
+# TVID IMPACTS (SIMPLE)
 # ===============================
-def get_story_by_index(index):
-    if index >= len(STORIES):
-        return None
-    return STORIES[index]
-
-# ===============================
-# FLATTEN BLOCKS INTO TEXT (ORDERED)
-# ===============================
-def render_story(story, lang="es"):
-
-    if not story:
-        return None
-
-    text_output = []
-
-    for block in story.get("blocks", []):
-
-        content = block.get("text", "")
-
-        if isinstance(content, dict):
-            text_output.append(content.get(lang, ""))
-        else:
-            text_output.append(str(content))
-
-    return " ".join(text_output).strip()
+IMPACTS = {
+    "TDB": {"mental": 5, "discipline": 2, "karma": 1},
+    "TDP": {"social": 5, "discipline": 3, "karma": 1},
+    "TDM": {"mental": -6, "karma": -1},
+    "TDN": {"social": 4, "karma": 1},
+    "TDG": {"discipline": 4, "mental": 2, "karma": 0},
+    "TDK": {"social": 6, "mental": 1, "karma": 1}
+}
 
 # ===============================
-# PSYCHOLOGY ENGINE
+# APPLY IMPACTS
 # ===============================
-def update_psychology(state, decision):
+def apply(state, decision):
+    effect = IMPACTS.get(decision, IMPACTS["TDM"])
 
-    psy = state["psychology"]
-
-    if decision == "TDM":
-        psy["stress"] += 6
-        psy["control"] -= 4
-
-    elif decision in ["TDB", "TDP"]:
-        psy["resilience"] += 4
-        psy["control"] += 3
-
-    elif decision == "TDN":
-        psy["trauma"] += 3
-
-    elif decision == "TDG":
-        psy["control"] += 5
-        psy["stress"] += 2
-
-    elif decision == "TDK":
-        psy["resilience"] += 3
-
-    for k in psy:
-        psy[k] = max(0, min(100, psy[k]))
-
-    if psy["stress"] > 70:
-        state["identity"]["core"] = "survival"
-    elif psy["trauma"] > 60:
-        state["identity"]["core"] = "fragmented"
-    elif psy["resilience"] > 70:
-        state["identity"]["core"] = "stable"
-    else:
-        state["identity"]["core"] = "neutral"
+    for k, v in effect.items():
+        state[k] = max(0, min(100, state[k] + v))
 
 # ===============================
-# HOME
+# GET CURRENT BLOCK
 # ===============================
-@app.get("/")
-def home():
-    return FileResponse("static/session.html")
+def get_current_block(state):
+    missions = CONTENT
+
+    if state["mission_index"] >= len(missions):
+        state["mission_index"] = 0
+        state["block_index"] = 0
+
+    mission = missions[state["mission_index"]]
+    blocks = mission["blocks"]
+
+    if state["block_index"] >= len(blocks):
+        state["mission_index"] += 1
+        state["block_index"] = 0
+
+        if state["mission_index"] >= len(missions):
+            state["mission_index"] = 0
+
+        mission = missions[state["mission_index"]]
+        blocks = mission["blocks"]
+
+    return mission, blocks[state["block_index"]]
+
+# ===============================
+# FORMAT BLOCK TEXT
+# ===============================
+def extract_text(block):
+    text = block.get("text", "")
+
+    if isinstance(text, dict):
+        return text.get("es") or text.get("en")
+
+    return str(text)
 
 # ===============================
 # START SESSION
@@ -151,23 +112,24 @@ async def start(req: Request):
     profile = data.get("profile", {})
 
     session_id = str(uuid.uuid4())
-
     state = create_state(profile)
 
-    story = get_story_by_index(0)
-
     sessions[session_id] = state
+
+    mission, block = get_current_block(state)
 
     return {
         "session_id": session_id,
         "state": state,
-        "story": story,
-        "index": 0,
-        "end": False
+        "story": {
+            "mission_id": mission["id"],
+            "category": mission["category"],
+            "blocks": [block]
+        }
     }
 
 # ===============================
-# JUDGE ENGINE (NO REPEAT FLOW)
+# JUDGE (CORE ENGINE)
 # ===============================
 @app.post("/judge")
 async def judge(req: Request):
@@ -178,69 +140,59 @@ async def judge(req: Request):
     decision = data.get("decision", "TDM")
 
     if session_id not in sessions:
-        return JSONResponse({"error": "session expired"}, status_code=404)
+        return JSONResponse(status_code=404, content={"error": "session expired"})
 
     state = sessions[session_id]
 
-    index = state["story_index"]
+    # anti spam
+    now = time.time()
+    if now - state["last_update"] < 0.1:
+        return {"status": "cooldown", "state": state}
+
+    state["last_update"] = now
 
     # ===============================
-    # IMPACT SYSTEM
+    # APPLY IMPACTS
     # ===============================
-    effects = {
-        "TDB": {"mental": 8, "discipline": 5, "karma": 2},
-        "TDP": {"discipline": 6, "karma": 3},
-        "TDM": {"mental": -10, "karma": -2},
-        "TDN": {"social": 6, "karma": 1},
-        "TDG": {"mental": 5, "discipline": 4},
-        "TDK": {"social": 8, "karma": 2}
+    apply(state, decision)
+
+    # ===============================
+    # SAVE HISTORY
+    # ===============================
+    state["history"].append(decision)
+
+    # ===============================
+    # MOVE STORY FORWARD
+    # ===============================
+    state["block_index"] += 1
+
+    mission, block = get_current_block(state)
+
+    # ===============================
+    # FORMAT STORY OUTPUT
+    # ===============================
+    story = {
+        "mission_id": mission["id"],
+        "level": mission["level"],
+        "category": mission["category"],
+        "blocks": [block]
     }
 
-    for k, v in effects.get(decision, {}).items():
-        state[k] = max(0, min(100, state.get(k, 0) + v))
-
-    # ===============================
-    # PSYCHOLOGY UPDATE
-    # ===============================
-    update_psychology(state, decision)
-
-    # ===============================
-    # ADVANCE STORY (NO REPEAT)
-    # ===============================
-    next_index = index + 1
-    next_story = get_story_by_index(next_index)
-
-    # RESET ONLY WHEN FINISHED ALL
-    if not next_story:
-        state["story_index"] = 0  # reset loop only at end
-
-        return {
-            "state": state,
-            "story": None,
-            "end": True,
-            "message": "FIN DEL CICLO HUMANO. TODOS LOS EVENTOS COMPLETADOS."
-        }
-
-    # update index
-    state["story_index"] = next_index
-    sessions[session_id] = state
-
-    # render full text from blocks
-    full_story = render_story(next_story, lang="es")
-
     return {
+        "status": "continue",
         "state": state,
-        "story": {
-            "id": next_story.get("id"),
-            "level": next_story.get("level"),
-            "category": next_story.get("category"),
-            "text": full_story
-        },
-        "end": False
+        "story": story
     }
 
 # ===============================
-# RUN SERVER
+# HOME
+# ===============================
+@app.get("/")
+def home():
+    return FileResponse("static/session.html")
+
+# ===============================
+# RUN
 # ===============================
 if __name__ == "__main__":
     import uvicorn
