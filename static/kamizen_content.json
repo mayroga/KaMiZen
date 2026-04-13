@@ -1,7 +1,7 @@
 {
   "meta": {
     "system": "MAYKAMI - KAMIZEN LIFE ENGINE",
-    "version": "3.0",
+    "version": "3.1",
     "description": "Sistema de misiones basado en TVid, respiración consciente, decisiones y evolución de comportamiento humano.",
     "core_principle": "Pensamiento → Emoción → Acción → Hábitos → Carácter → Destino"
   },
@@ -9,11 +9,11 @@
   "global_philosophy": {
     "voice": {
       "es": "Cuida tus pensamientos, porque se convertirán en tus palabras. Cuida tus palabras, porque se convertirán en tus acciones. Cuida tus acciones, porque se convertirán en tus hábitos. Cuida tus hábitos, porque se convertirán en tu carácter. Y tu carácter será quien determine tu destino.",
-      "en": "Watch your thoughts, they become your words. Watch your words, they become your actions. Watch your actions, they become your habits. Watch your habits, they become your character. Your character becomes your destiny."
+      "en": "Watch your thoughts, they become your words. Watch your words, they become your actions. Watch your actions, they become your habits. Your character becomes your destiny."
     },
     "biological_link": {
       "es": "El pensamiento repetido modifica tu sistema nervioso: estrés (cortisol) o bienestar (dopamina/serotonina).",
-      "en": "Repeated thoughts reshape your nervous system: stress (cortisol) or wellbeing (dopamine/serotonin)."
+      "en": "Repeated thoughts reshape your nervous system: stress or wellbeing chemistry."
     },
     "tvid_connection": {
       "TDB": "Construcción mental consciente",
@@ -28,118 +28,40 @@
   "missions": [
 
     {
-      "id": 1,
-      "level": 1,
-      "category": "Nacimiento y Conciencia Inicial",
-      "blocks": [
-        {
-          "type": "voice",
-          "text": {
-            "en": "You are born into a system you did not choose.",
-            "es": "Naces en un sistema que no elegiste."
-          }
-        },
-        {
-          "type": "strategy",
-          "text": {
-            "en": "Everything you experience begins shaping your identity immediately.",
-            "es": "Todo lo que experimentas comienza a moldear tu identidad desde el inicio."
-          }
-        },
-        {
-          "type": "breathing",
-          "duration": 6,
-          "text": {
-            "en": "Inhale control. Exhale reaction.",
-            "es": "Inhala control. Exhala reacción."
-          }
-        },
-        {
-          "type": "tvid",
-          "mode": "TDB",
-          "text": {
-            "en": "Observe without reacting. Awareness is your first power.",
-            "es": "Observa sin reaccionar. La conciencia es tu primer poder."
-          }
-        }
-      ]
-    },
-
-    {
-      "id": 2,
-      "level": 1,
-      "category": "Infancia y Formación",
-      "blocks": [
-        {
-          "type": "voice",
-          "text": {
-            "en": "A child learns by observing, not by listening.",
-            "es": "Un niño aprende observando, no escuchando."
-          }
-        },
-        {
-          "type": "strategy",
-          "text": {
-            "en": "Patterns formed early become automatic behaviors later.",
-            "es": "Los patrones tempranos se convierten en comportamientos automáticos."
-          }
-        },
-        {
-          "type": "breathing",
-          "duration": 5,
-          "text": {
-            "en": "Slow your breath. You slow your impulses.",
-            "es": "Reduce tu respiración. Reduces tus impulsos."
-          }
-        },
-        {
-          "type": "quiz",
-          "question": {
-            "en": "What shapes you most?",
-            "es": "¿Qué te forma más?"
-          },
-          "options": {
-            "en": ["Environment", "Choices", "Luck"],
-            "es": ["Entorno", "Decisiones", "Suerte"]
-          },
-          "correct": 1
-        }
-      ]
-    },
-
-    {
       "id": 3,
-      "level": 2,
-      "category": "Amor y Relaciones",
+      "level": 1,
+      "category": "EL AMIGO QUE TE PIDE TODO",
       "blocks": [
         {
           "type": "voice",
           "text": {
-            "en": "Attachment creates vulnerability.",
-            "es": "El apego crea vulnerabilidad."
+            "es": "Estás en un recreo en Miami. Un amigo se acerca con peticiones constantes."
           }
         },
         {
           "type": "story",
           "text": {
-            "en": "Losing someone forces you to face yourself.",
-            "es": "Perder a alguien te obliga a enfrentarte a ti mismo."
+            "es": "Kevin presta dinero una vez. Luego otra. Luego otra. Hasta que un día no tiene nada para sí mismo."
           }
         },
         {
           "type": "breathing",
-          "duration": 6,
+          "duration": 4,
           "text": {
-            "en": "Breathe through pain. Do not escape it.",
-            "es": "Respira el dolor. No escapes de él."
+            "es": "Respira 4–2–6. Estás en el momento. Puedes decidir."
           }
         },
         {
           "type": "tvid",
-          "mode": "TDN",
+          "mode": "TDG",
           "text": {
-            "en": "Feel the emotion without losing control.",
-            "es": "Siente la emoción sin perder el control."
+            "es": "Poner límites no es perder amistad, es mantener identidad."
+          }
+        },
+        {
+          "type": "action",
+          "text": {
+            "es": "Hoy dices NO una vez sin explicación."
           }
         }
       ]
@@ -147,37 +69,32 @@
 
     {
       "id": 4,
-      "level": 2,
-      "category": "Dinero y Decisiones",
+      "level": 1,
+      "category": "EL NIÑO QUE PEGÓ Y QUEDÓ SOLO",
       "blocks": [
         {
           "type": "voice",
           "text": {
-            "en": "Money amplifies who you already are.",
-            "es": "El dinero amplifica lo que ya eres."
+            "es": "Un niño empuja a otro en la fila del lunch en Miami."
           }
         },
         {
-          "type": "strategy",
+          "type": "story",
           "text": {
-            "en": "Good decisions compound over time. Bad ones collapse systems.",
-            "es": "Las buenas decisiones se acumulan. Las malas colapsan sistemas."
-          }
-        },
-        {
-          "type": "breathing",
-          "duration": 5,
-          "text": {
-            "en": "Pause before action. Regain control.",
-            "es": "Pausa antes de actuar. Recupera el control."
+            "es": "Nadie responde con violencia, pero todos se alejan. El agresor queda solo."
           }
         },
         {
           "type": "tvid",
-          "mode": "TDP",
+          "mode": "TDM",
           "text": {
-            "en": "Act with structure, not impulse.",
-            "es": "Actúa con estructura, no con impulso."
+            "es": "La fuerza sin control genera aislamiento."
+          }
+        },
+        {
+          "type": "action",
+          "text": {
+            "es": "Hoy no interrumpes, no empujas, observas tu fuerza."
           }
         }
       ]
@@ -185,30 +102,32 @@
 
     {
       "id": 5,
-      "level": 3,
-      "category": "Salud y Cuerpo",
+      "level": 2,
+      "category": "EL DINERO QUE NO ENTENDISTE",
       "blocks": [
         {
           "type": "voice",
           "text": {
-            "en": "Your body reflects your mental discipline.",
-            "es": "Tu cuerpo refleja tu disciplina mental."
+            "es": "Un niño recibe dinero para toda la semana."
           }
         },
         {
-          "type": "breathing",
-          "duration": 7,
+          "type": "story",
           "text": {
-            "en": "Deep breathing resets your nervous system.",
-            "es": "La respiración profunda reinicia tu sistema nervioso."
+            "es": "Lo gasta rápido en placer inmediato. Luego no tiene nada."
           }
         },
         {
           "type": "tvid",
           "mode": "TDB",
           "text": {
-            "en": "Build stability through awareness.",
-            "es": "Construye estabilidad a través de la conciencia."
+            "es": "El dinero es decisión convertida en valor."
+          }
+        },
+        {
+          "type": "action",
+          "text": {
+            "es": "Hoy esperas 10 segundos antes de comprar algo."
           }
         }
       ]
@@ -216,30 +135,32 @@
 
     {
       "id": 6,
-      "level": 3,
-      "category": "Vicios y Control",
+      "level": 2,
+      "category": "EL CARRO QUE SE DETUVO",
       "blocks": [
         {
           "type": "voice",
           "text": {
-            "en": "Pleasure without control becomes dependency.",
-            "es": "El placer sin control se vuelve dependencia."
+            "es": "Una niña camina sola en Miami. Un carro se detiene."
           }
         },
         {
-          "type": "breathing",
-          "duration": 6,
+          "type": "story",
           "text": {
-            "en": "Observe the urge. Let it pass.",
-            "es": "Observa el impulso. Déjalo pasar."
+            "es": "No conoce al conductor. Decide correr. Se salva por su intuición."
           }
         },
         {
           "type": "tvid",
           "mode": "TDG",
           "text": {
-            "en": "Control impulse before it controls you.",
-            "es": "Controla el impulso antes de que te controle a ti."
+            "es": "No todo lo que se ofrece es seguro."
+          }
+        },
+        {
+          "type": "action",
+          "text": {
+            "es": "Practica decir NO con firmeza."
           }
         }
       ]
@@ -247,30 +168,32 @@
 
     {
       "id": 7,
-      "level": 4,
-      "category": "Conflicto y Reacción",
+      "level": 3,
+      "category": "LA MENTIRA PEQUEÑA",
       "blocks": [
         {
           "type": "voice",
           "text": {
-            "en": "Your reaction defines your intelligence.",
-            "es": "Tu reacción define tu inteligencia."
+            "es": "Un niño rompe algo y niega su responsabilidad."
           }
         },
         {
-          "type": "breathing",
-          "duration": 5,
+          "type": "story",
           "text": {
-            "en": "Pause before response.",
-            "es": "Pausa antes de responder."
+            "es": "La confianza familiar se rompe poco a poco."
           }
         },
         {
           "type": "tvid",
-          "mode": "TDM",
+          "mode": "TDB",
           "text": {
-            "en": "Transform reaction into awareness.",
-            "es": "Transforma la reacción en conciencia."
+            "es": "La verdad sostiene lo que la mentira destruye."
+          }
+        },
+        {
+          "type": "action",
+          "text": {
+            "es": "Hoy dices la verdad aunque incomode."
           }
         }
       ]
@@ -278,30 +201,32 @@
 
     {
       "id": 8,
-      "level": 5,
-      "category": "Destino y Construcción",
+      "level": 3,
+      "category": "EL NIÑO INVISIBLE EN EL SALÓN",
       "blocks": [
         {
           "type": "voice",
           "text": {
-            "en": "Your life is built from repeated decisions.",
-            "es": "Tu vida se construye con decisiones repetidas."
+            "es": "En clase nadie lo mira ni lo elige."
           }
         },
         {
-          "type": "breathing",
-          "duration": 6,
+          "type": "story",
           "text": {
-            "en": "Consistency creates identity.",
-            "es": "La consistencia crea identidad."
+            "es": "Un día habla, se equivoca, pero es visto por primera vez."
           }
         },
         {
           "type": "tvid",
-          "mode": "TDP",
+          "mode": "TDN",
           "text": {
-            "en": "Build your structure daily.",
-            "es": "Construye tu estructura cada día."
+            "es": "Si no te muestras, no existes."
+          }
+        },
+        {
+          "type": "action",
+          "text": {
+            "es": "Hoy hablas al menos una vez."
           }
         }
       ]
@@ -309,83 +234,73 @@
 
     {
       "id": 9,
-      "level": 6,
-      "category": "Final y Legado",
+      "level": 4,
+      "category": "EL ENOJO EN LA CASA",
       "blocks": [
         {
           "type": "voice",
           "text": {
-            "en": "What you become is your legacy.",
-            "es": "En lo que te conviertes es tu legado."
+            "es": "Un niño llega de la escuela lleno de enojo."
           }
         },
         {
-          "type": "breathing",
-          "duration": 8,
+          "type": "story",
           "text": {
-            "en": "Release. Accept. End cycle.",
-            "es": "Suelta. Acepta. Cierra el ciclo."
+            "es": "Su reacción lo aleja de los demás."
           }
         },
         {
           "type": "tvid",
-          "mode": "TDK",
+          "mode": "TDG",
           "text": {
-            "en": "Connection completes the journey.",
-            "es": "La conexión completa el viaje."
+            "es": "El enojo sin control destruye conexión."
+          }
+        },
+        {
+          "type": "action",
+          "text": {
+            "es": "Hoy respiras antes de responder."
+          }
+        }
+      ]
+    },
+
+    {
+      "id": 10,
+      "level": 5,
+      "category": "EL NIÑO QUE APRENDIÓ A GANAR",
+      "blocks": [
+        {
+          "type": "voice",
+          "text": {
+            "es": "Un niño pierde en deportes repetidamente."
+          }
+        },
+        {
+          "type": "story",
+          "text": {
+            "es": "Sigue entrenando. Día tras día. Hasta que gana por disciplina."
+          }
+        },
+        {
+          "type": "tvid",
+          "mode": "TDB",
+          "text": {
+            "es": "La repetición cambia el destino."
+          }
+        },
+        {
+          "type": "action",
+          "text": {
+            "es": "Hoy haces algo difícil por 10 minutos sin rendirte."
           }
         }
       ]
     }
-
   ],
 
   "karma_system": {
     "enabled": true,
-    "max_karma": 100,
-
-    "levels": {
-      "0": "Sin control",
-      "10": "Despertar inicial",
-      "25": "Conciencia activa",
-      "50": "Dominio mental",
-      "75": "Maestro del sistema",
-      "100": "Estado trascendente"
-    },
-
-    "rewards": {
-      "10": {
-        "unlock": ["TDB_boost"],
-        "description": "Aumento de estabilidad mental"
-      },
-      "25": {
-        "unlock": ["auto_TDB", "shield_basic"],
-        "description": "Protección contra eventos negativos"
-      },
-      "50": {
-        "unlock": ["slow_time", "karma_multiplier_x2"],
-        "description": "Control del ritmo de decisiones"
-      },
-      "75": {
-        "unlock": ["auto_recovery", "event_prediction"],
-        "description": "Anticipación de eventos del sistema"
-      },
-      "100": {
-        "unlock": ["full_control_mode"],
-        "description": "Dominio total del sistema TVID"
-      }
-    },
-
-    "penalties": {
-      "negative_karma_threshold": -10,
-      "effects": ["random_events_increase", "mental_decay_boost"]
-    },
-
-    "visualization": {
-      "ui_display": true,
-      "show_bar": true,
-      "show_level_text": true,
-      "color_gradient": ["#ff3b3b", "#ffcc00", "#00ff88", "#00f2ff"]
-    }
+    "max_karma": 100
   }
 }
