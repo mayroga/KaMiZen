@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,6 +12,7 @@
             --panel: rgba(0, 15, 30, 0.95);
             --danger: #ff4444;
             --success: #33ff33;
+            --warning: #ffcc00;
         }
 
         body {
@@ -79,8 +80,8 @@
 
         /* CIRCULO RESPIRATORIO */
         #breathing-circle {
-            width: 150px;
-            height: 150px;
+            width: 140px;
+            height: 140px;
             border: 4px solid var(--neon);
             border-radius: 50%;
             margin: 20px auto;
@@ -120,6 +121,7 @@
             justify-content: center;
             box-shadow: 0 0 30px rgba(0, 242, 255, 0.15);
             margin-bottom: 20px;
+            cursor: pointer;
         }
 
         /* ACTIONS GRID */
@@ -145,10 +147,26 @@
 
         .opt-btn:hover { background: var(--neon); color: var(--bg); box-shadow: 0 0 15px var(--neon); }
 
+        /* FEEDBACK OVERLAY (Sounds/Impact) */
+        #feedback-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 100;
+            display: none;
+        }
+
+        .impact-red { background: rgba(255, 0, 0, 0.3); animation: flash 0.3s; }
+        .impact-green { background: rgba(0, 255, 0, 0.3); animation: flash 0.3s; }
+        
+        @keyframes flash { from { opacity: 1; } to { opacity: 0; } }
+
         /* CONTROLS */
         #controls { position: absolute; bottom: 20px; right: 20px; display: flex; gap: 10px; }
         .btn-ctrl { border: 1px solid var(--accent); color: var(--accent); font-size: 10px; padding: 8px 15px; background: transparent; cursor: pointer; }
         #speaker-icon { position: absolute; bottom: 20px; left: 20px; font-size: 24px; cursor: pointer; opacity: 0.6; }
+
+        #clear-btn { border-color: var(--danger); color: var(--danger); font-weight: bold; }
 
         @media (max-width: 600px) {
             #stats { grid-template-columns: repeat(2, 1fr); }
@@ -159,53 +177,91 @@
 </head>
 <body>
 
+<div id="feedback-overlay"></div>
+
 <div id="app">
     <div id="header">
         <div id="category-tag">AL CIELO | AURA PROTOCOL</div>
         <div id="stats">
             <div class="box"><span class="label">MENTAL</span><span id="mental" class="val">100</span></div>
-            <div class="box"><span class="label">SOCIAL</span><span id="social" class="val">80</span></div>
-            <div class="box"><span class="label">KARMA</span><span id="karma" class="val">10</span></div>
-            <div class="box"><span class="label">DISCIPLINE</span><span id="disc" class="val">50</span></div>
+            <div class="box"><span class="label">SOCIAL</span><span id="social" class="val">100</span></div>
+            <div class="box"><span class="label">KARMA</span><span id="karma" class="val">0</span></div>
+            <div class="box"><span class="label">DISCIPLINA</span><span id="disc" class="val">100</span></div>
         </div>
     </div>
 
     <div id="message-container">
         <div id="timer">00:00</div>
         <div id="breathing-circle"></div>
-        <div id="message">
-            SYSTEM STANDBY...<br>
-            [ CLICK TO CONNECT ]
+        <div id="message" onclick="startOrContinue()">
+            SISTEMA EN ESPERA...<br>
+            [ TOCAR PARA CONECTAR ]
         </div>
     </div>
 
-    <div id="options-container">
-        </div>
+    <div id="options-container"></div>
 
     <div id="speaker-icon" onclick="toggleVoice()">🔊</div>
 
     <div id="controls">
+        <button id="clear-btn" class="btn-ctrl" onclick="resetApp()">BORRAR DATOS</button>
         <button class="btn-ctrl" onclick="toggleLanguage()">ES/EN</button>
-        <button class="btn-ctrl" onclick="resetApp()" style="border-color: var(--danger); color: var(--danger);">RESET</button>
     </div>
 </div>
 
 <script>
     let session_id = localStorage.getItem("aura_sid");
-    let current_lang = "en";
+    let current_lang = "es";
     let voice_enabled = true;
     let timer_interval = null;
 
-    async function initSession() {
-        const res = await fetch("/start", {
-            method: "POST",
-            headers: {"Content-Type":"application/json"},
-            body: JSON.stringify({ profile: {} })
-        });
-        const data = await res.json();
-        session_id = data.session_id;
-        localStorage.setItem("aura_sid", session_id);
-        updateUI(data);
+    // Sonidos predefinidos (Osciladores Web Audio)
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    
+    function playSound(type) {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        
+        if (type === "explosion") { // Fallo
+            osc.type = "sawtooth";
+            osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime + 0.5);
+            gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+            triggerVisualImpact("red");
+        } else if (type === "lottery") { // Éxito
+            osc.type = "sine";
+            osc.frequency.setValueAtTime(880, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(1760, audioCtx.currentTime + 0.3);
+            gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+            triggerVisualImpact("green");
+        }
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.5);
+    }
+
+    function triggerVisualImpact(color) {
+        const overlay = document.getElementById("feedback-overlay");
+        overlay.className = color === "red" ? "impact-red" : "impact-green";
+        overlay.style.display = "block";
+        setTimeout(() => overlay.style.display = "none", 300);
+    }
+
+    async function startOrContinue() {
+        if (!session_id) {
+            const res = await fetch("/start", {
+                method: "POST",
+                headers: {"Content-Type":"application/json"},
+                body: JSON.stringify({ profile: { lang: current_lang } })
+            });
+            const data = await res.json();
+            session_id = data.session_id;
+            localStorage.setItem("aura_sid", session_id);
+            updateUI(data);
+        }
     }
 
     async function handleChoice(code) {
@@ -215,37 +271,42 @@
             body: JSON.stringify({ session_id, decision: code })
         });
         const data = await res.json();
+        
+        // Ejecutar efectos si vienen en la respuesta
+        if (data.story.feedback_audio) {
+            playSound(data.story.feedback_audio);
+        }
+        
         updateUI(data);
     }
 
     function updateUI(data) {
         if (!data.state) return;
         
-        // Actualizar Stats
         document.getElementById("mental").innerText = data.state.mental;
         document.getElementById("social").innerText = data.state.social;
         document.getElementById("karma").innerText = data.state.karma;
         document.getElementById("disc").innerText = data.state.discipline;
 
         const story = data.story;
-        const text = current_lang === "en" ? story.text_en : story.text_es;
+        const text = current_lang === "en" ? (story.text_en || story.text) : (story.text_es || story.text);
         document.getElementById("message").innerText = text;
         document.getElementById("category-tag").innerText = story.category;
 
         if (voice_enabled) speak(text);
-        
-        // Limpiar interfaz
         resetVisuals();
 
-        // Lógica según tipo de bloque
-        if (story.type === "breathing") {
+        if (story.type === "breathing" || story.type === "breathing_warmup") {
             startBreathing(story.duration_sec);
         } else if (story.type === "silence_challenge") {
             startSilence(story.duration_sec);
-        } else if (story.type === "tvid" || story.type === "quiz") {
+        } else if (story.type === "tvid" || story.type === "quiz" || story.type === "math_trap") {
             renderOptions(story.options);
+        } else if (story.type === "riddle") {
+            renderRiddle(story);
+        } else if (story.type === "win") {
+            renderOptions([{ code: "RESET", text: { en: "RESTART LEGACY", es: "REINICIAR LEGADO" } }]);
         } else {
-            // Botón "CONTINUE" para historias simples
             renderOptions([{ code: "TDB", text: { en: "CONTINUE", es: "CONTINUAR" } }]);
         }
     }
@@ -256,10 +317,29 @@
         options.forEach(opt => {
             const btn = document.createElement("button");
             btn.className = "opt-btn";
-            btn.innerText = current_lang === "en" ? opt.text.en : opt.text.es;
-            btn.onclick = () => handleChoice(opt.code);
+            btn.innerText = current_lang === "en" ? (opt.text.en || opt.text) : (opt.text.es || opt.text);
+            btn.onclick = () => {
+                if (opt.code === "RESET") resetApp();
+                else handleChoice(opt.code);
+            };
             container.appendChild(btn);
         });
+    }
+
+    function renderRiddle(story) {
+        const container = document.getElementById("options-container");
+        container.innerHTML = "";
+        const btn = document.createElement("button");
+        btn.className = "opt-btn";
+        btn.style.gridColumn = "1 / span 2";
+        btn.innerText = current_lang === "en" ? "REVEAL TRUTH" : "REVELAR VERDAD";
+        btn.onclick = () => {
+            document.getElementById("message").innerText = 
+                (current_lang === "en" ? story.answer.en : story.answer.es) + "\n\n" +
+                (current_lang === "en" ? story.insight.en : story.insight.es);
+            renderOptions([{ code: "TDB", text: { en: "UNDERSTOOD", es: "ENTENDIDO" } }]);
+        };
+        container.appendChild(btn);
     }
 
     function startBreathing(seconds) {
@@ -280,7 +360,6 @@
         const timerDiv = document.getElementById("timer");
         timerDiv.style.display = "block";
         let remaining = seconds;
-        
         timer_interval = setInterval(() => {
             let mins = Math.floor(remaining / 60);
             let secs = remaining % 60;
@@ -304,12 +383,13 @@
         window.speechSynthesis.cancel();
         const ut = new SpeechSynthesisUtterance(text);
         ut.lang = current_lang === "en" ? "en-US" : "es-US";
+        ut.rate = 0.95; // Voz más profesional y pausada
         window.speechSynthesis.speak(ut);
     }
 
     function toggleLanguage() {
         current_lang = current_lang === "en" ? "es" : "en";
-        initSession(); // Reinicia para actualizar textos
+        resetApp(); 
     }
 
     function toggleVoice() {
@@ -321,10 +401,6 @@
         localStorage.clear();
         location.reload();
     }
-
-    document.getElementById("message").onclick = () => {
-        if (!session_id) initSession();
-    };
 </script>
 </body>
 </html>
