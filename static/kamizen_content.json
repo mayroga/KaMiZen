@@ -3,669 +3,1156 @@
     {
       "id": 1,
       "level": 1,
-      "category": "CONTROL INICIAL: RESPIRAR PARA NO PERDERTE",
+      "theme": "SOCIAL TEST: FIRST IMPRESSION CONTROL",
+      "engagement": {
+        "dopamine_start": true,
+        "sound_fx": true,
+        "game_intro": true
+      },
+      "ui": {
+        "buttons": ["next", "back", "restart", "skip"],
+        "language_toggle": true
+      },
       "blocks": [
         {
           "type": "story",
           "text": {
-            "es": "Estás en la escuela en Miami. Te dan $10 para el almuerzo. Ves pizza, dulces y soda. También sabes que en casa no hay mucho dinero hoy."
+            "en": "You walk into school in Miami. A group of students looks at you silently to see how you react.",
+            "es": "Entras a la escuela en Miami. Un grupo te mira en silencio para ver cómo reaccionas."
           }
         },
         {
-          "type": "quiz",
-          "question": {
-            "es": "¿Qué haces con los $10?"
-          },
+          "type": "analysis",
+          "text": {
+            "en": "Humans test confidence without speaking. Your reaction defines your social position.",
+            "es": "Los humanos prueban confianza sin hablar. Tu reacción define tu posición social."
+          }
+        },
+        {
+          "type": "tvid",
           "options": [
             {
-              "text": { "es": "Gastar todo en dulces ahora" },
+              "code": "IMPULSE",
+              "text": { "en": "React nervous or aggressive", "es": "Reaccionar nervioso o agresivo" },
               "correct": false,
-              "feedback": { "es": "Error. Dominio emocional bajo." }
+              "reason": {
+                "en": "Shows lack of emotional control.",
+                "es": "Muestra falta de control emocional."
+              }
             },
             {
-              "text": { "es": "Comprar comida básica y guardar parte" },
+              "code": "CONTROL",
+              "text": { "en": "Stay calm and observe silently", "es": "Mantener calma y observar en silencio" },
               "correct": true,
-              "feedback": { "es": "Correcto. Disciplina financiera." }
+              "reason": {
+                "en": "Silent control creates respect.",
+                "es": "El control silencioso crea respeto."
+              }
             },
             {
-              "text": { "es": "No comer y guardar todo" },
-              "correct": false,
-              "feedback": { "es": "Error. No es equilibrio." }
+              "code": "EXIT",
+              "text": { "en": "Move away naturally", "es": "Alejarse naturalmente" },
+              "correct": true,
+              "reason": {
+                "en": "Strategic exit is intelligence.",
+                "es": "Salir estratégicamente es inteligencia."
+              }
             }
           ]
         },
         {
-          "type": "laughter_therapy",
-          "duration_sec": 60,
-          "text": {
-            "es": "Ríe durante 1 minuto para liberar tensión."
-          }
+          "type": "sound_event",
+          "success_fx": "soft_chime",
+          "fail_fx": "deep_buzz"
+        },
+        {
+          "type": "mini_riddle",
+          "question": {
+            "en": "What controls emotion without force?",
+            "es": "¿Qué controla la emoción sin fuerza?"
+          },
+          "answers": [
+            { "text": { "en": "Self-control", "es": "Autocontrol" }, "correct": true },
+            { "text": { "en": "Anger", "es": "Ira" }, "correct": false },
+            { "text": { "en": "Noise", "es": "Ruido" }, "correct": false }
+          ]
         },
         {
           "type": "silence_challenge",
           "duration_sec": 20,
-          "quotes": [
-            { "es": "El que se controla, gana antes de empezar." }
-          ]
+          "reward": {
+            "en": "Builds awareness and emotional stability",
+            "es": "Construye conciencia y estabilidad emocional"
+          }
+        },
+        {
+          "type": "final_lesson",
+          "text": {
+            "en": "Power is silence under pressure.",
+            "es": "El poder es silencio bajo presión."
+          }
         }
       ]
     },
     {
       "id": 2,
       "level": 1,
-      "category": "EMOCION: NO REACCIONAR",
+      "theme": "SOCIAL PRESSURE: FRIEND TEST",
       "blocks": [
         {
           "type": "story",
           "text": {
-            "es": "Un niño se burla de ti frente a todos en clase."
+            "en": "Your friends laugh at someone weaker and expect you to join.",
+            "es": "Tus amigos se ríen de alguien débil y esperan que te unas."
           }
         },
         {
-          "type": "quiz",
-          "question": { "es": "¿Qué haces?" },
+          "type": "analysis",
+          "text": {
+            "en": "Group pressure tests identity and courage.",
+            "es": "La presión del grupo prueba identidad y valentía."
+          }
+        },
+        {
+          "type": "tvid",
           "options": [
             {
-              "text": { "es": "Responder con insulto" },
-              "correct": false
+              "code": "FOLLOW",
+              "text": { "en": "Laugh with them", "es": "Reír con ellos" },
+              "correct": false,
+              "reason": {
+                "en": "Lowers your self-respect.",
+                "es": "Reduce tu respeto propio."
+              }
             },
             {
-              "text": { "es": "Respirar y guardar silencio" },
-              "correct": true
+              "code": "CONTROL",
+              "text": { "en": "Stay neutral, don't participate", "es": "Mantener neutralidad" },
+              "correct": true,
+              "reason": {
+                "en": "Protects identity.",
+                "es": "Protege tu identidad."
+              }
             },
             {
-              "text": { "es": "Ignorar con miedo" },
-              "correct": false
+              "code": "LEAD",
+              "text": { "en": "Defend the person", "es": "Defender a la persona" },
+              "correct": true,
+              "reason": {
+                "en": "Builds leadership power.",
+                "es": "Construye liderazgo."
+              }
             }
           ]
         },
         {
-          "type": "silence_challenge",
-          "duration_sec": 30,
-          "quotes": [
-            { "es": "Tu reacción define tu nivel." }
+          "type": "sound_event",
+          "success_fx": "soft_chime",
+          "fail_fx": "deep_buzz"
+        },
+        {
+          "type": "mini_math",
+          "question": {
+            "en": "If you lose respect, what remains?",
+            "es": "Si pierdes respeto, ¿qué queda?"
+          },
+          "answers": [
+            { "text": { "en": "Nothing", "es": "Nada" }, "correct": true },
+            { "text": { "en": "Money", "es": "Dinero" }, "correct": false },
+            { "text": { "en": "Friends", "es": "Amigos" }, "correct": false }
           ]
+        },
+        {
+          "type": "silence_challenge",
+          "duration_sec": 25,
+          "reward": {
+            "en": "Strengthens moral decision making",
+            "es": "Fortalece decisiones morales"
+          }
+        },
+        {
+          "type": "final_lesson",
+          "text": {
+            "en": "Your silence can be strength or weakness.",
+            "es": "Tu silencio puede ser fuerza o debilidad."
+          }
         }
       ]
     },
     {
       "id": 3,
-      "level": 1,
-      "category": "CALLE: DECISION SEGURA",
+      "level": 2,
+      "theme": "MONEY CONTROL: FIRST DECISION",
       "blocks": [
         {
           "type": "story",
           "text": {
-            "es": "Caminas en Miami. Un carro pasa lento tres veces."
+            "en": "You get $20. You see instant pleasure vs future value.",
+            "es": "Recibes $20. Ves placer inmediato vs valor futuro."
           }
         },
         {
-          "type": "quiz",
-          "question": { "es": "¿Qué haces?" },
+          "type": "tvid",
           "options": [
-            { "text": { "es": "Entrar al callejón" }, "correct": false },
-            { "text": { "es": "Entrar a la tienda" }, "correct": true },
-            { "text": { "es": "Correr sin pensar" }, "correct": false }
+            {
+              "code": "SPEND",
+              "text": { "en": "Spend everything now", "es": "Gastar todo ahora" },
+              "correct": false,
+              "reason": {
+                "en": "Trains short-term thinking.",
+                "es": "Entrena pensamiento corto."
+              }
+            },
+            {
+              "code": "SAVE",
+              "text": { "en": "Save and plan", "es": "Ahorrar y planificar" },
+              "correct": true,
+              "reason": {
+                "en": "Builds financial intelligence.",
+                "es": "Construye inteligencia financiera."
+              }
+            },
+            {
+              "code": "BALANCE",
+              "text": { "en": "Spend part, save part", "es": "Gastar parte, guardar parte" },
+              "correct": true,
+              "reason": {
+                "en": "Balance is real mastery.",
+                "es": "El equilibrio es maestría."
+              }
+            }
           ]
         },
         {
+          "type": "sound_event",
+          "success_fx": "cash_ping",
+          "fail_fx": "error_buzz"
+        },
+        {
           "type": "silence_challenge",
-          "duration_sec": 40,
-          "quotes": [
-            { "es": "Ver el peligro antes es inteligencia." }
-          ]
+          "duration_sec": 30,
+          "reward": {
+            "en": "Improves financial discipline mindset",
+            "es": "Mejora disciplina financiera"
+          }
+        },
+        {
+          "type": "final_lesson",
+          "text": {
+            "en": "Money follows discipline.",
+            "es": "El dinero sigue la disciplina."
+          }
         }
       ]
     },
     {
       "id": 4,
       "level": 2,
-      "category": "DINERO: CONTROL BASICO",
+      "theme": "TRUST TEST: FRIENDSHIP POWER",
       "blocks": [
         {
           "type": "story",
           "text": {
-            "es": "Recibes $20. Tus amigos gastan todo."
+            "en": "A friend pressures you to cheat on a test.",
+            "es": "Un amigo te presiona para copiar en un examen."
           }
         },
         {
-          "type": "quiz",
-          "question": { "es": "¿Qué haces?" },
+          "type": "tvid",
           "options": [
-            { "text": { "es": "Gastar para encajar" }, "correct": false },
-            { "text": { "es": "Guardar el dinero" }, "correct": true },
-            { "text": { "es": "Prestarlo" }, "correct": false }
+            {
+              "code": "CHEAT",
+              "text": { "en": "Help them cheat", "es": "Ayudar a copiar" },
+              "correct": false,
+              "reason": {
+                "en": "Destroys integrity.",
+                "es": "Destruye la integridad."
+              }
+            },
+            {
+              "code": "REFUSE",
+              "text": { "en": "Refuse firmly", "es": "Negarse firmemente" },
+              "correct": true,
+              "reason": {
+                "en": "Builds character strength.",
+                "es": "Construye carácter."
+              }
+            },
+            {
+              "code": "EXIT",
+              "text": { "en": "Distance yourself", "es": "Alejarse" },
+              "correct": true,
+              "reason": {
+                "en": "Protects your mindset.",
+                "es": "Protege tu mentalidad."
+              }
+            }
           ]
         },
         {
           "type": "silence_challenge",
-          "duration_sec": 50,
-          "quotes": [
-            { "es": "El dinero sigue al control." }
-          ]
+          "duration_sec": 35,
+          "reward": {
+            "en": "Builds integrity under pressure",
+            "es": "Construye integridad bajo presión"
+          }
+        },
+        {
+          "type": "final_lesson",
+          "text": {
+            "en": "Truth builds real power.",
+            "es": "La verdad construye poder real."
+          }
         }
       ]
     },
     {
       "id": 5,
       "level": 2,
-      "category": "IDENTIDAD: QUIEN ERES",
+      "theme": "SELF CONTROL: THE TEMPTATION TEST",
+      "engagement": {
+        "dopamine_start": true,
+        "sound_fx": true
+      },
+      "ui": {
+        "buttons": ["next", "back", "restart", "skip"],
+        "language_toggle": true
+      },
       "blocks": [
         {
           "type": "story",
           "text": {
-            "es": "Nadie te ve. Puedes copiar en un examen."
+            "en": "You are alone. Nobody is watching. You can cheat and nobody will know.",
+            "es": "Estás solo. Nadie te ve. Puedes hacer trampa y nadie lo sabrá."
           }
         },
         {
-          "type": "quiz",
-          "question": { "es": "¿Qué haces?" },
+          "type": "analysis",
+          "text": {
+            "en": "Your real identity is built when nobody is watching.",
+            "es": "Tu verdadera identidad se construye cuando nadie te ve."
+          }
+        },
+        {
+          "type": "tvid",
           "options": [
-            { "text": { "es": "Copiar" }, "correct": false },
-            { "text": { "es": "Hacerlo tú mismo" }, "correct": true },
-            { "text": { "es": "No hacer nada" }, "correct": false }
+            {
+              "code": "CHEAT",
+              "text": { "en": "Cheat to win", "es": "Hacer trampa para ganar" },
+              "correct": false,
+              "reason": {
+                "en": "Destroys self-respect and discipline.",
+                "es": "Destruye tu respeto propio y disciplina."
+              }
+            },
+            {
+              "code": "HONOR",
+              "text": { "en": "Do the right thing", "es": "Hacer lo correcto" },
+              "correct": true,
+              "reason": {
+                "en": "Builds strong character.",
+                "es": "Construye carácter fuerte."
+              }
+            },
+            {
+              "code": "AVOID",
+              "text": { "en": "Avoid the situation", "es": "Evitar la situación" },
+              "correct": false,
+              "reason": {
+                "en": "Avoiding doesn't build strength.",
+                "es": "Evitar no construye fuerza."
+              }
+            }
+          ]
+        },
+        {
+          "type": "sound_event",
+          "success_fx": "clean_win",
+          "fail_fx": "error_buzz"
+        },
+        {
+          "type": "mini_riddle",
+          "question": {
+            "en": "What grows when nobody sees it?",
+            "es": "¿Qué crece cuando nadie lo ve?"
+          },
+          "answers": [
+            { "text": { "en": "Character", "es": "Carácter" }, "correct": true },
+            { "text": { "en": "Luck", "es": "Suerte" }, "correct": false },
+            { "text": { "en": "Noise", "es": "Ruido" }, "correct": false }
           ]
         },
         {
           "type": "silence_challenge",
-          "duration_sec": 60,
-          "quotes": [
-            { "es": "Eres lo que haces cuando nadie te ve." }
-          ]
+          "duration_sec": 30,
+          "reward": {
+            "en": "Builds inner discipline and awareness",
+            "es": "Construye disciplina interna y conciencia"
+          }
+        },
+        {
+          "type": "final_lesson",
+          "text": {
+            "en": "Who you are in silence defines your future.",
+            "es": "Quién eres en silencio define tu futuro."
+          }
         }
       ]
     },
     {
       "id": 6,
       "level": 2,
-      "category": "CONTROL TOTAL",
+      "theme": "DECISION POWER: THINK BEFORE ACTION",
       "blocks": [
         {
           "type": "story",
           "text": {
-            "es": "Estás solo. Debes decidir algo importante."
+            "en": "You must make a decision fast. Everyone is waiting for you.",
+            "es": "Debes tomar una decisión rápida. Todos esperan tu reacción."
           }
         },
         {
-          "type": "quiz",
-          "question": { "es": "¿Cómo decides?" },
+          "type": "analysis",
+          "text": {
+            "en": "Fast decisions without thinking create mistakes.",
+            "es": "Las decisiones rápidas sin pensar crean errores."
+          }
+        },
+        {
+          "type": "tvid",
           "options": [
-            { "text": { "es": "Por impulso" }, "correct": false },
-            { "text": { "es": "Pensando consecuencias" }, "correct": true },
-            { "text": { "es": "Evitar decidir" }, "correct": false }
+            {
+              "code": "IMPULSE",
+              "text": { "en": "Act immediately", "es": "Actuar sin pensar" },
+              "correct": false,
+              "reason": {
+                "en": "Impulse leads to bad results.",
+                "es": "El impulso lleva a malos resultados."
+              }
+            },
+            {
+              "code": "PAUSE",
+              "text": { "en": "Pause and think", "es": "Pausar y pensar" },
+              "correct": true,
+              "reason": {
+                "en": "Control creates better outcomes.",
+                "es": "El control mejora los resultados."
+              }
+            },
+            {
+              "code": "AVOID",
+              "text": { "en": "Avoid decision", "es": "Evitar decidir" },
+              "correct": false,
+              "reason": {
+                "en": "Not deciding is also losing.",
+                "es": "No decidir también es perder."
+              }
+            }
+          ]
+        },
+        {
+          "type": "sound_event",
+          "success_fx": "mind_click",
+          "fail_fx": "error_buzz"
+        },
+        {
+          "type": "mini_math",
+          "question": {
+            "en": "Better decision = Time + ?",
+            "es": "Mejor decisión = Tiempo + ?"
+          },
+          "answers": [
+            { "text": { "en": "Thinking", "es": "Pensar" }, "correct": true },
+            { "text": { "en": "Speed", "es": "Velocidad" }, "correct": false },
+            { "text": { "en": "Fear", "es": "Miedo" }, "correct": false }
           ]
         },
         {
           "type": "silence_challenge",
-          "duration_sec": 70,
-          "quotes": [
-            { "es": "El que decide bien, vive mejor." }
-          ]
+          "duration_sec": 35,
+          "reward": {
+            "en": "Improves decision clarity",
+            "es": "Mejora claridad mental"
+          }
+        },
+        {
+          "type": "final_lesson",
+          "text": {
+            "en": "Control your decisions, control your life.",
+            "es": "Controla tus decisiones, controla tu vida."
+          }
         }
       ]
     },
     {
       "id": 7,
       "level": 3,
-      "category": "PRESION SOCIAL",
+      "theme": "SOCIAL INTELLIGENCE: THE LOOK",
       "blocks": [
         {
           "type": "story",
           "text": {
-            "es": "Tus amigos se burlan de otro niño."
+            "en": "Someone looks at you in a challenging way in public.",
+            "es": "Alguien te mira de forma desafiante en público."
           }
         },
         {
-          "type": "quiz",
-          "question": { "es": "¿Qué haces?" },
+          "type": "analysis",
+          "text": {
+            "en": "Eye contact is a silent social language.",
+            "es": "El contacto visual es lenguaje social silencioso."
+          }
+        },
+        {
+          "type": "tvid",
           "options": [
-            { "text": { "es": "Reír" }, "correct": false },
-            { "text": { "es": "Defenderlo" }, "correct": true },
-            { "text": { "es": "Quedarte callado" }, "correct": false }
+            {
+              "code": "AGGRESSIVE",
+              "text": { "en": "Stare aggressively", "es": "Mirar agresivamente" },
+              "correct": false,
+              "reason": {
+                "en": "Escalates conflict.",
+                "es": "Escala el conflicto."
+              }
+            },
+            {
+              "code": "CALM",
+              "text": { "en": "Look calm and neutral", "es": "Mirar calmado" },
+              "correct": true,
+              "reason": {
+                "en": "Shows control and confidence.",
+                "es": "Muestra control y confianza."
+              }
+            },
+            {
+              "code": "AVOID",
+              "text": { "en": "Look away in fear", "es": "Bajar la mirada con miedo" },
+              "correct": false,
+              "reason": {
+                "en": "Shows insecurity.",
+                "es": "Muestra inseguridad."
+              }
+            }
           ]
+        },
+        {
+          "type": "sound_event",
+          "success_fx": "respect_ping",
+          "fail_fx": "danger_buzz"
         },
         {
           "type": "silence_challenge",
           "duration_sec": 40,
-          "quotes": [
-            { "es": "Si no te controlas, otros lo harán." }
-          ]
+          "reward": {
+            "en": "Builds social confidence",
+            "es": "Construye confianza social"
+          }
+        },
+        {
+          "type": "final_lesson",
+          "text": {
+            "en": "Confidence is calm, not loud.",
+            "es": "La confianza es calma, no ruido."
+          }
         }
       ]
     },
     {
       "id": 8,
       "level": 3,
-      "category": "MONEY: THE FIRST DECISION",
+      "theme": "MONEY MINDSET: VALUE VS PRICE",
       "blocks": [
         {
           "type": "story",
           "text": {
-            "es": "Tienes $20 y ves algo que quieres comprar."
+            "en": "You want something expensive, but it has no real value.",
+            "es": "Quieres algo caro, pero no tiene valor real."
           }
         },
         {
-          "type": "quiz",
-          "question": { "es": "¿Qué haces?" },
+          "type": "analysis",
+          "text": {
+            "en": "Price is what you pay. Value is what you get.",
+            "es": "Precio es lo que pagas. Valor es lo que recibes."
+          }
+        },
+        {
+          "type": "tvid",
           "options": [
-            { "text": { "es": "Comprar impulso" }, "correct": false },
-            { "text": { "es": "Comprar comida" }, "correct": true },
-            { "text": { "es": "Esperar" }, "correct": true }
+            {
+              "code": "BUY",
+              "text": { "en": "Buy for emotion", "es": "Comprar por emoción" },
+              "correct": false,
+              "reason": {
+                "en": "Emotion wastes money.",
+                "es": "La emoción gasta dinero."
+              }
+            },
+            {
+              "code": "ANALYZE",
+              "text": { "en": "Think about value", "es": "Pensar en el valor" },
+              "correct": true,
+              "reason": {
+                "en": "Smart financial thinking.",
+                "es": "Pensamiento financiero inteligente."
+              }
+            },
+            {
+              "code": "WAIT",
+              "text": { "en": "Wait before buying", "es": "Esperar antes de comprar" },
+              "correct": true,
+              "reason": {
+                "en": "Patience saves money.",
+                "es": "La paciencia ahorra dinero."
+              }
+            }
+          ]
+        },
+        {
+          "type": "sound_event",
+          "success_fx": "cash_win",
+          "fail_fx": "loss_buzz"
+        },
+        {
+          "type": "mini_riddle",
+          "question": {
+            "en": "What is more important than price?",
+            "es": "¿Qué es más importante que el precio?"
+          },
+          "answers": [
+            { "text": { "en": "Value", "es": "Valor" }, "correct": true },
+            { "text": { "en": "Color", "es": "Color" }, "correct": false },
+            { "text": { "en": "Trend", "es": "Moda" }, "correct": false }
           ]
         },
         {
           "type": "silence_challenge",
-          "duration_sec": 50,
-          "quotes": [
-            { "es": "Cada decisión crea tu futuro." }
-          ]
+          "duration_sec": 45,
+          "reward": {
+            "en": "Builds smart money thinking",
+            "es": "Construye inteligencia financiera"
+          }
+        },
+        {
+          "type": "final_lesson",
+          "text": {
+            "en": "Smart people buy value, not emotion.",
+            "es": "La gente inteligente compra valor, no emoción."
+          }
         }
       ]
     },
     {
       "id": 9,
-      "level": 4,
-      "category": "STREET DANGER: THE STRANGER",
-      "blocks": [
-    {
-      "type": "story",
-      "text": {
-        "es": "Un hombre en un carro se detiene y dice: 'Conozco a tus padres. Súbete, te llevo a casa.'"
-      }
-    },
-    {
-      "type": "quiz",
-      "question": { "es": "¿Qué haces?" },
-      "options": [
-        { "text": { "es": "Subir al carro" }, "correct": false },
-        { "text": { "es": "Correr a un lugar seguro" }, "correct": true },
-        { "text": { "es": "Hablar desde lejos" }, "correct": false }
-      ]
-    },
-    {
-      "type": "silence_challenge",
-      "duration_sec": 60,
-      "quotes": [
-        { "es": "La distancia es seguridad." }
-      ]
-    }
-  ]
-},
-{
-  "id": 10,
-  "level": 4,
-  "category": "MANIPULATION: THE FRIEND",
-  "blocks": [
-    {
-      "type": "story",
-      "text": {
-        "es": "Un amigo te dice: 'Si no me das las respuestas, no soy tu amigo.'"
-      }
-    },
-    {
-      "type": "quiz",
-      "question": { "es": "¿Qué haces?" },
-      "options": [
-        { "text": { "es": "Dar las respuestas" }, "correct": false },
-        { "text": { "es": "Decir que no" }, "correct": true },
-        { "text": { "es": "Alejarte" }, "correct": true }
-      ]
-    },
-    {
-      "type": "silence_challenge",
-      "duration_sec": 80,
-      "quotes": [
-        { "es": "El respeto vale más que la presión." }
-      ]
-    }
-  ]
-},
-{
-      "id": 11,
-      "level": 5,
-      "category": "FIRST BUSINESS: SELL OR LOSE",
+      "level": 3,
+      "theme": "STREET SMARTS: STRANGER SIGNALS",
       "blocks": [
         {
           "type": "story",
           "text": {
-            "es": "Compras dulces para vender en la escuela, pero nadie compra."
+            "en": "A stranger in a car calls you and says he knows your parents.",
+            "es": "Un extraño en un carro te llama y dice que conoce a tus padres."
           }
         },
         {
-          "type": "quiz",
-          "question": { "es": "¿Qué haces?" },
+          "type": "analysis",
+          "text": {
+            "en": "Danger often uses trust words to confuse you.",
+            "es": "El peligro usa palabras de confianza para confundirte."
+          }
+        },
+        {
+          "type": "tvid",
           "options": [
-            { "text": { "es": "Rendirse" }, "correct": false },
-            { "text": { "es": "Cambiar estrategia" }, "correct": true },
-            { "text": { "es": "Bajar precio" }, "correct": true }
+            {
+              "code": "GETIN",
+              "text": { "en": "Get in the car", "es": "Subir al carro" },
+              "correct": false,
+              "reason": {
+                "en": "High risk, loss of safety.",
+                "es": "Alto riesgo, pérdida de seguridad."
+              }
+            },
+            {
+              "code": "RUNSAFE",
+              "text": { "en": "Go to public safe place", "es": "Ir a un lugar público seguro" },
+              "correct": true,
+              "reason": {
+                "en": "Safety first always wins.",
+                "es": "La seguridad siempre gana."
+              }
+            },
+            {
+              "code": "ASKHELP",
+              "text": { "en": "Ask nearby adult", "es": "Pedir ayuda a un adulto" },
+              "correct": true,
+              "reason": {
+                "en": "Smart protection strategy.",
+                "es": "Estrategia inteligente de protección."
+              }
+            }
+          ]
+        },
+        {
+          "type": "sound_event",
+          "success_fx": "alert_success",
+          "fail_fx": "warning_buzz"
+        },
+        {
+          "type": "silence_challenge",
+          "duration_sec": 40,
+          "reward": {
+            "en": "Improves survival awareness",
+            "es": "Mejora la conciencia de supervivencia"
+          }
+        },
+        {
+          "type": "final_lesson",
+          "text": {
+            "en": "Safety is intelligence in action.",
+            "es": "La seguridad es inteligencia en acción."
+          }
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "level": 3,
+      "theme": "SOCIAL POWER: FRIEND PRESSURE",
+      "blocks": [
+        {
+          "type": "story",
+          "text": {
+            "en": "Friends push you to insult someone weaker to fit in.",
+            "es": "Tus amigos te presionan para insultar a alguien débil."
+          }
+        },
+        {
+          "type": "tvid",
+          "options": [
+            {
+              "code": "FOLLOW",
+              "text": { "en": "Join them", "es": "Unirse" },
+              "correct": false,
+              "reason": { "en": "Loses respect.", "es": "Pierdes respeto." }
+            },
+            {
+              "code": "STOP",
+              "text": { "en": "Refuse calmly", "es": "Negarse con calma" },
+              "correct": true,
+              "reason": { "en": "Builds character strength.", "es": "Construye carácter." }
+            },
+            {
+              "code": "LEAD",
+              "text": { "en": "Defend the person", "es": "Defender a la persona" },
+              "correct": true,
+              "reason": { "en": "True leadership.", "es": "Liderazgo real." }
+            }
+          ]
+        },
+        {
+          "type": "mini_riddle",
+          "question": {
+            "en": "What is stronger than popularity?",
+            "es": "¿Qué es más fuerte que la popularidad?"
+          },
+          "answers": [
+            { "text": { "en": "Respect", "es": "Respeto" }, "correct": true },
+            { "text": { "en": "Laughter", "es": "Risa" }, "correct": false },
+            { "text": { "en": "Fear", "es": "Miedo" }, "correct": false }
           ]
         },
         {
           "type": "silence_challenge",
-          "duration_sec": 100,
-          "quotes": [
-            { "es": "El fracaso es información." }
+          "duration_sec": 35,
+          "reward": {
+            "en": "Builds moral leadership",
+            "es": "Construye liderazgo moral"
+          }
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "level": 4,
+      "theme": "MONEY CHOICE: FAST OR SMART",
+      "blocks": [
+        {
+          "type": "story",
+          "text": {
+            "en": "You get $50. You can spend it fast or use it wisely.",
+            "es": "Recibes $50. Puedes gastarlo rápido o usarlo bien."
+          }
+        },
+        {
+          "type": "tvid",
+          "options": [
+            {
+              "code": "SPEND",
+              "text": { "en": "Spend everything", "es": "Gastar todo" },
+              "correct": false,
+              "reason": { "en": "Short-term mindset.", "es": "Mentalidad corta." }
+            },
+            {
+              "code": "INVEST",
+              "text": { "en": "Save or invest", "es": "Ahorrar o invertir" },
+              "correct": true,
+              "reason": { "en": "Builds future wealth.", "es": "Construye riqueza futura." }
+            },
+            {
+              "code": "PART",
+              "text": { "en": "Split money wisely", "es": "Dividir con inteligencia" },
+              "correct": true,
+              "reason": { "en": "Balance wins long term.", "es": "El equilibrio gana." }
+            }
           ]
+        },
+        {
+          "type": "sound_event",
+          "success_fx": "cash_ping",
+          "fail_fx": "error_buzz"
+        },
+        {
+          "type": "silence_challenge",
+          "duration_sec": 45,
+          "reward": {
+            "en": "Improves financial discipline",
+            "es": "Mejora disciplina financiera"
+          }
         }
       ]
     },
     {
       "id": 12,
-      "level": 5,
-      "category": "ANGER CONTROL: THE FIGHT",
+      "level": 4,
+      "theme": "TRUST TEST: LIES AND FRIENDSHIP",
       "blocks": [
         {
           "type": "story",
           "text": {
-            "es": "Un niño te empuja fuerte en la escuela. Todos miran."
+            "en": "A friend lies about you to others.",
+            "es": "Un amigo miente sobre ti."
           }
         },
         {
-          "type": "quiz",
-          "question": { "es": "¿Qué haces?" },
+          "type": "tvid",
           "options": [
-            { "text": { "es": "Golpear de vuelta" }, "correct": false },
-            { "text": { "es": "Controlarte" }, "correct": true },
-            { "text": { "es": "Pedir ayuda" }, "correct": true }
+            {
+              "code": "REVENGE",
+              "text": { "en": "Get revenge", "es": "Vengarte" },
+              "correct": false,
+              "reason": { "en": "Escalates conflict.", "es": "Escala el conflicto." }
+            },
+            {
+              "code": "TALK",
+              "text": { "en": "Talk calmly", "es": "Hablar con calma" },
+              "correct": true,
+              "reason": { "en": "Maturity wins.", "es": "La madurez gana." }
+            },
+            {
+              "code": "LEAVE",
+              "text": { "en": "Distance yourself", "es": "Alejarte" },
+              "correct": true,
+              "reason": { "en": "Protects your peace.", "es": "Protege tu paz." }
+            }
           ]
         },
         {
           "type": "silence_challenge",
-          "duration_sec": 120,
-          "quotes": [
-            { "es": "El autocontrol es poder." }
-          ]
+          "duration_sec": 50,
+          "reward": {
+            "en": "Emotional control under betrayal",
+            "es": "Control emocional ante traición"
+          }
         }
       ]
     },
     {
       "id": 13,
       "level": 5,
-      "category": "BETRAYAL: THE SECRET",
+      "theme": "DISCIPLINE: NO EXCUSES",
       "blocks": [
         {
           "type": "story",
           "text": {
-            "es": "Contaste un secreto y ahora todos lo saben."
+            "en": "You are tired but have important responsibilities.",
+            "es": "Estás cansado pero tienes responsabilidades."
           }
         },
         {
-          "type": "quiz",
-          "question": { "es": "¿Qué haces?" },
+          "type": "tvid",
           "options": [
-            { "text": { "es": "Vengarte" }, "correct": false },
-            { "text": { "es": "Hablar con calma" }, "correct": true },
-            { "text": { "es": "Alejarte" }, "correct": true }
+            {
+              "code": "QUIT",
+              "text": { "en": "Give up", "es": "Rendirse" },
+              "correct": false,
+              "reason": { "en": "Weak habit building.", "es": "Forma hábitos débiles." }
+            },
+            {
+              "code": "ACT",
+              "text": { "en": "Do it anyway", "es": "Hacerlo igual" },
+              "correct": true,
+              "reason": { "en": "Builds discipline.", "es": "Construye disciplina." }
+            },
+            {
+              "code": "DELAY",
+              "text": { "en": "Delay action", "es": "Posponer" },
+              "correct": false,
+              "reason": { "en": "Creates procrastination.", "es": "Crea procrastinación." }
+            }
+          ]
+        },
+        {
+          "type": "mini_riddle",
+          "question": {
+            "en": "What beats motivation?",
+            "es": "¿Qué vence la motivación?"
+          },
+          "answers": [
+            { "text": { "en": "Discipline", "es": "Disciplina" }, "correct": true },
+            { "text": { "en": "Excuses", "es": "Excusas" }, "correct": false },
+            { "text": { "en": "Sleep", "es": "Sueño" }, "correct": false }
           ]
         },
         {
           "type": "silence_challenge",
-          "duration_sec": 140,
-          "quotes": [
-            { "es": "No todos merecen tu confianza." }
-          ]
+          "duration_sec": 60,
+          "reward": {
+            "en": "Builds self-control system",
+            "es": "Construye autocontrol"
+          }
         }
       ]
     },
     {
       "id": 14,
       "level": 5,
-      "category": "FAMILY DECISION: THE LAST MONEY",
+      "theme": "FEAR CONTROL: FIRST DECISION",
       "blocks": [
         {
           "type": "story",
           "text": {
-            "es": "Tus padres no tienen mucho dinero esta semana."
+            "en": "You face something that makes you nervous.",
+            "es": "Te enfrentas a algo que te da miedo."
           }
         },
         {
-          "type": "quiz",
-          "question": { "es": "¿Qué haces?" },
+          "type": "tvid",
           "options": [
-            { "text": { "es": "Insistir en compras" }, "correct": false },
-            { "text": { "es": "Esperar" }, "correct": true },
-            { "text": { "es": "Ayudar a ahorrar" }, "correct": true }
+            {
+              "code": "RUN",
+              "text": { "en": "Avoid it", "es": "Evitarlo" },
+              "correct": false,
+              "reason": { "en": "Fear grows.", "es": "El miedo crece." }
+            },
+            {
+              "code": "FACE",
+              "text": { "en": "Face it", "es": "Enfrentarlo" },
+              "correct": true,
+              "reason": { "en": "Fear disappears with action.", "es": "El miedo desaparece con acción." }
+            },
+            {
+              "code": "WAIT",
+              "text": { "en": "Wait for others", "es": "Esperar a otros" },
+              "correct": false,
+              "reason": { "en": "Loses independence.", "es": "Pierdes independencia." }
+            }
           ]
         },
         {
           "type": "silence_challenge",
-          "duration_sec": 160,
-          "quotes": [
-            { "es": "La madurez empieza temprano." }
-          ]
+          "duration_sec": 70,
+          "reward": {
+            "en": "Builds courage under pressure",
+            "es": "Construye valentía"
+          }
         }
       ]
     },
     {
       "id": 15,
       "level": 6,
-      "category": "MONEY TRAP: EASY CASH",
+      "theme": "LEADERSHIP: GROUP CONTROL",
       "blocks": [
         {
           "type": "story",
           "text": {
-            "es": "Un chico mayor te ofrece dinero por guardar algo en tu mochila."
+            "en": "People start following your decisions.",
+            "es": "La gente empieza a seguir tus decisiones."
           }
         },
         {
-          "type": "quiz",
-          "question": { "es": "¿Qué haces?" },
+          "type": "tvid",
           "options": [
-            { "text": { "es": "Aceptar dinero" }, "correct": false },
-            { "text": { "es": "Negarte" }, "correct": true },
-            { "text": { "es": "Decir a un adulto" }, "correct": true }
+            {
+              "code": "CONTROL",
+              "text": { "en": "Control others", "es": "Controlar a otros" },
+              "correct": false,
+              "reason": { "en": "Abuse of power.", "es": "Abuso de poder." }
+            },
+            {
+              "code": "GUIDE",
+              "text": { "en": "Guide others", "es": "Guiar a otros" },
+              "correct": true,
+              "reason": { "en": "True leadership.", "es": "Liderazgo real." }
+            },
+            {
+              "code": "TEACH",
+              "text": { "en": "Teach independence", "es": "Enseñar independencia" },
+              "correct": true,
+              "reason": { "en": "Creates strong leaders.", "es": "Crea líderes fuertes." }
+            }
           ]
         },
         {
           "type": "silence_challenge",
-          "duration_sec": 180,
-          "quotes": [
-            { "es": "El dinero fácil es peligroso." }
-          ]
+          "duration_sec": 80,
+          "reward": {
+            "en": "Leadership responsibility awareness",
+            "es": "Conciencia de liderazgo"
+          }
         }
       ]
     },
     {
       "id": 16,
-      "level": 6,
-      "category": "POWER: THE GROUP LEADER",
+      "level": 7,
+      "theme": "IDENTITY: WHO YOU BECOME",
       "blocks": [
         {
           "type": "story",
           "text": {
-            "es": "Eres líder del grupo y otros te siguen incluso cuando está mal."
+            "en": "You start changing depending on who is watching.",
+            "es": "Empiezas a cambiar según quién te mira."
           }
         },
         {
-          "type": "quiz",
-          "question": { "es": "¿Qué haces?" },
+          "type": "tvid",
           "options": [
-            { "text": { "es": "Controlar a otros" }, "correct": false },
-            { "text": { "es": "Ayudar y guiar" }, "correct": true },
-            { "text": { "es": "Enseñar independencia" }, "correct": true }
+            {
+              "code": "FAKE",
+              "text": { "en": "Act different for approval", "es": "Actuar diferente por aprobación" },
+              "correct": false,
+              "reason": { "en": "Loses identity.", "es": "Pierdes identidad." }
+            },
+            {
+              "code": "REAL",
+              "text": { "en": "Stay authentic", "es": "Ser auténtico" },
+              "correct": true,
+              "reason": { "en": "Builds real self-worth.", "es": "Construye valor real." }
+            },
+            {
+              "code": "BALANCE",
+              "text": { "en": "Adapt but stay true", "es": "Adaptarte sin perderte" },
+              "correct": true,
+              "reason": { "en": "Smart identity control.", "es": "Control inteligente." }
+            }
           ]
         },
         {
           "type": "silence_challenge",
-          "duration_sec": 200,
-          "quotes": [
-            { "es": "El liderazgo es responsabilidad." }
-          ]
+          "duration_sec": 90,
+          "reward": {
+            "en": "Strengthens identity stability",
+            "es": "Fortalece identidad"
+          }
         }
       ]
     },
     {
       "id": 17,
-      "level": 6,
-      "category": "IDENTITY: WHO ARE YOU?",
+      "level": 8,
+      "theme": "LEGACY: LONG TERM THINKING",
       "blocks": [
         {
           "type": "story",
           "text": {
-            "es": "Todos intentan ser iguales en la escuela."
+            "en": "You think about your future life and decisions.",
+            "es": "Piensas en tu futuro y tus decisiones."
           }
         },
         {
-          "type": "quiz",
-          "question": { "es": "¿Qué haces?" },
+          "type": "tvid",
           "options": [
-            { "text": { "es": "Copiar a otros" }, "correct": false },
-            { "text": { "es": "Ser tú mismo" }, "correct": true },
-            { "text": { "es": "Mezclar pero mantener identidad" }, "correct": true }
+            {
+              "code": "SHORT",
+              "text": { "en": "Live only for now", "es": "Vivir solo el presente" },
+              "correct": false,
+              "reason": { "en": "Weak future planning.", "es": "Mal futuro." }
+            },
+            {
+              "code": "BUILD",
+              "text": { "en": "Build future daily", "es": "Construir futuro diario" },
+              "correct": true,
+              "reason": { "en": "Success mindset.", "es": "Mentalidad de éxito." }
+            },
+            {
+              "code": "TEACH",
+              "text": { "en": "Help others grow", "es": "Ayudar a otros" },
+              "correct": true,
+              "reason": { "en": "Legacy creation.", "es": "Creación de legado." }
+            }
           ]
         },
         {
           "type": "silence_challenge",
-          "duration_sec": 220,
-          "quotes": [
-            { "es": "Ser real es poder." }
-          ]
+          "duration_sec": 120,
+          "reward": {
+            "en": "Long-term vision development",
+            "es": "Visión a largo plazo"
+          }
         }
       ]
     },
     {
       "id": 18,
-      "level": 7,
-      "category": "PURPOSE: YOUR PATH",
+      "level": 9,
+      "theme": "FINAL: MASTER CONTROL",
       "blocks": [
         {
           "type": "story",
           "text": {
-            "es": "Creces y ahora debes elegir: seguir al grupo o construir tu propio camino."
+            "en": "You have completed the system. Now you control emotions, money, fear, and decisions.",
+            "es": "Has completado el sistema. Ahora controlas emociones, dinero, miedo y decisiones."
           }
         },
         {
-          "type": "quiz",
-          "question": { "es": "¿Qué eliges?" },
+          "type": "tvid",
           "options": [
-            { "text": { "es": "Seguir a otros" }, "correct": false },
-            { "text": { "es": "Crear tu propio camino" }, "correct": true },
-            { "text": { "es": "Ayudar a otros a crecer contigo" }, "correct": true }
-          ]
-        },
-        {
-          "type": "silence_challenge",
-          "duration_sec": 240,
-          "quotes": [
-            { "es": "Tu futuro se construye con decisiones." }
-          ]
-        }
-      ]
-    },
-    {
-      "id": 19,
-      "level": 7,
-      "category": "DISCIPLINE: THE WAKE UP MOMENT",
-      "blocks": [
-        {
-          "type": "story",
-          "text": {
-            "es": "Es temprano. No quieres levantarte, pero tienes responsabilidades."
-          }
-        },
-        {
-          "type": "quiz",
-          "question": { "es": "¿Qué haces?" },
-          "options": [
-            { "text": { "es": "Seguir durmiendo" }, "correct": false },
-            { "text": { "es": "Levantarte aunque no quieras" }, "correct": true },
-            { "text": { "es": "Posponer todo" }, "correct": false }
+            {
+              "code": "REACT",
+              "text": { "en": "React without thinking", "es": "Reaccionar sin pensar" },
+              "correct": false,
+              "reason": { "en": "Loses control.", "es": "Pierdes control." }
+            },
+            {
+              "code": "CONTROL",
+              "text": { "en": "Think before acting", "es": "Pensar antes de actuar" },
+              "correct": true,
+              "reason": { "en": "Mastery achieved.", "es": "Maestría lograda." }
+            },
+            {
+              "code": "EVOLVE",
+              "text": { "en": "Keep learning always", "es": "Seguir aprendiendo siempre" },
+              "correct": true,
+              "reason": { "en": "True evolution.", "es": "Evolución real." }
+            }
           ]
         },
         {
           "type": "silence_challenge",
           "duration_sec": 180,
-          "quotes": [
-            { "es": "La disciplina gana cuando la motivación muere." }
-          ]
-        }
-      ]
-    },
-    {
-      "id": 20,
-      "level": 8,
-      "category": "FEAR: FINAL TEST",
-      "blocks": [
-        {
-          "type": "story",
-          "text": {
-            "es": "Estás frente a una decisión importante que te da miedo."
+          "reward": {
+            "en": "Full cognitive and emotional mastery",
+            "es": "Maestría emocional completa"
           }
         },
         {
-          "type": "quiz",
-          "question": { "es": "¿Qué haces?" },
-          "options": [
-            { "text": { "es": "Evitar la decisión" }, "correct": false },
-            { "text": { "es": "Enfrentar el miedo" }, "correct": true },
-            { "text": { "es": "Esperar que otros decidan" }, "correct": false }
-          ]
-        },
-        {
-          "type": "silence_challenge",
-          "duration_sec": 200,
-          "quotes": [
-            { "es": "El miedo desaparece cuando actúas." }
-          ]
-        }
-      ]
-    },
-    {
-      "id": 21,
-      "level": 8,
-      "category": "LEGACY: WHO YOU BECOME",
-      "blocks": [
-        {
-          "type": "story",
+          "type": "final_message",
           "text": {
-            "es": "Miras tu vida y ves todas tus decisiones pasadas."
+            "en": "You are now in control of your life.",
+            "es": "Ahora tienes control de tu vida."
           }
-        },
-        {
-          "type": "quiz",
-          "question": { "es": "¿Qué quieres ser?" },
-          "options": [
-            { "text": { "es": "Alguien sin control" }, "correct": false },
-            { "text": { "es": "Alguien disciplinado y fuerte" }, "correct": true },
-            { "text": { "es": "Alguien que aprende siempre" }, "correct": true }
-          ]
-        },
-        {
-          "type": "silence_challenge",
-          "duration_sec": 240,
-          "quotes": [
-            { "es": "Tu legado comienza hoy." }
-          ]
-        }
-      ]
-    },
-    {
-      "id": 22,
-      "level": 9,
-      "category": "FINAL: MASTER CONTROL",
-      "blocks": [
-        {
-          "type": "story",
-          "text": {
-            "es": "Has llegado al final del entrenamiento."
-          }
-        },
-        {
-          "type": "quiz",
-          "question": { "es": "¿Cuál es tu resultado?" },
-          "options": [
-            { "text": { "es": "Reaccionar sin pensar" }, "correct": false },
-            { "text": { "es": "Controlar mente y acciones" }, "correct": true },
-            { "text": { "es": "Aprender y mejorar siempre" }, "correct": true }
-          ]
-        },
-        {
-          "type": "silence_challenge",
-          "duration_sec": 300,
-          "quotes": [
-            { "es": "El verdadero poder es el autocontrol." },
-            { "es": "Tu vida depende de tus decisiones." }
-          ]
         }
       ]
     }
