@@ -1,222 +1,153 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
-import uuid
-import json
-import time
-import random
-import os
+import uuid, json, time, random, os
 
 app = FastAPI()
 
-# =========================
-# STATIC
-# =========================
-if not os.path.exists("static"):
-    os.makedirs("static")
-
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-# =========================
-# LOAD GAME CONTENT
-# =========================
 with open("static/kamizen_content.json", "r", encoding="utf-8") as f:
-    GAME_DATA = json.load(f)["missions"]
+    GAME = json.load(f)["missions"]
 
-# =========================
-# MEMORY SYSTEM
-# =========================
 SESSIONS = {}
 RANKING = {}
 
 # =========================
-# XP SYSTEM CONFIG
+# UTIL
 # =========================
-XP_CORRECT = 10
-XP_WRONG = -5
+def norm(x):
+    return x.strip().upper() if isinstance(x, str) else x
 
 # =========================
-# START SESSION
+# START
 # =========================
 @app.post("/start")
-async def start_game(request: Request):
-    data = await request.json()
-    lang = data.get("profile", {}).get("lang", "es")
+async def start(req: Request):
+    data = await req.json()
+    sid = str(uuid.uuid4())
 
-    session_id = str(uuid.uuid4())
-
-    SESSIONS[session_id] = {
-        "index": 0,
+    SESSIONS[sid] = {
+        "i": 0,
         "xp": 0,
         "errors": 0,
-        "start_time": time.time(),
-        "lang": lang,
-        "history": []
+        "streak": 0,
+        "lang": data.get("profile", {}).get("lang", "es")
     }
 
-    mission = GAME_DATA[0]
-
-    return JSONResponse({
-        "session_id": session_id,
-        "story": build_story(mission, 0, lang)
-    })
-
+    return {
+        "session_id": sid,
+        "story": build(0, SESSIONS[sid])
+    }
 
 # =========================
-# JUDGE ANSWER
+# JUDGE
 # =========================
 @app.post("/judge")
-async def judge(request: Request):
-    data = await request.json()
-
-    session_id = data["session_id"]
+async def judge(req: Request):
+    data = await req.json()
+    sid = data["session_id"]
     decision = data["decision"]
 
-    if session_id not in SESSIONS:
-        return JSONResponse({"error": "invalid session"})
+    s = SESSIONS[sid]
+    mission = GAME[s["i"]]
 
-    session = SESSIONS[session_id]
-    index = session["index"]
+    tvid = next(b for b in mission["blocks"] if b["type"] == "tvid")
 
-    if index >= len(GAME_DATA):
-        return JSONResponse({"end": True})
-
-    mission = GAME_DATA[index]
-    tvid = get_tvid(mission)
-
-    result = None
+    chosen = None
     correct = False
+    reason = None
 
-    for opt in tvid["options"]:
-        if opt["code"] == decision:
-            correct = opt["correct"]
-            result = opt
-            break
+    for o in tvid["options"]:
+        if norm(o["code"]) == norm(decision):
+            chosen = o
+            correct = o["correct"]
+            reason = o.get("reason", None)
 
-    # =========================
-    # XP LOGIC (FIXED)
-    # =========================
+    # ================= XP SYSTEM =================
     if correct:
-        session["xp"] += XP_CORRECT
-        feedback_type = "success"
+        s["xp"] += 10
+        s["streak"] += 1
     else:
-        session["xp"] += XP_WRONG
-        session["errors"] += 1
-        feedback_type = "fail"
+        s["xp"] -= 5
+        s["errors"] += 1
+        s["streak"] = 0
 
-    # =========================
-    # NO HARD RESET (FIX IMPORTANT)
-    # =========================
-    if session["errors"] >= 5:
-        session["errors"] = 0
-        session["xp"] = max(0, session["xp"] - 20)
-        feedback_type = "warning"
+    # ================= SOFT CONSEQUENCE =================
+    if s["errors"] >= 5:
+        s["xp"] = max(0, s["xp"] - 15)
+        s["errors"] = 0
 
-    # =========================
-    # NEXT STEP
-    # =========================
-    session["index"] += 1
+    # ================= NEXT =================
+    s["i"] += 1
+    next_m = GAME[s["i"]] if s["i"] < len(GAME) else None
 
-    next_mission = GAME_DATA[session["index"]] if session["index"] < len(GAME_DATA) else None
+    RANKING[sid] = s["xp"]
 
-    # =========================
-    # RANKING UPDATE
-    # =========================
-    RANKING[session_id] = session["xp"]
-
-    return JSONResponse({
-        "story": build_story(next_mission, session["index"], session["lang"]) if next_mission else {
-            "type": "end",
-            "text_es": "Sesión completada. Respira y reflexiona.",
-            "xp": session["xp"]
-        },
-        "xp": session["xp"],
-        "errors": session["errors"],
-        "feedback": feedback_type,
-        "timer": get_timer(next_mission),
-        "rank": get_rank(session_id)
-    })
-
+    return {
+        "story": build(s["i"], s),
+        "xp": s["xp"],
+        "streak": s["streak"],
+        "errors": s["errors"],
+        "correct": correct,
+        "reason": reason,
+        "semaphore": "green" if correct else "red",
+        "timer": get_timer(next_m),
+        "rank": get_rank(sid),
+        "voice": True
+    }
 
 # =========================
 # STORY BUILDER
 # =========================
-def build_story(mission, index, lang):
-    if not mission:
-        return None
+def build(i, s):
+    if i >= len(GAME):
+        return {
+            "type": "end",
+            "text_es": "Sesión completada. Respira y reflexiona.",
+            "text_en": "Session completed. Breathe and reflect."
+        }
 
-    # safe extraction
-    blocks = mission.get("blocks", [])
+    m = GAME[i]
 
-    story_text = ""
+    story = ""
     options = []
-    story_type = "normal"
     timer = 20
 
-    for b in blocks:
+    for b in m["blocks"]:
         if b["type"] == "story":
-            story_text = b["text"].get(lang, "")
+            story = b["text"][s["lang"]]
         if b["type"] == "tvid":
             options = b["options"]
         if b["type"] == "silence_challenge":
-            story_type = "silence"
-            timer = b.get("duration_sec", 20)
+            timer = b["duration_sec"]
 
     return {
-        "text_es": story_text,
-        "type": story_type,
+        "text_es": story,
+        "text_en": story,
         "options": options,
         "timer": timer,
-        "level": mission["level"],
-        "theme": mission["theme"]
+        "level": m["level"],
+        "theme": m["theme"]
     }
 
-
 # =========================
-# HELPERS
-# =========================
-def get_tvid(mission):
-    for b in mission["blocks"]:
-        if b["type"] == "tvid":
-            return b
-    return {"options": []}
-
-
-def get_timer(mission):
-    if not mission:
-        return 0
-    for b in mission["blocks"]:
+def get_timer(m):
+    if not m: return 15
+    for b in m["blocks"]:
         if b["type"] == "silence_challenge":
-            return b.get("duration_sec", 20)
+            return b["duration_sec"]
     return 15
 
-
-def get_rank(session_id):
-    sorted_rank = sorted(RANKING.items(), key=lambda x: x[1], reverse=True)
-
-    for i, (sid, xp) in enumerate(sorted_rank):
-        if sid == session_id:
-            return i + 1
-
-    return len(sorted_rank) + 1
-
-
 # =========================
-# RANKING GLOBAL
-# =========================
-@app.get("/ranking")
-async def ranking():
-    sorted_rank = sorted(RANKING.items(), key=lambda x: x[1], reverse=True)
+def get_rank(sid):
+    sorted_r = sorted(RANKING.items(), key=lambda x: x[1], reverse=True)
+    for i,(k,v) in enumerate(sorted_r):
+        if k == sid:
+            return i+1
+    return len(sorted_r)
 
-    return JSONResponse([
-        {"session": k, "xp": v, "rank": i + 1}
-        for i, (k, v) in enumerate(sorted_rank)
-    ])
-
-
-# =========================
-# ROOT
 # =========================
 @app.get("/")
-async def root():
+def root():
     return FileResponse("static/session.html")
