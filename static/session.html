@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>KAMIZEN | SESSION PRO</title>
 
 <style>
@@ -10,6 +10,8 @@
     --neon:#00f2ff;
     --bg:#000;
     --panel:rgba(0,15,30,0.92);
+    --danger:#ff4444;
+    --success:#33ff33;
 }
 
 body{
@@ -30,17 +32,38 @@ body{
     position:relative;
 }
 
-/* ===== BREATH ===== */
+/* CONTROLS */
+#controls{
+    position:absolute;
+    top:10px;
+    width:100%;
+    display:flex;
+    justify-content:space-between;
+    padding:0 10px;
+}
+
+.ctrl-btn{
+    padding:6px 10px;
+    font-size:12px;
+}
+
+/* LANGUAGE */
+#langToggle{
+    position:absolute;
+    top:50px;
+    right:10px;
+}
+
+/* CIRCLE */
 #circle{
     width:70px;
     height:70px;
     border-radius:50%;
-    background:rgba(0,242,255,0.25);
+    background:rgba(0,242,255,0.2);
     box-shadow:0 0 30px var(--neon);
-    transition:transform 2.5s ease-in-out, opacity 1s ease;
 }
 
-/* ===== TEXT ===== */
+/* TEXT */
 #message{
     position:absolute;
     bottom:180px;
@@ -50,10 +73,10 @@ body{
     background:var(--panel);
     border:1px solid var(--neon);
     text-align:center;
-    min-height:120px;
+    min-height:140px;
 }
 
-/* ===== OPTIONS ===== */
+/* OPTIONS */
 #options{
     position:absolute;
     bottom:70px;
@@ -66,11 +89,11 @@ body{
 
 button{
     padding:12px;
-    background:transparent;
     border:1px solid var(--neon);
+    background:transparent;
     color:var(--neon);
-    font-weight:bold;
     cursor:pointer;
+    font-weight:bold;
 }
 
 button:hover{
@@ -78,27 +101,19 @@ button:hover{
     color:#000;
 }
 
-/* ===== TOP CONTROLS ===== */
-#controls{
-    position:absolute;
-    top:10px;
-    width:100%;
-    display:flex;
-    justify-content:space-between;
-    padding:0 10px;
-}
-
-.ctrl-btn{
-    font-size:12px;
-    padding:6px 10px;
-}
-
 /* SILENCE */
 #silence{
     position:absolute;
-    top:50px;
+    top:80px;
     font-size:12px;
     opacity:0.7;
+}
+
+.flashFail{
+    background:rgba(255,0,0,0.4);
+}
+.flashSuccess{
+    background:rgba(0,255,0,0.3);
 }
 </style>
 </head>
@@ -107,55 +122,38 @@ button:hover{
 
 <div id="app">
 
-    <div id="controls">
-        <button class="ctrl-btn" onclick="restart()">REINICIAR</button>
-        <button class="ctrl-btn" onclick="back()">ATRÁS</button>
-        <button class="ctrl-btn" onclick="skip()">SALTAR</button>
-    </div>
+<div id="controls">
+<button class="ctrl-btn" onclick="restart()">RESTART</button>
+<button class="ctrl-btn" onclick="back()">BACK</button>
+<button class="ctrl-btn" onclick="skip()">SKIP</button>
+</div>
 
-    <div id="silence">SILENCIO: <span id="silenceLevel">20</span>s</div>
+<button id="langToggle" onclick="toggleLang()">ES</button>
 
-    <div id="circle"></div>
+<div id="silence">SILENCE: <span id="silenceLevel">20</span>s</div>
 
-    <div id="message" onclick="start()">TOCA PARA INICIAR</div>
+<div id="circle"></div>
 
-    <div id="options"></div>
+<div id="message" onclick="start()">TAP TO START</div>
+
+<div id="options"></div>
 
 </div>
 
 <script>
 
-/* ================= STATE ================= */
-let session_id = null;
-let history = [];
-let lang = "es";
-let loading = false;
+/* STATE */
+let session_id=null;
+let history=[];
+let lang="en";
+let loading=false;
 
-/* ================= AUDIO ================= */
-const audio = new (window.AudioContext || window.webkitAudioContext)();
+/* AUDIO */
+const audio=new (window.AudioContext||window.webkitAudioContext)();
 
-/* MUSIC LOOP */
-let musicOsc;
-
-function startMusic(){
-    musicOsc = audio.createOscillator();
-    const gain = audio.createGain();
-
-    musicOsc.type = "sine";
-    musicOsc.frequency.value = 220;
-
-    gain.gain.value = 0.03;
-
-    musicOsc.connect(gain);
-    gain.connect(audio.destination);
-
-    musicOsc.start();
-}
-
-/* SOUND */
 function sound(type){
-    const o = audio.createOscillator();
-    const g = audio.createGain();
+    const o=audio.createOscillator();
+    const g=audio.createGain();
 
     o.connect(g);
     g.connect(audio.destination);
@@ -164,145 +162,173 @@ function sound(type){
     if(type==="fail") o.frequency.value=120;
     if(type==="click") o.frequency.value=300;
 
-    o.type="sine";
     g.gain.value=0.15;
-
     o.start();
     o.stop(audio.currentTime+0.2);
 }
 
-/* ================= START ================= */
-async function start(){
+/* MUSIC */
+let music;
+function startMusic(){
+    music=audio.createOscillator();
+    const g=audio.createGain();
+    music.frequency.value=220;
+    g.gain.value=0.03;
+    music.connect(g);
+    g.connect(audio.destination);
+    music.start();
+}
 
+/* START */
+async function start(){
     if(audio.state==="suspended") await audio.resume();
 
+    sound("ok"); sound("ok"); // DOPAMINA
     startMusic();
 
-    const res = await fetch("/start",{
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({profile:{lang}})
-    });
+    const res=await fetch("/start",{method:"POST"});
+    const data=await res.json();
 
-    const data = await res.json();
-
-    session_id = data.session_id;
-    history = [];
+    session_id=data.session_id;
+    history=[];
 
     render(data);
 }
 
-/* ================= SEND ================= */
+/* SEND */
 async function send(code){
 
     if(loading) return;
-    loading = true;
+    loading=true;
 
     sound("click");
 
-    const res = await fetch("/judge",{
+    const res=await fetch("/judge",{
         method:"POST",
         headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({
-            session_id,
-            decision:code
-        })
+        body:JSON.stringify({session_id,decision:code})
     });
 
-    const data = await res.json();
-
+    const data=await res.json();
     history.push(data);
 
     render(data);
-
-    loading = false;
+    loading=false;
 }
 
-/* ================= RENDER ================= */
+/* RENDER */
 function render(data){
 
-    if(!data || !data.story) return;
+    if(!data||!data.story) return;
 
-    const s = data.story;
+    const s=data.story;
 
-    document.getElementById("message").innerText =
-        s.text_es || s.text_en || "...";
+    let text = s.text?.[lang] || s.text_en || s.text_es || "";
 
-    document.getElementById("options").innerHTML = "";
-
-    /* BREATH FIX */
-    if(s.type==="breathing"){
-        breathe();
-    } else {
-        stopBreath();
+    /* ANALYSIS */
+    if(s.analysis){
+        text += "\n\n" + (s.analysis[lang] || "");
     }
 
-    /* SILENCE */
+    /* SILENCE INFO */
     if(s.type==="silence_challenge"){
         document.getElementById("silenceLevel").innerText =
             s.duration_sec || 20;
+
+        if(s.reward){
+            text += "\n\n" + (s.reward[lang] || "");
+        }
     }
 
-    let opts = s.options || [];
+    document.getElementById("message").innerText=text;
+    document.getElementById("options").innerHTML="";
 
-    if(opts.length===0 && s.type!=="silence_challenge"){
-        opts=[{code:"TDB",text:{es:"CONTINUAR",en:"CONTINUE"}}];
+    /* RIDDLE / MATH */
+    if(s.type==="mini_riddle"||s.type==="mini_math"){
+
+        document.getElementById("message").innerText =
+            s.question?.[lang] || "";
+
+        s.answers.forEach(a=>{
+            const b=document.createElement("button");
+            b.innerText=a.text?.[lang];
+
+            b.onclick=()=>{
+                if(a.correct){
+                    sound("ok");
+                    flash(true);
+                }else{
+                    sound("fail");
+                    flash(false);
+                }
+                setTimeout(()=>send("TDB"),800);
+            };
+
+            document.getElementById("options").appendChild(b);
+        });
+
+        return;
+    }
+
+    /* OPTIONS */
+    let opts=s.options||[];
+
+    if(opts.length===0){
+        opts=[{code:"TDB",text:{en:"CONTINUE",es:"CONTINUAR"}}];
     }
 
     opts.forEach(o=>{
         const b=document.createElement("button");
         b.innerText=o.text?.[lang]||"OK";
-        b.onclick=()=>send(o.code);
+
+        b.onclick=()=>{
+            sound("click");
+
+            if(o.reason){
+                document.getElementById("message").innerText =
+                    o.reason[lang] || "";
+            }
+
+            if(o.correct){
+                sound("ok");
+                flash(true);
+            }else{
+                sound("fail");
+                flash(false);
+            }
+
+            setTimeout(()=>send(o.code),1000);
+        };
+
         document.getElementById("options").appendChild(b);
     });
-
-    sound("ok");
 }
 
-/* ================= BREATH ================= */
-let breathInterval;
+/* FLASH */
+function flash(success){
+    const app=document.getElementById("app");
+    app.classList.add(success?"flashSuccess":"flashFail");
 
-function breathe(){
-    const c=document.getElementById("circle");
-    let grow=true;
-
-    clearInterval(breathInterval);
-
-    breathInterval=setInterval(()=>{
-        c.style.transform = grow?"scale(2)":"scale(1)";
-        c.style.opacity = grow?0.8:0.4;
-        grow=!grow;
-    },2500);
+    setTimeout(()=>{
+        app.classList.remove("flashSuccess","flashFail");
+    },300);
 }
 
-function stopBreath(){
-    clearInterval(breathInterval);
-}
-
-/* ================= CONTROLS ================= */
-function skip(){
-    sound("click");
-    send("TDB");
-}
-
+/* CONTROLS */
+function skip(){ send("TDB"); }
 function back(){
     if(history.length<2) return;
-    sound("click");
-    const prev = history[history.length-2];
-    render(prev);
     history.pop();
+    render(history[history.length-1]);
 }
+function restart(){ location.reload(); }
 
-function restart(){
-    sound("fail");
-    location.reload();
+/* LANG */
+function toggleLang(){
+    lang = lang==="en"?"es":"en";
+    document.getElementById("langToggle").innerText =
+        lang==="en"?"ES":"EN";
 }
-
-/* SAFE LOOP */
-setInterval(()=>{
-    const c=document.getElementById("circle");
-    c.style.opacity = 0.4 + Math.random()*0.4;
-},3000);
 
 </script>
 
