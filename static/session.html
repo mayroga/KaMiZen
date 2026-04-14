@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NEURO PRO | KAMIZEN SYSTEM</title>
+<title>AL CIELO | KAMIZEN SYSTEM</title>
 
 <style>
 :root{
@@ -18,11 +18,10 @@ body{
   margin:0;
   background:var(--bg);
   color:var(--neon);
-  font-family:Arial;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   overflow:hidden;
 }
 
-/* ================= UI LAYOUT ================= */
 #app{
   height:100vh;
   display:flex;
@@ -30,15 +29,22 @@ body{
   justify-content:center;
   flex-direction:column;
   position:relative;
+  transition: background 1s ease;
 }
 
-/* ================= XP BAR ================= */
-#xpBar{
+/* UI HEADER */
+#header{
   position:absolute;
-  top:10px;
-  left:10px;
-  width:200px;
-  height:12px;
+  top:20px;
+  width:90%;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+#xpBar{
+  width:150px;
+  height:10px;
   border:1px solid var(--neon);
 }
 
@@ -46,63 +52,69 @@ body{
   height:100%;
   width:0%;
   background:var(--green);
+  transition: width 0.5s ease;
 }
 
-/* ================= TIMER ================= */
-#timer{
-  position:absolute;
-  top:10px;
-  right:10px;
-  font-size:14px;
-}
+#levelIndicator{ font-weight:bold; letter-spacing: 2px; }
 
-/* ================= SEMAPHORE ================= */
-#light{
-  position:absolute;
-  top:50px;
-  width:20px;
-  height:20px;
-  border-radius:50%;
-  background:gray;
-}
-
-/* ================= CIRCLE BREATH ================= */
+/* VISUAL CORE */
 #circle{
-  width:80px;
-  height:80px;
+  width:100px;
+  height:100px;
   border-radius:50%;
-  background:rgba(0,242,255,0.2);
-  box-shadow:0 0 30px var(--neon);
-  transition:all 2.5s ease;
+  background:rgba(0,242,255,0.1);
+  box-shadow:0 0 40px var(--neon);
+  transition: transform 2s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* ================= TEXT ================= */
+#timerDisplay{
+  font-size: 24px;
+  font-weight: bold;
+}
+
+/* CONTENT PANELS */
+#reason{
+  position:absolute;
+  bottom:350px;
+  width:85%;
+  text-align:center;
+  font-size:16px;
+  color: var(--green);
+  min-height: 40px;
+}
+
 #message{
   position:absolute;
-  bottom:200px;
+  bottom:160px;
   width:85%;
-  padding:15px;
+  padding:20px;
   background:var(--panel);
+  border: 1px solid rgba(0,242,255,0.3);
   text-align:center;
-  min-height:120px;
+  min-height:100px;
+  cursor: pointer;
 }
 
-/* ================= OPTIONS ================= */
 #options{
   position:absolute;
-  bottom:70px;
+  bottom:40px;
   width:85%;
   display:grid;
   grid-template-columns:1fr 1fr;
-  gap:10px;
+  gap:15px;
 }
 
 button{
-  padding:12px;
+  padding:15px;
   border:1px solid var(--neon);
   background:transparent;
   color:var(--neon);
+  font-weight: bold;
   cursor:pointer;
+  text-transform: uppercase;
 }
 
 button:hover{
@@ -110,14 +122,15 @@ button:hover{
   color:#000;
 }
 
-/* ================= REASON BOX ================= */
-#reason{
-  position:absolute;
-  bottom:320px;
-  width:85%;
-  text-align:center;
-  font-size:14px;
-  opacity:0.8;
+.hidden { display: none !important; }
+
+/* SEMAPHORE LIGHT */
+#light{
+  width:15px;
+  height:15px;
+  border-radius:50%;
+  background:gray;
+  margin-right: 10px;
 }
 </style>
 </head>
@@ -125,169 +138,180 @@ button:hover{
 <body>
 
 <div id="app">
+  <div id="header">
+    <div style="display:flex; align-items:center;">
+      <div id="light"></div>
+      <div id="xpBar"><div id="xpFill"></div></div>
+    </div>
+    <div id="levelIndicator">LVL: 1</div>
+  </div>
 
-  <div id="xpBar"><div id="xpFill"></div></div>
-  <div id="timer">⏱ 0</div>
-  <div id="light"></div>
-
-  <div id="circle"></div>
+  <div id="circle">
+    <div id="timerDisplay"></div>
+  </div>
 
   <div id="reason"></div>
-  <div id="message" onclick="start()">TOCA PARA INICIAR</div>
-
-  <div id="options"></div>
-
+  <div id="message" onclick="nextStep()">INICIAR ENTRENAMIENTO</div>
+  <div id="options" class="hidden"></div>
 </div>
 
 <script>
+let currentMission = null;
+let currentBlockIndex = 0;
+let xp = 0;
+let lang = "es";
+let timerInt = null;
 
-let session_id=null;
-let lang="es";
-let xp=0;
-let timerInt=null;
-
-/* ================= AUDIO ================= */
 const audio = new (window.AudioContext || window.webkitAudioContext)();
 
 function sound(type){
   const o=audio.createOscillator();
   const g=audio.createGain();
-
-  o.connect(g);
-  g.connect(audio.destination);
-
-  if(type==="ok") o.frequency.value=700;
-  if(type==="fail") o.frequency.value=120;
-  if(type==="magic") o.frequency.value=520;
-
-  o.type="sine";
-  g.gain.value=0.2;
-
-  o.start();
-  o.stop(audio.currentTime+0.25);
+  o.connect(g); g.connect(audio.destination);
+  if(type==="ok") o.frequency.value=600;
+  if(type==="fail") o.frequency.value=150;
+  if(type==="reward") o.frequency.value=800;
+  o.type="sine"; g.gain.value=0.1;
+  o.start(); o.stop(audio.currentTime+0.2);
 }
 
-/* ================= VOICE ================= */
 function speak(text){
   if(!text) return;
+  speechSynthesis.cancel();
   let u=new SpeechSynthesisUtterance(text);
-  u.lang="es-ES";
+  u.lang = (lang === "es") ? "es-ES" : "en-US";
   speechSynthesis.speak(u);
 }
 
-/* ================= START ================= */
-async function start(){
+async function fetchMissions() {
+  // En producción, esto vendría de tu API/DB
+  const response = await fetch('/static/missions.json'); 
+  return await response.json();
+}
 
+// Inicia o avanza la misión
+async function startSession() {
   if(audio.state==="suspended") await audio.resume();
-
-  const r=await fetch("/start",{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({profile:{lang}})
-  });
-
-  const d=await r.json();
-  session_id=d.session_id;
-
-  render(d.story);
+  // Simulación de carga inicial nivel 1
+  loadMission(1);
 }
 
-/* ================= SEND ================= */
-async function send(code){
-
-  const r=await fetch("/judge",{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({session_id,decision:code})
+async function loadMission(id) {
+  // Aquí llamarías a tu backend para obtener la misión actual del usuario
+  const r = await fetch("/get_mission", {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({ mission_id: id })
   });
-
-  const d=await r.json();
-
-  xp=d.xp;
-  updateXP(xp);
-
-  setSemaphore(d.semaphore);
-
-  document.getElementById("reason").innerText =
-    d.reason ? d.reason.es : "";
-
-  speak(d.reason ? d.reason.es : "");
-
-  sound(d.correct ? "magic" : "fail");
-
-  render(d.story);
-
-  startTimer(d.story?.timer || 15);
+  const data = await r.json();
+  currentMission = data.mission;
+  currentBlockIndex = 0;
+  document.getElementById("levelIndicator").innerText = `LVL: ${currentMission.id}`;
+  processBlock();
 }
 
-/* ================= RENDER ================= */
-function render(s){
+function processBlock() {
+  const block = currentMission.blocks[currentBlockIndex];
+  const msgEl = document.getElementById("message");
+  const optEl = document.getElementById("options");
+  const reasonEl = document.getElementById("reason");
+  
+  optEl.classList.add("hidden");
+  reasonEl.innerText = "";
 
-  if(!s) return;
-
-  document.getElementById("message").innerText =
-    s.text_es || s.text_en;
-
-  document.getElementById("options").innerHTML="";
-
-  if(s.options){
-    s.options.forEach(o=>{
-      let b=document.createElement("button");
-      b.innerText=o.text.es;
-      b.onclick=()=>send(o.code);
-      document.getElementById("options").appendChild(b);
+  if (block.type === "story" || block.type === "analysis") {
+    msgEl.innerText = block.text[lang];
+    speak(block.text[lang]);
+    msgEl.onclick = nextStep;
+  } 
+  else if (block.type === "tvid") {
+    msgEl.innerText = (lang === "es") ? "ELIGE TU CAMINO:" : "CHOOSE YOUR PATH:";
+    optEl.innerHTML = "";
+    optEl.classList.remove("hidden");
+    block.options.forEach(opt => {
+      let b = document.createElement("button");
+      b.innerText = opt.text[lang];
+      b.onclick = () => handleDecision(opt);
+      optEl.appendChild(b);
     });
+    msgEl.onclick = null;
   }
-
-  startBreath();
-}
-
-/* ================= XP BAR ================= */
-function updateXP(v){
-  let p=Math.min(100,v);
-  document.getElementById("xpFill").style.width=p+"%";
-}
-
-/* ================= SEMAPHORE ================= */
-function setSemaphore(c){
-  let l=document.getElementById("light");
-
-  if(c==="green"){
-    l.style.background="#33ff88";
-  }else{
-    l.style.background="#ff3355";
+  else if (block.type === "silence_challenge") {
+    startSilenceChallenge(block);
   }
 }
 
-/* ================= BREATH ================= */
-function startBreath(){
-  let c=document.getElementById("circle");
-
-  setInterval(()=>{
-    c.style.transform="scale("+(1+Math.random()*1.2)+")";
-  },2000);
+function nextStep() {
+  currentBlockIndex++;
+  if (currentBlockIndex < currentMission.blocks.length) {
+    processBlock();
+  } else {
+    // Siguiente misión
+    loadMission(currentMission.id + 1);
+  }
 }
 
-/* ================= TIMER ================= */
-function startTimer(t){
-  clearInterval(timerInt);
+function handleDecision(opt) {
+  const reasonEl = document.getElementById("reason");
+  const light = document.getElementById("light");
+  
+  reasonEl.innerText = opt.reason[lang];
+  speak(opt.reason[lang]);
 
-  let time=t;
-  document.getElementById("timer").innerText="⏱ "+time;
+  if (opt.correct) {
+    light.style.background = "#33ff88";
+    sound("ok");
+    xp += 5;
+    updateXP();
+    setTimeout(nextStep, 3000);
+  } else {
+    light.style.background = "#ff3355";
+    sound("fail");
+    // No avanza hasta que elija la correcta o reinicie bloque
+  }
+}
 
-  timerInt=setInterval(()=>{
-    time--;
-    document.getElementById("timer").innerText="⏱ "+time;
-
-    if(time<=0){
+function startSilenceChallenge(block) {
+  const msgEl = document.getElementById("message");
+  msgEl.innerText = (lang === "es") ? "DESAFÍO DE SILENCIO: NO TOQUES EL TELÉFONO" : "SILENCE CHALLENGE: DON'T TOUCH THE PHONE";
+  
+  let timeLeft = block.duration_sec;
+  document.getElementById("timerDisplay").innerText = timeLeft;
+  
+  timerInt = setInterval(() => {
+    timeLeft--;
+    document.getElementById("timerDisplay").innerText = timeLeft;
+    if (timeLeft <= 0) {
       clearInterval(timerInt);
-      speak("Tiempo terminado");
+      sound("reward");
+      msgEl.innerText = block.reward[lang];
+      speak(block.reward[lang]);
+      document.getElementById("timerDisplay").innerText = "✓";
+      xp += 10;
+      updateXP();
+      msgEl.onclick = nextStep;
     }
-
-  },1000);
+  }, 1000);
 }
+
+function updateXP() {
+  document.getElementById("xpFill").style.width = (xp % 100) + "%";
+}
+
+// Visual breath logic
+setInterval(() => {
+  const c = document.getElementById("circle");
+  const scale = 1 + (Math.random() * 0.5);
+  c.style.transform = `scale(${scale})`;
+}, 2500);
+
+// Entrada inicial
+function nextStepInitial() {
+    if(!currentMission) startSession();
+    else nextStep();
+}
+document.getElementById("message").onclick = nextStepInitial;
 
 </script>
-
 </body>
 </html>
