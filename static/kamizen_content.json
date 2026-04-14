@@ -6,15 +6,6 @@
       "category": "CONTROL INICIAL: RESPIRAR PARA NO PERDERTE",
       "blocks": [
         {
-          "type": "breathing",
-          "duration_sec": 60,
-          "mode": "circle_blue",
-          "scientific": "Slow breathing activates the parasympathetic nervous system, reducing cortisol and stress (Harvard Medical School, 2020).",
-          "text": {
-            "es": "Mira el círculo azul. Inhala cuando crece, exhala cuando baja. Tu control empieza aquí. (1 minuto)"
-          }
-        },
-        {
           "type": "story",
           "text": {
             "es": "Estás en la escuela en Miami. Te dan $10 para el almuerzo. Ves pizza, dulces y soda. También sabes que en casa no hay mucho dinero hoy."
@@ -29,17 +20,17 @@
             {
               "text": { "es": "Gastar todo en dulces ahora" },
               "correct": false,
-              "feedback": { "es": "Error. Elegiste emoción inmediata. Esto entrena debilidad mental." }
+              "feedback": { "es": "Error. Dominio emocional bajo." }
             },
             {
               "text": { "es": "Comprar comida básica y guardar parte" },
               "correct": true,
-              "feedback": { "es": "Correcto. Estás entrenando disciplina y control financiero." }
+              "feedback": { "es": "Correcto. Disciplina financiera." }
             },
             {
               "text": { "es": "No comer y guardar todo" },
               "correct": false,
-              "feedback": { "es": "Error. El control no es castigo extremo, es equilibrio." }
+              "feedback": { "es": "Error. No es equilibrio." }
             }
           ]
         },
@@ -47,16 +38,14 @@
           "type": "laughter_therapy",
           "duration_sec": 60,
           "text": {
-            "es": "Ríe durante 1 minuto aunque no quieras. Esto libera dopamina y reduce ansiedad (Stanford, 2019)."
+            "es": "Ríe durante 1 minuto para liberar tensión."
           }
         },
         {
           "type": "silence_challenge",
           "duration_sec": 20,
-          "scientific": "Silence improves cognitive processing and emotional regulation (NIH, 2013).",
           "quotes": [
-            { "es": "El que se controla, gana antes de empezar." },
-            { "es": "El silencio entrena tu mente." }
+            { "es": "El que se controla, gana antes de empezar." }
           ]
         }
       ]
@@ -67,49 +56,28 @@
       "category": "EMOCION: NO REACCIONAR",
       "blocks": [
         {
-          "type": "breathing",
-          "duration_sec": 60,
-          "mode": "circle_blue",
-          "scientific": "Controlled breathing reduces amygdala overreaction (Yale, 2018).",
-          "text": {
-            "es": "Respira con el círculo. No reacciones, controla."
-          }
-        },
-        {
           "type": "story",
           "text": {
-            "es": "Un niño se burla de ti frente a todos en clase. Todos se ríen."
+            "es": "Un niño se burla de ti frente a todos en clase."
           }
         },
         {
           "type": "quiz",
-          "question": {
-            "es": "¿Qué haces?"
-          },
+          "question": { "es": "¿Qué haces?" },
           "options": [
             {
               "text": { "es": "Responder con insulto" },
-              "correct": false,
-              "feedback": { "es": "Error. Perdiste control. Te manipuló." }
+              "correct": false
             },
             {
-              "text": { "es": "Respirar, mirar y guardar silencio" },
-              "correct": true,
-              "feedback": { "es": "Correcto. El silencio rompe el ataque." }
+              "text": { "es": "Respirar y guardar silencio" },
+              "correct": true
             },
             {
               "text": { "es": "Ignorar con miedo" },
-              "correct": false,
-              "feedback": { "es": "Error. No es control, es evasión." }
+              "correct": false
             }
           ]
-        },
-        {
-          "type": "laughter_therapy",
-          "duration_sec": 60,
-          "text": {
-            "es": "Ríe fuerte como si nada te afectara. Estás entrenando dominio emocional."
-          }
         },
         {
           "type": "silence_challenge",
@@ -126,49 +94,19 @@
       "category": "CALLE: DECISION SEGURA",
       "blocks": [
         {
-          "type": "breathing",
-          "duration_sec": 60,
-          "mode": "circle_blue",
-          "scientific": "Breathing improves situational awareness under stress (APA, 2017).",
-          "text": {
-            "es": "Respira antes de decidir. La calma salva."
-          }
-        },
-        {
           "type": "story",
           "text": {
-            "es": "Caminas en Miami. Un carro pasa lento tres veces. Hay una tienda abierta y un callejón oscuro."
+            "es": "Caminas en Miami. Un carro pasa lento tres veces."
           }
         },
         {
           "type": "quiz",
-          "question": {
-            "es": "¿Qué haces?"
-          },
+          "question": { "es": "¿Qué haces?" },
           "options": [
-            {
-              "text": { "es": "Tomar el callejón" },
-              "correct": false,
-              "feedback": { "es": "Error. Elegiste riesgo." }
-            },
-            {
-              "text": { "es": "Entrar a la tienda y pedir ayuda" },
-              "correct": true,
-              "feedback": { "es": "Correcto. Elegiste visibilidad y seguridad." }
-            },
-            {
-              "text": { "es": "Correr sin pensar" },
-              "correct": false,
-              "feedback": { "es": "Error. Acción sin estrategia." }
-            }
+            { "text": { "es": "Entrar al callejón" }, "correct": false },
+            { "text": { "es": "Entrar a la tienda" }, "correct": true },
+            { "text": { "es": "Correr sin pensar" }, "correct": false }
           ]
-        },
-        {
-          "type": "laughter_therapy",
-          "duration_sec": 60,
-          "text": {
-            "es": "Ríe para soltar tensión. Tu cuerpo vuelve al control."
-          }
         },
         {
           "type": "silence_challenge",
@@ -185,40 +123,18 @@
       "category": "DINERO: CONTROL BASICO",
       "blocks": [
         {
-          "type": "breathing",
-          "duration_sec": 60,
-          "mode": "circle_blue",
-          "text": {
-            "es": "Respira. El dinero también se controla con calma."
-          }
-        },
-        {
           "type": "story",
           "text": {
-            "es": "Recibes $20. Tus amigos compran cosas caras. Te miran esperando que hagas lo mismo."
+            "es": "Recibes $20. Tus amigos gastan todo."
           }
         },
         {
           "type": "quiz",
-          "question": {
-            "es": "¿Qué haces?"
-          },
+          "question": { "es": "¿Qué haces?" },
           "options": [
-            {
-              "text": { "es": "Gastar para encajar" },
-              "correct": false,
-              "feedback": { "es": "Error. Estás comprando aceptación." }
-            },
-            {
-              "text": { "es": "Guardar y usar con intención" },
-              "correct": true,
-              "feedback": { "es": "Correcto. Esto es inteligencia financiera." }
-            },
-            {
-              "text": { "es": "Prestar dinero" },
-              "correct": false,
-              "feedback": { "es": "Error. Sin control, pierdes dinero." }
-            }
+            { "text": { "es": "Gastar para encajar" }, "correct": false },
+            { "text": { "es": "Guardar el dinero" }, "correct": true },
+            { "text": { "es": "Prestarlo" }, "correct": false }
           ]
         },
         {
@@ -236,40 +152,18 @@
       "category": "IDENTIDAD: QUIEN ERES",
       "blocks": [
         {
-          "type": "breathing",
-          "duration_sec": 60,
-          "mode": "circle_blue",
-          "text": {
-            "es": "Respira. Aquí decides quién eres."
-          }
-        },
-        {
           "type": "story",
           "text": {
-            "es": "Nadie te ve. Puedes copiar en un examen o hacerlo tú mismo."
+            "es": "Nadie te ve. Puedes copiar en un examen."
           }
         },
         {
           "type": "quiz",
-          "question": {
-            "es": "¿Qué haces?"
-          },
+          "question": { "es": "¿Qué haces?" },
           "options": [
-            {
-              "text": { "es": "Copiar" },
-              "correct": false,
-              "feedback": { "es": "Error. Ganaste nota, perdiste carácter." }
-            },
-            {
-              "text": { "es": "Hacerlo tú mismo" },
-              "correct": true,
-              "feedback": { "es": "Correcto. Estás construyendo identidad real." }
-            },
-            {
-              "text": { "es": "No hacer nada" },
-              "correct": false,
-              "feedback": { "es": "Error. Evadir no construye." }
-            }
+            { "text": { "es": "Copiar" }, "correct": false },
+            { "text": { "es": "Hacerlo tú mismo" }, "correct": true },
+            { "text": { "es": "No hacer nada" }, "correct": false }
           ]
         },
         {
@@ -284,43 +178,21 @@
     {
       "id": 6,
       "level": 2,
-      "category": "CONTROL TOTAL: DECISION",
+      "category": "CONTROL TOTAL",
       "blocks": [
-        {
-          "type": "breathing",
-          "duration_sec": 60,
-          "mode": "circle_blue",
-          "text": {
-            "es": "Respira. Aquí empieza el control real."
-          }
-        },
         {
           "type": "story",
           "text": {
-            "es": "Estás solo. Nadie te guía. Tienes que decidir algo importante."
+            "es": "Estás solo. Debes decidir algo importante."
           }
         },
         {
           "type": "quiz",
-          "question": {
-            "es": "¿Cómo decides?"
-          },
+          "question": { "es": "¿Cómo decides?" },
           "options": [
-            {
-              "text": { "es": "Por impulso" },
-              "correct": false,
-              "feedback": { "es": "Error. El impulso destruye decisiones." }
-            },
-            {
-              "text": { "es": "Respirar y pensar consecuencias" },
-              "correct": true,
-              "feedback": { "es": "Correcto. Estás liderando tu vida." }
-            },
-            {
-              "text": { "es": "Evitar decidir" },
-              "correct": false,
-              "feedback": { "es": "Error. No decidir también decide por ti." }
-            }
+            { "text": { "es": "Por impulso" }, "correct": false },
+            { "text": { "es": "Pensando consecuencias" }, "correct": true },
+            { "text": { "es": "Evitar decidir" }, "correct": false }
           ]
         },
         {
@@ -335,64 +207,28 @@
     {
       "id": 7,
       "level": 3,
-      "category": "SOCIAL PRESSURE: THE LUNCH TABLE",
+      "category": "PRESION SOCIAL",
       "blocks": [
-        {
-          "type": "breathing",
-          "duration_sec": 60,
-          "mode": "focus",
-          "text": {
-            "en": "Watch the blue circle. Inhale as it grows, exhale as it shrinks. This calms your amygdala and helps you make decisions under pressure. (1 Minute)",
-            "es": "Mira el círculo azul. Inhala cuando crece, exhala cuando se encoge. Esto calma la amígdala y te ayuda a decidir bajo presión. (1 Minuto)"
-          }
-        },
         {
           "type": "story",
           "text": {
-            "en": "At school in Miami, your friends are laughing at a kid because his shoes are old. They look at you and say: 'Say something funny'. Everyone is watching.",
-            "es": "En la escuela en Miami, tus amigos se burlan de un niño porque sus zapatos están viejos. Te miran y dicen: 'Di algo gracioso'. Todos te están mirando."
+            "es": "Tus amigos se burlan de otro niño."
           }
         },
         {
-          "type": "tvid",
-          "mode": "tension",
+          "type": "quiz",
+          "question": { "es": "¿Qué haces?" },
           "options": [
-            {
-              "code": "TDM",
-              "text": { "en": "Make a joke to fit in.", "es": "Hacer un chiste para encajar." }
-            },
-            {
-              "code": "TDK",
-              "text": { "en": "Say: 'Leave him alone.'", "es": "Decir: 'Déjenlo en paz'." }
-            },
-            {
-              "code": "TDN",
-              "text": { "en": "Stay silent but don’t laugh.", "es": "Quedarte callado pero no reír." }
-            }
+            { "text": { "es": "Reír" }, "correct": false },
+            { "text": { "es": "Defenderlo" }, "correct": true },
+            { "text": { "es": "Quedarte callado" }, "correct": false }
           ]
-        },
-        {
-          "type": "psychological_insight",
-          "text": {
-            "en": "REALITY: Laughing makes you part of the attack. Silence protects you, but courage changes the environment. Leaders feel fear… and act anyway.",
-            "es": "REALIDAD: Reír te hace parte del ataque. El silencio te protege, pero el valor cambia el entorno. Los líderes sienten miedo… y actúan igual."
-          }
-        },
-        {
-          "type": "laughter_therapy",
-          "text": {
-            "en": "Laugh strong for 30 seconds like a leader who is not controlled by others. This reduces stress hormones and increases confidence.",
-            "es": "Ríe fuerte por 30 segundos como un líder que no es controlado por otros. Esto reduce el estrés y aumenta la confianza."
-          }
         },
         {
           "type": "silence_challenge",
           "duration_sec": 40,
           "quotes": [
-            {
-              "en": "If you don't control yourself, others will.",
-              "es": "Si no te controlas, otros lo harán."
-            }
+            { "es": "Si no te controlas, otros lo harán." }
           ]
         }
       ]
@@ -400,57 +236,28 @@
     {
       "id": 8,
       "level": 3,
-      "category": "MONEY: THE FIRST $20",
+      "category": "MONEY: THE FIRST DECISION",
       "blocks": [
-        {
-          "type": "breathing",
-          "duration_sec": 60,
-          "mode": "focus",
-          "text": {
-            "en": "Breathe slow. This activates your prefrontal cortex, helping you make smarter money decisions. (1 Minute)",
-            "es": "Respira lento. Esto activa tu corteza prefrontal y te ayuda a tomar mejores decisiones con el dinero. (1 Minuto)"
-          }
-        },
         {
           "type": "story",
           "text": {
-            "en": "Your mom gives you $20 in Miami to buy groceries. On the way, you see a video game skin you really want for $19.99.",
-            "es": "Tu mamá te da $20 para comprar comida. En el camino ves una skin de videojuego que quieres por $19.99."
+            "es": "Tienes $20 y ves algo que quieres comprar."
           }
         },
         {
-          "type": "tvid",
-          "mode": "tension",
+          "type": "quiz",
+          "question": { "es": "¿Qué haces?" },
           "options": [
-            {
-              "code": "TDM",
-              "text": { "en": "Buy the game skin.", "es": "Comprar la skin." }
-            },
-            {
-              "code": "TDG",
-              "text": { "en": "Buy the groceries.", "es": "Comprar la comida." }
-            },
-            {
-              "code": "TDP",
-              "text": { "en": "Save part and buy later.", "es": "Ahorrar una parte y comprar después." }
-            }
+            { "text": { "es": "Comprar impulso" }, "correct": false },
+            { "text": { "es": "Comprar comida" }, "correct": true },
+            { "text": { "es": "Esperar" }, "correct": true }
           ]
-        },
-        {
-          "type": "psychological_insight",
-          "text": {
-            "en": "TRUTH: Money shows your priorities. Immediate pleasure feels good… but responsibility builds your future.",
-            "es": "VERDAD: El dinero muestra tus prioridades. El placer inmediato se siente bien… pero la responsabilidad construye tu futuro."
-          }
         },
         {
           "type": "silence_challenge",
           "duration_sec": 50,
           "quotes": [
-            {
-              "en": "Every dollar you spend is a decision about your future.",
-              "es": "Cada dólar que gastas es una decisión sobre tu futuro."
-            }
+            { "es": "Cada decisión crea tu futuro." }
           ]
         }
       ]
@@ -460,382 +267,405 @@
       "level": 4,
       "category": "STREET DANGER: THE STRANGER",
       "blocks": [
-        {
-          "type": "story",
-          "text": {
-            "en": "A man in a car stops near you and says: 'I know your parents. Get in, I’ll take you home.' You’ve never seen him before.",
-            "es": "Un hombre en un carro se detiene y dice: 'Conozco a tus padres. Súbete, te llevo a casa.' Nunca lo has visto."
-          }
-        },
-        {
-          "type": "tvid",
-          "mode": "agitation",
-          "options": [
-            {
-              "code": "TDM",
-              "text": { "en": "Get in to be polite.", "es": "Subirte por educación." }
-            },
-            {
-              "code": "TDG",
-              "text": { "en": "Run to a public place and ask for help.", "es": "Correr a un lugar público y pedir ayuda." }
-            },
-            {
-              "code": "TDN",
-              "text": { "en": "Ask questions and stay far.", "es": "Hacer preguntas y mantener distancia." }
-            }
-          ]
-        },
-        {
-          "type": "psychological_insight",
-          "text": {
-            "en": "SURVIVAL: Real danger often looks friendly. Distance is safety. Never trade safety for politeness.",
-            "es": "SUPERVIVENCIA: El peligro real muchas veces parece amable. La distancia es seguridad. Nunca cambies seguridad por educación."
-          }
-        },
-        {
-          "type": "breathing",
-          "duration_sec": 60,
-          "mode": "power",
-          "text": {
-            "en": "Fast inhale, slow exhale. This helps your body react without panic. (1 Minute)",
-            "es": "Inhala rápido, exhala lento. Esto ayuda a actuar sin pánico. (1 Minuto)"
-          }
-        },
-        {
-          "type": "silence_challenge",
-          "duration_sec": 60,
-          "quotes": [
-            {
-              "en": "Your safety is your responsibility.",
-              "es": "Tu seguridad es tu responsabilidad."
-            }
-          ]
-        }
-      ]
-    },
     {
-      "id": 10,
-      "level": 4,
-      "category": "MANIPULATION: THE FRIEND",
-      "blocks": [
-        {
-          "type": "story",
-          "text": {
-            "en": "A friend tells you: 'If you don’t give me your answers on the test, I won’t be your friend anymore.'",
-            "es": "Un amigo te dice: 'Si no me das las respuestas del examen, ya no soy tu amigo.'"
-          }
-        },
-        {
-          "type": "tvid",
-          "mode": "tension",
-          "options": [
-            {
-              "code": "TDM",
-              "text": { "en": "Give the answers.", "es": "Dar las respuestas." }
-            },
-            {
-              "code": "TDK",
-              "text": { "en": "Say no and explain why.", "es": "Decir que no y explicar por qué." }
-            },
-            {
-              "code": "TDG",
-              "text": { "en": "Walk away from the friendship.", "es": "Alejarte de la amistad." }
-            }
-          ]
-        },
-        {
-          "type": "psychological_insight",
-          "text": {
-            "en": "TRUTH: Real friends don’t force you to betray yourself. Manipulation uses fear. Strength uses clarity.",
-            "es": "VERDAD: Un amigo real no te obliga a traicionarte. La manipulación usa miedo. La fuerza usa claridad."
-          }
-        },
-        {
-          "type": "silence_challenge",
-          "duration_sec": 80,
-          "quotes": [
-            {
-              "en": "Respect is more important than approval.",
-              "es": "El respeto es más importante que la aprobación."
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": 12,
-      "level": 5,
-      "category": "ANGER CONTROL: THE FIGHT",
-      "blocks": [
-       {
-        "type": "story",
-        "text": {
-          "en": "A kid pushes you hard in school. Everyone is watching. Your heart is racing.",
-          "es": "Un niño te empuja fuerte en la escuela. Todos están mirando. Tu corazón late rápido."
-        }
+      "type": "story",
+      "text": {
+        "es": "Un hombre en un carro se detiene y dice: 'Conozco a tus padres. Súbete, te llevo a casa.'"
       }
-    ]
-  },
-
-  {
-    "id": 13,
-    "level": 5,
-    "category": "BETRAYAL: THE SECRET",
-    "blocks": [
-      {
-        "type": "breathing",
-        "duration_sec": 60,
-        "mode": "focus",
-        "text": {
-          "en": "Slow breathing activates your brain's control center and helps you think before reacting. (1 Minute)",
-          "es": "La respiración lenta activa el centro de control del cerebro y te ayuda a pensar antes de reaccionar. (1 Minuto)"
-        }
-      }
-    ]
-  },
-  {
-    "id": 14,
-    "level": 5,
-    "category": "FAMILY DECISION: THE LAST MONEY",
-    "blocks": [
-      {
-        "type": "story",
-        "text": {
-          "en": "At home in Miami, your parents are worried. You hear them say they don’t have enough money this week.",
-          "es": "En casa, tus padres están preocupados. Escuchas que no tienen suficiente dinero esta semana."
-        }
-      }
-    ]
-   },
-   {
-      "id": 15,
-      "level": 6,
-      "category": "MONEY TRAP: EASY CASH",
-      "blocks": [
-        {
-          "type": "story",
-          "text": {
-            "en": "An older kid offers you $50 to 'just hold something' in your backpack at school. He says it's easy money.",
-            "es": "Un chico mayor te ofrece $50 por 'guardar algo' en tu mochila en la escuela. Dice que es dinero fácil."
-          }
-        },
-        {
-          "type": "tvid",
-          "mode": "agitation",
-          "options": [
-            {
-              "code": "TDM",
-              "text": { "en": "Take the money.", "es": "Aceptar el dinero." }
-            },
-            {
-              "code": "TDG",
-              "text": { "en": "Refuse and walk away.", "es": "Negarte y alejarte." }
-            },
-            {
-              "code": "TDN",
-              "text": { "en": "Tell a trusted adult.", "es": "Decirle a un adulto de confianza." }
-            }
-          ]
-        },
-        {
-          "type": "psychological_insight",
-          "text": {
-            "en": "DANGER: Easy money often hides serious problems. Smart people protect their future, not just their present.",
-            "es": "PELIGRO: El dinero fácil muchas veces esconde problemas grandes. Las personas inteligentes protegen su futuro."
-          }
-        },
-        {
-          "type": "breathing",
-          "duration_sec": 60,
-          "mode": "power",
-          "text": {
-            "en": "Control your breath to control fear and pressure. (1 Minute)",
-            "es": "Controla tu respiración para controlar el miedo y la presión. (1 Minuto)"
-          }
-        },
-        {
-          "type": "silence_challenge",
-          "duration_sec": 180,
-          "quotes": [
-            {
-              "en": "Not all opportunities are good opportunities.",
-              "es": "No todas las oportunidades son buenas."
-            }
-          ]
-        }
+    },
+    {
+      "type": "quiz",
+      "question": { "es": "¿Qué haces?" },
+      "options": [
+        { "text": { "es": "Subir al carro" }, "correct": false },
+        { "text": { "es": "Correr a un lugar seguro" }, "correct": true },
+        { "text": { "es": "Hablar desde lejos" }, "correct": false }
       ]
     },
     {
-      "id": 16,
-      "level": 6,
-      "category": "POWER: THE GROUP LEADER",
-      "blocks": [
-        {
-          "type": "story",
-          "text": {
-            "en": "You become the leader of your group at school. Now others follow what you say—even when it’s wrong.",
-            "es": "Te conviertes en líder de tu grupo. Ahora otros hacen lo que tú dices, incluso si está mal."
-          }
-        },
-        {
-          "type": "tvid",
-          "mode": "tension",
-          "options": [
-            {
-              "code": "TDM",
-              "text": { "en": "Use power to control others.", "es": "Usar el poder para controlar." }
-            },
-            {
-              "code": "TDK",
-              "text": { "en": "Use power to help and guide.", "es": "Usar el poder para ayudar." }
-            },
-            {
-              "code": "TDG",
-              "text": { "en": "Teach others to think for themselves.", "es": "Enseñar a pensar por sí mismos." }
-            }
-          ]
-        },
-        {
-          "type": "psychological_insight",
-          "text": {
-            "en": "POWER: Real leaders don’t control… they build others. Power without values becomes danger.",
-            "es": "PODER: Los verdaderos líderes no controlan… construyen. El poder sin valores se vuelve peligro."
-          }
-        },
-        {
-          "type": "laughter_therapy",
-          "text": {
-            "en": "Laugh confidently for 30 seconds. This releases pressure and strengthens leadership presence.",
-            "es": "Ríe con confianza por 30 segundos. Esto libera presión y fortalece tu presencia como líder."
-          }
-        },
-        {
-          "type": "silence_challenge",
-          "duration_sec": 200,
-          "quotes": [
-            {
-              "en": "Leadership is responsibility, not control.",
-              "es": "El liderazgo es responsabilidad, no control."
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": 17,
-      "level": 6,
-      "category": "IDENTITY: WHO ARE YOU?",
-      "blocks": [
-        {
-          "type": "story",
-          "text": {
-            "en": "At school, everyone is trying to be like someone else—same clothes, same behavior. You feel pressure to change who you are.",
-            "es": "En la escuela, todos intentan ser como otros—misma ropa, misma actitud. Sientes presión para cambiar."
-          }
-        },
-        {
-          "type": "tvid",
-          "mode": "tension",
-          "options": [
-            {
-              "code": "TDM",
-              "text": { "en": "Copy others to fit in.", "es": "Copiar para encajar." }
-            },
-            {
-              "code": "TDK",
-              "text": { "en": "Stay true to yourself.", "es": "Ser tú mismo." }
-            },
-            {
-              "code": "TDN",
-              "text": { "en": "Learn from others but stay original.", "es": "Aprender pero seguir siendo tú." }
-            }
-          ]
-        },
-        {
-          "type": "psychological_insight",
-          "text": {
-            "en": "IDENTITY: Copying gives short approval. Being yourself builds long-term strength.",
-            "es": "IDENTIDAD: Copiar da aprobación rápida. Ser tú construye fuerza real."
-          }
-        },
-        {
-          "type": "breathing",
-          "duration_sec": 60,
-          "mode": "focus",
-          "text": {
-            "en": "Focus breathing increases self-awareness and confidence. (1 Minute)",
-            "es": "La respiración enfocada aumenta la autoconciencia y la confianza. (1 Minuto)"
-          }
-        },
-        {
-          "type": "silence_challenge",
-          "duration_sec": 220,
-          "quotes": [
-            {
-              "en": "Be real, not accepted.",
-              "es": "Sé real, no aceptado."
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": 18,
-      "level": 7,
-      "category": "PURPOSE: YOUR PATH",
-      "blocks": [
-        {
-          "type": "story",
-          "text": {
-            "en": "You grow up. You can choose: follow the crowd, or build your own path—even if it’s harder.",
-            "es": "Creces. Puedes elegir: seguir a los demás o construir tu propio camino, aunque sea más difícil."
-          }
-        },
-        {
-          "type": "tvid",
-          "mode": "power",
-          "options": [
-            {
-              "code": "TDM",
-              "text": { "en": "Follow others for comfort.", "es": "Seguir a otros por comodidad." }
-            },
-            {
-              "code": "TDG",
-              "text": { "en": "Build your own path.", "es": "Crear tu propio camino." }
-            },
-            {
-              "code": "TDK",
-              "text": { "en": "Help others grow with you.", "es": "Crecer ayudando a otros." }
-            }
-          ]
-        },
-        {
-          "type": "psychological_insight",
-          "text": {
-            "en": "PURPOSE: Life rewards those who build, not those who follow. Your decisions today create your future.",
-            "es": "PROPÓSITO: La vida recompensa a quien construye, no al que sigue. Tus decisiones crean tu futuro."
-          }
-        },
-        {
-          "type": "breathing",
-          "duration_sec": 60,
-          "mode": "victory",
-          "text": {
-            "en": "Deep victory breathing. Feel your future being built. (1 Minute)",
-            "es": "Respiración de victoria. Siente tu futuro construirse. (1 Minuto)"
-          }
-        },
-        {
-          "type": "silence_challenge",
-          "duration_sec": 240,
-          "quotes": [
-            {
-              "en": "You are building your life right now.",
-              "es": "Estás construyendo tu vida ahora mismo."
-            }
-          ]
-        }
+      "type": "silence_challenge",
+      "duration_sec": 60,
+      "quotes": [
+        { "es": "La distancia es seguridad." }
       ]
     }
   ]
-}
+},
+{
+  "id": 10,
+  "level": 4,
+  "category": "MANIPULATION: THE FRIEND",
+  "blocks": [
+    {
+      "type": "story",
+      "text": {
+        "es": "Un amigo te dice: 'Si no me das las respuestas, no soy tu amigo.'"
+      }
+    },
+    {
+      "type": "quiz",
+      "question": { "es": "¿Qué haces?" },
+      "options": [
+        { "text": { "es": "Dar las respuestas" }, "correct": false },
+        { "text": { "es": "Decir que no" }, "correct": true },
+        { "text": { "es": "Alejarte" }, "correct": true }
+      ]
+    },
+    {
+      "type": "silence_challenge",
+      "duration_sec": 80,
+      "quotes": [
+        { "es": "El respeto vale más que la presión." }
+      ]
+    }
+  ]
+},
+{
+  "id": 11,
+  "level": 5,
+  "category": "FIRST BUSINESS: SELL OR LOSE",
+  "blocks": [
+    {
+      "type": "story",
+      "text": {
+        "es": "Compras dulces para vender en la escuela, pero nadie compra."
+      }
+    },
+    {
+      "type": "quiz",
+      "question": { "es": "¿Qué haces?" },
+      "options": [
+        { "text": { "es": "Rendirse" }, "correct": false },
+        { "text": { "es": "Cambiar estrategia" }, "correct": true },
+        { "text": { "es": "Bajar precio" }, "correct": true }
+      ]
+    },
+    {
+      "type": "silence_challenge",
+      "duration_sec": 100,
+      "quotes": [
+        { "es": "El fracaso es información." }
+      ]
+    }
+  ]
+},
+{
+  "id": 12,
+  "level": 5,
+  "category": "ANGER CONTROL: THE FIGHT",
+  "blocks": [
+    {
+      "type": "story",
+      "text": {
+        "es": "Un niño te empuja fuerte en la escuela. Todos miran."
+      }
+    },
+    {
+      "type": "quiz",
+      "question": { "es": "¿Qué haces?" },
+      "options": [
+        { "text": { "es": "Golpear de vuelta" }, "correct": false },
+        { "text": { "es": "Controlarte" }, "correct": true },
+        { "text": { "es": "Pedir ayuda" }, "correct": true }
+      ]
+    },
+    {
+      "type": "silence_challenge",
+      "duration_sec": 120,
+      "quotes": [
+        { "es": "El autocontrol es poder." }
+      ]
+    }
+  ]
+},
+{
+  "id": 13,
+  "level": 5,
+  "category": "BETRAYAL: THE SECRET",
+  "blocks": [
+    {
+      "type": "story",
+      "text": {
+        "es": "Contaste un secreto y ahora todos lo saben."
+      }
+    },
+    {
+      "type": "quiz",
+      "question": { "es": "¿Qué haces?" },
+      "options": [
+        { "text": { "es": "Vengarte" }, "correct": false },
+        { "text": { "es": "Hablar con calma" }, "correct": true },
+        { "text": { "es": "Alejarte" }, "correct": true }
+      ]
+    },
+    {
+      "type": "silence_challenge",
+      "duration_sec": 140,
+      "quotes": [
+        { "es": "No todos merecen tu confianza." }
+      ]
+    }
+  ]
+},
+{
+  "id": 14,
+  "level": 5,
+  "category": "FAMILY DECISION: THE LAST MONEY",
+  "blocks": [
+    {
+      "type": "story",
+      "text": {
+        "es": "Tus padres no tienen mucho dinero esta semana."
+      }
+    },
+    {
+      "type": "quiz",
+      "question": { "es": "¿Qué haces?" },
+      "options": [
+        { "text": { "es": "Insistir en compras" }, "correct": false },
+        { "text": { "es": "Esperar" }, "correct": true },
+        { "text": { "es": "Ayudar a ahorrar" }, "correct": true }
+      ]
+    },
+    {
+      "type": "silence_challenge",
+      "duration_sec": 160,
+      "quotes": [
+        { "es": "La madurez empieza temprano." }
+      ]
+    }
+  ]
+},
+{
+  "id": 15,
+  "level": 6,
+  "category": "MONEY TRAP: EASY CASH",
+  "blocks": [
+    {
+      "type": "story",
+      "text": {
+        "es": "Un chico mayor te ofrece dinero por guardar algo en tu mochila."
+      }
+    },
+    {
+      "type": "quiz",
+      "question": { "es": "¿Qué haces?" },
+      "options": [
+        { "text": { "es": "Aceptar dinero" }, "correct": false },
+        { "text": { "es": "Negarte" }, "correct": true },
+        { "text": { "es": "Decir a un adulto" }, "correct": true }
+      ]
+    },
+    {
+      "type": "silence_challenge",
+      "duration_sec": 180,
+      "quotes": [
+        { "es": "El dinero fácil es peligroso." }
+      ]
+    }
+  ]
+},
+{
+  "id": 16,
+  "level": 6,
+  "category": "POWER: THE GROUP LEADER",
+  "blocks": [
+    {
+      "type": "story",
+      "text": {
+        "es": "Eres líder del grupo y otros te siguen incluso cuando está mal."
+      }
+    },
+    {
+      "type": "quiz",
+      "question": { "es": "¿Qué haces?" },
+      "options": [
+        { "text": { "es": "Controlar a otros" }, "correct": false },
+        { "text": { "es": "Ayudar y guiar" }, "correct": true },
+        { "text": { "es": "Enseñar independencia" }, "correct": true }
+      ]
+    },
+    {
+      "type": "silence_challenge",
+      "duration_sec": 200,
+      "quotes": [
+        { "es": "El liderazgo es responsabilidad." }
+      ]
+    }
+  ]
+},
+{
+  "id": 17,
+  "level": 6,
+  "category": "IDENTITY: WHO ARE YOU?",
+  "blocks": [
+    {
+      "type": "story",
+      "text": {
+        "es": "Todos intentan ser iguales en la escuela."
+      }
+    },
+    {
+      "type": "quiz",
+      "question": { "es": "¿Qué haces?" },
+      "options": [
+        { "text": { "es": "Copiar a otros" }, "correct": false },
+        { "text": { "es": "Ser tú mismo" }, "correct": true },
+        { "text": { "es": "Mezclar pero mantener identidad" }, "correct": true }
+      ]
+    },
+    {
+      "type": "silence_challenge",
+      "duration_sec": 220,
+      "quotes": [
+        { "es": "Ser real es poder." }
+      ]
+    }
+  ]
+},
+{
+  "id": 18,
+  "level": 7,
+  "category": "PURPOSE: YOUR PATH",
+  "blocks": [
+    {
+      "type": "story",
+      "text": {
+        "es": "Creces y ahora debes elegir: seguir al grupo o construir tu propio camino."
+      }
+    },
+    {
+      "type": "quiz",
+      "question": { "es": "¿Qué eliges?" },
+      "options": [
+        { "text": { "es": "Seguir a otros" }, "correct": false },
+        { "text": { "es": "Crear tu propio camino" }, "correct": true },
+        { "text": { "es": "Ayudar a otros a crecer contigo" }, "correct": true }
+      ]
+    },
+    {
+      "type": "silence_challenge",
+      "duration_sec": 240,
+      "quotes": [
+        { "es": "Tu futuro se construye con decisiones." }
+      ]
+    }
+  ]
+},
+{
+  "id": 19,
+  "level": 7,
+  "category": "DISCIPLINE: THE WAKE UP MOMENT",
+  "blocks": [
+    {
+      "type": "story",
+      "text": {
+        "es": "Es temprano. No quieres levantarte, pero tienes responsabilidades."
+      }
+    },
+    {
+      "type": "quiz",
+      "question": { "es": "¿Qué haces?" },
+      "options": [
+        { "text": { "es": "Seguir durmiendo" }, "correct": false },
+        { "text": { "es": "Levantarte aunque no quieras" }, "correct": true },
+        { "text": { "es": "Posponer todo" }, "correct": false }
+      ]
+    },
+    {
+      "type": "silence_challenge",
+      "duration_sec": 180,
+      "quotes": [
+        { "es": "La disciplina gana cuando la motivación muere." }
+      ]
+    }
+  ]
+},
+{
+  "id": 20,
+  "level": 8,
+  "category": "FEAR: FINAL TEST",
+  "blocks": [
+    {
+      "type": "story",
+      "text": {
+        "es": "Estás frente a una decisión importante que te da miedo."
+      }
+    },
+    {
+      "type": "quiz",
+      "question": { "es": "¿Qué haces?" },
+      "options": [
+        { "text": { "es": "Evitar la decisión" }, "correct": false },
+        { "text": { "es": "Enfrentar el miedo" }, "correct": true },
+        { "text": { "es": "Esperar que otros decidan" }, "correct": false }
+      ]
+    },
+    {
+      "type": "silence_challenge",
+      "duration_sec": 200,
+      "quotes": [
+        { "es": "El miedo desaparece cuando actúas." }
+      ]
+    }
+  ]
+},
+{
+  "id": 21,
+  "level": 8,
+  "category": "LEGACY: WHO YOU BECOME",
+  "blocks": [
+    {
+      "type": "story",
+      "text": {
+        "es": "Miras tu vida y ves todas tus decisiones pasadas."
+      }
+    },
+    {
+      "type": "quiz",
+      "question": { "es": "¿Qué quieres ser?" },
+      "options": [
+        { "text": { "es": "Alguien sin control" }, "correct": false },
+        { "text": { "es": "Alguien disciplinado y fuerte" }, "correct": true },
+        { "text": { "es": "Alguien que aprende siempre" }, "correct": true }
+      ]
+    },
+    {
+      "type": "silence_challenge",
+      "duration_sec": 240,
+      "quotes": [
+        { "es": "Tu legado comienza hoy." }
+      ]
+    }
+  ]
+},
+{
+  "id": 22,
+  "level": 9,
+  "category": "FINAL: MASTER CONTROL",
+  "blocks": [
+    {
+      "type": "story",
+      "text": {
+        "es": "Has llegado al final del entrenamiento. Ahora sabes controlar emoción, dinero, presión y decisiones."
+      }
+    },
+    {
+      "type": "quiz",
+      "question": { "es": "¿Cuál es tu resultado?" },
+      "options": [
+        { "text": { "es": "Reaccionar sin pensar" }, "correct": false },
+        { "text": { "es": "Controlar mente y acciones" }, "correct": true },
+        { "text": { "es": "Aprender y mejorar siempre" }, "correct": true }
+      ]
+    },
+    {
+      "type": "silence_challenge",
+      "duration_sec": 300,
+      "quotes": [
+        { "es": "El verdadero poder es el autocontrol." },
+        { "es": "Tu vida depende de tus decisiones." }
+      ]
+    }
+  ]
+}    
