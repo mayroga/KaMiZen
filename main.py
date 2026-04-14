@@ -1,9 +1,8 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from fastapi.responses import JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
-import uuid
-import time
 import json
+import uuid
 import os
 
 app = FastAPI()
@@ -11,123 +10,112 @@ app = FastAPI()
 # ===============================
 # STATIC
 # ===============================
-if not os.path.exists("static"):
-    os.makedirs("static")
-
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # ===============================
-# LOAD DATABASE SAFE
+# LOAD JSON CONTENT
 # ===============================
-CONTENT = []
+CONTENT_PATH = "static/kamizen_content.json"
 
 def load_content():
-    global CONTENT
     try:
-        path = "static/kamizen_content.json"
-
-        if not os.path.exists(path):
-            print("[WARN] No JSON found")
-            CONTENT = []
-            return
-
-        with open(path, "r", encoding="utf-8") as f:
-            raw = json.load(f)
-
-        CONTENT = raw.get("missions", []) if isinstance(raw, dict) else raw
-
-        print(f"[OK] Missions loaded: {len(CONTENT)}")
-
+        with open(CONTENT_PATH, "r", encoding="utf-8") as f:
+            data = json.load(f)
+            return data.get("missions", [])
     except Exception as e:
         print("[ERROR] JSON LOAD FAIL:", e)
-        CONTENT = []
+        return []
 
-load_content()
+MISSIONS = load_content()
 
 # ===============================
-# SESSIONS
+# SESSION STORAGE
 # ===============================
 sessions = {}
 
 # ===============================
-# STATE
+# HELPERS
 # ===============================
-def create_state():
-    return {
-        "mission": 0,
-        "block": 0,
-        "last": time.time(),
-        "history": []
+def get_first_valid_block(mission):
+    """
+    Evita comenzar con breathing
+    """
+    for block in mission["blocks"]:
+        if block["type"] != "breathing":
+            return block
+    return mission["blocks"][0]
+
+
+def get_next_block(session):
+    mission_index = session["mission_index"]
+    block_index = session["block_index"]
+
+    if mission_index >= len(MISSIONS):
+        return {"type": "end", "text": {"en": "END", "es": "FIN"}}
+
+    mission = MISSIONS[mission_index]
+    blocks = mission["blocks"]
+
+    if block_index >= len(blocks):
+        # siguiente misión
+        session["mission_index"] += 1
+        session["block_index"] = 0
+
+        if session["mission_index"] >= len(MISSIONS):
+            return {"type": "end", "text": {"en": "END", "es": "FIN"}}
+
+        return get_first_valid_block(MISSIONS[session["mission_index"]])
+
+    block = blocks[block_index]
+    session["block_index"] += 1
+
+    return block
+
+
+def format_block(block):
+    """
+    Convierte cualquier tipo de bloque en formato estándar para el frontend
+    """
+
+    base = {
+        "type": block.get("type"),
     }
 
-# ===============================
-# SAFE GET CURRENT BLOCK
-# ===============================
-def get_current(state):
-    try:
-        mission = CONTENT[state["mission"]]
-        block = mission["blocks"][state["block"]]
-        return mission, block
-    except:
-        state["mission"] = 0
-        state["block"] = 0
-        return CONTENT[0], CONTENT[0]["blocks"][0]
+    # TEXT
+    if "text" in block:
+        base["text"] = block["text"]
 
-# ===============================
-# FORMAT FRONTEND SAFE
-# ===============================
-def format_block(mission, block):
+    # ANALYSIS
+    if "analysis" in block:
+        base["analysis"] = block["analysis"]
 
-    text = block.get("text", {})
+    # OPTIONS (quiz / tvid)
+    if "options" in block:
+        base["options"] = []
+        for opt in block["options"]:
+            base["options"].append({
+                "code": opt.get("code", "TDB"),
+                "text": opt.get("text"),
+                "correct": opt.get("correct", False),
+                "reason": opt.get("reason", {})
+            })
 
-    if isinstance(text, str):
-        text_es = text
-        text_en = text
-    else:
-        text_es = text.get("es") or text.get("en") or "..."
-        text_en = text.get("en") or text_es
+    # MINI RIDDLE / MATH
+    if block.get("type") in ["mini_riddle", "mini_math"]:
+        base["question"] = block.get("question")
+        base["answers"] = block.get("answers")
 
-    options = []
+    # SILENCE
+    if block.get("type") == "silence_challenge":
+        base["duration_sec"] = block.get("duration_sec", 20)
+        base["reward"] = block.get("reward", {})
 
-    for opt in block.get("options", []):
-        t = opt.get("text", {})
-        options.append({
-            "code": opt.get("code", "TDB"),
-            "text": {
-                "es": t.get("es", "CONTINUAR"),
-                "en": t.get("en", "CONTINUE")
-            }
-        })
+    # FINAL LESSON
+    if block.get("type") == "final_lesson":
+        base["text"] = block.get("text")
 
-    return {
-        "type": block.get("type", "story"),
-        "text_es": text_es,
-        "text_en": text_en,
-        "options": options,
-        "duration_sec": block.get("duration_sec", 0)
-    }
+    return base
 
-# ===============================
-# APPLY PROGRESSION
-# ===============================
-def next_step(state):
-
-    state["block"] += 1
-
-    if state["mission"] >= len(CONTENT):
-        state["mission"] = 0
-        state["block"] = 0
-        return
-
-    mission = CONTENT[state["mission"]]
-
-    if state["block"] >= len(mission["blocks"]):
-        state["mission"] += 1
-        state["block"] = 0
-
-    if state["mission"] >= len(CONTENT):
-        state["mission"] = 0
-        state["block"] = 0
 
 # ===============================
 # ROUTES
@@ -137,78 +125,65 @@ def next_step(state):
 def home():
     return FileResponse("static/session.html")
 
-# ===============================
-# START
-# ===============================
+
 @app.post("/start")
-async def start(req: Request):
+def start():
+    session_id = str(uuid.uuid4())
 
-    try:
-        data = await req.json()
+    session = {
+        "mission_index": 0,
+        "block_index": 0
+    }
 
-        sid = str(uuid.uuid4())
-        state = create_state()
+    sessions[session_id] = session
 
-        sessions[sid] = state
-
-        mission, block = get_current(state)
-
-        return {
-            "session_id": sid,
-            "story": format_block(mission, block)
-        }
-
-    except Exception as e:
-        return JSONResponse({"error": str(e)}, status_code=500)
-
-# ===============================
-# JUDGE
-# ===============================
-@app.post("/judge")
-async def judge(req: Request):
-
-    try:
-        data = await req.json()
-
-        sid = data.get("session_id")
-        decision = data.get("decision")
-
-        if sid not in sessions:
-            return JSONResponse({"error": "SESSION LOST"}, status_code=404)
-
-        state = sessions[sid]
-
-        # anti spam
-        if time.time() - state["last"] < 0.05:
-            mission, block = get_current(state)
-            return {"story": format_block(mission, block)}
-
-        state["last"] = time.time()
-
-        # progression
-        next_step(state)
-
-        mission, block = get_current(state)
-
-        state["history"].append({
-            "mission": state["mission"],
-            "block": state["block"]
+    if not MISSIONS:
+        return JSONResponse({
+            "session_id": session_id,
+            "story": {
+                "type": "error",
+                "text": {"en": "No content loaded", "es": "No hay contenido"}
+            }
         })
 
-        return {
-            "story": format_block(mission, block),
-            "state": state
-        }
+    first_block = get_first_valid_block(MISSIONS[0])
 
-    except Exception as e:
-        print("[ERROR]", e)
-        return JSONResponse({"error": "RECOVERY"}, status_code=500)
+    return JSONResponse({
+        "session_id": session_id,
+        "story": format_block(first_block)
+    })
+
+
+@app.post("/judge")
+def judge(data: dict):
+    session_id = data.get("session_id")
+    decision = data.get("decision")
+
+    session = sessions.get(session_id)
+
+    if not session:
+        return JSONResponse({
+            "story": {
+                "type": "error",
+                "text": {"en": "Session expired", "es": "Sesión expirada"}
+            }
+        })
+
+    # Aquí puedes agregar lógica futura (XP, castigos, etc.)
+    # Por ahora solo avanza
+
+    next_block = get_next_block(session)
+
+    return JSONResponse({
+        "story": format_block(next_block)
+    })
+
 
 # ===============================
-# RUN
+# DEBUG RELOAD CONTENT
 # ===============================
-if __name__ == "__main__":
-    import uvicorn
-
-    port = int(os.environ.get("PORT", 10000))
-    uvicorn.run(app, host="0.0.0.0", port=port)
+@app.get("/reload")
+def reload_content():
+    global MISSIONS
+    MISSIONS = load_content()
+    return {"status": "reloaded", "missions": len(MISSIONS)}
