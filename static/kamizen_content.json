@@ -391,8 +391,8 @@
 {"type":"final_lesson","text":{"en":"Master yourself. Live free.","es":"Domínate. Vive libre."}}
 ]
 },
-[
-{"id":24,"level":6,"theme":"SOCIAL AWARENESS: FAKE FRIEND TEST",
+{
+"id":24,"level":6,"theme":"SOCIAL AWARENESS: FAKE FRIEND TEST",
 "blocks":[
 {"type":"story","text":{"en":"A friend exaggerates your mistake in front of others.","es":"Un amigo exagera tu error frente a otros."}},
 {"type":"analysis","text":{"en":"Social perception can be manipulated.","es":"La percepción social puede ser manipulada."}},
@@ -408,7 +408,8 @@
 {"type":"final_lesson","text":{"en":"Calm is social power.","es":"La calma es poder social."}}
 ]
 },
-{"id":25,"level":6,"theme":"DECISION MAKING: FAST CHOICE TRAP",
+{
+"id":25,"level":6,"theme":"DECISION MAKING: FAST CHOICE TRAP",
 "blocks":[
 {"type":"story","text":{"en":"You must choose quickly under pressure.","es":"Debes decidir rápido bajo presión."}},
 {"type":"analysis","text":{"en":"Speed without awareness creates mistakes.","es":"La velocidad sin conciencia crea errores."}},
@@ -424,7 +425,8 @@
 {"type":"final_lesson","text":{"en":"Slow mind wins.","es":"La mente lenta gana."}}
 ]
 },
-{"id":26,"level":6,"theme":"DIGITAL DISTRACTION: PHONE CONTROL",
+{
+"id":26,"level":6,"theme":"DIGITAL DISTRACTION: PHONE CONTROL",
 "blocks":[
 {"type":"story","text":{"en":"Your phone keeps distracting you while studying.","es":"El teléfono te distrae mientras estudias."}},
 {"type":"analysis","text":{"en":"Attention is your real power.","es":"La atención es tu verdadero poder."}},
@@ -440,7 +442,8 @@
 {"type":"final_lesson","text":{"en":"You control attention.","es":"Tú controlas la atención."}}
 ]
 },
-{"id":27,"level":7,"theme":"LEADERSHIP: GROUP PRESSURE",
+{
+"id":27,"level":7,"theme":"LEADERSHIP: GROUP PRESSURE",
 "blocks":[
 {"type":"story","text":{"en":"A group pushes you to follow a bad idea.","es":"Un grupo te presiona a seguir una mala idea."}},
 {"type":"analysis","text":{"en":"Leadership is independent thinking.","es":"El liderazgo es pensamiento independiente."}},
@@ -456,7 +459,8 @@
 {"type":"final_lesson","text":{"en":"Think, don’t follow blindly.","es":"Piensa, no sigas ciegamente."}}
 ]
 },
-{"id":28,"level":7,"theme":"EMOTIONAL CONTROL: ANGER MOMENT",
+{
+"id":28,"level":7,"theme":"EMOTIONAL CONTROL: ANGER MOMENT",
 "blocks":[
 {"type":"story","text":{"en":"Someone insults you unexpectedly.","es":"Alguien te insulta inesperadamente."}},
 {"type":"analysis","text":{"en":"Emotion decides outcome.","es":"La emoción decide el resultado."}},
@@ -472,7 +476,8 @@
 {"type":"final_lesson","text":{"en":"You own your emotions.","es":"Tú controlas tus emociones."}}
 ]
 },
-{"id":29,"level":7,"theme":"FOCUS: STUDY DISCIPLINE",
+{
+"id":29,"level":7,"theme":"FOCUS: STUDY DISCIPLINE",
 "blocks":[
 {"type":"story","text":{"en":"You must study but feel lazy.","es":"Debes estudiar pero tienes pereza."}},
 {"type":"analysis","text":{"en":"Discipline creates future success.","es":"La disciplina crea éxito futuro."}},
@@ -488,7 +493,8 @@
 {"type":"final_lesson","text":{"en":"Start now, not later.","es":"Empieza ahora, no después."}}
 ]
 },
-{"id":30,"level":8,"theme":"COURAGE: FEAR CHALLENGE",
+{
+"id":30,"level":8,"theme":"COURAGE: FEAR CHALLENGE",
 "blocks":[
 {"type":"story","text":{"en":"You feel fear before a challenge.","es":"Sientes miedo antes de un reto."}},
 {"type":"analysis","text":{"en":"Fear is mental interpretation.","es":"El miedo es interpretación mental."}},
@@ -504,7 +510,8 @@
 {"type":"final_lesson","text":{"en":"Fear loses when you act.","es":"El miedo pierde cuando actúas."}}
 ]
 },
-{"id":31,"level":8,"theme":"FINAL INTEGRATION: INNER CONTROL",
+{
+"id":31,"level":8,"theme":"FINAL INTEGRATION: INNER CONTROL",
 "blocks":[
 {"type":"story","text":{"en":"You face multiple real-life challenges at once.","es":"Enfrentas varios desafíos reales al mismo tiempo."}},
 {"type":"analysis","text":{"en":"Integration of mind, breath and action defines mastery.","es":"La integración de mente, respiración y acción define la maestría."}},
@@ -520,8 +527,8 @@
 {"type":"final_lesson","text":{"en":"You are your control system.","es":"Tú eres tu sistema de control."}}
 ]
 },
-[
-{"id":32,"level":9,"theme":"FINAL PRESSURE: SOCIAL CHAOS",
+{
+"id":32,"level":9,"theme":"FINAL PRESSURE: SOCIAL CHAOS",
 "blocks":[
 {"type":"story","text":{"en":"Everything around you is chaotic. People react emotionally and expect you to join.","es":"Todo a tu alrededor es caos. Las personas reaccionan emocionalmente y esperan que te unas."}},
 {"type":"analysis","text":{"en":"Chaos tests inner stability.","es":"El caos prueba la estabilidad interna."}},
@@ -537,7 +544,8 @@
 {"type":"final_lesson","text":{"en":"You control the storm inside.","es":"Tú controlas la tormenta interna."}}
 ]
 },
-{"id":33,"level":9,"theme":"MENTAL SHADOW: DOUBT SYSTEM",
+{
+"id":33,"level":9,"theme":"MENTAL SHADOW: DOUBT SYSTEM",
 "blocks":[
 {"type":"story","text":{"en":"A strong doubt appears in your mind before action.","es":"Una fuerte duda aparece en tu mente antes de actuar."}},
 {"type":"analysis","text":{"en":"Doubt appears before growth.","es":"La duda aparece antes del crecimiento."}},
@@ -553,7 +561,8 @@
 {"type":"final_lesson","text":{"en":"Doubt is defeated by action.","es":"La duda se derrota con acción."}}
 ]
 },
-{"id":34,"level":10,"theme":"INNER FREEDOM: DIGITAL DETACHMENT",
+{
+"id":34,"level":10,"theme":"INNER FREEDOM: DIGITAL DETACHMENT",
 "blocks":[
 {"type":"story","text":{"en":"You feel addicted to your phone or distractions.","es":"Sientes adicción al teléfono o distracciones."}},
 {"type":"analysis","text":{"en":"Freedom begins with attention control.","es":"La libertad comienza con el control de la atención."}},
@@ -569,7 +578,8 @@
 {"type":"final_lesson","text":{"en":"Freedom starts inside you.","es":"La libertad comienza dentro de ti."}}
 ]
 },
-{"id":35,"level":10,"theme":"FINAL AWAKENING: MASTER SELF",
+{
+"id":35,"level":10,"theme":"FINAL AWAKENING: MASTER SELF",
 "blocks":[
 {"type":"story","text":{"en":"You look back at everything you learned. Now you face yourself.","es":"Miras todo lo que aprendiste. Ahora te enfrentas a ti mismo."}},
 {"type":"analysis","text":{"en":"True mastery is self-awareness.","es":"La verdadera maestría es autoconciencia."}},
@@ -585,6 +595,4 @@
 {"type":"final_lesson","text":{"en":"You are the system now.","es":"Ahora tú eres el sistema."}}
 ]
 }
-]  
-}  
-]
+]   
