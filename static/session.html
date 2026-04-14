@@ -3,13 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KAMIZEN | SESSION PRO</title>
+<title>KAMIZEN PRO</title>
 
 <style>
 :root{
     --neon:#00f2ff;
     --bg:#000;
-    --panel:rgba(0,15,30,0.92);
     --danger:#ff4444;
     --success:#33ff33;
 }
@@ -17,63 +16,58 @@
 body{
     margin:0;
     background:var(--bg);
-    font-family:Arial;
     color:var(--neon);
+    font-family:Arial;
     overflow:hidden;
 }
 
 #app{
-    width:100%;
     height:100vh;
     display:flex;
+    flex-direction:column;
     align-items:center;
     justify-content:center;
-    flex-direction:column;
-    position:relative;
 }
 
-/* CONTROLS */
-#controls{
+/* XP BAR */
+#xpContainer{
     position:absolute;
     top:10px;
-    width:100%;
-    display:flex;
-    justify-content:space-between;
-    padding:0 10px;
+    width:80%;
+    height:12px;
+    background:#111;
 }
 
-.ctrl-btn{
-    padding:6px 10px;
-    font-size:12px;
+#xpBar{
+    height:100%;
+    width:0%;
+    background:var(--neon);
 }
 
-/* LANGUAGE */
-#langToggle{
+#level{
     position:absolute;
-    top:50px;
-    right:10px;
+    top:25px;
+    font-size:14px;
 }
 
-/* CIRCLE */
-#circle{
-    width:70px;
-    height:70px;
-    border-radius:50%;
-    background:rgba(0,242,255,0.2);
-    box-shadow:0 0 30px var(--neon);
+/* TIMER */
+#timer{
+    position:absolute;
+    top:45px;
+    font-size:18px;
+    color:#fff;
 }
 
-/* TEXT */
+/* MESSAGE */
 #message{
     position:absolute;
-    bottom:180px;
+    bottom:200px;
     width:85%;
     max-width:700px;
-    padding:15px;
-    background:var(--panel);
-    border:1px solid var(--neon);
+    padding:20px;
+    font-size:22px;
     text-align:center;
-    min-height:140px;
+    border:1px solid var(--neon);
 }
 
 /* OPTIONS */
@@ -88,12 +82,12 @@ body{
 }
 
 button{
-    padding:12px;
-    border:1px solid var(--neon);
+    padding:15px;
+    font-size:18px;
     background:transparent;
+    border:1px solid var(--neon);
     color:var(--neon);
     cursor:pointer;
-    font-weight:bold;
 }
 
 button:hover{
@@ -101,19 +95,33 @@ button:hover{
     color:#000;
 }
 
-/* SILENCE */
-#silence{
+/* CONTROLS */
+#controls{
     position:absolute;
-    top:80px;
-    font-size:12px;
-    opacity:0.7;
+    top:70px;
+    width:100%;
+    display:flex;
+    justify-content:space-between;
+    padding:0 10px;
 }
 
-.flashFail{
-    background:rgba(255,0,0,0.4);
+.ctrl{
+    font-size:12px;
+    padding:5px 10px;
 }
-.flashSuccess{
-    background:rgba(0,255,0,0.3);
+
+/* BREATH */
+#circle{
+    width:70px;
+    height:70px;
+    border-radius:50%;
+    background:rgba(0,242,255,0.3);
+    box-shadow:0 0 30px var(--neon);
+}
+
+/* EFFECT */
+.flashRed{
+    background:red !important;
 }
 </style>
 </head>
@@ -122,19 +130,20 @@ button:hover{
 
 <div id="app">
 
+<div id="xpContainer"><div id="xpBar"></div></div>
+<div id="level">LEVEL 1</div>
+<div id="timer">5</div>
+
 <div id="controls">
-<button class="ctrl-btn" onclick="restart()">RESTART</button>
-<button class="ctrl-btn" onclick="back()">BACK</button>
-<button class="ctrl-btn" onclick="skip()">SKIP</button>
+<button class="ctrl" onclick="restart()">RESTART</button>
+<button class="ctrl" onclick="back()">BACK</button>
+<button class="ctrl" onclick="skip()">SKIP</button>
+<button class="ctrl" onclick="toggleLang()">ES/EN</button>
 </div>
-
-<button id="langToggle" onclick="toggleLang()">ES</button>
-
-<div id="silence">SILENCE: <span id="silenceLevel">20</span>s</div>
 
 <div id="circle"></div>
 
-<div id="message" onclick="start()">TAP TO START</div>
+<div id="message" onclick="start()">START GAME</div>
 
 <div id="options"></div>
 
@@ -146,19 +155,21 @@ button:hover{
 let session_id=null;
 let history=[];
 let lang="en";
+let xp=0;
+let level=1;
+let errors=0;
+let timerInt;
 let loading=false;
 
 /* AUDIO */
-const audio=new (window.AudioContext||window.webkitAudioContext)();
+const audio = new (window.AudioContext || window.webkitAudioContext)();
 
 function sound(type){
     const o=audio.createOscillator();
     const g=audio.createGain();
+    o.connect(g); g.connect(audio.destination);
 
-    o.connect(g);
-    g.connect(audio.destination);
-
-    if(type==="ok") o.frequency.value=520;
+    if(type==="ok") o.frequency.value=500;
     if(type==="fail") o.frequency.value=120;
     if(type==="click") o.frequency.value=300;
 
@@ -169,35 +180,38 @@ function sound(type){
 
 /* MUSIC */
 let music;
-function startMusic(){
-    music=audio.createOscillator();
-    const g=audio.createGain();
-    music.frequency.value=220;
-    g.gain.value=0.03;
+function startMusic(freq=200){
+    music = audio.createOscillator();
+    const g = audio.createGain();
     music.connect(g);
     g.connect(audio.destination);
+    music.frequency.value=freq;
+    g.gain.value=0.03;
     music.start();
+}
+
+/* VOICE */
+function speak(t){
+    const msg=new SpeechSynthesisUtterance(t);
+    msg.rate=0.9;
+    speechSynthesis.speak(msg);
 }
 
 /* START */
 async function start(){
     if(audio.state==="suspended") await audio.resume();
 
-    sound("ok"); sound("ok"); // DOPAMINA
     startMusic();
 
     const res=await fetch("/start",{method:"POST"});
     const data=await res.json();
 
     session_id=data.session_id;
-    history=[];
-
     render(data);
 }
 
 /* SEND */
 async function send(code){
-
     if(loading) return;
     loading=true;
 
@@ -210,112 +224,116 @@ async function send(code){
     });
 
     const data=await res.json();
-    history.push(data);
 
+    history.push(data);
+    updateXP(data);
     render(data);
+
     loading=false;
+}
+
+/* XP */
+function updateXP(data){
+    if(data.correct){
+        xp+=10;
+        sound("ok");
+    }else{
+        xp-=5;
+        errors++;
+        sound("fail");
+    }
+
+    if(xp>=100){
+        level++;
+        xp=0;
+    }
+
+    document.getElementById("xpBar").style.width=xp+"%";
+    document.getElementById("level").innerText="LEVEL "+level;
+
+    if(errors>=3){
+        failState();
+    }
+}
+
+/* FAIL */
+function failState(){
+    document.body.classList.add("flashRed");
+    speak("You lost control");
+
+    setTimeout(()=>location.reload(),2000);
+}
+
+/* TIMER */
+function startTimer(sec){
+    let t=sec;
+    document.getElementById("timer").innerText=t;
+
+    clearInterval(timerInt);
+
+    timerInt=setInterval(()=>{
+        t--;
+        document.getElementById("timer").innerText=t;
+
+        if(t<=0){
+            clearInterval(timerInt);
+            send("TIME_FAIL");
+        }
+    },1000);
 }
 
 /* RENDER */
 function render(data){
 
-    if(!data||!data.story) return;
+    if(!data.story) return;
 
     const s=data.story;
 
-    let text = s.text?.[lang] || s.text_en || s.text_es || "";
-
-    /* ANALYSIS */
-    if(s.analysis){
-        text += "\n\n" + (s.analysis[lang] || "");
-    }
-
-    /* SILENCE INFO */
-    if(s.type==="silence_challenge"){
-        document.getElementById("silenceLevel").innerText =
-            s.duration_sec || 20;
-
-        if(s.reward){
-            text += "\n\n" + (s.reward[lang] || "");
-        }
-    }
-
+    const text=s.text_en || s.text_es;
     document.getElementById("message").innerText=text;
+
+    speak(text);
+
     document.getElementById("options").innerHTML="";
 
-    /* RIDDLE / MATH */
-    if(s.type==="mini_riddle"||s.type==="mini_math"){
-
-        document.getElementById("message").innerText =
-            s.question?.[lang] || "";
-
-        s.answers.forEach(a=>{
-            const b=document.createElement("button");
-            b.innerText=a.text?.[lang];
-
-            b.onclick=()=>{
-                if(a.correct){
-                    sound("ok");
-                    flash(true);
-                }else{
-                    sound("fail");
-                    flash(false);
-                }
-                setTimeout(()=>send("TDB"),800);
-            };
-
-            document.getElementById("options").appendChild(b);
-        });
-
-        return;
+    if(s.type==="quiz" || s.type==="tvid"){
+        startTimer(5);
     }
 
-    /* OPTIONS */
-    let opts=s.options||[];
+    if(s.type==="breathing"){
+        breathe();
+    }
+
+    let opts=s.options || [];
 
     if(opts.length===0){
-        opts=[{code:"TDB",text:{en:"CONTINUE",es:"CONTINUAR"}}];
+        opts=[{code:"NEXT",text:{en:"CONTINUE"}}];
     }
 
     opts.forEach(o=>{
         const b=document.createElement("button");
-        b.innerText=o.text?.[lang]||"OK";
-
-        b.onclick=()=>{
-            sound("click");
-
-            if(o.reason){
-                document.getElementById("message").innerText =
-                    o.reason[lang] || "";
-            }
-
-            if(o.correct){
-                sound("ok");
-                flash(true);
-            }else{
-                sound("fail");
-                flash(false);
-            }
-
-            setTimeout(()=>send(o.code),1000);
-        };
-
+        b.innerText=o.text?.[lang] || "GO";
+        b.onclick=()=>send(o.code);
         document.getElementById("options").appendChild(b);
     });
 }
 
-/* FLASH */
-function flash(success){
-    const app=document.getElementById("app");
-    app.classList.add(success?"flashSuccess":"flashFail");
+/* BREATH */
+let breathInt;
+function breathe(){
+    const c=document.getElementById("circle");
+    let grow=true;
 
-    setTimeout(()=>{
-        app.classList.remove("flashSuccess","flashFail");
-    },300);
+    clearInterval(breathInt);
+
+    breathInt=setInterval(()=>{
+        c.style.transform=grow?"scale(2)":"scale(1)";
+        grow=!grow;
+    },2500);
 }
 
 /* CONTROLS */
-function skip(){ send("TDB"); }
+function skip(){ send("SKIP"); }
 function back(){
     if(history.length<2) return;
     history.pop();
@@ -323,11 +341,8 @@ function back(){
 }
 function restart(){ location.reload(); }
 
-/* LANG */
 function toggleLang(){
-    lang = lang==="en"?"es":"en";
-    document.getElementById("langToggle").innerText =
-        lang==="en"?"ES":"EN";
+    lang = lang==="en" ? "es" : "en";
 }
 
 </script>
