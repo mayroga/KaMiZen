@@ -3,282 +3,382 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AL CIELO | KAMIZEN SYSTEM</title>
+<title>NEURO PRO 2.0 | KAMIZEN</title>
+
 <style>
-:root {
-    --bg: #000;
-    --neon: #00f2ff;
-    --green: #33ff88;
-    --red: #ff3355;
-    --panel: rgba(0, 15, 30, 0.95);
+:root{
+  --bg:#000;
+  --neon:#00f2ff;
+  --green:#33ff88;
+  --red:#ff5566;
+  --yellow:#ffcc33;
+  --panel:rgba(0,15,30,0.95);
 }
 
-body {
-    margin: 0; background: var(--bg); color: var(--neon);
-    font-family: 'Courier New', Courier, monospace;
-    overflow: hidden; height: 100vh;
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--neon);
+  font-family:Arial;
+  overflow:hidden;
 }
 
-#app {
-    height: 100vh; display: flex; align-items: center;
-    justify-content: center; flex-direction: column; position: relative;
+/* HEADER */
+#header{
+  position:absolute;
+  top:10px;
+  width:95%;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
 }
 
-/* UI HEADER */
-#header {
-    position: absolute; top: 20px; width: 90%;
-    display: flex; justify-content: space-between; align-items: center; z-index: 10;
+#xpBar{
+  width:150px;
+  height:10px;
+  border:1px solid var(--neon);
+}
+#xpFill{
+  height:100%;
+  width:0%;
+  background:var(--green);
+  transition:0.4s;
 }
 
-.status-group { display: flex; align-items: center; gap: 15px; }
-#light { width: 22px; height: 22px; border-radius: 50%; background: #333; transition: 0.3s; }
-
-/* CENTRAL CORE */
-#circle {
-    width: 130px; height: 130px; border-radius: 50%;
-    border: 3px solid var(--neon); display: flex; align-items: center;
-    justify-content: center; box-shadow: 0 0 20px rgba(0,242,255,0.3);
-    margin-bottom: 40px; transition: 0.5s;
+/* AVATAR */
+#avatar{
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  background:#222;
+  border:2px solid var(--neon);
+  background-size:cover;
 }
 
-#timerDisplay { font-size: 35px; font-weight: bold; }
-
-/* TEXT PANELS */
-#reason {
-    position: absolute; bottom: 390px; width: 85%;
-    text-align: center; font-size: 15px; min-height: 50px; color: #fff;
+/* CORE */
+#core{
+  position:absolute;
+  top:35%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  width:130px;
+  height:130px;
+  border-radius:50%;
+  border:2px solid var(--neon);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-size:30px;
 }
 
-#message {
-    position: absolute; bottom: 200px; width: 85%;
-    padding: 25px; background: var(--panel); border: 1px solid var(--neon);
-    text-align: center; min-height: 90px; font-size: 18px;
+/* TEXT */
+#message{
+  position:absolute;
+  bottom:220px;
+  width:90%;
+  padding:18px;
+  background:var(--panel);
+  border:1px solid var(--neon);
+  text-align:center;
+  font-size:18px;
 }
 
-/* OPTIONS & CONTROLS */
-#options {
-    position: absolute; bottom: 100px; width: 85%;
-    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+#reason{
+  position:absolute;
+  bottom:300px;
+  width:90%;
+  text-align:center;
+  color:#fff;
+  font-size:14px;
 }
 
-#navControls {
-    position: absolute; bottom: 30px; width: 90%;
-    display: flex; justify-content: space-around;
+/* OPTIONS */
+#options{
+  position:absolute;
+  bottom:110px;
+  width:90%;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
 }
 
-.btn {
-    padding: 12px; border: 1px solid var(--neon);
-    background: transparent; color: var(--neon);
-    cursor: pointer; font-weight: bold; font-family: inherit; font-size: 12px;
+button{
+  padding:14px;
+  border:1px solid var(--neon);
+  background:transparent;
+  color:var(--neon);
+  cursor:pointer;
 }
 
-.opt-btn { padding: 20px; font-size: 14px; border: 1px solid var(--neon); background: rgba(0,242,255,0.1); color: var(--neon); cursor: pointer; }
+button:hover{
+  background:var(--neon);
+  color:#000;
+}
 
-/* STATES */
-.correct { background: var(--green) !important; box-shadow: 0 0 20px var(--green); }
-.incorrect { background: var(--red) !important; box-shadow: 0 0 20px var(--red); }
-.hidden { display: none !important; }
+/* NAV */
+#nav{
+  position:absolute;
+  bottom:20px;
+  width:90%;
+  display:flex;
+  justify-content:space-between;
+}
+
+/* ANTI ADDICTION WARNING */
+#breakScreen{
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:#000;
+  display:none;
+  justify-content:center;
+  align-items:center;
+  flex-direction:column;
+  color:white;
+  font-size:20px;
+}
 </style>
 </head>
+
 <body>
 
-<div id="app">
-    <div id="header">
-        <div class="status-group">
-            <div id="light"></div>
-            <div id="xpBar" style="width:100px; height:8px; border:1px solid var(--neon);"><div id="xpFill" style="height:100%; width:0%; background:var(--green); transition:0.5s;"></div></div>
-        </div>
-        <button class="btn" onclick="toggleLang()">EN/ES</button>
-    </div>
+<div id="header">
+  <div style="display:flex;gap:10px;align-items:center;">
+    <div id="avatar"></div>
+    <div id="xpBar"><div id="xpFill"></div></div>
+  </div>
+  <button onclick="toggleLang()">EN/ES</button>
+</div>
 
-    <div id="circle"><div id="timerDisplay">READY</div></div>
+<div id="core">0</div>
 
-    <div id="reason"></div>
-    <div id="message">TOCA PARA INICIAR NEURO-PROGRAMA</div>
-    <div id="options" class="hidden"></div>
+<div id="reason"></div>
+<div id="message">CLICK TO START NEURO PRO 2.0</div>
 
-    <div id="navControls" class="hidden">
-        <button class="btn" onclick="prevBlock()">BACK</button>
-        <button class="btn" onclick="restartMission()">RESTART</button>
-        <button class="btn" onclick="nextBlock()">CONTINUE</button>
-    </div>
+<div id="options"></div>
+
+<div id="nav">
+  <button onclick="back()">BACK</button>
+  <button onclick="restart()">RESTART</button>
+  <button onclick="next()">NEXT</button>
+</div>
+
+<div id="breakScreen">
+  <h2>🧠 BREAK MODE</h2>
+  <p>Respira 30 segundos. No pantalla.</p>
 </div>
 
 <script>
-let sid = null;
-let currentMission = null;
-let blockIdx = 0;
-let lang = "en"; 
-let xp = 0;
-let autoTimer = null;
 
-// AUDIO ENGINE
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-let dopamineMusic = null;
+let session_id=null;
+let mission=null;
+let index=0;
+let lang="en";
+let xp=0;
+let errors=0;
+let eventHistory=[];
+let avatarIndex=Math.floor(Math.random()*5);
 
-function playSound(freq, type, duration) {
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    osc.connect(gain); gain.connect(audioCtx.destination);
-    osc.frequency.value = freq; osc.type = type;
-    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
-    osc.start(); osc.stop(audioCtx.currentTime + duration);
+/* AVATAR SYSTEM */
+const avatars=[
+  "https://i.imgur.com/1.png",
+  "https://i.imgur.com/2.png",
+  "https://i.imgur.com/3.png",
+  "https://i.imgur.com/4.png",
+  "https://i.imgur.com/5.png"
+];
+
+document.getElementById("avatar").style.backgroundImage=`url(${avatars[avatarIndex]})`;
+
+/* AUDIO */
+const ctx=new (window.AudioContext||window.webkitAudioContext)();
+
+function sound(type){
+  const o=ctx.createOscillator();
+  const g=ctx.createGain();
+
+  o.connect(g); g.connect(ctx.destination);
+
+  if(type==="good"){ o.frequency.value=880; o.type="sine"; }
+  if(type==="bad"){ o.frequency.value=120; o.type="sawtooth"; }
+  if(type==="event"){ o.frequency.value=600; o.type="triangle"; }
+
+  g.gain.value=0.2;
+  o.start();
+  o.stop(ctx.currentTime+0.3);
 }
 
-function startDopamineMusic() {
-    if (dopamineMusic) return;
-    const gain = audioCtx.createGain();
-    gain.gain.value = 0.05;
-    gain.connect(audioCtx.destination);
-    
-    // Generador de ritmo binario relajante
-    const playBeat = () => {
-        const osc = audioCtx.createOscillator();
-        osc.connect(gain);
-        osc.frequency.setValueAtTime(110, audioCtx.currentTime);
-        osc.frequency.linearRampToValueAtTime(55, audioCtx.currentTime + 0.1);
-        osc.start(); osc.stop(audioCtx.currentTime + 0.1);
-    };
-    dopamineMusic = setInterval(playBeat, 2000);
+/* START */
+async function start(){
+  if(ctx.state==="suspended") await ctx.resume();
+
+  const r=await fetch("/start",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({profile:{lang}})
+  });
+
+  const d=await r.json();
+  session_id=d.session_id;
+  mission=d.mission;
+  render();
 }
 
-// LOGICA DE JUEGO
-async function init() {
-    if (audioCtx.state === 'suspended') audioCtx.resume();
-    startDopamineMusic();
-    const r = await fetch("/start", {
-        method: "POST",
-        headers: {"Content-Type":"application/json"},
-        body: JSON.stringify({profile: {lang}})
+/* IA ADAPTATIVA */
+function adaptDifficulty(){
+  if(errors>=3){
+    mission.blocks.push({
+      type:"analysis",
+      text:{
+        en:"System slowdown: you need focus recovery.",
+        es:"Sistema lento: necesitas recuperación de enfoque."
+      }
     });
-    const d = await r.json();
-    sid = d.session_id;
-    currentMission = d.mission;
-    document.getElementById("navControls").classList.remove("hidden");
-    renderBlock();
+    errors=0;
+  }
 }
 
-function renderBlock() {
-    const block = currentMission.blocks[blockIdx];
-    const msg = document.getElementById("message");
-    const opt = document.getElementById("options");
-    const reason = document.getElementById("reason");
-    const light = document.getElementById("light");
-    
-    clearTimeout(autoTimer);
-    opt.classList.add("hidden");
-    reason.innerText = "";
-    light.style.background = "#333";
-    
-    if (block.type === "story" || block.type === "analysis") {
-        msg.innerText = block.text[lang];
-        speak(block.text[lang]);
-        // AUTOMÁTICO: Avanza solo tras 7 segundos
-        autoTimer = setTimeout(nextBlock, 7000);
-    } 
-    else if (block.type === "tvid") {
-        msg.innerText = (lang === "en") ? "DECIDE:" : "DECIDE:";
-        opt.innerHTML = "";
-        opt.classList.remove("hidden");
-        block.options.forEach(o => {
-            let b = document.createElement("button");
-            b.className = "opt-btn";
-            b.innerText = o.text[lang];
-            b.onclick = () => checkDecision(o, b);
-            opt.appendChild(b);
-        });
-    }
-    else if (block.type === "silence_challenge") {
-        runChallenge(block);
-    }
+/* RANDOM EVENT SYSTEM */
+function randomEvent(){
+  const events=[
+    "⚡ Unexpected challenge appears",
+    "🎁 Bonus focus moment",
+    "⚠ Social pressure spike",
+    "🧠 Memory boost activated"
+  ];
+
+  if(Math.random()<0.25 && !eventHistory.includes(index)){
+    eventHistory.push(index);
+    document.getElementById("message").innerText=
+      events[Math.floor(Math.random()*events.length)];
+    sound("event");
+  }
 }
 
-async function checkDecision(o, btn) {
-    const r = await fetch("/judge", {
-        method: "POST",
-        headers: {"Content-Type":"application/json"},
-        body: JSON.stringify({session_id: sid, decision: o.code})
+/* RENDER */
+function render(){
+  const b=mission.blocks[index];
+
+  document.getElementById("options").innerHTML="";
+  document.getElementById("reason").innerText="";
+
+  randomEvent();
+  adaptDifficulty();
+
+  if(b.type==="story"||b.type==="analysis"){
+    document.getElementById("message").innerText=b.text[lang];
+    speak(b.text[lang]);
+  }
+
+  if(b.type==="tvid"){
+    document.getElementById("message").innerText="DECIDE";
+
+    b.options.forEach(o=>{
+      const btn=document.createElement("button");
+      btn.innerText=o.text[lang];
+
+      btn.onclick=()=>choose(o);
+
+      document.getElementById("options").appendChild(btn);
     });
-    const d = await r.json();
-    
-    document.getElementById("reason").innerText = o.reason[lang];
-    speak(o.reason[lang]);
+  }
 
-    if (o.correct) {
-        playSound(880, "sine", 0.5); // Premio
-        document.getElementById("light").style.background = "var(--green)";
-        btn.style.borderColor = "var(--green)";
-        xp = d.xp;
-        document.getElementById("xpFill").style.width = (xp % 100) + "%";
-        setTimeout(loadNextMission, 4000);
-    } else {
-        playSound(150, "sawtooth", 0.3); // Penalización
-        document.getElementById("light").style.background = "var(--red)";
-        btn.style.borderColor = "var(--red)";
+  if(b.type==="silence_challenge"){
+    runSilence(b.duration_sec);
+  }
+}
+
+/* CHOICE */
+function choose(o){
+
+  document.getElementById("reason").innerText=o.reason[lang];
+
+  if(o.correct){
+    sound("good");
+    xp+=10;
+  }else{
+    sound("bad");
+    xp-=5;
+    errors++;
+    if(xp<0)xp=0;
+  }
+
+  document.getElementById("xpFill").style.width=(xp%100)+"%";
+
+  checkAntiAddiction();
+
+  setTimeout(next,2000);
+}
+
+/* ANTI ADDICTION SYSTEM */
+function checkAntiAddiction(){
+  if(xp>=120){
+    document.getElementById("breakScreen").style.display="flex";
+    setTimeout(()=>{
+      document.getElementById("breakScreen").style.display="none";
+      xp=80;
+    },30000);
+  }
+}
+
+/* SILENCE */
+function runSilence(t){
+  const core=document.getElementById("core");
+  let i=t;
+
+  core.innerText=i;
+
+  const int=setInterval(()=>{
+    i--;
+    core.innerText=i;
+
+    if(i<=0){
+      clearInterval(int);
+      core.innerText="✓";
+      sound("good");
+      setTimeout(next,2000);
     }
+  },1000);
 }
 
-function runChallenge(block) {
-    let t = block.duration_sec;
-    const disp = document.getElementById("timerDisplay");
-    let intv = setInterval(() => {
-        t--;
-        disp.innerText = t;
-        if (t <= 0) {
-            clearInterval(intv);
-            disp.innerText = "✓";
-            playSound(1200, "sine", 0.8);
-            setTimeout(nextBlock, 2000);
-        }
-    }, 1000);
+/* NAV */
+function next(){
+  index++;
+  if(index>=mission.blocks.length) return restart();
+  render();
 }
 
-// NAVEGACIÓN
-function nextBlock() {
-    blockIdx++;
-    if (blockIdx < currentMission.blocks.length) renderBlock();
-    else loadNextMission();
+function back(){
+  if(index>0) index--;
+  render();
 }
 
-function prevBlock() {
-    if (blockIdx > 0) {
-        blockIdx--;
-        renderBlock();
-    }
+function restart(){
+  index=0;
+  errors=0;
+  render();
 }
 
-function restartMission() {
-    blockIdx = 0;
-    renderBlock();
+/* LANG */
+function toggleLang(){
+  lang=lang==="en"?"es":"en";
+  render();
 }
 
-async function loadNextMission() {
-    const r = await fetch("/get_mission", {
-        method: "POST",
-        headers: {"Content-Type":"application/json"},
-        body: JSON.stringify({session_id: sid})
-    });
-    const d = await r.json();
-    currentMission = d.mission;
-    blockIdx = 0;
-    renderBlock();
+/* VOZ */
+function speak(t){
+  const u=new SpeechSynthesisUtterance(t);
+  u.lang=lang==="en"?"en-US":"es-ES";
+  u.rate=0.95;
+  speechSynthesis.speak(u);
 }
 
-function toggleLang() {
-    lang = (lang === "en") ? "es" : "en";
-    renderBlock();
-}
+/* INIT */
+document.getElementById("message").onclick=start;
 
-function speak(t) {
-    window.speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(t);
-    u.lang = (lang === "en") ? "en-US" : "es-ES";
-    u.rate = 0.9;
-    window.speechSynthesis.speak(u);
-}
-
-document.getElementById("message").onclick = () => { if(!sid) init(); };
 </script>
+
 </body>
 </html>
