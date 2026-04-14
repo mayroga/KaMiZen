@@ -18,13 +18,18 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 # --- CARGA DE CONTENIDO (KAMIZEN DATABASE) ---
 CONTENT = []
 try:
-    # Se busca el archivo en la carpeta static
     file_path = "static/kamizen_content.json"
     if os.path.exists(file_path):
         with open(file_path, "r", encoding="utf-8") as f:
             data = json.load(f)
-            # Soporta estructura de lista directa o diccionario con clave "missions"
-            CONTENT = data.get("missions") if isinstance(data, dict) else data
+            # Soporta tanto {"missions": [...]} como una lista directa [...]
+            if isinstance(data, dict) and "missions" in data:
+                CONTENT = data["missions"]
+            elif isinstance(data, list):
+                CONTENT = data
+            else:
+                CONTENT = []
+        print(f"DATABASE LOADED: {len(CONTENT)} missions found.")
     else:
         print("WARNING: static/kamizen_content.json no encontrado.")
 except Exception as e:
@@ -49,24 +54,24 @@ def create_initial_state(profile):
 
 # --- MATRIZ DE IMPACTO (PROTOCOLO AL CIELO) ---
 IMPACTS = {
-    "TDB": {"mental": 2, "discipline": 5},                # Avance Estándar
-    "TDP": {"mental": 5, "discipline": 10, "karma": 5},    # Inversión/Estructura
-    "TDM": {"mental": -15, "discipline": -10, "karma": -5},# Error/Riesgo
-    "TDN": {"mental": 8, "social": 5, "discipline": 3},   # Seguridad
-    "TDG": {"discipline": 12, "mental": 5, "social": -5}, # Control
-    "TDK": {"social": 15, "karma": 10, "mental": 5},      # Honor/Éxito
-    "CORRECT": {"mental": 10, "discipline": 10},          # Acierto
-    "WRONG": {"mental": -10, "discipline": -5}            # Fallo
+    "TDB": {"mental": 2, "discipline": 5},                
+    "TDP": {"mental": 5, "discipline": 10, "karma": 5},    
+    "TDM": {"mental": -15, "discipline": -10, "karma": -5},
+    "TDN": {"mental": 8, "social": 5, "discipline": 3},   
+    "TDG": {"discipline": 12, "mental": 5, "social": -5}, 
+    "TDK": {"social": 15, "karma": 10, "mental": 5},      
+    "CORRECT": {"mental": 10, "discipline": 10},          
+    "WRONG": {"mental": -10, "discipline": -5}            
 }
 
 def get_audio_mood(block):
     """Determina la atmósfera sonora según el tipo de bloque."""
     b_type = block.get("type", "")
-    mode = block.get("mode")
+    mode = block.get("mode", "")
     
     if "breathing" in b_type: return mode if mode else "focus"
     if b_type == "silence_challenge": return "ambient"
-    if b_type in ["quiz", "riddle"]: return "discovery"
+    if b_type in ["quiz", "riddle", "tvid"]: return "discovery"
     if b_type == "win": return "victory"
     return "ambient"
 
@@ -93,18 +98,32 @@ def apply_progression(state, decision):
         state["block_index"] = 0
     
     # 5. REINICIO MAESTRO (Loop Infinito)
-    # Si llegamos al final de la lista de misiones (ej. misión 23), volvemos a la 0
     if state["mission_index"] >= len(CONTENT):
         state["mission_index"] = 0
         state["block_index"] = 0
 
 def format_block_response(mission, block):
-    """Prepara el objeto JSON para el frontend."""
+    """Prepara el objeto JSON para el frontend con soporte bilingüe robusto."""
+    # Extraer texto principal
     text_data = block.get("text", {})
     if not text_data and "question" in block:
         text_data = block["question"]
     
-    options = block.get("options", [])
+    # Fallback si falta un idioma
+    text_es = text_data.get("es", "Cargando sistema...")
+    text_en = text_data.get("en", text_es) # Si no hay inglés, usa español
+
+    options = []
+    raw_options = block.get("options", [])
+    
+    for opt in raw_options:
+        opt_text = opt.get("text", {})
+        o_es = opt_text.get("es", "Opción")
+        o_en = opt_text.get("en", o_es)
+        options.append({
+            "code": opt.get("code", "TDB"),
+            "text": {"es": o_es, "en": o_en}
+        })
     
     # Garantizar botón de continuar si no hay opciones definidas (evita bloqueos)
     if not options and block.get("type") not in ["breathing", "silence_challenge", "breathing_warmup"]:
@@ -113,18 +132,20 @@ def format_block_response(mission, block):
     response = {
         "type": block.get("type", "story"),
         "category": mission.get("category", "AL CIELO"),
-        "text_en": text_data.get("en", "System loading..."),
-        "text_es": text_data.get("es", "Cargando sistema..."),
+        "text_en": text_en,
+        "text_es": text_es,
         "duration_sec": block.get("duration_sec", 0),
         "options": options,
         "mood": get_audio_mood(block),
         "feedback_audio": block.get("feedback_audio"),
     }
 
-    # Datos extra para acertijos
+    # Datos para Riddle
     if block.get("type") == "riddle":
-        response["answer"] = block.get("answer", {"en": "...", "es": "..."})
-        response["insight"] = block.get("insight", {"en": "...", "es": "..."})
+        ans = block.get("answer", {})
+        ins = block.get("insight", {})
+        response["answer"] = {"es": ans.get("es", "..."), "en": ans.get("en", ans.get("es", "..."))}
+        response["insight"] = {"es": ins.get("es", "..."), "en": ins.get("en", ins.get("es", "..."))}
 
     return response
 
@@ -156,6 +177,7 @@ async def start_session(req: Request):
             "story": format_block_response(mission, block)
         }
     except Exception as e:
+        print(f"Error en /start: {e}")
         return JSONResponse(status_code=500, content={"error": str(e)})
 
 @app.post("/judge")
@@ -171,7 +193,7 @@ async def judge_decision(req: Request):
 
         state = sessions[session_id]
         
-        # Cooldown de 200ms para evitar spam de clics que congelen el backend
+        # Cooldown de 200ms para evitar spam
         now = time.time()
         if now - state["last_update"] < 0.2:
             return {"status": "cooldown", "state": state}
@@ -197,6 +219,5 @@ async def judge_decision(req: Request):
 # --- EJECUCIÓN ---
 if __name__ == "__main__":
     import uvicorn
-    # Render usa la variable de entorno PORT
     port = int(os.environ.get("PORT", 10000))
     uvicorn.run(app, host="0.0.0.0", port=port)
