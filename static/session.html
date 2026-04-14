@@ -153,8 +153,8 @@
             display: none;
         }
 
-        .impact-red { background: rgba(255, 0, 0, 0.3); animation: flash 0.3s; }
-        .impact-green { background: rgba(0, 255, 0, 0.3); animation: flash 0.3s; }
+        .impact-red { background: rgba(255, 0, 0, 0.3); animation: flash 0.3s forwards; }
+        .impact-green { background: rgba(0, 255, 0, 0.3); animation: flash 0.3s forwards; }
         
         @keyframes flash { from { opacity: 1; } to { opacity: 0; } }
 
@@ -241,33 +241,40 @@
 
     function triggerVisualImpact(color) {
         const overlay = document.getElementById("feedback-overlay");
-        overlay.className = color === "red" ? "impact-red" : "impact-green";
         overlay.style.display = "block";
-        setTimeout(() => overlay.style.display = "none", 300);
+        overlay.className = color === "red" ? "impact-red" : "impact-green";
+        setTimeout(() => {
+            overlay.style.display = "none";
+            overlay.className = "";
+        }, 300);
     }
 
     async function startOrContinue() {
         if (is_loading) return;
         if (audioCtx.state === 'suspended') audioCtx.resume();
 
-        if (!session_id) {
-            is_loading = true;
-            try {
-                const res = await fetch("/start", {
-                    method: "POST",
-                    headers: {"Content-Type":"application/json"},
-                    body: JSON.stringify({ profile: { lang: current_lang } })
-                });
-                const data = await res.json();
+        is_loading = true;
+        try {
+            const endpoint = session_id ? "/judge" : "/start";
+            const body = session_id ? { session_id, decision: "TDB" } : { profile: { lang: current_lang } };
+            
+            const res = await fetch(endpoint, {
+                method: "POST",
+                headers: {"Content-Type":"application/json"},
+                body: JSON.stringify(body)
+            });
+            
+            const data = await res.json();
+            if (data.session_id) {
                 session_id = data.session_id;
                 localStorage.setItem("aura_sid", session_id);
-                updateUI(data);
-            } catch (e) {
-                console.error("Connection Error", e);
-                document.getElementById("message").innerText = "ERROR DE CONEXIÓN. REINTENTANDO...";
-            } finally {
-                is_loading = false;
             }
+            updateUI(data);
+        } catch (e) {
+            console.error("Connection Error", e);
+            document.getElementById("message").innerText = "ERROR DE CONEXIÓN. REINTENTANDO...";
+        } finally {
+            is_loading = false;
         }
     }
 
@@ -283,7 +290,7 @@
             });
             const data = await res.json();
             
-            if (data.status === "wait" || data.status === "cooldown") {
+            if (data.status === "cooldown") {
                 is_loading = false;
                 return;
             }
@@ -301,25 +308,27 @@
     }
 
     function updateUI(data) {
-        if (!data.state || !data.story) return;
-        resetVisuals(); // Limpiar todo antes de pintar lo nuevo
-
-        document.getElementById("mental").innerText = data.state.mental;
-        document.getElementById("social").innerText = data.state.social;
-        document.getElementById("karma").innerText = data.state.karma;
-        document.getElementById("disc").innerText = data.state.discipline;
-
         const story = data.story;
+        const state = data.state;
+        if (!story || !state) return;
+
+        resetVisuals();
+
+        document.getElementById("mental").innerText = state.mental;
+        document.getElementById("social").innerText = state.social;
+        document.getElementById("karma").innerText = state.karma;
+        document.getElementById("disc").innerText = state.discipline;
+
         const text = current_lang === "en" ? story.text_en : story.text_es;
         document.getElementById("message").innerText = text;
         document.getElementById("category-tag").innerText = story.category;
 
         if (voice_enabled) speak(text);
 
-        if (story.type.includes("breathing")) {
-            startBreathing(story.duration_sec);
+        if (story.type && story.type.includes("breathing")) {
+            startBreathing(story.duration_sec || 20);
         } else if (story.type === "silence_challenge") {
-            startSilence(story.duration_sec);
+            startSilence(story.duration_sec || 60);
         } else if (story.type === "riddle") {
             renderRiddle(story);
         } else {
@@ -336,7 +345,8 @@
         opts.forEach(opt => {
             const btn = document.createElement("button");
             btn.className = "opt-btn";
-            btn.innerText = current_lang === "en" ? (opt.text.en || opt.text.es) : (opt.text.es || opt.text.en);
+            const btnText = current_lang === "en" ? (opt.text.en || opt.text.es) : (opt.text.es || opt.text.en);
+            btn.innerText = btnText;
             btn.onclick = () => handleChoice(opt.code);
             container.appendChild(btn);
         });
@@ -363,7 +373,6 @@
         circle.style.display = "block";
         let elapsed = 0;
         
-        // Primera pulsación inmediata
         circle.classList.add("inhale");
         
         timer_interval = setInterval(() => {
@@ -417,7 +426,7 @@
     function toggleLanguage() {
         current_lang = current_lang === "en" ? "es" : "en";
         localStorage.setItem("aura_lang", current_lang);
-        resetApp(); 
+        location.reload(); 
     }
 
     function toggleVoice() {
@@ -431,10 +440,9 @@
         location.reload();
     }
 
-    // Auto-conectar si ya hay sesión
-    if (session_id) {
-        window.onload = startOrContinue;
-    }
+    window.onload = () => {
+        if (session_id) startOrContinue();
+    };
 </script>
 </body>
 </html>
