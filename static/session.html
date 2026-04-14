@@ -1,317 +1,335 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AL CIELO | KAMIZEN SYSTEM</title>
-
 <style>
-:root{
-  --bg:#000;
-  --neon:#00f2ff;
-  --green:#33ff88;
-  --red:#ff3355;
-  --panel:rgba(0,15,30,0.9);
+:root {
+    --bg: #000;
+    --neon: #00f2ff;
+    --green: #33ff88;
+    --red: #ff3355;
+    --panel: rgba(0, 15, 30, 0.95);
+    --shadow: 0 0 15px rgba(0, 242, 255, 0.5);
 }
 
-body{
-  margin:0;
-  background:var(--bg);
-  color:var(--neon);
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  overflow:hidden;
+body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--neon);
+    font-family: 'Courier New', Courier, monospace;
+    overflow: hidden;
+    height: 100vh;
 }
 
-#app{
-  height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  flex-direction:column;
-  position:relative;
-  transition: background 1s ease;
+#app {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    position: relative;
+    padding: 20px;
+    box-sizing: border-box;
 }
 
-/* UI HEADER */
-#header{
-  position:absolute;
-  top:20px;
-  width:90%;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
+/* HEADER UI */
+#header {
+    position: absolute;
+    top: 20px;
+    width: 90%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 10;
 }
 
-#xpBar{
-  width:150px;
-  height:10px;
-  border:1px solid var(--neon);
+#langSwitch {
+    background: transparent;
+    border: 1px solid var(--neon);
+    color: var(--neon);
+    padding: 8px 15px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.3s;
 }
 
-#xpFill{
-  height:100%;
-  width:0%;
-  background:var(--green);
-  transition: width 0.5s ease;
+#langSwitch:hover { background: var(--neon); color: #000; }
+
+.status-group { display: flex; align-items: center; gap: 15px; }
+
+#xpBar { width: 150px; height: 10px; border: 1px solid var(--neon); position: relative; }
+#xpFill { height: 100%; width: 0%; background: var(--green); transition: width 0.5s ease-out; }
+
+/* SEMAPHORE */
+#light { 
+    width: 25px; height: 25px; border-radius: 50%; 
+    background: #333; transition: 0.4s; 
+    box-shadow: inset 0 0 5px #000;
 }
 
-#levelIndicator{ font-weight:bold; letter-spacing: 2px; }
-
-/* VISUAL CORE */
-#circle{
-  width:100px;
-  height:100px;
-  border-radius:50%;
-  background:rgba(0,242,255,0.1);
-  box-shadow:0 0 40px var(--neon);
-  transition: transform 2s ease-in-out;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+/* CENTRAL CORE */
+#circle {
+    width: 140px; height: 140px; border-radius: 50%;
+    border: 3px solid var(--neon);
+    display: flex; align-items: center; justify-content: center;
+    transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: var(--shadow);
+    margin-bottom: 40px;
 }
 
-#timerDisplay{
-  font-size: 24px;
-  font-weight: bold;
+#timerDisplay { font-size: 40px; font-weight: bold; text-shadow: var(--shadow); }
+
+/* FEEDBACK & MESSAGE */
+#reason {
+    position: absolute; bottom: 380px; width: 85%;
+    text-align: center; font-size: 15px; min-height: 60px;
+    line-height: 1.4; color: #fff; text-shadow: 0 0 5px var(--neon);
 }
 
-/* CONTENT PANELS */
-#reason{
-  position:absolute;
-  bottom:350px;
-  width:85%;
-  text-align:center;
-  font-size:16px;
-  color: var(--green);
-  min-height: 40px;
+#message {
+    position: absolute; bottom: 180px; width: 85%;
+    padding: 25px; background: var(--panel);
+    border: 1px solid var(--neon);
+    text-align: center; min-height: 100px;
+    cursor: pointer; font-size: 19px;
+    box-shadow: var(--shadow);
+    display: flex; align-items: center; justify-content: center;
 }
 
-#message{
-  position:absolute;
-  bottom:160px;
-  width:85%;
-  padding:20px;
-  background:var(--panel);
-  border: 1px solid rgba(0,242,255,0.3);
-  text-align:center;
-  min-height:100px;
-  cursor: pointer;
+/* OPTIONS */
+#options {
+    position: absolute; bottom: 40px; width: 85%;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 15px;
 }
 
-#options{
-  position:absolute;
-  bottom:40px;
-  width:85%;
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:15px;
+.opt-btn {
+    padding: 18px; border: 1px solid var(--neon);
+    background: rgba(0, 242, 255, 0.05); color: var(--neon);
+    cursor: pointer; font-weight: bold; font-family: inherit;
+    transition: 0.2s; font-size: 14px;
 }
 
-button{
-  padding:15px;
-  border:1px solid var(--neon);
-  background:transparent;
-  color:var(--neon);
-  font-weight: bold;
-  cursor:pointer;
-  text-transform: uppercase;
-}
+.opt-btn:active { transform: scale(0.95); }
 
-button:hover{
-  background:var(--neon);
-  color:#000;
-}
+/* SEMAPHORE STATES */
+.light-green { background: var(--green) !important; box-shadow: 0 0 20px var(--green) !important; }
+.light-red { background: var(--red) !important; box-shadow: 0 0 20px var(--red) !important; }
+
+.btn-correct { border-color: var(--green) !important; color: var(--green) !important; background: rgba(51, 255, 136, 0.1) !important; }
+.btn-incorrect { border-color: var(--red) !important; color: var(--red) !important; background: rgba(255, 51, 85, 0.1) !important; }
 
 .hidden { display: none !important; }
 
-/* SEMAPHORE LIGHT */
-#light{
-  width:15px;
-  height:15px;
-  border-radius:50%;
-  background:gray;
-  margin-right: 10px;
+/* ANIMATION */
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 0.8; }
+    50% { transform: scale(1.05); opacity: 1; }
+    100% { transform: scale(1); opacity: 0.8; }
 }
+.pulse { animation: pulse 2s infinite; }
 </style>
 </head>
-
 <body>
 
 <div id="app">
-  <div id="header">
-    <div style="display:flex; align-items:center;">
-      <div id="light"></div>
-      <div id="xpBar"><div id="xpFill"></div></div>
+    <div id="header">
+        <div class="status-group">
+            <div id="light"></div>
+            <div id="xpBar"><div id="xpFill"></div></div>
+        </div>
+        <button id="langSwitch" onclick="toggleLang()">ESPAÑOL</button>
     </div>
-    <div id="levelIndicator">LVL: 1</div>
-  </div>
 
-  <div id="circle">
-    <div id="timerDisplay"></div>
-  </div>
+    <div id="circle"><div id="timerDisplay">READY</div></div>
 
-  <div id="reason"></div>
-  <div id="message" onclick="nextStep()">INICIAR ENTRENAMIENTO</div>
-  <div id="options" class="hidden"></div>
+    <div id="reason"></div>
+    <div id="message" onclick="handleAutoAdvance()">INITIALIZING NEURO-LINK...</div>
+    <div id="options" class="hidden"></div>
 </div>
 
 <script>
+let sid = null;
 let currentMission = null;
-let currentBlockIndex = 0;
+let blockIdx = 0;
+let lang = "en"; 
 let xp = 0;
-let lang = "es";
-let timerInt = null;
+let isWaitingForInput = false;
+let challengeActive = false;
 
-const audio = new (window.AudioContext || window.webkitAudioContext)();
-
-function sound(type){
-  const o=audio.createOscillator();
-  const g=audio.createGain();
-  o.connect(g); g.connect(audio.destination);
-  if(type==="ok") o.frequency.value=600;
-  if(type==="fail") o.frequency.value=150;
-  if(type==="reward") o.frequency.value=800;
-  o.type="sine"; g.gain.value=0.1;
-  o.start(); o.stop(audio.currentTime+0.2);
-}
-
-function speak(text){
-  if(!text) return;
-  speechSynthesis.cancel();
-  let u=new SpeechSynthesisUtterance(text);
-  u.lang = (lang === "es") ? "es-ES" : "en-US";
-  speechSynthesis.speak(u);
-}
-
-async function fetchMissions() {
-  // En producción, esto vendría de tu API/DB
-  const response = await fetch('/static/missions.json'); 
-  return await response.json();
-}
-
-// Inicia o avanza la misión
-async function startSession() {
-  if(audio.state==="suspended") await audio.resume();
-  // Simulación de carga inicial nivel 1
-  loadMission(1);
-}
-
-async function loadMission(id) {
-  // Aquí llamarías a tu backend para obtener la misión actual del usuario
-  const r = await fetch("/get_mission", {
-    method: "POST",
-    headers: {"Content-Type":"application/json"},
-    body: JSON.stringify({ mission_id: id })
-  });
-  const data = await r.json();
-  currentMission = data.mission;
-  currentBlockIndex = 0;
-  document.getElementById("levelIndicator").innerText = `LVL: ${currentMission.id}`;
-  processBlock();
-}
-
-function processBlock() {
-  const block = currentMission.blocks[currentBlockIndex];
-  const msgEl = document.getElementById("message");
-  const optEl = document.getElementById("options");
-  const reasonEl = document.getElementById("reason");
-  
-  optEl.classList.add("hidden");
-  reasonEl.innerText = "";
-
-  if (block.type === "story" || block.type === "analysis") {
-    msgEl.innerText = block.text[lang];
-    speak(block.text[lang]);
-    msgEl.onclick = nextStep;
-  } 
-  else if (block.type === "tvid") {
-    msgEl.innerText = (lang === "es") ? "ELIGE TU CAMINO:" : "CHOOSE YOUR PATH:";
-    optEl.innerHTML = "";
-    optEl.classList.remove("hidden");
-    block.options.forEach(opt => {
-      let b = document.createElement("button");
-      b.innerText = opt.text[lang];
-      b.onclick = () => handleDecision(opt);
-      optEl.appendChild(b);
-    });
-    msgEl.onclick = null;
-  }
-  else if (block.type === "silence_challenge") {
-    startSilenceChallenge(block);
-  }
-}
-
-function nextStep() {
-  currentBlockIndex++;
-  if (currentBlockIndex < currentMission.blocks.length) {
-    processBlock();
-  } else {
-    // Siguiente misión
-    loadMission(currentMission.id + 1);
-  }
-}
-
-function handleDecision(opt) {
-  const reasonEl = document.getElementById("reason");
-  const light = document.getElementById("light");
-  
-  reasonEl.innerText = opt.reason[lang];
-  speak(opt.reason[lang]);
-
-  if (opt.correct) {
-    light.style.background = "#33ff88";
-    sound("ok");
-    xp += 5;
-    updateXP();
-    setTimeout(nextStep, 3000);
-  } else {
-    light.style.background = "#ff3355";
-    sound("fail");
-    // No avanza hasta que elija la correcta o reinicie bloque
-  }
-}
-
-function startSilenceChallenge(block) {
-  const msgEl = document.getElementById("message");
-  msgEl.innerText = (lang === "es") ? "DESAFÍO DE SILENCIO: NO TOQUES EL TELÉFONO" : "SILENCE CHALLENGE: DON'T TOUCH THE PHONE";
-  
-  let timeLeft = block.duration_sec;
-  document.getElementById("timerDisplay").innerText = timeLeft;
-  
-  timerInt = setInterval(() => {
-    timeLeft--;
-    document.getElementById("timerDisplay").innerText = timeLeft;
-    if (timeLeft <= 0) {
-      clearInterval(timerInt);
-      sound("reward");
-      msgEl.innerText = block.reward[lang];
-      speak(block.reward[lang]);
-      document.getElementById("timerDisplay").innerText = "✓";
-      xp += 10;
-      updateXP();
-      msgEl.onclick = nextStep;
+// INICIALIZACIÓN
+async function init() {
+    try {
+        const r = await fetch("/start", {
+            method: "POST",
+            headers: {"Content-Type":"application/json"},
+            body: JSON.stringify({profile: {lang}})
+        });
+        const d = await r.json();
+        sid = d.session_id;
+        currentMission = d.mission;
+        renderBlock();
+    } catch (e) {
+        document.getElementById("message").innerText = "CONNECTION ERROR. RETRYING...";
+        setTimeout(init, 3000);
     }
-  }, 1000);
+}
+
+// RENDERIZADO DE BLOQUES
+function renderBlock() {
+    if (!currentMission) return;
+    const block = currentMission.blocks[blockIdx];
+    const msg = document.getElementById("message");
+    const opt = document.getElementById("options");
+    const reason = document.getElementById("reason");
+    const timerDisp = document.getElementById("timerDisplay");
+    const light = document.getElementById("light");
+
+    // Limpieza de estado
+    opt.classList.add("hidden");
+    reason.innerText = "";
+    light.className = "";
+    isWaitingForInput = false;
+    challengeActive = false;
+    msg.classList.remove("pulse");
+
+    if (block.type === "story" || block.type === "analysis") {
+        msg.innerText = block.text[lang];
+        msg.classList.add("pulse");
+        timerDisp.innerText = ">>";
+        speak(block.text[lang]);
+    } 
+    else if (block.type === "tvid") {
+        isWaitingForInput = true;
+        msg.innerText = (lang === "en") ? "CHOOSE YOUR REACTION:" : "ELIGE TU REACCIÓN:";
+        timerDisp.innerText = "?";
+        opt.innerHTML = "";
+        opt.classList.remove("hidden");
+        block.options.forEach(o => {
+            let btn = document.createElement("button");
+            btn.className = "opt-btn";
+            btn.innerText = o.text[lang];
+            btn.onclick = () => checkDecision(o, btn);
+            opt.appendChild(btn);
+        });
+    }
+    else if (block.type === "silence_challenge") {
+        runChallenge(block);
+    }
+}
+
+// AVANCE AUTOMÁTICO / MANUAL
+function handleAutoAdvance() {
+    if (isWaitingForInput || challengeActive) return;
+    
+    blockIdx++;
+    if (blockIdx < currentMission.blocks.length) {
+        renderBlock();
+    } else {
+        loadNextMission();
+    }
+}
+
+// CARGAR SIGUIENTE MISIÓN
+async function loadNextMission() {
+    document.getElementById("message").innerText = "...LOADING NEXT LEVEL...";
+    try {
+        const r = await fetch("/get_mission", {
+            method: "POST",
+            headers: {"Content-Type":"application/json"},
+            body: JSON.stringify({session_id: sid})
+        });
+        const d = await r.json();
+        currentMission = d.mission;
+        blockIdx = 0;
+        renderBlock();
+    } catch (e) {
+        console.error("Mission Load Error", e);
+    }
+}
+
+// VALIDACIÓN DE DECISIONES
+async function checkDecision(o, btn) {
+    if (!isWaitingForInput) return;
+    
+    const reason = document.getElementById("reason");
+    const light = document.getElementById("light");
+    
+    try {
+        const r = await fetch("/judge", {
+            method: "POST",
+            headers: {"Content-Type":"application/json"},
+            body: JSON.stringify({session_id: sid, decision: o.code})
+        });
+        const d = await r.json();
+
+        reason.innerText = o.reason[lang];
+        speak(o.reason[lang]);
+
+        if (o.correct) {
+            btn.classList.add("btn-correct");
+            light.className = "light-green";
+            xp = d.xp;
+            updateXP();
+            isWaitingForInput = false;
+            // Espera para que lea la explicación científica antes de seguir
+            setTimeout(handleAutoAdvance, 5000);
+        } else {
+            btn.classList.add("btn-incorrect");
+            light.className = "light-red";
+            // No bloquea, permite elegir otra opción
+        }
+    } catch (e) {
+        console.error("Judge Error", e);
+    }
+}
+
+// RETO DE SILENCIO (CRONÓMETRO)
+function runChallenge(block) {
+    challengeActive = true;
+    let time = block.duration_sec;
+    const disp = document.getElementById("timerDisplay");
+    const msg = document.getElementById("message");
+    
+    msg.innerText = (lang === "en") ? "STAY STILL. DON'T TOUCH." : "QUÉDATE QUIETO. NO TOQUES.";
+    disp.innerText = time;
+
+    let intv = setInterval(() => {
+        time--;
+        disp.innerText = time;
+        if (time <= 0) {
+            clearInterval(intv);
+            challengeActive = false;
+            disp.innerText = "✓";
+            msg.innerText = block.reward[lang];
+            msg.classList.add("pulse");
+            speak(block.reward[lang]);
+            // El usuario debe tocar para confirmar que terminó el reto
+        }
+    }, 1000);
+}
+
+// UTILIDADES
+function toggleLang() {
+    lang = (lang === "en") ? "es" : "en";
+    document.getElementById("langSwitch").innerText = (lang === "en") ? "ESPAÑOL" : "ENGLISH";
+    renderBlock();
 }
 
 function updateXP() {
-  document.getElementById("xpFill").style.width = (xp % 100) + "%";
+    document.getElementById("xpFill").style.width = (xp % 100) + "%";
 }
 
-// Visual breath logic
-setInterval(() => {
-  const c = document.getElementById("circle");
-  const scale = 1 + (Math.random() * 0.5);
-  c.style.transform = `scale(${scale})`;
-}, 2500);
-
-// Entrada inicial
-function nextStepInitial() {
-    if(!currentMission) startSession();
-    else nextStep();
+function speak(t) {
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(t);
+    u.lang = (lang === "en") ? "en-US" : "es-ES";
+    u.rate = 0.95;
+    window.speechSynthesis.speak(u);
 }
-document.getElementById("message").onclick = nextStepInitial;
 
+window.onload = init;
 </script>
 </body>
 </html>
