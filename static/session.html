@@ -3,16 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NEURO PRO 2.0 | KAMIZEN</title>
+<title>KAMIZEN CORE</title>
 
 <style>
 :root{
   --bg:#000;
   --neon:#00f2ff;
-  --green:#33ff88;
-  --red:#ff5566;
-  --yellow:#ffcc33;
-  --panel:rgba(0,15,30,0.95);
+  --green:#00ff88;
+  --red:#ff0044;
+  --yellow:#ffcc00;
+  --panel:rgba(0,20,40,0.95);
 }
 
 body{
@@ -30,11 +30,10 @@ body{
   width:95%;
   display:flex;
   justify-content:space-between;
-  align-items:center;
 }
 
 #xpBar{
-  width:150px;
+  width:180px;
   height:10px;
   border:1px solid var(--neon);
 }
@@ -42,54 +41,43 @@ body{
   height:100%;
   width:0%;
   background:var(--green);
-  transition:0.4s;
-}
-
-/* AVATAR */
-#avatar{
-  width:40px;
-  height:40px;
-  border-radius:50%;
-  background:#222;
-  border:2px solid var(--neon);
-  background-size:cover;
+  transition:0.3s;
 }
 
 /* CORE */
 #core{
   position:absolute;
-  top:35%;
+  top:30%;
   left:50%;
   transform:translate(-50%,-50%);
-  width:130px;
-  height:130px;
-  border-radius:50%;
+  font-size:40px;
   border:2px solid var(--neon);
+  width:140px;
+  height:140px;
+  border-radius:50%;
   display:flex;
   justify-content:center;
   align-items:center;
-  font-size:30px;
 }
 
 /* TEXT */
 #message{
   position:absolute;
-  bottom:220px;
+  bottom:230px;
   width:90%;
-  padding:18px;
-  background:var(--panel);
+  left:5%;
+  padding:15px;
   border:1px solid var(--neon);
+  background:var(--panel);
   text-align:center;
-  font-size:18px;
 }
 
 #reason{
   position:absolute;
   bottom:300px;
   width:90%;
+  left:5%;
   text-align:center;
-  color:#fff;
-  font-size:14px;
 }
 
 /* OPTIONS */
@@ -97,47 +85,53 @@ body{
   position:absolute;
   bottom:110px;
   width:90%;
+  left:5%;
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:10px;
 }
 
 button{
-  padding:14px;
+  padding:15px;
   border:1px solid var(--neon);
-  background:transparent;
+  background:black;
   color:var(--neon);
   cursor:pointer;
+  transition:0.2s;
 }
 
 button:hover{
   background:var(--neon);
-  color:#000;
+  color:black;
 }
+
+/* FEEDBACK */
+.correct{ background:var(--green)!important; color:black!important;}
+.wrong{ background:var(--red)!important; color:white!important;}
 
 /* NAV */
 #nav{
   position:absolute;
   bottom:20px;
   width:90%;
+  left:5%;
   display:flex;
   justify-content:space-between;
 }
 
-/* ANTI ADDICTION WARNING */
-#breakScreen{
+/* BREAK */
+#break{
   position:absolute;
   top:0;
   left:0;
   width:100%;
   height:100%;
-  background:#000;
+  background:black;
   display:none;
   justify-content:center;
   align-items:center;
   flex-direction:column;
   color:white;
-  font-size:20px;
 }
 </style>
 </head>
@@ -145,17 +139,13 @@ button:hover{
 <body>
 
 <div id="header">
-  <div style="display:flex;gap:10px;align-items:center;">
-    <div id="avatar"></div>
-    <div id="xpBar"><div id="xpFill"></div></div>
-  </div>
+  <div id="xpBar"><div id="xpFill"></div></div>
   <button onclick="toggleLang()">EN/ES</button>
 </div>
 
-<div id="core">0</div>
-
+<div id="core">⚡</div>
 <div id="reason"></div>
-<div id="message">CLICK TO START NEURO PRO 2.0</div>
+<div id="message">CLICK TO START</div>
 
 <div id="options"></div>
 
@@ -165,32 +155,16 @@ button:hover{
   <button onclick="next()">NEXT</button>
 </div>
 
-<div id="breakScreen">
+<div id="break">
   <h2>🧠 BREAK MODE</h2>
-  <p>Respira 30 segundos. No pantalla.</p>
+  <p>Respira. 30 segundos sin pantalla.</p>
 </div>
 
 <script>
-
 let session_id=null;
 let mission=null;
-let index=0;
 let lang="en";
 let xp=0;
-let errors=0;
-let eventHistory=[];
-let avatarIndex=Math.floor(Math.random()*5);
-
-/* AVATAR SYSTEM */
-const avatars=[
-  "https://i.imgur.com/1.png",
-  "https://i.imgur.com/2.png",
-  "https://i.imgur.com/3.png",
-  "https://i.imgur.com/4.png",
-  "https://i.imgur.com/5.png"
-];
-
-document.getElementById("avatar").style.backgroundImage=`url(${avatars[avatarIndex]})`;
 
 /* AUDIO */
 const ctx=new (window.AudioContext||window.webkitAudioContext)();
@@ -198,167 +172,183 @@ const ctx=new (window.AudioContext||window.webkitAudioContext)();
 function sound(type){
   const o=ctx.createOscillator();
   const g=ctx.createGain();
-
   o.connect(g); g.connect(ctx.destination);
 
-  if(type==="good"){ o.frequency.value=880; o.type="sine"; }
-  if(type==="bad"){ o.frequency.value=120; o.type="sawtooth"; }
-  if(type==="event"){ o.frequency.value=600; o.type="triangle"; }
+  if(type==="good"){o.frequency.value=900;}
+  if(type==="bad"){o.frequency.value=150;}
+  if(type==="click"){o.frequency.value=500;}
 
   g.gain.value=0.2;
   o.start();
-  o.stop(ctx.currentTime+0.3);
+  o.stop(ctx.currentTime+0.2);
 }
 
 /* START */
 async function start(){
   if(ctx.state==="suspended") await ctx.resume();
 
-  const r=await fetch("/start",{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({profile:{lang}})
-  });
-
+  const r=await fetch("/start",{method:"POST"});
   const d=await r.json();
+
   session_id=d.session_id;
   mission=d.mission;
+
   render();
 }
 
-/* IA ADAPTATIVA */
-function adaptDifficulty(){
-  if(errors>=3){
-    mission.blocks.push({
-      type:"analysis",
-      text:{
-        en:"System slowdown: you need focus recovery.",
-        es:"Sistema lento: necesitas recuperación de enfoque."
-      }
-    });
-    errors=0;
-  }
-}
+/* GET MISSION */
+async function loadMission(){
+  const r=await fetch("/get_mission",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({session_id})
+  });
 
-/* RANDOM EVENT SYSTEM */
-function randomEvent(){
-  const events=[
-    "⚡ Unexpected challenge appears",
-    "🎁 Bonus focus moment",
-    "⚠ Social pressure spike",
-    "🧠 Memory boost activated"
-  ];
+  const d=await r.json();
+  mission=d.mission;
 
-  if(Math.random()<0.25 && !eventHistory.includes(index)){
-    eventHistory.push(index);
-    document.getElementById("message").innerText=
-      events[Math.floor(Math.random()*events.length)];
-    sound("event");
+  /* 🔇 SILENCE */
+  if(d.silence){
+    showSilence(d.silence);
   }
+
+  render();
 }
 
 /* RENDER */
 function render(){
-  const b=mission.blocks[index];
+  if(!mission) return;
 
-  document.getElementById("options").innerHTML="";
+  const msg=document.getElementById("message");
+  const opt=document.getElementById("options");
+
+  opt.innerHTML="";
   document.getElementById("reason").innerText="";
 
-  randomEvent();
-  adaptDifficulty();
+  let textBlock=mission.blocks.find(b=>b.text);
+  msg.innerText=textBlock?.text?.[lang] || "..."
 
-  if(b.type==="story"||b.type==="analysis"){
-    document.getElementById("message").innerText=b.text[lang];
-    speak(b.text[lang]);
-  }
+  let tvid=mission.blocks.find(b=>b.type==="tvid");
 
-  if(b.type==="tvid"){
-    document.getElementById("message").innerText="DECIDE";
-
-    b.options.forEach(o=>{
+  if(tvid){
+    tvid.options.forEach(o=>{
       const btn=document.createElement("button");
       btn.innerText=o.text[lang];
 
-      btn.onclick=()=>choose(o);
+      btn.onclick=()=>choose(btn,o);
 
-      document.getElementById("options").appendChild(btn);
+      opt.appendChild(btn);
     });
-  }
-
-  if(b.type==="silence_challenge"){
-    runSilence(b.duration_sec);
   }
 }
 
-/* CHOICE */
-function choose(o){
+/* CHOOSE */
+async function choose(btn,o){
+
+  const r=await fetch("/judge",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({
+      session_id,
+      decision:o.code
+    })
+  });
+
+  const d=await r.json();
 
   document.getElementById("reason").innerText=o.reason[lang];
 
-  if(o.correct){
+  if(d.correct){
+    btn.classList.add("correct");
     sound("good");
-    xp+=10;
   }else{
+    btn.classList.add("wrong");
     sound("bad");
-    xp-=5;
-    errors++;
-    if(xp<0)xp=0;
   }
 
+  xp=d.xp;
   document.getElementById("xpFill").style.width=(xp%100)+"%";
 
-  checkAntiAddiction();
-
-  setTimeout(next,2000);
-}
-
-/* ANTI ADDICTION SYSTEM */
-function checkAntiAddiction(){
-  if(xp>=120){
-    document.getElementById("breakScreen").style.display="flex";
-    setTimeout(()=>{
-      document.getElementById("breakScreen").style.display="none";
-      xp=80;
-    },30000);
+  if(d.break){
+    showBreak();
   }
+
+  setTimeout(()=>{
+    mission=d.next_mission;
+    render();
+  },1500);
 }
 
-/* SILENCE */
-function runSilence(t){
-  const core=document.getElementById("core");
-  let i=t;
+/* SILENCE MODE */
+function showSilence(s){
+  const msg=document.getElementById("message");
 
-  core.innerText=i;
+  msg.innerText=
+    s.message+"\n\n🎯 "+s.objective+"\n💡 "+s.benefit;
 
-  const int=setInterval(()=>{
-    i--;
-    core.innerText=i;
+  let t=5;
+  document.getElementById("core").innerText=t;
 
-    if(i<=0){
-      clearInterval(int);
-      core.innerText="✓";
-      sound("good");
-      setTimeout(next,2000);
+  const i=setInterval(()=>{
+    t--;
+    document.getElementById("core").innerText=t;
+
+    if(t<=0){
+      clearInterval(i);
+      loadMission();
     }
   },1000);
 }
 
-/* NAV */
-function next(){
-  index++;
-  if(index>=mission.blocks.length) return restart();
+/* BREAK */
+function showBreak(){
+  const b=document.getElementById("break");
+  b.style.display="flex";
+
+  setTimeout(()=>{
+    b.style.display="none";
+  },30000);
+}
+
+/* NAV CONTROL (CASTIGO REAL) */
+async function next(){
+  sound("click");
+
+  const r=await fetch("/force_next",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({session_id})
+  });
+
+  const d=await r.json();
+
+  alert(d.message);
+
+  xp=d.xp;
+  mission=d.mission;
   render();
 }
 
-function back(){
-  if(index>0) index--;
+async function back(){
+  sound("click");
+
+  const r=await fetch("/force_back",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({session_id})
+  });
+
+  const d=await r.json();
+
+  alert(d.message);
+
+  xp=d.xp;
+  mission=d.mission;
   render();
 }
 
 function restart(){
-  index=0;
-  errors=0;
-  render();
+  location.reload();
 }
 
 /* LANG */
@@ -367,17 +357,8 @@ function toggleLang(){
   render();
 }
 
-/* VOZ */
-function speak(t){
-  const u=new SpeechSynthesisUtterance(t);
-  u.lang=lang==="en"?"en-US":"es-ES";
-  u.rate=0.95;
-  speechSynthesis.speak(u);
-}
-
 /* INIT */
 document.getElementById("message").onclick=start;
-
 </script>
 
 </body>
