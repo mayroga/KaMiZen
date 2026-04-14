@@ -15,7 +15,6 @@
     --success: #33ff33;
 }
 
-/* ===== BASE ===== */
 body {
     margin: 0;
     background: var(--bg);
@@ -24,7 +23,6 @@ body {
     overflow: hidden;
 }
 
-/* ===== APP ===== */
 #app {
     width: 100%;
     height: 100vh;
@@ -38,7 +36,7 @@ body {
 /* ===== BREATHING CIRCLE ===== */
 #breath-container {
     position: absolute;
-    top: 45%;
+    top: 40%;
     width: 200px;
     height: 200px;
     display: flex;
@@ -47,18 +45,13 @@ body {
 }
 
 #circle {
-    width: 80px;
-    height: 80px;
+    width: 70px;
+    height: 70px;
     border-radius: 50%;
-    background: rgba(0,242,255,0.3);
+    background: rgba(0,242,255,0.25);
     box-shadow: 0 0 40px var(--neon);
-    animation: breathe 6s infinite ease-in-out;
-}
-
-@keyframes breathe {
-    0% { transform: scale(1); opacity: 0.4; }
-    50% { transform: scale(2.2); opacity: 1; }
-    100% { transform: scale(1); opacity: 0.4; }
+    transform: scale(1);
+    transition: transform 3s ease-in-out, opacity 3s ease-in-out;
 }
 
 /* ===== TEXT ===== */
@@ -100,7 +93,7 @@ button:hover {
     color: black;
 }
 
-/* ===== SILENCE MODE ===== */
+/* SILENCE */
 #silence {
     position: absolute;
     top: 10px;
@@ -108,10 +101,10 @@ button:hover {
     opacity: 0.7;
 }
 
-/* ===== FLASH ===== */
 .flash {
     animation: flash 0.4s;
 }
+
 @keyframes flash {
     0% { background: rgba(255,0,0,0.5); }
     100% { background: transparent; }
@@ -123,19 +116,14 @@ button:hover {
 
 <div id="app">
 
-    <div id="silence">🧘 SILENCE LEVEL: <span id="silenceLevel">20</span>s</div>
+    <div id="silence">🧘 SILENCE: <span id="silenceLevel">20</span>s</div>
 
-    <!-- CÍRCULO RESPIRACIÓN -->
     <div id="breath-container">
         <div id="circle"></div>
     </div>
 
-    <!-- MENSAJE -->
-    <div id="message" onclick="startApp()">
-        TOCA PARA INICIAR
-    </div>
+    <div id="message" onclick="startApp()">TOCA PARA INICIAR</div>
 
-    <!-- OPCIONES -->
     <div id="options"></div>
 
 </div>
@@ -143,16 +131,17 @@ button:hover {
 <script>
 
 let session_id = null;
-let silenceTime = 20; // inicia en 20s y sube por nivel
 let lang = "es";
+let silenceTime = 20;
+let isLoading = false;
+
 let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-/* =========================
-   SONIDO DOPAMINA / ALERTA
-========================= */
+/* ================= SOUND ================= */
 function playSound(type){
     const osc = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
+
     osc.connect(gain);
     gain.connect(audioCtx.destination);
 
@@ -172,78 +161,110 @@ function playSound(type){
     osc.stop(audioCtx.currentTime + 0.4);
 }
 
-/* =========================
-   INICIO
-========================= */
+/* ================= START ================= */
 async function startApp(){
-    if(audioCtx.state === "suspended") await audioCtx.resume();
+
+    if(audioCtx.state === "suspended") {
+        await audioCtx.resume();
+    }
 
     const res = await fetch("/start", {
         method: "POST",
         headers: {"Content-Type":"application/json"},
-        body: JSON.stringify({ lang })
+        body: JSON.stringify({ profile: { lang } })
     });
 
     const data = await res.json();
     session_id = data.session_id;
+
     loadStep(data);
 }
 
-/* =========================
-   RESPUESTA
-========================= */
+/* ================= SEND ================= */
 async function sendChoice(code){
-    playSound("click");
+
+    if(isLoading) return;
+    isLoading = true;
 
     const res = await fetch("/judge", {
         method: "POST",
         headers: {"Content-Type":"application/json"},
         body: JSON.stringify({
             session_id,
-            decision: code,
-            silence: silenceTime
+            decision: code
         })
     });
 
     const data = await res.json();
     loadStep(data);
+
+    isLoading = false;
 }
 
-/* =========================
-   UI UPDATE
-========================= */
+/* ================= LOAD STEP ================= */
 function loadStep(data){
+
     if(!data || !data.story) return;
 
-    document.getElementById("message").innerText =
-        lang === "es" ? data.story.text_es : data.story.text_en;
+    const story = data.story;
 
-    // SILENCE PROGRESIVO
-    silenceTime = Math.min(180, silenceTime + 10);
+    document.getElementById("message").innerText =
+        story.text_es || story.text_en || "";
+
+    document.getElementById("options").innerHTML = "";
+
+    /* ================= BREATHING CONTROL ================= */
+    if(story.type === "breathing") {
+        animateBreathing(3000);
+    }
+
+    if(story.type === "silence_challenge"){
+        silenceTime = story.duration_sec || silenceTime;
+    } else {
+        silenceTime = Math.min(180, silenceTime + 10);
+    }
+
     document.getElementById("silenceLevel").innerText = silenceTime;
 
-    const container = document.getElementById("options");
-    container.innerHTML = "";
+    /* ================= OPTIONS ================= */
+    const opts = story.options || [];
 
-    (data.story.options || []).forEach(opt=>{
+    if(opts.length === 0 && story.type !== "breathing" && story.type !== "silence_challenge"){
+        opts.push({
+            code: "TDB",
+            text: { es: "CONTINUAR", en: "CONTINUE" }
+        });
+    }
+
+    opts.forEach(opt=>{
         const b = document.createElement("button");
         b.innerText = opt.text?.[lang] || "CONTINUAR";
         b.onclick = () => sendChoice(opt.code);
-        container.appendChild(b);
+        document.getElementById("options").appendChild(b);
     });
 
     if(data.story.type === "fail") playSound("fail");
     if(data.story.type === "success") playSound("success");
 }
 
-/* =========================
-   SISTEMA DE RESPIRACIÓN
-   (CIENTÍFICO: regula sistema nervioso)
-========================= */
+/* ================= BREATHING ANIMATION ================= */
+function animateBreathing(duration){
+    const circle = document.getElementById("circle");
+
+    circle.style.transition = `transform ${duration/1000}s ease-in-out`;
+
+    circle.style.transform = "scale(2.2)";
+
+    setTimeout(()=>{
+        circle.style.transform = "scale(1)";
+    }, duration/2);
+}
+
+/* ================= AUTO LOOP BREATH ================= */
 setInterval(()=>{
     const circle = document.getElementById("circle");
-    circle.style.filter = "blur(0.5px) drop-shadow(0 0 10px #00f2ff)";
-}, 2000);
+    circle.style.opacity = 0.4 + Math.random()*0.6;
+}, 3000);
 
 </script>
 
