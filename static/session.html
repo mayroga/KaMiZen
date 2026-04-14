@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>AL CIELO | AURA BY MAY ROGA</title>
     <style>
         :root {
@@ -122,6 +122,7 @@
             box-shadow: 0 0 30px rgba(0, 242, 255, 0.15);
             margin-bottom: 20px;
             cursor: pointer;
+            overflow-y: auto;
         }
 
         /* ACTIONS GRID */
@@ -147,7 +148,7 @@
 
         .opt-btn:hover { background: var(--neon); color: var(--bg); box-shadow: 0 0 15px var(--neon); }
 
-        /* FEEDBACK OVERLAY (Sounds/Impact) */
+        /* FEEDBACK OVERLAY */
         #feedback-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -171,7 +172,8 @@
         @media (max-width: 600px) {
             #stats { grid-template-columns: repeat(2, 1fr); }
             #options-container { grid-template-columns: 1fr; }
-            #message { font-size: 15px; }
+            #message { font-size: 15px; min-height: 140px; }
+            .val { font-size: 18px; }
         }
     </style>
 </head>
@@ -205,33 +207,33 @@
 
     <div id="controls">
         <button id="clear-btn" class="btn-ctrl" onclick="resetApp()">BORRAR DATOS</button>
-        <button class="btn-ctrl" onclick="toggleLanguage()">ES/EN</button>
+        <button class="btn-ctrl" onclick="toggleLanguage()">ES / EN</button>
     </div>
 </div>
 
 <script>
     let session_id = localStorage.getItem("aura_sid");
-    let current_lang = "es";
+    let current_lang = localStorage.getItem("aura_lang") || "es";
     let voice_enabled = true;
     let timer_interval = null;
 
-    // Sonidos predefinidos (Osciladores Web Audio)
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     
     function playSound(type) {
+        if (!type) return;
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
         osc.connect(gain);
         gain.connect(audioCtx.destination);
         
-        if (type === "explosion") { // Fallo
+        if (type === "explosion") {
             osc.type = "sawtooth";
             osc.frequency.setValueAtTime(150, audioCtx.currentTime);
             osc.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime + 0.5);
             gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
             gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
             triggerVisualImpact("red");
-        } else if (type === "lottery") { // Éxito
+        } else if (type === "lottery") {
             osc.type = "sine";
             osc.frequency.setValueAtTime(880, audioCtx.currentTime);
             osc.frequency.exponentialRampToValueAtTime(1760, audioCtx.currentTime + 0.3);
@@ -252,36 +254,45 @@
 
     async function startOrContinue() {
         if (!session_id) {
-            const res = await fetch("/start", {
-                method: "POST",
-                headers: {"Content-Type":"application/json"},
-                body: JSON.stringify({ profile: { lang: current_lang } })
-            });
-            const data = await res.json();
-            session_id = data.session_id;
-            localStorage.setItem("aura_sid", session_id);
-            updateUI(data);
+            try {
+                const res = await fetch("/start", {
+                    method: "POST",
+                    headers: {"Content-Type":"application/json"},
+                    body: JSON.stringify({ profile: { lang: current_lang } })
+                });
+                const data = await res.json();
+                session_id = data.session_id;
+                localStorage.setItem("aura_sid", session_id);
+                updateUI(data);
+            } catch (e) {
+                console.error("Connection Error", e);
+            }
         }
     }
 
     async function handleChoice(code) {
-        const res = await fetch("/judge", {
-            method: "POST",
-            headers: {"Content-Type":"application/json"},
-            body: JSON.stringify({ session_id, decision: code })
-        });
-        const data = await res.json();
-        
-        // Ejecutar efectos si vienen en la respuesta
-        if (data.story.feedback_audio) {
-            playSound(data.story.feedback_audio);
+        try {
+            const res = await fetch("/judge", {
+                method: "POST",
+                headers: {"Content-Type":"application/json"},
+                body: JSON.stringify({ session_id, decision: code })
+            });
+            const data = await res.json();
+            
+            if (data.status === "wait") return;
+            
+            if (data.story && data.story.feedback_audio) {
+                playSound(data.story.feedback_audio);
+            }
+            
+            updateUI(data);
+        } catch (e) {
+            console.error("Judge Error", e);
         }
-        
-        updateUI(data);
     }
 
     function updateUI(data) {
-        if (!data.state) return;
+        if (!data.state || !data.story) return;
         
         document.getElementById("mental").innerText = data.state.mental;
         document.getElementById("social").innerText = data.state.social;
@@ -289,35 +300,35 @@
         document.getElementById("disc").innerText = data.state.discipline;
 
         const story = data.story;
-        const text = current_lang === "en" ? (story.text_en || story.text) : (story.text_es || story.text);
+        const text = current_lang === "en" ? story.text_en : story.text_es;
         document.getElementById("message").innerText = text;
         document.getElementById("category-tag").innerText = story.category;
 
         if (voice_enabled) speak(text);
         resetVisuals();
 
-        if (story.type === "breathing" || story.type === "breathing_warmup") {
+        if (story.type.includes("breathing")) {
             startBreathing(story.duration_sec);
         } else if (story.type === "silence_challenge") {
             startSilence(story.duration_sec);
-        } else if (story.type === "tvid" || story.type === "quiz" || story.type === "math_trap") {
-            renderOptions(story.options);
         } else if (story.type === "riddle") {
             renderRiddle(story);
-        } else if (story.type === "win") {
-            renderOptions([{ code: "RESET", text: { en: "RESTART LEGACY", es: "REINICIAR LEGADO" } }]);
         } else {
-            renderOptions([{ code: "TDB", text: { en: "CONTINUE", es: "CONTINUAR" } }]);
+            renderOptions(story.options);
         }
     }
 
     function renderOptions(options) {
         const container = document.getElementById("options-container");
         container.innerHTML = "";
-        options.forEach(opt => {
+        
+        // Si no hay opciones, el sistema asegura un botón de continuar
+        const opts = (options && options.length > 0) ? options : [{ code: "TDB", text: { en: "CONTINUE", es: "CONTINUAR" } }];
+        
+        opts.forEach(opt => {
             const btn = document.createElement("button");
             btn.className = "opt-btn";
-            btn.innerText = current_lang === "en" ? (opt.text.en || opt.text) : (opt.text.es || opt.text);
+            btn.innerText = current_lang === "en" ? opt.text.en : opt.text.es;
             btn.onclick = () => {
                 if (opt.code === "RESET") resetApp();
                 else handleChoice(opt.code);
@@ -346,14 +357,18 @@
         const circle = document.getElementById("breathing-circle");
         circle.style.display = "block";
         let elapsed = 0;
+        circle.classList.add("inhale");
+        
         const interval = setInterval(() => {
-            circle.classList.toggle("inhale");
             elapsed += 4;
+            circle.classList.toggle("inhale");
+            circle.classList.toggle("exhale");
             if (elapsed >= seconds) {
                 clearInterval(interval);
                 handleChoice("TDB");
             }
         }, 4000);
+        timer_interval = interval;
     }
 
     function startSilence(seconds) {
@@ -374,6 +389,7 @@
 
     function resetVisuals() {
         document.getElementById("breathing-circle").style.display = "none";
+        document.getElementById("breathing-circle").className = "";
         document.getElementById("timer").style.display = "none";
         document.getElementById("options-container").innerHTML = "";
         if (timer_interval) clearInterval(timer_interval);
@@ -383,22 +399,24 @@
         window.speechSynthesis.cancel();
         const ut = new SpeechSynthesisUtterance(text);
         ut.lang = current_lang === "en" ? "en-US" : "es-US";
-        ut.rate = 0.95; // Voz más profesional y pausada
+        ut.rate = 0.9;
         window.speechSynthesis.speak(ut);
     }
 
     function toggleLanguage() {
         current_lang = current_lang === "en" ? "es" : "en";
+        localStorage.setItem("aura_lang", current_lang);
         resetApp(); 
     }
 
     function toggleVoice() {
         voice_enabled = !voice_enabled;
         document.getElementById("speaker-icon").innerText = voice_enabled ? "🔊" : "🔇";
+        if (!voice_enabled) window.speechSynthesis.cancel();
     }
 
     function resetApp() {
-        localStorage.clear();
+        localStorage.removeItem("aura_sid");
         location.reload();
     }
 </script>
