@@ -3,13 +3,13 @@ from fastapi.responses import JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 import uuid
 import time
-import os
 import json
+import os
 
 app = FastAPI()
 
 # ===============================
-# STATIC FILES
+# STATIC
 # ===============================
 if not os.path.exists("static"):
     os.makedirs("static")
@@ -17,132 +17,68 @@ if not os.path.exists("static"):
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # ===============================
-# LOAD KAMIZEN DATABASE
+# LOAD DATABASE SAFE
 # ===============================
 CONTENT = []
 
-try:
-    path = "static/kamizen_content.json"
+def load_content():
+    global CONTENT
+    try:
+        path = "static/kamizen_content.json"
 
-    if os.path.exists(path):
+        if not os.path.exists(path):
+            print("[WARN] No JSON found")
+            CONTENT = []
+            return
+
         with open(path, "r", encoding="utf-8") as f:
-            data = json.load(f)
+            raw = json.load(f)
 
-            if isinstance(data, dict) and "missions" in data:
-                CONTENT = data["missions"]
-            elif isinstance(data, list):
-                CONTENT = data
-            else:
-                CONTENT = []
+        CONTENT = raw.get("missions", []) if isinstance(raw, dict) else raw
 
-        print(f"[OK] KAMIZEN LOADED: {len(CONTENT)} missions")
+        print(f"[OK] Missions loaded: {len(CONTENT)}")
 
-    else:
-        print("[WARN] kamizen_content.json NOT FOUND")
+    except Exception as e:
+        print("[ERROR] JSON LOAD FAIL:", e)
+        CONTENT = []
 
-except Exception as e:
-    print(f"[ERROR] DATABASE LOAD FAILED: {e}")
+load_content()
 
 # ===============================
-# SESSIONS MEMORY
+# SESSIONS
 # ===============================
 sessions = {}
 
 # ===============================
-# INITIAL STATE
+# STATE
 # ===============================
-def create_initial_state(profile):
+def create_state():
     return {
-        "mental": 100,
-        "social": 100,
-        "discipline": 100,
-        "karma": 0,
-        "mission_index": 0,
-        "block_index": 0,
-        "last_update": time.time(),
-        "history": [],
-        "lang": profile.get("lang", "es")
+        "mission": 0,
+        "block": 0,
+        "last": time.time(),
+        "history": []
     }
 
 # ===============================
-# IMPACT SYSTEM
+# SAFE GET CURRENT BLOCK
 # ===============================
-IMPACTS = {
-    "TDB": {"mental": 2, "discipline": 3},
-    "TDP": {"mental": 5, "discipline": 8, "karma": 2},
-    "TDM": {"mental": -12, "discipline": -20, "karma": -5},
-    "TDN": {"mental": 6, "social": 5},
-    "TDG": {"discipline": 10, "mental": 3, "social": -3},
-    "TDK": {"social": 12, "karma": 8, "mental": 4},
-    "CORRECT": {"mental": 10, "discipline": 10},
-    "WRONG": {"mental": -10, "discipline": -8}
-}
-
-# ===============================
-# AUTO ADVANCE SYSTEM
-# ===============================
-AUTO_ADVANCE_TYPES = [
-    "breathing",
-    "laughter_therapy",
-    "silence_challenge"
-]
-
-def is_auto_block(block_type):
-    return block_type in AUTO_ADVANCE_TYPES
-
-# ===============================
-# APPLY PROGRESSION
-# ===============================
-def apply_progression(state, decision):
-
-    if not CONTENT:
-        return
-
-    # aplicar impacto
-    effect = IMPACTS.get(decision, IMPACTS["TDB"])
-
-    for k, v in effect.items():
-        if k in state:
-            state[k] = max(0, min(100, state[k] + v))
-
+def get_current(state):
     try:
-        mission = CONTENT[state["mission_index"]]
-        blocks = mission.get("blocks", [])
-
-        # avanzar bloque
-        state["block_index"] += 1
-
-        # salto automático si es bloque pasivo
-        while state["mission_index"] < len(CONTENT):
-            mission = CONTENT[state["mission_index"]]
-            blocks = mission.get("blocks", [])
-
-            if state["block_index"] >= len(blocks):
-                state["mission_index"] += 1
-                state["block_index"] = 0
-
-                if state["mission_index"] >= len(CONTENT):
-                    state["mission_index"] = 0
-
-            current_block = CONTENT[state["mission_index"]]["blocks"][state["block_index"]]
-
-            if is_auto_block(current_block["type"]):
-                state["block_index"] += 1
-                continue
-
-            break
-
-    except Exception as e:
-        print("[PROGRESSION ERROR]", e)
-        state["mission_index"] = 0
-        state["block_index"] = 0
+        mission = CONTENT[state["mission"]]
+        block = mission["blocks"][state["block"]]
+        return mission, block
+    except:
+        state["mission"] = 0
+        state["block"] = 0
+        return CONTENT[0], CONTENT[0]["blocks"][0]
 
 # ===============================
-# FORMAT RESPONSE
+# FORMAT FRONTEND SAFE
 # ===============================
-def format_block_response(mission, block):
+def format_block(mission, block):
 
-    text = block.get("text") or block.get("question") or {}
+    text = block.get("text", {})
 
     if isinstance(text, str):
         text_es = text
@@ -155,56 +91,54 @@ def format_block_response(mission, block):
 
     for opt in block.get("options", []):
         t = opt.get("text", {})
-        es = t.get("es") or t.get("en") or "CONTINUAR"
-        en = t.get("en") or es
-
         options.append({
             "code": opt.get("code", "TDB"),
-            "text": {"es": es, "en": en}
+            "text": {
+                "es": t.get("es", "CONTINUAR"),
+                "en": t.get("en", "CONTINUE")
+            }
         })
 
-    if not options and block.get("type") not in ["breathing", "silence_challenge"]:
-        options = [{
-            "code": "TDB",
-            "text": {"es": "CONTINUAR", "en": "CONTINUE"}
-        }]
-
-    response = {
+    return {
         "type": block.get("type", "story"),
-        "category": mission.get("category", "KAMIZEN"),
         "text_es": text_es,
         "text_en": text_en,
-        "duration_sec": block.get("duration_sec", 0),
         "options": options,
-        "silence": block.get("silence"),
-        "breathing": block.get("breathing")
+        "duration_sec": block.get("duration_sec", 0)
     }
 
-    if block.get("type") == "riddle":
-        ans = block.get("answer", {})
-        ins = block.get("insight", {})
+# ===============================
+# APPLY PROGRESSION
+# ===============================
+def next_step(state):
 
-        response["answer"] = {
-            "es": ans.get("es", ""),
-            "en": ans.get("en", "")
-        }
+    state["block"] += 1
 
-        response["insight"] = {
-            "es": ins.get("es", ""),
-            "en": ins.get("en", "")
-        }
+    if state["mission"] >= len(CONTENT):
+        state["mission"] = 0
+        state["block"] = 0
+        return
 
-    return response
+    mission = CONTENT[state["mission"]]
+
+    if state["block"] >= len(mission["blocks"]):
+        state["mission"] += 1
+        state["block"] = 0
+
+    if state["mission"] >= len(CONTENT):
+        state["mission"] = 0
+        state["block"] = 0
 
 # ===============================
 # ROUTES
 # ===============================
+
 @app.get("/")
 def home():
     return FileResponse("static/session.html")
 
 # ===============================
-# START SESSION
+# START
 # ===============================
 @app.post("/start")
 async def start(req: Request):
@@ -212,28 +146,23 @@ async def start(req: Request):
     try:
         data = await req.json()
 
-        session_id = str(uuid.uuid4())
-        state = create_initial_state(data.get("profile", {}))
+        sid = str(uuid.uuid4())
+        state = create_state()
 
-        sessions[session_id] = state
+        sessions[sid] = state
 
-        if not CONTENT:
-            return JSONResponse({"error": "NO_CONTENT"}, status_code=500)
-
-        mission = CONTENT[0]
-        block = mission["blocks"][0]
+        mission, block = get_current(state)
 
         return {
-            "session_id": session_id,
-            "state": state,
-            "story": format_block_response(mission, block)
+            "session_id": sid,
+            "story": format_block(mission, block)
         }
 
     except Exception as e:
         return JSONResponse({"error": str(e)}, status_code=500)
 
 # ===============================
-# JUDGE DECISION
+# JUDGE
 # ===============================
 @app.post("/judge")
 async def judge(req: Request):
@@ -242,36 +171,41 @@ async def judge(req: Request):
         data = await req.json()
 
         sid = data.get("session_id")
-        decision = data.get("decision", "TDB")
+        decision = data.get("decision")
 
         if sid not in sessions:
-            return JSONResponse({"error": "SESSION_EXPIRED"}, status_code=404)
+            return JSONResponse({"error": "SESSION LOST"}, status_code=404)
 
         state = sessions[sid]
 
-        now = time.time()
-        if now - state["last_update"] < 0.08:
-            return {"status": "cooldown", "state": state}
+        # anti spam
+        if time.time() - state["last"] < 0.05:
+            mission, block = get_current(state)
+            return {"story": format_block(mission, block)}
 
-        state["last_update"] = now
+        state["last"] = time.time()
 
-        apply_progression(state, decision)
+        # progression
+        next_step(state)
 
-        mission = CONTENT[state["mission_index"]]
-        block = mission["blocks"][state["block_index"]]
+        mission, block = get_current(state)
+
+        state["history"].append({
+            "mission": state["mission"],
+            "block": state["block"]
+        })
 
         return {
-            "status": "ok",
-            "state": state,
-            "story": format_block_response(mission, block)
+            "story": format_block(mission, block),
+            "state": state
         }
 
     except Exception as e:
-        print("[ERROR /judge]", e)
-        return JSONResponse({"error": "RECOVERY_MODE"}, status_code=500)
+        print("[ERROR]", e)
+        return JSONResponse({"error": "RECOVERY"}, status_code=500)
 
 # ===============================
-# RUN SERVER
+# RUN
 # ===============================
 if __name__ == "__main__":
     import uvicorn
