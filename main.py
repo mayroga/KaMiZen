@@ -1,267 +1,240 @@
-# =========================
-# KAMIZEN PRO ENGINE
-# =========================
-
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from fastapi.responses import JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
-import uuid
+from pydantic import BaseModel
 import json
-import random
-import os
+import time
+import uuid
 
 app = FastAPI()
 
 # =========================
-# STATIC
+# STATIC FILES
 # =========================
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # =========================
-# LOAD CONTENT
+# LOAD GAME CONTENT
 # =========================
-CONTENT_PATH = "static/kamizen_content.json"
-
-def load_content():
-    try:
-        with open(CONTENT_PATH, "r", encoding="utf-8") as f:
-            return json.load(f)["missions"]
-    except Exception as e:
-        print("[ERROR] JSON LOAD FAIL:", e)
-        return []
-
-MISSIONS = load_content()
+with open("static/kamizen_content.json", "r", encoding="utf-8") as f:
+    CONTENT = json.load(f)["missions"]
 
 # =========================
-# SESSION MEMORY
+# GLOBAL STATE
 # =========================
-sessions = {}
-
-def new_session():
-    sid = str(uuid.uuid4())
-
-    sessions[sid] = {
-        "mission": 0,
-        "block": 0,
-        "xp": 0,
-        "level": 1,
-        "errors": 0,
-        "achievements": [],
-        "history": []
-    }
-
-    return sid
+SESSIONS = {}
+RANKING = {}  # global ranking (simple memory)
 
 # =========================
-# UTIL
+# XP SYSTEM
 # =========================
-def get_current_block(session):
-    try:
-        mission = MISSIONS[session["mission"]]
-        block = mission["blocks"][session["block"]]
-        return mission, block
-    except:
-        return None, None
-
-def next_block(session):
-    session["block"] += 1
-
-    if session["block"] >= len(MISSIONS[session["mission"]]["blocks"]):
-        session["mission"] += 1
-        session["block"] = 0
-
-    if session["mission"] >= len(MISSIONS):
-        return None
-
-    return get_current_block(session)
-
-# =========================
-# RANDOM EVENT
-# =========================
-def random_event():
-    return {
-        "type": "event",
-        "text_en": "⚠️ Unexpected situation! Someone challenges your confidence.",
-        "text_es": "⚠️ Evento inesperado! Alguien desafía tu confianza.",
-        "options": [
-            {"code": "CONTROL", "text": {"en": "Stay calm", "es": "Mantener calma"}},
-            {"code": "IMPULSE", "text": {"en": "React fast", "es": "Reaccionar rápido"}}
-        ]
-    }
+def add_xp(session, amount):
+    session["xp"] += amount
+    if session["xp"] < 0:
+        session["xp"] = 0
 
 # =========================
 # ACHIEVEMENTS
 # =========================
 def check_achievements(session):
-    unlocked = []
+    xp = session["xp"]
+    achievements = session["achievements"]
 
-    if session["xp"] >= 50 and "first_xp" not in session["achievements"]:
-        session["achievements"].append("first_xp")
-        unlocked.append("First Control")
+    if xp >= 50 and "FIRST_CONTROL" not in achievements:
+        achievements.append("FIRST_CONTROL")
 
-    if session["errors"] == 0 and session["mission"] >= 2:
-        if "perfect_start" not in session["achievements"]:
-            session["achievements"].append("perfect_start")
-            unlocked.append("Perfect Mind")
+    if xp >= 120 and "DISCIPLINE_LEVEL" not in achievements:
+        achievements.append("DISCIPLINE_LEVEL")
 
-    return unlocked
+    if session["errors"] == 0 and session["steps"] >= 5:
+        if "PERFECT_RUN" not in achievements:
+            achievements.append("PERFECT_RUN")
 
 # =========================
-# START
+# SESSION MODEL
+# =========================
+class StartRequest(BaseModel):
+    profile: dict
+
+class JudgeRequest(BaseModel):
+    session_id: str
+    decision: str
+
+
+# =========================
+# START GAME
 # =========================
 @app.post("/start")
-async def start():
-    sid = new_session()
-    session = sessions[sid]
+def start(req: StartRequest):
 
-    mission, block = get_current_block(session)
+    sid = str(uuid.uuid4())
 
-    return JSONResponse({
-        "session_id": sid,
-        "story": format_block(block),
-        "xp": session["xp"],
-        "level": session["level"],
-        "identity": "You are starting your mental training"
-    })
-
-# =========================
-# JUDGE
-# =========================
-@app.post("/judge")
-async def judge(req: Request):
-    data = await req.json()
-    sid = data.get("session_id")
-    decision = data.get("decision")
-
-    if sid not in sessions:
-        return JSONResponse({"error": "Invalid session"})
-
-    session = sessions[sid]
-
-    mission, block = get_current_block(session)
-
-    correct = False
-
-    # =========================
-    # EVALUATE
-    # =========================
-    if block.get("type") in ["quiz", "tvid"]:
-        for opt in block.get("options", []):
-            if opt.get("code") == decision:
-                correct = opt.get("correct", False)
-
-    # =========================
-    # XP SYSTEM
-    # =========================
-    if correct:
-        session["xp"] += 10
-    else:
-        session["xp"] -= 5
-        session["errors"] += 1
-
-    # LEVEL UP
-    if session["xp"] >= 100:
-        session["level"] += 1
-        session["xp"] = 0
-
-    # =========================
-    # FAIL STATE
-    # =========================
-    if session["errors"] >= 3:
-        sessions.pop(sid)
-        return JSONResponse({
-            "story": {
-                "type": "fail_state",
-                "text_en": "You lost control. Restarting...",
-                "text_es": "Perdiste el control. Reiniciando..."
-            },
-            "correct": False
-        })
-
-    # =========================
-    # RANDOM EVENT (20%)
-    # =========================
-    if random.random() < 0.2:
-        return JSONResponse({
-            "story": random_event(),
-            "xp": session["xp"],
-            "level": session["level"],
-            "correct": correct
-        })
-
-    # =========================
-    # NEXT
-    # =========================
-    nxt = next_block(session)
-
-    if not nxt:
-        sessions.pop(sid)
-        return JSONResponse({
-            "story": {
-                "type": "end",
-                "text_en": "🏆 Training Complete. You are in control.",
-                "text_es": "🏆 Entrenamiento completo. Estás en control."
-            },
-            "xp": session["xp"],
-            "level": session["level"],
-            "correct": True
-        })
-
-    mission, block = nxt
-
-    # =========================
-    # ACHIEVEMENTS
-    # =========================
-    achievements = check_achievements(session)
-
-    identity = build_identity(session, correct)
-
-    return JSONResponse({
-        "story": format_block(block),
-        "xp": session["xp"],
-        "level": session["level"],
-        "correct": correct,
-        "achievements": achievements,
-        "identity": identity
-    })
-
-# =========================
-# FORMAT BLOCK
-# =========================
-def format_block(block):
-
-    formatted = {
-        "type": block.get("type"),
-        "text_en": block.get("text", {}).get("en"),
-        "text_es": block.get("text", {}).get("es"),
-        "options": []
+    SESSIONS[sid] = {
+        "index": 0,
+        "xp": 0,
+        "errors": 0,
+        "steps": 0,
+        "achievements": [],
+        "started_at": time.time(),
+        "lang": req.profile.get("lang", "en"),
+        "timer": 30
     }
 
-    if block.get("type") in ["quiz", "tvid"]:
-        for i, opt in enumerate(block.get("options", [])):
-            formatted["options"].append({
-                "code": opt.get("code", f"OPT{i}"),
-                "text": opt.get("text", {})
-            })
+    mission = CONTENT[0]
 
-    if block.get("type") == "silence_challenge":
-        formatted["duration_sec"] = block.get("duration_sec", 10)
+    return {
+        "session_id": sid,
+        "story": build_story(mission, 0, SESSIONS[sid])
+    }
 
-    return formatted
 
 # =========================
-# IDENTITY ENGINE
+# JUDGE ANSWERS
 # =========================
-def build_identity(session, correct):
+@app.post("/judge")
+def judge(req: JudgeRequest):
 
+    if req.session_id not in SESSIONS:
+        return JSONResponse({"error": "invalid session"}, status_code=400)
+
+    session = SESSIONS[req.session_id]
+    mission = CONTENT[session["index"]]
+
+    session["steps"] += 1
+
+    correct = is_correct(mission, req.decision)
+
+    # =========================
+    # XP LOGIC FIXED
+    # =========================
     if correct:
-        return "You are gaining control"
+        add_xp(session, 10)
+        result_type = "success"
     else:
-        return "You are losing control"
+        add_xp(session, -5)
+        session["errors"] += 1
+        result_type = "fail"
+
+    # =========================
+    # GAME OVER RULE (soft, no reset spam)
+    # =========================
+    if session["errors"] >= 3:
+        session["status"] = "mental_break"
+        return {
+            "session_id": req.session_id,
+            "story": {
+                "type": "fail",
+                "text_es": "Demasiados errores. Respira y reinicia enfoque mental."
+            }
+        }
+
+    # =========================
+    # NEXT LEVEL
+    # =========================
+    session["index"] += 1
+
+    if session["index"] >= len(CONTENT):
+        update_ranking(session)
+        return {
+            "session_id": req.session_id,
+            "story": {
+                "type": "end",
+                "text_es": "Has completado el entrenamiento. Eres más fuerte mentalmente."
+            }
+        }
+
+    next_mission = CONTENT[session["index"]]
+
+    check_achievements(session)
+
+    return {
+        "session_id": req.session_id,
+        "result": result_type,
+        "xp": session["xp"],
+        "achievements": session["achievements"],
+        "story": build_story(next_mission, session["index"], session)
+    }
+
 
 # =========================
-# ROOT
+# BUILD STORY RESPONSE
+# =========================
+def build_story(mission, index, session):
+
+    block = mission["blocks"][0]
+
+    return {
+        "type": "mission",
+        "level": mission["level"],
+        "xp": session["xp"],
+        "timer": session["timer"],
+        "text_es": block["text"]["es"] if "text" in block else "",
+        "options": extract_options(mission)
+    }
+
+
+# =========================
+# EXTRACT OPTIONS
+# =========================
+def extract_options(mission):
+
+    for b in mission["blocks"]:
+        if b["type"] in ["quiz", "tvid"]:
+            opts = []
+
+            for o in b["options"]:
+                opts.append({
+                    "code": o.get("code", o["text"]["es"]),
+                    "text": o["text"],
+                    "correct": o.get("correct", False)
+                })
+
+            return opts
+
+    return []
+
+
+# =========================
+# CHECK ANSWER
+# =========================
+def is_correct(mission, decision):
+
+    for b in mission["blocks"]:
+        if b["type"] in ["quiz", "tvid"]:
+            for o in b["options"]:
+                if o.get("code", o["text"]["es"]) == decision:
+                    return o.get("correct", False)
+
+    return False
+
+
+# =========================
+# RANKING SYSTEM
+# =========================
+def update_ranking(session):
+
+    score = session["xp"]
+    user_id = str(uuid.uuid4())
+
+    RANKING[user_id] = score
+
+
+@app.get("/ranking")
+def get_ranking():
+
+    sorted_rank = sorted(RANKING.items(), key=lambda x: x[1], reverse=True)
+
+    return {
+        "ranking": [
+            {"player": k, "xp": v}
+            for k, v in sorted_rank[:10]
+        ]
+    }
+
+
+# =========================
+# STATIC FRONTEND
 # =========================
 @app.get("/")
-async def root():
+def home():
     return FileResponse("static/session.html")
