@@ -55,7 +55,7 @@ IMPACTS = {
 
 def get_audio_mood(block):
     """Asigna el mood musical basado en el tipo de bloque y su modo interno."""
-    b_type = block.get("type")
+    b_type = block.get("type", "")
     mode = block.get("mode")
     
     if "breathing" in b_type: return mode if mode else "focus"
@@ -67,7 +67,7 @@ def get_audio_mood(block):
     return "ambient"
 
 def apply_progression(state, decision):
-    """Gestiona el avance lógico a través de los 22 niveles del Kamizen."""
+    """Ciclo infinito: Lee del 1 al 22 y vuelve a empezar automáticamente."""
     if not CONTENT: return
 
     # 1. Aplicar impacto si la decisión existe en la matriz
@@ -82,21 +82,28 @@ def apply_progression(state, decision):
     # 3. Avance de puntero de bloque
     state["block_index"] += 1
     
-    # 4. Cambio de misión (Nivel) si se acaban los bloques
+    # 4. Manejo de cambio de nivel o reinicio del sistema (Loop)
     if state["block_index"] >= len(current_mission["blocks"]):
         state["mission_index"] += 1
         state["block_index"] = 0
+    
+    # REINICIO MAESTRO: Si llega al final de la base de datos, vuelve al inicio
+    if state["mission_index"] >= len(CONTENT):
+        state["mission_index"] = 0
+        state["block_index"] = 0
 
 def format_block_response(mission, block):
-    """Prepara el bloque de contenido para el frontend."""
-    # Extraer texto principal (soporta 'text' o 'question')
+    """Prepara el bloque de contenido para el frontend, asegurando bilingüismo."""
     text_data = block.get("text", {})
     if not text_data and "question" in block:
         text_data = block["question"]
     
     options = block.get("options", [])
     
-    # Si es un riddle, enviamos los datos de respuesta para que el front los maneje
+    # Garantizar botón de continuar si no hay opciones definidas
+    if not options and block.get("type") not in ["breathing", "silence_challenge", "breathing_warmup"]:
+        options = [{"code": "TDB", "text": {"en": "CONTINUE", "es": "CONTINUAR"}}]
+    
     riddle_data = {}
     if block.get("type") == "riddle":
         riddle_data = {
@@ -107,12 +114,12 @@ def format_block_response(mission, block):
     return {
         "type": block.get("type", "story"),
         "category": mission.get("category", "AL CIELO"),
-        "text_en": text_data.get("en", ""),
-        "text_es": text_data.get("es", ""),
+        "text_en": text_data.get("en", "System loading..."),
+        "text_es": text_data.get("es", "Cargando sistema..."),
         "duration_sec": block.get("duration_sec", 0),
         "options": options,
         "mood": get_audio_mood(block),
-        "feedback_audio": block.get("feedback_audio"), # Para triggers de sonido (lottery/explosion)
+        "feedback_audio": block.get("feedback_audio"),
         "quotes": block.get("quotes", []),
         **riddle_data
     }
@@ -142,7 +149,7 @@ async def start_session(req: Request):
 
 @app.post("/judge")
 async def judge_decision(req: Request):
-    """Procesa decisiones, quizes y avance de niveles."""
+    """Procesa el impacto y gestiona la continuidad del ciclo."""
     try:
         data = await req.json()
         session_id = data.get("session_id")
@@ -153,25 +160,15 @@ async def judge_decision(req: Request):
 
         state = sessions[session_id]
         
-        # Cooldown de seguridad
+        # Cooldown optimizado para fluidez
         now = time.time()
-        if now - state["last_update"] < 0.3:
+        if now - state["last_update"] < 0.2:
             return {"status": "cooldown", "state": state}
         
         state["last_update"] = now
         apply_progression(state, decision)
         
-        # Verificar fin del sistema
-        if state["mission_index"] >= len(CONTENT):
-            state["mission_index"] = len(CONTENT) - 1 # Mantener en el último para el feedback de victoria
-            mission = CONTENT[-1]
-            block = mission["blocks"][-1]
-            return {
-                "status": "end",
-                "state": state,
-                "story": format_block_response(mission, block)
-            }
-
+        # Obtener nueva posición tras la progresión (ya incluye el reinicio si aplica)
         mission = CONTENT[state["mission_index"]]
         block = mission["blocks"][state["block_index"]]
 
@@ -181,7 +178,7 @@ async def judge_decision(req: Request):
             "story": format_block_response(mission, block)
         }
     except Exception as e:
-        return JSONResponse(status_code=500, content={"error": str(e)})
+        return JSONResponse(status_code=500, content={"error": "Reconnecting system..."})
 
 @app.get("/")
 def serve_home():
@@ -189,6 +186,5 @@ def serve_home():
 
 if __name__ == "__main__":
     import uvicorn
-    # Render usa la variable PORT
     port = int(os.environ.get("PORT", 10000))
     uvicorn.run(app, host="0.0.0.0", port=port)
