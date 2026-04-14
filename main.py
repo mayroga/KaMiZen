@@ -12,7 +12,6 @@ app = FastAPI()
 if not os.path.exists("static"):
     os.makedirs("static")
 
-# Montar archivos estáticos para acceso a CSS, JS e Imágenes
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # --- CARGA DE CONTENIDO (KAMIZEN DATABASE) ---
@@ -22,7 +21,6 @@ try:
     if os.path.exists(file_path):
         with open(file_path, "r", encoding="utf-8") as f:
             data = json.load(f)
-            # Soporta tanto {"missions": [...]} como una lista directa [...]
             if isinstance(data, dict) and "missions" in data:
                 CONTENT = data["missions"]
             elif isinstance(data, list):
@@ -39,7 +37,6 @@ except Exception as e:
 sessions = {}
 
 def create_initial_state(profile):
-    """Inicializa el perfil de usuario para AURA BY MAY ROGA."""
     return {
         "mental": 100,
         "social": 100,
@@ -52,7 +49,7 @@ def create_initial_state(profile):
         "history": []
     }
 
-# --- MATRIZ DE IMPACTO (PROTOCOLO AL CIELO) ---
+# --- MATRIZ DE IMPACTO ---
 IMPACTS = {
     "TDB": {"mental": 2, "discipline": 5},                
     "TDP": {"mental": 5, "discipline": 10, "karma": 5},    
@@ -64,69 +61,62 @@ IMPACTS = {
     "WRONG": {"mental": -10, "discipline": -5}            
 }
 
-def get_audio_mood(block):
-    """Determina la atmósfera sonora según el tipo de bloque."""
-    b_type = block.get("type", "")
-    mode = block.get("mode", "")
-    
-    if "breathing" in b_type: return mode if mode else "focus"
-    if b_type == "silence_challenge": return "ambient"
-    if b_type in ["quiz", "riddle", "tvid"]: return "discovery"
-    if b_type == "win": return "victory"
-    return "ambient"
-
 def apply_progression(state, decision):
-    """Gestiona el ciclo infinito del sistema (Loop 1 a 22)."""
-    if not CONTENT:
-        return
+    if not CONTENT: return
 
-    # 1. Aplicar impacto de la decisión
+    # 1. Aplicar impacto
     effect = IMPACTS.get(decision, IMPACTS["TDB"])
     for stat, value in effect.items():
         if stat in state:
             state[stat] = max(0, min(100, state[stat] + value))
     
-    # 2. Referencia de la misión actual
-    current_mission = CONTENT[state["mission_index"]]
-    
-    # 3. Avanzar al siguiente bloque
-    state["block_index"] += 1
-    
-    # 4. Verificar si la misión terminó
-    if state["block_index"] >= len(current_mission.get("blocks", [])):
-        state["mission_index"] += 1
-        state["block_index"] = 0
-    
-    # 5. REINICIO MAESTRO (Loop Infinito)
-    if state["mission_index"] >= len(CONTENT):
+    # 2. Obtener misión actual
+    try:
+        current_mission = CONTENT[state["mission_index"]]
+        blocks = current_mission.get("blocks", [])
+        
+        # 3. Avanzar bloque
+        state["block_index"] += 1
+        
+        # 4. Verificar fin de misión
+        if state["block_index"] >= len(blocks):
+            state["mission_index"] += 1
+            state["block_index"] = 0
+            
+        # 5. Reinicio de ciclo infinito
+        if state["mission_index"] >= len(CONTENT):
+            state["mission_index"] = 0
+            state["block_index"] = 0
+    except IndexError:
         state["mission_index"] = 0
         state["block_index"] = 0
 
 def format_block_response(mission, block):
-    """Prepara el objeto JSON para el frontend con soporte bilingüe robusto."""
-    # Extraer texto principal
-    text_data = block.get("text", {})
-    if not text_data and "question" in block:
-        text_data = block["question"]
+    # Extracción de texto con múltiples fallbacks para asegurar lectura
+    text_data = block.get("text") or block.get("question") or block.get("message") or {}
     
-    # Fallback si falta un idioma
-    text_es = text_data.get("es", "Cargando sistema...")
-    text_en = text_data.get("en", text_es) # Si no hay inglés, usa español
+    if isinstance(text_data, str):
+        text_es = text_data
+        text_en = text_data
+    else:
+        text_es = text_data.get("es") or text_data.get("en") or "SISTEMA CARGANDO..."
+        text_en = text_data.get("en") or text_es
 
+    # Procesamiento de opciones
     options = []
     raw_options = block.get("options", [])
     
     for opt in raw_options:
         opt_text = opt.get("text", {})
-        o_es = opt_text.get("es", "Opción")
-        o_en = opt_text.get("en", o_es)
+        o_es = opt_text.get("es") or opt_text.get("en") or "CONTINUAR"
+        o_en = opt_text.get("en") or o_es
         options.append({
             "code": opt.get("code", "TDB"),
             "text": {"es": o_es, "en": o_en}
         })
     
-    # Garantizar botón de continuar si no hay opciones definidas (evita bloqueos)
-    if not options and block.get("type") not in ["breathing", "silence_challenge", "breathing_warmup"]:
+    # BOTÓN DE SEGURIDAD: Evita que el sistema se quede sin salida
+    if not options and block.get("type") not in ["breathing", "silence_challenge"]:
         options = [{"code": "TDB", "text": {"en": "CONTINUE", "es": "CONTINUAR"}}]
     
     response = {
@@ -136,11 +126,9 @@ def format_block_response(mission, block):
         "text_es": text_es,
         "duration_sec": block.get("duration_sec", 0),
         "options": options,
-        "mood": get_audio_mood(block),
         "feedback_audio": block.get("feedback_audio"),
     }
 
-    # Datos para Riddle
     if block.get("type") == "riddle":
         ans = block.get("answer", {})
         ins = block.get("insight", {})
@@ -153,12 +141,10 @@ def format_block_response(mission, block):
 
 @app.get("/")
 def serve_home():
-    """Servir la interfaz principal."""
     return FileResponse("static/session.html")
 
 @app.post("/start")
 async def start_session(req: Request):
-    """Inicia o reinicia una sesión de AURA."""
     try:
         data = await req.json()
         session_id = str(uuid.uuid4())
@@ -177,12 +163,10 @@ async def start_session(req: Request):
             "story": format_block_response(mission, block)
         }
     except Exception as e:
-        print(f"Error en /start: {e}")
         return JSONResponse(status_code=500, content={"error": str(e)})
 
 @app.post("/judge")
 async def judge_decision(req: Request):
-    """Procesa decisiones y devuelve el siguiente paso del protocolo."""
     try:
         data = await req.json()
         session_id = data.get("session_id")
@@ -192,18 +176,15 @@ async def judge_decision(req: Request):
             return JSONResponse(status_code=404, content={"error": "Session Expired"})
 
         state = sessions[session_id]
-        
-        # Cooldown de 200ms para evitar spam
         now = time.time()
-        if now - state["last_update"] < 0.2:
+        
+        # Cooldown reducido para respuesta rápida
+        if now - state["last_update"] < 0.1:
             return {"status": "cooldown", "state": state}
         
         state["last_update"] = now
-        
-        # Avanzar en la lógica
         apply_progression(state, decision)
         
-        # Obtener el nuevo bloque tras la progresión
         mission = CONTENT[state["mission_index"]]
         block = mission["blocks"][state["block_index"]]
 
@@ -214,9 +195,8 @@ async def judge_decision(req: Request):
         }
     except Exception as e:
         print(f"Error en /judge: {e}")
-        return JSONResponse(status_code=500, content={"error": "System reconnecting..."})
+        return JSONResponse(status_code=500, content={"error": "Reconnecting..."})
 
-# --- EJECUCIÓN ---
 if __name__ == "__main__":
     import uvicorn
     port = int(os.environ.get("PORT", 10000))
