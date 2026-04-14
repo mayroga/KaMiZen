@@ -8,211 +8,241 @@ import json
 
 app = FastAPI()
 
-# --- CONFIGURACIÓN DE DIRECTORIOS ---
+# ===============================
+# STATIC
+# ===============================
 if not os.path.exists("static"):
     os.makedirs("static")
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-# --- CARGA DE CONTENIDO (KAMIZEN DATABASE) ---
+# ===============================
+# DATABASE LOAD (KAMIZEN)
+# ===============================
 CONTENT = []
+
 try:
-    file_path = "static/kamizen_content.json"
-    if os.path.exists(file_path):
-        with open(file_path, "r", encoding="utf-8") as f:
+    path = "static/kamizen_content.json"
+    if os.path.exists(path):
+        with open(path, "r", encoding="utf-8") as f:
             data = json.load(f)
-            # Soporta tanto el formato {"missions": [...]} como una lista directa
+
             if isinstance(data, dict) and "missions" in data:
                 CONTENT = data["missions"]
             elif isinstance(data, list):
                 CONTENT = data
             else:
                 CONTENT = []
-        print(f"DATABASE LOADED: {len(CONTENT)} missions found.")
-    else:
-        print("WARNING: static/kamizen_content.json no encontrado.")
-except Exception as e:
-    print(f"CRITICAL DATABASE ERROR: {e}")
 
-# --- PERSISTENCIA EN MEMORIA ---
+        print(f"[OK] KAMIZEN LOADED: {len(CONTENT)} missions")
+    else:
+        print("[WARN] kamizen_content.json not found")
+except Exception as e:
+    print(f"[ERROR] DB LOAD FAILED: {e}")
+
+# ===============================
+# SESSIONS MEMORY
+# ===============================
 sessions = {}
 
+# ===============================
+# INITIAL STATE
+# ===============================
 def create_initial_state(profile):
-    """Inicializa el perfil de usuario con valores base."""
     return {
         "mental": 100,
         "social": 100,
         "discipline": 100,
         "karma": 0,
-        "age": profile.get("age", 18),
         "mission_index": 0,
         "block_index": 0,
         "last_update": time.time(),
-        "history": []
+        "history": [],
+        "lang": profile.get("lang", "es")
     }
 
-# --- MATRIZ DE IMPACTO (PROTOCOLO AL CIELO) ---
-# TDM es el código usado para "SALTAR" o decisiones impulsivas (Castigo)
+# ===============================
+# IMPACT SYSTEM (TVID + CONTROL)
+# ===============================
 IMPACTS = {
-    "TDB": {"mental": 2, "discipline": 5},                
-    "TDP": {"mental": 5, "discipline": 10, "karma": 5},    
-    "TDM": {"mental": -15, "discipline": -25, "karma": -5}, # PENALIZACIÓN SEVERA EN DISCIPLINA
-    "TDN": {"mental": 8, "social": 5, "discipline": 3},   
-    "TDG": {"discipline": 12, "mental": 5, "social": -5}, 
-    "TDK": {"social": 15, "karma": 10, "mental": 5},      
-    "CORRECT": {"mental": 10, "discipline": 10},          
-    "WRONG": {"mental": -10, "discipline": -5}            
+    "TDB": {"mental": 2, "discipline": 3},
+    "TDP": {"mental": 5, "discipline": 8, "karma": 2},
+    "TDM": {"mental": -12, "discipline": -20, "karma": -5},  # castigo fuerte
+    "TDN": {"mental": 6, "social": 5},
+    "TDG": {"discipline": 10, "mental": 3, "social": -3},
+    "TDK": {"social": 12, "karma": 8, "mental": 4},
+    "CORRECT": {"mental": 10, "discipline": 10},
+    "WRONG": {"mental": -10, "discipline": -8}
 }
 
+# ===============================
+# APPLY PROGRESSION
+# ===============================
 def apply_progression(state, decision):
-    """Gestiona el impacto en los puntos y el avance en la narrativa."""
-    if not CONTENT: return
 
-    # 1. Aplicar impacto de la decisión
+    if not CONTENT:
+        return
+
     effect = IMPACTS.get(decision, IMPACTS["TDB"])
-    for stat, value in effect.items():
-        if stat in state:
-            state[stat] = max(0, min(100, state[stat] + value))
-    
-    # 2. Referencia de la misión actual para avanzar
+
+    for k, v in effect.items():
+        if k in state:
+            state[k] = max(0, min(100, state[k] + v))
+
     try:
-        current_mission = CONTENT[state["mission_index"]]
-        blocks = current_mission.get("blocks", [])
-        
-        # 3. Avanzar al siguiente bloque
+        mission = CONTENT[state["mission_index"]]
+        blocks = mission.get("blocks", [])
+
         state["block_index"] += 1
-        
-        # 4. Verificar si la misión terminó
+
+        # siguiente misión
         if state["block_index"] >= len(blocks):
             state["mission_index"] += 1
             state["block_index"] = 0
-            
-        # 5. REINICIO MAESTRO (Loop Infinito)
+
+        # loop infinito seguro
         if state["mission_index"] >= len(CONTENT):
             state["mission_index"] = 0
             state["block_index"] = 0
-    except (IndexError, KeyError):
+
+    except Exception:
         state["mission_index"] = 0
         state["block_index"] = 0
 
+# ===============================
+# FORMAT RESPONSE
+# ===============================
 def format_block_response(mission, block):
-    """Prepara el objeto JSON para el frontend asegurando traducción y estabilidad."""
-    # Extraer texto principal con múltiples fallbacks
-    text_data = block.get("text") or block.get("question") or block.get("message") or {}
-    
-    if isinstance(text_data, str):
-        text_es = text_data
-        text_en = text_data
-    else:
-        text_es = text_data.get("es") or text_data.get("en") or "CARGANDO PROTOCOLO..."
-        text_en = text_data.get("en") or text_es
 
-    # Procesamiento de opciones
+    text = block.get("text") or block.get("question") or {}
+
+    if isinstance(text, str):
+        text_es = text
+        text_en = text
+    else:
+        text_es = text.get("es") or text.get("en") or "..."
+        text_en = text.get("en") or text_es
+
     options = []
-    raw_options = block.get("options", [])
-    
-    for opt in raw_options:
-        opt_text = opt.get("text", {})
-        o_es = opt_text.get("es") or opt_text.get("en") or "CONTINUAR"
-        o_en = opt_text.get("en") or o_es
+
+    for opt in block.get("options", []):
+        t = opt.get("text", {})
+        es = t.get("es") or t.get("en") or "CONTINUAR"
+        en = t.get("en") or es
+
         options.append({
             "code": opt.get("code", "TDB"),
-            "text": {"es": o_es, "en": o_en}
+            "text": {"es": es, "en": en}
         })
-    
-    # SEGURIDAD: Evita que el usuario se quede bloqueado sin botones
+
     if not options and block.get("type") not in ["breathing", "silence_challenge"]:
-        options = [{"code": "TDB", "text": {"en": "CONTINUE", "es": "CONTINUAR"}}]
-    
-    # Si la decisión fue un salto (TDM), se puede forzar un feedback_audio específico
-    f_audio = block.get("feedback_audio")
-    
+        options = [{"code": "TDB", "text": {"es": "CONTINUAR", "en": "CONTINUE"}}]
+
     response = {
         "type": block.get("type", "story"),
-        "category": mission.get("category", "AL CIELO"),
-        "text_en": text_en,
+        "category": mission.get("category", "KAMIZEN"),
         "text_es": text_es,
+        "text_en": text_en,
         "duration_sec": block.get("duration_sec", 0),
         "options": options,
-        "feedback_audio": f_audio,
+        "silence": block.get("silence", None),
+        "breathing": block.get("breathing", None)
     }
 
-    # Datos extra para acertijos (Riddles)
     if block.get("type") == "riddle":
         ans = block.get("answer", {})
         ins = block.get("insight", {})
-        response["answer"] = {"es": ans.get("es", "..."), "en": ans.get("en", ans.get("es", "..."))}
-        response["insight"] = {"es": ins.get("es", "..."), "en": ins.get("en", ins.get("es", "..."))}
+
+        response["answer"] = {
+            "es": ans.get("es", ""),
+            "en": ans.get("en", "")
+        }
+
+        response["insight"] = {
+            "es": ins.get("es", ""),
+            "en": ins.get("en", "")
+        }
 
     return response
 
-# --- ENDPOINTS ---
+# ===============================
+# ROUTES
+# ===============================
 
 @app.get("/")
-def serve_home():
-    """Servir la interfaz principal."""
+def home():
     return FileResponse("static/session.html")
 
+# -------------------------------
+# START SESSION
+# -------------------------------
 @app.post("/start")
-async def start_session(req: Request):
-    """Inicia una nueva sesión del protocolo."""
+async def start(req: Request):
     try:
         data = await req.json()
+
         session_id = str(uuid.uuid4())
         state = create_initial_state(data.get("profile", {}))
+
         sessions[session_id] = state
-        
+
         if not CONTENT:
-            return JSONResponse(status_code=500, content={"error": "Database missing"})
-            
+            return JSONResponse({"error": "NO_CONTENT"}, status_code=500)
+
         mission = CONTENT[0]
         block = mission["blocks"][0]
-        
+
         return {
             "session_id": session_id,
             "state": state,
             "story": format_block_response(mission, block)
         }
-    except Exception as e:
-        return JSONResponse(status_code=500, content={"error": str(e)})
 
+    except Exception as e:
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+# -------------------------------
+# JUDGE DECISION
+# -------------------------------
 @app.post("/judge")
-async def judge_decision(req: Request):
-    """Procesa cada paso y actualiza los puntos de disciplina y estado."""
+async def judge(req: Request):
     try:
         data = await req.json()
-        session_id = data.get("session_id")
+
+        sid = data.get("session_id")
         decision = data.get("decision", "TDB")
 
-        if not session_id or session_id not in sessions:
-            return JSONResponse(status_code=404, content={"error": "Session Expired"})
+        if sid not in sessions:
+            return JSONResponse({"error": "SESSION_EXPIRED"}, status_code=404)
 
-        state = sessions[session_id]
+        state = sessions[sid]
+
         now = time.time()
-        
-        # Evitar spam (cooldown de 100ms)
-        if now - state["last_update"] < 0.1:
+        if now - state["last_update"] < 0.08:
             return {"status": "cooldown", "state": state}
-        
+
         state["last_update"] = now
+
         apply_progression(state, decision)
-        
-        # Obtener el nuevo bloque tras el avance
+
         mission = CONTENT[state["mission_index"]]
         block = mission["blocks"][state["block_index"]]
 
         return {
-            "status": "continue",
+            "status": "ok",
             "state": state,
             "story": format_block_response(mission, block)
         }
-    except Exception as e:
-        print(f"Error en /judge: {e}")
-        return JSONResponse(status_code=500, content={"error": "Reconnecting..."})
 
-# --- EJECUCIÓN ---
+    except Exception as e:
+        print("[ERROR /judge]", e)
+        return JSONResponse({"error": "RECOVERY_MODE"}, status_code=500)
+
+# ===============================
+# RUN SERVER
+# ===============================
 if __name__ == "__main__":
     import uvicorn
-    # Puerto dinámico para despliegue en Render o local
+
     port = int(os.environ.get("PORT", 10000))
     uvicorn.run(app, host="0.0.0.0", port=port)
