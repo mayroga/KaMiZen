@@ -1,342 +1,251 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AL CIELO | AURA BY MAY ROGA</title>
-    <style>
-        :root {
-            --neon: #00f2ff;
-            --bg: #000;
-            --accent: #ff00ff;
-            --panel: rgba(0, 15, 30, 0.95);
-            --danger: #ff4444;
-            --success: #33ff33;
-            --warning: #ffcc00;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>AL CIELO | AURA BY MAY ROGA</title>
 
-        body {
-            margin: 0;
-            font-family: 'Segoe UI', Roboto, sans-serif;
-            background: var(--bg);
-            color: var(--neon);
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            text-transform: uppercase;
-        }
+<style>
+:root {
+    --neon: #00f2ff;
+    --bg: #000;
+    --accent: #ff00ff;
+    --panel: rgba(0, 15, 30, 0.95);
+    --danger: #ff4444;
+    --success: #33ff33;
+}
 
-        #app {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            background: radial-gradient(circle, #001a1a 0%, #000 80%);
-            position: relative;
-        }
+/* ===== BASE ===== */
+body {
+    margin: 0;
+    background: var(--bg);
+    font-family: Arial, sans-serif;
+    color: var(--neon);
+    overflow: hidden;
+}
 
-        #header {
-            position: absolute;
-            top: 20px;
-            width: 90%;
-            max-width: 900px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+/* ===== APP ===== */
+#app {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
 
-        #category-tag {
-            font-size: 14px;
-            letter-spacing: 3px;
-            margin-bottom: 10px;
-            color: var(--accent);
-            text-shadow: 0 0 10px var(--accent);
-            font-weight: bold;
-            text-align: center;
-        }
+/* ===== BREATHING CIRCLE ===== */
+#breath-container {
+    position: absolute;
+    top: 45%;
+    width: 200px;
+    height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
-        #stats {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-            width: 100%;
-        }
+#circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: rgba(0,242,255,0.3);
+    box-shadow: 0 0 40px var(--neon);
+    animation: breathe 6s infinite ease-in-out;
+}
 
-        .box {
-            border: 1px solid var(--neon);
-            background: rgba(0, 242, 255, 0.05);
-            padding: 8px;
-            text-align: center;
-            transition: all 0.3s;
-        }
+@keyframes breathe {
+    0% { transform: scale(1); opacity: 0.4; }
+    50% { transform: scale(2.2); opacity: 1; }
+    100% { transform: scale(1); opacity: 0.4; }
+}
 
-        .label { font-size: 8px; display: block; margin-bottom: 3px; opacity: 0.7; }
-        .val { font-size: 18px; font-weight: bold; font-family: 'Courier New', monospace; }
+/* ===== TEXT ===== */
+#message {
+    position: absolute;
+    bottom: 220px;
+    width: 85%;
+    max-width: 700px;
+    padding: 20px;
+    border: 2px solid var(--neon);
+    background: var(--panel);
+    text-align: center;
+    font-size: 18px;
+    min-height: 120px;
+}
 
-        #message-container {
-            width: 85%;
-            max-width: 800px;
-            margin: 15px 0;
-            text-align: center;
-        }
+/* ===== OPTIONS ===== */
+#options {
+    position: absolute;
+    bottom: 80px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    width: 85%;
+    max-width: 700px;
+}
 
-        #message {
-            min-height: 160px;
-            max-height: 300px;
-            padding: 20px;
-            border: 2px solid var(--neon);
-            background: var(--panel);
-            font-size: 18px;
-            line-height: 1.4;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 0 20px rgba(0, 242, 255, 0.1);
-            margin-bottom: 15px;
-            overflow-y: auto;
-        }
+button {
+    padding: 15px;
+    border: 1px solid var(--neon);
+    background: transparent;
+    color: var(--neon);
+    cursor: pointer;
+    font-weight: bold;
+}
 
-        #options-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            width: 85%;
-            max-width: 800px;
-        }
+button:hover {
+    background: var(--neon);
+    color: black;
+}
 
-        .opt-btn {
-            padding: 15px;
-            border: 1px solid var(--neon);
-            background: transparent;
-            color: var(--neon);
-            font-weight: bold;
-            font-size: 12px;
-            cursor: pointer;
-            text-transform: uppercase;
-            transition: 0.2s;
-        }
+/* ===== SILENCE MODE ===== */
+#silence {
+    position: absolute;
+    top: 10px;
+    font-size: 14px;
+    opacity: 0.7;
+}
 
-        .opt-btn:hover { background: var(--neon); color: var(--bg); }
-
-        #nav-controls {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 15px;
-            width: 85%;
-        }
-
-        .nav-btn {
-            background: rgba(255, 68, 68, 0.1);
-            border: 1px solid var(--danger);
-            color: white;
-            font-size: 10px;
-            padding: 12px;
-            cursor: pointer;
-            flex: 1;
-            font-weight: bold;
-        }
-
-        .nav-btn:hover { background: var(--danger); color: black; }
-
-        #feedback-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none;
-            z-index: 1000;
-            display: none;
-        }
-
-        .impact-red { background: rgba(255, 0, 0, 0.5); animation: flash 0.4s forwards; }
-        @keyframes flash { from { opacity: 1; } to { opacity: 0; } }
-
-        #footer-tools {
-            position: absolute;
-            bottom: 15px;
-            width: 90%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .tool-btn { background: transparent; border: none; color: var(--neon); opacity: 0.5; cursor: pointer; font-size: 24px; }
-    </style>
+/* ===== FLASH ===== */
+.flash {
+    animation: flash 0.4s;
+}
+@keyframes flash {
+    0% { background: rgba(255,0,0,0.5); }
+    100% { background: transparent; }
+}
+</style>
 </head>
+
 <body>
 
-<div id="feedback-overlay"></div>
-
 <div id="app">
-    <div id="header">
-        <div id="category-tag">AL CIELO | AURA PROTOCOL</div>
-        <div id="stats">
-            <div class="box"><span class="label">MENTAL</span><span id="mental" class="val">100</span></div>
-            <div class="box"><span class="label">SOCIAL</span><span id="social" class="val">100</span></div>
-            <div class="box"><span class="label">KARMA</span><span id="karma" class="val">0</span></div>
-            <div class="box"><span id="disc-box" class="label">DISCIPLINA</span><span id="disc" class="val">100</span></div>
-        </div>
+
+    <div id="silence">🧘 SILENCE LEVEL: <span id="silenceLevel">20</span>s</div>
+
+    <!-- CÍRCULO RESPIRACIÓN -->
+    <div id="breath-container">
+        <div id="circle"></div>
     </div>
 
-    <div id="message-container">
-        <div id="message" onclick="initApp()">
-            [ TOCAR PARA INICIAR ]
-        </div>
+    <!-- MENSAJE -->
+    <div id="message" onclick="startApp()">
+        TOCA PARA INICIAR
     </div>
 
-    <div id="options-container"></div>
+    <!-- OPCIONES -->
+    <div id="options"></div>
 
-    <div id="nav-controls">
-        <button class="nav-btn" onclick="triggerPunishment('TDM')">SALTAR (CASTIGO)</button>
-        <button class="nav-btn" onclick="resetWithPunishment()">REINICIAR TODO</button>
-    </div>
-
-    <div id="footer-tools">
-        <button class="tool-btn" onclick="toggleVoice()" id="voice-toggle">🔊</button>
-        <button onclick="toggleLanguage()" style="background:transparent; border:1px solid var(--accent); color:var(--accent); font-size:12px; padding:8px 15px; cursor:pointer; font-weight:bold;">ES / EN</button>
-        <button class="tool-btn" onclick="resetWithPunishment()" style="color:var(--danger)">🗑️</button>
-    </div>
 </div>
 
 <script>
-    let session_id = localStorage.getItem("aura_sid");
-    let current_lang = localStorage.getItem("aura_lang") || "es";
-    let voice_enabled = true;
-    let is_loading = false;
 
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+let session_id = null;
+let silenceTime = 20; // inicia en 20s y sube por nivel
+let lang = "es";
+let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-    function playDopamineNegative() {
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.connect(gain); gain.connect(audioCtx.destination);
+/* =========================
+   SONIDO DOPAMINA / ALERTA
+========================= */
+function playSound(type){
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+
+    if(type === "fail"){
         osc.type = "sawtooth";
-        osc.frequency.setValueAtTime(120, audioCtx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime + 0.6);
-        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-        gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.6);
-        osc.start(); osc.stop(audioCtx.currentTime + 0.6);
-        
-        const overlay = document.getElementById("feedback-overlay");
-        overlay.style.display = "block";
-        overlay.className = "impact-red";
-        setTimeout(() => { overlay.style.display = "none"; }, 400);
+        osc.frequency.value = 120;
+    } else if(type === "success"){
+        osc.type = "sine";
+        osc.frequency.value = 520;
+    } else {
+        osc.type = "triangle";
+        osc.frequency.value = 300;
     }
 
-    async function initApp() {
-        if (audioCtx.state === 'suspended') audioCtx.resume();
-        if (!session_id) {
-            const res = await fetch("/start", {
-                method: "POST",
-                headers: {"Content-Type":"application/json"},
-                body: JSON.stringify({ profile: { lang: current_lang } })
-            });
-            const data = await res.json();
-            session_id = data.session_id;
-            localStorage.setItem("aura_sid", session_id);
-            updateUI(data);
-        } else {
-            handleChoice("TDB");
-        }
-    }
+    gain.gain.value = 0.2;
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.4);
+}
 
-    async function handleChoice(code) {
-        if (is_loading) return;
-        is_loading = true;
+/* =========================
+   INICIO
+========================= */
+async function startApp(){
+    if(audioCtx.state === "suspended") await audioCtx.resume();
 
-        // LIMPIEZA TOTAL PARA EVITAR CONGELAMIENTO
-        window.speechSynthesis.cancel(); 
-        document.getElementById("message").innerText = ""; 
-        document.getElementById("options-container").innerHTML = "";
+    const res = await fetch("/start", {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({ lang })
+    });
 
-        try {
-            const res = await fetch("/judge", {
-                method: "POST",
-                headers: {"Content-Type":"application/json"},
-                body: JSON.stringify({ session_id, decision: code })
-            });
-            const data = await res.json();
-            updateUI(data);
-        } catch (e) {
-            console.error(e);
-        } finally {
-            is_loading = false;
-        }
-    }
+    const data = await res.json();
+    session_id = data.session_id;
+    loadStep(data);
+}
 
-    function triggerPunishment(code) {
-        playDopamineNegative();
-        handleChoice(code);
-    }
+/* =========================
+   RESPUESTA
+========================= */
+async function sendChoice(code){
+    playSound("click");
 
-    function resetWithPunishment() {
-        playDopamineNegative();
-        localStorage.removeItem("aura_sid");
-        session_id = null;
-        setTimeout(() => { location.reload(); }, 500);
-    }
+    const res = await fetch("/judge", {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({
+            session_id,
+            decision: code,
+            silence: silenceTime
+        })
+    });
 
-    function updateUI(data) {
-        const { story, state } = data;
-        if (!story || !state) return;
+    const data = await res.json();
+    loadStep(data);
+}
 
-        // Actualizar estadísticas
-        document.getElementById("mental").innerText = state.mental;
-        document.getElementById("social").innerText = state.social;
-        document.getElementById("karma").innerText = state.karma;
-        document.getElementById("disc").innerText = state.discipline;
+/* =========================
+   UI UPDATE
+========================= */
+function loadStep(data){
+    if(!data || !data.story) return;
 
-        // Traducción y Voz
-        const text = current_lang === "en" ? story.text_en : story.text_es;
-        document.getElementById("message").innerText = text;
-        document.getElementById("category-tag").innerText = story.category;
+    document.getElementById("message").innerText =
+        lang === "es" ? data.story.text_es : data.story.text_en;
 
-        if (voice_enabled) speak(text);
+    // SILENCE PROGRESIVO
+    silenceTime = Math.min(180, silenceTime + 10);
+    document.getElementById("silenceLevel").innerText = silenceTime;
 
-        // Render de opciones
-        const container = document.getElementById("options-container");
-        container.innerHTML = "";
-        const opts = story.options || [{ code: "TDB", text: { en: "CONTINUE", es: "CONTINUAR" } }];
-        
-        opts.forEach(opt => {
-            const btn = document.createElement("button");
-            btn.className = "opt-btn";
-            btn.innerText = current_lang === "en" ? (opt.text.en || opt.text.es) : (opt.text.es || opt.text.en);
-            btn.onclick = () => handleChoice(opt.code);
-            container.appendChild(btn);
-        });
-    }
+    const container = document.getElementById("options");
+    container.innerHTML = "";
 
-    function speak(t) {
-        window.speechSynthesis.cancel(); 
-        const ut = new SpeechSynthesisUtterance(t);
-        // Forzar idioma correcto para evitar "habla feo"
-        ut.lang = current_lang === "en" ? "en-US" : "es-MX";
-        ut.rate = 1.0;
-        ut.pitch = 1.0;
-        window.speechSynthesis.speak(ut);
-    }
+    (data.story.options || []).forEach(opt=>{
+        const b = document.createElement("button");
+        b.innerText = opt.text?.[lang] || "CONTINUAR";
+        b.onclick = () => sendChoice(opt.code);
+        container.appendChild(b);
+    });
 
-    function toggleLanguage() {
-        current_lang = current_lang === "es" ? "en" : "es";
-        localStorage.setItem("aura_lang", current_lang);
-        window.speechSynthesis.cancel();
-        location.reload(); 
-    }
+    if(data.story.type === "fail") playSound("fail");
+    if(data.story.type === "success") playSound("success");
+}
 
-    function toggleVoice() {
-        voice_enabled = !voice_enabled;
-        document.getElementById("voice-toggle").innerText = voice_enabled ? "🔊" : "🔇";
-        if (!voice_enabled) window.speechSynthesis.cancel();
-    }
+/* =========================
+   SISTEMA DE RESPIRACIÓN
+   (CIENTÍFICO: regula sistema nervioso)
+========================= */
+setInterval(()=>{
+    const circle = document.getElementById("circle");
+    circle.style.filter = "blur(0.5px) drop-shadow(0 0 10px #00f2ff)";
+}, 2000);
 
-    window.onload = () => {
-        if (session_id) initApp();
-    };
 </script>
+
 </body>
 </html>
