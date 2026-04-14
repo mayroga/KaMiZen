@@ -4,7 +4,6 @@ from fastapi.staticfiles import StaticFiles
 import uuid
 import json
 import os
-import random
 
 app = FastAPI()
 
@@ -23,64 +22,70 @@ if os.path.exists(STATIC_DIR):
 # MEMORY SYSTEM
 # =========================
 GAME_DATA = []
+MISSION_IDS = []
 SESSIONS = {}
 RANKING = {}
 
 
 # =========================
-# LOAD JSON SAFE
+# LOAD GAME (SAFE + ORDERED)
 # =========================
 def load_game():
-    global GAME_DATA
+    global GAME_DATA, MISSION_IDS
+
     try:
         if not os.path.exists(CONTENT_PATH):
             GAME_DATA = []
+            MISSION_IDS = []
             print("❌ JSON not found")
             return
 
         with open(CONTENT_PATH, "r", encoding="utf-8") as f:
-            raw = f.read().strip()
+            data = json.load(f)
 
-            if not raw:
-                GAME_DATA = []
-                print("❌ Empty JSON")
-                return
+        GAME_DATA = data.get("missions", [])
 
-            data = json.loads(raw)
-            GAME_DATA = data.get("missions", [])
+        # 🔥 ORDER BY ID ASCENDING
+        GAME_DATA.sort(key=lambda x: x.get("id", 0))
 
-            print(f"✅ Missions loaded: {len(GAME_DATA)}")
+        # 🔥 EXTRACT IDS
+        MISSION_IDS = [m["id"] for m in GAME_DATA]
+
+        print(f"✅ Missions loaded: {len(GAME_DATA)}")
 
     except Exception as e:
         print("❌ JSON ERROR:", e)
         GAME_DATA = []
+        MISSION_IDS = []
 
 
 load_game()
 
 
 # =========================
-# UTIL
+# UTIL: GET MISSION BY ID
 # =========================
-def norm(x):
-    return str(x).strip().upper() if x else ""
-
-
-def get_rank(session_id):
-    if not RANKING:
-        return 1
-
-    sorted_rank = sorted(RANKING.items(), key=lambda x: x[1], reverse=True)
-
-    for i, (sid, xp) in enumerate(sorted_rank):
-        if sid == session_id:
-            return i + 1
-
-    return len(sorted_rank)
+def get_mission_by_id(mid):
+    return next((m for m in GAME_DATA if m.get("id") == mid), None)
 
 
 # =========================
-# ROOT
+# UTIL: LOOP NEXT ID
+# =========================
+def get_next_id(current_id):
+    if not MISSION_IDS:
+        return None
+
+    if current_id not in MISSION_IDS:
+        return MISSION_IDS[0]
+
+    idx = MISSION_IDS.index(current_id)
+    next_idx = (idx + 1) % len(MISSION_IDS)
+    return MISSION_IDS[next_idx]
+
+
+# =========================
+# ROOT → SESSION HTML
 # =========================
 @app.get("/")
 def root():
@@ -93,28 +98,23 @@ def root():
 # =========================
 @app.post("/start")
 async def start(req: Request):
-    global GAME_DATA
-
-    if not GAME_DATA:
-        load_game()
-
-    body = await req.json() if req else {}
-    lang = body.get("profile", {}).get("lang", "en")
+    body = await req.json()
 
     sid = str(uuid.uuid4())
 
+    first_id = MISSION_IDS[0] if MISSION_IDS else None
+
     SESSIONS[sid] = {
-        "mission_index": 0,
+        "mission_id": first_id,
         "xp": 0,
         "errors": 0,
         "streak": 0,
-        "lang": lang,
         "break_trigger": 0
     }
 
     return {
         "session_id": sid,
-        "mission": GAME_DATA[0] if GAME_DATA else {}
+        "mission": get_mission_by_id(first_id)
     }
 
 
@@ -129,30 +129,11 @@ async def get_mission(req: Request):
     if sid not in SESSIONS:
         return JSONResponse({"error": "Invalid session"}, status_code=401)
 
-    s = SESSIONS[sid]
-    idx = s["mission_index"]
+    mid = SESSIONS[sid]["mission_id"]
 
-    if idx >= len(GAME_DATA):
-        return {"mission": {"id": "END"}}
-
-    return {"mission": GAME_DATA[idx]}
-
-
-# =========================
-# ADAPTIVE AI CORE
-# =========================
-def adapt_session(s):
-    """
-    IA simple:
-    - muchos errores → reduce XP reward pero añade refuerzo educativo
-    - buen streak → bonus XP
-    """
-    if s["errors"] >= 3:
-        s["xp"] = max(0, s["xp"] - 5)
-        s["break_trigger"] += 1
-
-    if s["streak"] >= 3:
-        s["xp"] += 5
+    return {
+        "mission": get_mission_by_id(mid)
+    }
 
 
 # =========================
@@ -170,18 +151,23 @@ async def judge(req: Request):
 
     s = SESSIONS[sid]
 
-    if s["mission_index"] >= len(GAME_DATA):
-        return {"finished": True, "xp": s["xp"]}
+    mission = get_mission_by_id(s["mission_id"])
 
-    mission = GAME_DATA[s["mission_index"]]
+    if not mission:
+        return JSONResponse({"error": "Mission not found"}, status_code=404)
 
+    # find TVID block
     tvid = next((b for b in mission["blocks"] if b["type"] == "tvid"), None)
 
     if not tvid:
-        s["mission_index"] += 1
-        return {"xp": s["xp"], "correct": True, "auto": True}
+        s["mission_id"] = get_next_id(s["mission_id"])
+        return {"xp": s["xp"], "auto": True, "correct": True}
 
-    option = next((o for o in tvid["options"] if norm(o["code"]) == norm(decision)), None)
+    option = next(
+        (o for o in tvid["options"]
+         if str(o["code"]).strip().upper() == str(decision).strip().upper()),
+        None
+    )
 
     if not option:
         return JSONResponse({"error": "Option not found"}, status_code=404)
@@ -192,36 +178,34 @@ async def judge(req: Request):
         s["xp"] += 15
         s["streak"] += 1
         s["errors"] = 0
-        s["mission_index"] += 1
+        s["mission_id"] = get_next_id(s["mission_id"])
     else:
         s["xp"] = max(0, s["xp"] - 5)
         s["errors"] += 1
         s["streak"] = 0
 
-    # IA ADAPTIVA
-    adapt_session(s)
-
-    # BREAK SYSTEM (anti adicción)
+    # BREAK SYSTEM (anti overload)
+    s["break_trigger"] += 1
     break_mode = False
-    if s["break_trigger"] >= 3:
+
+    if s["break_trigger"] >= 10:
         break_mode = True
         s["break_trigger"] = 0
 
-    # RANKING GLOBAL
+    # ranking update
     RANKING[sid] = s["xp"]
 
     return {
         "correct": correct,
         "xp": s["xp"],
         "reason": option.get("reason", {}),
-        "semaphore": "green" if correct else "red",
-        "rank": get_rank(sid),
+        "next_mission": get_mission_by_id(s["mission_id"]),
         "break": break_mode
     }
 
 
 # =========================
-# RUN
+# RUN SERVER
 # =========================
 if __name__ == "__main__":
     import uvicorn
