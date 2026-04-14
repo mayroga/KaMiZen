@@ -3,71 +3,92 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KAMIZEN PRO SYSTEM</title>
+<title>KAMIZEN | ULTRA SESSION</title>
 
 <style>
 :root{
+    --bg:#05060a;
     --neon:#00f2ff;
-    --bg:#000;
+    --good:#33ff88;
+    --bad:#ff5577;
+    --panel:rgba(0,0,0,0.6);
 }
 
+/* ================= BASE ================= */
 body{
     margin:0;
     background:var(--bg);
-    color:var(--neon);
     font-family:Arial;
+    color:var(--neon);
     overflow:hidden;
-    transition:0.4s;
 }
 
+/* ================= APP ================= */
 #app{
     height:100vh;
     display:flex;
+    flex-direction:column;
     align-items:center;
     justify-content:center;
-    flex-direction:column;
+    position:relative;
 }
 
-/* XP BAR */
-#xpContainer{
+/* ================= XP BAR ================= */
+#xpBarContainer{
     position:absolute;
     top:10px;
     width:80%;
-    height:10px;
+    height:12px;
     background:#111;
+    border:1px solid var(--neon);
 }
 
 #xpBar{
     height:100%;
     width:0%;
     background:var(--neon);
+    transition:0.5s;
 }
 
-#level{
-    position:absolute;
-    top:25px;
-}
-
-/* TIMER */
-#timer{
+/* ================= TIMER ================= */
+#timerCircle{
     position:absolute;
     top:50px;
+    width:80px;
+    height:80px;
+    border-radius:50%;
+    border:3px solid var(--neon);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:14px;
+}
+
+/* ================= BREATH ================= */
+#circle{
+    width:90px;
+    height:90px;
+    border-radius:50%;
+    background:rgba(0,242,255,0.2);
+    box-shadow:0 0 30px var(--neon);
+    transition:transform 2.5s ease;
+}
+
+/* ================= MESSAGE ================= */
+#message{
+    position:absolute;
+    bottom:180px;
+    width:85%;
+    max-width:700px;
+    padding:15px;
+    background:var(--panel);
+    border:1px solid var(--neon);
+    text-align:center;
+    min-height:120px;
     font-size:18px;
 }
 
-/* MESSAGE */
-#message{
-    position:absolute;
-    bottom:200px;
-    width:85%;
-    max-width:700px;
-    padding:20px;
-    border:1px solid var(--neon);
-    text-align:center;
-    font-size:22px;
-}
-
-/* OPTIONS */
+/* ================= OPTIONS ================= */
 #options{
     position:absolute;
     bottom:70px;
@@ -79,31 +100,55 @@ body{
 }
 
 button{
-    padding:15px;
-    font-size:18px;
+    padding:12px;
     background:transparent;
     border:1px solid var(--neon);
     color:var(--neon);
+    font-weight:bold;
     cursor:pointer;
+    transition:0.2s;
 }
 
-/* BREATH CIRCLE */
-#circle{
-    width:70px;
-    height:70px;
-    border-radius:50%;
-    background:rgba(0,242,255,0.25);
-    box-shadow:0 0 30px var(--neon);
-    transition:transform 2s, opacity 2s;
+button:hover{
+    background:var(--neon);
+    color:black;
 }
 
-/* SOFT STATES */
-.success{
-    background:rgba(0,255,120,0.10) !important;
+/* ================= FEEDBACK ================= */
+.flash-good{
+    animation:good 0.5s;
+}
+.flash-bad{
+    animation:bad 0.5s;
 }
 
-.fail{
-    background:rgba(255,0,0,0.10) !important;
+@keyframes good{
+    0%{background:rgba(0,255,100,0.2);}
+    100%{background:transparent;}
+}
+
+@keyframes bad{
+    0%{background:rgba(255,80,80,0.15);}
+    100%{background:transparent;}
+}
+
+/* ================= RANKING ================= */
+#ranking{
+    position:absolute;
+    right:10px;
+    top:120px;
+    width:180px;
+    background:rgba(0,0,0,0.4);
+    border:1px solid var(--neon);
+    padding:10px;
+    font-size:12px;
+}
+
+/* ================= SILENCE ================= */
+#silence{
+    position:absolute;
+    top:140px;
+    font-size:12px;
 }
 </style>
 </head>
@@ -112,15 +157,28 @@ button{
 
 <div id="app">
 
-<div id="xpContainer"><div id="xpBar"></div></div>
-<div id="level">LEVEL 1</div>
-<div id="timer">--</div>
+    <!-- XP -->
+    <div id="xpBarContainer">
+        <div id="xpBar"></div>
+    </div>
 
-<div id="circle"></div>
+    <!-- TIMER -->
+    <div id="timerCircle">20</div>
 
-<div id="message" onclick="start()">TAP TO START</div>
+    <!-- BREATH -->
+    <div id="circle"></div>
 
-<div id="options"></div>
+    <!-- MESSAGE -->
+    <div id="message" onclick="start()">TOCA PARA INICIAR</div>
+
+    <!-- OPTIONS -->
+    <div id="options"></div>
+
+    <!-- SILENCE -->
+    <div id="silence">SILENCE MODE</div>
+
+    <!-- RANKING -->
+    <div id="ranking">LOADING RANK...</div>
 
 </div>
 
@@ -128,74 +186,40 @@ button{
 
 /* ================= STATE ================= */
 let session_id=null;
-let xp=0;
-let level=1;
-let errors=0;
 let lang="en";
-let timer;
-let breath;
+let xp=0;
+let timer=20;
+let interval=null;
+let breathInterval=null;
 
 /* ================= AUDIO ================= */
-const audio = new (window.AudioContext || window.webkitAudioContext)();
+const audio=new (window.AudioContext||window.webkitAudioContext)();
 
-/* CLICK */
-function clickSound(){
+function sound(type){
+
     const o=audio.createOscillator();
     const g=audio.createGain();
-
-    o.type="sine";
-    o.frequency.value=300;
-
-    g.gain.value=0.1;
 
     o.connect(g);
     g.connect(audio.destination);
 
-    o.start();
-    o.stop(audio.currentTime+0.1);
-}
+    if(type==="good"){
+        o.frequency.value=520;
+        g.gain.value=0.15;
+    }
 
-/* FAIL = glass break */
-function failSound(){
-    const o=audio.createOscillator();
-    const g=audio.createGain();
+    if(type==="bad"){
+        o.frequency.value=120;
+        g.gain.value=0.1;
+    }
 
-    o.type="square";
-    o.frequency.value=90;
-
-    g.gain.value=0.2;
-
-    o.connect(g);
-    g.connect(audio.destination);
+    if(type==="magic"){
+        o.frequency.value=700;
+        g.gain.value=0.2;
+    }
 
     o.start();
-    o.stop(audio.currentTime+0.25);
-}
-
-/* WIN = magic lottery */
-function winSound(){
-    const o=audio.createOscillator();
-    const g=audio.createGain();
-
-    o.type="sine";
-
-    let f=300;
-    const int=setInterval(()=>{
-        f+=30;
-        o.frequency.setValueAtTime(f,audio.currentTime);
-    },50);
-
-    g.gain.value=0.15;
-
-    o.connect(g);
-    g.connect(audio.destination);
-
-    o.start();
-
-    setTimeout(()=>{
-        clearInterval(int);
-        o.stop();
-    },500);
+    o.stop(audio.currentTime+0.2);
 }
 
 /* ================= START ================= */
@@ -203,149 +227,141 @@ async function start(){
 
     if(audio.state==="suspended") await audio.resume();
 
-    const r=await fetch("/start",{method:"POST"});
-    const d=await r.json();
+    const res=await fetch("/start",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({profile:{lang}})
+    });
 
-    session_id=d.session_id;
+    const data=await res.json();
+    session_id=data.session_id;
 
-    render(d);
+    load(data);
+    loadRanking();
 }
 
 /* ================= SEND ================= */
 async function send(code){
 
-    clickSound();
-
-    const r=await fetch("/judge",{
+    const res=await fetch("/judge",{
         method:"POST",
         headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({session_id,decision:code})
+        body:JSON.stringify({
+            session_id,
+            decision:code
+        })
     });
 
-    const d=await r.json();
+    const data=await res.json();
 
-    handleState(d);
-    render(d);
-}
-
-/* ================= STATE HANDLER ================= */
-function handleState(d){
-
-    document.body.classList.remove("success","fail");
-
-    if(d.state==="success"){
-        document.body.classList.add("success");
+    if(data.result==="success"){
         xp+=10;
-        winSound();
+        sound("good");
+        flash("good");
+    }else{
+        xp-=3;
+        sound("bad");
+        flash("bad");
     }
 
-    if(d.state==="fail"){
-        document.body.classList.add("fail");
-        xp-=5;
-        errors++;
-        failSound();
-    }
-
-    if(xp>=100){
-        level++;
-        xp=0;
-    }
-
-    document.getElementById("xpBar").style.width=xp+"%";
-    document.getElementById("level").innerText="LEVEL "+level;
-
-    if(errors>=3){
-        setTimeout(()=>{
-            location.reload();
-        },2000);
-    }
+    updateXPBar();
+    load(data);
 }
 
-/* ================= RENDER ================= */
-function render(d){
+/* ================= LOAD ================= */
+function load(data){
 
-    const s=d.story;
-    if(!s) return;
+    if(!data.story) return;
 
-    document.getElementById("message").innerText =
-        s.text_en || s.text_es || "";
+    document.getElementById("message").innerText=
+        data.story.text_es||data.story.text_en;
 
     document.getElementById("options").innerHTML="";
 
-    stopBreath();
-
-    if(s.type==="breathing"){
-        startBreath();
-    }
-
-    if(s.type==="tvid_break"){
-        startBreath();
-        startTimer(60);
-    }
-
-    if(s.type==="quiz" || s.type==="tvid"){
-        startTimer(5);
-    }
-
-    let opts=s.options || [];
-
-    if(opts.length===0){
-        opts=[{code:"NEXT",text:{en:"CONTINUE",es:"CONTINUAR"}}];
-    }
-
-    opts.forEach(o=>{
+    (data.story.options||[]).forEach(o=>{
         const b=document.createElement("button");
-        b.innerText=o.text?.[lang] || "OK";
+        b.innerText=o.text?.[lang]||"OK";
         b.onclick=()=>send(o.code);
         document.getElementById("options").appendChild(b);
     });
+
+    startTimer(data.story.timer||20);
+    startBreathing();
+}
+
+/* ================= XP BAR ================= */
+function updateXPBar(){
+    let percent=Math.min(100,xp);
+    document.getElementById("xpBar").style.width=percent+"%";
 }
 
 /* ================= TIMER ================= */
-function startTimer(sec){
+function startTimer(t){
 
-    let t=sec;
-    document.getElementById("timer").innerText=t;
+    timer=t;
+    document.getElementById("timerCircle").innerText=t;
 
-    clearInterval(timer);
+    clearInterval(interval);
 
-    timer=setInterval(()=>{
-        t--;
-        document.getElementById("timer").innerText=t;
+    interval=setInterval(()=>{
+        timer--;
+        document.getElementById("timerCircle").innerText=timer;
 
-        if(t<=0){
-            clearInterval(timer);
-            send("TIMEOUT");
+        if(timer<=0){
+            clearInterval(interval);
+            send("TIME_OUT");
         }
     },1000);
 }
 
 /* ================= BREATH ================= */
-function startBreath(){
+function startBreathing(){
 
     const c=document.getElementById("circle");
+
+    clearInterval(breathInterval);
+
     let grow=true;
 
-    clearInterval(breath);
-
-    breath=setInterval(()=>{
-
-        c.style.transform=grow?"scale(2.2)":"scale(1)";
-        c.style.opacity=grow?0.9:0.4;
-
+    breathInterval=setInterval(()=>{
+        c.style.transform=grow?"scale(2)":"scale(1)";
+        c.style.opacity=grow?0.8:0.4;
         grow=!grow;
-
-    },2000);
+    },2500);
 }
 
-function stopBreath(){
-    clearInterval(breath);
+/* ================= FLASH ================= */
+function flash(type){
+
+    const m=document.getElementById("message");
+
+    if(type==="good"){
+        m.classList.add("flash-good");
+    }else{
+        m.classList.add("flash-bad");
+    }
+
+    setTimeout(()=>{
+        m.classList.remove("flash-good","flash-bad");
+    },500);
 }
 
-/* ================= LANG ================= */
-function toggleLang(){
-    lang = lang==="en"?"es":"en";
+/* ================= RANKING ================= */
+async function loadRanking(){
+
+    const res=await fetch("/ranking");
+    const data=await res.json();
+
+    let html="🏆 RANKING<br><br>";
+
+    data.ranking.forEach((r,i)=>{
+        html+=`${i+1}. Player ${r.player.slice(0,4)} - ${r.xp}<br>`;
+    });
+
+    document.getElementById("ranking").innerHTML=html;
 }
+
+setInterval(loadRanking,5000);
 
 </script>
 
