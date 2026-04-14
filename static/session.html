@@ -51,8 +51,8 @@
 
         #category-tag {
             font-size: 14px;
-            letter-spacing: 5px;
-            margin-bottom: 15px;
+            letter-spacing: 3px;
+            margin-bottom: 10px;
             color: var(--accent);
             text-shadow: 0 0 10px var(--accent);
             font-weight: bold;
@@ -62,111 +62,137 @@
         #stats {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
+            gap: 10px;
             width: 100%;
         }
 
         .box {
             border: 1px solid var(--neon);
             background: rgba(0, 242, 255, 0.05);
-            padding: 10px;
+            padding: 8px;
             text-align: center;
-            box-shadow: inset 0 0 10px rgba(0, 242, 255, 0.1);
         }
 
-        .label { font-size: 9px; display: block; margin-bottom: 5px; opacity: 0.7; }
-        .val { font-size: 22px; font-weight: bold; font-family: 'Courier New', monospace; }
+        .label { font-size: 8px; display: block; margin-bottom: 3px; opacity: 0.7; }
+        .val { font-size: 18px; font-weight: bold; font-family: 'Courier New', monospace; }
 
         #breathing-circle {
-            width: 140px;
-            height: 140px;
+            width: 120px;
+            height: 120px;
             border: 4px solid var(--neon);
             border-radius: 50%;
-            margin: 20px auto;
+            margin: 15px auto;
             display: none;
             box-shadow: 0 0 20px var(--neon);
             transition: transform 4s ease-in-out, background 4s ease-in-out;
         }
 
-        .inhale { transform: scale(1.8); background: rgba(0, 242, 255, 0.2); }
+        .inhale { transform: scale(1.6); background: rgba(0, 242, 255, 0.2); }
         .exhale { transform: scale(0.8); background: transparent; }
 
         #message-container {
             width: 85%;
-            max-width: 850px;
-            margin: 20px 0;
+            max-width: 800px;
+            margin: 15px 0;
             text-align: center;
         }
 
         #timer {
-            font-size: 45px;
+            font-size: 40px;
             color: var(--accent);
             margin-bottom: 10px;
             display: none;
             font-family: 'Courier New', monospace;
-            text-shadow: 0 0 15px var(--accent);
         }
 
         #message {
-            min-height: 180px;
-            padding: 25px;
+            min-height: 160px;
+            max-height: 300px;
+            padding: 20px;
             border: 2px solid var(--neon);
             background: var(--panel);
-            font-size: 18px;
-            line-height: 1.6;
+            font-size: 16px;
+            line-height: 1.4;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 0 30px rgba(0, 242, 255, 0.15);
-            margin-bottom: 20px;
-            cursor: pointer;
+            box-shadow: 0 0 20px rgba(0, 242, 255, 0.1);
+            margin-bottom: 15px;
             overflow-y: auto;
         }
 
         #options-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            gap: 12px;
             width: 85%;
-            max-width: 850px;
+            max-width: 800px;
         }
 
         .opt-btn {
-            padding: 18px;
+            padding: 15px;
             border: 1px solid var(--neon);
             background: transparent;
             color: var(--neon);
             font-weight: bold;
-            font-size: 13px;
+            font-size: 12px;
             cursor: pointer;
-            transition: 0.3s;
             text-transform: uppercase;
+            transition: 0.2s;
         }
 
-        .opt-btn:hover { background: var(--neon); color: var(--bg); box-shadow: 0 0 15px var(--neon); }
+        .opt-btn:hover { background: var(--neon); color: var(--bg); }
+
+        /* Estilo para botones de navegación inferior */
+        #nav-controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+            width: 85%;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 242, 255, 0.3);
+            color: white;
+            font-size: 9px;
+            padding: 10px;
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .nav-btn:hover { border-color: var(--accent); color: var(--accent); }
 
         #feedback-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             pointer-events: none;
-            z-index: 100;
+            z-index: 1000;
             display: none;
         }
 
         .impact-red { background: rgba(255, 0, 0, 0.3); animation: flash 0.3s forwards; }
         .impact-green { background: rgba(0, 255, 0, 0.3); animation: flash 0.3s forwards; }
-        
         @keyframes flash { from { opacity: 1; } to { opacity: 0; } }
 
-        #controls { position: absolute; bottom: 20px; right: 20px; display: flex; gap: 10px; }
-        .btn-ctrl { border: 1px solid var(--accent); color: var(--accent); font-size: 10px; padding: 8px 15px; background: transparent; cursor: pointer; }
-        #speaker-icon { position: absolute; bottom: 20px; left: 20px; font-size: 24px; cursor: pointer; opacity: 0.6; }
-        #clear-btn { border-color: var(--danger); color: var(--danger); font-weight: bold; }
+        #footer-tools {
+            position: absolute;
+            bottom: 15px;
+            width: 90%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .tool-btn { background: transparent; border: none; color: var(--neon); opacity: 0.5; cursor: pointer; font-size: 20px; }
+        .tool-btn:hover { opacity: 1; }
 
         @media (max-width: 600px) {
             #stats { grid-template-columns: repeat(2, 1fr); }
             #options-container { grid-template-columns: 1fr; }
-            #message { font-size: 15px; min-height: 140px; }
+            #message { font-size: 14px; min-height: 120px; }
         }
     </style>
 </head>
@@ -189,18 +215,21 @@
         <div id="timer">00:00</div>
         <div id="breathing-circle"></div>
         <div id="message" onclick="startOrContinue()">
-            SISTEMA EN ESPERA...<br>
             [ TOCAR PARA CONECTAR ]
         </div>
     </div>
 
     <div id="options-container"></div>
 
-    <div id="speaker-icon" onclick="toggleVoice()">🔊</div>
+    <div id="nav-controls">
+        <button class="nav-btn" onclick="handleChoice('TDM')">SALTAR / AVANZAR</button>
+        <button class="nav-btn" onclick="resetApp()">REINICIAR TODO</button>
+    </div>
 
-    <div id="controls">
-        <button id="clear-btn" class="btn-ctrl" onclick="resetApp()">BORRAR DATOS</button>
-        <button class="btn-ctrl" onclick="toggleLanguage()">ES / EN</button>
+    <div id="footer-tools">
+        <button class="tool-btn" onclick="toggleVoice()" id="voice-toggle">🔊</button>
+        <button onclick="toggleLanguage()" style="background:transparent; border:1px solid var(--accent); color:var(--accent); font-size:10px; padding:5px 10px; cursor:pointer;">ES / EN</button>
+        <button class="tool-btn" onclick="resetApp()" style="color:var(--danger)">🗑️</button>
     </div>
 </div>
 
@@ -217,71 +246,46 @@
         if (!type || audioCtx.state === 'suspended') return;
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        
+        osc.connect(gain); gain.connect(audioCtx.destination);
         if (type === "explosion") {
-            osc.type = "sawtooth";
             osc.frequency.setValueAtTime(150, audioCtx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime + 0.5);
-            gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
             triggerVisualImpact("red");
         } else if (type === "lottery") {
-            osc.type = "sine";
             osc.frequency.setValueAtTime(880, audioCtx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(1760, audioCtx.currentTime + 0.3);
-            gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
             triggerVisualImpact("green");
         }
-        osc.start();
-        osc.stop(audioCtx.currentTime + 0.5);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.3);
     }
 
     function triggerVisualImpact(color) {
         const overlay = document.getElementById("feedback-overlay");
         overlay.style.display = "block";
         overlay.className = color === "red" ? "impact-red" : "impact-green";
-        setTimeout(() => {
-            overlay.style.display = "none";
-            overlay.className = "";
-        }, 300);
+        setTimeout(() => { overlay.style.display = "none"; }, 300);
     }
 
     async function startOrContinue() {
         if (is_loading) return;
         if (audioCtx.state === 'suspended') audioCtx.resume();
-
         is_loading = true;
         try {
-            const endpoint = session_id ? "/judge" : "/start";
-            const body = session_id ? { session_id, decision: "TDB" } : { profile: { lang: current_lang } };
-            
-            const res = await fetch(endpoint, {
+            const res = await fetch(session_id ? "/judge" : "/start", {
                 method: "POST",
                 headers: {"Content-Type":"application/json"},
-                body: JSON.stringify(body)
+                body: JSON.stringify(session_id ? { session_id, decision: "TDB" } : { profile: { lang: current_lang } })
             });
-            
             const data = await res.json();
-            if (data.session_id) {
-                session_id = data.session_id;
-                localStorage.setItem("aura_sid", session_id);
-            }
+            if (data.session_id) { session_id = data.session_id; localStorage.setItem("aura_sid", session_id); }
             updateUI(data);
         } catch (e) {
-            console.error("Connection Error", e);
-            document.getElementById("message").innerText = "ERROR DE CONEXIÓN. REINTENTANDO...";
-        } finally {
-            is_loading = false;
-        }
+            document.getElementById("message").innerText = "SISTEMA DESCONECTADO. REINTENTANDO...";
+        } finally { is_loading = false; }
     }
 
     async function handleChoice(code) {
         if (is_loading) return;
         is_loading = true;
-        
+        window.speechSynthesis.cancel();
         try {
             const res = await fetch("/judge", {
                 method: "POST",
@@ -289,31 +293,15 @@
                 body: JSON.stringify({ session_id, decision: code })
             });
             const data = await res.json();
-            
-            if (data.status === "cooldown") {
-                is_loading = false;
-                return;
-            }
-            
-            if (data.story && data.story.feedback_audio) {
-                playSound(data.story.feedback_audio);
-            }
-            
+            if (data.story && data.story.feedback_audio) playSound(data.story.feedback_audio);
             updateUI(data);
-        } catch (e) {
-            console.error("Judge Error", e);
-        } finally {
-            is_loading = false;
-        }
+        } catch (e) { console.error(e); } finally { is_loading = false; }
     }
 
     function updateUI(data) {
-        const story = data.story;
-        const state = data.state;
+        const { story, state } = data;
         if (!story || !state) return;
-
         resetVisuals();
-
         document.getElementById("mental").innerText = state.mental;
         document.getElementById("social").innerText = state.social;
         document.getElementById("karma").innerText = state.karma;
@@ -325,28 +313,21 @@
 
         if (voice_enabled) speak(text);
 
-        if (story.type && story.type.includes("breathing")) {
-            startBreathing(story.duration_sec || 20);
-        } else if (story.type === "silence_challenge") {
-            startSilence(story.duration_sec || 60);
-        } else if (story.type === "riddle") {
-            renderRiddle(story);
-        } else {
-            renderOptions(story.options);
-        }
+        if (story.type?.includes("breathing")) startBreathing(story.duration_sec || 20);
+        else if (story.type === "silence_challenge") startSilence(story.duration_sec || 60);
+        else if (story.type === "riddle") renderRiddle(story);
+        else renderOptions(story.options);
     }
 
     function renderOptions(options) {
         const container = document.getElementById("options-container");
         container.innerHTML = "";
-        
+        // Si no hay opciones en el JSON, forzamos un botón de CONTINUAR
         const opts = (options && options.length > 0) ? options : [{ code: "TDB", text: { en: "CONTINUE", es: "CONTINUAR" } }];
-        
         opts.forEach(opt => {
             const btn = document.createElement("button");
             btn.className = "opt-btn";
-            const btnText = current_lang === "en" ? (opt.text.en || opt.text.es) : (opt.text.es || opt.text.en);
-            btn.innerText = btnText;
+            btn.innerText = current_lang === "en" ? (opt.text.en || opt.text.es) : (opt.text.es || opt.text.en);
             btn.onclick = () => handleChoice(opt.code);
             container.appendChild(btn);
         });
@@ -356,82 +337,60 @@
         const container = document.getElementById("options-container");
         container.innerHTML = "";
         const btn = document.createElement("button");
-        btn.className = "opt-btn";
-        btn.style.gridColumn = "1 / span 2";
+        btn.className = "opt-btn"; btn.style.gridColumn = "1 / span 2";
         btn.innerText = current_lang === "en" ? "REVEAL TRUTH" : "REVELAR VERDAD";
         btn.onclick = () => {
-            const ans = current_lang === "en" ? story.answer.en : story.answer.es;
-            const ins = current_lang === "en" ? story.insight.en : story.insight.es;
-            document.getElementById("message").innerText = ans + "\n\n" + ins;
+            document.getElementById("message").innerText = current_lang === "en" ? story.answer.en : story.answer.es;
             renderOptions([{ code: "TDB", text: { en: "UNDERSTOOD", es: "ENTENDIDO" } }]);
         };
         container.appendChild(btn);
     }
 
-    function startBreathing(seconds) {
+    function startBreathing(sec) {
         const circle = document.getElementById("breathing-circle");
         circle.style.display = "block";
-        let elapsed = 0;
-        
         circle.classList.add("inhale");
-        
+        let elapsed = 0;
         timer_interval = setInterval(() => {
             elapsed += 4;
-            if (elapsed >= seconds) {
-                clearInterval(timer_interval);
-                handleChoice("TDB");
-            } else {
-                circle.classList.toggle("inhale");
-                circle.classList.toggle("exhale");
-            }
+            if (elapsed >= sec) { clearInterval(timer_interval); handleChoice("TDB"); }
+            else { circle.classList.toggle("inhale"); circle.classList.toggle("exhale"); }
         }, 4000);
     }
 
-    function startSilence(seconds) {
+    function startSilence(sec) {
         const timerDiv = document.getElementById("timer");
         timerDiv.style.display = "block";
-        let remaining = seconds;
-        
+        let rem = sec;
         timer_interval = setInterval(() => {
-            let mins = Math.floor(remaining / 60);
-            let secs = remaining % 60;
-            timerDiv.innerText = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
-            remaining--;
-            if (remaining < 0) {
-                clearInterval(timer_interval);
-                handleChoice("TDB");
-            }
+            timerDiv.innerText = `${Math.floor(rem/60)}:${(rem%60).toString().padStart(2,'0')}`;
+            if (rem-- <= 0) { clearInterval(timer_interval); handleChoice("TDB"); }
         }, 1000);
     }
 
     function resetVisuals() {
-        if (timer_interval) {
-            clearInterval(timer_interval);
-            timer_interval = null;
-        }
+        if (timer_interval) clearInterval(timer_interval);
         document.getElementById("breathing-circle").style.display = "none";
-        document.getElementById("breathing-circle").classList.remove("inhale", "exhale");
         document.getElementById("timer").style.display = "none";
         document.getElementById("options-container").innerHTML = "";
     }
 
-    function speak(text) {
-        window.speechSynthesis.cancel();
-        const ut = new SpeechSynthesisUtterance(text);
+    function speak(t) {
+        const ut = new SpeechSynthesisUtterance(t);
         ut.lang = current_lang === "en" ? "en-US" : "es-US";
-        ut.rate = 0.95;
+        ut.rate = 0.9;
         window.speechSynthesis.speak(ut);
     }
 
     function toggleLanguage() {
         current_lang = current_lang === "en" ? "es" : "en";
         localStorage.setItem("aura_lang", current_lang);
-        location.reload(); 
+        startOrContinue();
     }
 
     function toggleVoice() {
         voice_enabled = !voice_enabled;
-        document.getElementById("speaker-icon").innerText = voice_enabled ? "🔊" : "🔇";
+        document.getElementById("voice-toggle").innerText = voice_enabled ? "🔊" : "🔇";
         if (!voice_enabled) window.speechSynthesis.cancel();
     }
 
@@ -440,9 +399,7 @@
         location.reload();
     }
 
-    window.onload = () => {
-        if (session_id) startOrContinue();
-    };
+    window.onload = () => { if (session_id) startOrContinue(); };
 </script>
 </body>
 </html>
