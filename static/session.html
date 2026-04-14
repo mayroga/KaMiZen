@@ -71,24 +71,11 @@
             background: rgba(0, 242, 255, 0.05);
             padding: 8px;
             text-align: center;
+            transition: all 0.3s;
         }
 
         .label { font-size: 8px; display: block; margin-bottom: 3px; opacity: 0.7; }
         .val { font-size: 18px; font-weight: bold; font-family: 'Courier New', monospace; }
-
-        #breathing-circle {
-            width: 120px;
-            height: 120px;
-            border: 4px solid var(--neon);
-            border-radius: 50%;
-            margin: 15px auto;
-            display: none;
-            box-shadow: 0 0 20px var(--neon);
-            transition: transform 4s ease-in-out, background 4s ease-in-out;
-        }
-
-        .inhale { transform: scale(1.6); background: rgba(0, 242, 255, 0.2); }
-        .exhale { transform: scale(0.8); background: transparent; }
 
         #message-container {
             width: 85%;
@@ -97,21 +84,13 @@
             text-align: center;
         }
 
-        #timer {
-            font-size: 40px;
-            color: var(--accent);
-            margin-bottom: 10px;
-            display: none;
-            font-family: 'Courier New', monospace;
-        }
-
         #message {
             min-height: 160px;
             max-height: 300px;
             padding: 20px;
             border: 2px solid var(--neon);
             background: var(--panel);
-            font-size: 16px;
+            font-size: 18px;
             line-height: 1.4;
             display: flex;
             flex-direction: column;
@@ -144,7 +123,6 @@
 
         .opt-btn:hover { background: var(--neon); color: var(--bg); }
 
-        /* Estilo para botones de navegación inferior */
         #nav-controls {
             display: flex;
             justify-content: center;
@@ -154,16 +132,17 @@
         }
 
         .nav-btn {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(0, 242, 255, 0.3);
+            background: rgba(255, 68, 68, 0.1);
+            border: 1px solid var(--danger);
             color: white;
-            font-size: 9px;
-            padding: 10px;
+            font-size: 10px;
+            padding: 12px;
             cursor: pointer;
             flex: 1;
+            font-weight: bold;
         }
 
-        .nav-btn:hover { border-color: var(--accent); color: var(--accent); }
+        .nav-btn:hover { background: var(--danger); color: black; }
 
         #feedback-overlay {
             position: fixed;
@@ -173,8 +152,7 @@
             display: none;
         }
 
-        .impact-red { background: rgba(255, 0, 0, 0.3); animation: flash 0.3s forwards; }
-        .impact-green { background: rgba(0, 255, 0, 0.3); animation: flash 0.3s forwards; }
+        .impact-red { background: rgba(255, 0, 0, 0.5); animation: flash 0.4s forwards; }
         @keyframes flash { from { opacity: 1; } to { opacity: 0; } }
 
         #footer-tools {
@@ -186,14 +164,7 @@
             align-items: center;
         }
 
-        .tool-btn { background: transparent; border: none; color: var(--neon); opacity: 0.5; cursor: pointer; font-size: 20px; }
-        .tool-btn:hover { opacity: 1; }
-
-        @media (max-width: 600px) {
-            #stats { grid-template-columns: repeat(2, 1fr); }
-            #options-container { grid-template-columns: 1fr; }
-            #message { font-size: 14px; min-height: 120px; }
-        }
+        .tool-btn { background: transparent; border: none; color: var(--neon); opacity: 0.5; cursor: pointer; font-size: 24px; }
     </style>
 </head>
 <body>
@@ -207,29 +178,27 @@
             <div class="box"><span class="label">MENTAL</span><span id="mental" class="val">100</span></div>
             <div class="box"><span class="label">SOCIAL</span><span id="social" class="val">100</span></div>
             <div class="box"><span class="label">KARMA</span><span id="karma" class="val">0</span></div>
-            <div class="box"><span class="label">DISCIPLINA</span><span id="disc" class="val">100</span></div>
+            <div class="box"><span id="disc-box" class="label">DISCIPLINA</span><span id="disc" class="val">100</span></div>
         </div>
     </div>
 
     <div id="message-container">
-        <div id="timer">00:00</div>
-        <div id="breathing-circle"></div>
-        <div id="message" onclick="startOrContinue()">
-            [ TOCAR PARA CONECTAR ]
+        <div id="message" onclick="initApp()">
+            [ TOCAR PARA INICIAR ]
         </div>
     </div>
 
     <div id="options-container"></div>
 
     <div id="nav-controls">
-        <button class="nav-btn" onclick="handleChoice('TDM')">SALTAR / AVANZAR</button>
-        <button class="nav-btn" onclick="resetApp()">REINICIAR TODO</button>
+        <button class="nav-btn" onclick="triggerPunishment('TDM')">SALTAR (CASTIGO)</button>
+        <button class="nav-btn" onclick="resetWithPunishment()">REINICIAR TODO</button>
     </div>
 
     <div id="footer-tools">
         <button class="tool-btn" onclick="toggleVoice()" id="voice-toggle">🔊</button>
-        <button onclick="toggleLanguage()" style="background:transparent; border:1px solid var(--accent); color:var(--accent); font-size:10px; padding:5px 10px; cursor:pointer;">ES / EN</button>
-        <button class="tool-btn" onclick="resetApp()" style="color:var(--danger)">🗑️</button>
+        <button onclick="toggleLanguage()" style="background:transparent; border:1px solid var(--accent); color:var(--accent); font-size:12px; padding:8px 15px; cursor:pointer; font-weight:bold;">ES / EN</button>
+        <button class="tool-btn" onclick="resetWithPunishment()" style="color:var(--danger)">🗑️</button>
     </div>
 </div>
 
@@ -237,55 +206,53 @@
     let session_id = localStorage.getItem("aura_sid");
     let current_lang = localStorage.getItem("aura_lang") || "es";
     let voice_enabled = true;
-    let timer_interval = null;
     let is_loading = false;
 
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    
-    function playSound(type) {
-        if (!type || audioCtx.state === 'suspended') return;
+
+    function playDopamineNegative() {
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
         osc.connect(gain); gain.connect(audioCtx.destination);
-        if (type === "explosion") {
-            osc.frequency.setValueAtTime(150, audioCtx.currentTime);
-            triggerVisualImpact("red");
-        } else if (type === "lottery") {
-            osc.frequency.setValueAtTime(880, audioCtx.currentTime);
-            triggerVisualImpact("green");
-        }
-        osc.start(); osc.stop(audioCtx.currentTime + 0.3);
-    }
-
-    function triggerVisualImpact(color) {
+        osc.type = "sawtooth";
+        osc.frequency.setValueAtTime(120, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime + 0.6);
+        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+        gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.6);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.6);
+        
         const overlay = document.getElementById("feedback-overlay");
         overlay.style.display = "block";
-        overlay.className = color === "red" ? "impact-red" : "impact-green";
-        setTimeout(() => { overlay.style.display = "none"; }, 300);
+        overlay.className = "impact-red";
+        setTimeout(() => { overlay.style.display = "none"; }, 400);
     }
 
-    async function startOrContinue() {
-        if (is_loading) return;
+    async function initApp() {
         if (audioCtx.state === 'suspended') audioCtx.resume();
-        is_loading = true;
-        try {
-            const res = await fetch(session_id ? "/judge" : "/start", {
+        if (!session_id) {
+            const res = await fetch("/start", {
                 method: "POST",
                 headers: {"Content-Type":"application/json"},
-                body: JSON.stringify(session_id ? { session_id, decision: "TDB" } : { profile: { lang: current_lang } })
+                body: JSON.stringify({ profile: { lang: current_lang } })
             });
             const data = await res.json();
-            if (data.session_id) { session_id = data.session_id; localStorage.setItem("aura_sid", session_id); }
+            session_id = data.session_id;
+            localStorage.setItem("aura_sid", session_id);
             updateUI(data);
-        } catch (e) {
-            document.getElementById("message").innerText = "SISTEMA DESCONECTADO. REINTENTANDO...";
-        } finally { is_loading = false; }
+        } else {
+            handleChoice("TDB");
+        }
     }
 
     async function handleChoice(code) {
         if (is_loading) return;
         is_loading = true;
-        window.speechSynthesis.cancel();
+
+        // LIMPIEZA TOTAL PARA EVITAR CONGELAMIENTO
+        window.speechSynthesis.cancel(); 
+        document.getElementById("message").innerText = ""; 
+        document.getElementById("options-container").innerHTML = "";
+
         try {
             const res = await fetch("/judge", {
                 method: "POST",
@@ -293,37 +260,48 @@
                 body: JSON.stringify({ session_id, decision: code })
             });
             const data = await res.json();
-            if (data.story && data.story.feedback_audio) playSound(data.story.feedback_audio);
             updateUI(data);
-        } catch (e) { console.error(e); } finally { is_loading = false; }
+        } catch (e) {
+            console.error(e);
+        } finally {
+            is_loading = false;
+        }
+    }
+
+    function triggerPunishment(code) {
+        playDopamineNegative();
+        handleChoice(code);
+    }
+
+    function resetWithPunishment() {
+        playDopamineNegative();
+        localStorage.removeItem("aura_sid");
+        session_id = null;
+        setTimeout(() => { location.reload(); }, 500);
     }
 
     function updateUI(data) {
         const { story, state } = data;
         if (!story || !state) return;
-        resetVisuals();
+
+        // Actualizar estadísticas
         document.getElementById("mental").innerText = state.mental;
         document.getElementById("social").innerText = state.social;
         document.getElementById("karma").innerText = state.karma;
         document.getElementById("disc").innerText = state.discipline;
 
+        // Traducción y Voz
         const text = current_lang === "en" ? story.text_en : story.text_es;
         document.getElementById("message").innerText = text;
         document.getElementById("category-tag").innerText = story.category;
 
         if (voice_enabled) speak(text);
 
-        if (story.type?.includes("breathing")) startBreathing(story.duration_sec || 20);
-        else if (story.type === "silence_challenge") startSilence(story.duration_sec || 60);
-        else if (story.type === "riddle") renderRiddle(story);
-        else renderOptions(story.options);
-    }
-
-    function renderOptions(options) {
+        // Render de opciones
         const container = document.getElementById("options-container");
         container.innerHTML = "";
-        // Si no hay opciones en el JSON, forzamos un botón de CONTINUAR
-        const opts = (options && options.length > 0) ? options : [{ code: "TDB", text: { en: "CONTINUE", es: "CONTINUAR" } }];
+        const opts = story.options || [{ code: "TDB", text: { en: "CONTINUE", es: "CONTINUAR" } }];
+        
         opts.forEach(opt => {
             const btn = document.createElement("button");
             btn.className = "opt-btn";
@@ -333,59 +311,21 @@
         });
     }
 
-    function renderRiddle(story) {
-        const container = document.getElementById("options-container");
-        container.innerHTML = "";
-        const btn = document.createElement("button");
-        btn.className = "opt-btn"; btn.style.gridColumn = "1 / span 2";
-        btn.innerText = current_lang === "en" ? "REVEAL TRUTH" : "REVELAR VERDAD";
-        btn.onclick = () => {
-            document.getElementById("message").innerText = current_lang === "en" ? story.answer.en : story.answer.es;
-            renderOptions([{ code: "TDB", text: { en: "UNDERSTOOD", es: "ENTENDIDO" } }]);
-        };
-        container.appendChild(btn);
-    }
-
-    function startBreathing(sec) {
-        const circle = document.getElementById("breathing-circle");
-        circle.style.display = "block";
-        circle.classList.add("inhale");
-        let elapsed = 0;
-        timer_interval = setInterval(() => {
-            elapsed += 4;
-            if (elapsed >= sec) { clearInterval(timer_interval); handleChoice("TDB"); }
-            else { circle.classList.toggle("inhale"); circle.classList.toggle("exhale"); }
-        }, 4000);
-    }
-
-    function startSilence(sec) {
-        const timerDiv = document.getElementById("timer");
-        timerDiv.style.display = "block";
-        let rem = sec;
-        timer_interval = setInterval(() => {
-            timerDiv.innerText = `${Math.floor(rem/60)}:${(rem%60).toString().padStart(2,'0')}`;
-            if (rem-- <= 0) { clearInterval(timer_interval); handleChoice("TDB"); }
-        }, 1000);
-    }
-
-    function resetVisuals() {
-        if (timer_interval) clearInterval(timer_interval);
-        document.getElementById("breathing-circle").style.display = "none";
-        document.getElementById("timer").style.display = "none";
-        document.getElementById("options-container").innerHTML = "";
-    }
-
     function speak(t) {
+        window.speechSynthesis.cancel(); 
         const ut = new SpeechSynthesisUtterance(t);
-        ut.lang = current_lang === "en" ? "en-US" : "es-US";
-        ut.rate = 0.9;
+        // Forzar idioma correcto para evitar "habla feo"
+        ut.lang = current_lang === "en" ? "en-US" : "es-MX";
+        ut.rate = 1.0;
+        ut.pitch = 1.0;
         window.speechSynthesis.speak(ut);
     }
 
     function toggleLanguage() {
-        current_lang = current_lang === "en" ? "es" : "en";
+        current_lang = current_lang === "es" ? "en" : "es";
         localStorage.setItem("aura_lang", current_lang);
-        startOrContinue();
+        window.speechSynthesis.cancel();
+        location.reload(); 
     }
 
     function toggleVoice() {
@@ -394,12 +334,9 @@
         if (!voice_enabled) window.speechSynthesis.cancel();
     }
 
-    function resetApp() {
-        localStorage.removeItem("aura_sid");
-        location.reload();
-    }
-
-    window.onload = () => { if (session_id) startOrContinue(); };
+    window.onload = () => {
+        if (session_id) initApp();
+    };
 </script>
 </body>
 </html>
