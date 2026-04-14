@@ -9,7 +9,7 @@ import json
 app = FastAPI()
 
 # ===============================
-# STATIC
+# STATIC FILES
 # ===============================
 if not os.path.exists("static"):
     os.makedirs("static")
@@ -17,12 +17,13 @@ if not os.path.exists("static"):
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # ===============================
-# DATABASE LOAD (KAMIZEN)
+# LOAD KAMIZEN DATABASE
 # ===============================
 CONTENT = []
 
 try:
     path = "static/kamizen_content.json"
+
     if os.path.exists(path):
         with open(path, "r", encoding="utf-8") as f:
             data = json.load(f)
@@ -35,10 +36,12 @@ try:
                 CONTENT = []
 
         print(f"[OK] KAMIZEN LOADED: {len(CONTENT)} missions")
+
     else:
-        print("[WARN] kamizen_content.json not found")
+        print("[WARN] kamizen_content.json NOT FOUND")
+
 except Exception as e:
-    print(f"[ERROR] DB LOAD FAILED: {e}")
+    print(f"[ERROR] DATABASE LOAD FAILED: {e}")
 
 # ===============================
 # SESSIONS MEMORY
@@ -62,18 +65,30 @@ def create_initial_state(profile):
     }
 
 # ===============================
-# IMPACT SYSTEM (TVID + CONTROL)
+# IMPACT SYSTEM
 # ===============================
 IMPACTS = {
     "TDB": {"mental": 2, "discipline": 3},
     "TDP": {"mental": 5, "discipline": 8, "karma": 2},
-    "TDM": {"mental": -12, "discipline": -20, "karma": -5},  # castigo fuerte
+    "TDM": {"mental": -12, "discipline": -20, "karma": -5},
     "TDN": {"mental": 6, "social": 5},
     "TDG": {"discipline": 10, "mental": 3, "social": -3},
     "TDK": {"social": 12, "karma": 8, "mental": 4},
     "CORRECT": {"mental": 10, "discipline": 10},
     "WRONG": {"mental": -10, "discipline": -8}
 }
+
+# ===============================
+# AUTO ADVANCE SYSTEM
+# ===============================
+AUTO_ADVANCE_TYPES = [
+    "breathing",
+    "laughter_therapy",
+    "silence_challenge"
+]
+
+def is_auto_block(block_type):
+    return block_type in AUTO_ADVANCE_TYPES
 
 # ===============================
 # APPLY PROGRESSION
@@ -83,6 +98,7 @@ def apply_progression(state, decision):
     if not CONTENT:
         return
 
+    # aplicar impacto
     effect = IMPACTS.get(decision, IMPACTS["TDB"])
 
     for k, v in effect.items():
@@ -93,19 +109,31 @@ def apply_progression(state, decision):
         mission = CONTENT[state["mission_index"]]
         blocks = mission.get("blocks", [])
 
+        # avanzar bloque
         state["block_index"] += 1
 
-        # siguiente misión
-        if state["block_index"] >= len(blocks):
-            state["mission_index"] += 1
-            state["block_index"] = 0
+        # salto automático si es bloque pasivo
+        while state["mission_index"] < len(CONTENT):
+            mission = CONTENT[state["mission_index"]]
+            blocks = mission.get("blocks", [])
 
-        # loop infinito seguro
-        if state["mission_index"] >= len(CONTENT):
-            state["mission_index"] = 0
-            state["block_index"] = 0
+            if state["block_index"] >= len(blocks):
+                state["mission_index"] += 1
+                state["block_index"] = 0
 
-    except Exception:
+                if state["mission_index"] >= len(CONTENT):
+                    state["mission_index"] = 0
+
+            current_block = CONTENT[state["mission_index"]]["blocks"][state["block_index"]]
+
+            if is_auto_block(current_block["type"]):
+                state["block_index"] += 1
+                continue
+
+            break
+
+    except Exception as e:
+        print("[PROGRESSION ERROR]", e)
         state["mission_index"] = 0
         state["block_index"] = 0
 
@@ -136,7 +164,10 @@ def format_block_response(mission, block):
         })
 
     if not options and block.get("type") not in ["breathing", "silence_challenge"]:
-        options = [{"code": "TDB", "text": {"es": "CONTINUAR", "en": "CONTINUE"}}]
+        options = [{
+            "code": "TDB",
+            "text": {"es": "CONTINUAR", "en": "CONTINUE"}
+        }]
 
     response = {
         "type": block.get("type", "story"),
@@ -145,8 +176,8 @@ def format_block_response(mission, block):
         "text_en": text_en,
         "duration_sec": block.get("duration_sec", 0),
         "options": options,
-        "silence": block.get("silence", None),
-        "breathing": block.get("breathing", None)
+        "silence": block.get("silence"),
+        "breathing": block.get("breathing")
     }
 
     if block.get("type") == "riddle":
@@ -168,16 +199,16 @@ def format_block_response(mission, block):
 # ===============================
 # ROUTES
 # ===============================
-
 @app.get("/")
 def home():
     return FileResponse("static/session.html")
 
-# -------------------------------
+# ===============================
 # START SESSION
-# -------------------------------
+# ===============================
 @app.post("/start")
 async def start(req: Request):
+
     try:
         data = await req.json()
 
@@ -201,11 +232,12 @@ async def start(req: Request):
     except Exception as e:
         return JSONResponse({"error": str(e)}, status_code=500)
 
-# -------------------------------
+# ===============================
 # JUDGE DECISION
-# -------------------------------
+# ===============================
 @app.post("/judge")
 async def judge(req: Request):
+
     try:
         data = await req.json()
 
