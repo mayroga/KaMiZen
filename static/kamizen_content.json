@@ -321,351 +321,353 @@
   ]
 },
 {
-  "id": 11,
-  "level": 5,
-  "category": "FIRST BUSINESS: SELL OR LOSE",
-  "blocks": [
-    {
-      "type": "story",
-      "text": {
-        "es": "Compras dulces para vender en la escuela, pero nadie compra."
-      }
-    },
-    {
-      "type": "quiz",
-      "question": { "es": "¿Qué haces?" },
-      "options": [
-        { "text": { "es": "Rendirse" }, "correct": false },
-        { "text": { "es": "Cambiar estrategia" }, "correct": true },
-        { "text": { "es": "Bajar precio" }, "correct": true }
+      "id": 11,
+      "level": 5,
+      "category": "FIRST BUSINESS: SELL OR LOSE",
+      "blocks": [
+        {
+          "type": "story",
+          "text": {
+            "es": "Compras dulces para vender en la escuela, pero nadie compra."
+          }
+        },
+        {
+          "type": "quiz",
+          "question": { "es": "¿Qué haces?" },
+          "options": [
+            { "text": { "es": "Rendirse" }, "correct": false },
+            { "text": { "es": "Cambiar estrategia" }, "correct": true },
+            { "text": { "es": "Bajar precio" }, "correct": true }
+          ]
+        },
+        {
+          "type": "silence_challenge",
+          "duration_sec": 100,
+          "quotes": [
+            { "es": "El fracaso es información." }
+          ]
+        }
       ]
     },
     {
-      "type": "silence_challenge",
-      "duration_sec": 100,
-      "quotes": [
-        { "es": "El fracaso es información." }
+      "id": 12,
+      "level": 5,
+      "category": "ANGER CONTROL: THE FIGHT",
+      "blocks": [
+        {
+          "type": "story",
+          "text": {
+            "es": "Un niño te empuja fuerte en la escuela. Todos miran."
+          }
+        },
+        {
+          "type": "quiz",
+          "question": { "es": "¿Qué haces?" },
+          "options": [
+            { "text": { "es": "Golpear de vuelta" }, "correct": false },
+            { "text": { "es": "Controlarte" }, "correct": true },
+            { "text": { "es": "Pedir ayuda" }, "correct": true }
+          ]
+        },
+        {
+          "type": "silence_challenge",
+          "duration_sec": 120,
+          "quotes": [
+            { "es": "El autocontrol es poder." }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "level": 5,
+      "category": "BETRAYAL: THE SECRET",
+      "blocks": [
+        {
+          "type": "story",
+          "text": {
+            "es": "Contaste un secreto y ahora todos lo saben."
+          }
+        },
+        {
+          "type": "quiz",
+          "question": { "es": "¿Qué haces?" },
+          "options": [
+            { "text": { "es": "Vengarte" }, "correct": false },
+            { "text": { "es": "Hablar con calma" }, "correct": true },
+            { "text": { "es": "Alejarte" }, "correct": true }
+          ]
+        },
+        {
+          "type": "silence_challenge",
+          "duration_sec": 140,
+          "quotes": [
+            { "es": "No todos merecen tu confianza." }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "level": 5,
+      "category": "FAMILY DECISION: THE LAST MONEY",
+      "blocks": [
+        {
+          "type": "story",
+          "text": {
+            "es": "Tus padres no tienen mucho dinero esta semana."
+          }
+        },
+        {
+          "type": "quiz",
+          "question": { "es": "¿Qué haces?" },
+          "options": [
+            { "text": { "es": "Insistir en compras" }, "correct": false },
+            { "text": { "es": "Esperar" }, "correct": true },
+            { "text": { "es": "Ayudar a ahorrar" }, "correct": true }
+          ]
+        },
+        {
+          "type": "silence_challenge",
+          "duration_sec": 160,
+          "quotes": [
+            { "es": "La madurez empieza temprano." }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "level": 6,
+      "category": "MONEY TRAP: EASY CASH",
+      "blocks": [
+        {
+          "type": "story",
+          "text": {
+            "es": "Un chico mayor te ofrece dinero por guardar algo en tu mochila."
+          }
+        },
+        {
+          "type": "quiz",
+          "question": { "es": "¿Qué haces?" },
+          "options": [
+            { "text": { "es": "Aceptar dinero" }, "correct": false },
+            { "text": { "es": "Negarte" }, "correct": true },
+            { "text": { "es": "Decir a un adulto" }, "correct": true }
+          ]
+        },
+        {
+          "type": "silence_challenge",
+          "duration_sec": 180,
+          "quotes": [
+            { "es": "El dinero fácil es peligroso." }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "level": 6,
+      "category": "POWER: THE GROUP LEADER",
+      "blocks": [
+        {
+          "type": "story",
+          "text": {
+            "es": "Eres líder del grupo y otros te siguen incluso cuando está mal."
+          }
+        },
+        {
+          "type": "quiz",
+          "question": { "es": "¿Qué haces?" },
+          "options": [
+            { "text": { "es": "Controlar a otros" }, "correct": false },
+            { "text": { "es": "Ayudar y guiar" }, "correct": true },
+            { "text": { "es": "Enseñar independencia" }, "correct": true }
+          ]
+        },
+        {
+          "type": "silence_challenge",
+          "duration_sec": 200,
+          "quotes": [
+            { "es": "El liderazgo es responsabilidad." }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 17,
+      "level": 6,
+      "category": "IDENTITY: WHO ARE YOU?",
+      "blocks": [
+        {
+          "type": "story",
+          "text": {
+            "es": "Todos intentan ser iguales en la escuela."
+          }
+        },
+        {
+          "type": "quiz",
+          "question": { "es": "¿Qué haces?" },
+          "options": [
+            { "text": { "es": "Copiar a otros" }, "correct": false },
+            { "text": { "es": "Ser tú mismo" }, "correct": true },
+            { "text": { "es": "Mezclar pero mantener identidad" }, "correct": true }
+          ]
+        },
+        {
+          "type": "silence_challenge",
+          "duration_sec": 220,
+          "quotes": [
+            { "es": "Ser real es poder." }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 18,
+      "level": 7,
+      "category": "PURPOSE: YOUR PATH",
+      "blocks": [
+        {
+          "type": "story",
+          "text": {
+            "es": "Creces y ahora debes elegir: seguir al grupo o construir tu propio camino."
+          }
+        },
+        {
+          "type": "quiz",
+          "question": { "es": "¿Qué eliges?" },
+          "options": [
+            { "text": { "es": "Seguir a otros" }, "correct": false },
+            { "text": { "es": "Crear tu propio camino" }, "correct": true },
+            { "text": { "es": "Ayudar a otros a crecer contigo" }, "correct": true }
+          ]
+        },
+        {
+          "type": "silence_challenge",
+          "duration_sec": 240,
+          "quotes": [
+            { "es": "Tu futuro se construye con decisiones." }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 19,
+      "level": 7,
+      "category": "DISCIPLINE: THE WAKE UP MOMENT",
+      "blocks": [
+        {
+          "type": "story",
+          "text": {
+            "es": "Es temprano. No quieres levantarte, pero tienes responsabilidades."
+          }
+        },
+        {
+          "type": "quiz",
+          "question": { "es": "¿Qué haces?" },
+          "options": [
+            { "text": { "es": "Seguir durmiendo" }, "correct": false },
+            { "text": { "es": "Levantarte aunque no quieras" }, "correct": true },
+            { "text": { "es": "Posponer todo" }, "correct": false }
+          ]
+        },
+        {
+          "type": "silence_challenge",
+          "duration_sec": 180,
+          "quotes": [
+            { "es": "La disciplina gana cuando la motivación muere." }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 20,
+      "level": 8,
+      "category": "FEAR: FINAL TEST",
+      "blocks": [
+        {
+          "type": "story",
+          "text": {
+            "es": "Estás frente a una decisión importante que te da miedo."
+          }
+        },
+        {
+          "type": "quiz",
+          "question": { "es": "¿Qué haces?" },
+          "options": [
+            { "text": { "es": "Evitar la decisión" }, "correct": false },
+            { "text": { "es": "Enfrentar el miedo" }, "correct": true },
+            { "text": { "es": "Esperar que otros decidan" }, "correct": false }
+          ]
+        },
+        {
+          "type": "silence_challenge",
+          "duration_sec": 200,
+          "quotes": [
+            { "es": "El miedo desaparece cuando actúas." }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 21,
+      "level": 8,
+      "category": "LEGACY: WHO YOU BECOME",
+      "blocks": [
+        {
+          "type": "story",
+          "text": {
+            "es": "Miras tu vida y ves todas tus decisiones pasadas."
+          }
+        },
+        {
+          "type": "quiz",
+          "question": { "es": "¿Qué quieres ser?" },
+          "options": [
+            { "text": { "es": "Alguien sin control" }, "correct": false },
+            { "text": { "es": "Alguien disciplinado y fuerte" }, "correct": true },
+            { "text": { "es": "Alguien que aprende siempre" }, "correct": true }
+          ]
+        },
+        {
+          "type": "silence_challenge",
+          "duration_sec": 240,
+          "quotes": [
+            { "es": "Tu legado comienza hoy." }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 22,
+      "level": 9,
+      "category": "FINAL: MASTER CONTROL",
+      "blocks": [
+        {
+          "type": "story",
+          "text": {
+            "es": "Has llegado al final del entrenamiento."
+          }
+        },
+        {
+          "type": "quiz",
+          "question": { "es": "¿Cuál es tu resultado?" },
+          "options": [
+            { "text": { "es": "Reaccionar sin pensar" }, "correct": false },
+            { "text": { "es": "Controlar mente y acciones" }, "correct": true },
+            { "text": { "es": "Aprender y mejorar siempre" }, "correct": true }
+          ]
+        },
+        {
+          "type": "silence_challenge",
+          "duration_sec": 300,
+          "quotes": [
+            { "es": "El verdadero poder es el autocontrol." },
+            { "es": "Tu vida depende de tus decisiones." }
+          ]
+        }
       ]
     }
   ]
-},
-{
-  "id": 12,
-  "level": 5,
-  "category": "ANGER CONTROL: THE FIGHT",
-  "blocks": [
-    {
-      "type": "story",
-      "text": {
-        "es": "Un niño te empuja fuerte en la escuela. Todos miran."
-      }
-    },
-    {
-      "type": "quiz",
-      "question": { "es": "¿Qué haces?" },
-      "options": [
-        { "text": { "es": "Golpear de vuelta" }, "correct": false },
-        { "text": { "es": "Controlarte" }, "correct": true },
-        { "text": { "es": "Pedir ayuda" }, "correct": true }
-      ]
-    },
-    {
-      "type": "silence_challenge",
-      "duration_sec": 120,
-      "quotes": [
-        { "es": "El autocontrol es poder." }
-      ]
-    }
-  ]
-},
-{
-  "id": 13,
-  "level": 5,
-  "category": "BETRAYAL: THE SECRET",
-  "blocks": [
-    {
-      "type": "story",
-      "text": {
-        "es": "Contaste un secreto y ahora todos lo saben."
-      }
-    },
-    {
-      "type": "quiz",
-      "question": { "es": "¿Qué haces?" },
-      "options": [
-        { "text": { "es": "Vengarte" }, "correct": false },
-        { "text": { "es": "Hablar con calma" }, "correct": true },
-        { "text": { "es": "Alejarte" }, "correct": true }
-      ]
-    },
-    {
-      "type": "silence_challenge",
-      "duration_sec": 140,
-      "quotes": [
-        { "es": "No todos merecen tu confianza." }
-      ]
-    }
-  ]
-},
-{
-  "id": 14,
-  "level": 5,
-  "category": "FAMILY DECISION: THE LAST MONEY",
-  "blocks": [
-    {
-      "type": "story",
-      "text": {
-        "es": "Tus padres no tienen mucho dinero esta semana."
-      }
-    },
-    {
-      "type": "quiz",
-      "question": { "es": "¿Qué haces?" },
-      "options": [
-        { "text": { "es": "Insistir en compras" }, "correct": false },
-        { "text": { "es": "Esperar" }, "correct": true },
-        { "text": { "es": "Ayudar a ahorrar" }, "correct": true }
-      ]
-    },
-    {
-      "type": "silence_challenge",
-      "duration_sec": 160,
-      "quotes": [
-        { "es": "La madurez empieza temprano." }
-      ]
-    }
-  ]
-},
-{
-  "id": 15,
-  "level": 6,
-  "category": "MONEY TRAP: EASY CASH",
-  "blocks": [
-    {
-      "type": "story",
-      "text": {
-        "es": "Un chico mayor te ofrece dinero por guardar algo en tu mochila."
-      }
-    },
-    {
-      "type": "quiz",
-      "question": { "es": "¿Qué haces?" },
-      "options": [
-        { "text": { "es": "Aceptar dinero" }, "correct": false },
-        { "text": { "es": "Negarte" }, "correct": true },
-        { "text": { "es": "Decir a un adulto" }, "correct": true }
-      ]
-    },
-    {
-      "type": "silence_challenge",
-      "duration_sec": 180,
-      "quotes": [
-        { "es": "El dinero fácil es peligroso." }
-      ]
-    }
-  ]
-},
-{
-  "id": 16,
-  "level": 6,
-  "category": "POWER: THE GROUP LEADER",
-  "blocks": [
-    {
-      "type": "story",
-      "text": {
-        "es": "Eres líder del grupo y otros te siguen incluso cuando está mal."
-      }
-    },
-    {
-      "type": "quiz",
-      "question": { "es": "¿Qué haces?" },
-      "options": [
-        { "text": { "es": "Controlar a otros" }, "correct": false },
-        { "text": { "es": "Ayudar y guiar" }, "correct": true },
-        { "text": { "es": "Enseñar independencia" }, "correct": true }
-      ]
-    },
-    {
-      "type": "silence_challenge",
-      "duration_sec": 200,
-      "quotes": [
-        { "es": "El liderazgo es responsabilidad." }
-      ]
-    }
-  ]
-},
-{
-  "id": 17,
-  "level": 6,
-  "category": "IDENTITY: WHO ARE YOU?",
-  "blocks": [
-    {
-      "type": "story",
-      "text": {
-        "es": "Todos intentan ser iguales en la escuela."
-      }
-    },
-    {
-      "type": "quiz",
-      "question": { "es": "¿Qué haces?" },
-      "options": [
-        { "text": { "es": "Copiar a otros" }, "correct": false },
-        { "text": { "es": "Ser tú mismo" }, "correct": true },
-        { "text": { "es": "Mezclar pero mantener identidad" }, "correct": true }
-      ]
-    },
-    {
-      "type": "silence_challenge",
-      "duration_sec": 220,
-      "quotes": [
-        { "es": "Ser real es poder." }
-      ]
-    }
-  ]
-},
-{
-  "id": 18,
-  "level": 7,
-  "category": "PURPOSE: YOUR PATH",
-  "blocks": [
-    {
-      "type": "story",
-      "text": {
-        "es": "Creces y ahora debes elegir: seguir al grupo o construir tu propio camino."
-      }
-    },
-    {
-      "type": "quiz",
-      "question": { "es": "¿Qué eliges?" },
-      "options": [
-        { "text": { "es": "Seguir a otros" }, "correct": false },
-        { "text": { "es": "Crear tu propio camino" }, "correct": true },
-        { "text": { "es": "Ayudar a otros a crecer contigo" }, "correct": true }
-      ]
-    },
-    {
-      "type": "silence_challenge",
-      "duration_sec": 240,
-      "quotes": [
-        { "es": "Tu futuro se construye con decisiones." }
-      ]
-    }
-  ]
-},
-{
-  "id": 19,
-  "level": 7,
-  "category": "DISCIPLINE: THE WAKE UP MOMENT",
-  "blocks": [
-    {
-      "type": "story",
-      "text": {
-        "es": "Es temprano. No quieres levantarte, pero tienes responsabilidades."
-      }
-    },
-    {
-      "type": "quiz",
-      "question": { "es": "¿Qué haces?" },
-      "options": [
-        { "text": { "es": "Seguir durmiendo" }, "correct": false },
-        { "text": { "es": "Levantarte aunque no quieras" }, "correct": true },
-        { "text": { "es": "Posponer todo" }, "correct": false }
-      ]
-    },
-    {
-      "type": "silence_challenge",
-      "duration_sec": 180,
-      "quotes": [
-        { "es": "La disciplina gana cuando la motivación muere." }
-      ]
-    }
-  ]
-},
-{
-  "id": 20,
-  "level": 8,
-  "category": "FEAR: FINAL TEST",
-  "blocks": [
-    {
-      "type": "story",
-      "text": {
-        "es": "Estás frente a una decisión importante que te da miedo."
-      }
-    },
-    {
-      "type": "quiz",
-      "question": { "es": "¿Qué haces?" },
-      "options": [
-        { "text": { "es": "Evitar la decisión" }, "correct": false },
-        { "text": { "es": "Enfrentar el miedo" }, "correct": true },
-        { "text": { "es": "Esperar que otros decidan" }, "correct": false }
-      ]
-    },
-    {
-      "type": "silence_challenge",
-      "duration_sec": 200,
-      "quotes": [
-        { "es": "El miedo desaparece cuando actúas." }
-      ]
-    }
-  ]
-},
-{
-  "id": 21,
-  "level": 8,
-  "category": "LEGACY: WHO YOU BECOME",
-  "blocks": [
-    {
-      "type": "story",
-      "text": {
-        "es": "Miras tu vida y ves todas tus decisiones pasadas."
-      }
-    },
-    {
-      "type": "quiz",
-      "question": { "es": "¿Qué quieres ser?" },
-      "options": [
-        { "text": { "es": "Alguien sin control" }, "correct": false },
-        { "text": { "es": "Alguien disciplinado y fuerte" }, "correct": true },
-        { "text": { "es": "Alguien que aprende siempre" }, "correct": true }
-      ]
-    },
-    {
-      "type": "silence_challenge",
-      "duration_sec": 240,
-      "quotes": [
-        { "es": "Tu legado comienza hoy." }
-      ]
-    }
-  ]
-},
-{
-  "id": 22,
-  "level": 9,
-  "category": "FINAL: MASTER CONTROL",
-  "blocks": [
-    {
-      "type": "story",
-      "text": {
-        "es": "Has llegado al final del entrenamiento. Ahora sabes controlar emoción, dinero, presión y decisiones."
-      }
-    },
-    {
-      "type": "quiz",
-      "question": { "es": "¿Cuál es tu resultado?" },
-      "options": [
-        { "text": { "es": "Reaccionar sin pensar" }, "correct": false },
-        { "text": { "es": "Controlar mente y acciones" }, "correct": true },
-        { "text": { "es": "Aprender y mejorar siempre" }, "correct": true }
-      ]
-    },
-    {
-      "type": "silence_challenge",
-      "duration_sec": 300,
-      "quotes": [
-        { "es": "El verdadero poder es el autocontrol." },
-        { "es": "Tu vida depende de tus decisiones." }
-      ]
-    }
-  ]
-}    
+}
