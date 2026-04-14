@@ -1,1142 +1,405 @@
-{
-  "missions": [
-    {
-      "id": 1,
-      "level": 1,
-      "category": "THE FOUNDATION: BREATH & HONOR",
-      "blocks": [
-        {
-          "type": "breathing_warmup",
-          "duration_sec": 20,
-          "mode": "intro",
-          "text": {
-            "es": "Calentamiento: Inhala y exhala con el círculo. Este capítulo trata sobre el autocontrol. La ciencia demuestra que 20 segundos de respiración rítmica oxigenan tu lóbulo frontal, permitiéndote decidir con la mente y no con el estómago. Prepárate para elegir tu honor sobre tu hambre."
-          },
-          "voice_instruction": "Inhala paz... exhala debilidad. Estás entrenando tu cerebro para no ser un esclavo de tus impulsos."
-        },
-        {
-          "type": "story",
-          "text": {
-            "es": "Tu madre te dio los últimos $10 para la leche de la familia. En el camino, ves una máquina expendedora con tu soda y dulces favoritos. Tu estómago ruge. El azúcar te llama."
-          }
-        },
-        {
-          "type": "tvid",
-          "mode": "tension",
-          "options": [
-            {
-              "code": "TDM",
-              "text": { "es": "Comprar los dulces ahora para calmar el hambre." },
-              "feedback_audio": "explosion",
-              "feedback_text": { "es": "Fallo. Has cambiado la supervivencia de tu familia por un pico de glucosa de 5 minutos." }
-            },
-            {
-              "code": "TDG",
-              "text": { "es": "Seguir caminando y llevar el dinero a casa." },
-              "feedback_audio": "lottery",
-              "feedback_text": { "es": "Éxito. Has demostrado que tu palabra vale más que tu apetito. El honor es la moneda de los reyes." }
-            }
-          ]
-        },
-        {
-          "type": "psychological_insight",
-          "text": {
-            "es": "EL PESO: Si compraste los dulces, esta noche tu madre beberá agua mientras sientes la culpa del azúcar. Si trajiste el dinero, eres el hombre que provee. El honor se gana en el hambre."
-          }
-        },
-        {
-          "type": "silence_challenge",
-          "duration_sec": 60,
-          "explanation": "El silencio es donde el carácter se solidifica. Si no puedes dominar tu lengua por 60 segundos, nunca dominarás tus finanzas.",
-          "quotes": [
-            { "es": "DINERO: El dinero es un excelente esclavo, pero un amo terrible." },
-            { "es": "SABIDURÍA: Quien se conquista a sí mismo es más poderoso que quien conquista una ciudad." }
-          ]
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AL CIELO | AURA BY MAY ROGA</title>
+    <style>
+        :root {
+            --neon: #00f2ff;
+            --bg: #000;
+            --accent: #ff00ff;
+            --panel: rgba(0, 15, 30, 0.95);
+            --danger: #ff4444;
+            --success: #33ff33;
+            --warning: #ffcc00;
         }
-      ]
-    },
-    {
-      "id": 2,
-      "level": 1,
-      "category": "MENTAL SHARPNESS: TRUTH & LIES",
-      "blocks": [
-        {
-          "type": "breathing_warmup",
-          "duration_sec": 20,
-          "mode": "focus",
-          "text": {
-            "es": "Calentamiento: Respiración de Fuego. Inhalaciones cortas y potentes. Vamos a despertar tu estado de alerta. Un líder nunca reacciona, un líder responde. Aprenderás a usar el silencio como un escudo de poder."
-          }
-        },
-        {
-          "type": "quiz",
-          "question": {
-            "es": "¿En un momento de ira extrema, cuál es la herramienta más poderosa de un líder?"
-          },
-          "options": [
-            {
-              "text": { "es": "Reaccionar rápido para mostrar dominio." },
-              "correct": false,
-              "feedback_audio": "explosion",
-              "feedback": { "es": "Falso. Reaccionar es ser esclavo de la emoción. Perdiste el respeto de los presentes." }
-            },
-            {
-              "text": { "es": "Un silencio de 10 segundos antes de hablar." },
-              "correct": true,
-              "feedback_audio": "lottery",
-              "feedback": { "es": "Verdadero. El silencio crea un espacio donde tú eliges tu destino en lugar de dejar que tu sangre lo elija." }
-            },
-            {
-              "text": { "es": "Ignorar a la persona completamente." },
-              "correct": false,
-              "feedback_audio": "explosion",
-              "feedback": { "es": "Falso. Ignorar es una máscara defensiva; el silencio es un poder ofensivo." }
-            }
-          ]
-        },
-        {
-          "type": "math_trap",
-          "question": {
-            "es": "Si tienes 3 manzanas y me quitas 2, ¿cuántas manzanas tienes?"
-          },
-          "options": [
-            { "text": { "es": "1" }, "correct": false, "feedback_audio": "explosion", "feedback": { "es": "Incorrecto. Te dejaste llevar por la resta simple." } },
-            { "text": { "es": "2" }, "correct": true, "feedback_audio": "lottery", "feedback": { "es": "¡Correcto! Tú me quitaste 2, por lo tanto tú tienes 2. Atención al detalle." } },
-            { "text": { "es": "3" }, "correct": false, "feedback_audio": "explosion", "feedback": { "es": "Incorrecto. Lee de nuevo con calma." } }
-          ]
-        },
-        {
-          "type": "laughter_therapy",
-          "text": {
-            "es": "La risa es un arma. Fuerza una carcajada por 30 segundos. Siente tu cortisol bajar. Un guerrero feliz es un guerrero peligroso."
-          }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--neon);
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-transform: uppercase;
         }
-      ]
-    },
-    {
-      "id": 3,
-      "level": 1,
-      "category": "THE DECEPTION: STREET WISDOM",
-      "blocks": [
-        {
-          "type": "breathing_warmup",
-          "duration_sec": 20,
-          "mode": "power",
-          "text": {
-            "es": "Calentamiento: Expansión torácica. Inhala 4 segundos, expande el pecho, exhala 4 segundos. La calle no perdona la ingenuidad. Vamos a entrenar tu instinto de supervivencia para que nadie use tu bondad en tu contra."
-          }
-        },
-        {
-          "type": "story",
-          "text": {
-            "es": "Un extraño se te acerca. Dice que perdió su teléfono y necesita que descargues una app para ayudarlo a encontrar a su 'hijo perdido'. Se ve desesperado y llora."
-          }
-        },
-        {
-          "type": "tvid",
-          "mode": "agitation",
-          "options": [
-            {
-              "code": "TDM",
-              "text": { "es": "Descargarla rápido para ayudar al niño." },
-              "feedback_audio": "explosion",
-              "feedback_text": { "es": "Error fatal. Has entregado las llaves de tu banco por una emoción momentánea." }
-            },
-            {
-              "code": "TDN",
-              "text": { "es": "Pedirle a un guardia de seguridad que lo ayude en su lugar." },
-              "feedback_audio": "lottery",
-              "feedback_text": { "es": "Sabiduría pura. Ayudaste sin poner en riesgo tu integridad. La seguridad no se negocia." }
-            }
-          ]
-        },
-        {
-          "type": "psychological_insight",
-          "text": {
-            "es": "REALIDAD: La 'app' era un espejo para tus datos bancarios. Tu amabilidad fue usada como llave para tu casa. La ayuda real usa canales seguros, no atajos."
-          }
-        },
-        {
-          "type": "silence_challenge",
-          "duration_sec": 90,
-          "explanation": "El silencio te permite observar lo que otros intentan ocultar con palabras. Escucha el entorno.",
-          "quotes": [
-            { "es": "BIENESTAR: Tu cuerpo es el único lugar que tienes para vivir. Cuídalo." },
-            { "es": "DINERO: Si no aprendes a decir NO, tus bolsillos siempre estarán vacíos." }
-          ]
+
+        #app {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(circle, #001a1a 0%, #000 80%);
+            position: relative;
         }
-      ]
-    },
-    {
-      "id": 4,
-      "level": 2,
-      "category": "RIDDLES OF THE MIND",
-      "blocks": [
-        {
-          "type": "breathing_warmup",
-          "duration_sec": 20,
-          "mode": "clarity",
-          "text": {
-            "es": "Calentamiento: Respiración 4-4-4. Cuadrada. Este nivel desafía tu percepción. Si no construyes tu mente, otros la usarán para construir sus sueños. Vamos a afilar tu visión interna."
-          }
-        },
-        {
-          "type": "riddle",
-          "text": {
-            "es": "Construyo catedrales pero no tengo manos. Puedo hacerte un rey o un prisionero en un cuarto oscuro. Me alimento de lo que ves y oyes. ¿Qué soy?"
-          },
-          "answer": { "es": "La Mente / Imaginación" },
-          "insight": {
-            "es": "Tu imaginación puede ser tu paraíso o tu infierno. Tú decides qué semillas plantar cada mañana."
-          }
-        },
-        {
-          "type": "math_trap",
-          "question": {
-            "es": "¿Qué pesa más? ¿Un kilo de hierro o un kilo de plumas?"
-          },
-          "options": [
-            { "text": { "es": "Hierro" }, "correct": false, "feedback_audio": "explosion" },
-            { "text": { "es": "Plumas" }, "correct": false, "feedback_audio": "explosion" },
-            { "text": { "es": "Pesan lo mismo" }, "correct": true, "feedback_audio": "lottery", "feedback": { "es": "Exacto. Un kilo es un kilo. No dejes que el material confunda tu juicio sobre la cantidad." } }
-          ]
-        },
-        {
-          "type": "silence_challenge",
-          "duration_sec": 90,
-          "quotes": [
-            { "es": "SABIDURÍA: La riqueza no es tener muchas posesiones, sino pocos deseos." },
-            { "es": "PODER: Tu mente es un jardín. Si no plantas flores, crecerán malezas." }
-          ]
+
+        #header {
+            position: absolute;
+            top: 20px;
+            width: 90%;
+            max-width: 900px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
-      ]
-    },
-    {
-      "id": 5,
-      "level": 2,
-      "category": "SOCIAL POWER: THE CIRCLE",
-      "blocks": [
-        {
-          "type": "breathing_warmup",
-          "duration_sec": 20,
-          "mode": "victory",
-          "text": {
-            "es": "Calentamiento: Inhala profundo y retén 5 segundos. La presión social es la prueba de fuego del carácter. Hoy aprenderás a marcar tu territorio frente a la manada. Un león no ríe cuando las hienas burlan al débil."
-          }
-        },
-        {
-          "type": "story",
-          "text": {
-            "es": "Tu grupo de amigos se burla de un mesero que se equivocó con la orden. Esperan que tú hagas el siguiente chiste. El mesero parece a punto de llorar."
-          }
-        },
-        {
-          "type": "tvid",
-          "mode": "tension",
-          "options": [
-            {
-              "code": "TDK",
-              "text": { "es": "Decir: 'Déjenlo en paz, es solo un error'." },
-              "feedback_audio": "lottery",
-              "feedback_text": { "es": "Liderazgo puro. Has puesto límites. El respeto que ganaste hoy vale más que cualquier aplauso de tontos." }
-            },
-            {
-              "code": "TDM",
-              "text": { "es": "Hacer el chiste para seguir siendo el 'cool' del grupo." },
-              "feedback_audio": "explosion",
-              "feedback_text": { "es": "Cobardía. Has vendido tu integridad por la aceptación de personas que no te respetarán mañana." }
-            }
-          ]
-        },
-        {
-          "type": "psychological_insight",
-          "text": {
-            "es": "LA VERDAD: Un líder protege al débil. Al hacer el chiste, te convertiste en un seguidor de la manada. Al defenderlo, marcaste tu territorio como un hombre de carácter."
-          }
-        },
-        {
-          "type": "silence_challenge",
-          "duration_sec": 120,
-          "quotes": [
-            { "es": "SABIDURÍA: Tu entorno puede ser tu jaula o tu jardín. Tú eliges las semillas." },
-            { "es": "AMOR: El respeto hacia los demás es el reflejo del respeto que te tienes a ti mismo." }
-          ]
+
+        #category-tag {
+            font-size: 14px;
+            letter-spacing: 3px;
+            margin-bottom: 10px;
+            color: var(--accent);
+            text-shadow: 0 0 10px var(--accent);
+            font-weight: bold;
+            text-align: center;
         }
-      ]
-    },
-    {
-      "id": 6,
-      "level": 2,
-      "category": "EMOTIONAL INTELLIGENCE: THE MIRROR",
-      "blocks": [
-        {
-          "type": "breathing_warmup",
-          "duration_sec": 20,
-          "mode": "focus",
-          "text": {
-            "es": "Calentamiento: Respiración de Enfoque. En 20 segundos, el oxígeno llegará a tu corteza prefrontal. Este nivel trata sobre el dominio emocional bajo ataque. Si controlas tu reacción, controlas la situación."
-          },
-          "voice_instruction": "Inhala claridad... exhala toda la ira contenida. Eres un roble ante la tormenta."
-        },
-        {
-          "type": "story",
-          "text": {
-            "es": "Estás en una entrevista de trabajo. El entrevistador insulta intencionalmente tu experiencia previa para ver cómo reaccionas. Tu sangre está hirviendo. Él busca tu quiebre."
-          }
-        },
-        {
-          "type": "tvid",
-          "mode": "tension",
-          "options": [
-            {
-              "code": "TDG",
-              "text": { "es": "Respira y responde con datos y hechos." },
-              "feedback_audio": "lottery",
-              "feedback_text": { "es": "Excelente. Mostraste presencia ejecutiva. Has ganado el respeto de quien te puso a prueba." }
-            },
-            {
-              "code": "TDM",
-              "text": { "es": "Defiende tu honor señalando su falta de respeto." },
-              "feedback_audio": "explosion",
-              "feedback_text": { "es": "Error. Demostraste que eres fácil de manipular. Quien pierde los estribos, pierde el trato." }
-            }
-          ]
-        },
-        {
-          "type": "psychological_insight",
-          "text": {
-            "es": "ANÁLISIS: El insulto fue una prueba de estrés. Si reaccionas, le entregas el control al otro. Si respondes con frialdad, tú dictas el resultado."
-          }
-        },
-        {
-          "type": "silence_challenge",
-          "duration_sec": 140,
-          "explanation": "El silencio en la adversidad es poder. Aprende a estar cómodo en la tensión sin hablar.",
-          "quotes": [
-            { "es": "SABIDURÍA: La primera y mejor victoria es conquistarse a uno mismo." },
-            { "es": "BIENESTAR: Una mente en calma es capaz de ver soluciones donde otros solo ven problemas." }
-          ]
+
+        #stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            width: 100%;
         }
-      ]
-    },
-    {
-      "id": 7,
-      "level": 3,
-      "category": "STREET LOGIC: THE GIFT",
-      "blocks": [
-        {
-          "type": "breathing_warmup",
-          "duration_sec": 20,
-          "mode": "logic",
-          "text": {
-            "es": "Calentamiento: Inhala en 4, exhala en 4. Entramos en lógica de calle y negocios. La ciencia dice que el cerebro bajo estrés busca atajos falsos; respira para ver la verdad detrás de las palabras."
-          }
-        },
-        {
-          "type": "quiz",
-          "question": {
-            "es": "En una negociación de negocios, ¿quién tiene más poder?"
-          },
-          "options": [
-            {
-              "text": { "es": "El que más habla." },
-              "correct": false,
-              "feedback_audio": "explosion",
-              "feedback": { "es": "Falso. Hablar demasiado revela tus debilidades y miedos." }
-            },
-            {
-              "text": { "es": "El que está dispuesto a retirarse." },
-              "correct": true,
-              "feedback_audio": "lottery",
-              "feedback": { "es": "Verdadero. El poder de decir 'No' y levantarse de la mesa es la ventaja definitiva en la vida." }
-            },
-            {
-              "text": { "es": "El que tiene más dinero." },
-              "correct": false,
-              "feedback_audio": "explosion",
-              "feedback": { "es": "Falso. El dinero es inútil si estás desesperado por gastarlo o cerrarlo." }
-            }
-          ]
-        },
-        {
-          "type": "math_trap",
-          "question": {
-            "es": "Si un smartphone y su funda cuestan $110, y el smartphone cuesta $100 más que la funda, ¿cuánto cuesta la funda?"
-          },
-          "options": [
-            { "text": { "es": "$10" }, "correct": false, "feedback_audio": "explosion" },
-            { "text": { "es": "$5" }, "correct": true, "feedback_audio": "lottery", "feedback": { "es": "¡Exacto! $105 (teléfono) + $5 (funda) = $110. No caigas en lo obvio." } },
-            { "text": { "es": "$1" }, "correct": false, "feedback_audio": "explosion" }
-          ]
-        },
-        {
-          "type": "riddle",
-          "text": {
-            "es": "Soy fácil de desperdiciar pero imposible de comprar. Soy lo único que tienes que es realmente tuyo, hasta que me agoto. ¿Qué soy?"
-          },
-          "answer": { "es": "El Tiempo" },
-          "insight": {
-            "es": "DINERO: Gastar tiempo es pagar con tu vida. Invierte tu tiempo, no lo gastes."
-          }
+
+        .box {
+            border: 1px solid var(--neon);
+            background: rgba(0, 242, 255, 0.05);
+            padding: 8px;
+            text-align: center;
         }
-      ]
-    },
-    {
-      "id": 8,
-      "level": 3,
-      "category": "FINANCIAL DISCIPLINE: THE TRAP",
-      "blocks": [
-        {
-          "type": "breathing_warmup",
-          "duration_sec": 20,
-          "mode": "discipline",
-          "text": {
-            "es": "Calentamiento: Exhalaciones largas. Vamos a vaciar el aire viciado. Este nivel es sobre dinero real. La dopamina de presumir es la ruina de los ignorantes. Aprenderás a ser un rey en secreto."
-          }
-        },
-        {
-          "type": "story",
-          "text": {
-            "es": "Acabas de recibir tu primer gran cheque. Tus amigos van a un club VIP y te presionan para que pagues la primera ronda de botellas caras para 'celebrar'. Todos te miran."
-          }
-        },
-        {
-          "type": "tvid",
-          "mode": "agitation",
-          "options": [
-            {
-              "code": "TDP",
-              "text": { "es": "Decir que tienes otros planes e invertir ese dinero." },
-              "feedback_audio": "lottery",
-              "feedback_text": { "es": "Sabiduría financiera. Has comprado libertad futura en lugar de aplausos vacíos." }
-            },
-            {
-              "code": "TDM",
-              "text": { "es": "Comprar las botellas; te ganaste el derecho a presumir." },
-              "feedback_audio": "explosion",
-              "feedback_text": { "es": "Fracaso. Compraste respeto temporal de gente que solo quiere tu billetera. Ahora eres esclavo de tu ego." }
-            }
-          ]
-        },
-        {
-          "type": "psychological_insight",
-          "text": {
-            "es": "LA TRAMPA: Una noche de 'rey' suele llevar a un mes de 'esclavo'. La verdadera riqueza es lo que no se ve."
-          }
-        },
-        {
-          "type": "silence_challenge",
-          "duration_sec": 180,
-          "explanation": "El silencio te aleja de la presión social. Respira mientras visualizas tu cuenta bancaria creciendo.",
-          "quotes": [
-            { "es": "DINERO: No ahorres lo que queda después de gastar, gasta lo que queda después de ahorrar." },
-            { "es": "SABIDURÍA: La libertad financiera empieza en la mente, no en la billetera." }
-          ]
+
+        .label { font-size: 8px; display: block; margin-bottom: 3px; opacity: 0.7; }
+        .val { font-size: 18px; font-weight: bold; font-family: 'Courier New', monospace; }
+
+        #breathing-circle {
+            width: 120px;
+            height: 120px;
+            border: 4px solid var(--neon);
+            border-radius: 50%;
+            margin: 15px auto;
+            display: none;
+            box-shadow: 0 0 20px var(--neon);
+            transition: transform 4s ease-in-out, background 4s ease-in-out;
         }
-      ]
-    },
-    {
-      "id": 9,
-      "level": 3,
-      "category": "PHYSICAL MASTERY: OXYGEN",
-      "blocks": [
-        {
-          "type": "breathing_warmup",
-          "duration_sec": 20,
-          "mode": "power",
-          "text": {
-            "es": "Calentamiento: Inhala poder. Este bloque es sobre el dominio de tu sistema nervioso. La respiración cuadrada es usada por fuerzas especiales para mantener la calma en combate. Tu vida es tu combate."
-          }
-        },
-        {
-          "type": "breathing",
-          "duration_sec": 180,
-          "mode": "power",
-          "text": {
-            "es": "Respiración Cuadrada: Inhala 4, mantén 4, exhala 4, mantén 4. Dentro del círculo verás la guía. Hazlo al pie de la letra para resetear tu estrés."
-          }
-        },
-        {
-          "type": "math_trap",
-          "question": {
-            "es": "Si un doctor te da 3 pastillas y te dice que tomes una cada media hora, ¿en cuánto tiempo te las habrás tomado todas?"
-          },
-          "options": [
-            { "text": { "es": "1 hora y media" }, "correct": false, "feedback_audio": "explosion" },
-            { "text": { "es": "1 hora" }, "correct": true, "feedback_audio": "lottery", "feedback": { "es": "Correcto. Tomas la primera (0 min), la segunda (30 min) y la tercera (60 min)." } },
-            { "text": { "es": "45 minutos" }, "correct": false, "feedback_audio": "explosion" }
-          ]
-        },
-        {
-          "type": "laughter_therapy",
-          "text": {
-            "es": "La risa disuelve el cortisol. Ríe a carcajadas por 1 minuto imaginando que tus miedos son ridículos. El miedo es el agua que apaga tu fuego; la risa es el viento que lo aviva."
-          }
+
+        .inhale { transform: scale(1.6); background: rgba(0, 242, 255, 0.2); }
+        .exhale { transform: scale(0.8); background: transparent; }
+
+        #message-container {
+            width: 85%;
+            max-width: 800px;
+            margin: 15px 0;
+            text-align: center;
         }
-      ]
-    },
-    {
-      "id": 10,
-      "level": 4,
-      "category": "SITUATIONAL AWARENESS: THE SHADOW",
-      "blocks": [
-        {
-          "type": "breathing_warmup",
-          "duration_sec": 20,
-          "mode": "tension",
-          "text": {
-            "es": "Calentamiento: Inhalación rápida, exhalación lenta. Vamos a agudizar tus sentidos. La supervivencia depende de ver lo que otros ignoran. Tu ego es tu peor enemigo en situaciones de riesgo."
-          }
-        },
-        {
-          "type": "story",
-          "text": {
-            "es": "Caminando a casa de noche, notas que el mismo auto ha pasado tres veces a tu lado, frenando cada vez. Hay una gasolinera iluminada cerca y un atajo oscuro hacia tu casa."
-          }
-        },
-        {
-          "type": "tvid",
-          "mode": "tension",
-          "options": [
-            {
-              "code": "TDG",
-              "text": { "es": "Entrar en la gasolinera y pedir que te recojan." },
-              "feedback_audio": "lottery",
-              "feedback_text": { "es": "Sabiduría de supervivencia. Al buscar la luz, eliminaste la ventaja del depredador." }
-            },
-            {
-              "code": "TDM",
-              "text": { "es": "Correr por el atajo; conoces mejor la zona." },
-              "feedback_audio": "explosion",
-              "feedback_text": { "es": "Peligro. El atajo es una zona de emboscada. Nunca apuestes tu vida a la velocidad cuando tienes una opción segura." }
-            }
-          ]
-        },
-        {
-          "type": "psychological_insight",
-          "text": {
-            "es": "SUPERVIVENCIA: El ego quiere correr; la Sabiduría quiere ser vista. La luz es tu mejor escudo."
-          }
-        },
-        {
-          "type": "silence_challenge",
-          "duration_sec": 180,
-          "explanation": "Usa este silencio para escanear tus pensamientos. ¿Qué tan alerta estás hoy?",
-          "quotes": [
-            { "es": "SABIDURÍA: La precaución es la madre de la longevidad." },
-            { "es": "FELICIDAD: Estar a salvo es la base de toda paz mental." }
-          ]
+
+        #timer {
+            font-size: 40px;
+            color: var(--accent);
+            margin-bottom: 10px;
+            display: none;
+            font-family: 'Courier New', monospace;
         }
-      ]
-    },
-    {
-      "id": 11,
-      "level": 4,
-      "category": "THE ARCHITECT: PLANNING",
-      "blocks": [
-        {
-          "type": "breathing_warmup",
-          "duration_sec": 20,
-          "mode": "clarity",
-          "text": {
-            "es": "Calentamiento: Respira profundamente para oxigenar tu visión a largo plazo. Este nivel trata sobre construir imperios. La consistencia es el interés compuesto de la disciplina."
-          }
-        },
-        {
-          "type": "quiz",
-          "question": {
-            "es": "¿Cuál es la forma más efectiva de lograr una meta masiva de 5 años?"
-          },
-          "options": [
-            {
-              "text": { "es": "Visualizar el resultado final todos los días." },
-              "correct": false,
-              "feedback_audio": "explosion",
-              "feedback": { "es": "Falso. La visualización sin sudor es solo fantasía." }
-            },
-            {
-              "text": { "es": "Dividirla en pequeñas tareas diarias no negociables." },
-              "correct": true,
-              "feedback_audio": "lottery",
-              "feedback": { "es": "Verdadero. Los monumentos se construyen ladrillo a ladrillo, todos los días sin falta." }
-            },
-            {
-              "text": { "es": "Esperar la oportunidad adecuada para empezar." },
-              "correct": false,
-              "feedback_audio": "explosion",
-              "feedback": { "es": "Falso. El 'momento adecuado' es el refugio de los que nunca empiezan." }
-            }
-          ]
-        },
-        {
-          "type": "riddle",
-          "text": {
-            "es": "Soy lo único que crece cuando me entregas a otros, y aun así te hago más rico que el oro. ¿Qué soy?"
-          },
-          "answer": { "es": "El Conocimiento" },
-          "insight": {
-            "es": "SABIDURÍA: Una cabeza vacía es la carga más pesada. Llénala de activos mentales."
-          }
+
+        #message {
+            min-height: 160px;
+            max-height: 300px;
+            padding: 20px;
+            border: 2px solid var(--neon);
+            background: var(--panel);
+            font-size: 16px;
+            line-height: 1.4;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 20px rgba(0, 242, 255, 0.1);
+            margin-bottom: 15px;
+            overflow-y: auto;
         }
-      ]
-    },
-    {
-      "id": 12,
-      "level": 4,
-      "category": "LEADERSHIP: THE BURDEN OF TRUTH",
-      "blocks": [
-        {
-          "type": "breathing_warmup",
-          "duration_sec": 20,
-          "mode": "focus",
-          "text": {
-            "es": "Calentamiento: Técnica 4-7-8. Inhala en 4, mantén en 7, exhala en 8. Este nivel trata sobre la lealtad y la integridad. La ciencia demuestra que esta respiración resetea el sistema nervioso parasimpático, dándote la frialdad necesaria para tomar decisiones difíciles."
-          }
-        },
-        {
-          "type": "story",
-          "text": {
-            "es": "Descubres que tu mejor amigo ha estado robando pequeñas cantidades de dinero de la empresa donde ambos trabajan. Si no dices nada, eres cómplice. Si hablas, él lo pierde todo. Tu integridad está en la balanza."
-          }
-        },
-        {
-          "type": "tvid",
-          "mode": "tension",
-          "options": [
-            {
-              "code": "TDG",
-              "text": { "es": "Enfréntalo y dale 24 horas para confesar o lo harás tú." },
-              "feedback_audio": "lottery",
-              "feedback_text": { "es": "Liderazgo real. Le diste una oportunidad de honor. La lealtad a un ladrón es tu propia tumba." }
-            },
-            {
-              "code": "TDM",
-              "text": { "es": "Guarda el secreto; la lealtad a un amigo va antes que una empresa." },
-              "feedback_audio": "explosion",
-              "feedback_text": { "es": "Fallo. Ahora eres cómplice. Su veneno ahora mancha tu futuro y tu carrera." }
-            }
-          ]
-        },
-        {
-          "type": "psychological_insight",
-          "text": {
-            "es": "LA VERDAD: La lealtad sin principios no es lealtad, es complicidad. Un hombre de valor no protege la deshonra ajena."
-          }
-        },
-        {
-          "type": "silence_challenge",
-          "duration_sec": 200,
-          "explanation": "Usa este silencio para reflexionar sobre tu círculo cercano. ¿Quiénes te elevan y quiénes te hunden?",
-          "quotes": [
-            { "es": "SABIDURÍA: Un hombre es tan fiel como lo son sus opciones." },
-            { "es": "DINERO: La honestidad es un activo caro; no la esperes de gente barata." }
-          ]
+
+        #options-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            width: 85%;
+            max-width: 800px;
         }
-      ]
-    },
-    {
-      "id": 13,
-      "level": 5,
-      "category": "MENTAL WARFARE: PERCEPTION",
-      "blocks": [
-        {
-          "type": "breathing_warmup",
-          "duration_sec": 20,
-          "mode": "power",
-          "text": {
-            "es": "Calentamiento: Inhalaciones profundas. Vamos a endurecer tu mirada. En el juego del poder, el silencio es tu arma más letal. Quien habla primero para defenderse, ya ha perdido."
-          }
-        },
-        {
-          "type": "quiz",
-          "question": {
-            "es": "Cuando alguien intenta humillarte en público con un 'chiste', ¿cuál es la respuesta más efectiva?"
-          },
-          "options": [
-            {
-              "text": { "es": "Insultarlo de vuelta aún más fuerte." },
-              "correct": false,
-              "feedback_audio": "explosion",
-              "feedback": { "es": "Falso. Has bajado a su nivel y demostrado que te dolió." }
-            },
-            {
-              "text": { "es": "Mirarlo a los ojos, sonreír levemente y quedarte en silencio." },
-              "correct": true,
-              "feedback_audio": "lottery",
-              "feedback": { "es": "Verdadero. El silencio genera incomodidad máxima en el agresor. Él queda como un patético ante el grupo." }
-            },
-            {
-              "text": { "es": "Explicar por qué el chiste es ofensivo." },
-              "correct": false,
-              "feedback_audio": "explosion",
-              "feedback": { "es": "Falso. Explicar es pedir permiso; el poder no da explicaciones." }
-            }
-          ]
-        },
-        {
-          "type": "math_trap",
-          "question": {
-            "es": "Si un avión se estrella justo en la frontera entre México y Estados Unidos, ¿dónde entierran a los sobrevivientes?"
-          },
-          "options": [
-            { "text": { "es": "En México" }, "correct": false, "feedback_audio": "explosion" },
-            { "text": { "es": "En Estados Unidos" }, "correct": false, "feedback_audio": "explosion" },
-            { "text": { "es": "A los sobrevivientes no se les entierra" }, "correct": true, "feedback_audio": "lottery", "feedback": { "es": "¡Exacto! El cerebro cansado entierra a la gente viva. Mantente alerta." } }
-          ]
-        },
-        {
-          "type": "laughter_therapy",
-          "text": {
-            "es": "Ríe por 1 minuto como si hubieras ganado el premio mayor. La risa es el escudo contra los proyectiles del ego ajeno. Eres invulnerable."
-          }
+
+        .opt-btn {
+            padding: 15px;
+            border: 1px solid var(--neon);
+            background: transparent;
+            color: var(--neon);
+            font-weight: bold;
+            font-size: 12px;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: 0.2s;
         }
-      ]
-    },
-    {
-      "id": 14,
-      "level": 5,
-      "category": "POWER DYNAMICS: THE PROMISE",
-      "blocks": [
-        {
-          "type": "breathing_warmup",
-          "duration_sec": 20,
-          "mode": "clarity",
-          "text": {
-            "es": "Calentamiento: Inhala libertad, exhala dependencia. Este nivel trata sobre las cadenas invisibles. El favor de un poderoso es la deuda más cara del mundo."
-          }
-        },
-        {
-          "type": "story",
-          "text": {
-            "es": "Una persona poderosa se ofrece a pagar todas tus deudas a cambio de un favor 'en blanco' en el futuro. Sin preguntas. Libertad inmediata a cambio de un 'sí'."
-          }
-        },
-        {
-          "type": "tvid",
-          "mode": "agitation",
-          "options": [
-            {
-              "code": "TDG",
-              "text": { "es": "Rechazar. No vendes tu futuro por comodidad actual." },
-              "feedback_audio": "lottery",
-              "feedback_text": { "es": "Sabiduría de hierro. Prefieres el hambre temporal a la esclavitud permanente." }
-            },
-            {
-              "code": "TDM",
-              "text": { "es": "Aceptar. Ya verás cómo resolver el favor cuando llegue el momento." },
-              "feedback_audio": "explosion",
-              "feedback_text": { "es": "Fallo. Has vendido tu alma. El precio de ese favor será tu integridad o tu familia." }
-            }
-          ]
-        },
-        {
-          "type": "psychological_insight",
-          "text": {
-            "es": "LA DEUDA: La libertad real es la capacidad de decir 'No' a cualquiera. Si debes un favor, ya no eres dueño de tus pasos."
-          }
-        },
-        {
-          "type": "silence_challenge",
-          "duration_sec": 240,
-          "explanation": "Disfruta de tu silencio. Un esclavo no tiene derecho al silencio propio. Tú sí.",
-          "quotes": [
-            { "es": "DINERO: Ten cuidado a quién le debes; algunas deudas se pagan con el alma." },
-            { "es": "SABIDURÍA: Lo que hoy parece un atajo, mañana será un laberinto." }
-          ]
+
+        .opt-btn:hover { background: var(--neon); color: var(--bg); }
+
+        /* Estilo para botones de navegación inferior */
+        #nav-controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+            width: 85%;
         }
-      ]
-    },
-    {
-      "id": 15,
-      "level": 5,
-      "category": "ADVANCED RIDDLES",
-      "blocks": [
-        {
-          "type": "breathing_warmup",
-          "duration_sec": 20,
-          "mode": "power",
-          "text": {
-            "es": "Calentamiento: Respiración abdominal. Vamos a centrar tu energía. El conocimiento es riqueza, pero la aplicación del conocimiento es poder. Vamos a probar tu agudeza."
-          }
-        },
-        {
-          "type": "riddle",
-          "text": {
-            "es": "Soy lo único que puedes dar y que aún conservas. Puedo ser el puente más fuerte o el cuchillo más afilado. ¿Qué soy?"
-          },
-          "answer": { "es": "Tu Palabra / Tu Promesa" },
-          "insight": {
-            "es": "PODER: Un hombre sin su palabra es solo una sombra que habla. Mantén tu palabra inquebrantable."
-          }
-        },
-        {
-          "type": "math_trap",
-          "question": {
-            "es": "Un padre tiene 54 años y su hijo 9. ¿Dentro de cuántos años la edad del padre será el triple de la del hijo?"
-          },
-          "options": [
-            { "text": { "es": "12" }, "correct": false, "feedback_audio": "explosion" },
-            { "text": { "es": "13.5" }, "correct": true, "feedback_audio": "lottery", "feedback": { "es": "Correcto. 54+13.5=67.5 y 9+13.5=22.5. El triple exacto. La precisión es poder." } },
-            { "text": { "es": "15" }, "correct": false, "feedback_audio": "explosion" }
-          ]
-        },
-        {
-          "type": "breathing",
-          "duration_sec": 180,
-          "mode": "power",
-          "text": {
-            "es": "Respira profundo. Expande tu pecho. Visualiza cómo cada inhalación construye el muro de tu disciplina. Eres invencible."
-          }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 242, 255, 0.3);
+            color: white;
+            font-size: 9px;
+            padding: 10px;
+            cursor: pointer;
+            flex: 1;
         }
-      ]
-    },
-    {
-      "id": 16,
-      "level": 6,
-      "category": "CRITICAL JUDGMENT: THE SHORTCUT",
-      "blocks": [
-        {
-          "type": "breathing_warmup",
-          "duration_sec": 20,
-          "mode": "discipline",
-          "text": {
-            "es": "Calentamiento: Exhalación forzada. Limpia tus pulmones de mentiras. Este nivel trata sobre la avaricia. El dinero fácil es el anzuelo de los que terminan en la red."
-          }
-        },
-        {
-          "type": "story",
-          "text": {
-            "es": "Te ofrecen una inversión 'única en la vida' que garantiza el 100% de retorno en una semana. Tus vecinos están ganando y presumiendo el efectivo. La oportunidad se acaba hoy."
-          }
-        },
-        {
-          "type": "tvid",
-          "mode": "tension",
-          "options": [
-            {
-              "code": "TDP",
-              "text": { "es": "Aléjate. Si es demasiado bueno para ser verdad, es una trampa." },
-              "feedback_audio": "lottery",
-              "feedback_text": { "es": "Protegiste tu capital. Los esquemas rápidos se alimentan de la desesperación." }
-            },
-            {
-              "code": "TDM",
-              "text": { "es": "Invierte solo lo que puedas permitirte perder." },
-              "feedback_audio": "explosion",
-              "feedback_text": { "es": "Fallo. Acabas de financiar la estafa de otro. El dinero rápido se va más rápido de lo que vino." }
-            }
-          ]
-        },
-        {
-          "type": "psychological_insight",
-          "text": {
-            "es": "LA TRAMPA: Esto es un esquema Ponzi. Los primeros cobran con el dinero de los últimos. La dignidad no tiene precio, el fraude sí."
-          }
-        },
-        {
-          "type": "silence_challenge",
-          "duration_sec": 260,
-          "explanation": "El silencio vence a la ansiedad de la urgencia falsa. Respira y mantén tu dinero en tu bolsillo.",
-          "quotes": [
-            { "es": "DINERO: El mercado está diseñado para transferir dinero de los impacientes a los pacientes." },
-            { "es": "SABIDURÍA: Nunca inviertas en algo que no puedas explicarle a un niño." }
-          ]
+
+        .nav-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+        #feedback-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+            display: none;
         }
-      ]
-    },
-    {
-      "id": 17,
-      "level": 6,
-      "category": "THE OBSERVER: BODY LANGUAGE",
-      "blocks": [
-        {
-          "type": "breathing_warmup",
-          "duration_sec": 20,
-          "mode": "logic",
-          "text": {
-            "es": "Calentamiento: Mirada fija al círculo. La observación es tu radar de supervivencia. Aprenderás a leer las intenciones antes de que se conviertan en palabras."
-          }
-        },
-        {
-          "type": "quiz",
-          "question": {
-            "es": "Hablas con alguien y sus pies apuntan hacia la salida mientras te sonríe. ¿Qué significa esto?"
-          },
-          "options": [
-            {
-              "text": { "es": "Están muy interesados en lo que dices." },
-              "correct": false,
-              "feedback_audio": "explosion",
-              "feedback": { "es": "Falso. Los pies revelan la intención de escape de la mente." }
-            },
-            {
-              "text": { "es": "Quieren irse de la conversación de inmediato." },
-              "correct": true,
-              "feedback_audio": "lottery",
-              "feedback": { "es": "Verdadero. El cuerpo se prepara para salir antes de que la boca se atreva a decirlo. Respeta tu tiempo y vete tú primero." }
-            },
-            {
-              "text": { "es": "Están nerviosos porque les gustas." },
-              "correct": false,
-              "feedback_audio": "explosion",
-              "feedback": { "es": "Falso. La atracción suele implicar 'espejo', no huida." }
-            }
-          ]
-        },
-        {
-          "type": "math_trap",
-          "question": {
-            "es": "¿Cuántos animales metió Moisés en el arca?"
-          },
-          "options": [
-            { "text": { "es": "Dos de cada especie" }, "correct": false, "feedback_audio": "explosion" },
-            { "text": { "es": "Siete de algunos" }, "correct": false, "feedback_audio": "explosion" },
-            { "text": { "es": "Ninguno, fue Noé" }, "correct": true, "feedback_audio": "lottery", "feedback": { "es": "¡Correcto! El nombre correcto importa. No dejes que te confundan con detalles falsos." } }
-          ]
-        },
-        {
-          "type": "laughter_therapy",
-          "text": {
-            "es": "Ríe durante 1 minuto recordando una vez que alguien intentó engañarte y no pudo. La risa del que sabe la verdad es la más poderosa. Eres el observador, no la víctima."
-          }
+
+        .impact-red { background: rgba(255, 0, 0, 0.3); animation: flash 0.3s forwards; }
+        .impact-green { background: rgba(0, 255, 0, 0.3); animation: flash 0.3s forwards; }
+        @keyframes flash { from { opacity: 1; } to { opacity: 0; } }
+
+        #footer-tools {
+            position: absolute;
+            bottom: 15px;
+            width: 90%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-      ]
-    },
-    {
-      "id": 18,
-      "level": 6,
-      "category": "THE LEGACY: FAMILY AND BLOOD",
-      "blocks": [
-        {
-          "type": "breathing_warmup",
-          "duration_sec": 20,
-          "mode": "focus",
-          "text": {
-            "es": "Calentamiento: Respiración de Linaje. Siente la fuerza de quienes vinieron antes que tú. El éxito no es solo tuyo, es de tu sangre; pero la sabiduría consiste en saber proteger esa sangre de sí misma."
-          }
-        },
-        {
-          "type": "story",
-          "text": {
-            "es": "Finalmente has alcanzado el éxito. Tu padre, que siempre fue duro contigo, te pide un préstamo para un negocio en el que ya fracasó dos veces. Sabes que probablemente lo perderá de nuevo. El corazón te pide decir sí; la mente sabe la verdad."
-          }
-        },
-        {
-          "type": "tvid",
-          "mode": "tension",
-          "options": [
-            {
-              "code": "TDG",
-              "text": { "es": "Ofrecer pagar sus gastos de vida en lugar de darle efectivo." },
-              "feedback_audio": "lottery",
-              "feedback_text": { "es": "Sabiduría superior. Proteges al padre sin financiar el fracaso. Has salvado el capital de la familia." }
-            },
-            {
-              "code": "TDM",
-              "text": { "es": "Darle el dinero; es tu sangre y se lo debes." },
-              "feedback_audio": "explosion",
-              "feedback_text": { "es": "Error. Has tirado el dinero a un pozo sin fondo. Alimentar la irresponsabilidad no es amor, es debilidad." }
-            }
-          ]
-        },
-        {
-          "type": "psychological_insight",
-          "text": {
-            "es": "EL BALANCE: La lealtad familiar se demuestra con protección, no con complicidad en el error. Un hombre sabio cuida el patrimonio para las próximas generaciones."
-          }
-        },
-        {
-          "type": "silence_challenge",
-          "duration_sec": 280,
-          "explanation": "El silencio es respeto. Honra a tu familia en este tiempo, pero mantén tu resolución firme.",
-          "quotes": [
-            { "es": "SABIDURÍA: Un hombre que no pasa tiempo con su familia nunca puede ser un hombre de verdad." },
-            { "es": "DINERO: La riqueza familiar se construye en siglos y se destruye en un fin de semana." }
-          ]
+
+        .tool-btn { background: transparent; border: none; color: var(--neon); opacity: 0.5; cursor: pointer; font-size: 20px; }
+        .tool-btn:hover { opacity: 1; }
+
+        @media (max-width: 600px) {
+            #stats { grid-template-columns: repeat(2, 1fr); }
+            #options-container { grid-template-columns: 1fr; }
+            #message { font-size: 14px; min-height: 120px; }
         }
-      ]
-    },
-    {
-      "id": 19,
-      "level": 7,
-      "category": "THE SUPREME TEST: THE TABLET",
-      "blocks": [
-        {
-          "type": "breathing_warmup",
-          "duration_sec": 20,
-          "mode": "discipline",
-          "text": {
-            "es": "Calentamiento: Inhala integridad. Este es el nivel de la verdad absoluta. La ciencia del carácter dice que lo que haces cuando nadie te ve, o cuando es caro decir la verdad, define tu destino."
-          }
-        },
-        {
-          "type": "story",
-          "text": {
-            "es": "Rompiste por accidente la tablet de tu hermanita; la que ella ahorró por un año para comprar. Tu madre entra al cuarto y la culpa a ella por ser 'descuidada'. Tu hermana llora en silencio, aceptando un castigo que no merece."
-          }
-        },
-        {
-          "type": "tvid",
-          "mode": "agitation",
-          "options": [
-            {
-              "code": "TDK",
-              "text": { "es": "Intervenir: 'Mamá, fui yo. Trabajaré para comprarle una nueva'." },
-              "feedback_audio": "lottery",
-              "feedback_text": { "es": "Has nacido de nuevo. Has comprado tu honor. La lealtad de tu hermana será tu escudo el resto de tu vida." }
-            },
-            {
-              "code": "TDM",
-              "text": { "es": "Cállate; fue un accidente y no puedes pagar una nueva." },
-              "feedback_audio": "explosion",
-              "feedback_text": { "es": "Has fallado la prueba máxima. Eres un fantasma en tu propia casa. La cobardía te saldrá más cara que cualquier tablet." }
-            }
-          ]
-        },
-        {
-          "type": "psychological_insight",
-          "text": {
-            "es": "LA ELECCIÓN DEL HÉROE: La integridad cuesta dinero y esfuerzo, pero la falta de ella te quita el alma. Un líder siempre asume la responsabilidad de sus actos."
-          }
+    </style>
+</head>
+<body>
+
+<div id="feedback-overlay"></div>
+
+<div id="app">
+    <div id="header">
+        <div id="category-tag">AL CIELO | AURA PROTOCOL</div>
+        <div id="stats">
+            <div class="box"><span class="label">MENTAL</span><span id="mental" class="val">100</span></div>
+            <div class="box"><span class="label">SOCIAL</span><span id="social" class="val">100</span></div>
+            <div class="box"><span class="label">KARMA</span><span id="karma" class="val">0</span></div>
+            <div class="box"><span class="label">DISCIPLINA</span><span id="disc" class="val">100</span></div>
+        </div>
+    </div>
+
+    <div id="message-container">
+        <div id="timer">00:00</div>
+        <div id="breathing-circle"></div>
+        <div id="message" onclick="startOrContinue()">
+            [ TOCAR PARA CONECTAR ]
+        </div>
+    </div>
+
+    <div id="options-container"></div>
+
+    <div id="nav-controls">
+        <button class="nav-btn" onclick="handleChoice('TDM')">SALTAR / AVANZAR</button>
+        <button class="nav-btn" onclick="resetApp()">REINICIAR TODO</button>
+    </div>
+
+    <div id="footer-tools">
+        <button class="tool-btn" onclick="toggleVoice()" id="voice-toggle">🔊</button>
+        <button onclick="toggleLanguage()" style="background:transparent; border:1px solid var(--accent); color:var(--accent); font-size:10px; padding:5px 10px; cursor:pointer;">ES / EN</button>
+        <button class="tool-btn" onclick="resetApp()" style="color:var(--danger)">🗑️</button>
+    </div>
+</div>
+
+<script>
+    let session_id = localStorage.getItem("aura_sid");
+    let current_lang = localStorage.getItem("aura_lang") || "es";
+    let voice_enabled = true;
+    let timer_interval = null;
+    let is_loading = false;
+
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    
+    function playSound(type) {
+        if (!type || audioCtx.state === 'suspended') return;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        if (type === "explosion") {
+            osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+            triggerVisualImpact("red");
+        } else if (type === "lottery") {
+            osc.frequency.setValueAtTime(880, audioCtx.currentTime);
+            triggerVisualImpact("green");
         }
-      ]
-    },
-    {
-      "id": 20,
-      "level": 7,
-      "category": "MENTAL FORTRESS: RIDDLES OF POWER",
-      "blocks": [
-        {
-          "type": "breathing_warmup",
-          "duration_sec": 20,
-          "mode": "logic",
-          "text": {
-            "es": "Calentamiento: Agudeza visual. Prepárate para los acertijos finales. Solo una mente fría y calculadora puede ver el patrón detrás del caos."
-          }
-        },
-        {
-          "type": "quiz",
-          "question": {
-            "es": "¿Cuál es el secreto definitivo de la riqueza a largo plazo?"
-          },
-          "options": [
-            {
-              "text": { "es": "Trabajar 20 horas al día sin descanso." },
-              "correct": false,
-              "feedback_audio": "explosion",
-              "feedback": { "es": "Falso. El esfuerzo sin dirección es solo agotamiento." }
-            },
-            {
-              "text": { "es": "Gratificación diferida: Cambiar el 'deseo' de hoy por la 'libertad' de mañana." },
-              "correct": true,
-              "feedback_audio": "lottery",
-              "feedback": { "es": "Verdadero. El interés compuesto del carácter es la fuerza más poderosa del universo. Domina tus impulsos y dominarás el mundo." }
-            },
-            {
-              "text": { "es": "Ganar la lotería o una gran herencia." },
-              "correct": false,
-              "feedback_audio": "explosion",
-              "feedback": { "es": "Falso. El dinero sin educación financiera es solo una deuda postergada." }
-            }
-          ]
-        },
-        {
-          "type": "math_trap",
-          "question": {
-            "es": "¿Qué pesa más? ¿Un kilo de hierro o un kilo de plumas?"
-          },
-          "options": [
-            { "text": { "es": "El hierro" }, "correct": false, "feedback_audio": "explosion" },
-            { "text": { "es": "Ambos pesan lo mismo" }, "correct": true, "feedback_audio": "lottery", "feedback": { "es": "Lógica básica. Un kilo es un kilo. No dejes que la densidad de los problemas te engañe sobre su peso real." } },
-            { "text": { "es": "Las plumas" }, "correct": false, "feedback_audio": "explosion" }
-          ]
-        },
-        {
-          "type": "riddle",
-          "text": {
-            "es": "No estoy vivo, pero crezco. No tengo pulmones, pero necesito aire. No tengo boca, pero el agua me mata. ¿Qué soy?"
-          },
-          "answer": { "es": "El Fuego" },
-          "insight": {
-            "es": "SABIDURÍA: Tu ambición es fuego. Aliméntala con disciplina, no permitas que la comodidad la apague."
-          }
-        }
-      ]
-    },
-    {
-      "id": 21,
-      "level": 7,
-      "category": "THE ASCENSION: FINAL SILENCE",
-      "blocks": [
-        {
-          "type": "breathing_warmup",
-          "duration_sec": 20,
-          "mode": "victory",
-          "text": {
-            "es": "Calentamiento: Respiración de Victoria. Inhala el futuro, exhala el pasado. Estás a pasos de la cima. Siente cómo tu vibración ha cambiado desde el nivel 1."
-          }
-        },
-        {
-          "type": "laughter_therapy",
-          "text": {
-            "es": "Ponte de pie. Ríete de la versión de ti que empezó este viaje. Ya no eres esa persona. Has evolucionado. La risa del ganador es la frecuencia de AL CIELO."
-          }
-        },
-        {
-          "type": "silence_challenge",
-          "duration_sec": 300,
-          "explanation": "5 minutos de silencio absoluto. El examen final. Si puedes dominar este vacío, puedes dominar cualquier sala de juntas, cualquier crisis, cualquier destino.",
-          "quotes": [
-            { "es": "SABIDURÍA: La batalla final es siempre contra ti mismo. Si ganas aquí, ganas en todas partes." },
-            { "es": "BIENESTAR: El silencio es el lenguaje de la creación; escucha lo que tu nuevo yo tiene que decirte." }
-          ]
-        },
-        {
-          "type": "story",
-          "text": {
-            "es": "Has llegado a la cima. Aura te pregunta: 'Ahora que tienes el poder, el conocimiento y la disciplina, ¿lo usarás para construir un trono para ti solo, o una escuela para elevar a otros?'"
-          }
-        },
-        {
-          "type": "tvid",
-          "mode": "power",
-          "options": [
-            {
-              "code": "TDK",
-              "text": { "es": "Construiré para otros (Conexión)." },
-              "feedback_audio": "lottery",
-              "feedback_text": { "es": "El camino del sabio. Quien eleva a otros, se vuelve inmortal." }
-            },
-            {
-              "code": "TDG",
-              "text": { "es": "Construiré mi propio imperio primero (Control)." },
-              "feedback_audio": "lottery",
-              "feedback_text": { "es": "El camino del arquitecto. Asegura la base para que el refugio sea inexpugnable." }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": 22,
-      "level": 7,
-      "category": "THE ARCHITECT'S SEAL",
-      "blocks": [
-        {
-          "type": "breathing",
-          "duration_sec": 180,
-          "mode": "victory",
-          "text": {
-            "es": "Respiración Final. Ahora estás AL CIELO. Siente la paz que solo da el deber cumplido. Lleva esta claridad al mundo real. Estás sellado."
-          }
-        },
-        {
-          "type": "win",
-          "text": {
-            "es": "FELICIDADES. Has completado los 22 niveles de KAMIZEN / AL CIELO BY MAY ROGA. Tu certificado de carácter no está en un papel, está en tus decisiones a partir de ahora. Ve y lidera."
-          }
-        }
-      ]
+        osc.start(); osc.stop(audioCtx.currentTime + 0.3);
     }
-  ]
-}
+
+    function triggerVisualImpact(color) {
+        const overlay = document.getElementById("feedback-overlay");
+        overlay.style.display = "block";
+        overlay.className = color === "red" ? "impact-red" : "impact-green";
+        setTimeout(() => { overlay.style.display = "none"; }, 300);
+    }
+
+    async function startOrContinue() {
+        if (is_loading) return;
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        is_loading = true;
+        try {
+            const res = await fetch(session_id ? "/judge" : "/start", {
+                method: "POST",
+                headers: {"Content-Type":"application/json"},
+                body: JSON.stringify(session_id ? { session_id, decision: "TDB" } : { profile: { lang: current_lang } })
+            });
+            const data = await res.json();
+            if (data.session_id) { session_id = data.session_id; localStorage.setItem("aura_sid", session_id); }
+            updateUI(data);
+        } catch (e) {
+            document.getElementById("message").innerText = "SISTEMA DESCONECTADO. REINTENTANDO...";
+        } finally { is_loading = false; }
+    }
+
+    async function handleChoice(code) {
+        if (is_loading) return;
+        is_loading = true;
+        window.speechSynthesis.cancel();
+        try {
+            const res = await fetch("/judge", {
+                method: "POST",
+                headers: {"Content-Type":"application/json"},
+                body: JSON.stringify({ session_id, decision: code })
+            });
+            const data = await res.json();
+            if (data.story && data.story.feedback_audio) playSound(data.story.feedback_audio);
+            updateUI(data);
+        } catch (e) { console.error(e); } finally { is_loading = false; }
+    }
+
+    function updateUI(data) {
+        const { story, state } = data;
+        if (!story || !state) return;
+        resetVisuals();
+        document.getElementById("mental").innerText = state.mental;
+        document.getElementById("social").innerText = state.social;
+        document.getElementById("karma").innerText = state.karma;
+        document.getElementById("disc").innerText = state.discipline;
+
+        const text = current_lang === "en" ? story.text_en : story.text_es;
+        document.getElementById("message").innerText = text;
+        document.getElementById("category-tag").innerText = story.category;
+
+        if (voice_enabled) speak(text);
+
+        if (story.type?.includes("breathing")) startBreathing(story.duration_sec || 20);
+        else if (story.type === "silence_challenge") startSilence(story.duration_sec || 60);
+        else if (story.type === "riddle") renderRiddle(story);
+        else renderOptions(story.options);
+    }
+
+    function renderOptions(options) {
+        const container = document.getElementById("options-container");
+        container.innerHTML = "";
+        // Si no hay opciones en el JSON, forzamos un botón de CONTINUAR
+        const opts = (options && options.length > 0) ? options : [{ code: "TDB", text: { en: "CONTINUE", es: "CONTINUAR" } }];
+        opts.forEach(opt => {
+            const btn = document.createElement("button");
+            btn.className = "opt-btn";
+            btn.innerText = current_lang === "en" ? (opt.text.en || opt.text.es) : (opt.text.es || opt.text.en);
+            btn.onclick = () => handleChoice(opt.code);
+            container.appendChild(btn);
+        });
+    }
+
+    function renderRiddle(story) {
+        const container = document.getElementById("options-container");
+        container.innerHTML = "";
+        const btn = document.createElement("button");
+        btn.className = "opt-btn"; btn.style.gridColumn = "1 / span 2";
+        btn.innerText = current_lang === "en" ? "REVEAL TRUTH" : "REVELAR VERDAD";
+        btn.onclick = () => {
+            document.getElementById("message").innerText = current_lang === "en" ? story.answer.en : story.answer.es;
+            renderOptions([{ code: "TDB", text: { en: "UNDERSTOOD", es: "ENTENDIDO" } }]);
+        };
+        container.appendChild(btn);
+    }
+
+    function startBreathing(sec) {
+        const circle = document.getElementById("breathing-circle");
+        circle.style.display = "block";
+        circle.classList.add("inhale");
+        let elapsed = 0;
+        timer_interval = setInterval(() => {
+            elapsed += 4;
+            if (elapsed >= sec) { clearInterval(timer_interval); handleChoice("TDB"); }
+            else { circle.classList.toggle("inhale"); circle.classList.toggle("exhale"); }
+        }, 4000);
+    }
+
+    function startSilence(sec) {
+        const timerDiv = document.getElementById("timer");
+        timerDiv.style.display = "block";
+        let rem = sec;
+        timer_interval = setInterval(() => {
+            timerDiv.innerText = `${Math.floor(rem/60)}:${(rem%60).toString().padStart(2,'0')}`;
+            if (rem-- <= 0) { clearInterval(timer_interval); handleChoice("TDB"); }
+        }, 1000);
+    }
+
+    function resetVisuals() {
+        if (timer_interval) clearInterval(timer_interval);
+        document.getElementById("breathing-circle").style.display = "none";
+        document.getElementById("timer").style.display = "none";
+        document.getElementById("options-container").innerHTML = "";
+    }
+
+    function speak(t) {
+        const ut = new SpeechSynthesisUtterance(t);
+        ut.lang = current_lang === "en" ? "en-US" : "es-US";
+        ut.rate = 0.9;
+        window.speechSynthesis.speak(ut);
+    }
+
+    function toggleLanguage() {
+        current_lang = current_lang === "en" ? "es" : "en";
+        localStorage.setItem("aura_lang", current_lang);
+        startOrContinue();
+    }
+
+    function toggleVoice() {
+        voice_enabled = !voice_enabled;
+        document.getElementById("voice-toggle").innerText = voice_enabled ? "🔊" : "🔇";
+        if (!voice_enabled) window.speechSynthesis.cancel();
+    }
+
+    function resetApp() {
+        localStorage.removeItem("aura_sid");
+        location.reload();
+    }
+
+    window.onload = () => { if (session_id) startOrContinue(); };
+</script>
+</body>
+</html>
