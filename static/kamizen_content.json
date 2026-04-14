@@ -563,244 +563,51 @@
       ]
     },
     {
-      "id": 11,
-      "level": 5,
-      "category": "FIRST BUSINESS: SELL OR LOSE",
-      "blocks": [
-        {
-          "type": "story",
-          "text": {
-            "en": "You buy 10 candies for $5 to sell at school. Nobody buys. Your friends laugh and say it's stupid.",
-            "es": "Compras 10 dulces por $5 para vender en la escuela. Nadie compra. Tus amigos se ríen."
-          }
-        },
-        {
-          "type": "tvid",
-          "mode": "tension",
-          "options": [
-            {
-              "code": "TDM",
-              "text": { "en": "Quit and eat the candies.", "es": "Rendirte y comer los dulces." }
-            },
-            {
-              "code": "TDG",
-              "text": { "en": "Change strategy and try again.", "es": "Cambiar estrategia e intentar otra vez." }
-            },
-            {
-              "code": "TDP",
-              "text": { "en": "Lower price and sell fast.", "es": "Bajar el precio y vender rápido." }
-            }
-          ]
-        },
-        {
-          "type": "psychological_insight",
-          "text": {
-            "en": "REALITY: Failure is data. Winners adjust. Losers quit. Business is learning, not guessing.",
-            "es": "REALIDAD: El fracaso es información. Los ganadores ajustan. Los perdedores se rinden. El negocio es aprender, no adivinar."
-          }
-        },
-        {
-          "type": "breathing",
-          "duration_sec": 60,
-          "mode": "focus",
-          "text": {
-            "en": "Calm breathing to reset your brain and think clearly. (1 Minute)",
-            "es": "Respiración calmada para reiniciar tu mente. (1 Minuto)"
-          }
-        },
-        {
-          "type": "silence_challenge",
-          "duration_sec": 100,
-          "quotes": [
-            {
-              "en": "Every failure is a lesson you paid for.",
-              "es": "Cada fracaso es una lección que pagaste."
-            }
-          ]
-        }
-      ]
-    },
-    {
       "id": 12,
       "level": 5,
       "category": "ANGER CONTROL: THE FIGHT",
       "blocks": [
-        {
-          "type": "story",
-          "text": {
-            "en": "A kid pushes you hard in school. Everyone is watching. Your heart is racing.",
-            "es": "Un niño te empuja fuerte en la escuela. Todos están mirando. Tu corazón late rápido."
-          }
-        },
-        {
-          "type": "tvid",
-          "mode": "agitation",
-          "options": [
-            {
-              "code": "TDM",
-              "text": { "en": "Hit him back immediately.", "es": "Golpearlo de inmediato." }
-            },
-            {
-              "code": "TDG",
-              "text": { "en": "Step back and control yourself.", "es": "Dar un paso atrás y controlarte." }
-            },
-            {
-              "code": "TDN",
-              "text": { "en": "Call for help from an adult.", "es": "Pedir ayuda a un adulto." }
-            }
-          ]
-        },
-        {
-          "type": "psychological_insight",
-          "text": {
-            "en": "CONTROL: Anger is energy. If you react, you lose control. If you control it, you become dangerous in a smart way.",
-            "es": "CONTROL: La ira es energía. Si reaccionas, pierdes control. Si la controlas, te vuelves peligroso de forma inteligente."
-          }
-        },
-        {
-          "type": "breathing",
-          "duration_sec": 60,
-          "mode": "power",
-          "text": {
-            "en": "Inhale deep, exhale slow. This lowers adrenaline and gives you control. (1 Minute)",
-            "es": "Inhala profundo, exhala lento. Esto baja la adrenalina y te da control. (1 Minuto)"
-          }
-        },
-        {
-          "type": "silence_challenge",
-          "duration_sec": 120,
-          "quotes": [
-            {
-              "en": "The strongest person is the one who controls himself.",
-              "es": "La persona más fuerte es la que se controla a sí misma."
-            }
-          ]
+       {
+        "type": "story",
+        "text": {
+          "en": "A kid pushes you hard in school. Everyone is watching. Your heart is racing.",
+          "es": "Un niño te empuja fuerte en la escuela. Todos están mirando. Tu corazón late rápido."
         }
-      ],
+      }
+    ]
+  },
+
+  {
+    "id": 13,
+    "level": 5,
+    "category": "BETRAYAL: THE SECRET",
+    "blocks": [
       {
-       "id": 13,
-       "level": 5,
-       "category": "BETRAYAL: THE SECRET",
-       "blocks": [
-         {
-          "type": "breathing",
-          "duration_sec": 60,
-          "mode": "focus",
-          "text": {
-            "en": "Slow breathing activates your brain's control center and helps you think before reacting. (1 Minute)",
-            "es": "La respiración lenta activa el centro de control del cerebro y te ayuda a pensar antes de reaccionar. (1 Minuto)"
-          }
-        },
-        {
-          "type": "story",
-          "text": {
-            "en": "You told your best friend a secret. The next day at school, other kids are laughing… they know everything.",
-            "es": "Le contaste un secreto a tu mejor amigo. Al día siguiente en la escuela, otros niños se ríen… saben todo."
-          }
-        },
-        {
-          "type": "tvid",
-          "mode": "tension",
-          "options": [
-            {
-              "code": "TDM",
-              "text": { "en": "Tell everyone his secrets back.", "es": "Contar sus secretos también." }
-            },
-            {
-              "code": "TDK",
-              "text": { "en": "Talk to him calmly and set a boundary.", "es": "Hablar con él y poner un límite." }
-            },
-            {
-              "code": "TDG",
-              "text": { "en": "Step away and choose better friends.", "es": "Alejarte y elegir mejores amigos." }
-            }
-          ]
-        },
-        {
-          "type": "psychological_insight",
-          "text": {
-            "en": "TRUTH: Not everyone deserves access to your inside world. Trust is built slowly… and lost fast.",
-            "es": "VERDAD: No todos merecen acceso a tu mundo interior. La confianza se construye lento… y se pierde rápido."
-          }
-        },
-        {
-          "type": "laughter_therapy",
-          "text": {
-            "en": "Laugh softly for 30 seconds. This helps your brain release emotional pain and regain control.",
-            "es": "Ríe suavemente por 30 segundos. Esto ayuda a liberar el dolor emocional y recuperar el control."
-          }
-        },
-        {
-          "type": "silence_challenge",
-          "duration_sec": 140,
-          "quotes": [
-            {
-              "en": "Choose carefully who you trust with your truth.",
-              "es": "Elige bien a quién le das tu verdad."
-            }
-          ]
+        "type": "breathing",
+        "duration_sec": 60,
+        "mode": "focus",
+        "text": {
+          "en": "Slow breathing activates your brain's control center and helps you think before reacting. (1 Minute)",
+          "es": "La respiración lenta activa el centro de control del cerebro y te ayuda a pensar antes de reaccionar. (1 Minuto)"
         }
-      ]
-    },
-    {
-      "id": 14,
-      "level": 5,
-      "category": "FAMILY DECISION: THE LAST MONEY",
-      "blocks": [
-        {
-          "type": "story",
-          "text": {
-            "en": "At home in Miami, your parents are worried. You hear them say they don’t have enough money this week. The next day, you still want new sneakers like your classmates.",
-            "es": "En casa, tus padres están preocupados. Escuchas que no tienen suficiente dinero esta semana. Al día siguiente, quieres tenis nuevos como tus compañeros."
-          }
-        },
-        {
-          "type": "tvid",
-          "mode": "tension",
-          "options": [
-            {
-              "code": "TDM",
-              "text": { "en": "Ask again and cry until they buy them.", "es": "Pedirlos y llorar hasta que los compren." }
-            },
-            {
-              "code": "TDK",
-              "text": { "en": "Say: 'It’s okay, I can wait.'", "es": "Decir: 'Está bien, puedo esperar'." }
-            },
-            {
-              "code": "TDP",
-              "text": { "en": "Think of ways to help or save money.", "es": "Pensar cómo ayudar o ahorrar." }
-            }
-          ]
-        },
-        {
-          "type": "psychological_insight",
-          "text": {
-            "en": "REALITY: Understanding your family’s situation makes you stronger, not weaker. Maturity starts early.",
-            "es": "REALIDAD: Entender la situación de tu familia te hace más fuerte, no más débil. La madurez empieza temprano."
-          }
-        },
-        {
-          "type": "breathing",
-          "duration_sec": 60,
-          "mode": "calm",
-          "text": {
-            "en": "Deep breathing reduces emotional impulses and increases patience. (1 Minute)",
-            "es": "La respiración profunda reduce impulsos emocionales y aumenta la paciencia. (1 Minuto)"
-          }
-        },
-        {
-          "type": "silence_challenge",
-          "duration_sec": 160,
-          "quotes": [
-            {
-              "en": "Strong children become strong adults.",
-              "es": "Los niños fuertes se convierten en adultos fuertes."
-            }
-          ]
+      }
+    ]
+  },
+  {
+    "id": 14,
+    "level": 5,
+    "category": "FAMILY DECISION: THE LAST MONEY",
+    "blocks": [
+      {
+        "type": "story",
+        "text": {
+          "en": "At home in Miami, your parents are worried. You hear them say they don’t have enough money this week.",
+          "es": "En casa, tus padres están preocupados. Escuchas que no tienen suficiente dinero esta semana."
         }
-      ]
-    },
-    {
+      }
+    ]
+   },
+   {
       "id": 15,
       "level": 6,
       "category": "MONEY TRAP: EASY CASH",
