@@ -1,95 +1,63 @@
+Entendido. Vamos a blindar este JSON con la filosofía **KaMiZen** de **AURA BY MAY ROGA LLC**. No es solo un juego; es un entrenamiento de élite para la vida real. He integrado conceptos de *Street Smarts*, inteligencia financiera de *The Millionaire Mind*, el poder del silencio y, sobre todo, la **Desintoxicación Digital** sutil: enseñamos que el poder real ocurre fuera de la pantalla.
+
+Aquí tienes el JSON optimizado del ID 1 al 5, diseñado para ser leído con autoridad y claridad:
+
+```json
 {
   "missions": [
     {
       "id": 1,
       "level": 1,
-      "theme": "SOCIAL TEST: FIRST IMPRESSION CONTROL",
+      "theme": "THE SILENT OBSERVER: REALITY VS. SCREEN",
       "engagement": {
         "dopamine_start": true,
         "sound_fx": true,
-        "game_intro": true
-      },
-      "ui": {
-        "buttons": ["next", "back", "restart", "skip"],
-        "language_toggle": true
+        "background_type": "nature_variable"
       },
       "blocks": [
         {
           "type": "story",
           "text": {
-            "en": "You walk into school in Miami. A group of students looks at you silently to see how you react.",
-            "es": "Entras a la escuela en Miami. Un grupo te mira en silencio para ver cómo reaccionas."
+            "en": "You are in a park in Miami. Everyone is looking at their phones, but you notice a real opportunity or a hidden danger nearby.",
+            "es": "Estás en un parque en Miami. Todos miran sus teléfonos, pero tú notas una oportunidad real o un peligro oculto cerca."
           }
         },
         {
           "type": "analysis",
           "text": {
-            "en": "Humans test confidence without speaking. Your reaction defines your social position.",
-            "es": "Los humanos prueban confianza sin hablar. Tu reacción define tu posición social."
+            "en": "Digital addiction blinds the weak. The leader looks up and masters the physical environment.",
+            "es": "La adicción digital ciega a los débiles. El líder levanta la vista y domina el entorno físico."
           }
         },
         {
           "type": "tvid",
           "options": [
             {
-              "code": "IMPULSE",
-              "text": { "en": "React nervous or aggressive", "es": "Reaccionar nervioso o agresivo" },
+              "code": "OBSERVE",
+              "text": { "en": "Put the phone away and scan the perimeter", "es": "Guardar el teléfono y escanear el perímetro" },
+              "correct": true,
+              "reason": {
+                "en": "Mastery begins by disconnecting from the fake world to control the real one.",
+                "es": "La maestría comienza desconectándose del mundo falso para controlar el real."
+              }
+            },
+            {
+              "code": "IGNORE",
+              "text": { "en": "Keep scrolling to fit in", "es": "Seguir navegando para encajar" },
               "correct": false,
               "reason": {
-                "en": "Shows lack of emotional control.",
-                "es": "Muestra falta de control emocional."
-              }
-            },
-            {
-              "code": "CONTROL",
-              "text": { "en": "Stay calm and observe silently", "es": "Mantener calma y observar en silencio" },
-              "correct": true,
-              "reason": {
-                "en": "Silent control creates respect.",
-                "es": "El control silencioso crea respeto."
-              }
-            },
-            {
-              "code": "EXIT",
-              "text": { "en": "Move away naturally", "es": "Alejarse naturalmente" },
-              "correct": true,
-              "reason": {
-                "en": "Strategic exit is intelligence.",
-                "es": "Salir estratégicamente es inteligencia."
+                "en": "Following the herd makes you a digital slave. You lose your edge.",
+                "es": "Seguir a la manada te hace un esclavo digital. Pierdes tu ventaja."
               }
             }
-          ]
-        },
-        {
-          "type": "sound_event",
-          "success_fx": "soft_chime",
-          "fail_fx": "deep_buzz"
-        },
-        {
-          "type": "mini_riddle",
-          "question": {
-            "en": "What controls emotion without force?",
-            "es": "¿Qué controla la emoción sin fuerza?"
-          },
-          "answers": [
-            { "text": { "en": "Self-control", "es": "Autocontrol" }, "correct": true },
-            { "text": { "en": "Anger", "es": "Ira" }, "correct": false },
-            { "text": { "en": "Noise", "es": "Ruido" }, "correct": false }
           ]
         },
         {
           "type": "silence_challenge",
           "duration_sec": 20,
           "reward": {
-            "en": "Builds awareness and emotional stability",
-            "es": "Construye conciencia y estabilidad emocional"
-          }
-        },
-        {
-          "type": "final_lesson",
-          "text": {
-            "en": "Power is silence under pressure.",
-            "es": "El poder es silencio bajo presión."
+            "en": "You recovered 20 seconds of real life. Your brain is now sharper than a screen.",
+            "es": "Recuperaste 20 segundos de vida real. Tu cerebro es ahora más agudo que una pantalla."
           }
         }
       ]
@@ -97,84 +65,50 @@
     {
       "id": 2,
       "level": 1,
-      "theme": "SOCIAL PRESSURE: FRIEND TEST",
+      "theme": "MONEY FOUNDATIONS: THE WEALTHY BRAIN",
       "blocks": [
         {
           "type": "story",
           "text": {
-            "en": "Your friends laugh at someone weaker and expect you to join.",
-            "es": "Tus amigos se ríen de alguien débil y esperan que te unas."
+            "en": "You see a trending virtual skin for a game that costs all your savings. It promises 'digital status'.",
+            "es": "Ves una 'skin' virtual de moda que cuesta todos tus ahorros. Promete 'estatus digital'."
           }
         },
         {
           "type": "analysis",
           "text": {
-            "en": "Group pressure tests identity and courage.",
-            "es": "La presión del grupo prueba identidad y valentía."
+            "en": "Poor minds buy illusions. Rich minds invest in assets and knowledge.",
+            "es": "Las mentes pobres compran ilusiones. Las mentes ricas invierten en activos y conocimiento."
           }
         },
         {
           "type": "tvid",
           "options": [
             {
-              "code": "FOLLOW",
-              "text": { "en": "Laugh with them", "es": "Reír con ellos" },
+              "code": "SAVE",
+              "text": { "en": "Keep your money for a real-world investment", "es": "Guardar tu dinero para una inversión real" },
+              "correct": true,
+              "reason": {
+                "en": "Wealth is built by what you DON'T spend on digital trash.",
+                "es": "La riqueza se construye con lo que NO gastas en basura digital."
+              }
+            },
+            {
+              "code": "BUY",
+              "text": { "en": "Buy it to show off online", "es": "Comprarlo para presumir en línea" },
               "correct": false,
               "reason": {
-                "en": "Lowers your self-respect.",
-                "es": "Reduce tu respeto propio."
-              }
-            },
-            {
-              "code": "CONTROL",
-              "text": { "en": "Stay neutral, don't participate", "es": "Mantener neutralidad" },
-              "correct": true,
-              "reason": {
-                "en": "Protects identity.",
-                "es": "Protege tu identidad."
-              }
-            },
-            {
-              "code": "LEAD",
-              "text": { "en": "Defend the person", "es": "Defender a la persona" },
-              "correct": true,
-              "reason": {
-                "en": "Builds leadership power.",
-                "es": "Construye liderazgo."
+                "en": "Seeking validation from strangers via a screen is the fastest path to poverty.",
+                "es": "Buscar validación de extraños a través de una pantalla es el camino más rápido a la pobreza."
               }
             }
           ]
         },
         {
-          "type": "sound_event",
-          "success_fx": "soft_chime",
-          "fail_fx": "deep_buzz"
-        },
-        {
-          "type": "mini_math",
-          "question": {
-            "en": "If you lose respect, what remains?",
-            "es": "Si pierdes respeto, ¿qué queda?"
-          },
-          "answers": [
-            { "text": { "en": "Nothing", "es": "Nada" }, "correct": true },
-            { "text": { "en": "Money", "es": "Dinero" }, "correct": false },
-            { "text": { "en": "Friends", "es": "Amigos" }, "correct": false }
-          ]
-        },
-        {
-          "type": "silence_challenge",
-          "duration_sec": 25,
-          "reward": {
-            "en": "Strengthens moral decision making",
-            "es": "Fortalece decisiones morales"
-          }
-        },
-        {
           "type": "final_lesson",
           "text": {
-            "en": "Your silence can be strength or weakness.",
-            "es": "Tu silencio puede ser fuerza o debilidad."
+            "en": "A millionaire doesn't need a digital avatar to feel powerful.",
+            "es": "Un millonario no necesita un avatar digital para sentirse poderoso."
           }
         }
       ]
@@ -182,65 +116,51 @@
     {
       "id": 3,
       "level": 2,
-      "theme": "MONEY CONTROL: FIRST DECISION",
+      "theme": "THE POWER OF SILENCE: SOCIAL SHIELD",
       "blocks": [
         {
           "type": "story",
           "text": {
-            "en": "You get $20. You see instant pleasure vs future value.",
-            "es": "Recibes $20. Ves placer inmediato vs valor futuro."
+            "en": "An online 'friend' is trying to provoke you into a digital argument. They want your attention and your energy.",
+            "es": "Un 'amigo' en línea intenta provocarte en una discusión digital. Quiere tu atención y energía."
+          }
+        },
+        {
+          "type": "analysis",
+          "text": {
+            "en": "He who speaks less, controls more. Energy spent on a screen is energy stolen from your future.",
+            "es": "Quien habla menos, controla más. La energía gastada en una pantalla es energía robada a tu futuro."
           }
         },
         {
           "type": "tvid",
           "options": [
             {
-              "code": "SPEND",
-              "text": { "en": "Spend everything now", "es": "Gastar todo ahora" },
+              "code": "SILENCE",
+              "text": { "en": "Log off and stay silent. No reaction.", "es": "Cerrar sesión y guardar silencio. Sin reacción." },
+              "correct": true,
+              "reason": {
+                "en": "Silence is the ultimate weapon. You win by not participating in the noise.",
+                "es": "El silencio es el arma definitiva. Ganas al no participar en el ruido."
+              }
+            },
+            {
+              "code": "ARGUE",
+              "text": { "en": "Type a fast, angry response", "es": "Escribir una respuesta rápida y enojada" },
               "correct": false,
               "reason": {
-                "en": "Trains short-term thinking.",
-                "es": "Entrena pensamiento corto."
-              }
-            },
-            {
-              "code": "SAVE",
-              "text": { "en": "Save and plan", "es": "Ahorrar y planificar" },
-              "correct": true,
-              "reason": {
-                "en": "Builds financial intelligence.",
-                "es": "Construye inteligencia financiera."
-              }
-            },
-            {
-              "code": "BALANCE",
-              "text": { "en": "Spend part, save part", "es": "Gastar parte, guardar parte" },
-              "correct": true,
-              "reason": {
-                "en": "Balance is real mastery.",
-                "es": "El equilibrio es maestría."
+                "en": "Impulse control is weak. You gave your power to a keyboard.",
+                "es": "El control de impulsos es débil. Le diste tu poder a un teclado."
               }
             }
           ]
         },
         {
-          "type": "sound_event",
-          "success_fx": "cash_ping",
-          "fail_fx": "error_buzz"
-        },
-        {
           "type": "silence_challenge",
           "duration_sec": 30,
           "reward": {
-            "en": "Improves financial discipline mindset",
-            "es": "Mejora disciplina financiera"
-          }
-        },
-        {
-          "type": "final_lesson",
-          "text": {
-            "en": "Money follows discipline.",
-            "es": "El dinero sigue la disciplina."
+            "en": "You mastered your ego. Silence is your new fortress.",
+            "es": "Dominaste tu ego. El silencio es tu nueva fortaleza."
           }
         }
       ]
@@ -248,60 +168,50 @@
     {
       "id": 4,
       "level": 2,
-      "theme": "TRUST TEST: FRIENDSHIP POWER",
+      "theme": "STREET SMARTS: THE TRAP OF EASY TRUST",
       "blocks": [
         {
           "type": "story",
           "text": {
-            "en": "A friend pressures you to cheat on a test.",
-            "es": "Un amigo te presiona para copiar en un examen."
+            "en": "A stranger online offers you a 'job' to make fast money by sharing your personal data.",
+            "es": "Un extraño en línea te ofrece un 'trabajo' para ganar dinero rápido compartiendo tus datos."
+          }
+        },
+        {
+          "type": "analysis",
+          "text": {
+            "en": "The world is full of predators using digital masks. Your privacy is your life insurance.",
+            "es": "El mundo está lleno de depredadores usando máscaras digitales. Tu privacidad es tu seguro de vida."
           }
         },
         {
           "type": "tvid",
           "options": [
             {
-              "code": "CHEAT",
-              "text": { "en": "Help them cheat", "es": "Ayudar a copiar" },
+              "code": "BLOCK",
+              "text": { "en": "Block immediately and inform a real adult", "es": "Bloquear de inmediato e informar a un adulto real" },
+              "correct": true,
+              "reason": {
+                "en": "Protecting your information is the first step to becoming a secure leader.",
+                "es": "Proteger tu información es el primer paso para ser un líder seguro."
+              }
+            },
+            {
+              "code": "TALK",
+              "text": { "en": "Ask for more details to see if it's true", "es": "Pedir más detalles para ver si es verdad" },
               "correct": false,
               "reason": {
-                "en": "Destroys integrity.",
-                "es": "Destruye la integridad."
-              }
-            },
-            {
-              "code": "REFUSE",
-              "text": { "en": "Refuse firmly", "es": "Negarse firmemente" },
-              "correct": true,
-              "reason": {
-                "en": "Builds character strength.",
-                "es": "Construye carácter."
-              }
-            },
-            {
-              "code": "EXIT",
-              "text": { "en": "Distance yourself", "es": "Alejarse" },
-              "correct": true,
-              "reason": {
-                "en": "Protects your mindset.",
-                "es": "Protege tu mentalidad."
+                "en": "Naivety is dangerous. Predators feed on your curiosity.",
+                "es": "La ingenuidad es peligrosa. Los depredadores se alimentan de tu curiosidad."
               }
             }
           ]
         },
         {
-          "type": "silence_challenge",
-          "duration_sec": 35,
-          "reward": {
-            "en": "Builds integrity under pressure",
-            "es": "Construye integridad bajo presión"
-          }
-        },
-        {
           "type": "final_lesson",
           "text": {
-            "en": "Truth builds real power.",
-            "es": "La verdad construye poder real."
+            "en": "Real wealth comes from hard work and ethics, never from 'easy' digital shortcuts.",
+            "es": "La riqueza real viene del trabajo duro y la ética, nunca de atajos digitales 'fáciles'."
           }
         }
       ]
@@ -309,551 +219,327 @@
     {
       "id": 5,
       "level": 2,
-      "theme": "SELF CONTROL: THE TEMPTATION TEST",
-      "engagement": {
-        "dopamine_start": true,
-        "sound_fx": true
-      },
-      "ui": {
-        "buttons": ["next", "back", "restart", "skip"],
-        "language_toggle": true
-      },
+      "theme": "MENTAL TOUGHNESS: NO EXCUSES",
       "blocks": [
         {
           "type": "story",
           "text": {
-            "en": "You are alone. Nobody is watching. You can cheat and nobody will know.",
-            "es": "Estás solo. Nadie te ve. Puedes hacer trampa y nadie lo sabrá."
+            "en": "You have to finish a real-world task (homework or sport), but your phone notifications are 'screaming' for attention.",
+            "es": "Tienes que terminar una tarea real (deberes o deporte), pero las notificaciones del teléfono 'gritan' por atención."
           }
         },
         {
           "type": "analysis",
           "text": {
-            "en": "Your real identity is built when nobody is watching.",
-            "es": "Tu verdadera identidad se construye cuando nadie te ve."
+            "en": "Discipline is doing what must be done, even when the digital dopamine is calling you away.",
+            "es": "La disciplina es hacer lo que se debe hacer, incluso cuando la dopamina digital te llama."
           }
         },
         {
           "type": "tvid",
           "options": [
             {
-              "code": "CHEAT",
-              "text": { "en": "Cheat to win", "es": "Hacer trampa para ganar" },
-              "correct": false,
-              "reason": {
-                "en": "Destroys self-respect and discipline.",
-                "es": "Destruye tu respeto propio y disciplina."
-              }
-            },
-            {
-              "code": "HONOR",
-              "text": { "en": "Do the right thing", "es": "Hacer lo correcto" },
+              "code": "FINISH",
+              "text": { "en": "Turn off the phone and complete the task", "es": "Apagar el teléfono y completar la tarea" },
               "correct": true,
               "reason": {
-                "en": "Builds strong character.",
-                "es": "Construye carácter fuerte."
+                "en": "Successful people focus on their mission, not on likes or alerts.",
+                "es": "Las personas exitosas se enfocan en su misión, no en 'likes' o alertas."
               }
             },
             {
-              "code": "AVOID",
-              "text": { "en": "Avoid the situation", "es": "Evitar la situación" },
+              "code": "CHECK",
+              "text": { "en": "Check 'just for a second'", "es": "Revisar 'solo por un segundo'" },
               "correct": false,
               "reason": {
-                "en": "Avoiding doesn't build strength.",
-                "es": "Evitar no construye fuerza."
+                "en": "The 'second' becomes an hour. You just lost your most valuable asset: Time.",
+                "es": "Ese 'segundo' se vuelve una hora. Acabas de perder tu activo más valioso: el Tiempo."
               }
             }
           ]
         },
         {
-          "type": "sound_event",
-          "success_fx": "clean_win",
-          "fail_fx": "error_buzz"
-        },
-        {
-          "type": "mini_riddle",
-          "question": {
-            "en": "What grows when nobody sees it?",
-            "es": "¿Qué crece cuando nadie lo ve?"
-          },
-          "answers": [
-            { "text": { "en": "Character", "es": "Carácter" }, "correct": true },
-            { "text": { "en": "Luck", "es": "Suerte" }, "correct": false },
-            { "text": { "en": "Noise", "es": "Ruido" }, "correct": false }
-          ]
-        },
-        {
           "type": "silence_challenge",
-          "duration_sec": 30,
+          "duration_sec": 45,
           "reward": {
-            "en": "Builds inner discipline and awareness",
-            "es": "Construye disciplina interna y conciencia"
-          }
-        },
-        {
-          "type": "final_lesson",
-          "text": {
-            "en": "Who you are in silence defines your future.",
-            "es": "Quién eres en silencio define tu futuro."
+            "en": "Focus is the superpower of the 21st century. You just leveled up.",
+            "es": "El enfoque es el superpoder del siglo XXI. Acabas de subir de nivel."
           }
         }
       ]
     },
     {
       "id": 6,
-      "level": 2,
-      "theme": "DECISION POWER: THINK BEFORE ACTION",
+      "level": 6,
+      "theme": "THE EMOTIONAL SHIELD: REJECTION MASTERY",
+      "engagement": {
+        "dopamine_start": true,
+        "sound_fx": true,
+        "background_type": "deep_space"
+      },
       "blocks": [
         {
           "type": "story",
           "text": {
-            "en": "You must make a decision fast. Everyone is waiting for you.",
-            "es": "Debes tomar una decisión rápida. Todos esperan tu reacción."
+            "en": "A close contact ignores your message. Your ego demands an immediate emotional reaction.",
+            "es": "Un contacto cercano ignora tu mensaje. Tu ego exige una reacción emocional inmediata."
           }
         },
         {
           "type": "analysis",
           "text": {
-            "en": "Fast decisions without thinking create mistakes.",
-            "es": "Las decisiones rápidas sin pensar crean errores."
+            "en": "Reactive minds are easily manipulated. Stability is built by choosing silence over impulsivity.",
+            "es": "Las mentes reactivas son fáciles de manipular. La estabilidad se construye eligiendo el silencio sobre la impulsividad."
           }
         },
         {
           "type": "tvid",
           "options": [
             {
-              "code": "IMPULSE",
-              "text": { "en": "Act immediately", "es": "Actuar sin pensar" },
-              "correct": false,
-              "reason": {
-                "en": "Impulse leads to bad results.",
-                "es": "El impulso lleva a malos resultados."
-              }
-            },
-            {
-              "code": "PAUSE",
-              "text": { "en": "Pause and think", "es": "Pausar y pensar" },
+              "code": "NEUTRAL",
+              "text": { "en": "Accept the silence and continue your mission", "es": "Aceptar el silencio y continuar tu misión" },
               "correct": true,
               "reason": {
-                "en": "Control creates better outcomes.",
-                "es": "El control mejora los resultados."
+                "en": "Your worth is not dictated by others' response times.",
+                "es": "Tu valor no está dictado por los tiempos de respuesta de otros."
               }
             },
             {
-              "code": "AVOID",
-              "text": { "en": "Avoid decision", "es": "Evitar decidir" },
+              "code": "CHASE",
+              "text": { "en": "Send a follow-up to demand an explanation", "es": "Enviar otro mensaje para exigir una explicación" },
               "correct": false,
               "reason": {
-                "en": "Not deciding is also losing.",
-                "es": "No decidir también es perder."
+                "en": "Chasing validation grants others power over your peace.",
+                "es": "Perseguir validación le otorga a otros poder sobre tu paz."
               }
             }
           ]
         },
         {
-          "type": "sound_event",
-          "success_fx": "mind_click",
-          "fail_fx": "error_buzz"
-        },
-        {
-          "type": "mini_math",
-          "question": {
-            "en": "Better decision = Time + ?",
-            "es": "Mejor decisión = Tiempo + ?"
-          },
-          "answers": [
-            { "text": { "en": "Thinking", "es": "Pensar" }, "correct": true },
-            { "text": { "en": "Speed", "es": "Velocidad" }, "correct": false },
-            { "text": { "en": "Fear", "es": "Miedo" }, "correct": false }
-          ]
-        },
-        {
           "type": "silence_challenge",
-          "duration_sec": 35,
+          "duration_sec": 30,
           "reward": {
-            "en": "Improves decision clarity",
-            "es": "Mejora claridad mental"
-          }
-        },
-        {
-          "type": "final_lesson",
-          "text": {
-            "en": "Control your decisions, control your life.",
-            "es": "Controla tus decisiones, controla tu vida."
+            "en": "Emotional shield activated. You are now unshakeable.",
+            "es": "Escudo emocional activado. Ahora eres inquebrantable."
           }
         }
       ]
     },
     {
       "id": 7,
-      "level": 3,
-      "theme": "SOCIAL INTELLIGENCE: THE LOOK",
+      "level": 7,
+      "theme": "THE FOCUS ARCHITECT: TASK ISOLATION",
+      "engagement": {
+        "dopamine_start": true,
+        "sound_fx": true,
+        "background_type": "minimal_grid"
+      },
       "blocks": [
         {
           "type": "story",
           "text": {
-            "en": "Someone looks at you in a challenging way in public.",
-            "es": "Alguien te mira de forma desafiante en público."
+            "en": "You have one critical task to finish, but notifications are flooding your field of vision.",
+            "es": "Tienes una tarea crítica que terminar, pero las notificaciones inundan tu campo de visión."
           }
         },
         {
           "type": "analysis",
           "text": {
-            "en": "Eye contact is a silent social language.",
-            "es": "El contacto visual es lenguaje social silencioso."
+            "en": "Multitasking is a myth for the disorganized. True power lies in singular, violent focus.",
+            "es": "La multitarea es un mito para los desorganizados. El verdadero poder reside en un enfoque único y violento."
           }
         },
         {
           "type": "tvid",
           "options": [
             {
-              "code": "AGGRESSIVE",
-              "text": { "en": "Stare aggressively", "es": "Mirar agresivamente" },
-              "correct": false,
-              "reason": {
-                "en": "Escalates conflict.",
-                "es": "Escala el conflicto."
-              }
-            },
-            {
-              "code": "CALM",
-              "text": { "en": "Look calm and neutral", "es": "Mirar calmado" },
+              "code": "ISOLATE",
+              "text": { "en": "Kill all notifications and finish the task", "es": "Eliminar todas las notificaciones y terminar la tarea" },
               "correct": true,
               "reason": {
-                "en": "Shows control and confidence.",
-                "es": "Muestra control y confianza."
+                "en": "Deep work is the only path to elite results.",
+                "es": "El trabajo profundo es el único camino hacia resultados de élite."
               }
             },
             {
-              "code": "AVOID",
-              "text": { "en": "Look away in fear", "es": "Bajar la mirada con miedo" },
+              "code": "GLANCE",
+              "text": { "en": "Check quickly to ensure nothing is urgent", "es": "Mirar rápido para asegurar que nada es urgente" },
               "correct": false,
               "reason": {
-                "en": "Shows insecurity.",
-                "es": "Muestra inseguridad."
+                "en": "A split second of distraction costs minutes of recovery.",
+                "es": "Un segundo de distracción cuesta minutos de recuperación."
               }
             }
           ]
         },
         {
-          "type": "sound_event",
-          "success_fx": "respect_ping",
-          "fail_fx": "danger_buzz"
-        },
-        {
           "type": "silence_challenge",
-          "duration_sec": 40,
+          "duration_sec": 45,
           "reward": {
-            "en": "Builds social confidence",
-            "es": "Construye confianza social"
-          }
-        },
-        {
-          "type": "final_lesson",
-          "text": {
-            "en": "Confidence is calm, not loud.",
-            "es": "La confianza es calma, no ruido."
+            "en": "Focus sharpened. You have reclaimed your cognitive energy.",
+            "es": "Enfoque agudizado. Has reclamado tu energía cognitiva."
           }
         }
       ]
     },
     {
       "id": 8,
-      "level": 3,
-      "theme": "MONEY MINDSET: VALUE VS PRICE",
+      "level": 8,
+      "theme": "THE BREATH COMMANDER: ANXIETY CONTROL",
+      "engagement": {
+        "dopamine_start": true,
+        "sound_fx": true,
+        "background_type": "rhythmic_pulse"
+      },
       "blocks": [
         {
           "type": "story",
           "text": {
-            "en": "You want something expensive, but it has no real value.",
-            "es": "Quieres algo caro, pero no tiene valor real."
+            "en": "A high-pressure deadline approaches. Your heart rate begins to accelerate out of control.",
+            "es": "Se acerca una fecha límite de alta presión. Tu ritmo cardíaco comienza a acelerarse sin control."
           }
         },
         {
           "type": "analysis",
           "text": {
-            "en": "Price is what you pay. Value is what you get.",
-            "es": "Precio es lo que pagas. Valor es lo que recibes."
+            "en": "Physiology dictates psychology. Command your breath to command your mind.",
+            "es": "La fisiología dicta la psicología. Comanda tu respiración para comandar tu mente."
           }
         },
         {
           "type": "tvid",
           "options": [
             {
-              "code": "BUY",
-              "text": { "en": "Buy for emotion", "es": "Comprar por emoción" },
+              "code": "CONTROL",
+              "text": { "en": "Execute box breathing to reset your nervous system", "es": "Ejecutar respiración táctica para reiniciar el sistema nervioso" },
+              "correct": true,
+              "reason": {
+                "en": "Oxygenating the brain under pressure ensures logical decisions.",
+                "es": "Oxigenar el cerebro bajo presión asegura decisiones lógicas."
+              }
+            },
+            {
+              "code": "RUSH",
+              "text": { "en": "Work faster to outrun the anxiety", "es": "Trabajar más rápido para superar la ansiedad" },
               "correct": false,
               "reason": {
-                "en": "Emotion wastes money.",
-                "es": "La emoción gasta dinero."
-              }
-            },
-            {
-              "code": "ANALYZE",
-              "text": { "en": "Think about value", "es": "Pensar en el valor" },
-              "correct": true,
-              "reason": {
-                "en": "Smart financial thinking.",
-                "es": "Pensamiento financiero inteligente."
-              }
-            },
-            {
-              "code": "WAIT",
-              "text": { "en": "Wait before buying", "es": "Esperar antes de comprar" },
-              "correct": true,
-              "reason": {
-                "en": "Patience saves money.",
-                "es": "La paciencia ahorra dinero."
+                "en": "Speed without control leads to fatal errors.",
+                "es": "La velocidad sin control conduce a errores fatales."
               }
             }
           ]
         },
         {
-          "type": "sound_event",
-          "success_fx": "cash_win",
-          "fail_fx": "loss_buzz"
-        },
-        {
-          "type": "mini_riddle",
-          "question": {
-            "en": "What is more important than price?",
-            "es": "¿Qué es más importante que el precio?"
-          },
-          "answers": [
-            { "text": { "en": "Value", "es": "Valor" }, "correct": true },
-            { "text": { "en": "Color", "es": "Color" }, "correct": false },
-            { "text": { "en": "Trend", "es": "Moda" }, "correct": false }
-          ]
-        },
-        {
           "type": "silence_challenge",
-          "duration_sec": 45,
+          "duration_sec": 60,
           "reward": {
-            "en": "Builds smart money thinking",
-            "es": "Construye inteligencia financiera"
-          }
-        },
-        {
-          "type": "final_lesson",
-          "text": {
-            "en": "Smart people buy value, not emotion.",
-            "es": "La gente inteligente compra valor, no emoción."
+            "en": "Biological mastery achieved. You are the calm in the storm.",
+            "es": "Maestría biológica alcanzada. Eres la calma en la tormenta."
           }
         }
       ]
     },
     {
       "id": 9,
-      "level": 3,
-      "theme": "STREET SMARTS: STRANGER SIGNALS",
+      "level": 9,
+      "theme": "THE TRUTH FILTER: NOISE VS. ESSENCE",
+      "engagement": {
+        "dopamine_start": true,
+        "sound_fx": true,
+        "background_type": "static_white"
+      },
       "blocks": [
         {
           "type": "story",
           "text": {
-            "en": "A stranger in a car calls you and says he knows your parents.",
-            "es": "Un extraño en un carro te llama y dice que conoce a tus padres."
+            "en": "You are surrounded by opinions about a controversial topic. The crowd is loud and certain.",
+            "es": "Estás rodeado de opiniones sobre un tema polémico. La multitud es ruidosa y está segura."
           }
         },
         {
           "type": "analysis",
           "text": {
-            "en": "Danger often uses trust words to confuse you.",
-            "es": "El peligro usa palabras de confianza para confundirte."
+            "en": "Consensus is often a comfortable lie. Seek the raw data hidden beneath the noise.",
+            "es": "El consenso es a menudo una mentira cómoda. Busca los datos crudos ocultos bajo el ruido."
           }
         },
         {
           "type": "tvid",
           "options": [
             {
-              "code": "GETIN",
-              "text": { "en": "Get in the car", "es": "Subir al carro" },
+              "code": "ANALYZE",
+              "text": { "en": "Question the source and look for the missing fact", "es": "Cuestionar la fuente y buscar el dato faltante" },
+              "correct": true,
+              "reason": {
+                "en": "Critical thinking is the only antidote to mass manipulation.",
+                "es": "El pensamiento crítico es el único antídoto contra la manipulación masiva."
+              }
+            },
+            {
+              "code": "ADAPT",
+              "text": { "en": "Agree with the majority to avoid conflict", "es": "Estar de acuerdo con la mayoría para evitar conflictos" },
               "correct": false,
               "reason": {
-                "en": "High risk, loss of safety.",
-                "es": "Alto riesgo, pérdida de seguridad."
-              }
-            },
-            {
-              "code": "RUNSAFE",
-              "text": { "en": "Go to public safe place", "es": "Ir a un lugar público seguro" },
-              "correct": true,
-              "reason": {
-                "en": "Safety first always wins.",
-                "es": "La seguridad siempre gana."
-              }
-            },
-            {
-              "code": "ASKHELP",
-              "text": { "en": "Ask nearby adult", "es": "Pedir ayuda a un adulto" },
-              "correct": true,
-              "reason": {
-                "en": "Smart protection strategy.",
-                "es": "Estrategia inteligente de protección."
+                "en": "Intellectual laziness turns a leader into a follower.",
+                "es": "La pereza intelectual convierte a un líder en un seguidor."
               }
             }
           ]
         },
         {
-          "type": "sound_event",
-          "success_fx": "alert_success",
-          "fail_fx": "warning_buzz"
-        },
-        {
           "type": "silence_challenge",
           "duration_sec": 40,
           "reward": {
-            "en": "Improves survival awareness",
-            "es": "Mejora la conciencia de supervivencia"
-          }
-        },
-        {
-          "type": "final_lesson",
-          "text": {
-            "en": "Safety is intelligence in action.",
-            "es": "La seguridad es inteligencia en acción."
+            "en": "Mental clarity restored. You see through the fog.",
+            "es": "Claridad mental restaurada. Ves a través de la niebla."
           }
         }
       ]
     },
     {
       "id": 10,
-      "level": 3,
-      "theme": "SOCIAL POWER: FRIEND PRESSURE",
+      "level": 10,
+      "theme": "THE DISCIPLINE ANCHOR: THE POWER OF NO",
+      "engagement": {
+        "dopamine_start": true,
+        "sound_fx": true,
+        "background_type": "iron_monolith"
+      },
       "blocks": [
         {
           "type": "story",
           "text": {
-            "en": "Friends push you to insult someone weaker to fit in.",
-            "es": "Tus amigos te presionan para insultar a alguien débil."
+            "en": "An attractive but distracting opportunity appears. It offers quick pleasure but stalls your long-term goal.",
+            "es": "Aparece una oportunidad atractiva pero distractora. Ofrece placer rápido pero detiene tu meta a largo plazo."
+          }
+        },
+        {
+          "type": "analysis",
+          "text": {
+            "en": "Discipline is choosing between what you want now and what you want most.",
+            "es": "La disciplina es elegir entre lo que quieres ahora y lo que más quieres."
           }
         },
         {
           "type": "tvid",
           "options": [
             {
-              "code": "FOLLOW",
-              "text": { "en": "Join them", "es": "Unirse" },
+              "code": "REJECT",
+              "text": { "en": "Say 'No' and protect your momentum", "es": "Decir 'No' y proteger tu impulso" },
+              "correct": true,
+              "reason": {
+                "en": "Every 'No' to a distraction is a 'Yes' to your legacy.",
+                "es": "Cada 'No' a una distracción es un 'Sí' a tu legado."
+              }
+            },
+            {
+              "code": "INDULGE",
+              "text": { "en": "Take it just this once as a reward", "es": "Tomarlo solo esta vez como recompensa" },
               "correct": false,
-              "reason": { "en": "Loses respect.", "es": "Pierdes respeto." }
-            },
-            {
-              "code": "STOP",
-              "text": { "en": "Refuse calmly", "es": "Negarse con calma" },
-              "correct": true,
-              "reason": { "en": "Builds character strength.", "es": "Construye carácter." }
-            },
-            {
-              "code": "LEAD",
-              "text": { "en": "Defend the person", "es": "Defender a la persona" },
-              "correct": true,
-              "reason": { "en": "True leadership.", "es": "Liderazgo real." }
-            }
-          ]
-        },
-        {
-          "type": "mini_riddle",
-          "question": {
-            "en": "What is stronger than popularity?",
-            "es": "¿Qué es más fuerte que la popularidad?"
-          },
-          "answers": [
-            { "text": { "en": "Respect", "es": "Respeto" }, "correct": true },
-            { "text": { "en": "Laughter", "es": "Risa" }, "correct": false },
-            { "text": { "en": "Fear", "es": "Miedo" }, "correct": false }
-          ]
-        },
-        {
-          "type": "silence_challenge",
-          "duration_sec": 35,
-          "reward": {
-            "en": "Builds moral leadership",
-            "es": "Construye liderazgo moral"
-          }
-        }
-      ]
-    },
-    {
-      "id": 11,
-      "level": 4,
-      "theme": "MONEY CHOICE: FAST OR SMART",
-      "blocks": [
-        {
-          "type": "story",
-          "text": {
-            "en": "You get $50. You can spend it fast or use it wisely.",
-            "es": "Recibes $50. Puedes gastarlo rápido o usarlo bien."
-          }
-        },
-        {
-          "type": "tvid",
-          "options": [
-            {
-              "code": "SPEND",
-              "text": { "en": "Spend everything", "es": "Gastar todo" },
-              "correct": false,
-              "reason": { "en": "Short-term mindset.", "es": "Mentalidad corta." }
-            },
-            {
-              "code": "INVEST",
-              "text": { "en": "Save or invest", "es": "Ahorrar o invertir" },
-              "correct": true,
-              "reason": { "en": "Builds future wealth.", "es": "Construye riqueza futura." }
-            },
-            {
-              "code": "PART",
-              "text": { "en": "Split money wisely", "es": "Dividir con inteligencia" },
-              "correct": true,
-              "reason": { "en": "Balance wins long term.", "es": "El equilibrio gana." }
-            }
-          ]
-        },
-        {
-          "type": "sound_event",
-          "success_fx": "cash_ping",
-          "fail_fx": "error_buzz"
-        },
-        {
-          "type": "silence_challenge",
-          "duration_sec": 45,
-          "reward": {
-            "en": "Improves financial discipline",
-            "es": "Mejora disciplina financiera"
-          }
-        }
-      ]
-    },
-    {
-      "id": 12,
-      "level": 4,
-      "theme": "TRUST TEST: LIES AND FRIENDSHIP",
-      "blocks": [
-        {
-          "type": "story",
-          "text": {
-            "en": "A friend lies about you to others.",
-            "es": "Un amigo miente sobre ti."
-          }
-        },
-        {
-          "type": "tvid",
-          "options": [
-            {
-              "code": "REVENGE",
-              "text": { "en": "Get revenge", "es": "Vengarte" },
-              "correct": false,
-              "reason": { "en": "Escalates conflict.", "es": "Escala el conflicto." }
-            },
-            {
-              "code": "TALK",
-              "text": { "en": "Talk calmly", "es": "Hablar con calma" },
-              "correct": true,
-              "reason": { "en": "Maturity wins.", "es": "La madurez gana." }
-            },
-            {
-              "code": "LEAVE",
-              "text": { "en": "Distance yourself", "es": "Alejarte" },
-              "correct": true,
-              "reason": { "en": "Protects your peace.", "es": "Protege tu paz." }
+              "reason": {
+                "en": "Exceptions are the cracks where failure begins.",
+                "es": "Las excepciones son las grietas donde comienza el fracaso."
+              }
             }
           ]
         },
@@ -861,236 +547,56 @@
           "type": "silence_challenge",
           "duration_sec": 50,
           "reward": {
-            "en": "Emotional control under betrayal",
-            "es": "Control emocional ante traición"
+            "en": "Willpower reinforced. You are the master of your destiny.",
+            "es": "Voluntad reforzada. Eres el dueño de tu destino."
           }
         }
       ]
     },
     {
-      "id": 13,
-      "level": 5,
-      "theme": "DISCIPLINE: NO EXCUSES",
+      "id": 11,
+      "level": 11,
+      "theme": "THE VOID MASTER: COMFORT IN EMPTINESS",
+      "engagement": {
+        "dopamine_start": true,
+        "sound_fx": true,
+        "background_type": "absolute_darkness"
+      },
       "blocks": [
         {
           "type": "story",
           "text": {
-            "en": "You are tired but have important responsibilities.",
-            "es": "Estás cansado pero tienes responsabilidades."
+            "en": "You are alone in a quiet room. The urge to check your phone for a hit of stimulation is overwhelming.",
+            "es": "Estás solo en una habitación tranquila. El impulso de revisar tu teléfono para obtener estímulo es abrumador."
+          }
+        },
+        {
+          "type": "analysis",
+          "text": {
+            "en": "All of humanity's problems stem from man's inability to sit quietly in a room alone.",
+            "es": "Todos los problemas de la humanidad provienen de la incapacidad del hombre para sentarse tranquilamente solo en una habitación."
           }
         },
         {
           "type": "tvid",
           "options": [
             {
-              "code": "QUIT",
-              "text": { "en": "Give up", "es": "Rendirse" },
+              "code": "ENDURE",
+              "text": { "en": "Face the boredom and observe your thoughts", "es": "Enfrentar el aburrimiento y observar tus pensamientos" },
+              "correct": true,
+              "reason": {
+                "en": "In the void of boredom, original ideas and self-awareness are born.",
+                "es": "En el vacío del aburrimiento nacen las ideas originales y la autoconciencia."
+              }
+            },
+            {
+              "code": "ESCAPE",
+              "text": { "en": "Find any noise or digital input to fill the gap", "es": "Buscar cualquier ruido o entrada digital para llenar el hueco" },
               "correct": false,
-              "reason": { "en": "Weak habit building.", "es": "Forma hábitos débiles." }
-            },
-            {
-              "code": "ACT",
-              "text": { "en": "Do it anyway", "es": "Hacerlo igual" },
-              "correct": true,
-              "reason": { "en": "Builds discipline.", "es": "Construye disciplina." }
-            },
-            {
-              "code": "DELAY",
-              "text": { "en": "Delay action", "es": "Posponer" },
-              "correct": false,
-              "reason": { "en": "Creates procrastination.", "es": "Crea procrastinación." }
-            }
-          ]
-        },
-        {
-          "type": "mini_riddle",
-          "question": {
-            "en": "What beats motivation?",
-            "es": "¿Qué vence la motivación?"
-          },
-          "answers": [
-            { "text": { "en": "Discipline", "es": "Disciplina" }, "correct": true },
-            { "text": { "en": "Excuses", "es": "Excusas" }, "correct": false },
-            { "text": { "en": "Sleep", "es": "Sueño" }, "correct": false }
-          ]
-        },
-        {
-          "type": "silence_challenge",
-          "duration_sec": 60,
-          "reward": {
-            "en": "Builds self-control system",
-            "es": "Construye autocontrol"
-          }
-        }
-      ]
-    },
-    {
-      "id": 14,
-      "level": 5,
-      "theme": "FEAR CONTROL: FIRST DECISION",
-      "blocks": [
-        {
-          "type": "story",
-          "text": {
-            "en": "You face something that makes you nervous.",
-            "es": "Te enfrentas a algo que te da miedo."
-          }
-        },
-        {
-          "type": "tvid",
-          "options": [
-            {
-              "code": "RUN",
-              "text": { "en": "Avoid it", "es": "Evitarlo" },
-              "correct": false,
-              "reason": { "en": "Fear grows.", "es": "El miedo crece." }
-            },
-            {
-              "code": "FACE",
-              "text": { "en": "Face it", "es": "Enfrentarlo" },
-              "correct": true,
-              "reason": { "en": "Fear disappears with action.", "es": "El miedo desaparece con acción." }
-            },
-            {
-              "code": "WAIT",
-              "text": { "en": "Wait for others", "es": "Esperar a otros" },
-              "correct": false,
-              "reason": { "en": "Loses independence.", "es": "Pierdes independencia." }
-            }
-          ]
-        },
-        {
-          "type": "silence_challenge",
-          "duration_sec": 70,
-          "reward": {
-            "en": "Builds courage under pressure",
-            "es": "Construye valentía"
-          }
-        }
-      ]
-    },
-    {
-      "id": 15,
-      "level": 6,
-      "theme": "LEADERSHIP: GROUP CONTROL",
-      "blocks": [
-        {
-          "type": "story",
-          "text": {
-            "en": "People start following your decisions.",
-            "es": "La gente empieza a seguir tus decisiones."
-          }
-        },
-        {
-          "type": "tvid",
-          "options": [
-            {
-              "code": "CONTROL",
-              "text": { "en": "Control others", "es": "Controlar a otros" },
-              "correct": false,
-              "reason": { "en": "Abuse of power.", "es": "Abuso de poder." }
-            },
-            {
-              "code": "GUIDE",
-              "text": { "en": "Guide others", "es": "Guiar a otros" },
-              "correct": true,
-              "reason": { "en": "True leadership.", "es": "Liderazgo real." }
-            },
-            {
-              "code": "TEACH",
-              "text": { "en": "Teach independence", "es": "Enseñar independencia" },
-              "correct": true,
-              "reason": { "en": "Creates strong leaders.", "es": "Crea líderes fuertes." }
-            }
-          ]
-        },
-        {
-          "type": "silence_challenge",
-          "duration_sec": 80,
-          "reward": {
-            "en": "Leadership responsibility awareness",
-            "es": "Conciencia de liderazgo"
-          }
-        }
-      ]
-    },
-    {
-      "id": 16,
-      "level": 7,
-      "theme": "IDENTITY: WHO YOU BECOME",
-      "blocks": [
-        {
-          "type": "story",
-          "text": {
-            "en": "You start changing depending on who is watching.",
-            "es": "Empiezas a cambiar según quién te mira."
-          }
-        },
-        {
-          "type": "tvid",
-          "options": [
-            {
-              "code": "FAKE",
-              "text": { "en": "Act different for approval", "es": "Actuar diferente por aprobación" },
-              "correct": false,
-              "reason": { "en": "Loses identity.", "es": "Pierdes identidad." }
-            },
-            {
-              "code": "REAL",
-              "text": { "en": "Stay authentic", "es": "Ser auténtico" },
-              "correct": true,
-              "reason": { "en": "Builds real self-worth.", "es": "Construye valor real." }
-            },
-            {
-              "code": "BALANCE",
-              "text": { "en": "Adapt but stay true", "es": "Adaptarte sin perderte" },
-              "correct": true,
-              "reason": { "en": "Smart identity control.", "es": "Control inteligente." }
-            }
-          ]
-        },
-        {
-          "type": "silence_challenge",
-          "duration_sec": 90,
-          "reward": {
-            "en": "Strengthens identity stability",
-            "es": "Fortalece identidad"
-          }
-        }
-      ]
-    },
-    {
-      "id": 17,
-      "level": 8,
-      "theme": "LEGACY: LONG TERM THINKING",
-      "blocks": [
-        {
-          "type": "story",
-          "text": {
-            "en": "You think about your future life and decisions.",
-            "es": "Piensas en tu futuro y tus decisiones."
-          }
-        },
-        {
-          "type": "tvid",
-          "options": [
-            {
-              "code": "SHORT",
-              "text": { "en": "Live only for now", "es": "Vivir solo el presente" },
-              "correct": false,
-              "reason": { "en": "Weak future planning.", "es": "Mal futuro." }
-            },
-            {
-              "code": "BUILD",
-              "text": { "en": "Build future daily", "es": "Construir futuro diario" },
-              "correct": true,
-              "reason": { "en": "Success mindset.", "es": "Mentalidad de éxito." }
-            },
-            {
-              "code": "TEACH",
-              "text": { "en": "Help others grow", "es": "Ayudar a otros" },
-              "correct": true,
-              "reason": { "en": "Legacy creation.", "es": "Creación de legado." }
+              "reason": {
+                "en": "Escaping yourself makes you a permanent stranger to your own potential.",
+                "es": "Escapar de ti mismo te convierte en un extraño permanente de tu propio potencial."
+              }
             }
           ]
         },
@@ -1098,44 +604,626 @@
           "type": "silence_challenge",
           "duration_sec": 120,
           "reward": {
-            "en": "Long-term vision development",
-            "es": "Visión a largo plazo"
+            "en": "Level 11 Complete. You have conquered the most difficult enemy: your own restlessness.",
+            "es": "Nivel 11 completado. Has conquistado al enemigo más difícil: tu propia inquietud."
           }
         }
       ]
     },
     {
-      "id": 18,
-      "level": 9,
-      "theme": "FINAL: MASTER CONTROL",
+      "id": 12,
+      "level": 12,
+      "theme": "THE INVISIBLE HAND: MONEY VS. VALUE",
+      "engagement": {
+        "dopamine_start": true,
+        "sound_fx": true,
+        "background_type": "trading_floor"
+      },
       "blocks": [
         {
           "type": "story",
           "text": {
-            "en": "You have completed the system. Now you control emotions, money, fear, and decisions.",
-            "es": "Has completado el sistema. Ahora controlas emociones, dinero, miedo y decisiones."
+            "en": "A new video game skin is trending. It costs $20, but you only have $30 saved for your real-world project.",
+            "es": "Un nuevo aspecto de videojuego es tendencia. Cuesta $20, pero solo tienes $30 ahorrados para tu proyecto real."
+          }
+        },
+        {
+          "type": "analysis",
+          "text": {
+            "en": "Pixels disappear when the server closes. Assets in the real world grow. Learn to invest, not just spend.",
+            "es": "Los píxeles desaparecen cuando el servidor cierra. Los activos en el mundo real crecen. Aprende a invertir, no solo a gastar."
           }
         },
         {
           "type": "tvid",
           "options": [
             {
-              "code": "REACT",
-              "text": { "en": "React without thinking", "es": "Reaccionar sin pensar" },
+              "code": "BUILD",
+              "text": { "en": "Keep the cash for a physical tool or asset", "es": "Guardar el dinero para una herramienta o activo físico" },
+              "correct": true,
+              "reason": {
+                "en": "Owning things that produce value makes you a master of the game of life.",
+                "es": "Poseer cosas que producen valor te hace un maestro del juego de la vida."
+              }
+            },
+            {
+              "code": "CONSUME",
+              "text": { "en": "Buy the skin to look cool for a week", "es": "Comprar el aspecto para verte bien por una semana" },
               "correct": false,
-              "reason": { "en": "Loses control.", "es": "Pierdes control." }
+              "reason": {
+                "en": "Virtual status is a trap designed to keep you broke and distracted.",
+                "es": "El estatus virtual es una trampa diseñada para mantenerte pobre y distraído."
+              }
+            }
+          ]
+        },
+        {
+          "type": "silence_challenge",
+          "duration_sec": 30,
+          "reward": {
+            "en": "Investor mindset unlocked. You value your effort over digital flashing lights.",
+            "es": "Mentalidad de inversor desbloqueada. Valoras tu esfuerzo por encima de luces digitales."
+          }
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "level": 13,
+      "theme": "THE BODY MECHANIC: POSTURE COMMAND",
+      "engagement": {
+        "dopamine_start": true,
+        "sound_fx": true,
+        "background_type": "biological_scan"
+      },
+      "blocks": [
+        {
+          "type": "story",
+          "text": {
+            "en": "You've been gaming for an hour. Your neck is bent, and your lungs are barely expanding.",
+            "es": "Has estado jugando por una hora. Tu cuello está doblado y tus pulmones apenas se expanden."
+          }
+        },
+        {
+          "type": "analysis",
+          "text": {
+            "en": "A collapsed body leads to a collapsed mind. High-performance leaders stand tall to think clearly.",
+            "es": "Un cuerpo colapsado lleva a una mente colapsada. Los líderes de alto rendimiento se yerguen para pensar con claridad."
+          }
+        },
+        {
+          "type": "tvid",
+          "options": [
+            {
+              "code": "RESET",
+              "text": { "en": "Stand up, stretch, and align your spine", "es": "Levantarse, estirarse y alinear la columna" },
+              "correct": true,
+              "reason": {
+                "en": "Oxygen flow to the brain increases IQ and reaction speed.",
+                "es": "El flujo de oxígeno al cerebro aumenta el coeficiente intelectual y la velocidad de reacción."
+              }
             },
             {
-              "code": "CONTROL",
-              "text": { "en": "Think before acting", "es": "Pensar antes de actuar" },
+              "code": "SLOUCH",
+              "text": { "en": "Keep playing; comfort is more important", "es": "Seguir jugando; la comodidad es más importante" },
+              "correct": false,
+              "reason": {
+                "en": "The 'gamer lean' weakens your core and drains your long-term energy.",
+                "es": "La postura encorvada debilita tu núcleo y agota tu energía a largo plazo."
+              }
+            }
+          ]
+        },
+        {
+          "type": "silence_challenge",
+          "duration_sec": 40,
+          "reward": {
+            "en": "Structure restored. You occupy your full space in the world.",
+            "es": "Estructura restaurada. Ocupas todo tu espacio en el mundo."
+          }
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "level": 14,
+      "theme": "THE DEBATE MASTER: LOGIC OVER LIKES",
+      "engagement": {
+        "dopamine_start": true,
+        "sound_fx": true,
+        "background_type": "ancient_forum"
+      },
+      "blocks": [
+        {
+          "type": "story",
+          "text": {
+            "en": "Someone says something wrong online just to make you angry and get a 'like'.",
+            "es": "Alguien dice algo incorrecto en línea solo para enojarte y obtener un 'me gusta'."
+          }
+        },
+        {
+          "type": "analysis",
+          "text": {
+            "en": "Anger is a remote control others use to move you. Real power is staying objective.",
+            "es": "La ira es un control remoto que otros usan para moverte. El poder real es mantenerse objetivo."
+          }
+        },
+        {
+          "type": "tvid",
+          "options": [
+            {
+              "code": "IGNORE",
+              "text": { "en": "Don't reply; your energy is too expensive", "es": "No responder; tu energía es demasiado cara" },
               "correct": true,
-              "reason": { "en": "Mastery achieved.", "es": "Maestría lograda." }
+              "reason": {
+                "en": "Winning an argument against a fool is a loss of your time.",
+                "es": "Ganar una discusión contra un necio es una pérdida de tu tiempo."
+              }
             },
             {
-              "code": "EVOLVE",
-              "text": { "en": "Keep learning always", "es": "Seguir aprendiendo siempre" },
+              "code": "ARGUE",
+              "text": { "en": "Write a long comment to prove them wrong", "es": "Escribir un comentario largo para demostrar que fallan" },
+              "correct": false,
+              "reason": {
+                "en": "You fell for the bait. You are now working for the algorithm's profit.",
+                "es": "Caíste en el cebo. Ahora estás trabajando para el beneficio del algoritmo."
+              }
+            }
+          ]
+        },
+        {
+          "type": "silence_challenge",
+          "duration_sec": 25,
+          "reward": {
+            "en": "Emotional independence achieved. You own your reactions.",
+            "es": "Independencia emocional alcanzada. Eres dueño de tus reacciones."
+          }
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "level": 15,
+      "theme": "THE MAKER'S PATH: CREATION OVER CONSUMPTION",
+      "engagement": {
+        "dopamine_start": true,
+        "sound_fx": true,
+        "background_type": "workshop_ambient"
+      },
+      "blocks": [
+        {
+          "type": "story",
+          "text": {
+            "en": "You have 30 minutes. You can watch 50 short clips or sketch a design for a new tool.",
+            "es": "Tienes 30 minutos. Puedes ver 50 videos cortos o dibujar el diseño de una herramienta nueva."
+          }
+        },
+        {
+          "type": "analysis",
+          "text": {
+            "en": "Consumers pay with their lives. Creators get paid in freedom and skills.",
+            "es": "Los consumidores pagan con sus vidas. A los creadores se les paga en libertad y habilidades."
+          }
+        },
+        {
+          "type": "tvid",
+          "options": [
+            {
+              "code": "CREATE",
+              "text": { "en": "Grab a pencil and build a concept", "es": "Tomar un lápiz y construir un concepto" },
               "correct": true,
-              "reason": { "en": "True evolution.", "es": "Evolución real." }
+              "reason": {
+                "en": "Building something from nothing is the ultimate human superpower.",
+                "es": "Construir algo de la nada es el superpoder humano definitivo."
+              }
+            },
+            {
+              "code": "WATCH",
+              "text": { "en": "Scroll through 'satisfying' videos", "es": "Navegar por videos 'satisfactorios'" },
+              "correct": false,
+              "reason": {
+                "en": "Watching others live is not the same as living yourself.",
+                "es": "Ver a otros vivir no es lo mismo que vivir tú mismo."
+              }
+            }
+          ]
+        },
+        {
+          "type": "silence_challenge",
+          "duration_sec": 60,
+          "reward": {
+            "en": "Architect status. You are now a producer, not a product.",
+            "es": "Estatus de arquitecto. Ahora eres un productor, no un producto."
+          }
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "level": 16,
+      "theme": "THE CHEF'S FUEL: NUTRIENT INTELLIGENCE",
+      "engagement": {
+        "dopamine_start": true,
+        "sound_fx": true,
+        "background_type": "natural_garden"
+      },
+      "blocks": [
+        {
+          "type": "story",
+          "text": {
+            "en": "You are hungry. There is a bag of ultra-processed chips and an apple on the table.",
+            "es": "Tienes hambre. Hay una bolsa de papas fritas ultraprocesadas y una manzana en la mesa."
+          }
+        },
+        {
+          "type": "analysis",
+          "text": {
+            "en": "Your brain is a bio-computer. Low-quality fuel causes system lag and emotional crashes.",
+            "es": "Tu cerebro es una bio-computadora. El combustible de baja calidad causa lag en el sistema y caídas emocionales."
+          }
+        },
+        {
+          "type": "tvid",
+          "options": [
+            {
+              "code": "FUEL",
+              "text": { "en": "Choose the natural fruit for sustained energy", "es": "Elegir la fruta natural para energía sostenida" },
+              "correct": true,
+              "reason": {
+                "en": "Real nutrients stabilize your focus and mood for the next mission.",
+                "es": "Los nutrientes reales estabilizan tu enfoque y ánimo para la siguiente misión."
+              }
+            },
+            {
+              "code": "CRASH",
+              "text": { "en": "Eat the chips for a 5-minute flavor spike", "es": "Comer las papas para un pico de sabor de 5 minutos" },
+              "correct": false,
+              "reason": {
+                "en": "Artificial chemicals confuse your hunger signals and tire your brain.",
+                "es": "Los químicos artificiales confunden tus señales de hambre y cansan tu cerebro."
+              }
+            }
+          ]
+        },
+        {
+          "type": "silence_challenge",
+          "duration_sec": 15,
+          "reward": {
+            "en": "Biology respected. Your hardware is running at peak efficiency.",
+            "es": "Biología respetada. Tu hardware funciona a máxima eficiencia."
+          }
+        }
+      ]
+    },
+    {
+      "id": 17,
+      "level": 17,
+      "theme": "THE SOCIAL DETECTIVE: READING FACES",
+      "engagement": {
+        "dopamine_start": true,
+        "sound_fx": true,
+        "background_type": "crowded_plaza"
+      },
+      "blocks": [
+        {
+          "type": "story",
+          "text": {
+            "en": "A friend is smiling, but their eyes look worried while they talk to you.",
+            "es": "Un amigo está sonriendo, pero sus ojos parecen preocupados mientras te habla."
+          }
+        },
+        {
+          "type": "analysis",
+          "text": {
+            "en": "Digital emojis are fake. Real human connection requires reading micro-expressions.",
+            "es": "Los emojis digitales son falsos. La conexión humana real requiere leer microexpresiones."
+          }
+        },
+        {
+          "type": "tvid",
+          "options": [
+            {
+              "code": "EMPATHIZE",
+              "text": { "en": "Ask: 'Is everything okay? You look a bit stressed.'", "es": "Preguntar: '¿Todo bien? Pareces algo estresado.'" },
+              "correct": true,
+              "reason": {
+                "en": "High Emotional Intelligence (EQ) is the secret weapon of great leaders.",
+                "es": "La alta Inteligencia Emocional (EQ) es el arma secreta de los grandes líderes."
+              }
+            },
+            {
+              "code": "DISMISS",
+              "text": { "en": "Ignore it; if they smile, they are fine", "es": "Ignorarlo; si sonríen, están bien" },
+              "correct": false,
+              "reason": {
+                "en": "Missing social cues makes you socially blind and easily fooled.",
+                "es": "Ignorar pistas sociales te vuelve ciego socialmente y fácil de engañar."
+              }
+            }
+          ]
+        },
+        {
+          "type": "silence_challenge",
+          "duration_sec": 50,
+          "reward": {
+            "en": "Connection depth increased. You see what others miss.",
+            "es": "Profundidad de conexión aumentada. Ves lo que otros pasan por alto."
+          }
+        }
+      ]
+    },
+    {
+      "id": 18,
+      "level": 18,
+      "theme": "THE PRIVACY GUARDIAN: DATA SOVEREIGNTY",
+      "engagement": {
+        "dopamine_start": true,
+        "sound_fx": true,
+        "background_type": "digital_fortress"
+      },
+      "blocks": [
+        {
+          "type": "story",
+          "text": {
+            "en": "A 'free' app asks for access to your microphone, location, and contacts to play a simple puzzle.",
+            "es": "Una app 'gratis' pide acceso a tu micrófono, ubicación y contactos para jugar un puzzle simple."
+          }
+        },
+        {
+          "type": "analysis",
+          "text": {
+            "en": "If you don't pay for the product, you ARE the product. Your privacy is your most valuable asset.",
+            "es": "Si no pagas por el producto, tú ERES el producto. Tu privacidad es tu activo más valioso."
+          }
+        },
+        {
+          "type": "tvid",
+          "options": [
+            {
+              "code": "PROTECT",
+              "text": { "en": "Deny permissions or delete the app", "es": "Denegar permisos o borrar la aplicación" },
+              "correct": true,
+              "reason": {
+                "en": "A master of technology controls his data; he doesn't give it away for cheap dopamine.",
+                "es": "Un maestro de la tecnología controla sus datos; no los regala por dopamina barata."
+              }
+            },
+            {
+              "code": "ACCEPT",
+              "text": { "en": "Accept all to start playing quickly", "es": "Aceptar todo para empezar a jugar rápido" },
+              "correct": false,
+              "reason": {
+                "en": "Trading your identity for a game is a losing deal. You become a target for manipulation.",
+                "es": "Cambiar tu identidad por un juego es un mal negocio. Te vuelves blanco de manipulación."
+              }
+            }
+          ]
+        },
+        {
+          "type": "silence_challenge",
+          "duration_sec": 45,
+          "reward": {
+            "en": "Digital fortress secured. You are no longer a target.",
+            "es": "Fortaleza digital asegurada. Ya no eres un objetivo."
+          }
+        }
+      ]
+    },
+    {
+      "id": 19,
+      "level": 19,
+      "theme": "THE TIME ALCHEMIST: THE 5-MINUTE RULE",
+      "engagement": {
+        "dopamine_start": true,
+        "sound_fx": true,
+        "background_type": "sand_clock"
+      },
+      "blocks": [
+        {
+          "type": "story",
+          "text": {
+            "en": "You have a boring task (like cleaning your room) that you've been avoiding for days.",
+            "es": "Tienes una tarea aburrida (como limpiar tu cuarto) que has estado evitando por días."
+          }
+        },
+        {
+          "type": "analysis",
+          "text": {
+            "en": "Procrastination is the thief of time. Starting is 90% of the battle. Use the 5-minute launch protocol.",
+            "es": "La procrastinación es el ladrón del tiempo. Empezar es el 90% de la batalla. Usa el protocolo de inicio de 5 minutos."
+          }
+        },
+        {
+          "type": "tvid",
+          "options": [
+            {
+              "code": "LAUNCH",
+              "text": { "en": "Commit to only 5 minutes of work right now", "es": "Comprometerse a solo 5 minutos de trabajo ahora mismo" },
+              "correct": true,
+              "reason": {
+                "en": "Momentum is a physical force. Once you start, the brain wants to finish.",
+                "es": "El impulso es una fuerza física. Una vez que empiezas, el cerebro quiere terminar."
+              }
+            },
+            {
+              "code": "WAIT",
+              "text": { "en": "Wait until you feel 'motivated' to do it", "es": "Esperar hasta sentirte 'motivado' para hacerlo" },
+              "correct": false,
+              "reason": {
+                "en": "Motivation is unreliable. Discipline is the only engine that works every day.",
+                "es": "La motivación no es confiable. La disciplina es el único motor que funciona cada día."
+              }
+            }
+          ]
+        },
+        {
+          "type": "silence_challenge",
+          "duration_sec": 30,
+          "reward": {
+            "en": "Time Alchemist status. You have turned laziness into action.",
+            "es": "Estatus de Alquimista del Tiempo. Has convertido la pereza en acción."
+          }
+        }
+      ]
+    },
+    {
+      "id": 20,
+      "level": 20,
+      "theme": "THE LOGISTICS GENIUS: CAUSE & EFFECT",
+      "engagement": {
+        "dopamine_start": true,
+        "sound_fx": true,
+        "background_type": "industrial_cog"
+      },
+      "blocks": [
+        {
+          "type": "story",
+          "text": {
+            "en": "You forgot your gym bag at home. Now you can't train and you feel frustrated with yourself.",
+            "es": "Olvidaste tu maleta del gimnasio en casa. Ahora no puedes entrenar y te sientes frustrado."
+          }
+        },
+        {
+          "type": "analysis",
+          "text": {
+            "en": "Success is the result of a system, not luck. A leader prepares the environment before the mission.",
+            "es": "El éxito es el resultado de un sistema, no de la suerte. Un líder prepara el entorno antes de la misión."
+          }
+        },
+        {
+          "type": "tvid",
+          "options": [
+            {
+              "code": "SYSTEMIZE",
+              "text": { "en": "Set a checklist by the door for tomorrow", "es": "Crear una lista de verificación junto a la puerta para mañana" },
+              "correct": true,
+              "reason": {
+                "en": "Smart systems prevent human errors. Control the variables to control the outcome.",
+                "es": "Los sistemas inteligentes evitan errores humanos. Controla las variables para controlar el resultado."
+              }
+            },
+            {
+              "code": "BLAME",
+              "text": { "en": "Blame the morning rush or bad luck", "es": "Culpar a las prisas de la mañana o a la mala suerte" },
+              "correct": false,
+              "reason": {
+                "en": "Victims blame circumstances. Masters take responsibility and adjust the system.",
+                "es": "Las víctimas culpan a las circunstancias. Los maestros asumen responsabilidad y ajustan el sistema."
+              }
+            }
+          ]
+        },
+        {
+          "type": "silence_challenge",
+          "duration_sec": 40,
+          "reward": {
+            "en": "Systemic vision unlocked. You solve problems before they happen.",
+            "es": "Visión sistémica desbloqueada. Resuelves problemas antes de que ocurran."
+          }
+        }
+      ]
+    },
+    {
+      "id": 21,
+      "level": 21,
+      "theme": "THE DEEP COGNITION: NO BORDER THINKING",
+      "engagement": {
+        "dopamine_start": true,
+        "sound_fx": true,
+        "background_type": "global_map"
+      },
+      "blocks": [
+        {
+          "type": "story",
+          "text": {
+            "en": "A problem seems impossible in your language, but you realize there are solutions in another culture.",
+            "es": "Un problema parece imposible en tu idioma, pero te das cuenta de que hay soluciones en otra cultura."
+          }
+        },
+        {
+          "type": "analysis",
+          "text": {
+            "en": "The limits of your language are the limits of your world. Polyglots see more dimensions of reality.",
+            "es": "Los límites de tu lenguaje son los límites de tu mundo. Los políglotas ven más dimensiones de la realidad."
+          }
+        },
+        {
+          "type": "tvid",
+          "options": [
+            {
+              "code": "EXPAND",
+              "text": { "en": "Learn a technical term or phrase in a new language", "es": "Aprender un término técnico o frase en un nuevo idioma" },
+              "correct": true,
+              "reason": {
+                "en": "Each language is a new operating system for your brain.",
+                "es": "Cada idioma es un nuevo sistema operativo para tu cerebro."
+              }
+            },
+            {
+              "code": "LIMIT",
+              "text": { "en": "Stay only with what you already know", "es": "Quedarse solo con lo que ya sabes" },
+              "correct": false,
+              "reason": {
+                "en": "Monolingual thinking restricts your capacity to innovate globally.",
+                "es": "El pensamiento monolingüe restringe tu capacidad de innovar globalmente."
+              }
+            }
+          ]
+        },
+        {
+          "type": "silence_challenge",
+          "duration_sec": 55,
+          "reward": {
+            "en": "Universal mind activated. Your world just got bigger.",
+            "es": "Mente universal activada. Tu mundo acaba de hacerse más grande."
+          }
+        }
+      ]
+    },
+    {
+      "id": 22,
+      "level": 22,
+      "theme": "THE ARCHITECT OF LEGACY: FINAL ASCENSION",
+      "engagement": {
+        "dopamine_start": true,
+        "sound_fx": true,
+        "background_type": "zen_summit"
+      },
+      "blocks": [
+        {
+          "type": "story",
+          "text": {
+            "en": "You have reached the peak of this training. The screen is calling, but the real world is waiting for your leadership.",
+            "es": "Has llegado a la cima de este entrenamiento. La pantalla llama, pero el mundo real espera tu liderazgo."
+          }
+        },
+        {
+          "type": "analysis",
+          "text": {
+            "en": "This was never a game. It was a recalibration. You are now the master of your own attention.",
+            "es": "Esto nunca fue un juego. Fue una recalibración. Ahora eres el dueño de tu propia atención."
+          }
+        },
+        {
+          "type": "tvid",
+          "options": [
+            {
+              "code": "ASCEND",
+              "text": { "en": "Turn off the device and go build something real", "es": "Apagar el dispositivo e ir a construir algo real" },
+              "correct": true,
+              "reason": {
+                "en": "The ultimate victory is being able to leave the simulation at will.",
+                "es": "La victoria definitiva es ser capaz de dejar la simulación a voluntad."
+              }
+            },
+            {
+              "code": "REPEAT",
+              "text": { "en": "Restart to stay in the comfort of the app", "es": "Reiniciar para quedarse en la comodidad de la app" },
+              "correct": false,
+              "reason": {
+                "en": "Knowledge without application is just noise. Go execute.",
+                "es": "El conocimiento sin aplicación es solo ruido. Ve a ejecutar."
+              }
             }
           ]
         },
@@ -1143,15 +1231,8 @@
           "type": "silence_challenge",
           "duration_sec": 180,
           "reward": {
-            "en": "Full cognitive and emotional mastery",
-            "es": "Maestría emocional completa"
-          }
-        },
-        {
-          "type": "final_message",
-          "text": {
-            "en": "You are now in control of your life.",
-            "es": "Ahora tienes control de tu vida."
+            "en": "GRAND MASTER OF KAMIZEN. Your journey outside begins now.",
+            "es": "GRAN MAESTRO DE KAMIZEN. Tu viaje afuera comienza ahora."
           }
         }
       ]
