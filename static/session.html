@@ -1,66 +1,88 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>KAMIZEN | CORE FOCUS SYSTEM</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KAMIZEN | CORE SESSION</title>
 
 <style>
 :root{
-  --neon:#00f2ff;
   --bg:#000;
-  --panel:rgba(0,15,30,0.92);
+  --neon:#00f2ff;
   --good:#00ff88;
   --bad:#ff0044;
+  --warn:#ffcc00;
+  --panel:rgba(0,20,40,0.9);
 }
 
 body{
   margin:0;
   background:var(--bg);
-  font-family:Arial;
   color:var(--neon);
+  font-family:Arial;
   overflow:hidden;
 }
 
-#app{
+/* ================= HEADER ================= */
+#top{
+  position:absolute;
+  top:10px;
   width:100%;
-  height:100vh;
   display:flex;
-  align-items:center;
-  justify-content:center;
-  flex-direction:column;
-  position:relative;
+  justify-content:space-between;
+  padding:0 10px;
+  font-size:12px;
 }
 
-/* BREATH CORE */
-#circle{
-  width:80px;
-  height:80px;
+/* ================= SEMAPHORE ================= */
+#semaphore{
+  display:flex;
+  gap:6px;
+}
+
+.light{
+  width:12px;
+  height:12px;
   border-radius:50%;
-  background:rgba(0,242,255,0.2);
-  box-shadow:0 0 25px var(--neon);
-  transition:2.5s ease-in-out;
+  background:#333;
 }
 
-/* MESSAGE */
+.good{ background:var(--good); }
+.warn{ background:var(--warn); }
+.bad{ background:var(--bad); }
+
+/* ================= CORE ================= */
+#core{
+  position:absolute;
+  top:35%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  font-size:18px;
+  text-align:center;
+  width:80%;
+}
+
+/* ================= MESSAGE ================= */
 #message{
   position:absolute;
-  bottom:170px;
+  bottom:180px;
+  left:50%;
+  transform:translateX(-50%);
   width:85%;
-  max-width:720px;
-  padding:15px;
+  min-height:100px;
   background:var(--panel);
   border:1px solid var(--neon);
+  padding:15px;
   text-align:center;
-  min-height:120px;
 }
 
-/* OPTIONS */
+/* ================= OPTIONS ================= */
 #options{
   position:absolute;
-  bottom:60px;
+  bottom:70px;
   width:85%;
-  max-width:720px;
+  left:50%;
+  transform:translateX(-50%);
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:10px;
@@ -71,9 +93,7 @@ button{
   background:transparent;
   border:1px solid var(--neon);
   color:var(--neon);
-  font-weight:bold;
   cursor:pointer;
-  transition:0.2s;
 }
 
 button:hover{
@@ -81,65 +101,62 @@ button:hover{
   color:#000;
 }
 
-#controls{
-  position:absolute;
-  top:10px;
-  width:100%;
-  display:flex;
-  justify-content:space-between;
-  padding:0 10px;
-  font-size:12px;
-}
-
-/* SILENCE MODE */
-#silence{
+/* ================= STATUS ================= */
+#status{
   position:absolute;
   top:50px;
+  width:100%;
+  text-align:center;
   font-size:12px;
-  opacity:0.7;
+  opacity:0.8;
+}
+
+/* ================= BREATH VISUAL ================= */
+#breath{
+  position:absolute;
+  top:20%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  width:60px;
+  height:60px;
+  border-radius:50%;
+  background:rgba(0,242,255,0.15);
+  transition:1.5s ease;
 }
 </style>
 </head>
 
 <body>
 
-<div id="app">
-
-  <div id="controls">
-    <button onclick="restart()">RESTART</button>
-    <button onclick="skip()">SKIP</button>
+<div id="top">
+  <div id="semaphore">
+    <div class="light" id="green"></div>
+    <div class="light" id="yellow"></div>
+    <div class="light" id="red"></div>
   </div>
 
-  <div id="silence">SILENCE: <span id="silenceLevel">20</span>s</div>
-
-  <div id="circle"></div>
-
-  <div id="message" onclick="start()">TOUCH TO START</div>
-
-  <div id="options"></div>
-
+  <div>
+    <button onclick="restart()">RESET</button>
+  </div>
 </div>
+
+<div id="status">READY</div>
+
+<div id="breath"></div>
+
+<div id="core"></div>
+
+<div id="message" onclick="start()">TOUCH TO START</div>
+
+<div id="options"></div>
 
 <script>
 
-/* =========================
-   CORE STATE (SIMPLIFIED)
-========================= */
 let session_id = null;
-let lang = "es";
+let lang = "en";
 let loading = false;
-let current = null;
 
-/* INTERNAL (HIDDEN INTELLIGENCE) */
-let metrics = {
-  stress: 0,
-  attention: 50,
-  emotion: 50
-};
-
-/* =========================
-   AUDIO ENGINE (LIGHT)
-========================= */
+/* ================= AUDIO (EVENT ONLY) ================= */
 const audio = new (window.AudioContext || window.webkitAudioContext)();
 
 function sound(type){
@@ -149,89 +166,47 @@ function sound(type){
   o.connect(g);
   g.connect(audio.destination);
 
-  if(type==="ok") o.frequency.value = 520;
-  if(type==="bad") o.frequency.value = 140;
-  if(type==="click") o.frequency.value = 300;
+  if(type==="ok") o.frequency.value=520;
+  if(type==="fail") o.frequency.value=140;
+  if(type==="click") o.frequency.value=300;
 
-  g.gain.value = 0.12;
-
+  g.gain.value = 0.15;
   o.start();
   o.stop(audio.currentTime + 0.2);
 }
 
-/* =========================
-   MUSIC LOOP (STABLE)
-========================= */
-let musicOsc;
+/* ================= SEMAPHORE ================= */
+function setLight(state){
+  document.getElementById("green").classList.remove("good");
+  document.getElementById("yellow").classList.remove("warn");
+  document.getElementById("red").classList.remove("bad");
 
-function startMusic(){
-  if(musicOsc) return;
-
-  musicOsc = audio.createOscillator();
-  const gain = audio.createGain();
-
-  musicOsc.type = "sine";
-  musicOsc.frequency.value = 220;
-
-  gain.gain.value = 0.03;
-
-  musicOsc.connect(gain);
-  gain.connect(audio.destination);
-
-  musicOsc.start();
+  if(state==="good") document.getElementById("green").classList.add("good");
+  if(state==="warn") document.getElementById("yellow").classList.add("warn");
+  if(state==="bad") document.getElementById("red").classList.add("bad");
 }
 
-/* =========================
-   BREATH SYSTEM
-========================= */
-let breathInterval;
-
-function breathe(){
-  const c = document.getElementById("circle");
-
-  clearInterval(breathInterval);
-
-  let grow = true;
-
-  breathInterval = setInterval(()=>{
-
-    c.style.transform = grow ? "scale(1.8)" : "scale(1)";
-    c.style.opacity = grow ? 0.85 : 0.4;
-
-    grow = !grow;
-
-  }, 2500);
-}
-
-function stopBreath(){
-  clearInterval(breathInterval);
-}
-
-/* =========================
-   START SESSION
-========================= */
+/* ================= START ================= */
 async function start(){
-
-  if(loading) return;
-  loading = true;
 
   if(audio.state==="suspended") await audio.resume();
 
-  startMusic();
+  sound("click");
 
-  const res = await fetch("/start",{method:"POST"});
-  const data = await res.json();
+  const r = await fetch("/start",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({})
+  });
 
-  session_id = data.session_id;
+  const d = await r.json();
 
-  render(data);
+  session_id = d.session_id;
 
-  loading = false;
+  render(d);
 }
 
-/* =========================
-   SEND ACTION (LOCKED FLOW)
-========================= */
+/* ================= SEND ================= */
 async function send(code){
 
   if(loading) return;
@@ -239,7 +214,7 @@ async function send(code){
 
   sound("click");
 
-  const res = await fetch("/judge",{
+  const r = await fetch("/judge",{
     method:"POST",
     headers:{"Content-Type":"application/json"},
     body:JSON.stringify({
@@ -248,114 +223,112 @@ async function send(code){
     })
   });
 
-  const data = await res.json();
+  const d = await r.json();
 
-  updateMetrics(data);
-
-  render(data);
+  render(d);
 
   loading = false;
 }
 
-/* =========================
-   METRICS (INTERNAL ONLY)
-========================= */
-function updateMetrics(data){
+/* ================= SAFE TEXT ================= */
+function getText(obj){
+  if(!obj) return "...";
+  return obj.en || obj.es || "...";
+}
+
+/* ================= RENDER ================= */
+function render(data){
 
   if(!data) return;
 
-  if(data.correct){
-    metrics.attention += 3;
-    metrics.emotion += 2;
-    metrics.stress -= 2;
-  }else{
-    metrics.attention -= 2;
-    metrics.emotion -= 2;
-    metrics.stress += 3;
+  const story = data.story;
+
+  if(!story){
+    document.getElementById("message").innerText = "LOADING...";
+    return;
   }
 
-  metrics.attention = clamp(metrics.attention);
-  metrics.emotion = clamp(metrics.emotion);
-  metrics.stress = clamp(metrics.stress);
-}
+  document.getElementById("message").innerText =
+    getText(story.text);
 
-function clamp(v){
-  return Math.max(0, Math.min(100, v));
-}
+  document.getElementById("options").innerHTML = "";
 
-/* =========================
-   RENDER ENGINE (CLEAN FLOW)
-========================= */
-function render(data){
+  /* ================= SEMAPHORE LOGIC ================= */
+  setLight("good");
 
-  if(!data || !data.story) return;
+  if(data.metrics){
+    if(data.metrics.stress > 70) setLight("bad");
+    else if(data.metrics.attention < 40) setLight("warn");
+    else setLight("good");
+  }
 
-  current = data.story;
-
-  const msg = document.getElementById("message");
-  const opt = document.getElementById("options");
-
-  msg.innerText =
-    current.text?.es ||
-    current.text?.en ||
-    "..."
-
-  opt.innerHTML = "";
-
-  /* BREATH CONTROL */
-  if(current.type === "breathing"){
+  /* ================= BREATH ================= */
+  if(story.type === "breathing"){
     breathe();
-  }else{
+  } else {
     stopBreath();
   }
 
-  /* SILENCE */
-  if(current.type === "silence_challenge"){
-    document.getElementById("silenceLevel").innerText =
-      current.duration_sec || 20;
-  }
+  /* ================= OPTIONS ================= */
+  let opts = story.options || [];
 
-  /* OPTIONS */
-  let options = current.options || [];
-
-  if(options.length === 0 && current.type !== "silence_challenge"){
-    options = [{
-      code:"NEXT",
-      text:{es:"CONTINUAR",en:"CONTINUE"}
+  if(opts.length === 0){
+    opts = [{
+      code:"CONTINUE",
+      text:{en:"CONTINUE",es:"CONTINUAR"}
     }];
   }
 
-  options.forEach(o=>{
+  opts.forEach(o=>{
     const b = document.createElement("button");
-
-    b.innerText = o.text?.[lang] || "OK";
-
-    b.onclick = ()=> send(o.code);
-
-    opt.appendChild(b);
+    b.innerText = getText(o.text);
+    b.onclick = ()=>send(o.code);
+    document.getElementById("options").appendChild(b);
   });
+
+  /* ================= STATUS ================= */
+  document.getElementById("status").innerText =
+    data.coach || "ACTIVE";
 
   sound("ok");
 }
 
-/* =========================
-   CONTROLS
-========================= */
-function skip(){
-  send("NEXT");
+/* ================= BREATH CONTROL ================= */
+let breathInterval;
+
+function breathe(){
+  const b = document.getElementById("breath");
+
+  clearInterval(breathInterval);
+
+  let grow = true;
+
+  breathInterval = setInterval(()=>{
+    b.style.transform = grow
+      ? "translate(-50%,-50%) scale(2)"
+      : "translate(-50%,-50%) scale(1)";
+
+    b.style.opacity = grow ? 0.7 : 0.3;
+    grow = !grow;
+
+  },1500);
 }
 
+function stopBreath(){
+  clearInterval(breathInterval);
+}
+
+/* ================= RESET ================= */
 function restart(){
+  sound("fail");
   location.reload();
 }
 
-/* =========================
-   AUTO BACKGROUND STABILITY
-========================= */
+/* ================= AUTO SAFE LOOP ================= */
 setInterval(()=>{
-  const c = document.getElementById("circle");
-  c.style.opacity = 0.4 + Math.random()*0.3;
-}, 3000);
+  const b = document.getElementById("breath");
+  b.style.opacity = 0.3 + Math.random()*0.3;
+},3000);
 
 </script>
 
