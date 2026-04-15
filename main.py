@@ -36,6 +36,8 @@ sessions = {}
 # ===============================
 
 def get_first_block(mission):
+    if not mission or "blocks" not in mission:
+        return {"type": "end", "text": {"es": "ERROR", "en": "ERROR"}}
     return mission["blocks"][0]
 
 
@@ -43,12 +45,14 @@ def get_next_block(session):
     m = session["mission_index"]
     b = session["block_index"]
 
+    # FIN GLOBAL
     if m >= len(MISSIONS):
         return {"type": "end", "text": {"es": "FIN", "en": "END"}}
 
     mission = MISSIONS[m]
-    blocks = mission["blocks"]
+    blocks = mission.get("blocks", [])
 
+    # SIGUIENTE MISION
     if b >= len(blocks):
         session["mission_index"] += 1
         session["block_index"] = 0
@@ -66,21 +70,24 @@ def get_next_block(session):
 
 def format_block(block):
     """
-    NORMALIZA TODO PARA FRONTEND session.html
+    NORMALIZACIÓN TOTAL PARA FRONTEND
     """
 
+    if not block:
+        return {"type": "error", "text_es": "Bloque vacío", "text_en": ""}
+
     out = {
-        "type": block.get("type"),
+        "type": block.get("type", "story"),
         "text_es": "",
         "text_en": ""
     }
 
-    # TEXT GENERAL
+    # TEXT NORMAL
     if "text" in block:
         out["text_es"] = block["text"].get("es", "")
         out["text_en"] = block["text"].get("en", "")
 
-    # GUIDE (breath / riso)
+    # GUIDE (breathing / riso)
     if "guide" in block:
         out["text_es"] = block["guide"].get("es", out["text_es"])
         out["text_en"] = block["guide"].get("en", out["text_en"])
@@ -95,8 +102,8 @@ def format_block(block):
         out["options"] = []
         for opt in block["options"]:
             out["options"].append({
-                "code": opt.get("code"),
-                "text": opt.get("text"),
+                "code": opt.get("code", "NEXT"),
+                "text": opt.get("text", {}),
                 "correct": opt.get("correct", False)
             })
 
@@ -116,14 +123,28 @@ def home():
     return FileResponse("static/session.html")
 
 
+# ===============================
+# START SESSION (FIXED)
+# ===============================
 @app.post("/start")
-def start():
+def start(data: dict = None):
+
     session_id = str(uuid.uuid4())
 
     sessions[session_id] = {
         "mission_index": 0,
         "block_index": 0
     }
+
+    if not MISSIONS:
+        return {
+            "session_id": session_id,
+            "story": {
+                "type": "error",
+                "text_es": "No hay misiones",
+                "text_en": "No missions loaded"
+            }
+        }
 
     first = get_first_block(MISSIONS[0])
 
@@ -133,14 +154,28 @@ def start():
     }
 
 
+# ===============================
+# JUDGE (FIXED SAFE)
+# ===============================
 @app.post("/judge")
 def judge(data: dict):
+
     session_id = data.get("session_id")
+    decision = data.get("decision")
 
     session = sessions.get(session_id)
-    if not session:
-        return {"story": {"type": "error", "text_es": "Sesión expirada"}}
 
+    # 🔥 FIX CLAVE: NO matar sesión si existe error mínimo
+    if not session:
+        return {
+            "story": {
+                "type": "error",
+                "text_es": "Sesión expirada. Reinicia.",
+                "text_en": "Session expired. Restart."
+            }
+        }
+
+    # avanzar misión SIEMPRE
     next_block = get_next_block(session)
 
     return {
@@ -148,8 +183,14 @@ def judge(data: dict):
     }
 
 
+# ===============================
+# RELOAD JSON
+# ===============================
 @app.get("/reload")
 def reload():
     global MISSIONS
     MISSIONS = load_content()
-    return {"status": "ok", "missions": len(MISSIONS)}
+    return {
+        "status": "ok",
+        "missions": len(MISSIONS)
+    }
