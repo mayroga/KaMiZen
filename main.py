@@ -53,7 +53,7 @@ def load_game():
 load_game()
 
 # =========================
-# UTILS
+# UTILITIES
 # =========================
 def get_mission(mid):
     return next((m for m in GAME_DATA if m.get("id") == mid), None)
@@ -77,42 +77,37 @@ def prev_mission(current_id):
     return MISSION_IDS[max(0, idx - 1)]
 
 # =========================
-# COACH SYSTEM (VARIADO, NO REPETITIVO)
+# COACH SYSTEM (VARIADO + NO REPETITIVO)
 # =========================
-COACH_LINES = {
+COACH = {
     "start": [
-        "Inicia el enfoque.",
-        "Atención activa.",
-        "Entrando en modo entrenamiento.",
-        "Respira y observa."
+        "Enfoque activo.",
+        "Respira y observa.",
+        "Iniciando entrenamiento mental.",
+        "Atención total."
     ],
     "correct": [
-        "Bien hecho, sigues avanzando.",
-        "Correcto, mantén el ritmo.",
-        "Buen control mental.",
+        "Bien hecho, sigue así.",
+        "Correcto, buen control.",
+        "Excelente decisión.",
         "Precisión lograda."
     ],
     "wrong": [
-        "Observa el error, aprende.",
-        "Reajusta tu atención.",
-        "No es fallo, es corrección.",
-        "Vuelve al foco."
+        "Error, ajusta tu enfoque.",
+        "Observa y corrige.",
+        "No es fallo, es aprendizaje.",
+        "Vuelve al centro."
     ],
     "breathing": [
-        "Inhala lento...",
-        "Exhala suavemente...",
+        "Inhala lentamente...",
+        "Exhala con calma...",
         "Siente tu respiración...",
-        "Control corporal activo..."
-    ],
-    "level_up": [
-        "Subiste de nivel mental.",
-        "Mayor control logrado.",
-        "Evolución cognitiva activa."
+        "Control del cuerpo..."
     ]
 }
 
 def coach(mode):
-    return random.choice(COACH_LINES.get(mode, COACH_LINES["start"]))
+    return random.choice(COACH.get(mode, COACH["start"]))
 
 # =========================
 # ROOT
@@ -137,8 +132,8 @@ async def start(req: Request):
         "errors": 0,
         "streak": 0,
         "visited": [],
-        "time_limit": 0,
-        "session_steps": 0
+        "steps": 0,
+        "session_time": 0
     }
 
     return {
@@ -159,15 +154,13 @@ async def get_mission_route(req: Request):
     if not s:
         return JSONResponse({"error": "Invalid session"}, 401)
 
-    mission = get_mission(s["mission_id"])
-
     return {
-        "mission": mission,
+        "mission": get_mission(s["mission_id"]),
         "coach": coach("start")
     }
 
 # =========================
-# CORE JUDGE (ORCHESTRATED LOGIC FIXED)
+# JUDGE (ORQUESTADO)
 # =========================
 @app.post("/judge")
 async def judge(req: Request):
@@ -187,15 +180,15 @@ async def judge(req: Request):
     tvid = get_tvid(mission)
 
     # =========================
-    # IF NO TVID → PURE FLOW
+    # SIN TVID → FLUJO NATURAL
     # =========================
     if not tvid:
         s["visited"].append(s["mission_id"])
         s["mission_id"] = next_mission(s["mission_id"], s["visited"])
 
         return {
-            "correct": True,
             "auto": True,
+            "correct": True,
             "xp": s["xp"],
             "next_mission": get_mission(s["mission_id"]),
             "coach": coach("start")
@@ -213,32 +206,31 @@ async def judge(req: Request):
     correct = option.get("correct", False)
 
     # =========================
-    # BALANCED REWARD SYSTEM (NO WRONG LOGIC)
+    # XP SYSTEM BALANCEADO
     # =========================
     if correct:
-        s["xp"] += 10 + (s["streak"] * 2)
+        s["xp"] += 12 + (s["streak"] * 2)
         s["streak"] += 1
         s["errors"] = 0
         coach_msg = coach("correct")
     else:
-        s["xp"] = max(0, s["xp"] - 4)
+        s["xp"] = max(0, s["xp"] - 5)
         s["errors"] += 1
         s["streak"] = 0
         coach_msg = coach("wrong")
 
     # =========================
-    # BREATHING TRIGGER (ONLY WHEN NEEDED)
+    # BREATHING DETECTION
     # =========================
-    breathing = False
-    if "breathing" in [b.get("type") for b in mission.get("blocks", [])]:
-        breathing = True
+    breathing = any(b.get("type") in ["breathing", "tvid_exercise", "silence"]
+                    for b in mission.get("blocks", []))
 
     # =========================
-    # SESSION FLOW CONTROL (NOT LINEAR)
+    # FLOW CONTROL (NO RAPIDEZ)
     # =========================
-    s["session_steps"] += 1
+    s["steps"] += 1
 
-    if s["session_steps"] % 6 == 0:
+    if s["steps"] % 5 == 0:
         s["mission_id"] = next_mission(s["mission_id"], s["visited"])
     else:
         s["visited"].append(s["mission_id"])
@@ -257,7 +249,7 @@ async def judge(req: Request):
     }
 
 # =========================
-# FORCE NAVIGATION (CONTROLLED)
+# FORCE NAVIGATION
 # =========================
 @app.post("/force_next")
 async def force_next(req: Request):
@@ -268,11 +260,12 @@ async def force_next(req: Request):
     if not s:
         return JSONResponse({"error": "Invalid session"}, 401)
 
-    s["xp"] = max(0, s["xp"] - 6)
+    s["xp"] = max(0, s["xp"] - 8)
+    s["visited"].append(s["mission_id"])
     s["mission_id"] = next_mission(s["mission_id"], s["visited"])
 
     return {
-        "message": "Cambio de escena aplicado",
+        "message": "Cambio de escena",
         "xp": s["xp"],
         "mission": get_mission(s["mission_id"])
     }
@@ -289,13 +282,13 @@ async def force_back(req: Request):
     prev = prev_mission(s["mission_id"])
 
     if not prev:
-        return {"message": "No hay retroceso posible"}
+        return {"message": "No retroceso disponible"}
 
-    s["xp"] = max(0, s["xp"] - 4)
+    s["xp"] = max(0, s["xp"] - 5)
     s["mission_id"] = prev
 
     return {
-        "message": "Retroceso aplicado con costo",
+        "message": "Retroceso aplicado",
         "xp": s["xp"],
         "mission": get_mission(prev)
     }
