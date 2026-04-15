@@ -42,15 +42,9 @@ ranking = {}
 # =========================
 # HELPERS
 # =========================
-def get_mission(index):
-    if 0 <= index < len(MISSIONS):
-        return MISSIONS[index]
-    return None
-
-
-def get_first_block(mission):
-    if mission and mission.get("blocks"):
-        return mission["blocks"][0]
+def get_mission(i):
+    if 0 <= i < len(MISSIONS):
+        return MISSIONS[i]
     return None
 
 
@@ -58,33 +52,47 @@ def clamp(v):
     return max(0, min(100, v))
 
 
-def get_blocks(mission):
+def first_block(mission):
     if not mission:
-        return []
+        return None
     blocks = mission.get("blocks", [])
-    return blocks
+    return blocks[0] if blocks else None
 
 
 # =========================
-# COACH SYSTEM
+# COACH SYSTEM (NARRATIVO)
 # =========================
 COACH = {
-    "start": ["Focus", "Observe", "Breathe", "Attention active"],
-    "correct": ["Good", "Correct", "Well done", "Excellent"],
-    "wrong": ["Try again", "Learn", "Adjust", "Refocus"]
+    "start": [
+        "Focus. Observe your inner state.",
+        "You are entering a controlled flow.",
+        "Attention activated.",
+        "Begin awareness cycle."
+    ],
+    "correct": [
+        "Correct. Neural alignment stable.",
+        "Good decision. Continue flow.",
+        "Positive reinforcement detected.",
+        "System stability increasing."
+    ],
+    "wrong": [
+        "Adjustment required.",
+        "Error detected, recalibrating.",
+        "Learning phase activated.",
+        "Return to control state."
+    ]
 }
-
 
 def coach(mode):
     return random.choice(COACH.get(mode, COACH["start"]))
 
 
 # =========================
-# ACTION LOCK
+# ANTI-SPAM / TIMING LOCK
 # =========================
 def can_act(session):
     now = time.time()
-    if now - session["last_action"] < 0.8:
+    if now - session["last_action"] < 1.2:
         return False
     session["last_action"] = now
     return True
@@ -106,32 +114,34 @@ async def start(req: Request):
 
     sid = str(uuid.uuid4())
 
-    mission = get_mission(0)
-
     sessions[sid] = {
         "mission_index": 0,
         "block_index": 0,
+
         "xp": 0,
         "streak": 0,
 
-        # METRICS FASE 2
+        # ===== FASE 2 EMOTIONAL SYSTEM =====
         "stress": 40,
         "attention": 50,
         "emotion": 50,
 
+        # timing control
         "last_action": 0
     }
 
+    mission = get_mission(0)
+    block = first_block(mission)
+
     return {
         "session_id": sid,
-        "story": get_first_block(mission),
-        "coach": coach("start"),
-        "xp": 0
+        "story": block,
+        "coach": coach("start")
     }
 
 
 # =========================
-# JUDGE CORE (ORQUESTA)
+# CORE ENGINE (JUDGE)
 # =========================
 @app.post("/judge")
 async def judge(req: Request):
@@ -145,13 +155,17 @@ async def judge(req: Request):
     if not s:
         return JSONResponse({"error": "Session expired"}, 401)
 
+    # =========================
+    # ANTI SPAM LOCK
+    # =========================
     if not can_act(s):
         return {
             "story": {
                 "type": "wait",
-                "text": {"en": "Wait...", "es": "Espera..."}
+                "text": {"en": "Wait processing...", "es": "Procesando..."}
             },
-            "xp": s["xp"]
+            "correct": None,
+            "coach": "System stabilizing"
         }
 
     mission = get_mission(s["mission_index"])
@@ -161,7 +175,7 @@ async def judge(req: Request):
     blocks = mission.get("blocks", [])
 
     # =========================
-    # BLOCK FLOW
+    # FLOW CONTROL (NO REPETITION)
     # =========================
     if s["block_index"] >= len(blocks):
         s["mission_index"] += 1
@@ -176,7 +190,7 @@ async def judge(req: Request):
     s["block_index"] += 1
 
     # =========================
-    # TVID CHECK
+    # TVID LOGIC
     # =========================
     correct = True
     reason = {}
@@ -193,26 +207,31 @@ async def judge(req: Request):
             reason = option.get("reason", {})
 
     # =========================
-    # XP + METRICS
+    # EMOTIONAL ENGINE
     # =========================
     if correct:
-        s["xp"] += 10
+        s["xp"] += 10 + s["streak"]
         s["streak"] += 1
-        s["attention"] += 2
-        s["emotion"] += 1
-        s["stress"] -= 2
+
+        s["attention"] += 3
+        s["emotion"] += 2
+        s["stress"] -= 3
+
         coach_msg = coach("correct")
-        signal = "green"
+
     else:
         s["xp"] = max(0, s["xp"] - 5)
         s["streak"] = 0
-        s["attention"] -= 2
-        s["emotion"] -= 2
-        s["stress"] += 3
-        coach_msg = coach("wrong")
-        signal = "red"
 
-    # CLAMP
+        s["attention"] -= 3
+        s["emotion"] -= 2
+        s["stress"] += 4
+
+        coach_msg = coach("wrong")
+
+    # =========================
+    # CLAMP SYSTEM
+    # =========================
     s["stress"] = clamp(s["stress"])
     s["attention"] = clamp(s["attention"])
     s["emotion"] = clamp(s["emotion"])
@@ -220,9 +239,8 @@ async def judge(req: Request):
     ranking[sid] = s["xp"]
 
     # =========================
-    # NEXT BLOCK
+    # NEXT BLOCK PRELOAD
     # =========================
-    next_block = None
     next_mission = get_mission(s["mission_index"])
 
     if next_mission and s["block_index"] < len(next_mission["blocks"]):
@@ -231,23 +249,17 @@ async def judge(req: Request):
         s["mission_index"] += 1
         s["block_index"] = 0
         next_mission = get_mission(s["mission_index"])
-        next_block = get_first_block(next_mission)
+        next_block = first_block(next_mission)
 
     return {
         "story": next_block,
         "correct": correct,
+        "xp": s["xp"],
+        "streak": s["streak"],
         "reason": reason,
         "coach": coach_msg,
 
-        # SEMÁFORO
-        "signal": signal,
-
-        # VOZ (FRONTEND)
-        "voice": True,
-
-        "xp": s["xp"],
-        "streak": s["streak"],
-
+        # ===== FASE 2 METRICS =====
         "metrics": {
             "stress": s["stress"],
             "attention": s["attention"],
@@ -267,49 +279,38 @@ async def force_skip(req: Request):
 
     s = sessions.get(sid)
     if not s:
-        return JSONResponse({"error": "invalid session"}, 401)
+        return JSONResponse({"error": "Invalid session"}, 401)
 
     s["block_index"] += 1
 
     mission = get_mission(s["mission_index"])
+
     if not mission:
         return {"story": {"type": "end", "text": {"en": "END", "es": "FIN"}}}
 
-    if s["block_index"] >= len(mission["blocks"]):
+    blocks = mission.get("blocks", [])
+
+    if s["block_index"] >= len(blocks):
         s["mission_index"] += 1
         s["block_index"] = 0
 
     mission = get_mission(s["mission_index"])
+    block = first_block(mission)
 
     return {
-        "story": get_first_block(mission),
+        "story": block,
         "xp": s["xp"]
     }
 
 
 # =========================
-# FORCE BACK
+# RELOAD CONTENT
 # =========================
-@app.post("/force_back")
-async def force_back(req: Request):
-
-    body = await req.json()
-    sid = body.get("session_id")
-
-    s = sessions.get(sid)
-    if not s:
-        return JSONResponse({"error": "invalid session"}, 401)
-
-    s["block_index"] = max(0, s["block_index"] - 1)
-
-    mission = get_mission(s["mission_index"])
-    if not mission:
-        return {"story": {"type": "end", "text": {"en": "END", "es": "FIN"}}}
-
-    return {
-        "story": mission["blocks"][s["block_index"]],
-        "xp": s["xp"]
-    }
+@app.get("/reload")
+def reload():
+    global MISSIONS
+    MISSIONS = load_content()
+    return {"status": "reloaded", "missions": len(MISSIONS)}
 
 
 # =========================
@@ -318,16 +319,6 @@ async def force_back(req: Request):
 @app.get("/ranking")
 def get_ranking():
     return sorted(ranking.items(), key=lambda x: x[1], reverse=True)[:10]
-
-
-# =========================
-# RELOAD
-# =========================
-@app.get("/reload")
-def reload():
-    global MISSIONS
-    MISSIONS = load_content()
-    return {"status": "reloaded", "missions": len(MISSIONS)}
 
 
 # =========================
