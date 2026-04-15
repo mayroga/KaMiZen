@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KAMIZEN CORE</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>KAMIZEN</title>
 
 <style>
 :root{
@@ -11,8 +11,7 @@
   --neon:#00f2ff;
   --green:#00ff88;
   --red:#ff0044;
-  --yellow:#ffcc00;
-  --panel:rgba(0,20,40,0.95);
+  --panel:rgba(0,20,40,0.92);
 }
 
 body{
@@ -23,81 +22,55 @@ body{
   overflow:hidden;
 }
 
-/* BREATHING CORE */
 #breath{
   position:absolute;
-  top:28%;
+  top:22%;
   left:50%;
-  transform:translate(-50%,-50%) scale(1);
+  transform:translate(-50%,-50%);
   width:160px;
   height:160px;
   border-radius:50%;
-  background:rgba(0,200,255,0.18);
   border:2px solid var(--neon);
+  background:rgba(0,255,255,0.08);
   transition:4s ease-in-out;
 }
 
-/* HEADER */
-#header{
+#top{
   position:absolute;
   top:10px;
   width:95%;
   display:flex;
   justify-content:space-between;
-  align-items:center;
+  font-size:12px;
 }
 
 #xpBar{
-  width:180px;
+  width:200px;
   height:10px;
   border:1px solid var(--neon);
 }
-
 #xpFill{
-  height:100%;
   width:0%;
+  height:100%;
   background:var(--green);
-  transition:0.5s;
 }
 
-/* CORE TEXT */
-#core{
+#content{
   position:absolute;
   top:45%;
   left:50%;
   transform:translate(-50%,-50%);
-  font-size:26px;
-  text-align:center;
-}
-
-/* MESSAGE */
-#message{
-  position:absolute;
-  bottom:240px;
   width:90%;
-  left:5%;
-  padding:15px;
-  border:1px solid var(--neon);
-  background:var(--panel);
   text-align:center;
-  min-height:70px;
 }
 
-/* REASON */
-#reason{
-  position:absolute;
-  bottom:320px;
-  width:90%;
-  left:5%;
-  text-align:center;
-  color:#ffffff;
-  min-height:30px;
-}
+#title{font-size:20px;margin-bottom:10px;}
+#text{font-size:16px;min-height:80px;}
+#reason{font-size:13px;color:white;margin-top:10px;}
 
-/* OPTIONS */
 #options{
   position:absolute;
-  bottom:110px;
+  bottom:120px;
   width:90%;
   left:5%;
   display:grid;
@@ -106,349 +79,385 @@ body{
 }
 
 button{
-  padding:15px;
+  padding:14px;
+  background:black;
   border:1px solid var(--neon);
-  background:black;
   color:var(--neon);
-  cursor:pointer;
-  transition:0.2s;
-  min-height:55px;
 }
 
-button:hover{
-  background:var(--neon);
-  color:black;
-}
+.correct{background:var(--green)!important;color:black;}
+.wrong{background:var(--red)!important;color:white;}
 
-.correct{ background:var(--green)!important; color:black!important;}
-.wrong{ background:var(--red)!important; color:white!important;}
-
-/* NAV */
-#nav{
+#coachBox{
   position:absolute;
-  bottom:20px;
-  width:90%;
-  left:5%;
-  display:flex;
-  justify-content:space-between;
+  right:10px;
+  top:120px;
+  width:200px;
+  height:160px;
+  border:1px solid var(--neon);
+  background:rgba(0,0,0,0.6);
+  padding:10px;
+  font-size:12px;
 }
 
-/* BREAK SCREEN */
-#break{
+#metrics{
   position:absolute;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
-  background:black;
-  display:none;
-  justify-content:center;
-  align-items:center;
-  flex-direction:column;
+  left:10px;
+  top:120px;
+  font-size:11px;
   color:white;
 }
 
-/* SILENCE MODE */
-#silence{
+#breakScreen,#silenceScreen{
   position:absolute;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
+  top:0;left:0;
+  width:100%;height:100%;
   background:black;
   display:none;
   justify-content:center;
   align-items:center;
   flex-direction:column;
-  color:#00f2ff;
-  text-align:center;
 }
+
 </style>
 </head>
 
 <body>
 
-<div id="header">
+<div id="top">
   <div id="xpBar"><div id="xpFill"></div></div>
-  <button onclick="toggleLang()">EN/ES</button>
+  <div id="langBtn" onclick="toggleLang()">EN/ES</div>
 </div>
 
 <div id="breath"></div>
 
-<div id="core"></div>
+<div id="metrics">
+  <div>Stress: <span id="stress">0</span></div>
+  <div>Focus: <span id="focus">0</span></div>
+  <div>Emotion: <span id="emotion">Stable</span></div>
+</div>
 
-<div id="reason"></div>
-<div id="message">CLICK TO START</div>
+<div id="coachBox">
+  <b>KaMiZen Coach</b>
+  <div id="coachText">Ready...</div>
+</div>
+
+<div id="content">
+  <div id="title"></div>
+  <div id="text"></div>
+  <div id="reason"></div>
+</div>
 
 <div id="options"></div>
 
-<div id="nav">
-  <button onclick="back()">BACK</button>
-  <button onclick="restart()">RESTART</button>
-  <button onclick="next()">NEXT</button>
+<div id="breakScreen">
+  <h2>BREAK MODE</h2>
+  <button onclick="continueSession()">Continue</button>
 </div>
 
-<div id="break">
-  <h2>🧠 BREAK MODE</h2>
-  <p>Respira 30 segundos sin pantalla</p>
-</div>
-
-<div id="silence">
-  <h2>🤫 SILENCE MODE</h2>
-  <p id="silenceText"></p>
-  <div id="silenceTimer"></div>
+<div id="silenceScreen">
+  <h2>SILENCE MODE</h2>
+  <h1 id="timer"></h1>
 </div>
 
 <script>
 
+/* =========================
+SESSION CORE
+========================= */
 let session_id=null;
 let mission=null;
 let lang="en";
 let xp=0;
-let voiceQueue=[];
-let speaking=false;
-
-/* AUDIO */
-const ctx=new (window.AudioContext||window.webkitAudioContext)();
-
-function sound(type){
-  const o=ctx.createOscillator();
-  const g=ctx.createGain();
-  o.connect(g); g.connect(ctx.destination);
-
-  if(type==="good") o.frequency.value=900;
-  if(type==="bad") o.frequency.value=140;
-  if(type==="click") o.frequency.value=500;
-
-  g.gain.value=0.25;
-  o.start();
-  o.stop(ctx.currentTime+0.25);
-}
 
 /* =========================
-   VOICE QUEUE (EVITA CORTES)
+USER PROFILE (ADAPTIVE SYSTEM)
 ========================= */
-function speak(text){
-  voiceQueue.push(text);
-  processVoice();
+let profile={
+  ageGroup:"adult", // child | adult | senior | veteran | gov
+  stress:0,
+  focus:0,
+  emotion:"neutral"
+};
+
+/* =========================
+AUDIO ENGINE (VOICE)
+========================= */
+let q=[];
+let speaking=false;
+
+function speak(t){
+  q.push(t);
+  process();
 }
 
-function processVoice(){
-  if(speaking || voiceQueue.length===0) return;
-
+function process(){
+  if(speaking||q.length===0) return;
   speaking=true;
-  const text=voiceQueue.shift();
+  let t=q.shift();
 
-  const u=new SpeechSynthesisUtterance(text);
+  let u=new SpeechSynthesisUtterance(t);
   u.lang=lang==="en"?"en-US":"es-ES";
   u.rate=0.9;
 
-  u.onend=()=>{
-    speaking=false;
-    setTimeout(processVoice,300);
-  };
-
+  u.onend=()=>{speaking=false;setTimeout(process,200);};
   speechSynthesis.speak(u);
 }
 
 /* =========================
-   BREATHING SYSTEM (SINCRONIZADO)
+AMBIENT MUSIC ENGINE (INTELLIGENT)
 ========================= */
-function startBreathing(){
-  const b=document.getElementById("breath");
+const audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+let ambientOsc=null;
+
+function startMusic(){
+  ambientOsc=audioCtx.createOscillator();
+  let gain=audioCtx.createGain();
+
+  ambientOsc.type="sine";
+  ambientOsc.frequency.value=40;
+
+  gain.gain.value=0.03;
+
+  ambientOsc.connect(gain);
+  gain.connect(audioCtx.destination);
+
+  ambientOsc.start();
 
   setInterval(()=>{
-    b.style.transform="translate(-50%,-50%) scale(1.4)";
-    speak(lang==="en"?"Inhale slowly":"Inhala lentamente");
+    let base=40;
 
-    setTimeout(()=>{
-      b.style.transform="translate(-50%,-50%) scale(1)";
-      speak(lang==="en"?"Exhale slowly":"Exhala lentamente");
-    },4000);
+    if(profile.stress>60) base=60;
+    if(profile.focus>70) base=30;
 
-  },8000);
+    ambientOsc.frequency.setValueAtTime(base,audioCtx.currentTime);
+  },2000);
 }
 
 /* =========================
-   START
+METRICS ENGINE
+========================= */
+function updateMetrics(correct){
+
+  if(correct){
+    profile.focus+=5;
+    profile.stress=Math.max(0,profile.stress-3);
+  }else{
+    profile.stress+=6;
+    profile.focus=Math.max(0,profile.focus-2);
+  }
+
+  if(profile.stress>70) profile.emotion="anxious";
+  else if(profile.focus>70) profile.emotion="focused";
+  else profile.emotion="neutral";
+
+  document.getElementById("stress").innerText=profile.stress;
+  document.getElementById("focus").innerText=profile.focus;
+  document.getElementById("emotion").innerText=profile.emotion;
+}
+
+/* =========================
+COACH (CONVERSATIONAL SIMULATION)
+========================= */
+function coach(msg){
+  let c=document.getElementById("coachText");
+
+  let style="";
+
+  if(profile.ageGroup==="child") style="simple focus calm";
+  if(profile.ageGroup==="senior") style="slow clear repetition";
+  if(profile.ageGroup==="veteran") style="discipline control strength";
+  if(profile.ageGroup==="gov") style="strategic analytical";
+  if(profile.ageGroup==="adult") style="balanced reasoning";
+
+  c.innerText = msg + " ["+style+"]";
+}
+
+/* =========================
+START
 ========================= */
 async function start(){
-  if(ctx.state==="suspended") await ctx.resume();
-
   const r=await fetch("/start",{method:"POST"});
   const d=await r.json();
 
   session_id=d.session_id;
   mission=d.mission;
 
-  startBreathing();
-  render();
+  startMusic();
+  runMission();
 }
 
 /* =========================
-   SHUFFLE (ANTI PREDICT)
+MISSION ENGINE
 ========================= */
-function shuffle(a){
-  return a.sort(()=>Math.random()-0.5);
+async function runMission(){
+
+  const blocks=mission.blocks;
+
+  for(let b of blocks){
+    await runBlock(b);
+  }
+
+  showBreak();
 }
 
 /* =========================
-   RENDER (SLOW + CONTROLLED)
+BLOCK ENGINE
 ========================= */
-function render(){
-  if(!mission) return;
+function wait(ms){return new Promise(r=>setTimeout(r,ms));}
 
-  const msg=document.getElementById("message");
-  const opt=document.getElementById("options");
-  const reason=document.getElementById("reason");
+async function runBlock(b){
 
-  opt.innerHTML="";
-  reason.innerText="";
+  let t=document.getElementById("title");
+  let x=document.getElementById("text");
+  let r=document.getElementById("reason");
+  let o=document.getElementById("options");
 
-  const textBlock=mission.blocks.find(b=>b.text);
-  const text=textBlock?.text?.[lang] || "";
+  o.innerHTML="";
 
-  msg.innerText=text;
-  speak(text);
+  if(b.type==="story"){
+    t.innerText="Story";
+    x.innerText=b.text[lang];
+    speak(b.text[lang]);
+    coach("Observe carefully");
+    await wait(4000);
+  }
 
-  const tvid=mission.blocks.find(b=>b.type==="tvid");
+  if(b.type==="analysis"){
+    t.innerText="Analysis";
+    x.innerText=b.text[lang];
+    speak(b.text[lang]);
+    coach("Understand situation");
+    await wait(4000);
+  }
 
-  if(tvid){
-    const options=shuffle([...tvid.options]);
+  if(b.type==="breath_focus"){
+    t.innerText="Breathing";
+    speak(b.guide[lang]);
+    await wait((b.duration_sec||20)*1000);
+  }
 
-    options.forEach((o,i)=>{
-      const btn=document.createElement("button");
-      btn.innerText=o.text[lang];
+  if(b.type==="tvid"){
 
-      // delay natural (NO RAPIDO)
-      setTimeout(()=>{
-        opt.appendChild(btn);
-      }, i*400);
+    return new Promise(resolve=>{
 
-      btn.onclick=()=>choose(btn,o);
+      b.options.forEach(opt=>{
+
+        let btn=document.createElement("button");
+        btn.innerText=opt.text[lang];
+
+        btn.onclick=async()=>{
+
+          const res=await fetch("/judge",{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({session_id,decision:opt.code})
+          });
+
+          const d=await res.json();
+
+          updateMetrics(d.correct);
+
+          if(d.correct){
+            btn.className="correct";
+            coach("Good decision");
+          }else{
+            btn.className="wrong";
+            coach("Learn and adjust");
+          }
+
+          r.innerText=opt.reason[lang];
+
+          await wait(1500);
+          resolve();
+        };
+
+        o.appendChild(btn);
+      });
     });
   }
 
-  // TVID EXERCISES
-  const exercise=mission.blocks.find(b=>b.type==="tvid_exercise");
-  if(exercise){
-    runExercise(exercise);
+  if(b.type==="riso_tvid"){
+    speak(b.guide[lang]);
+    coach("Smile activation");
+    await wait(4000);
   }
 
-  const silence=mission.blocks.find(b=>b.type==="silence");
-  if(silence){
-    runSilence(silence);
+  if(b.type==="silence_challenge"){
+    return runSilence(b);
+  }
+
+  if(b.type==="final_lesson"){
+    t.innerText="Lesson";
+    x.innerText=b.text[lang];
+    speak(b.text[lang]);
+    coach("Integration complete");
+    await wait(4000);
   }
 }
 
 /* =========================
-   EXERCISE TVID
+SILENCE MODE
 ========================= */
-function runExercise(ex){
-  speak(ex.instruction?.[lang] || "Exercise time");
+function runSilence(b){
 
-  setTimeout(()=>{
-    speak(ex.step1?.[lang] || "Relaja tu cuerpo");
-  },2000);
+  return new Promise(resolve=>{
 
-  setTimeout(()=>{
-    speak(ex.step2?.[lang] || "Respira profundo");
-  },6000);
-}
+    let s=document.getElementById("silenceScreen");
+    let t=document.getElementById("timer");
 
-/* =========================
-   SILENCE MODE
-========================= */
-function runSilence(s){
-  document.getElementById("silence").style.display="flex";
+    s.style.display="flex";
 
-  document.getElementById("silenceText").innerText=
-    s.message?.[lang] || "Silence mode";
+    let time=b.duration_sec||20;
 
-  let t=10;
+    let i=setInterval(()=>{
 
-  const i=setInterval(()=>{
-    document.getElementById("silenceTimer").innerText=t;
-    t--;
+      t.innerText=time;
+      time--;
 
-    if(t<=0){
-      clearInterval(i);
-      document.getElementById("silence").style.display="none";
-      next();
-    }
-  },1000);
-}
+      if(time<=0){
+        clearInterval(i);
+        s.style.display="none";
+        resolve();
+      }
 
-/* =========================
-   CHOOSE (SLOW FEEDBACK)
-========================= */
-async function choose(btn,o){
-
-  const r=await fetch("/judge",{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({session_id,decision:o.code})
+    },1000);
   });
-
-  const d=await r.json();
-
-  document.getElementById("reason").innerText=o.reason?.[lang] || "";
-
-  if(d.correct){
-    btn.classList.add("correct");
-    sound("good");
-    speak("Correcto. Buen control.");
-  }else{
-    btn.classList.add("wrong");
-    sound("bad");
-    speak("Error. Aprende y reajusta.");
-  }
-
-  xp=d.xp;
-  document.getElementById("xpFill").style.width=(xp%100)+"%";
-
-  if(d.break){
-    document.getElementById("break").style.display="flex";
-    setTimeout(()=>document.getElementById("break").style.display="none",30000);
-  }
-
-  // DELAY NEXT (NO FAST SKIP)
-  setTimeout(()=>{
-    mission=d.next_mission;
-    render();
-  },3500);
 }
 
 /* =========================
-   NAV CONTROL
+BREAK
 ========================= */
-async function next(){
+function showBreak(){
+  document.getElementById("breakScreen").style.display="flex";
+}
+
+function continueSession(){
+  document.getElementById("breakScreen").style.display="none";
+  forceNext();
+}
+
+/* =========================
+NAV
+========================= */
+async function forceNext(){
   const r=await fetch("/force_next",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({session_id})});
   const d=await r.json();
   mission=d.mission;
-  xp=d.xp;
-  render();
+  runMission();
 }
 
-async function back(){
-  const r=await fetch("/force_back",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({session_id})});
-  const d=await r.json();
-  mission=d.mission;
-  xp=d.xp;
-  render();
-}
-
-function restart(){
-  location.reload();
-}
-
+/* =========================
+LANG
+========================= */
 function toggleLang(){
   lang=lang==="en"?"es":"en";
-  render();
 }
 
-/* INIT */
-document.getElementById("message").onclick=start;
+/* =========================
+INIT
+========================= */
+document.body.onclick=start;
 
 </script>
 
