@@ -1,35 +1,35 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>KaMiZen Session Engine</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KaMiZen Session</title>
 
 <style>
 body{
   margin:0;
-  font-family: Arial, sans-serif;
+  font-family:Arial, sans-serif;
   background:#0b0b0b;
   color:white;
   text-align:center;
 }
 
 #container{
-  padding:20px;
   max-width:800px;
   margin:auto;
+  padding:20px;
 }
 
 .block{
-  margin:20px 0;
-  padding:15px;
-  border-radius:10px;
   background:#1a1a1a;
+  padding:20px;
+  border-radius:12px;
+  margin:20px 0;
 }
 
 button{
-  padding:10px 15px;
-  margin:5px;
+  padding:12px 16px;
+  margin:6px;
   border:none;
   border-radius:8px;
   cursor:pointer;
@@ -46,17 +46,15 @@ button{
 
 .correct{
   background:#1f8f3a !important;
-  color:white;
 }
 
 .wrong{
   background:#b02a2a !important;
-  color:white;
 }
 
-#breath{
+#timer{
+  margin-top:10px;
   font-size:18px;
-  opacity:0.9;
 }
 
 </style>
@@ -65,121 +63,200 @@ button{
 <body>
 
 <div id="container">
-  <h2 id="title">KaMiZen Session</h2>
+  <h2>KaMiZen</h2>
   <div id="content"></div>
 </div>
 
 <script>
-const missions = /* ===================== FULL DATA ===================== */ [
-  {
-"id":27,"level":27,"theme":"LEADERSHIP: GROUP PRESSURE (ADVANCED)",
-"blocks":[
-{"type":"story","text":{"en":"A group with strong influence pressures you to support an idea that feels wrong, but rewarding socially.","es":"Un grupo con influencia te presiona a apoyar una idea que parece incorrecta pero socialmente atractiva."}},
-{"type":"analysis","text":{"en":"Leadership is resisting emotional contagion and thinking independently under pressure.","es":"El liderazgo es resistir la emoción colectiva y pensar de forma independiente bajo presión."}},
-{"type":"breath_focus","duration_sec":30,"guide":{"es":"Inhala claridad. Exhala presión del grupo."}},
-{"type":"tvid","options":[
-{"code":"FOLLOW","text":{"es":"Seguir para ser aceptado"},"correct":false},
-{"code":"QUESTION","text":{"es":"Cuestionar la intención"},"correct":true},
-{"code":"LEAD","text":{"es":"Proponer alternativa"},"correct":true}
-]}
-]
-  },
 
-  {
-"id":28,"level":28,"theme":"EMOTIONAL CONTROL: ANGER TRIGGER CONTROL",
-"blocks":[
-{"type":"story","text":{"es":"Alguien te provoca intencionalmente frente a otros."}},
-{"type":"analysis","text":{"es":"El control emocional determina tu poder social."}},
-{"type":"tvid","options":[
-{"code":"EXPLODE","text":{"es":"Reaccionar agresivo"},"correct":false},
-{"code":"CONTROL","text":{"es":"Mantener calma"},"correct":true},
-{"code":"REDIRECT","text":{"es":"Redirigir atención"},"correct":true}
-]}
-]
-  }
-];
-
-// UI STATE
+let missions = [];
 let currentMission = 0;
 let currentBlock = 0;
 
 const content = document.getElementById("content");
 
-function renderBlock(){
-  const mission = missions[currentMission];
-  const block = mission.blocks[currentBlock];
 
-  content.innerHTML = "";
+// =========================
+// LOAD DATA
+// =========================
+fetch("/api/missions")
+.then(res => res.json())
+.then(data=>{
+  missions = data.missions || [];
+  start();
+})
+.catch(err=>{
+  content.innerHTML = "<h3>Error cargando datos</h3>";
+  console.error(err);
+});
+
+
+// =========================
+// START
+// =========================
+function start(){
+  currentMission = 0;
+  currentBlock = 0;
+  render();
+}
+
+
+// =========================
+// RENDER
+// =========================
+function render(){
+
+  if(!missions.length){
+    content.innerHTML = "<h3>No hay contenido</h3>";
+    return;
+  }
+
+  const mission = missions[currentMission];
+
+  if(!mission){
+    content.innerHTML = "<h2>Sesión completada</h2>";
+    return;
+  }
+
+  const block = mission.blocks[currentBlock];
 
   if(!block){
     nextMission();
     return;
   }
 
+  content.innerHTML = "";
+
   const div = document.createElement("div");
   div.className = "block";
 
-  // STORY / ANALYSIS / BREATH
-  if(block.type !== "tvid"){
-    div.innerHTML = `
-      <p>${block.text?.es || ""}</p>
-      ${block.type === "breath_focus" ? `<p id="breath">🌬️ ${block.guide?.es}</p>` : ""}
-    `;
+  // ========= TEXT =========
+  if(
+    block.type === "story" ||
+    block.type === "analysis" ||
+    block.type === "micro_explanation" ||
+    block.type === "final_lesson"
+  ){
+    div.innerHTML = `<p>${block.text?.es || ""}</p>`;
+    content.appendChild(div);
 
     setTimeout(()=>{
       currentBlock++;
-      renderBlock();
-    }, 2500);
+      render();
+    }, 3000);
+
+    return;
+  }
+
+  // ========= BREATH / RISO =========
+  if(block.type === "breath_focus" || block.type === "riso_tvid"){
+
+    div.innerHTML = `
+      <p>${block.guide?.es || ""}</p>
+      <div id="timer"></div>
+    `;
+
+    content.appendChild(div);
+
+    runTimer(block.duration_sec || 30, ()=>{
+      currentBlock++;
+      render();
+    });
+
+    return;
+  }
+
+  // ========= SILENCE =========
+  if(block.type === "silence_challenge"){
+
+    div.innerHTML = `
+      <p>🤫 Mantente en silencio</p>
+      <div id="timer"></div>
+    `;
+
+    content.appendChild(div);
+
+    runTimer(block.duration_sec || 20, ()=>{
+      alert(block.reward?.es || "Bien hecho");
+      currentBlock++;
+      render();
+    });
+
+    return;
+  }
+
+  // ========= TVID =========
+  if(block.type === "tvid"){
+
+    const options = block.options || [];
+
+    div.innerHTML = `<h3>Elige una opción</h3>`;
+
+    options.forEach(opt=>{
+      const btn = document.createElement("button");
+      btn.className = "option";
+      btn.innerText = opt.text?.es || "";
+
+      btn.onclick = ()=>{
+
+        document.querySelectorAll(".option").forEach(b=>{
+          b.classList.remove("correct","wrong");
+        });
+
+        // ✅ SOLO AQUÍ COLOR (como pediste)
+        if(opt.correct){
+          btn.classList.add("correct");
+        } else {
+          btn.classList.add("wrong");
+        }
+
+        setTimeout(()=>{
+          currentBlock++;
+          render();
+        }, 800);
+      };
+
+      div.appendChild(btn);
+    });
 
     content.appendChild(div);
     return;
   }
 
-  // TVID QUESTION
-  div.innerHTML = `<h3>${block.text?.es || "Elige una opción"}</h3>`;
-
-  block.options.forEach(opt=>{
-    const btn = document.createElement("button");
-    btn.className = "option";
-    btn.innerText = opt.text.es;
-
-    btn.onclick = ()=>{
-      // RESET COLORS
-      document.querySelectorAll(".option").forEach(b=>{
-        b.classList.remove("correct","wrong");
-      });
-
-      if(opt.correct){
-        btn.classList.add("correct"); // 🟢 SOLO AQUÍ VERDE
-      } else {
-        btn.classList.add("wrong"); // 🔴 SOLO AQUÍ ROJO
-      }
-
-      setTimeout(()=>{
-        currentBlock++;
-        renderBlock();
-      }, 900);
-    };
-
-    div.appendChild(btn);
-  });
-
-  content.appendChild(div);
 }
 
+
+// =========================
+// TIMER
+// =========================
+function runTimer(seconds, callback){
+
+  const timer = document.getElementById("timer");
+  let t = seconds;
+
+  timer.innerText = "⏳ " + t;
+
+  const interval = setInterval(()=>{
+    t--;
+    timer.innerText = "⏳ " + t;
+
+    if(t <= 0){
+      clearInterval(interval);
+      callback();
+    }
+  },1000);
+}
+
+
+// =========================
+// NEXT
+// =========================
 function nextMission(){
   currentMission++;
   currentBlock = 0;
-
-  if(currentMission >= missions.length){
-    content.innerHTML = "<h2>Sesión completada</h2>";
-    return;
-  }
-
-  renderBlock();
+  render();
 }
 
-renderBlock();
 </script>
 
 </body>
