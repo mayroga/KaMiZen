@@ -312,7 +312,7 @@
 {"type":"story","text":{"en":"You try to join a group. They ignore you, then laugh softly as if you don’t exist. You feel the pressure of invisibility.","es":"Intentas unirte a un grupo. Te ignoran y luego se ríen como si no existieras. Sientes la presión de la invisibilidad."}},
 {"type":"analysis","text":{"en":"Rejection triggers identity pressure. Strong minds do not collapse under invisibility.","es":"El rechazo activa presión de identidad. Las mentes fuertes no colapsan ante la invisibilidad."}},
 {"type":"breath_focus","duration_sec":35,"guide":{"en":"Inhale self-worth deeply. Exhale need for approval.","es":"Inhala valor propio profundo. Exhala necesidad de aprobación."}},
-{"type":"tvid":[
+{"type":"tvid","options":[
 {"code":"CHASE","text":{"en":"Try harder to fit in","es":"Forzar encajar"},"correct":false,"reason":{"en":"Lowers identity stability.","es":"Reduce estabilidad personal."}},
 {"code":"STAY","text":{"en":"Stay composed and observe","es":"Mantener calma y observar"},"correct":true,"reason":{"en":"Builds emotional independence.","es":"Construye independencia emocional."}},
 {"code":"LEAVE","text":{"en":"Walk away with dignity","es":"Alejarse con dignidad"},"correct":true,"reason":{"en":"Protects self-worth system.","es":"Protege el valor propio."}}
@@ -329,7 +329,7 @@
 {"type":"story","text":{"en":"A sudden situation triggers you. Everything pushes you to react instantly without thinking.","es":"Una situación repentina te activa. Todo te empuja a reaccionar sin pensar."}},
 {"type":"analysis","text":{"en":"Impulse is emotional automation. Control is conscious interruption.","es":"El impulso es automatismo emocional. El control es interrupción consciente."}},
 {"type":"breath_focus","duration_sec":35,"guide":{"en":"Inhale pause deeply. Exhale reaction slowly.","es":"Inhala pausa profundo. Exhala reacción lento."}},
-{"type":"tvid":[
+{"type":"tvid","options":[
 {"code":"REACT","text":{"en":"React immediately","es":"Reaccionar inmediato"},"correct":false,"reason":{"en":"Loses executive control.","es":"Pierde control ejecutivo."}},
 {"code":"PAUSE","text":{"en":"Pause before responding","es":"Pausar antes de responder"},"correct":true,"reason":{"en":"Activates rational brain.","es":"Activa el cerebro racional."}},
 {"code":"OBSERVE","text":{"en":"Observe without action","es":"Observar sin actuar"},"correct":true,"reason":{"en":"Creates strategic awareness.","es":"Crea conciencia estratégica."}}
@@ -346,7 +346,7 @@
 {"type":"story","text":{"en":"You make a mistake and consequences appear. People notice your part in it.","es":"Cometes un error y aparecen consecuencias. Otros notan tu parte."}},
 {"type":"analysis","text":{"en":"Responsibility transforms identity into maturity.","es":"La responsabilidad transforma la identidad en madurez."}},
 {"type":"breath_focus","duration_sec":35,"guide":{"en":"Inhale honesty fully. Exhale denial completely.","es":"Inhala honestidad completa. Exhala negación."}},
-{"type":"tvid":[
+{"type":"tvid","options":[
 {"code":"DENY","text":{"en":"Deny involvement","es":"Negar participación"},"correct":false,"reason":{"en":"Weakens credibility.","es":"Debilita credibilidad."}},
 {"code":"ACCEPT","text":{"en":"Accept clearly","es":"Aceptar claramente"},"correct":true,"reason":{"en":"Builds trust and strength.","es":"Construye confianza y fuerza."}},
 {"code":"SHIFT","text":{"en":"Shift blame","es":"Culpar a otros"},"correct":false,"reason":{"en":"Breaks integrity system.","es":"Rompe la integridad."}}
@@ -363,7 +363,7 @@
 {"type":"story","text":{"en":"Someone tests your limits with subtle disrespect in front of others.","es":"Alguien prueba tus límites con falta de respeto sutil delante de otros."}},
 {"type":"analysis","text":{"en":"Self-respect is the invisible boundary others feel.","es":"El respeto propio es el límite invisible que otros sienten."}},
 {"type":"breath_focus","duration_sec":35,"guide":{"en":"Inhale dignity deeply. Exhale insecurity.","es":"Inhala dignidad profundo. Exhala inseguridad."}},
-{"type":"tvid":[
+{"type":"tvid","options":[
 {"code":"ACCEPT","text":{"en":"Accept disrespect","es":"Aceptar falta de respeto"},"correct":false,"reason":{"en":"Weakens personal standard.","es":"Debilita el estándar personal."}},
 {"code":"CALM","text":{"en":"Respond calmly","es":"Responder con calma"},"correct":true,"reason":{"en":"Maintains control of situation.","es":"Mantiene control."}},
 {"code":"BOUNDARY","text":{"en":"Set clear boundary","es":"Poner límite claro"},"correct":true,"reason":{"en":"Protects identity structure.","es":"Protege la identidad."}}
@@ -380,7 +380,7 @@
 {"type":"story","text":{"en":"You notice you are no longer controlled by emotions, people, or situations as before.","es":"Notas que ya no eres controlado por emociones, personas o situaciones como antes."}},
 {"type":"analysis","text":{"en":"Freedom is internal governance, not external absence of pressure.","es":"La libertad es gobierno interno, no ausencia externa de presión."}},
 {"type":"breath_focus","duration_sec":40,"guide":{"en":"Inhale control deeply. Exhale mental noise completely.","es":"Inhala control profundo. Exhala ruido mental."}},
-{"type":"tvid":[
+{"type":"tvid","options":[
 {"code":"REACT","text":{"en":"React to everything","es":"Reaccionar a todo"},"correct":false,"reason":{"en":"Lacks mastery.","es":"Falta dominio."}},
 {"code":"CONTROL","text":{"en":"Control responses","es":"Controlar respuestas"},"correct":true,"reason":{"en":"True internal freedom.","es":"Libertad interna real."}},
 {"code":"GROW","text":{"en":"Evolve continuously","es":"Evolucionar continuamente"},"correct":true,"reason":{"en":"Sustains mastery.","es":"Sostiene la maestría."}}
@@ -397,7 +397,7 @@
 {"type":"story","text":{"en":"A friend distorts your mistake in front of others, changing how people see you.","es":"Un amigo distorsiona tu error delante de otros cambiando cómo te ven."}},
 {"type":"analysis","text":{"en":"Social perception is unstable without emotional control.","es":"La percepción social es inestable sin control emocional."}},
 {"type":"breath_focus","duration_sec":35,"guide":{"en":"Inhale stability. Exhale ego reaction.","es":"Inhala estabilidad. Exhala reacción del ego."}},
-{"type":"tvid":[
+{"type":"tvid","options":[
 {"code":"ATTACK","text":{"en":"Confront aggressively","es":"Confrontar agresivo"},"correct":false,"reason":{"en":"Escalates social damage.","es":"Escala daño social."}},
 {"code":"CONTROL","text":{"en":"Stay calm and composed","es":"Mantener calma"},"correct":true,"reason":{"en":"Neutralizes manipulation.","es":"Neutraliza manipulación."}},
 {"code":"REFLECT","text":{"en":"Clarify privately later","es":"Aclarar en privado"},"correct":true,"reason":{"en":"Restores truth safely.","es":"Restaura la verdad."}}
@@ -414,7 +414,7 @@
 {"type":"story","text":{"en":"You must decide under time pressure while consequences feel heavy.","es":"Debes decidir bajo presión con consecuencias importantes."}},
 {"type":"analysis","text":{"en":"Speed without clarity creates long-term cost.","es":"La velocidad sin claridad crea costo futuro."}},
 {"type":"breath_focus","duration_sec":35,"guide":{"en":"Inhale clarity. Exhale urgency.","es":"Inhala claridad. Exhala urgencia."}},
-{"type":"tvid":[
+{"type":"tvid","options":[
 {"code":"RUSH","text":{"en":"Rush decision","es":"Decidir rápido"},"correct":false,"reason":{"en":"Creates error chains.","es":"Crea cadena de errores."}},
 {"code":"FOCUS","text":{"en":"Pause briefly and decide","es":"Pausar brevemente"},"correct":true,"reason":{"en":"Optimizes accuracy.","es":"Optimiza precisión."}},
 {"code":"SKIP","text":{"en":"Delay with awareness","es":"Retrasar con conciencia"},"correct":true,"reason":{"en":"Allows clarity emergence.","es":"Permite claridad."}}
@@ -431,7 +431,7 @@
 {"type":"story","text":{"en":"Your phone, notifications, and apps constantly pull your attention away from your goals.","es":"Tu teléfono, notificaciones y apps te alejan de tus metas."}},
 {"type":"analysis","text":{"en":"Attention fragmentation reduces life control.","es":"La fragmentación de atención reduce el control de vida."}},
 {"type":"breath_focus","duration_sec":35,"guide":{"en":"Inhale focus deeply. Exhale digital pull.","es":"Inhala enfoque profundo. Exhala distracción digital."}},
-{"type":"tvid":[
+{"type":"tvid","options":[
 {"code":"CHECK","text":{"en":"Constant checking","es":"Revisar constantemente"},"correct":false,"reason":{"en":"Breaks cognitive flow.","es":"Rompe el flujo mental."}},
 {"code":"RESIST","text":{"en":"Ignore impulses","es":"Ignorar impulsos"},"correct":true,"reason":{"en":"Strengthens discipline.","es":"Fortalece disciplina."}},
 {"code":"CONTROL","text":{"en":"Set strict limits","es":"Establecer límites"},"correct":true,"reason":{"en":"Restores attention sovereignty.","es":"Restaura soberanía de atención."}}
