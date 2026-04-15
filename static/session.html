@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KAMIZEN CORE | ORCHESTRATED BRAIN SYSTEM</title>
+<title>KAMIZEN CORE</title>
 
 <style>
 :root{
@@ -15,9 +15,6 @@
   --panel:rgba(0,20,40,0.95);
 }
 
-/* =========================
-   GLOBAL
-========================= */
 body{
   margin:0;
   background:var(--bg);
@@ -26,31 +23,28 @@ body{
   overflow:hidden;
 }
 
-/* =========================
-   BREATHING CORE (GLBO)
-========================= */
+/* BREATHING CORE */
 #breath{
   position:absolute;
   top:28%;
   left:50%;
   transform:translate(-50%,-50%) scale(1);
-  width:150px;
-  height:150px;
+  width:160px;
+  height:160px;
   border-radius:50%;
   background:rgba(0,200,255,0.18);
   border:2px solid var(--neon);
-  display:none;
+  transition:4s ease-in-out;
 }
 
-/* =========================
-   HEADER
-========================= */
+/* HEADER */
 #header{
   position:absolute;
   top:10px;
   width:95%;
   display:flex;
   justify-content:space-between;
+  align-items:center;
 }
 
 #xpBar{
@@ -63,53 +57,44 @@ body{
   height:100%;
   width:0%;
   background:var(--green);
-  transition:0.3s;
+  transition:0.5s;
 }
 
-/* =========================
-   CORE TIMER
-========================= */
+/* CORE TEXT */
 #core{
   position:absolute;
-  top:28%;
+  top:45%;
   left:50%;
   transform:translate(-50%,-50%);
-  font-size:35px;
-  width:140px;
-  height:140px;
-  border-radius:50%;
-  border:2px solid var(--neon);
-  display:flex;
-  justify-content:center;
-  align-items:center;
+  font-size:26px;
+  text-align:center;
 }
 
-/* =========================
-   TEXT
-========================= */
+/* MESSAGE */
 #message{
   position:absolute;
-  bottom:230px;
+  bottom:240px;
   width:90%;
   left:5%;
   padding:15px;
   border:1px solid var(--neon);
   background:var(--panel);
   text-align:center;
+  min-height:70px;
 }
 
+/* REASON */
 #reason{
   position:absolute;
-  bottom:300px;
+  bottom:320px;
   width:90%;
   left:5%;
   text-align:center;
-  font-size:14px;
+  color:#ffffff;
+  min-height:30px;
 }
 
-/* =========================
-   OPTIONS (SHUFFLE ENABLED)
-========================= */
+/* OPTIONS */
 #options{
   position:absolute;
   bottom:110px;
@@ -127,6 +112,7 @@ button{
   color:var(--neon);
   cursor:pointer;
   transition:0.2s;
+  min-height:55px;
 }
 
 button:hover{
@@ -134,12 +120,10 @@ button:hover{
   color:black;
 }
 
-.correct{background:var(--green)!important;color:black!important;}
-.wrong{background:var(--red)!important;color:white!important;}
+.correct{ background:var(--green)!important; color:black!important;}
+.wrong{ background:var(--red)!important; color:white!important;}
 
-/* =========================
-   NAV
-========================= */
+/* NAV */
 #nav{
   position:absolute;
   bottom:20px;
@@ -149,9 +133,7 @@ button:hover{
   justify-content:space-between;
 }
 
-/* =========================
-   BREAK MODE
-========================= */
+/* BREAK SCREEN */
 #break{
   position:absolute;
   top:0;
@@ -164,6 +146,21 @@ button:hover{
   align-items:center;
   flex-direction:column;
   color:white;
+}
+
+/* SILENCE MODE */
+#silence{
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:black;
+  display:none;
+  justify-content:center;
+  align-items:center;
+  flex-direction:column;
+  color:#00f2ff;
   text-align:center;
 }
 </style>
@@ -171,14 +168,15 @@ button:hover{
 
 <body>
 
-<div id="breath"></div>
-
 <div id="header">
   <div id="xpBar"><div id="xpFill"></div></div>
   <button onclick="toggleLang()">EN/ES</button>
 </div>
 
-<div id="core">⚡</div>
+<div id="breath"></div>
+
+<div id="core"></div>
+
 <div id="reason"></div>
 <div id="message">CLICK TO START</div>
 
@@ -192,7 +190,13 @@ button:hover{
 
 <div id="break">
   <h2>🧠 BREAK MODE</h2>
-  <p>Respira. Recupera tu mente.</p>
+  <p>Respira 30 segundos sin pantalla</p>
+</div>
+
+<div id="silence">
+  <h2>🤫 SILENCE MODE</h2>
+  <p id="silenceText"></p>
+  <div id="silenceTimer"></div>
 </div>
 
 <script>
@@ -201,79 +205,68 @@ let session_id=null;
 let mission=null;
 let lang="en";
 let xp=0;
+let voiceQueue=[];
+let speaking=false;
 
-/* =========================
-   AUDIO ENGINE
-========================= */
+/* AUDIO */
 const ctx=new (window.AudioContext||window.webkitAudioContext)();
 
 function sound(type){
   const o=ctx.createOscillator();
   const g=ctx.createGain();
-
   o.connect(g); g.connect(ctx.destination);
 
   if(type==="good") o.frequency.value=900;
-  if(type==="bad") o.frequency.value=150;
+  if(type==="bad") o.frequency.value=140;
   if(type==="click") o.frequency.value=500;
 
-  g.gain.value=0.2;
+  g.gain.value=0.25;
   o.start();
-  o.stop(ctx.currentTime+0.2);
+  o.stop(ctx.currentTime+0.25);
 }
 
 /* =========================
-   VOICE COACH VARIATION
+   VOICE QUEUE (EVITA CORTES)
 ========================= */
-const coachPhrases=[
-  "Focus now",
-  "Keep control",
-  "Stay present",
-  "You are improving",
-  "Observe and decide",
-  "Calm mind active"
-];
-
 function speak(text){
+  voiceQueue.push(text);
+  processVoice();
+}
+
+function processVoice(){
+  if(speaking || voiceQueue.length===0) return;
+
+  speaking=true;
+  const text=voiceQueue.shift();
+
   const u=new SpeechSynthesisUtterance(text);
-  u.rate=0.9;
   u.lang=lang==="en"?"en-US":"es-ES";
-  speechSynthesis.cancel();
+  u.rate=0.9;
+
+  u.onend=()=>{
+    speaking=false;
+    setTimeout(processVoice,300);
+  };
+
   speechSynthesis.speak(u);
 }
 
-function randomCoach(){
-  return coachPhrases[Math.floor(Math.random()*coachPhrases.length)];
-}
-
 /* =========================
-   BREATHING SCENE (SYNC)
+   BREATHING SYSTEM (SINCRONIZADO)
 ========================= */
-let breathingInterval=null;
-
 function startBreathing(){
   const b=document.getElementById("breath");
-  b.style.display="block";
 
-  clearInterval(breathingInterval);
-
-  breathingInterval=setInterval(()=>{
-
-    b.style.transform="translate(-50%,-50%) scale(1.6)";
-    speak(lang==="en"?"Inhale":"Inhala");
+  setInterval(()=>{
+    b.style.transform="translate(-50%,-50%) scale(1.4)";
+    speak(lang==="en"?"Inhale slowly":"Inhala lentamente");
 
     setTimeout(()=>{
       b.style.transform="translate(-50%,-50%) scale(1)";
-      speak(lang==="en"?"Exhale":"Exhala");
+      speak(lang==="en"?"Exhale slowly":"Exhala lentamente");
     },4000);
 
   },8000);
-}
-
-function stopBreathing(){
-  const b=document.getElementById("breath");
-  b.style.display="none";
-  clearInterval(breathingInterval);
 }
 
 /* =========================
@@ -288,102 +281,113 @@ async function start(){
   session_id=d.session_id;
   mission=d.mission;
 
+  startBreathing();
   render();
 }
 
 /* =========================
-   SHUFFLE (ANTI PATTERN)
+   SHUFFLE (ANTI PREDICT)
 ========================= */
 function shuffle(a){
   return a.sort(()=>Math.random()-0.5);
 }
 
 /* =========================
-   RENDER ENGINE (SCENES)
+   RENDER (SLOW + CONTROLLED)
 ========================= */
 function render(){
-
   if(!mission) return;
 
   const msg=document.getElementById("message");
   const opt=document.getElementById("options");
+  const reason=document.getElementById("reason");
 
   opt.innerHTML="";
-  document.getElementById("reason").innerText="";
+  reason.innerText="";
 
   const textBlock=mission.blocks.find(b=>b.text);
-  const text=textBlock?.text?.[lang] || "..."
+  const text=textBlock?.text?.[lang] || "";
 
   msg.innerText=text;
-
-  speak(randomCoach()+"... "+text);
+  speak(text);
 
   const tvid=mission.blocks.find(b=>b.type==="tvid");
 
-  /* =========================
-     BREATHING SCENE CONTROL
-  ========================= */
-  const hasBreathing=mission.blocks.some(b=>b.type==="breathing");
-
-  if(hasBreathing){
-    startBreathing();
-  }else{
-    stopBreathing();
-  }
-
-  /* =========================
-     OPTIONS SHUFFLE REQUIRED
-  ========================= */
   if(tvid){
     const options=shuffle([...tvid.options]);
 
-    options.forEach(o=>{
+    options.forEach((o,i)=>{
       const btn=document.createElement("button");
       btn.innerText=o.text[lang];
 
-      btn.onclick=()=>choose(btn,o);
+      // delay natural (NO RAPIDO)
+      setTimeout(()=>{
+        opt.appendChild(btn);
+      }, i*400);
 
-      opt.appendChild(btn);
+      btn.onclick=()=>choose(btn,o);
     });
   }
 
-  /* =========================
-     TVID EXERCISE SCENE
-  ========================= */
-  if(mission.blocks.some(b=>b.type==="tvid_exercise")){
-    runExercise();
+  // TVID EXERCISES
+  const exercise=mission.blocks.find(b=>b.type==="tvid_exercise");
+  if(exercise){
+    runExercise(exercise);
+  }
+
+  const silence=mission.blocks.find(b=>b.type==="silence");
+  if(silence){
+    runSilence(silence);
   }
 }
 
 /* =========================
-   TVID REAL EXECUTION
+   EXERCISE TVID
 ========================= */
-function runExercise(){
-  speak(lang==="en"
-    ?"Close your eyes. Feel your breathing."
-    :"Cierra los ojos. Siente tu respiración."
-  );
+function runExercise(ex){
+  speak(ex.instruction?.[lang] || "Exercise time");
 
   setTimeout(()=>{
-    speak(lang==="en"
-      ?"Smile. Hold it. You are in control."
-      :"Sonríe. Mantén. Tienes control."
-    );
-  },4000);
+    speak(ex.step1?.[lang] || "Relaja tu cuerpo");
+  },2000);
+
+  setTimeout(()=>{
+    speak(ex.step2?.[lang] || "Respira profundo");
+  },6000);
 }
 
 /* =========================
-   CHOOSE ANSWER
+   SILENCE MODE
+========================= */
+function runSilence(s){
+  document.getElementById("silence").style.display="flex";
+
+  document.getElementById("silenceText").innerText=
+    s.message?.[lang] || "Silence mode";
+
+  let t=10;
+
+  const i=setInterval(()=>{
+    document.getElementById("silenceTimer").innerText=t;
+    t--;
+
+    if(t<=0){
+      clearInterval(i);
+      document.getElementById("silence").style.display="none";
+      next();
+    }
+  },1000);
+}
+
+/* =========================
+   CHOOSE (SLOW FEEDBACK)
 ========================= */
 async function choose(btn,o){
 
   const r=await fetch("/judge",{
     method:"POST",
     headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({
-      session_id,
-      decision:o.code
-    })
+    body:JSON.stringify({session_id,decision:o.code})
   });
 
   const d=await r.json();
@@ -393,80 +397,44 @@ async function choose(btn,o){
   if(d.correct){
     btn.classList.add("correct");
     sound("good");
-    speak("Correct. "+randomCoach());
+    speak("Correcto. Buen control.");
   }else{
     btn.classList.add("wrong");
     sound("bad");
-    speak("Incorrect. Learn and retry.");
+    speak("Error. Aprende y reajusta.");
   }
 
   xp=d.xp;
   document.getElementById("xpFill").style.width=(xp%100)+"%";
 
   if(d.break){
-    showBreak();
+    document.getElementById("break").style.display="flex";
+    setTimeout(()=>document.getElementById("break").style.display="none",30000);
   }
 
+  // DELAY NEXT (NO FAST SKIP)
   setTimeout(()=>{
     mission=d.next_mission;
     render();
-  },1800);
+  },3500);
 }
 
 /* =========================
-   BREAK SYSTEM
-========================= */
-function showBreak(){
-  const b=document.getElementById("break");
-  b.style.display="flex";
-
-  speak("Stop. Rest your mind.");
-
-  setTimeout(()=>{
-    b.style.display="none";
-  },30000);
-}
-
-/* =========================
-   NAV SYSTEM
+   NAV CONTROL
 ========================= */
 async function next(){
-  sound("click");
-
-  const r=await fetch("/force_next",{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({session_id})
-  });
-
+  const r=await fetch("/force_next",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({session_id})});
   const d=await r.json();
-
-  alert(d.message);
-  speak(d.message);
-
-  xp=d.xp;
   mission=d.mission;
-
+  xp=d.xp;
   render();
 }
 
 async function back(){
-  sound("click");
-
-  const r=await fetch("/force_back",{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({session_id})
-  });
-
+  const r=await fetch("/force_back",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({session_id})});
   const d=await r.json();
-
-  alert(d.message);
-  speak(d.message);
-
-  xp=d.xp;
   mission=d.mission;
-
+  xp=d.xp;
   render();
 }
 
@@ -479,9 +447,7 @@ function toggleLang(){
   render();
 }
 
-/* =========================
-   INIT
-========================= */
+/* INIT */
 document.getElementById("message").onclick=start;
 
 </script>
