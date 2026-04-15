@@ -5,10 +5,6 @@ import uuid
 import json
 
 app = FastAPI()
-
-# ===============================
-# STATIC
-# ===============================
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # ===============================
@@ -27,84 +23,57 @@ def load_content():
 MISSIONS = load_content()
 
 # ===============================
-# SESSIONS
+# SESSIONS MEMORY (IN RAM)
 # ===============================
 sessions = {}
 
 # ===============================
-# CORE FLOW CONTROL
+# FLOW ENGINE
 # ===============================
 
-def get_block(session):
-    mission = MISSIONS[session["mission"]]
+def next_block(session):
+
+    mission = MISSIONS[session["m"]]
     blocks = mission["blocks"]
 
-    if session["index"] >= len(blocks):
-        session["mission"] += 1
-        session["index"] = 0
+    # avanzar bloque
+    if session["i"] >= len(blocks):
 
-        if session["mission"] >= len(MISSIONS):
-            return {"type": "end", "text": {"en": "END", "es": "FIN"}}
+        session["m"] += 1
+        session["i"] = 0
 
-        mission = MISSIONS[session["mission"]]
-        blocks = mission["blocks"]
+        # fin total
+        if session["m"] >= len(MISSIONS):
+            return {
+                "type": "end",
+                "text": {
+                    "en": "Session completed",
+                    "es": "Sesión completada"
+                }
+            }
 
-    block = blocks[session["index"]]
-    session["index"] += 1
+        blocks = MISSIONS[session["m"]]["blocks"]
+
+    block = blocks[session["i"]]
+    session["i"] += 1
+
     return block
 
 
 # ===============================
-# FORMAT BLOCK (FRONT SAFE)
+# FORMAT CLEAN OUTPUT
 # ===============================
-def format_block(block, lang="en"):
-    base = {
+def format_block(block):
+
+    return {
         "type": block.get("type"),
-        "lang": lang
+        "text": block.get("text"),
+        "analysis": block.get("analysis"),
+        "options": block.get("options") if block.get("type") == "tvid" else None,
+        "guide": block.get("guide"),
+        "duration_sec": block.get("duration_sec"),
+        "reward": block.get("reward")
     }
-
-    # TEXT BLOCKS
-    if "text" in block:
-        base["text"] = block["text"]
-
-    # STORY / ANALYSIS
-    if "analysis" in block:
-        base["analysis"] = block["analysis"]
-
-    # BREATH
-    if block.get("type") in ["breath_focus", "breathing"]:
-        base["duration_sec"] = block.get("duration_sec", 30)
-        base["guide"] = block.get("guide", {})
-
-    # TVID / QUIZ
-    if block.get("type") == "tvid":
-        base["options"] = block.get("options", [])
-
-    # RISO TVID
-    if block.get("type") == "riso_tvid":
-        base["guide"] = block.get("guide", {})
-        base["duration_sec"] = block.get("duration_sec", 30)
-
-    # SILENCE FINAL BLOCK
-    if block.get("type") == "silence_challenge":
-        base["duration_sec"] = block.get("duration_sec", 20)
-        base["reward"] = block.get("reward", {})
-        base["type"] = "silence"
-
-    # FINAL LESSON
-    if block.get("type") == "final_lesson":
-        base["text"] = block.get("text")
-
-    return base
-
-
-# ===============================
-# ROUTES
-# ===============================
-
-@app.get("/")
-def home():
-    return FileResponse("static/session.html")
 
 
 # ===============================
@@ -112,28 +81,29 @@ def home():
 # ===============================
 @app.post("/start")
 def start(data: dict):
-    session_id = str(uuid.uuid4())
+
     lang = data.get("profile", {}).get("lang", "en")
 
+    session_id = str(uuid.uuid4())
+
     sessions[session_id] = {
-        "mission": 0,
-        "index": 0,
+        "m": 0,
+        "i": 0,
         "lang": lang,
-        "last_block": None
+        "last": None
     }
 
-    block = get_block(sessions[session_id])
-
-    sessions[session_id]["last_block"] = block
+    block = next_block(sessions[session_id])
+    sessions[session_id]["last"] = block
 
     return JSONResponse({
         "session_id": session_id,
-        "story": format_block(block, lang)
+        "story": format_block(block)
     })
 
 
 # ===============================
-# JUDGE LOGIC (CONTROL TOTAL)
+# JUDGE (ONLY TVID LOGIC)
 # ===============================
 @app.post("/judge")
 def judge(data: dict):
@@ -145,44 +115,45 @@ def judge(data: dict):
 
     if not session:
         return JSONResponse({
-            "story": {
+            "next": {
                 "type": "error",
-                "text": {"en": "Session expired", "es": "Sesión expirada"}
+                "text": {
+                    "en": "Session expired",
+                    "es": "Sesión expirada"
+                }
             }
         })
 
-    lang = session["lang"]
+    last = session["last"]
 
-    last = session.get("last_block")
+    feedback = None
 
-    response = {
-        "type": "feedback",
-        "correct": None,
-        "reason": {},
-        "next": None
-    }
-
-    # =========================
-    # IF QUIZ (TVID)
-    # =========================
+    # ===========================
+    # ONLY TVID HAS DECISION LOGIC
+    # ===========================
     if last and last.get("type") == "tvid":
 
         options = last.get("options", [])
+
         selected = next((o for o in options if o["code"] == decision), None)
 
         if selected:
-            response["correct"] = selected.get("correct", False)
-            response["reason"] = selected.get("reason", {})
 
-    # =========================
+            feedback = {
+                "correct": selected.get("correct", False),
+                "reason": selected.get("reason", {})
+            }
+
+    # ===========================
     # ADVANCE FLOW ALWAYS
-    # =========================
-    next_block = get_block(session)
-    session["last_block"] = next_block
+    # ===========================
+    block = next_block(session)
+    session["last"] = block
 
-    response["next"] = format_block(next_block, lang)
-
-    return JSONResponse(response)
+    return JSONResponse({
+        "feedback": feedback,
+        "next": format_block(block)
+    })
 
 
 # ===============================
@@ -192,4 +163,12 @@ def judge(data: dict):
 def reload():
     global MISSIONS
     MISSIONS = load_content()
-    return {"status": "reloaded", "missions": len(MISSIONS)}
+    return {"ok": True, "missions": len(MISSIONS)}
+
+
+# ===============================
+# FRONTEND ENTRY
+# ===============================
+@app.get("/")
+def home():
+    return FileResponse("static/session.html")
