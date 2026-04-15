@@ -5,11 +5,12 @@ import uuid
 import json
 import os
 import time
+import random
 
 app = FastAPI()
 
 # =========================
-# STATIC
+# PATH
 # =========================
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 STATIC_DIR = os.path.join(BASE_DIR, "static")
@@ -41,42 +42,41 @@ ranking = {}
 # =========================
 # HELPERS
 # =========================
-def get_mission(index):
-    if 0 <= index < len(MISSIONS):
-        return MISSIONS[index]
+def get_mission(i):
+    if 0 <= i < len(MISSIONS):
+        return MISSIONS[i]
     return None
-
-
-def get_first_block(mission):
-    if not mission:
-        return None
-    return mission["blocks"][0] if mission["blocks"] else None
 
 
 def clamp(v):
     return max(0, min(100, v))
 
 
+def first_block(mission):
+    if not mission:
+        return None
+    return mission["blocks"][0] if mission.get("blocks") else None
+
+
 # =========================
-# SIMPLE COACH SYSTEM
+# COACH SYSTEM (IA SIMPLE)
 # =========================
 COACH = {
-    "start": ["Focus", "Observe", "Breathe"],
+    "start": ["Focus", "Breathe", "Observe"],
     "correct": ["Good", "Correct", "Well done"],
-    "wrong": ["Try again", "Learn", "Adjust"]
+    "wrong": ["Try again", "Adjust", "Learn"]
 }
 
 def coach(mode):
-    import random
     return random.choice(COACH.get(mode, COACH["start"]))
 
 
 # =========================
-# ACTION LOCK (CRITICAL)
+# LOCK SYSTEM (CRITICAL)
 # =========================
 def can_act(session):
     now = time.time()
-    if now - session["last_action"] < 1.0:
+    if now - session["last_action"] < 1.2:
         return False
     session["last_action"] = now
     return True
@@ -86,7 +86,7 @@ def can_act(session):
 # ROOT
 # =========================
 @app.get("/")
-def home():
+def root():
     return FileResponse(os.path.join(STATIC_DIR, "session.html"))
 
 
@@ -104,7 +104,7 @@ async def start(req: Request):
         "xp": 0,
         "streak": 0,
 
-        # 🔥 FASE 2 INTERNAL METRICS
+        # FASE 2 MÉTRICAS
         "stress": 30,
         "attention": 50,
         "emotion": 50,
@@ -113,17 +113,16 @@ async def start(req: Request):
     }
 
     mission = get_mission(0)
-    block = get_first_block(mission)
 
     return {
         "session_id": sid,
-        "story": block,
+        "story": first_block(mission),
         "coach": coach("start")
     }
 
 
 # =========================
-# JUDGE (CORE ENGINE)
+# CORE ENGINE (JUDGE)
 # =========================
 @app.post("/judge")
 async def judge(req: Request):
@@ -137,7 +136,7 @@ async def judge(req: Request):
     if not s:
         return JSONResponse({"error": "Session expired"}, 401)
 
-    # 🔥 LOCK ANTI DOUBLE ACTION
+    # 🔒 ANTI DOUBLE ACTION
     if not can_act(s):
         return {
             "story": {
@@ -153,7 +152,7 @@ async def judge(req: Request):
     blocks = mission.get("blocks", [])
 
     # =========================
-    # GET CURRENT BLOCK
+    # END OF MISSION → NEXT
     # =========================
     if s["block_index"] >= len(blocks):
         s["mission_index"] += 1
@@ -161,7 +160,7 @@ async def judge(req: Request):
         mission = get_mission(s["mission_index"])
         blocks = mission.get("blocks", []) if mission else []
 
-    if not mission or not blocks:
+    if not mission:
         return {
             "story": {
                 "type": "end",
@@ -173,7 +172,7 @@ async def judge(req: Request):
     s["block_index"] += 1
 
     # =========================
-    # TVID LOGIC (IF EXISTS)
+    # TVID CHECK
     # =========================
     correct = True
     reason = {}
@@ -190,7 +189,7 @@ async def judge(req: Request):
             reason = option.get("reason", {})
 
     # =========================
-    # XP + METRICS UPDATE
+    # XP + MÉTRICAS
     # =========================
     if correct:
         s["xp"] += 10
@@ -212,7 +211,7 @@ async def judge(req: Request):
         coach_msg = coach("wrong")
 
     # =========================
-    # CLAMP METRICS
+    # CLAMP SAFE
     # =========================
     s["stress"] = clamp(s["stress"])
     s["attention"] = clamp(s["attention"])
@@ -221,18 +220,18 @@ async def judge(req: Request):
     ranking[sid] = s["xp"]
 
     # =========================
-    # NEXT BLOCK AUTO FLOW
+    # NEXT BLOCK CONTROLLED
     # =========================
+    mission = get_mission(s["mission_index"])
     next_block = None
-    next_mission = get_mission(s["mission_index"])
 
-    if next_mission and s["block_index"] < len(next_mission["blocks"]):
-        next_block = next_mission["blocks"][s["block_index"]]
+    if mission and s["block_index"] < len(mission["blocks"]):
+        next_block = mission["blocks"][s["block_index"]]
     else:
         s["mission_index"] += 1
         s["block_index"] = 0
-        next_mission = get_mission(s["mission_index"])
-        next_block = get_first_block(next_mission)
+        mission = get_mission(s["mission_index"])
+        next_block = first_block(mission)
 
     return {
         "story": next_block,
@@ -242,7 +241,6 @@ async def judge(req: Request):
         "reason": reason,
         "coach": coach_msg,
 
-        # 🔥 INTERNAL FASE 2 DATA (frontend puede ignorar)
         "metrics": {
             "stress": s["stress"],
             "attention": s["attention"],
@@ -252,7 +250,7 @@ async def judge(req: Request):
 
 
 # =========================
-# FORCE SKIP (SAFE)
+# FORCE SKIP
 # =========================
 @app.post("/force_skip")
 async def force_skip(req: Request):
@@ -267,32 +265,19 @@ async def force_skip(req: Request):
     s["block_index"] += 1
 
     mission = get_mission(s["mission_index"])
-
     if not mission:
         return {"story": {"type": "end", "text": {"en": "END", "es": "FIN"}}}
 
-    blocks = mission["blocks"]
-
-    if s["block_index"] >= len(blocks):
+    if s["block_index"] >= len(mission["blocks"]):
         s["mission_index"] += 1
         s["block_index"] = 0
-        mission = get_mission(s["mission_index"])
-        blocks = mission["blocks"]
+
+    mission = get_mission(s["mission_index"])
 
     return {
-        "story": blocks[s["block_index"]],
+        "story": first_block(mission),
         "xp": s["xp"]
     }
-
-
-# =========================
-# RELOAD CONTENT
-# =========================
-@app.get("/reload")
-def reload():
-    global MISSIONS
-    MISSIONS = load_content()
-    return {"status": "reloaded", "missions": len(MISSIONS)}
 
 
 # =========================
@@ -304,7 +289,17 @@ def get_ranking():
 
 
 # =========================
-# RUN SERVER
+# RELOAD
+# =========================
+@app.get("/reload")
+def reload():
+    global MISSIONS
+    MISSIONS = load_content()
+    return {"status": "reloaded", "missions": len(MISSIONS)}
+
+
+# =========================
+# RUN
 # =========================
 if __name__ == "__main__":
     import uvicorn
