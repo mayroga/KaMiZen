@@ -19,6 +19,7 @@ CONTENT_PATH = os.path.join(STATIC_DIR, "kamizen_content.json")
 if os.path.exists(STATIC_DIR):
     app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
+
 # =========================
 # MEMORY SYSTEM
 # =========================
@@ -26,6 +27,7 @@ GAME_DATA: List[Dict[str, Any]] = []
 MISSION_IDS: List[int] = []
 SESSIONS: Dict[str, Dict[str, Any]] = {}
 RANKING: Dict[str, int] = {}
+
 
 # =========================
 # LOAD GAME
@@ -55,7 +57,9 @@ def load_game():
         print("❌ LOAD ERROR:", e)
         GAME_DATA, MISSION_IDS = [], []
 
+
 load_game()
+
 
 # =========================
 # UTILS
@@ -63,9 +67,11 @@ load_game()
 def get_mission(mid):
     return next((m for m in GAME_DATA if m.get("id") == mid), None)
 
+
 def next_mission(current, visited):
-    remaining = [m for m in MISSION_IDS if m not in visited]
-    return random.choice(remaining) if remaining else MISSION_IDS[0]
+    pool = [m for m in MISSION_IDS if m not in visited]
+    return random.choice(pool) if pool else random.choice(MISSION_IDS)
+
 
 def prev_mission(current):
     if current in MISSION_IDS:
@@ -73,11 +79,21 @@ def prev_mission(current):
         return MISSION_IDS[max(0, idx - 1)]
     return None
 
+
 def norm(x):
     return str(x).strip().upper()
 
+
 def get_tvid(mission):
     return next((b for b in mission.get("blocks", []) if b.get("type") == "tvid"), None)
+
+
+def get_scene_type(mission):
+    blocks = mission.get("blocks", [])
+    for b in blocks:
+        return b.get("type")
+    return None
+
 
 # =========================
 # ROOT
@@ -86,6 +102,7 @@ def get_tvid(mission):
 def root():
     file = os.path.join(STATIC_DIR, "session.html")
     return FileResponse(file)
+
 
 # =========================
 # START SESSION
@@ -101,8 +118,9 @@ async def start(req: Request):
         "streak": 0,
         "visited": [],
         "break_counter": 0,
-        "engagement_mode": True,   # 🔥 MODE ACTIVADO
-        "coach_mood": "neutral"
+        "session_time": 0,
+        "max_time": 900,  # 15 min control saludable
+        "coach_state": "neutral"
     }
 
     return {
@@ -110,20 +128,38 @@ async def start(req: Request):
         "mission": get_mission(SESSIONS[sid]["mission_id"])
     }
 
-# =========================
-# COACH PERSONALITY ENGINE
-# =========================
-def coach_message(s):
-    if s["streak"] >= 3:
-        return "🔥 Estás en racha. Sigue así."
-    if s["errors"] >= 2:
-        return "🧠 Respira. Ajusta tu enfoque."
-    if s["xp"] > 80:
-        return "⚡ Nivel alto. Control total requerido."
-    return "🎯 Enfoque activo."
 
 # =========================
-# GET MISSION
+# COACH ENGINE (VARIABLE PERSONALITY)
+# =========================
+def coach(s):
+    if s["streak"] >= 4:
+        return random.choice([
+            "🔥 Flujo total. Sigue así.",
+            "⚡ Estás dominando el sistema.",
+            "🎯 Precisión alta. Continúa."
+        ])
+
+    if s["errors"] >= 2:
+        return random.choice([
+            "🧠 Ajusta respiración y enfoque.",
+            "⏳ Respira. Observa antes de actuar.",
+            "🎯 Menos velocidad, más precisión."
+        ])
+
+    if s["xp"] > 100:
+        return "⚡ Nivel alto. Control mental requerido."
+
+    return random.choice([
+        "🎮 Escena activa.",
+        "🎯 Enfoque en progreso.",
+        "🧠 Mantén ritmo.",
+        "⚙ Sistema estable."
+    ])
+
+
+# =========================
+# GET MISSION (ORCHESTRATED SCENE)
 # =========================
 @app.post("/get_mission")
 async def get_mission_route(req: Request):
@@ -136,13 +172,36 @@ async def get_mission_route(req: Request):
 
     mission = get_mission(s["mission_id"])
 
+    scene_type = get_scene_type(mission)
+
+    # 🫁 RESPIRACIÓN SOLO CUANDO APLICA
+    breathing = None
+    if scene_type in ["breathing", "silence", "tvid_exercise"]:
+        breathing = {
+            "active": True,
+            "pattern": "4-4",
+            "message": "Respira con el coach"
+        }
+
+    # ⏱ CONTROL TIEMPO SALUDABLE
+    s["session_time"] += 1
+    if s["session_time"] >= s["max_time"]:
+        return {
+            "session_end": True,
+            "message": "🧠 Sesión completada. Descanso recomendado.",
+            "xp": s["xp"]
+        }
+
     return {
         "mission": mission,
-        "coach": coach_message(s)
+        "coach": coach(s),
+        "scene": scene_type,
+        "breathing": breathing
     }
 
+
 # =========================
-# JUDGE CORE (TVID + GAME LOOP)
+# JUDGE CORE (TVID ENGINE)
 # =========================
 @app.post("/judge")
 async def judge(req: Request):
@@ -161,9 +220,7 @@ async def judge(req: Request):
 
     tvid = get_tvid(mission)
 
-    # =========================
-    # NO TVID → AUTO FLOW
-    # =========================
+    # AUTO FLOW
     if not tvid:
         s["visited"].append(s["mission_id"])
         s["mission_id"] = next_mission(s["mission_id"], s["visited"])
@@ -177,22 +234,18 @@ async def judge(req: Request):
     correct = option.get("correct", False)
 
     # =========================
-    # ENGAGEMENT REWARD SYSTEM
+    # REWARD / PUNISHMENT SYSTEM
     # =========================
     if correct:
-        base = 20
-        bonus = s["streak"] * 5
-        s["xp"] += base + bonus
+        s["xp"] += 20 + (s["streak"] * 3)
         s["streak"] += 1
         s["errors"] = 0
-
-        feedback = "🟢 PERFECTO"
+        feedback = "🟢 CORRECTO"
     else:
         s["xp"] = max(0, s["xp"] - 10)
         s["errors"] += 1
         s["streak"] = 0
-
-        feedback = "🔴 ERROR"
+        feedback = "🔴 INCORRECTO"
 
     # =========================
     # ADAPTIVE DIFFICULTY
@@ -205,14 +258,12 @@ async def judge(req: Request):
     # BREAK SYSTEM
     # =========================
     s["break_counter"] += 1
-    break_mode = False
-
-    if s["break_counter"] >= 8:
-        break_mode = True
+    break_mode = s["break_counter"] >= 7
+    if break_mode:
         s["break_counter"] = 0
 
     # =========================
-    # NEXT MISSION (ANTI PREDICT)
+    # NEXT SCENE (NON LINEAL)
     # =========================
     s["visited"].append(s["mission_id"])
     s["mission_id"] = next_mission(s["mission_id"], s["visited"])
@@ -224,14 +275,15 @@ async def judge(req: Request):
         "feedback": feedback,
         "xp": s["xp"],
         "streak": s["streak"],
-        "coach": coach_message(s),
+        "coach": coach(s),
         "reason": option.get("reason", {}),
         "next_mission": get_mission(s["mission_id"]),
         "break": break_mode
     }
 
+
 # =========================
-# FORCE NAVIGATION (CONTROLLED PENALTY)
+# FORCE NAVIGATION (CONTROL + CONSEQUENCE)
 # =========================
 @app.post("/force_next")
 async def force_next(req: Request):
@@ -246,14 +298,16 @@ async def force_next(req: Request):
     s["mission_id"] = next_mission(s["mission_id"], s["visited"])
 
     return {
-        "message": "⚠ Saltar reduce tu progreso",
+        "message": random.choice([
+            "⚠ Saltar reduce progreso.",
+            "⛔ Disciplina primero.",
+            "🎯 Cada escena importa."
+        ]),
         "xp": s["xp"],
         "mission": get_mission(s["mission_id"])
     }
 
-# =========================
-# FORCE BACK
-# =========================
+
 @app.post("/force_back")
 async def force_back(req: Request):
     body = await req.json()
@@ -272,10 +326,11 @@ async def force_back(req: Request):
     s["mission_id"] = prev
 
     return {
-        "message": "⛔ Retroceso con costo",
+        "message": "⛔ Retroceso con costo de aprendizaje",
         "xp": s["xp"],
         "mission": get_mission(prev)
     }
+
 
 # =========================
 # RANKING
@@ -283,6 +338,7 @@ async def force_back(req: Request):
 @app.get("/ranking")
 def ranking():
     return sorted(RANKING.items(), key=lambda x: x[1], reverse=True)[:10]
+
 
 # =========================
 # RUN SERVER
