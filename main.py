@@ -1,112 +1,155 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from fastapi.responses import JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 import json
 import uuid
-import os
 
 app = FastAPI()
 
-# Montar estáticos
-if not os.path.exists("static"):
-    os.makedirs("static")
+# ===============================
+# STATIC
+# ===============================
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
+# ===============================
+# LOAD JSON
+# ===============================
 CONTENT_PATH = "static/kamizen_content.json"
 
 def load_content():
     try:
-        if not os.path.exists(CONTENT_PATH):
-            return []
         with open(CONTENT_PATH, "r", encoding="utf-8") as f:
-            data = json.load(f)
-            return data.get("missions", [])
+            return json.load(f).get("missions", [])
     except Exception as e:
-        print("[ERROR] JSON LOAD FAIL:", e)
+        print("JSON ERROR:", e)
         return []
 
 MISSIONS = load_content()
+
+# ===============================
+# SESSIONS
+# ===============================
 sessions = {}
 
-# --- HELPERS MEJORADOS ---
+# ===============================
+# HELPERS
+# ===============================
+
+def get_first_block(mission):
+    return mission["blocks"][0]
+
 
 def get_next_block(session):
-    m_idx = session["mission_index"]
-    b_idx = session["block_index"]
+    m = session["mission_index"]
+    b = session["block_index"]
 
-    if m_idx >= len(MISSIONS):
-        return {"type": "end", "text": {"en": "END", "es": "FIN"}}
+    if m >= len(MISSIONS):
+        return {"type": "end", "text": {"es": "FIN", "en": "END"}}
 
-    mission = MISSIONS[m_idx]
-    blocks = mission.get("blocks", [])
+    mission = MISSIONS[m]
+    blocks = mission["blocks"]
 
-    # Si ya terminamos los bloques de esta misión
-    if b_idx >= len(blocks):
+    if b >= len(blocks):
         session["mission_index"] += 1
         session["block_index"] = 0
-        return get_next_block(session) # Llamada recursiva controlada
 
-    block = blocks[b_idx]
+        if session["mission_index"] >= len(MISSIONS):
+            return {"type": "end", "text": {"es": "FIN", "en": "END"}}
+
+        return get_first_block(MISSIONS[session["mission_index"]])
+
+    block = blocks[b]
     session["block_index"] += 1
+
     return block
+
 
 def format_block(block):
     """
-    Asegura que el frontend reciba algo coherente incluso si el tipo es nuevo
+    NORMALIZA TODO PARA FRONTEND session.html
     """
-    if not block:
-        return {"type": "error", "text": {"en": "Block not found", "es": "Bloque no encontrado"}}
 
-    # Copia base para no mutar el original
-    base = block.copy()
-    
-    # Normalización para tipos específicos que el frontend espera
-    if block.get("type") in ["breath_focus", "riso_tvid"]:
-        # Estos suelen usar 'guide' en lugar de 'text'
-        if "guide" in block:
-            base["text"] = block["guide"]
-            
-    return base
-
-# --- RUTAS ---
-
-@app.get("/")
-async def home():
-    return FileResponse("static/session.html")
-
-@app.post("/start")
-async def start():
-    session_id = str(uuid.uuid4())
-    sessions[session_id] = {"mission_index": 0, "block_index": 0}
-
-    if not MISSIONS:
-        return JSONResponse({"error": "No missions loaded"})
-
-    # Empezamos directamente con el flujo
-    first_block = get_next_block(sessions[session_id])
-    
-    return {
-        "session_id": session_id,
-        "story": format_block(first_block)
+    out = {
+        "type": block.get("type"),
+        "text_es": "",
+        "text_en": ""
     }
 
-@app.post("/judge")
-async def judge(request: Request):
-    data = await request.json()
-    session_id = data.get("session_id")
-    session = sessions.get(session_id)
+    # TEXT GENERAL
+    if "text" in block:
+        out["text_es"] = block["text"].get("es", "")
+        out["text_en"] = block["text"].get("en", "")
 
+    # GUIDE (breath / riso)
+    if "guide" in block:
+        out["text_es"] = block["guide"].get("es", out["text_es"])
+        out["text_en"] = block["guide"].get("en", out["text_en"])
+
+    # ANALYSIS
+    if "analysis" in block:
+        out["text_es"] = block["analysis"].get("es", "")
+        out["text_en"] = block["analysis"].get("en", "")
+
+    # OPTIONS (TVID)
+    if "options" in block:
+        out["options"] = []
+        for opt in block["options"]:
+            out["options"].append({
+                "code": opt.get("code"),
+                "text": opt.get("text"),
+                "correct": opt.get("correct", False)
+            })
+
+    # SILENCE
+    if block.get("type") == "silence_challenge":
+        out["duration_sec"] = block.get("duration_sec", 20)
+
+    return out
+
+
+# ===============================
+# ROUTES
+# ===============================
+
+@app.get("/")
+def home():
+    return FileResponse("static/session.html")
+
+
+@app.post("/start")
+def start():
+    session_id = str(uuid.uuid4())
+
+    sessions[session_id] = {
+        "mission_index": 0,
+        "block_index": 0
+    }
+
+    first = get_first_block(MISSIONS[0])
+
+    return {
+        "session_id": session_id,
+        "story": format_block(first)
+    }
+
+
+@app.post("/judge")
+def judge(data: dict):
+    session_id = data.get("session_id")
+
+    session = sessions.get(session_id)
     if not session:
-        return JSONResponse({"error": "Invalid session"}, status_code=400)
+        return {"story": {"type": "error", "text_es": "Sesión expirada"}}
 
     next_block = get_next_block(session)
-    
+
     return {
         "story": format_block(next_block)
     }
+
 
 @app.get("/reload")
 def reload():
     global MISSIONS
     MISSIONS = load_content()
-    return {"status": "reloaded", "count": len(MISSIONS)}
+    return {"status": "ok", "missions": len(MISSIONS)}
