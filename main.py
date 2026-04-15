@@ -4,101 +4,91 @@ from fastapi.staticfiles import StaticFiles
 import uuid
 import json
 import os
-import random
 import time
 
 app = FastAPI()
 
 # =========================
-# PATH CONFIG
+# STATIC
 # =========================
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 STATIC_DIR = os.path.join(BASE_DIR, "static")
 CONTENT_PATH = os.path.join(STATIC_DIR, "kamizen_content.json")
 
-if os.path.exists(STATIC_DIR):
-    app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+
 
 # =========================
-# MEMORY SYSTEM
+# LOAD CONTENT
 # =========================
-GAME_DATA = []
-MISSION_IDS = []
-SESSIONS = {}
-RANKING = {}
+def load_content():
+    try:
+        with open(CONTENT_PATH, "r", encoding="utf-8") as f:
+            return json.load(f).get("missions", [])
+    except:
+        return []
 
-# =========================
-# LOAD GAME
-# =========================
-def load_game():
-    global GAME_DATA, MISSION_IDS
+MISSIONS = load_content()
 
-    if not os.path.exists(CONTENT_PATH):
-        GAME_DATA, MISSION_IDS = [], []
-        return
-
-    with open(CONTENT_PATH, "r", encoding="utf-8") as f:
-        data = json.load(f)
-
-    missions = data.get("missions", [])
-    missions = [m for m in missions if isinstance(m, dict) and "id" in m]
-    missions.sort(key=lambda x: x.get("id", 0))
-
-    GAME_DATA = missions
-    MISSION_IDS = [m["id"] for m in missions]
-
-load_game()
 
 # =========================
-# UTILITIES
+# MEMORY
 # =========================
-def get_mission(mid):
-    return next((m for m in GAME_DATA if m.get("id") == mid), None)
+sessions = {}
+ranking = {}
 
-def get_tvid(mission):
-    return next((b for b in mission.get("blocks", []) if b.get("type") == "tvid"), None)
-
-def normalize(x):
-    return str(x).strip().upper()
-
-def next_mission(current_id, visited):
-    remaining = [m for m in MISSION_IDS if m not in visited]
-    if not remaining:
-        return MISSION_IDS[0] if MISSION_IDS else None
-    return random.choice(remaining)
 
 # =========================
-# COACH ENGINE
+# HELPERS
+# =========================
+def get_mission(index):
+    if 0 <= index < len(MISSIONS):
+        return MISSIONS[index]
+    return None
+
+
+def get_first_block(mission):
+    if not mission:
+        return None
+    return mission["blocks"][0] if mission["blocks"] else None
+
+
+def clamp(v):
+    return max(0, min(100, v))
+
+
+# =========================
+# SIMPLE COACH SYSTEM
 # =========================
 COACH = {
-    "start": ["Focus active", "Observe", "Calm mind"],
-    "correct": ["Good decision", "Correct", "Well done"],
-    "wrong": ["Learn from this", "Adjust", "Try again"]
+    "start": ["Focus", "Observe", "Breathe"],
+    "correct": ["Good", "Correct", "Well done"],
+    "wrong": ["Try again", "Learn", "Adjust"]
 }
 
 def coach(mode):
+    import random
     return random.choice(COACH.get(mode, COACH["start"]))
 
+
 # =========================
-# SESSION LOCK SYSTEM (CRITICAL)
+# ACTION LOCK (CRITICAL)
 # =========================
 def can_act(session):
     now = time.time()
-    last = session.get("last_action", 0)
-
-    # ❗ BLOQUEA spam o doble acción
-    if now - last < 1.2:
+    if now - session["last_action"] < 1.0:
         return False
-
     session["last_action"] = now
     return True
+
 
 # =========================
 # ROOT
 # =========================
 @app.get("/")
-def root():
+def home():
     return FileResponse(os.path.join(STATIC_DIR, "session.html"))
+
 
 # =========================
 # START SESSION
@@ -108,48 +98,32 @@ async def start(req: Request):
 
     sid = str(uuid.uuid4())
 
-    SESSIONS[sid] = {
-        "mission_id": MISSION_IDS[0] if MISSION_IDS else None,
+    sessions[sid] = {
+        "mission_index": 0,
+        "block_index": 0,
         "xp": 0,
         "streak": 0,
-        "errors": 0,
-        "visited": [],
-        "last_action": 0,
 
-        # 🔥 NEW FASE 2 STATE
-        "locked": False,
-        "emotion_score": 0,
-        "attention_score": 0,
-        "stress_score": 0,
-        "age_group": "adult"
+        # 🔥 FASE 2 INTERNAL METRICS
+        "stress": 30,
+        "attention": 50,
+        "emotion": 50,
+
+        "last_action": 0
     }
+
+    mission = get_mission(0)
+    block = get_first_block(mission)
 
     return {
         "session_id": sid,
-        "mission": get_mission(SESSIONS[sid]["mission_id"]),
+        "story": block,
         "coach": coach("start")
     }
 
-# =========================
-# GET MISSION (SAFE)
-# =========================
-@app.post("/get_mission")
-async def get_mission_route(req: Request):
-
-    body = await req.json()
-    sid = body.get("session_id")
-
-    s = SESSIONS.get(sid)
-    if not s:
-        return JSONResponse({"error": "Invalid session"}, 401)
-
-    return {
-        "mission": get_mission(s["mission_id"]),
-        "coach": coach("start")
-    }
 
 # =========================
-# JUDGE (CONTROLLED FLOW ENGINE)
+# JUDGE (CORE ENGINE)
 # =========================
 @app.post("/judge")
 async def judge(req: Request):
@@ -158,139 +132,176 @@ async def judge(req: Request):
     sid = body.get("session_id")
     decision = body.get("decision")
 
-    s = SESSIONS.get(sid)
-    if not s:
-        return JSONResponse({"error": "Invalid session"}, 401)
+    s = sessions.get(sid)
 
-    # 🔥 LOCK CHECK (NO DOUBLE ACTIONS)
+    if not s:
+        return JSONResponse({"error": "Session expired"}, 401)
+
+    # 🔥 LOCK ANTI DOUBLE ACTION
     if not can_act(s):
         return {
-            "locked": True,
-            "message": "Action too fast, wait",
-            "xp": s["xp"]
+            "story": {
+                "type": "wait",
+                "text": {"en": "Wait...", "es": "Espera..."}
+            }
         }
 
-    mission = get_mission(s["mission_id"])
+    mission = get_mission(s["mission_index"])
     if not mission:
-        return JSONResponse({"error": "Mission missing"}, 404)
+        return JSONResponse({"error": "Mission not found"}, 404)
 
-    tvid = get_tvid(mission)
+    blocks = mission.get("blocks", [])
 
     # =========================
-    # NO TVID FLOW
+    # GET CURRENT BLOCK
     # =========================
-    if not tvid:
-        s["visited"].append(s["mission_id"])
-        s["mission_id"] = next_mission(s["mission_id"], s["visited"])
+    if s["block_index"] >= len(blocks):
+        s["mission_index"] += 1
+        s["block_index"] = 0
+        mission = get_mission(s["mission_index"])
+        blocks = mission.get("blocks", []) if mission else []
 
+    if not mission or not blocks:
         return {
-            "auto": True,
-            "correct": True,
-            "xp": s["xp"],
-            "next_mission": get_mission(s["mission_id"]),
-            "coach": coach("start")
+            "story": {
+                "type": "end",
+                "text": {"en": "END", "es": "FIN"}
+            }
         }
 
-    option = next(
-        (o for o in tvid.get("options", [])
-         if normalize(o.get("code")) == normalize(decision)),
-        None
-    )
-
-    if not option:
-        return JSONResponse({"error": "Invalid option"}, 400)
-
-    correct = option.get("correct", False)
+    block = blocks[s["block_index"]]
+    s["block_index"] += 1
 
     # =========================
-    # XP + EMOTION SYSTEM
+    # TVID LOGIC (IF EXISTS)
+    # =========================
+    correct = True
+    reason = {}
+
+    if block.get("type") == "tvid":
+        option = next(
+            (o for o in block.get("options", [])
+             if o.get("code") == decision),
+            None
+        )
+
+        if option:
+            correct = option.get("correct", False)
+            reason = option.get("reason", {})
+
+    # =========================
+    # XP + METRICS UPDATE
     # =========================
     if correct:
         s["xp"] += 10
         s["streak"] += 1
-        s["emotion_score"] += 2
-        s["attention_score"] += 3
-        s["stress_score"] -= 2
+
+        s["attention"] += 3
+        s["emotion"] += 2
+        s["stress"] -= 2
+
         coach_msg = coach("correct")
     else:
         s["xp"] = max(0, s["xp"] - 5)
         s["streak"] = 0
-        s["emotion_score"] -= 2
-        s["attention_score"] -= 1
-        s["stress_score"] += 4
+
+        s["attention"] -= 2
+        s["emotion"] -= 2
+        s["stress"] += 3
+
         coach_msg = coach("wrong")
 
     # =========================
-    # CLAMP VALUES (NO OVERFLOW)
+    # CLAMP METRICS
     # =========================
-    s["stress_score"] = max(0, min(100, s["stress_score"]))
-    s["attention_score"] = max(0, min(100, s["attention_score"]))
-    s["emotion_score"] = max(0, min(100, s["emotion_score"]))
+    s["stress"] = clamp(s["stress"])
+    s["attention"] = clamp(s["attention"])
+    s["emotion"] = clamp(s["emotion"])
 
-    RANKING[sid] = s["xp"]
+    ranking[sid] = s["xp"]
+
+    # =========================
+    # NEXT BLOCK AUTO FLOW
+    # =========================
+    next_block = None
+    next_mission = get_mission(s["mission_index"])
+
+    if next_mission and s["block_index"] < len(next_mission["blocks"]):
+        next_block = next_mission["blocks"][s["block_index"]]
+    else:
+        s["mission_index"] += 1
+        s["block_index"] = 0
+        next_mission = get_mission(s["mission_index"])
+        next_block = get_first_block(next_mission)
 
     return {
+        "story": next_block,
         "correct": correct,
         "xp": s["xp"],
         "streak": s["streak"],
-        "reason": option.get("reason", {}),
+        "reason": reason,
         "coach": coach_msg,
 
-        # 🔥 FASE 2 DATA STREAM
-        "emotion": {
-            "stress": s["stress_score"],
-            "attention": s["attention_score"],
-            "emotion": s["emotion_score"]
-        },
-
-        "next_mission": get_mission(s["mission_id"])
+        # 🔥 INTERNAL FASE 2 DATA (frontend puede ignorar)
+        "metrics": {
+            "stress": s["stress"],
+            "attention": s["attention"],
+            "emotion": s["emotion"]
+        }
     }
 
+
 # =========================
-# FORCE NAVIGATION (SAFE)
+# FORCE SKIP (SAFE)
 # =========================
-@app.post("/force_next")
-async def force_next(req: Request):
+@app.post("/force_skip")
+async def force_skip(req: Request):
 
     body = await req.json()
     sid = body.get("session_id")
 
-    s = SESSIONS.get(sid)
+    s = sessions.get(sid)
     if not s:
         return JSONResponse({"error": "Invalid session"}, 401)
 
-    s["mission_id"] = next_mission(s["mission_id"], s["visited"])
-    s["visited"].append(s["mission_id"])
+    s["block_index"] += 1
+
+    mission = get_mission(s["mission_index"])
+
+    if not mission:
+        return {"story": {"type": "end", "text": {"en": "END", "es": "FIN"}}}
+
+    blocks = mission["blocks"]
+
+    if s["block_index"] >= len(blocks):
+        s["mission_index"] += 1
+        s["block_index"] = 0
+        mission = get_mission(s["mission_index"])
+        blocks = mission["blocks"]
 
     return {
-        "mission": get_mission(s["mission_id"]),
+        "story": blocks[s["block_index"]],
         "xp": s["xp"]
     }
 
-@app.post("/force_back")
-async def force_back(req: Request):
 
-    body = await req.json()
-    sid = body.get("session_id")
+# =========================
+# RELOAD CONTENT
+# =========================
+@app.get("/reload")
+def reload():
+    global MISSIONS
+    MISSIONS = load_content()
+    return {"status": "reloaded", "missions": len(MISSIONS)}
 
-    s = SESSIONS.get(sid)
-    if not s:
-        return JSONResponse({"error": "Invalid session"}, 401)
-
-    if len(s["visited"]) > 0:
-        s["mission_id"] = s["visited"][-1]
-
-    return {
-        "mission": get_mission(s["mission_id"]),
-        "xp": s["xp"]
-    }
 
 # =========================
 # RANKING
 # =========================
 @app.get("/ranking")
-def ranking():
-    return sorted(RANKING.items(), key=lambda x: x[1], reverse=True)[:10]
+def get_ranking():
+    return sorted(ranking.items(), key=lambda x: x[1], reverse=True)[:10]
+
 
 # =========================
 # RUN SERVER
