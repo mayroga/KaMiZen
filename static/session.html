@@ -1,281 +1,185 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KAMIZEN SESSION</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>KaMiZen Session Engine</title>
 
 <style>
-:root{
-    --neon:#00f2ff;
-    --bg:#000;
-    --panel:rgba(0,15,30,0.9);
-    --green:#00ff6a;
-    --red:#ff2a2a;
-    --yellow:#ffd000;
-}
-
 body{
-    margin:0;
-    background:var(--bg);
-    font-family:Arial;
-    color:var(--neon);
-    overflow:hidden;
+  margin:0;
+  font-family: Arial, sans-serif;
+  background:#0b0b0b;
+  color:white;
+  text-align:center;
 }
 
-/* ===== APP ===== */
-#app{
-    height:100vh;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    flex-direction:column;
-    position:relative;
+#container{
+  padding:20px;
+  max-width:800px;
+  margin:auto;
 }
 
-/* ===== SEMÁFORO ===== */
-#signal{
-    position:absolute;
-    width:100%;
-    height:100%;
-    top:0;
-    left:0;
-    opacity:0;
-    transition:opacity 0.4s ease;
-    z-index:0;
-}
-
-.signal-green{ background:var(--green); }
-.signal-red{ background:var(--red); }
-
-/* ===== BREATH ===== */
-#circle{
-    width:80px;
-    height:80px;
-    border-radius:50%;
-    background:rgba(0,242,255,0.2);
-    box-shadow:0 0 25px var(--neon);
-    z-index:2;
-}
-
-/* ===== MESSAGE ===== */
-#message{
-    position:absolute;
-    bottom:180px;
-    width:85%;
-    max-width:700px;
-    background:var(--panel);
-    border:1px solid var(--neon);
-    padding:15px;
-    text-align:center;
-    min-height:110px;
-    z-index:2;
-}
-
-/* ===== OPTIONS ===== */
-#options{
-    position:absolute;
-    bottom:70px;
-    width:85%;
-    max-width:700px;
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:10px;
-    z-index:2;
+.block{
+  margin:20px 0;
+  padding:15px;
+  border-radius:10px;
+  background:#1a1a1a;
 }
 
 button{
-    padding:12px;
-    border:1px solid var(--neon);
-    background:transparent;
-    color:var(--neon);
-    cursor:pointer;
+  padding:10px 15px;
+  margin:5px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
 }
 
-button:hover{
-    background:var(--neon);
-    color:#000;
+.option{
+  background:#333;
+  color:white;
 }
 
-/* ===== SILENCE ===== */
-#silence{
-    position:absolute;
-    top:50px;
-    font-size:12px;
-    opacity:0.7;
+.option:hover{
+  background:#444;
 }
+
+.correct{
+  background:#1f8f3a !important;
+  color:white;
+}
+
+.wrong{
+  background:#b02a2a !important;
+  color:white;
+}
+
+#breath{
+  font-size:18px;
+  opacity:0.9;
+}
+
 </style>
 </head>
 
 <body>
 
-<div id="app">
-
-<div id="signal"></div>
-
-<div id="silence">SILENCE: <span id="silenceLevel">20</span>s</div>
-
-<div id="circle"></div>
-
-<div id="message" onclick="start()">TOUCH TO START</div>
-
-<div id="options"></div>
-
+<div id="container">
+  <h2 id="title">KaMiZen Session</h2>
+  <div id="content"></div>
 </div>
 
 <script>
+const missions = /* ===================== FULL DATA ===================== */ [
+  {
+"id":27,"level":27,"theme":"LEADERSHIP: GROUP PRESSURE (ADVANCED)",
+"blocks":[
+{"type":"story","text":{"en":"A group with strong influence pressures you to support an idea that feels wrong, but rewarding socially.","es":"Un grupo con influencia te presiona a apoyar una idea que parece incorrecta pero socialmente atractiva."}},
+{"type":"analysis","text":{"en":"Leadership is resisting emotional contagion and thinking independently under pressure.","es":"El liderazgo es resistir la emoción colectiva y pensar de forma independiente bajo presión."}},
+{"type":"breath_focus","duration_sec":30,"guide":{"es":"Inhala claridad. Exhala presión del grupo."}},
+{"type":"tvid","options":[
+{"code":"FOLLOW","text":{"es":"Seguir para ser aceptado"},"correct":false},
+{"code":"QUESTION","text":{"es":"Cuestionar la intención"},"correct":true},
+{"code":"LEAD","text":{"es":"Proponer alternativa"},"correct":true}
+]}
+]
+  },
 
-let session_id=null;
-let lang="en";
-let loading=false;
-let breathTimer=null;
+  {
+"id":28,"level":28,"theme":"EMOTIONAL CONTROL: ANGER TRIGGER CONTROL",
+"blocks":[
+{"type":"story","text":{"es":"Alguien te provoca intencionalmente frente a otros."}},
+{"type":"analysis","text":{"es":"El control emocional determina tu poder social."}},
+{"type":"tvid","options":[
+{"code":"EXPLODE","text":{"es":"Reaccionar agresivo"},"correct":false},
+{"code":"CONTROL","text":{"es":"Mantener calma"},"correct":true},
+{"code":"REDIRECT","text":{"es":"Redirigir atención"},"correct":true}
+]}
+]
+  }
+];
 
-/* ================= SAFE AUDIO (NO LOOP) ================= */
-function sound(type){
-    const ctx = new AudioContext();
-    const o = ctx.createOscillator();
-    const g = ctx.createGain();
+// UI STATE
+let currentMission = 0;
+let currentBlock = 0;
 
-    o.connect(g);
-    g.connect(ctx.destination);
+const content = document.getElementById("content");
 
-    o.type="sine";
+function renderBlock(){
+  const mission = missions[currentMission];
+  const block = mission.blocks[currentBlock];
 
-    if(type==="ok") o.frequency.value=440;
-    if(type==="fail") o.frequency.value=180;
-    if(type==="click") o.frequency.value=300;
+  content.innerHTML = "";
 
-    g.gain.value=0.08;
+  if(!block){
+    nextMission();
+    return;
+  }
 
-    o.start();
-    o.stop(ctx.currentTime+0.15);
+  const div = document.createElement("div");
+  div.className = "block";
+
+  // STORY / ANALYSIS / BREATH
+  if(block.type !== "tvid"){
+    div.innerHTML = `
+      <p>${block.text?.es || ""}</p>
+      ${block.type === "breath_focus" ? `<p id="breath">🌬️ ${block.guide?.es}</p>` : ""}
+    `;
+
+    setTimeout(()=>{
+      currentBlock++;
+      renderBlock();
+    }, 2500);
+
+    content.appendChild(div);
+    return;
+  }
+
+  // TVID QUESTION
+  div.innerHTML = `<h3>${block.text?.es || "Elige una opción"}</h3>`;
+
+  block.options.forEach(opt=>{
+    const btn = document.createElement("button");
+    btn.className = "option";
+    btn.innerText = opt.text.es;
+
+    btn.onclick = ()=>{
+      // RESET COLORS
+      document.querySelectorAll(".option").forEach(b=>{
+        b.classList.remove("correct","wrong");
+      });
+
+      if(opt.correct){
+        btn.classList.add("correct"); // 🟢 SOLO AQUÍ VERDE
+      } else {
+        btn.classList.add("wrong"); // 🔴 SOLO AQUÍ ROJO
+      }
+
+      setTimeout(()=>{
+        currentBlock++;
+        renderBlock();
+      }, 900);
+    };
+
+    div.appendChild(btn);
+  });
+
+  content.appendChild(div);
 }
 
-/* ================= START ================= */
-async function start(){
+function nextMission(){
+  currentMission++;
+  currentBlock = 0;
 
-    if(loading) return;
-    loading=true;
+  if(currentMission >= missions.length){
+    content.innerHTML = "<h2>Sesión completada</h2>";
+    return;
+  }
 
-    const res = await fetch("/start",{method:"POST"});
-    const data = await res.json();
-
-    session_id = data.session_id;
-
-    render(data);
-
-    loading=false;
+  renderBlock();
 }
 
-/* ================= SEND ================= */
-async function send(decision){
-
-    if(loading) return;
-    loading=true;
-
-    sound("click");
-
-    const res = await fetch("/judge",{
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({session_id, decision})
-    });
-
-    const data = await res.json();
-
-    render(data);
-
-    loading=false;
-}
-
-/* ================= SEMÁFORO ================= */
-function signal(color){
-    const s = document.getElementById("signal");
-
-    if(color==="green"){
-        s.className="signal-green";
-        s.style.opacity=0.6;
-    }
-
-    if(color==="red"){
-        s.className="signal-red";
-        s.style.opacity=0.6;
-    }
-
-    setTimeout(()=>s.style.opacity=0,800);
-}
-
-/* ================= BREATH ================= */
-function breathe(){
-    const c=document.getElementById("circle");
-    let up=true;
-
-    clearInterval(breathTimer);
-
-    breathTimer=setInterval(()=>{
-        c.style.transform = up?"scale(1.8)":"scale(1)";
-        up=!up;
-    },2500);
-}
-
-function stopBreath(){
-    clearInterval(breathTimer);
-}
-
-/* ================= RENDER ================= */
-function render(data){
-
-    if(!data || !data.story) return;
-
-    const s = data.story;
-
-    /* TEXT SAFE */
-    const text =
-        (s.text && (s.text.en || s.text.es)) || s.text || "..."
-
-    document.getElementById("message").innerText = text;
-
-    document.getElementById("options").innerHTML="";
-
-    /* BREATH */
-    if(s.type==="breathing"){
-        breathe();
-    } else {
-        stopBreath();
-    }
-
-    /* SILENCE */
-    if(s.type==="silence_challenge"){
-        document.getElementById("silenceLevel").innerText =
-            s.duration_sec || 20;
-    }
-
-    /* OPTIONS */
-    let opts = s.options || [];
-
-    if(opts.length===0){
-        opts=[{code:"NEXT", text:{en:"CONTINUE",es:"CONTINUAR"}}];
-    }
-
-    opts.forEach(o=>{
-        const b=document.createElement("button");
-        b.innerText=o.text?.[lang]||"OK";
-        b.onclick=()=>send(o.code);
-        document.getElementById("options").appendChild(b);
-    });
-
-    /* ================= SEMÁFORO LOGIC ================= */
-    if(data.correct===true){
-        signal("green");
-        sound("ok");
-    }
-
-    if(data.correct===false){
-        signal("red");
-        sound("fail");
-    }
-}
-
+renderBlock();
 </script>
 
 </body>
