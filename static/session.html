@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KAMIZEN CORE ORCHESTRATED</title>
+<title>KAMIZEN CORE | ORCHESTRATED BRAIN SYSTEM</title>
 
 <style>
 :root{
@@ -11,9 +11,13 @@
   --neon:#00f2ff;
   --green:#00ff88;
   --red:#ff0044;
+  --yellow:#ffcc00;
   --panel:rgba(0,20,40,0.95);
 }
 
+/* =========================
+   GLOBAL
+========================= */
 body{
   margin:0;
   background:var(--bg);
@@ -22,22 +26,25 @@ body{
   overflow:hidden;
 }
 
-/* ================= BREATH SCENE ================= */
+/* =========================
+   BREATHING CORE (GLBO)
+========================= */
 #breath{
   position:absolute;
-  top:30%;
+  top:28%;
   left:50%;
   transform:translate(-50%,-50%) scale(1);
   width:150px;
   height:150px;
   border-radius:50%;
-  background:rgba(0,200,255,0.2);
+  background:rgba(0,200,255,0.18);
   border:2px solid var(--neon);
   display:none;
-  transition:4s ease-in-out;
 }
 
-/* HEADER */
+/* =========================
+   HEADER
+========================= */
 #header{
   position:absolute;
   top:10px;
@@ -51,13 +58,35 @@ body{
   height:10px;
   border:1px solid var(--neon);
 }
+
 #xpFill{
   height:100%;
   width:0%;
   background:var(--green);
+  transition:0.3s;
 }
 
-/* MESSAGE */
+/* =========================
+   CORE TIMER
+========================= */
+#core{
+  position:absolute;
+  top:28%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  font-size:35px;
+  width:140px;
+  height:140px;
+  border-radius:50%;
+  border:2px solid var(--neon);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+/* =========================
+   TEXT
+========================= */
 #message{
   position:absolute;
   bottom:230px;
@@ -69,18 +98,18 @@ body{
   text-align:center;
 }
 
-/* COACH */
-#coach{
+#reason{
   position:absolute;
-  bottom:320px;
+  bottom:300px;
   width:90%;
   left:5%;
   text-align:center;
   font-size:14px;
-  opacity:0.9;
 }
 
-/* OPTIONS */
+/* =========================
+   OPTIONS (SHUFFLE ENABLED)
+========================= */
 #options{
   position:absolute;
   bottom:110px;
@@ -108,7 +137,9 @@ button:hover{
 .correct{background:var(--green)!important;color:black!important;}
 .wrong{background:var(--red)!important;color:white!important;}
 
-/* NAV */
+/* =========================
+   NAV
+========================= */
 #nav{
   position:absolute;
   bottom:20px;
@@ -118,7 +149,9 @@ button:hover{
   justify-content:space-between;
 }
 
-/* BREAK */
+/* =========================
+   BREAK MODE
+========================= */
 #break{
   position:absolute;
   top:0;
@@ -131,6 +164,7 @@ button:hover{
   align-items:center;
   flex-direction:column;
   color:white;
+  text-align:center;
 }
 </style>
 </head>
@@ -141,10 +175,13 @@ button:hover{
 
 <div id="header">
   <div id="xpBar"><div id="xpFill"></div></div>
+  <button onclick="toggleLang()">EN/ES</button>
 </div>
 
-<div id="coach"></div>
+<div id="core">⚡</div>
+<div id="reason"></div>
 <div id="message">CLICK TO START</div>
+
 <div id="options"></div>
 
 <div id="nav">
@@ -155,7 +192,7 @@ button:hover{
 
 <div id="break">
   <h2>🧠 BREAK MODE</h2>
-  <p>Descanso obligatorio. Sin pantalla.</p>
+  <p>Respira. Recupera tu mente.</p>
 </div>
 
 <script>
@@ -164,85 +201,84 @@ let session_id=null;
 let mission=null;
 let lang="en";
 let xp=0;
-let scene="idle";
-let sessionStart=Date.now();
 
-/* ================= AUDIO ================= */
+/* =========================
+   AUDIO ENGINE
+========================= */
 const ctx=new (window.AudioContext||window.webkitAudioContext)();
 
 function sound(type){
   const o=ctx.createOscillator();
   const g=ctx.createGain();
+
   o.connect(g); g.connect(ctx.destination);
 
-  if(type==="good") o.frequency.value=1000;
+  if(type==="good") o.frequency.value=900;
   if(type==="bad") o.frequency.value=150;
   if(type==="click") o.frequency.value=500;
-  if(type==="breath") o.frequency.value=600;
 
   g.gain.value=0.2;
   o.start();
-  o.stop(ctx.currentTime+0.25);
+  o.stop(ctx.currentTime+0.2);
 }
 
-/* ================= COACH VARIATION ================= */
-const coachLines=[
-  "Focus is your power.",
-  "Keep control of your mind.",
-  "You are improving.",
-  "Stay present.",
-  "Breathe and decide.",
-  "Calm mind, strong actions."
+/* =========================
+   VOICE COACH VARIATION
+========================= */
+const coachPhrases=[
+  "Focus now",
+  "Keep control",
+  "Stay present",
+  "You are improving",
+  "Observe and decide",
+  "Calm mind active"
 ];
 
-function coachSpeak(extra=""){
-  const text = coachLines[Math.floor(Math.random()*coachLines.length)] + " " + extra;
-  document.getElementById("coach").innerText=text;
-
+function speak(text){
   const u=new SpeechSynthesisUtterance(text);
   u.rate=0.9;
+  u.lang=lang==="en"?"en-US":"es-ES";
   speechSynthesis.cancel();
   speechSynthesis.speak(u);
 }
 
-/* ================= BREATHING SCENE ================= */
-function startBreathScene(){
-  scene="breathing";
+function randomCoach(){
+  return coachPhrases[Math.floor(Math.random()*coachPhrases.length)];
+}
 
+/* =========================
+   BREATHING SCENE (SYNC)
+========================= */
+let breathingInterval=null;
+
+function startBreathing(){
   const b=document.getElementById("breath");
   b.style.display="block";
 
-  let inhale=true;
+  clearInterval(breathingInterval);
 
-  const interval=setInterval(()=>{
+  breathingInterval=setInterval(()=>{
 
-    if(scene!=="breathing"){
-      clearInterval(interval);
-      b.style.display="none";
-      return;
-    }
+    b.style.transform="translate(-50%,-50%) scale(1.6)";
+    speak(lang==="en"?"Inhale":"Inhala");
 
-    if(inhale){
-      b.style.transform="translate(-50%,-50%) scale(1.4)";
-      coachSpeak("Inhale");
-      sound("breath");
-    }else{
+    setTimeout(()=>{
       b.style.transform="translate(-50%,-50%) scale(1)";
-      coachSpeak("Exhale");
-      sound("breath");
-    }
+      speak(lang==="en"?"Exhale":"Exhala");
+    },4000);
 
-    inhale=!inhale;
-
-  },4000);
+  },8000);
 }
 
-/* ================= SCENE CONTROL ================= */
-function setScene(type){
-  scene=type;
+function stopBreathing(){
+  const b=document.getElementById("breath");
+  b.style.display="none";
+  clearInterval(breathingInterval);
 }
 
-/* ================= START ================= */
+/* =========================
+   START
+========================= */
 async function start(){
   if(ctx.state==="suspended") await ctx.resume();
 
@@ -255,42 +291,55 @@ async function start(){
   render();
 }
 
-/* ================= RENDER ORCHESTRATION ================= */
+/* =========================
+   SHUFFLE (ANTI PATTERN)
+========================= */
+function shuffle(a){
+  return a.sort(()=>Math.random()-0.5);
+}
+
+/* =========================
+   RENDER ENGINE (SCENES)
+========================= */
 function render(){
+
+  if(!mission) return;
 
   const msg=document.getElementById("message");
   const opt=document.getElementById("options");
 
   opt.innerHTML="";
+  document.getElementById("reason").innerText="";
 
   const textBlock=mission.blocks.find(b=>b.text);
+  const text=textBlock?.text?.[lang] || "..."
+
+  msg.innerText=text;
+
+  speak(randomCoach()+"... "+text);
+
   const tvid=mission.blocks.find(b=>b.type==="tvid");
-  const exercise=mission.blocks.find(b=>b.type==="tvid_exercise");
-  const breath=mission.blocks.find(b=>b.type==="breathing");
 
-  /* ================= BREATH SCENE ================= */
-  if(breath){
-    setScene("breathing");
-    startBreathScene();
-    coachSpeak("Respiración activa. Sigue el ritmo.");
-    msg.innerText="BREATHING SCENE ACTIVE";
-    return;
+  /* =========================
+     BREATHING SCENE CONTROL
+  ========================= */
+  const hasBreathing=mission.blocks.some(b=>b.type==="breathing");
+
+  if(hasBreathing){
+    startBreathing();
+  }else{
+    stopBreathing();
   }
 
-  /* STOP BREATH */
-  scene="question";
-  document.getElementById("breath").style.display="none";
-
-  /* ================= QUESTION ================= */
-  if(textBlock){
-    msg.innerText=textBlock.text?.[lang] || "...";
-    coachSpeak();
-  }
-
+  /* =========================
+     OPTIONS SHUFFLE REQUIRED
+  ========================= */
   if(tvid){
-    tvid.options.forEach(o=>{
+    const options=shuffle([...tvid.options]);
+
+    options.forEach(o=>{
       const btn=document.createElement("button");
-      btn.innerText=o.text?.[lang];
+      btn.innerText=o.text[lang];
 
       btn.onclick=()=>choose(btn,o);
 
@@ -298,38 +347,57 @@ function render(){
     });
   }
 
-  /* ================= EXERCISE ================= */
-  if(exercise){
-    coachSpeak("TVID exercise mode activated.");
-    setTimeout(()=>{
-      coachSpeak("Close eyes. Reset mind.");
-    },2000);
+  /* =========================
+     TVID EXERCISE SCENE
+  ========================= */
+  if(mission.blocks.some(b=>b.type==="tvid_exercise")){
+    runExercise();
   }
-
-  checkSessionTime();
 }
 
-/* ================= ANSWER ================= */
+/* =========================
+   TVID REAL EXECUTION
+========================= */
+function runExercise(){
+  speak(lang==="en"
+    ?"Close your eyes. Feel your breathing."
+    :"Cierra los ojos. Siente tu respiración."
+  );
+
+  setTimeout(()=>{
+    speak(lang==="en"
+      ?"Smile. Hold it. You are in control."
+      :"Sonríe. Mantén. Tienes control."
+    );
+  },4000);
+}
+
+/* =========================
+   CHOOSE ANSWER
+========================= */
 async function choose(btn,o){
 
   const r=await fetch("/judge",{
     method:"POST",
     headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({session_id,decision:o.code})
+    body:JSON.stringify({
+      session_id,
+      decision:o.code
+    })
   });
 
   const d=await r.json();
 
-  document.getElementById("message").innerText=o.reason?.[lang] || "";
+  document.getElementById("reason").innerText=o.reason?.[lang] || "";
 
   if(d.correct){
     btn.classList.add("correct");
     sound("good");
-    coachSpeak("Correct decision.");
+    speak("Correct. "+randomCoach());
   }else{
     btn.classList.add("wrong");
     sound("bad");
-    coachSpeak("Learn from this.");
+    speak("Incorrect. Learn and retry.");
   }
 
   xp=d.xp;
@@ -342,47 +410,63 @@ async function choose(btn,o){
   setTimeout(()=>{
     mission=d.next_mission;
     render();
-  },2000);
+  },1800);
 }
 
-/* ================= BREAK ================= */
+/* =========================
+   BREAK SYSTEM
+========================= */
 function showBreak(){
-  document.getElementById("break").style.display="flex";
-  coachSpeak("Rest time. No screen.");
+  const b=document.getElementById("break");
+  b.style.display="flex";
+
+  speak("Stop. Rest your mind.");
 
   setTimeout(()=>{
-    document.getElementById("break").style.display="none";
+    b.style.display="none";
   },30000);
 }
 
-/* ================= TIME CONTROL (ANTI ADDICTION) ================= */
-function checkSessionTime(){
-  const mins=(Date.now()-sessionStart)/60000;
-
-  if(mins>=15){
-    document.getElementById("break").style.display="flex";
-    coachSpeak("Session complete. Good work.");
-
-    setTimeout(()=>{
-      location.reload();
-    },20000);
-  }
-}
-
-/* ================= NAV ================= */
+/* =========================
+   NAV SYSTEM
+========================= */
 async function next(){
-  const r=await fetch("/force_next",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({session_id})});
+  sound("click");
+
+  const r=await fetch("/force_next",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({session_id})
+  });
+
   const d=await r.json();
-  mission=d.mission;
+
+  alert(d.message);
+  speak(d.message);
+
   xp=d.xp;
+  mission=d.mission;
+
   render();
 }
 
 async function back(){
-  const r=await fetch("/force_back",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({session_id})});
+  sound("click");
+
+  const r=await fetch("/force_back",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({session_id})
+  });
+
   const d=await r.json();
-  mission=d.mission;
+
+  alert(d.message);
+  speak(d.message);
+
   xp=d.xp;
+  mission=d.mission;
+
   render();
 }
 
@@ -390,7 +474,14 @@ function restart(){
   location.reload();
 }
 
-/* ================= INIT ================= */
+function toggleLang(){
+  lang=lang==="en"?"es":"en";
+  render();
+}
+
+/* =========================
+   INIT
+========================= */
 document.getElementById("message").onclick=start;
 
 </script>
