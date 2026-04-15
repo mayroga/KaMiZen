@@ -1,15 +1,19 @@
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
-import uuid
 import json
+import uuid
 
 app = FastAPI()
+
+# =========================
+# STATIC
+# =========================
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-# ===============================
+# =========================
 # LOAD CONTENT
-# ===============================
+# =========================
 CONTENT_PATH = "static/kamizen_content.json"
 
 def load_content():
@@ -17,94 +21,141 @@ def load_content():
         with open(CONTENT_PATH, "r", encoding="utf-8") as f:
             return json.load(f).get("missions", [])
     except Exception as e:
-        print("JSON ERROR:", e)
+        print("ERROR LOAD JSON:", e)
         return []
 
 MISSIONS = load_content()
 
-# ===============================
-# SESSIONS MEMORY (IN RAM)
-# ===============================
+# =========================
+# SESSIONS MEMORY
+# =========================
 sessions = {}
 
-# ===============================
-# FLOW ENGINE
-# ===============================
+# =========================
+# HELPERS
+# =========================
 
-def next_block(session):
-
-    mission = MISSIONS[session["m"]]
-    blocks = mission["blocks"]
-
-    # avanzar bloque
-    if session["i"] >= len(blocks):
-
-        session["m"] += 1
-        session["i"] = 0
-
-        # fin total
-        if session["m"] >= len(MISSIONS):
-            return {
-                "type": "end",
-                "text": {
-                    "en": "Session completed",
-                    "es": "Sesión completada"
-                }
-            }
-
-        blocks = MISSIONS[session["m"]]["blocks"]
-
-    block = blocks[session["i"]]
-    session["i"] += 1
-
-    return block
+def get_mission(session):
+    idx = session["mission_index"]
+    if idx >= len(MISSIONS):
+        return None
+    return MISSIONS[idx]
 
 
-# ===============================
-# FORMAT CLEAN OUTPUT
-# ===============================
+def get_blocks(session):
+    mission = get_mission(session)
+    if not mission:
+        return []
+    return mission.get("blocks", [])
+
+
+def get_current_block(session):
+    blocks = get_blocks(session)
+    i = session["block_index"]
+
+    if i >= len(blocks):
+        return None
+
+    return blocks[i]
+
+
+def advance(session):
+    session["block_index"] += 1
+
+    blocks = get_blocks(session)
+
+    if session["block_index"] >= len(blocks):
+        session["mission_index"] += 1
+        session["block_index"] = 0
+
+
 def format_block(block):
+    if not block:
+        return None
 
-    return {
-        "type": block.get("type"),
-        "text": block.get("text"),
-        "analysis": block.get("analysis"),
-        "options": block.get("options") if block.get("type") == "tvid" else None,
-        "guide": block.get("guide"),
-        "duration_sec": block.get("duration_sec"),
-        "reward": block.get("reward")
+    base = {
+        "type": block.get("type")
     }
 
+    # TEXT / ANALYSIS
+    if "text" in block:
+        base["text"] = block["text"]
 
-# ===============================
-# START SESSION
-# ===============================
+    if "analysis" in block:
+        base["analysis"] = block["analysis"]
+
+    # BREATH
+    if block.get("type") in ["breath_focus", "breathing"]:
+        base["duration_sec"] = block.get("duration_sec", 30)
+        base["guide"] = block.get("guide", {})
+
+    # TVID / QUIZ
+    if "options" in block:
+        base["options"] = []
+        for o in block["options"]:
+            base["options"].append({
+                "code": o.get("code"),
+                "text": o.get("text"),
+                "correct": o.get("correct", False),
+                "reason": o.get("reason", {})
+            })
+
+    # SILENCE
+    if block.get("type") == "silence_challenge":
+        base["duration_sec"] = block.get("duration_sec", 20)
+        base["reward"] = block.get("reward", {})
+
+    # QUESTION
+    if "question" in block:
+        base["question"] = block["question"]
+
+    return base
+
+
+def evaluate_answer(block, decision):
+    """
+    Solo aplica a TVID / QUIZ
+    """
+    if not block or "options" not in block:
+        return None
+
+    for opt in block["options"]:
+        if opt.get("code") == decision:
+            return {
+                "correct": opt.get("correct", False),
+                "reason": opt.get("reason", {})
+            }
+
+    return None
+
+
+# =========================
+# ROUTES
+# =========================
+
+@app.get("/")
+def home():
+    return FileResponse("static/session.html")
+
+
 @app.post("/start")
-def start(data: dict):
-
-    lang = data.get("profile", {}).get("lang", "en")
+def start(data: dict = None):
 
     session_id = str(uuid.uuid4())
 
     sessions[session_id] = {
-        "m": 0,
-        "i": 0,
-        "lang": lang,
-        "last": None
+        "mission_index": 0,
+        "block_index": 0
     }
 
-    block = next_block(sessions[session_id])
-    sessions[session_id]["last"] = block
+    first = get_current_block(sessions[session_id])
 
     return JSONResponse({
         "session_id": session_id,
-        "story": format_block(block)
+        "story": format_block(first)
     })
 
 
-# ===============================
-# JUDGE (ONLY TVID LOGIC)
-# ===============================
 @app.post("/judge")
 def judge(data: dict):
 
@@ -115,60 +166,44 @@ def judge(data: dict):
 
     if not session:
         return JSONResponse({
-            "next": {
+            "story": {
                 "type": "error",
-                "text": {
-                    "en": "Session expired",
-                    "es": "Sesión expirada"
-                }
+                "text": {"en": "Session expired", "es": "Sesión expirada"}
             }
         })
 
-    last = session["last"]
+    current = get_current_block(session)
 
-    feedback = None
+    feedback = evaluate_answer(current, decision)
 
-    # ===========================
-    # ONLY TVID HAS DECISION LOGIC
-    # ===========================
-    if last and last.get("type") == "tvid":
+    # SOLO feedback si es TVID
+    response = {}
 
-        options = last.get("options", [])
+    if feedback:
+        response["feedback"] = feedback
 
-        selected = next((o for o in options if o["code"] == decision), None)
+    # avanzar flujo SIEMPRE
+    advance(session)
 
-        if selected:
+    next_block = get_current_block(session)
 
-            feedback = {
-                "correct": selected.get("correct", False),
-                "reason": selected.get("reason", {})
+    # si terminó misión
+    if next_block is None:
+        response["story"] = {
+            "type": "end",
+            "text": {
+                "en": "SESSION COMPLETE",
+                "es": "SESIÓN COMPLETADA"
             }
+        }
+    else:
+        response["story"] = format_block(next_block)
 
-    # ===========================
-    # ADVANCE FLOW ALWAYS
-    # ===========================
-    block = next_block(session)
-    session["last"] = block
-
-    return JSONResponse({
-        "feedback": feedback,
-        "next": format_block(block)
-    })
+    return JSONResponse(response)
 
 
-# ===============================
-# RELOAD CONTENT
-# ===============================
 @app.get("/reload")
 def reload():
     global MISSIONS
     MISSIONS = load_content()
-    return {"ok": True, "missions": len(MISSIONS)}
-
-
-# ===============================
-# FRONTEND ENTRY
-# ===============================
-@app.get("/")
-def home():
-    return FileResponse("static/session.html")
+    return {"status": "reloaded", "missions": len(MISSIONS)}
