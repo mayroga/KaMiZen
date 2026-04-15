@@ -1,263 +1,103 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KaMiZen Session</title>
-
-<style>
-body{
-  margin:0;
-  font-family:Arial, sans-serif;
-  background:#0b0b0b;
-  color:white;
-  text-align:center;
-}
-
-#container{
-  max-width:800px;
-  margin:auto;
-  padding:20px;
-}
-
-.block{
-  background:#1a1a1a;
-  padding:20px;
-  border-radius:12px;
-  margin:20px 0;
-}
-
-button{
-  padding:12px 16px;
-  margin:6px;
-  border:none;
-  border-radius:8px;
-  cursor:pointer;
-}
-
-.option{
-  background:#333;
-  color:white;
-}
-
-.option:hover{
-  background:#444;
-}
-
-.correct{
-  background:#1f8f3a !important;
-}
-
-.wrong{
-  background:#b02a2a !important;
-}
-
-#timer{
-  margin-top:10px;
-  font-size:18px;
-}
-
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KaMiZen Session</title>
+    <style>
+        body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0b0b0b; color: white; text-align: center; }
+        #container { max-width: 600px; margin: auto; padding: 40px 20px; }
+        .block { background: #141414; padding: 30px; border-radius: 15px; border: 1px solid #333; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        button { padding: 15px 20px; margin: 10px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        .option { background: #222; color: #ccc; border: 1px solid #444; width: 80%; }
+        .option:hover { background: #333; color: white; }
+        .correct { background: #1f8f3a !important; color: white; }
+        .wrong { background: #b02a2a !important; color: white; }
+        #timer { font-size: 24px; color: #ffcc00; margin: 20px 0; }
+        .clear-btn { background: #444; color: white; margin-top: 50px; font-size: 12px; opacity: 0.6; }
+    </style>
 </head>
-
 <body>
 
 <div id="container">
-  <h2>KaMiZen</h2>
-  <div id="content"></div>
+    <h1 style="letter-spacing: 4px; color: #444;">KAMIZEN</h1>
+    <div id="content">
+        <button onclick="initSession()" style="background:#fff; color:#000; padding: 20px 40px;">INICIAR MISIÓN</button>
+    </div>
+    <button class="clear-btn" onclick="location.reload()">BORRAR SESIÓN</button>
 </div>
 
 <script>
-
-let missions = [];
-let currentMission = 0;
-let currentBlock = 0;
-
+let sessionId = null;
 const content = document.getElementById("content");
 
-
-// =========================
-// LOAD DATA
-// =========================
-fetch("/api/missions")
-.then(res => res.json())
-.then(data=>{
-  missions = data.missions || [];
-  start();
-})
-.catch(err=>{
-  content.innerHTML = "<h3>Error cargando datos</h3>";
-  console.error(err);
-});
-
-
-// =========================
-// START
-// =========================
-function start(){
-  currentMission = 0;
-  currentBlock = 0;
-  render();
+async function initSession() {
+    const res = await fetch("/start", { method: "POST" });
+    const data = await res.json();
+    sessionId = data.session_id;
+    render(data.story);
 }
 
-
-// =========================
-// RENDER
-// =========================
-function render(){
-
-  if(!missions.length){
-    content.innerHTML = "<h3>No hay contenido</h3>";
-    return;
-  }
-
-  const mission = missions[currentMission];
-
-  if(!mission){
-    content.innerHTML = "<h2>Sesión completada</h2>";
-    return;
-  }
-
-  const block = mission.blocks[currentBlock];
-
-  if(!block){
-    nextMission();
-    return;
-  }
-
-  content.innerHTML = "";
-
-  const div = document.createElement("div");
-  div.className = "block";
-
-  // ========= TEXT =========
-  if(
-    block.type === "story" ||
-    block.type === "analysis" ||
-    block.type === "micro_explanation" ||
-    block.type === "final_lesson"
-  ){
-    div.innerHTML = `<p>${block.text?.es || ""}</p>`;
-    content.appendChild(div);
-
-    setTimeout(()=>{
-      currentBlock++;
-      render();
-    }, 3000);
-
-    return;
-  }
-
-  // ========= BREATH / RISO =========
-  if(block.type === "breath_focus" || block.type === "riso_tvid"){
-
-    div.innerHTML = `
-      <p>${block.guide?.es || ""}</p>
-      <div id="timer"></div>
-    `;
-
-    content.appendChild(div);
-
-    runTimer(block.duration_sec || 30, ()=>{
-      currentBlock++;
-      render();
+async function nextStep(decision = "AUTO") {
+    const res = await fetch("/judge", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ session_id: sessionId, decision: decision })
     });
-
-    return;
-  }
-
-  // ========= SILENCE =========
-  if(block.type === "silence_challenge"){
-
-    div.innerHTML = `
-      <p>🤫 Mantente en silencio</p>
-      <div id="timer"></div>
-    `;
-
-    content.appendChild(div);
-
-    runTimer(block.duration_sec || 20, ()=>{
-      alert(block.reward?.es || "Bien hecho");
-      currentBlock++;
-      render();
-    });
-
-    return;
-  }
-
-  // ========= TVID =========
-  if(block.type === "tvid"){
-
-    const options = block.options || [];
-
-    div.innerHTML = `<h3>Elige una opción</h3>`;
-
-    options.forEach(opt=>{
-      const btn = document.createElement("button");
-      btn.className = "option";
-      btn.innerText = opt.text?.es || "";
-
-      btn.onclick = ()=>{
-
-        document.querySelectorAll(".option").forEach(b=>{
-          b.classList.remove("correct","wrong");
-        });
-
-        // ✅ SOLO AQUÍ COLOR (como pediste)
-        if(opt.correct){
-          btn.classList.add("correct");
-        } else {
-          btn.classList.add("wrong");
-        }
-
-        setTimeout(()=>{
-          currentBlock++;
-          render();
-        }, 800);
-      };
-
-      div.appendChild(btn);
-    });
-
-    content.appendChild(div);
-    return;
-  }
-
+    const data = await res.json();
+    render(data.story);
 }
 
+function render(block) {
+    content.innerHTML = "";
+    const div = document.createElement("div");
+    div.className = "block";
 
-// =========================
-// TIMER
-// =========================
-function runTimer(seconds, callback){
-
-  const timer = document.getElementById("timer");
-  let t = seconds;
-
-  timer.innerText = "⏳ " + t;
-
-  const interval = setInterval(()=>{
-    t--;
-    timer.innerText = "⏳ " + t;
-
-    if(t <= 0){
-      clearInterval(interval);
-      callback();
+    // Manejo de textos simples
+    if (["story", "analysis", "micro_explanation", "final_lesson"].includes(block.type)) {
+        div.innerHTML = `<p style="font-size:1.2em; line-height:1.6;">${block.text?.es || ""}</p>`;
+        content.appendChild(div);
+        setTimeout(() => nextStep(), 4000);
+    } 
+    // Manejo de respiración y risa
+    else if (["breath_focus", "riso_tvid"].includes(block.type)) {
+        div.innerHTML = `<p>${block.text?.es || block.guide?.es || ""}</p><div id="timer">⏳</div>`;
+        content.appendChild(div);
+        runTimer(block.duration_sec || 30);
     }
-  },1000);
+    // Manejo de TVID (Opciones)
+    else if (block.type === "tvid") {
+        div.innerHTML = `<h3 style="color:#666;">DECIDE</h3>`;
+        (block.options || []).forEach(opt => {
+            const btn = document.createElement("button");
+            btn.className = "option";
+            btn.innerText = opt.text?.es || "";
+            btn.onclick = () => {
+                btn.classList.add(opt.correct ? "correct" : "wrong");
+                setTimeout(() => nextStep(opt.code), 1000);
+            };
+            div.appendChild(btn);
+        });
+        content.appendChild(div);
+    }
+    // Fin
+    else if (block.type === "end") {
+        div.innerHTML = `<h2>${block.text?.es || "FIN"}</h2>`;
+        content.appendChild(div);
+    }
 }
 
-
-// =========================
-// NEXT
-// =========================
-function nextMission(){
-  currentMission++;
-  currentBlock = 0;
-  render();
+function runTimer(sec) {
+    let t = sec;
+    const display = document.getElementById("timer");
+    const interval = setInterval(() => {
+        display.innerText = "⏳ " + t;
+        if (t-- <= 0) {
+            clearInterval(interval);
+            nextStep();
+        }
+    }, 1000);
 }
-
 </script>
-
 </body>
 </html>
