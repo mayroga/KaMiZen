@@ -1,463 +1,361 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>KAMIZEN</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>KAMIZEN | CORE FOCUS SYSTEM</title>
 
 <style>
 :root{
-  --bg:#000;
   --neon:#00f2ff;
-  --green:#00ff88;
-  --red:#ff0044;
-  --panel:rgba(0,20,40,0.92);
+  --bg:#000;
+  --panel:rgba(0,15,30,0.92);
+  --good:#00ff88;
+  --bad:#ff0044;
 }
 
 body{
   margin:0;
   background:var(--bg);
-  color:var(--neon);
   font-family:Arial;
+  color:var(--neon);
   overflow:hidden;
 }
 
-#breath{
-  position:absolute;
-  top:22%;
-  left:50%;
-  transform:translate(-50%,-50%);
-  width:160px;
-  height:160px;
-  border-radius:50%;
-  border:2px solid var(--neon);
-  background:rgba(0,255,255,0.08);
-  transition:4s ease-in-out;
-}
-
-#top{
-  position:absolute;
-  top:10px;
-  width:95%;
+#app{
+  width:100%;
+  height:100vh;
   display:flex;
-  justify-content:space-between;
-  font-size:12px;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  position:relative;
 }
 
-#xpBar{
-  width:200px;
-  height:10px;
-  border:1px solid var(--neon);
-}
-#xpFill{
-  width:0%;
-  height:100%;
-  background:var(--green);
+/* BREATH CORE */
+#circle{
+  width:80px;
+  height:80px;
+  border-radius:50%;
+  background:rgba(0,242,255,0.2);
+  box-shadow:0 0 25px var(--neon);
+  transition:2.5s ease-in-out;
 }
 
-#content{
+/* MESSAGE */
+#message{
   position:absolute;
-  top:45%;
-  left:50%;
-  transform:translate(-50%,-50%);
-  width:90%;
+  bottom:170px;
+  width:85%;
+  max-width:720px;
+  padding:15px;
+  background:var(--panel);
+  border:1px solid var(--neon);
   text-align:center;
+  min-height:120px;
 }
 
-#title{font-size:20px;margin-bottom:10px;}
-#text{font-size:16px;min-height:80px;}
-#reason{font-size:13px;color:white;margin-top:10px;}
-
+/* OPTIONS */
 #options{
   position:absolute;
-  bottom:120px;
-  width:90%;
-  left:5%;
+  bottom:60px;
+  width:85%;
+  max-width:720px;
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:10px;
 }
 
 button{
-  padding:14px;
-  background:black;
+  padding:12px;
+  background:transparent;
   border:1px solid var(--neon);
   color:var(--neon);
+  font-weight:bold;
+  cursor:pointer;
+  transition:0.2s;
 }
 
-.correct{background:var(--green)!important;color:black;}
-.wrong{background:var(--red)!important;color:white;}
+button:hover{
+  background:var(--neon);
+  color:#000;
+}
 
-#coachBox{
+#controls{
   position:absolute;
-  right:10px;
-  top:120px;
-  width:200px;
-  height:160px;
-  border:1px solid var(--neon);
-  background:rgba(0,0,0,0.6);
-  padding:10px;
+  top:10px;
+  width:100%;
+  display:flex;
+  justify-content:space-between;
+  padding:0 10px;
   font-size:12px;
 }
 
-#metrics{
+/* SILENCE MODE */
+#silence{
   position:absolute;
-  left:10px;
-  top:120px;
-  font-size:11px;
-  color:white;
+  top:50px;
+  font-size:12px;
+  opacity:0.7;
 }
-
-#breakScreen,#silenceScreen{
-  position:absolute;
-  top:0;left:0;
-  width:100%;height:100%;
-  background:black;
-  display:none;
-  justify-content:center;
-  align-items:center;
-  flex-direction:column;
-}
-
 </style>
 </head>
 
 <body>
 
-<div id="top">
-  <div id="xpBar"><div id="xpFill"></div></div>
-  <div id="langBtn" onclick="toggleLang()">EN/ES</div>
-</div>
+<div id="app">
 
-<div id="breath"></div>
+  <div id="controls">
+    <button onclick="restart()">RESTART</button>
+    <button onclick="skip()">SKIP</button>
+  </div>
 
-<div id="metrics">
-  <div>Stress: <span id="stress">0</span></div>
-  <div>Focus: <span id="focus">0</span></div>
-  <div>Emotion: <span id="emotion">Stable</span></div>
-</div>
+  <div id="silence">SILENCE: <span id="silenceLevel">20</span>s</div>
 
-<div id="coachBox">
-  <b>KaMiZen Coach</b>
-  <div id="coachText">Ready...</div>
-</div>
+  <div id="circle"></div>
 
-<div id="content">
-  <div id="title"></div>
-  <div id="text"></div>
-  <div id="reason"></div>
-</div>
+  <div id="message" onclick="start()">TOUCH TO START</div>
 
-<div id="options"></div>
+  <div id="options"></div>
 
-<div id="breakScreen">
-  <h2>BREAK MODE</h2>
-  <button onclick="continueSession()">Continue</button>
-</div>
-
-<div id="silenceScreen">
-  <h2>SILENCE MODE</h2>
-  <h1 id="timer"></h1>
 </div>
 
 <script>
 
 /* =========================
-SESSION CORE
+   CORE STATE (SIMPLIFIED)
 ========================= */
-let session_id=null;
-let mission=null;
-let lang="en";
-let xp=0;
+let session_id = null;
+let lang = "es";
+let loading = false;
+let current = null;
 
-/* =========================
-USER PROFILE (ADAPTIVE SYSTEM)
-========================= */
-let profile={
-  ageGroup:"adult", // child | adult | senior | veteran | gov
-  stress:0,
-  focus:0,
-  emotion:"neutral"
+/* INTERNAL (HIDDEN INTELLIGENCE) */
+let metrics = {
+  stress: 0,
+  attention: 50,
+  emotion: 50
 };
 
 /* =========================
-AUDIO ENGINE (VOICE)
+   AUDIO ENGINE (LIGHT)
 ========================= */
-let q=[];
-let speaking=false;
+const audio = new (window.AudioContext || window.webkitAudioContext)();
 
-function speak(t){
-  q.push(t);
-  process();
-}
+function sound(type){
+  const o = audio.createOscillator();
+  const g = audio.createGain();
 
-function process(){
-  if(speaking||q.length===0) return;
-  speaking=true;
-  let t=q.shift();
+  o.connect(g);
+  g.connect(audio.destination);
 
-  let u=new SpeechSynthesisUtterance(t);
-  u.lang=lang==="en"?"en-US":"es-ES";
-  u.rate=0.9;
+  if(type==="ok") o.frequency.value = 520;
+  if(type==="bad") o.frequency.value = 140;
+  if(type==="click") o.frequency.value = 300;
 
-  u.onend=()=>{speaking=false;setTimeout(process,200);};
-  speechSynthesis.speak(u);
+  g.gain.value = 0.12;
+
+  o.start();
+  o.stop(audio.currentTime + 0.2);
 }
 
 /* =========================
-AMBIENT MUSIC ENGINE (INTELLIGENT)
+   MUSIC LOOP (STABLE)
 ========================= */
-const audioCtx = new (window.AudioContext||window.webkitAudioContext)();
-let ambientOsc=null;
+let musicOsc;
 
 function startMusic(){
-  ambientOsc=audioCtx.createOscillator();
-  let gain=audioCtx.createGain();
+  if(musicOsc) return;
 
-  ambientOsc.type="sine";
-  ambientOsc.frequency.value=40;
+  musicOsc = audio.createOscillator();
+  const gain = audio.createGain();
 
-  gain.gain.value=0.03;
+  musicOsc.type = "sine";
+  musicOsc.frequency.value = 220;
 
-  ambientOsc.connect(gain);
-  gain.connect(audioCtx.destination);
+  gain.gain.value = 0.03;
 
-  ambientOsc.start();
+  musicOsc.connect(gain);
+  gain.connect(audio.destination);
 
-  setInterval(()=>{
-    let base=40;
-
-    if(profile.stress>60) base=60;
-    if(profile.focus>70) base=30;
-
-    ambientOsc.frequency.setValueAtTime(base,audioCtx.currentTime);
-  },2000);
+  musicOsc.start();
 }
 
 /* =========================
-METRICS ENGINE
+   BREATH SYSTEM
 ========================= */
-function updateMetrics(correct){
+let breathInterval;
 
-  if(correct){
-    profile.focus+=5;
-    profile.stress=Math.max(0,profile.stress-3);
-  }else{
-    profile.stress+=6;
-    profile.focus=Math.max(0,profile.focus-2);
-  }
+function breathe(){
+  const c = document.getElementById("circle");
 
-  if(profile.stress>70) profile.emotion="anxious";
-  else if(profile.focus>70) profile.emotion="focused";
-  else profile.emotion="neutral";
+  clearInterval(breathInterval);
 
-  document.getElementById("stress").innerText=profile.stress;
-  document.getElementById("focus").innerText=profile.focus;
-  document.getElementById("emotion").innerText=profile.emotion;
+  let grow = true;
+
+  breathInterval = setInterval(()=>{
+
+    c.style.transform = grow ? "scale(1.8)" : "scale(1)";
+    c.style.opacity = grow ? 0.85 : 0.4;
+
+    grow = !grow;
+
+  }, 2500);
+}
+
+function stopBreath(){
+  clearInterval(breathInterval);
 }
 
 /* =========================
-COACH (CONVERSATIONAL SIMULATION)
-========================= */
-function coach(msg){
-  let c=document.getElementById("coachText");
-
-  let style="";
-
-  if(profile.ageGroup==="child") style="simple focus calm";
-  if(profile.ageGroup==="senior") style="slow clear repetition";
-  if(profile.ageGroup==="veteran") style="discipline control strength";
-  if(profile.ageGroup==="gov") style="strategic analytical";
-  if(profile.ageGroup==="adult") style="balanced reasoning";
-
-  c.innerText = msg + " ["+style+"]";
-}
-
-/* =========================
-START
+   START SESSION
 ========================= */
 async function start(){
-  const r=await fetch("/start",{method:"POST"});
-  const d=await r.json();
 
-  session_id=d.session_id;
-  mission=d.mission;
+  if(loading) return;
+  loading = true;
+
+  if(audio.state==="suspended") await audio.resume();
 
   startMusic();
-  runMission();
+
+  const res = await fetch("/start",{method:"POST"});
+  const data = await res.json();
+
+  session_id = data.session_id;
+
+  render(data);
+
+  loading = false;
 }
 
 /* =========================
-MISSION ENGINE
+   SEND ACTION (LOCKED FLOW)
 ========================= */
-async function runMission(){
+async function send(code){
 
-  const blocks=mission.blocks;
+  if(loading) return;
+  loading = true;
 
-  for(let b of blocks){
-    await runBlock(b);
-  }
+  sound("click");
 
-  showBreak();
-}
-
-/* =========================
-BLOCK ENGINE
-========================= */
-function wait(ms){return new Promise(r=>setTimeout(r,ms));}
-
-async function runBlock(b){
-
-  let t=document.getElementById("title");
-  let x=document.getElementById("text");
-  let r=document.getElementById("reason");
-  let o=document.getElementById("options");
-
-  o.innerHTML="";
-
-  if(b.type==="story"){
-    t.innerText="Story";
-    x.innerText=b.text[lang];
-    speak(b.text[lang]);
-    coach("Observe carefully");
-    await wait(4000);
-  }
-
-  if(b.type==="analysis"){
-    t.innerText="Analysis";
-    x.innerText=b.text[lang];
-    speak(b.text[lang]);
-    coach("Understand situation");
-    await wait(4000);
-  }
-
-  if(b.type==="breath_focus"){
-    t.innerText="Breathing";
-    speak(b.guide[lang]);
-    await wait((b.duration_sec||20)*1000);
-  }
-
-  if(b.type==="tvid"){
-
-    return new Promise(resolve=>{
-
-      b.options.forEach(opt=>{
-
-        let btn=document.createElement("button");
-        btn.innerText=opt.text[lang];
-
-        btn.onclick=async()=>{
-
-          const res=await fetch("/judge",{
-            method:"POST",
-            headers:{"Content-Type":"application/json"},
-            body:JSON.stringify({session_id,decision:opt.code})
-          });
-
-          const d=await res.json();
-
-          updateMetrics(d.correct);
-
-          if(d.correct){
-            btn.className="correct";
-            coach("Good decision");
-          }else{
-            btn.className="wrong";
-            coach("Learn and adjust");
-          }
-
-          r.innerText=opt.reason[lang];
-
-          await wait(1500);
-          resolve();
-        };
-
-        o.appendChild(btn);
-      });
-    });
-  }
-
-  if(b.type==="riso_tvid"){
-    speak(b.guide[lang]);
-    coach("Smile activation");
-    await wait(4000);
-  }
-
-  if(b.type==="silence_challenge"){
-    return runSilence(b);
-  }
-
-  if(b.type==="final_lesson"){
-    t.innerText="Lesson";
-    x.innerText=b.text[lang];
-    speak(b.text[lang]);
-    coach("Integration complete");
-    await wait(4000);
-  }
-}
-
-/* =========================
-SILENCE MODE
-========================= */
-function runSilence(b){
-
-  return new Promise(resolve=>{
-
-    let s=document.getElementById("silenceScreen");
-    let t=document.getElementById("timer");
-
-    s.style.display="flex";
-
-    let time=b.duration_sec||20;
-
-    let i=setInterval(()=>{
-
-      t.innerText=time;
-      time--;
-
-      if(time<=0){
-        clearInterval(i);
-        s.style.display="none";
-        resolve();
-      }
-
-    },1000);
+  const res = await fetch("/judge",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({
+      session_id,
+      decision:code
+    })
   });
+
+  const data = await res.json();
+
+  updateMetrics(data);
+
+  render(data);
+
+  loading = false;
 }
 
 /* =========================
-BREAK
+   METRICS (INTERNAL ONLY)
 ========================= */
-function showBreak(){
-  document.getElementById("breakScreen").style.display="flex";
+function updateMetrics(data){
+
+  if(!data) return;
+
+  if(data.correct){
+    metrics.attention += 3;
+    metrics.emotion += 2;
+    metrics.stress -= 2;
+  }else{
+    metrics.attention -= 2;
+    metrics.emotion -= 2;
+    metrics.stress += 3;
+  }
+
+  metrics.attention = clamp(metrics.attention);
+  metrics.emotion = clamp(metrics.emotion);
+  metrics.stress = clamp(metrics.stress);
 }
 
-function continueSession(){
-  document.getElementById("breakScreen").style.display="none";
-  forceNext();
-}
-
-/* =========================
-NAV
-========================= */
-async function forceNext(){
-  const r=await fetch("/force_next",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({session_id})});
-  const d=await r.json();
-  mission=d.mission;
-  runMission();
-}
-
-/* =========================
-LANG
-========================= */
-function toggleLang(){
-  lang=lang==="en"?"es":"en";
+function clamp(v){
+  return Math.max(0, Math.min(100, v));
 }
 
 /* =========================
-INIT
+   RENDER ENGINE (CLEAN FLOW)
 ========================= */
-document.body.onclick=start;
+function render(data){
+
+  if(!data || !data.story) return;
+
+  current = data.story;
+
+  const msg = document.getElementById("message");
+  const opt = document.getElementById("options");
+
+  msg.innerText =
+    current.text?.es ||
+    current.text?.en ||
+    "..."
+
+  opt.innerHTML = "";
+
+  /* BREATH CONTROL */
+  if(current.type === "breathing"){
+    breathe();
+  }else{
+    stopBreath();
+  }
+
+  /* SILENCE */
+  if(current.type === "silence_challenge"){
+    document.getElementById("silenceLevel").innerText =
+      current.duration_sec || 20;
+  }
+
+  /* OPTIONS */
+  let options = current.options || [];
+
+  if(options.length === 0 && current.type !== "silence_challenge"){
+    options = [{
+      code:"NEXT",
+      text:{es:"CONTINUAR",en:"CONTINUE"}
+    }];
+  }
+
+  options.forEach(o=>{
+    const b = document.createElement("button");
+
+    b.innerText = o.text?.[lang] || "OK";
+
+    b.onclick = ()=> send(o.code);
+
+    opt.appendChild(b);
+  });
+
+  sound("ok");
+}
+
+/* =========================
+   CONTROLS
+========================= */
+function skip(){
+  send("NEXT");
+}
+
+function restart(){
+  location.reload();
+}
+
+/* =========================
+   AUTO BACKGROUND STABILITY
+========================= */
+setInterval(()=>{
+  const c = document.getElementById("circle");
+  c.style.opacity = 0.4 + Math.random()*0.3;
+}, 3000);
 
 </script>
 
