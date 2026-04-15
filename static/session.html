@@ -1,103 +1,326 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KaMiZen Session</title>
-    <style>
-        body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0b0b0b; color: white; text-align: center; }
-        #container { max-width: 600px; margin: auto; padding: 40px 20px; }
-        .block { background: #141414; padding: 30px; border-radius: 15px; border: 1px solid #333; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        button { padding: 15px 20px; margin: 10px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s; }
-        .option { background: #222; color: #ccc; border: 1px solid #444; width: 80%; }
-        .option:hover { background: #333; color: white; }
-        .correct { background: #1f8f3a !important; color: white; }
-        .wrong { background: #b02a2a !important; color: white; }
-        #timer { font-size: 24px; color: #ffcc00; margin: 20px 0; }
-        .clear-btn { background: #444; color: white; margin-top: 50px; font-size: 12px; opacity: 0.6; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>KAMIZEN | SESSION PRO</title>
+
+<style>
+:root{
+    --neon:#00f2ff;
+    --bg:#000;
+    --panel:rgba(0,15,30,0.92);
+}
+
+body{
+    margin:0;
+    background:var(--bg);
+    font-family:Arial;
+    color:var(--neon);
+    overflow:hidden;
+}
+
+#app{
+    width:100%;
+    height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    position:relative;
+}
+
+/* BREATH CIRCLE */
+#circle{
+    width:80px;
+    height:80px;
+    border-radius:50%;
+    background:rgba(0,242,255,0.25);
+    box-shadow:0 0 30px var(--neon);
+    transition:transform 2.5s ease-in-out, opacity 1s ease;
+}
+
+/* MESSAGE */
+#message{
+    position:absolute;
+    bottom:180px;
+    width:85%;
+    max-width:700px;
+    padding:15px;
+    background:var(--panel);
+    border:1px solid var(--neon);
+    text-align:center;
+    min-height:120px;
+    font-size:16px;
+    line-height:1.5;
+}
+
+/* OPTIONS */
+#options{
+    position:absolute;
+    bottom:70px;
+    width:85%;
+    max-width:700px;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+}
+
+button{
+    padding:12px;
+    background:transparent;
+    border:1px solid var(--neon);
+    color:var(--neon);
+    font-weight:bold;
+    cursor:pointer;
+    transition:0.2s;
+}
+
+button:hover{
+    background:var(--neon);
+    color:#000;
+}
+
+/* TOP CONTROLS */
+#controls{
+    position:absolute;
+    top:10px;
+    width:100%;
+    display:flex;
+    justify-content:space-between;
+    padding:0 10px;
+}
+
+.ctrl-btn{
+    font-size:12px;
+    padding:6px 10px;
+}
+
+/* SILENCE */
+#silence{
+    position:absolute;
+    top:50px;
+    font-size:12px;
+    opacity:0.7;
+}
+</style>
 </head>
+
 <body>
 
-<div id="container">
-    <h1 style="letter-spacing: 4px; color: #444;">KAMIZEN</h1>
-    <div id="content">
-        <button onclick="initSession()" style="background:#fff; color:#000; padding: 20px 40px;">INICIAR MISIÓN</button>
+<div id="app">
+
+    <div id="controls">
+        <button class="ctrl-btn" onclick="restart()">REINICIAR</button>
+        <button class="ctrl-btn" onclick="back()">ATRÁS</button>
+        <button class="ctrl-btn" onclick="skip()">SALTAR</button>
     </div>
-    <button class="clear-btn" onclick="location.reload()">BORRAR SESIÓN</button>
+
+    <div id="silence">SILENCIO: <span id="silenceLevel">0</span>s</div>
+
+    <div id="circle"></div>
+
+    <div id="message" onclick="start()">TOCA PARA INICIAR</div>
+
+    <div id="options"></div>
+
 </div>
 
 <script>
-let sessionId = null;
-const content = document.getElementById("content");
 
-async function initSession() {
-    const res = await fetch("/start", { method: "POST" });
-    const data = await res.json();
-    sessionId = data.session_id;
-    render(data.story);
+/* ================= STATE ================= */
+let session_id = null;
+let history = [];
+let lang = "es";
+let loading = false;
+
+/* ================= AUDIO ================= */
+const audio = new (window.AudioContext || window.webkitAudioContext)();
+
+let musicOsc;
+
+function startMusic(){
+    if(musicOsc) return;
+
+    musicOsc = audio.createOscillator();
+    const gain = audio.createGain();
+
+    musicOsc.type = "sine";
+    musicOsc.frequency.value = 220;
+
+    gain.gain.value = 0.03;
+
+    musicOsc.connect(gain);
+    gain.connect(audio.destination);
+
+    musicOsc.start();
 }
 
-async function nextStep(decision = "AUTO") {
-    const res = await fetch("/judge", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ session_id: sessionId, decision: decision })
+/* SOUND FX */
+function sound(type){
+    const o = audio.createOscillator();
+    const g = audio.createGain();
+
+    o.connect(g);
+    g.connect(audio.destination);
+
+    o.type = "sine";
+
+    if(type==="ok") o.frequency.value=520;
+    if(type==="fail") o.frequency.value=120;
+    if(type==="click") o.frequency.value=300;
+
+    g.gain.value = 0.15;
+
+    o.start();
+    o.stop(audio.currentTime + 0.2);
+}
+
+/* ================= START ================= */
+async function start(){
+
+    if(audio.state === "suspended") await audio.resume();
+
+    startMusic();
+
+    const res = await fetch("/start",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({profile:{lang}})
     });
+
     const data = await res.json();
+
+    session_id = data.session_id;
+    history = [];
+
     render(data.story);
 }
 
-function render(block) {
-    content.innerHTML = "";
-    const div = document.createElement("div");
-    div.className = "block";
+/* ================= SEND ================= */
+async function send(code){
 
-    // Manejo de textos simples
-    if (["story", "analysis", "micro_explanation", "final_lesson"].includes(block.type)) {
-        div.innerHTML = `<p style="font-size:1.2em; line-height:1.6;">${block.text?.es || ""}</p>`;
-        content.appendChild(div);
-        setTimeout(() => nextStep(), 4000);
-    } 
-    // Manejo de respiración y risa
-    else if (["breath_focus", "riso_tvid"].includes(block.type)) {
-        div.innerHTML = `<p>${block.text?.es || block.guide?.es || ""}</p><div id="timer">⏳</div>`;
-        content.appendChild(div);
-        runTimer(block.duration_sec || 30);
-    }
-    // Manejo de TVID (Opciones)
-    else if (block.type === "tvid") {
-        div.innerHTML = `<h3 style="color:#666;">DECIDE</h3>`;
-        (block.options || []).forEach(opt => {
-            const btn = document.createElement("button");
-            btn.className = "option";
-            btn.innerText = opt.text?.es || "";
-            btn.onclick = () => {
-                btn.classList.add(opt.correct ? "correct" : "wrong");
-                setTimeout(() => nextStep(opt.code), 1000);
-            };
-            div.appendChild(btn);
-        });
-        content.appendChild(div);
-    }
-    // Fin
-    else if (block.type === "end") {
-        div.innerHTML = `<h2>${block.text?.es || "FIN"}</h2>`;
-        content.appendChild(div);
-    }
+    if(loading) return;
+    loading = true;
+
+    sound("click");
+
+    const res = await fetch("/judge",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+            session_id,
+            decision:code
+        })
+    });
+
+    const data = await res.json();
+
+    history.push(data);
+
+    render(data.story);
+
+    loading = false;
 }
 
-function runTimer(sec) {
-    let t = sec;
-    const display = document.getElementById("timer");
-    const interval = setInterval(() => {
-        display.innerText = "⏳ " + t;
-        if (t-- <= 0) {
-            clearInterval(interval);
-            nextStep();
-        }
-    }, 1000);
+/* ================= RENDER ================= */
+function render(s){
+
+    if(!s) return;
+
+    const msg = document.getElementById("message");
+    const optBox = document.getElementById("options");
+
+    optBox.innerHTML = "";
+
+    /* TEXT */
+    msg.innerText =
+        s.text_es ||
+        s.text_en ||
+        "..."
+
+    /* SILENCE */
+    if(s.type === "silence_challenge"){
+        document.getElementById("silenceLevel").innerText =
+            s.duration_sec || 0;
+    } else {
+        document.getElementById("silenceLevel").innerText = "0";
+    }
+
+    /* BREATH */
+    if(s.type === "breath_focus"){
+        breathe();
+    } else {
+        stopBreath();
+    }
+
+    /* OPTIONS */
+    let opts = s.options || [];
+
+    if(opts.length === 0 && s.type !== "silence_challenge"){
+        opts = [{
+            code:"NEXT",
+            text:{es:"CONTINUAR", en:"CONTINUE"}
+        }];
+    }
+
+    opts.forEach(o=>{
+        const b = document.createElement("button");
+        b.innerText = o.text?.[lang] || "OK";
+
+        b.onclick = ()=> send(o.code);
+
+        optBox.appendChild(b);
+    });
+
+    sound("ok");
 }
+
+/* ================= BREATH ================= */
+let breathInterval;
+
+function breathe(){
+    const c = document.getElementById("circle");
+    let grow = true;
+
+    clearInterval(breathInterval);
+
+    breathInterval = setInterval(()=>{
+        c.style.transform = grow ? "scale(2)" : "scale(1)";
+        c.style.opacity = grow ? 0.8 : 0.4;
+        grow = !grow;
+    }, 2500);
+}
+
+function stopBreath(){
+    clearInterval(breathInterval);
+}
+
+/* ================= CONTROLS ================= */
+function skip(){
+    send("NEXT");
+}
+
+function back(){
+    if(history.length < 2) return;
+
+    const prev = history[history.length - 2];
+    history.pop();
+
+    render(prev.story || prev);
+}
+
+function restart(){
+    location.reload();
+}
+
+/* ================= VISUAL LOOP ================= */
+setInterval(()=>{
+    const c = document.getElementById("circle");
+    c.style.opacity = 0.4 + Math.random()*0.4;
+}, 3000);
+
 </script>
+
 </body>
 </html>
