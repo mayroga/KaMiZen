@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>KAMIZEN | SESSION PRO</title>
 
 <style>
@@ -23,7 +23,6 @@ body{
 }
 
 #app{
-    width:100%;
     height:100vh;
     display:flex;
     flex-direction:column;
@@ -35,17 +34,32 @@ body{
     position:relative;
 }
 
-/* BREATH */
+/* TOP */
+#topbar{
+    position:absolute;
+    top:10px;
+    width:100%;
+    display:flex;
+    justify-content:space-between;
+    padding:0 10px;
+}
+
+.small-btn{
+    font-size:12px;
+    padding:6px 10px;
+}
+
+/* CIRCLE */
 #circle{
-    width:80px;
-    height:80px;
+    width:90px;
+    height:90px;
     border-radius:50%;
     background:rgba(0,242,255,0.2);
     box-shadow:0 0 25px var(--neon);
-    transition:transform 2.2s ease, opacity 1s ease;
+    transition:all 2s ease;
 }
 
-/* TEXT */
+/* MESSAGE */
 #message{
     width:90%;
     max-width:750px;
@@ -55,7 +69,6 @@ body{
     border:1px solid var(--neon);
     text-align:center;
     font-size:18px;
-    line-height:1.4;
 }
 
 /* OPTIONS */
@@ -72,9 +85,7 @@ button{
     border:1px solid var(--neon);
     background:transparent;
     color:var(--neon);
-    font-weight:bold;
     cursor:pointer;
-    font-size:14px;
 }
 
 button:hover{
@@ -82,65 +93,39 @@ button:hover{
     color:#000;
 }
 
-/* TOP BAR */
-#topbar{
-    position:absolute;
-    top:10px;
-    width:100%;
+/* NAV */
+#nav{
+    width:90%;
+    max-width:750px;
     display:flex;
-    justify-content:space-between;
-    padding:0 10px;
-    box-sizing:border-box;
+    gap:10px;
 }
 
-.small-btn{
-    font-size:12px;
-    padding:6px 10px;
+.navbtn{
+    flex:1;
+}
+
+/* TIMER */
+#timer{
+    font-size:14px;
+    opacity:0.7;
 }
 
 /* FEEDBACK */
 #overlay{
     position:absolute;
     top:0;
-    left:0;
     width:100%;
     height:100%;
     display:none;
     align-items:center;
     justify-content:center;
-    font-size:30px;
+    font-size:28px;
     font-weight:bold;
-    z-index:10;
-    text-align:center;
-    padding:20px;
-    box-sizing:border-box;
 }
 
-.good{
-    background:rgba(0,255,136,0.25);
-    color:var(--good);
-}
-
-.bad{
-    background:rgba(255,51,85,0.25);
-    color:var(--bad);
-}
-
-/* NAV */
-#nav{
-    width:90%;
-    max-width:750px;
-    display:flex;
-    justify-content:space-between;
-    gap:10px;
-}
-
-.navbtn{
-    flex:1;
-    padding:12px;
-    border:1px solid var(--neon);
-    background:transparent;
-}
+.good{background:rgba(0,255,136,0.2);}
+.bad{background:rgba(255,51,85,0.2);}
 </style>
 </head>
 
@@ -159,11 +144,13 @@ button:hover{
 
     <div id="message">TOUCH TO START</div>
 
+    <div id="timer"></div>
+
     <div id="options"></div>
 
     <div id="nav">
         <button class="navbtn" onclick="back()">BACK</button>
-        <button class="navbtn" onclick="next()">NEXT</button>
+        <button class="navbtn" onclick="continueFlow()">CONTINUE</button>
         <button class="navbtn" onclick="skip()">SKIP</button>
     </div>
 
@@ -173,41 +160,33 @@ button:hover{
 
 let session_id = null;
 let lang = "en";
-let loading = false;
-let lastBlock = null;
+let currentBlock = null;
 let history = [];
 
+let timerInterval = null;
+let breathInterval = null;
+
+/* AUDIO */
 const audio = new (window.AudioContext || window.webkitAudioContext)();
 
-/* SOUND ENGINE */
 function sound(type){
     const o = audio.createOscillator();
     const g = audio.createGain();
-
     o.connect(g);
     g.connect(audio.destination);
-    o.type="sine";
 
-    if(type==="ok") o.frequency.value=520;
-    if(type==="bad") o.frequency.value=120;
-    if(type==="click") o.frequency.value=300;
+    o.frequency.value = (type==="ok") ? 500 : (type==="bad") ? 120 : 300;
 
-    g.gain.value=0.2;
+    g.gain.value = 0.2;
     o.start();
     o.stop(audio.currentTime+0.2);
 }
 
 /* START */
 async function start(){
-
     if(audio.state==="suspended") await audio.resume();
 
-    const res = await fetch("/start",{
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({profile:{lang}})
-    });
-
+    const res = await fetch("/start",{method:"POST"});
     const data = await res.json();
 
     session_id = data.session_id;
@@ -217,17 +196,14 @@ async function start(){
 }
 
 /* SEND */
-async function send(code){
-
-    if(loading) return;
-    loading = true;
+async function send(decision){
 
     sound("click");
 
     const res = await fetch("/judge",{
         method:"POST",
         headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({session_id, decision:code})
+        body:JSON.stringify({session_id, decision})
     });
 
     const data = await res.json();
@@ -237,40 +213,31 @@ async function send(code){
     }
 
     if(data.story){
-        history.push(lastBlock);
+        history.push(currentBlock);
         render(data.story);
     }
-
-    loading = false;
 }
 
 /* RENDER */
 function render(block){
 
-    if(!block) return;
+    clearTimers();
 
-    lastBlock = block;
+    currentBlock = block;
 
     const msg = document.getElementById("message");
     const opts = document.getElementById("options");
 
-    opts.innerHTML = "";
+    opts.innerHTML="";
 
     msg.innerText =
         block.text?.[lang] ||
         block.analysis?.[lang] ||
         block.question?.[lang] ||
-        "..."
-
-    /* BREATH */
-    if(block.type==="breath_focus" || block.type==="breathing"){
-        startBreath();
-    } else {
-        stopBreath();
-    }
+        "...";
 
     /* OPTIONS */
-    if(Array.isArray(block.options)){
+    if(block.options){
         block.options.forEach(o=>{
             const b=document.createElement("button");
             b.innerText=o.text?.[lang] || o.text?.en;
@@ -278,41 +245,95 @@ function render(block){
             opts.appendChild(b);
         });
     }
+
+    /* BREATH */
+    if(block.type==="breath_focus" || block.type==="breathing"){
+        startBreath(block.duration_sec);
+    }
+
+    /* SILENCE / TIMER */
+    if(block.duration_sec){
+        startTimer(block.duration_sec);
+    }
 }
 
-/* BREATH */
-let breathInterval;
+/* TIMER REAL */
+function startTimer(seconds){
 
-function startBreath(){
-    const c=document.getElementById("circle");
+    const t = document.getElementById("timer");
+    let time = seconds;
 
-    let grow=true;
-    clearInterval(breathInterval);
+    t.innerText = time + "s";
 
-    breathInterval=setInterval(()=>{
-        c.style.transform=grow?"scale(2)":"scale(1)";
-        c.style.opacity=grow?"0.8":"0.3";
-        grow=!grow;
-    },2200);
+    timerInterval = setInterval(()=>{
+        time--;
+        t.innerText = time + "s";
+
+        if(time<=0){
+            clearInterval(timerInterval);
+        }
+
+    },1000);
 }
 
-function stopBreath(){
+/* BREATH REAL */
+function startBreath(duration){
+
+    const c = document.getElementById("circle");
+
+    let grow = true;
+
+    breathInterval = setInterval(()=>{
+        c.style.transform = grow ? "scale(2)" : "scale(1)";
+        c.style.opacity = grow ? "0.8" : "0.3";
+        grow = !grow;
+    },2000);
+
+}
+
+/* CLEAR */
+function clearTimers(){
+    clearInterval(timerInterval);
     clearInterval(breathInterval);
+}
+
+/* CONTROLES */
+function continueFlow(){
+    send("NEXT");
+}
+
+function skip(){
+    send("SKIP");
+}
+
+function back(){
+    if(history.length===0) return;
+    render(history.pop());
+}
+
+function restart(){
+    location.reload();
+}
+
+function toggleLang(){
+    lang = (lang==="en") ? "es" : "en";
+    if(currentBlock) render(currentBlock);
 }
 
 /* FEEDBACK */
 function showFeedback(fb){
 
     const overlay=document.getElementById("overlay");
+
     overlay.style.display="flex";
 
     if(fb.correct){
         overlay.className="good";
-        overlay.innerText = fb.reason?.[lang] || fb.reason?.en || "GOOD";
+        overlay.innerText = fb.reason?.[lang] || "GOOD";
         sound("ok");
     } else {
         overlay.className="bad";
-        overlay.innerText = fb.reason?.[lang] || fb.reason?.en || "WRONG";
+        overlay.innerText = fb.reason?.[lang] || "WRONG";
         sound("bad");
     }
 
@@ -321,29 +342,8 @@ function showFeedback(fb){
     },1200);
 }
 
-/* NAV */
-function next(){
-    send("NEXT");
-}
-
-function back(){
-    if(history.length===0) return;
-    render(history.pop());
-}
-
-function skip(){
-    send("SKIP");
-}
-
-function restart(){
-    location.reload();
-}
-
-function toggleLang(){
-    lang = (lang==="en")?"es":"en";
-}
-
-document.getElementById("message").onclick=start;
+/* START CLICK */
+document.getElementById("message").onclick = start;
 
 </script>
 
