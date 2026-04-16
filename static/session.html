@@ -3,22 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KAMIZEN | SESSION PRO</title>
+<title>KAMIZEN | EXPERIENCE</title>
 
 <style>
 :root{
     --neon:#00f2ff;
     --bg:#000;
     --panel:rgba(0,15,30,0.92);
-    --good:#00ff88;
-    --bad:#ff3355;
 }
 
 body{
     margin:0;
-    background:var(--bg);
+    background:#000;
     font-family:Arial;
-    color:var(--neon);
+    color:#00f2ff;
     overflow:hidden;
 }
 
@@ -26,106 +24,69 @@ body{
     height:100vh;
     display:flex;
     flex-direction:column;
-    align-items:center;
     justify-content:center;
-    gap:15px;
+    align-items:center;
+    gap:20px;
     padding:20px;
     box-sizing:border-box;
-    position:relative;
 }
 
-/* TOP */
-#topbar{
-    position:absolute;
-    top:10px;
-    width:100%;
-    display:flex;
-    justify-content:space-between;
-    padding:0 10px;
+#message{
+    max-width:800px;
+    padding:20px;
+    border:1px solid #00f2ff;
+    background:rgba(0,10,20,0.9);
+    text-align:center;
+    font-size:20px;
+    min-height:160px;
+    line-height:1.5;
 }
 
-.small-btn{
-    font-size:12px;
-    padding:6px 10px;
-}
-
-/* CIRCLE */
 #circle{
-    width:90px;
-    height:90px;
+    width:100px;
+    height:100px;
     border-radius:50%;
-    background:rgba(0,242,255,0.2);
-    box-shadow:0 0 25px var(--neon);
+    background:rgba(0,242,255,0.15);
+    box-shadow:0 0 30px #00f2ff;
     transition:all 2s ease;
 }
 
-/* MESSAGE */
-#message{
-    width:90%;
-    max-width:750px;
-    min-height:140px;
-    padding:18px;
-    background:var(--panel);
-    border:1px solid var(--neon);
-    text-align:center;
-    font-size:18px;
-}
-
-/* OPTIONS */
 #options{
-    width:90%;
-    max-width:750px;
     display:grid;
     grid-template-columns:1fr 1fr 1fr;
     gap:10px;
+    width:90%;
+    max-width:800px;
 }
 
 button{
     padding:14px;
-    border:1px solid var(--neon);
     background:transparent;
-    color:var(--neon);
+    border:1px solid #00f2ff;
+    color:#00f2ff;
     cursor:pointer;
 }
 
 button:hover{
-    background:var(--neon);
+    background:#00f2ff;
     color:#000;
 }
 
-/* NAV */
 #nav{
-    width:90%;
-    max-width:750px;
     display:flex;
     gap:10px;
+    width:90%;
+    max-width:800px;
 }
 
 .navbtn{
     flex:1;
 }
 
-/* TIMER */
 #timer{
     font-size:14px;
     opacity:0.7;
 }
-
-/* FEEDBACK */
-#overlay{
-    position:absolute;
-    top:0;
-    width:100%;
-    height:100%;
-    display:none;
-    align-items:center;
-    justify-content:center;
-    font-size:28px;
-    font-weight:bold;
-}
-
-.good{background:rgba(0,255,136,0.2);}
-.bad{background:rgba(255,51,85,0.2);}
 </style>
 </head>
 
@@ -133,84 +94,105 @@ button:hover{
 
 <div id="app">
 
-    <div id="topbar">
-        <button class="small-btn" onclick="toggleLang()">ES/EN</button>
-        <button class="small-btn" onclick="restart()">RESTART</button>
-    </div>
+<div>
+<button onclick="toggleLang()">ES/EN</button>
+<button onclick="restart()">RESTART</button>
+</div>
 
-    <div id="overlay"></div>
+<div id="circle"></div>
 
-    <div id="circle"></div>
+<div id="message">TOUCH TO START</div>
 
-    <div id="message">TOUCH TO START</div>
+<div id="timer"></div>
 
-    <div id="timer"></div>
+<div id="options"></div>
 
-    <div id="options"></div>
-
-    <div id="nav">
-        <button class="navbtn" onclick="back()">BACK</button>
-        <button class="navbtn" onclick="continueFlow()">CONTINUE</button>
-        <button class="navbtn" onclick="skip()">SKIP</button>
-    </div>
+<div id="nav">
+<button class="navbtn" onclick="back()">BACK</button>
+<button class="navbtn" onclick="continueFlow()">CONTINUE</button>
+<button class="navbtn" onclick="skip()">SKIP</button>
+</div>
 
 </div>
 
 <script>
 
-let session_id = null;
-let lang = "en";
-let currentBlock = null;
-let history = [];
+let session_id=null;
+let lang="en";
+let currentBlock=null;
+let history=[];
 
-let timerInterval = null;
-let breathInterval = null;
+let timerInt=null;
+let breathInt=null;
+let musicOsc=null;
 
-/* AUDIO */
-const audio = new (window.AudioContext || window.webkitAudioContext)();
+/* AUDIO BASE */
+const ctx = new (window.AudioContext||window.webkitAudioContext)();
 
-function sound(type){
-    const o = audio.createOscillator();
-    const g = audio.createGain();
-    o.connect(g);
-    g.connect(audio.destination);
+/* VOZ */
+function speak(text){
+    if(!text) return;
 
-    o.frequency.value = (type==="ok") ? 500 : (type==="bad") ? 120 : 300;
+    speechSynthesis.cancel();
 
-    g.gain.value = 0.2;
-    o.start();
-    o.stop(audio.currentTime+0.2);
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.lang = lang==="es"?"es-ES":"en-US";
+    utter.rate = 0.9;
+    utter.pitch = 1;
+
+    speechSynthesis.speak(utter);
+}
+
+/* MUSICA */
+function playMusic(type){
+
+    if(musicOsc){
+        musicOsc.stop();
+    }
+
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc.type="sine";
+
+    if(type==="calm") osc.frequency.value=110;
+    if(type==="focus") osc.frequency.value=180;
+    if(type==="power") osc.frequency.value=260;
+
+    gain.gain.value=0.05;
+
+    osc.start();
+
+    musicOsc = osc;
 }
 
 /* START */
 async function start(){
-    if(audio.state==="suspended") await audio.resume();
+
+    await ctx.resume();
 
     const res = await fetch("/start",{method:"POST"});
     const data = await res.json();
 
-    session_id = data.session_id;
-    history = [];
+    session_id=data.session_id;
+    history=[];
 
     render(data.story);
 }
 
 /* SEND */
-async function send(decision){
-
-    sound("click");
+async function send(code){
 
     const res = await fetch("/judge",{
         method:"POST",
         headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({session_id, decision})
+        body:JSON.stringify({session_id,decision:code})
     });
 
     const data = await res.json();
-
-    if(data.feedback){
-        showFeedback(data.feedback);
-    }
 
     if(data.story){
         history.push(currentBlock);
@@ -221,83 +203,109 @@ async function send(decision){
 /* RENDER */
 function render(block){
 
-    clearTimers();
+    clearAll();
 
-    currentBlock = block;
+    currentBlock=block;
 
-    const msg = document.getElementById("message");
-    const opts = document.getElementById("options");
+    const msg=document.getElementById("message");
+    const opts=document.getElementById("options");
 
     opts.innerHTML="";
 
-    msg.innerText =
+    let text =
         block.text?.[lang] ||
         block.analysis?.[lang] ||
         block.question?.[lang] ||
         "...";
 
-    /* OPTIONS */
+    msg.innerText=text;
+
+    speak(text);
+
+    /* TIPOS DE BLOQUE */
+    switch(block.type){
+
+        case "story":
+            playMusic("calm");
+        break;
+
+        case "analysis":
+            playMusic("focus");
+        break;
+
+        case "breath_focus":
+        case "breathing":
+            playMusic("calm");
+            startBreath(block.duration_sec);
+        break;
+
+        case "riso_tvid":
+            playMusic("power");
+        break;
+
+        case "silence_challenge":
+            playMusic("calm");
+        break;
+
+        case "tvid":
+            playMusic("focus");
+        break;
+    }
+
+    /* OPCIONES */
     if(block.options){
         block.options.forEach(o=>{
             const b=document.createElement("button");
-            b.innerText=o.text?.[lang] || o.text?.en;
-            b.onclick=()=>send(o.code);
+            b.innerText=o.text?.[lang]||o.text?.en;
+
+            b.onclick=()=>{
+                send(o.code);
+            };
+
             opts.appendChild(b);
         });
     }
 
-    /* BREATH */
-    if(block.type==="breath_focus" || block.type==="breathing"){
-        startBreath(block.duration_sec);
-    }
-
-    /* SILENCE / TIMER */
+    /* TIEMPO */
     if(block.duration_sec){
         startTimer(block.duration_sec);
     }
 }
 
 /* TIMER REAL */
-function startTimer(seconds){
+function startTimer(sec){
 
-    const t = document.getElementById("timer");
-    let time = seconds;
+    const t=document.getElementById("timer");
 
-    t.innerText = time + "s";
+    let s=sec;
 
-    timerInterval = setInterval(()=>{
-        time--;
-        t.innerText = time + "s";
+    t.innerText=s+"s";
 
-        if(time<=0){
-            clearInterval(timerInterval);
+    timerInt=setInterval(()=>{
+        s--;
+        t.innerText=s+"s";
+
+        if(s<=0){
+            clearInterval(timerInt);
         }
-
     },1000);
 }
 
-/* BREATH REAL */
-function startBreath(duration){
+/* BREATH */
+function startBreath(){
 
-    const c = document.getElementById("circle");
+    const c=document.getElementById("circle");
 
-    let grow = true;
+    let grow=true;
 
-    breathInterval = setInterval(()=>{
-        c.style.transform = grow ? "scale(2)" : "scale(1)";
-        c.style.opacity = grow ? "0.8" : "0.3";
-        grow = !grow;
+    breathInt=setInterval(()=>{
+        c.style.transform=grow?"scale(2)":"scale(1)";
+        c.style.opacity=grow?"0.8":"0.3";
+        grow=!grow;
     },2000);
-
 }
 
-/* CLEAR */
-function clearTimers(){
-    clearInterval(timerInterval);
-    clearInterval(breathInterval);
-}
-
-/* CONTROLES */
+/* CONTROL */
 function continueFlow(){
     send("NEXT");
 }
@@ -316,34 +324,19 @@ function restart(){
 }
 
 function toggleLang(){
-    lang = (lang==="en") ? "es" : "en";
+    lang=(lang==="en")?"es":"en";
     if(currentBlock) render(currentBlock);
 }
 
-/* FEEDBACK */
-function showFeedback(fb){
-
-    const overlay=document.getElementById("overlay");
-
-    overlay.style.display="flex";
-
-    if(fb.correct){
-        overlay.className="good";
-        overlay.innerText = fb.reason?.[lang] || "GOOD";
-        sound("ok");
-    } else {
-        overlay.className="bad";
-        overlay.innerText = fb.reason?.[lang] || "WRONG";
-        sound("bad");
-    }
-
-    setTimeout(()=>{
-        overlay.style.display="none";
-    },1200);
+/* CLEAR */
+function clearAll(){
+    clearInterval(timerInt);
+    clearInterval(breathInt);
+    speechSynthesis.cancel();
 }
 
-/* START CLICK */
-document.getElementById("message").onclick = start;
+/* START */
+document.getElementById("message").onclick=start;
 
 </script>
 
