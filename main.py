@@ -21,7 +21,9 @@ def load_content():
     try:
         with open(CONTENT_PATH, "r", encoding="utf-8") as f:
             data = json.load(f)
-            return data.get("missions", [])
+            missions = data.get("missions", [])
+            print(f"MISSIONS LOADED: {len(missions)}")
+            return missions
     except Exception as e:
         print("ERROR LOADING JSON:", e)
         return []
@@ -29,19 +31,19 @@ def load_content():
 MISSIONS = load_content()
 
 # =========================
-# SESSION STORAGE
+# SESSION MEMORY
 # =========================
 sessions = {}
 
 # =========================
-# HELPERS
+# CORE ENGINE
 # =========================
 
 def get_mission(session):
-    idx = session["mission_index"]
-    if idx >= len(MISSIONS):
+    i = session["mission_index"]
+    if i >= len(MISSIONS):
         return None
-    return MISSIONS[idx]
+    return MISSIONS[i]
 
 
 def get_blocks(session):
@@ -53,36 +55,48 @@ def get_blocks(session):
 
 def get_current_block(session):
     blocks = get_blocks(session)
-    idx = session["block_index"]
+    i = session["block_index"]
 
-    if idx >= len(blocks):
+    if i >= len(blocks):
         return None
 
-    return blocks[idx]
+    return blocks[i]
 
 
 def advance(session):
-    """
-    Avanza de bloque respetando misiones
-    """
     session["block_index"] += 1
 
     blocks = get_blocks(session)
 
+    # pasa de misión automáticamente
     if session["block_index"] >= len(blocks):
         session["mission_index"] += 1
         session["block_index"] = 0
 
 
+def safe_end():
+    return {
+        "type": "end",
+        "text": {
+            "en": "SESSION COMPLETE",
+            "es": "SESIÓN COMPLETADA"
+        }
+    }
+
+
+# =========================
+# FORMAT (CLAVE)
+# =========================
+
 def format_block(block):
     """
-    Prepara el bloque para el frontend
+    Nunca devuelve vacío → evita pantalla en blanco
     """
     if not block:
-        return None
+        return safe_end()
 
     data = {
-        "type": block.get("type")
+        "type": block.get("type", "unknown")
     }
 
     # TEXTOS
@@ -95,24 +109,27 @@ def format_block(block):
     if "question" in block:
         data["question"] = block["question"]
 
-    # DURACIÓN (CLAVE PARA FRONT)
+    # DURACIÓN
     if "duration_sec" in block:
         data["duration_sec"] = block.get("duration_sec", 0)
 
-    # GUIDE (breath / riso)
+    # GUIDE
     if "guide" in block:
         data["guide"] = block.get("guide", {})
 
     # OPTIONS (TVID)
     if "options" in block:
-        data["options"] = []
-        for opt in block["options"]:
-            data["options"].append({
-                "code": opt.get("code"),
-                "text": opt.get("text"),
-                "correct": opt.get("correct", False),
-                "reason": opt.get("reason", {})
+        formatted_options = []
+
+        for o in block["options"]:
+            formatted_options.append({
+                "code": o.get("code"),
+                "text": o.get("text"),
+                "correct": o.get("correct", False),
+                "reason": o.get("reason", {})
             })
+
+        data["options"] = formatted_options
 
     # REWARD (silence)
     if "reward" in block:
@@ -121,9 +138,13 @@ def format_block(block):
     return data
 
 
+# =========================
+# LOGIC
+# =========================
+
 def evaluate_answer(block, decision):
     """
-    Evalúa respuestas SOLO si hay opciones
+    Solo evalúa si es TVID real
     """
     if not block or "options" not in block:
         return None
@@ -140,21 +161,21 @@ def evaluate_answer(block, decision):
 
 def should_advance(block, decision):
     """
-    Lógica inteligente de avance
+    Control total del flujo
     """
 
     if not block:
         return False
 
-    # Si es decisión (TVID)
+    # RESPUESTA TVID → SIEMPRE avanza
     if "options" in block:
         return True
 
-    # Control manual del usuario
+    # CONTROL USUARIO
     if decision in ["NEXT", "SKIP"]:
         return True
 
-    # Bloques pasivos NO avanzan solos
+    # BLOQUES PASIVOS → esperan
     return False
 
 
@@ -177,11 +198,11 @@ def start():
         "block_index": 0
     }
 
-    first_block = get_current_block(sessions[session_id])
+    first = get_current_block(sessions[session_id])
 
     return JSONResponse({
         "session_id": session_id,
-        "story": format_block(first_block)
+        "story": format_block(first)
     })
 
 
@@ -193,6 +214,7 @@ def judge(data: dict):
 
     session = sessions.get(session_id)
 
+    # SESIÓN INVALIDA
     if not session:
         return JSONResponse({
             "story": {
@@ -204,37 +226,31 @@ def judge(data: dict):
             }
         })
 
-    current_block = get_current_block(session)
+    current = get_current_block(session)
 
     response = {}
 
     # =========================
-    # EVALUAR RESPUESTA (SI APLICA)
+    # FEEDBACK (TVID)
     # =========================
-    feedback = evaluate_answer(current_block, decision)
+    feedback = evaluate_answer(current, decision)
 
     if feedback:
         response["feedback"] = feedback
 
     # =========================
-    # CONTROL DE AVANCE REAL
+    # AVANCE CONTROLADO
     # =========================
-    if should_advance(current_block, decision):
+    if should_advance(current, decision):
         advance(session)
 
     next_block = get_current_block(session)
 
     # =========================
-    # FIN DE CONTENIDO
+    # FIN TOTAL
     # =========================
     if not next_block:
-        response["story"] = {
-            "type": "end",
-            "text": {
-                "en": "SESSION COMPLETE",
-                "es": "SESIÓN COMPLETADA"
-            }
-        }
+        response["story"] = safe_end()
         return JSONResponse(response)
 
     response["story"] = format_block(next_block)
