@@ -6,13 +6,12 @@ import uuid
 import os
 
 app = FastAPI()
-
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 CONTENT_PATH = os.path.join("static", "kamizen_content.json")
 
 # =========================
-# LOAD JSON
+# LOAD CONTENT
 # =========================
 def load_content():
     try:
@@ -29,64 +28,57 @@ MISSIONS = load_content()
 # =========================
 sessions = {}
 
-# =========================
-# CREATE SESSION
-# =========================
 def create_session():
     return {
-        "mission_index": 0,
-        "block_index": 0,
-        "current_block_id": None
+        "m": 0,
+        "b": 0,
+        "last": None
     }
 
 # =========================
 # GET BLOCK SAFE
 # =========================
-def get_block(session):
-    m = session["mission_index"]
-    b = session["block_index"]
+def get_block(s):
 
-    if m >= len(MISSIONS):
+    if s["m"] >= len(MISSIONS):
         return None
 
-    mission = MISSIONS[m]
+    mission = MISSIONS[s["m"]]
     blocks = mission.get("blocks", [])
 
-    if b >= len(blocks):
+    if s["b"] >= len(blocks):
         return None
 
-    block = blocks[b]
+    block = blocks[s["b"]]
 
-    # 🔒 BLOQUE IDENTIDAD REAL (evita repetición)
-    block_id = f"{m}:{b}:{block.get('type')}"
+    key = f"{s['m']}:{s['b']}:{block['type']}"
 
-    if session.get("current_block_id") == block_id:
+    if s["last"] == key:
         return None
 
-    session["current_block_id"] = block_id
-
+    s["last"] = key
     return block
 
 # =========================
 # ADVANCE ENGINE
 # =========================
-def advance(session):
-    session["block_index"] += 1
+def advance(s):
 
-    mission = MISSIONS[session["mission_index"]]
-    blocks = mission.get("blocks", [])
+    s["b"] += 1
 
-    if session["block_index"] >= len(blocks):
-        session["mission_index"] += 1
-        session["block_index"] = 0
+    mission = MISSIONS[s["m"]]
+    if s["b"] >= len(mission["blocks"]):
+        s["m"] += 1
+        s["b"] = 0
 
-    session["current_block_id"] = None
+    s["last"] = None
 
 # =========================
-# FORMAT SAFE OUTPUT
+# FORMAT OUTPUT
 # =========================
-def format_block(block):
-    if not block:
+def format_block(b):
+
+    if not b:
         return {
             "type": "end",
             "text": {
@@ -95,17 +87,17 @@ def format_block(block):
             }
         }
 
-    out = {"type": block.get("type")}
+    out = {"type": b["type"]}
 
-    for k in ["text", "analysis", "question"]:
-        if k in block:
-            out[k] = block[k]
+    for k in ["text", "analysis"]:
+        if k in b:
+            out[k] = b[k]
 
-    if "duration_sec" in block:
-        out["duration_sec"] = block["duration_sec"]
+    if "options" in b:
+        out["options"] = b["options"]
 
-    if "options" in block:
-        out["options"] = block["options"]
+    if "duration_sec" in b:
+        out["duration_sec"] = b["duration_sec"]
 
     return out
 
@@ -113,11 +105,12 @@ def format_block(block):
 # EVALUATION
 # =========================
 def evaluate(block, decision):
+
     if not block or "options" not in block:
         return None
 
     for o in block["options"]:
-        if o.get("code") == decision:
+        if o["code"] == decision:
             return o
 
     return None
@@ -129,65 +122,49 @@ def evaluate(block, decision):
 def home():
     return FileResponse("static/session.html")
 
-# =========================
-# START
-# =========================
 @app.post("/start")
 def start():
 
-    session_id = str(uuid.uuid4())
-    sessions[session_id] = create_session()
+    sid = str(uuid.uuid4())
+    sessions[sid] = create_session()
 
-    session = sessions[session_id]
-    block = get_block(session)
+    s = sessions[sid]
+    block = get_block(s)
 
     return JSONResponse({
-        "session_id": session_id,
+        "session_id": sid,
         "story": format_block(block)
     })
 
-# =========================
-# ENGINE CORE
-# =========================
 @app.post("/judge")
 def judge(data: dict):
 
-    session_id = data.get("session_id")
+    sid = data.get("session_id")
     decision = data.get("decision")
 
-    session = sessions.get(session_id)
+    s = sessions.get(sid)
 
-    if not session:
-        return {"story": {"type": "error", "text": {"en": "Session expired", "es": "Sesión expirada"}}}
+    if not s:
+        return {"story": {"type":"error","text":{"en":"Session expired","es":"Sesión expirada"}}}
 
-    current = get_block(session)
-
+    block = get_block(s)
     feedback = None
 
-    # =========================
-    # ANSWER FLOW
-    # =========================
     if decision != "NEXT":
-        feedback = evaluate(current, decision)
+        feedback = evaluate(block, decision)
 
-    # =========================
-    # ADVANCE FLOW
-    # =========================
     if decision == "NEXT" or feedback:
-        advance(session)
+        advance(s)
 
-    next_block = get_block(session)
+    next_block = get_block(s)
 
     return JSONResponse({
         "feedback": feedback,
         "story": format_block(next_block)
     })
 
-# =========================
-# RELOAD JSON
-# =========================
 @app.get("/reload")
 def reload():
     global MISSIONS
     MISSIONS = load_content()
-    return {"status": "reloaded", "missions": len(MISSIONS)}
+    return {"status":"reloaded","missions":len(MISSIONS)}
