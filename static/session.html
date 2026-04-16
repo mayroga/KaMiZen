@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KAMIZEN EXPERIENCE</title>
+<title>KAMIZEN FLOW</title>
 
 <style>
 body{
@@ -32,7 +32,6 @@ body{
     text-align:center;
     font-size:22px;
     min-height:160px;
-    transition:all 0.5s ease;
 }
 
 #circle{
@@ -57,15 +56,8 @@ button{
     cursor:pointer;
 }
 
-.correct{
-    background:#00ff88;
-    color:#000;
-}
-
-.wrong{
-    background:#ff3355;
-    color:#fff;
-}
+.correct{background:#00ff88;color:#000;}
+.wrong{background:#ff3355;color:#fff;}
 
 #timer{
     font-size:18px;
@@ -85,18 +77,12 @@ button{
 <script>
 
 let session_id=null;
-let currentBlock=null;
-let autoMode=true;
-let locked=true;
-
-/* AUDIO */
-const ctx = new (window.AudioContext||window.webkitAudioContext)();
+let missionBlocks=[];
+let index=0;
 
 /* VOZ */
 function speak(text){
     return new Promise(resolve=>{
-        if(!text){resolve();return;}
-
         const u=new SpeechSynthesisUtterance(text);
         u.rate=0.9;
         u.onend=resolve;
@@ -107,63 +93,81 @@ function speak(text){
 /* START */
 async function start(){
 
-    await ctx.resume();
-
     const res = await fetch("/start",{method:"POST"});
     const data = await res.json();
 
     session_id=data.session_id;
 
-    runBlock(data.story);
+    await loadFullMission();
+    runFlow();
 }
 
-/* MOTOR PRINCIPAL */
-async function runBlock(block){
+/* CARGAR TODA LA MISIÓN */
+async function loadFullMission(){
 
-    locked=true;
-    hideOptions();
+    missionBlocks=[];
 
-    const text =
-        block.text?.en ||
-        block.analysis?.en ||
-        block.question?.en ||
-        "...";
+    let next = true;
 
-    await showMessage(text);
+    while(next){
 
-    switch(block.type){
+        const res = await fetch("/judge",{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({session_id,decision:"NEXT"})
+        });
 
-        case "story":
-        case "analysis":
-        case "micro_explanation":
-        case "final_lesson":
-            await delay(1500);
-            nextAuto();
-        break;
+        const data = await res.json();
 
-        case "tvid":
-            await runTVID(block);
-        break;
-
-        case "breath_focus":
-            await runBreath(block);
-            nextAuto();
-        break;
-
-        case "riso_tvid":
-            await runRiso(block);
-            nextAuto();
-        break;
-
-        case "silence_challenge":
-            await runSilence(block);
-            nextAuto();
-        break;
+        if(data.story.type==="end"){
+            next=false;
+        }else{
+            missionBlocks.push(data.story);
+        }
     }
+
+    index=0;
 }
 
-/* MENSAJE */
-async function showMessage(text){
+/* MOTOR */
+async function runFlow(){
+
+    const story = missionBlocks.filter(b=>b.type==="story");
+    const analysis = missionBlocks.filter(b=>b.type==="analysis");
+    const tvid = missionBlocks.find(b=>b.options);
+
+    const breath = missionBlocks.find(b=>b.type==="breath_focus");
+    const riso = missionBlocks.find(b=>b.type==="riso_tvid");
+    const silence = missionBlocks.find(b=>b.type==="silence_challenge");
+
+    /* 1 HISTORIA */
+    await show(story[0]);
+
+    /* 2 ANALISIS */
+    await show(analysis[0]);
+
+    /* 3 TVID */
+    await runTVID(tvid);
+
+    /* 4 PAUSA PROFUNDA */
+    await deepPause();
+
+    /* 5 RESPIRACIÓN */
+    if(breath) await runBreath(breath);
+
+    /* 6 RISOTERAPIA */
+    if(riso) await runRiso(riso);
+
+    /* 7 SILENCIO */
+    if(silence) await runSilence(silence);
+
+    /* FIN */
+    await show({text:{en:"Session completed."}});
+}
+
+/* SHOW */
+async function show(block){
+    const text=block.text?.en || "...";
     document.getElementById("message").innerText=text;
     await speak(text);
 }
@@ -171,76 +175,76 @@ async function showMessage(text){
 /* TVID */
 async function runTVID(block){
 
-    locked=false;
-    showOptions(block);
-
-    return new Promise(resolve=>{
-        window.resolveTVID = resolve;
-    });
-}
-
-function showOptions(block){
+    const msg=block.question?.en || "Make your decision";
+    await show({text:{en:msg}});
 
     const opts=document.getElementById("options");
     opts.innerHTML="";
     opts.style.display="flex";
 
-    block.options.forEach(o=>{
-        const b=document.createElement("button");
-        b.innerText=o.text.en;
+    return new Promise(resolve=>{
 
-        b.onclick=()=>{
-            if(locked) punish();
+        block.options.forEach(o=>{
+            const b=document.createElement("button");
+            b.innerText=o.text.en;
 
-            if(o.correct){
-                b.classList.add("correct");
-                showMessage(o.reason.en);
-                locked=true;
-                setTimeout(()=>{
-                    hideOptions();
-                    window.resolveTVID();
-                },1500);
-            }else{
-                b.classList.add("wrong");
-                showMessage(o.reason.en);
-            }
-        };
+            b.onclick=async()=>{
+                if(o.correct){
+                    b.classList.add("correct");
+                    await show({text:{en:o.reason.en}});
+                    opts.style.display="none";
+                    resolve();
+                }else{
+                    b.classList.add("wrong");
+                    await show({text:{en:o.reason.en}});
+                }
+            };
 
-        opts.appendChild(b);
+            opts.appendChild(b);
+        });
+
     });
 }
 
-function hideOptions(){
-    document.getElementById("options").style.display="none";
+/* PAUSA ANTI-ADICCIÓN */
+async function deepPause(){
+
+    const text="Now pause. Do nothing. Let your mind disconnect.";
+
+    document.getElementById("message").innerText=text;
+
+    await speak(text);
+
+    await delay(5000);
 }
 
 /* RESPIRACIÓN */
 async function runBreath(block){
 
-    const msg="Now we will breathe. This increases control and clarity.";
-    await showMessage(msg);
+    const text="Now we breathe. This creates control and clarity.";
+    await show({text:{en:text}});
 
     const c=document.getElementById("circle");
     c.style.display="block";
 
     let grow=true;
 
-    const interval=setInterval(()=>{
+    const i=setInterval(()=>{
         c.style.transform=grow?"scale(2)":"scale(1)";
         grow=!grow;
     },2000);
 
     await countdown(block.duration_sec);
 
-    clearInterval(interval);
+    clearInterval(i);
     c.style.display="none";
 }
 
 /* RISOTERAPIA */
 async function runRiso(block){
 
-    const msg="Now we activate a light smile. This resets your emotional state.";
-    await showMessage(msg);
+    const text="Now activate a gentle smile. This resets your emotional state.";
+    await show({text:{en:text}});
 
     await countdown(block.duration_sec);
 }
@@ -248,19 +252,17 @@ async function runRiso(block){
 /* SILENCIO */
 async function runSilence(block){
 
-    const msg="Now silence challenge. Stay present. This builds mental strength.";
-    await showMessage(msg);
+    const text="Silence challenge. Stay present. This builds mental strength.";
+    await show({text:{en:text}});
 
     await countdown(block.duration_sec);
 }
 
 /* TIMER */
 function countdown(sec){
-
     return new Promise(resolve=>{
-        const t=document.getElementById("timer");
-
         let s=sec;
+        const t=document.getElementById("timer");
         t.innerText=s+"s";
 
         const i=setInterval(()=>{
@@ -275,34 +277,11 @@ function countdown(sec){
     });
 }
 
-/* NEXT AUTO */
-async function nextAuto(){
-
-    const res = await fetch("/judge",{
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({session_id,decision:"NEXT"})
-    });
-
-    const data = await res.json();
-
-    runBlock(data.story);
-}
-
-/* CASTIGO */
-function punish(){
-    document.body.style.background="#300";
-    setTimeout(()=>{
-        location.reload();
-    },1000);
-}
-
-/* DELAY */
+/* UTILS */
 function delay(ms){
     return new Promise(r=>setTimeout(r,ms));
 }
 
-/* START */
 document.getElementById("message").onclick=start;
 
 </script>
