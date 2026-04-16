@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KAMIZEN FLOW</title>
+<title>KAMIZEN EXPERIENCE FLOW</title>
 
 <style>
 body{
@@ -22,16 +22,19 @@ body{
     align-items:center;
     gap:20px;
     padding:20px;
+    box-sizing:border-box;
 }
 
 #message{
     max-width:800px;
+    min-height:160px;
     padding:20px;
     border:1px solid #00f2ff;
     background:rgba(0,10,20,0.9);
     text-align:center;
     font-size:22px;
-    min-height:160px;
+    line-height:1.4;
+    transition:all 0.5s ease;
 }
 
 #circle{
@@ -45,6 +48,7 @@ body{
 
 #options{
     display:none;
+    flex-direction:column;
     gap:10px;
 }
 
@@ -61,6 +65,16 @@ button{
 
 #timer{
     font-size:18px;
+    opacity:0.7;
+}
+
+#top{
+    position:absolute;
+    top:10px;
+    width:100%;
+    display:flex;
+    justify-content:space-between;
+    padding:0 10px;
 }
 </style>
 </head>
@@ -68,201 +82,201 @@ button{
 <body>
 
 <div id="app">
+
+<div id="top">
+<button onclick="toggleLang()">ES/EN</button>
+<button onclick="restart()">RESTART</button>
+</div>
+
 <div id="message">TOUCH TO START</div>
 <div id="circle"></div>
 <div id="timer"></div>
 <div id="options"></div>
+
 </div>
 
 <script>
 
 let session_id=null;
-let missionBlocks=[];
-let index=0;
+let lang="en";
+let current=null;
+let locked=true;
 
 /* VOZ */
 function speak(text){
-    return new Promise(resolve=>{
+    return new Promise(res=>{
+        if(!text){res();return;}
         const u=new SpeechSynthesisUtterance(text);
         u.rate=0.9;
-        u.onend=resolve;
+        u.lang=lang==="es"?"es-ES":"en-US";
+        u.onend=res;
         speechSynthesis.speak(u);
     });
 }
 
 /* START */
 async function start(){
-
-    const res = await fetch("/start",{method:"POST"});
-    const data = await res.json();
+    const res=await fetch("/start",{method:"POST"});
+    const data=await res.json();
 
     session_id=data.session_id;
-
-    await loadFullMission();
-    runFlow();
+    run(data.story);
 }
 
-/* CARGAR TODA LA MISIÓN */
-async function loadFullMission(){
+/* ENGINE PRINCIPAL */
+async function run(block){
 
-    missionBlocks=[];
+    locked=true;
+    hideOptions();
 
-    let next = true;
+    current=block;
 
-    while(next){
+    const text=
+        block.text?.[lang]||
+        block.analysis?.[lang]||
+        block.question?.[lang]||
+        "...";
 
-        const res = await fetch("/judge",{
-            method:"POST",
-            headers:{"Content-Type":"application/json"},
-            body:JSON.stringify({session_id,decision:"NEXT"})
-        });
+    await show(text);
 
-        const data = await res.json();
-
-        if(data.story.type==="end"){
-            next=false;
-        }else{
-            missionBlocks.push(data.story);
-        }
+    /* =========================
+       1. STORY / ANALYSIS
+    ========================= */
+    if(block.type==="story" || block.type==="analysis"){
+        await pause(1200);
+        next();
+        return;
     }
 
-    index=0;
+    /* =========================
+       2. QUESTION (TVID)
+    ========================= */
+    if(block.type==="tvid"){
+        showOptions(block);
+        return;
+    }
+
+    /* =========================
+       3. FEEDBACK FLOW
+    ========================= */
+    if(block.type==="micro_explanation"){
+        await pause(1200);
+        next();
+        return;
+    }
+
+    /* =========================
+       4. BREATH (DESPUÉS DE RESPONDER)
+    ========================= */
+    if(block.type==="breath_focus"){
+        await speak("Now we breathe. This resets your mind.");
+        await breath(block.duration_sec);
+        next();
+        return;
+    }
+
+    /* =========================
+       5. RISOTERAPIA
+    ========================= */
+    if(block.type==="riso_tvid"){
+        await speak("Now we activate light smile. This shifts emotional state.");
+        await timer(block.duration_sec);
+        next();
+        return;
+    }
+
+    /* =========================
+       6. SILENCIO
+    ========================= */
+    if(block.type==="silence_challenge"){
+        await speak("Now silence challenge. No reaction. Full awareness.");
+        await timer(block.duration_sec);
+        next();
+        return;
+    }
+
+    /* FINAL */
+    if(block.type==="final_lesson"){
+        await pause(1500);
+        next();
+    }
 }
 
-/* MOTOR */
-async function runFlow(){
-
-    const story = missionBlocks.filter(b=>b.type==="story");
-    const analysis = missionBlocks.filter(b=>b.type==="analysis");
-    const tvid = missionBlocks.find(b=>b.options);
-
-    const breath = missionBlocks.find(b=>b.type==="breath_focus");
-    const riso = missionBlocks.find(b=>b.type==="riso_tvid");
-    const silence = missionBlocks.find(b=>b.type==="silence_challenge");
-
-    /* 1 HISTORIA */
-    await show(story[0]);
-
-    /* 2 ANALISIS */
-    await show(analysis[0]);
-
-    /* 3 TVID */
-    await runTVID(tvid);
-
-    /* 4 PAUSA PROFUNDA */
-    await deepPause();
-
-    /* 5 RESPIRACIÓN */
-    if(breath) await runBreath(breath);
-
-    /* 6 RISOTERAPIA */
-    if(riso) await runRiso(riso);
-
-    /* 7 SILENCIO */
-    if(silence) await runSilence(silence);
-
-    /* FIN */
-    await show({text:{en:"Session completed."}});
+/* SHOW TEXT */
+async function show(t){
+    document.getElementById("message").innerText=t;
+    await speak(t);
 }
 
-/* SHOW */
-async function show(block){
-    const text=block.text?.en || "...";
-    document.getElementById("message").innerText=text;
-    await speak(text);
-}
+/* OPTIONS TVID */
+function showOptions(block){
 
-/* TVID */
-async function runTVID(block){
+    const box=document.getElementById("options");
+    box.style.display="flex";
+    box.innerHTML="";
 
-    const msg=block.question?.en || "Make your decision";
-    await show({text:{en:msg}});
+    locked=false;
 
-    const opts=document.getElementById("options");
-    opts.innerHTML="";
-    opts.style.display="flex";
+    block.options.forEach(o=>{
+        const b=document.createElement("button");
+        b.innerText=o.text.en;
 
-    return new Promise(resolve=>{
+        b.onclick=async ()=>{
 
-        block.options.forEach(o=>{
-            const b=document.createElement("button");
-            b.innerText=o.text.en;
+            if(locked) return;
 
-            b.onclick=async()=>{
-                if(o.correct){
-                    b.classList.add("correct");
-                    await show({text:{en:o.reason.en}});
-                    opts.style.display="none";
-                    resolve();
-                }else{
-                    b.classList.add("wrong");
-                    await show({text:{en:o.reason.en}});
-                }
-            };
+            if(o.correct){
+                b.classList.add("correct");
+                locked=true;
 
-            opts.appendChild(b);
-        });
+                await show(o.reason.en);
 
+                setTimeout(()=>{
+                    hideOptions();
+                    next();
+                },1200);
+
+            }else{
+                b.classList.add("wrong");
+                await show(o.reason.en);
+            }
+        };
+
+        box.appendChild(b);
     });
 }
 
-/* PAUSA ANTI-ADICCIÓN */
-async function deepPause(){
-
-    const text="Now pause. Do nothing. Let your mind disconnect.";
-
-    document.getElementById("message").innerText=text;
-
-    await speak(text);
-
-    await delay(5000);
+function hideOptions(){
+    document.getElementById("options").style.display="none";
 }
 
-/* RESPIRACIÓN */
-async function runBreath(block){
+/* BREATH */
+function breath(sec){
+    return new Promise(res=>{
+        const c=document.getElementById("circle");
+        c.style.display="block";
 
-    const text="Now we breathe. This creates control and clarity.";
-    await show({text:{en:text}});
+        let grow=true;
 
-    const c=document.getElementById("circle");
-    c.style.display="block";
+        const i=setInterval(()=>{
+            c.style.transform=grow?"scale(2)":"scale(1)";
+            grow=!grow;
+        },2000);
 
-    let grow=true;
-
-    const i=setInterval(()=>{
-        c.style.transform=grow?"scale(2)":"scale(1)";
-        grow=!grow;
-    },2000);
-
-    await countdown(block.duration_sec);
-
-    clearInterval(i);
-    c.style.display="none";
-}
-
-/* RISOTERAPIA */
-async function runRiso(block){
-
-    const text="Now activate a gentle smile. This resets your emotional state.";
-    await show({text:{en:text}});
-
-    await countdown(block.duration_sec);
-}
-
-/* SILENCIO */
-async function runSilence(block){
-
-    const text="Silence challenge. Stay present. This builds mental strength.";
-    await show({text:{en:text}});
-
-    await countdown(block.duration_sec);
+        setTimeout(()=>{
+            clearInterval(i);
+            c.style.display="none";
+            res();
+        },sec*1000);
+    });
 }
 
 /* TIMER */
-function countdown(sec){
-    return new Promise(resolve=>{
-        let s=sec;
+function timer(sec){
+    return new Promise(res=>{
         const t=document.getElementById("timer");
+
+        let s=sec;
         t.innerText=s+"s";
 
         const i=setInterval(()=>{
@@ -271,16 +285,29 @@ function countdown(sec){
 
             if(s<=0){
                 clearInterval(i);
-                resolve();
+                res();
             }
         },1000);
     });
 }
 
-/* UTILS */
-function delay(ms){
-    return new Promise(r=>setTimeout(r,ms));
+/* NEXT */
+async function next(){
+
+    const res=await fetch("/judge",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({session_id,decision:"NEXT"})
+    });
+
+    const data=await res.json();
+    run(data.story);
 }
+
+/* CONTROL */
+function restart(){location.reload();}
+function toggleLang(){lang=lang==="en"?"es":"en";if(current)run(current);}
+function pause(ms){return new Promise(r=>setTimeout(r,ms));}
 
 document.getElementById("message").onclick=start;
 
