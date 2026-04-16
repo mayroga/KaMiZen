@@ -100,25 +100,21 @@ button{
 <script>
 
 /* =========================
-   STATE ENGINE SAFE MODE
+   SAFE STATE ENGINE v2
 ========================= */
 let session_id = null;
 let lang = "en";
 let current = null;
 
-let engineLocked = false;
+let locked = false;
 let timerInterval = null;
 
 /* =========================
-   SAFE SPEECH ENGINE
+   SPEECH ENGINE SAFE
 ========================= */
 function speak(text){
     return new Promise(resolve=>{
-
-        if(!text){
-            resolve();
-            return;
-        }
+        if(!text) return resolve();
 
         speechSynthesis.cancel();
 
@@ -127,7 +123,6 @@ function speak(text){
         u.lang = lang === "es" ? "es-ES" : "en-US";
 
         u.onend = ()=> resolve();
-
         setTimeout(()=> resolve(), 6000);
 
         speechSynthesis.speak(u);
@@ -139,29 +134,29 @@ function speak(text){
 ========================= */
 async function start(){
 
-    if(engineLocked) return;
-    engineLocked = true;
+    if(locked) return;
+    locked = true;
 
     try{
-
         const res = await fetch("/start",{method:"POST"});
         const data = await res.json();
 
         session_id = data.session_id;
+
         await run(data.story);
 
     }finally{
-        engineLocked = false;
+        locked = false;
     }
 }
 
 /* =========================
-   MAIN ENGINE
+   CORE RUNNER (FIXED FLOW)
 ========================= */
 async function run(block){
 
-    if(engineLocked) return;
-    engineLocked = true;
+    if(!block || locked) return;
+    locked = true;
 
     try{
 
@@ -173,52 +168,36 @@ async function run(block){
         const text =
             block.text?.[lang] ||
             block.analysis?.[lang] ||
-            block.question?.[lang] ||
             "";
 
         document.getElementById("message").innerText = text;
 
         await speak(text);
 
-        /* TVID */
         if(block.type === "tvid"){
             showOptions(block);
+            return;
         }
 
-        /* BREATH */
         if(block.type === "breath_focus"){
             await breath(block.duration_sec);
-            await next();
         }
 
-        /* RISO */
-        if(block.type === "riso_tvid"){
+        if(block.type === "riso_tvid" || block.type === "silence_challenge"){
             await timer(block.duration_sec);
-            await next();
         }
 
-        /* SILENCE */
-        if(block.type === "silence_challenge"){
-            await timer(block.duration_sec);
-            await next();
-        }
-
-        /* FINAL */
-        if(block.type === "final_lesson"){
-            await pause(1200);
-            await next();
-        }
+        await next();
 
     }catch(e){
         console.log("ENGINE ERROR:", e);
-
     }finally{
-        engineLocked = false;
+        locked = false;
     }
 }
 
 /* =========================
-   OPTIONS TVID
+   OPTIONS SYSTEM
 ========================= */
 function showOptions(block){
 
@@ -233,8 +212,8 @@ function showOptions(block){
 
         b.onclick = async ()=>{
 
-            if(engineLocked) return;
-            engineLocked = true;
+            if(locked) return;
+            locked = true;
 
             try{
 
@@ -250,17 +229,15 @@ function showOptions(block){
                 const data = await res.json();
 
                 if(data.feedback){
-                    await show(data.feedback.reason?.[lang] || "");
+                    await show(data.feedback.reason?.[lang]);
                 }
 
-                b.classList.add(o.correct ? "correct" : "wrong");
+                b.className = o.correct ? "correct" : "wrong";
 
-                setTimeout(async ()=>{
-                    await run(data.story);
-                }, 700);
+                setTimeout(()=> run(data.story), 500);
 
             }finally{
-                engineLocked = false;
+                locked = false;
             }
         };
 
@@ -269,7 +246,7 @@ function showOptions(block){
 }
 
 /* =========================
-   NEXT ENGINE CALL
+   NEXT FLOW FIXED
 ========================= */
 async function next(){
 
@@ -283,11 +260,12 @@ async function next(){
     });
 
     const data = await res.json();
+
     await run(data.story);
 }
 
 /* =========================
-   BREATH
+   BREATH ENGINE
 ========================= */
 function breath(sec){
     return new Promise(res=>{
@@ -311,7 +289,7 @@ function breath(sec){
 }
 
 /* =========================
-   TIMER SAFE
+   TIMER
 ========================= */
 function timer(sec){
     return new Promise(res=>{
@@ -319,11 +297,12 @@ function timer(sec){
         const t = document.getElementById("timer");
         let s = sec;
 
-        t.innerText = s + "s";
+        t.innerText = s;
 
         timerInterval = setInterval(()=>{
+
             s--;
-            t.innerText = s + "s";
+            t.innerText = s;
 
             if(s <= 0){
                 clearInterval(timerInterval);
@@ -331,6 +310,7 @@ function timer(sec){
                 t.innerText = "";
                 res();
             }
+
         },1000);
     });
 }
@@ -355,10 +335,6 @@ async function show(text){
     await speak(text);
 }
 
-function pause(ms){
-    return new Promise(r=>setTimeout(r,ms));
-}
-
 function restart(){
     location.reload();
 }
@@ -368,7 +344,7 @@ function toggleLang(){
     if(current) run(current);
 }
 
-/* START */
+/* INIT */
 document.getElementById("message").onclick = start;
 
 </script>
