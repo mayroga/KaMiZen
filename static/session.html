@@ -3,20 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KAMIZEN | EXPERIENCE</title>
+<title>KAMIZEN EXPERIENCE</title>
 
 <style>
-:root{
-    --neon:#00f2ff;
-    --bg:#000;
-    --panel:rgba(0,15,30,0.92);
-}
-
 body{
     margin:0;
     background:#000;
-    font-family:Arial;
     color:#00f2ff;
+    font-family:Arial;
     overflow:hidden;
 }
 
@@ -28,7 +22,6 @@ body{
     align-items:center;
     gap:20px;
     padding:20px;
-    box-sizing:border-box;
 }
 
 #message{
@@ -37,55 +30,45 @@ body{
     border:1px solid #00f2ff;
     background:rgba(0,10,20,0.9);
     text-align:center;
-    font-size:20px;
+    font-size:22px;
     min-height:160px;
-    line-height:1.5;
+    transition:all 0.5s ease;
 }
 
 #circle{
     width:100px;
     height:100px;
     border-radius:50%;
-    background:rgba(0,242,255,0.15);
+    background:rgba(0,242,255,0.2);
     box-shadow:0 0 30px #00f2ff;
-    transition:all 2s ease;
+    display:none;
 }
 
 #options{
-    display:grid;
-    grid-template-columns:1fr 1fr 1fr;
+    display:none;
     gap:10px;
-    width:90%;
-    max-width:800px;
 }
 
 button{
     padding:14px;
-    background:transparent;
     border:1px solid #00f2ff;
+    background:transparent;
     color:#00f2ff;
     cursor:pointer;
 }
 
-button:hover{
-    background:#00f2ff;
+.correct{
+    background:#00ff88;
     color:#000;
 }
 
-#nav{
-    display:flex;
-    gap:10px;
-    width:90%;
-    max-width:800px;
-}
-
-.navbtn{
-    flex:1;
+.wrong{
+    background:#ff3355;
+    color:#fff;
 }
 
 #timer{
-    font-size:14px;
-    opacity:0.7;
+    font-size:18px;
 }
 </style>
 </head>
@@ -93,80 +76,32 @@ button:hover{
 <body>
 
 <div id="app">
-
-<div>
-<button onclick="toggleLang()">ES/EN</button>
-<button onclick="restart()">RESTART</button>
-</div>
-
-<div id="circle"></div>
-
 <div id="message">TOUCH TO START</div>
-
+<div id="circle"></div>
 <div id="timer"></div>
-
 <div id="options"></div>
-
-<div id="nav">
-<button class="navbtn" onclick="back()">BACK</button>
-<button class="navbtn" onclick="continueFlow()">CONTINUE</button>
-<button class="navbtn" onclick="skip()">SKIP</button>
-</div>
-
 </div>
 
 <script>
 
 let session_id=null;
-let lang="en";
 let currentBlock=null;
-let history=[];
+let autoMode=true;
+let locked=true;
 
-let timerInt=null;
-let breathInt=null;
-let musicOsc=null;
-
-/* AUDIO BASE */
+/* AUDIO */
 const ctx = new (window.AudioContext||window.webkitAudioContext)();
 
 /* VOZ */
 function speak(text){
-    if(!text) return;
+    return new Promise(resolve=>{
+        if(!text){resolve();return;}
 
-    speechSynthesis.cancel();
-
-    const utter = new SpeechSynthesisUtterance(text);
-    utter.lang = lang==="es"?"es-ES":"en-US";
-    utter.rate = 0.9;
-    utter.pitch = 1;
-
-    speechSynthesis.speak(utter);
-}
-
-/* MUSICA */
-function playMusic(type){
-
-    if(musicOsc){
-        musicOsc.stop();
-    }
-
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-
-    osc.type="sine";
-
-    if(type==="calm") osc.frequency.value=110;
-    if(type==="focus") osc.frequency.value=180;
-    if(type==="power") osc.frequency.value=260;
-
-    gain.gain.value=0.05;
-
-    osc.start();
-
-    musicOsc = osc;
+        const u=new SpeechSynthesisUtterance(text);
+        u.rate=0.9;
+        u.onend=resolve;
+        speechSynthesis.speak(u);
+    });
 }
 
 /* START */
@@ -178,161 +113,193 @@ async function start(){
     const data = await res.json();
 
     session_id=data.session_id;
-    history=[];
 
-    render(data.story);
+    runBlock(data.story);
 }
 
-/* SEND */
-async function send(code){
+/* MOTOR PRINCIPAL */
+async function runBlock(block){
+
+    locked=true;
+    hideOptions();
+
+    const text =
+        block.text?.en ||
+        block.analysis?.en ||
+        block.question?.en ||
+        "...";
+
+    await showMessage(text);
+
+    switch(block.type){
+
+        case "story":
+        case "analysis":
+        case "micro_explanation":
+        case "final_lesson":
+            await delay(1500);
+            nextAuto();
+        break;
+
+        case "tvid":
+            await runTVID(block);
+        break;
+
+        case "breath_focus":
+            await runBreath(block);
+            nextAuto();
+        break;
+
+        case "riso_tvid":
+            await runRiso(block);
+            nextAuto();
+        break;
+
+        case "silence_challenge":
+            await runSilence(block);
+            nextAuto();
+        break;
+    }
+}
+
+/* MENSAJE */
+async function showMessage(text){
+    document.getElementById("message").innerText=text;
+    await speak(text);
+}
+
+/* TVID */
+async function runTVID(block){
+
+    locked=false;
+    showOptions(block);
+
+    return new Promise(resolve=>{
+        window.resolveTVID = resolve;
+    });
+}
+
+function showOptions(block){
+
+    const opts=document.getElementById("options");
+    opts.innerHTML="";
+    opts.style.display="flex";
+
+    block.options.forEach(o=>{
+        const b=document.createElement("button");
+        b.innerText=o.text.en;
+
+        b.onclick=()=>{
+            if(locked) punish();
+
+            if(o.correct){
+                b.classList.add("correct");
+                showMessage(o.reason.en);
+                locked=true;
+                setTimeout(()=>{
+                    hideOptions();
+                    window.resolveTVID();
+                },1500);
+            }else{
+                b.classList.add("wrong");
+                showMessage(o.reason.en);
+            }
+        };
+
+        opts.appendChild(b);
+    });
+}
+
+function hideOptions(){
+    document.getElementById("options").style.display="none";
+}
+
+/* RESPIRACIÓN */
+async function runBreath(block){
+
+    const msg="Now we will breathe. This increases control and clarity.";
+    await showMessage(msg);
+
+    const c=document.getElementById("circle");
+    c.style.display="block";
+
+    let grow=true;
+
+    const interval=setInterval(()=>{
+        c.style.transform=grow?"scale(2)":"scale(1)";
+        grow=!grow;
+    },2000);
+
+    await countdown(block.duration_sec);
+
+    clearInterval(interval);
+    c.style.display="none";
+}
+
+/* RISOTERAPIA */
+async function runRiso(block){
+
+    const msg="Now we activate a light smile. This resets your emotional state.";
+    await showMessage(msg);
+
+    await countdown(block.duration_sec);
+}
+
+/* SILENCIO */
+async function runSilence(block){
+
+    const msg="Now silence challenge. Stay present. This builds mental strength.";
+    await showMessage(msg);
+
+    await countdown(block.duration_sec);
+}
+
+/* TIMER */
+function countdown(sec){
+
+    return new Promise(resolve=>{
+        const t=document.getElementById("timer");
+
+        let s=sec;
+        t.innerText=s+"s";
+
+        const i=setInterval(()=>{
+            s--;
+            t.innerText=s+"s";
+
+            if(s<=0){
+                clearInterval(i);
+                resolve();
+            }
+        },1000);
+    });
+}
+
+/* NEXT AUTO */
+async function nextAuto(){
 
     const res = await fetch("/judge",{
         method:"POST",
         headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({session_id,decision:code})
+        body:JSON.stringify({session_id,decision:"NEXT"})
     });
 
     const data = await res.json();
 
-    if(data.story){
-        history.push(currentBlock);
-        render(data.story);
-    }
+    runBlock(data.story);
 }
 
-/* RENDER */
-function render(block){
-
-    clearAll();
-
-    currentBlock=block;
-
-    const msg=document.getElementById("message");
-    const opts=document.getElementById("options");
-
-    opts.innerHTML="";
-
-    let text =
-        block.text?.[lang] ||
-        block.analysis?.[lang] ||
-        block.question?.[lang] ||
-        "...";
-
-    msg.innerText=text;
-
-    speak(text);
-
-    /* TIPOS DE BLOQUE */
-    switch(block.type){
-
-        case "story":
-            playMusic("calm");
-        break;
-
-        case "analysis":
-            playMusic("focus");
-        break;
-
-        case "breath_focus":
-        case "breathing":
-            playMusic("calm");
-            startBreath(block.duration_sec);
-        break;
-
-        case "riso_tvid":
-            playMusic("power");
-        break;
-
-        case "silence_challenge":
-            playMusic("calm");
-        break;
-
-        case "tvid":
-            playMusic("focus");
-        break;
-    }
-
-    /* OPCIONES */
-    if(block.options){
-        block.options.forEach(o=>{
-            const b=document.createElement("button");
-            b.innerText=o.text?.[lang]||o.text?.en;
-
-            b.onclick=()=>{
-                send(o.code);
-            };
-
-            opts.appendChild(b);
-        });
-    }
-
-    /* TIEMPO */
-    if(block.duration_sec){
-        startTimer(block.duration_sec);
-    }
-}
-
-/* TIMER REAL */
-function startTimer(sec){
-
-    const t=document.getElementById("timer");
-
-    let s=sec;
-
-    t.innerText=s+"s";
-
-    timerInt=setInterval(()=>{
-        s--;
-        t.innerText=s+"s";
-
-        if(s<=0){
-            clearInterval(timerInt);
-        }
+/* CASTIGO */
+function punish(){
+    document.body.style.background="#300";
+    setTimeout(()=>{
+        location.reload();
     },1000);
 }
 
-/* BREATH */
-function startBreath(){
-
-    const c=document.getElementById("circle");
-
-    let grow=true;
-
-    breathInt=setInterval(()=>{
-        c.style.transform=grow?"scale(2)":"scale(1)";
-        c.style.opacity=grow?"0.8":"0.3";
-        grow=!grow;
-    },2000);
-}
-
-/* CONTROL */
-function continueFlow(){
-    send("NEXT");
-}
-
-function skip(){
-    send("SKIP");
-}
-
-function back(){
-    if(history.length===0) return;
-    render(history.pop());
-}
-
-function restart(){
-    location.reload();
-}
-
-function toggleLang(){
-    lang=(lang==="en")?"es":"en";
-    if(currentBlock) render(currentBlock);
-}
-
-/* CLEAR */
-function clearAll(){
-    clearInterval(timerInt);
-    clearInterval(breathInt);
-    speechSynthesis.cancel();
+/* DELAY */
+function delay(ms){
+    return new Promise(r=>setTimeout(r,ms));
 }
 
 /* START */
