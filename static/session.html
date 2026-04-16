@@ -34,14 +34,13 @@ body{
     text-align:center;
     font-size:22px;
     line-height:1.4;
-    transition:all 0.4s ease;
 }
 
 #circle{
     width:120px;
     height:120px;
     border-radius:50%;
-    background:rgba(0,242,255,0.2);
+    background:rgba(0,242,255,0.15);
     box-shadow:0 0 40px #00f2ff;
     display:none;
 }
@@ -49,7 +48,7 @@ body{
 #options{
     display:none;
     flex-direction:column;
-    gap:12px;
+    gap:10px;
     width:100%;
     max-width:500px;
 }
@@ -61,11 +60,6 @@ button{
     color:#00f2ff;
     cursor:pointer;
     font-size:16px;
-    transition:0.2s;
-}
-
-button:hover{
-    transform:scale(1.02);
 }
 
 .correct{background:#00ff88;color:#000;}
@@ -105,21 +99,37 @@ button:hover{
 
 <script>
 
-let session_id=null;
-let lang="en";
-let current=null;
-let locked=true;
+/* =========================
+   STATE ENGINE SAFE MODE
+========================= */
+let session_id = null;
+let lang = "en";
+let current = null;
+
+let engineLocked = false;
+let timerInterval = null;
 
 /* =========================
-   VOZ
+   SAFE SPEECH ENGINE
 ========================= */
 function speak(text){
-    return new Promise(res=>{
-        if(!text){res();return;}
-        const u=new SpeechSynthesisUtterance(text);
-        u.rate=0.9;
-        u.lang=lang==="es"?"es-ES":"en-US";
-        u.onend=res;
+    return new Promise(resolve=>{
+
+        if(!text){
+            resolve();
+            return;
+        }
+
+        speechSynthesis.cancel();
+
+        const u = new SpeechSynthesisUtterance(text);
+        u.rate = 0.9;
+        u.lang = lang === "es" ? "es-ES" : "en-US";
+
+        u.onend = ()=> resolve();
+
+        setTimeout(()=> resolve(), 6000);
+
         speechSynthesis.speak(u);
     });
 }
@@ -128,99 +138,83 @@ function speak(text){
    START SESSION
 ========================= */
 async function start(){
-    const res=await fetch("/start",{method:"POST"});
-    const data=await res.json();
 
-    session_id=data.session_id;
-    run(data.story);
+    if(engineLocked) return;
+    engineLocked = true;
+
+    try{
+
+        const res = await fetch("/start",{method:"POST"});
+        const data = await res.json();
+
+        session_id = data.session_id;
+        await run(data.story);
+
+    }finally{
+        engineLocked = false;
+    }
 }
 
 /* =========================
-   ENGINE PRINCIPAL
+   MAIN ENGINE
 ========================= */
 async function run(block){
 
-    current=block;
-    locked=true;
+    if(engineLocked) return;
+    engineLocked = true;
 
-    hideOptions();
-    clearTimer();
+    try{
 
-    const text =
-        block.text?.[lang] ||
-        block.analysis?.[lang] ||
-        block.question?.[lang] ||
-        "";
+        current = block;
 
-    await show(text);
+        hideOptions();
+        clearTimer();
 
-    /* =========================
-       STORY / ANALYSIS
-       (SOLO MUESTRA, NO AVANZA SOLO)
-    ========================= */
-    if(block.type==="story" || block.type==="analysis"){
-        return;
+        const text =
+            block.text?.[lang] ||
+            block.analysis?.[lang] ||
+            block.question?.[lang] ||
+            "";
+
+        document.getElementById("message").innerText = text;
+
+        await speak(text);
+
+        /* TVID */
+        if(block.type === "tvid"){
+            showOptions(block);
+        }
+
+        /* BREATH */
+        if(block.type === "breath_focus"){
+            await breath(block.duration_sec);
+            await next();
+        }
+
+        /* RISO */
+        if(block.type === "riso_tvid"){
+            await timer(block.duration_sec);
+            await next();
+        }
+
+        /* SILENCE */
+        if(block.type === "silence_challenge"){
+            await timer(block.duration_sec);
+            await next();
+        }
+
+        /* FINAL */
+        if(block.type === "final_lesson"){
+            await pause(1200);
+            await next();
+        }
+
+    }catch(e){
+        console.log("ENGINE ERROR:", e);
+
+    }finally{
+        engineLocked = false;
     }
-
-    /* =========================
-       TVID QUESTION
-    ========================= */
-    if(block.type==="tvid"){
-        showOptions(block);
-        return;
-    }
-
-    /* =========================
-       MICRO EXPLANATION
-    ========================= */
-    if(block.type==="micro_explanation"){
-        return;
-    }
-
-    /* =========================
-       BREATH (POST-ANSWER FLOW)
-    ========================= */
-    if(block.type==="breath_focus"){
-        await speak("Now breathing phase.");
-        await breath(block.duration_sec);
-        next();
-        return;
-    }
-
-    /* =========================
-       RISOTERAPIA
-    ========================= */
-    if(block.type==="riso_tvid"){
-        await speak("Light smile activation.");
-        await timer(block.duration_sec);
-        next();
-        return;
-    }
-
-    /* =========================
-       SILENCE
-    ========================= */
-    if(block.type==="silence_challenge"){
-        await speak("Silence challenge starts now.");
-        await timer(block.duration_sec);
-        next();
-        return;
-    }
-
-    /* FINAL */
-    if(block.type==="final_lesson"){
-        await pause(1200);
-        next();
-        return;
-    }
-}
-
-/* =========================
-   SHOW TEXT
-========================= */
-async function show(t){
-    document.getElementById("message").innerText = t || "";
-    await speak(t || "");
 }
 
 /* =========================
@@ -228,49 +222,46 @@ async function show(t){
 ========================= */
 function showOptions(block){
 
-    const box=document.getElementById("options");
-    box.style.display="flex";
-    box.innerHTML="";
-
-    locked=false;
+    const box = document.getElementById("options");
+    box.style.display = "flex";
+    box.innerHTML = "";
 
     block.options.forEach(o=>{
 
-        const b=document.createElement("button");
-        b.innerText=o.text?.[lang] || "";
+        const b = document.createElement("button");
+        b.innerText = o.text?.[lang] || "";
 
-        b.onclick=async ()=>{
+        b.onclick = async ()=>{
 
-            if(locked) return;
+            if(engineLocked) return;
+            engineLocked = true;
 
-            locked=true;
+            try{
 
-            const res = await fetch("/judge",{
-                method:"POST",
-                headers:{"Content-Type":"application/json"},
-                body:JSON.stringify({
-                    session_id,
-                    decision:o.code
-                })
-            });
+                const res = await fetch("/judge",{
+                    method:"POST",
+                    headers:{"Content-Type":"application/json"},
+                    body:JSON.stringify({
+                        session_id,
+                        decision:o.code
+                    })
+                });
 
-            const data = await res.json();
+                const data = await res.json();
 
-            /* FEEDBACK */
-            if(data.feedback){
-                await show(data.feedback.reason?.[lang] || "");
+                if(data.feedback){
+                    await show(data.feedback.reason?.[lang] || "");
+                }
+
+                b.classList.add(o.correct ? "correct" : "wrong");
+
+                setTimeout(async ()=>{
+                    await run(data.story);
+                }, 700);
+
+            }finally{
+                engineLocked = false;
             }
-
-            /* COLOR RESULT */
-            if(o.correct){
-                b.classList.add("correct");
-            }else{
-                b.classList.add("wrong");
-            }
-
-            setTimeout(()=>{
-                run(data.story);
-            },900);
         };
 
         box.appendChild(b);
@@ -278,48 +269,66 @@ function showOptions(block){
 }
 
 /* =========================
+   NEXT ENGINE CALL
+========================= */
+async function next(){
+
+    const res = await fetch("/judge",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+            session_id,
+            decision:"NEXT"
+        })
+    });
+
+    const data = await res.json();
+    await run(data.story);
+}
+
+/* =========================
    BREATH
 ========================= */
 function breath(sec){
     return new Promise(res=>{
-        const c=document.getElementById("circle");
-        c.style.display="block";
 
-        let grow=true;
+        const c = document.getElementById("circle");
+        c.style.display = "block";
 
-        const i=setInterval(()=>{
-            c.style.transform=grow?"scale(2)":"scale(1)";
-            grow=!grow;
-        },2000);
+        let grow = true;
+
+        const i = setInterval(()=>{
+            c.style.transform = grow ? "scale(2)" : "scale(1)";
+            grow = !grow;
+        }, 2000);
 
         setTimeout(()=>{
             clearInterval(i);
-            c.style.display="none";
+            c.style.display = "none";
             res();
-        },sec*1000);
+        }, sec*1000);
     });
 }
 
 /* =========================
-   TIMER
+   TIMER SAFE
 ========================= */
-let timerInterval=null;
-
 function timer(sec){
     return new Promise(res=>{
-        const t=document.getElementById("timer");
-        let s=sec;
 
-        t.innerText=s+"s";
+        const t = document.getElementById("timer");
+        let s = sec;
 
-        timerInterval=setInterval(()=>{
+        t.innerText = s + "s";
+
+        timerInterval = setInterval(()=>{
             s--;
-            t.innerText=s+"s";
+            t.innerText = s + "s";
 
-            if(s<=0){
+            if(s <= 0){
                 clearInterval(timerInterval);
-                timerInterval=null;
-                t.innerText="";
+                timerInterval = null;
+                t.innerText = "";
                 res();
             }
         },1000);
@@ -329,44 +338,38 @@ function timer(sec){
 function clearTimer(){
     if(timerInterval){
         clearInterval(timerInterval);
-        timerInterval=null;
+        timerInterval = null;
     }
-    document.getElementById("timer").innerText="";
+    document.getElementById("timer").innerText = "";
 }
 
 /* =========================
-   NEXT (CONTROLADO SOLO POR ENGINE)
+   UI HELPERS
 ========================= */
-async function next(){
-
-    const res=await fetch("/judge",{
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({
-            session_id,
-            decision:"NEXT"
-        })
-    });
-
-    const data=await res.json();
-    run(data.story);
+function hideOptions(){
+    document.getElementById("options").style.display = "none";
 }
 
-/* =========================
-   CONTROL UI
-========================= */
-function restart(){location.reload();}
-
-function toggleLang(){
-    lang = lang==="en"?"es":"en";
-    if(current) run(current);
+async function show(text){
+    document.getElementById("message").innerText = text;
+    await speak(text);
 }
 
 function pause(ms){
     return new Promise(r=>setTimeout(r,ms));
 }
 
-document.getElementById("message").onclick=start;
+function restart(){
+    location.reload();
+}
+
+function toggleLang(){
+    lang = lang === "en" ? "es" : "en";
+    if(current) run(current);
+}
+
+/* START */
+document.getElementById("message").onclick = start;
 
 </script>
 
