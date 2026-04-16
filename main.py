@@ -7,52 +7,42 @@ import os
 
 app = FastAPI()
 
-# =========================
-# STATIC FILES
-# =========================
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-# =========================
-# LOAD CONTENT
-# =========================
 CONTENT_PATH = os.path.join("static", "kamizen_content.json")
 
+# =========================
+# LOAD JSON
+# =========================
 def load_content():
     try:
         with open(CONTENT_PATH, "r", encoding="utf-8") as f:
-            data = json.load(f)
-            return data.get("missions", [])
+            return json.load(f).get("missions", [])
     except Exception as e:
-        print("ERROR LOADING JSON:", e)
+        print("JSON ERROR:", e)
         return []
 
 MISSIONS = load_content()
 
 # =========================
-# SESSIONS MEMORY (GAME STATE)
+# SESSIONS
 # =========================
 sessions = {}
 
 # =========================
-# SESSION STATE STRUCTURE
+# CREATE SESSION
 # =========================
 def create_session():
     return {
         "mission_index": 0,
         "block_index": 0,
-        "last_block_key": None,
-        "state": {
-            "clarity": 50,
-            "stress": 50,
-            "awareness": 50,
-            "emotion": "neutral"
-        }
+        "current_block_id": None
     }
 
 # =========================
-# GET CURRENT BLOCK
+# GET BLOCK SAFE
 # =========================
-def get_current_block(session):
+def get_block(session):
     m = session["mission_index"]
     b = session["block_index"]
 
@@ -65,28 +55,35 @@ def get_current_block(session):
     if b >= len(blocks):
         return None
 
-    return blocks[b]
+    block = blocks[b]
 
+    # 🔒 BLOQUE IDENTIDAD REAL (evita repetición)
+    block_id = f"{m}:{b}:{block.get('type')}"
+
+    if session.get("current_block_id") == block_id:
+        return None
+
+    session["current_block_id"] = block_id
+
+    return block
 
 # =========================
-# ADVANCE ENGINE (CONTROLADO)
+# ADVANCE ENGINE
 # =========================
 def advance(session):
     session["block_index"] += 1
 
-    m = session["mission_index"]
-    b = session["block_index"]
+    mission = MISSIONS[session["mission_index"]]
+    blocks = mission.get("blocks", [])
 
-    if m < len(MISSIONS):
-        blocks = MISSIONS[m].get("blocks", [])
+    if session["block_index"] >= len(blocks):
+        session["mission_index"] += 1
+        session["block_index"] = 0
 
-        if b >= len(blocks):
-            session["mission_index"] += 1
-            session["block_index"] = 0
-
+    session["current_block_id"] = None
 
 # =========================
-# FORMAT BLOCK SAFE
+# FORMAT SAFE OUTPUT
 # =========================
 def format_block(block):
     if not block:
@@ -98,63 +95,32 @@ def format_block(block):
             }
         }
 
-    data = {"type": block.get("type", "unknown")}
+    out = {"type": block.get("type")}
 
-    for key in ["text", "analysis", "question"]:
-        if key in block:
-            data[key] = block[key]
+    for k in ["text", "analysis", "question"]:
+        if k in block:
+            out[k] = block[k]
 
     if "duration_sec" in block:
-        data["duration_sec"] = block["duration_sec"]
+        out["duration_sec"] = block["duration_sec"]
 
     if "options" in block:
-        data["options"] = []
-        for o in block["options"]:
-            data["options"].append({
-                "code": o.get("code"),
-                "text": o.get("text"),
-                "correct": o.get("correct", False),
-                "reason": o.get("reason", {})
-            })
+        out["options"] = block["options"]
 
-    if "reward" in block:
-        data["reward"] = block["reward"]
-
-    return data
-
+    return out
 
 # =========================
-# ANSWER EVALUATION
+# EVALUATION
 # =========================
-def evaluate_answer(block, decision):
+def evaluate(block, decision):
     if not block or "options" not in block:
         return None
 
-    for opt in block["options"]:
-        if opt.get("code") == decision:
-            return {
-                "correct": opt.get("correct", False),
-                "reason": opt.get("reason", {})
-            }
+    for o in block["options"]:
+        if o.get("code") == decision:
+            return o
 
     return None
-
-
-# =========================
-# APPLY GAME STATE EFFECTS
-# =========================
-def apply_state(session, feedback):
-    if not feedback:
-        return
-
-    if feedback.get("correct"):
-        session["state"]["clarity"] += 5
-        session["state"]["awareness"] += 5
-        session["state"]["stress"] -= 3
-    else:
-        session["state"]["stress"] += 5
-        session["state"]["clarity"] -= 3
-
 
 # =========================
 # ROUTES
@@ -163,9 +129,8 @@ def apply_state(session, feedback):
 def home():
     return FileResponse("static/session.html")
 
-
 # =========================
-# START SESSION
+# START
 # =========================
 @app.post("/start")
 def start():
@@ -174,16 +139,15 @@ def start():
     sessions[session_id] = create_session()
 
     session = sessions[session_id]
-    block = get_current_block(session)
+    block = get_block(session)
 
     return JSONResponse({
         "session_id": session_id,
         "story": format_block(block)
     })
 
-
 # =========================
-# MAIN ENGINE JUDGE
+# ENGINE CORE
 # =========================
 @app.post("/judge")
 def judge(data: dict):
@@ -194,53 +158,36 @@ def judge(data: dict):
     session = sessions.get(session_id)
 
     if not session:
-        return JSONResponse({
-            "story": {
-                "type": "error",
-                "text": {
-                    "en": "Session expired",
-                    "es": "Sesión expirada"
-                }
-            }
-        })
+        return {"story": {"type": "error", "text": {"en": "Session expired", "es": "Sesión expirada"}}}
 
-    current = get_current_block(session)
+    current = get_block(session)
 
     feedback = None
-    response = {}
 
     # =========================
-    # EVALUATION
+    # ANSWER FLOW
     # =========================
     if decision != "NEXT":
-        feedback = evaluate_answer(current, decision)
-        apply_state(session, feedback)
-        response["feedback"] = feedback
+        feedback = evaluate(current, decision)
 
     # =========================
-    # ADVANCE ONLY WHEN READY
+    # ADVANCE FLOW
     # =========================
-    if decision == "NEXT":
+    if decision == "NEXT" or feedback:
         advance(session)
 
-    # =========================
-    # GET NEXT BLOCK
-    # =========================
-    next_block = get_current_block(session)
+    next_block = get_block(session)
 
-    response["story"] = format_block(next_block)
-
-    return JSONResponse(response)
-
+    return JSONResponse({
+        "feedback": feedback,
+        "story": format_block(next_block)
+    })
 
 # =========================
-# RELOAD CONTENT
+# RELOAD JSON
 # =========================
 @app.get("/reload")
 def reload():
     global MISSIONS
     MISSIONS = load_content()
-    return {
-        "status": "reloaded",
-        "missions": len(MISSIONS)
-    }
+    return {"status": "reloaded", "missions": len(MISSIONS)}
