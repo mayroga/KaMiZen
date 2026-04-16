@@ -34,30 +34,38 @@ body{
     text-align:center;
     font-size:22px;
     line-height:1.4;
-    transition:all 0.5s ease;
+    transition:all 0.4s ease;
 }
 
 #circle{
-    width:100px;
-    height:100px;
+    width:120px;
+    height:120px;
     border-radius:50%;
     background:rgba(0,242,255,0.2);
-    box-shadow:0 0 30px #00f2ff;
+    box-shadow:0 0 40px #00f2ff;
     display:none;
 }
 
 #options{
     display:none;
     flex-direction:column;
-    gap:10px;
+    gap:12px;
+    width:100%;
+    max-width:500px;
 }
 
 button{
-    padding:14px;
+    padding:16px;
     border:1px solid #00f2ff;
     background:transparent;
     color:#00f2ff;
     cursor:pointer;
+    font-size:16px;
+    transition:0.2s;
+}
+
+button:hover{
+    transform:scale(1.02);
 }
 
 .correct{background:#00ff88;color:#000;}
@@ -102,7 +110,9 @@ let lang="en";
 let current=null;
 let locked=true;
 
-/* VOZ */
+/* =========================
+   VOZ
+========================= */
 function speak(text){
     return new Promise(res=>{
         if(!text){res();return;}
@@ -114,7 +124,9 @@ function speak(text){
     });
 }
 
-/* START */
+/* =========================
+   START SESSION
+========================= */
 async function start(){
     const res=await fetch("/start",{method:"POST"});
     const data=await res.json();
@@ -123,33 +135,35 @@ async function start(){
     run(data.story);
 }
 
-/* ENGINE PRINCIPAL */
+/* =========================
+   ENGINE PRINCIPAL
+========================= */
 async function run(block){
 
-    locked=true;
-    hideOptions();
-
     current=block;
+    locked=true;
 
-    const text=
-        block.text?.[lang]||
-        block.analysis?.[lang]||
-        block.question?.[lang]||
-        "...";
+    hideOptions();
+    clearTimer();
+
+    const text =
+        block.text?.[lang] ||
+        block.analysis?.[lang] ||
+        block.question?.[lang] ||
+        "";
 
     await show(text);
 
     /* =========================
-       1. STORY / ANALYSIS
+       STORY / ANALYSIS
+       (SOLO MUESTRA, NO AVANZA SOLO)
     ========================= */
     if(block.type==="story" || block.type==="analysis"){
-        await pause(1200);
-        next();
         return;
     }
 
     /* =========================
-       2. QUESTION (TVID)
+       TVID QUESTION
     ========================= */
     if(block.type==="tvid"){
         showOptions(block);
@@ -157,39 +171,37 @@ async function run(block){
     }
 
     /* =========================
-       3. FEEDBACK FLOW
+       MICRO EXPLANATION
     ========================= */
     if(block.type==="micro_explanation"){
-        await pause(1200);
-        next();
         return;
     }
 
     /* =========================
-       4. BREATH (DESPUÉS DE RESPONDER)
+       BREATH (POST-ANSWER FLOW)
     ========================= */
     if(block.type==="breath_focus"){
-        await speak("Now we breathe. This resets your mind.");
+        await speak("Now breathing phase.");
         await breath(block.duration_sec);
         next();
         return;
     }
 
     /* =========================
-       5. RISOTERAPIA
+       RISOTERAPIA
     ========================= */
     if(block.type==="riso_tvid"){
-        await speak("Now we activate light smile. This shifts emotional state.");
+        await speak("Light smile activation.");
         await timer(block.duration_sec);
         next();
         return;
     }
 
     /* =========================
-       6. SILENCIO
+       SILENCE
     ========================= */
     if(block.type==="silence_challenge"){
-        await speak("Now silence challenge. No reaction. Full awareness.");
+        await speak("Silence challenge starts now.");
         await timer(block.duration_sec);
         next();
         return;
@@ -197,18 +209,23 @@ async function run(block){
 
     /* FINAL */
     if(block.type==="final_lesson"){
-        await pause(1500);
+        await pause(1200);
         next();
+        return;
     }
 }
 
-/* SHOW TEXT */
+/* =========================
+   SHOW TEXT
+========================= */
 async function show(t){
-    document.getElementById("message").innerText=t;
-    await speak(t);
+    document.getElementById("message").innerText = t || "";
+    await speak(t || "");
 }
 
-/* OPTIONS TVID */
+/* =========================
+   OPTIONS TVID
+========================= */
 function showOptions(block){
 
     const box=document.getElementById("options");
@@ -218,39 +235,51 @@ function showOptions(block){
     locked=false;
 
     block.options.forEach(o=>{
+
         const b=document.createElement("button");
-        b.innerText=o.text.en;
+        b.innerText=o.text?.[lang] || "";
 
         b.onclick=async ()=>{
 
             if(locked) return;
 
+            locked=true;
+
+            const res = await fetch("/judge",{
+                method:"POST",
+                headers:{"Content-Type":"application/json"},
+                body:JSON.stringify({
+                    session_id,
+                    decision:o.code
+                })
+            });
+
+            const data = await res.json();
+
+            /* FEEDBACK */
+            if(data.feedback){
+                await show(data.feedback.reason?.[lang] || "");
+            }
+
+            /* COLOR RESULT */
             if(o.correct){
                 b.classList.add("correct");
-                locked=true;
-
-                await show(o.reason.en);
-
-                setTimeout(()=>{
-                    hideOptions();
-                    next();
-                },1200);
-
             }else{
                 b.classList.add("wrong");
-                await show(o.reason.en);
             }
+
+            setTimeout(()=>{
+                run(data.story);
+            },900);
         };
 
         box.appendChild(b);
     });
 }
 
-function hideOptions(){
-    document.getElementById("options").style.display="none";
-}
-
-/* BREATH */
+/* =========================
+   BREATH
+========================= */
 function breath(sec){
     return new Promise(res=>{
         const c=document.getElementById("circle");
@@ -271,43 +300,71 @@ function breath(sec){
     });
 }
 
-/* TIMER */
+/* =========================
+   TIMER
+========================= */
+let timerInterval=null;
+
 function timer(sec){
     return new Promise(res=>{
         const t=document.getElementById("timer");
-
         let s=sec;
+
         t.innerText=s+"s";
 
-        const i=setInterval(()=>{
+        timerInterval=setInterval(()=>{
             s--;
             t.innerText=s+"s";
 
             if(s<=0){
-                clearInterval(i);
+                clearInterval(timerInterval);
+                timerInterval=null;
+                t.innerText="";
                 res();
             }
         },1000);
     });
 }
 
-/* NEXT */
+function clearTimer(){
+    if(timerInterval){
+        clearInterval(timerInterval);
+        timerInterval=null;
+    }
+    document.getElementById("timer").innerText="";
+}
+
+/* =========================
+   NEXT (CONTROLADO SOLO POR ENGINE)
+========================= */
 async function next(){
 
     const res=await fetch("/judge",{
         method:"POST",
         headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({session_id,decision:"NEXT"})
+        body:JSON.stringify({
+            session_id,
+            decision:"NEXT"
+        })
     });
 
     const data=await res.json();
     run(data.story);
 }
 
-/* CONTROL */
+/* =========================
+   CONTROL UI
+========================= */
 function restart(){location.reload();}
-function toggleLang(){lang=lang==="en"?"es":"en";if(current)run(current);}
-function pause(ms){return new Promise(r=>setTimeout(r,ms));}
+
+function toggleLang(){
+    lang = lang==="en"?"es":"en";
+    if(current) run(current);
+}
+
+function pause(ms){
+    return new Promise(r=>setTimeout(r,ms));
+}
 
 document.getElementById("message").onclick=start;
 
