@@ -13,7 +13,7 @@ app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # =========================
-# LOAD CONTENT
+# LOAD JSON
 # =========================
 CONTENT_PATH = os.path.join("static", "kamizen_content.json")
 
@@ -21,9 +21,7 @@ def load_content():
     try:
         with open(CONTENT_PATH, "r", encoding="utf-8") as f:
             data = json.load(f)
-            missions = data.get("missions", [])
-            print(f"MISSIONS LOADED: {len(missions)}")
-            return missions
+            return data.get("missions", [])
     except Exception as e:
         print("ERROR LOADING JSON:", e)
         return []
@@ -36,70 +34,58 @@ MISSIONS = load_content()
 sessions = {}
 
 # =========================
-# CORE ENGINE
+# CORE ENGINE (SIN LÓGICA EXTRA)
 # =========================
 
-def get_mission(session):
-    i = session["mission_index"]
-    if i >= len(MISSIONS):
-        return None
-    return MISSIONS[i]
-
-
-def get_blocks(session):
-    mission = get_mission(session)
-    if not mission:
-        return []
-    return mission.get("blocks", [])
-
-
 def get_current_block(session):
-    blocks = get_blocks(session)
-    i = session["block_index"]
+    m = session["mission_index"]
+    b = session["block_index"]
 
-    if i >= len(blocks):
+    if m >= len(MISSIONS):
         return None
 
-    return blocks[i]
+    mission = MISSIONS[m]
+    blocks = mission.get("blocks", [])
+
+    if b >= len(blocks):
+        return None
+
+    return blocks[b]
 
 
 def advance(session):
     session["block_index"] += 1
 
-    blocks = get_blocks(session)
+    m = session["mission_index"]
+    b = session["block_index"]
 
-    # pasa de misión automáticamente
-    if session["block_index"] >= len(blocks):
-        session["mission_index"] += 1
-        session["block_index"] = 0
+    if m < len(MISSIONS):
+        blocks = MISSIONS[m].get("blocks", [])
 
+        # pasa a siguiente misión
+        if b >= len(blocks):
+            session["mission_index"] += 1
+            session["block_index"] = 0
 
-def safe_end():
-    return {
-        "type": "end",
-        "text": {
-            "en": "SESSION COMPLETE",
-            "es": "SESIÓN COMPLETADA"
-        }
-    }
-
-
-# =========================
-# FORMAT (CLAVE)
-# =========================
 
 def format_block(block):
     """
-    Nunca devuelve vacío → evita pantalla en blanco
+    Siempre devuelve algo válido
     """
     if not block:
-        return safe_end()
+        return {
+            "type": "end",
+            "text": {
+                "en": "SESSION COMPLETE",
+                "es": "SESIÓN COMPLETADA"
+            }
+        }
 
     data = {
         "type": block.get("type", "unknown")
     }
 
-    # TEXTOS
+    # textos
     if "text" in block:
         data["text"] = block["text"]
 
@@ -109,42 +95,35 @@ def format_block(block):
     if "question" in block:
         data["question"] = block["question"]
 
-    # DURACIÓN
+    # duración
     if "duration_sec" in block:
         data["duration_sec"] = block.get("duration_sec", 0)
 
-    # GUIDE
+    # guía
     if "guide" in block:
         data["guide"] = block.get("guide", {})
 
-    # OPTIONS (TVID)
+    # opciones (TVID)
     if "options" in block:
-        formatted_options = []
-
+        data["options"] = []
         for o in block["options"]:
-            formatted_options.append({
+            data["options"].append({
                 "code": o.get("code"),
                 "text": o.get("text"),
                 "correct": o.get("correct", False),
                 "reason": o.get("reason", {})
             })
 
-        data["options"] = formatted_options
-
-    # REWARD (silence)
+    # reward
     if "reward" in block:
         data["reward"] = block.get("reward", {})
 
     return data
 
 
-# =========================
-# LOGIC
-# =========================
-
 def evaluate_answer(block, decision):
     """
-    Solo evalúa si es TVID real
+    SOLO evalúa, NO avanza
     """
     if not block or "options" not in block:
         return None
@@ -157,26 +136,6 @@ def evaluate_answer(block, decision):
             }
 
     return None
-
-
-def should_advance(block, decision):
-    """
-    Control total del flujo
-    """
-
-    if not block:
-        return False
-
-    # RESPUESTA TVID → SIEMPRE avanza
-    if "options" in block:
-        return True
-
-    # CONTROL USUARIO
-    if decision in ["NEXT", "SKIP"]:
-        return True
-
-    # BLOQUES PASIVOS → esperan
-    return False
 
 
 # =========================
@@ -198,11 +157,11 @@ def start():
         "block_index": 0
     }
 
-    first = get_current_block(sessions[session_id])
+    block = get_current_block(sessions[session_id])
 
     return JSONResponse({
         "session_id": session_id,
-        "story": format_block(first)
+        "story": format_block(block)
     })
 
 
@@ -214,7 +173,6 @@ def judge(data: dict):
 
     session = sessions.get(session_id)
 
-    # SESIÓN INVALIDA
     if not session:
         return JSONResponse({
             "story": {
@@ -231,7 +189,7 @@ def judge(data: dict):
     response = {}
 
     # =========================
-    # FEEDBACK (TVID)
+    # EVALUAR RESPUESTA
     # =========================
     feedback = evaluate_answer(current, decision)
 
@@ -239,19 +197,15 @@ def judge(data: dict):
         response["feedback"] = feedback
 
     # =========================
-    # AVANCE CONTROLADO
+    # AVANCE SOLO SI FRONT LO PIDE
     # =========================
-    if should_advance(current, decision):
+    if decision == "NEXT":
         advance(session)
 
+    # =========================
+    # SIGUIENTE BLOQUE
+    # =========================
     next_block = get_current_block(session)
-
-    # =========================
-    # FIN TOTAL
-    # =========================
-    if not next_block:
-        response["story"] = safe_end()
-        return JSONResponse(response)
 
     response["story"] = format_block(next_block)
 
