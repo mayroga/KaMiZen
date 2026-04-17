@@ -1,31 +1,97 @@
-// ==============================
-// KAMIZEN ENGINE CORE V1
-// SINGLE SOURCE OF TRUTH GAME ENGINE
-// ==============================
+// =====================================
+// 🧠 KAMIZEN ENGINE CORE — FINAL UNITY VERSION
+// SINGLE BRAIN / NO CONFLICTS / NO DUPLICATION
+// =====================================
 
 const KamizenEngine = (() => {
 
     // =========================
-    // STATE (CENTRAL BRAIN)
+    // GLOBAL STATE (SINGLE SOURCE OF TRUTH)
     // =========================
-    let state = {
+    const state = {
         missionId: 1,
-        locked: false,
+        mission: null,
         lang: "en",
+        locked: false,
+
         score: 0,
-        hero: "",
-        realName: "",
-        currentMission: null,
+
         floatingWords: [],
-        silenceActive: false,
-        audioEnabled: true,
-        tvidActive: false
+
+        silence: {
+            active: false,
+            level: 1,
+            timeLeft: 0,
+            violations: 0,
+            lastInput: 0
+        },
+
+        power: {
+            focus: 0,
+            discipline: 0,
+            wisdom: 0
+        }
     };
 
     // =========================
-    // AUDIO MANAGER
+    // LOCK SYSTEM (ABSOLUTE FLOW CONTROL)
     // =========================
-    const AudioManager = {
+    const Lock = {
+        on() {
+            state.locked = true;
+            document.body.style.pointerEvents = "none";
+        },
+        off() {
+            state.locked = false;
+            document.body.style.pointerEvents = "auto";
+        },
+        is() {
+            return state.locked;
+        }
+    };
+
+    // =========================
+    // SAFE INPUT LAYER (ONLY ONE LISTENER SYSTEM)
+    // =========================
+    const Input = {
+
+        init() {
+
+            // REMOVE ANY PREVIOUS CONFLICT LISTENERS
+            window.onmousemove = null;
+            window.onkeydown = null;
+            window.onclick = null;
+            window.ontouchstart = null;
+            document.onvisibilitychange = null;
+
+            const handle = (type) => {
+                if (!state.silence.active) return;
+
+                const now = Date.now();
+
+                // debounce anti false-positive
+                if (now - state.silence.lastInput < 1200) return;
+
+                state.silence.lastInput = now;
+
+                Silence.registerViolation(type);
+            };
+
+            window.addEventListener("mousemove", () => handle("mouse"));
+            window.addEventListener("keydown", () => handle("keyboard"));
+            window.addEventListener("click", () => handle("click"));
+            window.addEventListener("touchstart", () => handle("touch"));
+
+            document.addEventListener("visibilitychange", () => {
+                if (document.hidden) handle("tab-switch");
+            });
+        }
+    };
+
+    // =========================
+    // AUDIO SYSTEM (SIMPLE + STABLE)
+    // =========================
+    const Audio = {
         bg: null,
         ok: null,
         bad: null,
@@ -37,259 +103,14 @@ const KamizenEngine = (() => {
 
             if (this.bg) {
                 this.bg.loop = true;
-                this.bg.volume = 0.3;
+                this.bg.volume = 0.25;
                 this.bg.play().catch(() => {});
             }
         },
 
         play(type) {
-            if (!state.audioEnabled) return;
-
             if (type === "ok" && this.ok) this.ok.play();
             if (type === "bad" && this.bad) this.bad.play();
-        },
-
-        stopAll() {
-            if (this.bg) this.bg.pause();
-        }
-    };
-
-    // =========================
-    // UI LOCK SYSTEM (CRITICAL)
-    // =========================
-    const LockSystem = {
-        lock() {
-            state.locked = true;
-            document.body.style.pointerEvents = "none";
-        },
-
-        unlock() {
-            state.locked = false;
-            document.body.style.pointerEvents = "auto";
-        },
-
-        isLocked() {
-            return state.locked;
-        }
-    };
-
-    // =========================
-    // STATE CONTROL
-    // =========================
-    const setState = (newState) => {
-        state = { ...state, ...newState };
-    };
-
-    const getState = () => state;
-
-    // =========================
-    // MISSION SYSTEM
-    // =========================
-    const MissionSystem = {
-
-        async loadMission(id) {
-            try {
-                LockSystem.lock();
-
-                const res = await fetch(`/api/mission/${id}`);
-                const data = await res.json();
-
-                state.currentMission = data;
-                state.missionId = id;
-
-                if (data.ui?.floating_words) {
-                    state.floatingWords = data.ui.floating_words;
-                }
-
-                return data;
-
-            } catch (e) {
-                console.error("Mission load error:", e);
-                return null;
-            } finally {
-                LockSystem.unlock();
-            }
-        },
-
-        next() {
-            state.missionId = state.missionId + 1;
-            if (state.missionId > 35) state.missionId = 1;
-            return state.missionId;
-        }
-    };
-
-    // =========================
-    // TVID ENGINE (INTELLIGENT ROUTER)
-    // =========================
-    const TVidEngine = {
-
-        async run(mission, correct) {
-            if (!mission) return;
-
-            state.tvidActive = true;
-            LockSystem.lock();
-
-            let theme = (mission.theme || "").toUpperCase();
-
-            let type = "DEFAULT";
-
-            if (theme.includes("ANGER")) type = "ANGER";
-            if (theme.includes("FEAR") || theme.includes("COURAGE")) type = "FEAR";
-            if (theme.includes("DIGITAL")) type = "DIGITAL";
-            if (theme.includes("TRUTH")) type = "TRUTH";
-            if (theme.includes("PRESSURE")) type = "PRESSURE";
-
-            UI.showOverlay("TVID ACTIVE", "Processing behavioral response...");
-
-            switch (type) {
-
-                case "ANGER":
-                    await BreathingSystem.run(3, "Control anger through breath");
-                    Speech.speak("Control your reaction. Return to calm.");
-                    break;
-
-                case "FEAR":
-                    await BreathingSystem.run(3, "Fear is a signal");
-                    Speech.speak("Fear is not danger. It is information.");
-                    break;
-
-                case "DIGITAL":
-                    await BreathingSystem.run(2, "Recover attention");
-                    Speech.speak("Take back your attention.");
-                    break;
-
-                case "TRUTH":
-                    await BreathingSystem.run(2, "Truth alignment");
-                    Speech.speak("Truth builds identity.");
-                    break;
-
-                case "PRESSURE":
-                    await BreathingSystem.run(4, "Decision clarity");
-                    Speech.speak("Pause creates intelligence.");
-                    break;
-
-                default:
-                    await BreathingSystem.run(2, "Reset awareness");
-                    Speech.speak("Return to awareness.");
-            }
-
-            UI.hideOverlay();
-
-            state.tvidActive = false;
-            LockSystem.unlock();
-        }
-    };
-
-    // =========================
-    // BREATHING SYSTEM (SYNCED)
-    // =========================
-    const BreathingSystem = {
-
-        async run(cycles, reason) {
-            console.log("Breathing:", reason);
-
-            for (let i = 0; i < cycles; i++) {
-                Speech.speak("Inhale");
-                UI.setBreath("in");
-
-                await Utils.wait(3000);
-
-                Speech.speak("Exhale");
-                UI.setBreath("out");
-
-                await Utils.wait(3000);
-            }
-        }
-    };
-
-    // =========================
-    // SILENCE SYSTEM
-    // =========================
-    const SilenceSystem = {
-
-        async start(durationSeconds) {
-            state.silenceActive = true;
-            LockSystem.lock();
-
-            UI.showOverlay("SILENCE MODE", `Stay silent for ${durationSeconds} seconds`);
-
-            let t = durationSeconds;
-
-            while (t > 0) {
-                UI.updateSilence(t);
-                await Utils.wait(1000);
-                t--;
-            }
-
-            state.silenceActive = false;
-            LockSystem.unlock();
-
-            UI.hideOverlay();
-            Speech.speak("Silence complete");
-        }
-    };
-
-    // =========================
-    // FLOATING WORDS
-    // =========================
-    const FloatingSystem = {
-
-        start() {
-            setInterval(() => {
-                if (!state.floatingWords.length) return;
-                if (state.locked) return;
-
-                const w = document.createElement("div");
-                w.className = "floating";
-                w.innerText = state.floatingWords[
-                    Math.floor(Math.random() * state.floatingWords.length)
-                ];
-
-                w.style.left = Math.random() * 100 + "vw";
-
-                document.body.appendChild(w);
-
-                setTimeout(() => w.remove(), 4000);
-
-            }, 1200);
-        }
-    };
-
-    // =========================
-    // UI SYSTEM
-    // =========================
-    const UI = {
-
-        showOverlay(title, text) {
-            const o = document.getElementById("overlay");
-            document.getElementById("overlayTitle").innerText = title;
-            document.getElementById("overlayText").innerText = text;
-            o.style.display = "flex";
-        },
-
-        hideOverlay() {
-            document.getElementById("overlay").style.display = "none";
-        },
-
-        setBreath(state) {
-            const b = document.getElementById("breath");
-
-            if (!b) return;
-
-            if (state === "in") {
-                b.style.transform = "scale(1.5)";
-                b.style.background = "#00f2ff";
-            }
-
-            if (state === "out") {
-                b.style.transform = "scale(1)";
-                b.style.background = "#0044ff";
-            }
-        },
-
-        updateSilence(t) {
-            const el = document.getElementById("story");
-            if (el) el.innerText = `Silence: ${t}s remaining`;
         }
     };
 
@@ -297,7 +118,7 @@ const KamizenEngine = (() => {
     // SPEECH ENGINE
     // =========================
     const Speech = {
-        speak(text) {
+        say(text) {
             const u = new SpeechSynthesisUtterance(text);
             u.lang = state.lang === "en" ? "en-US" : "es-ES";
             u.rate = 0.85;
@@ -306,30 +127,360 @@ const KamizenEngine = (() => {
     };
 
     // =========================
-    // UTILITIES
+    // FLOATING WORDS (NO CONFLICTS)
     // =========================
-    const Utils = {
-        wait(ms) {
-            return new Promise(r => setTimeout(r, ms));
+    const Floating = {
+
+        start() {
+            setInterval(() => {
+
+                if (Lock.is()) return;
+                if (!state.floatingWords.length) return;
+
+                const el = document.createElement("div");
+                el.className = "floating";
+
+                el.innerText = state.floatingWords[
+                    Math.floor(Math.random() * state.floatingWords.length)
+                ];
+
+                el.style.left = Math.random() * 100 + "vw";
+
+                el.onclick = () => {
+                    Speech.say(el.innerText);
+                    state.score += 1;
+                    el.remove();
+                };
+
+                document.body.appendChild(el);
+
+                setTimeout(() => el.remove(), 4000);
+
+            }, 1200);
         }
     };
 
     // =========================
-    // PUBLIC API
+    // SILENCE SYSTEM (AAA STABLE VERSION)
     // =========================
+    const Silence = {
+
+        start(level = 1) {
+
+            state.silence.active = true;
+            state.silence.level = level;
+            state.silence.timeLeft = getDuration(level);
+            state.silence.violations = 0;
+
+            Lock.on();
+
+            UI.overlay("NEURO SILENCE", "Control breath. Control mind.");
+
+            Input.init();
+
+            Breath.start(level);
+
+            const timer = setInterval(() => {
+
+                if (!state.silence.active) {
+                    clearInterval(timer);
+                    return;
+                }
+
+                state.silence.timeLeft--;
+
+                UI.silence(state.silence.timeLeft);
+
+                if (state.silence.timeLeft <= 0) {
+                    Silence.complete();
+                    clearInterval(timer);
+                }
+
+            }, 1000);
+        },
+
+        registerViolation(type) {
+
+            state.silence.violations++;
+
+            Speech.say("Distraction detected");
+
+            UI.flashRed();
+
+            state.silence.timeLeft = Math.max(10, state.silence.timeLeft - 10);
+
+            if (state.silence.violations >= 3) {
+                Silence.reset();
+            }
+        },
+
+        reset() {
+            Speech.say("Silence broken. Restarting.");
+            state.silence.active = false;
+
+            setTimeout(() => {
+                Silence.start(state.silence.level);
+            }, 2500);
+        },
+
+        complete() {
+            state.silence.active = false;
+
+            Lock.off();
+
+            UI.flashGreen();
+
+            Speech.say("Silence completed");
+
+            state.power.discipline++;
+            state.power.focus++;
+
+            UI.hideOverlay();
+        }
+    };
+
+    // =========================
+    // BREATH SYSTEM (SYNCED)
+    // =========================
+    const Breath = {
+
+        start(level) {
+
+            const cycle = getBreathCycle(level);
+
+            const loop = setInterval(() => {
+
+                if (!state.silence.active) {
+                    clearInterval(loop);
+                    return;
+                }
+
+                UI.breath("in");
+                Speech.say("Inhale");
+
+                setTimeout(() => {
+                    UI.breath("out");
+                    Speech.say("Exhale");
+                }, cycle / 2);
+
+            }, cycle);
+        }
+    };
+
+    // =========================
+    // MISSION LOADER
+    // =========================
+    const Mission = {
+
+        async load(id) {
+
+            Lock.on();
+
+            try {
+                const res = await fetch(`/api/mission/${id}`);
+                const data = await res.json();
+
+                state.mission = data;
+                state.missionId = id;
+
+                if (data.ui?.floating_words) {
+                    state.floatingWords = data.ui.floating_words;
+                }
+
+                Renderer.render(data);
+
+            } catch (e) {
+                console.error("Mission error:", e);
+            }
+
+            Lock.off();
+        },
+
+        next() {
+            state.missionId++;
+            if (state.missionId > 35) state.missionId = 1;
+            this.load(state.missionId);
+        }
+    };
+
+    // =========================
+    // RENDER SYSTEM (NO LOGIC)
+    // =========================
+    const Renderer = {
+
+        render(m) {
+
+            const story = m.blocks.find(b => b.type === "story");
+            const analysis = m.blocks.find(b => b.type === "analysis");
+            const decision = m.blocks.find(b => b.type === "decision");
+
+            UI.text("story", story.text[state.lang]);
+            Speech.say(story.text[state.lang]);
+
+            setTimeout(() => {
+                UI.text("analysis", analysis.text[state.lang]);
+                Speech.say(analysis.text[state.lang]);
+            }, 2500);
+
+            setTimeout(() => {
+                Options.render(decision.options);
+            }, 5000);
+        }
+    };
+
+    // =========================
+    // OPTIONS (4 RANDOM SAFE SHUFFLE)
+    // =========================
+    const Options = {
+
+        render(options) {
+
+            const container = document.getElementById("options");
+            container.innerHTML = "";
+
+            const shuffled = [...options].sort(() => Math.random() - 0.5);
+
+            shuffled.forEach(opt => {
+
+                const btn = document.createElement("button");
+                btn.innerText = opt.text[state.lang];
+
+                btn.onclick = () => Decision.select(opt);
+
+                container.appendChild(btn);
+            });
+        }
+    };
+
+    // =========================
+    // DECISION ENGINE
+    // =========================
+    const Decision = {
+
+        async select(opt) {
+
+            if (Lock.is()) return;
+
+            Lock.on();
+            Options.clear();
+
+            if (opt.correct) {
+                Audio.play("ok");
+                Speech.say("Correct");
+                state.score += 10;
+                state.power.wisdom++;
+            } else {
+                Audio.play("bad");
+                Speech.say("Wrong");
+                state.score -= 5;
+                state.power.focus--;
+            }
+
+            await TVID.run(state.mission);
+
+            Mission.next();
+        }
+    };
+
+    // =========================
+    // TVID ENGINE
+    // =========================
+    const TVID = {
+
+        async run(mission) {
+
+            UI.overlay("TVID", "Processing response...");
+            Lock.on();
+
+            await Breath.start(2);
+
+            Speech.say("Return to awareness");
+
+            UI.hideOverlay();
+
+            Lock.off();
+        }
+    };
+
+    // =========================
+    // UI SYSTEM (ONLY DOM)
+    // =========================
+    const UI = {
+
+        text(id, value) {
+            const el = document.getElementById(id);
+            if (el) el.innerText = value;
+        },
+
+        overlay(title, text) {
+            document.getElementById("overlayTitle").innerText = title;
+            document.getElementById("overlayText").innerText = text;
+            document.getElementById("overlay").style.display = "flex";
+        },
+
+        hideOverlay() {
+            document.getElementById("overlay").style.display = "none";
+        },
+
+        breath(state) {
+            const b = document.getElementById("breath");
+            if (!b) return;
+
+            b.style.transform = state === "in" ? "scale(1.5)" : "scale(1)";
+        },
+
+        silence(t) {
+            const el = document.getElementById("silence");
+            if (el) el.innerText = "Silence: " + t + "s";
+        },
+
+        flashRed() {
+            document.body.style.background = "#330000";
+            setTimeout(() => document.body.style.background = "#000", 600);
+        },
+
+        flashGreen() {
+            document.body.style.background = "#003300";
+            setTimeout(() => document.body.style.background = "#000", 800);
+        }
+    };
+
+    // =========================
+    // HELPERS
+    // =========================
+    function getDuration(level) {
+        if (level <= 7) return 180;
+        if (level <= 14) return 360;
+        if (level <= 21) return 600;
+        if (level <= 28) return 900;
+        return 1200;
+    }
+
+    function getBreathCycle(level) {
+        if (level <= 7) return 6000;
+        if (level <= 14) return 5000;
+        if (level <= 21) return 4000;
+        return 3000;
+    }
+
+    // =========================
+    // INIT
+    // =========================
+    function init() {
+
+        Audio.init();
+        Input.init();
+
+        Mission.load(1);
+        Floating.start();
+    }
+
     return {
-        state,
-        setState,
-        getState,
-        AudioManager,
-        MissionSystem,
-        TVidEngine,
-        BreathingSystem,
-        SilenceSystem,
-        FloatingSystem,
-        UI,
-        Speech,
-        LockSystem
+        init,
+        Mission
     };
 
 })();
+
+// AUTO START
+KamizenEngine.init();
