@@ -1,89 +1,113 @@
-from flask import Flask, jsonify, send_from_directory, request
+from flask import Flask, jsonify, send_from_directory
 import json
 import os
 
 app = Flask(__name__, static_folder="static")
 
 # =========================
-# MAPA DE ARCHIVOS POR RANGO
+# CONFIG
 # =========================
+
 MISSION_FILES = [
-    ("missions_1_7.json", 1, 7),
-    ("missions_8_14.json", 8, 14),
-    ("missions_15_21.json", 15, 21),
-    ("missions_22_35.json", 22, 35)
+    ("missions_01_07.json", (1, 7)),
+    ("missions_08_14.json", (8, 14)),
+    ("missions_15_21.json", (15, 21)),
+    ("missions_22_28.json", (22, 28)),
+    ("missions_29_35.json", (29, 35)),
 ]
 
 # =========================
-# CACHE EN MEMORIA (evita recargar disco)
+# LOAD JSON SAFE
 # =========================
-CACHE = {}
 
-def load_file(file_name):
-    if file_name in CACHE:
-        return CACHE[file_name]
-
-    path = os.path.join(os.getcwd(), file_name)
-
-    if not os.path.exists(path):
+def load_json_file(filename):
+    try:
+        path = os.path.join(os.path.dirname(__file__), filename)
+        with open(path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception as e:
+        print(f"[ERROR LOADING {filename}] -> {e}")
         return None
 
-    with open(path, "r", encoding="utf-8") as f:
-        data = json.load(f)
-
-    CACHE[file_name] = data
-    return data
-
-
 # =========================
-# BUSCAR MISIÓN POR ID (RANGO INTELIGENTE)
+# GET FILE BY MISSION ID
 # =========================
-def get_mission_by_id(mission_id):
-    for file_name, start, end in MISSION_FILES:
+
+def get_file_for_mission(mission_id):
+    for filename, (start, end) in MISSION_FILES:
         if start <= mission_id <= end:
-            data = load_file(file_name)
-            if not data:
-                return None
-
-            for mission in data.get("missions", []):
-                if mission["id"] == mission_id:
-                    return mission
+            return filename
     return None
 
+# =========================
+# GET MISSION BY ID
+# =========================
+
+def get_mission(mission_id):
+    filename = get_file_for_mission(mission_id)
+
+    if not filename:
+        return None
+
+    data = load_json_file(filename)
+    if not data:
+        return None
+
+    for mission in data.get("missions", []):
+        if mission.get("id") == mission_id:
+            return mission
+
+    return None
 
 # =========================
-# API: MISIÓN ACTUAL
+# API: MISSION
 # =========================
+
 @app.route("/api/mission/<int:mission_id>")
-def mission(mission_id):
-    mission = get_mission_by_id(mission_id)
+def api_mission(mission_id):
+    mission = get_mission(mission_id)
 
     if not mission:
-        return jsonify({"error": "Mission not found"}), 404
+        return jsonify({
+            "error": "Mission not found",
+            "mission_id": mission_id
+        }), 404
 
     return jsonify(mission)
 
+# =========================
+# API: NEXT MISSION FLOW (1 → 35 → 1)
+# =========================
 
-# =========================
-# API: SISTEMA DE LOOP 1-35
-# =========================
 @app.route("/api/next/<int:mission_id>")
-def next_mission(mission_id):
+def api_next(mission_id):
     next_id = mission_id + 1
-
     if next_id > 35:
         next_id = 1
 
-    return jsonify({"next": next_id})
-
+    return jsonify({
+        "next_mission": next_id
+    })
 
 # =========================
-# FRONTEND
+# HOME (SESSION)
 # =========================
+
 @app.route("/")
 def home():
     return send_from_directory("static", "session.html")
 
+# =========================
+# STATIC FILES SAFE
+# =========================
+
+@app.route("/static/<path:path>")
+def static_files(path):
+    return send_from_directory("static", path)
+
+# =========================
+# RUN APP
+# =========================
 
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=5000)
+    app.run(host="0.0.0.0", port=10000, debug=True)
