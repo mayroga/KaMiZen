@@ -1,0 +1,296 @@
+{
+  "game": "KAMIZEN KIDS: MATRIX TRAINING SYSTEM",
+  "chapter": 3,
+  "range": "15-21",
+  "ui": {
+    "floating_words": [
+      "DISCIPLINE", "FOCUS", "PAUSE", "CONTROL", "TRUTH", "CALM", "AWARENESS", "ACTION"
+    ]
+  },
+  "matrix_rules": [
+    "1. Observe before reacting",
+    "2. Action creates reality",
+    "3. Thought controls emotion",
+    "4. Silence is power",
+    "5. Focus beats distraction",
+    "6. Breath controls mind",
+    "7. Reaction weakens control",
+    "8. Awareness is strength",
+    "9. Calm is intelligence",
+    "10. Impulse is not truth",
+    "11. Choice defines identity",
+    "12. Energy follows attention",
+    "13. Stop before emotional action",
+    "14. See patterns, not chaos",
+    "15. Inner voice is guide",
+    "16. Fear is temporary signal",
+    "17. Courage is movement",
+    "18. Truth builds power",
+    "19. Respect creates boundaries",
+    "20. Discipline builds freedom",
+    "21. Small actions shape future",
+    "22. Emotion is data",
+    "23. Pause creates intelligence",
+    "24. Control attention always",
+    "25. Learn from every mistake",
+    "26. Think before speaking",
+    "27. Calm wins conflict",
+    "28. Awareness breaks confusion",
+    "29. Identity is built daily",
+    "30. Master yourself first"
+  ],
+  "missions": [
+    {
+      "id": 15,
+      "level": 15,
+      "theme": "DIGITAL CONTROL TRAINING",
+      "blocks": [
+        {
+          "type": "story",
+          "text": {
+            "en": "Your phone keeps calling your attention even when you try to focus.",
+            "es": "Tu teléfono sigue llamando tu atención aunque intentas concentrarte."
+          }
+        },
+        {
+          "type": "analysis",
+          "text": {
+            "en": "Attention is something you must protect.",
+            "es": "La atención es algo que debes proteger."
+          }
+        },
+        {
+          "type": "decision",
+          "options": [
+            {
+              "code": "CHECK",
+              "text": { "en": "Check instantly", "es": "Revisar inmediatamente" },
+              "correct": false
+            },
+            {
+              "code": "CONTROL",
+              "text": { "en": "Set limits and focus", "es": "Poner límites y enfocarse" },
+              "correct": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "level": 16,
+      "theme": "TRUTH UNDER PRESSURE",
+      "blocks": [
+        {
+          "type": "story",
+          "text": {
+            "en": "You are asked to lie to avoid trouble.",
+            "es": "Te piden mentir para evitar problemas."
+          }
+        },
+        {
+          "type": "analysis",
+          "text": {
+            "en": "Truth builds strong identity.",
+            "es": "La verdad construye identidad fuerte."
+          }
+        },
+        {
+          "type": "decision",
+          "options": [
+            {
+              "code": "LIE",
+              "text": { "en": "Lie", "es": "Mentir" },
+              "correct": false
+            },
+            {
+              "code": "TRUTH",
+              "text": { "en": "Tell truth calmly", "es": "Decir la verdad con calma" },
+              "correct": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 17,
+      "level": 17,
+      "theme": "KINDNESS ACTION TEST",
+      "blocks": [
+        {
+          "type": "story",
+          "text": {
+            "en": "Someone needs help but nobody is paying attention.",
+            "es": "Alguien necesita ayuda pero nadie presta atención."
+          }
+        },
+        {
+          "type": "analysis",
+          "text": {
+            "en": "Real strength is helping others.",
+            "es": "La verdadera fuerza es ayudar a otros."
+          }
+        },
+        {
+          "type": "decision",
+          "options": [
+            {
+              "code": "IGNORE",
+              "text": { "en": "Ignore", "es": "Ignorar" },
+              "correct": false
+            },
+            {
+              "code": "HELP",
+              "text": { "en": "Help", "es": "Ayudar" },
+              "correct": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 18,
+      "level": 18,
+      "theme": "INNER CONTROL STABILITY",
+      "blocks": [
+        {
+          "type": "story",
+          "text": {
+            "en": "Multiple problems happen at the same time.",
+            "es": "Varios problemas ocurren al mismo tiempo."
+          }
+        },
+        {
+          "type": "analysis",
+          "text": {
+            "en": "Control is staying stable in chaos.",
+            "es": "El control es mantenerse estable en el caos."
+          }
+        },
+        {
+          "type": "decision",
+          "options": [
+            {
+              "code": "REACT",
+              "text": { "en": "React emotionally", "es": "Reaccionar emocionalmente" },
+              "correct": false
+            },
+            {
+              "code": "CENTER",
+              "text": { "en": "Stay centered", "es": "Mantener centro" },
+              "correct": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 19,
+      "level": 19,
+      "theme": "SOCIAL REJECTION CONTROL",
+      "blocks": [
+        {
+          "type": "story",
+          "text": {
+            "en": "A group ignores you and makes you feel invisible.",
+            "es": "Un grupo te ignora y te hace sentir invisible."
+          }
+        },
+        {
+          "type": "analysis",
+          "text": {
+            "en": "Your value does not depend on others.",
+            "es": "Tu valor no depende de otros."
+          }
+        },
+        {
+          "type": "decision",
+          "options": [
+            {
+              "code": "CHASE",
+              "text": { "en": "Try to fit in", "es": "Intentar encajar" },
+              "correct": false
+            },
+            {
+              "code": "STAY",
+              "text": { "en": "Stay calm and observe", "es": "Mantener calma y observar" },
+              "correct": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 20,
+      "level": 20,
+      "theme": "IMPULSE CONTROL SYSTEM",
+      "blocks": [
+        {
+          "type": "story",
+          "text": {
+            "en": "You feel like reacting immediately without thinking.",
+            "es": "Sientes ganas de reaccionar sin pensar."
+          }
+        },
+        {
+          "type": "analysis",
+          "text": {
+            "en": "Pause creates intelligence.",
+            "es": "La pausa crea inteligencia."
+          }
+        },
+        {
+          "type": "decision",
+          "options": [
+            {
+              "code": "REACT",
+              "text": { "en": "React instantly", "es": "Reaccionar instantáneo" },
+              "correct": false
+            },
+            {
+              "code": "PAUSE",
+              "text": { "en": "Pause before action", "es": "Pausar antes de actuar" },
+              "correct": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 21,
+      "level": 21,
+      "theme": "RESPONSIBILITY GROWTH",
+      "blocks": [
+        {
+          "type": "story",
+          "text": {
+            "en": "You made a mistake and must decide what to do next.",
+            "es": "Cometiste un error y debes decidir qué hacer."
+          }
+        },
+        {
+          "type": "analysis",
+          "text": {
+            "en": "Responsibility creates maturity.",
+            "es": "La responsabilidad crea madurez."
+          }
+        },
+        {
+          "type": "decision",
+          "options": [
+            {
+              "code": "DENY",
+              "text": { "en": "Deny mistake", "es": "Negar error" },
+              "correct": false
+            },
+            {
+              "code": "ACCEPT",
+              "text": { "en": "Accept and learn", "es": "Aceptar y aprender" },
+              "correct": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
