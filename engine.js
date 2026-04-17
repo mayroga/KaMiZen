@@ -1,76 +1,205 @@
 /**
- * 🧠 AURA ENGINE CORE - VINCULADO A MAIN.PY
- * Sin cortes. Inglés por defecto.
+ * 🧠 KAMIZEN ENGINE CORE — AL CIELO EDITION
+ * Director de Orquesta: Música, Disparos, TVID y Neuro-Silence
  */
 
-const AuraEngine = (() => {
+const KamizenEngine = (() => {
+
+    // ==========================================
+    // 📊 ESTADO GLOBAL (Single Source of Truth)
+    // ==========================================
     const state = {
         score: 0,
-        lang: "en", 
-        missionId: 0,
+        energy: 100,
+        lang: "en",
+        missionId: 1,
         mission: null,
         locked: false,
-        paused: false,
-        silenceActive: false
+        silenceActive: false,
+        silenceTime: 180, // Inicia en 3 min (180s)
+        floatingWords: ["POWER", "FOCUS", "STREET", "TRUTH"]
     };
 
-    const AudioSys = {
-        play(id) {
-            const el = document.getElementById(id);
-            if (el) { el.currentTime = 0; el.play().catch(() => {}); }
+    // ==========================================
+    // 🔒 SISTEMA DE CONTROL DE FLUJO (LOCK)
+    // ==========================================
+    const Lock = {
+        on() { state.locked = true; document.body.style.pointerEvents = "none"; },
+        off() { state.locked = false; document.body.style.pointerEvents = "auto"; },
+        is() { return state.locked; }
+    };
+
+    // ==========================================
+    // 🔊 AUDIO & DOPAMINA (ESTILO SONIC)
+    // ==========================================
+    const AudioSystem = {
+        bg: null, ok: null, bad: null,
+        init() {
+            this.bg = document.getElementById("bg");
+            this.ok = document.getElementById("ok");
+            this.bad = document.getElementById("bad");
+            this.playDopamine();
         },
-        startAmbient() {
-            const bg = document.getElementById("bg");
-            if (bg) { bg.volume = 0.3; bg.play().catch(() => {}); }
+        playDopamine() {
+            if (this.bg) {
+                this.bg.playbackRate = 1.1; // Más rápido para energía
+                this.bg.volume = 0.3;
+                this.bg.play().catch(() => {});
+            }
+        },
+        playEffect(type) {
+            if (type === 'win' && this.ok) this.ok.play();
+            if (type === 'bad' && this.bad) this.bad.play();
         }
     };
 
+    // ==========================================
+    // 🗣️ MOTOR DE VOZ (SPEECH)
+    // ==========================================
     const Speech = {
         say(text) {
             window.speechSynthesis.cancel();
-            const msg = new SpeechSynthesisUtterance(text);
-            msg.lang = state.lang === "en" ? "en-US" : "es-ES";
-            msg.rate = 0.9;
-            window.speechSynthesis.speak(msg);
+            const u = new SpeechSynthesisUtterance(text);
+            u.lang = state.lang === "en" ? "en-US" : "es-ES";
+            u.rate = 0.9;
+            window.speechSynthesis.speak(u);
         }
     };
 
-    const MissionSystem = {
-        async loadNext() {
-            if (state.locked) return;
-            state.locked = true;
+    // ==========================================
+    // 🎯 SISTEMA DE DISPARO A PALABRAS
+    // ==========================================
+    const FloatingWords = {
+        start() {
+            setInterval(() => {
+                if (state.silenceActive || Lock.is()) return;
+                this.spawn();
+            }, 2000);
+        },
+        spawn() {
+            const types = [
+                { class: 'word-good', val: 10, words: ["HONESTY", "POWER", "TRUTH", "RESPECT"] },
+                { class: 'word-bad', val: -10, words: ["LIE", "FEAR", "LAZY", "ANGER"] },
+                { class: 'word-neutral', val: 0, words: ["STREET", "RUN", "CITY", "WALK"] }
+            ];
+           
+            const config = types[Math.floor(Math.random() * types.length)];
+            const el = document.createElement("div");
+            el.className = `floating ${config.class}`;
+            el.innerText = config.words[Math.floor(Math.random() * config.words.length)];
+            el.style.left = Math.random() * 90 + "vw";
+           
+            el.onmousedown = () => {
+                el.classList.add("blast");
+                state.score += config.val;
+                AudioSystem.playEffect(config.val >= 0 ? 'win' : 'bad');
+                UI.updateScore();
+                setTimeout(() => el.remove(), 300);
+            };
 
-            try {
-                // Endpoint exacto de tu Main.py
-                const response = await fetch("/api/mission/next");
-                const data = await response.json();
+            document.body.appendChild(el);
+            setTimeout(() => { if(el) el.remove(); }, 5000);
+        }
+    };
 
-                if (data.error) {
-                    UI.setText("story-box", "End of Journey.");
-                    return;
+    // ==========================================
+    // 🎮 MOTOR DE DECISIONES (4 OPCIONES + TVID)
+    // ==========================================
+    const Decision = {
+        async handle(option) {
+            Lock.on();
+            const box = document.getElementById("explanation-box");
+            box.style.display = "block";
+           
+            const explanation = option.explanation[state.lang];
+            box.innerText = explanation;
+           
+            const synonymsGood = ["¡Excelente!", "¡Sabio!", "¡Nivel Sonic!", "¡Poderoso!"];
+            const synonymsBad = ["¡Cuidado!", "¡Atención!", "¡Error de cálculo!", "¡Piénsalo!"];
+
+            if (option.correct) {
+                document.body.style.backgroundColor = "#004400";
+                AudioSystem.playEffect("win");
+                Speech.say(synonymsGood[Math.floor(Math.random()*synonymsGood.length)] + " " + explanation);
+            } else {
+                document.body.style.backgroundColor = "#440000";
+                AudioSystem.playEffect("bad");
+                Speech.say(synonymsBad[Math.floor(Math.random()*synonymsBad.length)] + " " + explanation);
+            }
+
+            setTimeout(async () => {
+                document.body.style.backgroundColor = "";
+                box.style.display = "none";
+                await SilenceReto.start();
+            }, 6000);
+        }
+    };
+
+    // ==========================================
+    // 🧘 NEURO-SILENCE PROGRESIVO
+    // ==========================================
+    const SilenceReto = {
+        explanations: [
+            "El silencio es donde tu cerebro guarda lo aprendido, como cuando Sonic guarda sus anillos.",
+            "Ahora vamos a calmar el corazón para que tu mente sea más rápida que cualquier enemigo.",
+            "La respiración guiada no es aburrida, es el entrenamiento secreto de los líderes.",
+            "Dominar tu silencio es dominar tu vida en la calle."
+        ],
+        async start() {
+            state.silenceActive = true;
+            UI.clearOptions();
+           
+            const msg = this.explanations[Math.floor(Math.random() * this.explanations.length)];
+            Speech.say(msg + " Iniciando reto de silencio.");
+           
+            UI.showBreath(true);
+            UI.setText("story", `SILENCIO PROGRESIVO: ${Math.floor(state.silenceTime / 60)} MIN`);
+           
+            let timeLeft = state.silenceTime;
+            const timer = setInterval(() => {
+                timeLeft--;
+                if (timeLeft <= 0 || !state.silenceActive) {
+                    clearInterval(timer);
+                    this.complete();
                 }
+            }, 1000);
+        },
+        complete() {
+            state.silenceActive = false;
+            state.silenceTime = Math.min(state.silenceTime + 60, 1200); // Sube 1 min hasta 20
+            UI.showBreath(false);
+            Speech.say("Reto completado. Subiendo de nivel.");
+            Mission.loadNext();
+        }
+    };
 
+    // ==========================================
+    // 📂 CARGADOR DE MISIONES (PERSISTENTE)
+    // ==========================================
+    const Mission = {
+        async loadNext() {
+            Lock.on();
+            try {
+                const res = await fetch("/api/mission/next");
+                const data = await res.json();
                 state.mission = data;
-                state.missionId = data.id;
                 this.render(data);
             } catch (e) {
-                UI.setText("story-box", "Connection Error. Check Main.py");
-            } finally {
-                state.locked = false;
+                console.error("Error cargando misión");
             }
+            Lock.off();
         },
-
         render(m) {
-            UI.clear();
             const story = m.blocks.find(b => b.type === "story").text[state.lang];
             const analysis = m.blocks.find(b => b.type === "analysis").text[state.lang];
             const decision = m.blocks.find(b => b.type === "decision");
 
-            UI.setText("story-box", story);
+            UI.setText("story", story);
+            UI.setText("analysis", "");
             Speech.say(story);
 
             setTimeout(() => {
-                UI.setText("analysis-box", analysis);
+                UI.setText("analysis", analysis);
                 Speech.say(analysis);
             }, 4000);
 
@@ -80,166 +209,43 @@ const AuraEngine = (() => {
         }
     };
 
+    // ==========================================
+    // 🖥️ INTERFAZ DE USUARIO (UI)
+    // ==========================================
     const UI = {
-        setText(id, txt) { document.getElementById(id).innerText = txt; },
-        clear() {
-            this.setText("analysis-box", "");
-            document.getElementById("options-grid").innerHTML = "";
-            document.getElementById("explanation-box").style.display = "none";
-            document.getElementById("breathing-system").style.display = "none";
-        },
-        updateScore() {
-            const label = state.lang === "en" ? "SCORE: " : "PUNTOS: ";
-            document.getElementById("points-display").innerText = label + state.score;
-        },
-        renderOptions(opts) {
-            const grid = document.getElementById("options-grid");
-            grid.innerHTML = "";
-            opts.forEach(o => {
-                const btn = document.createElement("button");
-                btn.innerText = o.text[state.lang];
-                btn.onclick = () => Decision.handle(o);
-                grid.appendChild(btn);
+        setText(id, val) { const el = document.getElementById(id); if(el) el.innerText = val; },
+        updateScore() { this.setText("score-display", `PUNTOS: ${state.score}`); },
+        clearOptions() { document.getElementById("options").innerHTML = ""; },
+        showBreath(show) { document.getElementById("breath").style.display = show ? "block" : "none"; },
+        renderOptions(options) {
+            const container = document.getElementById("options");
+            container.innerHTML = "";
+            options.forEach(opt => {
+                const b = document.createElement("button");
+                b.className = "opt-btn";
+                b.innerText = opt.text[state.lang];
+                b.onclick = () => Decision.handle(opt);
+                container.appendChild(b);
             });
-        },
-        showExplanation(txt) {
-            const box = document.getElementById("explanation-box");
-            box.innerText = txt;
-            box.style.display = "block";
         }
     };
 
-    const Decision = {
-        async handle(opt) {
-            if (state.locked) return;
-            state.locked = true;
-
-            const signal = document.getElementById("feedback-signal");
-            const isCorrect = opt.correct;
-            const explanation = opt.explanation[state.lang];
-
-            UI.showExplanation(explanation);
-            Speech.say(explanation);
-
-            if (isCorrect) {
-                state.score += 100;
-                signal.className = "semaphore-green";
-                AudioSys.play("ok");
-            } else {
-                state.score -= 50;
-                signal.className = "semaphore-red";
-                AudioSys.play("bad");
-            }
-            UI.updateScore();
-
-            setTimeout(async () => {
-                signal.className = "";
-                // Vincula con lógica de silencio de Main.py (ejemplo nivel cada 3 misiones)
-                if (state.missionId % 3 === 0) {
-                    await SilenceReto.init();
-                } else {
-                    state.locked = false;
-                    MissionSystem.loadNext();
-                }
-            }, 7000);
-        }
-    };
-
-    const SilenceReto = {
-        async init() {
-            UI.clear();
-            // Llama a Main.py para obtener el tiempo de silencio basado en el ID de misión
-            const res = await fetch(`/api/silence/${state.missionId}`);
-            const data = await res.json();
-            const time = data.silence_time;
-
-            state.silenceActive = true;
-            document.getElementById("breathing-system").style.display = "flex";
-            document.getElementById("timer-container").style.display = "block";
-            UI.setText("story-box", `NEURO-SILENCE: ${time/60} MIN`);
-
-            let remaining = time;
-            const clock = setInterval(() => {
-                if (state.paused) return;
-                remaining--;
-                
-                // Actualizar timer circular
-                const min = Math.floor(remaining / 60);
-                const sec = remaining % 60;
-                document.getElementById("timer-text").innerText = `${min}:${sec < 10 ? '0'+sec : sec}`;
-
-                // Animación respiración (ciclos de 8s)
-                const circle = document.getElementById("breathing-circle");
-                const bText = document.getElementById("breath-text");
-                if (remaining % 8 > 4) {
-                    circle.style.transform = "scale(1.3)";
-                    bText.innerText = state.lang === "en" ? "INHALE" : "INHALE";
-                } else {
-                    circle.style.transform = "scale(0.8)";
-                    bText.innerText = state.lang === "en" ? "EXHALE" : "EXHALE";
-                }
-
-                if (remaining <= 0) {
-                    clearInterval(clock);
-                    state.silenceActive = false;
-                    document.getElementById("timer-container").style.display = "none";
-                    state.locked = false;
-                    MissionSystem.loadNext();
-                }
-            }, 1000);
-        }
-    };
-
-    const DistractionSys = {
-        spawn() {
-            if (state.paused || state.locked) return;
-            const layer = document.getElementById("floating-words-layer");
-            const isGood = Math.random() > 0.5;
-            const words = isGood ? ["FOCUS", "POWER", "TRUTH"] : ["LIE", "FEAR", "LAZY"];
-            
-            const el = document.createElement("div");
-            el.className = `floating ${isGood ? 'word-good' : 'word-bad'}`;
-            el.innerText = words[Math.floor(Math.random()*words.length)];
-            el.style.left = Math.random() * 80 + "vw";
-
-            el.onclick = () => {
-                el.classList.add("blast");
-                state.score += isGood ? 10 : -20;
-                UI.updateScore();
-                AudioSys.play(isGood ? "ok" : "bad");
-                setTimeout(() => el.remove(), 400);
-            };
-            layer.appendChild(el);
-            setTimeout(() => { if(el) el.remove(); }, 6000);
-        }
-    };
-
+    // ==========================================
+    // 🚀 INICIALIZACIÓN
+    // ==========================================
     return {
         init() {
-            const userName = prompt("Name:") || "User";
-            const heroName = prompt("Hero Name:") || "Aura Warrior";
-            UI.setText("hero-name", heroName);
-            
-            AudioSys.startAmbient();
-            setInterval(() => DistractionSys.spawn(), 3000);
-            MissionSystem.loadNext();
+            AudioSystem.init();
+            FloatingWords.start();
+            Mission.loadNext();
+            console.log("🚀 Kamizen Engine Al Cielo Ready.");
         },
         toggleLang() {
             state.lang = state.lang === "en" ? "es" : "en";
-            UI.updateScore();
-            if (state.mission) MissionSystem.render(state.mission);
-        },
-        gamePause() { 
-            state.paused = true; 
-            document.getElementById("btn-pause").style.display = "none";
-            document.getElementById("btn-resume").style.display = "inline-block";
-        },
-        gameResume() { 
-            state.paused = false; 
-            document.getElementById("btn-pause").style.display = "inline-block";
-            document.getElementById("btn-resume").style.display = "none";
+            if(state.mission) Mission.render(state.mission);
         }
     };
 })();
 
-window.onload = () => AuraEngine.init();
+// Iniciar al cargar la ventana
+window.onload = () => KamizenEngine.init();
