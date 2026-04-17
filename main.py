@@ -1,119 +1,72 @@
 from flask import Flask, jsonify, send_from_directory
-import json
 import os
+import json
 
 app = Flask(__name__, static_folder="static")
 
-BASE_PATH = os.path.dirname(__file__)
+BASE = os.path.dirname(__file__)
 
 # =========================
-# DETECT ALL MISSION FILES (ROOT ONLY)
+# 📦 LOAD MISSION FILES SAFE
 # =========================
-
-def get_json_files():
-    """
-    Detecta automáticamente todos los archivos:
-    missions_01_07.json ... missions_29_35.json
-    SIN hardcode.
-    """
-    files = []
-    for f in os.listdir(BASE_PATH):
-        if f.startswith("missions_") and f.endswith(".json"):
-            files.append(f)
-    return files
-
-
-# =========================
-# SAFE LOAD JSON
-# =========================
-
-def load_json(file_path):
+def load_json(file):
     try:
-        with open(file_path, "r", encoding="utf-8") as f:
+        path = os.path.join(BASE, file)
+        with open(path, "r", encoding="utf-8") as f:
             return json.load(f)
-    except Exception as e:
-        print(f"[JSON ERROR] {file_path}: {e}")
+    except:
         return None
 
 
+def get_all_missions():
+    files = [
+        "missions_01_07.json",
+        "missions_08_14.json",
+        "missions_15_21.json",
+        "missions_22_28.json",
+        "missions_29_35.json"
+    ]
+
+    data = []
+
+    for f in files:
+        j = load_json(f)
+        if j:
+            data.append(j)
+
+    return data
+
+
 # =========================
-# FIND MISSION (GLOBAL SEARCH)
+# 🎯 FIND MISSION (PURE DATA)
 # =========================
+def find_mission(mid):
+    datasets = get_all_missions()
 
-def find_mission(mission_id):
-    """
-    Busca misión en TODOS los archivos reales.
-    NO asume estructura artificial.
-    """
-    for file in get_json_files():
-        path = os.path.join(BASE_PATH, file)
-        data = load_json(path)
-
-        if not data:
-            continue
-
-        missions = data.get("missions", [])
-        for m in missions:
-            if m.get("id") == mission_id:
+    for pack in datasets:
+        for m in pack.get("missions", []):
+            if m.get("id") == mid:
                 return m
 
     return None
 
 
 # =========================
-# FIND CHAPTER (RAW JSON EXACTO)
+# 📊 GET CHAPTER (RAW JSON ONLY)
 # =========================
-
 def find_chapter(chapter_id):
-    """
-    Devuelve el JSON EXACTO sin modificar.
-    """
-    for file in get_json_files():
-        path = os.path.join(BASE_PATH, file)
-        data = load_json(path)
+    datasets = get_all_missions()
 
-        if not data:
-            continue
-
-        if data.get("chapter") == chapter_id:
-            return data
+    for pack in datasets:
+        if pack.get("chapter") == chapter_id:
+            return pack
 
     return None
 
 
 # =========================
-# GET FULL GAME STATE (OPTIONAL FUTURE)
+# 🎮 API: MISSION
 # =========================
-
-def get_full_game():
-    """
-    Junta todos los JSON sin modificar.
-    """
-    game = {
-        "missions": [],
-        "chapters": {}
-    }
-
-    for file in get_json_files():
-        path = os.path.join(BASE_PATH, file)
-        data = load_json(path)
-
-        if not data:
-            continue
-
-        game["missions"].extend(data.get("missions", []))
-
-        chapter = data.get("chapter")
-        if chapter:
-            game["chapters"][chapter] = data
-
-    return game
-
-
-# =========================
-# API: MISSION (SINGLE)
-# =========================
-
 @app.route("/api/mission/<int:mission_id>")
 def api_mission(mission_id):
     mission = find_mission(mission_id)
@@ -121,16 +74,15 @@ def api_mission(mission_id):
     if not mission:
         return jsonify({
             "error": "Mission not found",
-            "mission_id": mission_id
+            "id": mission_id
         }), 404
 
     return jsonify(mission)
 
 
 # =========================
-# API: CHAPTER (RAW FILE)
+# 📘 API: CHAPTER (RAW DATA)
 # =========================
-
 @app.route("/api/chapter/<int:chapter_id>")
 def api_chapter(chapter_id):
     chapter = find_chapter(chapter_id)
@@ -138,19 +90,20 @@ def api_chapter(chapter_id):
     if not chapter:
         return jsonify({
             "error": "Chapter not found",
-            "chapter_id": chapter_id
+            "id": chapter_id
         }), 404
 
     return jsonify(chapter)
 
 
 # =========================
-# API: NEXT MISSION (1 → 35 LOOP)
+# 🔁 NEXT MISSION (NO LOGIC)
 # =========================
-
 @app.route("/api/next/<int:mission_id>")
 def api_next(mission_id):
+
     next_id = mission_id + 1
+
     if next_id > 35:
         next_id = 1
 
@@ -160,51 +113,69 @@ def api_next(mission_id):
 
 
 # =========================
-# API: FULL GAME (OPTIONAL)
+# 🧠 SILENCE CONFIG (FOR SESSION.HTML)
 # =========================
+@app.route("/api/silence/<int:level>")
+def api_silence(level):
 
-@app.route("/api/game")
-def api_game():
-    return jsonify(get_full_game())
+    if level <= 7:
+        t = 180
+    elif level <= 14:
+        t = 360
+    elif level <= 21:
+        t = 600
+    elif level <= 28:
+        t = 900
+    else:
+        t = 1200
+
+    return jsonify({
+        "level": level,
+        "silence_time": t
+    })
 
 
 # =========================
-# HOME
+# 🌬️ BREATH CONFIG (SYNC WITH UI)
 # =========================
+@app.route("/api/breath/<int:level>")
+def api_breath(level):
 
+    if level <= 7:
+        interval = 60
+    elif level <= 14:
+        interval = 50
+    elif level <= 21:
+        interval = 40
+    elif level <= 28:
+        interval = 30
+    else:
+        interval = 25
+
+    return jsonify({
+        "level": level,
+        "breath_interval_sec": interval
+    })
+
+
+# =========================
+# 🏠 FRONTEND ENTRY
+# =========================
 @app.route("/")
 def home():
     return send_from_directory("static", "session.html")
 
 
 # =========================
-# STATIC FILES
+# 📁 STATIC FILES
 # =========================
-
 @app.route("/static/<path:path>")
 def static_files(path):
     return send_from_directory("static", path)
 
 
 # =========================
-# ERROR HANDLING (ANTI 500 SAFE MODE)
+# 🚀 RUN SERVER
 # =========================
-
-@app.errorhandler(500)
-def internal_error(e):
-    return jsonify({
-        "error": "internal_server_error",
-        "message": str(e)
-    }), 500
-
-
-# =========================
-# RUN SERVER
-# =========================
-
 if __name__ == "__main__":
-    app.run(
-        host="0.0.0.0",
-        port=10000,
-        debug=True
-    )
+    app.run(host="0.0.0.0", port=10000, debug=True)
