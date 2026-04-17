@@ -2,67 +2,131 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>KAMIZEN | AL CIELO PRO</title>
 
 <style>
 body {
-    margin:0;
-    background: radial-gradient(circle,#001a33,#000);
-    color:white;
-    font-family:Arial;
-    overflow:hidden;
+    margin: 0;
+    background: radial-gradient(circle, #001a33, #000);
+    color: #fff;
+    font-family: 'Segoe UI', Arial;
+    text-align: center;
+    overflow: hidden;
+    cursor: crosshair;
 }
 
-#score-display { color:#00f2ff; }
+#topbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 15px;
+    background: rgba(0,0,0,0.3);
+    z-index: 100;
+}
+
+#game { padding-top: 80px; }
+
+#top-ui {
+    display: flex;
+    justify-content: space-around;
+    color: #00f2ff;
+    font-weight: bold;
+}
 
 button {
-    padding:12px;
-    margin:5px;
-    border:2px solid #00f2ff;
-    background:transparent;
-    color:white;
-    cursor:pointer;
+    padding: 15px 25px;
+    margin: 10px;
+    border: 2px solid #00f2ff;
+    background: rgba(0,242,255,0.1);
+    color: white;
+    border-radius: 12px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #00f2ff;
+    color: black;
 }
 
 .opt-btn {
-    display:block;
-    width:80%;
-    margin:10px auto;
+    display: block;
+    width: 80%;
+    max-width: 500px;
+    margin: 10px auto;
+    text-align: left;
 }
 
 #breath {
-    width:100px;height:100px;
-    border-radius:50%;
-    background:#00f2ff;
-    display:none;
-    margin:auto;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #00f2ff, #0066ff);
+    margin: 20px auto;
+    display: none;
 }
 
 .floating {
-    position:absolute;
-    animation: floatUp 5s linear;
+    position: absolute;
+    padding: 8px 18px;
+    border-radius: 20px;
+    animation: floatUp 5s linear forwards;
 }
 
 @keyframes floatUp {
-    from { transform:translateY(100vh); }
-    to { transform:translateY(-20vh); }
+    from { transform: translateY(110vh); }
+    to { transform: translateY(-20vh); }
 }
+
+.word-good { color:#00ff00; border:1px solid #00ff00; }
+.word-bad { color:#ff0000; border:1px solid #ff0000; }
+.word-neutral { color:#ffff00; border:1px solid #ffff00; }
+
+#explanation-box {
+    background: rgba(0,0,0,0.8);
+    border-left: 5px solid #00f2ff;
+    padding: 20px;
+    width: 80%;
+    margin: 20px auto;
+    display: none;
+}
+
+#story, #analysis {
+    min-height: 40px;
+}
+
 </style>
 </head>
 
 <body>
 
-<div id="score-display">PUNTOS: 0</div>
+<div id="topbar">
+    <button onclick="KamizenEngine.toggleLang()">EN/ES</button>
+    <div id="score-display">PUNTOS: 0</div>
+</div>
 
-<h2 id="story"></h2>
-<div id="analysis"></div>
+<div id="game">
 
-<div id="breath"></div>
-<div id="options"></div>
+    <div id="top-ui">
+        <div id="stat-focus">FOCUS: 100%</div>
+        <div id="stat-life">ENERGY: ⚡⚡⚡</div>
+    </div>
 
-<div id="explanation-box"></div>
+    <h2 id="hero-name"></h2>
 
-<audio id="bg" src="/static/sounds/bg.mp3" loop></audio>
+    <div id="breath"></div>
+
+    <div id="story"></div>
+    <div id="analysis"></div>
+
+    <div id="explanation-box"></div>
+    <div id="options"></div>
+
+</div>
+
+<audio id="bg" loop src="/static/sounds/bg.mp3"></audio>
 <audio id="ok" src="/static/sounds/success.mp3"></audio>
 <audio id="bad" src="/static/sounds/glass.mp3"></audio>
 
