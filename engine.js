@@ -1,12 +1,11 @@
 /**
- * 🧠 KAMIZEN ENGINE vSTABLE PRO CLEAN
- * NO FREEZE + NO SPAM + NO LOOP OVERLOAD + UI BRIDGE SAFE
+ * 🧠 KAMIZEN ENGINE STABLE CORE (NO FREEZE BUILD)
  */
 
 const KamizenEngine = (() => {
 
     // ==========================================
-    // 📊 STATE
+    // 📊 STATE (CLEAN + NO OVERLOAD)
     // ==========================================
     const state = {
         score: 0,
@@ -17,30 +16,28 @@ const KamizenEngine = (() => {
         missionId: 1,
         locked: false,
         silenceActive: false,
-        silenceTime: 20,
 
-        floatInterval: null,
-        breathActive: false,
-        timerInterval: null,
-
-        running: false
+        timers: {
+            float: null,
+            silence: null
+        }
     };
 
-    const player = { name: "Player", hero: "Kamizen" };
+    const player = { name: "", hero: "" };
 
     // ==========================================
-    // 🔒 SAFE LOCK (NO FREEZE BODY)
+    // 🔒 LOCK (NO FREEZE BODY)
     // ==========================================
     const Lock = {
         on() {
             state.locked = true;
+            document.body.classList.add("locked");
         },
         off() {
             state.locked = false;
+            document.body.classList.remove("locked");
         },
-        is() {
-            return state.locked;
-        }
+        is() { return state.locked; }
     };
 
     // ==========================================
@@ -71,14 +68,13 @@ const KamizenEngine = (() => {
     };
 
     // ==========================================
-    // 🗣️ SPEECH SAFE (ANTI FREEZE)
+    // 🗣️ SPEECH ANTI-SPAM (CLAVE PARA NO FREEZE)
     // ==========================================
     const Speech = {
         last: 0,
-
         say(text) {
             const now = Date.now();
-            if (now - this.last < 1200) return;
+            if (now - this.last < 1200) return; // 🔥 ANTI FREEZE REAL
             this.last = now;
 
             try {
@@ -92,91 +88,83 @@ const KamizenEngine = (() => {
     };
 
     // ==========================================
-    // 🌍 TEXT CLEAN
-    // ==========================================
-    const TEXT = {
-        en: {
-            points: "POINTS",
-            focus: "FOCUS",
-            energy: "ENERGY",
-            silence: "SILENCE",
-            inhale: "Inhale",
-            exhale: "Exhale",
-            lost: "Attention lost"
-        },
-        es: {
-            points: "PUNTOS",
-            focus: "FOCO",
-            energy: "ENERGÍA",
-            silence: "SILENCIO",
-            inhale: "Inhala",
-            exhale: "Exhala",
-            lost: "Atención perdida"
-        }
-    };
-
-    // ==========================================
-    // 🖥️ UI BRIDGE SAFE
+    // 🖥️ UI SAFE ACCESS
     // ==========================================
     const UI = {
 
-        push(extra = {}) {
-            if (!window.updateSessionUI) return;
+        get(id) {
+            return document.getElementById(id);
+        },
 
-            window.updateSessionUI({
-                points: state.score,
-                focus: state.focus,
-                energy: state.energy,
-                timerText: extra.timerText || "",
-                html: extra.html || ""
-            });
+        set(id, val) {
+            const el = this.get(id);
+            if (el) el.textContent = val;
         },
 
         updateTop() {
-            this.push();
+            this.set("score-display", `PUNTOS: ${state.score}`);
+            this.set("focus-display", `FOCUS: ${state.focus}%`);
+            this.set("energy-display", `ENERGY: ${state.energy}`);
         },
 
-        clearOptions() {
-            const el = document.getElementById("missionBox");
+        clear(id) {
+            const el = this.get(id);
             if (el) el.innerHTML = "";
+        },
+
+        show(id, v) {
+            const el = this.get(id);
+            if (el) el.style.display = v ? "block" : "none";
+        },
+
+        renderOptions(options) {
+            const c = this.get("options");
+            if (!c) return;
+
+            c.innerHTML = "";
+
+            options.forEach(opt => {
+                const b = document.createElement("button");
+                b.className = "opt-btn";
+                b.textContent = opt.text?.[state.lang] || "OPTION";
+
+                b.onclick = () => Decision.handle(opt);
+
+                c.appendChild(b);
+            });
         }
     };
 
     // ==========================================
-    // 🎯 FLOATING SYSTEM SAFE (NO OVERLOAD)
+    // 🎯 FLOATING WORDS (NO OVERLOAD FIX)
     // ==========================================
     const Floating = {
+
         start() {
+            if (state.timers.float) clearInterval(state.timers.float);
 
-            if (state.floatInterval) clearInterval(state.floatInterval);
-
-            state.floatInterval = setInterval(() => {
-
+            state.timers.float = setInterval(() => {
                 if (state.locked || state.silenceActive) return;
                 if (document.hidden) return;
 
                 this.spawn();
 
-            }, 2500);
+            }, 2200);
         },
 
         spawn() {
 
-            const words = ["FOCUS", "TRUTH", "CALM", "FEAR", "POWER"];
+            const words = ["FOCUS", "TRUTH", "CALM", "POWER", "FEAR", "NOISE"];
             const val = Math.random() > 0.5 ? 5 : -5;
 
             const el = document.createElement("div");
             el.className = "floating";
             el.textContent = words[Math.floor(Math.random() * words.length)];
-            el.style.position = "absolute";
             el.style.left = Math.random() * 90 + "vw";
-            el.style.top = Math.random() * 70 + "vh";
-            el.style.color = val > 0 ? "#00ff88" : "#ff3b3b";
 
             el.onclick = () => {
                 state.score += val;
                 state.focus += val > 0 ? 1 : -2;
-                state.energy += val > 0 ? 1 : -1;
 
                 AudioSystem.play(val > 0 ? "win" : "bad");
                 UI.updateTop();
@@ -191,7 +179,49 @@ const KamizenEngine = (() => {
     };
 
     // ==========================================
-    // 🧘 SILENCE SAFE (NO LOOP FREEZE)
+    // 🎮 DECISION SAFE (NO STACK FREEZE)
+    // ==========================================
+    const Decision = {
+
+        async handle(opt) {
+
+            if (state.locked) return;
+
+            Lock.on();
+
+            const box = UI.get("explanation-box");
+            if (box) box.style.display = "block";
+
+            const txt = opt.explanation?.[state.lang] || "";
+
+            if (opt.correct === true) {
+                state.score += 20;
+                state.focus += 2;
+                state.energy += 2;
+                AudioSystem.play("win");
+            } else {
+                state.score -= 10;
+                state.focus -= 2;
+                AudioSystem.play("bad");
+            }
+
+            UI.updateTop();
+            Speech.say(txt);
+
+            if (box) box.textContent = txt;
+
+            await new Promise(r => setTimeout(r, 2000));
+
+            if (box) box.style.display = "none";
+
+            Lock.off();
+
+            Silence.start();
+        }
+    };
+
+    // ==========================================
+    // 🧘 SILENCE SAFE (NO LOOP LOCK)
     // ==========================================
     const Silence = {
 
@@ -200,31 +230,30 @@ const KamizenEngine = (() => {
         start() {
 
             if (this.active) return;
-
             this.active = true;
+
             state.silenceActive = true;
 
-            UI.clearOptions();
+            UI.clear("options");
+            UI.show("breath", true);
 
             let time = state.missionId <= 7 ? 20 :
                        state.missionId <= 14 ? 180 :
                        state.missionId <= 21 ? 300 : 600;
 
-            if (state.timerInterval) clearInterval(state.timerInterval);
+            if (state.timers.silence) clearInterval(state.timers.silence);
 
-            state.timerInterval = setInterval(() => {
+            state.timers.silence = setInterval(() => {
 
                 time--;
 
-                const min = Math.floor(time / 60);
-                const sec = String(time % 60).padStart(2, "0");
-
-                UI.push({
-                    timerText: `${TEXT[state.lang].silence}: ${min}:${sec}`
-                });
+                const el = UI.get("analysis");
+                if (el) {
+                    el.textContent = `SILENCE: ${Math.floor(time/60)}:${String(time%60).padStart(2,"0")}`;
+                }
 
                 if (time <= 0) {
-                    clearInterval(state.timerInterval);
+                    clearInterval(state.timers.silence);
                     this.stop();
                 }
 
@@ -233,47 +262,38 @@ const KamizenEngine = (() => {
             this.breathLoop();
         },
 
-        breathLoop() {
+        async breathLoop() {
 
-            if (state.breathActive) return;
-            state.breathActive = true;
+            const b = UI.get("breath");
+            if (!b) return;
 
-            const loop = async () => {
+            while (this.active) {
 
-                const breath = document.getElementById("breath");
+                b.style.transform = "scale(2)";
+                Speech.say("Inhale");
 
-                while (this.active) {
+                await new Promise(r => setTimeout(r, 3000));
+                if (!this.active) break;
 
-                    if (breath) breath.style.transform = "scale(2)";
-                    Speech.say(TEXT[state.lang].inhale);
-                    await new Promise(r => setTimeout(r, 3000));
+                b.style.transform = "scale(1)";
+                Speech.say("Exhale");
 
-                    if (!this.active) break;
-
-                    if (breath) breath.style.transform = "scale(1)";
-                    Speech.say(TEXT[state.lang].exhale);
-                    await new Promise(r => setTimeout(r, 3000));
-                }
-
-                state.breathActive = false;
-            };
-
-            loop();
+                await new Promise(r => setTimeout(r, 3000));
+            }
         },
 
         stop() {
             this.active = false;
             state.silenceActive = false;
 
-            const breath = document.getElementById("breath");
-            if (breath) breath.style.transform = "scale(1)";
+            UI.show("breath", false);
 
             Mission.next();
         }
     };
 
     // ==========================================
-    // 📂 MISSION SAFE
+    // 📂 MISSION SAFE (NO CRASH)
     // ==========================================
     const Mission = {
 
@@ -293,98 +313,51 @@ const KamizenEngine = (() => {
 
         render(m) {
 
-            const box = document.getElementById("missionBox");
-            if (!box) return;
+            const story = m.blocks?.find(b => b.type === "story")?.text?.[state.lang] || "";
+            const analysis = m.blocks?.find(b => b.type === "analysis")?.text?.[state.lang] || "";
+            const decision = m.blocks?.find(b => b.type === "decision");
 
-            const story = m.blocks?.[0]?.text?.[state.lang] || "";
-            const analysis = m.blocks?.[1]?.text?.[state.lang] || "";
-            const options = m.blocks?.[2]?.options || [];
-
-            box.innerHTML = `
-                <div><b>${story}</b></div>
-                <div style="color:#00f2ff;margin-top:10px">${analysis}</div>
-            `;
+            UI.set("story", story);
+            UI.set("analysis", "");
 
             Speech.say(story);
 
             setTimeout(() => {
-                let html = "";
-                options.forEach(o => {
-                    html += `<div class="option" onclick="window.Engine.choose(${options.indexOf(o)})">${o.text[state.lang]}</div>`;
-                });
-                box.innerHTML += `<div id="optBox">${html}</div>`;
+                UI.set("analysis", analysis);
             }, 3000);
 
-            state._options = options;
-
-            UI.updateTop();
+            setTimeout(() => {
+                if (decision?.options) UI.renderOptions(decision.options);
+            }, 6000);
         }
     };
-
-    // ==========================================
-    // 🎮 DECISION SAFE
-    // ==========================================
-    function choose(i) {
-
-        const opt = state._options?.[i];
-        if (!opt) return;
-
-        Lock.on();
-
-        if (opt.correct === true) {
-            state.score += 20;
-            state.focus += 2;
-            state.energy += 2;
-            AudioSystem.play("win");
-        } else {
-            state.score -= 10;
-            state.focus -= 2;
-            AudioSystem.play("bad");
-        }
-
-        UI.updateTop();
-
-        setTimeout(() => {
-            Lock.off();
-            Silence.start();
-        }, 1500);
-    }
 
     // ==========================================
     // 🚀 INIT SAFE
     // ==========================================
     function init() {
 
-        if (state.running) return;
-        state.running = true;
+        player.name = "Player";
+        player.hero = "Kamizen";
 
         AudioSystem.init();
         Floating.start();
-
         UI.updateTop();
+
         Mission.next();
     }
 
-    // ==========================================
-    // 🌐 PUBLIC API (MATCH SESSION.HTML)
-    // ==========================================
     return {
-        start: init,
         init,
-        next: () => Mission.next(),
-        back: () => Mission.next(),
-        restart: () => location.reload(),
-
         toggleLang() {
             state.lang = state.lang === "en" ? "es" : "en";
-            if (state.mission) Mission.render(state.mission);
+            UI.updateTop();
         },
-
-        choose
+        restart() {
+            location.reload();
+        }
     };
 
 })();
 
-// EXPORT GLOBAL
-window.Engine = KamizenEngine;
-window.onload = null;
+window.onload = () => KamizenEngine.init();
