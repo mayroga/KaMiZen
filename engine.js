@@ -1,179 +1,230 @@
-let state = {
-    score: 0,
-    lang: "en",
-    missionId: 1,
-    mission: null,
-    silence: 180
-};
+/**
+ * 🧠 KAMIZEN ENGINE CORE — AL CIELO EDITION
+ */
+const KamizenEngine = (() => {
+    const state = {
+        score: 0,
+        energy: 100,
+        lang: "en",
+        missionId: 1,
+        mission: null,
+        locked: false,
+        silenceActive: false,
+        silenceTime: 180,
+        floatingWords: ["POWER", "FOCUS", "STREET", "TRUTH"]
+    };
+    const Lock = {
+        on() { state.locked = true; document.body.style.pointerEvents = "none"; },
+        off() { state.locked = false; document.body.style.pointerEvents = "auto"; },
+        is() { return state.locked; }
+    };
+    const AudioSystem = {
+        bg: null, ok: null, bad: null,
+        init() {
+            this.bg = document.getElementById("bg");
+            this.ok = document.getElementById("ok");
+            this.bad = document.getElementById("bad");
+            this.playDopamine();
+        },
+        playDopamine() {
+            if (this.bg) {
+                this.bg.playbackRate = 1.1;
+                this.bg.volume = 0.3;
+                this.bg.play().catch(() => {});
+            }
+        },
+        playEffect(type) {
+            if (type === 'win' && this.ok) this.ok.play();
+            if (type === 'bad' && this.bad) this.bad.play();
+        }
+    };
+    const Speech = {
+        say(text) {
+            window.speechSynthesis.cancel();
+            const u = new SpeechSynthesisUtterance(text);
+            u.lang = state.lang === "en" ? "en-US" : "es-ES";
+            u.rate = 0.9;
+            window.speechSynthesis.speak(u);
+        }
+    };
+    const FloatingWords = {
+        start() {
+            setInterval(() => {
+                if (state.silenceActive || Lock.is()) return;
+                this.spawn();
+            }, 2000);
+        },
+        spawn() {
+            const types = [
+                { class: 'word-good', val: 10, words: ["HONESTY", "POWER", "TRUTH", "RESPECT"] },
+                { class: 'word-bad', val: -10, words: ["LIE", "FEAR", "LAZY", "ANGER"] },
+                { class: 'word-neutral', val: 0, words: ["STREET", "RUN", "CITY", "WALK"] }
+            ];
+            const config = types[Math.floor(Math.random() * types.length)];
+            const el = document.createElement("div");
+            el.className = `floating ${config.class}`;
+            el.innerText = config.words[Math.floor(Math.random() * config.words.length)];
+            el.style.left = Math.random() * 90 + "vw";
+            el.onmousedown = () => {
+                el.classList.add("blast");
+                state.score += config.val;
+                AudioSystem.playEffect(config.val >= 0 ? 'win' : 'bad');
+                UI.updateScore();
+                setTimeout(() => el.remove(), 300);
+            };
+            document.body.appendChild(el);
+            setTimeout(() => { if (el) el.remove(); }, 5000);
+        }
+    };
+    const Decision = {
+        async handle(option) {
+            Lock.on();
+            const box = document.getElementById("explanation-box");
+            box.style.display = "block";
+            const explanation = option.explanation[state.lang];
+            box.innerText = explanation;
+            const goodEN = ["Excellent!", "Wise choice!", "Sonic level!", "Powerful!"];
+            const badEN = ["Careful!", "Pay attention!", "Wrong move!", "Think again!"];
+            const goodES = ["¡Excelente!", "¡Sabio!", "¡Nivel Sonic!", "¡Poderoso!"];
+            const badES = ["¡Cuidado!", "¡Atención!", "¡Error!", "¡Piénsalo!"];
+            const good = state.lang === "en" ? goodEN : goodES;
+            const bad = state.lang === "en" ? badEN : badES;
+            if (option.correct) {
+                document.body.style.backgroundColor = "#004400";
+                AudioSystem.playEffect("win");
+                Speech.say(good[Math.floor(Math.random() * good.length)] + " " + explanation);
+            } else {
+                document.body.style.backgroundColor = "#440000";
+                AudioSystem.playEffect("bad");
+                Speech.say(bad[Math.floor(Math.random() * bad.length)] + " " + explanation);
+            }
+            setTimeout(async () => {
+                document.body.style.backgroundColor = "";
+                box.style.display = "none";
+                await SilenceReto.start();
+            }, 6000);
+        }
+    };
+    const SilenceReto = {
+        explanationsEN: [
+            "Silence is where your brain stores what you learn.",
+            "Now we calm your heart so your mind gets faster.",
+            "Breathing is the hidden training of leaders.",
+            "Master your silence, master your life."
+        ],
+        explanationsES: [
+            "El silencio es donde tu cerebro guarda lo aprendido.",
+            "Ahora calmamos el corazón para acelerar tu mente.",
+            "Respirar es el entrenamiento secreto de líderes.",
+            "Domina tu silencio, domina tu vida."
+        ],
+        async start() {
+            state.silenceActive = true;
+            UI.clearOptions();
+            const list = state.lang === "en" ? this.explanationsEN : this.explanationsES;
+            const msg = list[Math.floor(Math.random() * list.length)];
+            Speech.say(msg);
+            UI.showBreath(true);
+            UI.setText(
+                "story",
+                state.lang === "en"
+                    ? `SILENCE MODE: ${Math.floor(state.silenceTime / 60)} MIN`
+                    : `SILENCIO: ${Math.floor(state.silenceTime / 60)} MIN`
+            );
+            let timeLeft = state.silenceTime;
+            const timer = setInterval(() => {
+                timeLeft--;
+                if (timeLeft <= 0 || !state.silenceActive) {
+                    clearInterval(timer);
+                    this.complete();
+                }
+            }, 1000);
+        },
+        complete() {
+            state.silenceActive = false;
+            state.silenceTime = Math.min(state.silenceTime + 60, 1200);
+            UI.showBreath(false);
+            Speech.say(
+                state.lang === "en"
+                    ? "Challenge completed. Level up."
+                    : "Reto completado. Subiendo nivel."
+            );
 
-let player = { name: "", hero: "" };
-
-// ================= AUDIO =================
-let bg, ok, bad;
-
-function initAudio() {
-    bg = document.getElementById("bg");
-    ok = document.getElementById("ok");
-    bad = document.getElementById("bad");
-
-    if (bg) {
-        bg.volume = 0.3;
-        bg.playbackRate = 1.1;
-        bg.play().catch(()=>{});
-    }
-}
-
-// ================= SPEECH =================
-function speak(text) {
-    window.speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = state.lang === "en" ? "en-US" : "es-ES";
-    u.rate = 0.9;
-    speechSynthesis.speak(u);
-}
-
-// ================= UI =================
-function setText(id, val) {
-    const el = document.getElementById(id);
-    if (el) el.innerText = val;
-}
-
-function updateScore() {
-    setText("score-display", "PUNTOS: " + state.score);
-}
-
-// ================= INIT =================
-async function init() {
-    player.name = prompt("Nombre:") || "Player";
-    player.hero = prompt("Heroe:") || "Kamizen";
-
-    document.getElementById("hero-name").innerText = player.hero;
-
-    initAudio();
-    startFloatingSystem();
-    loadMission();
-}
-
-// ================= MISIONES =================
-async function loadMission() {
-    const res = await fetch("/api/mission/" + state.missionId);
-    state.mission = await res.json();
-
-    renderMission(state.mission);
-}
-
-function renderMission(m) {
-    const story = m.blocks.find(b => b.type === "story").text[state.lang];
-    const analysis = m.blocks.find(b => b.type === "analysis").text[state.lang];
-    const decision = m.blocks.find(b => b.type === "decision");
-
-    setText("story", story);
-    setText("analysis", "");
-
-    speak(story);
-
-    setTimeout(() => {
-        setText("analysis", analysis);
-        speak(analysis);
-    }, 3500);
-
-    setTimeout(() => {
-        renderOptions(decision.options);
-    }, 7000);
-}
-
-// ================= OPCIONES =================
-function renderOptions(options) {
-    const c = document.getElementById("options");
-    c.innerHTML = "";
-
-    options.forEach(opt => {
-        const b = document.createElement("button");
-        b.className = "opt-btn";
-        b.innerText = opt.text[state.lang];
-        b.onclick = function () {
-            handleChoice(opt);
-        };
-        c.appendChild(b);
-    });
-}
-
-function handleChoice(option) {
-    document.getElementById("options").innerHTML = "";
-
-    const box = document.getElementById("explanation-box");
-    box.style.display = "block";
-    box.innerText = option.explanation[state.lang];
-
-    if (option.correct) {
-        state.score += 20;
-        document.body.style.background = "#004400";
-        ok && ok.play();
-        speak("Correcto. " + box.innerText);
-    } else {
-        state.score -= 10;
-        document.body.style.background = "#440000";
-        bad && bad.play();
-        speak("Incorrecto. " + box.innerText);
-    }
-
-    updateScore();
-
-    setTimeout(() => {
-        document.body.style.background = "";
-        nextMission();
-    }, 4000);
-}
-
-// ================= FLUJO =================
-function nextMission() {
-    state.missionId++;
-    if (state.missionId > 35) state.missionId = 1;
-    loadMission();
-}
-
-// ================= FLOATING SYSTEM =================
-function startFloatingSystem() {
-    setInterval(() => {
-
-        const types = ["good", "bad", "neutral"];
-        const type = types[Math.random() * types.length | 0];
-
-        const words = {
-            good: ["POWER", "TRUTH", "FOCUS", "CONTROL"],
-            bad: ["FEAR", "LIE", "ANGER", "LAZY"],
-            neutral: ["STREET", "WALK", "CITY", "WAIT"]
-        };
-
-        const el = document.createElement("div");
-        el.className = "floating word-" + type;
-        el.innerText = words[type][Math.random() * words[type].length | 0];
-        el.style.left = Math.random() * 90 + "vw";
-
-        el.onmousedown = function () {
-            el.classList.add("blast");
-
-            if (type === "good") state.score += 5;
-            if (type === "bad") state.score -= 10;
-
-            updateScore();
-            el.remove();
-        };
-
-        document.body.appendChild(el);
-
-        setTimeout(() => {
-            el.remove();
-        }, 5000);
-
-    }, 2000);
-}
-
-// ================= LANG =================
-function toggleLang() {
-    state.lang = state.lang === "en" ? "es" : "en";
-    if (state.mission) renderMission(state.mission);
-}
-
-// ================= EXPORT GLOBAL =================
-window.onload = init;
+            Mission.loadNext();
+        }
+    };
+    const Mission = {
+        async loadNext() {
+            Lock.on();
+            try {
+                const res = await fetch("/api/mission/next");
+                const data = await res.json();
+                state.mission = data;
+                this.render(data);
+            } catch (e) {
+                console.error("Mission load error");
+            }
+            Lock.off();
+        },
+        render(m) {
+            const story = m.blocks.find(b => b.type === "story").text[state.lang];
+            const analysis = m.blocks.find(b => b.type === "analysis").text[state.lang];
+            const decision = m.blocks.find(b => b.type === "decision");
+            UI.setText("story", story);
+            UI.setText("analysis", "");
+            Speech.say(story);
+            setTimeout(() => {
+                UI.setText("analysis", analysis);
+                Speech.say(analysis);
+            }, 4000);
+            setTimeout(() => {
+                UI.renderOptions(decision.options);
+            }, 8000);
+        }
+    };
+    const UI = {
+        setText(id, val) {
+            const el = document.getElementById(id);
+            if (el) el.innerText = val;
+        },
+        updateScore() {
+            this.setText(
+                "score-display",
+                state.lang === "en"
+                    ? `POINTS: ${state.score}`
+                    : `PUNTOS: ${state.score}`
+            );
+        },
+        clearOptions() {
+            document.getElementById("options").innerHTML = "";
+        },
+        showBreath(show) {
+            document.getElementById("breath").style.display = show ? "block" : "none";
+        },
+        renderOptions(options) {
+            const container = document.getElementById("options");
+            container.innerHTML = "";
+            options.forEach(opt => {
+                const b = document.createElement("button");
+                b.className = "opt-btn";
+                b.innerText = opt.text[state.lang];
+                b.onclick = () => Decision.handle(opt);
+                container.appendChild(b);
+            });
+        }
+    };
+    return {
+        init() {
+            AudioSystem.init();
+            FloatingWords.start();
+            Mission.loadNext();
+            console.log("ENGINE READY");
+        },
+        toggleLang() {
+            state.lang = state.lang === "en" ? "es" : "en";
+            UI.updateScore();
+            if (state.mission) Mission.render(state.mission);
+        }
+    };
+})();
+window.onload = () => KamizenEngine.init();
