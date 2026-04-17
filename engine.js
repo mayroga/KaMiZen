@@ -1,44 +1,30 @@
 /**
- * 🧠 AURA ENGINE CORE — AL CIELO EDITION
- * Director de Orquesta: Música, Disparos, TVID y Neuro-Silence Progresivo
- * AURA BY MAY ROGA LLC
+ * 🧠 AURA ENGINE CORE — VINCULADO A MAIN.PY
  */
 
 const AuraEngine = (() => {
-
-    // ==========================================
-    // 📊 ESTADO GLOBAL
-    // ==========================================
     const state = {
         score: 0,
+        lang: "en", // Inicia en Inglés como pediste
         level: 1,
-        lang: "en", // Default Inglés
-        mission: null,
-        locked: false,
-        silenceActive: false,
         paused: false,
-        playerName: "",
-        heroName: "",
-        silenceTime: 180, 
-        sounds: {
-            win: document.getElementById("ok"),
-            fail: document.getElementById("bad"),
-            ambient: document.getElementById("bg")
+        missionActive: false,
+        silenceActive: false
+    };
+
+    const AudioSystem = {
+        play(id) {
+            const el = document.getElementById(id);
+            if (el) { el.currentTime = 0; el.play().catch(() => {}); }
+        },
+        startBG() {
+            const bg = document.getElementById("bg");
+            if (bg) { bg.volume = 0.3; bg.play().catch(() => {}); }
         }
     };
 
-    const Lock = {
-        on() { state.locked = true; },
-        off() { state.locked = false; },
-        is() { return state.locked; }
-    };
-
-    // ==========================================
-    // 🗣️ MOTOR DE VOZ
-    // ==========================================
     const Speech = {
         say(text) {
-            if (!text) return;
             window.speechSynthesis.cancel();
             const u = new SpeechSynthesisUtterance(text);
             u.lang = state.lang === "en" ? "en-US" : "es-ES";
@@ -47,245 +33,180 @@ const AuraEngine = (() => {
         }
     };
 
-    // ==========================================
-    // 📂 MOTOR DE MISIONES
-    // ==========================================
-    const Mission = {
+    const UI = {
+        updateScore() {
+            document.getElementById("score-display").innerText = `SCORE: ${state.score.toString().padStart(4, '0')}`;
+        },
+        showSignal(type) {
+            const s = document.getElementById("feedback-signal");
+            s.className = type === "green" ? "sig-green" : "sig-red";
+            setTimeout(() => s.className = "", 3000);
+        }
+    };
+
+    // --- LÓGICA DE MISIONES (CONECTA CON MAIN.PY) ---
+    const MissionSystem = {
         async loadNext() {
             try {
-                // Ajustado para llamar a tu API actual de misiones
-                const res = await fetch(`/api/mission/${state.level}`);
-                if (!res.ok) {
-                    state.level = 1;
-                    this.loadNext();
-                    return;
-                }
+                // Llamada a tu main.py: @app.route("/api/mission/next")
+                const res = await fetch("/api/mission/next");
                 const data = await res.json();
-                state.mission = data;
+                if (data.error) throw data.error;
+
                 this.render(data);
             } catch (e) {
-                console.error("Error cargando misión. Usando respaldo...");
-                UI.setText("story-box", "Error connecting to Mission Control.");
+                console.error("Error cargando misión:", e);
+                document.getElementById("story").innerText = "Fin de las misiones o error de conexión.";
             }
         },
+
         render(m) {
-            const story = m.blocks.find(b => b.type === "story").text[state.lang];
-            const analysis = m.blocks.find(b => b.type === "analysis") ? m.blocks.find(b => b.type === "analysis").text[state.lang] : "";
+            const storyText = m.blocks.find(b => b.type === "story").text[state.lang];
+            const analysisText = m.blocks.find(b => b.type === "analysis").text[state.lang];
             const decision = m.blocks.find(b => b.type === "decision");
 
-            UI.setText("story-box", story);
-            UI.setText("mission-theme", `${state.heroName} | Level ${state.level}`);
-            UI.clearOptions();
-            Speech.say(story);
+            document.getElementById("story").innerText = storyText;
+            document.getElementById("analysis").innerText = "";
+            document.getElementById("options").innerHTML = "";
+            document.getElementById("explanation-box").style.display = "none";
 
-            // Mostrar análisis después de 3 segundos
+            Speech.say(storyText);
+
             setTimeout(() => {
-                if (analysis) {
-                    UI.setText("story-box", analysis);
-                    Speech.say(analysis);
-                }
+                document.getElementById("analysis").innerText = analysisText;
+                Speech.say(analysisText);
             }, 4000);
 
-            // Mostrar botones después de 7 segundos
             setTimeout(() => {
-                UI.renderOptions(decision.options);
-                Lock.off();
-            }, 7500);
-        }
-    };
+                this.showOptions(decision.options);
+            }, 8000);
+        },
 
-    // ==========================================
-    // 🎮 DECISIONES Y FEEDBACK
-    // ==========================================
-    const Decision = {
-        handle(option) {
-            if (Lock.is()) return;
-            Lock.on();
+        showOptions(opts) {
+            const container = document.getElementById("options");
+            opts.forEach(o => {
+                const b = document.createElement("button");
+                b.innerText = o.text[state.lang];
+                b.onclick = () => this.handleChoice(o);
+                container.appendChild(b);
+            });
+        },
 
-            const isCorrect = option.correct;
-            const explanation = option.explanation ? option.explanation[state.lang] : "";
-            const signal = document.getElementById('feedback-signal');
+        async handleChoice(opt) {
+            document.getElementById("options").innerHTML = "";
+            const box = document.getElementById("explanation-box");
+            box.innerText = opt.explanation[state.lang];
+            box.style.display = "block";
 
-            if (isCorrect) {
-                state.sounds.win.play();
-                signal.className = "semaphore-green";
+            if (opt.correct) {
                 state.score += 100;
+                UI.showSignal("green");
+                AudioSystem.play("ok");
             } else {
-                state.sounds.fail.play();
-                signal.className = "semaphore-red";
                 state.score -= 50;
+                UI.showSignal("red");
+                AudioSystem.play("bad");
             }
-
             UI.updateScore();
-            UI.showExplanation(explanation || (isCorrect ? "Correct!" : "Try again"));
-            Speech.say(explanation);
+            Speech.say(box.innerText);
 
             setTimeout(() => {
-                signal.className = "semaphore-off";
-                UI.hideExplanation();
-                state.level++;
-                
-                // Reto de silencio cada 2 niveles o según lógica
-                if (state.level % 2 === 0) {
-                    SilenceReto.start();
-                } else {
-                    Mission.loadNext();
-                }
-            }, 6000);
-        }
-    };
+                box.style.display = "none";
+                this.checkSilence();
+            }, 7000);
+        },
 
-    // ==========================================
-    // 🧘 RETO DE SILENCIO
-    // ==========================================
-    const SilenceReto = {
-        start() {
+        async checkSilence() {
+            // Lógica de silencio conectada a tu API de Main.py
+            // @app.route("/api/silence/<int:level>")
+            const res = await fetch(`/api/silence/${state.level}`);
+            const data = await res.json();
+            
+            this.startSilence(data.silence_time);
+        },
+
+        startSilence(seconds) {
             state.silenceActive = true;
-            UI.toggleBreathing(true);
-            UI.clearOptions();
+            const b = document.getElementById("breath");
+            const s = document.getElementById("story");
+            b.style.display = "flex";
+            s.innerText = `RETO DE SILENCIO: ${seconds / 60} MIN`;
 
-            let timeLeft = 20 + (state.level * 5); // Tiempo progresivo
-            UI.updateTimer(timeLeft);
-
-            Speech.say(state.lang === "en" ? "Silence Challenge. Focus on your breath." : "Reto de silencio. Enfócate en tu respiración.");
+            let timeLeft = seconds;
+            let inhale = true;
 
             const timer = setInterval(() => {
                 if (state.paused) return;
                 timeLeft--;
-                UI.updateTimer(timeLeft);
-                UI.animateBreathing(timeLeft);
+                
+                // Animación de respiración
+                if (timeLeft % 5 === 0) {
+                    inhale = !inhale;
+                    b.innerText = inhale ? (state.lang === "en" ? "INHALE" : "INHALE") : (state.lang === "en" ? "EXHALE" : "EXHALE");
+                    b.style.transform = inhale ? "scale(1.2)" : "scale(1)";
+                }
 
-                if (timeLeft <= 0 || !state.silenceActive) {
+                if (timeLeft <= 0) {
                     clearInterval(timer);
-                    this.complete();
+                    this.completeSilence();
                 }
             }, 1000);
         },
-        complete() {
+
+        completeSilence() {
             state.silenceActive = false;
-            UI.toggleBreathing(false);
-            Speech.say(state.lang === "en" ? "Excellent focus." : "Excelente enfoque.");
-            Mission.loadNext();
+            document.getElementById("breath").style.display = "none";
+            state.level++;
+            this.loadNext();
         }
     };
 
-    // ==========================================
-    // 🎯 DISPAROS A PALABRAS
-    // ==========================================
-    const FloatingWords = {
+    // --- SISTEMA DE PALABRAS FLOTANTES ---
+    const FloatingSystem = {
         start() {
             setInterval(() => {
-                if (state.silenceActive || state.paused) return;
+                if (state.paused || state.silenceActive) return;
                 this.spawn();
             }, 3000);
         },
         spawn() {
-            const pool = {
-                good: ["FOCUS", "POWER", "TRUTH", "CALM"],
-                bad: ["FEAR", "LIE", "ANGER", "LAZY"]
-            };
-            const isGood = Math.random() > 0.4;
-            const word = isGood ? pool.good[Math.floor(Math.random()*pool.good.length)] : pool.bad[Math.floor(Math.random()*pool.bad.length)];
+            const isGood = Math.random() > 0.5;
+            const word = document.createElement("div");
+            word.className = `floating ${isGood ? "word-good" : "word-bad"}`;
+            word.innerText = isGood ? "FOCUS" : "FEAR";
+            word.style.left = Math.random() * 80 + "vw";
             
-            const el = document.createElement("div");
-            el.className = `floating ${isGood ? 'word-good' : 'word-bad'}`;
-            el.innerText = word;
-            el.style.left = Math.random() * 80 + "vw";
-            
-            el.onmousedown = () => {
-                el.classList.add("blast");
+            word.onclick = () => {
                 state.score += isGood ? 10 : -20;
-                if(isGood) state.sounds.win.play(); else state.sounds.fail.play();
                 UI.updateScore();
-                setTimeout(() => el.remove(), 300);
+                AudioSystem.play(isGood ? "ok" : "bad");
+                word.remove();
             };
-
-            document.getElementById("floating-words-layer").appendChild(el);
-            setTimeout(() => { if(el) el.remove(); }, 5000);
+            document.getElementById("floating-layer").appendChild(word);
+            setTimeout(() => word.remove(), 5000);
         }
     };
 
-    // ==========================================
-    // 🖥️ INTERFAZ DE USUARIO
-    // ==========================================
-    const UI = {
-        setText(id, val) { const e = document.getElementById(id); if(e) e.innerText = val; },
-        updateScore() { 
-            this.setText("points-display", `SCORE: ${state.score.toString().padStart(4, '0')}`); 
-        },
-        updateTimer(s) {
-            const m = Math.floor(s / 60);
-            const sec = s % 60;
-            this.setText("timer-text", `${m}:${sec.toString().padStart(2, '0')}`);
-        },
-        renderOptions(options) {
-            const grid = document.getElementById("options-grid");
-            grid.innerHTML = "";
-            options.forEach(opt => {
-                const b = document.createElement("button");
-                b.innerText = opt.text[state.lang];
-                b.onclick = () => Decision.handle(opt);
-                grid.appendChild(b);
-            });
-        },
-        toggleBreathing(show) {
-            document.getElementById("breathing-system").style.display = show ? "block" : "none";
-            document.getElementById("options-grid").style.display = show ? "none" : "grid";
-            document.getElementById("timer-container").style.display = show ? "block" : "none";
-        },
-        animateBreathing(s) {
-            const circle = document.getElementById("breathing-circle");
-            const txt = document.getElementById("breath-text");
-            if (s % 8 > 4) {
-                txt.innerText = state.lang === "en" ? "EXHALE" : "EXHALA";
-                circle.style.transform = "scale(0.8)";
-            } else {
-                txt.innerText = state.lang === "en" ? "INHALE" : "INHALA";
-                circle.style.transform = "scale(1.3)";
-            }
-        },
-        showExplanation(txt) {
-            const b = document.getElementById("explanation-box");
-            b.innerText = txt;
-            b.style.display = "block";
-        },
-        hideExplanation() { document.getElementById("explanation-box").style.display = "none"; },
-        clearOptions() { document.getElementById("options-grid").innerHTML = ""; }
-    };
-
     return {
-        async init() {
-            // Solicitar datos iniciales
-            state.playerName = prompt("Your Name / Tu Nombre:") || "Player";
-            state.heroName = prompt("Hero Name / Nombre de Héroe:") || "Warrior";
-            
-            UI.setText("mission-theme", `${state.heroName} | Ready`);
-            
-            // Audio Inicial
-            state.sounds.ambient.volume = 0.3;
-            state.sounds.ambient.play().catch(() => console.log("Audio needs interaction"));
-
-            FloatingWords.start();
-            Mission.loadNext();
+        init() {
+            document.getElementById("start-overlay").style.display = "none";
+            AudioSystem.startBG();
+            FloatingSystem.start();
+            MissionSystem.loadNext();
         },
         toggleLang() {
             state.lang = state.lang === "en" ? "es" : "en";
-            document.getElementById("lang-toggle").innerText = state.lang === "en" ? "ESPAÑOL" : "ENGLISH";
-            if (state.mission) Mission.render(state.mission);
+            // Recargar misión actual con nuevo idioma si es necesario
         },
         gamePause() {
             state.paused = true;
-            Lock.on();
             document.getElementById("btn-pause").style.display = "none";
             document.getElementById("btn-resume").style.display = "inline-block";
         },
         gameResume() {
             state.paused = false;
-            Lock.off();
             document.getElementById("btn-pause").style.display = "inline-block";
             document.getElementById("btn-resume").style.display = "none";
         }
     };
 })();
-
-window.onload = () => AuraEngine.init();
