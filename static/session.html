@@ -1,152 +1,190 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KAMIZEN SESSION</title>
+<title>KAMIZEN | PRO V2</title>
 
 <style>
-body {
-    margin: 0;
-    background: #000;
-    color: #00f2ff;
-    font-family: Arial, sans-serif;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-}
-
-#container {
-    max-width: 700px;
-    text-align: center;
-}
-
-button {
-    margin: 10px;
-    padding: 10px 20px;
-    background: #00f2ff;
-    border: none;
-    color: #000;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-button:hover {
-    background: #00c0cc;
-}
+body{margin:0;background:#000;color:#fff;font-family:Arial;text-align:center;overflow:hidden}
+#game{padding:20px}
+button{padding:12px 20px;margin:10px;font-size:16px;border:none;border-radius:8px;cursor:pointer}
+.correct{background:green}
+.wrong{background:red}
+#breath{width:120px;height:120px;border-radius:50%;background:#00f2ff;margin:20px auto;transition:4s}
+.floating{position:absolute;color:#00f2ff;opacity:0.7;animation:float 4s linear}
+@keyframes float{from{transform:translateY(100vh)}to{transform:translateY(-10vh)}}
+#topbar{position:fixed;top:0;width:100%;display:flex;justify-content:space-between;padding:10px}
 </style>
 </head>
 
 <body>
 
-<div id="container">
-    <h1 id="theme"></h1>
-    <p id="text"></p>
-    <div id="options"></div>
+<div id="topbar">
+<button onclick="toggleLang()">LANG</button>
+<button onclick="startSilence()">SILENCE</button>
 </div>
 
+<div id="game">
+<h1 id="title">KAMIZEN</h1>
+<h2 id="hero"></h2>
+<div id="breath"></div>
+<div id="story"></div>
+<div id="analysis"></div>
+<div id="options"></div>
+</div>
+
+<audio id="bg" loop src="static/sounds/bg.mp3"></audio>
+<audio id="ok" src="static/sounds/success.mp3"></audio>
+<audio id="bad" src="static/sounds/glass.mp3"></audio>
+
 <script>
-let currentMission = 1
-let currentBlock = 0
-let blocks = []
+let lang="en";
+let mission=1;
+let data=null;
+let score=0;
 
-// =========================
-// LOAD MISSION (RAW)
-// =========================
-async function loadMission(id) {
-    try {
-        const res = await fetch(`/api/mission/${id}`)
-        const data = await res.json()
+let player={real:"",hero:""};
 
-        if (data.error) {
-            document.getElementById("text").innerText = data.error
-            return
-        }
+async function init(){
+player.real=prompt("Enter your name");
+player.hero=prompt("Hero name");
+document.getElementById("hero").innerText=player.hero;
 
-        blocks = data.blocks || []
-        currentBlock = 0
-
-        document.getElementById("theme").innerText = data.theme || ""
-
-        renderBlock()
-
-    } catch (e) {
-        document.getElementById("text").innerText = "Error cargando misión"
-    }
+startMusic();
+breathing();
+await loadMission();
+spawnWords();
 }
 
-// =========================
-// RENDER BLOCK (GENÉRICO)
-// =========================
-function renderBlock() {
-    const block = blocks[currentBlock]
-    if (!block) return
-
-    const textEl = document.getElementById("text")
-    const optionsEl = document.getElementById("options")
-
-    optionsEl.innerHTML = ""
-
-    // TEXTO (EN / ES automático)
-    if (block.text) {
-        textEl.innerText = block.text.es || block.text.en || ""
-    }
-
-    // DECISION
-    if (block.type === "decision") {
-        block.options.forEach(opt => {
-            const btn = document.createElement("button")
-            btn.innerText = opt.text.es || opt.text.en
-
-            btn.onclick = () => {
-                nextBlock()
-            }
-
-            optionsEl.appendChild(btn)
-        })
-    } else {
-        // AUTO NEXT
-        setTimeout(nextBlock, 2000)
-    }
+function startMusic(){
+let bg=document.getElementById("bg");
+bg.volume=0.3;
+bg.play().catch(()=>{});
 }
 
-// =========================
-// NEXT BLOCK
-// =========================
-function nextBlock() {
-    currentBlock++
-
-    if (currentBlock >= blocks.length) {
-        nextMission()
-    } else {
-        renderBlock()
-    }
+function speak(t){
+let m=new SpeechSynthesisUtterance(t);
+m.lang=lang==="en"?"en-US":"es-ES";
+m.rate=0.85;
+m.pitch=0.8;
+speechSynthesis.speak(m);
 }
 
-// =========================
-// NEXT MISSION
-// =========================
-async function nextMission() {
-    try {
-        const res = await fetch(`/api/next/${currentMission}`)
-        const data = await res.json()
-
-        currentMission = data.next
-
-        loadMission(currentMission)
-
-    } catch (e) {
-        document.getElementById("text").innerText = "Error avanzando"
-    }
+function toggleLang(){
+lang=lang==="en"?"es":"en";
+loadMission();
 }
 
-// =========================
-// START
-// =========================
-loadMission(currentMission)
+async function loadMission(){
+let res=await fetch(`/api/mission/${mission}`);
+if(!res.ok)return;
+let m=await res.json();
+render(m);
+}
 
+function render(m){
+let story=m.blocks.find(b=>b.type==="story");
+let analysis=m.blocks.find(b=>b.type==="analysis");
+let decision=m.blocks.find(b=>b.type==="decision");
+
+let st=story.text[lang];
+let an=analysis.text[lang];
+
+let sDiv=document.getElementById("story");
+let aDiv=document.getElementById("analysis");
+let oDiv=document.getElementById("options");
+
+sDiv.innerText=st;
+aDiv.innerText="";
+oDiv.innerHTML="";
+
+speak(st);
+
+setTimeout(()=>{
+aDiv.innerText=an;
+speak(an);
+},4000);
+
+setTimeout(()=>{
+createOptions(decision.options,m);
+},8000);
+}
+
+function createOptions(options,m){
+let oDiv=document.getElementById("options");
+oDiv.innerHTML="";
+
+options.forEach(opt=>{
+let b=document.createElement("button");
+b.innerText=opt.text[lang];
+
+b.onclick=()=>{
+handleAnswer(opt.correct,b,m);
+};
+
+oDiv.appendChild(b);
+});
+}
+
+async function handleAnswer(correct,btn,m){
+let ok=document.getElementById("ok");
+let bad=document.getElementById("bad");
+
+if(correct){
+btn.classList.add("correct");
+ok.play();
+score+=10;
+speak("Correct");
+}else{
+btn.classList.add("wrong");
+bad.play();
+score-=5;
+speak("Wrong choice");
+}
+
+await wait(3000);
+
+mission++;
+if(mission>35)mission=1;
+
+loadMission();
+}
+
+function wait(ms){return new Promise(r=>setTimeout(r,ms));}
+
+function breathing(){
+let b=document.getElementById("breath");
+let grow=true;
+setInterval(()=>{
+b.style.transform=grow?"scale(1.5)":"scale(1)";
+grow=!grow;
+},4000);
+}
+
+function spawnWords(){
+let words=["FOCUS","CALM","CONTROL","PAUSE","TRUTH"];
+setInterval(()=>{
+let w=document.createElement("div");
+w.className="floating";
+w.style.left=Math.random()*100+"vw";
+w.innerText=words[Math.floor(Math.random()*words.length)];
+document.body.appendChild(w);
+setTimeout(()=>w.remove(),4000);
+},1200);
+}
+
+async function startSilence(){
+speak("Silence challenge started");
+let t=60;
+while(t>0){
+await wait(1000);
+t--;
+}
+speak("Completed");
+}
+
+init();
 </script>
 
 </body>
