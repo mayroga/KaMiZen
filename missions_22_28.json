@@ -1,0 +1,296 @@
+{
+  "game": "KAMIZEN KIDS: MATRIX TRAINING SYSTEM",
+  "chapter": 4,
+  "range": "22-28",
+  "ui": {
+    "floating_words": [
+      "LEAD", "CALM", "CONTROL", "BOUNDARY", "TRUTH", "FOCUS", "RESPECT", "PAUSE"
+    ]
+  },
+  "matrix_rules": [
+    "1. Observe before reacting",
+    "2. Action creates reality",
+    "3. Thought controls emotion",
+    "4. Silence is power",
+    "5. Focus beats distraction",
+    "6. Breath controls mind",
+    "7. Reaction weakens control",
+    "8. Awareness is strength",
+    "9. Calm is intelligence",
+    "10. Impulse is not truth",
+    "11. Choice defines identity",
+    "12. Energy follows attention",
+    "13. Stop before emotional action",
+    "14. See patterns, not chaos",
+    "15. Inner voice is guide",
+    "16. Fear is temporary signal",
+    "17. Courage is movement",
+    "18. Truth builds power",
+    "19. Respect creates boundaries",
+    "20. Discipline builds freedom",
+    "21. Small actions shape future",
+    "22. Emotion is data",
+    "23. Pause creates intelligence",
+    "24. Control attention always",
+    "25. Learn from every mistake",
+    "26. Think before speaking",
+    "27. Calm wins conflict",
+    "28. Awareness breaks confusion",
+    "29. Identity is built daily",
+    "30. Master yourself first"
+  ],
+  "missions": [
+    {
+      "id": 22,
+      "level": 22,
+      "theme": "SELF RESPECT BOUNDARY",
+      "blocks": [
+        {
+          "type": "story",
+          "text": {
+            "en": "Someone pushes your limits in front of others.",
+            "es": "Alguien prueba tus límites delante de otros."
+          }
+        },
+        {
+          "type": "analysis",
+          "text": {
+            "en": "Self-respect is a silent boundary.",
+            "es": "El respeto propio es un límite silencioso."
+          }
+        },
+        {
+          "type": "decision",
+          "options": [
+            {
+              "code": "ACCEPT",
+              "text": { "en": "Allow disrespect", "es": "Aceptar falta de respeto" },
+              "correct": false
+            },
+            {
+              "code": "BOUNDARY",
+              "text": { "en": "Set calm boundary", "es": "Poner límite calmado" },
+              "correct": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 23,
+      "level": 23,
+      "theme": "INNER FREEDOM",
+      "blocks": [
+        {
+          "type": "story",
+          "text": {
+            "en": "You notice you are less controlled by emotions than before.",
+            "es": "Notas que eres menos controlado por emociones que antes."
+          }
+        },
+        {
+          "type": "analysis",
+          "text": {
+            "en": "Freedom is inner control, not external absence.",
+            "es": "La libertad es control interno, no ausencia externa."
+          }
+        },
+        {
+          "type": "decision",
+          "options": [
+            {
+              "code": "REACT",
+              "text": { "en": "React automatically", "es": "Reaccionar automático" },
+              "correct": false
+            },
+            {
+              "code": "CONTROL",
+              "text": { "en": "Control response", "es": "Controlar respuesta" },
+              "correct": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 24,
+      "level": 24,
+      "theme": "SOCIAL PERCEPTION SHIFT",
+      "blocks": [
+        {
+          "type": "story",
+          "text": {
+            "en": "Someone changes how others see you by twisting a mistake.",
+            "es": "Alguien cambia cómo te ven los demás distorsionando un error."
+          }
+        },
+        {
+          "type": "analysis",
+          "text": {
+            "en": "Perception is unstable without emotional control.",
+            "es": "La percepción es inestable sin control emocional."
+          }
+        },
+        {
+          "type": "decision",
+          "options": [
+            {
+              "code": "ATTACK",
+              "text": { "en": "React aggressively", "es": "Reaccionar agresivo" },
+              "correct": false
+            },
+            {
+              "code": "CALM",
+              "text": { "en": "Stay calm", "es": "Mantener calma" },
+              "correct": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 25,
+      "level": 25,
+      "theme": "DECISION UNDER PRESSURE",
+      "blocks": [
+        {
+          "type": "story",
+          "text": {
+            "en": "You must choose quickly with important consequences.",
+            "es": "Debes elegir rápido con consecuencias importantes."
+          }
+        },
+        {
+          "type": "analysis",
+          "text": {
+            "en": "Clarity is stronger than speed.",
+            "es": "La claridad es más fuerte que la velocidad."
+          }
+        },
+        {
+          "type": "decision",
+          "options": [
+            {
+              "code": "RUSH",
+              "text": { "en": "Decide fast", "es": "Decidir rápido" },
+              "correct": false
+            },
+            {
+              "code": "FOCUS",
+              "text": { "en": "Pause and choose", "es": "Pausar y elegir" },
+              "correct": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 26,
+      "level": 26,
+      "theme": "DIGITAL CONTROL",
+      "blocks": [
+        {
+          "type": "story",
+          "text": {
+            "en": "Your attention is constantly pulled by devices.",
+            "es": "Tu atención es jalada por dispositivos constantemente."
+          }
+        },
+        {
+          "type": "analysis",
+          "text": {
+            "en": "Attention is your real power.",
+            "es": "La atención es tu poder real."
+          }
+        },
+        {
+          "type": "decision",
+          "options": [
+            {
+              "code": "SCROLL",
+              "text": { "en": "Keep scrolling", "es": "Seguir deslizando" },
+              "correct": false
+            },
+            {
+              "code": "STOP",
+              "text": { "en": "Stop and control", "es": "Parar y controlar" },
+              "correct": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 27,
+      "level": 27,
+      "theme": "LEADERSHIP PRESSURE",
+      "blocks": [
+        {
+          "type": "story",
+          "text": {
+            "en": "A group pressures you to agree with something you doubt.",
+            "es": "Un grupo te presiona para aceptar algo que dudas."
+          }
+        },
+        {
+          "type": "analysis",
+          "text": {
+            "en": "Leadership is independent thinking under pressure.",
+            "es": "El liderazgo es pensar independiente bajo presión."
+          }
+        },
+        {
+          "type": "decision",
+          "options": [
+            {
+              "code": "FOLLOW",
+              "text": { "en": "Follow group", "es": "Seguir grupo" },
+              "correct": false
+            },
+            {
+              "code": "LEAD",
+              "text": { "en": "Think independently", "es": "Pensar independiente" },
+              "correct": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 28,
+      "level": 28,
+      "theme": "ANGER CONTROL",
+      "blocks": [
+        {
+          "type": "story",
+          "text": {
+            "en": "Someone tries to make you angry in front of others.",
+            "es": "Alguien intenta hacerte enojar delante de otros."
+          }
+        },
+        {
+          "type": "analysis",
+          "text": {
+            "en": "Your reaction defines your power.",
+            "es": "Tu reacción define tu poder."
+          }
+        },
+        {
+          "type": "decision",
+          "options": [
+            {
+              "code": "EXPLODE",
+              "text": { "en": "Get angry", "es": "Enojarse" },
+              "correct": false
+            },
+            {
+              "code": "CONTROL",
+              "text": { "en": "Stay calm", "es": "Mantener calma" },
+              "correct": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
