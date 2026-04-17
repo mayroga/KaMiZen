@@ -1,277 +1,247 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KAMIZEN SESSION</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<title>KAMIZEN | SESSION PRO</title>
 
 <style>
 :root{
-    --bg:#000;
-    --neon:#00f2ff;
-    --text:#fff;
+  --bg:#000;
+  --fg:#fff;
+  --neon:#00f2ff;
+  --danger:#ff004c;
+  --ok:#00ff88;
+  --warn:#ffcc00;
+  --glass:rgba(255,255,255,0.06);
 }
+
+*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,Helvetica,sans-serif;}
 
 body{
-    margin:0;
-    background:var(--bg);
-    color:var(--text);
-    font-family:Arial, sans-serif;
-    overflow:hidden;
+  background:var(--bg);
+  color:var(--fg);
+  overflow:hidden;
 }
 
-/* HUD */
+/* TOP HUD */
 #hud{
-    position:fixed;
-    top:10px;
-    left:10px;
-    right:10px;
-    display:flex;
-    justify-content:space-between;
-    z-index:1000;
-    font-size:14px;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:70px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:10px 15px;
+  background:rgba(0,0,0,0.8);
+  border-bottom:1px solid var(--neon);
+  z-index:1000;
 }
 
-.hud-box{
-    border:1px solid var(--neon);
-    padding:8px 12px;
-    border-radius:10px;
+/* CENTER SCORE */
+#scoreCenter{
+  position:absolute;
+  left:50%;
+  transform:translateX(-50%);
+  display:flex;
+  gap:20px;
+  align-items:center;
+  font-size:14px;
 }
 
-/* MAIN */
-#container{
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
-    height:100vh;
-    text-align:center;
-    padding:20px;
+.stat{
+  padding:6px 10px;
+  border:1px solid var(--neon);
+  border-radius:8px;
+  background:var(--glass);
+  min-width:90px;
+  text-align:center;
 }
 
-/* TEXT */
-#story, #analysis{
-    max-width:600px;
-    margin-bottom:20px;
+#points{
+  font-size:18px;
+  font-weight:bold;
+  color:var(--neon);
 }
 
-/* BUTTONS */
+/* LEFT BUTTONS */
+#leftControls, #rightControls{
+  display:flex;
+  gap:8px;
+}
+
 button{
-    background:none;
-    border:1px solid var(--neon);
-    color:var(--text);
-    padding:10px 15px;
-    margin:5px;
-    border-radius:10px;
-    cursor:pointer;
+  background:var(--glass);
+  border:1px solid var(--neon);
+  color:var(--fg);
+  padding:8px 10px;
+  border-radius:8px;
+  cursor:pointer;
+  transition:0.2s;
+  font-size:12px;
 }
 
 button:hover{
-    background:var(--neon);
-    color:#000;
+  transform:scale(1.05);
+  border-color:#fff;
+}
+
+/* MAIN AREA */
+#main{
+  position:absolute;
+  top:70px;
+  left:0;
+  width:100%;
+  height:calc(100% - 70px);
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  padding:20px;
+}
+
+/* CARD */
+#card{
+  width:90%;
+  max-width:800px;
+  background:rgba(255,255,255,0.04);
+  border:1px solid var(--neon);
+  border-radius:15px;
+  padding:20px;
+}
+
+/* TEXT */
+#story{
+  font-size:18px;
+  margin-bottom:15px;
+  line-height:1.4;
+}
+
+#analysis{
+  font-size:14px;
+  color:#aaa;
+  margin-bottom:20px;
 }
 
 /* OPTIONS */
-#options{
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-    width:100%;
-    max-width:400px;
+.option{
+  border:1px solid var(--neon);
+  padding:12px;
+  margin:8px 0;
+  border-radius:10px;
+  cursor:pointer;
+  transition:0.2s;
 }
 
-/* START SCREEN */
-#startScreen{
-    position:absolute;
-    top:0;
-    left:0;
-    right:0;
-    bottom:0;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
-    background:#000;
-    z-index:2000;
+.option:hover{
+  background:rgba(0,242,255,0.1);
 }
 
-/* FLOAT WORDS */
-.floating{
-    position:absolute;
-    opacity:0.1;
-    font-size:18px;
-    animation:float 10s linear infinite;
+/* TIMER */
+#timer{
+  position:fixed;
+  bottom:15px;
+  right:15px;
+  padding:10px 15px;
+  border:1px solid var(--warn);
+  border-radius:10px;
+  background:rgba(0,0,0,0.6);
+  font-size:14px;
 }
 
-@keyframes float{
-    from{transform:translateY(100vh);}
-    to{transform:translateY(-100vh);}
+/* LANGUAGE */
+#lang{
+  position:fixed;
+  bottom:15px;
+  left:15px;
 }
 </style>
 </head>
 
 <body>
 
-<!-- START SCREEN -->
-<div id="startScreen">
-    <h1>KAMIZEN</h1>
-    <button onclick="startGame()">START</button>
-</div>
-
 <!-- HUD -->
 <div id="hud">
-    <div class="hud-box">Points: <span id="points">0</span></div>
-    <div class="hud-box">Focus: <span id="focus">100</span></div>
-    <div class="hud-box">Energy: <span id="energy">100</span></div>
+
+  <div id="leftControls">
+    <button onclick="engine.startSession()">START</button>
+    <button onclick="engine.back()">BACK</button>
+    <button onclick="engine.restart()">RESTART</button>
+  </div>
+
+  <div id="scoreCenter">
+    <div class="stat">FOCUS: <span id="focus">0</span></div>
+    <div class="stat">ENERGY: <span id="energy">0</span></div>
+    <div class="stat">POINTS: <span id="points">0</span></div>
+  </div>
+
+  <div id="rightControls">
+    <button onclick="engine.continueSession()">CONTINUE</button>
+    <button onclick="engine.setLang('en')">EN</button>
+    <button onclick="engine.setLang('es')">ES</button>
+  </div>
+
 </div>
 
 <!-- MAIN -->
-<div id="container">
+<div id="main">
 
-    <div id="story"></div>
+  <div id="card">
+
+    <div id="story">Press START to begin session</div>
     <div id="analysis"></div>
 
     <div id="options"></div>
 
-    <div>
-        <button onclick="prevMission()">BACK</button>
-        <button onclick="nextMission()">CONTINUE</button>
-        <button onclick="resetGame()">RESTART</button>
-    </div>
+  </div>
 
 </div>
 
-<script>
-let missions = [];
-let current = 0;
+<!-- TIMER -->
+<div id="timer">00:00</div>
 
-let state = {
-    points:0,
-    focus:100,
-    energy:100
+<!-- ENGINE LINK -->
+<script src="engine.js"></script>
+
+<script>
+/* UI HOOKS ONLY — ENGINE CONTROLS ALL LOGIC */
+
+window.ui = {
+  setStory(text){
+    document.getElementById("story").innerText = text;
+  },
+  setAnalysis(text){
+    document.getElementById("analysis").innerText = text;
+  },
+  setOptions(options){
+    const box = document.getElementById("options");
+    box.innerHTML = "";
+    options.forEach((opt,i)=>{
+      const div = document.createElement("div");
+      div.className = "option";
+      div.innerText = opt;
+      div.onclick = ()=>engine.selectOption(i);
+      box.appendChild(div);
+    });
+  },
+  setStats({focus,energy,points}){
+    document.getElementById("focus").innerText = focus;
+    document.getElementById("energy").innerText = energy;
+    document.getElementById("points").innerText = points;
+  },
+  setTimer(text){
+    document.getElementById("timer").innerText = text;
+  }
 };
 
-/* SAFE LOAD */
-async function loadMissions(){
-    try{
-        const res1 = await fetch("missions_08_14.json");
-        const res2 = await fetch("missions_15_21.json");
-
-        const data1 = await res1.json();
-        const data2 = await res2.json();
-
-        missions = [...data1.missions, ...data2.missions];
-
-    }catch(e){
-        console.error("Load error:", e);
-    }
-}
-
-/* START */
-async function startGame(){
-    document.getElementById("startScreen").style.display="none";
-    await loadMissions();
-    render();
-}
-
-/* RENDER */
-function render(){
-    if(!missions.length) return;
-
-    const m = missions[current];
-
-    const storyBlock = m.blocks.find(b=>b.type==="story");
-    const analysisBlock = m.blocks.find(b=>b.type==="analysis");
-    const decisionBlock = m.blocks.find(b=>b.type==="decision");
-
-    document.getElementById("story").innerText = storyBlock.text.en;
-    document.getElementById("analysis").innerText = analysisBlock.text.en;
-
-    const optionsDiv = document.getElementById("options");
-    optionsDiv.innerHTML="";
-
-    decisionBlock.options.forEach(opt=>{
-        const btn = document.createElement("button");
-        btn.innerText = opt.text.en;
-
-        btn.onclick = ()=>{
-            applyResult(opt.correct);
-        };
-
-        optionsDiv.appendChild(btn);
-    });
-
-    updateHUD();
-}
-
-/* RESULT */
-function applyResult(result){
-    if(result === true){
-        state.points += 10;
-        state.focus += 2;
-        state.energy += 2;
-    }else if(result === "partial"){
-        state.points += 5;
-    }else{
-        state.focus -= 5;
-        state.energy -= 5;
-    }
-
-    clampStats();
-    updateHUD();
-}
-
-/* LIMITS */
-function clampStats(){
-    state.focus = Math.max(0, Math.min(100, state.focus));
-    state.energy = Math.max(0, Math.min(100, state.energy));
-}
-
-/* HUD */
-function updateHUD(){
-    document.getElementById("points").innerText = state.points;
-    document.getElementById("focus").innerText = state.focus;
-    document.getElementById("energy").innerText = state.energy;
-}
-
-/* NAV */
-function nextMission(){
-    if(current < missions.length-1){
-        current++;
-        render();
-    }
-}
-
-function prevMission(){
-    if(current > 0){
-        current--;
-        render();
-    }
-}
-
-/* RESET */
-function resetGame(){
-    current = 0;
-    state = {points:0, focus:100, energy:100};
-    render();
-}
-
-/* FLOAT WORDS (NO FREEZE SAFE) */
-function spawnWords(){
-    const words = ["FOCUS","CONTROL","CALM","TRUTH","PAUSE"];
-    setInterval(()=>{
-        const w = document.createElement("div");
-        w.className="floating";
-        w.innerText = words[Math.floor(Math.random()*words.length)];
-        w.style.left = Math.random()*100+"vw";
-        document.body.appendChild(w);
-
-        setTimeout(()=>w.remove(),10000);
-    },2000);
-}
-
-spawnWords();
-
+/* AUTO-INIT SAFE MODE (prevents freeze) */
+window.addEventListener("load", ()=>{
+  if(engine && engine.init){
+    engine.init();
+  }
+});
 </script>
 
 </body>
