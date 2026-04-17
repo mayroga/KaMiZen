@@ -2,184 +2,127 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>KAMIZEN SESSION PRO</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>KAMIZEN | SESSION PRO CLEAN</title>
 
 <style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:Arial, Helvetica, sans-serif;
+:root{
+  --bg:#000;
+  --neon:#00f2ff;
+  --text:#eaeaea;
 }
 
+*{box-sizing:border-box;font-family:Arial;}
 body{
-    background:#000;
-    color:#fff;
-    overflow:hidden;
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  overflow:hidden;
 }
 
-/* TOP HUD */
-#hud{
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    display:flex;
-    justify-content:center;
-    gap:30px;
-    padding:10px;
-    font-size:14px;
-    z-index:1000;
+/* TOP */
+#topBar{
+  position:fixed;
+  top:0;
+  width:100%;
+  display:flex;
+  justify-content:center;
+  gap:40px;
+  padding:10px;
 }
 
-.hud-box{
-    padding:6px 12px;
-    border:1px solid #00f2ff;
-    border-radius:6px;
-    background:rgba(0,0,0,0.6);
-}
+.stat{font-size:14px;text-align:center;}
+.stat b{display:block;color:var(--neon);font-size:18px;}
 
-/* CENTER TITLE */
-#hero-name{
-    position:fixed;
-    top:45px;
-    width:100%;
-    text-align:center;
-    font-size:16px;
-    color:#00f2ff;
-    z-index:1000;
+/* TIMER */
+#timerBox{
+  position:fixed;
+  top:60px;
+  width:100%;
+  text-align:center;
+  color:yellow;
 }
 
 /* MAIN */
 #container{
-    position:absolute;
-    top:120px;
-    width:100%;
-    padding:20px;
-    text-align:center;
+  position:absolute;
+  top:120px;
+  bottom:120px;
+  left:0;
+  right:0;
+  padding:20px;
+  overflow:auto;
 }
 
-#story{
-    font-size:20px;
-    margin-bottom:15px;
+#missionBox{
+  border:1px solid var(--neon);
+  padding:15px;
+  border-radius:10px;
 }
 
-#analysis{
-    font-size:16px;
-    opacity:0.8;
-    margin-bottom:20px;
+.option{
+  margin:10px 0;
+  padding:12px;
+  border:1px solid #333;
+  cursor:pointer;
 }
 
-#options{
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-    align-items:center;
+.option:hover{border-color:var(--neon);}
+
+/* CONTROLS */
+#controls{
+  position:fixed;
+  bottom:0;
+  width:100%;
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  padding:10px;
 }
 
 button{
-    padding:10px 15px;
-    background:#111;
-    color:#fff;
-    border:1px solid #00f2ff;
-    border-radius:8px;
-    cursor:pointer;
-    width:80%;
-}
-
-button:hover{
-    background:#00f2ff;
-    color:#000;
-}
-
-/* BOTTOM CONTROLS */
-#controls{
-    position:fixed;
-    bottom:10px;
-    width:100%;
-    display:flex;
-    justify-content:center;
-    gap:10px;
-}
-
-.ctrl{
-    padding:8px 10px;
-    border:1px solid #00f2ff;
-    background:#000;
-    color:#fff;
-    cursor:pointer;
-}
-
-/* BREATH SYSTEM */
-#breath{
-    position:fixed;
-    bottom:120px;
-    left:50%;
-    transform:translateX(-50%);
-    font-size:40px;
-    display:none;
-    transition:all 3.5s ease;
-    opacity:0.7;
-}
-
-/* TIMER */
-#analysis.timer{
-    color:#00f2ff;
-    font-size:18px;
-    margin-top:10px;
+  background:#111;
+  border:1px solid var(--neon);
+  color:white;
+  padding:10px;
 }
 </style>
 </head>
 
 <body>
 
-<!-- AUDIO -->
-<audio id="bg" src="bg.mp3" loop></audio>
-<audio id="ok" src="ok.mp3"></audio>
-<audio id="bad" src="bad.mp3"></audio>
-
-<!-- HUD TOP -->
-<div id="hud">
-    <div class="hud-box" id="score-display">POINTS: 0</div>
-    <div class="hud-box" id="focus-display">FOCUS: 100%</div>
-    <div class="hud-box" id="energy-display">ENERGY: 100</div>
+<div id="topBar">
+  <div class="stat">POINTS<b id="points">0</b></div>
+  <div class="stat">FOCUS<b id="focus">0</b></div>
+  <div class="stat">ENERGY<b id="energy">0</b></div>
 </div>
 
-<div id="hero-name"></div>
+<div id="timerBox">--:--</div>
 
-<!-- MAIN -->
 <div id="container">
-    <div id="story"></div>
-    <div id="analysis"></div>
-    <div id="options"></div>
+  <div id="missionBox">START</div>
 </div>
 
-<!-- BREATH -->
-<div id="breath">●</div>
-
-<!-- EXPLANATION -->
-<div id="explanation-box" style="
-    position:fixed;
-    bottom:150px;
-    width:90%;
-    left:5%;
-    padding:10px;
-    border:1px solid #00f2ff;
-    display:none;
-    background:rgba(0,0,0,0.8);
-    text-align:center;
-"></div>
-
-<!-- CONTROLS -->
 <div id="controls">
-    <button class="ctrl" onclick="KamizenEngine.init()">START</button>
-    <button class="ctrl" onclick="KamizenEngine.back()">BACK</button>
-    <button class="ctrl" onclick="KamizenEngine.restart()">RESTART</button>
-    <button class="ctrl" onclick="KamizenEngine.toggleLang()">EN/ES</button>
+  <button onclick="Engine.start()">START</button>
+  <button onclick="Engine.back()">BACK</button>
+  <button onclick="Engine.next()">NEXT</button>
+  <button onclick="Engine.restart()">RESTART</button>
+  <button onclick="Engine.toggleLang()">EN/ES</button>
 </div>
+
+<div id="breath" style="width:80px;height:80px;border-radius:50%;background:#00f2ff;margin:auto;display:none;"></div>
 
 <script src="engine.js"></script>
+
+<script>
+window.updateSessionUI = function(s){
+  document.getElementById("points").innerText = s.points;
+  document.getElementById("focus").innerText = s.focus;
+  document.getElementById("energy").innerText = s.energy;
+  document.getElementById("timerBox").innerText = s.timerText || "";
+};
+</script>
 
 </body>
 </html>
