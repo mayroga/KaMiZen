@@ -5,94 +5,102 @@ import os
 app = Flask(__name__, static_folder="static")
 
 # =========================
-# LOAD CONTENT SAFE
+# LOAD JSON
 # =========================
-def load_content():
-    path = os.path.join("static", "kamizen_content.json")
-    with open(path, "r", encoding="utf-8") as f:
-        return json.load(f)
+def load_data():
+    with open("static/kamizen_content.json", "r", encoding="utf-8") as f:
+        data = json.load(f)
 
-DATA = load_content()
+    # ordenar misiones por ID SIEMPRE
+    data["missions"] = sorted(data["missions"], key=lambda m: m["id"])
+    return data
+
+DATA = load_data()
 
 # =========================
-# STATE MACHINE GLOBAL
+# STATE (SOURCE OF TRUTH)
 # =========================
 STATE = {
-    "mission_id": 1,
-    "block_index": 0,
-    "status": "idle"
+    "mission_index": 0,
+    "block_index": 0
 }
 
 # =========================
-# GET CURRENT BLOCK
+# GET CURRENT MISSION/BLOCK
 # =========================
-def get_current_block():
-    mission = next((m for m in DATA["missions"] if m["id"] == STATE["mission_id"]), None)
-    if not mission:
-        return None
+def get_current():
+    missions = DATA["missions"]
 
-    if STATE["block_index"] >= len(mission["blocks"]):
-        return None
+    # reset global si termina todo
+    if STATE["mission_index"] >= len(missions):
+        STATE["mission_index"] = 0
+        STATE["block_index"] = 0
 
-    return mission["blocks"][STATE["block_index"]]
+    mission = missions[STATE["mission_index"]]
+    blocks = mission["blocks"]
+
+    # reset bloque si termina misión
+    if STATE["block_index"] >= len(blocks):
+        STATE["mission_index"] += 1
+        STATE["block_index"] = 0
+
+        # recursivo para evitar saltos
+        return get_current()
+
+    return {
+        "mission": mission,
+        "block": blocks[STATE["block_index"]],
+        "state": STATE
+    }
 
 # =========================
-# API: START SESSION
+# START / RESET
 # =========================
 @app.route("/api/start", methods=["POST"])
 def start():
-    STATE["mission_id"] = 1
+    STATE["mission_index"] = 0
     STATE["block_index"] = 0
-    STATE["status"] = "running"
-    return jsonify({"ok": True, "state": STATE})
+    return jsonify(get_current())
 
 # =========================
-# API: GET CURRENT BLOCK
+# GET CURRENT STEP
 # =========================
 @app.route("/api/state", methods=["GET"])
 def state():
-    block = get_current_block()
-    return jsonify({
-        "state": STATE,
-        "block": block
-    })
+    return jsonify(get_current())
 
 # =========================
-# API: NEXT BLOCK
+# NEXT STEP (ONLY MAIN CONTROLS FLOW)
 # =========================
 @app.route("/api/next", methods=["POST"])
-def next_block():
+def next_step():
     STATE["block_index"] += 1
-
-    mission = next((m for m in DATA["missions"] if m["id"] == STATE["mission_id"]), None)
-
-    if STATE["block_index"] >= len(mission["blocks"]):
-        STATE["status"] = "finished"
-
-    return jsonify({"ok": True, "state": STATE})
+    return jsonify(get_current())
 
 # =========================
-# API: ANSWER (TVID)
+# ANSWER CHECK (TVID)
 # =========================
 @app.route("/api/answer", methods=["POST"])
 def answer():
     data = request.json
     code = data.get("code")
 
-    block = get_current_block()
-    if not block or block.get("type") != "tvid":
-        return jsonify({"ok": False, "error": "no_tvid_block"})
+    current = get_current()
+    block = current["block"]
+
+    if block["type"] != "tvid":
+        return jsonify({"ok": False})
 
     option = next((o for o in block["options"] if o["code"] == code), None)
 
     return jsonify({
         "ok": True,
-        "correct": option.get("correct", False),
-        "reason": option.get("reason", {})
+        "correct": option["correct"],
+        "reason": option["reason"]
     })
 
 # =========================
-# STATIC FRONTEND
+# FRONTEND
 # =========================
 @app.route("/")
 def home():
