@@ -7,145 +7,98 @@ app = Flask(__name__, static_folder="static")
 BASE_PATH = os.path.dirname(__file__)
 
 # =========================
-# DETECT ALL MISSION FILES (ROOT ONLY)
+# LOAD JSON FILES (REAL STRUCTURE)
 # =========================
 
 def get_json_files():
-    """
-    Detecta automáticamente todos los archivos:
-    missions_01_07.json ... missions_29_35.json
-    SIN hardcode.
-    """
-    files = []
-    for f in os.listdir(BASE_PATH):
-        if f.startswith("missions_") and f.endswith(".json"):
-            files.append(f)
-    return files
+    # SOLO tus archivos reales
+    return [
+        "missions_01_07.json",
+        "missions_08_14.json",
+        "missions_15_21.json",
+        "missions_22_28.json",
+        "missions_29_35.json"
+    ]
+
+
+def load_file(file):
+    path = os.path.join(BASE_PATH, file)
+    with open(path, "r", encoding="utf-8") as f:
+        return json.load(f)
 
 
 # =========================
-# SAFE LOAD JSON
+# CACHE MEMORY (FAST LOAD)
 # =========================
 
-def load_json(file_path):
-    try:
-        with open(file_path, "r", encoding="utf-8") as f:
-            return json.load(f)
-    except Exception as e:
-        print(f"[JSON ERROR] {file_path}: {e}")
-        return None
+CACHE = {
+    "missions": {},
+    "chapters": {}
+}
 
 
-# =========================
-# FIND MISSION (GLOBAL SEARCH)
-# =========================
-
-def find_mission(mission_id):
-    """
-    Busca misión en TODOS los archivos reales.
-    NO asume estructura artificial.
-    """
+def build_cache():
     for file in get_json_files():
-        path = os.path.join(BASE_PATH, file)
-        data = load_json(path)
+        try:
+            data = load_file(file)
 
-        if not data:
-            continue
+            chapter = data.get("chapter")
+            CACHE["chapters"][chapter] = data
 
-        missions = data.get("missions", [])
-        for m in missions:
-            if m.get("id") == mission_id:
-                return m
+            for m in data.get("missions", []):
+                mid = m.get("id")
+                CACHE["missions"][mid] = {
+                    **m,
+                    "ui": data.get("ui", {}),
+                    "matrix_rules": data.get("matrix_rules", []),
+                    "game": data.get("game"),
+                    "chapter": chapter
+                }
 
-    return None
-
-
-# =========================
-# FIND CHAPTER (RAW JSON EXACTO)
-# =========================
-
-def find_chapter(chapter_id):
-    """
-    Devuelve el JSON EXACTO sin modificar.
-    """
-    for file in get_json_files():
-        path = os.path.join(BASE_PATH, file)
-        data = load_json(path)
-
-        if not data:
-            continue
-
-        if data.get("chapter") == chapter_id:
-            return data
-
-    return None
+        except Exception as e:
+            print(f"[ERROR LOADING {file}] {e}")
 
 
 # =========================
-# GET FULL GAME STATE (OPTIONAL FUTURE)
+# INIT CACHE ON START
 # =========================
 
-def get_full_game():
-    """
-    Junta todos los JSON sin modificar.
-    """
-    game = {
-        "missions": [],
-        "chapters": {}
-    }
-
-    for file in get_json_files():
-        path = os.path.join(BASE_PATH, file)
-        data = load_json(path)
-
-        if not data:
-            continue
-
-        game["missions"].extend(data.get("missions", []))
-
-        chapter = data.get("chapter")
-        if chapter:
-            game["chapters"][chapter] = data
-
-    return game
+build_cache()
 
 
 # =========================
-# API: MISSION (SINGLE)
+# API: MISSION (ULTRA STABLE)
 # =========================
 
 @app.route("/api/mission/<int:mission_id>")
 def api_mission(mission_id):
-    mission = find_mission(mission_id)
+    mission = CACHE["missions"].get(mission_id)
 
     if not mission:
         return jsonify({
             "error": "Mission not found",
-            "mission_id": mission_id
+            "id": mission_id
         }), 404
 
     return jsonify(mission)
 
 
 # =========================
-# API: CHAPTER (RAW FILE)
+# API: CHAPTER (FULL RAW JSON)
 # =========================
 
 @app.route("/api/chapter/<int:chapter_id>")
 def api_chapter(chapter_id):
-    chapter = find_chapter(chapter_id)
+    chapter = CACHE["chapters"].get(chapter_id)
 
     if not chapter:
-        return jsonify({
-            "error": "Chapter not found",
-            "chapter_id": chapter_id
-        }), 404
+        return jsonify({"error": "Chapter not found"}), 404
 
     return jsonify(chapter)
 
 
 # =========================
-# API: NEXT MISSION (1 → 35 LOOP)
+# NEXT MISSION FLOW (1-35 LOOP)
 # =========================
 
 @app.route("/api/next/<int:mission_id>")
@@ -154,22 +107,11 @@ def api_next(mission_id):
     if next_id > 35:
         next_id = 1
 
-    return jsonify({
-        "next": next_id
-    })
+    return jsonify({"next": next_id})
 
 
 # =========================
-# API: FULL GAME (OPTIONAL)
-# =========================
-
-@app.route("/api/game")
-def api_game():
-    return jsonify(get_full_game())
-
-
-# =========================
-# HOME
+# HOME (SESSION GAME)
 # =========================
 
 @app.route("/")
@@ -187,24 +129,10 @@ def static_files(path):
 
 
 # =========================
-# ERROR HANDLING (ANTI 500 SAFE MODE)
-# =========================
-
-@app.errorhandler(500)
-def internal_error(e):
-    return jsonify({
-        "error": "internal_server_error",
-        "message": str(e)
-    }), 500
-
-
-# =========================
 # RUN SERVER
 # =========================
 
 if __name__ == "__main__":
-    app.run(
-        host="0.0.0.0",
-        port=10000,
-        debug=True
-    )
+    print("🚀 KAMIZEN ENGINE V2 LOADED")
+    print("📦 Missions cached:", len(CACHE["missions"]))
+    app.run(host="0.0.0.0", port=10000, debug=True)
