@@ -3,213 +3,275 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KAMIZEN | AL CIELO PRO</title>
+<title>KAMIZEN SESSION</title>
 
 <style>
 :root{
-    --neon:#00f2ff;
     --bg:#000;
+    --neon:#00f2ff;
+    --text:#fff;
 }
 
 body{
     margin:0;
-    background: radial-gradient(circle, #001a33, #000);
-    color:#fff;
-    font-family: 'Segoe UI', Arial;
-    text-align:center;
+    background:var(--bg);
+    color:var(--text);
+    font-family:Arial, sans-serif;
     overflow:hidden;
-    cursor: crosshair;
 }
 
-/* ================= TOP BAR ================= */
-#topbar{
+/* HUD */
+#hud{
     position:fixed;
-    top:0;
-    width:100%;
+    top:10px;
+    left:10px;
+    right:10px;
     display:flex;
     justify-content:space-between;
-    align-items:center;
-    padding:10px 15px;
-    background:rgba(0,0,0,0.4);
-    z-index:100;
+    z-index:1000;
+    font-size:14px;
 }
 
-#controls button{
-    margin:3px;
-}
-
-/* ================= STATS ================= */
-#stats{
-    display:flex;
-    gap:15px;
-    font-weight:bold;
-    color:var(--neon);
-    font-size:1.2rem;
-}
-
-/* ================= MAIN ================= */
-#game{
-    padding-top:80px;
-}
-
-#hero-name{
-    font-size:1.5rem;
-    color:var(--neon);
-}
-
-#story{
-    font-size:1.6rem;
-    margin:20px;
-    font-weight:bold;
-}
-
-#analysis{
-    color:var(--neon);
-    font-style:italic;
-    margin-bottom:20px;
-}
-
-/* ================= BUTTONS ================= */
-button{
-    padding:12px 20px;
-    font-size:16px;
-    border:2px solid var(--neon);
-    background:rgba(0,242,255,0.1);
-    color:white;
-    border-radius:10px;
-    cursor:pointer;
-    transition:0.3s;
-}
-
-button:hover{
-    background:var(--neon);
-    color:black;
-    box-shadow:0 0 15px var(--neon);
-}
-
-.opt-btn{
-    display:block;
-    width:80%;
-    max-width:500px;
-    margin:10px auto;
-    text-align:left;
-}
-
-/* ================= BREATH ================= */
-#breath{
-    width:100px;
-    height:100px;
-    border-radius:50%;
-    background: radial-gradient(circle, #00f2ff, #0066ff);
-    margin:20px auto;
-    display:none;
-    transition: transform 4s ease-in-out;
-    box-shadow:0 0 30px #00f2ff;
-}
-
-/* ================= FLOATING ================= */
-.floating{
-    position:absolute;
-    padding:8px 18px;
-    border-radius:20px;
-    font-weight:bold;
-    cursor:pointer;
-    animation: floatUp 5s linear forwards;
-}
-
-.word-good{ color:#00ff00; border:2px solid #00ff00; }
-.word-bad{ color:#ff0000; border:2px solid #ff0000; }
-.word-neutral{ color:#ffff00; border:2px solid #ffff00; }
-
-@keyframes floatUp{
-    from{ transform:translateY(110vh);}
-    to{ transform:translateY(-20vh);}
-}
-
-.blast{ animation:burst 0.4s forwards;}
-@keyframes burst{ to{ transform:scale(4); opacity:0;} }
-
-/* ================= EXPLANATION ================= */
-#explanation-box{
-    display:none;
-    background:rgba(0,0,0,0.8);
-    border-left:5px solid var(--neon);
-    padding:15px;
-    margin:20px auto;
-    width:80%;
+.hud-box{
+    border:1px solid var(--neon);
+    padding:8px 12px;
     border-radius:10px;
 }
 
-/* ================= START SCREEN ================= */
-#start-screen{
-    position:fixed;
-    inset:0;
-    background:black;
+/* MAIN */
+#container{
     display:flex;
     flex-direction:column;
     justify-content:center;
     align-items:center;
-    z-index:200;
+    height:100vh;
+    text-align:center;
+    padding:20px;
 }
 
-#start-screen h1{
-    color:var(--neon);
-    font-size:2rem;
+/* TEXT */
+#story, #analysis{
+    max-width:600px;
     margin-bottom:20px;
 }
 
+/* BUTTONS */
+button{
+    background:none;
+    border:1px solid var(--neon);
+    color:var(--text);
+    padding:10px 15px;
+    margin:5px;
+    border-radius:10px;
+    cursor:pointer;
+}
+
+button:hover{
+    background:var(--neon);
+    color:#000;
+}
+
+/* OPTIONS */
+#options{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    width:100%;
+    max-width:400px;
+}
+
+/* START SCREEN */
+#startScreen{
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    background:#000;
+    z-index:2000;
+}
+
+/* FLOAT WORDS */
+.floating{
+    position:absolute;
+    opacity:0.1;
+    font-size:18px;
+    animation:float 10s linear infinite;
+}
+
+@keyframes float{
+    from{transform:translateY(100vh);}
+    to{transform:translateY(-100vh);}
+}
 </style>
 </head>
 
 <body>
 
-<!-- 🔝 TOPBAR -->
-<div id="topbar">
-    <div id="controls">
-        <button onclick="startGame()">START</button>
-        <button onclick="KamizenEngine.toggleLang()">EN/ES</button>
-        <button onclick="location.reload()">RESTART</button>
-    </div>
-
-    <div id="stats">
-        <div id="score-display">PUNTOS: 0</div>
-        <div id="focus-display">FOCUS: 100%</div>
-        <div id="energy-display">ENERGY: ⚡⚡⚡</div>
-    </div>
+<!-- START SCREEN -->
+<div id="startScreen">
+    <h1>KAMIZEN</h1>
+    <button onclick="startGame()">START</button>
 </div>
 
-<!-- 🎮 GAME -->
-<div id="game">
-    <h2 id="hero-name"></h2>
+<!-- HUD -->
+<div id="hud">
+    <div class="hud-box">Points: <span id="points">0</span></div>
+    <div class="hud-box">Focus: <span id="focus">100</span></div>
+    <div class="hud-box">Energy: <span id="energy">100</span></div>
+</div>
 
-    <div id="breath"></div>
+<!-- MAIN -->
+<div id="container">
 
-    <div id="story">Bienvenido a Kamizen</div>
+    <div id="story"></div>
     <div id="analysis"></div>
 
-    <div id="explanation-box"></div>
     <div id="options"></div>
+
+    <div>
+        <button onclick="prevMission()">BACK</button>
+        <button onclick="nextMission()">CONTINUE</button>
+        <button onclick="resetGame()">RESTART</button>
+    </div>
+
 </div>
-
-<!-- 🚀 START SCREEN -->
-<div id="start-screen">
-    <h1>KAMIZEN: AL CIELO</h1>
-    <button onclick="startGame()">INICIAR</button>
-</div>
-
-<!-- 🔊 AUDIO -->
-<audio id="bg" loop src="/static/sounds/bg.mp3"></audio>
-<audio id="ok" src="/static/sounds/success.mp3"></audio>
-<audio id="bad" src="/static/sounds/glass.mp3"></audio>
-
-<!-- 🧠 ENGINE -->
-<script src="/static/engine.js"></script>
 
 <script>
-function startGame(){
-    document.getElementById("start-screen").style.display = "none";
-    KamizenEngine.init();
+let missions = [];
+let current = 0;
+
+let state = {
+    points:0,
+    focus:100,
+    energy:100
+};
+
+/* SAFE LOAD */
+async function loadMissions(){
+    try{
+        const res1 = await fetch("missions_08_14.json");
+        const res2 = await fetch("missions_15_21.json");
+
+        const data1 = await res1.json();
+        const data2 = await res2.json();
+
+        missions = [...data1.missions, ...data2.missions];
+
+    }catch(e){
+        console.error("Load error:", e);
+    }
 }
+
+/* START */
+async function startGame(){
+    document.getElementById("startScreen").style.display="none";
+    await loadMissions();
+    render();
+}
+
+/* RENDER */
+function render(){
+    if(!missions.length) return;
+
+    const m = missions[current];
+
+    const storyBlock = m.blocks.find(b=>b.type==="story");
+    const analysisBlock = m.blocks.find(b=>b.type==="analysis");
+    const decisionBlock = m.blocks.find(b=>b.type==="decision");
+
+    document.getElementById("story").innerText = storyBlock.text.en;
+    document.getElementById("analysis").innerText = analysisBlock.text.en;
+
+    const optionsDiv = document.getElementById("options");
+    optionsDiv.innerHTML="";
+
+    decisionBlock.options.forEach(opt=>{
+        const btn = document.createElement("button");
+        btn.innerText = opt.text.en;
+
+        btn.onclick = ()=>{
+            applyResult(opt.correct);
+        };
+
+        optionsDiv.appendChild(btn);
+    });
+
+    updateHUD();
+}
+
+/* RESULT */
+function applyResult(result){
+    if(result === true){
+        state.points += 10;
+        state.focus += 2;
+        state.energy += 2;
+    }else if(result === "partial"){
+        state.points += 5;
+    }else{
+        state.focus -= 5;
+        state.energy -= 5;
+    }
+
+    clampStats();
+    updateHUD();
+}
+
+/* LIMITS */
+function clampStats(){
+    state.focus = Math.max(0, Math.min(100, state.focus));
+    state.energy = Math.max(0, Math.min(100, state.energy));
+}
+
+/* HUD */
+function updateHUD(){
+    document.getElementById("points").innerText = state.points;
+    document.getElementById("focus").innerText = state.focus;
+    document.getElementById("energy").innerText = state.energy;
+}
+
+/* NAV */
+function nextMission(){
+    if(current < missions.length-1){
+        current++;
+        render();
+    }
+}
+
+function prevMission(){
+    if(current > 0){
+        current--;
+        render();
+    }
+}
+
+/* RESET */
+function resetGame(){
+    current = 0;
+    state = {points:0, focus:100, energy:100};
+    render();
+}
+
+/* FLOAT WORDS (NO FREEZE SAFE) */
+function spawnWords(){
+    const words = ["FOCUS","CONTROL","CALM","TRUTH","PAUSE"];
+    setInterval(()=>{
+        const w = document.createElement("div");
+        w.className="floating";
+        w.innerText = words[Math.floor(Math.random()*words.length)];
+        w.style.left = Math.random()*100+"vw";
+        document.body.appendChild(w);
+
+        setTimeout(()=>w.remove(),10000);
+    },2000);
+}
+
+spawnWords();
+
 </script>
 
 </body>
