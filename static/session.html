@@ -41,8 +41,8 @@ button{padding:12px 20px;margin:10px;font-size:16px;border:none;border-radius:8p
 <script>
 let lang="en";
 let mission=1;
-let data=null;
 let score=0;
+let floatingWords=[];
 
 let player={real:"",hero:""};
 
@@ -54,7 +54,7 @@ document.getElementById("hero").innerText=player.hero;
 startMusic();
 breathing();
 await loadMission();
-spawnWords();
+startFloatingSystem();
 }
 
 function startMusic(){
@@ -80,6 +80,12 @@ async function loadMission(){
 let res=await fetch(`/api/mission/${mission}`);
 if(!res.ok)return;
 let m=await res.json();
+
+// 🔥 EXTRAER FLOATING WORDS DEL JSON
+if(m.ui && m.ui.floating_words){
+floatingWords = m.ui.floating_words;
+}
+
 render(m);
 }
 
@@ -107,11 +113,11 @@ speak(an);
 },4000);
 
 setTimeout(()=>{
-createOptions(decision.options,m);
+createOptions(decision.options);
 },8000);
 }
 
-function createOptions(options,m){
+function createOptions(options){
 let oDiv=document.getElementById("options");
 oDiv.innerHTML="";
 
@@ -120,14 +126,14 @@ let b=document.createElement("button");
 b.innerText=opt.text[lang];
 
 b.onclick=()=>{
-handleAnswer(opt.correct,b,m);
+handleAnswer(opt.correct,b);
 };
 
 oDiv.appendChild(b);
 });
 }
 
-async function handleAnswer(correct,btn,m){
+async function handleAnswer(correct,btn){
 let ok=document.getElementById("ok");
 let bad=document.getElementById("bad");
 
@@ -162,14 +168,18 @@ grow=!grow;
 },4000);
 }
 
-function spawnWords(){
-let words=["FOCUS","CALM","CONTROL","PAUSE","TRUTH"];
+// 🔥 FLOATING WORDS DINÁMICO DESDE JSON
+function startFloatingSystem(){
 setInterval(()=>{
+if(floatingWords.length===0)return;
+
 let w=document.createElement("div");
 w.className="floating";
 w.style.left=Math.random()*100+"vw";
-w.innerText=words[Math.floor(Math.random()*words.length)];
+w.innerText=floatingWords[Math.floor(Math.random()*floatingWords.length)];
+
 document.body.appendChild(w);
+
 setTimeout(()=>w.remove(),4000);
 },1200);
 }
