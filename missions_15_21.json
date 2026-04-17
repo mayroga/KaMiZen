@@ -3,41 +3,13 @@
   "chapter": 3,
   "range": "15-21",
   "ui": {
-    "floating_words": [
-      "DISCIPLINE", "FOCUS", "PAUSE", "CONTROL", "TRUTH", "CALM", "AWARENESS", "ACTION"
-    ]
+    "floating_words": ["DISCIPLINE", "FOCUS", "PAUSE", "CONTROL", "TRUTH", "CALM", "AWARENESS", "ACTION"]
   },
   "matrix_rules": [
-    "1. Observe before reacting",
-    "2. Action creates reality",
-    "3. Thought controls emotion",
-    "4. Silence is power",
     "5. Focus beats distraction",
-    "6. Breath controls mind",
-    "7. Reaction weakens control",
-    "8. Awareness is strength",
-    "9. Calm is intelligence",
-    "10. Impulse is not truth",
-    "11. Choice defines identity",
-    "12. Energy follows attention",
     "13. Stop before emotional action",
-    "14. See patterns, not chaos",
-    "15. Inner voice is guide",
-    "16. Fear is temporary signal",
-    "17. Courage is movement",
-    "18. Truth builds power",
-    "19. Respect creates boundaries",
     "20. Discipline builds freedom",
-    "21. Small actions shape future",
-    "22. Emotion is data",
-    "23. Pause creates intelligence",
-    "24. Control attention always",
-    "25. Learn from every mistake",
-    "26. Think before speaking",
-    "27. Calm wins conflict",
-    "28. Awareness breaks confusion",
-    "29. Identity is built daily",
-    "30. Master yourself first"
+    "23. Pause creates intelligence"
   ],
   "missions": [
     {
@@ -48,30 +20,24 @@
         {
           "type": "story",
           "text": {
-            "en": "Your phone keeps calling your attention even when you try to focus.",
-            "es": "Tu teléfono sigue llamando tu atención aunque intentas concentrarte."
+            "en": "You are doing homework on your computer and an ad for a new game appears.",
+            "es": "Estás haciendo la tarea en la computadora y aparece un anuncio de un juego nuevo."
           }
         },
         {
           "type": "analysis",
           "text": {
-            "en": "Attention is something you must protect.",
-            "es": "La atención es algo que debes proteger."
+            "en": "Attention is a resource. If you don't use it, others will steal it.",
+            "es": "La atención es un recurso. Si no la usas, otros la robarán."
           }
         },
         {
           "type": "decision",
           "options": [
-            {
-              "code": "CHECK",
-              "text": { "en": "Check instantly", "es": "Revisar inmediatamente" },
-              "correct": false
-            },
-            {
-              "code": "CONTROL",
-              "text": { "en": "Set limits and focus", "es": "Poner límites y enfocarse" },
-              "correct": true
-            }
+            { "text": { "en": "Close the tab immediately", "es": "Cerrar la pestaña de inmediato" }, "correct": true, "explanation": { "en": "Speed in cutting distractions is speed in reaching your goals.", "es": "La velocidad al cortar distracciones es velocidad para alcanzar tus metas." } },
+            { "text": { "en": "Click to see the trailer", "es": "Clic para ver el tráiler" }, "correct": false, "explanation": { "en": "The Matrix uses curiosity to keep you unproductive. Don't fall for it.", "es": "La Matrix usa la curiosidad para mantenerte improductivo. No caigas." } },
+            { "text": { "en": "Save it for later", "es": "Guardarlo para después" }, "correct": "partial", "explanation": { "en": "Better than clicking now, but your mind is still thinking about it.", "es": "Mejor que dar clic ahora, pero tu mente sigue pensando en eso." } },
+            { "text": { "en": "Ask a friend if it's good", "es": "Preguntar a un amigo si es bueno" }, "correct": false, "explanation": { "en": "Talking about the distraction is still being distracted. Get back to work.", "es": "Hablar de la distracción sigue siendo estar distraído. Vuelve al trabajo." } }
           ]
         }
       ]
@@ -84,30 +50,24 @@
         {
           "type": "story",
           "text": {
-            "en": "You are asked to lie to avoid trouble.",
-            "es": "Te piden mentir para evitar problemas."
+            "en": "Your group failed a project. Your friends want you to tell the teacher it was a technical error.",
+            "es": "Tu grupo falló un proyecto. Tus amigos quieren que le digas al profesor que fue un error técnico."
           }
         },
         {
           "type": "analysis",
           "text": {
-            "en": "Truth builds strong identity.",
-            "es": "La verdad construye identidad fuerte."
+            "en": "Truth builds a reputation that becomes your armor.",
+            "es": "La verdad construye una reputación que se convierte en tu armadura."
           }
         },
         {
           "type": "decision",
           "options": [
-            {
-              "code": "LIE",
-              "text": { "en": "Lie", "es": "Mentir" },
-              "correct": false
-            },
-            {
-              "code": "TRUTH",
-              "text": { "en": "Tell truth calmly", "es": "Decir la verdad con calma" },
-              "correct": true
-            }
+            { "text": { "en": "Tell the truth about the failure", "es": "Decir la verdad sobre el fallo" }, "correct": true, "explanation": { "en": "Admitting failure allows you to fix it. Lies just delay the crash.", "es": "Admitir el fallo te permite corregirlo. Las mentiras solo retrasan el choque." } },
+            { "text": { "en": "Support the group's lie", "es": "Apoyar la mentira del grupo" }, "correct": false, "explanation": { "en": "If you lie for the group, you become a slave to their secrets.", "es": "Si mientes por el grupo, te vuelves esclavo de sus secretos." } },
+            { "text": { "en": "Stay quiet and let them lie", "es": "Callar y dejar que ellos mientan" }, "correct": "partial", "explanation": { "en": "Silence isn't a lie, but it isn't the truth either. It's a weak middle ground.", "es": "El silencio no es mentira, pero tampoco es la verdad. Es un punto medio débil." } },
+            { "text": { "en": "Leave the group room", "es": "Irte de la sala del grupo" }, "correct": false, "explanation": { "en": "Escaping the situation doesn't solve the lack of integrity.", "es": "Escapar de la situación no resuelve la falta de integridad." } }
           ]
         }
       ]
@@ -120,30 +80,24 @@
         {
           "type": "story",
           "text": {
-            "en": "Someone needs help but nobody is paying attention.",
-            "es": "Alguien necesita ayuda pero nadie presta atención."
+            "en": "A new student is sitting alone while everyone else is playing. They look sad.",
+            "es": "Un estudiante nuevo está sentado solo mientras todos juegan. Se ve triste."
           }
         },
         {
           "type": "analysis",
           "text": {
-            "en": "Real strength is helping others.",
-            "es": "La verdadera fuerza es ayudar a otros."
+            "en": "Real power is the ability to change someone's reality for the better.",
+            "es": "El poder real es la capacidad de cambiar la realidad de alguien para mejor."
           }
         },
         {
           "type": "decision",
           "options": [
-            {
-              "code": "IGNORE",
-              "text": { "en": "Ignore", "es": "Ignorar" },
-              "correct": false
-            },
-            {
-              "code": "HELP",
-              "text": { "en": "Help", "es": "Ayudar" },
-              "correct": true
-            }
+            { "text": { "en": "Invite them to join you", "es": "Invitarlos a unirse a ti" }, "correct": true, "explanation": { "en": "Leaders create inclusive circles. Followers just watch.", "es": "Los líderes crean círculos inclusivos. Los seguidores solo miran." } },
+            { "text": { "en": "Keep playing with your friends", "es": "Seguir jugando con tus amigos" }, "correct": false, "explanation": { "en": "Ignoring those in need hardens your heart and weakens your empathy.", "es": "Ignorar a quien lo necesita endurece tu corazón y debilita tu empatía." } },
+            { "text": { "en": "Tell a teacher they are alone", "es": "Decirle a un profesor que está solo" }, "correct": "partial", "explanation": { "en": "Good, but you delegated your power instead of using it yourself.", "es": "Bueno, pero delegaste tu poder en lugar de usarlo tú mismo." } },
+            { "text": { "en": "Watch them from a distance", "es": "Observarlos de lejos" }, "correct": false, "explanation": { "en": "Observation without action in this case is just wasting energy.", "es": "Observar sin actuar en este caso es solo gastar energía." } }
           ]
         }
       ]
@@ -156,30 +110,24 @@
         {
           "type": "story",
           "text": {
-            "en": "Multiple problems happen at the same time.",
-            "es": "Varios problemas ocurren al mismo tiempo."
+            "en": "You lost your keys, you're late, and it starts raining. Everything is going wrong.",
+            "es": "Perdiste las llaves, vas tarde y empieza a llover. Todo sale mal."
           }
         },
         {
           "type": "analysis",
           "text": {
-            "en": "Control is staying stable in chaos.",
-            "es": "El control es mantenerse estable en el caos."
+            "en": "Stability is not the absence of chaos, but being the center of it.",
+            "es": "La estabilidad no es la ausencia de caos, sino ser el centro de él."
           }
         },
         {
           "type": "decision",
           "options": [
-            {
-              "code": "REACT",
-              "text": { "en": "React emotionally", "es": "Reaccionar emocionalmente" },
-              "correct": false
-            },
-            {
-              "code": "CENTER",
-              "text": { "en": "Stay centered", "es": "Mantener centro" },
-              "correct": true
-            }
+            { "text": { "en": "Stop, breathe, and plan", "es": "Parar, respirar y planear" }, "correct": true, "explanation": { "en": "A 10-second pause can save you 10 minutes of mistakes.", "es": "Una pausa de 10 segundos puede ahorrarte 10 minutos de errores." } },
+            { "text": { "en": "Run and panic", "es": "Correr y entrar en pánico" }, "correct": false, "explanation": { "en": "Panic is a signal to the Matrix that you have lost control.", "es": "El pánico es una señal a la Matrix de que has perdido el control." } },
+            { "text": { "en": "Blame the day for being bad", "es": "Culpar al día por ser malo" }, "correct": false, "explanation": { "en": "Blaming external things gives them power over your mood.", "es": "Culpar a lo externo le da poder sobre tu estado de ánimo." } },
+            { "text": { "en": "Ask for help immediately", "es": "Pedir ayuda de inmediato" }, "correct": "partial", "explanation": { "en": "Help is good, but try to find your own center first.", "es": "La ayuda es buena, pero intenta encontrar tu centro primero." } }
           ]
         }
       ]
@@ -192,30 +140,24 @@
         {
           "type": "story",
           "text": {
-            "en": "A group ignores you and makes you feel invisible.",
-            "es": "Un grupo te ignora y te hace sentir invisible."
+            "en": "You try to join a conversation and they stop talking and look at you coldly.",
+            "es": "Intentas unirte a una conversación y ellos dejan de hablar y te miran con frialdad."
           }
         },
         {
           "type": "analysis",
           "text": {
-            "en": "Your value does not depend on others.",
-            "es": "Tu valor no depende de otros."
+            "en": "Your value is a fact, not a vote by others.",
+            "es": "Tu valor es un hecho, no una votación de los demás."
           }
         },
         {
           "type": "decision",
           "options": [
-            {
-              "code": "CHASE",
-              "text": { "en": "Try to fit in", "es": "Intentar encajar" },
-              "correct": false
-            },
-            {
-              "code": "STAY",
-              "text": { "en": "Stay calm and observe", "es": "Mantener calma y observar" },
-              "correct": true
-            }
+            { "text": { "en": "Smile calmly and walk away", "es": "Sonreír con calma e irse" }, "correct": true, "explanation": { "en": "By not being affected, you show that their opinion has no power.", "es": "Al no afectarte, demuestras que su opinión no tiene poder." } },
+            { "text": { "en": "Ask why they are mean", "es": "Preguntar por qué son malos" }, "correct": false, "explanation": { "en": "Seeking explanations from the unkind gives them more importance.", "es": "Buscar explicaciones de los crueles les da más importancia." } },
+            { "text": { "en": "Try to tell a joke to fit in", "es": "Intentar contar un chiste para encajar" }, "correct": false, "explanation": { "en": "Begging for attention is a sign of internal weakness.", "es": "Mendigar atención es una señal de debilidad interna." } },
+            { "text": { "en": "Stay there in silence", "es": "Quedarse ahí en silencio" }, "correct": "partial", "explanation": { "en": "Silence is good, but don't stay where you aren't respected.", "es": "El silencio es bueno, pero no te quedes donde no te respetan." } }
           ]
         }
       ]
@@ -228,30 +170,24 @@
         {
           "type": "story",
           "text": {
-            "en": "You feel like reacting immediately without thinking.",
-            "es": "Sientes ganas de reaccionar sin pensar."
+            "en": "You receive a message that makes you very angry. Your fingers want to type a mean reply.",
+            "es": "Recibes un mensaje que te enoja mucho. Tus dedos quieren escribir algo cruel."
           }
         },
         {
           "type": "analysis",
           "text": {
-            "en": "Pause creates intelligence.",
-            "es": "La pausa crea inteligencia."
+            "en": "The time between impulse and action is where freedom lives.",
+            "es": "El tiempo entre el impulso y la acción es donde vive la libertad."
           }
         },
         {
           "type": "decision",
           "options": [
-            {
-              "code": "REACT",
-              "text": { "en": "React instantly", "es": "Reaccionar instantáneo" },
-              "correct": false
-            },
-            {
-              "code": "PAUSE",
-              "text": { "en": "Pause before action", "es": "Pausar antes de actuar" },
-              "correct": true
-            }
+            { "text": { "en": "Put the phone away for 5 mins", "es": "Alejar el móvil por 5 min" }, "correct": true, "explanation": { "en": "Cooling down allows your logical brain to take the lead.", "es": "Enfriarte permite que tu cerebro lógico tome el mando." } },
+            { "text": { "en": "Send the mean reply", "es": "Enviar la respuesta cruel" }, "correct": false, "explanation": { "en": "Once sent, the damage to your reputation is permanent.", "es": "Una vez enviado, el daño a tu reputación es permanente." } },
+            { "text": { "en": "Delete the message and block", "es": "Borrar el mensaje y bloquear" }, "correct": "partial", "explanation": { "en": "Effective, but make sure you aren't just running away from emotion.", "es": "Efectivo, pero asegúrate de no estar solo huyendo de la emoción." } },
+            { "text": { "en": "Show the message to others", "es": "Mostrar el mensaje a otros" }, "correct": false, "explanation": { "en": "Spreading the fire just burns more people. Stay in control.", "es": "Esparcir el fuego solo quema a más gente. Mantén el control." } }
           ]
         }
       ]
@@ -264,30 +200,24 @@
         {
           "type": "story",
           "text": {
-            "en": "You made a mistake and must decide what to do next.",
-            "es": "Cometiste un error y debes decidir qué hacer."
+            "en": "You were supposed to water the plants and they died. Your parents are asking what happened.",
+            "es": "Debías regar las plantas y murieron. Tus padres preguntan qué pasó."
           }
         },
         {
           "type": "analysis",
           "text": {
-            "en": "Responsibility creates maturity.",
-            "es": "La responsabilidad crea madurez."
+            "en": "Responsibility is the price of greatness.",
+            "es": "La responsabilidad es el precio de la grandeza."
           }
         },
         {
           "type": "decision",
           "options": [
-            {
-              "code": "DENY",
-              "text": { "en": "Deny mistake", "es": "Negar error" },
-              "correct": false
-            },
-            {
-              "code": "ACCEPT",
-              "text": { "en": "Accept and learn", "es": "Aceptar y aprender" },
-              "correct": true
-            }
+            { "text": { "en": "Accept it and offer a solution", "es": "Aceptarlo y ofrecer solución" }, "correct": true, "explanation": { "en": "Owning the result and acting to fix it is the mark of a master.", "es": "Admitir el resultado y actuar para arreglarlo es la marca de un maestro." } },
+            { "text": { "en": "Say you forgot but won't happen again", "es": "Decir que lo olvidaste y no pasará" }, "correct": "partial", "explanation": { "en": "Honest, but promises are cheap. Action is what matters.", "es": "Sincero, pero las promesas son baratas. La acción es lo que importa." } },
+            { "text": { "en": "Blame the sun or the weather", "es": "Culpar al sol o al clima" }, "correct": false, "explanation": { "en": "Excuses are for those who are afraid of growing up.", "es": "Las excusas son para quienes tienen miedo de crecer." } },
+            { "text": { "en": "Say you did it and they died anyway", "es": "Decir que sí lo hiciste y murieron" }, "correct": false, "explanation": { "en": "A lie here is a double failure: in action and in character.", "es": "Una mentira aquí es un doble fallo: en la acción y en el carácter." } }
           ]
         }
       ]
