@@ -3,205 +3,198 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KAMIZEN | SESSION PRO NEURO</title>
+<title>KAMIZEN | PRO V2</title>
 
 <style>
-body{
- margin:0;
- background:#000;
- color:#fff;
- font-family:Arial, sans-serif;
- overflow:hidden;
-}
-
-#game{
- position:relative;
- width:100vw;
- height:100vh;
-}
-
-.floating{
- position:absolute;
- font-size:14px;
- opacity:0.2;
- animation:float 6s infinite linear;
-}
-
-@keyframes float{
- from{transform:translateY(100vh);}
- to{transform:translateY(-10vh);}
-}
-
-#ui{
- position:absolute;
- top:10px;
- left:10px;
- z-index:10;
-}
-
-button{
- margin:5px;
- padding:10px;
- border:none;
- cursor:pointer;
-}
-
-.good{background:green; color:white;}
-.bad{background:red; color:white;}
-
-#silence{
- position:absolute;
- bottom:10px;
- left:10px;
- font-size:12px;
- opacity:0.8;
-}
-
-#silenceOverlay{
- position:fixed;
- inset:0;
- background:rgba(0,0,0,0.85);
- display:none;
- align-items:center;
- justify-content:center;
- flex-direction:column;
- z-index:999;
- text-align:center;
-}
-
-#silenceOverlay h1{
- font-size:22px;
- margin-bottom:10px;
-}
-
-#silenceOverlay p{
- max-width:600px;
- opacity:0.8;
-}
+body{margin:0;background:#000;color:#fff;font-family:Arial;text-align:center;overflow:hidden}
+#game{padding:20px}
+button{padding:12px 20px;margin:10px;font-size:16px;border:none;border-radius:8px;cursor:pointer}
+.correct{background:green}
+.wrong{background:red}
+#breath{width:120px;height:120px;border-radius:50%;background:#00f2ff;margin:20px auto;transition:4s}
+.floating{position:absolute;color:#00f2ff;opacity:0.7;animation:float 4s linear}
+@keyframes float{from{transform:translateY(100vh)}to{transform:translateY(-10vh)}}
+#topbar{position:fixed;top:0;width:100%;display:flex;justify-content:space-between;padding:10px}
 </style>
 </head>
 
 <body>
 
-<div id="game"></div>
-
-<div id="ui">
- <button onclick="startMission()">START</button>
- <button onclick="toggleLang()">EN/ES</button>
+<div id="topbar">
+<button onclick="toggleLang()">LANG</button>
+<button onclick="startSilence()">SILENCE</button>
 </div>
 
-<div id="silence">Silence system inactive</div>
-
-<div id="silenceOverlay">
- <h1>NEURO SILENCE MODE</h1>
- <p id="silenceText">Preparing...</p>
+<div id="game">
+<h1 id="title">KAMIZEN</h1>
+<h2 id="hero"></h2>
+<div id="breath"></div>
+<div id="story"></div>
+<div id="analysis"></div>
+<div id="options"></div>
 </div>
+
+<audio id="bg" loop src="static/sounds/bg.mp3"></audio>
+<audio id="ok" src="static/sounds/success.mp3"></audio>
+<audio id="bad" src="static/sounds/glass.mp3"></audio>
 
 <script>
-let currentLevel = 1;
-let silenceActive = false;
-let silenceTime = 0;
-let silenceTimer;
-let lastInteraction = Date.now();
+let lang="en";
+let mission=1;
+let score=0;
+let floatingWords=[];
 
-function getSilenceTime(level){
- if(level<=7) return 180;
- if(level<=14) return 360;
- if(level<=21) return 600;
- if(level<=28) return 900;
- return 1200;
+let player={real:"",hero:""};
+
+async function init(){
+player.real=prompt("Enter your name");
+player.hero=prompt("Hero name");
+document.getElementById("hero").innerText=player.hero;
+
+startMusic();
+breathing();
+await loadMission();
+startFloatingSystem();
 }
 
-function getBreathInterval(level){
- if(level<=7) return 60000;
- if(level<=14) return 50000;
- if(level<=21) return 40000;
- if(level<=28) return 30000;
- return 25000;
+function startMusic(){
+let bg=document.getElementById("bg");
+bg.volume=0.3;
+bg.play().catch(()=>{});
 }
 
-function startSilence(level){
- silenceTime = getSilenceTime(level);
- silenceActive = true;
- document.getElementById("silence").innerText = "Silence: " + silenceTime + "s";
-
- document.getElementById("silenceOverlay").style.display = "flex";
- document.getElementById("silenceText").innerText = "Stay still. Control attention. Breathe.";
-
- let breathInterval = getBreathInterval(level);
-
- silenceTimer = setInterval(()=>{
-  silenceTime--;
-  document.getElementById("silence").innerText = "Silence: " + silenceTime + "s";
-
-  if(silenceTime % Math.floor(breathInterval/1000) === 0){
-    playBreathCue(level);
-  }
-
-  if(silenceTime <= 0){
-    clearInterval(silenceTimer);
-    silenceActive = false;
-    document.getElementById("silence").innerText = "Silence complete";
-    rewardPlayer();
-    document.getElementById("silenceOverlay").style.display = "none";
-  }
- },1000);
+function speak(t){
+let m=new SpeechSynthesisUtterance(t);
+m.lang=lang==="en"?"en-US":"es-ES";
+m.rate=0.85;
+m.pitch=0.8;
+speechSynthesis.speak(m);
 }
 
-function playBreathCue(level){
- console.log("BREATH FLOW LEVEL " + level + ": IN... HOLD... OUT...");
- if(navigator.vibrate) navigator.vibrate(200);
+function toggleLang(){
+lang=lang==="en"?"es":"en";
+loadMission();
 }
 
-function rewardPlayer(){
- document.body.style.background = "#003300";
- setTimeout(()=>document.body.style.background="#000",2000);
+async function loadMission(){
+let res=await fetch(`/api/mission/${mission}`);
+if(!res.ok)return;
+let m=await res.json();
+
+// 🔥 EXTRAER FLOATING WORDS DEL JSON
+if(m.ui && m.ui.floating_words){
+floatingWords = m.ui.floating_words;
 }
 
-function penalty(intensity=1){
- document.body.style.background = "#330000";
- setTimeout(()=>document.body.style.background="#000",1500 + intensity*500);
+render(m);
 }
 
-function startMission(){
- startSilence(currentLevel);
+function render(m){
+let story=m.blocks.find(b=>b.type==="story");
+let analysis=m.blocks.find(b=>b.type==="analysis");
+let decision=m.blocks.find(b=>b.type==="decision");
+
+let st=story.text[lang];
+let an=analysis.text[lang];
+
+let sDiv=document.getElementById("story");
+let aDiv=document.getElementById("analysis");
+let oDiv=document.getElementById("options");
+
+sDiv.innerText=st;
+aDiv.innerText="";
+oDiv.innerHTML="";
+
+speak(st);
+
+setTimeout(()=>{
+aDiv.innerText=an;
+speak(an);
+},4000);
+
+setTimeout(()=>{
+createOptions(decision.options);
+},8000);
 }
 
-// =========================
-// NEURO-REACTIVE SYSTEM
-// =========================
+function createOptions(options){
+let oDiv=document.getElementById("options");
+oDiv.innerHTML="";
 
-function triggerViolation(type="interaction"){
- if(!silenceActive) return;
+options.forEach(opt=>{
+let b=document.createElement("button");
+b.innerText=opt.text[lang];
 
- lastInteraction = Date.now();
+b.onclick=()=>{
+handleAnswer(opt.correct,b);
+};
 
- penalty(currentLevel);
-
- document.getElementById("silenceText").innerText = "Violation detected: " + type;
-
- if(silenceTimer){
-  clearInterval(silenceTimer);
-  silenceActive = false;
- }
-}
-
-window.addEventListener("keydown", ()=>triggerViolation("keyboard"));
-window.addEventListener("mousemove", ()=>triggerViolation("mouse"));
-window.addEventListener("touchstart", ()=>triggerViolation("touch"));
-window.addEventListener("scroll", ()=>triggerViolation("scroll"));
-
-document.addEventListener("visibilitychange", ()=>{
- if(document.hidden) triggerViolation("tab switch");
+oDiv.appendChild(b);
 });
+}
 
-// anti-idle detection
+async function handleAnswer(correct,btn){
+let ok=document.getElementById("ok");
+let bad=document.getElementById("bad");
+
+if(correct){
+btn.classList.add("correct");
+ok.play();
+score+=10;
+speak("Correct");
+}else{
+btn.classList.add("wrong");
+bad.play();
+score-=5;
+speak("Wrong choice");
+}
+
+await wait(3000);
+
+mission++;
+if(mission>35)mission=1;
+
+loadMission();
+}
+
+function wait(ms){return new Promise(r=>setTimeout(r,ms));}
+
+function breathing(){
+let b=document.getElementById("breath");
+let grow=true;
 setInterval(()=>{
- if(silenceActive && Date.now() - lastInteraction > 15000){
-  triggerViolation("idle break");
- }
-},5000);
+b.style.transform=grow?"scale(1.5)":"scale(1)";
+grow=!grow;
+},4000);
+}
 
+// 🔥 FLOATING WORDS DINÁMICO DESDE JSON
+function startFloatingSystem(){
+setInterval(()=>{
+if(floatingWords.length===0)return;
+
+let w=document.createElement("div");
+w.className="floating";
+w.style.left=Math.random()*100+"vw";
+w.innerText=floatingWords[Math.floor(Math.random()*floatingWords.length)];
+
+document.body.appendChild(w);
+
+setTimeout(()=>w.remove(),4000);
+},1200);
+}
+
+async function startSilence(){
+speak("Silence challenge started");
+let t=60;
+while(t>0){
+await wait(1000);
+t--;
+}
+speak("Completed");
+}
+
+init();
 </script>
 
 </body>
