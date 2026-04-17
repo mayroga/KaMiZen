@@ -1,154 +1,147 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>KAMIZEN ENGINE</title>
+<title>KAMIZEN KIDS - MATRIX TRAINING</title>
 
 <style>
 body {
-    margin: 0;
-    background: #000;
-    color: #00f2ff;
-    font-family: Arial, sans-serif;
+    margin:0;
+    background:black;
+    color:white;
+    font-family: Arial;
+    text-align:center;
 }
 
-header {
-    padding: 15px;
-    border-bottom: 1px solid #00f2ff;
+#container {
+    padding:20px;
+    max-width:800px;
+    margin:auto;
 }
 
-.container {
-    padding: 20px;
+h1 {
+    color:#00f2ff;
 }
 
 .card {
-    border: 1px solid #00f2ff;
-    padding: 20px;
-    margin-top: 20px;
-    border-radius: 10px;
+    border:1px solid #00f2ff;
+    padding:20px;
+    margin-top:20px;
+    border-radius:10px;
 }
 
 button {
-    margin: 5px;
-    padding: 10px;
-    background: #111;
-    color: #00f2ff;
-    border: 1px solid #00f2ff;
-    cursor: pointer;
+    margin-top:10px;
+    padding:10px;
+    border:none;
+    background:#00f2ff;
+    cursor:pointer;
+    font-weight:bold;
 }
 
-button:hover {
-    background: #00f2ff;
-    color: #000;
+.word {
+    position:absolute;
+    color:#00f2ff;
+    font-size:14px;
+    opacity:0.4;
+    animation: float 6s infinite linear;
+}
+
+@keyframes float {
+    from { transform: translateY(100vh); }
+    to { transform: translateY(-10vh); }
 }
 </style>
 </head>
 
 <body>
 
-<header>
-    <h2>🧠 KAMIZEN ENGINE v1</h2>
-</header>
-
-<div class="container">
-    <div id="app"></div>
+<div id="container">
+    <h1>KAMIZEN MATRIX TRAINING</h1>
+    <div id="mission"></div>
+    <button onclick="nextMission()">NEXT</button>
 </div>
 
 <script>
 
-// ============================
-// LOAD STATE FROM MAIN.PY
-// ============================
-async function getState() {
-    const res = await fetch("/api/state");
-    return await res.json();
-}
+let currentMission = 1;
 
-// ============================
-// START GAME
-// ============================
-async function startGame() {
-    await fetch("/api/start", { method: "POST" });
-    render();
-}
+// =========================
+// LOAD MISSION
+// =========================
+async function loadMission(id) {
+    let res = await fetch(`/api/mission/${id}`);
+    let data = await res.json();
 
-// ============================
-// NEXT BLOCK
-// ============================
-async function nextBlock() {
-    await fetch("/api/next", { method: "POST" });
-    render();
-}
-
-// ============================
-// ANSWER TVID
-// ============================
-async function answer(code) {
-    const res = await fetch("/api/answer", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code })
-    });
-
-    const data = await res.json();
-
-    if (data.correct) {
-        alert("✔ Correcto");
-    } else {
-        alert("❌ Incorrecto");
-    }
-}
-
-// ============================
-// RENDER ENGINE (NO LOGIC HERE)
-// ============================
-async function render() {
-    const data = await getState();
-    const block = data.block;
-
-    const app = document.getElementById("app");
-
-    if (!block) {
-        app.innerHTML = "<h2>🎉 FIN DEL JUEGO</h2>";
+    if (data.error) {
+        document.getElementById("mission").innerHTML = "MISSION NOT FOUND";
         return;
     }
 
-    let html = `<div class="card">`;
+    render(data);
+}
 
-    html += `<h3>${block.type.toUpperCase()}</h3>`;
+// =========================
+// RENDER MISSION
+// =========================
+function render(m) {
+    let html = `
+        <div class="card">
+            <h2>LEVEL ${m.level} - ${m.theme}</h2>
+    `;
 
-    // TEXT BLOCK
-    if (block.text) {
-        html += `<p>${block.text.en || ""}</p>`;
-    }
+    m.blocks.forEach(b => {
+        if (b.type === "story" || b.type === "analysis") {
+            html += `<p>${b.text.en}</p>`;
+        }
 
-    // GUIDE (breathing / instructions)
-    if (block.guide) {
-        html += `<p>🎯 ${block.guide.en}</p>`;
-    }
-
-    // OPTIONS (TVID SYSTEM)
-    if (block.options) {
-        block.options.forEach(opt => {
-            html += `
-                <button onclick="answer('${opt.code}')">
-                    ${opt.text.en}
-                </button>
-            `;
-        });
-    }
-
-    html += `<br><br><button onclick="nextBlock()">NEXT ▶</button>`;
+        if (b.type === "decision") {
+            b.options.forEach(opt => {
+                html += `<button onclick="choose('${opt.code}', ${opt.correct})">${opt.text.en}</button><br>`;
+            });
+        }
+    });
 
     html += `</div>`;
 
-    app.innerHTML = html;
+    document.getElementById("mission").innerHTML = html;
 }
 
-// ============================
+// =========================
+// DECISION
+// =========================
+function choose(code, correct) {
+    alert(correct ? "✔ GOOD CHOICE" : "✘ TRY AGAIN");
+}
+
+// =========================
+// NEXT MISSION (LOOP 1-35)
+// =========================
+async function nextMission() {
+    let res = await fetch(`/api/next/${currentMission}`);
+    let data = await res.json();
+
+    currentMission = data.next;
+    loadMission(currentMission);
+}
+
 // INIT
-// ============================
-startGame();
+loadMission(currentMission);
+
+// =========================
+// FLOATING WORDS (MATRIX UI)
+// =========================
+const words = ["FOCUS","CALM","CONTROL","BREATH","PAUSE","LEAD"];
+
+setInterval(() => {
+    let w = document.createElement("div");
+    w.className = "word";
+    w.innerText = words[Math.floor(Math.random()*words.length)];
+    w.style.left = Math.random()*100 + "vw";
+    document.body.appendChild(w);
+
+    setTimeout(()=>w.remove(), 6000);
+}, 800);
 
 </script>
 
