@@ -3,40 +3,12 @@
   "chapter": 1,
   "range": "1-7",
   "ui": {
-    "floating_words": [
-      "FOCUS", "CALM", "BREATH", "ACTION", "STOP", "THINK", "CONTROL"
-    ]
+    "floating_words": ["FOCUS", "CALM", "BREATH", "ACTION", "STOP", "THINK", "CONTROL"]
   },
   "matrix_rules": [
     "1. Observe before reacting",
-    "2. Action creates reality",
-    "3. Thought controls emotion",
     "4. Silence is power",
-    "5. Focus beats distraction",
-    "6. Breath controls mind",
-    "7. Reaction weakens control",
-    "8. Awareness is strength",
-    "9. Calm is intelligence",
     "10. Impulse is not truth",
-    "11. Choice defines identity",
-    "12. Energy follows attention",
-    "13. Stop before emotional action",
-    "14. See patterns, not chaos",
-    "15. Inner voice is guide",
-    "16. Fear is temporary signal",
-    "17. Courage is movement",
-    "18. Truth builds power",
-    "19. Respect creates boundaries",
-    "20. Discipline builds freedom",
-    "21. Small actions shape future",
-    "22. Emotion is data",
-    "23. Pause creates intelligence",
-    "24. Control attention always",
-    "25. Learn from every mistake",
-    "26. Think before speaking",
-    "27. Calm wins conflict",
-    "28. Awareness breaks confusion",
-    "29. Identity is built daily",
     "30. Master yourself first"
   ],
   "missions": [
@@ -49,7 +21,7 @@
           "type": "story",
           "text": {
             "en": "You enter a noisy school hallway. Everything is loud, but something small feels different.",
-            "es": "Entras en un pasillo escolar ruidoso. Todo es caos, pero algo pequeño es diferente."
+            "es": "Entras en un pasillo escolar ruidoso. Todo es caos, pero algo pequeño se siente diferente."
           }
         },
         {
@@ -62,16 +34,10 @@
         {
           "type": "decision",
           "options": [
-            {
-              "code": "IGNORE",
-              "text": { "en": "Ignore everything", "es": "Ignorar todo" },
-              "correct": false
-            },
-            {
-              "code": "OBSERVE",
-              "text": { "en": "Look carefully", "es": "Observar con atención" },
-              "correct": true
-            }
+            { "text": { "en": "Look carefully at surroundings", "es": "Observar con atención" }, "correct": true, "explanation": { "en": "Scanning the environment lets you see the exit before the chaos starts.", "es": "Escanear el entorno te permite ver la salida antes de que empiece el caos." } },
+            { "text": { "en": "Ignore and keep walking", "es": "Ignorar y seguir caminando" }, "correct": false, "explanation": { "en": "Ignoring signs makes you a target for the unexpected.", "es": "Ignorar las señales te convierte en un blanco para lo inesperado." } },
+            { "text": { "en": "Run through the hallway", "es": "Correr por el pasillo" }, "correct": false, "explanation": { "en": "Running without looking is moving blind. Blindness is weakness.", "es": "Correr sin mirar es moverte a ciegas. La ceguera es debilidad." } },
+            { "text": { "en": "Close your eyes", "es": "Cerrar los ojos" }, "correct": false, "explanation": { "en": "Fear makes you close your eyes; power keeps them open.", "es": "El miedo te hace cerrar los ojos; el poder los mantiene abiertos." } }
           ]
         }
       ]
@@ -84,8 +50,8 @@
         {
           "type": "story",
           "text": {
-            "en": "Something small happens, but your feelings become very strong.",
-            "es": "Algo pequeño sucede, pero tus emociones se vuelven muy fuertes."
+            "en": "Someone bumps into you on purpose. Your face feels hot.",
+            "es": "Alguien te empuja a propósito. Sientes que tu cara se calienta."
           }
         },
         {
@@ -98,16 +64,10 @@
         {
           "type": "decision",
           "options": [
-            {
-              "code": "REACT",
-              "text": { "en": "React fast", "es": "Reaccionar rápido" },
-              "correct": false
-            },
-            {
-              "code": "PAUSE",
-              "text": { "en": "Pause and breathe", "es": "Pausar y respirar" },
-              "correct": true
-            }
+            { "text": { "en": "Pause and breathe", "es": "Pausar y respirar" }, "correct": true, "explanation": { "en": "Breathing reclaims your energy. You control the situation now.", "es": "Respirar recupera tu energía. Ahora tú controlas la situación." } },
+            { "text": { "en": "Push them back immediately", "es": "Empujar de vuelta de inmediato" }, "correct": false, "explanation": { "en": "Reacting fast is giving your power to the other person.", "es": "Reaccionar rápido es regalarle tu poder a la otra persona." } },
+            { "text": { "en": "Scream at them", "es": "Gritarles" }, "correct": false, "explanation": { "en": "Noise is not power. Silence is much more intimidating.", "es": "El ruido no es poder. El silencio es mucho más intimidante." } },
+            { "text": { "en": "Walk away crying", "es": "Irse llorando" }, "correct": false, "explanation": { "en": "Control your exit. Walk away in calm, not in defeat.", "es": "Controla tu salida. Aléjate con calma, no derrotado." } }
           ]
         }
       ]
@@ -120,30 +80,24 @@
         {
           "type": "story",
           "text": {
-            "en": "You must choose between something easy now or something better later.",
-            "es": "Debes elegir entre algo fácil ahora o algo mejor después."
+            "en": "You have money for a healthy meal, but you see a giant bag of candy.",
+            "es": "Tienes dinero para una comida sana, pero ves una bolsa gigante de dulces."
           }
         },
         {
           "type": "analysis",
           "text": {
-            "en": "Small choices build your future.",
-            "es": "Las pequeñas decisiones construyen tu futuro."
+            "en": "Small choices build your future strength.",
+            "es": "Las pequeñas decisiones construyen tu fuerza futura."
           }
         },
         {
           "type": "decision",
           "options": [
-            {
-              "code": "EASY",
-              "text": { "en": "Easy now", "es": "Fácil ahora" },
-              "correct": false
-            },
-            {
-              "code": "SMART",
-              "text": { "en": "Smart future choice", "es": "Elección inteligente" },
-              "correct": true
-            }
+            { "text": { "en": "Buy the healthy meal", "es": "Comprar comida sana" }, "correct": true, "explanation": { "en": "Fueling your body right makes your brain faster than the rest.", "es": "Alimentar bien tu cuerpo hace que tu cerebro sea más rápido que el resto." } },
+            { "text": { "en": "Buy all the candy", "es": "Comprar todos los dulces" }, "correct": false, "explanation": { "en": "Sugar gives a fake peak followed by a crash. Don't be weak.", "es": "El azúcar da un pico falso seguido de una caída. No seas débil." } },
+            { "text": { "en": "Don't eat anything", "es": "No comer nada" }, "correct": false, "explanation": { "en": "An empty tank can't win a race. Discipline needs fuel.", "es": "Un tanque vacío no gana carreras. La disciplina necesita combustible." } },
+            { "text": { "en": "Ask someone for more money", "es": "Pedir más dinero a alguien" }, "correct": false, "explanation": { "en": "Dependency is a cage. Manage what you have.", "es": "La dependencia es una jaula. Administra lo que tienes." } }
           ]
         }
       ]
@@ -156,30 +110,24 @@
         {
           "type": "story",
           "text": {
-            "en": "Friends want you to do something you feel is wrong.",
-            "es": "Tus amigos quieren que hagas algo que sientes que está mal."
+            "en": "The 'cool' kids are laughing at a smaller student and want you to join.",
+            "es": "Los chicos 'populares' se burlan de un estudiante pequeño y quieren que te unas."
           }
         },
         {
           "type": "analysis",
           "text": {
-            "en": "True strength is saying no calmly.",
-            "es": "La verdadera fuerza es decir no con calma."
+            "en": "True strength is staying individual when the group is wrong.",
+            "es": "La verdadera fuerza es ser individual cuando el grupo se equivoca."
           }
         },
         {
           "type": "decision",
           "options": [
-            {
-              "code": "FOLLOW",
-              "text": { "en": "Follow group", "es": "Seguir al grupo" },
-              "correct": false
-            },
-            {
-              "code": "STAND",
-              "text": { "en": "Stand calm", "es": "Mantenerse firme" },
-              "correct": true
-            }
+            { "text": { "en": "Stay calm and walk away", "es": "Mantener calma e irse" }, "correct": true, "explanation": { "en": "Not joining shows you don't need their approval to feel powerful.", "es": "No unirte muestra que no necesitas su aprobación para sentirte poderoso." } },
+            { "text": { "en": "Laugh with them", "es": "Reírse con ellos" }, "correct": false, "explanation": { "en": "Following the pack makes you a sheep, not a leader.", "es": "Seguir a la manada te hace una oveja, no un líder." } },
+            { "text": { "en": "Film it with your phone", "es": "Grabar con el teléfono" }, "correct": false, "explanation": { "en": "Recording cruelty is participating in it. High risk, zero honor.", "es": "Grabar la crueldad es participar en ella. Alto riesgo, cero honor." } },
+            { "text": { "en": "Start an argument", "es": "Empezar una discusión" }, "correct": false, "explanation": { "en": "Don't waste energy on noise. Silence speaks louder.", "es": "No gastes energía en ruido. El silencio habla más fuerte." } }
           ]
         }
       ]
@@ -192,30 +140,24 @@
         {
           "type": "story",
           "text": {
-            "en": "Many distractions try to steal your attention.",
-            "es": "Muchas distracciones intentan robar tu atención."
+            "en": "You are studying and your phone keeps buzzing with notifications.",
+            "es": "Estás estudiando y tu teléfono no deja de vibrar con notificaciones."
           }
         },
         {
           "type": "analysis",
           "text": {
-            "en": "Focus is a superpower you train.",
-            "es": "El enfoque es un superpoder que entrenas."
+            "en": "Focus is a superpower you must protect.",
+            "es": "El enfoque es un superpoder que debes proteger."
           }
         },
         {
           "type": "decision",
           "options": [
-            {
-              "code": "MULTI",
-              "text": { "en": "Do many things", "es": "Hacer muchas cosas" },
-              "correct": false
-            },
-            {
-              "code": "FOCUS",
-              "text": { "en": "One thing only", "es": "Una sola cosa" },
-              "correct": true
-            }
+            { "text": { "en": "Put phone in another room", "es": "Poner el móvil en otra habitación" }, "correct": true, "explanation": { "en": "If you don't see the distraction, it doesn't exist for your brain.", "es": "Si no ves la distracción, no existe para tu cerebro." } },
+            { "text": { "en": "Check notifications fast", "es": "Mirar las notificaciones rápido" }, "correct": false, "explanation": { "en": "Every 'quick' check resets your brain's focus timer.", "es": "Cada mirada 'rápida' reinicia el cronómetro de enfoque de tu cerebro." } },
+            { "text": { "en": "Use phone while studying", "es": "Usar el móvil mientras estudias" }, "correct": false, "explanation": { "en": "Multitasking is a lie. You are just doing two things badly.", "es": "La multitarea es una mentira. Solo haces dos cosas mal." } },
+            { "text": { "en": "Turn off only the sound", "es": "Apagar solo el sonido" }, "correct": false, "explanation": { "en": "The light of the screen is enough to steal your focus.", "es": "La luz de la pantalla es suficiente para robarte el enfoque." } }
           ]
         }
       ]
@@ -228,30 +170,24 @@
         {
           "type": "story",
           "text": {
-            "en": "Someone is only your friend when they need something.",
-            "es": "Alguien solo es tu amigo cuando necesita algo."
+            "en": "A friend asks to 'borrow' money again but never pays back.",
+            "es": "Un amigo pide dinero 'prestado' otra vez pero nunca lo devuelve."
           }
         },
         {
           "type": "analysis",
           "text": {
-            "en": "Actions show real friendship.",
-            "es": "Las acciones muestran la verdadera amistad."
+            "en": "Patterns are more important than promises.",
+            "es": "Los patrones son más importantes que las promesas."
           }
         },
         {
           "type": "decision",
           "options": [
-            {
-              "code": "IGNORE",
-              "text": { "en": "Ignore signs", "es": "Ignorar señales" },
-              "correct": false
-            },
-            {
-              "code": "OBSERVE",
-              "text": { "en": "Watch behavior", "es": "Observar comportamiento" },
-              "correct": true
-            }
+            { "text": { "en": "Say no firmly and calmly", "es": "Decir no con firmeza y calma" }, "correct": true, "explanation": { "en": "Setting boundaries is how you earn respect in the street.", "es": "Poner límites es como te ganas el respeto en la calle." } },
+            { "text": { "en": "Lend it one last time", "es": "Prestarlo una última vez" }, "correct": false, "explanation": { "en": "Giving in to patterns teaches people they can use you.", "es": "Ceder ante los patrones enseña a la gente que pueden usarte." } },
+            { "text": { "en": "Get angry and fight", "es": "Enojarse y pelear" }, "correct": false, "explanation": { "en": "Anger shows you are hurt. Calm shows you are in control.", "es": "La ira muestra que estás dolido. La calma muestra control." } },
+            { "text": { "en": "Make up a lie to say no", "es": "Inventar una mentira para decir no" }, "correct": false, "explanation": { "en": "Lying is for the weak. The truth is your shield.", "es": "Mentir es para los débiles. La verdad es tu escudo." } }
           ]
         }
       ]
@@ -264,30 +200,24 @@
         {
           "type": "story",
           "text": {
-            "en": "Someone makes you angry in front of others.",
-            "es": "Alguien te hace enojar delante de otros."
+            "en": "Someone tells a lie about you and everyone is looking.",
+            "es": "Alguien dice una mentira sobre ti y todos te están mirando."
           }
         },
         {
           "type": "analysis",
           "text": {
-            "en": "Staying calm gives you power.",
-            "es": "Mantener la calma te da poder."
+            "en": "Your reaction defines the truth for others.",
+            "es": "Tu reacción define la verdad para los demás."
           }
         },
         {
           "type": "decision",
           "options": [
-            {
-              "code": "EXPLODE",
-              "text": { "en": "Get angry", "es": "Enojarse" },
-              "correct": false
-            },
-            {
-              "code": "CALM",
-              "text": { "en": "Stay calm", "es": "Mantener calma" },
-              "correct": true
-            }
+            { "text": { "en": "Keep a neutral face and wait", "es": "Cara neutral y esperar" }, "correct": true, "explanation": { "en": "Chaos hates silence. By staying calm, you make the liar look crazy.", "es": "Al caos le molesta el silencio. Al seguir calmado, el mentiroso parece loco." } },
+            { "text": { "en": "Scream that it's a lie", "es": "Gritar que es mentira" }, "correct": false, "explanation": { "en": "Desperation looks like guilt. Control your voice.", "es": "La desesperación parece culpa. Controla tu voz." } },
+            { "text": { "en": "Attack the person", "es": "Atacar a la persona" }, "correct": false, "explanation": { "en": "Violence is the last refuge of the incompetent.", "es": "La violencia es el último refugio del incompetente." } },
+            { "text": { "en": "Run away and hide", "es": "Correr y esconderse" }, "correct": false, "explanation": { "en": "Running makes the lie feel real. Stand your ground in silence.", "es": "Correr hace que la mentira parezca real. Mantente firme en silencio." } }
           ]
         }
       ]
