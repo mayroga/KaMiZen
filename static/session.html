@@ -1,55 +1,40 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>KAMIZEN KIDS - MATRIX TRAINING</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KAMIZEN SESSION</title>
 
 <style>
 body {
-    margin:0;
-    background:black;
-    color:white;
-    font-family: Arial;
-    text-align:center;
+    margin: 0;
+    background: #000;
+    color: #00f2ff;
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
 }
 
 #container {
-    padding:20px;
-    max-width:800px;
-    margin:auto;
-}
-
-h1 {
-    color:#00f2ff;
-}
-
-.card {
-    border:1px solid #00f2ff;
-    padding:20px;
-    margin-top:20px;
-    border-radius:10px;
+    max-width: 700px;
+    text-align: center;
 }
 
 button {
-    margin-top:10px;
-    padding:10px;
-    border:none;
-    background:#00f2ff;
-    cursor:pointer;
-    font-weight:bold;
+    margin: 10px;
+    padding: 10px 20px;
+    background: #00f2ff;
+    border: none;
+    color: #000;
+    cursor: pointer;
+    font-weight: bold;
 }
 
-.word {
-    position:absolute;
-    color:#00f2ff;
-    font-size:14px;
-    opacity:0.4;
-    animation: float 6s infinite linear;
-}
-
-@keyframes float {
-    from { transform: translateY(100vh); }
-    to { transform: translateY(-10vh); }
+button:hover {
+    background: #00c0cc;
 }
 </style>
 </head>
@@ -57,91 +42,110 @@ button {
 <body>
 
 <div id="container">
-    <h1>KAMIZEN MATRIX TRAINING</h1>
-    <div id="mission"></div>
-    <button onclick="nextMission()">NEXT</button>
+    <h1 id="theme"></h1>
+    <p id="text"></p>
+    <div id="options"></div>
 </div>
 
 <script>
-
-let currentMission = 1;
+let currentMission = 1
+let currentBlock = 0
+let blocks = []
 
 // =========================
-// LOAD MISSION
+// LOAD MISSION (RAW)
 // =========================
 async function loadMission(id) {
-    let res = await fetch(`/api/mission/${id}`);
-    let data = await res.json();
+    try {
+        const res = await fetch(`/api/mission/${id}`)
+        const data = await res.json()
 
-    if (data.error) {
-        document.getElementById("mission").innerHTML = "MISSION NOT FOUND";
-        return;
+        if (data.error) {
+            document.getElementById("text").innerText = data.error
+            return
+        }
+
+        blocks = data.blocks || []
+        currentBlock = 0
+
+        document.getElementById("theme").innerText = data.theme || ""
+
+        renderBlock()
+
+    } catch (e) {
+        document.getElementById("text").innerText = "Error cargando misión"
+    }
+}
+
+// =========================
+// RENDER BLOCK (GENÉRICO)
+// =========================
+function renderBlock() {
+    const block = blocks[currentBlock]
+    if (!block) return
+
+    const textEl = document.getElementById("text")
+    const optionsEl = document.getElementById("options")
+
+    optionsEl.innerHTML = ""
+
+    // TEXTO (EN / ES automático)
+    if (block.text) {
+        textEl.innerText = block.text.es || block.text.en || ""
     }
 
-    render(data);
+    // DECISION
+    if (block.type === "decision") {
+        block.options.forEach(opt => {
+            const btn = document.createElement("button")
+            btn.innerText = opt.text.es || opt.text.en
+
+            btn.onclick = () => {
+                nextBlock()
+            }
+
+            optionsEl.appendChild(btn)
+        })
+    } else {
+        // AUTO NEXT
+        setTimeout(nextBlock, 2000)
+    }
 }
 
 // =========================
-// RENDER MISSION
+// NEXT BLOCK
 // =========================
-function render(m) {
-    let html = `
-        <div class="card">
-            <h2>LEVEL ${m.level} - ${m.theme}</h2>
-    `;
+function nextBlock() {
+    currentBlock++
 
-    m.blocks.forEach(b => {
-        if (b.type === "story" || b.type === "analysis") {
-            html += `<p>${b.text.en}</p>`;
-        }
-
-        if (b.type === "decision") {
-            b.options.forEach(opt => {
-                html += `<button onclick="choose('${opt.code}', ${opt.correct})">${opt.text.en}</button><br>`;
-            });
-        }
-    });
-
-    html += `</div>`;
-
-    document.getElementById("mission").innerHTML = html;
+    if (currentBlock >= blocks.length) {
+        nextMission()
+    } else {
+        renderBlock()
+    }
 }
 
 // =========================
-// DECISION
-// =========================
-function choose(code, correct) {
-    alert(correct ? "✔ GOOD CHOICE" : "✘ TRY AGAIN");
-}
-
-// =========================
-// NEXT MISSION (LOOP 1-35)
+// NEXT MISSION
 // =========================
 async function nextMission() {
-    let res = await fetch(`/api/next/${currentMission}`);
-    let data = await res.json();
+    try {
+        const res = await fetch(`/api/next/${currentMission}`)
+        const data = await res.json()
 
-    currentMission = data.next;
-    loadMission(currentMission);
+        currentMission = data.next
+
+        loadMission(currentMission)
+
+    } catch (e) {
+        document.getElementById("text").innerText = "Error avanzando"
+    }
 }
 
-// INIT
-loadMission(currentMission);
-
 // =========================
-// FLOATING WORDS (MATRIX UI)
+// START
 // =========================
-const words = ["FOCUS","CALM","CONTROL","BREATH","PAUSE","LEAD"];
-
-setInterval(() => {
-    let w = document.createElement("div");
-    w.className = "word";
-    w.innerText = words[Math.floor(Math.random()*words.length)];
-    w.style.left = Math.random()*100 + "vw";
-    document.body.appendChild(w);
-
-    setTimeout(()=>w.remove(), 6000);
-}, 800);
+loadMission(currentMission)
 
 </script>
 
