@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KAMIZEN EXPERIENCE FLOW</title>
+<title>KAMIZEN ENGINE v3</title>
 
 <style>
 body{
@@ -20,22 +20,25 @@ body{
     flex-direction:column;
     justify-content:center;
     align-items:center;
-    gap:20px;
+    gap:18px;
     padding:20px;
     box-sizing:border-box;
 }
 
+/* MAIN TEXT PANEL */
 #message{
-    max-width:800px;
+    max-width:850px;
     min-height:160px;
     padding:20px;
     border:1px solid #00f2ff;
     background:rgba(0,10,20,0.9);
     text-align:center;
     font-size:22px;
-    line-height:1.4;
+    line-height:1.5;
+    transition:all 0.3s ease;
 }
 
+/* BREATH VISUAL */
 #circle{
     width:120px;
     height:120px;
@@ -45,31 +48,39 @@ body{
     display:none;
 }
 
+/* OPTIONS PANEL */
 #options{
     display:none;
     flex-direction:column;
     gap:10px;
     width:100%;
-    max-width:500px;
+    max-width:520px;
 }
 
 button{
-    padding:16px;
+    padding:14px;
     border:1px solid #00f2ff;
     background:transparent;
     color:#00f2ff;
     cursor:pointer;
     font-size:16px;
+    transition:0.2s;
+}
+
+button:hover{
+    transform:scale(1.02);
 }
 
 .correct{background:#00ff88;color:#000;}
 .wrong{background:#ff3355;color:#fff;}
 
+/* TIMER */
 #timer{
     font-size:18px;
     opacity:0.7;
 }
 
+/* TOP BAR */
 #top{
     position:absolute;
     top:10px;
@@ -77,6 +88,13 @@ button{
     display:flex;
     justify-content:space-between;
     padding:0 10px;
+}
+
+#state{
+    position:absolute;
+    bottom:10px;
+    font-size:12px;
+    opacity:0.5;
 }
 </style>
 </head>
@@ -90,27 +108,32 @@ button{
 <button onclick="restart()">RESTART</button>
 </div>
 
-<div id="message">TOUCH TO START</div>
+<div id="message">CLICK TO START</div>
 <div id="circle"></div>
 <div id="timer"></div>
 <div id="options"></div>
+
+<div id="state"></div>
 
 </div>
 
 <script>
 
 /* =========================
-   SAFE STATE ENGINE v2
+   ENGINE STATE v3
 ========================= */
 let session_id = null;
 let lang = "en";
-let current = null;
 
 let locked = false;
-let timerInterval = null;
+let current_block = null;
+
+let timerRef = null;
+let state = "idle"; 
+// idle | story | breath | choice | wait | end
 
 /* =========================
-   SPEECH ENGINE SAFE
+   SAFE SPEECH ENGINE
 ========================= */
 function speak(text){
     return new Promise(resolve=>{
@@ -138,12 +161,13 @@ async function start(){
     locked = true;
 
     try{
+
         const res = await fetch("/start",{method:"POST"});
         const data = await res.json();
 
         session_id = data.session_id;
 
-        await run(data.story);
+        await render(data.story);
 
     }finally{
         locked = false;
@@ -151,40 +175,48 @@ async function start(){
 }
 
 /* =========================
-   CORE RUNNER (FIXED FLOW)
+   MAIN RENDER ENGINE
 ========================= */
-async function run(block){
+async function render(block){
 
     if(!block || locked) return;
     locked = true;
 
     try{
 
-        current = block;
+        current_block = block;
 
         hideOptions();
         clearTimer();
+
+        setState("story");
 
         const text =
             block.text?.[lang] ||
             block.analysis?.[lang] ||
             "";
 
-        document.getElementById("message").innerText = text;
-
+        setMessage(text);
         await speak(text);
 
+        /* =========================
+           FLOW ROUTING SYSTEM
+        ========================= */
+
         if(block.type === "tvid"){
+            setState("choice");
             showOptions(block);
             return;
         }
 
         if(block.type === "breath_focus"){
-            await breath(block.duration_sec);
+            setState("breath");
+            await breath(block.duration_sec || 30);
         }
 
         if(block.type === "riso_tvid" || block.type === "silence_challenge"){
-            await timer(block.duration_sec);
+            setState("wait");
+            await timer(block.duration_sec || 20);
         }
 
         await next();
@@ -197,7 +229,7 @@ async function run(block){
 }
 
 /* =========================
-   OPTIONS SYSTEM
+   OPTIONS SYSTEM (TVID)
 ========================= */
 function showOptions(block){
 
@@ -205,10 +237,10 @@ function showOptions(block){
     box.style.display = "flex";
     box.innerHTML = "";
 
-    block.options.forEach(o=>{
+    block.options.forEach(opt=>{
 
         const b = document.createElement("button");
-        b.innerText = o.text?.[lang] || "";
+        b.innerText = opt.text?.[lang] || "";
 
         b.onclick = async ()=>{
 
@@ -217,24 +249,26 @@ function showOptions(block){
 
             try{
 
+                disableOptions();
+
                 const res = await fetch("/judge",{
                     method:"POST",
                     headers:{"Content-Type":"application/json"},
                     body:JSON.stringify({
                         session_id,
-                        decision:o.code
+                        decision:opt.code
                     })
                 });
 
                 const data = await res.json();
 
                 if(data.feedback){
-                    await show(data.feedback.reason?.[lang]);
+                    await setMessage(data.feedback.reason?.[lang] || "");
                 }
 
-                b.className = o.correct ? "correct" : "wrong";
+                b.classList.add(opt.correct ? "correct" : "wrong");
 
-                setTimeout(()=> run(data.story), 500);
+                setTimeout(()=> render(data.story), 600);
 
             }finally{
                 locked = false;
@@ -246,9 +280,11 @@ function showOptions(block){
 }
 
 /* =========================
-   NEXT FLOW FIXED
+   NEXT FLOW
 ========================= */
 async function next(){
+
+    setState("wait");
 
     const res = await fetch("/judge",{
         method:"POST",
@@ -261,13 +297,14 @@ async function next(){
 
     const data = await res.json();
 
-    await run(data.story);
+    await render(data.story);
 }
 
 /* =========================
-   BREATH ENGINE
+   BREATH SYSTEM
 ========================= */
 function breath(sec){
+
     return new Promise(res=>{
 
         const c = document.getElementById("circle");
@@ -278,20 +315,21 @@ function breath(sec){
         const i = setInterval(()=>{
             c.style.transform = grow ? "scale(2)" : "scale(1)";
             grow = !grow;
-        }, 2000);
+        }, 1800);
 
         setTimeout(()=>{
             clearInterval(i);
             c.style.display = "none";
             res();
-        }, sec*1000);
+        }, sec * 1000);
     });
 }
 
 /* =========================
-   TIMER
+   TIMER SYSTEM
 ========================= */
 function timer(sec){
+
     return new Promise(res=>{
 
         const t = document.getElementById("timer");
@@ -299,14 +337,14 @@ function timer(sec){
 
         t.innerText = s;
 
-        timerInterval = setInterval(()=>{
+        timerRef = setInterval(()=>{
 
             s--;
             t.innerText = s;
 
             if(s <= 0){
-                clearInterval(timerInterval);
-                timerInterval = null;
+                clearInterval(timerRef);
+                timerRef = null;
                 t.innerText = "";
                 res();
             }
@@ -316,35 +354,52 @@ function timer(sec){
 }
 
 function clearTimer(){
-    if(timerInterval){
-        clearInterval(timerInterval);
-        timerInterval = null;
+    if(timerRef){
+        clearInterval(timerRef);
+        timerRef = null;
     }
     document.getElementById("timer").innerText = "";
 }
 
 /* =========================
-   UI HELPERS
+   UI CORE
 ========================= */
+function setMessage(text){
+    document.getElementById("message").innerText = text;
+}
+
 function hideOptions(){
     document.getElementById("options").style.display = "none";
 }
 
-async function show(text){
-    document.getElementById("message").innerText = text;
-    await speak(text);
+function disableOptions(){
+    const btns = document.querySelectorAll("#options button");
+    btns.forEach(b=>b.disabled = true);
 }
 
+/* =========================
+   STATE VISUAL DEBUG
+========================= */
+function setState(s){
+    state = s;
+    document.getElementById("state").innerText = "STATE: " + s;
+}
+
+/* =========================
+   CONTROLS
+========================= */
 function restart(){
     location.reload();
 }
 
 function toggleLang(){
     lang = lang === "en" ? "es" : "en";
-    if(current) run(current);
+    if(current_block) render(current_block);
 }
 
-/* INIT */
+/* =========================
+   INIT
+========================= */
 document.getElementById("message").onclick = start;
 
 </script>
