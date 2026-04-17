@@ -7,136 +7,95 @@
 const AuraEngine = (() => {
 
     // ==========================================
-    // 📊 ESTADO GLOBAL (Single Source of Truth)
+    // 📊 ESTADO GLOBAL
     // ==========================================
     const state = {
         score: 0,
         level: 1,
-        energy: 100,
-        lang: "en", // Default: English
+        lang: "en", // Default Inglés
         mission: null,
         locked: false,
         silenceActive: false,
         paused: false,
-        // Configuración de tiempos según nivel
-        silenceDuration: 20, 
+        playerName: "",
+        heroName: "",
+        silenceTime: 180, 
         sounds: {
-            win: new Audio('/assets/sounds/lottery_win.mp3'),
-            fail: new Audio('/assets/sounds/glass_break.mp3'),
-            ambient: new Audio('/assets/sounds/matrix_ambient.mp3')
+            win: document.getElementById("ok"),
+            fail: document.getElementById("bad"),
+            ambient: document.getElementById("bg")
         }
     };
 
-    // ==========================================
-    // 🔒 SISTEMA DE CONTROL DE FLUJO (LOCK)
-    // ==========================================
     const Lock = {
-        on() { state.locked = true; document.body.style.pointerEvents = "none"; },
-        off() { state.locked = false; document.body.style.pointerEvents = "auto"; },
+        on() { state.locked = true; },
+        off() { state.locked = false; },
         is() { return state.locked; }
     };
 
     // ==========================================
-    // 🔊 AUDIO & DOPAMINA (AURA EDITION)
-    // ==========================================
-    const AudioSystem = {
-        init() {
-            state.sounds.ambient.loop = true;
-            state.sounds.ambient.volume = 0.3;
-            this.playAmbient();
-        },
-        playAmbient() {
-            state.sounds.ambient.play().catch(() => {
-                console.log("Interacción requerida para audio.");
-            });
-        },
-        playEffect(type) {
-            if (type === 'win') {
-                state.sounds.win.currentTime = 0;
-                state.sounds.win.play();
-            } else if (type === 'fail') {
-                state.sounds.fail.currentTime = 0;
-                state.sounds.fail.play();
-            }
-        }
-    };
-
-    // ==========================================
-    // 🗣️ MOTOR DE VOZ (BILINGÜE OBLIGATORIO)
+    // 🗣️ MOTOR DE VOZ
     // ==========================================
     const Speech = {
         say(text) {
-            window.speechSynthesis.cancel(); // Detener previa
+            if (!text) return;
+            window.speechSynthesis.cancel();
             const u = new SpeechSynthesisUtterance(text);
             u.lang = state.lang === "en" ? "en-US" : "es-ES";
-            u.rate = 0.9; // Ritmo profesional
+            u.rate = 0.9;
             window.speechSynthesis.speak(u);
         }
     };
 
     // ==========================================
-    // 🧘 NEURO-SILENCE PROGRESIVO & RESPIRACIÓN
+    // 📂 MOTOR DE MISIONES
     // ==========================================
-    const SilenceReto = {
-        getDuration(level) {
-            // Regla: 1-6 bloques (20s a 60s), 7+ bloques (3min a 20min)
-            if (level <= 6) return 20 + (level - 1) * 8; 
-            return Math.min(180 + (level - 7) * 60, 1200); 
+    const Mission = {
+        async loadNext() {
+            try {
+                // Ajustado para llamar a tu API actual de misiones
+                const res = await fetch(`/api/mission/${state.level}`);
+                if (!res.ok) {
+                    state.level = 1;
+                    this.loadNext();
+                    return;
+                }
+                const data = await res.json();
+                state.mission = data;
+                this.render(data);
+            } catch (e) {
+                console.error("Error cargando misión. Usando respaldo...");
+                UI.setText("story-box", "Error connecting to Mission Control.");
+            }
         },
+        render(m) {
+            const story = m.blocks.find(b => b.type === "story").text[state.lang];
+            const analysis = m.blocks.find(b => b.type === "analysis") ? m.blocks.find(b => b.type === "analysis").text[state.lang] : "";
+            const decision = m.blocks.find(b => b.type === "decision");
 
-        async start() {
-            if (Lock.is() || state.silenceActive) return;
-            
-            state.silenceActive = true;
-            UI.toggleBreathing(true);
+            UI.setText("story-box", story);
+            UI.setText("mission-theme", `${state.heroName} | Level ${state.level}`);
             UI.clearOptions();
+            Speech.say(story);
 
-            const duration = this.getDuration(state.level);
-            let timeLeft = duration;
-
-            const protocols = {
-                'CALM': { 
-                    en: "Focus: Lowering Cortisol. Benefit: Emotional Control.",
-                    es: "Objetivo: Bajar Cortisol. Beneficio: Control Emocional."
+            // Mostrar análisis después de 3 segundos
+            setTimeout(() => {
+                if (analysis) {
+                    UI.setText("story-box", analysis);
+                    Speech.say(analysis);
                 }
-            };
+            }, 4000);
 
-            Speech.say(state.lang === "en" ? "Silence Challenge Initiated." : "Reto de Silencio Iniciado.");
-            Speech.say(protocols['CALM'][state.lang]);
-
-            const timer = setInterval(() => {
-                if (state.paused) return;
-
-                timeLeft--;
-                UI.updateTimer(timeLeft);
-                UI.animateBreathing(timeLeft);
-
-                // Distracciones aleatorias (The Warrior Distraction System)
-                if (Math.random() > 0.95) triggerDistraction();
-
-                if (timeLeft <= 0 || !state.silenceActive) {
-                    clearInterval(timer);
-                    this.complete();
-                }
-            }, 1000);
-        },
-
-        complete() {
-            state.silenceActive = false;
-            UI.toggleBreathing(false);
-            state.level++;
-            
-            const msg = state.lang === "en" ? 
-                "Challenge completed. Your mind is strengthening." : 
-                "Reto completado. Tu mente se está fortaleciendo.";
-            
-            Speech.say(msg);
-            Mission.loadNext();
+            // Mostrar botones después de 7 segundos
+            setTimeout(() => {
+                UI.renderOptions(decision.options);
+                Lock.off();
+            }, 7500);
         }
     };
 
     // ==========================================
-    // 🎮 MOTOR DE DECISIONES (FEEDBACK & SEMÁFORO)
+    // 🎮 DECISIONES Y FEEDBACK
     // ==========================================
     const Decision = {
         handle(option) {
@@ -144,51 +103,86 @@ const AuraEngine = (() => {
             Lock.on();
 
             const isCorrect = option.correct;
-            const explanation = option.explanation[state.lang];
+            const explanation = option.explanation ? option.explanation[state.lang] : "";
             const signal = document.getElementById('feedback-signal');
 
             if (isCorrect) {
-                AudioSystem.playEffect('win');
+                state.sounds.win.play();
                 signal.className = "semaphore-green";
                 state.score += 100;
             } else {
-                AudioSystem.playEffect('fail');
+                state.sounds.fail.play();
                 signal.className = "semaphore-red";
                 state.score -= 50;
             }
 
             UI.updateScore();
-            UI.showExplanation(explanation);
+            UI.showExplanation(explanation || (isCorrect ? "Correct!" : "Try again"));
             Speech.say(explanation);
 
-            // Esperar a que la voz termine antes de mover el flujo
             setTimeout(() => {
                 signal.className = "semaphore-off";
                 UI.hideExplanation();
-                // El reto de silencio aparece estratégicamente, no al minuto 1
+                state.level++;
+                
+                // Reto de silencio cada 2 niveles o según lógica
                 if (state.level % 2 === 0) {
                     SilenceReto.start();
                 } else {
                     Mission.loadNext();
                 }
-            }, 7000);
+            }, 6000);
         }
     };
 
     // ==========================================
-    // 🎯 SISTEMA DE DISPARO A PALABRAS (DOPAMINA)
+    // 🧘 RETO DE SILENCIO
+    // ==========================================
+    const SilenceReto = {
+        start() {
+            state.silenceActive = true;
+            UI.toggleBreathing(true);
+            UI.clearOptions();
+
+            let timeLeft = 20 + (state.level * 5); // Tiempo progresivo
+            UI.updateTimer(timeLeft);
+
+            Speech.say(state.lang === "en" ? "Silence Challenge. Focus on your breath." : "Reto de silencio. Enfócate en tu respiración.");
+
+            const timer = setInterval(() => {
+                if (state.paused) return;
+                timeLeft--;
+                UI.updateTimer(timeLeft);
+                UI.animateBreathing(timeLeft);
+
+                if (timeLeft <= 0 || !state.silenceActive) {
+                    clearInterval(timer);
+                    this.complete();
+                }
+            }, 1000);
+        },
+        complete() {
+            state.silenceActive = false;
+            UI.toggleBreathing(false);
+            Speech.say(state.lang === "en" ? "Excellent focus." : "Excelente enfoque.");
+            Mission.loadNext();
+        }
+    };
+
+    // ==========================================
+    // 🎯 DISPAROS A PALABRAS
     // ==========================================
     const FloatingWords = {
         start() {
             setInterval(() => {
-                if (state.silenceActive || state.paused || Lock.is()) return;
+                if (state.silenceActive || state.paused) return;
                 this.spawn();
-            }, 2500);
+            }, 3000);
         },
         spawn() {
             const pool = {
-                good: ["POWER", "FOCUS", "TRUTH", "WINNER"],
-                bad: ["FEAR", "LAZY", "LIE", "QUIT"]
+                good: ["FOCUS", "POWER", "TRUTH", "CALM"],
+                bad: ["FEAR", "LIE", "ANGER", "LAZY"]
             };
             const isGood = Math.random() > 0.4;
             const word = isGood ? pool.good[Math.floor(Math.random()*pool.good.length)] : pool.bad[Math.floor(Math.random()*pool.bad.length)];
@@ -196,135 +190,102 @@ const AuraEngine = (() => {
             const el = document.createElement("div");
             el.className = `floating ${isGood ? 'word-good' : 'word-bad'}`;
             el.innerText = word;
-            el.style.left = Math.random() * 85 + "vw";
+            el.style.left = Math.random() * 80 + "vw";
             
             el.onmousedown = () => {
                 el.classList.add("blast");
                 state.score += isGood ? 10 : -20;
-                AudioSystem.playEffect(isGood ? 'win' : 'fail');
+                if(isGood) state.sounds.win.play(); else state.sounds.fail.play();
                 UI.updateScore();
                 setTimeout(() => el.remove(), 300);
             };
 
             document.getElementById("floating-words-layer").appendChild(el);
-            setTimeout(() => { if(el) el.remove(); }, 6000);
+            setTimeout(() => { if(el) el.remove(); }, 5000);
         }
     };
 
     // ==========================================
-    // 📂 CARGADOR DE MISIONES
-    // ==========================================
-    const Mission = {
-        async loadNext() {
-            Lock.on();
-            try {
-                const res = await fetch(`/api/mission/next?level=${state.level}`);
-                const data = await res.json();
-                state.mission = data;
-                this.render(data);
-            } catch (e) {
-                console.error("Error cargando misión.");
-            }
-            Lock.off();
-        },
-        render(m) {
-            const story = m.blocks.find(b => b.type === "story").text[state.lang];
-            const decision = m.blocks.find(b => b.type === "decision");
-
-            UI.setText("story-box", story);
-            UI.renderOptions(decision.options);
-            Speech.say(story);
-        }
-    };
-
-    // ==========================================
-    // 🖥️ INTERFAZ DE USUARIO (UI)
+    // 🖥️ INTERFAZ DE USUARIO
     // ==========================================
     const UI = {
-        setText(id, val) { document.getElementById(id).innerText = val; },
+        setText(id, val) { const e = document.getElementById(id); if(e) e.innerText = val; },
         updateScore() { 
-            const prefix = state.lang === "en" ? "SCORE: " : "PUNTOS: ";
-            document.getElementById("points-display").innerText = prefix + state.score.toString().padStart(4, '0');
+            this.setText("points-display", `SCORE: ${state.score.toString().padStart(4, '0')}`); 
         },
-        updateTimer(seconds) {
-            const t = document.getElementById("timer-text");
-            const m = Math.floor(seconds / 60);
-            const s = seconds % 60;
-            t.innerText = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-        },
-        toggleBreathing(show) {
-            document.getElementById("breathing-system").style.display = show ? "flex" : "none";
-            document.getElementById("options-grid").style.display = show ? "none" : "grid";
-        },
-        animateBreathing(timeLeft) {
-            const circle = document.getElementById("breathing-circle");
-            const txt = document.getElementById("breath-text");
-            const cycle = timeLeft % 8; // Ciclo de 8 seg
-
-            if (cycle > 4) {
-                txt.innerText = state.lang === "en" ? "EXHALE" : "EXHALA";
-                circle.style.transform = "scale(0.8)";
-            } else {
-                txt.innerText = state.lang === "en" ? "INHALE" : "INHALA";
-                circle.style.transform = "scale(1.2)";
-            }
+        updateTimer(s) {
+            const m = Math.floor(s / 60);
+            const sec = s % 60;
+            this.setText("timer-text", `${m}:${sec.toString().padStart(2, '0')}`);
         },
         renderOptions(options) {
-            const container = document.getElementById("options-grid");
-            container.innerHTML = "";
+            const grid = document.getElementById("options-grid");
+            grid.innerHTML = "";
             options.forEach(opt => {
                 const b = document.createElement("button");
                 b.innerText = opt.text[state.lang];
                 b.onclick = () => Decision.handle(opt);
-                container.appendChild(b);
+                grid.appendChild(b);
             });
         },
-        showExplanation(text) {
-            const box = document.getElementById("explanation-box");
-            box.innerText = text;
-            box.style.display = "block";
+        toggleBreathing(show) {
+            document.getElementById("breathing-system").style.display = show ? "block" : "none";
+            document.getElementById("options-grid").style.display = show ? "none" : "grid";
+            document.getElementById("timer-container").style.display = show ? "block" : "none";
+        },
+        animateBreathing(s) {
+            const circle = document.getElementById("breathing-circle");
+            const txt = document.getElementById("breath-text");
+            if (s % 8 > 4) {
+                txt.innerText = state.lang === "en" ? "EXHALE" : "EXHALA";
+                circle.style.transform = "scale(0.8)";
+            } else {
+                txt.innerText = state.lang === "en" ? "INHALE" : "INHALA";
+                circle.style.transform = "scale(1.3)";
+            }
+        },
+        showExplanation(txt) {
+            const b = document.getElementById("explanation-box");
+            b.innerText = txt;
+            b.style.display = "block";
         },
         hideExplanation() { document.getElementById("explanation-box").style.display = "none"; },
         clearOptions() { document.getElementById("options-grid").innerHTML = ""; }
     };
 
-    function triggerDistraction() {
-        // Sonidos de distracción para entrenar el enfoque
-        const ping = new Audio('/assets/sounds/distraction_ping.mp3');
-        ping.volume = 0.2;
-        ping.play();
-    }
-
-    // ==========================================
-    // 🚀 INICIALIZACIÓN & CONTROLES PÚBLICOS
-    // ==========================================
     return {
-        init() {
-            AudioSystem.init();
+        async init() {
+            // Solicitar datos iniciales
+            state.playerName = prompt("Your Name / Tu Nombre:") || "Player";
+            state.heroName = prompt("Hero Name / Nombre de Héroe:") || "Warrior";
+            
+            UI.setText("mission-theme", `${state.heroName} | Ready`);
+            
+            // Audio Inicial
+            state.sounds.ambient.volume = 0.3;
+            state.sounds.ambient.play().catch(() => console.log("Audio needs interaction"));
+
             FloatingWords.start();
             Mission.loadNext();
-            console.log("🚀 AURA ENGINE READY.");
         },
         toggleLang() {
             state.lang = state.lang === "en" ? "es" : "en";
             document.getElementById("lang-toggle").innerText = state.lang === "en" ? "ESPAÑOL" : "ENGLISH";
-            UI.updateScore();
             if (state.mission) Mission.render(state.mission);
         },
-        gamePause() { 
-            state.paused = true; 
-            Lock.on(); 
+        gamePause() {
+            state.paused = true;
+            Lock.on();
             document.getElementById("btn-pause").style.display = "none";
             document.getElementById("btn-resume").style.display = "inline-block";
         },
-        gameResume() { 
-            state.paused = false; 
-            Lock.off(); 
+        gameResume() {
+            state.paused = false;
+            Lock.off();
             document.getElementById("btn-pause").style.display = "inline-block";
             document.getElementById("btn-resume").style.display = "none";
         }
     };
 })();
 
-// Arranque oficial
 window.onload = () => AuraEngine.init();
