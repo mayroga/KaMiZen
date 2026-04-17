@@ -1,19 +1,16 @@
-from flask import Flask, jsonify, send_from_directory
+from fastapi import FastAPI
+from fastapi.responses import JSONResponse
 import json
 import os
-import logging
+import time
 
-app = Flask(__name__, static_folder="static")
-
-# =========================
-# LOGGING PROFESIONAL
-# =========================
-logging.basicConfig(level=logging.INFO)
+app = FastAPI()
 
 # =========================
-# JSON FILES (ROOT DIRECTORY)
+# CONFIG
 # =========================
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+BASE_DIR = os.getcwd()
 
 MISSION_FILES = [
     ("missions_01_07.json", (1, 7)),
@@ -24,130 +21,133 @@ MISSION_FILES = [
 ]
 
 # =========================
-# SAFE LOAD JSON
+# RAM CACHE (CORE ENGINE)
 # =========================
-def load_json_file(filename):
+
+CACHE = {
+    "missions": {},
+    "loaded": False,
+    "last_load": None
+}
+
+# =========================
+# SAFE LOAD
+# =========================
+
+def safe_load_json(path):
     try:
-        path = os.path.join(BASE_DIR, filename)
-
-        if not os.path.exists(path):
-            logging.error(f"[MISSING FILE] {filename}")
-            return None
-
         with open(path, "r", encoding="utf-8") as f:
-            return json.load(f)
+            data = json.load(f)
 
-    except json.JSONDecodeError as e:
-        logging.error(f"[JSON ERROR] {filename} -> {e}")
-        return None
+        if isinstance(data, dict):
+            return data
+
+        return {"missions": []}
 
     except Exception as e:
-        logging.error(f"[LOAD ERROR] {filename} -> {e}")
-        return None
+        print(f"[LOAD ERROR] {path} -> {e}")
+        return {"missions": []}
 
 
 # =========================
-# GET FILE BY RANGE
+# LOAD ALL INTO RAM
 # =========================
-def get_file_for_mission(mission_id):
-    try:
-        mission_id = int(mission_id)
-    except:
-        return None
+
+def load_all_missions():
+    global CACHE
+
+    temp = {}
 
     for filename, (start, end) in MISSION_FILES:
-        if start <= mission_id <= end:
-            return filename
+        path = os.path.join(BASE_DIR, filename)
+        data = safe_load_json(path)
 
-    return None
+        missions = data.get("missions", [])
 
+        for m in missions:
+            mid = m.get("id")
+            if mid:
+                temp[mid] = m
 
-# =========================
-# GET MISSION
-# =========================
-def get_mission(mission_id):
-    filename = get_file_for_mission(mission_id)
+    CACHE["missions"] = temp
+    CACHE["loaded"] = True
+    CACHE["last_load"] = time.time()
 
-    if not filename:
-        logging.warning(f"[NO FILE MATCH] mission {mission_id}")
-        return None
-
-    data = load_json_file(filename)
-
-    if not data or "missions" not in data:
-        logging.error(f"[INVALID STRUCTURE] {filename}")
-        return None
-
-    for mission in data["missions"]:
-        if int(mission.get("id", -1)) == mission_id:
-            return mission
-
-    logging.warning(f"[MISSION NOT FOUND] {mission_id}")
-    return None
+    print("🚀 KAMIZEN ENGINE LOADED IN RAM")
 
 
 # =========================
-# API: MISSION
+# AUTO LOAD ON START
 # =========================
-@app.route("/api/mission/<int:mission_id>")
-def api_mission(mission_id):
-    mission = get_mission(mission_id)
+
+@app.on_event("startup")
+def startup():
+    load_all_missions()
+
+
+# =========================
+# GET MISSION (ZERO DISK)
+# =========================
+
+@app.get("/api/mission/{mission_id}")
+def get_mission(mission_id: int):
+
+    mission = CACHE["missions"].get(mission_id)
 
     if not mission:
-        return jsonify({
-            "error": "Mission not found",
+        return JSONResponse({
+            "status": "ok",
+            "found": False,
             "mission_id": mission_id
-        }), 404
+        }, status_code=404)
 
-    return jsonify(mission)
+    return {
+        "status": "ok",
+        "found": True,
+        "mission": mission
+    }
 
 
 # =========================
-# NEXT MISSION
+# NEXT MISSION FLOW
 # =========================
-@app.route("/api/next/<int:mission_id>")
-def api_next(mission_id):
+
+@app.get("/api/next/{mission_id}")
+def next_mission(mission_id: int):
+
     next_id = mission_id + 1
-
     if next_id > 35:
         next_id = 1
 
-    return jsonify({
+    return {
         "next_mission": next_id
-    })
+    }
 
 
 # =========================
-# HOME
+# HEALTH CHECK (INDUSTRIAL)
 # =========================
-@app.route("/")
-def home():
-    return send_from_directory("static", "session.html")
+
+@app.get("/api/status")
+def status():
+
+    return {
+        "system": "KAMIZEN INDUSTRIAL ENGINE V2",
+        "cache_loaded": CACHE["loaded"],
+        "missions_loaded": len(CACHE["missions"]),
+        "last_reload": CACHE["last_load"]
+    }
 
 
 # =========================
-# STATIC SAFE
+# MANUAL RELOAD (SAFE)
 # =========================
-@app.route("/static/<path:path>")
-def static_files(path):
-    return send_from_directory("static", path)
 
+@app.get("/api/reload")
+def reload_cache():
+    load_all_missions()
 
-# =========================
-# GLOBAL ERROR HANDLER (ANTI 500 BLIND)
-# =========================
-@app.errorhandler(Exception)
-def handle_error(e):
-    logging.error(f"[FATAL ERROR] {str(e)}")
-
-    return jsonify({
-        "error": "internal_server_error",
-        "message": str(e)
-    }), 500
-
-
-# =========================
-# RUN
-# =========================
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=10000, debug=False)
+    return {
+        "status": "reloaded",
+        "missions": len(CACHE["missions"])
+    }
