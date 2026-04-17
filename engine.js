@@ -10,7 +10,7 @@ const KamizenEngine = (() => {
         mission: null,
         locked: false,
         silenceActive: false,
-        silenceTime: 180,
+        silenceTime: 20,
         floatingWords: ["POWER", "FOCUS", "STREET", "TRUTH"]
     };
     const Lock = {
@@ -38,16 +38,41 @@ const KamizenEngine = (() => {
             if (type === 'bad' && this.bad) this.bad.play();
         }
     };
+    // ✅ VOZ SIN CORTES (cola)
     const Speech = {
+        queue: [],
+        speaking: false,
         say(text) {
-            window.speechSynthesis.cancel();
+            this.queue.push(text);
+            this.run();
+        },
+        run() {
+            if (this.speaking || this.queue.length === 0) return;
+            this.speaking = true;
+            const text = this.queue.shift();
             const u = new SpeechSynthesisUtterance(text);
             u.lang = state.lang === "en" ? "en-US" : "es-ES";
             u.rate = 0.9;
+
+            u.onend = () => {
+                this.speaking = false;
+                this.run();
+            };
             window.speechSynthesis.speak(u);
         }
     };
+    // ✅ PALABRAS CON PSICOLOGÍA
     const FloatingWords = {
+        psychology: {
+            POWER: "Choosing power reinforces self-control circuits.",
+            FOCUS: "Focus strengthens prefrontal cortex decision making.",
+            TRUTH: "Truth builds cognitive clarity and reduces stress.",
+            RESPECT: "Respect reinforces social intelligence pathways.",
+            LIE: "Lies increase cognitive load and stress hormones.",
+            FEAR: "Fear activates survival mode, reducing reasoning.",
+            LAZY: "Laziness weakens motivation circuits over time.",
+            ANGER: "Anger hijacks the amygdala, blocking logic."
+        },
         start() {
             setInterval(() => {
                 if (state.silenceActive || Lock.is()) return;
@@ -56,20 +81,24 @@ const KamizenEngine = (() => {
         },
         spawn() {
             const types = [
-                { class: 'word-good', val: 10, words: ["HONESTY", "POWER", "TRUTH", "RESPECT"] },
+                { class: 'word-good', val: 10, words: ["POWER", "FOCUS", "TRUTH", "RESPECT"] },
                 { class: 'word-bad', val: -10, words: ["LIE", "FEAR", "LAZY", "ANGER"] },
                 { class: 'word-neutral', val: 0, words: ["STREET", "RUN", "CITY", "WALK"] }
             ];
             const config = types[Math.floor(Math.random() * types.length)];
+            const word = config.words[Math.floor(Math.random() * config.words.length)];
             const el = document.createElement("div");
             el.className = `floating ${config.class}`;
-            el.innerText = config.words[Math.floor(Math.random() * config.words.length)];
+            el.innerText = word;
             el.style.left = Math.random() * 90 + "vw";
             el.onmousedown = () => {
                 el.classList.add("blast");
                 state.score += config.val;
                 AudioSystem.playEffect(config.val >= 0 ? 'win' : 'bad');
                 UI.updateScore();
+                // 🔥 explicación psicológica
+                const explain = this.psychology[word] || "";
+                if (explain) Speech.say(explain);
                 setTimeout(() => el.remove(), 300);
             };
             document.body.appendChild(el);
@@ -83,20 +112,18 @@ const KamizenEngine = (() => {
             box.style.display = "block";
             const explanation = option.explanation[state.lang];
             box.innerText = explanation;
-            const goodEN = ["Excellent!", "Wise choice!", "Sonic level!", "Powerful!"];
-            const badEN = ["Careful!", "Pay attention!", "Wrong move!", "Think again!"];
-            const goodES = ["¡Excelente!", "¡Sabio!", "¡Nivel Sonic!", "¡Poderoso!"];
-            const badES = ["¡Cuidado!", "¡Atención!", "¡Error!", "¡Piénsalo!"];
-            const good = state.lang === "en" ? goodEN : goodES;
-            const bad = state.lang === "en" ? badEN : badES;
+            const good = ["Excellent!", "Wise choice!", "Powerful!", "High level!"];
+            const bad = ["Careful!", "Wrong move!", "Think again!", "Adjust!"];
             if (option.correct) {
                 document.body.style.backgroundColor = "#004400";
                 AudioSystem.playEffect("win");
-                Speech.say(good[Math.floor(Math.random() * good.length)] + " " + explanation);
+                Speech.say(good[Math.floor(Math.random() * good.length)]);
+                Speech.say(explanation);
             } else {
                 document.body.style.backgroundColor = "#440000";
                 AudioSystem.playEffect("bad");
-                Speech.say(bad[Math.floor(Math.random() * bad.length)] + " " + explanation);
+                Speech.say(bad[Math.floor(Math.random() * bad.length)]);
+                Speech.say(explanation);
             }
             setTimeout(async () => {
                 document.body.style.backgroundColor = "";
@@ -105,51 +132,56 @@ const KamizenEngine = (() => {
             }, 6000);
         }
     };
+    // ✅ SILENCIO REAL + RESPIRACIÓN + CIENCIA
     const SilenceReto = {
-        explanationsEN: [
-            "Silence is where your brain stores what you learn.",
-            "Now we calm your heart so your mind gets faster.",
-            "Breathing is the hidden training of leaders.",
-            "Master your silence, master your life."
-        ],
-        explanationsES: [
-            "El silencio es donde tu cerebro guarda lo aprendido.",
-            "Ahora calmamos el corazón para acelerar tu mente.",
-            "Respirar es el entrenamiento secreto de líderes.",
-            "Domina tu silencio, domina tu vida."
-        ],
+        getTimeByMission() {
+            if (state.missionId <= 7) return 20;
+            return Math.min(20 + (state.missionId * 10), 1200);
+        },
         async start() {
             state.silenceActive = true;
             UI.clearOptions();
-            const list = state.lang === "en" ? this.explanationsEN : this.explanationsES;
-            const msg = list[Math.floor(Math.random() * list.length)];
-            Speech.say(msg);
-            UI.showBreath(true);
-            UI.setText(
-                "story",
-                state.lang === "en"
-                    ? `SILENCE MODE: ${Math.floor(state.silenceTime / 60)} MIN`
-                    : `SILENCIO: ${Math.floor(state.silenceTime / 60)} MIN`
-            );
-            let timeLeft = state.silenceTime;
+            const breath = document.getElementById("breath");
+            const story = document.getElementById("story");
+            const analysis = document.getElementById("analysis");
+            breath.style.display = "block";
+            analysis.innerText = "";
+            const time = this.getTimeByMission();
+            state.silenceTime = time;
+            story.innerText = `SILENCE: ${time}s`;
+            // 🧠 explicación científica
+            Speech.say("Now focus on your breathing.");
+            Speech.say("Slow breathing activates the parasympathetic nervous system.");
+            Speech.say("This reduces cortisol and improves decision making.");
+            Speech.say("Inhale slowly...");
+            this.breathGuide();
+            let t = time;
             const timer = setInterval(() => {
-                timeLeft--;
-                if (timeLeft <= 0 || !state.silenceActive) {
+                t--;
+                if (t <= 0) {
                     clearInterval(timer);
                     this.complete();
                 }
             }, 1000);
         },
+        breathGuide() {
+            const b = document.getElementById("breath");
+            let grow = true;
+            const interval = setInterval(() => {
+                if (!state.silenceActive) {
+                    clearInterval(interval);
+                    return;
+                }
+                b.style.transform = grow ? "scale(2.5)" : "scale(1)";
+                Speech.say(grow ? "Inhale..." : "Exhale...");
+                grow = !grow;
+            }, 4000);
+        },
         complete() {
             state.silenceActive = false;
-            state.silenceTime = Math.min(state.silenceTime + 60, 1200);
-            UI.showBreath(false);
-            Speech.say(
-                state.lang === "en"
-                    ? "Challenge completed. Level up."
-                    : "Reto completado. Subiendo nivel."
-            );
-
+            document.getElementById("breath").style.display = "none";
+            Speech.say("Challenge completed. Brain optimized.");
+            state.missionId++;
             Mission.loadNext();
         }
     };
@@ -188,12 +220,7 @@ const KamizenEngine = (() => {
             if (el) el.innerText = val;
         },
         updateScore() {
-            this.setText(
-                "score-display",
-                state.lang === "en"
-                    ? `POINTS: ${state.score}`
-                    : `PUNTOS: ${state.score}`
-            );
+            this.setText("score-display", `POINTS: ${state.score}`);
         },
         clearOptions() {
             document.getElementById("options").innerHTML = "";
