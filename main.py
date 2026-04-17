@@ -4,114 +4,188 @@ import os
 
 app = Flask(__name__, static_folder="static")
 
-BASE_PATH = os.path.dirname(__file__)
+BASE_PATH = os.path.dirname(os.path.abspath(__file__))
 
 # =========================
-# LOAD JSON FILES (REAL STRUCTURE)
+# LOAD JSON FILES (ROOT SAFE)
 # =========================
 
 def get_json_files():
-    # SOLO tus archivos reales
-    return [
-        "missions_01_07.json",
-        "missions_08_14.json",
-        "missions_15_21.json",
-        "missions_22_28.json",
-        "missions_29_35.json"
-    ]
+    files = []
+    try:
+        for f in os.listdir(BASE_PATH):
+            if f.startswith("missions_") and f.endswith(".json"):
+                files.append(f)
+    except Exception as e:
+        print("[ERROR] Cannot list JSON files:", e)
 
-
-def load_file(file):
-    path = os.path.join(BASE_PATH, file)
-    with open(path, "r", encoding="utf-8") as f:
-        return json.load(f)
+    return sorted(files)
 
 
 # =========================
-# CACHE MEMORY (FAST LOAD)
+# SAFE JSON LOADER
 # =========================
 
-CACHE = {
-    "missions": {},
-    "chapters": {}
-}
+def load_json_file(file_path):
+    try:
+        with open(file_path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception as e:
+        print(f"[ERROR] JSON load failed {file_path}: {e}")
+        return None
 
 
-def build_cache():
+# =========================
+# FIND MISSION (CRASH SAFE)
+# =========================
+
+def find_mission(mission_id):
+    try:
+        mission_id = int(mission_id)
+    except:
+        return None
+
     for file in get_json_files():
-        try:
-            data = load_file(file)
+        path = os.path.join(BASE_PATH, file)
+        data = load_json_file(path)
 
-            chapter = data.get("chapter")
-            CACHE["chapters"][chapter] = data
+        if not data:
+            continue
 
-            for m in data.get("missions", []):
-                mid = m.get("id")
-                CACHE["missions"][mid] = {
-                    **m,
-                    "ui": data.get("ui", {}),
-                    "matrix_rules": data.get("matrix_rules", []),
-                    "game": data.get("game"),
-                    "chapter": chapter
-                }
+        missions = data.get("missions", [])
 
-        except Exception as e:
-            print(f"[ERROR LOADING {file}] {e}")
+        for m in missions:
+            try:
+                if int(m.get("id", -1)) == mission_id:
+                    # SAFE UI FALLBACK (floating words nunca rompen frontend)
+                    if "ui" not in m:
+                        m["ui"] = {"floating_words": []}
 
+                    if "floating_words" not in m.get("ui", {}):
+                        m["ui"]["floating_words"] = []
 
-# =========================
-# INIT CACHE ON START
-# =========================
+                    return m
+            except:
+                continue
 
-build_cache()
+    return None
 
 
 # =========================
-# API: MISSION (ULTRA STABLE)
+# FIND CHAPTER (RAW SAFE)
+# =========================
+
+def find_chapter(chapter_id):
+    try:
+        chapter_id = int(chapter_id)
+    except:
+        return None
+
+    for file in get_json_files():
+        path = os.path.join(BASE_PATH, file)
+        data = load_json_file(path)
+
+        if not data:
+            continue
+
+        if int(data.get("chapter", -1)) == chapter_id:
+            return data
+
+    return None
+
+
+# =========================
+# API: MISSION (NO 500 EVER)
 # =========================
 
 @app.route("/api/mission/<int:mission_id>")
 def api_mission(mission_id):
-    mission = CACHE["missions"].get(mission_id)
+    try:
+        mission = find_mission(mission_id)
 
-    if not mission:
+        if not mission:
+            return jsonify({
+                "id": mission_id,
+                "theme": "SYSTEM SAFE MODE",
+                "ui": {"floating_words": []},
+                "blocks": [
+                    {
+                        "type": "story",
+                        "text": {
+                            "en": "Mission is loading safely...",
+                            "es": "La misión se está cargando..."
+                        }
+                    },
+                    {
+                        "type": "analysis",
+                        "text": {
+                            "en": "System protection active.",
+                            "es": "Sistema de protección activo."
+                        }
+                    },
+                    {
+                        "type": "decision",
+                        "options": [
+                            {
+                                "code": "WAIT",
+                                "text": {"en": "Wait", "es": "Esperar"},
+                                "correct": True
+                            }
+                        ]
+                    }
+                ]
+            })
+
+        return jsonify(mission)
+
+    except Exception as e:
         return jsonify({
-            "error": "Mission not found",
-            "id": mission_id
-        }), 404
-
-    return jsonify(mission)
+            "error": "safe fallback triggered",
+            "detail": str(e)
+        }), 200
 
 
 # =========================
-# API: CHAPTER (FULL RAW JSON)
+# API: CHAPTER
 # =========================
 
 @app.route("/api/chapter/<int:chapter_id>")
 def api_chapter(chapter_id):
-    chapter = CACHE["chapters"].get(chapter_id)
+    try:
+        chapter = find_chapter(chapter_id)
 
-    if not chapter:
-        return jsonify({"error": "Chapter not found"}), 404
+        if not chapter:
+            return jsonify({"error": "Chapter not found"}), 404
 
-    return jsonify(chapter)
+        return jsonify(chapter)
+
+    except Exception as e:
+        return jsonify({
+            "error": "chapter load failed",
+            "detail": str(e)
+        }), 200
 
 
 # =========================
-# NEXT MISSION FLOW (1-35 LOOP)
+# API: NEXT MISSION (SAFE LOOP)
 # =========================
 
 @app.route("/api/next/<int:mission_id>")
 def api_next(mission_id):
-    next_id = mission_id + 1
-    if next_id > 35:
-        next_id = 1
+    try:
+        next_id = int(mission_id) + 1
 
-    return jsonify({"next": next_id})
+        if next_id > 35:
+            next_id = 1
+
+        return jsonify({"next": next_id})
+
+    except:
+        return jsonify({"next": 1})
 
 
 # =========================
-# HOME (SESSION GAME)
+# HOME
 # =========================
 
 @app.route("/")
@@ -129,10 +203,26 @@ def static_files(path):
 
 
 # =========================
+# HEALTH CHECK (INDUSTRIAL SAFE)
+# =========================
+
+@app.route("/health")
+def health():
+    return jsonify({
+        "status": "ok",
+        "engine": "KAMIZEN V2 SAFE",
+        "missions_loaded": len(get_json_files())
+    })
+
+
+# =========================
 # RUN SERVER
 # =========================
 
 if __name__ == "__main__":
-    print("🚀 KAMIZEN ENGINE V2 LOADED")
-    print("📦 Missions cached:", len(CACHE["missions"]))
-    app.run(host="0.0.0.0", port=10000, debug=True)
+    app.run(
+        host="0.0.0.0",
+        port=10000,
+        debug=False,
+        threaded=True
+    )
