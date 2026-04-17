@@ -3,109 +3,135 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AL CIELO | AURA PRO</title>
+    <title>AL CIELO PRO | AURA BY MAY ROGA LLC</title>
     <style>
-        :root { --neon-blue: #00f2ff; --neon-green: #00ff00; --neon-red: #ff0000; }
-        body { 
-            margin: 0; background: radial-gradient(circle, #001a33, #000); 
-            color: #fff; font-family: 'Segoe UI', sans-serif; text-align: center; 
-            overflow: hidden; height: 100vh;
+        :root {
+            --neon-blue: #00f2ff;
+            --neon-green: #00ff00;
+            --neon-red: #ff0000;
         }
-        /* HUD Superior */
+
+        body { 
+            margin: 0; 
+            background: radial-gradient(circle, #001a33, #000); 
+            color: #fff; 
+            font-family: 'Segoe UI', Arial, sans-serif; 
+            text-align: center; 
+            overflow: hidden; 
+            cursor: crosshair;
+            height: 100vh;
+        }
+
+        /* HUD SUPERIOR */
         .top-hud { 
-            position: fixed; top: 0; width: 100%; display: flex; 
-            justify-content: space-between; align-items: center;
-            padding: 10px 20px; z-index: 100; background: rgba(0,0,0,0.6);
+            position: fixed; top: 0; width: 100%; 
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 25px; z-index: 100;
+            background: rgba(0,0,0,0.5); backdrop-filter: blur(5px);
             box-sizing: border-box;
         }
-        #score-display { font-size: 1.5rem; color: var(--neon-blue); font-weight: bold; }
 
-        /* Contenedor Principal */
-        #game-container { padding-top: 80px; height: 100%; position: relative; }
-        #hero-name { color: var(--neon-blue); font-size: 1.2rem; margin: 5px; }
+        #points-display { font-size: 1.5rem; font-weight: bold; color: var(--neon-blue); text-shadow: 0 0 10px var(--neon-blue); }
 
-        /* Pantalla de Inicio / Bloqueo */
-        #start-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,10,0.9); z-index: 200;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-        }
+        /* CONTENEDOR PRINCIPAL */
+        #game-container { padding-top: 80px; height: 100%; position: relative; z-index: 10; }
+        #hero-name { color: var(--neon-blue); font-size: 1.2rem; margin: 5px 0; text-transform: uppercase; letter-spacing: 2px; }
 
-        /* Área de Misión */
-        #story { font-size: 1.6rem; margin: 20px; font-weight: bold; min-height: 60px; }
-        #analysis { color: var(--neon-blue); font-style: italic; margin-bottom: 20px; min-height: 30px; }
-        
-        /* Grid de Opciones */
-        #options { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; max-width: 600px; margin: 0 auto; padding: 20px; }
+        #story-box { font-size: 1.6rem; margin: 20px auto; font-weight: bold; max-width: 85%; min-height: 100px; }
+        #analysis-box { color: var(--neon-blue); font-style: italic; margin-bottom: 20px; font-size: 1.1rem; min-height: 40px; }
+
+        /* TIMER CIRCULAR */
+        #timer-container { position: relative; width: 100px; height: 100px; margin: 15px auto; display: none; }
+        .timer-svg { transform: rotate(-90deg); width: 100px; height: 100px; }
+        .timer-svg circle { fill: none; stroke: rgba(255,255,255,0.1); stroke-width: 8; }
+        #timer-path { fill: none; stroke: var(--neon-blue); stroke-width: 8; stroke-linecap: round; stroke-dasharray: 283; }
+        #timer-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-weight: bold; }
+
+        /* GRID DE OPCIONES */
+        #options-grid { display: grid; grid-template-columns: 1fr; gap: 12px; max-width: 500px; margin: 0 auto; padding: 10px; }
+
         button { 
             padding: 15px; font-size: 16px; border: 2px solid var(--neon-blue); 
             background: rgba(0, 242, 255, 0.1); color: white; border-radius: 12px; 
-            cursor: pointer; transition: 0.3s;
+            cursor: pointer; transition: 0.3s; 
         }
         button:hover { background: var(--neon-blue); color: #000; box-shadow: 0 0 20px var(--neon-blue); }
         button.danger { border-color: var(--neon-red); color: var(--neon-red); }
 
-        /* Respiración */
-        #breath { 
+        /* RESPIRACIÓN */
+        #breathing-system { display: none; flex-direction: column; align-items: center; }
+        #breathing-circle { 
             width: 150px; height: 150px; border-radius: 50%; 
             background: radial-gradient(circle, var(--neon-blue), #0066ff); 
-            margin: 20px auto; display: none; box-shadow: 0 0 30px var(--neon-blue);
-            align-items: center; justify-content: center; font-weight: bold;
+            margin: 20px; box-shadow: 0 0 40px var(--neon-blue);
+            transition: transform 4s ease-in-out; display: flex; align-items: center; justify-content: center;
         }
 
-        /* Explicación */
-        #explanation-box { 
-            background: rgba(0,0,0,0.9); border: 2px solid var(--neon-blue);
-            padding: 20px; margin: 20px auto; width: 80%; display: none; border-radius: 15px;
-        }
-
-        /* Palabras Flotantes */
-        #floating-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+        /* PALABRAS FLOTANTES */
+        #floating-words-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5; }
         .floating { 
-            position: absolute; padding: 10px; border-radius: 20px; pointer-events: auto;
-            font-weight: bold; animation: floatUp 5s linear forwards; 
+            position: absolute; padding: 8px 18px; border-radius: 20px; font-weight: bold; 
+            pointer-events: auto; animation: floatUp 6s linear forwards; 
         }
-        .word-good { color: var(--neon-green); border: 1px solid var(--neon-green); }
-        .word-bad { color: var(--neon-red); border: 1px solid var(--neon-red); }
+        .word-good { color: var(--neon-green); border: 2px solid var(--neon-green); box-shadow: 0 0 10px var(--neon-green); }
+        .word-bad { color: var(--neon-red); border: 2px solid var(--neon-red); box-shadow: 0 0 10px var(--neon-red); }
         @keyframes floatUp { from { transform: translateY(110vh); } to { transform: translateY(-20vh); } }
+        .blast { animation: burst 0.4s forwards; pointer-events: none; }
+        @keyframes burst { to { transform: scale(4); opacity: 0; } }
 
-        /* Señal Visual */
-        #feedback-signal { position: fixed; bottom: 80px; right: 20px; width: 40px; height: 40px; border-radius: 50%; opacity: 0; transition: 0.3s; }
-        .sig-green { opacity: 1; background: var(--neon-green); box-shadow: 0 0 20px var(--neon-green); }
-        .sig-red { opacity: 1; background: var(--neon-red); box-shadow: 0 0 20px var(--neon-red); }
+        /* FEEDBACK EXPLANATION */
+        #explanation-box {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 85%; max-width: 500px; background: rgba(0,0,0,0.9);
+            border: 3px solid var(--neon-blue); padding: 25px; border-radius: 20px;
+            z-index: 200; display: none; font-size: 1.2rem;
+        }
 
-        .control-footer { position: fixed; bottom: 0; width: 100%; padding: 15px; display: flex; justify-content: center; gap: 10px; background: rgba(0,0,0,0.5); }
+        #feedback-signal { position: fixed; bottom: 80px; right: 20px; width: 40px; height: 40px; border-radius: 50%; opacity: 0; }
+        .semaphore-green { opacity: 1 !important; background: var(--neon-green); box-shadow: 0 0 20px var(--neon-green); }
+        .semaphore-red { opacity: 1 !important; background: var(--neon-red); box-shadow: 0 0 20px var(--neon-red); }
+
+        .control-footer { position: fixed; bottom: 15px; width: 100%; display: flex; justify-content: center; gap: 15px; }
     </style>
 </head>
 <body>
 
-<div id="start-overlay">
-    <h1 style="color:var(--neon-blue)">AL CIELO PRO</h1>
-    <button onclick="AuraEngine.init()">INICIAR SISTEMA / START SYSTEM</button>
-</div>
-
 <div id="game-container">
     <div class="top-hud">
-        <div id="score-display">SCORE: 0000</div>
+        <div id="points-display">SCORE: 0000</div>
         <button onclick="AuraEngine.toggleLang()">EN/ES</button>
     </div>
 
-    <div id="hero-name">SISTEMA AURA ACTIVO</div>
-    <div id="floating-layer"></div>
+    <div id="floating-words-layer"></div>
 
-    <div id="story">Cargando Misión...</div>
-    <div id="analysis"></div>
-    <div id="breath">INHALE</div>
+    <div id="content-screen">
+        <div id="hero-name">AURA SYSTEM</div>
+        <div id="story-box">INITIALIZING...</div>
+        <div id="analysis-box"></div>
+
+        <div id="timer-container">
+            <svg class="timer-svg" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="45"></circle>
+                <path id="timer-path" d="M 50,50 m -45,0 a 45,45 0 1,0 90,0 a 45,45 0 1,0 -90,0"></path>
+            </svg>
+            <div id="timer-text">00:00</div>
+        </div>
+
+        <div id="options-grid"></div>
+
+        <div id="breathing-system">
+            <div id="breathing-circle"><b id="breath-text">INHALE</b></div>
+            <p id="breathing-guidance"></p>
+        </div>
+    </div>
 
     <div id="explanation-box"></div>
-    <div id="options"></div>
-
     <div id="feedback-signal"></div>
 
     <div class="control-footer">
         <button id="btn-pause" onclick="AuraEngine.gamePause()">PAUSE</button>
-        <button id="btn-resume" onclick="AuraEngine.gameResume()" style="display:none;">CONTINUE</button>
-        <button onclick="location.reload()" class="danger">DELETE/RESET</button>
+        <button id="btn-resume" onclick="AuraEngine.gameResume()" style="display:none;">RESUME</button>
+        <button id="btn-delete" class="danger" onclick="location.reload()">DELETE</button>
     </div>
 </div>
 
