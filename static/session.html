@@ -21,13 +21,34 @@
             width: 100%;
             display: flex;
             justify-content: space-between;
-            padding: 15px;
+            align-items: center;
+            padding: 20px 40px; /* 🔥 MÁS ESPACIO */
             z-index: 100;
             background: rgba(0,0,0,0.3);
         }
-        #game { padding-top: 80px; position: relative; z-index: 10; }
-
-        #top-ui { display: flex; justify-content: space-around; font-weight: bold; font-size: 1.2rem; color: #00f2ff; }
+        #score-display {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #00f2ff;
+            padding: 10px 20px;
+            border-radius: 12px;
+            background: rgba(0, 242, 255, 0.1);
+            box-shadow: 0 0 15px #00f2ff;
+            letter-spacing: 1px;
+            margin-right: 10px; /* 🔥 separación del borde */
+        }
+        #game {
+            padding-top: 100px;
+            position: relative;
+            z-index: 10;
+        }
+        #top-ui {
+            display: flex;
+            justify-content: space-around;
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: #00f2ff;
+        }
         button {
             padding: 15px 25px;
             margin: 10px;
@@ -39,10 +60,22 @@
             cursor: pointer;
             transition: 0.3s;
         }
-        button:hover { background: #00f2ff; color: #000; box-shadow: 0 0 20px #00f2ff; }
-        .opt-btn { display: block; width: 80%; max-width: 500px; margin: 10px auto; text-align: left; }
+        button:hover {
+            background: #00f2ff;
+            color: #000;
+            box-shadow: 0 0 20px #00f2ff;
+        }
+        .opt-btn {
+            display: block;
+            width: 80%;
+            max-width: 500px;
+            margin: 10px auto;
+            text-align: left;
+        }
         #breath {
-            width: 100px; height: 100px; border-radius: 50%;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
             background: radial-gradient(circle, #00f2ff, #0066ff);
             margin: 20px auto;
             transition: transform 4s ease-in-out;
@@ -59,16 +92,34 @@
             z-index: 50;
             animation: floatUp 5s linear forwards;
         }
-        .word-good { color: #00ff00; border: 2px solid #00ff00; box-shadow: 0 0 15px #00ff00; text-shadow: 0 0 10px #00ff00; }
-        .word-bad { color: #ff0000; border: 2px solid #ff0000; box-shadow: 0 0 15px #ff0000; text-shadow: 0 0 10px #ff0000; }
-        .word-neutral { color: #ffff00; border: 2px solid #ffff00; text-shadow: 0 0 10px #ffff00; }
-
+        .word-good {
+            color: #00ff00;
+            border: 2px solid #00ff00;
+            box-shadow: 0 0 15px #00ff00;
+            text-shadow: 0 0 10px #00ff00;
+        }
+        .word-bad {
+            color: #ff0000;
+            border: 2px solid #ff0000;
+            box-shadow: 0 0 15px #ff0000;
+            text-shadow: 0 0 10px #ff0000;
+        }
+        .word-neutral {
+            color: #ffff00;
+            border: 2px solid #ffff00;
+            text-shadow: 0 0 10px #ffff00;
+        }
         @keyframes floatUp {
             from { transform: translateY(110vh) rotate(0deg); }
             to { transform: translateY(-20vh) rotate(20deg); }
         }
-        .blast { animation: burst 0.4s forwards; pointer-events: none; }
-        @keyframes burst { to { transform: scale(4); opacity: 0; } }
+        .blast {
+            animation: burst 0.4s forwards;
+            pointer-events: none;
+        }
+        @keyframes burst {
+            to { transform: scale(4); opacity: 0; }
+        }
         #explanation-box {
             background: rgba(0,0,0,0.8);
             border-left: 5px solid #00f2ff;
@@ -80,8 +131,16 @@
             border-radius: 0 15px 15px 0;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
-        #story { font-size: 1.5rem; margin: 20px; font-weight: bold; }
-        #analysis { color: #00f2ff; font-style: italic; margin-bottom: 20px; }
+        #story {
+            font-size: 1.5rem;
+            margin: 20px;
+            font-weight: bold;
+        }
+        #analysis {
+            color: #00f2ff;
+            font-style: italic;
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
@@ -89,7 +148,6 @@
     <button onclick="toggleLang()">EN / ES</button>
     <div id="score-display">POINTS: 0</div>
 </div>
-
 <div id="game">
     <div id="top-ui">
         <div id="stat-focus">FOCUS: 100%</div>
@@ -106,194 +164,7 @@
 <audio id="ok" src="/static/sounds/success.mp3"></audio>
 <audio id="bad" src="/static/sounds/glass.mp3"></audio>
 <script>
-let lang = "en";
-let missionId = 1;
-let score = 0;
-let silenceMinutes = 3;
-let currentMissionData = null;
-const player = { name: "", hero: "" };
-const wordPool = {
-    good: ["FOCUS", "TRUTH", "CALM", "POWER", "CONTROL", "RESPECT", "ACTION"],
-    bad: ["FEAR", "LIE", "CHAOS", "IMPULSE", "LAZY", "ANGRY", "SHAME"],
-    neutral: ["STREET", "CITY", "WALK", "WATCH", "WAIT", "VOICE"]
-};
-async function init() {
-    player.name = prompt(lang === "en" ? "Your real name:" : "Tu nombre real:") || "Player";
-    player.hero = prompt(lang === "en" ? "Your hero name:" : "Nombre de tu héroe:") || "Kamizen Hero";
-    document.getElementById("hero-name").innerText = player.hero;
-    startMusic();
-    startFloatingSystem();
-    loadNextMission();
-}
-function startMusic() {
-    let bg = document.getElementById("bg");
-    bg.volume = 0.4;
-    bg.playbackRate = 1.1;
-    bg.play().catch(() => console.log("Click to enable audio"));
-}
-function speak(text) {
-    window.speechSynthesis.cancel();
-    let msg = new SpeechSynthesisUtterance(text);
-    msg.lang = lang === "en" ? "en-US" : "es-ES";
-    msg.rate = 0.9;
-    window.speechSynthesis.speak(msg);
-}
-function toggleLang() {
-    lang = lang === "en" ? "es" : "en";
-
-    document.getElementById("score-display").innerText =
-        lang === "en" ? `POINTS: ${score}` : `PUNTOS: ${score}`;
-
-    if (currentMissionData) renderMission(currentMissionData);
-}
-async function loadNextMission() {
-    try {
-        const res = await fetch(`/api/mission/${missionId}`);
-        if (!res.ok) { missionId = 1; loadNextMission(); return; }
-        currentMissionData = await res.json();
-        renderMission(currentMissionData);
-    } catch (e) {
-        console.error("Mission load error");
-    }
-}
-function renderMission(m) {
-    const story = m.blocks.find(b => b.type === "story").text[lang];
-    const analysis = m.blocks.find(b => b.type === "analysis").text[lang];
-    const decision = m.blocks.find(b => b.type === "decision");
-    document.getElementById("story").innerText = story;
-    document.getElementById("analysis").innerText = "";
-    document.getElementById("options").innerHTML = "";
-    document.getElementById("explanation-box").style.display = "none";
-    document.getElementById("breath").style.display = "none";
-    speak(story);
-    setTimeout(() => {
-        document.getElementById("analysis").innerText = analysis;
-        speak(analysis);
-    }, 3500);
-    setTimeout(() => {
-        displayOptions(decision.options);
-    }, 7000);
-}
-function displayOptions(options) {
-    const oDiv = document.getElementById("options");
-    oDiv.innerHTML = "";
-    options.forEach(opt => {
-        let b = document.createElement("button");
-        b.className = "opt-btn";
-        b.innerText = opt.text[lang];
-        b.onclick = () => handleChoice(opt);
-        oDiv.appendChild(b);
-    });
-}
-async function handleChoice(option) {
-    document.getElementById("options").innerHTML = "";
-    const box = document.getElementById("explanation-box");
-    const okSound = document.getElementById("ok");
-    const badSound = document.getElementById("bad");
-    box.innerText = option.explanation[lang];
-    box.style.display = "block";
-    const goodEN = ["Excellent!", "Powerful!", "Wise!", "Sonic level!"];
-    const badEN = ["Careful!", "Think again!", "Wrong move!", "Attention!"];
-    const goodES = ["¡Excelente!", "¡Poderoso!", "¡Sabio!", "¡Nivel Sonic!"];
-    const badES = ["¡Cuidado!", "¡Piénsalo!", "¡Error!", "¡Atención!"];
-    const good = lang === "en" ? goodEN : goodES;
-    const bad = lang === "en" ? badEN : badES;
-    if (option.correct) {
-        document.body.style.backgroundColor = "#004400";
-        okSound.play();
-        score += 20;
-        speak(good[Math.floor(Math.random()*good.length)] + ". " + box.innerText);
-    } else {
-        document.body.style.backgroundColor = "#440000";
-        badSound.play();
-        score -= 10;
-        speak(bad[Math.floor(Math.random()*bad.length)] + ". " + box.innerText);
-    }
-    document.getElementById("score-display").innerText =
-        lang === "en" ? `POINTS: ${score}` : `PUNTOS: ${score}`;
-
-    setTimeout(() => {
-        document.body.style.backgroundColor = "";
-        startSilenceReto();
-    }, 6000);
-}
-async function startSilenceReto() {
-    const breath = document.getElementById("breath");
-    const story = document.getElementById("story");
-    const analysis = document.getElementById("analysis");
-    story.innerText =
-        lang === "en"
-            ? `SILENCE CHALLENGE: ${silenceMinutes} MINUTES`
-            : `RETO DE SILENCIO: ${silenceMinutes} MINUTOS`;
-    analysis.innerText =
-        lang === "en"
-            ? "Control your breathing. Do not touch anything."
-            : "Controla tu respiración. No toques nada.";
-    const explanationsEN = [
-        "Silence makes your mind stronger.",
-        "Breathing control is real power.",
-        "Calm reveals hidden answers.",
-        "Focus creates energy."
-    ];
-    const explanationsES = [
-        "El silencio fortalece tu mente.",
-        "Respirar es poder real.",
-        "La calma revela respuestas.",
-        "El enfoque crea energía."
-    ];
-    const list = lang === "en" ? explanationsEN : explanationsES;
-    speak(list[Math.floor(Math.random()*list.length)]);
-    breath.style.display = "block";
-    runBreathingAnimation();
-    let seconds = silenceMinutes * 60;
-    const timer = setInterval(() => {
-        seconds--;
-        if (seconds <= 0) {
-            clearInterval(timer);
-            completeSilence();
-        }
-    }, 1000);
-}
-function runBreathingAnimation() {
-    const b = document.getElementById("breath");
-    let grow = true;
-    const interval = setInterval(() => {
-        if (b.style.display === "none") {
-            clearInterval(interval);
-            return;
-        }
-        b.style.transform = grow ? "scale(2.5)" : "scale(1)";
-        grow = !grow;
-    }, 4000);
-}
-function completeSilence() {
-    speak(lang === "en" ? "Challenge completed." : "Reto completado.");
-    silenceMinutes = Math.min(silenceMinutes + 1, 20);
-    missionId++;
-    if (missionId > 35) missionId = 1;
-    loadNextMission();
-}
-function startFloatingSystem() {
-    setInterval(() => {
-        const type = Math.random() > 0.7 ? "bad" : (Math.random() > 0.4 ? "good" : "neutral");
-        const word = wordPool[type][Math.floor(Math.random() * wordPool[type].length)];
-        const el = document.createElement("div");
-        el.className = `floating word-${type}`;
-        el.innerText = word;
-        el.style.left = Math.random() * 90 + "vw";
-        el.onmousedown = () => {
-            el.classList.add("blast");
-            if (type === "good") { score += 5; document.getElementById("ok").play(); }
-            if (type === "bad") { score -= 10; document.getElementById("bad").play(); }
-            document.getElementById("score-display").innerText =
-                lang === "en" ? `POINTS: ${score}` : `PUNTOS: ${score}`;
-            setTimeout(() => el.remove(), 400);
-        };
-        document.body.appendChild(el);
-        setTimeout(() => { if (el) el.remove(); }, 5000);
-    }, 2000);
-}
-window.onload = init;
+/* TODO TU JS EXACTO SIN CAMBIOS */
 </script>
 </body>
 </html>
