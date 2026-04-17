@@ -1,86 +1,133 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>KAMIZEN ENGINE v1</title>
+<title>KAMIZEN ENGINE</title>
 
 <style>
 body {
-    margin:0;
-    background:#000;
-    color:#00f2ff;
-    font-family: Arial;
+    margin: 0;
+    background: #000;
+    color: #00f2ff;
+    font-family: Arial, sans-serif;
+}
+
+header {
+    padding: 15px;
+    border-bottom: 1px solid #00f2ff;
 }
 
 .container {
-    padding:20px;
+    padding: 20px;
 }
 
-.block {
-    border:1px solid #00f2ff;
-    padding:20px;
-    margin-top:20px;
-    border-radius:10px;
+.card {
+    border: 1px solid #00f2ff;
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 10px;
 }
 
 button {
-    margin:5px;
-    padding:10px;
-    background:#111;
-    color:#00f2ff;
-    border:1px solid #00f2ff;
-    cursor:pointer;
+    margin: 5px;
+    padding: 10px;
+    background: #111;
+    color: #00f2ff;
+    border: 1px solid #00f2ff;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #00f2ff;
+    color: #000;
 }
 </style>
 </head>
 
 <body>
 
+<header>
+    <h2>🧠 KAMIZEN ENGINE v1</h2>
+</header>
+
 <div class="container">
-
-<h1>🧠 KAMIZEN ENGINE</h1>
-
-<div id="game"></div>
-
+    <div id="app"></div>
 </div>
 
 <script>
 
-async function start() {
-    await fetch("/api/start", {method:"POST"});
-    load();
+// ============================
+// LOAD STATE FROM MAIN.PY
+// ============================
+async function getState() {
+    const res = await fetch("/api/state");
+    return await res.json();
 }
 
-async function load() {
-    const res = await fetch("/api/state");
+// ============================
+// START GAME
+// ============================
+async function startGame() {
+    await fetch("/api/start", { method: "POST" });
+    render();
+}
+
+// ============================
+// NEXT BLOCK
+// ============================
+async function nextBlock() {
+    await fetch("/api/next", { method: "POST" });
+    render();
+}
+
+// ============================
+// ANSWER TVID
+// ============================
+async function answer(code) {
+    const res = await fetch("/api/answer", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code })
+    });
+
     const data = await res.json();
 
+    if (data.correct) {
+        alert("✔ Correcto");
+    } else {
+        alert("❌ Incorrecto");
+    }
+}
+
+// ============================
+// RENDER ENGINE (NO LOGIC HERE)
+// ============================
+async function render() {
+    const data = await getState();
     const block = data.block;
-    const game = document.getElementById("game");
+
+    const app = document.getElementById("app");
 
     if (!block) {
-        game.innerHTML = "<h2>FINISHED</h2>";
+        app.innerHTML = "<h2>🎉 FIN DEL JUEGO</h2>";
         return;
     }
 
-    render(block);
-}
+    let html = `<div class="card">`;
 
-function render(block) {
-    const game = document.getElementById("game");
+    html += `<h3>${block.type.toUpperCase()}</h3>`;
 
-    let html = `<div class="block">`;
-
-    html += `<h2>${block.type}</h2>`;
-
+    // TEXT BLOCK
     if (block.text) {
         html += `<p>${block.text.en || ""}</p>`;
     }
 
+    // GUIDE (breathing / instructions)
     if (block.guide) {
         html += `<p>🎯 ${block.guide.en}</p>`;
     }
 
+    // OPTIONS (TVID SYSTEM)
     if (block.options) {
         block.options.forEach(opt => {
             html += `
@@ -91,30 +138,17 @@ function render(block) {
         });
     }
 
-    html += `<br><br><button onclick="next()">NEXT</button>`;
+    html += `<br><br><button onclick="nextBlock()">NEXT ▶</button>`;
 
     html += `</div>`;
 
-    game.innerHTML = html;
+    app.innerHTML = html;
 }
 
-async function next() {
-    await fetch("/api/next", {method:"POST"});
-    load();
-}
-
-async function answer(code) {
-    const res = await fetch("/api/answer", {
-        method:"POST",
-        headers: {"Content-Type":"application/json"},
-        body: JSON.stringify({code})
-    });
-
-    const data = await res.json();
-    alert(data.correct ? "✔ CORRECTO" : "❌ INCORRECTO");
-}
-
-start();
+// ============================
+// INIT
+// ============================
+startGame();
 
 </script>
 
