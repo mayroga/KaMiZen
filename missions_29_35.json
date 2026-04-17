@@ -17,7 +17,6 @@
       "AWARENESS"
     ]
   },
-
   "matrix_rules": [
     "1. Observe before reacting",
     "2. Action creates reality",
@@ -50,7 +49,6 @@
     "29. Identity is built daily",
     "30. Master yourself first"
   ],
-
   "missions": [
     {
       "id": 29,
@@ -88,7 +86,6 @@
         }
       ]
     },
-
     {
       "id": 30,
       "level": 30,
@@ -125,7 +122,6 @@
         }
       ]
     },
-
     {
       "id": 31,
       "level": 31,
@@ -162,7 +158,6 @@
         }
       ]
     },
-
     {
       "id": 32,
       "level": 32,
@@ -199,7 +194,6 @@
         }
       ]
     },
-
     {
       "id": 33,
       "level": 33,
@@ -236,7 +230,6 @@
         }
       ]
     },
-
     {
       "id": 34,
       "level": 34,
@@ -273,7 +266,6 @@
         }
       ]
     },
-
     {
       "id": 35,
       "level": 35,
