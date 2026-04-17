@@ -1,103 +1,81 @@
-from flask import Flask, jsonify, request, send_from_directory
+from flask import Flask, jsonify, send_from_directory, request
 import json
 import os
 
 app = Flask(__name__, static_folder="static")
 
 # =========================
-# LOAD JSON
+# MAPA DE ARCHIVOS POR RANGO
 # =========================
-def load_data():
-    with open("static/kamizen_content.json", "r", encoding="utf-8") as f:
+MISSION_FILES = [
+    ("missions_1_7.json", 1, 7),
+    ("missions_8_14.json", 8, 14),
+    ("missions_15_21.json", 15, 21),
+    ("missions_22_35.json", 22, 35)
+]
+
+# =========================
+# CACHE EN MEMORIA (evita recargar disco)
+# =========================
+CACHE = {}
+
+def load_file(file_name):
+    if file_name in CACHE:
+        return CACHE[file_name]
+
+    path = os.path.join(os.getcwd(), file_name)
+
+    if not os.path.exists(path):
+        return None
+
+    with open(path, "r", encoding="utf-8") as f:
         data = json.load(f)
 
-    # ordenar misiones por ID SIEMPRE
-    data["missions"] = sorted(data["missions"], key=lambda m: m["id"])
+    CACHE[file_name] = data
     return data
 
-DATA = load_data()
 
 # =========================
-# STATE (SOURCE OF TRUTH)
+# BUSCAR MISIÓN POR ID (RANGO INTELIGENTE)
 # =========================
-STATE = {
-    "mission_index": 0,
-    "block_index": 0
-}
+def get_mission_by_id(mission_id):
+    for file_name, start, end in MISSION_FILES:
+        if start <= mission_id <= end:
+            data = load_file(file_name)
+            if not data:
+                return None
 
-# =========================
-# GET CURRENT MISSION/BLOCK
-# =========================
-def get_current():
-    missions = DATA["missions"]
+            for mission in data.get("missions", []):
+                if mission["id"] == mission_id:
+                    return mission
+    return None
 
-    # reset global si termina todo
-    if STATE["mission_index"] >= len(missions):
-        STATE["mission_index"] = 0
-        STATE["block_index"] = 0
-
-    mission = missions[STATE["mission_index"]]
-    blocks = mission["blocks"]
-
-    # reset bloque si termina misión
-    if STATE["block_index"] >= len(blocks):
-        STATE["mission_index"] += 1
-        STATE["block_index"] = 0
-
-        # recursivo para evitar saltos
-        return get_current()
-
-    return {
-        "mission": mission,
-        "block": blocks[STATE["block_index"]],
-        "state": STATE
-    }
 
 # =========================
-# START / RESET
+# API: MISIÓN ACTUAL
 # =========================
-@app.route("/api/start", methods=["POST"])
-def start():
-    STATE["mission_index"] = 0
-    STATE["block_index"] = 0
-    return jsonify(get_current())
+@app.route("/api/mission/<int:mission_id>")
+def mission(mission_id):
+    mission = get_mission_by_id(mission_id)
+
+    if not mission:
+        return jsonify({"error": "Mission not found"}), 404
+
+    return jsonify(mission)
+
 
 # =========================
-# GET CURRENT STEP
+# API: SISTEMA DE LOOP 1-35
 # =========================
-@app.route("/api/state", methods=["GET"])
-def state():
-    return jsonify(get_current())
+@app.route("/api/next/<int:mission_id>")
+def next_mission(mission_id):
+    next_id = mission_id + 1
 
-# =========================
-# NEXT STEP (ONLY MAIN CONTROLS FLOW)
-# =========================
-@app.route("/api/next", methods=["POST"])
-def next_step():
-    STATE["block_index"] += 1
-    return jsonify(get_current())
+    if next_id > 35:
+        next_id = 1
 
-# =========================
-# ANSWER CHECK (TVID)
-# =========================
-@app.route("/api/answer", methods=["POST"])
-def answer():
-    data = request.json
-    code = data.get("code")
+    return jsonify({"next": next_id})
 
-    current = get_current()
-    block = current["block"]
-
-    if block["type"] != "tvid":
-        return jsonify({"ok": False})
-
-    option = next((o for o in block["options"] if o["code"] == code), None)
-
-    return jsonify({
-        "ok": True,
-        "correct": option["correct"],
-        "reason": option["reason"]
-    })
 
 # =========================
 # FRONTEND
@@ -106,5 +84,6 @@ def answer():
 def home():
     return send_from_directory("static", "session.html")
 
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, host="0.0.0.0", port=5000)
