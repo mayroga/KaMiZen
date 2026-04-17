@@ -7,12 +7,13 @@ import os
 import time
 
 app = FastAPI()
+
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 CONTENT_PATH = os.path.join("static", "kamizen_content.json")
 
 # =========================
-# LOAD CONTENT (SAFE)
+# LOAD CONTENT SAFE
 # =========================
 def load_content():
     try:
@@ -26,32 +27,47 @@ def load_content():
 MISSIONS = load_content()
 
 # =========================
-# GLOBAL SESSIONS STORE
+# MEMORY SYSTEM
 # =========================
+players = {}
 sessions = {}
 
 # =========================
-# SESSION STATE MACHINE MODEL
+# PLAYER CREATE
 # =========================
-def create_session():
-    return {
-        "mission_index": 0,
-        "block_index": 0,
+@app.post("/create_player")
+def create_player(data: dict):
 
-        "state": "idle",  # idle | running | waiting | finished
+    player_id = str(uuid.uuid4())
 
-        "last_block_key": None,
-        "last_action": None,
-
+    players[player_id] = {
+        "real_name": data.get("real_name"),
+        "avatar_name": data.get("avatar_name"),
         "created_at": time.time(),
-        "updated_at": time.time(),
+        "level": 1,
+        "xp": 0
+    }
 
-        "decisions": 0,
-        "errors": 0
+    return {
+        "player_id": player_id,
+        "avatar_name": data.get("avatar_name")
     }
 
 # =========================
-# SAFE GET CURRENT BLOCK
+# SESSION CREATE
+# =========================
+def create_session(player_id=None):
+
+    return {
+        "player_id": player_id,
+        "mission_index": 0,
+        "block_index": 0,
+        "last_block_key": None,
+        "locked": False
+    }
+
+# =========================
+# GET CURRENT BLOCK SAFE
 # =========================
 def get_block(session):
 
@@ -59,7 +75,6 @@ def get_block(session):
     b = session["block_index"]
 
     if m >= len(MISSIONS):
-        session["state"] = "finished"
         return None
 
     mission = MISSIONS[m]
@@ -70,41 +85,34 @@ def get_block(session):
 
     block = blocks[b]
 
-    # 🔒 UNIQUE BLOCK KEY (ANTI DUPLICATION)
-    block_key = f"{m}:{b}:{block.get('type')}"
+    # 🔒 anti-repeat safety key
+    key = f"{m}:{b}:{block.get('type')}"
 
-    # prevent double send
-    if session["last_block_key"] == block_key and session["last_action"] == "sent":
+    if session.get("last_block_key") == key:
         return None
 
-    session["last_block_key"] = block_key
-    session["last_action"] = "sent"
+    session["last_block_key"] = key
 
     return block
 
 # =========================
-# STATE ADVANCER (CORE ENGINE)
+# ADVANCE ENGINE SAFE
 # =========================
 def advance(session):
 
     session["block_index"] += 1
-    session["updated_at"] = time.time()
 
     mission = MISSIONS[session["mission_index"]]
+    blocks = mission.get("blocks", [])
 
-    if session["block_index"] >= len(mission.get("blocks", [])):
+    if session["block_index"] >= len(blocks):
         session["mission_index"] += 1
         session["block_index"] = 0
 
-        # safety check
-        if session["mission_index"] >= len(MISSIONS):
-            session["state"] = "finished"
-
     session["last_block_key"] = None
-    session["last_action"] = "advance"
 
 # =========================
-# FORMAT OUTPUT (FRONTEND SAFE)
+# FORMAT OUTPUT SAFE
 # =========================
 def format_block(block):
 
@@ -117,24 +125,22 @@ def format_block(block):
             }
         }
 
-    out = {
-        "type": block.get("type")
-    }
+    out = {"type": block.get("type")}
 
     for k in ["text", "analysis", "question"]:
         if k in block:
             out[k] = block[k]
 
-    if "options" in block:
-        out["options"] = block["options"]
-
     if "duration_sec" in block:
         out["duration_sec"] = block["duration_sec"]
+
+    if "options" in block:
+        out["options"] = block["options"]
 
     return out
 
 # =========================
-# DECISION ENGINE (TVID)
+# EVALUATION ENGINE
 # =========================
 def evaluate(block, decision):
 
@@ -148,131 +154,80 @@ def evaluate(block, decision):
     return None
 
 # =========================
-# SESSION VALIDATION (ANTI CRASH)
-# =========================
-def validate_session(session):
-
-    if not session:
-        return False
-
-    if session.get("state") == "finished":
-        return False
-
-    if session["errors"] > 10:
-        session["state"] = "finished"
-        return False
-
-    return True
-
-# =========================
-# ROOT
+# HOME
 # =========================
 @app.get("/")
 def home():
     return FileResponse("static/session.html")
 
 # =========================
-# START SESSION
+# START SESSION (PLAYER LINKED)
 # =========================
 @app.post("/start")
-def start():
+def start(data: dict = None):
 
-    sid = str(uuid.uuid4())
-    sessions[sid] = create_session()
+    # player_id optional (future expansion)
+    player_id = None
 
-    session = sessions[sid]
+    session_id = str(uuid.uuid4())
+    sessions[session_id] = create_session(player_id)
+
+    session = sessions[session_id]
+
     block = get_block(session)
 
-    session["state"] = "running"
-
     return JSONResponse({
-        "session_id": sid,
+        "session_id": session_id,
         "story": format_block(block)
     })
 
 # =========================
-# MAIN STATE MACHINE ROUTE
+# CORE ENGINE (STATE MACHINE REAL)
 # =========================
 @app.post("/judge")
 def judge(data: dict):
 
-    sid = data.get("session_id")
+    session_id = data.get("session_id")
     decision = data.get("decision")
 
-    session = sessions.get(sid)
+    session = sessions.get(session_id)
 
-    if not validate_session(session):
+    if not session:
         return JSONResponse({
             "story": {
                 "type": "error",
                 "text": {
-                    "en": "Session invalid or expired",
-                    "es": "Sesión inválida o expirada"
+                    "en": "Session expired",
+                    "es": "Sesión expirada"
                 }
             }
         })
 
-    current_block = get_block(session)
-
-    if not current_block:
-        return JSONResponse({
-            "story": {
-                "type": "end",
-                "text": {
-                    "en": "NO MORE CONTENT",
-                    "es": "NO HAY MÁS CONTENIDO"
-                }
-            }
-        })
+    current = get_block(session)
 
     feedback = None
 
-    try:
+    # =========================
+    # ACTION LOGIC
+    # =========================
+    if decision != "NEXT":
+        feedback = evaluate(current, decision)
 
-        # =========================
-        # TVID DECISION FLOW
-        # =========================
-        if decision and decision != "NEXT":
-            feedback = evaluate(current_block, decision)
-            session["decisions"] += 1
+    # =========================
+    # ADVANCE RULE
+    # =========================
+    if decision == "NEXT" or feedback:
+        advance(session)
 
-        # =========================
-        # ADVANCE RULE
-        # =========================
-        should_advance = (
-            decision == "NEXT" or feedback is not None
-        )
+    next_block = get_block(session)
 
-        if should_advance:
-            advance(session)
-
-        next_block = get_block(session)
-
-        session["state"] = "running"
-        session["updated_at"] = time.time()
-
-        return JSONResponse({
-            "feedback": feedback,
-            "story": format_block(next_block)
-        })
-
-    except Exception as e:
-
-        session["errors"] += 1
-        print("ENGINE ERROR:", e)
-
-        return JSONResponse({
-            "story": {
-                "type": "error",
-                "text": {
-                    "en": "Engine error",
-                    "es": "Error del sistema"
-                }
-            }
-        })
+    return JSONResponse({
+        "feedback": feedback,
+        "story": format_block(next_block)
+    })
 
 # =========================
-# DEBUG / RELOAD CONTENT
+# RELOAD CONTENT (DEV ONLY)
 # =========================
 @app.get("/reload")
 def reload():
@@ -283,19 +238,4 @@ def reload():
     return {
         "status": "reloaded",
         "missions": len(MISSIONS)
-    }
-
-# =========================
-# SESSION INSPECTOR (DEBUG TOOL)
-# =========================
-@app.get("/session/{sid}")
-def inspect(sid: str):
-
-    session = sessions.get(sid)
-
-    if not session:
-        return {"error": "not found"}
-
-    return {
-        "session": session
     }
