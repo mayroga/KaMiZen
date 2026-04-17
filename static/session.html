@@ -3,420 +3,361 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KAMIZEN | NEURO SESSION V5</title>
+<title>KAMIZEN | ENGINE V2 AAA</title>
 
 <style>
 body{
- margin:0;
- background:#000;
- color:#fff;
- font-family:Arial, sans-serif;
- overflow:hidden;
+margin:0;
+background:#000;
+color:#fff;
+font-family:Arial;
+overflow:hidden;
+text-align:center;
+}
+
+#topbar{
+position:fixed;
+top:0;
+width:100%;
+display:flex;
+justify-content:space-between;
+padding:10px;
+z-index:10;
 }
 
 #game{
- position:relative;
- width:100vw;
- height:100vh;
- padding:20px;
+padding:60px 20px;
 }
 
-#ui{
- position:absolute;
- top:10px;
- left:10px;
- z-index:10;
+#hero{
+font-size:20px;
+color:#00f2ff;
 }
 
-button{
- margin:5px;
- padding:10px;
- border:none;
- cursor:pointer;
- border-radius:6px;
-}
-
-.good{background:green;color:white;}
-.bad{background:red;color:white;}
-
-.floating{
- position:absolute;
- font-size:14px;
- opacity:0.25;
- animation:float 6s linear;
-}
-
-@keyframes float{
- from{transform:translateY(100vh);}
- to{transform:translateY(-10vh);}
-}
-
-#breath{
- width:80px;
- height:80px;
- border-radius:50%;
- background:#00f2ff;
- margin:20px auto;
- transition:3s;
-}
-
-#silenceOverlay{
- position:fixed;
- inset:0;
- background:rgba(0,0,0,0.9);
- display:none;
- align-items:center;
- justify-content:center;
- flex-direction:column;
- text-align:center;
- z-index:999;
-}
-
-#silenceOverlay h1{
- font-size:22px;
+#story,#analysis{
+margin:15px;
+font-size:18px;
+min-height:40px;
 }
 
 #options button{
- margin:8px;
+padding:12px;
+margin:8px;
+border:none;
+border-radius:10px;
+font-size:16px;
+cursor:pointer;
 }
+
+.correct{background:green;color:white;}
+.wrong{background:red;color:white;}
+
+#breath{
+width:120px;
+height:120px;
+border-radius:50%;
+background:#00f2ff;
+margin:20px auto;
+transition:4s;
+}
+
+.floating{
+position:absolute;
+color:#00f2ff;
+opacity:0.7;
+animation:float 5s linear;
+font-size:14px;
+}
+
+@keyframes float{
+from{transform:translateY(100vh);}
+to{transform:translateY(-10vh);}
+}
+
+#overlay{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.92);
+display:none;
+align-items:center;
+justify-content:center;
+flex-direction:column;
+z-index:20;
+padding:20px;
+}
+
+button{
+background:#111;
+color:white;
+border:1px solid #333;
+}
+
 </style>
 </head>
 
 <body>
 
-<div id="ui">
- <button onclick="toggleLang()">EN/ES</button>
- <button onclick="startSilence()">SILENCE</button>
+<div id="topbar">
+<button onclick="toggleLang()">LANG</button>
+<button onclick="startSilence()">SILENCE</button>
 </div>
 
 <div id="game">
- <h1 id="hero"></h1>
- <div id="breath"></div>
+<h1>KAMIZEN ENGINE</h1>
+<h2 id="hero"></h2>
 
- <div id="story"></div>
- <div id="analysis"></div>
- <div id="options"></div>
+<div id="breath"></div>
+
+<div id="story"></div>
+<div id="analysis"></div>
+<div id="options"></div>
 </div>
 
-<div id="silenceOverlay">
- <h1>NEURO SILENCE MODE</h1>
- <p id="silenceText"></p>
+<div id="overlay">
+<h2 id="overlayTitle"></h2>
+<p id="overlayText"></p>
 </div>
 
+<!-- AUDIO -->
+<audio id="bg" loop src="/static/sounds/bg.mp3"></audio>
 <audio id="ok" src="/static/sounds/success.mp3"></audio>
 <audio id="bad" src="/static/sounds/glass.mp3"></audio>
-<audio id="bg" src="/static/sounds/bg.mp3" loop></audio>
+<audio id="tick" src="/static/sounds/tick.mp3"></audio>
 
 <script>
 
-let mission = 1;
-let lang = "en";
-let score = 0;
-let floatingWords = [];
-let currentMission = null;
+let lang="en";
+let mission=1;
+let floatingWords=[];
+let currentMission=null;
+let locked=false;
 
-let player = {
- real: "",
- hero: ""
-};
-
-// =========================
-// INIT
-// =========================
+let player={real:"",hero:""};
 
 async function init(){
- player.real = prompt("Enter your name");
- player.hero = prompt("Hero name");
+player.real=prompt("Player name");
+player.hero=prompt("Hero name");
 
- document.getElementById("hero").innerText = player.hero;
+document.getElementById("hero").innerText=player.hero;
 
- document.getElementById("bg").volume = 0.3;
- document.getElementById("bg").play().catch(()=>{});
+document.getElementById("bg").volume=0.3;
+document.getElementById("bg").play().catch(()=>{});
 
- breathing();
- loadMission();
- startFloating();
+breathing();
+await loadMission();
+startFloating();
 }
 
-// =========================
-// LOAD MISSION (FROM BACKEND)
-// =========================
+function speak(t){
+let s=new SpeechSynthesisUtterance(t);
+s.lang = lang==="en"?"en-US":"es-ES";
+s.rate=0.85;
+speechSynthesis.speak(s);
+}
+
+function toggleLang(){
+lang = lang==="en"?"es":"en";
+loadMission();
+}
 
 async function loadMission(){
- let res = await fetch(`/api/mission/${mission}`);
- if(!res.ok) return;
+let res=await fetch(`/api/mission/${mission}`);
+if(!res.ok)return;
 
- let data = await res.json();
- currentMission = data;
+currentMission=await res.json();
 
- floatingWords = (data.ui && data.ui.floating_words) ? data.ui.floating_words : [];
+floatingWords = currentMission.ui?.floating_words || [];
 
- render(data);
+render(currentMission);
 }
-
-// =========================
-// RENDER
-// =========================
 
 function render(m){
 
- let story = m.blocks.find(b=>b.type==="story");
- let analysis = m.blocks.find(b=>b.type==="analysis");
- let decision = m.blocks.find(b=>b.type==="decision");
+locked=false;
 
- document.getElementById("story").innerText = story.text[lang];
- document.getElementById("analysis").innerText = "";
+let story=m.blocks.find(b=>b.type==="story");
+let analysis=m.blocks.find(b=>b.type==="analysis");
+let decision=m.blocks.find(b=>b.type==="decision");
 
- speak(story.text[lang]);
+document.getElementById("story").innerText=story.text[lang];
+document.getElementById("analysis").innerText="";
 
- setTimeout(()=>{
-  document.getElementById("analysis").innerText = analysis.text[lang];
-  speak(analysis.text[lang]);
- },3000);
+speak(story.text[lang]);
 
- setTimeout(()=>{
-  renderOptions(decision.options);
- },6000);
+setTimeout(()=>{
+document.getElementById("analysis").innerText=analysis.text[lang];
+speak(analysis.text[lang]);
+},3500);
+
+setTimeout(()=>{
+createOptions(decision.options);
+},7000);
+}
+
+function createOptions(options){
+let o=document.getElementById("options");
+o.innerHTML="";
+
+options.forEach(opt=>{
+let b=document.createElement("button");
+b.innerText=opt.text[lang];
+
+b.onclick=()=>answer(opt.correct, b);
+
+o.appendChild(b);
+});
+}
+
+async function answer(correct, btn){
+if(locked)return;
+locked=true;
+
+let ok=document.getElementById("ok");
+let bad=document.getElementById("bad");
+
+if(correct){
+btn.classList.add("correct");
+ok.play();
+speak("Correct choice");
+}else{
+btn.classList.add("wrong");
+bad.play();
+speak("Wrong choice");
+}
+
+await wait(1200);
+await runTVid(currentMission, correct);
+
+mission++;
+if(mission>35)mission=1;
+loadMission();
 }
 
 // =========================
-// OPTIONS
+// TVID ENGINE AAA
 // =========================
 
-function renderOptions(options){
- let box = document.getElementById("options");
- box.innerHTML = "";
+async function runTVid(m, correct){
 
- options.forEach(o=>{
-  let b = document.createElement("button");
-  b.innerText = o.text[lang];
+let type = "DEFAULT";
+let theme = (m.theme||"").toUpperCase();
 
-  b.onclick = ()=>handleAnswer(o.correct);
+if(theme.includes("ANGER")||theme.includes("CONTROL")) type="ANGER";
+if(theme.includes("FEAR")||theme.includes("COURAGE")) type="FEAR";
+if(theme.includes("DIGITAL")) type="DIGITAL";
+if(theme.includes("TRUTH")) type="TRUTH";
+if(theme.includes("PRESSURE")) type="PRESSURE";
 
-  box.appendChild(b);
- });
+showOverlay("TVID MODE", "Processing response...");
+
+switch(type){
+
+case "ANGER":
+await breathCycle(3);
+speak("Control your reaction");
+break;
+
+case "FEAR":
+await breathCycle(3);
+speak("Fear is not danger");
+break;
+
+case "DIGITAL":
+await breathCycle(2);
+speak("Recover attention");
+break;
+
+case "TRUTH":
+await breathCycle(2);
+speak("Truth builds identity");
+break;
+
+case "PRESSURE":
+await breathCycle(4);
+speak("Pause creates intelligence");
+break;
+
+default:
+await breathCycle(2);
+speak("Return to awareness");
 }
 
-// =========================
-// ANSWER SYSTEM
-// =========================
-
-async function handleAnswer(correct){
-
- let ok = document.getElementById("ok");
- let bad = document.getElementById("bad");
-
- if(correct){
-  ok.play();
-  score += 10;
-  speak("Correct");
-  document.body.style.background = "#003300";
- }else{
-  bad.play();
-  score -= 5;
-  speak("Wrong");
-  document.body.style.background = "#330000";
- }
-
- setTimeout(()=>document.body.style.background="#000",800);
-
- await runTVid(currentMission);
-
- mission++;
- if(mission > 35) mission = 1;
-
- loadMission();
+closeOverlay();
 }
 
-// =========================
-// TVID INTELLIGENT ENGINE
-// =========================
-
-async function runTVid(m){
-
- if(!m) return;
-
- let theme = (m.theme || "").toUpperCase();
- let type = "DEFAULT";
-
- if(theme.includes("ANGER") || theme.includes("CONTROL")) type="ANGER";
- if(theme.includes("FEAR") || theme.includes("COURAGE")) type="FEAR";
- if(theme.includes("DIGITAL")) type="DIGITAL";
- if(theme.includes("TRUTH")) type="TRUTH";
- if(theme.includes("PRESSURE")) type="PRESSURE";
-
- showOverlay("TVID MODE","Processing...");
-
- switch(type){
-
- case "ANGER":
- await breathingCycle(3);
- speakFlow("Control reaction. Return to calm.");
- break;
-
- case "FEAR":
- await breathingCycle(3);
- speakFlow("Fear is signal, not command.");
- break;
-
- case "DIGITAL":
- await breathingCycle(2);
- speakFlow("Recover attention.");
- break;
-
- case "TRUTH":
- await breathingCycle(2);
- speakFlow("Truth builds identity.");
- break;
-
- case "PRESSURE":
- await breathingCycle(4);
- speakFlow("Pause creates intelligence.");
- break;
-
- default:
- await breathingCycle(2);
- speakFlow("Return to awareness.");
- }
-
- closeOverlay();
-}
-
-// =========================
-// SILENCE SYSTEM (NEURO-REACTIVE)
-// =========================
-
-function getSilenceTime(level){
- if(level<=7) return 180;
- if(level<=14) return 360;
- if(level<=21) return 600;
- if(level<=28) return 900;
- return 1200;
-}
-
-let silenceActive=false;
-let silenceTimer=null;
-let silenceTime=0;
-
-function startSilence(){
-
- let level = mission;
-
- silenceTime = getSilenceTime(level);
- silenceActive = true;
-
- document.getElementById("silenceOverlay").style.display="flex";
- document.getElementById("silenceText").innerText="Stay still. Breathe.";
-
- silenceTimer = setInterval(()=>{
-
-  silenceTime--;
-
-  if(silenceTime % 30 === 0){
-   speak("Inhale... Exhale...");
-  }
-
-  if(silenceTime<=0){
-   clearInterval(silenceTimer);
-   silenceActive=false;
-   reward();
-   document.getElementById("silenceOverlay").style.display="none";
-  }
-
- },1000);
-}
-
-function triggerViolation(type){
-
- if(!silenceActive) return;
-
- document.body.style.background="#330000";
- setTimeout(()=>document.body.style.background="#000",600);
-
- speak("Violation detected: "+type);
-
- clearInterval(silenceTimer);
- silenceActive=false;
-}
-
-// anti-cheat
-window.addEventListener("keydown",()=>triggerViolation("keyboard"));
-window.addEventListener("mousemove",()=>triggerViolation("mouse"));
-window.addEventListener("touchstart",()=>triggerViolation("touch"));
-window.addEventListener("visibilitychange",()=>triggerViolation("tab"));
-
-function reward(){
- document.body.style.background="#003300";
- setTimeout(()=>document.body.style.background="#000",1500);
- speak("Silence completed");
-}
-
-// =========================
-// FLOATING WORDS
-// =========================
-
-function startFloating(){
- setInterval(()=>{
-  if(!floatingWords.length) return;
-
-  let w = document.createElement("div");
-  w.className="floating";
-  w.style.left=Math.random()*100+"vw";
-  w.innerText=floatingWords[Math.floor(Math.random()*floatingWords.length)];
-
-  document.body.appendChild(w);
-  setTimeout(()=>w.remove(),6000);
-
- },1200);
-}
-
-// =========================
-// BREATH
-// =========================
-
-function breathing(){
- let b=document.getElementById("breath");
- let up=true;
-
- setInterval(()=>{
-  b.style.transform = up ? "scale(1.5)" : "scale(1)";
-  up=!up;
- },3000);
-}
-
-// =========================
-// SPEECH
-// =========================
-
-function speak(t){
- let u=new SpeechSynthesisUtterance(t);
- u.lang="en-US";
- u.rate=0.85;
- u.pitch=0.8;
- speechSynthesis.speak(u);
-}
-
-function speakFlow(t){
- speak(t);
- return new Promise(r=>setTimeout(r,2000));
-}
-
-// =========================
-// OVERLAY
-// =========================
-
-function showOverlay(t,msg){
- document.getElementById("silenceOverlay").style.display="flex";
- document.getElementById("silenceText").innerText=msg;
+function showOverlay(t,txt){
+document.getElementById("overlayTitle").innerText=t;
+document.getElementById("overlayText").innerText=txt;
+document.getElementById("overlay").style.display="flex";
 }
 
 function closeOverlay(){
- document.getElementById("silenceOverlay").style.display="none";
+document.getElementById("overlay").style.display="none";
+}
+
+function wait(ms){return new Promise(r=>setTimeout(r,ms));}
+
+// =========================
+// BREATHING SYSTEM
+// =========================
+
+function breathing(){
+let b=document.getElementById("breath");
+let grow=true;
+
+setInterval(()=>{
+b.style.transform = grow?"scale(1.6)":"scale(1)";
+grow=!grow;
+},4000);
+}
+
+async function breathCycle(n){
+for(let i=0;i<n;i++){
+speak("Inhale");
+await wait(2500);
+speak("Exhale");
+await wait(2500);
+}
 }
 
 // =========================
-// START
+// FLOATING SYSTEM (FROM JSON)
 // =========================
+
+function startFloating(){
+setInterval(()=>{
+if(!floatingWords.length)return;
+
+let d=document.createElement("div");
+d.className="floating";
+d.style.left=Math.random()*100+"vw";
+d.innerText=floatingWords[Math.floor(Math.random()*floatingWords.length)];
+
+document.body.appendChild(d);
+
+setTimeout(()=>d.remove(),5000);
+
+},900);
+}
+
+// =========================
+// SILENCE SYSTEM (3 → 20 MIN READY)
+// =========================
+
+async function startSilence(){
+
+speak("Silence challenge started");
+
+let level = Math.min(mission, 35);
+let duration = 180 + (level * 30); // 3 min → scaling future to 20 min
+
+for(let t=duration;t>0;t--){
+await wait(1000);
+if(t%10===0) document.getElementById("tick").play();
+}
+
+speak("Silence completed");
+}
 
 init();
 
