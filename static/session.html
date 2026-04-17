@@ -1,127 +1,304 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
-<title>KAMIZEN | SESSION PRO CLEAN</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KAMIZEN | AL CIELO PRO</title>
 
 <style>
-:root{
-  --bg:#000;
-  --neon:#00f2ff;
-  --text:#eaeaea;
+body {
+    margin: 0;
+    background: radial-gradient(circle, #001a33, #000);
+    color: #fff;
+    font-family: 'Segoe UI', Arial;
+    text-align: center;
+    overflow: hidden;
+    cursor: crosshair;
+    transition: background 0.5s;
 }
 
-*{box-sizing:border-box;font-family:Arial;}
-body{
-  margin:0;
-  background:var(--bg);
-  color:var(--text);
-  overflow:hidden;
+/* TOP BAR */
+#topbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 15px;
+    z-index: 100;
+    background: rgba(0,0,0,0.3);
 }
 
-/* TOP */
-#topBar{
-  position:fixed;
-  top:0;
-  width:100%;
-  display:flex;
-  justify-content:center;
-  gap:40px;
-  padding:10px;
+/* GAME AREA */
+#game {
+    padding-top: 90px;
 }
 
-.stat{font-size:14px;text-align:center;}
-.stat b{display:block;color:var(--neon);font-size:18px;}
-
-/* TIMER */
-#timerBox{
-  position:fixed;
-  top:60px;
-  width:100%;
-  text-align:center;
-  color:yellow;
+/* UI */
+button {
+    padding: 15px 25px;
+    margin: 10px;
+    font-size: 18px;
+    border: 2px solid #00f2ff;
+    background: rgba(0, 242, 255, 0.1);
+    color: white;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: 0.3s;
 }
 
-/* MAIN */
-#container{
-  position:absolute;
-  top:120px;
-  bottom:120px;
-  left:0;
-  right:0;
-  padding:20px;
-  overflow:auto;
+button:hover {
+    background: #00f2ff;
+    color: #000;
+    box-shadow: 0 0 20px #00f2ff;
 }
 
-#missionBox{
-  border:1px solid var(--neon);
-  padding:15px;
-  border-radius:10px;
+.opt-btn {
+    display: block;
+    width: 80%;
+    max-width: 600px;
+    margin: 10px auto;
+    text-align: left;
 }
 
-.option{
-  margin:10px 0;
-  padding:12px;
-  border:1px solid #333;
-  cursor:pointer;
+/* BREATH */
+#breath {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    margin: 20px auto;
+    background: radial-gradient(circle, #00f2ff, #0066ff);
+    display: none;
+    box-shadow: 0 0 30px #00f2ff;
+    transition: transform 4s ease-in-out;
 }
 
-.option:hover{border-color:var(--neon);}
-
-/* CONTROLS */
-#controls{
-  position:fixed;
-  bottom:0;
-  width:100%;
-  display:flex;
-  justify-content:center;
-  gap:10px;
-  padding:10px;
+/* FLOATING WORDS */
+.floating {
+    position: absolute;
+    padding: 8px 18px;
+    border-radius: 20px;
+    font-weight: bold;
+    z-index: 50;
+    animation: floatUp 5s linear forwards;
 }
 
-button{
-  background:#111;
-  border:1px solid var(--neon);
-  color:white;
-  padding:10px;
+.word-good { color: #00ff00; border: 2px solid #00ff00; }
+.word-bad { color: #ff0000; border: 2px solid #ff0000; }
+.word-neutral { color: #ffff00; border: 2px solid #ffff00; }
+
+@keyframes floatUp {
+    from { transform: translateY(110vh); }
+    to { transform: translateY(-20vh); }
 }
+
+#explanation-box {
+    background: rgba(0,0,0,0.85);
+    border-left: 5px solid #00f2ff;
+    padding: 20px;
+    margin: 20px auto;
+    width: 85%;
+    display: none;
+    font-size: 1.2rem;
+    border-radius: 12px;
+}
+
+#story { font-size: 1.6rem; font-weight: bold; margin: 20px; }
+#analysis { color: #00f2ff; margin-bottom: 20px; }
 </style>
 </head>
 
 <body>
 
-<div id="topBar">
-  <div class="stat">POINTS<b id="points">0</b></div>
-  <div class="stat">FOCUS<b id="focus">0</b></div>
-  <div class="stat">ENERGY<b id="energy">0</b></div>
+<div id="topbar">
+    <button onclick="KamizenEngine.toggleLang()">EN/ES</button>
+    <div id="score-display">PUNTOS: 0</div>
 </div>
 
-<div id="timerBox">--:--</div>
-
-<div id="container">
-  <div id="missionBox">START</div>
+<div id="game">
+    <div id="breath"></div>
+    <div id="story">Cargando...</div>
+    <div id="analysis"></div>
+    <div id="explanation-box"></div>
+    <div id="options"></div>
 </div>
 
-<div id="controls">
-  <button onclick="Engine.start()">START</button>
-  <button onclick="Engine.back()">BACK</button>
-  <button onclick="Engine.next()">NEXT</button>
-  <button onclick="Engine.restart()">RESTART</button>
-  <button onclick="Engine.toggleLang()">EN/ES</button>
-</div>
-
-<div id="breath" style="width:80px;height:80px;border-radius:50%;background:#00f2ff;margin:auto;display:none;"></div>
-
-<script src="engine.js"></script>
+<audio id="bg" loop src="/static/sounds/bg.mp3"></audio>
+<audio id="ok" src="/static/sounds/success.mp3"></audio>
+<audio id="bad" src="/static/sounds/glass.mp3"></audio>
 
 <script>
-window.updateSessionUI = function(s){
-  document.getElementById("points").innerText = s.points;
-  document.getElementById("focus").innerText = s.focus;
-  document.getElementById("energy").innerText = s.energy;
-  document.getElementById("timerBox").innerText = s.timerText || "";
+/* =========================
+   🧠 KAMIZEN ENGINE ÚNICO
+========================= */
+
+const KamizenEngine = (() => {
+
+const state = {
+    score: 0,
+    lang: "en",
+    mission: null,
+    locked: false,
+    silenceActive: false,
+    silenceTime: 180
 };
+
+const Lock = {
+    on(){ state.locked = true; document.body.style.pointerEvents="none"; },
+    off(){ state.locked = false; document.body.style.pointerEvents="auto"; },
+    is(){ return state.locked; }
+};
+
+const AudioSystem = {
+    init(){
+        this.bg = document.getElementById("bg");
+        this.ok = document.getElementById("ok");
+        this.bad = document.getElementById("bad");
+        if(this.bg){
+            this.bg.volume = 0.3;
+            this.bg.play().catch(()=>{});
+        }
+    },
+    play(type){
+        if(type==="win") this.ok?.play();
+        if(type==="bad") this.bad?.play();
+    }
+};
+
+const Speech = {
+    say(t){
+        window.speechSynthesis.cancel();
+        const u = new SpeechSynthesisUtterance(t);
+        u.lang = state.lang==="en"?"en-US":"es-ES";
+        u.rate = 0.9;
+        speechSynthesis.speak(u);
+    }
+};
+
+const UI = {
+    set(id,v){ const e=document.getElementById(id); if(e) e.innerText=v; },
+    score(){ this.set("score-display","PUNTOS: "+state.score); },
+    clear(){ document.getElementById("options").innerHTML=""; }
+};
+
+const FloatingWords = {
+    start(){
+        setInterval(()=>this.spawn(),2000);
+    },
+    spawn(){
+        const types = [
+            {cls:"word-good",val:10,list:["TRUTH","POWER"]},
+            {cls:"word-bad",val:-10,list:["FEAR","LIE"]},
+            {cls:"word-neutral",val:0,list:["CITY","WAIT"]}
+        ];
+
+        const t = types[Math.floor(Math.random()*types.length)];
+        const el = document.createElement("div");
+
+        el.className = "floating "+t.cls;
+        el.innerText = t.list[Math.floor(Math.random()*t.list.length)];
+        el.style.left = Math.random()*90+"vw";
+
+        el.onclick = ()=>{
+            state.score += t.val;
+            UI.score();
+            AudioSystem.play(t.val>=0?"win":"bad");
+            el.remove();
+        };
+
+        document.body.appendChild(el);
+        setTimeout(()=>el.remove(),5000);
+    }
+};
+
+const Mission = {
+    async load(){
+        try{
+            const r = await fetch("/api/mission/next");
+            state.mission = await r.json();
+            this.render(state.mission);
+        }catch(e){
+            UI.set("story","NO MISSION");
+        }
+    },
+
+    render(m){
+        const story = m.blocks.find(b=>b.type==="story").text[state.lang];
+        const analysis = m.blocks.find(b=>b.type==="analysis").text[state.lang];
+
+        UI.set("story",story);
+        Speech.say(story);
+
+        setTimeout(()=>{
+            UI.set("analysis",analysis);
+            Speech.say(analysis);
+        },3000);
+
+        setTimeout(()=>{
+            UI.renderOptions?.(m.blocks.find(b=>b.type==="decision").options);
+        },6000);
+    }
+};
+
+const Decision = {
+    handle(opt){
+        Lock.on();
+        const box=document.getElementById("explanation-box");
+        box.style.display="block";
+
+        box.innerText = opt.explanation[state.lang];
+
+        if(opt.correct){
+            document.body.style.background="#004400";
+            state.score+=20;
+            AudioSystem.play("win");
+        }else{
+            document.body.style.background="#440000";
+            state.score-=10;
+            AudioSystem.play("bad");
+        }
+
+        UI.score();
+
+        setTimeout(()=>{
+            document.body.style.background="";
+            box.style.display="none";
+            Silence.start();
+        },4000);
+    }
+};
+
+const Silence = {
+    start(){
+        state.silenceActive=true;
+        UI.clear();
+
+        Speech.say("Silence mode activated");
+
+        setTimeout(()=>{
+            state.silenceActive=false;
+            Mission.load();
+            Lock.off();
+        },5000);
+    }
+};
+
+return {
+    init(){
+        AudioSystem.init();
+        FloatingWords.start();
+        Mission.load();
+    },
+    toggleLang(){
+        state.lang = state.lang==="en"?"es":"en";
+        if(state.mission) Mission.render(state.mission);
+    },
+    decide: Decision.handle
+};
+
+})();
+
+window.onload = ()=>KamizenEngine.init();
 </script>
 
 </body>
