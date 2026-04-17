@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KAMIZEN ENGINE v3</title>
+<title>KAMIZEN ENGINE v4</title>
 
 <style>
 body{
@@ -25,7 +25,37 @@ body{
     box-sizing:border-box;
 }
 
-/* MAIN TEXT PANEL */
+/* ONBOARDING */
+#intro{
+    position:absolute;
+    top:0;left:0;
+    width:100%;height:100%;
+    background:#000;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    gap:15px;
+    z-index:999;
+}
+
+#intro input{
+    padding:10px;
+    width:250px;
+    border:1px solid #00f2ff;
+    background:#000;
+    color:#00f2ff;
+}
+
+#intro button{
+    padding:12px;
+    border:1px solid #00f2ff;
+    background:transparent;
+    color:#00f2ff;
+    cursor:pointer;
+}
+
+/* GAME UI */
 #message{
     max-width:850px;
     min-height:160px;
@@ -35,10 +65,8 @@ body{
     text-align:center;
     font-size:22px;
     line-height:1.5;
-    transition:all 0.3s ease;
 }
 
-/* BREATH VISUAL */
 #circle{
     width:120px;
     height:120px;
@@ -48,7 +76,6 @@ body{
     display:none;
 }
 
-/* OPTIONS PANEL */
 #options{
     display:none;
     flex-direction:column;
@@ -64,23 +91,16 @@ button{
     color:#00f2ff;
     cursor:pointer;
     font-size:16px;
-    transition:0.2s;
-}
-
-button:hover{
-    transform:scale(1.02);
 }
 
 .correct{background:#00ff88;color:#000;}
 .wrong{background:#ff3355;color:#fff;}
 
-/* TIMER */
 #timer{
     font-size:18px;
     opacity:0.7;
 }
 
-/* TOP BAR */
 #top{
     position:absolute;
     top:10px;
@@ -101,6 +121,23 @@ button:hover{
 
 <body>
 
+<!-- =========================
+     ONBOARDING
+========================= -->
+<div id="intro">
+
+<h1>KAMIZEN</h1>
+
+<input id="realName" placeholder="Your name">
+<input id="avatarName" placeholder="Your game name">
+
+<button onclick="createPlayer()">START</button>
+
+</div>
+
+<!-- =========================
+     GAME APP
+========================= -->
 <div id="app">
 
 <div id="top">
@@ -108,7 +145,7 @@ button:hover{
 <button onclick="restart()">RESTART</button>
 </div>
 
-<div id="message">CLICK TO START</div>
+<div id="message">CLICK START</div>
 <div id="circle"></div>
 <div id="timer"></div>
 <div id="options"></div>
@@ -120,20 +157,20 @@ button:hover{
 <script>
 
 /* =========================
-   ENGINE STATE v3
+   GLOBAL STATE
 ========================= */
 let session_id = null;
-let lang = "en";
+let player_id = null;
 
+let lang = "en";
 let locked = false;
 let current_block = null;
 
 let timerRef = null;
-let state = "idle"; 
-// idle | story | breath | choice | wait | end
+let state = "idle";
 
 /* =========================
-   SAFE SPEECH ENGINE
+   SAFE SPEECH
 ========================= */
 function speak(text){
     return new Promise(resolve=>{
@@ -153,7 +190,46 @@ function speak(text){
 }
 
 /* =========================
-   START SESSION
+   ONBOARDING (NO FREEZE)
+========================= */
+async function createPlayer(){
+
+    const real = document.getElementById("realName").value;
+    const avatar = document.getElementById("avatarName").value;
+
+    if(!real || !avatar){
+        alert("Fill all fields");
+        return;
+    }
+
+    try{
+
+        const res = await fetch("/create_player",{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({
+                real_name: real,
+                avatar_name: avatar
+            })
+        });
+
+        const data = await res.json();
+
+        player_id = data.player_id;
+
+        document.getElementById("intro").style.display = "none";
+
+        setMessage("Welcome " + data.avatar_name);
+
+        start();
+
+    }catch(e){
+        console.log("ONBOARDING ERROR:", e);
+    }
+}
+
+/* =========================
+   START GAME SESSION
 ========================= */
 async function start(){
 
@@ -175,7 +251,7 @@ async function start(){
 }
 
 /* =========================
-   MAIN RENDER ENGINE
+   MAIN ENGINE LOOP
 ========================= */
 async function render(block){
 
@@ -198,10 +274,6 @@ async function render(block){
 
         setMessage(text);
         await speak(text);
-
-        /* =========================
-           FLOW ROUTING SYSTEM
-        ========================= */
 
         if(block.type === "tvid"){
             setState("choice");
@@ -229,7 +301,7 @@ async function render(block){
 }
 
 /* =========================
-   OPTIONS SYSTEM (TVID)
+   TVID OPTIONS
 ========================= */
 function showOptions(block){
 
@@ -284,8 +356,6 @@ function showOptions(block){
 ========================= */
 async function next(){
 
-    setState("wait");
-
     const res = await fetch("/judge",{
         method:"POST",
         headers:{"Content-Type":"application/json"},
@@ -321,7 +391,7 @@ function breath(sec){
             clearInterval(i);
             c.style.display = "none";
             res();
-        }, sec * 1000);
+        }, sec*1000);
     });
 }
 
@@ -362,7 +432,7 @@ function clearTimer(){
 }
 
 /* =========================
-   UI CORE
+   UI HELPERS
 ========================= */
 function setMessage(text){
     document.getElementById("message").innerText = text;
@@ -373,12 +443,12 @@ function hideOptions(){
 }
 
 function disableOptions(){
-    const btns = document.querySelectorAll("#options button");
-    btns.forEach(b=>b.disabled = true);
+    document.querySelectorAll("#options button")
+        .forEach(b=>b.disabled = true);
 }
 
 /* =========================
-   STATE VISUAL DEBUG
+   STATE DEBUG
 ========================= */
 function setState(s){
     state = s;
