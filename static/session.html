@@ -3,22 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KAMIZEN | SESSION CORE</title>
+<title>KAMIZEN | CONTROL SURFACE</title>
 
 <style>
-/* =========================
-   BASE VISUAL (NO LOGIC)
-========================= */
 body {
     margin: 0;
     background: radial-gradient(circle, #001a33, #000);
-    color: #fff;
-    font-family: 'Segoe UI', Arial, sans-serif;
+    color: white;
+    font-family: Arial, sans-serif;
     overflow: hidden;
 }
 
 /* =========================
-   TOP CONTROL BAR
+   TOP BAR
 ========================= */
 #topbar {
     position: fixed;
@@ -29,52 +26,40 @@ body {
     gap: 10px;
     padding: 12px;
     background: rgba(0,0,0,0.4);
-    z-index: 1000;
+    z-index: 999;
     flex-wrap: wrap;
 }
 
 /* =========================
-   BUTTON SYSTEM (HORIZONTAL)
+   BUTTONS (PASSIVE ONLY)
 ========================= */
-.ctrl-btn {
-    padding: 10px 16px;
-    font-size: 14px;
+button {
+    padding: 10px 14px;
     border: 2px solid #00f2ff;
-    background: rgba(0, 242, 255, 0.08);
+    background: rgba(0,242,255,0.08);
     color: white;
     border-radius: 10px;
     cursor: pointer;
-    transition: 0.2s;
     min-width: 90px;
 }
 
-.ctrl-btn:hover {
+button:hover {
     background: #00f2ff;
-    color: #000;
+    color: black;
 }
 
 /* =========================
-   SAFE GAME AREA (NO UI CONTROL)
+   DISPLAY AREA (READ ONLY)
 ========================= */
 #game {
     padding-top: 80px;
     text-align: center;
 }
 
-/* =========================
-   SCORE DISPLAY ONLY (READ ONLY)
-========================= */
 #score-display {
     margin-top: 10px;
-    font-weight: bold;
     color: #00f2ff;
-}
-
-/* =========================
-   PREVENT UI OVERLAP FLOATERS
-========================= */
-#ui-block {
-    pointer-events: none;
+    font-weight: bold;
 }
 </style>
 </head>
@@ -82,43 +67,38 @@ body {
 <body>
 
 <!-- =========================
-     TOP CONTROL SYSTEM
+     CONTROL SURFACE (NO LOGIC)
 ========================= -->
 <div id="topbar">
 
-    <!-- LANGUAGE -->
-    <button class="ctrl-btn" onclick="KamizenEngine?.toggleLang?.()">EN / ES</button>
+    <!-- NO onclick ENGINE CALLS -->
+    <button data-action="lang">EN / ES</button>
 
-    <!-- GAME CONTROLS -->
-    <button class="ctrl-btn" onclick="KamizenEngine?.back?.()">BACK</button>
-    <button class="ctrl-btn" onclick="KamizenEngine?.start?.()">START</button>
-    <button class="ctrl-btn" onclick="KamizenEngine?.continue?.()">CONTINUE</button>
-    <button class="ctrl-btn" onclick="KamizenEngine?.pause?.()">PAUSE</button>
-    <button class="ctrl-btn" onclick="KamizenEngine?.restart?.()">RESTART</button>
+    <button data-action="back">BACK</button>
+    <button data-action="start">START</button>
+    <button data-action="continue">CONTINUE</button>
+    <button data-action="pause">PAUSE</button>
+    <button data-action="restart">RESTART</button>
 
 </div>
 
 <!-- =========================
-     GAME AREA (ENGINE OUTPUT ONLY)
+     GAME OUTPUT ONLY
 ========================= -->
 <div id="game">
 
     <h2 id="hero-name"></h2>
 
-    <div id="story">ENGINE CONTROL ACTIVE...</div>
+    <div id="story">WAITING ENGINE...</div>
     <div id="analysis"></div>
 
-    <!-- ENGINE WILL RENDER OPTIONS HERE -->
     <div id="options"></div>
 
-    <!-- READ ONLY SCORE -->
     <div id="score-display">PUNTOS: 0</div>
 
 </div>
 
-<!-- =========================
-     AUDIO (USED BY ENGINE ONLY)
-========================= -->
+<!-- AUDIO ONLY -->
 <audio id="bg" loop src="/static/sounds/bg.mp3"></audio>
 <audio id="ok" src="/static/sounds/success.mp3"></audio>
 <audio id="bad" src="/static/sounds/glass.mp3"></audio>
