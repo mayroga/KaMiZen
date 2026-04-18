@@ -225,7 +225,7 @@ const KamizenEngine = (() => {
                     clearInterval(interval);
                     return;
                 }
-                b style.transform = grow ? "scale(2.5)" : "scale(1)";
+                b.style.transform = grow ? "scale(2.5)" : "scale(1)";
                 grow = !grow;
 
             }, 4000);
