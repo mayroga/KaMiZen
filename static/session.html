@@ -4,7 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>KAMIZEN | AL CIELO PRO</title>
+
 <style>
+/* =========================
+   BASE
+========================= */
 body {
     margin: 0;
     background: radial-gradient(circle, #001a33, #000);
@@ -13,75 +17,66 @@ body {
     text-align: center;
     overflow: hidden;
     cursor: crosshair;
-    transition: background 0.5s ease;
+    transition: background 0.5s;
 }
-/* ===================== TOP BAR ===================== */
+
 #topbar {
     position: fixed;
     top: 0;
-    left: 0;
     width: 100%;
     display: flex;
     justify-content: space-between;
-    padding: 12px 18px;
-    z-index: 1000;
-    background: rgba(0,0,0,0.35);
-    backdrop-filter: blur(8px);
-    box-sizing: border-box;
+    padding: 15px;
+    z-index: 100;
+    background: rgba(0,0,0,0.3);
 }
-#score-display {
-    font-weight: bold;
-    font-size: 1.1rem;
-    color: #00f2ff;
-}
-#hero-name {
-    margin-top: 80px;
-    font-size: 1.8rem;
-    color: #ffffff;
-    text-shadow: 0 0 10px #00f2ff;
-}
-/* ===================== GAME AREA ===================== */
+
 #game {
-    padding-top: 20px;
+    padding-top: 80px;
     position: relative;
     z-index: 10;
 }
+
 #top-ui {
     display: flex;
     justify-content: space-around;
     font-weight: bold;
-    font-size: 1rem;
+    font-size: 1.2rem;
     color: #00f2ff;
-    margin-top: 10px;
 }
-#stat-focus, #stat-life {
-    opacity: 0.9;
-}
-/* ===================== BUTTONS ===================== */
+
+/* =========================
+   BUTTONS
+========================= */
 button {
-    padding: 12px 18px;
-    margin: 8px;
-    font-size: 16px;
+    padding: 15px 25px;
+    margin: 10px;
+    font-size: 18px;
     border: 2px solid #00f2ff;
-    background: rgba(0, 242, 255, 0.08);
+    background: rgba(0, 242, 255, 0.1);
     color: white;
-    border-radius: 10px;
+    border-radius: 12px;
     cursor: pointer;
-    transition: 0.25s;
+    transition: 0.3s;
 }
+
 button:hover {
     background: #00f2ff;
     color: #000;
-    box-shadow: 0 0 15px #00f2ff;
+    box-shadow: 0 0 20px #00f2ff;
 }
+
 .opt-btn {
     display: block;
-    width: 85%;
-    max-width: 520px;
+    width: 80%;
+    max-width: 500px;
     margin: 10px auto;
     text-align: left;
 }
-/* ===================== BREATH ===================== */
+
+/* =========================
+   BREATHE
+========================= */
 #breath {
     width: 100px;
     height: 100px;
@@ -92,10 +87,13 @@ button:hover {
     box-shadow: 0 0 30px #00f2ff;
     display: none;
 }
-/* ===================== FLOATING WORDS ===================== */
+
+/* =========================
+   FLOATING WORDS BASE
+========================= */
 .floating {
     position: absolute;
-    padding: 8px 16px;
+    padding: 8px 18px;
     border-radius: 20px;
     font-weight: bold;
     cursor: pointer;
@@ -103,83 +101,214 @@ button:hover {
     z-index: 50;
     animation: floatUp 5s linear forwards;
 }
+
 @keyframes floatUp {
     from { transform: translateY(110vh) rotate(0deg); }
     to { transform: translateY(-20vh) rotate(20deg); }
 }
-/* ===================== WORD COLORS ===================== */
-.word-good {
-    background: rgba(0, 255, 0, 0.15);
-    color: #00ff00;
-    border: 2px solid #00ff00;
-    box-shadow: 0 0 15px #00ff00;
-}
-.word-bad {
-    background: rgba(255, 0, 0, 0.08);
-    color: #ff6666;
-    border: 1px solid #ff0000;
-    box-shadow: 0 0 10px rgba(255,0,0,0.4);
-}
-.word-neutral {
-    color: #ffff66;
-    border: 2px solid #ffff66;
-}
-/* ===================== BLAST ===================== */
+
 .blast {
     animation: burst 0.4s forwards;
     pointer-events: none;
 }
+
 @keyframes burst {
     to { transform: scale(4); opacity: 0; }
 }
-/* ===================== UI BOX ===================== */
+
+/* =========================
+   POWER / SMOKE (PSYCHOLOGY)
+========================= */
+
+/* Bubbles of Power */
+.word-good {
+    background: rgba(0, 255, 0, 0.2);
+    color: #00ff00;
+    border: 2px solid #00ff00;
+    box-shadow: 0 0 20px #00ff00;
+    text-shadow: 0 0 10px #00ff00;
+}
+
+/* Bubbles of Smoke */
+.word-bad {
+    background: rgba(255, 255, 255, 0.1);
+    color: #aaaaaa;
+    border: 1px dashed #ff0000;
+    box-shadow: 0 0 10px rgba(255,0,0,0.5);
+    animation: vibrate 0.2s infinite;
+}
+
+@keyframes vibrate {
+    0% { transform: translate(0,0) rotate(0deg); }
+    50% { transform: translate(2px, 2px) rotate(1deg); }
+    100% { transform: translate(0,0) rotate(0deg); }
+}
+
+/* =========================
+  Quick Traps
+========================= */
+.floating[style*="2.5s"],
+.floating[style*="2s"] {
+    font-size: 1.4rem;
+    box-shadow: 0 0 30px #fff;
+    filter: brightness(1.5);
+}
+
+/* =========================
+   FLASH ERROR
+========================= */
+.flash-red {
+    animation: flashDanger 0.3s;
+}
+
+@keyframes flashDanger {
+    0% { background: rgba(255,0,0,0.5); }
+    100% { background: transparent; }
+}
+
+/* =========================
+   UI BOX
+========================= */
 #explanation-box {
-    background: rgba(0,0,0,0.85);
-    border-left: 4px solid #00f2ff;
-    padding: 18px;
+    background: rgba(0,0,0,0.8);
+    border-left: 5px solid #00f2ff;
+    padding: 20px;
     margin: 20px auto;
     width: 80%;
     display: none;
-    font-size: 1.1rem;
-    border-radius: 0 12px 12px 0;
+    font-size: 1.2rem;
+    border-radius: 0 15px 15px 0;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
-/* ===================== TEXT ===================== */
-#story {
-    font-size: 1.4rem;
-    margin: 20px;
-    font-weight: bold;
-}
-#analysis {
-    color: #00f2ff;
-    font-style: italic;
-    margin-bottom: 20px;
-}
+
+#story { font-size: 1.5rem; margin: 20px; font-weight: bold; }
+#analysis { color: #00f2ff; font-style: italic; margin-bottom: 20px; }
 </style>
 </head>
+
 <body>
-<!-- TOP BAR -->
+
 <div id="topbar">
-    <button onclick="KamizenEngine.toggleLang()">EN / ES</button>
+    <button onclick="toggleLang()">EN/ES</button>
     <div id="score-display">POINTS: 0</div>
 </div>
-<!-- GAME -->
+
 <div id="game">
+
     <div id="top-ui">
         <div id="stat-focus">FOCUS: 100%</div>
         <div id="stat-life">ENERGY: ⚡⚡⚡</div>
     </div>
+
     <h2 id="hero-name"></h2>
+
     <div id="breath"></div>
+
     <div id="story"></div>
     <div id="analysis"></div>
+
     <div id="explanation-box"></div>
     <div id="options"></div>
 </div>
+
 <!-- AUDIO -->
 <audio id="bg" loop src="/static/sounds/bg.mp3"></audio>
 <audio id="ok" src="/static/sounds/success.mp3"></audio>
 <audio id="bad" src="/static/sounds/glass.mp3"></audio>
-<!-- ENGINE ONLY (NO DUPLICATED LOGIC) -->
-<script src="/static/engine.js"></script>
+
+<script>
+
+/* =========================
+   WORDPOOL UPDATE
+========================= */
+const wordPool = {
+    good: ["CRITERIO", "ESTRATEGIA", "SABIDURIA", "VALENTIA", "LEALTAD", "CALMA", "AMOR"],
+    bad: ["APROBACION", "IMPULSO", "VICTIMA", "GASTO", "MIEDO", "DESENFOQUE", "EGO"],
+    neutral: ["CALLE", "CIUDAD", "ESCUELA", "RELOJ", "ESPERA", "RUIDO"]
+};
+
+let lang = "en";
+let missionId = 1;
+let score = 0;
+let silenceMinutes = 3;
+let currentMissionData = null;
+
+/* =========================
+   INIT
+========================= */
+async function init() {
+    const name = prompt("Tu nombre real:") || "Player";
+    const hero = prompt("Nombre de tu Héroe:") || "Kamizen";
+    document.getElementById("hero-name").innerText = hero;
+
+    startMusic();
+    startFloatingSystem();
+    loadNextMission();
+}
+
+/* =========================
+   AUDIO
+========================= */
+function startMusic() {
+    const bg = document.getElementById("bg");
+    bg.volume = 0.4;
+    bg.playbackRate = 1.1;
+    bg.play().catch(()=>{});
+}
+
+function speak(text) {
+    window.speechSynthesis.cancel();
+    const msg = new SpeechSynthesisUtterance(text);
+    msg.lang = lang === "en" ? "en-US" : "es-ES";
+    msg.rate = 0.9;
+    window.speechSynthesis.speak(msg);
+}
+
+function toggleLang() {
+    lang = lang === "en" ? "es" : "en";
+    if (currentMissionData) renderMission(currentMissionData);
+}
+
+/* =========================
+   FLOATING SYSTEM
+========================= */
+function startFloatingSystem() {
+    setInterval(() => {
+        const type = Math.random() > 0.7 ? "bad" : (Math.random() > 0.4 ? "good" : "neutral");
+        const word = wordPool[type][Math.floor(Math.random()*wordPool[type].length)];
+
+        const el = document.createElement("div");
+        el.className = `floating word-${type}`;
+        el.innerText = word;
+        el.style.left = Math.random() * 90 + "vw";
+
+        el.onmousedown = () => {
+            el.classList.add("blast");
+
+            if (type === "good") {
+                score += 5;
+                document.getElementById("ok").play();
+            }
+            if (type === "bad") {
+                score -= 10;
+                document.getElementById("bad").play();
+            }
+
+            document.getElementById("score-display").innerText = `PUNTOS: ${score}`;
+            setTimeout(()=>el.remove(),300);
+        };
+
+        document.body.appendChild(el);
+        setTimeout(()=>el.remove(),5000);
+    }, 2000);
+}
+
+/* =========================
+   START
+========================= */
+window.onload = init;
+
+</script>
+
 </body>
 </html>
