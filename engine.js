@@ -1,13 +1,12 @@
 /**
- * 🧠 KAMIZEN ENGINE CORE — AL CIELO EDITION (SINGLE ENGINE SYSTEM)
- * Todo el sistema del juego vive aquí.
- * No existe SESSION.HTML ENGINE paralelo.
+ * 🧠 KAMIZEN ENGINE CORE — AL CIELO EDITION (STABLE SINGLE ENGINE)
+ * Session SOLO renderiza. Engine controla TODO comportamiento.
  */
 
 const KamizenEngine = (() => {
 
     // =====================================================
-    // 📊 ESTADO GLOBAL (SOURCE OF TRUTH)
+    // 📊 STATE (SINGLE SOURCE OF TRUTH)
     // =====================================================
     const state = {
         score: 0,
@@ -17,19 +16,20 @@ const KamizenEngine = (() => {
         mission: null,
 
         locked: false,
-
         silenceActive: false,
         silenceTime: 180,
 
-        attention: 100,        // 🧠 NUEVO: foco mental real
-        streak: 0,             // 🔥 NUEVO: racha de decisiones correctas
-        mistakes: 0,           // ⚠️ NUEVO: errores acumulados
+        attention: 100,
+        streak: 0,
+        mistakes: 0,
 
-        lastAction: Date.now()
+        lastAction: Date.now(),
+
+        intervals: [] // 🧠 CONTROL CENTRAL DE TIMERS
     };
 
     // =====================================================
-    // 🔒 LOCK SYSTEM (INTERACCIÓN CONTROLADA)
+    // 🔒 LOCK SYSTEM
     // =====================================================
     const Lock = {
         on() {
@@ -46,7 +46,7 @@ const KamizenEngine = (() => {
     };
 
     // =====================================================
-    // 🔊 AUDIO SYSTEM (ROBUSTO)
+    // 🔊 AUDIO SYSTEM
     // =====================================================
     const AudioSystem = {
         bg: null,
@@ -61,7 +61,6 @@ const KamizenEngine = (() => {
             if (this.bg) {
                 this.bg.volume = 0.25;
                 this.bg.loop = true;
-                this.bg.playbackRate = 1.05;
                 this.bg.play().catch(() => {});
             }
         },
@@ -73,23 +72,24 @@ const KamizenEngine = (() => {
             try {
                 a.currentTime = 0;
                 a.play();
-            } catch (e) {}
+            } catch {}
         }
     };
 
     // =====================================================
-    // 🗣️ SPEECH SYSTEM (CON COLA REAL)
+    // 🗣️ SPEECH QUEUE (SAFE)
     // =====================================================
     const Speech = {
         queue: [],
         speaking: false,
 
         say(text) {
+            if (!text) return;
             this.queue.push(text);
-            this.process();
+            this.next();
         },
 
-        process() {
+        next() {
             if (this.speaking || this.queue.length === 0) return;
 
             this.speaking = true;
@@ -101,7 +101,7 @@ const KamizenEngine = (() => {
 
             u.onend = () => {
                 this.speaking = false;
-                this.process();
+                this.next();
             };
 
             window.speechSynthesis.speak(u);
@@ -109,66 +109,53 @@ const KamizenEngine = (() => {
     };
 
     // =====================================================
-    // 🧠 PSYCHOLOGY CORE (SIGNIFICADO REAL)
+    // 🧠 PSYCHOLOGY MAP
     // =====================================================
     const Psychology = {
-
-        CRITERIO: "You decide your actions. You are not controlled.",
-        ESTRATEGIA: "You learn to observe and move smart.",
-        SABIDURIA: "Money is a tool, not emotion.",
-        VALENTIA: "You act even with fear.",
+        CRITERIO: "You decide your actions.",
+        ESTRATEGIA: "You move intelligently.",
+        SABIDURIA: "Money is a tool.",
+        VALENTIA: "You act despite fear.",
         CALMA: "Control breath = control life.",
 
-        APROBACION: "You lose yourself trying to please others.",
+        APROBACION: "You lose identity seeking validation.",
         IMPULSO: "You act without thinking.",
         VICTIMA: "You give away your power.",
-        GASTO: "You lose control over money.",
-        EGO: "Fear of judgment blocks your growth.",
+        GASTO: "You lose financial control.",
+        EGO: "Fear blocks growth.",
 
         TELEFONO: "Attention is being stolen.",
-        PANTALLA: "Digital addiction risk.",
-        DISTRACCION: "Focus is being destroyed."
+        PANTALLA: "Digital overload risk.",
+        DISTRACCION: "Focus breakdown detected."
     };
 
     // =====================================================
-    // 🌌 FLOATING SYSTEM (INTELIGENTE + PROGRESIVO)
+    // 🌌 FLOATING SYSTEM (CONTROLLED LOOP)
     // =====================================================
     const FloatingWords = {
 
-        spawn() {
+        start() {
+            const id = setInterval(() => {
+                if (!state.silenceActive && !Lock.is()) {
+                    this.spawn();
+                }
+            }, 1700);
 
-            if (state.silenceActive || Lock.is()) return;
+            state.intervals.push(id);
+        },
+
+        spawn() {
 
             const r = Math.random();
 
             let config;
 
-            // 🧨 TRAMPAS
             if (r > 0.85) {
-                config = {
-                    type: "trap",
-                    class: "word-bad",
-                    words: ["TELEFONO", "PANTALLA", "DISTRACCION"],
-                    val: -25
-                };
-
-            // 🟢 PODER
+                config = { class: "word-bad", words: ["TELEFONO","PANTALLA","DISTRACCION"], val: -25 };
             } else if (r > 0.4) {
-                config = {
-                    type: "power",
-                    class: "word-good",
-                    words: ["CRITERIO", "ESTRATEGIA", "SABIDURIA", "VALENTIA", "CALMA"],
-                    val: 20
-                };
-
-            // 🔴 HUMO
+                config = { class: "word-good", words: ["CRITERIO","ESTRATEGIA","SABIDURIA","VALENTIA","CALMA"], val: 20 };
             } else {
-                config = {
-                    type: "smoke",
-                    class: "word-neutral",
-                    words: ["APROBACION", "IMPULSO", "EGO", "VICTIMA", "GASTO"],
-                    val: -10
-                };
+                config = { class: "word-neutral", words: ["APROBACION","IMPULSO","EGO","VICTIMA"], val: -10 };
             }
 
             const word = config.words[Math.floor(Math.random() * config.words.length)];
@@ -176,13 +163,9 @@ const KamizenEngine = (() => {
             const el = document.createElement("div");
             el.className = `floating ${config.class}`;
             el.innerText = word;
-
             el.style.left = Math.random() * 90 + "vw";
 
             el.onclick = () => {
-
-                el.style.transform = "scale(3)";
-                el.style.opacity = "0";
 
                 state.score += config.val;
                 state.lastAction = Date.now();
@@ -191,16 +174,17 @@ const KamizenEngine = (() => {
                     state.streak++;
                     state.attention = Math.min(100, state.attention + 2);
                     AudioSystem.play("win");
-                    Speech.say(Psychology[word] || "Good decision");
                 } else {
                     state.mistakes++;
                     state.streak = 0;
                     state.attention -= 5;
                     AudioSystem.play("bad");
-                    Speech.say("Warning: " + (Psychology[word] || "Bad choice"));
                 }
 
                 UI.update();
+
+                el.style.transform = "scale(3)";
+                el.style.opacity = "0";
 
                 setTimeout(() => el.remove(), 300);
             };
@@ -208,15 +192,11 @@ const KamizenEngine = (() => {
             document.body.appendChild(el);
 
             setTimeout(() => el.remove(), 5000);
-        },
-
-        start() {
-            setInterval(() => this.spawn(), 1600);
         }
     };
 
     // =====================================================
-    // 🎮 DECISION ENGINE (NARRATIVA + REACCIÓN)
+    // 🎮 DECISION SYSTEM
     // =====================================================
     const Decision = {
 
@@ -227,79 +207,72 @@ const KamizenEngine = (() => {
             const box = document.getElementById("explanation-box");
             box.style.display = "block";
 
-            const text = option.explanation?.[state.lang] || "No explanation";
+            const text = option.explanation?.[state.lang] || "";
+
             box.innerText = text;
 
-            const good = ["Smart choice", "Excellent", "Focused mind"];
-            const bad = ["Think again", "Risk detected", "Wrong path"];
-
             if (option.correct) {
-                document.body.style.background = "#003300";
-                AudioSystem.play("win");
-                Speech.say(good[Math.floor(Math.random() * good.length)] + ". " + text);
+                state.score += 20;
                 state.streak++;
-                state.attention += 3;
+                AudioSystem.play("win");
+                Speech.say("Good choice. " + text);
             } else {
-                document.body.style.background = "#330000";
-                AudioSystem.play("bad");
-                Speech.say(bad[Math.floor(Math.random() * bad.length)] + ". " + text);
                 state.mistakes++;
                 state.streak = 0;
-                state.attention -= 5;
+                AudioSystem.play("bad");
+                Speech.say("Wrong path. " + text);
             }
 
             UI.update();
 
             setTimeout(() => {
-                document.body.style.background = "";
                 box.style.display = "none";
-                SilenceReto.start();
-            }, 5000);
+                Lock.off();
+                Silence.start();
+            }, 4000);
         }
     };
 
     // =====================================================
-    // 🧘 SILENCE SYSTEM (MEJORADO REAL)
+    // 🧘 SILENCE SYSTEM
     // =====================================================
-    const SilenceReto = {
+    const Silence = {
 
         start() {
 
             state.silenceActive = true;
-            UI.clear();
-
-            Speech.say("Silence mode activated. Control yourself.");
 
             let t = state.silenceTime;
 
-            const timer = setInterval(() => {
+            const id = setInterval(() => {
+
+                if (state.locked) return;
 
                 t--;
-
-                state.attention += 0.1; // micro mejora por calma
+                state.attention += 0.05;
 
                 if (t <= 0 || state.attention <= 0) {
-                    clearInterval(timer);
+                    clearInterval(id);
                     this.finish();
                 }
 
             }, 1000);
+
+            state.intervals.push(id);
+
+            Speech.say("Silence mode activated.");
         },
 
         finish() {
-
             state.silenceActive = false;
-
             state.score += 30 + state.streak * 2;
-
-            Speech.say("Silence completed. Mental upgrade achieved.");
-
+            Speech.say("Silence completed.");
             Mission.load();
         }
     };
 
     // =====================================================
-    // 📂 MISSION SYSTEM
+    // 📂 MISSION SYSTEM (SINGLE FETCH OWNER)
     // =====================================================
     const Mission = {
 
@@ -308,7 +281,6 @@ const KamizenEngine = (() => {
             Lock.on();
 
             try {
-
                 const res = await fetch("/api/mission/next");
                 const data = await res.json();
 
@@ -316,12 +288,8 @@ const KamizenEngine = (() => {
 
                 this.render(data);
 
-            } catch (e) {
-
-                console.error("Mission load failed");
-
-                Speech.say("System error. Restarting mission.");
-
+            } catch {
+                Speech.say("Mission error. Retrying...");
             }
 
             Lock.off();
@@ -341,16 +309,16 @@ const KamizenEngine = (() => {
             setTimeout(() => {
                 UI.set("analysis", analysis);
                 Speech.say(analysis);
-            }, 3000);
+            }, 2500);
 
             setTimeout(() => {
                 UI.render(decision.options);
-            }, 7000);
+            }, 6000);
         }
     };
 
     // =====================================================
-    // 🖥️ UI SYSTEM
+    // 🖥️ UI (MINIMAL SAFE LAYER)
     // =====================================================
     const UI = {
 
@@ -376,8 +344,8 @@ const KamizenEngine = (() => {
             options.forEach(opt => {
 
                 const b = document.createElement("button");
-                b.innerText = opt.text[state.lang];
                 b.className = "opt-btn";
+                b.innerText = opt.text[state.lang];
 
                 b.onclick = () => Decision.handle(opt);
 
@@ -395,7 +363,7 @@ const KamizenEngine = (() => {
             AudioSystem.init();
             FloatingWords.start();
             Mission.load();
-            console.log("KAMIZEN ENGINE FULL ACTIVE");
+            console.log("KAMIZEN ENGINE STABLE ACTIVE");
         },
 
         toggleLang() {
