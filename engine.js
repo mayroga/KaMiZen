@@ -1,35 +1,56 @@
 /**
- * 🧠 KAMIZEN ENGINE CORE — AL CIELO EDITION (STABLE SINGLE ENGINE)
- * Session SOLO renderiza. Engine controla TODO comportamiento.
+ * 🧠 KAMIZEN ENGINE CORE — DOM AUTHORITY SYSTEM
+ * ENGINE ES EL ÚNICO CONTROLADOR DEL JUEGO
  */
 
 const KamizenEngine = (() => {
 
     // =====================================================
-    // 📊 STATE (SINGLE SOURCE OF TRUTH)
+    // 📊 STATE
     // =====================================================
     const state = {
         score: 0,
-        energy: 100,
         lang: "en",
-        missionId: 1,
         mission: null,
-
         locked: false,
+
         silenceActive: false,
         silenceTime: 180,
 
         attention: 100,
         streak: 0,
-        mistakes: 0,
-
-        lastAction: Date.now(),
-
-        intervals: [] // 🧠 CONTROL CENTRAL DE TIMERS
+        mistakes: 0
     };
 
     // =====================================================
-    // 🔒 LOCK SYSTEM
+    // 🧱 DOM AUTHORITY LAYER (CLAVE)
+    // =====================================================
+    const DOM = {
+        set(id, val) {
+            const el = document.getElementById(id);
+            if (el) el.innerText = val;
+        },
+
+        html(id, val) {
+            const el = document.getElementById(id);
+            if (el) el.innerHTML = val;
+        },
+
+        clear(id) {
+            const el = document.getElementById(id);
+            if (el) el.innerHTML = "";
+        },
+
+        create(tag, className, text) {
+            const el = document.createElement(tag);
+            if (className) el.className = className;
+            if (text) el.innerText = text;
+            return el;
+        }
+    };
+
+    // =====================================================
+    // 🔒 LOCK (ENGINE PRIORITY)
     // =====================================================
     const Lock = {
         on() {
@@ -46,7 +67,7 @@ const KamizenEngine = (() => {
     };
 
     // =====================================================
-    // 🔊 AUDIO SYSTEM
+    // 🔊 AUDIO
     // =====================================================
     const AudioSystem = {
         bg: null,
@@ -69,19 +90,17 @@ const KamizenEngine = (() => {
             const a = type === "win" ? this.ok : this.bad;
             if (!a) return;
 
-            try {
-                a.currentTime = 0;
-                a.play();
-            } catch {}
+            a.currentTime = 0;
+            a.play().catch(() => {});
         }
     };
 
     // =====================================================
-    // 🗣️ SPEECH QUEUE (SAFE)
+    // 🗣️ SPEECH QUEUE
     // =====================================================
     const Speech = {
         queue: [],
-        speaking: false,
+        running: false,
 
         say(text) {
             if (!text) return;
@@ -90,9 +109,9 @@ const KamizenEngine = (() => {
         },
 
         next() {
-            if (this.speaking || this.queue.length === 0) return;
+            if (this.running || this.queue.length === 0) return;
 
-            this.speaking = true;
+            this.running = true;
             const text = this.queue.shift();
 
             const u = new SpeechSynthesisUtterance(text);
@@ -100,88 +119,49 @@ const KamizenEngine = (() => {
             u.rate = 0.92;
 
             u.onend = () => {
-                this.speaking = false;
+                this.running = false;
                 this.next();
             };
 
-            window.speechSynthesis.speak(u);
+            speechSynthesis.speak(u);
         }
     };
 
     // =====================================================
-    // 🧠 PSYCHOLOGY MAP
-    // =====================================================
-    const Psychology = {
-        CRITERIO: "You decide your actions.",
-        ESTRATEGIA: "You move intelligently.",
-        SABIDURIA: "Money is a tool.",
-        VALENTIA: "You act despite fear.",
-        CALMA: "Control breath = control life.",
-
-        APROBACION: "You lose identity seeking validation.",
-        IMPULSO: "You act without thinking.",
-        VICTIMA: "You give away your power.",
-        GASTO: "You lose financial control.",
-        EGO: "Fear blocks growth.",
-
-        TELEFONO: "Attention is being stolen.",
-        PANTALLA: "Digital overload risk.",
-        DISTRACCION: "Focus breakdown detected."
-    };
-
-    // =====================================================
-    // 🌌 FLOATING SYSTEM (CONTROLLED LOOP)
+    // 🌌 FLOATING SYSTEM (ENGINE OWNED ONLY)
     // =====================================================
     const FloatingWords = {
 
-        start() {
-            const id = setInterval(() => {
-                if (!state.silenceActive && !Lock.is()) {
-                    this.spawn();
-                }
-            }, 1700);
-
-            state.intervals.push(id);
-        },
-
         spawn() {
 
-            const r = Math.random();
+            if (state.silenceActive || Lock.is()) return;
 
-            let config;
+            const pool = [
+                { w: "CRITERIO", v: 20, c: "good" },
+                { w: "ESTRATEGIA", v: 20, c: "good" },
+                { w: "APROBACION", v: -10, c: "bad" },
+                { w: "IMPULSO", v: -10, c: "bad" }
+            ];
 
-            if (r > 0.85) {
-                config = { class: "word-bad", words: ["TELEFONO","PANTALLA","DISTRACCION"], val: -25 };
-            } else if (r > 0.4) {
-                config = { class: "word-good", words: ["CRITERIO","ESTRATEGIA","SABIDURIA","VALENTIA","CALMA"], val: 20 };
-            } else {
-                config = { class: "word-neutral", words: ["APROBACION","IMPULSO","EGO","VICTIMA"], val: -10 };
-            }
+            const item = pool[Math.floor(Math.random() * pool.length)];
 
-            const word = config.words[Math.floor(Math.random() * config.words.length)];
+            const el = DOM.create("div", `floating word-${item.c}`, item.w);
 
-            const el = document.createElement("div");
-            el.className = `floating ${config.class}`;
-            el.innerText = word;
             el.style.left = Math.random() * 90 + "vw";
 
             el.onclick = () => {
 
-                state.score += config.val;
-                state.lastAction = Date.now();
+                state.score += item.v;
 
-                if (config.val > 0) {
+                if (item.v > 0) {
                     state.streak++;
-                    state.attention = Math.min(100, state.attention + 2);
                     AudioSystem.play("win");
                 } else {
-                    state.mistakes++;
                     state.streak = 0;
-                    state.attention -= 5;
                     AudioSystem.play("bad");
                 }
 
-                UI.update();
+                DOM.set("score-display", "POINTS: " + state.score);
 
                 el.style.transform = "scale(3)";
                 el.style.opacity = "0";
@@ -192,44 +172,43 @@ const KamizenEngine = (() => {
             document.body.appendChild(el);
 
             setTimeout(() => el.remove(), 5000);
+        },
+
+        start() {
+            setInterval(() => this.spawn(), 1600);
         }
     };
 
     // =====================================================
-    // 🎮 DECISION SYSTEM
+    // 🎮 DECISIONS
     // =====================================================
     const Decision = {
 
-        handle(option) {
+        handle(opt) {
 
             Lock.on();
 
+            DOM.html("explanation-box", opt.explanation?.[state.lang] || "");
             const box = document.getElementById("explanation-box");
             box.style.display = "block";
 
-            const text = option.explanation?.[state.lang] || "";
-
-            box.innerText = text;
-
-            if (option.correct) {
+            if (opt.correct) {
                 state.score += 20;
-                state.streak++;
                 AudioSystem.play("win");
-                Speech.say("Good choice. " + text);
+                Speech.say("Correct choice");
             } else {
-                state.mistakes++;
-                state.streak = 0;
+                state.score -= 10;
                 AudioSystem.play("bad");
-                Speech.say("Wrong path. " + text);
+                Speech.say("Wrong choice");
             }
 
-            UI.update();
+            DOM.set("score-display", "POINTS: " + state.score);
 
             setTimeout(() => {
                 box.style.display = "none";
                 Lock.off();
                 Silence.start();
-            }, 4000);
+            }, 3000);
         }
     };
 
@@ -246,39 +225,30 @@ const KamizenEngine = (() => {
 
             const id = setInterval(() => {
 
-                if (state.locked) return;
-
                 t--;
-                state.attention += 0.05;
 
-                if (t <= 0 || state.attention <= 0) {
+                if (t <= 0) {
                     clearInterval(id);
                     this.finish();
                 }
 
             }, 1000);
-
-            state.intervals.push(id);
-
-            Speech.say("Silence mode activated.");
         },
 
         finish() {
             state.silenceActive = false;
-            state.score += 30 + state.streak * 2;
-            Speech.say("Silence completed.");
+            state.score += 30;
+            Speech.say("Silence completed");
             Mission.load();
         }
     };
 
     // =====================================================
-    // 📂 MISSION SYSTEM (SINGLE FETCH OWNER)
+    // 📂 MISSION SYSTEM (ENGINE OWNS OUTPUT)
     // =====================================================
     const Mission = {
 
         async load() {
-
-            Lock.on();
 
             try {
                 const res = await fetch("/api/mission/next");
@@ -289,10 +259,8 @@ const KamizenEngine = (() => {
                 this.render(data);
 
             } catch {
-                Speech.say("Mission error. Retrying...");
+                Speech.say("Mission error");
             }
-
-            Lock.off();
         },
 
         render(m) {
@@ -301,40 +269,26 @@ const KamizenEngine = (() => {
             const analysis = m.blocks.find(b => b.type === "analysis")?.text[state.lang];
             const decision = m.blocks.find(b => b.type === "decision");
 
-            UI.set("story", story);
-            UI.set("analysis", "");
+            DOM.set("story", story);
+            DOM.set("analysis", "");
 
             Speech.say(story);
 
             setTimeout(() => {
-                UI.set("analysis", analysis);
+                DOM.set("analysis", analysis);
                 Speech.say(analysis);
             }, 2500);
 
             setTimeout(() => {
                 UI.render(decision.options);
-            }, 6000);
+            }, 5000);
         }
     };
 
     // =====================================================
-    // 🖥️ UI (MINIMAL SAFE LAYER)
+    // 🖥️ UI (ONLY ENGINE WRITES HERE)
     // =====================================================
     const UI = {
-
-        set(id, val) {
-            const el = document.getElementById(id);
-            if (el) el.innerText = val;
-        },
-
-        update() {
-            this.set("score-display", "POINTS: " + state.score);
-        },
-
-        clear() {
-            const o = document.getElementById("options");
-            if (o) o.innerHTML = "";
-        },
 
         render(options) {
 
@@ -343,9 +297,7 @@ const KamizenEngine = (() => {
 
             options.forEach(opt => {
 
-                const b = document.createElement("button");
-                b.className = "opt-btn";
-                b.innerText = opt.text[state.lang];
+                const b = DOM.create("button", "opt-btn", opt.text[state.lang]);
 
                 b.onclick = () => Decision.handle(opt);
 
@@ -363,7 +315,6 @@ const KamizenEngine = (() => {
             AudioSystem.init();
             FloatingWords.start();
             Mission.load();
-            console.log("KAMIZEN ENGINE STABLE ACTIVE");
         },
 
         toggleLang() {
