@@ -184,7 +184,6 @@ button:hover {
 <audio id="bg" loop src="/static/sounds/bg.mp3"></audio>
 <audio id="ok" src="/static/sounds/success.mp3"></audio>
 <audio id="bad" src="/static/sounds/glass.mp3"></audio>
-
 <script>
 /* ===================== WORD POOL (UPDATED) ===================== */
 const wordPool = {
@@ -229,7 +228,6 @@ function startFloatingSystem() {
         el.style.left = Math.random() * 90 + "vw";
         el.onmousedown = () => {
             el.classList.add("blast");
-
             if (type === "good") {
                 score += 5;
                 document.getElementById("ok").play();
