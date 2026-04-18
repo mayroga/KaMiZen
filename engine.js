@@ -64,7 +64,6 @@ const KamizenEngine = (() => {
         },
         run() {
             if (this.speaking || this.queue.length === 0) return;
-
             this.speaking = true;
             const u = new SpeechSynthesisUtterance(this.queue.shift());
             u.lang = state.lang === "en" ? "en-US" : "es-ES";
@@ -331,13 +330,10 @@ const KamizenEngine = (() => {
             const story = m.blocks.find(b=>b.type==="story").text[state.lang];
             const analysis = m.blocks.find(b=>b.type==="analysis").text[state.lang];
             const decision = m.blocks.find(b=>b.type==="decision");
-
             UI.setText("story", story);
             UI.setText("analysis", "");
             UI.clearOptions();
-
             Speech.say(story);
-
             setTimeout(()=>{
                 UI.setText("analysis", analysis);
                 Speech.say(analysis);
