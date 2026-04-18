@@ -222,9 +222,9 @@ button:hover {
    WORDPOOL UPDATE
 ========================= */
 const wordPool = {
-    good: ["CRITERIO", "ESTRATEGIA", "SABIDURIA", "VALENTIA", "LEALTAD", "CALMA", "AMOR"],
-    bad: ["APROBACION", "IMPULSO", "VICTIMA", "GASTO", "MIEDO", "DESENFOQUE", "EGO"],
-    neutral: ["CALLE", "CIUDAD", "ESCUELA", "RELOJ", "ESPERA", "RUIDO"]
+    good: ["CRITERION", "ESTRATEGY", "WISDOM", "COURAGE", "LOYALTY", "CALM", "LOVE"],
+    bad: ["APPROVAL", "IMPULSE", "VICTIM", "SPEND", "FEAR", "DISTRACTION", "EGO"],
+    neutral: ["STREET", "CITY", "SCHOOL", "WATCH", "WAIT", "NOISE"]
 };
 
 let lang = "en";
@@ -237,8 +237,8 @@ let currentMissionData = null;
    INIT
 ========================= */
 async function init() {
-    const name = prompt("Tu nombre real:") || "Player";
-    const hero = prompt("Nombre de tu Héroe:") || "Kamizen";
+    const name = prompt("Your real name:") || "Player";
+    const hero = prompt("name of your hero:") || "Kamizen";
     document.getElementById("hero-name").innerText = hero;
 
     startMusic();
