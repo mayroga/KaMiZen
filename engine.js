@@ -21,7 +21,6 @@ const KamizenEngine = (() => {
     // 🔒 LOCK SYSTEM
     // ==========================================
     const Lock = {
-        on() { state.locked = true; document.body.style.pointerEvents = "none"; },
         off() { state.locked = false; document.body.style.pointerEvents = "auto"; },
         is() { return state.locked; }
     };
