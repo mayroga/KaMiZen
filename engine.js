@@ -11,7 +11,7 @@ const KamizenEngine = (() => {
         locked: false,
         silenceActive: false,
         silenceTime: 20,
-        floatingWords: ["POWER", "FOCUS", "STREET", "TRUTH"]
+        player: { name: "", hero: "" }
     };
     // =========================
     // 🔒 LOCK SYSTEM
@@ -76,6 +76,7 @@ const KamizenEngine = (() => {
                 this.speaking = false;
                 this.run();
             };
+
             window.speechSynthesis.speak(u);
         }
     };
@@ -84,23 +85,23 @@ const KamizenEngine = (() => {
     // =========================
     const FloatingWords = {
         psychology: {
-            CRITERIO: "Decision power: You become a leader, not a follower.",
-            ESTRATEGIA: "Social strategy: You attract strong allies.",
+            CRITERIO: "Decision power: You become a leader.",
+            ESTRATEGIA: "Social strategy builds allies.",
             SABIDURIA: "Financial wisdom creates freedom.",
             VALENTIA: "Courage builds respect.",
-            LEALTAD: "Loyalty gives you real support.",
-            CALMA: "Calm breathing controls situations.",
-            APROBACION: "Seeking approval destroys identity.",
-            IMPULSO: "Impulse weakens your mind.",
-            VICTIMA: "Blaming removes your power.",
-            GASTO: "Impulse spending creates dependency.",
+            LEALTAD: "Loyalty gives strength.",
+            CALMA: "Breathing controls the mind.",
+            APROBACION: "Approval destroys identity.",
+            IMPULSO: "Impulse weakens control.",
+            VICTIMA: "Blame removes power.",
+            GASTO: "Impulse spending traps you.",
             DESENFOQUE: "Distraction kills purpose.",
-            EGO: "Fear of opinion destroys dreams.",
+            EGO: "Fear of opinion limits you.",
             OPORTUNIDAD: "Opportunities move fast.",
-            TIEMPO: "Time is your most valuable asset.",
-            TELEFONO: "The phone can control you.",
+            TIEMPO: "Time is your greatest asset.",
+            TELEFONO: "Phone can control you.",
             PANTALLA: "Screens can trap your mind.",
-            DISTRACCION: "Noise pulls you away from your path."
+            DISTRACCION: "Noise removes focus."
         },
         start() {
             setInterval(() => {
@@ -149,7 +150,7 @@ const KamizenEngine = (() => {
                 } else {
                     AudioSystem.playEffect('bad');
                     const warn = config.isTrap ? "Trap detected! " : "";
-                    Speech.say(warn + (this.psychology[word] || "Incorrect choice."));
+                    Speech.say(warn + (this.psychology[word] || "Wrong choice."));
                 }
                 UI.updateScore();
                 setTimeout(() => el.remove(), 300);
@@ -161,7 +162,7 @@ const KamizenEngine = (() => {
         }
     };
     // =========================
-    // 🎯 DECISION SYSTEM (ORIGINAL)
+    // 🎯 DECISION SYSTEM
     // =========================
     const Decision = {
         async handle(option) {
@@ -173,14 +174,17 @@ const KamizenEngine = (() => {
             if (option.correct) {
                 document.body.style.backgroundColor = "#004400";
                 AudioSystem.playEffect("win");
+                state.score += 20;
                 Speech.say("Excellent choice.");
                 Speech.say(explanation);
             } else {
                 document.body.style.backgroundColor = "#440000";
                 AudioSystem.playEffect("bad");
+                state.score -= 10;
                 Speech.say("Wrong decision.");
                 Speech.say(explanation);
             }
+            UI.updateScore();
             setTimeout(async () => {
                 document.body.style.backgroundColor = "";
                 box.style.display = "none";
@@ -189,41 +193,122 @@ const KamizenEngine = (() => {
         }
     };
     // =========================
-    // 🤫 SILENCE SYSTEM (ORIGINAL)
+    // 🤫 SILENCE SYSTEM (UPDATED)
     // =========================
     const SilenceReto = {
+        getTime() {
+            return Math.min(30 + state.missionId * 5, 60);
+        },
         async start() {
             state.silenceActive = true;
+            UI.clearOptions();
             const breath = document.getElementById("breath");
             const story = document.getElementById("story");
+            const analysis = document.getElementById("analysis");
             breath.style.display = "block";
-            story.innerText = `SILENCE: ${state.silenceTime}s`;
-
-            let t = state.silenceTime;
-
+            let time = this.getTime();
+            state.silenceTime = time;
+            Speech.say("Focus. Start breathing with control.");
+            this.breathGuide(time);
             const timer = setInterval(() => {
-                t--;
-                if (t <= 0) {
+                time--;
+                story.innerText = `SILENCE: ${time}s`;
+
+                if (time <= 0) {
                     clearInterval(timer);
                     this.complete();
                 }
             }, 1000);
         },
+        breathGuide(totalTime) {
+            const b = document.getElementById("breath");
+            let grow = true;
+            let cycles = Math.floor(totalTime / 4);
+            const interval = setInterval(() => {
+                if (!state.silenceActive || cycles <= 0) {
+                    clearInterval(interval);
+                    return;
+                }
+                if (grow) {
+                    b.style.transform = "scale(2.5)";
+                    Speech.say("Inhale");
+                } else {
+                    b.style.transform = "scale(1)";
+                    Speech.say("Exhale");
+                    cycles--;
+                }
+                grow = !grow;
+            }, 2000);
+        },
         complete() {
             state.silenceActive = false;
             document.getElementById("breath").style.display = "none";
-            state.missionId++;
-            Mission.loadNext();
+            Speech.say("Silence complete. Mind stabilized.");
+
+            setTimeout(() => {
+                Wellness.risotherapy();
+            }, 1500);
         }
     };
     // =========================
-    // 🎮 MISSION SYSTEM (ORIGINAL)
+    // 🌿 WELLNESS SYSTEM (NEW)
+    // =========================
+    const Wellness = {
+        risotherapy() {
+            const story = document.getElementById("story");
+            const analysis = document.getElementById("analysis");
+            story.innerText = "LAUGHTER THERAPY: 10s";
+            analysis.innerText = "Force a smile. Breathe and laugh.";
+            const laughAudio = document.getElementById("ok");
+            let t = 10;
+            Speech.say("Smile. Even if forced. Start laughing.");
+            const timer = setInterval(() => {
+                t--;
+                story.innerText = `LAUGHTER: ${t}s`;
+                if (laughAudio) {
+                    laughAudio.currentTime = 0;
+                    laughAudio.play();
+                }
+                if (t <= 0) {
+                    clearInterval(timer);
+                    this.antiAddictionPause();
+                }
+            }, 1000);
+        },
+        antiAddictionPause() {
+            Lock.on();
+            const story = document.getElementById("story");
+            const analysis = document.getElementById("analysis");
+            let t = 15;
+            story.innerText = "PAUSE: DO NOTHING";
+            analysis.innerText = "Stay away from screen. Reset your brain.";
+            Speech.say("Pause. Do nothing. Let your brain reset.");
+            const timer = setInterval(() => {
+                t--;
+                story.innerText = `PAUSE: ${t}s`;
+                if (t <= 0) {
+                    clearInterval(timer);
+                    Lock.off();
+                    state.missionId++;
+                    Mission.loadNext();
+                }
+
+            }, 1000);
+        }
+    };
+    // =========================
+    // 🎮 MISSION SYSTEM
     // =========================
     const Mission = {
         async loadNext() {
             Lock.on();
             try {
-                const res = await fetch("/api/mission/next");
+                const res = await fetch(`/api/mission/${state.missionId}`);
+
+                if (!res.ok) {
+                    state.missionId = 1;
+                    return this.loadNext();
+                }
                 const data = await res.json();
                 state.mission = data;
                 this.render(data);
@@ -238,6 +323,7 @@ const KamizenEngine = (() => {
             const decision = m.blocks.find(b => b.type === "decision");
             UI.setText("story", story);
             UI.setText("analysis", "");
+            UI.clearOptions();
             Speech.say(story);
             setTimeout(() => {
                 UI.setText("analysis", analysis);
@@ -249,7 +335,7 @@ const KamizenEngine = (() => {
         }
     };
     // =========================
-    // UI
+    // UI SYSTEM
     // =========================
     const UI = {
         setText(id, val) {
@@ -260,11 +346,13 @@ const KamizenEngine = (() => {
             this.setText("score-display", `POINTS: ${state.score}`);
         },
         clearOptions() {
-            document.getElementById("options").innerHTML = "";
+            const el = document.getElementById("options");
+            if (el) el.innerHTML = "";
         },
         renderOptions(options) {
             const container = document.getElementById("options");
             container.innerHTML = "";
+
             options.forEach(opt => {
                 const b = document.createElement("button");
                 b.className = "opt-btn";
@@ -274,12 +362,26 @@ const KamizenEngine = (() => {
             });
         }
     };
+    // =========================
+    // PUBLIC API
+    // =========================
     return {
         init() {
+            state.player.name = prompt("Your real name:") || "Player";
+            state.player.hero = prompt("Your hero name:") || "Kamizen";
+            const heroEl = document.getElementById("hero-name");
+            if (heroEl) heroEl.innerText = state.player.hero;
             AudioSystem.init();
             FloatingWords.start();
             Mission.loadNext();
             console.log("ENGINE READY");
+        },
+        toggleLang() {
+            state.lang = state.lang === "en" ? "es" : "en";
+            UI.updateScore();
+            if (state.mission) {
+                Mission.render(state.mission);
+            }
         }
     };
 })();
