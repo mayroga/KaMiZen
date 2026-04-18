@@ -2,9 +2,7 @@
  * 🧠 KAMIZEN ENGINE CORE — AL CIELO EDITION
  * Director de Orquesta: Música, Disparos, TVID y Neuro-Silence
  */
-
 const KamizenEngine = (() => {
-
     // ==========================================
     // 📊 ESTADO GLOBAL (Single Source of Truth)
     // ==========================================
@@ -16,10 +14,9 @@ const KamizenEngine = (() => {
         mission: null,
         locked: false,
         silenceActive: false,
-        silenceTime: 40, // Inicia en 3 SEC
+        silenceTime: 180, // Inicia en 3 min (180s)
         floatingWords: ["POWER", "FOCUS", "STREET", "TRUTH"]
     };
-
     // ==========================================
     // 🔒 SISTEMA DE CONTROL DE FLUJO (LOCK)
     // ==========================================
@@ -28,7 +25,6 @@ const KamizenEngine = (() => {
         off() { state.locked = false; document.body.style.pointerEvents = "auto"; },
         is() { return state.locked; }
     };
-
     // ==========================================
     // 🔊 AUDIO & DOPAMINA (ESTILO SONIC)
     // ==========================================
@@ -52,7 +48,6 @@ const KamizenEngine = (() => {
             if (type === 'bad' && this.bad) this.bad.play();
         }
     };
-
     // ==========================================
     // 🗣️ MOTOR DE VOZ (SPEECH)
     // ==========================================
@@ -65,7 +60,6 @@ const KamizenEngine = (() => {
             window.speechSynthesis.speak(u);
         }
     };
-
     // ==========================================
     // 🎯 SISTEMA DE DISPARO A PALABRAS
     // ==========================================
@@ -81,14 +75,12 @@ const KamizenEngine = (() => {
                 { class: 'word-good', val: 10, words: ["HONESTY", "POWER", "TRUTH", "RESPECT"] },
                 { class: 'word-bad', val: -10, words: ["LIE", "FEAR", "LAZY", "ANGER"] },
                 { class: 'word-neutral', val: 0, words: ["STREET", "RUN", "CITY", "WALK"] }
-            ];
-           
+            ];           
             const config = types[Math.floor(Math.random() * types.length)];
             const el = document.createElement("div");
             el.className = `floating ${config.class}`;
             el.innerText = config.words[Math.floor(Math.random() * config.words.length)];
             el.style.left = Math.random() * 90 + "vw";
-           
             el.onmousedown = () => {
                 el.classList.add("blast");
                 state.score += config.val;
@@ -96,12 +88,10 @@ const KamizenEngine = (() => {
                 UI.updateScore();
                 setTimeout(() => el.remove(), 300);
             };
-
             document.body.appendChild(el);
             setTimeout(() => { if(el) el.remove(); }, 5000);
         }
     };
-
     // ==========================================
     // 🎮 MOTOR DE DECISIONES (4 OPCIONES + TVID)
     // ==========================================
@@ -109,14 +99,11 @@ const KamizenEngine = (() => {
         async handle(option) {
             Lock.on();
             const box = document.getElementById("explanation-box");
-            box.style.display = "block";
-           
+            box.style.display = "block";         
             const explanation = option.explanation[state.lang];
             box.innerText = explanation;
-           
             const synonymsGood = ["¡Excelente!", "¡Sabio!", "¡Nivel Sonic!", "¡Poderoso!"];
             const synonymsBad = ["¡Cuidado!", "¡Atención!", "¡Error de cálculo!", "¡Piénsalo!"];
-
             if (option.correct) {
                 document.body.style.backgroundColor = "#004400";
                 AudioSystem.playEffect("win");
@@ -126,15 +113,13 @@ const KamizenEngine = (() => {
                 AudioSystem.playEffect("bad");
                 Speech.say(synonymsBad[Math.floor(Math.random()*synonymsBad.length)] + " " + explanation);
             }
-
             setTimeout(async () => {
                 document.body.style.backgroundColor = "";
                 box.style.display = "none";
                 await SilenceReto.start();
-            }, 20);
+            }, 6000);
         }
     };
-
     // ==========================================
     // 🧘 NEURO-SILENCE PROGRESIVO
     // ==========================================
@@ -148,13 +133,10 @@ const KamizenEngine = (() => {
         async start() {
             state.silenceActive = true;
             UI.clearOptions();
-           
             const msg = this.explanations[Math.floor(Math.random() * this.explanations.length)];
             Speech.say(msg + " Iniciando reto de silencio.");
-           
             UI.showBreath(true);
-            UI.setText("story", `SILENCIO PROGRESIVO: ${Math.floor(state.silenceTime / 20)} SEC`);
-           
+            UI.setText("story", `SILENCIO PROGRESIVO: ${Math.floor(state.silenceTime / 60)} MIN`);
             let timeLeft = state.silenceTime;
             const timer = setInterval(() => {
                 timeLeft--;
@@ -166,13 +148,12 @@ const KamizenEngine = (() => {
         },
         complete() {
             state.silenceActive = false;
-            state.silenceTime = Math.sec(state.silenceTime + 20, 600); // Sube 3 sec hasta 20
+            state.silenceTime = Math.min(state.silenceTime + 60, 1200); // Sube 1 min hasta 20
             UI.showBreath(false);
             Speech.say("Reto completado. Subiendo de nivel.");
             Mission.loadNext();
         }
     };
-
     // ==========================================
     // 📂 CARGADOR DE MISIONES (PERSISTENTE)
     // ==========================================
@@ -193,22 +174,18 @@ const KamizenEngine = (() => {
             const story = m.blocks.find(b => b.type === "story").text[state.lang];
             const analysis = m.blocks.find(b => b.type === "analysis").text[state.lang];
             const decision = m.blocks.find(b => b.type === "decision");
-
             UI.setText("story", story);
             UI.setText("analysis", "");
             Speech.say(story);
-
             setTimeout(() => {
                 UI.setText("analysis", analysis);
                 Speech.say(analysis);
             }, 4000);
-
             setTimeout(() => {
                 UI.renderOptions(decision.options);
             }, 8000);
         }
     };
-
     // ==========================================
     // 🖥️ INTERFAZ DE USUARIO (UI)
     // ==========================================
@@ -229,7 +206,6 @@ const KamizenEngine = (() => {
             });
         }
     };
-
     // ==========================================
     // 🚀 INICIALIZACIÓN
     // ==========================================
@@ -246,6 +222,5 @@ const KamizenEngine = (() => {
         }
     };
 })();
-
 // Iniciar al cargar la ventana
 window.onload = () => KamizenEngine.init();
