@@ -1,5 +1,5 @@
 /**
- * 🧠 KAMIZEN ENGINE CORE — AL CIELO EDITION
+ * 🧠 KAMIZEN ENGINE CORE — AL CIELO EDITION (FINAL INTEGRATED ULTRA STABLE)
  */
 const KamizenEngine = (() => {
     const state = {
@@ -25,9 +25,7 @@ const KamizenEngine = (() => {
     // 🔊 AUDIO SYSTEM
     // =========================
     const AudioSystem = {
-        bg: null,
-        ok: null,
-        bad: null,
+        bg: null, ok: null, bad: null,
         init() {
             this.bg = document.getElementById("bg");
             this.ok = document.getElementById("ok");
@@ -36,22 +34,21 @@ const KamizenEngine = (() => {
         },
         playDopamine() {
             if (this.bg) {
-                this.bg.playbackRate = 1.1;
                 this.bg.volume = 0.3;
-                this.bg.play().catch(() => {});
+                this.bg.playbackRate = 1.05;
+                this.bg.play().catch(()=>{});
             }
         },
         playEffect(type) {
-            if (type === 'win' && this.ok) {
+            if (type === "win" && this.ok) {
                 this.ok.currentTime = 0;
-                this.ok.playbackRate = 1.2;
                 this.ok.play();
             }
-            if (type === 'bad' && this.bad) {
+            if (type === "bad" && this.bad) {
                 this.bad.currentTime = 0;
                 this.bad.play();
                 document.body.classList.add("flash-red");
-                setTimeout(() => document.body.classList.remove("flash-red"), 300);
+                setTimeout(()=>document.body.classList.remove("flash-red"),300);
             }
         }
     };
@@ -67,23 +64,23 @@ const KamizenEngine = (() => {
         },
         run() {
             if (this.speaking || this.queue.length === 0) return;
+
             this.speaking = true;
-            const text = this.queue.shift();
-            const u = new SpeechSynthesisUtterance(text);
+            const u = new SpeechSynthesisUtterance(this.queue.shift());
             u.lang = state.lang === "en" ? "en-US" : "es-ES";
             u.rate = 0.9;
             u.onend = () => {
                 this.speaking = false;
                 this.run();
             };
-
-            window.speechSynthesis.speak(u);
+            speechSynthesis.speak(u);
         }
     };
     // =========================
-    // 🌌 FLOATING WORDS
+    // 🌌 FLOATING WORDS SYSTEM (FULL FUSION FINAL)
     // =========================
     const FloatingWords = {
+        // 🧠 PSYCHOLOGY CORE
         psychology: {
             CRITERIO: "Decision power: You become a leader.",
             ESTRATEGIA: "Social strategy builds allies.",
@@ -103,6 +100,12 @@ const KamizenEngine = (() => {
             PANTALLA: "Screens can trap your mind.",
             DISTRACCION: "Noise removes focus."
         },
+        // 🌍 GLOBAL WORD POOL (FUSION REAL)
+        wordPool: {
+            good: ["DISCERNMENT", "STRATEGY", "WISDOM", "COURAGE", "LOYALTY", "CALM", "LOVE"],
+            bad: ["APPROVAL", "IMPULSE", "VICTIM", "SPENDING", "FEAR", "DISTRACTION", "EGO"],
+            neutral: ["STREET", "CITY", "SCHOOL", "CLOCK", "WAIT", "NOISE"]
+        },
         start() {
             setInterval(() => {
                 if (state.silenceActive || Lock.is()) return;
@@ -112,6 +115,7 @@ const KamizenEngine = (() => {
         spawn() {
             const r = Math.random();
             let config;
+            // 🧨 TRAP LAYER
             if (r > 0.9) {
                 config = {
                     class: 'word-good',
@@ -120,24 +124,39 @@ const KamizenEngine = (() => {
                     speed: "2s",
                     isTrap: true
                 };
-            } else if (r > 0.6) {
+            }
+            // 🟢 HIGH CONTROL LAYER
+            else if (r > 0.6) {
                 config = {
                     class: 'word-good',
                     val: 20,
                     words: ["CRITERIO", "ESTRATEGIA", "TIEMPO", "OPORTUNIDAD"],
                     speed: "2.5s"
                 };
-            } else {
+            }
+            // 🔴 FULL MIX CONFUSION LAYER
+            else {
+                const mix = [
+                    ...this.wordPool.good,
+                    ...this.wordPool.bad,
+                    ...this.wordPool.neutral,
+                    "CRITERIO",
+                    "ESTRATEGIA",
+                    "IMPULSO",
+                    "EGO"
+                ];
                 config = {
-                    class: 'word-bad',
-                    val: -10,
-                    words: ["IMPULSO", "VICTIMA", "EGO", "APROBACION"],
-                    speed: "6s"
+                    class: Math.random() > 0.5 ? 'word-good' : 'word-bad',
+                    val: Math.random() > 0.5 ? 20 : -10,
+                    words: mix,
+                    speed: "5s"
                 };
             }
             const word = config.words[Math.floor(Math.random() * config.words.length)];
             const el = document.createElement("div");
-            el.className = `floating ${config.class}`;
+            // 🎭 CONFUSIÓN VISUAL TOTAL (NO RELACIÓN CON VALOR)
+            const fakeColor = Math.random() > 0.5 ? "word-good" : "word-bad";
+            el.className = `floating ${fakeColor}`;
             el.innerText = word;
             el.style.left = Math.random() * 90 + "vw";
             el.style.animationDuration = config.speed;
@@ -145,15 +164,15 @@ const KamizenEngine = (() => {
                 el.classList.add("blast");
                 state.score += config.val;
                 if (config.val > 0) {
-                    AudioSystem.playEffect('win');
-                    Speech.say(this.psychology[word] || "Good choice.");
+                    AudioSystem.playEffect("win");
+                    Speech.say(this.psychology[word] || "Good focus.");
                 } else {
-                    AudioSystem.playEffect('bad');
-                    const warn = config.isTrap ? "Trap detected! " : "";
+                    AudioSystem.playEffect("bad");
+                    const warn = config.isTrap ? "Trap detected. " : "";
                     Speech.say(warn + (this.psychology[word] || "Wrong choice."));
                 }
                 UI.updateScore();
-                setTimeout(() => el.remove(), 300);
+                setTimeout(()=>el.remove(),300);
             };
             document.body.appendChild(el);
             setTimeout(() => {
@@ -168,32 +187,30 @@ const KamizenEngine = (() => {
         async handle(option) {
             Lock.on();
             const box = document.getElementById("explanation-box");
-            box.style.display = "block";
+            if (box) box.style.display = "block";
             const explanation = option.explanation[state.lang];
-            box.innerText = explanation;
+            if (box) box.innerText = explanation;
             if (option.correct) {
-                document.body.style.backgroundColor = "#004400";
-                AudioSystem.playEffect("win");
+                document.body.style.background = "#003300";
                 state.score += 20;
-                Speech.say("Excellent choice.");
-                Speech.say(explanation);
+                AudioSystem.playEffect("win");
+                Speech.say("Correct decision.");
             } else {
-                document.body.style.backgroundColor = "#440000";
-                AudioSystem.playEffect("bad");
+                document.body.style.background = "#330000";
                 state.score -= 10;
+                AudioSystem.playEffect("bad");
                 Speech.say("Wrong decision.");
-                Speech.say(explanation);
             }
             UI.updateScore();
             setTimeout(async () => {
-                document.body.style.backgroundColor = "";
-                box.style.display = "none";
+                document.body.style.background = "";
+                if (box) box.style.display = "none";
                 await SilenceReto.start();
-            }, 6000);
+            }, 5000);
         }
     };
     // =========================
-    // 🤫 SILENCE SYSTEM (UPDATED)
+    // 🤫 SILENCE SYSTEM
     // =========================
     const SilenceReto = {
         getTime() {
@@ -205,10 +222,11 @@ const KamizenEngine = (() => {
             const breath = document.getElementById("breath");
             const story = document.getElementById("story");
             const analysis = document.getElementById("analysis");
-            breath.style.display = "block";
+            if (breath) breath.style.display = "block";
             let time = this.getTime();
-            state.silenceTime = time;
-            Speech.say("Focus. Start breathing with control.");
+            story.innerText = `TECHNIQUE: BREATH + SILENCE (${time}s)`;
+            analysis.innerText = "Control breathing. Stay still.";
+            Speech.say("Start breathing control.");
             this.breathGuide(time);
             const timer = setInterval(() => {
                 time--;
@@ -218,6 +236,7 @@ const KamizenEngine = (() => {
                     clearInterval(timer);
                     this.complete();
                 }
+
             }, 1000);
         },
         breathGuide(totalTime) {
@@ -230,10 +249,10 @@ const KamizenEngine = (() => {
                     return;
                 }
                 if (grow) {
-                    b.style.transform = "scale(2.5)";
+                    if (b) b.style.transform = "scale(2.5)";
                     Speech.say("Inhale");
                 } else {
-                    b.style.transform = "scale(1)";
+                    if (b) b.style.transform = "scale(1)";
                     Speech.say("Exhale");
                     cycles--;
                 }
@@ -242,47 +261,43 @@ const KamizenEngine = (() => {
         },
         complete() {
             state.silenceActive = false;
-            document.getElementById("breath").style.display = "none";
-            Speech.say("Silence complete. Mind stabilized.");
-
+            const breath = document.getElementById("breath");
+            if (breath) breath.style.display = "none";
+            Speech.say("Silence complete.");
             setTimeout(() => {
                 Wellness.risotherapy();
-            }, 1500);
+            }, 1000);
         }
     };
     // =========================
-    // 🌿 WELLNESS SYSTEM (NEW)
+    // 🌿 WELLNESS SYSTEM
     // =========================
     const Wellness = {
         risotherapy() {
             const story = document.getElementById("story");
             const analysis = document.getElementById("analysis");
-            story.innerText = "LAUGHTER THERAPY: 10s";
-            analysis.innerText = "Force a smile. Breathe and laugh.";
-            const laughAudio = document.getElementById("ok");
             let t = 10;
-            Speech.say("Smile. Even if forced. Start laughing.");
+            story.innerText = "TECHNIQUE: LAUGHTER THERAPY (10s)";
+            analysis.innerText = "Smile and laugh.";
+            Speech.say("Smile and laugh.");
             const timer = setInterval(() => {
                 t--;
                 story.innerText = `LAUGHTER: ${t}s`;
-                if (laughAudio) {
-                    laughAudio.currentTime = 0;
-                    laughAudio.play();
-                }
+                AudioSystem.ok?.play();
                 if (t <= 0) {
                     clearInterval(timer);
-                    this.antiAddictionPause();
+                    this.pause();
                 }
             }, 1000);
         },
-        antiAddictionPause() {
+        pause() {
             Lock.on();
+            let t = 15;
             const story = document.getElementById("story");
             const analysis = document.getElementById("analysis");
-            let t = 15;
-            story.innerText = "PAUSE: DO NOTHING";
-            analysis.innerText = "Stay away from screen. Reset your brain.";
-            Speech.say("Pause. Do nothing. Let your brain reset.");
+            story.innerText = "TECHNIQUE: NEURAL RESET";
+            analysis.innerText = "Do nothing. Reset brain.";
+            Speech.say("Pause. Do nothing.");
             const timer = setInterval(() => {
                 t--;
                 story.innerText = `PAUSE: ${t}s`;
@@ -304,84 +319,75 @@ const KamizenEngine = (() => {
             Lock.on();
             try {
                 const res = await fetch(`/api/mission/${state.missionId}`);
-
-                if (!res.ok) {
-                    state.missionId = 1;
-                    return this.loadNext();
-                }
                 const data = await res.json();
                 state.mission = data;
                 this.render(data);
-            } catch (e) {
-                console.error("Mission load error");
+            } catch {
+                console.error("Mission error");
             }
             Lock.off();
         },
         render(m) {
-            const story = m.blocks.find(b => b.type === "story").text[state.lang];
-            const analysis = m.blocks.find(b => b.type === "analysis").text[state.lang];
-            const decision = m.blocks.find(b => b.type === "decision");
+            const story = m.blocks.find(b=>b.type==="story").text[state.lang];
+            const analysis = m.blocks.find(b=>b.type==="analysis").text[state.lang];
+            const decision = m.blocks.find(b=>b.type==="decision");
+
             UI.setText("story", story);
             UI.setText("analysis", "");
             UI.clearOptions();
+
             Speech.say(story);
-            setTimeout(() => {
+
+            setTimeout(()=>{
                 UI.setText("analysis", analysis);
                 Speech.say(analysis);
-            }, 4000);
-            setTimeout(() => {
+            },4000);
+            setTimeout(()=>{
                 UI.renderOptions(decision.options);
-            }, 8000);
+            },8000);
         }
     };
     // =========================
-    // UI SYSTEM
+    // UI
     // =========================
     const UI = {
-        setText(id, val) {
-            const el = document.getElementById(id);
-            if (el) el.innerText = val;
+        setText(id,val){
+            const el=document.getElementById(id);
+            if(el) el.innerText=val;
         },
-        updateScore() {
-            this.setText("score-display", `POINTS: ${state.score}`);
+        updateScore(){
+            this.setText("score-display",`POINTS: ${state.score}`);
         },
-        clearOptions() {
-            const el = document.getElementById("options");
-            if (el) el.innerHTML = "";
+        clearOptions(){
+            const el=document.getElementById("options");
+            if(el) el.innerHTML="";
         },
-        renderOptions(options) {
-            const container = document.getElementById("options");
-            container.innerHTML = "";
-
-            options.forEach(opt => {
-                const b = document.createElement("button");
-                b.className = "opt-btn";
-                b.innerText = opt.text[state.lang];
-                b.onclick = () => Decision.handle(opt);
-                container.appendChild(b);
+        renderOptions(options){
+            const c=document.getElementById("options");
+            if (!c) return;
+            c.innerHTML="";
+            options.forEach(opt=>{
+                const b=document.createElement("button");
+                b.className="opt-btn";
+                b.innerText=opt.text[state.lang];
+                b.onclick=()=>Decision.handle(opt);
+                c.appendChild(b);
             });
         }
     };
     // =========================
-    // PUBLIC API
+    // INIT
     // =========================
     return {
         init() {
-            state.player.name = prompt("Your real name:") || "Player";
-            state.player.hero = prompt("Your hero name:") || "Kamizen";
-            const heroEl = document.getElementById("hero-name");
-            if (heroEl) heroEl.innerText = state.player.hero;
+            state.player.name = prompt("Your name:") || "Player";
+            state.player.hero = prompt("Hero name:") || "Kamizen";
+            const hero = document.getElementById("hero-name");
+            if (hero) hero.innerText = state.player.hero;
             AudioSystem.init();
             FloatingWords.start();
             Mission.loadNext();
             console.log("ENGINE READY");
-        },
-        toggleLang() {
-            state.lang = state.lang === "en" ? "es" : "en";
-            UI.updateScore();
-            if (state.mission) {
-                Mission.render(state.mission);
-            }
         }
     };
 })();
