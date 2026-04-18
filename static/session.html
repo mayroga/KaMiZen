@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>KAMIZEN | SESSION</title>
-
 <style>
 body{
     margin:0;
@@ -14,7 +13,6 @@ body{
     overflow:hidden;
     text-align:center;
 }
-
 #topbar{
     position:fixed;
     top:0;
@@ -24,9 +22,7 @@ body{
     padding:15px;
     background:rgba(0,0,0,0.4);
 }
-
 #game{padding-top:80px}
-
 button{
     padding:12px 20px;
     margin:8px;
@@ -35,15 +31,12 @@ button{
     color:#fff;
     border-radius:10px;
 }
-
 button:hover{background:#00f2ff;color:#000}
-
 .opt-btn{
     display:block;
     width:80%;
     margin:10px auto;
 }
-
 #breath{
     width:90px;
     height:90px;
@@ -53,7 +46,6 @@ button:hover{background:#00f2ff;color:#000}
     display:none;
     transition:transform 4s;
 }
-
 .floating{
     position:absolute;
     padding:8px 14px;
@@ -61,16 +53,13 @@ button:hover{background:#00f2ff;color:#000}
     animation:floatUp 5s linear forwards;
     cursor:pointer;
 }
-
 @keyframes floatUp{
     from{transform:translateY(110vh)}
     to{transform:translateY(-20vh)}
 }
-
 .word-good{color:#00ff00}
 .word-bad{color:#ff0000}
 .word-neutral{color:#ffff00}
-
 #explanation-box{
     display:none;
     margin:20px auto;
@@ -80,104 +69,78 @@ button:hover{background:#00f2ff;color:#000}
 }
 </style>
 </head>
-
 <body>
-
 <div id="topbar">
     <button onclick="toggleLang()">EN/ES</button>
     <div id="score">PUNTOS: 0</div>
 </div>
-
 <div id="game">
     <h2 id="hero"></h2>
-
     <div id="breath"></div>
-
-    <div id="story">Loading...</div>
+    <div id="story"></div>
     <div id="analysis"></div>
-
     <div id="explanation-box"></div>
     <div id="options"></div>
 </div>
-
 <audio id="bg" loop src="/static/sounds/bg.mp3"></audio>
 <audio id="ok" src="/static/sounds/success.mp3"></audio>
 <audio id="bad" src="/static/sounds/glass.mp3"></audio>
-
 <script src="/static/engine.js"></script>
-
 <script>
-
 // =========================
 // UI STATE
 // =========================
 let lang = "en";
 let mission = null;
-
 // =========================
 // INIT
 // =========================
 async function init(){
     KamizenEngine.init();
-
     document.getElementById("hero").innerText =
         prompt("Hero name") || "Kamizen";
-
     startFloating();
     loadMission();
 }
-
 // =========================
 // MISSION RENDER
 // =========================
 async function loadMission(){
     mission = await KamizenEngine.Mission.next();
-
     const story = mission.blocks.find(b=>b.type==="story").text[lang];
     document.getElementById("story").innerText = story;
-
     KamizenEngine.Speech.say(story);
-
     setTimeout(()=>{
         const analysis = mission.blocks.find(b=>b.type==="analysis").text[lang];
         document.getElementById("analysis").innerText = analysis;
         KamizenEngine.Speech.say(analysis);
     },3000);
-
     setTimeout(()=>{
         renderOptions(mission.blocks.find(b=>b.type==="decision").options);
     },6000);
 }
-
 // =========================
 // OPTIONS
 // =========================
 function renderOptions(options){
     const box = document.getElementById("options");
     box.innerHTML="";
-
     options.forEach(opt=>{
         const b=document.createElement("button");
         b.className="opt-btn";
         b.innerText=opt.text[lang];
-
         b.onclick=()=>handle(opt);
-
         box.appendChild(b);
     });
 }
-
 // =========================
 // DECISION FLOW
 // =========================
 async function handle(opt){
-
     const result = KamizenEngine.Decision.handle(opt);
-
     const box = document.getElementById("explanation-box");
     box.style.display="block";
     box.innerText=result.explanation;
-
     if(result.correct){
         document.body.style.background="#004400";
         KamizenEngine.AudioSystem.win();
@@ -185,61 +148,44 @@ async function handle(opt){
         document.body.style.background="#440000";
         KamizenEngine.AudioSystem.fail();
     }
-
     KamizenEngine.Speech.say(result.explanation);
-
     setTimeout(()=>{
         box.style.display="none";
         document.body.style.background="";
         startSilence();
     },4000);
 }
-
 // =========================
 // SILENCE
 // =========================
 async function startSilence(){
     const time = KamizenEngine.Silence.start();
-
     document.getElementById("breath").style.display="block";
-
     setTimeout(()=>{
         KamizenEngine.Silence.complete();
         loadMission();
     },5000);
 }
-
 // =========================
 // FLOATING UI RENDER
 // =========================
 function startFloating(){
-
     KamizenEngine.FloatingWords.start((data)=>{
-
         const el=document.createElement("div");
-
         el.className="floating word-"+data.type;
         el.innerText=data.word;
         el.style.left=Math.random()*90+"vw";
-
         el.onclick=()=>{
-
             document.getElementById("score").innerText=
                 "PUNTOS: "+ (KamizenEngine.state.score += data.value);
-
             KamizenEngine.AudioSystem[data.value>=0?"win":"fail"]();
-
             el.remove();
         };
-
         document.body.appendChild(el);
-
         setTimeout(()=>el.remove(),5000);
     });
 }
-
 window.onload=init;
 </script>
-
 </body>
 </html>
