@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>KAMIZEN | AL CIELO PRO</title>
-
 <style>
 body {
     margin: 0;
@@ -16,7 +15,6 @@ body {
     cursor: crosshair;
     transition: background 0.5s ease;
 }
-
 /* ===================== TOP BAR ===================== */
 #topbar {
     position: fixed;
@@ -31,27 +29,23 @@ body {
     backdrop-filter: blur(8px);
     box-sizing: border-box;
 }
-
 #score-display {
     font-weight: bold;
     font-size: 1.1rem;
     color: #00f2ff;
 }
-
 #hero-name {
     margin-top: 80px;
     font-size: 1.8rem;
     color: #ffffff;
     text-shadow: 0 0 10px #00f2ff;
 }
-
 /* ===================== GAME AREA ===================== */
 #game {
     padding-top: 20px;
     position: relative;
     z-index: 10;
 }
-
 #top-ui {
     display: flex;
     justify-content: space-around;
@@ -60,11 +54,9 @@ body {
     color: #00f2ff;
     margin-top: 10px;
 }
-
 #stat-focus, #stat-life {
     opacity: 0.9;
 }
-
 /* ===================== BUTTONS ===================== */
 button {
     padding: 12px 18px;
@@ -77,13 +69,11 @@ button {
     cursor: pointer;
     transition: 0.25s;
 }
-
 button:hover {
     background: #00f2ff;
     color: #000;
     box-shadow: 0 0 15px #00f2ff;
 }
-
 .opt-btn {
     display: block;
     width: 85%;
@@ -91,7 +81,6 @@ button:hover {
     margin: 10px auto;
     text-align: left;
 }
-
 /* ===================== BREATH ===================== */
 #breath {
     width: 100px;
@@ -103,7 +92,6 @@ button:hover {
     box-shadow: 0 0 30px #00f2ff;
     display: none;
 }
-
 /* ===================== FLOATING WORDS ===================== */
 .floating {
     position: absolute;
@@ -115,12 +103,10 @@ button:hover {
     z-index: 50;
     animation: floatUp 5s linear forwards;
 }
-
 @keyframes floatUp {
     from { transform: translateY(110vh) rotate(0deg); }
     to { transform: translateY(-20vh) rotate(20deg); }
 }
-
 /* ===================== WORD COLORS ===================== */
 .word-good {
     background: rgba(0, 255, 0, 0.15);
@@ -128,29 +114,24 @@ button:hover {
     border: 2px solid #00ff00;
     box-shadow: 0 0 15px #00ff00;
 }
-
 .word-bad {
     background: rgba(255, 0, 0, 0.08);
     color: #ff6666;
     border: 1px solid #ff0000;
     box-shadow: 0 0 10px rgba(255,0,0,0.4);
 }
-
 .word-neutral {
     color: #ffff66;
     border: 2px solid #ffff66;
 }
-
 /* ===================== BLAST ===================== */
 .blast {
     animation: burst 0.4s forwards;
     pointer-events: none;
 }
-
 @keyframes burst {
     to { transform: scale(4); opacity: 0; }
 }
-
 /* ===================== UI BOX ===================== */
 #explanation-box {
     background: rgba(0,0,0,0.85);
@@ -162,14 +143,12 @@ button:hover {
     font-size: 1.1rem;
     border-radius: 0 12px 12px 0;
 }
-
 /* ===================== TEXT ===================== */
 #story {
     font-size: 1.4rem;
     margin: 20px;
     font-weight: bold;
 }
-
 #analysis {
     color: #00f2ff;
     font-style: italic;
@@ -177,42 +156,30 @@ button:hover {
 }
 </style>
 </head>
-
 <body>
-
 <!-- TOP BAR -->
 <div id="topbar">
     <button onclick="KamizenEngine.toggleLang()">EN / ES</button>
     <div id="score-display">POINTS: 0</div>
 </div>
-
 <!-- GAME -->
 <div id="game">
-
     <div id="top-ui">
         <div id="stat-focus">FOCUS: 100%</div>
         <div id="stat-life">ENERGY: ⚡⚡⚡</div>
     </div>
-
     <h2 id="hero-name"></h2>
-
     <div id="breath"></div>
-
     <div id="story"></div>
     <div id="analysis"></div>
-
     <div id="explanation-box"></div>
-
     <div id="options"></div>
 </div>
-
 <!-- AUDIO -->
 <audio id="bg" loop src="/static/sounds/bg.mp3"></audio>
 <audio id="ok" src="/static/sounds/success.mp3"></audio>
 <audio id="bad" src="/static/sounds/glass.mp3"></audio>
-
 <!-- ENGINE ONLY (NO DUPLICATED LOGIC) -->
 <script src="/static/engine.js"></script>
-
 </body>
 </html>
