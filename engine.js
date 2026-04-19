@@ -1,12 +1,7 @@
-/**
- * 🧠 KAMIZEN ENGINE CORE — FULL SURVIVAL + EDUCATION + GAME SYSTEM
- * UNIFIED VERSION (NO FEATURES REMOVED)
- */
-
 const KamizenEngine = (() => {
 
     // =====================================================
-    // 📊 GLOBAL STATE (CORE ORIGINAL + EXTENDED)
+    // 📊 STATE CORE
     // =====================================================
     const state = {
         score: 0,
@@ -14,17 +9,17 @@ const KamizenEngine = (() => {
         mission: null,
         locked: false,
 
-        mode: "mission", // mission | breathing | silence | tvid
+        mode: "mission",
+        missionId: 1,
 
         silenceActive: false,
-        silenceTime: 30,
+        silenceTime: 20, // base 20s
 
-        level: 1,
-        streak: 0
+        level: 1
     };
 
     // =====================================================
-    // 🧱 DOM AUTHORITY (UNCHANGED CORE)
+    // 🧱 DOM CORE
     // =====================================================
     const DOM = {
         set(id, val) {
@@ -35,10 +30,6 @@ const KamizenEngine = (() => {
             const el = document.getElementById(id);
             if (el) el.innerHTML = val;
         },
-        clear(id) {
-            const el = document.getElementById(id);
-            if (el) el.innerHTML = "";
-        },
         create(tag, cls, text) {
             const el = document.createElement(tag);
             if (cls) el.className = cls;
@@ -48,7 +39,7 @@ const KamizenEngine = (() => {
     };
 
     // =====================================================
-    // 🔒 LOCK SYSTEM (CORE)
+    // 🔒 LOCK SYSTEM
     // =====================================================
     const Lock = {
         on() {
@@ -65,132 +56,58 @@ const KamizenEngine = (() => {
     };
 
     // =====================================================
-    // 🔊 AUDIO SYSTEM (CORE)
+    // 🔊 AUDIO SYSTEM (ENGLISH ONLY DEFAULT)
     // =====================================================
-    const AudioSystem = {
-        bg: null,
-        ok: null,
-        bad: null,
-
-        init() {
-            this.bg = document.getElementById("bg");
-            this.ok = document.getElementById("ok");
-            this.bad = document.getElementById("bad");
-
-            if (this.bg) {
-                this.bg.volume = 0.25;
-                this.bg.loop = true;
-                this.bg.play().catch(() => {});
-            }
-        },
-
-        play(type) {
-            const a = type === "win" ? this.ok : this.bad;
-            if (!a) return;
-            a.currentTime = 0;
-            a.play().catch(() => {});
-        }
-    };
-
-    // =====================================================
-    // 🗣️ SPEECH SYSTEM (CORE + ENGLISH DEFAULT)
-    // =====================================================
-    const Speech = {
-        queue: [],
-        running: false,
-
+    const Voice = {
         say(text) {
-            if (!text) return;
-            this.queue.push(text);
-            this.next();
-        },
-
-        next() {
-            if (this.running || this.queue.length === 0) return;
-
-            this.running = true;
-            const text = this.queue.shift();
-
+            speechSynthesis.cancel();
             const u = new SpeechSynthesisUtterance(text);
             u.lang = "en-US";
             u.rate = 0.88;
             u.pitch = 0.9;
-
-            u.onend = () => {
-                this.running = false;
-                this.next();
-            };
-
             speechSynthesis.speak(u);
-        },
-
-        stop() {
-            speechSynthesis.cancel();
-            this.queue = [];
-            this.running = false;
         }
     };
 
     // =====================================================
-    // 🧠 SURVIVAL WORD SYSTEM (EXPANDED CORE)
+    // 🌈 SURVIVAL WORD SYSTEM (FOCUS = WORD, NOT COLOR)
     // =====================================================
     const WORDS = [
+        { w: "SURVIVAL", v: 15, impact: "positive", meaning: "Life priority awareness" },
+        { w: "INSTINCT", v: 12, impact: "positive", meaning: "Fast neural reaction system" },
+        { w: "ESCAPE", v: 15, impact: "positive", meaning: "Exit danger zone immediately" },
+        { w: "AWARENESS", v: 12, impact: "positive", meaning: "360 degree perception" },
+        { w: "ALERT", v: 10, impact: "positive", meaning: "Constant scanning state" },
+        { w: "REACTION", v: 10, impact: "positive", meaning: "Instant decision response" },
+        { w: "SHIELD", v: 10, impact: "positive", meaning: "Defense against manipulation" },
 
-        { w: "SURVIVAL", v: 15, impact: "positive", key: "SURVIVAL" },
-        { w: "INSTINCT", v: 12, impact: "positive", key: "INSTINCT" },
-        { w: "ESCAPE", v: 15, impact: "positive", key: "ESCAPE" },
-        { w: "AWARENESS", v: 12, impact: "positive", key: "AWARENESS" },
-        { w: "ALERT", v: 10, impact: "positive", key: "ALERT" },
-        { w: "REACTION", v: 10, impact: "positive", key: "REACTION" },
-        { w: "DOMINANCE", v: 12, impact: "positive", key: "DOMINANCE" },
-        { w: "SHIELD", v: 10, impact: "positive", key: "SHIELD" },
-
-        { w: "THREAT", v: -15, impact: "negative", key: "THREAT" },
-        { w: "FREEZE", v: -12, impact: "negative", key: "FREEZE" },
-        { w: "VICTIM", v: -20, impact: "negative", key: "VICTIM" },
-        { w: "PANIC", v: -15, impact: "negative", key: "PANIC" },
-        { w: "DANGER", v: -10, impact: "negative", key: "DANGER" },
-        { w: "ABUSE", v: -20, impact: "negative", key: "ABUSE" },
-        { w: "FEAR", v: -12, impact: "negative", key: "FEAR" },
-        { w: "TRAP", v: -15, impact: "negative", key: "TRAP" }
+        { w: "THREAT", v: -15, impact: "negative", meaning: "Danger detection required" },
+        { w: "FREEZE", v: -12, impact: "negative", meaning: "Paralysis under stress" },
+        { w: "VICTIM", v: -20, impact: "negative", meaning: "Loss of control mindset" },
+        { w: "PANIC", v: -15, impact: "negative", meaning: "Emotional collapse risk" },
+        { w: "DANGER", v: -10, impact: "negative", meaning: "Risk zone detected" },
+        { w: "FEAR", v: -12, impact: "negative", meaning: "Energy misdirection" },
+        { w: "TRAP", v: -15, impact: "negative", meaning: "Manipulation structure" }
     ];
 
     // =====================================================
-    // 📚 LIFE STRATEGY MAP (EDUCATION LAYER)
+    // 📚 LIFE RESPONSE MAP (COGNITIVE IMPACT)
     // =====================================================
-    const LIFE_MAP = {
-
-        THREAT: {
-            situation: "Threat / Danger",
-            strategy: "Do not freeze. Fear is energy.",
-            power: "INSTINCT: 0.5 sec reaction"
-        },
-
-        AWARENESS: {
-            situation: "Hostile Environment",
-            strategy: "Scan hands, eyes, exits.",
-            power: "AWARENESS: 360° vision"
-        },
-
-        SHIELD: {
-            situation: "Manipulation",
-            strategy: "Urgency or free offers = suspicion.",
-            power: "SHIELD: deception block"
-        },
-
-        SURVIVAL: {
-            situation: "Physical Risk",
-            strategy: "Cover first. Escape second.",
-            power: "SURVIVAL: life priority"
-        }
+    const LIFE = {
+        THREAT: "Do not freeze. Fear is energy to analyze.",
+        AWARENESS: "Scan environment. Eyes, hands, exits.",
+        SHIELD: "If urgency or free reward appears, verify intent.",
+        SURVIVAL: "Prioritize exit, safety, and distance."
     };
 
     // =====================================================
-    // 🌌 FLOATING WORD SYSTEM (SURVIVAL GAME)
+    // 🌈 FLOATING WORD SYSTEM (COLOR = DISTRACTION ONLY)
     // =====================================================
     const Floating = {
 
-        interval: null,
+        start() {
+            setInterval(() => this.spawn(), 1100);
+        },
 
         spawn() {
 
@@ -202,7 +119,8 @@ const KamizenEngine = (() => {
             el.className = "floating-word";
             el.innerText = item.w;
 
-            const colors = ["red", "green", "yellow", "blue"];
+            // 🎨 ONLY 3 COLORS (DISTRACTION SYSTEM)
+            const colors = ["red", "yellow", "green"];
             const color = colors[Math.floor(Math.random() * colors.length)];
 
             el.style.border = `2px solid ${color}`;
@@ -213,14 +131,14 @@ const KamizenEngine = (() => {
 
                 state.score += item.v;
 
-                const info = LIFE_MAP[item.key];
+                // ❗ WORD IS THE REAL INPUT
+                const meaning = item.meaning;
+                const lifeImpact = LIFE[item.w] || "Analyze behavior and context.";
 
-                const msg = info
-                    ? `${info.situation}. ${info.strategy}. ${info.power}.`
-                    : "Survival decision processed.";
+                const msg = `${item.w}. Meaning: ${meaning}. Impact: ${lifeImpact}`;
 
                 DOM.set("analysis", msg);
-                Speech.say(msg);
+                Voice.say(msg);
 
                 DOM.set("score-display", "POINTS: " + state.score);
 
@@ -229,16 +147,11 @@ const KamizenEngine = (() => {
 
             document.body.appendChild(el);
             setTimeout(() => el.remove(), 5000);
-        },
-
-        start() {
-            if (this.interval) return;
-            this.interval = setInterval(() => this.spawn(), 1200);
         }
     };
 
     // =====================================================
-    // 🎮 DECISION SYSTEM (NO PROGRESSION IF WRONG)
+    // 🎮 DECISION SYSTEM (NO SKIP UNTIL CORRECT)
     // =====================================================
     const Decision = {
 
@@ -248,29 +161,20 @@ const KamizenEngine = (() => {
 
             const box = document.getElementById("explanation-box");
 
-            const info = LIFE_MAP[opt.key];
+            let text = opt.correct
+                ? "Correct decision. Cognitive reinforcement applied."
+                : "Incorrect decision. Retry required.";
 
-            let text = "";
-
-            if (opt.correct) {
-                state.score += 20;
-                text = info
-                    ? `${info.strategy} | ${info.power}`
-                    : "Correct survival decision.";
-                Speech.say("Correct");
-            } else {
-                state.score -= 10;
-                text = info
-                    ? `Incorrect. ${info.strategy}`
-                    : "Incorrect survival reaction.";
-                Speech.say("Incorrect");
-            }
+            state.score += opt.correct ? 20 : -10;
 
             box.innerText = text;
             box.style.display = "block";
 
+            Voice.say(text);
+
             DOM.set("score-display", "POINTS: " + state.score);
 
+            // ❗ MUST REPEAT UNTIL CORRECT
             if (!opt.correct) return;
 
             setTimeout(() => {
@@ -282,41 +186,7 @@ const KamizenEngine = (() => {
     };
 
     // =====================================================
-    // 🧘 BREATHING MODE (SCIENTIFIC)
-    // =====================================================
-    const Breathing = {
-
-        start() {
-
-            state.mode = "breathing";
-
-            const el = document.getElementById("breath");
-            el.style.display = "block";
-
-            Speech.say(
-                "Breathing protocol activated. This improves oxygen flow and prefrontal control."
-            );
-
-            let phase = true;
-
-            this.interval = setInterval(() => {
-                el.innerText = phase ? "INHALE" : "EXHALE";
-                el.style.transform = phase ? "scale(2.5)" : "scale(1)";
-                phase = !phase;
-            }, 4000);
-
-            setTimeout(() => this.stop(), 20000);
-        },
-
-        stop() {
-            clearInterval(this.interval);
-            document.getElementById("breath").style.display = "none";
-            Router.next();
-        }
-    };
-
-    // =====================================================
-    // 🤫 SILENCE MODE (30–60 SEC PROGRESSION)
+    // 🧘 SILENCE MODE (20–60s PROGRESSIVE 1–35 ID)
     // =====================================================
     const Silence = {
 
@@ -324,10 +194,10 @@ const KamizenEngine = (() => {
 
             state.mode = "silence";
 
-            const time = Math.min(30 + state.level, 60);
+            const time = Math.min(20 + state.missionId, 60); // PROGRESSIVE
             let t = time;
 
-            Speech.say("Silence challenge started.");
+            Voice.say("Silence mode activated. Focus on internal control.");
 
             const id = setInterval(() => {
 
@@ -343,13 +213,13 @@ const KamizenEngine = (() => {
 
         finish() {
             state.score += 30;
-            Speech.say("Silence completed.");
+            Voice.say("Silence completed successfully.");
             Router.next();
         }
     };
 
     // =====================================================
-    // 📺 TVID MODE (MICRO LEARNING)
+    // 📺 TVID MODE (EDUCATIONAL MICRO LOOP)
     // =====================================================
     const TVID = {
 
@@ -358,56 +228,57 @@ const KamizenEngine = (() => {
             state.mode = "tvid";
 
             const msgs = [
-                "Attention is your strongest weapon.",
-                "Control emotion before action.",
-                "Survival starts with perception."
+                "Attention defines survival performance.",
+                "Control reaction before emotion.",
+                "Perception is your real weapon."
             ];
 
             const msg = msgs[Math.floor(Math.random() * msgs.length)];
 
             DOM.set("story", msg);
-            Speech.say(msg);
+            Voice.say(msg);
 
             setTimeout(() => Router.next(), 6000);
         }
     };
 
     // =====================================================
-    // 🧭 ROUTER (FULL ORIGINAL RESTORED)
+    // 🧭 ROUTER (FULL MODE SYSTEM RESTORED)
     // =====================================================
     const Router = {
 
         next() {
 
-            const modes = ["mission", "breathing", "silence", "tvid"];
+            const modes = ["mission", "silence", "tvid"];
+
             const m = modes[Math.floor(Math.random() * modes.length)];
 
             if (m === "mission") Mission.load();
-            if (m === "breathing") Breathing.start();
             if (m === "silence") Silence.start();
             if (m === "tvid") TVID.start();
         }
     };
 
     // =====================================================
-    // 📂 MISSION SYSTEM (RESTORED + BACKEND)
+    // 📂 MISSION SYSTEM (BACKEND RESTORED)
     // =====================================================
     const Mission = {
 
         async load() {
 
             try {
+
                 state.mode = "mission";
 
-                const res = await fetch("/api/mission/next");
+                const res = await fetch(`/api/mission/${state.missionId}`);
                 const data = await res.json();
 
                 state.mission = data;
+
                 this.render(data);
 
             } catch (e) {
-                console.error(e);
-                Speech.say("Mission loading error");
+                Voice.say("Mission loading error");
             }
         },
 
@@ -420,11 +291,11 @@ const KamizenEngine = (() => {
             DOM.set("story", story);
             DOM.set("analysis", "");
 
-            Speech.say(story);
+            Voice.say(story);
 
             setTimeout(() => {
                 DOM.set("analysis", analysis);
-                Speech.say(analysis);
+                Voice.say(analysis);
             }, 2500);
 
             setTimeout(() => {
@@ -444,8 +315,11 @@ const KamizenEngine = (() => {
             c.innerHTML = "";
 
             options.forEach(opt => {
+
                 const b = DOM.create("button", "opt-btn", opt.text.en);
+
                 b.onclick = () => Decision.handle(opt);
+
                 c.appendChild(b);
             });
         }
@@ -457,14 +331,11 @@ const KamizenEngine = (() => {
     return {
 
         init() {
-            AudioSystem.init();
             Floating.start();
             Router.next();
-        },
-
-        toggleLang() {
-            state.lang = state.lang === "en" ? "es" : "en";
         }
     };
 
 })();
+
+window.onload = () => KamizenEngine.init();
