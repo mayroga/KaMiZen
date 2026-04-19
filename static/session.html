@@ -164,6 +164,17 @@
             text-shadow: 0 0 10px #00f2ff;
         }
 
+        /* 🔥 CONTROL BUTTONS (NUEVO) */
+        #controls {
+            position: fixed;
+            bottom: 20px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            z-index: 100;
+        }
+
     </style>
 </head>
 
@@ -189,6 +200,12 @@
         <div id="options"></div>
     </div>
 
+    <!-- 🔥 CONTROLES MANUALES (PENALIZADOS POR ENGINE) -->
+    <div id="controls">
+        <button onclick="KamizenEngine.back()">BACK</button>
+        <button onclick="KamizenEngine.continue()">CONTINUE</button>
+    </div>
+
     <audio id="bg_music" loop>
         <source src="/static/sounds/dopamine_bg.mp3" type="audio/mpeg">
     </audio>
@@ -202,21 +219,32 @@
     </audio>
 
     <script src="/static/engine.js"></script>
+
     <script>
-        // Start engine when scripts load
         window.onload = () => {
+
             if(typeof KamizenEngine !== 'undefined') {
                 KamizenEngine.init();
             }
 
-            // Audio Unlock for Browsers
+            // 🔓 AUDIO UNLOCK
             document.body.addEventListener('click', () => {
                 const bg = document.getElementById('bg_music');
                 if(bg && bg.paused) {
-                    bg.play().catch(e => console.log("Audio play blocked"));
+                    bg.play().catch(() => {});
                 }
             }, { once: true });
+
+            // 🛡️ FALLBACK WATCHDOG (SI ENGINE MUERE)
+            setTimeout(() => {
+                const story = document.getElementById("story").innerText;
+                if(story.includes("Initialising") && typeof KamizenEngine !== 'undefined'){
+                    console.warn("Engine fallback triggered");
+                    KamizenEngine.init();
+                }
+            }, 4000);
         };
     </script>
+
 </body>
 </html>
