@@ -28,7 +28,6 @@ body {
     background: rgba(0,0,0,0.3);
 }
 
-/* 🔥 TOP UI REORGANIZADO */
 #top-ui {
     display: flex;
     justify-content: space-around;
@@ -65,10 +64,10 @@ button:hover {
     text-align: left;
 }
 
-/* 🔵 BREATH NO INTERFIERE UI */
+/* BREATHING CIRCLE (NON-INTERFERING) */
 #breath {
-    width: 100px;
-    height: 100px;
+    width: 110px;
+    height: 110px;
     border-radius: 50%;
     background: radial-gradient(circle, #00f2ff, #0066ff);
     margin: 20px auto;
@@ -76,29 +75,32 @@ button:hover {
     position: relative;
     z-index: 5;
     pointer-events: none;
-    opacity: 0.8;
+    opacity: 0.75;
+    box-shadow: 0 0 25px #00f2ff;
 }
 
 /* FLOATING WORDS */
 .floating {
     position: absolute;
-    padding: 8px 18px;
+    padding: 10px 20px;
     border-radius: 20px;
     font-weight: bold;
     cursor: pointer;
     animation: floatUp 5s linear forwards;
     z-index: 20;
+    transition: transform 0.2s ease;
+}
+
+/* 💥 BIG EXPLOSION FIXED */
+.blast {
+    transform: scale(6);
+    opacity: 0;
+    transition: 0.25s ease;
 }
 
 @keyframes floatUp {
     from { transform: translateY(110vh); }
     to { transform: translateY(-20vh); }
-}
-
-.blast {
-    transform: scale(3);
-    opacity: 0;
-    transition: 0.3s;
 }
 
 #explanation-box {
@@ -117,7 +119,6 @@ button:hover {
 <div id="topbar">
     <button onclick="toggleLang()">EN/ES</button>
 
-    <!-- 🔥 POINTS MOVIDO AQUÍ -->
     <div id="top-ui">
         <div id="stat-focus">FOCUS: 100%</div>
         <div id="points-display">POINTS: 0</div>
@@ -150,47 +151,18 @@ let missionId = 1;
 let score = 0;
 let currentMissionData = null;
 
-// =====================================================
-const state = {
-    score: 0,
-    lang: "en",
-    mode: "mission"
-};
-
-// =====================================================
-const LIFE_MAP = {
-    FEAR: {
-        situation: "Threat detected",
-        strategy: "Do not freeze. Act fast.",
-        power: "INSTINCT reaction 0.5s"
-    },
-    SHIELD: {
-        situation: "Manipulation detected",
-        strategy: "Question urgency and offers.",
-        power: "SHIELD: deception filter"
-    },
-    SURVIVAL: {
-        situation: "Danger zone",
-        strategy: "Cover first, escape second.",
-        power: "SURVIVAL priority"
-    }
-};
-
-// =====================================================
 const wordPool = {
 good: ["FOCUS","TRUTH","CALM","POWER","CONTROL","RESPECT","ACTION","SURVIVAL","INSTINCT","ESCAPE","AWARENESS","ALERT","REACTION"],
 bad: ["FEAR","LIE","CHAOS","IMPULSE","LAZY","ANGRY","SHAME","THREAT","FREEZE","VICTIM","PANIC","DANGER","TRAP"],
 neutral: ["STREET","CITY","WALK","WATCH","WAIT","VOICE"]
 };
 
-// =====================================================
 function init(){
     document.getElementById("hero-name").innerText = "KAMIZEN";
     startFloatingSystem();
     loadNextMission();
 }
 
-// =====================================================
 function speak(t){
     let u=new SpeechSynthesisUtterance(t);
     u.lang="en-US";
@@ -198,7 +170,6 @@ function speak(t){
     speechSynthesis.speak(u);
 }
 
-// =====================================================
 async function loadNextMission(){
     try{
         const res=await fetch(`/api/mission/${missionId}`);
@@ -207,7 +178,6 @@ async function loadNextMission(){
     }catch{}
 }
 
-// =====================================================
 function renderMission(m){
 
 const story=m.blocks.find(b=>b.type==="story").text.en;
@@ -227,7 +197,6 @@ speak(analysis);
 setTimeout(()=>displayOptions(decision.options),6000);
 }
 
-// =====================================================
 function displayOptions(options){
 const c=document.getElementById("options");
 c.innerHTML="";
@@ -241,18 +210,17 @@ c.appendChild(b);
 });
 }
 
-// =====================================================
 function handleChoice(opt){
 
 const box=document.getElementById("explanation-box");
 box.style.display="block";
 
-const info=LIFE_MAP[opt.key];
+const info = opt.key;
 
 if(opt.correct){
 score+=20;
 speak("Correct decision");
-box.innerText=info?info.strategy:"Correct choice";
+box.innerText="Correct survival action";
 }else{
 score-=10;
 speak("Incorrect decision");
@@ -261,22 +229,23 @@ box.innerText="Wrong reaction";
 
 updatePoints();
 
-setTimeout(()=>startSilence(),4000);
+setTimeout(()=>startSilence(),3000);
 }
 
-// =====================================================
-// 🔥 POINT SYSTEM CENTRAL
-// =====================================================
 function updatePoints(){
     document.getElementById("points-display").innerText = "POINTS: " + score;
 }
 
-// =====================================================
+/* =========================
+   SILENCE + BREATH SYSTEM
+========================= */
 function startSilence(){
 
 const time=Math.min(20+missionId,60);
 
 document.getElementById("story").innerText="SILENCE MODE: "+time+" SECONDS";
+
+startBreath();
 
 let t=time;
 
@@ -285,6 +254,7 @@ const id=setInterval(()=>{
 t--;
 if(t<=0){
 clearInterval(id);
+stopBreath();
 missionId++;
 loadNextMission();
 }
@@ -292,7 +262,29 @@ loadNextMission();
 },1000);
 }
 
-// =====================================================
+/* 🔵 BREATH ANIMATION */
+let breathInterval;
+
+function startBreath(){
+    const b=document.getElementById("breath");
+    b.style.display="block";
+
+    let grow=true;
+
+    breathInterval=setInterval(()=>{
+        b.style.transform = grow ? "scale(2.5)" : "scale(1)";
+        grow=!grow;
+    },2000);
+}
+
+function stopBreath(){
+    clearInterval(breathInterval);
+    document.getElementById("breath").style.display="none";
+}
+
+/* =========================
+   FLOATING SYSTEM + BIG EXPLOSION
+========================= */
 function startFloatingSystem(){
 
 setInterval(()=>{
@@ -309,21 +301,16 @@ el.style.border="2px solid currentColor";
 
 el.onclick=()=>{
 
-const info=LIFE_MAP[word];
-
 if(type==="good") score+=5;
 if(type==="bad") score-=10;
 
 updatePoints();
 
-el.classList.add("blast");
-setTimeout(()=>el.remove(),300);
+/* 💥 BIG EXPLOSION */
+el.style.transform="scale(6)";
+el.style.opacity="0";
 
-if(info){
-document.getElementById("analysis").innerText=
-info.situation+" | "+info.strategy+" | "+info.power;
-speak(info.strategy);
-}
+setTimeout(()=>el.remove(),300);
 
 };
 
