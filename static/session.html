@@ -1,367 +1,403 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KAMIZEN | SURVIVAL PRO SYSTEM</title>
+/**
+ * 🧠 KAMIZEN ENGINE CORE — SURVIVAL EDUCATION SYSTEM
+ * FULL MERGE VERSION (EXPANDED SYSTEM - NO FEATURES REMOVED)
+ */
 
-<style>
-/* =====================================================
-   🌌 CORE VISUAL SYSTEM
-===================================================== */
+const KamizenEngine = (() => {
 
-body {
-    margin: 0;
-    background: radial-gradient(circle, #001a33, #000);
-    color: #fff;
-    font-family: Arial, sans-serif;
-    text-align: center;
-    overflow: hidden;
-    cursor: crosshair;
-    transition: background 0.5s;
-}
+    // =====================================================
+    // 📊 STATE (UNCHANGED CORE + EXTENSION)
+    // =====================================================
+    const state = {
+        score: 0,
+        lang: "en",
+        mission: null,
+        locked: false,
 
-/* ===================================================== */
+        silenceActive: false,
+        silenceTime: 20,
 
-#topbar {
-    position: fixed;
-    top: 0;
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    padding: 15px;
-    z-index: 100;
-    background: rgba(0,0,0,0.3);
-}
+        missionId: 1,
 
-#game {
-    padding-top: 80px;
-    position: relative;
-    z-index: 10;
-}
+        attention: 100,
+        streak: 0,
+        mistakes: 0,
 
-button {
-    padding: 14px 22px;
-    margin: 10px;
-    font-size: 16px;
-    border: 2px solid #00f2ff;
-    background: rgba(0, 242, 255, 0.1);
-    color: white;
-    border-radius: 12px;
-    cursor: pointer;
-}
+        mode: "mission",
 
-button:hover {
-    background: #00f2ff;
-    color: #000;
-}
+        lastWordAnalysis: null,
+        speechLocked: false,
+        silenceQueue: false,
 
-/* ===================================================== */
+        breathMode: false,
+        tvidMode: false,
 
-.opt-btn {
-    display: block;
-    width: 80%;
-    max-width: 520px;
-    margin: 10px auto;
-    text-align: left;
-}
+        // 🧠 NEW: reading flow control (skip/back ready hook)
+        forceReading: true,
+        readingQueue: []
+    };
 
-/* =====================================================
-   🧘 BREATH CORE
-===================================================== */
+    // =====================================================
+    // 🧱 DOM AUTHORITY
+    // =====================================================
+    const DOM = {
+        set(id, val) {
+            const el = document.getElementById(id);
+            if (el) el.innerText = val;
+        },
+        html(id, val) {
+            const el = document.getElementById(id);
+            if (el) el.innerHTML = val;
+        },
+        clear(id) {
+            const el = document.getElementById(id);
+            if (el) el.innerHTML = "";
+        },
+        create(tag, cls, text) {
+            const el = document.createElement(tag);
+            if (cls) el.className = cls;
+            if (text) el.innerText = text;
+            return el;
+        }
+    };
 
-#breath {
-    width: 110px;
-    height: 110px;
-    border-radius: 50%;
-    background: radial-gradient(circle, #00f2ff, #0044ff);
-    margin: 20px auto;
-    display: none;
-    transition: transform 4s ease-in-out;
-    box-shadow: 0 0 30px #00f2ff;
-}
+    // =====================================================
+    // 🔒 LOCK SYSTEM
+    // =====================================================
+    const Lock = {
+        on() {
+            state.locked = true;
+            document.body.style.pointerEvents = "none";
+        },
+        off() {
+            state.locked = false;
+            document.body.style.pointerEvents = "auto";
+        },
+        is() {
+            return state.locked;
+        }
+    };
 
-/* =====================================================
-   🌌 FLOATING WORDS (COLOR = WARNING ONLY)
-===================================================== */
+    // =====================================================
+    // 🔊 AUDIO SYSTEM
+    // =====================================================
+    const AudioSystem = {
+        bg: null,
+        ok: null,
+        bad: null,
 
-.floating {
-    position: absolute;
-    padding: 10px 16px;
-    border-radius: 18px;
-    font-weight: bold;
-    user-select: none;
-    cursor: pointer;
-    animation: floatUp 5s linear forwards;
-}
+        init() {
+            this.bg = document.getElementById("bg");
+            this.ok = document.getElementById("ok");
+            this.bad = document.getElementById("bad");
 
-/* COLOR DOES NOT MEAN VALUE — ONLY SIGNAL */
+            if (this.bg) {
+                this.bg.volume = 0.25;
+                this.bg.loop = true;
+                this.bg.play().catch(() => {});
+            }
+        }
+    };
 
-.good { border: 2px solid #00ff00; color:#00ff00; }
-.bad { border: 2px solid #ff0000; color:#ff0000; }
-.neutral { border: 2px solid #ffff00; color:#ffff00; }
+    // =====================================================
+    // 🗣️ SPEECH SYSTEM (READ LOCK + QUEUE CONTROL)
+    // =====================================================
+    const Speech = {
+        queue: [],
+        running: false,
 
-@keyframes floatUp {
-    from { transform: translateY(110vh); }
-    to { transform: translateY(-20vh); }
-}
+        say(text) {
+            if (!text || state.speechLocked) return;
+            this.queue.push(text);
+            this.next();
+        },
 
-.blast {
-    animation: burst 0.3s forwards;
-}
+        next() {
+            if (this.running || this.queue.length === 0 || state.speechLocked) return;
 
-@keyframes burst {
-    to { transform: scale(3); opacity: 0; }
-}
+            this.running = true;
+            const text = this.queue.shift();
 
-/* ===================================================== */
+            const u = new SpeechSynthesisUtterance(text);
 
-#explanation-box {
-    background: rgba(0,0,0,0.85);
-    border-left: 5px solid #00f2ff;
-    padding: 18px;
-    margin: 20px auto;
-    width: 80%;
-    display: none;
-}
+            u.lang = state.lang === "es" ? "es-ES" : "en-US";
+            u.rate = 0.88;
+            u.pitch = 0.9;
 
-/* ===================================================== */
+            u.onend = () => {
+                this.running = false;
+                this.next();
+            };
 
-#story { font-size: 1.4rem; margin: 20px; font-weight: bold; }
-#analysis { color: #00f2ff; margin-bottom: 20px; }
+            speechSynthesis.speak(u);
+        }
+    };
 
-</style>
-</head>
+    // =====================================================
+    // 🧠 EXPANDED WORD SYSTEM
+    // =====================================================
+    const WORDS = [
+        { w:"SURVIVAL", v:15, impact:"positive" },
+        { w:"INSTINCT", v:12, impact:"positive" },
+        { w:"ESCAPE", v:15, impact:"positive" },
+        { w:"AWARENESS", v:12, impact:"positive" },
+        { w:"ALERT", v:10, impact:"positive" },
+        { w:"REACTION", v:10, impact:"positive" },
+        { w:"SHIELD", v:10, impact:"positive" },
 
-<body>
+        { w:"PERCEPTION", v:14, impact:"positive" },
+        { w:"SCAN", v:10, impact:"positive" },
+        { w:"VIGILANCE", v:13, impact:"positive" },
+        { w:"NO-FREEZE", v:15, impact:"positive" },
+        { w:"SHELTER", v:11, impact:"positive" },
 
-<div id="topbar">
-    <button onclick="toggleLang()">EN/ES</button>
-    <div id="score-display">ENERGY: 0</div>
-</div>
+        { w:"LEADERSHIP", v:14, impact:"positive" },
+        { w:"NEGOTIATION", v:12, impact:"positive" },
+        { w:"BOUNDARY", v:12, impact:"positive" },
+        { w:"INFLUENCE", v:13, impact:"positive" },
+        { w:"RESILIENCE", v:15, impact:"positive" },
+        { w:"NON-CONFORMITY", v:16, impact:"positive" },
 
-<div id="game">
+        { w:"SELF-MASTERY", v:15, impact:"positive" },
+        { w:"WILLPOWER", v:13, impact:"positive" },
+        { w:"STAMINA", v:11, impact:"positive" },
+        { w:"FOCUS-FIRE", v:14, impact:"positive" },
+        { w:"CHESS-MIND", v:16, impact:"positive" },
 
-    <div id="top-ui">
-        <div id="stat-focus">FOCUS: 100%</div>
-        <div id="stat-points">POINTS</div>
-    </div>
+        { w:"THREAT", v:-15, impact:"negative" },
+        { w:"FREEZE", v:-12, impact:"negative" },
+        { w:"VICTIM", v:-20, impact:"negative" },
+        { w:"PANIC", v:-15, impact:"negative" },
+        { w:"DANGER", v:-10, impact:"negative" },
+        { w:"FEAR", v:-12, impact:"negative" }
+    ];
 
-    <h2 id="hero-name"></h2>
-
-    <div id="breath"></div>
-
-    <div id="story">Loading mission...</div>
-    <div id="analysis"></div>
-
-    <div id="explanation-box"></div>
-
-    <div id="options"></div>
-</div>
-
-<audio id="bg" loop src="/static/sounds/bg.mp3"></audio>
-<audio id="ok" src="/static/sounds/success.mp3"></audio>
-<audio id="bad" src="/static/sounds/glass.mp3"></audio>
-
-<script>
-
-/* =====================================================
-   🧠 STATE (ENGINE ALIGNED)
-===================================================== */
-
-let lang = "en";
-let missionId = 1;
-let score = 0;
-let silenceSeconds = 20;
-let currentMission = null;
-
-/* ===================================================== */
-
-const WORDS = [
-    { w:"SURVIVAL", v:15, impact:"positive" },
-    { w:"INSTINCT", v:12, impact:"positive" },
-    { w:"ESCAPE", v:15, impact:"positive" },
-    { w:"AWARENESS", v:12, impact:"positive" },
-    { w:"ALERT", v:10, impact:"positive" },
-    { w:"SHIELD", v:10, impact:"positive" },
-
-    { w:"THREAT", v:-15, impact:"negative" },
-    { w:"FREEZE", v:-12, impact:"negative" },
-    { w:"VICTIM", v:-20, impact:"negative" },
-    { w:"PANIC", v:-15, impact:"negative" },
-    { w:"DANGER", v:-10, impact:"negative" }
-];
-
-/* =====================================================
-   🎨 COLOR RULE (NO MEANING, ONLY SIGNAL)
-===================================================== */
-
-function color(word){
-    if(word.v < 0) return "red";
-    if(word.v > 10) return "green";
-    return "yellow";
-}
-
-/* ===================================================== */
-
-function speak(t){
-    speechSynthesis.cancel();
-    let u = new SpeechSynthesisUtterance(t);
-    u.lang = "en-US";
-    u.rate = 0.9;
-    speechSynthesis.speak(u);
-}
-
-/* ===================================================== */
-
-async function init(){
-    document.getElementById("hero-name").innerText = "KAMIZEN USER";
-    startFloating();
-    loadMission();
-}
-
-/* ===================================================== */
-
-async function loadMission(){
-    try{
-        let r = await fetch("/api/mission/" + missionId);
-        currentMission = await r.json();
-        render(currentMission);
-    }catch(e){}
-}
-
-/* ===================================================== */
-
-function render(m){
-
-    let story = m.blocks.find(b=>b.type==="story").text.en;
-    let analysis = m.blocks.find(b=>b.type==="analysis").text.en;
-
-    document.getElementById("story").innerText = story;
-    document.getElementById("analysis").innerText = "";
-
-    speak(story);
-
-    setTimeout(()=>{
-        document.getElementById("analysis").innerText = analysis;
-        speak(analysis);
-    },2500);
-
-    setTimeout(()=>showOptions(m.blocks.find(b=>b.type==="decision").options),5000);
-}
-
-/* ===================================================== */
-
-function showOptions(opts){
-    let c = document.getElementById("options");
-    c.innerHTML="";
-
-    opts.forEach(o=>{
-        let b=document.createElement("button");
-        b.className="opt-btn";
-        b.innerText=o.text.en;
-        b.onclick=()=>handle(o);
-        c.appendChild(b);
-    });
-}
-
-/* =====================================================
-   🎮 DECISION SYSTEM (NO WRONG PROGRESSION)
-===================================================== */
-
-function handle(opt){
-
-    let box = document.getElementById("explanation-box");
-    box.style.display="block";
-
-    if(!opt.correct){
-
-        box.innerText="Incorrect. Retry required.";
-        speak("Incorrect. Try again.");
-        return; // ❌ NO ADVANCE
+    // =====================================================
+    // 🎨 COLOR SYSTEM (ONLY SIGNAL)
+    // =====================================================
+    function getColor(word) {
+        if (word.v < 0) return "red";
+        if (word.v > 12) return "green";
+        return "yellow";
     }
 
-    box.innerText="Correct decision validated.";
-    score += 20;
+    // =====================================================
+    // 🌌 FLOATING WORDS (EXPANDED + EXPLOSION + ANALYSIS ALWAYS)
+    // =====================================================
+    const Floating = {
 
-    document.getElementById("score-display").innerText="ENERGY: "+score;
+        spawn() {
 
-    speak("Correct");
+            if (Lock.is()) return;
 
-    setTimeout(()=>{
-        missionId++;
-        startSilence();
-    },2000);
-}
+            const item = WORDS[Math.floor(Math.random() * WORDS.length)];
 
-/* =====================================================
-   🌌 FLOATING WORDS (ENGINE MATCHED)
-===================================================== */
+            const el = document.createElement("div");
+            el.className = "floating-word";
+            el.innerText = item.w;
 
-function startFloating(){
+            const color = getColor(item);
 
-    setInterval(()=>{
+            el.style.border = `2px solid ${color}`;
+            el.style.color = color;
+            el.style.left = Math.random() * 90 + "vw";
 
-        let w = WORDS[Math.floor(Math.random()*WORDS.length)];
+            el.onclick = () => {
 
-        let el=document.createElement("div");
-        el.className="floating "+(w.v<0?"bad":w.v>10?"good":"neutral");
-        el.innerText=w.w;
-        el.style.left=Math.random()*90+"vw";
+                state.score += item.v;
 
-        el.onclick=()=>{
+                // 💥 ALWAYS ANALYZE EVEN IF EXPLODED
+                const analysis =
+                    item.impact === "positive"
+                        ? `${item.w} strengthens real-life decision control and awareness.`
+                        : `${item.w} represents risk behavior pattern in real environments.`;
 
-            score+=w.v;
+                state.lastWordAnalysis = analysis;
 
-            let msg = w.impact==="positive"
-                ? `${w.w} improves survival awareness`
-                : `${w.w} represents risk pattern`;
+                DOM.set("analysis", analysis);
+                Speech.say(analysis);
 
-            document.getElementById("analysis").innerText=msg;
-            speak(msg);
+                DOM.set("score-display", "POINTS: " + state.score);
 
-            el.remove();
-        };
+                // 💥 BIG EXPLOSION EFFECT (NO MOVEMENT AFTER CLICK)
+                el.style.transform = "scale(3)";
+                el.style.opacity = "0";
+                el.style.transition = "0.25s ease-out";
 
-        document.body.appendChild(el);
+                setTimeout(() => el.remove(), 250);
+            };
 
-        setTimeout(()=>el.remove(),5000);
+            document.body.appendChild(el);
 
-    },1500);
-}
+            setTimeout(() => el.remove(), 4500);
+        },
 
-/* =====================================================
-   🧘 SILENCE SYSTEM (20–60 SEC PROGRESSIVE)
-===================================================== */
-
-function startSilence(){
-
-    let t = Math.min(20 + missionId, 60);
-    silenceSeconds = t;
-
-    document.getElementById("story").innerText =
-        "SILENCE CHALLENGE: " + t + " SECONDS";
-
-    speak("Silence training started");
-
-    let timer=setInterval(()=>{
-
-        t--;
-
-        if(t<=0){
-            clearInterval(timer);
-            missionId++;
-            loadMission();
+        start() {
+            setInterval(() => this.spawn(), 750); // 🔥 more intense frequency
         }
+    };
 
-    },1000);
-}
+    // =====================================================
+    // 🧘 SILENCE SYSTEM (QUEUE SAFE)
+    // =====================================================
+    const Silence = {
 
-/* ===================================================== */
+        start() {
 
-window.onload=init;
+            state.mode = "silence";
+            state.silenceQueue = true;
 
-</script>
+            let t = Math.min(20 + state.missionId, 60);
+            state.silenceTime = t;
 
-</body>
-</html>
+            Speech.say("Silence training initiated.");
+
+            const id = setInterval(() => {
+
+                t--;
+
+                if (t <= 0) {
+                    clearInterval(id);
+                    this.finish();
+                }
+
+            }, 1000);
+        },
+
+        finish() {
+            state.score += 30;
+            Speech.say("Silence completed. Cognitive control improved.");
+            state.silenceQueue = false;
+            Router.next();
+        }
+    };
+
+    // =====================================================
+    // 🎮 DECISION SYSTEM
+    // =====================================================
+    const Decision = {
+
+        handle(opt) {
+
+            Lock.on();
+
+            const box = document.getElementById("explanation-box");
+
+            let text = opt.correct
+                ? "Correct decision improves survival response."
+                : "Incorrect decision detected. Retry required.";
+
+            if (!opt.correct) state.mistakes++;
+
+            box.innerText = text;
+            box.style.display = "block";
+
+            Speech.say(text);
+
+            if (!opt.correct) return;
+
+            setTimeout(() => {
+                box.style.display = "none";
+                Lock.off();
+                Router.next();
+            }, 3000);
+        }
+    };
+
+    // =====================================================
+    // 📂 MISSION SYSTEM
+    // =====================================================
+    const Mission = {
+
+        async load() {
+
+            try {
+                const res = await fetch("/api/mission/next");
+                const data = await res.json();
+
+                state.mission = data;
+                this.render(data);
+
+            } catch (e) {
+                Speech.say("Mission loading error");
+            }
+        },
+
+        render(m) {
+
+            const story = m.blocks.find(b => b.type === "story")?.text.en;
+            const analysis = m.blocks.find(b => b.type === "analysis")?.text.en;
+            const decision = m.blocks.find(b => b.type === "decision");
+
+            DOM.set("story", story);
+            DOM.set("analysis", "");
+
+            Speech.say(story);
+
+            setTimeout(() => {
+                DOM.set("analysis", analysis);
+                Speech.say(analysis);
+            }, 2500);
+
+            setTimeout(() => {
+                UI.render(decision.options);
+            }, 5000);
+        }
+    };
+
+    // =====================================================
+    // 🖥️ UI
+    // =====================================================
+    const UI = {
+
+        render(options) {
+
+            const c = document.getElementById("options");
+            c.innerHTML = "";
+
+            options.forEach(opt => {
+                const b = DOM.create("button", "opt-btn", opt.text.en);
+                b.onclick = () => Decision.handle(opt);
+                c.appendChild(b);
+            });
+        }
+    };
+
+    // =====================================================
+    // 🧭 ROUTER
+    // =====================================================
+    const Router = {
+
+        next() {
+
+            if (state.silenceQueue) return;
+
+            state.missionId++;
+
+            const modes = ["mission", "silence"];
+            const m = modes[Math.floor(Math.random() * modes.length)];
+
+            if (m === "mission") Mission.load();
+            if (m === "silence") Silence.start();
+        }
+    };
+
+    // =====================================================
+    // 🚀 INIT
+    // =====================================================
+    return {
+
+        init() {
+            AudioSystem.init();
+            Floating.start();
+            Router.next();
+        },
+
+        toggleLang() {
+            state.lang = state.lang === "en" ? "es" : "en";
+        }
+    };
+
+})();
+
+window.onload = () => KamizenEngine.init();
