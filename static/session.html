@@ -6,10 +6,6 @@
 <title>KAMIZEN | SURVIVAL PRO SYSTEM</title>
 
 <style>
-/* =====================================================
-   🌌 CORE VISUAL SYSTEM
-===================================================== */
-
 body {
     margin: 0;
     background: radial-gradient(circle, #001a33, #000);
@@ -18,11 +14,9 @@ body {
     text-align: center;
     overflow: hidden;
     cursor: crosshair;
-    transition: background 0.5s;
 }
 
-/* ===================================================== */
-
+/* TOP */
 #topbar {
     position: fixed;
     top: 0;
@@ -56,8 +50,6 @@ button:hover {
     color: #000;
 }
 
-/* ===================================================== */
-
 .opt-btn {
     display: block;
     width: 80%;
@@ -66,10 +58,7 @@ button:hover {
     text-align: left;
 }
 
-/* =====================================================
-   🧘 BREATH CORE
-===================================================== */
-
+/* BREATH (NO BLOCK INPUTS) */
 #breath {
     width: 110px;
     height: 110px;
@@ -79,12 +68,13 @@ button:hover {
     display: none;
     transition: transform 4s ease-in-out;
     box-shadow: 0 0 30px #00f2ff;
+    opacity: 0.35;
+    pointer-events: none;
+    position: relative;
+    z-index: 1;
 }
 
-/* =====================================================
-   🌌 FLOATING WORDS
-===================================================== */
-
+/* FLOATING WORDS */
 .floating-word {
     position: absolute;
     padding: 10px 16px;
@@ -92,31 +82,29 @@ button:hover {
     font-weight: bold;
     user-select: none;
     cursor: pointer;
-    animation: floatUp 4.5s linear forwards;
+    animation: floatUp 5s linear forwards;
     z-index: 50;
 }
-
-/* COLOR ONLY SIGNAL */
-.good { border: 2px solid #00ff00; color:#00ff00; }
-.bad { border: 2px solid #ff0000; color:#ff0000; }
-.neutral { border: 2px solid #ffff00; color:#ffff00; }
 
 @keyframes floatUp {
     from { transform: translateY(110vh); }
     to { transform: translateY(-20vh); }
 }
 
-/* 💥 BIG EXPLOSION EFFECT */
 .blast {
     animation: burst 0.35s forwards;
 }
 
 @keyframes burst {
-    to { transform: scale(5); opacity: 0; }
+    to { transform: scale(3.5); opacity: 0; }
 }
 
-/* ===================================================== */
+/* COLORS ONLY SIGNAL */
+.good { border: 2px solid #00ff00; color:#00ff00; }
+.bad { border: 2px solid #ff0000; color:#ff0000; }
+.neutral { border: 2px solid #ffff00; color:#ffff00; }
 
+/* TEXT */
 #explanation-box {
     background: rgba(0,0,0,0.85);
     border-left: 5px solid #00f2ff;
@@ -126,27 +114,19 @@ button:hover {
     display: none;
 }
 
-/* ===================================================== */
-
 #story { font-size: 1.4rem; margin: 20px; font-weight: bold; }
 #analysis { color: #00f2ff; margin-bottom: 20px; }
-
 </style>
 </head>
 
 <body>
 
 <div id="topbar">
-    <button onclick="KamizenEngine.toggleLang()">EN/ES</button>
+    <button onclick="toggleLang()">EN/ES</button>
     <div id="score-display">ENERGY: 0</div>
 </div>
 
 <div id="game">
-
-    <div id="top-ui">
-        <div id="stat-focus">FOCUS: 100%</div>
-        <div id="stat-points">POINTS</div>
-    </div>
 
     <h2 id="hero-name"></h2>
 
@@ -165,322 +145,230 @@ button:hover {
 <audio id="bad" src="/static/sounds/glass.mp3"></audio>
 
 <script>
-/**
- * 🧠 KAMIZEN ENGINE CORE — SURVIVAL EDUCATION SYSTEM
- * FULL MERGE VERSION (EXPANDED SYSTEM - NO FEATURES REMOVED)
- */
 
-const KamizenEngine = (() => {
+/* =====================================================
+   🧠 ENGINE STATE
+===================================================== */
 
-    const state = {
-        score: 0,
-        lang: "en",
-        mission: null,
-        locked: false,
+let lang = "en";
+let missionId = 1;
+let score = 0;
+let currentMission = null;
+let busy = false;
 
-        silenceActive: false,
-        silenceTime: 20,
+/* =====================================================
+   WORD SYSTEM (EXPANDED LOGIC)
+===================================================== */
 
-        missionId: 1,
+const WORDS = [
+    { w:"SURVIVAL", v:15, impact:"positive" },
+    { w:"INSTINCT", v:12, impact:"positive" },
+    { w:"ESCAPE", v:15, impact:"positive" },
+    { w:"AWARENESS", v:12, impact:"positive" },
+    { w:"ALERT", v:10, impact:"positive" },
+    { w:"SHIELD", v:10, impact:"positive" },
 
-        attention: 100,
-        streak: 0,
-        mistakes: 0,
+    { w:"PERCEPTION", v:14, impact:"positive" },
+    { w:"VIGILANCE", v:13, impact:"positive" },
+    { w:"LEADERSHIP", v:14, impact:"positive" },
+    { w:"RESILIENCE", v:15, impact:"positive" },
+    { w:"FOCUS-FIRE", v:14, impact:"positive" },
 
-        mode: "mission",
+    { w:"THREAT", v:-15, impact:"negative" },
+    { w:"FREEZE", v:-12, impact:"negative" },
+    { w:"VICTIM", v:-20, impact:"negative" },
+    { w:"PANIC", v:-15, impact:"negative" },
+    { w:"DANGER", v:-10, impact:"negative" }
+];
 
-        lastWordAnalysis: null,
-        speechLocked: false,
-        silenceQueue: false,
-        breathMode: false,
-        tvidMode: false
-    };
+/* =====================================================
+   COLOR (ONLY SIGNAL)
+===================================================== */
 
-    const DOM = {
-        set(id, val) {
-            const el = document.getElementById(id);
-            if (el) el.innerText = val;
-        },
-        html(id, val) {
-            const el = document.getElementById(id);
-            if (el) el.innerHTML = val;
-        },
-        clear(id) {
-            const el = document.getElementById(id);
-            if (el) el.innerHTML = "";
-        },
-        create(tag, cls, text) {
-            const el = document.createElement(tag);
-            if (cls) el.className = cls;
-            if (text) el.innerText = text;
-            return el;
-        }
-    };
+function color(w){
+    if(w.v < 0) return "red";
+    if(w.v > 12) return "green";
+    return "yellow";
+}
 
-    const Lock = {
-        on() {
-            state.locked = true;
-            document.body.style.pointerEvents = "none";
-        },
-        off() {
-            state.locked = false;
-            document.body.style.pointerEvents = "auto";
-        },
-        is() {
-            return state.locked;
-        }
-    };
+/* =====================================================
+   SPEECH (QUEUE SAFE)
+===================================================== */
 
-    const AudioSystem = {
-        init() {
-            this.bg = document.getElementById("bg");
-            this.ok = document.getElementById("ok");
-            this.bad = document.getElementById("bad");
+function speak(t){
+    if(!t) return;
+    let u = new SpeechSynthesisUtterance(t);
+    u.lang = "en-US";
+    u.rate = 0.9;
+    speechSynthesis.cancel();
+    speechSynthesis.speak(u);
+}
 
-            if (this.bg) {
-                this.bg.volume = 0.25;
-                this.bg.loop = true;
-                this.bg.play().catch(() => {});
-            }
-        }
-    };
+/* =====================================================
+   INIT
+===================================================== */
 
-    const Speech = {
-        queue: [],
-        running: false,
+function init(){
+    document.getElementById("hero-name").innerText = "KAMIZEN USER";
+    startFloating();
+    loadMission();
+}
 
-        say(text) {
-            if (!text || state.speechLocked) return;
-            this.queue.push(text);
-            this.next();
-        },
+/* =====================================================
+   MISSION
+===================================================== */
 
-        next() {
-            if (this.running || this.queue.length === 0) return;
+async function loadMission(){
+    try{
+        let r = await fetch("/api/mission/" + missionId);
+        currentMission = await r.json();
+        render(currentMission);
+    }catch(e){}
+}
 
-            this.running = true;
-            const text = this.queue.shift();
+function render(m){
 
-            const u = new SpeechSynthesisUtterance(text);
-            u.lang = state.lang === "es" ? "es-ES" : "en-US";
-            u.rate = 0.88;
-            u.pitch = 0.9;
+    let story = m.blocks.find(b=>b.type==="story").text.en;
+    let analysis = m.blocks.find(b=>b.type==="analysis").text.en;
 
-            u.onend = () => {
-                this.running = false;
-                this.next();
-            };
+    document.getElementById("story").innerText = story;
+    document.getElementById("analysis").innerText = "";
 
-            speechSynthesis.speak(u);
-        }
-    };
+    speak(story);
 
-    const WORDS = [
-        { w: "SURVIVAL", v: 15, impact: "positive" },
-        { w: "INSTINCT", v: 12, impact: "positive" },
-        { w: "ESCAPE", v: 15, impact: "positive" },
-        { w: "AWARENESS", v: 12, impact: "positive" },
-        { w: "ALERT", v: 10, impact: "positive" },
-        { w: "REACTION", v: 10, impact: "positive" },
-        { w: "SHIELD", v: 10, impact: "positive" },
+    setTimeout(()=>{
+        document.getElementById("analysis").innerText = analysis;
+        speak(analysis);
+    },2000);
 
-        { w: "PERCEPTION", v: 14, impact: "positive" },
-        { w: "SCAN", v: 10, impact: "positive" },
-        { w: "VIGILANCE", v: 13, impact: "positive" },
+    setTimeout(()=>{
+        showOptions(m.blocks.find(b=>b.type==="decision").options);
+    },4000);
+}
 
-        { w: "LEADERSHIP", v: 14, impact: "positive" },
-        { w: "RESILIENCE", v: 15, impact: "positive" },
-        { w: "FOCUS-FIRE", v: 14, impact: "positive" },
+/* =====================================================
+   OPTIONS
+===================================================== */
 
-        { w: "THREAT", v: -15, impact: "negative" },
-        { w: "FREEZE", v: -12, impact: "negative" },
-        { w: "VICTIM", v: -20, impact: "negative" },
-        { w: "PANIC", v: -15, impact: "negative" },
-        { w: "DANGER", v: -10, impact: "negative" }
-    ];
+function showOptions(opts){
+    let c = document.getElementById("options");
+    c.innerHTML="";
 
-    function getColor(word) {
-        if (word.v < 0) return "red";
-        if (word.v > 12) return "green";
-        return "yellow";
+    opts.forEach(o=>{
+        let b=document.createElement("button");
+        b.className="opt-btn";
+        b.innerText=o.text.en;
+        b.onclick=()=>handle(o);
+        c.appendChild(b);
+    });
+}
+
+/* =====================================================
+   DECISION (LOCK SAFE)
+===================================================== */
+
+function handle(opt){
+
+    if(busy) return;
+    busy = true;
+
+    let box = document.getElementById("explanation-box");
+    box.style.display="block";
+
+    if(!opt.correct){
+        box.innerText="Incorrect. Analyze and retry.";
+        speak("Incorrect");
+        busy = false;
+        return;
     }
 
-    const Floating = {
+    box.innerText="Correct decision validated.";
+    score += 20;
 
-        spawn() {
-            if (Lock.is()) return;
+    document.getElementById("score-display").innerText="ENERGY: "+score;
 
-            const item = WORDS[Math.floor(Math.random() * WORDS.length)];
+    speak("Correct");
 
-            const el = document.createElement("div");
-            el.className = "floating-word " + (item.v < 0 ? "bad" : item.v > 10 ? "good" : "neutral");
-            el.innerText = item.w;
+    setTimeout(()=>{
+        missionId++;
+        startSilence();
+        busy = false;
+    },1500);
+}
 
-            const color = getColor(item);
-            el.style.border = `2px solid ${color}`;
-            el.style.color = color;
-            el.style.left = Math.random() * 90 + "vw";
+/* =====================================================
+   FLOATING WORDS (EXPLOSION + REAL VALUE IMPACT)
+===================================================== */
 
-            el.onclick = () => {
+function startFloating(){
 
-                state.score += item.v;
+    setInterval(()=>{
 
-                state.lastWordAnalysis = {
-                    word: item.w,
-                    meaning: item.impact === "positive"
-                        ? `${item.w} improves survival awareness in real life.`
-                        : `${item.w} represents a risk pattern in real life.`,
-                    impact: item.impact
-                };
+        let w = WORDS[Math.floor(Math.random()*WORDS.length)];
 
-                DOM.set("analysis", state.lastWordAnalysis.meaning);
-                Speech.say(state.lastWordAnalysis.meaning);
-                DOM.set("score-display", "ENERGY: " + state.score);
+        let el=document.createElement("div");
+        el.className="floating-word "+(w.v<0?"bad":w.v>12?"good":"neutral");
+        el.innerText=w.w;
+        el.style.left=Math.random()*90+"vw";
 
-                el.classList.add("blast");
+        el.onclick=()=>{
 
-                setTimeout(() => el.remove(), 300);
-            };
+            if(busy) return;
 
-            document.body.appendChild(el);
-            setTimeout(() => el.remove(), 4500);
-        },
+            score += w.v;
 
-        start() {
-            setInterval(() => this.spawn(), 800);
+            el.classList.add("blast");
+
+            let msg = w.impact==="positive"
+                ? `${w.w} improves real-life decision power.`
+                : `${w.w} represents a risk pattern in life behavior.`;
+
+            document.getElementById("analysis").innerText=msg;
+            speak(msg);
+
+            document.getElementById("score-display").innerText="ENERGY: "+score;
+
+            setTimeout(()=>el.remove(),300);
+        };
+
+        document.body.appendChild(el);
+        setTimeout(()=>el.remove(),5000);
+
+    },900);
+}
+
+/* =====================================================
+   SILENCE (QUEUE SAFE - NO INTERRUPTION)
+===================================================== */
+
+function startSilence(){
+
+    if(busy) return;
+
+    let t = Math.min(20 + missionId, 60);
+
+    document.getElementById("story").innerText =
+        "SILENCE CHALLENGE: " + t + " SECONDS";
+
+    speak("Silence training started");
+
+    let timer=setInterval(()=>{
+
+        t--;
+
+        if(t<=0){
+            clearInterval(timer);
+            missionId++;
+            loadMission();
         }
-    };
 
-    const Silence = {
+    },1000);
+}
 
-        start() {
+/* ===================================================== */
 
-            state.mode = "silence";
+window.onload=init;
 
-            let t = Math.min(20 + state.missionId, 60);
-            state.silenceTime = t;
-
-            Speech.say("Silence training initiated.");
-
-            const id = setInterval(() => {
-
-                t--;
-                if (t <= 0) {
-                    clearInterval(id);
-                    this.finish();
-                }
-
-            }, 1000);
-        },
-
-        finish() {
-            state.score += 30;
-            Speech.say("Silence completed.");
-            Router.next();
-        }
-    };
-
-    const Decision = {
-        handle(opt) {
-
-            Lock.on();
-
-            const box = document.getElementById("explanation-box");
-
-            const text = opt.correct
-                ? "Correct decision improves survival response."
-                : "Incorrect decision detected.";
-
-            if (!opt.correct) state.mistakes++;
-
-            box.innerText = text;
-            box.style.display = "block";
-
-            Speech.say(text);
-
-            if (!opt.correct) return;
-
-            setTimeout(() => {
-                box.style.display = "none";
-                Lock.off();
-                Router.next();
-            }, 2500);
-        }
-    };
-
-    const Mission = {
-
-        async load() {
-            try {
-                const res = await fetch("/api/mission/next");
-                const data = await res.json();
-                state.mission = data;
-                this.render(data);
-            } catch (e) {
-                Speech.say("Mission error");
-            }
-        },
-
-        render(m) {
-
-            const story = m.blocks.find(b => b.type === "story")?.text.en;
-            const analysis = m.blocks.find(b => b.type === "analysis")?.text.en;
-            const decision = m.blocks.find(b => b.type === "decision");
-
-            DOM.set("story", story);
-            DOM.set("analysis", "");
-
-            Speech.say(story);
-
-            setTimeout(() => {
-                DOM.set("analysis", analysis);
-                Speech.say(analysis);
-            }, 2500);
-
-            setTimeout(() => {
-                UI.render(decision.options);
-            }, 5000);
-        }
-    };
-
-    const UI = {
-        render(options) {
-            const c = document.getElementById("options");
-            c.innerHTML = "";
-
-            options.forEach(opt => {
-                const b = DOM.create("button", "opt-btn", opt.text.en);
-                b.onclick = () => Decision.handle(opt);
-                c.appendChild(b);
-            });
-        }
-    };
-
-    const Router = {
-        next() {
-            state.missionId++;
-            const modes = ["mission", "silence"];
-            const m = modes[Math.floor(Math.random() * modes.length)];
-
-            if (m === "mission") Mission.load();
-            if (m === "silence") Silence.start();
-        }
-    };
-
-    return {
-        init() {
-            AudioSystem.init();
-            Floating.start();
-            Router.next();
-        },
-        toggleLang() {
-            state.lang = state.lang === "en" ? "es" : "en";
-        }
-    };
-
-})();
-
-window.onload = () => KamizenEngine.init();
 </script>
 
 </body>
