@@ -1,392 +1,222 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KAMIZEN | AL CIELO PRO</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AL CIELO | LIFE ADVISORY SYSTEM</title>
 
-<style>
-body {
-    margin: 0;
-    background: radial-gradient(circle, #001a33, #000);
-    color: #fff;
-    font-family: 'Segoe UI', Arial, sans-serif;
-    text-align: center;
-    overflow: hidden;
-    cursor: crosshair;
-    transition: background 0.5s;
-}
+    <style>
+        body {
+            margin: 0;
+            background: radial-gradient(circle, #001a33, #000);
+            color: #fff;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            text-align: center;
+            overflow: hidden;
+            cursor: crosshair;
+            transition: background 0.5s;
+        }
 
-#topbar {
-    position: fixed;
-    top: 0;
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    padding: 15px;
-    z-index: 100;
-    background: rgba(0,0,0,0.3);
-}
+        #topbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 15px;
+            z-index: 100;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 242, 255, 0.2);
+        }
 
-#top-ui {
-    display: flex;
-    justify-content: space-around;
-    font-weight: bold;
-    font-size: 1.2rem;
-    color: #00f2ff;
-    gap: 20px;
-    align-items: center;
-}
+        #top-ui {
+            display: flex;
+            justify-content: space-around;
+            font-weight: bold;
+            font-size: 1.3rem;
+            color: #00f2ff;
+            gap: 25px;
+            align-items: center;
+            margin-right: 20px;
+        }
 
-#game { padding-top: 80px; position: relative; z-index: 10; }
+        #game { 
+            padding-top: 120px; 
+            position: relative; 
+            z-index: 10; 
+            height: 80vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
-button {
-    padding: 15px 25px;
-    margin: 10px;
-    font-size: 18px;
-    border: 2px solid #00f2ff;
-    background: rgba(0, 242, 255, 0.1);
-    color: white;
-    border-radius: 12px;
-    cursor: pointer;
-}
+        button {
+            padding: 15px 30px;
+            margin: 10px;
+            font-size: 18px;
+            border: 2px solid #00f2ff;
+            background: rgba(0, 242, 255, 0.1);
+            color: white;
+            border-radius: 12px;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
 
-button:hover {
-    background: #00f2ff;
-    color: #000;
-}
+        button:hover {
+            background: #00f2ff;
+            color: #000;
+            box-shadow: 0 0 25px #00f2ff;
+            transform: translateY(-2px);
+        }
 
-.opt-btn {
-    display: block;
-    width: 80%;
-    max-width: 500px;
-    margin: 10px auto;
-    text-align: left;
-}
+        .opt-btn {
+            display: block;
+            width: 85%;
+            max-width: 650px;
+            margin: 12px auto;
+            text-align: left;
+            border-left: 6px solid #00f2ff;
+            animation: fadeIn 0.5s ease;
+        }
 
-#breath {
-    width: 110px;
-    height: 110px;
-    border-radius: 50%;
-    background: radial-gradient(circle, #00f2ff, #0066ff);
-    margin: 20px auto;
-    display: none;
-    position: relative;
-    z-index: 5;
-    pointer-events: none;
-    opacity: 0.75;
-    box-shadow: 0 0 25px #00f2ff;
-}
+        #breath {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #00f2ff, #0066ff);
+            margin: 20px auto;
+            display: none;
+            position: relative;
+            z-index: 5;
+            opacity: 0.8;
+            box-shadow: 0 0 40px #00f2ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #000;
+            font-size: 1.1rem;
+        }
 
-.floating {
-    position: absolute;
-    padding: 10px 20px;
-    border-radius: 20px;
-    font-weight: bold;
-    cursor: pointer;
-    animation: floatUp 5s linear forwards;
-    z-index: 20;
-    transition: transform 0.2s ease;
-}
+        .floating {
+            position: absolute;
+            padding: 14px 28px;
+            border-radius: 40px;
+            font-weight: 900;
+            cursor: pointer;
+            animation: floatUp 5.5s linear forwards;
+            z-index: 20;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(4px);
+            white-space: nowrap;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            transition: transform 0.2s ease;
+        }
 
-.blast {
-    transform: scale(6);
-    opacity: 0;
-    transition: 0.25s ease;
-}
+        @keyframes floatUp {
+            from { transform: translateY(110vh) rotate(-5deg); }
+            to { transform: translateY(-25vh) rotate(5deg); }
+        }
 
-@keyframes floatUp {
-    from { transform: translateY(110vh); }
-    to { transform: translateY(-20vh); }
-}
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-#explanation-box {
-    background: rgba(0,0,0,0.8);
-    border-left: 5px solid #00f2ff;
-    padding: 20px;
-    margin: 20px auto;
-    width: 80%;
-    display: none;
-}
-</style>
+        #explanation-box {
+            background: rgba(0,0,0,0.92);
+            border: 2px solid #00f2ff;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px auto;
+            width: 85%;
+            max-width: 750px;
+            display: none;
+            box-shadow: 0 0 40px rgba(0, 242, 255, 0.4);
+            font-size: 1.3rem;
+            line-height: 1.6;
+            color: #fff;
+            z-index: 50;
+        }
+
+        #story {
+            font-size: 1.5rem;
+            font-weight: bold;
+            max-width: 800px;
+            margin: 0 auto 15px;
+            padding: 0 20px;
+        }
+
+        #analysis {
+            color: #00f2ff;
+            font-style: italic;
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            min-height: 1.6em;
+            max-width: 700px;
+        }
+
+        #points-display {
+            text-shadow: 0 0 10px #00f2ff;
+        }
+
+    </style>
 </head>
 
 <body>
 
-<div id="topbar">
-    <button onclick="toggleLang()">EN/ES</button>
+    <div id="topbar">
+        <button onclick="KamizenEngine.toggleLang()">LANG: EN/ES</button>
 
-    <div id="top-ui">
-        <div id="stat-focus">FOCUS: 100%</div>
-        <div id="points-display">POINTS: 0</div>
-        <div id="stat-life">ENERGY</div>
+        <div id="top-ui">
+            <div id="points-display">POINTS: 0</div>
+        </div>
     </div>
-</div>
 
-<div id="game">
+    <div id="game">
+        <h2 id="hero-name">AL CIELO: LIFE ADVISOR</h2>
+        
+        <div id="breath"></div>
 
-<h2 id="hero-name"></h2>
+        <div id="story">Initialising System...</div>
+        <div id="analysis"></div>
 
-<div id="breath"></div>
+        <div id="explanation-box"></div>
+        <div id="options"></div>
+    </div>
 
-<div id="story">Loading Mission...</div>
-<div id="analysis"></div>
+    <audio id="bg_music" loop>
+        <source src="/static/sounds/dopamine_bg.mp3" type="audio/mpeg">
+    </audio>
+    
+    <audio id="ok_sound">
+        <source src="/static/sounds/success_lottery.mp3" type="audio/mpeg">
+    </audio>
+    
+    <audio id="bad_sound">
+        <source src="/static/sounds/glass_break.mp3" type="audio/mpeg">
+    </audio>
 
-<div id="explanation-box"></div>
-<div id="options"></div>
-
-</div>
-
-<audio id="bg" loop src="/static/sounds/bg.mp3"></audio>
-<audio id="ok" src="/static/sounds/success.mp3"></audio>
-<audio id="bad" src="/static/sounds/glass.mp3"></audio>
-
-<script>
-
-/* =========================
-   ORIGINAL SESSION SYSTEM (NO TOCAR)
-========================= */
-
-let lang = "en";
-let missionId = 1;
-let score = 0;
-let currentMissionData = null;
-
-const wordPool = {
-good: ["FOCUS","TRUTH","CALM","POWER","CONTROL","RESPECT","ACTION","SURVIVAL","INSTINCT","ESCAPE","AWARENESS","ALERT","REACTION"],
-bad: ["FEAR","LIE","CHAOS","IMPULSE","LAZY","ANGRY","SHAME","THREAT","FREEZE","VICTIM","PANIC","DANGER","TRAP"],
-neutral: ["STREET","CITY","WALK","WATCH","WAIT","VOICE"]
-};
-
-function init(){
-    document.getElementById("hero-name").innerText = "KAMIZEN";
-    startFloatingSystem();
-    loadNextMission();
-
-    // 🔥 INIT BACKUP ENGINE (NO INTERFIERE)
-    try{
-        KamizenEngine.init();
-    }catch(e){}
-}
-
-function speak(t){
-    let u=new SpeechSynthesisUtterance(t);
-    u.lang="en-US";
-    u.rate=0.9;
-    speechSynthesis.speak(u);
-}
-
-async function loadNextMission(){
-    try{
-        const res=await fetch(`/api/mission/${missionId}`);
-        currentMissionData=await res.json();
-        renderMission(currentMissionData);
-    }catch{}
-}
-
-function renderMission(m){
-
-const story=m.blocks.find(b=>b.type==="story").text.en;
-const analysis=m.blocks.find(b=>b.type==="analysis").text.en;
-const decision=m.blocks.find(b=>b.type==="decision");
-
-document.getElementById("story").innerText=story;
-document.getElementById("analysis").innerText="";
-
-speak(story);
-
-setTimeout(()=>{
-document.getElementById("analysis").innerText=analysis;
-speak(analysis);
-},3000);
-
-setTimeout(()=>displayOptions(decision.options),6000);
-}
-
-function displayOptions(options){
-const c=document.getElementById("options");
-c.innerHTML="";
-
-options.forEach(opt=>{
-let b=document.createElement("button");
-b.className="opt-btn";
-b.innerText=opt.text.en;
-b.onclick=()=>handleChoice(opt);
-c.appendChild(b);
-});
-}
-
-function handleChoice(opt){
-
-const box=document.getElementById("explanation-box");
-box.style.display="block";
-
-if(opt.correct){
-score+=20;
-box.innerText=opt.explanation?.en || "Correct decision";
-}else{
-score-=10;
-box.innerText=opt.explanation?.en || "Wrong decision";
-}
-
-updatePoints();
-setTimeout(()=>startSilence(),3000);
-}
-
-function updatePoints(){
-    document.getElementById("points-display").innerText = "POINTS: " + score;
-}
-
-/* =========================
-   SILENCE + BREATH
-========================= */
-
-function startSilence(){
-
-const time=Math.min(20+missionId,60);
-document.getElementById("story").innerText="SILENCE MODE: "+time+" SECONDS";
-
-startBreath();
-
-let t=time;
-
-const id=setInterval(()=>{
-t--;
-if(t<=0){
-clearInterval(id);
-stopBreath();
-missionId++;
-loadNextMission();
-}
-},1000);
-}
-
-let breathInterval;
-
-function startBreath(){
-    const b=document.getElementById("breath");
-    b.style.display="block";
-    let grow=true;
-
-    breathInterval=setInterval(()=>{
-        b.style.transform = grow ? "scale(2.5)" : "scale(1)";
-        grow=!grow;
-    },2000);
-}
-
-function stopBreath(){
-    clearInterval(breathInterval);
-    document.getElementById("breath").style.display="none";
-}
-
-/* =========================
-   FLOATING SYSTEM
-========================= */
-
-function startFloatingSystem(){
-
-setInterval(()=>{
-
-const type=Math.random()>0.7?"bad":Math.random()>0.4?"good":"neutral";
-const word=wordPool[type][Math.floor(Math.random()*wordPool[type].length)];
-
-const el=document.createElement("div");
-el.className="floating";
-el.innerText=word;
-el.style.left=Math.random()*90+"vw";
-el.style.color=type==="good"?"#00ff00":type==="bad"?"#ff0000":"#ffff00";
-el.style.border="2px solid currentColor";
-
-el.onclick=()=>{
-if(type==="good") score+=5;
-if(type==="bad") score-=10;
-
-document.getElementById("analysis").innerText =
-"Word: "+word+" → Repetition builds identity.";
-
-updatePoints();
-
-el.style.transform="scale(6)";
-el.style.opacity="0";
-
-setTimeout(()=>el.remove(),300);
-};
-
-document.body.appendChild(el);
-setTimeout(()=>el.remove(),5000);
-
-},1200);
-}
-
-/* =========================
-   🔥 BACKUP ENGINE (NO INTERFIERE)
-========================= */
-
-const KamizenEngine = (() => {
-
-    const state = {
-        score: 0,
-        lang: "en",
-        missions: [],
-        missionIndex: 0
-    };
-
-    const DOM = {
-        set(id,val){
-            const el=document.getElementById(id);
-            if(el) el.innerText=val;
-        }
-    };
-
-    const Speech = {
-        say(t){
-            const u=new SpeechSynthesisUtterance(t);
-            u.lang=state.lang==="es"?"es-ES":"en-US";
-            speechSynthesis.speak(u);
-        }
-    };
-
-    const Loader = {
-        async loadAll(){
-            const files=[
-                "/static/missions_01_07.json",
-                "/static/missions_15_21.json"
-            ];
-            for(let f of files){
-                try{
-                    const res=await fetch(f);
-                    const data=await res.json();
-                    state.missions.push(...data.missions);
-                }catch{}
+    <script src="/static/engine.js"></script>
+    <script>
+        // Start engine when scripts load
+        window.onload = () => {
+            if(typeof KamizenEngine !== 'undefined') {
+                KamizenEngine.init();
             }
-        }
-    };
 
-    const Mission = {
-        load(){
-            if(!state.missions.length) return;
-
-            const m=state.missions[state.missionIndex];
-            const story=m.blocks.find(b=>b.type==="story").text[state.lang];
-
-            DOM.set("analysis","[Backup Engine Ready]");
-            Speech.say("Backup system active");
-        }
-    };
-
-    return{
-        async init(){
-            await Loader.loadAll();
-            Mission.load();
-        }
-    };
-
-})();
-
-/* ========================= */
-
-window.onload=init;
-
-</script>
+            // Audio Unlock for Browsers
+            document.body.addEventListener('click', () => {
+                const bg = document.getElementById('bg_music');
+                if(bg && bg.paused) {
+                    bg.play().catch(e => console.log("Audio play blocked"));
+                }
+            }, { once: true });
+        };
+    </script>
 </body>
 </html>
