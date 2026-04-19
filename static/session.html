@@ -6,23 +6,17 @@
 <title>KAMIZEN | SURVIVAL PRO SYSTEM</title>
 
 <style>
-/* =====================================================
-   🌌 CORE VISUAL SYSTEM
-===================================================== */
-
 body {
     margin: 0;
     background: radial-gradient(circle, #001a33, #000);
     color: #fff;
-    font-family: Arial, sans-serif;
+    font-family: Arial;
     text-align: center;
     overflow: hidden;
     cursor: crosshair;
-    transition: background 0.5s;
 }
 
-/* ===================================================== */
-
+/* TOP BAR */
 #topbar {
     position: fixed;
     top: 0;
@@ -30,457 +24,197 @@ body {
     display: flex;
     justify-content: space-between;
     padding: 15px;
-    z-index: 100;
     background: rgba(0,0,0,0.3);
 }
 
-#game {
-    padding-top: 80px;
-    position: relative;
-    z-index: 10;
-}
+/* GAME */
+#game { padding-top: 80px; }
 
+/* BUTTONS */
 button {
-    padding: 14px 22px;
-    margin: 10px;
-    font-size: 16px;
+    padding: 14px 20px;
     border: 2px solid #00f2ff;
-    background: rgba(0, 242, 255, 0.1);
+    background: rgba(0,242,255,0.1);
     color: white;
     border-radius: 12px;
     cursor: pointer;
 }
 
-button:hover {
-    background: #00f2ff;
-    color: #000;
-}
-
-/* ===================================================== */
-
-.opt-btn {
-    display: block;
-    width: 80%;
-    max-width: 520px;
-    margin: 10px auto;
-    text-align: left;
-}
-
-/* =====================================================
-   🧘 BREATH CORE
-===================================================== */
-
+/* BREATH */
 #breath {
-    width: 110px;
-    height: 110px;
+    width: 120px;
+    height: 120px;
     border-radius: 50%;
     background: radial-gradient(circle, #00f2ff, #0044ff);
     margin: 20px auto;
     display: none;
-    transition: transform 4s ease-in-out;
     box-shadow: 0 0 30px #00f2ff;
+    transition: transform 4s ease-in-out;
 }
 
-/* =====================================================
-   🌌 FLOATING WORDS
-===================================================== */
-
+/* FLOATING WORDS */
 .floating-word {
     position: absolute;
     padding: 10px 16px;
-    border-radius: 18px;
+    border-radius: 16px;
     font-weight: bold;
-    user-select: none;
     cursor: pointer;
     animation: floatUp 4.5s linear forwards;
-    z-index: 50;
 }
 
-/* COLOR ONLY SIGNAL */
-.good { border: 2px solid #00ff00; color:#00ff00; }
-.bad { border: 2px solid #ff0000; color:#ff0000; }
-.neutral { border: 2px solid #ffff00; color:#ffff00; }
+.good { color:#00ff00; border:2px solid #00ff00; }
+.bad { color:#ff0000; border:2px solid #ff0000; }
+.neutral { color:#ffff00; border:2px solid #ffff00; }
 
 @keyframes floatUp {
     from { transform: translateY(110vh); }
     to { transform: translateY(-20vh); }
 }
 
-/* 💥 BIG EXPLOSION EFFECT */
+/* 💥 EXPLOSION MÁS FUERTE */
 .blast {
-    animation: burst 0.35s forwards;
+    animation: explode 0.25s forwards;
 }
 
-@keyframes burst {
-    to { transform: scale(5); opacity: 0; }
+@keyframes explode {
+    0% { transform: scale(1); opacity: 1; }
+    100% { transform: scale(6); opacity: 0; }
 }
 
-/* ===================================================== */
+/* TEXT */
+#story { font-size: 1.4rem; margin: 20px; font-weight: bold; }
+#analysis { color: #00f2ff; }
 
 #explanation-box {
     background: rgba(0,0,0,0.85);
-    border-left: 5px solid #00f2ff;
-    padding: 18px;
-    margin: 20px auto;
+    border-left: 4px solid #00f2ff;
+    padding: 15px;
     width: 80%;
+    margin: 20px auto;
     display: none;
 }
-
-/* ===================================================== */
-
-#story { font-size: 1.4rem; margin: 20px; font-weight: bold; }
-#analysis { color: #00f2ff; margin-bottom: 20px; }
-
 </style>
 </head>
 
 <body>
 
 <div id="topbar">
-    <button onclick="KamizenEngine.toggleLang()">EN/ES</button>
+    <button onclick="toggleLang()">EN/ES</button>
     <div id="score-display">ENERGY: 0</div>
 </div>
 
 <div id="game">
 
-    <div id="top-ui">
-        <div id="stat-focus">FOCUS: 100%</div>
-        <div id="stat-points">POINTS</div>
-    </div>
+    <h2 id="hero-name">KAMIZEN</h2>
 
-    <h2 id="hero-name"></h2>
-
+    <!-- 🌬️ BREATH SYSTEM -->
     <div id="breath"></div>
 
-    <div id="story">Loading mission...</div>
+    <div id="story">Loading...</div>
     <div id="analysis"></div>
 
     <div id="explanation-box"></div>
-
     <div id="options"></div>
 </div>
 
-<audio id="bg" loop src="/static/sounds/bg.mp3"></audio>
-<audio id="ok" src="/static/sounds/success.mp3"></audio>
-<audio id="bad" src="/static/sounds/glass.mp3"></audio>
+<!-- 🔊 SONIDOS -->
+<audio id="glass" src="/static/sounds/glass.mp3"></audio>
+<audio id="noise" src="/static/sounds/noise.mp3"></audio>
 
 <script>
-/**
- * 🧠 KAMIZEN ENGINE CORE — SURVIVAL EDUCATION SYSTEM
- * FULL MERGE VERSION (EXPANDED SYSTEM - NO FEATURES REMOVED)
- */
 
-const KamizenEngine = (() => {
+/* =========================
+   STATE
+========================= */
+let score = 0;
 
-    const state = {
-        score: 0,
-        lang: "en",
-        mission: null,
-        locked: false,
+/* =========================
+   WORDS
+========================= */
+const WORDS = [
+    {w:"SURVIVAL",v:15,impact:"good"},
+    {w:"ESCAPE",v:15,impact:"good"},
+    {w:"AWARENESS",v:12,impact:"good"},
 
-        silenceActive: false,
-        silenceTime: 20,
+    {w:"FEAR",v:-12,impact:"bad"},
+    {w:"PANIC",v:-15,impact:"bad"},
+    {w:"DANGER",v:-10,impact:"bad"}
+];
 
-        missionId: 1,
+/* =========================
+   BREATH SYSTEM 🌬️
+========================= */
+function startBreath() {
+    const b = document.getElementById("breath");
+    b.style.display = "block";
 
-        attention: 100,
-        streak: 0,
-        mistakes: 0,
+    let grow = true;
 
-        mode: "mission",
+    setInterval(() => {
+        b.style.transform = grow ? "scale(2.2)" : "scale(1)";
+        grow = !grow;
+    }, 4000);
+}
 
-        lastWordAnalysis: null,
-        speechLocked: false,
-        silenceQueue: false,
-        breathMode: false,
-        tvidMode: false
-    };
-
-    const DOM = {
-        set(id, val) {
-            const el = document.getElementById(id);
-            if (el) el.innerText = val;
-        },
-        html(id, val) {
-            const el = document.getElementById(id);
-            if (el) el.innerHTML = val;
-        },
-        clear(id) {
-            const el = document.getElementById(id);
-            if (el) el.innerHTML = "";
-        },
-        create(tag, cls, text) {
-            const el = document.createElement(tag);
-            if (cls) el.className = cls;
-            if (text) el.innerText = text;
-            return el;
-        }
-    };
-
-    const Lock = {
-        on() {
-            state.locked = true;
-            document.body.style.pointerEvents = "none";
-        },
-        off() {
-            state.locked = false;
-            document.body.style.pointerEvents = "auto";
-        },
-        is() {
-            return state.locked;
-        }
-    };
-
-    const AudioSystem = {
-        init() {
-            this.bg = document.getElementById("bg");
-            this.ok = document.getElementById("ok");
-            this.bad = document.getElementById("bad");
-
-            if (this.bg) {
-                this.bg.volume = 0.25;
-                this.bg.loop = true;
-                this.bg.play().catch(() => {});
-            }
-        }
-    };
-
-    const Speech = {
-        queue: [],
-        running: false,
-
-        say(text) {
-            if (!text || state.speechLocked) return;
-            this.queue.push(text);
-            this.next();
-        },
-
-        next() {
-            if (this.running || this.queue.length === 0) return;
-
-            this.running = true;
-            const text = this.queue.shift();
-
-            const u = new SpeechSynthesisUtterance(text);
-            u.lang = state.lang === "es" ? "es-ES" : "en-US";
-            u.rate = 0.88;
-            u.pitch = 0.9;
-
-            u.onend = () => {
-                this.running = false;
-                this.next();
-            };
-
-            speechSynthesis.speak(u);
-        }
-    };
-
-    const WORDS = [
-        { w: "SURVIVAL", v: 15, impact: "positive" },
-        { w: "INSTINCT", v: 12, impact: "positive" },
-        { w: "ESCAPE", v: 15, impact: "positive" },
-        { w: "AWARENESS", v: 12, impact: "positive" },
-        { w: "ALERT", v: 10, impact: "positive" },
-        { w: "REACTION", v: 10, impact: "positive" },
-        { w: "SHIELD", v: 10, impact: "positive" },
-
-        { w: "PERCEPTION", v: 14, impact: "positive" },
-        { w: "SCAN", v: 10, impact: "positive" },
-        { w: "VIGILANCE", v: 13, impact: "positive" },
-
-        { w: "LEADERSHIP", v: 14, impact: "positive" },
-        { w: "RESILIENCE", v: 15, impact: "positive" },
-        { w: "FOCUS-FIRE", v: 14, impact: "positive" },
-
-        { w: "THREAT", v: -15, impact: "negative" },
-        { w: "FREEZE", v: -12, impact: "negative" },
-        { w: "VICTIM", v: -20, impact: "negative" },
-        { w: "PANIC", v: -15, impact: "negative" },
-        { w: "DANGER", v: -10, impact: "negative" }
-    ];
-
-    function getColor(word) {
-        if (word.v < 0) return "red";
-        if (word.v > 12) return "green";
-        return "yellow";
+/* =========================
+   SOUND SYSTEM 🔊
+========================= */
+function playSound(type){
+    if(type === "good"){
+        document.getElementById("glass").currentTime = 0;
+        document.getElementById("glass").play();
+    } else {
+        document.getElementById("noise").currentTime = 0;
+        document.getElementById("noise").play();
     }
+}
 
-    const Floating = {
+/* =========================
+   FLOATING WORDS ⚡
+========================= */
+function spawnWord(){
 
-        spawn() {
-            if (Lock.is()) return;
+    const w = WORDS[Math.floor(Math.random()*WORDS.length)];
 
-            const item = WORDS[Math.floor(Math.random() * WORDS.length)];
+    const el = document.createElement("div");
+    el.className = "floating-word " + w.impact;
+    el.innerText = w.w;
+    el.style.left = Math.random()*90 + "vw";
 
-            const el = document.createElement("div");
-            el.className = "floating-word " + (item.v < 0 ? "bad" : item.v > 10 ? "good" : "neutral");
-            el.innerText = item.w;
+    el.onclick = () => {
 
-            const color = getColor(item);
-            el.style.border = `2px solid ${color}`;
-            el.style.color = color;
-            el.style.left = Math.random() * 90 + "vw";
+        score += w.v;
 
-            el.onclick = () => {
+        playSound(w.impact === "good" ? "good" : "bad");
 
-                state.score += item.v;
+        el.classList.add("blast");
 
-                state.lastWordAnalysis = {
-                    word: item.w,
-                    meaning: item.impact === "positive"
-                        ? `${item.w} improves survival awareness in real life.`
-                        : `${item.w} represents a risk pattern in real life.`,
-                    impact: item.impact
-                };
+        document.getElementById("analysis").innerText =
+            w.impact === "good"
+            ? `${w.w} strengthens survival awareness`
+            : `${w.w} triggers risk behavior`;
 
-                DOM.set("analysis", state.lastWordAnalysis.meaning);
-                Speech.say(state.lastWordAnalysis.meaning);
-                DOM.set("score-display", "ENERGY: " + state.score);
+        document.getElementById("score-display").innerText =
+            "ENERGY: " + score;
 
-                el.classList.add("blast");
-
-                setTimeout(() => el.remove(), 300);
-            };
-
-            document.body.appendChild(el);
-            setTimeout(() => el.remove(), 4500);
-        },
-
-        start() {
-            setInterval(() => this.spawn(), 800);
-        }
+        setTimeout(()=>el.remove(), 250);
     };
 
-    const Silence = {
+    document.body.appendChild(el);
 
-        start() {
+    setTimeout(()=>el.remove(), 4500);
+}
 
-            state.mode = "silence";
+/* =========================
+   LOOP
+========================= */
+setInterval(spawnWord, 900);
 
-            let t = Math.min(20 + state.missionId, 60);
-            state.silenceTime = t;
+/* =========================
+   INIT
+========================= */
+startBreath();
 
-            Speech.say("Silence training initiated.");
-
-            const id = setInterval(() => {
-
-                t--;
-                if (t <= 0) {
-                    clearInterval(id);
-                    this.finish();
-                }
-
-            }, 1000);
-        },
-
-        finish() {
-            state.score += 30;
-            Speech.say("Silence completed.");
-            Router.next();
-        }
-    };
-
-    const Decision = {
-        handle(opt) {
-
-            Lock.on();
-
-            const box = document.getElementById("explanation-box");
-
-            const text = opt.correct
-                ? "Correct decision improves survival response."
-                : "Incorrect decision detected.";
-
-            if (!opt.correct) state.mistakes++;
-
-            box.innerText = text;
-            box.style.display = "block";
-
-            Speech.say(text);
-
-            if (!opt.correct) return;
-
-            setTimeout(() => {
-                box.style.display = "none";
-                Lock.off();
-                Router.next();
-            }, 2500);
-        }
-    };
-
-    const Mission = {
-
-        async load() {
-            try {
-                const res = await fetch("/api/mission/next");
-                const data = await res.json();
-                state.mission = data;
-                this.render(data);
-            } catch (e) {
-                Speech.say("Mission error");
-            }
-        },
-
-        render(m) {
-
-            const story = m.blocks.find(b => b.type === "story")?.text.en;
-            const analysis = m.blocks.find(b => b.type === "analysis")?.text.en;
-            const decision = m.blocks.find(b => b.type === "decision");
-
-            DOM.set("story", story);
-            DOM.set("analysis", "");
-
-            Speech.say(story);
-
-            setTimeout(() => {
-                DOM.set("analysis", analysis);
-                Speech.say(analysis);
-            }, 2500);
-
-            setTimeout(() => {
-                UI.render(decision.options);
-            }, 5000);
-        }
-    };
-
-    const UI = {
-        render(options) {
-            const c = document.getElementById("options");
-            c.innerHTML = "";
-
-            options.forEach(opt => {
-                const b = DOM.create("button", "opt-btn", opt.text.en);
-                b.onclick = () => Decision.handle(opt);
-                c.appendChild(b);
-            });
-        }
-    };
-
-    const Router = {
-        next() {
-            state.missionId++;
-            const modes = ["mission", "silence"];
-            const m = modes[Math.floor(Math.random() * modes.length)];
-
-            if (m === "mission") Mission.load();
-            if (m === "silence") Silence.start();
-        }
-    };
-
-    return {
-        init() {
-            AudioSystem.init();
-            Floating.start();
-            Router.next();
-        },
-        toggleLang() {
-            state.lang = state.lang === "en" ? "es" : "en";
-        }
-    };
-
-})();
-
-window.onload = () => KamizenEngine.init();
 </script>
 
 </body>
