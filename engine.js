@@ -1,6 +1,6 @@
 /**
  * 🧠 KAMIZEN ENGINE CORE — SURVIVAL EDUCATION SYSTEM
- * FULL MERGE VERSION (NO FEATURES REMOVED)
+ * FULL MERGE VERSION (EXPANDED SYSTEM - NO FEATURES REMOVED)
  */
 
 const KamizenEngine = (() => {
@@ -10,12 +10,12 @@ const KamizenEngine = (() => {
     // =====================================================
     const state = {
         score: 0,
-        lang: "en", // DEFAULT ENGLISH ONLY
+        lang: "en",
         mission: null,
         locked: false,
 
         silenceActive: false,
-        silenceTime: 20, // base minimum
+        silenceTime: 20,
 
         missionId: 1,
 
@@ -23,7 +23,18 @@ const KamizenEngine = (() => {
         streak: 0,
         mistakes: 0,
 
-        mode: "mission"
+        mode: "mission",
+
+        // 🧠 NEW: SYSTEM MEMORY FOR WORD ANALYSIS
+        lastWordAnalysis: null,
+        speechLocked: false,
+        silenceQueue: false,
+
+        // 🌊 BREATH CONTROL HOOK (future engine expansion)
+        breathMode: false,
+
+        // 🎬 TVID MODE (placeholder expansion system)
+        tvidMode: false
     };
 
     // =====================================================
@@ -68,7 +79,7 @@ const KamizenEngine = (() => {
     };
 
     // =====================================================
-    // 🔊 AUDIO SYSTEM (ENGLISH DEFAULT ONLY)
+    // 🔊 AUDIO SYSTEM
     // =====================================================
     const AudioSystem = {
         bg: null,
@@ -85,18 +96,11 @@ const KamizenEngine = (() => {
                 this.bg.loop = true;
                 this.bg.play().catch(() => {});
             }
-        },
-
-        play(type) {
-            const a = type === "win" ? this.ok : this.bad;
-            if (!a) return;
-            a.currentTime = 0;
-            a.play().catch(() => {});
         }
     };
 
     // =====================================================
-    // 🗣️ VOICE SYSTEM (FORCED ENGLISH)
+    // 🗣️ SPEECH SYSTEM (IMPROVED SEQUENTIAL READ LOCK)
     // =====================================================
     const Speech = {
         queue: [],
@@ -104,19 +108,19 @@ const KamizenEngine = (() => {
 
         say(text) {
             if (!text) return;
+
             this.queue.push(text);
             this.next();
         },
 
         next() {
-            if (this.running || this.queue.length === 0) return;
+            if (this.running || state.speechLocked || this.queue.length === 0) return;
 
             this.running = true;
-            const text = this.queue.shift();
 
+            const text = this.queue.shift();
             const u = new SpeechSynthesisUtterance(text);
 
-            // 🔥 FORCE ENGLISH UNLESS MANUAL OVERRIDE
             u.lang = state.lang === "es" ? "es-ES" : "en-US";
             u.rate = 0.88;
             u.pitch = 0.9;
@@ -127,14 +131,24 @@ const KamizenEngine = (() => {
             };
 
             speechSynthesis.speak(u);
+        },
+
+        lockReading() {
+            state.speechLocked = true;
+        },
+
+        unlockReading() {
+            state.speechLocked = false;
+            this.next();
         }
     };
 
     // =====================================================
-    // 🧠 SURVIVAL WORD SYSTEM (CORE + FIXED COLOR LOGIC)
+    // 🧠 EXPANDED WORD SYSTEM (SURVIVAL + SOCIAL + MIND)
     // =====================================================
     const WORDS = [
 
+        // 🧠 SURVIVAL CORE
         { w: "SURVIVAL", v: 15, impact: "positive" },
         { w: "INSTINCT", v: 12, impact: "positive" },
         { w: "ESCAPE", v: 15, impact: "positive" },
@@ -143,6 +157,29 @@ const KamizenEngine = (() => {
         { w: "REACTION", v: 10, impact: "positive" },
         { w: "SHIELD", v: 10, impact: "positive" },
 
+        // 🧭 SURVIVAL EXPANSION
+        { w: "PERCEPTION", v: 14, impact: "positive" },
+        { w: "SCAN", v: 10, impact: "positive" },
+        { w: "VIGILANCE", v: 13, impact: "positive" },
+        { w: "NO-FREEZE", v: 15, impact: "positive" },
+        { w: "SHELTER", v: 11, impact: "positive" },
+
+        // 🧠 SOCIAL STRATEGY
+        { w: "LEADERSHIP", v: 14, impact: "positive" },
+        { w: "NEGOTIATION", v: 12, impact: "positive" },
+        { w: "BOUNDARY", v: 12, impact: "positive" },
+        { w: "INFLUENCE", v: 13, impact: "positive" },
+        { w: "RESILIENCE", v: 15, impact: "positive" },
+        { w: "NON-CONFORMITY", v: 16, impact: "positive" },
+
+        // 🧠 INNER ENGINE
+        { w: "SELF-MASTERY", v: 15, impact: "positive" },
+        { w: "WILLPOWER", v: 13, impact: "positive" },
+        { w: "STAMINA", v: 11, impact: "positive" },
+        { w: "FOCUS-FIRE", v: 14, impact: "positive" },
+        { w: "CHESS-MIND", v: 16, impact: "positive" },
+
+        // ⚠️ NEGATIVE SYSTEM
         { w: "THREAT", v: -15, impact: "negative" },
         { w: "FREEZE", v: -12, impact: "negative" },
         { w: "VICTIM", v: -20, impact: "negative" },
@@ -152,17 +189,16 @@ const KamizenEngine = (() => {
     ];
 
     // =====================================================
-    // 🎨 COLOR RULE (IMPORTANT FIX)
+    // 🎨 COLOR SYSTEM (VISUAL ONLY - MEANING IGNORED)
     // =====================================================
     function getColor(word) {
-        // ⚠️ COLOR IS ONLY WARNING SIGNAL, NOT MEANING
-        if (word.v < 0) return "red";        // caution
-        if (word.v > 10) return "green";     // safe action
-        return "yellow";                     // neutral alert
+        if (word.v < 0) return "red";
+        if (word.v > 12) return "green";
+        return "yellow";
     }
 
     // =====================================================
-    // 🌌 FLOATING WORDS (FIXED LOGIC)
+    // 🌌 FLOATING WORD SYSTEM (MORE FREQUENT + MEMORY ANALYSIS)
     // =====================================================
     const Floating = {
 
@@ -176,7 +212,6 @@ const KamizenEngine = (() => {
             el.className = "floating-word";
             el.innerText = item.w;
 
-            // 🔥 COLOR = DISTRACTION LAYER (NOT MEANING)
             const color = getColor(item);
 
             el.style.border = `2px solid ${color}`;
@@ -187,17 +222,18 @@ const KamizenEngine = (() => {
 
                 state.score += item.v;
 
-                // 🧠 REAL MEANING IS WORD, NOT COLOR
-                let msg = "";
+                // 🧠 STORE ANALYSIS EVEN AFTER EXPLOSION
+                state.lastWordAnalysis = {
+                    word: item.w,
+                    meaning:
+                        item.impact === "positive"
+                            ? `${item.w} improves survival intelligence and decision speed.`
+                            : `${item.w} is a risk pattern. Awareness required in real life.`,
+                    impact: item.impact
+                };
 
-                if (item.impact === "positive") {
-                    msg = `${item.w} strengthens decision-making and survival awareness.`;
-                } else {
-                    msg = `${item.w} represents a risk pattern. Analyze before reacting.`;
-                }
-
-                DOM.set("analysis", msg);
-                Speech.say(msg);
+                DOM.set("analysis", state.lastWordAnalysis.meaning);
+                Speech.say(state.lastWordAnalysis.meaning);
 
                 DOM.set("score-display", "POINTS: " + state.score);
 
@@ -205,26 +241,27 @@ const KamizenEngine = (() => {
             };
 
             document.body.appendChild(el);
-            setTimeout(() => el.remove(), 5000);
+
+            // ⚡ faster spawn cycle (more training density)
+            setTimeout(() => el.remove(), 4500);
         },
 
         start() {
-            setInterval(() => this.spawn(), 1200);
+            setInterval(() => this.spawn(), 900); // 🔥 increased frequency
         }
     };
 
     // =====================================================
-    // 🧘 SILENCE SYSTEM (PROGRESSIVE 20–60s BY ID)
+    // 🧘 SILENCE SYSTEM (QUEUE SAFE - NO INTERRUPTION)
     // =====================================================
     const Silence = {
 
         start() {
 
             state.mode = "silence";
+            state.silenceQueue = true;
 
-            // 🔥 PROGRESSIVE TIME SYSTEM (ID 1–35)
             let t = Math.min(20 + state.missionId, 60);
-
             state.silenceTime = t;
 
             Speech.say("Silence training initiated.");
@@ -242,14 +279,19 @@ const KamizenEngine = (() => {
         },
 
         finish() {
+
             state.score += 30;
+
             Speech.say("Silence completed. Cognitive control improved.");
+
+            state.silenceQueue = false;
+
             Router.next();
         }
     };
 
     // =====================================================
-    // 🎮 DECISION SYSTEM (NO PROGRESSION IF WRONG)
+    // 🎮 DECISION SYSTEM
     // =====================================================
     const Decision = {
 
@@ -281,7 +323,7 @@ const KamizenEngine = (() => {
     };
 
     // =====================================================
-    // 📂 MISSION SYSTEM (RESTORED FULL BACKEND)
+    // 📂 MISSION SYSTEM (UNCHANGED CORE)
     // =====================================================
     const Mission = {
 
@@ -293,7 +335,6 @@ const KamizenEngine = (() => {
                 const data = await res.json();
 
                 state.mission = data;
-
                 this.render(data);
 
             } catch (e) {
@@ -327,7 +368,6 @@ const KamizenEngine = (() => {
     // 🖥️ UI
     // =====================================================
     const UI = {
-
         render(options) {
 
             const c = document.getElementById("options");
@@ -342,11 +382,13 @@ const KamizenEngine = (() => {
     };
 
     // =====================================================
-    // 🧭 ROUTER (RESTORED + FIXED)
+    // 🧭 ROUTER
     // =====================================================
     const Router = {
 
         next() {
+
+            if (state.silenceQueue) return; // 🧠 safety queue
 
             state.missionId++;
 
