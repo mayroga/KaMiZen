@@ -3,376 +3,100 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KAMIZEN | SURVIVAL PRO SYSTEM</title>
+<title>KAMIZEN | SURVIVAL SYSTEM</title>
 
 <style>
-
-/* =====================================================
-   🌌 GLOBAL CORE
-===================================================== */
-
-body {
-    margin: 0;
-    background: radial-gradient(circle, #001a33, #000);
-    color: #fff;
-    font-family: Arial, sans-serif;
-    text-align: center;
-    overflow: hidden;
-    cursor: crosshair;
+body{
+    margin:0;
+    background:radial-gradient(circle,#001a33,#000);
+    color:#fff;
+    font-family:Arial;
+    text-align:center;
+    overflow:hidden;
 }
 
-/* ===================================================== */
-
-#topbar {
-    position: fixed;
-    top: 0;
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    padding: 15px;
-    z-index: 100;
-    background: rgba(0,0,0,0.35);
+#topbar{
+    position:fixed;
+    top:0;
+    width:100%;
+    display:flex;
+    justify-content:space-between;
+    padding:15px;
+    background:rgba(0,0,0,0.4);
 }
 
-#game {
-    padding-top: 80px;
-    position: relative;
-    z-index: 10;
+#breath{
+    width:120px;
+    height:120px;
+    border-radius:50%;
+    margin:20px auto;
+    background:radial-gradient(circle,#00f2ff,#0044ff);
+    display:none;
+    box-shadow:0 0 30px #00f2ff;
+    animation:breathe 4s infinite;
 }
 
-/* ===================================================== */
-
-button {
-    padding: 14px 22px;
-    margin: 10px;
-    font-size: 16px;
-    border: 2px solid #00f2ff;
-    background: rgba(0, 242, 255, 0.1);
-    color: white;
-    border-radius: 12px;
-    cursor: pointer;
+@keyframes breathe{
+    0%{transform:scale(1);}
+    50%{transform:scale(1.3);}
+    100%{transform:scale(1);}
 }
 
-button:hover {
-    background: #00f2ff;
-    color: #000;
+.floating-word{
+    position:absolute;
+    padding:10px 14px;
+    border-radius:16px;
+    cursor:pointer;
+    animation:floatUp 5s linear;
 }
 
-.opt-btn {
-    display: block;
-    width: 80%;
-    max-width: 520px;
-    margin: 10px auto;
-    text-align: left;
+@keyframes floatUp{
+    from{transform:translateY(100vh);}
+    to{transform:translateY(-20vh);}
 }
 
-/* =====================================================
-   🫁 BREATH SYSTEM
-===================================================== */
+.good{border:2px solid #0f0;color:#0f0;}
+.bad{border:2px solid #f00;color:#f00;}
 
-#breath {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    margin: 20px auto;
-    background: radial-gradient(circle, #00f2ff, #0044ff);
-    box-shadow: 0 0 35px #00f2ff;
-    animation: breathe 4s infinite ease-in-out;
+#explanation-box{
+    display:none;
+    background:rgba(0,0,0,0.8);
+    padding:15px;
+    margin:20px auto;
+    width:80%;
+    border-left:4px solid #00f2ff;
 }
 
-@keyframes breathe {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.25); }
-    100% { transform: scale(1); }
+button{
+    padding:12px;
+    margin:8px;
+    border:2px solid #00f2ff;
+    background:transparent;
+    color:white;
+    cursor:pointer;
 }
-
-/* =====================================================
-   🌌 FLOATING WORDS
-===================================================== */
-
-.floating-word {
-    position: absolute;
-    padding: 10px 16px;
-    border-radius: 18px;
-    font-weight: bold;
-    user-select: none;
-    cursor: pointer;
-    animation: floatUp 4.5s linear forwards;
-    z-index: 50;
-}
-
-@keyframes floatUp {
-    from { transform: translateY(110vh); }
-    to { transform: translateY(-20vh); }
-}
-
-.good { border: 2px solid #00ff00; color:#00ff00; }
-.bad { border: 2px solid #ff0000; color:#ff0000; }
-.neutral { border: 2px solid #ffff00; color:#ffff00; }
-
-/* 💥 EXPLOSION */
-.blast {
-    animation: explode 0.35s ease-out forwards;
-}
-
-@keyframes explode {
-    0% { transform: scale(1); opacity: 1; }
-    100% { transform: scale(6); opacity: 0; }
-}
-
-/* ===================================================== */
-
-#explanation-box {
-    background: rgba(0,0,0,0.85);
-    border-left: 5px solid #00f2ff;
-    padding: 18px;
-    margin: 20px auto;
-    width: 80%;
-    display: none;
-}
-
-/* ===================================================== */
-
-#story {
-    font-size: 1.4rem;
-    margin: 20px;
-    font-weight: bold;
-}
-
-#analysis {
-    color: #00f2ff;
-    margin-bottom: 20px;
-}
-
 </style>
 </head>
 
 <body>
 
 <div id="topbar">
-    <button onclick="KamizenEngine.toggleLang()">EN/ES</button>
     <div id="score-display">ENERGY: 0</div>
+    <button onclick="KamizenEngine.toggleLang()">EN/ES</button>
 </div>
 
-<div id="game">
+<div id="breath"></div>
 
-    <div id="breath"></div>
+<h2 id="story">Loading...</h2>
+<div id="analysis"></div>
 
-    <h2 id="hero-name">KAMIZEN USER</h2>
+<div id="explanation-box"></div>
+<div id="options"></div>
 
-    <div id="story">Loading mission...</div>
-    <div id="analysis"></div>
-
-    <div id="explanation-box"></div>
-
-    <div id="options"></div>
-</div>
-
-<!-- 🔊 AUDIO -->
 <audio id="ok" src="/static/sounds/success.mp3"></audio>
 <audio id="bad" src="/static/sounds/glass.mp3"></audio>
 
-<script>
-
-/* =====================================================
-   🧠 KAMIZEN ENGINE (UNIFIED)
-===================================================== */
-
-const KamizenEngine = (() => {
-
-    const state = {
-        score: 0,
-        lang: "en",
-        missionId: 1,
-        locked: false,
-        lastWordAnalysis: null
-    };
-
-    const DOM = {
-        set(id,val){
-            const el=document.getElementById(id);
-            if(el) el.innerText=val;
-        }
-    };
-
-    const Lock = {
-        on(){ state.locked=true; document.body.style.pointerEvents="none"; },
-        off(){ state.locked=false; document.body.style.pointerEvents="auto"; },
-        is(){ return state.locked; }
-    };
-
-    const AudioSystem = {
-        init(){
-            this.ok=document.getElementById("ok");
-            this.bad=document.getElementById("bad");
-        },
-        play(type){
-            let a = type==="good"?this.ok:this.bad;
-            if(!a) return;
-            a.currentTime=0;
-            a.play().catch(()=>{});
-        }
-    };
-
-    const Speech = {
-        say(t){
-            let u=new SpeechSynthesisUtterance(t);
-            u.lang="en-US";
-            u.rate=0.9;
-            speechSynthesis.speak(u);
-        }
-    };
-
-    const WORDS = [
-        {w:"SURVIVAL",v:15},
-        {w:"AWARENESS",v:12},
-        {w:"ESCAPE",v:15},
-        {w:"THREAT",v:-15},
-        {w:"PANIC",v:-12},
-        {w:"FREEZE",v:-10}
-    ];
-
-    function getColor(w){
-        return w.v<0?"red":w.v>10?"green":"yellow";
-    }
-
-    const Floating = {
-
-        spawn(){
-
-            if(Lock.is()) return;
-
-            const w = WORDS[Math.floor(Math.random()*WORDS.length)];
-
-            const el=document.createElement("div");
-            el.className="floating-word "+(w.v<0?"bad":w.v>10?"good":"neutral");
-            el.innerText=w.w;
-
-            el.style.left=Math.random()*90+"vw";
-
-            el.onclick=()=>{
-
-                state.score+=w.v;
-                DOM.set("score-display","ENERGY: "+state.score);
-
-                let msg = w.v>0
-                    ? `${w.w} strengthens survival awareness`
-                    : `${w.w} represents cognitive risk`;
-
-                state.lastWordAnalysis=msg;
-
-                DOM.set("analysis",msg);
-                Speech.say(msg);
-
-                AudioSystem.play(w.v>0?"good":"bad");
-
-                el.classList.add("blast");
-
-                setTimeout(()=>el.remove(),350);
-            };
-
-            document.body.appendChild(el);
-            setTimeout(()=>el.remove(),4500);
-        },
-
-        start(){
-            setInterval(()=>this.spawn(),700);
-        }
-    };
-
-    const Decision = {
-
-        handle(opt){
-
-            const box=document.getElementById("explanation-box");
-            box.style.display="block";
-
-            let text=opt.correct
-                ?"Correct survival response"
-                :"Incorrect response detected";
-
-            box.innerText=text;
-            Speech.say(text);
-
-            if(!opt.correct) return;
-
-            setTimeout(()=>{
-                box.style.display="none";
-                Router.next();
-            },2000);
-        }
-    };
-
-    const Mission = {
-
-        load(){
-            fetch("/api/mission/next")
-            .then(r=>r.json())
-            .then(d=>this.render(d))
-            .catch(()=>Speech.say("mission error"));
-        },
-
-        render(m){
-
-            let story=m.blocks.find(b=>b.type==="story")?.text.en;
-            let analysis=m.blocks.find(b=>b.type==="analysis")?.text.en;
-            let decision=m.blocks.find(b=>b.type==="decision");
-
-            DOM.set("story",story);
-            DOM.set("analysis","");
-
-            Speech.say(story);
-
-            setTimeout(()=>{
-                DOM.set("analysis",analysis);
-                Speech.say(analysis);
-            },2000);
-
-            setTimeout(()=>{
-                UI.render(decision.options);
-            },4000);
-        }
-    };
-
-    const UI = {
-        render(opts){
-
-            const c=document.getElementById("options");
-            c.innerHTML="";
-
-            opts.forEach(o=>{
-                let b=document.createElement("button");
-                b.className="opt-btn";
-                b.innerText=o.text.en;
-                b.onclick=()=>Decision.handle(o);
-                c.appendChild(b);
-            });
-        }
-    };
-
-    const Router = {
-        next(){
-            state.missionId++;
-            Mission.load();
-        }
-    };
-
-    return {
-        init(){
-            AudioSystem.init();
-            Floating.start();
-            Router.next();
-        },
-        toggleLang(){
-            state.lang=state.lang==="en"?"es":"en";
-        }
-    };
-
-})();
-
-window.onload=()=>KamizenEngine.init();
-
-</script>
+<script src="engine.js"></script>
 
 </body>
 </html>
