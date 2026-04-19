@@ -1,39 +1,38 @@
 /**
- * 🧠 KAMIZEN ENGINE CORE — FULL SURVIVAL + EDUCATION + GAME SYSTEM
- * UNIFIED VERSION (NO FEATURES REMOVED)
+ * 🧠 KAMIZEN ENGINE CORE — LIFE SCHOOL SYSTEM (JSON DRIVEN 1–35)
+ * FULL INTEGRATION: MISSIONS + DUALITY + EXPLANATIONS + LANGUAGE + CONTROL PENALTY
  */
 
 const KamizenEngine = (() => {
 
     // =====================================================
-    // 📊 GLOBAL STATE (CORE ORIGINAL + EXTENDED)
+    // 📊 GLOBAL STATE
     // =====================================================
     const state = {
         score: 0,
         lang: "en",
-        mission: null,
+
+        missionIndex: 0,
+        missions: [],
+        current: null,
+
         locked: false,
-
-        mode: "mission", // mission | breathing | silence | tvid
-
-        silenceActive: false,
-        silenceTime: 30,
+        mode: "mission",
 
         level: 1,
-        streak: 0
+        streak: 0,
+
+        autoMode: true,
+        lastInteraction: Date.now()
     };
 
     // =====================================================
-    // 🧱 DOM AUTHORITY (UNCHANGED CORE)
+    // 🧱 DOM
     // =====================================================
     const DOM = {
         set(id, val) {
             const el = document.getElementById(id);
             if (el) el.innerText = val;
-        },
-        html(id, val) {
-            const el = document.getElementById(id);
-            if (el) el.innerHTML = val;
         },
         clear(id) {
             const el = document.getElementById(id);
@@ -48,40 +47,27 @@ const KamizenEngine = (() => {
     };
 
     // =====================================================
-    // 🔒 LOCK SYSTEM (CORE)
+    // 🔒 LOCK
     // =====================================================
     const Lock = {
         on() {
             state.locked = true;
-            document.body.style.pointerEvents = "none";
         },
         off() {
             state.locked = false;
-            document.body.style.pointerEvents = "auto";
-        },
-        is() {
-            return state.locked;
         }
     };
 
     // =====================================================
-    // 🔊 AUDIO SYSTEM (CORE)
+    // 🔊 AUDIO
     // =====================================================
     const AudioSystem = {
-        bg: null,
         ok: null,
         bad: null,
 
         init() {
-            this.bg = document.getElementById("bg");
             this.ok = document.getElementById("ok");
             this.bad = document.getElementById("bad");
-
-            if (this.bg) {
-                this.bg.volume = 0.25;
-                this.bg.loop = true;
-                this.bg.play().catch(() => {});
-            }
         },
 
         play(type) {
@@ -93,138 +79,93 @@ const KamizenEngine = (() => {
     };
 
     // =====================================================
-    // 🗣️ SPEECH SYSTEM (CORE + ENGLISH DEFAULT)
+    // 🗣️ SPEECH (BILINGUAL REAL)
     // =====================================================
     const Speech = {
-        queue: [],
-        running: false,
-
         say(text) {
             if (!text) return;
-            this.queue.push(text);
-            this.next();
-        },
-
-        next() {
-            if (this.running || this.queue.length === 0) return;
-
-            this.running = true;
-            const text = this.queue.shift();
-
             const u = new SpeechSynthesisUtterance(text);
-            u.lang = "en-US";
-            u.rate = 0.88;
-            u.pitch = 0.9;
-
-            u.onend = () => {
-                this.running = false;
-                this.next();
-            };
-
+            u.lang = state.lang === "es" ? "es-ES" : "en-US";
+            u.rate = 0.9;
             speechSynthesis.speak(u);
-        },
-
-        stop() {
-            speechSynthesis.cancel();
-            this.queue = [];
-            this.running = false;
         }
     };
 
     // =====================================================
-    // 🧠 SURVIVAL WORD SYSTEM (EXPANDED CORE)
+    // 📂 JSON LOADER (MULTI FILE 1–35)
     // =====================================================
-    const WORDS = [
+    const Loader = {
 
-        { w: "SURVIVAL", v: 15, impact: "positive", key: "SURVIVAL" },
-        { w: "INSTINCT", v: 12, impact: "positive", key: "INSTINCT" },
-        { w: "ESCAPE", v: 15, impact: "positive", key: "ESCAPE" },
-        { w: "AWARENESS", v: 12, impact: "positive", key: "AWARENESS" },
-        { w: "ALERT", v: 10, impact: "positive", key: "ALERT" },
-        { w: "REACTION", v: 10, impact: "positive", key: "REACTION" },
-        { w: "DOMINANCE", v: 12, impact: "positive", key: "DOMINANCE" },
-        { w: "SHIELD", v: 10, impact: "positive", key: "SHIELD" },
+        async loadAll() {
 
-        { w: "THREAT", v: -15, impact: "negative", key: "THREAT" },
-        { w: "FREEZE", v: -12, impact: "negative", key: "FREEZE" },
-        { w: "VICTIM", v: -20, impact: "negative", key: "VICTIM" },
-        { w: "PANIC", v: -15, impact: "negative", key: "PANIC" },
-        { w: "DANGER", v: -10, impact: "negative", key: "DANGER" },
-        { w: "ABUSE", v: -20, impact: "negative", key: "ABUSE" },
-        { w: "FEAR", v: -12, impact: "negative", key: "FEAR" },
-        { w: "TRAP", v: -15, impact: "negative", key: "TRAP" }
-    ];
+            const files = [
+                "/static/missions_01_07.json",
+                "/static/missions_08_14.json",
+                "/static/missions_15_21.json",
+                "/static/missions_22_28.json",
+                "/static/missions_29_35.json"
+            ];
 
-    // =====================================================
-    // 📚 LIFE STRATEGY MAP (EDUCATION LAYER)
-    // =====================================================
-    const LIFE_MAP = {
+            for (let f of files) {
+                try {
+                    const res = await fetch(f);
+                    const data = await res.json();
 
-        THREAT: {
-            situation: "Threat / Danger",
-            strategy: "Do not freeze. Fear is energy.",
-            power: "INSTINCT: 0.5 sec reaction"
-        },
+                    state.missions.push(...data.missions);
 
-        AWARENESS: {
-            situation: "Hostile Environment",
-            strategy: "Scan hands, eyes, exits.",
-            power: "AWARENESS: 360° vision"
-        },
+                    // usar palabras flotantes dinámicas
+                    Floating.setWords(data.ui?.floating_words || []);
 
-        SHIELD: {
-            situation: "Manipulation",
-            strategy: "Urgency or free offers = suspicion.",
-            power: "SHIELD: deception block"
-        },
+                    // guardar reglas
+                    state.rules = data.matrix_rules;
 
-        SURVIVAL: {
-            situation: "Physical Risk",
-            strategy: "Cover first. Escape second.",
-            power: "SURVIVAL: life priority"
+                } catch (e) {
+                    console.warn("Missing file:", f);
+                }
+            }
         }
     };
 
     // =====================================================
-    // 🌌 FLOATING WORD SYSTEM (SURVIVAL GAME)
+    // 🌌 FLOATING WORDS (CON EXPLICACIÓN DE VIDA)
     // =====================================================
     const Floating = {
 
+        words: [],
         interval: null,
+
+        setWords(arr) {
+            this.words = arr;
+        },
 
         spawn() {
 
-            if (Lock.is() || state.mode !== "mission") return;
+            if (state.mode !== "mission") return;
 
-            const item = WORDS[Math.floor(Math.random() * WORDS.length)];
+            const word = this.words[Math.floor(Math.random() * this.words.length)];
 
             const el = document.createElement("div");
-            el.className = "floating-word";
-            el.innerText = item.w;
-
-            const colors = ["red", "green", "yellow", "blue"];
-            const color = colors[Math.floor(Math.random() * colors.length)];
-
-            el.style.border = `2px solid ${color}`;
-            el.style.color = color;
+            el.className = "floating";
+            el.innerText = word;
             el.style.left = Math.random() * 90 + "vw";
 
             el.onclick = () => {
 
-                state.score += item.v;
+                state.score += 5;
 
-                const info = LIFE_MAP[item.key];
-
-                const msg = info
-                    ? `${info.situation}. ${info.strategy}. ${info.power}.`
-                    : "Survival decision processed.";
+                const msg = state.lang === "es"
+                    ? `Palabra: ${word}. En la vida, lo que repites se vuelve hábito.`
+                    : `Word: ${word}. In life, what you repeat becomes your habit.`;
 
                 DOM.set("analysis", msg);
                 Speech.say(msg);
 
-                DOM.set("score-display", "POINTS: " + state.score);
+                DOM.set("points-display", "POINTS: " + state.score);
 
-                el.remove();
+                el.style.transform = "scale(5)";
+                el.style.opacity = "0";
+
+                setTimeout(() => el.remove(), 300);
             };
 
             document.body.appendChild(el);
@@ -233,12 +174,12 @@ const KamizenEngine = (() => {
 
         start() {
             if (this.interval) return;
-            this.interval = setInterval(() => this.spawn(), 1200);
+            this.interval = setInterval(() => this.spawn(), 1500);
         }
     };
 
     // =====================================================
-    // 🎮 DECISION SYSTEM (NO PROGRESSION IF WRONG)
+    // 🧠 DECISION SYSTEM (CON EXPLICACIÓN TOTAL + DUALIDAD)
     // =====================================================
     const Decision = {
 
@@ -248,41 +189,51 @@ const KamizenEngine = (() => {
 
             const box = document.getElementById("explanation-box");
 
-            const info = LIFE_MAP[opt.key];
+            let resultText = "";
+            let explain = opt.explanation[state.lang];
 
-            let text = "";
-
-            if (opt.correct) {
+            if (opt.correct === true) {
                 state.score += 20;
-                text = info
-                    ? `${info.strategy} | ${info.power}`
-                    : "Correct survival decision.";
-                Speech.say("Correct");
+                AudioSystem.play("win");
+
+                resultText = state.lang === "es"
+                    ? "Decisión correcta.\n" + explain
+                    : "Correct decision.\n" + explain;
+
+            } else if (opt.correct === "partial") {
+                state.score += 5;
+
+                resultText = state.lang === "es"
+                    ? "Decisión parcial.\n" + explain
+                    : "Partial decision.\n" + explain;
+
             } else {
                 state.score -= 10;
-                text = info
-                    ? `Incorrect. ${info.strategy}`
-                    : "Incorrect survival reaction.";
-                Speech.say("Incorrect");
+                AudioSystem.play("bad");
+
+                // 🔥 DUALIDAD (ERROR → APRENDIZAJE)
+                resultText = state.lang === "es"
+                    ? "Error detectado. Aprende:\n" + explain
+                    : "Error detected. Learn:\n" + explain;
             }
 
-            box.innerText = text;
+            box.innerText = resultText;
             box.style.display = "block";
 
-            DOM.set("score-display", "POINTS: " + state.score);
+            DOM.set("points-display", "POINTS: " + state.score);
 
-            if (!opt.correct) return;
+            Speech.say(resultText);
 
             setTimeout(() => {
                 box.style.display = "none";
                 Lock.off();
-                Router.next();
-            }, 3000);
+                Mission.next();
+            }, 4000);
         }
     };
 
     // =====================================================
-    // 🧘 BREATHING MODE (SCIENTIFIC)
+    // 🧘 BREATHING (CIENTÍFICO REAL SIMPLE)
     // =====================================================
     const Breathing = {
 
@@ -293,9 +244,11 @@ const KamizenEngine = (() => {
             const el = document.getElementById("breath");
             el.style.display = "block";
 
-            Speech.say(
-                "Breathing protocol activated. This improves oxygen flow and prefrontal control."
-            );
+            const msg = state.lang === "es"
+                ? "Respira. Inhalar activa energía. Exhalar calma tu sistema nervioso."
+                : "Breathe. Inhale activates energy. Exhale calms your nervous system.";
+
+            Speech.say(msg);
 
             let phase = true;
 
@@ -303,20 +256,20 @@ const KamizenEngine = (() => {
                 el.innerText = phase ? "INHALE" : "EXHALE";
                 el.style.transform = phase ? "scale(2.5)" : "scale(1)";
                 phase = !phase;
-            }, 4000);
+            }, 3000);
 
-            setTimeout(() => this.stop(), 20000);
+            setTimeout(() => this.stop(), 15000);
         },
 
         stop() {
             clearInterval(this.interval);
             document.getElementById("breath").style.display = "none";
-            Router.next();
+            state.mode = "mission";
         }
     };
 
     // =====================================================
-    // 🤫 SILENCE MODE (30–60 SEC PROGRESSION)
+    // 🤫 SILENCE
     // =====================================================
     const Silence = {
 
@@ -324,97 +277,49 @@ const KamizenEngine = (() => {
 
             state.mode = "silence";
 
-            const time = Math.min(30 + state.level, 60);
-            let t = time;
+            let t = 20;
 
-            Speech.say("Silence challenge started.");
+            const msg = state.lang === "es"
+                ? "Silencio. Observa sin reaccionar."
+                : "Silence. Observe without reacting.";
 
-            const id = setInterval(() => {
-
-                t--;
-
-                if (t <= 0) {
-                    clearInterval(id);
-                    this.finish();
-                }
-
-            }, 1000);
-        },
-
-        finish() {
-            state.score += 30;
-            Speech.say("Silence completed.");
-            Router.next();
-        }
-    };
-
-    // =====================================================
-    // 📺 TVID MODE (MICRO LEARNING)
-    // =====================================================
-    const TVID = {
-
-        start() {
-
-            state.mode = "tvid";
-
-            const msgs = [
-                "Attention is your strongest weapon.",
-                "Control emotion before action.",
-                "Survival starts with perception."
-            ];
-
-            const msg = msgs[Math.floor(Math.random() * msgs.length)];
-
-            DOM.set("story", msg);
             Speech.say(msg);
 
-            setTimeout(() => Router.next(), 6000);
+            const id = setInterval(() => {
+                t--;
+                if (t <= 0) {
+                    clearInterval(id);
+                    state.score += 15;
+                    state.mode = "mission";
+                }
+            }, 1000);
         }
     };
 
     // =====================================================
-    // 🧭 ROUTER (FULL ORIGINAL RESTORED)
-    // =====================================================
-    const Router = {
-
-        next() {
-
-            const modes = ["mission", "breathing", "silence", "tvid"];
-            const m = modes[Math.floor(Math.random() * modes.length)];
-
-            if (m === "mission") Mission.load();
-            if (m === "breathing") Breathing.start();
-            if (m === "silence") Silence.start();
-            if (m === "tvid") TVID.start();
-        }
-    };
-
-    // =====================================================
-    // 📂 MISSION SYSTEM (RESTORED + BACKEND)
+    // 📂 MISSION SYSTEM (JSON SECUENCIAL REAL)
     // =====================================================
     const Mission = {
 
-        async load() {
+        next() {
+            state.missionIndex++;
 
-            try {
-                state.mode = "mission";
-
-                const res = await fetch("/api/mission/next");
-                const data = await res.json();
-
-                state.mission = data;
-                this.render(data);
-
-            } catch (e) {
-                console.error(e);
-                Speech.say("Mission loading error");
+            if (state.missionIndex >= state.missions.length) {
+                state.missionIndex = 0;
             }
+
+            this.load();
         },
 
-        render(m) {
+        load() {
 
-            const story = m.blocks.find(b => b.type === "story")?.text.en;
-            const analysis = m.blocks.find(b => b.type === "analysis")?.text.en;
+            state.mode = "mission";
+
+            const m = state.missions[state.missionIndex];
+            state.current = m;
+
+            const story = m.blocks.find(b => b.type === "story").text[state.lang];
+            const analysis = m.blocks.find(b => b.type === "analysis").text[state.lang];
             const decision = m.blocks.find(b => b.type === "decision");
 
             DOM.set("story", story);
@@ -434,7 +339,7 @@ const KamizenEngine = (() => {
     };
 
     // =====================================================
-    // 🖥️ UI SYSTEM
+    // 🖥️ UI
     // =====================================================
     const UI = {
 
@@ -444,10 +349,30 @@ const KamizenEngine = (() => {
             c.innerHTML = "";
 
             options.forEach(opt => {
-                const b = DOM.create("button", "opt-btn", opt.text.en);
+                const b = DOM.create("button", "opt-btn", opt.text[state.lang]);
                 b.onclick = () => Decision.handle(opt);
                 c.appendChild(b);
             });
+        }
+    };
+
+    // =====================================================
+    // ⚠️ CONTROL PENALTY (BOTONES MANUALES)
+    // =====================================================
+    const Control = {
+
+        punish(action) {
+
+            state.score -= 15;
+
+            const msg = state.lang === "es"
+                ? `Interrupción detectada (${action}). En la vida, romper el proceso reduce resultados.`
+                : `Interruption detected (${action}). In life, breaking process reduces results.`;
+
+            DOM.set("analysis", msg);
+            Speech.say(msg);
+
+            DOM.set("points-display", "POINTS: " + state.score);
         }
     };
 
@@ -456,14 +381,27 @@ const KamizenEngine = (() => {
     // =====================================================
     return {
 
-        init() {
+        async init() {
             AudioSystem.init();
+            await Loader.loadAll();
             Floating.start();
-            Router.next();
+            Mission.load();
         },
 
         toggleLang() {
             state.lang = state.lang === "en" ? "es" : "en";
+            Mission.load();
+        },
+
+        continue() {
+            Control.punish("continue");
+            Mission.next();
+        },
+
+        back() {
+            Control.punish("back");
+            state.missionIndex = Math.max(0, state.missionIndex - 1);
+            Mission.load();
         }
     };
 
