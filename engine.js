@@ -1,408 +1,217 @@
 /**
- * 🧠 KAMIZEN ENGINE CORE — LIFE SCHOOL SYSTEM (JSON DRIVEN 1–35)
- * FULL INTEGRATION: MISSIONS + DUALITY + EXPLANATIONS + LANGUAGE + CONTROL PENALTY
+ * 🧠 KAMIZEN ENGINE CORE — AL CIELO PRO
+ * SISTEMA DE ASESORÍA DE VIDA: SUPERVIVENCIA, VALORES Y ESTRATEGIA SOCIAL
+ * INTEGRACIÓN TOTAL: SONIDOS DOPAMINA + CRISTAL ROTO + EXPLICACIONES DE VIDA
  */
 
 const KamizenEngine = (() => {
 
     // =====================================================
-    // 📊 GLOBAL STATE
+    // 📊 ESTADO GLOBAL
     // =====================================================
     const state = {
         score: 0,
         lang: "en",
-
         missionIndex: 0,
         missions: [],
         current: null,
-
         locked: false,
         mode: "mission",
-
-        level: 1,
-        streak: 0,
-
-        autoMode: true,
-        lastInteraction: Date.now()
-    };
-
-    // =====================================================
-    // 🧱 DOM
-    // =====================================================
-    const DOM = {
-        set(id, val) {
-            const el = document.getElementById(id);
-            if (el) el.innerText = val;
-        },
-        clear(id) {
-            const el = document.getElementById(id);
-            if (el) el.innerHTML = "";
-        },
-        create(tag, cls, text) {
-            const el = document.createElement(tag);
-            if (cls) el.className = cls;
-            if (text) el.innerText = text;
-            return el;
+        // Palabras que moldean el ADN del niño
+        words: {
+            good: [
+                { en: "FOCUS", es: "ENFOQUE", life: { en: "Focus is your shield against the world's noise.", es: "El enfoque es tu escudo contra el ruido del mundo." }},
+                { en: "SACRIFICE", es: "SACRIFICIO", life: { en: "Behind every comfort, there is someone's hard work.", es: "Detrás de cada comodidad, hay el trabajo duro de alguien." }},
+                { en: "ALERT", es: "ALERTA", life: { en: "A warrior sees the glitch before it becomes a problem.", es: "Un guerrero ve el fallo antes de que se convierta en problema." }},
+                { en: "RESILIENCE", es: "RESILIENCIA", life: { en: "Falling is part of the path; getting up is the goal.", es: "Caer es parte del camino; levantarse es el objetivo." }},
+                { en: "ACTION", es: "ACCIÓN", life: { en: "Doing nothing has consequences. Movement is life.", es: "No hacer nada tiene consecuencias. El movimiento es vida." }}
+            ],
+            bad: [
+                { en: "FEAR", es: "MIEDO", life: { en: "Fear is a lie designed to freeze your potential.", es: "El miedo es una mentira diseñada para congelar tu potencial." }},
+                { en: "DISTRACTION", es: "DISTRACCIÓN", life: { en: "In the street, a distracted mind is an open door.", es: "En la calle, una mente distraída es una puerta abierta." }},
+                { en: "EGO", es: "EGO", life: { en: "Ego blinds you from seeing reality as it truly is.", es: "El ego te ciega y no te deja ver la realidad como es." }},
+                { en: "IMPULSE", es: "IMPULSO", life: { en: "Reacting without thinking gives power to your enemy.", es: "Reaccionar sin pensar le da el poder a tu enemigo." }},
+                { en: "VICTIM", es: "VÍCTIMA", life: { en: "Victims complain; warriors adapt and overcome.", es: "Las víctimas se quejan; los guerreros se adaptan y vencen." }}
+            ]
         }
     };
 
     // =====================================================
-    // 🔒 LOCK
-    // =====================================================
-    const Lock = {
-        on() {
-            state.locked = true;
-        },
-        off() {
-            state.locked = false;
-        }
-    };
-
-    // =====================================================
-    // 🔊 AUDIO
+    // 🔊 SISTEMA DE AUDIO (DOPAMINA Y CRISTAL ROTO)
     // =====================================================
     const AudioSystem = {
-        ok: null,
-        bad: null,
-
         init() {
-            this.ok = document.getElementById("ok");
-            this.bad = document.getElementById("bad");
+            const bg = document.getElementById("bg_music");
+            if (bg) { bg.volume = 0.3; bg.play().catch(() => {}); }
         },
-
-        play(type) {
-            const a = type === "win" ? this.ok : this.bad;
-            if (!a) return;
-            a.currentTime = 0;
-            a.play().catch(() => {});
+        playSuccess() {
+            const s = document.getElementById("ok_sound");
+            if (s) { s.currentTime = 0; s.play().catch(() => {}); }
+        },
+        playGlass() {
+            const g = document.getElementById("bad_sound");
+            if (g) { g.currentTime = 0; g.play().catch(() => {}); }
         }
     };
 
     // =====================================================
-    // 🗣️ SPEECH (BILINGUAL REAL)
+    // 🗣️ VOZ DEL ASESOR
     // =====================================================
     const Speech = {
         say(text) {
             if (!text) return;
+            speechSynthesis.cancel();
             const u = new SpeechSynthesisUtterance(text);
             u.lang = state.lang === "es" ? "es-ES" : "en-US";
-            u.rate = 0.9;
+            u.rate = 0.9; 
             speechSynthesis.speak(u);
         }
     };
 
     // =====================================================
-    // 📂 JSON LOADER (MULTI FILE 1–35)
-    // =====================================================
-    const Loader = {
-
-        async loadAll() {
-
-            const files = [
-                "/static/missions_01_07.json",
-                "/static/missions_08_14.json",
-                "/static/missions_15_21.json",
-                "/static/missions_22_28.json",
-                "/static/missions_29_35.json"
-            ];
-
-            for (let f of files) {
-                try {
-                    const res = await fetch(f);
-                    const data = await res.json();
-
-                    state.missions.push(...data.missions);
-
-                    // usar palabras flotantes dinámicas
-                    Floating.setWords(data.ui?.floating_words || []);
-
-                    // guardar reglas
-                    state.rules = data.matrix_rules;
-
-                } catch (e) {
-                    console.warn("Missing file:", f);
-                }
-            }
-        }
-    };
-
-    // =====================================================
-    // 🌌 FLOATING WORDS (CON EXPLICACIÓN DE VIDA)
+    // 🌌 PALABRAS FLOTANTES (LECCIONES DE VIDA)
     // =====================================================
     const Floating = {
-
-        words: [],
-        interval: null,
-
-        setWords(arr) {
-            this.words = arr;
-        },
-
         spawn() {
+            if (state.mode !== "mission" || state.locked) return;
 
-            if (state.mode !== "mission") return;
-
-            const word = this.words[Math.floor(Math.random() * this.words.length)];
+            const isGood = Math.random() > 0.4;
+            const pool = isGood ? state.words.good : state.words.bad;
+            const item = pool[Math.floor(Math.random() * pool.length)];
 
             const el = document.createElement("div");
             el.className = "floating";
-            el.innerText = word;
-            el.style.left = Math.random() * 90 + "vw";
+            el.innerText = state.lang === "es" ? item.es : item.en;
+            el.style.left = (Math.random() * 85 + 5) + "vw";
+            el.style.color = isGood ? "#00f2ff" : "#ff4444";
+            el.style.border = `2px solid ${isGood ? "#00f2ff" : "#ff4444"}`;
 
             el.onclick = () => {
+                const lesson = item.life[state.lang];
+                
+                if (isGood) {
+                    state.score += 10;
+                    AudioSystem.playSuccess();
+                } else {
+                    state.score -= 20;
+                    AudioSystem.playGlass(); // Sonido de cristal roto para el error
+                }
 
-                state.score += 5;
+                document.getElementById("analysis").innerText = lesson;
+                Speech.say(lesson);
+                document.getElementById("points-display").innerText = "POINTS: " + state.score;
 
-                const msg = state.lang === "es"
-                    ? `Palabra: ${word}. En la vida, lo que repites se vuelve hábito.`
-                    : `Word: ${word}. In life, what you repeat becomes your habit.`;
-
-                DOM.set("analysis", msg);
-                Speech.say(msg);
-
-                DOM.set("points-display", "POINTS: " + state.score);
-
-                el.style.transform = "scale(5)";
+                el.style.transform = "scale(4)";
                 el.style.opacity = "0";
-
                 setTimeout(() => el.remove(), 300);
             };
 
             document.body.appendChild(el);
-            setTimeout(() => el.remove(), 5000);
+            setTimeout(() => { if(el.parentNode) el.remove(); }, 5000);
         },
-
         start() {
-            if (this.interval) return;
-            this.interval = setInterval(() => this.spawn(), 1500);
+            setInterval(() => this.spawn(), 1600);
         }
     };
 
     // =====================================================
-    // 🧠 DECISION SYSTEM (CON EXPLICACIÓN TOTAL + DUALIDAD)
+    // 🧠 MÓDULO DE DECISIÓN (EL GEN DEL LUCHADOR)
     // =====================================================
     const Decision = {
-
         handle(opt) {
-
-            Lock.on();
-
+            state.locked = true;
             const box = document.getElementById("explanation-box");
+            const explanation = opt.explanation[state.lang];
+            
+            let feedback = "";
 
-            let resultText = "";
-            let explain = opt.explanation[state.lang];
-
-            if (opt.correct === true) {
-                state.score += 20;
-                AudioSystem.play("win");
-
-                resultText = state.lang === "es"
-                    ? "Decisión correcta.\n" + explain
-                    : "Correct decision.\n" + explain;
-
-            } else if (opt.correct === "partial") {
-                state.score += 5;
-
-                resultText = state.lang === "es"
-                    ? "Decisión parcial.\n" + explain
-                    : "Partial decision.\n" + explain;
-
+            if (opt.correct) {
+                state.score += 50;
+                AudioSystem.playSuccess();
+                feedback = (state.lang === "es" ? "ESTRATEGIA CORRECTA: " : "CORRECT STRATEGY: ") + explanation;
             } else {
-                state.score -= 10;
-                AudioSystem.play("bad");
-
-                // 🔥 DUALIDAD (ERROR → APRENDIZAJE)
-                resultText = state.lang === "es"
-                    ? "Error detectado. Aprende:\n" + explain
-                    : "Error detected. Learn:\n" + explain;
+                state.score -= 40;
+                AudioSystem.playGlass(); // Impacto auditivo de fallo
+                feedback = (state.lang === "es" ? "FALLO DE JUICIO: " : "JUDGMENT FAILURE: ") + explanation;
             }
 
-            box.innerText = resultText;
+            box.innerHTML = `<strong>${feedback}</strong>`;
             box.style.display = "block";
-
-            DOM.set("points-display", "POINTS: " + state.score);
-
-            Speech.say(resultText);
+            document.getElementById("points-display").innerText = "POINTS: " + state.score;
+            Speech.say(feedback);
 
             setTimeout(() => {
                 box.style.display = "none";
-                Lock.off();
+                state.locked = false;
                 Mission.next();
-            }, 4000);
+            }, 8000);
         }
     };
 
     // =====================================================
-    // 🧘 BREATHING (CIENTÍFICO REAL SIMPLE)
-    // =====================================================
-    const Breathing = {
-
-        start() {
-
-            state.mode = "breathing";
-
-            const el = document.getElementById("breath");
-            el.style.display = "block";
-
-            const msg = state.lang === "es"
-                ? "Respira. Inhalar activa energía. Exhalar calma tu sistema nervioso."
-                : "Breathe. Inhale activates energy. Exhale calms your nervous system.";
-
-            Speech.say(msg);
-
-            let phase = true;
-
-            this.interval = setInterval(() => {
-                el.innerText = phase ? "INHALE" : "EXHALE";
-                el.style.transform = phase ? "scale(2.5)" : "scale(1)";
-                phase = !phase;
-            }, 3000);
-
-            setTimeout(() => this.stop(), 15000);
-        },
-
-        stop() {
-            clearInterval(this.interval);
-            document.getElementById("breath").style.display = "none";
-            state.mode = "mission";
-        }
-    };
-
-    // =====================================================
-    // 🤫 SILENCE
-    // =====================================================
-    const Silence = {
-
-        start() {
-
-            state.mode = "silence";
-
-            let t = 20;
-
-            const msg = state.lang === "es"
-                ? "Silencio. Observa sin reaccionar."
-                : "Silence. Observe without reacting.";
-
-            Speech.say(msg);
-
-            const id = setInterval(() => {
-                t--;
-                if (t <= 0) {
-                    clearInterval(id);
-                    state.score += 15;
-                    state.mode = "mission";
-                }
-            }, 1000);
-        }
-    };
-
-    // =====================================================
-    // 📂 MISSION SYSTEM (JSON SECUENCIAL REAL)
+    // 📂 SISTEMA DE MISIONES (EL MUNDO EXTERIOR)
     // =====================================================
     const Mission = {
-
-        next() {
-            state.missionIndex++;
-
-            if (state.missionIndex >= state.missions.length) {
-                state.missionIndex = 0;
+        async load() {
+            try {
+                // El sistema busca las misiones por ID
+                const res = await fetch(`/api/mission/${state.missionIndex + 1}`);
+                const data = await res.json();
+                this.render(data);
+            } catch (e) {
+                console.error("Mission system offline. Manual override needed.");
             }
-
-            this.load();
         },
 
-        load() {
-
-            state.mode = "mission";
-
-            const m = state.missions[state.missionIndex];
-            state.current = m;
-
+        render(m) {
             const story = m.blocks.find(b => b.type === "story").text[state.lang];
             const analysis = m.blocks.find(b => b.type === "analysis").text[state.lang];
             const decision = m.blocks.find(b => b.type === "decision");
 
-            DOM.set("story", story);
-            DOM.set("analysis", "");
-
+            document.getElementById("story").innerText = story;
+            document.getElementById("analysis").innerText = "";
             Speech.say(story);
 
             setTimeout(() => {
-                DOM.set("analysis", analysis);
+                document.getElementById("analysis").innerText = analysis;
                 Speech.say(analysis);
-            }, 2500);
+            }, 3500);
 
             setTimeout(() => {
-                UI.render(decision.options);
-            }, 5000);
+                const c = document.getElementById("options");
+                c.innerHTML = "";
+                decision.options.forEach(opt => {
+                    const b = document.createElement("button");
+                    b.className = "opt-btn";
+                    b.innerText = opt.text[state.lang];
+                    b.onclick = () => Decision.handle(opt);
+                    c.appendChild(b);
+                });
+            }, 7000);
+        },
+
+        next() {
+            state.missionIndex++;
+            this.load();
         }
     };
 
     // =====================================================
-    // 🖥️ UI
-    // =====================================================
-    const UI = {
-
-        render(options) {
-
-            const c = document.getElementById("options");
-            c.innerHTML = "";
-
-            options.forEach(opt => {
-                const b = DOM.create("button", "opt-btn", opt.text[state.lang]);
-                b.onclick = () => Decision.handle(opt);
-                c.appendChild(b);
-            });
-        }
-    };
-
-    // =====================================================
-    // ⚠️ CONTROL PENALTY (BOTONES MANUALES)
-    // =====================================================
-    const Control = {
-
-        punish(action) {
-
-            state.score -= 15;
-
-            const msg = state.lang === "es"
-                ? `Interrupción detectada (${action}). En la vida, romper el proceso reduce resultados.`
-                : `Interruption detected (${action}). In life, breaking process reduces results.`;
-
-            DOM.set("analysis", msg);
-            Speech.say(msg);
-
-            DOM.set("points-display", "POINTS: " + state.score);
-        }
-    };
-
-    // =====================================================
-    // 🚀 INIT
+    // 🚀 INICIALIZACIÓN
     // =====================================================
     return {
-
-        async init() {
+        init() {
             AudioSystem.init();
-            await Loader.loadAll();
             Floating.start();
             Mission.load();
         },
-
         toggleLang() {
             state.lang = state.lang === "en" ? "es" : "en";
-            Mission.load();
-        },
-
-        continue() {
-            Control.punish("continue");
-            Mission.next();
-        },
-
-        back() {
-            Control.punish("back");
-            state.missionIndex = Math.max(0, state.missionIndex - 1);
-            Mission.load();
+            Mission.load(); // Recargar misión en el nuevo idioma
         }
     };
 
 })();
+
+// Ejecutar motor
+window.onload = KamizenEngine.init;
