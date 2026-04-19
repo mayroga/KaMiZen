@@ -64,7 +64,6 @@ button:hover {
     text-align: left;
 }
 
-/* BREATHING CIRCLE (NON-INTERFERING) */
 #breath {
     width: 110px;
     height: 110px;
@@ -79,7 +78,6 @@ button:hover {
     box-shadow: 0 0 25px #00f2ff;
 }
 
-/* FLOATING WORDS */
 .floating {
     position: absolute;
     padding: 10px 20px;
@@ -91,7 +89,6 @@ button:hover {
     transition: transform 0.2s ease;
 }
 
-/* 💥 BIG EXPLOSION FIXED */
 .blast {
     transform: scale(6);
     opacity: 0;
@@ -146,6 +143,10 @@ button:hover {
 
 <script>
 
+/* =========================
+   ORIGINAL SESSION SYSTEM (NO TOCAR)
+========================= */
+
 let lang = "en";
 let missionId = 1;
 let score = 0;
@@ -161,6 +162,11 @@ function init(){
     document.getElementById("hero-name").innerText = "KAMIZEN";
     startFloatingSystem();
     loadNextMission();
+
+    // 🔥 INIT BACKUP ENGINE (NO INTERFIERE)
+    try{
+        KamizenEngine.init();
+    }catch(e){}
 }
 
 function speak(t){
@@ -215,20 +221,15 @@ function handleChoice(opt){
 const box=document.getElementById("explanation-box");
 box.style.display="block";
 
-const info = opt.key;
-
 if(opt.correct){
 score+=20;
-speak("Correct decision");
-box.innerText="Correct survival action";
+box.innerText=opt.explanation?.en || "Correct decision";
 }else{
 score-=10;
-speak("Incorrect decision");
-box.innerText="Wrong reaction";
+box.innerText=opt.explanation?.en || "Wrong decision";
 }
 
 updatePoints();
-
 setTimeout(()=>startSilence(),3000);
 }
 
@@ -237,12 +238,12 @@ function updatePoints(){
 }
 
 /* =========================
-   SILENCE + BREATH SYSTEM
+   SILENCE + BREATH
 ========================= */
+
 function startSilence(){
 
 const time=Math.min(20+missionId,60);
-
 document.getElementById("story").innerText="SILENCE MODE: "+time+" SECONDS";
 
 startBreath();
@@ -250,7 +251,6 @@ startBreath();
 let t=time;
 
 const id=setInterval(()=>{
-
 t--;
 if(t<=0){
 clearInterval(id);
@@ -258,17 +258,14 @@ stopBreath();
 missionId++;
 loadNextMission();
 }
-
 },1000);
 }
 
-/* 🔵 BREATH ANIMATION */
 let breathInterval;
 
 function startBreath(){
     const b=document.getElementById("breath");
     b.style.display="block";
-
     let grow=true;
 
     breathInterval=setInterval(()=>{
@@ -283,8 +280,9 @@ function stopBreath(){
 }
 
 /* =========================
-   FLOATING SYSTEM + BIG EXPLOSION
+   FLOATING SYSTEM
 ========================= */
+
 function startFloatingSystem(){
 
 setInterval(()=>{
@@ -300,18 +298,18 @@ el.style.color=type==="good"?"#00ff00":type==="bad"?"#ff0000":"#ffff00";
 el.style.border="2px solid currentColor";
 
 el.onclick=()=>{
-
 if(type==="good") score+=5;
 if(type==="bad") score-=10;
 
+document.getElementById("analysis").innerText =
+"Word: "+word+" → Repetition builds identity.";
+
 updatePoints();
 
-/* 💥 BIG EXPLOSION */
 el.style.transform="scale(6)";
 el.style.opacity="0";
 
 setTimeout(()=>el.remove(),300);
-
 };
 
 document.body.appendChild(el);
@@ -319,6 +317,73 @@ setTimeout(()=>el.remove(),5000);
 
 },1200);
 }
+
+/* =========================
+   🔥 BACKUP ENGINE (NO INTERFIERE)
+========================= */
+
+const KamizenEngine = (() => {
+
+    const state = {
+        score: 0,
+        lang: "en",
+        missions: [],
+        missionIndex: 0
+    };
+
+    const DOM = {
+        set(id,val){
+            const el=document.getElementById(id);
+            if(el) el.innerText=val;
+        }
+    };
+
+    const Speech = {
+        say(t){
+            const u=new SpeechSynthesisUtterance(t);
+            u.lang=state.lang==="es"?"es-ES":"en-US";
+            speechSynthesis.speak(u);
+        }
+    };
+
+    const Loader = {
+        async loadAll(){
+            const files=[
+                "/static/missions_01_07.json",
+                "/static/missions_15_21.json"
+            ];
+            for(let f of files){
+                try{
+                    const res=await fetch(f);
+                    const data=await res.json();
+                    state.missions.push(...data.missions);
+                }catch{}
+            }
+        }
+    };
+
+    const Mission = {
+        load(){
+            if(!state.missions.length) return;
+
+            const m=state.missions[state.missionIndex];
+            const story=m.blocks.find(b=>b.type==="story").text[state.lang];
+
+            DOM.set("analysis","[Backup Engine Ready]");
+            Speech.say("Backup system active");
+        }
+    };
+
+    return{
+        async init(){
+            await Loader.loadAll();
+            Mission.load();
+        }
+    };
+
+})();
+
+/* ========================= */
 
 window.onload=init;
 
