@@ -99,15 +99,18 @@ let allowInput=true;
 const GAME_1=300;
 const LEARN=360;
 
-// words
+// ================= WORDS (UPDATED EXACTO COMO PEDISTE) =================
 const words={
     good:["WILL","VISION","HONOR","COURAGE","BUILD","RISE",
             "FAITH","DISCIPLINE","STRENGTH","VICTORY"],
+
     bad:["NOISE","EXCUSE","QUITTING","EGO","HATE","CHAOS",
             "LAZY","FEAR","LIE","ANGER"],
+
     neutral:["CALM","LISTEN","WAIT","PEACE","PRAY","INSIDE",
             "BREATHE","STILL","SOUL","FOCUS"]
 };
+
 // ================= INIT =================
 function start(){
     document.getElementById("menu").style.display="none";
@@ -219,7 +222,6 @@ function showLearning(){
     document.getElementById("mission").innerText=
         missions[Math.floor(Math.random()*missions.length)];
 
-    // anti cheat
     document.body.onclick=()=>{
         if(!allowInput){
             score-=20;
@@ -233,7 +235,7 @@ function hideLearning(){
     document.getElementById("learning").style.display="none";
 }
 
-// ================= SCORE SAVE =================
+// ================= SCORE =================
 function updateScore(){
     document.getElementById("score").innerText="PUNTOS: "+score;
 }
