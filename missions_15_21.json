@@ -3,7 +3,7 @@
   "chapter": 3,
   "range": "15-21",
   "ui": {
-    "floating_words": ["DISCIPLINE", "FOCUS", "PAUSE", "CONTROL", "TRUTH", "CALM", "AWARENESS", "ACTION"]
+    "floating_words": ["WILL", "FOCUS", "HONOR", "BUILD", "VISION", "RISE", "STILL", "NOISE", "EXCUSE", "QUITTING"]
   },
   "matrix_rules": [
     "5. Focus beats distraction",
@@ -25,19 +25,10 @@
           }
         },
         {
-          "type": "analysis",
-          "text": {
-            "en": "Attention is a resource. If you don't use it, others will steal it.",
-            "es": "La atención es un recurso. Si no la usas, otros la robarán."
-          }
-        },
-        {
           "type": "decision",
           "options": [
-            { "text": { "en": "Close the tab immediately", "es": "Cerrar la pestaña de inmediato" }, "correct": true, "explanation": { "en": "Speed in cutting distractions is speed in reaching your goals.", "es": "La velocidad al cortar distracciones es velocidad para alcanzar tus metas." } },
-            { "text": { "en": "Click to see the trailer", "es": "Clic para ver el tráiler" }, "correct": false, "explanation": { "en": "The Matrix uses curiosity to keep you unproductive. Don't fall for it.", "es": "La Matrix usa la curiosidad para mantenerte improductivo. No caigas." } },
-            { "text": { "en": "Save it for later", "es": "Guardarlo para después" }, "correct": "partial", "explanation": { "en": "Better than clicking now, but your mind is still thinking about it.", "es": "Mejor que dar clic ahora, pero tu mente sigue pensando en eso." } },
-            { "text": { "en": "Ask a friend if it's good", "es": "Preguntar a un amigo si es bueno" }, "correct": false, "explanation": { "en": "Talking about the distraction is still being distracted. Get back to work.", "es": "Hablar de la distracción sigue siendo estar distraído. Vuelve al trabajo." } }
+            { "text": { "en": "Close the tab immediately", "es": "Cerrar la pestaña de inmediato" }, "correct": true, "explanation": { "en": "Speed in cutting NOISE is speed in reaching your VISION.", "es": "La velocidad al cortar el RUIDO es velocidad para alcanzar tu VISIÓN." } },
+            { "text": { "en": "Click to see the trailer", "es": "Clic para ver el tráiler" }, "correct": false, "explanation": { "en": "The Matrix uses curiosity as an EXCUSE to keep you weak. Don't fall.", "es": "La Matrix usa la curiosidad como EXCUSA para mantenerte débil. No caigas." } }
           ]
         }
       ]
@@ -50,24 +41,15 @@
         {
           "type": "story",
           "text": {
-            "en": "Your group failed a project. Your friends want you to tell the teacher it was a technical error.",
-            "es": "Tu grupo falló un proyecto. Tus amigos quieren que le digas al profesor que fue un error técnico."
-          }
-        },
-        {
-          "type": "analysis",
-          "text": {
-            "en": "Truth builds a reputation that becomes your armor.",
-            "es": "La verdad construye una reputación que se convierte en tu armadura."
+            "en": "Your group failed a project. Your friends want you to lie and say it was a technical error.",
+            "es": "Tu grupo falló un proyecto. Tus amigos quieren que mientas y digas que fue un error técnico."
           }
         },
         {
           "type": "decision",
           "options": [
-            { "text": { "en": "Tell the truth about the failure", "es": "Decir la verdad sobre el fallo" }, "correct": true, "explanation": { "en": "Admitting failure allows you to fix it. Lies just delay the crash.", "es": "Admitir el fallo te permite corregirlo. Las mentiras solo retrasan el choque." } },
-            { "text": { "en": "Support the group's lie", "es": "Apoyar la mentira del grupo" }, "correct": false, "explanation": { "en": "If you lie for the group, you become a slave to their secrets.", "es": "Si mientes por el grupo, te vuelves esclavo de sus secretos." } },
-            { "text": { "en": "Stay quiet and let them lie", "es": "Callar y dejar que ellos mientan" }, "correct": "partial", "explanation": { "en": "Silence isn't a lie, but it isn't the truth either. It's a weak middle ground.", "es": "El silencio no es mentira, pero tampoco es la verdad. Es un punto medio débil." } },
-            { "text": { "en": "Leave the group room", "es": "Irte de la sala del grupo" }, "correct": false, "explanation": { "en": "Escaping the situation doesn't solve the lack of integrity.", "es": "Escapar de la situación no resuelve la falta de integridad." } }
+            { "text": { "en": "Tell the truth about the failure", "es": "Decir la verdad sobre el fallo" }, "correct": true, "explanation": { "en": "HONOR allows you to BUILD a reputation that cannot be shaken.", "es": "El HONOR te permite CONSTRUIR una reputación que nada puede sacudir." } },
+            { "text": { "en": "Support the group's lie", "es": "Apoyar la mentira del grupo" }, "correct": false, "explanation": { "en": "QUITTING your integrity makes you a slave to others' secrets.", "es": "RENUNCIAR a tu integridad te hace esclavo de los secretos de otros." } }
           ]
         }
       ]
@@ -85,19 +67,10 @@
           }
         },
         {
-          "type": "analysis",
-          "text": {
-            "en": "Real power is the ability to change someone's reality for the better.",
-            "es": "El poder real es la capacidad de cambiar la realidad de alguien para mejor."
-          }
-        },
-        {
           "type": "decision",
           "options": [
-            { "text": { "en": "Invite them to join you", "es": "Invitarlos a unirse a ti" }, "correct": true, "explanation": { "en": "Leaders create inclusive circles. Followers just watch.", "es": "Los líderes crean círculos inclusivos. Los seguidores solo miran." } },
-            { "text": { "en": "Keep playing with your friends", "es": "Seguir jugando con tus amigos" }, "correct": false, "explanation": { "en": "Ignoring those in need hardens your heart and weakens your empathy.", "es": "Ignorar a quien lo necesita endurece tu corazón y debilita tu empatía." } },
-            { "text": { "en": "Tell a teacher they are alone", "es": "Decirle a un profesor que está solo" }, "correct": "partial", "explanation": { "en": "Good, but you delegated your power instead of using it yourself.", "es": "Bueno, pero delegaste tu poder en lugar de usarlo tú mismo." } },
-            { "text": { "en": "Watch them from a distance", "es": "Observarlos de lejos" }, "correct": false, "explanation": { "en": "Observation without action in this case is just wasting energy.", "es": "Observar sin actuar en este caso es solo gastar energía." } }
+            { "text": { "en": "Invite them to join you", "es": "Invitarlos a unirse a ti" }, "correct": true, "explanation": { "en": "True WILL is the power to change someone's reality for the better.", "es": "La verdadera VOLUNTAD es el poder de cambiar la realidad de alguien para mejor." } },
+            { "text": { "en": "Keep playing with your friends", "es": "Seguir jugando con tus amigos" }, "correct": false, "explanation": { "en": "Ignoring those in need is an EXCUSE that hardens your heart.", "es": "Ignorar a quien lo necesita es una EXCUSA que endurece tu corazón." } }
           ]
         }
       ]
@@ -115,19 +88,10 @@
           }
         },
         {
-          "type": "analysis",
-          "text": {
-            "en": "Stability is not the absence of chaos, but being the center of it.",
-            "es": "La estabilidad no es la ausencia de caos, sino ser el centro de él."
-          }
-        },
-        {
           "type": "decision",
           "options": [
-            { "text": { "en": "Stop, breathe, and plan", "es": "Parar, respirar y planear" }, "correct": true, "explanation": { "en": "A 10-second pause can save you 10 minutes of mistakes.", "es": "Una pausa de 10 segundos puede ahorrarte 10 minutos de errores." } },
-            { "text": { "en": "Run and panic", "es": "Correr y entrar en pánico" }, "correct": false, "explanation": { "en": "Panic is a signal to the Matrix that you have lost control.", "es": "El pánico es una señal a la Matrix de que has perdido el control." } },
-            { "text": { "en": "Blame the day for being bad", "es": "Culpar al día por ser malo" }, "correct": false, "explanation": { "en": "Blaming external things gives them power over your mood.", "es": "Culpar a lo externo le da poder sobre tu estado de ánimo." } },
-            { "text": { "en": "Ask for help immediately", "es": "Pedir ayuda de inmediato" }, "correct": "partial", "explanation": { "en": "Help is good, but try to find your own center first.", "es": "La ayuda es buena, pero intenta encontrar tu centro primero." } }
+            { "text": { "en": "Stop, breathe, and plan", "es": "Parar, respirar y planear" }, "correct": true, "explanation": { "en": "Being STILL is not the absence of chaos, but being the center of it.", "es": "Estar QUIETO no es la ausencia de caos, sino ser el centro de él." } },
+            { "text": { "en": "Run and panic", "es": "Correr y entrar en pánico" }, "correct": false, "explanation": { "en": "Panic is NOISE that tells the Matrix you have lost your WILL.", "es": "El pánico es RUIDO que le dice a la Matrix que has perdido tu VOLUNTAD." } }
           ]
         }
       ]
@@ -140,24 +104,15 @@
         {
           "type": "story",
           "text": {
-            "en": "You try to join a conversation and they stop talking and look at you coldly.",
-            "es": "Intentas unirte a una conversación y ellos dejan de hablar y te miran con frialdad."
-          }
-        },
-        {
-          "type": "analysis",
-          "text": {
-            "en": "Your value is a fact, not a vote by others.",
-            "es": "Tu valor es un hecho, no una votación de los demás."
+            "en": "You try to join a conversation and they look at you coldly and stop talking.",
+            "es": "Intentas unirte a una conversación y ellos te miran con frialdad y dejan de hablar."
           }
         },
         {
           "type": "decision",
           "options": [
-            { "text": { "en": "Smile calmly and walk away", "es": "Sonreír con calma e irse" }, "correct": true, "explanation": { "en": "By not being affected, you show that their opinion has no power.", "es": "Al no afectarte, demuestras que su opinión no tiene poder." } },
-            { "text": { "en": "Ask why they are mean", "es": "Preguntar por qué son malos" }, "correct": false, "explanation": { "en": "Seeking explanations from the unkind gives them more importance.", "es": "Buscar explicaciones de los crueles les da más importancia." } },
-            { "text": { "en": "Try to tell a joke to fit in", "es": "Intentar contar un chiste para encajar" }, "correct": false, "explanation": { "en": "Begging for attention is a sign of internal weakness.", "es": "Mendigar atención es una señal de debilidad interna." } },
-            { "text": { "en": "Stay there in silence", "es": "Quedarse ahí en silencio" }, "correct": "partial", "explanation": { "en": "Silence is good, but don't stay where you aren't respected.", "es": "El silencio es bueno, pero no te quedes donde no te respetan." } }
+            { "text": { "en": "Smile calmly and walk away", "es": "Sonreír con calma e irse" }, "correct": true, "explanation": { "en": "Your value is a fact. By staying STILL, you show their opinion has no power.", "es": "Tu valor es un hecho. Al seguir QUIETO, demuestras que su opinión no tiene poder." } },
+            { "text": { "en": "Try to tell a joke to fit in", "es": "Intentar contar un chiste para encajar" }, "correct": false, "explanation": { "en": "Begging for attention is QUITTING your self-respect.", "es": "Mendigar atención es RENUNCIAR a tu respeto propio." } }
           ]
         }
       ]
@@ -175,19 +130,10 @@
           }
         },
         {
-          "type": "analysis",
-          "text": {
-            "en": "The time between impulse and action is where freedom lives.",
-            "es": "El tiempo entre el impulso y la acción es donde vive la libertad."
-          }
-        },
-        {
           "type": "decision",
           "options": [
-            { "text": { "en": "Put the phone away for 5 mins", "es": "Alejar el móvil por 5 min" }, "correct": true, "explanation": { "en": "Cooling down allows your logical brain to take the lead.", "es": "Enfriarte permite que tu cerebro lógico tome el mando." } },
-            { "text": { "en": "Send the mean reply", "es": "Enviar la respuesta cruel" }, "correct": false, "explanation": { "en": "Once sent, the damage to your reputation is permanent.", "es": "Una vez enviado, el daño a tu reputación es permanente." } },
-            { "text": { "en": "Delete the message and block", "es": "Borrar el mensaje y bloquear" }, "correct": "partial", "explanation": { "en": "Effective, but make sure you aren't just running away from emotion.", "es": "Efectivo, pero asegúrate de no estar solo huyendo de la emoción." } },
-            { "text": { "en": "Show the message to others", "es": "Mostrar el mensaje a otros" }, "correct": false, "explanation": { "en": "Spreading the fire just burns more people. Stay in control.", "es": "Esparcir el fuego solo quema a más gente. Mantén el control." } }
+            { "text": { "en": "Put the phone away for 5 mins", "es": "Alejar el móvil por 5 min" }, "correct": true, "explanation": { "en": "The time between impulse and ACTION is where your FOCUS lives.", "es": "El tiempo entre el impulso y la ACCIÓN es donde vive tu ENFOQUE." } },
+            { "text": { "en": "Send the mean reply", "es": "Enviar la respuesta cruel" }, "correct": false, "explanation": { "en": "Reacting with HATE burns your own reputation. Don't be a puppet.", "es": "Reaccionar con ODIO quema tu propia reputación. No seas un títere." } }
           ]
         }
       ]
@@ -200,24 +146,15 @@
         {
           "type": "story",
           "text": {
-            "en": "You were supposed to water the plants and they died. Your parents are asking what happened.",
+            "en": "You were supposed to water the plants and they died. Your parents ask what happened.",
             "es": "Debías regar las plantas y murieron. Tus padres preguntan qué pasó."
-          }
-        },
-        {
-          "type": "analysis",
-          "text": {
-            "en": "Responsibility is the price of greatness.",
-            "es": "La responsabilidad es el precio de la grandeza."
           }
         },
         {
           "type": "decision",
           "options": [
-            { "text": { "en": "Accept it and offer a solution", "es": "Aceptarlo y ofrecer solución" }, "correct": true, "explanation": { "en": "Owning the result and acting to fix it is the mark of a master.", "es": "Admitir el resultado y actuar para arreglarlo es la marca de un maestro." } },
-            { "text": { "en": "Say you forgot but won't happen again", "es": "Decir que lo olvidaste y no pasará" }, "correct": "partial", "explanation": { "en": "Honest, but promises are cheap. Action is what matters.", "es": "Sincero, pero las promesas son baratas. La acción es lo que importa." } },
-            { "text": { "en": "Blame the sun or the weather", "es": "Culpar al sol o al clima" }, "correct": false, "explanation": { "en": "Excuses are for those who are afraid of growing up.", "es": "Las excusas son para quienes tienen miedo de crecer." } },
-            { "text": { "en": "Say you did it and they died anyway", "es": "Decir que sí lo hiciste y murieron" }, "correct": false, "explanation": { "en": "A lie here is a double failure: in action and in character.", "es": "Una mentira aquí es un doble fallo: en la acción y en el carácter." } }
+            { "text": { "en": "Accept it and offer a solution", "es": "Aceptarlo y ofrecer solución" }, "correct": true, "explanation": { "en": "Owning results allows you to RISE. Responsibility is the price of greatness.", "es": "Asumir los resultados te permite LEVANTARTE. La responsabilidad es el precio de la grandeza." } },
+            { "text": { "en": "Blame the sun or the weather", "es": "Culpar al sol o al clima" }, "correct": false, "explanation": { "en": "EXCUSES are for those who are afraid to BUILD a real character.", "es": "Las EXCUSAS son para quienes tienen miedo de CONSTRUIR un carácter real." } }
           ]
         }
       ]
