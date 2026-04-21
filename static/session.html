@@ -2,206 +2,270 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>KAMIZEN | AL CIELO PRO</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KAMIZEN LOOP PRO</title>
 
 <style>
-
-/* ===================== CORE DARK SYSTEM (NO CHANGES AL FONDO) ===================== */
-body {
-    margin: 0;
-    background: radial-gradient(circle, #001a33, #000); /* ❗ NO CAMBIADO */
-    color: #fff;
-    font-family: 'Segoe UI', Arial, sans-serif;
-    overflow: hidden;
-    user-select: none;
+body{
+    margin:0;
+    background:radial-gradient(circle,#001a33,#000);
+    color:#fff;
+    font-family:'Segoe UI',Arial;
+    text-align:center;
+    overflow:hidden;
+    cursor:crosshair;
 }
 
-/* ===================== TOPBAR ===================== */
-#topbar {
-    position: fixed;
-    top: 0;
-    width: 100%;
-    padding: 12px 20px;
-    z-index: 1000;
-    background: rgba(0,0,0,0.75);
-    border-bottom: 2px solid #00f2ff;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+/* TOP */
+#top-ui{
+    position:fixed;
+    top:0;
+    width:100%;
+    display:flex;
+    justify-content:space-around;
+    padding:15px;
+    color:#00f2ff;
+    font-weight:bold;
 }
 
-#score-display {
-    font-size: 1.9rem;
-    font-weight: 900;
-    color: #00f2ff;
-    text-shadow: 0 0 12px #00f2ff;
+#timer{ margin-top:70px; font-size:1.4rem; color:#00f2ff; }
+
+/* BUTTONS */
+#menu{
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
 }
 
-/* 🔥 TIMER BIG (IMPORTANT FOR USER ATTENTION) */
-#timer {
-    font-size: 3rem;
-    font-weight: 900;
-    color: #ffffff;
-    text-shadow: 0 0 15px #00f2ff;
-    font-family: monospace;
+/* FLOATING */
+.floating{
+    position:absolute;
+    padding:8px 18px;
+    border-radius:20px;
+    font-weight:bold;
+    animation:floatUp 5s linear forwards;
+}
+.word-good{color:#0f0;border:2px solid #0f0;}
+.word-bad{color:#f00;border:2px solid #f00;}
+.word-neutral{color:#ff0;border:2px solid #ff0;}
+
+@keyframes floatUp{
+    from{transform:translateY(110vh);}
+    to{transform:translateY(-20vh);}
 }
 
-/* ===================== GAME AREA ===================== */
-#game {
-    position: absolute;
-    top: 70px;
-    bottom: 120px;
-    width: 100%;
-    overflow: hidden;
-}
+.blast{transform:scale(3);opacity:0;transition:.3s}
 
-/* ===================== FLOATING WORDS ===================== */
-.floating {
-    position: absolute;
-    padding: 10px 22px;
-    border-radius: 40px;
-    font-weight: 900;
-    cursor: pointer;
-    animation: floatUp 5s linear forwards;
-    background: rgba(0,0,0,0.5);
-}
-
-.word-good {
-    color: #39ff14;
-    border: 2px solid #39ff14;
-    box-shadow: 0 0 12px #39ff14;
-}
-
-.word-bad {
-    color: #ff3131;
-    border: 2px solid #ff3131;
-    box-shadow: 0 0 12px #ff3131;
-}
-
-.word-neutral {
-    color: #ffdf00;
-    border: 2px solid #ffdf00;
-    box-shadow: 0 0 12px #ffdf00;
-}
-
-@keyframes floatUp {
-    from { transform: translateY(110vh); }
-    to { transform: translateY(-20vh); }
-}
-
-/* ===================== LEARNING ZONE ===================== */
-#learning {
-    display: none;
-    position: absolute;
-    top: 80px;
-    width: 100%;
-    text-align: center;
-}
-
-#story {
-    font-size: 1.7rem;
-    margin: 20px auto;
-    max-width: 850px;
-    color: #fff;
-}
-
-#analysis {
-    font-size: 1.3rem;
-    margin: 10px auto;
-    max-width: 800px;
-    color: #ccc;
-}
-
-/* ===================== BREATH SYSTEM ===================== */
-#breath {
-    width: 160px;
-    height: 160px;
-    margin: 25px auto;
-    border-radius: 50%;
-    background: radial-gradient(circle, #00f2ff, #0033ff);
-    box-shadow: 0 0 40px #00f2ff;
-    display: none;
-    animation: breathe 6s infinite ease-in-out;
-}
-
-@keyframes breathe {
-    0%,100% { transform: scale(0.8); opacity: 0.6; }
-    50% { transform: scale(1.3); opacity: 1; }
-}
-
-/* ===================== EXPLANATION ===================== */
-#explain {
-    position: absolute;
-    bottom: 140px;
-    width: 100%;
-    text-align: center;
-    font-size: 1.2rem;
-    color: #ffdf00;
-}
-
-/* ===================== CONTROLS (DARK ONLY) ===================== */
-#controls {
-    position: fixed;
-    bottom: 15px;
-    width: 100%;
-    text-align: center;
-}
-
-button {
-    padding: 12px 18px;
-    margin: 6px;
-    font-size: 15px;
-    border-radius: 12px;
-    border: 2px solid #00f2ff;
-    background: rgba(0,0,0,0.6); /* ❗ DARK ONLY */
-    color: #fff;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-button:hover {
-    box-shadow: 0 0 15px #00f2ff;
-}
-
+/* LEARNING */
+#learning{display:none;margin-top:120px}
 </style>
 </head>
 
 <body>
 
-<!-- ===================== TOPBAR ===================== -->
-<div id="topbar">
-    <div id="score-display">POINTS: 0</div>
-    <div id="timer">00:00</div>
+<div id="top-ui">
+    <div>FOCUS: 100%</div>
+    <div id="score">PUNTOS: 0</div>
+    <div>ENERGY: ⚡⚡⚡</div>
 </div>
 
-<!-- ===================== GAME ===================== -->
-<div id="game"></div>
+<div id="timer">00:00</div>
 
-<!-- ===================== LEARNING ===================== -->
+<div id="menu">
+    <button onclick="start()">START</button>
+    <button onclick="start()">CONTINUE</button>
+    <button onclick="reset()">BACK</button>
+</div>
+
 <div id="learning">
-    <div id="story"></div>
-    <div id="analysis"></div>
-    <div id="breath"></div>
+    <h2 id="lvl"></h2>
+    <p id="mission"></p>
 </div>
 
-<!-- ===================== EXPLANATION ===================== -->
-<div id="explain"></div>
-
-<!-- ===================== CONTROLS ===================== -->
-<div id="controls">
-    <button onclick="KamizenEngine.init()">START</button>
-    <button onclick="KamizenEngine.changeLang()">ESP/ENG</button>
-    <button onclick="KamizenEngine.reset()">RESET</button>
-</div>
-
-<!-- ===================== AUDIO ===================== -->
 <audio id="bg" loop src="/static/sounds/bg.mp3"></audio>
-<audio id="win" src="/static/sounds/success.mp3"></audio>
+<audio id="win" src="/static/sounds/trumpet.mp3"></audio>
 <audio id="bad" src="/static/sounds/glass.mp3"></audio>
 
-<!-- ===================== ENGINE ===================== -->
-<script src="/static/engine.js"></script>
+<script>
+// ================= STATE =================
+let score=0;
+let level=1;
+let phase="menu";
+let timer,spawn;
+let allowInput=true;
+
+// durations
+const GAME_1=300;
+const LEARN=360;
+
+// words
+const words={
+    good:["FOCUS","POWER","TRUTH"],
+    bad:["LIE","FEAR","LAZY"],
+    neutral:["CITY","RUN","WAIT"]
+};
+
+// ================= INIT =================
+function start(){
+    document.getElementById("menu").style.display="none";
+    playMusic();
+    runPhase("game1",GAME_1);
+}
+
+// ================= PHASES =================
+function runPhase(type,time){
+    clearAll();
+    phase=type;
+
+    if(type.includes("game")){
+        allowInput=true;
+        spawnWords();
+        hideLearning();
+    }
+
+    if(type==="learn"){
+        allowInput=false;
+        showLearning();
+    }
+
+    startTimer(time,()=>{
+        if(type==="game1"){
+            runPhase("learn",LEARN);
+        }
+        else if(type==="learn"){
+            const next = score>50?600:180;
+            runPhase("game2",next);
+        }
+        else{
+            runPhase("learn",LEARN);
+        }
+    });
+}
+
+// ================= TIMER =================
+function startTimer(t,cb){
+    updateTimer(t);
+    timer=setInterval(()=>{
+        t--;
+        updateTimer(t);
+        if(t<=0){clearInterval(timer);cb();}
+    },1000);
+}
+
+function updateTimer(t){
+    let m=Math.floor(t/60).toString().padStart(2,"0");
+    let s=(t%60).toString().padStart(2,"0");
+    document.getElementById("timer").innerText=`${m}:${s}`;
+}
+
+// ================= FLOATING =================
+function spawnWords(){
+    spawn=setInterval(()=>{
+        if(!allowInput)return;
+
+        const type=randomType();
+        const word=randomWord(type);
+
+        const el=document.createElement("div");
+        el.className=`floating word-${type}`;
+        el.innerText=word;
+        el.style.left=Math.random()*90+"vw";
+
+        el.onclick=()=>{
+            el.classList.add("blast");
+
+            if(type==="good"){score+=5;play("win");}
+            if(type==="bad"){score-=10;play("bad");}
+
+            updateScore();
+            setTimeout(()=>el.remove(),300);
+        };
+
+        document.body.appendChild(el);
+        setTimeout(()=>el.remove(),5000);
+
+    },1500);
+}
+
+function randomType(){
+    let r=Math.random();
+    if(r>0.7)return"bad";
+    if(r>0.4)return"good";
+    return"neutral";
+}
+
+function randomWord(t){
+    return words[t][Math.floor(Math.random()*words[t].length)];
+}
+
+// ================= LEARNING =================
+function showLearning(){
+    document.getElementById("learning").style.display="block";
+
+    level = Math.floor(score/50)+1;
+
+    document.getElementById("lvl").innerText="LEVEL "+level;
+
+    const missions=[
+        "Respira sin tocar la pantalla.",
+        "Controla tu impulso.",
+        "Concéntrate sin distracciones.",
+        "Domina tu mente."
+    ];
+
+    document.getElementById("mission").innerText=
+        missions[Math.floor(Math.random()*missions.length)];
+
+    // anti cheat
+    document.body.onclick=()=>{
+        if(!allowInput){
+            score-=20;
+            play("bad");
+            updateScore();
+        }
+    };
+}
+
+function hideLearning(){
+    document.getElementById("learning").style.display="none";
+}
+
+// ================= SCORE SAVE =================
+function updateScore(){
+    document.getElementById("score").innerText="PUNTOS: "+score;
+}
+
+function saveScore(){
+    let history=JSON.parse(localStorage.getItem("scores")||"[]");
+    history.push(score);
+    if(history.length>3)history.shift();
+    localStorage.setItem("scores",JSON.stringify(history));
+}
+
+// ================= AUDIO =================
+function playMusic(){
+    let bg=document.getElementById("bg");
+    bg.volume=.3;
+    bg.playbackRate=1.1;
+    bg.play().catch(()=>{});
+}
+
+function play(id){
+    document.getElementById(id).play();
+}
+
+// ================= CONTROL =================
+function clearAll(){
+    clearInterval(timer);
+    clearInterval(spawn);
+}
+
+function reset(){
+    saveScore();
+    location.reload();
+}
+</script>
 
 </body>
 </html>
