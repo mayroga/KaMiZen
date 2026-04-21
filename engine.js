@@ -1,3 +1,8 @@
+/**
+ * 🧠 KAMIZEN ENGINE CORE — AURA SYSTEM STABLE BUILD
+ * Reflejos vs Conciencia + Engaño Visual + Aprendizaje
+ */
+
 const KamizenEngine = (() => {
 
     // ==========================================
@@ -47,6 +52,7 @@ const KamizenEngine = (() => {
     const Speech = {
         say(text) {
             if (!text) return;
+
             speechSynthesis.cancel();
 
             const u = new SpeechSynthesisUtterance(text);
@@ -61,22 +67,13 @@ const KamizenEngine = (() => {
     // 🌌 WORD SYSTEM
     // ==========================================
     const words = {
-        power: [
-            "WILL","VISION","HONOR","COURAGE","BUILD","RISE",
-            "FAITH","DISCIPLINE","STRENGTH","VICTORY"
-        ],
-        risk: [
-            "NOISE","EXCUSE","QUITTING","EGO","HATE","CHAOS",
-            "LAZY","FEAR","LIE","ANGER"
-        ],
-        silence: [
-            "CALM","LISTEN","WAIT","PEACE","PRAY","INSIDE",
-            "BREATHE","STILL","SOUL","FOCUS"
-        ]
+        power: ["WILL","VISION","HONOR","COURAGE","BUILD","RISE","FAITH","DISCIPLINE","STRENGTH","VICTORY"],
+        risk: ["NOISE","EXCUSE","QUITTING","EGO","HATE","CHAOS","LAZY","FEAR","LIE","ANGER"],
+        silence: ["CALM","LISTEN","WAIT","PEACE","PRAY","INSIDE","BREATHE","STILL","SOUL","FOCUS"]
     };
 
     // ==========================================
-    // 🎮 FLOATING SYSTEM (🧠 ENGANO VISUAL INTELIGENTE)
+    // 🎮 FLOATING SYSTEM (REFLEXES VS CONSCIOUSNESS)
     // ==========================================
     const Floating = {
 
@@ -96,9 +93,9 @@ const KamizenEngine = (() => {
                 const list = words[type];
                 const word = list[Math.floor(Math.random() * list.length)];
 
-                // ================================
-                // 🧠 ENGANO VISUAL INTELIGENTE
-                // ================================
+                // ============================
+                // 🧠 VISUAL DECEPTION ENGINE
+                // ============================
                 const trick = Math.random() < 0.4;
 
                 let visualType = type;
@@ -117,14 +114,13 @@ const KamizenEngine = (() => {
                 if (trick) {
                     el.style.transform = "scale(1.15)";
                     el.style.filter = "blur(0.3px)";
-                    el.dataset.trick = "true";
                 }
 
-                el.onclick = () => {
+                // =====================================
+                // 🧠 REAL LOGIC (NO SE DEJA ENGAÑAR)
+                // =====================================
+                el.onmousedown = () => {
 
-                    // ================================
-                    // 🧠 LÓGICA REAL (NO ENGAÑADA)
-                    // ================================
                     if (type === "power") {
                         state.score += 10;
                         Audio.play("win");
@@ -147,10 +143,12 @@ const KamizenEngine = (() => {
                     setTimeout(() => el.remove(), 300);
                 };
 
-                document.getElementById("game").appendChild(el);
+                const game = document.getElementById("game");
+                if (game) game.appendChild(el);
+
                 setTimeout(() => el.remove(), 5000);
 
-            }, 1200);
+            }, 1100);
         },
 
         stop() {
@@ -197,7 +195,8 @@ const KamizenEngine = (() => {
 
             Floating.stop();
 
-            document.getElementById("learning").style.display = "block";
+            const learning = document.getElementById("learning");
+            if (learning) learning.style.display = "block";
 
             const story = state.lang === "en"
                 ? "Not everything with color means truth."
@@ -207,8 +206,11 @@ const KamizenEngine = (() => {
                 ? "Your mind must learn patterns, not reactions."
                 : "Tu mente debe aprender patrones, no reacciones.";
 
-            document.getElementById("story").innerText = story;
-            document.getElementById("analysis").innerText = analysis;
+            const storyEl = document.getElementById("story");
+            const analysisEl = document.getElementById("analysis");
+
+            if (storyEl) storyEl.innerText = story;
+            if (analysisEl) analysisEl.innerText = analysis;
 
             Speech.say(story);
             Speech.say(analysis);
@@ -229,6 +231,8 @@ const KamizenEngine = (() => {
             state.silenceActive = true;
 
             const el = document.getElementById("breath");
+            if (!el) return cb();
+
             el.style.display = "block";
 
             let t = seconds;
@@ -281,15 +285,16 @@ const KamizenEngine = (() => {
     const UI = {
 
         updateScore() {
-            document.getElementById("score-display").innerText =
-                "POINTS: " + state.score;
+            const el = document.getElementById("score-display");
+            if (el) el.innerText = "POINTS: " + state.score;
         },
 
         updateTimer(t) {
             const m = Math.floor(t / 60).toString().padStart(2, "0");
             const s = (t % 60).toString().padStart(2, "0");
 
-            document.getElementById("timer").innerText = `${m}:${s}`;
+            const el = document.getElementById("timer");
+            if (el) el.innerText = `${m}:${s}`;
         }
     };
 
@@ -303,7 +308,8 @@ const KamizenEngine = (() => {
                 ? `${word} → category: ${type}. Learn meaning, not emotion.`
                 : `${word} → categoría: ${type}. Aprende significado, no emoción.`;
 
-        document.getElementById("explain").innerText = msg;
+        const el = document.getElementById("explain");
+        if (el) el.innerText = msg;
 
         Speech.say(msg);
     }
