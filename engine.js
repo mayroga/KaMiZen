@@ -1,245 +1,253 @@
 /**
- * 🧠 KAMIZEN ENGINE CORE — AL CIELO FINAL STABLE
- * SINGLE ENGINE (NO DUPLICATES, NO FREEZE)
+ * 🧠 KAMIZEN ENGINE CORE — AL CIELO FINAL STABLE v2
+ * SINGLE LOOP ENGINE (NO FREEZE, NO DUPLICATES, PHASE SYSTEM READY)
  */
 
 const KamizenEngine = (() => {
 
     // ==========================================
-    // 📊 STATE
+    // 📊 STATE CORE (GAME LOOP CONTROL)
     // ==========================================
     const state = {
         score: 0,
         lang: "en",
         missionId: 1,
         mission: null,
+
+        phase: 1, // 1 = FLOAT GAME, 2 = LEARNING, 3 = DYNAMIC GAME
+        phaseTimer: 300,
+
         silenceMinutes: 3,
+        silenceActive: false,
+
         locked: false,
-        silenceActive: false
+        wordInterval: null,
+        timerInterval: null,
+
+        history: [],
+        maxHistory: 3
     };
 
     // ==========================================
-    // 🔊 AUDIO
+    // 🔊 AUDIO SYSTEM (WIN / FAIL / BACKGROUND)
     // ==========================================
     const Audio = {
-        bg: null, ok: null, bad: null,
+        bg: null,
+        win: null,
+        fail: null,
 
         init() {
             this.bg = document.getElementById("bg");
-            this.ok = document.getElementById("ok");
-            this.bad = document.getElementById("bad");
+            this.win = document.getElementById("ok");
+            this.fail = document.getElementById("bad");
 
             if (this.bg) {
-                this.bg.volume = 0.4;
+                this.bg.volume = 0.35;
                 this.bg.playbackRate = 1.1;
                 this.bg.play().catch(() => {});
             }
         },
 
         play(type) {
-            if (type === "ok" && this.ok) this.ok.play();
-            if (type === "bad" && this.bad) this.bad.play();
+            if (type === "win" && this.win) this.win.play();
+            if (type === "fail" && this.fail) this.fail.play();
         }
     };
 
     // ==========================================
-    // 🗣️ SPEECH (SAFE)
+    // 🗣️ SPEECH SYSTEM
     // ==========================================
     const Speech = {
         say(text) {
             if (!text) return;
             speechSynthesis.cancel();
+
             const u = new SpeechSynthesisUtterance(text);
             u.lang = state.lang === "en" ? "en-US" : "es-ES";
             u.rate = 0.9;
+
             speechSynthesis.speak(u);
         }
     };
 
     // ==========================================
-    // 🌌 FLOATING
+    // 🌌 FLOATING WORD GAME (PHASE 1 & 3)
     // ==========================================
     const Floating = {
+        words: {
+            good: ["FOCUS","POWER","TRUTH","CONTROL","DISCIPLINE"],
+            bad: ["FEAR","LIE","IMPULSE","CHAOS","LAZY"],
+            neutral: ["CITY","WALK","WAIT","WATCH"]
+        },
+
         start() {
-            setInterval(() => {
+            this.stop();
+
+            state.wordInterval = setInterval(() => {
+
                 if (state.locked || state.silenceActive) return;
 
-                const types = [
-                    { cls: "word-good", val: 5, words: ["FOCUS","POWER","TRUTH","CONTROL"] },
-                    { cls: "word-bad", val: -10, words: ["FEAR","IMPULSE","LIE","CHAOS"] },
-                    { cls: "word-neutral", val: 0, words: ["CITY","WALK","WATCH"] }
-                ];
+                const type =
+                    Math.random() > 0.7 ? "bad" :
+                    Math.random() > 0.4 ? "good" : "neutral";
 
-                const t = types[Math.floor(Math.random()*types.length)];
+                const wordList = this.words[type];
+                const word = wordList[Math.floor(Math.random() * wordList.length)];
+
                 const el = document.createElement("div");
-
-                el.className = `floating ${t.cls}`;
-                el.innerText = t.words[Math.floor(Math.random()*t.words.length)];
-                el.style.left = Math.random()*90+"vw";
+                el.className = `floating word-${type}`;
+                el.innerText = word;
+                el.style.left = Math.random() * 90 + "vw";
 
                 el.onclick = () => {
-                    state.score += t.val;
-                    Audio.play(t.val >= 0 ? "ok" : "bad");
-                    UI.updateScore();
+                    if (type === "good") {
+                        state.score += 5;
+                        Audio.play("win");
+                    }
+                    if (type === "bad") {
+                        state.score -= 10;
+                        Audio.play("fail");
+                    }
 
+                    UI.updateScore();
                     el.classList.add("blast");
-                    setTimeout(() => el.remove(), 300);
+                    setTimeout(() => el.remove(), 200);
                 };
 
                 document.body.appendChild(el);
 
                 setTimeout(() => el.remove(), 5000);
 
-            }, 2000);
+            }, 1500);
+        },
+
+        stop() {
+            if (state.wordInterval) clearInterval(state.wordInterval);
+            state.wordInterval = null;
+
+            document.querySelectorAll(".floating").forEach(e => e.remove());
         }
     };
 
     // ==========================================
-    // 🎯 DECISION
+    // ⏱️ PHASE ENGINE (MAIN LOOP)
     // ==========================================
-    const Decision = {
-        handle(opt) {
+    const Phase = {
 
-            if (state.locked) return;
-            state.locked = true;
+        startGamePhase() {
+            state.phase = 1;
+            Floating.start();
 
-            const box = document.getElementById("explanation-box");
-            const text = opt.explanation[state.lang];
+            this.startTimer(300, () => {
+                this.startLearningPhase();
+            });
+        },
 
-            box.innerText = text;
-            box.style.display = "block";
+        startLearningPhase() {
+            state.phase = 2;
 
-            if (opt.correct) {
-                state.score += 20;
-                Audio.play("ok");
-            } else {
-                state.score -= 10;
-                Audio.play("bad");
-            }
+            Floating.stop();
 
-            UI.updateScore();
-            Speech.say(text);
+            UI.showLearning(true);
 
-            setTimeout(() => {
-                box.style.display = "none";
-                Silence.start();
-            }, 5000);
-        }
-    };
+            Speech.say("Learning phase started. Follow instructions carefully.");
 
-    // ==========================================
-    // 🧘 SILENCE SYSTEM
-    // ==========================================
-    const Silence = {
-        start() {
+            this.startSilence(state.silenceMinutes * 60, () => {
+                this.startDynamicPhase();
+            });
+        },
 
-            state.silenceActive = true;
+        startDynamicPhase() {
+            state.phase = 3;
 
-            UI.clearOptions();
-            UI.showBreath(true);
+            UI.showLearning(false);
+            Floating.start();
 
-            UI.setText("story", `SILENCE: ${state.silenceMinutes} MIN`);
-            UI.setText("analysis", "Stay still. Control your breath.");
+            const duration = state.score > 0 ? 600 : 180;
 
-            Speech.say("Silence challenge started.");
+            this.startTimer(duration, () => {
+                this.saveRun();
+                this.startGamePhase();
+            });
+        },
 
-            let seconds = state.silenceMinutes * 60;
+        startTimer(seconds, callback) {
 
-            const timer = setInterval(() => {
-                seconds--;
+            if (state.timerInterval) clearInterval(state.timerInterval);
 
-                if (seconds <= 0 || !state.silenceActive) {
-                    clearInterval(timer);
-                    this.end();
+            let t = seconds;
+            UI.updateTimer(t);
+
+            state.timerInterval = setInterval(() => {
+                t--;
+                UI.updateTimer(t);
+
+                if (t <= 0) {
+                    clearInterval(state.timerInterval);
+                    callback();
                 }
 
             }, 1000);
         },
 
-        end() {
-            state.silenceActive = false;
+        startSilence(seconds, callback) {
 
-            state.silenceMinutes = Math.min(state.silenceMinutes + 1, 20);
+            state.silenceActive = true;
 
-            UI.showBreath(false);
+            UI.showBreath(true);
 
-            Speech.say("Challenge complete.");
+            let t = seconds;
 
-            Mission.next();
-        }
-    };
+            const timer = setInterval(() => {
 
-    // ==========================================
-    // 📂 MISSION
-    // ==========================================
-    const Mission = {
+                t--;
 
-        async load() {
-            try {
-                const res = await fetch(`/api/mission/${state.missionId}`);
-                if (!res.ok) throw "fail";
+                if (t <= 0) {
+                    clearInterval(timer);
+                    state.silenceActive = false;
+                    UI.showBreath(false);
+                    callback();
+                }
 
-                const data = await res.json();
-                state.mission = data;
+            }, 1000);
+        },
 
-                this.render(data);
+        saveRun() {
+            state.history.push(state.score);
 
-            } catch {
-                console.warn("mission error");
+            if (state.history.length > state.maxHistory) {
+                state.history.shift();
             }
-        },
 
-        render(m) {
-
-            const story = m.blocks.find(b=>b.type==="story").text[state.lang];
-            const analysis = m.blocks.find(b=>b.type==="analysis").text[state.lang];
-            const decision = m.blocks.find(b=>b.type==="decision");
-
-            UI.setText("story", story);
-            UI.setText("analysis", "");
-            UI.clearOptions();
-            UI.showBreath(false);
-
-            Speech.say(story);
-
-            setTimeout(()=>{
-                UI.setText("analysis", analysis);
-                Speech.say(analysis);
-            },3000);
-
-            setTimeout(()=>{
-                UI.renderOptions(decision.options);
-                state.locked = false;
-            },6000);
-        },
-
-        next() {
-            state.missionId++;
-            if (state.missionId > 40) state.missionId = 1;
-            this.load();
+            if (state.history.length >= state.maxHistory) {
+                state.history = [];
+                state.score = 0;
+            }
         }
     };
 
     // ==========================================
-    // 🖥️ UI
+    // 🖥️ UI SYSTEM
     // ==========================================
     const UI = {
-        setText(id,val){ document.getElementById(id).innerText = val; },
-        updateScore(){ this.setText("score-display", `PUNTOS: ${state.score}`); },
-        clearOptions(){ document.getElementById("options").innerHTML = ""; },
-        showBreath(v){ document.getElementById("breath").style.display = v?"block":"none"; },
 
-        renderOptions(opts){
-            const c = document.getElementById("options");
-            c.innerHTML = "";
+        updateScore() {
+            document.getElementById("score-display").innerText =
+                "POINTS: " + state.score;
+        },
 
-            opts.forEach(opt=>{
-                const b = document.createElement("button");
-                b.className = "opt-btn";
-                b.innerText = opt.text[state.lang];
-                b.onclick = ()=>Decision.handle(opt);
-                c.appendChild(b);
-            });
+        updateTimer(t) {
+            const m = Math.floor(t / 60).toString().padStart(2, "0");
+            const s = (t % 60).toString().padStart(2, "0");
+            document.getElementById("timer").innerText = `${m}:${s}`;
+        },
+
+        showLearning(v) {
+            document.getElementById("learning").style.display = v ? "block" : "none";
+        },
+
+        showBreath(v) {
+            document.getElementById("breath").style.display = v ? "block" : "none";
         }
     };
 
@@ -249,13 +257,13 @@ const KamizenEngine = (() => {
     return {
         init() {
             Audio.init();
-            Floating.start();
-            Mission.load();
-            console.log("🔥 KAMIZEN READY");
+            Phase.startGamePhase();
+            UI.updateScore();
+            console.log("🔥 KAMIZEN ENGINE v2 READY");
         },
+
         toggleLang() {
             state.lang = state.lang === "en" ? "es" : "en";
-            if (state.mission) Mission.render(state.mission);
         }
     };
 
