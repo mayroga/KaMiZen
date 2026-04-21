@@ -3,9 +3,7 @@
   "chapter": 5,
   "range": "29-35",
   "ui": {
-    "floating_words": [
-      "FOCUS", "CALM", "CONTROL", "PAUSE", "LEARN", "TRUTH", "LEAD", "DISCIPLINE", "BREATH", "AWARENESS"
-    ]
+    "floating_words": ["MASTER", "TRUTH", "WILL", "CORE", "SILENCE", "POWER", "ACTION", "LIMIT", "AWAKE", "FREEDOM"]
   },
   "matrix_rules": [
     "1. Observe before reacting",
@@ -27,19 +25,10 @@
           }
         },
         {
-          "type": "analysis",
-          "text": {
-            "en": "Discipline starts exactly when motivation disappears.",
-            "es": "La disciplina empieza exactamente cuando la motivación desaparece."
-          }
-        },
-        {
           "type": "decision",
           "options": [
-            { "text": { "en": "Do just 5 minutes of work", "es": "Hacer solo 5 minutos de trabajo" }, "correct": true, "explanation": { "en": "Small actions break the wall of laziness and build momentum.", "es": "Las acciones pequeñas rompen el muro de la pereza y crean impulso." } },
-            { "text": { "en": "Wait until you feel inspired", "es": "Esperar a sentirte inspirado" }, "correct": false, "explanation": { "en": "Waiting for inspiration is a trap; action creates inspiration.", "es": "Esperar la inspiración es una trampa; la acción crea inspiración." } },
-            { "text": { "en": "Do something else easier", "es": "Hacer otra cosa más fácil" }, "correct": "partial", "explanation": { "en": "Changing tasks is a distraction in disguise. Stay on target.", "es": "Cambiar de tarea es una distracción disfrazada. Mantén el objetivo." } },
-            { "text": { "en": "Sleep and try tomorrow", "es": "Dormir e intentar mañana" }, "correct": false, "explanation": { "en": "Tomorrow is the favorite place for failure. Do it today.", "es": "Mañana es el lugar favorito del fracaso. Hazlo hoy." } }
+            { "text": { "en": "Do just 5 minutes of work", "es": "Hacer solo 5 minutos de trabajo" }, "correct": true, "explanation": { "en": "Small ACTIONS break the wall of laziness and activate your WILL.", "es": "Las ACCIONES pequeñas rompen el muro de la pereza y activan tu VOLUNTAD." } },
+            { "text": { "en": "Wait until you feel inspired", "es": "Esperar a sentirte inspirado" }, "correct": false, "explanation": { "en": "Waiting is a trap; true POWER is moving when you least want to.", "es": "Esperar es una trampa; el VERDADERO PODER es moverte cuando menos quieres." } }
           ]
         }
       ]
@@ -52,24 +41,15 @@
         {
           "type": "story",
           "text": {
-            "en": "You have to speak in front of a group. Your heart is beating fast and you feel fear.",
-            "es": "Debes hablar frente a un grupo. Tu corazón late rápido y sientes miedo."
-          }
-        },
-        {
-          "type": "analysis",
-          "text": {
-            "en": "Fear is just data indicating that something important is happening.",
-            "es": "El miedo es solo información indicando que algo importante ocurre."
+            "en": "You have to speak in front of a group. Your heart is fast and you feel fear.",
+            "es": "Debes hablar frente a un grupo. Tu corazón va rápido y sientes miedo."
           }
         },
         {
           "type": "decision",
           "options": [
-            { "text": { "en": "Breathe deep and speak anyway", "es": "Respirar profundo y hablar igual" }, "correct": true, "explanation": { "en": "Courage is not the absence of fear, but acting while feeling it.", "es": "La valentía no es la ausencia de miedo, sino actuar mientras lo sientes." } },
-            { "text": { "en": "Ask someone else to do it", "es": "Pedir a otro que lo haga" }, "correct": false, "explanation": { "en": "Running away from fear makes the fear grow stronger next time.", "es": "Huir del miedo hace que el miedo sea más fuerte la próxima vez." } },
-            { "text": { "en": "Read from a paper without looking", "es": "Leer de un papel sin mirar" }, "correct": "partial", "explanation": { "en": "It's a start, but true mastery requires facing the audience.", "es": "Es un inicio, pero la maestría requiere enfrentar a la audiencia." } },
-            { "text": { "en": "Tell them you are sick", "es": "Decirles que estás enfermo" }, "correct": false, "explanation": { "en": "Lying to avoid fear is a double defeat in the Matrix.", "es": "Mentir para evitar el miedo es una doble derrota en la Matrix." } }
+            { "text": { "en": "Breathe deep and speak anyway", "es": "Respirar profundo y hablar igual" }, "correct": true, "explanation": { "en": "Courage is your SOUL acting while the body feels fear. Conquer it.", "es": "La valentía es tu ALMA actuando mientras el cuerpo siente miedo. Conquístalo." } },
+            { "text": { "en": "Tell them you are sick", "es": "Decirles que estás enfermo" }, "correct": false, "explanation": { "en": "A lie to avoid fear is a double defeat for your inner MASTER.", "es": "Una mentira para evitar el miedo es una doble derrota para tu MAESTRO interno." } }
           ]
         }
       ]
@@ -87,19 +67,10 @@
           }
         },
         {
-          "type": "analysis",
-          "text": {
-            "en": "A scattered mind is a weak mind. Focus is your primary weapon.",
-            "es": "Una mente dispersa es débil. El enfoque es tu arma principal."
-          }
-        },
-        {
           "type": "decision",
           "options": [
-            { "text": { "en": "Pick one task and finish it", "es": "Elegir una tarea y terminarla" }, "correct": true, "explanation": { "en": "One single point of focus cuts through chaos like a laser.", "es": "Un solo punto de enfoque corta el caos como un láser." } },
-            { "text": { "en": "Try to solve everything at once", "es": "Intentar resolver todo a la vez" }, "correct": false, "explanation": { "en": "Multitasking is a myth that drains your energy and creates errors.", "es": "La multitarea es un mito que drena tu energía y crea errores." } },
-            { "text": { "en": "Write a list and then rest", "es": "Hacer una lista y descansar" }, "correct": "partial", "explanation": { "en": "Organizing is good, but without action, the list is just paper.", "es": "Organizar es bueno, pero sin acción, la lista es solo papel." } },
-            { "text": { "en": "Watch TV to forget the chaos", "es": "Ver TV para olvidar el caos" }, "correct": false, "explanation": { "en": "Escapism doesn't solve problems; it just lets them grow.", "es": "El escapismo no resuelve problemas; solo deja que crezcan." } }
+            { "text": { "en": "Pick one task and finish it", "es": "Elegir una tarea y terminarla" }, "correct": true, "explanation": { "en": "One point of FOCUS cuts through CHAOS like a laser. Master your target.", "es": "Un punto de ENFOQUE corta el CAOS como un láser. Domina tu objetivo." } },
+            { "text": { "en": "Try to solve everything at once", "es": "Intentar resolver todo a la vez" }, "correct": false, "explanation": { "en": "Multitasking is a myth that drains your energy and kills your VISION.", "es": "La multitarea es un mito que drena tu energía y mata tu VISIÓN." } }
           ]
         }
       ]
@@ -112,24 +83,15 @@
         {
           "type": "story",
           "text": {
-            "en": "Someone says something very mean to you. You feel a wave of heat and anger.",
-            "es": "Alguien te dice algo muy cruel. Sientes una ola de calor y enojo."
-          }
-        },
-        {
-          "type": "analysis",
-          "text": {
-            "en": "The first reaction belongs to the Matrix; the second belongs to you.",
-            "es": "La primera reacción le pertenece a la Matrix; la segunda te pertenece a ti."
+            "en": "Someone says something very mean to you. You feel heat and anger.",
+            "es": "Alguien te dice algo muy cruel. Sientes calor y enojo."
           }
         },
         {
           "type": "decision",
           "options": [
-            { "text": { "en": "Pause and count to three", "es": "Pausar y contar hasta tres" }, "correct": true, "explanation": { "en": "The pause creates a gap where your intelligence can take control.", "es": "La pausa crea un espacio donde tu inteligencia toma el control." } },
-            { "text": { "en": "Say something mean back", "es": "Responder con algo cruel" }, "correct": false, "explanation": { "en": "Reacting with the same energy makes you a mirror of their weakness.", "es": "Reaccionar con la misma energía te hace un espejo de su debilidad." } },
-            { "text": { "en": "Walk away while crying", "es": "Irte mientras lloras" }, "correct": "partial", "explanation": { "en": "Walking away is good, but do it with dignity and calm.", "es": "Irte es bueno, pero hazlo con dignidad y calma." } },
-            { "text": { "en": "Shout at them to stop", "es": "Gritarles que se detengan" }, "correct": false, "explanation": { "en": "Shouting shows they successfully moved your emotional center.", "es": "Gritar demuestra que lograron mover tu centro emocional." } }
+            { "text": { "en": "Pause and count to three", "es": "Pausar y contar hasta tres" }, "correct": true, "explanation": { "en": "SILENCE creates a gap where your intelligence takes total CONTROL.", "es": "El SILENCIO crea un espacio donde tu inteligencia toma CONTROL total." } },
+            { "text": { "en": "Say something mean back", "es": "Responder con algo cruel" }, "correct": false, "explanation": { "en": "HATE is a reflection of their weakness. Don't become a mirror.", "es": "El ODIO es un reflejo de su debilidad. No te conviertas en un espejo." } }
           ]
         }
       ]
@@ -147,19 +109,10 @@
           }
         },
         {
-          "type": "analysis",
-          "text": {
-            "en": "Lying creates a glitch in your internal integrity system.",
-            "es": "Mentir crea un error en tu sistema interno de integridad."
-          }
-        },
-        {
           "type": "decision",
           "options": [
-            { "text": { "en": "Report it and offer to help", "es": "Reportarlo y ofrecer ayuda" }, "correct": true, "explanation": { "en": "Truth makes you heavy and stable; lies make you light and weak.", "es": "La verdad te hace pesado y estable; la mentira te hace ligero y débil." } },
-            { "text": { "en": "Stay quiet and wait", "es": "Callar y esperar" }, "correct": false, "explanation": { "en": "Passive lying is still lying. It creates hidden anxiety.", "es": "La mentira pasiva sigue siendo mentira. Crea ansiedad oculta." } },
-            { "text": { "en": "Clean it up and hide it", "es": "Limpiarlo y esconderlo" }, "correct": "partial", "explanation": { "en": "Cleaning is good, but hiding the fact leaves the debt unpaid.", "es": "Limpiar es bueno, pero esconder el hecho deja la deuda sin pagar." } },
-            { "text": { "en": "Blame the cat", "es": "Culpar al gato" }, "correct": false, "explanation": { "en": "Blaming others is the lowest level of character in the system.", "es": "Culpar a otros es el nivel más bajo de carácter en el sistema." } }
+            { "text": { "en": "Report it and offer to help", "es": "Reportarlo y ofrecer ayuda" }, "correct": true, "explanation": { "en": "TRUTH makes your CORE stable. Lies create glitches in your power.", "es": "La VERDAD hace tu núcleo estable. Las mentiras crean errores en tu poder." } },
+            { "text": { "en": "Blame the cat", "es": "Culpar al gato" }, "correct": false, "explanation": { "en": "Blaming others is QUITTING your responsibility. The Matrix wins.", "es": "Culpar a otros es RENUNCIAR a tu responsabilidad. La Matrix gana." } }
           ]
         }
       ]
@@ -172,24 +125,15 @@
         {
           "type": "story",
           "text": {
-            "en": "You are playing a game and the 'one more level' urge is very strong, but it's late.",
-            "es": "Estás jugando y el deseo de 'un nivel más' es muy fuerte, pero es tarde."
-          }
-        },
-        {
-          "type": "analysis",
-          "text": {
-            "en": "The Matrix uses dopamine to keep your mind locked in the screen.",
-            "es": "La Matrix usa dopamina para mantener tu mente encerrada en la pantalla."
+            "en": "The 'one more level' urge is strong, but it's very late for your rest.",
+            "es": "El deseo de 'un nivel más' es fuerte, pero es muy tarde para tu descanso."
           }
         },
         {
           "type": "decision",
           "options": [
-            { "text": { "en": "Turn it off immediately", "es": "Apagarlo inmediatamente" }, "correct": true, "explanation": { "en": "Turning it off at the peak of desire is the ultimate power move.", "es": "Apagarlo en el pico del deseo es el movimiento de poder definitivo." } },
-            { "text": { "en": "Play just five more minutes", "es": "Jugar solo cinco minutos más" }, "correct": false, "explanation": { "en": "Five minutes is the lie your brain tells you to stay trapped.", "es": "Cinco minutos es la mentira que tu cerebro te dice para seguir atrapado." } },
-            { "text": { "en": "Finish the level quickly", "es": "Terminar el nivel rápido" }, "correct": "partial", "explanation": { "en": "Acceptable, but you are still letting the game dictate your time.", "es": "Aceptable, pero sigues dejando que el juego dicte tu tiempo." } },
-            { "text": { "en": "Wait until you lose", "es": "Esperar hasta perder" }, "correct": false, "explanation": { "en": "Letting a loss decide when you stop is giving up your will.", "es": "Dejar que una derrota decida cuándo paras es entregar tu voluntad." } }
+            { "text": { "en": "Turn it off immediately", "es": "Apagarlo inmediatamente" }, "correct": true, "explanation": { "en": "Stopping at the peak of desire is the ultimate LIMIT move. You are AWAKE.", "es": "Parar en el pico del deseo es el LÍMITE definitivo. Estás DESPIERTO." } },
+            { "text": { "en": "Play just five more minutes", "es": "Jugar solo cinco minutos más" }, "correct": false, "explanation": { "en": "Five minutes is the EXCUSE the Matrix uses to steal your sleep.", "es": "Cinco minutos es la EXCUSA que la Matrix usa para robar tu sueño." } }
           ]
         }
       ]
@@ -202,24 +146,15 @@
         {
           "type": "story",
           "text": {
-            "en": "You face a situation where everyone is reacting with chaos and emotion.",
-            "es": "Enfrentas una situación donde todos reaccionan con caos y emoción."
-          }
-        },
-        {
-          "type": "analysis",
-          "text": {
-            "en": "Mastery is being the calm eye in the middle of the hurricane.",
-            "es": "La maestría es ser el ojo tranquilo en medio del huracán."
+            "en": "Everyone around you is reacting with chaos, noise, and fear.",
+            "es": "Todos a tu alrededor reaccionan con caos, ruido y miedo."
           }
         },
         {
           "type": "decision",
           "options": [
-            { "text": { "en": "Observe, breathe, and act", "es": "Observar, respirar y actuar" }, "correct": true, "explanation": { "en": "You have achieved total control of the system. You lead the reality.", "es": "Has logrado el control total del sistema. Tú lideras la realidad." } },
-            { "text": { "en": "Join the collective panic", "es": "Unirse al pánico colectivo" }, "correct": false, "explanation": { "en": "Following the crowd is returning to the Matrix. Stay awake.", "es": "Seguir a la multitud es volver a la Matrix. Mantente despierto." } },
-            { "text": { "en": "Do nothing and stay frozen", "es": "No hacer nada y congelarse" }, "correct": false, "explanation": { "en": "Freezing is a survival instinct, not a conscious choice. Choose.", "es": "Congelarse es instinto de supervivencia, no elección consciente. Elige." } },
-            { "text": { "en": "Tell everyone to be quiet", "es": "Decir a todos que se callen" }, "correct": "partial", "explanation": { "en": "Leading others is good, but your own calm is your primary duty.", "es": "Guiar a otros es bueno, pero tu propia calma es tu deber primario." } }
+            { "text": { "en": "Observe, breathe, and act", "es": "Observar, respirar y actuar" }, "correct": true, "explanation": { "en": "You are the center of the hurricane. MASTER of your reality. FREEDOM is yours.", "es": "Eres el centro del huracán. DUEÑO de tu realidad. La LIBERTAD es tuya." } },
+            { "text": { "en": "Join the collective panic", "es": "Unirse al pánico colectivo" }, "correct": false, "explanation": { "en": "Following the crowd is returning to the trance. You have failed the test.", "es": "Seguir a la multitud es volver al trance. Has fallado la prueba." } }
           ]
         }
       ]
