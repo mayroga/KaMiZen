@@ -124,10 +124,45 @@ const words={
             "BREATHE","STILL","SOUL","FOCUS"]
 };
 
+// ================= 🧠 MEANINGS (AGREGADO EXACTO) =================
+const meanings = {
+    WILL: "Decidir hacer algo aunque sea difícil.",
+    VISION: "Pensar en tu futuro antes de actuar.",
+    HONOR: "Hacer lo correcto incluso cuando nadie mira.",
+    COURAGE: "Actuar aunque tengas miedo.",
+    BUILD: "Crear algo mejor con esfuerzo.",
+    RISE: "Levantarte después de fallar.",
+    FAITH: "Creer en ti cuando todo parece difícil.",
+    DISCIPLINE: "Hacer lo que debes sin excusas.",
+    STRENGTH: "Controlarte a ti mismo.",
+    VICTORY: "Ganar después de resistir.",
+
+    CALM: "Mantenerte tranquilo en presión.",
+    LISTEN: "Escuchar antes de reaccionar.",
+    WAIT: "No actuar impulsivamente.",
+    PEACE: "Tener control interno.",
+    PRAY: "Reflexionar y conectar contigo.",
+    INSIDE: "Pensar antes de actuar.",
+    BREATHE: "Controlar tu cuerpo.",
+    STILL: "Quedarte quieto para pensar.",
+    SOUL: "Tu parte más profunda.",
+    FOCUS: "Concentrarte sin distracciones",
+
+    NOISE: "Distracción que te debilita.",
+    EXCUSE: "Mentira para no crecer.",
+    QUITTING: "Rendirse antes de lograrlo.",
+    EGO: "Creerte más sin demostrarlo.",
+    HATE: "Energía que destruye.",
+    CHAOS: "Falta de control.",
+    LAZY: "Evitar el esfuerzo.",
+    FEAR: "Miedo que te detiene.",
+    LIE: "Falsedad que te daña.",
+    ANGER: "Reacción sin control"
+};
+
 // ================= INIT =================
 function start(){
     document.getElementById("menu").style.display="none";
-    // 🔊 desbloqueo de audio como pediste
     playMusic(); 
     runPhase("game1", GAME_1);
 }
