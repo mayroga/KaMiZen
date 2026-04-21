@@ -3,7 +3,7 @@
   "chapter": 1,
   "range": "1-7",
   "ui": {
-    "floating_words": ["FOCUS", "CALM", "BREATH", "ACTION", "STOP", "THINK", "CONTROL"]
+    "floating_words": ["WILL", "VISION", "HONOR", "COURAGE", "BUILD", "RISE", "NOISE", "EXCUSE", "CALM", "PEACE"]
   },
   "matrix_rules": [
     "1. Observe before reacting",
@@ -25,19 +25,10 @@
           }
         },
         {
-          "type": "analysis",
-          "text": {
-            "en": "Noticing small details is the first power of awareness.",
-            "es": "Notar detalles pequeños es el primer poder de la conciencia."
-          }
-        },
-        {
           "type": "decision",
           "options": [
-            { "text": { "en": "Look carefully at surroundings", "es": "Observar con atención" }, "correct": true, "explanation": { "en": "Scanning the environment lets you see the exit before the chaos starts.", "es": "Escanear el entorno te permite ver la salida antes de que empiece el caos." } },
-            { "text": { "en": "Ignore and keep walking", "es": "Ignorar y seguir caminando" }, "correct": false, "explanation": { "en": "Ignoring signs makes you a target for the unexpected.", "es": "Ignorar las señales te convierte en un blanco para lo inesperado." } },
-            { "text": { "en": "Run through the hallway", "es": "Correr por el pasillo" }, "correct": false, "explanation": { "en": "Running without looking is moving blind. Blindness is weakness.", "es": "Correr sin mirar es moverte a ciegas. La ceguera es debilidad." } },
-            { "text": { "en": "Close your eyes", "es": "Cerrar los ojos" }, "correct": false, "explanation": { "en": "Fear makes you close your eyes; power keeps them open.", "es": "El miedo te hace cerrar los ojos; el poder los mantiene abiertos." } }
+            { "text": { "en": "Look carefully at surroundings", "es": "Observar con atención" }, "correct": true, "explanation": { "en": "Scanning the environment lets you see the exit before the chaos starts. You act with VISION.", "es": "Escanear el entorno te permite ver la salida antes del caos. Actúas con VISIÓN." } },
+            { "text": { "en": "Ignore and keep walking", "es": "Ignorar y seguir caminando" }, "correct": false, "explanation": { "en": "Ignoring signs is an EXCUSE to stay blind. Blindness is weakness.", "es": "Ignorar señales es una EXCUSA para seguir ciego. La ceguera es debilidad." } }
           ]
         }
       ]
@@ -55,19 +46,10 @@
           }
         },
         {
-          "type": "analysis",
-          "text": {
-            "en": "Feelings are signals, not commands.",
-            "es": "Los sentimientos son señales, no órdenes."
-          }
-        },
-        {
           "type": "decision",
           "options": [
-            { "text": { "en": "Pause and breathe", "es": "Pausar y respirar" }, "correct": true, "explanation": { "en": "Breathing reclaims your energy. You control the situation now.", "es": "Respirar recupera tu energía. Ahora tú controlas la situación." } },
-            { "text": { "en": "Push them back immediately", "es": "Empujar de vuelta de inmediato" }, "correct": false, "explanation": { "en": "Reacting fast is giving your power to the other person.", "es": "Reaccionar rápido es regalarle tu poder a la otra persona." } },
-            { "text": { "en": "Scream at them", "es": "Gritarles" }, "correct": false, "explanation": { "en": "Noise is not power. Silence is much more intimidating.", "es": "El ruido no es poder. El silencio es mucho más intimidante." } },
-            { "text": { "en": "Walk away crying", "es": "Irse llorando" }, "correct": false, "explanation": { "en": "Control your exit. Walk away in calm, not in defeat.", "es": "Controla tu salida. Aléjate con calma, no derrotado." } }
+            { "text": { "en": "Pause and breathe", "es": "Pausar y respirar" }, "correct": true, "explanation": { "en": "CALM reclaims your energy. You control the situation now.", "es": "La CALMA recupera tu energía. Ahora tú controlas la situación." } },
+            { "text": { "en": "Push them back immediately", "es": "Empujar de vuelta de inmediato" }, "correct": false, "explanation": { "en": "Reacting fast is giving your WILL to the other person. Never give away your power.", "es": "Reaccionar rápido es regalar tu VOLUNTAD al otro. Nunca regales tu poder." } }
           ]
         }
       ]
@@ -85,19 +67,10 @@
           }
         },
         {
-          "type": "analysis",
-          "text": {
-            "en": "Small choices build your future strength.",
-            "es": "Las pequeñas decisiones construyen tu fuerza futura."
-          }
-        },
-        {
           "type": "decision",
           "options": [
-            { "text": { "en": "Buy the healthy meal", "es": "Comprar comida sana" }, "correct": true, "explanation": { "en": "Fueling your body right makes your brain faster than the rest.", "es": "Alimentar bien tu cuerpo hace que tu cerebro sea más rápido que el resto." } },
-            { "text": { "en": "Buy all the candy", "es": "Comprar todos los dulces" }, "correct": false, "explanation": { "en": "Sugar gives a fake peak followed by a crash. Don't be weak.", "es": "El azúcar da un pico falso seguido de una caída. No seas débil." } },
-            { "text": { "en": "Don't eat anything", "es": "No comer nada" }, "correct": false, "explanation": { "en": "An empty tank can't win a race. Discipline needs fuel.", "es": "Un tanque vacío no gana carreras. La disciplina necesita combustible." } },
-            { "text": { "en": "Ask someone for more money", "es": "Pedir más dinero a alguien" }, "correct": false, "explanation": { "en": "Dependency is a cage. Manage what you have.", "es": "La dependencia es una jaula. Administra lo que tienes." } }
+            { "text": { "en": "Buy the healthy meal", "es": "Comprar comida sana" }, "correct": true, "explanation": { "en": "To BUILD a strong future, you must fuel the machine correctly.", "es": "Para CONSTRUIR un futuro fuerte, debes alimentar la máquina correctamente." } },
+            { "text": { "en": "Buy all the candy", "es": "Comprar todos los dulces" }, "correct": false, "explanation": { "en": "Sugar is just NOISE for your focus. Don't be a slave to a cheap impulse.", "es": "El azúcar es solo RUIDO para tu enfoque. No seas esclavo de un impulso barato." } }
           ]
         }
       ]
@@ -115,19 +88,10 @@
           }
         },
         {
-          "type": "analysis",
-          "text": {
-            "en": "True strength is staying individual when the group is wrong.",
-            "es": "La verdadera fuerza es ser individual cuando el grupo se equivoca."
-          }
-        },
-        {
           "type": "decision",
           "options": [
-            { "text": { "en": "Stay calm and walk away", "es": "Mantener calma e irse" }, "correct": true, "explanation": { "en": "Not joining shows you don't need their approval to feel powerful.", "es": "No unirte muestra que no necesitas su aprobación para sentirte poderoso." } },
-            { "text": { "en": "Laugh with them", "es": "Reírse con ellos" }, "correct": false, "explanation": { "en": "Following the pack makes you a sheep, not a leader.", "es": "Seguir a la manada te hace una oveja, no un líder." } },
-            { "text": { "en": "Film it with your phone", "es": "Grabar con el teléfono" }, "correct": false, "explanation": { "en": "Recording cruelty is participating in it. High risk, zero honor.", "es": "Grabar la crueldad es participar en ella. Alto riesgo, cero honor." } },
-            { "text": { "en": "Start an argument", "es": "Empezar una discusión" }, "correct": false, "explanation": { "en": "Don't waste energy on noise. Silence speaks louder.", "es": "No gastes energía en ruido. El silencio habla más fuerte." } }
+            { "text": { "en": "Stay calm and walk away", "es": "Mantener calma e irse" }, "correct": true, "explanation": { "en": "True HONOR is staying individual when the group is wrong.", "es": "El verdadero HONOR es mantenerte individual cuando el grupo se equivoca." } },
+            { "text": { "en": "Laugh with them", "es": "Reírse con ellos" }, "correct": false, "explanation": { "en": "QUITTING your values for approval makes you a sheep, not a leader.", "es": "RENDIR tus valores por aprobación te hace una oveja, no un líder." } }
           ]
         }
       ]
@@ -145,19 +109,10 @@
           }
         },
         {
-          "type": "analysis",
-          "text": {
-            "en": "Focus is a superpower you must protect.",
-            "es": "El enfoque es un superpoder que debes proteger."
-          }
-        },
-        {
           "type": "decision",
           "options": [
-            { "text": { "en": "Put phone in another room", "es": "Poner el móvil en otra habitación" }, "correct": true, "explanation": { "en": "If you don't see the distraction, it doesn't exist for your brain.", "es": "Si no ves la distracción, no existe para tu cerebro." } },
-            { "text": { "en": "Check notifications fast", "es": "Mirar las notificaciones rápido" }, "correct": false, "explanation": { "en": "Every 'quick' check resets your brain's focus timer.", "es": "Cada mirada 'rápida' reinicia el cronómetro de enfoque de tu cerebro." } },
-            { "text": { "en": "Use phone while studying", "es": "Usar el móvil mientras estudias" }, "correct": false, "explanation": { "en": "Multitasking is a lie. You are just doing two things badly.", "es": "La multitarea es una mentira. Solo haces dos cosas mal." } },
-            { "text": { "en": "Turn off only the sound", "es": "Apagar solo el sonido" }, "correct": false, "explanation": { "en": "The light of the screen is enough to steal your focus.", "es": "La luz de la pantalla es suficiente para robarte el enfoque." } }
+            { "text": { "en": "Put phone in another room", "es": "Poner el móvil en otra habitación" }, "correct": true, "explanation": { "en": "Removing NOISE is the only way to RISE above the average.", "es": "Eliminar el RUIDO es la única forma de LEVANTARSE por encima del promedio." } },
+            { "text": { "en": "Check notifications fast", "es": "Mirar las notificaciones rápido" }, "correct": false, "explanation": { "en": "Answering every buzz is giving up your FOCUS to an app. Be the master.", "es": "Responder a cada vibración es entregar tu ENFOQUE a una app. Sé el maestro." } }
           ]
         }
       ]
@@ -175,19 +130,10 @@
           }
         },
         {
-          "type": "analysis",
-          "text": {
-            "en": "Patterns are more important than promises.",
-            "es": "Los patrones son más importantes que las promesas."
-          }
-        },
-        {
           "type": "decision",
           "options": [
-            { "text": { "en": "Say no firmly and calmly", "es": "Decir no con firmeza y calma" }, "correct": true, "explanation": { "en": "Setting boundaries is how you earn respect in the street.", "es": "Poner límites es como te ganas el respeto en la calle." } },
-            { "text": { "en": "Lend it one last time", "es": "Prestarlo una última vez" }, "correct": false, "explanation": { "en": "Giving in to patterns teaches people they can use you.", "es": "Ceder ante los patrones enseña a la gente que pueden usarte." } },
-            { "text": { "en": "Get angry and fight", "es": "Enojarse y pelear" }, "correct": false, "explanation": { "en": "Anger shows you are hurt. Calm shows you are in control.", "es": "La ira muestra que estás dolido. La calma muestra control." } },
-            { "text": { "en": "Make up a lie to say no", "es": "Inventar una mentira para decir no" }, "correct": false, "explanation": { "en": "Lying is for the weak. The truth is your shield.", "es": "Mentir es para los débiles. La verdad es tu escudo." } }
+            { "text": { "en": "Say no firmly and calmly", "es": "Decir no con firmeza y calma" }, "correct": true, "explanation": { "en": "It takes COURAGE to set boundaries. This is how you gain respect.", "es": "Se requiere VALENTÍA para poner límites. Así es como ganas respeto." } },
+            { "text": { "en": "Lend it one last time", "es": "Prestarlo una última vez" }, "correct": false, "explanation": { "en": "Ignoring patterns is a mental EXCUSE. You are enabling your own loss.", "es": "Ignorar patrones es una EXCUSA mental. Estás permitiendo tu propia pérdida." } }
           ]
         }
       ]
@@ -205,19 +151,10 @@
           }
         },
         {
-          "type": "analysis",
-          "text": {
-            "en": "Your reaction defines the truth for others.",
-            "es": "Tu reacción define la verdad para los demás."
-          }
-        },
-        {
           "type": "decision",
           "options": [
-            { "text": { "en": "Keep a neutral face and wait", "es": "Cara neutral y esperar" }, "correct": true, "explanation": { "en": "Chaos hates silence. By staying calm, you make the liar look crazy.", "es": "Al caos le molesta el silencio. Al seguir calmado, el mentiroso parece loco." } },
-            { "text": { "en": "Scream that it's a lie", "es": "Gritar que es mentira" }, "correct": false, "explanation": { "en": "Desperation looks like guilt. Control your voice.", "es": "La desesperación parece culpa. Controla tu voz." } },
-            { "text": { "en": "Attack the person", "es": "Atacar a la persona" }, "correct": false, "explanation": { "en": "Violence is the last refuge of the incompetent.", "es": "La violencia es el último refugio del incompetente." } },
-            { "text": { "en": "Run away and hide", "es": "Correr y esconderse" }, "correct": false, "explanation": { "en": "Running makes the lie feel real. Stand your ground in silence.", "es": "Correr hace que la mentira parezca real. Mantente firme en silencio." } }
+            { "text": { "en": "Keep a neutral face and wait", "es": "Cara neutral y esperar" }, "correct": true, "explanation": { "en": "Your internal PEACE makes the liar look like CHAOS. Truth wins in silence.", "es": "Tu PAZ interna hace que el mentiroso parezca el CAOS. La verdad gana en silencio." } },
+            { "text": { "en": "Scream that it's a lie", "es": "Gritar que es mentira" }, "correct": false, "explanation": { "en": "Desperation is EGO trying to defend itself. Control your voice.", "es": "La desesperación es el EGO tratando de defenderse. Controla tu voz." } }
           ]
         }
       ]
