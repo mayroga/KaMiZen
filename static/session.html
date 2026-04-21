@@ -1,105 +1,163 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KAMIZEN | AL CIELO PRO</title>
-    <style>
-        /* Estilo Dopamina/Sonic */
-        body {
-            margin: 0;
-            background: radial-gradient(circle, #001a33, #000);
-            color: #fff;
-            font-family: 'Segoe UI', Arial, sans-serif;
-            text-align: center;
-            overflow: hidden;
-            cursor: crosshair;
-            transition: background 0.5s;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KAMIZEN | AL CIELO PRO</title>
 
-        #topbar {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            padding: 15px;
-            z-index: 100;
-            background: rgba(0,0,0,0.3);
-        }
+<style>
+body {
+    margin: 0;
+    background: radial-gradient(circle, #001a33, #000);
+    color: #fff;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    text-align: center;
+    overflow: hidden;
+    cursor: crosshair;
+    transition: background 0.5s;
+}
 
-        #game { padding-top: 80px; position: relative; z-index: 10; }
+#topbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 25px;
+    z-index: 100;
+    background: rgba(0,0,0,0.4);
+}
 
-        #top-ui { display: flex; justify-content: space-around; font-weight: bold; font-size: 1.2rem; color: #00f2ff; }
+#score-display {
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: #00f2ff;
+    letter-spacing: 1px;
+}
 
-        button {
-            padding: 15px 25px;
-            margin: 10px;
-            font-size: 18px;
-            border: 2px solid #00f2ff;
-            background: rgba(0, 242, 255, 0.1);
-            color: white;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        button:hover { background: #00f2ff; color: #000; box-shadow: 0 0 20px #00f2ff; }
-       
-        /* Botones de respuesta específicos */
-        .opt-btn { display: block; width: 80%; max-width: 500px; margin: 10px auto; text-align: left; }
+#game {
+    padding-top: 90px;
+    position: relative;
+    z-index: 10;
+}
 
-        #breath {
-            width: 100px; height: 100px; border-radius: 50%;
-            background: radial-gradient(circle, #00f2ff, #0066ff);
-            margin: 20px auto;
-            transition: transform 4s ease-in-out;
-            box-shadow: 0 0 30px #00f2ff;
-            display: none; /* Se activa en retos */
-        }
+#top-ui {
+    display: flex;
+    justify-content: space-around;
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: #00f2ff;
+}
 
-        /* Palabras Flotantes */
-        .floating {
-            position: absolute;
-            padding: 8px 18px;
-            border-radius: 20px;
-            font-weight: bold;
-            cursor: pointer;
-            user-select: none;
-            z-index: 50;
-            animation: floatUp 5s linear forwards;
-        }
-        .word-good { color: #00ff00; border: 2px solid #00ff00; box-shadow: 0 0 15px #00ff00; text-shadow: 0 0 10px #00ff00; }
-        .word-bad { color: #ff0000; border: 2px solid #ff0000; box-shadow: 0 0 15px #ff0000; text-shadow: 0 0 10px #ff0000; }
-        .word-neutral { color: #ffff00; border: 2px solid #ffff00; text-shadow: 0 0 10px #ffff00; }
+button {
+    padding: 14px 22px;
+    margin: 10px;
+    font-size: 18px;
+    border: 2px solid #00f2ff;
+    background: rgba(0, 242, 255, 0.1);
+    color: white;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: 0.25s;
+}
 
-        @keyframes floatUp {
-            from { transform: translateY(110vh) rotate(0deg); }
-            to { transform: translateY(-20vh) rotate(20deg); }
-        }
+button:hover {
+    background: #00f2ff;
+    color: #000;
+    box-shadow: 0 0 20px #00f2ff;
+}
 
-        .blast { animation: burst 0.4s forwards; pointer-events: none; }
-        @keyframes burst { to { transform: scale(4); opacity: 0; } }
+.opt-btn {
+    display: block;
+    width: 85%;
+    max-width: 520px;
+    margin: 12px auto;
+    text-align: left;
+}
 
-        #explanation-box {
-            background: rgba(0,0,0,0.8);
-            border-left: 5px solid #00f2ff;
-            padding: 20px;
-            margin: 20px auto;
-            width: 80%;
-            display: none;
-            font-size: 1.2rem;
-            border-radius: 0 15px 15px 0;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
+#breath {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #00f2ff, #0066ff);
+    margin: 25px auto;
+    transition: transform 4s ease-in-out;
+    box-shadow: 0 0 30px #00f2ff;
+    display: none;
+}
 
-        #story { font-size: 1.5rem; margin: 20px; font-weight: bold; }
-        #analysis { color: #00f2ff; font-style: italic; margin-bottom: 20px; }
-    </style>
+/* Floating Words */
+.floating {
+    position: absolute;
+    padding: 8px 18px;
+    border-radius: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    user-select: none;
+    z-index: 50;
+    animation: floatUp 5s linear forwards;
+}
+
+.word-good {
+    color: #00ff00;
+    border: 2px solid #00ff00;
+    box-shadow: 0 0 15px #00ff00;
+}
+
+.word-bad {
+    color: #ff0000;
+    border: 2px solid #ff0000;
+    box-shadow: 0 0 15px #ff0000;
+}
+
+.word-neutral {
+    color: #ffff00;
+    border: 2px solid #ffff00;
+}
+
+@keyframes floatUp {
+    from { transform: translateY(110vh); }
+    to { transform: translateY(-20vh); }
+}
+
+.blast {
+    animation: burst 0.4s forwards;
+    pointer-events: none;
+}
+
+@keyframes burst {
+    to { transform: scale(4); opacity: 0; }
+}
+
+#explanation-box {
+    background: rgba(0,0,0,0.85);
+    border-left: 5px solid #00f2ff;
+    padding: 20px;
+    margin: 20px auto;
+    width: 85%;
+    display: none;
+    font-size: 1.2rem;
+    border-radius: 0 15px 15px 0;
+}
+
+#story {
+    font-size: 1.6rem;
+    margin: 20px;
+    font-weight: bold;
+}
+
+#analysis {
+    color: #00f2ff;
+    font-style: italic;
+    margin-bottom: 20px;
+}
+</style>
 </head>
+
 <body>
 
 <div id="topbar">
-    <button onclick="toggleLang()">EN/ES</button>
+    <button onclick="toggleLang()">EN / ES</button>
     <div id="score-display">PUNTOS: 0</div>
 </div>
 
@@ -108,19 +166,22 @@
         <div id="stat-focus">FOCUS: 100%</div>
         <div id="stat-life">ENERGY: ⚡⚡⚡</div>
     </div>
-   
+
     <h2 id="hero-name"></h2>
     <div id="breath"></div>
-   
-    <div id="story">Cargando Misión...</div>
+
+    <div id="story">Cargando misión...</div>
     <div id="analysis"></div>
-   
+
     <div id="explanation-box"></div>
     <div id="options"></div>
 </div>
 
 <audio id="bg" loop src="/static/sounds/bg.mp3"></audio>
-<audio id="ok" src="/static/sounds/success.mp3"></audio> <audio id="bad" src="/static/sounds/glass.mp3"></audio> <script>
+<audio id="ok" src="/static/sounds/success.mp3"></audio>
+<audio id="bad" src="/static/sounds/glass.mp3"></audio>
+
+<script>
 let lang = "en";
 let missionId = 1;
 let score = 0;
@@ -129,204 +190,184 @@ let currentMissionData = null;
 
 const player = { name: "", hero: "" };
 
-// Configuración de palabras para disparar
 const wordPool = {
-    good: ["FOCUS", "TRUTH", "CALM", "POWER", "CONTROL", "RESPECT", "ACTION"],
-    bad: ["FEAR", "LIE", "CHAOS", "IMPULSE", "LAZY", "ANGRY", "SHAME"],
-    neutral: ["STREET", "CITY", "WALK", "WATCH", "WAIT", "VOICE"]
+    good: ["FOCUS","TRUTH","POWER","CONTROL","RESPECT"],
+    bad: ["FEAR","LIE","LAZY","ANGER"],
+    neutral: ["STREET","CITY","WALK","WAIT"]
 };
 
 async function init() {
-    player.name = prompt("Tu nombre real:") || "Player 1";
-    player.hero = prompt("Nombre de tu Héroe:") || "Kamizen Ninja";
+    player.name = prompt("Tu nombre:") || "Player";
+    player.hero = prompt("Tu héroe:") || "Kamizen";
     document.getElementById("hero-name").innerText = player.hero;
 
     startMusic();
-    startFloatingSystem();
+    startFloating();
     loadNextMission();
 }
 
 function startMusic() {
-    let bg = document.getElementById("bg");
-    bg.volume = 0.4;
-    bg.playbackRate = 1.1; // Ritmo Sonic
-    bg.play().catch(() => console.log("Click para iniciar audio"));
+    const bg = document.getElementById("bg");
+    bg.volume = 0.35;
+    bg.playbackRate = 1.1;
+    bg.play().catch(()=>{});
 }
 
 function speak(text) {
-    window.speechSynthesis.cancel();
-    let msg = new SpeechSynthesisUtterance(text);
-    msg.lang = lang === "en" ? "en-US" : "es-ES";
-    msg.rate = 0.9;
-    window.speechSynthesis.speak(msg);
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = lang === "en" ? "en-US" : "es-ES";
+    u.rate = 0.9;
+    speechSynthesis.speak(u);
 }
 
 function toggleLang() {
     lang = lang === "en" ? "es" : "en";
-    if (currentMissionData) renderMission(currentMissionData);
+    if(currentMissionData) renderMission(currentMissionData);
 }
 
 async function loadNextMission() {
     try {
         const res = await fetch(`/api/mission/${missionId}`);
-        if (!res.ok) { missionId = 1; loadNextMission(); return; }
+        if(!res.ok){ missionId = 1; return loadNextMission(); }
         currentMissionData = await res.json();
         renderMission(currentMissionData);
-    } catch (e) {
-        console.error("Error cargando misión");
+    } catch {
+        console.log("Error misión");
     }
 }
 
 function renderMission(m) {
-    const story = m.blocks.find(b => b.type === "story").text[lang];
-    const analysis = m.blocks.find(b => b.type === "analysis").text[lang];
-    const decision = m.blocks.find(b => b.type === "decision");
+    const story = m.blocks.find(b=>b.type==="story").text[lang];
+    const analysis = m.blocks.find(b=>b.type==="analysis").text[lang];
+    const decision = m.blocks.find(b=>b.type==="decision");
 
-    document.getElementById("story").innerText = story;
-    document.getElementById("analysis").innerText = "";
-    document.getElementById("options").innerHTML = "";
-    document.getElementById("explanation-box").style.display = "none";
-    document.getElementById("breath").style.display = "none";
+    setText("story", story);
+    setText("analysis", "");
+    clearOptions();
+    hide("explanation-box");
+    hide("breath");
 
     speak(story);
 
-    setTimeout(() => {
-        document.getElementById("analysis").innerText = analysis;
+    setTimeout(()=>{
+        setText("analysis", analysis);
         speak(analysis);
-    }, 3500);
+    },3500);
 
-    setTimeout(() => {
-        displayOptions(decision.options);
-    }, 7000);
+    setTimeout(()=>{
+        renderOptions(decision.options);
+    },7000);
 }
 
-function displayOptions(options) {
-    const oDiv = document.getElementById("options");
-    oDiv.innerHTML = "";
-   
-    // El sistema asegura al menos 4 opciones según la lógica de tu JSON
-    options.forEach(opt => {
-        let b = document.createElement("button");
+function renderOptions(options) {
+    const c = document.getElementById("options");
+    c.innerHTML = "";
+    options.forEach(opt=>{
+        const b = document.createElement("button");
         b.className = "opt-btn";
         b.innerText = opt.text[lang];
-        b.onclick = () => handleChoice(opt);
-        oDiv.appendChild(b);
+        b.onclick = ()=>handleChoice(opt);
+        c.appendChild(b);
     });
 }
 
-async function handleChoice(option) {
-    document.getElementById("options").innerHTML = "";
+function handleChoice(opt) {
+    clearOptions();
     const box = document.getElementById("explanation-box");
-    const okSound = document.getElementById("ok");
-    const badSound = document.getElementById("bad");
 
-    box.innerText = option.explanation ? option.explanation[lang] : (option.correct ? "¡Correcto!" : "Incorrecto");
-    box.style.display = "block";
+    box.innerText = opt.explanation[lang];
+    show("explanation-box");
 
-    if (option.correct === true) {
-        document.body.style.backgroundColor = "#004400";
-        okSound.play();
+    if(opt.correct){
+        document.body.style.background = "#003300";
         score += 20;
-        speak(getRandomSynonym(true) + ". " + box.innerText);
+        play("ok");
     } else {
-        document.body.style.backgroundColor = "#440000";
-        badSound.play();
+        document.body.style.background = "#330000";
         score -= 10;
-        speak(getRandomSynonym(false) + ". " + box.innerText);
+        play("bad");
     }
 
-    document.getElementById("score-display").innerText = `PUNTOS: ${score}`;
+    updateScore();
+    speak(box.innerText);
 
-    setTimeout(() => {
-        document.body.style.backgroundColor = "";
-        startSilenceReto();
-    }, 6000);
+    setTimeout(()=>{
+        document.body.style.background = "";
+        startSilence();
+    },6000);
 }
 
-function getRandomSynonym(isCorrect) {
-    const goods = ["¡Excelente!", "¡Poderoso!", "¡Sabio!", "¡Magnífico!", "¡Nivel Sonic!"];
-    const bads = ["¡Cuidado!", "¡Piénsalo bien!", "¡Error de matriz!", "¡Atención!", "¡Recalibrando!"];
-    return isCorrect ? goods[Math.floor(Math.random()*goods.length)] : bads[Math.floor(Math.random()*bads.length)];
-}
+function startSilence() {
+    show("breath");
+    setText("story", `SILENCIO: ${silenceMinutes} MIN`);
+    setText("analysis","Respira. No toques nada.");
 
-async function startSilenceReto() {
-    const breath = document.getElementById("breath");
-    const story = document.getElementById("story");
-    const analysis = document.getElementById("analysis");
-   
-    story.innerText = `RETO DE SILENCIO: ${silenceMinutes} MINUTOS`;
-    analysis.innerText = "Controla tu respiración. No toques nada.";
-   
-    const explanations = [
-        "El silencio es donde tu mente se vuelve indestructible.",
-        "Respirar con control es el verdadero superpoder de un líder.",
-        "En la calma encuentras la respuesta que la prisa te oculta.",
-        "Tu energía sigue a tu atención. Domina tu atención ahora."
-    ];
-   
-    speak(explanations[Math.floor(Math.random()*explanations.length)] + " Iniciando respiración guiada.");
-   
-    breath.style.display = "block";
-    runBreathingAnimation();
+    runBreath();
 
-    // Simulación del tiempo (progresivo)
-    let seconds = silenceMinutes * 60;
-    const timer = setInterval(() => {
-        seconds--;
-        if (seconds <= 0) {
+    let t = silenceMinutes * 60;
+    const timer = setInterval(()=>{
+        t--;
+        if(t<=0){
             clearInterval(timer);
-            completeSilence();
+            silenceDone();
         }
-    }, 1000);
+    },1000);
 }
 
-function runBreathingAnimation() {
+function runBreath(){
     const b = document.getElementById("breath");
-    let grow = true;
-    const interval = setInterval(() => {
-        if (document.getElementById("breath").style.display === "none") {
-            clearInterval(interval);
-            return;
-        }
-        b.style.transform = grow ? "scale(2.5)" : "scale(1)";
-        grow = !grow;
-    }, 4000);
+    let grow=true;
+    const i = setInterval(()=>{
+        if(b.style.display==="none"){clearInterval(i);return;}
+        b.style.transform = grow?"scale(2.5)":"scale(1)";
+        grow=!grow;
+    },4000);
 }
 
-function completeSilence() {
-    speak("Reto completado. Tu mente está lista.");
-    silenceMinutes = Math.min(silenceMinutes + 1, 20); // Sube de 1 en 1 hasta 20
+function silenceDone(){
+    hide("breath");
+    silenceMinutes = Math.min(silenceMinutes+1,20);
     missionId++;
-    if (missionId > 35) missionId = 1;
     loadNextMission();
 }
 
-// Sistema de Disparos a Palabras
-function startFloatingSystem() {
-    setInterval(() => {
-        const type = Math.random() > 0.7 ? "bad" : (Math.random() > 0.4 ? "good" : "neutral");
-        const word = wordPool[type][Math.floor(Math.random() * wordPool[type].length)];
-       
+function startFloating(){
+    setInterval(()=>{
+        const type = Math.random()>0.7?"bad":(Math.random()>0.4?"good":"neutral");
+        const word = wordPool[type][Math.floor(Math.random()*wordPool[type].length)];
+
         const el = document.createElement("div");
         el.className = `floating word-${type}`;
         el.innerText = word;
-        el.style.left = Math.random() * 90 + "vw";
-       
-        el.onmousedown = () => {
+        el.style.left = Math.random()*90+"vw";
+
+        el.onmousedown=()=>{
             el.classList.add("blast");
-            if (type === "good") { score += 5; document.getElementById("ok").play(); }
-            if (type === "bad") { score -= 10; document.getElementById("bad").play(); }
-            if (type === "neutral") { /* Las neutrales pueden cambiar si quieres */ }
-            document.getElementById("score-display").innerText = `PUNTOS: ${score}`;
-            setTimeout(() => el.remove(), 400);
+            if(type==="good"){score+=5; play("ok");}
+            if(type==="bad"){score-=10; play("bad");}
+            updateScore();
+            setTimeout(()=>el.remove(),300);
         };
 
         document.body.appendChild(el);
-        setTimeout(() => { if(el) el.remove(); }, 5000);
-    }, 2000);
+        setTimeout(()=>el.remove(),5000);
+
+    },2000);
 }
+
+function updateScore(){
+    setText("score-display",`PUNTOS: ${score}`);
+}
+
+function setText(id,v){document.getElementById(id).innerText=v;}
+function show(id){document.getElementById(id).style.display="block";}
+function hide(id){document.getElementById(id).style.display="none";}
+function clearOptions(){document.getElementById("options").innerHTML="";}
+function play(id){document.getElementById(id).play();}
 
 window.onload = init;
 </script>
+
 </body>
 </html>
