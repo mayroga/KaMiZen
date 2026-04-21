@@ -1,8 +1,3 @@
-/**
- * 🧠 KAMIZEN ENGINE CORE — AL CIELO / AURA BY MAY ROGA LLC
- * FULL SYSTEM RESTORE + LEARNING ENGINE + DECEPTION LOGIC
- */
-
 const KamizenEngine = (() => {
 
     // ==========================================
@@ -63,7 +58,7 @@ const KamizenEngine = (() => {
     };
 
     // ==========================================
-    // 🌌 WORD SYSTEM (FULL DICCIONARY PRESERVED)
+    // 🌌 WORD SYSTEM
     // ==========================================
     const words = {
         power: [
@@ -81,7 +76,7 @@ const KamizenEngine = (() => {
     };
 
     // ==========================================
-    // 🎮 FLOATING SYSTEM (WITH DECEPTION)
+    // 🎮 FLOATING SYSTEM (🧠 ENGANO VISUAL INTELIGENTE)
     // ==========================================
     const Floating = {
 
@@ -101,21 +96,35 @@ const KamizenEngine = (() => {
                 const list = words[type];
                 const word = list[Math.floor(Math.random() * list.length)];
 
+                // ================================
+                // 🧠 ENGANO VISUAL INTELIGENTE
+                // ================================
+                const trick = Math.random() < 0.4;
+
+                let visualType = type;
+
+                if (trick) {
+                    if (type === "power") visualType = "risk";
+                    else if (type === "risk") visualType = "power";
+                    else visualType = "silence";
+                }
+
                 const el = document.createElement("div");
-                el.className = `floating word-${type}`;
+                el.className = `floating word-${visualType}`;
                 el.innerText = word;
                 el.style.left = Math.random() * 90 + "vw";
 
-                // 🎭 DECEPTION LOGIC (IMPORTANT FOR LEARNING)
-                const trick = Math.random() < 0.3;
-
                 if (trick) {
-                    if (type === "power") el.style.borderColor = "red";
-                    if (type === "risk") el.style.borderColor = "green";
+                    el.style.transform = "scale(1.15)";
+                    el.style.filter = "blur(0.3px)";
+                    el.dataset.trick = "true";
                 }
 
                 el.onclick = () => {
 
+                    // ================================
+                    // 🧠 LÓGICA REAL (NO ENGAÑADA)
+                    // ================================
                     if (type === "power") {
                         state.score += 10;
                         Audio.play("win");
@@ -133,13 +142,15 @@ const KamizenEngine = (() => {
 
                     UI.updateScore();
                     explain(word, type);
-                    el.remove();
+
+                    el.classList.add("blast");
+                    setTimeout(() => el.remove(), 300);
                 };
 
                 document.getElementById("game").appendChild(el);
                 setTimeout(() => el.remove(), 5000);
 
-            }, 900);
+            }, 1200);
         },
 
         stop() {
@@ -159,7 +170,6 @@ const KamizenEngine = (() => {
             clearInterval(state.interval);
 
             state.timer = seconds;
-
             UI.updateTimer(state.timer);
 
             state.interval = setInterval(() => {
@@ -210,7 +220,7 @@ const KamizenEngine = (() => {
     };
 
     // ==========================================
-    // 🧘 BREATH SYSTEM (AUTO)
+    // 🧘 BREATH SYSTEM
     // ==========================================
     const Breath = {
 
