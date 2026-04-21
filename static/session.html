@@ -55,7 +55,15 @@ body{
     to{transform:translateY(-20vh);}
 }
 
-.blast{transform:scale(3);opacity:0;transition:.3s}
+/* 💥 EXPLOSIÓN */
+.blast{ 
+    animation: burst 0.4s forwards; 
+    pointer-events: none; 
+}
+
+@keyframes burst{ 
+    to{ transform: scale(4); opacity: 0; } 
+}
 
 /* LEARNING */
 #learning{display:none;margin-top:120px}
@@ -83,9 +91,14 @@ body{
     <p id="mission"></p>
 </div>
 
+<!-- 🔊 AUDIO COMPLETO ACTUALIZADO -->
 <audio id="bg" loop src="/static/sounds/bg.mp3"></audio>
 <audio id="win" src="/static/sounds/trumpet.mp3"></audio>
 <audio id="bad" src="/static/sounds/glass.mp3"></audio>
+
+<!-- NUEVOS (SIN QUITAR NADA) -->
+<audio id="ok" src="/static/sounds/explosion.mp3"></audio>
+<audio id="key" src="/static/sounds/keypress.mp3"></audio>
 
 <script>
 // ================= STATE =================
@@ -99,7 +112,7 @@ let allowInput=true;
 const GAME_1=300;
 const LEARN=360;
 
-// ================= WORDS (UPDATED EXACTO COMO PEDISTE) =================
+// ================= WORDS =================
 const words={
     good:["WILL","VISION","HONOR","COURAGE","BUILD","RISE",
             "FAITH","DISCIPLINE","STRENGTH","VICTORY"],
@@ -114,8 +127,9 @@ const words={
 // ================= INIT =================
 function start(){
     document.getElementById("menu").style.display="none";
-    playMusic();
-    runPhase("game1",GAME_1);
+    // 🔊 desbloqueo de audio como pediste
+    playMusic(); 
+    runPhase("game1", GAME_1);
 }
 
 // ================= PHASES =================
@@ -177,14 +191,24 @@ function spawnWords(){
         el.innerText=word;
         el.style.left=Math.random()*90+"vw";
 
-        el.onclick=()=>{
+        el.onmousedown = () => {
             el.classList.add("blast");
 
-            if(type==="good"){score+=5;play("win");}
-            if(type==="bad"){score-=10;play("bad");}
+            if (type === "good") { 
+                score += 5; 
+                document.getElementById("ok").play(); 
+            }
 
-            updateScore();
-            setTimeout(()=>el.remove(),300);
+            if (type === "bad") { 
+                score -= 10; 
+                document.getElementById("bad").play(); 
+            }
+
+            if (type === "neutral") { }
+
+            document.getElementById("score").innerText = `PUNTOS: ${score}`;
+
+            setTimeout(() => el.remove(), 400);
         };
 
         document.body.appendChild(el);
