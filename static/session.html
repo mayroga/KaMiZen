@@ -6,180 +6,201 @@
 <title>KAMIZEN | AL CIELO PRO</title>
 
 <style>
-:root {
-    --neon-blue:#00f2ff;
-    --neon-green:#39ff14;
-    --neon-red:#ff3131;
-    --neon-gold:#ffdf00;
+
+/* ===================== CORE DARK SYSTEM (NO CHANGES AL FONDO) ===================== */
+body {
+    margin: 0;
+    background: radial-gradient(circle, #001a33, #000); /* ❗ NO CAMBIADO */
+    color: #fff;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    overflow: hidden;
+    user-select: none;
 }
 
-body{
-    margin:0;
-    background:radial-gradient(circle,#001a33,#000); /* NO CAMBIADO */
-    color:#fff;
-    font-family:Segoe UI,Arial;
-    overflow:hidden;
-    user-select:none;
+/* ===================== TOPBAR ===================== */
+#topbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    padding: 12px 20px;
+    z-index: 1000;
+    background: rgba(0,0,0,0.75);
+    border-bottom: 2px solid #00f2ff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-/* ================= TOPBAR ================= */
-#topbar{
-    position:fixed;
-    top:0;
-    width:100%;
-    padding:15px;
-    display:flex;
-    justify-content:space-between;
-    background:rgba(0,0,0,0.6);
-    border-bottom:2px solid var(--neon-blue);
-    z-index:999;
+#score-display {
+    font-size: 1.9rem;
+    font-weight: 900;
+    color: #00f2ff;
+    text-shadow: 0 0 12px #00f2ff;
 }
 
-/* SCORE GRANDE (VISIBLE) */
-#score-display{
-    font-size:2rem;
-    font-weight:900;
-    color:var(--neon-blue);
-    text-shadow:0 0 15px var(--neon-blue);
+/* 🔥 TIMER BIG (IMPORTANT FOR USER ATTENTION) */
+#timer {
+    font-size: 3rem;
+    font-weight: 900;
+    color: #ffffff;
+    text-shadow: 0 0 15px #00f2ff;
+    font-family: monospace;
 }
 
-/* TIMER GRANDE (IMPORTANTE UX) */
-#timer{
-    font-size:3rem;
-    font-weight:900;
-    color:#fff;
+/* ===================== GAME AREA ===================== */
+#game {
+    position: absolute;
+    top: 70px;
+    bottom: 120px;
+    width: 100%;
+    overflow: hidden;
 }
 
-/* ================= GAME ================= */
-#game{
-    position:absolute;
-    top:70px;
-    bottom:140px;
-    width:100%;
-    overflow:hidden;
+/* ===================== FLOATING WORDS ===================== */
+.floating {
+    position: absolute;
+    padding: 10px 22px;
+    border-radius: 40px;
+    font-weight: 900;
+    cursor: pointer;
+    animation: floatUp 5s linear forwards;
+    background: rgba(0,0,0,0.5);
 }
 
-/* FLOATING WORDS */
-.floating{
-    position:absolute;
-    padding:10px 22px;
-    border-radius:40px;
-    font-weight:900;
-    cursor:pointer;
-    animation:floatUp 5s linear forwards;
+.word-good {
+    color: #39ff14;
+    border: 2px solid #39ff14;
+    box-shadow: 0 0 12px #39ff14;
 }
 
-/* COLORES NEON (NO BLANCO) */
-.word-good{border:2px solid var(--neon-green);color:var(--neon-green);}
-.word-bad{border:2px solid var(--neon-red);color:var(--neon-red);}
-.word-neutral{border:2px solid var(--neon-gold);color:var(--neon-gold);}
-
-@keyframes floatUp{
-    from{transform:translateY(110vh);}
-    to{transform:translateY(-20vh);}
+.word-bad {
+    color: #ff3131;
+    border: 2px solid #ff3131;
+    box-shadow: 0 0 12px #ff3131;
 }
 
-/* ================= LEARNING ================= */
-#learning{
-    display:none;
-    position:absolute;
-    top:80px;
-    width:100%;
-    text-align:center;
+.word-neutral {
+    color: #ffdf00;
+    border: 2px solid #ffdf00;
+    box-shadow: 0 0 12px #ffdf00;
 }
 
-#story,#analysis{
-    font-size:1.6rem;
-    margin:10px auto;
-    max-width:850px;
-    color:#f0f0f0;
+@keyframes floatUp {
+    from { transform: translateY(110vh); }
+    to { transform: translateY(-20vh); }
 }
 
-/* ================= BREATH ================= */
-#breath{
-    width:140px;
-    height:140px;
-    margin:20px auto;
-    border-radius:50%;
-    background:radial-gradient(circle,var(--neon-blue),#0033ff);
-    animation:breathe 6s infinite;
-    display:none;
+/* ===================== LEARNING ZONE ===================== */
+#learning {
+    display: none;
+    position: absolute;
+    top: 80px;
+    width: 100%;
+    text-align: center;
 }
 
-@keyframes breathe{
-    0%,100%{transform:scale(.8);}
-    50%{transform:scale(1.3);}
+#story {
+    font-size: 1.7rem;
+    margin: 20px auto;
+    max-width: 850px;
+    color: #fff;
 }
 
-/* ================= EXPLANATION ================= */
-#explain{
-    position:absolute;
-    bottom:120px;
-    width:100%;
-    text-align:center;
-    font-size:1.3rem;
-    color:var(--neon-gold);
-    text-shadow:0 0 10px #000;
+#analysis {
+    font-size: 1.3rem;
+    margin: 10px auto;
+    max-width: 800px;
+    color: #ccc;
 }
 
-/* ================= CONTROLS ================= */
-#controls{
-    position:fixed;
-    bottom:15px;
-    width:100%;
-    text-align:center;
+/* ===================== BREATH SYSTEM ===================== */
+#breath {
+    width: 160px;
+    height: 160px;
+    margin: 25px auto;
+    border-radius: 50%;
+    background: radial-gradient(circle, #00f2ff, #0033ff);
+    box-shadow: 0 0 40px #00f2ff;
+    display: none;
+    animation: breathe 6s infinite ease-in-out;
 }
 
-button{
-    padding:12px 18px;
-    margin:5px;
-    border:2px solid var(--neon-blue);
-    background:rgba(0,242,255,0.08);
-    color:#fff;
-    border-radius:12px;
-    font-weight:bold;
-    cursor:pointer;
+@keyframes breathe {
+    0%,100% { transform: scale(0.8); opacity: 0.6; }
+    50% { transform: scale(1.3); opacity: 1; }
 }
 
-button:hover{
-    box-shadow:0 0 15px var(--neon-blue);
+/* ===================== EXPLANATION ===================== */
+#explain {
+    position: absolute;
+    bottom: 140px;
+    width: 100%;
+    text-align: center;
+    font-size: 1.2rem;
+    color: #ffdf00;
 }
+
+/* ===================== CONTROLS (DARK ONLY) ===================== */
+#controls {
+    position: fixed;
+    bottom: 15px;
+    width: 100%;
+    text-align: center;
+}
+
+button {
+    padding: 12px 18px;
+    margin: 6px;
+    font-size: 15px;
+    border-radius: 12px;
+    border: 2px solid #00f2ff;
+    background: rgba(0,0,0,0.6); /* ❗ DARK ONLY */
+    color: #fff;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+button:hover {
+    box-shadow: 0 0 15px #00f2ff;
+}
+
 </style>
 </head>
 
 <body>
 
-<!-- ================= TOP ================= -->
+<!-- ===================== TOPBAR ===================== -->
 <div id="topbar">
     <div id="score-display">POINTS: 0</div>
     <div id="timer">00:00</div>
 </div>
 
-<!-- ================= GAME ================= -->
+<!-- ===================== GAME ===================== -->
 <div id="game"></div>
 
-<!-- ================= LEARNING ================= -->
+<!-- ===================== LEARNING ===================== -->
 <div id="learning">
     <div id="story"></div>
     <div id="analysis"></div>
     <div id="breath"></div>
 </div>
 
-<!-- EXPLANATION FEEDBACK -->
+<!-- ===================== EXPLANATION ===================== -->
 <div id="explain"></div>
 
-<!-- ================= CONTROLS ================= -->
+<!-- ===================== CONTROLS ===================== -->
 <div id="controls">
     <button onclick="KamizenEngine.init()">START</button>
-    <button onclick="KamizenEngine.changeLang()">ESP / ENG</button>
+    <button onclick="KamizenEngine.changeLang()">ESP/ENG</button>
     <button onclick="KamizenEngine.reset()">RESET</button>
 </div>
 
-<!-- ================= AUDIO ================= -->
+<!-- ===================== AUDIO ===================== -->
 <audio id="bg" loop src="/static/sounds/bg.mp3"></audio>
 <audio id="win" src="/static/sounds/success.mp3"></audio>
 <audio id="bad" src="/static/sounds/glass.mp3"></audio>
 
+<!-- ===================== ENGINE ===================== -->
 <script src="/static/engine.js"></script>
 
 </body>
