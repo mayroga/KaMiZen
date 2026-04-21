@@ -2,143 +2,174 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KAMIZEN | AL CIELO PRO</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>KAMIZEN | AL CIELO PRO STABLE</title>
 
 <style>
+:root {
+    --neon-blue: #00f2ff;
+    --neon-green: #39ff14;
+    --neon-red: #ff3131;
+    --neon-gold: #ffdf00;
+    --glass: rgba(255, 255, 255, 0.08);
+}
+
 body {
     margin: 0;
     background: radial-gradient(circle, #001a33, #000);
     color: #fff;
     font-family: 'Segoe UI', Arial, sans-serif;
-    text-align: center;
     overflow: hidden;
-    cursor: crosshair;
-    transition: background 0.5s;
+    height: 100vh;
+    user-select: none;
 }
 
+/* ===================== TOPBAR ===================== */
 #topbar {
     position: fixed;
     top: 0;
     width: 100%;
     padding: 15px 25px;
     z-index: 100;
-    background: rgba(0,0,0,0.4);
-}
-
-#top-ui {
+    background: rgba(0,0,0,0.6);
+    border-bottom: 2px solid var(--neon-blue);
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
     align-items: center;
-    font-weight: bold;
-    font-size: 1.2rem;
-    color: #00f2ff;
 }
 
 #score-display {
-    font-size: 1.5rem;
-    color: #00f2ff;
+    font-size: 1.6rem;
+    font-weight: 900;
+    color: var(--neon-blue);
+    text-shadow: 0 0 10px var(--neon-blue);
 }
 
 #timer {
-    font-size: 1.2rem;
-    color: #fff;
-    margin-top: 5px;
+    font-size: 1.3rem;
+    font-family: monospace;
 }
 
+/* ===================== GAME ===================== */
 #game {
-    padding-top: 100px;
-}
-
-button {
-    padding: 12px 20px;
-    margin: 8px;
-    font-size: 16px;
-    border: 2px solid #00f2ff;
-    background: rgba(0, 242, 255, 0.1);
-    color: white;
-    border-radius: 12px;
-    cursor: pointer;
-}
-
-button:hover {
-    background: #00f2ff;
-    color: #000;
-}
-
-#controls {
-    position: fixed;
-    bottom: 20px;
+    position: absolute;
+    top: 60px;
+    bottom: 120px;
     width: 100%;
+    overflow: hidden;
 }
 
+/* Floating words */
 .floating {
     position: absolute;
-    padding: 8px 18px;
-    border-radius: 20px;
-    font-weight: bold;
+    padding: 10px 18px;
+    border-radius: 40px;
+    font-weight: 900;
     cursor: pointer;
-    user-select: none;
     animation: floatUp 5s linear forwards;
+    user-select: none;
 }
 
-.word-good { color: #00ff00; border: 2px solid #00ff00; }
-.word-bad { color: #ff0000; border: 2px solid #ff0000; }
-.word-neutral { color: #ffff00; border: 2px solid #ffff00; }
+.word-good {
+    color: var(--neon-green);
+    border: 2px solid var(--neon-green);
+    box-shadow: 0 0 10px var(--neon-green);
+}
+
+.word-bad {
+    color: var(--neon-red);
+    border: 2px solid var(--neon-red);
+    box-shadow: 0 0 10px var(--neon-red);
+}
+
+.word-neutral {
+    color: var(--neon-gold);
+    border: 2px solid var(--neon-gold);
+    box-shadow: 0 0 10px var(--neon-gold);
+}
 
 @keyframes floatUp {
     from { transform: translateY(110vh); }
     to { transform: translateY(-20vh); }
 }
 
+/* ===================== LEARNING ===================== */
 #learning {
     display: none;
+    position: absolute;
+    top: 70px;
+    width: 100%;
+    text-align: center;
     padding: 20px;
 }
 
+#story, #analysis {
+    margin: 10px auto;
+    max-width: 800px;
+    font-size: 1.4rem;
+}
+
 #breath {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    background: radial-gradient(circle, #00f2ff, #0066ff);
+    width: 120px;
+    height: 120px;
     margin: 20px auto;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--neon-blue), #0033ff);
     display: none;
 }
 
-#options button {
-    display: block;
-    width: 80%;
-    margin: 10px auto;
+/* ===================== CONTROLS ===================== */
+#controls {
+    position: fixed;
+    bottom: 20px;
+    width: 100%;
+    text-align: center;
+}
+
+button {
+    padding: 12px 20px;
+    margin: 8px;
+    font-size: 16px;
+    border-radius: 12px;
+    border: 2px solid var(--neon-blue);
+    background: rgba(0,242,255,0.1);
+    color: white;
+    cursor: pointer;
+}
+
+button:hover {
+    background: var(--neon-blue);
+    color: black;
 }
 </style>
 </head>
 
 <body>
 
+<!-- TOPBAR -->
 <div id="topbar">
-    <div id="top-ui">
-        <div>FOCUS: 100%</div>
-        <div id="score-display">POINTS: 0</div>
-        <div>ENERGY: ⚡⚡⚡</div>
-    </div>
+    <div id="score-display">POINTS: 0</div>
     <div id="timer">00:00</div>
 </div>
 
+<!-- GAME AREA -->
 <div id="game"></div>
 
+<!-- LEARNING -->
 <div id="learning">
     <div id="story"></div>
     <div id="analysis"></div>
     <div id="breath"></div>
-    <div id="options"></div>
 </div>
 
+<!-- CONTROLS -->
 <div id="controls">
     <button onclick="startGame()">START</button>
     <button onclick="continueGame()">CONTINUE</button>
-    <button onclick="backGame()">BACK</button>
+    <button onclick="location.reload()">RESET</button>
 </div>
 
+<!-- AUDIO -->
 <audio id="bg" loop src="/static/sounds/bg.mp3"></audio>
 <audio id="win" src="/static/sounds/success.mp3"></audio>
 <audio id="bad" src="/static/sounds/glass.mp3"></audio>
@@ -147,15 +178,16 @@ button:hover {
 let phase = 1;
 let score = 0;
 let timer = 0;
-let interval = null;
-let gameHistory = [];
+let interval;
+let wordInterval;
 
-const wordPool = {
+const pool = {
     good: ["FOCUS","POWER","TRUTH","CONTROL"],
     bad: ["FEAR","LIE","LAZY","ANGER"],
     neutral: ["CITY","WALK","WAIT"]
 };
 
+/* ===================== GAME START ===================== */
 function startGame(){
     reset();
     phase = 1;
@@ -163,18 +195,10 @@ function startGame(){
 }
 
 function continueGame(){
-    if(phase===2) runPhase3();
+    if(phase === 2) runPhase3();
 }
 
-function backGame(){
-    location.reload();
-}
-
-function reset(){
-    clearInterval(interval);
-    document.getElementById("learning").style.display="none";
-}
-
+/* ===================== PHASE 1 ===================== */
 function runPhase1(duration){
     spawnWords();
     runTimer(duration, ()=>{
@@ -184,82 +208,87 @@ function runPhase1(duration){
     });
 }
 
+/* ===================== PHASE 3 ===================== */
 function runPhase3(){
     const duration = score > 0 ? 600 : 180;
     phase = 1;
     runPhase1(duration);
 }
 
+/* ===================== LEARNING ===================== */
 function runLearning(){
-    document.getElementById("learning").style.display="block";
-    document.getElementById("story").innerText="Learning phase started. Follow instructions.";
-    document.getElementById("analysis").innerText="Do not touch. Breathe.";
+    document.getElementById("learning").style.display = "block";
+    document.getElementById("story").innerText = "Learning phase started...";
+    document.getElementById("analysis").innerText = "Breathe. Observe. Do not react.";
+
     startSilence(360);
 }
 
 function startSilence(seconds){
     const breath = document.getElementById("breath");
-    breath.style.display="block";
+    breath.style.display = "block";
 
     let touched = false;
-    document.body.onclick = ()=> touched=true;
+    document.body.onclick = () => touched = true;
 
     runTimer(seconds, ()=>{
-        breath.style.display="none";
+        breath.style.display = "none";
         document.body.onclick = null;
         phase = 3;
         runPhase3();
     });
 
-    if(touched){
-        score -= 20;
-    }
+    if(touched) score -= 20;
 }
 
-function runTimer(seconds, callback){
+/* ===================== TIMER ===================== */
+function runTimer(seconds, cb){
     timer = seconds;
     updateTimer();
 
     interval = setInterval(()=>{
         timer--;
         updateTimer();
-        if(timer<=0){
+
+        if(timer <= 0){
             clearInterval(interval);
             saveScore();
-            callback();
+            cb();
         }
     },1000);
 }
 
 function updateTimer(){
-    const m = Math.floor(timer/60).toString().padStart(2,'0');
-    const s = (timer%60).toString().padStart(2,'0');
+    const m = String(Math.floor(timer/60)).padStart(2,'0');
+    const s = String(timer%60).padStart(2,'0');
     document.getElementById("timer").innerText = m+":"+s;
 }
 
-let wordInterval;
-
+/* ===================== WORD SYSTEM ===================== */
 function spawnWords(){
     wordInterval = setInterval(()=>{
-        const type = Math.random()>0.7?"bad":(Math.random()>0.4?"good":"neutral");
-        const word = wordPool[type][Math.floor(Math.random()*wordPool[type].length)];
+        const type =
+            Math.random()>0.7 ? "bad" :
+            Math.random()>0.4 ? "good" : "neutral";
+
+        const word = pool[type][Math.floor(Math.random()*pool[type].length)];
 
         const el = document.createElement("div");
         el.className = "floating word-"+type;
         el.innerText = word;
         el.style.left = Math.random()*90+"vw";
 
-        el.onmousedown = ()=>{
+        el.onclick = ()=>{
             if(type==="good"){ score+=5; play("win"); }
             if(type==="bad"){ score-=10; play("bad"); }
             updateScore();
             el.remove();
         };
 
-        document.body.appendChild(el);
+        document.getElementById("game").appendChild(el);
         setTimeout(()=>el.remove(),5000);
 
-    },1500);
+    },1300);
 }
 
 function stopWords(){
@@ -267,21 +296,30 @@ function stopWords(){
     document.querySelectorAll(".floating").forEach(e=>e.remove());
 }
 
+/* ===================== SCORE ===================== */
 function updateScore(){
     document.getElementById("score-display").innerText = "POINTS: "+score;
 }
 
+function saveScore(){
+    console.log("Saved score:", score);
+}
+
+/* ===================== AUDIO ===================== */
 function play(id){
     const a = document.getElementById(id);
-    a.currentTime=0;
+    if(!a) return;
+    a.currentTime = 0;
     a.play();
 }
 
-function saveScore(){
-    gameHistory.push(score);
-    if(gameHistory.length>3) gameHistory.shift();
+function reset(){
+    clearInterval(interval);
+    clearInterval(wordInterval);
+    document.getElementById("learning").style.display = "none";
 }
 
+/* ===================== INIT ===================== */
 window.onload = ()=>{
     document.getElementById("bg").play().catch(()=>{});
 };
