@@ -74,7 +74,7 @@ body{
 
 <div id="top-ui">
     <div>FOCUS: 100%</div>
-    <div id="score">PUNTOS: 0</div>
+    <div id="score">POINTS: 0</div>
     <div>ENERGY: ⚡⚡⚡</div>
 </div>
 
@@ -84,6 +84,8 @@ body{
     <button onclick="start()">START</button>
     <button onclick="start()">CONTINUE</button>
     <button onclick="reset()">BACK</button>
+    <!-- 🌍 BOTÓN IDIOMA -->
+    <button onclick="toggleLang()">ES / EN</button>
 </div>
 
 <div id="learning">
@@ -91,12 +93,10 @@ body{
     <p id="mission"></p>
 </div>
 
-<!-- 🔊 AUDIO COMPLETO ACTUALIZADO -->
+<!-- AUDIO -->
 <audio id="bg" loop src="/static/sounds/bg.mp3"></audio>
 <audio id="win" src="/static/sounds/trumpet.mp3"></audio>
 <audio id="bad" src="/static/sounds/glass.mp3"></audio>
-
-<!-- NUEVOS (SIN QUITAR NADA) -->
 <audio id="ok" src="/static/sounds/explosion.mp3"></audio>
 <audio id="key" src="/static/sounds/keypress.mp3"></audio>
 
@@ -108,9 +108,40 @@ let phase="menu";
 let timer,spawn;
 let allowInput=true;
 
+// 🌍 idioma
+let lang = "en";
+
 // durations
 const GAME_1=300;
 const LEARN=360;
+
+// ================= TEXTOS =================
+const texts = {
+    en: {
+        start: "START",
+        continue: "CONTINUE",
+        back: "BACK",
+        points: "POINTS",
+        missions: [
+            "Breathe without touching the screen.",
+            "Control your impulse.",
+            "Focus without distractions.",
+            "Master your mind."
+        ]
+    },
+    es: {
+        start: "INICIAR",
+        continue: "CONTINUAR",
+        back: "ATRÁS",
+        points: "PUNTOS",
+        missions: [
+            "Respira sin tocar la pantalla.",
+            "Controla tu impulso.",
+            "Concéntrate sin distracciones.",
+            "Domina tu mente."
+        ]
+    }
+};
 
 // ================= WORDS =================
 const words={
@@ -124,41 +155,56 @@ const words={
             "BREATHE","STILL","SOUL","FOCUS"]
 };
 
-// ================= 🧠 MEANINGS (AGREGADO EXACTO) =================
+// ================= MEANINGS =================
 const meanings = {
-    WILL: "Decidir hacer algo aunque sea difícil.",
-    VISION: "Pensar en tu futuro antes de actuar.",
-    HONOR: "Hacer lo correcto incluso cuando nadie mira.",
-    COURAGE: "Actuar aunque tengas miedo.",
-    BUILD: "Crear algo mejor con esfuerzo.",
-    RISE: "Levantarte después de fallar.",
-    FAITH: "Creer en ti cuando todo parece difícil.",
-    DISCIPLINE: "Hacer lo que debes sin excusas.",
-    STRENGTH: "Controlarte a ti mismo.",
-    VICTORY: "Ganar después de resistir.",
+    WILL: "Decide to act even if it's hard.",
+    VISION: "Think about your future before acting.",
+    HONOR: "Do right even when unseen.",
+    COURAGE: "Act despite fear.",
+    BUILD: "Create something better.",
+    RISE: "Stand up after failing.",
+    FAITH: "Believe when it's difficult.",
+    DISCIPLINE: "Do what must be done.",
+    STRENGTH: "Control yourself.",
+    VICTORY: "Win after resisting.",
 
-    CALM: "Mantenerte tranquilo en presión.",
-    LISTEN: "Escuchar antes de reaccionar.",
-    WAIT: "No actuar impulsivamente.",
-    PEACE: "Tener control interno.",
-    PRAY: "Reflexionar y conectar contigo.",
-    INSIDE: "Pensar antes de actuar.",
-    BREATHE: "Controlar tu cuerpo.",
-    STILL: "Quedarte quieto para pensar.",
-    SOUL: "Tu parte más profunda.",
-    FOCUS: "Concentrarte sin distracciones",
+    CALM: "Stay relaxed under pressure.",
+    LISTEN: "Hear before reacting.",
+    WAIT: "Don't act impulsively.",
+    PEACE: "Inner control.",
+    PRAY: "Reflect deeply.",
+    INSIDE: "Think before acting.",
+    BREATHE: "Control your body.",
+    STILL: "Stay still to think.",
+    SOUL: "Your deepest part.",
+    FOCUS: "No distractions.",
 
-    NOISE: "Distracción que te debilita.",
-    EXCUSE: "Mentira para no crecer.",
-    QUITTING: "Rendirse antes de lograrlo.",
-    EGO: "Creerte más sin demostrarlo.",
-    HATE: "Energía que destruye.",
-    CHAOS: "Falta de control.",
-    LAZY: "Evitar el esfuerzo.",
-    FEAR: "Miedo que te detiene.",
-    LIE: "Falsedad que te daña.",
-    ANGER: "Reacción sin control"
+    NOISE: "Weak distraction.",
+    EXCUSE: "Lie to avoid growth.",
+    QUITTING: "Stop too early.",
+    EGO: "False self-importance.",
+    HATE: "Destructive energy.",
+    CHAOS: "No control.",
+    LAZY: "Avoid effort.",
+    FEAR: "Stops action.",
+    LIE: "Damaging falsehood.",
+    ANGER: "Uncontrolled reaction"
 };
+
+// ================= LANGUAGE =================
+function toggleLang(){
+    lang = lang === "en" ? "es" : "en";
+    applyLang();
+}
+
+function applyLang(){
+    document.querySelector("#menu button:nth-child(1)").innerText = texts[lang].start;
+    document.querySelector("#menu button:nth-child(2)").innerText = texts[lang].continue;
+    document.querySelector("#menu button:nth-child(3)").innerText = texts[lang].back;
+
+    document.getElementById("score").innerText =
+        `${texts[lang].points}: ${score}`;
+}
 
 // ================= INIT =================
 function start(){
@@ -239,11 +285,10 @@ function spawnWords(){
                 document.getElementById("bad").play(); 
             }
 
-            if (type === "neutral") { }
+            document.getElementById("score").innerText =
+                `${texts[lang].points}: ${score}`;
 
-            document.getElementById("score").innerText = `PUNTOS: ${score}`;
-
-            setTimeout(() => el.remove(), 400);
+            setTimeout(()=>el.remove(),400);
         };
 
         document.body.appendChild(el);
@@ -271,39 +316,14 @@ function showLearning(){
 
     document.getElementById("lvl").innerText="LEVEL "+level;
 
-    const missions=[
-        "Respira sin tocar la pantalla.",
-        "Controla tu impulso.",
-        "Concéntrate sin distracciones.",
-        "Domina tu mente."
-    ];
+    const missions = texts[lang].missions;
 
     document.getElementById("mission").innerText=
         missions[Math.floor(Math.random()*missions.length)];
-
-    document.body.onclick=()=>{
-        if(!allowInput){
-            score-=20;
-            play("bad");
-            updateScore();
-        }
-    };
 }
 
 function hideLearning(){
     document.getElementById("learning").style.display="none";
-}
-
-// ================= SCORE =================
-function updateScore(){
-    document.getElementById("score").innerText="PUNTOS: "+score;
-}
-
-function saveScore(){
-    let history=JSON.parse(localStorage.getItem("scores")||"[]");
-    history.push(score);
-    if(history.length>3)history.shift();
-    localStorage.setItem("scores",JSON.stringify(history));
 }
 
 // ================= AUDIO =================
@@ -314,10 +334,6 @@ function playMusic(){
     bg.play().catch(()=>{});
 }
 
-function play(id){
-    document.getElementById(id).play();
-}
-
 // ================= CONTROL =================
 function clearAll(){
     clearInterval(timer);
@@ -325,9 +341,11 @@ function clearAll(){
 }
 
 function reset(){
-    saveScore();
     location.reload();
 }
+
+// aplicar idioma inicial
+applyLang();
 </script>
 
 </body>
