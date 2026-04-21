@@ -3,284 +3,220 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>KAMIZEN | AL CIELO PRO STABLE</title>
+<title>KAMIZEN | AL CIELO PRO</title>
 
 <style>
 :root {
-    --neon-blue: #00f2ff;
-    --neon-green: #39ff14;
-    --neon-red: #ff3131;
-    --neon-gold: #ffdf00;
-    --glass: rgba(255, 255, 255, 0.08);
+    --blue:#00f2ff;
+    --green:#39ff14;
+    --red:#ff3131;
+    --gold:#ffdf00;
 }
 
-body {
-    margin: 0;
-    background: radial-gradient(circle, #001a33, #000);
-    color: #fff;
-    font-family: 'Segoe UI', Arial, sans-serif;
-    overflow: hidden;
-    height: 100vh;
-    user-select: none;
+body{
+    margin:0;
+    background:radial-gradient(circle,#001a33,#000);
+    color:#fff;
+    font-family:Segoe UI,Arial;
+    overflow:hidden;
+    user-select:none;
 }
 
-/* ===================== TOPBAR ===================== */
-#topbar {
-    position: fixed;
-    top: 0;
-    width: 100%;
-    padding: 15px 25px;
-    z-index: 100;
-    background: rgba(0,0,0,0.6);
-    border-bottom: 2px solid var(--neon-blue);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+/* ================= TOPBAR ================= */
+#topbar{
+    position:fixed;
+    top:0;
+    width:100%;
+    display:flex;
+    justify-content:space-between;
+    padding:15px;
+    background:rgba(0,0,0,.7);
+    border-bottom:2px solid var(--blue);
+    z-index:1000;
 }
 
-#score-display {
-    font-size: 1.6rem;
-    font-weight: 900;
-    color: var(--neon-blue);
-    text-shadow: 0 0 10px var(--neon-blue);
+#score-display{
+    font-size:1.8rem;
+    color:var(--blue);
+    font-weight:900;
 }
 
-#timer {
-    font-size: 1.3rem;
-    font-family: monospace;
+#timer{
+    font-size:2.5rem; /* BIG IMPORTANT */
+    font-weight:900;
+    color:#fff;
 }
 
-/* ===================== GAME ===================== */
-#game {
-    position: absolute;
-    top: 60px;
-    bottom: 120px;
-    width: 100%;
-    overflow: hidden;
+/* ================= GAME ================= */
+#game{
+    position:absolute;
+    top:70px;
+    bottom:120px;
+    width:100%;
+    overflow:hidden;
 }
 
-/* Floating words */
-.floating {
-    position: absolute;
-    padding: 10px 18px;
-    border-radius: 40px;
-    font-weight: 900;
-    cursor: pointer;
-    animation: floatUp 5s linear forwards;
-    user-select: none;
+/* FLOATING WORDS */
+.floating{
+    position:absolute;
+    padding:10px 20px;
+    border-radius:40px;
+    font-weight:900;
+    cursor:pointer;
+    animation:floatUp 5s linear forwards;
 }
 
-.word-good {
-    color: var(--neon-green);
-    border: 2px solid var(--neon-green);
-    box-shadow: 0 0 10px var(--neon-green);
+.word-good{border:2px solid var(--green);color:var(--green);}
+.word-bad{border:2px solid var(--red);color:var(--red);}
+.word-neutral{border:2px solid var(--gold);color:var(--gold);}
+
+@keyframes floatUp{
+    from{transform:translateY(110vh);}
+    to{transform:translateY(-20vh);}
 }
 
-.word-bad {
-    color: var(--neon-red);
-    border: 2px solid var(--neon-red);
-    box-shadow: 0 0 10px var(--neon-red);
+/* ================= LEARNING ================= */
+#learning{
+    display:none;
+    position:absolute;
+    top:80px;
+    width:100%;
+    text-align:center;
 }
 
-.word-neutral {
-    color: var(--neon-gold);
-    border: 2px solid var(--neon-gold);
-    box-shadow: 0 0 10px var(--neon-gold);
+#story,#analysis{
+    font-size:1.5rem;
+    margin:10px auto;
+    max-width:800px;
 }
 
-@keyframes floatUp {
-    from { transform: translateY(110vh); }
-    to { transform: translateY(-20vh); }
+/* BREATH CIRCLE AUTO */
+#breath{
+    width:140px;
+    height:140px;
+    margin:20px auto;
+    border-radius:50%;
+    background:radial-gradient(circle,#00f2ff,#0033ff);
+    animation:breathe 6s infinite;
 }
 
-/* ===================== LEARNING ===================== */
-#learning {
-    display: none;
-    position: absolute;
-    top: 70px;
-    width: 100%;
-    text-align: center;
-    padding: 20px;
+@keyframes breathe{
+    0%,100%{transform:scale(.8);}
+    50%{transform:scale(1.3);}
 }
 
-#story, #analysis {
-    margin: 10px auto;
-    max-width: 800px;
-    font-size: 1.4rem;
+/* ================= CONTROLS ================= */
+#controls{
+    position:fixed;
+    bottom:15px;
+    width:100%;
+    text-align:center;
 }
 
-#breath {
-    width: 120px;
-    height: 120px;
-    margin: 20px auto;
-    border-radius: 50%;
-    background: radial-gradient(circle, var(--neon-blue), #0033ff);
-    display: none;
+button{
+    padding:12px 18px;
+    margin:5px;
+    border:2px solid var(--blue);
+    background:rgba(0,242,255,.1);
+    color:#fff;
+    border-radius:10px;
 }
 
-/* ===================== CONTROLS ===================== */
-#controls {
-    position: fixed;
-    bottom: 20px;
-    width: 100%;
-    text-align: center;
-}
-
-button {
-    padding: 12px 20px;
-    margin: 8px;
-    font-size: 16px;
-    border-radius: 12px;
-    border: 2px solid var(--neon-blue);
-    background: rgba(0,242,255,0.1);
-    color: white;
-    cursor: pointer;
-}
-
-button:hover {
-    background: var(--neon-blue);
-    color: black;
+/* ================= EXPLANATION ================= */
+#explain{
+    position:absolute;
+    bottom:140px;
+    width:100%;
+    text-align:center;
+    font-size:1.3rem;
+    color:var(--gold);
 }
 </style>
 </head>
 
 <body>
 
-<!-- TOPBAR -->
 <div id="topbar">
     <div id="score-display">POINTS: 0</div>
     <div id="timer">00:00</div>
 </div>
 
-<!-- GAME AREA -->
 <div id="game"></div>
 
-<!-- LEARNING -->
 <div id="learning">
     <div id="story"></div>
     <div id="analysis"></div>
     <div id="breath"></div>
 </div>
 
-<!-- CONTROLS -->
+<div id="explain"></div>
+
 <div id="controls">
     <button onclick="startGame()">START</button>
-    <button onclick="continueGame()">CONTINUE</button>
+    <button onclick="toggleLang()">ESP/ENG</button>
     <button onclick="location.reload()">RESET</button>
 </div>
 
-<!-- AUDIO -->
 <audio id="bg" loop src="/static/sounds/bg.mp3"></audio>
 <audio id="win" src="/static/sounds/success.mp3"></audio>
 <audio id="bad" src="/static/sounds/glass.mp3"></audio>
 
 <script>
-let phase = 1;
-let score = 0;
-let timer = 0;
+
+let score=0;
+let timer=0;
 let interval;
 let wordInterval;
+let lang="en";
 
-const pool = {
-    good: ["FOCUS","POWER","TRUTH","CONTROL"],
-    bad: ["FEAR","LIE","LAZY","ANGER"],
-    neutral: ["CITY","WALK","WAIT"]
+/* ================= WORD ENGINE (WITH DECEPTION) ================= */
+const words={
+    good:["FOCUS","POWER","TRUTH","CONTROL","DISCIPLINE"],
+    bad:["FEAR","LIE","LAZY","ANGER","CHAOS"],
+    neutral:["CITY","WALK","WAIT","WATCH"]
 };
 
-/* ===================== GAME START ===================== */
 function startGame(){
-    reset();
-    phase = 1;
-    runPhase1(300);
+    runPhase(300);
 }
 
-function continueGame(){
-    if(phase === 2) runPhase3();
-}
-
-/* ===================== PHASE 1 ===================== */
-function runPhase1(duration){
+/* ================= PHASE ================= */
+function runPhase(time){
     spawnWords();
-    runTimer(duration, ()=>{
-        phase = 2;
+    runTimer(time,()=>{
         stopWords();
-        runLearning();
+        startLearning();
     });
 }
 
-/* ===================== PHASE 3 ===================== */
-function runPhase3(){
-    const duration = score > 0 ? 600 : 180;
-    phase = 1;
-    runPhase1(duration);
-}
-
-/* ===================== LEARNING ===================== */
-function runLearning(){
-    document.getElementById("learning").style.display = "block";
-    document.getElementById("story").innerText = "Learning phase started...";
-    document.getElementById("analysis").innerText = "Breathe. Observe. Do not react.";
-
-    startSilence(360);
-}
-
-function startSilence(seconds){
-    const breath = document.getElementById("breath");
-    breath.style.display = "block";
-
-    let touched = false;
-    document.body.onclick = () => touched = true;
-
-    runTimer(seconds, ()=>{
-        breath.style.display = "none";
-        document.body.onclick = null;
-        phase = 3;
-        runPhase3();
-    });
-
-    if(touched) score -= 20;
-}
-
-/* ===================== TIMER ===================== */
-function runTimer(seconds, cb){
-    timer = seconds;
-    updateTimer();
-
-    interval = setInterval(()=>{
-        timer--;
-        updateTimer();
-
-        if(timer <= 0){
-            clearInterval(interval);
-            saveScore();
-            cb();
-        }
-    },1000);
-}
-
-function updateTimer(){
-    const m = String(Math.floor(timer/60)).padStart(2,'0');
-    const s = String(timer%60).padStart(2,'0');
-    document.getElementById("timer").innerText = m+":"+s;
-}
-
-/* ===================== WORD SYSTEM ===================== */
+/* ================= WORD SPAWN (DECEPTION SYSTEM) ================= */
 function spawnWords(){
-    wordInterval = setInterval(()=>{
-        const type =
-            Math.random()>0.7 ? "bad" :
-            Math.random()>0.4 ? "good" : "neutral";
+    wordInterval=setInterval(()=>{
 
-        const word = pool[type][Math.floor(Math.random()*pool[type].length)];
+        const type=Math.random()>0.65?"bad":(Math.random()>0.4?"good":"neutral");
+        const word=words[type][Math.floor(Math.random()*words[type].length)];
 
-        const el = document.createElement("div");
-        el.className = "floating word-"+type;
-        el.innerText = word;
-        el.style.left = Math.random()*90+"vw";
+        const el=document.createElement("div");
+        el.className="floating word-"+type;
+        el.innerText=word;
+        el.style.left=Math.random()*90+"vw";
 
-        el.onclick = ()=>{
-            if(type==="good"){ score+=5; play("win"); }
-            if(type==="bad"){ score-=10; play("bad"); }
+        /* 🎭 DECEPTION SYSTEM */
+        const fakeColor=Math.random()>0.7;
+
+        if(fakeColor){
+            el.style.borderColor=
+                type==="good"?"red":
+                type==="bad"?"green":"yellow";
+        }
+
+        el.onclick=()=>{
+
+            if(type==="good"){ score+=10; play("win"); }
+            if(type==="bad"){ score-=15; play("bad"); }
+            if(type==="neutral"){ score+=5; }
+
+            explain(word,type);
             updateScore();
             el.remove();
         };
@@ -288,41 +224,102 @@ function spawnWords(){
         document.getElementById("game").appendChild(el);
         setTimeout(()=>el.remove(),5000);
 
-    },1300);
+    },900);
 }
 
+/* ================= LEARNING PHASE ================= */
+function startLearning(){
+    document.getElementById("learning").style.display="block";
+
+    speak("Learning phase started. Observe carefully.");
+
+    document.getElementById("story").innerText =
+    lang==="en"
+    ?"You must learn that not everything you see is true."
+    :"No todo lo que ves es verdad.";
+
+    document.getElementById("analysis").innerText =
+    lang==="en"
+    ?"Colors can lie. Meaning is deeper."
+    :"Los colores pueden mentir. El significado es más profundo.";
+
+    autoBreath();
+}
+
+/* ================= BREATH AUTO ================= */
+function autoBreath(){
+    let breath=document.getElementById("breath");
+    let t=360;
+
+    let i=setInterval(()=>{
+        t--;
+        if(t<=0){clearInterval(i);runPhase(600);}
+    },1000);
+}
+
+/* ================= TIMER ================= */
+function runTimer(s,cb){
+    timer=s;
+    updateTimer();
+
+    interval=setInterval(()=>{
+        timer--;
+        updateTimer();
+        if(timer<=0){
+            clearInterval(interval);
+            cb();
+        }
+    },1000);
+}
+
+function updateTimer(){
+    let m=Math.floor(timer/60).toString().padStart(2,'0');
+    let s=(timer%60).toString().padStart(2,'0');
+    document.getElementById("timer").innerText=m+":"+s;
+}
+
+/* ================= UI ================= */
+function updateScore(){
+    document.getElementById("score-display").innerText="POINTS: "+score;
+}
+
+/* ================= AUDIO ================= */
+function play(id){
+    let a=document.getElementById(id);
+    if(a){a.currentTime=0;a.play();}
+}
+
+/* ================= SPEECH ================= */
+function speak(text){
+    let u=new SpeechSynthesisUtterance(text);
+    u.lang=lang==="en"?"en-US":"es-ES";
+    u.rate=0.9;
+    speechSynthesis.speak(u);
+}
+
+/* ================= EXPLANATION ================= */
+function explain(word,type){
+    document.getElementById("explain").innerText =
+    lang==="en"
+    ? `${word} = ${type.toUpperCase()} → learn the pattern, not the color`
+    : `${word} = ${type.toUpperCase()} → aprende el patrón, no el color`;
+}
+
+/* ================= STOP ================= */
 function stopWords(){
     clearInterval(wordInterval);
     document.querySelectorAll(".floating").forEach(e=>e.remove());
 }
 
-/* ===================== SCORE ===================== */
-function updateScore(){
-    document.getElementById("score-display").innerText = "POINTS: "+score;
+/* ================= LANG ================= */
+function toggleLang(){
+    lang=lang==="en"?"es":"en";
 }
 
-function saveScore(){
-    console.log("Saved score:", score);
-}
-
-/* ===================== AUDIO ===================== */
-function play(id){
-    const a = document.getElementById(id);
-    if(!a) return;
-    a.currentTime = 0;
-    a.play();
-}
-
-function reset(){
-    clearInterval(interval);
-    clearInterval(wordInterval);
-    document.getElementById("learning").style.display = "none";
-}
-
-/* ===================== INIT ===================== */
-window.onload = ()=>{
+window.onload=()=>{
     document.getElementById("bg").play().catch(()=>{});
 };
+
 </script>
 
 </body>
