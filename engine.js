@@ -1,8 +1,6 @@
 /**
- * 🧠 KAMIZEN ENGINE CORE — AL CIELO PRO
- * SISTEMA DE ASESORÍA DE VIDA: SUPERVIVENCIA, VALORES Y ESTRATEGIA SOCIAL
- * INTEGRACIÓN TOTAL: SONIDOS DOPAMINA + CRISTAL ROTO + EXPLICACIONES DE VIDA
- * + BACKUP SAFE SYSTEM (ANTI-CRASH) + VISUAL EXPLOSION BOOST
+ * 🧠 KAMIZEN ENGINE CORE — AL CIELO PRO (STABLE VERSION)
+ * FIXED: Anti-freeze + Timer Control + Speech Safe + Clean Flow
  */
 
 const KamizenEngine = (() => {
@@ -14,35 +12,29 @@ const KamizenEngine = (() => {
         score: 0,
         lang: "en",
         missionIndex: 0,
-        missions: [],
-        current: null,
         locked: false,
         mode: "mission",
+        backupMode: false
+    };
 
-        // 🛡️ BACKUP MODE (si API falla)
-        backupMode: false,
-
-        // Palabras que moldean el ADN del niño
-        words: {
-            good: [
-                { en: "FOCUS", es: "ENFOQUE", life: { en: "Focus is your shield against the world's noise.", es: "El enfoque es tu escudo contra el ruido del mundo." }},
-                { en: "SACRIFICE", es: "SACRIFICIO", life: { en: "Behind every comfort, there is someone's hard work.", es: "Detrás de cada comodidad, hay el trabajo duro de alguien." }},
-                { en: "ALERT", es: "ALERTA", life: { en: "A warrior sees the glitch before it becomes a problem.", es: "Un guerrero ve el fallo antes de que se convierta en problema." }},
-                { en: "RESILIENCE", es: "RESILIENCIA", life: { en: "Falling is part of the path; getting up is the goal.", es: "Caer es parte del camino; levantarse es el objetivo." }},
-                { en: "ACTION", es: "ACCIÓN", life: { en: "Doing nothing has consequences. Movement is life.", es: "No hacer nada tiene consecuencias. El movimiento es vida." }}
-            ],
-            bad: [
-                { en: "FEAR", es: "MIEDO", life: { en: "Fear is a lie designed to freeze your potential.", es: "El miedo es una mentira diseñada para congelar tu potencial." }},
-                { en: "DISTRACTION", es: "DISTRACCIÓN", life: { en: "In the street, a distracted mind is an open door.", es: "En la calle, una mente distraída es una puerta abierta." }},
-                { en: "EGO", es: "EGO", life: { en: "Ego blinds you from seeing reality as it truly is.", es: "El ego te ciega y no te deja ver la realidad como es." }},
-                { en: "IMPULSE", es: "IMPULSO", life: { en: "Reacting without thinking gives power to your enemy.", es: "Reaccionar sin pensar le da el poder a tu enemigo." }},
-                { en: "VICTIM", es: "VÍCTIMA", life: { en: "Victims complain; warriors adapt and overcome.", es: "Las víctimas se quejan; los guerreros se adaptan y vencen." }}
-            ]
+    // =====================================================
+    // ⏱️ TIMER MANAGER (ANTI FREEZE)
+    // =====================================================
+    const Timer = {
+        timers: [],
+        set(fn, time) {
+            const t = setTimeout(fn, time);
+            this.timers.push(t);
+            return t;
+        },
+        clearAll() {
+            this.timers.forEach(t => clearTimeout(t));
+            this.timers = [];
         }
     };
 
     // =====================================================
-    // 🔊 SISTEMA DE AUDIO
+    // 🔊 AUDIO SYSTEM
     // =====================================================
     const AudioSystem = {
         init() {
@@ -69,61 +61,65 @@ const KamizenEngine = (() => {
     };
 
     // =====================================================
-    // 🗣️ VOZ
+    // 🗣️ SPEECH SAFE
     // =====================================================
     const Speech = {
+        current: null,
+
         say(text) {
             if (!text) return;
-            speechSynthesis.cancel();
-            const u = new SpeechSynthesisUtterance(text);
-            u.lang = state.lang === "es" ? "es-ES" : "en-US";
-            u.rate = 0.9;
-            speechSynthesis.speak(u);
+
+            try {
+                speechSynthesis.cancel();
+
+                if (this.current) {
+                    this.current.onend = null;
+                    this.current.onerror = null;
+                }
+
+                const u = new SpeechSynthesisUtterance(text);
+                this.current = u;
+
+                u.lang = state.lang === "es" ? "es-ES" : "en-US";
+                u.rate = 0.9;
+
+                speechSynthesis.speak(u);
+
+            } catch (e) {
+                console.warn("Speech error:", e);
+            }
         }
     };
 
     // =====================================================
-    // 🌌 PALABRAS FLOTANTES (MEJORADAS + EXPLOSIÓN)
+    // 🌌 FLOATING SYSTEM (OPTIMIZADO)
     // =====================================================
     const Floating = {
 
-        spawn() {
-            if (state.mode !== "mission" || state.locked) return;
+        words: [
+            "FOCUS", "CALM", "BREATH", "CONTROL",
+            "DISTRACTION", "IMPULSE", "EGO"
+        ],
 
-            const isGood = Math.random() > 0.4;
-            const pool = isGood ? state.words.good : state.words.bad;
-            const item = pool[Math.floor(Math.random() * pool.length)];
+        spawn() {
+            if (state.locked || state.mode !== "mission") return;
 
             const el = document.createElement("div");
             el.className = "floating";
-            el.innerText = state.lang === "es" ? item.es : item.en;
+            el.innerText = this.words[Math.floor(Math.random() * this.words.length)];
 
             el.style.left = (Math.random() * 85 + 5) + "vw";
-            el.style.color = isGood ? "#00f2ff" : "#ff4444";
-            el.style.border = `2px solid ${isGood ? "#00f2ff" : "#ff4444"}`;
 
             el.onclick = () => {
+                state.score += 5;
+                AudioSystem.playSuccess();
 
-                const lesson = item.life[state.lang];
-
-                if (isGood) {
-                    state.score += 10;
-                    AudioSystem.playSuccess();
-                } else {
-                    state.score -= 20;
-                    AudioSystem.playGlass();
-                }
-
-                document.getElementById("analysis").innerText = lesson;
-                Speech.say(lesson);
                 document.getElementById("points-display").innerText = "POINTS: " + state.score;
 
-                // 💥 EXPLOSIÓN GRANDE (VISUAL)
-                el.style.transform = "scale(6)";
+                el.style.transform = "scale(4)";
                 el.style.opacity = "0";
-                el.style.transition = "0.25s ease";
 
-                setTimeout(() => el.remove(), 300);
+                setTimeout(() => el.remove(), 200);
             };
 
             document.body.appendChild(el);
@@ -134,7 +130,9 @@ const KamizenEngine = (() => {
         },
 
         start() {
-            setInterval(() => this.spawn(), 1400);
+            setInterval(() => {
+                if (!state.locked) this.spawn();
+            }, 1800);
         }
     };
 
@@ -144,7 +142,10 @@ const KamizenEngine = (() => {
     const Decision = {
         handle(opt) {
 
+            if (state.locked) return;
+
             state.locked = true;
+            Timer.clearAll();
 
             const box = document.getElementById("explanation-box");
             const explanation = opt.explanation[state.lang];
@@ -154,18 +155,11 @@ const KamizenEngine = (() => {
             if (opt.correct) {
                 state.score += 50;
                 AudioSystem.playSuccess();
-
-                feedback = (state.lang === "es"
-                    ? "ESTRATEGIA CORRECTA:\n"
-                    : "CORRECT STRATEGY:\n") + explanation;
-
+                feedback = (state.lang === "es" ? "ESTRATEGIA CORRECTA:\n" : "CORRECT STRATEGY:\n") + explanation;
             } else {
                 state.score -= 40;
                 AudioSystem.playGlass();
-
-                feedback = (state.lang === "es"
-                    ? "FALLO DE JUICIO:\n"
-                    : "JUDGMENT FAILURE:\n") + explanation;
+                feedback = (state.lang === "es" ? "FALLO:\n" : "FAILURE:\n") + explanation;
             }
 
             box.innerText = feedback;
@@ -175,23 +169,26 @@ const KamizenEngine = (() => {
 
             Speech.say(feedback);
 
-            setTimeout(() => {
+            Timer.set(() => {
                 box.style.display = "none";
                 state.locked = false;
                 Mission.next();
-            }, 8000);
+            }, 5000);
         }
     };
 
     // =====================================================
-    // 📂 MISSION SYSTEM + BACKUP
+    // 📂 MISSION SYSTEM
     // =====================================================
     const Mission = {
 
         async load() {
 
+            if (state.locked) return;
+            state.locked = true;
+
             try {
-                const res = await fetch(`/api/mission/${state.missionIndex + 1}`);
+                const res = await fetch(`/api/mission/next`);
 
                 if (!res.ok) throw new Error("API FAIL");
 
@@ -202,15 +199,19 @@ const KamizenEngine = (() => {
 
             } catch (e) {
 
-                console.warn("⚠️ BACKUP MODE ACTIVATED");
+                console.warn("⚠️ BACKUP MODE");
 
                 state.backupMode = true;
-
                 this.renderBackup();
+
+            } finally {
+                state.locked = false;
             }
         },
 
         render(m) {
+
+            Timer.clearAll();
 
             const story = m.blocks.find(b => b.type === "story").text[state.lang];
             const analysis = m.blocks.find(b => b.type === "analysis").text[state.lang];
@@ -218,18 +219,18 @@ const KamizenEngine = (() => {
 
             document.getElementById("story").innerText = story;
             document.getElementById("analysis").innerText = "";
+            document.getElementById("options").innerHTML = "";
 
             Speech.say(story);
 
-            setTimeout(() => {
+            Timer.set(() => {
                 document.getElementById("analysis").innerText = analysis;
                 Speech.say(analysis);
-            }, 3500);
+            }, 3000);
 
-            setTimeout(() => {
+            Timer.set(() => {
 
                 const c = document.getElementById("options");
-                c.innerHTML = "";
 
                 decision.options.forEach(opt => {
                     const b = document.createElement("button");
@@ -239,24 +240,23 @@ const KamizenEngine = (() => {
                     c.appendChild(b);
                 });
 
-            }, 7000);
+            }, 6000);
         },
 
-        // 🛡️ MODO RESPALDO (NO BLOQUEA APP)
         renderBackup() {
 
+            Timer.clearAll();
+
             const story = state.lang === "es"
-                ? "Modo supervivencia activo. Observa y decide."
-                : "Survival mode active. Observe and decide.";
+                ? "Modo supervivencia activo."
+                : "Survival mode active.";
 
             const analysis = state.lang === "es"
-                ? "Incluso sin sistema, tu mente sigue funcionando."
-                : "Even without system, your mind still works.";
+                ? "Tu mente sigue funcionando."
+                : "Your mind is still active.";
 
             document.getElementById("story").innerText = story;
             document.getElementById("analysis").innerText = analysis;
-
-            Speech.say(story);
 
             const c = document.getElementById("options");
             c.innerHTML = "";
@@ -265,17 +265,18 @@ const KamizenEngine = (() => {
                 const b = document.createElement("button");
                 b.className = "opt-btn";
                 b.innerText = txt;
+
                 b.onclick = () => {
                     state.score += 5;
                     document.getElementById("points-display").innerText = "POINTS: " + state.score;
                     this.next();
                 };
+
                 c.appendChild(b);
             });
         },
 
         next() {
-            state.missionIndex++;
             this.load();
         }
     };
@@ -299,7 +300,9 @@ const KamizenEngine = (() => {
 
 })();
 
-// AUTO START (SAFE)
+// =====================================================
+// ▶️ AUTO START
+// =====================================================
 window.onload = () => {
     if (typeof KamizenEngine !== "undefined") {
         KamizenEngine.init();
