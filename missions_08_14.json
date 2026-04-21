@@ -27,7 +27,7 @@
         {
           "type": "decision",
           "options": [
-            { "text": { "en": "Admit it calmly", "es": "Admitirlo con calma" }, "correct": true, "explanation": { "en": "Owning mistakes builds HONOR. You are an Architect of your own truth.", "es": "Asumir errores construye HONOR. Eres un Arquitecto de tu propia verdad." } },
+            { "text": { "en": "Admit it calmly", "es": "Admitirlo con calma" }, "correct": true, "explanation": { "en": "Owning mistakes builds HONOR. You are the Architect of your own truth.", "es": "Asumir errores construye HONOR. Eres el Arquitecto de tu propia verdad." } },
             { "text": { "en": "Hide the broken pieces", "es": "Esconder las piezas rotas" }, "correct": false, "explanation": { "en": "Hiding is QUITTING your integrity. The lie will live inside your soul.", "es": "Esconder es RENUNCIAR a tu integridad. La mentira vivirá en tu alma." } }
           ]
         }
