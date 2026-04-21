@@ -3,7 +3,7 @@
   "chapter": 2,
   "range": "8-14",
   "ui": {
-    "floating_words": ["PAUSE", "THINK", "BREATH", "CONTROL", "CALM", "TRUTH", "FOCUS", "OBSERVE"]
+    "floating_words": ["FAITH", "DISCIPLINE", "STRENGTH", "VICTORY", "STILL", "SOUL", "CHAOS", "HATE", "EGO", "QUITTING"]
   },
   "matrix_rules": [
     "2. Action creates reality",
@@ -25,19 +25,10 @@
           }
         },
         {
-          "type": "analysis",
-          "text": {
-            "en": "Truth builds a character that cannot be shaken.",
-            "es": "La verdad construye un carácter que nada puede sacudir."
-          }
-        },
-        {
           "type": "decision",
           "options": [
-            { "text": { "en": "Admit it calmly", "es": "Admitirlo con calma" }, "correct": true, "explanation": { "en": "Owning your mistakes gives you more respect than hiding them ever will.", "es": "Ser dueño de tus errores te da más respeto de lo que ocultarlos te dará jamás." } },
-            { "text": { "en": "Stay silent and watch", "es": "Callar y observar" }, "correct": "partial", "explanation": { "en": "Silence is power, but using it to let others suffer is a trap for your mind.", "es": "El silencio es poder, pero usarlo para dejar sufrir a otros es una trampa mental." } },
-            { "text": { "en": "Blame the person you dislike", "es": "Culpar a quien te cae mal" }, "correct": false, "explanation": { "en": "Lying to hurt others creates a weak identity. You become the chaos.", "es": "Mentir para dañar crea una identidad débil. Te conviertes en el caos." } },
-            { "text": { "en": "Hide the broken pieces", "es": "Esconder las piezas rotas" }, "correct": false, "explanation": { "en": "You can hide the evidence, but you can't hide the truth from your own mind.", "es": "Puedes esconder la evidencia, pero no puedes esconder la verdad de tu mente." } }
+            { "text": { "en": "Admit it calmly", "es": "Admitirlo con calma" }, "correct": true, "explanation": { "en": "Owning mistakes builds HONOR. You are an Architect of your own truth.", "es": "Asumir errores construye HONOR. Eres un Arquitecto de tu propia verdad." } },
+            { "text": { "en": "Hide the broken pieces", "es": "Esconder las piezas rotas" }, "correct": false, "explanation": { "en": "Hiding is QUITTING your integrity. The lie will live inside your soul.", "es": "Esconder es RENUNCIAR a tu integridad. La mentira vivirá en tu alma." } }
           ]
         }
       ]
@@ -55,19 +46,10 @@
           }
         },
         {
-          "type": "analysis",
-          "text": {
-            "en": "Attention is your real power. Don't sell it for cheap.",
-            "es": "La atención es tu verdadero poder. No la vendas barata."
-          }
-        },
-        {
           "type": "decision",
           "options": [
-            { "text": { "en": "Dismiss and continue", "es": "Ignorar y continuar" }, "correct": true, "explanation": { "en": "Choosing your path over a screen is how you master the Matrix.", "es": "Elegir tu camino sobre una pantalla es como dominas la Matrix." } },
-            { "text": { "en": "Watch 'just one' video", "es": "Ver 'solo un' video" }, "correct": false, "explanation": { "en": "The algorithm is designed to steal your time. One video is never just one.", "es": "El algoritmo está diseñado para robar tu tiempo. Un video nunca es solo uno." } },
-            { "text": { "en": "Check who sent it", "es": "Mirar quién lo envió" }, "correct": "partial", "explanation": { "en": "Curiosity is a tool, but at the wrong time, it's a distraction.", "es": "La curiosidad es una herramienta, pero en el momento erróneo, es distracción." } },
-            { "text": { "en": "Give up on the skill", "es": "Rendirse con el aprendizaje" }, "correct": false, "explanation": { "en": "Giving up because of a distraction means the distraction is your master.", "es": "Rendirse por una distracción significa que la distracción es tu amo." } }
+            { "text": { "en": "Dismiss and continue", "es": "Ignorar y continuar" }, "correct": true, "explanation": { "en": "DISCIPLINE is doing what you must even when a distraction looks easy.", "es": "La DISCIPLINA es hacer lo que debes incluso cuando la distracción parece fácil." } },
+            { "text": { "en": "Watch 'just one' video", "es": "Ver 'solo un' video" }, "correct": false, "explanation": { "en": "The algorithm wants to steal your VICTORY. Don't let it win.", "es": "El algoritmo quiere robar tu VICTORIA. No dejes que gane." } }
           ]
         }
       ]
@@ -85,19 +67,10 @@
           }
         },
         {
-          "type": "analysis",
-          "text": {
-            "en": "Fast thinking is not always smart thinking.",
-            "es": "Pensar rápido no siempre es pensar bien."
-          }
-        },
-        {
           "type": "decision",
           "options": [
-            { "text": { "en": "Focus on your own paper", "es": "Enfocarte en tu papel" }, "correct": true, "explanation": { "en": "Your integrity is worth more than their temporary approval.", "es": "Tu integridad vale más que la aprobación temporal de ellos." } },
-            { "text": { "en": "Give the answer quickly", "es": "Dar la respuesta rápido" }, "correct": false, "explanation": { "en": "Taking a risk for someone else's laziness is a bad deal for your future.", "es": "Arriesgarte por la pereza de otro es un mal negocio para tu futuro." } },
-            { "text": { "en": "Tell the teacher", "es": "Decirle al profesor" }, "correct": "partial", "explanation": { "en": "Reporting is an option, but mastering your own boundary is the real lesson.", "es": "Reportar es opción, pero dominar tu propio límite es la verdadera lección." } },
-            { "text": { "en": "Pretend you didn't hear", "es": "Fingir que no escuchaste" }, "correct": false, "explanation": { "en": "Faking ignorance is a weak shield. Be clear in your action.", "es": "Fingir ignorancia es un escudo débil. Sé claro en tu acción." } }
+            { "text": { "en": "Focus on your own paper", "es": "Enfocarte en tu papel" }, "correct": true, "explanation": { "en": "Your STRENGTH comes from what you know, not from helping others cheat.", "es": "Tu FUERZA viene de lo que sabes, no de ayudar a otros a hacer trampa." } },
+            { "text": { "en": "Give the answer quickly", "es": "Dar la respuesta rápido" }, "correct": false, "explanation": { "en": "Risking your future for an EXCUSE is a bad investment of your WILL.", "es": "Arriesgar tu futuro por una EXCUSA es una mala inversión de tu VOLUNTAD." } }
           ]
         }
       ]
@@ -115,19 +88,10 @@
           }
         },
         {
-          "type": "analysis",
-          "text": {
-            "en": "Taking responsibility makes you stronger than making excuses.",
-            "es": "Asumir responsabilidad te hace más fuerte que dar excusas."
-          }
-        },
-        {
           "type": "decision",
           "options": [
-            { "text": { "en": "Apologize and do it now", "es": "Disculparse y hacerlo ahora" }, "correct": true, "explanation": { "en": "Correcting an error immediately shows you are a person of action.", "es": "Corregir un error de inmediato muestra que eres una persona de acción." } },
-            { "text": { "en": "Say you felt sick", "es": "Decir que te sentías mal" }, "correct": false, "explanation": { "en": "Using health as an excuse weakens your word. Lies are heavy to carry.", "es": "Usar la salud como excusa debilita tu palabra. Las mentiras pesan." } },
-            { "text": { "en": "Blame the game for being long", "es": "Culpar al juego por ser largo" }, "correct": false, "explanation": { "en": "The game doesn't control your hands; you do. Don't be a puppet.", "es": "El juego no controla tus manos; tú sí. No seas un títere." } },
-            { "text": { "en": "Do it later when forced", "es": "Hacerlo luego por obligación" }, "correct": "partial", "explanation": { "en": "Waiting to be forced means you lost your freedom to choose.", "es": "Esperar a ser obligado significa que perdiste tu libertad de elegir." } }
+            { "text": { "en": "Apologize and do it now", "es": "Disculparse y hacerlo ahora" }, "correct": true, "explanation": { "en": "To RISE, you must fix your errors without being asked twice.", "es": "Para LEVANTARTE, debes corregir tus errores sin que te lo pidan dos veces." } },
+            { "text": { "en": "Blame the game for being long", "es": "Culpar al juego por ser largo" }, "correct": false, "explanation": { "en": "Blaming external factors is the EGO's way of staying weak.", "es": "Culpar a factores externos es la forma en que el EGO se mantiene débil." } }
           ]
         }
       ]
@@ -145,19 +109,10 @@
           }
         },
         {
-          "type": "analysis",
-          "text": {
-            "en": "Control is power over yourself, not over the opinions of fools.",
-            "es": "El control es poder sobre ti, no sobre las opiniones de los tontos."
-          }
-        },
-        {
           "type": "decision",
           "options": [
-            { "text": { "en": "Neutral look and silence", "es": "Mirada neutral y silencio" }, "correct": true, "explanation": { "en": "Your silence is a wall they cannot climb. You win by not playing.", "es": "Tu silencio es un muro que no pueden escalar. Ganas al no jugar." } },
-            { "text": { "en": "Insult them back", "es": "Insultarlos de vuelta" }, "correct": false, "explanation": { "en": "Lowering yourself to their level makes you equal to them.", "es": "Bajarte a su nivel te hace igual a ellos." } },
-            { "text": { "en": "Try to explain why they are wrong", "es": "Explicar por qué se equivocan" }, "correct": "partial", "explanation": { "en": "The street doesn't care about logic, it cares about reaction. Don't react.", "es": "A la calle no le importa la lógica, sino la reacción. No reacciones." } },
-            { "text": { "en": "Cry or look at the floor", "es": "Llorar o mirar al suelo" }, "correct": false, "explanation": { "en": "Keep your eyes up. You are a master of your own identity.", "es": "Mantén la mirada arriba. Eres el maestro de tu propia identidad." } }
+            { "text": { "en": "Neutral look and silence", "es": "Mirada neutral y silencio" }, "correct": true, "explanation": { "en": "STILL minds are invincible. You win by not entering the CHAOS.", "es": "Las mentes QUIETAS son invencibles. Ganas al no entrar en el CAOS." } },
+            { "text": { "en": "Insult them back", "es": "Insultarlos de vuelta" }, "correct": false, "explanation": { "en": "HATE is a poison you drink hoping the other person dies. Be smarter.", "es": "El ODIO es un veneno que bebes esperando que el otro muera. Sé más inteligente." } }
           ]
         }
       ]
@@ -175,19 +130,10 @@
           }
         },
         {
-          "type": "analysis",
-          "text": {
-            "en": "Envy is energy wasted on someone else's timeline.",
-            "es": "La envidia es energía desperdiciada en el tiempo de otro."
-          }
-        },
-        {
           "type": "decision",
           "options": [
-            { "text": { "en": "Congratulate and focus on your work", "es": "Felicitar y enfocarte en lo tuyo" }, "correct": true, "explanation": { "en": "Being happy for others while working on yourself is ultimate power.", "es": "Alegrarte por otros mientras trabajas en ti es el poder máximo." } },
-            { "text": { "en": "Stop talking to them", "es": "Dejar de hablarles" }, "correct": false, "explanation": { "en": "Isolation based on envy is a slow poison for your mind.", "es": "El aislamiento por envidia es un veneno lento para tu mente." } },
-            { "text": { "en": "Tell others it was luck", "es": "Decir a otros que fue suerte" }, "correct": false, "explanation": { "en": "Diminishing others doesn't make you bigger. It makes you small.", "es": "Disminuir a otros no te hace más grande. Te hace pequeño." } },
-            { "text": { "en": "Try to beat them next time", "es": "Intentar ganarles la próxima" }, "correct": "partial", "explanation": { "en": "Competition is good, but focus on being better than you were yesterday.", "es": "Competir es bueno, pero enfócate en ser mejor de lo que fuiste ayer." } }
+            { "text": { "en": "Congratulate and focus on your work", "es": "Felicitar y enfocarte en lo tuyo" }, "correct": true, "explanation": { "en": "Have FAITH in your own process. Envy is just NOISE on your timeline.", "es": "Ten FE en tu propio proceso. La envidia es solo RUIDO en tu línea de tiempo." } },
+            { "text": { "en": "Tell others it was luck", "es": "Decir a otros que fue suerte" }, "correct": false, "explanation": { "en": "Your EGO makes you small when you try to diminish others' STRENGTH.", "es": "Tu EGO te hace pequeño cuando intentas disminuir la FUERZA de los demás." } }
           ]
         }
       ]
@@ -205,19 +151,10 @@
           }
         },
         {
-          "type": "analysis",
-          "text": {
-            "en": "Your voice is a tool for justice and confidence.",
-            "es": "Tu voz es una herramienta para la justicia y la confianza."
-          }
-        },
-        {
           "type": "decision",
           "options": [
-            { "text": { "en": "Speak up for the truth", "es": "Hablar por la verdad" }, "correct": true, "explanation": { "en": "Using your voice when it's hard is how you break the Matrix.", "es": "Usar tu voz cuando es difícil es como rompes la Matrix." } },
-            { "text": { "en": "Look away and stay quiet", "es": "Mirar a otro lado y callar" }, "correct": false, "explanation": { "en": "Silence in the face of injustice is agreement with the noise.", "es": "El silencio ante la injusticia es estar de acuerdo con el ruido." } },
-            { "text": { "en": "Wait for someone else to speak", "es": "Esperar a que otro hable" }, "correct": "partial", "explanation": { "en": "Waiting for a leader means you aren't one yet. Lead now.", "es": "Esperar a un líder significa que aún no lo eres. Lidera ahora." } },
-            { "text": { "en": "Record it to post later", "es": "Grabar para publicar luego" }, "correct": false, "explanation": { "en": "Action in the moment is power; digital clout is just distraction.", "es": "La acción al momento es poder; la fama digital es solo distracción." } }
+            { "text": { "en": "Speak up for the truth", "es": "Hablar por la verdad" }, "correct": true, "explanation": { "en": "Using your voice is a VICTORY for your SOUL. Never be a silent observer of lies.", "es": "Usar tu voz es una VICTORIA para tu ALMA. Nunca seas un observador silencioso de mentiras." } },
+            { "text": { "en": "Look away and stay quiet", "es": "Mirar a otro lado y callar" }, "correct": false, "explanation": { "en": "QUITTING the truth because of fear is the first step into the Matrix.", "es": "ABANDONAR la verdad por miedo es el primer paso hacia la Matrix." } }
           ]
         }
       ]
