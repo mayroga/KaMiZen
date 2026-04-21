@@ -1,50 +1,24 @@
 /**
- * 🧠 KAMIZEN ENGINE CORE — FINAL MERGED SYSTEM v3
- * AURA + PHASE LOOP + DICTIONARY SYSTEM + DIAGNOSIS ENGINE
- * SINGLE SOURCE OF TRUTH (NO CONFLICTS / NO FREEZE)
+ * 🧠 KAMIZEN ENGINE CORE — AL CIELO / AURA BY MAY ROGA LLC
+ * FULL SYSTEM RESTORE + LEARNING ENGINE + DECEPTION LOGIC
  */
 
 const KamizenEngine = (() => {
 
     // ==========================================
-    // 📊 STATE CORE (UNIFIED SYSTEM)
+    // 📊 STATE CORE
     // ==========================================
     const state = {
         score: 0,
         lang: "en",
+        phase: 1,
 
-        missionId: 1,
-        mission: null,
-
-        phase: 1, // 1 FLOAT GAME | 2 LEARNING | 3 DYNAMIC LOOP
-
-        timer: 300,
-        silenceTime: 180,
+        missionActive: false,
         silenceActive: false,
 
-        locked: false,
-
-        wordInterval: null,
-        timerInterval: null,
-
-        history: [],
-        maxHistory: 3,
-
-        // 🧠 AURA DICTIONARY (EXPANDED SYSTEM)
-        words: {
-            power: [
-                "WILL","VISION","HONOR","COURAGE","BUILD","RISE",
-                "FAITH","DISCIPLINE","STRENGTH","VICTORY"
-            ],
-            risk: [
-                "NOISE","EXCUSE","QUITTING","EGO","HATE","CHAOS",
-                "LAZY","FEAR","LIE","ANGER"
-            ],
-            silence: [
-                "CALM","LISTEN","WAIT","PEACE","PRAY","INSIDE",
-                "BREATHE","STILL","SOUL","FOCUS"
-            ]
-        }
+        timer: 0,
+        interval: null,
+        wordInterval: null
     };
 
     // ==========================================
@@ -57,12 +31,11 @@ const KamizenEngine = (() => {
 
         init() {
             this.bg = document.getElementById("bg");
-            this.win = document.getElementById("ok");
+            this.win = document.getElementById("win");
             this.fail = document.getElementById("bad");
 
             if (this.bg) {
-                this.bg.volume = 0.25;
-                this.bg.playbackRate = 1.05;
+                this.bg.volume = 0.3;
                 this.bg.play().catch(() => {});
             }
         },
@@ -90,7 +63,25 @@ const KamizenEngine = (() => {
     };
 
     // ==========================================
-    // 🌌 FLOATING WORD SYSTEM (CORE GAME)
+    // 🌌 WORD SYSTEM (FULL DICCIONARY PRESERVED)
+    // ==========================================
+    const words = {
+        power: [
+            "WILL","VISION","HONOR","COURAGE","BUILD","RISE",
+            "FAITH","DISCIPLINE","STRENGTH","VICTORY"
+        ],
+        risk: [
+            "NOISE","EXCUSE","QUITTING","EGO","HATE","CHAOS",
+            "LAZY","FEAR","LIE","ANGER"
+        ],
+        silence: [
+            "CALM","LISTEN","WAIT","PEACE","PRAY","INSIDE",
+            "BREATHE","STILL","SOUL","FOCUS"
+        ]
+    };
+
+    // ==========================================
+    // 🎮 FLOATING SYSTEM (WITH DECEPTION)
     // ==========================================
     const Floating = {
 
@@ -99,64 +90,56 @@ const KamizenEngine = (() => {
 
             state.wordInterval = setInterval(() => {
 
-                if (state.locked || state.silenceActive) return;
+                if (state.phase !== 1) return;
 
                 const r = Math.random();
 
-                let category, list, css;
+                let type =
+                    r > 0.65 ? "risk" :
+                    r > 0.35 ? "power" : "silence";
 
-                if (r > 0.6) {
-                    category = "power";
-                    list = state.words.power;
-                    css = "word-good";
-                } else if (r > 0.3) {
-                    category = "risk";
-                    list = state.words.risk;
-                    css = "word-bad";
-                } else {
-                    category = "silence";
-                    list = state.words.silence;
-                    css = "word-neutral";
-                }
-
+                const list = words[type];
                 const word = list[Math.floor(Math.random() * list.length)];
 
                 const el = document.createElement("div");
-                el.className = `floating ${css}`;
+                el.className = `floating word-${type}`;
                 el.innerText = word;
+                el.style.left = Math.random() * 90 + "vw";
 
-                el.style.left = (Math.random() * 85 + 5) + "vw";
-                el.style.animationDuration = (category === "silence" ? 3000 : 5000) + "ms";
+                // 🎭 DECEPTION LOGIC (IMPORTANT FOR LEARNING)
+                const trick = Math.random() < 0.3;
 
-                // 🎯 TRICK MODE (visual deception)
-                const trick = Math.random() < 0.25;
-                if (trick) el.style.borderWidth = "5px";
+                if (trick) {
+                    if (type === "power") el.style.borderColor = "red";
+                    if (type === "risk") el.style.borderColor = "green";
+                }
 
                 el.onclick = () => {
 
-                    if (category === "power") {
+                    if (type === "power") {
                         state.score += 10;
                         Audio.play("win");
-                    } 
-                    else if (category === "risk") {
+                    }
+
+                    if (type === "risk") {
                         state.score -= 15;
                         Audio.play("fail");
-                    } 
-                    else {
+                    }
+
+                    if (type === "silence") {
                         state.score += 5;
                         Audio.play("win");
                     }
 
                     UI.updateScore();
-
+                    explain(word, type);
                     el.remove();
                 };
 
-                document.body.appendChild(el);
-
+                document.getElementById("game").appendChild(el);
                 setTimeout(() => el.remove(), 5000);
 
-            }, 1200);
+            }, 900);
         },
 
         stop() {
@@ -167,145 +150,123 @@ const KamizenEngine = (() => {
     };
 
     // ==========================================
-    // 🧠 DIAGNOSIS SYSTEM
+    // ⏱️ TIMER ENGINE
     // ==========================================
-    const Diagnosis = {
-        getProfile() {
-            const s = state.score;
+    const Timer = {
 
-            if (s >= 150) {
-                return {
-                    title: { en: "The Architect", es: "El Arquitecto" },
-                    desc: {
-                        en: "You see through illusions. Total control.",
-                        es: "Ves a través de ilusiones. Control total."
-                    }
-                };
-            }
+        start(seconds, cb) {
 
-            if (s >= 70) {
-                return {
-                    title: { en: "The Warrior", es: "El Guerrero" },
-                    desc: {
-                        en: "Strong focus, but distractions still exist.",
-                        es: "Fuerza alta, pero aún hay distracciones."
-                    }
-                };
-            }
+            clearInterval(state.interval);
 
-            if (s >= 0) {
-                return {
-                    title: { en: "The Student", es: "El Aprendiz" },
-                    desc: {
-                        en: "You are learning to control attention.",
-                        es: "Estás aprendiendo a controlar tu atención."
-                    }
-                };
-            }
+            state.timer = seconds;
 
-            return {
-                title: { en: "The Warning", es: "La Advertencia" },
-                desc: {
-                    en: "Chaos is leading your decisions.",
-                    es: "El caos está guiando tus decisiones."
+            UI.updateTimer(state.timer);
+
+            state.interval = setInterval(() => {
+
+                state.timer--;
+                UI.updateTimer(state.timer);
+
+                if (state.timer <= 0) {
+                    clearInterval(state.interval);
+                    cb();
                 }
-            };
+
+            }, 1000);
         }
     };
 
     // ==========================================
-    // ⏱️ PHASE ENGINE (MAIN LOOP SYSTEM)
+    // 🧠 LEARNING SYSTEM
     // ==========================================
-    const Phase = {
+    const Learning = {
 
-        startGame() {
-            state.phase = 1;
-            Floating.start();
+        start() {
 
-            this.timer(300, () => this.startLearning());
-        },
-
-        startLearning() {
             state.phase = 2;
 
             Floating.stop();
 
-            UI.showLearning(true);
+            document.getElementById("learning").style.display = "block";
 
-            Speech.say("Learning phase activated.");
+            const story = state.lang === "en"
+                ? "Not everything with color means truth."
+                : "No todo lo que brilla es verdad.";
 
-            this.silence(state.silenceTime, () => this.startDynamic());
-        },
+            const analysis = state.lang === "en"
+                ? "Your mind must learn patterns, not reactions."
+                : "Tu mente debe aprender patrones, no reacciones.";
 
-        startDynamic() {
-            state.phase = 3;
+            document.getElementById("story").innerText = story;
+            document.getElementById("analysis").innerText = analysis;
 
-            UI.showLearning(false);
+            Speech.say(story);
+            Speech.say(analysis);
 
-            Floating.start();
-
-            const duration = state.score > 0 ? 600 : 180;
-
-            this.timer(duration, () => {
-                this.saveRun();
-                this.startGame();
+            Breath.start(360, () => {
+                Game.runPhase3();
             });
-        },
-
-        timer(seconds, cb) {
-            clearInterval(state.timerInterval);
-
-            let t = seconds;
-            UI.updateTimer(t);
-
-            state.timerInterval = setInterval(() => {
-                t--;
-                UI.updateTimer(t);
-
-                if (t <= 0) {
-                    clearInterval(state.timerInterval);
-                    cb();
-                }
-
-            }, 1000);
-        },
-
-        silence(seconds, cb) {
-            state.silenceActive = true;
-
-            UI.showBreath(true);
-
-            let t = seconds;
-
-            const timer = setInterval(() => {
-                t--;
-
-                if (t <= 0) {
-                    clearInterval(timer);
-                    state.silenceActive = false;
-                    UI.showBreath(false);
-                    cb();
-                }
-
-            }, 1000);
-        },
-
-        saveRun() {
-            state.history.push(state.score);
-
-            if (state.history.length > state.maxHistory) {
-                state.history.shift();
-            }
-
-            if (state.history.length >= state.maxHistory) {
-                state.history = [];
-                state.score = 0;
-            }
         }
     };
 
     // ==========================================
-    // 🖥️ UI SYSTEM
+    // 🧘 BREATH SYSTEM (AUTO)
+    // ==========================================
+    const Breath = {
+
+        start(seconds, cb) {
+
+            state.silenceActive = true;
+
+            const el = document.getElementById("breath");
+            el.style.display = "block";
+
+            let t = seconds;
+
+            const i = setInterval(() => {
+
+                t--;
+
+                if (t <= 0) {
+                    clearInterval(i);
+                    el.style.display = "none";
+                    state.silenceActive = false;
+                    cb();
+                }
+
+            }, 1000);
+        }
+    };
+
+    // ==========================================
+    // 🎮 GAME FLOW
+    // ==========================================
+    const Game = {
+
+        start() {
+            state.phase = 1;
+            Floating.start();
+
+            Timer.start(300, () => {
+                Learning.start();
+            });
+        },
+
+        runPhase3() {
+            state.phase = 3;
+
+            Floating.start();
+
+            const time = state.score > 0 ? 600 : 180;
+
+            Timer.start(time, () => {
+                this.start();
+            });
+        }
+    };
+
+    // ==========================================
+    // 📊 UI SYSTEM
     // ==========================================
     const UI = {
 
@@ -317,29 +278,35 @@ const KamizenEngine = (() => {
         updateTimer(t) {
             const m = Math.floor(t / 60).toString().padStart(2, "0");
             const s = (t % 60).toString().padStart(2, "0");
+
             document.getElementById("timer").innerText = `${m}:${s}`;
-        },
-
-        showLearning(v) {
-            const el = document.getElementById("learning");
-            if (el) el.style.display = v ? "block" : "none";
-        },
-
-        showBreath(v) {
-            const el = document.getElementById("breath");
-            if (el) el.style.display = v ? "block" : "none";
         }
     };
+
+    // ==========================================
+    // 🧠 EXPLANATION ENGINE
+    // ==========================================
+    function explain(word, type) {
+
+        const msg =
+            state.lang === "en"
+                ? `${word} → category: ${type}. Learn meaning, not emotion.`
+                : `${word} → categoría: ${type}. Aprende significado, no emoción.`;
+
+        document.getElementById("explain").innerText = msg;
+
+        Speech.say(msg);
+    }
 
     // ==========================================
     // 🚀 INIT
     // ==========================================
     return {
+
         init() {
             Audio.init();
+            Game.start();
             UI.updateScore();
-            Phase.startGame();
-            console.log("🔥 KAMIZEN ENGINE v3 FULL MERGED READY");
         },
 
         changeLang() {
@@ -347,7 +314,6 @@ const KamizenEngine = (() => {
         },
 
         reset() {
-            state.score = 0;
             location.reload();
         }
     };
