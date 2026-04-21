@@ -28,14 +28,22 @@ body{
     font-weight:bold;
 }
 
-#timer{ margin-top:70px; font-size:1.4rem; color:#00f2ff; }
+/* TIMER */
+#timer{
+    margin-top:70px;
+    font-size:1.4rem;
+    color:#00f2ff;
+}
 
-/* BUTTONS */
+/* MENU */
 #menu{
     position:absolute;
     top:50%;
     left:50%;
     transform:translate(-50%,-50%);
+    display:flex;
+    flex-direction:column;
+    gap:10px;
 }
 
 /* FLOATING */
@@ -46,6 +54,7 @@ body{
     font-weight:bold;
     animation:floatUp 5s linear forwards;
 }
+
 .word-good{color:#0f0;border:2px solid #0f0;}
 .word-bad{color:#f00;border:2px solid #f00;}
 .word-neutral{color:#ff0;border:2px solid #ff0;}
@@ -55,18 +64,42 @@ body{
     to{transform:translateY(-20vh);}
 }
 
-/* 💥 EXPLOSIÓN */
-.blast{ 
-    animation: burst 0.4s forwards; 
-    pointer-events: none; 
+/* EXPLOSION */
+.blast{
+    animation:burst 0.4s forwards;
+    pointer-events:none;
 }
 
-@keyframes burst{ 
-    to{ transform: scale(4); opacity: 0; } 
+@keyframes burst{
+    to{transform:scale(4);opacity:0;}
 }
 
 /* LEARNING */
-#learning{display:none;margin-top:120px}
+#learning{
+    display:none;
+    margin-top:120px;
+}
+
+/* BREATH UI (CIRCULO RESPIRACIÓN) */
+#breathCircle{
+    position:fixed;
+    top:55%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    width:120px;
+    height:120px;
+    border-radius:50%;
+    border:3px solid #00f2ff;
+    display:none;
+    animation:breatheAnim 4s infinite ease-in-out;
+    box-shadow:0 0 20px #00f2ff;
+}
+
+@keyframes breatheAnim{
+    0%{transform:translate(-50%,-50%) scale(0.8); opacity:0.5;}
+    50%{transform:translate(-50%,-50%) scale(1.3); opacity:1;}
+    100%{transform:translate(-50%,-50%) scale(0.8); opacity:0.5;}
+}
 </style>
 </head>
 
@@ -80,18 +113,23 @@ body{
 
 <div id="timer">00:00</div>
 
+<!-- MENU -->
 <div id="menu">
     <button onclick="start()">START</button>
     <button onclick="start()">CONTINUE</button>
     <button onclick="reset()">BACK</button>
-    <!-- 🌍 BOTÓN IDIOMA -->
     <button onclick="toggleLang()">ES / EN</button>
 </div>
 
+<!-- LEARNING -->
 <div id="learning">
     <h2 id="lvl"></h2>
     <p id="mission"></p>
+    <div id="explain"></div>
 </div>
+
+<!-- BREATH CIRCLE -->
+<div id="breathCircle"></div>
 
 <!-- AUDIO -->
 <audio id="bg" loop src="/static/sounds/bg.mp3"></audio>
@@ -101,21 +139,17 @@ body{
 <audio id="key" src="/static/sounds/keypress.mp3"></audio>
 
 <script>
-// ================= STATE =================
-let score=0;
-let level=1;
-let phase="menu";
-let timer,spawn;
-let allowInput=true;
 
-// 🌍 idioma
+// ================= STATE =================
+let score = 0;
+let level = 1;
+let phase = "menu";
+let timer, spawn;
+let allowInput = true;
+
+// ================= LANGUAGE =================
 let lang = "en";
 
-// durations
-const GAME_1=300;
-const LEARN=360;
-
-// ================= TEXTOS =================
 const texts = {
     en: {
         start: "START",
@@ -144,52 +178,18 @@ const texts = {
 };
 
 // ================= WORDS =================
-const words={
-    good:["WILL","VISION","HONOR","COURAGE","BUILD","RISE",
-            "FAITH","DISCIPLINE","STRENGTH","VICTORY"],
-
-    bad:["NOISE","EXCUSE","QUITTING","EGO","HATE","CHAOS",
-            "LAZY","FEAR","LIE","ANGER"],
-
-    neutral:["CALM","LISTEN","WAIT","PEACE","PRAY","INSIDE",
-            "BREATHE","STILL","SOUL","FOCUS"]
+const words = {
+    good:["WILL","VISION","HONOR","COURAGE","BUILD","RISE","FAITH","DISCIPLINE","STRENGTH","VICTORY"],
+    bad:["NOISE","EXCUSE","QUITTING","EGO","HATE","CHAOS","LAZY","FEAR","LIE","ANGER"],
+    neutral:["CALM","LISTEN","WAIT","PEACE","PRAY","INSIDE","BREATHE","STILL","SOUL","FOCUS"]
 };
 
-// ================= MEANINGS =================
-const meanings = {
-    WILL: "Decide to act even if it's hard.",
-    VISION: "Think about your future before acting.",
-    HONOR: "Do right even when unseen.",
-    COURAGE: "Act despite fear.",
-    BUILD: "Create something better.",
-    RISE: "Stand up after failing.",
-    FAITH: "Believe when it's difficult.",
-    DISCIPLINE: "Do what must be done.",
-    STRENGTH: "Control yourself.",
-    VICTORY: "Win after resisting.",
-
-    CALM: "Stay relaxed under pressure.",
-    LISTEN: "Hear before reacting.",
-    WAIT: "Don't act impulsively.",
-    PEACE: "Inner control.",
-    PRAY: "Reflect deeply.",
-    INSIDE: "Think before acting.",
-    BREATHE: "Control your body.",
-    STILL: "Stay still to think.",
-    SOUL: "Your deepest part.",
-    FOCUS: "No distractions.",
-
-    NOISE: "Weak distraction.",
-    EXCUSE: "Lie to avoid growth.",
-    QUITTING: "Stop too early.",
-    EGO: "False self-importance.",
-    HATE: "Destructive energy.",
-    CHAOS: "No control.",
-    LAZY: "Avoid effort.",
-    FEAR: "Stops action.",
-    LIE: "Damaging falsehood.",
-    ANGER: "Uncontrolled reaction"
-};
+// ================= INIT =================
+function start(){
+    document.getElementById("menu").style.display="none";
+    playMusic();
+    runPhase("game1",300);
+}
 
 // ================= LANGUAGE =================
 function toggleLang(){
@@ -206,17 +206,9 @@ function applyLang(){
         `${texts[lang].points}: ${score}`;
 }
 
-// ================= INIT =================
-function start(){
-    document.getElementById("menu").style.display="none";
-    playMusic(); 
-    runPhase("game1", GAME_1);
-}
-
 // ================= PHASES =================
 function runPhase(type,time){
     clearAll();
-    phase=type;
 
     if(type.includes("game")){
         allowInput=true;
@@ -230,22 +222,12 @@ function runPhase(type,time){
     }
 
     startTimer(time,()=>{
-        if(type==="game1"){
-            runPhase("learn",LEARN);
-        }
-        else if(type==="learn"){
-            const next = score>50?600:180;
-            runPhase("game2",next);
-        }
-        else{
-            runPhase("learn",LEARN);
-        }
+        runPhase("learn",360);
     });
 }
 
 // ================= TIMER =================
 function startTimer(t,cb){
-    updateTimer(t);
     timer=setInterval(()=>{
         t--;
         updateTimer(t);
@@ -262,39 +244,38 @@ function updateTimer(t){
 // ================= FLOATING =================
 function spawnWords(){
     spawn=setInterval(()=>{
-        if(!allowInput)return;
 
-        const type=randomType();
-        const word=randomWord(type);
+        const type = randomType();
+        const word = randomWord(type);
 
         const el=document.createElement("div");
         el.className=`floating word-${type}`;
         el.innerText=word;
         el.style.left=Math.random()*90+"vw";
 
-        el.onmousedown = () => {
+        el.onmousedown=()=>{
+
             el.classList.add("blast");
 
-            if (type === "good") { 
-                score += 5; 
-                document.getElementById("ok").play(); 
+            if(type==="good"){
+                score+=5;
+                document.getElementById("win").play();
             }
 
-            if (type === "bad") { 
-                score -= 10; 
-                document.getElementById("bad").play(); 
+            if(type==="bad"){
+                score-=10;
+                document.getElementById("bad").play();
             }
 
-            document.getElementById("score").innerText =
-                `${texts[lang].points}: ${score}`;
-
-            setTimeout(()=>el.remove(),400);
+            updateScore();
+            showExplanation(word);
+            setTimeout(()=>el.remove(),300);
         };
 
         document.body.appendChild(el);
         setTimeout(()=>el.remove(),5000);
 
-    },1500);
+    },1200);
 }
 
 function randomType(){
@@ -310,6 +291,7 @@ function randomWord(t){
 
 // ================= LEARNING =================
 function showLearning(){
+
     document.getElementById("learning").style.display="block";
 
     level = Math.floor(score/50)+1;
@@ -318,19 +300,47 @@ function showLearning(){
 
     const missions = texts[lang].missions;
 
-    document.getElementById("mission").innerText=
+    document.getElementById("mission").innerText =
         missions[Math.floor(Math.random()*missions.length)];
+
+    // BREATH SYSTEM ACTIVATION
+    startBreathing();
 }
 
-function hideLearning(){
-    document.getElementById("learning").style.display="none";
+// ================= BREATH SYSTEM =================
+function startBreathing(){
+    const circle = document.getElementById("breathCircle");
+    circle.style.display="block";
+
+    let cycles = 5;
+    let i = setInterval(()=>{
+
+        cycles--;
+
+        if(cycles<=0){
+            clearInterval(i);
+            circle.style.display="none";
+        }
+
+    },4000);
+}
+
+// ================= EXPLANATION =================
+function showExplanation(word){
+    const msg = word + " → meaning loaded";
+    document.getElementById("explain").innerText = msg;
+}
+
+// ================= SCORE =================
+function updateScore(){
+    document.getElementById("score").innerText =
+        `${texts[lang].points}: ${score}`;
 }
 
 // ================= AUDIO =================
 function playMusic(){
     let bg=document.getElementById("bg");
     bg.volume=.3;
-    bg.playbackRate=1.1;
     bg.play().catch(()=>{});
 }
 
@@ -340,12 +350,16 @@ function clearAll(){
     clearInterval(spawn);
 }
 
+function hideLearning(){
+    document.getElementById("learning").style.display="none";
+}
+
 function reset(){
     location.reload();
 }
 
-// aplicar idioma inicial
-applyLang();
+window.onload=applyLang;
+
 </script>
 
 </body>
