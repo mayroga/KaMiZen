@@ -1,273 +1,333 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AL CIELO: MATRIX TRAINING</title>
-    <style>
-        :root {
-            --neon-blue: #00f2ff;
-            --neon-green: #00ff41;
-            --neon-red: #ff003c;
-            --matrix-bg: #00050a;
-        }
+/**
+ * 🧠 KAMIZEN ENGINE CORE — AL CIELO / AURA BY MAY ROGA LLC
+ * VERSION: 3.1.0 - EXPLOSIVE OMNI-LOOP
+ * FEATURES: PARTICLE EXPLOSIONS, INTENSE NEON, REVERSED SOUND LOGIC
+ */
 
-        body {
-            margin: 0;
-            background: var(--matrix-bg);
-            color: #fff;
-            font-family: 'Courier New', Courier, monospace;
-            overflow: hidden;
-            touch-action: manipulation;
-            user-select: none;
-        }
+const KamizenEngine = (() => {
 
-        /* SCANLINE EFFECT */
-        body::before {
-            content: " ";
-            position: absolute;
-            top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
-                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            background-size: 100% 2px, 3px 100%;
-            pointer-events: none;
-            z-index: 100;
-        }
-
-        /* HEADER UI */
-        #hud {
-            position: fixed;
-            top: 0; width: 100%;
-            display: flex;
-            justify-content: space-between;
-            padding: 20px;
-            box-sizing: border-box;
-            z-index: 50;
-        }
-
-        #timer-box { font-size: 2rem; color: var(--neon-blue); font-weight: bold; }
-        #score-box { font-size: 1.5rem; padding: 5px 15px; border: 2px solid #fff; }
+    const state = {
+        score: 0,
+        lang: "en",
+        mission: null,
+        level: 1,
         
-        /* SOCIAL MISSION PANEL */
-        #social-panel {
-            position: fixed;
-            bottom: 20px; left: 50%;
-            transform: translateX(-50%);
-            width: 90%;
-            background: rgba(0, 20, 40, 0.9);
-            border: 2px solid var(--neon-blue);
-            padding: 15px;
-            display: none;
-            z-index: 400;
-            text-align: center;
-        }
+        phase: 1, // 1: Flow, 2: Story/Mission, 3: Silence/Breath
+        locked: false,
+        
+        wordInterval: null,
+        timerInterval: null,
+        
+        silenceTime: 180,
+        breathInterval: 60,
+        
+        // UI Elements Cache
+        elements: {}
+    };
 
-        /* FLOATING WORDS */
-        .floating {
-            position: absolute;
-            padding: 10px 20px;
-            font-weight: bold;
-            border-radius: 4px;
-            background: rgba(0,0,0,0.8);
-            z-index: 10;
-            animation: floatUp 6s linear forwards;
-        }
-        .word-good { border: 2px solid var(--neon-green); color: var(--neon-green); }
-        .word-bad { border: 2px solid var(--neon-red); color: var(--neon-red); }
-
-        @keyframes floatUp {
-            from { transform: translateY(110vh); opacity: 1; }
-            to { transform: translateY(-20vh); opacity: 0; }
-        }
-
-        /* BREATH SYSTEM */
-        #breath-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9);
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 500;
-        }
-        #breath-circle {
-            width: 150px; height: 150px;
-            border: 5px solid var(--neon-blue);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 3s ease-in-out;
-        }
-
-        .panel {
-            position: fixed; top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            background: #000; padding: 30px;
-            border: 2px solid var(--neon-blue);
-            display: flex; flex-direction: column; gap: 15px; z-index: 600;
-        }
-        button { background: transparent; color: var(--neon-blue); border: 1px solid var(--neon-blue); padding: 10px; cursor: pointer; }
-    </style>
-</head>
-<body>
-
-    <div id="hud">
-        <div id="timer-box">00:00</div>
-        <div id="mastery-lvl" style="color: var(--neon-green);">MASTERY: x1</div>
-        <div id="score-box">POINTS: 0</div>
-    </div>
-
-    <div id="main-menu" class="panel">
-        <h1>KAMIZEN: AL CIELO</h1>
-        <button onclick="startGame('en')">START TRAINING (EN)</button>
-        <button onclick="startGame('es')">INICIAR ENTRENAMIENTO (ES)</button>
-    </div>
-
-    <div id="social-panel">
-        <p id="social-text"></p>
-        <div id="social-options" style="display: flex; gap: 10px; justify-content: center;"></div>
-    </div>
-
-    <div id="breath-overlay">
-        <h2 id="breath-title">SILENCE CHALLENGE</h2>
-        <div id="breath-circle"><span id="breath-label">...</span></div>
-        <p id="breath-desc" style="margin-top: 20px; max-width: 80%; text-align: center;"></p>
-    </div>
-
-    <audio id="snd-win" src="/static/sounds/trumpet.mp3"></audio>
-    <audio id="snd-fail" src="/static/sounds/glass.mp3"></audio>
-
-    <script>
-        let state = {
-            score: 0, mastery: 1, lang: 'en',
-            timeLeft: 300, phase: 'menu',
-            silenceDuration: 20, // Empieza en 20s
-            blocksCompleted: 0
-        };
-
-        const content = {
-            en: {
-                inhale: "INHALE", exhale: "EXHALE",
-                missions: [
-                    { q: "A friend is being teased. What do you do?", a: "Support him", b: "Stay quiet", win: "SOCIAL RESPECT +50", fail: "INTEGRITY LOSS -20" },
-                    { q: "You lost a game. Your reaction?", a: "Congratulate them", b: "Throw a fit", win: "EMOTIONAL POWER +50", fail: "EGO TRAP -20" }
-                ],
-                words: { good: ["HONOR", "TRUTH", "CALM", "WILL"], bad: ["LIE", "EGO", "LAZY", "HATE"] }
-            },
-            es: {
-                inhale: "INHALA", exhale: "EXHALA",
-                missions: [
-                    { q: "¿Se burlan de un amigo. Qué haces?", a: "Apoyarlo", b: "Callar", win: "RESPETO SOCIAL +50", fail: "PERDIDA DE INTEGRIDAD -20" },
-                    { q: "¿Perdiste un juego. Tu reacción?", a: "Felicitar", b: "Enojarte", win: "PODER EMOCIONAL +50", fail: "TRAMPA DEL EGO -20" }
-                ],
-                words: { good: ["HONOR", "VERDAD", "CALMA", "VOLUNTAD"], bad: ["MENTIRA", "EGO", "PEREZA", "ODIO"] }
+    // ==========================================
+    // 🔊 AUDIO SYSTEM (CORRECT: GLASS CRASH / FAIL: BUZZER)
+    // ==========================================
+    const Audio = {
+        bg: null, win: null, fail: null,
+        init() {
+            this.bg = document.getElementById("bg");
+            this.win = document.getElementById("bad"); // Ahora configurado para sonar a CRISTAL ROTO al acertar
+            this.fail = document.getElementById("ok");  // Ahora configurado para sonar a FALLO/PITO al errar
+            if (this.bg) { this.bg.volume = 0.2; this.bg.play().catch(() => {}); }
+        },
+        play(type) {
+            if (type === "win" && this.win) {
+                this.win.currentTime = 0;
+                this.win.play();
             }
-        };
-
-        function startGame(l) {
-            state.lang = l;
-            document.getElementById('main-menu').style.display = 'none';
-            state.interval = setInterval(updateTimer, 1000);
-            state.spawnInterval = setInterval(spawnWord, 1200);
-            // Lanzar primera misión social a los 10 segundos
-            setTimeout(triggerSocialMission, 10000);
+            if (type === "fail" && this.fail) {
+                this.fail.currentTime = 0;
+                this.fail.play();
+            }
         }
+    };
 
-        function updateTimer() {
-            state.timeLeft--;
-            let m = Math.floor(state.timeLeft / 60).toString().padStart(2, '0');
-            let s = (state.timeLeft % 60).toString().padStart(2, '0');
-            document.getElementById('timer-box').innerText = `${m}:${s}`;
-
-            if (state.timeLeft % 45 === 0) triggerSilenceChallenge();
+    // ==========================================
+    // 🗣️ SPEECH SYSTEM (MANDATORY COMPLETION)
+    // ==========================================
+    const Speech = {
+        say(text) {
+            if (!text) return;
+            if (!window.speechSynthesis) return;
+            speechSynthesis.cancel();
+            const u = new SpeechSynthesisUtterance(text);
+            u.lang = state.lang === "en" ? "en-US" : "es-ES";
+            u.rate = 0.85;
+            u.pitch = 1.0;
+            speechSynthesis.speak(u);
         }
+    };
 
-        function spawnWord() {
-            const type = Math.random() > 0.4 ? 'good' : 'bad';
-            const list = content[state.lang].words[type];
-            const text = list[Math.floor(Math.random() * list.length)];
-            const div = document.createElement('div');
-            div.className = `floating word-${type}`;
-            div.innerText = text;
-            div.style.left = Math.random() * 80 + 10 + "vw";
-            div.onclick = () => {
-                if (type === 'good') {
-                    state.score += (10 * state.mastery);
-                    document.getElementById('snd-win').play();
-                } else {
-                    state.score -= 20;
-                    state.mastery = 1;
-                    document.getElementById('snd-fail').play();
-                }
-                updateHUD();
-                div.remove();
-            };
-            document.body.appendChild(div);
-            setTimeout(() => div.remove(), 6000);
-        }
+    // ==========================================
+    // 🌌 FLOATING WORD GAME (DOPAMINE & EXPLOSION ENGINE)
+    // ==========================================
+    const Floating = {
+        words: {
+            power: ["WILL","VISION","HONOR","COURAGE","BUILD","RISE","FAITH","DISCIPLINE","STRENGTH","VICTORY"],
+            risk: ["NOISE","EXCUSE","QUITTING","EGO","HATE","CHAOS","LAZY","FEAR","LIE","ANGER"],
+            silence: ["CALM","LISTEN","WAIT","PEACE","PRAY","INSIDE","BREATHE","STILL","SOUL","FOCUS"]
+        },
 
-        function triggerSocialMission() {
-            const mission = content[state.lang].missions[Math.floor(Math.random() * content[state.lang].missions.length)];
-            const panel = document.getElementById('social-panel');
-            const opts = document.getElementById('social-options');
+        start() {
+            this.stop();
+            state.wordInterval = setInterval(() => {
+                if (state.locked || state.phase !== 1) return;
+
+                const r = Math.random();
+                let type, wordList;
+                
+                if (r > 0.6) { type = 'power'; wordList = this.words.power; }
+                else if (r > 0.3) { type = 'silence'; wordList = this.words.silence; }
+                else { type = 'risk'; wordList = this.words.risk; }
+
+                const word = wordList[Math.floor(Math.random() * wordList.length)];
+                this.createWordElement(word, type);
+            }, 1000);
+        },
+
+        createWordElement(text, type) {
+            const el = document.createElement("div");
+            const isBad = type === 'risk';
             
-            document.getElementById('social-text').innerText = mission.q;
-            opts.innerHTML = `
-                <button onclick="resolveSocial(true, '${mission.win}')">${mission.a}</button>
-                <button onclick="resolveSocial(false, '${mission.fail}')">${mission.b}</button>
-            `;
-            panel.style.display = 'block';
-        }
-
-        function resolveSocial(correct, msg) {
-            if (correct) {
-                state.score += 50;
-                state.mastery++;
-                document.getElementById('snd-win').play();
+            el.className = `floating ${isBad ? 'word-bad' : 'word-good'}`;
+            el.innerText = text;
+            
+            // Colores más fuertes y saturados
+            if (isBad) {
+                el.style.border = "3px solid #ff0000";
+                el.style.boxShadow = "0 0 20px #ff0000";
+                el.style.color = "#ff0000";
             } else {
-                state.score -= 30;
-                document.getElementById('snd-fail').play();
+                el.style.border = "3px solid #00ff00";
+                el.style.boxShadow = "0 0 20px #00ff00";
+                el.style.color = "#00ff00";
             }
-            alert(msg);
-            document.getElementById('social-panel').style.display = 'none';
-            updateHUD();
-        }
 
-        function triggerSilenceChallenge() {
-            clearInterval(state.spawnInterval);
-            const overlay = document.getElementById('breath-overlay');
-            const circle = document.getElementById('breath-circle');
-            const label = document.getElementById('breath-label');
+            el.style.left = (Math.random() * 80 + 10) + "vw";
+            el.style.fontSize = "1.5rem";
+            el.style.fontWeight = "900";
+            el.style.position = "absolute";
+            el.style.cursor = "crosshair";
             
-            overlay.style.display = 'flex';
-            state.blocksCompleted++;
-            
-            // Lógica de progresión: Bloque 1-6 sube de 20 a 60s. Bloque 7+ sube a minutos.
-            if(state.blocksCompleted < 7) state.silenceDuration = 20 + (state.blocksCompleted * 8);
-            else state.silenceDuration = 180; 
-
-            document.getElementById('breath-desc').innerText = `RETO DE SILENCIO: ${state.silenceDuration}s\n"La paz es tu escudo"`;
-
-            let timer = 0;
-            const cycle = setInterval(() => {
-                timer += 4;
-                if (timer >= state.silenceDuration) {
-                    clearInterval(cycle);
-                    overlay.style.display = 'none';
-                    state.spawnInterval = setInterval(spawnWord, 1200);
-                    setTimeout(triggerSocialMission, 5000); // Misión social tras el silencio
+            el.onclick = (e) => {
+                this.explode(e.clientX, e.clientY, isBad ? '#ff0000' : '#00ff00');
+                
+                if (isBad) {
+                    state.score -= 15;
+                    Audio.play("fail"); // Pito de fallo
+                    UI.flashScreen("red");
+                } else {
+                    state.score += 10;
+                    Audio.play("win"); // Cristal roto
+                    UI.flashScreen("green");
                 }
-                label.innerText = (label.innerText === content[state.lang].inhale) ? content[state.lang].exhale : content[state.lang].inhale;
-                circle.style.transform = (circle.style.transform === "scale(1.3)") ? "scale(0.8)" : "scale(1.3)";
-            }, 4000);
-        }
+                UI.updateScore();
+                el.remove();
+            };
 
-        function updateHUD() {
-            document.getElementById('score-box').innerText = `POINTS: ${state.score}`;
-            document.getElementById('mastery-lvl').innerText = `MASTERY: x${state.mastery}`;
+            document.body.appendChild(el);
+            setTimeout(() => { if(el) el.remove(); }, 5000);
+        },
+
+        explode(x, y, color) {
+            for (let i = 0; i < 12; i++) {
+                const p = document.createElement("div");
+                p.style.position = "fixed";
+                p.style.left = x + "px";
+                p.style.top = y + "px";
+                p.style.width = "8px";
+                p.style.height = "8px";
+                p.style.backgroundColor = color;
+                p.style.boxShadow = `0 0 10px ${color}`;
+                p.style.borderRadius = "50%";
+                p.style.pointerEvents = "none";
+                p.style.zIndex = "999";
+                
+                const angle = Math.random() * Math.PI * 2;
+                const velocity = 2 + Math.random() * 5;
+                const vx = Math.cos(angle) * velocity;
+                const vy = Math.sin(angle) * velocity;
+
+                document.body.appendChild(p);
+
+                let opacity = 1;
+                const anim = setInterval(() => {
+                    x += vx;
+                    y += vy;
+                    opacity -= 0.05;
+                    p.style.left = x + "px";
+                    p.style.top = y + "px";
+                    p.style.opacity = opacity;
+                    if (opacity <= 0) {
+                        clearInterval(anim);
+                        p.remove();
+                    }
+                }, 20);
+            }
+        },
+
+        stop() {
+            clearInterval(state.wordInterval);
+            document.querySelectorAll(".floating").forEach(e => e.remove());
         }
-    </script>
-</body>
-</html>
+    };
+
+    // ==========================================
+    // 🎯 MISSION & DIAGNOSIS LOGIC
+    // ==========================================
+    const Mission = {
+        async loadNext() {
+            try {
+                const res = await fetch("/api/mission/next");
+                state.mission = await res.json();
+                state.level = state.mission.level;
+                
+                // Cargar tiempos dinámicos de API
+                const sRes = await fetch(`/api/silence/${state.level}`);
+                const sData = await sRes.json();
+                state.silenceTime = sData.silence_time;
+
+                const bRes = await fetch(`/api/breath/${state.level}`);
+                const bData = await bRes.json();
+                state.breathInterval = bData.breath_interval_sec;
+
+                this.render();
+            } catch (e) { 
+                console.error("Sync Error", e); 
+                // Fallback words if API fails
+                if (!state.mission) Floating.start();
+            }
+        },
+
+        render() {
+            state.phase = 2;
+            Floating.stop();
+            UI.toggleView("mission-zone", true);
+            
+            const story = state.mission.blocks.find(b => b.type === "story");
+            UI.setText("story-text", story.text[state.lang]);
+            Speech.say(story.text[state.lang]);
+
+            const optionsZone = document.getElementById("options-zone");
+            optionsZone.innerHTML = "";
+            
+            const decision = state.mission.blocks.find(b => b.type === "decision");
+            decision.options.forEach(opt => {
+                const btn = document.createElement("button");
+                btn.className = "kamizen-btn";
+                btn.style.margin = "10px";
+                btn.style.boxShadow = "0 0 15px var(--neon-blue)";
+                btn.innerText = opt.text[state.lang];
+                btn.onclick = () => this.handleChoice(opt);
+                optionsZone.appendChild(btn);
+            });
+        },
+
+        handleChoice(opt) {
+            const feedback = opt.explanation[state.lang];
+            const isCorrect = opt.correct === true;
+            
+            UI.setText("story-text", feedback);
+            Speech.say(feedback);
+            
+            if (isCorrect) {
+                Audio.play("win"); // Cristal roto (acierto)
+                state.score += 50;
+                setTimeout(() => this.startSilencePhase(), 4000);
+            } else {
+                Audio.play("fail"); // Pito de fallo (error)
+                state.score -= 20;
+            }
+            UI.updateScore();
+        },
+
+        startSilencePhase() {
+            state.phase = 3;
+            UI.toggleView("mission-zone", false);
+            UI.toggleView("silence-zone", true);
+            
+            let timeLeft = state.silenceTime;
+            Speech.say(state.lang === "en" ? "Entering Silence Challenge. Breathe." : "Iniciando Reto de Silencio. Respira.");
+
+            const timer = setInterval(() => {
+                timeLeft--;
+                UI.updateSilenceTimer(timeLeft);
+                
+                if (timeLeft % 10 === 0) {
+                    const action = (timeLeft / 10) % 2 === 0 ? "INHALAR / INHALE" : "EXHALAR / EXHALE";
+                    UI.setText("breath-instruction", action);
+                }
+
+                if (timeLeft <= 0 || state.phase !== 3) {
+                    clearInterval(timer);
+                    UI.toggleView("silence-zone", false);
+                    state.phase = 1;
+                    Floating.start();
+                }
+            }, 1000);
+        }
+    };
+
+    // ==========================================
+    // 🖥️ UI SYSTEM (INTENSE VISUALS)
+    // ==========================================
+    const UI = {
+        updateScore() {
+            const val = document.getElementById("score-val");
+            val.innerText = state.score;
+            val.style.textShadow = "0 0 20px #fff";
+        },
+        updateSilenceTimer(t) {
+            const m = Math.floor(t / 60);
+            const s = t % 60;
+            const clock = document.getElementById("silence-clock");
+            clock.innerText = `${m}:${s.toString().padStart(2,'0')}`;
+            clock.style.color = "#00f2ff";
+            clock.style.textShadow = "0 0 25px #00f2ff";
+        },
+        toggleView(id, show) {
+            const el = document.getElementById(id);
+            if (el) el.style.display = show ? "flex" : "none";
+        },
+        setText(id, txt) {
+            const el = document.getElementById(id);
+            if (el) el.innerText = txt;
+        },
+        flashScreen(color) {
+            const original = document.body.style.backgroundColor;
+            document.body.style.backgroundColor = color === "green" ? "#00ff00" : "#ff0000";
+            setTimeout(() => document.body.style.backgroundColor = "#000", 150);
+        },
+        clearAll() {
+            state.score = 0;
+            this.updateScore();
+            location.reload();
+        }
+    };
+
+    return {
+        init() {
+            Audio.init();
+            UI.updateScore();
+            Mission.loadNext();
+            // Loop de control
+            setInterval(() => {
+                if(state.phase === 1 && !state.mission) Mission.loadNext();
+            }, 5000);
+        },
+        changeLang() {
+            state.lang = state.lang === "en" ? "es" : "en";
+            if (state.mission) Mission.render();
+        },
+        reset: () => UI.clearAll()
+    };
+
+})();
+
+window.onload = () => KamizenEngine.init();
