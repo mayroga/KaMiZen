@@ -49,19 +49,16 @@ body::before{
     font-size:2.5rem;
     color:var(--neon-blue);
     font-weight:bold;
-    text-shadow:0 0 10px var(--neon-blue);
 }
 
 #score-box{
     font-size:1.8rem;
     padding:5px 15px;
     border:3px solid #fff;
-    box-shadow:0 0 15px #fff;
 }
 
 #mastery-lvl{
     font-size:1.5rem;
-    text-shadow:0 0 10px var(--neon-green);
 }
 
 #social-panel{
@@ -71,7 +68,6 @@ body::before{
     width:90%;
     background:rgba(0,20,40,0.95);
     border:3px solid var(--neon-blue);
-    box-shadow:0 0 20px var(--neon-blue);
     padding:20px;
     display:none;
     z-index:400;
@@ -85,7 +81,6 @@ body::before{
     font-size:1.4rem;
     border-radius:8px;
     background:rgba(0,0,0,0.85);
-    z-index:10;
     animation:floatUp 6s linear forwards;
 }
 
@@ -104,33 +99,6 @@ body::before{
 
 @keyframes blast{
     to{transform:scale(4);opacity:0;}
-}
-
-#breath-overlay{
-    position:fixed;
-    top:0;left:0;width:100%;height:100%;
-    background:rgba(0,0,0,0.95);
-    display:none;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    z-index:500;
-}
-
-#breath-circle{
-    width:200px;height:200px;
-    border:8px solid var(--neon-blue);
-    border-radius:50%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    transition:all 3.5s ease-in-out;
-}
-
-#breath-label{
-    font-size:2.5rem;
-    font-weight:bold;
-    color:var(--neon-blue);
 }
 
 .panel{
@@ -171,12 +139,6 @@ button{
     <div id="social-options"></div>
 </div>
 
-<div id="breath-overlay">
-    <h2 id="breath-title">SILENCE CHALLENGE</h2>
-    <div id="breath-circle"><span id="breath-label">...</span></div>
-    <p id="breath-desc"></p>
-</div>
-
 <audio id="snd-hit" src="/static/sounds/glass.mp3"></audio>
 <audio id="snd-error" src="/static/sounds/trumpet.mp3"></audio>
 <audio id="snd-click" src="/static/sounds/keypress.mp3"></audio>
@@ -186,46 +148,51 @@ let state={
     score:0,
     mastery:1,
     lang:'en',
-    timeLeft:300, // 🔥 5 MINUTOS
-    phase:'menu',
-    silenceDuration:20,
-    blocksCompleted:0
+    timeLeft:300,
 };
 
 const content={
 en:{
 missions:[
-{q:"You see someone nervous in public. What do you do?",a:"Encourage them",b:"Ignore",win:"+RESPECT",fail:"-CONNECTION"},
-{q:"Someone insults you. Your move?",a:"Stay calm",b:"React angry",win:"+CONTROL",fail:"-POWER"},
-{q:"A team fails. You?",a:"Motivate",b:"Blame",win:"+LEADERSHIP",fail:"-TRUST"},
-{q:"You feel fear. You?",a:"Act anyway",b:"Avoid",win:"+COURAGE",fail:"-GROWTH"},
-{q:"Friend lies. You?",a:"Confront calmly",b:"Ignore",win:"+TRUTH",fail:"-RESPECT"},
-{q:"You fail. Next?",a:"Learn",b:"Quit",win:"+PROGRESS",fail:"-MINDSET"},
-{q:"Conflict rises. You?",a:"De-escalate",b:"Fuel it",win:"+INTELLIGENCE",fail:"-CONTROL"},
-{q:"Opportunity appears. You?",a:"Take it",b:"Wait",win:"+SUCCESS",fail:"-LOSS"},
-{q:"Someone cries. You?",a:"Support",b:"Avoid",win:"+EMPATHY",fail:"-HUMANITY"},
-{q:"You win. You?",a:"Stay humble",b:"Brag",win:"+RESPECT",fail:"-EGO"},
-{q:"Team loses. You?",a:"Encourage",b:"Criticize",win:"+UNITY",fail:"-TRUST"},
-{q:"You are tired. You?",a:"Push wisely",b:"Quit",win:"+DISCIPLINE",fail:"-WEAKNESS"},
-{q:"Friend succeeds. You?",a:"Celebrate",b:"Envy",win:"+LOYALTY",fail:"-ENVY"},
-{q:"You are wrong. You?",a:"Admit",b:"Deny",win:"+HONOR",fail:"-EGO"},
-{q:"Pressure hits. You?",a:"Focus",b:"Panic",win:"+CONTROL",fail:"-CHAOS"},
-{q:"You feel anger. You?",a:"Control",b:"Explode",win:"+POWER",fail:"-LOSS"},
-{q:"You see injustice. You?",a:"Act",b:"Ignore",win:"+COURAGE",fail:"-WEAKNESS"},
-{q:"You doubt yourself. You?",a:"Trust process",b:"Quit",win:"+FAITH",fail:"-FAIL"},
-{q:"Someone helps you. You?",a:"Thank",b:"Ignore",win:"+RESPECT",fail:"-DISCONNECT"},
-{q:"Time is short. You?",a:"Focus",b:"Waste",win:"+RESULT",fail:"-LOSS"},
-{q:"You are alone. You?",a:"Build",b:"Scroll",win:"+GROWTH",fail:"-STAGNATION"},
-{q:"You are criticized. You?",a:"Learn",b:"React",win:"+EVOLUTION",fail:"-EGO"},
-{q:"You feel lazy. You?",a:"Act",b:"Delay",win:"+DISCIPLINE",fail:"-LOSS"},
-{q:"You get chance. You?",a:"Take risk",b:"Avoid",win:"+SUCCESS",fail:"-MISS"},
-{q:"You see fear. You?",a:"Face it",b:"Run",win:"+COURAGE",fail:"-LIMIT"}
-]
+{q:"Friend ignored in group?",a:"Include them",b:"Ignore",win:"+RESPECT",fail:"-EMPATHY"},
+{q:"You are insulted?",a:"Stay calm",b:"React angry",win:"+CONTROL",fail:"-CONTROL"},
+{q:"Team fails?",a:"Encourage",b:"Blame",win:"+LEADERSHIP",fail:"-TEAM"},
+{q:"Someone lies?",a:"Stay honest",b:"Lie back",win:"+INTEGRITY",fail:"-VALUES"},
+{q:"You feel fear?",a:"Act anyway",b:"Avoid",win:"+COURAGE",fail:"-GROWTH"},
+{q:"Friend succeeds?",a:"Celebrate",b:"Jealous",win:"+ABUNDANCE",fail:"-MINDSET"},
+{q:"You lose money?",a:"Learn",b:"Blame",win:"+INTELLIGENCE",fail:"-EGO"},
+{q:"Pressure rises?",a:"Breathe",b:"Panic",win:"+FOCUS",fail:"-CONTROL"},
+{q:"You fail test?",a:"Retry",b:"Quit",win:"+DISCIPLINE",fail:"-WILL"},
+{q:"Criticism?",a:"Listen",b:"Attack",win:"+GROWTH",fail:"-EGO"},
+{q:"Late to meeting?",a:"Apologize",b:"Excuse",win:"+HONOR",fail:"-TRUST"},
+{q:"Conflict?",a:"Resolve",b:"Escalate",win:"+SOCIAL SKILL",fail:"-CHAOS"},
+{q:"Opportunity?",a:"Take it",b:"Wait",win:"+ACTION",fail:"-FEAR"},
+{q:"Tired?",a:"Continue",b:"Stop",win:"+STRENGTH",fail:"-WEAKNESS"},
+{q:"Criticized publicly?",a:"Stay calm",b:"Fight back",win:"+RESPECT",fail:"-IMAGE"},
+{q:"Team wins?",a:"Share credit",b:"Take credit",win:"+LEADER",fail:"-EGO"},
+{q:"See injustice?",a:"Act",b:"Ignore",win:"+COURAGE",fail:"-PASSIVE"},
+{q:"Opportunity risky?",a:"Evaluate",b:"Avoid",win:"+GROWTH",fail:"-FEAR"},
+{q:"Distraction?",a:"Refocus",b:"Follow it",win:"+DISCIPLINE",fail:"-LOSS"},
+{q:"You doubt yourself?",a:"Trust process",b:"Quit",win:"+FAITH",fail:"-CONFIDENCE"},
+{q:"Someone cries?",a:"Support",b:"Ignore",win:"+EMPATHY",fail:"-COLD"},
+{q:"Argument?",a:"Listen",b:"Interrupt",win:"+RESPECT",fail:"-EGO"},
+{q:"Hard choice?",a:"Think",b:"React",win:"+INTELLIGENCE",fail:"-IMPULSE"},
+{q:"Anger?",a:"Control",b:"Explode",win:"+POWER",fail:"-LOSS"},
+{q:"Alone time?",a:"Reflect",b:"Escape",win:"+WISDOM",fail:"-DISTRACTION"}
+],
+words:{
+power:["WILL","VISION","HONOR","COURAGE","BUILD","RISE","FAITH","DISCIPLINE","STRENGTH","VICTORY"],
+risk:["NOISE","EXCUSE","QUITTING","EGO","HATE","CHAOS","LAZY","FEAR","LIE","ANGER"],
+silence:["CALM","LISTEN","WAIT","PEACE","PRAY","INSIDE","BREATHE","STILL","SOUL","FOCUS"]
+}
 },
 es:{
-missions:[
-{q:"Ves a alguien nervioso. Qué haces?",a:"Apoyar",b:"Ignorar",win:"+RESPETO",fail:"-CONEXION"}
-]
+missions:[...Array(25).keys()].map(i=>({q:"Situación social",a:"Correcto",b:"Incorrecto",win:"+BIEN",fail:"-MAL"})),
+words:{
+power:["VOLUNTAD","VISIÓN","HONOR","VALOR","CONSTRUIR","CRECER","FE","DISCIPLINA","FUERZA","VICTORIA"],
+risk:["RUIDO","EXCUSA","RENDIRSE","EGO","ODIO","CAOS","PEREZA","MIEDO","MENTIRA","IRA"],
+silence:["CALMA","ESCUCHA","ESPERA","PAZ","ORAR","INTERIOR","RESPIRA","QUIETO","ALMA","ENFOQUE"]
+}
 }
 };
 
@@ -248,9 +215,14 @@ function updateTimer(){
 function spawnWord(){
     const types=['power','risk','silence'];
     const cat=types[Math.floor(Math.random()*types.length)];
+
+    const wordList=content[state.lang].words[cat];
+    const text=wordList[Math.floor(Math.random()*wordList.length)];
+
     const div=document.createElement('div');
     div.className=`floating word-${cat}`;
-    div.innerText=cat.toUpperCase();
+    div.innerText=text;
+
     div.style.left=Math.random()*80+"vw";
 
     div.onclick=()=>{
