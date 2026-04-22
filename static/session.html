@@ -1,366 +1,294 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KAMIZEN LOOP PRO</title>
-
-<style>
-body{
-    margin:0;
-    background:radial-gradient(circle,#001a33,#000);
-    color:#fff;
-    font-family:'Segoe UI',Arial;
-    text-align:center;
-    overflow:hidden;
-    cursor:crosshair;
-}
-
-/* TOP */
-#top-ui{
-    position:fixed;
-    top:0;
-    width:100%;
-    display:flex;
-    justify-content:space-around;
-    padding:15px;
-    color:#00f2ff;
-    font-weight:bold;
-}
-
-/* TIMER */
-#timer{
-    margin-top:70px;
-    font-size:1.4rem;
-    color:#00f2ff;
-}
-
-/* MENU */
-#menu{
-    position:absolute;
-    top:50%;
-    left:50%;
-    transform:translate(-50%,-50%);
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-}
-
-/* FLOATING */
-.floating{
-    position:absolute;
-    padding:8px 18px;
-    border-radius:20px;
-    font-weight:bold;
-    animation:floatUp 5s linear forwards;
-}
-
-.word-good{color:#0f0;border:2px solid #0f0;}
-.word-bad{color:#f00;border:2px solid #f00;}
-.word-neutral{color:#ff0;border:2px solid #ff0;}
-
-@keyframes floatUp{
-    from{transform:translateY(110vh);}
-    to{transform:translateY(-20vh);}
-}
-
-/* EXPLOSION */
-.blast{
-    animation:burst 0.4s forwards;
-    pointer-events:none;
-}
-
-@keyframes burst{
-    to{transform:scale(4);opacity:0;}
-}
-
-/* LEARNING */
-#learning{
-    display:none;
-    margin-top:120px;
-}
-
-/* BREATH UI (CIRCULO RESPIRACIÓN) */
-#breathCircle{
-    position:fixed;
-    top:55%;
-    left:50%;
-    transform:translate(-50%,-50%);
-    width:120px;
-    height:120px;
-    border-radius:50%;
-    border:3px solid #00f2ff;
-    display:none;
-    animation:breatheAnim 4s infinite ease-in-out;
-    box-shadow:0 0 20px #00f2ff;
-}
-
-@keyframes breatheAnim{
-    0%{transform:translate(-50%,-50%) scale(0.8); opacity:0.5;}
-    50%{transform:translate(-50%,-50%) scale(1.3); opacity:1;}
-    100%{transform:translate(-50%,-50%) scale(0.8); opacity:0.5;}
-}
-</style>
-</head>
-
-<body>
-
-<div id="top-ui">
-    <div>FOCUS: 100%</div>
-    <div id="score">POINTS: 0</div>
-    <div>ENERGY: ⚡⚡⚡</div>
-</div>
-
-<div id="timer">00:00</div>
-
-<!-- MENU -->
-<div id="menu">
-    <button onclick="start()">START</button>
-    <button onclick="start()">CONTINUE</button>
-    <button onclick="reset()">BACK</button>
-    <button onclick="toggleLang()">ES / EN</button>
-</div>
-
-<!-- LEARNING -->
-<div id="learning">
-    <h2 id="lvl"></h2>
-    <p id="mission"></p>
-    <div id="explain"></div>
-</div>
-
-<!-- BREATH CIRCLE -->
-<div id="breathCircle"></div>
-
-<!-- AUDIO -->
-<audio id="bg" loop src="/static/sounds/bg.mp3"></audio>
-<audio id="win" src="/static/sounds/trumpet.mp3"></audio>
-<audio id="bad" src="/static/sounds/glass.mp3"></audio>
-<audio id="ok" src="/static/sounds/explosion.mp3"></audio>
-<audio id="key" src="/static/sounds/keypress.mp3"></audio>
-
-<script>
-
-// ================= STATE =================
-let score = 0;
-let level = 1;
-let phase = "menu";
-let timer, spawn;
-let allowInput = true;
-
-// ================= LANGUAGE =================
-let lang = "en";
-
-const texts = {
-    en: {
-        start: "START",
-        continue: "CONTINUE",
-        back: "BACK",
-        points: "POINTS",
-        missions: [
-            "Breathe without touching the screen.",
-            "Control your impulse.",
-            "Focus without distractions.",
-            "Master your mind."
-        ]
-    },
-    es: {
-        start: "INICIAR",
-        continue: "CONTINUAR",
-        back: "ATRÁS",
-        points: "PUNTOS",
-        missions: [
-            "Respira sin tocar la pantalla.",
-            "Controla tu impulso.",
-            "Concéntrate sin distracciones.",
-            "Domina tu mente."
-        ]
-    }
-};
-
-// ================= WORDS =================
-const words = {
-    good:["WILL","VISION","FOCUS","HONOR","COURAGE","BREATHE","BUILD","RISE","CALM","FAITH","DISCIPLINE","LISTEN","STRENGTH","VICTORY"],
-    bad:["NOISE","EXCUSE","QUITTING","EGO","HATE","CHAOS","LAZY","FEAR","LIE","ANGER"],
-    neutral:["CALM","LISTEN","WAIT","PEACE","PRAY","INSIDE","BREATHE","STILL","SOUL","FOCUS"]
-};
-
-// ================= INIT =================
-function start(){
-    document.getElementById("menu").style.display="none";
-    playMusic();
-    runPhase("game1",300);
-}
-
-// ================= LANGUAGE =================
-function toggleLang(){
-    lang = lang === "en" ? "es" : "en";
-    applyLang();
-}
-
-function applyLang(){
-    document.querySelector("#menu button:nth-child(1)").innerText = texts[lang].start;
-    document.querySelector("#menu button:nth-child(2)").innerText = texts[lang].continue;
-    document.querySelector("#menu button:nth-child(3)").innerText = texts[lang].back;
-
-    document.getElementById("score").innerText =
-        `${texts[lang].points}: ${score}`;
-}
-
-// ================= PHASES =================
-function runPhase(type,time){
-    clearAll();
-
-    if(type.includes("game")){
-        allowInput=true;
-        spawnWords();
-        hideLearning();
-    }
-
-    if(type==="learn"){
-        allowInput=false;
-        showLearning();
-    }
-
-    startTimer(time,()=>{
-        runPhase("learn",360);
-    });
-}
-
-// ================= TIMER =================
-function startTimer(t,cb){
-    timer=setInterval(()=>{
-        t--;
-        updateTimer(t);
-        if(t<=0){clearInterval(timer);cb();}
-    },1000);
-}
-
-function updateTimer(t){
-    let m=Math.floor(t/60).toString().padStart(2,"0");
-    let s=(t%60).toString().padStart(2,"0");
-    document.getElementById("timer").innerText=`${m}:${s}`;
-}
-
-// ================= FLOATING =================
-function spawnWords(){
-    spawn=setInterval(()=>{
-
-        const type = randomType();
-        const word = randomWord(type);
-
-        const el=document.createElement("div");
-        el.className=`floating word-${type}`;
-        el.innerText=word;
-        el.style.left=Math.random()*90+"vw";
-
-        el.onmousedown=()=>{
-
-            el.classList.add("blast");
-
-            if(type==="good"){
-                score+=5;
-                document.getElementById("win").play();
-            }
-
-            if(type==="bad"){
-                score-=10;
-                document.getElementById("bad").play();
-            }
-
-            updateScore();
-            showExplanation(word);
-            setTimeout(()=>el.remove(),300);
-        };
-
-        document.body.appendChild(el);
-        setTimeout(()=>el.remove(),5000);
-
-    },1200);
-}
-
-function randomType(){
-    let r=Math.random();
-    if(r>0.7)return"bad";
-    if(r>0.4)return"good";
-    return"neutral";
-}
-
-function randomWord(t){
-    return words[t][Math.floor(Math.random()*words[t].length)];
-}
-
-// ================= LEARNING =================
-function showLearning(){
-
-    document.getElementById("learning").style.display="block";
-
-    level = Math.floor(score/50)+1;
-
-    document.getElementById("lvl").innerText="LEVEL "+level;
-
-    const missions = texts[lang].missions;
-
-    document.getElementById("mission").innerText =
-        missions[Math.floor(Math.random()*missions.length)];
-
-    // BREATH SYSTEM ACTIVATION
-    startBreathing();
-}
-
-// ================= BREATH SYSTEM =================
-function startBreathing(){
-    const circle = document.getElementById("breathCircle");
-    circle.style.display="block";
-
-    let cycles = 5;
-    let i = setInterval(()=>{
-
-        cycles--;
-
-        if(cycles<=0){
-            clearInterval(i);
-            circle.style.display="none";
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AL CIELO: MATRIX TRAINING</title>
+    <style>
+        :root {
+            --neon-blue: #00f2ff;
+            --neon-green: #00ff41;
+            --neon-red: #ff003c;
+            --matrix-bg: #00050a;
         }
 
-    },4000);
-}
+        body {
+            margin: 0;
+            background: var(--matrix-bg);
+            color: #fff;
+            font-family: 'Courier New', Courier, monospace;
+            overflow: hidden;
+            touch-action: manipulation;
+            user-select: none;
+        }
 
-// ================= EXPLANATION =================
-function showExplanation(word){
-    const msg = word + " → meaning loaded";
-    document.getElementById("explain").innerText = msg;
-}
+        /* SCANLINE EFFECT */
+        body::before {
+            content: " ";
+            position: absolute;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+            z-index: 100;
+        }
 
-// ================= SCORE =================
-function updateScore(){
-    document.getElementById("score").innerText =
-        `${texts[lang].points}: ${score}`;
-}
+        /* HEADER UI */
+        #hud {
+            position: fixed;
+            top: 0; width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+            box-sizing: border-box;
+            z-index: 50;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
+        }
 
-// ================= AUDIO =================
-function playMusic(){
-    let bg=document.getElementById("bg");
-    bg.volume=.3;
-    bg.play().catch(()=>{});
-}
+        #timer-box {
+            font-size: 2.5rem;
+            color: var(--neon-blue);
+            text-shadow: 0 0 15px var(--neon-blue);
+            font-weight: bold;
+        }
 
-// ================= CONTROL =================
-function clearAll(){
-    clearInterval(timer);
-    clearInterval(spawn);
-}
+        #score-box {
+            font-size: 1.5rem;
+            padding: 10px;
+            border: 2px solid #fff;
+            transition: all 0.3s;
+        }
 
-function hideLearning(){
-    document.getElementById("learning").style.display="none";
-}
+        .score-good { border-color: var(--neon-green) !important; color: var(--neon-green); box-shadow: 0 0 15px var(--neon-green); }
+        .score-bad { border-color: var(--neon-red) !important; color: var(--neon-red); box-shadow: 0 0 15px var(--neon-red); }
 
-function reset(){
-    location.reload();
-}
+        /* FLOATING WORDS */
+        .floating {
+            position: absolute;
+            padding: 12px 24px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            border-radius: 4px;
+            background: rgba(0,0,0,0.7);
+            cursor: pointer;
+            z-index: 10;
+            white-space: nowrap;
+            animation: floatUp 6s linear forwards;
+        }
 
-window.onload=applyLang;
+        .word-good { border: 2px solid var(--neon-green); color: var(--neon-green); }
+        .word-bad { border: 2px solid var(--neon-red); color: var(--neon-red); }
+        .word-neutral { border: 2px solid var(--neon-blue); color: var(--neon-blue); }
 
-</script>
+        @keyframes floatUp {
+            from { transform: translateY(110vh) scale(1); opacity: 1; }
+            to { transform: translateY(-20vh) scale(0.8); opacity: 0; }
+        }
 
+        /* BREATH SYSTEM */
+        #breath-overlay {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            z-index: 200;
+        }
+
+        #breath-circle {
+            width: 200px; height: 200px;
+            border: 5px solid var(--neon-blue);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 30px var(--neon-blue);
+            transition: all 4s ease-in-out;
+        }
+
+        #breath-label {
+            font-size: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+        }
+
+        /* MENUS */
+        .panel {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 10, 20, 0.95);
+            padding: 40px;
+            border: 1px solid var(--neon-blue);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            z-index: 300;
+        }
+
+        button {
+            background: transparent;
+            color: var(--neon-blue);
+            border: 1px solid var(--neon-blue);
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover { background: var(--neon-blue); color: #000; }
+
+    </style>
+</head>
+<body>
+
+    <div id="hud">
+        <div id="timer-box">00:00</div>
+        <div id="score-box">POINTS: 0</div>
+    </div>
+
+    <div id="main-menu" class="panel">
+        <h1 id="menu-title">READY TO TRAIN?</h1>
+        <button onclick="startGame('en')">ENGLISH MODE</button>
+        <button onclick="startGame('es')">MODO ESPAÑOL</button>
+    </div>
+
+    <div id="breath-overlay">
+        <div id="breath-circle">
+            <span id="breath-label">INHALE</span>
+        </div>
+        <p id="breath-goal" style="margin-top: 20px; text-align: center;"></p>
+    </div>
+
+    <audio id="snd-win" src="/static/sounds/trumpet.mp3"></audio> <audio id="snd-fail" src="/static/sounds/glass.mp3"></audio> <audio id="snd-click" src="/static/sounds/keypress.mp3"></audio>
+
+    <script>
+        let state = {
+            score: 0,
+            lang: 'en',
+            timeLeft: 300,
+            interval: null,
+            spawnInterval: null,
+            phase: 'menu'
+        };
+
+        const config = {
+            en: {
+                inhale: "INHALE", exhale: "EXHALE",
+                points: "POINTS", goal: "NEURO-GOAL:",
+                words: {
+                    good: ["FAITH", "WILL", "FOCUS", "HONOR", "CALM", "STRENGTH"],
+                    bad: ["EGO", "LIE", "HATE", "LAZY", "CHAOS", "EXCUSE"],
+                    neutral: ["STILL", "SOUL", "WAIT", "SILENCE", "BREATHE"]
+                }
+            },
+            es: {
+                inhale: "INHALA", exhale: "EXHALA",
+                points: "PUNTOS", goal: "OBJETIVO NEURO:",
+                words: {
+                    good: ["FE", "VOLUNTAD", "ENFOQUE", "HONOR", "CALMA", "FUERZA"],
+                    bad: ["EGO", "MENTIRA", "ODIO", "PEREZA", "CAOS", "EXCUSA"],
+                    neutral: ["QUIETO", "ALMA", "ESPERA", "SILENCIO", "RESPIRA"]
+                }
+            }
+        };
+
+        function startGame(l) {
+            state.lang = l;
+            state.phase = 'action';
+            document.getElementById('main-menu').style.display = 'none';
+            startActionPhase();
+        }
+
+        function startActionPhase() {
+            state.interval = setInterval(updateTimer, 1000);
+            state.spawnInterval = setInterval(spawnWord, 1200);
+        }
+
+        function updateTimer() {
+            state.timeLeft--;
+            let m = Math.floor(state.timeLeft / 60).toString().padStart(2, '0');
+            let s = (state.timeLeft % 60).toString().padStart(2, '0');
+            document.getElementById('timer-box').innerText = `${m}:${s}`;
+
+            // DISCIPLINE TRIGGER: Cada 60 segundos, Reto de Silencio
+            if (state.timeLeft % 60 === 0 && state.timeLeft > 0) {
+                triggerSilenceChallenge();
+            }
+        }
+
+        function spawnWord() {
+            const types = ['good', 'bad', 'neutral'];
+            const type = types[Math.floor(Math.random() * types.length)];
+            const list = config[state.lang].words[type];
+            const text = list[Math.floor(Math.random() * list.length)];
+
+            const div = document.createElement('div');
+            div.className = `floating word-${type}`;
+            div.innerText = text;
+            div.style.left = Math.random() * 80 + 10 + "vw";
+            
+            div.onclick = () => handleWordClick(div, type);
+            document.body.appendChild(div);
+            
+            setTimeout(() => div.remove(), 6000);
+        }
+
+        function handleWordClick(el, type) {
+            const sb = document.getElementById('score-box');
+            
+            if (type === 'good') {
+                state.score += 10;
+                sb.className = 'score-good';
+                document.getElementById('snd-win').play();
+            } else if (type === 'bad') {
+                state.score -= 20;
+                sb.className = 'score-bad';
+                document.getElementById('snd-fail').play();
+            } else {
+                state.score += 2;
+                document.getElementById('snd-click').play();
+            }
+
+            document.getElementById('score-box').innerText = `${config[state.lang].points}: ${state.score}`;
+            el.style.transform = "scale(2)";
+            el.style.opacity = "0";
+            setTimeout(() => el.remove(), 200);
+        }
+
+        function triggerSilenceChallenge() {
+            clearInterval(state.spawnInterval);
+            const overlay = document.getElementById('breath-overlay');
+            const circle = document.getElementById('breath-circle');
+            const label = document.getElementById('breath-label');
+            const goalTxt = document.getElementById('breath-goal');
+            
+            overlay.style.display = 'flex';
+            goalTxt.innerText = state.lang === 'en' ? "SILENCE CHALLENGE: RECENTER CORE" : "RETO DE SILENCIO: RECENTRA TU NÚCLEO";
+
+            let count = 0;
+            const cycle = () => {
+                if (count >= 4) {
+                    overlay.style.display = 'none';
+                    state.spawnInterval = setInterval(spawnWord, 1200);
+                    return;
+                }
+                
+                label.innerText = config[state.lang].inhale;
+                circle.style.transform = "scale(1.5)";
+                
+                setTimeout(() => {
+                    label.innerText = config[state.lang].exhale;
+                    circle.style.transform = "scale(0.8)";
+                    count++;
+                    setTimeout(cycle, 4000);
+                }, 4000);
+            };
+
+            cycle();
+        }
+    </script>
 </body>
 </html>
