@@ -1,191 +1,180 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AL CIELO: MATRIX TRAINING</title>
-    <style>
-        :root {
-            --neon-blue: #00f2ff;
-            --neon-green: #00ff41;
-            --neon-red: #ff003c;
-            --neon-yellow: #ffff00;
-            --matrix-bg: #00050a;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>AL CIELO: MATRIX TRAINING</title>
 
-        body {
-            margin: 0;
-            background: var(--matrix-bg);
-            color: #fff;
-            font-family: 'Courier New', Courier, monospace;
-            overflow: hidden;
-            touch-action: manipulation;
-            user-select: none;
-        }
+<style>
+:root {
+    --neon-blue:#00f2ff;
+    --neon-green:#00ff41;
+    --neon-red:#ff003c;
+    --neon-yellow:#ffff00;
+    --matrix-bg:#00050a;
+}
 
-        body::before {
-            content: " ";
-            position: absolute;
-            top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
-                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            background-size: 100% 2px, 3px 100%;
-            pointer-events: none;
-            z-index: 100;
-        }
+body{
+    margin:0;
+    background:var(--matrix-bg);
+    color:#fff;
+    font-family:'Courier New', Courier, monospace;
+    overflow:hidden;
+    touch-action:manipulation;
+    user-select:none;
+}
 
-        #hud {
-            position: fixed;
-            top: 0; width: 100%;
-            display: flex;
-            justify-content: space-between;
-            padding: 20px;
-            box-sizing: border-box;
-            z-index: 50;
-        }
+body::before{
+    content:" ";
+    position:absolute;
+    top:0;left:0;bottom:0;right:0;
+    background:linear-gradient(rgba(18,16,16,0)50%,rgba(0,0,0,0.25)50%),
+               linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06));
+    background-size:100% 2px,3px 100%;
+    pointer-events:none;
+    z-index:100;
+}
 
-        #timer-box { 
-            font-size: 2.5rem; 
-            color: var(--neon-blue); 
-            font-weight: bold; 
-            text-shadow: 0 0 10px var(--neon-blue);
-        }
+#hud{
+    position:fixed;
+    top:0;width:100%;
+    display:flex;
+    justify-content:space-between;
+    padding:20px;
+    box-sizing:border-box;
+    z-index:50;
+}
 
-        #score-box { 
-            font-size: 1.8rem; 
-            padding: 5px 15px; 
-            border: 3px solid #fff; 
-            box-shadow: 0 0 15px #fff;
-        }
-        
-        #mastery-lvl {
-            font-size: 1.5rem;
-            text-shadow: 0 0 10px var(--neon-green);
-        }
-        
-        #social-panel {
-            position: fixed;
-            bottom: 20px; left: 50%;
-            transform: translateX(-50%);
-            width: 90%;
-            background: rgba(0, 20, 40, 0.95);
-            border: 3px solid var(--neon-blue);
-            box-shadow: 0 0 20px var(--neon-blue);
-            padding: 20px;
-            display: none;
-            z-index: 400;
-            text-align: center;
-        }
+#timer-box{
+    font-size:2.5rem;
+    color:var(--neon-blue);
+    font-weight:bold;
+    text-shadow:0 0 10px var(--neon-blue);
+}
 
-        .floating {
-            position: absolute;
-            padding: 12px 24px;
-            font-weight: 900;
-            font-size: 1.4rem;
-            border-radius: 8px;
-            background: rgba(0,0,0,0.85);
-            z-index: 10;
-            animation: floatUp 6s linear forwards;
-            transition: transform 0.1s;
-        }
+#score-box{
+    font-size:1.8rem;
+    padding:5px 15px;
+    border:3px solid #fff;
+    box-shadow:0 0 15px #fff;
+}
 
-        .word-power { border: 3px solid var(--neon-green); color: var(--neon-green); text-shadow: 0 0 10px var(--neon-green); }
-        .word-risk { border: 3px solid var(--neon-red); color: var(--neon-red); text-shadow: 0 0 10px var(--neon-red); }
-        .word-silence { border: 3px solid var(--neon-yellow); color: var(--neon-yellow); text-shadow: 0 0 10px var(--neon-yellow); }
+#mastery-lvl{
+    font-size:1.5rem;
+    text-shadow:0 0 10px var(--neon-green);
+}
 
-        @keyframes floatUp {
-            from { transform: translateY(110vh); opacity: 1; }
-            to { transform: translateY(-20vh); opacity: 0; }
-        }
+#social-panel{
+    position:fixed;
+    bottom:20px;left:50%;
+    transform:translateX(-50%);
+    width:90%;
+    background:rgba(0,20,40,0.95);
+    border:3px solid var(--neon-blue);
+    box-shadow:0 0 20px var(--neon-blue);
+    padding:20px;
+    display:none;
+    z-index:400;
+    text-align:center;
+}
 
-        .explode {
-            animation: blast 0.4s ease-out forwards !important;
-            pointer-events: none;
-        }
+.floating{
+    position:absolute;
+    padding:12px 24px;
+    font-weight:900;
+    font-size:1.4rem;
+    border-radius:8px;
+    background:rgba(0,0,0,0.85);
+    z-index:10;
+    animation:floatUp 6s linear forwards;
+}
 
-        @keyframes blast {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(2.5); opacity: 0.5; filter: brightness(2); }
-            100% { transform: scale(4); opacity: 0; }
-        }
+.word-power{border:3px solid var(--neon-green);color:var(--neon-green);}
+.word-risk{border:3px solid var(--neon-red);color:var(--neon-red);}
+.word-silence{border:3px solid var(--neon-yellow);color:var(--neon-yellow);}
 
-        #breath-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95);
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 500;
-        }
+@keyframes floatUp{
+    from{transform:translateY(110vh);}
+    to{transform:translateY(-20vh);}
+}
 
-        #breath-circle {
-            width: 200px; height: 200px;
-            border: 8px solid var(--neon-blue);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 0 40px var(--neon-blue);
-            transition: all 3.5s ease-in-out;
-        }
+.explode{
+    animation:blast .4s ease-out forwards !important;
+}
 
-        #breath-label {
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: var(--neon-blue);
-        }
+@keyframes blast{
+    to{transform:scale(4);opacity:0;}
+}
 
-        .panel {
-            position: fixed; top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            background: #000; padding: 40px;
-            border: 4px solid var(--neon-blue);
-            box-shadow: 0 0 30px var(--neon-blue);
-            display: flex; flex-direction: column; gap: 20px; z-index: 600;
-        }
+#breath-overlay{
+    position:fixed;
+    top:0;left:0;width:100%;height:100%;
+    background:rgba(0,0,0,0.95);
+    display:none;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    z-index:500;
+}
 
-        button { 
-            background: transparent; 
-            color: var(--neon-blue); 
-            border: 2px solid var(--neon-blue); 
-            padding: 15px; 
-            font-size: 1.2rem;
-            font-weight: bold;
-            cursor: pointer; 
-            transition: 0.3s;
-        }
-        button:hover {
-            background: var(--neon-blue);
-            color: #000;
-            box-shadow: 0 0 20px var(--neon-blue);
-        }
-    </style>
+#breath-circle{
+    width:200px;height:200px;
+    border:8px solid var(--neon-blue);
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition:all 3.5s ease-in-out;
+}
+
+#breath-label{
+    font-size:2.5rem;
+    font-weight:bold;
+    color:var(--neon-blue);
+}
+
+.panel{
+    position:fixed;top:50%;left:50%;
+    transform:translate(-50%,-50%);
+    background:#000;padding:40px;
+    border:4px solid var(--neon-blue);
+    display:flex;flex-direction:column;gap:20px;
+}
+
+button{
+    background:transparent;
+    color:var(--neon-blue);
+    border:2px solid var(--neon-blue);
+    padding:15px;
+    font-size:1.2rem;
+    cursor:pointer;
+}
+</style>
 </head>
+
 <body>
 
 <div id="hud">
-    <div id="timer-box">00:00</div>
-    <div id="mastery-lvl" style="color: var(--neon-green);">MASTERY: x1</div>
+    <div id="timer-box">05:00</div>
+    <div id="mastery-lvl">MASTERY: x1</div>
     <div id="score-box">POINTS: 0</div>
 </div>
 
 <div id="main-menu" class="panel">
-    <h1 style="color: var(--neon-blue); text-align: center;">KAMIZEN: AL CIELO</h1>
+    <h1>KAMIZEN: AL CIELO</h1>
     <button onclick="startGame('en')">START TRAINING (EN)</button>
     <button onclick="startGame('es')">INICIAR ENTRENAMIENTO (ES)</button>
 </div>
 
 <div id="social-panel">
-    <p id="social-text" style="font-size: 1.5rem; margin-bottom: 20px;"></p>
-    <div id="social-options" style="display: flex; gap: 20px; justify-content: center;"></div>
+    <p id="social-text"></p>
+    <div id="social-options"></div>
 </div>
 
 <div id="breath-overlay">
-    <h2 id="breath-title" style="color: var(--neon-blue); font-size: 2.5rem; margin-bottom: 30px;">SILENCE CHALLENGE</h2>
+    <h2 id="breath-title">SILENCE CHALLENGE</h2>
     <div id="breath-circle"><span id="breath-label">...</span></div>
-    <p id="breath-desc" style="margin-top: 30px; font-size: 1.5rem; max-width: 80%; text-align: center; color: var(--neon-blue);"></p>
+    <p id="breath-desc"></p>
 </div>
 
 <audio id="snd-hit" src="/static/sounds/glass.mp3"></audio>
@@ -193,80 +182,56 @@
 <audio id="snd-click" src="/static/sounds/keypress.mp3"></audio>
 
 <script>
-let state = {
-    score: 0,
-    mastery: 1,
-    lang: 'en',
-    timeLeft: 600, // 🔥 EXTENDIDO A 10 MINUTOS
-    phase: 'menu',
-    silenceDuration: 20,
-    blocksCompleted: 0
+let state={
+    score:0,
+    mastery:1,
+    lang:'en',
+    timeLeft:300, // 🔥 5 MINUTOS
+    phase:'menu',
+    silenceDuration:20,
+    blocksCompleted:0
 };
 
-const content = {
-    en: {
-        inhale: "INHALE",
-        exhale: "EXHALE",
-        points: "POINTS",
-        mastery: "MASTERY",
-        missions: [
-            {q:"Friend ignored in group?",a:"Include them",b:"Ignore",win:"+RESPECT",fail:"-EMPATHY"},
-            {q:"You are insulted?",a:"Stay calm",b:"React angry",win:"+CONTROL",fail:"-CONTROL"},
-            {q:"Team fails?",a:"Encourage",b:"Blame",win:"+LEADERSHIP",fail:"-TEAM"},
-            {q:"Someone lies?",a:"Stay honest",b:"Lie back",win:"+INTEGRITY",fail:"-VALUES"},
-            {q:"You feel fear?",a:"Act anyway",b:"Avoid",win:"+COURAGE",fail:"-GROWTH"},
-            {q:"Friend succeeds?",a:"Celebrate",b:"Jealous",win:"+ABUNDANCE",fail:"-MINDSET"},
-            {q:"You lose money?",a:"Learn",b:"Blame",win:"+INTELLIGENCE",fail:"-EGO"},
-            {q:"Pressure rises?",a:"Breathe",b:"Panic",win:"+FOCUS",fail:"-CONTROL"},
-            {q:"You fail test?",a:"Retry",b:"Quit",win:"+DISCIPLINE",fail:"-WILL"},
-            {q:"Criticism?",a:"Listen",b:"Attack",win:"+GROWTH",fail:"-EGO"},
-            {q:"Late to meeting?",a:"Apologize",b:"Excuse",win:"+HONOR",fail:"-TRUST"},
-            {q:"Conflict?",a:"Resolve",b:"Escalate",win:"+SOCIAL SKILL",fail:"-CHAOS"},
-            {q:"Opportunity?",a:"Take it",b:"Wait",win:"+ACTION",fail:"-FEAR"},
-            {q:"Tired?",a:"Continue",b:"Stop",win:"+STRENGTH",fail:"-WEAKNESS"},
-            {q:"Criticized publicly?",a:"Stay calm",b:"Fight back",win:"+RESPECT",fail:"-IMAGE"},
-            {q:"Team wins?",a:"Share credit",b:"Take credit",win:"+LEADER",fail:"-EGO"},
-            {q:"See injustice?",a:"Act",b:"Ignore",win:"+COURAGE",fail:"-PASSIVE"},
-            {q:"Opportunity risky?",a:"Evaluate",b:"Avoid",win:"+GROWTH",fail:"-FEAR"},
-            {q:"Distraction?",a:"Refocus",b:"Follow it",win:"+DISCIPLINE",fail:"-LOSS"},
-            {q:"You doubt yourself?",a:"Trust process",b:"Quit",win:"+FAITH",fail:"-CONFIDENCE"},
-            {q:"Someone cries?",a:"Support",b:"Ignore",win:"+EMPATHY",fail:"-COLD"},
-            {q:"Argument?",a:"Listen",b:"Interrupt",win:"+RESPECT",fail:"-EGO"},
-            {q:"Hard choice?",a:"Think",b:"React",win:"+INTELLIGENCE",fail:"-IMPULSE"},
-            {q:"Anger?",a:"Control",b:"Explode",win:"+POWER",fail:"-LOSS"},
-            {q:"Alone time?",a:"Reflect",b:"Escape",win:"+WISDOM",fail:"-DISTRACTION"}
-        ],
-        words: {
-            power:["WILL","VISION","HONOR","COURAGE","BUILD","RISE","FAITH","DISCIPLINE","STRENGTH","VICTORY"],
-            risk:["NOISE","EXCUSE","QUITTING","EGO","HATE","CHAOS","LAZY","FEAR","LIE","ANGER"],
-            silence:["CALM","LISTEN","WAIT","PEACE","PRAY","INSIDE","BREATHE","STILL","SOUL","FOCUS"]
-        }
-    },
-    es: {
-        inhale:"INHALA",
-        exhale:"EXHALA",
-        points:"PUNTOS",
-        mastery:"MAESTRÍA",
-        missions:[...Array(25).keys()].map(i=>({q:"Situación social",a:"Correcto",b:"Incorrecto",win:"+BIEN",fail:"-MAL"})),
-        words:{
-            power:["VOLUNTAD","VISIÓN","HONOR","VALOR","CONSTRUIR","CRECER","FE","DISCIPLINA","FUERZA","VICTORIA"],
-            risk:["RUIDO","EXCUSA","RENDIRSE","EGO","ODIO","CAOS","PEREZA","MIEDO","MENTIRA","IRA"],
-            silence:["CALMA","ESCUCHA","ESPERA","PAZ","ORAR","INTERIOR","RESPIRA","QUIETO","ALMA","ENFOQUE"]
-        }
-    }
-};
-
-// 🔥 TODO LO DEMÁS EXACTAMENTE IGUAL (NO MODIFICADO)
-
-function updateHUD(){
-    document.getElementById('score-box').innerText=`${content[state.lang].points}: ${state.score}`;
-    document.getElementById('mastery-lvl').innerText=`${content[state.lang].mastery}: x${state.mastery}`;
+const content={
+en:{
+missions:[
+{q:"You see someone nervous in public. What do you do?",a:"Encourage them",b:"Ignore",win:"+RESPECT",fail:"-CONNECTION"},
+{q:"Someone insults you. Your move?",a:"Stay calm",b:"React angry",win:"+CONTROL",fail:"-POWER"},
+{q:"A team fails. You?",a:"Motivate",b:"Blame",win:"+LEADERSHIP",fail:"-TRUST"},
+{q:"You feel fear. You?",a:"Act anyway",b:"Avoid",win:"+COURAGE",fail:"-GROWTH"},
+{q:"Friend lies. You?",a:"Confront calmly",b:"Ignore",win:"+TRUTH",fail:"-RESPECT"},
+{q:"You fail. Next?",a:"Learn",b:"Quit",win:"+PROGRESS",fail:"-MINDSET"},
+{q:"Conflict rises. You?",a:"De-escalate",b:"Fuel it",win:"+INTELLIGENCE",fail:"-CONTROL"},
+{q:"Opportunity appears. You?",a:"Take it",b:"Wait",win:"+SUCCESS",fail:"-LOSS"},
+{q:"Someone cries. You?",a:"Support",b:"Avoid",win:"+EMPATHY",fail:"-HUMANITY"},
+{q:"You win. You?",a:"Stay humble",b:"Brag",win:"+RESPECT",fail:"-EGO"},
+{q:"Team loses. You?",a:"Encourage",b:"Criticize",win:"+UNITY",fail:"-TRUST"},
+{q:"You are tired. You?",a:"Push wisely",b:"Quit",win:"+DISCIPLINE",fail:"-WEAKNESS"},
+{q:"Friend succeeds. You?",a:"Celebrate",b:"Envy",win:"+LOYALTY",fail:"-ENVY"},
+{q:"You are wrong. You?",a:"Admit",b:"Deny",win:"+HONOR",fail:"-EGO"},
+{q:"Pressure hits. You?",a:"Focus",b:"Panic",win:"+CONTROL",fail:"-CHAOS"},
+{q:"You feel anger. You?",a:"Control",b:"Explode",win:"+POWER",fail:"-LOSS"},
+{q:"You see injustice. You?",a:"Act",b:"Ignore",win:"+COURAGE",fail:"-WEAKNESS"},
+{q:"You doubt yourself. You?",a:"Trust process",b:"Quit",win:"+FAITH",fail:"-FAIL"},
+{q:"Someone helps you. You?",a:"Thank",b:"Ignore",win:"+RESPECT",fail:"-DISCONNECT"},
+{q:"Time is short. You?",a:"Focus",b:"Waste",win:"+RESULT",fail:"-LOSS"},
+{q:"You are alone. You?",a:"Build",b:"Scroll",win:"+GROWTH",fail:"-STAGNATION"},
+{q:"You are criticized. You?",a:"Learn",b:"React",win:"+EVOLUTION",fail:"-EGO"},
+{q:"You feel lazy. You?",a:"Act",b:"Delay",win:"+DISCIPLINE",fail:"-LOSS"},
+{q:"You get chance. You?",a:"Take risk",b:"Avoid",win:"+SUCCESS",fail:"-MISS"},
+{q:"You see fear. You?",a:"Face it",b:"Run",win:"+COURAGE",fail:"-LIMIT"}
+]
+},
+es:{
+missions:[
+{q:"Ves a alguien nervioso. Qué haces?",a:"Apoyar",b:"Ignorar",win:"+RESPETO",fail:"-CONEXION"}
+]
 }
+};
 
 function startGame(l){
     state.lang=l;
     document.getElementById('main-menu').style.display='none';
-    updateHUD();
     state.interval=setInterval(updateTimer,1000);
     state.spawnInterval=setInterval(spawnWord,1000);
     setTimeout(triggerSocialMission,10000);
@@ -277,104 +242,55 @@ function updateTimer(){
     let m=Math.floor(state.timeLeft/60).toString().padStart(2,'0');
     let s=(state.timeLeft%60).toString().padStart(2,'0');
     document.getElementById('timer-box').innerText=`${m}:${s}`;
-    if(state.timeLeft%45===0&&state.timeLeft>0)triggerSilenceChallenge();
     if(state.timeLeft<=0)endGame();
 }
 
 function spawnWord(){
-    const categories=['power','risk','silence'];
-    const cat=categories[Math.floor(Math.random()*categories.length)];
-    const list=content[state.lang].words[cat];
-    const text=list[Math.floor(Math.random()*list.length)];
-
+    const types=['power','risk','silence'];
+    const cat=types[Math.floor(Math.random()*types.length)];
     const div=document.createElement('div');
     div.className=`floating word-${cat}`;
-    div.innerText=text;
-    div.style.left=Math.random()*75+10+"vw";
+    div.innerText=cat.toUpperCase();
+    div.style.left=Math.random()*80+"vw";
 
     div.onclick=()=>{
         div.classList.add('explode');
         document.getElementById('snd-click').play();
-        if(cat==='power'||cat==='silence'){
-            state.score+=15*state.mastery;
-            document.getElementById('snd-hit').play();
-        }else{
+
+        if(cat==='risk'){
             state.score-=30;
-            state.mastery=1;
             document.getElementById('snd-error').play();
+        }else{
+            state.score+=15;
+            document.getElementById('snd-hit').play();
         }
-        updateHUD();
-        setTimeout(()=>div.remove(),4000);
+
+        document.getElementById('score-box').innerText=`POINTS: ${state.score}`;
+        setTimeout(()=>div.remove(),300);
     };
 
     document.body.appendChild(div);
-    setTimeout(()=>{if(div)div.remove();},6000);
+    setTimeout(()=>div.remove(),6000);
 }
 
 function triggerSocialMission(){
-    if(state.timeLeft<=10)return;
-    const mission=content[state.lang].missions[Math.floor(Math.random()*content[state.lang].missions.length)];
-    document.getElementById('social-text').innerText=mission.q;
+    const m=content[state.lang].missions[Math.floor(Math.random()*content[state.lang].missions.length)];
+    document.getElementById('social-text').innerText=m.q;
     document.getElementById('social-options').innerHTML=`
-        <button onclick="resolveSocial(true,'${mission.win}')">${mission.a}</button>
-        <button onclick="resolveSocial(false,'${mission.fail}')">${mission.b}</button>
-    `;
+    <button onclick="resolve(true,'${m.win}')">${m.a}</button>
+    <button onclick="resolve(false,'${m.fail}')">${m.b}</button>`;
     document.getElementById('social-panel').style.display='block';
 }
 
-function resolveSocial(correct,msg){
-    if(correct){
-        state.score+=100;
-        state.mastery++;
-        document.getElementById('snd-hit').play();
-    }else{
-        state.score-=50;
-        document.getElementById('snd-error').play();
-    }
+function resolve(c,msg){
+    if(c){state.score+=100;}
+    else{state.score-=50;}
     alert(msg);
     document.getElementById('social-panel').style.display='none';
-    updateHUD();
-}
-
-function triggerSilenceChallenge(){
-    clearInterval(state.spawnInterval);
-    const overlay=document.getElementById('breath-overlay');
-    const circle=document.getElementById('breath-circle');
-    const label=document.getElementById('breath-label');
-    overlay.style.display='flex';
-    state.blocksCompleted++;
-    if(state.blocksCompleted<7)state.silenceDuration=20+(state.blocksCompleted*8);
-    else state.silenceDuration=180;
-
-    document.getElementById('breath-desc').innerText=`SILENCE CHALLENGE: ${state.silenceDuration}s`;
-
-    let elapsed=0;
-    label.innerText=content[state.lang].inhale;
-    circle.style.transform="scale(1.4)";
-
-    const cycle=setInterval(()=>{
-        elapsed+=4;
-        if(elapsed>=state.silenceDuration){
-            clearInterval(cycle);
-            overlay.style.display='none';
-            state.spawnInterval=setInterval(spawnWord,1000);
-            setTimeout(triggerSocialMission,5000);
-            return;
-        }
-        if(label.innerText===content[state.lang].inhale){
-            label.innerText=content[state.lang].exhale;
-            circle.style.transform="scale(0.8)";
-        }else{
-            label.innerText=content[state.lang].inhale;
-            circle.style.transform="scale(1.4)";
-        }
-    },4000);
 }
 
 function endGame(){
-    clearInterval(state.interval);
-    clearInterval(state.spawnInterval);
-    alert(`TRAINING COMPLETE\nFINAL SCORE: ${state.score}`);
+    alert("FINAL SCORE: "+state.score);
     location.reload();
 }
 </script>
