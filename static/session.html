@@ -43,168 +43,136 @@
             padding: 20px;
             box-sizing: border-box;
             z-index: 50;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
         }
 
-        #timer-box {
-            font-size: 2.5rem;
-            color: var(--neon-blue);
-            text-shadow: 0 0 15px var(--neon-blue);
-            font-weight: bold;
+        #timer-box { font-size: 2rem; color: var(--neon-blue); font-weight: bold; }
+        #score-box { font-size: 1.5rem; padding: 5px 15px; border: 2px solid #fff; }
+        
+        /* SOCIAL MISSION PANEL */
+        #social-panel {
+            position: fixed;
+            bottom: 20px; left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            background: rgba(0, 20, 40, 0.9);
+            border: 2px solid var(--neon-blue);
+            padding: 15px;
+            display: none;
+            z-index: 400;
+            text-align: center;
         }
-
-        #score-box {
-            font-size: 1.5rem;
-            padding: 10px;
-            border: 2px solid #fff;
-            transition: all 0.3s;
-        }
-
-        .score-good { border-color: var(--neon-green) !important; color: var(--neon-green); box-shadow: 0 0 15px var(--neon-green); }
-        .score-bad { border-color: var(--neon-red) !important; color: var(--neon-red); box-shadow: 0 0 15px var(--neon-red); }
 
         /* FLOATING WORDS */
         .floating {
             position: absolute;
-            padding: 12px 24px;
+            padding: 10px 20px;
             font-weight: bold;
-            font-size: 1.2rem;
             border-radius: 4px;
-            background: rgba(0,0,0,0.7);
-            cursor: pointer;
+            background: rgba(0,0,0,0.8);
             z-index: 10;
-            white-space: nowrap;
             animation: floatUp 6s linear forwards;
         }
-
         .word-good { border: 2px solid var(--neon-green); color: var(--neon-green); }
         .word-bad { border: 2px solid var(--neon-red); color: var(--neon-red); }
-        .word-neutral { border: 2px solid var(--neon-blue); color: var(--neon-blue); }
 
         @keyframes floatUp {
-            from { transform: translateY(110vh) scale(1); opacity: 1; }
-            to { transform: translateY(-20vh) scale(0.8); opacity: 0; }
+            from { transform: translateY(110vh); opacity: 1; }
+            to { transform: translateY(-20vh); opacity: 0; }
         }
 
         /* BREATH SYSTEM */
         #breath-overlay {
             position: fixed;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
             display: none;
             flex-direction: column;
             align-items: center;
-            z-index: 200;
+            justify-content: center;
+            z-index: 500;
         }
-
         #breath-circle {
-            width: 200px; height: 200px;
+            width: 150px; height: 150px;
             border: 5px solid var(--neon-blue);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 0 30px var(--neon-blue);
-            transition: all 4s ease-in-out;
+            transition: all 3s ease-in-out;
         }
 
-        #breath-label {
-            font-size: 2rem;
-            text-transform: uppercase;
-            letter-spacing: 5px;
-        }
-
-        /* MENUS */
         .panel {
-            position: fixed;
-            top: 50%; left: 50%;
+            position: fixed; top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            background: rgba(0, 10, 20, 0.95);
-            padding: 40px;
-            border: 1px solid var(--neon-blue);
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            z-index: 300;
+            background: #000; padding: 30px;
+            border: 2px solid var(--neon-blue);
+            display: flex; flex-direction: column; gap: 15px; z-index: 600;
         }
-
-        button {
-            background: transparent;
-            color: var(--neon-blue);
-            border: 1px solid var(--neon-blue);
-            padding: 15px 30px;
-            font-size: 1.2rem;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        button:hover { background: var(--neon-blue); color: #000; }
-
+        button { background: transparent; color: var(--neon-blue); border: 1px solid var(--neon-blue); padding: 10px; cursor: pointer; }
     </style>
 </head>
 <body>
 
     <div id="hud">
         <div id="timer-box">00:00</div>
+        <div id="mastery-lvl" style="color: var(--neon-green);">MASTERY: x1</div>
         <div id="score-box">POINTS: 0</div>
     </div>
 
     <div id="main-menu" class="panel">
-        <h1 id="menu-title">READY TO TRAIN?</h1>
-        <button onclick="startGame('en')">ENGLISH MODE</button>
-        <button onclick="startGame('es')">MODO ESPAÑOL</button>
+        <h1>KAMIZEN: AL CIELO</h1>
+        <button onclick="startGame('en')">START TRAINING (EN)</button>
+        <button onclick="startGame('es')">INICIAR ENTRENAMIENTO (ES)</button>
+    </div>
+
+    <div id="social-panel">
+        <p id="social-text"></p>
+        <div id="social-options" style="display: flex; gap: 10px; justify-content: center;"></div>
     </div>
 
     <div id="breath-overlay">
-        <div id="breath-circle">
-            <span id="breath-label">INHALE</span>
-        </div>
-        <p id="breath-goal" style="margin-top: 20px; text-align: center;"></p>
+        <h2 id="breath-title">SILENCE CHALLENGE</h2>
+        <div id="breath-circle"><span id="breath-label">...</span></div>
+        <p id="breath-desc" style="margin-top: 20px; max-width: 80%; text-align: center;"></p>
     </div>
 
-    <audio id="snd-win" src="/static/sounds/trumpet.mp3"></audio> <audio id="snd-fail" src="/static/sounds/glass.mp3"></audio> <audio id="snd-click" src="/static/sounds/keypress.mp3"></audio>
+    <audio id="snd-win" src="/static/sounds/trumpet.mp3"></audio>
+    <audio id="snd-fail" src="/static/sounds/glass.mp3"></audio>
 
     <script>
         let state = {
-            score: 0,
-            lang: 'en',
-            timeLeft: 300,
-            interval: null,
-            spawnInterval: null,
-            phase: 'menu'
+            score: 0, mastery: 1, lang: 'en',
+            timeLeft: 300, phase: 'menu',
+            silenceDuration: 20, // Empieza en 20s
+            blocksCompleted: 0
         };
 
-        const config = {
+        const content = {
             en: {
                 inhale: "INHALE", exhale: "EXHALE",
-                points: "POINTS", goal: "NEURO-GOAL:",
-                words: {
-                    good: ["FAITH", "WILL", "FOCUS", "HONOR", "CALM", "STRENGTH"],
-                    bad: ["EGO", "LIE", "HATE", "LAZY", "CHAOS", "EXCUSE"],
-                    neutral: ["STILL", "SOUL", "WAIT", "SILENCE", "BREATHE"]
-                }
+                missions: [
+                    { q: "A friend is being teased. What do you do?", a: "Support him", b: "Stay quiet", win: "SOCIAL RESPECT +50", fail: "INTEGRITY LOSS -20" },
+                    { q: "You lost a game. Your reaction?", a: "Congratulate them", b: "Throw a fit", win: "EMOTIONAL POWER +50", fail: "EGO TRAP -20" }
+                ],
+                words: { good: ["HONOR", "TRUTH", "CALM", "WILL"], bad: ["LIE", "EGO", "LAZY", "HATE"] }
             },
             es: {
                 inhale: "INHALA", exhale: "EXHALA",
-                points: "PUNTOS", goal: "OBJETIVO NEURO:",
-                words: {
-                    good: ["FE", "VOLUNTAD", "ENFOQUE", "HONOR", "CALMA", "FUERZA"],
-                    bad: ["EGO", "MENTIRA", "ODIO", "PEREZA", "CAOS", "EXCUSA"],
-                    neutral: ["QUIETO", "ALMA", "ESPERA", "SILENCIO", "RESPIRA"]
-                }
+                missions: [
+                    { q: "¿Se burlan de un amigo. Qué haces?", a: "Apoyarlo", b: "Callar", win: "RESPETO SOCIAL +50", fail: "PERDIDA DE INTEGRIDAD -20" },
+                    { q: "¿Perdiste un juego. Tu reacción?", a: "Felicitar", b: "Enojarte", win: "PODER EMOCIONAL +50", fail: "TRAMPA DEL EGO -20" }
+                ],
+                words: { good: ["HONOR", "VERDAD", "CALMA", "VOLUNTAD"], bad: ["MENTIRA", "EGO", "PEREZA", "ODIO"] }
             }
         };
 
         function startGame(l) {
             state.lang = l;
-            state.phase = 'action';
             document.getElementById('main-menu').style.display = 'none';
-            startActionPhase();
-        }
-
-        function startActionPhase() {
             state.interval = setInterval(updateTimer, 1000);
             state.spawnInterval = setInterval(spawnWord, 1200);
+            // Lanzar primera misión social a los 10 segundos
+            setTimeout(triggerSocialMission, 10000);
         }
 
         function updateTimer() {
@@ -213,49 +181,58 @@
             let s = (state.timeLeft % 60).toString().padStart(2, '0');
             document.getElementById('timer-box').innerText = `${m}:${s}`;
 
-            // DISCIPLINE TRIGGER: Cada 60 segundos, Reto de Silencio
-            if (state.timeLeft % 60 === 0 && state.timeLeft > 0) {
-                triggerSilenceChallenge();
-            }
+            if (state.timeLeft % 45 === 0) triggerSilenceChallenge();
         }
 
         function spawnWord() {
-            const types = ['good', 'bad', 'neutral'];
-            const type = types[Math.floor(Math.random() * types.length)];
-            const list = config[state.lang].words[type];
+            const type = Math.random() > 0.4 ? 'good' : 'bad';
+            const list = content[state.lang].words[type];
             const text = list[Math.floor(Math.random() * list.length)];
-
             const div = document.createElement('div');
             div.className = `floating word-${type}`;
             div.innerText = text;
             div.style.left = Math.random() * 80 + 10 + "vw";
-            
-            div.onclick = () => handleWordClick(div, type);
+            div.onclick = () => {
+                if (type === 'good') {
+                    state.score += (10 * state.mastery);
+                    document.getElementById('snd-win').play();
+                } else {
+                    state.score -= 20;
+                    state.mastery = 1;
+                    document.getElementById('snd-fail').play();
+                }
+                updateHUD();
+                div.remove();
+            };
             document.body.appendChild(div);
-            
             setTimeout(() => div.remove(), 6000);
         }
 
-        function handleWordClick(el, type) {
-            const sb = document.getElementById('score-box');
+        function triggerSocialMission() {
+            const mission = content[state.lang].missions[Math.floor(Math.random() * content[state.lang].missions.length)];
+            const panel = document.getElementById('social-panel');
+            const opts = document.getElementById('social-options');
             
-            if (type === 'good') {
-                state.score += 10;
-                sb.className = 'score-good';
-                document.getElementById('snd-win').play();
-            } else if (type === 'bad') {
-                state.score -= 20;
-                sb.className = 'score-bad';
-                document.getElementById('snd-fail').play();
-            } else {
-                state.score += 2;
-                document.getElementById('snd-click').play();
-            }
+            document.getElementById('social-text').innerText = mission.q;
+            opts.innerHTML = `
+                <button onclick="resolveSocial(true, '${mission.win}')">${mission.a}</button>
+                <button onclick="resolveSocial(false, '${mission.fail}')">${mission.b}</button>
+            `;
+            panel.style.display = 'block';
+        }
 
-            document.getElementById('score-box').innerText = `${config[state.lang].points}: ${state.score}`;
-            el.style.transform = "scale(2)";
-            el.style.opacity = "0";
-            setTimeout(() => el.remove(), 200);
+        function resolveSocial(correct, msg) {
+            if (correct) {
+                state.score += 50;
+                state.mastery++;
+                document.getElementById('snd-win').play();
+            } else {
+                state.score -= 30;
+                document.getElementById('snd-fail').play();
+            }
+            alert(msg);
+            document.getElementById('social-panel').style.display = 'none';
+            updateHUD();
         }
 
         function triggerSilenceChallenge() {
@@ -263,31 +240,33 @@
             const overlay = document.getElementById('breath-overlay');
             const circle = document.getElementById('breath-circle');
             const label = document.getElementById('breath-label');
-            const goalTxt = document.getElementById('breath-goal');
             
             overlay.style.display = 'flex';
-            goalTxt.innerText = state.lang === 'en' ? "SILENCE CHALLENGE: RECENTER CORE" : "RETO DE SILENCIO: RECENTRA TU NÚCLEO";
+            state.blocksCompleted++;
+            
+            // Lógica de progresión: Bloque 1-6 sube de 20 a 60s. Bloque 7+ sube a minutos.
+            if(state.blocksCompleted < 7) state.silenceDuration = 20 + (state.blocksCompleted * 8);
+            else state.silenceDuration = 180; 
 
-            let count = 0;
-            const cycle = () => {
-                if (count >= 4) {
+            document.getElementById('breath-desc').innerText = `RETO DE SILENCIO: ${state.silenceDuration}s\n"La paz es tu escudo"`;
+
+            let timer = 0;
+            const cycle = setInterval(() => {
+                timer += 4;
+                if (timer >= state.silenceDuration) {
+                    clearInterval(cycle);
                     overlay.style.display = 'none';
                     state.spawnInterval = setInterval(spawnWord, 1200);
-                    return;
+                    setTimeout(triggerSocialMission, 5000); // Misión social tras el silencio
                 }
-                
-                label.innerText = config[state.lang].inhale;
-                circle.style.transform = "scale(1.5)";
-                
-                setTimeout(() => {
-                    label.innerText = config[state.lang].exhale;
-                    circle.style.transform = "scale(0.8)";
-                    count++;
-                    setTimeout(cycle, 4000);
-                }, 4000);
-            };
+                label.innerText = (label.innerText === content[state.lang].inhale) ? content[state.lang].exhale : content[state.lang].inhale;
+                circle.style.transform = (circle.style.transform === "scale(1.3)") ? "scale(0.8)" : "scale(1.3)";
+            }, 4000);
+        }
 
-            cycle();
+        function updateHUD() {
+            document.getElementById('score-box').innerText = `POINTS: ${state.score}`;
+            document.getElementById('mastery-lvl').innerText = `MASTERY: x${state.mastery}`;
         }
     </script>
 </body>
