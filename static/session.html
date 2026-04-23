@@ -33,22 +33,38 @@ body{
 #score-box{border:3px solid #fff;padding:5px 15px;}
 #mastery-lvl{color:var(--neon-green);}
 
-.floating{
-    position:absolute;
-    padding:12px 24px;
-    font-weight:900;
-    border-radius:8px;
-    background:rgba(0,0,0,.85);
-    animation:floatUp 6s linear forwards;
+/* Estilos de Palabras Actualizados */
+.floating {
+    position: absolute;
+    padding: 12px 24px;
+    font-weight: 900;
+    font-size: 1.4rem;
+    border-radius: 8px;
+    background: rgba(0,0,0,0.85);
+    z-index: 10;
+    animation: floatUp 6s linear forwards;
+    transition: transform 0.1s;
 }
 
-.word-power{border:3px solid var(--neon-green);color:var(--neon-green);}
-.word-risk{border:3px solid var(--neon-red);color:var(--neon-red);}
-.word-silence{border:3px solid var(--neon-yellow);color:var(--neon-yellow);}
+.word-power { border: 3px solid var(--neon-green); color: var(--neon-green); text-shadow: 0 0 10px var(--neon-green); }
+.word-risk { border: 3px solid var(--neon-red); color: var(--neon-red); text-shadow: 0 0 10px var(--neon-red); }
+.word-silence { border: 3px solid var(--neon-yellow); color: var(--neon-yellow); text-shadow: 0 0 10px var(--neon-yellow); }
 
-@keyframes floatUp{
-    from{transform:translateY(110vh);}
-    to{transform:translateY(-20vh);opacity:0;}
+@keyframes floatUp {
+    from { transform: translateY(110vh); opacity: 1; }
+    to { transform: translateY(-20vh); opacity: 0; }
+}
+
+/* Efecto de Explosión */
+.explode {
+    animation: blast 0.4s ease-out forwards !important;
+    pointer-events: none;
+}
+
+@keyframes blast {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(2.5); opacity: 0.5; filter: brightness(2); }
+    100% { transform: scale(4); opacity: 0; }
 }
 
 #overlay{
@@ -163,9 +179,7 @@ function loopTimer(){
 
 function startWords(){
     document.getElementById("overlay").style.display="none";
-
     state.spawnInterval=setInterval(spawnWord, state.spawnRate);
-
     loopTimer();
 }
 
@@ -180,6 +194,9 @@ function spawnWord(){
     div.style.left=Math.random()*80+"vw";
 
     div.onclick=()=>{
+        // Añadir clase de explosión al hacer clic
+        div.classList.add('explode');
+        
         if(c==="risk"){
             state.score-=30;
             state.combo=0;
@@ -193,22 +210,20 @@ function spawnWord(){
             document.getElementById("hit").play();
         }
         updateHUD();
-        div.remove();
+        
+        // Remover el elemento después de que termine la animación blast
+        setTimeout(()=>div.remove(), 400);
     };
 
     document.body.appendChild(div);
-    setTimeout(()=>div.remove(),5000);
+    setTimeout(()=>{ if(div) div.remove(); }, 5000);
 
-    // 🔥 dificultad dinámica
     state.spawnRate=Math.max(400, state.spawnRate - 5);
 }
 
 function startQuestions(){
     clearInterval(state.spawnInterval);
-
-    showOverlay("DECISION",
-    "Choose correctly under pressure");
-
+    showOverlay("DECISION", "Choose correctly under pressure");
     setTimeout(()=>{
         state.score+=50*state.mastery;
         nextPhase();
@@ -216,14 +231,10 @@ function startQuestions(){
 }
 
 function startBreath(){
-    showOverlay("BREATH",
-    "Control = Power");
-
+    showOverlay("BREATH", "Control = Power");
     const circle=document.getElementById("circle");
     const label=document.getElementById("breath-label");
-
     let inhale=true;
-
     const cycle=setInterval(()=>{
         if(inhale){
             label.innerText="IN";
@@ -234,7 +245,6 @@ function startBreath(){
         }
         inhale=!inhale;
     },4000);
-
     setTimeout(()=>{
         clearInterval(cycle);
         state.mastery++;
@@ -243,14 +253,10 @@ function startBreath(){
 }
 
 function startSilence(){
-    showOverlay("SILENCE",
-    "Do nothing. Absolute control.");
-
+    showOverlay("SILENCE", "Do nothing. Absolute control.");
     let violated=false;
-
     window.onmousemove=()=>violated=true;
     window.onclick=()=>violated=true;
-
     setTimeout(()=>{
         if(!violated){
             state.score+=200*state.mastery;
@@ -273,7 +279,6 @@ function showOverlay(title,desc){
 function updateHUD(){
     document.getElementById("score-box").innerText=state.score;
     document.getElementById("mastery-lvl").innerText="x"+state.mastery;
-
     let m=Math.floor(state.timer/60).toString().padStart(2,"0");
     let s=(state.timer%60).toString().padStart(2,"0");
     document.getElementById("timer-box").innerText=`${m}:${s}`;
