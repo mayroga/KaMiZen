@@ -27,92 +27,10 @@
         {
           "type": "decision",
           "options": [
-            { "text": { "en": "Close the tab immediately", "es": "Cerrar la pestaña de inmediato" }, "correct": true, "explanation": { "en": "Speed in cutting NOISE is speed in reaching your VISION.", "es": "La velocidad al cortar el RUIDO es velocidad para alcanzar tu VISIÓN." } },
-            { "text": { "en": "Click to see the trailer", "es": "Clic para ver el tráiler" }, "correct": false, "explanation": { "en": "The Matrix uses curiosity as an EXCUSE to keep you weak. Don't fall.", "es": "La Matrix usa la curiosidad como EXCUSA para mantenerte débil. No caigas." } }
-          ]
-        }
-      ]
-    },
-    {
-      "id": 16,
-      "level": 16,
-      "theme": "TRUTH UNDER PRESSURE",
-      "blocks": [
-        {
-          "type": "story",
-          "text": {
-            "en": "Your group failed a project. Your friends want you to lie and say it was a technical error.",
-            "es": "Tu grupo falló un proyecto. Tus amigos quieren que mientas y digas que fue un error técnico."
-          }
-        },
-        {
-          "type": "decision",
-          "options": [
-            { "text": { "en": "Tell the truth about the failure", "es": "Decir la verdad sobre el fallo" }, "correct": true, "explanation": { "en": "HONOR allows you to BUILD a reputation that cannot be shaken.", "es": "El HONOR te permite CONSTRUIR una reputación que nada puede sacudir." } },
-            { "text": { "en": "Support the group's lie", "es": "Apoyar la mentira del grupo" }, "correct": false, "explanation": { "en": "QUITTING your integrity makes you a slave to others' secrets.", "es": "RENUNCIAR a tu integridad te hace esclavo de los secretos de otros." } }
-          ]
-        }
-      ]
-    },
-    {
-      "id": 17,
-      "level": 17,
-      "theme": "KINDNESS ACTION TEST",
-      "blocks": [
-        {
-          "type": "story",
-          "text": {
-            "en": "A new student is sitting alone while everyone else is playing. They look sad.",
-            "es": "Un estudiante nuevo está sentado solo mientras todos juegan. Se ve triste."
-          }
-        },
-        {
-          "type": "decision",
-          "options": [
-            { "text": { "en": "Invite them to join you", "es": "Invitarlos a unirse a ti" }, "correct": true, "explanation": { "en": "True WILL is the power to change someone's reality for the better.", "es": "La verdadera VOLUNTAD es el poder de cambiar la realidad de alguien para mejor." } },
-            { "text": { "en": "Keep playing with your friends", "es": "Seguir jugando con tus amigos" }, "correct": false, "explanation": { "en": "Ignoring those in need is an EXCUSE that hardens your heart.", "es": "Ignorar a quien lo necesita es una EXCUSA que endurece tu corazón." } }
-          ]
-        }
-      ]
-    },
-    {
-      "id": 18,
-      "level": 18,
-      "theme": "INNER CONTROL STABILITY",
-      "blocks": [
-        {
-          "type": "story",
-          "text": {
-            "en": "You lost your keys, you're late, and it starts raining. Everything is going wrong.",
-            "es": "Perdiste las llaves, vas tarde y empieza a llover. Todo sale mal."
-          }
-        },
-        {
-          "type": "decision",
-          "options": [
-            { "text": { "en": "Stop, breathe, and plan", "es": "Parar, respirar y planear" }, "correct": true, "explanation": { "en": "Being STILL is not the absence of chaos, but being the center of it.", "es": "Estar QUIETO no es la ausencia de caos, sino ser el centro de él." } },
-            { "text": { "en": "Run and panic", "es": "Correr y entrar en pánico" }, "correct": false, "explanation": { "en": "Panic is NOISE that tells the Matrix you have lost your WILL.", "es": "El pánico es RUIDO que le dice a la Matrix que has perdido tu VOLUNTAD." } }
-          ]
-        }
-      ]
-    },
-    {
-      "id": 19,
-      "level": 19,
-      "theme": "SOCIAL REJECTION CONTROL",
-      "blocks": [
-        {
-          "type": "story",
-          "text": {
-            "en": "You try to join a conversation and they look at you coldly and stop talking.",
-            "es": "Intentas unirte a una conversación y ellos te miran con frialdad y dejan de hablar."
-          }
-        },
-        {
-          "type": "decision",
-          "options": [
-            { "text": { "en": "Smile calmly and walk away", "es": "Sonreír con calma e irse" }, "correct": true, "explanation": { "en": "Your value is a fact. By staying STILL, you show their opinion has no power.", "es": "Tu valor es un hecho. Al seguir QUIETO, demuestras que su opinión no tiene poder." } },
-            { "text": { "en": "Try to tell a joke to fit in", "es": "Intentar contar un chiste para encajar" }, "correct": false, "explanation": { "en": "Begging for attention is QUITTING your self-respect.", "es": "Mendigar atención es RENUNCIAR a tu respeto propio." } }
+            { "text": { "en": "Close the tab and block the site", "es": "Cerrar pestaña y bloquear el sitio" }, "score": 10, "correct": true, "explanation": { "en": "Speed in cutting NOISE is speed in reaching your VISION.", "es": "Velocidad al cortar el RUIDO es velocidad para alcanzar tu VISIÓN." } },
+            { "text": { "en": "Close the tab and continue", "es": "Cerrar la pestaña y continuar" }, "score": 5, "correct": true, "explanation": { "en": "Good focus, but masters prevent future distractions.", "es": "Buen enfoque, pero los maestros previenen distracciones futuras." } },
+            { "text": { "en": "Click to see the trailer", "es": "Clic para ver el tráiler" }, "score": 0, "correct": false, "explanation": { "en": "The Matrix uses curiosity as an EXCUSE to keep you weak.", "es": "La Matrix usa la curiosidad como EXCUSA para mantenerte débil." } },
+            { "text": { "en": "Download the game now", "es": "Descargar el juego ahora" }, "score": -5, "correct": false, "explanation": { "en": "You abandoned your WILL for a digital shiny object. Total trance.", "es": "Abandonaste tu VOLUNTAD por un objeto brillante digital. Trance total." } }
           ]
         }
       ]
@@ -132,29 +50,10 @@
         {
           "type": "decision",
           "options": [
-            { "text": { "en": "Put the phone away for 5 mins", "es": "Alejar el móvil por 5 min" }, "correct": true, "explanation": { "en": "The time between impulse and ACTION is where your FOCUS lives.", "es": "El tiempo entre el impulso y la ACCIÓN es donde vive tu ENFOQUE." } },
-            { "text": { "en": "Send the mean reply", "es": "Enviar la respuesta cruel" }, "correct": false, "explanation": { "en": "Reacting with HATE burns your own reputation. Don't be a puppet.", "es": "Reaccionar con ODIO quema tu propia reputación. No seas un títere." } }
-          ]
-        }
-      ]
-    },
-    {
-      "id": 21,
-      "level": 21,
-      "theme": "RESPONSIBILITY GROWTH",
-      "blocks": [
-        {
-          "type": "story",
-          "text": {
-            "en": "You were supposed to water the plants and they died. Your parents ask what happened.",
-            "es": "Debías regar las plantas y murieron. Tus padres preguntan qué pasó."
-          }
-        },
-        {
-          "type": "decision",
-          "options": [
-            { "text": { "en": "Accept it and offer a solution", "es": "Aceptarlo y ofrecer solución" }, "correct": true, "explanation": { "en": "Owning results allows you to RISE. Responsibility is the price of greatness.", "es": "Asumir los resultados te permite LEVANTARTE. La responsabilidad es el precio de la grandeza." } },
-            { "text": { "en": "Blame the sun or the weather", "es": "Culpar al sol o al clima" }, "correct": false, "explanation": { "en": "EXCUSES are for those who are afraid to BUILD a real character.", "es": "Las EXCUSAS son para quienes tienen miedo de CONSTRUIR un carácter real." } }
+            { "text": { "en": "Turn off the phone and breathe", "es": "Apagar el móvil y respirar" }, "score": 10, "correct": true, "explanation": { "en": "The time between impulse and ACTION is where your FOCUS lives.", "es": "El tiempo entre el impulso y la ACCIÓN es donde vive tu ENFOQUE." } },
+            { "text": { "en": "Wait 10 minutes to respond", "es": "Esperar 10 minutos para responder" }, "score": 5, "correct": true, "explanation": { "en": "Waiting is acceptable, but clearing the mind is better.", "es": "Esperar es aceptable, pero limpiar la mente es mejor." } },
+            { "text": { "en": "Type the reply but don't send it", "es": "Escribir la respuesta pero no enviarla" }, "score": 0, "correct": false, "explanation": { "en": "Playing with fire still burns your energy. Don't feed the CHAOS.", "es": "Jugar con fuego igual quema tu energía. No alimentes el CAOS." } },
+            { "text": { "en": "Send the mean reply immediately", "es": "Enviar la respuesta cruel de inmediato" }, "score": -5, "correct": false, "explanation": { "en": "Reacting with HATE makes you a puppet of the Matrix.", "es": "Reaccionar con ODIO te hace un títere de la Matrix." } }
           ]
         }
       ]
