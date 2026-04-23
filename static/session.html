@@ -23,7 +23,7 @@ body{
     user-select:none;
 }
 
-/* LANGUAGE BUTTON */
+/* LANGUAGE BUTTON (SEPARADO FIX) */
 #lang-btn{
     position:fixed;
     top:15px;
@@ -39,8 +39,11 @@ body{
 
 /* HUD */
 #hud{
-    position:fixed;top:0;width:100%;
-    display:flex;justify-content:space-between;
+    position:fixed;
+    top:0;
+    width:100%;
+    display:flex;
+    justify-content:space-between;
     padding:20px;
     z-index:50;
     box-sizing: border-box;
@@ -53,9 +56,14 @@ body{
 
 /* STATS */
 #life-stats {
-    position: fixed; bottom: 20px; left: 20px;
-    display: flex; gap: 15px; z-index: 50;
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    display: flex;
+    gap: 15px;
+    z-index: 50;
 }
+
 .stat-pill {
     border: 1px solid #444;
     padding: 5px 10px;
@@ -100,7 +108,8 @@ body{
 /* OVERLAY */
 #overlay{
     position:fixed;
-    width:100%;height:100%;
+    width:100%;
+    height:100%;
     background:rgba(0,5,10,0.95);
     display:none;
     align-items:center;
@@ -111,7 +120,8 @@ body{
 }
 
 #circle{
-    width:200px;height:200px;
+    width:200px;
+    height:200px;
     border:6px solid var(--neon-blue);
     border-radius:50%;
     display:flex;
@@ -121,16 +131,22 @@ body{
     margin: 20px 0;
 }
 
-#phase-title { color: var(--neon-blue); font-size: 3rem; margin: 0; }
+#phase-title {
+    color: var(--neon-blue);
+    font-size: 3rem;
+    margin: 0;
+}
 </style>
 </head>
 
 <body>
 
+<!-- BOTÓN INDEPENDIENTE -->
 <button id="lang-btn" onclick="toggleLang()">ES</button>
 
 <div id="hud">
     <div id="timer-box">05:00</div>
+
     <div id="score-container">
         <div id="mastery-lvl">MASTERY x1</div>
         <div id="score-box">0</div>
@@ -154,28 +170,8 @@ body{
 
 <script>
 
-/* =========================
-   LANGUAGE SYSTEM (UI ONLY)
-========================= */
-
-let lang = "en";
-
-const ui = {
-    en:{
-        mastery:"MASTERY",
-        respect:"Respect",
-        peace:"Peace",
-        lead:"Leadership",
-        situation:"SITUATION"
-    },
-    es:{
-        mastery:"MAESTRÍA",
-        respect:"Respeto",
-        peace:"Paz",
-        lead:"Liderazgo",
-        situation:"SITUACIÓN"
-    }
-};
+/* LANGUAGE */
+let lang="en";
 
 function toggleLang(){
     lang = (lang==="en") ? "es" : "en";
@@ -183,62 +179,60 @@ function toggleLang(){
     updateHUD();
 }
 
-/* =========================
-   GAME CORE (UNCHANGED LOGIC)
-========================= */
-
+/* STATE */
 let state = {
-    score: 0,
-    mastery: 1,
-    combo: 0,
-    phase: -1,
-    timer: 0,
-    playing: false,
-    spawnRate: 1200,
-    stats: { respect: 50, peace: 50, lead: 50 }
+    score:0,
+    mastery:1,
+    combo:0,
+    phase:-1,
+    timer:0,
+    playing:false,
+    spawnRate:1200,
+    stats:{respect:50,peace:50,lead:50}
 };
 
-const phases = [
-    {name: "WORDS", duration: 300, desc: {en:"Capture POWER, ignore NOISE.", es:"Captura PODER, ignora el RUIDO."}},
-    {name: "BREATH", duration: 30, desc: {en:"Sync your rhythm. Control.", es:"Sincroniza tu ritmo. Control."}},
-    {name: "SILENCE", duration: 20, desc: {en:"Do not move. Peace is strength.", es:"No te muevas. La paz es fuerza."}},
-    {name: "WORDS+", duration: 600, desc: {en:"Speed up. Break the Matrix.", es:"Acelera. Rompe la Matrix."}}
+const phases=[
+    {name:"WORDS",duration:300,desc:{en:"Capture POWER, ignore NOISE.",es:"Captura PODER, ignora RUIDO."}},
+    {name:"BREATH",duration:30,desc:{en:"Control rhythm.",es:"Controla el ritmo."}},
+    {name:"SILENCE",duration:20,desc:{en:"Stay still.",es:"Quédate quieto."}},
+    {name:"WORDS+",duration:600,desc:{en:"Break limits.",es:"Rompe límites."}}
 ];
 
-const words = {
-    power:["WILL","FOCUS","DISCIPLINE","VISION","HONOR"],
-    risk:["EGO","NOISE","LAZY","FEAR","RUSH"],
-    silence:["CALM","WAIT","BREATHE","STILL","PEACE"]
+const words={
+    power:["WILL","FOCUS","DISCIPLINE","VISION"],
+    risk:["EGO","NOISE","LAZY","FEAR"],
+    silence:["CALM","WAIT","BREATHE","PEACE"]
 };
 
-function start(){ state.playing = true; nextPhase(); }
+function start(){ state.playing=true; nextPhase(); }
 
 function nextPhase(){
     clearInterval(state.spawnInterval);
     clearInterval(state.timerInterval);
 
-    state.phase = (state.phase + 1) % phases.length;
-    const p = phases[state.phase];
-
-    state.timer = p.duration;
+    state.phase=(state.phase+1)%phases.length;
+    const p=phases[state.phase];
+    state.timer=p.duration;
 
     if(p.name.includes("WORDS")) startWords();
     else if(p.name==="BREATH") startBreath(p);
     else if(p.name==="SILENCE") startSilence(p);
-}
 
-function startWords(){
-    document.getElementById("overlay").style.display="none";
-    state.spawnInterval = setInterval(spawnWord, state.spawnRate);
-    loopTimer();
+    updateHUD();
 }
 
 function loopTimer(){
-    state.timerInterval = setInterval(()=>{
+    state.timerInterval=setInterval(()=>{
         state.timer--;
         updateHUD();
         if(state.timer<=0) nextPhase();
     },1000);
+}
+
+function startWords(){
+    document.getElementById("overlay").style.display="none";
+    state.spawnInterval=setInterval(spawnWord, state.spawnRate);
+    loopTimer(); // FIX: reloj siempre activo
 }
 
 function spawnWord(){
@@ -256,16 +250,10 @@ function spawnWord(){
 
         if(c==="risk"){
             state.score=Math.max(0,state.score-30);
-            state.combo=0;
             state.mastery=1;
-            state.stats.peace-=5;
-            document.getElementById("error").play();
         }else{
-            state.combo++;
-            state.score+=(10+state.combo)*state.mastery;
-            state.stats.peace+=1;
-            if(state.combo%5===0) state.mastery++;
-            document.getElementById("hit").play();
+            state.score+=10*state.mastery;
+            if(++state.combo%5===0) state.mastery++;
         }
 
         updateHUD();
@@ -277,63 +265,54 @@ function spawnWord(){
 }
 
 function startBreath(p){
-    showOverlay("BREATH", p.desc[lang]);
+    showOverlay("BREATH",p.desc[lang]);
     const circle=document.getElementById("circle");
     const label=document.getElementById("breath-label");
-    let inhale=true;
+    let inha=true;
 
     const cycle=setInterval(()=>{
-        label.innerText=inhale?"IN":"OUT";
-        circle.style.transform=inhale?"scale(1.5)":"scale(0.8)";
-        inhale=!inhale;
+        label.innerText=inha?"IN":"OUT";
+        circle.style.transform=inha?"scale(1.5)":"scale(0.8)";
+        inha=!inha;
     },4000);
 
-    state.timerInterval=setInterval(()=>{
-        state.timer--;
-        updateHUD();
-        if(state.timer<=0){
-            clearInterval(cycle);
-            state.mastery++;
-            nextPhase();
-        }
-    },1000);
+    loopTimer(); // FIX RELOJ
+
+    setTimeout(()=>{clearInterval(cycle); state.mastery++; nextPhase();},state.timer*1000);
 }
 
 function startSilence(p){
-    showOverlay("SILENCE", p.desc[lang]);
+    showOverlay("SILENCE",p.desc[lang]);
     let violated=false;
 
     window.onmousemove=()=>violated=true;
     window.onclick=()=>violated=true;
 
-    state.timerInterval=setInterval(()=>{
-        state.timer--;
-        updateHUD();
+    loopTimer(); // FIX RELOJ
 
-        if(state.timer<=0){
-            if(!violated){
-                state.score+=500*state.mastery;
-                state.stats.lead+=10;
-            }else state.score=Math.max(0,state.score-100);
-
-            nextPhase();
-        }
-    },1000);
+    setTimeout(()=>{
+        if(!violated) state.score+=500*state.mastery;
+        nextPhase();
+    },state.timer*1000);
 }
 
-function showOverlay(title,desc){
+function showOverlay(t,d){
     document.getElementById("overlay").style.display="flex";
-    document.getElementById("phase-title").innerText=title;
-    document.getElementById("phase-desc").innerText=desc;
+    document.getElementById("phase-title").innerText=t;
+    document.getElementById("phase-desc").innerText=d;
 }
 
 function updateHUD(){
     document.getElementById("score-box").innerText=state.score;
-    document.getElementById("mastery-lvl").innerText=ui[lang].mastery+" x"+state.mastery;
+    document.getElementById("mastery-lvl").innerText="MASTERY x"+state.mastery;
 
-    document.getElementById("st-respect").innerHTML=`${ui[lang].respect}: <span>${state.stats.respect}</span>`;
-    document.getElementById("st-peace").innerHTML=`${ui[lang].peace}: <span>${state.stats.peace}</span>`;
-    document.getElementById("st-lead").innerHTML=`${ui[lang].lead}: <span>${state.stats.lead}</span>`;
+    document.getElementById("st-respect").innerHTML=`Respect: <span>${state.stats.respect}</span>`;
+    document.getElementById("st-peace").innerHTML=`Peace: <span>${state.stats.peace}</span>`;
+    document.getElementById("st-lead").innerHTML=`Leadership: <span>${state.stats.lead}</span>`;
+
+    let m=Math.floor(state.timer/60).toString().padStart(2,"0");
+    let s=(state.timer%60).toString().padStart(2,"0");
+    document.getElementById("timer-box").innerText=`${m}:${s}`;
 }
 
 start();
