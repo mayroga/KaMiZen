@@ -95,7 +95,7 @@ body {
 
 /* OVERLAYS Y CIRCULO RESPIRATORIO */
 #overlay {
-    position:fixed; width:100%; height:100%; background:rgba(0,5,10,0.99);
+    position:fixed; width:100%; height:100%; background:rgba(0,5,10,0.95);
     display:none; align-items:center; justify-content:center;
     flex-direction:column; z-index:500; text-align:center; padding: 30px;
 }
@@ -174,16 +174,16 @@ let lang = "en";
 let state = {
     score: 0, mastery: 1, combo: 0, timer: 300,
     stats: { respect: 50, peace: 50, lead: 50, money: 100, happy: 50, safety: 100 },
-    playing: false
+    playing: false,
+    spawnRate: 1300
 };
 
 const words = {
-    power: ["WILL", "FOCUS", "TRUTH", "WORK", "STUDY", "HONOR"],
-    risk: ["LIES", "RAGE", "LAZY", "DEBT", "DARK", "SHOUT", "EGO"],
-    silence: ["CALM", "LISTEN", "PLAN", "SAVE", "HOME", "WAIT", "REST"]
+    power: ["WILL", "FOCUS", "TRUTH", "WORK", "STUDY", "HONOR", "DISCIPLINE", "VALOR", "STRENGTH"],
+    risk: ["LIES", "RAGE", "LAZY", "DEBT", "DARK", "SHOUT", "EGO", "GREED", "CHAOS"],
+    silence: ["CALM", "LISTEN", "PLAN", "SAVE", "HOME", "WAIT", "REST", "ZEN", "PAUSE"]
 };
 
-// SITUACIONES Y PREGUNTAS (4 RESPUESTAS SEGÚN JSON)
 const situations = [
     {
         type: "decision",
@@ -195,16 +195,6 @@ const situations = [
             { text: {en: "Explode in anger", es: "Explotar de ira"}, effect: {respect: -20, peace: -25, happy: -15} },
             { text: {en: "Stay silent", es: "Quedarse en silencio"}, effect: {respect: -5, peace: 10, lead: 0} }
         ]
-    },
-    {
-        type: "breathing",
-        title: {en: "TVID BREATHING", es: "RESPIRACIÓN TVID"},
-        desc: {en: "To lead, you must first master your pulse. Follow the circle to reset your nervous system.", es: "Para liderar, primero debes dominar tu pulso. Sigue el círculo para resetear tu sistema nervioso."}
-    },
-    {
-        type: "silence",
-        title: {en: "THE SILENCE CHALLENGE", es: "RETO DE SILENCIO"},
-        desc: {en: "A leader knows when to listen. Observe the information without reacting for 10 seconds.", es: "Un líder sabe cuándo escuchar. Observa la información sin reaccionar por 10 segundos."}
     }
 ];
 
@@ -217,14 +207,33 @@ function toggleLang() {
 function start() {
     state.playing = true;
     updateHUD();
-    setInterval(() => {
-        if(state.timer > 0 && !isOverlayOpen()) {
+    
+    // Timer principal de 5 minutos
+    const gameTimer = setInterval(() => {
+        if(state.timer > 0) {
             state.timer--;
             updateHUD();
+            // Aumento de dificultad cada minuto
+            if(state.timer % 60 === 0 && state.spawnRate > 600) {
+                state.spawnRate -= 150;
+            }
+        } else {
+            clearInterval(gameTimer);
+            alert("Training Session Complete");
         }
     }, 1000);
-    setInterval(spawnWord, 1300);
-    setInterval(triggerSituation, 35000); // Frecuencia de retos
+
+    // Loop de palabras flotantes (no se interrumpe)
+    const wordLoop = () => {
+        if(state.timer > 0) {
+            spawnWord();
+            setTimeout(wordLoop, state.spawnRate);
+        }
+    };
+    wordLoop();
+
+    // Loop de Retos Especiales (Respiración/Silencio -> Pregunta) cada 45 segundos
+    setInterval(triggerSpecialCycle, 45000); 
 }
 
 function isOverlayOpen() {
@@ -232,13 +241,20 @@ function isOverlayOpen() {
 }
 
 function spawnWord() {
-    if (isOverlayOpen()) return;
+    // Nota: Ahora las palabras caen incluso si el overlay está abierto pero con z-index inferior
     const cats = ["power", "risk", "silence"];
     const c = cats[Math.floor(Math.random() * 3)];
     const div = document.createElement("div");
     div.className = `floating word-${c}`;
-    div.innerText = words[c][Math.floor(Math.random() * words[c].length)];
+    
+    // Categorías extendidas según maestría
+    const wordList = words[c];
+    div.innerText = wordList[Math.floor(Math.random() * wordList.length)];
     div.style.left = Math.random() * 75 + "vw";
+    
+    // Velocidad aumenta según nivel de maestría
+    const speed = Math.max(3, 7 - (state.mastery * 0.5));
+    div.style.animationDuration = speed + "s";
     
     div.onclick = () => {
         div.classList.add("explode");
@@ -259,63 +275,95 @@ function spawnWord() {
         setTimeout(() => { if(div.parentNode) div.remove(); }, 500);
     };
     document.body.appendChild(div);
-    setTimeout(() => { if(div.parentNode) div.remove(); }, 7000);
+    setTimeout(() => { if(div.parentNode) div.remove(); }, speed * 1000);
 }
 
-function triggerSituation() {
+function triggerSpecialCycle() {
+    const chance = Math.random();
+    if(chance > 0.5) {
+        startBreathing(() => triggerQuestion());
+    } else {
+        startSilenceChallenge(() => triggerQuestion());
+    }
+}
+
+function startBreathing(callback) {
+    const overlay = document.getElementById("overlay");
+    const circle = document.getElementById("breath-circle");
+    const desc = document.getElementById("phase-desc");
+    const grid = document.getElementById("decision-grid");
+
+    document.getElementById("phase-title").innerText = lang === "en" ? "TVID BREATHING" : "RESPIRACIÓN TVID";
+    desc.innerText = lang === "en" ? "Resetting Nervous System (30s)..." : "Reseteando Sistema Nervioso (30s)...";
+    grid.innerHTML = "";
+    circle.style.display = "flex";
+    overlay.style.display = "flex";
+
+    let elapsed = 0;
+    const breathe = () => {
+        if(elapsed >= 30) {
+            circle.style.display = "none";
+            applyEffect({peace: 20, respect: 10});
+            callback();
+            return;
+        }
+        circle.innerText = lang === "en" ? "INHALE" : "INHHALA";
+        circle.className = "inhale";
+        setTimeout(() => {
+            circle.innerText = lang === "en" ? "EXHALE" : "EXHALA";
+            circle.className = "exhale";
+            setTimeout(() => {
+                elapsed += 8;
+                breathe();
+            }, 4000);
+        }, 4000);
+    };
+    breathe();
+}
+
+function startSilenceChallenge(callback) {
+    const overlay = document.getElementById("overlay");
+    const desc = document.getElementById("phase-desc");
+    const circle = document.getElementById("breath-circle");
+    const grid = document.getElementById("decision-grid");
+
+    document.getElementById("phase-title").innerText = lang === "en" ? "SILENCE CHALLENGE" : "RETO DE SILENCIO";
+    circle.style.display = "none";
+    grid.innerHTML = "";
+    overlay.style.display = "flex";
+
+    let timeLeft = 30;
+    const interval = setInterval(() => {
+        desc.innerText = (lang === "en" ? "A leader masters silence... " : "Un líder domina el silencio... ") + timeLeft + "s";
+        timeLeft--;
+        if(timeLeft < 0) {
+            clearInterval(interval);
+            applyEffect({lead: 25, peace: 15});
+            callback();
+        }
+    }, 1000);
+}
+
+function triggerQuestion() {
     const sit = situations[Math.floor(Math.random() * situations.length)];
     const overlay = document.getElementById("overlay");
     const grid = document.getElementById("decision-grid");
-    const circle = document.getElementById("breath-circle");
     const desc = document.getElementById("phase-desc");
     
     document.getElementById("phase-title").innerText = sit.title[lang];
     desc.innerText = sit.desc[lang];
     grid.innerHTML = "";
-    overlay.style.display = "flex";
 
-    if(sit.type === "decision") {
-        circle.style.display = "none";
-        sit.choices.forEach(choice => {
-            const btn = document.createElement("button");
-            btn.className = "choice-btn";
-            btn.innerText = choice.text[lang];
-            btn.onclick = () => { applyEffect(choice.effect); overlay.style.display = "none"; };
-            grid.appendChild(btn);
-        });
-    } 
-    else if(sit.type === "breathing") {
-        circle.style.display = "flex";
-        let cycles = 0;
-        const breathAnim = () => {
-            if(cycles >= 2) { 
-                overlay.style.display = "none"; 
-                applyEffect({peace: 20, respect: 10});
-                return; 
-            }
-            circle.innerText = lang === "en" ? "INHALE" : "INHHALA";
-            circle.className = "inhale";
-            setTimeout(() => {
-                circle.innerText = lang === "en" ? "EXHALE" : "EXHALA";
-                circle.className = "exhale";
-                setTimeout(() => { cycles++; breathAnim(); }, 4000);
-            }, 4000);
+    sit.choices.forEach(choice => {
+        const btn = document.createElement("button");
+        btn.className = "choice-btn";
+        btn.innerText = choice.text[lang];
+        btn.onclick = () => { 
+            applyEffect(choice.effect); 
+            overlay.style.display = "none"; 
         };
-        breathAnim();
-    }
-    else if(sit.type === "silence") {
-        circle.style.display = "none";
-        let timeLeft = 10;
-        const interval = setInterval(() => {
-            desc.innerText = (lang === "en" ? "Maintaining silence... " : "Manteniendo silencio... ") + timeLeft;
-            timeLeft--;
-            if(timeLeft < 0) {
-                clearInterval(interval);
-                overlay.style.display = "none";
-                applyEffect({lead: 25, peace: 15});
-            }
-        }, 1000);
-    }
+        grid.appendChild(btn);
+    });
 }
 
 function applyEffect(eff) {
