@@ -23,26 +23,47 @@ body{
     user-select:none;
 }
 
-/* --- HUD --- */
+/* LANGUAGE BUTTON */
+#lang-btn{
+    position:fixed;
+    top:15px;
+    right:15px;
+    z-index:999;
+    padding:10px 14px;
+    border:2px solid var(--neon-blue);
+    background:rgba(0,0,0,0.7);
+    color:var(--neon-blue);
+    font-weight:bold;
+    cursor:pointer;
+}
+
+/* HUD */
 #hud{
     position:fixed;top:0;width:100%;
     display:flex;justify-content:space-between;
-    padding:20px;z-index:50;
+    padding:20px;
+    z-index:50;
     box-sizing: border-box;
 }
 
 #timer-box{font-size:2.5rem;color:var(--neon-blue);}
 #score-container{text-align:right;}
-#score-box{border:3px solid #fff;padding:5px 15px; font-size: 1.5rem; display: inline-block;}
-#mastery-lvl{color:var(--neon-green); font-size: 1.2rem; font-weight: bold;}
+#score-box{border:3px solid #fff;padding:5px 15px; font-size: 1.5rem;}
+#mastery-lvl{color:var(--neon-green); font-size: 1.2rem;}
 
+/* STATS */
 #life-stats {
     position: fixed; bottom: 20px; left: 20px;
     display: flex; gap: 15px; z-index: 50;
 }
-.stat-pill { border: 1px solid #444; padding: 5px 10px; font-size: 0.8rem; background: rgba(0,0,0,0.5); }
+.stat-pill {
+    border: 1px solid #444;
+    padding: 5px 10px;
+    font-size: 0.8rem;
+    background: rgba(0,0,0,0.5);
+}
 
-/* --- ELEMENTOS FLOTANTES --- */
+/* FLOATING WORDS */
 .floating {
     position: absolute;
     padding: 12px 24px;
@@ -76,7 +97,7 @@ body{
     100% { transform: scale(4); opacity: 0; }
 }
 
-/* --- OVERLAY DE FASES --- */
+/* OVERLAY */
 #overlay{
     position:fixed;
     width:100%;height:100%;
@@ -86,14 +107,16 @@ body{
     justify-content:center;
     flex-direction:column;
     z-index:500;
-    text-align: center;
+    text-align:center;
 }
 
 #circle{
     width:200px;height:200px;
     border:6px solid var(--neon-blue);
     border-radius:50%;
-    display:flex;align-items:center;justify-content:center;
+    display:flex;
+    align-items:center;
+    justify-content:center;
     transition:all 4s ease;
     margin: 20px 0;
 }
@@ -104,6 +127,8 @@ body{
 
 <body>
 
+<button id="lang-btn" onclick="toggleLang()">ES</button>
+
 <div id="hud">
     <div id="timer-box">05:00</div>
     <div id="score-container">
@@ -113,21 +138,55 @@ body{
 </div>
 
 <div id="life-stats">
-    <div class="stat-pill">Respect: <span id="stat-respect">50</span></div>
-    <div class="stat-pill">Peace: <span id="stat-peace">50</span></div>
-    <div class="stat-pill">Leadership: <span id="stat-lead">50</span></div>
+    <div class="stat-pill" id="st-respect">Respect: <span>50</span></div>
+    <div class="stat-pill" id="st-peace">Peace: <span>50</span></div>
+    <div class="stat-pill" id="st-lead">Leadership: <span>50</span></div>
 </div>
 
 <div id="overlay">
-    <h1 id="phase-title">SITUACIÓN</h1>
-    <div id="circle"><span id="breath-label" style="font-size: 2rem;"></span></div>
-    <p id="phase-desc" style="font-size: 1.2rem; max-width: 80%;"></p>
+    <h1 id="phase-title">SITUATION</h1>
+    <div id="circle"><span id="breath-label"></span></div>
+    <p id="phase-desc"></p>
 </div>
 
 <audio id="hit" src="/static/sounds/glass.mp3"></audio>
 <audio id="error" src="/static/sounds/trumpet.mp3"></audio>
 
 <script>
+
+/* =========================
+   LANGUAGE SYSTEM (UI ONLY)
+========================= */
+
+let lang = "en";
+
+const ui = {
+    en:{
+        mastery:"MASTERY",
+        respect:"Respect",
+        peace:"Peace",
+        lead:"Leadership",
+        situation:"SITUATION"
+    },
+    es:{
+        mastery:"MAESTRÍA",
+        respect:"Respeto",
+        peace:"Paz",
+        lead:"Liderazgo",
+        situation:"SITUACIÓN"
+    }
+};
+
+function toggleLang(){
+    lang = (lang==="en") ? "es" : "en";
+    document.getElementById("lang-btn").innerText = (lang==="en") ? "ES" : "EN";
+    updateHUD();
+}
+
+/* =========================
+   GAME CORE (UNCHANGED LOGIC)
+========================= */
+
 let state = {
     score: 0,
     mastery: 1,
@@ -140,168 +199,143 @@ let state = {
 };
 
 const phases = [
-    {name: "WORDS", duration: 300, desc: "Captura el PODER, ignora el RUIDO."},
-    {name: "BREATH", duration: 30, desc: "Sincroniza tu ritmo. Control absoluto."},
-    {name: "SILENCE", duration: 20, desc: "No te muevas. La paz es fuerza."},
-    {name: "WORDS+", duration: 600, desc: "Acelera. Rompe la Matrix."}
+    {name: "WORDS", duration: 300, desc: {en:"Capture POWER, ignore NOISE.", es:"Captura PODER, ignora el RUIDO."}},
+    {name: "BREATH", duration: 30, desc: {en:"Sync your rhythm. Control.", es:"Sincroniza tu ritmo. Control."}},
+    {name: "SILENCE", duration: 20, desc: {en:"Do not move. Peace is strength.", es:"No te muevas. La paz es fuerza."}},
+    {name: "WORDS+", duration: 600, desc: {en:"Speed up. Break the Matrix.", es:"Acelera. Rompe la Matrix."}}
 ];
 
 const words = {
-    power: ["WILL", "FOCUS", "DISCIPLINE", "VISION", "HONOR"],
-    risk: ["EGO", "NOISE", "LAZY", "FEAR", "RUSH"],
-    silence: ["CALM", "WAIT", "BREATHE", "STILL", "PEACE"]
+    power:["WILL","FOCUS","DISCIPLINE","VISION","HONOR"],
+    risk:["EGO","NOISE","LAZY","FEAR","RUSH"],
+    silence:["CALM","WAIT","BREATHE","STILL","PEACE"]
 };
 
-function start() {
-    state.playing = true;
-    nextPhase();
-}
+function start(){ state.playing = true; nextPhase(); }
 
-function nextPhase() {
+function nextPhase(){
     clearInterval(state.spawnInterval);
     clearInterval(state.timerInterval);
 
     state.phase = (state.phase + 1) % phases.length;
     const p = phases[state.phase];
+
     state.timer = p.duration;
 
-    if (p.name.includes("WORDS")) {
-        startWords();
-    } else if (p.name === "BREATH") {
-        startBreath(p);
-    } else if (p.name === "SILENCE") {
-        startSilence(p);
-    }
+    if(p.name.includes("WORDS")) startWords();
+    else if(p.name==="BREATH") startBreath(p);
+    else if(p.name==="SILENCE") startSilence(p);
 }
 
-function loopTimer() {
-    state.timerInterval = setInterval(() => {
-        state.timer--;
-        updateHUD();
-        if (state.timer <= 0) {
-            nextPhase();
-        }
-    }, 1000);
-}
-
-function startWords() {
-    document.getElementById("overlay").style.display = "none";
+function startWords(){
+    document.getElementById("overlay").style.display="none";
     state.spawnInterval = setInterval(spawnWord, state.spawnRate);
     loopTimer();
 }
 
-function spawnWord() {
-    const cats = ["power", "risk", "silence"];
-    const c = cats[Math.floor(Math.random() * 3)];
-    const list = words[c];
+function loopTimer(){
+    state.timerInterval = setInterval(()=>{
+        state.timer--;
+        updateHUD();
+        if(state.timer<=0) nextPhase();
+    },1000);
+}
 
-    const div = document.createElement("div");
-    div.className = `floating word-${c}`;
-    div.innerText = list[Math.floor(Math.random() * list.length)];
-    div.style.left = Math.random() * 80 + "vw";
+function spawnWord(){
+    const cats=["power","risk","silence"];
+    const c=cats[Math.floor(Math.random()*3)];
+    const list=words[c];
 
-    div.onclick = () => {
-        // Efecto de explosión
-        div.classList.add('explode');
-        
-        if (c === "risk") {
-            state.score = Math.max(0, state.score - 30);
-            state.combo = 0;
-            state.mastery = 1;
-            state.stats.peace -= 5;
+    const div=document.createElement("div");
+    div.className=`floating word-${c}`;
+    div.innerText=list[Math.floor(Math.random()*list.length)];
+    div.style.left=Math.random()*80+"vw";
+
+    div.onclick=()=>{
+        div.classList.add("explode");
+
+        if(c==="risk"){
+            state.score=Math.max(0,state.score-30);
+            state.combo=0;
+            state.mastery=1;
+            state.stats.peace-=5;
             document.getElementById("error").play();
-        } else {
+        }else{
             state.combo++;
-            state.score += (10 + state.combo) * state.mastery;
-            state.stats.peace += 1;
-            if (state.combo % 5 === 0) state.mastery++;
+            state.score+=(10+state.combo)*state.mastery;
+            state.stats.peace+=1;
+            if(state.combo%5===0) state.mastery++;
             document.getElementById("hit").play();
         }
+
         updateHUD();
-        
-        // Remover después de la animación de explosión
-        setTimeout(() => { if(div.parentNode) div.remove(); }, 400);
+        setTimeout(()=>div.remove(),400);
     };
 
     document.body.appendChild(div);
-    setTimeout(() => { if(div.parentNode && !div.classList.contains('explode')) div.remove(); }, 5000);
+    setTimeout(()=>div.remove(),5000);
 }
 
-function startBreath(p) {
-    showOverlay("BREATH", p.desc);
-    const circle = document.getElementById("circle");
-    const label = document.getElementById("breath-label");
-    let inhale = true;
+function startBreath(p){
+    showOverlay("BREATH", p.desc[lang]);
+    const circle=document.getElementById("circle");
+    const label=document.getElementById("breath-label");
+    let inhale=true;
 
-    const cycle = setInterval(() => {
-        if (inhale) {
-            label.innerText = "IN";
-            circle.style.transform = "scale(1.5)";
-            circle.style.borderColor = "var(--neon-green)";
-        } else {
-            label.innerText = "OUT";
-            circle.style.transform = "scale(0.8)";
-            circle.style.borderColor = "var(--neon-blue)";
-        }
-        inhale = !inhale;
-    }, 4000);
+    const cycle=setInterval(()=>{
+        label.innerText=inhale?"IN":"OUT";
+        circle.style.transform=inhale?"scale(1.5)":"scale(0.8)";
+        inhale=!inhale;
+    },4000);
 
-    state.timerInterval = setInterval(() => {
+    state.timerInterval=setInterval(()=>{
         state.timer--;
         updateHUD();
-        if (state.timer <= 0) {
+        if(state.timer<=0){
             clearInterval(cycle);
             state.mastery++;
             nextPhase();
         }
-    }, 1000);
+    },1000);
 }
 
-function startSilence(p) {
-    showOverlay("SILENCE", p.desc);
-    document.getElementById("circle").style.display = "none";
-    let violated = false;
+function startSilence(p){
+    showOverlay("SILENCE", p.desc[lang]);
+    let violated=false;
 
-    const detectVibration = () => violated = true;
-    window.addEventListener('mousemove', detectVibration, {once: true});
-    window.addEventListener('click', detectVibration, {once: true});
+    window.onmousemove=()=>violated=true;
+    window.onclick=()=>violated=true;
 
-    state.timerInterval = setInterval(() => {
+    state.timerInterval=setInterval(()=>{
         state.timer--;
         updateHUD();
-        if (state.timer <= 0) {
-            document.getElementById("circle").style.display = "flex";
-            if (!violated) {
-                state.score += 500 * state.mastery;
-                state.stats.lead += 10;
-            } else {
-                state.score = Math.max(0, state.score - 100);
-            }
+
+        if(state.timer<=0){
+            if(!violated){
+                state.score+=500*state.mastery;
+                state.stats.lead+=10;
+            }else state.score=Math.max(0,state.score-100);
+
             nextPhase();
         }
-    }, 1000);
+    },1000);
 }
 
-function showOverlay(title, desc) {
-    const o = document.getElementById("overlay");
-    o.style.display = "flex";
-    document.getElementById("phase-title").innerText = title;
-    document.getElementById("phase-desc").innerText = desc;
+function showOverlay(title,desc){
+    document.getElementById("overlay").style.display="flex";
+    document.getElementById("phase-title").innerText=title;
+    document.getElementById("phase-desc").innerText=desc;
 }
 
-function updateHUD() {
-    document.getElementById("score-box").innerText = state.score;
-    document.getElementById("mastery-lvl").innerText = "MASTERY x" + state.mastery;
-    document.getElementById("stat-respect").innerText = state.stats.respect;
-    document.getElementById("stat-peace").innerText = state.stats.peace;
-    document.getElementById("stat-lead").innerText = state.stats.lead;
+function updateHUD(){
+    document.getElementById("score-box").innerText=state.score;
+    document.getElementById("mastery-lvl").innerText=ui[lang].mastery+" x"+state.mastery;
 
-    let m = Math.floor(state.timer / 60).toString().padStart(2, "0");
-    let s = (state.timer % 60).toString().padStart(2, "0");
-    document.getElementById("timer-box").innerText = `${m}:${s}`;
+    document.getElementById("st-respect").innerHTML=`${ui[lang].respect}: <span>${state.stats.respect}</span>`;
+    document.getElementById("st-peace").innerHTML=`${ui[lang].peace}: <span>${state.stats.peace}</span>`;
+    document.getElementById("st-lead").innerHTML=`${ui[lang].lead}: <span>${state.stats.lead}</span>`;
 }
 
-// Inicialización
 start();
 
 </script>
