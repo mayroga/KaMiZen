@@ -1,336 +1,189 @@
 /**
- * 🧠 KAMIZEN ENGINE CORE — AURA SYSTEM STABLE BUILD
- * Reflejos vs Conciencia + Engaño Visual + Aprendizaje
+ * 🧠 AURA BY MAY ROGA LLC — KAMIZEN ENGINE 2026
+ * Professional Advisory System for Matrix Training
  */
 
 const KamizenEngine = (() => {
 
-    // ==========================================
-    // 📊 STATE CORE
-    // ==========================================
     const state = {
         score: 0,
-        lang: "en",
-        phase: 1,
-
-        missionActive: false,
-        silenceActive: false,
-
-        timer: 0,
-        interval: null,
-        wordInterval: null
+        mastery: 1,
+        lang: "es", // Default
+        playing: true,
+        timer: 300,
+        stats: { respect: 50, peace: 50, lead: 50 },
+        nextMissionEvent: 20, // Segundos para la primera misión
+        currentMissionIndex: 0,
+        missions: []
     };
 
-    // ==========================================
-    // 🔊 AUDIO SYSTEM
-    // ==========================================
-    const Audio = {
-        bg: null,
-        win: null,
-        fail: null,
+    const words = {
+        power: ["WILL", "FOCUS", "HONOR", "BUILD", "VISION", "RISE", "FAITH", "DISCIPLINE", "STRENGTH", "VICTORY"],
+        risk: ["NOISE", "EXCUSE", "QUITTING", "EGO", "HATE", "CHAOS", "LAZY", "FEAR", "LIE", "ANGER"],
+        silence: ["CALM", "LISTEN", "WAIT", "PEACE", "SOUL", "STILL", "BREATHE", "OBSERVE"]
+    };
 
-        init() {
-            this.bg = document.getElementById("bg");
-            this.win = document.getElementById("win");
-            this.fail = document.getElementById("bad");
-
-            if (this.bg) {
-                this.bg.volume = 0.3;
-                this.bg.play().catch(() => {});
+    // --- CARGA DE MISIONES (Simulado o Fetch) ---
+    async function loadMissions() {
+        // En un entorno real, aquí se hace fetch a los .json proporcionados
+        // Por ahora, integramos la estructura de 4 opciones para el motor
+        return [
+            {
+                id: 15, theme: "DIGITAL CONTROL", env: "MATRIX",
+                text: { es: "Aparece un anuncio de un juego mientras haces la tarea.", en: "An ad appears while doing homework." },
+                options: [
+                    { text: { es: "Cerrar y bloquear sitio", en: "Close and block site" }, score: 10, impact: { peace: 5, lead: 5 }, correct: true, expl: { es: "Velocidad al cortar el RUIDO es VISIÓN.", en: "Speed in cutting NOISE is VISION." } },
+                    { text: { es: "Cerrar la pestaña", en: "Close tab" }, score: 5, impact: { peace: 2, lead: 0 }, correct: true, expl: { es: "Buen enfoque.", en: "Good focus." } },
+                    { text: { es: "Ver el tráiler", en: "Watch trailer" }, score: 0, impact: { peace: -5, lead: -5 }, correct: false, expl: { es: "La curiosidad es una EXCUSA.", en: "Curiosity is an EXCUSE." } },
+                    { text: { es: "Descargar el juego", en: "Download game" }, score: -10, impact: { peace: -15, lead: -10 }, correct: false, expl: { es: "Trance total.", en: "Total trance." } }
+                ]
             }
-        },
+            // ... El motor cargará el resto de misiones 16-35 dinámicamente
+        ];
+    }
 
-        play(type) {
-            if (type === "win" && this.win) this.win.play();
-            if (type === "fail" && this.fail) this.fail.play();
-        }
-    };
-
-    // ==========================================
-    // 🗣️ SPEECH SYSTEM
-    // ==========================================
     const Speech = {
         say(text) {
             if (!text) return;
-
             speechSynthesis.cancel();
-
             const u = new SpeechSynthesisUtterance(text);
             u.lang = state.lang === "en" ? "en-US" : "es-ES";
-            u.rate = 0.9;
-
+            u.rate = 1.0;
             speechSynthesis.speak(u);
         }
     };
 
-    // ==========================================
-    // 🌌 WORD SYSTEM
-    // ==========================================
-    const words = {
-        power: ["WILL","VISION","HONOR","COURAGE","BUILD","RISE","FAITH","DISCIPLINE","STRENGTH","VICTORY"],
-        risk: ["NOISE","EXCUSE","QUITTING","EGO","HATE","CHAOS","LAZY","FEAR","LIE","ANGER"],
-        silence: ["CALM","LISTEN","WAIT","PEACE","PRAY","INSIDE","BREATHE","STILL","SOUL","FOCUS"]
-    };
+    function spawnWord() {
+        if (!state.playing) return;
+        
+        const types = ["power", "risk", "silence"];
+        const realType = types[Math.floor(Math.random() * 3)];
+        const word = words[realType][Math.floor(Math.random() * words[realType].length)];
 
-    // ==========================================
-    // 🎮 FLOATING SYSTEM (REFLEXES VS CONSCIOUSNESS)
-    // ==========================================
-    const Floating = {
-
-        start() {
-            this.stop();
-
-            state.wordInterval = setInterval(() => {
-
-                if (state.phase !== 1) return;
-
-                const r = Math.random();
-
-                let type =
-                    r > 0.65 ? "risk" :
-                    r > 0.35 ? "power" : "silence";
-
-                const list = words[type];
-                const word = list[Math.floor(Math.random() * list.length)];
-
-                // ============================
-                // 🧠 VISUAL DECEPTION ENGINE
-                // ============================
-                const trick = Math.random() < 0.4;
-
-                let visualType = type;
-
-                if (trick) {
-                    if (type === "power") visualType = "risk";
-                    else if (type === "risk") visualType = "power";
-                    else visualType = "silence";
-                }
-
-                const el = document.createElement("div");
-                el.className = `floating word-${visualType}`;
-                el.innerText = word;
-                el.style.left = Math.random() * 90 + "vw";
-
-                if (trick) {
-                    el.style.transform = "scale(1.15)";
-                    el.style.filter = "blur(0.3px)";
-                }
-
-                // =====================================
-                // 🧠 REAL LOGIC (NO SE DEJA ENGAÑAR)
-                // =====================================
-                el.onmousedown = () => {
-
-                    if (type === "power") {
-                        state.score += 10;
-                        Audio.play("win");
-                    }
-
-                    if (type === "risk") {
-                        state.score -= 15;
-                        Audio.play("fail");
-                    }
-
-                    if (type === "silence") {
-                        state.score += 5;
-                        Audio.play("win");
-                    }
-
-                    UI.updateScore();
-                    explain(word, type);
-
-                    el.classList.add("blast");
-                    setTimeout(() => el.remove(), 300);
-                };
-
-                const game = document.getElementById("game");
-                if (game) game.appendChild(el);
-
-                setTimeout(() => el.remove(), 5000);
-
-            }, 1100);
-        },
-
-        stop() {
-            clearInterval(state.wordInterval);
-            state.wordInterval = null;
-            document.querySelectorAll(".floating").forEach(e => e.remove());
+        // --- ENGAÑO VISUAL (Visual Deception) ---
+        const isDeception = Math.random() < 0.3;
+        let visualClass = realType;
+        if (isDeception) {
+            visualClass = realType === "power" ? "risk" : "power";
         }
-    };
 
-    // ==========================================
-    // ⏱️ TIMER ENGINE
-    // ==========================================
-    const Timer = {
+        const el = document.createElement("div");
+        el.className = `floating word-${visualClass}`;
+        el.innerText = word;
+        el.style.left = Math.random() * 80 + 5 + "vw";
+        if (isDeception) el.style.filter = "contrast(1.5) brightness(1.2)";
 
-        start(seconds, cb) {
+        el.onclick = () => {
+            if (realType === "risk") {
+                state.score -= 20;
+                state.stats.peace -= 5;
+                document.getElementById("error").play();
+            } else {
+                state.score += 10 * state.mastery;
+                state.stats.peace += 2;
+                document.getElementById("hit").play();
+            }
+            updateHUD();
+            el.classList.add("blast");
+            setTimeout(() => el.remove(), 300);
+        };
 
-            clearInterval(state.interval);
-
-            state.timer = seconds;
-            UI.updateTimer(state.timer);
-
-            state.interval = setInterval(() => {
-
-                state.timer--;
-                UI.updateTimer(state.timer);
-
-                if (state.timer <= 0) {
-                    clearInterval(state.interval);
-                    cb();
-                }
-
-            }, 1000);
-        }
-    };
-
-    // ==========================================
-    // 🧠 LEARNING SYSTEM
-    // ==========================================
-    const Learning = {
-
-        start() {
-
-            state.phase = 2;
-
-            Floating.stop();
-
-            const learning = document.getElementById("learning");
-            if (learning) learning.style.display = "block";
-
-            const story = state.lang === "en"
-                ? "Not everything with color means truth."
-                : "No todo lo que brilla es verdad.";
-
-            const analysis = state.lang === "en"
-                ? "Your mind must learn patterns, not reactions."
-                : "Tu mente debe aprender patrones, no reacciones.";
-
-            const storyEl = document.getElementById("story");
-            const analysisEl = document.getElementById("analysis");
-
-            if (storyEl) storyEl.innerText = story;
-            if (analysisEl) analysisEl.innerText = analysis;
-
-            Speech.say(story);
-            Speech.say(analysis);
-
-            Breath.start(360, () => {
-                Game.runPhase3();
-            });
-        }
-    };
-
-    // ==========================================
-    // 🧘 BREATH SYSTEM
-    // ==========================================
-    const Breath = {
-
-        start(seconds, cb) {
-
-            state.silenceActive = true;
-
-            const el = document.getElementById("breath");
-            if (!el) return cb();
-
-            el.style.display = "block";
-
-            let t = seconds;
-
-            const i = setInterval(() => {
-
-                t--;
-
-                if (t <= 0) {
-                    clearInterval(i);
-                    el.style.display = "none";
-                    state.silenceActive = false;
-                    cb();
-                }
-
-            }, 1000);
-        }
-    };
-
-    // ==========================================
-    // 🎮 GAME FLOW
-    // ==========================================
-    const Game = {
-
-        start() {
-            state.phase = 1;
-            Floating.start();
-
-            Timer.start(300, () => {
-                Learning.start();
-            });
-        },
-
-        runPhase3() {
-            state.phase = 3;
-
-            Floating.start();
-
-            const time = state.score > 0 ? 600 : 180;
-
-            Timer.start(time, () => {
-                this.start();
-            });
-        }
-    };
-
-    // ==========================================
-    // 📊 UI SYSTEM
-    // ==========================================
-    const UI = {
-
-        updateScore() {
-            const el = document.getElementById("score-display");
-            if (el) el.innerText = "POINTS: " + state.score;
-        },
-
-        updateTimer(t) {
-            const m = Math.floor(t / 60).toString().padStart(2, "0");
-            const s = (t % 60).toString().padStart(2, "0");
-
-            const el = document.getElementById("timer");
-            if (el) el.innerText = `${m}:${s}`;
-        }
-    };
-
-    // ==========================================
-    // 🧠 EXPLANATION ENGINE
-    // ==========================================
-    function explain(word, type) {
-
-        const msg =
-            state.lang === "en"
-                ? `${word} → category: ${type}. Learn meaning, not emotion.`
-                : `${word} → categoría: ${type}. Aprende significado, no emoción.`;
-
-        const el = document.getElementById("explain");
-        if (el) el.innerText = msg;
-
-        Speech.say(msg);
+        document.getElementById("game-container").appendChild(el);
+        setTimeout(() => { if (el.parentNode) el.remove(); }, 6000);
     }
 
-    // ==========================================
-    // 🚀 INIT
-    // ==========================================
+    function triggerMission() {
+        state.playing = false;
+        // Limpiar palabras flotantes para enfoque
+        document.querySelectorAll(".floating").forEach(e => e.remove());
+
+        const mission = state.missions[Math.floor(Math.random() * state.missions.length)];
+        const overlay = document.getElementById("social-overlay");
+        
+        document.getElementById("scenario-env").innerText = mission.env || "MATRIX TRAINING";
+        document.getElementById("scenario-title").innerText = mission.theme;
+        document.getElementById("scenario-desc").innerText = mission.text[state.lang];
+        
+        const container = document.getElementById("decision-container");
+        container.innerHTML = "";
+
+        mission.options.forEach(opt => {
+            const btn = document.createElement("button");
+            btn.className = "btn-decision";
+            btn.innerText = opt.text[state.lang];
+            btn.onclick = () => executeDecision(opt);
+            container.appendChild(btn);
+        });
+
+        overlay.style.display = "flex";
+        Speech.say(mission.text[state.lang]);
+    }
+
+    function executeDecision(opt) {
+        state.score += opt.score;
+        state.stats.respect += opt.impact.respect || 0;
+        state.stats.peace += opt.impact.peace || 0;
+        state.stats.lead += opt.impact.lead || 0;
+
+        const toast = document.getElementById("feedback-toast");
+        const msg = document.getElementById("feedback-msg");
+        const expl = document.getElementById("explanation-text");
+
+        toast.style.display = "block";
+        toast.style.background = opt.correct ? "var(--neon-green)" : "var(--neon-red)";
+        toast.style.color = "#000";
+        
+        msg.innerText = opt.correct ? "MASTERY INCREASED" : "MATRIX GLITCH DETECTED";
+        expl.innerText = opt.expl[state.lang];
+
+        Speech.say(opt.expl[state.lang]);
+
+        setTimeout(() => {
+            toast.style.display = "none";
+            document.getElementById("social-overlay").style.display = "none";
+            state.playing = true;
+            updateHUD();
+        }, 4000);
+    }
+
+    function updateHUD() {
+        document.getElementById("score-box").innerText = state.score;
+        document.getElementById("mastery-lvl").innerText = "x" + state.mastery;
+        document.getElementById("stat-respect").innerText = state.stats.respect;
+        document.getElementById("stat-peace").innerText = state.stats.peace;
+        document.getElementById("stat-lead").innerText = state.stats.lead;
+
+        const m = Math.floor(state.timer / 60).toString().padStart(2, "0");
+        const s = (state.timer % 60).toString().padStart(2, "0");
+        document.getElementById("timer-box").innerText = `${m}:${s}`;
+    }
+
+    function loop() {
+        setInterval(() => {
+            if (!state.playing) return;
+            state.timer--;
+            state.nextMissionEvent--;
+
+            if (state.timer <= 0) {
+                alert("Training Session Complete. Report generated.");
+                location.reload();
+            }
+
+            if (state.nextMissionEvent <= 0) {
+                triggerMission();
+                state.nextMissionEvent = 30 + Math.random() * 20; 
+            }
+            updateHUD();
+        }, 1000);
+        
+        setInterval(spawnWord, 1200);
+    }
+
     return {
-
-        init() {
-            Audio.init();
-            Game.start();
-            UI.updateScore();
-        },
-
-        changeLang() {
-            state.lang = state.lang === "en" ? "es" : "en";
-        },
-
-        reset() {
-            location.reload();
+        async init() {
+            state.missions = await loadMissions();
+            updateHUD();
+            loop();
         }
     };
 
