@@ -27,50 +27,10 @@
         {
           "type": "decision",
           "options": [
-            { "text": { "en": "Speak privately and firmly", "es": "Hablar en privado y firme" }, "correct": true, "explanation": { "en": "STRENGTH is setting limits without needing an audience or a fight.", "es": "La FUERZA es poner límites sin necesitar una audiencia o una pelea." } },
-            { "text": { "en": "Laugh to fit in", "es": "Reír para encajar" }, "correct": false, "explanation": { "en": "Accepting disrespect is QUITTING your SOUL's integrity.", "es": "Aceptar la falta de respeto es RENUNCIAR a la integridad de tu ALMA." } }
-          ]
-        }
-      ]
-    },
-    {
-      "id": 23,
-      "level": 23,
-      "theme": "INNER FREEDOM",
-      "blocks": [
-        {
-          "type": "story",
-          "text": {
-            "en": "You receive a low grade on a project you worked hard on. You want to quit.",
-            "es": "Recibes una nota baja en un proyecto en el que te esforzaste. Quieres rendirte."
-          }
-        },
-        {
-          "type": "decision",
-          "options": [
-            { "text": { "en": "Analyze mistakes and retry", "es": "Analizar errores y reintentar" }, "correct": true, "explanation": { "en": "DISCIPLINE is being master of your effort, not slave to the result.", "es": "La DISCIPLINA es ser dueño de tu esfuerzo, no esclavo del resultado." } },
-            { "text": { "en": "Complain about the teacher", "es": "Quejarse del profesor" }, "correct": false, "explanation": { "en": "Blaming others is a trap for the EGO. It keeps you weak.", "es": "Culpar a otros es una trampa para el EGO. Te mantiene débil." } }
-          ]
-        }
-      ]
-    },
-    {
-      "id": 24,
-      "level": 24,
-      "theme": "SOCIAL PERCEPTION SHIFT",
-      "blocks": [
-        {
-          "type": "story",
-          "text": {
-            "en": "Someone spreads a rumor about you. People look at you differently.",
-            "es": "Alguien esparce un rumor sobre ti. La gente te ve diferente."
-          }
-        },
-        {
-          "type": "decision",
-          "options": [
-            { "text": { "en": "Act with consistent integrity", "es": "Actuar con integridad constante" }, "correct": true, "explanation": { "en": "Your character is a mountain; rumors are just NOISE. Truth outlasts lies.", "es": "Tu carácter es una montaña; los rumores son solo RUIDO. La verdad sobrevive." } },
-            { "text": { "en": "Spread a rumor about them", "es": "Esparcir un rumor sobre ellos" }, "correct": false, "explanation": { "en": "Using their tactics makes you part of the CHAOS you hate.", "es": "Usar sus tácticas te hace parte del CAOS que odias." } }
+            { "text": { "en": "Set a firm private boundary", "es": "Poner un límite firme en privado" }, "score": 10, "correct": true, "explanation": { "en": "STRENGTH is setting limits without needing a fight. Pure HONOR.", "es": "La FUERZA es poner límites sin necesitar una pelea. HONOR puro." } },
+            { "text": { "en": "Ignore the jokes and walk away", "es": "Ignorar las bromas e irse" }, "score": 5, "correct": true, "explanation": { "en": "Walking away is CALM, but a leader protects their SOUL by speaking.", "es": "Irse es CALMA, pero un líder protege su ALMA hablando." } },
+            { "text": { "en": "Laugh to fit in", "es": "Reír para encajar" }, "score": 0, "correct": false, "explanation": { "en": "Accepting disrespect is QUITTING your integrity.", "es": "Aceptar la falta de respeto es RENUNCIAR a tu integridad." } },
+            { "text": { "en": "Insult them back in front of everyone", "es": "Insultarlos frente a todos" }, "score": -5, "correct": false, "explanation": { "en": "You entered the CHAOS. You became what you hate.", "es": "Entraste en el CAOS. Te convertiste en lo que odias." } }
           ]
         }
       ]
@@ -83,78 +43,17 @@
         {
           "type": "story",
           "text": {
-            "en": "You have 10 seconds to decide: join a risky prank or walk away and be called a 'coward'.",
+            "en": "You have 10 seconds: join a risky prank or walk away and be called a 'coward'.",
             "es": "Tienes 10 segundos: unirte a una broma pesada o irte y que te llamen 'cobarde'."
           }
         },
         {
           "type": "decision",
           "options": [
-            { "text": { "en": "Walk away without doubt", "es": "Irte sin dudar" }, "correct": true, "explanation": { "en": "Refusing a mistake is VICTORY. Clarity sees the end at the beginning.", "es": "Rechazar un error es la VICTORIA. La claridad ve el final desde el principio." } },
-            { "text": { "en": "Join to avoid being judged", "es": "Unirte para evitar juicios" }, "correct": false, "explanation": { "en": "Buying approval with your HONOR is a debt you can never pay.", "es": "Comprar aprobación con tu HONOR es una deuda que nunca pagas." } }
-          ]
-        }
-      ]
-    },
-    {
-      "id": 26,
-      "level": 26,
-      "theme": "DIGITAL CONTROL",
-      "blocks": [
-        {
-          "type": "story",
-          "text": {
-            "en": "You realize you've been scrolling for 2 hours and feel mentally drained.",
-            "es": "Te das cuenta de que llevas 2 horas deslizando y te sientes agotado."
-          }
-        },
-        {
-          "type": "decision",
-          "options": [
-            { "text": { "en": "Shutdown and go outside", "es": "Apagar e ir afuera" }, "correct": true, "explanation": { "en": "The Matrix feeds on your time. Reconnecting with reality is STRENGTH.", "es": "La Matrix se alimenta de tu tiempo. Reconectar con la realidad es FUERZA." } },
-            { "text": { "en": "Check one more 'useful' video", "es": "Ver un video más 'útil'" }, "correct": false, "explanation": { "en": "The EGO always finds an excuse to stay hooked. Break the trance.", "es": "El EGO siempre halla una excusa para seguir enganchado. Rompe el trance." } }
-          ]
-        }
-      ]
-    },
-    {
-      "id": 27,
-      "level": 27,
-      "theme": "LEADERSHIP PRESSURE",
-      "blocks": [
-        {
-          "type": "story",
-          "text": {
-            "en": "The whole group wants to take a shortcut that is dishonest. They look at you.",
-            "es": "Todo el grupo quiere tomar un atajo deshonesto. Te miran a ti."
-          }
-        },
-        {
-          "type": "decision",
-          "options": [
-            { "text": { "en": "Propose the honest path", "es": "Proponer el camino honesto" }, "correct": true, "explanation": { "en": "A leader follows the truth, not the majority. This is your VICTORY.", "es": "Un líder sigue la verdad, no a la mayoría. Esta es tu VICTORIA." } },
-            { "text": { "en": "Do what they want to be popular", "es": "Hacer lo que quieran para ser popular" }, "correct": false, "explanation": { "en": "Popularity gained by cheating is a house of cards. It will fall.", "es": "La popularidad ganada con trampas es una casa de naipes. Caerá." } }
-          ]
-        }
-      ]
-    },
-    {
-      "id": 28,
-      "level": 28,
-      "theme": "ANGER CONTROL",
-      "blocks": [
-        {
-          "type": "story",
-          "text": {
-            "en": "An opponent cheats and starts mocking you. Your blood is boiling.",
-            "es": "Un oponente hace trampa y empieza a burlarse. Tu sangre hierve."
-          }
-        },
-        {
-          "type": "decision",
-          "options": [
-            { "text": { "en": "Maintain a calm face", "es": "Mantener rostro calmado" }, "correct": true, "explanation": { "en": "When you are STILL, their attack has nowhere to land. You conquer them.", "es": "Cuando estás QUIETO, su ataque no tiene donde aterrizar. Los conquistas." } },
-            { "text": { "en": "Yell at them", "es": "Gritarles" }, "correct": false, "explanation": { "en": "HATE is a reaction that proves they successfully controlled you.", "es": "El ODIO es una reacción que prueba que te controlaron con éxito." } }
+            { "text": { "en": "Walk away with head high", "es": "Irte con la frente en alto" }, "score": 10, "correct": true, "explanation": { "en": "Refusing a mistake is VICTORY. Clarity sees the end at the beginning.", "es": "Rechazar un error es la VICTORIA. La claridad ve el final al inicio." } },
+            { "text": { "en": "Say 'No, thanks' and leave", "es": "Decir 'No, gracias' e irte" }, "score": 5, "correct": true, "explanation": { "en": "Polite refusal is safe, but Mastery is walking without doubt.", "es": "El rechazo cortés es seguro, pero la Maestría es caminar sin dudas." } },
+            { "text": { "en": "Stay and watch without participating", "es": "Quedarte a ver sin participar" }, "score": 0, "correct": false, "explanation": { "en": "Being a witness to chaos is still feeding the Matrix noise.", "es": "Ser testigo del caos sigue alimentando el ruido de la Matrix." } },
+            { "text": { "en": "Join to avoid being judged", "es": "Unirte para evitar juicios" }, "score": -5, "correct": false, "explanation": { "en": "Buying approval with your HONOR is a debt you can never pay.", "es": "Comprar aprobación con tu HONOR es una deuda que nunca pagas." } }
           ]
         }
       ]
