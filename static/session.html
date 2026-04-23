@@ -83,7 +83,6 @@ body {
     to { transform: translateY(-25vh) rotate(5deg); } 
 }
 
-/* EFECTO DE EXPLOSIÓN */
 .explode { 
     animation: blast 0.5s ease-out forwards !important; 
     pointer-events: none; 
@@ -94,12 +93,24 @@ body {
     100% { transform: scale(4); opacity: 0; } 
 }
 
-/* OVERLAY DE TOMA DE DECISIONES */
+/* OVERLAYS Y CIRCULO RESPIRATORIO */
 #overlay {
     position:fixed; width:100%; height:100%; background:rgba(0,5,10,0.99);
     display:none; align-items:center; justify-content:center;
     flex-direction:column; z-index:500; text-align:center; padding: 30px;
 }
+
+/* EL CÍRCULO TVID */
+#breath-circle {
+    width: 250px; height: 250px; border: 8px solid var(--neon-blue);
+    border-radius: 50%; margin: 30px; transition: 4s ease-in-out;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.5rem; font-weight: bold; text-transform: uppercase;
+    box-shadow: 0 0 30px var(--neon-blue);
+}
+.inhale { transform: scale(1.4); background: rgba(0, 242, 255, 0.2); }
+.exhale { transform: scale(0.9); background: rgba(0, 0, 0, 0.5); }
+
 #phase-title { 
     color:var(--neon-blue); text-transform: uppercase; 
     letter-spacing: 4px; font-size: 2.5rem; margin-bottom: 10px;
@@ -153,6 +164,7 @@ body {
 
 <div id="overlay">
     <h1 id="phase-title"></h1>
+    <div id="breath-circle" style="display: none;"></div>
     <p id="phase-desc"></p>
     <div id="decision-grid"></div>
 </div>
@@ -171,8 +183,10 @@ const words = {
     silence: ["CALM", "LISTEN", "PLAN", "SAVE", "HOME", "WAIT", "REST"]
 };
 
+// SITUACIONES Y PREGUNTAS (4 RESPUESTAS SEGÚN JSON)
 const situations = [
     {
+        type: "decision",
         title: {en: "THE ACCUSATION", es: "LA ACUSACIÓN"},
         desc: {en: "A peer accuses you of a mistake you didn't commit in front of the group.", es: "Un compañero te acusa de un error que no cometiste frente al grupo."},
         choices: [
@@ -183,34 +197,14 @@ const situations = [
         ]
     },
     {
-        title: {en: "STREET SAFETY", es: "SEGURIDAD EN LA CALLE"},
-        desc: {en: "A stranger tells you they have a puppy in their car and want to show you.", es: "Un extraño te dice que tiene un perrito en su auto y quiere mostrártelo."},
-        choices: [
-            { text: {en: "Run to a safe place", es: "Correr a un lugar seguro"}, effect: {safety: 25, lead: 10, peace: 15} },
-            { text: {en: "Say 'No' and walk away", es: "Decir 'No' y alejarse"}, effect: {safety: 15, respect: 15, lead: 5} },
-            { text: {en: "Shout for help", es: "Gritar pidiendo ayuda"}, effect: {safety: 30, lead: 20} },
-            { text: {en: "Check the puppy", es: "Ir a ver al perrito"}, effect: {safety: -50, happy: -30, peace: -30} }
-        ]
+        type: "breathing",
+        title: {en: "TVID BREATHING", es: "RESPIRACIÓN TVID"},
+        desc: {en: "To lead, you must first master your pulse. Follow the circle to reset your nervous system.", es: "Para liderar, primero debes dominar tu pulso. Sigue el círculo para resetear tu sistema nervioso."}
     },
     {
-        title: {en: "FIRST BUSINESS", es: "PRIMER NEGOCIO"},
-        desc: {en: "You earned $50. You can buy a video game or invest in materials to make and sell crafts.", es: "Ganaste $50. Puedes comprar un videojuego o invertir en materiales para hacer y vender artesanías."},
-        choices: [
-            { text: {en: "Invest in business (-$50)", es: "Invertir en negocio (-$50)"}, effect: {money: -50, lead: 30, happy: 15} },
-            { text: {en: "Buy video game (-$50)", es: "Comprar videojuego (-$50)"}, effect: {money: -50, happy: 30, peace: 10} },
-            { text: {en: "Save for the future", es: "Ahorrar para el futuro"}, effect: {money: 0, peace: 25, lead: 15} },
-            { text: {en: "Donate a portion", es: "Donar una parte"}, effect: {respect: 40, happy: 35, money: -10} }
-        ]
-    },
-    {
-        title: {en: "SOCIAL PRESSURE", es: "PRESIÓN SOCIAL"},
-        desc: {en: "A group of friends is excluding a new student. They want you to do the same.", es: "Un grupo de amigos está excluyendo a un alumno nuevo. Quieren que hagas lo mismo."},
-        choices: [
-            { text: {en: "Invite the new student", es: "Invitar al alumno nuevo"}, effect: {respect: 30, lead: 35, happy: 20} },
-            { text: {en: "Talk to the group", es: "Hablar con el grupo"}, effect: {lead: 25, respect: 15, peace: 10} },
-            { text: {en: "Do nothing / Walk away", es: "No hacer nada / Alejarse"}, effect: {peace: 15, lead: -10} },
-            { text: {en: "Join the exclusion", es: "Unirse a la exclusión"}, effect: {respect: -40, lead: -30, happy: -20} }
-        ]
+        type: "silence",
+        title: {en: "THE SILENCE CHALLENGE", es: "RETO DE SILENCIO"},
+        desc: {en: "A leader knows when to listen. Observe the information without reacting for 10 seconds.", es: "Un líder sabe cuándo escuchar. Observa la información sin reaccionar por 10 segundos."}
     }
 ];
 
@@ -230,7 +224,7 @@ function start() {
         }
     }, 1000);
     setInterval(spawnWord, 1300);
-    setInterval(triggerSituation, 38000); 
+    setInterval(triggerSituation, 35000); // Frecuencia de retos
 }
 
 function isOverlayOpen() {
@@ -248,35 +242,22 @@ function spawnWord() {
     
     div.onclick = () => {
         div.classList.add("explode");
-        
         if(c === "risk") {
             state.score = Math.max(0, state.score - 60);
-            state.stats.safety -= 8;
-            state.stats.peace -= 5;
-            state.stats.respect -= 2;   // AHORA SE MUEVE RESPECT
-            state.stats.lead -= 2;      // AHORA SE MUEVE LEADERSHIP
-            state.combo = 0;
-            state.mastery = 1; 
+            state.stats.safety -= 8; state.stats.peace -= 5;
+            state.stats.respect -= 2; state.stats.lead -= 2;
+            state.combo = 0; state.mastery = 1; 
         } else if(c === "power") {
             state.score += 20 * state.mastery;
-            state.stats.money += 3;
-            state.stats.lead += 2;      // AHORA SUBE LEADERSHIP CON POWER
-            state.stats.respect += 1;   // SUBE RESPECT
-            state.combo++;
-            if(state.combo % 5 === 0) state.mastery++;
+            state.stats.money += 3; state.stats.lead += 2; state.stats.respect += 1;
+            state.combo++; if(state.combo % 5 === 0) state.mastery++;
         } else {
-            state.stats.peace += 4;
-            state.stats.respect += 2;   // AHORA SUBE RESPECT CON SILENCE/CALM
-            state.stats.happy += 3;
-            state.stats.money += 1;
-            state.combo++;
-            if(state.combo % 5 === 0) state.mastery++;
+            state.stats.peace += 4; state.stats.respect += 2; state.stats.happy += 3;
+            state.combo++; if(state.combo % 5 === 0) state.mastery++;
         }
-        
         updateHUD();
         setTimeout(() => { if(div.parentNode) div.remove(); }, 500);
     };
-    
     document.body.appendChild(div);
     setTimeout(() => { if(div.parentNode) div.remove(); }, 7000);
 }
@@ -285,28 +266,60 @@ function triggerSituation() {
     const sit = situations[Math.floor(Math.random() * situations.length)];
     const overlay = document.getElementById("overlay");
     const grid = document.getElementById("decision-grid");
+    const circle = document.getElementById("breath-circle");
+    const desc = document.getElementById("phase-desc");
     
     document.getElementById("phase-title").innerText = sit.title[lang];
-    document.getElementById("phase-desc").innerText = sit.desc[lang];
+    desc.innerText = sit.desc[lang];
     grid.innerHTML = "";
-    
-    sit.choices.forEach(choice => {
-        const btn = document.createElement("button");
-        btn.className = "choice-btn";
-        btn.innerText = choice.text[lang];
-        btn.onclick = () => {
-            applyEffect(choice.effect);
-            overlay.style.display = "none";
-        };
-        grid.appendChild(btn);
-    });
     overlay.style.display = "flex";
+
+    if(sit.type === "decision") {
+        circle.style.display = "none";
+        sit.choices.forEach(choice => {
+            const btn = document.createElement("button");
+            btn.className = "choice-btn";
+            btn.innerText = choice.text[lang];
+            btn.onclick = () => { applyEffect(choice.effect); overlay.style.display = "none"; };
+            grid.appendChild(btn);
+        });
+    } 
+    else if(sit.type === "breathing") {
+        circle.style.display = "flex";
+        let cycles = 0;
+        const breathAnim = () => {
+            if(cycles >= 2) { 
+                overlay.style.display = "none"; 
+                applyEffect({peace: 20, respect: 10});
+                return; 
+            }
+            circle.innerText = lang === "en" ? "INHALE" : "INHHALA";
+            circle.className = "inhale";
+            setTimeout(() => {
+                circle.innerText = lang === "en" ? "EXHALE" : "EXHALA";
+                circle.className = "exhale";
+                setTimeout(() => { cycles++; breathAnim(); }, 4000);
+            }, 4000);
+        };
+        breathAnim();
+    }
+    else if(sit.type === "silence") {
+        circle.style.display = "none";
+        let timeLeft = 10;
+        const interval = setInterval(() => {
+            desc.innerText = (lang === "en" ? "Maintaining silence... " : "Manteniendo silencio... ") + timeLeft;
+            timeLeft--;
+            if(timeLeft < 0) {
+                clearInterval(interval);
+                overlay.style.display = "none";
+                applyEffect({lead: 25, peace: 15});
+            }
+        }, 1000);
+    }
 }
 
 function applyEffect(eff) {
-    Object.keys(eff).forEach(k => { 
-        state.stats[k] += eff[k]; 
-    });
+    Object.keys(eff).forEach(k => { state.stats[k] += eff[k]; });
     state.stats.happy = Math.min(100, Math.max(0, state.stats.happy));
     state.stats.safety = Math.min(100, Math.max(0, state.stats.safety));
     state.stats.peace = Math.max(0, state.stats.peace);
