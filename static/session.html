@@ -43,24 +43,37 @@ body{
 .stat-pill { border: 1px solid #444; padding: 5px 10px; font-size: 0.8rem; background: rgba(0,0,0,0.5); }
 
 /* --- ELEMENTOS FLOTANTES --- */
-.floating{
-    position:absolute;
-    padding:12px 24px;
-    font-weight:900;
-    border-radius:8px;
-    background:rgba(0,0,0,.85);
-    cursor: pointer;
+.floating {
+    position: absolute;
+    padding: 12px 24px;
+    font-weight: 900;
+    font-size: 1.4rem;
+    border-radius: 8px;
+    background: rgba(0,0,0,0.85);
     z-index: 10;
-    animation:floatUp 6s linear forwards;
+    animation: floatUp 6s linear forwards;
+    transition: transform 0.1s;
+    cursor: pointer;
 }
 
-.word-power{border:3px solid var(--neon-green);color:var(--neon-green); box-shadow: 0 0 10px var(--neon-green);}
-.word-risk{border:3px solid var(--neon-red);color:var(--neon-red); box-shadow: 0 0 10px var(--neon-red);}
-.word-silence{border:3px solid var(--neon-yellow);color:var(--neon-yellow); box-shadow: 0 0 10px var(--neon-yellow);}
+.word-power { border: 3px solid var(--neon-green); color: var(--neon-green); text-shadow: 0 0 10px var(--neon-green); }
+.word-risk { border: 3px solid var(--neon-red); color: var(--neon-red); text-shadow: 0 0 10px var(--neon-red); }
+.word-silence { border: 3px solid var(--neon-yellow); color: var(--neon-yellow); text-shadow: 0 0 10px var(--neon-yellow); }
 
-@keyframes floatUp{
-    from{transform:translateY(110vh);}
-    to{transform:translateY(-20vh);opacity:0;}
+@keyframes floatUp {
+    from { transform: translateY(110vh); opacity: 1; }
+    to { transform: translateY(-20vh); opacity: 0; }
+}
+
+.explode {
+    animation: blast 0.4s ease-out forwards !important;
+    pointer-events: none;
+}
+
+@keyframes blast {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(2.5); opacity: 0.5; filter: brightness(2); }
+    100% { transform: scale(4); opacity: 0; }
 }
 
 /* --- OVERLAY DE FASES --- */
@@ -145,7 +158,6 @@ function start() {
 }
 
 function nextPhase() {
-    // Limpiar intervalos previos
     clearInterval(state.spawnInterval);
     clearInterval(state.timerInterval);
 
@@ -189,6 +201,9 @@ function spawnWord() {
     div.style.left = Math.random() * 80 + "vw";
 
     div.onclick = () => {
+        // Efecto de explosión
+        div.classList.add('explode');
+        
         if (c === "risk") {
             state.score = Math.max(0, state.score - 30);
             state.combo = 0;
@@ -203,11 +218,13 @@ function spawnWord() {
             document.getElementById("hit").play();
         }
         updateHUD();
-        div.remove();
+        
+        // Remover después de la animación de explosión
+        setTimeout(() => { if(div.parentNode) div.remove(); }, 400);
     };
 
     document.body.appendChild(div);
-    setTimeout(() => { if(div.parentNode) div.remove(); }, 5000);
+    setTimeout(() => { if(div.parentNode && !div.classList.contains('explode')) div.remove(); }, 5000);
 }
 
 function startBreath(p) {
