@@ -208,23 +208,22 @@ function start() {
     state.playing = true;
     updateHUD();
     
-    // Timer principal ININTERRUMPIDO de 5 minutos
+    // Timer principal de 5 minutos
     const gameTimer = setInterval(() => {
         if(state.timer > 0) {
             state.timer--;
             updateHUD();
-            // Aumento de dificultad por tiempo transcurrido
-            if(state.timer % 60 === 0 && state.spawnRate > 500) {
+            // Aumento de dificultad cada minuto
+            if(state.timer % 60 === 0 && state.spawnRate > 600) {
                 state.spawnRate -= 150;
             }
         } else {
             clearInterval(gameTimer);
-            state.playing = false;
-            alert(lang === "en" ? "Session Completed" : "Sesión Completada");
+            alert("Training Session Complete");
         }
     }, 1000);
 
-    // Loop de palabras flotantes (Independiente del timer)
+    // Loop de palabras flotantes (no se interrumpe)
     const wordLoop = () => {
         if(state.timer > 0) {
             spawnWord();
@@ -233,8 +232,8 @@ function start() {
     };
     wordLoop();
 
-    // Loop de Retos (30s Respiración/Silencio + Pregunta) cada 50 segundos
-    setInterval(triggerSpecialCycle, 50000); 
+    // Loop de Retos Especiales (Respiración/Silencio -> Pregunta) cada 45 segundos
+    setInterval(triggerSpecialCycle, 45000); 
 }
 
 function isOverlayOpen() {
@@ -242,17 +241,19 @@ function isOverlayOpen() {
 }
 
 function spawnWord() {
+    // Nota: Ahora las palabras caen incluso si el overlay está abierto pero con z-index inferior
     const cats = ["power", "risk", "silence"];
     const c = cats[Math.floor(Math.random() * 3)];
     const div = document.createElement("div");
     div.className = `floating word-${c}`;
     
+    // Categorías extendidas según maestría
     const wordList = words[c];
     div.innerText = wordList[Math.floor(Math.random() * wordList.length)];
     div.style.left = Math.random() * 75 + "vw";
     
-    // La velocidad aumenta con la maestría
-    const speed = Math.max(2.5, 7 - (state.mastery * 0.4));
+    // Velocidad aumenta según nivel de maestría
+    const speed = Math.max(3, 7 - (state.mastery * 0.5));
     div.style.animationDuration = speed + "s";
     
     div.onclick = () => {
@@ -278,7 +279,6 @@ function spawnWord() {
 }
 
 function triggerSpecialCycle() {
-    if(state.timer <= 10) return; // No iniciar ciclos si queda poco tiempo
     const chance = Math.random();
     if(chance > 0.5) {
         startBreathing(() => triggerQuestion());
@@ -294,20 +294,20 @@ function startBreathing(callback) {
     const grid = document.getElementById("decision-grid");
 
     document.getElementById("phase-title").innerText = lang === "en" ? "TVID BREATHING" : "RESPIRACIÓN TVID";
+    desc.innerText = lang === "en" ? "Resetting Nervous System (30s)..." : "Reseteando Sistema Nervioso (30s)...";
     grid.innerHTML = "";
     circle.style.display = "flex";
     overlay.style.display = "flex";
 
     let elapsed = 0;
     const breathe = () => {
-        if(elapsed >= 30 || state.timer <= 0) {
+        if(elapsed >= 30) {
             circle.style.display = "none";
             applyEffect({peace: 20, respect: 10});
             callback();
             return;
         }
-        desc.innerText = (lang === "en" ? "Focus on your pulse... " : "Enfócate en tu pulso... ") + (30 - elapsed) + "s";
-        circle.innerText = lang === "en" ? "INHALE" : "INHALA";
+        circle.innerText = lang === "en" ? "INHALE" : "INHHALA";
         circle.className = "inhale";
         setTimeout(() => {
             circle.innerText = lang === "en" ? "EXHALE" : "EXHALA";
@@ -336,7 +336,7 @@ function startSilenceChallenge(callback) {
     const interval = setInterval(() => {
         desc.innerText = (lang === "en" ? "A leader masters silence... " : "Un líder domina el silencio... ") + timeLeft + "s";
         timeLeft--;
-        if(timeLeft < 0 || state.timer <= 0) {
+        if(timeLeft < 0) {
             clearInterval(interval);
             applyEffect({lead: 25, peace: 15});
             callback();
@@ -345,10 +345,6 @@ function startSilenceChallenge(callback) {
 }
 
 function triggerQuestion() {
-    if(state.timer <= 0) {
-        document.getElementById("overlay").style.display = "none";
-        return;
-    }
     const sit = situations[Math.floor(Math.random() * situations.length)];
     const overlay = document.getElementById("overlay");
     const grid = document.getElementById("decision-grid");
