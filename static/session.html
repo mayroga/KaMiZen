@@ -6,7 +6,6 @@
 <title>AL CIELO: MATRIX TRAINING</title>
 
 <style>
-/* 🔥 TODO TU CSS ORIGINAL INTACTO */
 :root {
     --neon-blue:#00f2ff;
     --neon-green:#00ff41;
@@ -34,234 +33,222 @@ body{
 #score-box{border:3px solid #fff;padding:5px 15px;}
 #mastery-lvl{color:var(--neon-green);}
 
-/* TODO LO DEMÁS IGUAL (no cortado) */
+.floating{
+    position:absolute;
+    padding:12px 24px;
+    font-weight:900;
+    border-radius:8px;
+    background:rgba(0,0,0,.85);
+    animation:floatUp 6s linear forwards;
+}
+
+.word-power{border:3px solid var(--neon-green);color:var(--neon-green);}
+.word-risk{border:3px solid var(--neon-red);color:var(--neon-red);}
+.word-silence{border:3px solid var(--neon-yellow);color:var(--neon-yellow);}
+
+@keyframes floatUp{
+    from{transform:translateY(110vh);}
+    to{transform:translateY(-20vh);opacity:0;}
+}
+
+#overlay{
+    position:fixed;
+    width:100%;height:100%;
+    background:#000;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    z-index:500;
+}
+
+#circle{
+    width:200px;height:200px;
+    border:6px solid var(--neon-blue);
+    border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    transition:all 4s ease;
+}
+
+button{
+    padding:15px;
+    background:none;
+    border:2px solid var(--neon-blue);
+    color:var(--neon-blue);
+    cursor:pointer;
+}
 </style>
 </head>
 
 <body>
 
-<!-- 🔥 TODO TU HTML ORIGINAL INTACTO -->
 <div id="hud">
     <div id="timer-box">00:00</div>
-    <div id="mastery-lvl">MASTERY: x1</div>
-    <div id="score-box">POINTS: 0</div>
+    <div id="mastery-lvl">x1</div>
+    <div id="score-box">0</div>
 </div>
 
-<div id="main-menu" class="panel">
-    <h1>KAMIZEN: AL CIELO</h1>
-    <button onclick="startGame('en')">START TRAINING</button>
+<div id="overlay">
+    <h1 id="phase-title"></h1>
+    <div id="circle"><span id="breath-label"></span></div>
+    <p id="phase-desc"></p>
 </div>
 
-<div id="social-panel">
-    <p id="social-text"></p>
-    <div id="social-options"></div>
-</div>
-
-<div id="breath-overlay">
-    <h2 id="breath-title">SILENCE CHALLENGE</h2>
-    <div id="breath-circle"><span id="breath-label"></span></div>
-    <p id="breath-desc"></p>
-</div>
-
-<audio id="snd-hit" src="/static/sounds/glass.mp3"></audio>
-<audio id="snd-error" src="/static/sounds/trumpet.mp3"></audio>
-<audio id="snd-click" src="/static/sounds/keypress.mp3"></audio>
+<audio id="hit" src="/static/sounds/glass.mp3"></audio>
+<audio id="error" src="/static/sounds/trumpet.mp3"></audio>
 
 <script>
 
-// ==============================
-// 🔥 ESTADO (NO ROTO)
-// ==============================
-
-let state = {
+let state={
     score:0,
     mastery:1,
-    lang:'en',
-    timeLeft:300,
-    silenceDuration:20,
-    blocksCompleted:0,
-
-    // 🔥 NUEVO (sin romper nada)
-    phaseIndex:0,
-    phaseTime:0,
-    combo:0
+    combo:0,
+    phase:0,
+    difficulty:1,
+    timer:0,
+    playing:false,
+    spawnRate:1200
 };
 
-// ==============================
-// 🔥 HUD SEGURO
-// ==============================
-
-function updateHUD(){
-    document.getElementById('score-box').innerText = "POINTS: "+state.score;
-    document.getElementById('mastery-lvl').innerText = "MASTERY: x"+state.mastery;
-}
-
-// ==============================
-// 🔥 START CORREGIDO
-// ==============================
-
-const originalStart = function(l){
-    state.lang = l;
-    document.getElementById('main-menu').style.display='none';
-    updateHUD();
-};
-
-function startGame(l){
-    originalStart(l);
-
-    clearInterval(state.interval);
-    clearInterval(state.spawnInterval);
-
-    startPhaseLoop();
-}
-
-// ==============================
-// 🔁 PHASE SYSTEM (FIX REAL)
-// ==============================
-
-const PHASES = [
-    {name:"WORDS_1", duration:300},
-    {name:"QUESTIONS", duration:40},
-    {name:"BREATH", duration:30},
-    {name:"SILENCE", duration:20},
-    {name:"WORDS_2", duration:600}
+const phases=[
+    {name:"WORDS",duration:300},
+    {name:"QUESTIONS",duration:40},
+    {name:"BREATH",duration:30},
+    {name:"SILENCE",duration:20},
+    {name:"WORDS+",duration:600}
 ];
 
-function startPhaseLoop(){
-    state.phaseIndex = 0;
-    runPhase();
-}
+const words={
+    power:["WILL","FOCUS","DISCIPLINE"],
+    risk:["EGO","NOISE","LAZY"],
+    silence:["CALM","WAIT","BREATHE"]
+};
 
-function runPhase(){
-    const p = PHASES[state.phaseIndex];
-    state.phaseTime = p.duration;
-
-    clearInterval(state.spawnInterval);
-
-    if(p.name.includes("WORDS")){
-        state.spawnInterval = setInterval(spawnWord, getSpawnRate());
-    }
-
-    if(p.name==="QUESTIONS"){
-        triggerSocialMission();
-    }
-
-    if(p.name==="BREATH"){
-        triggerBreath();
-    }
-
-    if(p.name==="SILENCE"){
-        triggerSilence();
-    }
-
-    const t = setInterval(()=>{
-        state.phaseTime--;
-
-        let m = Math.floor(state.phaseTime/60).toString().padStart(2,'0');
-        let s = (state.phaseTime%60).toString().padStart(2,'0');
-
-        document.getElementById('timer-box').innerText = m+":"+s;
-
-        if(state.phaseTime<=0){
-            clearInterval(t);
-            nextPhase();
-        }
-
-    },1000);
+function start(){
+    state.playing=true;
+    nextPhase();
 }
 
 function nextPhase(){
-    state.phaseIndex = (state.phaseIndex+1)%PHASES.length;
-    runPhase();
+    state.phase=(state.phase+1)%phases.length;
+    const p=phases[state.phase];
+
+    state.timer=p.duration;
+
+    if(p.name.includes("WORDS")){
+        startWords();
+    }
+    else if(p.name==="QUESTIONS"){
+        startQuestions();
+    }
+    else if(p.name==="BREATH"){
+        startBreath();
+    }
+    else if(p.name==="SILENCE"){
+        startSilence();
+    }
 }
 
-// ==============================
-// 🎮 WORD SYSTEM (TUYO + FIX)
-// ==============================
+function loopTimer(){
+    const t=setInterval(()=>{
+        state.timer--;
+        updateHUD();
 
-function getSpawnRate(){
-    return Math.max(300, 1000 - state.mastery*50);
+        if(state.timer<=0){
+            clearInterval(t);
+            nextPhase();
+        }
+    },1000);
+}
+
+function startWords(){
+    document.getElementById("overlay").style.display="none";
+
+    state.spawnInterval=setInterval(spawnWord, state.spawnRate);
+
+    loopTimer();
 }
 
 function spawnWord(){
-
-    const cats=['power','risk','silence'];
+    const cats=["power","risk","silence"];
     const c=cats[Math.floor(Math.random()*3)];
+    const list=words[c];
 
-    const div=document.createElement('div');
+    const div=document.createElement("div");
     div.className=`floating word-${c}`;
-    div.innerText="..."; // mantiene lógica original
+    div.innerText=list[Math.floor(Math.random()*list.length)];
     div.style.left=Math.random()*80+"vw";
 
     div.onclick=()=>{
-        div.classList.add('explode');
-
-        document.getElementById('snd-click').play();
-
-        if(c==='risk'){
+        if(c==="risk"){
             state.score-=30;
-            state.mastery=1;
             state.combo=0;
-            document.getElementById('snd-error').play();
+            state.mastery=1;
+            document.getElementById("error").play();
         }else{
             state.combo++;
-            state.score+=15*state.mastery + state.combo;
-
-            if(state.combo%4===0) state.mastery++;
-
-            document.getElementById('snd-hit').play();
+            let bonus=10+state.combo;
+            state.score+=bonus*state.mastery;
+            if(state.combo%5===0) state.mastery++;
+            document.getElementById("hit").play();
         }
-
         updateHUD();
         div.remove();
     };
 
     document.body.appendChild(div);
     setTimeout(()=>div.remove(),5000);
+
+    // 🔥 dificultad dinámica
+    state.spawnRate=Math.max(400, state.spawnRate - 5);
 }
 
-// ==============================
-// 🧠 BREATH FIX
-// ==============================
+function startQuestions(){
+    clearInterval(state.spawnInterval);
 
-function triggerBreath(){
-    const o=document.getElementById('breath-overlay');
-    const c=document.getElementById('breath-circle');
-    const l=document.getElementById('breath-label');
+    showOverlay("DECISION",
+    "Choose correctly under pressure");
 
-    o.style.display='flex';
+    setTimeout(()=>{
+        state.score+=50*state.mastery;
+        nextPhase();
+    },4000);
+}
+
+function startBreath(){
+    showOverlay("BREATH",
+    "Control = Power");
+
+    const circle=document.getElementById("circle");
+    const label=document.getElementById("breath-label");
 
     let inhale=true;
 
-    const i=setInterval(()=>{
+    const cycle=setInterval(()=>{
         if(inhale){
-            l.innerText="IN";
-            c.style.transform="scale(1.4)";
+            label.innerText="IN";
+            circle.style.transform="scale(1.4)";
         }else{
-            l.innerText="OUT";
-            c.style.transform="scale(0.7)";
+            label.innerText="OUT";
+            circle.style.transform="scale(0.7)";
         }
         inhale=!inhale;
     },4000);
 
     setTimeout(()=>{
-        clearInterval(i);
-        o.style.display='none';
+        clearInterval(cycle);
         state.mastery++;
         nextPhase();
-    }, state.phaseTime*1000);
+    }, state.timer*1000);
 }
 
-// ==============================
-// 🔇 SILENCE FIX
-// ==============================
-
-function triggerSilence(){
-    const o=document.getElementById('breath-overlay');
-    o.style.display='flex';
+function startSilence(){
+    showOverlay("SILENCE",
+    "Do nothing. Absolute control.");
 
     let violated=false;
 
+    window.onmousemove=()=>violated=true;
     window.onclick=()=>violated=true;
 
     setTimeout(()=>{
@@ -269,31 +256,30 @@ function triggerSilence(){
             state.score+=200*state.mastery;
         }else{
             state.score-=100;
-            state.mastery=1;
         }
-
+        window.onmousemove=null;
         window.onclick=null;
-        o.style.display='none';
-        updateHUD();
         nextPhase();
-
-    }, state.phaseTime*1000);
+    }, state.timer*1000);
 }
 
-// ==============================
-// 🧠 SOCIAL (SIN CAMBIO)
-// ==============================
-
-function triggerSocialMission(){
-    state.score+=50*state.mastery;
-    updateHUD();
+function showOverlay(title,desc){
+    const o=document.getElementById("overlay");
+    o.style.display="flex";
+    document.getElementById("phase-title").innerText=title;
+    document.getElementById("phase-desc").innerText=desc;
 }
 
-// ==============================
-// 🚀 AUTO START SAFE
-// ==============================
+function updateHUD(){
+    document.getElementById("score-box").innerText=state.score;
+    document.getElementById("mastery-lvl").innerText="x"+state.mastery;
 
-updateHUD();
+    let m=Math.floor(state.timer/60).toString().padStart(2,"0");
+    let s=(state.timer%60).toString().padStart(2,"0");
+    document.getElementById("timer-box").innerText=`${m}:${s}`;
+}
+
+start();
 
 </script>
 </body>
