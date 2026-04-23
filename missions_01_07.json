@@ -27,8 +27,10 @@
         {
           "type": "decision",
           "options": [
-            { "text": { "en": "Look carefully at surroundings", "es": "Observar con atención" }, "correct": true, "explanation": { "en": "Scanning the environment lets you see the exit before the chaos starts. You act with VISION.", "es": "Escanear el entorno te permite ver la salida antes del caos. Actúas con VISIÓN." } },
-            { "text": { "en": "Ignore and keep walking", "es": "Ignorar y seguir caminando" }, "correct": false, "explanation": { "en": "Ignoring signs is an EXCUSE to stay blind. Blindness is weakness.", "es": "Ignorar señales es una EXCUSA para seguir ciego. La ceguera es debilidad." } }
+            { "text": { "en": "Stop, observe, and find the source", "es": "Parar, observar y hallar el origen" }, "score": 10, "correct": true, "explanation": { "en": "Scanning the environment lets you see the exit before the chaos starts. VISION.", "es": "Escanear el entorno te permite ver la salida antes del caos. VISIÓN." } },
+            { "text": { "en": "Walk slowly and stay alert", "es": "Caminar lento y estar alerta" }, "score": 5, "correct": true, "explanation": { "en": "Alertness is better than blindness, but action requires stopping the noise.", "es": "Estar alerta es mejor que la ceguera, pero actuar requiere detener el ruido." } },
+            { "text": { "en": "Ignore and keep walking", "es": "Ignorar y seguir caminando" }, "score": 0, "correct": false, "explanation": { "en": "Ignoring signs is an EXCUSE to stay blind. Blindness is weakness.", "es": "Ignorar señales es una EXCUSA para seguir ciego. La ceguera es debilidad." } },
+            { "text": { "en": "Run through the hallway in panic", "es": "Correr por el pasillo en pánico" }, "score": -5, "correct": false, "explanation": { "en": "Panic is the ultimate NOISE. You have lost your internal compass.", "es": "El pánico es el RUIDO máximo. Has perdido tu brújula interna." } }
           ]
         }
       ]
@@ -48,113 +50,10 @@
         {
           "type": "decision",
           "options": [
-            { "text": { "en": "Pause and breathe", "es": "Pausar y respirar" }, "correct": true, "explanation": { "en": "CALM reclaims your energy. You control the situation now.", "es": "La CALMA recupera tu energía. Ahora tú controlas la situación." } },
-            { "text": { "en": "Push them back immediately", "es": "Empujar de vuelta de inmediato" }, "correct": false, "explanation": { "en": "Reacting fast is giving your WILL to the other person. Never give away your power.", "es": "Reaccionar rápido es regalar tu VOLUNTAD al otro. Nunca regales tu poder." } }
-          ]
-        }
-      ]
-    },
-    {
-      "id": 3,
-      "level": 3,
-      "theme": "SMALL CHOICES",
-      "blocks": [
-        {
-          "type": "story",
-          "text": {
-            "en": "You have money for a healthy meal, but you see a giant bag of candy.",
-            "es": "Tienes dinero para una comida sana, pero ves una bolsa gigante de dulces."
-          }
-        },
-        {
-          "type": "decision",
-          "options": [
-            { "text": { "en": "Buy the healthy meal", "es": "Comprar comida sana" }, "correct": true, "explanation": { "en": "To BUILD a strong future, you must fuel the machine correctly.", "es": "Para CONSTRUIR un futuro fuerte, debes alimentar la máquina correctamente." } },
-            { "text": { "en": "Buy all the candy", "es": "Comprar todos los dulces" }, "correct": false, "explanation": { "en": "Sugar is just NOISE for your focus. Don't be a slave to a cheap impulse.", "es": "El azúcar es solo RUIDO para tu enfoque. No seas esclavo de un impulso barato." } }
-          ]
-        }
-      ]
-    },
-    {
-      "id": 4,
-      "level": 4,
-      "theme": "GROUP PRESSURE",
-      "blocks": [
-        {
-          "type": "story",
-          "text": {
-            "en": "The 'cool' kids are laughing at a smaller student and want you to join.",
-            "es": "Los chicos 'populares' se burlan de un estudiante pequeño y quieren que te unas."
-          }
-        },
-        {
-          "type": "decision",
-          "options": [
-            { "text": { "en": "Stay calm and walk away", "es": "Mantener calma e irse" }, "correct": true, "explanation": { "en": "True HONOR is staying individual when the group is wrong.", "es": "El verdadero HONOR es mantenerte individual cuando el grupo se equivoca." } },
-            { "text": { "en": "Laugh with them", "es": "Reírse con ellos" }, "correct": false, "explanation": { "en": "QUITTING your values for approval makes you a sheep, not a leader.", "es": "RENDIR tus valores por aprobación te hace una oveja, no un líder." } }
-          ]
-        }
-      ]
-    },
-    {
-      "id": 5,
-      "level": 5,
-      "theme": "FOCUS TRAINING",
-      "blocks": [
-        {
-          "type": "story",
-          "text": {
-            "en": "You are studying and your phone keeps buzzing with notifications.",
-            "es": "Estás estudiando y tu teléfono no deja de vibrar con notificaciones."
-          }
-        },
-        {
-          "type": "decision",
-          "options": [
-            { "text": { "en": "Put phone in another room", "es": "Poner el móvil en otra habitación" }, "correct": true, "explanation": { "en": "Removing NOISE is the only way to RISE above the average.", "es": "Eliminar el RUIDO es la única forma de LEVANTARSE por encima del promedio." } },
-            { "text": { "en": "Check notifications fast", "es": "Mirar las notificaciones rápido" }, "correct": false, "explanation": { "en": "Answering every buzz is giving up your FOCUS to an app. Be the master.", "es": "Responder a cada vibración es entregar tu ENFOQUE a una app. Sé el maestro." } }
-          ]
-        }
-      ]
-    },
-    {
-      "id": 6,
-      "level": 6,
-      "theme": "REAL FRIENDS",
-      "blocks": [
-        {
-          "type": "story",
-          "text": {
-            "en": "A friend asks to 'borrow' money again but never pays back.",
-            "es": "Un amigo pide dinero 'prestado' otra vez pero nunca lo devuelve."
-          }
-        },
-        {
-          "type": "decision",
-          "options": [
-            { "text": { "en": "Say no firmly and calmly", "es": "Decir no con firmeza y calma" }, "correct": true, "explanation": { "en": "It takes COURAGE to set boundaries. This is how you gain respect.", "es": "Se requiere VALENTÍA para poner límites. Así es como ganas respeto." } },
-            { "text": { "en": "Lend it one last time", "es": "Prestarlo una última vez" }, "correct": false, "explanation": { "en": "Ignoring patterns is a mental EXCUSE. You are enabling your own loss.", "es": "Ignorar patrones es una EXCUSA mental. Estás permitiendo tu propia pérdida." } }
-          ]
-        }
-      ]
-    },
-    {
-      "id": 7,
-      "level": 7,
-      "theme": "CALM UNDER PRESSURE",
-      "blocks": [
-        {
-          "type": "story",
-          "text": {
-            "en": "Someone tells a lie about you and everyone is looking.",
-            "es": "Alguien dice una mentira sobre ti y todos te están mirando."
-          }
-        },
-        {
-          "type": "decision",
-          "options": [
-            { "text": { "en": "Keep a neutral face and wait", "es": "Cara neutral y esperar" }, "correct": true, "explanation": { "en": "Your internal PEACE makes the liar look like CHAOS. Truth wins in silence.", "es": "Tu PAZ interna hace que el mentiroso parezca el CAOS. La verdad gana en silencio." } },
-            { "text": { "en": "Scream that it's a lie", "es": "Gritar que es mentira" }, "correct": false, "explanation": { "en": "Desperation is EGO trying to defend itself. Control your voice.", "es": "La desesperación es el EGO tratando de defenderse. Controla tu voz." } }
+            { "text": { "en": "Pause, breathe, and keep your gaze steady", "es": "Pausar, respirar y mantener mirada firme" }, "score": 10, "correct": true, "explanation": { "en": "CALM reclaims your energy. You control the situation now.", "es": "La CALMA recupera tu energía. Ahora tú controlas la situación." } },
+            { "text": { "en": "Walk away without looking back", "es": "Alejarse sin mirar atrás" }, "score": 5, "correct": true, "explanation": { "en": "Choosing not to fight is acceptable, but true mastery is keeping your stance.", "es": "Elegir no pelear es aceptable, pero la maestría es mantener tu postura." } },
+            { "text": { "en": "Insult them under your breath", "es": "Insultarlos entre dientes" }, "score": 0, "correct": false, "explanation": { "en": "Hate is a reaction that burns your own peace. Don't be a puppet.", "es": "El odio es una reacción que quema tu propia paz. No seas un títere." } },
+            { "text": { "en": "Push them back immediately", "es": "Empujar de vuelta de inmediato" }, "score": -5, "correct": false, "explanation": { "en": "Reacting fast is giving your WILL to the other person. Power lost.", "es": "Reaccionar rápido es regalar tu VOLUNTAD al otro. Poder perdido." } }
           ]
         }
       ]
