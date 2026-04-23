@@ -223,16 +223,13 @@ function toggleLang() {
 function start() {
     state.playing = true;
     updateHUD();
-    // Ciclo de tiempo
     setInterval(() => {
         if(state.timer > 0 && !isOverlayOpen()) {
             state.timer--;
             updateHUD();
         }
     }, 1000);
-    // Ciclo de aparición de palabras
     setInterval(spawnWord, 1300);
-    // Ciclo de situaciones
     setInterval(triggerSituation, 38000); 
 }
 
@@ -250,23 +247,26 @@ function spawnWord() {
     div.style.left = Math.random() * 75 + "vw";
     
     div.onclick = () => {
-        // EFECTO DE EXPLOSIÓN INTEGRADO
         div.classList.add("explode");
         
         if(c === "risk") {
             state.score = Math.max(0, state.score - 60);
             state.stats.safety -= 8;
             state.stats.peace -= 5;
-            state.combo = 0; // Rompe el combo
+            state.stats.respect -= 2;   // AHORA SE MUEVE RESPECT
+            state.stats.lead -= 2;      // AHORA SE MUEVE LEADERSHIP
+            state.combo = 0;
             state.mastery = 1; 
         } else if(c === "power") {
             state.score += 20 * state.mastery;
             state.stats.money += 3;
-            state.stats.lead += 1;
+            state.stats.lead += 2;      // AHORA SUBE LEADERSHIP CON POWER
+            state.stats.respect += 1;   // SUBE RESPECT
             state.combo++;
             if(state.combo % 5 === 0) state.mastery++;
         } else {
             state.stats.peace += 4;
+            state.stats.respect += 2;   // AHORA SUBE RESPECT CON SILENCE/CALM
             state.stats.happy += 3;
             state.stats.money += 1;
             state.combo++;
@@ -274,12 +274,10 @@ function spawnWord() {
         }
         
         updateHUD();
-        // Esperar a que termine la animación de explosión para borrar
         setTimeout(() => { if(div.parentNode) div.remove(); }, 500);
     };
     
     document.body.appendChild(div);
-    // Borrar si llega al techo sin ser tocada
     setTimeout(() => { if(div.parentNode) div.remove(); }, 7000);
 }
 
@@ -309,11 +307,11 @@ function applyEffect(eff) {
     Object.keys(eff).forEach(k => { 
         state.stats[k] += eff[k]; 
     });
-    // Validaciones de límites para niños
     state.stats.happy = Math.min(100, Math.max(0, state.stats.happy));
     state.stats.safety = Math.min(100, Math.max(0, state.stats.safety));
     state.stats.peace = Math.max(0, state.stats.peace);
     state.stats.respect = Math.max(0, state.stats.respect);
+    state.stats.lead = Math.max(0, state.stats.lead);
     updateHUD();
 }
 
@@ -327,7 +325,6 @@ function updateHUD() {
     document.getElementById("v-safety").innerText = state.stats.safety;
     document.getElementById("v-happy").innerText = state.stats.happy;
     
-    // Feedback de la barra de seguridad (Semáforo de vida)
     const sBar = document.getElementById("security-alert");
     if(state.stats.safety < 40) {
         sBar.style.background = "var(--neon-red)";
@@ -345,7 +342,6 @@ function updateHUD() {
     document.getElementById("timer-box").innerText = `${m}:${s}`;
 }
 
-// Iniciar sistema
 start();
 </script>
 </body>
