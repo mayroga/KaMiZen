@@ -20,15 +20,17 @@
         {
           "type": "story",
           "text": {
-            "en": "You broke something expensive by accident. No one saw you, but someone else might get blamed.",
-            "es": "Rompiste algo caro por accidente. Nadie te vio, pero podrían culpar a otra persona."
+            "en": "You broke something expensive by accident. No one saw you.",
+            "es": "Rompiste algo caro por accidente. Nadie te vio."
           }
         },
         {
           "type": "decision",
           "options": [
-            { "text": { "en": "Admit it calmly", "es": "Admitirlo con calma" }, "correct": true, "explanation": { "en": "Owning mistakes builds HONOR. You are the Architect of your own truth.", "es": "Asumir errores construye HONOR. Eres el Arquitecto de tu propia verdad." } },
-            { "text": { "en": "Hide the broken pieces", "es": "Esconder las piezas rotas" }, "correct": false, "explanation": { "en": "Hiding is QUITTING your integrity. The lie will live inside your soul.", "es": "Esconder es RENUNCIAR a tu integridad. La mentira vivirá en tu alma." } }
+            { "text": { "en": "Report it and offer to fix it", "es": "Reportarlo y ofrecer repararlo" }, "score": 10, "correct": true, "explanation": { "en": "Owning mistakes builds HONOR. You are the Architect of your truth.", "es": "Asumir errores construye HONOR. Eres el Arquitecto de tu verdad." } },
+            { "text": { "en": "Admit it only if they ask", "es": "Admitirlo solo si preguntan" }, "score": 5, "correct": true, "explanation": { "en": "Honesty under pressure is okay, but taking initiative is Mastery.", "es": "La honestidad bajo presión está bien, pero la iniciativa es Maestría." } },
+            { "text": { "en": "Hide the broken pieces", "es": "Esconder las piezas rotas" }, "score": 0, "correct": false, "explanation": { "en": "Hiding is QUITTING your integrity. The lie lives inside you.", "es": "Esconder es RENUNCIAR a tu integridad. La mentira vive en ti." } },
+            { "text": { "en": "Blame the cat or a sibling", "es": "Culpar al gato o a un hermano" }, "score": -5, "correct": false, "explanation": { "en": "Transferring guilt is a Matrix glitch. Your power is now zero.", "es": "Transferir la culpa es un error de la Matrix. Tu poder ahora es cero." } }
           ]
         }
       ]
@@ -41,120 +43,17 @@
         {
           "type": "story",
           "text": {
-            "en": "You are learning a new skill, but a notification for a viral video pops up.",
+            "en": "You are learning a new skill, but a viral video notification pops up.",
             "es": "Estás aprendiendo algo nuevo, pero sale una notificación de un video viral."
           }
         },
         {
           "type": "decision",
           "options": [
-            { "text": { "en": "Dismiss and continue", "es": "Ignorar y continuar" }, "correct": true, "explanation": { "en": "DISCIPLINE is doing what you must even when a distraction looks easy.", "es": "La DISCIPLINA es hacer lo que debes incluso cuando la distracción parece fácil." } },
-            { "text": { "en": "Watch 'just one' video", "es": "Ver 'solo un' video" }, "correct": false, "explanation": { "en": "The algorithm wants to steal your VICTORY. Don't let it win.", "es": "El algoritmo quiere robar tu VICTORIA. No dejes que gane." } }
-          ]
-        }
-      ]
-    },
-    {
-      "id": 10,
-      "level": 10,
-      "theme": "PRESSURE DECISION",
-      "blocks": [
-        {
-          "type": "story",
-          "text": {
-            "en": "An older student asks you for an answer during a test. The teacher is looking away.",
-            "es": "Un estudiante mayor te pide una respuesta en un examen. El profesor no mira."
-          }
-        },
-        {
-          "type": "decision",
-          "options": [
-            { "text": { "en": "Focus on your own paper", "es": "Enfocarte en tu papel" }, "correct": true, "explanation": { "en": "Your STRENGTH comes from what you know, not from helping others cheat.", "es": "Tu FUERZA viene de lo que sabes, no de ayudar a otros a hacer trampa." } },
-            { "text": { "en": "Give the answer quickly", "es": "Dar la respuesta rápido" }, "correct": false, "explanation": { "en": "Risking your future for an EXCUSE is a bad investment of your WILL.", "es": "Arriesgar tu futuro por una EXCUSA es una mala inversión de tu VOLUNTAD." } }
-          ]
-        }
-      ]
-    },
-    {
-      "id": 11,
-      "level": 11,
-      "theme": "OWN RESPONSIBILITY",
-      "blocks": [
-        {
-          "type": "story",
-          "text": {
-            "en": "You were supposed to help at home, but you forgot and played games instead.",
-            "es": "Debías ayudar en casa, pero lo olvidaste por jugar videojuegos."
-          }
-        },
-        {
-          "type": "decision",
-          "options": [
-            { "text": { "en": "Apologize and do it now", "es": "Disculparse y hacerlo ahora" }, "correct": true, "explanation": { "en": "To RISE, you must fix your errors without being asked twice.", "es": "Para LEVANTARTE, debes corregir tus errores sin que te lo pidan dos veces." } },
-            { "text": { "en": "Blame the game for being long", "es": "Culpar al juego por ser largo" }, "correct": false, "explanation": { "en": "Blaming external factors is the EGO's way of staying weak.", "es": "Culpar a factores externos es la forma en que el EGO se mantiene débil." } }
-          ]
-        }
-      ]
-    },
-    {
-      "id": 12,
-      "level": 12,
-      "theme": "SELF CONTROL TEST",
-      "blocks": [
-        {
-          "type": "story",
-          "text": {
-            "en": "Someone is making fun of your shoes. They want you to get mad and fight.",
-            "es": "Alguien se burla de tus zapatos. Quieren que te enojes y pelees."
-          }
-        },
-        {
-          "type": "decision",
-          "options": [
-            { "text": { "en": "Neutral look and silence", "es": "Mirada neutral y silencio" }, "correct": true, "explanation": { "en": "STILL minds are invincible. You win by not entering the CHAOS.", "es": "Las mentes QUIETAS son invencibles. Ganas al no entrar en el CAOS." } },
-            { "text": { "en": "Insult them back", "es": "Insultarlos de vuelta" }, "correct": false, "explanation": { "en": "HATE is a poison you drink hoping the other person dies. Be smarter.", "es": "El ODIO es un veneno que bebes esperando que el otro muera. Sé más inteligente." } }
-          ]
-        }
-      ]
-    },
-    {
-      "id": 13,
-      "level": 13,
-      "theme": "ENVY CONTROL",
-      "blocks": [
-        {
-          "type": "story",
-          "text": {
-            "en": "Your best friend got the prize you wanted. You feel a sting in your chest.",
-            "es": "Tu mejor amigo ganó el premio que tú querías. Sientes una punzada en el pecho."
-          }
-        },
-        {
-          "type": "decision",
-          "options": [
-            { "text": { "en": "Congratulate and focus on your work", "es": "Felicitar y enfocarte en lo tuyo" }, "correct": true, "explanation": { "en": "Have FAITH in your own process. Envy is just NOISE on your timeline.", "es": "Ten FE en tu propio proceso. La envidia es solo RUIDO en tu línea de tiempo." } },
-            { "text": { "en": "Tell others it was luck", "es": "Decir a otros que fue suerte" }, "correct": false, "explanation": { "en": "Your EGO makes you small when you try to diminish others' STRENGTH.", "es": "Tu EGO te hace pequeño cuando intentas disminuir la FUERZA de los demás." } }
-          ]
-        }
-      ]
-    },
-    {
-      "id": 14,
-      "level": 14,
-      "theme": "VOICE POWER",
-      "blocks": [
-        {
-          "type": "story",
-          "text": {
-            "en": "You see someone being treated unfairly. Your heart is racing.",
-            "es": "Ves que tratan a alguien injustamente. Tu corazón late rápido."
-          }
-        },
-        {
-          "type": "decision",
-          "options": [
-            { "text": { "en": "Speak up for the truth", "es": "Hablar por la verdad" }, "correct": true, "explanation": { "en": "Using your voice is a VICTORY for your SOUL. Never be a silent observer of lies.", "es": "Usar tu voz es una VICTORIA para tu ALMA. Nunca seas un observador silencioso de mentiras." } },
-            { "text": { "en": "Look away and stay quiet", "es": "Mirar a otro lado y callar" }, "correct": false, "explanation": { "en": "QUITTING the truth because of fear is the first step into the Matrix.", "es": "ABANDONAR la verdad por miedo es el primer paso hacia la Matrix." } }
+            { "text": { "en": "Turn off notifications and continue", "es": "Apagar notificaciones y continuar" }, "score": 10, "correct": true, "explanation": { "en": "DISCIPLINE is moving when the distraction looks easy. VICTORY.", "es": "La DISCIPLINA es moverte cuando la distracción parece fácil. VICTORIA." } },
+            { "text": { "en": "Swipe it away and keep working", "es": "Deslizar para borrar y seguir trabajando" }, "score": 5, "correct": true, "explanation": { "en": "Good, but the noise is still there. Cut the source to RISE.", "es": "Bien, pero el ruido sigue ahí. Corta la fuente para LEVANTARTE." } },
+            { "text": { "en": "Watch 'just one' video", "es": "Ver 'solo un' video" }, "score": 0, "correct": false, "explanation": { "en": "The algorithm wants to steal your time. You are losing the battle.", "es": "El algoritmo quiere robar tu tiempo. Estás perdiendo la batalla." } },
+            { "text": { "en": "Spend hours watching related videos", "es": "Pasar horas viendo videos relacionados" }, "score": -5, "correct": false, "explanation": { "en": "You have fallen into the trance. The Matrix is feeding on you.", "es": "Has caído en el trance. La Matrix se está alimentando de ti." } }
           ]
         }
       ]
