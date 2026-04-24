@@ -2,13 +2,51 @@
   "game": "KAMIZEN KIDS: MATRIX TRAINING SYSTEM",
   "chapter": 5,
   "range": "29-35",
+
   "ui": {
-    "floating_words": ["MASTER", "TRUTH", "WILL", "CORE", "SILENCE", "POWER", "ACTION", "LIMIT", "AWAKE", "FREEDOM"]
+    "floating_words": [
+      "FOCUS",
+      "CALM",
+      "CONTROL",
+      "PAUSE",
+      "LEARN",
+      "TRUTH",
+      "LEAD",
+      "DISCIPLINE",
+      "BREATH",
+      "AWARENESS"
+    ]
   },
   "matrix_rules": [
     "1. Observe before reacting",
+    "2. Action creates reality",
+    "3. Thought controls emotion",
+    "4. Silence is power",
+    "5. Focus beats distraction",
+    "6. Breath controls mind",
+    "7. Reaction weakens control",
     "8. Awareness is strength",
+    "9. Calm is intelligence",
+    "10. Impulse is not truth",
+    "11. Choice defines identity",
+    "12. Energy follows attention",
+    "13. Stop before emotional action",
+    "14. See patterns, not chaos",
+    "15. Inner voice is guide",
+    "16. Fear is temporary signal",
+    "17. Courage is movement",
+    "18. Truth builds power",
+    "19. Respect creates boundaries",
     "20. Discipline builds freedom",
+    "21. Small actions shape future",
+    "22. Emotion is data",
+    "23. Pause creates intelligence",
+    "24. Control attention always",
+    "25. Learn from every mistake",
+    "26. Think before speaking",
+    "27. Calm wins conflict",
+    "28. Awareness breaks confusion",
+    "29. Identity is built daily",
     "30. Master yourself first"
   ],
   "missions": [
@@ -20,17 +58,210 @@
         {
           "type": "story",
           "text": {
-            "en": "You have a big goal, but today you feel lazy and want to do nothing.",
-            "es": "Tienes una gran meta, pero hoy sientes pereza y no quieres hacer nada."
+            "en": "You feel lazy, but a task is waiting for you.",
+            "es": "Sientes pereza, pero tienes una tarea pendiente."
+          }
+        },
+        {
+          "type": "analysis",
+          "text": {
+            "en": "Discipline starts when motivation disappears.",
+            "es": "La disciplina empieza cuando la motivación desaparece."
           }
         },
         {
           "type": "decision",
           "options": [
-            { "text": { "en": "Execute 5 mins of intense work", "es": "Ejecutar 5 min de trabajo intenso" }, "score": 10, "correct": true, "explanation": { "en": "Small ACTIONS break the wall of laziness and activate your WILL.", "es": "Las ACCIONES rompen el muro de la pereza y activan tu VOLUNTAD." } },
-            { "text": { "en": "Review your plan for tomorrow", "es": "Revisar tu plan para mañana" }, "score": 5, "correct": true, "explanation": { "en": "Planning is better than nothing, but ACTION is the key to the CORE.", "es": "Planear es mejor que nada, pero la ACCIÓN es la llave al NÚCLEO." } },
-            { "text": { "en": "Wait until you feel inspired", "es": "Esperar a sentirte inspirado" }, "score": 0, "correct": false, "explanation": { "en": "Waiting is a trap; true POWER is moving when you least want to.", "es": "Esperar es una trampa; el PODER es moverte cuando menos quieres." } },
-            { "text": { "en": "Quit the goal entirely", "es": "Abandonar la meta por completo" }, "score": -5, "correct": false, "explanation": { "en": "QUITTING because of a feeling is the ultimate defeat. Matrix wins.", "es": "RENUNCIAR por un sentimiento es la derrota máxima. La Matrix gana." } }
+            {
+              "code": "WAIT",
+              "text": { "en": "Wait motivation", "es": "Esperar motivación" },
+              "correct": false
+            },
+            {
+              "code": "START",
+              "text": { "en": "Start small action", "es": "Empezar pequeño" },
+              "correct": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 30,
+      "level": 30,
+      "theme": "COURAGE TEST",
+      "blocks": [
+        {
+          "type": "story",
+          "text": {
+            "en": "You feel fear before doing something important.",
+            "es": "Sientes miedo antes de hacer algo importante."
+          }
+        },
+        {
+          "type": "analysis",
+          "text": {
+            "en": "Fear is a signal, not a stop sign.",
+            "es": "El miedo es señal, no prohibición."
+          }
+        },
+        {
+          "type": "decision",
+          "options": [
+            {
+              "code": "ESCAPE",
+              "text": { "en": "Avoid it", "es": "Evitarlo" },
+              "correct": false
+            },
+            {
+              "code": "FACE",
+              "text": { "en": "Do it with fear", "es": "Hacerlo con miedo" },
+              "correct": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 31,
+      "level": 31,
+      "theme": "MENTAL CONTROL SYSTEM",
+      "blocks": [
+        {
+          "type": "story",
+          "text": {
+            "en": "Many thoughts appear at the same time in your mind.",
+            "es": "Muchos pensamientos aparecen al mismo tiempo."
+          }
+        },
+        {
+          "type": "analysis",
+          "text": {
+            "en": "A strong mind chooses one direction.",
+            "es": "Una mente fuerte elige una dirección."
+          }
+        },
+        {
+          "type": "decision",
+          "options": [
+            {
+              "code": "CONFUSE",
+              "text": { "en": "Follow all thoughts", "es": "Seguir todo" },
+              "correct": false
+            },
+            {
+              "code": "FOCUS",
+              "text": { "en": "Choose one focus", "es": "Elegir enfoque" },
+              "correct": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 32,
+      "level": 32,
+      "theme": "EMOTIONAL CONTROL",
+      "blocks": [
+        {
+          "type": "story",
+          "text": {
+            "en": "Something makes you feel angry or sad quickly.",
+            "es": "Algo te hace sentir enojo o tristeza rápido."
+          }
+        },
+        {
+          "type": "analysis",
+          "text": {
+            "en": "Emotion is energy that must be guided.",
+            "es": "La emoción es energía que se guía."
+          }
+        },
+        {
+          "type": "decision",
+          "options": [
+            {
+              "code": "REACT",
+              "text": { "en": "React instantly", "es": "Reaccionar" },
+              "correct": false
+            },
+            {
+              "code": "PAUSE",
+              "text": { "en": "Pause and breathe", "es": "Pausar y respirar" },
+              "correct": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 33,
+      "level": 33,
+      "theme": "TRUTH CHOICE",
+      "blocks": [
+        {
+          "type": "story",
+          "text": {
+            "en": "You made a mistake and must decide what to say.",
+            "es": "Cometiste un error y debes decidir qué decir."
+          }
+        },
+        {
+          "type": "analysis",
+          "text": {
+            "en": "Truth builds trust with yourself.",
+            "es": "La verdad construye confianza contigo."
+          }
+        },
+        {
+          "type": "decision",
+          "options": [
+            {
+              "code": "HIDE",
+              "text": { "en": "Hide it", "es": "Ocultarlo" },
+              "correct": false
+            },
+            {
+              "code": "TRUTH",
+              "text": { "en": "Tell truth", "es": "Decir la verdad" },
+              "correct": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 34,
+      "level": 34,
+      "theme": "DIGITAL FREEDOM",
+      "blocks": [
+        {
+          "type": "story",
+          "text": {
+            "en": "Your phone keeps calling your attention.",
+            "es": "Tu teléfono llama tu atención constantemente."
+          }
+        },
+        {
+          "type": "analysis",
+          "text": {
+            "en": "You control your attention, not devices.",
+            "es": "Tú controlas tu atención, no los dispositivos."
+          }
+        },
+        {
+          "type": "decision",
+          "options": [
+            {
+              "code": "SCROLL",
+              "text": { "en": "Keep using phone", "es": "Seguir en el teléfono" },
+              "correct": false
+            },
+            {
+              "code": "STOP",
+              "text": { "en": "Stop and focus", "es": "Parar y enfocar" },
+              "correct": true
+            }
           ]
         }
       ]
@@ -43,17 +274,30 @@
         {
           "type": "story",
           "text": {
-            "en": "Everyone around you is reacting with chaos, noise, and fear.",
-            "es": "Todos a tu alrededor reaccionan con caos, ruido y miedo."
+            "en": "You now control your thoughts, emotions and actions better than before.",
+            "es": "Ahora controlas mejor tus pensamientos, emociones y acciones."
+          }
+        },
+        {
+          "type": "analysis",
+          "text": {
+            "en": "Mastery is awareness of yourself.",
+            "es": "La maestría es conciencia de ti mismo."
           }
         },
         {
           "type": "decision",
           "options": [
-            { "text": { "en": "Breathe, observe, and lead with peace", "es": "Respirar, observar y liderar con paz" }, "score": 10, "correct": true, "explanation": { "en": "You are the center of the hurricane. MASTER of your reality.", "es": "Eres el centro del huracán. DUEÑO de tu realidad." } },
-            { "text": { "en": "Stay silent and wait for clarity", "es": "Guardar silencio y esperar claridad" }, "score": 5, "correct": true, "explanation": { "en": "SILENCE is power, but a Master uses it to find the path.", "es": "El SILENCIO es poder, pero un Maestro lo usa para hallar el camino." } },
-            { "text": { "en": "Try to shout to stop the noise", "es": "Intentar gritar para parar el ruido" }, "score": 0, "correct": false, "explanation": { "en": "Adding noise to noise only feeds the Matrix. Find your STILL mind.", "es": "Más ruido al ruido solo alimenta a la Matrix. Busca tu mente QUIETA." } },
-            { "text": { "en": "Join the collective panic", "es": "Unirse al pánico colectivo" }, "score": -5, "correct": false, "explanation": { "en": "Following the crowd is returning to the trance. Game Over.", "es": "Seguir a la multitud es volver al trance. Fin del juego." } }
+            {
+              "code": "REACT",
+              "text": { "en": "React without thinking", "es": "Reaccionar sin pensar" },
+              "correct": false
+            },
+            {
+              "code": "OBSERVE",
+              "text": { "en": "Observe and choose", "es": "Observar y elegir" },
+              "correct": true
+            }
           ]
         }
       ]
