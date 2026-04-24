@@ -12,6 +12,7 @@
 body {
     margin:0; background:var(--matrix-bg); color:#fff;
     font-family:'Courier New', monospace; overflow:hidden; user-select:none;
+    transition: background 0.3s ease;
 }
 
 /* ALERTA */
@@ -22,7 +23,7 @@ body {
 }
 
 #lang-btn {
-    position:fixed; top:20px; right:20px; z-index:999;
+    position:fixed; bottom:20px; right:20px; z-index:999;
     padding:10px 18px; border:2px solid var(--neon-blue);
     background:rgba(0,0,0,0.8); color:var(--neon-blue); cursor:pointer; 
     font-weight: bold; border-radius: 5px;
@@ -123,49 +124,122 @@ body {
     <div id="decision-grid"></div>
 </div>
 
-<!-- 🔥 ENGINE INTEGRATION -->
 <script src="/static/engine.js"></script>
 
 <script>
 
 // ==========================================
-// 🌌 WORD SYSTEM (PRO)
+// 🌌 WORD SYSTEM (LIFE TRAINING REAL)
 // ==========================================
 const words = {
-    power: [
-        "WILL","VISION","HONOR","COURAGE","BUILD","RISE",
-        "FAITH","DISCIPLINE","STRENGTH","VICTORY"
-    ],
-    risk: [
-        "NOISE","EXCUSE","QUITTING","EGO","HATE","CHAOS",
-        "LAZY","FEAR","LIE","ANGER"
-    ],
-    silence: [
-        "CALM","LISTEN","WAIT","PEACE","PRAY","INSIDE",
-        "BREATHE","STILL","SOUL","FOCUS"
-    ]
+    power: ["LISTEN FIRST","STAY CALM","THINK BEFORE","CONTROL EMOTION","RESPECT OTHERS","ASK WHY","FOCUS NOW","BE HONEST","KEEP LEARNING","SOLVE PROBLEM","HELP TEAM","WAIT YOUR TURN","PLAN AHEAD","ADAPT FAST","SPEAK CLEAR","OBSERVE SILENTLY"],
+    risk: ["REACT ANGRY","BLAME OTHERS","LIE TO WIN","LOSE CONTROL","FOLLOW CROWD","ACT WITHOUT THINK","IGNORE CONSEQUENCE","EGO FIRST","QUIT EARLY","ESCAPE RESPONSIBILITY","SEEK APPROVAL","WASTE TIME","DISTRACT EASY","OVERREACT","TALK TOO MUCH","NO PLAN"],
+    silence: ["OBSERVE PEOPLE","READ SITUATION","WAIT RIGHT MOMENT","CONTROL IMPULSE","THINK LONG TERM","SEE INTENTION","UNDERSTAND ENERGY","BREATHE DEEP","FEEL BEFORE ACT","CHOOSE WISE","LISTEN MORE","ANALYZE QUIET","SEE CONSEQUENCES","KEEP BALANCE","INNER CONTROL","MENTAL CLARITY"]
 };
+
+// ==========================================
+// 🧠 LIFE EXPLANATION ENGINE
+// ==========================================
+const explanations = [
+"Staying calm gives you control. Losing control gives power to others.",
+"Reacting slow makes you stronger than reacting fast.",
+"Anger is fast, intelligence is slow. Choose slow.",
+"Respect earns trust. Trust opens doors.",
+"Listening first makes people reveal everything.",
+"People show who they are if you stay silent.",
+"Thinking before acting avoids future problems.",
+"Every decision builds your future identity.",
+"Small smart choices beat big emotional mistakes.",
+"School teaches knowledge, life teaches decisions.",
+"Most problems are social, not academic.",
+"Understanding people is more valuable than memorizing.",
+"Money follows discipline, not luck.",
+"Spending fast creates stress later.",
+"Saving small today creates freedom tomorrow.",
+"Avoiding danger is smarter than facing it.",
+"Reading situations keeps you safe.",
+"Not reacting is sometimes the strongest move.",
+"Leaders stay calm when others panic.",
+"Blaming weakens you. Responsibility builds power.",
+"Helping others increases your influence.",
+"Silence sharpens awareness.",
+"Breathing controls your nervous system.",
+"Calm mind = better decisions.",
+"Your habits today create your life tomorrow.",
+"Discipline beats motivation every time.",
+"Focus creates results.",
+"Distraction destroys potential.",
+"Energy flows where attention goes.",
+"You become what you repeat.",
+"Strong mind = strong life.",
+"Control yourself before controlling anything else.",
+"Winning inside creates winning outside.",
+"Awareness is your real power.",
+"Patience avoids mistakes.",
+"Speed without thinking creates problems.",
+"Clarity beats confusion.",
+"Observation beats reaction.",
+"Thinking long term changes everything.",
+"Your future depends on daily decisions.",
+"Emotional control is a superpower",
+"Most people lose because they react, not think",
+"Silence lets you see what others miss",
+"Confidence comes from control, not noise",
+"Learning never stops in real life",
+"Smart people adapt, not complain",
+"Understanding beats arguing",
+"Control your words, control your life",
+"Your reaction defines your result",
+"Every situation is training",
+"Life rewards awareness",
+"Thinking is your strongest weapon"
+];
 
 // ================= ORIGINAL STATE =================
 let lang = "en";
 let gameMode = "idle";
 
 let state = {
-    score: 0, mastery: 1, combo: 0,
+    score: 0, mastery: 1, combo: 0, timer:300,
     stats: { respect:50, peace:50, lead:50, money:100, happy:50, safety:100 },
     spawnRate:1300
 };
 
+// ================= TIMER =================
+setInterval(()=>{
+    if(state.timer>0){
+        state.timer--;
+        updateHUD();
+    }
+},1000);
+
+// ================= LANGUAGE =================
+function toggleLang(){
+    lang = (lang==="en") ? "es" : "en";
+    document.getElementById("lang-btn").innerText = lang.toUpperCase();
+}
+
 // ================= VOICE =================
 function speak(text){
-    if(window.KamizenEngine){
-        KamizenEngine.speak(text);
-    } else {
-        const msg = new SpeechSynthesisUtterance(text);
-        msg.lang="en-US";
-        speechSynthesis.cancel();
-        speechSynthesis.speak(msg);
-    }
+    const msg = new SpeechSynthesisUtterance(text);
+    msg.lang = (lang==="en")?"en-US":"es-ES";
+    speechSynthesis.cancel();
+    speechSynthesis.speak(msg);
+}
+
+// ================= HUD =================
+function updateHUD(){
+    document.getElementById("score-box").innerText=state.score;
+    document.getElementById("timer-box").innerText =
+    String(Math.floor(state.timer/60)).padStart(2,"0")+":"+
+    String(state.timer%60).padStart(2,"0");
+
+    document.getElementById("v-respect").innerText=state.stats.respect;
+    document.getElementById("v-peace").innerText=state.stats.peace;
+    document.getElementById("v-lead").innerText=state.stats.lead;
+    document.getElementById("v-money").innerText=state.stats.money;
+    document.getElementById("v-safety").innerText=state.stats.safety;
+    document.getElementById("v-happy").innerText=state.stats.happy;
 }
 
 // ================= WORD SYSTEM =================
@@ -177,15 +251,25 @@ function spawnWord(){
 
     const div=document.createElement("div");
     div.className=`floating word-${c}`;
-
-    const list = words[c];
-    div.innerText = list[Math.floor(Math.random()*list.length)];
-
+    div.innerText = words[c][Math.floor(Math.random()*words[c].length)];
     div.style.left=Math.random()*80+"vw";
 
     div.onclick=()=>{
         div.classList.add("explode");
-        state.score+= (c==="power"?20:(c==="risk"?-40:10));
+
+        if(c==="power"){
+            state.score+=20;
+            state.stats.respect++;
+            state.stats.lead++;
+        }
+        if(c==="risk"){
+            state.score-=30;
+            state.stats.safety-=2;
+        }
+        if(c==="silence"){
+            state.stats.peace++;
+        }
+
         updateHUD();
         setTimeout(()=>div.remove(),500);
     };
@@ -194,24 +278,17 @@ function spawnWord(){
     setTimeout(()=>div.remove(),6000);
 }
 
-// ================= BACKEND =================
-async function fetchMission(){
-    const res = await fetch("/api/mission/next?lang=en");
-    return await res.json();
-}
-
-// ================= QUESTION =================
+// ================= QUESTIONS =================
 async function triggerQuestion(){
-    const data = await fetchMission();
+    const res = await fetch("/api/mission/next?lang="+lang);
+    const data = await res.json();
 
-    const overlay = document.getElementById("overlay");
-    const grid = document.getElementById("decision-grid");
-    const desc = document.getElementById("phase-desc");
-    const title = document.getElementById("phase-title");
+    const overlay=document.getElementById("overlay");
+    const grid=document.getElementById("decision-grid");
+    const desc=document.getElementById("phase-desc");
 
-    title.innerText = data.theme;
-    desc.innerText = data.story;
-    speak(data.story);
+    overlay.style.display="flex";
+    desc.innerText=data.story;
 
     grid.innerHTML="";
 
@@ -221,117 +298,61 @@ async function triggerQuestion(){
         btn.innerText=opt.text;
 
         btn.onclick=()=>{
+
+            let color="#ffaa00";
+
+            if(opt.score>=8) color="#00ff41";
+            else if(opt.score>=4) color="#ff8800";
+            else if(opt.score>=0) color="#cccc00";
+            else color="#ff003c";
+
+            document.body.style.background=color;
+
             state.score+=opt.score;
-            desc.innerText=opt.explanation;
-            speak(opt.explanation);
+
+            if(opt.score>0){
+                state.stats.respect++;
+                state.stats.lead++;
+            } else {
+                state.stats.safety--;
+                state.stats.peace--;
+            }
+
+            updateHUD();
+
+            const exp = explanations[Math.floor(Math.random()*explanations.length)];
+            desc.innerText = exp;
+            speak(exp);
 
             setTimeout(()=>{
+                document.body.style.background="#00050a";
                 overlay.style.display="none";
-                if(window.onQuestionAnswered) window.onQuestionAnswered();
-            },3000);
+            },3500);
         };
 
         grid.appendChild(btn);
     });
-
-    overlay.style.display="flex";
 }
 
-// ================= PHASES =================
-function playWords(sec){
-    return new Promise(resolve=>{
-        gameMode="words";
-        let end=Date.now()+sec*1000;
-        function loop(){
-            if(Date.now()>end){gameMode="idle"; return resolve();}
-            spawnWord();
-            setTimeout(loop,state.spawnRate);
-        }
-        loop();
-    });
-}
-
-function breathing(){
-    return new Promise(resolve=>{
-        gameMode="breathing";
-        const overlay=document.getElementById("overlay");
-        const circle=document.getElementById("breath-circle");
-        const desc=document.getElementById("phase-desc");
-
-        overlay.style.display="flex";
-        circle.style.display="flex";
-
-        speak("Breathing resets your nervous system and improves focus.");
-
-        let t=30;
-        const i=setInterval(()=>{
-            desc.innerText="Breathing... "+t;
-            t--;
-            if(t<0){
-                clearInterval(i);
-                overlay.style.display="none";
-                resolve();
-            }
-        },1000);
-    });
-}
-
-function silence(){
-    return new Promise(resolve=>{
-        gameMode="silence";
-        const overlay=document.getElementById("overlay");
-        const desc=document.getElementById("phase-desc");
-
-        overlay.style.display="flex";
-        speak("Silence builds control and mental strength.");
-
-        let t=60;
-        const i=setInterval(()=>{
-            desc.innerText="Silence... "+t;
-            t--;
-            if(t<0){
-                clearInterval(i);
-                overlay.style.display="none";
-                resolve();
-            }
-        },1000);
-    });
-}
-
-function questions(){
-    return new Promise(resolve=>{
-        gameMode="question";
-        triggerQuestion();
-        window.onQuestionAnswered=resolve;
-    });
-}
-
-// ================= MAIN LOOP =================
+// ================= LOOP =================
 async function mainLoop(){
     while(true){
-        await playWords(300);
-        await breathing();
-        await questions();
+        gameMode="words";
+        let end=Date.now()+300000;
 
-        await playWords(600);
-        await silence();
-        await breathing();
-        await questions();
+        while(Date.now()<end){
+            spawnWord();
+            await new Promise(r=>setTimeout(r,state.spawnRate));
+        }
+
+        await triggerQuestion();
     }
 }
 
-// ================= HUD =================
-function updateHUD(){
-    document.getElementById("score-box").innerText=state.score;
-}
-
 // ================= START =================
-function start(){
-    speak("Training started");
-    mainLoop();
-}
+updateHUD();
+mainLoop();
 
-start();
 </script>
 </body>
 </html>
