@@ -1,305 +1,124 @@
 {
-  "game": "KAMIZEN KIDS: MATRIX TRAINING SYSTEM",
-  "chapter": 5,
-  "range": "29-35",
-
-  "ui": {
-    "floating_words": [
-      "FOCUS",
-      "CALM",
-      "CONTROL",
-      "PAUSE",
-      "LEARN",
-      "TRUTH",
-      "LEAD",
-      "DISCIPLINE",
-      "BREATH",
-      "AWARENESS"
-    ]
+  "game":"KAMIZEN KIDS: MATRIX TRAINING SYSTEM",
+  "chapter":4,
+  "range":"29-35",
+  "ui":{
+    "floating_words":["DISCIPLINE","AWARENESS","CALM","FOCUS","TRUTH","CONTROL","ACTION","PAUSE"]
   },
-  "matrix_rules": [
-    "1. Observe before reacting",
-    "2. Action creates reality",
-    "3. Thought controls emotion",
-    "4. Silence is power",
-    "5. Focus beats distraction",
-    "6. Breath controls mind",
-    "7. Reaction weakens control",
-    "8. Awareness is strength",
-    "9. Calm is intelligence",
-    "10. Impulse is not truth",
-    "11. Choice defines identity",
-    "12. Energy follows attention",
-    "13. Stop before emotional action",
-    "14. See patterns, not chaos",
-    "15. Inner voice is guide",
-    "16. Fear is temporary signal",
-    "17. Courage is movement",
-    "18. Truth builds power",
-    "19. Respect creates boundaries",
-    "20. Discipline builds freedom",
-    "21. Small actions shape future",
-    "22. Emotion is data",
-    "23. Pause creates intelligence",
-    "24. Control attention always",
-    "25. Learn from every mistake",
-    "26. Think before speaking",
-    "27. Calm wins conflict",
-    "28. Awareness breaks confusion",
-    "29. Identity is built daily",
-    "30. Master yourself first"
+  "matrix_rules":[
+    "1. Master yourself first",
+    "2. Awareness creates freedom",
+    "3. Emotion is data",
+    "4. Silence reveals truth",
+    "5. Focus builds reality",
+    "6. Discipline beats impulse",
+    "7. Calm is real power",
+    "8. Action defines identity"
   ],
-  "missions": [
+  "missions":[
     {
-      "id": 29,
-      "level": 29,
-      "theme": "DISCIPLINE BREAKER",
-      "blocks": [
-        {
-          "type": "story",
-          "text": {
-            "en": "You feel lazy, but a task is waiting for you.",
-            "es": "Sientes pereza, pero tienes una tarea pendiente."
-          }
-        },
-        {
-          "type": "analysis",
-          "text": {
-            "en": "Discipline starts when motivation disappears.",
-            "es": "La disciplina empieza cuando la motivación desaparece."
-          }
-        },
-        {
-          "type": "decision",
-          "options": [
-            {
-              "code": "WAIT",
-              "text": { "en": "Wait motivation", "es": "Esperar motivación" },
-              "correct": false
-            },
-            {
-              "code": "START",
-              "text": { "en": "Start small action", "es": "Empezar pequeño" },
-              "correct": true
-            }
-          ]
-        }
+      "id":29,
+      "level":29,
+      "theme":"EMOTIONAL TRAP",
+      "blocks":[
+        {"type":"story","text":{"en":"Someone insults you publicly.","es":"Alguien te insulta en público."}},
+        {"type":"analysis","text":{"en":"Reaction is a choice.","es":"La reacción es una elección."}},
+        {"type":"decision","options":[
+          {"code":"EXPLODE","text":{"en":"Get angry immediately","es":"Enojarte de inmediato"},"correct":false},
+          {"code":"IGNORE","text":{"en":"Ignore and walk away","es":"Ignorar y alejarte"},"correct":false},
+          {"code":"PAUSE","text":{"en":"Pause and breathe","es":"Pausar y respirar"},"correct":true},
+          {"code":"ATTACK","text":{"en":"Respond aggressively","es":"Responder agresivo"},"correct":false}
+        ]}
       ]
     },
     {
-      "id": 30,
-      "level": 30,
-      "theme": "COURAGE TEST",
-      "blocks": [
-        {
-          "type": "story",
-          "text": {
-            "en": "You feel fear before doing something important.",
-            "es": "Sientes miedo antes de hacer algo importante."
-          }
-        },
-        {
-          "type": "analysis",
-          "text": {
-            "en": "Fear is a signal, not a stop sign.",
-            "es": "El miedo es señal, no prohibición."
-          }
-        },
-        {
-          "type": "decision",
-          "options": [
-            {
-              "code": "ESCAPE",
-              "text": { "en": "Avoid it", "es": "Evitarlo" },
-              "correct": false
-            },
-            {
-              "code": "FACE",
-              "text": { "en": "Do it with fear", "es": "Hacerlo con miedo" },
-              "correct": true
-            }
-          ]
-        }
+      "id":30,
+      "level":30,
+      "theme":"FOCUS BREAK",
+      "blocks":[
+        {"type":"story","text":{"en":"You are studying but distractions appear.","es":"Estás estudiando pero aparecen distracciones."}},
+        {"type":"analysis","text":{"en":"Attention is energy.","es":"La atención es energía."}},
+        {"type":"decision","options":[
+          {"code":"MULTI","text":{"en":"Do many things at once","es":"Hacer muchas cosas a la vez"},"correct":false},
+          {"code":"QUIT","text":{"en":"Stop studying","es":"Dejar de estudiar"},"correct":false},
+          {"code":"FOCUS","text":{"en":"Focus only on study","es":"Enfocarte solo en estudiar"},"correct":true},
+          {"code":"DISTRACT","text":{"en":"Check phone often","es":"Revisar el teléfono"},"correct":false}
+        ]}
       ]
     },
     {
-      "id": 31,
-      "level": 31,
-      "theme": "MENTAL CONTROL SYSTEM",
-      "blocks": [
-        {
-          "type": "story",
-          "text": {
-            "en": "Many thoughts appear at the same time in your mind.",
-            "es": "Muchos pensamientos aparecen al mismo tiempo."
-          }
-        },
-        {
-          "type": "analysis",
-          "text": {
-            "en": "A strong mind chooses one direction.",
-            "es": "Una mente fuerte elige una dirección."
-          }
-        },
-        {
-          "type": "decision",
-          "options": [
-            {
-              "code": "CONFUSE",
-              "text": { "en": "Follow all thoughts", "es": "Seguir todo" },
-              "correct": false
-            },
-            {
-              "code": "FOCUS",
-              "text": { "en": "Choose one focus", "es": "Elegir enfoque" },
-              "correct": true
-            }
-          ]
-        }
+      "id":31,
+      "level":31,
+      "theme":"TRUTH TEST",
+      "blocks":[
+        {"type":"story","text":{"en":"You made a mistake but no one knows.","es":"Cometiste un error pero nadie lo sabe."}},
+        {"type":"analysis","text":{"en":"Truth builds identity.","es":"La verdad construye identidad."}},
+        {"type":"decision","options":[
+          {"code":"LIE","text":{"en":"Hide the truth","es":"Ocultar la verdad"},"correct":false},
+          {"code":"BLAME","text":{"en":"Blame someone else","es":"Culpar a otro"},"correct":false},
+          {"code":"TRUTH","text":{"en":"Admit honestly","es":"Admitir honestamente"},"correct":true},
+          {"code":"IGNORE","text":{"en":"Do nothing","es":"No hacer nada"},"correct":false}
+        ]}
       ]
     },
     {
-      "id": 32,
-      "level": 32,
-      "theme": "EMOTIONAL CONTROL",
-      "blocks": [
-        {
-          "type": "story",
-          "text": {
-            "en": "Something makes you feel angry or sad quickly.",
-            "es": "Algo te hace sentir enojo o tristeza rápido."
-          }
-        },
-        {
-          "type": "analysis",
-          "text": {
-            "en": "Emotion is energy that must be guided.",
-            "es": "La emoción es energía que se guía."
-          }
-        },
-        {
-          "type": "decision",
-          "options": [
-            {
-              "code": "REACT",
-              "text": { "en": "React instantly", "es": "Reaccionar" },
-              "correct": false
-            },
-            {
-              "code": "PAUSE",
-              "text": { "en": "Pause and breathe", "es": "Pausar y respirar" },
-              "correct": true
-            }
-          ]
-        }
+      "id":32,
+      "level":32,
+      "theme":"SOCIAL PRESSURE",
+      "blocks":[
+        {"type":"story","text":{"en":"Friends push you to do something wrong.","es":"Tus amigos te presionan a hacer algo malo."}},
+        {"type":"analysis","text":{"en":"Strength is saying no.","es":"La fuerza es decir no."}},
+        {"type":"decision","options":[
+          {"code":"FOLLOW","text":{"en":"Follow them","es":"Seguirlos"},"correct":false},
+          {"code":"LAUGH","text":{"en":"Laugh and join","es":"Reír y unirse"},"correct":false},
+          {"code":"STAND","text":{"en":"Say no calmly","es":"Decir no con calma"},"correct":true},
+          {"code":"RUN","text":{"en":"Escape situation","es":"Escapar"},"correct":false}
+        ]}
       ]
     },
     {
-      "id": 33,
-      "level": 33,
-      "theme": "TRUTH CHOICE",
-      "blocks": [
-        {
-          "type": "story",
-          "text": {
-            "en": "You made a mistake and must decide what to say.",
-            "es": "Cometiste un error y debes decidir qué decir."
-          }
-        },
-        {
-          "type": "analysis",
-          "text": {
-            "en": "Truth builds trust with yourself.",
-            "es": "La verdad construye confianza contigo."
-          }
-        },
-        {
-          "type": "decision",
-          "options": [
-            {
-              "code": "HIDE",
-              "text": { "en": "Hide it", "es": "Ocultarlo" },
-              "correct": false
-            },
-            {
-              "code": "TRUTH",
-              "text": { "en": "Tell truth", "es": "Decir la verdad" },
-              "correct": true
-            }
-          ]
-        }
+      "id":33,
+      "level":33,
+      "theme":"MENTAL CHAOS",
+      "blocks":[
+        {"type":"story","text":{"en":"Your thoughts are racing too fast.","es":"Tus pensamientos van demasiado rápido."}},
+        {"type":"analysis","text":{"en":"Calm creates clarity.","es":"La calma crea claridad."}},
+        {"type":"decision","options":[
+          {"code":"PANIC","text":{"en":"Overthink everything","es":"Sobrepensar todo"},"correct":false},
+          {"code":"STOP","text":{"en":"Stop and breathe","es":"Parar y respirar"},"correct":true},
+          {"code":"RUSH","text":{"en":"Act immediately","es":"Actuar de inmediato"},"correct":false},
+          {"code":"IGNORE","text":{"en":"Ignore thoughts","es":"Ignorar pensamientos"},"correct":false}
+        ]}
       ]
     },
     {
-      "id": 34,
-      "level": 34,
-      "theme": "DIGITAL FREEDOM",
-      "blocks": [
-        {
-          "type": "story",
-          "text": {
-            "en": "Your phone keeps calling your attention.",
-            "es": "Tu teléfono llama tu atención constantemente."
-          }
-        },
-        {
-          "type": "analysis",
-          "text": {
-            "en": "You control your attention, not devices.",
-            "es": "Tú controlas tu atención, no los dispositivos."
-          }
-        },
-        {
-          "type": "decision",
-          "options": [
-            {
-              "code": "SCROLL",
-              "text": { "en": "Keep using phone", "es": "Seguir en el teléfono" },
-              "correct": false
-            },
-            {
-              "code": "STOP",
-              "text": { "en": "Stop and focus", "es": "Parar y enfocar" },
-              "correct": true
-            }
-          ]
-        }
+      "id":34,
+      "level":34,
+      "theme":"INNER CONTROL",
+      "blocks":[
+        {"type":"story","text":{"en":"You feel strong emotions rising.","es":"Sientes emociones fuertes subiendo."}},
+        {"type":"analysis","text":{"en":"Control starts inside.","es":"El control empieza dentro."}},
+        {"type":"decision","options":[
+          {"code":"EXPRESS","text":{"en":"Act emotionally","es":"Actuar emocionalmente"},"correct":false},
+          {"code":"SUPPRESS","text":{"en":"Ignore emotions","es":"Ignorar emociones"},"correct":false},
+          {"code":"OBSERVE","text":{"en":"Observe feelings","es":"Observar emociones"},"correct":true},
+          {"code":"ESCAPE","text":{"en":"Avoid situation","es":"Evitar situación"},"correct":false}
+        ]}
       ]
     },
     {
-      "id": 35,
-      "level": 35,
-      "theme": "FINAL MASTERY",
-      "blocks": [
-        {
-          "type": "story",
-          "text": {
-            "en": "You now control your thoughts, emotions and actions better than before.",
-            "es": "Ahora controlas mejor tus pensamientos, emociones y acciones."
-          }
-        },
-        {
-          "type": "analysis",
-          "text": {
-            "en": "Mastery is awareness of yourself.",
-            "es": "La maestría es conciencia de ti mismo."
-          }
-        },
-        {
-          "type": "decision",
-          "options": [
-            {
-              "code": "REACT",
-              "text": { "en": "React without thinking", "es": "Reaccionar sin pensar" },
-              "correct": false
-            },
-            {
-              "code": "OBSERVE",
-              "text": { "en": "Observe and choose", "es": "Observar y elegir" },
-              "correct": true
-            }
-          ]
-        }
+      "id":35,
+      "level":35,
+      "theme":"FINAL DISCIPLINE TEST",
+      "blocks":[
+        {"type":"story","text":{"en":"You are tested with full distraction.","es":"Te ponen a prueba con distracción total."}},
+        {"type":"analysis","text":{"en":"Discipline defines mastery.","es":"La disciplina define la maestría."}},
+        {"type":"decision","options":[
+          {"code":"QUIT","text":{"en":"Give up","es":"Rendirse"},"correct":false},
+          {"code":"DISTRACT","text":{"en":"Lose focus","es":"Perder enfoque"},"correct":false},
+          {"code":"FOCUS","text":{"en":"Stay fully focused","es":"Mantener enfoque total"},"correct":true},
+          {"code":"REACT","text":{"en":"React emotionally","es":"Reaccionar emocionalmente"},"correct":false}
+        ]}
       ]
     }
   ]
