@@ -1,6 +1,8 @@
 from flask import Flask, jsonify, send_from_directory, request
 import os
 import json
+import random
+from collections import deque
 
 app = Flask(__name__, static_folder="static")
 
@@ -12,13 +14,18 @@ BASE = os.path.dirname(__file__)
 def get_save_data():
     data = load_json("save_game.json")
     if data is None:
-        return {"last_mission": 0}
+        return {"last_mission": 0, "score": 0}
     return data
 
-def save_progress(mid):
+def save_progress(mid, score=None):
     path = os.path.join(BASE, "save_game.json")
+
+    data = {"last_mission": mid}
+    if score is not None:
+        data["score"] = score
+
     with open(path, "w", encoding="utf-8") as f:
-        json.dump({"last_mission": mid}, f)
+        json.dump(data, f)
 
 # =========================
 # 📦 LOAD JSON SAFE
@@ -50,28 +57,89 @@ def get_all_missions():
     return data
 
 # =========================
-# 🔍 SEARCH LOGIC
+# 🧠 IA CORE (NEW LAYER)
 # =========================
-def find_mission(mid):
-    datasets = get_all_missions()
-    for pack in datasets:
-        for m in pack.get("missions", []):
-            if m.get("id") == mid:
-                return m, pack
-    return None, None
 
-def find_chapter(chapter_id):
-    datasets = get_all_missions()
-    for pack in datasets:
-        if pack.get("chapter") == chapter_id:
-            return pack
-    return None
+used_explanations = deque(maxlen=80)
 
-def get_total_missions():
-    return 35
+user_ai = {
+    "score": 0,
+    "stress": 0,
+    "focus": 50,
+    "discipline": 50,
+    "stage": "school"
+}
+
+contexts = {
+    "school": ["focus", "listen", "learn", "respect", "discipline"],
+    "street": ["awareness", "risk control", "observation"],
+    "money": ["discipline", "saving", "strategy", "control"],
+    "family": ["respect", "communication", "empathy"],
+    "future": ["planning", "vision", "long term thinking"],
+    "security": ["avoid danger", "read situations"],
+    "happiness": ["balance", "calm mind", "gratitude"],
+    "business": ["strategy", "risk control", "decision making"]
+}
+
+explanations = [
+    "Control emotions before reacting changes outcomes.",
+    "Thinking first avoids long term mistakes.",
+    "Silence reveals what noise hides.",
+    "Respect builds long term trust.",
+    "Discipline creates freedom over time.",
+    "Every decision builds your identity.",
+    "Awareness is stronger than speed.",
+    "Observation is better than reaction.",
+    "Calm mind produces better results.",
+    "Responsibility creates leadership.",
+    "Your decisions today build your future.",
+    "Smart thinking reduces mistakes.",
+    "Focus determines your results.",
+    "Reacting fast often creates errors.",
+    "Thinking slow is thinking strong."
+]
 
 # =========================
-# 🎮 FORMAT FOR FRONTEND
+# 🧠 AI FUNCTIONS
+# =========================
+
+def pick_explanation():
+    available = [e for e in explanations if e not in used_explanations]
+
+    if not available:
+        used_explanations.clear()
+        available = explanations
+
+    chosen = random.choice(available)
+    used_explanations.append(chosen)
+    return chosen
+
+
+def difficulty():
+    if user_ai["score"] < 100:
+        return "easy"
+    elif user_ai["score"] < 300:
+        return "medium"
+    return "hard"
+
+
+def generate_words(context):
+    base = contexts.get(context, contexts["school"])
+
+    dynamic = [
+        "CONTROL", "FOCUS", "DECIDE", "OBSERVE",
+        "THINK FAST", "THINK DEEP", "ACT SMART"
+    ]
+
+    result = list(set(base + random.sample(dynamic, 3)))
+    return [w.upper() for w in result]
+
+
+def pick_context():
+    return random.choice(list(contexts.keys()))
+
+# =========================
+# 🎮 FORMAT SYSTEM (COMPATIBLE)
 # =========================
 def format_mission(mission, pack, lang="en"):
     if not mission:
@@ -79,6 +147,8 @@ def format_mission(mission, pack, lang="en"):
 
     story_block = next((b for b in mission["blocks"] if b["type"] == "story"), {})
     decision_block = next((b for b in mission["blocks"] if b["type"] == "decision"), {})
+
+    context = pick_context()
 
     return {
         "id": mission.get("id"),
@@ -88,8 +158,17 @@ def format_mission(mission, pack, lang="en"):
         "ui": pack.get("ui", {}),
         "matrix_rules": pack.get("matrix_rules", []),
 
+        "difficulty": difficulty(),
+        "context": context,
+
         "story": story_block.get("text", {}).get(lang, ""),
-        
+
+        # 🧠 IA WORDS (NEW)
+        "words": generate_words(context),
+
+        # 🧠 IA EXPLANATION
+        "ai_explanation": pick_explanation(),
+
         "options": [
             {
                 "text": opt["text"].get(lang, ""),
@@ -100,6 +179,20 @@ def format_mission(mission, pack, lang="en"):
             for opt in decision_block.get("options", [])
         ]
     }
+
+# =========================
+# 🔍 SEARCH LOGIC (UNCHANGED)
+# =========================
+def find_mission(mid):
+    datasets = get_all_missions()
+    for pack in datasets:
+        for m in pack.get("missions", []):
+            if m.get("id") == mid:
+                return m, pack
+    return None, None
+
+def get_total_missions():
+    return 35
 
 # =========================
 # 🎯 API
@@ -127,74 +220,50 @@ def next_mission_flow():
 
     current_data = get_save_data()
     current_id = current_data.get("last_mission", 0)
+    score = current_data.get("score", 0)
 
     next_id = current_id + 1
-    total = get_total_missions()
 
-    if next_id > total:
-        next_id = 1  # loop infinito
+    if next_id > get_total_missions():
+        next_id = 1
 
     mission, pack = find_mission(next_id)
 
     if mission:
-        save_progress(next_id)
+        user_ai["score"] = score + 1
+
+        save_progress(next_id, user_ai["score"])
+
         return jsonify(format_mission(mission, pack, lang))
 
     return jsonify({"error": "No mission found"}), 404
 
 
 # =========================
-# 🧠 TRAINING CONFIG
+# 🧠 UPDATE AI STATE
 # =========================
+@app.route("/api/update", methods=["POST"])
+def update_ai():
+    data = request.json
 
-@app.route("/api/config")
-def api_config():
+    score = data.get("score", 0)
+
+    user_ai["score"] += score
+
+    if score < 0:
+        user_ai["stress"] += 1
+        user_ai["focus"] -= 1
+    else:
+        user_ai["focus"] += 1
+
     return jsonify({
-        "breathing_seconds": 30,
-        "silence_seconds": 60,
-        "phase_1_words": 300,
-        "phase_2_words": 600,
-        "voice": "male_en",
-        "loop": True
+        "status": "ok",
+        "ai_state": user_ai
     })
-
-
-@app.route("/api/silence/<int:level>")
-def api_silence(level):
-    if level <= 7:
-        t = 180
-    elif level <= 14:
-        t = 360
-    elif level <= 21:
-        t = 600
-    elif level <= 28:
-        t = 900
-    else:
-        t = 1200
-    
-    return jsonify({"level": level, "silence_time": t})
-
-
-@app.route("/api/breath/<int:level>")
-def api_breath(level):
-    if level <= 7:
-        interval = 60
-    elif level <= 14:
-        interval = 50
-    elif level <= 21:
-        interval = 40
-    elif level <= 28:
-        interval = 30
-    else:
-        interval = 25
-    
-    return jsonify({"level": level, "breath_interval_sec": interval})
-
 
 # =========================
 # 🏠 STATIC
 # =========================
-
 @app.route("/")
 def home():
     return send_from_directory("static", "session.html")
@@ -203,13 +272,12 @@ def home():
 def static_files(path):
     return send_from_directory("static", path)
 
-
 # =========================
 # 🚀 START
 # =========================
 if __name__ == "__main__":
     if not os.path.exists(os.path.join(BASE, "save_game.json")):
-        save_progress(0)
+        save_progress(0, 0)
 
-    print("🚀 AL CIELO PRO SERVER RUNNING ON PORT 10000")
+    print("🚀 AL CIELO HYBRID AI SERVER RUNNING ON PORT 10000")
     app.run(host="0.0.0.0", port=10000, debug=True)
