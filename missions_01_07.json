@@ -3,12 +3,40 @@
   "chapter": 1,
   "range": "1-7",
   "ui": {
-    "floating_words": ["WILL", "VISION", "HONOR", "COURAGE", "BUILD", "RISE", "NOISE", "EXCUSE", "CALM", "PEACE"]
+    "floating_words": [
+      "FOCUS", "CALM", "BREATH", "ACTION", "STOP", "THINK", "CONTROL"
+    ]
   },
   "matrix_rules": [
     "1. Observe before reacting",
+    "2. Action creates reality",
+    "3. Thought controls emotion",
     "4. Silence is power",
+    "5. Focus beats distraction",
+    "6. Breath controls mind",
+    "7. Reaction weakens control",
+    "8. Awareness is strength",
+    "9. Calm is intelligence",
     "10. Impulse is not truth",
+    "11. Choice defines identity",
+    "12. Energy follows attention",
+    "13. Stop before emotional action",
+    "14. See patterns, not chaos",
+    "15. Inner voice is guide",
+    "16. Fear is temporary signal",
+    "17. Courage is movement",
+    "18. Truth builds power",
+    "19. Respect creates boundaries",
+    "20. Discipline builds freedom",
+    "21. Small actions shape future",
+    "22. Emotion is data",
+    "23. Pause creates intelligence",
+    "24. Control attention always",
+    "25. Learn from every mistake",
+    "26. Think before speaking",
+    "27. Calm wins conflict",
+    "28. Awareness breaks confusion",
+    "29. Identity is built daily",
     "30. Master yourself first"
   ],
   "missions": [
@@ -21,16 +49,29 @@
           "type": "story",
           "text": {
             "en": "You enter a noisy school hallway. Everything is loud, but something small feels different.",
-            "es": "Entras en un pasillo escolar ruidoso. Todo es caos, pero algo pequeño se siente diferente."
+            "es": "Entras en un pasillo escolar ruidoso. Todo es caos, pero algo pequeño es diferente."
+          }
+        },
+        {
+          "type": "analysis",
+          "text": {
+            "en": "Noticing small details is the first power of awareness.",
+            "es": "Notar detalles pequeños es el primer poder de la conciencia."
           }
         },
         {
           "type": "decision",
           "options": [
-            { "text": { "en": "Stop, observe, and find the source", "es": "Parar, observar y hallar el origen" }, "score": 10, "correct": true, "explanation": { "en": "Scanning the environment lets you see the exit before the chaos starts. VISION.", "es": "Escanear el entorno te permite ver la salida antes del caos. VISIÓN." } },
-            { "text": { "en": "Walk slowly and stay alert", "es": "Caminar lento y estar alerta" }, "score": 5, "correct": true, "explanation": { "en": "Alertness is better than blindness, but action requires stopping the noise.", "es": "Estar alerta es mejor que la ceguera, pero actuar requiere detener el ruido." } },
-            { "text": { "en": "Ignore and keep walking", "es": "Ignorar y seguir caminando" }, "score": 0, "correct": false, "explanation": { "en": "Ignoring signs is an EXCUSE to stay blind. Blindness is weakness.", "es": "Ignorar señales es una EXCUSA para seguir ciego. La ceguera es debilidad." } },
-            { "text": { "en": "Run through the hallway in panic", "es": "Correr por el pasillo en pánico" }, "score": -5, "correct": false, "explanation": { "en": "Panic is the ultimate NOISE. You have lost your internal compass.", "es": "El pánico es el RUIDO máximo. Has perdido tu brújula interna." } }
+            {
+              "code": "IGNORE",
+              "text": { "en": "Ignore everything", "es": "Ignorar todo" },
+              "correct": false
+            },
+            {
+              "code": "OBSERVE",
+              "text": { "en": "Look carefully", "es": "Observar con atención" },
+              "correct": true
+            }
           ]
         }
       ]
@@ -43,17 +84,210 @@
         {
           "type": "story",
           "text": {
-            "en": "Someone bumps into you on purpose. Your face feels hot.",
-            "es": "Alguien te empuja a propósito. Sientes que tu cara se calienta."
+            "en": "Something small happens, but your feelings become very strong.",
+            "es": "Algo pequeño sucede, pero tus emociones se vuelven muy fuertes."
+          }
+        },
+        {
+          "type": "analysis",
+          "text": {
+            "en": "Feelings are signals, not commands.",
+            "es": "Los sentimientos son señales, no órdenes."
           }
         },
         {
           "type": "decision",
           "options": [
-            { "text": { "en": "Pause, breathe, and keep your gaze steady", "es": "Pausar, respirar y mantener mirada firme" }, "score": 10, "correct": true, "explanation": { "en": "CALM reclaims your energy. You control the situation now.", "es": "La CALMA recupera tu energía. Ahora tú controlas la situación." } },
-            { "text": { "en": "Walk away without looking back", "es": "Alejarse sin mirar atrás" }, "score": 5, "correct": true, "explanation": { "en": "Choosing not to fight is acceptable, but true mastery is keeping your stance.", "es": "Elegir no pelear es aceptable, pero la maestría es mantener tu postura." } },
-            { "text": { "en": "Insult them under your breath", "es": "Insultarlos entre dientes" }, "score": 0, "correct": false, "explanation": { "en": "Hate is a reaction that burns your own peace. Don't be a puppet.", "es": "El odio es una reacción que quema tu propia paz. No seas un títere." } },
-            { "text": { "en": "Push them back immediately", "es": "Empujar de vuelta de inmediato" }, "score": -5, "correct": false, "explanation": { "en": "Reacting fast is giving your WILL to the other person. Power lost.", "es": "Reaccionar rápido es regalar tu VOLUNTAD al otro. Poder perdido." } }
+            {
+              "code": "REACT",
+              "text": { "en": "React fast", "es": "Reaccionar rápido" },
+              "correct": false
+            },
+            {
+              "code": "PAUSE",
+              "text": { "en": "Pause and breathe", "es": "Pausar y respirar" },
+              "correct": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "level": 3,
+      "theme": "SMALL CHOICES",
+      "blocks": [
+        {
+          "type": "story",
+          "text": {
+            "en": "You must choose between something easy now or something better later.",
+            "es": "Debes elegir entre algo fácil ahora o algo mejor después."
+          }
+        },
+        {
+          "type": "analysis",
+          "text": {
+            "en": "Small choices build your future.",
+            "es": "Las pequeñas decisiones construyen tu futuro."
+          }
+        },
+        {
+          "type": "decision",
+          "options": [
+            {
+              "code": "EASY",
+              "text": { "en": "Easy now", "es": "Fácil ahora" },
+              "correct": false
+            },
+            {
+              "code": "SMART",
+              "text": { "en": "Smart future choice", "es": "Elección inteligente" },
+              "correct": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "level": 4,
+      "theme": "GROUP PRESSURE",
+      "blocks": [
+        {
+          "type": "story",
+          "text": {
+            "en": "Friends want you to do something you feel is wrong.",
+            "es": "Tus amigos quieren que hagas algo que sientes que está mal."
+          }
+        },
+        {
+          "type": "analysis",
+          "text": {
+            "en": "True strength is saying no calmly.",
+            "es": "La verdadera fuerza es decir no con calma."
+          }
+        },
+        {
+          "type": "decision",
+          "options": [
+            {
+              "code": "FOLLOW",
+              "text": { "en": "Follow group", "es": "Seguir al grupo" },
+              "correct": false
+            },
+            {
+              "code": "STAND",
+              "text": { "en": "Stand calm", "es": "Mantenerse firme" },
+              "correct": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "level": 5,
+      "theme": "FOCUS TRAINING",
+      "blocks": [
+        {
+          "type": "story",
+          "text": {
+            "en": "Many distractions try to steal your attention.",
+            "es": "Muchas distracciones intentan robar tu atención."
+          }
+        },
+        {
+          "type": "analysis",
+          "text": {
+            "en": "Focus is a superpower you train.",
+            "es": "El enfoque es un superpoder que entrenas."
+          }
+        },
+        {
+          "type": "decision",
+          "options": [
+            {
+              "code": "MULTI",
+              "text": { "en": "Do many things", "es": "Hacer muchas cosas" },
+              "correct": false
+            },
+            {
+              "code": "FOCUS",
+              "text": { "en": "One thing only", "es": "Una sola cosa" },
+              "correct": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "level": 6,
+      "theme": "REAL FRIENDS",
+      "blocks": [
+        {
+          "type": "story",
+          "text": {
+            "en": "Someone is only your friend when they need something.",
+            "es": "Alguien solo es tu amigo cuando necesita algo."
+          }
+        },
+        {
+          "type": "analysis",
+          "text": {
+            "en": "Actions show real friendship.",
+            "es": "Las acciones muestran la verdadera amistad."
+          }
+        },
+        {
+          "type": "decision",
+          "options": [
+            {
+              "code": "IGNORE",
+              "text": { "en": "Ignore signs", "es": "Ignorar señales" },
+              "correct": false
+            },
+            {
+              "code": "OBSERVE",
+              "text": { "en": "Watch behavior", "es": "Observar comportamiento" },
+              "correct": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "level": 7,
+      "theme": "CALM UNDER PRESSURE",
+      "blocks": [
+        {
+          "type": "story",
+          "text": {
+            "en": "Someone makes you angry in front of others.",
+            "es": "Alguien te hace enojar delante de otros."
+          }
+        },
+        {
+          "type": "analysis",
+          "text": {
+            "en": "Staying calm gives you power.",
+            "es": "Mantener la calma te da poder."
+          }
+        },
+        {
+          "type": "decision",
+          "options": [
+            {
+              "code": "EXPLODE",
+              "text": { "en": "Get angry", "es": "Enojarse" },
+              "correct": false
+            },
+            {
+              "code": "CALM",
+              "text": { "en": "Stay calm", "es": "Mantener calma" },
+              "correct": true
+            }
           ]
         }
       ]
