@@ -129,6 +129,17 @@ body {
 <script>
 
 // ==========================================
+// 🔊 SFX SYSTEM
+// ==========================================
+const sfx = {
+    click: new Audio('https://actions.google.com/sounds/v1/cartoon/pop.ogg'),
+    power: new Audio('https://actions.google.com/sounds/v1/cartoon/clank_with_rattle.ogg'),
+    risk: new Audio('https://actions.google.com/sounds/v1/cartoon/boing.ogg'),
+    success: new Audio('https://actions.google.com/sounds/v1/cartoon/upward_glissando.ogg'),
+    fail: new Audio('https://actions.google.com/sounds/v1/cartoon/concussive_hit_guitar_accent.ogg')
+};
+
+// ==========================================
 // 🌌 WORD SYSTEM (LIFE TRAINING REAL)
 // ==========================================
 const words = {
@@ -242,7 +253,7 @@ function updateHUD(){
     document.getElementById("v-happy").innerText=state.stats.happy;
 }
 
-// ================= WORD SYSTEM =================
+// ================= WORD SYSTEM (UPDATED) =================
 function spawnWord(){
     if(gameMode!=="words") return;
 
@@ -255,18 +266,24 @@ function spawnWord(){
     div.style.left=Math.random()*80+"vw";
 
     div.onclick=()=>{
+        if(div.dataset.clicked) return;
+        div.dataset.clicked="true";
+
         div.classList.add("explode");
 
         if(c==="power"){
+            sfx.power.play();
             state.score+=20;
             state.stats.respect++;
             state.stats.lead++;
         }
         if(c==="risk"){
+            sfx.risk.play();
             state.score-=30;
             state.stats.safety-=2;
         }
         if(c==="silence"){
+            sfx.click.play();
             state.stats.peace++;
         }
 
@@ -275,10 +292,10 @@ function spawnWord(){
     };
 
     document.body.appendChild(div);
-    setTimeout(()=>div.remove(),6000);
+    setTimeout(()=>div.remove(),7000);
 }
 
-// ================= QUESTIONS =================
+// ================= QUESTIONS (UPDATED) =================
 async function triggerQuestion(){
     const res = await fetch("/api/mission/next?lang="+lang);
     const data = await res.json();
@@ -301,10 +318,19 @@ async function triggerQuestion(){
 
             let color="#ffaa00";
 
-            if(opt.score>=8) color="#00ff41";
-            else if(opt.score>=4) color="#ff8800";
-            else if(opt.score>=0) color="#cccc00";
-            else color="#ff003c";
+            if(opt.score>=8){
+                color="#00ff41";
+                sfx.success.play();
+            } else if(opt.score>=4){
+                color="#ffff00";
+                sfx.click.play();
+            } else if(opt.score>=0){
+                color="#ff8800";
+                sfx.click.play();
+            } else {
+                color="#ff003c";
+                sfx.fail.play();
+            }
 
             document.body.style.background=color;
 
@@ -320,7 +346,9 @@ async function triggerQuestion(){
 
             updateHUD();
 
-            const exp = explanations[Math.floor(Math.random()*explanations.length)];
+            grid.innerHTML="";
+
+            const exp = opt.explanation || explanations[Math.floor(Math.random()*explanations.length)];
             desc.innerText = exp;
             speak(exp);
 
@@ -334,18 +362,24 @@ async function triggerQuestion(){
     });
 }
 
-// ================= LOOP =================
+// ================= LOOP (UPDATED) =================
 async function mainLoop(){
     while(true){
         gameMode="words";
-        let end=Date.now()+300000;
+
+        let end=Date.now()+45000;
 
         while(Date.now()<end){
             spawnWord();
             await new Promise(r=>setTimeout(r,state.spawnRate));
         }
 
+        document.querySelectorAll('.floating').forEach(el => el.remove());
+
+        gameMode="question";
         await triggerQuestion();
+
+        await new Promise(r=>setTimeout(r,4000));
     }
 }
 
