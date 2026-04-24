@@ -1,296 +1,71 @@
-{
-  "game": "KAMIZEN KIDS: MATRIX TRAINING SYSTEM",
-  "chapter": 2,
-  "range": "8-14",
-  "ui": {
-    "floating_words": [
-      "PAUSE", "THINK", "BREATH", "CONTROL", "CALM", "TRUTH", "FOCUS", "OBSERVE"
-    ]
-  },
-  "matrix_rules": [
-    "1. Observe before reacting",
-    "2. Action creates reality",
-    "3. Thought controls emotion",
-    "4. Silence is power",
-    "5. Focus beats distraction",
-    "6. Breath controls mind",
-    "7. Reaction weakens control",
-    "8. Awareness is strength",
-    "9. Calm is intelligence",
-    "10. Impulse is not truth",
-    "11. Choice defines identity",
-    "12. Energy follows attention",
-    "13. Stop before emotional action",
-    "14. See patterns, not chaos",
-    "15. Inner voice is guide",
-    "16. Fear is temporary signal",
-    "17. Courage is movement",
-    "18. Truth builds power",
-    "19. Respect creates boundaries",
-    "20. Discipline builds freedom",
-    "21. Small actions shape future",
-    "22. Emotion is data",
-    "23. Pause creates intelligence",
-    "24. Control attention always",
-    "25. Learn from every mistake",
-    "26. Think before speaking",
-    "27. Calm wins conflict",
-    "28. Awareness breaks confusion",
-    "29. Identity is built daily",
-    "30. Master yourself first"
-  ],
-  "missions": [
-    {
-      "id": 8,
-      "level": 8,
-      "theme": "TRUTH CHOICE",
-      "blocks": [
-        {
-          "type": "story",
-          "text": {
-            "en": "You know the truth, but telling it might cause problems.",
-            "es": "Sabes la verdad, pero decirla puede causar problemas."
-          }
-        },
-        {
-          "type": "analysis",
-          "text": {
-            "en": "Truth builds strong character.",
-            "es": "La verdad construye carácter fuerte."
-          }
-        },
-        {
-          "type": "decision",
-          "options": [
-            {
-              "code": "LIE",
-              "text": { "en": "Say a lie", "es": "Decir mentira" },
-              "correct": false
-            },
-            {
-              "code": "TRUTH",
-              "text": { "en": "Say truth calmly", "es": "Decir verdad con calma" },
-              "correct": true
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": 9,
-      "level": 9,
-      "theme": "DIGITAL DISTRACTION",
-      "blocks": [
-        {
-          "type": "story",
-          "text": {
-            "en": "Your phone keeps pulling your attention away.",
-            "es": "Tu teléfono roba tu atención constantemente."
-          }
-        },
-        {
-          "type": "analysis",
-          "text": {
-            "en": "Attention is your real power.",
-            "es": "La atención es tu verdadero poder."
-          }
-        },
-        {
-          "type": "decision",
-          "options": [
-            {
-              "code": "CHECK",
-              "text": { "en": "Check phone now", "es": "Revisar teléfono ahora" },
-              "correct": false
-            },
-            {
-              "code": "CONTROL",
-              "text": { "en": "Control usage time", "es": "Controlar uso" },
-              "correct": true
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": 10,
-      "level": 10,
-      "theme": "PRESSURE DECISION",
-      "blocks": [
-        {
-          "type": "story",
-          "text": {
-            "en": "You must decide quickly under pressure.",
-            "es": "Debes decidir rápido bajo presión."
-          }
-        },
-        {
-          "type": "analysis",
-          "text": {
-            "en": "Fast thinking is not always smart thinking.",
-            "es": "Pensar rápido no siempre es pensar bien."
-          }
-        },
-        {
-          "type": "decision",
-          "options": [
-            {
-              "code": "RUSH",
-              "text": { "en": "Decide fast", "es": "Decidir rápido" },
-              "correct": false
-            },
-            {
-              "code": "PAUSE",
-              "text": { "en": "Pause and think", "es": "Pausar y pensar" },
-              "correct": true
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": 11,
-      "level": 11,
-      "theme": "OWN RESPONSIBILITY",
-      "blocks": [
-        {
-          "type": "story",
-          "text": {
-            "en": "A mistake happens and you are part of it.",
-            "es": "Ocurre un error y tú eres parte de él."
-          }
-        },
-        {
-          "type": "analysis",
-          "text": {
-            "en": "Taking responsibility makes you stronger.",
-            "es": "Asumir responsabilidad te hace más fuerte."
-          }
-        },
-        {
-          "type": "decision",
-          "options": [
-            {
-              "code": "DENY",
-              "text": { "en": "Deny it", "es": "Negarlo" },
-              "correct": false
-            },
-            {
-              "code": "ACCEPT",
-              "text": { "en": "Accept it", "es": "Aceptar" },
-              "correct": true
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": 12,
-      "level": 12,
-      "theme": "SELF CONTROL TEST",
-      "blocks": [
-        {
-          "type": "story",
-          "text": {
-            "en": "Someone tries to make you lose control in front of others.",
-            "es": "Alguien intenta hacerte perder el control delante de otros."
-          }
-        },
-        {
-          "type": "analysis",
-          "text": {
-            "en": "Control is power over yourself.",
-            "es": "El control es poder sobre ti mismo."
-          }
-        },
-        {
-          "type": "decision",
-          "options": [
-            {
-              "code": "EXPLODE",
-              "text": { "en": "Get angry", "es": "Enojarse" },
-              "correct": false
-            },
-            {
-              "code": "PAUSE",
-              "text": { "en": "Stay silent", "es": "Mantener silencio" },
-              "correct": true
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": 13,
-      "level": 13,
-      "theme": "ENVY CONTROL",
-      "blocks": [
-        {
-          "type": "story",
-          "text": {
-            "en": "Someone succeeds and you feel comparison inside.",
-            "es": "Alguien triunfa y sientes comparación."
-          }
-        },
-        {
-          "type": "analysis",
-          "text": {
-            "en": "Your path is unique.",
-            "es": "Tu camino es único."
-          }
-        },
-        {
-          "type": "decision",
-          "options": [
-            {
-              "code": "COMPARE",
-              "text": { "en": "Compare yourself", "es": "Compararte" },
-              "correct": false
-            },
-            {
-              "code": "FOCUS",
-              "text": { "en": "Focus on your path", "es": "Enfocarte en tu camino" },
-              "correct": true
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": 14,
-      "level": 14,
-      "theme": "VOICE POWER",
-      "blocks": [
-        {
-          "type": "story",
-          "text": {
-            "en": "You know the answer but feel afraid to speak.",
-            "es": "Sabes la respuesta pero tienes miedo de hablar."
-          }
-        },
-        {
-          "type": "analysis",
-          "text": {
-            "en": "Your voice builds confidence.",
-            "es": "Tu voz construye confianza."
-          }
-        },
-        {
-          "type": "decision",
-          "options": [
-            {
-              "code": "SILENCE",
-              "text": { "en": "Stay silent", "es": "Quedarte en silencio" },
-              "correct": false
-            },
-            {
-              "code": "SPEAK",
-              "text": { "en": "Speak up", "es": "Hablar" },
-              "correct": true
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
+{"game":"KAMIZEN KIDS: MATRIX TRAINING SYSTEM","chapter":2,"range":"8-14","ui":{"floating_words":["PAUSE","THINK","BREATH","CONTROL","CALM","TRUTH","FOCUS","OBSERVE"]},"matrix_rules":["1.Observe before reacting","2.Action creates reality","3.Thought controls emotion","4.Silence is power","5.Focus beats distraction","6.Breath controls mind","7.Reaction weakens control","8.Awareness is strength","9.Calm is intelligence","10.Impulse is not truth","11.Choice defines identity","12.Energy follows attention","13.Stop before emotional action","14.See patterns not chaos","15.Inner voice is guide","16.Fear is temporary signal","17.Courage is movement","18.Truth builds power","19.Respect creates boundaries","20.Discipline builds freedom","21.Small actions shape future","22.Emotion is data","23.Pause creates intelligence","24.Control attention always","25.Learn from every mistake","26.Think before speaking","27.Calm wins conflict","28.Awareness breaks confusion","29.Identity is built daily","30.Master yourself first"],"missions":[
+{"id":8,"level":8,"theme":"TRUTH","blocks":[
+{"type":"story","text":{"en":"Truth is risky.","es":"La verdad es riesgosa."}},
+{"type":"analysis","text":{"en":"Truth builds character.","es":"La verdad construye carácter."}},
+{"type":"decision","options":[
+{"code":"A","text":{"en":"Lie","es":"Mentir"},"correct":false},
+{"code":"B","text":{"en":"Truth calm","es":"Verdad calmada"},"correct":true},
+{"code":"C","text":{"en":"Hide","es":"Ocultar"},"correct":false},
+{"code":"D","text":{"en":"Delay","es":"Retrasar"},"correct":false}
+]}]},
+
+{"id":9,"level":9,"theme":"DISTRACTION","blocks":[
+{"type":"story","text":{"en":"Phone distracts you.","es":"El teléfono distrae."}},
+{"type":"analysis","text":{"en":"Attention is power.","es":"La atención es poder."}},
+{"type":"decision","options":[
+{"code":"A","text":{"en":"Check phone","es":"Revisar teléfono"},"correct":false},
+{"code":"B","text":{"en":"Control time","es":"Controlar tiempo"},"correct":true},
+{"code":"C","text":{"en":"Ignore work","es":"Ignorar trabajo"},"correct":false},
+{"code":"D","text":{"en":"Quit task","es":"Abandonar tarea"},"correct":false}
+]}]},
+
+{"id":10,"level":10,"theme":"PRESSURE","blocks":[
+{"type":"story","text":{"en":"Fast decision needed.","es":"Decisión rápida."}},
+{"type":"analysis","text":{"en":"Pause is power.","es":"Pausar es poder."}},
+{"type":"decision","options":[
+{"code":"A","text":{"en":"Rush","es":"Apresurar"},"correct":false},
+{"code":"B","text":{"en":"Pause think","es":"Pausar pensar"},"correct":true},
+{"code":"C","text":{"en":"Guess","es":"Adivinar"},"correct":false},
+{"code":"D","text":{"en":"Avoid","es":"Evitar"},"correct":false}
+]}]},
+
+{"id":11,"level":11,"theme":"RESPONSIBILITY","blocks":[
+{"type":"story","text":{"en":"You made mistake.","es":"Cometiste error."}},
+{"type":"analysis","text":{"en":"Own it.","es":"Asumirlo."}},
+{"type":"decision","options":[
+{"code":"A","text":{"en":"Deny","es":"Negar"},"correct":false},
+{"code":"B","text":{"en":"Accept","es":"Aceptar"},"correct":true},
+{"code":"C","text":{"en":"Blame","es":"Culpar"},"correct":false},
+{"code":"D","text":{"en":"Hide","es":"Ocultar"},"correct":false}
+]}]},
+
+{"id":12,"level":12,"theme":"CONTROL","blocks":[
+{"type":"story","text":{"en":"You are provoked.","es":"Te provocan."}},
+{"type":"analysis","text":{"en":"Self control wins.","es":"Autocontrol gana."}},
+{"type":"decision","options":[
+{"code":"A","text":{"en":"Explode","es":"Explotar"},"correct":false},
+{"code":"B","text":{"en":"Stay silent","es":"Quedarse en silencio"},"correct":true},
+{"code":"C","text":{"en":"Shout","es":"Gritar"},"correct":false},
+{"code":"D","text":{"en":"Leave","es":"Irse"},"correct":false}
+]}]},
+
+{"id":13,"level":13,"theme":"ENVY","blocks":[
+{"type":"story","text":{"en":"Someone succeeds.","es":"Alguien triunfa."}},
+{"type":"analysis","text":{"en":"Focus path.","es":"Enfócate."}},
+{"type":"decision","options":[
+{"code":"A","text":{"en":"Compare","es":"Comparar"},"correct":false},
+{"code":"B","text":{"en":"Focus path","es":"Enfocar camino"},"correct":true},
+{"code":"C","text":{"en":"Quit","es":"Renunciar"},"correct":false},
+{"code":"D","text":{"en":"Doubt","es":"Dudar"},"correct":false}
+]}]},
+
+{"id":14,"level":14,"theme":"VOICE","blocks":[
+{"type":"story","text":{"en":"Speak or stay silent.","es":"Hablar o callar."}},
+{"type":"analysis","text":{"en":"Voice is power.","es":"La voz es poder."}},
+{"type":"decision","options":[
+{"code":"A","text":{"en":"Silence","es":"Silencio"},"correct":false},
+{"code":"B","text":{"en":"Speak","es":"Hablar"},"correct":true},
+{"code":"C","text":{"en":"Avoid","es":"Evitar"},"correct":false},
+{"code":"D","text":{"en":"Hide","es":"Ocultar"},"correct":false}
+]}]}
+]}
