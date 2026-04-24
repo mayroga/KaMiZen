@@ -1,296 +1,71 @@
-{
-  "game": "KAMIZEN KIDS: MATRIX TRAINING SYSTEM",
-  "chapter": 1,
-  "range": "1-7",
-  "ui": {
-    "floating_words": [
-      "FOCUS", "CALM", "BREATH", "ACTION", "STOP", "THINK", "CONTROL"
-    ]
-  },
-  "matrix_rules": [
-    "1. Observe before reacting",
-    "2. Action creates reality",
-    "3. Thought controls emotion",
-    "4. Silence is power",
-    "5. Focus beats distraction",
-    "6. Breath controls mind",
-    "7. Reaction weakens control",
-    "8. Awareness is strength",
-    "9. Calm is intelligence",
-    "10. Impulse is not truth",
-    "11. Choice defines identity",
-    "12. Energy follows attention",
-    "13. Stop before emotional action",
-    "14. See patterns, not chaos",
-    "15. Inner voice is guide",
-    "16. Fear is temporary signal",
-    "17. Courage is movement",
-    "18. Truth builds power",
-    "19. Respect creates boundaries",
-    "20. Discipline builds freedom",
-    "21. Small actions shape future",
-    "22. Emotion is data",
-    "23. Pause creates intelligence",
-    "24. Control attention always",
-    "25. Learn from every mistake",
-    "26. Think before speaking",
-    "27. Calm wins conflict",
-    "28. Awareness breaks confusion",
-    "29. Identity is built daily",
-    "30. Master yourself first"
-  ],
-  "missions": [
-    {
-      "id": 1,
-      "level": 1,
-      "theme": "THE HIDDEN SIGNAL",
-      "blocks": [
-        {
-          "type": "story",
-          "text": {
-            "en": "You enter a noisy school hallway. Everything is loud, but something small feels different.",
-            "es": "Entras en un pasillo escolar ruidoso. Todo es caos, pero algo pequeño es diferente."
-          }
-        },
-        {
-          "type": "analysis",
-          "text": {
-            "en": "Noticing small details is the first power of awareness.",
-            "es": "Notar detalles pequeños es el primer poder de la conciencia."
-          }
-        },
-        {
-          "type": "decision",
-          "options": [
-            {
-              "code": "IGNORE",
-              "text": { "en": "Ignore everything", "es": "Ignorar todo" },
-              "correct": false
-            },
-            {
-              "code": "OBSERVE",
-              "text": { "en": "Look carefully", "es": "Observar con atención" },
-              "correct": true
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": 2,
-      "level": 2,
-      "theme": "EMOTIONS INSIDE YOU",
-      "blocks": [
-        {
-          "type": "story",
-          "text": {
-            "en": "Something small happens, but your feelings become very strong.",
-            "es": "Algo pequeño sucede, pero tus emociones se vuelven muy fuertes."
-          }
-        },
-        {
-          "type": "analysis",
-          "text": {
-            "en": "Feelings are signals, not commands.",
-            "es": "Los sentimientos son señales, no órdenes."
-          }
-        },
-        {
-          "type": "decision",
-          "options": [
-            {
-              "code": "REACT",
-              "text": { "en": "React fast", "es": "Reaccionar rápido" },
-              "correct": false
-            },
-            {
-              "code": "PAUSE",
-              "text": { "en": "Pause and breathe", "es": "Pausar y respirar" },
-              "correct": true
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": 3,
-      "level": 3,
-      "theme": "SMALL CHOICES",
-      "blocks": [
-        {
-          "type": "story",
-          "text": {
-            "en": "You must choose between something easy now or something better later.",
-            "es": "Debes elegir entre algo fácil ahora o algo mejor después."
-          }
-        },
-        {
-          "type": "analysis",
-          "text": {
-            "en": "Small choices build your future.",
-            "es": "Las pequeñas decisiones construyen tu futuro."
-          }
-        },
-        {
-          "type": "decision",
-          "options": [
-            {
-              "code": "EASY",
-              "text": { "en": "Easy now", "es": "Fácil ahora" },
-              "correct": false
-            },
-            {
-              "code": "SMART",
-              "text": { "en": "Smart future choice", "es": "Elección inteligente" },
-              "correct": true
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": 4,
-      "level": 4,
-      "theme": "GROUP PRESSURE",
-      "blocks": [
-        {
-          "type": "story",
-          "text": {
-            "en": "Friends want you to do something you feel is wrong.",
-            "es": "Tus amigos quieren que hagas algo que sientes que está mal."
-          }
-        },
-        {
-          "type": "analysis",
-          "text": {
-            "en": "True strength is saying no calmly.",
-            "es": "La verdadera fuerza es decir no con calma."
-          }
-        },
-        {
-          "type": "decision",
-          "options": [
-            {
-              "code": "FOLLOW",
-              "text": { "en": "Follow group", "es": "Seguir al grupo" },
-              "correct": false
-            },
-            {
-              "code": "STAND",
-              "text": { "en": "Stand calm", "es": "Mantenerse firme" },
-              "correct": true
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": 5,
-      "level": 5,
-      "theme": "FOCUS TRAINING",
-      "blocks": [
-        {
-          "type": "story",
-          "text": {
-            "en": "Many distractions try to steal your attention.",
-            "es": "Muchas distracciones intentan robar tu atención."
-          }
-        },
-        {
-          "type": "analysis",
-          "text": {
-            "en": "Focus is a superpower you train.",
-            "es": "El enfoque es un superpoder que entrenas."
-          }
-        },
-        {
-          "type": "decision",
-          "options": [
-            {
-              "code": "MULTI",
-              "text": { "en": "Do many things", "es": "Hacer muchas cosas" },
-              "correct": false
-            },
-            {
-              "code": "FOCUS",
-              "text": { "en": "One thing only", "es": "Una sola cosa" },
-              "correct": true
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": 6,
-      "level": 6,
-      "theme": "REAL FRIENDS",
-      "blocks": [
-        {
-          "type": "story",
-          "text": {
-            "en": "Someone is only your friend when they need something.",
-            "es": "Alguien solo es tu amigo cuando necesita algo."
-          }
-        },
-        {
-          "type": "analysis",
-          "text": {
-            "en": "Actions show real friendship.",
-            "es": "Las acciones muestran la verdadera amistad."
-          }
-        },
-        {
-          "type": "decision",
-          "options": [
-            {
-              "code": "IGNORE",
-              "text": { "en": "Ignore signs", "es": "Ignorar señales" },
-              "correct": false
-            },
-            {
-              "code": "OBSERVE",
-              "text": { "en": "Watch behavior", "es": "Observar comportamiento" },
-              "correct": true
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": 7,
-      "level": 7,
-      "theme": "CALM UNDER PRESSURE",
-      "blocks": [
-        {
-          "type": "story",
-          "text": {
-            "en": "Someone makes you angry in front of others.",
-            "es": "Alguien te hace enojar delante de otros."
-          }
-        },
-        {
-          "type": "analysis",
-          "text": {
-            "en": "Staying calm gives you power.",
-            "es": "Mantener la calma te da poder."
-          }
-        },
-        {
-          "type": "decision",
-          "options": [
-            {
-              "code": "EXPLODE",
-              "text": { "en": "Get angry", "es": "Enojarse" },
-              "correct": false
-            },
-            {
-              "code": "CALM",
-              "text": { "en": "Stay calm", "es": "Mantener calma" },
-              "correct": true
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
+{"game":"KAMIZEN KIDS: MATRIX TRAINING SYSTEM","chapter":1,"range":"1-7","ui":{"floating_words":["FOCUS","CALM","BREATH","ACTION","STOP","THINK","CONTROL"]},"matrix_rules":["1.Observe before reacting","2.Action creates reality","3.Thought controls emotion","4.Silence is power","5.Focus beats distraction","6.Breath controls mind","7.Reaction weakens control","8.Awareness is strength","9.Calm is intelligence","10.Impulse is not truth","11.Choice defines identity","12.Energy follows attention","13.Stop before emotional action","14.See patterns not chaos","15.Inner voice is guide","16.Fear is temporary signal","17.Courage is movement","18.Truth builds power","19.Respect creates boundaries","20.Discipline builds freedom","21.Small actions shape future","22.Emotion is data","23.Pause creates intelligence","24.Control attention always","25.Learn from every mistake","26.Think before speaking","27.Calm wins conflict","28.Awareness breaks confusion","29.Identity is built daily","30.Master yourself first"],"missions":[
+{"id":1,"level":1,"theme":"THE HIDDEN SIGNAL","blocks":[
+{"type":"story","text":{"en":"You enter a noisy hallway.","es":"Entras en un pasillo ruidoso."}},
+{"type":"analysis","text":{"en":"Small details matter.","es":"Los detalles importan."}},
+{"type":"decision","options":[
+{"code":"A","text":{"en":"Ignore everything","es":"Ignorar todo"},"correct":false},
+{"code":"B","text":{"en":"Look carefully","es":"Observar con atención"},"correct":true},
+{"code":"C","text":{"en":"Run away","es":"Salir corriendo"},"correct":false},
+{"code":"D","text":{"en":"Ask others","es":"Preguntar a otros"},"correct":false}
+]}]},
+
+{"id":2,"level":2,"theme":"EMOTIONS","blocks":[
+{"type":"story","text":{"en":"Something triggers emotion.","es":"Algo activa emociones."}},
+{"type":"analysis","text":{"en":"Emotion is signal.","es":"La emoción es señal."}},
+{"type":"decision","options":[
+{"code":"A","text":{"en":"React fast","es":"Reaccionar rápido"},"correct":false},
+{"code":"B","text":{"en":"Pause breathe","es":"Pausar respirar"},"correct":true},
+{"code":"C","text":{"en":"Yell","es":"Gritar"},"correct":false},
+{"code":"D","text":{"en":"Ignore feelings","es":"Ignorar emociones"},"correct":false}
+]}]},
+
+{"id":3,"level":3,"theme":"CHOICES","blocks":[
+{"type":"story","text":{"en":"Easy now or better later.","es":"Fácil ahora o mejor después."}},
+{"type":"analysis","text":{"en":"Future matters.","es":"El futuro importa."}},
+{"type":"decision","options":[
+{"code":"A","text":{"en":"Easy now","es":"Fácil ahora"},"correct":false},
+{"code":"B","text":{"en":"Smart choice","es":"Elección inteligente"},"correct":true},
+{"code":"C","text":{"en":"Do nothing","es":"No hacer nada"},"correct":false},
+{"code":"D","text":{"en":"Delay everything","es":"Retrasar todo"},"correct":false}
+]}]},
+
+{"id":4,"level":4,"theme":"PRESSURE","blocks":[
+{"type":"story","text":{"en":"Group pressure appears.","es":"Presión de grupo."}},
+{"type":"analysis","text":{"en":"Stand firm.","es":"Mantente firme."}},
+{"type":"decision","options":[
+{"code":"A","text":{"en":"Follow group","es":"Seguir grupo"},"correct":false},
+{"code":"B","text":{"en":"Stay calm","es":"Mantener calma"},"correct":true},
+{"code":"C","text":{"en":"Escape","es":"Escapar"},"correct":false},
+{"code":"D","text":{"en":"Argue","es":"Discutir"},"correct":false}
+]}]},
+
+{"id":5,"level":5,"theme":"FOCUS","blocks":[
+{"type":"story","text":{"en":"Many distractions.","es":"Muchas distracciones."}},
+{"type":"analysis","text":{"en":"Focus wins.","es":"El enfoque gana."}},
+{"type":"decision","options":[
+{"code":"A","text":{"en":"Multitask","es":"Multitarea"},"correct":false},
+{"code":"B","text":{"en":"One task","es":"Una tarea"},"correct":true},
+{"code":"C","text":{"en":"Stop everything","es":"Parar todo"},"correct":false},
+{"code":"D","text":{"en":"Switch tasks","es":"Cambiar tareas"},"correct":false}
+]}]},
+
+{"id":6,"level":6,"theme":"FRIENDS","blocks":[
+{"type":"story","text":{"en":"Friend behavior unclear.","es":"Comportamiento de amigo."}},
+{"type":"analysis","text":{"en":"Observe actions.","es":"Observa acciones."}},
+{"type":"decision","options":[
+{"code":"A","text":{"en":"Ignore","es":"Ignorar"},"correct":false},
+{"code":"B","text":{"en":"Observe","es":"Observar"},"correct":true},
+{"code":"C","text":{"en":"Confront","es":"Confrontar"},"correct":false},
+{"code":"D","text":{"en":"Leave","es":"Irse"},"correct":false}
+]}]},
+
+{"id":7,"level":7,"theme":"CALM","blocks":[
+{"type":"story","text":{"en":"You are provoked.","es":"Te provocan."}},
+{"type":"analysis","text":{"en":"Control yourself.","es":"Controla tus emociones."}},
+{"type":"decision","options":[
+{"code":"A","text":{"en":"Explode","es":"Explotar"},"correct":false},
+{"code":"B","text":{"en":"Stay calm","es":"Mantener calma"},"correct":true},
+{"code":"C","text":{"en":"Run","es":"Correr"},"correct":false},
+{"code":"D","text":{"en":"Shout","es":"Gritar"},"correct":false}
+]}]}
+]}
