@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, send_from_directory
+from flask import Flask, jsonify, send_from_directory, request
 import os
 import json
 
@@ -7,23 +7,21 @@ app = Flask(__name__, static_folder="static")
 BASE = os.path.dirname(__file__)
 
 # =========================
-# 💾 SISTEMA DE PERSISTENCIA (SAVE GAME)
+# 💾 SAVE SYSTEM
 # =========================
 def get_save_data():
-    """Carga el progreso guardado o inicia desde 0."""
     data = load_json("save_game.json")
     if data is None:
         return {"last_mission": 0}
     return data
 
 def save_progress(mid):
-    """Guarda el ID de la última misión completada."""
     path = os.path.join(BASE, "save_game.json")
     with open(path, "w", encoding="utf-8") as f:
         json.dump({"last_mission": mid}, f)
 
 # =========================
-# 📦 LOAD MISSION FILES SAFE
+# 📦 LOAD JSON SAFE
 # =========================
 def load_json(file):
     try:
@@ -52,15 +50,15 @@ def get_all_missions():
     return data
 
 # =========================
-# 🎯 LOGICA DE BUSQUEDA
+# 🔍 SEARCH LOGIC
 # =========================
 def find_mission(mid):
     datasets = get_all_missions()
     for pack in datasets:
         for m in pack.get("missions", []):
             if m.get("id") == mid:
-                return m
-    return None
+                return m, pack
+    return None, None
 
 def find_chapter(chapter_id):
     datasets = get_all_missions()
@@ -69,57 +67,116 @@ def find_chapter(chapter_id):
             return pack
     return None
 
+def get_total_missions():
+    return 35
+
 # =========================
-# 🎮 API: MISIONES Y FLUJO
+# 🎮 FORMAT FOR FRONTEND
+# =========================
+def format_mission(mission, pack, lang="en"):
+    if not mission:
+        return None
+
+    story_block = next((b for b in mission["blocks"] if b["type"] == "story"), {})
+    decision_block = next((b for b in mission["blocks"] if b["type"] == "decision"), {})
+
+    return {
+        "id": mission.get("id"),
+        "level": mission.get("level"),
+        "theme": mission.get("theme"),
+        "chapter": pack.get("chapter"),
+        "ui": pack.get("ui", {}),
+        "matrix_rules": pack.get("matrix_rules", []),
+
+        "story": story_block.get("text", {}).get(lang, ""),
+        
+        "options": [
+            {
+                "text": opt["text"].get(lang, ""),
+                "score": opt.get("score", 0),
+                "correct": opt.get("correct", False),
+                "explanation": opt.get("explanation", {}).get(lang, "")
+            }
+            for opt in decision_block.get("options", [])
+        ]
+    }
+
+# =========================
+# 🎯 API
 # =========================
 
 @app.route("/api/mission/<int:mission_id>")
 def api_mission(mission_id):
-    mission = find_mission(mission_id)
+    lang = request.args.get("lang", "en")
+
+    mission, pack = find_mission(mission_id)
+
     if not mission:
-        return jsonify({"error": "Mission not found", "id": mission_id}), 404
-    return jsonify(mission)
+        return jsonify({"error": "Mission not found"}), 404
+
+    return jsonify(format_mission(mission, pack, lang))
+
 
 @app.route("/api/mission/next")
 def next_mission_flow():
-    """Ruta inteligente: entrega la siguiente misión sin repetir."""
+    lang = request.args.get("lang", "en")
+    reset = request.args.get("reset", "false").lower() == "true"
+
+    if reset:
+        save_progress(0)
+
     current_data = get_save_data()
     current_id = current_data.get("last_mission", 0)
-    
+
     next_id = current_id + 1
-    if next_id > 35: 
-        next_id = 1 # Reinicio infinito
-        
-    mission = find_mission(next_id)
+    total = get_total_missions()
+
+    if next_id > total:
+        next_id = 1  # loop infinito
+
+    mission, pack = find_mission(next_id)
+
     if mission:
-        save_progress(next_id) # Solo guarda si la misión existe
-        return jsonify(mission)
-    
-    return jsonify({"error": "No more missions"}), 404
+        save_progress(next_id)
+        return jsonify(format_mission(mission, pack, lang))
+
+    return jsonify({"error": "No mission found"}), 404
+
 
 # =========================
-# 🧠 CONFIGURACIONES DINÁMICAS
+# 🧠 TRAINING CONFIG
 # =========================
+
+@app.route("/api/config")
+def api_config():
+    return jsonify({
+        "breathing_seconds": 30,
+        "silence_seconds": 60,
+        "phase_1_words": 300,
+        "phase_2_words": 600,
+        "voice": "male_en",
+        "loop": True
+    })
+
 
 @app.route("/api/silence/<int:level>")
 def api_silence(level):
-    """Tiempos progresivos de 3 a 20 minutos."""
     if level <= 7:
-        t = 180  # 3 min
+        t = 180
     elif level <= 14:
-        t = 360  # 6 min
+        t = 360
     elif level <= 21:
-        t = 600  # 10 min
+        t = 600
     elif level <= 28:
-        t = 900  # 15 min
+        t = 900
     else:
-        t = 1200 # 20 min
+        t = 1200
     
     return jsonify({"level": level, "silence_time": t})
 
+
 @app.route("/api/breath/<int:level>")
 def api_breath(level):
-    """Intervalos de respiración (más lentos según nivel)."""
     if level <= 7:
         interval = 60
     elif level <= 14:
@@ -133,8 +190,9 @@ def api_breath(level):
     
     return jsonify({"level": level, "breath_interval_sec": interval})
 
+
 # =========================
-# 🏠 RUTAS DE ARCHIVOS
+# 🏠 STATIC
 # =========================
 
 @app.route("/")
@@ -145,13 +203,13 @@ def home():
 def static_files(path):
     return send_from_directory("static", path)
 
+
 # =========================
-# 🚀 INICIO DEL SERVIDOR
+# 🚀 START
 # =========================
 if __name__ == "__main__":
-    # Verifica que el archivo de guardado exista al iniciar
     if not os.path.exists(os.path.join(BASE, "save_game.json")):
         save_progress(0)
-        
-    print("🚀 AL CIELO: Servidor Activo en el puerto 10000")
+
+    print("🚀 AL CIELO PRO SERVER RUNNING ON PORT 10000")
     app.run(host="0.0.0.0", port=10000, debug=True)
