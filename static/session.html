@@ -134,6 +134,7 @@ body {
 
 <div id="hud">
     <div id="timer-box">05:00</div>
+    <div id="score-box" style="display:none;">0</div>
 </div>
 
 <div id="life-stats">
@@ -156,7 +157,9 @@ body {
 
 <script>
 
-// ================= WORDS =================
+// ==========================================
+// 🌌 WORD SYSTEM (UNCHANGED CORE)
+// ==========================================
 const words = {
     power:["WILL","VISION","HONOR","COURAGE","BUILD","RISE","FAITH","DISCIPLINE","STRENGTH","VICTORY"],
     risk:["NOISE","EXCUSE","QUITTING","EGO","HATE","CHAOS","LAZY","FEAR","LIE","ANGER"],
@@ -170,69 +173,84 @@ let gameMode="idle";
 let state={
     timer:300,
     score:0,
-    spawnRate:1200,
+    spawnRate:1300,
     stats:{respect:50,peace:50,lead:50,money:100,safety:100,happy:50}
 };
 
-// ================= TIMER REAL =================
+// ================= SAFE SPEAK =================
+function speak(text){
+    try{
+        const msg=new SpeechSynthesisUtterance(text);
+        msg.lang=lang==="en"?"en-US":"es-ES";
+        speechSynthesis.cancel();
+        speechSynthesis.speak(msg);
+    }catch(e){}
+}
+
+// ================= FIXED TIMER =================
 setInterval(()=>{
-    if(state.timer>0){
-        state.timer--;
-        updateHUD();
-    }
+    if(state.timer<=0) return;
+    state.timer--;
+    updateHUD();
 },1000);
 
-// ================= LANGUAGE =================
+// ================= LANGUAGE FIX =================
 function toggleLang(){
-    lang = lang==="en"?"es":"en";
+    lang = (lang==="en")?"es":"en";
+    document.getElementById("lang-btn").innerText=lang.toUpperCase();
     speak(lang==="en"?"English mode":"Modo español");
 }
 
-// ================= SPEAK =================
-function speak(t){
-    let s=new SpeechSynthesisUtterance(t);
-    s.lang=lang==="en"?"en-US":"es-ES";
-    speechSynthesis.cancel();
-    speechSynthesis.speak(s);
-}
-
-// ================= WORDS =================
+// ================= WORD LOOP (FIXED STABLE LOOP) =================
 function spawnWord(){
     if(gameMode!=="words") return;
 
     const type=["power","risk","silence"][Math.floor(Math.random()*3)];
-    const div=document.createElement("div");
 
-    div.className="floating word-"+type;
+    const div=document.createElement("div");
+    div.className=`floating word-${type}`;
     div.innerText=words[type][Math.floor(Math.random()*words[type].length)];
     div.style.left=Math.random()*80+"vw";
 
     div.onclick=()=>{
-        div.remove();
+        div.classList.add("explode");
 
-        if(type==="power"){state.score+=20;}
-        if(type==="risk"){state.score-=30;}
-        if(type==="silence"){state.stats.peace++;}
+        if(type==="power") state.score+=20;
+        if(type==="risk") state.score-=30;
+        if(type==="silence") state.stats.peace++;
 
         updateHUD();
+        setTimeout(()=>div.remove(),300);
     };
 
     document.body.appendChild(div);
+
     setTimeout(()=>div.remove(),6000);
 }
 
-// ================= BACKEND =================
+// ================= BACKEND SAFE =================
 async function fetchMission(){
-    let r=await fetch("/api/mission/next?lang="+lang);
-    return await r.json();
+    try{
+        const res=await fetch("/api/mission/next?lang="+lang);
+        return await res.json();
+    }catch(e){
+        return {
+            theme:"Fallback",
+            story:"System offline",
+            options:[
+                {text:"Wait",score:0,explanation:"Waiting"},
+                {text:"Observe",score:5,explanation:"Observing"}
+            ]
+        };
+    }
 }
 
-// ================= QUESTION =================
-async function question(){
-    let data=await fetchMission();
+// ================= QUESTION FIX (NO FREEZE) =================
+async function triggerQuestion(){
+    const data=await fetchMission();
 
-    let overlay=document.getElementById("overlay");
-    let grid=document.getElementById("decision-grid");
+    const overlay=document.getElementById("overlay");
+    const grid=document.getElementById("decision-grid");
 
     document.getElementById("phase-title").innerText=data.theme;
     document.getElementById("phase-desc").innerText=data.story;
@@ -242,106 +260,129 @@ async function question(){
     grid.innerHTML="";
 
     data.options.forEach(opt=>{
-        let b=document.createElement("button");
-        b.className="choice-btn";
-        b.innerText=opt.text;
+        const btn=document.createElement("button");
+        btn.className="choice-btn";
+        btn.innerText=opt.text;
 
-        b.onclick=()=>{
+        btn.onclick=()=>{
+            state.score+=opt.score;
+
             flash(opt.score);
 
-            state.score+=opt.score;
             updateHUD();
 
-            setTimeout(()=>overlay.style.display="none",1200);
+            setTimeout(()=>{
+                overlay.style.display="none";
+                window.onQuestionAnswered?.();
+            },800);
         };
 
-        grid.appendChild(b);
+        grid.appendChild(btn);
     });
 
     overlay.style.display="flex";
 }
 
-// ================= FLASH AAA =================
+// ================= VISUAL FEEDBACK FIX =================
 function flash(score){
-    let body=document.body;
+    document.body.style.transition="0.3s";
 
-    if(score>=10) body.className="flash-green";
-    else if(score>0) body.className="flash-yellow";
-    else if(score===0) body.className="flash-orange";
-    else body.className="flash-red";
+    if(score>=10) document.body.style.background="rgba(0,255,65,0.25)";
+    else if(score>0) document.body.style.background="rgba(255,255,0,0.2)";
+    else if(score===0) document.body.style.background="rgba(255,140,0,0.2)";
+    else if(score<0) document.body.style.background="rgba(255,0,60,0.25)";
 
-    setTimeout(()=>body.className="",800);
+    setTimeout(()=>{
+        document.body.style.background="var(--matrix-bg)";
+    },500);
 }
 
-// ================= PHASES =================
+// ================= SAFE WORD LOOP =================
 function playWords(sec){
-    return new Promise(res=>{
+    return new Promise(resolve=>{
         gameMode="words";
-        let end=Date.now()+sec*1000;
+
+        const end=Date.now()+sec*1000;
 
         function loop(){
-            if(Date.now()>end){gameMode="idle";return res();}
+            if(Date.now()>=end){
+                gameMode="idle";
+                return resolve();
+            }
+
             spawnWord();
+
             setTimeout(loop,state.spawnRate);
         }
+
         loop();
     });
 }
 
-function breath(){
-    return new Promise(res=>{
-        gameMode="breath";
+// ================= BREATHING FIX =================
+function breathing(){
+    return new Promise(resolve=>{
+        gameMode="breathing";
 
-        let c=document.getElementById("breath-circle");
-        let o=document.getElementById("overlay");
+        const overlay=document.getElementById("overlay");
+        const circle=document.getElementById("breath-circle");
 
-        o.style.display="flex";
-        c.style.display="flex";
+        overlay.style.display="flex";
+        circle.style.display="flex";
 
         speak("Breathing training active");
 
         let t=30;
 
-        let i=setInterval(()=>{
-            c.className = t%2===0?"inhale":"exhale";
+        const i=setInterval(()=>{
+            circle.className=(t%2===0)?"inhale":"exhale";
+
+            document.getElementById("phase-desc").innerText="Breathing "+t;
 
             if(--t<0){
                 clearInterval(i);
-                o.style.display="none";
-                res();
+                circle.style.display="none";
+                overlay.style.display="none";
+                resolve();
             }
         },1000);
     });
 }
 
+// ================= SILENCE FIX =================
 function silence(){
-    return new Promise(res=>{
+    return new Promise(resolve=>{
         gameMode="silence";
 
-        let o=document.getElementById("overlay");
-        o.style.display="flex";
+        const overlay=document.getElementById("overlay");
+        overlay.style.display="flex";
 
         speak("Silence training");
 
         let t=60;
 
-        let i=setInterval(()=>{
+        const i=setInterval(()=>{
             document.getElementById("phase-desc").innerText="Silence "+t;
 
             if(--t<0){
                 clearInterval(i);
-                o.style.display="none";
-                res();
+                overlay.style.display="none";
+                resolve();
             }
         },1000);
     });
 }
 
-// ================= HUD =================
+// ================= HUD FIX =================
 function updateHUD(){
+    const scoreBox = document.getElementById("score-box");
+    if(scoreBox) scoreBox.innerText=state.score;
+
+    const m=Math.floor(state.timer/60);
+    const s=state.timer%60;
+
     document.getElementById("timer-box").innerText=
-        String(Math.floor(state.timer/60)).padStart(2,"0")+":"+
-        String(state.timer%60).padStart(2,"0");
+        String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
 
     document.getElementById("v-respect").innerText=state.stats.respect;
     document.getElementById("v-peace").innerText=state.stats.peace;
@@ -351,24 +392,25 @@ function updateHUD(){
     document.getElementById("v-happy").innerText=state.stats.happy;
 }
 
-// ================= LOOP =================
-async function loop(){
+// ================= MAIN LOOP (FIXED NO FREEZE) =================
+async function mainLoop(){
     while(true){
         await playWords(300);
-        await breath();
-        await question();
+        await breathing();
+        await triggerQuestion();
 
         await playWords(600);
         await silence();
-        await breath();
-        await question();
+        await breathing();
+        await triggerQuestion();
     }
 }
 
 // ================= START =================
 function start(){
-    speak("System online");
-    loop();
+    speak("System started");
+    updateHUD();
+    mainLoop();
 }
 
 start();
