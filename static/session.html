@@ -355,7 +355,7 @@ async function triggerQuestion(){
             updateHUD();
 
             grid.innerHTML="";
-            const exp = opt.explanation || explanations[Math.floor(Math.random()*explanations.length)];
+            const exp = opt.explanation || "No explanation provided.";
             desc.innerText = exp;
             speak(exp);
 
