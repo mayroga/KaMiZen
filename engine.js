@@ -1,7 +1,7 @@
 /**
- * 🧠 KAMIZEN ENGINE CORE — STABLE SYNC VERSION
- * Conectado a session.html + Flask backend
- * Controla: estado, voz, API, efectos
+ * 🧠 KAMIZEN ENGINE CORE — CLEAN STABLE VERSION
+ * JSON-driven system (NO AI explanations)
+ * Sync with Flask backend + session.html
  */
 
 const KamizenEngine = (() => {
@@ -34,17 +34,18 @@ const KamizenEngine = (() => {
         if (!text) return;
 
         const msg = new SpeechSynthesisUtterance(text);
-        msg.lang = "en-US";
+        msg.lang = state.lang === "es" ? "es-ES" : "en-US";
         msg.rate = 0.95;
         msg.pitch = 0.9;
 
         const voices = speechSynthesis.getVoices();
-        const male = voices.find(v =>
-            v.lang === "en-US" &&
-            v.name.toLowerCase().includes("male")
+
+        const preferredVoice = voices.find(v =>
+            v.lang === msg.lang &&
+            v.name.toLowerCase().includes("female")
         );
 
-        if (male) msg.voice = male;
+        if (preferredVoice) msg.voice = preferredVoice;
 
         speechSynthesis.cancel();
         speechSynthesis.speak(msg);
@@ -74,7 +75,7 @@ const KamizenEngine = (() => {
     }
 
     // =========================
-    // 🎯 APPLY MISSION RESULT
+    // 🎯 APPLY RESULT
     // =========================
     function applyMissionResult(option) {
         if (!option) return;
@@ -86,28 +87,25 @@ const KamizenEngine = (() => {
             if (state.combo % 5 === 0) state.mastery++;
         } else {
             state.combo = 0;
-            state.mastery = 1;
+            state.mastery = Math.max(1, state.mastery - 1);
         }
 
         updateHUD();
     }
 
     // =========================
-    // 📊 HUD UPDATE
+    // 📊 HUD
     // =========================
     function updateHUD() {
-        const scoreBox = document.getElementById("score-box");
-        const masteryBox = document.getElementById("mastery-lvl");
-
-        if (scoreBox) scoreBox.innerText = state.score;
-        if (masteryBox) masteryBox.innerText = `MASTERY x${state.mastery}`;
-
-        // stats
-        const s = state.stats;
-        const set = (id, val) => {
+        const set = (id, value) => {
             const el = document.getElementById(id);
-            if (el) el.innerText = val;
+            if (el) el.innerText = value;
         };
+
+        set("score-box", state.score);
+        set("mastery-lvl", `MASTERY x${state.mastery}`);
+
+        const s = state.stats;
 
         set("v-respect", s.respect);
         set("v-peace", s.peace);
@@ -116,21 +114,38 @@ const KamizenEngine = (() => {
         set("v-safety", s.safety);
         set("v-happy", s.happy);
 
-        // barra seguridad
-        const sBar = document.getElementById("security-alert");
-        if (sBar) {
+        const bar = document.getElementById("security-alert");
+        if (bar) {
             if (s.safety < 40) {
-                sBar.style.background = "var(--neon-red)";
+                bar.style.background = "var(--neon-red)";
             } else if (s.safety < 75) {
-                sBar.style.background = "var(--neon-yellow)";
+                bar.style.background = "var(--neon-yellow)";
             } else {
-                sBar.style.background = "var(--neon-green)";
+                bar.style.background = "var(--neon-green)";
             }
         }
     }
 
     // =========================
-    // 🧠 QUESTION FLOW (BACKEND)
+    // 🧠 SAFE EXPLANATION RESOLVE
+    // =========================
+    function resolveExplanation(opt) {
+        if (!opt) return "No explanation";
+
+        const lang = state.lang;
+
+        const exp =
+            (typeof opt.explanation === "object"
+                ? opt.explanation?.[lang]
+                : opt.explanation) ||
+            opt.explanation?.en ||
+            "No explanation available";
+
+        return exp;
+    }
+
+    // =========================
+    // 🎮 MISSION FLOW
     // =========================
     async function runMissionUI() {
 
@@ -155,6 +170,7 @@ const KamizenEngine = (() => {
         grid.innerHTML = "";
 
         data.options.forEach(opt => {
+
             const btn = document.createElement("button");
             btn.className = "choice-btn";
             btn.innerText = opt.text;
@@ -163,15 +179,19 @@ const KamizenEngine = (() => {
 
                 applyMissionResult(opt);
 
-                desc.innerText = opt.explanation;
-                speak(opt.explanation);
+                const exp = resolveExplanation(opt);
+
+                desc.innerText = exp;
+                speak(exp);
 
                 setTimeout(() => {
                     overlay.style.display = "none";
+
                     if (window.onQuestionAnswered) {
                         window.onQuestionAnswered();
                     }
-                }, 3500);
+
+                }, 3000);
             };
 
             grid.appendChild(btn);
@@ -181,14 +201,7 @@ const KamizenEngine = (() => {
     }
 
     // =========================
-    // 🎮 WORD FILTER (SYNC)
-    // =========================
-    function canSpawnWords() {
-        return gameMode === "words";
-    }
-
-    // =========================
-    // 🎯 MODE CONTROL
+    // 🎮 MODE CONTROL
     // =========================
     function setMode(mode) {
         gameMode = mode;
@@ -198,13 +211,18 @@ const KamizenEngine = (() => {
         return gameMode;
     }
 
+    function canSpawnWords() {
+        return gameMode === "words";
+    }
+
     // =========================
     // 🚀 INIT
     // =========================
     async function init() {
         const cfg = await fetchConfig();
+
         if (cfg) {
-            console.log("⚙️ Config loaded:", cfg);
+            console.log("⚙️ Config loaded");
         }
 
         speak("Kamizen system initialized.");
@@ -220,9 +238,8 @@ const KamizenEngine = (() => {
         init,
 
         fetchNextMission,
-        applyMissionResult,
-
         runMissionUI,
+        applyMissionResult,
 
         updateHUD,
 
