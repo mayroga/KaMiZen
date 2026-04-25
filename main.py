@@ -12,18 +12,18 @@ BASE = os.path.dirname(__file__)
 # 💾 SAVE SYSTEM
 # =========================
 def get_save_data():
-    data = load_json("save_game.json")
-    if data is None:
-        return {"last_mission": 0, "score": 0}
-    return data
-
-def save_progress(mid, score=None):
     path = os.path.join(BASE, "save_game.json")
+    if not os.path.exists(path):
+        return {"last_mission": 0, "score": 0}
+    with open(path, "r", encoding="utf-8") as f:
+        return json.load(f)
 
-    data = {"last_mission": mid}
-    if score is not None:
-        data["score"] = score
-
+def save_progress(mid, score):
+    path = os.path.join(BASE, "save_game.json")
+    data = {
+        "last_mission": mid,
+        "score": score
+    }
     with open(path, "w", encoding="utf-8") as f:
         json.dump(data, f)
 
@@ -49,19 +49,11 @@ def get_all_missions():
         "missions_22_28.json",
         "missions_29_35.json"
     ]
-    data = []
-    for f in files:
-        j = load_json(f)
-        if j:
-            data.append(j)
-    return data
+    return [load_json(f) for f in files if load_json(f)]
 
 # =========================
-# 🧠 IA CORE (NEW LAYER)
+# 🧠 AI STATE (SOLO LOGICA)
 # =========================
-
-used_explanations = deque(maxlen=80)
-
 user_ai = {
     "score": 0,
     "stress": 0,
@@ -71,50 +63,35 @@ user_ai = {
 }
 
 contexts = {
-    "school": ["focus", "listen", "learn", "respect", "discipline"],
+    "school": ["focus", "listen", "learn", "discipline"],
     "street": ["awareness", "risk control", "observation"],
-    "money": ["discipline", "saving", "strategy", "control"],
-    "family": ["respect", "communication", "empathy"],
-    "future": ["planning", "vision", "long term thinking"],
+    "money": ["discipline", "saving", "strategy"],
+    "family": ["respect", "communication"],
+    "future": ["planning", "vision"],
     "security": ["avoid danger", "read situations"],
-    "happiness": ["balance", "calm mind", "gratitude"],
-    "business": ["strategy", "risk control", "decision making"]
+    "business": ["strategy", "decision making"]
 }
 
-explanations = [
-    "Control emotions before reacting changes outcomes.",
-    "Thinking first avoids long term mistakes.",
-    "Silence reveals what noise hides.",
-    "Respect builds long term trust.",
-    "Discipline creates freedom over time.",
-    "Every decision builds your identity.",
-    "Awareness is stronger than speed.",
-    "Observation is better than reaction.",
-    "Calm mind produces better results.",
-    "Responsibility creates leadership.",
-    "Your decisions today build your future.",
-    "Smart thinking reduces mistakes.",
-    "Focus determines your results.",
-    "Reacting fast often creates errors.",
-    "Thinking slow is thinking strong."
-]
+# =========================
+# 🧠 WORD SYSTEM
+# =========================
+def generate_words(context):
+    base = contexts.get(context, contexts["school"])
+
+    dynamic = [
+        "CONTROL", "FOCUS", "OBSERVE",
+        "THINK", "PAUSE", "CALM"
+    ]
+
+    result = list(set(base + random.sample(dynamic, 3)))
+    return [w.upper() for w in result]
+
+def pick_context():
+    return random.choice(list(contexts.keys()))
 
 # =========================
-# 🧠 AI FUNCTIONS
+# 🎯 DIFFICULTY
 # =========================
-
-def pick_explanation():
-    available = [e for e in explanations if e not in used_explanations]
-
-    if not available:
-        used_explanations.clear()
-        available = explanations
-
-    chosen = random.choice(available)
-    used_explanations.append(chosen)
-    return chosen
-
-
 def difficulty():
     if user_ai["score"] < 100:
         return "easy"
@@ -122,29 +99,10 @@ def difficulty():
         return "medium"
     return "hard"
 
-
-def generate_words(context):
-    base = contexts.get(context, contexts["school"])
-
-    dynamic = [
-        "CONTROL", "FOCUS", "DECIDE", "OBSERVE",
-        "THINK FAST", "THINK DEEP", "ACT SMART"
-    ]
-
-    result = list(set(base + random.sample(dynamic, 3)))
-    return [w.upper() for w in result]
-
-
-def pick_context():
-    return random.choice(list(contexts.keys()))
-
 # =========================
-# 🎮 FORMAT SYSTEM (COMPATIBLE)
+# 🎮 FORMAT MISSION
 # =========================
 def format_mission(mission, pack, lang="en"):
-    if not mission:
-        return None
-
     story_block = next((b for b in mission["blocks"] if b["type"] == "story"), {})
     decision_block = next((b for b in mission["blocks"] if b["type"] == "decision"), {})
 
@@ -163,12 +121,10 @@ def format_mission(mission, pack, lang="en"):
 
         "story": story_block.get("text", {}).get(lang, ""),
 
-        # 🧠 IA WORDS (NEW)
+        # IA WORDS (ÚNICO USO DE IA)
         "words": generate_words(context),
 
-        # 🧠 IA EXPLANATION
-        "ai_explanation": pick_explanation(),
-
+        # OPTIONS (JSON ONLY SOURCE OF EXPLANATION)
         "options": [
             {
                 "text": opt["text"].get(lang, ""),
@@ -181,7 +137,7 @@ def format_mission(mission, pack, lang="en"):
     }
 
 # =========================
-# 🔍 SEARCH LOGIC (UNCHANGED)
+# 🔍 FIND MISSION
 # =========================
 def find_mission(mid):
     datasets = get_all_missions()
@@ -197,7 +153,6 @@ def get_total_missions():
 # =========================
 # 🎯 API
 # =========================
-
 @app.route("/api/mission/<int:mission_id>")
 def api_mission(mission_id):
     lang = request.args.get("lang", "en")
@@ -216,28 +171,26 @@ def next_mission_flow():
     reset = request.args.get("reset", "false").lower() == "true"
 
     if reset:
-        save_progress(0)
+        save_progress(0, 0)
 
-    current_data = get_save_data()
-    current_id = current_data.get("last_mission", 0)
-    score = current_data.get("score", 0)
+    current = get_save_data()
+    current_id = current.get("last_mission", 0)
+    score = current.get("score", 0)
 
     next_id = current_id + 1
-
     if next_id > get_total_missions():
         next_id = 1
 
     mission, pack = find_mission(next_id)
 
-    if mission:
-        user_ai["score"] = score + 1
+    if not mission:
+        return jsonify({"error": "No mission found"}), 404
 
-        save_progress(next_id, user_ai["score"])
+    user_ai["score"] = score
 
-        return jsonify(format_mission(mission, pack, lang))
+    save_progress(next_id, user_ai["score"])
 
-    return jsonify({"error": "No mission found"}), 404
-
+    return jsonify(format_mission(mission, pack, lang))
 
 # =========================
 # 🧠 UPDATE AI STATE
@@ -245,7 +198,6 @@ def next_mission_flow():
 @app.route("/api/update", methods=["POST"])
 def update_ai():
     data = request.json
-
     score = data.get("score", 0)
 
     user_ai["score"] += score
@@ -279,5 +231,5 @@ if __name__ == "__main__":
     if not os.path.exists(os.path.join(BASE, "save_game.json")):
         save_progress(0, 0)
 
-    print("🚀 AL CIELO HYBRID AI SERVER RUNNING ON PORT 10000")
+    print("🚀 KAMIZEN CLEAN CORE RUNNING ON PORT 10000")
     app.run(host="0.0.0.0", port=10000, debug=True)
