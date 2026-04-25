@@ -282,9 +282,15 @@ async function triggerQuestion(){
 
             grid.innerHTML = "";
 
-            const finalExplanation = opt.explanation;
-            desc.innerText = finalExplanation;
-            speak(finalExplanation);
+            const exp = opt.explanation?.[lang];
+
+if (!exp) {
+    console.warn("Missing explanation in JSON for option:", opt);
+    return;
+}
+
+desc.innerText = exp;
+speak(exp);
 
             setTimeout(() => {
                 document.body.style.background = "#00050a";
