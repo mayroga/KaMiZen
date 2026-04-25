@@ -1,71 +1,73 @@
 {"game":"KAMIZEN KIDS: MATRIX TRAINING SYSTEM","chapter":4,"range":"22-28","ui":{"floating_words":["VISION","CONTROL","FOCUS","DISCIPLINE","CALM","TRUTH","AWARENESS"]},"matrix_rules":["1.Observe before reacting","2.Action creates reality","3.Thought controls emotion","4.Silence is power","5.Focus beats distraction","6.Breath controls mind","7.Reaction weakens control","8.Awareness is strength","9.Calm is intelligence","10.Impulse is not truth","11.Choice defines identity","12.Energy follows attention","13.Stop emotional action","14.See patterns not chaos","15.Inner voice is guide","16.Fear is signal","17.Courage is movement","18.Truth builds power","19.Respect creates boundaries","20.Discipline builds freedom","21.Small actions shape future","22.Emotion is data","23.Pause creates intelligence","24.Control attention always","25.Learn from mistakes","26.Think before speaking","27.Calm wins conflict","28.Awareness breaks confusion","29.Identity is built daily","30.Master yourself first"],"missions":[
+
 {"id":22,"level":22,"theme":"AWARENESS TEST","blocks":[
 {"type":"story","text":{"en":"Hidden detail appears.","es":"Aparece detalle oculto."}},
 {"type":"analysis","text":{"en":"Awareness reveals truth.","es":"La conciencia revela verdad."}},
 {"type":"decision","options":[
-{"code":"A","text":{"en":"Ignore","es":"Ignorar"},"correct":false},
-{"code":"B","text":{"en":"Observe closely","es":"Observar"},"correct":true},
-{"code":"C","text":{"en":"Run","es":"Correr"},"correct":false},
-{"code":"D","text":{"en":"Guess","es":"Adivinar"},"correct":false}
+{"code":"A","text":{"en":"Ignore","es":"Ignorar"},"correct":false,"explanation":"Ignoring removes awareness and causes missed information."},
+{"code":"B","text":{"en":"Observe closely","es":"Observar"},"correct":true,"explanation":"Observation reveals hidden patterns and gives advantage."},
+{"code":"C","text":{"en":"Run","es":"Correr"},"correct":false,"explanation":"Running avoids understanding the situation."},
+{"code":"D","text":{"en":"Guess","es":"Adivinar"},"correct":false,"explanation":"Guessing removes logic and increases error."}
 ]}]},
 
 {"id":23,"level":23,"theme":"EMOTIONAL CONTROL","blocks":[
 {"type":"story","text":{"en":"Emotions rise suddenly.","es":"Suben emociones."}},
 {"type":"analysis","text":{"en":"Control is key.","es":"El control es clave."}},
 {"type":"decision","options":[
-{"code":"A","text":{"en":"Explode","es":"Explotar"},"correct":false},
-{"code":"B","text":{"en":"Pause breathe","es":"Pausar respirar"},"correct":true},
-{"code":"C","text":{"en":"Shout","es":"Gritar"},"correct":false},
-{"code":"D","text":{"en":"Escape","es":"Escapar"},"correct":false}
+{"code":"A","text":{"en":"Explode","es":"Explotar"},"correct":false,"explanation":"Exploding gives control to emotions and weakens decisions."},
+{"code":"B","text":{"en":"Pause breathe","es":"Pausar respirar"},"correct":true,"explanation":"Breathing creates control and stabilizes the mind."},
+{"code":"C","text":{"en":"Shout","es":"Gritar"},"correct":false,"explanation":"Shouting increases chaos and reduces clarity."},
+{"code":"D","text":{"en":"Escape","es":"Escapar"},"correct":false,"explanation":"Escaping avoids control and prevents growth."}
 ]}]},
 
 {"id":24,"level":24,"theme":"DECISION SPEED","blocks":[
 {"type":"story","text":{"en":"Time pressure increases.","es":"Presión de tiempo."}},
 {"type":"analysis","text":{"en":"Fast is not best.","es":"Rápido no es mejor."}},
 {"type":"decision","options":[
-{"code":"A","text":{"en":"Rush","es":"Apresurar"},"correct":false},
-{"code":"B","text":{"en":"Think then act","es":"Pensar y actuar"},"correct":true},
-{"code":"C","text":{"en":"Random","es":"Aleatorio"},"correct":false},
-{"code":"D","text":{"en":"Stop","es":"Parar"},"correct":false}
+{"code":"A","text":{"en":"Rush","es":"Apresurar"},"correct":false,"explanation":"Rushing creates mistakes and poor decisions."},
+{"code":"B","text":{"en":"Think then act","es":"Pensar y actuar"},"correct":true,"explanation":"Thinking first creates better and more precise actions."},
+{"code":"C","text":{"en":"Random","es":"Aleatorio"},"correct":false,"explanation":"Random decisions remove control and logic."},
+{"code":"D","text":{"en":"Stop","es":"Parar"},"correct":false,"explanation":"Stopping avoids decision instead of solving it."}
 ]}]},
 
 {"id":25,"level":25,"theme":"LEARNING ERROR","blocks":[
 {"type":"story","text":{"en":"You make a mistake.","es":"Cometes error."}},
 {"type":"analysis","text":{"en":"Learn from error.","es":"Aprender del error."}},
 {"type":"decision","options":[
-{"code":"A","text":{"en":"Ignore","es":"Ignorar"},"correct":false},
-{"code":"B","text":{"en":"Learn","es":"Aprender"},"correct":true},
-{"code":"C","text":{"en":"Blame","es":"Culpar"},"correct":false},
-{"code":"D","text":{"en":"Hide","es":"Ocultar"},"correct":false}
+{"code":"A","text":{"en":"Ignore","es":"Ignorar"},"correct":false,"explanation":"Ignoring mistakes repeats them."},
+{"code":"B","text":{"en":"Learn","es":"Aprender"},"correct":true,"explanation":"Learning from mistakes builds intelligence and growth."},
+{"code":"C","text":{"en":"Blame","es":"Culpar"},"correct":false,"explanation":"Blaming removes responsibility and slows progress."},
+{"code":"D","text":{"en":"Hide","es":"Ocultar"},"correct":false,"explanation":"Hiding mistakes increases future consequences."}
 ]}]},
 
 {"id":26,"level":26,"theme":"THOUGHT CONTROL","blocks":[
 {"type":"story","text":{"en":"Thoughts become chaotic.","es":"Pensamientos caóticos."}},
 {"type":"analysis","text":{"en":"Control mind.","es":"Controla mente."}},
 {"type":"decision","options":[
-{"code":"A","text":{"en":"React","es":"Reaccionar"},"correct":false},
-{"code":"B","text":{"en":"Organize mind","es":"Organizar mente"},"correct":true},
-{"code":"C","text":{"en":"Escape","es":"Escapar"},"correct":false},
-{"code":"D","text":{"en":"Ignore","es":"Ignorar"},"correct":false}
+{"code":"A","text":{"en":"React","es":"Reaccionar"},"correct":false,"explanation":"Reacting to chaos increases confusion."},
+{"code":"B","text":{"en":"Organize mind","es":"Organizar mente"},"correct":true,"explanation":"Organizing thoughts creates clarity and control."},
+{"code":"C","text":{"en":"Escape","es":"Escapar"},"correct":false,"explanation":"Escaping avoids solving internal chaos."},
+{"code":"D","text":{"en":"Ignore","es":"Ignorar"},"correct":false,"explanation":"Ignoring mental chaos makes it stronger."}
 ]}]},
 
 {"id":27,"level":27,"theme":"INNER CALM","blocks":[
 {"type":"story","text":{"en":"Conflict appears.","es":"Conflicto aparece."}},
 {"type":"analysis","text":{"en":"Calm wins.","es":"La calma gana."}},
 {"type":"decision","options":[
-{"code":"A","text":{"en":"Fight","es":"Pelear"},"correct":false},
-{"code":"B","text":{"en":"Stay calm","es":"Mantener calma"},"correct":true},
-{"code":"C","text":{"en":"Run","es":"Correr"},"correct":false},
-{"code":"D","text":{"en":"Shout","es":"Gritar"},"correct":false}
+{"code":"A","text":{"en":"Fight","es":"Pelear"},"correct":false,"explanation":"Fighting escalates conflict and reduces clarity."},
+{"code":"B","text":{"en":"Stay calm","es":"Mantener calma"},"correct":true,"explanation":"Calm allows control and better decisions."},
+{"code":"C","text":{"en":"Run","es":"Correr"},"correct":false,"explanation":"Running avoids resolving the situation."},
+{"code":"D","text":{"en":"Shout","es":"Gritar"},"correct":false,"explanation":"Shouting increases chaos and reduces influence."}
 ]}]},
 
 {"id":28,"level":28,"theme":"FINAL AWARENESS","blocks":[
 {"type":"story","text":{"en":"Everything connects.","es":"Todo se conecta."}},
 {"type":"analysis","text":{"en":"Awareness wins.","es":"La conciencia gana."}},
 {"type":"decision","options":[
-{"code":"A","text":{"en":"Ignore","es":"Ignorar"},"correct":false},
-{"code":"B","text":{"en":"Understand","es":"Entender"},"correct":true},
-{"code":"C","text":{"en":"Escape","es":"Escapar"},"correct":false},
-{"code":"D","text":{"en":"React","es":"Reaccionar"},"correct":false}
+{"code":"A","text":{"en":"Ignore","es":"Ignorar"},"correct":false,"explanation":"Ignoring connections keeps you blind to patterns."},
+{"code":"B","text":{"en":"Understand","es":"Entender"},"correct":true,"explanation":"Understanding connections gives full awareness and control."},
+{"code":"C","text":{"en":"Escape","es":"Escapar"},"correct":false,"explanation":"Escaping avoids understanding reality."},
+{"code":"D","text":{"en":"React","es":"Reaccionar"},"correct":false,"explanation":"Reacting without understanding breaks awareness."}
 ]}]}
+
 ]}
