@@ -2,9 +2,7 @@
   "game":"KAMIZEN KIDS: MATRIX TRAINING SYSTEM",
   "chapter":4,
   "range":"29-35",
-  "ui":{
-    "floating_words":["DISCIPLINE","AWARENESS","CALM","FOCUS","TRUTH","CONTROL","ACTION","PAUSE"]
-  },
+  "ui":{"floating_words":["DISCIPLINE","AWARENESS","CALM","FOCUS","TRUTH","CONTROL","ACTION","PAUSE"]},
   "matrix_rules":[
     "1. Master yourself first",
     "2. Awareness creates freedom",
@@ -24,10 +22,10 @@
         {"type":"story","text":{"en":"Someone insults you publicly.","es":"Alguien te insulta en público."}},
         {"type":"analysis","text":{"en":"Reaction is a choice.","es":"La reacción es una elección."}},
         {"type":"decision","options":[
-          {"code":"EXPLODE","text":{"en":"Get angry immediately","es":"Enojarte de inmediato"},"correct":false},
-          {"code":"IGNORE","text":{"en":"Ignore and walk away","es":"Ignorar y alejarte"},"correct":false},
-          {"code":"PAUSE","text":{"en":"Pause and breathe","es":"Pausar y respirar"},"correct":true},
-          {"code":"ATTACK","text":{"en":"Respond aggressively","es":"Responder agresivo"},"correct":false}
+          {"code":"EXPLODE","text":{"en":"Get angry immediately","es":"Enojarte de inmediato"},"correct":false,"explanation":{"en":"Instant anger removes control and increases regret.","es":"La ira inmediata elimina el control y aumenta el arrepentimiento."}},
+          {"code":"IGNORE","text":{"en":"Ignore and walk away","es":"Ignorar y alejarte"},"correct":false,"explanation":{"en":"Avoiding without awareness does not solve emotional control.","es":"Evitar sin conciencia no desarrolla control emocional."}},
+          {"code":"PAUSE","text":{"en":"Pause and breathe","es":"Pausar y respirar"},"correct":true,"explanation":{"en":"Breathing restores control and prevents emotional reaction.","es":"Respirar restaura el control y evita reacciones emocionales."}},
+          {"code":"ATTACK","text":{"en":"Respond aggressively","es":"Responder agresivo"},"correct":false,"explanation":{"en":"Aggression escalates conflict and weakens discipline.","es":"La agresión aumenta el conflicto y debilita la disciplina."}}
         ]}
       ]
     },
@@ -39,10 +37,10 @@
         {"type":"story","text":{"en":"You are studying but distractions appear.","es":"Estás estudiando pero aparecen distracciones."}},
         {"type":"analysis","text":{"en":"Attention is energy.","es":"La atención es energía."}},
         {"type":"decision","options":[
-          {"code":"MULTI","text":{"en":"Do many things at once","es":"Hacer muchas cosas a la vez"},"correct":false},
-          {"code":"QUIT","text":{"en":"Stop studying","es":"Dejar de estudiar"},"correct":false},
-          {"code":"FOCUS","text":{"en":"Focus only on study","es":"Enfocarte solo en estudiar"},"correct":true},
-          {"code":"DISTRACT","text":{"en":"Check phone often","es":"Revisar el teléfono"},"correct":false}
+          {"code":"MULTI","text":{"en":"Do many things at once","es":"Hacer muchas cosas a la vez"},"correct":false,"explanation":{"en":"Multitasking reduces learning efficiency.","es":"La multitarea reduce la eficiencia del aprendizaje."}},
+          {"code":"QUIT","text":{"en":"Stop studying","es":"Dejar de estudiar"},"correct":false,"explanation":{"en":"Quitting breaks discipline and progress.","es":"Rendirse rompe la disciplina y el progreso."}},
+          {"code":"FOCUS","text":{"en":"Focus only on study","es":"Enfocarte solo en estudiar"},"correct":true,"explanation":{"en":"Single focus increases retention and control.","es":"El enfoque único mejora la retención y el control."}},
+          {"code":"DISTRACT","text":{"en":"Check phone often","es":"Revisar el teléfono"},"correct":false,"explanation":{"en":"Constant distraction destroys attention flow.","es":"La distracción constante destruye el enfoque."}}
         ]}
       ]
     },
@@ -54,10 +52,10 @@
         {"type":"story","text":{"en":"You made a mistake but no one knows.","es":"Cometiste un error pero nadie lo sabe."}},
         {"type":"analysis","text":{"en":"Truth builds identity.","es":"La verdad construye identidad."}},
         {"type":"decision","options":[
-          {"code":"LIE","text":{"en":"Hide the truth","es":"Ocultar la verdad"},"correct":false},
-          {"code":"BLAME","text":{"en":"Blame someone else","es":"Culpar a otro"},"correct":false},
-          {"code":"TRUTH","text":{"en":"Admit honestly","es":"Admitir honestamente"},"correct":true},
-          {"code":"IGNORE","text":{"en":"Do nothing","es":"No hacer nada"},"correct":false}
+          {"code":"LIE","text":{"en":"Hide the truth","es":"Ocultar la verdad"},"correct":false,"explanation":{"en":"Lies damage long-term integrity.","es":"Las mentiras dañan la integridad a largo plazo."}},
+          {"code":"BLAME","text":{"en":"Blame someone else","es":"Culpar a otro"},"correct":false,"explanation":{"en":"Blaming avoids responsibility and growth.","es":"Culpar evita responsabilidad y crecimiento."}},
+          {"code":"TRUTH","text":{"en":"Admit honestly","es":"Admitir honestamente"},"correct":true,"explanation":{"en":"Honesty strengthens character and trust.","es":"La honestidad fortalece el carácter y la confianza."}},
+          {"code":"IGNORE","text":{"en":"Do nothing","es":"No hacer nada"},"correct":false,"explanation":{"en":"Ignoring prevents correction and learning.","es":"Ignorar impide corregir y aprender."}}
         ]}
       ]
     },
@@ -69,10 +67,10 @@
         {"type":"story","text":{"en":"Friends push you to do something wrong.","es":"Tus amigos te presionan a hacer algo malo."}},
         {"type":"analysis","text":{"en":"Strength is saying no.","es":"La fuerza es decir no."}},
         {"type":"decision","options":[
-          {"code":"FOLLOW","text":{"en":"Follow them","es":"Seguirlos"},"correct":false},
-          {"code":"LAUGH","text":{"en":"Laugh and join","es":"Reír y unirse"},"correct":false},
-          {"code":"STAND","text":{"en":"Say no calmly","es":"Decir no con calma"},"correct":true},
-          {"code":"RUN","text":{"en":"Escape situation","es":"Escapar"},"correct":false}
+          {"code":"FOLLOW","text":{"en":"Follow them","es":"Seguirlos"},"correct":false,"explanation":{"en":"Following wrong pressure weakens identity.","es":"Seguir la mala presión debilita la identidad."}},
+          {"code":"LAUGH","text":{"en":"Laugh and join","es":"Reír y unirse"},"correct":false,"explanation":{"en":"Normalizing wrong actions reduces self-control.","es":"Normalizar lo incorrecto reduce el autocontrol."}},
+          {"code":"STAND","text":{"en":"Say no calmly","es":"Decir no con calma"},"correct":true,"explanation":{"en":"Calm refusal shows strength and independence.","es":"Negarse con calma muestra fuerza e independencia."}},
+          {"code":"RUN","text":{"en":"Escape situation","es":"Escapar"},"correct":false,"explanation":{"en":"Avoidance does not build real confidence.","es":"Evitar no construye verdadera confianza."}}
         ]}
       ]
     },
@@ -84,10 +82,10 @@
         {"type":"story","text":{"en":"Your thoughts are racing too fast.","es":"Tus pensamientos van demasiado rápido."}},
         {"type":"analysis","text":{"en":"Calm creates clarity.","es":"La calma crea claridad."}},
         {"type":"decision","options":[
-          {"code":"PANIC","text":{"en":"Overthink everything","es":"Sobrepensar todo"},"correct":false},
-          {"code":"STOP","text":{"en":"Stop and breathe","es":"Parar y respirar"},"correct":true},
-          {"code":"RUSH","text":{"en":"Act immediately","es":"Actuar de inmediato"},"correct":false},
-          {"code":"IGNORE","text":{"en":"Ignore thoughts","es":"Ignorar pensamientos"},"correct":false}
+          {"code":"PANIC","text":{"en":"Overthink everything","es":"Sobrepensar todo"},"correct":false,"explanation":{"en":"Overthinking increases confusion.","es":"Sobrepensar aumenta la confusión."}},
+          {"code":"STOP","text":{"en":"Stop and breathe","es":"Parar y respirar"},"correct":true,"explanation":{"en":"Breathing resets mental clarity.","es":"Respirar restablece la claridad mental."}},
+          {"code":"RUSH","text":{"en":"Act immediately","es":"Actuar de inmediato"},"correct":false,"explanation":{"en":"Fast action without clarity causes mistakes.","es":"Actuar rápido sin claridad causa errores."}},
+          {"code":"IGNORE","text":{"en":"Ignore thoughts","es":"Ignorar pensamientos"},"correct":false,"explanation":{"en":"Ignoring thoughts prevents understanding them.","es":"Ignorar pensamientos impide entenderlos."}}
         ]}
       ]
     },
@@ -99,10 +97,10 @@
         {"type":"story","text":{"en":"You feel strong emotions rising.","es":"Sientes emociones fuertes subiendo."}},
         {"type":"analysis","text":{"en":"Control starts inside.","es":"El control empieza dentro."}},
         {"type":"decision","options":[
-          {"code":"EXPRESS","text":{"en":"Act emotionally","es":"Actuar emocionalmente"},"correct":false},
-          {"code":"SUPPRESS","text":{"en":"Ignore emotions","es":"Ignorar emociones"},"correct":false},
-          {"code":"OBSERVE","text":{"en":"Observe feelings","es":"Observar emociones"},"correct":true},
-          {"code":"ESCAPE","text":{"en":"Avoid situation","es":"Evitar situación"},"correct":false}
+          {"code":"EXPRESS","text":{"en":"Act emotionally","es":"Actuar emocionalmente"},"correct":false,"explanation":{"en":"Emotional reaction reduces control.","es":"La reacción emocional reduce el control."}},
+          {"code":"SUPPRESS","text":{"en":"Ignore emotions","es":"Ignorar emociones"},"correct":false,"explanation":{"en":"Suppressing emotions does not resolve them.","es":"Reprimir emociones no las resuelve."}},
+          {"code":"OBSERVE","text":{"en":"Observe feelings","es":"Observar emociones"},"correct":true,"explanation":{"en":"Observation creates emotional mastery.","es":"Observar crea dominio emocional."}},
+          {"code":"ESCAPE","text":{"en":"Avoid situation","es":"Evitar situación"},"correct":false,"explanation":{"en":"Avoidance prevents personal growth.","es":"Evitar impide el crecimiento personal."}}
         ]}
       ]
     },
@@ -114,10 +112,10 @@
         {"type":"story","text":{"en":"You are tested with full distraction.","es":"Te ponen a prueba con distracción total."}},
         {"type":"analysis","text":{"en":"Discipline defines mastery.","es":"La disciplina define la maestría."}},
         {"type":"decision","options":[
-          {"code":"QUIT","text":{"en":"Give up","es":"Rendirse"},"correct":false},
-          {"code":"DISTRACT","text":{"en":"Lose focus","es":"Perder enfoque"},"correct":false},
-          {"code":"FOCUS","text":{"en":"Stay fully focused","es":"Mantener enfoque total"},"correct":true},
-          {"code":"REACT","text":{"en":"React emotionally","es":"Reaccionar emocionalmente"},"correct":false}
+          {"code":"QUIT","text":{"en":"Give up","es":"Rendirse"},"correct":false,"explanation":{"en":"Quitting breaks discipline and growth.","es":"Rendirse rompe la disciplina y el crecimiento."}},
+          {"code":"DISTRACT","text":{"en":"Lose focus","es":"Perder enfoque"},"correct":false,"explanation":{"en":"Distraction destroys mastery.","es":"La distracción destruye la maestría."}},
+          {"code":"FOCUS","text":{"en":"Stay fully focused","es":"Mantener enfoque total"},"correct":true,"explanation":{"en":"Full focus is the highest form of discipline.","es":"El enfoque total es la máxima disciplina."}},
+          {"code":"REACT","text":{"en":"React emotionally","es":"Reaccionar emocionalmente"},"correct":false,"explanation":{"en":"Emotional reaction reduces control and precision.","es":"La reacción emocional reduce control y precisión."}}
         ]}
       ]
     }
