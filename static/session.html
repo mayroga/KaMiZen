@@ -129,15 +129,20 @@ body {
 <script>
 
 // ==========================================
-// 🔊 SFX SYSTEM
+// 🔊 SFX & MUSIC SYSTEM (UNISON & INTENSE)
 // ==========================================
 const sfx = {
     click: new Audio('https://actions.google.com/sounds/v1/cartoon/pop.ogg'),
     power: new Audio('https://actions.google.com/sounds/v1/cartoon/clank_with_rattle.ogg'),
     risk: new Audio('https://actions.google.com/sounds/v1/cartoon/boing.ogg'),
-    success: new Audio('https://actions.google.com/sounds/v1/cartoon/upward_glissando.ogg'),
-    fail: new Audio('https://actions.google.com/sounds/v1/cartoon/concussive_hit_guitar_accent.ogg')
+    success: new Audio('https://actions.google.com/sounds/v1/science_fiction/low_fuzz_beam.ogg'),
+    fail: new Audio('https://actions.google.com/sounds/v1/foley/glass_shatter.ogg'),
+    open: new Audio('https://actions.google.com/sounds/v1/doors/creaky_door_open.ogg')
 };
+
+const bgMusic = new Audio('https://actions.google.com/sounds/v1/science_fiction/staccato_hi_tech_bleeps.ogg');
+bgMusic.loop = true;
+bgMusic.playbackRate = 1.5;
 
 // ==========================================
 // 🌌 WORD SYSTEM (LIFE TRAINING REAL)
@@ -242,8 +247,7 @@ function speak(text){
 function updateHUD(){
     document.getElementById("score-box").innerText=state.score;
     document.getElementById("timer-box").innerText =
-    String(Math.floor(state.timer/60)).padStart(2,"0")+":"+
-    String(state.timer%60).padStart(2,"0");
+    String(Math.floor(state.timer/60)).padStart(2,"0")+":"+String(state.timer%60).padStart(2,"0");
 
     document.getElementById("v-respect").innerText=state.stats.respect;
     document.getElementById("v-peace").innerText=state.stats.peace;
@@ -268,8 +272,9 @@ function spawnWord(){
     div.onclick=()=>{
         if(div.dataset.clicked) return;
         div.dataset.clicked="true";
-
         div.classList.add("explode");
+
+        sfx.open.currentTime=0; sfx.open.play();
 
         if(c==="power"){
             sfx.power.play();
@@ -278,7 +283,7 @@ function spawnWord(){
             state.stats.lead++;
         }
         if(c==="risk"){
-            sfx.risk.play();
+            sfx.fail.play();
             state.score-=30;
             state.stats.safety-=2;
         }
@@ -316,6 +321,9 @@ async function triggerQuestion(){
 
         btn.onclick=()=>{
 
+            sfx.open.currentTime=0;
+            sfx.open.play();
+
             let color="#ffaa00";
 
             if(opt.score>=8){
@@ -347,7 +355,6 @@ async function triggerQuestion(){
             updateHUD();
 
             grid.innerHTML="";
-
             const exp = opt.explanation || explanations[Math.floor(Math.random()*explanations.length)];
             desc.innerText = exp;
             speak(exp);
@@ -362,7 +369,7 @@ async function triggerQuestion(){
     });
 }
 
-// ================= LOOP (UPDATED) =================
+// ================= LOOP =================
 async function mainLoop(){
     while(true){
         gameMode="words";
@@ -374,7 +381,7 @@ async function mainLoop(){
             await new Promise(r=>setTimeout(r,state.spawnRate));
         }
 
-        document.querySelectorAll('.floating').forEach(el => el.remove());
+        document.querySelectorAll('.floating').forEach(el=>el.remove());
 
         gameMode="question";
         await triggerQuestion();
@@ -384,6 +391,10 @@ async function mainLoop(){
 }
 
 // ================= START =================
+document.addEventListener('click', () => {
+    bgMusic.play().catch(()=>{});
+}, { once:true });
+
 updateHUD();
 mainLoop();
 
