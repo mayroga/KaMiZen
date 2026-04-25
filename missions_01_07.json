@@ -1,71 +1,72 @@
 {"game":"KAMIZEN KIDS: MATRIX TRAINING SYSTEM","chapter":1,"range":"1-7","ui":{"floating_words":["FOCUS","CALM","BREATH","ACTION","STOP","THINK","CONTROL"]},"matrix_rules":["1.Observe before reacting","2.Action creates reality","3.Thought controls emotion","4.Silence is power","5.Focus beats distraction","6.Breath controls mind","7.Reaction weakens control","8.Awareness is strength","9.Calm is intelligence","10.Impulse is not truth","11.Choice defines identity","12.Energy follows attention","13.Stop before emotional action","14.See patterns not chaos","15.Inner voice is guide","16.Fear is temporary signal","17.Courage is movement","18.Truth builds power","19.Respect creates boundaries","20.Discipline builds freedom","21.Small actions shape future","22.Emotion is data","23.Pause creates intelligence","24.Control attention always","25.Learn from every mistake","26.Think before speaking","27.Calm wins conflict","28.Awareness breaks confusion","29.Identity is built daily","30.Master yourself first"],"missions":[
+
 {"id":1,"level":1,"theme":"THE HIDDEN SIGNAL","blocks":[
 {"type":"story","text":{"en":"You enter a noisy hallway.","es":"Entras en un pasillo ruidoso."}},
 {"type":"analysis","text":{"en":"Small details matter.","es":"Los detalles importan."}},
 {"type":"decision","options":[
-{"code":"A","text":{"en":"Ignore everything","es":"Ignorar todo"},"correct":false},
-{"code":"B","text":{"en":"Look carefully","es":"Observar con atención"},"correct":true},
-{"code":"C","text":{"en":"Run away","es":"Salir corriendo"},"correct":false},
-{"code":"D","text":{"en":"Ask others","es":"Preguntar a otros"},"correct":false}
+{"code":"A","text":{"en":"Ignore everything","es":"Ignorar todo"},"correct":false,"explanation":"Ignoring removes awareness. Without awareness, you lose control of the situation."},
+{"code":"B","text":{"en":"Look carefully","es":"Observar con atención"},"correct":true,"explanation":"Observation reveals hidden patterns. Awareness gives you control before acting."},
+{"code":"C","text":{"en":"Run away","es":"Salir corriendo"},"correct":false,"explanation":"Running avoids learning. Escaping prevents understanding and growth."},
+{"code":"D","text":{"en":"Ask others","es":"Preguntar a otros"},"correct":false,"explanation":"Depending on others weakens your perception. First observe by yourself."}
 ]}]},
 
 {"id":2,"level":2,"theme":"EMOTIONS","blocks":[
 {"type":"story","text":{"en":"Something triggers emotion.","es":"Algo activa emociones."}},
 {"type":"analysis","text":{"en":"Emotion is signal.","es":"La emoción es señal."}},
 {"type":"decision","options":[
-{"code":"A","text":{"en":"React fast","es":"Reaccionar rápido"},"correct":false},
-{"code":"B","text":{"en":"Pause breathe","es":"Pausar respirar"},"correct":true},
-{"code":"C","text":{"en":"Yell","es":"Gritar"},"correct":false},
-{"code":"D","text":{"en":"Ignore feelings","es":"Ignorar emociones"},"correct":false}
+{"code":"A","text":{"en":"React fast","es":"Reaccionar rápido"},"correct":false,"explanation":"Fast reaction is loss of control. Emotion without pause leads to mistakes."},
+{"code":"B","text":{"en":"Pause breathe","es":"Pausar respirar"},"correct":true,"explanation":"Breathing slows emotion. Pausing creates control before action."},
+{"code":"C","text":{"en":"Yell","es":"Gritar"},"correct":false,"explanation":"Yelling releases emotion but destroys control and influence."},
+{"code":"D","text":{"en":"Ignore feelings","es":"Ignorar emociones"},"correct":false,"explanation":"Ignoring emotions removes valuable signals. You must understand them, not suppress them."}
 ]}]},
 
 {"id":3,"level":3,"theme":"CHOICES","blocks":[
 {"type":"story","text":{"en":"Easy now or better later.","es":"Fácil ahora o mejor después."}},
 {"type":"analysis","text":{"en":"Future matters.","es":"El futuro importa."}},
 {"type":"decision","options":[
-{"code":"A","text":{"en":"Easy now","es":"Fácil ahora"},"correct":false},
-{"code":"B","text":{"en":"Smart choice","es":"Elección inteligente"},"correct":true},
-{"code":"C","text":{"en":"Do nothing","es":"No hacer nada"},"correct":false},
-{"code":"D","text":{"en":"Delay everything","es":"Retrasar todo"},"correct":false}
+{"code":"A","text":{"en":"Easy now","es":"Fácil ahora"},"correct":false,"explanation":"Choosing easy now creates harder problems later."},
+{"code":"B","text":{"en":"Smart choice","es":"Elección inteligente"},"correct":true,"explanation":"Smart choices build future advantage. Discipline creates freedom."},
+{"code":"C","text":{"en":"Do nothing","es":"No hacer nada"},"correct":false,"explanation":"Inaction is still a decision. It usually leads to lost opportunities."},
+{"code":"D","text":{"en":"Delay everything","es":"Retrasar todo"},"correct":false,"explanation":"Delaying creates pressure and weakens control over time."}
 ]}]},
 
 {"id":4,"level":4,"theme":"PRESSURE","blocks":[
 {"type":"story","text":{"en":"Group pressure appears.","es":"Presión de grupo."}},
 {"type":"analysis","text":{"en":"Stand firm.","es":"Mantente firme."}},
 {"type":"decision","options":[
-{"code":"A","text":{"en":"Follow group","es":"Seguir grupo"},"correct":false},
-{"code":"B","text":{"en":"Stay calm","es":"Mantener calma"},"correct":true},
-{"code":"C","text":{"en":"Escape","es":"Escapar"},"correct":false},
-{"code":"D","text":{"en":"Argue","es":"Discutir"},"correct":false}
+{"code":"A","text":{"en":"Follow group","es":"Seguir grupo"},"correct":false,"explanation":"Following the group removes your identity and decision power."},
+{"code":"B","text":{"en":"Stay calm","es":"Mantener calma"},"correct":true,"explanation":"Calm keeps your mind clear. Control under pressure builds strength."},
+{"code":"C","text":{"en":"Escape","es":"Escapar"},"correct":false,"explanation":"Escaping avoids pressure but also avoids growth."},
+{"code":"D","text":{"en":"Argue","es":"Discutir"},"correct":false,"explanation":"Arguing increases tension and reduces clarity."}
 ]}]},
 
 {"id":5,"level":5,"theme":"FOCUS","blocks":[
 {"type":"story","text":{"en":"Many distractions.","es":"Muchas distracciones."}},
 {"type":"analysis","text":{"en":"Focus wins.","es":"El enfoque gana."}},
 {"type":"decision","options":[
-{"code":"A","text":{"en":"Multitask","es":"Multitarea"},"correct":false},
-{"code":"B","text":{"en":"One task","es":"Una tarea"},"correct":true},
-{"code":"C","text":{"en":"Stop everything","es":"Parar todo"},"correct":false},
-{"code":"D","text":{"en":"Switch tasks","es":"Cambiar tareas"},"correct":false}
+{"code":"A","text":{"en":"Multitask","es":"Multitarea"},"correct":false,"explanation":"Multitasking splits attention and reduces performance."},
+{"code":"B","text":{"en":"One task","es":"Una tarea"},"correct":true,"explanation":"Single focus maximizes efficiency and results."},
+{"code":"C","text":{"en":"Stop everything","es":"Parar todo"},"correct":false,"explanation":"Stopping removes progress. Control is better than quitting."},
+{"code":"D","text":{"en":"Switch tasks","es":"Cambiar tareas"},"correct":false,"explanation":"Constant switching destroys deep focus and progress."}
 ]}]},
 
 {"id":6,"level":6,"theme":"FRIENDS","blocks":[
 {"type":"story","text":{"en":"Friend behavior unclear.","es":"Comportamiento de amigo."}},
 {"type":"analysis","text":{"en":"Observe actions.","es":"Observa acciones."}},
 {"type":"decision","options":[
-{"code":"A","text":{"en":"Ignore","es":"Ignorar"},"correct":false},
-{"code":"B","text":{"en":"Observe","es":"Observar"},"correct":true},
-{"code":"C","text":{"en":"Confront","es":"Confrontar"},"correct":false},
-{"code":"D","text":{"en":"Leave","es":"Irse"},"correct":false}
+{"code":"A","text":{"en":"Ignore","es":"Ignorar"},"correct":false,"explanation":"Ignoring removes awareness of real intentions."},
+{"code":"B","text":{"en":"Observe","es":"Observar"},"correct":true,"explanation":"Observation reveals truth through behavior, not words."},
+{"code":"C","text":{"en":"Confront","es":"Confrontar"},"correct":false,"explanation":"Confronting without understanding can escalate conflict."},
+{"code":"D","text":{"en":"Leave","es":"Irse"},"correct":false,"explanation":"Leaving removes the chance to understand and learn."}
 ]}]},
 
 {"id":7,"level":7,"theme":"CALM","blocks":[
 {"type":"story","text":{"en":"You are provoked.","es":"Te provocan."}},
 {"type":"analysis","text":{"en":"Control yourself.","es":"Controla tus emociones."}},
 {"type":"decision","options":[
-{"code":"A","text":{"en":"Explode","es":"Explotar"},"correct":false},
-{"code":"B","text":{"en":"Stay calm","es":"Mantener calma"},"correct":true},
-{"code":"C","text":{"en":"Run","es":"Correr"},"correct":false},
-{"code":"D","text":{"en":"Shout","es":"Gritar"},"correct":false}
+{"code":"A","text":{"en":"Explode","es":"Explotar"},"correct":false,"explanation":"Exploding gives control to others and weakens your position."},
+{"code":"B","text":{"en":"Stay calm","es":"Mantener calma"},"correct":true,"explanation":"Calm under pressure is real power and control."},
+{"code":"C","text":{"en":"Run","es":"Correr"},"correct":false,"explanation":"Running avoids the situation but does not build strength."},
+{"code":"D","text":{"en":"Shout","es":"Gritar"},"correct":false,"explanation":"Shouting increases chaos and reduces influence."}
 ]}]}
 ]}
