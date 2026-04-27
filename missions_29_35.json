@@ -10,9 +10,14 @@
 {"id":29,"cat":"emotion","b":[
 {"t":"v","tx":"Hoy: TRAMPA EMOCIONAL."},
 {"t":"h","tx":"Te insultan en público."},
-{"t":"br","tx":"Inhala","d":5},{"t":"br","tx":"Exhala","d":5},
+
+{"t":"br","tx":"Inhale / Inhala","d":5},
+{"t":"br","tx":"Exhale / Exhala","d":5,
+"inf":"Parasympathetic activation / Activación del sistema parasimpático → reduce cortisol y reactividad emocional"},
+
 {"t":"d","q":"¿Qué haces?","op":["Explotar","Ignorar","Respirar","Atacar"],"c":2,
 "ex":["Explotar=pierdes control.","Ignorar sin conciencia=no aprendes control.","Respirar=regula emoción (control real).","Atacar=escalas conflicto."]},
+
 {"t":"r","tx":"+Control","p":20},
 {"t":"c","tx":"Control emocional = poder."}
 ]},
@@ -21,16 +26,22 @@
 {"t":"v","tx":"Hoy: ENFOQUE."},
 {"t":"h","tx":"Distracciones aparecen."},
 {"t":"d","q":"¿Qué haces?","op":["Multitarea","Parar","Enfocar","Teléfono"],"c":2,
-"ex":["Multitarea=baja rendimiento.","Parar=sin progreso.","Enfocar=mejor retención.","Teléfono=rompe flujo mental."]},
+"ex":["Multitarea=baja rendimiento.","Parar=sin progreso.","Enfocar=mejora red atencional (prefrontal cortex).","Teléfono=rompe flujo mental."]},
+
 {"t":"r","tx":"+Focus","p":20},
 {"t":"c","tx":"Atención = energía."}
 ]},
+
+{"t":"br","tx":"--- SILENCE BLOCK A ---","d":60,
+"inf_en":"1 minute silence improves attention stability and impulse inhibition",
+"inf_es":"1 minuto de silencio mejora atención y control de impulsos"},
 
 {"id":31,"cat":"truth","b":[
 {"t":"v","tx":"Hoy: VERDAD."},
 {"t":"h","tx":"Error oculto."},
 {"t":"d","q":"¿Qué haces?","op":["Mentir","Culpar","Verdad","Ignorar"],"c":2,
-"ex":["Mentir=daña identidad.","Culpar=evitas crecer.","Verdad=fortalece carácter.","Ignorar=sin mejora."]},
+"ex":["Mentir=daña identidad.","Culpar=evitas crecer.","Verdad=fortalece coherencia neural y confianza.","Ignorar=sin mejora."]},
+
 {"t":"r","tx":"+Integridad","p":20},
 {"t":"c","tx":"La verdad crea respeto."}
 ]},
@@ -39,7 +50,8 @@
 {"t":"v","tx":"Hoy: PRESIÓN SOCIAL."},
 {"t":"h","tx":"Te presionan mal."},
 {"t":"d","q":"¿Qué haces?","op":["Seguir","Reír","Decir no","Escapar"],"c":2,
-"ex":["Seguir=pierdes identidad.","Reír=normalizas error.","Decir no=independencia real.","Escapar=no construyes confianza."]},
+"ex":["Seguir=pierdes identidad.","Reír=normalizas error.","Decir no=activación de autonomía y liderazgo.","Escapar=no construyes confianza."]},
+
 {"t":"r","tx":"+Fuerza","p":20},
 {"t":"c","tx":"Decir no = liderazgo."}
 ]},
@@ -47,18 +59,28 @@
 {"id":33,"cat":"mind","b":[
 {"t":"v","tx":"Hoy: CAOS MENTAL."},
 {"t":"h","tx":"Pensamientos rápidos."},
-{"t":"br","tx":"Inhala","d":4},{"t":"br","tx":"Exhala","d":4},
+
+{"t":"br","tx":"Inhale / Inhala","d":4},
+{"t":"br","tx":"Exhale / Exhala","d":4,
+"inf":"Neural reset through breathing / Reinicio neural mediante respiración"},
+
 {"t":"d","q":"¿Qué haces?","op":["Sobrepensar","Respirar","Actuar","Ignorar"],"c":1,
-"ex":["Sobrepensar=confusión.","Respirar=reset mental.","Actuar sin claridad=errores.","Ignorar=no entiendes mente."]},
+"ex":["Sobrepensar=confusión.","Respirar=reduce actividad amígdala y ordena mente.","Actuar sin claridad=errores.","Ignorar=no entiendes mente."]},
+
 {"t":"r","tx":"+Claridad","p":20},
 {"t":"c","tx":"Calma = claridad."}
 ]},
+
+{"t":"br","tx":"--- SILENCE BLOCK B ---","d":120,
+"inf_en":"2 minutes silence strengthens neuroplasticity and emotional regulation networks",
+"inf_es":"2 minutos de silencio fortalecen neuroplasticidad y regulación emocional cerebral"},
 
 {"id":34,"cat":"inner","b":[
 {"t":"v","tx":"Hoy: CONTROL INTERNO."},
 {"t":"h","tx":"Emoción fuerte."},
 {"t":"d","q":"¿Qué haces?","op":["Reaccionar","Ignorar","Observar","Evitar"],"c":2,
-"ex":["Reaccionar=sin control.","Ignorar=no resuelve.","Observar=dominio emocional.","Evitar=no creces."]},
+"ex":["Reaccionar=sin control.","Ignorar=no resuelve.","Observar=incrementa metacognición y dominio emocional.","Evitar=no creces."]},
+
 {"t":"r","tx":"+Dominio","p":20},
 {"t":"c","tx":"Observar = controlar."}
 ]},
@@ -67,16 +89,22 @@
 {"t":"v","tx":"PRUEBA FINAL: DISCIPLINA."},
 {"t":"h","tx":"Distracción total."},
 {"t":"d","q":"¿Qué haces?","op":["Rendirse","Distracción","Enfoque","Reaccionar"],"c":2,
-"ex":["Rendirse=rompe disciplina.","Distracción=sin maestría.","Enfoque=control total.","Reaccionar=sin precisión."]},
+"ex":["Rendirse=rompe disciplina.","Distracción=sin maestría.","Enfoque=control prefrontal total.","Reaccionar=sin precisión."]},
+
 {"t":"r","tx":"+Maestría","p":20},
 
 {"t":"v","tx":"RETO FINAL: SILENCIO ABSOLUTO."},
 
-{"t":"br","tx":"Inhala profundo","d":6,"inf":"Activa calma profunda"},
-{"t":"br","tx":"Retén","d":3,"inf":"Entrena control"},
-{"t":"br","tx":"Exhala lento","d":6,"inf":"Reduce estrés"},
+{"t":"br","tx":"Inhale / Inhala profundo","d":6,
+"inf":"Activates parasympathetic system / Activa sistema parasimpático"},
+{"t":"br","tx":"Hold / Retén","d":3,
+"inf":"Impulse control training / Entrenamiento de control de impulsos"},
+{"t":"br","tx":"Exhale / Exhala lento","d":6,
+"inf":"Heart rate reduction / Reducción del ritmo cardíaco"},
 
-{"t":"sil","d":120,"tx":"Sin moverte. Solo observa.","inf":"Nivel alto de control mental"},
+{"t":"sil","d":120,
+"tx":"Sin moverte. Solo observa.",
+"inf":"High-level metacognitive control / Control metacognitivo avanzado"},
 
 {"t":"v","tx":"Has completado el sistema."},
 
