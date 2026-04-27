@@ -1,73 +1,90 @@
-{"game":"KAMIZEN KIDS: MATRIX TRAINING SYSTEM","chapter":2,"range":"8-14","ui":{"floating_words":["PAUSE","THINK","BREATH","CONTROL","CALM","TRUTH","FOCUS","OBSERVE"]},"matrix_rules":["1.Observe before reacting","2.Action creates reality","3.Thought controls emotion","4.Silence is power","5.Focus beats distraction","6.Breath controls mind","7.Reaction weakens control","8.Awareness is strength","9.Calm is intelligence","10.Impulse is not truth","11.Choice defines identity","12.Energy follows attention","13.Stop before emotional action","14.See patterns not chaos","15.Inner voice is guide","16.Fear is temporary signal","17.Courage is movement","18.Truth builds power","19.Respect creates boundaries","20.Discipline builds freedom","21.Small actions shape future","22.Emotion is data","23.Pause creates intelligence","24.Control attention always","25.Learn from every mistake","26.Think before speaking","27.Calm wins conflict","28.Awareness breaks confusion","29.Identity is built daily","30.Master yourself first"],"missions":[
+{
+"sys":"KAMIZEN KIDS","ch":2,"rng":"8-14",
 
-{"id":8,"level":8,"theme":"TRUTH","blocks":[
-{"type":"story","text":{"en":"Truth is risky.","es":"La verdad es riesgosa."}},
-{"type":"analysis","text":{"en":"Truth builds character.","es":"La verdad construye carácter."}},
-{"type":"decision","options":[
-{"code":"A","text":{"en":"Lie","es":"Mentir"},"correct":false,"explanation":"Lying gives short-term escape but destroys long-term trust."},
-{"code":"B","text":{"en":"Truth calm","es":"Verdad calmada"},"correct":true,"explanation":"Calm truth builds respect and strong identity."},
-{"code":"C","text":{"en":"Hide","es":"Ocultar"},"correct":false,"explanation":"Hiding delays consequences but increases pressure."},
-{"code":"D","text":{"en":"Delay","es":"Retrasar"},"correct":false,"explanation":"Delaying truth makes situations worse over time."}
-]}]},
+"ui":{"fw":["PAUSE","THINK","BREATH","CONTROL","CALM","TRUTH","FOCUS","OBSERVE"]},
 
-{"id":9,"level":9,"theme":"DISTRACTION","blocks":[
-{"type":"story","text":{"en":"Phone distracts you.","es":"El teléfono distrae."}},
-{"type":"analysis","text":{"en":"Attention is power.","es":"La atención es poder."}},
-{"type":"decision","options":[
-{"code":"A","text":{"en":"Check phone","es":"Revisar teléfono"},"correct":false,"explanation":"Giving attention to distractions weakens your focus."},
-{"code":"B","text":{"en":"Control time","es":"Controlar tiempo"},"correct":true,"explanation":"Controlling attention increases productivity and discipline."},
-{"code":"C","text":{"en":"Ignore work","es":"Ignorar trabajo"},"correct":false,"explanation":"Ignoring responsibilities creates future stress."},
-{"code":"D","text":{"en":"Quit task","es":"Abandonar tarea"},"correct":false,"explanation":"Quitting removes progress and builds weak habits."}
-]}]},
+"rules":["Obs>React","Act=Real","Thought>Emotion","Silence=Power","Focus>Noise","Breath=Ctrl"],
 
-{"id":10,"level":10,"theme":"PRESSURE","blocks":[
-{"type":"story","text":{"en":"Fast decision needed.","es":"Decisión rápida."}},
-{"type":"analysis","text":{"en":"Pause is power.","es":"Pausar es poder."}},
-{"type":"decision","options":[
-{"code":"A","text":{"en":"Rush","es":"Apresurar"},"correct":false,"explanation":"Rushing leads to mistakes and poor decisions."},
-{"code":"B","text":{"en":"Pause think","es":"Pausar pensar"},"correct":true,"explanation":"Pausing allows clarity and better decisions."},
-{"code":"C","text":{"en":"Guess","es":"Adivinar"},"correct":false,"explanation":"Guessing removes logic and increases risk."},
-{"code":"D","text":{"en":"Avoid","es":"Evitar"},"correct":false,"explanation":"Avoiding decisions creates bigger problems later."}
-]}]},
+"ses":[
 
-{"id":11,"level":11,"theme":"RESPONSIBILITY","blocks":[
-{"type":"story","text":{"en":"You made mistake.","es":"Cometiste error."}},
-{"type":"analysis","text":{"en":"Own it.","es":"Asumirlo."}},
-{"type":"decision","options":[
-{"code":"A","text":{"en":"Deny","es":"Negar"},"correct":false,"explanation":"Denying blocks growth and damages trust."},
-{"code":"B","text":{"en":"Accept","es":"Aceptar"},"correct":true,"explanation":"Accepting responsibility builds strength and respect."},
-{"code":"C","text":{"en":"Blame","es":"Culpar"},"correct":false,"explanation":"Blaming others removes your power to improve."},
-{"code":"D","text":{"en":"Hide","es":"Ocultar"},"correct":false,"explanation":"Hiding mistakes increases consequences later."}
-]}]},
+{"id":8,"cat":"truth","b":[
+{"t":"v","tx":"Hoy: VERDAD."},
+{"t":"h","tx":"Decir la verdad da miedo."},
+{"t":"br","tx":"Inhala","d":4},{"t":"br","tx":"Exhala","d":4},
+{"t":"d","q":"¿Qué haces?","op":["Mentir","Verdad calmada","Ocultar","Retrasar"],"c":1,
+"ex":["Mentir=alivia corto plazo pero daña confianza (memoria conflictiva).","Verdad calmada=activa coherencia interna y respeto externo.","Ocultar=aumenta estrés interno.","Retrasar=crea más presión mental."]},
+{"t":"r","tx":"+Integridad","p":20},
+{"t":"c","tx":"La verdad te hace fuerte por dentro."}
+]},
 
-{"id":12,"level":12,"theme":"CONTROL","blocks":[
-{"type":"story","text":{"en":"You are provoked.","es":"Te provocan."}},
-{"type":"analysis","text":{"en":"Self control wins.","es":"Autocontrol gana."}},
-{"type":"decision","options":[
-{"code":"A","text":{"en":"Explode","es":"Explotar"},"correct":false,"explanation":"Exploding gives control to others."},
-{"code":"B","text":{"en":"Stay silent","es":"Quedarse en silencio"},"correct":true,"explanation":"Silence gives you control and observation advantage."},
-{"code":"C","text":{"en":"Shout","es":"Gritar"},"correct":false,"explanation":"Shouting increases chaos and reduces control."},
-{"code":"D","text":{"en":"Leave","es":"Irse"},"correct":false,"explanation":"Leaving avoids the challenge instead of mastering it."}
-]}]},
+{"id":9,"cat":"focus","b":[
+{"t":"v","tx":"Hoy: ATENCIÓN."},
+{"t":"h","tx":"El teléfono distrae."},
+{"t":"d","q":"¿Qué haces?","op":["Revisar","Controlar tiempo","Ignorar trabajo","Abandonar"],"c":1,
+"ex":["Revisar=tu dopamina se vuelve dependiente.","Controlar tiempo=entrenas disciplina y enfoque real.","Ignorar trabajo=acumulas estrés futuro.","Abandonar=refuerza hábito débil."]},
+{"t":"r","tx":"+Atención","p":20},
+{"t":"c","tx":"Tu atención es tu dinero mental."}
+]},
 
-{"id":13,"level":13,"theme":"ENVY","blocks":[
-{"type":"story","text":{"en":"Someone succeeds.","es":"Alguien triunfa."}},
-{"type":"analysis","text":{"en":"Focus path.","es":"Enfócate."}},
-{"type":"decision","options":[
-{"code":"A","text":{"en":"Compare","es":"Comparar"},"correct":false,"explanation":"Comparison creates insecurity and distraction."},
-{"code":"B","text":{"en":"Focus path","es":"Enfocar camino"},"correct":true,"explanation":"Focusing on your path builds progress and clarity."},
-{"code":"C","text":{"en":"Quit","es":"Renunciar"},"correct":false,"explanation":"Quitting stops growth completely."},
-{"code":"D","text":{"en":"Doubt","es":"Dudar"},"correct":false,"explanation":"Doubt weakens action and confidence."}
-]}]},
+{"id":10,"cat":"pressure","b":[
+{"t":"v","tx":"Hoy: DECISIÓN BAJO PRESIÓN."},
+{"t":"h","tx":"Debes decidir rápido."},
+{"t":"br","tx":"Inhala","d":3},{"t":"br","tx":"Exhala","d":3},
+{"t":"d","q":"¿Qué haces?","op":["Apresurar","Pausar","Adivinar","Evitar"],"c":1,
+"ex":["Apresurar=reduce precisión (cerebro reactivo).","Pausar=activa claridad y lógica.","Adivinar=alto riesgo sin datos.","Evitar=problema crece."]},
+{"t":"r","tx":"+Claridad","p":20},
+{"t":"c","tx":"Pausa rápida = mente fuerte."}
+]},
 
-{"id":14,"level":14,"theme":"VOICE","blocks":[
-{"type":"story","text":{"en":"Speak or stay silent.","es":"Hablar o callar."}},
-{"type":"analysis","text":{"en":"Voice is power.","es":"La voz es poder."}},
-{"type":"decision","options":[
-{"code":"A","text":{"en":"Silence","es":"Silencio"},"correct":false,"explanation":"Silence at the wrong moment removes influence."},
-{"code":"B","text":{"en":"Speak","es":"Hablar"},"correct":true,"explanation":"Speaking with intention creates impact and presence."},
-{"code":"C","text":{"en":"Avoid","es":"Evitar"},"correct":false,"explanation":"Avoiding reduces growth and confidence."},
-{"code":"D","text":{"en":"Hide","es":"Ocultar"},"correct":false,"explanation":"Hiding removes your voice and identity."}
-]}]}
-  
+{"id":11,"cat":"resp","b":[
+{"t":"v","tx":"Hoy: RESPONSABILIDAD."},
+{"t":"h","tx":"Cometiste un error."},
+{"t":"d","q":"¿Qué haces?","op":["Negar","Aceptar","Culpar","Ocultar"],"c":1,
+"ex":["Negar=bloquea aprendizaje.","Aceptar=neuroplasticidad activa mejora.","Culpar=entregas tu poder.","Ocultar=aumenta consecuencias."]},
+{"t":"r","tx":"+Responsabilidad","p":20},
+{"t":"c","tx":"Aceptar te hace crecer rápido."}
+]},
+
+{"id":12,"cat":"control","b":[
+{"t":"v","tx":"Hoy: AUTOCONTROL."},
+{"t":"h","tx":"Te provocan."},
+{"t":"br","tx":"Inhala","d":5},{"t":"br","tx":"Exhala","d":5},
+{"t":"d","q":"¿Qué haces?","op":["Explotar","Silencio","Gritar","Irse"],"c":1,
+"ex":["Explotar=amígdala domina.","Silencio=control + observación.","Gritar=ruido sin poder.","Irse=evitas entrenar."]},
+{"t":"r","tx":"+Control","p":20},
+{"t":"c","tx":"El que se controla, lidera."}
+]},
+
+{"id":13,"cat":"mind","b":[
+{"t":"v","tx":"Hoy: ENVIDIA."},
+{"t":"h","tx":"Otro tiene éxito."},
+{"t":"d","q":"¿Qué haces?","op":["Comparar","Enfocar","Rendirse","Dudar"],"c":1,
+"ex":["Comparar=baja autoestima (ruido mental).","Enfocar=crea progreso real.","Rendirse=detiene crecimiento.","Dudar=reduce acción."]},
+{"t":"r","tx":"+Dirección","p":20},
+{"t":"c","tx":"Tu camino es tu poder."}
+]},
+
+{"id":14,"cat":"voice","b":[
+{"t":"v","tx":"Hoy: VOZ Y PRESENCIA."},
+{"t":"h","tx":"Hablar o callar."},
+{"t":"d","q":"¿Qué haces?","op":["Callar","Hablar claro","Evitar","Ocultar"],"c":1,
+"ex":["Callar (mal momento)=pierdes influencia.","Hablar claro=activa respeto y liderazgo.","Evitar=reduce confianza.","Ocultar=borra identidad."]},
+{"t":"r","tx":"+Presencia","p":20},
+
+{"t":"v","tx":"RETO FINAL: SILENCIO INTELIGENTE (2 min)."},
+
+{"t":"br","tx":"Inhala profundo","d":6,"inf":"Activa sistema parasimpático (calma real)"},
+{"t":"br","tx":"Retén","d":3,"inf":"Entrena control de impulsos"},
+{"t":"br","tx":"Exhala lento","d":6,"inf":"Reduce ritmo cardíaco"},
+
+{"t":"br","tx":"Inhala corto","d":3,"inf":"Activa atención"},
+{"t":"br","tx":"Exhala largo","d":6,"inf":"Profundiza relajación"},
+
+{"t":"sil","d":120,"tx":"Silencio total. Observa sin reaccionar.","inf":"Entrenas metacognición (ver pensamientos sin actuar)"},
+
+{"t":"v","tx":"Ahora sabes controlar mente y reacción."},
+
+{"t":"c","tx":"Tu mente entrenada es tu ventaja en la vida."}
+]}
+
 ]}
