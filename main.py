@@ -24,6 +24,7 @@ body {
     user-select:none;
 }
 
+/* ALERTA */
 #security-alert {
     position:fixed;
     top:0;
@@ -32,6 +33,7 @@ body {
     height:8px;
     background:var(--neon-green);
     z-index:1000;
+    transition:0.8s ease;
     box-shadow:0 0 15px var(--neon-green);
 }
 
@@ -66,6 +68,10 @@ body {
     text-shadow:0 0 20px var(--neon-blue);
 }
 
+#score-container {
+    text-align:right;
+}
+
 #mastery-lvl {
     color:var(--neon-green);
     font-size:1.2rem;
@@ -80,6 +86,7 @@ body {
     background:rgba(255,255,255,0.1);
 }
 
+/* STATS */
 #life-stats {
     position:fixed;
     bottom:20px;
@@ -104,9 +111,9 @@ body {
     color:var(--neon-blue);
 }
 
-#v-money { color:var(--neon-gold)!important; }
-#v-safety { color:var(--neon-red)!important; }
-#v-happy { color:#ff00ff!important; }
+#v-money { color:var(--neon-gold) !important; }
+#v-safety { color:var(--neon-red) !important; }
+#v-happy { color:#ff00ff !important; }
 
 /* WORDS */
 .floating {
@@ -121,9 +128,20 @@ body {
     cursor:pointer;
 }
 
-.word-power { border:3px solid var(--neon-green); color:var(--neon-green); }
-.word-risk { border:3px solid var(--neon-red); color:var(--neon-red); }
-.word-silence { border:3px solid var(--neon-yellow); color:var(--neon-yellow); }
+.word-power {
+    border:3px solid var(--neon-green);
+    color:var(--neon-green);
+}
+
+.word-risk {
+    border:3px solid var(--neon-red);
+    color:var(--neon-red);
+}
+
+.word-silence {
+    border:3px solid var(--neon-yellow);
+    color:var(--neon-yellow);
+}
 
 @keyframes floatUp {
     from { transform:translateY(110vh); }
@@ -131,7 +149,7 @@ body {
 }
 
 .explode {
-    animation:blast 0.5s ease-out forwards!important;
+    animation:blast 0.5s ease-out forwards !important;
 }
 
 @keyframes blast {
@@ -180,8 +198,10 @@ body {
 
 <div id="hud">
     <div id="timer-box">05:00</div>
-    <div id="score-box">0</div>
-    <div id="mastery-lvl">MASTERY x1</div>
+    <div id="score-container">
+        <div id="mastery-lvl">MASTERY x1</div>
+        <div id="score-box">0</div>
+    </div>
 </div>
 
 <div id="life-stats">
@@ -237,108 +257,118 @@ function updateHUD(){
 }
 
 function toggleLang(){
-    lang = (lang==="en") ? "es" : "en";
+    lang = (lang === "en") ? "es" : "en";
     document.getElementById("lang-btn").innerText = lang.toUpperCase();
 }
 
 const words = {
-    power:["LISTEN FIRST","STAY CALM","THINK BEFORE","CONTROL EMOTION","RESPECT OTHERS"],
-    risk:["REACT ANGRY","BLAME OTHERS","LOSE CONTROL","FOLLOW CROWD"],
-    silence:["OBSERVE PEOPLE","BREATHE DEEP","WAIT MOMENT","INNER CONTROL"]
+    power:["LISTEN FIRST","STAY CALM","THINK BEFORE","CONTROL EMOTION","RESPECT OTHERS","FOCUS NOW"],
+    risk:["REACT ANGRY","BLAME OTHERS","LOSE CONTROL","FOLLOW CROWD","NO PLAN"],
+    silence:["OBSERVE PEOPLE","BREATHE DEEP","WAIT MOMENT","INNER CONTROL","CALM DOWN"]
 };
 
 function spawnWord(){
-    if(gameMode!=="words") return;
+    if(gameMode !== "words") return;
 
-    const cats=["power","risk","silence"];
-    const styles=["word-power","word-risk","word-silence"];
-    const c = cats[Math.floor(Math.random()*3)];
+    const cats = ["power","risk","silence"];
+    const styles = ["word-power","word-risk","word-silence"];
+    const c = cats[Math.floor(Math.random()*cats.length)];
 
-    const div=document.createElement("div");
-    div.className="floating "+styles[Math.floor(Math.random()*3)];
+    const div = document.createElement("div");
+    div.className = "floating " + styles[Math.floor(Math.random()*styles.length)];
     div.innerText = words[c][Math.floor(Math.random()*words[c].length)];
     div.style.left = Math.random()*80 + "vw";
 
     div.onclick = () => {
         if(div.dataset.clicked) return;
-        div.dataset.clicked=true;
+        div.dataset.clicked = "1";
         div.classList.add("explode");
 
-        if(c==="power") state.score+=20;
-        if(c==="risk") state.score-=30;
-        if(c==="silence") state.stats.peace++;
+        if(c === "power") state.score += 20;
+        if(c === "risk") state.score -= 30;
+        if(c === "silence") state.stats.peace++;
 
         updateHUD();
-        setTimeout(()=>div.remove(),500);
+        setTimeout(() => div.remove(), 500);
     };
 
     document.body.appendChild(div);
-    setTimeout(()=>div.remove(),7000);
+
+    setTimeout(() => {
+        if(div && div.parentNode) div.remove();
+    }, 7000);
 }
 
 async function triggerQuestion(){
     try {
-        const res = await fetch("/api/mission/next?lang="+lang);
-        const data = await res.json();
+        const res = await fetch("/api/mission/next?lang=" + lang);
+        if(!res.ok) return;
 
-        if(!data || data.error || !data.options){
-            document.getElementById("overlay").style.display="none";
-            return;
-        }
+        const data = await res.json();
 
         const overlay = document.getElementById("overlay");
         const grid = document.getElementById("decision-grid");
         const desc = document.getElementById("phase-desc");
         const title = document.getElementById("phase-title");
 
-        overlay.style.display="flex";
-        title.innerText=data.theme||"MISSION";
-        desc.innerText=data.story||"";
-        grid.innerHTML="";
+        overlay.style.display = "flex";
+        title.innerText = data.theme || "MISSION";
+        desc.innerText = data.story || "";
+        grid.innerHTML = "";
 
-        data.options.forEach(opt=>{
-            const btn=document.createElement("button");
-            btn.className="choice-btn";
-            btn.innerText=opt.text;
+        (data.options || []).forEach(opt => {
+            const btn = document.createElement("button");
+            btn.className = "choice-btn";
+            btn.innerText = opt.text;
 
-            btn.onclick=()=>{
+            btn.onclick = () => {
                 state.score += opt.score || 0;
                 desc.innerText = opt.explanation || "";
-                grid.innerHTML="";
-                setTimeout(()=>overlay.style.display="none",2500);
-                updateHUD();
+                grid.innerHTML = "";
+
+                setTimeout(() => {
+                    overlay.style.display = "none";
+                }, 2500);
             };
 
             grid.appendChild(btn);
         });
 
-    } catch(e){
-        document.getElementById("overlay").style.display="none";
+    } catch(e) {
+        console.error("QUESTION ERROR", e);
+        document.getElementById("overlay").style.display = "none";
     }
 }
 
 async function mainLoop(){
     while(true){
-        gameMode="words";
+        try {
+            gameMode = "words";
 
-        let end=Date.now()+45000;
+            let end = Date.now() + 45000;
 
-        while(Date.now()<end){
-            spawnWord();
-            await new Promise(r=>setTimeout(r,state.spawnRate));
+            while(Date.now() < end){
+                spawnWord();
+                await new Promise(r => setTimeout(r, state.spawnRate));
+            }
+
+            document.querySelectorAll(".floating").forEach(e => e.remove());
+
+            gameMode = "question";
+            await triggerQuestion();
+
+            await new Promise(r => setTimeout(r, 4000));
+
+        } catch(e) {
+            console.error("LOOP ERROR", e);
         }
-
-        document.querySelectorAll(".floating").forEach(e=>e.remove());
-
-        gameMode="question";
-        await triggerQuestion();
-
-        await new Promise(r=>setTimeout(r,4000));
     }
 }
 
 updateHUD();
 mainLoop();
+
+document.addEventListener("click", () => {}, {once:true});
 
 </script>
 
