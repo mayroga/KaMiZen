@@ -123,6 +123,11 @@ body {
 .word-risk { border:3px solid var(--neon-red); color:var(--neon-red); }
 .word-silence { border:3px solid var(--neon-yellow); color:var(--neon-yellow); }
 
+/* NUEVAS PALABRAS ECONOMÍA / NEGOCIO / BIENESTAR */
+.word-money { border:3px solid var(--neon-gold); color:var(--neon-gold); }
+.word-business { border:3px solid #00e5ff; color:#00e5ff; }
+.word-growth { border:3px solid #00ff99; color:#00ff99; }
+
 @keyframes floatUp {
     from { transform:translateY(110vh); }
     to { transform:translateY(-25vh); }
@@ -168,7 +173,6 @@ body {
     cursor:pointer;
 }
 
-/* BREATHING CIRCLE */
 #breath-circle{
     width:140px;
     height:140px;
@@ -224,78 +228,95 @@ body {
 
 <script>
 
-let lang="en";
-let gameMode="idle";
+let lang = "en";
+let gameMode = "idle";
 
-let state={
-    score:0,
-    mastery:1,
-    timer:300,
-    stats:{respect:50,peace:50,lead:50,money:100,happy:50,safety:100},
+let currentMissionId = 0;
+let nextMissionId = 1;
+
+let state = {
+    score: 0,
+    mastery: 1,
+    timer: 300,
+    stats: {
+        respect:50,
+        peace:50,
+        lead:50,
+        money:100,
+        happy:50,
+        safety:100
+    },
     spawnRate:1300
 };
 
 function speak(text){
     try{
-        let u=new SpeechSynthesisUtterance(text);
-        u.lang="en-US";
+        let u = new SpeechSynthesisUtterance(text);
+        u.lang = "en-US";
         speechSynthesis.speak(u);
     }catch(e){}
 }
 
 function updateHUD(){
-    document.getElementById("score-box").innerText=state.score;
+    document.getElementById("score-box").innerText = state.score;
 
-    let m=Math.floor(state.timer/60);
-    let s=state.timer%60;
+    let m = Math.floor(state.timer/60);
+    let s = state.timer%60;
 
-    document.getElementById("timer-box").innerText=
+    document.getElementById("timer-box").innerText =
         String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
 
     for(let k in state.stats){
-        let el=document.getElementById("v-"+k);
-        if(el) el.innerText=state.stats[k];
+        let el = document.getElementById("v-"+k);
+        if(el) el.innerText = state.stats[k];
     }
 }
 
-/* BREATH SYSTEM */
-function breathCycle(type, sec){
-    let circle=document.getElementById("breath-circle");
-    circle.style.display="flex";
-    circle.innerText=type.toUpperCase();
-
-    speak(type);
-
-    setTimeout(()=>circle.style.display="none", sec*1000);
+/* BREATH */
+function breathCycle(txt, sec){
+    let c = document.getElementById("breath-circle");
+    c.style.display="flex";
+    c.innerText = txt.toUpperCase();
+    speak(txt);
+    setTimeout(()=>c.style.display="none", sec*1000);
 }
 
 /* WORDS */
-const words={
+const words = {
     power:["LISTEN FIRST","STAY CALM","THINK BEFORE","CONTROL EMOTION","RESPECT OTHERS"],
     risk:["REACT ANGRY","BLAME OTHERS","LOSE CONTROL","FOLLOW CROWD"],
-    silence:["OBSERVE PEOPLE","BREATHE DEEP","WAIT MOMENT","INNER CONTROL"]
+    silence:["OBSERVE PEOPLE","BREATHE DEEP","WAIT MOMENT","INNER CONTROL"],
+
+    // NUEVO: economía / negocio / bienestar
+    money:["INVEST SMART","BUILD VALUE","CREATE CASHFLOW","SAVE MONEY","THINK SCALE"],
+    business:["BUILD SYSTEM","SELL VALUE","LEAD MARKET","CREATE BRAND","EXPAND NETWORK"],
+    growth:["LEARN FAST","IMPROVE DAILY","BUILD SKILL","FOCUS LONGTERM"]
 };
 
 function spawnWord(){
-    if(gameMode!=="words")return;
+    if(gameMode!=="words") return;
 
-    const cats=["power","risk","silence"];
-    const styles=["word-power","word-risk","word-silence"];
-    const c=cats[Math.floor(Math.random()*3)];
+    const cats=["power","risk","silence","money","business","growth"];
+    const styles=["word-power","word-risk","word-silence","word-money","word-business","word-growth"];
+
+    const c = cats[Math.floor(Math.random()*cats.length)];
 
     let div=document.createElement("div");
-    div.className="floating "+styles[Math.floor(Math.random()*3)];
-    div.innerText=words[c][Math.floor(Math.random()*words[c].length)];
-    div.style.left=Math.random()*80+"vw";
+    div.className="floating "+styles[cats.indexOf(c)];
+    div.innerText = words[c][Math.floor(Math.random()*words[c].length)];
+    div.style.left = Math.random()*80+"vw";
 
     div.onclick=()=>{
-        if(div.dataset.clicked)return;
+        if(div.dataset.clicked) return;
         div.dataset.clicked=true;
         div.classList.add("explode");
 
         if(c==="power"){state.score+=20;state.stats.respect++;}
         if(c==="risk"){state.score-=30;state.stats.safety--;}
         if(c==="silence"){state.stats.peace++;state.stats.happy++;}
+        if(c==="money"){state.score+=25;state.stats.money++;}
+        if(c==="business"){state.score+=30;state.stats.lead++;}
+        if(c==="growth"){state.stats.happy++;state.stats.peace++;}
 
         updateHUD();
         setTimeout(()=>div.remove(),500);
@@ -305,30 +326,28 @@ function spawnWord(){
     setTimeout(()=>div.remove(),7000);
 }
 
-/* JSON MISSION */
+/* MISSION SYNC id + next */
 async function triggerQuestion(){
     try{
-        const res=await fetch("/api/mission/next?lang="+lang);
-        const data=await res.json();
+        const res = await fetch("/api/mission/next?lang="+lang);
+        const data = await res.json();
 
-        if(!data||!data.options)return;
+        if(!data || !data.options) return;
 
-        let overlay=document.getElementById("overlay");
-        let grid=document.getElementById("decision-grid");
-        let desc=document.getElementById("phase-desc");
-        let title=document.getElementById("phase-title");
+        currentMissionId = data.id;
+        nextMissionId = data.next;
+
+        let overlay = document.getElementById("overlay");
+        let grid = document.getElementById("decision-grid");
+        let desc = document.getElementById("phase-desc");
+        let title = document.getElementById("phase-title");
 
         overlay.style.display="flex";
 
-        title.innerText=data.theme||"MISSION";
-        desc.innerText=(data.analysis||"")+"\n\n"+(data.story||"");
+        title.innerText = data.theme || "MISSION";
+        desc.innerText = (data.analysis||"") + "\n\n" + (data.story||"");
 
         grid.innerHTML="";
-
-        /* BREATH TRIGGER */
-        if(data.analysis?.includes("Inhala")){
-            breathCycle("inhale",4);
-        }
 
         data.options.forEach(opt=>{
             let btn=document.createElement("button");
@@ -339,15 +358,21 @@ async function triggerQuestion(){
                 if(opt.correct){
                     state.score+=30;
                     state.stats.respect++;
+                    state.stats.happy++;
                 }else{
                     state.score-=20;
                     state.stats.safety--;
                 }
 
                 speak(opt.explanation?.en||"");
-                desc.innerText=opt.explanation?.[lang]||"";
+                desc.innerText = opt.explanation?.[lang]||"";
+
                 grid.innerHTML="";
-                setTimeout(()=>overlay.style.display="none",2000);
+
+                setTimeout(()=>{
+                    overlay.style.display="none";
+                },1500);
+
                 updateHUD();
             };
 
@@ -357,7 +382,7 @@ async function triggerQuestion(){
     }catch(e){}
 }
 
-/* TIMER FIX */
+/* TIMER */
 setInterval(()=>{
     if(state.timer>0){
         state.timer--;
