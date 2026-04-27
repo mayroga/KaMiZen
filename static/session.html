@@ -214,6 +214,7 @@ body {
 
 let lang = "en";
 let gameMode = "idle";
+let missionIndex = 1;
 
 let state = {
     score: 0,
@@ -248,26 +249,20 @@ function updateHUD(){
     ];
 
     let max = -999;
-    let maxId = "";
 
     stats.forEach(s=>{
         const el = document.getElementById(s.id);
         if(!el) return;
+
         el.innerText = s.value;
-        el.style.transform = "scale(1)";
-        if(s.value > max){
-            max = s.value;
-            maxId = s.id;
-        }
+
+        // tamaño dinámico (más alto = más grande)
+        let scale = 1 + (s.value / 100);
+        el.style.transform = "scale(" + scale + ")";
+
+        if(s.value > max) max = s.value;
     });
 
-    stats.forEach(s=>{
-        const el = document.getElementById(s.id);
-        if(s.id === maxId){
-            el.style.transform = "scale(1.4)";
-            el.style.color = "#00ff41";
-        }
-    });
 }
 
 function toggleLang(){
@@ -294,6 +289,7 @@ function spawnWord(){
     div.style.left = Math.random()*80 + "vw";
 
     div.onclick=()=>{
+
         if(div.dataset.clicked) return;
         div.dataset.clicked=true;
         div.classList.add("explode");
@@ -323,41 +319,70 @@ function spawnWord(){
     setTimeout(()=>div.remove(),7000);
 }
 
+// cargar JSON real por misión
+async function loadMission(){
+    const file =
+        missionIndex <= 7 ? "/static/missions_01_07.json" :
+        missionIndex <= 14 ? "/static/missions_08_14.json" :
+        missionIndex <= 21 ? "/static/missions_15_21.json" :
+        missionIndex <= 28 ? "/static/missions_22_28.json" :
+        "/static/missions_29_35.json";
+
+    const res = await fetch(file);
+    const data = await res.json();
+
+    let list = data.missions || [];
+    return list.find(m => m.id === missionIndex);
+}
+
 async function triggerQuestion(){
-    try{
-        const res = await fetch("/api/mission/next?lang="+lang);
-        if(!res.ok) return;
+    const mission = await loadMission();
+    if(!mission) return;
 
-        const data = await res.json();
-        if(!data || !data.options) return;
+    const overlay=document.getElementById("overlay");
+    const grid=document.getElementById("decision-grid");
+    const desc=document.getElementById("phase-desc");
+    const title=document.getElementById("phase-title");
 
-        const overlay=document.getElementById("overlay");
-        const grid=document.getElementById("decision-grid");
-        const desc=document.getElementById("phase-desc");
-        const title=document.getElementById("phase-title");
+    overlay.style.display="flex";
 
-        overlay.style.display="flex";
-        title.innerText=data.theme||"MISSION";
-        desc.innerText=data.story||"";
-        grid.innerHTML="";
+    const story = mission.blocks.find(b=>b.type==="story");
+    const options = mission.blocks.find(b=>b.type==="decision");
 
-        data.options.forEach(opt=>{
-            const btn=document.createElement("button");
-            btn.className="choice-btn";
-            btn.innerText=opt.text;
+    title.innerText = mission.theme;
+    desc.innerText = story?.text?.[lang] || "";
 
-            btn.onclick=()=>{
-                state.score += opt.score||0;
-                desc.innerText = opt.explanation||"";
-                grid.innerHTML="";
-                setTimeout(()=>overlay.style.display="none",2000);
-                updateHUD();
-            };
+    grid.innerHTML="";
 
-            grid.appendChild(btn);
-        });
+    options.options.forEach(opt=>{
+        const btn=document.createElement("button");
+        btn.className="choice-btn";
+        btn.innerText = opt.text?.[lang] || opt.text?.en;
 
-    } catch(e){}
+        btn.onclick=()=>{
+
+            if(opt.correct){
+                state.score += 30;
+                state.stats.respect++;
+                state.stats.happy++;
+            } else {
+                state.score -= 20;
+                state.stats.safety--;
+            }
+
+            desc.innerText = opt.explanation?.[lang] || opt.explanation?.en;
+            grid.innerHTML="";
+
+            setTimeout(()=>{
+                overlay.style.display="none";
+                missionIndex++;
+            },2000);
+
+            updateHUD();
+        };
+
+        grid.appendChild(btn);
+    });
 }
 
 setInterval(()=>{
@@ -369,6 +394,7 @@ setInterval(()=>{
 
 async function mainLoop(){
     while(true){
+
         gameMode="words";
 
         let end=Date.now()+45000;
