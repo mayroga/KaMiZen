@@ -1,9 +1,3 @@
-/**
- * 🧠 KAMIZEN FLASK CORE — ROBUST STABLE VERSION
- * JSON-driven system (NO AI logic changes)
- * Safe mission flow + error-proof API + stable file handling
- */
-
 from flask import Flask, jsonify, send_from_directory, request
 import os
 import json
@@ -11,15 +5,12 @@ import random
 from threading import Lock
 
 app = Flask(__name__, static_folder="static")
-BASE = os.path.dirname(__file__)
 
-# =========================
-# 🔒 THREAD SAFE LOCK
-# =========================
+BASE = os.path.dirname(__file__)
 lock = Lock()
 
 # =========================
-# 💾 SAVE SYSTEM (ROBUST)
+# SAVE SYSTEM
 # =========================
 def get_save_data():
     try:
@@ -29,15 +20,9 @@ def get_save_data():
             return {"last_mission": 0, "score": 0}
 
         with open(path, "r", encoding="utf-8") as f:
-            data = json.load(f)
+            return json.load(f)
 
-        return {
-            "last_mission": int(data.get("last_mission", 0)),
-            "score": int(data.get("score", 0))
-        }
-
-    except Exception as e:
-        print("SAVE READ ERROR:", e)
+    except:
         return {"last_mission": 0, "score": 0}
 
 
@@ -45,19 +30,17 @@ def save_progress(mid, score):
     try:
         path = os.path.join(BASE, "save_game.json")
 
-        data = {
-            "last_mission": int(mid),
-            "score": int(score)
-        }
-
         with open(path, "w", encoding="utf-8") as f:
-            json.dump(data, f)
+            json.dump({
+                "last_mission": int(mid),
+                "score": int(score)
+            }, f)
 
     except Exception as e:
-        print("SAVE WRITE ERROR:", e)
+        print("SAVE ERROR:", e)
 
 # =========================
-# 📦 LOAD JSON SAFE
+# LOAD JSON
 # =========================
 def load_json(file):
     try:
@@ -70,7 +53,7 @@ def load_json(file):
             return json.load(f)
 
     except Exception as e:
-        print(f"LOAD ERROR {file}:", e)
+        print("LOAD ERROR:", file, e)
         return None
 
 
@@ -83,16 +66,10 @@ def get_all_missions():
         "missions_29_35.json"
     ]
 
-    data = []
-    for f in files:
-        d = load_json(f)
-        if d:
-            data.append(d)
-
-    return data
+    return [load_json(f) for f in files if load_json(f)]
 
 # =========================
-# 🧠 AI STATE (SAFE CORE ONLY)
+# AI STATE
 # =========================
 user_ai = {
     "score": 0,
@@ -113,175 +90,135 @@ contexts = {
 }
 
 # =========================
-# 🧠 WORD SYSTEM
+# WORD SYSTEM
 # =========================
 def generate_words(context):
     try:
         base = contexts.get(context, contexts["school"])
-
         dynamic = ["CONTROL", "FOCUS", "OBSERVE", "THINK", "PAUSE", "CALM"]
 
-        pool = list(set(base + random.sample(dynamic, 3)))
-        return [w.upper() for w in pool]
+        return list(set(base + random.sample(dynamic, 3)))
 
-    except Exception as e:
-        print("WORD GEN ERROR:", e)
+    except:
         return ["FOCUS", "CALM", "CONTROL"]
 
 
 def pick_context():
-    try:
-        return random.choice(list(contexts.keys()))
-    except:
-        return "school"
+    return random.choice(list(contexts.keys()))
 
 # =========================
-# 🎯 DIFFICULTY
+# DIFFICULTY
 # =========================
 def difficulty():
-    try:
-        score = user_ai.get("score", 0)
+    s = user_ai.get("score", 0)
 
-        if score < 100:
-            return "easy"
-        elif score < 300:
-            return "medium"
-        return "hard"
-
-    except:
+    if s < 100:
         return "easy"
+    elif s < 300:
+        return "medium"
+    return "hard"
 
 # =========================
-# 🎮 FORMAT MISSION (SAFE)
+# FORMAT MISSION
 # =========================
 def format_mission(mission, pack, lang="en"):
-    try:
-        blocks = mission.get("blocks", [])
+    blocks = mission.get("blocks", [])
 
-        story_block = next((b for b in blocks if b.get("type") == "story"), {})
-        decision_block = next((b for b in blocks if b.get("type") == "decision"), {})
+    story_block = next((b for b in blocks if b.get("type") == "story"), {})
+    decision_block = next((b for b in blocks if b.get("type") == "decision"), {})
 
-        context = pick_context()
+    context = pick_context()
 
-        return {
-            "id": mission.get("id"),
-            "level": mission.get("level"),
-            "theme": mission.get("theme"),
-            "chapter": pack.get("chapter", 1),
-            "ui": pack.get("ui", {}),
-            "matrix_rules": pack.get("matrix_rules", []),
+    return {
+        "id": mission.get("id"),
+        "level": mission.get("level"),
+        "theme": mission.get("theme"),
+        "chapter": pack.get("chapter", 1),
 
-            "difficulty": difficulty(),
-            "context": context,
+        "difficulty": difficulty(),
+        "context": context,
 
-            "story": story_block.get("text", {}).get(lang, ""),
+        "story": story_block.get("text", {}).get(lang, ""),
 
-            "words": generate_words(context),
+        "words": generate_words(context),
 
-            "options": [
-                {
-                    "text": opt.get("text", {}).get(lang, ""),
-                    "score": opt.get("score", 0),
-                    "correct": opt.get("correct", False),
-                    "explanation": opt.get("explanation", {}).get(lang, "")
-                }
-                for opt in decision_block.get("options", [])
-            ]
-        }
-
-    except Exception as e:
-        print("FORMAT ERROR:", e)
-        return {
-            "id": 0,
-            "theme": "ERROR",
-            "story": "System error",
-            "options": []
-        }
+        "options": [
+            {
+                "text": o.get("text", {}).get(lang, ""),
+                "score": o.get("score", 0),
+                "correct": o.get("correct", False),
+                "explanation": o.get("explanation", {}).get(lang, "")
+            }
+            for o in decision_block.get("options", [])
+        ]
+    }
 
 # =========================
-# 🔍 FIND MISSION (SAFE)
+# FIND MISSION
 # =========================
 def find_mission(mid):
     try:
-        datasets = get_all_missions()
-
-        for pack in datasets:
+        for pack in get_all_missions():
             for m in pack.get("missions", []):
                 if m.get("id") == mid:
                     return m, pack
+    except:
+        pass
 
-        return None, None
-
-    except Exception as e:
-        print("FIND ERROR:", e)
-        return None, None
+    return None, None
 
 
-def get_total_missions():
+def total_missions():
     return 35
 
 # =========================
-# 🎯 API: MISSION BY ID
+# API: MISSION
 # =========================
-@app.route("/api/mission/<int:mission_id>")
-def api_mission(mission_id):
-    try:
+@app.route("/api/mission/<int:mid>")
+def mission(mid):
+    lang = request.args.get("lang", "en")
+
+    m, p = find_mission(mid)
+
+    if not m:
+        return jsonify({"error": "not found"}), 404
+
+    return jsonify(format_mission(m, p, lang))
+
+# =========================
+# API: NEXT (FIXED SAFE LOOP)
+# =========================
+@app.route("/api/mission/next")
+def next_mission():
+    with lock:
         lang = request.args.get("lang", "en")
 
-        mission, pack = find_mission(mission_id)
+        data = get_save_data()
+
+        last = int(data.get("last_mission", 0))
+        score = int(data.get("score", 0))
+
+        nxt = last + 1
+
+        if nxt > total_missions():
+            nxt = 1
+
+        mission, pack = find_mission(nxt)
 
         if not mission:
-            return jsonify({"error": "Mission not found"}), 404
+            return jsonify({"error": "no mission"}), 404
+
+        user_ai["score"] = score
+
+        save_progress(nxt, score)
 
         return jsonify(format_mission(mission, pack, lang))
 
-    except Exception as e:
-        print("API ERROR:", e)
-        return jsonify({"error": "server error"}), 500
-
 # =========================
-# 🎯 API: NEXT MISSION (ROBUST FLOW)
-# =========================
-@app.route("/api/mission/next")
-def next_mission_flow():
-    with lock:
-        try:
-            lang = request.args.get("lang", "en")
-            reset = request.args.get("reset", "false").lower() == "true"
-
-            if reset:
-                save_progress(0, 0)
-
-            current = get_save_data()
-
-            current_id = int(current.get("last_mission", 0))
-            score = int(current.get("score", 0))
-
-            next_id = current_id + 1
-
-            if next_id > get_total_missions():
-                next_id = 1
-
-            mission, pack = find_mission(next_id)
-
-            if not mission:
-                return jsonify({"error": "No mission found"}), 404
-
-            user_ai["score"] = score
-
-            save_progress(next_id, user_ai["score"])
-
-            return jsonify(format_mission(mission, pack, lang))
-
-        except Exception as e:
-            print("NEXT MISSION ERROR:", e)
-            return jsonify({"error": "flow error"}), 500
-
-# =========================
-# 🧠 UPDATE AI STATE
+# UPDATE AI
 # =========================
 @app.route("/api/update", methods=["POST"])
-def update_ai():
+def update():
     try:
         data = request.json or {}
         score = int(data.get("score", 0))
@@ -294,17 +231,13 @@ def update_ai():
         else:
             user_ai["focus"] += 1
 
-        return jsonify({
-            "status": "ok",
-            "ai_state": user_ai
-        })
+        return jsonify({"status": "ok", "ai": user_ai})
 
-    except Exception as e:
-        print("UPDATE ERROR:", e)
+    except:
         return jsonify({"status": "error"}), 500
 
 # =========================
-# 🏠 STATIC
+# STATIC
 # =========================
 @app.route("/")
 def home():
@@ -312,11 +245,11 @@ def home():
 
 
 @app.route("/static/<path:path>")
-def static_files(path):
+def static(path):
     return send_from_directory("static", path)
 
 # =========================
-# 🚀 START SAFE
+# START
 # =========================
 if __name__ == "__main__":
     try:
@@ -325,9 +258,9 @@ if __name__ == "__main__":
         if not os.path.exists(path):
             save_progress(0, 0)
 
-        print("🚀 KAMIZEN CLEAN CORE RUNNING ON PORT 10000")
+        print("KAMIZEN SERVER RUNNING ON 10000")
 
         app.run(host="0.0.0.0", port=10000, debug=True)
 
     except Exception as e:
-        print("FATAL START ERROR:", e)
+        print("FATAL ERROR:", e)
