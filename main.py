@@ -1,13 +1,3 @@
-/**
- * KAMIZEN FLASK CORE — DEPLOY PROOF (RENDER READY)
- * - No endpoint conflicts
- * - Thread-safe
- * - Safe file IO
- * - Stable mission flow
- * - No static overrides
- * - Production-safe behavior
- */
-
 from flask import Flask, jsonify, send_from_directory, request
 import os
 import json
@@ -20,7 +10,7 @@ BASE = os.path.dirname(__file__)
 lock = Lock()
 
 # =========================
-# SAVE SYSTEM (SAFE)
+# SAVE SYSTEM
 # =========================
 def get_save_data():
     path = os.path.join(BASE, "save_game.json")
@@ -29,20 +19,14 @@ def get_save_data():
             return {"last_mission": 0, "score": 0}
 
         with open(path, "r", encoding="utf-8") as f:
-            data = json.load(f)
-
-        return {
-            "last_mission": int(data.get("last_mission", 0)),
-            "score": int(data.get("score", 0))
-        }
-
+            return json.load(f)
     except:
         return {"last_mission": 0, "score": 0}
 
 
 def save_progress(mid, score):
-    path = os.path.join(BASE, "save_game.json")
     try:
+        path = os.path.join(BASE, "save_game.json")
         with open(path, "w", encoding="utf-8") as f:
             json.dump({
                 "last_mission": int(mid),
@@ -53,14 +37,13 @@ def save_progress(mid, score):
 
 
 # =========================
-# LOAD JSON SAFE
+# LOAD JSON
 # =========================
 def load_json(file):
     try:
         path = os.path.join(BASE, file)
         if not os.path.exists(path):
             return None
-
         with open(path, "r", encoding="utf-8") as f:
             return json.load(f)
     except:
@@ -76,24 +59,23 @@ def get_all_missions():
         "missions_29_35.json"
     ]
 
-    packs = []
+    out = []
     for f in files:
-        d = load_json(f)
-        if d:
-            packs.append(d)
+        data = load_json(f)
+        if data:
+            out.append(data)
 
-    return packs
+    return out
 
 
 # =========================
-# AI STATE (LIGHTWEIGHT)
+# AI STATE
 # =========================
 user_ai = {
     "score": 0,
     "stress": 0,
     "focus": 50
 }
-
 
 contexts = {
     "school": ["focus", "listen", "learn", "discipline"],
@@ -132,7 +114,7 @@ def difficulty():
     s = user_ai.get("score", 0)
     if s < 100:
         return "easy"
-    elif s < 300:
+    if s < 300:
         return "medium"
     return "hard"
 
@@ -177,7 +159,7 @@ def format_mission(mission, pack, lang="en"):
         return {
             "id": 0,
             "theme": "ERROR",
-            "story": "System error",
+            "story": "system error",
             "options": []
         }
 
@@ -202,7 +184,7 @@ def total_missions():
 
 
 # =========================
-# API: HEALTH CHECK (FOR RENDER)
+# HEALTH CHECK (RENDER SAFE)
 # =========================
 @app.route("/health")
 def health():
@@ -210,7 +192,7 @@ def health():
 
 
 # =========================
-# API: MISSION BY ID
+# MISSION BY ID
 # =========================
 @app.route("/api/mission/<int:mid>")
 def mission(mid):
@@ -225,7 +207,7 @@ def mission(mid):
 
 
 # =========================
-# API: NEXT MISSION (SAFE + LOCKED)
+# NEXT MISSION (LOCKED SAFE)
 # =========================
 @app.route("/api/mission/next")
 def next_mission():
@@ -262,7 +244,7 @@ def next_mission():
 
 
 # =========================
-# API: UPDATE STATE
+# UPDATE STATE
 # =========================
 @app.route("/api/update", methods=["POST"])
 def update():
@@ -285,15 +267,20 @@ def update():
 
 
 # =========================
-# STATIC (SAFE — NO CONFLICT)
+# STATIC FILES
 # =========================
 @app.route("/")
 def home():
     return send_from_directory("static", "session.html")
 
 
+@app.route("/static/<path:path>")
+def static_files(path):
+    return send_from_directory("static", path)
+
+
 # =========================
-# STARTUP SAFE
+# START SERVER
 # =========================
 if __name__ == "__main__":
     try:
@@ -302,7 +289,7 @@ if __name__ == "__main__":
         if not os.path.exists(path):
             save_progress(0, 0)
 
-        print("KAMIZEN DEPLOY READY SERVER ON 10000")
+        print("KAMIZEN SERVER RUNNING ON PORT 10000")
 
         app.run(
             host="0.0.0.0",
@@ -312,4 +299,4 @@ if __name__ == "__main__":
         )
 
     except Exception as e:
-        print("FATAL START ERROR:", e)
+        print("FATAL ERROR:", e)
