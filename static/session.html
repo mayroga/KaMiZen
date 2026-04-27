@@ -208,12 +208,13 @@ body {
     <div id="decision-grid"></div>
 </div>
 
-<script src="/static/engine.js"></script>
-
 <script>
 
 let lang = "en";
 let gameMode = "idle";
+let missionIndex = 1;
+let currentBlocks = [];
+let blockIndex = 0;
 
 let state = {
     score: 0,
@@ -231,7 +232,6 @@ let state = {
 };
 
 function updateHUD(){
-
     document.getElementById("score-box").innerText = state.score;
 
     document.getElementById("timer-box").innerText =
@@ -250,7 +250,6 @@ function updateHUD(){
     stats.forEach(s=>{
         const el = document.getElementById(s.id);
         if(!el) return;
-
         el.innerText = s.value;
         let scale = 1 + (s.value / 100);
         el.style.transform = "scale(" + scale + ")";
@@ -262,111 +261,119 @@ function toggleLang(){
     document.getElementById("lang-btn").innerText = lang.toUpperCase();
 }
 
-const words = {
-    power:["LISTEN FIRST","STAY CALM","THINK BEFORE","CONTROL EMOTION","RESPECT OTHERS"],
-    risk:["REACT ANGRY","BLAME OTHERS","LOSE CONTROL","FOLLOW CROWD"],
-    silence:["OBSERVE PEOPLE","BREATHE DEEP","WAIT MOMENT","INNER CONTROL"]
-};
+async function loadMission(){
 
-function spawnWord(){
-    if(gameMode!=="words") return;
+    const file =
+        missionIndex <= 7 ? "/static/missions_01_07.json" :
+        missionIndex <= 14 ? "/static/missions_08_14.json" :
+        missionIndex <= 21 ? "/static/missions_15_21.json" :
+        missionIndex <= 28 ? "/static/missions_22_28.json" :
+        "/static/missions_29_35.json";
 
-    const cats=["power","risk","silence"];
-    const styles=["word-power","word-risk","word-silence"];
-    const c = cats[Math.floor(Math.random()*3)];
+    const res = await fetch(file + "?v=" + Date.now());
+    const data = await res.json();
 
-    const div=document.createElement("div");
-    div.className="floating "+styles[Math.floor(Math.random()*3)];
-    div.innerText = words[c][Math.floor(Math.random()*words[c].length)];
-    div.style.left = Math.random()*80 + "vw";
+    let mission = (data.ses || []).find(m => m.id === missionIndex);
 
-    div.onclick=()=>{
-        if(div.dataset.clicked) return;
-        div.dataset.clicked=true;
-        div.classList.add("explode");
+    if(!mission){
+        missionIndex = 1;
+        return loadMission();
+    }
 
-        if(c==="power"){
-            state.score+=20;
-            state.stats.respect++;
-            state.stats.lead++;
-        }
-
-        if(c==="risk"){
-            state.score-=30;
-            state.stats.safety--;
-            state.stats.peace--;
-        }
-
-        if(c==="silence"){
-            state.stats.peace++;
-            state.stats.happy++;
-        }
-
-        updateHUD();
-        setTimeout(()=>div.remove(),500);
-    };
-
-    document.body.appendChild(div);
-    setTimeout(()=>div.remove(),7000);
+    return mission;
 }
 
-async function triggerQuestion(){
+async function runBlocks(){
 
-    try{
-        const res = await fetch("/api/mission/next?lang="+lang);
-        if(!res.ok) return;
+    const overlay=document.getElementById("overlay");
+    const desc=document.getElementById("phase-desc");
+    const title=document.getElementById("phase-title");
+    const grid=document.getElementById("decision-grid");
 
-        const data = await res.json();
-        if(!data || !data.options) return;
+    overlay.style.display="flex";
+    grid.innerHTML="";
 
-        const overlay=document.getElementById("overlay");
-        const grid=document.getElementById("decision-grid");
-        const desc=document.getElementById("phase-desc");
-        const title=document.getElementById("phase-title");
+    while(blockIndex < currentBlocks.length){
 
-        overlay.style.display="flex";
+        const b = currentBlocks[blockIndex];
 
-        title.innerText = data.theme || "MISSION";
+        if(b.t==="v" || b.t==="h" || b.t==="c"){
+            title.innerText = "";
+            desc.innerText = b.tx;
+            await wait(2000);
+        }
 
-        desc.innerText =
-            (data.analysis ? data.analysis + "\n\n" : "") +
-            (data.story || "");
+        if(b.t==="br"){
+            desc.innerText = b.tx;
+            await wait((b.d || 3)*1000);
+        }
 
-        grid.innerHTML="";
+        if(b.t==="sil"){
+            desc.innerText = b.tx;
+            await wait((b.d || 60)*1000);
+        }
 
-        if(!Array.isArray(data.options)) return;
+        if(b.t==="r"){
+            state.score += b.p || 0;
+            desc.innerText = b.tx;
+            updateHUD();
+            await wait(1500);
+        }
 
-        data.options.forEach(opt=>{
+        if(b.t==="d"){
+            desc.innerText = b.q;
+            grid.innerHTML="";
 
-            const btn=document.createElement("button");
-            btn.className="choice-btn";
-            btn.innerText = opt.text?.[lang] || opt.text?.en || "";
+            await new Promise(resolve=>{
+                b.op.forEach((text,i)=>{
+                    const btn=document.createElement("button");
+                    btn.className="choice-btn";
+                    btn.innerText=text;
 
-            btn.onclick=()=>{
+                    btn.onclick=()=>{
+                        if(i===b.c){
+                            state.score += 30;
+                        } else {
+                            state.score -= 20;
+                        }
 
-                if(opt.correct){
-                    state.score += 30;
-                    state.stats.respect++;
-                    state.stats.happy++;
-                } else {
-                    state.score -= 20;
-                    state.stats.safety--;
-                }
+                        desc.innerText = b.ex[i] || "";
+                        grid.innerHTML="";
+                        updateHUD();
 
-                desc.innerText = opt.explanation?.[lang] || opt.explanation?.en || "";
-                grid.innerHTML="";
+                        setTimeout(resolve,2000);
+                    };
 
-                setTimeout(()=>{
-                    overlay.style.display="none";
-                },2000);
+                    grid.appendChild(btn);
+                });
+            });
+        }
 
-                updateHUD();
-            };
+        blockIndex++;
+    }
 
-            grid.appendChild(btn);
-        });
+    overlay.style.display="none";
+    missionIndex++;
+    blockIndex = 0;
 
-    }catch(e){}
+    if(missionIndex>35) missionIndex=1;
+}
+
+function wait(ms){
+    return new Promise(r=>setTimeout(r,ms));
+}
+
+async function mainLoop(){
+
+    while(true){
+
+        const mission = await loadMission();
+        currentBlocks = mission.b || [];
+
+        await runBlocks();
+
+        await wait(1000);
+    }
 }
 
 setInterval(()=>{
@@ -375,28 +382,6 @@ setInterval(()=>{
         updateHUD();
     }
 },1000);
-
-async function mainLoop(){
-
-    while(true){
-
-        gameMode="words";
-
-        let end=Date.now()+45000;
-
-        while(Date.now()<end){
-            spawnWord();
-            await new Promise(r=>setTimeout(r,state.spawnRate));
-        }
-
-        document.querySelectorAll(".floating").forEach(e=>e.remove());
-
-        gameMode="question";
-        await triggerQuestion();
-
-        await new Promise(r=>setTimeout(r,3000));
-    }
-}
 
 updateHUD();
 mainLoop();
