@@ -4,6 +4,9 @@ import os
 
 app = Flask(__name__, static_folder="static")
 
+# =========================
+# 🧠 CACHE
+# =========================
 CACHE = {}
 
 STATE = {
@@ -18,14 +21,20 @@ STATE = {
     }
 }
 
+# =========================
+# 📍 ROOT PATH (JSON EN RAÍZ)
+# =========================
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
+# =========================
+# 📦 LOAD JSON FROM ROOT
+# =========================
 def load_json(file_name):
     if file_name in CACHE:
         return CACHE[file_name]
 
-    path = os.path.join(BASE_DIR, file_name)
+    path = os.path.join(BASE_DIR, file_name)  # 🔥 RAÍZ DIRECTA
 
     try:
         with open(path, "r", encoding="utf-8") as f:
@@ -33,10 +42,15 @@ def load_json(file_name):
             CACHE[file_name] = data
             return data
     except Exception as e:
-        print("ERROR:", file_name, e)
+        print("❌ ERROR loading JSON:", file_name)
+        print("📍 PATH:", path)
+        print("🔥 ERROR:", e)
         return None
 
 
+# =========================
+# 🔎 GET FILE BY RANGE
+# =========================
 def get_file_by_index(i):
     for start in sorted(STATE["range_map"].keys()):
         if start <= i <= start + 6:
@@ -44,6 +58,9 @@ def get_file_by_index(i):
     return STATE["range_map"][1]
 
 
+# =========================
+# 🚀 MISSION ENGINE
+# =========================
 @app.route("/api/mission/next")
 def next_mission():
 
@@ -53,24 +70,26 @@ def next_mission():
     file_name = get_file_by_index(mission_id)
     data = load_json(file_name)
 
-    if not data or "ses" not in data:
-        return jsonify({"error": "no data", "file": file_name}), 500
+    # 🔴 FAIL SAFE
+    if not data:
+        return jsonify({"error": "JSON NOT FOUND", "file": file_name}), 500
 
-    # 🔥 FIX REAL: no depende solo del ID exacto
-    mission = None
+    if "ses" not in data:
+        return jsonify({"error": "INVALID FORMAT", "file": file_name}), 500
 
-    for s in data["ses"]:
-        if s.get("id") == mission_id:
-            mission = s
-            break
+    mission = next((s for s in data["ses"] if s.get("id") == mission_id), None)
 
-    # 🔴 SI NO EXISTE, USA PRIMERA MISIÓN DEL BLOQUE
-    if mission is None and len(data["ses"]) > 0:
-        mission = data["ses"][0]
-        mission_id = mission.get("id", mission_id)
+    # 🔥 SAFE FALLBACK (NO FREEZE)
+    if not mission:
+        mission = data["ses"][0] if data["ses"] else None
+        if mission:
+            mission_id = mission.get("id", mission_id)
+
+    if not mission:
+        return jsonify({"error": "NO MISSION FOUND"}), 500
 
     # =========================
-    # PARSE
+    # PARSE MISSION
     # =========================
     story = ""
     title = ""
@@ -94,7 +113,10 @@ def next_mission():
             options = []
             for i, op in enumerate(ops):
                 options.append({
-                    "text": {"en": op, "es": op},
+                    "text": {
+                        "en": op,
+                        "es": op
+                    },
                     "correct": (i == correct),
                     "explanation": {
                         "en": block.get("ex", [""])[i] if i < len(block.get("ex", [])) else "",
@@ -106,13 +128,16 @@ def next_mission():
             analysis += block.get("tx", "") + "\n"
 
     # =========================
-    # SAFE ADVANCE
+    # ADVANCE INDEX
     # =========================
     STATE["mission_index"] += 1
 
     if STATE["mission_index"] > STATE["MAX_MISSION"]:
         STATE["mission_index"] = 1
 
+    # =========================
+    # RESPONSE
+    # =========================
     return jsonify({
         "id": mission_id,
         "next": STATE["mission_index"],
@@ -124,6 +149,9 @@ def next_mission():
     })
 
 
+# =========================
+# 🌐 STATIC
+# =========================
 @app.route("/")
 def index():
     return send_from_directory("static", "session.html")
@@ -134,11 +162,17 @@ def static_files(path):
     return send_from_directory("static", path)
 
 
+# =========================
+# 🔁 RESET
+# =========================
 @app.route("/api/reset")
 def reset():
     STATE["mission_index"] = 1
     return jsonify({"ok": True})
 
 
+# =========================
+# 🚀 RUN
+# =========================
 if __name__ == "__main__":
     app.run(debug=True)
