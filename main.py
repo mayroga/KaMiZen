@@ -4,9 +4,6 @@ import os
 
 app = Flask(__name__, static_folder="static")
 
-# =========================
-# 🧠 CACHE
-# =========================
 CACHE = {}
 
 STATE = {
@@ -21,20 +18,26 @@ STATE = {
     }
 }
 
-# =========================
-# 📍 ROOT PATH (JSON EN RAÍZ)
-# =========================
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = os.getcwd()
 
 
 # =========================
-# 📦 LOAD JSON FROM ROOT
+# 🔧 SAFE GET LANG TEXT
+# =========================
+def t(obj, lang):
+    if isinstance(obj, dict):
+        return obj.get(lang) or obj.get("en") or ""
+    return obj or ""
+
+
+# =========================
+# LOAD JSON
 # =========================
 def load_json(file_name):
     if file_name in CACHE:
         return CACHE[file_name]
 
-    path = os.path.join(BASE_DIR, file_name)  # 🔥 RAÍZ DIRECTA
+    path = os.path.join(BASE_DIR, file_name)
 
     try:
         with open(path, "r", encoding="utf-8") as f:
@@ -42,14 +45,12 @@ def load_json(file_name):
             CACHE[file_name] = data
             return data
     except Exception as e:
-        print("❌ ERROR loading JSON:", file_name)
-        print("📍 PATH:", path)
-        print("🔥 ERROR:", e)
+        print("ERROR:", path, e)
         return None
 
 
 # =========================
-# 🔎 GET FILE BY RANGE
+# RANGE FILE
 # =========================
 def get_file_by_index(i):
     for start in sorted(STATE["range_map"].keys()):
@@ -59,7 +60,7 @@ def get_file_by_index(i):
 
 
 # =========================
-# 🚀 MISSION ENGINE
+# API
 # =========================
 @app.route("/api/mission/next")
 def next_mission():
@@ -70,27 +71,14 @@ def next_mission():
     file_name = get_file_by_index(mission_id)
     data = load_json(file_name)
 
-    # 🔴 FAIL SAFE
-    if not data:
-        return jsonify({"error": "JSON NOT FOUND", "file": file_name}), 500
-
-    if "ses" not in data:
-        return jsonify({"error": "INVALID FORMAT", "file": file_name}), 500
+    if not data or "ses" not in data:
+        return jsonify({"error": "NO DATA", "file": file_name}), 500
 
     mission = next((s for s in data["ses"] if s.get("id") == mission_id), None)
 
-    # 🔥 SAFE FALLBACK (NO FREEZE)
     if not mission:
-        mission = data["ses"][0] if data["ses"] else None
-        if mission:
-            mission_id = mission.get("id", mission_id)
+        mission = data["ses"][0]
 
-    if not mission:
-        return jsonify({"error": "NO MISSION FOUND"}), 500
-
-    # =========================
-    # PARSE MISSION
-    # =========================
     story = ""
     title = ""
     options = []
@@ -98,46 +86,47 @@ def next_mission():
 
     for block in mission.get("b", []):
 
-        t = block.get("t")
+        ttype = block.get("t")
 
-        if t == "v":
-            title = block.get("tx", "")
+        # TITLE
+        if ttype == "v":
+            title = t(block.get("tx"), lang)
 
-        elif t == "h":
-            story += block.get("tx", "") + "\n"
+        # STORY
+        elif ttype == "h":
+            story += t(block.get("tx"), lang) + "\n"
 
-        elif t == "d":
+        # QUESTION
+        elif ttype == "d":
             ops = block.get("op", [])
             correct = block.get("c", 0)
 
+            qtext = t(block.get("q"), lang)
+
             options = []
-            for i, op in enumerate(ops):
+            for idx, op in enumerate(ops):
                 options.append({
                     "text": {
                         "en": op,
                         "es": op
                     },
-                    "correct": (i == correct),
+                    "correct": idx == correct,
                     "explanation": {
-                        "en": block.get("ex", [""])[i] if i < len(block.get("ex", [])) else "",
-                        "es": block.get("ex", [""])[i] if i < len(block.get("ex", [])) else ""
-                    }
+                        "en": block.get("ex", [""])[idx] if idx < len(block.get("ex", [])) else "",
+                        "es": block.get("ex", [""])[idx] if idx < len(block.get("ex", [])) else ""
+                    },
+                    "question": qtext
                 })
 
-        elif t == "c":
-            analysis += block.get("tx", "") + "\n"
+        # ANALYSIS
+        elif ttype == "c":
+            analysis += t(block.get("tx"), lang) + "\n"
 
-    # =========================
-    # ADVANCE INDEX
-    # =========================
+    # ADVANCE SAFE
     STATE["mission_index"] += 1
-
     if STATE["mission_index"] > STATE["MAX_MISSION"]:
         STATE["mission_index"] = 1
 
-    # =========================
-    # RESPONSE
-    # =========================
     return jsonify({
         "id": mission_id,
         "next": STATE["mission_index"],
@@ -150,7 +139,7 @@ def next_mission():
 
 
 # =========================
-# 🌐 STATIC
+# STATIC
 # =========================
 @app.route("/")
 def index():
@@ -162,17 +151,12 @@ def static_files(path):
     return send_from_directory("static", path)
 
 
-# =========================
-# 🔁 RESET
-# =========================
 @app.route("/api/reset")
 def reset():
     STATE["mission_index"] = 1
     return jsonify({"ok": True})
 
 
-# =========================
-# 🚀 RUN
-# =========================
 if __name__ == "__main__":
+    print("SERVER RUNNING OK")
     app.run(debug=True)
