@@ -96,7 +96,6 @@ body {
     font-size:0.9rem;
     background:rgba(0,0,0,0.9);
     border-radius:6px;
-    transition:0.3s;
 }
 
 .stat-pill span {
@@ -120,20 +119,9 @@ body {
     cursor:pointer;
 }
 
-.word-power {
-    border:3px solid var(--neon-green);
-    color:var(--neon-green);
-}
-
-.word-risk {
-    border:3px solid var(--neon-red);
-    color:var(--neon-red);
-}
-
-.word-silence {
-    border:3px solid var(--neon-yellow);
-    color:var(--neon-yellow);
-}
+.word-power { border:3px solid var(--neon-green); color:var(--neon-green); }
+.word-risk { border:3px solid var(--neon-red); color:var(--neon-red); }
+.word-silence { border:3px solid var(--neon-yellow); color:var(--neon-yellow); }
 
 @keyframes floatUp {
     from { transform:translateY(110vh); }
@@ -208,19 +196,18 @@ body {
     <div id="decision-grid"></div>
 </div>
 
+<script src="/static/engine.js"></script>
+
 <script>
 
-let lang = "en";
-let gameMode = "idle";
-let missionIndex = 1;
-let currentBlocks = [];
-let blockIndex = 0;
+let lang="en";
+let gameMode="idle";
 
-let state = {
-    score: 0,
-    mastery: 1,
-    timer: 300,
-    stats: {
+let state={
+    score:0,
+    mastery:1,
+    timer:300,
+    stats:{
         respect:50,
         peace:50,
         lead:50,
@@ -232,156 +219,141 @@ let state = {
 };
 
 function updateHUD(){
-    document.getElementById("score-box").innerText = state.score;
+    document.getElementById("score-box").innerText=state.score;
 
-    document.getElementById("timer-box").innerText =
-        String(Math.floor(state.timer/60)).padStart(2,"0") + ":" +
+    document.getElementById("timer-box").innerText=
+        String(Math.floor(state.timer/60)).padStart(2,"0")+":"+
         String(state.timer%60).padStart(2,"0");
 
-    const stats = [
-        {id:"v-respect", value:state.stats.respect},
-        {id:"v-peace", value:state.stats.peace},
-        {id:"v-lead", value:state.stats.lead},
-        {id:"v-money", value:state.stats.money},
-        {id:"v-safety", value:state.stats.safety},
-        {id:"v-happy", value:state.stats.happy}
-    ];
-
-    stats.forEach(s=>{
-        const el = document.getElementById(s.id);
-        if(!el) return;
-        el.innerText = s.value;
-        let scale = 1 + (s.value / 100);
-        el.style.transform = "scale(" + scale + ")";
-    });
+    for(const k in state.stats){
+        const el=document.getElementById("v-"+k);
+        if(el) el.innerText=state.stats[k];
+    }
 }
 
 function toggleLang(){
-    lang = (lang==="en") ? "es" : "en";
-    document.getElementById("lang-btn").innerText = lang.toUpperCase();
+    lang=(lang==="en")?"es":"en";
+    document.getElementById("lang-btn").innerText=lang.toUpperCase();
 }
 
-async function loadMission(){
+const words={
+    power:["LISTEN FIRST","STAY CALM","THINK BEFORE","CONTROL EMOTION","RESPECT OTHERS"],
+    risk:["REACT ANGRY","BLAME OTHERS","LOSE CONTROL","FOLLOW CROWD"],
+    silence:["OBSERVE PEOPLE","BREATHE DEEP","WAIT MOMENT","INNER CONTROL"]
+};
 
-    const file =
-        missionIndex <= 7 ? "/static/missions_01_07.json" :
-        missionIndex <= 14 ? "/static/missions_08_14.json" :
-        missionIndex <= 21 ? "/static/missions_15_21.json" :
-        missionIndex <= 28 ? "/static/missions_22_28.json" :
-        "/static/missions_29_35.json";
+function spawnWord(){
+    if(gameMode!=="words")return;
 
-    const res = await fetch(file + "?v=" + Date.now());
-    const data = await res.json();
+    const cats=["power","risk","silence"];
+    const styles=["word-power","word-risk","word-silence"];
+    const c=cats[Math.floor(Math.random()*3)];
 
-    let mission = (data.ses || []).find(m => m.id === missionIndex);
+    const div=document.createElement("div");
+    div.className="floating "+styles[Math.floor(Math.random()*3)];
+    div.innerText=words[c][Math.floor(Math.random()*words[c].length)];
+    div.style.left=Math.random()*80+"vw";
 
-    if(!mission){
-        missionIndex = 1;
-        return loadMission();
-    }
+    div.onclick=()=>{
+        if(div.dataset.clicked)return;
+        div.dataset.clicked=true;
+        div.classList.add("explode");
 
-    return mission;
+        if(c==="power"){
+            state.score+=20;
+            state.stats.respect++;
+            state.stats.lead++;
+        }
+
+        if(c==="risk"){
+            state.score-=30;
+            state.stats.safety--;
+            state.stats.peace--;
+        }
+
+        if(c==="silence"){
+            state.stats.peace++;
+            state.stats.happy++;
+        }
+
+        updateHUD();
+        setTimeout(()=>div.remove(),500);
+    };
+
+    document.body.appendChild(div);
+    setTimeout(()=>div.remove(),7000);
 }
 
-async function runBlocks(){
+async function triggerQuestion(){
 
-    const overlay=document.getElementById("overlay");
-    const desc=document.getElementById("phase-desc");
-    const title=document.getElementById("phase-title");
-    const grid=document.getElementById("decision-grid");
+    try{
+        const res=await fetch("/api/mission/next?lang="+lang);
+        const data=await res.json();
 
-    overlay.style.display="flex";
-    grid.innerHTML="";
+        if(!data||!data.options)return;
 
-    while(blockIndex < currentBlocks.length){
+        const overlay=document.getElementById("overlay");
+        const grid=document.getElementById("decision-grid");
+        const desc=document.getElementById("phase-desc");
+        const title=document.getElementById("phase-title");
 
-        const b = currentBlocks[blockIndex];
+        overlay.style.display="flex";
+        title.innerText=data.theme||"MISSION";
 
-        if(b.t==="v" || b.t==="h" || b.t==="c"){
-            title.innerText = "";
-            desc.innerText = b.tx;
-            await wait(2000);
-        }
+        desc.innerText=(data.analysis?data.analysis+"\n\n":"")+(data.story||"");
 
-        if(b.t==="br"){
-            desc.innerText = b.tx;
-            await wait((b.d || 3)*1000);
-        }
+        grid.innerHTML="";
 
-        if(b.t==="sil"){
-            desc.innerText = b.tx;
-            await wait((b.d || 60)*1000);
-        }
+        data.options.forEach(opt=>{
+            const btn=document.createElement("button");
+            btn.className="choice-btn";
+            btn.innerText=opt.text?.[lang]||opt.text?.en;
 
-        if(b.t==="r"){
-            state.score += b.p || 0;
-            desc.innerText = b.tx;
-            updateHUD();
-            await wait(1500);
-        }
+            btn.onclick=()=>{
 
-        if(b.t==="d"){
-            desc.innerText = b.q;
-            grid.innerHTML="";
+                if(opt.correct){
+                    state.score+=30;
+                    state.stats.respect++;
+                    state.stats.happy++;
+                }else{
+                    state.score-=20;
+                    state.stats.safety--;
+                }
 
-            await new Promise(resolve=>{
-                b.op.forEach((text,i)=>{
-                    const btn=document.createElement("button");
-                    btn.className="choice-btn";
-                    btn.innerText=text;
+                desc.innerText=opt.explanation?.[lang]||opt.explanation?.en;
+                grid.innerHTML="";
 
-                    btn.onclick=()=>{
-                        if(i===b.c){
-                            state.score += 30;
-                        } else {
-                            state.score -= 20;
-                        }
+                setTimeout(()=>overlay.style.display="none",2000);
 
-                        desc.innerText = b.ex[i] || "";
-                        grid.innerHTML="";
-                        updateHUD();
+                updateHUD();
+            };
 
-                        setTimeout(resolve,2000);
-                    };
+            grid.appendChild(btn);
+        });
 
-                    grid.appendChild(btn);
-                });
-            });
-        }
-
-        blockIndex++;
-    }
-
-    overlay.style.display="none";
-    missionIndex++;
-    blockIndex = 0;
-
-    if(missionIndex>35) missionIndex=1;
-}
-
-function wait(ms){
-    return new Promise(r=>setTimeout(r,ms));
+    }catch(e){}
 }
 
 async function mainLoop(){
 
     while(true){
 
-        const mission = await loadMission();
-        currentBlocks = mission.b || [];
+        gameMode="words";
+        let end=Date.now()+45000;
 
-        await runBlocks();
+        while(Date.now()<end){
+            spawnWord();
+            await new Promise(r=>setTimeout(r,state.spawnRate));
+        }
 
-        await wait(1000);
+        document.querySelectorAll(".floating").forEach(e=>e.remove());
+
+        gameMode="question";
+        await triggerQuestion();
+
+        await new Promise(r=>setTimeout(r,3000));
     }
 }
-
-setInterval(()=>{
-    if(state.timer>0){
-        state.timer--;
-        updateHUD();
-    }
-},1000);
 
 updateHUD();
 mainLoop();
