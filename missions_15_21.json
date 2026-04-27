@@ -1,73 +1,90 @@
-{"game":"KAMIZEN KIDS: MATRIX TRAINING SYSTEM","chapter":3,"range":"15-21","ui":{"floating_words":["DISCIPLINE","FOCUS","CALM","TRUTH","CONTROL","BREATH","AWARENESS"]},"matrix_rules":["1.Observe before reacting","2.Action creates reality","3.Thought controls emotion","4.Silence is power","5.Focus beats distraction","6.Breath controls mind","7.Reaction weakens control","8.Awareness is strength","9.Calm is intelligence","10.Impulse is not truth","11.Choice defines identity","12.Energy follows attention","13.Stop emotional action","14.See patterns not chaos","15.Inner voice is guide","16.Fear is signal","17.Courage is movement","18.Truth builds power","19.Respect creates boundaries","20.Discipline builds freedom","21.Small actions shape future","22.Emotion is data","23.Pause creates intelligence","24.Control attention always","25.Learn from mistakes","26.Think before speaking","27.Calm wins conflict","28.Awareness breaks confusion","29.Identity is built daily","30.Master yourself first"],"missions":[
+{
+"sys":"KAMIZEN KIDS","ch":3,"rng":"15-21",
 
-{"id":15,"level":15,"theme":"CONTROL EMOTION","blocks":[
-{"type":"story","text":{"en":"Someone insults you directly.","es":"Alguien te insulta directamente."}},
-{"type":"analysis","text":{"en":"Control defines strength.","es":"El control define fuerza."}},
-{"type":"decision","options":[
-{"code":"A","text":{"en":"Insult back","es":"Insultar de vuelta"},"correct":false,"explanation":"Reacting emotionally gives control to others and weakens your position."},
-{"code":"B","text":{"en":"Stay calm","es":"Mantener calma"},"correct":true,"explanation":"Staying calm keeps control in your hands and shows true strength."},
-{"code":"C","text":{"en":"Ignore run","es":"Ignorar y huir"},"correct":false,"explanation":"Avoiding removes growth. You lose the chance to build internal control."},
-{"code":"D","text":{"en":"Shout","es":"Gritar"},"correct":false,"explanation":"Shouting escalates conflict and destroys clarity."}
-]}]},
+"ui":{"fw":["DISCIPLINE","FOCUS","CALM","TRUTH","CONTROL","BREATH","AWARENESS"]},
 
-{"id":16,"level":16,"theme":"FOCUS TEST","blocks":[
-{"type":"story","text":{"en":"Many distractions appear.","es":"Aparecen distracciones."}},
-{"type":"analysis","text":{"en":"Focus is skill.","es":"El enfoque es habilidad."}},
-{"type":"decision","options":[
-{"code":"A","text":{"en":"Switch tasks","es":"Cambiar tareas"},"correct":false,"explanation":"Switching tasks breaks concentration and reduces performance."},
-{"code":"B","text":{"en":"Focus one task","es":"Una sola tarea"},"correct":true,"explanation":"Single focus increases efficiency and builds discipline."},
-{"code":"C","text":{"en":"Stop all","es":"Detener todo"},"correct":false,"explanation":"Stopping removes progress instead of controlling attention."},
-{"code":"D","text":{"en":"Delay work","es":"Retrasar trabajo"},"correct":false,"explanation":"Delaying creates stress and weakens responsibility."}
-]}]},
+"rules":["Obs>React","Act=Real","Thought>Emotion","Silence=Power","Focus>Noise","Breath=Ctrl"],
 
-{"id":17,"level":17,"theme":"FEAR CONTROL","blocks":[
-{"type":"story","text":{"en":"You feel fear before action.","es":"Sientes miedo antes de actuar."}},
-{"type":"analysis","text":{"en":"Fear is signal.","es":"El miedo es señal."}},
-{"type":"decision","options":[
-{"code":"A","text":{"en":"Stop forever","es":"Detenerse"},"correct":false,"explanation":"Stopping because of fear blocks growth and opportunity."},
-{"code":"B","text":{"en":"Act anyway","es":"Actuar igual"},"correct":true,"explanation":"Acting despite fear builds courage and internal strength."},
-{"code":"C","text":{"en":"Escape","es":"Escapar"},"correct":false,"explanation":"Escaping reinforces fear and reduces confidence."},
-{"code":"D","text":{"en":"Freeze","es":"Paralizarse"},"correct":false,"explanation":"Freezing removes control and prevents progress."}
-]}]},
+"ses":[
 
-{"id":18,"level":18,"theme":"TRUTH POWER","blocks":[
-{"type":"story","text":{"en":"You must choose honesty.","es":"Debes elegir honestidad."}},
-{"type":"analysis","text":{"en":"Truth builds power.","es":"La verdad construye poder."}},
-{"type":"decision","options":[
-{"code":"A","text":{"en":"Lie","es":"Mentir"},"correct":false,"explanation":"Lying creates short-term relief but destroys long-term trust."},
-{"code":"B","text":{"en":"Tell truth","es":"Decir verdad"},"correct":true,"explanation":"Truth builds trust, clarity, and strong identity."},
-{"code":"C","text":{"en":"Hide","es":"Ocultar"},"correct":false,"explanation":"Hiding delays consequences and increases pressure."},
-{"code":"D","text":{"en":"Delay","es":"Retrasar"},"correct":false,"explanation":"Delaying truth makes problems grow over time."}
-]}]},
+{"id":15,"cat":"emotion","b":[
+{"t":"v","tx":"Hoy: CONTROL EMOCIONAL REAL."},
+{"t":"h","tx":"Alguien te insulta."},
+{"t":"br","tx":"Inhala","d":4},{"t":"br","tx":"Exhala","d":4},
+{"t":"d","q":"¿Qué haces?","op":["Insultar","Calma","Huir","Gritar"],"c":1,
+"ex":["Insultar=amígdala domina, pierdes poder.","Calma=corteza prefrontal controla → fuerza real.","Huir=evitas entrenar control.","Gritar=aumenta caos, baja inteligencia."]},
+{"t":"r","tx":"+Control","p":20},
+{"t":"c","tx":"El que se controla, gana."}
+]},
 
-{"id":19,"level":19,"theme":"SOCIAL PRESSURE","blocks":[
-{"type":"story","text":{"en":"Group pushes wrong action.","es":"El grupo presiona mal."}},
-{"type":"analysis","text":{"en":"Independence matters.","es":"La independencia importa."}},
-{"type":"decision","options":[
-{"code":"A","text":{"en":"Follow group","es":"Seguir grupo"},"correct":false,"explanation":"Following others removes your identity and control."},
-{"code":"B","text":{"en":"Stand firm","es":"Mantener firme"},"correct":true,"explanation":"Standing firm protects your values and builds strength."},
-{"code":"C","text":{"en":"Laugh it off","es":"Reírse"},"correct":false,"explanation":"Avoiding the situation prevents real decision-making."},
-{"code":"D","text":{"en":"Leave panic","es":"Salir en pánico"},"correct":false,"explanation":"Panic decisions reduce clarity and control."}
-]}]},
+{"id":16,"cat":"focus","b":[
+{"t":"v","tx":"Hoy: TEST DE ENFOQUE."},
+{"t":"h","tx":"Muchas distracciones."},
+{"t":"d","q":"¿Qué haces?","op":["Cambiar","1 tarea","Parar","Retrasar"],"c":1,
+"ex":["Cambiar=rompe concentración (costo cognitivo).","1 tarea=estado de flujo (máximo rendimiento).","Parar=sin progreso.","Retrasar=aumenta estrés."]},
+{"t":"r","tx":"+Focus","p":20},
+{"t":"c","tx":"Enfoque = ventaja competitiva."}
+]},
 
-{"id":20,"level":20,"theme":"DISCIPLINE","blocks":[
-{"type":"story","text":{"en":"You want to quit early.","es":"Quieres rendirte."}},
-{"type":"analysis","text":{"en":"Discipline wins.","es":"La disciplina gana."}},
-{"type":"decision","options":[
-{"code":"A","text":{"en":"Quit","es":"Rendirse"},"correct":false,"explanation":"Quitting builds weak habits and stops progress."},
-{"code":"B","text":{"en":"Continue","es":"Continuar"},"correct":true,"explanation":"Continuing builds discipline and long-term success."},
-{"code":"C","text":{"en":"Delay","es":"Retrasar"},"correct":false,"explanation":"Delaying reduces consistency and weakens results."},
-{"code":"D","text":{"en":"Avoid","es":"Evitar"},"correct":false,"explanation":"Avoiding removes responsibility and growth."}
-]}]},
+{"id":17,"cat":"fear","b":[
+{"t":"v","tx":"Hoy: CONTROL DEL MIEDO."},
+{"t":"h","tx":"Sientes miedo antes de actuar."},
+{"t":"br","tx":"Inhala","d":5},{"t":"br","tx":"Exhala","d":5},
+{"t":"d","q":"¿Qué haces?","op":["Detenerse","Actuar","Escapar","Paralizar"],"c":1,
+"ex":["Detenerse=refuerza miedo (circuito neuronal).","Actuar=crea coraje (exposición progresiva).","Escapar=aumenta miedo futuro.","Paralizar=sin control ni progreso."]},
+{"t":"r","tx":"+Coraje","p":20},
+{"t":"c","tx":"El miedo es señal, no orden."}
+]},
 
-{"id":21,"level":21,"theme":"SELF MASTER","blocks":[
-{"type":"story","text":{"en":"You must control yourself.","es":"Debes controlarte."}},
-{"type":"analysis","text":{"en":"Mastery is internal.","es":"La maestría es interna."}},
-{"type":"decision","options":[
-{"code":"A","text":{"en":"React","es":"Reaccionar"},"correct":false,"explanation":"Reacting automatically means lack of control."},
-{"code":"B","text":{"en":"Control self","es":"Autocontrol"},"correct":true,"explanation":"Self-control is the foundation of mastery and power."},
-{"code":"C","text":{"en":"Escape","es":"Escapar"},"correct":false,"explanation":"Escaping avoids the challenge instead of mastering it."},
-{"code":"D","text":{"en":"Ignore","es":"Ignorar"},"correct":false,"explanation":"Ignoring prevents awareness and improvement."}
-]}]}
+{"id":18,"cat":"truth","b":[
+{"t":"v","tx":"Hoy: PODER DE LA VERDAD."},
+{"t":"h","tx":"Debes ser honesto."},
+{"t":"d","q":"¿Qué haces?","op":["Mentir","Verdad","Ocultar","Retrasar"],"c":1,
+"ex":["Mentir=conflicto interno (estrés cognitivo).","Verdad=coherencia + confianza.","Ocultar=presión acumulada.","Retrasar=problema crece."]},
+{"t":"r","tx":"+Integridad","p":20},
+{"t":"c","tx":"La verdad construye respeto."}
+]},
+
+{"id":19,"cat":"social","b":[
+{"t":"v","tx":"Hoy: PRESIÓN SOCIAL."},
+{"t":"h","tx":"Grupo empuja algo incorrecto."},
+{"t":"d","q":"¿Qué haces?","op":["Seguir","Firme","Reír","Pánico"],"c":1,
+"ex":["Seguir=pierdes identidad.","Firme=proteges valores (auto-respeto).","Reír=evitas decidir.","Pánico=baja control mental."]},
+{"t":"r","tx":"+Carácter","p":20},
+{"t":"c","tx":"Ser firme crea respeto real."}
+]},
+
+{"id":20,"cat":"discipline","b":[
+{"t":"v","tx":"Hoy: DISCIPLINA."},
+{"t":"h","tx":"Quieres rendirte."},
+{"t":"br","tx":"Inhala","d":3},{"t":"br","tx":"Exhala","d":3},
+{"t":"d","q":"¿Qué haces?","op":["Rendirse","Continuar","Retrasar","Evitar"],"c":1,
+"ex":["Rendirse=refuerza hábito débil.","Continuar=neuroplasticidad fortalece disciplina.","Retrasar=rompe consistencia.","Evitar=sin crecimiento."]},
+{"t":"r","tx":"+Disciplina","p":20},
+{"t":"c","tx":"Disciplina = libertad futura."}
+]},
+
+{"id":21,"cat":"mastery","b":[
+{"t":"v","tx":"Hoy: MAESTRÍA PERSONAL."},
+{"t":"h","tx":"Debes controlarte."},
+{"t":"d","q":"¿Qué haces?","op":["Reaccionar","Autocontrol","Escapar","Ignorar"],"c":1,
+"ex":["Reaccionar=automático sin control.","Autocontrol=activa mente ejecutiva (poder real).","Escapar=evita aprendizaje.","Ignorar=sin conciencia."]},
+{"t":"r","tx":"+Maestría","p":20},
+
+{"t":"v","tx":"RETO FINAL: SILENCIO Y DOMINIO (2 min)."},
+
+{"t":"br","tx":"Inhala profundo","d":6,"inf":"Activa sistema parasimpático → calma"},
+{"t":"br","tx":"Retén","d":3,"inf":"Entrena control de impulso"},
+{"t":"br","tx":"Exhala lento","d":6,"inf":"Reduce ritmo cardíaco"},
+
+{"t":"br","tx":"Inhala corto","d":3,"inf":"Activa enfoque"},
+{"t":"br","tx":"Exhala largo","d":6,"inf":"Profundiza control emocional"},
+
+{"t":"sil","d":120,"tx":"Silencio total. Observa sin reaccionar.","inf":"Entrena metacognición (ver pensamientos sin actuar)"},
+
+{"t":"v","tx":"Ahora tienes control sobre ti mismo."},
+
+{"t":"c","tx":"Dominarte = dominar tu vida."}
+]}
 
 ]}
