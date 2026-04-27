@@ -19,9 +19,14 @@
 {"id":23,"cat":"emotion","b":[
 {"t":"v","tx":"Hoy: CONTROL EMOCIONAL."},
 {"t":"h","tx":"Emoción sube rápido."},
-{"t":"br","tx":"Inhala","d":5},{"t":"br","tx":"Exhala","d":5},
+
+{"t":"br","tx":"Inhale / Inhala","d":5},
+{"t":"br","tx":"Exhale / Exhala","d":5,
+"inf":"Activates parasympathetic system / Activa sistema parasimpático → reduces stress hormones (cortisol)"},
+
 {"t":"d","q":"¿Qué haces?","op":["Explotar","Respirar","Gritar","Escapar"],"c":1,
 "ex":["Explotar=emoción domina.","Respirar=regula sistema nervioso.","Gritar=aumenta caos.","Escapar=sin control real."]},
+
 {"t":"r","tx":"+Control","p":20},
 {"t":"c","tx":"Respirar = reset mental."}
 ]},
@@ -30,7 +35,7 @@
 {"t":"v","tx":"Hoy: DECISIÓN."},
 {"t":"h","tx":"Tiempo limitado."},
 {"t":"d","q":"¿Qué haces?","op":["Apresurar","Pensar","Aleatorio","Parar"],"c":1,
-"ex":["Apresurar=errores.","Pensar=precisión.","Aleatorio=sin control.","Parar=no resuelve."]},
+"ex":["Apresurar=errores.","Pensar=precisión (prefrontal cortex active).","Aleatorio=sin control.","Parar=no resuelve."]},
 {"t":"r","tx":"+Claridad","p":20},
 {"t":"c","tx":"Pensar antes = mejores resultados."}
 ]},
@@ -39,17 +44,26 @@
 {"t":"v","tx":"Hoy: ERROR."},
 {"t":"h","tx":"Te equivocas."},
 {"t":"d","q":"¿Qué haces?","op":["Ignorar","Aprender","Culpar","Ocultar"],"c":1,
-"ex":["Ignorar=repites error.","Aprender=mejora real (neuroplasticidad).","Culpar=pierdes poder.","Ocultar=crece problema."]},
+"ex":["Ignorar=repites error.","Aprender=neuroplasticidad activa crecimiento.","Culpar=pierdes poder.","Ocultar=crece problema."]},
 {"t":"r","tx":"+Aprendizaje","p":20},
 {"t":"c","tx":"Error = oportunidad."}
 ]},
 
+{"t":"br","tx":"--- SILENCE TRAINING BLOCK A ---","d":60,
+"inf_en":"1 minute silence: improves attention stability and impulse control (prefrontal activation)",
+"inf_es":"1 minuto de silencio: mejora atención y control de impulsos (activación prefrontal)"},
+
 {"id":26,"cat":"mind","b":[
 {"t":"v","tx":"Hoy: MENTE."},
 {"t":"h","tx":"Pensamientos caóticos."},
-{"t":"br","tx":"Inhala","d":4},{"t":"br","tx":"Exhala","d":4},
+
+{"t":"br","tx":"Inhale / Inhala","d":4},
+{"t":"br","tx":"Exhale / Exhala","d":4,
+"inf":"Regulates amygdala response / Regula la amígdala reduciendo reactividad emocional"},
+
 {"t":"d","q":"¿Qué haces?","op":["Reaccionar","Ordenar","Escapar","Ignorar"],"c":1,
 "ex":["Reaccionar=aumenta caos.","Ordenar=claridad mental.","Escapar=no resuelve.","Ignorar=empeora ruido mental."]},
+
 {"t":"r","tx":"+Claridad","p":20},
 {"t":"c","tx":"Orden mental = control."}
 ]},
@@ -58,10 +72,14 @@
 {"t":"v","tx":"Hoy: CALMA."},
 {"t":"h","tx":"Conflicto aparece."},
 {"t":"d","q":"¿Qué haces?","op":["Pelear","Calma","Correr","Gritar"],"c":1,
-"ex":["Pelear=escalas problema.","Calma=control total.","Correr=evitas resolver.","Gritar=menos influencia."]},
+"ex":["Pelear=escalas problema.","Calma=regulación emocional superior.","Correr=evitas resolver.","Gritar=menos influencia."]},
 {"t":"r","tx":"+Calma","p":20},
 {"t":"c","tx":"La calma gana siempre."}
 ]},
+
+{"t":"br","tx":"--- SILENCE TRAINING BLOCK B ---","d":120,
+"inf_en":"2 minutes silence: strengthens neuroplasticity and emotional regulation pathways",
+"inf_es":"2 minutos de silencio: fortalece neuroplasticidad y control emocional cerebral"},
 
 {"id":28,"cat":"final","b":[
 {"t":"v","tx":"Hoy: CONEXIÓN TOTAL."},
@@ -72,11 +90,16 @@
 
 {"t":"v","tx":"RETO FINAL: SILENCIO Y VISIÓN."},
 
-{"t":"br","tx":"Inhala profundo","d":6,"inf":"Calma sistema nervioso"},
-{"t":"br","tx":"Retén","d":3,"inf":"Control impulso"},
-{"t":"br","tx":"Exhala lento","d":6,"inf":"Reduce tensión"},
+{"t":"br","tx":"Inhale / Inhala profundo","d":6,
+"inf":"Activates parasympathetic nervous system / Activa sistema parasimpático"},
+{"t":"br","tx":"Hold / Retén","d":3,
+"inf":"Trains impulse control / Entrena control de impulsos"},
+{"t":"br","tx":"Exhale / Exhala lento","d":6,
+"inf":"Lowers heart rate / Reduce ritmo cardíaco"},
 
-{"t":"sil","d":120,"tx":"Observa todo sin reaccionar.","inf":"Entrena conciencia global"},
+{"t":"sil","d":120,
+"tx":"Silent observation / Observación silenciosa",
+"inf":"Metacognition training / Entrenamiento de metacognición"},
 
 {"t":"c","tx":"Ver todo = dominar todo."}
 ]}
