@@ -279,15 +279,20 @@ function spawnWord(){
 async function triggerQuestion(){
     try {
         const res = await fetch("/api/mission/next?lang="+lang);
-        if(!res.ok) return;
 
-        const data = await res.json();
-        if(!data || !data.options) return;
+if (!res.ok) return;
 
-        const overlay=document.getElementById("overlay");
-        const grid=document.getElementById("decision-grid");
-        const desc=document.getElementById("phase-desc");
-        const title=document.getElementById("phase-title");
+const text = await res.text();
+
+let data;
+try {
+    data = JSON.parse(text);
+} catch(e) {
+    console.error("INVALID JSON FROM SERVER:", text);
+    return;
+}
+
+if (!data.options) return;
 
         overlay.style.display="flex";
         title.innerText=data.theme||"MISSION";
