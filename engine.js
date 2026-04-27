@@ -1,5 +1,5 @@
 /**
- * 🧠 KAMIZEN ENGINE CORE — CLEAN STABLE VERSION
+ * 🧠 KAMIZEN ENGINE CORE — CLEAN STABLE VERSION (ROBUST FIXED)
  * JSON-driven system (NO AI explanations)
  * Sync with Flask backend + session.html
  */
@@ -26,6 +26,7 @@ const KamizenEngine = (() => {
     };
 
     let gameMode = "idle";
+    let isRunningMission = false;
 
     // =========================
     // 🔊 VOICE SYSTEM
@@ -33,31 +34,43 @@ const KamizenEngine = (() => {
     function speak(text) {
         if (!text) return;
 
-        const msg = new SpeechSynthesisUtterance(text);
-        msg.lang = state.lang === "es" ? "es-ES" : "en-US";
-        msg.rate = 0.95;
-        msg.pitch = 0.9;
+        try {
+            const msg = new SpeechSynthesisUtterance(text);
+            msg.lang = state.lang === "es" ? "es-ES" : "en-US";
+            msg.rate = 0.95;
+            msg.pitch = 0.9;
 
-        const voices = speechSynthesis.getVoices();
+            const voices = speechSynthesis.getVoices();
 
-        const preferredVoice = voices.find(v =>
-            v.lang === msg.lang &&
-            v.name.toLowerCase().includes("female")
-        );
+            const preferredVoice = voices.find(v =>
+                v.lang === msg.lang &&
+                v.name.toLowerCase().includes("female")
+            );
 
-        if (preferredVoice) msg.voice = preferredVoice;
+            if (preferredVoice) msg.voice = preferredVoice;
 
-        speechSynthesis.cancel();
-        speechSynthesis.speak(msg);
+            speechSynthesis.cancel();
+            speechSynthesis.speak(msg);
+
+        } catch (e) {
+            console.error("VOICE ERROR:", e);
+        }
     }
 
     // =========================
-    // 🌐 API
+    // 🌐 API SAFE
     // =========================
     async function fetchNextMission() {
         try {
             const res = await fetch(`/api/mission/next?lang=${state.lang}`);
+
+            if (!res.ok) {
+                console.error("MISSION HTTP ERROR:", res.status);
+                return null;
+            }
+
             return await res.json();
+
         } catch (e) {
             console.error("Mission fetch error:", e);
             return null;
@@ -67,6 +80,7 @@ const KamizenEngine = (() => {
     async function fetchConfig() {
         try {
             const res = await fetch(`/api/config`);
+            if (!res.ok) return null;
             return await res.json();
         } catch (e) {
             console.error("Config fetch error:", e);
@@ -75,7 +89,7 @@ const KamizenEngine = (() => {
     }
 
     // =========================
-    // 🎯 APPLY RESULT
+    // 🎯 APPLY RESULT (SAFE)
     // =========================
     function applyMissionResult(option) {
         if (!option) return;
@@ -94,7 +108,7 @@ const KamizenEngine = (() => {
     }
 
     // =========================
-    // 📊 HUD
+    // 📊 HUD SAFE
     // =========================
     function updateHUD() {
         const set = (id, value) => {
@@ -127,16 +141,16 @@ const KamizenEngine = (() => {
     }
 
     // =========================
-    // 🧠 SAFE EXPLANATION RESOLVE
+    // 🧠 EXPLANATION SAFE
     // =========================
     function resolveExplanation(opt) {
         if (!opt) return "No explanation";
 
-        const lang = state.lang;
+        const l = state.lang;
 
         const exp =
             (typeof opt.explanation === "object"
-                ? opt.explanation?.[lang]
+                ? opt.explanation?.[l]
                 : opt.explanation) ||
             opt.explanation?.en ||
             "No explanation available";
@@ -145,59 +159,85 @@ const KamizenEngine = (() => {
     }
 
     // =========================
-    // 🎮 MISSION FLOW
+    // 🎮 MISSION FLOW (ROBUST FIX)
     // =========================
     async function runMissionUI() {
 
-        gameMode = "question";
+        if (isRunningMission) return;
+        isRunningMission = true;
 
-        const data = await fetchNextMission();
-        if (!data) {
-            speak("Error loading mission");
-            return;
-        }
+        try {
+            gameMode = "question";
 
-        const overlay = document.getElementById("overlay");
-        const grid = document.getElementById("decision-grid");
-        const desc = document.getElementById("phase-desc");
-        const title = document.getElementById("phase-title");
+            const data = await fetchNextMission();
 
-        title.innerText = data.theme || "MISSION";
-        desc.innerText = data.story || "";
+            if (!data || !data.options) {
+                speak("Mission error");
+                isRunningMission = false;
+                return;
+            }
 
-        speak(data.story);
+            const overlay = document.getElementById("overlay");
+            const grid = document.getElementById("decision-grid");
+            const desc = document.getElementById("phase-desc");
+            const title = document.getElementById("phase-title");
 
-        grid.innerHTML = "";
+            if (!overlay || !grid || !desc || !title) {
+                console.error("UI missing elements");
+                isRunningMission = false;
+                return;
+            }
 
-        data.options.forEach(opt => {
+            title.innerText = data.theme || "MISSION";
+            desc.innerText = data.story || "";
 
-            const btn = document.createElement("button");
-            btn.className = "choice-btn";
-            btn.innerText = opt.text;
+            speak(data.story);
 
-            btn.onclick = () => {
+            grid.innerHTML = "";
 
-                applyMissionResult(opt);
+            data.options.forEach(opt => {
 
-                const exp = resolveExplanation(opt);
+                const btn = document.createElement("button");
+                btn.className = "choice-btn";
+                btn.innerText = opt.text || "Option";
 
-                desc.innerText = exp;
-                speak(exp);
+                btn.onclick = () => {
 
-                setTimeout(() => {
-                    overlay.style.display = "none";
+                    try {
+                        applyMissionResult(opt);
 
-                    if (window.onQuestionAnswered) {
-                        window.onQuestionAnswered();
+                        const exp = resolveExplanation(opt);
+
+                        desc.innerText = exp;
+                        speak(exp);
+
+                        grid.innerHTML = "";
+
+                        setTimeout(() => {
+                            overlay.style.display = "none";
+                            isRunningMission = false;
+
+                            if (window.onQuestionAnswered) {
+                                window.onQuestionAnswered();
+                            }
+
+                        }, 2500);
+
+                    } catch (e) {
+                        console.error("OPTION ERROR:", e);
+                        isRunningMission = false;
                     }
+                };
 
-                }, 3000);
-            };
+                grid.appendChild(btn);
+            });
 
-            grid.appendChild(btn);
-        });
+            overlay.style.display = "flex";
 
-        overlay.style.display = "flex";
+        } catch (e) {
+            console.error("MISSION FLOW ERROR:", e);
+            isRunningMission = false;
+        }
     }
 
     // =========================
@@ -216,17 +256,22 @@ const KamizenEngine = (() => {
     }
 
     // =========================
-    // 🚀 INIT
+    // 🚀 INIT SAFE
     // =========================
     async function init() {
-        const cfg = await fetchConfig();
+        try {
+            const cfg = await fetchConfig();
 
-        if (cfg) {
-            console.log("⚙️ Config loaded");
+            if (cfg) {
+                console.log("⚙️ Config loaded");
+            }
+
+            speak("Kamizen system initialized.");
+            updateHUD();
+
+        } catch (e) {
+            console.error("INIT ERROR:", e);
         }
-
-        speak("Kamizen system initialized.");
-        updateHUD();
     }
 
     // =========================
@@ -251,8 +296,12 @@ const KamizenEngine = (() => {
 })();
 
 // =========================
-// 🔥 AUTO INIT
+// 🔥 AUTO INIT SAFE
 // =========================
 document.addEventListener("DOMContentLoaded", () => {
-    KamizenEngine.init();
+    try {
+        KamizenEngine.init();
+    } catch (e) {
+        console.error("ENGINE INIT FAIL:", e);
+    }
 });
