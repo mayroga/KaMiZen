@@ -1,98 +1,129 @@
-from flask import Flask, jsonify, request
+# main.py
+from flask import Flask, jsonify, request, send_from_directory
 import json
 import os
-from threading import Lock
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="static")
 
 # =========================
-# 📦 LOAD JSON FILES (ORDERED)
+# 📦 FILE SYSTEM SAFE LOAD
 # =========================
-MISSION_FILES = [
-    "missions_01_07.json",
-    "missions_08_14.json",
-    "missions_15_21.json",
-    "missions_22_28.json",
-    "missions_29_35.json"
+FILES = [
+    "static/missions_01_07.json",
+    "static/missions_08_14.json",
+    "static/missions_15_21.json",
+    "static/missions_22_28.json",
+    "static/missions_29_35.json",
 ]
 
-missions = []
-lock = Lock()
-index = 0
+all_missions = []
+mission_index = 0
 
 
-def load_missions():
-    global missions
+def load_all_missions():
+    global all_missions
 
     all_missions = []
 
-    for file in MISSION_FILES:
-        path = os.path.join("static", file)
-
+    for path in FILES:
         try:
+            if not os.path.exists(path):
+                continue
+
             with open(path, "r", encoding="utf-8") as f:
                 data = json.load(f)
-                all_missions.extend(data.get("missions", []))
+
+                missions = data.get("missions", [])
+                if isinstance(missions, list):
+                    all_missions.extend(missions)
 
         except Exception as e:
-            print(f"ERROR LOADING {file}: {e}")
+            print(f"[MISSION LOAD ERROR] {path}: {e}")
 
-    missions = all_missions
-    print(f"TOTAL MISSIONS LOADED: {len(missions)}")
+    # ordenar por id
+    try:
+        all_missions.sort(key=lambda x: x.get("id", 0))
+    except Exception as e:
+        print("[SORT ERROR]", e)
 
 
 # =========================
-# 🎯 NEXT MISSION (INFINITE LOOP)
+# 🔄 SAFE RESET LOOP (INFINITE READY)
 # =========================
+def reset_if_needed():
+    global mission_index
+    if mission_index >= len(all_missions):
+        mission_index = 0
+
+
+# =========================
+# 🌐 ROUTES
+# =========================
+@app.route("/")
+def home():
+    return send_from_directory("static", "session.html")
+
+
 @app.route("/api/mission/next")
 def next_mission():
-    global index
+    global mission_index
 
     lang = request.args.get("lang", "en")
 
-    with lock:
-        if not missions:
-            return jsonify({"error": "no missions loaded"}), 500
+    if not all_missions:
+        return jsonify({
+            "error": "no missions loaded",
+            "hint": "check JSON files"
+        }), 500
 
-        mission = missions[index]
+    reset_if_needed()
 
-        # advance pointer (infinite loop)
-        index = (index + 1) % len(missions)
+    mission = all_missions[mission_index]
+    mission_index += 1
 
-    # optional language cleanup (keeps session compatibility)
-    def pick_text(obj):
-        if isinstance(obj, dict):
-            return obj.get(lang) or obj.get("en") or next(iter(obj.values()))
-        return obj
+    # =========================
+    # 🧠 NORMALIZE SAFE OUTPUT
+    # =========================
+    blocks = mission.get("blocks", [])
 
-    # adapt translation safely
-    mission_copy = json.loads(json.dumps(mission))
+    story = ""
+    options = []
 
-    for block in mission_copy.get("blocks", []):
-        if "text" in block:
-            block["text"] = pick_text(block["text"])
+    for b in blocks:
+        if b.get("type") == "story":
+            t = b.get("text", {})
+            story = t.get(lang, t.get("en", ""))
 
-        if block.get("type") == "decision":
-            for opt in block.get("options", []):
-                if "text" in opt:
-                    opt["text"] = pick_text(opt["text"])
-                if "explanation" in opt:
-                    opt["explanation"] = pick_text(opt["explanation"])
+        if b.get("type") == "decision":
+            options = b.get("options", [])
 
-    return jsonify(mission_copy)
+    return jsonify({
+        "id": mission.get("id"),
+        "level": mission.get("level"),
+        "theme": mission.get("theme"),
+        "story": story,
+        "options": options
+    })
+
+
+@app.route("/api/config")
+def config():
+    return jsonify({
+        "status": "ok",
+        "missions_loaded": len(all_missions)
+    })
 
 
 # =========================
-# 🚀 INIT
+# 🚀 INIT SAFE (NO deprecated Flask hooks)
 # =========================
-@app.before_first_request
-def startup():
-    load_missions()
+load_all_missions()
 
 
-# =========================
-# ▶ RUN SERVER
-# =========================
 if __name__ == "__main__":
-    load_missions()
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    try:
+        load_all_missions()
+        print(f"[OK] Missions loaded: {len(all_missions)}")
+        app.run(host="0.0.0.0", port=10000, debug=True)
+    except Exception as e:
+        print("[FATAL ERROR]", e)
