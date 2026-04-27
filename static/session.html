@@ -96,6 +96,7 @@ body {
     font-size:0.9rem;
     background:rgba(0,0,0,0.9);
     border-radius:6px;
+    transition:0.3s;
 }
 
 .stat-pill span {
@@ -119,9 +120,20 @@ body {
     cursor:pointer;
 }
 
-.word-power { border:3px solid var(--neon-green); color:var(--neon-green); }
-.word-risk { border:3px solid var(--neon-red); color:var(--neon-red); }
-.word-silence { border:3px solid var(--neon-yellow); color:var(--neon-yellow); }
+.word-power {
+    border:3px solid var(--neon-green);
+    color:var(--neon-green);
+}
+
+.word-risk {
+    border:3px solid var(--neon-red);
+    color:var(--neon-red);
+}
+
+.word-silence {
+    border:3px solid var(--neon-yellow);
+    color:var(--neon-yellow);
+}
 
 @keyframes floatUp {
     from { transform:translateY(110vh); }
@@ -199,6 +211,7 @@ body {
 <script src="/static/engine.js"></script>
 
 <script>
+
 let lang = "en";
 let gameMode = "idle";
 
@@ -218,18 +231,43 @@ let state = {
 };
 
 function updateHUD(){
+
     document.getElementById("score-box").innerText = state.score;
 
     document.getElementById("timer-box").innerText =
         String(Math.floor(state.timer/60)).padStart(2,"0") + ":" +
         String(state.timer%60).padStart(2,"0");
 
-    document.getElementById("v-respect").innerText = state.stats.respect;
-    document.getElementById("v-peace").innerText = state.stats.peace;
-    document.getElementById("v-lead").innerText = state.stats.lead;
-    document.getElementById("v-money").innerText = state.stats.money;
-    document.getElementById("v-safety").innerText = state.stats.safety;
-    document.getElementById("v-happy").innerText = state.stats.happy;
+    const stats = [
+        {id:"v-respect", value:state.stats.respect},
+        {id:"v-peace", value:state.stats.peace},
+        {id:"v-lead", value:state.stats.lead},
+        {id:"v-money", value:state.stats.money},
+        {id:"v-safety", value:state.stats.safety},
+        {id:"v-happy", value:state.stats.happy}
+    ];
+
+    let max = -999;
+    let maxId = "";
+
+    stats.forEach(s=>{
+        const el = document.getElementById(s.id);
+        if(!el) return;
+        el.innerText = s.value;
+        el.style.transform = "scale(1)";
+        if(s.value > max){
+            max = s.value;
+            maxId = s.id;
+        }
+    });
+
+    stats.forEach(s=>{
+        const el = document.getElementById(s.id);
+        if(s.id === maxId){
+            el.style.transform = "scale(1.4)";
+            el.style.color = "#00ff41";
+        }
+    });
 }
 
 function toggleLang(){
@@ -260,9 +298,22 @@ function spawnWord(){
         div.dataset.clicked=true;
         div.classList.add("explode");
 
-        if(c==="power") state.score+=20;
-        if(c==="risk") state.score-=30;
-        if(c==="silence") state.stats.peace++;
+        if(c==="power"){
+            state.score+=20;
+            state.stats.respect++;
+            state.stats.lead++;
+        }
+
+        if(c==="risk"){
+            state.score-=30;
+            state.stats.safety--;
+            state.stats.peace--;
+        }
+
+        if(c==="silence"){
+            state.stats.peace++;
+            state.stats.happy++;
+        }
 
         updateHUD();
         setTimeout(()=>div.remove(),500);
@@ -306,38 +357,39 @@ async function triggerQuestion(){
             grid.appendChild(btn);
         });
 
-    } catch(e){
-        console.error(e);
-    }
+    } catch(e){}
 }
+
+setInterval(()=>{
+    if(state.timer>0){
+        state.timer--;
+        updateHUD();
+    }
+},1000);
 
 async function mainLoop(){
     while(true){
-        try{
-            gameMode="words";
+        gameMode="words";
 
-            let end=Date.now()+45000;
+        let end=Date.now()+45000;
 
-            while(Date.now()<end){
-                spawnWord();
-                await new Promise(r=>setTimeout(r,state.spawnRate));
-            }
-
-            document.querySelectorAll(".floating").forEach(e=>e.remove());
-
-            gameMode="question";
-            await triggerQuestion();
-
-            await new Promise(r=>setTimeout(r,3000));
-
-        } catch(e){
-            console.error(e);
+        while(Date.now()<end){
+            spawnWord();
+            await new Promise(r=>setTimeout(r,state.spawnRate));
         }
+
+        document.querySelectorAll(".floating").forEach(e=>e.remove());
+
+        gameMode="question";
+        await triggerQuestion();
+
+        await new Promise(r=>setTimeout(r,3000));
     }
 }
 
 updateHUD();
 mainLoop();
+
 </script>
 
 </body>
