@@ -76,7 +76,6 @@ body {
     border:3px solid #fff;
     padding:8px 20px;
     font-size:1.8rem;
-    margin-top:5px;
     background:rgba(255,255,255,0.1);
 }
 
@@ -121,20 +120,9 @@ body {
     cursor:pointer;
 }
 
-.word-power {
-    border:3px solid var(--neon-green);
-    color:var(--neon-green);
-}
-
-.word-risk {
-    border:3px solid var(--neon-red);
-    color:var(--neon-red);
-}
-
-.word-silence {
-    border:3px solid var(--neon-yellow);
-    color:var(--neon-yellow);
-}
+.word-power { border:3px solid var(--neon-green); color:var(--neon-green); }
+.word-risk { border:3px solid var(--neon-red); color:var(--neon-red); }
+.word-silence { border:3px solid var(--neon-yellow); color:var(--neon-yellow); }
 
 @keyframes floatUp {
     from { transform:translateY(110vh); }
@@ -216,6 +204,7 @@ body {
 
 let lang = "en";
 let gameMode = "idle";
+let lockLoop = false;
 
 let state = {
     score: 0,
@@ -236,7 +225,7 @@ function updateHUD(){
     document.getElementById("score-box").innerText = state.score;
 
     document.getElementById("timer-box").innerText =
-        String(Math.floor(state.timer/60)).padStart(2,"0") + ":" +
+        String(Math.floor(state.timer/60)).padStart(2,"0")+":"+
         String(state.timer%60).padStart(2,"0");
 
     document.getElementById("v-respect").innerText = state.stats.respect;
@@ -270,9 +259,9 @@ function spawnWord(){
     div.innerText = words[c][Math.floor(Math.random()*words[c].length)];
     div.style.left = Math.random()*80 + "vw";
 
-    div.onclick = () => {
+    div.onclick=()=>{
         if(div.dataset.clicked) return;
-        div.dataset.clicked=true;
+        div.dataset.clicked=1;
         div.classList.add("explode");
 
         if(c==="power") state.score+=20;
@@ -290,24 +279,15 @@ function spawnWord(){
 async function triggerQuestion(){
     try {
         const res = await fetch("/api/mission/next?lang="+lang);
-
-        if(!res.ok) {
-            console.error("API FAIL");
-            return;
-        }
+        if(!res.ok) return;
 
         const data = await res.json();
+        if(!data || !data.options) return;
 
-        if(!data || data.error || !data.options){
-            console.error("BAD DATA:", data);
-            document.getElementById("overlay").style.display="none";
-            return;
-        }
-
-        const overlay = document.getElementById("overlay");
-        const grid = document.getElementById("decision-grid");
-        const desc = document.getElementById("phase-desc");
-        const title = document.getElementById("phase-title");
+        const overlay=document.getElementById("overlay");
+        const grid=document.getElementById("decision-grid");
+        const desc=document.getElementById("phase-desc");
+        const title=document.getElementById("phase-title");
 
         overlay.style.display="flex";
         title.innerText=data.theme||"MISSION";
@@ -320,8 +300,8 @@ async function triggerQuestion(){
             btn.innerText=opt.text;
 
             btn.onclick=()=>{
-                state.score += opt.score || 0;
-                desc.innerText = opt.explanation || "";
+                state.score += opt.score||0;
+                desc.innerText = opt.explanation||"";
                 grid.innerHTML="";
                 setTimeout(()=>overlay.style.display="none",2500);
                 updateHUD();
@@ -331,12 +311,15 @@ async function triggerQuestion(){
         });
 
     } catch(e){
-        console.error("QUESTION ERROR:", e);
+        console.error("QUESTION ERROR",e);
         document.getElementById("overlay").style.display="none";
     }
 }
 
 async function mainLoop(){
+    if(lockLoop) return;
+    lockLoop = true;
+
     while(true){
         try{
             gameMode="words";
@@ -356,7 +339,7 @@ async function mainLoop(){
             await new Promise(r=>setTimeout(r,4000));
 
         } catch(e){
-            console.error("LOOP ERROR:",e);
+            console.error("LOOP ERROR",e);
         }
     }
 }
