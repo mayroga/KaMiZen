@@ -1,135 +1,156 @@
-# main.py
-from flask import Flask, jsonify, request, send_from_directory
-import json
 import os
+import json
+from flask import Flask, jsonify, send_from_directory
 
 app = Flask(__name__, static_folder="static")
 
 # =========================
-# 📂 CONFIG RANGOS
+# 📂 CONFIG
 # =========================
-RANGES = [
-    (1, 7,  "static/missions_01_07.json"),
-    (8, 14, "static/missions_08_14.json"),
-    (15,21, "static/missions_15_21.json"),
-    (22,28, "static/missions_22_28.json"),
-    (29,35, "static/missions_29_35.json"),
+JSON_FILES = [
+    "missions_01_07.json",
+    "missions_08_14.json",
+    "missions_15_21.json",
+    "missions_22_28.json",
+    "missions_29_35.json"
 ]
 
-# cache en memoria por archivo
-cache = {}
-
-mission_index = 1
+CACHE = {}
+MISSION_POINTER = 1
 
 
 # =========================
-# 📦 LOAD FILE ON DEMAND
+# 📥 LOAD JSON (CACHE)
 # =========================
-def get_file_for_mission(mid):
-    for start, end, path in RANGES:
-        if start <= mid <= end:
-            return path
-    return None
+def load_json(filename):
+    if filename in CACHE:
+        return CACHE[filename]
 
+    path = os.path.join(app.static_folder, filename)
 
-def load_file(path):
-    if path in cache:
-        return cache[path]
+    if not os.path.exists(path):
+        return None
 
     try:
-        if not os.path.exists(path):
-            return None
-
         with open(path, "r", encoding="utf-8") as f:
             data = json.load(f)
-            cache[path] = data
+            CACHE[filename] = data
             return data
-
-    except Exception as e:
-        print(f"[LOAD ERROR] {path}:", e)
+    except Exception:
         return None
 
 
 # =========================
-# 🔄 LOOP CONTROL
+# 🔎 FIND SESSION BY ID
 # =========================
-def next_index():
-    global mission_index
-    mission_index += 1
-    if mission_index > 35:
-        mission_index = 1
+def find_session(session_id):
+    for file in JSON_FILES:
+        data = load_json(file)
+        if not data:
+            continue
+
+        sessions = data.get("ses", [])
+        for s in sessions:
+            if s.get("id") == session_id:
+                return s
+
+    return None
+
+
+# =========================
+# 🔁 NEXT SESSION LOOP
+# =========================
+def get_next_session():
+    global MISSION_POINTER
+
+    session = find_session(MISSION_POINTER)
+
+    if session is None:
+        MISSION_POINTER = 1
+        session = find_session(MISSION_POINTER)
+
+    MISSION_POINTER += 1
+    if MISSION_POINTER > 35:
+        MISSION_POINTER = 1
+
+    return session
+
+
+# =========================
+# 🧠 PARSER NUEVO FORMATO JSON
+# =========================
+def parse_session(session):
+    if not session:
+        return {}
+
+    blocks = session.get("b", [])
+
+    story_parts = []
+    analysis = ""
+    options = []
+
+    for b in blocks:
+        t = b.get("t")
+
+        # narrativa (v + h)
+        if t in ["v", "h"]:
+            story_parts.append(b.get("tx", ""))
+
+        # conclusión / análisis
+        elif t == "c":
+            analysis = b.get("tx", "")
+
+        # decisión
+        elif t == "d":
+            ops = b.get("op", [])
+            correct_index = b.get("c", 0)
+            explanations = b.get("ex", [])
+
+            for i, op in enumerate(ops):
+                options.append({
+                    "text": {
+                        "en": op,
+                        "es": op
+                    },
+                    "correct": i == correct_index,
+                    "explanation": {
+                        "en": explanations[i] if i < len(explanations) else "",
+                        "es": explanations[i] if i < len(explanations) else ""
+                    }
+                })
+
+    return {
+        "id": session.get("id"),
+        "theme": session.get("cat", "MISSION").upper(),
+        "story": " ".join(story_parts),
+        "analysis": analysis,
+        "options": options
+    }
 
 
 # =========================
 # 🌐 ROUTES
 # =========================
 @app.route("/")
-def home():
+def index():
     return send_from_directory("static", "session.html")
 
 
 @app.route("/api/mission/next")
 def next_mission():
-    global mission_index
-
-    lang = request.args.get("lang", "en")
-
-    path = get_file_for_mission(mission_index)
-    if not path:
-        return jsonify({"error": "invalid range"}), 500
-
-    data = load_file(path)
-    if not data:
-        return jsonify({"error": "file not loaded"}), 500
-
-    missions = data.get("missions", [])
-
-    mission = next((m for m in missions if m.get("id") == mission_index), None)
-
-    if not mission:
-        next_index()
-        return jsonify({"error": "mission not found"}), 404
-
-    # =========================
-    # 🧠 EXTRAER EXACTO DEL JSON
-    # =========================
-    story = ""
-    analysis = ""
-    options = []
-
-    for b in mission.get("blocks", []):
-        if b.get("type") == "story":
-            story = b.get("text", {}).get(lang, b.get("text", {}).get("en", ""))
-
-        elif b.get("type") == "analysis":
-            analysis = b.get("text", {}).get(lang, b.get("text", {}).get("en", ""))
-
-        elif b.get("type") == "decision":
-            options = b.get("options", [])
-
-    response = {
-        "id": mission.get("id"),
-        "level": mission.get("level"),
-        "theme": mission.get("theme"),
-        "story": story,
-        "analysis": analysis,
-        "options": options
-    }
-
-    next_index()
-    return jsonify(response)
+    session = get_next_session()
+    parsed = parse_session(session)
+    return jsonify(parsed)
 
 
-@app.route("/api/config")
-def config():
-    return jsonify({
-        "status": "ok",
-        "cache_files": list(cache.keys())
-    })
+@app.route("/static/<path:path>")
+def static_files(path):
+    return send_from_directory("static", path)
 
 
 # =========================
-# 🚀 START
+# 🚀 RUN
 # =========================
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=10000, debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
