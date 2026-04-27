@@ -5,7 +5,7 @@ from flask import Flask, jsonify, send_from_directory
 app = Flask(__name__, static_folder="static")
 
 # =========================
-# 📂 CONFIG
+# CONFIG
 # =========================
 JSON_FILES = [
     "missions_01_07.json",
@@ -20,28 +20,33 @@ MISSION_POINTER = 1
 
 
 # =========================
-# 📥 LOAD JSON (CACHE)
+# 📥 LOAD JSON (ROOT FOLDER)
 # =========================
 def load_json(filename):
     if filename in CACHE:
         return CACHE[filename]
 
-    path = os.path.join(app.static_folder, filename)
+    path = os.path.join(os.getcwd(), filename)  # 🔥 RAÍZ DEL PROYECTO
+
+    print("📂 buscando:", path)
 
     if not os.path.exists(path):
+        print("❌ NO EXISTE:", path)
         return None
 
     try:
         with open(path, "r", encoding="utf-8") as f:
             data = json.load(f)
             CACHE[filename] = data
+            print("✅ cargado:", filename)
             return data
-    except Exception:
+    except Exception as e:
+        print("❌ error json:", filename, e)
         return None
 
 
 # =========================
-# 🔎 FIND SESSION BY ID
+# 🔎 FIND SESSION
 # =========================
 def find_session(session_id):
     for file in JSON_FILES:
@@ -50,22 +55,25 @@ def find_session(session_id):
             continue
 
         sessions = data.get("ses", [])
+
         for s in sessions:
             if s.get("id") == session_id:
+                print("🎯 FOUND:", session_id)
                 return s
 
+    print("⚠️ NOT FOUND:", session_id)
     return None
 
 
 # =========================
-# 🔁 NEXT SESSION LOOP
+# 🔁 LOOP INFINITO
 # =========================
 def get_next_session():
     global MISSION_POINTER
 
     session = find_session(MISSION_POINTER)
 
-    if session is None:
+    if not session:
         MISSION_POINTER = 1
         session = find_session(MISSION_POINTER)
 
@@ -77,52 +85,45 @@ def get_next_session():
 
 
 # =========================
-# 🧠 PARSER NUEVO FORMATO JSON
+# 🧠 PARSER JSON NUEVO
 # =========================
 def parse_session(session):
     if not session:
         return {}
 
-    blocks = session.get("b", [])
-
-    story_parts = []
+    story = []
     analysis = ""
     options = []
 
-    for b in blocks:
+    for b in session.get("b", []):
+
         t = b.get("t")
 
-        # narrativa (v + h)
         if t in ["v", "h"]:
-            story_parts.append(b.get("tx", ""))
+            story.append(b.get("tx", ""))
 
-        # conclusión / análisis
         elif t == "c":
             analysis = b.get("tx", "")
 
-        # decisión
         elif t == "d":
             ops = b.get("op", [])
-            correct_index = b.get("c", 0)
-            explanations = b.get("ex", [])
+            correct = b.get("c", 0)
+            ex = b.get("ex", [])
 
             for i, op in enumerate(ops):
                 options.append({
-                    "text": {
-                        "en": op,
-                        "es": op
-                    },
-                    "correct": i == correct_index,
+                    "text": {"en": op, "es": op},
+                    "correct": i == correct,
                     "explanation": {
-                        "en": explanations[i] if i < len(explanations) else "",
-                        "es": explanations[i] if i < len(explanations) else ""
+                        "en": ex[i] if i < len(ex) else "",
+                        "es": ex[i] if i < len(ex) else ""
                     }
                 })
 
     return {
         "id": session.get("id"),
-        "theme": session.get("cat", "MISSION").upper(),
-        "story": " ".join(story_parts),
+        "theme": session.get("cat"),
+        "story": " ".join(story),
         "analysis": analysis,
         "options": options
     }
@@ -132,15 +133,18 @@ def parse_session(session):
 # 🌐 ROUTES
 # =========================
 @app.route("/")
-def index():
+def home():
     return send_from_directory("static", "session.html")
 
 
 @app.route("/api/mission/next")
 def next_mission():
     session = get_next_session()
-    parsed = parse_session(session)
-    return jsonify(parsed)
+
+    if not session:
+        return jsonify({"error": "no session"}), 500
+
+    return jsonify(parse_session(session))
 
 
 @app.route("/static/<path:path>")
@@ -152,5 +156,5 @@ def static_files(path):
 # 🚀 RUN
 # =========================
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port)
+    print("🔥 SERVER RUNNING...")
+    app.run(host="0.0.0.0", port=5000, debug=True)
