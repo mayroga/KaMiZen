@@ -1,123 +1,86 @@
 {
-  "game":"KAMIZEN KIDS: MATRIX TRAINING SYSTEM",
-  "chapter":4,
-  "range":"29-35",
-  "ui":{"floating_words":["DISCIPLINE","AWARENESS","CALM","FOCUS","TRUTH","CONTROL","ACTION","PAUSE"]},
-  "matrix_rules":[
-    "1. Master yourself first",
-    "2. Awareness creates freedom",
-    "3. Emotion is data",
-    "4. Silence reveals truth",
-    "5. Focus builds reality",
-    "6. Discipline beats impulse",
-    "7. Calm is real power",
-    "8. Action defines identity"
-  ],
-  "missions":[
-    {
-      "id":29,
-      "level":29,
-      "theme":"EMOTIONAL TRAP",
-      "blocks":[
-        {"type":"story","text":{"en":"Someone insults you publicly.","es":"Alguien te insulta en público."}},
-        {"type":"analysis","text":{"en":"Reaction is a choice.","es":"La reacción es una elección."}},
-        {"type":"decision","options":[
-          {"code":"EXPLODE","text":{"en":"Get angry immediately","es":"Enojarte de inmediato"},"correct":false,"explanation":{"en":"Instant anger removes control and increases regret.","es":"La ira inmediata elimina el control y aumenta el arrepentimiento."}},
-          {"code":"IGNORE","text":{"en":"Ignore and walk away","es":"Ignorar y alejarte"},"correct":false,"explanation":{"en":"Avoiding without awareness does not solve emotional control.","es":"Evitar sin conciencia no desarrolla control emocional."}},
-          {"code":"PAUSE","text":{"en":"Pause and breathe","es":"Pausar y respirar"},"correct":true,"explanation":{"en":"Breathing restores control and prevents emotional reaction.","es":"Respirar restaura el control y evita reacciones emocionales."}},
-          {"code":"ATTACK","text":{"en":"Respond aggressively","es":"Responder agresivo"},"correct":false,"explanation":{"en":"Aggression escalates conflict and weakens discipline.","es":"La agresión aumenta el conflicto y debilita la disciplina."}}
-        ]}
-      ]
-    },
-    {
-      "id":30,
-      "level":30,
-      "theme":"FOCUS BREAK",
-      "blocks":[
-        {"type":"story","text":{"en":"You are studying but distractions appear.","es":"Estás estudiando pero aparecen distracciones."}},
-        {"type":"analysis","text":{"en":"Attention is energy.","es":"La atención es energía."}},
-        {"type":"decision","options":[
-          {"code":"MULTI","text":{"en":"Do many things at once","es":"Hacer muchas cosas a la vez"},"correct":false,"explanation":{"en":"Multitasking reduces learning efficiency.","es":"La multitarea reduce la eficiencia del aprendizaje."}},
-          {"code":"QUIT","text":{"en":"Stop studying","es":"Dejar de estudiar"},"correct":false,"explanation":{"en":"Quitting breaks discipline and progress.","es":"Rendirse rompe la disciplina y el progreso."}},
-          {"code":"FOCUS","text":{"en":"Focus only on study","es":"Enfocarte solo en estudiar"},"correct":true,"explanation":{"en":"Single focus increases retention and control.","es":"El enfoque único mejora la retención y el control."}},
-          {"code":"DISTRACT","text":{"en":"Check phone often","es":"Revisar el teléfono"},"correct":false,"explanation":{"en":"Constant distraction destroys attention flow.","es":"La distracción constante destruye el enfoque."}}
-        ]}
-      ]
-    },
-    {
-      "id":31,
-      "level":31,
-      "theme":"TRUTH TEST",
-      "blocks":[
-        {"type":"story","text":{"en":"You made a mistake but no one knows.","es":"Cometiste un error pero nadie lo sabe."}},
-        {"type":"analysis","text":{"en":"Truth builds identity.","es":"La verdad construye identidad."}},
-        {"type":"decision","options":[
-          {"code":"LIE","text":{"en":"Hide the truth","es":"Ocultar la verdad"},"correct":false,"explanation":{"en":"Lies damage long-term integrity.","es":"Las mentiras dañan la integridad a largo plazo."}},
-          {"code":"BLAME","text":{"en":"Blame someone else","es":"Culpar a otro"},"correct":false,"explanation":{"en":"Blaming avoids responsibility and growth.","es":"Culpar evita responsabilidad y crecimiento."}},
-          {"code":"TRUTH","text":{"en":"Admit honestly","es":"Admitir honestamente"},"correct":true,"explanation":{"en":"Honesty strengthens character and trust.","es":"La honestidad fortalece el carácter y la confianza."}},
-          {"code":"IGNORE","text":{"en":"Do nothing","es":"No hacer nada"},"correct":false,"explanation":{"en":"Ignoring prevents correction and learning.","es":"Ignorar impide corregir y aprender."}}
-        ]}
-      ]
-    },
-    {
-      "id":32,
-      "level":32,
-      "theme":"SOCIAL PRESSURE",
-      "blocks":[
-        {"type":"story","text":{"en":"Friends push you to do something wrong.","es":"Tus amigos te presionan a hacer algo malo."}},
-        {"type":"analysis","text":{"en":"Strength is saying no.","es":"La fuerza es decir no."}},
-        {"type":"decision","options":[
-          {"code":"FOLLOW","text":{"en":"Follow them","es":"Seguirlos"},"correct":false,"explanation":{"en":"Following wrong pressure weakens identity.","es":"Seguir la mala presión debilita la identidad."}},
-          {"code":"LAUGH","text":{"en":"Laugh and join","es":"Reír y unirse"},"correct":false,"explanation":{"en":"Normalizing wrong actions reduces self-control.","es":"Normalizar lo incorrecto reduce el autocontrol."}},
-          {"code":"STAND","text":{"en":"Say no calmly","es":"Decir no con calma"},"correct":true,"explanation":{"en":"Calm refusal shows strength and independence.","es":"Negarse con calma muestra fuerza e independencia."}},
-          {"code":"RUN","text":{"en":"Escape situation","es":"Escapar"},"correct":false,"explanation":{"en":"Avoidance does not build real confidence.","es":"Evitar no construye verdadera confianza."}}
-        ]}
-      ]
-    },
-    {
-      "id":33,
-      "level":33,
-      "theme":"MENTAL CHAOS",
-      "blocks":[
-        {"type":"story","text":{"en":"Your thoughts are racing too fast.","es":"Tus pensamientos van demasiado rápido."}},
-        {"type":"analysis","text":{"en":"Calm creates clarity.","es":"La calma crea claridad."}},
-        {"type":"decision","options":[
-          {"code":"PANIC","text":{"en":"Overthink everything","es":"Sobrepensar todo"},"correct":false,"explanation":{"en":"Overthinking increases confusion.","es":"Sobrepensar aumenta la confusión."}},
-          {"code":"STOP","text":{"en":"Stop and breathe","es":"Parar y respirar"},"correct":true,"explanation":{"en":"Breathing resets mental clarity.","es":"Respirar restablece la claridad mental."}},
-          {"code":"RUSH","text":{"en":"Act immediately","es":"Actuar de inmediato"},"correct":false,"explanation":{"en":"Fast action without clarity causes mistakes.","es":"Actuar rápido sin claridad causa errores."}},
-          {"code":"IGNORE","text":{"en":"Ignore thoughts","es":"Ignorar pensamientos"},"correct":false,"explanation":{"en":"Ignoring thoughts prevents understanding them.","es":"Ignorar pensamientos impide entenderlos."}}
-        ]}
-      ]
-    },
-    {
-      "id":34,
-      "level":34,
-      "theme":"INNER CONTROL",
-      "blocks":[
-        {"type":"story","text":{"en":"You feel strong emotions rising.","es":"Sientes emociones fuertes subiendo."}},
-        {"type":"analysis","text":{"en":"Control starts inside.","es":"El control empieza dentro."}},
-        {"type":"decision","options":[
-          {"code":"EXPRESS","text":{"en":"Act emotionally","es":"Actuar emocionalmente"},"correct":false,"explanation":{"en":"Emotional reaction reduces control.","es":"La reacción emocional reduce el control."}},
-          {"code":"SUPPRESS","text":{"en":"Ignore emotions","es":"Ignorar emociones"},"correct":false,"explanation":{"en":"Suppressing emotions does not resolve them.","es":"Reprimir emociones no las resuelve."}},
-          {"code":"OBSERVE","text":{"en":"Observe feelings","es":"Observar emociones"},"correct":true,"explanation":{"en":"Observation creates emotional mastery.","es":"Observar crea dominio emocional."}},
-          {"code":"ESCAPE","text":{"en":"Avoid situation","es":"Evitar situación"},"correct":false,"explanation":{"en":"Avoidance prevents personal growth.","es":"Evitar impide el crecimiento personal."}}
-        ]}
-      ]
-    },
-    {
-      "id":35,
-      "level":35,
-      "theme":"FINAL DISCIPLINE TEST",
-      "blocks":[
-        {"type":"story","text":{"en":"You are tested with full distraction.","es":"Te ponen a prueba con distracción total."}},
-        {"type":"analysis","text":{"en":"Discipline defines mastery.","es":"La disciplina define la maestría."}},
-        {"type":"decision","options":[
-          {"code":"QUIT","text":{"en":"Give up","es":"Rendirse"},"correct":false,"explanation":{"en":"Quitting breaks discipline and growth.","es":"Rendirse rompe la disciplina y el crecimiento."}},
-          {"code":"DISTRACT","text":{"en":"Lose focus","es":"Perder enfoque"},"correct":false,"explanation":{"en":"Distraction destroys mastery.","es":"La distracción destruye la maestría."}},
-          {"code":"FOCUS","text":{"en":"Stay fully focused","es":"Mantener enfoque total"},"correct":true,"explanation":{"en":"Full focus is the highest form of discipline.","es":"El enfoque total es la máxima disciplina."}},
-          {"code":"REACT","text":{"en":"React emotionally","es":"Reaccionar emocionalmente"},"correct":false,"explanation":{"en":"Emotional reaction reduces control and precision.","es":"La reacción emocional reduce control y precisión."}}
-        ]}
-      ]
-    }
-  ]
-}
+"sys":"KAMIZEN KIDS","ch":4,"rng":"29-35",
+
+"ui":{"fw":["DISCIPLINE","AWARENESS","CALM","FOCUS","TRUTH","CONTROL","ACTION","PAUSE"]},
+
+"rules":["MasterSelf","Awareness=Freedom","Emotion=Data","Silence=Truth","Focus=Reality","Discipline>Impulse","Calm=Power","Action=Identity"],
+
+"ses":[
+
+{"id":29,"cat":"emotion","b":[
+{"t":"v","tx":"Hoy: TRAMPA EMOCIONAL."},
+{"t":"h","tx":"Te insultan en público."},
+{"t":"br","tx":"Inhala","d":5},{"t":"br","tx":"Exhala","d":5},
+{"t":"d","q":"¿Qué haces?","op":["Explotar","Ignorar","Respirar","Atacar"],"c":2,
+"ex":["Explotar=pierdes control.","Ignorar sin conciencia=no aprendes control.","Respirar=regula emoción (control real).","Atacar=escalas conflicto."]},
+{"t":"r","tx":"+Control","p":20},
+{"t":"c","tx":"Control emocional = poder."}
+]},
+
+{"id":30,"cat":"focus","b":[
+{"t":"v","tx":"Hoy: ENFOQUE."},
+{"t":"h","tx":"Distracciones aparecen."},
+{"t":"d","q":"¿Qué haces?","op":["Multitarea","Parar","Enfocar","Teléfono"],"c":2,
+"ex":["Multitarea=baja rendimiento.","Parar=sin progreso.","Enfocar=mejor retención.","Teléfono=rompe flujo mental."]},
+{"t":"r","tx":"+Focus","p":20},
+{"t":"c","tx":"Atención = energía."}
+]},
+
+{"id":31,"cat":"truth","b":[
+{"t":"v","tx":"Hoy: VERDAD."},
+{"t":"h","tx":"Error oculto."},
+{"t":"d","q":"¿Qué haces?","op":["Mentir","Culpar","Verdad","Ignorar"],"c":2,
+"ex":["Mentir=daña identidad.","Culpar=evitas crecer.","Verdad=fortalece carácter.","Ignorar=sin mejora."]},
+{"t":"r","tx":"+Integridad","p":20},
+{"t":"c","tx":"La verdad crea respeto."}
+]},
+
+{"id":32,"cat":"social","b":[
+{"t":"v","tx":"Hoy: PRESIÓN SOCIAL."},
+{"t":"h","tx":"Te presionan mal."},
+{"t":"d","q":"¿Qué haces?","op":["Seguir","Reír","Decir no","Escapar"],"c":2,
+"ex":["Seguir=pierdes identidad.","Reír=normalizas error.","Decir no=independencia real.","Escapar=no construyes confianza."]},
+{"t":"r","tx":"+Fuerza","p":20},
+{"t":"c","tx":"Decir no = liderazgo."}
+]},
+
+{"id":33,"cat":"mind","b":[
+{"t":"v","tx":"Hoy: CAOS MENTAL."},
+{"t":"h","tx":"Pensamientos rápidos."},
+{"t":"br","tx":"Inhala","d":4},{"t":"br","tx":"Exhala","d":4},
+{"t":"d","q":"¿Qué haces?","op":["Sobrepensar","Respirar","Actuar","Ignorar"],"c":1,
+"ex":["Sobrepensar=confusión.","Respirar=reset mental.","Actuar sin claridad=errores.","Ignorar=no entiendes mente."]},
+{"t":"r","tx":"+Claridad","p":20},
+{"t":"c","tx":"Calma = claridad."}
+]},
+
+{"id":34,"cat":"inner","b":[
+{"t":"v","tx":"Hoy: CONTROL INTERNO."},
+{"t":"h","tx":"Emoción fuerte."},
+{"t":"d","q":"¿Qué haces?","op":["Reaccionar","Ignorar","Observar","Evitar"],"c":2,
+"ex":["Reaccionar=sin control.","Ignorar=no resuelve.","Observar=dominio emocional.","Evitar=no creces."]},
+{"t":"r","tx":"+Dominio","p":20},
+{"t":"c","tx":"Observar = controlar."}
+]},
+
+{"id":35,"cat":"final","b":[
+{"t":"v","tx":"PRUEBA FINAL: DISCIPLINA."},
+{"t":"h","tx":"Distracción total."},
+{"t":"d","q":"¿Qué haces?","op":["Rendirse","Distracción","Enfoque","Reaccionar"],"c":2,
+"ex":["Rendirse=rompe disciplina.","Distracción=sin maestría.","Enfoque=control total.","Reaccionar=sin precisión."]},
+{"t":"r","tx":"+Maestría","p":20},
+
+{"t":"v","tx":"RETO FINAL: SILENCIO ABSOLUTO."},
+
+{"t":"br","tx":"Inhala profundo","d":6,"inf":"Activa calma profunda"},
+{"t":"br","tx":"Retén","d":3,"inf":"Entrena control"},
+{"t":"br","tx":"Exhala lento","d":6,"inf":"Reduce estrés"},
+
+{"t":"sil","d":120,"tx":"Sin moverte. Solo observa.","inf":"Nivel alto de control mental"},
+
+{"t":"v","tx":"Has completado el sistema."},
+
+{"t":"c","tx":"Disciplina + control = poder real en la vida."}
+]}
+
+]}
