@@ -214,7 +214,6 @@ body {
 
 let lang = "en";
 let gameMode = "idle";
-let missionIndex = 1;
 
 let state = {
     score: 0,
@@ -253,11 +252,9 @@ function updateHUD(){
         if(!el) return;
 
         el.innerText = s.value;
-
         let scale = 1 + (s.value / 100);
         el.style.transform = "scale(" + scale + ")";
     });
-
 }
 
 function toggleLang(){
@@ -284,7 +281,6 @@ function spawnWord(){
     div.style.left = Math.random()*80 + "vw";
 
     div.onclick=()=>{
-
         if(div.dataset.clicked) return;
         div.dataset.clicked=true;
         div.classList.add("explode");
@@ -314,71 +310,63 @@ function spawnWord(){
     setTimeout(()=>div.remove(),7000);
 }
 
-async function loadMission(){
-
-    const file =
-        missionIndex <= 7 ? "/static/missions_01_07.json" :
-        missionIndex <= 14 ? "/static/missions_08_14.json" :
-        missionIndex <= 21 ? "/static/missions_15_21.json" :
-        missionIndex <= 28 ? "/static/missions_22_28.json" :
-        "/static/missions_29_35.json";
-
-    const res = await fetch(file);
-    const data = await res.json();
-
-    return (data.missions || []).find(m => m.id === missionIndex);
-}
-
 async function triggerQuestion(){
 
-    const mission = await loadMission();
-    if(!mission) return;
+    try{
+        const res = await fetch("/api/mission/next?lang="+lang);
+        if(!res.ok) return;
 
-    const overlay=document.getElementById("overlay");
-    const grid=document.getElementById("decision-grid");
-    const desc=document.getElementById("phase-desc");
-    const title=document.getElementById("phase-title");
+        const data = await res.json();
+        if(!data || !data.options) return;
 
-    overlay.style.display="flex";
+        const overlay=document.getElementById("overlay");
+        const grid=document.getElementById("decision-grid");
+        const desc=document.getElementById("phase-desc");
+        const title=document.getElementById("phase-title");
 
-    const story = mission.blocks.find(b=>b.type==="story");
-    const decision = mission.blocks.find(b=>b.type==="decision");
+        overlay.style.display="flex";
 
-    title.innerText = mission.theme;
-    desc.innerText = story?.text?.[lang] || "";
+        title.innerText = data.theme || "MISSION";
 
-    grid.innerHTML="";
+        desc.innerText =
+            (data.analysis ? data.analysis + "\n\n" : "") +
+            (data.story || "");
 
-    decision.options.forEach(opt=>{
+        grid.innerHTML="";
 
-        const btn=document.createElement("button");
-        btn.className="choice-btn";
-        btn.innerText = opt.text?.[lang] || opt.text?.en;
+        if(!Array.isArray(data.options)) return;
 
-        btn.onclick=()=>{
+        data.options.forEach(opt=>{
 
-            if(opt.correct){
-                state.score += 30;
-                state.stats.respect++;
-                state.stats.happy++;
-            } else {
-                state.score -= 20;
-                state.stats.safety--;
-            }
+            const btn=document.createElement("button");
+            btn.className="choice-btn";
+            btn.innerText = opt.text?.[lang] || opt.text?.en || "";
 
-            desc.innerText = opt.explanation?.[lang] || opt.explanation?.en;
-            grid.innerHTML="";
+            btn.onclick=()=>{
 
-            setTimeout(()=>{
-                overlay.style.display="none";
-                missionIndex++;
-            },2000);
+                if(opt.correct){
+                    state.score += 30;
+                    state.stats.respect++;
+                    state.stats.happy++;
+                } else {
+                    state.score -= 20;
+                    state.stats.safety--;
+                }
 
-            updateHUD();
-        };
+                desc.innerText = opt.explanation?.[lang] || opt.explanation?.en || "";
+                grid.innerHTML="";
 
-        grid.appendChild(btn);
-    });
+                setTimeout(()=>{
+                    overlay.style.display="none";
+                },2000);
+
+                updateHUD();
+            };
+
+            grid.appendChild(btn);
+        });
+
+    }catch(e){}
 }
 
 setInterval(()=>{
