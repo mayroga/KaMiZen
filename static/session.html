@@ -248,19 +248,14 @@ function updateHUD(){
         {id:"v-happy", value:state.stats.happy}
     ];
 
-    let max = -999;
-
     stats.forEach(s=>{
         const el = document.getElementById(s.id);
         if(!el) return;
 
         el.innerText = s.value;
 
-        // tamaño dinámico (más alto = más grande)
         let scale = 1 + (s.value / 100);
         el.style.transform = "scale(" + scale + ")";
-
-        if(s.value > max) max = s.value;
     });
 
 }
@@ -319,8 +314,8 @@ function spawnWord(){
     setTimeout(()=>div.remove(),7000);
 }
 
-// cargar JSON real por misión
 async function loadMission(){
+
     const file =
         missionIndex <= 7 ? "/static/missions_01_07.json" :
         missionIndex <= 14 ? "/static/missions_08_14.json" :
@@ -331,11 +326,11 @@ async function loadMission(){
     const res = await fetch(file);
     const data = await res.json();
 
-    let list = data.missions || [];
-    return list.find(m => m.id === missionIndex);
+    return (data.missions || []).find(m => m.id === missionIndex);
 }
 
 async function triggerQuestion(){
+
     const mission = await loadMission();
     if(!mission) return;
 
@@ -347,14 +342,15 @@ async function triggerQuestion(){
     overlay.style.display="flex";
 
     const story = mission.blocks.find(b=>b.type==="story");
-    const options = mission.blocks.find(b=>b.type==="decision");
+    const decision = mission.blocks.find(b=>b.type==="decision");
 
     title.innerText = mission.theme;
     desc.innerText = story?.text?.[lang] || "";
 
     grid.innerHTML="";
 
-    options.options.forEach(opt=>{
+    decision.options.forEach(opt=>{
+
         const btn=document.createElement("button");
         btn.className="choice-btn";
         btn.innerText = opt.text?.[lang] || opt.text?.en;
@@ -393,6 +389,7 @@ setInterval(()=>{
 },1000);
 
 async function mainLoop(){
+
     while(true){
 
         gameMode="words";
