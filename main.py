@@ -5,7 +5,7 @@ import os
 app = Flask(__name__, static_folder="static")
 
 # =========================
-# 🧠 MEMORY CACHE
+# 🧠 CACHE
 # =========================
 CACHE = {}
 
@@ -22,7 +22,7 @@ STATE = {
 }
 
 # =========================
-# 📦 LOAD JSON FROM ROOT
+# 📦 LOAD JSON (ROOT FILES)
 # =========================
 def load_json(file_name):
     if file_name in CACHE:
@@ -41,7 +41,7 @@ def load_json(file_name):
 
 
 # =========================
-# 🔎 GET FILE BY INDEX
+# 🔎 FILE BY INDEX RANGE
 # =========================
 def get_file_by_index(i):
     for start in sorted(STATE["range_map"].keys()):
@@ -51,7 +51,7 @@ def get_file_by_index(i):
 
 
 # =========================
-# 🚀 API: NEXT MISSION (SECUENCIAL PERFECTO)
+# 🚀 SEQUENTIAL MISSION ENGINE (NO DESYNC)
 # =========================
 @app.route("/api/mission/next")
 def next_mission():
@@ -65,25 +65,36 @@ def next_mission():
     if not data or "ses" not in data:
         return jsonify({"error": "no data"}), 500
 
-    mission = next((s for s in data["ses"] if s.get("id") == mission_id), None)
+    mission = None
+    for s in data["ses"]:
+        if s.get("id") == mission_id:
+            mission = s
+            break
 
-    # ❗ SI NO EXISTE: NO SALTES, SOLO AVANZA CONTROLADO
+    # =========================
+    # SKIP SAFE ADVANCE (NO LOOP BREAK)
+    # =========================
     if mission is None:
         STATE["mission_index"] += 1
+
         if STATE["mission_index"] > STATE["MAX_MISSION"]:
             STATE["mission_index"] = 1
+
         return jsonify({
             "skip": True,
+            "id": mission_id,
             "next": STATE["mission_index"]
         })
 
+    # =========================
+    # PARSE BLOCKS
+    # =========================
     story = ""
     title = ""
     options = []
     analysis = ""
 
     for block in mission.get("b", []):
-
         t = block.get("t")
 
         if t == "v":
@@ -99,7 +110,10 @@ def next_mission():
             options = []
             for i, op in enumerate(ops):
                 options.append({
-                    "text": {"en": op, "es": op},
+                    "text": {
+                        "en": op,
+                        "es": op
+                    },
                     "correct": (i == correct),
                     "explanation": {
                         "en": block.get("ex", [""])[i] if i < len(block.get("ex", [])) else "",
@@ -111,20 +125,23 @@ def next_mission():
             analysis += block.get("tx", "") + "\n"
 
     # =========================
-    # 🔁 AVANCE SECUENCIAL LIMPIO
+    # ADVANCE SEQUENCIAL SAFE
     # =========================
     STATE["mission_index"] += 1
 
     if STATE["mission_index"] > STATE["MAX_MISSION"]:
         STATE["mission_index"] = 1
 
+    # =========================
+    # RESPONSE (SYNC FIXED)
+    # =========================
     return jsonify({
         "id": mission_id,
+        "next": STATE["mission_index"],
         "theme": title,
         "story": story.strip(),
         "analysis": analysis.strip(),
-        "options": options,
-        "next": STATE["mission_index"]
+        "options": options
     })
 
 
