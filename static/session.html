@@ -107,7 +107,7 @@ body {
 #v-safety { color:var(--neon-red)!important; }
 #v-happy { color:#ff00ff!important; }
 
-/* FLOATING WORDS (NO CHANGE CORE STYLE) */
+/* FLOATING WORDS (UNCHANGED CORE) */
 .floating {
     position:absolute;
     padding:15px 30px;
@@ -232,24 +232,8 @@ body {
 
 let lang = "en";
 let gameMode = "idle";
-
 let currentMissionId = 1;
 
-/* =========================
-   SPEECH (ONLY EN OR ES)
-========================= */
-function speak(text){
-    try{
-        if(!text) return;
-        let u = new SpeechSynthesisUtterance(text);
-        u.lang = (lang === "es") ? "es-ES" : "en-US";
-        speechSynthesis.speak(u);
-    }catch(e){}
-}
-
-/* =========================
-   HUD
-========================= */
 let state = {
     score: 0,
     mastery: 1,
@@ -265,6 +249,18 @@ let state = {
     spawnRate:1300
 };
 
+/* SPEECH */
+function speak(text){
+    if(!text) return;
+    try{
+        let u = new SpeechSynthesisUtterance(text);
+        u.lang = (lang==="es") ? "es-ES" : "en-US";
+        speechSynthesis.cancel();
+        speechSynthesis.speak(u);
+    }catch(e){}
+}
+
+/* HUD */
 function updateHUD(){
     document.getElementById("score-box").innerText = state.score;
 
@@ -280,30 +276,16 @@ function updateHUD(){
     }
 }
 
-/* =========================
-   BREATHING SYSTEM (REAL FLOW)
-========================= */
+/* BREATH */
 function breathCycle(type, sec){
     let c = document.getElementById("breath-circle");
     c.style.display="flex";
-
-    let map = {
-        inhale: "INHALE",
-        hold: "HOLD",
-        exhale: "EXHALE",
-        silence: "SILENCE"
-    };
-
-    c.innerText = map[type] || type.toUpperCase();
-
+    c.innerText = type.toUpperCase();
     speak(type);
-
     setTimeout(()=>c.style.display="none", sec*1000);
 }
 
-/* =========================
-   FLOATING WORDS (UNCHANGED CORE)
-========================= */
+/* FLOATING WORDS (NO CHANGES) */
 const words = {
     power:["LISTEN FIRST","STAY CALM","THINK BEFORE","CONTROL EMOTION","RESPECT OTHERS"],
     risk:["REACT ANGRY","BLAME OTHERS","LOSE CONTROL","FOLLOW CROWD"],
@@ -338,6 +320,7 @@ function spawnWord(){
         if(c==="risk") state.stats.safety--;
         if(c==="silence") state.stats.peace++;
 
+        state.score++;
         updateHUD();
         setTimeout(()=>div.remove(),500);
     };
@@ -346,79 +329,65 @@ function spawnWord(){
     setTimeout(()=>div.remove(),7000);
 }
 
-/* =========================
-   MISSION FETCH (FIXED ID SYNC)
-   - NO RANDOM DESYNC
-========================= */
+/* MISSION */
 async function triggerQuestion(){
-    try{
-        const res = await fetch("/api/mission/next?lang="+lang);
-        const data = await res.json();
+    const res = await fetch("/api/mission/next?lang="+lang);
+    const data = await res.json();
 
-        if(!data || !data.options) return;
+    if(!data || !data.options) return;
 
-        currentMissionId = data.id;
+    currentMissionId = data.id;
 
-        let overlay = document.getElementById("overlay");
-        let grid = document.getElementById("decision-grid");
-        let desc = document.getElementById("phase-desc");
-        let title = document.getElementById("phase-title");
+    let overlay = document.getElementById("overlay");
+    let grid = document.getElementById("decision-grid");
+    let desc = document.getElementById("phase-desc");
+    let title = document.getElementById("phase-title");
 
-        overlay.style.display="flex";
+    overlay.style.display="flex";
 
-        title.innerText = data.theme || "MISSION";
-        desc.innerText = (data.analysis||"") + "\n\n" + (data.story||"");
+    title.innerText = data.theme;
+    desc.innerText = (data.analysis||"") + "\n\n" + (data.story||"");
 
-        grid.innerHTML="";
+    grid.innerHTML="";
 
-        /* BREATH TRIGGERS FROM JSON */
-        if(data.analysis?.toLowerCase().includes("inhala")){
-            breathCycle("inhale",4);
-        }
-        if(data.analysis?.toLowerCase().includes("silencio")){
-            breathCycle("silence",2);
-        }
+    if((data.analysis+data.story).toLowerCase().includes("inhala")){
+        breathCycle("inhale",4);
+    }
+    if((data.analysis+data.story).toLowerCase().includes("silencio")){
+        breathCycle("silence",2);
+    }
 
-        data.options.forEach(opt=>{
-            let btn=document.createElement("button");
-            btn.className="choice-btn";
+    data.options.forEach(opt=>{
+        let btn=document.createElement("button");
+        btn.className="choice-btn";
 
-            btn.innerText = (lang==="es")
-                ? (opt.text?.es || opt.text?.en)
-                : opt.text?.en;
+        btn.innerText = (lang==="es") ? opt.text.es : opt.text.en;
 
-            btn.onclick=()=>{
-                if(opt.correct){
-                    state.score+=30;
-                    state.stats.respect++;
-                    state.stats.happy++;
-                }else{
-                    state.score-=20;
-                    state.stats.safety--;
-                }
+        btn.onclick=()=>{
+            if(opt.correct){
+                state.score+=30;
+                state.stats.respect++;
+                state.stats.happy++;
+            }else{
+                state.score-=20;
+                state.stats.safety--;
+            }
 
-                let exp = (lang==="es")
-                    ? opt.explanation?.es
-                    : opt.explanation?.en;
+            let exp = (lang==="es") ? opt.explanation.es : opt.explanation.en;
+            speak(exp);
+            desc.innerText = exp;
 
-                speak(exp);
-                desc.innerText = exp;
+            grid.innerHTML="";
+            setTimeout(()=>overlay.style.display="none",1500);
 
-                grid.innerHTML="";
-                setTimeout(()=>overlay.style.display="none",1500);
+            updateHUD();
+        };
 
-                updateHUD();
-            };
-
-            grid.appendChild(btn);
-        });
-
-    }catch(e){}
+        grid.appendChild(btn);
+    });
 }
 
-/* =========================
-   TIMER FIX (NOT STOPPING)
-========================= */
+/* TIMER */
 setInterval(()=>{
     if(state.timer>0){
         state.timer--;
@@ -426,9 +395,7 @@ setInterval(()=>{
     }
 },1000);
 
-/* =========================
-   LOOP
-========================= */
+/* LOOP */
 async function mainLoop(){
     while(true){
         gameMode="words";
