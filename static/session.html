@@ -167,6 +167,28 @@ body {
     color:#fff;
     cursor:pointer;
 }
+
+/* BREATHING CIRCLE */
+#breath-circle{
+    width:140px;
+    height:140px;
+    border-radius:50%;
+    border:4px solid var(--neon-blue);
+    margin:10px auto;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    font-weight:bold;
+    color:var(--neon-blue);
+    animation:pulse 4s infinite;
+}
+
+@keyframes pulse{
+    0%{transform:scale(1);opacity:0.5;}
+    50%{transform:scale(1.4);opacity:1;}
+    100%{transform:scale(1);opacity:0.5;}
+}
 </style>
 </head>
 
@@ -190,6 +212,8 @@ body {
     <div class="stat-pill">Happiness: <span id="v-happy">50</span>%</div>
 </div>
 
+<div id="breath-circle">INHALE</div>
+
 <div id="overlay">
     <h1 id="phase-title"></h1>
     <p id="phase-desc"></p>
@@ -207,35 +231,45 @@ let state={
     score:0,
     mastery:1,
     timer:300,
-    stats:{
-        respect:50,
-        peace:50,
-        lead:50,
-        money:100,
-        happy:50,
-        safety:100
-    },
+    stats:{respect:50,peace:50,lead:50,money:100,happy:50,safety:100},
     spawnRate:1300
 };
+
+function speak(text){
+    try{
+        let u=new SpeechSynthesisUtterance(text);
+        u.lang="en-US";
+        speechSynthesis.speak(u);
+    }catch(e){}
+}
 
 function updateHUD(){
     document.getElementById("score-box").innerText=state.score;
 
-    document.getElementById("timer-box").innerText=
-        String(Math.floor(state.timer/60)).padStart(2,"0")+":"+
-        String(state.timer%60).padStart(2,"0");
+    let m=Math.floor(state.timer/60);
+    let s=state.timer%60;
 
-    for(const k in state.stats){
-        const el=document.getElementById("v-"+k);
+    document.getElementById("timer-box").innerText=
+        String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
+
+    for(let k in state.stats){
+        let el=document.getElementById("v-"+k);
         if(el) el.innerText=state.stats[k];
     }
 }
 
-function toggleLang(){
-    lang=(lang==="en")?"es":"en";
-    document.getElementById("lang-btn").innerText=lang.toUpperCase();
+/* BREATH SYSTEM */
+function breathCycle(type, sec){
+    let circle=document.getElementById("breath-circle");
+    circle.style.display="flex";
+    circle.innerText=type.toUpperCase();
+
+    speak(type);
+
+    setTimeout(()=>circle.style.display="none", sec*1000);
 }
 
+/* WORDS */
 const words={
     power:["LISTEN FIRST","STAY CALM","THINK BEFORE","CONTROL EMOTION","RESPECT OTHERS"],
     risk:["REACT ANGRY","BLAME OTHERS","LOSE CONTROL","FOLLOW CROWD"],
@@ -249,7 +283,7 @@ function spawnWord(){
     const styles=["word-power","word-risk","word-silence"];
     const c=cats[Math.floor(Math.random()*3)];
 
-    const div=document.createElement("div");
+    let div=document.createElement("div");
     div.className="floating "+styles[Math.floor(Math.random()*3)];
     div.innerText=words[c][Math.floor(Math.random()*words[c].length)];
     div.style.left=Math.random()*80+"vw";
@@ -259,22 +293,9 @@ function spawnWord(){
         div.dataset.clicked=true;
         div.classList.add("explode");
 
-        if(c==="power"){
-            state.score+=20;
-            state.stats.respect++;
-            state.stats.lead++;
-        }
-
-        if(c==="risk"){
-            state.score-=30;
-            state.stats.safety--;
-            state.stats.peace--;
-        }
-
-        if(c==="silence"){
-            state.stats.peace++;
-            state.stats.happy++;
-        }
+        if(c==="power"){state.score+=20;state.stats.respect++;}
+        if(c==="risk"){state.score-=30;state.stats.safety--;}
+        if(c==="silence"){state.stats.peace++;state.stats.happy++;}
 
         updateHUD();
         setTimeout(()=>div.remove(),500);
@@ -284,47 +305,49 @@ function spawnWord(){
     setTimeout(()=>div.remove(),7000);
 }
 
+/* JSON MISSION */
 async function triggerQuestion(){
-
     try{
         const res=await fetch("/api/mission/next?lang="+lang);
         const data=await res.json();
 
         if(!data||!data.options)return;
 
-        const overlay=document.getElementById("overlay");
-        const grid=document.getElementById("decision-grid");
-        const desc=document.getElementById("phase-desc");
-        const title=document.getElementById("phase-title");
+        let overlay=document.getElementById("overlay");
+        let grid=document.getElementById("decision-grid");
+        let desc=document.getElementById("phase-desc");
+        let title=document.getElementById("phase-title");
 
         overlay.style.display="flex";
-        title.innerText=data.theme||"MISSION";
 
-        desc.innerText=(data.analysis?data.analysis+"\n\n":"")+(data.story||"");
+        title.innerText=data.theme||"MISSION";
+        desc.innerText=(data.analysis||"")+"\n\n"+(data.story||"");
 
         grid.innerHTML="";
 
+        /* BREATH TRIGGER */
+        if(data.analysis?.includes("Inhala")){
+            breathCycle("inhale",4);
+        }
+
         data.options.forEach(opt=>{
-            const btn=document.createElement("button");
+            let btn=document.createElement("button");
             btn.className="choice-btn";
             btn.innerText=opt.text?.[lang]||opt.text?.en;
 
             btn.onclick=()=>{
-
                 if(opt.correct){
                     state.score+=30;
                     state.stats.respect++;
-                    state.stats.happy++;
                 }else{
                     state.score-=20;
                     state.stats.safety--;
                 }
 
-                desc.innerText=opt.explanation?.[lang]||opt.explanation?.en;
+                speak(opt.explanation?.en||"");
+                desc.innerText=opt.explanation?.[lang]||"";
                 grid.innerHTML="";
-
                 setTimeout(()=>overlay.style.display="none",2000);
-
                 updateHUD();
             };
 
@@ -334,13 +357,20 @@ async function triggerQuestion(){
     }catch(e){}
 }
 
+/* TIMER FIX */
+setInterval(()=>{
+    if(state.timer>0){
+        state.timer--;
+        updateHUD();
+    }
+},1000);
+
+/* LOOP */
 async function mainLoop(){
-
     while(true){
-
         gameMode="words";
-        let end=Date.now()+45000;
 
+        let end=Date.now()+45000;
         while(Date.now()<end){
             spawnWord();
             await new Promise(r=>setTimeout(r,state.spawnRate));
