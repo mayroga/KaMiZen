@@ -11,6 +11,7 @@ CACHE = {}
 
 STATE = {
     "mission_index": 1,
+    "MAX_MISSION": 35,
     "range_map": {
         1: "missions_01_07.json",
         8: "missions_08_14.json",
@@ -19,7 +20,6 @@ STATE = {
         29: "missions_29_35.json"
     }
 }
-
 
 # =========================
 # 📦 LOAD JSON FROM ROOT
@@ -51,7 +51,7 @@ def get_file_by_index(i):
 
 
 # =========================
-# 🚀 API: NEXT MISSION
+# 🚀 API: NEXT MISSION (SECUENCIAL PERFECTO)
 # =========================
 @app.route("/api/mission/next")
 def next_mission():
@@ -65,21 +65,18 @@ def next_mission():
     if not data or "ses" not in data:
         return jsonify({"error": "no data"}), 500
 
-    mission = None
+    mission = next((s for s in data["ses"] if s.get("id") == mission_id), None)
 
-    # buscar misión por id dentro de ses
-    for s in data["ses"]:
-        if s.get("id") == mission_id:
-            mission = s
-            break
-
-    if not mission:
+    # ❗ SI NO EXISTE: NO SALTES, SOLO AVANZA CONTROLADO
+    if mission is None:
         STATE["mission_index"] += 1
-        return jsonify({"skip": True})
+        if STATE["mission_index"] > STATE["MAX_MISSION"]:
+            STATE["mission_index"] = 1
+        return jsonify({
+            "skip": True,
+            "next": STATE["mission_index"]
+        })
 
-    # =========================
-    # 🔥 PARSE NEW STRUCTURE
-    # =========================
     story = ""
     title = ""
     options = []
@@ -96,10 +93,10 @@ def next_mission():
             story += block.get("tx", "") + "\n"
 
         elif t == "d":
-            options = []
             ops = block.get("op", [])
             correct = block.get("c", 0)
 
+            options = []
             for i, op in enumerate(ops):
                 options.append({
                     "text": {"en": op, "es": op},
@@ -113,16 +110,21 @@ def next_mission():
         elif t == "c":
             analysis += block.get("tx", "") + "\n"
 
-    # avanzar misión
+    # =========================
+    # 🔁 AVANCE SECUENCIAL LIMPIO
+    # =========================
     STATE["mission_index"] += 1
-    if STATE["mission_index"] > 35:
+
+    if STATE["mission_index"] > STATE["MAX_MISSION"]:
         STATE["mission_index"] = 1
 
     return jsonify({
+        "id": mission_id,
         "theme": title,
         "story": story.strip(),
         "analysis": analysis.strip(),
-        "options": options
+        "options": options,
+        "next": STATE["mission_index"]
     })
 
 
@@ -140,7 +142,7 @@ def static_files(path):
 
 
 # =========================
-# 🔁 RESET (DEBUG)
+# 🔁 RESET
 # =========================
 @app.route("/api/reset")
 def reset():
