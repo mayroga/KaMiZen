@@ -1,150 +1,137 @@
-import os
+from flask import Flask, jsonify, request, send_from_directory
 import json
-from flask import Flask, jsonify, send_from_directory
+import os
 
 app = Flask(__name__, static_folder="static")
 
 # =========================
-# CONFIG
+# 🧠 MEMORY CACHE
 # =========================
-JSON_FILES = [
-    "missions_01_07.json",
-    "missions_08_14.json",
-    "missions_15_21.json",
-    "missions_22_28.json",
-    "missions_29_35.json"
-]
-
 CACHE = {}
-MISSION_POINTER = 1
+
+STATE = {
+    "mission_index": 1,
+    "range_map": {
+        1: "missions_01_07.json",
+        8: "missions_08_14.json",
+        15: "missions_15_21.json",
+        22: "missions_22_28.json",
+        29: "missions_29_35.json"
+    }
+}
 
 
 # =========================
-# 📥 LOAD JSON (ROOT FOLDER)
+# 📦 LOAD JSON FROM ROOT
 # =========================
-def load_json(filename):
-    if filename in CACHE:
-        return CACHE[filename]
+def load_json(file_name):
+    if file_name in CACHE:
+        return CACHE[file_name]
 
-    path = os.path.join(os.getcwd(), filename)  # 🔥 RAÍZ DEL PROYECTO
-
-    print("📂 buscando:", path)
-
-    if not os.path.exists(path):
-        print("❌ NO EXISTE:", path)
-        return None
+    path = os.path.join(os.getcwd(), file_name)
 
     try:
         with open(path, "r", encoding="utf-8") as f:
             data = json.load(f)
-            CACHE[filename] = data
-            print("✅ cargado:", filename)
+            CACHE[file_name] = data
             return data
     except Exception as e:
-        print("❌ error json:", filename, e)
+        print("ERROR loading:", file_name, e)
         return None
 
 
 # =========================
-# 🔎 FIND SESSION
+# 🔎 GET FILE BY INDEX
 # =========================
-def find_session(session_id):
-    for file in JSON_FILES:
-        data = load_json(file)
-        if not data:
-            continue
-
-        sessions = data.get("ses", [])
-
-        for s in sessions:
-            if s.get("id") == session_id:
-                print("🎯 FOUND:", session_id)
-                return s
-
-    print("⚠️ NOT FOUND:", session_id)
-    return None
+def get_file_by_index(i):
+    for start in sorted(STATE["range_map"].keys()):
+        if start <= i <= start + 6:
+            return STATE["range_map"][start]
+    return STATE["range_map"][1]
 
 
 # =========================
-# 🔁 LOOP INFINITO
+# 🚀 API: NEXT MISSION
 # =========================
-def get_next_session():
-    global MISSION_POINTER
+@app.route("/api/mission/next")
+def next_mission():
 
-    session = find_session(MISSION_POINTER)
+    lang = request.args.get("lang", "en")
+    mission_id = STATE["mission_index"]
 
-    if not session:
-        MISSION_POINTER = 1
-        session = find_session(MISSION_POINTER)
+    file_name = get_file_by_index(mission_id)
+    data = load_json(file_name)
 
-    MISSION_POINTER += 1
-    if MISSION_POINTER > 35:
-        MISSION_POINTER = 1
+    if not data or "ses" not in data:
+        return jsonify({"error": "no data"}), 500
 
-    return session
+    mission = None
 
+    # buscar misión por id dentro de ses
+    for s in data["ses"]:
+        if s.get("id") == mission_id:
+            mission = s
+            break
 
-# =========================
-# 🧠 PARSER JSON NUEVO
-# =========================
-def parse_session(session):
-    if not session:
-        return {}
+    if not mission:
+        STATE["mission_index"] += 1
+        return jsonify({"skip": True})
 
-    story = []
-    analysis = ""
+    # =========================
+    # 🔥 PARSE NEW STRUCTURE
+    # =========================
+    story = ""
+    title = ""
     options = []
+    analysis = ""
 
-    for b in session.get("b", []):
+    for block in mission.get("b", []):
 
-        t = b.get("t")
+        t = block.get("t")
 
-        if t in ["v", "h"]:
-            story.append(b.get("tx", ""))
+        if t == "v":
+            title = block.get("tx", "")
 
-        elif t == "c":
-            analysis = b.get("tx", "")
+        elif t == "h":
+            story += block.get("tx", "") + "\n"
 
         elif t == "d":
-            ops = b.get("op", [])
-            correct = b.get("c", 0)
-            ex = b.get("ex", [])
+            options = []
+            ops = block.get("op", [])
+            correct = block.get("c", 0)
 
             for i, op in enumerate(ops):
                 options.append({
                     "text": {"en": op, "es": op},
-                    "correct": i == correct,
+                    "correct": (i == correct),
                     "explanation": {
-                        "en": ex[i] if i < len(ex) else "",
-                        "es": ex[i] if i < len(ex) else ""
+                        "en": block.get("ex", [""])[i] if i < len(block.get("ex", [])) else "",
+                        "es": block.get("ex", [""])[i] if i < len(block.get("ex", [])) else ""
                     }
                 })
 
-    return {
-        "id": session.get("id"),
-        "theme": session.get("cat"),
-        "story": " ".join(story),
-        "analysis": analysis,
+        elif t == "c":
+            analysis += block.get("tx", "") + "\n"
+
+    # avanzar misión
+    STATE["mission_index"] += 1
+    if STATE["mission_index"] > 35:
+        STATE["mission_index"] = 1
+
+    return jsonify({
+        "theme": title,
+        "story": story.strip(),
+        "analysis": analysis.strip(),
         "options": options
-    }
+    })
 
 
 # =========================
-# 🌐 ROUTES
+# 🌐 STATIC
 # =========================
 @app.route("/")
-def home():
+def index():
     return send_from_directory("static", "session.html")
-
-
-@app.route("/api/mission/next")
-def next_mission():
-    session = get_next_session()
-
-    if not session:
-        return jsonify({"error": "no session"}), 500
-
-    return jsonify(parse_session(session))
 
 
 @app.route("/static/<path:path>")
@@ -153,8 +140,16 @@ def static_files(path):
 
 
 # =========================
+# 🔁 RESET (DEBUG)
+# =========================
+@app.route("/api/reset")
+def reset():
+    STATE["mission_index"] = 1
+    return jsonify({"ok": True})
+
+
+# =========================
 # 🚀 RUN
 # =========================
 if __name__ == "__main__":
-    print("🔥 SERVER RUNNING...")
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(debug=True)
