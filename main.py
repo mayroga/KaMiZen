@@ -1,376 +1,140 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>AL CIELO: TOTAL LIFE TRAINING</title>
+from flask import Flask, jsonify, send_from_directory, request
+import os
+import json
+import random
 
-<style>
-:root {
-    --neon-blue:#00f2ff;
-    --neon-green:#00ff41;
-    --neon-red:#ff003c;
-    --neon-yellow:#ffff00;
-    --matrix-bg:#00050a;
-    --neon-gold:#ffcc00;
+app = Flask(__name__, static_folder="static")
+
+BASE = os.path.dirname(__file__)
+
+# =========================
+# 💾 SAVE SYSTEM
+# =========================
+def get_save_data():
+    path = os.path.join(BASE, "save_game.json")
+    if not os.path.exists(path):
+        return {"last_mission": 0, "score": 0}
+    with open(path, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+def save_progress(mid, score):
+    path = os.path.join(BASE, "save_game.json")
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump({"last_mission": mid, "score": score}, f)
+
+# =========================
+# 📦 LOAD JSON
+# =========================
+def load_json(file):
+    try:
+        path = os.path.join(BASE, file)
+        if not os.path.exists(path):
+            return None
+        with open(path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except:
+        return None
+
+def get_all_missions():
+    files = [
+        "missions_01_07.json",
+        "missions_08_14.json",
+        "missions_15_21.json",
+        "missions_22_28.json",
+        "missions_29_35.json"
+    ]
+    return [load_json(f) for f in files if load_json(f)]
+
+# =========================
+# 🧠 STATE
+# =========================
+user_ai = {
+    "score": 0
 }
 
-body {
-    margin:0;
-    background:var(--matrix-bg);
-    color:#fff;
-    font-family:'Courier New', monospace;
-    overflow:hidden;
-    user-select:none;
-}
+# =========================
+# 🎯 CORE LOGIC
+# =========================
+def pick_context():
+    return random.choice(["focus", "calm", "risk", "control"])
 
-/* ALERTA */
-#security-alert {
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:8px;
-    background:var(--neon-green);
-    z-index:1000;
-    transition:0.8s ease;
-    box-shadow:0 0 15px var(--neon-green);
-}
+def generate_words():
+    return ["FOCUS", "CALM", "OBSERVE", "CONTROL", "THINK"]
 
-#lang-btn {
-    position:fixed;
-    bottom:20px;
-    right:20px;
-    z-index:999;
-    padding:10px 18px;
-    border:2px solid var(--neon-blue);
-    background:rgba(0,0,0,0.8);
-    color:var(--neon-blue);
-    cursor:pointer;
-    font-weight:bold;
-    border-radius:5px;
-}
+def difficulty(score):
+    if score < 100:
+        return "easy"
+    if score < 300:
+        return "medium"
+    return "hard"
 
-#hud {
-    position:fixed;
-    top:20px;
-    width:100%;
-    display:flex;
-    justify-content:space-between;
-    padding:20px;
-    z-index:50;
-    box-sizing:border-box;
-}
+# =========================
+# 🎮 FORMAT
+# =========================
+def format_mission(mission, pack, lang="en"):
+    story = mission["blocks"][0]["text"].get(lang, "")
 
-#timer-box {
-    font-size:2.8rem;
-    color:var(--neon-blue);
-    text-shadow:0 0 20px var(--neon-blue);
-}
+    options = mission["blocks"][1]["options"]
 
-#score-container {
-    text-align:right;
-}
-
-#mastery-lvl {
-    color:var(--neon-green);
-    font-size:1.2rem;
-    font-weight:bold;
-}
-
-#score-box {
-    border:3px solid #fff;
-    padding:8px 20px;
-    font-size:1.8rem;
-    margin-top:5px;
-    background:rgba(255,255,255,0.1);
-}
-
-/* STATS */
-#life-stats {
-    position:fixed;
-    bottom:20px;
-    left:20px;
-    display:flex;
-    flex-wrap:wrap;
-    gap:12px;
-    z-index:50;
-    max-width:95%;
-}
-
-.stat-pill {
-    border:2px solid #333;
-    padding:10px 15px;
-    font-size:0.9rem;
-    background:rgba(0,0,0,0.9);
-    border-radius:6px;
-}
-
-.stat-pill span {
-    font-weight:bold;
-    color:var(--neon-blue);
-}
-
-#v-money { color:var(--neon-gold) !important; }
-#v-safety { color:var(--neon-red) !important; }
-#v-happy { color:#ff00ff !important; }
-
-/* WORDS */
-.floating {
-    position:absolute;
-    padding:15px 30px;
-    font-weight:900;
-    font-size:1.5rem;
-    border-radius:10px;
-    background:rgba(0,0,0,0.9);
-    z-index:10;
-    animation:floatUp 7s linear forwards;
-    cursor:pointer;
-}
-
-.word-power {
-    border:3px solid var(--neon-green);
-    color:var(--neon-green);
-}
-
-.word-risk {
-    border:3px solid var(--neon-red);
-    color:var(--neon-red);
-}
-
-.word-silence {
-    border:3px solid var(--neon-yellow);
-    color:var(--neon-yellow);
-}
-
-@keyframes floatUp {
-    from { transform:translateY(110vh); }
-    to { transform:translateY(-25vh); }
-}
-
-.explode {
-    animation:blast 0.5s ease-out forwards !important;
-}
-
-@keyframes blast {
-    0% { transform:scale(1); opacity:1; }
-    100% { transform:scale(4); opacity:0; }
-}
-
-/* OVERLAY */
-#overlay {
-    position:fixed;
-    width:100%;
-    height:100%;
-    background:rgba(0,5,10,0.95);
-    display:none;
-    align-items:center;
-    justify-content:center;
-    flex-direction:column;
-    z-index:500;
-    text-align:center;
-    padding:30px;
-}
-
-#decision-grid {
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:20px;
-    margin-top:30px;
-    width:100%;
-    max-width:800px;
-}
-
-.choice-btn {
-    padding:22px;
-    border:3px solid var(--neon-blue);
-    background:none;
-    color:#fff;
-    cursor:pointer;
-}
-</style>
-</head>
-
-<body>
-
-<div id="security-alert"></div>
-<button id="lang-btn" onclick="toggleLang()">EN</button>
-
-<div id="hud">
-    <div id="timer-box">05:00</div>
-    <div id="score-container">
-        <div id="mastery-lvl">MASTERY x1</div>
-        <div id="score-box">0</div>
-    </div>
-</div>
-
-<div id="life-stats">
-    <div class="stat-pill">Respect: <span id="v-respect">50</span></div>
-    <div class="stat-pill">Peace: <span id="v-peace">50</span></div>
-    <div class="stat-pill">Leadership: <span id="v-lead">50</span></div>
-    <div class="stat-pill">Money: $<span id="v-money">100</span></div>
-    <div class="stat-pill">Safety: <span id="v-safety">100</span>%</div>
-    <div class="stat-pill">Happiness: <span id="v-happy">50</span>%</div>
-</div>
-
-<div id="overlay">
-    <h1 id="phase-title"></h1>
-    <p id="phase-desc"></p>
-    <div id="decision-grid"></div>
-</div>
-
-<script src="/static/engine.js"></script>
-
-<script>
-
-let lang = "en";
-let gameMode = "idle";
-
-let state = {
-    score: 0,
-    mastery: 1,
-    timer: 300,
-    stats: {
-        respect:50,
-        peace:50,
-        lead:50,
-        money:100,
-        happy:50,
-        safety:100
-    },
-    spawnRate:1300
-};
-
-function updateHUD(){
-    document.getElementById("score-box").innerText = state.score;
-
-    document.getElementById("timer-box").innerText =
-        String(Math.floor(state.timer/60)).padStart(2,"0") + ":" +
-        String(state.timer%60).padStart(2,"0");
-
-    document.getElementById("v-respect").innerText = state.stats.respect;
-    document.getElementById("v-peace").innerText = state.stats.peace;
-    document.getElementById("v-lead").innerText = state.stats.lead;
-    document.getElementById("v-money").innerText = state.stats.money;
-    document.getElementById("v-safety").innerText = state.stats.safety;
-    document.getElementById("v-happy").innerText = state.stats.happy;
-}
-
-function toggleLang(){
-    lang = (lang === "en") ? "es" : "en";
-    document.getElementById("lang-btn").innerText = lang.toUpperCase();
-}
-
-const words = {
-    power:["LISTEN FIRST","STAY CALM","THINK BEFORE","CONTROL EMOTION","RESPECT OTHERS","FOCUS NOW"],
-    risk:["REACT ANGRY","BLAME OTHERS","LOSE CONTROL","FOLLOW CROWD","NO PLAN"],
-    silence:["OBSERVE PEOPLE","BREATHE DEEP","WAIT MOMENT","INNER CONTROL","CALM DOWN"]
-};
-
-function spawnWord(){
-    if(gameMode !== "words") return;
-
-    const cats = ["power","risk","silence"];
-    const styles = ["word-power","word-risk","word-silence"];
-    const c = cats[Math.floor(Math.random()*cats.length)];
-
-    const div = document.createElement("div");
-    div.className = "floating " + styles[Math.floor(Math.random()*styles.length)];
-    div.innerText = words[c][Math.floor(Math.random()*words[c].length)];
-    div.style.left = Math.random()*80 + "vw";
-
-    div.onclick = () => {
-        if(div.dataset.clicked) return;
-        div.dataset.clicked = "1";
-        div.classList.add("explode");
-
-        if(c === "power") state.score += 20;
-        if(c === "risk") state.score -= 30;
-        if(c === "silence") state.stats.peace++;
-
-        updateHUD();
-        setTimeout(() => div.remove(), 500);
-    };
-
-    document.body.appendChild(div);
-
-    setTimeout(() => {
-        if(div && div.parentNode) div.remove();
-    }, 7000);
-}
-
-async function triggerQuestion(){
-    try {
-        const res = await fetch("/api/mission/next?lang=" + lang);
-        if(!res.ok) return;
-
-        const data = await res.json();
-
-        const overlay = document.getElementById("overlay");
-        const grid = document.getElementById("decision-grid");
-        const desc = document.getElementById("phase-desc");
-        const title = document.getElementById("phase-title");
-
-        overlay.style.display = "flex";
-        title.innerText = data.theme || "MISSION";
-        desc.innerText = data.story || "";
-        grid.innerHTML = "";
-
-        (data.options || []).forEach(opt => {
-            const btn = document.createElement("button");
-            btn.className = "choice-btn";
-            btn.innerText = opt.text;
-
-            btn.onclick = () => {
-                state.score += opt.score || 0;
-                desc.innerText = opt.explanation || "";
-                grid.innerHTML = "";
-
-                setTimeout(() => {
-                    overlay.style.display = "none";
-                }, 2500);
-            };
-
-            grid.appendChild(btn);
-        });
-
-    } catch(e) {
-        console.error("QUESTION ERROR", e);
-        document.getElementById("overlay").style.display = "none";
-    }
-}
-
-async function mainLoop(){
-    while(true){
-        try {
-            gameMode = "words";
-
-            let end = Date.now() + 45000;
-
-            while(Date.now() < end){
-                spawnWord();
-                await new Promise(r => setTimeout(r, state.spawnRate));
+    return {
+        "id": mission.get("id"),
+        "theme": mission.get("theme"),
+        "story": story,
+        "difficulty": difficulty(user_ai["score"]),
+        "words": generate_words(),
+        "options": [
+            {
+                "text": o["text"].get(lang, ""),
+                "score": o.get("score", 0),
+                "correct": o.get("correct", False),
+                "explanation": o.get("explanation", {}).get(lang, "")
             }
-
-            document.querySelectorAll(".floating").forEach(e => e.remove());
-
-            gameMode = "question";
-            await triggerQuestion();
-
-            await new Promise(r => setTimeout(r, 4000));
-
-        } catch(e) {
-            console.error("LOOP ERROR", e);
-        }
+            for o in options
+        ]
     }
-}
 
-updateHUD();
-mainLoop();
+# =========================
+# 🔍 FIND
+# =========================
+def find_mission(mid):
+    for pack in get_all_missions():
+        for m in pack.get("missions", []):
+            if m["id"] == mid:
+                return m, pack
+    return None, None
 
-document.addEventListener("click", () => {}, {once:true});
+# =========================
+# 🎯 API
+# =========================
+@app.route("/api/mission/next")
+def next_mission():
+    lang = request.args.get("lang", "en")
 
-</script>
+    data = get_save_data()
+    next_id = data["last_mission"] + 1
 
-</body>
-</html>
+    mission, pack = find_mission(next_id)
+
+    if not mission:
+        return jsonify({"error": "no mission"}), 404
+
+    save_progress(next_id, user_ai["score"])
+
+    return jsonify(format_mission(mission, pack, lang))
+
+# =========================
+# 🏠 FRONTEND
+# =========================
+@app.route("/")
+def home():
+    return send_from_directory("static", "session.html")
+
+@app.route("/static/<path:path>")
+def static_files(path):
+    return send_from_directory("static", path)
+
+# =========================
+# 🚀 RUN
+# =========================
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=10000)
