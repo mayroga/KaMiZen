@@ -22,13 +22,19 @@ STATE = {
 }
 
 # =========================
-# 📦 LOAD JSON (ROOT FILES)
+# 📦 BASE DIR (FIX REAL PATH ISSUE)
+# =========================
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# =========================
+# 📦 LOAD JSON (ROOT FILES FIXED)
 # =========================
 def load_json(file_name):
     if file_name in CACHE:
         return CACHE[file_name]
 
-    path = os.path.join(os.getcwd(), file_name)
+    # 🔥 FIX: always resolve relative to main.py location
+    path = os.path.join(BASE_DIR, file_name)
 
     try:
         with open(path, "r", encoding="utf-8") as f:
@@ -36,7 +42,7 @@ def load_json(file_name):
             CACHE[file_name] = data
             return data
     except Exception as e:
-        print("ERROR loading:", file_name, e)
+        print("❌ ERROR loading:", file_name, "| PATH:", path, "|", e)
         return None
 
 
@@ -51,7 +57,7 @@ def get_file_by_index(i):
 
 
 # =========================
-# 🚀 SEQUENTIAL MISSION ENGINE (NO DESYNC)
+# 🚀 SEQUENTIAL MISSION ENGINE (ROBUST SYNC)
 # =========================
 @app.route("/api/mission/next")
 def next_mission():
@@ -63,7 +69,11 @@ def next_mission():
     data = load_json(file_name)
 
     if not data or "ses" not in data:
-        return jsonify({"error": "no data"}), 500
+        return jsonify({
+            "error": "no data",
+            "file": file_name,
+            "id": mission_id
+        }), 500
 
     mission = None
     for s in data["ses"]:
@@ -72,7 +82,7 @@ def next_mission():
             break
 
     # =========================
-    # SKIP SAFE ADVANCE (NO LOOP BREAK)
+    # SAFE SKIP (NO FREEZE)
     # =========================
     if mission is None:
         STATE["mission_index"] += 1
@@ -87,7 +97,7 @@ def next_mission():
         })
 
     # =========================
-    # PARSE BLOCKS
+    # PARSE MISSION
     # =========================
     story = ""
     title = ""
@@ -108,16 +118,16 @@ def next_mission():
             correct = block.get("c", 0)
 
             options = []
-            for i, op in enumerate(ops):
+            for idx, op in enumerate(ops):
                 options.append({
                     "text": {
                         "en": op,
                         "es": op
                     },
-                    "correct": (i == correct),
+                    "correct": (idx == correct),
                     "explanation": {
-                        "en": block.get("ex", [""])[i] if i < len(block.get("ex", [])) else "",
-                        "es": block.get("ex", [""])[i] if i < len(block.get("ex", [])) else ""
+                        "en": block.get("ex", [""])[idx] if idx < len(block.get("ex", [])) else "",
+                        "es": block.get("ex", [""])[idx] if idx < len(block.get("ex", [])) else ""
                     }
                 })
 
@@ -125,7 +135,7 @@ def next_mission():
             analysis += block.get("tx", "") + "\n"
 
     # =========================
-    # ADVANCE SEQUENCIAL SAFE
+    # ADVANCE INDEX (CONTROLLED)
     # =========================
     STATE["mission_index"] += 1
 
@@ -133,7 +143,7 @@ def next_mission():
         STATE["mission_index"] = 1
 
     # =========================
-    # RESPONSE (SYNC FIXED)
+    # RESPONSE (FULL SYNC FIX)
     # =========================
     return jsonify({
         "id": mission_id,
@@ -141,12 +151,13 @@ def next_mission():
         "theme": title,
         "story": story.strip(),
         "analysis": analysis.strip(),
-        "options": options
+        "options": options,
+        "lang": lang
     })
 
 
 # =========================
-# 🌐 STATIC
+# 🌐 STATIC ROUTES
 # =========================
 @app.route("/")
 def index():
@@ -159,16 +170,19 @@ def static_files(path):
 
 
 # =========================
-# 🔁 RESET
+# 🔁 RESET SYSTEM
 # =========================
 @app.route("/api/reset")
 def reset():
     STATE["mission_index"] = 1
-    return jsonify({"ok": True})
+    return jsonify({
+        "ok": True,
+        "mission_index": STATE["mission_index"]
+    })
 
 
 # =========================
-# 🚀 RUN
+# 🚀 RUN SERVER
 # =========================
 if __name__ == "__main__":
     app.run(debug=True)
