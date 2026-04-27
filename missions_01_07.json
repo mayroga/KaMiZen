@@ -1,5 +1,7 @@
 {
-"sys":"KAMIZEN KIDS","ch":1,"rng":"1-7",
+"sys":"KAMIZEN KIDS",
+"ch":1,
+"rng":"1-7",
 
 "ui":{"fw":["FOCUS","CALM","BREATH","ACTION","STOP","THINK","CONTROL"]},
 
@@ -8,83 +10,142 @@
 "ses":[
 
 {"id":1,"cat":"aware","b":[
-{"t":"v","tx":"Sistema activo. Hoy: OBSERVAR antes de actuar."},
-{"t":"vis","tx":"Ruido. Tú en calma mirando todo."},
-{"t":"br","tx":"Inhala","d":4},{"t":"br","tx":"Retén","d":2},{"t":"br","tx":"Exhala","d":4},
-{"t":"h","tx":"Pasillo ruidoso. Algo importante escondido."},
-{"t":"d","q":"¿Qué haces?","op":["Ignorar","Observar","Correr","Preguntar"],"c":1,
-"ex":["Ignorar=cerebro pierde info clave.","Observar=tu cerebro detecta patrones (corteza prefrontal activa control).","Correr=evitas aprender.","Preguntar=dependes antes de pensar."]},
-{"t":"r","tx":"+Conciencia","p":20},
-{"t":"c","tx":"Observar primero = ventaja en vida."}
+{"t":"v","tx":{"en":"System active: OBSERVE before acting","es":"Sistema activo: OBSERVA antes de actuar"}},
+{"t":"vis","tx":{"en":"Noise. You are calm observing everything","es":"Ruido. Estás en calma observando todo"}},
+{"t":"br","tx":{"en":"Inhale","es":"Inhala"},"d":4},
+{"t":"br","tx":{"en":"Hold","es":"Retén"},"d":2},
+{"t":"br","tx":{"en":"Exhale","es":"Exhala"},"d":4},
+
+{"t":"h","tx":{"en":"A noisy hallway. Something important is hidden.","es":"Un pasillo ruidoso. Algo importante está oculto."}},
+
+{"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
+"op":["Ignore","Observe","Run","Ask"],
+"c":1,
+"ex":[
+"Ignore=brain misses key data",
+"Observe=prefrontal cortex activates pattern detection",
+"Run=avoid learning",
+"Ask=depend before thinking"
 ]},
+
+{"t":"r","tx":"+Awareness","p":20},
+{"t":"c","tx":{"en":"Observe first = life advantage","es":"Observar primero = ventaja en la vida"}}
+]},
+
 
 {"id":2,"cat":"emotion","b":[
-{"t":"v","tx":"Hoy: CONTROL emocional."},
-{"t":"h","tx":"Algo activa emoción fuerte."},
-{"t":"br","tx":"Inhala","d":5},{"t":"br","tx":"Retén","d":3},{"t":"br","tx":"Exhala","d":5},
-{"t":"d","q":"¿Qué haces?","op":["Reaccionar","Respirar","Gritar","Ignorar"],"c":1,
-"ex":["Reaccionar=amígdala domina, pierdes control.","Respirar=activa sistema parasimpático (calma real).","Gritar=liberas pero pierdes poder.","Ignorar=emoción sigue sin entenderse."]},
-{"t":"r","tx":"+Control","p":20},
-{"t":"c","tx":"Pausa=control real."}
+{"t":"v","tx":{"en":"Today: EMOTIONAL CONTROL","es":"Hoy: CONTROL EMOCIONAL"}},
+{"t":"h","tx":{"en":"Something triggers strong emotion","es":"Algo activa una emoción fuerte"}},
+
+{"t":"br","tx":{"en":"Inhale","es":"Inhala"},"d":5},
+{"t":"br","tx":{"en":"Hold","es":"Retén"},"d":3},
+{"t":"br","tx":{"en":"Exhale","es":"Exhala"},"d":5},
+
+{"t":"h","tx":{"en":"2 MIN SILENCE TRAINING (BRAIN CALM RESET)","es":"ENTRENAMIENTO 2 MIN SILENCIO (RESET DE CALMA CEREBRAL)"}},
+
+{"t":"sil","d":120,
+"tx":{"en":"Silent observation. No reaction allowed.","es":"Observación en silencio. Sin reacción permitida."},
+"inf":{
+"en":"Activates parasympathetic system → lowers cortisol → improves prefrontal control",
+"es":"Activa sistema parasimpático → reduce cortisol → mejora control prefrontal"
+}},
+
+{"t":"c","tx":{"en":"Pause = real control","es":"Pausa = control real"}}
 ]},
+
 
 {"id":3,"cat":"choice","b":[
-{"t":"v","tx":"Hoy: DECISIONES."},
-{"t":"h","tx":"Fácil ahora o mejor después."},
-{"t":"d","q":"¿Qué eliges?","op":["Fácil","Inteligente","Nada","Retrasar"],"c":1,
-"ex":["Fácil=dopamina rápida, problemas luego.","Inteligente=corteza prefrontal construye futuro.","Nada=decisión pasiva, pierdes oportunidades.","Retrasar=aumenta estrés y presión."]},
-{"t":"r","tx":"+Decisión","p":20},
-{"t":"c","tx":"Pequeñas decisiones crean tu vida."}
+{"t":"v","tx":{"en":"Today: DECISIONS","es":"Hoy: DECISIONES"}},
+{"t":"h","tx":{"en":"Easy now or better later","es":"Fácil ahora o mejor después"}},
+
+{"t":"d","q":{"en":"What do you choose?","es":"¿Qué eliges?"},
+"op":["Easy","Smart","Nothing","Delay"],
+"c":1,
+"ex":[
+"Easy=short dopamine, future problems",
+"Smart=builds future neural structure",
+"Nothing=passive loss",
+"Delay=increases stress load"
 ]},
+
+{"t":"r","tx":"+Decision","p":20}
+]},
+
 
 {"id":4,"cat":"pressure","b":[
-{"t":"v","tx":"Hoy: PRESIÓN."},
-{"t":"h","tx":"Grupo te presiona."},
-{"t":"d","q":"¿Qué haces?","op":["Seguir","Calma","Escapar","Discutir"],"c":1,
-"ex":["Seguir=pierdes identidad.","Calma=controlas sistema nervioso y decides mejor.","Escapar=no entrenas fuerza.","Discutir=sube emoción, baja lógica."]},
-{"t":"r","tx":"+Fuerza","p":20},
-{"t":"c","tx":"Bajo presión se revela quién eres."}
+{"t":"v","tx":{"en":"Today: SOCIAL PRESSURE","es":"Hoy: PRESIÓN SOCIAL"}},
+{"t":"h","tx":{"en":"Group is pushing you","es":"El grupo te está presionando"}},
+
+{"t":"br","tx":{"en":"Inhale","es":"Inhala"},"d":4},
+{"t":"br","tx":{"en":"Exhale","es":"Exhala"},"d":4},
+
+{"t":"h","tx":{"en":"1 MIN SILENCE TEST (FAST CONTROL RESET)","es":"PRUEBA 1 MIN SILENCIO (RESET RÁPIDO DE CONTROL)"}},
+
+{"t":"sil","d":60,
+"tx":{"en":"Stay silent. Observe pressure without reacting","es":"Permanece en silencio. Observa la presión sin reaccionar"},
+"inf":{
+"en":"Trains impulse inhibition and amygdala control",
+"es":"Entrena inhibición de impulsos y control de la amígdala"
+}},
+
+{"t":"r","tx":"+Strength","p":20}
 ]},
+
 
 {"id":5,"cat":"focus","b":[
-{"t":"v","tx":"Hoy: ENFOQUE."},
-{"t":"h","tx":"Muchas distracciones."},
-{"t":"d","q":"¿Qué haces?","op":["Multitarea","1 tarea","Parar","Cambiar"],"c":1,
-"ex":["Multitarea=divide atención (menos rendimiento).","1 tarea=flujo profundo (máximo rendimiento).","Parar=cero progreso.","Cambiar=rompe concentración."]},
-{"t":"r","tx":"+Focus","p":20},
-{"t":"c","tx":"El enfoque gana dinero, tiempo y resultados."}
+{"t":"v","tx":{"en":"Today: FOCUS","es":"Hoy: ENFOQUE"}},
+{"t":"h","tx":{"en":"Many distractions appear","es":"Aparecen muchas distracciones"}},
+
+{"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
+"op":["Multitask","One task","Stop","Switch"],
+"c":1,
+"ex":[
+"Multitask=attention split",
+"One task=deep focus state",
+"Stop=no progress",
+"Switch=breaks neural flow"
 ]},
+
+{"t":"r","tx":"+Focus","p":20}
+]},
+
 
 {"id":6,"cat":"social","b":[
-{"t":"v","tx":"Hoy: PERSONAS."},
-{"t":"h","tx":"Alguien actúa raro."},
-{"t":"d","q":"¿Qué haces?","op":["Ignorar","Observar","Confrontar","Irse"],"c":1,
-"ex":["Ignorar=pierdes señales sociales.","Observar=lees patrones reales (lenguaje no verbal).","Confrontar=riesgo sin info.","Irse=evitas aprender."]},
-{"t":"r","tx":"+Lectura","p":20},
-{"t":"c","tx":"Las acciones dicen la verdad."}
+{"t":"v","tx":{"en":"Today: PEOPLE ANALYSIS","es":"Hoy: ANÁLISIS DE PERSONAS"}},
+{"t":"h","tx":{"en":"Someone behaves strangely","es":"Alguien se comporta extraño"}},
+
+{"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
+"op":["Ignore","Observe","Confront","Leave"],
+"c":1},
+
+{"t":"r","tx":"+Reading","p":20}
 ]},
 
+
 {"id":7,"cat":"calm","b":[
-{"t":"v","tx":"Hoy: DOMINIO TOTAL."},
-{"t":"h","tx":"Te provocan fuerte."},
-{"t":"d","q":"¿Qué haces?","op":["Explotar","Calma","Correr","Gritar"],"c":1,
-"ex":["Explotar=entregas control.","Calma=tu cerebro ejecutivo domina.","Correr=evitas crecer.","Gritar=ruido sin poder."]},
-{"t":"r","tx":"+Dominio","p":20},
+{"t":"v","tx":{"en":"FINAL DOMINANCE TEST","es":"PRUEBA FINAL DE DOMINIO"}},
+{"t":"h","tx":{"en":"Someone provokes you strongly","es":"Alguien te provoca fuertemente"}},
 
-{"t":"v","tx":"RETO FINAL: 2 MIN SILENCIO. Esto entrena control real del cerebro."},
+{"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
+"op":["Explode","Calm","Run","Shout"],
+"c":1},
 
-{"t":"br","tx":"Inhala profundo","d":6,"inf":"Activa nervio vago → baja estrés"},
-{"t":"br","tx":"Retén","d":3,"inf":"Aumenta tolerancia al impulso"},
-{"t":"br","tx":"Exhala lento","d":6,"inf":"Reduce ritmo cardíaco"},
+{"t":"r","tx":"+Control","p":20},
 
-{"t":"br","tx":"Inhala corto","d":3,"inf":"Activa enfoque mental"},
-{"t":"br","tx":"Exhala largo","d":6,"inf":"Profundiza calma y control emocional"},
+{"t":"v","tx":{"en":"FINAL SILENCE TRAINING","es":"ENTRENAMIENTO FINAL DE SILENCIO"}},
 
-{"t":"sil","d":120,"tx":"Silencio total. Observa pensamientos sin reaccionar.","inf":"Entrena metacognición: ver pensamientos sin ser ellos"},
+{"t":"br","tx":{"en":"Deep inhale","es":"Inhala profundo"},"d":6},
+{"t":"br","tx":{"en":"Hold","es":"Retén"},"d":3},
+{"t":"br","tx":{"en":"Slow exhale","es":"Exhala lento"},"d":6},
 
-{"t":"v","tx":"Si hiciste esto, tienes ventaja real sobre la mayoría."},
+{"t":"sil","d":120,
+"tx":{"en":"Observe thoughts without reacting","es":"Observa pensamientos sin reaccionar"},
+"inf":{
+"en":"Builds metacognition (thinking about thinking)",
+"es":"Desarrolla metacognición (pensar sobre el pensamiento)"
+}},
 
-{"t":"c","tx":"Calma = poder en escuela, calle, dinero y vida."}
+{"t":"c","tx":{"en":"Calm = real power","es":"Calma = poder real"}}
 ]}
 
 ]}
