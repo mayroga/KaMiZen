@@ -4,97 +4,193 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>AL CIELO: TOTAL LIFE TRAINING</title>
+
 <style>
 :root {
-    --neon-blue:#00f2ff; --neon-green:#00ff41; --neon-red:#ff003c;
-    --neon-yellow:#ffff00; --matrix-bg:#00050a; --neon-gold: #ffcc00;
+    --neon-blue:#00f2ff;
+    --neon-green:#00ff41;
+    --neon-red:#ff003c;
+    --neon-yellow:#ffff00;
+    --matrix-bg:#00050a;
+    --neon-gold:#ffcc00;
 }
+
 body {
-    margin:0; background:var(--matrix-bg); color:#fff;
-    font-family:'Courier New', monospace; overflow:hidden; user-select:none;
-    transition: background 0.3s ease;
+    margin:0;
+    background:var(--matrix-bg);
+    color:#fff;
+    font-family:'Courier New', monospace;
+    overflow:hidden;
+    user-select:none;
 }
 
 /* ALERTA */
 #security-alert {
-    position: fixed; top: 0; left: 0; width: 100%; height: 8px;
-    background: var(--neon-green); z-index: 1000; transition: 0.8s ease;
-    box-shadow: 0 0 15px var(--neon-green);
+    position: fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:8px;
+    background:var(--neon-green);
+    z-index:1000;
+    transition:0.8s ease;
+    box-shadow:0 0 15px var(--neon-green);
 }
 
 #lang-btn {
-    position:fixed; bottom:20px; right:20px; z-index:999;
-    padding:10px 18px; border:2px solid var(--neon-blue);
-    background:rgba(0,0,0,0.8); color:var(--neon-blue); cursor:pointer;
-    font-weight: bold; border-radius: 5px;
+    position:fixed;
+    bottom:20px;
+    right:20px;
+    z-index:999;
+    padding:10px 18px;
+    border:2px solid var(--neon-blue);
+    background:rgba(0,0,0,0.8);
+    color:var(--neon-blue);
+    cursor:pointer;
+    font-weight:bold;
+    border-radius:5px;
 }
 
 #hud {
-    position:fixed; top:20px; width:100%; display:flex;
-    justify-content:space-between; padding:20px; z-index:50; box-sizing: border-box;
+    position:fixed;
+    top:20px;
+    width:100%;
+    display:flex;
+    justify-content:space-between;
+    padding:20px;
+    z-index:50;
+    box-sizing:border-box;
 }
-#timer-box { font-size:2.8rem; color:var(--neon-blue); text-shadow:0 0 20px var(--neon-blue); }
-#score-container { text-align:right; }
-#mastery-lvl { color: var(--neon-green); font-size:1.2rem; font-weight:bold; }
-#score-box { border:3px solid #fff; padding:8px 20px; font-size:1.8rem; margin-top:5px; background:rgba(255,255,255,0.1); }
 
-#life-stats {
-    position: fixed; bottom: 20px; left: 20px; display: flex; flex-wrap: wrap;
-    gap: 12px; z-index: 50; max-width: 95%;
+#timer-box {
+    font-size:2.8rem;
+    color:var(--neon-blue);
+    text-shadow:0 0 20px var(--neon-blue);
 }
-.stat-pill { border: 2px solid #333; padding: 10px 15px; font-size: 0.9rem; background: rgba(0,0,0,0.9); border-radius: 6px; }
-.stat-pill span { font-weight: bold; color: var(--neon-blue); }
-#v-money { color: var(--neon-gold) !important; }
-#v-safety { color: var(--neon-red) !important; }
-#v-happy { color: #ff00ff !important; }
+
+#score-container {
+    text-align:right;
+}
+
+#mastery-lvl {
+    color:var(--neon-green);
+    font-size:1.2rem;
+    font-weight:bold;
+}
+
+#score-box {
+    border:3px solid #fff;
+    padding:8px 20px;
+    font-size:1.8rem;
+    margin-top:5px;
+    background:rgba(255,255,255,0.1);
+}
+
+/* STATS */
+#life-stats {
+    position:fixed;
+    bottom:20px;
+    left:20px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:12px;
+    z-index:50;
+    max-width:95%;
+}
+
+.stat-pill {
+    border:2px solid #333;
+    padding:10px 15px;
+    font-size:0.9rem;
+    background:rgba(0,0,0,0.9);
+    border-radius:6px;
+}
+
+.stat-pill span {
+    font-weight:bold;
+    color:var(--neon-blue);
+}
+
+#v-money { color:var(--neon-gold)!important; }
+#v-safety { color:var(--neon-red)!important; }
+#v-happy { color:#ff00ff!important; }
 
 /* WORDS */
 .floating {
-    position: absolute; padding: 15px 30px; font-weight: 900; font-size: 1.5rem;
-    border-radius: 10px; background: rgba(0,0,0,0.9); z-index: 10;
-    animation: floatUp 7s linear forwards; cursor: pointer;
+    position:absolute;
+    padding:15px 30px;
+    font-weight:900;
+    font-size:1.5rem;
+    border-radius:10px;
+    background:rgba(0,0,0,0.9);
+    z-index:10;
+    animation:floatUp 7s linear forwards;
+    cursor:pointer;
 }
-.word-power { border: 3px solid var(--neon-green); color: var(--neon-green); }
-.word-risk { border: 3px solid var(--neon-red); color: var(--neon-red); }
-.word-silence { border: 3px solid var(--neon-yellow); color: var(--neon-yellow); }
+
+.word-power {
+    border:3px solid var(--neon-green);
+    color:var(--neon-green);
+}
+
+.word-risk {
+    border:3px solid var(--neon-red);
+    color:var(--neon-red);
+}
+
+.word-silence {
+    border:3px solid var(--neon-yellow);
+    color:var(--neon-yellow);
+}
 
 @keyframes floatUp {
-    from { transform: translateY(110vh); }
-    to { transform: translateY(-25vh); }
+    from { transform:translateY(110vh); }
+    to { transform:translateY(-25vh); }
 }
 
-.explode { animation: blast 0.5s ease-out forwards !important; }
+.explode {
+    animation:blast 0.5s ease-out forwards!important;
+}
+
 @keyframes blast {
-    0% { transform: scale(1); opacity: 1; }
-    100% { transform: scale(4); opacity: 0; }
+    0% { transform:scale(1); opacity:1; }
+    100% { transform:scale(4); opacity:0; }
 }
 
 /* OVERLAY */
 #overlay {
-    position:fixed; width:100%; height:100%; background:rgba(0,5,10,0.95);
-    display:none; align-items:center; justify-content:center;
-    flex-direction:column; z-index:500; text-align:center; padding:30px;
+    position:fixed;
+    width:100%;
+    height:100%;
+    background:rgba(0,5,10,0.95);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    z-index:500;
+    text-align:center;
+    padding:30px;
 }
-
-#breath-circle {
-    width:250px; height:250px; border:8px solid var(--neon-blue);
-    border-radius:50%; margin:30px;
-    display:flex; align-items:center; justify-content:center;
-    font-size:1.5rem;
-}
-.inhale { transform:scale(1.3); }
-.exhale { transform:scale(0.8); }
 
 #decision-grid {
-    display:grid; grid-template-columns:1fr 1fr; gap:20px;
-    margin-top:30px; width:100%; max-width:800px;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+    margin-top:30px;
+    width:100%;
+    max-width:800px;
 }
+
 .choice-btn {
-    padding:22px; border:3px solid var(--neon-blue);
-    background:none; color:#fff; cursor:pointer;
+    padding:22px;
+    border:3px solid var(--neon-blue);
+    background:none;
+    color:#fff;
+    cursor:pointer;
 }
 </style>
 </head>
+
 <body>
 
 <div id="security-alert"></div>
@@ -119,7 +215,6 @@ body {
 
 <div id="overlay">
     <h1 id="phase-title"></h1>
-    <div id="breath-circle" style="display:none;"></div>
     <p id="phase-desc"></p>
     <div id="decision-grid"></div>
 </div>
@@ -128,48 +223,40 @@ body {
 
 <script>
 
-// ==========================================
-// 🔊 SFX & MUSIC SYSTEM (UNISON & INTENSE)
-// ==========================================
-const sfx = {
-    click: new Audio('https://actions.google.com/sounds/v1/cartoon/pop.ogg'),
-    power: new Audio('https://actions.google.com/sounds/v1/cartoon/clank_with_rattle.ogg'),
-    risk: new Audio('https://actions.google.com/sounds/v1/cartoon/boing.ogg'),
-    success: new Audio('https://actions.google.com/sounds/v1/science_fiction/low_fuzz_beam.ogg'),
-    fail: new Audio('https://actions.google.com/sounds/v1/foley/glass_shatter.ogg'),
-    open: new Audio('https://actions.google.com/sounds/v1/doors/creaky_door_open.ogg')
-};
-
-const bgMusic = new Audio('https://actions.google.com/sounds/v1/science_fiction/staccato_hi_tech_bleeps.ogg'); 
-bgMusic.loop = true;
-bgMusic.playbackRate = 1.5;
-
-// ==========================================
-// 🌌 WORD SYSTEM
-// ==========================================
-const words = {
-    power: ["LISTEN FIRST","STAY CALM","THINK BEFORE","CONTROL EMOTION","RESPECT OTHERS","ASK WHY","FOCUS NOW","BE HONEST","KEEP LEARNING","SOLVE PROBLEM","HELP TEAM","WAIT YOUR TURN","PLAN AHEAD","ADAPT FAST","SPEAK CLEAR","OBSERVE SILENTLY"],
-    risk: ["REACT ANGRY","BLAME OTHERS","LIE TO WIN","LOSE CONTROL","FOLLOW CROWD","ACT WITHOUT THINK","IGNORE CONSEQUENCE","EGO FIRST","QUIT EARLY","ESCAPE RESPONSIBILITY","SEEK APPROVAL","WASTE TIME","DISTRACT EASY","OVERREACT","TALK TOO MUCH","NO PLAN"],
-    silence: ["OBSERVE PEOPLE","READ SITUATION","WAIT RIGHT MOMENT","CONTROL IMPULSE","THINK LONG TERM","SEE INTENTION","UNDERSTAND ENERGY","BREATHE DEEP","FEEL BEFORE ACT","CHOOSE WISE","LISTEN MORE","ANALYZE QUIET","SEE CONSEQUENCES","KEEP BALANCE","INNER CONTROL","MENTAL CLARITY"]
-};
-
 // ================= STATE =================
 let lang = "en";
 let gameMode = "idle";
 
 let state = {
-    score: 0, mastery: 1, combo: 0, timer:300,
-    stats: { respect:50, peace:50, lead:50, money:100, happy:50, safety:100 },
+    score: 0,
+    mastery: 1,
+    timer: 300,
+    stats: {
+        respect:50,
+        peace:50,
+        lead:50,
+        money:100,
+        happy:50,
+        safety:100
+    },
     spawnRate:1300
 };
 
-// ================= TIMER =================
-setInterval(()=>{
-    if(state.timer>0){
-        state.timer--;
-        updateHUD();
-    }
-},1000);
+// ================= HUD =================
+function updateHUD(){
+    document.getElementById("score-box").innerText = state.score;
+
+    document.getElementById("timer-box").innerText =
+        String(Math.floor(state.timer/60)).padStart(2,"0") + ":" +
+        String(state.timer%60).padStart(2,"0");
+
+    document.getElementById("v-respect").innerText = state.stats.respect;
+    document.getElementById("v-peace").innerText = state.stats.peace;
+    document.getElementById("v-lead").innerText = state.stats.lead;
+    document.getElementById("v-money").innerText = state.stats.money;
+    document.getElementById("v-safety").innerText = state.stats.safety;
+    document.getElementById("v-happy").innerText = state.stats.happy;
+}
 
 // ================= LANGUAGE =================
 function toggleLang(){
@@ -177,143 +264,105 @@ function toggleLang(){
     document.getElementById("lang-btn").innerText = lang.toUpperCase();
 }
 
-// ================= VOICE =================
-function speak(text){
-    const msg = new SpeechSynthesisUtterance(text);
-    msg.lang = (lang==="en")?"en-US":"es-ES";
-    speechSynthesis.cancel();
-    speechSynthesis.speak(msg);
-}
+// ================= WORD SYSTEM =================
+const words = {
+    power:["LISTEN FIRST","STAY CALM","THINK BEFORE","CONTROL EMOTION","RESPECT OTHERS"],
+    risk:["REACT ANGRY","BLAME OTHERS","LOSE CONTROL","FOLLOW CROWD"],
+    silence:["OBSERVE PEOPLE","BREATHE DEEP","WAIT MOMENT","INNER CONTROL"]
+};
 
-// ================= HUD =================
-function updateHUD(){
-    document.getElementById("score-box").innerText=state.score;
-    document.getElementById("timer-box").innerText =
-    String(Math.floor(state.timer/60)).padStart(2,"0")+":"+
-    String(state.timer%60).padStart(2,"0");
-
-    document.getElementById("v-respect").innerText=state.stats.respect;
-    document.getElementById("v-peace").innerText=state.stats.peace;
-    document.getElementById("v-lead").innerText=state.stats.lead;
-    document.getElementById("v-money").innerText=state.stats.money;
-    document.getElementById("v-safety").innerText=state.stats.safety;
-    document.getElementById("v-happy").innerText=state.stats.happy;
-}
-
-// ================= WORD SYSTEM UPDATED =================
 function spawnWord(){
     if(gameMode!=="words") return;
 
-    const cats = ["power", "risk", "silence"];
-    const visualStyles = ["word-power", "word-risk", "word-silence"];
-    const c = cats[Math.floor(Math.random() * 3)];
-    const randomStyle = visualStyles[Math.floor(Math.random() * visualStyles.length)];
+    const cats=["power","risk","silence"];
+    const styles=["word-power","word-risk","word-silence"];
+    const c = cats[Math.floor(Math.random()*3)];
 
-    const div = document.createElement("div");
-    div.className = `floating ${randomStyle}`;
-    div.innerText = words[c][Math.floor(Math.random() * words[c].length)];
-    div.style.left = Math.random() * 80 + "vw";
+    const div=document.createElement("div");
+    div.className="floating "+styles[Math.floor(Math.random()*3)];
+    div.innerText = words[c][Math.floor(Math.random()*words[c].length)];
+    div.style.left = Math.random()*80 + "vw";
 
     div.onclick = () => {
         if(div.dataset.clicked) return;
-        div.dataset.clicked = "true";
+        div.dataset.clicked=true;
         div.classList.add("explode");
 
-        sfx.open.currentTime = 0; 
-        sfx.open.play();
-
-        if(c === "power"){
-            sfx.power.play();
-            state.score += 20;
-            state.stats.respect++;
-        }
-        if(c === "risk"){
-            sfx.fail.play();
-            state.score -= 30;
-            state.stats.safety -= 2;
-        }
-        if(c === "silence"){
-            sfx.click.play();
-            state.stats.peace++;
-        }
+        if(c==="power") state.score+=20;
+        if(c==="risk") state.score-=30;
+        if(c==="silence") state.stats.peace++;
 
         updateHUD();
-        setTimeout(() => div.remove(), 500);
+        setTimeout(()=>div.remove(),500);
     };
 
     document.body.appendChild(div);
-    setTimeout(() => { if(div.parentNode) div.remove(); }, 7000);
+    setTimeout(()=>div.remove(),7000);
 }
 
-// ================= QUESTIONS (NO RANDOM) =================
+// ================= QUESTION SYSTEM (FIXED ROBUST) =================
 async function triggerQuestion(){
-    const res = await fetch("/api/mission/next?lang="+lang);
-    const data = await res.json();
+    try {
+        const res = await fetch("/api/mission/next?lang="+lang);
+        if(!res.ok) return;
 
-    const overlay = document.getElementById("overlay");
-    const grid = document.getElementById("decision-grid");
-    const desc = document.getElementById("phase-desc");
-    const title = document.getElementById("phase-title");
+        const data = await res.json();
 
-    overlay.style.display = "flex";
-    title.innerText = data.theme || "KAMIZEN TRAINING";
-    desc.innerText = data.story;
+        const overlay = document.getElementById("overlay");
+        const grid = document.getElementById("decision-grid");
+        const desc = document.getElementById("phase-desc");
+        const title = document.getElementById("phase-title");
 
-    grid.innerHTML = "";
+        overlay.style.display="flex";
+        title.innerText=data.theme||"MISSION";
+        desc.innerText=data.story||"";
+        grid.innerHTML="";
 
-    data.options.forEach(opt => {
-        const btn = document.createElement("button");
-        btn.className = "choice-btn";
-        btn.innerText = opt.text;
+        data.options.forEach(opt=>{
+            const btn=document.createElement("button");
+            btn.className="choice-btn";
+            btn.innerText=opt.text;
 
-        btn.onclick = () => {
-            sfx.open.currentTime = 0;
-            sfx.open.play();
+            btn.onclick=()=>{
+                state.score+=opt.score||0;
+                desc.innerText=opt.explanation||"";
+                grid.innerHTML="";
 
-            let color = "#ffaa00";
-            if(opt.score >= 8) { color = "#00ff41"; sfx.success.play(); }
-            else if(opt.score >= 4) { color = "#ffff00"; sfx.click.play(); }
-            else if(opt.score >= 0) { color = "#ff8800"; sfx.click.play(); }
-            else { color = "#ff003c"; sfx.fail.play(); }
+                setTimeout(()=>overlay.style.display="none",3000);
+            };
 
-            document.body.style.background = color;
-            state.score += opt.score;
-            updateHUD();
+            grid.appendChild(btn);
+        });
 
-            grid.innerHTML = "";
-
-            const finalExplanation = opt.explanation;
-            desc.innerText = finalExplanation;
-            speak(finalExplanation);
-
-            setTimeout(() => {
-                document.body.style.background = "#00050a";
-                overlay.style.display = "none";
-            }, 4500);
-        };
-
-        grid.appendChild(btn);
-    });
+    } catch(e){
+        console.error("QUESTION ERROR:",e);
+        document.getElementById("overlay").style.display="none";
+    }
 }
 
-// ================= LOOP =================
+// ================= MAIN LOOP (FIXED) =================
 async function mainLoop(){
     while(true){
-        gameMode="words";
+        try {
+            gameMode="words";
 
-        let end=Date.now()+45000;
+            let end=Date.now()+45000;
 
-        while(Date.now()<end){
-            spawnWord();
-            await new Promise(r=>setTimeout(r,state.spawnRate));
+            while(Date.now()<end){
+                spawnWord();
+                await new Promise(r=>setTimeout(r,state.spawnRate));
+            }
+
+            document.querySelectorAll(".floating").forEach(e=>e.remove());
+
+            gameMode="question";
+            await triggerQuestion();
+
+            await new Promise(r=>setTimeout(r,4000));
+
+        } catch(e){
+            console.error("LOOP ERROR:",e);
         }
-
-        document.querySelectorAll('.floating').forEach(el => el.remove());
-
-        gameMode="question";
-        await triggerQuestion();
-
-        await new Promise(r=>setTimeout(r,4000));
     }
 }
 
@@ -321,11 +370,11 @@ async function mainLoop(){
 updateHUD();
 mainLoop();
 
-// iniciar música con primer click
-document.addEventListener('click', () => {
-    bgMusic.play().catch(()=>{});
-}, { once:true });
+document.addEventListener("click",()=>{
+    document.body.clickSound=true;
+},{once:true});
 
 </script>
+
 </body>
 </html>
