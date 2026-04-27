@@ -66,17 +66,17 @@ body {
     text-shadow:0 0 20px var(--neon-blue);
 }
 
-#mastery-lvl {
-    color:var(--neon-green);
-    font-size:1.2rem;
-    font-weight:bold;
-}
-
 #score-box {
     border:3px solid #fff;
     padding:8px 20px;
     font-size:1.8rem;
     background:rgba(255,255,255,0.1);
+}
+
+#mastery-lvl {
+    color:var(--neon-green);
+    font-size:1.2rem;
+    font-weight:bold;
 }
 
 #life-stats {
@@ -107,7 +107,6 @@ body {
 #v-safety { color:var(--neon-red)!important; }
 #v-happy { color:#ff00ff!important; }
 
-/* WORDS */
 .floating {
     position:absolute;
     padding:15px 30px;
@@ -138,7 +137,6 @@ body {
     100% { transform:scale(4); opacity:0; }
 }
 
-/* OVERLAY */
 #overlay {
     position:fixed;
     width:100%;
@@ -201,10 +199,8 @@ body {
 <script src="/static/engine.js"></script>
 
 <script>
-
 let lang = "en";
 let gameMode = "idle";
-let lockLoop = false;
 
 let state = {
     score: 0,
@@ -225,7 +221,7 @@ function updateHUD(){
     document.getElementById("score-box").innerText = state.score;
 
     document.getElementById("timer-box").innerText =
-        String(Math.floor(state.timer/60)).padStart(2,"0")+":"+
+        String(Math.floor(state.timer/60)).padStart(2,"0") + ":" +
         String(state.timer%60).padStart(2,"0");
 
     document.getElementById("v-respect").innerText = state.stats.respect;
@@ -261,7 +257,7 @@ function spawnWord(){
 
     div.onclick=()=>{
         if(div.dataset.clicked) return;
-        div.dataset.clicked=1;
+        div.dataset.clicked=true;
         div.classList.add("explode");
 
         if(c==="power") state.score+=20;
@@ -277,22 +273,17 @@ function spawnWord(){
 }
 
 async function triggerQuestion(){
-    try {
+    try{
         const res = await fetch("/api/mission/next?lang="+lang);
+        if(!res.ok) return;
 
-if (!res.ok) return;
+        const data = await res.json();
+        if(!data || !data.options) return;
 
-const text = await res.text();
-
-let data;
-try {
-    data = JSON.parse(text);
-} catch(e) {
-    console.error("INVALID JSON FROM SERVER:", text);
-    return;
-}
-
-if (!data.options) return;
+        const overlay=document.getElementById("overlay");
+        const grid=document.getElementById("decision-grid");
+        const desc=document.getElementById("phase-desc");
+        const title=document.getElementById("phase-title");
 
         overlay.style.display="flex";
         title.innerText=data.theme||"MISSION";
@@ -308,7 +299,7 @@ if (!data.options) return;
                 state.score += opt.score||0;
                 desc.innerText = opt.explanation||"";
                 grid.innerHTML="";
-                setTimeout(()=>overlay.style.display="none",2500);
+                setTimeout(()=>overlay.style.display="none",2000);
                 updateHUD();
             };
 
@@ -316,15 +307,11 @@ if (!data.options) return;
         });
 
     } catch(e){
-        console.error("QUESTION ERROR",e);
-        document.getElementById("overlay").style.display="none";
+        console.error(e);
     }
 }
 
 async function mainLoop(){
-    if(lockLoop) return;
-    lockLoop = true;
-
     while(true){
         try{
             gameMode="words";
@@ -341,17 +328,16 @@ async function mainLoop(){
             gameMode="question";
             await triggerQuestion();
 
-            await new Promise(r=>setTimeout(r,4000));
+            await new Promise(r=>setTimeout(r,3000));
 
         } catch(e){
-            console.error("LOOP ERROR",e);
+            console.error(e);
         }
     }
 }
 
 updateHUD();
 mainLoop();
-
 </script>
 
 </body>
