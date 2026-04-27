@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -107,6 +107,7 @@ body {
 #v-safety { color:var(--neon-red)!important; }
 #v-happy { color:#ff00ff!important; }
 
+/* FLOATING WORDS (NO CHANGE CORE STYLE) */
 .floating {
     position:absolute;
     padding:15px 30px;
@@ -123,7 +124,6 @@ body {
 .word-risk { border:3px solid var(--neon-red); color:var(--neon-red); }
 .word-silence { border:3px solid var(--neon-yellow); color:var(--neon-yellow); }
 
-/* NUEVAS PALABRAS ECONOMÍA / NEGOCIO / BIENESTAR */
 .word-money { border:3px solid var(--neon-gold); color:var(--neon-gold); }
 .word-business { border:3px solid #00e5ff; color:#00e5ff; }
 .word-growth { border:3px solid #00ff99; color:#00ff99; }
@@ -142,6 +142,7 @@ body {
     100% { transform:scale(4); opacity:0; }
 }
 
+/* OVERLAY */
 #overlay {
     position:fixed;
     width:100%;
@@ -173,6 +174,7 @@ body {
     cursor:pointer;
 }
 
+/* BREATHING CIRCLE */
 #breath-circle{
     width:140px;
     height:140px;
@@ -231,9 +233,23 @@ body {
 let lang = "en";
 let gameMode = "idle";
 
-let currentMissionId = 0;
-let nextMissionId = 1;
+let currentMissionId = 1;
 
+/* =========================
+   SPEECH (ONLY EN OR ES)
+========================= */
+function speak(text){
+    try{
+        if(!text) return;
+        let u = new SpeechSynthesisUtterance(text);
+        u.lang = (lang === "es") ? "es-ES" : "en-US";
+        speechSynthesis.speak(u);
+    }catch(e){}
+}
+
+/* =========================
+   HUD
+========================= */
 let state = {
     score: 0,
     mastery: 1,
@@ -248,14 +264,6 @@ let state = {
     },
     spawnRate:1300
 };
-
-function speak(text){
-    try{
-        let u = new SpeechSynthesisUtterance(text);
-        u.lang = "en-US";
-        speechSynthesis.speak(u);
-    }catch(e){}
-}
 
 function updateHUD(){
     document.getElementById("score-box").innerText = state.score;
@@ -272,25 +280,37 @@ function updateHUD(){
     }
 }
 
-/* BREATH */
-function breathCycle(txt, sec){
+/* =========================
+   BREATHING SYSTEM (REAL FLOW)
+========================= */
+function breathCycle(type, sec){
     let c = document.getElementById("breath-circle");
     c.style.display="flex";
-    c.innerText = txt.toUpperCase();
-    speak(txt);
+
+    let map = {
+        inhale: "INHALE",
+        hold: "HOLD",
+        exhale: "EXHALE",
+        silence: "SILENCE"
+    };
+
+    c.innerText = map[type] || type.toUpperCase();
+
+    speak(type);
+
     setTimeout(()=>c.style.display="none", sec*1000);
 }
 
-/* WORDS */
+/* =========================
+   FLOATING WORDS (UNCHANGED CORE)
+========================= */
 const words = {
     power:["LISTEN FIRST","STAY CALM","THINK BEFORE","CONTROL EMOTION","RESPECT OTHERS"],
     risk:["REACT ANGRY","BLAME OTHERS","LOSE CONTROL","FOLLOW CROWD"],
     silence:["OBSERVE PEOPLE","BREATHE DEEP","WAIT MOMENT","INNER CONTROL"],
-
-    // NUEVO: economía / negocio / bienestar
-    money:["INVEST SMART","BUILD VALUE","CREATE CASHFLOW","SAVE MONEY","THINK SCALE"],
-    business:["BUILD SYSTEM","SELL VALUE","LEAD MARKET","CREATE BRAND","EXPAND NETWORK"],
-    growth:["LEARN FAST","IMPROVE DAILY","BUILD SKILL","FOCUS LONGTERM"]
+    money:["INVEST SMART","BUILD VALUE","CASHFLOW","SAVE MONEY","THINK SCALE"],
+    business:["BUILD SYSTEM","SELL VALUE","LEAD MARKET","BRAND POWER","EXPAND NETWORK"],
+    growth:["LEARN FAST","IMPROVE DAILY","BUILD SKILL","LONG TERM THINK"]
 };
 
 function spawnWord(){
@@ -311,12 +331,12 @@ function spawnWord(){
         div.dataset.clicked=true;
         div.classList.add("explode");
 
-        if(c==="power"){state.score+=20;state.stats.respect++;}
-        if(c==="risk"){state.score-=30;state.stats.safety--;}
-        if(c==="silence"){state.stats.peace++;state.stats.happy++;}
-        if(c==="money"){state.score+=25;state.stats.money++;}
-        if(c==="business"){state.score+=30;state.stats.lead++;}
-        if(c==="growth"){state.stats.happy++;state.stats.peace++;}
+        if(c==="money") state.stats.money++;
+        if(c==="business") state.stats.lead++;
+        if(c==="growth") state.stats.happy++;
+        if(c==="power") state.stats.respect++;
+        if(c==="risk") state.stats.safety--;
+        if(c==="silence") state.stats.peace++;
 
         updateHUD();
         setTimeout(()=>div.remove(),500);
@@ -326,7 +346,10 @@ function spawnWord(){
     setTimeout(()=>div.remove(),7000);
 }
 
-/* MISSION SYNC id + next */
+/* =========================
+   MISSION FETCH (FIXED ID SYNC)
+   - NO RANDOM DESYNC
+========================= */
 async function triggerQuestion(){
     try{
         const res = await fetch("/api/mission/next?lang="+lang);
@@ -335,7 +358,6 @@ async function triggerQuestion(){
         if(!data || !data.options) return;
 
         currentMissionId = data.id;
-        nextMissionId = data.next;
 
         let overlay = document.getElementById("overlay");
         let grid = document.getElementById("decision-grid");
@@ -349,10 +371,21 @@ async function triggerQuestion(){
 
         grid.innerHTML="";
 
+        /* BREATH TRIGGERS FROM JSON */
+        if(data.analysis?.toLowerCase().includes("inhala")){
+            breathCycle("inhale",4);
+        }
+        if(data.analysis?.toLowerCase().includes("silencio")){
+            breathCycle("silence",2);
+        }
+
         data.options.forEach(opt=>{
             let btn=document.createElement("button");
             btn.className="choice-btn";
-            btn.innerText=opt.text?.[lang]||opt.text?.en;
+
+            btn.innerText = (lang==="es")
+                ? (opt.text?.es || opt.text?.en)
+                : opt.text?.en;
 
             btn.onclick=()=>{
                 if(opt.correct){
@@ -364,14 +397,15 @@ async function triggerQuestion(){
                     state.stats.safety--;
                 }
 
-                speak(opt.explanation?.en||"");
-                desc.innerText = opt.explanation?.[lang]||"";
+                let exp = (lang==="es")
+                    ? opt.explanation?.es
+                    : opt.explanation?.en;
+
+                speak(exp);
+                desc.innerText = exp;
 
                 grid.innerHTML="";
-
-                setTimeout(()=>{
-                    overlay.style.display="none";
-                },1500);
+                setTimeout(()=>overlay.style.display="none",1500);
 
                 updateHUD();
             };
@@ -382,7 +416,9 @@ async function triggerQuestion(){
     }catch(e){}
 }
 
-/* TIMER */
+/* =========================
+   TIMER FIX (NOT STOPPING)
+========================= */
 setInterval(()=>{
     if(state.timer>0){
         state.timer--;
@@ -390,12 +426,15 @@ setInterval(()=>{
     }
 },1000);
 
-/* LOOP */
+/* =========================
+   LOOP
+========================= */
 async function mainLoop(){
     while(true){
         gameMode="words";
 
         let end=Date.now()+45000;
+
         while(Date.now()<end){
             spawnWord();
             await new Promise(r=>setTimeout(r,state.spawnRate));
@@ -408,6 +447,11 @@ async function mainLoop(){
 
         await new Promise(r=>setTimeout(r,3000));
     }
+}
+
+function toggleLang(){
+    lang = (lang==="en") ? "es" : "en";
+    document.getElementById("lang-btn").innerText = lang.toUpperCase();
 }
 
 updateHUD();
