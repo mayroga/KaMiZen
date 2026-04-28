@@ -140,6 +140,37 @@ body {
     0% { transform:scale(1); opacity:1; }
     100% { transform:scale(4); opacity:0; }
 }
+
+/* BREATHING CIRCLE */
+#breath-circle{
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    width:320px;
+    height:320px;
+    border-radius:50%;
+    border:6px solid var(--neon-blue);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    text-align:center;
+    font-weight:bold;
+    color:var(--neon-blue);
+    font-size:2rem;
+    animation:pulse 4s infinite;
+    z-index:200;
+    pointer-events:none;
+    background:rgba(0,0,0,0.2);
+    backdrop-filter:blur(2px);
+}
+
+@keyframes pulse{
+    0%{transform:translate(-50%,-50%) scale(1);opacity:0.5;}
+    50%{transform:translate(-50%,-50%) scale(1.4);opacity:1;}
+    100%{transform:translate(-50%,-50%) scale(1);opacity:0.5;}
+}
 </style>
 </head>
 
@@ -149,7 +180,7 @@ body {
 <button id="lang-btn" onclick="toggleLang()">EN</button>
 
 <div id="hud">
-    <div id="timer-box">05:00</div>
+    <div id="timer-box">15:00</div>
     <div id="score-box">0</div>
     <div id="mastery-lvl">MASTERY x1</div>
 </div>
@@ -163,83 +194,56 @@ body {
     <div class="stat-pill">Happiness: <span id="v-happy">50</span>%</div>
 </div>
 
-<script src="/static/engine.js"></script>
+<div id="breath-circle">INHALE</div>
 
 <script>
 
 /* =========================
-   AUDIO ENGINE (ONLY ADDITION)
+   AUDIO ENGINE
 ========================= */
-const AudioEngine = {
+const AudioEngine={
     ctx:null,
-
     init(){
         if(this.ctx) return;
-        this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+        this.ctx=new (window.AudioContext||window.webkitAudioContext)();
         this.music();
     },
-
     music(){
-        const notes=[261.63,293.66,329.63,392,440];
-
+        const notes=[261,293,329,392,440];
         const loop=()=>{
             if(!this.ctx) return;
-
             let o=this.ctx.createOscillator();
             let g=this.ctx.createGain();
-
             o.type="square";
             o.frequency.value=notes[Math.floor(Math.random()*notes.length)];
-
             g.gain.value=0.03;
-
-            o.connect(g);
-            g.connect(this.ctx.destination);
-
+            o.connect(g);g.connect(this.ctx.destination);
             o.start();
             o.stop(this.ctx.currentTime+0.2);
-
             setTimeout(loop,250);
         };
         loop();
     },
-
     playCoin(){
         if(!this.ctx) return;
         let o=this.ctx.createOscillator();
         let g=this.ctx.createGain();
-
         o.type="triangle";
         o.frequency.value=900;
-
         g.gain.value=0.1;
-
-        o.connect(g);
-        g.connect(this.ctx.destination);
-
-        o.start();
-        o.stop(this.ctx.currentTime+0.1);
+        o.connect(g);g.connect(this.ctx.destination);
+        o.start();o.stop(this.ctx.currentTime+0.1);
     },
-
     playExplode(){
         if(!this.ctx) return;
-
         let buffer=this.ctx.createBuffer(1,this.ctx.sampleRate*0.1,this.ctx.sampleRate);
         let data=buffer.getChannelData(0);
-
-        for(let i=0;i<data.length;i++){
-            data[i]=Math.random()*2-1;
-        }
-
+        for(let i=0;i<data.length;i++) data[i]=Math.random()*2-1;
         let noise=this.ctx.createBufferSource();
         noise.buffer=buffer;
-
         let g=this.ctx.createGain();
         g.gain.value=0.2;
-
-        noise.connect(g);
-        g.connect(this.ctx.destination);
-
+        noise.connect(g);g.connect(this.ctx.destination);
         noise.start();
     }
 };
@@ -247,10 +251,11 @@ const AudioEngine = {
 document.addEventListener("click",()=>AudioEngine.init(),{once:true});
 
 /* =========================
-   STATE (UNCHANGED CORE)
+   STATE
 ========================= */
 let lang="en";
 let gameMode="words";
+let sessionEnded=false;
 
 let state={
     score:0,
@@ -268,7 +273,7 @@ let state={
 };
 
 /* =========================
-   FLOATING WORDS (UNCHANGED)
+   WORDS
 ========================= */
 const words={
     power:["LISTEN FIRST","STAY CALM","THINK BEFORE"],
@@ -280,7 +285,7 @@ const words={
 };
 
 function spawnWord(){
-    if(gameMode!=="words") return;
+    if(gameMode!=="words"||sessionEnded) return;
 
     const cats=["power","risk","silence","money","business","growth"];
     const styles=["word-power","word-risk","word-silence","word-money","word-business","word-growth"];
@@ -297,11 +302,18 @@ function spawnWord(){
         if(div.dataset.clicked) return;
         div.dataset.clicked=true;
 
-        /* ONLY ADDITION (NO CORE CHANGE) */
         AudioEngine.playCoin();
         setTimeout(()=>AudioEngine.playExplode(),50);
 
         div.classList.add("explode");
+
+        /* STAT INCREMENT FIXED */
+        if(c==="power") state.stats.respect++;
+        if(c==="risk") state.stats.safety--;
+        if(c==="silence") state.stats.peace++;
+        if(c==="money") state.stats.money++;
+        if(c==="business") state.stats.lead++;
+        if(c==="growth") state.stats.happy++;
 
         state.score++;
         updateHUD();
@@ -314,7 +326,7 @@ function spawnWord(){
 }
 
 /* =========================
-   HUD (UNCHANGED)
+   HUD
 ========================= */
 function updateHUD(){
     document.getElementById("score-box").innerText=state.score;
@@ -332,21 +344,48 @@ function updateHUD(){
 }
 
 /* =========================
-   TIMER (UNCHANGED)
+   BREATH END SESSION
 ========================= */
-setInterval(()=>{
+function breath(text,ms){
+    return new Promise(res=>{
+        let c=document.getElementById("breath-circle");
+        c.style.display="flex";
+        c.innerText=text;
+        setTimeout(()=>{
+            c.style.display="none";
+            res();
+        },ms);
+    });
+}
+
+async function endSession(){
+    sessionEnded=true;
+    gameMode="breath";
+    document.querySelectorAll(".floating").forEach(e=>e.remove());
+
+    await breath("INHALE",2000);
+    await breath("HOLD",2000);
+    await breath("EXHALE",2000);
+}
+
+/* =========================
+   TIMER (15 MIN END TRIGGER)
+========================= */
+setInterval(async ()=>{
     if(state.timer>0){
         state.timer--;
         updateHUD();
+
+        if(state.timer===0 && !sessionEnded){
+            await endSession();
+        }
     }
 },1000);
 
 /* =========================
-   LOOP (UNCHANGED CORE)
+   LOOP
 ========================= */
-setInterval(()=>{
-    spawnWord();
-},state.spawnRate);
+setInterval(()=>spawnWord(),state.spawnRate);
 
 updateHUD();
 
