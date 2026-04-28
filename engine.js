@@ -1,8 +1,5 @@
 const KamizenEngine = (() => {
 
-    // =========================
-    // 🧠 CORE STATE (MINIMAL)
-    // =========================
     const state = {
         lang: "en"
     };
@@ -12,7 +9,6 @@ const KamizenEngine = (() => {
     // =========================
     function toggleLang() {
         state.lang = (state.lang === "en") ? "es" : "en";
-
         const btn = document.getElementById("lang-btn");
         if (btn) btn.innerText = state.lang.toUpperCase();
     }
@@ -22,108 +18,57 @@ const KamizenEngine = (() => {
     }
 
     // =========================
-    // 🔊 VOICE (SAFE)
+    // 🔊 SIMPLE VOICE (OPTIONAL)
     // =========================
     function speak(text) {
         if (!text) return;
-
         try {
             const msg = new SpeechSynthesisUtterance(text);
-
-            msg.lang = state.lang === "es"
-                ? "es-ES"
-                : "en-US";
-
-            msg.rate = 0.9;
-            msg.pitch = 0.9;
-
+            msg.lang = state.lang === "es" ? "es-ES" : "en-US";
             speechSynthesis.cancel();
             speechSynthesis.speak(msg);
-
-        } catch (e) {
-            // silent fail
-        }
+        } catch (e) {}
     }
 
     // =========================
-    // 🌐 FETCH MISSION
+    // 🌐 FETCH MISSION ONLY
     // =========================
     async function fetchMission() {
-
         try {
             const res = await fetch(`/api/mission/next?lang=${state.lang}`);
-
-            if (!res.ok) {
-                console.warn("Mission fetch failed:", res.status);
-                return null;
-            }
-
-            const data = await res.json();
-
-            if (!data || !data.options) {
-                console.warn("Invalid mission data");
-                return null;
-            }
-
-            return data;
-
+            if (!res.ok) return null;
+            return await res.json();
         } catch (e) {
-            console.warn("Fetch error:", e);
             return null;
         }
     }
 
     // =========================
-    // 📊 APPLY RESULT (PURE LOGIC)
+    // 📦 MINIMAL APPLY (NO HUD)
     // =========================
-    function applyResult(localState, opt) {
+    function applyResult(stateRef, opt) {
+        if (!opt || !stateRef) return;
 
-        if (!localState || !opt) return;
+        stateRef.score += opt.score || 0;
 
-        // score base
         if (opt.correct) {
-            localState.score += 30;
-
-            if (localState.stats) {
-                localState.stats.respect++;
-                localState.stats.happy++;
-            }
-
+            stateRef.stats.respect++;
+            stateRef.stats.happy++;
         } else {
-            localState.score -= 20;
-
-            if (localState.stats) {
-                localState.stats.safety--;
-            }
+            stateRef.stats.safety--;
         }
     }
 
-    // =========================
-    // 🛡 SAFE WRAPPER (OPTIONAL)
-    // =========================
-    function safeApply(localState, opt) {
-        try {
-            applyResult(localState, opt);
-        } catch (e) {
-            console.warn("applyResult error:", e);
-        }
-    }
-
-    // =========================
-    // 🌐 PUBLIC API
-    // =========================
     return {
         state,
         toggleLang,
         getLang,
         speak,
         fetchMission,
-        applyResult: safeApply
+        applyResult
     };
 
 })();
 
-// =========================
-// 🌐 GLOBAL EXPORT
-// =========================
+// expose
 window.KamizenEngine = KamizenEngine;
