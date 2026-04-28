@@ -120,13 +120,6 @@ body {
     cursor:pointer;
 }
 
-.word-power { border:3px solid var(--neon-green); color:var(--neon-green); }
-.word-risk { border:3px solid var(--neon-red); color:var(--neon-red); }
-.word-silence { border:3px solid var(--neon-yellow); color:var(--neon-yellow); }
-.word-money { border:3px solid var(--neon-gold); color:var(--neon-gold); }
-.word-business { border:3px solid #00e5ff; color:#00e5ff; }
-.word-growth { border:3px solid #00ff99; color:#00ff99; }
-
 @keyframes floatUp {
     from { transform:translateY(110vh); }
     to { transform:translateY(-25vh); }
@@ -199,7 +192,7 @@ body {
 <script>
 
 /* =========================
-   AUDIO ENGINE (UNCHANGED ADDITION ONLY)
+   AUDIO ENGINE
 ========================= */
 const AudioEngine={
     ctx:null,
@@ -209,13 +202,12 @@ const AudioEngine={
         this.music();
     },
     music(){
-        const notes=[220,261,293,329,392,440,523,587];
+        const notes=[220,261,293,329,392,440,523];
 
         const loop=()=>{
             if(!this.ctx) return;
-
-            const o=this.ctx.createOscillator();
-            const g=this.ctx.createGain();
+            let o=this.ctx.createOscillator();
+            let g=this.ctx.createGain();
 
             o.type="square";
             o.frequency.value=notes[Math.floor(Math.random()*notes.length)];
@@ -234,8 +226,8 @@ const AudioEngine={
     },
     playCoin(){
         if(!this.ctx) return;
-        const o=this.ctx.createOscillator();
-        const g=this.ctx.createGain();
+        let o=this.ctx.createOscillator();
+        let g=this.ctx.createGain();
 
         o.type="triangle";
         o.frequency.value=880;
@@ -246,22 +238,18 @@ const AudioEngine={
         g.connect(this.ctx.destination);
 
         o.start();
-        o.stop(this.ctx.currentTime+0.12);
+        o.stop(this.ctx.currentTime+0.1);
     },
     playExplode(){
         if(!this.ctx) return;
+        let buffer=this.ctx.createBuffer(1,this.ctx.sampleRate*0.1,this.ctx.sampleRate);
+        let data=buffer.getChannelData(0);
+        for(let i=0;i<data.length;i++) data[i]=Math.random()*2-1;
 
-        const buffer=this.ctx.createBuffer(1,this.ctx.sampleRate*0.15,this.ctx.sampleRate);
-        const data=buffer.getChannelData(0);
-
-        for(let i=0;i<data.length;i++){
-            data[i]=Math.random()*2-1;
-        }
-
-        const noise=this.ctx.createBufferSource();
+        let noise=this.ctx.createBufferSource();
         noise.buffer=buffer;
 
-        const g=this.ctx.createGain();
+        let g=this.ctx.createGain();
         g.gain.value=0.2;
 
         noise.connect(g);
@@ -277,12 +265,10 @@ document.addEventListener("click",()=>AudioEngine.init(),{once:true});
    STATE
 ========================= */
 let lang="en";
-let gameMode="words";
 let sessionEnded=false;
 
 let state={
     score:0,
-    mastery:1,
     timer:900,
     stats:{
         respect:50,
@@ -291,73 +277,39 @@ let state={
         money:100,
         happy:50,
         safety:100
-    },
-    spawnRate:1200,
-    difficulty:1
+    }
 };
 
 /* =========================
-   WORD BANK (EXPANDED + CHILD EDUCATION THEMES)
+   WORDS
 ========================= */
-const words={
-    power:[
-        "LISTEN FIRST","STAY CALM","THINK BEFORE","CONTROL EMOTION","RESPONSIBILITY","SELF DISCIPLINE"
-    ],
-    risk:[
-        "REACT ANGRY","LOSE CONTROL","IMPULSIVE ACTION","BAD CHOICE","FOLLOW PRESSURE"
-    ],
-    silence:[
-        "OBSERVE","BREATHE DEEP","WAIT MOMENT","FOCUS","INNER PEACE"
-    ],
-    money:[
-        "SAVE MONEY","INVEST SMART","BUILD VALUE","WORK SMART","THINK LONG TERM","CREATE INCOME"
-    ],
-    business:[
-        "BUILD SYSTEM","LEAD MARKET","TEAMWORK","SOLVE PROBLEMS","CREATE VALUE","HELP OTHERS"
-    ],
-    growth:[
-        "LEARN FAST","IMPROVE DAILY","PRACTICE","NEVER QUIT","DISCIPLINE","SKILL UP"
-    ],
+const words=[
+    {t:"LISTEN FIRST", type:"good"},
+    {t:"RESPECT FAMILY", type:"good"},
+    {t:"LEARN FAST", type:"good"},
+    {t:"BUILD FUTURE", type:"good"},
+    {t:"FOCUS SCHOOL", type:"good"},
 
-    /* EXTRA EDUCATIONAL POOLS (NEW) */
-    school:[
-        "FOCUS CLASS","DO HOMEWORK","READ BOOKS","ASK QUESTIONS","LEARN EVERY DAY"
-    ],
-    family:[
-        "RESPECT PARENTS","HELP AT HOME","LISTEN FAMILY","LOVE FAMILY","BE KIND"
-    ],
-    life:[
-        "MAKE GOOD CHOICES","BE HONEST","STAY STRONG","BE PATIENT","NEVER GIVE UP"
-    ],
-    love:[
-        "RESPECT PEOPLE","BE KIND","UNDERSTAND OTHERS","CARE FOR OTHERS","FRIENDSHIP"
-    ],
-    happiness:[
-        "SMILE","GRATITUDE","ENJOY MOMENT","POSITIVE THINKING","PEACE INSIDE"
-    ],
-    street:[
-        "STAY SAFE","AVOID TROUBLE","SMART DECISIONS","OBSERVE SURROUNDINGS","BE ALERT"
-    ]
-};
+    {t:"REACT ANGRY", type:"bad"},
+    {t:"IGNORE SCHOOL", type:"bad"},
+    {t:"BAD FRIENDS", type:"bad"},
+    {t:"LOSE CONTROL", type:"bad"},
+    {t:"FIGHT BACK", type:"bad"}
+];
 
 /* =========================
-   FLOATING WORD SPAWN (INCREASED DIVERSITY + RANDOM COLORS)
+   SPAWN WORDS
 ========================= */
 function spawnWord(){
-    if(gameMode!=="words"||sessionEnded) return;
+    if(sessionEnded) return;
 
-    const cats=Object.keys(words);
-    const styles=["word-power","word-risk","word-silence","word-money","word-business","word-growth"];
+    let w=words[Math.floor(Math.random()*words.length)];
 
-    const c=cats[Math.floor(Math.random()*cats.length)];
-
-    const div=document.createElement("div");
-    div.className="floating "+styles[Math.floor(Math.random()*styles.length)];
-
-    div.innerText=words[c][Math.floor(Math.random()*words[c].length)];
-
+    let div=document.createElement("div");
+    div.className="floating";
+    div.innerText=w.t;
     div.style.left=Math.random()*85+"vw";
-    div.style.color=`hsl(${Math.random()*360},100%,60%)`; // RANDOM COLOR = focus training
+    div.style.color=`hsl(${Math.random()*360},100%,60%)`;
 
     div.onclick=()=>{
 
@@ -365,39 +317,35 @@ function spawnWord(){
         div.dataset.clicked=true;
 
         AudioEngine.playCoin();
-        setTimeout(()=>AudioEngine.playExplode(),60);
+        setTimeout(()=>AudioEngine.playExplode(),50);
 
         div.classList.add("explode");
 
-        /* STAT SYSTEM */
-        if(c==="power") state.stats.respect++;
-        if(c==="risk") state.stats.safety--;
-        if(c==="silence") state.stats.peace++;
-        if(c==="money") state.stats.money++;
-        if(c==="business") state.stats.lead++;
-        if(c==="growth") state.stats.happy++;
+        /* =========================
+           CORE DECISION SYSTEM
+           +20 correct / -10 wrong
+        ========================= */
 
-        if(c==="school") state.stats.respect++;
-        if(c==="family") state.stats.peace++;
-        if(c==="life") state.stats.respect++;
-        if(c==="love") state.stats.happy++;
-        if(c==="happiness") state.stats.happy++;
-        if(c==="street") state.stats.safety--;
+        if(w.type==="good"){
+            state.score += 20;
 
-        state.score++;
+            state.stats.respect++;
+            state.stats.peace++;
+            state.stats.happy++;
+
+        } else {
+            state.score -= 10;
+
+            state.stats.safety--;
+            state.stats.lead--;
+        }
+
         updateHUD();
-
-        setTimeout(()=>div.remove(),500);
+        setTimeout(()=>div.remove(),400);
     };
 
     document.body.appendChild(div);
-
-    setTimeout(()=>div.remove(),8000);
-
-    /* DIFFICULTY INCREASE OVER TIME */
-    if(state.score%20===0 && state.spawnRate>400){
-        state.spawnRate-=50;
-    }
+    setTimeout(()=>div.remove(),7000);
 }
 
 /* =========================
@@ -419,49 +367,22 @@ function updateHUD(){
 }
 
 /* =========================
-   END SESSION BREATH
-========================= */
-function breath(text,ms){
-    return new Promise(res=>{
-        let c=document.getElementById("breath-circle");
-        c.style.display="flex";
-        c.innerText=text;
-        setTimeout(()=>{
-            c.style.display="none";
-            res();
-        },ms);
-    });
-}
-
-async function endSession(){
-    sessionEnded=true;
-    gameMode="breath";
-
-    document.querySelectorAll(".floating").forEach(e=>e.remove());
-
-    await breath("INHALE",2000);
-    await breath("HOLD",2000);
-    await breath("EXHALE",2000);
-}
-
-/* =========================
    TIMER
 ========================= */
-setInterval(async ()=>{
+setInterval(()=>{
     if(state.timer>0){
         state.timer--;
         updateHUD();
-
-        if(state.timer===0 && !sessionEnded){
-            await endSession();
-        }
+    }else{
+        sessionEnded=true;
+        document.querySelectorAll(".floating").forEach(e=>e.remove());
     }
 },1000);
 
 /* =========================
-   SPAWN LOOP
+   LOOP
 ========================= */
-setInterval(()=>spawnWord(),state.spawnRate);
+setInterval(()=>spawnWord(),1200);
 
 updateHUD();
 
