@@ -1,209 +1,499 @@
-from flask import Flask, jsonify, request, send_from_directory
-import json
-import os
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>AL CIELO: TOTAL LIFE TRAINING</title>
 
-app = Flask(__name__, static_folder="static")
-
-# =========================
-# 🧠 CACHE + STATE
-# =========================
-CACHE = {}
-
-STATE = {
-    "mission_index": 1,
-    "MAX_MISSION": 35,
-    "range_map": {
-        1: "missions_01_07.json",
-        8: "missions_08_14.json",
-        15: "missions_15_21.json",
-        22: "missions_22_28.json",
-        29: "missions_29_35.json"
-    }
+<style>
+:root {
+    --neon-blue:#00f2ff;
+    --neon-green:#00ff41;
+    --neon-red:#ff003c;
+    --neon-yellow:#ffff00;
+    --matrix-bg:#00050a;
+    --neon-gold:#ffcc00;
 }
 
-# =========================
-# 📍 BASE DIR (JSON EN RAÍZ REAL)
-# =========================
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+body {
+    margin:0;
+    background:var(--matrix-bg);
+    color:#fff;
+    font-family:'Courier New', monospace;
+    overflow:hidden;
+    user-select:none;
+}
 
+#security-alert {
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:8px;
+    background:var(--neon-green);
+    z-index:1000;
+    box-shadow:0 0 15px var(--neon-green);
+}
 
-# =========================
-# 🔧 SAFE TRANSLATION FUNCTION
-# =========================
-def t(obj, lang="en"):
-    if isinstance(obj, dict):
-        return obj.get(lang) or obj.get("en") or ""
-    return obj or ""
+#lang-btn {
+    position:fixed;
+    bottom:20px;
+    right:20px;
+    z-index:999;
+    padding:10px 18px;
+    border:2px solid var(--neon-blue);
+    background:rgba(0,0,0,0.8);
+    color:var(--neon-blue);
+    cursor:pointer;
+    font-weight:bold;
+    border-radius:5px;
+}
 
+#hud {
+    position:fixed;
+    top:20px;
+    width:100%;
+    display:flex;
+    justify-content:space-between;
+    padding:20px;
+    z-index:50;
+    box-sizing:border-box;
+}
 
-# =========================
-# 📦 LOAD JSON SAFE (ROOT FIX)
-# =========================
-def load_json(file_name):
-    if file_name in CACHE:
-        return CACHE[file_name]
+#timer-box {
+    font-size:2.8rem;
+    color:var(--neon-blue);
+    text-shadow:0 0 20px var(--neon-blue);
+}
 
-    path = os.path.join(BASE_DIR, file_name)
+#score-box {
+    border:3px solid #fff;
+    padding:8px 20px;
+    font-size:1.8rem;
+    background:rgba(255,255,255,0.1);
+}
 
-    try:
-        with open(path, "r", encoding="utf-8") as f:
-            data = json.load(f)
-            CACHE[file_name] = data
-            return data
-    except Exception as e:
-        print("❌ JSON LOAD ERROR:", file_name)
-        print("📍 PATH:", path)
-        print("🔥 ERROR:", e)
-        return None
+#mastery-lvl {
+    color:var(--neon-green);
+    font-size:1.2rem;
+    font-weight:bold;
+}
 
+#life-stats {
+    position:fixed;
+    bottom:20px;
+    left:20px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:12px;
+    z-index:50;
+    max-width:95%;
+}
 
-# =========================
-# 🔎 RANGE SELECTOR (1-35 SAFE)
-# =========================
-def get_file_by_index(i):
-    for start in sorted(STATE["range_map"].keys()):
-        if start <= i <= start + 6:
-            return STATE["range_map"][start]
-    return STATE["range_map"][1]
+.stat-pill {
+    border:2px solid #333;
+    padding:10px 15px;
+    font-size:0.9rem;
+    background:rgba(0,0,0,0.9);
+    border-radius:6px;
+}
 
+.stat-pill span {
+    font-weight:bold;
+    color:var(--neon-blue);
+}
 
-# =========================
-# 🚀 MAIN MISSION ENGINE
-# =========================
-@app.route("/api/mission/next")
-def next_mission():
+#v-money { color:var(--neon-gold)!important; }
+#v-safety { color:var(--neon-red)!important; }
+#v-happy { color:#ff00ff!important; }
 
-    lang = request.args.get("lang", "en")
-    mission_id = STATE["mission_index"]
+/* FLOATING WORDS (UNCHANGED CORE) */
+.floating {
+    position:absolute;
+    padding:15px 30px;
+    font-weight:900;
+    font-size:1.5rem;
+    border-radius:10px;
+    background:rgba(0,0,0,0.9);
+    z-index:10;
+    animation:floatUp 7s linear forwards;
+    cursor:pointer;
+}
 
-    file_name = get_file_by_index(mission_id)
-    data = load_json(file_name)
+.word-power { border:3px solid var(--neon-green); color:var(--neon-green); }
+.word-risk { border:3px solid var(--neon-red); color:var(--neon-red); }
+.word-silence { border:3px solid var(--neon-yellow); color:var(--neon-yellow); }
 
-    # ❌ HARD SAFETY CHECK
-    if not data:
-        return jsonify({
-            "error": "JSON FILE NOT FOUND",
-            "file": file_name,
-            "id": mission_id
-        }), 500
+.word-money { border:3px solid var(--neon-gold); color:var(--neon-gold); }
+.word-business { border:3px solid #00e5ff; color:#00e5ff; }
+.word-growth { border:3px solid #00ff99; color:#00ff99; }
 
-    if "ses" not in data:
-        return jsonify({
-            "error": "INVALID JSON STRUCTURE",
-            "file": file_name
-        }), 500
+@keyframes floatUp {
+    from { transform:translateY(110vh); }
+    to { transform:translateY(-25vh); }
+}
 
-    # =========================
-    # FIND MISSION
-    # =========================
-    mission = next((s for s in data["ses"] if s.get("id") == mission_id), None)
+.explode {
+    animation:blast 0.5s ease-out forwards!important;
+}
 
-    # 🔁 FALLBACK SAFE (NO CRASH)
-    if not mission:
-        mission = data["ses"][0] if data["ses"] else None
-        if mission:
-            mission_id = mission.get("id", mission_id)
+@keyframes blast {
+    0% { transform:scale(1); opacity:1; }
+    100% { transform:scale(4); opacity:0; }
+}
 
-    if not mission:
-        return jsonify({"error": "NO MISSION FOUND"}), 500
+/* OVERLAY */
+#overlay {
+    position:fixed;
+    width:100%;
+    height:100%;
+    background:rgba(0,5,10,0.95);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    z-index:500;
+    text-align:center;
+    padding:30px;
+}
 
-    # =========================
-    # PARSE MISSION BLOCKS
-    # =========================
-    story = ""
-    title = ""
-    options = []
-    analysis = ""
+#decision-grid {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+    margin-top:30px;
+    width:100%;
+    max-width:800px;
+}
 
-    for block in mission.get("b", []):
+.choice-btn {
+    padding:22px;
+    border:3px solid var(--neon-blue);
+    background:none;
+    color:#fff;
+    cursor:pointer;
+}
 
-        ttype = block.get("t")
+/* BREATHING CIRCLE — REPLACED (ONLY CHANGE) */
+#breath-circle{
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    
+    width:320px;
+    height:320px;
+    border-radius:50%;
+    
+    border:6px solid var(--neon-blue);
+    
+    display:none;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    text-align:center;
 
-        # TITLE
-        if ttype == "v":
-            title = t(block.get("tx"), lang)
+    font-weight:bold;
+    color:var(--neon-blue);
+    font-size:2rem;
 
-        # STORY
-        elif ttype == "h":
-            story += t(block.get("tx"), lang) + "\n"
+    animation:pulse 4s infinite;
+    z-index:200;
 
-        # QUESTION
-        elif ttype == "d":
+    pointer-events:none;
+    background:rgba(0,0,0,0.2);
+    backdrop-filter:blur(2px);
+}
 
-            ops = block.get("op", [])
-            correct = block.get("c", 0)
-            question_text = t(block.get("q"), lang)
+@keyframes pulse{
+    0%{transform:scale(1);opacity:0.5;}
+    50%{transform:scale(1.4);opacity:1;}
+    100%{transform:scale(1);opacity:0.5;}
+}
+</style>
+</head>
 
-            options = []
+<body>
 
-            for idx, op in enumerate(ops):
-                options.append({
-                    "text": {
-                        "en": op,
-                        "es": op
-                    },
-                    "correct": idx == correct,
-                    "explanation": {
-                        "en": block.get("ex", [""])[idx] if idx < len(block.get("ex", [])) else "",
-                        "es": block.get("ex", [""])[idx] if idx < len(block.get("ex", [])) else ""
-                    },
-                    "question": question_text
-                })
+<div id="security-alert"></div>
+<button id="lang-btn" onclick="toggleLang()">EN</button>
 
-        # ANALYSIS
-        elif ttype == "c":
-            analysis += t(block.get("tx"), lang) + "\n"
+<div id="hud">
+    <div id="timer-box">05:00</div>
+    <div id="score-box">0</div>
+    <div id="mastery-lvl">MASTERY x1</div>
+</div>
 
-    # =========================
-    # ADVANCE INDEX SAFE LOOP
-    # =========================
-    STATE["mission_index"] += 1
-    if STATE["mission_index"] > STATE["MAX_MISSION"]:
-        STATE["mission_index"] = 1
+<div id="life-stats">
+    <div class="stat-pill">Respect: <span id="v-respect">50</span></div>
+    <div class="stat-pill">Peace: <span id="v-peace">50</span></div>
+    <div class="stat-pill">Leadership: <span id="v-lead">50</span></div>
+    <div class="stat-pill">Money: $<span id="v-money">100</span></div>
+    <div class="stat-pill">Safety: <span id="v-safety">100</span>%</div>
+    <div class="stat-pill">Happiness: <span id="v-happy">50</span>%</div>
+</div>
 
-    # =========================
-    # CLEAN RESPONSE
-    # =========================
-    return jsonify({
-        "id": mission_id,
-        "next": STATE["mission_index"],
-        "theme": title,
-        "story": story.strip(),
-        "analysis": analysis.strip(),
-        "options": options,
-        "lang": lang
-    })
+<div id="breath-circle">INHALE</div>
 
+<div id="overlay">
+    <h1 id="phase-title"></h1>
+    <p id="phase-desc"></p>
+    <div id="decision-grid"></div>
+</div>
 
-# =========================
-# 🌐 STATIC ROUTES
-# =========================
-@app.route("/")
-def index():
-    return send_from_directory("static", "session.html")
+<script src="/static/engine.js"></script>
 
+<script>
 
-@app.route("/static/<path:path>")
-def static_files(path):
-    return send_from_directory("static", path)
+let lang = "en";
+let gameMode = "idle";
+let currentMissionId = 1;
 
+let state = {
+    score: 0,
+    mastery: 1,
+    timer: 300,
+    stats: {
+        respect:50,
+        peace:50,
+        lead:50,
+        money:100,
+        happy:50,
+        safety:100
+    },
+    spawnRate:1300
+};
 
-# =========================
-# 🔁 RESET SYSTEM
-# =========================
-@app.route("/api/reset")
-def reset():
-    STATE["mission_index"] = 1
-    CACHE.clear()
-    return jsonify({
-        "ok": True,
-        "mission_index": STATE["mission_index"]
-    })
+let gameStopped = false;
+let gamePaused = false;
 
+/* SPEECH — FORCED ENGLISH ONLY */
+function speak(text){
+    if(!text) return;
+    try{
+        let u = new SpeechSynthesisUtterance(text);
+        u.lang = "en-US";
+        speechSynthesis.cancel();
+        speechSynthesis.speak(u);
+    }catch(e){}
+}
 
-# =========================
-# 🚀 RUN SERVER
-# =========================
-if __name__ == "__main__":
-    print("🚀 KAMIZEN SERVER RUNNING STABLE MODE...")
-    app.run(debug=True)
+/* HUD */
+function updateHUD(){
+    document.getElementById("score-box").innerText = state.score;
+
+    let m = Math.floor(state.timer/60);
+    let s = state.timer%60;
+
+    document.getElementById("timer-box").innerText =
+        String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
+
+    for(let k in state.stats){
+        let el = document.getElementById("v-"+k);
+        if(el) el.innerText = state.stats[k];
+    }
+}
+
+/* BREATH */
+function breathCycle(type, sec){
+    let c = document.getElementById("breath-circle");
+    c.style.display="flex";
+    c.innerText = type.toUpperCase();
+    speak(type);
+    setTimeout(()=>c.style.display="none", sec*1000);
+}
+
+/* FLOATING WORDS */
+const words = {
+    power:["LISTEN FIRST","STAY CALM","THINK BEFORE","CONTROL EMOTION","RESPECT OTHERS"],
+    risk:["REACT ANGRY","BLAME OTHERS","LOSE CONTROL","FOLLOW CROWD"],
+    silence:["OBSERVE PEOPLE","BREATHE DEEP","WAIT MOMENT","INNER CONTROL"],
+    money:["INVEST SMART","BUILD VALUE","CASHFLOW","SAVE MONEY","THINK SCALE"],
+    business:["BUILD SYSTEM","SELL VALUE","LEAD MARKET","BRAND POWER","EXPAND NETWORK"],
+    growth:["LEARN FAST","IMPROVE DAILY","BUILD SKILL","LONG TERM THINK"]
+};
+
+function spawnWord(){
+    if(gameMode!=="words") return;
+
+    const cats=["power","risk","silence","money","business","growth"];
+    const styles=["word-power","word-risk","word-silence","word-money","word-business","word-growth"];
+
+    const c = cats[Math.floor(Math.random()*cats.length)];
+
+    let div=document.createElement("div");
+    div.className="floating "+styles[cats.indexOf(c)];
+    div.innerText = words[c][Math.floor(Math.random()*words[c].length)];
+    div.style.left = Math.random()*80+"vw";
+
+    div.onclick=()=>{
+        if(div.dataset.clicked) return;
+        div.dataset.clicked=true;
+        div.classList.add("explode");
+
+        if(c==="money") state.stats.money++;
+        if(c==="business") state.stats.lead++;
+        if(c==="growth") state.stats.happy++;
+        if(c==="power") state.stats.respect++;
+        if(c==="risk") state.stats.safety--;
+        if(c==="silence") state.stats.peace++;
+
+        state.score++;
+        updateHUD();
+        setTimeout(()=>div.remove(),500);
+    };
+
+    document.body.appendChild(div);
+    setTimeout(()=>div.remove(),7000);
+}
+
+/* CONTINUE / PAUSE / FINISH MENU */
+function showEndBlockMenu(){
+    const overlay = document.getElementById("overlay");
+    const grid = document.getElementById("decision-grid");
+
+    overlay.style.display="flex";
+    grid.innerHTML="";
+
+    function makeBtn(text, action){
+        let b=document.createElement("button");
+        b.className="choice-btn";
+        b.innerText=text;
+        b.onclick=action;
+        return b;
+    }
+
+    grid.appendChild(makeBtn("CONTINUE", ()=>{
+        overlay.style.display="none";
+        gamePaused=false;
+        gameStopped=false;
+        mainLoop();
+    }));
+
+    grid.appendChild(makeBtn("PAUSE", ()=>{
+        gamePaused=true;
+        overlay.style.display="none";
+    }));
+
+    grid.appendChild(makeBtn("FINISHED", ()=>{
+        gameStopped=true;
+        overlay.style.display="none";
+    }));
+}
+
+/* MISSION */
+async function triggerQuestion(){
+    const res = await fetch("/api/mission/next?lang="+lang);
+    const data = await res.json();
+
+    if(!data || !data.options) return;
+
+    let overlay = document.getElementById("overlay");
+    let grid = document.getElementById("decision-grid");
+    let desc = document.getElementById("phase-desc");
+    let title = document.getElementById("phase-title");
+
+    overlay.style.display="flex";
+
+    title.innerText = data.theme;
+    desc.innerText = (data.analysis||"") + "\n\n" + (data.story||"");
+
+    grid.innerHTML="";
+
+    let continueBtn = null;
+
+    function closeOverlay(){
+        overlay.style.display="none";
+    }
+
+    data.options.forEach(opt=>{
+        let btn=document.createElement("button");
+        btn.className="choice-btn";
+
+        btn.innerText = (lang==="es") ? opt.text.es : opt.text.en;
+
+        btn.onclick=()=>{
+
+            if(opt.correct){
+                state.score+=30;
+                state.stats.respect++;
+                state.stats.happy++;
+            }else{
+                state.score-=20;
+                state.stats.safety--;
+            }
+
+            let exp = (lang==="es") ? opt.explanation.es : opt.explanation.en;
+            speak(exp);
+            desc.innerText = exp;
+
+            grid.innerHTML="";
+
+            if(!continueBtn){
+                continueBtn = document.createElement("button");
+                continueBtn.className="choice-btn";
+                continueBtn.innerText = "CONTINUE";
+                continueBtn.onclick = showEndBlockMenu;
+                grid.appendChild(continueBtn);
+            }
+
+            updateHUD();
+        };
+
+        grid.appendChild(btn);
+    });
+}
+
+/* TIMER */
+setInterval(()=>{
+    if(state.timer>0){
+        state.timer--;
+        updateHUD();
+    }
+},1000);
+
+/* MAIN LOOP */
+async function mainLoop(){
+    while(!gameStopped){
+
+        if(gamePaused) return;
+
+        gameMode = "words";
+
+        let end = Date.now() + (5 * 60 * 1000);
+
+        while(Date.now() < end && !gamePaused && !gameStopped){
+            spawnWord();
+            await new Promise(r => setTimeout(r, state.spawnRate));
+        }
+
+        document.querySelectorAll(".floating").forEach(e => e.remove());
+
+        gameMode = "breath";
+
+        await breathCycle("INHALE", 6);
+        await breathCycle("HOLD", 6);
+        await breathCycle("EXHALE", 6);
+
+        gameMode = "question";
+        await triggerQuestion();
+
+        await new Promise(r => setTimeout(r, 3000));
+
+        showEndBlockMenu();
+        return;
+    }
+}
+
+function toggleLang(){
+    lang = (lang==="en") ? "es" : "en";
+    document.getElementById("lang-btn").innerText = lang.toUpperCase();
+}
+
+updateHUD();
+mainLoop();
+
+</script>
+
+</body>
+</html>
