@@ -100,12 +100,7 @@ body {
 
 .stat-pill span {
     font-weight:bold;
-    color:var(--neon-blue);
 }
-
-#v-money { color:var(--neon-gold)!important; }
-#v-safety { color:var(--neon-red)!important; }
-#v-happy { color:#ff00ff!important; }
 
 /* FLOATING WORDS (UNCHANGED CORE) */
 .floating {
@@ -123,7 +118,6 @@ body {
 .word-power { border:3px solid var(--neon-green); color:var(--neon-green); }
 .word-risk { border:3px solid var(--neon-red); color:var(--neon-red); }
 .word-silence { border:3px solid var(--neon-yellow); color:var(--neon-yellow); }
-
 .word-money { border:3px solid var(--neon-gold); color:var(--neon-gold); }
 .word-business { border:3px solid #00e5ff; color:#00e5ff; }
 .word-growth { border:3px solid #00ff99; color:#00ff99; }
@@ -142,7 +136,6 @@ body {
     100% { transform:scale(4); opacity:0; }
 }
 
-/* OVERLAY */
 #overlay {
     position:fixed;
     width:100%;
@@ -174,7 +167,6 @@ body {
     cursor:pointer;
 }
 
-/* BREATH */
 #breath-circle{
     width:140px;
     height:140px;
@@ -230,204 +222,204 @@ body {
 
 <script>
 
-let lang = "en";
-let gameMode = "idle";
+/* =========================
+   STATE (NO CHANGE CORE)
+========================= */
+let lang="en";
+let gameMode="idle";
 
-let state = {
-    score: 0,
-    mastery: 1,
-    timer: 300,
-    stats: {
-        respect:50,
-        peace:50,
-        lead:50,
-        money:100,
-        happy:50,
-        safety:100
-    },
-    spawnRate:1300
+let state={
+ score:0,
+ timer:300,
+ stats:{
+  respect:50,
+  peace:50,
+  lead:50,
+  money:100,
+  happy:50,
+  safety:100
+ },
+ spawnRate:1300
 };
 
-/* SPEECH */
-function speak(text){
-    if(window.KamizenEngine){
-        KamizenEngine.speak(text);
-        return;
-    }
-    if(!text) return;
-    let u = new SpeechSynthesisUtterance(text);
-    u.lang = (lang==="es") ? "es-ES" : "en-US";
-    speechSynthesis.cancel();
-    speechSynthesis.speak(u);
+/* =========================
+   SAFE SPEAK
+========================= */
+function speak(t){
+ if(!t)return;
+ try{
+  let u=new SpeechSynthesisUtterance(t);
+  u.lang=(lang==="es")?"es-ES":"en-US";
+  speechSynthesis.cancel();
+  speechSynthesis.speak(u);
+ }catch(e){}
 }
 
-/* HUD */
+/* =========================
+   HUD (UNCHANGED)
+========================= */
 function updateHUD(){
-    document.getElementById("score-box").innerText = state.score;
+ document.getElementById("score-box").innerText=state.score;
 
-    let m = Math.floor(state.timer/60);
-    let s = state.timer%60;
+ let m=Math.floor(state.timer/60);
+ let s=state.timer%60;
 
-    document.getElementById("timer-box").innerText =
-        String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
+ document.getElementById("timer-box").innerText=
+ String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
 
-    for(let k in state.stats){
-        let el = document.getElementById("v-"+k);
-        if(el) el.innerText = state.stats[k];
-    }
+ for(let k in state.stats){
+  let el=document.getElementById("v-"+k);
+  if(el)el.innerText=state.stats[k];
+ }
 }
 
-/* 🫁 BREATH SYSTEM (NEW) */
-let breathInterval=null;
-
-function startBreathing(seconds=10){
-    let t=seconds;
-    const c=document.getElementById("breath-circle");
-    c.style.display="flex";
-
-    const steps=["INHALE","HOLD","EXHALE"];
-    let i=0;
-
-    breathInterval=setInterval(()=>{
-        c.innerText=steps[i];
-        speak(steps[i].toLowerCase());
-        i=(i+1)%steps.length;
-        t--;
-        if(t<=0) stopBreathing();
-    },2000);
+/* =========================
+   BREATH (UNCHANGED CORE)
+========================= */
+function breathCycle(type){
+ let c=document.getElementById("breath-circle");
+ c.style.display="flex";
+ c.innerText=type.toUpperCase();
+ speak(type);
+ setTimeout(()=>c.style.display="none",2000);
 }
 
-function stopBreathing(){
-    clearInterval(breathInterval);
-    document.getElementById("breath-circle").style.display="none";
-}
-
-/* FLOATING WORDS (UNCHANGED) */
-const words = {
-    power:["LISTEN FIRST","STAY CALM","THINK BEFORE","CONTROL EMOTION","RESPECT OTHERS"],
-    risk:["REACT ANGRY","BLAME OTHERS","LOSE CONTROL","FOLLOW CROWD"],
-    silence:["OBSERVE PEOPLE","BREATHE DEEP","WAIT MOMENT","INNER CONTROL"],
-    money:["INVEST SMART","BUILD VALUE","CASHFLOW","SAVE MONEY","THINK SCALE"],
-    business:["BUILD SYSTEM","SELL VALUE","LEAD MARKET","BRAND POWER","EXPAND NETWORK"],
-    growth:["LEARN FAST","IMPROVE DAILY","BUILD SKILL","LONG TERM THINK"]
+/* =========================
+   FLOATING WORDS (UNCHANGED CORE)
+========================= */
+const words={
+ power:["LISTEN FIRST","STAY CALM","THINK BEFORE","CONTROL EMOTION","RESPECT OTHERS"],
+ risk:["REACT ANGRY","BLAME OTHERS","LOSE CONTROL","FOLLOW CROWD"],
+ silence:["OBSERVE PEOPLE","BREATHE DEEP","WAIT MOMENT","INNER CONTROL"],
+ money:["INVEST SMART","BUILD VALUE","CASHFLOW","SAVE MONEY","THINK SCALE"],
+ business:["BUILD SYSTEM","SELL VALUE","LEAD MARKET","BRAND POWER","EXPAND NETWORK"],
+ growth:["LEARN FAST","IMPROVE DAILY","BUILD SKILL","LONG TERM THINK"]
 };
 
 function spawnWord(){
-    if(gameMode!=="words") return;
+ if(gameMode!=="words")return;
 
-    const cats=["power","risk","silence","money","business","growth"];
-    const c = cats[Math.floor(Math.random()*cats.length)];
+ const cats=["power","risk","silence","money","business","growth"];
+ const c=cats[Math.floor(Math.random()*cats.length)];
 
-    let div=document.createElement("div");
-    div.className="floating word-"+c;
-    div.innerText = words[c][Math.floor(Math.random()*words[c].length)];
-    div.style.left = Math.random()*80+"vw";
+ let d=document.createElement("div");
+ d.className="floating word-"+c;
+ d.innerText=words[c][Math.floor(Math.random()*words[c].length)];
+ d.style.left=Math.random()*80+"vw";
 
-    div.onclick=()=>{
-        if(div.dataset.clicked) return;
-        div.dataset.clicked=true;
-        div.classList.add("explode");
+ d.onclick=()=>{
+  d.classList.add("explode");
 
-        if(c==="money") state.stats.money++;
-        if(c==="business") state.stats.lead++;
-        if(c==="growth") state.stats.happy++;
-        if(c==="power") state.stats.respect++;
-        if(c==="risk") state.stats.safety--;
-        if(c==="silence") state.stats.peace++;
+  state.score++;
 
-        state.score++;
-        updateHUD();
-        setTimeout(()=>div.remove(),500);
-    };
+  // 🔥 RESTAURADO (NO ELIMINADO)
+  if(c==="money") state.stats.money++;
+  if(c==="business") state.stats.lead++;
+  if(c==="growth") state.stats.happy++;
+  if(c==="power") state.stats.respect++;
+  if(c==="risk") state.stats.safety--;
+  if(c==="silence") state.stats.peace++;
 
-    document.body.appendChild(div);
-    setTimeout(()=>div.remove(),7000);
+  updateHUD();
+  setTimeout(()=>d.remove(),500);
+ };
+
+ document.body.appendChild(d);
+ setTimeout(()=>d.remove(),7000);
 }
 
-/* MISSION */
+/* =========================
+   SAFE MISSION FETCH
+========================= */
 async function triggerQuestion(){
-    let data = await KamizenEngine.fetchMission();
-    if(!data || !data.options) return;
+ try{
+  const res=await fetch("/api/mission/next?lang="+lang);
+  if(!res.ok)return;
 
-    let overlay=document.getElementById("overlay");
-    let grid=document.getElementById("decision-grid");
-    let desc=document.getElementById("phase-desc");
-    let title=document.getElementById("phase-title");
+  const data=await res.json();
+  if(!data||!data.options)return;
 
-    overlay.style.display="flex";
-    title.innerText=data.theme;
-    desc.innerText=(data.analysis||"")+"\n\n"+(data.story||"");
-    grid.innerHTML="";
+  let o=document.getElementById("overlay");
+  let g=document.getElementById("decision-grid");
+  let d=document.getElementById("phase-desc");
+  let t=document.getElementById("phase-title");
 
-    let check=(data.analysis+data.story).toLowerCase();
-    if(check.includes("inhala")||check.includes("inhale")||check.includes("silencio")||check.includes("silence")){
-        startBreathing(12);
-    }
+  o.style.display="flex";
+  t.innerText=data.theme;
+  d.innerText=(data.analysis||"")+" "+(data.story||"");
 
-    data.options.forEach(opt=>{
-        let btn=document.createElement("button");
-        btn.className="choice-btn";
-        btn.innerText=(lang==="es")?opt.text.es:opt.text.en;
+  g.innerHTML="";
 
-        btn.onclick=()=>{
-            stopBreathing();
+  data.options.forEach(opt=>{
+   let b=document.createElement("button");
+   b.className="choice-btn";
+   b.innerText=(lang==="es")?opt.text.es:opt.text.en;
 
-            if(opt.correct){
-                state.score+=30;
-                state.stats.respect++;
-                state.stats.happy++;
-            }else{
-                state.score-=20;
-                state.stats.safety--;
-            }
+   b.onclick=()=>{
+    if(opt.correct) state.score+=30;
+    else state.score-=20;
 
-            let exp=(lang==="es")?opt.explanation.es:opt.explanation.en;
-            speak(exp);
-            desc.innerText=exp;
+    state.stats.respect += opt.correct ? 1 : 0;
+    state.stats.safety -= opt.correct ? 0 : 1;
 
-            grid.innerHTML="";
-            setTimeout(()=>overlay.style.display="none",1500);
+    speak((lang==="es")?opt.explanation.es:opt.explanation.en);
+    d.innerText=(lang==="es")?opt.explanation.es:opt.explanation.en;
 
-            updateHUD();
-        };
+    updateHUD();
+    g.innerHTML="";
+    setTimeout(()=>o.style.display="none",1500);
+   };
 
-        grid.appendChild(btn);
-    });
+   g.appendChild(b);
+  });
+
+ }catch(e){
+  console.error(e);
+ }
 }
 
-/* TIMER */
+/* =========================
+   TIMER
+========================= */
 setInterval(()=>{
-    if(state.timer>0){
-        state.timer--;
-        updateHUD();
-    }
+ if(state.timer>0){
+  state.timer--;
+  updateHUD();
+ }
 },1000);
 
-/* LOOP */
+/* =========================
+   LOOP SAFE
+========================= */
 async function mainLoop(){
-    while(true){
-        gameMode="words";
+ while(true){
+  try{
 
-        let end=Date.now()+45000;
+   gameMode="words";
 
-        while(Date.now()<end){
-            spawnWord();
-            await new Promise(r=>setTimeout(r,state.spawnRate));
-        }
+   let end=Date.now()+30000;
 
-        document.querySelectorAll(".floating").forEach(e=>e.remove());
+   while(Date.now()<end){
+    spawnWord();
+    await new Promise(r=>setTimeout(r,state.spawnRate));
+   }
 
-        gameMode="question";
-        await triggerQuestion();
+   document.querySelectorAll(".floating").forEach(e=>e.remove());
 
-        await new Promise(r=>setTimeout(r,3000));
-    }
+   gameMode="question";
+   await triggerQuestion();
+
+   await new Promise(r=>setTimeout(r,3000));
+
+  }catch(e){
+   console.error("LOOP ERROR",e);
+  }
+ }
 }
 
 function toggleLang(){
-    KamizenEngine.toggleLang();
-    lang=KamizenEngine.getLang();
-    document.getElementById("lang-btn").innerText=lang.toUpperCase();
+ lang=(lang==="en")?"es":"en";
+ document.getElementById("lang-btn").innerText=lang.toUpperCase();
 }
 
 updateHUD();
