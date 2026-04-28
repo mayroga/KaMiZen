@@ -2,9 +2,29 @@ const KamizenEngine = (() => {
 
     const state = {
         lang: "en",
-        silenceActive: false,
-        silenceTimer: 0,
-        silenceInterval: null
+
+        phase: "FLOAT_5",
+
+        timer: 300, // 5 min inicial
+
+        floatTimer: 300,
+        extendedTimer: 600,
+        silenceTimer: 120,
+
+        stats: {
+            respect: 50,
+            peace: 50,
+            lead: 50,
+            money: 100,
+            happy: 50,
+            safety: 100
+        },
+
+        score: 0,
+        spawnRate: 1300,
+
+        lockInput: false,
+        silenceLocked: false
     };
 
     // =========================
@@ -21,42 +41,175 @@ const KamizenEngine = (() => {
     }
 
     // =========================
-    // 🔊 VOZ MASCULINA CALMADA (EN/ES PERFECTO)
+    // 🔊 VOICE
     // =========================
     function speak(text) {
         if (!text) return;
-
         try {
-            let msg = new SpeechSynthesisUtterance(text);
-
-            msg.lang = (state.lang === "es") ? "es-ES" : "en-US";
-
-            let voices = speechSynthesis.getVoices();
-
-            let maleVoice =
-                voices.find(v => v.name.toLowerCase().includes("male")) ||
-                voices.find(v => v.name.toLowerCase().includes("daniel")) ||
-                voices.find(v => v.name.toLowerCase().includes("google")) ||
-                voices[0];
-
-            if (maleVoice) msg.voice = maleVoice;
-
-            msg.pitch = 0.75;   // grave = masculino calmado
-            msg.rate = 0.95;    // lento controlado
-
+            const msg = new SpeechSynthesisUtterance(text);
+            msg.lang = state.lang === "es" ? "es-ES" : "en-US";
+            msg.rate = 0.9;
+            msg.pitch = 0.9;
             speechSynthesis.cancel();
             speechSynthesis.speak(msg);
-
         } catch (e) {}
     }
 
     // =========================
-    // 🌐 FETCH MISSION
+    // 🫁 BREATH SYSTEM VISUAL CONTROL
+    // =========================
+    function breath(type) {
+        const circle = document.getElementById("breath-circle");
+        if (!circle) return;
+
+        circle.style.display = "flex";
+
+        let map = {
+            inhale: "INHALE",
+            hold: "HOLD",
+            exhale: "EXHALE",
+            silence: "SILENCE"
+        };
+
+        circle.innerText = map[type] || type.toUpperCase();
+    }
+
+    // =========================
+    // 📊 UPDATE STATS UI
+    // =========================
+    function updateStatsUI() {
+        for (let k in state.stats) {
+            let el = document.getElementById("v-" + k);
+            if (el) el.innerText = state.stats[k];
+        }
+    }
+
+    // =========================
+    // 📈 APPLY WORD RESULT
+    // =========================
+    function applyWord(type) {
+        state.score++;
+
+        if (type === "money") state.stats.money++;
+        if (type === "business") state.stats.lead++;
+        if (type === "growth") state.stats.happy++;
+        if (type === "power") state.stats.respect++;
+        if (type === "risk") state.stats.safety--;
+        if (type === "silence") state.stats.peace++;
+
+        updateStatsUI();
+    }
+
+    // =========================
+    // ⏱️ TIMER ENGINE
+    // =========================
+    setInterval(() => {
+
+        // FLOAT 5 MIN
+        if (state.phase === "FLOAT_5") {
+            state.floatTimer--;
+            if (state.floatTimer <= 0) {
+                startExtended();
+            }
+        }
+
+        // EXTENDED 10 MIN
+        else if (state.phase === "EXTENDED") {
+            state.extendedTimer--;
+
+            if (state.extendedTimer % 120 === 0) {
+                triggerMiniMission();
+            }
+
+            if (state.extendedTimer <= 0) {
+                startMission();
+            }
+        }
+
+        // SILENCE
+        else if (state.phase === "SILENCE") {
+            state.silenceTimer--;
+
+            breathCycle();
+
+            if (state.silenceTimer <= 0) {
+                allowContinue();
+            }
+        }
+
+        updateHUD();
+
+    }, 1000);
+
+    // =========================
+    // 🫁 BREATH CYCLE AUTOMATIC
+    // =========================
+    let breathStep = 0;
+    function breathCycle() {
+        const steps = ["inhale", "hold", "exhale"];
+        breath(steps[breathStep]);
+        breathStep = (breathStep + 1) % steps.length;
+    }
+
+    // =========================
+    // 🌟 PHASE SWITCHING
+    // =========================
+    function startExtended() {
+        state.phase = "EXTENDED";
+        state.extendedTimer = 600;
+        speak("Extended training started");
+    }
+
+    function startMission() {
+        state.phase = "MISSION";
+        speak("Mission phase starting");
+        triggerQuestion();
+    }
+
+    function startSilence() {
+        state.phase = "SILENCE";
+        state.silenceTimer = 120;
+        state.lockInput = true;
+        state.silenceLocked = true;
+
+        speak(state.lang === "es"
+            ? "Entrenamiento de silencio activado"
+            : "Silence training activated"
+        );
+    }
+
+    function allowContinue() {
+        const overlay = document.getElementById("overlay");
+
+        const warn = state.lang === "es"
+            ? "Si continúas sin disciplina, solo tendrás 45 segundos de juego libre"
+            : "If you continue without discipline, only 45 seconds free play";
+
+        speak(warn);
+        alert(warn);
+
+        state.lockInput = false;
+        state.silenceLocked = false;
+
+        overlay.style.display = "none";
+        state.phase = "FLOAT_5";
+        state.floatTimer = 300;
+    }
+
+    // =========================
+    // ⚠️ MINI INTERRUPTION
+    // =========================
+    function triggerMiniMission() {
+        if (state.phase !== "EXTENDED") return;
+        triggerQuestion();
+    }
+
+    // =========================
+    // 🧠 FETCH MISSION (FROM HTML SYSTEM)
     // =========================
     async function fetchMission() {
         try {
             const res = await fetch(`/api/mission/next?lang=${state.lang}`);
-            if (!res.ok) return null;
             return await res.json();
         } catch (e) {
             return null;
@@ -64,87 +217,45 @@ const KamizenEngine = (() => {
     }
 
     // =========================
-    // 📦 APPLY RESULT
+    // 📊 HUD CONTROL
     // =========================
-    function applyResult(stateRef, opt) {
-        if (!opt || !stateRef) return;
+    function updateHUD() {
+        const timer = document.getElementById("timer-box");
 
-        stateRef.score += opt.score || 0;
+        if (timer) {
+            let t = 0;
 
-        if (opt.correct) {
-            stateRef.stats.respect++;
-            stateRef.stats.happy++;
-        } else {
-            stateRef.stats.safety--;
-        }
-    }
+            if (state.phase === "FLOAT_5") t = state.floatTimer;
+            if (state.phase === "EXTENDED") t = state.extendedTimer;
+            if (state.phase === "SILENCE") t = state.silenceTimer;
 
-    // =========================
-    // 🧠 SILENCE MODE ENGINE (NEW CORE)
-    // =========================
-    function startSilence(data) {
+            let m = Math.floor(t / 60);
+            let s = t % 60;
 
-        state.silenceActive = true;
-        state.silenceTimer = data.d || 60;
-
-        let circle = document.getElementById("breath-circle");
-        let text = document.getElementById("breath-text");
-        let science = document.getElementById("breath-science");
-        let timer = document.getElementById("breath-timer");
-
-        if (!circle) return;
-
-        circle.style.display = "flex";
-
-        if (science) {
-            science.innerText =
-                data.inf?.[state.lang] ||
-                data.inf?.en ||
-                "Neural regulation active";
+            timer.innerText =
+                String(m).padStart(2, "0") + ":" +
+                String(s).padStart(2, "0");
         }
 
-        const phases = ["INHALE", "HOLD", "EXHALE", "SILENCE"];
-        let i = 0;
-
-        clearInterval(state.silenceInterval);
-
-        state.silenceInterval = setInterval(() => {
-
-            if (timer) timer.innerText = state.silenceTimer + "s";
-
-            if (text) text.innerText = phases[i % phases.length];
-            i++;
-
-            state.silenceTimer--;
-
-            if (state.silenceTimer <= 0) {
-                clearInterval(state.silenceInterval);
-                circle.style.display = "none";
-                state.silenceActive = false;
-            }
-
-        }, 1000);
+        const score = document.getElementById("score-box");
+        if (score) score.innerText = state.score;
     }
 
     // =========================
-    // 🔒 BLOCK CHECK (USE IN FRONTEND)
+    // 🌐 PUBLIC API
     // =========================
-    function isBlocked() {
-        return state.silenceActive;
-    }
-
     return {
         state,
         toggleLang,
         getLang,
         speak,
+        breath,
+        applyWord,
         fetchMission,
-        applyResult,
-        startSilence,
-        isBlocked
+        updateHUD,
+        startSilence
     };
 
 })();
 
-// expose global
 window.KamizenEngine = KamizenEngine;
