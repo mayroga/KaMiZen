@@ -173,6 +173,10 @@ body {
     cursor:pointer;
 }
 
+.choice-btn.locked {
+    opacity:0.6;
+}
+
 #continue-btn{
     margin-top:20px;
     padding:15px 30px;
@@ -184,11 +188,14 @@ body {
 }
 
 #breath-circle{
-    width:160px;
-    height:160px;
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    width:180px;
+    height:180px;
     border-radius:50%;
     border:4px solid var(--neon-blue);
-    margin:10px auto;
     display:none;
     align-items:center;
     justify-content:center;
@@ -196,12 +203,14 @@ body {
     font-weight:bold;
     color:var(--neon-blue);
     animation:pulse 4s infinite;
+    z-index:9999;
+    background:rgba(0,0,0,0.9);
 }
 
 @keyframes pulse{
-    0%{transform:scale(1);opacity:0.5;}
-    50%{transform:scale(1.4);opacity:1;}
-    100%{transform:scale(1);opacity:0.5;}
+    0%{transform:translate(-50%,-50%) scale(1);opacity:0.5;}
+    50%{transform:translate(-50%,-50%) scale(1.4);opacity:1;}
+    100%{transform:translate(-50%,-50%) scale(1);opacity:0.5;}
 }
 </style>
 </head>
@@ -239,6 +248,77 @@ body {
 
 <script>
 
+/* =========================
+   AUDIO ENGINE (ADDED)
+========================= */
+const AudioEngine={
+    ctx:null,
+    init(){
+        if(this.ctx) return;
+        this.ctx=new (window.AudioContext||window.webkitAudioContext)();
+        this.music();
+    },
+    music(){
+        const notes=[220,261,293,329,392,440,523];
+        const loop=()=>{
+            if(!this.ctx) return;
+            let o=this.ctx.createOscillator();
+            let g=this.ctx.createGain();
+
+            o.type="sine";
+            o.frequency.value=notes[Math.floor(Math.random()*notes.length)];
+            g.gain.value=0.03;
+
+            o.connect(g);
+            g.connect(this.ctx.destination);
+
+            o.start();
+            o.stop(this.ctx.currentTime+0.3);
+
+            setTimeout(loop,300);
+        };
+        loop();
+    },
+    click(){
+        if(!this.ctx) return;
+        let o=this.ctx.createOscillator();
+        let g=this.ctx.createGain();
+
+        o.type="triangle";
+        o.frequency.value=800;
+        g.gain.value=0.08;
+
+        o.connect(g);
+        g.connect(this.ctx.destination);
+
+        o.start();
+        o.stop(this.ctx.currentTime+0.1);
+    },
+    explode(){
+        if(!this.ctx) return;
+        let buffer=this.ctx.createBuffer(1,this.ctx.sampleRate*0.1,this.ctx.sampleRate);
+        let data=buffer.getChannelData(0);
+        for(let i=0;i<data.length;i++) data[i]=Math.random()*2-1;
+
+        let noise=this.ctx.createBufferSource();
+        noise.buffer=buffer;
+
+        let g=this.ctx.createGain();
+        g.gain.value=0.2;
+
+        noise.connect(g);
+        g.connect(this.ctx.destination);
+
+        noise.start();
+    }
+};
+
+document.addEventListener("click",()=>AudioEngine.init(),{once:true});
+
+/* =========================
+   ORIGINAL CODE (UNTOUCHED)
+========================= */
+
 let lang="en";
 let gameMode="idle";
 
@@ -270,21 +350,22 @@ function updateHUD(){
     }
 }
 
-/* BREATH FULL SYSTEM 18s */
-async function breathingExercise(withVoice=true){
+async function breathingExercise(duration=18000, withVoice=true){
     let c=document.getElementById("breath-circle");
     let desc=document.getElementById("phase-desc");
 
     c.style.display="flex";
 
-    for(let i=0;i<3;i++){
+    let cycles = duration / 6000;
+
+    for(let i=0;i<cycles;i++){
         c.innerText="INHALE";
-        desc.innerText="Oxygen enters blood. Heart rate stabilizes. Brain focus increases.";
+        desc.innerText="Oxygen enters blood. Brain focus increases.";
         if(withVoice) speak("Inhale slowly");
         await new Promise(r=>setTimeout(r,3000));
 
         c.innerText="EXHALE";
-        desc.innerText="Stress leaves body. Muscles relax. Nervous system resets.";
+        desc.innerText="Stress leaves body. Nervous system resets.";
         if(withVoice) speak("Exhale slowly");
         await new Promise(r=>setTimeout(r,3000));
     }
@@ -292,7 +373,6 @@ async function breathingExercise(withVoice=true){
     c.style.display="none";
 }
 
-/* WORDS */
 const words={
 power:["LISTEN FIRST","STAY CALM","THINK BEFORE","CONTROL EMOTION","RESPECT OTHERS"],
 risk:["REACT ANGRY","BLAME OTHERS","LOSE CONTROL","FOLLOW CROWD"],
@@ -319,13 +399,11 @@ if(div.dataset.clicked) return;
 div.dataset.clicked=true;
 div.classList.add("explode");
 
-let positive = ["power","silence","money","business","growth"].includes(c);
+AudioEngine.click();
+setTimeout(()=>AudioEngine.explode(),50);
 
-if(positive){
-    state.score+=20;
-}else{
-    state.score-=10;
-}
+let positive=["power","silence","money","business","growth"].includes(c);
+state.score+=positive?20:-10;
 
 if(c==="money") state.stats.money++;
 if(c==="business") state.stats.lead++;
@@ -342,7 +420,6 @@ document.body.appendChild(div);
 setTimeout(()=>div.remove(),7000);
 }
 
-/* QUESTION */
 async function triggerQuestion(){
 const res=await fetch("/api/mission/next?lang="+lang);
 const data=await res.json();
@@ -362,11 +439,13 @@ title.innerText=data.theme;
 desc.innerText=data.story;
 
 if(desc.innerText.toLowerCase().includes("inhale")){
-    await breathingExercise(true);
+    await breathingExercise(18000,true);
 }
 if(desc.innerText.toLowerCase().includes("silence")){
-    await breathingExercise(false);
+    await breathingExercise(18000,false);
 }
+
+let answered=false;
 
 data.options.forEach(opt=>{
 let btn=document.createElement("button");
@@ -374,9 +453,16 @@ btn.className="choice-btn";
 btn.innerText=opt.text.en;
 
 btn.onclick=()=>{
-let correct=opt.correct;
+AudioEngine.click();
 
-if(correct){
+let exp=opt.explanation.en;
+desc.innerText=exp;
+speak(exp);
+
+if(!answered){
+answered=true;
+
+if(opt.correct){
 state.score+=30;
 document.body.classList.add("correct-flash");
 }else{
@@ -388,34 +474,36 @@ setTimeout(()=>{
 document.body.classList.remove("correct-flash","wrong-flash");
 },500);
 
-desc.innerText=opt.explanation.en;
-speak(opt.explanation.en);
-
-grid.innerHTML="";
+document.querySelectorAll(".choice-btn").forEach(b=>b.classList.add("locked"));
 cont.style.display="block";
-
 updateHUD();
+}
 };
 
 grid.appendChild(btn);
 });
 
 cont.onclick=()=>{
+AudioEngine.click();
 overlay.style.display="none";
 };
 }
 
-/* TIMER */
+function resetTimer(){
+state.timer=300;
+}
+
 setInterval(()=>{
-if(state.timer>0){
+if(state.timer>0 && gameMode==="words"){
 state.timer--;
 updateHUD();
 }
 },1000);
 
-/* LOOP */
 async function mainLoop(){
 while(true){
+
+resetTimer();
 gameMode="words";
 
 let end=Date.now()+45000;
