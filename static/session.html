@@ -24,7 +24,7 @@ body {
     user-select:none;
 }
 
-/* RESPONSIVE FIX */
+/* RESPONSIVE */
 @media (max-width:768px){
     #timer-box{font-size:1.8rem;}
     #score-box{font-size:1.2rem;}
@@ -108,7 +108,7 @@ body {
     border-radius:6px;
 }
 
-/* FLOATING WORDS (UNCHANGED CORE) */
+/* FLOATING WORDS (NO CHANGE CORE) */
 .floating {
     position:absolute;
     padding:15px 30px;
@@ -174,12 +174,6 @@ body {
     cursor:pointer;
 }
 
-/* FEEDBACK */
-.correct { background:rgba(0,255,0,0.2)!important; border-color:var(--neon-green)!important; }
-.wrong { background:rgba(255,0,0,0.2)!important; border-color:var(--neon-red)!important; }
-.mid1 { background:rgba(255,255,0,0.15)!important; }
-.mid2 { background:rgba(255,165,0,0.15)!important; }
-
 /* BREATH */
 #breath-circle{
     width:140px;
@@ -209,7 +203,7 @@ body {
     margin-top:10px;
 }
 
-/* CONTINUE BUTTON */
+/* CONTINUE */
 #continue-btn{
     margin-top:20px;
     padding:15px 25px;
@@ -226,10 +220,10 @@ body {
 <body>
 
 <div id="security-alert"></div>
-<button id="lang-btn" onclick="toggleLang()">EN</button>
+<button id="lang-btn">EN</button>
 
 <div id="hud">
-    <div id="timer-box">05:00</div>
+    <div id="timer-box">00:00</div>
     <div id="score-box">0</div>
     <div id="mastery-lvl">MASTERY x1</div>
 </div>
@@ -252,178 +246,99 @@ body {
     <div id="silence-timer"></div>
     <div id="decision-grid"></div>
 
-    <button id="continue-btn" onclick="closeOverlay()">CONTINUE</button>
+    <button id="continue-btn">CONTINUE</button>
 </div>
 
+<!-- ENGINE CONTROLS EVERYTHING -->
 <script src="/static/engine.js"></script>
 
 <script>
 
-let lang="en";
-let gameMode="idle";
-
-let state={
- score:0,
- timer:300,
- stats:{respect:50,peace:50,lead:50,money:100,happy:50,safety:100},
- spawnRate:1300
+let state = {
+    score: 0,
+    timer: 0,
+    stats: {
+        respect:50, peace:50, lead:50,
+        money:100, happy:50, safety:100
+    }
 };
 
-function speak(t){
- if(!t)return;
- let u=new SpeechSynthesisUtterance(t);
- u.lang=(lang==="es")?"es-ES":"en-US";
- speechSynthesis.cancel();
- speechSynthesis.speak(u);
-}
-
+/* ENGINE BRIDGE */
 function updateHUD(){
- document.getElementById("score-box").innerText=state.score;
- let m=Math.floor(state.timer/60),s=state.timer%60;
- document.getElementById("timer-box").innerText=
- String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
+    document.getElementById("score-box").innerText = state.score;
 
- for(let k in state.stats){
-  let el=document.getElementById("v-"+k);
-  if(el)el.innerText=state.stats[k];
- }
+    let m = Math.floor(state.timer/60);
+    let s = state.timer%60;
+
+    document.getElementById("timer-box").innerText =
+        String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
+
+    for(let k in state.stats){
+        let el = document.getElementById("v-"+k);
+        if(el) el.innerText = state.stats[k];
+    }
 }
 
-function breathCycle(t,s){
- let c=document.getElementById("breath-circle");
- c.style.display="flex";
- c.innerText=t.toUpperCase();
- speak(t);
- setTimeout(()=>c.style.display="none",s*1000);
+/* BREATH VISUAL ONLY (ENGINE CONTROLLED) */
+function breathCycle(type){
+    let c = document.getElementById("breath-circle");
+    c.style.display = "flex";
+    c.innerText = type.toUpperCase();
 }
 
-/* WORDS (UNCHANGED CORE) */
-const words={
- power:["LISTEN FIRST","STAY CALM","THINK BEFORE","CONTROL EMOTION","RESPECT OTHERS"],
- risk:["REACT ANGRY","BLAME OTHERS","LOSE CONTROL","FOLLOW CROWD"],
- silence:["OBSERVE PEOPLE","BREATHE DEEP","WAIT MOMENT","INNER CONTROL"],
- money:["INVEST SMART","BUILD VALUE","CASHFLOW","SAVE MONEY","THINK SCALE"],
- business:["BUILD SYSTEM","SELL VALUE","LEAD MARKET","BRAND POWER","EXPAND NETWORK"],
- growth:["LEARN FAST","IMPROVE DAILY","BUILD SKILL","LONG TERM THINK"]
+/* CONTINUE */
+document.getElementById("continue-btn").onclick = () => {
+    document.getElementById("overlay").style.display = "none";
+    if(window.KamizenEngine?.state?.silenceLocked){
+        alert("⚠ Discipline warning: next phase will be restricted.");
+    }
 };
 
-function spawnWord(){
- if(gameMode!=="words")return;
-
- const c=["power","risk","silence","money","business","growth"][Math.floor(Math.random()*6)];
-
- let d=document.createElement("div");
- d.className="floating word-"+c;
- d.innerText=words[c][Math.floor(Math.random()*words[c].length)];
- d.style.left=Math.random()*80+"vw";
-
- d.onclick=()=>{
-  d.classList.add("explode");
-  state.score++;
-  updateHUD();
-  setTimeout(()=>d.remove(),500);
- };
-
- document.body.appendChild(d);
- setTimeout(()=>d.remove(),7000);
-}
-
-/* SILENCE */
-let silenceInterval;
-
-function runSilence(seconds){
- let t=seconds;
- document.getElementById("silence-timer").innerText=t;
- document.getElementById("continue-btn").style.display="none";
-
- silenceInterval=setInterval(()=>{
-  t--;
-  document.getElementById("silence-timer").innerText=t;
-
-  breathCycle(["inhale","hold","exhale"][Math.floor(Math.random()*3)],2);
-
-  if(t<=0){
-   clearInterval(silenceInterval);
-   document.getElementById("continue-btn").style.display="block";
-  }
- },1000);
-}
-
-function closeOverlay(){
- document.getElementById("overlay").style.display="none";
-}
-
-/* MISSION */
-async function triggerQuestion(){
- const res=await fetch("/api/mission/next?lang="+lang);
- const data=await res.json();
-
- if(!data.options)return;
-
- let o=document.getElementById("overlay");
- let g=document.getElementById("decision-grid");
- let d=document.getElementById("phase-desc");
- let t=document.getElementById("phase-title");
-
- o.style.display="flex";
- t.innerText=data.theme;
- d.innerText=(data.analysis||"")+" "+(data.story||"");
- g.innerHTML="";
-
- if((data.analysis+data.story).includes("silencio")){
-  runSilence(10);
- }
-
- data.options.forEach((opt,i)=>{
-  let b=document.createElement("button");
-  b.className="choice-btn";
-  b.innerText=(lang==="es")?opt.text.es:opt.text.en;
-
-  b.onclick=()=>{
-   if(opt.correct)b.classList.add("correct");
-   else b.classList.add("wrong");
-
-   state.score+=opt.correct?30:-20;
-   updateHUD();
-
-   speak((lang==="es")?opt.explanation.es:opt.explanation.en);
-   d.innerText=(lang==="es")?opt.explanation.es:opt.explanation.en;
-
-   document.getElementById("continue-btn").style.display="block";
-  };
-
-  g.appendChild(b);
- });
-}
-
-setInterval(()=>{if(state.timer>0){state.timer--;updateHUD();}},1000);
-
-async function loop(){
- while(true){
-  gameMode="words";
-  let end=Date.now()+30000;
-
-  while(Date.now()<end){
-   spawnWord();
-   await new Promise(r=>setTimeout(r,state.spawnRate));
-  }
-
-  document.querySelectorAll(".floating").forEach(e=>e.remove());
-
-  gameMode="question";
-  await triggerQuestion();
-
-  await new Promise(r=>setTimeout(r,2000));
- }
-}
-
+/* LANGUAGE */
 function toggleLang(){
- lang=(lang==="en")?"es":"en";
- document.getElementById("lang-btn").innerText=lang.toUpperCase();
+    KamizenEngine.toggleLang();
 }
+
+/* WORDS HANDLED BY ENGINE ONLY */
+function spawnWord(){
+    if(KamizenEngine?.state?.lockInput) return;
+
+    const cats = ["power","risk","silence","money","business","growth"];
+    const c = cats[Math.floor(Math.random()*cats.length)];
+
+    let d=document.createElement("div");
+    d.className="floating word-"+c;
+    d.innerText="...";
+
+    d.onclick=()=>{
+        KamizenEngine.applyWord(c);
+        state.score = KamizenEngine.state.score;
+        state.stats = KamizenEngine.state.stats;
+        updateHUD();
+        d.classList.add("explode");
+        setTimeout(()=>d.remove(),500);
+    };
+
+    document.body.appendChild(d);
+    setTimeout(()=>d.remove(),7000);
+}
+
+/* ENGINE SYNC LOOP */
+setInterval(()=>{
+    if(KamizenEngine){
+        state.score = KamizenEngine.state.score;
+        state.timer = KamizenEngine.state.timer;
+        state.stats = KamizenEngine.state.stats;
+        updateHUD();
+
+        let phase = KamizenEngine.state.phase;
+        if(phase === "SILENCE"){
+            breathCycle("silence");
+        }
+    }
+},500);
 
 updateHUD();
-loop();
 
 </script>
 
