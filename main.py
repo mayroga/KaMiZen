@@ -22,7 +22,7 @@ BASE_DIR = os.getcwd()
 
 
 # =========================
-# 🔧 SAFE GET LANG TEXT
+# SAFE GET LANG TEXT
 # =========================
 def t(obj, lang):
     if isinstance(obj, dict):
@@ -88,15 +88,12 @@ def next_mission():
 
         ttype = block.get("t")
 
-        # TITLE
         if ttype == "v":
             title = t(block.get("tx"), lang)
 
-        # STORY
         elif ttype == "h":
             story += t(block.get("tx"), lang) + "\n"
 
-        # QUESTION
         elif ttype == "d":
             ops = block.get("op", [])
             correct = block.get("c", 0)
@@ -118,11 +115,9 @@ def next_mission():
                     "question": qtext
                 })
 
-        # ANALYSIS
         elif ttype == "c":
             analysis += t(block.get("tx"), lang) + "\n"
 
-    # ADVANCE SAFE
     STATE["mission_index"] += 1
     if STATE["mission_index"] > STATE["MAX_MISSION"]:
         STATE["mission_index"] = 1
