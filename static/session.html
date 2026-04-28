@@ -24,40 +24,7 @@ body {
     user-select:none;
 }
 
-/* RESPONSIVE */
-@media (max-width:768px){
-    #timer-box{font-size:1.8rem;}
-    #score-box{font-size:1.2rem;}
-    .floating{font-size:1rem;padding:10px 16px;}
-    #decision-grid{grid-template-columns:1fr;}
-}
-
 /* HUD */
-#security-alert {
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:8px;
-    background:var(--neon-green);
-    z-index:1000;
-    box-shadow:0 0 15px var(--neon-green);
-}
-
-#lang-btn {
-    position:fixed;
-    bottom:20px;
-    right:20px;
-    z-index:999;
-    padding:10px 18px;
-    border:2px solid var(--neon-blue);
-    background:rgba(0,0,0,0.8);
-    color:var(--neon-blue);
-    cursor:pointer;
-    font-weight:bold;
-    border-radius:5px;
-}
-
 #hud {
     position:fixed;
     top:20px;
@@ -72,20 +39,11 @@ body {
 #timer-box {
     font-size:2.8rem;
     color:var(--neon-blue);
-    text-shadow:0 0 20px var(--neon-blue);
 }
 
 #score-box {
     border:3px solid #fff;
     padding:8px 20px;
-    font-size:1.8rem;
-    background:rgba(255,255,255,0.1);
-}
-
-#mastery-lvl {
-    color:var(--neon-green);
-    font-size:1.2rem;
-    font-weight:bold;
 }
 
 /* STATS */
@@ -94,31 +52,17 @@ body {
     bottom:20px;
     left:20px;
     display:flex;
-    flex-wrap:wrap;
     gap:12px;
-    z-index:50;
-    max-width:95%;
 }
 
-.stat-pill {
-    border:2px solid #333;
-    padding:10px 15px;
-    font-size:0.9rem;
-    background:rgba(0,0,0,0.9);
-    border-radius:6px;
-}
-
-/* FLOATING WORDS (NO CHANGE CORE) */
+/* FLOATING WORDS (engine controls content) */
 .floating {
     position:absolute;
     padding:15px 30px;
-    font-weight:900;
     font-size:1.5rem;
-    border-radius:10px;
     background:rgba(0,0,0,0.9);
-    z-index:10;
-    animation:floatUp 7s linear forwards;
     cursor:pointer;
+    animation:floatUp 7s linear forwards;
 }
 
 .word-power { border:3px solid var(--neon-green); color:var(--neon-green); }
@@ -147,195 +91,131 @@ body {
     position:fixed;
     width:100%;
     height:100%;
-    background:rgba(0,5,10,0.95);
+    background:rgba(0,0,0,0.9);
     display:none;
     align-items:center;
     justify-content:center;
     flex-direction:column;
-    z-index:500;
-    text-align:center;
-    padding:30px;
-}
-
-#decision-grid {
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:20px;
-    margin-top:30px;
-    width:100%;
-    max-width:800px;
+    z-index:100;
 }
 
 .choice-btn {
-    padding:22px;
-    border:3px solid var(--neon-blue);
+    margin:10px;
+    padding:20px;
+    border:2px solid var(--neon-blue);
     background:none;
     color:#fff;
-    cursor:pointer;
 }
 
-/* BREATH */
 #breath-circle{
-    width:140px;
-    height:140px;
+    width:120px;
+    height:120px;
     border-radius:50%;
-    border:4px solid var(--neon-blue);
-    margin:10px auto;
+    border:3px solid var(--neon-blue);
     display:none;
     align-items:center;
     justify-content:center;
-    text-align:center;
-    font-weight:bold;
-    color:var(--neon-blue);
-    animation:pulse 4s infinite;
 }
 
-@keyframes pulse{
-    0%{transform:scale(1);opacity:0.5;}
-    50%{transform:scale(1.4);opacity:1;}
-    100%{transform:scale(1);opacity:0.5;}
-}
-
-/* SILENCE TIMER */
-#silence-timer{
-    font-size:2rem;
-    color:var(--neon-yellow);
-    margin-top:10px;
-}
-
-/* CONTINUE */
-#continue-btn{
-    margin-top:20px;
-    padding:15px 25px;
-    border:2px solid var(--neon-green);
-    background:none;
-    color:var(--neon-green);
-    font-weight:bold;
-    display:none;
-    cursor:pointer;
-}
 </style>
 </head>
 
 <body>
 
-<div id="security-alert"></div>
-<button id="lang-btn">EN</button>
-
 <div id="hud">
     <div id="timer-box">00:00</div>
     <div id="score-box">0</div>
-    <div id="mastery-lvl">MASTERY x1</div>
 </div>
 
 <div id="life-stats">
-    <div class="stat-pill">Respect: <span id="v-respect">50</span></div>
-    <div class="stat-pill">Peace: <span id="v-peace">50</span></div>
-    <div class="stat-pill">Leadership: <span id="v-lead">50</span></div>
-    <div class="stat-pill">Money: $<span id="v-money">100</span></div>
-    <div class="stat-pill">Safety: <span id="v-safety">100</span>%</div>
-    <div class="stat-pill">Happiness: <span id="v-happy">50</span>%</div>
+    <div>Respect: <span id="v-respect">50</span></div>
+    <div>Peace: <span id="v-peace">50</span></div>
+    <div>Lead: <span id="v-lead">50</span></div>
+    <div>Money: <span id="v-money">100</span></div>
+    <div>Safety: <span id="v-safety">100</span></div>
 </div>
 
-<div id="breath-circle">INHALE</div>
+<div id="breath-circle"></div>
 
 <div id="overlay">
     <h1 id="phase-title"></h1>
     <p id="phase-desc"></p>
-
-    <div id="silence-timer"></div>
     <div id="decision-grid"></div>
-
-    <button id="continue-btn">CONTINUE</button>
+    <button onclick="document.getElementById('overlay').style.display='none'">
+        CONTINUE
+    </button>
 </div>
 
-<!-- ENGINE CONTROLS EVERYTHING -->
 <script src="/static/engine.js"></script>
 
 <script>
 
-let state = {
-    score: 0,
-    timer: 0,
-    stats: {
-        respect:50, peace:50, lead:50,
-        money:100, happy:50, safety:100
-    }
-};
+/* =========================
+   UI ONLY BRIDGE (NO LOGIC)
+========================= */
 
-/* ENGINE BRIDGE */
 function updateHUD(){
-    document.getElementById("score-box").innerText = state.score;
+    if(!window.KamizenEngine) return;
 
-    let m = Math.floor(state.timer/60);
-    let s = state.timer%60;
+    const s = KamizenEngine.state;
+
+    document.getElementById("score-box").innerText = s.score;
+
+    let m = Math.floor((s.floatTimer || s.timer || 0)/60);
+    let sec = (s.floatTimer || s.timer || 0)%60;
 
     document.getElementById("timer-box").innerText =
-        String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
+        String(m).padStart(2,"0")+":"+String(sec).padStart(2,"0");
 
-    for(let k in state.stats){
+    let stats = s.stats;
+    for(let k in stats){
         let el = document.getElementById("v-"+k);
-        if(el) el.innerText = state.stats[k];
+        if(el) el.innerText = stats[k];
     }
 }
 
-/* BREATH VISUAL ONLY (ENGINE CONTROLLED) */
+/* BREATH ONLY VISUAL */
 function breathCycle(type){
     let c = document.getElementById("breath-circle");
-    c.style.display = "flex";
+    c.style.display="flex";
     c.innerText = type.toUpperCase();
 }
 
-/* CONTINUE */
-document.getElementById("continue-btn").onclick = () => {
-    document.getElementById("overlay").style.display = "none";
-    if(window.KamizenEngine?.state?.silenceLocked){
-        alert("⚠ Discipline warning: next phase will be restricted.");
-    }
-};
-
-/* LANGUAGE */
-function toggleLang(){
-    KamizenEngine.toggleLang();
-}
-
-/* WORDS HANDLED BY ENGINE ONLY */
+/* WORDS ONLY VISUAL (ENGINE DECIDES LOGIC) */
 function spawnWord(){
-    if(KamizenEngine?.state?.lockInput) return;
+    if(!window.KamizenEngine) return;
+    if(KamizenEngine.state.lockInput) return;
 
-    const cats = ["power","risk","silence","money","business","growth"];
-    const c = cats[Math.floor(Math.random()*cats.length)];
+    const types=["power","risk","silence","money","business","growth"];
+    const c=types[Math.floor(Math.random()*types.length)];
 
     let d=document.createElement("div");
     d.className="floating word-"+c;
-    d.innerText="...";
+    d.innerText=c.toUpperCase();
+
+    d.style.left=Math.random()*80+"vw";
 
     d.onclick=()=>{
         KamizenEngine.applyWord(c);
-        state.score = KamizenEngine.state.score;
-        state.stats = KamizenEngine.state.stats;
-        updateHUD();
         d.classList.add("explode");
-        setTimeout(()=>d.remove(),500);
+        setTimeout(()=>d.remove(),400);
+        updateHUD();
     };
 
     document.body.appendChild(d);
     setTimeout(()=>d.remove(),7000);
 }
 
-/* ENGINE SYNC LOOP */
+/* SYNC LOOP ONLY */
 setInterval(()=>{
-    if(KamizenEngine){
-        state.score = KamizenEngine.state.score;
-        state.timer = KamizenEngine.state.timer;
-        state.stats = KamizenEngine.state.stats;
-        updateHUD();
+    if(!window.KamizenEngine) return;
 
-        let phase = KamizenEngine.state.phase;
-        if(phase === "SILENCE"){
-            breathCycle("silence");
-        }
+    updateHUD();
+
+    if(KamizenEngine.state.phase==="SILENCE"){
+        breathCycle("inhale");
     }
+
 },500);
 
 updateHUD();
