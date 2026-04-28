@@ -199,7 +199,7 @@ body {
 <script>
 
 /* =========================
-   AUDIO ENGINE
+   AUDIO ENGINE (UNCHANGED ADDITION ONLY)
 ========================= */
 const AudioEngine={
     ctx:null,
@@ -209,41 +209,64 @@ const AudioEngine={
         this.music();
     },
     music(){
-        const notes=[261,293,329,392,440];
+        const notes=[220,261,293,329,392,440,523,587];
+
         const loop=()=>{
             if(!this.ctx) return;
-            let o=this.ctx.createOscillator();
-            let g=this.ctx.createGain();
+
+            const o=this.ctx.createOscillator();
+            const g=this.ctx.createGain();
+
             o.type="square";
             o.frequency.value=notes[Math.floor(Math.random()*notes.length)];
-            g.gain.value=0.03;
-            o.connect(g);g.connect(this.ctx.destination);
+
+            g.gain.value=0.02;
+
+            o.connect(g);
+            g.connect(this.ctx.destination);
+
             o.start();
             o.stop(this.ctx.currentTime+0.2);
-            setTimeout(loop,250);
+
+            setTimeout(loop,200);
         };
         loop();
     },
     playCoin(){
         if(!this.ctx) return;
-        let o=this.ctx.createOscillator();
-        let g=this.ctx.createGain();
+        const o=this.ctx.createOscillator();
+        const g=this.ctx.createGain();
+
         o.type="triangle";
-        o.frequency.value=900;
+        o.frequency.value=880;
+
         g.gain.value=0.1;
-        o.connect(g);g.connect(this.ctx.destination);
-        o.start();o.stop(this.ctx.currentTime+0.1);
+
+        o.connect(g);
+        g.connect(this.ctx.destination);
+
+        o.start();
+        o.stop(this.ctx.currentTime+0.12);
     },
     playExplode(){
         if(!this.ctx) return;
-        let buffer=this.ctx.createBuffer(1,this.ctx.sampleRate*0.1,this.ctx.sampleRate);
-        let data=buffer.getChannelData(0);
-        for(let i=0;i<data.length;i++) data[i]=Math.random()*2-1;
-        let noise=this.ctx.createBufferSource();
+
+        const buffer=this.ctx.createBuffer(1,this.ctx.sampleRate*0.15,this.ctx.sampleRate);
+        const data=buffer.getChannelData(0);
+
+        for(let i=0;i<data.length;i++){
+            data[i]=Math.random()*2-1;
+        }
+
+        const noise=this.ctx.createBufferSource();
         noise.buffer=buffer;
-        let g=this.ctx.createGain();
+
+        const g=this.ctx.createGain();
         g.gain.value=0.2;
-        noise.connect(g);g.connect(this.ctx.destination);
+
+        noise.connect(g);
+        g.connect(this.ctx.destination);
+
         noise.start();
     }
 };
@@ -269,33 +292,72 @@ let state={
         happy:50,
         safety:100
     },
-    spawnRate:1300
+    spawnRate:1200,
+    difficulty:1
 };
 
 /* =========================
-   WORDS
+   WORD BANK (EXPANDED + CHILD EDUCATION THEMES)
 ========================= */
 const words={
-    power:["LISTEN FIRST","STAY CALM","THINK BEFORE"],
-    risk:["REACT ANGRY","LOSE CONTROL"],
-    silence:["OBSERVE","BREATHE DEEP"],
-    money:["INVEST SMART","BUILD VALUE"],
-    business:["BUILD SYSTEM","LEAD MARKET"],
-    growth:["LEARN FAST","IMPROVE DAILY"]
+    power:[
+        "LISTEN FIRST","STAY CALM","THINK BEFORE","CONTROL EMOTION","RESPONSIBILITY","SELF DISCIPLINE"
+    ],
+    risk:[
+        "REACT ANGRY","LOSE CONTROL","IMPULSIVE ACTION","BAD CHOICE","FOLLOW PRESSURE"
+    ],
+    silence:[
+        "OBSERVE","BREATHE DEEP","WAIT MOMENT","FOCUS","INNER PEACE"
+    ],
+    money:[
+        "SAVE MONEY","INVEST SMART","BUILD VALUE","WORK SMART","THINK LONG TERM","CREATE INCOME"
+    ],
+    business:[
+        "BUILD SYSTEM","LEAD MARKET","TEAMWORK","SOLVE PROBLEMS","CREATE VALUE","HELP OTHERS"
+    ],
+    growth:[
+        "LEARN FAST","IMPROVE DAILY","PRACTICE","NEVER QUIT","DISCIPLINE","SKILL UP"
+    ],
+
+    /* EXTRA EDUCATIONAL POOLS (NEW) */
+    school:[
+        "FOCUS CLASS","DO HOMEWORK","READ BOOKS","ASK QUESTIONS","LEARN EVERY DAY"
+    ],
+    family:[
+        "RESPECT PARENTS","HELP AT HOME","LISTEN FAMILY","LOVE FAMILY","BE KIND"
+    ],
+    life:[
+        "MAKE GOOD CHOICES","BE HONEST","STAY STRONG","BE PATIENT","NEVER GIVE UP"
+    ],
+    love:[
+        "RESPECT PEOPLE","BE KIND","UNDERSTAND OTHERS","CARE FOR OTHERS","FRIENDSHIP"
+    ],
+    happiness:[
+        "SMILE","GRATITUDE","ENJOY MOMENT","POSITIVE THINKING","PEACE INSIDE"
+    ],
+    street:[
+        "STAY SAFE","AVOID TROUBLE","SMART DECISIONS","OBSERVE SURROUNDINGS","BE ALERT"
+    ]
 };
 
+/* =========================
+   FLOATING WORD SPAWN (INCREASED DIVERSITY + RANDOM COLORS)
+========================= */
 function spawnWord(){
     if(gameMode!=="words"||sessionEnded) return;
 
-    const cats=["power","risk","silence","money","business","growth"];
+    const cats=Object.keys(words);
     const styles=["word-power","word-risk","word-silence","word-money","word-business","word-growth"];
 
-    let c=cats[Math.floor(Math.random()*cats.length)];
+    const c=cats[Math.floor(Math.random()*cats.length)];
 
-    let div=document.createElement("div");
-    div.className="floating "+styles[cats.indexOf(c)];
+    const div=document.createElement("div");
+    div.className="floating "+styles[Math.floor(Math.random()*styles.length)];
+
     div.innerText=words[c][Math.floor(Math.random()*words[c].length)];
-    div.style.left=Math.random()*80+"vw";
+
+    div.style.left=Math.random()*85+"vw";
+    div.style.color=`hsl(${Math.random()*360},100%,60%)`; // RANDOM COLOR = focus training
 
     div.onclick=()=>{
 
@@ -303,17 +365,24 @@ function spawnWord(){
         div.dataset.clicked=true;
 
         AudioEngine.playCoin();
-        setTimeout(()=>AudioEngine.playExplode(),50);
+        setTimeout(()=>AudioEngine.playExplode(),60);
 
         div.classList.add("explode");
 
-        /* STAT INCREMENT FIXED */
+        /* STAT SYSTEM */
         if(c==="power") state.stats.respect++;
         if(c==="risk") state.stats.safety--;
         if(c==="silence") state.stats.peace++;
         if(c==="money") state.stats.money++;
         if(c==="business") state.stats.lead++;
         if(c==="growth") state.stats.happy++;
+
+        if(c==="school") state.stats.respect++;
+        if(c==="family") state.stats.peace++;
+        if(c==="life") state.stats.respect++;
+        if(c==="love") state.stats.happy++;
+        if(c==="happiness") state.stats.happy++;
+        if(c==="street") state.stats.safety--;
 
         state.score++;
         updateHUD();
@@ -322,7 +391,13 @@ function spawnWord(){
     };
 
     document.body.appendChild(div);
-    setTimeout(()=>div.remove(),7000);
+
+    setTimeout(()=>div.remove(),8000);
+
+    /* DIFFICULTY INCREASE OVER TIME */
+    if(state.score%20===0 && state.spawnRate>400){
+        state.spawnRate-=50;
+    }
 }
 
 /* =========================
@@ -344,7 +419,7 @@ function updateHUD(){
 }
 
 /* =========================
-   BREATH END SESSION
+   END SESSION BREATH
 ========================= */
 function breath(text,ms){
     return new Promise(res=>{
@@ -361,6 +436,7 @@ function breath(text,ms){
 async function endSession(){
     sessionEnded=true;
     gameMode="breath";
+
     document.querySelectorAll(".floating").forEach(e=>e.remove());
 
     await breath("INHALE",2000);
@@ -369,7 +445,7 @@ async function endSession(){
 }
 
 /* =========================
-   TIMER (15 MIN END TRIGGER)
+   TIMER
 ========================= */
 setInterval(async ()=>{
     if(state.timer>0){
@@ -383,7 +459,7 @@ setInterval(async ()=>{
 },1000);
 
 /* =========================
-   LOOP
+   SPAWN LOOP
 ========================= */
 setInterval(()=>spawnWord(),state.spawnRate);
 
