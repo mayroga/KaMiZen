@@ -100,7 +100,12 @@ body {
 
 .stat-pill span {
     font-weight:bold;
+    color:var(--neon-blue);
 }
+
+#v-money { color:var(--neon-gold)!important; }
+#v-safety { color:var(--neon-red)!important; }
+#v-happy { color:#ff00ff!important; }
 
 /* FLOATING WORDS (UNCHANGED CORE) */
 .floating {
@@ -118,6 +123,7 @@ body {
 .word-power { border:3px solid var(--neon-green); color:var(--neon-green); }
 .word-risk { border:3px solid var(--neon-red); color:var(--neon-red); }
 .word-silence { border:3px solid var(--neon-yellow); color:var(--neon-yellow); }
+
 .word-money { border:3px solid var(--neon-gold); color:var(--neon-gold); }
 .word-business { border:3px solid #00e5ff; color:#00e5ff; }
 .word-growth { border:3px solid #00ff99; color:#00ff99; }
@@ -136,6 +142,7 @@ body {
     100% { transform:scale(4); opacity:0; }
 }
 
+/* OVERLAY */
 #overlay {
     position:fixed;
     width:100%;
@@ -167,6 +174,7 @@ body {
     cursor:pointer;
 }
 
+/* BREATHING CIRCLE */
 #breath-circle{
     width:140px;
     height:140px;
@@ -222,204 +230,202 @@ body {
 
 <script>
 
-/* =========================
-   STATE (NO CHANGE CORE)
-========================= */
-let lang="en";
-let gameMode="idle";
+let lang = "en";
+let gameMode = "idle";
+let currentMissionId = 1;
 
-let state={
- score:0,
- timer:300,
- stats:{
-  respect:50,
-  peace:50,
-  lead:50,
-  money:100,
-  happy:50,
-  safety:100
- },
- spawnRate:1300
+let state = {
+    score: 0,
+    mastery: 1,
+    timer: 300,
+    stats: {
+        respect:50,
+        peace:50,
+        lead:50,
+        money:100,
+        happy:50,
+        safety:100
+    },
+    spawnRate:1300
 };
 
-/* =========================
-   SAFE SPEAK
-========================= */
-function speak(t){
- if(!t)return;
- try{
-  let u=new SpeechSynthesisUtterance(t);
-  u.lang=(lang==="es")?"es-ES":"en-US";
-  speechSynthesis.cancel();
-  speechSynthesis.speak(u);
- }catch(e){}
+/* SPEECH — FORCED ENGLISH ONLY */
+function speak(text){
+    if(!text) return;
+    try{
+        let u = new SpeechSynthesisUtterance(text);
+        u.lang = "en-US";
+        speechSynthesis.cancel();
+        speechSynthesis.speak(u);
+    }catch(e){}
 }
 
-/* =========================
-   HUD (UNCHANGED)
-========================= */
+/* HUD */
 function updateHUD(){
- document.getElementById("score-box").innerText=state.score;
+    document.getElementById("score-box").innerText = state.score;
 
- let m=Math.floor(state.timer/60);
- let s=state.timer%60;
+    let m = Math.floor(state.timer/60);
+    let s = state.timer%60;
 
- document.getElementById("timer-box").innerText=
- String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
+    document.getElementById("timer-box").innerText =
+        String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
 
- for(let k in state.stats){
-  let el=document.getElementById("v-"+k);
-  if(el)el.innerText=state.stats[k];
- }
+    for(let k in state.stats){
+        let el = document.getElementById("v-"+k);
+        if(el) el.innerText = state.stats[k];
+    }
 }
 
-/* =========================
-   BREATH (UNCHANGED CORE)
-========================= */
-function breathCycle(type){
- let c=document.getElementById("breath-circle");
- c.style.display="flex";
- c.innerText=type.toUpperCase();
- speak(type);
- setTimeout(()=>c.style.display="none",2000);
+/* BREATH */
+function breathCycle(type, sec){
+    let c = document.getElementById("breath-circle");
+    c.style.display="flex";
+    c.innerText = type.toUpperCase();
+    speak(type);
+    setTimeout(()=>c.style.display="none", sec*1000);
 }
 
-/* =========================
-   FLOATING WORDS (UNCHANGED CORE)
-========================= */
-const words={
- power:["LISTEN FIRST","STAY CALM","THINK BEFORE","CONTROL EMOTION","RESPECT OTHERS"],
- risk:["REACT ANGRY","BLAME OTHERS","LOSE CONTROL","FOLLOW CROWD"],
- silence:["OBSERVE PEOPLE","BREATHE DEEP","WAIT MOMENT","INNER CONTROL"],
- money:["INVEST SMART","BUILD VALUE","CASHFLOW","SAVE MONEY","THINK SCALE"],
- business:["BUILD SYSTEM","SELL VALUE","LEAD MARKET","BRAND POWER","EXPAND NETWORK"],
- growth:["LEARN FAST","IMPROVE DAILY","BUILD SKILL","LONG TERM THINK"]
+/* FLOATING WORDS (UNCHANGED CORE) */
+const words = {
+    power:["LISTEN FIRST","STAY CALM","THINK BEFORE","CONTROL EMOTION","RESPECT OTHERS"],
+    risk:["REACT ANGRY","BLAME OTHERS","LOSE CONTROL","FOLLOW CROWD"],
+    silence:["OBSERVE PEOPLE","BREATHE DEEP","WAIT MOMENT","INNER CONTROL"],
+    money:["INVEST SMART","BUILD VALUE","CASHFLOW","SAVE MONEY","THINK SCALE"],
+    business:["BUILD SYSTEM","SELL VALUE","LEAD MARKET","BRAND POWER","EXPAND NETWORK"],
+    growth:["LEARN FAST","IMPROVE DAILY","BUILD SKILL","LONG TERM THINK"]
 };
 
 function spawnWord(){
- if(gameMode!=="words")return;
+    if(gameMode!=="words") return;
 
- const cats=["power","risk","silence","money","business","growth"];
- const c=cats[Math.floor(Math.random()*cats.length)];
+    const cats=["power","risk","silence","money","business","growth"];
+    const styles=["word-power","word-risk","word-silence","word-money","word-business","word-growth"];
 
- let d=document.createElement("div");
- d.className="floating word-"+c;
- d.innerText=words[c][Math.floor(Math.random()*words[c].length)];
- d.style.left=Math.random()*80+"vw";
+    const c = cats[Math.floor(Math.random()*cats.length)];
 
- d.onclick=()=>{
-  d.classList.add("explode");
+    let div=document.createElement("div");
+    div.className="floating "+styles[cats.indexOf(c)];
+    div.innerText = words[c][Math.floor(Math.random()*words[c].length)];
+    div.style.left = Math.random()*80+"vw";
 
-  state.score++;
+    div.onclick=()=>{
+        if(div.dataset.clicked) return;
+        div.dataset.clicked=true;
+        div.classList.add("explode");
 
-  // 🔥 RESTAURADO (NO ELIMINADO)
-  if(c==="money") state.stats.money++;
-  if(c==="business") state.stats.lead++;
-  if(c==="growth") state.stats.happy++;
-  if(c==="power") state.stats.respect++;
-  if(c==="risk") state.stats.safety--;
-  if(c==="silence") state.stats.peace++;
+        if(c==="money") state.stats.money++;
+        if(c==="business") state.stats.lead++;
+        if(c==="growth") state.stats.happy++;
+        if(c==="power") state.stats.respect++;
+        if(c==="risk") state.stats.safety--;
+        if(c==="silence") state.stats.peace++;
 
-  updateHUD();
-  setTimeout(()=>d.remove(),500);
- };
+        state.score++;
+        updateHUD();
+        setTimeout(()=>div.remove(),500);
+    };
 
- document.body.appendChild(d);
- setTimeout(()=>d.remove(),7000);
+    document.body.appendChild(div);
+    setTimeout(()=>div.remove(),7000);
 }
 
-/* =========================
-   SAFE MISSION FETCH
-========================= */
+/* MISSION (UNCHANGED) */
 async function triggerQuestion(){
- try{
-  const res=await fetch("/api/mission/next?lang="+lang);
-  if(!res.ok)return;
+    const res = await fetch("/api/mission/next?lang="+lang);
+    const data = await res.json();
 
-  const data=await res.json();
-  if(!data||!data.options)return;
+    if(!data || !data.options) return;
 
-  let o=document.getElementById("overlay");
-  let g=document.getElementById("decision-grid");
-  let d=document.getElementById("phase-desc");
-  let t=document.getElementById("phase-title");
+    currentMissionId = data.id;
 
-  o.style.display="flex";
-  t.innerText=data.theme;
-  d.innerText=(data.analysis||"")+" "+(data.story||"");
+    let overlay = document.getElementById("overlay");
+    let grid = document.getElementById("decision-grid");
+    let desc = document.getElementById("phase-desc");
+    let title = document.getElementById("phase-title");
 
-  g.innerHTML="";
+    overlay.style.display="flex";
 
-  data.options.forEach(opt=>{
-   let b=document.createElement("button");
-   b.className="choice-btn";
-   b.innerText=(lang==="es")?opt.text.es:opt.text.en;
+    title.innerText = data.theme;
+    desc.innerText = (data.analysis||"") + "\n\n" + (data.story||"");
 
-   b.onclick=()=>{
-    if(opt.correct) state.score+=30;
-    else state.score-=20;
+    grid.innerHTML="";
 
-    state.stats.respect += opt.correct ? 1 : 0;
-    state.stats.safety -= opt.correct ? 0 : 1;
+    if((data.analysis+data.story).toLowerCase().includes("inhala")){
+        breathCycle("inhale",4);
+    }
+    if((data.analysis+data.story).toLowerCase().includes("silencio")){
+        breathCycle("silence",2);
+    }
 
-    speak((lang==="es")?opt.explanation.es:opt.explanation.en);
-    d.innerText=(lang==="es")?opt.explanation.es:opt.explanation.en;
+    data.options.forEach(opt=>{
+        let btn=document.createElement("button");
+        btn.className="choice-btn";
 
-    updateHUD();
-    g.innerHTML="";
-    setTimeout(()=>o.style.display="none",1500);
-   };
+        btn.innerText = (lang==="es") ? opt.text.es : opt.text.en;
 
-   g.appendChild(b);
-  });
+        btn.onclick=()=>{
+            if(opt.correct){
+                state.score+=30;
+                state.stats.respect++;
+                state.stats.happy++;
+            }else{
+                state.score-=20;
+                state.stats.safety--;
+            }
 
- }catch(e){
-  console.error(e);
- }
+            let exp = (lang==="es") ? opt.explanation.es : opt.explanation.en;
+            speak(exp);
+            desc.innerText = exp;
+
+            grid.innerHTML="";
+            setTimeout(()=>overlay.style.display="none",1500);
+
+            updateHUD();
+        };
+
+        grid.appendChild(btn);
+    });
 }
 
-/* =========================
-   TIMER
-========================= */
+/* TIMER */
 setInterval(()=>{
- if(state.timer>0){
-  state.timer--;
-  updateHUD();
- }
+    if(state.timer>0){
+        state.timer--;
+        updateHUD();
+    }
 },1000);
 
-/* =========================
-   LOOP SAFE
-========================= */
+/* MAIN LOOP — UPDATED */
 async function mainLoop(){
- while(true){
-  try{
+    while(true){
 
-   gameMode="words";
+        gameMode = "words";
 
-   let end=Date.now()+30000;
+        let end = Date.now() + (5 * 60 * 1000);
 
-   while(Date.now()<end){
-    spawnWord();
-    await new Promise(r=>setTimeout(r,state.spawnRate));
-   }
+        while(Date.now() < end){
+            spawnWord();
+            await new Promise(r => setTimeout(r, state.spawnRate));
+        }
 
-   document.querySelectorAll(".floating").forEach(e=>e.remove());
+        document.querySelectorAll(".floating").forEach(e => e.remove());
 
-   gameMode="question";
-   await triggerQuestion();
+        gameMode = "breath";
 
-   await new Promise(r=>setTimeout(r,3000));
+        await breathCycle("INHALE", 6);
+        await breathCycle("HOLD", 6);
+        await breathCycle("EXHALE", 6);
 
-  }catch(e){
-   console.error("LOOP ERROR",e);
-  }
- }
+        gameMode = "question";
+        await triggerQuestion();
+
+        await new Promise(r => setTimeout(r, 3000));
+    }
 }
 
 function toggleLang(){
- lang=(lang==="en")?"es":"en";
- document.getElementById("lang-btn").innerText=lang.toUpperCase();
+    lang = (lang==="en") ? "es" : "en";
+    document.getElementById("lang-btn").innerText = lang.toUpperCase();
 }
 
 updateHUD();
