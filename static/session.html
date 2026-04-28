@@ -24,7 +24,7 @@ body {
     user-select:none;
 }
 
-/* RESPONSIVE */
+/* RESPONSIVE FIX */
 @media (max-width:768px){
     #timer-box{font-size:1.8rem;}
     #score-box{font-size:1.2rem;}
@@ -108,7 +108,7 @@ body {
     border-radius:6px;
 }
 
-/* FLOATING WORDS (NO CHANGE CORE) */
+/* FLOATING WORDS (UNCHANGED CORE) */
 .floating {
     position:absolute;
     padding:15px 30px;
@@ -174,13 +174,13 @@ body {
     cursor:pointer;
 }
 
-/* FEEDBACK COLORS */
+/* FEEDBACK */
 .correct { background:rgba(0,255,0,0.2)!important; border-color:var(--neon-green)!important; }
 .wrong { background:rgba(255,0,0,0.2)!important; border-color:var(--neon-red)!important; }
 .mid1 { background:rgba(255,255,0,0.15)!important; }
 .mid2 { background:rgba(255,165,0,0.15)!important; }
 
-/* BREATHING */
+/* BREATH */
 #breath-circle{
     width:140px;
     height:140px;
@@ -209,7 +209,7 @@ body {
     margin-top:10px;
 }
 
-/* CONTINUE */
+/* CONTINUE BUTTON */
 #continue-btn{
     margin-top:20px;
     padding:15px 25px;
@@ -248,8 +248,10 @@ body {
 <div id="overlay">
     <h1 id="phase-title"></h1>
     <p id="phase-desc"></p>
+
     <div id="silence-timer"></div>
     <div id="decision-grid"></div>
+
     <button id="continue-btn" onclick="closeOverlay()">CONTINUE</button>
 </div>
 
@@ -275,19 +277,18 @@ function speak(t){
  speechSynthesis.speak(u);
 }
 
-/* HUD */
 function updateHUD(){
  document.getElementById("score-box").innerText=state.score;
  let m=Math.floor(state.timer/60),s=state.timer%60;
  document.getElementById("timer-box").innerText=
  String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
+
  for(let k in state.stats){
   let el=document.getElementById("v-"+k);
   if(el)el.innerText=state.stats[k];
  }
 }
 
-/* BREATH */
 function breathCycle(t,s){
  let c=document.getElementById("breath-circle");
  c.style.display="flex";
@@ -296,7 +297,7 @@ function breathCycle(t,s){
  setTimeout(()=>c.style.display="none",s*1000);
 }
 
-/* WORDS (UNCHANGED) */
+/* WORDS (UNCHANGED CORE) */
 const words={
  power:["LISTEN FIRST","STAY CALM","THINK BEFORE","CONTROL EMOTION","RESPECT OTHERS"],
  risk:["REACT ANGRY","BLAME OTHERS","LOSE CONTROL","FOLLOW CROWD"],
@@ -308,17 +309,26 @@ const words={
 
 function spawnWord(){
  if(gameMode!=="words")return;
+
  const c=["power","risk","silence","money","business","growth"][Math.floor(Math.random()*6)];
+
  let d=document.createElement("div");
  d.className="floating word-"+c;
  d.innerText=words[c][Math.floor(Math.random()*words[c].length)];
  d.style.left=Math.random()*80+"vw";
- d.onclick=()=>{d.classList.add("explode");state.score++;updateHUD();setTimeout(()=>d.remove(),500);};
+
+ d.onclick=()=>{
+  d.classList.add("explode");
+  state.score++;
+  updateHUD();
+  setTimeout(()=>d.remove(),500);
+ };
+
  document.body.appendChild(d);
  setTimeout(()=>d.remove(),7000);
 }
 
-/* SILENCE MODE */
+/* SILENCE */
 let silenceInterval;
 
 function runSilence(seconds){
@@ -339,7 +349,6 @@ function runSilence(seconds){
  },1000);
 }
 
-/* CLOSE */
 function closeOverlay(){
  document.getElementById("overlay").style.display="none";
 }
@@ -365,58 +374,45 @@ async function triggerQuestion(){
   runSilence(10);
  }
 
- if((data.analysis+data.story).includes("inhala")){
-  breathCycle("inhale",4);
- }
-
  data.options.forEach((opt,i)=>{
   let b=document.createElement("button");
   b.className="choice-btn";
   b.innerText=(lang==="es")?opt.text.es:opt.text.en;
 
   b.onclick=()=>{
-   let correct=opt.correct;
+   if(opt.correct)b.classList.add("correct");
+   else b.classList.add("wrong");
 
-   if(correct){
-    b.classList.add("correct");
-    state.score+=30;
-   }else{
-    b.classList.add("wrong");
-    state.score-=20;
-   }
-
-   g.querySelectorAll("button").forEach((x,idx)=>{
-    if(idx!==i){
-     x.classList.add(idx%2? "mid1":"mid2");
-    }
-   });
+   state.score+=opt.correct?30:-20;
+   updateHUD();
 
    speak((lang==="es")?opt.explanation.es:opt.explanation.en);
    d.innerText=(lang==="es")?opt.explanation.es:opt.explanation.en;
 
    document.getElementById("continue-btn").style.display="block";
-   updateHUD();
   };
 
   g.appendChild(b);
  });
 }
 
-/* TIMER */
 setInterval(()=>{if(state.timer>0){state.timer--;updateHUD();}},1000);
 
-/* LOOP */
 async function loop(){
  while(true){
   gameMode="words";
   let end=Date.now()+30000;
+
   while(Date.now()<end){
    spawnWord();
    await new Promise(r=>setTimeout(r,state.spawnRate));
   }
+
   document.querySelectorAll(".floating").forEach(e=>e.remove());
+
   gameMode="question";
   await triggerQuestion();
+
   await new Promise(r=>setTimeout(r,2000));
  }
 }
