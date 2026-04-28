@@ -22,7 +22,11 @@ body {
     font-family:'Courier New', monospace;
     overflow:hidden;
     user-select:none;
+    transition:background 0.3s;
 }
+
+.correct-flash { background:#002a00 !important; }
+.wrong-flash { background:#2a0000 !important; }
 
 #security-alert {
     position:fixed;
@@ -107,7 +111,6 @@ body {
 #v-safety { color:var(--neon-red)!important; }
 #v-happy { color:#ff00ff!important; }
 
-/* FLOATING WORDS (UNCHANGED CORE) */
 .floating {
     position:absolute;
     padding:15px 30px;
@@ -123,7 +126,6 @@ body {
 .word-power { border:3px solid var(--neon-green); color:var(--neon-green); }
 .word-risk { border:3px solid var(--neon-red); color:var(--neon-red); }
 .word-silence { border:3px solid var(--neon-yellow); color:var(--neon-yellow); }
-
 .word-money { border:3px solid var(--neon-gold); color:var(--neon-gold); }
 .word-business { border:3px solid #00e5ff; color:#00e5ff; }
 .word-growth { border:3px solid #00ff99; color:#00ff99; }
@@ -133,16 +135,13 @@ body {
     to { transform:translateY(-25vh); }
 }
 
-.explode {
-    animation:blast 0.5s ease-out forwards!important;
-}
+.explode { animation:blast 0.5s ease-out forwards!important; }
 
 @keyframes blast {
     0% { transform:scale(1); opacity:1; }
     100% { transform:scale(4); opacity:0; }
 }
 
-/* OVERLAY */
 #overlay {
     position:fixed;
     width:100%;
@@ -174,10 +173,19 @@ body {
     cursor:pointer;
 }
 
-/* BREATHING CIRCLE */
+#continue-btn{
+    margin-top:20px;
+    padding:15px 30px;
+    border:2px solid #fff;
+    background:none;
+    color:#fff;
+    display:none;
+    cursor:pointer;
+}
+
 #breath-circle{
-    width:140px;
-    height:140px;
+    width:160px;
+    height:160px;
     border-radius:50%;
     border:4px solid var(--neon-blue);
     margin:10px auto;
@@ -224,201 +232,211 @@ body {
     <h1 id="phase-title"></h1>
     <p id="phase-desc"></p>
     <div id="decision-grid"></div>
+    <button id="continue-btn">CONTINUE</button>
 </div>
 
 <script src="/static/engine.js"></script>
 
 <script>
 
-let lang = "en";
-let gameMode = "idle";
-let currentMissionId = 1;
+let lang="en";
+let gameMode="idle";
 
-let state = {
-    score: 0,
-    mastery: 1,
-    timer: 300,
-    stats: {
-        respect:50,
-        peace:50,
-        lead:50,
-        money:100,
-        happy:50,
-        safety:100
-    },
+let state={
+    score:0,
+    mastery:1,
+    timer:300,
+    stats:{respect:50,peace:50,lead:50,money:100,happy:50,safety:100},
     spawnRate:1300
 };
 
-/* SPEECH */
-function speak(text){
-    if(!text) return;
-    try{
-        let u = new SpeechSynthesisUtterance(text);
-        u.lang = (lang==="es") ? "es-ES" : "en-US";
-        speechSynthesis.cancel();
-        speechSynthesis.speak(u);
-    }catch(e){}
+function speak(t){
+    if(!t) return;
+    let u=new SpeechSynthesisUtterance(t);
+    u.lang="en-US";
+    speechSynthesis.cancel();
+    speechSynthesis.speak(u);
 }
 
-/* HUD */
 function updateHUD(){
-    document.getElementById("score-box").innerText = state.score;
-
-    let m = Math.floor(state.timer/60);
-    let s = state.timer%60;
-
-    document.getElementById("timer-box").innerText =
+    document.getElementById("score-box").innerText=state.score;
+    let m=Math.floor(state.timer/60);
+    let s=state.timer%60;
+    document.getElementById("timer-box").innerText=
         String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
-
     for(let k in state.stats){
-        let el = document.getElementById("v-"+k);
-        if(el) el.innerText = state.stats[k];
+        let el=document.getElementById("v-"+k);
+        if(el) el.innerText=state.stats[k];
     }
 }
 
-/* BREATH */
-function breathCycle(type, sec){
-    let c = document.getElementById("breath-circle");
+/* BREATH FULL SYSTEM 18s */
+async function breathingExercise(withVoice=true){
+    let c=document.getElementById("breath-circle");
+    let desc=document.getElementById("phase-desc");
+
     c.style.display="flex";
-    c.innerText = type.toUpperCase();
-    speak(type);
-    setTimeout(()=>c.style.display="none", sec*1000);
+
+    for(let i=0;i<3;i++){
+        c.innerText="INHALE";
+        desc.innerText="Oxygen enters blood. Heart rate stabilizes. Brain focus increases.";
+        if(withVoice) speak("Inhale slowly");
+        await new Promise(r=>setTimeout(r,3000));
+
+        c.innerText="EXHALE";
+        desc.innerText="Stress leaves body. Muscles relax. Nervous system resets.";
+        if(withVoice) speak("Exhale slowly");
+        await new Promise(r=>setTimeout(r,3000));
+    }
+
+    c.style.display="none";
 }
 
-/* FLOATING WORDS (NO CHANGES) */
-const words = {
-    power:["LISTEN FIRST","STAY CALM","THINK BEFORE","CONTROL EMOTION","RESPECT OTHERS"],
-    risk:["REACT ANGRY","BLAME OTHERS","LOSE CONTROL","FOLLOW CROWD"],
-    silence:["OBSERVE PEOPLE","BREATHE DEEP","WAIT MOMENT","INNER CONTROL"],
-    money:["INVEST SMART","BUILD VALUE","CASHFLOW","SAVE MONEY","THINK SCALE"],
-    business:["BUILD SYSTEM","SELL VALUE","LEAD MARKET","BRAND POWER","EXPAND NETWORK"],
-    growth:["LEARN FAST","IMPROVE DAILY","BUILD SKILL","LONG TERM THINK"]
+/* WORDS */
+const words={
+power:["LISTEN FIRST","STAY CALM","THINK BEFORE","CONTROL EMOTION","RESPECT OTHERS"],
+risk:["REACT ANGRY","BLAME OTHERS","LOSE CONTROL","FOLLOW CROWD"],
+silence:["OBSERVE PEOPLE","BREATHE DEEP","WAIT MOMENT","INNER CONTROL"],
+money:["INVEST SMART","BUILD VALUE","CASHFLOW","SAVE MONEY","THINK SCALE"],
+business:["BUILD SYSTEM","SELL VALUE","LEAD MARKET","BRAND POWER","EXPAND NETWORK"],
+growth:["LEARN FAST","IMPROVE DAILY","BUILD SKILL","LONG TERM THINK"]
 };
 
 function spawnWord(){
-    if(gameMode!=="words") return;
+if(gameMode!=="words") return;
 
-    const cats=["power","risk","silence","money","business","growth"];
-    const styles=["word-power","word-risk","word-silence","word-money","word-business","word-growth"];
+const cats=["power","risk","silence","money","business","growth"];
+const styles=["word-power","word-risk","word-silence","word-money","word-business","word-growth"];
+const c=cats[Math.floor(Math.random()*cats.length)];
 
-    const c = cats[Math.floor(Math.random()*cats.length)];
+let div=document.createElement("div");
+div.className="floating "+styles[cats.indexOf(c)];
+div.innerText=words[c][Math.floor(Math.random()*words[c].length)];
+div.style.left=Math.random()*80+"vw";
 
-    let div=document.createElement("div");
-    div.className="floating "+styles[cats.indexOf(c)];
-    div.innerText = words[c][Math.floor(Math.random()*words[c].length)];
-    div.style.left = Math.random()*80+"vw";
+div.onclick=()=>{
+if(div.dataset.clicked) return;
+div.dataset.clicked=true;
+div.classList.add("explode");
 
-    div.onclick=()=>{
-        if(div.dataset.clicked) return;
-        div.dataset.clicked=true;
-        div.classList.add("explode");
+let positive = ["power","silence","money","business","growth"].includes(c);
 
-        if(c==="money") state.stats.money++;
-        if(c==="business") state.stats.lead++;
-        if(c==="growth") state.stats.happy++;
-        if(c==="power") state.stats.respect++;
-        if(c==="risk") state.stats.safety--;
-        if(c==="silence") state.stats.peace++;
-
-        state.score++;
-        updateHUD();
-        setTimeout(()=>div.remove(),500);
-    };
-
-    document.body.appendChild(div);
-    setTimeout(()=>div.remove(),7000);
+if(positive){
+    state.score+=20;
+}else{
+    state.score-=10;
 }
 
-/* MISSION */
+if(c==="money") state.stats.money++;
+if(c==="business") state.stats.lead++;
+if(c==="growth") state.stats.happy++;
+if(c==="power") state.stats.respect++;
+if(c==="risk") state.stats.safety--;
+if(c==="silence") state.stats.peace++;
+
+updateHUD();
+setTimeout(()=>div.remove(),500);
+};
+
+document.body.appendChild(div);
+setTimeout(()=>div.remove(),7000);
+}
+
+/* QUESTION */
 async function triggerQuestion(){
-    const res = await fetch("/api/mission/next?lang="+lang);
-    const data = await res.json();
+const res=await fetch("/api/mission/next?lang="+lang);
+const data=await res.json();
+if(!data||!data.options) return;
 
-    if(!data || !data.options) return;
+let overlay=document.getElementById("overlay");
+let grid=document.getElementById("decision-grid");
+let desc=document.getElementById("phase-desc");
+let title=document.getElementById("phase-title");
+let cont=document.getElementById("continue-btn");
 
-    currentMissionId = data.id;
+overlay.style.display="flex";
+grid.innerHTML="";
+cont.style.display="none";
 
-    let overlay = document.getElementById("overlay");
-    let grid = document.getElementById("decision-grid");
-    let desc = document.getElementById("phase-desc");
-    let title = document.getElementById("phase-title");
+title.innerText=data.theme;
+desc.innerText=data.story;
 
-    overlay.style.display="flex";
+if(desc.innerText.toLowerCase().includes("inhale")){
+    await breathingExercise(true);
+}
+if(desc.innerText.toLowerCase().includes("silence")){
+    await breathingExercise(false);
+}
 
-    title.innerText = data.theme;
-    desc.innerText = (data.analysis||"") + "\n\n" + (data.story||"");
+data.options.forEach(opt=>{
+let btn=document.createElement("button");
+btn.className="choice-btn";
+btn.innerText=opt.text.en;
 
-    grid.innerHTML="";
+btn.onclick=()=>{
+let correct=opt.correct;
 
-    if((data.analysis+data.story).toLowerCase().includes("inhala")){
-        breathCycle("inhale",4);
-    }
-    if((data.analysis+data.story).toLowerCase().includes("silencio")){
-        breathCycle("silence",2);
-    }
+if(correct){
+state.score+=30;
+document.body.classList.add("correct-flash");
+}else{
+state.score-=20;
+document.body.classList.add("wrong-flash");
+}
 
-    data.options.forEach(opt=>{
-        let btn=document.createElement("button");
-        btn.className="choice-btn";
+setTimeout(()=>{
+document.body.classList.remove("correct-flash","wrong-flash");
+},500);
 
-        btn.innerText = (lang==="es") ? opt.text.es : opt.text.en;
+desc.innerText=opt.explanation.en;
+speak(opt.explanation.en);
 
-        btn.onclick=()=>{
-            if(opt.correct){
-                state.score+=30;
-                state.stats.respect++;
-                state.stats.happy++;
-            }else{
-                state.score-=20;
-                state.stats.safety--;
-            }
+grid.innerHTML="";
+cont.style.display="block";
 
-            let exp = (lang==="es") ? opt.explanation.es : opt.explanation.en;
-            speak(exp);
-            desc.innerText = exp;
+updateHUD();
+};
 
-            grid.innerHTML="";
-            setTimeout(()=>overlay.style.display="none",1500);
+grid.appendChild(btn);
+});
 
-            updateHUD();
-        };
-
-        grid.appendChild(btn);
-    });
+cont.onclick=()=>{
+overlay.style.display="none";
+};
 }
 
 /* TIMER */
 setInterval(()=>{
-    if(state.timer>0){
-        state.timer--;
-        updateHUD();
-    }
+if(state.timer>0){
+state.timer--;
+updateHUD();
+}
 },1000);
 
 /* LOOP */
 async function mainLoop(){
-    while(true){
-        gameMode="words";
+while(true){
+gameMode="words";
 
-        let end=Date.now()+45000;
+let end=Date.now()+45000;
 
-        while(Date.now()<end){
-            spawnWord();
-            await new Promise(r=>setTimeout(r,state.spawnRate));
-        }
+while(Date.now()<end){
+spawnWord();
+await new Promise(r=>setTimeout(r,state.spawnRate));
+}
 
-        document.querySelectorAll(".floating").forEach(e=>e.remove());
+document.querySelectorAll(".floating").forEach(e=>e.remove());
 
-        gameMode="question";
-        await triggerQuestion();
+gameMode="question";
+await triggerQuestion();
 
-        await new Promise(r=>setTimeout(r,3000));
-    }
+await new Promise(r=>setTimeout(r,3000));
+}
 }
 
 function toggleLang(){
-    lang = (lang==="en") ? "es" : "en";
-    document.getElementById("lang-btn").innerText = lang.toUpperCase();
+lang=(lang==="en")?"es":"en";
+document.getElementById("lang-btn").innerText=lang.toUpperCase();
 }
 
 updateHUD();
