@@ -22,13 +22,13 @@ STATE = {
 }
 
 # =========================
-# 📍 BASE DIR (JSON EN RAÍZ)
+# 📍 BASE DIR (JSON EN RAÍZ REAL)
 # =========================
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 # =========================
-# 🔧 SAFE TRANSLATION
+# 🔧 SAFE TRANSLATION FUNCTION
 # =========================
 def t(obj, lang="en"):
     if isinstance(obj, dict):
@@ -37,7 +37,7 @@ def t(obj, lang="en"):
 
 
 # =========================
-# 📦 LOAD JSON
+# 📦 LOAD JSON SAFE (ROOT FIX)
 # =========================
 def load_json(file_name):
     if file_name in CACHE:
@@ -51,14 +51,14 @@ def load_json(file_name):
             CACHE[file_name] = data
             return data
     except Exception as e:
-        print("❌ JSON ERROR:", file_name)
+        print("❌ JSON LOAD ERROR:", file_name)
         print("📍 PATH:", path)
-        print("🔥", e)
+        print("🔥 ERROR:", e)
         return None
 
 
 # =========================
-# 🔎 RANGE SYSTEM
+# 🔎 RANGE SELECTOR (1-35 SAFE)
 # =========================
 def get_file_by_index(i):
     for start in sorted(STATE["range_map"].keys()):
@@ -68,7 +68,7 @@ def get_file_by_index(i):
 
 
 # =========================
-# 🚀 MAIN API ENGINE
+# 🚀 MAIN MISSION ENGINE
 # =========================
 @app.route("/api/mission/next")
 def next_mission():
@@ -79,16 +79,26 @@ def next_mission():
     file_name = get_file_by_index(mission_id)
     data = load_json(file_name)
 
-    # ❌ SAFETY CHECK
-    if not data or "ses" not in data:
+    # ❌ HARD SAFETY CHECK
+    if not data:
         return jsonify({
-            "error": "INVALID JSON OR NOT FOUND",
+            "error": "JSON FILE NOT FOUND",
+            "file": file_name,
+            "id": mission_id
+        }), 500
+
+    if "ses" not in data:
+        return jsonify({
+            "error": "INVALID JSON STRUCTURE",
             "file": file_name
         }), 500
 
+    # =========================
+    # FIND MISSION
+    # =========================
     mission = next((s for s in data["ses"] if s.get("id") == mission_id), None)
 
-    # 🔁 FALLBACK SAFE
+    # 🔁 FALLBACK SAFE (NO CRASH)
     if not mission:
         mission = data["ses"][0] if data["ses"] else None
         if mission:
@@ -98,7 +108,7 @@ def next_mission():
         return jsonify({"error": "NO MISSION FOUND"}), 500
 
     # =========================
-    # PARSE BLOCKS
+    # PARSE MISSION BLOCKS
     # =========================
     story = ""
     title = ""
@@ -122,7 +132,6 @@ def next_mission():
 
             ops = block.get("op", [])
             correct = block.get("c", 0)
-
             question_text = t(block.get("q"), lang)
 
             options = []
@@ -141,19 +150,19 @@ def next_mission():
                     "question": question_text
                 })
 
-        # ANALYSIS / COMMENT
+        # ANALYSIS
         elif ttype == "c":
             analysis += t(block.get("tx"), lang) + "\n"
 
     # =========================
-    # ADVANCE INDEX SAFE
+    # ADVANCE INDEX SAFE LOOP
     # =========================
     STATE["mission_index"] += 1
     if STATE["mission_index"] > STATE["MAX_MISSION"]:
         STATE["mission_index"] = 1
 
     # =========================
-    # RESPONSE CLEAN
+    # CLEAN RESPONSE
     # =========================
     return jsonify({
         "id": mission_id,
@@ -186,12 +195,15 @@ def static_files(path):
 def reset():
     STATE["mission_index"] = 1
     CACHE.clear()
-    return jsonify({"ok": True, "mission_index": STATE["mission_index"]})
+    return jsonify({
+        "ok": True,
+        "mission_index": STATE["mission_index"]
+    })
 
 
 # =========================
 # 🚀 RUN SERVER
 # =========================
 if __name__ == "__main__":
-    print("🚀 KAMIZEN SERVER RUNNING...")
+    print("🚀 KAMIZEN SERVER RUNNING STABLE MODE...")
     app.run(debug=True)
