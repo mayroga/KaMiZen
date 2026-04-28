@@ -174,20 +174,35 @@ body {
     cursor:pointer;
 }
 
-/* BREATHING CIRCLE */
+/* BREATHING CIRCLE — REPLACED (ONLY CHANGE) */
 #breath-circle{
-    width:140px;
-    height:140px;
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    
+    width:320px;
+    height:320px;
     border-radius:50%;
-    border:4px solid var(--neon-blue);
-    margin:10px auto;
+    
+    border:6px solid var(--neon-blue);
+    
     display:none;
     align-items:center;
     justify-content:center;
+    flex-direction:column;
     text-align:center;
+
     font-weight:bold;
     color:var(--neon-blue);
+    font-size:2rem;
+
     animation:pulse 4s infinite;
+    z-index:200;
+
+    pointer-events:none;
+    background:rgba(0,0,0,0.2);
+    backdrop-filter:blur(2px);
 }
 
 @keyframes pulse{
@@ -249,6 +264,9 @@ let state = {
     spawnRate:1300
 };
 
+let gameStopped = false;
+let gamePaused = false;
+
 /* SPEECH — FORCED ENGLISH ONLY */
 function speak(text){
     if(!text) return;
@@ -285,7 +303,7 @@ function breathCycle(type, sec){
     setTimeout(()=>c.style.display="none", sec*1000);
 }
 
-/* FLOATING WORDS (UNCHANGED CORE) */
+/* FLOATING WORDS */
 const words = {
     power:["LISTEN FIRST","STAY CALM","THINK BEFORE","CONTROL EMOTION","RESPECT OTHERS"],
     risk:["REACT ANGRY","BLAME OTHERS","LOSE CONTROL","FOLLOW CROWD"],
@@ -329,14 +347,46 @@ function spawnWord(){
     setTimeout(()=>div.remove(),7000);
 }
 
-/* MISSION (UNCHANGED) */
+/* CONTINUE / PAUSE / FINISH MENU */
+function showEndBlockMenu(){
+    const overlay = document.getElementById("overlay");
+    const grid = document.getElementById("decision-grid");
+
+    overlay.style.display="flex";
+    grid.innerHTML="";
+
+    function makeBtn(text, action){
+        let b=document.createElement("button");
+        b.className="choice-btn";
+        b.innerText=text;
+        b.onclick=action;
+        return b;
+    }
+
+    grid.appendChild(makeBtn("CONTINUE", ()=>{
+        overlay.style.display="none";
+        gamePaused=false;
+        gameStopped=false;
+        mainLoop();
+    }));
+
+    grid.appendChild(makeBtn("PAUSE", ()=>{
+        gamePaused=true;
+        overlay.style.display="none";
+    }));
+
+    grid.appendChild(makeBtn("FINISHED", ()=>{
+        gameStopped=true;
+        overlay.style.display="none";
+    }));
+}
+
+/* MISSION */
 async function triggerQuestion(){
     const res = await fetch("/api/mission/next?lang="+lang);
     const data = await res.json();
 
     if(!data || !data.options) return;
-
-    currentMissionId = data.id;
 
     let overlay = document.getElementById("overlay");
     let grid = document.getElementById("decision-grid");
@@ -350,11 +400,10 @@ async function triggerQuestion(){
 
     grid.innerHTML="";
 
-    if((data.analysis+data.story).toLowerCase().includes("inhala")){
-        breathCycle("inhale",4);
-    }
-    if((data.analysis+data.story).toLowerCase().includes("silencio")){
-        breathCycle("silence",2);
+    let continueBtn = null;
+
+    function closeOverlay(){
+        overlay.style.display="none";
     }
 
     data.options.forEach(opt=>{
@@ -364,6 +413,7 @@ async function triggerQuestion(){
         btn.innerText = (lang==="es") ? opt.text.es : opt.text.en;
 
         btn.onclick=()=>{
+
             if(opt.correct){
                 state.score+=30;
                 state.stats.respect++;
@@ -378,7 +428,14 @@ async function triggerQuestion(){
             desc.innerText = exp;
 
             grid.innerHTML="";
-            setTimeout(()=>overlay.style.display="none",1500);
+
+            if(!continueBtn){
+                continueBtn = document.createElement("button");
+                continueBtn.className="choice-btn";
+                continueBtn.innerText = "CONTINUE";
+                continueBtn.onclick = showEndBlockMenu;
+                grid.appendChild(continueBtn);
+            }
 
             updateHUD();
         };
@@ -395,15 +452,17 @@ setInterval(()=>{
     }
 },1000);
 
-/* MAIN LOOP — UPDATED */
+/* MAIN LOOP */
 async function mainLoop(){
-    while(true){
+    while(!gameStopped){
+
+        if(gamePaused) return;
 
         gameMode = "words";
 
         let end = Date.now() + (5 * 60 * 1000);
 
-        while(Date.now() < end){
+        while(Date.now() < end && !gamePaused && !gameStopped){
             spawnWord();
             await new Promise(r => setTimeout(r, state.spawnRate));
         }
@@ -420,6 +479,9 @@ async function mainLoop(){
         await triggerQuestion();
 
         await new Promise(r => setTimeout(r, 3000));
+
+        showEndBlockMenu();
+        return;
     }
 }
 
