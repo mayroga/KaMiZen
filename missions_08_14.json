@@ -1,177 +1,232 @@
 {
-"sys":"KAMIZEN KIDS",
-"ch":2,
-"rng":"8-14",
+  "sys": "KAMIZEN KIDS",
+  "ch": 2,
+  "rng": "8-14",
 
-"ui":{"fw":["PAUSE","THINK","BREATH","CONTROL","CALM","TRUTH","FOCUS","OBSERVE"]},
+  "ui": {
+    "fw": ["PAUSE", "THINK", "BREATH", "CONTROL", "CALM", "TRUTH", "FOCUS", "OBSERVE"]
+  },
 
-"rules":["Obs>React","Act=Real","Thought>Emotion","Silence=Power","Focus>Noise","Breath=Ctrl"],
+  "rules": ["Obs>React", "Act=Real", "Thought>Emotion", "Silence=Power", "Focus>Noise", "Breath=Ctrl"],
 
-"ses":[
+  "ses": [
 
-{"id":8,"cat":"truth","b":[
-{"t":"v","tx":{"en":"Today: TRUTH","es":"Hoy: VERDAD"}},
-{"t":"h","tx":{"en":"Telling the truth can feel dangerous","es":"Decir la verdad puede sentirse peligroso"}},
+    {
+      "id": 8,
+      "cat": "truth",
+      "b": [
+        {"t": "v", "tx": {"en": "Today: TRUTH", "es": "Hoy: VERDAD"}},
+        {"t": "h", "tx": {"en": "Telling the truth can feel dangerous", "es": "Decir la verdad puede sentirse peligroso"}},
 
-{"t":"br","tx":{"en":"Inhale","es":"Inhala"},"d":4},
-{"t":"br","tx":{"en":"Exhale","es":"Exhala"},"d":4},
+        {"t": "br", "tx": {"en": "Inhale", "es": "Inhala"}, "d": 4},
+        {"t": "br", "tx": {"en": "Exhale", "es": "Exhala"}, "d": 4},
 
-{"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
-"op":["Lie","Calm truth","Hide","Delay"],
-"c":1,
-"ex":[
-"Lying = short-term relief, long-term trust damage / Mentir = alivio corto, daño a la confianza a largo plazo",
-"Calm truth = activates coherence and respect / Verdad calmada = activa coherencia y respeto",
-"Hiding = increases internal stress / Ocultar = aumenta el estrés interno",
-"Delaying = increases mental pressure / Posponer = aumenta la presión mental"
-]},
+        {
+          "t": "d",
+          "q": {"en": "What do you do?", "es": "¿Qué haces?"},
+          "op": ["Lie", "Calm truth", "Hide", "Delay"],
+          "c": 1,
+          "ex": [
+            "Lying = short-term relief, long-term trust damage",
+            "Calm truth = activates coherence and respect",
+            "Hiding = increases internal stress",
+            "Delaying = increases mental pressure"
+          ]
+        },
 
-{"t":"r","tx":"+Integrity","p":20}
-]},
+        {"t": "r", "tx": "+Integrity", "p": 20}
+      ]
+    },
 
+    {
+      "id": 9,
+      "cat": "focus",
+      "b": [
+        {"t": "v", "tx": {"en": "Today: ATTENTION", "es": "Hoy: ATENCIÓN"}},
+        {"t": "h", "tx": {"en": "The phone keeps distracting you", "es": "El teléfono te distrae constantemente"}},
 
-{"id":9,"cat":"focus","b":[
-{"t":"v","tx":{"en":"Today: ATTENTION","es":"Hoy: ATENCIÓN"}},
-{"t":"h","tx":{"en":"The phone keeps distracting you","es":"El teléfono te distrae constantemente"}},
+        {
+          "t": "d",
+          "q": {"en": "What do you do?", "es": "¿Qué haces?"},
+          "op": ["Check", "Control time", "Ignore work", "Quit"],
+          "c": 1,
+          "ex": [
+            "Dopamine dependency increases",
+            "Time control builds discipline circuits",
+            "Stress accumulates later",
+            "Quit reinforces weak habit"
+          ]
+        },
 
-{"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
-"op":["Check","Control time","Ignore work","Quit"],
-"c":1,
-"ex":[
-"Dopamine dependency increases / Aumenta la dependencia de dopamina",
-"Time control builds discipline circuits / Control del tiempo construye disciplina",
-"Stress accumulates later / El estrés se acumula después",
-"Quit reinforces weak habit / Renunciar refuerza el hábito débil"
-]},
+        {"t": "r", "tx": "+Attention", "p": 20},
 
-{"t":"r","tx":"+Attention","p":20},
+        {"t": "v", "tx": {"en": "1 MIN SILENCE RESET", "es": "RESET DE 1 MIN SILENCIO"}},
 
-{"t":"v","tx":{"en":"1 MIN SILENCE RESET","es":"RESET DE 1 MIN SILENCIO"}},
+        {
+          "t": "sil",
+          "d": 60,
+          "tx": {"en": "Observe without reacting", "es": "Observa sin reaccionar"},
+          "inf": {
+            "en": "Trains impulse control and amygdala inhibition",
+            "es": "Entrena control de impulsos + inhibición de la amígdala"
+          }
+        },
 
-{"t":"sil","d":60,
-"tx":{"en":"Observe without reacting","es":"Observa sin reaccionar"},
-"inf":{
-"en":"Trains impulse control and amygdala inhibition / Entrena el control de impulsos y la inhibición de la amígdala",
-"es":"Entrena control de impulsos + inhibición de la amígdala"
+        {
+          "t": "c",
+          "tx": {"en": "Attention = mental money", "es": "Atención = dinero mental"}
+        }
+      ]
+    },
+
+    {
+      "id": 10,
+      "cat": "pressure",
+      "b": [
+        {"t": "v", "tx": {"en": "Today: PRESSURE DECISION", "es": "Hoy: DECISIÓN BAJO PRESIÓN"}},
+        {"t": "h", "tx": {"en": "You must decide fast", "es": "Debes decidir rápido"}},
+
+        {"t": "br", "tx": {"en": "Inhale", "es": "Inhala"}, "d": 3},
+        {"t": "br", "tx": {"en": "Exhale", "es": "Exhala"}, "d": 3},
+
+        {
+          "t": "d",
+          "q": {"en": "What do you do?", "es": "¿Qué haces?"},
+          "op": ["Rush", "Pause", "Guess", "Avoid"],
+          "c": 1,
+          "ex": [
+            "Reduces accuracy",
+            "Activates prefrontal clarity",
+            "High risk without data",
+            "Problem grows"
+          ]
+        },
+
+        {"t": "r", "tx": "+Clarity", "p": 20}
+      ]
+    },
+
+    {
+      "id": 11,
+      "cat": "resp",
+      "b": [
+        {"t": "v", "tx": {"en": "Today: RESPONSIBILITY", "es": "Hoy: RESPONSABILIDAD"}},
+        {"t": "h", "tx": {"en": "You made a mistake", "es": "Cometiste un error"}},
+
+        {
+          "t": "d",
+          "q": {"en": "What do you do?", "es": "¿Qué haces?"},
+          "op": ["Deny", "Accept", "Blame", "Hide"],
+          "c": 1,
+          "ex": [
+            "Blocks learning",
+            "Activates neuroplasticity",
+            "Gives away control",
+            "Increases consequences"
+          ]
+        },
+
+        {"t": "r", "tx": "+Responsibility", "p": 20}
+      ]
+    },
+
+    {
+      "id": 12,
+      "cat": "control",
+      "b": [
+        {"t": "v", "tx": {"en": "Today: SELF CONTROL", "es": "Hoy: AUTOCONTROL"}},
+        {"t": "h", "tx": {"en": "Someone provokes you", "es": "Alguien te provoca"}},
+
+        {"t": "br", "tx": {"en": "Inhale", "es": "Inhala"}, "d": 5},
+        {"t": "br", "tx": {"en": "Exhale", "es": "Exhala"}, "d": 5},
+
+        {"t": "v", "tx": {"en": "2 MIN SILENCE TRAINING", "es": "ENTRENAMIENTO 2 MIN SILENCIO"}},
+
+        {
+          "t": "sil",
+          "d": 120,
+          "tx": {"en": "No reaction. Just observe", "es": "Sin reacción. Solo observa"},
+          "inf": {
+            "en": "Strengthens prefrontal control over the amygdala",
+            "es": "Fortalece control prefrontal sobre la amígdala"
+          }
+        },
+
+        {"t": "r", "tx": "+Control", "p": 20}
+      ]
+    },
+
+    {
+      "id": 13,
+      "cat": "mind",
+      "b": [
+        {"t": "v", "tx": {"en": "Today: ENVY", "es": "Hoy: ENVIDIA"}},
+        {"t": "h", "tx": {"en": "Someone is succeeding", "es": "Alguien tiene éxito"}},
+
+        {
+          "t": "d",
+          "q": {"en": "What do you do?", "es": "¿Qué haces?"},
+          "op": ["Compare", "Focus", "Give up", "Doubt"],
+          "c": 1,
+          "ex": [
+            "Reduces self-esteem",
+            "Builds progress pathways",
+            "Stops growth",
+            "Reduces action"
+          ]
+        },
+
+        {"t": "r", "tx": "+Direction", "p": 20}
+      ]
+    },
+
+    {
+      "id": 14,
+      "cat": "voice",
+      "b": [
+        {"t": "v", "tx": {"en": "Today: VOICE & PRESENCE", "es": "Hoy: VOZ Y PRESENCIA"}},
+        {"t": "h", "tx": {"en": "Speak or stay silent", "es": "Hablar o callar"}},
+
+        {
+          "t": "d",
+          "q": {"en": "What do you do?", "es": "¿Qué haces?"},
+          "op": ["Stay silent", "Speak clear", "Avoid", "Hide"],
+          "c": 1,
+          "ex": [
+            "Loses influence in wrong context",
+            "Builds leadership and respect",
+            "Reduces confidence",
+            "Erases identity"
+          ]
+        },
+
+        {"t": "r", "tx": "+Presence", "p": 20},
+
+        {"t": "v", "tx": {"en": "FINAL SILENCE CHALLENGE", "es": "RETO FINAL DE SILENCIO"}},
+
+        {"t": "br", "tx": {"en": "Deep inhale", "es": "Inhala profundo"}, "d": 6},
+        {"t": "br", "tx": {"en": "Hold", "es": "Retén"}, "d": 3},
+        {"t": "br", "tx": {"en": "Slow exhale", "es": "Exhala lento"}, "d": 6},
+
+        {"t": "br", "tx": {"en": "Short inhale", "es": "Inhala corto"}, "d": 3},
+        {"t": "br", "tx": {"en": "Long exhale", "es": "Exhala largo"}, "d": 6},
+
+        {
+          "t": "sil",
+          "d": 120,
+          "tx": {"en": "Observe thoughts without reacting", "es": "Observa pensamientos sin reaccionar"},
+          "inf": {
+            "en": "Develops metacognition (thinking about thinking)",
+            "es": "Desarrolla metacognición (pensar sobre el pensamiento)"
+          }
+        },
+
+        {
+          "t": "c",
+          "tx": {"en": "Your trained mind is your advantage", "es": "Tu mente entrenada es tu ventaja"}
+        }
+      ]
+    }
+
+  ]
 }
-},
-
-{"t":"c","tx":{"en":"Attention = mental money","es":"Atención = dinero mental"}}
-]},
-
-
-{"id":10,"cat":"pressure","b":[
-{"t":"v","tx":{"en":"Today: PRESSURE DECISION","es":"Hoy: DECISIÓN BAJO PRESIÓN"}},
-{"t":"h","tx":{"en":"You must decide fast","es":"Debes decidir rápido"}},
-
-{"t":"br","tx":{"en":"Inhale","es":"Inhala"},"d":3},
-{"t":"br","tx":{"en":"Exhale","es":"Exhala"},"d":3},
-
-{"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
-"op":["Rush","Pause","Guess","Avoid"],
-"c":1,
-"ex":[
-"Reduces accuracy / Reduce la precisión",
-"Activates prefrontal clarity / Activa la claridad prefrontal",
-"High risk without data / Alto riesgo sin datos",
-"Problem grows / El problema crece"
-]},
-
-{"t":"r","tx":"+Clarity","p":20}
-]},
-
-
-{"id":11,"cat":"resp","b":[
-{"t":"v","tx":{"en":"Today: RESPONSIBILITY","es":"Hoy: RESPONSABILIDAD"}},
-{"t":"h","tx":{"en":"You made a mistake","es":"Cometiste un error"}},
-
-{"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
-"op":["Deny","Accept","Blame","Hide"],
-"c":1,
-"ex":[
-"Blocks learning / Bloquea el aprendizaje",
-"Activates neuroplasticity / Activa la neuroplasticidad",
-"Gives away control / Pierdes el control",
-"Increases consequences / Aumentan las consecuencias"
-]},
-
-{"t":"r","tx":"+Responsibility","p":20}
-]},
-
-
-{"id":12,"cat":"control","b":[
-{"t":"v","tx":{"en":"Today: SELF CONTROL","es":"Hoy: AUTOCONTROL"}},
-{"t":"h","tx":{"en":"Someone provokes you","es":"Alguien te provoca"}},
-
-{"t":"br","tx":{"en":"Inhale","es":"Inhala"},"d":5},
-{"t":"br","tx":{"en":"Exhale","es":"Exhala"},"d":5},
-
-{"t":"v","tx":{"en":"2 MIN SILENCE TRAINING","es":"ENTRENAMIENTO 2 MIN SILENCIO"}},
-
-{"t":"sil","d":120,
-"tx":{"en":"No reaction. Just observe","es":"Sin reacción. Solo observa"},
-"inf":{
-"en":"Strengthens prefrontal control over the amygdala / Fortalece el control prefrontal sobre la amígdala",
-"es":"Fortalece control prefrontal sobre la amígdala"
-}
-},
-
-{"t":"r","tx":"+Control","p":20}
-]},
-
-
-{"id":13,"cat":"mind","b":[
-{"t":"v","tx":{"en":"Today: ENVY","es":"Hoy: ENVIDIA"}},
-{"t":"h","tx":{"en":"Someone is succeeding","es":"Alguien tiene éxito"}},
-
-{"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
-"op":["Compare","Focus","Give up","Doubt"],
-"c":1,
-"ex":[
-"Reduces self-esteem / Reduce la autoestima",
-"Builds progress pathways / Construye rutas de progreso",
-"Stops growth / Detiene el crecimiento",
-"Reduces action / Reduce la acción"
-]},
-
-{"t":"r","tx":"+Direction","p":20}
-]},
-
-
-{"id":14,"cat":"voice","b":[
-{"t":"v","tx":{"en":"Today: VOICE & PRESENCE","es":"Hoy: VOZ Y PRESENCIA"}},
-{"t":"h","tx":{"en":"Speak or stay silent","es":"Hablar o callar"}},
-
-{"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
-"op":["Stay silent","Speak clear","Avoid","Hide"],
-"c":1,
-"ex":[
-"Loses influence in wrong context / Pierde influencia en el contexto incorrecto",
-"Builds leadership and respect / Construye liderazgo y respeto",
-"Reduces confidence / Reduce la confianza",
-"Erases identity / Borra la identidad"
-]},
-
-{"t":"r","tx":"+Presence","p":20},
-
-{"t":"v","tx":{"en":"FINAL SILENCE CHALLENGE","es":"RETO FINAL DE SILENCIO"}},
-
-{"t":"br","tx":{"en":"Deep inhale","es":"Inhala profundo"},"d":6},
-{"t":"br","tx":{"en":"Hold","es":"Retén"},"d":3},
-{"t":"br","tx":{"en":"Slow exhale","es":"Exhala lento"},"d":6},
-
-{"t":"br","tx":{"en":"Short inhale","es":"Inhala corto"},"d":3},
-{"t":"br","tx":{"en":"Long exhale","es":"Exhala largo"},"d":6},
-
-{"t":"sil","d":120,
-"tx":{"en":"Observe thoughts without reacting","es":"Observa pensamientos sin reaccionar"},
-"inf":{
-"en":"Develops metacognition (thinking about thinking) / Desarrolla metacognición (pensar sobre el pensamiento)",
-"es":"Desarrolla metacognición (pensar sobre el pensamiento)"
-}
-},
-
-{"t":"c","tx":{"en":"Your trained mind is your advantage","es":"Tu mente entrenada es tu ventaja"}}
-]}
-
-]}
