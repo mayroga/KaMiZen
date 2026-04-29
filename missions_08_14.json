@@ -20,10 +20,10 @@
 "op":["Lie","Calm truth","Hide","Delay"],
 "c":1,
 "ex":[
-"Lying=short relief, long trust damage",
-"Calm truth=activates coherence + respect",
-"Hiding=increases internal stress",
-"Delaying=increases mental pressure"
+"Lying = short-term relief, long-term trust damage / Mentir = alivio corto, daño a la confianza a largo plazo",
+"Calm truth = activates coherence and respect / Verdad calmada = activa coherencia y respeto",
+"Hiding = increases internal stress / Ocultar = aumenta el estrés interno",
+"Delaying = increases mental pressure / Posponer = aumenta la presión mental"
 ]},
 
 {"t":"r","tx":"+Integrity","p":20}
@@ -38,10 +38,10 @@
 "op":["Check","Control time","Ignore work","Quit"],
 "c":1,
 "ex":[
-"Dopamine dependency increases",
-"Time control builds discipline circuits",
-"Stress accumulates later",
-"Quit reinforces weak habit"
+"Dopamine dependency increases / Aumenta la dependencia de dopamina",
+"Time control builds discipline circuits / Control del tiempo construye disciplina",
+"Stress accumulates later / El estrés se acumula después",
+"Quit reinforces weak habit / Renunciar refuerza el hábito débil"
 ]},
 
 {"t":"r","tx":"+Attention","p":20},
@@ -51,9 +51,10 @@
 {"t":"sil","d":60,
 "tx":{"en":"Observe without reacting","es":"Observa sin reaccionar"},
 "inf":{
-"en":"Trains impulse control + amygdala inhibition",
+"en":"Trains impulse control and amygdala inhibition / Entrena el control de impulsos y la inhibición de la amígdala",
 "es":"Entrena control de impulsos + inhibición de la amígdala"
-}},
+}
+},
 
 {"t":"c","tx":{"en":"Attention = mental money","es":"Atención = dinero mental"}}
 ]},
@@ -70,10 +71,10 @@
 "op":["Rush","Pause","Guess","Avoid"],
 "c":1,
 "ex":[
-"Reduces accuracy",
-"Activates prefrontal clarity",
-"High risk without data",
-"Problem grows"
+"Reduces accuracy / Reduce la precisión",
+"Activates prefrontal clarity / Activa la claridad prefrontal",
+"High risk without data / Alto riesgo sin datos",
+"Problem grows / El problema crece"
 ]},
 
 {"t":"r","tx":"+Clarity","p":20}
@@ -88,10 +89,10 @@
 "op":["Deny","Accept","Blame","Hide"],
 "c":1,
 "ex":[
-"Blocks learning",
-"Activates neuroplasticity",
-"Gives away control",
-"Increases consequences"
+"Blocks learning / Bloquea el aprendizaje",
+"Activates neuroplasticity / Activa la neuroplasticidad",
+"Gives away control / Pierdes el control",
+"Increases consequences / Aumentan las consecuencias"
 ]},
 
 {"t":"r","tx":"+Responsibility","p":20}
@@ -110,9 +111,10 @@
 {"t":"sil","d":120,
 "tx":{"en":"No reaction. Just observe","es":"Sin reacción. Solo observa"},
 "inf":{
-"en":"Strengthens prefrontal control over amygdala",
+"en":"Strengthens prefrontal control over the amygdala / Fortalece el control prefrontal sobre la amígdala",
 "es":"Fortalece control prefrontal sobre la amígdala"
-}},
+}
+},
 
 {"t":"r","tx":"+Control","p":20}
 ]},
@@ -126,10 +128,10 @@
 "op":["Compare","Focus","Give up","Doubt"],
 "c":1,
 "ex":[
-"Reduces self-esteem",
-"Builds progress pathways",
-"Stops growth",
-"Reduces action"
+"Reduces self-esteem / Reduce la autoestima",
+"Builds progress pathways / Construye rutas de progreso",
+"Stops growth / Detiene el crecimiento",
+"Reduces action / Reduce la acción"
 ]},
 
 {"t":"r","tx":"+Direction","p":20}
@@ -144,10 +146,10 @@
 "op":["Stay silent","Speak clear","Avoid","Hide"],
 "c":1,
 "ex":[
-"Loses influence in wrong context",
-"Builds leadership + respect",
-"Reduces confidence",
-"Erases identity"
+"Loses influence in wrong context / Pierde influencia en el contexto incorrecto",
+"Builds leadership and respect / Construye liderazgo y respeto",
+"Reduces confidence / Reduce la confianza",
+"Erases identity / Borra la identidad"
 ]},
 
 {"t":"r","tx":"+Presence","p":20},
@@ -164,9 +166,10 @@
 {"t":"sil","d":120,
 "tx":{"en":"Observe thoughts without reacting","es":"Observa pensamientos sin reaccionar"},
 "inf":{
-"en":"Develops metacognition (thinking about thinking)",
+"en":"Develops metacognition (thinking about thinking) / Desarrolla metacognición (pensar sobre el pensamiento)",
 "es":"Desarrolla metacognición (pensar sobre el pensamiento)"
-}},
+}
+},
 
 {"t":"c","tx":{"en":"Your trained mind is your advantage","es":"Tu mente entrenada es tu ventaja"}}
 ]}
