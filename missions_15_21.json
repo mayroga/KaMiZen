@@ -1,240 +1,260 @@
 {
-  "sys": "KAMIZEN KIDS",
-  "ch": 3,
-  "rng": "15-21",
+"sys":"KAMIZEN LIFE SAFETY",
+"ch":3,
+"rng":"15-21",
 
-  "ui": {
-    "fw": ["DISCIPLINE", "FOCUS", "CALM", "TRUTH", "CONTROL", "BREATH", "AWARENESS"]
-  },
+"ui":{"fw":["AWARENESS","CALM","CONTROL","FOCUS","TRUTH","SAFETY","ACTION","HELP"]},
 
-  "rules": ["Obs>React", "Act=Real", "Thought>Emotion", "Silence=Power", "Focus>Noise", "Breath=Ctrl"],
+"rules":[
+"Awareness>Reaction",
+"Calm>Impulse",
+"AskHelp=Strength",
+"Distance>Conflict",
+"Truth=Protection",
+"Action=Safety"
+],
 
-  "ses": [
+"missions":[
 
-    {
-      "id": 15,
-      "cat": "emotion",
-      "b": [
-        {"t": "v", "tx": {"en": "Today: EMOTIONAL CONTROL", "es": "Hoy: CONTROL EMOCIONAL"}},
-        {"t": "h", "tx": {"en": "Someone insults you", "es": "Alguien te insulta"}},
+{
+"id":15,
+"cat":"emotion",
+"b":[
+{"t":"v","tx":{"en":"Today: EMOTIONAL CONTROL","es":"Hoy: CONTROL EMOCIONAL"}},
+{"t":"h","tx":{"en":"Someone says something mean","es":"Alguien dice algo hiriente"}},
 
-        {"t": "br", "tx": {"en": "Inhale", "es": "Inhala"}, "d": 4},
-        {"t": "br", "tx": {"en": "Exhale", "es": "Exhala"}, "d": 4},
+{"story":{"en":"A calm mind is like water. It reflects reality without breaking.","es":"Una mente calmada es como el agua. Refleja la realidad sin romperse."}},
 
-        {
-          "t": "d",
-          "q": {"en": "What do you do?", "es": "¿Qué haces?"},
-          "op": ["Insult back", "Calm", "Run", "Scream"],
-          "c": 1,
-          "ex": [
-            "Amygdala hijack, loss of control",
-            "Prefrontal cortex activation = real power",
-            "Avoids emotional training",
-            "Increases chaos response"
-          ]
-        },
+{"t":"br","tx":{"en":"Inhale","es":"Inhala"},"d":5},
+{"t":"br","tx":{"en":"Exhale","es":"Exhala"},"d":5},
 
-        {"t": "r", "tx": "+Control", "p": 20}
-      ]
-    },
+{"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
+"op":["React angry / Reaccionar con rabia","Stay calm & breathe / Mantener calma y respirar","Shout / Gritar","Walk into conflict / Entrar en conflicto"],
+"c":1,
+"ex":[
+"Anger = loss of control / pérdida de control",
+"Calm + breathing = emotional regulation / regulación emocional",
+"Shouting = escalation / escalada",
+"Conflict entry = risk increase / aumenta el riesgo"
+]},
 
-    {
-      "id": 16,
-      "cat": "focus",
-      "b": [
-        {"t": "v", "tx": {"en": "Today: FOCUS TEST", "es": "Hoy: TEST DE ENFOQUE"}},
-        {"t": "h", "tx": {"en": "Many distractions appear", "es": "Aparecen muchas distracciones"}},
+{"t":"r","tx":"+Control / +Control","p":20},
 
-        {
-          "t": "d",
-          "q": {"en": "What do you do?", "es": "¿Qué haces?"},
-          "op": ["Switch task", "Single task", "Stop", "Delay"],
-          "c": 1,
-          "ex": [
-            "Breaks cognitive flow",
-            "Deep focus state (optimal performance)",
-            "No progress state",
-            "Increases mental stress"
-          ]
-        },
+{"t":"sil","d":30,
+"tx":{"en":"30s calm observation","es":"30s observación calmada"},
+"inf":{"en":"Short silence supports prefrontal activation and reduces emotional reactivity","es":"El silencio corto activa control prefrontal y reduce reactividad emocional"}
+},
 
-        {"t": "r", "tx": "+Focus", "p": 20},
+{"t":"breath_auto","d":30,
+"tx":{"en":"4-4 breathing cycle","es":"Ciclo respiratorio 4-4"},
+"inf":{"en":"Supports nervous system balance and stress reduction","es":"Apoya equilibrio del sistema nervioso y reducción del estrés"}
+}
+]
+},
 
-        {"t": "v", "tx": {"en": "1 MIN SILENCE RESET", "es": "RESET DE 1 MIN SILENCIO"}},
 
-        {
-          "t": "sil",
-          "d": 60,
-          "tx": {"en": "Observe without reaction", "es": "Observa sin reaccionar"},
-          "inf": {
-            "en": "Reduces amygdala reactivity and increases attention control",
-            "es": "Reduce reactividad de la amígdala y mejora atención"
-          }
-        }
-      ]
-    },
+{
+"id":16,
+"cat":"focus",
+"b":[
+{"t":"v","tx":{"en":"Today: FOCUS TEST","es":"Hoy: PRUEBA DE ENFOQUE"}},
+{"t":"h","tx":{"en":"Many distractions appear","es":"Aparecen muchas distracciones"}},
 
-    {
-      "id": 17,
-      "cat": "fear",
-      "b": [
-        {"t": "v", "tx": {"en": "Today: FEAR CONTROL", "es": "Hoy: CONTROL DEL MIEDO"}},
-        {"t": "h", "tx": {"en": "You feel fear before acting", "es": "Sientes miedo antes de actuar"}},
+{"story":{"en":"Focus is like a flashlight. It only works when pointed in one direction.","es":"El enfoque es como una linterna. Solo funciona cuando apunta en una dirección."}},
 
-        {"t": "br", "tx": {"en": "Inhale", "es": "Inhala"}, "d": 5},
-        {"t": "br", "tx": {"en": "Exhale", "es": "Exhala"}, "d": 5},
+{"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
+"op":["Multitask / Multitarea","Single focus / Un solo enfoque","Stop everything / Parar todo","Check phone / Revisar teléfono"],
+"c":1,
+"ex":[
+"Multitask = low efficiency / baja eficiencia",
+"Single focus = deep attention network / red de atención profunda",
+"Stop = no progress / sin progreso",
+"Phone = attention break / rompe la atención"
+]},
 
-        {
-          "t": "d",
-          "q": {"en": "What do you do?", "es": "¿Qué haces?"},
-          "op": ["Stop", "Act", "Escape", "Freeze"],
-          "c": 1,
-          "ex": [
-            "Strengthens fear circuit",
-            "Creates courage through exposure",
-            "Reinforces avoidance behavior",
-            "Blocks action system"
-          ]
-        },
+{"t":"r","tx":"+Focus / +Enfoque","p":20},
 
-        {"t": "r", "tx": "+Courage", "p": 20}
-      ]
-    },
+{"t":"sil","d":45,
+"tx":{"en":"Quiet attention training","es":"Entrenamiento de atención silenciosa"},
+"inf":{"en":"Improves sustained attention and impulse control","es":"Mejora atención sostenida y control de impulsos"}
+},
 
-    {
-      "id": 18,
-      "cat": "truth",
-      "b": [
-        {"t": "v", "tx": {"en": "Today: TRUTH POWER", "es": "Hoy: PODER DE LA VERDAD"}},
-        {"t": "h", "tx": {"en": "You must be honest", "es": "Debes ser honesto"}},
+{"t":"breath_auto","d":30,
+"tx":{"en":"Slow inhale 4 / exhale 6","es":"Inhala 4 / exhala 6"},
+"inf":{"en":"Longer exhale promotes calm nervous system state","es":"Exhalación larga promueve estado de calma"}
+}
+]
+},
 
-        {
-          "t": "d",
-          "q": {"en": "What do you do?", "es": "¿Qué haces?"},
-          "op": ["Lie", "Truth", "Hide", "Delay"],
-          "c": 1,
-          "ex": [
-            "Cognitive stress and internal conflict",
-            "Aligns identity and behavior",
-            "Increases internal pressure",
-            "Problem escalates"
-          ]
-        },
 
-        {"t": "r", "tx": "+Integrity", "p": 20}
-      ]
-    },
+{
+"id":17,
+"cat":"safety",
+"b":[
+{"t":"v","tx":{"en":"Today: PERSONAL SAFETY","es":"Hoy: SEGURIDAD PERSONAL"}},
+{"t":"h","tx":{"en":"You feel unsure about a situation","es":"Te sientes inseguro en una situación"}},
 
-    {
-      "id": 19,
-      "cat": "social",
-      "b": [
-        {"t": "v", "tx": {"en": "Today: SOCIAL PRESSURE", "es": "Hoy: PRESIÓN SOCIAL"}},
-        {"t": "h", "tx": {"en": "Group pushes wrong decision", "es": "El grupo empuja una mala decisión"}},
+{"story":{"en":"Safety starts when you notice discomfort early.","es":"La seguridad empieza cuando notas incomodidad temprano."}},
 
-        {
-          "t": "d",
-          "q": {"en": "What do you do?", "es": "¿Qué haces?"},
-          "op": ["Follow", "Stand firm", "Laugh", "Panic"],
-          "c": 1,
-          "ex": [
-            "Identity loss mechanism",
-            "Self-respect activation",
-            "Avoids responsibility",
-            "Reduces cognitive control"
-          ]
-        },
+{"t":"d","q":{"en":"What is safest action?","es":"¿Cuál es la acción más segura?"},
+"op":["Ignore feeling / Ignorar sensación","Move away & ask help / Alejarse y pedir ayuda","Stay no matter what / Quedarse siempre","Act without thinking / Actuar sin pensar"],
+"c":1,
+"ex":[
+"Ignoring warning signals = risk / riesgo",
+"Moving away + help = protection system / sistema de protección",
+"Staying = exposure to danger / exposición a peligro",
+"Impulsive action = unsafe decisions / decisiones inseguras"
+]},
 
-        {"t": "r", "tx": "+Character", "p": 20}
-      ]
-    },
+{"t":"r","tx":"+Safety / +Seguridad","p":20},
 
-    {
-      "id": 20,
-      "cat": "discipline",
-      "b": [
-        {"t": "v", "tx": {"en": "Today: DISCIPLINE", "es": "Hoy: DISCIPLINA"}},
-        {"t": "h", "tx": {"en": "You feel like quitting", "es": "Sientes ganas de rendirte"}},
+{"t":"sil","d":60,
+"tx":{"en":"Safety breathing reset","es":"Respiración de seguridad"},
+"inf":{"en":"Reduces panic and improves decision clarity","es":"Reduce pánico y mejora claridad de decisión"}
+},
 
-        {"t": "br", "tx": {"en": "Inhale", "es": "Inhala"}, "d": 3},
-        {"t": "br", "tx": {"en": "Exhale", "es": "Exhala"}, "d": 3},
+{"t":"breath_auto","d":30,
+"tx":{"en":"Calm steady breathing 4-4","es":"Respiración calmada 4-4"},
+"inf":{"en":"Stabilizes stress response system","es":"Estabiliza el sistema de respuesta al estrés"}
+}
+]
+},
 
-        {
-          "t": "d",
-          "q": {"en": "What do you do?", "es": "¿Qué haces?"},
-          "op": ["Quit", "Continue", "Delay", "Avoid"],
-          "c": 1,
-          "ex": [
-            "Weak habit reinforcement",
-            "Neuroplasticity strengthening loop",
-            "Breaks consistency",
-            "No growth cycle"
-          ]
-        },
 
-        {"t": "r", "tx": "+Discipline", "p": 20},
+{
+"id":18,
+"cat":"truth",
+"b":[
+{"t":"v","tx":{"en":"Today: TRUTH & HONESTY","es":"Hoy: VERDAD Y HONESTIDAD"}},
+{"t":"h","tx":{"en":"You made a mistake","es":"Cometiste un error"}},
 
-        {"t": "v", "tx": {"en": "2 MIN SILENCE TRAINING", "es": "ENTRENAMIENTO 2 MIN SILENCIO"}},
+{"story":{"en":"Truth is like light. It makes hidden things clear.","es":"La verdad es como la luz. Hace visibles las cosas ocultas."}},
 
-        {
-          "t": "sil",
-          "d": 120,
-          "tx": {"en": "Observe thoughts without reaction", "es": "Observa pensamientos sin reaccionar"},
-          "inf": {
-            "en": "Strengthens executive control and impulse inhibition",
-            "es": "Fortalece control ejecutivo e inhibición de impulsos"
-          }
-        }
-      ]
-    },
+{"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
+"op":["Hide mistake / Ocultar error","Tell truth / Decir la verdad","Blame others / Culpar a otros","Run away / Escapar"],
+"c":1,
+"ex":[
+"Hiding = weak trust / debilita confianza",
+"Truth = learning + respect / aprendizaje + respeto",
+"Blame = no growth / sin crecimiento",
+"Escape = unresolved issue / problema sin resolver"
+]},
 
-    {
-      "id": 21,
-      "cat": "mastery",
-      "b": [
-        {"t": "v", "tx": {"en": "Today: SELF MASTERY", "es": "Hoy: MAESTRÍA PERSONAL"}},
-        {"t": "h", "tx": {"en": "You must control yourself", "es": "Debes controlarte a ti mismo"}},
+{"t":"r","tx":"+Integrity / +Integridad","p":20},
 
-        {
-          "t": "d",
-          "q": {"en": "What do you do?", "es": "¿Qué haces?"},
-          "op": ["React", "Self control", "Escape", "Ignore"],
-          "c": 1,
-          "ex": [
-            "Automatic reaction system",
-            "Executive brain activation (true control)",
-            "Avoids learning",
-            "No awareness state"
-          ]
-        },
+{"t":"sil","d":75,
+"tx":{"en":"Truth awareness breathing","es":"Respiración de conciencia de verdad"},
+"inf":{"en":"Supports emotional regulation during honesty decisions","es":"Apoya regulación emocional en decisiones honestas"}
+},
 
-        {"t": "r", "tx": "+Mastery", "p": 20},
+{"t":"breath_auto","d":30,
+"tx":{"en":"Slow regulated breathing cycle","es":"Ciclo de respiración lenta regulada"},
+"inf":{"en":"Improves clarity under pressure","es":"Mejora claridad bajo presión"}
+}
+]
+},
 
-        {"t": "v", "tx": {"en": "FINAL SILENCE CHALLENGE", "es": "RETO FINAL DE SILENCIO"}},
 
-        {"t": "br", "tx": {"en": "Deep inhale", "es": "Inhala profundo"}, "d": 6},
-        {"t": "br", "tx": {"en": "Hold", "es": "Retén"}, "d": 3},
-        {"t": "br", "tx": {"en": "Slow exhale", "es": "Exhala lento"}, "d": 6},
+{
+"id":19,
+"cat":"social",
+"b":[
+{"t":"v","tx":{"en":"Today: SOCIAL PRESSURE","es":"Hoy: PRESIÓN SOCIAL"}},
+{"t":"h","tx":{"en":"Group pushes you to do something wrong","es":"El grupo te presiona a hacer algo incorrecto"}},
 
-        {"t": "br", "tx": {"en": "Short inhale", "es": "Inhala corto"}, "d": 3},
-        {"t": "br", "tx": {"en": "Long exhale", "es": "Exhala largo"}, "d": 6},
+{"story":{"en":"Strength is not following the crowd. Strength is choosing right.","es":"La fuerza no es seguir a la multitud. La fuerza es elegir lo correcto."}},
 
-        {
-          "t": "sil",
-          "d": 120,
-          "tx": {"en": "Observe without reacting", "es": "Observa sin reaccionar"},
-          "inf": {
-            "en": "Builds metacognition and emotional regulation",
-            "es": "Construye metacognición y regulación emocional"
-          }
-        },
+{"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
+"op":["Follow group / Seguir grupo","Say no / Decir no","Laugh and join / Reír y unirse","Ignore thinking / No pensar"],
+"c":1,
+"ex":[
+"Following = loss of self / pérdida de identidad",
+"Saying no = autonomy + respect / autonomía + respeto",
+"Joining = risk behavior / conducta de riesgo",
+"No thinking = poor decisions / malas decisiones"
+]},
 
-        {
-          "t": "c",
-          "tx": {"en": "Self mastery = life control", "es": "Maestría personal = control de vida"}
-        }
-      ]
-    }
+{"t":"r","tx":"+Character / +Carácter","p":20},
 
-  ]
+{"t":"sil","d":90,
+"tx":{"en":"Confidence breathing practice","es":"Práctica de respiración de confianza"},
+"inf":{"en":"Builds emotional independence and self-control","es":"Construye independencia emocional y autocontrol"}
+},
+
+{"t":"breath_auto","d":30,
+"tx":{"en":"Balanced inhale/exhale cycle","es":"Ciclo equilibrado inhala/exhala"},
+"inf":{"en":"Supports stable decision-making","es":"Apoya decisiones estables"}
+}
+]
+},
+
+
+{
+"id":20,
+"cat":"discipline",
+"b":[
+{"t":"v","tx":{"en":"Today: DISCIPLINE TEST","es":"Hoy: PRUEBA DE DISCIPLINA"}},
+{"t":"h","tx":{"en":"You feel like quitting","es":"Sientes ganas de rendirte"}},
+
+{"story":{"en":"Discipline is doing what is right even when you don't feel like it.","es":"La disciplina es hacer lo correcto incluso cuando no tienes ganas."}},
+
+{"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
+"op":["Quit / Rendirse","Continue / Continuar","Delay / Posponer","Avoid / Evitar"],
+"c":1,
+"ex":[
+"Quitting = broken habit cycle / rompe el hábito",
+"Continuing = neuroplasticity growth / crecimiento neural",
+"Delaying = loss of momentum / pérdida de impulso",
+"Avoiding = no development / sin desarrollo"
+]},
+
+{"t":"r","tx":"+Discipline / +Disciplina","p":20},
+
+{"t":"sil","d":105,
+"tx":{"en":"Endurance silence training","es":"Entrenamiento de silencio de resistencia"},
+"inf":{"en":"Improves attention endurance and impulse resistance","es":"Mejora resistencia de atención y control de impulsos"}
+},
+
+{"t":"breath_auto","d":30,
+"tx":{"en":"Controlled breathing 4-6 cycle","es":"Respiración controlada 4-6"},
+"inf":{"en":"Supports endurance under stress","es":"Apoya resistencia bajo estrés"}
+}
+]
+},
+
+
+{
+"id":21,
+"cat":"mastery",
+"b":[
+{"t":"v","tx":{"en":"Today: SELF MASTERY","es":"Hoy: MAESTRÍA PERSONAL"}},
+{"t":"h","tx":{"en":"Control your reactions","es":"Controla tus reacciones"}},
+
+{"story":{"en":"A strong mind does not react first. It understands first.","es":"Una mente fuerte no reacciona primero. Primero entiende."}},
+
+{"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
+"op":["React fast / Reaccionar rápido","Pause & think / Pausar y pensar","Ignore everything / Ignorar todo","Act randomly / Actuar sin pensar"],
+"c":1,
+"ex":[
+"Fast reaction = low control / poco control",
+"Pause = executive brain activation / activación del cerebro ejecutivo",
+"Ignoring = no awareness / sin conciencia",
+"Random action = chaos / caos"
+]},
+
+{"t":"r","tx":"+Mastery / +Maestría","p":20},
+
+{"t":"sil","d":180,
+"tx":{"en":"3-minute silence mastery challenge","es":"Reto de 3 minutos de silencio de maestría"},
+"inf":{"en":"Long silence may strengthen metacognition and emotional regulation pathways","es":"Silencio largo puede fortalecer metacognición y regulación emocional"}
+},
+
+{"t":"breath_auto","d":30,
+"tx":{"en":"Deep slow breathing reset","es":"Respiración profunda de reinicio"},
+"inf":{"en":"Helps restore full nervous system balance","es":"Ayuda a restaurar equilibrio del sistema nervioso"}
+}
+]
+}
+
+]
 }
