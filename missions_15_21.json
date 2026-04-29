@@ -20,10 +20,10 @@
 "op":["Insult back","Calm","Run","Scream"],
 "c":1,
 "ex":[
-"Amygdala hijack, loss of control",
-"Prefrontal cortex activation = real power",
-"Avoids emotional training",
-"Increases chaos response"
+"Amygdala hijack, loss of control / Secuestro de la amígdala, pérdida de control",
+"Prefrontal cortex activation = real power / Activación de la corteza prefrontal = poder real",
+"Avoids emotional training / Evita el entrenamiento emocional",
+"Increases chaos response / Aumenta la respuesta caótica"
 ]},
 
 {"t":"r","tx":"+Control","p":20}
@@ -38,10 +38,10 @@
 "op":["Switch task","Single task","Stop","Delay"],
 "c":1,
 "ex":[
-"Breaks cognitive flow",
-"Deep focus state (optimal performance)",
-"No progress state",
-"Increases mental stress"
+"Breaks cognitive flow / Rompe el flujo cognitivo",
+"Deep focus state (optimal performance) / Estado de enfoque profundo (rendimiento óptimo)",
+"No progress state / Estado sin progreso",
+"Increases mental stress / Aumenta el estrés mental"
 ]},
 
 {"t":"r","tx":"+Focus","p":20},
@@ -51,7 +51,7 @@
 {"t":"sil","d":60,
 "tx":{"en":"Observe without reaction","es":"Observa sin reaccionar"},
 "inf":{
-"en":"Reduces amygdala reactivity + increases attention control",
+"en":"Reduces amygdala reactivity + increases attention control / Reduce la reactividad de la amígdala + aumenta el control de la atención",
 "es":"Reduce reactividad de la amígdala + mejora atención"
 }
 }
@@ -69,10 +69,10 @@
 "op":["Stop","Act","Escape","Freeze"],
 "c":1,
 "ex":[
-"Strengthens fear circuit",
-"Creates courage through exposure",
-"Reinforces avoidance behavior",
-"Blocks action system"
+"Strengthens fear circuit / Refuerza el circuito del miedo",
+"Creates courage through exposure / Crea valentía mediante exposición",
+"Reinforces avoidance behavior / Refuerza la evitación",
+"Blocks action system / Bloquea el sistema de acción"
 ]},
 
 {"t":"r","tx":"+Courage","p":20}
@@ -87,10 +87,10 @@
 "op":["Lie","Truth","Hide","Delay"],
 "c":1,
 "ex":[
-"Cognitive stress + internal conflict",
-"Aligns identity and behavior",
-"Increases pressure internally",
-"Problem escalates"
+"Cognitive stress + internal conflict / Estrés cognitivo + conflicto interno",
+"Aligns identity and behavior / Alinea identidad y comportamiento",
+"Increases pressure internally / Aumenta la presión interna",
+"Problem escalates / El problema escala"
 ]},
 
 {"t":"r","tx":"+Integrity","p":20}
@@ -105,10 +105,10 @@
 "op":["Follow","Stand firm","Laugh","Panic"],
 "c":1,
 "ex":[
-"Identity loss mechanism",
-"Self-respect activation",
-"Avoids decision responsibility",
-"Reduces cognitive control"
+"Identity loss mechanism / Pérdida de identidad",
+"Self-respect activation / Activación del auto-respeto",
+"Avoids decision responsibility / Evita la responsabilidad",
+"Reduces cognitive control / Reduce el control cognitivo"
 ]},
 
 {"t":"r","tx":"+Character","p":20}
@@ -126,10 +126,10 @@
 "op":["Quit","Continue","Delay","Avoid"],
 "c":1,
 "ex":[
-"Weak habit reinforcement",
-"Neuroplasticity strengthening loop",
-"Consistency break",
-"No growth cycle"
+"Weak habit reinforcement / Refuerzo de hábito débil",
+"Neuroplasticity strengthening loop / Refuerzo de neuroplasticidad",
+"Consistency break / Rompe la consistencia",
+"No growth cycle / Sin ciclo de crecimiento"
 ]},
 
 {"t":"r","tx":"+Discipline","p":20},
@@ -139,7 +139,7 @@
 {"t":"sil","d":120,
 "tx":{"en":"Observe thoughts without reaction","es":"Observa pensamientos sin reaccionar"},
 "inf":{
-"en":"Strengthens executive control and impulse inhibition",
+"en":"Strengthens executive control and impulse inhibition / Fortalece el control ejecutivo e inhibición de impulsos",
 "es":"Fortalece control ejecutivo e inhibición de impulsos"
 }
 }
@@ -154,10 +154,10 @@
 "op":["React","Self control","Escape","Ignore"],
 "c":1,
 "ex":[
-"Automatic reaction system",
-"Executive brain activation (true control)",
-"Avoids learning",
-"No awareness state"
+"Automatic reaction system / Sistema de reacción automática",
+"Executive brain activation (true control) / Activación del cerebro ejecutivo (control real)",
+"Avoids learning / Evita el aprendizaje",
+"No awareness state / Sin estado de conciencia"
 ]},
 
 {"t":"r","tx":"+Mastery","p":20},
@@ -174,7 +174,7 @@
 {"t":"sil","d":120,
 "tx":{"en":"Observe without reacting","es":"Observa sin reaccionar"},
 "inf":{
-"en":"Builds metacognition and emotional regulation",
+"en":"Builds metacognition and emotional regulation / Construye metacognición y regulación emocional",
 "es":"Desarrolla metacognición y regulación emocional"
 }
 },
