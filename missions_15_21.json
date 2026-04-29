@@ -1,185 +1,240 @@
 {
-"sys":"KAMIZEN KIDS",
-"ch":3,
-"rng":"15-21",
+  "sys": "KAMIZEN KIDS",
+  "ch": 3,
+  "rng": "15-21",
 
-"ui":{"fw":["DISCIPLINE","FOCUS","CALM","TRUTH","CONTROL","BREATH","AWARENESS"]},
+  "ui": {
+    "fw": ["DISCIPLINE", "FOCUS", "CALM", "TRUTH", "CONTROL", "BREATH", "AWARENESS"]
+  },
 
-"rules":["Obs>React","Act=Real","Thought>Emotion","Silence=Power","Focus>Noise","Breath=Ctrl"],
+  "rules": ["Obs>React", "Act=Real", "Thought>Emotion", "Silence=Power", "Focus>Noise", "Breath=Ctrl"],
 
-"ses":[
+  "ses": [
 
-{"id":15,"cat":"emotion","b":[
-{"t":"v","tx":{"en":"Today: EMOTIONAL CONTROL","es":"Hoy: CONTROL EMOCIONAL"}},
-{"t":"h","tx":{"en":"Someone insults you","es":"Alguien te insulta"}},
+    {
+      "id": 15,
+      "cat": "emotion",
+      "b": [
+        {"t": "v", "tx": {"en": "Today: EMOTIONAL CONTROL", "es": "Hoy: CONTROL EMOCIONAL"}},
+        {"t": "h", "tx": {"en": "Someone insults you", "es": "Alguien te insulta"}},
 
-{"t":"br","tx":{"en":"Inhale","es":"Inhala"},"d":4},
-{"t":"br","tx":{"en":"Exhale","es":"Exhala"},"d":4},
+        {"t": "br", "tx": {"en": "Inhale", "es": "Inhala"}, "d": 4},
+        {"t": "br", "tx": {"en": "Exhale", "es": "Exhala"}, "d": 4},
 
-{"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
-"op":["Insult back","Calm","Run","Scream"],
-"c":1,
-"ex":[
-"Amygdala hijack, loss of control / Secuestro de la amígdala, pérdida de control",
-"Prefrontal cortex activation = real power / Activación de la corteza prefrontal = poder real",
-"Avoids emotional training / Evita el entrenamiento emocional",
-"Increases chaos response / Aumenta la respuesta caótica"
-]},
+        {
+          "t": "d",
+          "q": {"en": "What do you do?", "es": "¿Qué haces?"},
+          "op": ["Insult back", "Calm", "Run", "Scream"],
+          "c": 1,
+          "ex": [
+            "Amygdala hijack, loss of control",
+            "Prefrontal cortex activation = real power",
+            "Avoids emotional training",
+            "Increases chaos response"
+          ]
+        },
 
-{"t":"r","tx":"+Control","p":20}
-]},
+        {"t": "r", "tx": "+Control", "p": 20}
+      ]
+    },
 
+    {
+      "id": 16,
+      "cat": "focus",
+      "b": [
+        {"t": "v", "tx": {"en": "Today: FOCUS TEST", "es": "Hoy: TEST DE ENFOQUE"}},
+        {"t": "h", "tx": {"en": "Many distractions appear", "es": "Aparecen muchas distracciones"}},
 
-{"id":16,"cat":"focus","b":[
-{"t":"v","tx":{"en":"Today: FOCUS TEST","es":"Hoy: TEST DE ENFOQUE"}},
-{"t":"h","tx":{"en":"Many distractions appear","es":"Aparecen muchas distracciones"}},
+        {
+          "t": "d",
+          "q": {"en": "What do you do?", "es": "¿Qué haces?"},
+          "op": ["Switch task", "Single task", "Stop", "Delay"],
+          "c": 1,
+          "ex": [
+            "Breaks cognitive flow",
+            "Deep focus state (optimal performance)",
+            "No progress state",
+            "Increases mental stress"
+          ]
+        },
 
-{"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
-"op":["Switch task","Single task","Stop","Delay"],
-"c":1,
-"ex":[
-"Breaks cognitive flow / Rompe el flujo cognitivo",
-"Deep focus state (optimal performance) / Estado de enfoque profundo (rendimiento óptimo)",
-"No progress state / Estado sin progreso",
-"Increases mental stress / Aumenta el estrés mental"
-]},
+        {"t": "r", "tx": "+Focus", "p": 20},
 
-{"t":"r","tx":"+Focus","p":20},
+        {"t": "v", "tx": {"en": "1 MIN SILENCE RESET", "es": "RESET DE 1 MIN SILENCIO"}},
 
-{"t":"v","tx":{"en":"1 MIN SILENCE RESET","es":"RESET DE 1 MIN SILENCIO"}},
+        {
+          "t": "sil",
+          "d": 60,
+          "tx": {"en": "Observe without reaction", "es": "Observa sin reaccionar"},
+          "inf": {
+            "en": "Reduces amygdala reactivity and increases attention control",
+            "es": "Reduce reactividad de la amígdala y mejora atención"
+          }
+        }
+      ]
+    },
 
-{"t":"sil","d":60,
-"tx":{"en":"Observe without reaction","es":"Observa sin reaccionar"},
-"inf":{
-"en":"Reduces amygdala reactivity + increases attention control / Reduce la reactividad de la amígdala + aumenta el control de la atención",
-"es":"Reduce reactividad de la amígdala + mejora atención"
+    {
+      "id": 17,
+      "cat": "fear",
+      "b": [
+        {"t": "v", "tx": {"en": "Today: FEAR CONTROL", "es": "Hoy: CONTROL DEL MIEDO"}},
+        {"t": "h", "tx": {"en": "You feel fear before acting", "es": "Sientes miedo antes de actuar"}},
+
+        {"t": "br", "tx": {"en": "Inhale", "es": "Inhala"}, "d": 5},
+        {"t": "br", "tx": {"en": "Exhale", "es": "Exhala"}, "d": 5},
+
+        {
+          "t": "d",
+          "q": {"en": "What do you do?", "es": "¿Qué haces?"},
+          "op": ["Stop", "Act", "Escape", "Freeze"],
+          "c": 1,
+          "ex": [
+            "Strengthens fear circuit",
+            "Creates courage through exposure",
+            "Reinforces avoidance behavior",
+            "Blocks action system"
+          ]
+        },
+
+        {"t": "r", "tx": "+Courage", "p": 20}
+      ]
+    },
+
+    {
+      "id": 18,
+      "cat": "truth",
+      "b": [
+        {"t": "v", "tx": {"en": "Today: TRUTH POWER", "es": "Hoy: PODER DE LA VERDAD"}},
+        {"t": "h", "tx": {"en": "You must be honest", "es": "Debes ser honesto"}},
+
+        {
+          "t": "d",
+          "q": {"en": "What do you do?", "es": "¿Qué haces?"},
+          "op": ["Lie", "Truth", "Hide", "Delay"],
+          "c": 1,
+          "ex": [
+            "Cognitive stress and internal conflict",
+            "Aligns identity and behavior",
+            "Increases internal pressure",
+            "Problem escalates"
+          ]
+        },
+
+        {"t": "r", "tx": "+Integrity", "p": 20}
+      ]
+    },
+
+    {
+      "id": 19,
+      "cat": "social",
+      "b": [
+        {"t": "v", "tx": {"en": "Today: SOCIAL PRESSURE", "es": "Hoy: PRESIÓN SOCIAL"}},
+        {"t": "h", "tx": {"en": "Group pushes wrong decision", "es": "El grupo empuja una mala decisión"}},
+
+        {
+          "t": "d",
+          "q": {"en": "What do you do?", "es": "¿Qué haces?"},
+          "op": ["Follow", "Stand firm", "Laugh", "Panic"],
+          "c": 1,
+          "ex": [
+            "Identity loss mechanism",
+            "Self-respect activation",
+            "Avoids responsibility",
+            "Reduces cognitive control"
+          ]
+        },
+
+        {"t": "r", "tx": "+Character", "p": 20}
+      ]
+    },
+
+    {
+      "id": 20,
+      "cat": "discipline",
+      "b": [
+        {"t": "v", "tx": {"en": "Today: DISCIPLINE", "es": "Hoy: DISCIPLINA"}},
+        {"t": "h", "tx": {"en": "You feel like quitting", "es": "Sientes ganas de rendirte"}},
+
+        {"t": "br", "tx": {"en": "Inhale", "es": "Inhala"}, "d": 3},
+        {"t": "br", "tx": {"en": "Exhale", "es": "Exhala"}, "d": 3},
+
+        {
+          "t": "d",
+          "q": {"en": "What do you do?", "es": "¿Qué haces?"},
+          "op": ["Quit", "Continue", "Delay", "Avoid"],
+          "c": 1,
+          "ex": [
+            "Weak habit reinforcement",
+            "Neuroplasticity strengthening loop",
+            "Breaks consistency",
+            "No growth cycle"
+          ]
+        },
+
+        {"t": "r", "tx": "+Discipline", "p": 20},
+
+        {"t": "v", "tx": {"en": "2 MIN SILENCE TRAINING", "es": "ENTRENAMIENTO 2 MIN SILENCIO"}},
+
+        {
+          "t": "sil",
+          "d": 120,
+          "tx": {"en": "Observe thoughts without reaction", "es": "Observa pensamientos sin reaccionar"},
+          "inf": {
+            "en": "Strengthens executive control and impulse inhibition",
+            "es": "Fortalece control ejecutivo e inhibición de impulsos"
+          }
+        }
+      ]
+    },
+
+    {
+      "id": 21,
+      "cat": "mastery",
+      "b": [
+        {"t": "v", "tx": {"en": "Today: SELF MASTERY", "es": "Hoy: MAESTRÍA PERSONAL"}},
+        {"t": "h", "tx": {"en": "You must control yourself", "es": "Debes controlarte a ti mismo"}},
+
+        {
+          "t": "d",
+          "q": {"en": "What do you do?", "es": "¿Qué haces?"},
+          "op": ["React", "Self control", "Escape", "Ignore"],
+          "c": 1,
+          "ex": [
+            "Automatic reaction system",
+            "Executive brain activation (true control)",
+            "Avoids learning",
+            "No awareness state"
+          ]
+        },
+
+        {"t": "r", "tx": "+Mastery", "p": 20},
+
+        {"t": "v", "tx": {"en": "FINAL SILENCE CHALLENGE", "es": "RETO FINAL DE SILENCIO"}},
+
+        {"t": "br", "tx": {"en": "Deep inhale", "es": "Inhala profundo"}, "d": 6},
+        {"t": "br", "tx": {"en": "Hold", "es": "Retén"}, "d": 3},
+        {"t": "br", "tx": {"en": "Slow exhale", "es": "Exhala lento"}, "d": 6},
+
+        {"t": "br", "tx": {"en": "Short inhale", "es": "Inhala corto"}, "d": 3},
+        {"t": "br", "tx": {"en": "Long exhale", "es": "Exhala largo"}, "d": 6},
+
+        {
+          "t": "sil",
+          "d": 120,
+          "tx": {"en": "Observe without reacting", "es": "Observa sin reaccionar"},
+          "inf": {
+            "en": "Builds metacognition and emotional regulation",
+            "es": "Construye metacognición y regulación emocional"
+          }
+        },
+
+        {
+          "t": "c",
+          "tx": {"en": "Self mastery = life control", "es": "Maestría personal = control de vida"}
+        }
+      ]
+    }
+
+  ]
 }
-}
-]},
-
-
-{"id":17,"cat":"fear","b":[
-{"t":"v","tx":{"en":"Today: FEAR CONTROL","es":"Hoy: CONTROL DEL MIEDO"}},
-{"t":"h","tx":{"en":"You feel fear before acting","es":"Sientes miedo antes de actuar"}},
-
-{"t":"br","tx":{"en":"Inhale","es":"Inhala"},"d":5},
-{"t":"br","tx":{"en":"Exhale","es":"Exhala"},"d":5},
-
-{"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
-"op":["Stop","Act","Escape","Freeze"],
-"c":1,
-"ex":[
-"Strengthens fear circuit / Refuerza el circuito del miedo",
-"Creates courage through exposure / Crea valentía mediante exposición",
-"Reinforces avoidance behavior / Refuerza la evitación",
-"Blocks action system / Bloquea el sistema de acción"
-]},
-
-{"t":"r","tx":"+Courage","p":20}
-]},
-
-
-{"id":18,"cat":"truth","b":[
-{"t":"v","tx":{"en":"Today: TRUTH POWER","es":"Hoy: PODER DE LA VERDAD"}},
-{"t":"h","tx":{"en":"You must be honest","es":"Debes ser honesto"}},
-
-{"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
-"op":["Lie","Truth","Hide","Delay"],
-"c":1,
-"ex":[
-"Cognitive stress + internal conflict / Estrés cognitivo + conflicto interno",
-"Aligns identity and behavior / Alinea identidad y comportamiento",
-"Increases pressure internally / Aumenta la presión interna",
-"Problem escalates / El problema escala"
-]},
-
-{"t":"r","tx":"+Integrity","p":20}
-]},
-
-
-{"id":19,"cat":"social","b":[
-{"t":"v","tx":{"en":"Today: SOCIAL PRESSURE","es":"Hoy: PRESIÓN SOCIAL"}},
-{"t":"h","tx":{"en":"Group pushes wrong decision","es":"El grupo empuja una mala decisión"}},
-
-{"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
-"op":["Follow","Stand firm","Laugh","Panic"],
-"c":1,
-"ex":[
-"Identity loss mechanism / Pérdida de identidad",
-"Self-respect activation / Activación del auto-respeto",
-"Avoids decision responsibility / Evita la responsabilidad",
-"Reduces cognitive control / Reduce el control cognitivo"
-]},
-
-{"t":"r","tx":"+Character","p":20}
-]},
-
-
-{"id":20,"cat":"discipline","b":[
-{"t":"v","tx":{"en":"Today: DISCIPLINE","es":"Hoy: DISCIPLINA"}},
-{"t":"h","tx":{"en":"You feel like quitting","es":"Sientes ganas de rendirte"}},
-
-{"t":"br","tx":{"en":"Inhale","es":"Inhala"},"d":3},
-{"t":"br","tx":{"en":"Exhale","es":"Exhala"},"d":3},
-
-{"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
-"op":["Quit","Continue","Delay","Avoid"],
-"c":1,
-"ex":[
-"Weak habit reinforcement / Refuerzo de hábito débil",
-"Neuroplasticity strengthening loop / Refuerzo de neuroplasticidad",
-"Consistency break / Rompe la consistencia",
-"No growth cycle / Sin ciclo de crecimiento"
-]},
-
-{"t":"r","tx":"+Discipline","p":20},
-
-{"t":"v","tx":{"en":"2 MIN SILENCE TRAINING","es":"ENTRENAMIENTO 2 MIN SILENCIO"}},
-
-{"t":"sil","d":120,
-"tx":{"en":"Observe thoughts without reaction","es":"Observa pensamientos sin reaccionar"},
-"inf":{
-"en":"Strengthens executive control and impulse inhibition / Fortalece el control ejecutivo e inhibición de impulsos",
-"es":"Fortalece control ejecutivo e inhibición de impulsos"
-}
-}
-]},
-
-
-{"id":21,"cat":"mastery","b":[
-{"t":"v","tx":{"en":"Today: SELF MASTERY","es":"Hoy: MAESTRÍA PERSONAL"}},
-{"t":"h","tx":{"en":"You must control yourself","es":"Debes controlarte a ti mismo"}},
-
-{"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
-"op":["React","Self control","Escape","Ignore"],
-"c":1,
-"ex":[
-"Automatic reaction system / Sistema de reacción automática",
-"Executive brain activation (true control) / Activación del cerebro ejecutivo (control real)",
-"Avoids learning / Evita el aprendizaje",
-"No awareness state / Sin estado de conciencia"
-]},
-
-{"t":"r","tx":"+Mastery","p":20},
-
-{"t":"v","tx":{"en":"FINAL SILENCE CHALLENGE","es":"RETO FINAL DE SILENCIO"}},
-
-{"t":"br","tx":{"en":"Deep inhale","es":"Inhala profundo"},"d":6},
-{"t":"br","tx":{"en":"Hold","es":"Retén"},"d":3},
-{"t":"br","tx":{"en":"Slow exhale","es":"Exhala lento"},"d":6},
-
-{"t":"br","tx":{"en":"Short inhale","es":"Inhala corto"},"d":3},
-{"t":"br","tx":{"en":"Long exhale","es":"Exhala largo"},"d":6},
-
-{"t":"sil","d":120,
-"tx":{"en":"Observe without reacting","es":"Observa sin reaccionar"},
-"inf":{
-"en":"Builds metacognition and emotional regulation / Construye metacognición y regulación emocional",
-"es":"Desarrolla metacognición y regulación emocional"
-}
-},
-
-{"t":"c","tx":{"en":"Self mastery = life control","es":"Maestría personal = control de vida"}}
-]}
-
-]}
