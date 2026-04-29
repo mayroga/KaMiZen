@@ -28,13 +28,11 @@ body {
 .correct-flash { background:#002a00 !important; }
 .wrong-flash { background:#2a0000 !important; }
 
-/* =========================
-   ANSWER COLOR SYSTEM (ADDED)
-========================= */
-.opt-green { border:3px solid var(--neon-green) !important; color:var(--neon-green) !important; }
-.opt-yellow { border:3px solid var(--neon-yellow) !important; color:var(--neon-yellow) !important; }
-.opt-orange { border:3px solid orange !important; color:orange !important; }
-.opt-red { border:3px solid var(--neon-red) !important; color:var(--neon-red) !important; }
+/* ANSWER COLORS (ONLY AFTER CLICK) */
+.opt-green { border:3px solid var(--neon-green)!important; color:var(--neon-green)!important; }
+.opt-yellow { border:3px solid var(--neon-yellow)!important; color:var(--neon-yellow)!important; }
+.opt-orange { border:3px solid orange!important; color:orange!important; }
+.opt-red { border:3px solid var(--neon-red)!important; color:var(--neon-red)!important; }
 
 #security-alert {
     position:fixed;
@@ -181,9 +179,7 @@ body {
     cursor:pointer;
 }
 
-.choice-btn.locked {
-    opacity:0.6;
-}
+.choice-btn.locked { opacity:0.6; }
 
 #continue-btn{
     margin-top:20px;
@@ -195,30 +191,40 @@ body {
     cursor:pointer;
 }
 
-#breath-circle{
+/* BREATH */
+#breath-container{
     position:fixed;
     top:50%;
     left:50%;
     transform:translate(-50%,-50%);
-    width:180px;
-    height:180px;
-    border-radius:50%;
-    border:4px solid var(--neon-blue);
+    width:320px;
+    height:320px;
     display:none;
     align-items:center;
     justify-content:center;
-    text-align:center;
-    font-weight:bold;
-    color:var(--neon-blue);
-    animation:pulse 4s infinite;
     z-index:9999;
-    background:rgba(0,0,0,0.9);
+    pointer-events:none;
 }
 
-@keyframes pulse{
-    0%{transform:translate(-50%,-50%) scale(1);opacity:0.5;}
-    50%{transform:translate(-50%,-50%) scale(1.4);opacity:1;}
-    100%{transform:translate(-50%,-50%) scale(1);opacity:0.5;}
+#breath-circle{
+    width:120px;
+    height:120px;
+    border-radius:50%;
+    border:4px solid var(--neon-blue);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:bold;
+    color:var(--neon-blue);
+    background:rgba(0,0,0,0.9);
+    box-shadow:0 0 40px var(--neon-blue);
+    animation:breathAnim 6s ease-in-out infinite;
+}
+
+@keyframes breathAnim{
+    0%{transform:scale(0.7);opacity:0.6;}
+    50%{transform:scale(1.4);opacity:1;}
+    100%{transform:scale(0.7);opacity:0.6;}
 }
 </style>
 </head>
@@ -243,7 +249,9 @@ body {
     <div class="stat-pill">Happiness: <span id="v-happy">50</span>%</div>
 </div>
 
-<div id="breath-circle">INHALE</div>
+<div id="breath-container">
+    <div id="breath-circle">INHALE</div>
+</div>
 
 <div id="overlay">
     <h1 id="phase-title"></h1>
@@ -256,142 +264,48 @@ body {
 
 <script>
 
-/* =========================
-   AUDIO ENGINE (ADDED)
-========================= */
-const AudioEngine={
-    ctx:null,
-    init(){
-        if(this.ctx) return;
-        this.ctx=new (window.AudioContext||window.webkitAudioContext)();
-        this.music();
-    },
-    music(){
-        const notes=[220,261,293,329,392,440,523];
-        const loop=()=>{
-            if(!this.ctx) return;
-            let o=this.ctx.createOscillator();
-            let g=this.ctx.createGain();
-
-            o.type="sine";
-            o.frequency.value=notes[Math.floor(Math.random()*notes.length)];
-            g.gain.value=0.03;
-
-            o.connect(g);
-            g.connect(this.ctx.destination);
-
-            o.start();
-            o.stop(this.ctx.currentTime+0.3);
-
-            setTimeout(loop,300);
-        };
-        loop();
-    },
-    click(){
-        if(!this.ctx) return;
-        let o=this.ctx.createOscillator();
-        let g=this.ctx.createGain();
-
-        o.type="triangle";
-        o.frequency.value=800;
-        g.gain.value=0.08;
-
-        o.connect(g);
-        g.connect(this.ctx.destination);
-
-        o.start();
-        o.stop(this.ctx.currentTime+0.1);
-    },
-    explode(){
-        if(!this.ctx) return;
-        let buffer=this.ctx.createBuffer(1,this.ctx.sampleRate*0.1,this.ctx.sampleRate);
-        let data=buffer.getChannelData(0);
-        for(let i=0;i<data.length;i++) data[i]=Math.random()*2-1;
-
-        let noise=this.ctx.createBufferSource();
-        noise.buffer=buffer;
-
-        let g=this.ctx.createGain();
-        g.gain.value=0.2;
-
-        noise.connect(g);
-        g.connect(this.ctx.destination);
-
-        noise.start();
-    }
-};
-
+const AudioEngine={ctx:null,init(){if(this.ctx)return;this.ctx=new(window.AudioContext||window.webkitAudioContext)();this.music();},music(){const notes=[220,261,293,329,392,440,523];const loop=()=>{if(!this.ctx)return;let o=this.ctx.createOscillator();let g=this.ctx.createGain();o.type="sine";o.frequency.value=notes[Math.floor(Math.random()*notes.length)];g.gain.value=0.03;o.connect(g);g.connect(this.ctx.destination);o.start();o.stop(this.ctx.currentTime+0.3);setTimeout(loop,300);};loop();},click(){if(!this.ctx)return;let o=this.ctx.createOscillator();let g=this.ctx.createGain();o.type="triangle";o.frequency.value=800;g.gain.value=0.08;o.connect(g);g.connect(this.ctx.destination);o.start();o.stop(this.ctx.currentTime+0.1);},explode(){if(!this.ctx)return;let buffer=this.ctx.createBuffer(1,this.ctx.sampleRate*0.1,this.ctx.sampleRate);let data=buffer.getChannelData(0);for(let i=0;i<data.length;i++)data[i]=Math.random()*2-1;let noise=this.ctx.createBufferSource();noise.buffer=buffer;let g=this.ctx.createGain();g.gain.value=0.2;noise.connect(g);g.connect(this.ctx.destination);noise.start();}};
 document.addEventListener("click",()=>AudioEngine.init(),{once:true});
 
+let lang="en";let gameMode="idle";
+
+let state={score:0,mastery:1,timer:300,stats:{respect:50,peace:50,lead:50,money:100,happy:50,safety:100},spawnRate:1300};
+
+function speak(t){if(!t)return;let u=new SpeechSynthesisUtterance(t);u.lang="en-US";speechSynthesis.cancel();speechSynthesis.speak(u);}
+
+function updateHUD(){document.getElementById("score-box").innerText=state.score;let m=Math.floor(state.timer/60);let s=state.timer%60;document.getElementById("timer-box").innerText=String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");for(let k in state.stats){let el=document.getElementById("v-"+k);if(el)el.innerText=state.stats[k];}}
+
+async function breathingExercise(duration=18000,withVoice=true){
+let container=document.getElementById("breath-container");
+let c=document.getElementById("breath-circle");
+let desc=document.getElementById("phase-desc");
+
+container.style.display="flex";
+
+let cycles=duration/6000;
+
+for(let i=0;i<cycles;i++){
+c.innerText="INHALE";
+desc.innerText="Oxygen enters blood. Brain focus increases.";
+if(withVoice)speak("Inhale slowly");
+await new Promise(r=>setTimeout(r,3000));
+
+c.innerText="EXHALE";
+desc.innerText="Stress leaves body. Nervous system resets.";
+if(withVoice)speak("Exhale slowly");
+await new Promise(r=>setTimeout(r,3000));
+}
+
+container.style.display="none";
+}
+
+const words={power:["LISTEN FIRST","STAY CALM","THINK BEFORE","CONTROL EMOTION","RESPECT OTHERS"],risk:["REACT ANGRY","BLAME OTHERS","LOSE CONTROL","FOLLOW CROWD"],silence:["OBSERVE PEOPLE","BREATHE DEEP","WAIT MOMENT","INNER CONTROL"],money:["INVEST SMART","BUILD VALUE","CASHFLOW","SAVE MONEY","THINK SCALE"],business:["BUILD SYSTEM","SELL VALUE","LEAD MARKET","BRAND POWER","EXPAND NETWORK"],growth:["LEARN FAST","IMPROVE DAILY","BUILD SKILL","LONG TERM THINK"]};
+
 /* =========================
-   ORIGINAL CODE (UNTOUCHED)
+   UPDATED SPAWN WORD ONLY
 ========================= */
-
-let lang="en";
-let gameMode="idle";
-
-let state={
-    score:0,
-    mastery:1,
-    timer:300,
-    stats:{respect:50,peace:50,lead:50,money:100,happy:50,safety:100},
-    spawnRate:1300
-};
-
-function speak(t){
-    if(!t) return;
-    let u=new SpeechSynthesisUtterance(t);
-    u.lang="en-US";
-    speechSynthesis.cancel();
-    speechSynthesis.speak(u);
-}
-
-function updateHUD(){
-    document.getElementById("score-box").innerText=state.score;
-    let m=Math.floor(state.timer/60);
-    let s=state.timer%60;
-    document.getElementById("timer-box").innerText=
-        String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
-    for(let k in state.stats){
-        let el=document.getElementById("v-"+k);
-        if(el) el.innerText=state.stats[k];
-    }
-}
-
-async function breathingExercise(duration=18000, withVoice=true){
-    let c=document.getElementById("breath-circle");
-    let desc=document.getElementById("phase-desc");
-
-    c.style.display="flex";
-
-    let cycles = duration / 6000;
-
-    for(let i=0;i<cycles;i++){
-        c.innerText="INHALE";
-        desc.innerText="Oxygen enters blood. Brain focus increases.";
-        if(withVoice) speak("Inhale slowly");
-        await new Promise(r=>setTimeout(r,3000));
-
-        c.innerText="EXHALE";
-        desc.innerText="Stress leaves body. Nervous system resets.";
-        if(withVoice) speak("Exhale slowly");
-        await new Promise(r=>setTimeout(r,3000));
-    }
-
-    c.style.display="none";
-}
-
-const words={
-power:["LISTEN FIRST","STAY CALM","THINK BEFORE","CONTROL EMOTION","RESPECT OTHERS"],
-risk:["REACT ANGRY","BLAME OTHERS","LOSE CONTROL","FOLLOW CROWD"],
-silence:["OBSERVE PEOPLE","BREATHE DEEP","WAIT MOMENT","INNER CONTROL"],
-money:["INVEST SMART","BUILD VALUE","CASHFLOW","SAVE MONEY","THINK SCALE"],
-business:["BUILD SYSTEM","SELL VALUE","LEAD MARKET","BRAND POWER","EXPAND NETWORK"],
-growth:["LEARN FAST","IMPROVE DAILY","BUILD SKILL","LONG TERM THINK"]
-};
-
 function spawnWord(){
-if(gameMode!=="words") return;
+if(gameMode!=="words")return;
 
 const cats=["power","risk","silence","money","business","growth"];
 const styles=["word-power","word-risk","word-silence","word-money","word-business","word-growth"];
@@ -400,10 +314,37 @@ const c=cats[Math.floor(Math.random()*cats.length)];
 let div=document.createElement("div");
 div.className="floating "+styles[cats.indexOf(c)];
 div.innerText=words[c][Math.floor(Math.random()*words[c].length)];
-div.style.left=Math.random()*80+"vw";
 
+/* direction movement */
+let x=Math.random()*80;
+let y=110;
+let dx=(Math.random()*2-1)*0.5;
+let dy=-0.6;
+
+function move(){
+x+=dx;
+y+=dy;
+
+if(x<0||x>90)dx*=-1;
+if(Math.random()<0.01){dx=(Math.random()*2-1)*0.6;dy=-0.6;}
+
+div.style.left=x+"vw";
+div.style.top=y+"vh";
+
+requestAnimationFrame(move);
+}
+move();
+
+/* trap word */
+let isTrap=false;
+if(Math.random()<0.12 && c==="risk"){
+isTrap=true;
+div.className="floating word-power";
+}
+
+/* one-time color change ONLY on click */
 div.onclick=()=>{
-if(div.dataset.clicked) return;
+if(div.dataset.clicked)return;
 div.dataset.clicked=true;
 div.classList.add("explode");
 
@@ -411,17 +352,21 @@ AudioEngine.click();
 setTimeout(()=>AudioEngine.explode(),50);
 
 let positive=["power","silence","money","business","growth"].includes(c);
-state.score+=positive?20:-10;
 
-if(c==="money") state.stats.money++;
-if(c==="business") state.stats.lead++;
-if(c==="growth") state.stats.happy++;
-if(c==="power") state.stats.respect++;
-if(c==="risk") state.stats.safety--;
-if(c==="silence") state.stats.peace++;
+if(isTrap){
+state.score=Math.floor(state.score*0.3);
+}else{
+state.score+=positive?20:-10;
+}
+
+if(c==="money")state.stats.money++;
+if(c==="business")state.stats.lead++;
+if(c==="growth")state.stats.happy++;
+if(c==="power")state.stats.respect++;
+if(c==="risk")state.stats.safety--;
+if(c==="silence")state.stats.peace++;
 
 updateHUD();
-setTimeout(()=>div.remove(),500);
 };
 
 document.body.appendChild(div);
@@ -431,7 +376,7 @@ setTimeout(()=>div.remove(),7000);
 async function triggerQuestion(){
 const res=await fetch("/api/mission/next?lang="+lang);
 const data=await res.json();
-if(!data||!data.options) return;
+if(!data||!data.options)return;
 
 let overlay=document.getElementById("overlay");
 let grid=document.getElementById("decision-grid");
@@ -446,12 +391,8 @@ cont.style.display="none";
 title.innerText=data.theme;
 desc.innerText=data.story;
 
-if(desc.innerText.toLowerCase().includes("inhale")){
-    await breathingExercise(18000,true);
-}
-if(desc.innerText.toLowerCase().includes("silence")){
-    await breathingExercise(18000,false);
-}
+if(desc.innerText.toLowerCase().includes("inhale"))await breathingExercise(18000,true);
+if(desc.innerText.toLowerCase().includes("silence"))await breathingExercise(18000,false);
 
 let answered=false;
 
@@ -460,19 +401,8 @@ let btn=document.createElement("button");
 btn.className="choice-btn";
 btn.innerText=opt.text.en;
 
-/* =========================
-   COLOR + EXPLANATION SYSTEM (UPDATED)
-========================= */
-if(opt.correct){
-    btn.classList.add("opt-green");
-} else {
-    // fallback (no backend grading available)
-    btn.classList.add("opt-red");
-}
-
 btn.onclick=()=>{
 AudioEngine.click();
-
 let exp=opt.explanation.en;
 desc.innerText=exp;
 speak(exp);
@@ -480,17 +410,13 @@ speak(exp);
 if(!answered){
 answered=true;
 
-if(opt.correct){
-state.score+=30;
-document.body.classList.add("correct-flash");
-}else{
-state.score-=20;
-document.body.classList.add("wrong-flash");
-}
+btn.classList.add(opt.correct?"opt-green":"opt-red");
 
-setTimeout(()=>{
-document.body.classList.remove("correct-flash","wrong-flash");
-},500);
+state.score+=opt.correct?30:-20;
+
+document.body.classList.add(opt.correct?"correct-flash":"wrong-flash");
+
+setTimeout(()=>document.body.classList.remove("correct-flash","wrong-flash"),500);
 
 document.querySelectorAll(".choice-btn").forEach(b=>b.classList.add("locked"));
 cont.style.display="block";
@@ -507,12 +433,10 @@ overlay.style.display="none";
 };
 }
 
-function resetTimer(){
-state.timer=300;
-}
+function resetTimer(){state.timer=300;}
 
 setInterval(()=>{
-if(state.timer>0 && gameMode==="words"){
+if(state.timer>0&&gameMode==="words"){
 state.timer--;
 updateHUD();
 }
@@ -520,12 +444,10 @@ updateHUD();
 
 async function mainLoop(){
 while(true){
-
 resetTimer();
 gameMode="words";
 
 let end=Date.now()+45000;
-
 while(Date.now()<end){
 spawnWord();
 await new Promise(r=>setTimeout(r,state.spawnRate));
@@ -535,7 +457,6 @@ document.querySelectorAll(".floating").forEach(e=>e.remove());
 
 gameMode="question";
 await triggerQuestion();
-
 await new Promise(r=>setTimeout(r,3000));
 }
 }
@@ -550,71 +471,8 @@ mainLoop();
 
 </script>
 
-<!-- =========================
-     ENGINE.JS MERGED (RAW COPY - NO CHANGES)
-========================= -->
 <script>
-const KamizenEngine = (() => {
-
-    const state = {
-        lang: "en"
-    };
-
-    function toggleLang() {
-        state.lang = (state.lang === "en") ? "es" : "en";
-        const btn = document.getElementById("lang-btn");
-        if (btn) btn.innerText = state.lang.toUpperCase();
-    }
-
-    function getLang() {
-        return state.lang;
-    }
-
-    function speak(text) {
-        if (!text) return;
-        try {
-            const msg = new SpeechSynthesisUtterance(text);
-            msg.lang = state.lang === "es" ? "es-ES" : "en-US";
-            speechSynthesis.cancel();
-            speechSynthesis.speak(msg);
-        } catch (e) {}
-    }
-
-    async function fetchMission() {
-        try {
-            const res = await fetch(`/api/mission/next?lang=${state.lang}`);
-            if (!res.ok) return null;
-            return await res.json();
-        } catch (e) {
-            return null;
-        }
-    }
-
-    function applyResult(stateRef, opt) {
-        if (!opt || !stateRef) return;
-
-        stateRef.score += opt.score || 0;
-
-        if (opt.correct) {
-            stateRef.stats.respect++;
-            stateRef.stats.happy++;
-        } else {
-            stateRef.stats.safety--;
-        }
-    }
-
-    return {
-        state,
-        toggleLang,
-        getLang,
-        speak,
-        fetchMission,
-        applyResult
-    };
-
-})();
-
-window.KamizenEngine = KamizenEngine;
+const KamizenEngine=(()=>{const state={lang:"en"};function toggleLang(){state.lang=(state.lang==="en")?"es":"en";const btn=document.getElementById("lang-btn");if(btn)btn.innerText=state.lang.toUpperCase();}function getLang(){return state.lang;}function speak(text){if(!text)return;try{const msg=new SpeechSynthesisUtterance(text);msg.lang=state.lang==="es"?"es-ES":"en-US";speechSynthesis.cancel();speechSynthesis.speak(msg);}catch(e){}}async function fetchMission(){try{const res=await fetch(`/api/mission/next?lang=${state.lang}`);if(!res.ok)return null;return await res.json();}catch(e){return null;}}function applyResult(stateRef,opt){if(!opt||!stateRef)return;stateRef.score+=opt.score||0;if(opt.correct){stateRef.stats.respect++;stateRef.stats.happy++;}else{stateRef.stats.safety--;}}return{state,toggleLang,getLang,speak,fetchMission,applyResult};})();window.KamizenEngine=KamizenEngine;
 </script>
 
 </body>
