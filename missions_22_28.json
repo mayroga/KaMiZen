@@ -8,100 +8,167 @@
 "ses":[
 
 {"id":22,"cat":"aware","b":[
-{"t":"v","tx":"Hoy: CONCIENCIA."},
-{"t":"h","tx":"Hay un detalle oculto."},
-{"t":"d","q":"¿Qué haces?","op":["Ignorar","Observar","Correr","Adivinar"],"c":1,
-"ex":["Ignorar=pierdes información clave.","Observar=detectas patrones (ventaja mental).","Correr=evitas entender.","Adivinar=sin lógica, más error."]},
-{"t":"r","tx":"+Awareness","p":20},
-{"t":"c","tx":"Ver más = saber más."}
+{"t":"v","tx":"Today: AWARENESS / Hoy: CONCIENCIA."},
+{"t":"h","tx":"There is a hidden detail / Hay un detalle oculto."},
+
+{"t":"d","q":"What do you do? / ¿Qué haces?",
+"op":["Ignore / Ignorar","Observe / Observar","Run / Correr","Guess / Adivinar"],
+"c":1,
+"ex":[
+"Ignore = lose key information / pierdes información clave.",
+"Observe = detect patterns (mental advantage) / detectas patrones (ventaja mental).",
+"Run = avoid understanding / evitas entender.",
+"Guess = no logic, more error / sin lógica, más error."
 ]},
 
+{"t":"r","tx":"+Awareness / +Conciencia","p":20},
+{"t":"c","tx":"See more = know more / Ver más = saber más."}
+]},
+
+
 {"id":23,"cat":"emotion","b":[
-{"t":"v","tx":"Hoy: CONTROL EMOCIONAL."},
-{"t":"h","tx":"Emoción sube rápido."},
+{"t":"v","tx":"Today: EMOTIONAL CONTROL / Hoy: CONTROL EMOCIONAL."},
+{"t":"h","tx":"Emotion rises fast / La emoción sube rápido."},
 
 {"t":"br","tx":"Inhale / Inhala","d":5},
 {"t":"br","tx":"Exhale / Exhala","d":5,
-"inf":"Activates parasympathetic system / Activa sistema parasimpático → reduces stress hormones (cortisol)"},
+"inf":"Activates parasympathetic system / Activa sistema parasimpático → reduces stress hormones (cortisol) / reduce hormonas del estrés (cortisol)"},
 
-{"t":"d","q":"¿Qué haces?","op":["Explotar","Respirar","Gritar","Escapar"],"c":1,
-"ex":["Explotar=emoción domina.","Respirar=regula sistema nervioso.","Gritar=aumenta caos.","Escapar=sin control real."]},
-
-{"t":"r","tx":"+Control","p":20},
-{"t":"c","tx":"Respirar = reset mental."}
+{"t":"d","q":"What do you do? / ¿Qué haces?",
+"op":["Explode / Explotar","Breathe / Respirar","Scream / Gritar","Escape / Escapar"],
+"c":1,
+"ex":[
+"Explode = emotion dominates / la emoción domina.",
+"Breathe = regulates nervous system / regula el sistema nervioso.",
+"Scream = increases chaos / aumenta el caos.",
+"Escape = no real control / sin control real."
 ]},
+
+{"t":"r","tx":"+Control / +Control","p":20},
+{"t":"c","tx":"Breathing = mental reset / Respirar = reset mental."}
+]},
+
 
 {"id":24,"cat":"decision","b":[
-{"t":"v","tx":"Hoy: DECISIÓN."},
-{"t":"h","tx":"Tiempo limitado."},
-{"t":"d","q":"¿Qué haces?","op":["Apresurar","Pensar","Aleatorio","Parar"],"c":1,
-"ex":["Apresurar=errores.","Pensar=precisión (prefrontal cortex active).","Aleatorio=sin control.","Parar=no resuelve."]},
-{"t":"r","tx":"+Claridad","p":20},
-{"t":"c","tx":"Pensar antes = mejores resultados."}
+{"t":"v","tx":"Today: DECISION / Hoy: DECISIÓN."},
+{"t":"h","tx":"Limited time / Tiempo limitado."},
+
+{"t":"d","q":"What do you do? / ¿Qué haces?",
+"op":["Rush / Apresurar","Think / Pensar","Random / Aleatorio","Stop / Parar"],
+"c":1,
+"ex":[
+"Rushing = errors / errores.",
+"Thinking = precision (prefrontal cortex active) / precisión (corteza prefrontal activa).",
+"Random = no control / sin control.",
+"Stopping = no solution / no resuelve."
 ]},
+
+{"t":"r","tx":"+Clarity / +Claridad","p":20},
+{"t":"c","tx":"Think first = better results / Pensar antes = mejores resultados."}
+]},
+
 
 {"id":25,"cat":"learn","b":[
-{"t":"v","tx":"Hoy: ERROR."},
-{"t":"h","tx":"Te equivocas."},
-{"t":"d","q":"¿Qué haces?","op":["Ignorar","Aprender","Culpar","Ocultar"],"c":1,
-"ex":["Ignorar=repites error.","Aprender=neuroplasticidad activa crecimiento.","Culpar=pierdes poder.","Ocultar=crece problema."]},
-{"t":"r","tx":"+Aprendizaje","p":20},
-{"t":"c","tx":"Error = oportunidad."}
+{"t":"v","tx":"Today: ERROR / Hoy: ERROR."},
+{"t":"h","tx":"You make a mistake / Cometes un error."},
+
+{"t":"d","q":"What do you do? / ¿Qué haces?",
+"op":["Ignore / Ignorar","Learn / Aprender","Blame / Culpar","Hide / Ocultar"],
+"c":1,
+"ex":[
+"Ignore = repeat error / repites el error.",
+"Learn = neuroplasticity activates growth / neuroplasticidad activa crecimiento.",
+"Blame = lose power / pierdes poder.",
+"Hide = problem grows / el problema crece."
 ]},
 
+{"t":"r","tx":"+Learning / +Aprendizaje","p":20},
+{"t":"c","tx":"Error = opportunity / Error = oportunidad."}
+]},
+
+
 {"t":"br","tx":"--- SILENCE TRAINING BLOCK A ---","d":60,
-"inf_en":"1 minute silence: improves attention stability and impulse control (prefrontal activation)",
-"inf_es":"1 minuto de silencio: mejora atención y control de impulsos (activación prefrontal)"},
+"inf_en":"1 minute silence improves attention stability and impulse control (prefrontal activation)",
+"inf_es":"1 minuto de silencio mejora atención y control de impulsos (activación prefrontal)"},
+
 
 {"id":26,"cat":"mind","b":[
-{"t":"v","tx":"Hoy: MENTE."},
-{"t":"h","tx":"Pensamientos caóticos."},
+{"t":"v","tx":"Today: MIND / Hoy: MENTE."},
+{"t":"h","tx":"Chaotic thoughts / Pensamientos caóticos."},
 
 {"t":"br","tx":"Inhale / Inhala","d":4},
 {"t":"br","tx":"Exhale / Exhala","d":4,
 "inf":"Regulates amygdala response / Regula la amígdala reduciendo reactividad emocional"},
 
-{"t":"d","q":"¿Qué haces?","op":["Reaccionar","Ordenar","Escapar","Ignorar"],"c":1,
-"ex":["Reaccionar=aumenta caos.","Ordenar=claridad mental.","Escapar=no resuelve.","Ignorar=empeora ruido mental."]},
-
-{"t":"r","tx":"+Claridad","p":20},
-{"t":"c","tx":"Orden mental = control."}
+{"t":"d","q":"What do you do? / ¿Qué haces?",
+"op":["React / Reaccionar","Organize / Ordenar","Escape / Escapar","Ignore / Ignorar"],
+"c":1,
+"ex":[
+"React = increases chaos / aumenta el caos.",
+"Organize = mental clarity / claridad mental.",
+"Escape = no solution / no resuelve.",
+"Ignore = worsens mental noise / empeora el ruido mental."
 ]},
+
+{"t":"r","tx":"+Clarity / +Claridad","p":20},
+{"t":"c","tx":"Order = control / Orden = control."}
+]},
+
 
 {"id":27,"cat":"calm","b":[
-{"t":"v","tx":"Hoy: CALMA."},
-{"t":"h","tx":"Conflicto aparece."},
-{"t":"d","q":"¿Qué haces?","op":["Pelear","Calma","Correr","Gritar"],"c":1,
-"ex":["Pelear=escalas problema.","Calma=regulación emocional superior.","Correr=evitas resolver.","Gritar=menos influencia."]},
-{"t":"r","tx":"+Calma","p":20},
-{"t":"c","tx":"La calma gana siempre."}
+{"t":"v","tx":"Today: CALM / Hoy: CALMA."},
+{"t":"h","tx":"Conflict appears / Aparece conflicto."},
+
+{"t":"d","q":"What do you do? / ¿Qué haces?",
+"op":["Fight / Pelear","Calm / Calma","Run / Correr","Scream / Gritar"],
+"c":1,
+"ex":[
+"Fight = escalates problem / escala el problema.",
+"Calm = superior emotional regulation / regulación emocional superior.",
+"Run = avoids solution / evita resolver.",
+"Scream = less influence / menos influencia."
 ]},
 
+{"t":"r","tx":"+Calm / +Calma","p":20},
+{"t":"c","tx":"Calm always wins / La calma siempre gana."}
+]},
+
+
 {"t":"br","tx":"--- SILENCE TRAINING BLOCK B ---","d":120,
-"inf_en":"2 minutes silence: strengthens neuroplasticity and emotional regulation pathways",
-"inf_es":"2 minutos de silencio: fortalece neuroplasticidad y control emocional cerebral"},
+"inf_en":"2 minutes silence strengthens neuroplasticity and emotional regulation pathways",
+"inf_es":"2 minutos de silencio fortalecen neuroplasticidad y rutas de regulación emocional cerebral"},
+
 
 {"id":28,"cat":"final","b":[
-{"t":"v","tx":"Hoy: CONEXIÓN TOTAL."},
-{"t":"h","tx":"Todo está conectado."},
-{"t":"d","q":"¿Qué haces?","op":["Ignorar","Entender","Escapar","Reaccionar"],"c":1,
-"ex":["Ignorar=sin conciencia.","Entender=visión completa.","Escapar=evitas realidad.","Reaccionar=sin análisis."]},
-{"t":"r","tx":"+Visión","p":20},
+{"t":"v","tx":"Today: TOTAL CONNECTION / Hoy: CONEXIÓN TOTAL."},
+{"t":"h","tx":"Everything is connected / Todo está conectado."},
 
-{"t":"v","tx":"RETO FINAL: SILENCIO Y VISIÓN."},
+{"t":"d","q":"What do you do? / ¿Qué haces?",
+"op":["Ignore / Ignorar","Understand / Entender","Escape / Escapar","React / Reaccionar"],
+"c":1,
+"ex":[
+"Ignore = no awareness / sin conciencia.",
+"Understand = full vision / visión completa.",
+"Escape = avoid reality / evitas la realidad.",
+"React = no analysis / sin análisis."
+]},
 
-{"t":"br","tx":"Inhale / Inhala profundo","d":6,
+{"t":"r","tx":"+Vision / +Visión","p":20},
+
+{"t":"v","tx":"FINAL CHALLENGE: SILENCE & VISION / RETO FINAL: SILENCIO Y VISIÓN."},
+
+{"t":"br","tx":"Inhale / Inhala deep","d":6,
 "inf":"Activates parasympathetic nervous system / Activa sistema parasimpático"},
 {"t":"br","tx":"Hold / Retén","d":3,
 "inf":"Trains impulse control / Entrena control de impulsos"},
-{"t":"br","tx":"Exhale / Exhala lento","d":6,
-"inf":"Lowers heart rate / Reduce ritmo cardíaco"},
+{"t":"br","tx":"Exhale / Exhala slow","d":6,
+"inf":"Reduces heart rate / Reduce ritmo cardíaco"},
 
 {"t":"sil","d":120,
 "tx":"Silent observation / Observación silenciosa",
 "inf":"Metacognition training / Entrenamiento de metacognición"},
 
-{"t":"c","tx":"Ver todo = dominar todo."}
+{"t":"c","tx":"See everything = master everything / Ver todo = dominar todo."}
 ]}
 
 ]}
