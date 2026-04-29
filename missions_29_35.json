@@ -1,5 +1,7 @@
 {
-"sys":"KAMIZEN KIDS","ch":4,"rng":"29-35",
+"sys":"KAMIZEN KIDS",
+"ch":4,
+"rng":"29-35",
 
 "ui":{"fw":["DISCIPLINE","AWARENESS","CALM","FOCUS","TRUTH","CONTROL","ACTION","PAUSE"]},
 
@@ -8,170 +10,176 @@
 "ses":[
 
 {"id":29,"cat":"emotion","b":[
-{"t":"v","tx":"Today: EMOTIONAL TRAP / Hoy: TRAMPA EMOCIONAL."},
-{"t":"h","tx":"You are insulted in public / Te insultan en público."},
+{"t":"v","tx":{"en":"Today: EMOTIONAL TRAP","es":"Hoy: TRAMPA EMOCIONAL"}},
+{"t":"h","tx":{"en":"You are insulted in public","es":"Te insultan en público"}},
 
-{"t":"br","tx":"Inhale / Inhala","d":5},
-{"t":"br","tx":"Exhale / Exhala","d":5,
-"inf":"Parasympathetic activation / Activación del sistema parasimpático → reduces cortisol and emotional reactivity / reduce cortisol y reactividad emocional"},
+{"t":"br","tx":{"en":"Inhale","es":"Inhala"},"d":5},
+{"t":"br","tx":{"en":"Exhale","es":"Exhala"},"d":5,
+"inf":{"en":"Parasympathetic activation → reduces cortisol and emotional reactivity",
+"es":"Activación parasimpática → reduce cortisol y reactividad emocional"}},
 
-{"t":"d","q":"What do you do? / ¿Qué haces?",
-"op":["Explode / Explotar","Ignore / Ignorar","Breathe / Respirar","Attack / Atacar"],
+{"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
+"op":["Explode","Ignore","Breathe","Attack"],
 "c":2,
 "ex":[
-"Explode = lose control / pierdes control.",
-"Ignore without awareness = no learning / sin conciencia no aprendes control.",
-"Breathe = regulates emotion (real control) / regula emoción (control real).",
-"Attack = escalates conflict / escala el conflicto."
+"Explode = lose control",
+"Ignore without awareness = no learning",
+"Breathe = regulates emotion (real control)",
+"Attack = escalates conflict"
 ]},
 
-{"t":"r","tx":"+Control / +Control","p":20},
-{"t":"c","tx":"Emotional control = power / Control emocional = poder."}
+{"t":"r","tx":"+Control","p":20},
+{"t":"c","tx":{"en":"Emotional control = power","es":"Control emocional = poder"}}
 ]},
-
 
 {"id":30,"cat":"focus","b":[
-{"t":"v","tx":"Today: FOCUS / Hoy: ENFOQUE."},
-{"t":"h","tx":"Distractions appear / Aparecen distracciones."},
+{"t":"v","tx":{"en":"Today: FOCUS","es":"Hoy: ENFOQUE"}},
+{"t":"h","tx":{"en":"Distractions appear","es":"Aparecen distracciones"}},
 
-{"t":"d","q":"What do you do? / ¿Qué haces?",
-"op":["Multitask / Multitarea","Stop / Parar","Focus / Enfocar","Phone / Teléfono"],
+{"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
+"op":["Multitask","Stop","Focus","Phone"],
 "c":2,
 "ex":[
-"Multitasking = low performance / baja rendimiento.",
-"Stopping = no progress / sin progreso.",
-"Focusing = improves attention network (prefrontal cortex) / mejora red atencional (corteza prefrontal).",
-"Phone = breaks mental flow / rompe el flujo mental."
+"Multitasking = low performance",
+"Stopping = no progress",
+"Focusing = improves attention network (prefrontal cortex)",
+"Phone = breaks mental flow"
 ]},
 
-{"t":"r","tx":"+Focus / +Enfoque","p":20},
-{"t":"c","tx":"Attention = energy / Atención = energía."}
+{"t":"r","tx":"+Focus","p":20},
+{"t":"c","tx":{"en":"Attention = energy","es":"Atención = energía"}}
 ]},
 
-
-{"t":"br","tx":"--- SILENCE BLOCK A ---","d":60,
-"inf_en":"1 minute silence improves attention stability and impulse inhibition",
-"inf_es":"1 minuto de silencio mejora atención y control de impulsos"},
-
+{"t":"br",
+"tx":{"en":"--- SILENCE BLOCK A ---","es":"--- BLOQUE DE SILENCIO A ---"},
+"d":60,
+"inf":{
+"en":"1 minute silence improves attention stability and impulse inhibition",
+"es":"1 minuto de silencio mejora atención y control de impulsos"
+}
+},
 
 {"id":31,"cat":"truth","b":[
-{"t":"v","tx":"Today: TRUTH / Hoy: VERDAD."},
-{"t":"h","tx":"Hidden mistake / Error oculto."},
+{"t":"v","tx":{"en":"Today: TRUTH","es":"Hoy: VERDAD"}},
+{"t":"h","tx":{"en":"Hidden mistake","es":"Error oculto"}},
 
-{"t":"d","q":"What do you do? / ¿Qué haces?",
-"op":["Lie / Mentir","Blame / Culpar","Truth / Verdad","Ignore / Ignorar"],
+{"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
+"op":["Lie","Blame","Truth","Ignore"],
 "c":2,
 "ex":[
-"Lying damages identity / mentir daña la identidad.",
-"Blaming avoids growth / culpar evita crecer.",
-"Truth builds neural coherence and trust / la verdad fortalece coherencia neural y confianza.",
-"Ignoring = no improvement / sin mejora."
+"Lying damages identity",
+"Blaming avoids growth",
+"Truth builds neural coherence and trust",
+"Ignoring = no improvement"
 ]},
 
-{"t":"r","tx":"+Integrity / +Integridad","p":20},
-{"t":"c","tx":"Truth creates respect / La verdad crea respeto."}
+{"t":"r","tx":"+Integrity","p":20},
+{"t":"c","tx":{"en":"Truth creates respect","es":"La verdad crea respeto"}}
 ]},
-
 
 {"id":32,"cat":"social","b":[
-{"t":"v","tx":"Today: SOCIAL PRESSURE / Hoy: PRESIÓN SOCIAL."},
-{"t":"h","tx":"You are pressured wrongly / Te presionan mal."},
+{"t":"v","tx":{"en":"Today: SOCIAL PRESSURE","es":"Hoy: PRESIÓN SOCIAL"}},
+{"t":"h","tx":{"en":"You are pressured wrongly","es":"Te presionan mal"}},
 
-{"t":"d","q":"What do you do? / ¿Qué haces?",
-"op":["Follow / Seguir","Laugh / Reír","Say no / Decir no","Escape / Escapar"],
+{"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
+"op":["Follow","Laugh","Say no","Escape"],
 "c":2,
 "ex":[
-"Following = identity loss / pérdida de identidad.",
-"Laughing = normalizes error / normaliza el error.",
-"Saying no = activates autonomy and leadership / activa autonomía y liderazgo.",
-"Escaping = no trust building / no construye confianza."
+"Following = identity loss",
+"Laughing = normalizes error",
+"Saying no = activates autonomy and leadership",
+"Escaping = no trust building"
 ]},
 
-{"t":"r","tx":"+Strength / +Fuerza","p":20},
-{"t":"c","tx":"Saying no = leadership / Decir no = liderazgo."}
+{"t":"r","tx":"+Strength","p":20},
+{"t":"c","tx":{"en":"Saying no = leadership","es":"Decir no = liderazgo"}}
 ]},
-
 
 {"id":33,"cat":"mind","b":[
-{"t":"v","tx":"Today: MENTAL CHAOS / Hoy: CAOS MENTAL."},
-{"t":"h","tx":"Fast thoughts / Pensamientos rápidos."},
+{"t":"v","tx":{"en":"Today: MENTAL CHAOS","es":"Hoy: CAOS MENTAL"}},
+{"t":"h","tx":{"en":"Fast thoughts","es":"Pensamientos rápidos"}},
 
-{"t":"br","tx":"Inhale / Inhala","d":4},
-{"t":"br","tx":"Exhale / Exhala","d":4,
-"inf":"Neural reset through breathing / Reinicio neural mediante respiración"},
+{"t":"br","tx":{"en":"Inhale","es":"Inhala"},"d":4},
+{"t":"br","tx":{"en":"Exhale","es":"Exhala"},"d":4,
+"inf":{"en":"Neural reset through breathing",
+"es":"Reinicio neural mediante respiración"}},
 
-{"t":"d","q":"What do you do? / ¿Qué haces?",
-"op":["Overthink / Sobrepensar","Breathe / Respirar","Act / Actuar","Ignore / Ignorar"],
+{"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
+"op":["Overthink","Breathe","Act","Ignore"],
 "c":1,
 "ex":[
-"Overthinking = confusion / confusión.",
-"Breathe = reduces amygdala activity and restores order / reduce actividad de la amígdala y ordena la mente.",
-"Acting without clarity = errors / errores.",
-"Ignoring = no understanding mind / no entiendes la mente."
+"Overthinking = confusion",
+"Breathe = reduces amygdala activity and restores order",
+"Acting without clarity = errors",
+"Ignoring = no understanding mind"
 ]},
 
-{"t":"r","tx":"+Clarity / +Claridad","p":20},
-{"t":"c","tx":"Calm = clarity / Calma = claridad."}
+{"t":"r","tx":"+Clarity","p":20},
+{"t":"c","tx":{"en":"Calm = clarity","es":"Calma = claridad"}}
 ]},
 
-
-{"t":"br","tx":"--- SILENCE BLOCK B ---","d":120,
-"inf_en":"2 minutes silence strengthens neuroplasticity and emotional regulation networks",
-"inf_es":"2 minutos de silencio fortalecen neuroplasticidad y redes de regulación emocional cerebral"},
-
+{"t":"br",
+"tx":{"en":"--- SILENCE BLOCK B ---","es":"--- BLOQUE DE SILENCIO B ---"},
+"d":120,
+"inf":{
+"en":"2 minutes silence strengthens neuroplasticity and emotional regulation networks",
+"es":"2 minutos de silencio fortalecen neuroplasticidad y redes de regulación emocional cerebral"
+}
+},
 
 {"id":34,"cat":"inner","b":[
-{"t":"v","tx":"Today: INNER CONTROL / Hoy: CONTROL INTERNO."},
-{"t":"h","tx":"Strong emotion / Emoción fuerte."},
+{"t":"v","tx":{"en":"Today: INNER CONTROL","es":"Hoy: CONTROL INTERNO"}},
+{"t":"h","tx":{"en":"Strong emotion","es":"Emoción fuerte"}},
 
-{"t":"d","q":"What do you do? / ¿Qué haces?",
-"op":["React / Reaccionar","Ignore / Ignorar","Observe / Observar","Avoid / Evitar"],
+{"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
+"op":["React","Ignore","Observe","Avoid"],
 "c":2,
 "ex":[
-"Reacting = no control / sin control.",
-"Ignoring = not solving / no resuelve.",
-"Observing = increases metacognition and emotional mastery / incrementa metacognición y dominio emocional.",
-"Avoiding = no growth / no creces."
+"Reacting = no control",
+"Ignoring = not solving",
+"Observing = increases metacognition and emotional mastery",
+"Avoiding = no growth"
 ]},
 
-{"t":"r","tx":"+Mastery / +Dominio","p":20},
-{"t":"c","tx":"Observe = control / Observar = controlar."}
+{"t":"r","tx":"+Mastery","p":20},
+{"t":"c","tx":{"en":"Observe = control","es":"Observar = controlar"}}
 ]},
-
 
 {"id":35,"cat":"final","b":[
-{"t":"v","tx":"FINAL TEST: DISCIPLINE / PRUEBA FINAL: DISCIPLINA."},
-{"t":"h","tx":"Total distraction / Distracción total."},
+{"t":"v","tx":{"en":"FINAL TEST: DISCIPLINE","es":"PRUEBA FINAL: DISCIPLINA"}},
+{"t":"h","tx":{"en":"Total distraction","es":"Distracción total"}},
 
-{"t":"d","q":"What do you do? / ¿Qué haces?",
-"op":["Quit / Rendirse","Distract / Distracción","Focus / Enfoque","React / Reaccionar"],
+{"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
+"op":["Quit","Distract","Focus","React"],
 "c":2,
 "ex":[
-"Quitting = breaks discipline / rompe la disciplina.",
-"Distracting = no mastery / sin maestría.",
-"Focusing = full prefrontal control / control prefrontal total.",
-"Reacting = no precision / sin precisión."
+"Quitting = breaks discipline",
+"Distracting = no mastery",
+"Focusing = full prefrontal control",
+"Reacting = no precision"
 ]},
 
-{"t":"r","tx":"+Mastery / +Maestría","p":20},
+{"t":"r","tx":"+Mastery","p":20},
 
+{"t":"v","tx":{"en":"FINAL CHALLENGE: TOTAL SILENCE","es":"RETO FINAL: SILENCIO TOTAL"}},
 
-{"t":"v","tx":"FINAL CHALLENGE: TOTAL SILENCE / RETO FINAL: SILENCIO TOTAL."},
+{"t":"br","tx":{"en":"Inhale deep","es":"Inhala profundo"},"d":6,
+"inf":{"en":"Activates parasympathetic system","es":"Activa sistema parasimpático"}},
 
-{"t":"br","tx":"Inhale / Inhala deep","d":6,
-"inf":"Activates parasympathetic system / Activa sistema parasimpático"},
-{"t":"br","tx":"Hold / Retén","d":3,
-"inf":"Impulse control training / Entrenamiento de control de impulsos"},
-{"t":"br","tx":"Exhale / Exhala slow","d":6,
-"inf":"Heart rate reduction / Reducción del ritmo cardíaco"},
+{"t":"br","tx":{"en":"Hold","es":"Retén"},"d":3,
+"inf":{"en":"Impulse control training","es":"Entrenamiento de control de impulsos"}},
+
+{"t":"br","tx":{"en":"Exhale slow","es":"Exhala lento"},"d":6,
+"inf":{"en":"Heart rate reduction","es":"Reducción del ritmo cardíaco"}},
 
 {"t":"sil","d":120,
-"tx":"Do not move. Just observe. / Sin moverte. Solo observa.",
-"inf":"High-level metacognitive control / Control metacognitivo avanzado"},
+"tx":{"en":"Do not move. Just observe.","es":"Sin moverte. Solo observa"},
+"inf":{"en":"High-level metacognitive control","es":"Control metacognitivo avanzado"}},
 
-{"t":"v","tx":"You have completed the system / Has completado el sistema."},
+{"t":"v","tx":{"en":"You have completed the system","es":"Has completado el sistema"}},
 
-{"t":"c","tx":"Discipline + control = real power in life / Disciplina + control = poder real en la vida."}
+{"t":"c","tx":{"en":"Discipline + control = real power in life","es":"Disciplina + control = poder real en la vida"}}
 ]}
 
-]}
+]
+}
