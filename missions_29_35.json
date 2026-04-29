@@ -13,10 +13,11 @@
 {"t":"v","tx":{"en":"Today: EMOTIONAL TRAP","es":"Hoy: TRAMPA EMOCIONAL"}},
 {"t":"h","tx":{"en":"You are insulted in public","es":"Te insultan en público"}},
 
+{"story":{"en":"A student learned that reacting fast feels powerful, but staying calm is what protects your future.","es":"Un estudiante aprendió que reaccionar rápido parece poder, pero la calma protege tu futuro."}},
+
 {"t":"br","tx":{"en":"Inhale","es":"Inhala"},"d":5},
 {"t":"br","tx":{"en":"Exhale","es":"Exhala"},"d":5,
-"inf":{"en":"Parasympathetic activation → reduces cortisol and emotional reactivity",
-"es":"Activación parasimpática → reduce cortisol y reactividad emocional"}},
+"inf":{"en":"Parasympathetic activation → reduces cortisol and emotional reactivity","es":"Activación parasimpática → reduce cortisol y reactividad emocional"}},
 
 {"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
 "op":["Explode","Ignore","Breathe","Attack"],
@@ -29,12 +30,23 @@
 ]},
 
 {"t":"r","tx":"+Control","p":20},
-{"t":"c","tx":{"en":"Emotional control = power","es":"Control emocional = poder"}}
+{"t":"c","tx":{"en":"Emotional control = power","es":"Control emocional = poder"}},
+
+{"t":"sil","d":30,
+"tx":{"en":"Silent reset focus","es":"Reset silencioso de enfoque"},
+"inf":{"en":"Short silence may help reduce impulsive reactions and improve attention stability","es":"Silencio corto puede reducir impulsividad y mejorar estabilidad de atención"}},
+
+{"t":"breath_auto","d":30,
+"tx":{"en":"4-4 breathing cycle","es":"Ciclo respiración 4-4"},
+"inf":{"en":"Supports calm nervous system regulation","es":"Apoya regulación del sistema nervioso y calma"}}
 ]},
+
 
 {"id":30,"cat":"focus","b":[
 {"t":"v","tx":{"en":"Today: FOCUS","es":"Hoy: ENFOQUE"}},
 {"t":"h","tx":{"en":"Distractions appear","es":"Aparecen distracciones"}},
+
+{"story":{"en":"Focus is like a flashlight. Where you point it becomes your reality.","es":"El enfoque es como una linterna. Donde lo diriges se convierte en tu realidad."}},
 
 {"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
 "op":["Multitask","Stop","Focus","Phone"],
@@ -47,21 +59,23 @@
 ]},
 
 {"t":"r","tx":"+Focus","p":20},
-{"t":"c","tx":{"en":"Attention = energy","es":"Atención = energía"}}
+{"t":"c","tx":{"en":"Attention = energy","es":"Atención = energía"}},
+
+{"t":"sil","d":60,
+"tx":{"en":"Attention silence block","es":"Bloque de silencio de atención"},
+"inf":{"en":"1 minute quiet focus may improve cognitive stability and reduce distraction response","es":"1 minuto de silencio puede mejorar estabilidad cognitiva y reducir distracciones"}},
+
+{"t":"breath_auto","d":30,
+"tx":{"en":"Slow steady breathing","es":"Respiración lenta y estable"},
+"inf":{"en":"Helps maintain focus under distraction","es":"Ayuda a mantener enfoque bajo distracciones"}}
 ]},
 
-{"t":"br",
-"tx":{"en":"--- SILENCE BLOCK A ---","es":"--- BLOQUE DE SILENCIO A ---"},
-"d":60,
-"inf":{
-"en":"1 minute silence improves attention stability and impulse inhibition",
-"es":"1 minuto de silencio mejora atención y control de impulsos"
-}
-},
 
 {"id":31,"cat":"truth","b":[
 {"t":"v","tx":{"en":"Today: TRUTH","es":"Hoy: VERDAD"}},
 {"t":"h","tx":{"en":"Hidden mistake","es":"Error oculto"}},
+
+{"story":{"en":"A student who tells the truth grows faster than one who hides mistakes.","es":"Un estudiante que dice la verdad crece más rápido que uno que oculta errores."}},
 
 {"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
 "op":["Lie","Blame","Truth","Ignore"],
@@ -74,12 +88,23 @@
 ]},
 
 {"t":"r","tx":"+Integrity","p":20},
-{"t":"c","tx":{"en":"Truth creates respect","es":"La verdad crea respeto"}}
+{"t":"c","tx":{"en":"Truth creates respect","es":"La verdad crea respeto"}},
+
+{"t":"sil","d":60,
+"tx":{"en":"Truth reflection silence","es":"Silencio de reflexión de verdad"},
+"inf":{"en":"May support self-awareness and better decision alignment","es":"Puede mejorar autoconciencia y alineación de decisiones"}},
+
+{"t":"breath_auto","d":30,
+"tx":{"en":"Calm breathing 4-6","es":"Respiración calma 4-6"},
+"inf":{"en":"Longer exhale supports emotional regulation","es":"Exhalación más larga apoya regulación emocional"}}
 ]},
+
 
 {"id":32,"cat":"social","b":[
 {"t":"v","tx":{"en":"Today: SOCIAL PRESSURE","es":"Hoy: PRESIÓN SOCIAL"}},
 {"t":"h","tx":{"en":"You are pressured wrongly","es":"Te presionan mal"}},
+
+{"story":{"en":"Real strength is choosing your actions, even when others disagree.","es":"La verdadera fuerza es elegir tus acciones incluso cuando otros no están de acuerdo."}},
 
 {"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
 "op":["Follow","Laugh","Say no","Escape"],
@@ -92,17 +117,27 @@
 ]},
 
 {"t":"r","tx":"+Strength","p":20},
-{"t":"c","tx":{"en":"Saying no = leadership","es":"Decir no = liderazgo"}}
+{"t":"c","tx":{"en":"Saying no = leadership","es":"Decir no = liderazgo"}},
+
+{"t":"sil","d":75,
+"tx":{"en":"Boundary awareness silence","es":"Silencio de conciencia de límites"},
+"inf":{"en":"Supports self-control and reduces social pressure reactivity","es":"Apoya autocontrol y reduce reactividad a presión social"}},
+
+{"t":"breath_auto","d":30,
+"tx":{"en":"Steady confidence breathing","es":"Respiración de confianza estable"},
+"inf":{"en":"Helps maintain calm under social stress","es":"Ayuda a mantener calma bajo presión social"}}
 ]},
+
 
 {"id":33,"cat":"mind","b":[
 {"t":"v","tx":{"en":"Today: MENTAL CHAOS","es":"Hoy: CAOS MENTAL"}},
 {"t":"h","tx":{"en":"Fast thoughts","es":"Pensamientos rápidos"}},
 
+{"story":{"en":"When the mind is noisy, breathing becomes the first tool to regain control.","es":"Cuando la mente está ruidosa, la respiración es la primera herramienta para recuperar control."}},
+
 {"t":"br","tx":{"en":"Inhale","es":"Inhala"},"d":4},
 {"t":"br","tx":{"en":"Exhale","es":"Exhala"},"d":4,
-"inf":{"en":"Neural reset through breathing",
-"es":"Reinicio neural mediante respiración"}},
+"inf":{"en":"Neural reset through breathing","es":"Reinicio neural mediante respiración"}},
 
 {"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
 "op":["Overthink","Breathe","Act","Ignore"],
@@ -115,21 +150,23 @@
 ]},
 
 {"t":"r","tx":"+Clarity","p":20},
-{"t":"c","tx":{"en":"Calm = clarity","es":"Calma = claridad"}}
+{"t":"c","tx":{"en":"Calm = clarity","es":"Calma = claridad"}},
+
+{"t":"sil","d":90,
+"tx":{"en":"Mental reset silence","es":"Silencio de reinicio mental"},
+"inf":{"en":"May improve emotional regulation and cognitive clarity","es":"Puede mejorar regulación emocional y claridad cognitiva"}},
+
+{"t":"breath_auto","d":30,
+"tx":{"en":"Balanced breathing cycle","es":"Ciclo de respiración equilibrada"},
+"inf":{"en":"Supports mental stabilization","es":"Apoya estabilización mental"}}
 ]},
 
-{"t":"br",
-"tx":{"en":"--- SILENCE BLOCK B ---","es":"--- BLOQUE DE SILENCIO B ---"},
-"d":120,
-"inf":{
-"en":"2 minutes silence strengthens neuroplasticity and emotional regulation networks",
-"es":"2 minutos de silencio fortalecen neuroplasticidad y redes de regulación emocional cerebral"
-}
-},
 
 {"id":34,"cat":"inner","b":[
 {"t":"v","tx":{"en":"Today: INNER CONTROL","es":"Hoy: CONTROL INTERNO"}},
 {"t":"h","tx":{"en":"Strong emotion","es":"Emoción fuerte"}},
+
+{"story":{"en":"Observing emotions instead of reacting gives you real control.","es":"Observar emociones en vez de reaccionar te da control real."}},
 
 {"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
 "op":["React","Ignore","Observe","Avoid"],
@@ -142,12 +179,23 @@
 ]},
 
 {"t":"r","tx":"+Mastery","p":20},
-{"t":"c","tx":{"en":"Observe = control","es":"Observar = controlar"}}
+{"t":"c","tx":{"en":"Observe = control","es":"Observar = controlar"}},
+
+{"t":"sil","d":120,
+"tx":{"en":"Deep awareness silence","es":"Silencio de conciencia profunda"},
+"inf":{"en":"Strengthens metacognitive awareness and impulse control","es":"Fortalece metacognición y control de impulsos"}},
+
+{"t":"breath_auto","d":30,
+"tx":{"en":"Slow awareness breathing","es":"Respiración lenta de conciencia"},
+"inf":{"en":"Supports emotional regulation and attention control","es":"Apoya regulación emocional y control de atención"}}
 ]},
+
 
 {"id":35,"cat":"final","b":[
 {"t":"v","tx":{"en":"FINAL TEST: DISCIPLINE","es":"PRUEBA FINAL: DISCIPLINA"}},
 {"t":"h","tx":{"en":"Total distraction","es":"Distracción total"}},
+
+{"story":{"en":"Discipline is not about never falling. It is about returning to focus every time.","es":"La disciplina no es nunca caer. Es volver al enfoque cada vez."}},
 
 {"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
 "op":["Quit","Distract","Focus","React"],
@@ -172,9 +220,9 @@
 {"t":"br","tx":{"en":"Exhale slow","es":"Exhala lento"},"d":6,
 "inf":{"en":"Heart rate reduction","es":"Reducción del ritmo cardíaco"}},
 
-{"t":"sil","d":120,
+{"t":"sil","d":180,
 "tx":{"en":"Do not move. Just observe.","es":"Sin moverte. Solo observa"},
-"inf":{"en":"High-level metacognitive control","es":"Control metacognitivo avanzado"}},
+"inf":{"en":"High-level metacognitive control progression","es":"Progresión de control metacognitivo avanzado"}},
 
 {"t":"v","tx":{"en":"You have completed the system","es":"Has completado el sistema"}},
 
