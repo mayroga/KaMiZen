@@ -1,75 +1,90 @@
 import os
 import json
-import random
-from flask import Flask, render_template, jsonify, request, send_from_directory
+import logging
+from flask import Flask, send_from_directory, jsonify, request
 
-app = Flask(__name__, 
-            static_folder='static', 
-            template_folder='static') # Apuntamos a static donde está session.html
+# Configuración de logs para ver errores en el panel de Render
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
-# --- CONFIGURACIÓN DE RUTAS ---
-MISSION_DIR = os.path.dirname(os.path.abspath(__file__))
-TOTAL_MISSIONS = 35
+app = Flask(__name__)
 
-def load_mission(mission_id):
-    """Carga un archivo JSON de misión desde la raíz."""
-    file_path = os.path.join(MISSION_DIR, f"mission_{mission_id}.json")
-    try:
-        if os.path.exists(file_path):
-            with open(file_path, 'r', encoding='utf-8') as f:
-                return json.load(f)
-    except Exception as e:
-        print(f"Error cargando misión {mission_id}: {e}")
-    return None
+# Mapeo de misiones para control total
+MISSION_MAP = {
+    "1": "missions_01_07.json",
+    "2": "missions_08_14.json",
+    "3": "missions_15_21.json",
+    "4": "missions_22_28.json",
+    "5": "missions_29_35.json"
+}
 
-# --- RUTAS DE NAVEGACIÓN ---
+# --- RUTAS DE INTERFAZ ---
 
 @app.route('/')
 def index():
-    """Sirve la interfaz principal de la sesión."""
-    # Como tu session.html está en /static, Flask lo busca allí
-    return render_template('session.html')
+    """Sirve el HTML con headers de control de caché."""
+    try:
+        response = send_from_directory('static', 'session.html')
+        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+        return response
+    except Exception as e:
+        logger.error(f"Error sirviendo index: {e}")
+        return "Error: static/session.html no encontrado.", 404
 
-@app.route('/engine.js')
-def serve_js():
-    """Ruta de respaldo para asegurar que el motor se cargue."""
-    return send_from_directory(os.path.join(app.root_path, 'static/js'), 'engine.js')
+@app.route('/static/<path:path>')
+def serve_static(path):
+    """Servidor de estáticos genérico para JS, CSS e Imágenes."""
+    return send_from_directory('static', path)
 
-# --- API DE MISIONES (EL CEREBRO) ---
+# --- API DE MISIONES ROBUSTA ---
 
 @app.route('/api/mission/next')
 def get_mission():
     """
-    Endpoint que el engine.js consulta.
-    Gestiona qué misión enviar basándose en la progresión.
+    Carga la misión basada en el parámetro 'id'.
+    Si no hay ID, asume la primera.
     """
-    # En una app real, esto vendría de una sesión de usuario o DB.
-    # Por ahora, enviamos una misión aleatoria o basada en un parámetro.
-    mission_id = request.args.get('id', random.randint(1, TOTAL_MISSIONS))
+    mission_id = request.args.get('id', '1')
     lang = request.args.get('lang', 'es')
     
-    data = load_mission(mission_id)
+    file_name = MISSION_MAP.get(mission_id)
     
-    if data:
+    if not file_name:
+        return jsonify({
+            "success": False, 
+            "end": True, 
+            "message": "Ciclo de entrenamiento completado."
+        }), 200
+
+    file_path = os.path.join(os.getcwd(), file_name)
+
+    if not os.path.exists(file_path):
+        logger.error(f"Archivo no encontrado: {file_path}")
+        return jsonify({
+            "success": False, 
+            "error": "Error interno: Archivo de misión desaparecido."
+        }), 500
+
+    try:
+        with open(file_path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+        
+        logger.info(f"Misión {mission_id} enviada con éxito.")
         return jsonify({
             "success": True,
-            "mission_id": mission_id,
-            "mission": data
+            "mission": data,
+            "next_id": str(int(mission_id) + 1) if int(mission_id) < 5 else None
         })
-    else:
-        return jsonify({
-            "success": False,
-            "end": True,
-            "message": "No más misiones disponibles o error de carga."
-        })
+    except json.JSONDecodeError:
+        logger.error(f"Error de formato en JSON: {file_name}")
+        return jsonify({"success": False, "error": "Error de formato en datos."}), 500
+    except Exception as e:
+        logger.error(f"Error inesperado: {e}")
+        return jsonify({"success": False, "error": "Error de servidor."}), 500
 
-# --- GESTIÓN DE ERRORES ---
-
-@app.errorhandler(404)
-def not_found(e):
-    return jsonify({"error": "Recurso no encontrado"}), 404
+# --- CONFIGURACIÓN DE PUERTO PARA RENDER ---
 
 if __name__ == '__main__':
-    # Render usa la variable de entorno PORT
     port = int(os.environ.get("PORT", 5000))
+    # En producción (Render), debug debe ser False
     app.run(host='0.0.0.0', port=port, debug=False)
