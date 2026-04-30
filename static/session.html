@@ -1,82 +1,103 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AL CIELO - KaMiZen System</title>
     <style>
-        :root { --primary: #00d4ff; --bg: #050505; }
-        body { margin: 0; background: var(--bg); color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow: hidden; transition: background 0.5s; }
+        :root { --primary: #00d4ff; --bg: #050505; --success: #28a745; --error: #dc3545; }
+        body { margin: 0; background: var(--bg); color: white; font-family: 'Arial', sans-serif; overflow: hidden; transition: 0.3s; }
         
-        /* Efectos de Feedback */
-        .correct-flash { background: #002200 !important; }
-        .wrong-flash { background: #220000 !important; }
+        /* Pantalla de Inicio Obligatoria */
+        #start-screen {
+            position: fixed; inset: 0; background: var(--bg); z-index: 1000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .start-btn {
+            padding: 20px 50px; font-size: 2rem; background: var(--primary); 
+            color: black; border: none; border-radius: 50px; cursor: pointer; font-weight: bold;
+        }
 
-        /* UI de Stats */
-        #ui-layer { position: absolute; top: 20px; left: 20px; z-index: 10; width: 250px; }
-        .stat-bar { background: #222; height: 10px; border-radius: 5px; margin-bottom: 10px; overflow: hidden; }
-        .fill { height: 100%; transition: width 0.5s; }
-        #bar-peace { background: var(--primary); }
-        #bar-safety { background: #ffaa00; }
-        #timer-box { font-size: 2rem; font-weight: bold; color: var(--primary); }
+        /* Selector de Idioma */
+        #lang-toggle {
+            position: absolute; top: 20px; right: 20px; z-index: 500;
+            padding: 10px; background: rgba(255,255,255,0.1); border: 1px solid var(--primary);
+            color: white; cursor: pointer; border-radius: 5px;
+        }
 
-        /* Pantalla de Misión (Overlay) */
+        /* Indicadores Visuales (Métricas del Sistema) */
+        #ui-layer { position: absolute; top: 20px; left: 20px; z-index: 10; width: 300px; }
+        .stat-label { font-size: 0.9rem; margin-bottom: 5px; letter-spacing: 1px; }
+        .stat-bar { background: #222; height: 15px; border-radius: 10px; margin-bottom: 15px; overflow: hidden; border: 1px solid #444; }
+        .fill { height: 100%; transition: width 0.5s ease-in-out; }
+        #bar-peace { background: var(--primary); box-shadow: 0 0 10px var(--primary); }
+        #timer-box { font-size: 3rem; font-weight: bold; color: var(--primary); margin-bottom: 10px; }
+
+        /* Overlay de Misión y Preguntas */
         #overlay { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(0,0,0,0.9); display: none; flex-direction: column; 
-            align-items: center; justify-content: center; z-index: 100; text-align: center; padding: 20px;
+            position: fixed; inset: 0; background: rgba(0,0,0,0.95); 
+            display: none; flex-direction: column; align-items: center; justify-content: center; 
+            z-index: 100; text-align: center; padding: 40px;
         }
-        #phase-title { color: var(--primary); font-size: 1.5rem; margin-bottom: 10px; text-transform: uppercase; }
-        #phase-desc { font-size: 1.2rem; max-width: 600px; margin-bottom: 30px; line-height: 1.5; }
+        #phase-title { color: var(--primary); font-size: 2.5rem; margin-bottom: 20px; font-weight: 900; }
+        #phase-desc { font-size: 1.8rem; max-width: 800px; margin-bottom: 40px; line-height: 1.4; color: #eee; }
         
-        #decision-grid { display: grid; gap: 15px; width: 100%; max-width: 500px; }
+        /* Botones de Respuesta Grandes */
+        #decision-grid { display: flex; flex-direction: column; gap: 20px; width: 100%; max-width: 600px; }
         .choice-btn { 
-            background: transparent; border: 2px solid var(--primary); color: white; 
-            padding: 15px; font-size: 1rem; cursor: pointer; border-radius: 8px; transition: 0.3s;
+            background: rgba(255,255,255,0.05); border: 2px solid var(--primary); color: white; 
+            padding: 25px; font-size: 1.4rem; cursor: pointer; border-radius: 15px; transition: 0.3s;
         }
-        .choice-btn:hover { background: var(--primary); color: black; }
 
-        /* Palabras Flotantes */
+        /* Feedback de Colores */
+        .correct-choice { background: var(--success) !important; border-color: #fff !important; }
+        .wrong-choice { background: var(--error) !important; border-color: #fff !important; }
+
+        /* Palabras Flotantes (Más grandes y legibles) */
         .word-float { 
-            position: absolute; color: rgba(255,255,255,0.3); font-weight: bold; 
-            cursor: pointer; user-select: none; animation: floatUp 6s linear forwards; 
+            position: absolute; color: white; font-size: 2.5rem; font-weight: 900; 
+            cursor: pointer; user-select: none; text-shadow: 0 0 15px rgba(0,212,255,0.8);
+            animation: floatUp 7s linear forwards; z-index: 5;
         }
-        @keyframes floatUp { from { transform: translateY(100vh); } to { transform: translateY(-10vh); } }
+        @keyframes floatUp { from { transform: translateY(110vh); } to { transform: translateY(-20vh); } }
 
-        /* Respiración */
+        /* Círculos Respiratorios (Visibles y Proporcionales) */
         #breath-circle {
-            display: none; width: 200px; height: 200px; border-radius: 50%;
-            border: 5px solid var(--primary); align-items: center; justify-content: center;
-            position: relative; margin-top: 20px;
+            display: none; width: 300px; height: 300px; border-radius: 50%;
+            border: 10px solid var(--primary); align-items: center; justify-content: center;
+            position: relative; transition: 0.5s; background: rgba(0,212,255,0.05);
         }
         .inhale-anim { animation: pulse 4s infinite ease-in-out; }
-        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.5); } }
-        #breath-timer { font-size: 2rem; }
+        @keyframes pulse { 0%, 100% { transform: scale(0.8); opacity: 0.5; } 50% { transform: scale(1.3); opacity: 1; } }
+        #breath-timer { font-size: 4rem; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <div id="ui-layer">
-        <div id="timer-box">05:00</div>
-        <div>PAZ INTERIOR</div>
-        <div class="stat-bar"><div id="bar-peace" class="fill" style="width: 50%;"></div></div>
-        <div>SEGURIDAD</div>
-        <div class="stat-bar"><div id="bar-safety" class="fill" style="width: 100%;"></div></div>
+    <div id="start-screen">
+        <h1 style="color:var(--primary); font-size: 4rem; margin-bottom: 30px;">AL CIELO</h1>
+        <button class="start-btn" onclick="startSystem()">START MISSION</button>
     </div>
 
-    <!-- Capa de Misión -->
+    <button id="lang-toggle" onclick="toggleLang()">ESPAÑOL / ENGLISH</button>
+
+    <div id="ui-layer">
+        <div id="timer-box">05:00</div>
+        <div class="stat-label" id="label-peace">INTERNAL PEACE</div>
+        <div class="stat-bar"><div id="bar-peace" class="fill" style="width: 50%;"></div></div>
+    </div>
+
     <div id="overlay">
-        <div id="phase-title">SISTEMA INICIADO</div>
-        <div id="phase-desc">Haz clic en cualquier lugar para comenzar el entrenamiento "AL CIELO"...</div>
+        <div id="phase-title"></div>
+        <div id="phase-desc"></div>
         <div id="decision-grid"></div>
 
         <div id="breath-circle">
-            <div id="breath-txt" style="position: absolute; top: -40px;">RESPIRA</div>
+            <div id="breath-txt" style="position: absolute; top: -60px; font-size: 2rem; font-weight: bold;">BREATHE</div>
             <div id="breath-timer">4s</div>
         </div>
     </div>
 
-    <!-- IMPORTANTE: Aquí llamamos al archivo que tú tienes -->
     <script src="/static/js/engine.js"></script>
 </body>
 </html>
