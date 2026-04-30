@@ -3,99 +3,89 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AL CIELO - KaMiZen System</title>
+    <title>KAMIZEN LIFE SAFETY</title>
     <style>
-        :root { --primary: #00d4ff; --bg: #050505; --success: #28a745; --error: #dc3545; }
-        body { margin: 0; background: var(--bg); color: white; font-family: 'Arial', sans-serif; overflow: hidden; transition: 0.3s; }
+        :root { --primary: #00d4ff; --bg: #050505; --success: #28a745; --error: #dc3545; --gold: #ffd700; }
+        body { margin: 0; background: var(--bg); color: white; font-family: 'Courier New', monospace; overflow: hidden; }
         
-        /* Pantalla de Inicio Obligatoria */
         #start-screen {
             position: fixed; inset: 0; background: var(--bg); z-index: 1000;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
         .start-btn {
             padding: 20px 50px; font-size: 2rem; background: var(--primary); 
-            color: black; border: none; border-radius: 50px; cursor: pointer; font-weight: bold;
+            color: black; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;
         }
 
-        /* Selector de Idioma */
         #lang-toggle {
             position: absolute; top: 20px; right: 20px; z-index: 500;
-            padding: 10px; background: rgba(255,255,255,0.1); border: 1px solid var(--primary);
-            color: white; cursor: pointer; border-radius: 5px;
+            padding: 10px; background: transparent; border: 1px solid var(--primary);
+            color: var(--primary); cursor: pointer;
         }
 
-        /* Indicadores Visuales (Métricas del Sistema) */
-        #ui-layer { position: absolute; top: 20px; left: 20px; z-index: 10; width: 300px; }
-        .stat-label { font-size: 0.9rem; margin-bottom: 5px; letter-spacing: 1px; }
-        .stat-bar { background: #222; height: 15px; border-radius: 10px; margin-bottom: 15px; overflow: hidden; border: 1px solid #444; }
-        .fill { height: 100%; transition: width 0.5s ease-in-out; }
-        #bar-peace { background: var(--primary); box-shadow: 0 0 10px var(--primary); }
-        #timer-box { font-size: 3rem; font-weight: bold; color: var(--primary); margin-bottom: 10px; }
+        #ui-layer { position: absolute; top: 20px; left: 20px; z-index: 10; width: 320px; }
+        .stat-bar { background: #222; height: 12px; border-radius: 2px; margin-bottom: 15px; border: 1px solid #444; }
+        .fill { height: 100%; transition: width 0.5s; background: var(--primary); }
+        #timer-box { font-size: 2.5rem; font-weight: bold; color: var(--primary); }
 
-        /* Overlay de Misión y Preguntas */
         #overlay { 
-            position: fixed; inset: 0; background: rgba(0,0,0,0.95); 
+            position: fixed; inset: 0; background: rgba(0,0,0,0.98); 
             display: none; flex-direction: column; align-items: center; justify-content: center; 
             z-index: 100; text-align: center; padding: 40px;
         }
-        #phase-title { color: var(--primary); font-size: 2.5rem; margin-bottom: 20px; font-weight: 900; }
-        #phase-desc { font-size: 1.8rem; max-width: 800px; margin-bottom: 40px; line-height: 1.4; color: #eee; }
         
-        /* Botones de Respuesta Grandes */
-        #decision-grid { display: flex; flex-direction: column; gap: 20px; width: 100%; max-width: 600px; }
+        #phase-title { color: var(--primary); font-size: 2rem; margin-bottom: 10px; border-bottom: 2px solid var(--primary); }
+        #phase-desc { font-size: 1.5rem; max-width: 800px; margin-bottom: 30px; color: #fff; }
+        #info-box { font-size: 1rem; color: var(--gold); max-width: 600px; margin-top: 20px; font-style: italic; }
+
+        #decision-grid { display: flex; flex-direction: column; gap: 15px; width: 100%; max-width: 600px; }
         .choice-btn { 
-            background: rgba(255,255,255,0.05); border: 2px solid var(--primary); color: white; 
-            padding: 25px; font-size: 1.4rem; cursor: pointer; border-radius: 15px; transition: 0.3s;
+            background: transparent; border: 1px solid var(--primary); color: white; 
+            padding: 20px; font-size: 1.2rem; cursor: pointer; transition: 0.2s;
         }
 
-        /* Feedback de Colores */
-        .correct-choice { background: var(--success) !important; border-color: #fff !important; }
-        .wrong-choice { background: var(--error) !important; border-color: #fff !important; }
+        .correct-choice { background: var(--success) !important; color: white; }
+        .wrong-choice { background: var(--error) !important; color: white; }
 
-        /* Palabras Flotantes (Más grandes y legibles) */
         .word-float { 
-            position: absolute; color: white; font-size: 2.5rem; font-weight: 900; 
-            cursor: pointer; user-select: none; text-shadow: 0 0 15px rgba(0,212,255,0.8);
-            animation: floatUp 7s linear forwards; z-index: 5;
+            position: absolute; color: var(--primary); font-size: 1.8rem; font-weight: bold; 
+            cursor: pointer; user-select: none; opacity: 0.7;
+            animation: floatUp 8s linear forwards;
         }
         @keyframes floatUp { from { transform: translateY(110vh); } to { transform: translateY(-20vh); } }
 
-        /* Círculos Respiratorios (Visibles y Proporcionales) */
         #breath-circle {
-            display: none; width: 300px; height: 300px; border-radius: 50%;
-            border: 10px solid var(--primary); align-items: center; justify-content: center;
-            position: relative; transition: 0.5s; background: rgba(0,212,255,0.05);
+            display: none; width: 250px; height: 250px; border-radius: 50%;
+            border: 4px solid var(--primary); align-items: center; justify-content: center;
+            position: relative;
         }
         .inhale-anim { animation: pulse 4s infinite ease-in-out; }
-        @keyframes pulse { 0%, 100% { transform: scale(0.8); opacity: 0.5; } 50% { transform: scale(1.3); opacity: 1; } }
-        #breath-timer { font-size: 4rem; font-weight: bold; }
+        @keyframes pulse { 0%, 100% { transform: scale(0.8); } 50% { transform: scale(1.2); } }
     </style>
 </head>
 <body>
 
     <div id="start-screen">
-        <h1 style="color:var(--primary); font-size: 4rem; margin-bottom: 30px;">AL CIELO</h1>
-        <button class="start-btn" onclick="startSystem()">START MISSION</button>
+        <h1 style="color:var(--primary); font-size: 3rem;">KAMIZEN</h1>
+        <p style="color: #666;">LIFE SAFETY SYSTEM</p>
+        <button class="start-btn" onclick="startSystem()">INITIALIZE</button>
     </div>
 
-    <button id="lang-toggle" onclick="toggleLang()">ESPAÑOL / ENGLISH</button>
+    <button id="lang-toggle" onclick="toggleLang()">ES/EN</button>
 
     <div id="ui-layer">
         <div id="timer-box">05:00</div>
-        <div class="stat-label" id="label-peace">INTERNAL PEACE</div>
+        <div id="label-peace">AWARENESS LEVEL</div>
         <div class="stat-bar"><div id="bar-peace" class="fill" style="width: 50%;"></div></div>
+        <div id="rule-display" style="font-size: 0.8rem; color: var(--gold);"></div>
     </div>
 
     <div id="overlay">
         <div id="phase-title"></div>
         <div id="phase-desc"></div>
         <div id="decision-grid"></div>
-
-        <div id="breath-circle">
-            <div id="breath-txt" style="position: absolute; top: -60px; font-size: 2rem; font-weight: bold;">BREATHE</div>
-            <div id="breath-timer">4s</div>
-        </div>
+        <div id="breath-circle"><div id="breath-timer" style="font-size: 3rem;"></div></div>
+        <div id="info-box"></div>
     </div>
 
     <script src="/static/js/engine.js"></script>
