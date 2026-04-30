@@ -1,31 +1,23 @@
 /* ==============================================================
-   KAMIZEN LIFE SYSTEM - ENGINE.JS (CORE ITERATOR)
+   AL CIELO: KAMIZEN LIFE SYSTEM - ENGINE.JS (ESTABLE)
    ============================================================== */
 
 let state = {
     lang: 'es',
-    mode: 'ACTION_LOOP', // ACTION_LOOP | MISSION_BLOCK
+    mode: 'ACTION', // ACTION | MISSION | BREATH
     timeLeft: 300,
-    missionActive: false,
-    score: 0
+    peace: 50,
+    safety: 100,
+    missionActive: false
 };
 
-// --- SISTEMA DE AUDIO (Dopamina + SFX) ---
 const AudioEngine = {
-    // Música de fondo: Dopamina pero anti-estrés (Binaural/Zen-Step)
-    bgm: new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3'), 
-    // Efecto de cristal roto / bomba
+    bgm: new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3'),
     pop: new Audio('https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3'),
     
     init() {
         this.bgm.loop = true;
-        this.bgm.volume = 0.3;
-    },
-
-    playPop() {
-        const sfx = this.pop.cloneNode();
-        sfx.volume = 0.5;
-        sfx.play();
+        this.bgm.volume = 0.2;
     },
 
     speak(text) {
@@ -33,50 +25,48 @@ const AudioEngine = {
         speechSynthesis.cancel();
         const msg = new SpeechSynthesisUtterance(text);
         const voices = speechSynthesis.getVoices();
-        // Buscar voz masculina con peso profesional
+        // Selección de voz con peso profesional
         msg.voice = voices.find(v => v.name.includes('Male') || v.name.includes('Google español')) || voices[0];
-        msg.rate = 0.85; 
+        msg.rate = 0.85;
         msg.pitch = 0.9;
         speechSynthesis.speak(msg);
     }
 };
 
 /* ==============================================================
-   ITERADOR DE BLOQUES JSON (EL DIRECTOR)
+   ITERADOR DE MISIONES (CONTROL SECUENCIAL)
    ============================================================== */
 async function runMission() {
     if (state.missionActive) return;
-    
     state.missionActive = true;
-    state.mode = 'MISSION_BLOCK';
-    
-    // Limpiar campo de batalla
+    state.mode = 'MISSION';
+
+    // Limpieza de interfaz para enfoque
     document.querySelectorAll('.word-float').forEach(w => w.remove());
-    document.getElementById('overlay').style.display = 'flex';
+    const overlay = document.getElementById('overlay');
+    overlay.style.display = 'flex';
 
     try {
         const res = await fetch(`/api/mission/next?lang=${state.lang}`);
         const data = await res.json();
         
         if (data.end) {
-            AudioEngine.speak("Entrenamiento completado satisfactoriamente.");
+            AudioEngine.speak("Entrenamiento finalizado.");
             setTimeout(() => location.reload(), 3000);
             return;
         }
 
-        // RECORRER BLOQUES b[] SECUENCIALMENTE
-        const blocks = data.mission.b;
-        for (const block of blocks) {
+        // Procesa bloques b[] uno por uno
+        for (const block of data.mission.b) {
             await processBlock(block);
         }
 
     } catch (err) {
-        console.error("Error en el flujo de misión:", err);
+        console.error("Fallo en la carga de misión:", err);
     }
 
-    // Regresar al loop de acción
-    document.getElementById('overlay').style.display = 'none';
-    state.mode = 'ACTION_LOOP';
+    overlay.style.display = 'none';
+    state.mode = 'ACTION';
     state.missionActive = false;
 }
 
@@ -85,19 +75,21 @@ async function processBlock(b) {
     const desc = document.getElementById('phase-desc');
     const grid = document.getElementById('decision-grid');
 
+    document.body.className = ''; // Reset de efectos visuales
+
     switch(b.t) {
-        case "v": // Bloque Visual (Título)
+        case "v": // Título de fase
             title.innerText = b.tx[state.lang];
             break;
 
-        case "story": // Bloque Narrativo (Voz Obligatoria)
+        case "story": // Narrativa obligatoria
             grid.innerHTML = '';
             desc.innerText = b[state.lang];
             AudioEngine.speak(b[state.lang]);
-            await new Promise(r => setTimeout(r, 4500)); // Tiempo de escucha activa
+            await new Promise(r => setTimeout(r, 5500)); 
             break;
 
-        case "d": // Bloque de Decisión (Pregunta + Feedback)
+        case "d": // Decisión con Feedback de peso
             grid.innerHTML = '';
             desc.innerText = b.q[state.lang];
             AudioEngine.speak(b.q[state.lang]);
@@ -106,32 +98,34 @@ async function processBlock(b) {
                 b.op.forEach((opt, idx) => {
                     const btn = document.createElement('button');
                     btn.className = 'choice-btn';
-                    // El JSON viene formateado como "English / Español"
                     btn.innerText = opt.split(' / ')[state.lang === 'es' ? 1 : 0];
                     
                     btn.onclick = () => {
                         const isCorrect = idx === b.c;
                         const feedback = b.ex[idx].split(' / ')[state.lang === 'es' ? 1 : 0];
                         
+                        // Feedback visual inmediato
+                        document.body.className = isCorrect ? 'correct-flash' : 'wrong-flash';
+                        
                         desc.innerText = feedback;
                         AudioEngine.speak(feedback);
-                        
-                        // Feedback Visual
-                        document.body.className = isCorrect ? 'correct-flash' : 'wrong-flash';
-                        state.score += isCorrect ? 50 : -20;
-                        updateHUD();
+                        grid.innerHTML = ''; 
 
-                        grid.innerHTML = ''; // Bloquear otras opciones
+                        // Ajuste de métricas de paz interna
+                        state.peace = isCorrect ? Math.min(100, state.peace + 10) : Math.max(0, state.peace - 15);
+                        updateUI();
+
+                        // Pausa para asimilar el consejo
                         setTimeout(() => {
                             document.body.className = '';
                             resolve();
-                        }, 5000); // Pausa para asimilar el consejo del asesor
+                        }, 5000);
                     };
                     grid.appendChild(btn);
                 });
             });
 
-        case "br": // Bloque de Respiración o Silencio
+        case "br": // Módulo de Respiración
             return new Promise(async (resolve) => {
                 const circle = document.getElementById('breath-circle');
                 const bTxt = document.getElementById('breath-txt');
@@ -142,7 +136,7 @@ async function processBlock(b) {
                 bTxt.innerText = b.tx[state.lang];
                 AudioEngine.speak(b.tx[state.lang]);
                 
-                let seconds = b.d;
+                let seconds = b.d || 4;
                 while (seconds > 0) {
                     bTimer.innerText = seconds-- + "s";
                     await new Promise(r => setTimeout(r, 1000));
@@ -156,76 +150,70 @@ async function processBlock(b) {
 }
 
 /* ==============================================================
-   LOOP DE ACCIÓN (PALABRAS FLOTANTES)
+   DINÁMICA DE ACCIÓN (FLOTANTES)
    ============================================================== */
 function spawnWord() {
-    if (state.mode !== 'ACTION_LOOP') return;
+    if (state.mode !== 'ACTION') return;
 
     const div = document.createElement('div');
     div.className = 'word-float';
-    
-    const words = state.lang === 'es' ? 
-        ["RUIDO", "IMPULSO", "EGO", "CALMA", "ENFOQUE"] : 
-        ["NOISE", "IMPULSE", "EGO", "CALM", "FOCUS"];
-    
+    const words = state.lang === 'es' ? ["EGO", "RUIDO", "PRISA", "DUDAS"] : ["EGO", "NOISE", "HASTE", "DOUBTS"];
     div.innerText = words[Math.floor(Math.random() * words.length)];
     div.style.left = Math.random() * 80 + 10 + "vw";
     
     div.onclick = () => {
-        AudioEngine.playPop(); // Sonido de cristales rotos
-        div.style.transform = 'scale(2.5)';
-        div.style.opacity = '0';
-        state.score += 10;
-        updateHUD();
-        setTimeout(() => div.remove(), 150);
+        AudioEngine.pop.play();
+        state.peace = Math.min(100, state.peace + 2);
+        updateUI();
+        div.remove();
     };
-    
     document.body.appendChild(div);
-    // Limpieza automática si no se toca
-    setTimeout(() => { if (div.parentNode) div.remove(); }, 6000);
+    setTimeout(() => { if(div.parentNode) div.remove(); }, 6000);
+}
+
+function updateUI() {
+    const pBar = document.getElementById('bar-peace');
+    const sBar = document.getElementById('bar-safety');
+    if(pBar) pBar.style.width = state.peace + "%";
+    if(sBar) sBar.style.width = state.safety + "%";
 }
 
 /* ==============================================================
-   SISTEMA DE CONTROL Y TIEMPO
+   INICIO DE SISTEMA
    ============================================================== */
-function updateHUD() {
-    document.getElementById('score-box').innerText = `SCORE: ${state.score}`;
-}
-
-function startTimer() {
+function startSystem() {
     const timerEl = document.getElementById('timer-box');
+    
+    // Reloj maestro de 5 minutos
     const clock = setInterval(() => {
         if (state.timeLeft <= 0) {
             clearInterval(clock);
-            alert("SESIÓN FINALIZADA");
-            location.reload();
             return;
         }
 
         state.timeLeft--;
         const m = Math.floor(state.timeLeft / 60);
         const s = state.timeLeft % 60;
-        timerEl.innerText = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+        if(timerEl) timerEl.innerText = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
 
-        // Disparar Misión del Asesor cada 45 segundos
-        if (state.timeLeft % 45 === 0 && !state.missionActive) {
+        // Disparador programado de misiones cada 45 segundos
+        if (state.timeLeft % 45 === 0 && state.mode === 'ACTION') {
             runMission();
         }
     }, 1000);
+
+    setInterval(spawnWord, 1500);
+    
+    // Lanzamiento inicial
+    runMission();
 }
 
-function toggleLang() {
-    state.lang = (state.lang === 'es') ? 'en' : 'es';
-    document.getElementById('lang-btn').innerText = state.lang.toUpperCase();
-}
-
-// Inicialización por interacción del usuario (Requerido por navegadores para Audio)
+// Activación por interacción (Protocolo de Navegador)
 window.onclick = () => {
-    if (AudioEngine.bgm.paused) {
+    if (!window.started) {
+        window.started = true;
         AudioEngine.init();
-        AudioEngine.bgm.play();
-        startTimer();
-        setInterval(spawnWord, 1300); // Iniciar lluvia de palabras
-        runMission(); // Primera misión inmediata
+        AudioEngine.bgm.play().catch(console.warn);
+        startSystem();
     }
 };
