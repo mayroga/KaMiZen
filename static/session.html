@@ -2,123 +2,235 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KAMIZEN</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>AL CIELO: TOTAL LIFE TRAINING</title>
 
 <style>
-:root{
---blue:#00f2ff;--green:#00ff41;--red:#ff003c;--yellow:#ffff00;--bg:#00050a;
+:root {
+    --neon-blue:#00f2ff;
+    --neon-green:#00ff41;
+    --neon-red:#ff003c;
+    --neon-yellow:#ffff00;
+    --matrix-bg:#00050a;
+    --neon-gold:#ffcc00;
 }
 
-body{margin:0;background:var(--bg);color:#fff;font-family:monospace;overflow:hidden}
+body{margin:0;background:var(--matrix-bg);color:#fff;font-family:'Courier New',monospace;overflow:hidden;}
 
-/* HUD */
-#hud{position:fixed;top:10px;width:100%;display:flex;justify-content:space-between;padding:10px}
-#score-box{border:2px solid #fff;padding:5px 15px}
-#timer{font-size:2rem;color:var(--blue)}
+.correct-flash{background:#002a00!important;}
+.wrong-flash{background:#2a0000!important;}
 
-#lang-btn{position:fixed;bottom:15px;right:15px;padding:10px;border:2px solid var(--blue);background:#000;color:var(--blue);cursor:pointer}
+.opt-green{border:3px solid var(--neon-green)!important;color:var(--neon-green)!important;}
+.opt-red{border:3px solid var(--neon-red)!important;color:var(--neon-red)!important;}
 
-/* stats */
-#stats{position:fixed;bottom:15px;left:15px;display:flex;gap:10px;flex-wrap:wrap}
-.stat{border:1px solid #333;padding:6px}
+#lang-btn{
+position:fixed;bottom:20px;right:20px;z-index:999;
+padding:10px 18px;border:2px solid var(--neon-blue);
+background:rgba(0,0,0,0.8);color:var(--neon-blue);cursor:pointer;
+}
 
-/* floating */
-.floating{position:absolute;padding:10px 20px;font-weight:bold;border-radius:8px;cursor:pointer;animation:up 7s linear}
-@keyframes up{from{transform:translateY(110vh)}to{transform:translateY(-20vh)}}
+#hud{
+position:fixed;top:20px;width:100%;
+display:flex;justify-content:space-between;padding:20px;
+}
 
-.good{border:2px solid var(--green);color:var(--green)}
-.bad{border:2px solid var(--red);color:var(--red)}
+#timer-box{font-size:2.5rem;color:var(--neon-blue);}
+#score-box{border:3px solid #fff;padding:8px 20px;}
 
-/* overlay */
-#overlay{position:fixed;width:100%;height:100%;background:#000d;display:none;flex-direction:column;justify-content:center;align-items:center}
-.choice{margin:10px;padding:15px;border:2px solid var(--blue);cursor:pointer}
-#continue{margin-top:20px;display:none;padding:10px 20px;border:2px solid #fff;cursor:pointer}
+#life-stats{
+position:fixed;bottom:20px;left:20px;
+display:flex;flex-wrap:wrap;gap:12px;
+}
 
-/* breath */
-#breath{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);display:none}
+.stat-pill{
+border:2px solid #333;padding:10px 15px;
+background:rgba(0,0,0,0.9);
+}
+
+#v-money{color:var(--neon-gold)!important;}
+#v-safety{color:var(--neon-red)!important;}
+#v-happy{color:#ff00ff!important;}
+
+.floating{
+position:absolute;padding:15px 30px;font-weight:900;
+font-size:1.4rem;border-radius:10px;background:#000;
+animation:floatUp 7s linear forwards;cursor:pointer;
+}
+
+.word-power{border:3px solid var(--neon-green);color:var(--neon-green);}
+.word-risk{border:3px solid var(--neon-red);color:var(--neon-red);}
+.word-silence{border:3px solid var(--neon-yellow);color:var(--neon-yellow);}
+.word-money{border:3px solid var(--neon-gold);color:var(--neon-gold);}
+.word-business{border:3px solid #00e5ff;color:#00e5ff;}
+.word-growth{border:3px solid #00ff99;color:#00ff99;}
+
+@keyframes floatUp{
+from{transform:translateY(110vh);}
+to{transform:translateY(-25vh);}
+}
+
+.explode{animation:blast 0.5s ease-out forwards!important;}
+@keyframes blast{
+0%{transform:scale(1);opacity:1;}
+100%{transform:scale(4);opacity:0;}
+}
+
+#overlay{
+position:fixed;width:100%;height:100%;
+background:rgba(0,5,10,0.95);
+display:none;flex-direction:column;
+align-items:center;justify-content:center;
+text-align:center;padding:30px;
+}
+
+#decision-grid{
+display:grid;grid-template-columns:1fr 1fr;
+gap:20px;margin-top:30px;
+}
+
+.choice-btn{
+padding:22px;border:3px solid var(--neon-blue);
+background:none;color:#fff;cursor:pointer;
+}
+
+#continue-btn{
+margin-top:20px;padding:15px 30px;
+border:2px solid #fff;display:none;
+}
 </style>
 </head>
 
 <body>
 
+<button id="lang-btn">EN</button>
+
 <div id="hud">
-<div id="timer">05:00</div>
+<div id="timer-box">05:00</div>
 <div id="score-box">0</div>
 </div>
 
-<button id="lang-btn">EN</button>
-
-<div id="stats">
-<div class="stat">R:<span id="v-respect">50</span></div>
-<div class="stat">P:<span id="v-peace">50</span></div>
-<div class="stat">L:<span id="v-lead">50</span></div>
-<div class="stat">$:<span id="v-money">100</span></div>
-<div class="stat">S:<span id="v-safety">100</span></div>
-<div class="stat">H:<span id="v-happy">50</span></div>
+<div id="life-stats">
+<div class="stat-pill">Respect: <span id="v-respect">50</span></div>
+<div class="stat-pill">Peace: <span id="v-peace">50</span></div>
+<div class="stat-pill">Leadership: <span id="v-lead">50</span></div>
+<div class="stat-pill">Money: $<span id="v-money">100</span></div>
+<div class="stat-pill">Safety: <span id="v-safety">100</span>%</div>
+<div class="stat-pill">Happiness: <span id="v-happy">50</span>%</div>
 </div>
 
 <div id="overlay">
-<h2 id="title"></h2>
-<p id="desc"></p>
-<div id="choices"></div>
-<div id="continue">CONTINUE</div>
+<h1 id="phase-title"></h1>
+<p id="phase-desc"></p>
+<div id="decision-grid"></div>
+<button id="continue-btn">CONTINUE</button>
 </div>
-
-<div id="breath">BREATH...</div>
 
 <script>
 
-/* STATE */
+/* =========================
+GLOBAL STATE
+========================= */
 let lang="en";
+let gameMode="words";
+
 let state={
 score:0,
 timer:300,
-stats:{respect:50,peace:50,lead:50,money:100,safety:100,happy:50}
+stats:{respect:50,peace:50,lead:50,money:100,happy:50,safety:100},
+spawnRate:1200
 };
 
-/* UPDATE */
+/* =========================
+LANG FULL SWITCH
+========================= */
+function applyLang(){
+document.getElementById("lang-btn").innerText=lang.toUpperCase();
+
+const labels={
+en:["Respect","Peace","Leadership","Money","Safety","Happiness"],
+es:["Respeto","Paz","Liderazgo","Dinero","Seguridad","Felicidad"]
+};
+
+document.querySelectorAll(".stat-pill").forEach((el,i)=>{
+el.childNodes[0].nodeValue=labels[lang][i]+": ";
+});
+}
+
+document.getElementById("lang-btn").onclick=()=>{
+lang=(lang==="en")?"es":"en";
+applyLang();
+};
+
+/* =========================
+HUD
+========================= */
 function updateHUD(){
 document.getElementById("score-box").innerText=state.score;
+let m=Math.floor(state.timer/60);
+let s=state.timer%60;
+document.getElementById("timer-box").innerText=`${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
 for(let k in state.stats){
 let el=document.getElementById("v-"+k);
 if(el)el.innerText=state.stats[k];
 }
 }
 
-/* LANGUAGE */
-document.getElementById("lang-btn").onclick=()=>{
-lang=(lang==="en")?"es":"en";
-document.getElementById("lang-btn").innerText=lang.toUpperCase();
+/* =========================
+WORDS FULL SYSTEM (EXPLODE + STATS + +21/-20)
+========================= */
+const words={
+power:["LISTEN","CALM","CONTROL","RESPECT"],
+risk:["ANGER","RUSH","IMPULSE"],
+silence:["OBSERVE","WAIT","BREATHE"],
+money:["INVEST","SAVE","VALUE"],
+business:["BUILD","SELL","LEAD"],
+growth:["LEARN","IMPROVE","FOCUS"]
 };
 
-/* WORDS */
-const goodWords=["FOCUS","CALM","PLAN","BUILD"];
-const badWords=["ANGER","RUSH","BLAME","IMPULSE"];
+function spawnWord(){
 
-function spawn(){
+if(gameMode!=="words")return;
+
+const cats=Object.keys(words);
+const c=cats[Math.floor(Math.random()*cats.length)];
+
 let div=document.createElement("div");
-let good=Math.random()>0.4;
+div.className="floating word-"+c;
+div.innerText=words[c][Math.floor(Math.random()*words[c].length)];
 
-div.className="floating "+(good?"good":"bad");
-div.innerText=(good?goodWords:badWords)[Math.floor(Math.random()*4)];
+let x=Math.random()*80,y=110,dx=(Math.random()*2-1)*0.4;
 
-div.style.left=Math.random()*80+"vw";
+function move(){
+x+=dx;
+y-=0.6;
+if(x<0||x>90)dx*=-1;
+div.style.left=x+"vw";
+div.style.top=y+"vh";
+requestAnimationFrame(move);
+}
+move();
 
 div.onclick=()=>{
-if(div.clicked)return;
-div.clicked=true;
+if(div.dataset.done)return;
+div.dataset.done=1;
 
-div.style.opacity=0;
+div.classList.add("explode");
 
-if(good){
+let positive=["power","silence","money","business","growth"].includes(c);
+
+if(positive){
 state.score+=21;
-state.stats.respect++;
-state.stats.happy++;
 }else{
 state.score-=20;
-state.stats.safety--;
 }
+
+/* STATS MOVE */
+if(c==="money")state.stats.money++;
+if(c==="business")state.stats.lead++;
+if(c==="growth")state.stats.happy++;
+if(c==="power")state.stats.respect++;
+if(c==="risk")state.stats.safety--;
+if(c==="silence")state.stats.peace++;
 
 updateHUD();
 };
@@ -127,119 +239,114 @@ document.body.appendChild(div);
 setTimeout(()=>div.remove(),7000);
 }
 
-/* BREATH */
-async function doBreath(d){
-document.getElementById("breath").style.display="block";
-await new Promise(r=>setTimeout(r,d*1000));
-document.getElementById("breath").style.display="none";
-}
+/* =========================
+JSON ENGINE REAL (USING YOUR STRUCTURE)
+========================= */
+async function triggerQuestion(){
 
-/* LOAD JSON */
-async function loadMission(){
-let res=await fetch("/api/mission/next?lang="+lang);
-return await res.json();
-}
-
-/* QUESTION */
-async function runMission(){
-
-let m=await loadMission();
-if(!m)return;
+const res=await fetch("/api/mission/next?lang="+lang);
+const data=await res.json();
+if(!data||!data.b)return;
 
 let overlay=document.getElementById("overlay");
-let title=document.getElementById("title");
-let desc=document.getElementById("desc");
-let choices=document.getElementById("choices");
-let cont=document.getElementById("continue");
+let grid=document.getElementById("decision-grid");
+let title=document.getElementById("phase-title");
+let desc=document.getElementById("phase-desc");
+let cont=document.getElementById("continue-btn");
 
 overlay.style.display="flex";
-choices.innerHTML="";
+grid.innerHTML="";
 cont.style.display="none";
 
-/* PARSE BLOCK */
-let blocks=m.b||[];
+let story="";
+let decision=null;
 
-for(let b of blocks){
+/* PARSE BLOCKS EXACT */
+data.b.forEach(x=>{
+if(x.story)story=x.story[lang];
+if(x.t==="d")decision=x;
+});
 
-if(b.t==="v") title.innerText=b.tx[lang];
+/* TITLE */
+title.innerText=data.cat||"MISSION";
+desc.innerText=story;
 
-if(b.t==="h") desc.innerText=b.tx[lang];
+/* OPTIONS */
+let answered=false;
 
-if(b.story) desc.innerText=b.story[lang];
+decision.op.forEach((op,i)=>{
 
-if(b.t==="br") await doBreath(b.d);
+let btn=document.createElement("button");
+btn.className="choice-btn";
 
-if(b.t==="sil") await doBreath(b.d);
-
-if(b.t==="d"){
-desc.innerText=b.q[lang];
-
-b.op.forEach((opt,i)=>{
-let btn=document.createElement("div");
-btn.className="choice";
-btn.innerText=opt.split("/")[lang==="en"?0:1];
+/* bilingual split */
+let parts=op.split(" / ");
+btn.innerText=(lang==="es"&&parts[1])?parts[1]:parts[0];
 
 btn.onclick=()=>{
-let correct=(i===b.c);
 
-desc.innerText=b.ex[i];
+if(answered)return;
+answered=true;
+
+let correct=i===decision.c;
+
+btn.classList.add(correct?"opt-green":"opt-red");
+
+desc.innerText=decision.ex[i];
 
 state.score+=correct?30:-20;
 
-if(correct){
-btn.style.borderColor="green";
-}else{
-btn.style.borderColor="red";
-}
+/* FLASH */
+document.body.classList.add(correct?"correct-flash":"wrong-flash");
+setTimeout(()=>document.body.classList.remove("correct-flash","wrong-flash"),400);
 
 updateHUD();
+
 cont.style.display="block";
 };
 
-choices.appendChild(btn);
+grid.appendChild(btn);
 });
-}
-}
 
-/* continue */
-cont.onclick=()=>{
-overlay.style.display="none";
-};
-
+cont.onclick=()=>overlay.style.display="none";
 }
 
-/* LOOP */
+/* =========================
+LOOP
+========================= */
 setInterval(()=>{
-if(state.timer>0){
+if(state.timer>0&&gameMode==="words"){
 state.timer--;
-let m=Math.floor(state.timer/60);
-let s=state.timer%60;
-document.getElementById("timer").innerText=
-String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
+updateHUD();
 }
 },1000);
 
-/* MAIN */
-async function loop(){
+async function mainLoop(){
 while(true){
 
-let end=Date.now()+30000;
+state.timer=300;
+gameMode="words";
+
+let end=Date.now()+45000;
 
 while(Date.now()<end){
-spawn();
-await new Promise(r=>setTimeout(r,1200));
+spawnWord();
+await new Promise(r=>setTimeout(r,state.spawnRate));
 }
 
 document.querySelectorAll(".floating").forEach(e=>e.remove());
 
-await runMission();
+gameMode="question";
+await triggerQuestion();
 
-await new Promise(r=>setTimeout(r,2000));
+await new Promise(r=>setTimeout(r,3000));
 }
 }
 
+/* INIT */
+applyLang();
 updateHUD();
-loop();
+mainLoop();
 
 </script>
 
