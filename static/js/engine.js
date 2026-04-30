@@ -1,162 +1,121 @@
 let state = {
-    lang: 'en',
-    paused: false,
     stats: { stability: 50, resources: 20, energy: 70 },
-    userName: "USER",
+    timeLeft: 900, // 15 Minutos en segundos
+    started: true,
     missionActive: false,
-    started: false,
-    data: null,
-    currentMissionIdx: 0,
-    timer: 300
+    storyPool: [
+        {
+            title: "The Fern and the Bamboo",
+            text: "A child walked through the forest with his grandfather... (Historia completa del Helecho y el Bambú)... It was growing roots to sustain its greatness when it was time to climb to the sky."
+        },
+        // Aquí se añaden las otras 34 historias siguiendo el mismo formato
+    ],
+    usedStories: []
 };
 
-const WORDS = {
-    pos: ["FOCUS", "SAVING", "CALM", "RESPECT", "SAFETY", "TRUTH", "HELP"],
-    neg: ["IMPULSE", "WASTE", "ANGER", "NOISE", "HASTE", "EGO", "LIES"]
-};
-
-// Música de enfoque (Binaural)
-const AudioEngine = {
-    init() {
-        this.bgm = new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-15.mp3'); 
-        this.bgm.loop = true;
-        this.bgm.volume = 0.15;
-    },
+const Voice = {
     speak(text) {
         speechSynthesis.cancel();
         const msg = new SpeechSynthesisUtterance(text);
-        msg.lang = state.lang === 'es' ? 'es-ES' : 'en-US';
-        msg.rate = 0.85; // Voz calmada
+        const voices = speechSynthesis.getVoices();
+        msg.voice = voices.find(v => v.name.includes('Male') || v.name.includes('David')) || voices[0];
+        msg.lang = 'en-US';
+        msg.rate = 0.85;
         speechSynthesis.speak(msg);
     }
 };
 
-function updateUI() {
-    // Actualizar barras
-    Object.keys(state.stats).forEach(key => {
-        document.getElementById(`bar-${key}`).style.width = state.stats[key] + "%";
-        document.getElementById(`val-${key}`).innerText = state.stats[key] + "%";
-    });
-
-    // Evolución del Avatar
-    const scale = 0.6 + (state.stats.stability / 100);
-    const container = document.getElementById('avatar-container');
-    container.style.transform = `translateX(-50%) scale(${scale})`;
-    
-    const lines = document.querySelectorAll('.stickman');
-    const color = state.stats.stability > 60 ? "#2ecc71" : (state.stats.stability < 30 ? "#e74c3c" : "#00d4ff");
-    lines.forEach(l => {
-        l.style.stroke = color;
-        l.style.strokeWidth = 3 + (state.stats.resources / 20); // Más recursos = más fuerte/robusto
-    });
+// Sistema de Paisajes basado en tipos de palabras
+function changeLandscape(type) {
+    const body = document.body;
+    body.className = ''; 
+    if (["DINERO", "NEGOCIO", "GASTAR DINERO"].includes(type)) body.classList.add('landscape-city');
+    else if (["BIENESTAR", "SALUD", "AMOR", "FELICIDAD"].includes(type)) body.classList.add('landscape-zen');
+    else body.classList.add('landscape-forest');
 }
 
 function spawnWord() {
-    if (state.paused || state.missionActive || !state.started) return;
-
-    const isPos = Math.random() > 0.4;
-    const text = isPos ? WORDS.pos[Math.floor(Math.random() * WORDS.pos.length)] : WORDS.neg[Math.floor(Math.random() * WORDS.neg.length)];
+    if (state.missionActive || state.timeLeft <= 0) return;
+    
+    const categories = [
+        {t: "OBSTACULO", c: "red", p: -10}, {t: "OPORTUNIDAD", c: "gold", p: 15},
+        {t: "DINERO", c: "green", p: 10}, {t: "FAMILIA", c: "white", p: 5},
+        {t: "FELICIDAD", c: "pink", p: 20}, {t: "GASTAR SIN CONTROL", c: "red", p: -20}
+    ];
+    
+    const cat = categories[Math.floor(Math.random() * categories.length)];
+    changeLandscape(cat.t);
 
     const div = document.createElement('div');
     div.className = 'word-box';
-    div.innerText = text;
-    div.style.left = Math.random() * 75 + 10 + "vw";
-    if (!isPos) div.style.borderColor = "var(--error)";
+    div.innerText = cat.t;
+    div.style.borderColor = cat.c;
+    div.style.left = (Math.random() * 70 + 15) + "vw";
 
     div.onclick = () => {
-        if (isPos) {
-            state.stats.stability = Math.min(100, state.stats.stability + 10);
-            state.stats.energy = Math.min(100, state.stats.energy + 5);
-        } else {
-            state.stats.stability = Math.max(0, state.stats.stability - 10);
-            state.stats.energy = Math.max(0, state.stats.energy - 5);
-        }
-        updateUI();
-        div.style.transform = "scale(0)";
-        setTimeout(() => div.remove(), 200);
+        div.classList.add('explode');
+        state.stats.stability = Math.max(0, Math.min(100, state.stats.stability + cat.p));
+        updateHUD();
+        Voice.speak(cat.t);
+        setTimeout(() => div.remove(), 300);
     };
-
     document.body.appendChild(div);
-    setTimeout(() => { if(div.parentNode) div.remove(); }, 9000);
+    setTimeout(() => { if(div.parentNode) div.remove(); }, 10000);
 }
 
-async function runMission() {
+function updateHUD() {
+    document.getElementById('bar-stability').style.height = state.stats.stability + "%";
+    document.getElementById('bar-resources').style.height = state.stats.resources + "%";
+    document.getElementById('bar-energy').style.height = state.stats.energy + "%";
+}
+
+// Reloj Maestro y Apagado Automático
+setInterval(() => {
+    if (state.timeLeft <= 0) {
+        document.body.innerHTML = "<h1 style='text-align:center; margin-top:20vh;'>TRAINING COMPLETE. SYSTEM SHUTDOWN.</h1>";
+        return;
+    }
+    state.timeLeft--;
+    const m = Math.floor(state.timeLeft / 60);
+    const s = state.timeLeft % 60;
+    document.getElementById('master-clock').innerText = `${m}:${s.toString().padStart(2, '0')}`;
+    
+    // Lanzar historia cada 3 minutos (180s)
+    if (state.timeLeft % 180 === 0 && state.timeLeft < 900) showStory();
+}, 1000);
+
+function showStory() {
+    if (state.storyPool.length === 0) return;
     state.missionActive = true;
-    const overlay = document.getElementById('overlay');
-    const grid = document.getElementById('decision-grid');
-    const btnCont = document.getElementById('btn-continue');
+    const story = state.storyPool.shift();
+    state.usedStories.push(story);
     
+    const overlay = document.getElementById('story-overlay');
+    document.getElementById('story-title').innerText = story.title;
+    document.getElementById('story-text').innerText = story.text;
     overlay.style.display = 'flex';
-    btnCont.style.display = 'none';
-    grid.innerHTML = '';
-
-    const mission = state.data.missions[state.currentMissionIdx];
-    const qBlock = mission.b.find(b => b.t === 'd');
     
-    document.getElementById('phase-title').innerText = mission.b[0].tx[state.lang];
-    document.getElementById('phase-desc').innerText = qBlock.q[state.lang];
-    AudioEngine.speak(qBlock.q[state.lang]);
-
-    qBlock.op.forEach((opt, idx) => {
-        const btn = document.createElement('button');
-        btn.className = 'choice-btn';
-        btn.innerText = opt.split(' / ')[state.lang === 'es' ? 1 : 0];
-        
-        btn.onclick = () => {
-            const isCorrect = idx === qBlock.c;
-            // Limpiar otros botones
-            Array.from(grid.children).forEach(b => b.className = 'choice-btn');
-            
-            btn.className = isCorrect ? 'choice-btn selected-correct' : 'choice-btn selected-wrong';
-            document.getElementById('phase-desc').innerText = qBlock.ex[idx].split(' / ')[state.lang === 'es' ? 1 : 0];
-            
-            // Impacto en recursos y estabilidad
-            if(isCorrect) {
-                state.stats.resources = Math.min(100, state.stats.resources + 15);
-                state.stats.stability = Math.min(100, state.stats.stability + 10);
-            } else {
-                state.stats.stability = Math.max(0, state.stats.stability - 15);
-            }
-            
-            updateUI();
-            btnCont.style.display = 'block'; // Pausa de poder: el niño decide cuándo seguir
-        };
-        grid.appendChild(btn);
-    });
+    Voice.speak(story.title + ". " + story.text);
 }
 
-function resolveMission() {
-    document.getElementById('overlay').style.display = 'none';
-    state.currentMissionIdx = (state.currentMissionIdx + 1) % state.data.missions.length;
+function closeStory() {
+    document.getElementById('story-overlay').style.display = 'none';
     state.missionActive = false;
+    startBreathingExercise(); // Respiración después de cada historia
 }
 
-function togglePause() {
-    state.paused = !state.paused;
-    document.getElementById('pause-overlay').style.display = state.paused ? 'flex' : 'none';
-}
-
-function startSystem() {
-    const name = document.getElementById('user-name').value || "RECRUIT";
-    state.userName = name;
-    document.getElementById('avatar-name').innerText = state.userName;
+async function startBreathingExercise() {
+    const circle = document.getElementById('breath-circle');
+    const text = document.getElementById('breath-text');
+    circle.style.display = 'flex';
     
-    AudioEngine.init();
-    AudioEngine.bgm.play();
-
-    fetch('/api/mission/next?id=1').then(r => r.json()).then(json => {
-        state.data = json.mission;
-        state.started = true;
-        document.getElementById('start-screen').style.display = 'none';
-        
-        setInterval(() => { if(!state.paused) spawnWord(); }, 1800);
-        setInterval(() => {
-            if(!state.paused && !state.missionActive) {
-                state.timer--;
-                if(state.timer % 60 === 0) runMission();
-            }
-            updateUI();
-        }, 1000);
-        runMission();
-    });
+    for(let i=0; i<4; i++) {
+        text.innerText = "INHALE"; circle.style.transform = "scale(1.4)";
+        await new Promise(r => setTimeout(r, 4000));
+        text.innerText = "EXHALE"; circle.style.transform = "scale(1)";
+        await new Promise(r => setTimeout(r, 4000));
+    }
+    circle.style.display = 'none';
 }
+
+setInterval(spawnWord, 2500);
