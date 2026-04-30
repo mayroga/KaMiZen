@@ -1,243 +1,97 @@
-let lang = "en";
-let gameMode = "idle";
+/* =========================
+   ESTADO GLOBAL Y CONFIG
+   ========================= */
+let lang = "es"; 
+let gameMode = "words"; // words | question | breathing
 
 let state = {
     score: 0,
-    mastery: 1,
     timer: 300,
-    stats: {
-        respect: 50,
-        peace: 50,
-        lead: 50,
-        money: 100,
-        happy: 50,
-        safety: 100
-    },
+    stats: { respect: 50, peace: 50, lead: 50, money: 100, happy: 50, safety: 100 },
     spawnRate: 1400,
     maxWords: 18
 };
 
-let userProfile = {};
-
 /* =========================
-🧬 PROFILE ADAPTATION
-========================= */
-function applyProfile(profile){
-    if(!profile) return;
-    userProfile = profile;
-
-    state.spawnRate = 1400;
-
-    if(profile.impulsivity > 65) state.spawnRate -= 400;
-    if(profile.focus > 70) state.spawnRate += 300;
-    if(profile.calm > 65) state.spawnRate += 200;
-    if(profile.fear > 65) state.spawnRate -= 200;
-}
-
-/* =========================
-🔊 SAFE SPEECH (NO FREEZE)
-========================= */
-let speaking = false;
-
-function speak(t){
-    if(!t || speaking) return;
-
-    speaking = true;
-
-    let u = new SpeechSynthesisUtterance(t);
+   🔊 VOICE ENGINE (MASCULINO)
+   ========================= */
+function speak(text) {
+    if (!text) return;
+    speechSynthesis.cancel(); 
+    const u = new SpeechSynthesisUtterance(text);
+    
+    // Configurar voz
+    const voices = speechSynthesis.getVoices();
+    // Buscar una voz masculina (Google Spanish o similar)
+    u.voice = voices.find(v => v.name.includes('Male') || v.name.includes('México') || v.name.includes('Spain')) || voices[0];
+    
     u.lang = lang === "es" ? "es-ES" : "en-US";
-
-    u.onend = () => speaking = false;
-    u.onerror = () => speaking = false;
-
-    speechSynthesis.cancel();
+    u.rate = 0.9; // Un poco más lento para peso y autoridad
+    u.pitch = 0.8; // Tono más grave/profundo
     speechSynthesis.speak(u);
 }
 
 /* =========================
-📊 HUD
-========================= */
-function updateHUD(){
-    document.getElementById("score-box").innerText = state.score;
-
+   📊 HUD & UI
+   ========================= */
+function updateHUD() {
+    document.getElementById("score-box").innerText = `SCORE: ${state.score}`;
+    
     let m = Math.floor(state.timer / 60);
     let s = state.timer % 60;
-    document.getElementById("timer-box").innerText =
-        String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
+    document.getElementById("timer-box").innerText = 
+        `${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
 
-    for(let k in state.stats){
-        let el = document.getElementById("v-"+k);
-        if(el) el.innerText = state.stats[k];
+    for (let k in state.stats) {
+        let el = document.getElementById("v-" + k);
+        if (el) el.innerText = state.stats[k];
     }
 }
 
 /* =========================
-⚡ AUDIO (LIMITED, NO OVERFLOW)
-========================= */
-const AudioEngine = {
-    ctx:null,
-    lastClick:0,
+   🧠 LOGICA DE PREGUNTAS (API)
+   ========================= */
+async function triggerQuestion() {
+    gameMode = "question";
+    
+    try {
+        const res = await fetch(`/api/mission/next?lang=${lang}`);
+        const data = await res.json();
 
-    init(){
-        if(this.ctx) return;
-        this.ctx = new (window.AudioContext||window.webkitAudioContext)();
-    },
-
-    click(){
-        if(!this.ctx) return;
-
-        if(Date.now() - this.lastClick < 80) return;
-        this.lastClick = Date.now();
-
-        let o = this.ctx.createOscillator();
-        let g = this.ctx.createGain();
-
-        o.type = "triangle";
-        o.frequency.value = 700;
-
-        g.gain.value = 0.05;
-
-        o.connect(g);
-        g.connect(this.ctx.destination);
-
-        o.start();
-        o.stop(this.ctx.currentTime + 0.08);
-    },
-
-    explode(){
-        if(!this.ctx) return;
-
-        let buffer = this.ctx.createBuffer(1, this.ctx.sampleRate * 0.08, this.ctx.sampleRate);
-        let data = buffer.getChannelData(0);
-
-        for(let i=0;i<data.length;i++) data[i] = Math.random()*2-1;
-
-        let n = this.ctx.createBufferSource();
-        n.buffer = buffer;
-
-        let g = this.ctx.createGain();
-        g.gain.value = 0.15;
-
-        n.connect(g);
-        g.connect(this.ctx.destination);
-
-        n.start();
-    }
-};
-
-document.addEventListener("click",()=>AudioEngine.init(),{once:true});
-
-/* =========================
-🌊 WORD SYSTEM (CONTROLLED SPAWN)
-========================= */
-
-const words = {
-    power:["FOCUS","CONTROL","CALM","THINK"],
-    risk:["RUSH","ANGER","IMPULSE","IGNORE"],
-    silence:["BREATHE","OBSERVE","WAIT","RESET"],
-    money:["SAVE","BUILD","INVEST","GROW"],
-    business:["LEAD","SYSTEM","SCALE","VALUE"],
-    growth:["LEARN","ADAPT","DISCIPLINE","IMPROVE"]
-};
-
-let activeWords = 0;
-let lastSpawn = 0;
-
-function spawnWord(){
-
-    if(gameMode !== "words") return;
-
-    // 🧠 HARD LIMIT (ANTI FREEZE)
-    if(activeWords > state.maxWords) return;
-
-    let now = Date.now();
-    if(now - lastSpawn < state.spawnRate) return;
-    lastSpawn = now;
-
-    const cats = Object.keys(words);
-    const c = cats[Math.floor(Math.random()*cats.length)];
-
-    let div = document.createElement("div");
-    div.className = "floating";
-    div.innerText = words[c][Math.floor(Math.random()*words[c].length)];
-    div.style.left = Math.random()*80 + "vw";
-
-    activeWords++;
-
-    div.onclick = () => {
-
-        AudioEngine.click();
-
-        let positive = !["risk"].includes(c);
-
-        state.score += positive ? 20 : -10;
-
-        if(c==="money") state.stats.money++;
-        if(c==="business") state.stats.lead++;
-        if(c==="growth") state.stats.happy++;
-        if(c==="power") state.stats.respect++;
-        if(c==="risk") state.stats.safety--;
-        if(c==="silence") state.stats.peace++;
-
-        updateHUD();
-
-        div.remove();
-        activeWords--;
-    };
-
-    document.body.appendChild(div);
-
-    // 🧹 AUTO CLEANUP
-    setTimeout(()=>{
-        if(div.parentNode){
-            div.remove();
-            activeWords--;
+        if (data.end) {
+            alert("ENTRENAMIENTO FINALIZADO");
+            location.reload();
+            return;
         }
-    }, 6000);
-}
 
-/* =========================
-🧠 QUESTION SYSTEM
-========================= */
-async function triggerQuestion(){
+        const overlay = document.getElementById("overlay");
+        const grid = document.getElementById("decision-grid");
+        const desc = document.getElementById("phase-desc");
+        const title = document.getElementById("phase-title");
+        const cont = document.getElementById("continue-btn");
 
-    const res = await fetch("/api/mission/next?lang="+lang);
-    const data = await res.json();
+        overlay.style.display = "flex";
+        grid.innerHTML = "";
+        cont.style.display = "none";
+        
+        title.innerText = data.title;
+        desc.innerText = data.story || data.header;
+        
+        // Voz al iniciar la fase
+        speak(desc.innerText);
 
-    applyProfile(data.profile);
+        data.options.forEach(opt => {
+            const btn = document.createElement("button");
+            btn.className = "choice-btn";
+            btn.innerText = opt.text; // Ya viene filtrado por el servidor
 
-    let overlay = document.getElementById("overlay");
-    let grid = document.getElementById("decision-grid");
-    let desc = document.getElementById("phase-desc");
-    let title = document.getElementById("phase-title");
-    let cont = document.getElementById("continue-btn");
+            btn.onclick = () => {
+                AudioEngine.click();
+                desc.innerText = opt.explanation;
+                speak(opt.explanation);
 
-    overlay.style.display="flex";
-    grid.innerHTML="";
-    cont.style.display="none";
-
-    title.innerText = data.theme;
-    desc.innerText = data.story;
-
-    let answered = false;
-
-    data.options.forEach(opt=>{
-
-        let btn = document.createElement("button");
-        btn.className = "choice-btn";
-        btn.innerText = opt.text.en;
-
-        btn.onclick = ()=>{
-
-            AudioEngine.click();
-
-            desc.innerText = opt.explanation.en;
-            speak(opt.explanation.en);
-
-            if(!answered){
-                answered = true;
-
-                if(opt.correct){
+                // Feedback visual
+                if (opt.is_correct) {
                     state.score += 30;
                     document.body.classList.add("correct-flash");
                 } else {
@@ -245,77 +99,126 @@ async function triggerQuestion(){
                     document.body.classList.add("wrong-flash");
                 }
 
-                setTimeout(()=>{
-                    document.body.classList.remove("correct-flash","wrong-flash");
-                },400);
+                setTimeout(() => {
+                    document.body.classList.remove("correct-flash", "wrong-flash");
+                }, 400);
 
-                document.querySelectorAll(".choice-btn")
-                .forEach(b=>b.classList.add("locked"));
-
-                cont.style.display="block";
+                // Bloquear otras opciones
+                document.querySelectorAll(".choice-btn").forEach(b => b.disabled = true);
+                
+                // Preparar continuación (Respira o Siguiente)
+                cont.style.display = "block";
+                window.currentMissionsBlocks = data.interactive_blocks;
+                
+                if (window.currentMissionsBlocks && window.currentMissionsBlocks.length > 0) {
+                    cont.innerText = lang === "es" ? "INICIAR PRÁCTICA" : "START PRACTICE";
+                    cont.onclick = () => runBreathing(window.currentMissionsBlocks);
+                } else {
+                    cont.onclick = () => { overlay.style.display = "none"; gameMode = "words"; };
+                }
                 updateHUD();
-            }
-        };
-
-        grid.appendChild(btn);
-    });
-
-    cont.onclick = ()=>{
-        AudioEngine.click();
-        overlay.style.display="none";
-    };
+            };
+            grid.appendChild(btn);
+        });
+    } catch (e) {
+        console.error("Error en API:", e);
+    }
 }
 
 /* =========================
-⏱ SAFE TIMER
-========================= */
-setInterval(()=>{
-    if(state.timer>0 && gameMode==="words"){
-        state.timer--;
-        updateHUD();
+   🧘 PRÁCTICA DE RESPIRACIÓN
+   ========================= */
+async function runBreathing(blocks) {
+    gameMode = "breathing";
+    document.getElementById("overlay").style.display = "none";
+    const circle = document.getElementById("breath-circle");
+    const txt = document.getElementById("breath-txt");
+    const bTimer = document.getElementById("breath-timer");
+
+    circle.style.display = "flex";
+
+    for (let block of blocks) {
+        txt.innerText = block.text;
+        speak(block.text);
+        circle.className = (block.type === 'br') ? 'inhale-anim' : '';
+        
+        let count = block.duration;
+        while (count > 0) {
+            bTimer.innerText = count + "s";
+            await new Promise(r => setTimeout(r, 1000));
+            count--;
+        }
     }
-},1000);
+
+    circle.style.display = "none";
+    gameMode = "words"; // Volver al juego de palabras
+    phaseStart = Date.now(); // Resetear el timer de fase
+}
 
 /* =========================
-🔁 FRAME-BASED LOOP (NO FREEZE)
-========================= */
+   🌊 SISTEMA DE PALABRAS
+   ========================= */
+const words = {
+    power: ["CONTROL", "CALMA", "ENFOQUE"],
+    risk: ["RABIA", "IMPULSO", "IGNORAR"],
+    silence: ["RESPIRA", "ESPERA", "OBSERVA"]
+};
 
+let activeWords = 0;
+let lastSpawn = 0;
+
+function spawnWord() {
+    if (gameMode !== "words" || activeWords > state.maxWords) return;
+
+    let now = Date.now();
+    if (now - lastSpawn < state.spawnRate) return;
+    lastSpawn = now;
+
+    const cats = Object.keys(words);
+    const c = cats[Math.floor(Math.random() * cats.length)];
+
+    let div = document.createElement("div");
+    div.className = "floating";
+    div.innerText = words[c][Math.floor(Math.random() * words[c].length)];
+    div.style.left = Math.random() * 80 + "vw";
+
+    activeWords++;
+    div.onclick = () => {
+        AudioEngine.click();
+        state.score += (c === "risk") ? -20 : 10;
+        updateHUD();
+        div.remove();
+        activeWords--;
+    };
+
+    document.body.appendChild(div);
+    setTimeout(() => { if (div.parentNode) { div.remove(); activeWords--; } }, 6000);
+}
+
+/* =========================
+   🔁 LOOP PRINCIPAL
+   ========================= */
 let phaseStart = Date.now();
-let phase = "words";
 
-function loop(){
-
+function loop() {
     requestAnimationFrame(loop);
 
-    if(phase === "words"){
-
+    if (gameMode === "words") {
         spawnWord();
-
-        if(Date.now() - phaseStart > 45000){
-            phase = "question";
-            phaseStart = Date.now();
-
-            document.querySelectorAll(".floating").forEach(e=>e.remove());
+        // Cada 45 segundos, lanzar una pregunta de asesoría
+        if (Date.now() - phaseStart > 45000) {
+            document.querySelectorAll(".floating").forEach(e => e.remove());
             activeWords = 0;
-
             triggerQuestion();
         }
     }
 }
 
-function start(){
-    phaseStart = Date.now();
-    phase = "words";
-    loop();
-}
-
-function toggleLang(){
-    lang = (lang==="en")?"es":"en";
+function toggleLang() {
+    lang = (lang === "en") ? "es" : "en";
     document.getElementById("lang-btn").innerText = lang.toUpperCase();
 }
 
-/* =========================
-🚀 START
-========================= */
+// Iniciar
 updateHUD();
-start();
+loop();
