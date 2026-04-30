@@ -3,49 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AL CIELO - ADVISORY</title>
+    <title>AL CIELO - AURA BY MAY ROGA</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         :root { --blue: #00d4ff; --gold: #ffd700; --green: #2ecc71; --red: #e74c3c; }
-        body { margin: 0; background: #000; color: white; font-family: Arial, sans-serif; overflow: hidden; }
+        body { margin: 0; background: #000; color: white; font-family: 'Segoe UI', sans-serif; overflow: hidden; }
 
-        /* Login */
+        /* Pantalla de Inicio */
         #login-screen { position: fixed; inset: 0; background: #000; z-index: 5000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        input { padding: 15px; font-size: 1.5rem; border-radius: 8px; border: 2px solid var(--blue); background: #111; color: white; margin-bottom: 20px; }
+        input { padding: 15px; font-size: 1.5rem; border-radius: 10px; border: 2px solid var(--blue); background: #111; color: white; text-align: center; margin-bottom: 20px; }
         
-        /* Dashboard */
-        #master-clock { position: absolute; top: 10px; width: 100%; text-align: center; font-size: 4rem; font-weight: bold; color: var(--blue); z-index: 1000; }
+        /* Reloj Maestro */
+        #master-clock { position: absolute; top: 10px; width: 100%; text-align: center; font-size: 5rem; font-weight: 900; color: var(--blue); z-index: 1000; text-shadow: 0 0 20px rgba(0,212,255,0.5); pointer-events: none; }
         
-        #control-panel { position: absolute; top: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 2000; }
-        .icon-btn { width: 60px; height: 60px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; font-size: 0.9rem; }
-        .btn-trans { background: var(--gold); }
-        .btn-audio { background: var(--blue); }
+        /* Panel de Control Lateral */
+        #control-panel { position: absolute; top: 20px; right: 20px; display: flex; flex-direction: column; gap: 12px; z-index: 2000; }
+        .icon-btn { width: 55px; height: 55px; border-radius: 12px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+        .icon-btn:hover { transform: scale(1.1); }
+        .btn-translate { background: var(--gold); color: black; }
+        .btn-speaker { background: var(--blue); color: black; }
         .btn-pdf { background: var(--green); color: white; }
         .btn-clear { background: var(--red); color: white; }
 
-        /* Escenario Fijo */
-        #game-world { position: fixed; inset: 0; background: #111; display: none; }
-        #static-avatar { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); text-align: center; z-index: 100; }
+        /* Mundo de Juego */
+        #game-world { position: fixed; inset: 0; background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364); display: none; }
         
-        /* Historias */
-        #story-box { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 3000; padding: 40px; text-align: center; }
-        
-        /* Palabras */
-        .word { position: absolute; padding: 15px 25px; border: 2px solid white; border-radius: 20px; background: rgba(30,30,30,0.9); cursor: pointer; animation: fall 8s linear forwards; font-weight: bold; font-size: 1.1rem; }
-        @keyframes fall { from { top: -50px; } to { top: 105vh; } }
+        /* Avatar Estático (Sin Levitación) */
+        #avatar-container { position: absolute; bottom: 60px; left: 50%; transform: translateX(-50%); z-index: 100; text-align: center; }
+        .stickman { stroke: white; stroke-width: 4; fill: none; }
+
+        /* Superposición de Respiración */
+        #breath-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 320px; height: 320px; border: 12px solid white; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: bold; z-index: 500; transition: transform 4s linear; }
+
+        /* Cuadro de Historias */
+        #story-box { position: fixed; inset: 0; background: rgba(0,0,0,0.98); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 3000; padding: 40px; text-align: center; }
+        #story-title { color: var(--gold); font-size: 3.5rem; margin-bottom: 20px; }
+        #story-content { font-size: 1.8rem; line-height: 1.6; max-width: 850px; color: #f0f0f0; margin-bottom: 40px; }
+
+        /* Elementos que Caen */
+        .word { position: absolute; padding: 18px 35px; border: 2px solid white; border-radius: 40px; background: rgba(0,0,0,0.8); cursor: pointer; animation: fall 10s linear forwards; font-weight: bold; font-size: 1.2rem; white-space: nowrap; box-shadow: 0 0 15px rgba(255,255,255,0.2); }
+        @keyframes fall { from { top: -80px; } to { top: 110vh; } }
     </style>
 </head>
 <body>
 
     <div id="login-screen">
-        <h1 style="color: var(--blue);">AL CIELO</h1>
-        <input type="text" id="user-name" placeholder="Your Name">
-        <button onclick="initApp()" style="padding: 15px 40px; background: var(--blue); border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">START</button>
+        <h1 style="color: var(--blue); font-size: 3.5rem; letter-spacing: 5px;">AL CIELO</h1>
+        <input type="text" id="user-name" placeholder="Enter Student Name">
+        <button onclick="initApp()" style="padding: 18px 50px; background: var(--blue); border: none; border-radius: 10px; font-weight: bold; font-size: 1.2rem; cursor: pointer; color: black;">START ADVISORY</button>
     </div>
 
     <div id="control-panel">
-        <button class="icon-btn btn-trans" onclick="changeLang()">ES/EN</button>
-        <button class="icon-btn btn-audio" id="audio-btn" onclick="toggleMute()">AUDIO: ON</button>
+        <button class="icon-btn btn-translate" onclick="toggleLanguage()">ES/EN</button>
+        <button class="icon-btn btn-speaker" id="speaker-toggle" onclick="toggleAudio()">ON</button>
         <button class="icon-btn btn-pdf" onclick="generatePDF()">PDF</button>
         <button class="icon-btn btn-clear" onclick="location.reload()">CLEAR</button>
     </div>
@@ -53,19 +63,21 @@
     <div id="master-clock">15:00</div>
     
     <div id="game-world">
-        <div id="static-avatar">
-            <svg width="80" height="80" viewBox="0 0 100 100">
-                <circle cx="50" cy="30" r="20" stroke="white" stroke-width="4" fill="none"/>
-                <path d="M50 50 L50 90 M30 70 L70 70" stroke="white" stroke-width="4"/>
+        <!-- Avatar ahora está fijo, sin animaciones de levitación -->
+        <div id="avatar-container">
+            <svg width="120" height="170" viewBox="0 0 100 150">
+                <circle cx="50" cy="30" r="22" class="stickman"/>
+                <path d="M50 52 L50 110 M50 75 L15 50 M50 75 L85 50 M50 110 L20 145 M50 110 L80 145" class="stickman"/>
             </svg>
-            <div id="user-display" style="color:var(--gold); font-weight:bold; font-size:1.5rem;"></div>
+            <div id="display-name" style="margin-top:15px; font-size: 1.6rem; font-weight:900; color: var(--gold); text-transform: uppercase;"></div>
         </div>
+        <div id="breath-overlay">INHALE</div>
     </div>
 
     <div id="story-box">
-        <h1 id="st-title" style="color:var(--gold);"></h1>
-        <p id="st-body" style="font-size:1.5rem; max-width:700px;"></p>
-        <button onclick="closeStory()" style="padding:15px 40px; background:var(--green); color:white; border:none; border-radius:8px; cursor:pointer;">CONTINUE</button>
+        <h1 id="story-title"></h1>
+        <p id="story-content"></p>
+        <button onclick="closeStory()" style="padding: 20px 60px; background: var(--green); color: white; border: none; border-radius: 12px; font-size: 1.6rem; font-weight: bold; cursor: pointer;">I UNDERSTAND</button>
     </div>
 
     <script src="/static/js/engine.js"></script>
