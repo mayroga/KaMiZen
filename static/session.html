@@ -3,89 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KAMIZEN LIFE SAFETY</title>
+    <title>KAMIZEN LIFE SAFETY - Training Mode</title>
     <style>
-        :root { --primary: #00d4ff; --bg: #050505; --success: #28a745; --error: #dc3545; --gold: #ffd700; }
-        body { margin: 0; background: var(--bg); color: white; font-family: 'Courier New', monospace; overflow: hidden; }
+        :root { --primary: #00d4ff; --bg: #050505; --success: #2ecc71; --error: #e74c3c; --gold: #f1c40f; }
+        body { margin: 0; background: var(--bg); color: white; font-family: 'Courier New', monospace; overflow: hidden; transition: 0.5s; }
         
-        #start-screen {
-            position: fixed; inset: 0; background: var(--bg); z-index: 1000;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-        }
-        .start-btn {
-            padding: 20px 50px; font-size: 2rem; background: var(--primary); 
-            color: black; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;
+        /* Dashboard de Indicadores */
+        #ui-layer { position: absolute; top: 20px; left: 20px; z-index: 10; width: 350px; background: rgba(0,0,0,0.6); padding: 15px; border-radius: 10px; border-left: 4px solid var(--primary); }
+        .stat-group { margin-bottom: 12px; }
+        .stat-label { font-size: 0.8rem; letter-spacing: 1px; display: flex; justify-content: space-between; margin-bottom: 4px; }
+        .stat-bar { background: #222; height: 10px; border-radius: 5px; overflow: hidden; border: 1px solid #333; }
+        .fill { height: 100%; transition: width 0.6s ease; }
+        
+        /* Colores de barras */
+        #bar-stability { background: var(--primary); box-shadow: 0 0 10px var(--primary); }
+        #bar-resources { background: var(--gold); box-shadow: 0 0 10px var(--gold); }
+        #bar-energy { background: var(--success); box-shadow: 0 0 10px var(--success); }
+
+        /* Avatar System */
+        #avatar-container { position: absolute; bottom: 60px; left: 50%; transform: translateX(-50%); transition: 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 5; }
+        .stickman { fill: none; stroke: var(--primary); stroke-width: 4; stroke-linecap: round; transition: 0.5s; }
+        #avatar-name { text-align: center; font-size: 1.2rem; color: #fff; margin-top: 10px; font-weight: bold; text-transform: uppercase; }
+
+        /* Controles */
+        #btn-pause { position: absolute; top: 20px; right: 20px; padding: 12px 25px; background: rgba(243, 156, 18, 0.2); border: 1px solid #f39c12; color: #f39c12; cursor: pointer; font-weight: bold; border-radius: 5px; }
+        #pause-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: none; z-index: 1000; align-items: center; justify-content: center; flex-direction: column; cursor: pointer; }
+
+        /* Palabras en Cuadros */
+        .word-box { 
+            position: absolute; padding: 12px 24px; border: 2px solid var(--primary); 
+            background: rgba(0,212,255,0.05); color: white; font-weight: bold; 
+            cursor: pointer; border-radius: 8px; backdrop-filter: blur(5px);
+            animation: floatUp 9s linear forwards; font-size: 1.1rem;
         }
 
-        #lang-toggle {
-            position: absolute; top: 20px; right: 20px; z-index: 500;
-            padding: 10px; background: transparent; border: 1px solid var(--primary);
-            color: var(--primary); cursor: pointer;
-        }
-
-        #ui-layer { position: absolute; top: 20px; left: 20px; z-index: 10; width: 320px; }
-        .stat-bar { background: #222; height: 12px; border-radius: 2px; margin-bottom: 15px; border: 1px solid #444; }
-        .fill { height: 100%; transition: width 0.5s; background: var(--primary); }
-        #timer-box { font-size: 2.5rem; font-weight: bold; color: var(--primary); }
-
+        /* Mission Overlay */
         #overlay { 
-            position: fixed; inset: 0; background: rgba(0,0,0,0.98); 
+            position: fixed; inset: 0; background: rgba(5, 5, 5, 0.98); 
             display: none; flex-direction: column; align-items: center; justify-content: center; 
-            z-index: 100; text-align: center; padding: 40px;
+            z-index: 100; text-align: center; padding: 40px; border: 20px solid rgba(255,255,255,0.02);
         }
-        
-        #phase-title { color: var(--primary); font-size: 2rem; margin-bottom: 10px; border-bottom: 2px solid var(--primary); }
-        #phase-desc { font-size: 1.5rem; max-width: 800px; margin-bottom: 30px; color: #fff; }
-        #info-box { font-size: 1rem; color: var(--gold); max-width: 600px; margin-top: 20px; font-style: italic; }
-
-        #decision-grid { display: flex; flex-direction: column; gap: 15px; width: 100%; max-width: 600px; }
+        #decision-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; max-width: 700px; margin-top: 20px; }
         .choice-btn { 
-            background: transparent; border: 1px solid var(--primary); color: white; 
-            padding: 20px; font-size: 1.2rem; cursor: pointer; transition: 0.2s;
+            background: transparent; border: 2px solid #444; color: #aaa; 
+            padding: 25px; font-size: 1.1rem; cursor: pointer; transition: 0.3s; border-radius: 10px;
         }
+        .choice-btn:hover { border-color: var(--primary); color: white; }
+        .selected-correct { background: var(--success) !important; color: white !important; border-color: #fff !important; }
+        .selected-wrong { background: var(--error) !important; color: white !important; border-color: #fff !important; }
 
-        .correct-choice { background: var(--success) !important; color: white; }
-        .wrong-choice { background: var(--error) !important; color: white; }
-
-        .word-float { 
-            position: absolute; color: var(--primary); font-size: 1.8rem; font-weight: bold; 
-            cursor: pointer; user-select: none; opacity: 0.7;
-            animation: floatUp 8s linear forwards;
+        /* Botón Continuar (Pausa de Poder) */
+        #btn-continue { 
+            margin-top: 30px; padding: 20px 60px; background: var(--success); 
+            color: white; border: none; cursor: pointer; display: none; 
+            font-size: 1.5rem; font-weight: bold; border-radius: 50px;
+            box-shadow: 0 10px 20px rgba(46, 204, 113, 0.3);
         }
-        @keyframes floatUp { from { transform: translateY(110vh); } to { transform: translateY(-20vh); } }
-
-        #breath-circle {
-            display: none; width: 250px; height: 250px; border-radius: 50%;
-            border: 4px solid var(--primary); align-items: center; justify-content: center;
-            position: relative;
-        }
-        .inhale-anim { animation: pulse 4s infinite ease-in-out; }
-        @keyframes pulse { 0%, 100% { transform: scale(0.8); } 50% { transform: scale(1.2); } }
     </style>
 </head>
 <body>
 
-    <div id="start-screen">
-        <h1 style="color:var(--primary); font-size: 3rem;">KAMIZEN</h1>
-        <p style="color: #666;">LIFE SAFETY SYSTEM</p>
-        <button class="start-btn" onclick="startSystem()">INITIALIZE</button>
+    <!-- Pantalla Inicial -->
+    <div id="start-screen" style="position:fixed; inset:0; background:var(--bg); z-index:2000; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+        <h1 style="color:var(--primary); font-size: 3rem; margin-bottom: 10px;">KAMIZEN</h1>
+        <p style="color:#666; margin-bottom: 30px;">LIFE SAFETY TRAINING FOR FUTURE LEADERS</p>
+        <input type="text" id="user-name" placeholder="YOUR NAME" style="background:#111; border:1px solid var(--primary); color:white; padding:15px; font-size:1.5rem; text-align:center; margin-bottom:20px; width: 300px; border-radius: 10px;">
+        <button class="start-btn" onclick="startSystem()" style="padding:20px 60px; font-size:1.5rem; background:var(--primary); border:none; cursor:pointer; font-weight:bold; border-radius: 10px;">INITIALIZE TRAINING</button>
     </div>
 
-    <button id="lang-toggle" onclick="toggleLang()">ES/EN</button>
+    <button id="btn-pause" onclick="togglePause()">PAUSE SYSTEM</button>
+    <div id="pause-overlay" onclick="togglePause()">
+        <h1>SYSTEM PAUSED</h1>
+        <p>BREATHE AND CLICK TO RESUME</p>
+    </div>
 
+    <!-- HUD de Indicadores -->
     <div id="ui-layer">
         <div id="timer-box">05:00</div>
-        <div id="label-peace">AWARENESS LEVEL</div>
-        <div class="stat-bar"><div id="bar-peace" class="fill" style="width: 50%;"></div></div>
-        <div id="rule-display" style="font-size: 0.8rem; color: var(--gold);"></div>
+        
+        <div class="stat-group">
+            <div class="stat-label"><span>STABILITY (MIND)</span><span id="val-stability">50%</span></div>
+            <div class="stat-bar"><div id="bar-stability" class="fill" style="width: 50%;"></div></div>
+        </div>
+        
+        <div class="stat-group">
+            <div class="stat-label"><span>RESOURCES (FINANCE)</span><span id="val-resources">20%</span></div>
+            <div class="stat-bar"><div id="bar-resources" class="fill" style="width: 20%;"></div></div>
+        </div>
+
+        <div class="stat-group">
+            <div class="stat-label"><span>ENERGY (BODY)</span><span id="val-energy">70%</span></div>
+            <div class="stat-bar"><div id="bar-energy" class="fill" style="width: 70%;"></div></div>
+        </div>
     </div>
 
+    <!-- Avatar Evolutivo -->
+    <div id="avatar-container">
+        <svg width="120" height="180" viewBox="0 0 100 150" id="avatar-svg">
+            <circle cx="50" cy="30" r="15" class="stickman" id="av-head"/>
+            <path d="M50 45 L50 100" class="stickman" id="av-body"/>
+            <path d="M50 60 L20 40" class="stickman" id="av-larm"/>
+            <path d="M50 60 L80 40" class="stickman" id="av-rarm"/>
+            <path d="M50 100 L30 145" class="stickman" id="av-lleg"/>
+            <path d="M50 100 L70 145" class="stickman" id="av-rleg"/>
+        </svg>
+        <div id="avatar-name">RECRUIT</div>
+    </div>
+
+    <!-- Misiones de Sabiduría -->
     <div id="overlay">
-        <div id="phase-title"></div>
-        <div id="phase-desc"></div>
+        <h2 id="phase-title" style="color: var(--primary); letter-spacing: 2px;"></h2>
+        <p id="phase-desc" style="font-size: 1.4rem; line-height: 1.6; max-width: 700px;"></p>
         <div id="decision-grid"></div>
-        <div id="breath-circle"><div id="breath-timer" style="font-size: 3rem;"></div></div>
-        <div id="info-box"></div>
+        <button id="btn-continue" onclick="resolveMission()">CONTINUE MISSION</button>
+        <p id="info-extra" style="color: var(--gold); margin-top: 20px; font-size: 0.9rem;"></p>
     </div>
 
     <script src="/static/js/engine.js"></script>
