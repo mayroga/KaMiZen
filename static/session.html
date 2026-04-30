@@ -3,77 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AL CIELO - AURA BY MAY ROGA</title>
+    <title>AL CIELO - ADVISORY</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         :root { --blue: #00d4ff; --gold: #ffd700; --green: #2ecc71; --red: #e74c3c; }
-        body { margin: 0; background: #000; color: white; font-family: 'Segoe UI', sans-serif; overflow: hidden; }
+        body { margin: 0; background: #000; color: white; font-family: Arial, sans-serif; overflow: hidden; }
 
         /* Login */
         #login-screen { position: fixed; inset: 0; background: #000; z-index: 5000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        input { padding: 15px; font-size: 1.5rem; border-radius: 10px; border: 2px solid var(--blue); background: #111; color: white; text-align: center; }
+        input { padding: 15px; font-size: 1.5rem; border-radius: 8px; border: 2px solid var(--blue); background: #111; color: white; margin-bottom: 20px; }
         
-        /* Master UI */
-        #master-clock { position: absolute; top: 10px; width: 100%; text-align: center; font-size: 5rem; font-weight: 900; color: var(--blue); z-index: 1000; pointer-events: none; }
+        /* Dashboard */
+        #master-clock { position: absolute; top: 10px; width: 100%; text-align: center; font-size: 4rem; font-weight: bold; color: var(--blue); z-index: 1000; }
         
-        /* Control Panel Buttons */
         #control-panel { position: absolute; top: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 2000; }
-        .icon-btn { width: 50px; height: 50px; border-radius: 50%; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem; transition: 0.3s; }
-        .btn-translate { background: var(--gold); color: black; }
-        .btn-speaker { background: var(--blue); color: black; }
+        .icon-btn { width: 60px; height: 60px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; font-size: 0.9rem; }
+        .btn-trans { background: var(--gold); }
+        .btn-audio { background: var(--blue); }
         .btn-pdf { background: var(--green); color: white; }
         .btn-clear { background: var(--red); color: white; }
 
-        /* World & Avatar */
-        #game-world { position: fixed; inset: 0; background: linear-gradient(to bottom, #1a2a6c, #b21f1f, #fdbb2d); display: none; }
-        #avatar-container { position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%); z-index: 100; text-align: center; }
-        .stickman { stroke: white; stroke-width: 4; fill: none; }
-        .meditating { animation: float 3s ease-in-out infinite; }
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
-
-        /* Breathing Circle */
-        #breath-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 300px; height: 300px; border: 10px solid white; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 2.5rem; z-index: 500; transition: 4s linear; }
-
-        /* Story Overlay */
-        #story-box { position: fixed; inset: 0; background: rgba(0,0,0,0.98); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 3000; padding: 40px; text-align: center; }
+        /* Escenario Fijo */
+        #game-world { position: fixed; inset: 0; background: #111; display: none; }
+        #static-avatar { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); text-align: center; z-index: 100; }
         
-        /* Word Elements */
-        .word { position: absolute; padding: 15px 30px; border: 2px solid white; border-radius: 30px; background: rgba(0,0,0,0.7); cursor: pointer; animation: fall 10s linear forwards; font-weight: bold; }
-        @keyframes fall { from { top: -60px; } to { top: 110vh; } }
+        /* Historias */
+        #story-box { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 3000; padding: 40px; text-align: center; }
+        
+        /* Palabras */
+        .word { position: absolute; padding: 15px 25px; border: 2px solid white; border-radius: 20px; background: rgba(30,30,30,0.9); cursor: pointer; animation: fall 8s linear forwards; font-weight: bold; font-size: 1.1rem; }
+        @keyframes fall { from { top: -50px; } to { top: 105vh; } }
     </style>
 </head>
 <body>
 
     <div id="login-screen">
         <h1 style="color: var(--blue);">AL CIELO</h1>
-        <input type="text" id="user-name" placeholder="Enter Your Name">
-        <button onclick="initApp()" style="margin-top:20px; padding:15px 40px; background:var(--blue); border:none; border-radius:10px; cursor:pointer; font-weight:bold;">START ADVISORY</button>
+        <input type="text" id="user-name" placeholder="Your Name">
+        <button onclick="initApp()" style="padding: 15px 40px; background: var(--blue); border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">START</button>
     </div>
 
     <div id="control-panel">
-        <button class="icon-btn btn-translate" onclick="toggleLanguage()">ES/EN</button>
-        <button class="icon-btn btn-speaker" id="speaker-toggle" onclick="toggleAudio()">ON</button>
+        <button class="icon-btn btn-trans" onclick="changeLang()">ES/EN</button>
+        <button class="icon-btn btn-audio" id="audio-btn" onclick="toggleMute()">AUDIO: ON</button>
         <button class="icon-btn btn-pdf" onclick="generatePDF()">PDF</button>
-        <button class="icon-btn btn-clear" onclick="clearData()">CLEAR</button>
+        <button class="icon-btn btn-clear" onclick="location.reload()">CLEAR</button>
     </div>
 
     <div id="master-clock">15:00</div>
     
     <div id="game-world">
-        <div id="avatar-container" class="meditating">
-            <svg width="100" height="150" viewBox="0 0 100 150">
-                <circle cx="50" cy="30" r="20" class="stickman"/>
-                <path d="M50 50 L50 110 M50 70 L20 50 M50 70 L80 50 M50 110 L20 140 M50 110 L80 140" class="stickman"/>
+        <div id="static-avatar">
+            <svg width="80" height="80" viewBox="0 0 100 100">
+                <circle cx="50" cy="30" r="20" stroke="white" stroke-width="4" fill="none"/>
+                <path d="M50 50 L50 90 M30 70 L70 70" stroke="white" stroke-width="4"/>
             </svg>
-            <div id="display-name" style="color:var(--gold); font-weight:bold; font-size:1.4rem; margin-top:10px;"></div>
+            <div id="user-display" style="color:var(--gold); font-weight:bold; font-size:1.5rem;"></div>
         </div>
-        <div id="breath-overlay">BREATHE</div>
     </div>
 
     <div id="story-box">
-        <h1 id="story-title" style="color:var(--gold); font-size:3rem;"></h1>
-        <p id="story-content" style="font-size:1.8rem; max-width:800px;"></p>
-        <button onclick="closeStory()" style="padding:20px 60px; background:var(--green); color:white; border:none; border-radius:10px; font-size:1.5rem; cursor:pointer;">I UNDERSTAND</button>
+        <h1 id="st-title" style="color:var(--gold);"></h1>
+        <p id="st-body" style="font-size:1.5rem; max-width:700px;"></p>
+        <button onclick="closeStory()" style="padding:15px 40px; background:var(--green); color:white; border:none; border-radius:8px; cursor:pointer;">CONTINUE</button>
     </div>
 
     <script src="/static/js/engine.js"></script>
