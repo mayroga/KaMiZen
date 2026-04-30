@@ -6,80 +6,245 @@
     <title>AL CIELO - AURA BY MAY ROGA</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
-        :root { --blue: #00d4ff; --gold: #ffd700; --green: #2ecc71; --red: #e74c3c; }
-        body { margin: 0; background: #000; color: white; font-family: 'Segoe UI', sans-serif; overflow: hidden; }
+        :root { 
+            --primary: #00d4ff; 
+            --gold: #ffd700; 
+            --success: #2ecc71; 
+            --error: #e74c3c; 
+            --glass: rgba(255, 255, 255, 0.1);
+        }
 
-        /* Pantalla de Inicio */
-        #login-screen { position: fixed; inset: 0; background: #000; z-index: 5000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        input { padding: 15px; font-size: 1.5rem; border-radius: 10px; border: 2px solid var(--blue); background: #111; color: white; text-align: center; margin-bottom: 20px; }
-        
-        /* Reloj Maestro */
-        #master-clock { position: absolute; top: 10px; width: 100%; text-align: center; font-size: 5rem; font-weight: 900; color: var(--blue); z-index: 1000; text-shadow: 0 0 20px rgba(0,212,255,0.5); pointer-events: none; }
-        
-        /* Panel de Control Lateral */
-        #control-panel { position: absolute; top: 20px; right: 20px; display: flex; flex-direction: column; gap: 12px; z-index: 2000; }
-        .icon-btn { width: 55px; height: 55px; border-radius: 12px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
-        .icon-btn:hover { transform: scale(1.1); }
-        .btn-translate { background: var(--gold); color: black; }
-        .btn-speaker { background: var(--blue); color: black; }
-        .btn-pdf { background: var(--green); color: white; }
-        .btn-clear { background: var(--red); color: white; }
+        body { 
+            margin: 0; 
+            background: #000; 
+            color: white; 
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            overflow: hidden; 
+            transition: background 2s ease-in-out; 
+        }
 
-        /* Mundo de Juego */
-        #game-world { position: fixed; inset: 0; background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364); display: none; }
+        /* Paisajes Dinámicos */
+        .landscape-forest { background: linear-gradient(to bottom, #1a2a6c, #b21f1f, #fdbb2d); }
+        .landscape-city { background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364); }
+        .landscape-zen { background: linear-gradient(to bottom, #134e5e, #71b280); }
+
+        /* Pantalla de Inicio (Login) */
+        #login-screen { 
+            position: fixed; 
+            inset: 0; 
+            background: radial-gradient(circle, #111 0%, #000 100%); 
+            z-index: 9999; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+        }
         
-        /* Avatar Estático (Sin Levitación) */
-        #avatar-container { position: absolute; bottom: 60px; left: 50%; transform: translateX(-50%); z-index: 100; text-align: center; }
+        .login-card {
+            background: var(--glass);
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid var(--primary);
+            backdrop-filter: blur(10px);
+            text-align: center;
+        }
+
+        input#user-name { 
+            padding: 15px; 
+            font-size: 1.5rem; 
+            border-radius: 10px; 
+            border: 2px solid var(--primary); 
+            background: rgba(0,0,0,0.5); 
+            color: white; 
+            text-align: center; 
+            margin-bottom: 20px; 
+            outline: none;
+        }
+
+        /* Reloj Gigante */
+        #master-clock { 
+            position: absolute; 
+            top: 20px; 
+            width: 100%; 
+            text-align: center; 
+            font-size: 6rem; 
+            font-weight: 900; 
+            color: var(--primary); 
+            text-shadow: 0 0 30px rgba(0,212,255,0.6); 
+            z-index: 100; 
+            letter-spacing: 8px; 
+            pointer-events: none;
+        }
+
+        /* HUD Vertical (Stats) */
+        #hud-vertical { 
+            position: absolute; 
+            bottom: 40px; 
+            left: 30px; 
+            display: flex; 
+            gap: 25px; 
+            align-items: flex-end; 
+            z-index: 100; 
+        }
+        .bar-v-container { 
+            width: 25px; 
+            height: 220px; 
+            background: rgba(0,0,0,0.6); 
+            border: 2px solid rgba(255,255,255,0.3); 
+            border-radius: 15px; 
+            position: relative; 
+            overflow: hidden; 
+            box-shadow: 0 0 15px rgba(0,0,0,0.5);
+        }
+        .fill-v { 
+            position: absolute; 
+            bottom: 0; 
+            width: 100%; 
+            transition: height 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+        }
+
+        /* Avatar y Respiración Central */
+        #center-stage { 
+            position: absolute; 
+            bottom: 60px; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            gap: 30px; 
+            z-index: 10; 
+        }
+        #breath-circle { 
+            width: 160px; 
+            height: 160px; 
+            border: 6px solid white; 
+            border-radius: 50%; 
+            display: none; 
+            align-items: center; 
+            justify-content: center; 
+            font-weight: 900; 
+            transition: transform 4s linear; 
+            background: rgba(255,255,255,0.1); 
+            box-shadow: 0 0 40px rgba(255,255,255,0.2);
+            font-size: 1.2rem;
+        }
         .stickman { stroke: white; stroke-width: 4; fill: none; }
 
-        /* Superposición de Respiración */
-        #breath-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 320px; height: 320px; border: 12px solid white; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: bold; z-index: 500; transition: transform 4s linear; }
+        /* Palabras Flotantes */
+        .word-box { 
+            position: absolute; 
+            padding: 18px 30px; 
+            border: 3px solid white; 
+            border-radius: 50px;
+            background: rgba(0,0,0,0.8); 
+            font-weight: bold; 
+            cursor: pointer; 
+            z-index: 50;
+            font-size: 1.3rem;
+            white-space: nowrap;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            animation: moveDown 9s linear forwards;
+            transition: transform 0.3s, opacity 0.3s;
+        }
+        
+        @keyframes moveDown {
+            0% { top: -100px; transform: rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { top: 110vh; transform: rotate(10deg); opacity: 0; }
+        }
 
-        /* Cuadro de Historias */
-        #story-box { position: fixed; inset: 0; background: rgba(0,0,0,0.98); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 3000; padding: 40px; text-align: center; }
-        #story-title { color: var(--gold); font-size: 3.5rem; margin-bottom: 20px; }
-        #story-content { font-size: 1.8rem; line-height: 1.6; max-width: 850px; color: #f0f0f0; margin-bottom: 40px; }
+        .explode { 
+            transform: scale(3) rotate(15deg) !important; 
+            opacity: 0 !important; 
+            filter: blur(10px);
+        }
 
-        /* Elementos que Caen */
-        .word { position: absolute; padding: 18px 35px; border: 2px solid white; border-radius: 40px; background: rgba(0,0,0,0.8); cursor: pointer; animation: fall 10s linear forwards; font-weight: bold; font-size: 1.2rem; white-space: nowrap; box-shadow: 0 0 15px rgba(255,255,255,0.2); }
-        @keyframes fall { from { top: -80px; } to { top: 110vh; } }
+        /* Overlay de Historias */
+        #story-overlay { 
+            position: fixed; 
+            inset: 0; 
+            background: rgba(0,0,0,0.97); 
+            display: none; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            z-index: 5000; 
+            padding: 60px; 
+            text-align: center; 
+        }
+        #story-title { font-size: 4rem; color: var(--gold); margin-bottom: 30px; text-transform: uppercase; letter-spacing: 4px; }
+        #story-text { font-size: 1.8rem; line-height: 1.7; max-width: 1000px; color: #f0f0f0; }
+
+        /* Botones de Control */
+        .control-btn {
+            padding: 15px 40px;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn-start { background: var(--primary); color: black; margin-top: 20px; }
+        .btn-understand { background: var(--success); color: white; margin-top: 50px; }
+        .control-btn:hover { transform: scale(1.05); filter: brightness(1.2); }
     </style>
 </head>
-<body>
+<body class="landscape-forest">
 
+    <!-- Pantalla de Bienvenida / Identificación -->
     <div id="login-screen">
-        <h1 style="color: var(--blue); font-size: 3.5rem; letter-spacing: 5px;">AL CIELO</h1>
-        <input type="text" id="user-name" placeholder="Enter Student Name">
-        <button onclick="initApp()" style="padding: 18px 50px; background: var(--blue); border: none; border-radius: 10px; font-weight: bold; font-size: 1.2rem; cursor: pointer; color: black;">START ADVISORY</button>
-    </div>
-
-    <div id="control-panel">
-        <button class="icon-btn btn-translate" onclick="toggleLanguage()">ES/EN</button>
-        <button class="icon-btn btn-speaker" id="speaker-toggle" onclick="toggleAudio()">ON</button>
-        <button class="icon-btn btn-pdf" onclick="generatePDF()">PDF</button>
-        <button class="icon-btn btn-clear" onclick="location.reload()">CLEAR</button>
-    </div>
-
-    <div id="master-clock">15:00</div>
-    
-    <div id="game-world">
-        <!-- Avatar ahora está fijo, sin animaciones de levitación -->
-        <div id="avatar-container">
-            <svg width="120" height="170" viewBox="0 0 100 150">
-                <circle cx="50" cy="30" r="22" class="stickman"/>
-                <path d="M50 52 L50 110 M50 75 L15 50 M50 75 L85 50 M50 110 L20 145 M50 110 L80 145" class="stickman"/>
-            </svg>
-            <div id="display-name" style="margin-top:15px; font-size: 1.6rem; font-weight:900; color: var(--gold); text-transform: uppercase;"></div>
+        <div class="login-card">
+            <h1 style="color: var(--primary); font-size: 3rem; margin-bottom: 10px;">AL CIELO</h1>
+            <p style="color: var(--gold); margin-bottom: 30px; letter-spacing: 2px;">AURA BY MAY ROGA LLC</p>
+            <input type="text" id="user-name" placeholder="ENTER YOUR NAME">
+            <br>
+            <button class="control-btn btn-start" onclick="initApp(); document.getElementById('login-screen').style.display='none';">START ADVISORY</button>
         </div>
-        <div id="breath-overlay">INHALE</div>
     </div>
 
-    <div id="story-box">
+    <!-- Reloj Maestro -->
+    <div id="master-clock">15:00</div>
+
+    <!-- HUD Lateral de Estadísticas -->
+    <div id="hud-vertical">
+        <div class="bar-v-container" title="Stability">
+            <div id="bar-stability" class="fill-v" style="height:50%; background:var(--primary);"></div>
+        </div>
+        <div class="bar-v-container" title="Resources">
+            <div id="bar-resources" class="fill-v" style="height:20%; background:var(--gold);"></div>
+        </div>
+        <div class="bar-v-container" title="Energy">
+            <div id="bar-energy" class="fill-v" style="height:70%; background:var(--success);"></div>
+        </div>
+    </div>
+
+    <!-- Escenario Central: Avatar y Respiración -->
+    <div id="center-stage">
+        <div id="avatar-container">
+            <svg width="140" height="180" viewBox="0 0 100 150">
+                <circle cx="50" cy="30" r="20" class="stickman"/>
+                <path d="M50 50 L50 110 M50 70 L15 50 M50 70 L85 50 M50 110 L20 145 M50 110 L80 145" class="stickman"/>
+            </svg>
+            <div id="avatar-name" style="text-align:center; font-weight:900; letter-spacing:3px; margin-top:15px; color: var(--gold); font-size: 1.4rem;">RECRUIT</div>
+        </div>
+        
+        <div id="breath-circle">
+            <span id="breath-text">INHALE</span>
+        </div>
+    </div>
+
+    <!-- Superposición de Historias -->
+    <div id="story-overlay">
         <h1 id="story-title"></h1>
-        <p id="story-content"></p>
-        <button onclick="closeStory()" style="padding: 20px 60px; background: var(--green); color: white; border: none; border-radius: 12px; font-size: 1.6rem; font-weight: bold; cursor: pointer;">I UNDERSTAND</button>
+        <div id="story-text"></div>
+        <button class="control-btn btn-understand" onclick="closeStory()">I UNDERSTAND</button>
     </div>
 
+    <!-- Motor Lógico -->
     <script src="/static/js/engine.js"></script>
+
 </body>
 </html>
