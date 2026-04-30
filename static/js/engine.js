@@ -1,121 +1,150 @@
-let state = {
-    stats: { stability: 50, resources: 20, energy: 70 },
-    timeLeft: 900, // 15 Minutos en segundos
-    started: true,
-    missionActive: false,
-    storyPool: [
-        {
-            title: "The Fern and the Bamboo",
-            text: "A child walked through the forest with his grandfather... (Historia completa del Helecho y el Bambú)... It was growing roots to sustain its greatness when it was time to climb to the sky."
-        },
-        // Aquí se añaden las otras 34 historias siguiendo el mismo formato
-    ],
-    usedStories: []
+let engine = {
+    words: [],      // De kamizen_data.json
+    stories: [],    // De stories.json
+    timeLeft: 900,  // 15 Minutos
+    isRunning: false,
+    currentLandscape: 'forest'
 };
 
-const Voice = {
-    speak(text) {
-        speechSynthesis.cancel();
-        const msg = new SpeechSynthesisUtterance(text);
-        const voices = speechSynthesis.getVoices();
-        msg.voice = voices.find(v => v.name.includes('Male') || v.name.includes('David')) || voices[0];
-        msg.lang = 'en-US';
-        msg.rate = 0.85;
-        speechSynthesis.speak(msg);
-    }
-};
-
-// Sistema de Paisajes basado en tipos de palabras
-function changeLandscape(type) {
-    const body = document.body;
-    body.className = ''; 
-    if (["DINERO", "NEGOCIO", "GASTAR DINERO"].includes(type)) body.classList.add('landscape-city');
-    else if (["BIENESTAR", "SALUD", "AMOR", "FELICIDAD"].includes(type)) body.classList.add('landscape-zen');
-    else body.classList.add('landscape-forest');
+// 1. Cargar Datos
+async function loadData() {
+    try {
+        const wordsRes = await fetch('/data/kamizen_data.json');
+        const storiesRes = await fetch('/data/stories.json');
+        const wordsData = await wordsRes.json();
+        const storiesData = await storiesRes.json();
+        
+        engine.words = wordsData.words;
+        engine.stories = storiesData.stories;
+        
+        startSession();
+    } catch (e) { console.error("Error cargando JSONs", e); }
 }
 
-function spawnWord() {
-    if (state.missionActive || state.timeLeft <= 0) return;
-    
-    const categories = [
-        {t: "OBSTACULO", c: "red", p: -10}, {t: "OPORTUNIDAD", c: "gold", p: 15},
-        {t: "DINERO", c: "green", p: 10}, {t: "FAMILIA", c: "white", p: 5},
-        {t: "FELICIDAD", c: "pink", p: 20}, {t: "GASTAR SIN CONTROL", c: "red", p: -20}
-    ];
-    
-    const cat = categories[Math.floor(Math.random() * categories.length)];
-    changeLandscape(cat.t);
-
-    const div = document.createElement('div');
-    div.className = 'word-box';
-    div.innerText = cat.t;
-    div.style.borderColor = cat.c;
-    div.style.left = (Math.random() * 70 + 15) + "vw";
-
-    div.onclick = () => {
-        div.classList.add('explode');
-        state.stats.stability = Math.max(0, Math.min(100, state.stats.stability + cat.p));
-        updateHUD();
-        Voice.speak(cat.t);
-        setTimeout(() => div.remove(), 300);
-    };
-    document.body.appendChild(div);
-    setTimeout(() => { if(div.parentNode) div.remove(); }, 10000);
+// 2. Iniciar Sesión (Con Historia)
+function startSession() {
+    showStory(true); // Historia al principio
 }
 
-function updateHUD() {
-    document.getElementById('bar-stability').style.height = state.stats.stability + "%";
-    document.getElementById('bar-resources').style.height = state.stats.resources + "%";
-    document.getElementById('bar-energy').style.height = state.stats.energy + "%";
+// 3. Control del Reloj y Cierre Automático
+function startMasterClock() {
+    const timer = setInterval(() => {
+        if (engine.timeLeft <= 0) {
+            clearInterval(timer);
+            finishApp();
+            return;
+        }
+        engine.timeLeft--;
+        updateClockUI();
+        
+        // Cada 5 minutos, una pequeña pausa de respiración
+        if (engine.timeLeft % 300 === 0 && engine.timeLeft > 0) {
+            triggerBreathing();
+        }
+    }, 1000);
 }
 
-// Reloj Maestro y Apagado Automático
-setInterval(() => {
-    if (state.timeLeft <= 0) {
-        document.body.innerHTML = "<h1 style='text-align:center; margin-top:20vh;'>TRAINING COMPLETE. SYSTEM SHUTDOWN.</h1>";
-        return;
-    }
-    state.timeLeft--;
-    const m = Math.floor(state.timeLeft / 60);
-    const s = state.timeLeft % 60;
+function updateClockUI() {
+    const m = Math.floor(engine.timeLeft / 60);
+    const s = engine.timeLeft % 60;
     document.getElementById('master-clock').innerText = `${m}:${s.toString().padStart(2, '0')}`;
-    
-    // Lanzar historia cada 3 minutos (180s)
-    if (state.timeLeft % 180 === 0 && state.timeLeft < 900) showStory();
-}, 1000);
+}
 
-function showStory() {
-    if (state.storyPool.length === 0) return;
-    state.missionActive = true;
-    const story = state.storyPool.shift();
-    state.usedStories.push(story);
+// 4. Mostrar Historias (Sin repetir)
+function showStory(isInitial = false) {
+    engine.isRunning = false;
+    const storyBox = document.getElementById('story-box');
     
-    const overlay = document.getElementById('story-overlay');
-    document.getElementById('story-title').innerText = story.title;
-    document.getElementById('story-text').innerText = story.text;
-    overlay.style.display = 'flex';
+    // Sacamos una historia al azar y la removemos del pool
+    const index = Math.floor(Math.random() * engine.stories.length);
+    const story = engine.stories.splice(index, 1)[0];
+
+    document.getElementById('story-title').innerText = story.t;
+    document.getElementById('story-content').innerText = story.en; // Puedes cambiar a .es si prefieres
+    storyBox.style.display = 'flex';
     
-    Voice.speak(story.title + ". " + story.text);
+    speak(story.t + ". " + story.en);
 }
 
 function closeStory() {
-    document.getElementById('story-overlay').style.display = 'none';
-    state.missionActive = false;
-    startBreathingExercise(); // Respiración después de cada historia
+    document.getElementById('story-box').style.display = 'none';
+    if (!engine.isRunning) {
+        engine.isRunning = true;
+        startMasterClock();
+        spawnLoop();
+    }
 }
 
-async function startBreathingExercise() {
-    const circle = document.getElementById('breath-circle');
-    const text = document.getElementById('breath-text');
-    circle.style.display = 'flex';
+// 5. El Juego de Palabras y Muñequito
+function spawnLoop() {
+    if (!engine.isRunning || engine.timeLeft <= 0) return;
+
+    const wordData = engine.words[Math.floor(Math.random() * engine.words.length)];
+    createWordElement(wordData);
+
+    setTimeout(spawnLoop, 3000); // Aparece palabra cada 3 segundos
+}
+
+function createWordElement(data) {
+    const el = document.createElement('div');
+    el.className = 'word';
+    el.innerText = data.text;
+    el.style.left = (Math.random() * 80 + 10) + "vw";
     
-    for(let i=0; i<4; i++) {
-        text.innerText = "INHALE"; circle.style.transform = "scale(1.4)";
+    // Cambiar paisaje según tipo
+    updateEnvironment(data.type);
+
+    el.onclick = () => {
+        speak(data.text);
+        el.style.transform = "scale(2)";
+        el.style.opacity = "0";
+        setTimeout(() => el.remove(), 200);
+    };
+    
+    document.getElementById('game-world').appendChild(el);
+}
+
+function updateEnvironment(type) {
+    const world = document.getElementById('game-world');
+    world.className = ''; // Reset
+    if (type === 'NEGOCIO' || type === 'DINERO') world.classList.add('landscape-city');
+    if (type === 'BIENESTAR' || type === 'SALUD') world.classList.add('landscape-zen');
+}
+
+// 6. Respiración (El Silencio)
+async function triggerBreathing() {
+    engine.isRunning = false;
+    const overlay = document.getElementById('breath-overlay');
+    overlay.style.display = 'flex';
+
+    for (let i = 0; i < 3; i++) {
+        overlay.innerText = "INHALE";
+        overlay.style.transform = "translate(-50%, -50%) scale(1.5)";
         await new Promise(r => setTimeout(r, 4000));
-        text.innerText = "EXHALE"; circle.style.transform = "scale(1)";
+        overlay.innerText = "EXHALE";
+        overlay.style.transform = "translate(-50%, -50%) scale(1)";
         await new Promise(r => setTimeout(r, 4000));
     }
-    circle.style.display = 'none';
+
+    overlay.style.display = 'none';
+    engine.isRunning = true;
 }
 
-setInterval(spawnWord, 2500);
+// 7. Finalización y Apagado
+function finishApp() {
+    engine.isRunning = false;
+    showStory(); // Historia final
+    setTimeout(() => {
+        document.body.innerHTML = "<div style='display:flex; height:100vh; align-items:center; justify-content:center; background:black;'><h1>TIME IS UP. REST NOW.</h1></div>";
+    }, 20000); // Da tiempo a leer la última historia antes de apagar
+}
+
+function speak(text) {
+    window.speechSynthesis.cancel();
+    const msg = new SpeechSynthesisUtterance(text);
+    msg.lang = 'en-US';
+    window.speechSynthesis.speak(msg);
+}
+
+// Arrancar
+loadData();
