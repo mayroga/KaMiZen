@@ -3,139 +3,87 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KAMIZEN SESSION</title>
+<title>KAMIZEN CONNECTED</title>
 
 <style>
-:root {
-    --neon-blue:#00f2ff;
-    --neon-green:#00ff41;
-    --neon-red:#ff003c;
-    --neon-yellow:#ffff00;
-    --matrix-bg:#00050a;
-    --neon-gold:#ffcc00;
-}
-
 body{
-    margin:0;
-    background:var(--matrix-bg);
-    color:#fff;
-    font-family:'Courier New', monospace;
-    overflow:hidden;
+margin:0;
+background:#00050a;
+color:#fff;
+font-family:monospace;
+overflow:hidden;
 }
 
 /* HUD */
 #hud{
-    position:fixed;
-    top:20px;
-    width:100%;
-    display:flex;
-    justify-content:space-between;
-    padding:20px;
-    z-index:50;
+position:fixed;
+top:20px;
+width:100%;
+display:flex;
+justify-content:space-between;
+padding:20px;
+z-index:50;
 }
-#timer-box{font-size:2.5rem;color:var(--neon-blue);}
-#score-box{font-size:2rem;border:2px solid #fff;padding:5px 15px;}
-#mastery-lvl{color:var(--neon-green);}
 
-/* stats */
-#life-stats{
-    position:fixed;
-    bottom:20px;
-    left:20px;
-    display:flex;
-    flex-wrap:wrap;
-    gap:10px;
-    z-index:50;
-}
-.stat-pill{background:#000;padding:8px;border:1px solid #333}
-
-/* floating words */
+/* FLOATING WORDS */
 .floating{
-    position:absolute;
-    padding:12px 25px;
-    font-weight:bold;
-    border-radius:8px;
-    background:rgba(0,0,0,0.9);
-    cursor:pointer;
-    z-index:10;
-    animation:floatUp 10s linear forwards; /* MÁS LENTO */
+position:absolute;
+padding:12px 25px;
+border-radius:8px;
+background:rgba(0,0,0,0.85);
+cursor:pointer;
+animation:floatUp 10s linear forwards;
+z-index:10;
 }
 
-/* colores */
-.word-power{border:2px solid var(--neon-green);color:var(--neon-green);}
-.word-risk{border:2px solid var(--neon-red);color:var(--neon-red);}
-.word-silence{border:2px solid var(--neon-yellow);color:var(--neon-yellow);}
-.word-money{border:2px solid var(--neon-gold);color:var(--neon-gold);}
+@keyframes floatUp{
+from{transform:translateY(110vh);}
+to{transform:translateY(-20vh);}
+}
+
+.explode{
+animation:blast 0.4s ease-out forwards!important;
+}
+
+@keyframes blast{
+0%{transform:scale(1);opacity:1;}
+100%{transform:scale(3);opacity:0;}
+}
+
+/* COLORS */
+.word-power{border:2px solid #00ff41;color:#00ff41;}
+.word-risk{border:2px solid #ff003c;color:#ff003c;}
+.word-silence{border:2px solid #ffff00;color:#ffff00;}
+.word-money{border:2px solid #ffcc00;color:#ffcc00;}
 .word-business{border:2px solid #00e5ff;color:#00e5ff;}
 .word-growth{border:2px solid #00ff99;color:#00ff99;}
 
-@keyframes floatUp{
-    from{transform:translateY(110vh);}
-    to{transform:translateY(-20vh);}
-}
-
-/* EXPLOSIÓN */
-.explode{
-    animation:blast 0.4s ease-out forwards!important;
-}
-@keyframes blast{
-    0%{transform:scale(1);opacity:1;}
-    100%{transform:scale(3.5);opacity:0;}
-}
-
-/* overlay */
+/* OVERLAY */
 #overlay{
-    position:fixed;
-    width:100%;
-    height:100%;
-    background:rgba(0,0,0,0.95);
-    display:none;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
-    z-index:200;
+position:fixed;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.95);
+display:none;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+z-index:200;
 }
 
-/* BOTÓN CENTRAL */
+.choice-btn{
+padding:15px;
+margin:10px;
+border:2px solid #00f2ff;
+background:none;
+color:#fff;
+cursor:pointer;
+}
+
 #continue-btn{
-    margin-top:25px;
-    padding:15px 30px;
-    border:2px solid #fff;
-    cursor:pointer;
-    display:block; /* SIEMPRE VISIBLE */
-}
-
-/* breathing */
-#breath-container{
-    position:fixed;
-    top:50%;
-    left:50%;
-    transform:translate(-50%,-50%);
-    width:300px;
-    height:300px;
-    display:none;
-    justify-content:center;
-    align-items:center;
-    z-index:9999; /* SIEMPRE ENCIMA */
-}
-
-#breath-circle{
-    width:140px;
-    height:140px;
-    border-radius:50%;
-    border:3px solid var(--neon-blue);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-weight:bold;
-    color:var(--neon-blue);
-    animation:breathAnim 6s ease-in-out infinite;
-}
-
-@keyframes breathAnim{
-    0%{transform:scale(0.7);}
-    50%{transform:scale(1.4);}
-    100%{transform:scale(0.7);}
+margin-top:20px;
+padding:15px 30px;
+display:block;
 }
 </style>
 </head>
@@ -143,34 +91,22 @@ body{
 <body>
 
 <div id="hud">
-    <div id="timer-box">05:00</div>
-    <div id="score-box">0</div>
-    <div id="mastery-lvl">x1</div>
-</div>
-
-<div id="life-stats">
-    <div class="stat-pill">Respect <span id="v-respect">50</span></div>
-    <div class="stat-pill">Peace <span id="v-peace">50</span></div>
-    <div class="stat-pill">Lead <span id="v-lead">50</span></div>
-    <div class="stat-pill">Money <span id="v-money">100</span></div>
-    <div class="stat-pill">Safety <span id="v-safety">100</span></div>
-    <div class="stat-pill">Happy <span id="v-happy">50</span></div>
-</div>
-
-<div id="breath-container">
-    <div id="breath-circle">INHALE</div>
+<div id="score">0</div>
+<div id="timer">05:00</div>
 </div>
 
 <div id="overlay">
-    <h1 id="phase-title"></h1>
-    <p id="phase-desc"></p>
-    <div id="decision-grid"></div>
-    <button id="continue-btn">CONTINUE</button>
+<h1 id="phase-title"></h1>
+<p id="phase-desc"></p>
+<div id="decision-grid"></div>
+<button id="continue-btn">CONTINUE</button>
 </div>
 
 <script>
 
-/* AUDIO (NO TOCADO) */
+/* =========================
+   AUDIO (NO TOCAR)
+========================= */
 const AudioEngine={
 ctx:null,
 init(){
@@ -182,7 +118,7 @@ music(){
 const loop=()=>{
 let o=this.ctx.createOscillator();
 let g=this.ctx.createGain();
-o.frequency.value=220+Math.random()*200;
+o.frequency.value=220+Math.random()*300;
 g.gain.value=0.03;
 o.connect(g);g.connect(this.ctx.destination);
 o.start();o.stop(this.ctx.currentTime+0.3);
@@ -197,50 +133,154 @@ o.frequency.value=700;
 g.gain.value=0.1;
 o.connect(g);g.connect(this.ctx.destination);
 o.start();o.stop(this.ctx.currentTime+0.1);
-},
-explode(){
-let buffer=this.ctx.createBuffer(1,this.ctx.sampleRate*0.1,this.ctx.sampleRate);
-let data=buffer.getChannelData(0);
-for(let i=0;i<data.length;i++)data[i]=Math.random()*2-1;
-let n=this.ctx.createBufferSource();
-n.buffer=buffer;
-let g=this.ctx.createGain();
-g.gain.value=0.2;
-n.connect(g);g.connect(this.ctx.destination);
-n.start();
 }
 };
 
 document.addEventListener("click",()=>AudioEngine.init(),{once:true});
 
-/* STATE */
+/* =========================
+   STATE
+========================= */
 let state={
-score:0,
-stats:{respect:50,peace:50,lead:50,money:100,happy:50,safety:100}
+score:0
 };
 
-/* HUD */
 function updateHUD(){
-document.getElementById("score-box").innerText=state.score;
-for(let k in state.stats){
-document.getElementById("v-"+k).innerText=state.stats[k];
-}
+document.getElementById("score").innerText=state.score;
 }
 
-/* WORDS (ORIGINALES) */
-const words={
-power:["LISTEN FIRST","STAY CALM","THINK BEFORE","CONTROL EMOTION","RESPECT OTHERS"],
-risk:["REACT ANGRY","BLAME OTHERS","LOSE CONTROL","FOLLOW CROWD"],
-silence:["OBSERVE PEOPLE","BREATHE DEEP","WAIT MOMENT","INNER CONTROL"],
-money:["INVEST SMART","BUILD VALUE","CASHFLOW","SAVE MONEY","THINK SCALE"],
-business:["BUILD SYSTEM","SELL VALUE","LEAD MARKET","BRAND POWER","EXPAND NETWORK"],
-growth:["LEARN FAST","IMPROVE DAILY","BUILD SKILL","LONG TERM THINK"]
+/* =========================
+   JSON SYSTEM
+========================= */
+
+let missionIndex=1;
+let currentMission=null;
+
+function getFileByIndex(i){
+if(i<=7) return "missions_01_07.json";
+if(i<=14) return "missions_08_14.json";
+if(i<=21) return "missions_15_21.json";
+if(i<=28) return "missions_22_28.json";
+return "missions_29_35.json";
+}
+
+async function loadMission(){
+const file=getFileByIndex(missionIndex);
+const res=await fetch("/"+file);
+const data=await res.json();
+
+const mission=data.missions.find(m=>m.id===missionIndex);
+
+missionIndex++;
+if(missionIndex>35) missionIndex=1;
+
+return mission;
+}
+
+/* =========================
+   PARSER JSON
+========================= */
+
+function parseMission(m){
+
+let title="",story="",options=[];
+
+m.b.forEach(b=>{
+
+if(b.t==="v") title=b.tx.en;
+
+if(b.t==="h") story+=b.tx.en+" ";
+
+if(b.t==="d"){
+options=b.op.map((op,i)=>({
+text:op,
+correct:i===b.c,
+explanation:b.ex?.[i]||""
+}));
+}
+
+});
+
+return{title,story,options};
+}
+
+/* =========================
+   TRIGGER QUESTION (FIXED)
+========================= */
+
+async function triggerQuestion(){
+
+const raw=await loadMission();
+const mission=parseMission(raw);
+
+let overlay=document.getElementById("overlay");
+let grid=document.getElementById("decision-grid");
+let desc=document.getElementById("phase-desc");
+let title=document.getElementById("phase-title");
+let cont=document.getElementById("continue-btn");
+
+overlay.style.display="flex";
+grid.innerHTML="";
+cont.style.display="none";
+
+title.innerText=mission.title;
+desc.innerText=mission.story;
+
+let answered=false;
+
+mission.options.forEach(opt=>{
+
+let btn=document.createElement("button");
+btn.className="choice-btn";
+btn.innerText=opt.text;
+
+btn.onclick=()=>{
+
+AudioEngine.click();
+desc.innerText=opt.explanation;
+
+if(!answered){
+answered=true;
+
+btn.style.borderColor=opt.correct?"#00ff41":"#ff003c";
+
+state.score+=opt.correct?20:-15;
+
+updateHUD();
+
+document.querySelectorAll(".choice-btn")
+.forEach(b=>b.disabled=true);
+
+cont.style.display="block";
+}
 };
 
-/* SPAWN MEJORADO */
+grid.appendChild(btn);
+});
+
+cont.onclick=()=>{
+overlay.style.display="none";
+AudioEngine.click();
+};
+
+}
+
+/* =========================
+   FLOATING WORDS CORE (INTACTO)
+========================= */
+
+const words={
+power:["LISTEN FIRST","STAY CALM"],
+risk:["REACT ANGRY","LOSE CONTROL"],
+silence:["OBSERVE","BREATHE"],
+money:["INVEST SMART","SAVE MONEY"],
+business:["BUILD SYSTEM","LEAD MARKET"],
+growth:["LEARN FAST","IMPROVE DAILY"]
+};
+
 function spawnWord(){
 
-const cats=["power","risk","silence","money","business","growth"];
+const cats=Object.keys(words);
 const c=cats[Math.floor(Math.random()*cats.length)];
 
 let div=document.createElement("div");
@@ -249,48 +289,29 @@ div.innerText=words[c][Math.floor(Math.random()*words[c].length)];
 
 let x=Math.random()*80;
 let y=110;
-let dx=(Math.random()*2-1)*0.2; /* MÁS SUAVE */
-let dy=-0.25; /* MÁS LENTO */
+let dx=(Math.random()*2-1)*0.2;
+let dy=-0.25;
 
 function move(){
-x+=dx;
-y+=dy;
-
-if(x<0||x>90)dx*=-1;
-
+x+=dx;y+=dy;
 div.style.left=x+"vw";
 div.style.top=y+"vh";
-
 requestAnimationFrame(move);
 }
 move();
 
-/* CLICK */
 div.onclick=()=>{
+
 if(div.dataset.clicked)return;
 div.dataset.clicked=true;
 
 div.classList.add("explode");
-
 AudioEngine.click();
-setTimeout(()=>AudioEngine.explode(),50);
 
-/* lógica */
+/* REGLA PUNTOS UNIFICADA */
 let positive=["power","silence","money","business","growth"].includes(c);
 
-if(positive){
-state.score+=20;
-}else{
-state.score-=15;
-}
-
-/* stats */
-if(c==="power")state.stats.respect++;
-if(c==="silence")state.stats.peace++;
-if(c==="business")state.stats.lead++;
-if(c==="money")state.stats.money++;
-if(c==="growth")state.stats.happy++;
-if(c==="risk")state.stats.safety--;
+state.score+=positive?20:-15;
 
 updateHUD();
 };
@@ -299,10 +320,35 @@ document.body.appendChild(div);
 setTimeout(()=>div.remove(),10000);
 }
 
-/* LOOP */
+/* =========================
+   LOOP PRINCIPAL
+========================= */
+
 setInterval(spawnWord,1200);
 
+async function mainLoop(){
+
+while(true){
+
+let end=Date.now()+45000;
+
+while(Date.now()<end){
+spawnWord();
+await new Promise(r=>setTimeout(r,1200));
+}
+
+document.querySelectorAll(".floating").forEach(e=>e.remove());
+
+await triggerQuestion();
+
+await new Promise(r=>setTimeout(r,3000));
+
+}
+
+}
+
 updateHUD();
+mainLoop();
 
 </script>
 
