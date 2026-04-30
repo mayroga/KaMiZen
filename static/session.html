@@ -1,101 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AL CIELO - KAMIZEN</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <style>
-        :root { --primary: #00d4ff; --gold: #ffd700; --success: #2ecc71; }
-        
-        body { 
-            margin: 0; 
-            background: #000; /* Fondo Negro por defecto */
-            color: white; 
-            font-family: 'Segoe UI', sans-serif; 
-            overflow: hidden; 
-            transition: background 3s ease;
-        }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AL CIELO - KAMIZEN</title>
+    <style>
+        :root { --blue: #00d4ff; --gold: #ffd700; --green: #2ecc71; --red: #e74c3c; }
+        body { margin: 0; background: #000; color: white; font-family: 'Segoe UI', sans-serif; overflow: hidden; }
 
-        /* Paisajes que no tapan las letras */
-        .landscape-forest { background: linear-gradient(to bottom, #000000, #1a2a6c, #000000); }
-        .landscape-city { background: linear-gradient(to bottom, #000000, #203a43, #000000); }
-        .landscape-zen { background: linear-gradient(to bottom, #000000, #134e5e, #000000); }
+        /* Reloj Maestro */
+        #master-clock { position: absolute; top: 20px; width: 100%; text-align: center; font-size: 6rem; font-weight: 900; color: var(--blue); z-index: 1000; text-shadow: 0 0 20px rgba(0,212,255,0.6); pointer-events: none; }
 
-        #master-clock { 
-            position: absolute; top: 10px; width: 100%; text-align: center; 
-            font-size: 5rem; font-weight: 900; color: var(--primary); 
-            z-index: 100; text-shadow: 0 0 20px rgba(0,212,255,0.5);
-        }
+        /* Paisajes y Escenario */
+        #game-world { position: fixed; inset: 0; transition: background 2s; background: linear-gradient(to bottom, #1a2a6c, #b21f1f, #fdbb2d); }
+        .landscape-zen { background: linear-gradient(to bottom, #134e5e, #71b280) !important; }
+        .landscape-city { background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364) !important; }
 
-        #hud-vertical { position: absolute; bottom: 40px; left: 30px; display: flex; gap: 15px; z-index: 100; }
-        .bar-v-container { width: 15px; height: 150px; background: rgba(255,255,255,0.1); border: 1px solid white; border-radius: 10px; position: relative; overflow: hidden; }
-        .fill-v { position: absolute; bottom: 0; width: 100%; transition: height 0.5s; }
+        /* El Muñequito (Avatar) */
+        #avatar-container { position: absolute; bottom: 50px; left: 50%; transform: translateX(-50%); z-index: 100; transition: all 0.5s; text-align: center; }
+        .stickman { stroke: white; stroke-width: 4; fill: none; }
+        .meditating { animation: float 3s ease-in-out infinite; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
 
-        #center-stage { position: absolute; bottom: 50px; left: 50%; transform: translateX(-50%); z-index: 10; text-align: center; }
-        
-        /* Palabras Flotantes */
-        .word-box { 
-            position: absolute; padding: 12px 25px; border: 2px solid white; border-radius: 30px;
-            background: rgba(0,0,0,0.9); font-weight: bold; cursor: pointer; z-index: 50;
-            animation: fallDown 8s linear forwards; font-size: 1.1rem; color: white;
-            box-shadow: 0 0 15px rgba(255,255,255,0.2);
-        }
+        /* Área de Respiración (Silencio) */
+        #breath-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 300px; height: 300px; border: 8px solid white; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 2rem; font-weight: bold; background: rgba(255,255,255,0.1); z-index: 500; transition: transform 4s linear; }
 
-        @keyframes fallDown {
-            from { top: -50px; transform: scale(1); }
-            to { top: 110vh; transform: scale(1.1); }
-        }
+        /* Historias (Overlay) */
+        #story-box { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 2000; padding: 40px; text-align: center; }
+        #story-content { font-size: 1.8rem; line-height: 1.6; max-width: 800px; color: #f0f0f0; }
 
-        .explode { 
-            transform: scale(4) !important; 
-            opacity: 0 !important; 
-            transition: 0.3s ease-out;
-            pointer-events: none;
-        }
-
-        #story-overlay { 
-            position: fixed; inset: 0; background: rgba(0,0,0,0.95); 
-            display: none; flex-direction: column; align-items: center; justify-content: center; 
-            z-index: 1000; padding: 40px; text-align: center; 
-        }
-
-        #login-screen {
-            position: fixed; inset: 0; background: #000; z-index: 9999;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-        }
-        input { padding: 15px; background: #111; border: 2px solid var(--primary); color: white; font-size: 1.5rem; text-align: center; }
-    </style>
+        /* Palabras Flotantes */
+        .word { position: absolute; padding: 15px 25px; border: 2px solid white; border-radius: 30px; background: rgba(0,0,0,0.6); font-weight: bold; cursor: pointer; animation: fall 8s linear forwards; }
+        @keyframes fall { from { top: -50px; } to { top: 110vh; } }
+    </style>
 </head>
 <body>
 
-    <div id="login-screen">
-        <h1 style="color:var(--primary)">AL CIELO</h1>
-        <input type="text" id="user-name" placeholder="Tu Nombre">
-        <button onclick="initApp()" style="margin-top:20px; padding:15px 40px; background:var(--primary); border:none; cursor:pointer; font-weight:bold;">ENTRAR</button>
-    </div>
+    <div id="master-clock">15:00</div>
+    
+    <div id="game-world">
+        <!-- Avatar -->
+        <div id="avatar-container" class="meditating">
+            <svg width="100" height="150" viewBox="0 0 100 150">
+                <circle cx="50" cy="30" r="20" class="stickman"/>
+                <path d="M50 50 L50 110 M50 70 L20 50 M50 70 L80 50 M50 110 L20 140 M50 110 L80 140" class="stickman"/>
+            </svg>
+            <div id="avatar-label" style="margin-top:10px; font-weight:bold; letter-spacing:2px;">ESPECIALISTA</div>
+        </div>
 
-    <div id="master-clock">15:00</div>
+        <div id="breath-overlay">INHALE</div>
+    </div>
 
-    <div id="hud-vertical">
-        <div class="bar-v-container"><div id="bar-stability" class="fill-v" style="height:50%; background:var(--primary);"></div></div>
-        <div class="bar-v-container"><div id="bar-energy" class="fill-v" style="height:70%; background:var(--success);"></div></div>
-    </div>
+    <!-- Pantalla de Historias -->
+    <div id="story-box">
+        <h1 id="story-title" style="color:var(--gold); font-size: 3rem;"></h1>
+        <p id="story-content"></p>
+        <button onclick="closeStory()" style="margin-top:30px; padding:20px 60px; font-size:1.5rem; background:var(--green); border:none; color:white; border-radius:10px; cursor:pointer;">I AM READY</button>
+    </div>
 
-    <div id="center-stage">
-        <div id="avatar-name" style="color:var(--gold); font-weight:900; margin-bottom:10px;">RECRUIT</div>
-        <svg width="80" height="120" viewBox="0 0 100 150">
-            <circle cx="50" cy="30" r="20" stroke="white" stroke-width="4" fill="none"/>
-            <path d="M50 50 L50 110 M50 70 L20 50 M50 70 L80 50 M50 110 L25 145 M50 110 L75 145" stroke="white" stroke-width="4"/>
-        </svg>
-    </div>
-
-    <div id="story-overlay">
-        <h1 id="story-title" style="color:var(--gold)"></h1>
-        <p id="story-text" style="font-size:1.5rem; max-width:800px;"></p>
-        <button onclick="closeStory()" style="padding:15px 40px; background:var(--success); color:white; border:none; cursor:pointer; font-weight:bold;">ENTENDIDO</button>
-    </div>
-
-    <script src="/static/js/engine.js"></script>
+    <script src="/static/js/engine.js"></script>
 </body>
 </html>
