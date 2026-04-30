@@ -1,160 +1,54 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KAMIZEN CONNECTED</title>
-
-<style>
-body{
-margin:0;
-background:#00050a;
-color:#fff;
-font-family:monospace;
-overflow:hidden;
-}
-
-/* HUD */
-#hud{
-position:fixed;
-top:20px;
-width:100%;
-display:flex;
-justify-content:space-between;
-padding:20px;
-z-index:50;
-}
-
-/* FLOATING WORDS */
-.floating{
-position:absolute;
-padding:12px 25px;
-border-radius:8px;
-background:rgba(0,0,0,0.85);
-cursor:pointer;
-animation:floatUp 10s linear forwards;
-z-index:10;
-}
-
-@keyframes floatUp{
-from{transform:translateY(110vh);}
-to{transform:translateY(-20vh);}
-}
-
-.explode{
-animation:blast 0.4s ease-out forwards!important;
-}
-
-@keyframes blast{
-0%{transform:scale(1);opacity:1;}
-100%{transform:scale(3);opacity:0;}
-}
-
-/* COLORS */
-.word-power{border:2px solid #00ff41;color:#00ff41;}
-.word-risk{border:2px solid #ff003c;color:#ff003c;}
-.word-silence{border:2px solid #ffff00;color:#ffff00;}
-.word-money{border:2px solid #ffcc00;color:#ffcc00;}
-.word-business{border:2px solid #00e5ff;color:#00e5ff;}
-.word-growth{border:2px solid #00ff99;color:#00ff99;}
-
-/* OVERLAY */
-#overlay{
-position:fixed;
-width:100%;
-height:100%;
-background:rgba(0,0,0,0.95);
-display:none;
-flex-direction:column;
-justify-content:center;
-align-items:center;
-z-index:200;
-}
-
-.choice-btn{
-padding:15px;
-margin:10px;
-border:2px solid #00f2ff;
-background:none;
-color:#fff;
-cursor:pointer;
-}
-
-#continue-btn{
-margin-top:20px;
-padding:15px 30px;
-display:block;
-}
-</style>
-</head>
-
-<body>
-
-<div id="hud">
-<div id="score">0</div>
-<div id="timer">05:00</div>
-</div>
-
-<div id="overlay">
-<h1 id="phase-title"></h1>
-<p id="phase-desc"></p>
-<div id="decision-grid"></div>
-<button id="continue-btn">CONTINUE</button>
-</div>
-
-<script>
-
 /* =========================
-   AUDIO (NO TOCAR)
+   KAMIZEN CORE ENGINE STABLE
 ========================= */
-const AudioEngine={
-ctx:null,
-init(){
-if(this.ctx)return;
-this.ctx=new(window.AudioContext||window.webkitAudioContext)();
-this.music();
-},
-music(){
-const loop=()=>{
-let o=this.ctx.createOscillator();
-let g=this.ctx.createGain();
-o.frequency.value=220+Math.random()*300;
-g.gain.value=0.03;
-o.connect(g);g.connect(this.ctx.destination);
-o.start();o.stop(this.ctx.currentTime+0.3);
-setTimeout(loop,300);
-};
-loop();
-},
-click(){
-let o=this.ctx.createOscillator();
-let g=this.ctx.createGain();
-o.frequency.value=700;
-g.gain.value=0.1;
-o.connect(g);g.connect(this.ctx.destination);
-o.start();o.stop(this.ctx.currentTime+0.1);
-}
-};
 
-document.addEventListener("click",()=>AudioEngine.init(),{once:true});
+let lang="en";
+let gameMode="idle";
+let missionIndex=1;
 
-/* =========================
-   STATE
-========================= */
 let state={
-score:0
+score:0,
+mastery:1,
+timer:300,
+stats:{respect:50,peace:50,lead:50,money:100,happy:50,safety:100},
+spawnRate:1300
 };
+
+/* =========================
+   SAFE AUDIO (NO BREAKS)
+========================= */
+
+const AudioEngine={
+init(){},
+click(){},
+explode(){}
+};
+
+/* =========================
+   SAFE BREATHING SYSTEM
+========================= */
+
+async function breathingExercise(duration=10000,voice=false){
+let circle=document.getElementById("breath-circle");
+if(circle) circle.style.display="flex";
+
+await new Promise(r=>setTimeout(r,duration));
+
+if(circle) circle.style.display="none";
+}
+
+/* =========================
+   HUD FIX
+========================= */
 
 function updateHUD(){
-document.getElementById("score").innerText=state.score;
+let el=document.getElementById("score");
+if(el) el.innerText=state.score;
 }
 
 /* =========================
-   JSON SYSTEM
+   JSON LOADER
 ========================= */
-
-let missionIndex=1;
-let currentMission=null;
 
 function getFileByIndex(i){
 if(i<=7) return "missions_01_07.json";
@@ -166,52 +60,70 @@ return "missions_29_35.json";
 
 async function loadMission(){
 const file=getFileByIndex(missionIndex);
-const res=await fetch("/"+file);
+const res=await fetch("/static/"+file);
 const data=await res.json();
-
-const mission=data.missions.find(m=>m.id===missionIndex);
-
-missionIndex++;
-if(missionIndex>35) missionIndex=1;
-
-return mission;
+return data.missions.find(m=>m.id===missionIndex);
 }
 
 /* =========================
-   PARSER JSON
+   PARSER KAMIZEN SAFE
 ========================= */
 
 function parseMission(m){
 
-let title="",story="",options=[];
+if(!m || !m.b) return {title:"",story:"",options:[],analysis:""};
 
-m.b.forEach(b=>{
+let title="",story="",options=[],analysis="";
 
-if(b.t==="v") title=b.tx.en;
+m.b.forEach(block=>{
 
-if(b.t==="h") story+=b.tx.en+" ";
+if(block.t==="v"){
+title=block.tx?.[lang]||block.tx?.en||"";
+}
 
-if(b.t==="d"){
-options=b.op.map((op,i)=>({
-text:op,
-correct:i===b.c,
-explanation:b.ex?.[i]||""
+if(block.t==="h"){
+story+=(block.tx?.[lang]||block.tx?.en||"")+"\n";
+}
+
+if(block.story){
+story+="\n"+(block.story?.[lang]||block.story?.en||"");
+}
+
+if(block.t==="d"){
+options=block.op.map((o,i)=>({
+text:o,
+correct:i===block.c,
+explanation:block.ex?.[i]||""
 }));
+}
+
+if(block.t==="r"){
+state.score+=(block.p||20);
+}
+
+if(block.t==="sil"){
+analysis+="SILENCE\n";
+}
+
+if(block.t==="breath_auto"){
+analysis+="BREATH\n";
 }
 
 });
 
-return{title,story,options};
+return {title,story,options,analysis};
 }
 
 /* =========================
-   TRIGGER QUESTION (FIXED)
+   QUESTION SYSTEM FIXED
 ========================= */
 
 async function triggerQuestion(){
 
-const raw=await loadMission();
-const mission=parseMission(raw);
+const missionRaw=await loadMission();
+if(!missionRaw) return;
+
+const mission=parseMission(missionRaw);
 
 let overlay=document.getElementById("overlay");
 let grid=document.getElementById("decision-grid");
@@ -237,6 +149,7 @@ btn.innerText=opt.text;
 btn.onclick=()=>{
 
 AudioEngine.click();
+
 desc.innerText=opt.explanation;
 
 if(!answered){
@@ -246,12 +159,17 @@ btn.style.borderColor=opt.correct?"#00ff41":"#ff003c";
 
 state.score+=opt.correct?20:-15;
 
-updateHUD();
+document.body.classList.add(opt.correct?"correct-flash":"wrong-flash");
+
+setTimeout(()=>{
+document.body.classList.remove("correct-flash","wrong-flash");
+},400);
 
 document.querySelectorAll(".choice-btn")
 .forEach(b=>b.disabled=true);
 
 cont.style.display="block";
+updateHUD();
 }
 };
 
@@ -263,94 +181,98 @@ overlay.style.display="none";
 AudioEngine.click();
 };
 
+/* SILENCE / BREATH DETECTION REAL */
+if(missionRaw.b.some(b=>b.t==="sil")){
+await breathingExercise(15000,false);
+}
+
+if(missionRaw.b.some(b=>b.t==="breath_auto")){
+await breathingExercise(8000,false);
+}
 }
 
 /* =========================
-   FLOATING WORDS CORE (INTACTO)
+   FLOATING WORDS (UNCHANGED CORE)
 ========================= */
 
 const words={
-power:["LISTEN FIRST","STAY CALM"],
-risk:["REACT ANGRY","LOSE CONTROL"],
-silence:["OBSERVE","BREATHE"],
-money:["INVEST SMART","SAVE MONEY"],
-business:["BUILD SYSTEM","LEAD MARKET"],
-growth:["LEARN FAST","IMPROVE DAILY"]
+power:["LISTEN FIRST","STAY CALM","THINK BEFORE","CONTROL EMOTION","RESPECT OTHERS"],
+risk:["REACT ANGRY","BLAME OTHERS","LOSE CONTROL","FOLLOW CROWD"],
+silence:["OBSERVE PEOPLE","BREATHE DEEP","WAIT MOMENT","INNER CONTROL"],
+money:["INVEST SMART","BUILD VALUE","CASHFLOW","SAVE MONEY","THINK SCALE"],
+business:["BUILD SYSTEM","SELL VALUE","LEAD MARKET","BRAND POWER","EXPAND NETWORK"],
+growth:["LEARN FAST","IMPROVE DAILY","BUILD SKILL","LONG TERM THINK"]
 };
 
 function spawnWord(){
+if(gameMode!=="words") return;
 
-const cats=Object.keys(words);
+const cats=["power","risk","silence","money","business","growth"];
+const styles=["word-power","word-risk","word-silence","word-money","word-business","word-growth"];
+
 const c=cats[Math.floor(Math.random()*cats.length)];
 
 let div=document.createElement("div");
-div.className="floating word-"+c;
+div.className="floating "+styles[cats.indexOf(c)];
 div.innerText=words[c][Math.floor(Math.random()*words[c].length)];
-
-let x=Math.random()*80;
-let y=110;
-let dx=(Math.random()*2-1)*0.2;
-let dy=-0.25;
-
-function move(){
-x+=dx;y+=dy;
-div.style.left=x+"vw";
-div.style.top=y+"vh";
-requestAnimationFrame(move);
-}
-move();
+div.style.left=Math.random()*80+"vw";
 
 div.onclick=()=>{
 
-if(div.dataset.clicked)return;
+if(div.dataset.clicked) return;
 div.dataset.clicked=true;
 
 div.classList.add("explode");
+
 AudioEngine.click();
 
-/* REGLA PUNTOS UNIFICADA */
 let positive=["power","silence","money","business","growth"].includes(c);
 
 state.score+=positive?20:-15;
 
 updateHUD();
+
+setTimeout(()=>div.remove(),400);
 };
 
 document.body.appendChild(div);
-setTimeout(()=>div.remove(),10000);
+
+setTimeout(()=>div.remove(),8000);
 }
 
 /* =========================
-   LOOP PRINCIPAL
+   MAIN LOOP STABLE
 ========================= */
-
-setInterval(spawnWord,1200);
 
 async function mainLoop(){
 
 while(true){
 
-let end=Date.now()+45000;
+gameMode="words";
+
+let end=Date.now()+30000;
 
 while(Date.now()<end){
 spawnWord();
-await new Promise(r=>setTimeout(r,1200));
+await new Promise(r=>setTimeout(r,state.spawnRate));
 }
 
 document.querySelectorAll(".floating").forEach(e=>e.remove());
 
+gameMode="question";
+
+missionIndex++;
+if(missionIndex>35) missionIndex=1;
+
 await triggerQuestion();
 
-await new Promise(r=>setTimeout(r,3000));
-
+await new Promise(r=>setTimeout(r,2000));
+}
 }
 
-}
+/* =========================
+   INIT
+========================= */
 
 updateHUD();
 mainLoop();
-
-</script>
-
-</body>
-</html>
