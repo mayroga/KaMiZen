@@ -9,6 +9,7 @@ logger = logging.getLogger(__name__)
 app = Flask(__name__)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
+# Asegúrate de que estos nombres de archivo coincidan exactamente con tu carpeta
 MISSION_MAP = {
     "1": "missions_01_07.json",
     "2": "missions_08_14.json",
@@ -19,26 +20,21 @@ MISSION_MAP = {
 
 @app.route('/')
 def index():
-    response = send_from_directory('static', 'session.html')
-    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
-    return response
+    return send_from_directory('static', 'session.html')
 
 @app.route('/static/<path:path>')
 def serve_static(path):
     return send_from_directory('static', path)
 
-# --- API PARA HISTORIAS (stories.json) ---
 @app.route('/api/stories')
 def get_stories():
     try:
         file_path = os.path.join(BASE_DIR, 'stories.json')
         with open(file_path, 'r', encoding='utf-8') as f:
-            data = json.load(f)
-        return jsonify(data)
+            return jsonify(json.load(f))
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# --- API PARA MISIONES ---
 @app.route('/api/mission/next')
 def get_mission():
     mission_id = request.args.get('id', '1')
@@ -47,19 +43,19 @@ def get_mission():
     if not file_name:
         return jsonify({"success": False, "end": True})
 
-    file_path = os.path.join(BASE_DIR, file_name)
-    if not os.path.exists(file_path):
-        return jsonify({"success": False, "error": "File not found"}), 404
-
-    with open(file_path, 'r', encoding='utf-8') as f:
-        data = json.load(f)
-    
-    return jsonify({
-        "success": True,
-        "mission": data,
-        "next_id": str(int(mission_id) + 1) if int(mission_id) < 5 else None
-    })
+    try:
+        file_path = os.path.join(BASE_DIR, file_name)
+        with open(file_path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+        
+        return jsonify({
+            "success": True,
+            "mission": data, # Aquí va el JSON completo (sys, ui, missions, etc)
+            "next_id": str(int(mission_id) + 1) if int(mission_id) < 5 else None
+        })
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 404
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
-    app.run(host='0.0.0.0', port=port, debug=False)
+    app.run(host='0.0.0.0', port=port)
