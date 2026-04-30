@@ -3,70 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KAMIZEN LIFE SAFETY</title>
+    <title>AL CIELO - KAMIZEN</title>
     <style>
-        :root { --primary: #00d4ff; --gold: #ffd700; --success: #2ecc71; --error: #e74c3c; }
-        body { margin: 0; background: #000; color: white; font-family: 'Segoe UI', sans-serif; overflow: hidden; transition: background 2s ease-in-out; }
+        :root { --blue: #00d4ff; --gold: #ffd700; --green: #2ecc71; --red: #e74c3c; }
+        body { margin: 0; background: #000; color: white; font-family: 'Segoe UI', sans-serif; overflow: hidden; }
 
-        /* Paisajes Dinámicos */
-        .landscape-forest { background: linear-gradient(to bottom, #1a2a6c, #b21f1f, #fdbb2d); }
-        .landscape-city { background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364); }
-        .landscape-zen { background: linear-gradient(to bottom, #134e5e, #71b280); }
+        /* Reloj Maestro */
+        #master-clock { position: absolute; top: 20px; width: 100%; text-align: center; font-size: 6rem; font-weight: 900; color: var(--blue); z-index: 1000; text-shadow: 0 0 20px rgba(0,212,255,0.6); pointer-events: none; }
 
-        /* Reloj Gigante */
-        #master-clock { position: absolute; top: 10px; width: 100%; text-align: center; font-size: 5rem; font-weight: 900; color: var(--primary); text-shadow: 0 0 20px rgba(0,212,255,0.5); z-index: 100; letter-spacing: 5px; }
+        /* Paisajes y Escenario */
+        #game-world { position: fixed; inset: 0; transition: background 2s; background: linear-gradient(to bottom, #1a2a6c, #b21f1f, #fdbb2d); }
+        .landscape-zen { background: linear-gradient(to bottom, #134e5e, #71b280) !important; }
+        .landscape-city { background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364) !important; }
 
-        /* HUD Vertical (Stats) */
-        #hud-vertical { position: absolute; bottom: 40px; left: 30px; display: flex; gap: 20px; align-items: flex-end; z-index: 100; }
-        .bar-v-container { width: 20px; height: 180px; background: rgba(0,0,0,0.5); border: 2px solid #fff; border-radius: 10px; position: relative; overflow: hidden; }
-        .fill-v { position: absolute; bottom: 0; width: 100%; transition: height 0.8s; }
+        /* El Muñequito (Avatar) */
+        #avatar-container { position: absolute; bottom: 50px; left: 50%; transform: translateX(-50%); z-index: 100; transition: all 0.5s; text-align: center; }
+        .stickman { stroke: white; stroke-width: 4; fill: none; }
+        .meditating { animation: float 3s ease-in-out infinite; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
 
-        /* Avatar y Respiración */
-        #center-stage { position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 60px; z-index: 10; }
-        #breath-circle { width: 140px; height: 140px; border: 5px solid white; border-radius: 50%; display: none; align-items: center; justify-content: center; font-weight: bold; transition: transform 4s; background: rgba(255,255,255,0.1); }
+        /* Área de Respiración (Silencio) */
+        #breath-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 300px; height: 300px; border: 8px solid white; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 2rem; font-weight: bold; background: rgba(255,255,255,0.1); z-index: 500; transition: transform 4s linear; }
 
-        /* Palabras/Obstáculos */
-        .word-box { 
-            position: absolute; padding: 15px 25px; border: 3px solid white; border-radius: 12px;
-            background: rgba(0,0,0,0.7); font-weight: bold; cursor: pointer; z-index: 50;
-            animation: moveAround 10s linear forwards; font-size: 1.2rem;
-        }
-        .explode { transform: scale(3) rotate(20deg); opacity: 0; transition: 0.3s; }
+        /* Historias (Overlay) */
+        #story-box { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 2000; padding: 40px; text-align: center; }
+        #story-content { font-size: 1.8rem; line-height: 1.6; max-width: 800px; color: #f0f0f0; }
 
-        /* Overlay Historias */
-        #story-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 500; padding: 50px; text-align: center; }
-        #story-text { font-size: 1.5rem; line-height: 1.8; max-width: 900px; color: #eee; font-style: italic; }
+        /* Palabras Flotantes */
+        .word { position: absolute; padding: 15px 25px; border: 2px solid white; border-radius: 30px; background: rgba(0,0,0,0.6); font-weight: bold; cursor: pointer; animation: fall 8s linear forwards; }
+        @keyframes fall { from { top: -50px; } to { top: 110vh; } }
     </style>
 </head>
-<body class="landscape-forest">
+<body>
 
     <div id="master-clock">15:00</div>
-
-    <div id="hud-vertical">
-        <div class="bar-v-container"><div id="bar-stability" class="fill-v" style="height:50%; background:var(--primary);"></div></div>
-        <div class="bar-v-container"><div id="bar-resources" class="fill-v" style="height:20%; background:var(--gold);"></div></div>
-        <div class="bar-v-container"><div id="bar-energy" class="fill-v" style="height:70%; background:var(--success);"></div></div>
-    </div>
-
-    <div id="center-stage">
-        <div id="avatar-container">
-            <svg width="120" height="160" viewBox="0 0 100 150">
-                <circle cx="50" cy="30" r="18" fill="none" stroke="white" stroke-width="4"/>
-                <line x1="50" y1="48" x2="50" y2="100" stroke="white" stroke-width="4"/>
-                <line x1="50" y1="65" x2="15" y2="45" stroke="white" stroke-width="4"/>
-                <line x1="50" y1="65" x2="85" y2="45" stroke="white" stroke-width="4"/>
-                <line x1="50" y1="100" x2="25" y2="145" stroke="white" stroke-width="4"/>
-                <line x1="50" y1="100" x2="75" y2="145" stroke="white" stroke-width="4"/>
+    
+    <div id="game-world">
+        <!-- Avatar -->
+        <div id="avatar-container" class="meditating">
+            <svg width="100" height="150" viewBox="0 0 100 150">
+                <circle cx="50" cy="30" r="20" class="stickman"/>
+                <path d="M50 50 L50 110 M50 70 L20 50 M50 70 L80 50 M50 110 L20 140 M50 110 L80 140" class="stickman"/>
             </svg>
-            <div id="avatar-name" style="text-align:center; font-weight:900; letter-spacing:2px; margin-top:10px;">RECRUIT</div>
+            <div id="avatar-label" style="margin-top:10px; font-weight:bold; letter-spacing:2px;">ESPECIALISTA</div>
         </div>
-        <div id="breath-circle"><span id="breath-text">INHALE</span></div>
+
+        <div id="breath-overlay">INHALE</div>
     </div>
 
-    <div id="story-overlay">
-        <h1 id="story-title" style="color:var(--gold)"></h1>
-        <div id="story-text"></div>
-        <button onclick="closeStory()" style="margin-top:40px; padding:20px 50px; background:var(--success); border:none; color:white; font-weight:bold; cursor:pointer; font-size:1.2rem;">I UNDERSTAND</button>
+    <!-- Pantalla de Historias -->
+    <div id="story-box">
+        <h1 id="story-title" style="color:var(--gold); font-size: 3rem;"></h1>
+        <p id="story-content"></p>
+        <button onclick="closeStory()" style="margin-top:30px; padding:20px 60px; font-size:1.5rem; background:var(--green); border:none; color:white; border-radius:10px; cursor:pointer;">I AM READY</button>
     </div>
 
     <script src="/static/js/engine.js"></script>
