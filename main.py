@@ -8,8 +8,10 @@ app = Flask(__name__, static_folder="static")
 CACHE = {}
 
 # =========================
-# 🧠 STATE GLOBAL
+# 🔥 BASE FIJA (CRÍTICO)
 # =========================
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 STATE = {
     "mission_index": 1,
     "MAX_MISSION": 35,
@@ -25,31 +27,17 @@ STATE = {
 }
 
 # =========================
-# 🧬 USER PROFILE (ADAPTIVE CORE)
-# =========================
-PROFILE = {
-    "impulsivity": 50,
-    "calm": 50,
-    "focus": 50,
-    "fear": 50,
-    "discipline": 50,
-    "error_pattern": {
-        "react": 0,
-        "avoid": 0,
-        "risk": 0
-    }
-}
-
-BASE_DIR = os.getcwd()
-
-# =========================
-# LOAD JSON
+# LOAD JSON FIXED
 # =========================
 def load_json(file_name):
     if file_name in CACHE:
         return CACHE[file_name]
 
     path = os.path.join(BASE_DIR, file_name)
+
+    if not os.path.exists(path):
+        print("❌ JSON NOT FOUND:", path)
+        return {"missions": []}
 
     with open(path, "r", encoding="utf-8") as f:
         data = json.load(f)
@@ -58,13 +46,18 @@ def load_json(file_name):
 
 
 # =========================
-# FILE BY INDEX
+# RANGE FIXED
 # =========================
 def get_file_by_index(i):
-    for start in sorted(STATE["range_map"].keys()):
-        if start <= i <= start + 6:
-            return STATE["range_map"][start]
-    return STATE["range_map"][1]
+    if 1 <= i <= 7:
+        return "missions_01_07.json"
+    if 8 <= i <= 14:
+        return "missions_08_14.json"
+    if 15 <= i <= 21:
+        return "missions_15_21.json"
+    if 22 <= i <= 28:
+        return "missions_22_28.json"
+    return "missions_29_35.json"
 
 
 # =========================
@@ -75,66 +68,13 @@ def session_active():
 
 
 # =========================
-# 🧠 ADAPTIVE PROFILE UPDATE
-# =========================
-def update_profile(cat, chosen_correct, choice_index, correct_index):
-
-    if not chosen_correct:
-        PROFILE["impulsivity"] += 2
-        PROFILE["discipline"] -= 1
-
-    else:
-        PROFILE["discipline"] += 1
-
-    # CATEGORY IMPACT
-    if cat in ["bullying", "emotion", "social"]:
-        PROFILE["fear"] += 1 if not chosen_correct else -1
-
-    if cat in ["focus", "truth", "mind"]:
-        PROFILE["focus"] += 1 if chosen_correct else -1
-
-    if cat in ["emergency", "stranger", "digital"]:
-        PROFILE["calm"] += 1 if chosen_correct else -1
-
-    # ERROR PATTERN
-    if choice_index != correct_index:
-        if choice_index == 0:
-            PROFILE["error_pattern"]["react"] += 1
-        elif choice_index == 3:
-            PROFILE["error_pattern"]["avoid"] += 1
-        else:
-            PROFILE["error_pattern"]["risk"] += 1
-
-
-# =========================
-# DIFFICULTY ENGINE
-# =========================
-def get_difficulty_boost():
-    boost = 0
-
-    if PROFILE["impulsivity"] > 60:
-        boost += 1
-
-    if PROFILE["focus"] > 70:
-        boost -= 1
-
-    if PROFILE["fear"] > 65:
-        boost += 1
-
-    return boost
-
-
-# =========================
-# API MISSION
+# API
 # =========================
 @app.route("/api/mission/next")
 def next_mission():
 
     if not session_active():
-        return jsonify({
-            "end": True,
-            "message": "SESSION COMPLETE"
-        })
+        return jsonify({"end": True})
 
     lang = request.args.get("lang", "en")
     mission_id = STATE["mission_index"]
@@ -142,88 +82,55 @@ def next_mission():
     file_name = get_file_by_index(mission_id)
     data = load_json(file_name)
 
-    mission = next((m for m in data["missions"] if m["id"] == mission_id), None)
+    mission = next((m for m in data.get("missions", []) if m["id"] == mission_id), None)
 
-    if not mission:
+    if not mission and data.get("missions"):
         mission = data["missions"][0]
 
     title = ""
     story = ""
     options = []
 
-    # =========================
-    # PARSE MISSION
-    # =========================
-    for b in mission["b"]:
+    if mission:
 
-        if b["t"] == "v":
-            title = b["tx"].get(lang, "")
+        for b in mission["b"]:
 
-        if b["t"] == "h":
-            story += b["tx"].get(lang, "") + "\n"
+            if b["t"] == "v":
+                title = b["tx"].get(lang, "")
 
-        if b["t"] == "d":
-            ops = b["op"]
-            correct = b["c"]
-            q = b["q"].get(lang, "")
+            if b["t"] == "h":
+                story += b["tx"].get(lang, "") + "\n"
 
-            options = []
+            if b["t"] == "d":
+                q = b["q"].get(lang, "")
+                ops = b["op"]
+                correct = b["c"]
 
-            for i, op in enumerate(ops):
-                options.append({
-                    "text": op,
-                    "correct": i == correct,
-                    "explanation": b["ex"][i] if i < len(b["ex"]) else "",
-                    "question": q
-                })
+                options = []
 
-            # 🧠 UPDATE PROFILE BASED ON LAST ACTION (SIMULATED)
-            # NOTE: real app would send user choice via POST
-            update_profile(mission.get("cat", "unknown"), True, correct, correct)
+                for i, op in enumerate(ops):
+                    options.append({
+                        "text": op,
+                        "correct": i == correct,
+                        "explanation": b["ex"][i] if i < len(b["ex"]) else "",
+                        "question": q
+                    })
 
-    # =========================
-    # ADAPTIVE DIFFICULTY
-    # =========================
-    difficulty_boost = get_difficulty_boost()
-
-    if difficulty_boost > 0:
-        STATE["mission_index"] += difficulty_boost
-    else:
-        STATE["mission_index"] += 1
-
+    STATE["mission_index"] += 1
     if STATE["mission_index"] > STATE["MAX_MISSION"]:
         STATE["mission_index"] = 1
 
-    # =========================
-    # RESPONSE
-    # =========================
     return jsonify({
         "id": mission_id,
         "theme": title,
         "story": story,
         "options": options,
-        "time_left": int(STATE["session_duration"] - (time.time() - STATE["start_time"])),
-        "profile": PROFILE
+        "time_left": int(STATE["session_duration"] - (time.time() - STATE["start_time"]))
     })
 
 
 # =========================
-# RESET SESSION
-# =========================
-@app.route("/api/reset")
-def reset():
-    STATE["mission_index"] = 1
-    STATE["start_time"] = time.time()
-
-    # reset optional (comment if you want persistence)
-    # global PROFILE
-    # PROFILE = { ... reset values ... }
-
-    return jsonify({"ok": True})
-
-
-# =========================
-# STATIC
+# STATIC FIXED
 # =========================
 @app.route("/")
 def index():
@@ -235,9 +142,6 @@ def static_files(path):
     return send_from_directory("static", path)
 
 
-# =========================
-# RUN SERVER
-# =========================
 if __name__ == "__main__":
-    print("KAMIZEN ADAPTIVE ENGINE RUNNING")
+    print("KAMIZEN RUNNING FIXED")
     app.run(debug=True)
