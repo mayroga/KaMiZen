@@ -1,7 +1,7 @@
 let state = {
     lang: 'en',
     mode: 'ACTION',
-    timeLeft: 300,
+    timeLeft: 60,
     peace: 50,
     missionActive: false,
     started: false,
