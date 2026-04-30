@@ -1,33 +1,38 @@
 let state = {
-    lang: 'en', // Por defecto Inglés
+    lang: 'en',
     mode: 'ACTION',
     timeLeft: 300,
     peace: 50,
     missionActive: false,
-    started: false
+    started: false,
+    data: null,
+    currentMissionIdx: 0
 };
 
 const AudioEngine = {
-    init() {
-        this.bgm = new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3');
-        this.bgm.loop = true;
-        this.bgm.volume = 0.2;
-        this.bgm.play().catch(e => console.log("Audio waiting for interaction"));
-    },
     speak(text) {
         if (!text) return;
         speechSynthesis.cancel();
         const msg = new SpeechSynthesisUtterance(text);
         msg.lang = state.lang === 'es' ? 'es-ES' : 'en-US';
-        msg.rate = 0.9;
         speechSynthesis.speak(msg);
     }
 };
 
+async function loadData() {
+    const res = await fetch('/api/mission/next?id=1'); // En tu main.py asegúrate de que devuelva el JSON completo
+    const json = await res.json();
+    state.data = json.mission;
+    updateRule();
+}
+
 function toggleLang() {
     state.lang = state.lang === 'en' ? 'es' : 'en';
-    document.getElementById('label-peace').innerText = state.lang === 'es' ? 'PAZ INTERIOR' : 'INTERNAL PEACE';
-    document.getElementById('breath-txt').innerText = state.lang === 'es' ? 'RESPIRA' : 'BREATHE';
+}
+
+function updateRule() {
+    const rules = state.data.rules;
+    document.getElementById('rule-display').innerText = rules[Math.floor(Math.random() * rules.length)];
 }
 
 async function runMission() {
@@ -35,21 +40,16 @@ async function runMission() {
     state.missionActive = true;
     state.mode = 'MISSION';
 
-    document.querySelectorAll('.word-float').forEach(w => w.remove());
     const overlay = document.getElementById('overlay');
     overlay.style.display = 'flex';
 
-    try {
-        const res = await fetch(`/api/mission/next?lang=${state.lang}`);
-        const data = await res.json();
-        
-        for (const block of data.mission.b) {
-            await processBlock(block);
-        }
-    } catch (err) {
-        console.error("Mission error:", err);
+    const mission = state.data.missions[state.currentMissionIdx];
+    
+    for (const block of mission.b) {
+        await processBlock(block);
     }
 
+    state.currentMissionIdx = (state.currentMissionIdx + 1) % state.data.missions.length;
     overlay.style.display = 'none';
     state.mode = 'ACTION';
     state.missionActive = false;
@@ -60,21 +60,46 @@ async function processBlock(b) {
     const desc = document.getElementById('phase-desc');
     const grid = document.getElementById('decision-grid');
     const circle = document.getElementById('breath-circle');
+    const info = document.getElementById('info-box');
 
     grid.innerHTML = '';
     circle.style.display = 'none';
+    info.innerText = '';
 
     switch(b.t) {
         case "v":
             title.innerText = b.tx[state.lang];
             break;
-
+        case "h":
+            desc.innerText = b.tx[state.lang];
+            break;
         case "story":
             desc.innerText = b[state.lang];
             AudioEngine.speak(b[state.lang]);
-            await new Promise(r => setTimeout(r, 6000));
+            await new Promise(r => setTimeout(r, 5000));
             break;
-
+        case "br":
+        case "breath_auto":
+            circle.style.display = 'flex';
+            circle.classList.add('inhale-anim');
+            desc.innerText = b.tx[state.lang];
+            if(b.inf) info.innerText = b.inf[state.lang];
+            let s = b.d || 4;
+            while (s > 0) {
+                document.getElementById('breath-timer').innerText = s-- + "s";
+                await new Promise(r => setTimeout(r, 1000));
+            }
+            circle.classList.remove('inhale-anim');
+            break;
+        case "sil":
+            desc.innerText = b.tx[state.lang];
+            info.innerText = b.inf[state.lang];
+            let st = b.d;
+            while (st > 0) {
+                title.innerText = `SILENCE: ${st--}s`;
+                await new Promise(r => setTimeout(r, 1000));
+            }
+            break;
         case "d":
             desc.innerText = b.q[state.lang];
             AudioEngine.speak(b.q[state.lang]);
@@ -86,32 +111,14 @@ async function processBlock(b) {
                     btn.onclick = () => {
                         const isCorrect = idx === b.c;
                         btn.className = `choice-btn ${isCorrect ? 'correct-choice' : 'wrong-choice'}`;
-                        
                         const feedback = b.ex[idx].split(' / ')[state.lang === 'es' ? 1 : 0];
                         desc.innerText = feedback;
                         AudioEngine.speak(feedback);
-                        
-                        state.peace = isCorrect ? Math.min(100, state.peace + 15) : Math.max(0, state.peace - 20);
-                        updateUI();
-                        
-                        setTimeout(() => resolve(), 5000);
+                        setTimeout(resolve, 4000);
                     };
                     grid.appendChild(btn);
                 });
             });
-
-        case "br":
-            circle.style.display = 'flex';
-            circle.classList.add('inhale-anim');
-            AudioEngine.speak(state.lang === 'es' ? 'Inhala y exhala' : 'Inhale and exhale');
-            let s = b.d || 4;
-            while (s > 0) {
-                document.getElementById('breath-timer').innerText = s-- + "s";
-                await new Promise(r => setTimeout(r, 1000));
-            }
-            circle.classList.remove('inhale-anim');
-            circle.style.display = 'none';
-            break;
     }
 }
 
@@ -119,36 +126,32 @@ function spawnWord() {
     if (state.mode !== 'ACTION' || !state.started) return;
     const div = document.createElement('div');
     div.className = 'word-float';
-    const words = state.lang === 'es' ? ["EGO", "RUIDO", "PRISA", "DUDAS"] : ["EGO", "NOISE", "HASTE", "DOUBTS"];
+    const words = state.data.ui.fw;
     div.innerText = words[Math.floor(Math.random() * words.length)];
-    div.style.left = Math.random() * 70 + 15 + "vw";
+    div.style.left = Math.random() * 80 + 10 + "vw";
     div.onclick = () => {
-        state.peace = Math.min(100, state.peace + 3);
-        updateUI();
+        state.peace = Math.min(100, state.peace + 2);
+        document.getElementById('bar-peace').style.width = state.peace + "%";
         div.remove();
     };
     document.body.appendChild(div);
-    setTimeout(() => div.remove(), 7000);
-}
-
-function updateUI() {
-    document.getElementById('bar-peace').style.width = state.peace + "%";
+    setTimeout(() => div.remove(), 8000);
 }
 
 function startSystem() {
-    state.started = true;
-    document.getElementById('start-screen').style.display = 'none';
-    AudioEngine.init();
-    
-    setInterval(() => {
-        if (state.timeLeft <= 0) return;
-        state.timeLeft--;
-        const m = Math.floor(state.timeLeft / 60);
-        const s = state.timeLeft % 60;
-        document.getElementById('timer-box').innerText = `${m}:${s.toString().padStart(2,'0')}`;
-        if (state.timeLeft % 45 === 0) runMission();
-    }, 1000);
-
-    setInterval(spawnWord, 1200);
-    runMission();
+    loadData().then(() => {
+        state.started = true;
+        document.getElementById('start-screen').style.display = 'none';
+        setInterval(spawnWord, 1500);
+        setInterval(() => {
+            if(state.timeLeft > 0) {
+                state.timeLeft--;
+                const m = Math.floor(state.timeLeft / 60);
+                const s = state.timeLeft % 60;
+                document.getElementById('timer-box').innerText = `${m}:${s.toString().padStart(2,'0')}`;
+                if(state.timeLeft % 60 === 0) runMission();
+            }
+        }, 1000);
+        runMission();
+    });
 }
