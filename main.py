@@ -4,6 +4,9 @@ import os
 
 app = Flask(__name__, static_folder="static")
 
+# =========================
+# CACHE + STATE
+# =========================
 CACHE = {}
 
 STATE = {
@@ -22,7 +25,7 @@ BASE_DIR = os.getcwd()
 
 
 # =========================
-# SAFE GET LANG TEXT
+# SAFE TEXT LANG
 # =========================
 def t(obj, lang):
     if isinstance(obj, dict):
@@ -31,7 +34,7 @@ def t(obj, lang):
 
 
 # =========================
-# LOAD JSON
+# LOAD JSON (CACHE SAFE)
 # =========================
 def load_json(file_name):
     if file_name in CACHE:
@@ -45,12 +48,12 @@ def load_json(file_name):
             CACHE[file_name] = data
             return data
     except Exception as e:
-        print("ERROR:", path, e)
+        print("ERROR LOADING:", path, e)
         return None
 
 
 # =========================
-# RANGE FILE
+# FILE BY INDEX
 # =========================
 def get_file_by_index(i):
     for start in sorted(STATE["range_map"].keys()):
@@ -60,7 +63,25 @@ def get_file_by_index(i):
 
 
 # =========================
-# API
+# NORMALIZE MISSIONS (NEW + OLD STRUCTURE)
+# =========================
+def get_mission_list(data):
+    if not data:
+        return []
+
+    # NEW STRUCTURE
+    if "missions" in data:
+        return data["missions"]
+
+    # OLD STRUCTURE
+    if "ses" in data:
+        return data["ses"]
+
+    return []
+
+
+# =========================
+# API NEXT MISSION
 # =========================
 @app.route("/api/mission/next")
 def next_mission():
@@ -71,37 +92,62 @@ def next_mission():
     file_name = get_file_by_index(mission_id)
     data = load_json(file_name)
 
-    if not data or "ses" not in data:
-        return jsonify({"error": "NO DATA", "file": file_name}), 500
+    missions = get_mission_list(data)
 
-    mission = next((s for s in data["ses"] if s.get("id") == mission_id), None)
+    if not missions:
+        return jsonify({
+            "error": "NO DATA",
+            "file": file_name
+        }), 500
+
+    # FIND BY ID
+    mission = next((m for m in missions if m.get("id") == mission_id), None)
 
     if not mission:
-        mission = data["ses"][0]
+        mission = missions[0]
 
-    story = ""
+    # =========================
+    # PARSE BLOCKS (FULL COMPATIBLE)
+    # =========================
     title = ""
-    options = []
+    story = ""
     analysis = ""
+    question = ""
+    options = []
 
-    for block in mission.get("b", []):
+    blocks = mission.get("b", [])
+
+    for block in blocks:
 
         ttype = block.get("t")
 
+        # TITLE
         if ttype == "v":
             title = t(block.get("tx"), lang)
 
+        # HEADER / STORY TEXT
         elif ttype == "h":
             story += t(block.get("tx"), lang) + "\n"
 
+        # STORY OBJECT
+        elif "story" in block:
+            story += t(block.get("story"), lang) + "\n"
+
+        # DECISION
         elif ttype == "d":
+
+            question = t(block.get("q"), lang)
+
             ops = block.get("op", [])
             correct = block.get("c", 0)
-
-            qtext = t(block.get("q"), lang)
+            explanations = block.get("ex", [])
 
             options = []
+
             for idx, op in enumerate(ops):
+
+                exp = explanations[idx] if idx < len(explanations) else ""
+
                 options.append({
                     "text": {
                         "en": op,
@@ -109,28 +155,45 @@ def next_mission():
                     },
                     "correct": idx == correct,
                     "explanation": {
-                        "en": block.get("ex", [""])[idx] if idx < len(block.get("ex", [])) else "",
-                        "es": block.get("ex", [""])[idx] if idx < len(block.get("ex", [])) else ""
-                    },
-                    "question": qtext
+                        "en": exp,
+                        "es": exp
+                    }
                 })
 
+        # RESULT / REWARD TEXT
         elif ttype == "c":
             analysis += t(block.get("tx"), lang) + "\n"
 
+    # =========================
+    # NEXT INDEX LOOP
+    # =========================
     STATE["mission_index"] += 1
+
     if STATE["mission_index"] > STATE["MAX_MISSION"]:
         STATE["mission_index"] = 1
 
+    # =========================
+    # RESPONSE
+    # =========================
     return jsonify({
         "id": mission_id,
         "next": STATE["mission_index"],
         "theme": title,
         "story": story.strip(),
         "analysis": analysis.strip(),
+        "question": question,
         "options": options,
         "lang": lang
     })
+
+
+# =========================
+# RESET
+# =========================
+@app.route("/api/reset")
+def reset():
+    STATE["mission_index"] = 1
+    return jsonify({"ok": True})
 
 
 # =========================
@@ -146,12 +209,9 @@ def static_files(path):
     return send_from_directory("static", path)
 
 
-@app.route("/api/reset")
-def reset():
-    STATE["mission_index"] = 1
-    return jsonify({"ok": True})
-
-
+# =========================
+# RUN
+# =========================
 if __name__ == "__main__":
     print("SERVER RUNNING OK")
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)
