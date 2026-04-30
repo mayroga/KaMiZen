@@ -1,135 +1,132 @@
-const { jsPDF } = window.jspdf;
-
-let state = {
-    user: "Recruit",
-    score: 0,
-    timeLeft: 900,
+let engine = {
+    words: [],      // Palabras extraídas de ui.fw
+    stories: [],    // Narrativas de stories.json
+    timeLeft: 900,  // 15 Minutos (15:00)
     isRunning: false,
-    missionActive: false,
-    currentMissionId: "1",
-    words: [], // Aquí irán Awareness, Safety, etc.
-    missionsData: [], // Bloques de misiones del JSON
-    currentStep: 0,
-    history: { caught: [], missions: [] }
+    currentStep: 0
 };
 
-const bgMusic = new Audio('/static/music.mp3');
-bgMusic.loop = true;
-
-const Voice = {
-    speak(text) {
-        speechSynthesis.cancel();
-        const msg = new SpeechSynthesisUtterance(text);
-        msg.lang = 'en-US';
-        msg.rate = 0.85;
-        speechSynthesis.speak(msg);
-    }
-};
-
-async function initApp() {
-    const nameInput = document.getElementById('user-name');
-    state.user = nameInput.value.trim() || "Recruit";
-    document.getElementById('avatar-name').innerText = state.user;
-    
-    // 1. CARGAR STORIES PRIMERO
-    await loadStories();
-    // 2. CARGAR PRIMERA MISIÓN
-    await loadMissionData();
-    
-    document.getElementById('login-screen').style.display = 'none';
-    state.isRunning = true;
-    bgMusic.play().catch(e => console.log("Audio waiting for interaction"));
-    
-    // Lanzar primera historia de la misión
-    showMissionStep();
-}
-
-async function loadStories() {
+// 1. CARGA DE DATOS (Orden Crítico)
+async function initKamizen() {
     try {
-        const res = await fetch('/api/stories');
-        const data = await res.json();
-        // Puedes usar esto para intros generales si lo deseas
-    } catch (e) { console.error("Stories error"); }
-}
+        // Carga paralela para velocidad
+        const [storiesRes, dataRes] = await Promise.all([
+            fetch('/api/stories'),
+            fetch('/api/kamizen_data')
+        ]);
 
-async function loadMissionData() {
-    try {
-        const res = await fetch(`/api/mission/next?id=${state.currentMissionId}`);
-        const data = await res.json();
+        const storiesData = await storiesRes.json();
+        const kamizenData = await dataRes.json();
+
+        engine.stories = storiesData.stories; 
+        // Accedemos a la estructura jerárquica: ui -> fw (palabras)
+        engine.words = kamizenData.ui.fw; 
         
-        if (data.success) {
-            const mFile = data.mission;
-            // Extraer palabras del UI del JSON
-            state.words = mFile.ui.fw; 
-            // Extraer lista de misiones
-            state.missionsData = mFile.missions;
-            state.currentMissionId = data.next_id;
-        }
-    } catch (e) { console.error("Mission load error"); }
+        // Iniciamos con la primera historia
+        showStory(true);
+    } catch (e) {
+        console.error("Falla en la Matrix de datos", e);
+    }
 }
 
-function showMissionStep() {
-    state.missionActive = true;
-    const currentMission = state.missionsData[state.currentStep];
+// 2. NARRATIVA Y VOZ
+function showStory(isInitial = false) {
+    engine.isRunning = false;
+    const storyBox = document.getElementById('story-box');
     
-    // Buscar la historia dentro del bloque 'b'
-    const storyBlock = currentMission.b.find(item => item.story);
-    const text = storyBlock.story.en;
+    // Selección de historia (por orden o azar)
+    if (engine.stories.length === 0) return;
+    const story = engine.stories.shift(); // Saca la primera y la elimina del pool
 
-    document.getElementById('story-title').innerText = currentMission.cat.toUpperCase();
-    document.getElementById('story-text').innerText = text;
-    document.getElementById('story-overlay').style.display = 'flex';
+    document.getElementById('story-title').innerText = story.t;
+    document.getElementById('story-content').innerText = story.en;
+    storyBox.style.display = 'flex';
     
-    Voice.speak(text);
+    speak(`${story.t}. ${story.en}`);
 }
 
 function closeStory() {
-    document.getElementById('story-overlay').style.display = 'none';
-    state.missionActive = false;
-    // Preparar siguiente paso para el próximo ciclo de 3 minutos
-    state.currentStep = (state.currentStep + 1) % state.missionsData.length;
+    document.getElementById('story-box').style.display = 'none';
+    if (!engine.isRunning) {
+        engine.isRunning = true;
+        startMasterClock();
+        spawnLoop();
+    }
 }
 
-function spawnWord() {
-    if (state.missionActive || !state.isRunning) return;
+// 3. MECÁNICA DE JUEGO (Spawn de palabras)
+function spawnLoop() {
+    if (!engine.isRunning || engine.timeLeft <= 0) return;
 
-    const text = state.words[Math.floor(Math.random() * state.words.length)];
-    const div = document.createElement('div');
-    div.className = 'word-box';
-    div.innerText = text;
-    div.style.left = (Math.random() * 70 + 15) + "vw";
+    // Selecciona palabra de ui.fw
+    const wordText = engine.words[Math.floor(Math.random() * engine.words.length)];
+    createWordElement(wordText);
 
-    div.onclick = (e) => {
-        e.stopPropagation();
-        div.classList.add('explode');
-        state.score += 10;
-        updateHUD();
-        Voice.speak(text);
-        setTimeout(() => div.remove(), 300);
+    // Ajusta el tiempo de aparición (3 segundos)
+    setTimeout(spawnLoop, 3000);
+}
+
+function createWordElement(text) {
+    const el = document.createElement('div');
+    el.className = 'word';
+    el.innerText = text;
+    el.style.left = (Math.random() * 75 + 10) + "vw"; // Rango seguro
+    
+    el.onclick = () => {
+        speak(text);
+        el.style.transform = "scale(2.5) rotate(10deg)";
+        el.style.opacity = "0";
+        el.style.transition = "all 0.4s ease";
+        setTimeout(() => el.remove(), 400);
     };
-
-    document.body.appendChild(div);
-    setTimeout(() => { if(div.parentNode) div.remove(); }, 8000);
-}
-
-function updateHUD() {
-    document.getElementById('avatar-name').innerText = `${state.user} | Score: ${state.score}`;
-}
-
-// RELOJ MAESTRO
-setInterval(() => {
-    if (!state.isRunning) return;
-    state.timeLeft--;
     
-    const m = Math.floor(state.timeLeft / 60);
-    const s = state.timeLeft % 60;
+    document.getElementById('game-world').appendChild(el);
+    // Limpieza automática si no se toca
+    setTimeout(() => { if(el.parentNode) el.remove(); }, 8000);
+}
+
+// 4. RELOJ Y EVENTOS TEMPORALES
+function startMasterClock() {
+    const timer = setInterval(() => {
+        if (engine.timeLeft <= 0) {
+            clearInterval(timer);
+            finishApp();
+            return;
+        }
+        engine.timeLeft--;
+        updateClockUI();
+
+        // Pausa de Respiración cada 5 min (300s)
+        if (engine.timeLeft % 300 === 0 && engine.timeLeft > 0) {
+            triggerBreathing();
+        }
+    }, 1000);
+}
+
+function updateClockUI() {
+    const m = Math.floor(engine.timeLeft / 60);
+    const s = engine.timeLeft % 60;
     document.getElementById('master-clock').innerText = `${m}:${s.toString().padStart(2, '0')}`;
-    
-    // Cada 3 minutos (180s) mostrar nueva historia/misión
-    if (state.timeLeft % 180 === 0) showMissionStep();
-    
-    // Si se acaban las misiones del archivo, cargar el siguiente JSON
-    if (state.timeLeft === 450) loadMissionData(); 
-}, 1000);
+}
 
-setInterval(spawnWord, 2500);
+// 5. VOZ (Sintetizador)
+function speak(text) {
+    window.speechSynthesis.cancel();
+    const msg = new SpeechSynthesisUtterance(text);
+    msg.lang = 'en-US';
+    msg.rate = 0.9; // Un poco más lento para peso y autoridad
+    window.speechSynthesis.speak(msg);
+}
+
+function finishApp() {
+    engine.isRunning = false;
+    document.body.innerHTML = `
+        <div style="height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; background:black; color:white;">
+            <h1 style="font-size:4rem; color:#ffd700;">SESSION COMPLETE</h1>
+            <p style="font-size:1.5rem;">KAMIZEN: THE ART OF CONTINUOUS IMPROVEMENT</p>
+        </div>
+    `;
+}
+
+// ARRANQUE AUTOMÁTICO AL CARGAR
+window.onload = initKamizen;
