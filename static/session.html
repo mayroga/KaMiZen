@@ -1,219 +1,82 @@
-/* ==============================================================
-   AL CIELO: KAMIZEN LIFE SYSTEM - ENGINE.JS (CORE V1.0)
-   ============================================================== */
-
-let state = {
-    lang: 'es',
-    mode: 'ACTION', // ACTION | MISSION | BREATH
-    timeLeft: 300,
-    peace: 50,
-    safety: 100,
-    missionActive: false
-};
-
-const AudioEngine = {
-    bgm: new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3'),
-    pop: new Audio('https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3'),
-    
-    init() {
-        this.bgm.loop = true;
-        this.bgm.volume = 0.2;
-    },
-
-    speak(text) {
-        if (!text) return;
-        speechSynthesis.cancel();
-        const msg = new SpeechSynthesisUtterance(text);
-        const voices = speechSynthesis.getVoices();
-        // Buscar voz masculina profesional
-        msg.voice = voices.find(v => v.name.includes('Male') || v.name.includes('Google español')) || voices[0];
-        msg.rate = 0.85;
-        msg.pitch = 0.9;
-        speechSynthesis.speak(msg);
-    }
-};
-
-/* ==============================================================
-   ITERADOR DE MISIONES (EL CEREBRO)
-   ============================================================== */
-async function runMission() {
-    if (state.missionActive) return;
-    state.missionActive = true;
-    state.mode = 'MISSION';
-
-    // Limpiar pantalla de palabras
-    document.querySelectorAll('.word-float').forEach(w => w.remove());
-    const overlay = document.getElementById('overlay');
-    overlay.style.display = 'flex';
-
-    try {
-        const res = await fetch(`/api/mission/next?lang=${state.lang}`);
-        const data = await res.json();
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AL CIELO - KaMiZen System</title>
+    <style>
+        :root { --primary: #00d4ff; --bg: #050505; }
+        body { margin: 0; background: var(--bg); color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow: hidden; transition: background 0.5s; }
         
-        if (data.end) {
-            AudioEngine.speak("Entrenamiento completado.");
-            setTimeout(() => location.reload(), 3000);
-            return;
+        /* Efectos de Feedback */
+        .correct-flash { background: #002200 !important; }
+        .wrong-flash { background: #220000 !important; }
+
+        /* UI de Stats */
+        #ui-layer { position: absolute; top: 20px; left: 20px; z-index: 10; width: 250px; }
+        .stat-bar { background: #222; height: 10px; border-radius: 5px; margin-bottom: 10px; overflow: hidden; }
+        .fill { height: 100%; transition: width 0.5s; }
+        #bar-peace { background: var(--primary); }
+        #bar-safety { background: #ffaa00; }
+        #timer-box { font-size: 2rem; font-weight: bold; color: var(--primary); }
+
+        /* Pantalla de Misión (Overlay) */
+        #overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.9); display: none; flex-direction: column; 
+            align-items: center; justify-content: center; z-index: 100; text-align: center; padding: 20px;
         }
-
-        // RECORRER BLOQUES b[] SECUENCIALMENTE
-        for (const block of data.mission.b) {
-            await processBlock(block);
+        #phase-title { color: var(--primary); font-size: 1.5rem; margin-bottom: 10px; text-transform: uppercase; }
+        #phase-desc { font-size: 1.2rem; max-width: 600px; margin-bottom: 30px; line-height: 1.5; }
+        
+        #decision-grid { display: grid; gap: 15px; width: 100%; max-width: 500px; }
+        .choice-btn { 
+            background: transparent; border: 2px solid var(--primary); color: white; 
+            padding: 15px; font-size: 1rem; cursor: pointer; border-radius: 8px; transition: 0.3s;
         }
+        .choice-btn:hover { background: var(--primary); color: black; }
 
-    } catch (err) {
-        console.error("Error en flujo de misión:", err);
-    }
-
-    overlay.style.display = 'none';
-    state.mode = 'ACTION';
-    state.missionActive = false;
-}
-
-async function processBlock(b) {
-    const title = document.getElementById('phase-title');
-    const desc = document.getElementById('phase-desc');
-    const grid = document.getElementById('decision-grid');
-
-    // Resetear estilos de feedback
-    document.body.className = '';
-
-    switch(b.t) {
-        case "v": // Título visual
-            title.innerText = b.tx[state.lang];
-            break;
-
-        case "story": // Narrativa del Asesor
-            grid.innerHTML = '';
-            desc.innerText = b[state.lang];
-            AudioEngine.speak(b[state.lang]);
-            // Espera proporcional a la longitud del texto
-            await new Promise(r => setTimeout(r, 5000)); 
-            break;
-
-        case "d": // Decisión y Feedback
-            grid.innerHTML = '';
-            desc.innerText = b.q[state.lang];
-            AudioEngine.speak(b.q[state.lang]);
-            
-            return new Promise((resolve) => {
-                b.op.forEach((opt, idx) => {
-                    const btn = document.createElement('button');
-                    btn.className = 'choice-btn';
-                    btn.innerText = opt.split(' / ')[state.lang === 'es' ? 1 : 0];
-                    
-                    btn.onclick = () => {
-                        const isCorrect = idx === b.c;
-                        const feedback = b.ex[idx].split(' / ')[state.lang === 'es' ? 1 : 0];
-                        
-                        // Aplicar color de fondo según peso de respuesta
-                        document.body.className = isCorrect ? 'correct-flash' : 'wrong-flash';
-                        
-                        desc.innerText = feedback;
-                        AudioEngine.speak(feedback);
-                        grid.innerHTML = ''; // Bloquear otras opciones
-
-                        // Actualizar stats
-                        state.peace = isCorrect ? Math.min(100, state.peace + 10) : Math.max(0, state.peace - 15);
-                        updateUI();
-
-                        // Tiempo obligatorio para procesar la explicación del asesor
-                        setTimeout(() => {
-                            document.body.className = '';
-                            resolve();
-                        }, 5000);
-                    };
-                    grid.appendChild(btn);
-                });
-            });
-
-        case "br": // Respiración
-            return new Promise(async (resolve) => {
-                const circle = document.getElementById('breath-circle');
-                const bTxt = document.getElementById('breath-txt');
-                const bTimer = document.getElementById('breath-timer');
-                
-                circle.style.display = 'flex';
-                circle.classList.add('inhale-anim');
-                bTxt.innerText = b.tx[state.lang];
-                AudioEngine.speak(b.tx[state.lang]);
-                
-                let seconds = b.d || 4;
-                while (seconds > 0) {
-                    bTimer.innerText = seconds-- + "s";
-                    await new Promise(r => setTimeout(r, 1000));
-                }
-                
-                circle.style.display = 'none';
-                circle.classList.remove('inhale-anim');
-                resolve();
-            });
-    }
-}
-
-/* ==============================================================
-   ACCION Y UI
-   ============================================================== */
-function spawnWord() {
-    if (state.mode !== 'ACTION') return;
-
-    const div = document.createElement('div');
-    div.className = 'word-float';
-    const words = state.lang === 'es' ? ["EGO", "RUIDO", "PRISA", "DUDAS"] : ["EGO", "NOISE", "HASTE", "DOUBTS"];
-    div.innerText = words[Math.floor(Math.random() * words.length)];
-    div.style.left = Math.random() * 80 + 10 + "vw";
-    
-    div.onclick = () => {
-        AudioEngine.pop.play();
-        state.peace = Math.min(100, state.peace + 2);
-        updateUI();
-        div.remove();
-    };
-    document.body.appendChild(div);
-    setTimeout(() => { if(div.parentNode) div.remove(); }, 6000);
-}
-
-function updateUI() {
-    document.getElementById('bar-peace').style.width = state.peace + "%";
-    document.getElementById('bar-safety').style.width = state.safety + "%";
-}
-
-/* ==============================================================
-   SISTEMA DE CONTROL
-   ============================================================== */
-function startSystem() {
-    // Reloj principal
-    const timerEl = document.getElementById('timer-box');
-    const clock = setInterval(() => {
-        if (state.timeLeft <= 0) {
-            clearInterval(clock);
-            return;
+        /* Palabras Flotantes */
+        .word-float { 
+            position: absolute; color: rgba(255,255,255,0.3); font-weight: bold; 
+            cursor: pointer; user-select: none; animation: floatUp 6s linear forwards; 
         }
+        @keyframes floatUp { from { transform: translateY(100vh); } to { transform: translateY(-10vh); } }
 
-        state.timeLeft--;
-        const m = Math.floor(state.timeLeft / 60);
-        const s = state.timeLeft % 60;
-        timerEl.innerText = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-
-        // Disparador de misiones
-        if (state.timeLeft % 45 === 0 && state.mode === 'ACTION') {
-            runMission();
+        /* Respiración */
+        #breath-circle {
+            display: none; width: 200px; height: 200px; border-radius: 50%;
+            border: 5px solid var(--primary); align-items: center; justify-content: center;
+            position: relative; margin-top: 20px;
         }
-    }, 1000);
+        .inhale-anim { animation: pulse 4s infinite ease-in-out; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.5); } }
+        #breath-timer { font-size: 2rem; }
+    </style>
+</head>
+<body>
 
-    // Lluvia de palabras
-    setInterval(spawnWord, 1500);
-    
-    // Primera misión inmediata
-    runMission();
-}
+    <div id="ui-layer">
+        <div id="timer-box">05:00</div>
+        <div>PAZ INTERIOR</div>
+        <div class="stat-bar"><div id="bar-peace" class="fill" style="width: 50%;"></div></div>
+        <div>SEGURIDAD</div>
+        <div class="stat-bar"><div id="bar-safety" class="fill" style="width: 100%;"></div></div>
+    </div>
 
-// Inicialización por clic (Requerido por navegadores)
-window.onclick = () => {
-    if (!window.started) {
-        window.started = true;
-        AudioEngine.init();
-        AudioEngine.bgm.play();
-        startSystem();
-    }
-};
+    <!-- Capa de Misión -->
+    <div id="overlay">
+        <div id="phase-title">SISTEMA INICIADO</div>
+        <div id="phase-desc">Haz clic en cualquier lugar para comenzar el entrenamiento "AL CIELO"...</div>
+        <div id="decision-grid"></div>
+
+        <div id="breath-circle">
+            <div id="breath-txt" style="position: absolute; top: -40px;">RESPIRA</div>
+            <div id="breath-timer">4s</div>
+        </div>
+    </div>
+
+    <!-- IMPORTANTE: Aquí llamamos al archivo que tú tienes -->
+    <script src="/static/js/engine.js"></script>
+</body>
+</html>
