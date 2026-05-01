@@ -9,135 +9,161 @@
 body{
     margin:0;
     padding:0;
-    background:#05070d;
-    color:#ffffff;
+    background:#05080a;
+    color:white;
     font-family:Arial;
     overflow:hidden;
 }
 
-/* ===== START SCREEN (ONLY LAYER) ===== */
+/* START SCREEN */
 #startScreen{
     position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    background:#05070d;
+    inset:0;
     display:flex;
     flex-direction:column;
     justify-content:center;
     align-items:center;
-    gap:15px;
+    gap:20px;
+    background:#05080a;
     z-index:10;
 }
 
-#nameInput{
+input{
     padding:12px;
     font-size:18px;
     text-align:center;
-    width:220px;
-    border:1px solid #00f2ff;
-    background:#0b0f1a;
-    color:white;
 }
 
 button{
-    padding:12px 20px;
-    font-size:18px;
-    cursor:pointer;
+    padding:12px 25px;
     background:#00f2ff;
     border:none;
-    color:#000;
+    cursor:pointer;
+    font-weight:bold;
 }
 
-/* ===== GAME LAYERS (NO OVERLAP LOGIC) ===== */
+/* HUD */
+#timer{
+    position:absolute;
+    top:20px;
+    left:50%;
+    transform:translateX(-50%);
+    font-size:50px;
+    color:#00f2ff;
+}
+
 #centerText{
     position:absolute;
     top:50%;
     left:50%;
     transform:translate(-50%,-50%);
-    font-size:28px;
-    width:80%;
+    font-size:32px;
     text-align:center;
-    z-index:2;
-    pointer-events:none;
+    width:80%;
 }
 
-#timer{
-    position:absolute;
-    top:20px;
-    right:20px;
-    font-size:28px;
-    color:#00f2ff;
-    z-index:2;
-    pointer-events:none;
-}
-
-/* FLOAT WORDS SAFE LAYER */
-#wordLayer{
-    position:absolute;
-    inset:0;
-    z-index:1;
-    overflow:hidden;
-    pointer-events:none;
-}
-
+/* WORDS */
 .word{
     position:absolute;
-    font-size:18px;
     color:#00f2ff;
-    animation:floatUp 4s linear forwards;
+    font-size:20px;
+    cursor:pointer;
+    animation:float 5s linear forwards;
 }
 
-@keyframes floatUp{
+@keyframes float{
     from{transform:translateY(0);opacity:1;}
-    to{transform:translateY(-150px);opacity:0;}
+    to{transform:translateY(-200px);opacity:0;}
 }
 </style>
 </head>
 
 <body>
 
-<!-- START ONLY -->
 <div id="startScreen">
-    <h1>KAMIZEN</h1>
+    <h1 style="color:#00f2ff">KAMIZEN</h1>
     <input id="nameInput" placeholder="Enter name">
-    <button onclick="startSession()">START</button>
+    <button onclick="startApp()">START</button>
 </div>
 
-<!-- RENDER LAYERS -->
+<div id="timer">00:00</div>
 <div id="centerText"></div>
-<div id="timer"></div>
-<div id="wordLayer"></div>
-
-<!-- ENGINE -->
-<script src="/static/js/engine.js"></script>
 
 <script>
-function startSession(){
+
+/* =========================
+   STATE ONLY UI SIDE
+========================= */
+let user = localStorage.getItem("kamizen_name") || "";
+
+/* =========================
+   START APP (NO ENGINE LOGIC)
+========================= */
+function startApp(){
 
     const name = document.getElementById("nameInput").value.trim();
+    if(!name) return;
 
-    if(!name){
-        alert("Enter name");
-        return;
-    }
+    user = name;
+    localStorage.setItem("kamizen_name", user);
 
-    localStorage.setItem("kamizen_name", name);
+    document.getElementById("startScreen").style.display = "none";
 
-    const screen = document.getElementById("startScreen");
-
-    /* SAFE REMOVE (NO OVERLAP ISSUE) */
-    screen.style.display = "none";
-
-    /* ENGINE SAFE START */
-    if(window.Engine && typeof Engine.start === "function"){
-        Engine.start();
-    }else{
-        console.error("Engine not loaded");
+    // 🔥 SOLO INICIALIZA ENGINE EXTERNO
+    if(window.KamizenEngine){
+        window.KamizenEngine.start();
+    } else {
+        console.error("ENGINE NOT LOADED");
     }
 }
+
+/* =========================
+   RENDER FUNCTIONS (ENGINE CALLS THESE)
+========================= */
+
+/* TEXT */
+window.UI_showText = function(text){
+    document.getElementById("centerText").innerText = text || "";
+}
+
+/* TIMER MM:SS */
+window.UI_setTimer = function(seconds){
+
+    let m = Math.floor(seconds / 60);
+    let s = seconds % 60;
+
+    document.getElementById("timer").innerText =
+        `${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+}
+
+/* WORD SPAWN (ONLY VISUAL) */
+window.UI_spawnWord = function(word){
+
+    const el = document.createElement("div");
+    el.className = "word";
+    el.innerText = word;
+
+    el.style.left = Math.random()*window.innerWidth + "px";
+    el.style.top = (window.innerHeight - 100) + "px";
+
+    el.onclick = () => {
+        el.remove();
+    };
+
+    document.body.appendChild(el);
+
+    setTimeout(()=>el.remove(),5000);
+}
+
+/* BREATH STATE */
+window.UI_breath = function(text){
+    document.getElementById("centerText").innerText = text;
+}
+
 </script>
+
+<!-- ENGINE SEPARADO -->
+<script src="static/js/engine.js"></script>
 
 </body>
 </html>
