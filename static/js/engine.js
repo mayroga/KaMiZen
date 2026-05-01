@@ -1,228 +1,245 @@
-/* =========================================
-   KAMIZEN ENGINE CORE — UPDATED VERSION
-   File: static/js/engine.js
-   Handles session flow, state, timing, API sync
-   ========================================= */
+const Engine = (() => {
 
-const KamizenEngine = (() => {
-
-    // =========================
-    // STATE
-    // =========================
+    /* =========================
+       STATE GLOBAL (ÚNICO)
+    ========================= */
     let state = {
-        userName: null,
-        missionIndex: 1,
-        phase: "idle",
-        isRunning: false
+        index: 1,
+        running: false,
+        phase: "idle"
     };
 
-    // =========================
-    // INIT FROM LOCAL STORAGE
-    // =========================
+    let ui = {
+        centerText: null,
+        timer: null
+    };
+
+    let intervals = [];
+
+    /* =========================
+       INIT
+    ========================= */
     function init(){
-        state.userName = localStorage.getItem("kamizen_name") || null;
-        state.missionIndex = parseInt(localStorage.getItem("mission_index") || "1");
+        ui.centerText = document.getElementById("centerText");
+        ui.timer = document.getElementById("timer");
     }
 
-    // =========================
-    // SAVE STATE
-    // =========================
-    function save(){
-        localStorage.setItem("kamizen_name", state.userName);
-        localStorage.setItem("mission_index", state.missionIndex);
-    }
+    /* =========================
+       START ENGINE
+    ========================= */
+    async function start(){
 
-    // =========================
-    // START SESSION
-    // =========================
-    async function startSession(){
+        if(state.running) return;
 
-        if(state.isRunning) return;
-        state.isRunning = true;
+        state.running = true;
 
-        try {
-            const res = await fetch("/api/session/start");
-            const data = await res.json();
+        while(state.running){
 
-            state.missionIndex = data.index;
-            save();
+            const data = await fetchData();
 
-            await runStory(data.story);
-            await runFloatingPhase(300);
-            await runMission(data.mission);
-            await runFloatingPhase(300);
-            await runBreathingPhase(state.missionIndex);
+            if(!data){
+                await sleep(2000);
+                continue;
+            }
 
-            endSession();
+            state.index = data.index || 1;
 
-        } catch(err){
-            console.error("Engine error:", err);
+            await storyPhase(data.story);
+            await gamePhase(300);
+            await missionPhase(data.mission);
+            await gamePhase(300);
+            await breathingPhase(state.index);
+
+            cleanup();
         }
-
-        state.isRunning = false;
     }
 
-    // =========================
-    // STORY
-    // =========================
-    function runStory(story){
-        return new Promise(resolve => {
-
-            if(!story){ resolve(); return; }
-
-            const el = document.getElementById("centerText");
-            if(!el){ resolve(); return; }
-
-            el.innerText = story?.story?.en || "";
-
-            setTimeout(() => {
-                el.innerText = "";
-                resolve();
-            }, 5000);
-        });
+    /* =========================
+       FETCH DATA (FROM FLASK)
+    ========================= */
+    async function fetchData(){
+        try{
+            const res = await fetch("/api/session/start");
+            return await res.json();
+        }catch(e){
+            console.error("Fetch error", e);
+            return null;
+        }
     }
 
-    // =========================
-    // MISSION
-    // =========================
-    function runMission(mission){
-        return new Promise(resolve => {
+    /* =========================
+       STORY PHASE
+    ========================= */
+    async function storyPhase(story){
 
-            if(!mission){ resolve(); return; }
+        const text = story?.en || "NO STORY";
 
-            const el = document.getElementById("centerText");
-            if(!el){ resolve(); return; }
+        render(text);
 
-            const title = mission?.b?.[0]?.tx?.en || "MISSION";
+        await speak(text);
 
-            el.innerText = title;
+        await sleep(5000);
 
-            setTimeout(() => {
-                el.innerText = "";
-                resolve();
-            }, 6000);
-        });
+        clearText();
     }
 
-    // =========================
-    // FLOATING GAME PHASE
-    // =========================
-    function runFloatingPhase(duration){
+    /* =========================
+       MISSION PHASE
+    ========================= */
+    async function missionPhase(mission){
+
+        const text =
+            mission?.b?.[0]?.tx?.en ||
+            mission?.en ||
+            "MISSION";
+
+        render(text);
+
+        await sleep(5000);
+
+        clearText();
+    }
+
+    /* =========================
+       GAME PHASE (CONTROLLED)
+    ========================= */
+    async function gamePhase(seconds){
+
         return new Promise(resolve => {
 
-            let time = duration;
-            const timerEl = document.getElementById("timer");
+            let t = seconds;
 
-            const words = ["FOCUS","CALM","TRUTH","CONTROL","AWARENESS","BREATH"];
+            const timer = setInterval(() => {
 
-            const interval = setInterval(() => {
+                t--;
 
-                time--;
+                ui.timer.innerText = formatTime(t);
 
-                if(timerEl) timerEl.innerText = time;
+                spawnWord();
 
-                spawnWord(words);
-
-                if(time <= 0){
-                    clearInterval(interval);
+                if(t <= 0){
+                    clearInterval(timer);
                     resolve();
                 }
 
             }, 1000);
+
+            intervals.push(timer);
         });
     }
 
-    function spawnWord(words){
-        const word = document.createElement("div");
-        word.className = "word";
+    /* =========================
+       WORD SPAWN (NO OVERFLOW)
+    ========================= */
+    function spawnWord(){
 
-        word.innerText = words[Math.floor(Math.random()*words.length)];
+        const words = ["FOCUS","CALM","TRUTH","CONTROL","POWER"];
 
-        word.style.position = "absolute";
-        word.style.left = Math.random() * window.innerWidth + "px";
-        word.style.top = Math.random() * window.innerHeight + "px";
+        const el = document.createElement("div");
+        el.className = "word";
+        el.innerText = words[Math.floor(Math.random()*words.length)];
 
-        document.body.appendChild(word);
+        el.style.left = Math.random()*window.innerWidth + "px";
+        el.style.top = (window.innerHeight - 80) + "px";
 
-        setTimeout(() => {
-            word.remove();
-        }, 5000);
+        el.onclick = () => {
+            el.style.transform = "scale(2)";
+            el.style.opacity = "0";
+            setTimeout(()=>el.remove(),200);
+        };
+
+        document.body.appendChild(el);
+
+        setTimeout(()=>el.remove(),5000);
     }
 
-    // =========================
-    // BREATHING + SILENCE
-    // =========================
-    function runBreathingPhase(index){
+    /* =========================
+       BREATHING PHASE
+    ========================= */
+    async function breathingPhase(index){
+
+        let t = 20;
+
         return new Promise(resolve => {
 
-            let silenceTime = Math.min(30 + (index * 5), 180);
-
-            let t = 30;
-            const center = document.getElementById("centerText");
-
-            const breath = setInterval(() => {
-
-                if(center) center.innerText = (t % 2 === 0) ? "INHALE" : "EXHALE";
+            const b = setInterval(() => {
 
                 t--;
 
+                ui.centerText.innerText =
+                    (t % 2 === 0) ? "INHALE" : "EXHALE";
+
                 if(t <= 0){
-                    clearInterval(breath);
-                    runSilence(silenceTime, resolve);
+                    clearInterval(b);
+                    resolve();
                 }
 
             }, 1000);
+
+            intervals.push(b);
         });
     }
 
-    function runSilence(seconds, resolve){
+    /* =========================
+       SPEECH (SAFE)
+    ========================= */
+    function speak(text){
 
-        let t = seconds;
-        const timerEl = document.getElementById("timer");
-        const center = document.getElementById("centerText");
+        return new Promise(resolve => {
 
-        if(center) center.innerText = "SILENCE";
-
-        const s = setInterval(() => {
-
-            t--;
-
-            if(timerEl) timerEl.innerText = t;
-
-            if(t <= 0){
-                clearInterval(s);
+            if(!text){
                 resolve();
+                return;
             }
 
-        }, 1000);
+            const msg = new SpeechSynthesisUtterance(text);
+            msg.lang = "en-US";
+            msg.rate = 1;
+
+            msg.onend = resolve;
+
+            speechSynthesis.speak(msg);
+        });
     }
 
-    // =========================
-    // END SESSION
-    // =========================
-    function endSession(){
-
-        const el = document.getElementById("centerText");
-
-        if(el) el.innerText = "SESSION COMPLETE";
-
-        setTimeout(() => {
-            window.location.reload();
-        }, 4000);
+    /* =========================
+       UI HELPERS
+    ========================= */
+    function render(text){
+        ui.centerText.innerText = text || "";
     }
 
-    // =========================
-    // PUBLIC API
-    // =========================
+    function clearText(){
+        ui.centerText.innerText = "";
+    }
+
+    function formatTime(s){
+        const m = Math.floor(s/60);
+        const sec = s % 60;
+        return `${String(m).padStart(2,"0")}:${String(sec).padStart(2,"0")}`;
+    }
+
+    function sleep(ms){
+        return new Promise(r => setTimeout(r, ms));
+    }
+
+    function cleanup(){
+        intervals.forEach(i => clearInterval(i));
+        intervals = [];
+    }
+
+    function stop(){
+        state.running = false;
+        cleanup();
+    }
+
+    /* =========================
+       PUBLIC API
+    ========================= */
     return {
         init,
-        startSession,
-        getState: () => state
+        start,
+        stop
     };
 
 })();
-
-// Auto init
-window.addEventListener("load", () => {
-    KamizenEngine.init();
-});
