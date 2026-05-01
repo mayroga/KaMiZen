@@ -2,20 +2,19 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KAMIZEN SESSION</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>KAMIZEN CONTROL SYSTEM</title>
 
 <style>
-body{
+body {
     margin:0;
-    padding:0;
-    background:#05080a;
+    background:#05070d;
     color:white;
     font-family:Arial;
     overflow:hidden;
 }
 
-/* START SCREEN */
+/* START */
 #startScreen{
     position:fixed;
     inset:0;
@@ -24,8 +23,7 @@ body{
     justify-content:center;
     align-items:center;
     gap:20px;
-    background:#05080a;
-    z-index:10;
+    background:#05070d;
 }
 
 input{
@@ -35,29 +33,29 @@ input{
 }
 
 button{
-    padding:12px 25px;
-    background:#00f2ff;
-    border:none;
+    padding:12px 20px;
+    font-size:18px;
     cursor:pointer;
-    font-weight:bold;
 }
 
-/* HUD */
-#timer{
+/* TIMER GRANDE */
+#timer {
     position:absolute;
     top:20px;
     left:50%;
     transform:translateX(-50%);
-    font-size:50px;
+    font-size:60px;
     color:#00f2ff;
+    font-weight:bold;
 }
 
+/* CENTER TEXT */
 #centerText{
     position:absolute;
-    top:50%;
+    top:45%;
     left:50%;
     transform:translate(-50%,-50%);
-    font-size:32px;
+    font-size:30px;
     text-align:center;
     width:80%;
 }
@@ -65,15 +63,23 @@ button{
 /* WORDS */
 .word{
     position:absolute;
-    color:#00f2ff;
     font-size:20px;
+    color:#00f2ff;
     cursor:pointer;
-    animation:float 5s linear forwards;
+    animation: floatUp 5s linear forwards;
 }
 
-@keyframes float{
-    from{transform:translateY(0);opacity:1;}
-    to{transform:translateY(-200px);opacity:0;}
+@keyframes floatUp{
+    0%{transform:translateY(0);opacity:1;}
+    100%{transform:translateY(-250px) scale(0.5);opacity:0;}
+}
+
+.explode{
+    animation: explode .3s ease-out forwards;
+}
+
+@keyframes explode{
+    to{transform:scale(2);opacity:0;}
 }
 </style>
 </head>
@@ -81,89 +87,209 @@ button{
 <body>
 
 <div id="startScreen">
-    <h1 style="color:#00f2ff">KAMIZEN</h1>
+    <h1>KAMIZEN SYSTEM</h1>
     <input id="nameInput" placeholder="Enter name">
-    <button onclick="startApp()">START</button>
+    <button onclick="start()">START</button>
 </div>
 
 <div id="timer">00:00</div>
 <div id="centerText"></div>
 
 <script>
+/* =========================
+STATE CONTROL UNICO
+========================= */
+let index = parseInt(localStorage.getItem("kamizen_index") || "1");
+let running = false;
+let voicesReady = false;
 
 /* =========================
-   STATE ONLY UI SIDE
+VOICE SYSTEM (FIX AUDIO)
 ========================= */
-let user = localStorage.getItem("kamizen_name") || "";
+function speak(text){
+    try{
+        const msg = new SpeechSynthesisUtterance(text);
+        msg.lang = "en-US";
+        msg.rate = 1;
+        speechSynthesis.speak(msg);
+    }catch(e){}
+}
 
 /* =========================
-   START APP (NO ENGINE LOGIC)
+START
 ========================= */
-function startApp(){
-
+function start(){
     const name = document.getElementById("nameInput").value.trim();
     if(!name) return;
 
-    user = name;
-    localStorage.setItem("kamizen_name", user);
+    localStorage.setItem("kamizen_name", name);
 
-    document.getElementById("startScreen").style.display = "none";
+    document.getElementById("startScreen").style.display="none";
 
-    // 🔥 SOLO INICIALIZA ENGINE EXTERNO
-    if(window.KamizenEngine){
-        window.KamizenEngine.start();
-    } else {
-        console.error("ENGINE NOT LOADED");
+    if(!running){
+        running = true;
+        loop();
     }
 }
 
 /* =========================
-   RENDER FUNCTIONS (ENGINE CALLS THESE)
+MAIN LOOP (CONTROLLED)
 ========================= */
+async function loop(){
 
-/* TEXT */
-window.UI_showText = function(text){
-    document.getElementById("centerText").innerText = text || "";
+    while(true){
+
+        const data = await fetchData(index);
+
+        if(!data){
+            show("ERROR LOADING STORY");
+            await wait(2000);
+            continue;
+        }
+
+        /* 1 STORY */
+        const storyText = data.story?.en || "NO STORY";
+        show(storyText);
+        speak(storyText);
+        await wait(5000);
+
+        /* 2 GAME */
+        await game(300);
+
+        /* 3 MISSION */
+        const missionText = data.mission?.t?.en || "MISSION";
+        show(missionText);
+        speak(missionText);
+        await wait(5000);
+
+        /* 4 GAME */
+        await game(300);
+
+        /* 5 BREATH */
+        await breathing(index);
+
+        /* NEXT INDEX */
+        index++;
+        if(index > 35) index = 1;
+
+        localStorage.setItem("kamizen_index", index);
+    }
 }
 
-/* TIMER MM:SS */
-window.UI_setTimer = function(seconds){
+/* =========================
+FETCH SAFE (MAIN PY ONLY SOURCE)
+========================= */
+async function fetchData(i){
+    try{
+        const r = await fetch("/api/session/start");
+        return await r.json();
+    }catch(e){
+        return null;
+    }
+}
 
-    let m = Math.floor(seconds / 60);
-    let s = seconds % 60;
+/* =========================
+GAME (5 MIN SAFE TIMER)
+========================= */
+function game(seconds){
+
+    return new Promise(resolve => {
+
+        let t = seconds;
+
+        const interval = setInterval(()=>{
+
+            t--;
+
+            updateTimer(t);
+
+            spawnWord();
+
+            if(t<=0){
+                clearInterval(interval);
+                resolve();
+            }
+
+        },1000);
+    });
+}
+
+/* =========================
+TIMER MM:SS
+========================= */
+function updateTimer(s){
+
+    const m = Math.floor(s/60);
+    const r = s%60;
 
     document.getElementById("timer").innerText =
-        `${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+        `${String(m).padStart(2,'0')}:${String(r).padStart(2,'0')}`;
 }
 
-/* WORD SPAWN (ONLY VISUAL) */
-window.UI_spawnWord = function(word){
+/* =========================
+WORDS + EXPLOSION FIX
+========================= */
+function spawnWord(){
 
-    const el = document.createElement("div");
-    el.className = "word";
-    el.innerText = word;
+    const words = ["FOCUS","CONTROL","TRUTH","AWARENESS","CALM"];
+    const w = document.createElement("div");
 
-    el.style.left = Math.random()*window.innerWidth + "px";
-    el.style.top = (window.innerHeight - 100) + "px";
+    w.className = "word";
+    w.innerText = words[Math.floor(Math.random()*words.length)];
 
-    el.onclick = () => {
-        el.remove();
+    w.style.left = Math.random()*90 + "%";
+    w.style.top = Math.random()*70 + "%";
+
+    w.onclick = () => {
+
+        w.classList.add("explode");
+
+        setTimeout(()=>w.remove(),300);
+
+        speak("good");
     };
 
-    document.body.appendChild(el);
+    document.body.appendChild(w);
 
-    setTimeout(()=>el.remove(),5000);
+    setTimeout(()=>w.remove(),6000);
 }
 
-/* BREATH STATE */
-window.UI_breath = function(text){
-    document.getElementById("centerText").innerText = text;
+/* =========================
+BREATH + SILENCE PROGRESSIVE
+========================= */
+function breathing(i){
+
+    return new Promise(resolve=>{
+
+        let t = Math.min(30 + i*3, 180);
+
+        const b = setInterval(()=>{
+
+            t--;
+
+            document.getElementById("centerText").innerText =
+                (t%2===0)?"INHALE":"EXHALE";
+
+            if(t<=0){
+                clearInterval(b);
+                resolve();
+            }
+
+        },1000);
+    });
 }
 
+/* =========================
+UI
+========================= */
+function show(t){
+    document.getElementById("centerText").innerText = t;
+}
+
+function wait(ms){
+    return new Promise(r=>setTimeout(r,ms));
+}
 </script>
-
-<!-- ENGINE SEPARADO -->
-<script src="static/js/engine.js"></script>
 
 </body>
 </html>
