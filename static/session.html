@@ -3,58 +3,45 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>KAMIZEN - NEUROGAME OFFICIAL</title>
+<title>MAYKAMI NEUROGAME - SYSTEM</title>
 <style>
     :root { --primary: #00f2ff; --bg: #05070d; --font: 'Segoe UI', Roboto, sans-serif; --success: #28a745; --error: #dc3545; }
-    body { margin:0; background: var(--bg); color:#fff; font-family: var(--font); overflow:hidden; }
+    body { margin:0; background: var(--bg); color:#fff; font-family: var(--font); overflow:hidden; height: 100vh; }
     
-    /* Timer UI */
     #timer { position:absolute; top:20px; left:50%; transform:translateX(-50%); font-size:80px; color:var(--primary); font-weight:bold; z-index:100; text-shadow: 0 0 20px rgba(0,242,255,0.5); display:none; }
     
-    /* Main Display */
-    #mainDisplay { position:absolute; top:40%; left:50%; transform:translate(-50%,-50%); width:85%; text-align:center; z-index:50; }
-    #textNarrator { font-size:28px; line-height:1.6; margin-bottom: 30px; font-weight: 300; }
+    #mainDisplay { position:absolute; top:45%; left:50%; transform:translate(-50%,-50%); width:85%; text-align:center; z-index:50; }
+    #textNarrator { font-size:26px; line-height:1.6; margin-bottom: 30px; font-weight: 300; transition: opacity 0.5s; }
     
-    /* Trivia / Decision Area */
-    #quizArea { display:none; flex-direction:column; gap:15px; max-width:650px; margin: 0 auto; }
-    .opt-btn { padding:18px; background:rgba(255,255,255,0.05); border:2px solid var(--primary); color:#fff; cursor:pointer; border-radius:12px; font-size:18px; transition:0.3s; text-align:left; }
-    .opt-btn:hover { background: rgba(0,242,255,0.1); }
-    .correct { background: var(--success) !important; border-color: #fff; box-shadow: 0 0 20px var(--success); }
-    .wrong { background: var(--error) !important; border-color: #fff; box-shadow: 0 0 20px var(--error); }
-    #explanation { margin-top:20px; font-size:20px; color:var(--primary); display:none; background:rgba(0,0,0,0.7); padding:15px; border-radius:10px; border: 1px solid var(--primary); }
+    #quizArea { display:none; flex-direction:column; gap:12px; max-width:600px; margin: 0 auto; }
+    .opt-btn { padding:15px; background:rgba(255,255,255,0.05); border:2px solid var(--primary); color:#fff; cursor:pointer; border-radius:8px; font-size:18px; transition:0.2s; text-align:left; }
+    .opt-btn:hover { background: rgba(0,242,255,0.2); }
+    .correct { background: var(--success) !important; border-color: #fff; }
+    .wrong { background: var(--error) !important; border-color: #fff; }
 
-    /* Control Panel */
-    .btn-panel { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; gap: 15px; z-index: 1000; }
-    .btn-ka { padding:14px 35px; font-size:16px; background:var(--primary); color:#000; border:none; border-radius:50px; cursor:pointer; font-weight:bold; box-shadow: 0 0 15px var(--primary); text-transform: uppercase; }
-    #btnContinue, #btnNextQuiz, #btnFinishMission { display:none; }
+    .btn-panel { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); display: flex; gap: 15px; z-index: 1000; }
+    .btn-ka { padding:15px 40px; font-size:16px; background:var(--primary); color:#000; border:none; border-radius:4px; cursor:pointer; font-weight:bold; text-transform: uppercase; letter-spacing: 2px; }
     
-    /* Indicators (Right Side) */
-    #indicators { position:absolute; right:30px; top:50%; transform:translateY(-50%); display:none; flex-direction:column; gap:15px; z-index:100; }
-    .bar-wrap { display: flex; align-items: center; gap: 10px; }
-    .bar-lbl { font-size: 10px; width: 70px; text-align: right; color: var(--primary); letter-spacing: 1px; }
-    .bar-bg { width:12px; height:60px; background:rgba(255,255,255,0.1); border-radius:6px; position:relative; overflow:hidden; }
-    .bar-fill { position:absolute; bottom:0; width:100%; height:0%; background:var(--primary); transition: height 0.5s ease-out; box-shadow: 0 0 10px var(--primary); }
+    /* Indicadores Verticales */
+    #indicators { position:absolute; right:20px; top:50%; transform:translateY(-50%); display:none; flex-direction:column; gap:10px; }
+    .bar-wrap { display: flex; align-items: center; gap: 8px; }
+    .bar-lbl { font-size: 9px; width: 65px; text-align: right; color: var(--primary); }
+    .bar-bg { width:8px; height:50px; background:rgba(255,255,255,0.1); border-radius:2px; position:relative; }
+    .bar-fill { position:absolute; bottom:0; width:100%; height:0%; background:var(--primary); transition: 0.4s; }
 
-    /* Breathing Layer */
-    #breathLayer { display:none; position:fixed; inset:0; flex-direction:column; justify-content:center; align-items:center; z-index:150; background: var(--bg); }
-    #breathCircle { width: 250px; height: 250px; border-radius: 50%; background: radial-gradient(circle, #00f2ff 0%, #0044ff 100%); box-shadow: 0 0 100px #00f2ff; display:flex; justify-content:center; align-items:center; font-weight:bold; font-size:28px; transition: 4s ease-in-out; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
-    #scienceInfo { margin-top: 60px; width: 75%; text-align: center; color: var(--primary); font-size: 22px; line-height:1.5; font-style: italic; }
+    /* Palabras Flotantes */
+    .floating-word { position:absolute; font-size:22px; color:var(--primary); font-weight:bold; cursor:pointer; animation: floatUp 6s linear forwards; z-index: 80; text-shadow: 0 0 10px #000; }
+    @keyframes floatUp { 0%{transform:translateY(0); opacity:0;} 10%{opacity:1;} 90%{opacity:1;} 100%{transform:translateY(-500px); opacity:0;} }
 
-    /* Word Animation */
-    .floating-word { position:absolute; font-size:24px; color:var(--primary); font-weight:bold; cursor:pointer; animation: floatUp 7s linear forwards; white-space: nowrap; z-index: 80; text-shadow: 0 0 10px var(--primary); }
-    @keyframes floatUp { 0%{transform:translateY(0) scale(1); opacity:0;} 10%{opacity:1;} 90%{opacity:1;} 100%{transform:translateY(-600px) scale(1.2); opacity:0;} }
-
-    #explanationBox { position:absolute; bottom:130px; left:30px; width:300px; padding:20px; background: rgba(0,242,255,0.1); border-left: 5px solid var(--primary); font-size:16px; opacity:0; pointer-events:none; transition: opacity 0.4s; }
+    #explanationBox { position:absolute; bottom:120px; left:20px; width:280px; padding:15px; background: rgba(0,0,0,0.8); border-left: 4px solid var(--primary); font-size:14px; display:none; }
 </style>
 </head>
 <body>
 
 <div id="timer">00:00</div>
-
 <div id="mainDisplay">
-    <div id="textNarrator">Initializing KaMiZen System...</div>
+    <div id="textNarrator">SYSTEM READY...</div>
     <div id="quizArea"></div>
-    <div id="explanation"></div>
 </div>
 
 <div id="explanationBox">
@@ -63,139 +50,141 @@
 
 <div id="indicators"></div>
 
-<div id="breathLayer">
-    <div id="breathCircle">READY</div>
-    <div id="scienceInfo"></div>
-</div>
-
 <div class="btn-panel">
-    <button id="btnBack" class="btn-ka" style="background:#333; color:#fff;" onclick="location.reload()">BACK</button>
-    <button id="btnClear" class="btn-ka" style="background:#600; color:#fff;" onclick="localStorage.clear(); location.reload();">CLEAR CACHE</button>
     <button id="btnStart" class="btn-ka" onclick="KaMiZen.start()">START SESSION</button>
-    <button id="btnContinue" class="btn-ka" onclick="KaMiZen.nextStep()">CONTINUE</button>
-    <button id="btnNextQuiz" class="btn-ka" onclick="KaMiZen.processMissionStep()">NEXT STEP</button>
-    <button id="btnFinishMission" class="btn-ka" onclick="KaMiZen.cycle2()">START CYCLE 2</button>
+    <button id="btnAction" class="btn-ka" style="display:none;" onclick="KaMiZen.flowControl()">CONTINUE</button>
 </div>
 
-<!-- Audio Assets -->
 <audio id="bgMusic" loop src="https://assets.mixkit.co/music/preview/mixkit-tech-house-vibes-130.mp3"></audio>
 <audio id="sfxPop" src="https://www.soundjay.com/buttons/sounds/button-10.mp3"></audio>
-<audio id="sfxCorrect" src="https://www.myinstants.com/media/sounds/correct.mp3"></audio>
-<audio id="sfxWrong" src="https://www.myinstants.com/media/sounds/wrong.mp3"></audio>
 
 <script>
 const KaMiZen = (() => {
     let state = {
-        lang: 'en', // Idioma base oficial
-        phase: 'intro', 
-        data: null, 
-        stats: {}, 
-        missionIdx: 0, 
+        lang: 'en',
+        phase: 'boot',
+        data: null,
+        stats: {},
+        missionIdx: 0,
         stepIdx: 0,
-        timer: null,
-        floatingWords: ["AWARENESS","SAFETY","CALM","ACTION","TRUTH","CONTROL","HELP","FOCUS"]
+        timer: null
     };
 
+    // Nuevos Pilares Actualizados
     const pillars = {
-        "AWARENESS": { cat: "Awareness", es: "Conciencia del entorno.", en: "Notice surroundings." },
-        "SAFETY": { cat: "Safety", es: "Seguridad ante todo.", en: "Priority: Safety." },
-        "CALM": { cat: "Control", es: "Mantener la calma.", en: "Stay calm." },
-        "ACTION": { cat: "Action", es: "Actuar con propósito.", en: "Purposeful action." }
+        "LIMITS": { cat: "Protection", desc: "Learn to say 'no' and recognize personal space." },
+        "PERSISTENCE": { cat: "Resilience", desc: "Error is part of the process, not the end." },
+        "METHOD": { cat: "Organization", desc: "Replace chaos with logical steps." },
+        "CRITERIA": { cat: "Intelligence", desc: "Analyze info before accepting it as truth." },
+        "VALUE": { cat: "Wealth", desc: "Money follows the value you provide others." },
+        "BALANCE": { cat: "Health", desc: "The body and mind are your main assets." },
+        "LOYALTY": { cat: "Family", desc: "Strong bonds based on respect and support." },
+        "AUTONOMY": { cat: "Thought", desc: "Freedom based on principles, not pressure." },
+        "ADAPTATION": { cat: "Survival", desc: "Resolve situations in changing environments." },
+        "LEGACY": { cat: "Life", desc: "Live with purpose so your work transcends." }
     };
 
     const speak = (text, callback) => {
         window.speechSynthesis.cancel();
-        const msg = new SpeechSynthesisUtterance(text.replace(/[\\/_.,()]/g, ' '));
-        const voices = window.speechSynthesis.getVoices();
-        // Forzar voz inglesa por defecto
-        msg.voice = voices.find(v => v.lang.includes("en") && (v.name.includes("David") || v.name.includes("Male"))) || voices[0];
-        msg.rate = 0.85; 
+        const msg = new SpeechSynthesisUtterance(text);
+        msg.lang = 'en-US';
+        msg.rate = 0.9;
         msg.onend = callback;
         window.speechSynthesis.speak(msg);
     };
 
     const start = async () => {
         document.getElementById("btnStart").style.display = "none";
-        // Simulando carga de Mission.json y Stories
         const res = await fetch("/api/session/start");
         state.data = await res.json();
-        playIntro();
+        
+        state.phase = 'intro';
+        const introTxt = state.data.story[state.lang];
+        document.getElementById("textNarrator").innerText = introTxt;
+        speak(introTxt, showContinue);
     };
 
-    const playIntro = () => {
-        state.phase = 'stories';
-        const txt = state.data.story[state.lang];
-        document.getElementById("textNarrator").innerText = txt;
-        speak(txt, () => {
-            document.getElementById("btnContinue").style.display = "block";
-        });
+    const showContinue = () => {
+        const btn = document.getElementById("btnAction");
+        btn.innerText = "CONTINUE";
+        btn.style.display = "block";
     };
 
-    const nextStep = () => {
-        document.getElementById("btnContinue").style.display = "none";
-        if(state.phase === 'stories') playCycle(1);
-        else if(state.phase === 'diag1') startMission();
-        else if(state.phase === 'diag2') startSilenceChallenge();
+    const flowControl = () => {
+        document.getElementById("btnAction").style.display = "none";
+        
+        switch(state.phase) {
+            case 'intro': startCycle(1); break;
+            case 'diag1': startMissions(); break;
+            case 'mission_end': startCycle(2); break;
+            case 'diag2': finishSession(); break;
+        }
     };
 
-    const playCycle = (num) => {
-        state.phase = 'cycle' + num;
-        document.getElementById("textNarrator").innerText = "";
+    const startCycle = (num) => {
+        state.phase = 'playing' + num;
         document.getElementById("timer").style.display = "block";
         document.getElementById("indicators").style.display = "flex";
+        document.getElementById("bgMusic").play();
         initBars();
-        
-        const music = document.getElementById("bgMusic");
-        music.volume = 0.3;
-        music.play();
 
-        let timeLeft = 300; // 5 min
+        let timeLeft = 300; 
         state.timer = setInterval(() => {
             timeLeft--;
             document.getElementById("timer").innerText = formatTime(timeLeft);
-            spawnWord(timeLeft);
+            if(Math.random() > 0.7) spawnWord();
             if(timeLeft <= 0) {
                 clearInterval(state.timer);
-                showDiagnosis(num);
+                diagnosis(num);
             }
         }, 1000);
     };
 
-    const spawnWord = (timeLeft) => {
-        const word = state.floatingWords[Math.floor(Math.random()*state.floatingWords.length)];
+    const spawnWord = () => {
+        const keys = Object.keys(pillars);
+        const word = keys[Math.floor(Math.random()*keys.length)];
         const el = document.createElement("div");
         el.className = "floating-word";
         el.innerText = word;
-        el.style.left = (Math.random()*75 + 10) + "%";
+        el.style.left = (Math.random()*70 + 15) + "%";
         el.style.top = "90%";
-        
         el.onclick = () => {
-            const sfx = document.getElementById("sfxPop");
-            sfx.currentTime = 0;
-            sfx.play();
-            
-            const cat = pillars[word] ? pillars[word].cat : "Focus";
+            document.getElementById("sfxPop").play();
+            const cat = pillars[word].cat;
             state.stats[cat] = (state.stats[cat] || 0) + 1;
             updateBars();
-            
-            if(300 - timeLeft <= 60) {
-                const box = document.getElementById("explanationBox");
-                box.style.opacity = "1";
-                document.getElementById("expTitle").innerText = word;
-                document.getElementById("expBody").innerText = pillars[word] ? pillars[word][state.lang] : "Mental sharpness.";
-            }
+            showExp(word);
             el.remove();
         };
         document.body.appendChild(el);
     };
 
-    const startMission = () => {
-        state.phase = 'mission';
-        state.stepIdx = 0;
-        processMissionStep();
+    const showExp = (word) => {
+        const box = document.getElementById("explanationBox");
+        box.style.display = "block";
+        document.getElementById("expTitle").innerText = word;
+        document.getElementById("expBody").innerText = pillars[word].desc;
+        setTimeout(() => box.style.display = "none", 4000);
     };
 
-    const processMissionStep = () => {
+    const diagnosis = (num) => {
+        state.phase = 'diag' + num;
+        document.getElementById("bgMusic").pause();
+        document.getElementById("timer").style.display = "none";
+        const top = Object.keys(state.stats).reduce((a,b) => state.stats[a] > state.stats[b] ? a : b, "Neural Balance");
+        const msg = `NEURAL DIAGNOSIS ${num}: Optimal synchronization in ${top}. Logic circuits primed.`;
+        document.getElementById("textNarrator").innerText = msg;
+        speak(msg, showContinue);
+    };
+
+    const startMissions = () => {
+        state.phase = 'mission';
+        state.missionIdx = 0;
+        state.stepIdx = 0;
+        runStep();
+    };
+
+    const runStep = () => {
         const mission = state.data.missions[state.missionIdx];
         const step = mission.b[state.stepIdx];
 
@@ -203,60 +192,62 @@ const KaMiZen = (() => {
             state.missionIdx++;
             if(state.missionIdx < state.data.missions.length) {
                 state.stepIdx = 0;
-                processMissionStep();
+                runStep();
             } else {
-                document.getElementById("btnFinishMission").style.display = "block";
-                document.getElementById("btnNextQuiz").style.display = "none";
+                state.phase = 'mission_end';
+                const endMsg = "Field mission completed. Data uploaded.";
+                document.getElementById("textNarrator").innerText = endMsg;
+                speak(endMsg, showContinue);
             }
             return;
         }
 
+        // Limpiar área
         document.getElementById("quizArea").style.display = "none";
-        document.getElementById("explanation").style.display = "none";
-        document.getElementById("btnNextQuiz").style.display = "none";
+        document.getElementById("quizArea").innerHTML = "";
 
-        if(step.t === "v" || step.t === "h" || step.story) {
-            const txt = step.tx ? step.tx[state.lang] : step.story[state.lang];
-            document.getElementById("textNarrator").innerText = txt;
-            speak(txt, () => {
-                state.stepIdx++;
-                document.getElementById("btnNextQuiz").style.display = "block";
+        // Proyectar texto (Historia o Acción)
+        const text = step.tx ? step.tx[state.lang] : (step.story ? step.story[state.lang] : null);
+        
+        if(text) {
+            document.getElementById("textNarrator").innerText = text;
+            speak(text, () => {
+                setTimeout(() => {
+                    if(step.t === 'd') renderQuiz(step);
+                    else {
+                        state.stepIdx++;
+                        runStep();
+                    }
+                }, 1000); // Pausa clara entre pasos
             });
-        } 
-        else if(step.t === "d") { // Trivia / Decision
-            renderTrivia(step);
-        }
-        else { // Skip steps like auto_breath for mission projection text
+        } else if(step.t === 'd') {
+            renderQuiz(step);
+        } else {
             state.stepIdx++;
-            processMissionStep();
+            runStep();
         }
     };
 
-    const renderTrivia = (step) => {
+    const renderQuiz = (step) => {
+        document.getElementById("textNarrator").innerText = step.q[state.lang];
         const area = document.getElementById("quizArea");
         area.style.display = "flex";
-        document.getElementById("textNarrator").innerText = step.q[state.lang];
-        area.innerHTML = "";
-
+        
         step.op.forEach((opt, i) => {
             const b = document.createElement("button");
             b.className = "opt-btn";
             b.innerText = opt;
             b.onclick = () => {
-                const isCorrect = (i === step.c);
-                b.classList.add(isCorrect ? 'correct' : 'wrong');
+                const correct = (i === step.c);
+                b.classList.add(correct ? 'correct' : 'wrong');
                 document.querySelectorAll(".opt-btn").forEach(btn => btn.onclick = null);
                 
-                document.getElementById(isCorrect ? "sfxCorrect" : "sfxWrong").play();
+                const feedback = correct ? "Correct analysis." : "Suboptimal choice.";
+                const explanation = step.ex[i];
                 
-                const feedback = isCorrect ? "Correct." : "Incorrect.";
-                const exp = step.ex[i];
-                document.getElementById("explanation").innerText = exp;
-                document.getElementById("explanation").style.display = "block";
-                
-                speak(feedback + " " + exp, () => {
+                speak(feedback + " " + explanation, () => {
                     state.stepIdx++;
-                    document.getElementById("btnNextQuiz").style.display = "block";
+                    setTimeout(runStep, 1500);
                 });
             };
             area.appendChild(b);
@@ -264,59 +255,18 @@ const KaMiZen = (() => {
         speak(step.q[state.lang]);
     };
 
-    const showDiagnosis = (num) => {
-        state.phase = 'diag' + num;
-        document.getElementById("bgMusic").pause();
-        const top = Object.keys(state.stats).reduce((a,b) => state.stats[a] > state.stats[b] ? a : b, "Neural Balance");
-        const diag = `NEURAL DIAGNOSIS ${num}: High synchronization in ${top}. Your logic circuits are now primed.`;
-        document.getElementById("textNarrator").innerText = diag;
-        document.getElementById("timer").style.display = "none";
-        speak(diag, () => {
-            document.getElementById("btnContinue").style.display = "block";
-        });
-    };
-
-    const startSilenceChallenge = async () => {
-        state.phase = 'silence';
-        document.getElementById("indicators").style.display = "none";
-        document.getElementById("breathLayer").style.display = "flex";
-        document.getElementById("scienceInfo").innerText = "Silence deactivates the Amygdala and synchronizes the Heart-Brain coherence.";
-        
-        let t = 60; 
-        document.getElementById("timer").style.display = "block";
-
-        while(t > 0) {
-            document.getElementById("timer").innerText = formatTime(t);
-            await breathStep("INHALE", 1.8, 4000);
-            await breathStep("HOLD", 1.8, 4000);
-            await breathStep("EXHALE", 1.0, 4000);
-            t -= 12;
-        }
-        alert("KaMiZen Session Complete. Focus Restored.");
-        location.reload();
-    };
-
-    const breathStep = (txt, scale, time) => {
-        return new Promise(r => {
-            const c = document.getElementById("breathCircle");
-            c.innerText = txt;
-            c.style.transform = `scale(${scale})`;
-            setTimeout(r, time);
-        });
-    };
-
     const initBars = () => {
         const ind = document.getElementById("indicators");
         ind.innerHTML = "";
-        ["Awareness", "Safety", "Control", "Action"].forEach(cat => {
-            ind.innerHTML += `<div class="bar-wrap"><div class="bar-lbl">${cat.toUpperCase()}</div><div class="bar-bg"><div class="bar-fill" id="bar-${cat}"></div></div></div>`;
+        ["Protection", "Resilience", "Organization", "Intelligence", "Wealth", "Health", "Family", "Thought", "Survival", "Life"].forEach(c => {
+            ind.innerHTML += `<div class="bar-wrap"><div class="bar-lbl">${c}</div><div class="bar-bg"><div class="bar-fill" id="bar-${c}"></div></div></div>`;
         });
     };
 
     const updateBars = () => {
-        Object.keys(state.stats).forEach(cat => {
-            const el = document.getElementById(`bar-${cat}`);
-            if(el) el.style.height = Math.min(state.stats[cat]*12, 100) + "%";
+        Object.keys(state.stats).forEach(c => {
+            const el = document.getElementById(`bar-${c}`);
+            if(el) el.style.height = Math.min(state.stats[c]*15, 100) + "%";
         });
     };
 
@@ -326,7 +276,12 @@ const KaMiZen = (() => {
         return `${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
     };
 
-    return { start, nextStep, processMissionStep, cycle2: () => playCycle(2) };
+    const finishSession = () => {
+        alert("SESSION COMPLETE. RETURNING TO MAIN MENU.");
+        location.reload();
+    };
+
+    return { start, flowControl };
 })();
 </script>
 </body>
