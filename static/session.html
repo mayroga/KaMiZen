@@ -1,63 +1,240 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AL CIELO - KAMIZEN</title>
-    <style>
-        :root { --blue: #00d4ff; --gold: #ffd700; --green: #2ecc71; --red: #e74c3c; }
-        body { margin: 0; background: #000; color: white; font-family: 'Segoe UI', sans-serif; overflow: hidden; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>KAMIZEN SESSION</title>
 
-        /* Reloj Maestro */
-        #master-clock { position: absolute; top: 20px; width: 100%; text-align: center; font-size: 6rem; font-weight: 900; color: var(--blue); z-index: 1000; text-shadow: 0 0 20px rgba(0,212,255,0.6); pointer-events: none; }
+<style>
+body {
+    margin: 0;
+    padding: 0;
+    background: #0b0f1a;
+    color: #ffffff;
+    font-family: Arial, sans-serif;
+    overflow: hidden;
+}
 
-        /* Paisajes y Escenario */
-        #game-world { position: fixed; inset: 0; transition: background 2s; background: linear-gradient(to bottom, #1a2a6c, #b21f1f, #fdbb2d); }
-        .landscape-zen { background: linear-gradient(to bottom, #134e5e, #71b280) !important; }
-        .landscape-city { background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364) !important; }
+#startScreen {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: #0b0f1a;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
 
-        /* El Muñequito (Avatar) */
-        #avatar-container { position: absolute; bottom: 50px; left: 50%; transform: translateX(-50%); z-index: 100; transition: all 0.5s; text-align: center; }
-        .stickman { stroke: white; stroke-width: 4; fill: none; }
-        .meditating { animation: float 3s ease-in-out infinite; }
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+input {
+    padding: 10px;
+    font-size: 18px;
+}
 
-        /* Área de Respiración (Silencio) */
-        #breath-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 300px; height: 300px; border: 8px solid white; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 2rem; font-weight: bold; background: rgba(255,255,255,0.1); z-index: 500; transition: transform 4s linear; }
+button {
+    padding: 10px 20px;
+    font-size: 18px;
+    cursor: pointer;
+}
 
-        /* Historias (Overlay) */
-        #story-box { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 2000; padding: 40px; text-align: center; }
-        #story-content { font-size: 1.8rem; line-height: 1.6; max-width: 800px; color: #f0f0f0; }
+#ui {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+}
 
-        /* Palabras Flotantes */
-        .word { position: absolute; padding: 15px 25px; border: 2px solid white; border-radius: 30px; background: rgba(0,0,0,0.6); font-weight: bold; cursor: pointer; animation: fall 8s linear forwards; }
-        @keyframes fall { from { top: -50px; } to { top: 110vh; } }
-    </style>
+#timer {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+#centerText {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    font-size: 24px;
+}
+
+.word {
+    position: absolute;
+    color: #00f2ff;
+    font-size: 18px;
+    animation: float 5s linear forwards;
+}
+
+@keyframes float {
+    from { transform: translateY(0); opacity: 1; }
+    to { transform: translateY(-200px); opacity: 0; }
+}
+</style>
 </head>
 <body>
 
-    <div id="master-clock">15:00</div>
-    
-    <div id="game-world">
-        <!-- Avatar -->
-        <div id="avatar-container" class="meditating">
-            <svg width="100" height="150" viewBox="0 0 100 150">
-                <circle cx="50" cy="30" r="20" class="stickman"/>
-                <path d="M50 50 L50 110 M50 70 L20 50 M50 70 L80 50 M50 110 L20 140 M50 110 L80 140" class="stickman"/>
-            </svg>
-            <div id="avatar-label" style="margin-top:10px; font-weight:bold; letter-spacing:2px;">ESPECIALISTA</div>
-        </div>
+<div id="startScreen">
+    <h1>KAMIZEN LIFE SYSTEM</h1>
+    <input id="nameInput" placeholder="Enter your name">
+    <button onclick="startApp()">Start</button>
+</div>
 
-        <div id="breath-overlay">INHALE</div>
-    </div>
+<div id="ui"></div>
+<div id="timer"></div>
+<div id="centerText"></div>
 
-    <!-- Pantalla de Historias -->
-    <div id="story-box">
-        <h1 id="story-title" style="color:var(--gold); font-size: 3rem;"></h1>
-        <p id="story-content"></p>
-        <button onclick="closeStory()" style="margin-top:30px; padding:20px 60px; font-size:1.5rem; background:var(--green); border:none; color:white; border-radius:10px; cursor:pointer;">I AM READY</button>
-    </div>
+<script>
+let userName = localStorage.getItem("kamizen_name") || "";
+let missionIndex = parseInt(localStorage.getItem("mission_index") || "1");
 
-    <script src="/static/js/engine.js"></script>
+let state = {
+    phase: "idle"
+};
+
+if(userName){
+    document.getElementById("nameInput").value = userName;
+}
+
+function startApp(){
+    const input = document.getElementById("nameInput").value;
+    if(!input) return;
+
+    userName = input;
+    localStorage.setItem("kamizen_name", userName);
+
+    document.getElementById("startScreen").style.display = "none";
+
+    startSession();
+}
+
+async function startSession(){
+
+    const res = await fetch("/api/session/start");
+    const data = await res.json();
+
+    localStorage.setItem("mission_index", data.index);
+
+    missionIndex = data.index;
+
+    await showStory(data.story);
+
+    await floatingGame(300);
+
+    await showMission(data.mission);
+
+    await floatingGame(300);
+
+    await breathingPhase(missionIndex);
+
+    endSession();
+}
+
+function showStory(story){
+    return new Promise(resolve => {
+        if(!story){ resolve(); return; }
+
+        document.getElementById("centerText").innerText = story.story?.en || "";
+
+        setTimeout(() => {
+            document.getElementById("centerText").innerText = "";
+            resolve();
+        }, 5000);
+    });
+}
+
+function showMission(mission){
+    return new Promise(resolve => {
+        if(!mission){ resolve(); return; }
+
+        document.getElementById("centerText").innerText = mission.b?.[0]?.tx?.en || "MISSION";
+
+        setTimeout(() => {
+            document.getElementById("centerText").innerText = "";
+            resolve();
+        }, 6000);
+    });
+}
+
+function floatingGame(duration){
+    return new Promise(resolve => {
+        let time = duration;
+
+        const timer = setInterval(() => {
+            time--;
+
+            document.getElementById("timer").innerText = time;
+
+            spawnWord();
+
+            if(time <= 0){
+                clearInterval(timer);
+                resolve();
+            }
+        }, 1000);
+    });
+}
+
+function spawnWord(){
+    const words = ["FOCUS","CALM","TRUTH","CONTROL","AWARENESS"];
+    const word = document.createElement("div");
+    word.className = "word";
+    word.innerText = words[Math.floor(Math.random()*words.length)];
+
+    word.style.left = Math.random()*window.innerWidth + "px";
+    word.style.top = Math.random()*window.innerHeight + "px";
+
+    document.body.appendChild(word);
+
+    setTimeout(()=>word.remove(), 5000);
+}
+
+function breathingPhase(index){
+    return new Promise(resolve => {
+
+        let silence = Math.min(30 + (index * 5), 180);
+
+        let t = 30;
+
+        const breath = setInterval(()=>{
+            t--;
+            document.getElementById("centerText").innerText = (t%2==0)?"INHALE":"EXHALE";
+
+            if(t<=0){
+                clearInterval(breath);
+                startSilence(silence, resolve);
+            }
+        }, 1000);
+    });
+}
+
+function startSilence(seconds, resolve){
+
+    let t = seconds;
+
+    document.getElementById("centerText").innerText = "SILENCE";
+
+    const s = setInterval(()=>{
+        t--;
+        document.getElementById("timer").innerText = t;
+
+        if(t<=0){
+            clearInterval(s);
+            resolve();
+        }
+    },1000);
+}
+
+function endSession(){
+
+    document.getElementById("centerText").innerText = "SESSION COMPLETE";
+
+    setTimeout(()=>{
+        window.location.reload();
+    },4000);
+}
+
+</script>
+
 </body>
 </html>
