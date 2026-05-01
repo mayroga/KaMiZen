@@ -3,45 +3,48 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>KAMIZEN - SESSION</title>
+<title>KAMIZEN - NEUROGAME OFFICIAL</title>
 <style>
     :root { --primary: #00f2ff; --bg: #05070d; --font: 'Segoe UI', Roboto, sans-serif; --success: #28a745; --error: #dc3545; }
     body { margin:0; background: var(--bg); color:#fff; font-family: var(--font); overflow:hidden; }
     
-    /* Timer y UI Central */
+    /* Timer UI */
     #timer { position:absolute; top:20px; left:50%; transform:translateX(-50%); font-size:80px; color:var(--primary); font-weight:bold; z-index:100; text-shadow: 0 0 20px rgba(0,242,255,0.5); display:none; }
-    #mainDisplay { position:absolute; top:40%; left:50%; transform:translate(-50%,-50%); width:85%; text-align:center; z-index:50; }
-    #textNarrator { font-size:26px; line-height:1.5; margin-bottom: 30px; }
     
-    /* Trivia System */
-    #quizArea { display:none; flex-direction:column; gap:12px; max-width:600px; margin: 0 auto; }
-    .opt-btn { padding:15px; background:rgba(255,255,255,0.05); border:1px solid var(--primary); color:#fff; cursor:pointer; border-radius:8px; font-size:18px; transition:0.3s; text-align: left; }
-    .correct { background: var(--success) !important; border-color: #fff; box-shadow: 0 0 15px var(--success); }
-    .wrong { background: var(--error) !important; border-color: #fff; box-shadow: 0 0 15px var(--error); }
-    #explanation { margin-top:15px; font-size:18px; color:var(--primary); display:none; background:rgba(0,0,0,0.7); padding:15px; border-radius:10px; border: 1px solid var(--primary); }
+    /* Main Display */
+    #mainDisplay { position:absolute; top:40%; left:50%; transform:translate(-50%,-50%); width:85%; text-align:center; z-index:50; }
+    #textNarrator { font-size:28px; line-height:1.6; margin-bottom: 30px; font-weight: 300; }
+    
+    /* Trivia / Decision Area */
+    #quizArea { display:none; flex-direction:column; gap:15px; max-width:650px; margin: 0 auto; }
+    .opt-btn { padding:18px; background:rgba(255,255,255,0.05); border:2px solid var(--primary); color:#fff; cursor:pointer; border-radius:12px; font-size:18px; transition:0.3s; text-align:left; }
+    .opt-btn:hover { background: rgba(0,242,255,0.1); }
+    .correct { background: var(--success) !important; border-color: #fff; box-shadow: 0 0 20px var(--success); }
+    .wrong { background: var(--error) !important; border-color: #fff; box-shadow: 0 0 20px var(--error); }
+    #explanation { margin-top:20px; font-size:20px; color:var(--primary); display:none; background:rgba(0,0,0,0.7); padding:15px; border-radius:10px; border: 1px solid var(--primary); }
 
-    /* Control Buttons */
+    /* Control Panel */
     .btn-panel { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; gap: 15px; z-index: 1000; }
-    .btn-ka { padding:12px 30px; font-size:16px; background:var(--primary); color:#000; border:none; border-radius:50px; cursor:pointer; font-weight:bold; box-shadow: 0 0 15px var(--primary); text-transform: uppercase; }
+    .btn-ka { padding:14px 35px; font-size:16px; background:var(--primary); color:#000; border:none; border-radius:50px; cursor:pointer; font-weight:bold; box-shadow: 0 0 15px var(--primary); text-transform: uppercase; }
     #btnContinue, #btnNextQuiz, #btnFinishMission { display:none; }
     
-    /* Indicators (Patrones) */
-    #indicators { position:absolute; right:20px; top:50%; transform:translateY(-50%); display:none; flex-direction:column; gap:10px; z-index:100; }
-    .bar-wrap { display: flex; align-items: center; gap: 8px; }
-    .bar-lbl { font-size: 9px; width: 50px; text-align: right; color: var(--primary); }
-    .bar-bg { width:8px; height:50px; background:rgba(255,255,255,0.1); border-radius:4px; position:relative; }
-    .bar-fill { position:absolute; bottom:0; width:100%; height:0%; background:var(--primary); transition: height 0.4s; }
+    /* Indicators (Right Side) */
+    #indicators { position:absolute; right:30px; top:50%; transform:translateY(-50%); display:none; flex-direction:column; gap:15px; z-index:100; }
+    .bar-wrap { display: flex; align-items: center; gap: 10px; }
+    .bar-lbl { font-size: 10px; width: 70px; text-align: right; color: var(--primary); letter-spacing: 1px; }
+    .bar-bg { width:12px; height:60px; background:rgba(255,255,255,0.1); border-radius:6px; position:relative; overflow:hidden; }
+    .bar-fill { position:absolute; bottom:0; width:100%; height:0%; background:var(--primary); transition: height 0.5s ease-out; box-shadow: 0 0 10px var(--primary); }
 
-    /* Breath / Silence Layer */
+    /* Breathing Layer */
     #breathLayer { display:none; position:fixed; inset:0; flex-direction:column; justify-content:center; align-items:center; z-index:150; background: var(--bg); }
-    #breathCircle { width: 220px; height: 220px; border-radius: 50%; background: radial-gradient(circle, #00f2ff 0%, #0044ff 100%); box-shadow: 0 0 80px #00f2ff; display:flex; justify-content:center; align-items:center; font-weight:bold; font-size:24px; color: white; transition: 4s ease-in-out; text-align: center; padding: 20px; }
-    #scienceInfo { margin-top: 50px; width: 70%; text-align: center; color: var(--primary); font-size: 19px; line-height:1.4; font-style: italic; }
+    #breathCircle { width: 250px; height: 250px; border-radius: 50%; background: radial-gradient(circle, #00f2ff 0%, #0044ff 100%); box-shadow: 0 0 100px #00f2ff; display:flex; justify-content:center; align-items:center; font-weight:bold; font-size:28px; transition: 4s ease-in-out; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+    #scienceInfo { margin-top: 60px; width: 75%; text-align: center; color: var(--primary); font-size: 22px; line-height:1.5; font-style: italic; }
 
     /* Word Animation */
-    .floating-word { position:absolute; font-size:24px; color:var(--primary); font-weight:bold; cursor:pointer; animation: floatUp 6s linear forwards; white-space: nowrap; z-index: 80; text-shadow: 0 0 10px var(--primary); }
-    @keyframes floatUp { 0%{transform:translateY(0); opacity:0;} 10%{opacity:1;} 90%{opacity:1;} 100%{transform:translateY(-550px); opacity:0;} }
+    .floating-word { position:absolute; font-size:24px; color:var(--primary); font-weight:bold; cursor:pointer; animation: floatUp 7s linear forwards; white-space: nowrap; z-index: 80; text-shadow: 0 0 10px var(--primary); }
+    @keyframes floatUp { 0%{transform:translateY(0) scale(1); opacity:0;} 10%{opacity:1;} 90%{opacity:1;} 100%{transform:translateY(-600px) scale(1.2); opacity:0;} }
 
-    #explanationBox { position:absolute; bottom:120px; left:30px; width:280px; padding:15px; background: rgba(0,242,255,0.1); border-left: 4px solid var(--primary); font-size:14px; opacity:0; pointer-events:none; transition: opacity 0.3s; }
+    #explanationBox { position:absolute; bottom:130px; left:30px; width:300px; padding:20px; background: rgba(0,242,255,0.1); border-left: 5px solid var(--primary); font-size:16px; opacity:0; pointer-events:none; transition: opacity 0.4s; }
 </style>
 </head>
 <body>
@@ -49,7 +52,7 @@
 <div id="timer">00:00</div>
 
 <div id="mainDisplay">
-    <div id="textNarrator">KA-MI-ZEN SYSTEM INITIALIZING...</div>
+    <div id="textNarrator">Initializing KaMiZen System...</div>
     <div id="quizArea"></div>
     <div id="explanation"></div>
 </div>
@@ -61,44 +64,51 @@
 <div id="indicators"></div>
 
 <div id="breathLayer">
-    <div id="breathCircle">IDLE</div>
+    <div id="breathCircle">READY</div>
     <div id="scienceInfo"></div>
 </div>
 
 <div class="btn-panel">
-    <button id="btnBack" class="btn-ka" style="background:#444; color:#fff;" onclick="location.reload()">BACK</button>
-    <button id="btnClear" class="btn-ka" style="background:#ff4444;" onclick="localStorage.clear(); location.reload();">CLEAR CACHE</button>
+    <button id="btnBack" class="btn-ka" style="background:#333; color:#fff;" onclick="location.reload()">BACK</button>
+    <button id="btnClear" class="btn-ka" style="background:#600; color:#fff;" onclick="localStorage.clear(); location.reload();">CLEAR CACHE</button>
     <button id="btnStart" class="btn-ka" onclick="KaMiZen.start()">START SESSION</button>
     <button id="btnContinue" class="btn-ka" onclick="KaMiZen.nextStep()">CONTINUE</button>
     <button id="btnNextQuiz" class="btn-ka" onclick="KaMiZen.processMissionStep()">NEXT STEP</button>
+    <button id="btnFinishMission" class="btn-ka" onclick="KaMiZen.cycle2()">START CYCLE 2</button>
 </div>
 
+<!-- Audio Assets -->
 <audio id="bgMusic" loop src="https://assets.mixkit.co/music/preview/mixkit-tech-house-vibes-130.mp3"></audio>
+<audio id="sfxPop" src="https://www.soundjay.com/buttons/sounds/button-10.mp3"></audio>
 <audio id="sfxCorrect" src="https://www.myinstants.com/media/sounds/correct.mp3"></audio>
 <audio id="sfxWrong" src="https://www.myinstants.com/media/sounds/wrong.mp3"></audio>
-<audio id="sfxPop" src="https://www.soundjay.com/misc/sounds/bubble-pop-01.mp3"></audio>
 
 <script>
 const KaMiZen = (() => {
     let state = {
-        lang: 'en', phase: 'intro', data: null, 
-        stats: {}, missionIdx: 0, stepIdx: 0, timer: null
+        lang: 'en', // Idioma base oficial
+        phase: 'intro', 
+        data: null, 
+        stats: {}, 
+        missionIdx: 0, 
+        stepIdx: 0,
+        timer: null,
+        floatingWords: ["AWARENESS","SAFETY","CALM","ACTION","TRUTH","CONTROL","HELP","FOCUS"]
     };
 
-    // UI Floating Words from JSON
-    const uiWords = ["AWARENESS","SAFETY","CALM","ACTION","TRUTH","CONTROL","HELP","FOCUS"];
     const pillars = {
-        "AWARENESS": { cat: "Focus", en: "Notice surroundings.", es: "Observa tu entorno." },
-        "SAFETY": { cat: "Action", en: "Protection first.", es: "Protección primero." },
-        "CALM": { cat: "Spirit", en: "Clear mind.", es: "Mente clara." },
-        "ACTION": { cat: "Value", en: "Decisive move.", es: "Movimiento decisivo." }
+        "AWARENESS": { cat: "Awareness", es: "Conciencia del entorno.", en: "Notice surroundings." },
+        "SAFETY": { cat: "Safety", es: "Seguridad ante todo.", en: "Priority: Safety." },
+        "CALM": { cat: "Control", es: "Mantener la calma.", en: "Stay calm." },
+        "ACTION": { cat: "Action", es: "Actuar con propósito.", en: "Purposeful action." }
     };
 
     const speak = (text, callback) => {
         window.speechSynthesis.cancel();
         const msg = new SpeechSynthesisUtterance(text.replace(/[\\/_.,()]/g, ' '));
         const voices = window.speechSynthesis.getVoices();
-        msg.voice = voices.find(v => (v.name.includes("David") || v.name.includes("Male")) && v.lang.startsWith(state.lang)) || voices[0];
+        // Forzar voz inglesa por defecto
+        msg.voice = voices.find(v => v.lang.includes("en") && (v.name.includes("David") || v.name.includes("Male"))) || voices[0];
         msg.rate = 0.85; 
         msg.onend = callback;
         window.speechSynthesis.speak(msg);
@@ -106,16 +116,13 @@ const KaMiZen = (() => {
 
     const start = async () => {
         document.getElementById("btnStart").style.display = "none";
-        // Intentar reproducir música (requiere interacción)
-        const music = document.getElementById("bgMusic");
-        music.play().catch(() => console.log("Audio waiting for interaction"));
-        
+        // Simulando carga de Mission.json y Stories
         const res = await fetch("/api/session/start");
         state.data = await res.json();
-        playStories();
+        playIntro();
     };
 
-    const playStories = () => {
+    const playIntro = () => {
         state.phase = 'stories';
         const txt = state.data.story[state.lang];
         document.getElementById("textNarrator").innerText = txt;
@@ -127,8 +134,8 @@ const KaMiZen = (() => {
     const nextStep = () => {
         document.getElementById("btnContinue").style.display = "none";
         if(state.phase === 'stories') playCycle(1);
-        else if(state.phase === 'diag1') startMissionFlow();
-        else if(state.phase === 'diag2') playSilenceChallenge();
+        else if(state.phase === 'diag1') startMission();
+        else if(state.phase === 'diag2') startSilenceChallenge();
     };
 
     const playCycle = (num) => {
@@ -138,7 +145,11 @@ const KaMiZen = (() => {
         document.getElementById("indicators").style.display = "flex";
         initBars();
         
-        let timeLeft = 300; 
+        const music = document.getElementById("bgMusic");
+        music.volume = 0.3;
+        music.play();
+
+        let timeLeft = 300; // 5 min
         state.timer = setInterval(() => {
             timeLeft--;
             document.getElementById("timer").innerText = formatTime(timeLeft);
@@ -151,7 +162,7 @@ const KaMiZen = (() => {
     };
 
     const spawnWord = (timeLeft) => {
-        const word = uiWords[Math.floor(Math.random()*uiWords.length)];
+        const word = state.floatingWords[Math.floor(Math.random()*state.floatingWords.length)];
         const el = document.createElement("div");
         el.className = "floating-word";
         el.innerText = word;
@@ -159,23 +170,26 @@ const KaMiZen = (() => {
         el.style.top = "90%";
         
         el.onclick = () => {
-            document.getElementById("sfxPop").cloneNode().play();
-            const cat = pillars[word] ? pillars[word].cat : "Logic";
+            const sfx = document.getElementById("sfxPop");
+            sfx.currentTime = 0;
+            sfx.play();
+            
+            const cat = pillars[word] ? pillars[word].cat : "Focus";
             state.stats[cat] = (state.stats[cat] || 0) + 1;
             updateBars();
             
-            if(300 - timeLeft <= 60 && pillars[word]) {
+            if(300 - timeLeft <= 60) {
                 const box = document.getElementById("explanationBox");
                 box.style.opacity = "1";
                 document.getElementById("expTitle").innerText = word;
-                document.getElementById("expBody").innerText = pillars[word][state.lang];
+                document.getElementById("expBody").innerText = pillars[word] ? pillars[word][state.lang] : "Mental sharpness.";
             }
             el.remove();
         };
         document.body.appendChild(el);
     };
 
-    const startMissionFlow = () => {
+    const startMission = () => {
         state.phase = 'mission';
         state.stepIdx = 0;
         processMissionStep();
@@ -191,52 +205,39 @@ const KaMiZen = (() => {
                 state.stepIdx = 0;
                 processMissionStep();
             } else {
-                playCycle(2);
+                document.getElementById("btnFinishMission").style.display = "block";
+                document.getElementById("btnNextQuiz").style.display = "none";
             }
             return;
         }
 
-        document.getElementById("btnNextQuiz").style.display = "none";
         document.getElementById("quizArea").style.display = "none";
         document.getElementById("explanation").style.display = "none";
+        document.getElementById("btnNextQuiz").style.display = "none";
 
-        // Lógica según tipo de bloque del JSON
-        switch(step.t) {
-            case "v": // Video/Header
-            case "h": // Hint/Subheader
-            case "c": // Conclusion
-                const txt = step.tx[state.lang];
-                document.getElementById("textNarrator").innerText = txt;
-                speak(txt, () => {
-                    state.stepIdx++;
-                    document.getElementById("btnNextQuiz").style.display = "block";
-                });
-                break;
-
-            case "d": // Decision/Trivia
-                renderTrivia(step);
-                break;
-
-            case "br": // Breath
-                runMiniBreath(step);
-                break;
-
-            case "sil": // Silence
-            case "breath_auto":
-                runAutoBlock(step);
-                break;
-                
-            default:
+        if(step.t === "v" || step.t === "h" || step.story) {
+            const txt = step.tx ? step.tx[state.lang] : step.story[state.lang];
+            document.getElementById("textNarrator").innerText = txt;
+            speak(txt, () => {
                 state.stepIdx++;
-                processMissionStep();
+                document.getElementById("btnNextQuiz").style.display = "block";
+            });
+        } 
+        else if(step.t === "d") { // Trivia / Decision
+            renderTrivia(step);
+        }
+        else { // Skip steps like auto_breath for mission projection text
+            state.stepIdx++;
+            processMissionStep();
         }
     };
 
     const renderTrivia = (step) => {
         const area = document.getElementById("quizArea");
         area.style.display = "flex";
-        area.innerHTML = `<p style="font-size:22px; color:var(--primary)">${step.q[state.lang]}</p>`;
-        
+        document.getElementById("textNarrator").innerText = step.q[state.lang];
+        area.innerHTML = "";
+
         step.op.forEach((opt, i) => {
             const b = document.createElement("button");
             b.className = "opt-btn";
@@ -247,11 +248,13 @@ const KaMiZen = (() => {
                 document.querySelectorAll(".opt-btn").forEach(btn => btn.onclick = null);
                 
                 document.getElementById(isCorrect ? "sfxCorrect" : "sfxWrong").play();
-                const expText = step.ex[i];
-                document.getElementById("explanation").innerText = expText;
+                
+                const feedback = isCorrect ? "Correct." : "Incorrect.";
+                const exp = step.ex[i];
+                document.getElementById("explanation").innerText = exp;
                 document.getElementById("explanation").style.display = "block";
                 
-                speak(isCorrect ? "Correct. " + expText : "Incorrect. " + expText, () => {
+                speak(feedback + " " + exp, () => {
                     state.stepIdx++;
                     document.getElementById("btnNextQuiz").style.display = "block";
                 });
@@ -261,56 +264,11 @@ const KaMiZen = (() => {
         speak(step.q[state.lang]);
     };
 
-    const runMiniBreath = (step) => {
-        document.getElementById("breathLayer").style.display = "flex";
-        document.getElementById("breathCircle").innerText = step.tx[state.lang];
-        document.getElementById("scienceInfo").innerText = "";
-        
-        let d = step.d || 4;
-        const scale = step.tx[state.lang].toLowerCase().includes("inhale") ? 1.8 : 1.0;
-        document.getElementById("breathCircle").style.transform = `scale(${scale})`;
-        
-        speak(step.tx[state.lang], () => {
-            setTimeout(() => {
-                document.getElementById("breathLayer").style.display = "none";
-                state.stepIdx++;
-                processMissionStep();
-            }, d * 1000);
-        });
-    };
-
-    const runAutoBlock = async (step) => {
-        document.getElementById("breathLayer").style.display = "flex";
-        document.getElementById("scienceInfo").innerText = step.inf[state.lang];
-        let timeLeft = step.d;
-        
-        while(timeLeft > 0) {
-            document.getElementById("timer").innerText = formatTime(timeLeft);
-            document.getElementById("timer").style.display = "block";
-            
-            const isBreath = step.tx[state.lang].toLowerCase().includes("breathe");
-            document.getElementById("breathCircle").innerText = isBreath ? "INHALE" : "SILENCE";
-            document.getElementById("breathCircle").style.transform = "scale(1.8)";
-            await new Promise(r => setTimeout(r, 4000));
-            
-            if(isBreath) {
-                document.getElementById("breathCircle").innerText = "EXHALE";
-                document.getElementById("breathCircle").style.transform = "scale(1.0)";
-                await new Promise(r => setTimeout(r, 4000));
-                timeLeft -= 8;
-            } else {
-                timeLeft -= 4;
-            }
-        }
-        document.getElementById("breathLayer").style.display = "none";
-        state.stepIdx++;
-        processMissionStep();
-    };
-
     const showDiagnosis = (num) => {
         state.phase = 'diag' + num;
-        const top = Object.keys(state.stats).reduce((a,b) => state.stats[a] > state.stats[b] ? a : b, "Logic");
-        const diag = `Neural Diagnosis ${num}: Your interaction pattern shows ${top} dominance. Coherence achieved.`;
+        document.getElementById("bgMusic").pause();
+        const top = Object.keys(state.stats).reduce((a,b) => state.stats[a] > state.stats[b] ? a : b, "Neural Balance");
+        const diag = `NEURAL DIAGNOSIS ${num}: High synchronization in ${top}. Your logic circuits are now primed.`;
         document.getElementById("textNarrator").innerText = diag;
         document.getElementById("timer").style.display = "none";
         speak(diag, () => {
@@ -318,23 +276,47 @@ const KaMiZen = (() => {
         });
     };
 
-    const playSilenceChallenge = () => {
-        alert("Session Complete. Final integration achieved.");
+    const startSilenceChallenge = async () => {
+        state.phase = 'silence';
+        document.getElementById("indicators").style.display = "none";
+        document.getElementById("breathLayer").style.display = "flex";
+        document.getElementById("scienceInfo").innerText = "Silence deactivates the Amygdala and synchronizes the Heart-Brain coherence.";
+        
+        let t = 60; 
+        document.getElementById("timer").style.display = "block";
+
+        while(t > 0) {
+            document.getElementById("timer").innerText = formatTime(t);
+            await breathStep("INHALE", 1.8, 4000);
+            await breathStep("HOLD", 1.8, 4000);
+            await breathStep("EXHALE", 1.0, 4000);
+            t -= 12;
+        }
+        alert("KaMiZen Session Complete. Focus Restored.");
         location.reload();
+    };
+
+    const breathStep = (txt, scale, time) => {
+        return new Promise(r => {
+            const c = document.getElementById("breathCircle");
+            c.innerText = txt;
+            c.style.transform = `scale(${scale})`;
+            setTimeout(r, time);
+        });
     };
 
     const initBars = () => {
         const ind = document.getElementById("indicators");
         ind.innerHTML = "";
-        ["Focus","Action","Spirit","Value"].forEach(k => {
-            ind.innerHTML += `<div class="bar-wrap"><div class="bar-lbl">${k}</div><div class="bar-bg"><div class="bar-fill" id="bar-${k}"></div></div></div>`;
+        ["Awareness", "Safety", "Control", "Action"].forEach(cat => {
+            ind.innerHTML += `<div class="bar-wrap"><div class="bar-lbl">${cat.toUpperCase()}</div><div class="bar-bg"><div class="bar-fill" id="bar-${cat}"></div></div></div>`;
         });
     };
 
     const updateBars = () => {
         Object.keys(state.stats).forEach(cat => {
             const el = document.getElementById(`bar-${cat}`);
-            if(el) el.style.height = Math.min(state.stats[cat]*10, 100) + "%";
+            if(el) el.style.height = Math.min(state.stats[cat]*12, 100) + "%";
         });
     };
 
@@ -344,7 +326,7 @@ const KaMiZen = (() => {
         return `${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
     };
 
-    return { start, nextStep, processMissionStep };
+    return { start, nextStep, processMissionStep, cycle2: () => playCycle(2) };
 })();
 </script>
 </body>
