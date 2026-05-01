@@ -3,112 +3,209 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>MAYKAMI SYSTEM</title>
-
+<title>MAYKAMI NEUROGAME</title>
 <style>
-    body {
-        margin:0; background:#05070d; color:#fff;
-        font-family: 'Segoe UI', Arial, sans-serif; overflow:hidden;
+    :root { --primary: #00f2ff; --bg: #05070d; }
+    body { margin:0; background: var(--bg); color:#fff; font-family: Arial; overflow:hidden; transition: background 0.4s; }
+
+    /* HUD & UI */
+    #timer { position:absolute; top:20px; left:50%; transform:translateX(-50%); font-size:60px; color:var(--primary); font-weight:bold; z-index:10; }
+    #centerText { position:absolute; top:45%; left:50%; transform:translate(-50%,-50%); font-size:30px; width:80%; text-align:center; z-index:5; }
+    
+    /* Botón Continuar */
+    #btnNext { 
+        display:none; position:absolute; bottom:50px; left:50%; transform:translateX(-50%);
+        padding:15px 40px; font-size:20px; background:var(--primary); color:#000; border:none; border-radius:30px; cursor:pointer; font-weight:bold; z-index:20;
     }
 
-    #startScreen {
-        position:fixed; inset:0; display:flex; flex-direction:column;
-        justify-content:center; align-items:center; gap:20px;
-        background: radial-gradient(circle, #0b1121 0%, #05070d 100%); z-index:100;
-    }
-
-    input {
-        padding:15px; font-size:18px; text-align:center; border:1px solid #00f2ff;
-        border-radius:6px; background: rgba(255,255,255,0.05); color: white;
-    }
-
-    button {
-        padding:15px 30px; font-size:18px; cursor:pointer; border:none;
-        border-radius:6px; background:#00f2ff; color:#000; font-weight: bold;
-    }
-
-    /* UI ELEMENTS */
-    #timer {
-        position:absolute; top:20px; left:50%; transform:translateX(-50%);
-        font-size:70px; color:#00f2ff; font-weight:bold; text-shadow: 0 0 20px rgba(0,242,255,0.5);
-    }
-
+    /* Explicación Esquina */
     #explanationBox {
-        position: absolute; bottom: 20px; left: 20px; width: 300px;
-        padding: 15px; background: rgba(0, 242, 255, 0.05);
-        border-left: 4px solid #00f2ff; font-size: 15px; line-height: 1.4;
-        z-index: 50; pointer-events: none; opacity: 0; transition: opacity 0.3s;
+        position:absolute; bottom:20px; left:20px; width:250px; padding:15px;
+        background: rgba(0,242,255,0.1); border-left: 4px solid var(--primary); font-size:14px; opacity:0; transition: 0.5s;
     }
 
-    #centerText {
-        position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
-        font-size:38px; width:85%; text-align:center; pointer-events: none;
+    /* Barras de Indicadores (Perpendiculares) */
+    #indicators {
+        position:absolute; right:20px; top:50%; transform:translateY(-50%);
+        display:none; flex-direction:column; gap:10px; z-index:10;
+    }
+    .bar { width:10px; height:60px; background:rgba(255,255,255,0.2); border-radius:5px; position:relative; }
+    .fill { position:absolute; bottom:0; width:100%; height:0%; background:var(--primary); border-radius:5px; transition: height 0.3s; }
+
+    /* Diagnosis Modal */
+    #diagnosisModal {
+        display:none; position:fixed; inset:0; background:var(--bg); z-index:200;
+        flex-direction:column; justify-content:center; align-items:center; padding:40px; text-align:center;
     }
 
-    /* WORD & ANIMATION */
-    .word {
-        position:absolute; font-size:22px; color:#00f2ff; cursor:pointer;
-        font-weight: bold; text-shadow: 0 0 10px #00f2ff;
-        animation: float 5s linear forwards;
-    }
-
-    @keyframes float {
-        0%{transform:translateY(0); opacity:0;}
-        10%{opacity:1;}
-        90%{opacity:1;}
-        100%{transform:translateY(-300px); opacity:0;}
-    }
-
-    .tool-btn {
-        position: fixed; bottom: 20px; right: 20px; background: none;
-        border: 1px solid rgba(255,255,255,0.2); color: #555; padding: 5px; cursor: pointer;
-    }
+    .word { position:absolute; font-size:22px; color:var(--primary); font-weight:bold; cursor:pointer; animation: float 5s linear forwards; text-shadow: 0 0 10px var(--primary); }
+    @keyframes float { 0%{transform:translateY(0); opacity:0;} 10%{opacity:1;} 90%{opacity:1;} 100%{transform:translateY(-300px); opacity:0;} }
 </style>
 </head>
-
 <body>
 
-<div id="startScreen">
-    <h1 style="letter-spacing: 10px; color:#00f2ff;">MAYKAMI</h1>
-    <input id="nameInput" placeholder="Enter Name">
-    <button onclick="startApp()">ACTIVATE SESSION</button>
-</div>
-
 <div id="timer">00:00</div>
-<div id="centerText"></div>
+<div id="centerText">Initializing Session...</div>
+<button id="btnNext" onclick="Engine.nextPhase()">CONTINUE</button>
 
 <div id="explanationBox">
-    <strong id="expTitle" style="color:#00f2ff; display:block; margin-bottom:5px;"></strong>
-    <span id="expBody"></span>
+    <strong id="expTitle"></strong><br><span id="expBody"></span>
 </div>
 
-<button class="tool-btn" onclick="location.reload()">🗑️</button>
+<div id="indicators">
+    <div class="bar"><div class="fill" id="fill-protection"></div></div>
+    <div class="bar"><div class="fill" id="fill-wealth"></div></div>
+    <div class="bar"><div class="fill" id="fill-mind"></div></div>
+    <div class="bar"><div class="fill" id="fill-health"></div></div>
+</div>
 
-<!-- AUDIOS -->
-<audio id="bgMusic" loop>
-    <source src="https://assets.mixkit.co/music/preview/mixkit-lo-fi-night-chill-1616.mp3" type="audio/mpeg">
-</audio>
-<audio id="sfxGlass">
-    <source src="https://www.soundjay.com/misc/sounds/glass-break-01.mp3" type="audio/mpeg">
-</audio>
+<div id="diagnosisModal">
+    <h1 style="color:var(--primary)">SESSION DIAGNOSIS</h1>
+    <div id="diagResult" style="font-size:18px; line-height:1.6; max-width:600px; margin-bottom:30px;"></div>
+    <button onclick="location.reload()">CLOSE SESSION</button>
+</div>
 
-<script src="/static/js/engine.js"></script>
+<audio id="bgMusic" loop src="https://assets.mixkit.co/music/preview/mixkit-lo-fi-night-chill-1616.mp3"></audio>
+<audio id="sfxGlass" src="https://www.soundjay.com/misc/sounds/glass-break-01.mp3"></audio>
+
 <script>
-function startApp(){
-    const name = document.getElementById("nameInput").value.trim();
-    if(!name) return;
-    localStorage.setItem("kamizen_name", name);
-    
-    // Música de dopamina (Lo-fi suave)
-    const music = document.getElementById("bgMusic");
-    music.volume = 0.2;
-    music.play();
+const Engine = (() => {
+    let state = { phase: 'story', time: 0, stats: {}, gameTime: 300, wordsClicked: 0 };
+    const pillars = {
+        "LIMITS": { cat: "Protection", desc: "Defense: Learn to say NO.", color: "#ff4444" },
+        "PERSISTENCE": { cat: "Resilience", desc: "Lucha: Error is part of process.", color: "#ffaa00" },
+        "METHOD": { cat: "Structure", desc: "Organization: Chaos to Logic.", color: "#00ffaa" },
+        "VALUE": { cat: "Wealth", desc: "Business: Money follows value.", color: "#ffee00" },
+        "ADAPTATION": { cat: "Survival", desc: "Environment: Flow and thrive.", color: "#00aaff" }
+    };
 
-    document.getElementById("startScreen").style.display = "none";
-    Engine.init();
-    Engine.start();
-}
+    function init() {
+        // Cargar audio
+        document.getElementById("bgMusic").volume = 0.2;
+        startStory();
+    }
+
+    // FASE 1: STORY
+    async function startStory() {
+        const res = await fetch("/api/session/start");
+        const data = await res.json();
+        const text = data.story.en;
+        
+        document.getElementById("centerText").innerText = text;
+        speak(text, () => {
+            document.getElementById("btnNext").style.display = "block";
+        });
+    }
+
+    function speak(text, callback) {
+        const synth = window.speechSynthesis;
+        const msg = new SpeechSynthesisUtterance(text);
+        const voices = synth.getVoices();
+        // Intentar buscar voz masculina pausada
+        msg.voice = voices.find(v => v.name.includes("David") || v.name.includes("Male")) || voices[0];
+        msg.rate = 0.85; // Pausada
+        msg.pitch = 0.9;
+        msg.onend = callback;
+        synth.speak(msg);
+    }
+
+    // FASE 2: GAMEPLAY
+    function startLevel() {
+        state.phase = 'game';
+        document.getElementById("btnNext").style.display = "none";
+        document.getElementById("centerText").innerText = "";
+        document.getElementById("bgMusic").play();
+        
+        let t = state.gameTime;
+        const timerId = setInterval(() => {
+            t--;
+            state.time = state.gameTime - t;
+            document.getElementById("timer").innerText = formatTime(t);
+            
+            spawnWord();
+            updateUI();
+
+            if(t <= 0) {
+                clearInterval(timerId);
+                showDiagnosis();
+            }
+        }, 1000);
+    }
+
+    function spawnWord() {
+        const keys = Object.keys(pillars);
+        const key = keys[Math.floor(Math.random()*keys.length)];
+        const p = pillars[key];
+
+        const el = document.createElement("div");
+        el.className = "word";
+        el.innerText = key;
+        el.style.left = Math.random()*80 + 10 + "%";
+        el.style.top = Math.random()*60 + 20 + "%";
+
+        el.onclick = () => {
+            // Sonido y Explosión
+            const sfx = document.getElementById("sfxGlass").cloneNode();
+            sfx.play();
+            
+            // Feedback Visual
+            document.body.style.background = p.color + "33"; 
+            setTimeout(() => document.body.style.background = "#05070d", 200);
+
+            // Registro de Stats
+            state.stats[p.cat] = (state.stats[p.cat] || 0) + 1;
+            state.wordsClicked++;
+
+            // Explicación (Solo primer minuto)
+            if(state.time < 60) {
+                document.getElementById("explanationBox").style.opacity = "1";
+                document.getElementById("expTitle").innerText = key;
+                document.getElementById("expBody").innerText = p.desc;
+            }
+
+            el.remove();
+        };
+        document.body.appendChild(el);
+    }
+
+    function updateUI() {
+        if(state.time >= 60) {
+            document.getElementById("explanationBox").style.display = "none";
+            document.getElementById("indicators").style.display = "flex";
+            // Actualizar barras
+            const cats = ["Protection", "Wealth", "Structure", "Resilience"];
+            cats.forEach((c, i) => {
+                const val = (state.stats[c] || 0) * 10;
+                document.querySelectorAll(".fill")[i].style.height = Math.min(val, 100) + "%";
+            });
+        }
+    }
+
+    function showDiagnosis() {
+        document.getElementById("diagnosisModal").style.display = "flex";
+        const topCat = Object.keys(state.stats).reduce((a, b) => state.stats[a] > state.stats[b] ? a : b, "Focus");
+        
+        document.getElementById("diagResult").innerHTML = `
+            <strong>Principal Strength: ${topCat}</strong><br><br>
+            You focused on ${state.wordsClicked} life pillars. 
+            This indicates a proactive mindset towards <b>${topCat.toLowerCase()}</b>. 
+            The continuous method ensures that these concepts are now part of your subconscious structure.
+        `;
+    }
+
+    function formatTime(s) {
+        const m = Math.floor(s/60);
+        const sec = s%60;
+        return `${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+    }
+
+    return {
+        nextPhase: () => startLevel(),
+        init: init
+    };
+})();
+
+window.onload = Engine.init;
 </script>
-
 </body>
 </html>
