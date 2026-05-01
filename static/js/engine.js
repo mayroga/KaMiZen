@@ -1,12 +1,12 @@
 const Engine = (() => {
 
     /* =========================
-       STATE GLOBAL (ÚNICO)
+       STATE ÚNICO
     ========================= */
     let state = {
-        index: 1,
         running: false,
-        phase: "idle"
+        index: 1,
+        busy: false
     };
 
     let ui = {
@@ -14,18 +14,20 @@ const Engine = (() => {
         timer: null
     };
 
-    let intervals = [];
+    let timers = [];
 
     /* =========================
-       INIT
+       INIT (SAFE DOM BIND)
     ========================= */
     function init(){
+
         ui.centerText = document.getElementById("centerText");
         ui.timer = document.getElementById("timer");
+
     }
 
     /* =========================
-       START ENGINE
+       START ENGINE (ONLY ONE LOOP)
     ========================= */
     async function start(){
 
@@ -35,19 +37,39 @@ const Engine = (() => {
 
         while(state.running){
 
-            const data = await fetchData();
+            const data = await fetchSession();
 
-            if(!data){
+            if(!data || !data.story){
+                render("LOADING ERROR");
                 await sleep(2000);
                 continue;
             }
 
             state.index = data.index || 1;
 
+            /* =========================
+               1. STORY PHASE (ONLY story, NO stories confusion)
+            ========================= */
             await storyPhase(data.story);
+
+            /* =========================
+               2. GAME PHASE (5 MIN)
+            ========================= */
             await gamePhase(300);
+
+            /* =========================
+               3. MISSION PHASE
+            ========================= */
             await missionPhase(data.mission);
+
+            /* =========================
+               4. GAME PHASE AGAIN
+            ========================= */
             await gamePhase(300);
+
+            /* =========================
+               5. BREATHING PHASE
+            ========================= */
             await breathingPhase(state.index);
 
             cleanup();
@@ -55,53 +77,54 @@ const Engine = (() => {
     }
 
     /* =========================
-       FETCH DATA (FROM FLASK)
+       FETCH FROM MAIN.PY ONLY
     ========================= */
-    async function fetchData(){
+    async function fetchSession(){
         try{
             const res = await fetch("/api/session/start");
             return await res.json();
         }catch(e){
-            console.error("Fetch error", e);
+            console.error("FETCH ERROR", e);
             return null;
         }
     }
 
     /* =========================
-       STORY PHASE
+       STORY PHASE (SAFE ACCESS)
     ========================= */
     async function storyPhase(story){
 
-        const text = story?.en || "NO STORY";
+        const text =
+            story?.en ||
+            story?.es ||
+            "NO STORY FOUND";
 
         render(text);
-
-        await speak(text);
+        speak(text);
 
         await sleep(5000);
-
-        clearText();
+        clear();
     }
 
     /* =========================
-       MISSION PHASE
+       MISSION PHASE (SAFE ACCESS)
     ========================= */
     async function missionPhase(mission){
 
         const text =
-            mission?.b?.[0]?.tx?.en ||
+            mission?.t?.en ||
             mission?.en ||
-            "MISSION";
+            mission?.b?.[0]?.tx?.en ||
+            "NO MISSION";
 
         render(text);
 
         await sleep(5000);
-
-        clearText();
+        clear();
     }
 
     /* =========================
-       GAME PHASE (CONTROLLED)
+       GAME PHASE (CONTROLLED LOOP)
     ========================= */
     async function gamePhase(seconds){
 
@@ -109,112 +132,116 @@ const Engine = (() => {
 
             let t = seconds;
 
-            const timer = setInterval(() => {
+            const id = setInterval(() => {
 
                 t--;
 
-                ui.timer.innerText = formatTime(t);
+                if(ui.timer){
+                    ui.timer.innerText = formatTime(t);
+                }
 
                 spawnWord();
 
                 if(t <= 0){
-                    clearInterval(timer);
+                    clearInterval(id);
                     resolve();
                 }
 
             }, 1000);
 
-            intervals.push(timer);
+            timers.push(id);
         });
     }
 
     /* =========================
-       WORD SPAWN (NO OVERFLOW)
+       WORD SYSTEM (NO OVERFLOW)
     ========================= */
     function spawnWord(){
 
-        const words = ["FOCUS","CALM","TRUTH","CONTROL","POWER"];
+        const words = [
+            "FOCUS","CALM","TRUTH","CONTROL","AWARENESS"
+        ];
 
         const el = document.createElement("div");
         el.className = "word";
         el.innerText = words[Math.floor(Math.random()*words.length)];
 
-        el.style.left = Math.random()*window.innerWidth + "px";
-        el.style.top = (window.innerHeight - 80) + "px";
+        el.style.left = Math.random() * 90 + "%";
+        el.style.top = (Math.random() * 70 + 10) + "%";
 
         el.onclick = () => {
+
             el.style.transform = "scale(2)";
             el.style.opacity = "0";
-            setTimeout(()=>el.remove(),200);
+
+            setTimeout(() => el.remove(), 200);
+
         };
 
         document.body.appendChild(el);
 
-        setTimeout(()=>el.remove(),5000);
+        setTimeout(() => el.remove(), 5000);
     }
 
     /* =========================
-       BREATHING PHASE
+       BREATHING PHASE (PROGRESSIVE CONTROL)
     ========================= */
     async function breathingPhase(index){
 
-        let t = 20;
+        let t = Math.min(20 + index * 2, 180);
 
         return new Promise(resolve => {
 
-            const b = setInterval(() => {
+            const id = setInterval(() => {
 
                 t--;
 
-                ui.centerText.innerText =
-                    (t % 2 === 0) ? "INHALE" : "EXHALE";
+                render((t % 2 === 0) ? "INHALE" : "EXHALE");
 
                 if(t <= 0){
-                    clearInterval(b);
+                    clearInterval(id);
                     resolve();
                 }
 
             }, 1000);
 
-            intervals.push(b);
+            timers.push(id);
         });
     }
 
     /* =========================
-       SPEECH (SAFE)
+       SPEECH ENGINE (SAFE)
     ========================= */
     function speak(text){
 
-        return new Promise(resolve => {
+        if(!text) return;
 
-            if(!text){
-                resolve();
-                return;
-            }
-
+        try{
             const msg = new SpeechSynthesisUtterance(text);
             msg.lang = "en-US";
             msg.rate = 1;
 
-            msg.onend = resolve;
-
             speechSynthesis.speak(msg);
-        });
+        }catch(e){}
     }
 
     /* =========================
        UI HELPERS
     ========================= */
     function render(text){
-        ui.centerText.innerText = text || "";
+        if(ui.centerText){
+            ui.centerText.innerText = text || "";
+        }
     }
 
-    function clearText(){
-        ui.centerText.innerText = "";
+    function clear(){
+        if(ui.centerText){
+            ui.centerText.innerText = "";
+        }
     }
 
     function formatTime(s){
-        const m = Math.floor(s/60);
+        const m = Math.floor(s / 60);
         const sec = s % 60;
         return `${String(m).padStart(2,"0")}:${String(sec).padStart(2,"0")}`;
     }
@@ -224,8 +251,8 @@ const Engine = (() => {
     }
 
     function cleanup(){
-        intervals.forEach(i => clearInterval(i));
-        intervals = [];
+        timers.forEach(t => clearInterval(t));
+        timers = [];
     }
 
     function stop(){
