@@ -1,150 +1,228 @@
-let engine = {
-    words: [],      // De kamizen_data.json
-    stories: [],    // De stories.json
-    timeLeft: 900,  // 15 Minutos
-    isRunning: false,
-    currentLandscape: 'forest'
-};
+/* =========================================
+   KAMIZEN ENGINE CORE — UPDATED VERSION
+   File: static/js/engine.js
+   Handles session flow, state, timing, API sync
+   ========================================= */
 
-// 1. Cargar Datos
-async function loadData() {
-    try {
-        const wordsRes = await fetch('/data/kamizen_data.json');
-        const storiesRes = await fetch('/data/stories.json');
-        const wordsData = await wordsRes.json();
-        const storiesData = await storiesRes.json();
-        
-        engine.words = wordsData.words;
-        engine.stories = storiesData.stories;
-        
-        startSession();
-    } catch (e) { console.error("Error cargando JSONs", e); }
-}
+const KamizenEngine = (() => {
 
-// 2. Iniciar Sesión (Con Historia)
-function startSession() {
-    showStory(true); // Historia al principio
-}
+    // =========================
+    // STATE
+    // =========================
+    let state = {
+        userName: null,
+        missionIndex: 1,
+        phase: "idle",
+        isRunning: false
+    };
 
-// 3. Control del Reloj y Cierre Automático
-function startMasterClock() {
-    const timer = setInterval(() => {
-        if (engine.timeLeft <= 0) {
-            clearInterval(timer);
-            finishApp();
-            return;
-        }
-        engine.timeLeft--;
-        updateClockUI();
-        
-        // Cada 5 minutos, una pequeña pausa de respiración
-        if (engine.timeLeft % 300 === 0 && engine.timeLeft > 0) {
-            triggerBreathing();
-        }
-    }, 1000);
-}
+    // =========================
+    // INIT FROM LOCAL STORAGE
+    // =========================
+    function init(){
+        state.userName = localStorage.getItem("kamizen_name") || null;
+        state.missionIndex = parseInt(localStorage.getItem("mission_index") || "1");
+    }
 
-function updateClockUI() {
-    const m = Math.floor(engine.timeLeft / 60);
-    const s = engine.timeLeft % 60;
-    document.getElementById('master-clock').innerText = `${m}:${s.toString().padStart(2, '0')}`;
-}
+    // =========================
+    // SAVE STATE
+    // =========================
+    function save(){
+        localStorage.setItem("kamizen_name", state.userName);
+        localStorage.setItem("mission_index", state.missionIndex);
+    }
 
-// 4. Mostrar Historias (Sin repetir)
-function showStory(isInitial = false) {
-    engine.isRunning = false;
-    const storyBox = document.getElementById('story-box');
-    
-    // Sacamos una historia al azar y la removemos del pool
-    const index = Math.floor(Math.random() * engine.stories.length);
-    const story = engine.stories.splice(index, 1)[0];
+    // =========================
+    // START SESSION
+    // =========================
+    async function startSession(){
 
-    document.getElementById('story-title').innerText = story.t;
-    document.getElementById('story-content').innerText = story.en; // Puedes cambiar a .es si prefieres
-    storyBox.style.display = 'flex';
-    
-    speak(story.t + ". " + story.en);
-}
+        if(state.isRunning) return;
+        state.isRunning = true;
 
-function closeStory() {
-    document.getElementById('story-box').style.display = 'none';
-    if (!engine.isRunning) {
-        engine.isRunning = true;
-        startMasterClock();
-        spawnLoop();
-    }
-}
+        try {
+            const res = await fetch("/api/session/start");
+            const data = await res.json();
 
-// 5. El Juego de Palabras y Muñequito
-function spawnLoop() {
-    if (!engine.isRunning || engine.timeLeft <= 0) return;
+            state.missionIndex = data.index;
+            save();
 
-    const wordData = engine.words[Math.floor(Math.random() * engine.words.length)];
-    createWordElement(wordData);
+            await runStory(data.story);
+            await runFloatingPhase(300);
+            await runMission(data.mission);
+            await runFloatingPhase(300);
+            await runBreathingPhase(state.missionIndex);
 
-    setTimeout(spawnLoop, 3000); // Aparece palabra cada 3 segundos
-}
+            endSession();
 
-function createWordElement(data) {
-    const el = document.createElement('div');
-    el.className = 'word';
-    el.innerText = data.text;
-    el.style.left = (Math.random() * 80 + 10) + "vw";
-    
-    // Cambiar paisaje según tipo
-    updateEnvironment(data.type);
+        } catch(err){
+            console.error("Engine error:", err);
+        }
 
-    el.onclick = () => {
-        speak(data.text);
-        el.style.transform = "scale(2)";
-        el.style.opacity = "0";
-        setTimeout(() => el.remove(), 200);
-    };
-    
-    document.getElementById('game-world').appendChild(el);
-}
+        state.isRunning = false;
+    }
 
-function updateEnvironment(type) {
-    const world = document.getElementById('game-world');
-    world.className = ''; // Reset
-    if (type === 'NEGOCIO' || type === 'DINERO') world.classList.add('landscape-city');
-    if (type === 'BIENESTAR' || type === 'SALUD') world.classList.add('landscape-zen');
-}
+    // =========================
+    // STORY
+    // =========================
+    function runStory(story){
+        return new Promise(resolve => {
 
-// 6. Respiración (El Silencio)
-async function triggerBreathing() {
-    engine.isRunning = false;
-    const overlay = document.getElementById('breath-overlay');
-    overlay.style.display = 'flex';
+            if(!story){ resolve(); return; }
 
-    for (let i = 0; i < 3; i++) {
-        overlay.innerText = "INHALE";
-        overlay.style.transform = "translate(-50%, -50%) scale(1.5)";
-        await new Promise(r => setTimeout(r, 4000));
-        overlay.innerText = "EXHALE";
-        overlay.style.transform = "translate(-50%, -50%) scale(1)";
-        await new Promise(r => setTimeout(r, 4000));
-    }
+            const el = document.getElementById("centerText");
+            if(!el){ resolve(); return; }
 
-    overlay.style.display = 'none';
-    engine.isRunning = true;
-}
+            el.innerText = story?.story?.en || "";
 
-// 7. Finalización y Apagado
-function finishApp() {
-    engine.isRunning = false;
-    showStory(); // Historia final
-    setTimeout(() => {
-        document.body.innerHTML = "<div style='display:flex; height:100vh; align-items:center; justify-content:center; background:black;'><h1>TIME IS UP. REST NOW.</h1></div>";
-    }, 20000); // Da tiempo a leer la última historia antes de apagar
-}
+            setTimeout(() => {
+                el.innerText = "";
+                resolve();
+            }, 5000);
+        });
+    }
 
-function speak(text) {
-    window.speechSynthesis.cancel();
-    const msg = new SpeechSynthesisUtterance(text);
-    msg.lang = 'en-US';
-    window.speechSynthesis.speak(msg);
-}
+    // =========================
+    // MISSION
+    // =========================
+    function runMission(mission){
+        return new Promise(resolve => {
 
-// Arrancar
-loadData();
+            if(!mission){ resolve(); return; }
+
+            const el = document.getElementById("centerText");
+            if(!el){ resolve(); return; }
+
+            const title = mission?.b?.[0]?.tx?.en || "MISSION";
+
+            el.innerText = title;
+
+            setTimeout(() => {
+                el.innerText = "";
+                resolve();
+            }, 6000);
+        });
+    }
+
+    // =========================
+    // FLOATING GAME PHASE
+    // =========================
+    function runFloatingPhase(duration){
+        return new Promise(resolve => {
+
+            let time = duration;
+            const timerEl = document.getElementById("timer");
+
+            const words = ["FOCUS","CALM","TRUTH","CONTROL","AWARENESS","BREATH"];
+
+            const interval = setInterval(() => {
+
+                time--;
+
+                if(timerEl) timerEl.innerText = time;
+
+                spawnWord(words);
+
+                if(time <= 0){
+                    clearInterval(interval);
+                    resolve();
+                }
+
+            }, 1000);
+        });
+    }
+
+    function spawnWord(words){
+        const word = document.createElement("div");
+        word.className = "word";
+
+        word.innerText = words[Math.floor(Math.random()*words.length)];
+
+        word.style.position = "absolute";
+        word.style.left = Math.random() * window.innerWidth + "px";
+        word.style.top = Math.random() * window.innerHeight + "px";
+
+        document.body.appendChild(word);
+
+        setTimeout(() => {
+            word.remove();
+        }, 5000);
+    }
+
+    // =========================
+    // BREATHING + SILENCE
+    // =========================
+    function runBreathingPhase(index){
+        return new Promise(resolve => {
+
+            let silenceTime = Math.min(30 + (index * 5), 180);
+
+            let t = 30;
+            const center = document.getElementById("centerText");
+
+            const breath = setInterval(() => {
+
+                if(center) center.innerText = (t % 2 === 0) ? "INHALE" : "EXHALE";
+
+                t--;
+
+                if(t <= 0){
+                    clearInterval(breath);
+                    runSilence(silenceTime, resolve);
+                }
+
+            }, 1000);
+        });
+    }
+
+    function runSilence(seconds, resolve){
+
+        let t = seconds;
+        const timerEl = document.getElementById("timer");
+        const center = document.getElementById("centerText");
+
+        if(center) center.innerText = "SILENCE";
+
+        const s = setInterval(() => {
+
+            t--;
+
+            if(timerEl) timerEl.innerText = t;
+
+            if(t <= 0){
+                clearInterval(s);
+                resolve();
+            }
+
+        }, 1000);
+    }
+
+    // =========================
+    // END SESSION
+    // =========================
+    function endSession(){
+
+        const el = document.getElementById("centerText");
+
+        if(el) el.innerText = "SESSION COMPLETE";
+
+        setTimeout(() => {
+            window.location.reload();
+        }, 4000);
+    }
+
+    // =========================
+    // PUBLIC API
+    // =========================
+    return {
+        init,
+        startSession,
+        getState: () => state
+    };
+
+})();
+
+// Auto init
+window.addEventListener("load", () => {
+    KamizenEngine.init();
+});
