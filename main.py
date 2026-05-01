@@ -1,9 +1,8 @@
-from flask import Flask, jsonify, request
-import json
-import os
+from flask import send_from_directory
 
-app = Flask(__name__)
-
+@app.route("/")
+def index():
+    return send_from_directory("static", "session.html")
 # =========================
 # BASE DIR
 # =========================
