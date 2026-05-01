@@ -3,55 +3,55 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>MAYKAMI NEUROGAME</title>
+<title>KAMIZEN - NEUROGAME</title>
 <style>
     :root { --primary: #00f2ff; --bg: #05070d; --font: 'Segoe UI', Roboto, sans-serif; --success: #28a745; --error: #dc3545; }
-    body { margin:0; background: var(--bg); color:#fff; font-family: var(--font); overflow:hidden; transition: background 0.5s; }
+    body { margin:0; background: var(--bg); color:#fff; font-family: var(--font); overflow:hidden; }
     
-    #timer { position:absolute; top:20px; left:50%; transform:translateX(-50%); font-size:90px; color:var(--primary); font-weight:bold; z-index:100; text-shadow: 0 0 30px rgba(0,242,255,0.6); }
-    #centerText { position:absolute; top:30%; left:50%; transform:translate(-50%,-50%); font-size:28px; width:85%; text-align:center; z-index:50; line-height: 1.5; }
+    /* Timer y UI Central */
+    #timer { position:absolute; top:20px; left:50%; transform:translateX(-50%); font-size:80px; color:var(--primary); font-weight:bold; z-index:100; text-shadow: 0 0 20px rgba(0,242,255,0.5); display:none; }
+    #mainDisplay { position:absolute; top:40%; left:50%; transform:translate(-50%,-50%); width:85%; text-align:center; z-index:50; }
+    #textNarrator { font-size:26px; line-height:1.5; margin-bottom: 30px; }
     
     /* Trivia System */
-    #quizContainer { display:none; position:absolute; top:55%; left:50%; transform:translate(-50%, -50%); width:85%; z-index:200; flex-direction:column; gap:12px; }
-    .option-btn { padding:18px; background:rgba(255,255,255,0.05); border:2px solid var(--primary); color:#fff; cursor:pointer; border-radius:12px; font-size:20px; transition:0.3s; text-align:left; width: 100%; }
-    .option-btn.correct { background: var(--success) !important; border-color: #fff; box-shadow: 0 0 15px var(--success); }
-    .option-btn.wrong { background: var(--error) !important; border-color: #fff; box-shadow: 0 0 15px var(--error); }
-    #quizExplanation { margin-top:15px; font-size:20px; color:#fff; background: rgba(0,242,255,0.1); padding: 15px; border-radius: 10px; display:none; text-align:center; border: 1px solid var(--primary); }
+    #quizArea { display:none; flex-direction:column; gap:12px; max-width:600px; margin: 0 auto; }
+    .opt-btn { padding:15px; background:rgba(255,255,255,0.05); border:1px solid var(--primary); color:#fff; cursor:pointer; border-radius:8px; font-size:18px; transition:0.3s; }
+    .correct { background: var(--success) !important; border-color: #fff; }
+    .wrong { background: var(--error) !important; border-color: #fff; }
+    #explanation { margin-top:15px; font-size:18px; color:var(--primary); display:none; background:rgba(0,0,0,0.5); padding:10px; border-radius:5px; }
 
-    .btn-panel { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; gap: 20px; z-index: 1000; }
-    .btn-kam { padding:20px 50px; font-size:20px; background:var(--primary); color:#000; border:none; border-radius:50px; cursor:pointer; font-weight:bold; box-shadow: 0 0 25px var(--primary); text-transform: uppercase; }
-    #btnNext { display:none; background: #fff; color: #000; }
-
-    #explanationBox { position:absolute; bottom:140px; left:30px; width:350px; padding:25px; background: rgba(0,242,255,0.15); border-left: 6px solid var(--primary); font-size:18px; opacity:0; z-index:60; pointer-events: none; }
-
-    #indicators { position:absolute; right:40px; top:50%; transform:translateY(-50%); display:none; flex-direction:column; gap:20px; z-index:100; }
-    .bar-container { display: flex; align-items: center; gap: 15px; }
-    .bar-label { font-size: 12px; width: 70px; text-align: right; color: var(--primary); font-weight: bold; }
-    .bar { width:12px; height:70px; background:rgba(255,255,255,0.1); border-radius:6px; position:relative; overflow: hidden; }
-    .fill { position:absolute; bottom:0; width:100%; height:0%; background:var(--primary); transition: height 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-
-    #breathContainer { display:none; position:fixed; inset:0; flex-direction:column; justify-content:center; align-items:center; z-index:150; background: var(--bg); }
-    #breathCircle { width: 250px; height: 250px; border-radius: 50%; background: radial-gradient(circle, #00f2ff 0%, #0044ff 100%); box-shadow: 0 0 100px #00f2ff; display:flex; justify-content:center; align-items:center; font-weight:bold; font-size:28px; color:white; transition: all 4s ease-in-out; z-index: 151; }
-    #scienceText { position: absolute; bottom: 15%; width: 80%; text-align: center; color: #00f2ff; font-size: 22px; font-style: italic; line-height: 1.4; }
-
-    #finalModal { display:none; position:fixed; inset:0; background:var(--bg); z-index:2000; flex-direction:column; justify-content:center; align-items:center; padding:50px; text-align:center; }
+    /* Paneles de Control */
+    .btn-panel { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; gap: 15px; z-index: 1000; }
+    .btn-ka { padding:12px 30px; font-size:16px; background:var(--primary); color:#000; border:none; border-radius:50px; cursor:pointer; font-weight:bold; box-shadow: 0 0 15px var(--primary); }
+    #btnContinue, #btnNextQuiz, #btnFinishMission { display:none; }
     
-    .word { position:absolute; font-size:26px; color:var(--primary); font-weight:bold; cursor:pointer; animation: float 6s linear forwards; white-space: nowrap; user-select: none; }
-    @keyframes float { 0%{transform:translateY(0); opacity:0;} 10%{opacity:1;} 90%{opacity:1;} 100%{transform:translateY(-500px); opacity:0;} }
+    /* Patrones / Indicators */
+    #indicators { position:absolute; right:20px; top:50%; transform:translateY(-50%); display:none; flex-direction:column; gap:10px; z-index:100; }
+    .bar-wrap { display: flex; align-items: center; gap: 8px; }
+    .bar-lbl { font-size: 9px; width: 50px; text-align: right; color: var(--primary); }
+    .bar-bg { width:8px; height:50px; background:rgba(255,255,255,0.1); border-radius:4px; position:relative; }
+    .bar-fill { position:absolute; bottom:0; width:100%; height:0%; background:var(--primary); transition: height 0.4s; }
+
+    /* Breath / Silence */
+    #breathLayer { display:none; position:fixed; inset:0; flex-direction:column; justify-content:center; align-items:center; z-index:150; background: var(--bg); }
+    #breathCircle { width: 220px; height: 220px; border-radius: 50%; background: radial-gradient(circle, #00f2ff 0%, #0044ff 100%); box-shadow: 0 0 80px #00f2ff; display:flex; justify-content:center; align-items:center; font-weight:bold; font-size:24px; transition: 4s ease-in-out; }
+    #scienceInfo { margin-top: 50px; width: 70%; text-align: center; color: var(--primary); font-size: 19px; line-height:1.4; }
+
+    /* Word Animation */
+    .floating-word { position:absolute; font-size:22px; color:var(--primary); font-weight:bold; cursor:pointer; animation: floatUp 6s linear forwards; white-space: nowrap; z-index: 80; }
+    @keyframes floatUp { 0%{transform:translateY(0); opacity:0;} 10%{opacity:1;} 90%{opacity:1;} 100%{transform:translateY(-500px); opacity:0;} }
+
+    #explanationBox { position:absolute; bottom:120px; left:30px; width:280px; padding:15px; background: rgba(0,242,255,0.1); border-left: 4px solid var(--primary); font-size:14px; opacity:0; pointer-events:none; }
 </style>
 </head>
 <body>
 
-<div id="timer">05:00</div>
-<div id="centerText">SISTEMA NEURAL ACTIVADO</div>
+<div id="timer">00:00</div>
 
-<div id="quizContainer"></div>
-<div id="quizExplanation"></div>
-
-<div class="btn-panel">
-    <button id="btnStart" class="btn-kam" onclick="Engine.start()">INICIAR SESIÓN</button>
-    <button id="btnNext" class="btn-kam" onclick="Engine.nextQuiz()">SIGUIENTE</button>
-    <button id="btnLang" class="btn-kam" onclick="Engine.toggleLang()">ESP</button>
+<div id="mainDisplay">
+    <div id="textNarrator">Iniciando KaMiZen...</div>
+    <div id="quizArea"></div>
+    <div id="explanation"></div>
 </div>
 
 <div id="explanationBox">
@@ -60,46 +60,44 @@
 
 <div id="indicators"></div>
 
-<div id="breathContainer">
+<div id="breathLayer">
     <div id="breathCircle">IDLE</div>
-    <div id="scienceText"></div>
+    <div id="scienceInfo"></div>
 </div>
 
-<div id="finalModal">
-    <h1 id="diagTitle" style="color:var(--primary); font-size: 50px;">DIAGNÓSTICO FINAL</h1>
-    <div id="diagText" style="margin:40px 0; font-size:24px; line-height:1.8; max-width: 900px;"></div>
-    <button class="btn-kam" onclick="location.reload()">REINICIAR PROGRAMA</button>
+<div class="btn-panel">
+    <button id="btnBack" class="btn-ka" style="background:#444; color:#fff;" onclick="location.reload()">BACK</button>
+    <button id="btnClear" class="btn-ka" style="background:#ff4444;" onclick="localStorage.clear(); location.reload();">LIMPIAR CACHE</button>
+    <button id="btnStart" class="btn-ka" onclick="KaMiZen.start()">EMPEZAR</button>
+    <button id="btnContinue" class="btn-ka" onclick="KaMiZen.nextStep()">CONTINUAR</button>
+    <button id="btnNextQuiz" class="btn-ka" onclick="KaMiZen.processTrivia()">SIGUIENTE PREGUNTA</button>
+    <button id="btnFinishMission" class="btn-ka" onclick="KaMiZen.cycle2()">CONTINUAR A CICLO 2</button>
 </div>
 
-<audio id="bgMusic" loop preload="auto" src="https://assets.mixkit.co/music/preview/mixkit-tech-house-vibes-130.mp3"></audio>
-<audio id="sfxBreak" preload="auto" src="https://www.soundjay.com/misc/sounds/glass-break-01.mp3"></audio>
+<audio id="bgMusic" loop src="https://assets.mixkit.co/music/preview/mixkit-tech-house-vibes-130.mp3"></audio>
+<audio id="sfxCorrect" src="https://www.myinstants.com/media/sounds/correct.mp3"></audio>
+<audio id="sfxWrong" src="https://www.myinstants.com/media/sounds/wrong.mp3"></audio>
 
 <script>
-const Engine = (() => {
-    let state = { 
-        lang: 'en', phase: 'init', index: 1, 
-        stats: {}, clicks: 0, data: null, 
-        quizIndex: 0, cycle: 1
+const KaMiZen = (() => {
+    let state = {
+        lang: 'es', phase: 'intro', data: null, 
+        stats: {}, quizIdx: 0, timer: null
     };
 
     const pillars = {
-        "PURPOSE": { cat: "Core", color: "#ff00ff", en: "Your internal 'Why'.", es: "Tu 'Por qué' interno." },
-        "DISCIPLINE": { cat: "Action", color: "#00ff88", en: "Consistency over intensity.", es: "Consistencia sobre intensidad." },
-        "RESILIENCE": { cat: "Spirit", color: "#ffa500", en: "Absorb chaos, transform it.", es: "Absorbe el caos, transfórmalo." },
-        "WEALTH": { cat: "Value", color: "#ffd700", en: "Result of provided value.", es: "Resultado del valor aportado." },
-        "STRATEGY": { cat: "Mind", color: "#4444ff", en: "Wisdom in management.", es: "Sabiduría en la gestión." }
+        "PROPOSITO": { cat: "Core", en: "Your Why.", es: "Tu Porqué interno." },
+        "DISCIPLINA": { cat: "Action", en: "Consistency.", es: "Consistencia pura." },
+        "RESILIENCIA": { cat: "Spirit", en: "Absorb chaos.", es: "Absorber el caos." },
+        "RIQUEZA": { cat: "Value", en: "Value provided.", es: "Valor aportado." }
     };
 
     const speak = (text, callback) => {
         window.speechSynthesis.cancel();
-        // Limpieza total de signos para lectura de narrador
-        const clean = text.replace(/[\\/_.,()!?;:-]/g, ' ');
-        const msg = new SpeechSynthesisUtterance(clean);
+        const msg = new SpeechSynthesisUtterance(text.replace(/[\\/_.,()]/g, ' '));
         const voices = window.speechSynthesis.getVoices();
-        // Prioridad a voz masculina pausada
-        msg.voice = voices.find(v => v.name.includes("David") || v.name.includes("Male") || v.name.includes("Google US English")) || voices[0];
-        msg.rate = 0.85; 
-        msg.pitch = 0.9;
+        msg.voice = voices.find(v => v.name.includes("David") || v.name.includes("Male")) || voices[0];
+        msg.rate = 0.8; 
         msg.onend = callback;
         window.speechSynthesis.speak(msg);
     };
@@ -108,149 +106,149 @@ const Engine = (() => {
         document.getElementById("btnStart").style.display = "none";
         const res = await fetch("/api/session/start");
         state.data = await res.json();
-        playSequence("story");
+        playStories();
     };
 
-    const playSequence = (type) => {
-        state.phase = type;
-        const raw = type === "story" ? state.data.story[state.lang] : state.data.mission.b[0].tx[state.lang];
-        document.getElementById("centerText").innerText = raw;
-        
-        speak(raw, () => {
-            if(type === "story") playSequence("mission");
-            else startTrivia();
+    const playStories = () => {
+        state.phase = 'stories';
+        const txt = state.data.story[state.lang];
+        document.getElementById("textNarrator").innerText = txt;
+        speak(txt, () => {
+            document.getElementById("btnContinue").style.display = "block";
         });
     };
 
-    const startTrivia = () => {
-        state.phase = "quiz";
-        document.getElementById("centerText").innerText = "";
-        document.getElementById("quizContainer").style.display = "flex";
-        loadQuestion();
+    const nextStep = () => {
+        document.getElementById("btnContinue").style.display = "none";
+        if(state.phase === 'stories') playCycle(1);
+        else if(state.phase === 'diag1') playMission();
+        else if(state.phase === 'diag2') playSilence();
     };
 
-    const loadQuestion = () => {
-        const questions = state.data.mission.b[0].qs;
-        if(state.quizIndex >= questions.length) {
-            document.getElementById("quizContainer").style.display = "none";
-            startWordsGame(1);
-            return;
-        }
-
-        const q = questions[state.quizIndex];
-        const container = document.getElementById("quizContainer");
-        container.innerHTML = `<div style="font-size:26px; font-weight:bold; margin-bottom:20px; text-align:center;">${q.q[state.lang]}</div>`;
-        document.getElementById("quizExplanation").style.display = "none";
-        document.getElementById("btnNext").style.display = "none";
-
-        q.o[state.lang].forEach((opt, i) => {
-            const btn = document.createElement("button");
-            btn.className = "option-btn";
-            btn.innerText = opt;
-            btn.onclick = () => validate(i, q.a, q.e[state.lang]);
-            container.appendChild(btn);
-        });
-        
-        speak(q.q[state.lang], () => {});
-    };
-
-    const validate = (idx, correct, exp) => {
-        const btns = document.querySelectorAll(".option-btn");
-        const isCorrect = (idx === correct);
-        
-        btns[idx].classList.add(isCorrect ? "correct" : "wrong");
-        btns.forEach(b => b.disabled = true);
-
-        const feedback = isCorrect ? (state.lang === 'en' ? "Correct." : "Correcto.") : (state.lang === 'en' ? "Incorrect." : "Incorrecto.");
-        document.getElementById("quizExplanation").innerText = exp;
-        document.getElementById("quizExplanation").style.display = "block";
-        document.getElementById("btnNext").style.display = "block";
-
-        speak(`${feedback} ${exp}`, () => {});
-    };
-
-    const nextQuiz = () => {
-        state.quizIndex++;
-        loadQuestion();
-    };
-
-    const startWordsGame = (cycle) => {
-        state.cycle = cycle;
-        state.phase = 'game';
-        document.getElementById("quizExplanation").style.display = "none";
-        document.getElementById("btnNext").style.display = "none";
+    const playCycle = (num) => {
+        state.phase = 'cycle' + num;
+        document.getElementById("textNarrator").innerText = "";
+        document.getElementById("timer").style.display = "block";
         document.getElementById("indicators").style.display = "flex";
-        initIndicators();
+        initBars();
         
-        const music = document.getElementById("bgMusic");
-        music.volume = 0.5;
-        music.play();
+        document.getElementById("bgMusic").play();
+        let timeLeft = 300; 
         
-        let timeLeft = 300; // 5 minutos exactos
-        const loop = setInterval(() => {
+        state.timer = setInterval(() => {
             timeLeft--;
             document.getElementById("timer").innerText = formatTime(timeLeft);
-            spawnWord();
-
-            if (300 - timeLeft >= 60) document.getElementById("explanationBox").style.opacity = "0";
-
-            if (timeLeft <= 0) {
-                clearInterval(loop);
-                if(state.cycle === 1) startWordsGame(2);
-                else runSilence();
+            spawnWord(timeLeft);
+            if(timeLeft <= 0) {
+                clearInterval(state.timer);
+                showDiagnosis(num);
             }
         }, 1000);
     };
 
-    const spawnWord = () => {
+    const spawnWord = (timeLeft) => {
         const keys = Object.keys(pillars);
         const key = keys[Math.floor(Math.random()*keys.length)];
-        const p = pillars[key];
         const el = document.createElement("div");
-        el.className = "word";
+        el.className = "floating-word";
         el.innerText = key;
-        el.style.left = (Math.random() * 70 + 15) + "%";
-        el.style.top = "95%";
-        el.style.color = p.color;
-
+        el.style.left = (Math.random()*70 + 10) + "%";
+        el.style.top = "90%";
+        
         el.onclick = () => {
-            const sfx = document.getElementById("sfxBreak").cloneNode();
-            sfx.volume = 0.6;
-            sfx.play();
-            state.clicks++;
-            state.stats[p.cat] = (state.stats[p.cat] || 0) + 1;
+            state.stats[pillars[key].cat] = (state.stats[pillars[key].cat] || 0) + 1;
             updateBars();
-
-            if (300 - parseInt(document.getElementById("timer").innerText.split(":")[1]) < 60) {
-                document.getElementById("explanationBox").style.opacity = "1";
+            if(300 - timeLeft <= 60) {
+                const box = document.getElementById("explanationBox");
+                box.style.opacity = "1";
                 document.getElementById("expTitle").innerText = key;
-                document.getElementById("expBody").innerText = p[state.lang];
+                document.getElementById("expBody").innerText = pillars[key][state.lang];
             }
             el.remove();
         };
         document.body.appendChild(el);
     };
 
-    const runSilence = async () => {
-        state.phase = 'silence';
+    const showDiagnosis = (num) => {
+        state.phase = 'diag' + num;
         document.getElementById("bgMusic").pause();
-        document.getElementById("indicators").style.display = "none";
-        document.getElementById("breathContainer").style.display = "flex";
+        const top = Object.keys(state.stats).reduce((a,b) => state.stats[a] > state.stats[b] ? a : b, "Balance");
+        const diag = `Diagnóstico Neural ${num}: Tu interacción muestra un enfoque predominante en ${top}. Coherencia estabilizada.`;
+        document.getElementById("textNarrator").innerText = diag;
+        document.getElementById("timer").style.display = "none";
+        speak(diag, () => {
+            document.getElementById("btnContinue").style.display = "block";
+        });
+    };
 
-        let t = Math.round(Math.min(30 + (state.index - 1) * 5, 180));
-        document.getElementById("scienceText").innerText = state.lang === 'en' ? 
-            "Neuro-plasticity requires silence. The brain is now rewriting wealth-creation circuits." : 
-            "La neuro-plasticidad requiere silencio. El cerebro está reescribiendo circuitos de creación de riqueza.";
+    const playMission = () => {
+        state.phase = 'mission';
+        const missionText = state.data.mission.b[0].tx[state.lang];
+        document.getElementById("textNarrator").innerText = missionText;
+        speak(missionText, () => {
+            processTrivia();
+        });
+    };
 
-        while (t > 0) {
-            document.getElementById("timer").innerText = formatTime(t);
-            await breathStep("INHALA / INHALE", 1.8, 4000);
-            await breathStep("RETIENE / HOLD", 1.8, 4000);
-            await breathStep("EXHALA / EXHALE", 1.0, 4000);
-            t -= 12;
-            if(t < 0) t = 0;
+    const processTrivia = () => {
+        const q = state.data.mission.b[0].qs[state.quizIdx];
+        if(!q) {
+            document.getElementById("quizArea").style.display = "none";
+            document.getElementById("btnNextQuiz").style.display = "none";
+            document.getElementById("btnFinishMission").style.display = "block";
+            return;
         }
-        showFinalDiag();
+        
+        document.getElementById("btnNextQuiz").style.display = "none";
+        document.getElementById("explanation").style.display = "none";
+        const area = document.getElementById("quizArea");
+        area.style.display = "flex";
+        area.innerHTML = `<p>${q.q[state.lang]}</p>`;
+        
+        q.o[state.lang].forEach((opt, i) => {
+            const b = document.createElement("button");
+            b.className = "opt-btn";
+            b.innerText = opt;
+            b.onclick = () => {
+                const isCorrect = (i === q.a);
+                b.classList.add(isCorrect ? 'correct' : 'wrong');
+                document.querySelectorAll(".opt-btn").forEach(btn => btn.onclick = null);
+                
+                const feedback = isCorrect ? "Correcto" : "Incorrecto";
+                document.getElementById(isCorrect ? "sfxCorrect" : "sfxWrong").play();
+                
+                const expTxt = `${feedback}. ${q.e[state.lang]}`;
+                document.getElementById("explanation").innerText = q.e[state.lang];
+                document.getElementById("explanation").style.display = "block";
+                
+                speak(expTxt, () => {
+                    state.quizIdx++;
+                    document.getElementById("btnNextQuiz").style.display = "block";
+                });
+            };
+            area.appendChild(b);
+        });
+        speak(q.q[state.lang]);
+    };
+
+    const playSilence = async () => {
+        state.phase = 'silence';
+        document.getElementById("indicators").style.display = "none";
+        document.getElementById("breathLayer").style.display = "flex";
+        document.getElementById("scienceInfo").innerText = "El silencio desactiva la Amígdala y sincroniza el corazón con el cerebro.";
+        
+        let t = 60; // Ejemplo 1 min
+        document.getElementById("timer").style.display = "block";
+
+        while(t > 0) {
+            document.getElementById("timer").innerText = formatTime(t);
+            await breathStep("INHALE", 1.8, 4000);
+            await breathStep("HOLD", 1.8, 4000);
+            await breathStep("EXHALE", 1.0, 4000);
+            t -= 12;
+        }
+        alert("Sesión KaMiZen Completada.");
+        location.reload();
     };
 
     const breathStep = (txt, scale, time) => {
@@ -262,27 +260,18 @@ const Engine = (() => {
         });
     };
 
-    const showFinalDiag = () => {
-        document.getElementById("breathContainer").style.display = "none";
-        document.getElementById("finalModal").style.display = "flex";
-        const top = Object.keys(state.stats).reduce((a, b) => state.stats[a] > state.stats[b] ? a : b, "Equilibrio");
-        document.getElementById("diagText").innerText = state.lang === 'en' ? 
-            `Analysis complete. High neural density detected in ${top}. Efficiency increased by 18%.` : 
-            `Análisis completo. Alta densidad neural detectada en ${top}. Eficiencia incrementada en un 18%.`;
-    };
-
-    const initIndicators = () => {
+    const initBars = () => {
         const ind = document.getElementById("indicators");
         ind.innerHTML = "";
         Object.keys(pillars).forEach(k => {
-            ind.innerHTML += `<div class="bar-container"><div class="bar-label">${k}</div><div class="bar"><div class="fill" id="bar-${pillars[k].cat}"></div></div></div>`;
+            ind.innerHTML += `<div class="bar-wrap"><div class="bar-lbl">${k}</div><div class="bar-bg"><div class="bar-fill" id="bar-${pillars[k].cat}"></div></div></div>`;
         });
     };
 
     const updateBars = () => {
         Object.keys(state.stats).forEach(cat => {
             const el = document.getElementById(`bar-${cat}`);
-            if(el) el.style.height = Math.min(state.stats[cat] * 8, 100) + "%";
+            if(el) el.style.height = Math.min(state.stats[cat]*10, 100) + "%";
         });
     };
 
@@ -292,13 +281,7 @@ const Engine = (() => {
         return `${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
     };
 
-    return {
-        start, nextQuiz,
-        toggleLang: () => {
-            state.lang = state.lang === 'en' ? 'es' : 'en';
-            document.getElementById("btnLang").innerText = state.lang === 'en' ? 'ESP' : 'ENG';
-        }
-    };
+    return { start, nextStep, processTrivia, cycle2: () => playCycle(2) };
 })();
 </script>
 </body>
