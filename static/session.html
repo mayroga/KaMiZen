@@ -9,169 +9,210 @@
 body {
     margin: 0;
     padding: 0;
-    background: #0b0f1a;
-    color: white;
+    background: radial-gradient(circle, #0b0f1a, #05070d);
+    color: #ffffff;
     font-family: Arial, sans-serif;
     overflow: hidden;
 }
 
+/* START SCREEN */
 #startScreen {
     position: fixed;
-    width: 100%;
-    height: 100%;
+    inset: 0;
     background: #0b0f1a;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 20px;
+    gap: 18px;
+    z-index: 10;
 }
 
-input, button {
+#nameInput {
     padding: 12px;
     font-size: 18px;
+    width: 240px;
+    border-radius: 6px;
+    border: none;
 }
 
+button {
+    padding: 12px 22px;
+    font-size: 18px;
+    border-radius: 6px;
+    border: none;
+    background: #00f2ff;
+    cursor: pointer;
+}
+
+/* UI */
 #centerText {
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%,-50%);
+    font-size: 26px;
     text-align: center;
     width: 80%;
-    font-size: 22px;
 }
 
 #timer {
     position: absolute;
     top: 10px;
     right: 10px;
-    font-size: 16px;
+    font-size: 18px;
+    color: #00f2ff;
 }
 
+/* FLOAT WORDS */
 .word {
     position: absolute;
-    color: #00f2ff;
     font-size: 16px;
-    animation: float 5s linear forwards;
+    color: #00f2ff;
+    opacity: 0.9;
+    animation: floatUp 5s linear forwards;
 }
 
-@keyframes float {
-    from { transform: translateY(0); opacity: 1; }
-    to { transform: translateY(-200px); opacity: 0; }
+@keyframes floatUp {
+    0% { transform: translateY(0); opacity: 1; }
+    100% { transform: translateY(-250px); opacity: 0; }
 }
+
+.hidden { display:none; }
+
 </style>
 </head>
 
 <body>
 
-<!-- ================= START SCREEN ================= -->
+<!-- START -->
 <div id="startScreen">
     <h1>KAMIZEN LIFE SYSTEM</h1>
     <input id="nameInput" placeholder="Enter your name">
     <button onclick="startApp()">START</button>
-    <div id="error" style="color:red;"></div>
 </div>
 
-<!-- ================= UI ================= -->
-<div id="timer"></div>
+<!-- UI -->
 <div id="centerText"></div>
+<div id="timer"></div>
 
 <script>
 
-let userName = localStorage.getItem("kamizen_name") || "";
-let missionIndex = parseInt(localStorage.getItem("mission_index") || "1");
+let user = localStorage.getItem("kamizen_name") || "";
+let running = false;
 
-if(userName){
-    document.getElementById("nameInput").value = userName;
+if(user){
+    document.getElementById("nameInput").value = user;
 }
 
 /* =========================
-   SAFE START
+   START APP
 ========================= */
 function startApp(){
 
-    const input = document.getElementById("nameInput").value.trim();
-    const error = document.getElementById("error");
+    const name = document.getElementById("nameInput").value.trim();
+    if(!name) return;
 
-    if(!input){
-        error.innerText = "Enter a valid name";
-        return;
-    }
+    user = name;
+    localStorage.setItem("kamizen_name", user);
 
-    userName = input;
-    localStorage.setItem("kamizen_name", userName);
+    document.getElementById("startScreen").classList.add("hidden");
 
-    document.getElementById("startScreen").style.display = "none";
-
-    runCycle().catch(err => {
-        console.error("SYSTEM ERROR:", err);
-        document.getElementById("centerText").innerText =
-            "SYSTEM ERROR - RELOADING...";
-        setTimeout(()=>location.reload(), 3000);
-    });
-}
-
-/* =========================
-   LOAD DATA SAFE
-========================= */
-async function loadData(index){
-    try {
-        const res = await fetch(`/api/session/data/${index}`);
-
-        if(!res.ok) throw new Error("Backend error");
-
-        return await res.json();
-
-    } catch (e) {
-        console.error("Fetch error:", e);
-
-        return {
-            story: { story: { en: "ERROR LOADING STORY" } },
-            mission: { b: [{ tx: { en: "ERROR LOADING MISSION" } }] }
-        };
+    if(!running){
+        running = true;
+        engineLoop();
     }
 }
 
 /* =========================
-   MAIN LOOP
+   MAIN ENGINE LOOP
 ========================= */
-async function runCycle(){
+async function engineLoop(){
 
     while(true){
 
-        let index = parseInt(localStorage.getItem("mission_index") || "1");
+        let data = await safeFetch("/api/session/start");
 
-        const data = await loadData(index);
+        if(!data || !data.story){
+            show("ERROR LOADING STORY");
+            await wait(2000);
+            continue;
+        }
 
-        await showText(data.story?.story?.en || "NO STORY", 5000);
+        const index = data.index || 1;
 
+        const story = safeText(data.story, "en", "NO STORY");
+        const mission = safeMission(data.mission);
+
+        // 1. STORY
+        show(story);
+        await wait(5000);
+
+        // 2. GAME
         await floatingGame(300);
 
-        await showText(data.mission?.b?.[0]?.tx?.en || "NO MISSION", 5000);
+        // 3. MISSION
+        show(mission);
+        await wait(5000);
 
+        // 4. GAME
         await floatingGame(300);
 
-        await breathingPhase(index);
+        // 5. BREATH + SILENCE
+        await breathingSystem(index);
 
-        nextIndex();
+        // LOOP CONTINUA SOLO
     }
 }
 
 /* =========================
-   TEXT DISPLAY SAFE
+   SAFE FETCH
 ========================= */
-function showText(text, time){
-    return new Promise(resolve => {
+async function safeFetch(url){
+    try{
+        const res = await fetch(url);
+        return await res.json();
+    } catch(e){
+        console.error(e);
+        return null;
+    }
+}
 
-        const el = document.getElementById("centerText");
-        el.innerText = text;
+/* =========================
+   SAFE TEXT HANDLING
+========================= */
+function safeText(obj, lang, fallback){
 
-        setTimeout(() => {
-            el.innerText = "";
-            resolve();
-        }, time);
-    });
+    try{
+        return obj?.[lang] ||
+               obj?.en ||
+               obj?.text ||
+               fallback;
+    }catch(e){
+        return fallback;
+    }
+}
+
+function safeMission(m){
+
+    if(!m) return "MISSION";
+
+    return m?.t?.en ||
+           m?.en ||
+           m?.title ||
+           m?.b?.[0]?.tx?.en ||
+           "MISSION";
+}
+
+/* =========================
+   UI
+========================= */
+function show(text){
+    document.getElementById("centerText").innerText = text || "";
+}
+
+function wait(ms){
+    return new Promise(r => setTimeout(r, ms));
 }
 
 /* =========================
@@ -183,16 +224,15 @@ function floatingGame(duration){
 
         let t = duration;
 
-        const timer = setInterval(() => {
+        const loop = setInterval(() => {
 
             t--;
-
             document.getElementById("timer").innerText = t;
 
             spawnWord();
 
             if(t <= 0){
-                clearInterval(timer);
+                clearInterval(loop);
                 resolve();
             }
 
@@ -200,33 +240,33 @@ function floatingGame(duration){
     });
 }
 
-/* =========================
-   WORDS
-========================= */
 function spawnWord(){
 
-    const words = ["FOCUS","CALM","TRUTH","CONTROL","AWARENESS","DISCIPLINE"];
+    const words = [
+        "FOCUS","CALM","DISCIPLINE",
+        "AWARENESS","CONTROL","TRUTH"
+    ];
 
-    const w = document.createElement("div");
-    w.className = "word";
-    w.innerText = words[Math.floor(Math.random() * words.length)];
+    const el = document.createElement("div");
+    el.className = "word";
+    el.innerText = words[Math.floor(Math.random()*words.length)];
 
-    w.style.left = Math.random() * window.innerWidth + "px";
-    w.style.top = Math.random() * window.innerHeight + "px";
+    el.style.left = Math.random() * window.innerWidth + "px";
+    el.style.top = (window.innerHeight - 50) + "px";
 
-    document.body.appendChild(w);
+    document.body.appendChild(el);
 
-    setTimeout(() => w.remove(), 5000);
+    setTimeout(() => el.remove(), 5000);
 }
 
 /* =========================
-   BREATHING + SILENCE
+   BREATHING SYSTEM
 ========================= */
-function breathingPhase(index){
+function breathingSystem(index){
 
     return new Promise(resolve => {
 
-        let silence = Math.min(30 + index * 5, 180);
+        let silenceTime = Math.min(30 + index * 5, 180);
         let t = 30;
 
         const breath = setInterval(() => {
@@ -238,7 +278,7 @@ function breathingPhase(index){
 
             if(t <= 0){
                 clearInterval(breath);
-                startSilence(silence, resolve);
+                silencePhase(silenceTime, resolve);
             }
 
         }, 1000);
@@ -246,9 +286,9 @@ function breathingPhase(index){
 }
 
 /* =========================
-   SILENCE
+   SILENCE PHASE
 ========================= */
-function startSilence(seconds, resolve){
+function silencePhase(seconds, resolve){
 
     let t = seconds;
 
@@ -265,20 +305,6 @@ function startSilence(seconds, resolve){
         }
 
     }, 1000);
-}
-
-/* =========================
-   INDEX CONTROL
-========================= */
-function nextIndex(){
-
-    let i = parseInt(localStorage.getItem("mission_index") || "1");
-
-    i++;
-
-    if(i > 35) i = 1;
-
-    localStorage.setItem("mission_index", i);
 }
 
 </script>
