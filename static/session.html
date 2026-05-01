@@ -1,313 +1,250 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>KAMIZEN LIFE SYSTEM</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MAYKAMI NEUROGAME</title>
+    <style>
+        :root {
+            --primary: #00f2ff;
+            --bg: #0b0f1a;
+            --text: #ffffff;
+        }
+        body {
+            margin: 0; padding: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            user-select: none;
+        }
 
-<style>
-body {
-    margin: 0;
-    padding: 0;
-    background: radial-gradient(circle, #0b0f1a, #05070d);
-    color: #ffffff;
-    font-family: Arial, sans-serif;
-    overflow: hidden;
-}
+        /* Start Screen */
+        #startScreen {
+            position: fixed; z-index: 100;
+            width: 100%; height: 100%;
+            background: var(--bg);
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            gap: 20px;
+        }
 
-/* START SCREEN */
-#startScreen {
-    position: fixed;
-    inset: 0;
-    background: #0b0f1a;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 18px;
-    z-index: 10;
-}
+        .input-group { display: flex; flex-direction: column; gap: 10px; text-align: center; }
+        input {
+            padding: 12px; border-radius: 8px; border: 1px solid var(--primary);
+            background: rgba(255,255,255,0.1); color: white; font-size: 18px; outline: none;
+        }
 
-#nameInput {
-    padding: 12px;
-    font-size: 18px;
-    width: 240px;
-    border-radius: 6px;
-    border: none;
-}
+        button {
+            padding: 12px 30px; font-size: 18px; cursor: pointer;
+            background: var(--primary); color: var(--bg);
+            border: none; border-radius: 8px; font-weight: bold;
+            transition: transform 0.2s;
+        }
+        button:active { transform: scale(0.95); }
 
-button {
-    padding: 12px 22px;
-    font-size: 18px;
-    border-radius: 6px;
-    border: none;
-    background: #00f2ff;
-    cursor: pointer;
-}
+        /* HUD */
+        #hud {
+            position: absolute; top: 20px; width: 100%;
+            display: flex; justify-content: space-between; padding: 0 20px;
+            box-sizing: border-box; z-index: 50;
+        }
 
-/* UI */
-#centerText {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%,-50%);
-    font-size: 26px;
-    text-align: center;
-    width: 80%;
-}
+        #langToggle {
+            background: transparent; color: var(--primary);
+            border: 1px solid var(--primary); padding: 5px 15px; font-size: 14px;
+        }
 
-#timer {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    font-size: 18px;
-    color: #00f2ff;
-}
+        /* Main Content */
+        #centerContainer {
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center; width: 85%;
+        }
 
-/* FLOAT WORDS */
-.word {
-    position: absolute;
-    font-size: 16px;
-    color: #00f2ff;
-    opacity: 0.9;
-    animation: floatUp 5s linear forwards;
-}
+        #mainText { font-size: 28px; line-height: 1.4; transition: opacity 0.5s; }
+        #explanationText { font-size: 18px; color: #aaa; margin-top: 15px; }
 
-@keyframes floatUp {
-    0% { transform: translateY(0); opacity: 1; }
-    100% { transform: translateY(-250px); opacity: 0; }
-}
+        /* Floating Words */
+        .word {
+            position: absolute; color: var(--primary);
+            font-weight: bold; pointer-events: none;
+            white-space: nowrap; animation: floatUp 4s linear forwards;
+            text-shadow: 0 0 10px rgba(0,242,255,0.5);
+        }
 
-.hidden { display:none; }
+        @keyframes floatUp {
+            from { transform: translateY(0); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            to { transform: translateY(-150px); opacity: 0; }
+        }
 
-</style>
+        /* Buttons fixed at bottom */
+        .footer-tools {
+            position: fixed; bottom: 20px; right: 20px;
+            display: flex; gap: 10px;
+        }
+        .tool-btn { background: #333; color: white; padding: 10px; border-radius: 50%; cursor: pointer; border: none; }
+    </style>
 </head>
-
 <body>
 
-<!-- START -->
 <div id="startScreen">
-    <h1>KAMIZEN LIFE SYSTEM</h1>
-    <input id="nameInput" placeholder="Enter your name">
-    <button onclick="startApp()">START</button>
+    <h1>MAYKAMI NEUROGAME</h1>
+    <div class="input-group">
+        <input id="nameInput" type="text" placeholder="Your Name / Tu Nombre">
+        <button onclick="initSession()">START SESSION</button>
+    </div>
 </div>
 
-<!-- UI -->
-<div id="centerText"></div>
-<div id="timer"></div>
+<div id="hud">
+    <div id="timerDisplay">--</div>
+    <button id="langToggle" onclick="toggleLanguage()">ESPAÑOL</button>
+</div>
+
+<div id="centerContainer">
+    <div id="mainText">Prepare your mind.</div>
+    <div id="explanationText"></div>
+</div>
+
+<div class="footer-tools">
+    <button class="tool-btn" title="Clear" onclick="location.reload()">🗑️</button>
+</div>
 
 <script>
+/* ==========================================
+   CONFIG & DATA
+   ========================================== */
+let currentLang = 'en';
+let userName = "";
+const pillars = [
+    { en: "LIMITS", es: "LÍMITES", descEn: "Learn to say 'no' and protect your personal space.", descEs: "Aprende a decir 'no' y protege tu espacio personal." },
+    { en: "PERSISTENCE", es: "PERSISTENCIA", descEn: "Mistakes are steps, not the end of the road.", descEs: "Los errores son pasos, no el final del camino." },
+    { en: "METHOD", es: "MÉTODO", descEn: "Replace chaos with logical steps. Learn how to learn.", descEs: "Sustituye el caos por pasos lógicos. Aprende a aprender." },
+    { en: "CRITERION", es: "CRITERIO", descEn: "Think before you accept information as truth.", descEs: "Piensa antes de aceptar información como verdad." },
+    { en: "VALUE", es: "VALOR", descEn: "Wealth follows the value you provide to others.", descEs: "La riqueza sigue al valor que aportas a los demás." },
+    { en: "BALANCE", es: "EQUILIBRIO", descEn: "Mind and body are your most precious assets.", descEs: "Mente y cuerpo son tus activos más preciados." },
+    { en: "LOYALTY", es: "LEALTAD", descEn: "Strong bonds built on respect and mutual support.", descEs: "Vínculos sólidos basados en respeto y apoyo mutuo." },
+    { en: "AUTONOMY", es: "AUTONOMÍA", descEn: "Freedom to decide based on principles, not pressure.", descEs: "Libertad de decidir por principios, no por presión." },
+    { en: "ADAPTATION", es: "ADAPTACIÓN", descEn: "Flow and resolve in changing environments.", descEs: "Fluye y resuelve en entornos cambiantes." },
+    { en: "LEGACY", es: "LEGADO", descEn: "Live with purpose so your actions transcend.", descEs: "Vive con propósito para que tus acciones trasciendan." }
+];
 
-let user = localStorage.getItem("kamizen_name") || "";
-let running = false;
-
-if(user){
-    document.getElementById("nameInput").value = user;
-}
-
-/* =========================
-   START APP
-========================= */
-function startApp(){
-
-    const name = document.getElementById("nameInput").value.trim();
+/* ==========================================
+   CORE LOGIC (Fixed for no-freezing)
+   ========================================== */
+function initSession() {
+    const name = document.getElementById("nameInput").value;
     if(!name) return;
+    userName = name;
+    document.getElementById("startScreen").style.display = "none";
+    runCycle();
+}
 
-    user = name;
-    localStorage.setItem("kamizen_name", user);
+function toggleLanguage() {
+    currentLang = (currentLang === 'en') ? 'es' : 'en';
+    document.getElementById("langToggle").innerText = (currentLang === 'en') ? 'ESPAÑOL' : 'ENGLISH';
+}
 
-    document.getElementById("startScreen").classList.add("hidden");
-
-    if(!running){
-        running = true;
-        engineLoop();
+async function runCycle() {
+    // 1. Data Fetch with Timeout/Error handling to prevent freeze
+    let sessionData = { story: "Ready to grow?", mission: "Focus on your pillars." };
+    try {
+        const index = localStorage.getItem("mission_index") || 1;
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 3000); // 3s limit
+        
+        const res = await fetch(`/api/session/data/${index}`, { signal: controller.signal });
+        clearTimeout(timeoutId);
+        if(res.ok) sessionData = await res.json();
+    } catch(e) {
+        console.warn("Backend unavailable, using local buffer.");
     }
+
+    // 2. Story Phase
+    await displayText(sessionData.story, 5000);
+
+    // 3. Floating Game (Pillars Training)
+    await floatingTraining(20); // 20 seconds for demo, change to 300 for 5min
+
+    // 4. Mission Phase
+    await displayText(sessionData.mission, 5000);
+
+    // 5. Breathing Phase
+    await breathingPhase();
+
+    // Loop
+    updateIndex();
+    setTimeout(runCycle, 1000);
 }
 
-/* =========================
-   MAIN ENGINE LOOP
-========================= */
-async function engineLoop(){
-
-    while(true){
-
-        let data = await safeFetch("/api/session/start");
-
-        if(!data || !data.story){
-            show("ERROR LOADING STORY");
-            await wait(2000);
-            continue;
-        }
-
-        const index = data.index || 1;
-
-        const story = safeText(data.story, "en", "NO STORY");
-        const mission = safeMission(data.mission);
-
-        // 1. STORY
-        show(story);
-        await wait(5000);
-
-        // 2. GAME
-        await floatingGame(300);
-
-        // 3. MISSION
-        show(mission);
-        await wait(5000);
-
-        // 4. GAME
-        await floatingGame(300);
-
-        // 5. BREATH + SILENCE
-        await breathingSystem(index);
-
-        // LOOP CONTINUA SOLO
-    }
-}
-
-/* =========================
-   SAFE FETCH
-========================= */
-async function safeFetch(url){
-    try{
-        const res = await fetch(url);
-        return await res.json();
-    } catch(e){
-        console.error(e);
-        return null;
-    }
-}
-
-/* =========================
-   SAFE TEXT HANDLING
-========================= */
-function safeText(obj, lang, fallback){
-
-    try{
-        return obj?.[lang] ||
-               obj?.en ||
-               obj?.text ||
-               fallback;
-    }catch(e){
-        return fallback;
-    }
-}
-
-function safeMission(m){
-
-    if(!m) return "MISSION";
-
-    return m?.t?.en ||
-           m?.en ||
-           m?.title ||
-           m?.b?.[0]?.tx?.en ||
-           "MISSION";
-}
-
-/* =========================
-   UI
-========================= */
-function show(text){
-    document.getElementById("centerText").innerText = text || "";
-}
-
-function wait(ms){
-    return new Promise(r => setTimeout(r, ms));
-}
-
-/* =========================
-   FLOATING GAME
-========================= */
-function floatingGame(duration){
-
+/* ==========================================
+   UI COMPONENTS
+   ========================================== */
+function displayText(text, duration) {
     return new Promise(resolve => {
+        const main = document.getElementById("mainText");
+        main.innerText = (typeof text === 'object') ? (text[currentLang] || text.en) : text;
+        setTimeout(() => {
+            main.innerText = "";
+            resolve();
+        }, duration);
+    });
+}
 
-        let t = duration;
+function floatingTraining(duration) {
+    return new Promise(resolve => {
+        let time = duration;
+        const interval = setInterval(() => {
+            time--;
+            document.getElementById("timerDisplay").innerText = time;
+            
+            // Spawn word
+            const pillar = pillars[Math.floor(Math.random() * pillars.length)];
+            const wordEl = document.createElement("div");
+            wordEl.className = "word";
+            wordEl.innerText = pillar[currentLang];
+            wordEl.style.left = (Math.random() * 70 + 15) + "%";
+            wordEl.style.top = (Math.random() * 70 + 15) + "%";
+            document.body.appendChild(wordEl);
+            
+            // Show explanation in center
+            document.getElementById("mainText").innerText = pillar[currentLang];
+            document.getElementById("explanationText").innerText = pillar['desc' + (currentLang.charAt(0).toUpperCase() + currentLang.slice(1))];
 
-        const loop = setInterval(() => {
+            setTimeout(() => wordEl.remove(), 4000);
 
-            t--;
-            document.getElementById("timer").innerText = t;
-
-            spawnWord();
-
-            if(t <= 0){
-                clearInterval(loop);
+            if(time <= 0) {
+                clearInterval(interval);
+                document.getElementById("explanationText").innerText = "";
                 resolve();
             }
-
-        }, 1000);
+        }, 2000);
     });
 }
 
-function spawnWord(){
-
-    const words = [
-        "FOCUS","CALM","DISCIPLINE",
-        "AWARENESS","CONTROL","TRUTH"
-    ];
-
-    const el = document.createElement("div");
-    el.className = "word";
-    el.innerText = words[Math.floor(Math.random()*words.length)];
-
-    el.style.left = Math.random() * window.innerWidth + "px";
-    el.style.top = (window.innerHeight - 50) + "px";
-
-    document.body.appendChild(el);
-
-    setTimeout(() => el.remove(), 5000);
-}
-
-/* =========================
-   BREATHING SYSTEM
-========================= */
-function breathingSystem(index){
-
+function breathingPhase() {
     return new Promise(resolve => {
-
-        let silenceTime = Math.min(30 + index * 5, 180);
-        let t = 30;
-
-        const breath = setInterval(() => {
-
+        let t = 10; // Reducido para fluidez
+        const b = setInterval(() => {
             t--;
-
-            document.getElementById("centerText").innerText =
-                (t % 2 === 0) ? "INHALE" : "EXHALE";
-
-            if(t <= 0){
-                clearInterval(breath);
-                silencePhase(silenceTime, resolve);
+            const msg = (t % 2 === 0) ? 
+                {en: "INHALE", es: "INHALE"} : {en: "EXHALE", es: "EXHALE"};
+            document.getElementById("mainText").innerText = msg[currentLang];
+            if(t <= 0) {
+                clearInterval(b);
+                resolve();
             }
-
-        }, 1000);
+        }, 2000);
     });
 }
 
-/* =========================
-   SILENCE PHASE
-========================= */
-function silencePhase(seconds, resolve){
-
-    let t = seconds;
-
-    document.getElementById("centerText").innerText = "SILENCE";
-
-    const s = setInterval(() => {
-
-        t--;
-        document.getElementById("timer").innerText = t;
-
-        if(t <= 0){
-            clearInterval(s);
-            resolve();
-        }
-
-    }, 1000);
+function updateIndex() {
+    let i = parseInt(localStorage.getItem("mission_index") || "1");
+    i = (i >= 35) ? 1 : i + 1;
+    localStorage.setItem("mission_index", i);
 }
-
 </script>
-
 </body>
 </html>
