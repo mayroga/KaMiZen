@@ -3,137 +3,111 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>KAMIZEN SYSTEM</title>
+<title>MAYKAMI SYSTEM</title>
 
 <style>
-body{
-    margin:0;
-    background:#05070d;
-    color:#fff;
-    font-family:Arial;
-    overflow:hidden;
-}
+    body {
+        margin:0; background:#05070d; color:#fff;
+        font-family: 'Segoe UI', Arial, sans-serif; overflow:hidden;
+    }
 
-/* =========================
-   START SCREEN
-========================= */
-#startScreen{
-    position:fixed;
-    inset:0;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
-    gap:20px;
-    background:#05070d;
-    z-index:10;
-}
+    #startScreen {
+        position:fixed; inset:0; display:flex; flex-direction:column;
+        justify-content:center; align-items:center; gap:20px;
+        background: radial-gradient(circle, #0b1121 0%, #05070d 100%); z-index:100;
+    }
 
-input{
-    padding:12px;
-    font-size:18px;
-    text-align:center;
-    border:none;
-    border-radius:6px;
-}
+    input {
+        padding:15px; font-size:18px; text-align:center; border:1px solid #00f2ff;
+        border-radius:6px; background: rgba(255,255,255,0.05); color: white;
+    }
 
-button{
-    padding:12px 20px;
-    font-size:18px;
-    cursor:pointer;
-    border:none;
-    border-radius:6px;
-    background:#00f2ff;
-    color:#000;
-}
+    button {
+        padding:15px 30px; font-size:18px; cursor:pointer; border:none;
+        border-radius:6px; background:#00f2ff; color:#000; font-weight: bold;
+    }
 
-/* =========================
-   TIMER (BIG CENTER TOP)
-========================= */
-#timer{
-    position:absolute;
-    top:20px;
-    left:50%;
-    transform:translateX(-50%);
-    font-size:60px;
-    color:#00f2ff;
-    font-weight:bold;
-}
+    /* UI ELEMENTS */
+    #timer {
+        position:absolute; top:20px; left:50%; transform:translateX(-50%);
+        font-size:70px; color:#00f2ff; font-weight:bold; text-shadow: 0 0 20px rgba(0,242,255,0.5);
+    }
 
-/* =========================
-   CENTER TEXT
-========================= */
-#centerText{
-    position:absolute;
-    top:50%;
-    left:50%;
-    transform:translate(-50%,-50%);
-    font-size:32px;
-    width:80%;
-    text-align:center;
-}
+    #explanationBox {
+        position: absolute; bottom: 20px; left: 20px; width: 300px;
+        padding: 15px; background: rgba(0, 242, 255, 0.05);
+        border-left: 4px solid #00f2ff; font-size: 15px; line-height: 1.4;
+        z-index: 50; pointer-events: none; opacity: 0; transition: opacity 0.3s;
+    }
 
-/* =========================
-   WORDS
-========================= */
-.word{
-    position:absolute;
-    font-size:18px;
-    color:#00f2ff;
-    cursor:pointer;
-    animation: float 5s linear forwards;
-}
+    #centerText {
+        position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+        font-size:38px; width:85%; text-align:center; pointer-events: none;
+    }
 
-@keyframes float{
-    0%{transform:translateY(0);opacity:1;}
-    100%{transform:translateY(-250px);opacity:0;}
-}
+    /* WORD & ANIMATION */
+    .word {
+        position:absolute; font-size:22px; color:#00f2ff; cursor:pointer;
+        font-weight: bold; text-shadow: 0 0 10px #00f2ff;
+        animation: float 5s linear forwards;
+    }
 
-/* explosion */
-.explode{
-    transform:scale(2);
-    opacity:0;
-    transition:0.2s;
-}
+    @keyframes float {
+        0%{transform:translateY(0); opacity:0;}
+        10%{opacity:1;}
+        90%{opacity:1;}
+        100%{transform:translateY(-300px); opacity:0;}
+    }
 
+    .tool-btn {
+        position: fixed; bottom: 20px; right: 20px; background: none;
+        border: 1px solid rgba(255,255,255,0.2); color: #555; padding: 5px; cursor: pointer;
+    }
 </style>
 </head>
 
 <body>
 
-<!-- START -->
 <div id="startScreen">
-    <h1>KAMIZEN SYSTEM</h1>
+    <h1 style="letter-spacing: 10px; color:#00f2ff;">MAYKAMI</h1>
     <input id="nameInput" placeholder="Enter Name">
-    <button onclick="startApp()">START</button>
+    <button onclick="startApp()">ACTIVATE SESSION</button>
 </div>
 
-<!-- UI -->
 <div id="timer">00:00</div>
 <div id="centerText"></div>
 
-<!-- ENGINE -->
+<div id="explanationBox">
+    <strong id="expTitle" style="color:#00f2ff; display:block; margin-bottom:5px;"></strong>
+    <span id="expBody"></span>
+</div>
+
+<button class="tool-btn" onclick="location.reload()">🗑️</button>
+
+<!-- AUDIOS -->
+<audio id="bgMusic" loop>
+    <source src="https://assets.mixkit.co/music/preview/mixkit-lo-fi-night-chill-1616.mp3" type="audio/mpeg">
+</audio>
+<audio id="sfxGlass">
+    <source src="https://www.soundjay.com/misc/sounds/glass-break-01.mp3" type="audio/mpeg">
+</audio>
+
 <script src="/static/js/engine.js"></script>
-
 <script>
-
-/* =========================
-   START APP
-========================= */
 function startApp(){
-
     const name = document.getElementById("nameInput").value.trim();
     if(!name) return;
-
     localStorage.setItem("kamizen_name", name);
+    
+    // Música de dopamina (Lo-fi suave)
+    const music = document.getElementById("bgMusic");
+    music.volume = 0.2;
+    music.play();
 
     document.getElementById("startScreen").style.display = "none";
-
-    /* INIT ENGINE */
     Engine.init();
     Engine.start();
 }
-
 </script>
 
 </body>
