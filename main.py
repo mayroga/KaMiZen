@@ -1,8 +1,12 @@
-from flask import send_from_directory
+from flask import Flask, jsonify, request, send_from_directory
+import json
+import os
 
-@app.route("/")
-def index():
-    return send_from_directory("static", "session.html")
+# =========================
+# APP INIT
+# =========================
+app = Flask(__name__, static_folder="static")
+
 # =========================
 # BASE DIR
 # =========================
@@ -24,13 +28,13 @@ def load_state():
 
 def save_state(state):
     with open(STATE_FILE, "w", encoding="utf-8") as f:
-        json.dump(state, f)
+        json.dump(state, f, ensure_ascii=False, indent=2)
 
 
 STATE = load_state()
 
 # =========================
-# LOAD JSON
+# LOAD JSON FILES
 # =========================
 def load_json(file_name):
     path = os.path.join(BASE_DIR, file_name)
@@ -38,50 +42,52 @@ def load_json(file_name):
         return json.load(f)
 
 # =========================
-# STORIES
+# STORIES SYSTEM
 # =========================
 def get_story(index):
     data = load_json("stories.json")
-    for s in data["stories"]:
-        if s["id"] == index:
-            return s
+
+    for story in data.get("stories", []):
+        if story.get("id") == index:
+            return story
+
     return None
 
 # =========================
-# MISSIONS ROUTER
+# MISSIONS ROUTER SYSTEM
 # =========================
 def get_mission(index):
 
     if 1 <= index <= 7:
-        file = "missions_01_07.json"
+        file_name = "missions_01_07.json"
         key = "missions"
 
     elif 8 <= index <= 14:
-        file = "missions_08_14.json"
+        file_name = "missions_08_14.json"
         key = "missions"
 
     elif 15 <= index <= 21:
-        file = "missions_15_21.json"
+        file_name = "missions_15_21.json"
         key = "missions"
 
     elif 22 <= index <= 28:
-        file = "missions_22_28.json"
+        file_name = "missions_22_28.json"
         key = "missions"
 
     else:
-        file = "missions_29_35.json"
+        file_name = "missions_29_35.json"
         key = "ses"  # importante: este JSON usa "ses"
 
-    data = load_json(file)
+    data = load_json(file_name)
 
-    for m in data[key]:
-        if m["id"] == index:
-            return m
+    for mission in data.get(key, []):
+        if mission.get("id") == index:
+            return mission
 
     return None
 
 # =========================
-# INDEX CONTROL (PERSISTENT)
+# INDEX CONTROL (PERSISTENT LOOP 1-35)
 # =========================
 def get_index():
     return STATE.get("mission_index", 1)
@@ -96,7 +102,14 @@ def increment_index():
     save_state(STATE)
 
 # =========================
-# API START SESSION
+# ROUTE: HOME
+# =========================
+@app.route("/")
+def index():
+    return send_from_directory("static", "session.html")
+
+# =========================
+# API: START SESSION
 # =========================
 @app.route("/api/session/start")
 def start_session():
@@ -106,7 +119,7 @@ def start_session():
     story = get_story(index)
     mission = get_mission(index)
 
-    # avanzar al siguiente ciclo inmediatamente
+    # avanzar inmediatamente al siguiente ciclo
     increment_index()
 
     return jsonify({
@@ -116,14 +129,19 @@ def start_session():
     })
 
 # =========================
-# RESET (OPTIONAL DEBUG)
+# API: RESET (DEBUG)
 # =========================
 @app.route("/api/reset")
 def reset():
+
     global STATE
     STATE = {"mission_index": 1}
     save_state(STATE)
-    return jsonify({"status": "reset", "index": 1})
+
+    return jsonify({
+        "status": "reset",
+        "index": 1
+    })
 
 # =========================
 # RUN SERVER
