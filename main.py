@@ -5,9 +5,16 @@ import os
 app = Flask(__name__, static_folder="static")
 
 # =========================
-# BASE PATH
+# BASE DIR
 # =========================
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# =========================
+# STATE (SIMPLE MEMORY LOOP)
+# =========================
+STATE = {
+    "index": 1
+}
 
 # =========================
 # LOAD JSON SAFE
@@ -18,79 +25,94 @@ def load_json(file_name):
         return json.load(f)
 
 # =========================
-# STORIES PROVIDER
+# STORIES (EXACT KEY: stories.json)
 # =========================
-@app.route("/api/stories/<int:index>")
 def get_story(index):
-    try:
-        data = load_json("stories.json")
+    data = load_json("stories.json")
 
-        for item in data["stories"]:
-            if item["id"] == index:
-                return jsonify(item)
+    for item in data.get("stories", []):
+        if item.get("id") == index:
+            return item
 
-        return jsonify({"error": "story_not_found"})
-
-    except Exception as e:
-        return jsonify({"error": str(e)})
+    return None
 
 # =========================
-# MISSIONS PROVIDER (ROUTER SIMPLE)
+# MISSIONS ROUTER (EXACT FILE MAPPING)
 # =========================
-@app.route("/api/missions/<int:index>")
 def get_mission(index):
 
-    try:
-        if 1 <= index <= 7:
-            file = "missions_01_07.json"
-            key = "missions"
+    if 1 <= index <= 7:
+        file_name = "missions_01_07.json"
+        key = "missions"
 
-        elif 8 <= index <= 14:
-            file = "missions_08_14.json"
-            key = "missions"
+    elif 8 <= index <= 14:
+        file_name = "missions_08_14.json"
+        key = "missions"
 
-        elif 15 <= index <= 21:
-            file = "missions_15_21.json"
-            key = "missions"
+    elif 15 <= index <= 21:
+        file_name = "missions_15_21.json"
+        key = "missions"
 
-        elif 22 <= index <= 28:
-            file = "missions_22_28.json"
-            key = "missions"
+    elif 22 <= index <= 28:
+        file_name = "missions_22_28.json"
+        key = "missions"
 
-        else:
-            file = "missions_29_35.json"
-            key = "ses"
+    else:
+        file_name = "missions_29_35.json"
+        key = "missions"
 
-        data = load_json(file)
+    data = load_json(file_name)
 
-        for m in data[key]:
-            if m["id"] == index:
-                return jsonify(m)
+    for item in data.get(key, []):
+        if item.get("id") == index:
+            return item
 
-        return jsonify({"error": "mission_not_found"})
-
-    except Exception as e:
-        return jsonify({"error": str(e)})
+    return None
 
 # =========================
-# SESSION ENTRY (STATIC)
+# SESSION API (SINGLE SOURCE OF TRUTH)
+# =========================
+@app.route("/api/session/start")
+def session_start():
+
+    index = STATE["index"]
+
+    story = get_story(index)
+    mission = get_mission(index)
+
+    # ADVANCE INDEX (SAFE LOOP 1–35)
+    STATE["index"] += 1
+    if STATE["index"] > 35:
+        STATE["index"] = 1
+
+    return jsonify({
+        "index": index,
+        "story": story,
+        "mission": mission
+    })
+
+# =========================
+# RESET (DEBUG ONLY)
+# =========================
+@app.route("/api/reset")
+def reset():
+
+    STATE["index"] = 1
+
+    return jsonify({
+        "status": "reset",
+        "index": 1
+    })
+
+# =========================
+# FRONTEND ENTRY
 # =========================
 @app.route("/")
-def index():
+def home():
     return send_from_directory("static", "session.html")
-
-# =========================
-# HEALTH CHECK (DEBUG)
-# =========================
-@app.route("/api/health")
-def health():
-    return jsonify({
-        "status": "ok",
-        "mode": "data_provider_only"
-    })
 
 # =========================
 # RUN SERVER
 # =========================
 if __name__ == "__main__":
-    app.run(debug=True, threaded=True)
+    app.run(debug=True)
