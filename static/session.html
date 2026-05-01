@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>KAMIZEN SESSION RENDER</title>
+<title>KAMIZEN SESSION SAFE RENDER</title>
 
 <style>
 body{
     margin:0;
     padding:0;
     background:#05070d;
-    color:white;
+    color:#fff;
     font-family:Arial;
     overflow:hidden;
 }
@@ -24,14 +24,15 @@ body{
     flex-direction:column;
     justify-content:center;
     align-items:center;
-    gap:15px;
-    z-index:999;
+    gap:16px;
+    z-index:9999;
 }
 
 #nameInput{
     padding:12px;
     font-size:18px;
     text-align:center;
+    width:220px;
 }
 
 button{
@@ -40,43 +41,50 @@ button{
     cursor:pointer;
 }
 
-/* CENTER TEXT */
+/* SAFE UI LAYERS */
 #centerText{
     position:absolute;
     top:50%;
     left:50%;
     transform:translate(-50%,-50%);
-    font-size:32px;
+    font-size:28px;
     text-align:center;
-    width:80%;
+    width:85%;
+    pointer-events:none;
+    will-change: transform;
 }
 
-/* BIG TIMER */
 #timer{
     position:absolute;
-    top:50%;
-    left:50%;
-    transform:translate(-50%,-50%);
-    font-size:70px;
-    font-weight:bold;
+    top:20px;
+    right:20px;
+    font-size:28px;
     color:#00f2ff;
-    z-index:50;
+    pointer-events:none;
 }
 
-/* FLOAT WORDS */
+/* FLOAT WORDS SAFE CONTAINER */
+#wordLayer{
+    position:absolute;
+    inset:0;
+    overflow:hidden;
+    pointer-events:none;
+}
+
 .word{
     position:absolute;
     color:#00f2ff;
-    font-size:20px;
-    animation:floatUp 5s linear forwards;
+    font-size:18px;
+    opacity:0.9;
+    animation:float 4s linear forwards;
+    will-change: transform;
 }
 
-@keyframes floatUp{
+@keyframes float{
     from{transform:translateY(0);opacity:1;}
-    to{transform:translateY(-200px);opacity:0;}
+    to{transform:translateY(-180px);opacity:0;}
 }
 
-/* HIDE */
 .hidden{display:none;}
 </style>
 </head>
@@ -87,24 +95,24 @@ button{
 <div id="startScreen">
     <h1>KAMIZEN LIFE SYSTEM</h1>
     <input id="nameInput" placeholder="Enter name">
-    <button onclick="startSession()">START</button>
+    <button onclick="startApp()">START</button>
 </div>
 
-<!-- UI -->
+<!-- SAFE LAYERS -->
 <div id="centerText"></div>
 <div id="timer"></div>
+<div id="wordLayer"></div>
 
-<!-- ENGINE SCRIPT (ONLY BRIDGE) -->
 <script src="/static/js/engine.js"></script>
 
 <script>
-function startSession(){
+function startApp(){
     const name = document.getElementById("nameInput").value.trim();
     if(!name) return;
 
     localStorage.setItem("kamizen_name", name);
 
-    document.getElementById("startScreen").classList.add("hidden");
+    document.getElementById("startScreen").style.display = "none";
 
     if(window.Engine && Engine.start){
         Engine.start();
