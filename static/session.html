@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>KAMIZEN SESSION</title>
+<title>KAMIZEN LIFE SYSTEM</title>
 
 <style>
 body {
     margin: 0;
     padding: 0;
     background: #0b0f1a;
-    color: #ffffff;
+    color: #fff;
     font-family: Arial, sans-serif;
     overflow: hidden;
 }
@@ -25,11 +25,14 @@ body {
     justify-content: center;
     align-items: center;
     gap: 20px;
+    z-index: 10;
 }
 
 input {
     padding: 10px;
     font-size: 18px;
+    border: none;
+    outline: none;
 }
 
 button {
@@ -48,7 +51,7 @@ button {
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%,-50%);
     text-align: center;
     font-size: 24px;
     width: 80%;
@@ -73,7 +76,7 @@ button {
 <div id="startScreen">
     <h1>KAMIZEN LIFE SYSTEM</h1>
     <input id="nameInput" placeholder="Enter your name">
-    <button onclick="startApp()">Start</button>
+    <button onclick="startApp()">START</button>
 </div>
 
 <div id="timer"></div>
@@ -81,77 +84,93 @@ button {
 
 <script>
 
-let userName = localStorage.getItem("kamizen_name") || "";
 let missionIndex = parseInt(localStorage.getItem("mission_index") || "1");
+let userName = localStorage.getItem("kamizen_name") || "";
 
 if(userName){
     document.getElementById("nameInput").value = userName;
 }
 
 /* =========================
-   START APP
+   START
 ========================= */
 function startApp(){
-    const input = document.getElementById("nameInput").value;
-    if(!input) return;
 
-    userName = input;
+    const name = document.getElementById("nameInput").value;
+
+    if(!name) return;
+
+    userName = name;
     localStorage.setItem("kamizen_name", userName);
 
     document.getElementById("startScreen").style.display = "none";
 
-    runCycle();
+    bootEngine();
 }
 
 /* =========================
-   LOAD DATA FROM BACKEND
+   ENGINE BOOT
 ========================= */
-async function loadData(index){
-    const res = await fetch(`/api/session/data/${index}`);
-    return await res.json();
+async function bootEngine(){
+
+    try{
+        await cycle();
+    }catch(e){
+        console.log("ENGINE ERROR:", e);
+        setTimeout(bootEngine, 2000);
+    }
 }
 
 /* =========================
    MAIN LOOP
 ========================= */
-async function runCycle(){
+async function cycle(){
 
-    const index = parseInt(localStorage.getItem("mission_index") || "1");
+    missionIndex = parseInt(localStorage.getItem("mission_index") || "1");
 
-    const data = await loadData(index);
+    const data = await fetchData(missionIndex);
+
+    if(!data){
+        nextIndex();
+        return cycle();
+    }
 
     await showStory(data.story);
-
     await floatingGame(300);
 
     await showMission(data.mission);
-
     await floatingGame(300);
 
-    await breathingPhase(index);
+    await breathingPhase(missionIndex);
 
     nextIndex();
 
-    setTimeout(() => {
-        runCycle();
-    }, 1000);
+    return cycle();
+}
+
+/* =========================
+   FETCH FROM FLASK
+========================= */
+async function fetchData(index){
+
+    const res = await fetch(`/api/session/data/${index}`);
+
+    if(!res.ok) return null;
+
+    return await res.json();
 }
 
 /* =========================
    STORY
 ========================= */
 function showStory(story){
+
     return new Promise(resolve => {
 
-        if(!story){
-            resolve();
-            return;
-        }
-
         document.getElementById("centerText").innerText =
-            story.story?.en || "";
+            story?.story?.en || "..."
 
-        setTimeout(() => {
+        setTimeout(()=>{
             document.getElementById("centerText").innerText = "";
             resolve();
         }, 5000);
@@ -162,17 +181,13 @@ function showStory(story){
    MISSION
 ========================= */
 function showMission(mission){
+
     return new Promise(resolve => {
 
-        if(!mission){
-            resolve();
-            return;
-        }
-
         document.getElementById("centerText").innerText =
-            mission.b?.[0]?.tx?.en || "MISSION";
+            mission?.b?.[0]?.tx?.en || "MISSION";
 
-        setTimeout(() => {
+        setTimeout(()=>{
             document.getElementById("centerText").innerText = "";
             resolve();
         }, 5000);
@@ -180,27 +195,28 @@ function showMission(mission){
 }
 
 /* =========================
-   FLOATING GAME (5 MIN)
+   FLOATING GAME
 ========================= */
 function floatingGame(duration){
+
     return new Promise(resolve => {
 
-        let time = duration;
+        let t = duration;
 
-        const timer = setInterval(() => {
+        const loop = setInterval(()=>{
 
-            time--;
+            t--;
 
-            document.getElementById("timer").innerText = time;
+            document.getElementById("timer").innerText = t;
 
             spawnWord();
 
-            if(time <= 0){
-                clearInterval(timer);
+            if(t <= 0){
+                clearInterval(loop);
                 resolve();
             }
 
-        }, 1000);
+        },1000);
     });
 }
 
@@ -208,30 +224,32 @@ function floatingGame(duration){
    WORDS
 ========================= */
 function spawnWord(){
+
     const words = ["FOCUS","CALM","TRUTH","CONTROL","AWARENESS","DISCIPLINE"];
 
-    const word = document.createElement("div");
-    word.className = "word";
-    word.innerText = words[Math.floor(Math.random()*words.length)];
+    const el = document.createElement("div");
+    el.className = "word";
+    el.innerText = words[Math.floor(Math.random()*words.length)];
 
-    word.style.left = Math.random()*window.innerWidth + "px";
-    word.style.top = Math.random()*window.innerHeight + "px";
+    el.style.left = Math.random()*window.innerWidth + "px";
+    el.style.top = Math.random()*window.innerHeight + "px";
 
-    document.body.appendChild(word);
+    document.body.appendChild(el);
 
-    setTimeout(()=>word.remove(), 5000);
+    setTimeout(()=>el.remove(), 5000);
 }
 
 /* =========================
-   BREATH + SILENCE (30 → 180s)
+   BREATH + SILENCE
 ========================= */
 function breathingPhase(index){
+
     return new Promise(resolve => {
 
         let silence = Math.min(30 + (index * 5), 180);
         let t = 30;
 
-        const breath = setInterval(() => {
+        const b = setInterval(()=>{
 
             t--;
 
@@ -239,11 +257,11 @@ function breathingPhase(index){
                 (t % 2 === 0) ? "INHALE" : "EXHALE";
 
             if(t <= 0){
-                clearInterval(breath);
+                clearInterval(b);
                 startSilence(silence, resolve);
             }
 
-        }, 1000);
+        },1000);
     });
 }
 
@@ -256,7 +274,7 @@ function startSilence(seconds, resolve){
 
     document.getElementById("centerText").innerText = "SILENCE";
 
-    const s = setInterval(() => {
+    const s = setInterval(()=>{
 
         t--;
         document.getElementById("timer").innerText = t;
@@ -266,11 +284,11 @@ function startSilence(seconds, resolve){
             resolve();
         }
 
-    }, 1000);
+    },1000);
 }
 
 /* =========================
-   NEXT INDEX (LOCAL CONTROL)
+   INDEX CONTROL
 ========================= */
 function nextIndex(){
 
@@ -281,13 +299,6 @@ function nextIndex(){
     if(i > 35) i = 1;
 
     localStorage.setItem("mission_index", i);
-}
-
-/* =========================
-   END (visual only)
-========================= */
-function endSession(){
-    document.getElementById("centerText").innerText = "CONTINUOUS TRAINING ACTIVE";
 }
 
 </script>
