@@ -2,300 +2,281 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MAYKAMI SESSION</title>
 
 <style>
-    body {
-        margin: 0; padding: 0;
-        background: #05080a; color: #ffffff;
-        font-family: 'Segoe UI', sans-serif;
-        overflow: hidden; user-select: none;
-    }
+body {
+    margin:0;
+    padding:0;
+    background:#05080a;
+    color:white;
+    font-family:Segoe UI;
+    overflow:hidden;
+}
 
-    #startScreen {
-        position: fixed; z-index: 1000;
-        width: 100%; height: 100%;
-        background: radial-gradient(circle, #0b0f1a 0%, #05080a 100%);
-        display: flex; flex-direction: column;
-        justify-content: center; align-items: center;
-        gap: 20px;
-    }
+/* START */
+#startScreen{
+    position:fixed;
+    inset:0;
+    background:#05080a;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    gap:20px;
+    z-index:999;
+}
 
-    input {
-        padding: 15px;
-        font-size: 18px;
-        width: 250px;
-        background: rgba(255,255,255,0.05);
-        border: 1px solid #00f2ff;
-        color: white;
-        border-radius: 5px;
-        text-align: center;
-    }
+input{
+    padding:12px;
+    font-size:18px;
+    text-align:center;
+}
 
-    button.start-btn {
-        padding: 15px 40px;
-        font-size: 20px;
-        cursor: pointer;
-        background: #00f2ff;
-        color: #05080a;
-        border: none;
-        border-radius: 5px;
-        font-weight: bold;
-    }
+button{
+    padding:12px 30px;
+    background:#00f2ff;
+    border:none;
+    cursor:pointer;
+    font-weight:bold;
+}
 
-    #timer {
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        font-size: 28px;
-        color: #00f2ff;
-    }
+/* TIMER GRANDE */
+#timer{
+    position:absolute;
+    top:20px;
+    left:50%;
+    transform:translateX(-50%);
+    font-size:60px;
+    color:#00f2ff;
+    font-weight:bold;
+}
 
-    #centerText {
-        position: absolute;
-        top: 50%; left: 50%;
-        transform: translate(-50%, -50%);
-        text-align: center;
-        font-size: 34px;
-        width: 80%;
-    }
+/* CENTER TEXT */
+#centerText{
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    font-size:34px;
+    text-align:center;
+    width:80%;
+}
 
-    .word {
-        position: absolute;
-        color: #00f2ff;
-        font-size: 20px;
-        animation: float 5s linear forwards;
-        pointer-events: auto;
-    }
+/* WORDS */
+.word{
+    position:absolute;
+    font-size:20px;
+    color:#00f2ff;
+    cursor:pointer;
+    animation:float 5s linear forwards;
+}
 
-    @keyframes float {
-        from { transform: translateY(0); opacity: 1; }
-        to { transform: translateY(-250px); opacity: 0; }
-    }
+@keyframes float{
+    from{transform:translateY(0); opacity:1;}
+    to{transform:translateY(-250px); opacity:0;}
+}
 
-    #expBox {
-        position: absolute;
-        bottom: 20px;
-        left: 20px;
-        width: 260px;
-        font-size: 13px;
-        opacity: 0.8;
-        border-left: 3px solid #00f2ff;
-        padding-left: 10px;
-    }
+/* EXPLODE */
+.explode{
+    transform:scale(2);
+    opacity:0;
+    transition:0.2s;
+}
 </style>
 </head>
 
 <body>
 
 <div id="startScreen">
-    <h1 style="color:#00f2ff;">MAYKAMI</h1>
+    <h1 style="color:#00f2ff">MAYKAMI</h1>
     <input id="nameInput" placeholder="Enter Name">
-    <button class="start-btn" onclick="startApp()">START</button>
+    <button onclick="startApp()">START</button>
 </div>
 
-<div id="timer">0</div>
+<div id="timer">00:00</div>
 <div id="centerText"></div>
-
-<div id="expBox">
-    <b id="expTitle">READY</b><br>
-    <span id="expBody">Waiting system...</span>
-</div>
 
 <script>
 
-let userName = localStorage.getItem("kamizen_name") || "";
 let running = false;
-let activeIntervals = [];
+let intervals = [];
+let audioEnabled = false;
 
 /* =========================
    START
 ========================= */
 function startApp(){
-    const name = document.getElementById("nameInput").value.trim();
+
+    const name = document.getElementById("nameInput").value;
     if(!name) return;
 
-    userName = name;
-    localStorage.setItem("kamizen_name", userName);
+    document.getElementById("startScreen").style.display="none";
 
-    document.getElementById("startScreen").style.display = "none";
+    audioEnabled = true;
 
-    if(!running){
-        running = true;
-        mainLoop();
-    }
+    running = true;
+    loop();
 }
 
 /* =========================
-   MAIN LOOP (NO FREEZE)
+   MAIN LOOP
 ========================= */
-async function mainLoop(){
+async function loop(){
 
     while(true){
 
-        let data = await safeFetch("/api/session/start");
+        let data = await fetch("/api/session/start").then(r=>r.json());
 
-        if(!data || !data.story){
-            show("ERROR LOADING STORY");
-            await wait(2000);
-            continue;
-        }
+        const story = data?.story?.en || "NO STORY";
+        const mission = data?.mission?.b?.[0]?.tx?.en || "MISSION";
 
-        const index = data.index || 1;
-
-        const storyText = data.story?.en || "NO STORY";
-
-        const missionText =
-            data.mission?.b?.[0]?.tx?.en ||
-            data.mission?.en ||
-            "MISSION";
-
-        // STORY
-        show(storyText);
+        /* STORY + VOICE */
+        await speak(story);
+        showText(story);
         await wait(5000);
 
-        // GAME 1
+        /* GAME 1 */
         await floatingGame(300);
 
-        // MISSION
-        show(missionText);
+        /* MISSION */
+        showText(mission);
         await wait(5000);
 
-        // GAME 2
+        /* GAME 2 */
         await floatingGame(300);
 
-        // BREATH + SILENCE
-        await breathingPhase(index);
+        /* BREATH */
+        await breathing(data.index);
 
-        cleanupIntervals();
+        clearAll();
     }
 }
 
 /* =========================
-   SAFE FETCH
+   SPEECH (FIX VOICE)
 ========================= */
-async function safeFetch(url){
-    try{
-        const res = await fetch(url);
-        return await res.json();
-    }catch(e){
-        return null;
-    }
-}
+function speak(text){
+    return new Promise(resolve=>{
+        if(!audioEnabled) return resolve();
 
-/* =========================
-   UI
-========================= */
-function show(text){
-    document.getElementById("centerText").innerText = text || "";
-}
+        const msg = new SpeechSynthesisUtterance(text);
+        msg.lang = "en-US";
+        msg.rate = 1;
 
-function wait(ms){
-    return new Promise(r => setTimeout(r, ms));
-}
-
-/* =========================
-   FLOATING GAME (CONTROLLED)
-========================= */
-function floatingGame(duration){
-
-    return new Promise(resolve => {
-
-        let t = duration;
-
-        const interval = setInterval(() => {
-
-            t--;
-            document.getElementById("timer").innerText = t;
-
-            spawnWord();
-
-            if(t <= 0){
-                clearInterval(interval);
-                resolve();
-            }
-
-        }, 1000);
-
-        activeIntervals.push(interval);
+        msg.onend = resolve;
+        speechSynthesis.speak(msg);
     });
 }
 
 /* =========================
-   WORD SPAWN (SAFE)
+   TEXT UI
 ========================= */
-function spawnWord(){
+function showText(t){
+    document.getElementById("centerText").innerText = t;
+}
 
-    const words = ["FOCUS","CALM","TRUTH","CONTROL","AWARENESS"];
-
-    const el = document.createElement("div");
-    el.className = "word";
-    el.innerText = words[Math.floor(Math.random()*words.length)];
-
-    el.style.left = Math.random()*window.innerWidth + "px";
-    el.style.top = (window.innerHeight - 60) + "px";
-
-    document.body.appendChild(el);
-
-    setTimeout(()=> el.remove(), 5000);
+function wait(ms){
+    return new Promise(r=>setTimeout(r,ms));
 }
 
 /* =========================
-   BREATHING + SILENCE
+   TIMER FORMAT MIN:SEC
 ========================= */
-function breathingPhase(index){
+function formatTime(s){
+    let m = Math.floor(s/60);
+    let sec = s % 60;
+    return `${String(m).padStart(2,"0")}:${String(sec).padStart(2,"0")}`;
+}
 
-    return new Promise(resolve => {
+/* =========================
+   FLOATING GAME (ONLY DURING GAME)
+========================= */
+function floatingGame(time){
 
-        let silence = Math.min(30 + index * 5, 180);
-        let t = 20;
+    return new Promise(resolve=>{
 
-        const b = setInterval(() => {
+        let t = time;
+
+        const timer = setInterval(()=>{
+
+            t--;
+
+            document.getElementById("timer").innerText = formatTime(t);
+
+            spawnWord();
+
+            if(t<=0){
+                clearInterval(timer);
+                resolve();
+            }
+
+        },1000);
+
+        intervals.push(timer);
+    });
+}
+
+/* =========================
+   WORDS WITH EXPLOSION
+========================= */
+function spawnWord(){
+
+    const words = ["FOCUS","CALM","TRUTH","CONTROL","POWER"];
+
+    const el = document.createElement("div");
+    el.className="word";
+    el.innerText = words[Math.floor(Math.random()*words.length)];
+
+    el.style.left = Math.random()*window.innerWidth+"px";
+    el.style.top = (window.innerHeight-100)+"px";
+
+    el.onclick = ()=>{
+
+        el.classList.add("explode");
+
+        setTimeout(()=>el.remove(),200);
+    };
+
+    document.body.appendChild(el);
+
+    setTimeout(()=>el.remove(),5000);
+}
+
+/* =========================
+   BREATHING
+========================= */
+function breathing(index){
+
+    return new Promise(resolve=>{
+
+        let t=20;
+
+        const b=setInterval(()=>{
 
             t--;
 
             document.getElementById("centerText").innerText =
-                (t % 2 === 0) ? "INHALE" : "EXHALE";
+                (t%2===0)?"INHALE":"EXHALE";
 
-            if(t <= 0){
+            if(t<=0){
                 clearInterval(b);
-                startSilence(silence, resolve);
+                resolve();
             }
 
-        }, 1000);
+        },1000);
 
-        activeIntervals.push(b);
+        intervals.push(b);
     });
 }
 
-function startSilence(seconds, resolve){
-
-    let t = seconds;
-
-    const s = setInterval(() => {
-
-        t--;
-        document.getElementById("timer").innerText = t;
-
-        document.getElementById("centerText").innerText = "SILENCE";
-
-        if(t <= 0){
-            clearInterval(s);
-            resolve();
-        }
-
-    }, 1000);
-
-    activeIntervals.push(s);
-}
-
 /* =========================
-   CLEANUP (ANTI FREEZE)
+   CLEAN MEMORY (NO FREEZE)
 ========================= */
-function cleanupIntervals(){
-    activeIntervals.forEach(i => clearInterval(i));
-    activeIntervals = [];
+function clearAll(){
+    intervals.forEach(i=>clearInterval(i));
+    intervals=[];
 }
 
 </script>
