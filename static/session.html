@@ -38,12 +38,6 @@ button {
     cursor: pointer;
 }
 
-#ui {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-}
-
 #timer {
     position: absolute;
     top: 10px;
@@ -57,6 +51,7 @@ button {
     transform: translate(-50%, -50%);
     text-align: center;
     font-size: 24px;
+    width: 80%;
 }
 
 .word {
@@ -72,6 +67,7 @@ button {
 }
 </style>
 </head>
+
 <body>
 
 <div id="startScreen">
@@ -80,22 +76,21 @@ button {
     <button onclick="startApp()">Start</button>
 </div>
 
-<div id="ui"></div>
 <div id="timer"></div>
 <div id="centerText"></div>
 
 <script>
+
 let userName = localStorage.getItem("kamizen_name") || "";
 let missionIndex = parseInt(localStorage.getItem("mission_index") || "1");
-
-let state = {
-    phase: "idle"
-};
 
 if(userName){
     document.getElementById("nameInput").value = userName;
 }
 
+/* =========================
+   START APP
+========================= */
 function startApp(){
     const input = document.getElementById("nameInput").value;
     if(!input) return;
@@ -105,17 +100,25 @@ function startApp(){
 
     document.getElementById("startScreen").style.display = "none";
 
-    startSession();
+    runCycle();
 }
 
-async function startSession(){
+/* =========================
+   LOAD DATA FROM BACKEND
+========================= */
+async function loadData(index){
+    const res = await fetch(`/api/session/data/${index}`);
+    return await res.json();
+}
 
-    const res = await fetch("/api/session/start");
-    const data = await res.json();
+/* =========================
+   MAIN LOOP
+========================= */
+async function runCycle(){
 
-    localStorage.setItem("mission_index", data.index);
+    const index = parseInt(localStorage.getItem("mission_index") || "1");
 
-    missionIndex = data.index;
+    const data = await loadData(index);
 
     await showStory(data.story);
 
@@ -125,16 +128,28 @@ async function startSession(){
 
     await floatingGame(300);
 
-    await breathingPhase(missionIndex);
+    await breathingPhase(index);
 
-    endSession();
+    nextIndex();
+
+    setTimeout(() => {
+        runCycle();
+    }, 1000);
 }
 
+/* =========================
+   STORY
+========================= */
 function showStory(story){
     return new Promise(resolve => {
-        if(!story){ resolve(); return; }
 
-        document.getElementById("centerText").innerText = story.story?.en || "";
+        if(!story){
+            resolve();
+            return;
+        }
+
+        document.getElementById("centerText").innerText =
+            story.story?.en || "";
 
         setTimeout(() => {
             document.getElementById("centerText").innerText = "";
@@ -143,24 +158,37 @@ function showStory(story){
     });
 }
 
+/* =========================
+   MISSION
+========================= */
 function showMission(mission){
     return new Promise(resolve => {
-        if(!mission){ resolve(); return; }
 
-        document.getElementById("centerText").innerText = mission.b?.[0]?.tx?.en || "MISSION";
+        if(!mission){
+            resolve();
+            return;
+        }
+
+        document.getElementById("centerText").innerText =
+            mission.b?.[0]?.tx?.en || "MISSION";
 
         setTimeout(() => {
             document.getElementById("centerText").innerText = "";
             resolve();
-        }, 6000);
+        }, 5000);
     });
 }
 
+/* =========================
+   FLOATING GAME (5 MIN)
+========================= */
 function floatingGame(duration){
     return new Promise(resolve => {
+
         let time = duration;
 
         const timer = setInterval(() => {
+
             time--;
 
             document.getElementById("timer").innerText = time;
@@ -171,12 +199,17 @@ function floatingGame(duration){
                 clearInterval(timer);
                 resolve();
             }
+
         }, 1000);
     });
 }
 
+/* =========================
+   WORDS
+========================= */
 function spawnWord(){
-    const words = ["FOCUS","CALM","TRUTH","CONTROL","AWARENESS"];
+    const words = ["FOCUS","CALM","TRUTH","CONTROL","AWARENESS","DISCIPLINE"];
+
     const word = document.createElement("div");
     word.className = "word";
     word.innerText = words[Math.floor(Math.random()*words.length)];
@@ -189,49 +222,72 @@ function spawnWord(){
     setTimeout(()=>word.remove(), 5000);
 }
 
+/* =========================
+   BREATH + SILENCE (30 → 180s)
+========================= */
 function breathingPhase(index){
     return new Promise(resolve => {
 
         let silence = Math.min(30 + (index * 5), 180);
-
         let t = 30;
 
-        const breath = setInterval(()=>{
-            t--;
-            document.getElementById("centerText").innerText = (t%2==0)?"INHALE":"EXHALE";
+        const breath = setInterval(() => {
 
-            if(t<=0){
+            t--;
+
+            document.getElementById("centerText").innerText =
+                (t % 2 === 0) ? "INHALE" : "EXHALE";
+
+            if(t <= 0){
                 clearInterval(breath);
                 startSilence(silence, resolve);
             }
+
         }, 1000);
     });
 }
 
+/* =========================
+   SILENCE
+========================= */
 function startSilence(seconds, resolve){
 
     let t = seconds;
 
     document.getElementById("centerText").innerText = "SILENCE";
 
-    const s = setInterval(()=>{
+    const s = setInterval(() => {
+
         t--;
         document.getElementById("timer").innerText = t;
 
-        if(t<=0){
+        if(t <= 0){
             clearInterval(s);
             resolve();
         }
-    },1000);
+
+    }, 1000);
 }
 
+/* =========================
+   NEXT INDEX (LOCAL CONTROL)
+========================= */
+function nextIndex(){
+
+    let i = parseInt(localStorage.getItem("mission_index") || "1");
+
+    i++;
+
+    if(i > 35) i = 1;
+
+    localStorage.setItem("mission_index", i);
+}
+
+/* =========================
+   END (visual only)
+========================= */
 function endSession(){
-
-    document.getElementById("centerText").innerText = "SESSION COMPLETE";
-
-    setTimeout(()=>{
-        window.location.reload();
-    },4000);
+    document.getElementById("centerText").innerText = "CONTINUOUS TRAINING ACTIVE";
 }
 
 </script>
