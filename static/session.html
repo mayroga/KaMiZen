@@ -2,30 +2,33 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>KAMIZEN SESSION SAFE RENDER</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KAMIZEN SESSION</title>
 
 <style>
 body{
     margin:0;
     padding:0;
     background:#05070d;
-    color:#fff;
+    color:#ffffff;
     font-family:Arial;
     overflow:hidden;
 }
 
-/* START SCREEN */
+/* ===== START SCREEN (ONLY LAYER) ===== */
 #startScreen{
     position:fixed;
-    inset:0;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
     background:#05070d;
     display:flex;
     flex-direction:column;
     justify-content:center;
     align-items:center;
-    gap:16px;
-    z-index:9999;
+    gap:15px;
+    z-index:10;
 }
 
 #nameInput{
@@ -33,25 +36,31 @@ body{
     font-size:18px;
     text-align:center;
     width:220px;
+    border:1px solid #00f2ff;
+    background:#0b0f1a;
+    color:white;
 }
 
 button{
     padding:12px 20px;
     font-size:18px;
     cursor:pointer;
+    background:#00f2ff;
+    border:none;
+    color:#000;
 }
 
-/* SAFE UI LAYERS */
+/* ===== GAME LAYERS (NO OVERLAP LOGIC) ===== */
 #centerText{
     position:absolute;
     top:50%;
     left:50%;
     transform:translate(-50%,-50%);
     font-size:28px;
+    width:80%;
     text-align:center;
-    width:85%;
+    z-index:2;
     pointer-events:none;
-    will-change: transform;
 }
 
 #timer{
@@ -60,62 +69,72 @@ button{
     right:20px;
     font-size:28px;
     color:#00f2ff;
+    z-index:2;
     pointer-events:none;
 }
 
-/* FLOAT WORDS SAFE CONTAINER */
+/* FLOAT WORDS SAFE LAYER */
 #wordLayer{
     position:absolute;
     inset:0;
+    z-index:1;
     overflow:hidden;
     pointer-events:none;
 }
 
 .word{
     position:absolute;
-    color:#00f2ff;
     font-size:18px;
-    opacity:0.9;
-    animation:float 4s linear forwards;
-    will-change: transform;
+    color:#00f2ff;
+    animation:floatUp 4s linear forwards;
 }
 
-@keyframes float{
+@keyframes floatUp{
     from{transform:translateY(0);opacity:1;}
-    to{transform:translateY(-180px);opacity:0;}
+    to{transform:translateY(-150px);opacity:0;}
 }
-
-.hidden{display:none;}
 </style>
 </head>
 
 <body>
 
-<!-- START -->
+<!-- START ONLY -->
 <div id="startScreen">
-    <h1>KAMIZEN LIFE SYSTEM</h1>
+    <h1>KAMIZEN</h1>
     <input id="nameInput" placeholder="Enter name">
-    <button onclick="startApp()">START</button>
+    <button onclick="startSession()">START</button>
 </div>
 
-<!-- SAFE LAYERS -->
+<!-- RENDER LAYERS -->
 <div id="centerText"></div>
 <div id="timer"></div>
 <div id="wordLayer"></div>
 
+<!-- ENGINE -->
 <script src="/static/js/engine.js"></script>
 
 <script>
-function startApp(){
+function startSession(){
+
     const name = document.getElementById("nameInput").value.trim();
-    if(!name) return;
+
+    if(!name){
+        alert("Enter name");
+        return;
+    }
 
     localStorage.setItem("kamizen_name", name);
 
-    document.getElementById("startScreen").style.display = "none";
+    const screen = document.getElementById("startScreen");
 
-    if(window.Engine && Engine.start){
+    /* SAFE REMOVE (NO OVERLAP ISSUE) */
+    screen.style.display = "none";
+
+    /* ENGINE SAFE START */
+    if(window.Engine && typeof Engine.start === "function"){
         Engine.start();
+    }else{
+        console.error("Engine not loaded");
     }
 }
 </script>
