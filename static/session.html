@@ -1,84 +1,109 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>MAYKAMI NEUROGAME SYSTEM</title>
-    <style>
-        :root { --primary: #00f2ff; --bg: #05070d; --accent: #0057ff; }
-        body { margin:0; background: var(--bg); color:#fff; font-family: 'Segoe UI', Arial; overflow:hidden; transition: background 0.5s; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>KAMIZEN SESSION</title>
 
-        /* HUD */
-        #timer { position:absolute; top:20px; left:50%; transform:translateX(-50%); font-size:60px; color:var(--primary); font-weight:bold; z-index:100; text-shadow: 0 0 15px var(--primary); }
-        #centerText { position:absolute; top:45%; left:50%; transform:translate(-50%,-50%); font-size:28px; width:85%; text-align:center; z-index:50; line-height:1.4; }
-        
-        /* BOTONES */
-        .action-btn { 
-            display:none; position:absolute; bottom:80px; left:50%; transform:translateX(-50%);
-            padding:18px 50px; font-size:22px; background:var(--primary); color:#000; border:none; 
-            border-radius:40px; cursor:pointer; font-weight:bold; z-index:200; box-shadow: 0 0 20px var(--primary);
-        }
+<style>
+    :root { 
+        --primary: #00f2ff; 
+        --bg: #05070d; 
+        --accent: #003366;
+    }
+    body { 
+        margin:0; background: var(--bg); color:#fff; 
+        font-family: 'Segoe UI', Arial, sans-serif; overflow:hidden; 
+        transition: background 0.5s ease;
+    }
 
-        /* EXPLICACIÓN Y BARRAS */
-        #explanationBox {
-            position:absolute; bottom:20px; left:20px; width:280px; padding:15px;
-            background: rgba(0,242,255,0.05); border-left: 4px solid var(--primary); font-size:14px; opacity:0; transition: 0.5s;
-        }
-        #indicators {
-            position:absolute; right:20px; top:50%; transform:translateY(-50%);
-            display:none; flex-direction:column; gap:12px; z-index:10;
-        }
-        .bar { width:8px; height:50px; background:rgba(255,255,255,0.1); border-radius:4px; position:relative; }
-        .fill { position:absolute; bottom:0; width:100%; height:0%; background:var(--primary); transition: height 0.5s; }
+    /* --- UI ELEMENTS --- */
+    #timer { 
+        position:absolute; top:20px; left:50%; transform:translateX(-50%); 
+        font-size:60px; color:var(--primary); font-weight:bold; z-index:100; 
+    }
 
-        /* RESPIRACIÓN (CÍRCULO AZUL) */
-        #breathContainer {
-            display:none; position:absolute; top:50%; left:50%; transform:translate(-50%, -50%);
-            width:300px; height:300px; justify-content:center; align-items:center; z-index:60;
-        }
-        #breathCircle {
-            width:100px; height:100px; background: radial-gradient(circle, var(--accent), transparent);
-            border-radius:50%; transition: all 4s ease-in-out; filter: blur(10px);
-            display:flex; justify-content:center; align-items:center; font-weight:bold; font-size:24px;
-        }
+    #centerText { 
+        position:absolute; top:45%; left:50%; transform:translate(-50%,-50%); 
+        font-size:32px; width:85%; text-align:center; z-index:50; line-height: 1.4;
+    }
 
-        /* DIAGNÓSTICO */
-        #diagModal {
-            display:none; position:fixed; inset:0; background:var(--bg); z-index:300;
-            flex-direction:column; justify-content:center; align-items:center; padding:40px; text-align:center;
-        }
+    #btnContinue { 
+        display:none; position:absolute; bottom:60px; left:50%; transform:translateX(-50%);
+        padding:15px 50px; font-size:22px; background:var(--primary); color:#000; 
+        border:none; border-radius:50px; cursor:pointer; font-weight:bold; z-index:200;
+        box-shadow: 0 0 20px var(--primary);
+    }
 
-        /* OBJETOS JUEGO */
-        .word { position:absolute; font-size:22px; color:var(--primary); font-weight:bold; cursor:pointer; animation: float 5s linear forwards; }
-        @keyframes float { 0%{transform:translateY(0); opacity:0;} 10%{opacity:1;} 90%{opacity:1;} 100%{transform:translateY(-300px); opacity:0;} }
-    </style>
+    /* --- GAMEPLAY UI --- */
+    #explanationBox {
+        position:absolute; bottom:30px; left:30px; width:280px; padding:20px;
+        background: rgba(0,242,255,0.05); border-left: 5px solid var(--primary); 
+        font-size:15px; opacity:0; transition: opacity 0.5s; z-index:60;
+    }
+
+    #indicators {
+        position:absolute; right:30px; top:50%; transform:translateY(-50%);
+        display:none; flex-direction:column; gap:15px; z-index:100;
+    }
+    .bar { width:12px; height:80px; background:rgba(255,255,255,0.1); border-radius:10px; position:relative; }
+    .fill { position:absolute; bottom:0; width:100%; height:0%; background:var(--primary); transition: height 0.4s; }
+
+    /* --- BREATHING CIRCLE --- */
+    #breathContainer {
+        display:none; position:fixed; inset:0; flex-direction:column; 
+        justify-content:center; align-items:center; z-index:150; background: var(--bg);
+    }
+    #breathCircle {
+        width: 150px; height: 150px; border-radius: 50%;
+        background: radial-gradient(circle, #00f2ff 0%, #0044ff 100%);
+        box-shadow: 0 0 50px #00f2ff;
+        display:flex; justify-content:center; align-items:center;
+        font-weight:bold; font-size:20px; color:white; transition: all 4s ease-in-out;
+    }
+    #scienceText {
+        margin-top: 40px; width: 80%; text-align: center; color: #aaa; font-size: 14px;
+    }
+
+    /* --- MODALS --- */
+    #finalModal {
+        display:none; position:fixed; inset:0; background:var(--bg); z-index:300;
+        flex-direction:column; justify-content:center; align-items:center; padding:40px; text-align:center;
+    }
+
+    .word { 
+        position:absolute; font-size:24px; color:var(--primary); font-weight:bold; 
+        cursor:pointer; animation: float 5s linear forwards; 
+    }
+    @keyframes float { 0%{transform:translateY(0); opacity:0;} 10%{opacity:1;} 90%{opacity:1;} 100%{transform:translateY(-300px); opacity:0;} }
+</style>
 </head>
 <body>
 
 <div id="timer">00:00</div>
-<div id="centerText">Initializing Asesoría...</div>
-
-<div id="breathContainer">
-    <div id="breathCircle" id="breathLabel">INHALA</div>
-</div>
-
-<button id="btnAction" class="action-btn" onclick="Engine.proceed()">CONTINUE</button>
+<div id="centerText">Initializing Kamizen...</div>
+<button id="btnContinue" onclick="Engine.proceed()">CONTINUE</button>
 
 <div id="explanationBox">
     <strong id="expTitle"></strong><br><span id="expBody"></span>
 </div>
 
 <div id="indicators">
-    <div class="bar"><div class="fill" id="f1"></div></div>
-    <div class="bar"><div class="fill" id="f2"></div></div>
-    <div class="bar"><div class="fill" id="f3"></div></div>
-    <div class="bar"><div class="fill" id="f4"></div></div>
+    <div class="bar"><div class="fill" id="f-defense"></div></div>
+    <div class="bar"><div class="fill" id="f-wealth"></div></div>
+    <div class="bar"><div class="fill" id="f-logic"></div></div>
+    <div class="bar"><div class="fill" id="f-health"></div></div>
 </div>
 
-<div id="diagModal">
-    <h1 style="color:var(--primary); letter-spacing:5px;">SESSION REPORT</h1>
-    <div id="diagResult" style="font-size:18px; line-height:1.6; max-width:600px; margin-bottom:30px; color:#ccc;"></div>
-    <button class="action-btn" style="display:block; position:relative; bottom:0;" onclick="location.reload()">RESTART NEXT SESSION</button>
+<div id="breathContainer">
+    <div id="breathCircle">IDLE</div>
+    <div id="scienceText"></div>
+</div>
+
+<div id="finalModal">
+    <h1 style="color:var(--primary)">DIAGNOSIS COMPLETE</h1>
+    <div id="diagText" style="margin-bottom:30px; font-size:18px;"></div>
+    <button onclick="location.reload()" style="background:var(--primary); padding:15px 40px; border:none; border-radius:10px; font-weight:bold; cursor:pointer;">RESTART NEXT SESSION</button>
 </div>
 
 <!-- AUDIOS -->
@@ -88,78 +113,82 @@
 <script>
 const Engine = (() => {
     let state = { 
-        phase: 'loading', 
-        index: 1, 
-        stats: {}, 
-        gameTime: 300, // 5 min
-        wordsClicked: 0,
-        data: null 
+        phase: 'init', index: 1, stats: {}, clicks: 0, 
+        data: null, gameTime: 300 
     };
 
     const pillars = {
-        "LIMITS": { cat: "Defensa", color: "#ff4444", desc: "Enseña a decir NO y proteger tu espacio personal." },
-        "PERSISTENCE": { cat: "Resiliencia", color: "#ffaa00", desc: "El error es parte del proceso, no el destino final." },
-        "METHOD": { cat: "Organización", color: "#00ffaa", desc: "Sustituye el caos por pasos lógicos." },
-        "CRITERION": { cat: "Inteligencia", color: "#0057ff", desc: "Analiza la información antes de aceptarla." },
-        "VALUE": { cat: "Riqueza", color: "#ffee00", desc: "El dinero sigue al valor que aportas a otros." },
-        "BALANCE": { cat: "Salud", color: "#00ff44", desc: "Cuerpo y mente son tu activo más preciado." },
-        "LEALTY": { cat: "Familia", color: "#ff00ff", desc: "Vínculos sólidos basados en el respeto mutuo." },
-        "AUTONOMY": { cat: "Libertad", color: "#ffffff", desc: "Decidir por principios, no por presión social." },
-        "ADAPTATION": { cat: "Entorno", color: "#00aaff", desc: "Fluir y resolver en ambientes cambiantes." },
-        "LEGADO": { cat: "Trascendencia", color: "#aa00ff", desc: "Vivir con propósito para que lo construido trascienda." }
+        "LIMITS": { cat: "Defense", desc: "Teaches to say 'no' and protect your space.", color: "#ff2e2e" },
+        "PERSISTENCE": { cat: "Resilience", desc: "Understanding error is part of the process.", color: "#ffa500" },
+        "METHOD": { cat: "Structure", desc: "Replace chaos with logical steps.", color: "#00ff88" },
+        "VALUE": { cat: "Wealth", desc: "Money follows the value you provide to others.", color: "#ffd700" },
+        "ADAPTATION": { cat: "Survival", desc: "Flow and resolve in changing environments.", color: "#0088ff" }
     };
 
-    async function init() {
-        const res = await fetch("/api/session/start");
-        state.data = await res.json();
-        state.index = state.data.index;
-        
-        // Fase 1: Historia
-        document.getElementById("centerText").innerText = state.data.story.en;
-        speak(state.data.story.en, () => {
-            document.getElementById("btnAction").style.display = "block";
-        });
-    }
+    const init = async () => {
+        try {
+            const res = await fetch("/api/session/start");
+            state.data = await res.json();
+            state.index = state.data.index;
+            startStory();
+        } catch (e) {
+            document.getElementById("centerText").innerText = "Connection Error. Retrying...";
+            setTimeout(init, 3000);
+        }
+    };
 
-    function speak(text, callback) {
+    // --- PHASE 1: STORY ---
+    const startStory = () => {
+        state.phase = 'story';
+        const text = state.data.story.en;
+        document.getElementById("centerText").innerText = text;
+        
+        speak(text, () => {
+            document.getElementById("btnContinue").style.display = "block";
+        });
+    };
+
+    const speak = (text, callback) => {
         const synth = window.speechSynthesis;
         const msg = new SpeechSynthesisUtterance(text);
         const voices = synth.getVoices();
-        msg.voice = voices.find(v => v.name.includes("Male") || v.name.includes("David")) || voices[0];
-        msg.rate = 0.85; // Pausada
+        // Buscar voz masculina/David
+        msg.voice = voices.find(v => v.name.includes("David") || v.name.includes("Male")) || voices[0];
+        msg.rate = 0.8; // Pausada
         msg.pitch = 0.9;
         msg.onend = callback;
         synth.speak(msg);
-    }
+    };
 
-    function startLevel() {
+    // --- PHASE 2: GAMEPLAY ---
+    const startGame = () => {
         state.phase = 'game';
-        document.getElementById("btnAction").style.display = "none";
+        document.getElementById("btnContinue").style.display = "none";
         document.getElementById("centerText").innerText = "";
         document.getElementById("bgMusic").play();
         
-        let t = state.gameTime;
-        const gameLoop = setInterval(() => {
-            t--;
-            document.getElementById("timer").innerText = formatTime(t);
+        let timeLeft = state.gameTime;
+        const interval = setInterval(() => {
+            timeLeft--;
+            document.getElementById("timer").innerText = formatTime(timeLeft);
             
             spawnWord();
             
-            // Lógica de 60 segundos
-            const elapsed = state.gameTime - t;
-            if(elapsed >= 60) {
+            // UI DINÁMICA: 60 seg cambia modo
+            const elapsed = state.gameTime - timeLeft;
+            if (elapsed >= 60) {
                 document.getElementById("explanationBox").style.opacity = "0";
                 document.getElementById("indicators").style.display = "flex";
             }
 
-            if(t <= 0) {
-                clearInterval(gameLoop);
-                runDiagnosis();
+            if (timeLeft <= 0) {
+                clearInterval(interval);
+                startMission();
             }
         }, 1000);
-    }
+    };
 
-    function spawnWord() {
+    const spawnWord = () => {
         const keys = Object.keys(pillars);
         const key = keys[Math.floor(Math.random()*keys.length)];
         const p = pillars[key];
@@ -175,130 +204,99 @@ const Engine = (() => {
             document.body.style.background = p.color + "22";
             setTimeout(() => document.body.style.background = var(--bg), 150);
 
+            state.clicks++;
             state.stats[p.cat] = (state.stats[p.cat] || 0) + 1;
-            state.wordsClicked++;
+            
+            // Actualizar barras laterales
+            updateBars();
 
-            if((state.gameTime - state.timer) < 60) {
+            if (state.gameTime - parseInt(document.getElementById("timer").innerText.split(":")[1]) < 60) {
                 document.getElementById("explanationBox").style.opacity = "1";
                 document.getElementById("expTitle").innerText = key;
                 document.getElementById("expBody").innerText = p.desc;
             }
-            updateBars();
             el.remove();
         };
         document.body.appendChild(el);
     }
 
-    function updateBars() {
-        const fills = document.querySelectorAll(".fill");
-        Object.values(state.stats).forEach((val, i) => {
-            if(fills[i]) fills[i].style.height = Math.min(val * 10, 100) + "%";
+    const updateBars = () => {
+        const cats = ["Defense", "Wealth", "Structure", "Resilience"];
+        cats.forEach((c, i) => {
+            const val = (state.stats[c] || 0) * 8;
+            document.querySelectorAll(".fill")[i].style.height = Math.min(val, 100) + "%";
         });
-    }
+    };
 
-    async function runDiagnosis() {
-        state.phase = 'diagnosis';
+    // --- PHASE 3: MISSION & SILENCE ---
+    const startMission = async () => {
+        state.phase = 'mission';
         document.getElementById("bgMusic").pause();
-        document.getElementById("diagModal").style.display = "flex";
+        const mission = state.data.mission.b[0].tx.en;
+        document.getElementById("centerText").innerText = "MISSION: " + mission;
+        
+        await sleep(5000);
+        startBreathing();
+    };
+
+    const startBreathing = async () => {
+        state.phase = 'silence';
+        document.getElementById("centerText").innerText = "";
+        document.getElementById("breathContainer").style.display = "flex";
+        document.getElementById("scienceText").innerText = "The Vagus Nerve activation reduces cortisol and resets your prefrontal cortex for superior decision-making.";
+
+        // Tiempo de silencio crece con el index: 30s base + (index * 4s) hasta 180s
+        let silenceTime = Math.min(30 + (state.index * 4), 180);
+        let t = silenceTime;
+
+        while (t > 0) {
+            document.getElementById("timer").innerText = formatTime(t);
+            // Ciclo 4-4-4
+            await breathCycle("INHALA", 1.8);
+            await breathCycle("RETIENE", 1);
+            await breathCycle("EXHALA", 0.6);
+            t -= 12;
+            if(t < 0) t = 0;
+        }
+
+        showDiagnosis();
+    };
+
+    const breathCycle = (label, scale) => {
+        return new Promise(resolve => {
+            const circle = document.getElementById("breathCircle");
+            circle.innerText = label;
+            circle.style.transform = `scale(${scale})`;
+            setTimeout(resolve, 4000);
+        });
+    };
+
+    // --- FINAL PHASE ---
+    const showDiagnosis = () => {
+        document.getElementById("breathContainer").style.display = "none";
+        document.getElementById("finalModal").style.display = "flex";
         
         const top = Object.keys(state.stats).reduce((a, b) => state.stats[a] > state.stats[b] ? a : b, "Focus");
-        document.getElementById("diagResult").innerHTML = `
-            <strong>DIAGNOSIS: PREFRONTAL ENGAGEMENT</strong><br><br>
-            Your neural focus prioritize: <b>${top}</b>.<br>
-            By interacting with ${state.wordsClicked} pillars, you have stimulated the 
-            associative cortex, preparing the brain for the next stage: <b>Silent Integration</b>.
+        
+        document.getElementById("diagText").innerHTML = `
+            <strong>Mindset Profile: ${top} Driven</strong><br><br>
+            You interacted with ${state.clicks} life pillars. This neuro-training has reinforced 
+            your sub-conscious capacity for <b>${top}</b>. Your brain is now in a high-coherence state.
         `;
-        
-        // El botón en el modal ahora activa el Silencio
-        const btn = document.querySelector("#diagModal button");
-        btn.innerText = "START SILENCE RETO";
-        btn.onclick = startSilenceChallenge;
-    }
+    };
 
-    async function startSilenceChallenge() {
-        document.getElementById("diagModal").style.display = "none";
-        state.phase = 'silence';
-        
-        // Cálculo progresivo: 30s (Bloque 1) -> 180s (Bloque 35)
-        // Fórmula: 30 + (index-1) * 4.4
-        let silenceTime = Math.round(30 + (state.index - 1) * 4.41);
-        
-        document.getElementById("centerText").innerHTML = `
-            <span style="color:var(--primary)">CHALLENGE: SILENCE</span><br>
-            <small style="font-size:16px;">
-                Científicamente: El silencio reduce los niveles de cortisol y activa el 
-                <b>Nervio Vago</b>, permitiendo que el sistema nervioso se autorregule 
-                y procese la información aprendida.
-            </small>
-        `;
-
-        let t = silenceTime;
-        const sLoop = setInterval(() => {
-            t--;
-            document.getElementById("timer").innerText = formatTime(t);
-            if(t <= 0) {
-                clearInterval(sLoop);
-                startBreathing();
-            }
-        }, 1000);
-    }
-
-    function startBreathing() {
-        state.phase = 'breathing';
-        document.getElementById("centerText").style.display = "none";
-        document.getElementById("breathContainer").style.display = "flex";
-        
-        let breathT = 60; // 1 minuto de respiración post-silencio
-        const circle = document.getElementById("breathCircle");
-        
-        const bLoop = setInterval(() => {
-            breathT--;
-            document.getElementById("timer").innerText = formatTime(breathT);
-            
-            // Ciclo 4-4-4
-            const cycle = breathT % 12;
-            if(cycle >= 8) {
-                circle.style.transform = "scale(2.5)";
-                circle.innerText = "INHALA";
-                circle.style.background = "radial-gradient(circle, var(--primary), transparent)";
-            } else if(cycle >= 4) {
-                circle.style.transform = "scale(2.5)";
-                circle.innerText = "RETIENE";
-            } else {
-                circle.style.transform = "scale(0.8)";
-                circle.innerText = "EXHALA";
-                circle.style.background = "radial-gradient(circle, var(--accent), transparent)";
-            }
-
-            if(breathT <= 0) {
-                clearInterval(bLoop);
-                finishSession();
-            }
-        }, 1000);
-    }
-
-    function finishSession() {
-        document.body.innerHTML = `
-            <div style="display:flex; flex-direction:column; justify-content:center; align-items:center; height:100vh; background:#000;">
-                <h1 style="color:var(--primary); font-size:40px;">SESSION COMPLETE</h1>
-                <p>Neural connections stabilized.</p>
-                <button class="action-btn" style="display:block; position:relative; margin-top:30px;" onclick="location.reload()">NEXT BLOCK</button>
-            </div>
-        `;
-    }
-
-    function formatTime(s) {
+    // HELPERS
+    const formatTime = (s) => {
         const m = Math.floor(s/60);
         const sec = s%60;
-        return `${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
-    }
-
-    return {
-        init: init,
-        proceed: () => {
-            if(state.phase === 'loading') startLevel();
-        }
+        return `${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
     };
+    const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+    const proceed = () => {
+        if(state.phase === 'story') startGame();
+    };
+
+    return { init, proceed, nextPhase: proceed };
 })();
 
 window.onload = Engine.init;
