@@ -3,51 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>AL CIELO - LIFE STRATEGY</title>
+    <title>AL CIELO - SESSION</title>
     <style>
         :root {
-            --neon-blue: #00f2ff; --neon-gold: #f1c40f; --neon-green: #2ecc71;
-            --neon-purple: #9b59b6; --neon-red: #ff3131; --bg-dark: #020205;
+            --neon-blue: #00f2ff; --neon-gold: #f1c40f; --neon-red: #ff3131;
+            --bg-dark: #020205;
         }
-        body { margin: 0; overflow: hidden; background: var(--bg-dark); color: white; font-family: 'Orbitron', sans-serif; cursor: none; }
+        body { margin: 0; overflow: hidden; background: var(--bg-dark); color: white; font-family: 'Orbitron', sans-serif; cursor: crosshair; }
         
-        /* HUD SUPERIOR REFORZADO */
-        #hud { position: absolute; top: 0; width: 100%; display: flex; justify-content: space-evenly; z-index: 100; background: rgba(0,0,0,0.8); padding: 10px 0; border-bottom: 1px solid var(--neon-blue); }
-        .data-box { text-align: center; min-width: 100px; }
-        .label { font-size: 10px; color: var(--neon-blue); font-weight: 900; display: block; letter-spacing: 1px; }
-        .value { font-size: 22px; font-weight: 900; color: #fff; }
-        
-        /* RELOJ GIGANTE */
-        #timer-box { border: 2px solid var(--neon-red); padding: 5px 20px; border-radius: 10px; animation: pulse 2s infinite; }
-        #val-time { font-size: 30px; color: var(--neon-red); }
+        /* HUD - VISIBILIDAD PRIORITARIA */
+        #hud { 
+            position: absolute; top: 0; width: 100%; display: flex; 
+            justify-content: space-evenly; z-index: 100; 
+            background: rgba(0,0,0,0.85); padding: 15px 0; 
+            border-bottom: 2px solid var(--neon-blue);
+            pointer-events: none;
+        }
+        .data-box { text-align: center; }
+        .label { font-size: 10px; color: var(--neon-blue); font-weight: 900; display: block; }
+        .value { font-size: 20px; font-weight: 900; color: #fff; }
+        #timer-box { border: 1px solid var(--neon-red); padding: 2px 15px; border-radius: 5px; }
+        #val-time { color: var(--neon-red); font-size: 24px; }
 
-        /* SISTEMA DE OVERLAY (HISTORIAS Y MISIONES) */
-        #overlay-system { position: fixed; inset: 0; background: var(--bg-dark); z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px; text-align: center; }
-        #content-area { max-width: 800px; width: 90%; }
-        .mission-text { font-size: 18px; line-height: 1.6; color: #fff; margin: 20px 0; }
-        .scientific-inf { font-size: 12px; color: var(--neon-blue); font-style: italic; margin-top: 10px; }
+        /* OVERLAY SISTEMA - DEBE SER DINÁMICO */
+        #overlay-system { 
+            position: fixed; inset: 0; background: var(--bg-dark); 
+            z-index: 2000; display: flex; flex-direction: column; 
+            align-items: center; justify-content: center; 
+            padding: 20px; text-align: center; transition: opacity 0.5s ease;
+        }
+        #content-area { max-width: 600px; }
+        .mission-text { font-size: 1.2rem; line-height: 1.5; margin: 20px 0; min-height: 50px; }
         
-        /* CÍRCULO RESPIRATORIO KAMIZEN */
+        /* CÍRCULO KAMIZEN */
         #breathing-node { 
-            width: 250px; height: 250px; 
-            border: 8px solid var(--neon-blue); 
-            border-radius: 50%; 
-            display: none; 
-            align-items: center; 
-            justify-content: center; 
-            margin: 30px auto;
-            box-shadow: 0 0 50px var(--neon-blue);
-            transition: transform 4s ease-in-out; 
+            width: 200px; height: 200px; border: 10px solid var(--neon-blue); 
+            border-radius: 50%; display: none; align-items: center; 
+            justify-content: center; margin: 30px auto;
+            box-shadow: 0 0 30px var(--neon-blue);
+            transition: transform 3s ease-in-out;
         }
-        #breathing-text { font-size: 24px; font-weight: 900; color: var(--neon-blue); text-transform: uppercase; }
+        #breathing-text { font-size: 20px; font-weight: 900; color: var(--neon-blue); }
 
-        .btn-start { padding: 20px 60px; background: var(--neon-blue); border: none; font-family: 'Orbitron'; font-weight: 900; cursor: pointer; border-radius: 50px; box-shadow: 0 0 30px var(--neon-blue); margin-top: 30px; transition: 0.3s; }
-        .btn-start:hover { transform: scale(1.1); }
+        .btn-action { 
+            padding: 15px 40px; background: var(--neon-blue); 
+            color: #000; border: none; font-family: 'Orbitron'; 
+            font-weight: 900; cursor: pointer; border-radius: 5px;
+            box-shadow: 0 0 20px var(--neon-blue); text-transform: uppercase;
+        }
 
-        canvas { display: block; }
-        #flash-effect { position: fixed; inset: 0; pointer-events: none; z-index: 99; opacity: 0; }
-        
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
+        canvas { display: block; position: absolute; top: 0; left: 0; z-index: 10; }
+        #flash-effect { position: fixed; inset: 0; pointer-events: none; z-index: 500; opacity: 0; }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
 </head>
@@ -56,7 +62,7 @@
 <div id="flash-effect"></div>
 
 <div id="hud">
-    <div id="timer-box" class="data-box"><span class="label">SESSION TIME</span><span id="val-time">05:00</span></div>
+    <div id="timer-box" class="data-box"><span class="label">REMAINING</span><span id="val-time">05:00</span></div>
     <div class="data-box"><span class="label">CAPITAL</span><span id="val-money" class="value">0</span></div>
     <div class="data-box"><span class="label">STABILITY</span><span id="val-health" class="value">100%</span></div>
     <div class="data-box"><span class="label">LEGACY</span><span id="val-legacy" class="value">0</span></div>
@@ -64,40 +70,36 @@
 
 <div id="overlay-system">
     <div id="content-area">
-        <h1 id="display-title" style="color: var(--neon-gold); letter-spacing: 5px;">INITIALIZING...</h1>
-        <div id="display-body" class="mission-text"></div>
+        <h2 id="display-title" style="color: var(--neon-gold);">AURA ADVISORY</h2>
+        <div id="display-body" class="mission-text">Cargando protocolos de entrenamiento...</div>
         
-        <!-- Círculo Azul Automático -->
-        <div id="breathing-node"><span id="breathing-text">INHALE</span></div>
+        <div id="breathing-node"><span id="breathing-text">BREATHE</span></div>
         
-        <div id="display-inf" class="scientific-inf"></div>
-        <button id="action-btn" class="btn-start" onclick="Engine.start()">START TRAINING</button>
+        <div id="display-inf" style="font-size: 11px; color: #888; margin-bottom: 20px;"></div>
+        <button id="action-btn" class="btn-action">CARGAR MISIÓN</button>
     </div>
 </div>
 
 <canvas id="gameCanvas"></canvas>
 
-<!-- Audio Effects -->
-<audio id="sfxGlass" src="https://actions.google.com/sounds/v1/science_fiction/glitch_sequence.ogg"></audio>
-
 <script src="static/js/engine.js"></script>
 <script>
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
-const flash = document.getElementById('flash-effect');
+const overlay = document.getElementById('overlay-system');
+const actionBtn = document.getElementById('action-btn');
 
-// Configuración de juego integrada con las palabras de engine.js
 let gameActive = false;
-let gameSeconds = 300;
 let objects = [];
-const user = { x: 0, y: 0, size: 50 };
+let user = { x: window.innerWidth/2, y: window.innerHeight/2, size: 40 };
 
-const pillars = [
-    { id: "LIMITS", c: "#ff3131", impact: "health", val: -15 },
-    { id: "VALUE", c: "#f1c40f", impact: "money", val: 100 },
-    { id: "BALANCE", c: "#2ecc71", impact: "health", val: 10 },
-    { id: "LEGACY", c: "#9b59b6", impact: "legacy", val: 20 },
-    { id: "METHOD", c: "#00f2ff", impact: "aware", val: 15 }
+// Palabras clave de engine.js para las figuras
+const types = [
+    { word: "CBP", color: "#f1c40f", impact: "money", val: 50 },
+    { word: "DOT", color: "#00f2ff", impact: "aware", val: 10 },
+    { word: "IATA", color: "#2ecc71", impact: "health", val: 5 },
+    { word: "DG", color: "#ff3131", impact: "health", val: -20 },
+    { word: "SECURITY", color: "#9b59b6", impact: "legacy", val: 15 }
 ];
 
 function resize() {
@@ -107,125 +109,108 @@ function resize() {
 window.addEventListener('resize', resize);
 resize();
 
-// Seguimiento de entrada
-const updatePos = (e) => {
-    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-    user.x = clientX;
-    user.y = clientY;
+// Control de Mouse y Touch
+const handleInput = (e) => {
+    const x = e.touches ? e.touches[0].clientX : e.clientX;
+    const y = e.touches ? e.touches[0].clientY : e.clientY;
+    user.x = x; user.y = y;
 };
-window.addEventListener('mousemove', updatePos);
-window.addEventListener('touchmove', updatePos, {passive: false});
+window.addEventListener('mousemove', handleInput);
+window.addEventListener('touchmove', handleInput, {passive: false});
 
-function spawnObject() {
+function spawn() {
     if(!gameActive) return;
-    const type = pillars[Math.floor(Math.random() * pillars.length)];
+    const t = types[Math.floor(Math.random()*types.length)];
     objects.push({
-        ...type,
-        x: Math.random() * (canvas.width - 100) + 50,
-        y: -50,
-        speed: 3 + Math.random() * 4
+        ...t, x: Math.random()*canvas.width, y: -20, s: 2 + Math.random()*3
     });
 }
 
-function updateGame() {
+function loop() {
     if(!gameActive) return;
-    
-    objects.forEach((obj, i) => {
-        obj.y += obj.speed;
-        
-        // Colisión
-        const dist = Math.sqrt((obj.x - user.x)**2 + (obj.y - user.y)**2);
-        if(dist < user.size) {
-            triggerFlash(obj.val > 0 ? 'rgba(0,242,255,0.2)' : 'rgba(255,49,49,0.2)');
-            // Actualizar HUD localmente
-            if(obj.impact === 'money') document.getElementById('val-money').innerText = parseInt(document.getElementById('val-money').innerText) + obj.val;
-            if(obj.impact === 'health') {
-                let h = parseInt(document.getElementById('val-health').innerText);
-                document.getElementById('val-health').innerText = Math.max(0, Math.min(100, h + obj.val)) + "%";
-            }
-            if(obj.impact === 'legacy') document.getElementById('val-legacy').innerText = parseInt(document.getElementById('val-legacy').innerText) + obj.val;
-            
-            objects.splice(i, 1);
-            document.getElementById('sfxGlass').cloneNode().play();
-        }
-        if(obj.y > canvas.height + 50) objects.splice(i, 1);
-    });
-}
-
-function drawGame() {
-    ctx.fillStyle = 'rgba(2, 2, 5, 0.2)';
+    ctx.fillStyle = 'rgba(2, 2, 5, 0.3)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Usuario (Cursor)
-    ctx.strokeStyle = varColor('--neon-blue');
-    ctx.lineWidth = 2;
+    // Dibujar Usuario
+    ctx.strokeStyle = '#00f2ff';
+    ctx.lineWidth = 3;
     ctx.beginPath();
     ctx.arc(user.x, user.y, user.size, 0, Math.PI*2);
     ctx.stroke();
 
-    // Objetos
-    objects.forEach(obj => {
-        ctx.fillStyle = obj.c;
-        ctx.font = "bold 14px Orbitron";
+    // Dibujar Objetos
+    objects.forEach((o, i) => {
+        o.y += o.s;
+        ctx.fillStyle = o.color;
+        ctx.font = "bold 12px Orbitron";
         ctx.textAlign = "center";
-        ctx.fillText(obj.id, obj.x, obj.y - 15);
-        
+        ctx.fillText(o.word, o.x, o.y - 10);
         ctx.beginPath();
-        ctx.arc(obj.x, obj.y, 10, 0, Math.PI*2);
+        ctx.arc(o.x, o.y, 8, 0, Math.PI*2);
         ctx.fill();
+
+        // Colisión
+        const d = Math.sqrt((o.x-user.x)**2 + (o.y-user.y)**2);
+        if(d < user.size) {
+            objects.splice(i, 1);
+            updateStats(o);
+        }
+        if(o.y > canvas.height) objects.splice(i,1);
     });
-    
-    if(gameActive) requestAnimationFrame(drawGame);
+    requestAnimationFrame(loop);
 }
 
-function varColor(name) {
-    return getComputedStyle(document.documentElement).getPropertyValue(name).strip;
+function updateStats(o) {
+    if(o.impact === 'money') document.getElementById('val-money').innerText = parseInt(document.getElementById('val-money').innerText) + o.val;
+    if(o.impact === 'health') {
+        let h = parseInt(document.getElementById('val-health').innerText);
+        document.getElementById('val-health').innerText = Math.max(0, h + o.val) + "%";
+    }
+    if(o.impact === 'legacy') document.getElementById('val-legacy').innerText = parseInt(document.getElementById('val-legacy').innerText) + o.val;
 }
 
-function triggerFlash(color) {
-    flash.style.background = color;
-    flash.style.opacity = "1";
-    setTimeout(() => flash.style.opacity = "0", 150);
-}
-
-// Interfaz para engine.js
+// CONEXIÓN CON EL MOTOR ENGINE.JS
 window.GameVisuals = {
     toggleOverlay: (show) => {
-        document.getElementById('overlay-system').style.display = show ? 'flex' : 'none';
-        gameActive = !show;
-        if(gameActive) {
-            objects = [];
-            drawGame();
-            spawnInterval = setInterval(spawnObject, 800);
-        } else {
-            clearInterval(spawnInterval);
-        }
+        overlay.style.opacity = show ? "1" : "0";
+        setTimeout(() => {
+            overlay.style.display = show ? "flex" : "none";
+            gameActive = !show;
+            if(gameActive) {
+                objects = [];
+                loop();
+                setInterval(spawn, 1000);
+            }
+        }, 500);
     },
     updateContent: (title, body, inf = "") => {
         document.getElementById('display-title').innerText = title;
         document.getElementById('display-body').innerText = body;
         document.getElementById('display-inf').innerText = inf;
+        actionBtn.innerText = "CONTINUAR";
     },
-    runBreathing: (seconds, actionText) => {
+    runBreathing: (sec, text) => {
         const node = document.getElementById('breathing-node');
-        const txt = document.getElementById('breathing-text');
-        node.style.display = 'flex';
-        txt.innerText = actionText;
-        
-        if(actionText.toLowerCase().includes("inhale") || actionText.toLowerCase().includes("inhala")) {
-            node.style.transform = "scale(1.3)";
-        } else {
-            node.style.transform = "scale(0.8)";
-        }
+        node.style.display = "flex";
+        document.getElementById('breathing-text').innerText = text;
+        node.style.transform = text.toLowerCase().includes("in") ? "scale(1.4)" : "scale(0.8)";
     },
     stopBreathing: () => {
-        document.getElementById('breathing-node').style.display = 'none';
+        document.getElementById('breathing-node').style.display = "none";
     }
 };
 
-let spawnInterval;
-Engine.init();
+// Listener para el botón de acción vinculado al motor
+actionBtn.addEventListener('click', () => {
+    if(typeof Engine !== 'undefined') {
+        Engine.start(); // Esto activa el audio y el cambio de estado en engine.js
+    }
+});
+
+// Inicialización forzada
+window.onload = () => {
+    if(typeof Engine !== 'undefined') Engine.init();
+};
 </script>
 </body>
 </html>
