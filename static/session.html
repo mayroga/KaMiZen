@@ -1,268 +1,628 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>KAMIZEN SYSTEM</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>MAYKAMI NEUROGAME - OFFICIAL ADVISORY SYSTEM</title>
+    <style>
+        :root {
+            --primary: #00f2ff;
+            --secondary: #0044ff;
+            --bg: #03050a;
+            --surface: rgba(255, 255, 255, 0.05);
+            --font-main: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            --success: #28a745;
+            --error: #dc3545;
+            --warning: #ffc107;
+        }
 
-<style>
-:root {
-    --primary: #00f2ff;
-    --secondary: #0044ff;
-    --bg: #03050a;
-    --surface: rgba(255, 255, 255, 0.05);
-    --success: #28a745;
-    --error: #dc3545;
-    --warning: #ffc107;
-}
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
-* { box-sizing: border-box; }
+        body {
+            margin: 0;
+            padding: 0;
+            background: var(--bg);
+            color: #fff;
+            font-family: var(--font-main);
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
 
-body {
-    margin: 0;
-    padding: 0;
-    background: var(--bg);
-    color: #fff;
-    font-family: Arial, sans-serif;
-    overflow: hidden;
-    height: 100vh;
-}
+        #stars-container {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at center, #0a0e1a 0%, #03050a 100%);
+        }
 
-/* CENTRO REAL */
-#main-container {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 90%;
-    max-width: 900px;
-    text-align: center;
-}
+        #timer {
+            position: absolute;
+            top: 40px;
+            font-size: 110px;
+            font-weight: 900;
+            color: var(--primary);
+            text-shadow: 0 0 30px rgba(0, 242, 255, 0.6);
+            letter-spacing: -5px;
+            z-index: 100;
+            display: none;
+            font-variant-numeric: tabular-nums;
+        }
 
-/* NARRADOR */
-#text-narrator {
-    font-size: 28px;
-    margin-bottom: 30px;
-    min-height: 80px;
-}
+        #main-container {
+            width: 90%;
+            max-width: 900px;
+            text-align: center;
+            z-index: 50;
+            position: relative;
+        }
 
-/* DECISIONES CENTRADAS */
-#decision-area {
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    gap: 15px;
-}
+        #text-narrator {
+            font-size: 32px;
+            font-weight: 300;
+            line-height: 1.5;
+            margin-bottom: 40px;
+            min-height: 100px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            transition: opacity 0.3s ease;
+        }
 
-.option-card {
-    width: 100%;
-    max-width: 600px;
-    padding: 18px;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(0,242,255,0.3);
-    border-radius: 10px;
-    cursor: pointer;
-    transition: 0.3s;
-    text-align: center;
-}
+        #decision-area {
+            display: none;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 30px;
+            perspective: 1000px;
+        }
 
-.option-card:hover {
-    transform: scale(1.05);
-    border-color: var(--primary);
-}
+        .option-card {
+            background: var(--surface);
+            border: 1px solid rgba(0, 242, 255, 0.3);
+            padding: 20px 30px;
+            border-radius: 12px;
+            font-size: 20px;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
 
-.option-card.correct {
-    border-color: var(--success);
-    background: rgba(40,167,69,0.2);
-}
+        .option-card:hover {
+            background: rgba(0, 242, 255, 0.1);
+            border-color: var(--primary);
+            transform: translateX(10px);
+        }
 
-.option-card.incorrect {
-    border-color: var(--error);
-    background: rgba(220,53,69,0.2);
-}
+        .option-card.correct {
+            border-color: var(--success);
+            background: rgba(40, 167, 69, 0.2);
+            box-shadow: 0 0 20px rgba(40, 167, 69, 0.4);
+        }
 
-/* FEEDBACK */
-#feedback-panel {
-    margin-top: 15px;
-    padding: 15px;
-    display: none;
-    border: 1px solid var(--primary);
-    background: rgba(0,0,0,0.5);
-}
+        .option-card.incorrect {
+            border-color: var(--error);
+            background: rgba(220, 53, 69, 0.2);
+        }
 
-/* TIMER */
-#timer {
-    position: absolute;
-    top: 20px;
-    width: 100%;
-    text-align: center;
-    font-size: 80px;
-    color: var(--primary);
-    display: none;
-}
+        #feedback-panel {
+            margin-top: 25px;
+            padding: 20px;
+            border-radius: 8px;
+            background: rgba(0,0,0,0.6);
+            border: 1px solid var(--primary);
+            font-size: 18px;
+            color: var(--primary);
+            display: none;
+            animation: fadeIn 0.5s forwards;
+        }
 
-/* PALABRAS FLOTANTES */
-.word-node {
-    position: absolute;
-    padding: 10px 18px;
-    background: rgba(0,0,0,0.7);
-    border: 1px solid var(--primary);
-    border-radius: 8px;
-    color: var(--primary);
-    font-weight: bold;
-    cursor: pointer;
-    animation: floatUp 8s linear forwards;
-    left: 50%;
-    transform: translateX(-50%);
-}
+        #stats-sidebar {
+            position: absolute;
+            right: 30px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: none;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 110;
+        }
 
-@keyframes floatUp {
-    0% { transform: translate(-50%, 100vh); opacity: 0; }
-    10% { opacity: 1; }
-    100% { transform: translate(-50%, -20vh); opacity: 0; }
-}
+        .stat-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: flex-end;
+        }
 
-/* EXPLOSIÓN */
-.word-node.explode {
-    animation: explodeFX 0.4s ease-out forwards;
-}
+        .stat-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--primary);
+            width: 100px;
+            text-align: right;
+        }
 
-@keyframes explodeFX {
-    0% { transform: scale(1); opacity: 1; }
-    50% { transform: scale(1.6); }
-    100% { transform: scale(2.5); opacity: 0; }
-}
+        .stat-bar-bg {
+            width: 10px;
+            height: 60px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 5px;
+            position: relative;
+            overflow: hidden;
+        }
 
-/* RESPIRACIÓN */
-#breath-container {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    display: none;
-    z-index: 9999;
-}
+        .stat-bar-fill {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 0%;
+            background: linear-gradient(to top, var(--secondary), var(--primary));
+            transition: height 0.6s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+            box-shadow: 0 0 10px var(--primary);
+        }
 
-#breath-circle {
-    width: 140px;
-    height: 140px;
-    border-radius: 50%;
-    border: 3px solid var(--primary);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    color: var(--primary);
-    animation: breathe 6s infinite ease-in-out;
-}
+        .word-node {
+            position: absolute;
+            padding: 10px 20px;
+            background: rgba(0, 242, 255, 0.05);
+            border: 1px solid var(--primary);
+            border-radius: 4px;
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 20px;
+            cursor: pointer;
+            z-index: 80;
+            animation: float-mission 8s linear forwards;
+            white-space: nowrap;
+            text-transform: uppercase;
+        }
 
-@keyframes breathe {
-    0% { transform: scale(0.8); opacity: 0.6; }
-    50% { transform: scale(1.4); opacity: 1; }
-    100% { transform: scale(0.8); opacity: 0.6; }
-}
+        @keyframes float-mission {
+            0% { transform: translateY(100vh) scale(0.8); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-20vh) scale(1.1); opacity: 0; }
+        }
 
-/* BOTONES */
-button {
-    padding: 10px 20px;
-    margin-top: 10px;
-    cursor: pointer;
-}
-</style>
+        #pilar-info-box {
+            position: absolute;
+            bottom: 150px;
+            left: 40px;
+            width: 320px;
+            padding: 20px;
+            background: rgba(0,0,0,0.85);
+            border-left: 5px solid var(--primary);
+            border-radius: 0 10px 10px 0;
+            display: none;
+            z-index: 120;
+            box-shadow: 10px 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .control-bar {
+            position: absolute;
+            bottom: 40px;
+            display: flex;
+            gap: 20px;
+            z-index: 1000;
+        }
+
+        .btn-system {
+            padding: 18px 45px;
+            font-size: 16px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-primary { background: var(--primary); color: #000; box-shadow: 0 0 20px rgba(0, 242, 255, 0.4); }
+        .btn-primary:hover { transform: scale(1.05); box-shadow: 0 0 35px var(--primary); }
+        .btn-secondary { background: #222; color: #fff; border: 1px solid #444; }
+        .btn-danger { background: #600; color: #fff; }
+
+        #warning-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(220, 53, 69, 0.9);
+            z-index: 2000;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
 </head>
-
 <body>
 
-<div id="timer">00:00</div>
+    <div id="stars-container"></div>
+    <div id="timer">00:00</div>
 
-<div id="breath-container">
-    <div id="breath-circle">INHALE</div>
-</div>
+    <div id="main-container">
+        <div id="text-narrator">Initializing MayKaMi Neural Interface...</div>
+        <div id="decision-area"></div>
+        <div id="feedback-panel"></div>
+    </div>
 
-<div id="main-container">
+    <div id="pilar-info-box">
+        <h3 id="pilar-title" style="margin:0; color:var(--primary);"></h3>
+        <p id="pilar-desc" style="margin:10px 0 0; font-size:16px; line-height:1.4;"></p>
+    </div>
 
-    <div id="text-narrator">Loading system...</div>
+    <div id="stats-sidebar"></div>
 
-    <div id="decision-area"></div>
+    <div class="control-bar">
+        <button id="btn-back" class="btn-system btn-secondary" onclick="location.href='/'">BACK</button>
+        <button id="btn-clear" class="btn-system btn-danger" onclick="KaMiZen.clearData()">CLEAR CACHE</button>
+        <button id="btn-start" class="btn-system btn-primary" onclick="KaMiZen.beginSession()">START SESSION</button>
+        <button id="btn-continue" class="btn-system btn-primary" style="display:none;" onclick="KaMiZen.handleFlow()">CONTINUE</button>
+    </div>
 
-    <div id="feedback-panel"></div>
+    <div id="warning-overlay">
+        <h1>INACTIVITY DETECTED</h1>
+        <p>Touch the screen to maintain connection.</p>
+    </div>
 
-    <button onclick="startCycle()">START</button>
-</div>
+    <audio id="bg-music" loop src="https://assets.mixkit.co/music/preview/mixkit-tech-house-vibes-130.mp3"></audio>
+    <audio id="sfx-pop" src="https://www.soundjay.com/buttons/sounds/button-10.mp3"></audio>
+    <audio id="sfx-correct" src="https://www.myinstants.com/media/sounds/correct.mp3"></audio>
+    <audio id="sfx-wrong" src="https://www.myinstants.com/media/sounds/wrong.mp3"></audio>
 
-<script>
-/* ===================== STATE ===================== */
-let state = {
-    score: 0,
-    timer: 300,
-    spawnRate: 1200
-};
+    <script>
+        const KaMiZen = (() => {
+            let state = {
+                lang: 'en',
+                phase: 'init',
+                missionIdx: 0,
+                stepIdx: 0,
+                score: {},
+                timerVal: 300,
+                timerInterval: null,
+                sessionData: null,
+                lastActivity: Date.now(),
+                isSpeaking: false
+            };
 
-/* ===================== WORDS ===================== */
-const words = ["POWER","RISK","SILENCE","GROWTH","MONEY","FOCUS"];
+            const PILARES = {
+                "LIMITS": { cat: "Protection", en: "Teaches to say 'no' and recognize personal space.", color: "#ff4d4d" },
+                "PERSISTENCE": { cat: "Resilience", en: "Understanding that error is part of the process, not a destination.", color: "#ff944d" },
+                "METHOD": { cat: "Organization", en: "Replacing chaos with logical steps; learning to learn.", color: "#4dff88" },
+                "CRITERIA": { cat: "Intelligence", en: "Ability to analyze information before accepting it as truth.", color: "#4dffff" },
+                "VALUE": { cat: "Wealth", en: "Understanding that money follows the value one contributes to others.", color: "#ffff4d" },
+                "BALANCE": { cat: "Health", en: "Caring for the body and mind as the most precious asset.", color: "#4dffdb" },
+                "LOYALTY": { cat: "Family", en: "Fostering strong bonds based on respect and mutual support.", color: "#d24dff" },
+                "AUTONOMY": { cat: "Thought", en: "The freedom to decide based on principles and not social pressure.", color: "#ff4db8" },
+                "ADAPTATION": { cat: "Survival", en: "Ability to flow and resolve situations in changing environments.", color: "#ffdb4d" },
+                "LEGACY": { cat: "Final", en: "Living with purpose so that what is built transcends existence.", color: "#ffffff" }
+            };
 
-/* ===================== SPAWN ===================== */
-function spawnWord() {
-    let div = document.createElement("div");
-    div.className = "word-node";
-    div.innerText = words[Math.floor(Math.random() * words.length)];
+            // MOTOR DE VOZ CORREGIDO
+            const speak = (text, onEndCallback) => {
+                window.speechSynthesis.cancel();
+                state.isSpeaking = true;
+                
+                const parts = text.split(/[.!?]/).map(p => p.trim()).filter(p => p.length > 0);
+                let currentPart = 0;
 
-    div.style.left = (Math.random() * 70 + 15) + "%";
+                if (parts.length === 0) {
+                    state.isSpeaking = false;
+                    if (onEndCallback) onEndCallback();
+                    return;
+                }
 
-    div.onclick = () => {
-        if (div.dataset.clicked) return;
-        div.dataset.clicked = 1;
+                const speakPart = () => {
+                    if (currentPart >= parts.length) {
+                        state.isSpeaking = false;
+                        if (onEndCallback) onEndCallback();
+                        return;
+                    }
 
-        div.classList.add("explode");
+                    const msg = new SpeechSynthesisUtterance(parts[currentPart]);
+                    const voices = window.speechSynthesis.getVoices();
+                    msg.voice = voices.find(v => v.lang.includes('en') && v.name.includes('David')) || voices[0];
+                    msg.lang = 'en-US';
+                    msg.rate = 0.9; 
+                    
+                    msg.onend = () => {
+                        currentPart++;
+                        setTimeout(speakPart, 400); 
+                    };
 
-        setTimeout(() => div.remove(), 300);
+                    msg.onerror = (event) => {
+                        console.error("Speech Error:", event);
+                        currentPart++;
+                        speakPart();
+                    };
 
-        state.score += 10;
-        console.log("Score:", state.score);
-    };
+                    window.speechSynthesis.speak(msg);
+                };
 
-    document.body.appendChild(div);
-    setTimeout(() => div.remove(), 8000);
-}
+                speakPart();
+            };
 
-/* ===================== BREATH ===================== */
-function breathing() {
-    let c = document.getElementById("breath-container");
-    let text = document.getElementById("breath-circle");
+            const beginSession = async () => {
+                document.getElementById('btn-start').style.display = 'none';
+                try {
+                    const response = await fetch('/api/session/start');
+                    state.sessionData = await response.json();
+                    initActivityMonitor();
+                    state.phase = 'introduction';
+                    const storyText = state.sessionData.story[state.lang];
+                    updateNarrator(storyText);
+                    speak(storyText, showBtnContinue);
+                } catch (err) {
+                    updateNarrator("Error linking to neural network. Check connection.");
+                }
+            };
 
-    c.style.display = "block";
+            // MANEJO DE FLUJO CORREGIDO (Diagnosis-1 forzado a MissionMode)
+            const handleFlow = () => {
+                hideBtnContinue();
+                console.log("Current Phase before flow:", state.phase);
+                
+                switch(state.phase) {
+                    case 'introduction':
+                        startCycle(1);
+                        break;
+                    case 'diagnosis-1':
+                        startMissionMode();
+                        break;
+                    case 'mission-complete':
+                        startCycle(2);
+                        break;
+                    case 'diagnosis-2':
+                        endSession();
+                        break;
+                    default:
+                        console.log("No phase matched");
+                }
+            };
 
-    let steps = ["INHALE","EXHALE","INHALE","EXHALE"];
-    let i = 0;
+            const startCycle = (num) => {
+                state.phase = `cycle-${num}`;
+                updateNarrator("");
+                document.getElementById('timer').style.display = 'block';
+                document.getElementById('stats-sidebar').style.display = 'flex';
+                document.getElementById('bg-music').play();
+                initBars();
+                state.timerVal = 300; 
+                
+                state.timerInterval = setInterval(() => {
+                    state.timerVal--;
+                    document.getElementById('timer').innerText = formatTime(state.timerVal);
+                    if (Math.random() > 0.75) createWordNode();
+                    if (state.timerVal <= 0) {
+                        clearInterval(state.timerInterval);
+                        runDiagnosis(num);
+                    }
+                }, 1000);
+            };
 
-    let interval = setInterval(() => {
-        text.innerText = steps[i];
-        i++;
-        if (i >= steps.length) {
-            clearInterval(interval);
-            c.style.display = "none";
-        }
-    }, 2000);
-}
+            const createWordNode = () => {
+                const keys = Object.keys(PILARES);
+                const word = keys[Math.floor(Math.random() * keys.length)];
+                const node = document.createElement('div');
+                node.className = 'word-node';
+                node.innerText = word;
+                node.style.left = (Math.random() * 70 + 15) + "%";
+                node.style.borderColor = PILARES[word].color;
+                node.style.color = PILARES[word].color;
+                
+                node.onclick = () => {
+                    document.getElementById('sfx-pop').currentTime = 0;
+                    document.getElementById('sfx-pop').play();
+                    const category = PILARES[word].cat;
+                    state.score[category] = (state.score[category] || 0) + 1;
+                    updateBars();
+                    showPilarInfo(word);
+                    node.remove();
+                };
+                document.body.appendChild(node);
+                setTimeout(() => node.remove(), 8000);
+            };
 
-/* ===================== LOOP ===================== */
-function startCycle() {
+            const showPilarInfo = (word) => {
+                const box = document.getElementById('pilar-info-box');
+                const title = document.getElementById('pilar-title');
+                const desc = document.getElementById('pilar-desc');
+                title.innerText = word;
+                title.style.color = PILARES[word].color;
+                desc.innerText = PILARES[word].en;
+                box.style.display = 'block';
+                clearTimeout(window.pilarTimeout);
+                window.pilarTimeout = setTimeout(() => box.style.display = 'none', 4000);
+            };
 
-    let timer = setInterval(() => {
-        state.timer--;
+            const startMissionMode = () => {
+                state.phase = 'mission-active';
+                state.missionIdx = 0;
+                state.stepIdx = 0;
+                document.getElementById('timer').style.display = 'none';
+                document.getElementById('stats-sidebar').style.display = 'none';
+                processMissionStep();
+            };
 
-        if (Math.random() > 0.6) spawnWord();
+            const processMissionStep = () => {
+                const mission = state.sessionData.missions[state.missionIdx];
+                if (!mission) {
+                    finishAllMissions();
+                    return;
+                }
+                const step = mission.b[state.stepIdx];
+                if (!step) {
+                    state.missionIdx++;
+                    state.stepIdx = 0;
+                    processMissionStep();
+                    return;
+                }
 
-        if (state.timer % 60 === 0) breathing();
+                document.getElementById('decision-area').style.display = 'none';
+                document.getElementById('decision-area').innerHTML = '';
+                document.getElementById('feedback-panel').style.display = 'none';
 
-        if (state.timer <= 0) {
-            clearInterval(timer);
-            alert("Cycle finished");
-        }
+                const narration = step.tx ? step.tx[state.lang] : (step.story ? step.story[state.lang] : null);
+                
+                if (narration) {
+                    updateNarrator(narration);
+                    speak(narration, () => {
+                        if (step.t === 'd') renderDecision(step);
+                        else {
+                            state.stepIdx++;
+                            setTimeout(processMissionStep, 1000);
+                        }
+                    });
+                } else if (step.t === 'd') {
+                    renderDecision(step);
+                } else {
+                    state.stepIdx++;
+                    processMissionStep();
+                }
+            };
 
-    }, 1000);
-}
-</script>
+            const renderDecision = (step) => {
+                const area = document.getElementById('decision-area');
+                const qText = step.q[state.lang];
+                updateNarrator(qText);
+                area.style.display = 'flex';
+                step.op.forEach((optionText, idx) => {
+                    const card = document.createElement('div');
+                    card.className = 'option-card';
+                    card.innerText = optionText;
+                    card.onclick = () => handleChoice(idx, step);
+                    area.appendChild(card);
+                });
+                speak(qText);
+            };
 
+            const handleChoice = (choiceIdx, step) => {
+                const cards = document.querySelectorAll('.option-card');
+                cards.forEach(c => c.onclick = null);
+                const isCorrect = choiceIdx === step.c;
+                const feedback = step.ex[choiceIdx];
+                cards[choiceIdx].classList.add(isCorrect ? 'correct' : 'incorrect');
+                document.getElementById(isCorrect ? 'sfx-correct' : 'sfx-wrong').play();
+                const panel = document.getElementById('feedback-panel');
+                panel.innerText = feedback;
+                panel.style.display = 'block';
+                speak(feedback, () => {
+                    state.stepIdx++;
+                    setTimeout(processMissionStep, 2000);
+                });
+            };
+
+            const runDiagnosis = (num) => {
+                state.phase = `diagnosis-${num}`;
+                document.getElementById('bg-music').pause();
+                document.getElementById('timer').style.display = 'none';
+                document.querySelectorAll('.word-node').forEach(n => n.remove());
+                const categories = Object.keys(state.score);
+                const topCat = categories.length > 0 ? categories.reduce((a, b) => state.score[a] > state.score[b] ? a : b) : "NEURAL BALANCE";
+                const diagText = `NEURAL DIAGNOSIS ${num} COMPLETED. High synchronization detected in: ${topCat.toUpperCase()}. Your logic circuits are now primed for the next phase.`;
+                updateNarrator(diagText);
+                speak(diagText, showBtnContinue);
+            };
+
+            const finishAllMissions = () => {
+                state.phase = 'mission-complete';
+                const msg = "Operational field mission successfully completed. Moving to final neural cycle.";
+                updateNarrator(msg);
+                speak(msg, showBtnContinue);
+            };
+
+            const endSession = () => {
+                const finalMsg = "Protocol KaMiZen finalized. Your mental state is now optimized for professional decisions. Farewell.";
+                updateNarrator(finalMsg);
+                speak(finalMsg, () => {
+                    setTimeout(() => location.href = '/', 3000);
+                });
+            };
+
+            const updateNarrator = (text) => {
+                const el = document.getElementById('text-narrator');
+                el.style.opacity = 0;
+                setTimeout(() => {
+                    el.innerText = text;
+                    el.style.opacity = 1;
+                }, 300);
+            };
+
+            const showBtnContinue = () => {
+                const btn = document.getElementById('btn-continue');
+                btn.style.display = 'block';
+                btn.style.animation = 'fadeIn 0.5s';
+            };
+
+            const hideBtnContinue = () => {
+                document.getElementById('btn-continue').style.display = 'none';
+            };
+
+            const initBars = () => {
+                const sidebar = document.getElementById('stats-sidebar');
+                sidebar.innerHTML = '';
+                const cats = ["Protection", "Resilience", "Organization", "Intelligence", "Wealth", "Health", "Family", "Thought", "Survival"];
+                cats.forEach(c => {
+                    sidebar.innerHTML += `
+                        <div class="stat-row">
+                            <div class="stat-label">${c}</div>
+                            <div class="stat-bar-bg"><div class="stat-bar-fill" id="bar-${c}"></div></div>
+                        </div>`;
+                });
+            };
+
+            const updateBars = () => {
+                Object.keys(state.score).forEach(cat => {
+                    const fill = document.getElementById(`bar-${cat}`);
+                    if (fill) {
+                        const val = Math.min(state.score[cat] * 12, 100);
+                        fill.style.height = val + "%";
+                    }
+                });
+            };
+
+            const formatTime = (seconds) => {
+                const m = Math.floor(seconds / 60);
+                const s = seconds % 60;
+                return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+            };
+
+            const clearData = () => {
+                localStorage.clear();
+                location.reload();
+            };
+
+            const initActivityMonitor = () => {
+                const overlay = document.getElementById('warning-overlay');
+                const resetTimer = () => {
+                    state.lastActivity = Date.now();
+                    overlay.style.display = 'none';
+                };
+                window.addEventListener('mousedown', resetTimer);
+                window.addEventListener('touchstart', resetTimer);
+                setInterval(() => {
+                    const idleTime = Date.now() - state.lastActivity;
+                    if (idleTime > 59000 && idleTime < 240000) overlay.style.display = 'flex';
+                    else if (idleTime >= 240000) {
+                        alert("Session expired due to inactivity.");
+                        location.href = '/';
+                    }
+                }, 1000);
+            };
+
+            return { beginSession, handleFlow, clearData };
+        })();
+
+        window.speechSynthesis.getVoices();
+    </script>
 </body>
 </html>
