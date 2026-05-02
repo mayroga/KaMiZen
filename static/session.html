@@ -1,307 +1,336 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>MAYKAMI | NEURAL INTERFACE</title>
-    <style>
-        :root {
-            --primary: #00f2ff;
-            --secondary: #0044ff;
-            --neon-red: #ff3131;
-            --bg: #03050a;
-            --font-main: 'Orbitron', sans-serif;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KAMIZEN | LIFE SYSTEM</title>
 
-        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
 
-        body {
-            background: var(--bg);
-            color: #fff;
-            font-family: 'Segoe UI', Roboto, sans-serif;
-            overflow: hidden;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+<style>
+:root{
+--blue:#00f2ff;
+--red:#ff3b3b;
+--gold:#ffd000;
+--bg:#020205;
+}
 
-        /* ESCENARIO 3D */
-        #life-path {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at center, #0a0e1a 0%, #03050a 100%);
-            z-index: 0;
-            perspective: 600px;
-            display: none;
-        }
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Orbitron',sans-serif;}
 
-        #road {
-            position: absolute;
-            bottom: 0; left: 50%;
-            width: 200%; height: 80%;
-            background: repeating-linear-gradient(0deg, rgba(0, 242, 255, 0.05) 0px, rgba(0, 242, 255, 0.05) 2px, transparent 2px, transparent 50px);
-            transform: translateX(-50%) rotateX(60deg);
-        }
+body{
+background:radial-gradient(circle,#050816,#000);
+color:#fff;
+overflow:hidden;
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+}
 
-        /* AVATAR */
-        #avatar-container {
-            position: absolute;
-            bottom: 15%; left: 50%;
-            transform: translateX(-50%);
-            z-index: 10;
-            text-align: center;
-            display: none;
-        }
+/* CENTRO TOTAL */
+#game-container{
+position:relative;
+width:100%;
+height:100%;
+display:flex;
+justify-content:center;
+align-items:center;
+flex-direction:column;
+}
 
-        #avatar-sprite {
-            width: 50px; height: 85px;
-            background: var(--primary);
-            box-shadow: 0 0 25px var(--primary);
-            border-radius: 4px;
-            margin-bottom: 10px;
-            animation: breathe-avatar 2s infinite ease-in-out;
-        }
+/* TEXTO CENTRAL */
+#text-display{
+font-size:28px;
+text-align:center;
+max-width:800px;
+text-shadow:0 0 20px var(--blue);
+margin-bottom:30px;
+}
 
-        @keyframes breathe-avatar {
-            0%, 100% { transform: scaleY(1); opacity: 0.8; }
-            50% { transform: scaleY(1.08); opacity: 1; }
-        }
+/* AVATAR */
+#avatar{
+width:80px;height:120px;
+background:var(--blue);
+box-shadow:0 0 30px var(--blue);
+animation:breathe 2s infinite;
+margin-bottom:20px;
+}
 
-        /* NODOS FLOTANTES (PILARES) */
-        .word-node {
-            position: absolute;
-            padding: 8px 15px;
-            border: 1px solid var(--primary);
-            color: var(--primary);
-            font-weight: 900;
-            font-family: 'Orbitron', sans-serif;
-            cursor: pointer;
-            z-index: 5;
-            text-transform: uppercase;
-            white-space: nowrap;
-            animation: travel-3d 4s linear forwards;
-        }
+@keyframes breathe{
+0%,100%{transform:scale(1)}
+50%{transform:scale(1.1)}
+}
 
-        @keyframes travel-3d {
-            from { transform: translate(-50%, -100%) scale(0.1); opacity: 0; }
-            20% { opacity: 1; }
-            to { transform: translate(-50%, 600px) scale(2.5); opacity: 0; }
-        }
+/* NODOS */
+.node{
+position:absolute;
+padding:15px 25px;
+border-radius:10px;
+font-weight:bold;
+cursor:pointer;
+animation:floatUp 4s linear forwards;
+}
 
-        /* UI ELEMENTS */
-        #main-container {
-            width: 90%;
-            max-width: 800px;
-            text-align: center;
-            z-index: 100;
-            margin-top: 10vh;
-        }
+.opportunity{border:2px solid var(--blue);color:var(--blue);box-shadow:0 0 15px var(--blue);}
+.obstacle{border:2px solid var(--red);color:var(--red);box-shadow:0 0 15px var(--red);}
+.distraction{border:2px solid var(--gold);color:var(--gold);box-shadow:0 0 15px var(--gold);}
 
-        #text-narrator {
-            font-size: 28px;
-            font-weight: 300;
-            line-height: 1.4;
-            text-shadow: 0 0 15px rgba(0, 242, 255, 0.5);
-            transition: opacity 0.5s;
-        }
+@keyframes floatUp{
+0%{transform:translateY(200px) scale(0.5);opacity:0}
+50%{opacity:1}
+100%{transform:translateY(-400px) scale(1.2);opacity:0}
+}
 
-        #timer {
-            position: absolute;
-            top: 20px;
-            font-size: 80px;
-            font-family: 'Orbitron', sans-serif;
-            color: var(--primary);
-            opacity: 0.3;
-            z-index: 10;
-        }
+/* EXPLOSION */
+@keyframes explode{
+0%{transform:scale(1)}
+50%{transform:scale(2)}
+100%{transform:scale(0);opacity:0}
+}
 
-        .control-bar {
-            position: fixed;
-            bottom: 40px;
-            display: flex;
-            gap: 15px;
-            z-index: 1000;
-        }
+/* HUD */
+#hud{
+position:absolute;
+top:20px;
+left:50%;
+transform:translateX(-50%);
+display:flex;
+gap:40px;
+font-size:14px;
+color:var(--blue);
+}
 
-        .btn-system {
-            padding: 15px 35px;
-            font-family: 'Orbitron', sans-serif;
-            font-weight: bold;
-            border: none;
-            cursor: pointer;
-            text-transform: uppercase;
-            border-radius: 4px;
-        }
+/* MISION */
+#mission-box{
+display:none;
+flex-direction:column;
+gap:15px;
+max-width:600px;
+}
 
-        .btn-primary { background: var(--primary); color: #000; box-shadow: 0 0 20px rgba(0, 242, 255, 0.4); }
+.option{
+padding:15px;
+border:1px solid var(--blue);
+cursor:pointer;
+transition:0.3s;
+}
 
-        #decision-area {
-            display: none;
-            flex-direction: column;
-            gap: 12px;
-            margin-top: 30px;
-        }
+.option:hover{
+background:rgba(0,242,255,0.2);
+}
 
-        .option-card {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(0, 242, 255, 0.3);
-            padding: 18px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
+/* RESPIRACION */
+#breath-circle{
+position:absolute;
+width:150px;height:150px;
+border-radius:50%;
+border:4px solid var(--blue);
+display:none;
+animation:breathAnim 4s infinite;
+}
 
-        .option-card:hover { border-color: var(--primary); background: rgba(0, 242, 255, 0.1); }
-    </style>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
+@keyframes breathAnim{
+0%{transform:scale(1)}
+50%{transform:scale(1.6)}
+100%{transform:scale(1)}
+}
+
+/* OVERLAY */
+#overlay{
+position:absolute;
+inset:0;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+background:black;
+z-index:10;
+}
+
+input{
+padding:15px;
+font-size:18px;
+margin-bottom:20px;
+background:black;
+border:2px solid var(--blue);
+color:white;
+text-align:center;
+}
+
+button{
+padding:15px 40px;
+background:var(--blue);
+border:none;
+font-weight:bold;
+cursor:pointer;
+}
+
+</style>
 </head>
+
 <body>
 
-    <div id="life-path">
-        <div id="road"></div>
-    </div>
+<div id="game-container">
 
-    <div id="timer">05:00</div>
+<div id="overlay">
+<h2>ENTER NAME</h2>
+<input id="name">
+<button onclick="Game.start()">START</button>
+</div>
 
-    <div id="avatar-container">
-        <div id="avatar-sprite"></div>
-        <div style="font-family: 'Orbitron'; font-size: 10px; color: var(--primary);">NEURAL_AVATAR</div>
-    </div>
+<div id="hud">
+<div>MONEY: <span id="money">0</span></div>
+<div>PRESSURE: <span id="pressure">0</span></div>
+</div>
 
-    <div id="main-container">
-        <div id="text-narrator">INITIALIZING MAYKAMI...</div>
-        <div id="decision-area"></div>
-    </div>
+<div id="avatar"></div>
+<div id="text-display"></div>
 
-    <div class="control-bar">
-        <button id="btn-start" class="btn-system btn-primary" onclick="KaMiZen.beginSession()">START MISSION</button>
-        <button id="btn-continue" class="btn-system btn-primary" style="display:none;" onclick="KaMiZen.handleFlow()">CONTINUE</button>
-    </div>
+<div id="mission-box"></div>
 
-    <audio id="bg-music" loop src="https://assets.mixkit.co/music/preview/mixkit-techno-vibe-147.mp3"></audio>
+<div id="breath-circle"></div>
 
-    <script>
-        const KaMiZen = (() => {
-            let state = {
-                phase: 'init',
-                timerVal: 300,
-                missionIdx: 0,
-                stepIdx: 0,
-                sessionData: null
-            };
+</div>
 
-            const PILARES = ["LIMITS", "METHOD", "VALUE", "BALANCE", "LOYALTY", "AUTONOMY"];
+<script>
+const Game = (()=>{
 
-            const speak = (text, callback) => {
-                const ut = new SpeechSynthesisUtterance(text);
-                ut.lang = 'en-US';
-                ut.rate = 0.9;
-                ut.onend = callback;
-                window.speechSynthesis.speak(ut);
-            };
+let state={
+name:"",
+money:0,
+pressure:0,
+phase:"init",
+time:300,
+session:null
+};
 
-            const beginSession = async () => {
-                document.getElementById('btn-start').style.display = 'none';
-                // Simulamos fetch de API
-                state.sessionData = {
-                    story: { en: "Welcome to the Neural Path. Your objective is to align your core values while navigating professional pressure." },
-                    missions: [
-                        { b: [
-                            { t: 'd', q: {en: "A high-paying client asks you to bypass safety protocols. What is your move?"}, op: ["Strict Refusal", "Negotiate", "Accept Risk"], c: 0, ex: ["Correct. Safety is non-negotiable.", "Risk remains. Incorrect.", "Dangerous. High liability."] }
-                        ]}
-                    ]
-                };
-                
-                state.phase = 'introduction';
-                updateNarrator(state.sessionData.story.en);
-                speak(state.sessionData.story.en, () => {
-                    document.getElementById('btn-continue').style.display = 'block';
-                });
-            };
+const ELEMENTS=[
+{t:"MONEY",c:"opportunity",m:100,p:0},
+{t:"BUSINESS",c:"opportunity",m:300,p:5},
+{t:"LIE",c:"obstacle",m:-200,p:10},
+{t:"PHONE",c:"distraction",m:0,p:5}
+];
 
-            const handleFlow = () => {
-                document.getElementById('btn-continue').style.display = 'none';
-                if(state.phase === 'introduction') startNeuralCycle();
-                else if(state.phase === 'cycle-complete') startMissionMode();
-            };
+/* START */
+const start=async()=>{
+state.name=document.getElementById("name").value;
+if(!state.name)return;
 
-            const startNeuralCycle = () => {
-                state.phase = 'cycling';
-                document.getElementById('life-path').style.display = 'block';
-                document.getElementById('avatar-container').style.display = 'block';
-                document.getElementById('bg-music').play();
-                updateNarrator("SYNCHRONIZE WITH THE CORE VALUES");
+document.getElementById("overlay").style.display="none";
 
-                const cycle = setInterval(() => {
-                    state.timerVal--;
-                    document.getElementById('timer').innerText = new Date(state.timerVal * 1000).toISOString().substr(14, 5);
-                    if (Math.random() > 0.6) spawnNode();
-                    if (state.timerVal <= 280) { // Reducido para demo a 20 seg
-                        clearInterval(cycle);
-                        completeCycle();
-                    }
-                }, 1000);
-            };
+const res=await fetch('/api/session/start');
+state.session=await res.json();
 
-            const spawnNode = () => {
-                const word = PILARES[Math.floor(Math.random() * PILARES.length)];
-                const node = document.createElement('div');
-                node.className = 'word-node';
-                node.innerText = word;
-                node.style.left = "50%";
-                node.onclick = () => {
-                    node.style.background = "var(--primary)";
-                    node.style.color = "#000";
-                    setTimeout(() => node.remove(), 100);
-                };
-                document.getElementById('life-path').appendChild(node);
-                setTimeout(() => node.remove(), 4000);
-            };
+showText(state.session.story.en);
 
-            const completeCycle = () => {
-                state.phase = 'cycle-complete';
-                document.getElementById('bg-music').pause();
-                updateNarrator("NEURAL ALIGNMENT SUCCESSFUL. READY FOR MISSION.");
-                speak("Neural alignment successful.", () => {
-                    document.getElementById('btn-continue').style.display = 'block';
-                });
-            };
+setTimeout(startCycle,3000);
+};
 
-            const startMissionMode = () => {
-                document.getElementById('life-path').style.display = 'none';
-                document.getElementById('avatar-container').style.display = 'none';
-                processMissionStep();
-            };
+/* TEXTO */
+const showText=(t)=>{
+document.getElementById("text-display").innerText=t;
+};
 
-            const processMissionStep = () => {
-                const step = state.sessionData.missions[0].b[state.stepIdx];
-                const area = document.getElementById('decision-area');
-                area.style.display = 'flex';
-                area.innerHTML = '';
-                
-                updateNarrator(step.q.en);
-                step.op.forEach((o, i) => {
-                    const card = document.createElement('div');
-                    card.className = 'option-card';
-                    card.innerText = o;
-                    card.onclick = () => {
-                        updateNarrator(step.ex[i]);
-                        speak(step.ex[i], () => {
-                            alert("Session Complete. Returning to Hub.");
-                            location.reload();
-                        });
-                    };
-                    area.appendChild(card);
-                });
-            };
+/* CICLO 5 MIN */
+const startCycle=()=>{
+state.phase="cycle";
 
-            const updateNarrator = (txt) => {
-                document.getElementById('text-narrator').innerText = txt;
-            };
+let interval=setInterval(()=>{
+spawn();
 
-            return { beginSession, handleFlow };
-        })();
-    </script>
+state.time--;
+
+if(state.time<=0){
+clearInterval(interval);
+diagnosis();
+}
+
+},1000);
+};
+
+/* SPAWN */
+const spawn=()=>{
+if(Math.random()<0.6)return;
+
+let el=ELEMENTS[Math.floor(Math.random()*ELEMENTS.length)];
+
+let node=document.createElement("div");
+node.className="node "+el.c;
+node.innerText=el.t;
+
+node.style.left=(Math.random()*60+20)+"%";
+node.style.top="60%";
+
+node.onclick=()=>{
+state.money+=el.m;
+state.pressure+=el.p;
+
+document.getElementById("money").innerText=state.money;
+document.getElementById("pressure").innerText=state.pressure;
+
+node.style.animation="explode 0.5s forwards";
+setTimeout(()=>node.remove(),500);
+};
+
+document.body.appendChild(node);
+setTimeout(()=>node.remove(),4000);
+};
+
+/* DIAGNOSTICO */
+const diagnosis=()=>{
+showText("ANALYZING YOUR DECISIONS...");
+
+setTimeout(()=>{
+showText("RESULT: PRESSURE "+state.pressure+" / MONEY "+state.money);
+startMission();
+},3000);
+};
+
+/* MISION */
+const startMission=()=>{
+state.phase="mission";
+
+let m=state.session.missions[0];
+
+document.getElementById("mission-box").style.display="flex";
+
+showText(m.q.en);
+
+m.op.forEach((op,i)=>{
+let div=document.createElement("div");
+div.className="option";
+div.innerText=op;
+
+div.onclick=()=>{
+showText(m.ex[i]);
+setTimeout(startBreathing,3000);
+};
+
+document.getElementById("mission-box").appendChild(div);
+});
+};
+
+/* RESPIRACION */
+const startBreathing=()=>{
+document.getElementById("mission-box").style.display="none";
+
+showText("BREATHE IN... HOLD... RELEASE...");
+
+let circle=document.getElementById("breath-circle");
+circle.style.display="block";
+
+/* RETO SILENCIO */
+setTimeout(()=>{
+circle.style.display="none";
+showText("SILENCE COMPLETE. NEXT LEVEL.");
+setTimeout(()=>location.reload(),3000);
+},15000);
+};
+
+return{start};
+
+})();
+</script>
+
 </body>
 </html>
