@@ -3,76 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>AL CIELO - STREET SMARTS EDITION</title>
+    <title>AL CIELO - LIFE STRATEGY</title>
     <style>
         :root {
-            --neon-blue: #00f2ff;
-            --neon-gold: #f1c40f;
-            --neon-green: #2ecc71;
-            --neon-purple: #9b59b6;
-            --neon-red: #ff3131;
-            --bg-dark: #020205;
+            --neon-blue: #00f2ff; --neon-gold: #f1c40f; --neon-green: #2ecc71;
+            --neon-purple: #9b59b6; --neon-red: #ff3131; --bg-dark: #020205;
         }
         body { margin: 0; overflow: hidden; background: var(--bg-dark); color: white; font-family: 'Orbitron', sans-serif; cursor: none; }
-        
-        #hud {
-            position: absolute; top: 15px; width: 100%;
-            display: flex; justify-content: space-evenly;
-            z-index: 100; pointer-events: none; flex-wrap: wrap;
-        }
-        .data-box {
-            background: rgba(0, 0, 0, 0.9);
-            border: 2px solid var(--neon-blue);
-            padding: 8px 15px; text-align: center;
-            box-shadow: 0 0 15px rgba(0, 242, 255, 0.3);
-            min-width: 90px; margin: 5px; border-radius: 8px;
-        }
-        .label { font-size: 9px; color: var(--neon-blue); letter-spacing: 1px; font-weight: 900; display: block; }
-        .value { font-size: 18px; font-weight: 900; display: block; color: #fff; }
+        #hud { position: absolute; top: 10px; width: 100%; display: flex; justify-content: space-evenly; z-index: 100; pointer-events: none; flex-wrap: wrap; }
+        .data-box { background: rgba(0, 0, 0, 0.9); border: 2px solid var(--neon-blue); padding: 5px 10px; text-align: center; min-width: 85px; border-radius: 5px; margin: 2px; transition: transform 0.2s; }
+        .label { font-size: 8px; color: var(--neon-blue); font-weight: 900; display: block; }
+        .value { font-size: 16px; font-weight: 900; color: #fff; }
 
-        #start-screen {
-            position: fixed; inset: 0; background: var(--bg-dark);
-            display: flex; flex-direction: column; justify-content: center;
-            align-items: center; z-index: 1000; text-align: center; padding: 20px;
-        }
-        .start-btn {
-            padding: 20px 40px; background: var(--neon-blue); color: black;
-            border: none; font-family: 'Orbitron'; font-weight: 900;
-            cursor: pointer; margin-top: 25px; letter-spacing: 2px;
-            box-shadow: 0 0 25px var(--neon-blue); border-radius: 50px;
-        }
+        #overlay-system { position: fixed; inset: 0; background: var(--bg-dark); z-index: 1000; display: flex; flex-direction: column; align-items: center; padding: 20px; overflow-y: auto; text-align: center; }
+        .tutorial-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-width: 700px; margin: 20px 0; }
+        .item-info { background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px; border-left: 4px solid var(--neon-blue); font-size: 11px; text-align: left; }
+        .btn-start { padding: 18px 50px; background: var(--neon-blue); border: none; font-family: 'Orbitron'; font-weight: 900; cursor: pointer; border-radius: 50px; box-shadow: 0 0 25px var(--neon-blue); margin-top: 15px; }
+        
+        #flash-effect { position: fixed; inset: 0; pointer-events: none; z-index: 99; opacity: 0; transition: opacity 0.1s; }
+        canvas { display: block; }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
 </head>
 <body>
 
+<div id="flash-effect"></div>
+
 <div id="hud">
-    <div class="data-box" style="border-color: var(--neon-gold);">
-        <span class="label">SAVINGS</span>
-        <span id="val-money" class="value">0</span>
-    </div>
-    <div class="data-box" style="border-color: var(--neon-green);">
-        <span class="label">STABILITY</span>
-        <span id="val-health" class="value">100%</span>
-    </div>
-    <div class="data-box" style="border-color: var(--neon-purple);">
-        <span class="label">AWARENESS</span>
-        <span id="val-aware" class="value">0</span>
-    </div>
-    <div class="data-box" style="border-color: #e67e22;">
-        <span class="label">STREET SMARTS</span>
-        <span id="val-smarts" class="value">0</span>
-    </div>
+    <div id="box-money" class="data-box" style="border-color: var(--neon-gold);"><span class="label">CAPITAL</span><span id="val-money" class="value">0</span></div>
+    <div id="box-health" class="data-box" style="border-color: var(--neon-green);"><span class="label">STABILITY</span><span id="val-health" class="value">100%</span></div>
+    <div id="box-aware" class="data-box" style="border-color: var(--neon-purple);"><span class="label">AWARENESS</span><span id="val-aware" class="value">0</span></div>
+    <div id="box-legacy" class="data-box" style="border-color: #e67e22;"><span class="label">LEGACY</span><span id="val-legacy" class="value">0</span></div>
 </div>
 
-<div id="start-screen">
-    <h1 style="color: var(--neon-blue); letter-spacing: 10px; font-size: 40px;">AL CIELO</h1>
-    <h2 style="color: var(--neon-gold);">STREET SURVIVAL MODE</h2>
-    <p style="max-width: 500px; line-height: 1.6; color: #bbb;">
-        Learn to handle real-world dangers: School safety, saving at home, and street awareness. 
-        <b>Touch the helpers, avoid the dangers.</b>
-    </p>
-    <button class="start-btn" onclick="startGame()">INITIALIZE TRAINING</button>
+<div id="overlay-system">
+    <h1 style="color: var(--neon-blue); letter-spacing: 8px; margin-bottom: 5px;">AL CIELO: LIFE PREP</h1>
+    <p style="color: var(--neon-gold); font-size: 13px; letter-spacing: 2px;">REAL ACTIONS = REAL CONSEQUENCES</p>
+    
+    <div class="tutorial-grid">
+        <div class="item-info"><b>👤 STRANGER:</b> Do NOT speak. Walk away immediately. <i style="color: var(--neon-red);">(STABILITY --)</i></div>
+        <div class="item-info"><b>🚨 911 / ALARM:</b> Use only in emergencies. Stay alert. <i style="color: var(--neon-blue);">(AWARENESS ++)</i></div>
+        <div class="item-info"><b>💰 SAVINGS:</b> Work and save for your future self. <i style="color: var(--neon-gold);">(CAPITAL ++)</i></div>
+        <div class="item-info"><b>🙏 BE KIND:</b> Help others and respect parents. <i style="color: #e67e22;">(LEGACY ++)</i></div>
+        <div class="item-info"><b>💡 SOLUTIONS:</b> Find a need, create a fix. <i style="color: var(--neon-gold);">(CAPITAL +++)</i></div>
+        <div class="item-info"><b>👀 OBSERVE:</b> Watch your surroundings always. <i style="color: var(--neon-blue);">(SURVIVAL ++)</i></div>
+        <div class="item-info"><b>📚 STUDY:</b> Education is your best armor. <i style="color: var(--neon-purple);">(LEGACY ++)</i></div>
+        <div class="item-info"><b>🏎️ DANGER:</b> Watch for cars and bad friends. <i style="color: var(--neon-red);">(STABILITY ---)</i></div>
+    </div>
+
+    <button class="btn-start" onclick="beginSession()">START TRAINING</button>
+    <p style="font-size: 10px; color: #666; margin-top: 15px;">EVERY SECOND MATTERS. NO AUDITS, ONLY ADVICE.</p>
 </div>
 
 <canvas id="gameCanvas"></canvas>
@@ -80,177 +60,140 @@
 <script>
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
+const flash = document.getElementById('flash-effect');
 let audioCtx;
 
-function resize() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-}
-window.addEventListener('resize', resize);
-resize();
-
-// VOCABULARIO SIMPLIFICADO Y SITUACIONES USA
 const rawData = [
-    // Seguridad y Peligro
-    { text: "RUN & HIDE", emoji: "🏃‍♂️", type: "pos", stat: "smarts", impact: 10, color: "#2ecc71", freq: 523 },
-    { text: "STRANGER", emoji: "👤", type: "neg", stat: "health", impact: -30, color: "#ff3131", freq: 120 },
-    { text: "FAST CAR", emoji: "🚗", type: "neg", stat: "health", impact: -40, color: "#ff3131", freq: 100 },
-    { text: "BULLY", emoji: "👊", type: "neg", stat: "aware", impact: -15, color: "#ff3131", freq: 150 },
-    { text: "SHOOTER ALARM", emoji: "🚨", type: "pos", stat: "smarts", impact: 20, color: "#00f2ff", freq: 880 },
+    // Supervivencia y Alerta
+    { text: "STAY ALERT", emoji: "👀", type: "pos", stat: "aware", impact: 15, color: "#00f2ff", freq: 523 },
+    { text: "CALL 911", emoji: "🚨", type: "pos", stat: "aware", impact: 30, color: "#ff3131", freq: 880 },
+    { text: "BE SAFE", emoji: "🛡️", type: "pos", stat: "health", impact: 10, color: "#2ecc71", freq: 659 },
+    { text: "OBSERVE", emoji: "🔍", type: "pos", stat: "aware", impact: 20, color: "#00f2ff", freq: 587 },
     
-    // Economía del Hogar (Cuidar a los padres)
-    { text: "SAVE POWER", emoji: "💡", type: "pos", stat: "money", impact: 50, color: "#f1c40f", freq: 659 },
-    { text: "NO WASTING", emoji: "🍎", type: "pos", stat: "money", impact: 40, color: "#f1c40f", freq: 698 },
-    { text: "EARN $", emoji: "📈", type: "pos", stat: "money", impact: 100, color: "#f1c40f", freq: 783 },
+    // Castigos (Peligros)
+    { text: "STRANGER", emoji: "👤", type: "neg", stat: "health", impact: -40, color: "#ff3131", freq: 110 },
+    { text: "BULLYING", emoji: "👿", type: "neg", stat: "health", impact: -25, color: "#ff3131", freq: 130 },
+    { text: "FAST CAR", emoji: "🏎️", type: "neg", stat: "health", impact: -50, color: "#ff3131", freq: 90 },
     
-    // Social y Emocional
-    { text: "HELP PARENTS", emoji: "❤️", type: "pos", stat: "health", impact: 10, color: "#2ecc71", freq: 440 },
-    { text: "TELL TRUTH", emoji: "🗣️", type: "pos", stat: "aware", impact: 15, color: "#9b59b6", freq: 493 },
-    { text: "BAD FRIENDS", emoji: "🚬", type: "neg", stat: "smarts", impact: -20, color: "#ff3131", freq: 130 }
+    // Valores y Legado
+    { text: "BE KIND", emoji: "🙏", type: "pos", stat: "legacy", impact: 20, color: "#9b59b6", freq: 440 },
+    { text: "RESPECT", emoji: "🫡", type: "pos", stat: "legacy", impact: 25, color: "#2ecc71", freq: 493 },
+    { text: "STUDY", emoji: "📚", type: "pos", stat: "legacy", impact: 35, color: "#3498db", freq: 987 },
+    
+    // Economía y Soluciones
+    { text: "WORK HARD", emoji: "🔨", type: "pos", stat: "money", impact: 80, color: "#f1c40f", freq: 330 },
+    { text: "SAVE MONEY", emoji: "💰", type: "pos", stat: "money", impact: 150, color: "#f1c40f", freq: 783 },
+    { text: "NEW IDEA", emoji: "💡", type: "pos", stat: "money", impact: 300, color: "#f1c40f", freq: 1046 }
 ];
 
-let stats = { money: 0, health: 100, aware: 0, smarts: 0 };
+let stats = { money: 0, health: 100, aware: 0, legacy: 0 };
 let active = false;
 let objects = [];
-let particles = [];
-const user = { x: canvas.width / 2, y: canvas.height / 2, size: 60 };
+const user = { x: 0, y: 0, size: 60 };
+
+function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+window.addEventListener('resize', resize); resize();
+
+function triggerFlash(color) {
+    flash.style.backgroundColor = color;
+    flash.style.opacity = "0.4";
+    setTimeout(() => flash.style.opacity = "0", 100);
+}
 
 function playSound(freq, type) {
     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     const osc = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
-    osc.type = type === 'pos' ? 'sine' : 'sawtooth';
     osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-    gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.5);
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
-    osc.start();
-    osc.stop(audioCtx.currentTime + 0.5);
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.start(); osc.stop(audioCtx.currentTime + 0.5);
 }
 
 function spawn() {
     if(!active) return;
     const entry = rawData[Math.floor(Math.random() * rawData.length)];
-    objects.push({
-        ...entry,
-        x: Math.random() * (canvas.width - 200) + 100,
-        y: -150,
-        speed: 3 + (stats.smarts / 500), // La velocidad sube con la experiencia
-        pulse: 0
-    });
-}
-
-function createExplosion(x, y, color) {
-    for (let i = 0; i < 15; i++) {
-        particles.push({ x, y, vx: (Math.random() - 0.5) * 12, vy: (Math.random() - 0.5) * 12, life: 1.0, color });
-    }
-}
-
-function handleInput(e) {
-    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-    user.x = clientX;
-    user.y = clientY;
-}
-
-window.addEventListener('mousemove', handleInput);
-window.addEventListener('touchmove', handleInput);
-
-function update() {
-    if(!active) return;
-
-    objects.forEach((obj, i) => {
-        obj.y += obj.speed;
-        obj.pulse += 0.07;
-
-        const dist = Math.sqrt((obj.x - user.x)**2 + (obj.y - user.y)**2);
-        if (dist < user.size) {
-            playSound(obj.freq, obj.type);
-            createExplosion(obj.x, obj.y, obj.color);
-            
-            // Actualización de estados
-            if(obj.stat === 'money') stats.money += obj.impact;
-            if(obj.stat === 'health') stats.health = Math.max(0, Math.min(100, stats.health + obj.impact));
-            if(obj.stat === 'aware') stats.aware += obj.impact;
-            if(obj.stat === 'smarts') stats.smarts += obj.impact;
-            
-            updateHUD();
-            objects.splice(i, 1);
-            if (window.navigator.vibrate) window.navigator.vibrate(obj.type === 'pos' ? 20 : 120);
-        }
-        if(obj.y > canvas.height + 200) objects.splice(i, 1);
-    });
-
-    particles.forEach((p, i) => {
-        p.x += p.vx; p.y += p.vy; p.life -= 0.02;
-        if(p.life <= 0) particles.splice(i, 1);
-    });
-
-    if(stats.health <= 0) {
-        active = false;
-        alert("TRAINING OVER: You need to be more careful in the streets. Talk to your parents about safety.");
-        location.reload();
-    }
+    objects.push({ ...entry, x: Math.random()*(canvas.width-200)+100, y: -100, speed: 2.5 + (stats.aware/800) });
 }
 
 function updateHUD() {
     document.getElementById('val-money').innerText = stats.money;
     document.getElementById('val-health').innerText = stats.health + "%";
     document.getElementById('val-aware').innerText = stats.aware;
-    document.getElementById('val-smarts').innerText = stats.smarts;
+    document.getElementById('val-legacy').innerText = stats.legacy;
+}
+
+function update() {
+    if(!active) return;
+    objects.forEach((obj, i) => {
+        obj.y += obj.speed;
+        const dist = Math.sqrt((obj.x - user.x)**2 + (obj.y - user.y)**2);
+        
+        if (dist < user.size) {
+            playSound(obj.freq, obj.type);
+            triggerFlash(obj.type === 'pos' ? 'var(--neon-green)' : 'var(--neon-red)');
+            
+            if(obj.stat === 'money') stats.money += obj.impact;
+            if(obj.stat === 'health') stats.health = Math.max(0, Math.min(100, stats.health + obj.impact));
+            if(obj.stat === 'aware') stats.aware += obj.impact;
+            if(obj.stat === 'legacy') stats.legacy += obj.impact;
+            
+            updateHUD();
+            objects.splice(i, 1);
+            if(navigator.vibrate) navigator.vibrate(obj.type === 'pos' ? 30 : 200);
+        }
+        if(obj.y > canvas.height + 150) objects.splice(i, 1);
+    });
+
+    if(stats.health <= 0) {
+        active = false;
+        alert("DIAGNOSIS: SYSTEM COLLAPSE. Your life stability reached 0. Learn from the dangers and try again.");
+        location.reload();
+    }
 }
 
 function draw() {
-    ctx.fillStyle = 'rgba(2, 2, 5, 0.2)';
+    ctx.fillStyle = 'rgba(2, 2, 5, 0.4)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // SCANNER
+    
+    // Scanner
     ctx.shadowBlur = 20;
-    ctx.shadowColor = "#00f2ff";
-    ctx.strokeStyle = "#00f2ff";
+    ctx.shadowColor = varColor('--neon-blue');
+    ctx.strokeStyle = varColor('--neon-blue');
     ctx.lineWidth = 3;
     ctx.beginPath();
     ctx.arc(user.x, user.y, user.size - 10, 0, Math.PI * 2);
     ctx.stroke();
 
-    // PARTICLES
-    particles.forEach(p => {
-        ctx.globalAlpha = p.life;
-        ctx.fillStyle = p.color;
-        ctx.fillRect(p.x, p.y, 4, 4);
-    });
-    ctx.globalAlpha = 1.0;
-
-    // OBJECTS
     objects.forEach(obj => {
-        const bounce = Math.sin(obj.pulse) * 8;
         ctx.shadowBlur = 15;
         ctx.shadowColor = obj.color;
-        
-        ctx.fillStyle = "white";
-        ctx.font = "900 16px Orbitron";
+        ctx.fillStyle = obj.color;
         ctx.textAlign = "center";
-        ctx.fillText(obj.text, obj.x, obj.y - 45 + bounce);
-
+        ctx.font = "bold 13px Orbitron";
+        ctx.fillText(obj.text, obj.x, obj.y - 45);
         ctx.font = "55px Arial";
-        ctx.fillText(obj.emoji, obj.x, obj.y + bounce);
+        ctx.fillText(obj.emoji, obj.x, obj.y);
     });
 }
 
-function startGame() {
-    document.getElementById('start-screen').style.display = 'none';
+function varColor(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+
+function beginSession() {
+    document.getElementById('overlay-system').style.display = 'none';
     active = true;
-    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    setInterval(spawn, 900);
+    setInterval(spawn, 850);
     loop();
 }
 
-function loop() {
-    update();
-    draw();
-    requestAnimationFrame(loop);
-}
+function loop() { if(active) { update(); draw(); requestAnimationFrame(loop); } }
+
+window.addEventListener('mousemove', e => { user.x = e.clientX; user.y = e.clientY; });
+window.addEventListener('touchmove', e => { 
+    e.preventDefault();
+    user.x = e.touches[0].clientX; 
+    user.y = e.touches[0].clientY; 
+}, { passive: false });
 </script>
 </body>
 </html>
