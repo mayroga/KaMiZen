@@ -11,9 +11,10 @@
         }
         body { margin: 0; overflow: hidden; background: var(--bg-dark); color: white; font-family: 'Orbitron', sans-serif; cursor: none; }
         #hud { position: absolute; top: 10px; width: 100%; display: flex; justify-content: space-evenly; z-index: 100; pointer-events: none; flex-wrap: wrap; }
-        .data-box { background: rgba(0, 0, 0, 0.9); border: 2px solid var(--neon-blue); padding: 5px 10px; text-align: center; min-width: 85px; border-radius: 5px; margin: 2px; transition: transform 0.2s; }
+        .data-box { background: rgba(0, 0, 0, 0.9); border: 2px solid var(--neon-blue); padding: 5px 10px; text-align: center; min-width: 85px; border-radius: 5px; margin: 2px; }
         .label { font-size: 8px; color: var(--neon-blue); font-weight: 900; display: block; }
         .value { font-size: 16px; font-weight: 900; color: #fff; }
+        #timer-box { color: var(--neon-red); border-color: var(--neon-red); }
 
         #overlay-system { position: fixed; inset: 0; background: var(--bg-dark); z-index: 1000; display: flex; flex-direction: column; align-items: center; padding: 20px; overflow-y: auto; text-align: center; }
         .tutorial-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-width: 700px; margin: 20px 0; }
@@ -30,29 +31,19 @@
 <div id="flash-effect"></div>
 
 <div id="hud">
-    <div id="box-money" class="data-box" style="border-color: var(--neon-gold);"><span class="label">CAPITAL</span><span id="val-money" class="value">0</span></div>
-    <div id="box-health" class="data-box" style="border-color: var(--neon-green);"><span class="label">STABILITY</span><span id="val-health" class="value">100%</span></div>
-    <div id="box-aware" class="data-box" style="border-color: var(--neon-purple);"><span class="label">AWARENESS</span><span id="val-aware" class="value">0</span></div>
-    <div id="box-legacy" class="data-box" style="border-color: #e67e22;"><span class="label">LEGACY</span><span id="val-legacy" class="value">0</span></div>
+    <div id="timer-box" class="data-box"><span class="label">SESSION TIME</span><span id="val-time" class="value">10:00</span></div>
+    <div class="data-box" style="border-color: var(--neon-gold);"><span class="label">CAPITAL</span><span id="val-money" class="value">0</span></div>
+    <div class="data-box" style="border-color: var(--neon-green);"><span class="label">STABILITY</span><span id="val-health" class="value">100%</span></div>
+    <div class="data-box" style="border-color: #e67e22;"><span class="label">LEGACY</span><span id="val-legacy" class="value">0</span></div>
 </div>
 
 <div id="overlay-system">
-    <h1 style="color: var(--neon-blue); letter-spacing: 8px; margin-bottom: 5px;">AL CIELO: LIFE PREP</h1>
-    <p style="color: var(--neon-gold); font-size: 13px; letter-spacing: 2px;">REAL ACTIONS = REAL CONSEQUENCES</p>
+    <h1 id="main-title" style="color: var(--neon-blue); letter-spacing: 8px;">AL CIELO</h1>
+    <p id="sub-title" style="color: var(--neon-gold); font-size: 13px;"></p>
     
-    <div class="tutorial-grid">
-        <div class="item-info"><b>👤 STRANGER:</b> Do NOT speak. Walk away immediately. <i style="color: var(--neon-red);">(STABILITY --)</i></div>
-        <div class="item-info"><b>🚨 911 / ALARM:</b> Use only in emergencies. Stay alert. <i style="color: var(--neon-blue);">(AWARENESS ++)</i></div>
-        <div class="item-info"><b>💰 SAVINGS:</b> Work and save for your future self. <i style="color: var(--neon-gold);">(CAPITAL ++)</i></div>
-        <div class="item-info"><b>🙏 BE KIND:</b> Help others and respect parents. <i style="color: #e67e22;">(LEGACY ++)</i></div>
-        <div class="item-info"><b>💡 SOLUTIONS:</b> Find a need, create a fix. <i style="color: var(--neon-gold);">(CAPITAL +++)</i></div>
-        <div class="item-info"><b>👀 OBSERVE:</b> Watch your surroundings always. <i style="color: var(--neon-blue);">(SURVIVAL ++)</i></div>
-        <div class="item-info"><b>📚 STUDY:</b> Education is your best armor. <i style="color: var(--neon-purple);">(LEGACY ++)</i></div>
-        <div class="item-info"><b>🏎️ DANGER:</b> Watch for cars and bad friends. <i style="color: var(--neon-red);">(STABILITY ---)</i></div>
-    </div>
+    <div id="dynamic-tutorial" class="tutorial-grid"></div>
 
-    <button class="btn-start" onclick="beginSession()">START TRAINING</button>
-    <p style="font-size: 10px; color: #666; margin-top: 15px;">EVERY SECOND MATTERS. NO AUDITS, ONLY ADVICE.</p>
+    <button id="action-btn" class="btn-start" onclick="beginSession()">INITIALIZE</button>
 </div>
 
 <canvas id="gameCanvas"></canvas>
@@ -61,139 +52,151 @@
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 const flash = document.getElementById('flash-effect');
-let audioCtx;
+let audioCtx, gameTimer, sessionSeconds = 600; // 10 Minutos exactos
 
-const rawData = [
-    // Supervivencia y Alerta
-    { text: "STAY ALERT", emoji: "👀", type: "pos", stat: "aware", impact: 15, color: "#00f2ff", freq: 523 },
-    { text: "CALL 911", emoji: "🚨", type: "pos", stat: "aware", impact: 30, color: "#ff3131", freq: 880 },
-    { text: "BE SAFE", emoji: "🛡️", type: "pos", stat: "health", impact: 10, color: "#2ecc71", freq: 659 },
-    { text: "OBSERVE", emoji: "🔍", type: "pos", stat: "aware", impact: 20, color: "#00f2ff", freq: 587 },
-    
-    // Castigos (Peligros)
-    { text: "STRANGER", emoji: "👤", type: "neg", stat: "health", impact: -40, color: "#ff3131", freq: 110 },
-    { text: "BULLYING", emoji: "👿", type: "neg", stat: "health", impact: -25, color: "#ff3131", freq: 130 },
-    { text: "FAST CAR", emoji: "🏎️", type: "neg", stat: "health", impact: -50, color: "#ff3131", freq: 90 },
-    
-    // Valores y Legado
-    { text: "BE KIND", emoji: "🙏", type: "pos", stat: "legacy", impact: 20, color: "#9b59b6", freq: 440 },
-    { text: "RESPECT", emoji: "🫡", type: "pos", stat: "legacy", impact: 25, color: "#2ecc71", freq: 493 },
-    { text: "STUDY", emoji: "📚", type: "pos", stat: "legacy", impact: 35, color: "#3498db", freq: 987 },
-    
-    // Economía y Soluciones
-    { text: "WORK HARD", emoji: "🔨", type: "pos", stat: "money", impact: 80, color: "#f1c40f", freq: 330 },
-    { text: "SAVE MONEY", emoji: "💰", type: "pos", stat: "money", impact: 150, color: "#f1c40f", freq: 783 },
-    { text: "NEW IDEA", emoji: "💡", type: "pos", stat: "money", impact: 300, color: "#f1c40f", freq: 1046 }
+const variants = {
+    safety: [
+        { t: "WATCH OUT", e: "👀", s: "aware", i: 15, c: "#00f2ff" },
+        { t: "STAY ALERT", e: "🔍", s: "aware", i: 20, c: "#00f2ff" },
+        { t: "BE VIGILANT", e: "🛡️", s: "health", i: 10, c: "#2ecc71" }
+    ],
+    danger: [
+        { t: "STRANGER", e: "👤", s: "health", i: -45, c: "#ff3131" },
+        { t: "BAD CALL", e: "👿", s: "health", i: -30, c: "#ff3131" },
+        { t: "THREAT", e: "🏎️", s: "health", i: -50, c: "#ff3131" }
+    ],
+    finance: [
+        { t: "SAVE CASH", e: "💰", s: "money", i: 150, c: "#f1c40f" },
+        { t: "NEW BUSINESS", e: "💡", s: "money", i: 300, c: "#f1c40f" },
+        { t: "WORK HARD", e: "🔨", s: "money", i: 100, c: "#f1c40f" }
+    ],
+    values: [
+        { t: "BE KIND", e: "🙏", s: "legacy", i: 25, c: "#9b59b6" },
+        { t: "RESPECT", e: "🫡", s: "legacy", i: 30, c: "#2ecc71" },
+        { t: "STUDY TIME", e: "📚", s: "legacy", i: 40, c: "#3498db" }
+    ]
+};
+
+const explanations = [
+    "Every touch defines your future. Avoid the red, embrace the growth.",
+    "Survival is about choice. Learn to filter the street from the noise.",
+    "Your legacy is built on daily habits. Start your 10-minute training."
 ];
 
-let stats = { money: 0, health: 100, aware: 0, legacy: 0 };
-let active = false;
-let objects = [];
+let stats = { money: 0, health: 100, legacy: 0, aware: 0 };
+let active = false, objects = [];
 const user = { x: 0, y: 0, size: 60 };
 
-function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-window.addEventListener('resize', resize); resize();
+function generateSessionContent() {
+    const grid = document.getElementById('dynamic-tutorial');
+    const sub = document.getElementById('sub-title');
+    grid.innerHTML = '';
+    sub.innerText = explanations[Math.floor(Math.random() * explanations.length)];
 
-function triggerFlash(color) {
-    flash.style.backgroundColor = color;
-    flash.style.opacity = "0.4";
-    setTimeout(() => flash.style.opacity = "0", 100);
+    const pool = [...variants.safety, ...variants.danger, ...variants.finance, ...variants.values];
+    const shuffled = pool.sort(() => 0.5 - Math.random()).slice(0, 8);
+
+    shuffled.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'item-info';
+        div.innerHTML = `<b>${item.e} ${item.t}:</b> Impact on ${item.s.toUpperCase()}.`;
+        grid.appendChild(div);
+    });
 }
 
-function playSound(freq, type) {
-    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.5);
-    osc.connect(gain); gain.connect(audioCtx.destination);
-    osc.start(); osc.stop(audioCtx.currentTime + 0.5);
+function updateTimer() {
+    if(!active) return;
+    sessionSeconds--;
+    let mins = Math.floor(sessionSeconds / 60);
+    let secs = sessionSeconds % 60;
+    document.getElementById('val-time').innerText = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+    
+    if(sessionSeconds <= 0) endGame("SESSION COMPLETE: Time is up. Review your legacy.");
 }
 
 function spawn() {
     if(!active) return;
-    const entry = rawData[Math.floor(Math.random() * rawData.length)];
-    objects.push({ ...entry, x: Math.random()*(canvas.width-200)+100, y: -100, speed: 2.5 + (stats.aware/800) });
-}
-
-function updateHUD() {
-    document.getElementById('val-money').innerText = stats.money;
-    document.getElementById('val-health').innerText = stats.health + "%";
-    document.getElementById('val-aware').innerText = stats.aware;
-    document.getElementById('val-legacy').innerText = stats.legacy;
+    const category = Object.keys(variants)[Math.floor(Math.random()*4)];
+    const item = variants[category][Math.floor(Math.random()*3)];
+    objects.push({ 
+        ...item, 
+        x: Math.random()*(canvas.width-200)+100, 
+        y: -100, 
+        speed: 2.5 + Math.random()*2,
+        drift: (Math.random() - 0.5) * 2 // Desplazamiento lateral aleatorio
+    });
 }
 
 function update() {
     if(!active) return;
     objects.forEach((obj, i) => {
         obj.y += obj.speed;
+        obj.x += obj.drift;
         const dist = Math.sqrt((obj.x - user.x)**2 + (obj.y - user.y)**2);
         
         if (dist < user.size) {
-            playSound(obj.freq, obj.type);
-            triggerFlash(obj.type === 'pos' ? 'var(--neon-green)' : 'var(--neon-red)');
+            if(obj.s === 'money') stats.money += obj.i;
+            if(obj.s === 'health') stats.health = Math.max(0, Math.min(100, stats.health + obj.i));
+            if(obj.s === 'legacy') stats.legacy += obj.i;
+            if(obj.s === 'aware') stats.aware += obj.i;
             
-            if(obj.stat === 'money') stats.money += obj.impact;
-            if(obj.stat === 'health') stats.health = Math.max(0, Math.min(100, stats.health + obj.impact));
-            if(obj.stat === 'aware') stats.aware += obj.impact;
-            if(obj.stat === 'legacy') stats.legacy += obj.impact;
-            
-            updateHUD();
+            triggerFlash(obj.i > 0 ? 'var(--neon-green)' : 'var(--neon-red)');
+            document.getElementById('val-money').innerText = stats.money;
+            document.getElementById('val-health').innerText = stats.health + "%";
+            document.getElementById('val-legacy').innerText = stats.legacy;
             objects.splice(i, 1);
-            if(navigator.vibrate) navigator.vibrate(obj.type === 'pos' ? 30 : 200);
         }
-        if(obj.y > canvas.height + 150) objects.splice(i, 1);
+        if(obj.y > canvas.height + 100) objects.splice(i, 1);
     });
 
-    if(stats.health <= 0) {
-        active = false;
-        alert("DIAGNOSIS: SYSTEM COLLAPSE. Your life stability reached 0. Learn from the dangers and try again.");
-        location.reload();
-    }
+    if(stats.health <= 0) endGame("SYSTEM COLLAPSE: Stability reached 0.");
+}
+
+function endGame(msg) {
+    active = false;
+    clearInterval(gameTimer);
+    alert(msg);
+    document.getElementById('overlay-system').style.display = 'flex';
+    document.getElementById('action-btn').innerText = "RESTART TRAINING";
+    sessionSeconds = 600;
+    stats = { money: 0, health: 100, legacy: 0, aware: 0 };
+    objects = [];
+    generateSessionContent();
 }
 
 function draw() {
-    ctx.fillStyle = 'rgba(2, 2, 5, 0.4)';
+    ctx.fillStyle = 'rgba(2, 2, 5, 0.3)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-    
-    // Scanner
-    ctx.shadowBlur = 20;
-    ctx.shadowColor = varColor('--neon-blue');
-    ctx.strokeStyle = varColor('--neon-blue');
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.arc(user.x, user.y, user.size - 10, 0, Math.PI * 2);
-    ctx.stroke();
+    ctx.strokeStyle = "#00f2ff"; ctx.lineWidth = 3; ctx.beginPath();
+    ctx.arc(user.x, user.y, user.size - 10, 0, Math.PI * 2); ctx.stroke();
 
     objects.forEach(obj => {
-        ctx.shadowBlur = 15;
-        ctx.shadowColor = obj.color;
-        ctx.fillStyle = obj.color;
-        ctx.textAlign = "center";
-        ctx.font = "bold 13px Orbitron";
-        ctx.fillText(obj.text, obj.x, obj.y - 45);
-        ctx.font = "55px Arial";
-        ctx.fillText(obj.emoji, obj.x, obj.y);
+        ctx.fillStyle = obj.c; ctx.textAlign = "center";
+        ctx.font = "bold 12px Orbitron"; ctx.fillText(obj.t, obj.x, obj.y - 40);
+        ctx.font = "50px Arial"; ctx.fillText(obj.e, obj.x, obj.y);
     });
 }
 
-function varColor(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+function triggerFlash(color) {
+    flash.style.backgroundColor = color; flash.style.opacity = "0.3";
+    setTimeout(() => flash.style.opacity = "0", 100);
+}
 
 function beginSession() {
     document.getElementById('overlay-system').style.display = 'none';
     active = true;
-    setInterval(spawn, 850);
+    gameTimer = setInterval(updateTimer, 1000);
+    setInterval(spawn, 800);
     loop();
 }
 
 function loop() { if(active) { update(); draw(); requestAnimationFrame(loop); } }
-
+function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+window.addEventListener('resize', resize); resize();
 window.addEventListener('mousemove', e => { user.x = e.clientX; user.y = e.clientY; });
-window.addEventListener('touchmove', e => { 
-    e.preventDefault();
-    user.x = e.touches[0].clientX; 
-    user.y = e.touches[0].clientY; 
-}, { passive: false });
+window.addEventListener('touchmove', e => { user.x = e.touches[0].clientX; user.y = e.touches[0].clientY; }, {passive: false});
+
+generateSessionContent();
 </script>
 </body>
 </html>
