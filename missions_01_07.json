@@ -29,17 +29,17 @@
 {"t":"br","tx":{"en":"Exhale","es":"Exhala"},"d":4},
 
 {"t":"d","q":{"en":"You feel something is wrong. What do you do?","es":"Sientes que algo no está bien. ¿Qué haces?"},
-"op":["Ignore / Ignorar","Observe / Observar","Run away / Alejarse sin pensar","Freeze / Quedarse quieto"],
+"op":["Ignore","Observe","Run away","Freeze"],
 "c":1,
 "ex":[
-"Ignore = miss warning signs / pierdes señales de alerta",
-"Observe = understand situation / entiendes la situación",
-"Run without plan = confusion risk / riesgo de confusión",
-"Freeze = no action when needed / no actúas cuando hace falta"
+"Ignore = miss warning signs",
+"Observe = understand situation",
+"Run without plan = confusion risk",
+"Freeze = no action when needed"
 ]},
 
-{"t":"r","tx":"+Awareness / +Conciencia","p":20},
-{"t":"c","tx":{"en":"Seeing early helps you stay safe / Ver temprano ayuda a estar seguro"}},
+{"t":"r","tx":"+Awareness","p":20},
+{"t":"c","tx":{"en":"Seeing early helps you stay safe"}},
 
 {"t":"sil","d":30,
 "tx":{"en":"30 seconds quiet focus","es":"30 segundos de enfoque en silencio"},
@@ -65,17 +65,17 @@
 {"t":"br","tx":{"en":"Exhale","es":"Exhala"},"d":4},
 
 {"t":"d","q":{"en":"What is the safest response?","es":"¿Cuál es la respuesta más segura?"},
-"op":["Fight / Pelear","Respond angry / Responder con rabia","Walk away & tell an adult / Alejarse y avisar a un adulto","Laugh & ignore / Reír e ignorar"],
+"op":["Fight","Respond angry","Walk away & tell an adult","Laugh & ignore"],
 "c":2,
 "ex":[
-"Fight = increases danger / aumenta el peligro",
-"Anger = loss of control / pérdida de control",
-"Walk away + tell adult = real protection / protección real",
-"Ignore without telling = may continue / puede continuar"
+"Fight = increases danger",
+"Anger = loss of control",
+"Walk away + tell adult = real protection",
+"Ignore without telling = may continue"
 ]},
 
-{"t":"r","tx":"+Safety / +Seguridad","p":20},
-{"t":"c","tx":{"en":"Asking for help is strength / Pedir ayuda es fuerza"}},
+{"t":"r","tx":"+Safety","p":20},
+{"t":"c","tx":{"en":"Asking for help is strength"}},
 
 {"t":"sil","d":30,
 "tx":{"en":"Calm breathing reset","es":"Reset de respiración calmada"},
@@ -101,17 +101,17 @@
 {"t":"br","tx":{"en":"Exhale","es":"Exhala"},"d":4},
 
 {"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
-"op":["Go with them / Ir con ellos","Stay near trusted adults / Quedarte cerca de adultos seguros","Follow anywhere / Seguir a cualquier lugar","Keep secret / Guardarlo en secreto"],
+"op":["Go with them","Stay near trusted adults","Follow anywhere","Keep secret"],
 "c":1,
 "ex":[
-"Going with stranger = unsafe / inseguro",
-"Stay near trusted adults = safe / seguro",
-"Following = risk increases / aumenta el riesgo",
-"Keeping secrets = reduces protection / reduce protección"
+"Going with stranger = unsafe",
+"Stay near trusted adults = safe",
+"Following = risk increases",
+"Keeping secrets = reduces protection"
 ]},
 
-{"t":"r","tx":"+Protection / +Protección","p":20},
-{"t":"c","tx":{"en":"If you feel unsafe, move away and tell someone / Si te sientes inseguro, aléjate y avisa"}},
+{"t":"r","tx":"+Protection","p":20},
+{"t":"c","tx":{"en":"If you feel unsafe, move away and tell someone"}},
 
 {"t":"sil","d":45,
 "tx":{"en":"Calm awareness breathing","es":"Respiración de conciencia calmada"},
@@ -137,17 +137,17 @@
 {"t":"br","tx":{"en":"Exhale","es":"Exhala"},"d":5},
 
 {"t":"d","q":{"en":"What is the correct action?","es":"¿Cuál es la acción correcta?"},
-"op":["Hide alone / Esconderse solo","Find safe adult or emergency help / Buscar adulto seguro o ayuda","Walk randomly / Caminar sin rumbo","Do nothing / No hacer nada"],
+"op":["Hide alone","Find safe adult or emergency help","Walk randomly","Do nothing"],
 "c":1,
 "ex":[
-"Hiding alone = delays help / retrasa ayuda",
-"Seeking help = fastest safety / seguridad más rápida",
-"Random walking = increases risk / aumenta riesgo",
-"Doing nothing = danger continues / el peligro continúa"
+"Hiding alone = delays help",
+"Seeking help = fastest safety",
+"Random walking = increases risk",
+"Doing nothing = danger continues"
 ]},
 
-{"t":"r","tx":"+Help / +Ayuda","p":20},
-{"t":"c","tx":{"en":"Fast help increases safety / Ayuda rápida aumenta seguridad"}},
+{"t":"r","tx":"+Help","p":20},
+{"t":"c","tx":{"en":"Fast help increases safety"}},
 
 {"t":"sil","d":45,
 "tx":{"en":"Grounding breath focus","es":"Enfoque de respiración de calma"},
@@ -173,17 +173,17 @@
 {"t":"br","tx":{"en":"Exhale","es":"Exhala"},"d":4},
 
 {"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
-"op":["Share info / Compartir","Tell trusted adult / Avisar a adulto de confianza","Send location / Enviar ubicación","Ignore rules / Ignorar reglas"],
+"op":["Share info","Tell trusted adult","Send location","Ignore rules"],
 "c":1,
 "ex":[
-"Sharing info = risk / riesgo",
-"Telling adult = protection / protección",
-"Sending location = unsafe / inseguro",
-"Ignoring rules = vulnerability / vulnerabilidad"
+"Sharing info = risk",
+"Telling adult = protection",
+"Sending location = unsafe",
+"Ignoring rules = vulnerability"
 ]},
 
-{"t":"r","tx":"+Security / +Seguridad","p":20},
-{"t":"c","tx":{"en":"Privacy protects you / La privacidad te protege"}},
+{"t":"r","tx":"+Security","p":20},
+{"t":"c","tx":{"en":"Privacy protects you"}},
 
 {"t":"sil","d":60,
 "tx":{"en":"Slow focus breathing","es":"Respiración lenta de enfoque"},
@@ -206,17 +206,17 @@
 {"story":{"en":"Money is like water: if you save some, it helps you in the future.","es":"El dinero es como el agua: si guardas algo, te ayuda en el futuro."}},
 
 {"t":"d","q":{"en":"What is the smart action?","es":"¿Qué es lo inteligente?"},
-"op":["Spend all / Gastarlo todo","Save part / Ahorrar parte","Give all away / Regalar todo","Ignore / Ignorar"],
+"op":["Spend all","Save part","Give all away","Ignore"],
 "c":1,
 "ex":[
-"Spending all = no control / sin control",
-"Saving = discipline / disciplina",
-"Giving all = loss of resources / pérdida de recursos",
-"Ignoring = no awareness / sin conciencia"
+"Spending all = no control",
+"Saving = discipline",
+"Giving all = loss of resources",
+"Ignoring = no awareness"
 ]},
 
-{"t":"r","tx":"+Responsibility / +Responsabilidad","p":20},
-{"t":"c","tx":{"en":"Money needs planning / El dinero necesita planificación"}},
+{"t":"r","tx":"+Responsibility","p":20},
+{"t":"c","tx":{"en":"Money needs planning"}},
 
 {"t":"sil","d":60,
 "tx":{"en":"Calm decision breathing","es":"Respiración de decisión calmada"},
@@ -242,17 +242,17 @@
 {"t":"br","tx":{"en":"Exhale","es":"Exhala"},"d":5},
 
 {"t":"d","q":{"en":"What helps the situation?","es":"¿Qué ayuda a la situación?"},
-"op":["Shout / Gritar","Listen calmly / Escuchar calmado","Leave forever / Irse","Ignore family / Ignorar familia"],
+"op":["Shout","Listen calmly","Leave forever","Ignore family"],
 "c":1,
 "ex":[
-"Shouting = conflict grows / crece el conflicto",
-"Listening = resolution / resolución",
-"Leaving = no solution / no solución",
-"Ignoring = weak bond / vínculo débil"
+"Shouting = conflict grows",
+"Listening = resolution",
+"Leaving = no solution",
+"Ignoring = weak bond"
 ]},
 
-{"t":"r","tx":"+Respect / +Respeto","p":20},
-{"t":"c","tx":{"en":"Respect builds strong families / El respeto construye familias fuertes"}},
+{"t":"r","tx":"+Respect","p":20},
+{"t":"c","tx":{"en":"Respect builds strong families"}},
 
 {"t":"sil","d":90,
 "tx":{"en":"Long calm focus breathing","es":"Respiración larga de calma"},
