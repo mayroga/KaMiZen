@@ -38,10 +38,12 @@
 </div>
 
 <div id="overlay-system">
-    <h1 style="color: var(--neon-blue); letter-spacing: 8px;">AL CIELO</h1>
+    <h1 id="main-title" style="color: var(--neon-blue); letter-spacing: 8px;">AL CIELO</h1>
     <p id="sub-title" style="color: var(--neon-gold); font-size: 13px;"></p>
+    
     <div id="dynamic-tutorial" class="tutorial-grid"></div>
-    <button id="action-btn" class="btn-start" onclick="beginSession()">INITIALIZE WITH AUDIO</button>
+
+    <button id="action-btn" class="btn-start" onclick="beginSession()">INITIALIZE</button>
 </div>
 
 <canvas id="gameCanvas"></canvas>
@@ -51,28 +53,28 @@ const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 const flash = document.getElementById('flash-effect');
 let audioCtx, gameTimer, sessionSeconds = 600;
-let musicOsc, musicGain, currentBaseFreq = 220; // La base de la música de dopamina
+let musicGain, musicOsc1, musicOsc2;
 
 const variants = {
     safety: [
-        { t: "WATCH OUT", e: "👀", s: "aware", i: 15, c: "#00f2ff", f: 523 },
-        { t: "STAY ALERT", e: "🔍", s: "aware", i: 20, c: "#00f2ff", f: 587 },
-        { t: "BE VIGILANT", e: "🛡️", s: "health", i: 10, c: "#2ecc71", f: 659 }
+        { t: "WATCH OUT", e: "👀", s: "aware", i: 15, c: "#00f2ff", freq: 523.25 },
+        { t: "STAY ALERT", e: "🔍", s: "aware", i: 20, c: "#00f2ff", freq: 587.33 },
+        { t: "BE VIGILANT", e: "🛡️", s: "health", i: 10, c: "#2ecc71", freq: 659.25 }
     ],
     danger: [
-        { t: "STRANGER", e: "👤", s: "health", i: -45, c: "#ff3131", f: 110 },
-        { t: "BAD CALL", e: "👿", s: "health", i: -30, c: "#ff3131", f: 130 },
-        { t: "THREAT", e: "🏎️", s: "health", i: -50, c: "#ff3131", f: 90 }
+        { t: "STRANGER", e: "👤", s: "health", i: -45, c: "#ff3131", freq: 110 },
+        { t: "BAD CALL", e: "👿", s: "health", i: -30, c: "#ff3131", freq: 98 },
+        { t: "THREAT", e: "🏎️", s: "health", i: -50, c: "#ff3131", freq: 82 }
     ],
     finance: [
-        { t: "SAVE CASH", e: "💰", s: "money", i: 150, c: "#f1c40f", f: 783 },
-        { t: "NEW BUSINESS", e: "💡", s: "money", i: 300, c: "#f1c40f", f: 1046 },
-        { t: "WORK HARD", e: "🔨", s: "money", i: 100, c: "#f1c40f", f: 880 }
+        { t: "SAVE CASH", e: "💰", s: "money", i: 150, c: "#f1c40f", freq: 783.99 },
+        { t: "NEW BUSINESS", e: "💡", s: "money", i: 300, c: "#f1c40f", freq: 880.00 },
+        { t: "WORK HARD", e: "🔨", s: "money", i: 100, c: "#f1c40f", freq: 987.77 }
     ],
     values: [
-        { t: "BE KIND", e: "🙏", s: "legacy", i: 25, c: "#9b59b6", f: 440 },
-        { t: "RESPECT", e: "🫡", s: "legacy", i: 30, c: "#2ecc71", f: 493 },
-        { t: "STUDY TIME", e: "📚", s: "legacy", i: 40, c: "#3498db", f: 987 }
+        { t: "BE KIND", e: "🙏", s: "legacy", i: 25, c: "#9b59b6", freq: 440.00 },
+        { t: "RESPECT", e: "🫡", s: "legacy", i: 30, c: "#2ecc71", freq: 493.88 },
+        { t: "STUDY TIME", e: "📚", s: "legacy", i: 40, c: "#3498db", freq: 349.23 }
     ]
 };
 
@@ -88,50 +90,68 @@ const user = { x: 0, y: 0, size: 60 };
 
 // --- SISTEMA DE AUDIO ---
 function initAudio() {
-    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx) return;
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     
     // Música de fondo (Dopamina Binaural)
-    musicOsc = audioCtx.createOscillator();
     musicGain = audioCtx.createGain();
-    musicOsc.type = 'triangle';
-    musicOsc.frequency.setValueAtTime(currentBaseFreq, audioCtx.currentTime);
-    musicGain.gain.setValueAtTime(0.05, audioCtx.currentTime);
-    
-    musicOsc.connect(musicGain);
+    musicGain.gain.value = 0.1;
     musicGain.connect(audioCtx.destination);
-    musicOsc.start();
+
+    musicOsc1 = audioCtx.createOscillator();
+    musicOsc2 = audioCtx.createOscillator();
+    
+    musicOsc1.frequency.value = 180; // Frecuencia relajante
+    musicOsc2.frequency.value = 185; // Diferencia para efecto binaural
+    
+    musicOsc1.connect(musicGain);
+    musicOsc2.connect(musicGain);
+    
+    musicOsc1.start();
+    musicOsc2.start();
 }
 
-function playEffect(freq, type) {
-    if (!audioCtx) return;
+function updateMusicVolume() {
+    if (!active) return;
+    // Sube y baja el volumen cada minuto para relajar
+    const phase = (sessionSeconds % 60) / 60;
+    const vol = 0.05 + (Math.sin(phase * Math.PI) * 0.15); 
+    musicGain.gain.setTargetAtTime(vol, audioCtx.currentTime, 0.5);
+}
+
+function playEffect(freq, isPositive) {
     const osc = audioCtx.createOscillator();
     const g = audioCtx.createGain();
-    osc.type = type === 'pos' ? 'sine' : 'sawtooth';
-    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-    g.gain.setValueAtTime(0.1, audioCtx.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.4);
     osc.connect(g);
     g.connect(audioCtx.destination);
+
+    if (isPositive) {
+        // Sonido tipo Piano
+        osc.type = 'sine';
+        g.gain.setValueAtTime(0.6, audioCtx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
+    } else {
+        // Sonido tipo Electricidad/Castigo
+        osc.type = 'sawtooth';
+        g.gain.setValueAtTime(0.8, audioCtx.currentTime);
+        g.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + 0.2);
+    }
+
+    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
     osc.start();
-    osc.stop(audioCtx.currentTime + 0.4);
+    osc.stop(audioCtx.currentTime + 0.5);
 }
 
-function modulateMusic() {
-    if (!active) return;
-    // Cambia el tono cada minuto (sube o baja aleatoriamente para relajar/estimular)
-    const tones = [164.81, 196.00, 220.00, 261.63, 329.63];
-    currentBaseFreq = tones[Math.floor(Math.random() * tones.length)];
-    musicOsc.frequency.exponentialRampToValueAtTime(currentBaseFreq, audioCtx.currentTime + 2);
-}
-
-// --- LÓGICA DEL JUEGO ---
+// --- LÓGICA DE JUEGO ---
 function generateSessionContent() {
     const grid = document.getElementById('dynamic-tutorial');
     const sub = document.getElementById('sub-title');
     grid.innerHTML = '';
     sub.innerText = explanations[Math.floor(Math.random() * explanations.length)];
+
     const pool = [...variants.safety, ...variants.danger, ...variants.finance, ...variants.values];
     const shuffled = pool.sort(() => 0.5 - Math.random()).slice(0, 8);
+
     shuffled.forEach(item => {
         const div = document.createElement('div');
         div.className = 'item-info';
@@ -143,19 +163,25 @@ function generateSessionContent() {
 function updateTimer() {
     if(!active) return;
     sessionSeconds--;
-    if (sessionSeconds % 60 === 0) modulateMusic(); // Modular cada minuto
-
+    updateMusicVolume();
     let mins = Math.floor(sessionSeconds / 60);
     let secs = sessionSeconds % 60;
     document.getElementById('val-time').innerText = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
-    if(sessionSeconds <= 0) endGame("SESSION COMPLETE: Legacy Registered.");
+    
+    if(sessionSeconds <= 0) endGame("SESSION COMPLETE: Time is up. Review your legacy.");
 }
 
 function spawn() {
     if(!active) return;
     const cat = Object.keys(variants)[Math.floor(Math.random()*4)];
     const item = variants[cat][Math.floor(Math.random()*3)];
-    objects.push({ ...item, x: Math.random()*(canvas.width-200)+100, y: -100, speed: 2.5 + Math.random()*2, drift: (Math.random()-0.5)*2 });
+    objects.push({ 
+        ...item, 
+        x: Math.random()*(canvas.width-200)+100, 
+        y: -100, 
+        speed: 2.5 + Math.random()*2.5,
+        drift: (Math.random() - 0.5) * 3 
+    });
 }
 
 function update() {
@@ -164,33 +190,37 @@ function update() {
         obj.y += obj.speed;
         obj.x += obj.drift;
         const dist = Math.sqrt((obj.x - user.x)**2 + (obj.y - user.y)**2);
+        
         if (dist < user.size) {
-            playEffect(obj.f, obj.i > 0 ? 'pos' : 'neg');
+            playEffect(obj.freq, obj.i > 0);
             if(obj.s === 'money') stats.money += obj.i;
             if(obj.s === 'health') stats.health = Math.max(0, Math.min(100, stats.health + obj.i));
             if(obj.s === 'legacy') stats.legacy += obj.i;
             if(obj.s === 'aware') stats.aware += obj.i;
+            
             triggerFlash(obj.i > 0 ? 'var(--neon-green)' : 'var(--neon-red)');
-            updateHUD();
+            document.getElementById('val-money').innerText = stats.money;
+            document.getElementById('val-health').innerText = stats.health + "%";
+            document.getElementById('val-legacy').innerText = stats.legacy;
             objects.splice(i, 1);
         }
         if(obj.y > canvas.height + 100) objects.splice(i, 1);
     });
-    if(stats.health <= 0) endGame("SYSTEM COLLAPSE: Stability Lost.");
-}
 
-function updateHUD() {
-    document.getElementById('val-money').innerText = stats.money;
-    document.getElementById('val-health').innerText = stats.health + "%";
-    document.getElementById('val-legacy').innerText = stats.legacy;
+    if(stats.health <= 0) endGame("SYSTEM COLLAPSE: Stability reached 0.");
 }
 
 function endGame(msg) {
     active = false;
-    musicGain.gain.setTargetAtTime(0, audioCtx.currentTime, 0.5);
     clearInterval(gameTimer);
+    if(musicGain) musicGain.gain.setTargetAtTime(0, audioCtx.currentTime, 1);
     alert(msg);
-    location.reload();
+    document.getElementById('overlay-system').style.display = 'flex';
+    document.getElementById('action-btn').innerText = "RESTART TRAINING";
+    sessionSeconds = 600;
+    stats = { money: 0, health: 100, legacy: 0, aware: 0 };
+    objects = [];
+    generateSessionContent();
 }
 
 function draw() {
@@ -198,6 +228,7 @@ function draw() {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.strokeStyle = "#00f2ff"; ctx.lineWidth = 3; ctx.beginPath();
     ctx.arc(user.x, user.y, user.size - 10, 0, Math.PI * 2); ctx.stroke();
+
     objects.forEach(obj => {
         ctx.fillStyle = obj.c; ctx.textAlign = "center";
         ctx.font = "bold 12px Orbitron"; ctx.fillText(obj.t, obj.x, obj.y - 40);
@@ -220,8 +251,8 @@ function beginSession() {
 }
 
 function loop() { if(active) { update(); draw(); requestAnimationFrame(loop); } }
-window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
-canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+window.addEventListener('resize', resize); resize();
 window.addEventListener('mousemove', e => { user.x = e.clientX; user.y = e.clientY; });
 window.addEventListener('touchmove', e => { user.x = e.touches[0].clientX; user.y = e.touches[0].clientY; }, {passive: false});
 
