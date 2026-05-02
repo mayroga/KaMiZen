@@ -1,235 +1,288 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MAYKAMI NEUROGAME | Session</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-dark: #0a0a0c;
-            --accent: #00d2ff;
-            --text-main: #e0e0e0;
-            --card-bg: rgba(25, 25, 30, 0.95);
-            --border: rgba(255, 255, 255, 0.1);
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>MAYKAMI NEUROGAME - SYSTEM</title>
+<style>
+    :root { --primary: #00f2ff; --bg: #05070d; --font: 'Segoe UI', Roboto, sans-serif; --success: #28a745; --error: #dc3545; }
+    body { margin:0; background: var(--bg); color:#fff; font-family: var(--font); overflow:hidden; height: 100vh; }
+    
+    #timer { position:absolute; top:20px; left:50%; transform:translateX(-50%); font-size:80px; color:var(--primary); font-weight:bold; z-index:100; text-shadow: 0 0 20px rgba(0,242,255,0.5); display:none; }
+    
+    #mainDisplay { position:absolute; top:45%; left:50%; transform:translate(-50%,-50%); width:85%; text-align:center; z-index:50; }
+    #textNarrator { font-size:26px; line-height:1.6; margin-bottom: 30px; font-weight: 300; transition: opacity 0.5s; }
+    
+    #quizArea { display:none; flex-direction:column; gap:12px; max-width:600px; margin: 0 auto; }
+    .opt-btn { padding:15px; background:rgba(255,255,255,0.05); border:2px solid var(--primary); color:#fff; cursor:pointer; border-radius:8px; font-size:18px; transition:0.2s; text-align:left; }
+    .opt-btn:hover { background: rgba(0,242,255,0.2); }
+    .correct { background: var(--success) !important; border-color: #fff; }
+    .wrong { background: var(--error) !important; border-color: #fff; }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    .btn-panel { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); display: flex; gap: 15px; z-index: 1000; }
+    .btn-ka { padding:15px 40px; font-size:16px; background:var(--primary); color:#000; border:none; border-radius:4px; cursor:pointer; font-weight:bold; text-transform: uppercase; letter-spacing: 2px; }
+    
+    /* Indicadores Verticales */
+    #indicators { position:absolute; right:20px; top:50%; transform:translateY(-50%); display:none; flex-direction:column; gap:10px; }
+    .bar-wrap { display: flex; align-items: center; gap: 8px; }
+    .bar-lbl { font-size: 9px; width: 65px; text-align: right; color: var(--primary); }
+    .bar-bg { width:8px; height:50px; background:rgba(255,255,255,0.1); border-radius:2px; position:relative; }
+    .bar-fill { position:absolute; bottom:0; width:100%; height:0%; background:var(--primary); transition: 0.4s; }
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background: radial-gradient(circle at center, #1a1a2e 0%, var(--bg-dark) 100%);
-            color: var(--text-main);
-            height: 100vh;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
+    /* Palabras Flotantes */
+    .floating-word { position:absolute; font-size:22px; color:var(--primary); font-weight:bold; cursor:pointer; animation: floatUp 6s linear forwards; z-index: 80; text-shadow: 0 0 10px #000; }
+    @keyframes floatUp { 0%{transform:translateY(0); opacity:0;} 10%{opacity:1;} 90%{opacity:1;} 100%{transform:translateY(-500px); opacity:0;} }
 
-        header {
-            padding: 20px;
-            text-align: center;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .brand { font-weight: 700; letter-spacing: 2px; color: var(--accent); }
-
-        #main-stage {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            gap: 25px;
-        }
-
-        #display-text {
-            font-size: 1.4rem;
-            text-align: center;
-            max-width: 600px;
-            line-height: 1.6;
-            min-height: 100px;
-            font-weight: 300;
-        }
-
-        #decision-area {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 15px;
-            width: 100%;
-            max-width: 400px;
-        }
-
-        .btn-option {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            color: white;
-            padding: 18px;
-            border-radius: 12px;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-align: center;
-        }
-
-        .btn-option:active {
-            transform: scale(0.98);
-            border-color: var(--accent);
-            background: rgba(0, 210, 255, 0.1);
-        }
-
-        .control-bar {
-            padding: 25px;
-            display: flex;
-            justify-content: space-around;
-            border-top: 1px solid var(--border);
-        }
-
-        .icon-btn {
-            background: none;
-            border: none;
-            color: var(--text-main);
-            font-size: 0.9rem;
-            opacity: 0.6;
-            cursor: pointer;
-        }
-
-        .icon-btn.danger { color: #ff4b2b; opacity: 1; }
-
-        /* Loader */
-        .loader {
-            width: 40px;
-            height: 40px;
-            border: 3px solid var(--border);
-            border-top: 3px solid var(--accent);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        .hidden { display: none !important; }
-    </style>
+    #explanationBox { position:absolute; bottom:120px; left:20px; width:280px; padding:15px; background: rgba(0,0,0,0.8); border-left: 4px solid var(--primary); font-size:14px; display:none; }
+</style>
 </head>
 <body>
 
-    <header>
-        <div class="brand">MAYKAMI NEUROGAME</div>
-    </header>
+<div id="timer">00:00</div>
+<div id="mainDisplay">
+    <div id="textNarrator">SYSTEM READY...</div>
+    <div id="quizArea"></div>
+</div>
 
-    <main id="main-stage">
-        <div id="loading-view" class="hidden">
-            <div class="loader"></div>
-        </div>
+<div id="explanationBox">
+    <strong id="expTitle"></strong><br><span id="expBody"></span>
+</div>
 
-        <div id="session-content">
-            <p id="display-text">Initializing session...</p>
-        </div>
+<div id="indicators"></div>
 
-        <div id="decision-area" class="hidden">
-            <!-- Buttons dynamically injected here -->
-        </div>
-    </main>
+<div class="btn-panel">
+    <button id="btnStart" class="btn-ka" onclick="KaMiZen.start()">START SESSION</button>
+    <button id="btnAction" class="btn-ka" style="display:none;" onclick="KaMiZen.flowControl()">CONTINUE</button>
+</div>
 
-    <nav class="control-bar">
-        <button class="icon-btn" onclick="toggleAudio()">Mute/Unmute</button>
-        <button class="icon-btn danger" onclick="clearSession()">Reset</button>
-    </nav>
+<audio id="bgMusic" loop src="https://assets.mixkit.co/music/preview/mixkit-tech-house-vibes-130.mp3"></audio>
+<audio id="sfxPop" src="https://www.soundjay.com/buttons/sounds/button-10.mp3"></audio>
 
-    <script>
-        const state = {
-            currentStep: 0,
-            missionData: null,
-            audioEnabled: true,
-            synth: window.speechSynthesis
+<script>
+const KaMiZen = (() => {
+    let state = {
+        lang: 'en',
+        phase: 'boot',
+        data: null,
+        stats: {},
+        missionIdx: 0,
+        stepIdx: 0,
+        timer: null
+    };
+
+    // Nuevos Pilares Actualizados
+    const pillars = {
+        "LIMITS": { cat: "Protection", desc: "Learn to say 'no' and recognize personal space." },
+        "PERSISTENCE": { cat: "Resilience", desc: "Error is part of the process, not the end." },
+        "METHOD": { cat: "Organization", desc: "Replace chaos with logical steps." },
+        "CRITERIA": { cat: "Intelligence", desc: "Analyze info before accepting it as truth." },
+        "VALUE": { cat: "Wealth", desc: "Money follows the value you provide others." },
+        "BALANCE": { cat: "Health", desc: "The body and mind are your main assets." },
+        "LOYALTY": { cat: "Family", desc: "Strong bonds based on respect and support." },
+        "AUTONOMY": { cat: "Thought", desc: "Freedom based on principles, not pressure." },
+        "ADAPTATION": { cat: "Survival", desc: "Resolve situations in changing environments." },
+        "LEGACY": { cat: "Life", desc: "Live with purpose so your work transcends." }
+    };
+
+    const speak = (text, callback) => {
+        window.speechSynthesis.cancel();
+        const msg = new SpeechSynthesisUtterance(text);
+        msg.lang = 'en-US';
+        msg.rate = 0.9;
+        msg.onend = callback;
+        window.speechSynthesis.speak(msg);
+    };
+
+    const start = async () => {
+        document.getElementById("btnStart").style.display = "none";
+        const res = await fetch("/api/session/start");
+        state.data = await res.json();
+        
+        state.phase = 'intro';
+        const introTxt = state.data.story[state.lang];
+        document.getElementById("textNarrator").innerText = introTxt;
+        speak(introTxt, showContinue);
+    };
+
+    const showContinue = () => {
+        const btn = document.getElementById("btnAction");
+        btn.innerText = "CONTINUE";
+        btn.style.display = "block";
+    };
+
+    const flowControl = () => {
+        document.getElementById("btnAction").style.display = "none";
+        
+        switch(state.phase) {
+            case 'intro': startCycle(1); break;
+            case 'diag1': startMissions(); break;
+            case 'mission_end': startCycle(2); break;
+            case 'diag2': finishSession(); break;
+        }
+    };
+
+    const startCycle = (num) => {
+        state.phase = 'playing' + num;
+        document.getElementById("timer").style.display = "block";
+        document.getElementById("indicators").style.display = "flex";
+        document.getElementById("bgMusic").play();
+        initBars();
+
+        let timeLeft = 300; 
+        state.timer = setInterval(() => {
+            timeLeft--;
+            document.getElementById("timer").innerText = formatTime(timeLeft);
+            if(Math.random() > 0.7) spawnWord();
+            if(timeLeft <= 0) {
+                clearInterval(state.timer);
+                diagnosis(num);
+            }
+        }, 1000);
+    };
+
+    const spawnWord = () => {
+        const keys = Object.keys(pillars);
+        const word = keys[Math.floor(Math.random()*keys.length)];
+        const el = document.createElement("div");
+        el.className = "floating-word";
+        el.innerText = word;
+        el.style.left = (Math.random()*70 + 15) + "%";
+        el.style.top = "90%";
+        el.onclick = () => {
+            document.getElementById("sfxPop").play();
+            const cat = pillars[word].cat;
+            state.stats[cat] = (state.stats[cat] || 0) + 1;
+            updateBars();
+            showExp(word);
+            el.remove();
         };
+        document.body.appendChild(el);
+    };
 
-        const UI = {
-            text: document.getElementById('display-text'),
-            decisions: document.getElementById('decision-area'),
-            loading: document.getElementById('loading-view'),
-            content: document.getElementById('session-content')
-        };
+    const showExp = (word) => {
+        const box = document.getElementById("explanationBox");
+        box.style.display = "block";
+        document.getElementById("expTitle").innerText = word;
+        document.getElementById("expBody").innerText = pillars[word].desc;
+        setTimeout(() => box.style.display = "none", 4000);
+    };
 
-        // Initialization
-        async function startSession() {
-            showLoading(true);
-            try {
-                // Simulación de carga de misión - Reemplazar con fetch real si es necesario
-                state.missionData = [
-                    {
-                        tx: "Bienvenido a su asesoría estratégica. ¿Desea comenzar la optimización de procesos?",
-                        options: [
-                            { text: "Iniciar", next: 1 },
-                            { text: "Revisar Protocolo", next: 0 }
-                        ]
-                    },
-                    {
-                        tx: "El primer paso requiere su total atención. Las soluciones deben ser directas.",
-                        options: [
-                            { text: "Entendido", next: 2 }
-                        ]
+    const diagnosis = (num) => {
+        state.phase = 'diag' + num;
+        document.getElementById("bgMusic").pause();
+        document.getElementById("timer").style.display = "none";
+        const top = Object.keys(state.stats).reduce((a,b) => state.stats[a] > state.stats[b] ? a : b, "Neural Balance");
+        const msg = `NEURAL DIAGNOSIS ${num}: Optimal synchronization in ${top}. Logic circuits primed.`;
+        document.getElementById("textNarrator").innerText = msg;
+        speak(msg, showContinue);
+    };
+
+    const startMissions = () => {
+        state.phase = 'mission';
+        state.missionIdx = 0;
+        state.stepIdx = 0;
+        runStep();
+    };
+
+    const runStep = () => {
+        const mission = state.data.missions[state.missionIdx];
+        const step = mission.b[state.stepIdx];
+
+        if(!step) {
+            state.missionIdx++;
+            if(state.missionIdx < state.data.missions.length) {
+                state.stepIdx = 0;
+                runStep();
+            } else {
+                state.phase = 'mission_end';
+                const endMsg = "Field mission completed. Data uploaded.";
+                document.getElementById("textNarrator").innerText = endMsg;
+                speak(endMsg, showContinue);
+            }
+            return;
+        }
+
+        // Limpiar área
+        document.getElementById("quizArea").style.display = "none";
+        document.getElementById("quizArea").innerHTML = "";
+
+        // Proyectar texto (Historia o Acción)
+        const text = step.tx ? step.tx[state.lang] : (step.story ? step.story[state.lang] : null);
+        
+        if(text) {
+            document.getElementById("textNarrator").innerText = text;
+            speak(text, () => {
+                setTimeout(() => {
+                    if(step.t === 'd') renderQuiz(step);
+                    else {
+                        state.stepIdx++;
+                        runStep();
                     }
-                ];
-                renderStep(0);
-            } catch (err) {
-                UI.text.innerText = "Error loading session. Please try again.";
-            } finally {
-                showLoading(false);
-            }
-        }
-
-        function renderStep(index) {
-            const step = state.missionData[index];
-            if (!step) return;
-
-            UI.decisions.classList.add('hidden');
-            UI.text.innerText = step.tx;
-            
-            speak(step.tx);
-
-            // Inyectar botones
-            UI.decisions.innerHTML = '';
-            step.options.forEach(opt => {
-                const btn = document.createElement('button');
-                btn.className = 'btn-option';
-                btn.innerText = opt.text;
-                btn.onclick = () => renderStep(opt.next);
-                UI.decisions.appendChild(btn);
+                }, 1000); // Pausa clara entre pasos
             });
-
-            setTimeout(() => {
-                UI.decisions.classList.remove('hidden');
-            }, 500);
+        } else if(step.t === 'd') {
+            renderQuiz(step);
+        } else {
+            state.stepIdx++;
+            runStep();
         }
+    };
 
-        function speak(text) {
-            if (!state.audioEnabled) return;
-            state.synth.cancel();
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'en-US'; // O 'es-ES' según prefieras
-            utterance.rate = 1;
-            state.synth.speak(utterance);
-        }
+    const renderQuiz = (step) => {
+        document.getElementById("textNarrator").innerText = step.q[state.lang];
+        const area = document.getElementById("quizArea");
+        area.style.display = "flex";
+        
+        step.op.forEach((opt, i) => {
+            const b = document.createElement("button");
+            b.className = "opt-btn";
+            b.innerText = opt;
+            b.onclick = () => {
+                const correct = (i === step.c);
+                b.classList.add(correct ? 'correct' : 'wrong');
+                document.querySelectorAll(".opt-btn").forEach(btn => btn.onclick = null);
+                
+                const feedback = correct ? "Correct analysis." : "Suboptimal choice.";
+                const explanation = step.ex[i];
+                
+                speak(feedback + " " + explanation, () => {
+                    state.stepIdx++;
+                    setTimeout(runStep, 1500);
+                });
+            };
+            area.appendChild(b);
+        });
+        speak(step.q[state.lang]);
+    };
 
-        function toggleAudio() {
-            state.audioEnabled = !state.audioEnabled;
-            if (!state.audioEnabled) state.synth.cancel();
-        }
+    const initBars = () => {
+        const ind = document.getElementById("indicators");
+        ind.innerHTML = "";
+        ["Protection", "Resilience", "Organization", "Intelligence", "Wealth", "Health", "Family", "Thought", "Survival", "Life"].forEach(c => {
+            ind.innerHTML += `<div class="bar-wrap"><div class="bar-lbl">${c}</div><div class="bar-bg"><div class="bar-fill" id="bar-${c}"></div></div></div>`;
+        });
+    };
 
-        function clearSession() {
-            if (confirm("¿Desea borrar los datos actuales?")) {
-                location.reload();
-            }
-        }
+    const updateBars = () => {
+        Object.keys(state.stats).forEach(c => {
+            const el = document.getElementById(`bar-${c}`);
+            if(el) el.style.height = Math.min(state.stats[c]*15, 100) + "%";
+        });
+    };
 
-        function showLoading(show) {
-            UI.loading.classList.toggle('hidden', !show);
-            UI.content.classList.toggle('hidden', show);
-        }
+    const formatTime = (s) => {
+        const m = Math.floor(s/60);
+        const sec = s%60;
+        return `${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
+    };
 
-        window.onload = startSession;
-    </script>
+    const finishSession = () => {
+        alert("SESSION COMPLETE. RETURNING TO MAIN MENU.");
+        location.reload();
+    };
+
+    return { start, flowControl };
+})();
+</script>
 </body>
 </html>
