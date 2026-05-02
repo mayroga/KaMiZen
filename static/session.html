@@ -1,9 +1,10 @@
+html_code = """
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>MAYKAMI | NEURO-LIFE DIAGNOSIS</title>
+    <title>AL CIELO - NEURAL INTERFACE</title>
     <style>
         :root {
             --neon-blue: #00f2ff;
@@ -15,28 +16,34 @@
         }
         body { margin: 0; overflow: hidden; background: var(--bg-dark); color: white; font-family: 'Orbitron', sans-serif; cursor: none; }
         
-        /* HUD - VISIBILIDAD MÁXIMA */
         #hud {
-            position: absolute; top: 25px; width: 100%;
+            position: absolute; top: 20px; width: 100%;
             display: flex; justify-content: space-evenly;
             z-index: 100; pointer-events: none;
         }
         .data-box {
-            background: rgba(0, 0, 0, 0.8);
-            border: 3px solid var(--neon-blue);
-            padding: 15px 30px; text-align: center;
-            box-shadow: 0 0 20px rgba(0, 242, 255, 0.4);
-            min-width: 160px;
+            background: rgba(0, 0, 0, 0.85);
+            border: 2px solid var(--neon-blue);
+            padding: 10px 20px; text-align: center;
+            box-shadow: 0 0 20px rgba(0, 242, 255, 0.3);
+            min-width: 120px;
+            border-radius: 5px;
         }
-        .label { font-size: 12px; color: var(--neon-blue); letter-spacing: 3px; font-weight: 900; display: block; margin-bottom: 5px;}
-        .value { font-size: 28px; font-weight: 900; display: block; color: #fff; }
+        .label { font-size: 10px; color: var(--neon-blue); letter-spacing: 2px; font-weight: 900; display: block; }
+        .value { font-size: 24px; font-weight: 900; display: block; color: #fff; }
 
         canvas { display: block; }
 
-        #overlay {
+        #start-screen {
             position: fixed; inset: 0; background: var(--bg-dark);
             display: flex; flex-direction: column; justify-content: center;
-            align-items: center; z-index: 1000;
+            align-items: center; z-index: 1000; text-align: center;
+        }
+        .start-btn {
+            padding: 20px 50px; background: var(--neon-blue); color: black;
+            border: none; font-family: 'Orbitron'; font-weight: 900;
+            cursor: pointer; margin-top: 30px; letter-spacing: 3px;
+            box-shadow: 0 0 30px var(--neon-blue);
         }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
@@ -53,14 +60,15 @@
         <span id="val-health" class="value">100%</span>
     </div>
     <div class="data-box" style="border-color: var(--neon-purple);">
-        <span class="label">BIZ-UNITS</span>
+        <span class="label">BIZ UNITS</span>
         <span id="val-biz" class="value">0</span>
     </div>
 </div>
 
-<div id="overlay">
-    <h1 style="color: var(--neon-blue); letter-spacing: 10px;">MAYKAMI</h1>
-    <p style="letter-spacing: 3px;">NEURAL INTERFACE: ON</p>
+<div id="start-screen">
+    <h1 style="color: var(--neon-blue); letter-spacing: 15px; font-size: 50px;">AL CIELO</h1>
+    <p style="letter-spacing: 5px; color: #888;">NEURAL DIAGNOSTICS & DOPAMINE FLOW</p>
+    <button class="start-btn" onclick="startGame()">INITIALIZE INTERFACE</button>
 </div>
 
 <canvas id="gameCanvas"></canvas>
@@ -68,6 +76,7 @@
 <script>
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
+let audioCtx;
 
 function resize() {
     canvas.width = window.innerWidth;
@@ -76,33 +85,61 @@ function resize() {
 window.addEventListener('resize', resize);
 resize();
 
-// --- JSON DATA: PALABRAS RESTAURADAS Y VISIBLES ---
+// DATA JSON - PALABRAS VISIBLES
 const rawData = [
-    { "text": "SAVINGS", "emoji": "💰", "stat": "money", "impact": 100, "color": "#f1c40f" },
-    { "text": "BUSINESS", "emoji": "🤝", "stat": "biz", "impact": 1, "color": "#3498db" },
-    { "text": "FAMILY", "emoji": "🏠", "stat": "health", "impact": 15, "color": "#2ecc71" },
-    { "text": "HAPPINESS", "emoji": "😊", "stat": "health", "impact": 10, "color": "#9b59b6" },
-    { "text": "THREAT", "emoji": "⚠️", "stat": "health", "impact": -20, "color": "#ff3131" },
-    { "text": "PROBLEM", "emoji": "🛑", "stat": "health", "impact": -15, "color": "#95a5a6" },
-    { "text": "INVESTMENT", "emoji": "📈", "stat": "money", "impact": 200, "color": "#f1c40f" },
-    { "text": "EDUCATION", "emoji": "📚", "stat": "biz", "impact": 1, "color": "#00f2ff" }
+    { text: "SAVINGS", emoji: "💰", type: "pos", stat: "money", impact: 150, color: "#f1c40f", freq: 523.25 },
+    { text: "BUSINESS", emoji: "🤝", type: "pos", stat: "biz", impact: 1, color: "#3498db", freq: 659.25 },
+    { text: "FAMILY", emoji: "🏠", type: "pos", stat: "health", impact: 20, color: "#2ecc71", freq: 783.99 },
+    { text: "HAPPINESS", emoji: "😊", type: "pos", stat: "health", impact: 15, color: "#9b59b6", freq: 880.00 },
+    { text: "THREAT", emoji: "⚠️", type: "neg", stat: "health", impact: -25, color: "#ff3131", freq: 110.00 },
+    { text: "PROBLEM", emoji: "🛑", type: "neg", stat: "health", impact: -20, color: "#ff3131", freq: 90.00 },
+    { text: "INVESTMENT", emoji: "📈", type: "pos", stat: "money", impact: 300, color: "#00f2ff", freq: 987.77 },
+    { text: "EDUCATION", emoji: "📚", type: "pos", stat: "biz", impact: 1, color: "#00f2ff", freq: 1046.50 }
 ];
 
 let stats = { money: 0, health: 100, biz: 0 };
 let active = false;
-const objects = [];
-const user = { x: canvas.width / 2, y: canvas.height / 2, size: 50 };
+let objects = [];
+let particles = [];
+const user = { x: canvas.width / 2, y: canvas.height / 2, size: 60 };
+
+// SISTEMA DE AUDIO (DOPAMINA)
+function playSound(freq, type) {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = type === 'pos' ? 'sine' : 'sawtooth';
+    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.5);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.5);
+}
 
 function spawn() {
     if(!active) return;
     const entry = rawData[Math.floor(Math.random() * rawData.length)];
     objects.push({
         ...entry,
-        x: Math.random() * (canvas.width - 150) + 75,
-        y: -100,
-        speed: 3 + (stats.money / 2000),
+        x: Math.random() * (canvas.width - 200) + 100,
+        y: -150,
+        speed: 2.5 + (stats.money / 5000),
         pulse: 0
     });
+}
+
+function createExplosion(x, y, color) {
+    for (let i = 0; i < 15; i++) {
+        particles.push({
+            x, y,
+            vx: (Math.random() - 0.5) * 10,
+            vy: (Math.random() - 0.5) * 10,
+            life: 1.0,
+            color
+        });
+    }
 }
 
 function handleInput(e) {
@@ -114,32 +151,44 @@ function handleInput(e) {
 
 window.addEventListener('mousemove', handleInput);
 window.addEventListener('touchmove', handleInput);
-window.addEventListener('mousedown', handleInput);
 
 function update() {
     if(!active) return;
 
     objects.forEach((obj, i) => {
         obj.y += obj.speed;
-        obj.pulse += 0.05;
+        obj.pulse += 0.07;
 
-        // Colisión por proximidad
         const dist = Math.sqrt((obj.x - user.x)**2 + (obj.y - user.y)**2);
         if (dist < user.size) {
-            applyStat(obj);
+            // EFECTO TÁCTIL VISUAL Y SONORO
+            playSound(obj.freq, obj.type);
+            createExplosion(obj.x, obj.y, obj.color);
+            
+            if(obj.stat === 'money') stats.money += obj.impact;
+            if(obj.stat === 'biz') stats.biz += obj.impact;
+            if(obj.stat === 'health') stats.health = Math.max(0, Math.min(100, stats.health + obj.impact));
+            
+            updateHUD();
             objects.splice(i, 1);
+            if (window.navigator.vibrate) window.navigator.vibrate(obj.type === 'pos' ? 20 : 100);
         }
-        if(obj.y > canvas.height + 100) objects.splice(i, 1);
+        if(obj.y > canvas.height + 200) objects.splice(i, 1);
     });
 
-    if(stats.health <= 0) endGame("SYSTEM FAILURE", "Stability depleted. Balance is mandatory for success.");
+    particles.forEach((p, i) => {
+        p.x += p.vx; p.y += p.vy; p.life -= 0.02;
+        if(p.life <= 0) particles.splice(i, 1);
+    });
+
+    if(stats.health <= 0) {
+        active = false;
+        alert("DIAGNOSIS: SYSTEM COLLAPSE. Stability reached 0.");
+        location.reload();
+    }
 }
 
-function applyStat(obj) {
-    if(obj.stat === 'money') stats.money += obj.impact;
-    if(obj.stat === 'biz') stats.biz += obj.impact;
-    if(obj.stat === 'health') stats.health = Math.max(0, Math.min(100, stats.health + obj.impact));
-    
+function updateHUD() {
     document.getElementById('val-money').innerText = stats.money;
     document.getElementById('val-health').innerText = stats.health + "%";
     document.getElementById('val-biz').innerText = stats.biz;
@@ -149,45 +198,50 @@ function draw() {
     ctx.fillStyle = 'rgba(2, 2, 5, 0.2)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // AVATAR / SCANNER
-    ctx.shadowBlur = 25;
-    ctx.shadowColor = "#00f2ff";
-    ctx.strokeStyle = "#00f2ff";
+    // DIBUJAR SCANNER (PALPABLE)
+    ctx.shadowBlur = 30;
+    ctx.shadowColor = varColor('--neon-blue');
+    ctx.strokeStyle = varColor('--neon-blue');
     ctx.lineWidth = 4;
     ctx.beginPath();
     ctx.arc(user.x, user.y, user.size - 10, 0, Math.PI * 2);
     ctx.stroke();
 
-    // ELEMENTOS DEL CAMINO (PROYECCIÓN CLARA)
+    // DIBUJAR EXPLOSIONES DE DOPAMINA
+    particles.forEach(p => {
+        ctx.globalAlpha = p.life;
+        ctx.fillStyle = p.color;
+        ctx.fillRect(p.x, p.y, 4, 4);
+    });
+    ctx.globalAlpha = 1.0;
+
+    // DIBUJAR ICONOS (JSON PROJECTION)
     objects.forEach(obj => {
-        const offset = Math.sin(obj.pulse) * 8;
-        ctx.shadowBlur = 20;
+        const bounce = Math.sin(obj.pulse) * 10;
+        ctx.shadowBlur = 25;
         ctx.shadowColor = obj.color;
         
-        // Texto Superior (Muy visible)
-        ctx.fillStyle = "#FFFFFF";
-        ctx.font = "900 18px Orbitron";
+        ctx.fillStyle = "white";
+        ctx.font = "900 20px Orbitron";
         ctx.textAlign = "center";
-        ctx.fillText(obj.text, obj.x, obj.y - 30 + offset);
+        ctx.fillText(obj.text, obj.x, obj.y - 40 + bounce);
 
-        // Emoji Central
-        ctx.font = "50px Arial";
-        ctx.fillText(obj.emoji, obj.x, obj.y + offset);
+        ctx.font = "60px Arial";
+        ctx.fillText(obj.emoji, obj.x, obj.y + bounce);
     });
 }
 
-function endGame(title, msg) {
-    active = false;
-    alert(`${title}\n\n${msg}`);
-    location.reload();
+function varColor(name) {
+    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 }
 
-setTimeout(() => {
-    document.getElementById('overlay').style.display = 'none';
+function startGame() {
+    document.getElementById('start-screen').style.display = 'none';
     active = true;
-    setInterval(spawn, 900);
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    setInterval(spawn, 800);
     loop();
-}, 2000);
+}
 
 function loop() {
     update();
@@ -197,3 +251,7 @@ function loop() {
 </script>
 </body>
 </html>
+"""
+
+with open("al_cielo_neurogame.html", "w") as f:
+    f.write(html_code)
