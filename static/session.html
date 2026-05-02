@@ -1,291 +1,203 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>KAMIZEN | LIFE SIMULATOR</title>
+    <title>MAYKAMI | NEUROGAME</title>
     <style>
         :root {
             --neon-blue: #00f2ff;
-            --neon-gold: #ffcc00;
-            --neon-red: #ff3131;
-            --bg-dark: #020205;
+            --neon-gold: #f1c40f;
+            --neon-green: #2ecc71;
+            --neon-red: #e74c3c;
+            --bg-dark: #050505;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Orbitron', sans-serif; }
-
-        body {
-            background: var(--bg-dark);
-            color: #fff;
-            height: 100vh;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+        body { 
+            margin: 0; overflow: hidden; 
+            background: var(--bg-dark); 
+            color: white; 
+            font-family: 'Orbitron', sans-serif; 
         }
 
-        /* ESCENARIO: EL CAMINO DE LA VIDA */
-        #life-path {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(to bottom, #050a1a 0%, #000 100%);
-            z-index: 0;
-            perspective: 600px;
+        #ui-layer {
+            position: absolute; top: 20px; left: 20px;
+            display: flex; flex-direction: column; gap: 10px;
+            z-index: 100; pointer-events: none;
         }
 
-        #road {
-            position: absolute;
-            bottom: 0; left: 50%;
-            width: 200%; height: 80%;
-            background: repeating-linear-gradient(0deg, rgba(0, 242, 255, 0.05) 0px, rgba(0, 242, 255, 0.05) 2px, transparent 2px, transparent 50px);
-            transform: translateX(-50%) rotateX(60deg);
-            z-index: 1;
-        }
-
-        /* AVATAR */
-        #avatar-container {
-            position: absolute;
-            bottom: 20%;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 10;
-            text-align: center;
-        }
-
-        #avatar-sprite {
-            width: 60px; height: 100px;
-            background: var(--neon-blue);
-            box-shadow: 0 0 20px var(--neon-blue);
-            border-radius: 5px;
-            margin-bottom: 10px;
-            animation: breathe-sprite 2s infinite ease-in-out;
-        }
-
-        #avatar-name {
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: var(--neon-blue);
-            text-shadow: 0 0 5px var(--neon-blue);
-        }
-
-        @keyframes breathe-sprite {
-            0%, 100% { transform: scaleY(1); opacity: 0.8; }
-            50% { transform: scaleY(1.05); opacity: 1; }
-        }
-
-        /* OBJETOS DE VIDA (LIFE NODES) */
-        .life-node {
-            position: absolute;
+        .stat-card {
+            background: rgba(0, 0, 0, 0.6);
+            border-left: 4px solid var(--neon-blue);
             padding: 10px 20px;
-            border: 1px solid #fff;
-            font-weight: 900;
-            cursor: pointer;
-            z-index: 5;
-            text-transform: uppercase;
-            transition: transform 0.1s;
+            min-width: 200px;
+            backdrop-filter: blur(5px);
         }
 
-        .opportunity { border-color: var(--neon-blue); color: var(--neon-blue); box-shadow: 0 0 15px var(--neon-blue); }
-        .obstacle { border-color: var(--neon-red); color: var(--neon-red); box-shadow: 0 0 15px var(--neon-red); }
-        .distraction { border-color: var(--neon-gold); color: var(--neon-gold); box-shadow: 0 0 15px var(--neon-gold); }
+        .stat-label { font-size: 12px; text-transform: uppercase; letter-spacing: 2px; color: #aaa; }
+        .stat-value { font-size: 24px; font-weight: 900; display: block; }
 
-        /* UI OVERLAY */
-        #overlay {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 100;
-            background: rgba(0,0,0,0.8);
+        canvas { display: block; cursor: none; }
+
+        #msg-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.85);
+            display: none; flex-direction: column;
+            justify-content: center; align-items: center;
+            z-index: 1000; text-align: center;
         }
 
-        .input-kamizen {
-            background: transparent;
-            border: 2px solid var(--neon-blue);
-            padding: 15px;
-            color: #fff;
-            font-size: 20px;
-            text-align: center;
-            outline: none;
-            margin-bottom: 20px;
-        }
-
-        .btn-action {
-            background: var(--neon-blue);
-            color: #000;
-            padding: 15px 40px;
-            border: none;
-            font-weight: bold;
-            cursor: pointer;
-            text-transform: uppercase;
-        }
-
-        #stats {
-            position: absolute;
-            top: 20px; left: 20px;
-            z-index: 200;
-            display: none;
-        }
-
-        .stat-item { margin-bottom: 5px; font-size: 12px; color: var(--neon-blue); }
-
-        @keyframes travel {
-            from { transform: translate(-50%, -100%) scale(0.1); opacity: 0; }
-            to { transform: translate(-50%, 400px) scale(2); opacity: 1; }
+        .btn-reboot {
+            margin-top: 30px; padding: 15px 40px;
+            background: var(--neon-blue); border: none;
+            color: #000; font-weight: bold; cursor: pointer;
         }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <div id="life-path">
-        <div id="road"></div>
+<div id="ui-layer">
+    <div class="stat-card" style="border-color: var(--neon-gold);">
+        <span class="stat-label">CAPITAL</span>
+        <span id="val-money" class="stat-value">0</span>
     </div>
-
-    <!-- HUD -->
-    <div id="stats">
-        <div class="stat-item">BLOCK: <span id="stat-block">01</span></div>
-        <div class="stat-item">FORTUNE: <span id="stat-money">0</span></div>
-        <div class="stat-item">PRESSURE: <span id="stat-pressure">0</span></div>
+    <div class="stat-card" style="border-color: var(--neon-green);">
+        <span class="stat-label">ESTABILIDAD</span>
+        <span id="val-health" class="stat-value">100%</span>
     </div>
-
-    <!-- AVATAR EN EL CAMINO -->
-    <div id="avatar-container" style="display:none;">
-        <div id="avatar-sprite"></div>
-        <div id="avatar-name">PLAYER</div>
+    <div class="stat-card" style="border-color: var(--neon-blue);">
+        <span class="stat-label">NEGOCIOS</span>
+        <span id="val-biz" class="stat-value">0</span>
     </div>
+</div>
 
-    <!-- BOOT OVERLAY (REGISTRO DE NOMBRE) -->
-    <div id="overlay">
-        <h2 style="margin-bottom:20px; letter-spacing:5px;">IDENTITY SCAN</h2>
-        <input type="text" id="user-name" class="input-kamizen" placeholder="ENTER YOUR NAME" maxlength="12">
-        <button class="btn-action" onclick="Game.boot()">INITIALIZE AVATAR</button>
-    </div>
+<div id="msg-overlay">
+    <h1 id="final-status" style="font-size: 40px; color: var(--neon-blue);">SESIÓN COMPLETADA</h1>
+    <p id="final-msg" style="max-width: 500px; margin-top: 20px; line-height: 1.6;"></p>
+    <button class="btn-reboot" onclick="location.reload()">REINICIAR INTERFAZ</button>
+</div>
 
-    <!-- NARRATIVA Y RESPIRACIÓN (FLOTANTE) -->
-    <div id="narrative-layer" style="position:fixed; top:20%; width:80%; text-align:center; z-index:300; pointer-events:none;">
-        <h1 id="text-display" style="font-size:24px; text-shadow: 0 0 10px var(--neon-blue);"></h1>
-    </div>
+<canvas id="neuroCanvas"></canvas>
 
-    <!-- AUDIOS -->
-    <audio id="bg-music" loop src="https://assets.mixkit.co/music/preview/mixkit-techno-vibe-147.mp3"></audio>
-    <audio id="sfx-hit" src="https://www.soundjay.com/button/sounds/button-09.mp3"></audio>
+<script>
+const canvas = document.getElementById('neuroCanvas');
+const ctx = canvas.getContext('2d');
 
-    <script>
-        const Game = (() => {
-            let state = {
-                name: "",
-                money: 0,
-                pressure: 0,
-                block: 1,
-                phase: 'init',
-                sessionData: null
-            };
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
-            const LIFE_ELEMENTS = [
-                { t: "MONEY", c: "opportunity", m: 100, p: 0 },
-                { t: "BUSINESS", c: "opportunity", m: 500, p: 10 },
-                { t: "PRESSURE", c: "obstacle", m: 0, p: 20 },
-                { t: "LIE", c: "obstacle", m: -200, p: 5 },
-                { t: "PHONE", c: "distraction", m: 0, p: 5 },
-                { t: "DIVERSION", c: "distraction", m: -50, p: -10 },
-                { t: "STRENGTH", c: "opportunity", m: 0, p: -20 }
-            ];
+let gameActive = true;
+let stats = { money: 0, health: 100, biz: 0 };
 
-            const boot = async () => {
-                const nameInput = document.getElementById('user-name').value;
-                if(!nameInput) return alert("NAME REQUIRED");
-               
-                state.name = nameInput;
-                document.getElementById('avatar-name').innerText = state.name;
-                document.getElementById('overlay').style.display = 'none';
-                document.getElementById('avatar-container').style.display = 'block';
-                document.getElementById('stats').style.display = 'block';
-                document.getElementById('bg-music').play();
+const player = {
+    x: canvas.width / 2,
+    y: canvas.height - 100,
+    w: 60,
+    h: 20,
+    color: '#00f2ff'
+};
 
-                // Cargar datos del servidor
-                const res = await fetch('/api/session/start');
-                state.sessionData = await res.json();
-                state.block = state.sessionData.index;
-                document.getElementById('stat-block').innerText = state.block.toString().padStart(2, '0');
+const items = [];
+const config = [
+    { label: 'CAPITAL', emoji: '💰', val: 100, type: 'money', color: '#f1c40f' },
+    { label: 'NEGOCIO', emoji: '🤝', val: 1, type: 'biz', color: '#3498db' },
+    { label: 'FAMILIA', emoji: '🏠', val: 15, type: 'health', color: '#2ecc71' },
+    { label: 'PAZ', emoji: '😊', val: 10, type: 'health', color: '#9b59b6' },
+    { label: 'AMENAZA', emoji: '⚠️', val: -25, type: 'threat', color: '#e74c3c' },
+    { label: 'STRESS', emoji: '🛑', val: -15, type: 'health', color: '#95a5a6' }
+];
 
-                startJourney();
-            };
+function spawn() {
+    if(!gameActive) return;
+    const c = config[Math.floor(Math.random() * config.length)];
+    items.push({
+        x: Math.random() * (canvas.width - 100) + 50,
+        y: -50,
+        speed: 3 + Math.random() * 4,
+        ...c
+    });
+}
 
-            const speak = (txt, cb) => {
-                const ut = new SpeechSynthesisUtterance(txt);
-                ut.lang = 'en-US';
-                ut.rate = 0.9;
-                ut.onend = cb;
-                window.speechSynthesis.speak(ut);
-            };
+function update() {
+    if (!gameActive) return;
 
-            const startJourney = () => {
-                const story = state.sessionData.story.en;
-                document.getElementById('text-display').innerText = story;
-                speak(story, () => {
-                    setTimeout(startLifeCycle, 2000);
-                });
-            };
+    items.forEach((item, i) => {
+        item.y += item.speed;
 
-            const startLifeCycle = () => {
-                document.getElementById('text-display').innerText = "THE PATH IS OPEN. CHOOSE WISELY.";
-               
-                let count = 0;
-                const cycle = setInterval(() => {
-                    spawnLifeNode();
-                    count++;
-                    if(count > 15) {
-                        clearInterval(cycle);
-                        setTimeout(startMission, 5000);
-                    }
-                }, 1500);
-            };
+        // Detección de Colisión Proporcional
+        if (item.y > player.y - 20 && item.y < player.y + 20 &&
+            item.x > player.x - 40 && item.x < player.x + 40) {
+            
+            applyEffect(item);
+            items.splice(i, 1);
+        }
 
-            const spawnLifeNode = () => {
-                const el = LIFE_ELEMENTS[Math.floor(Math.random()*LIFE_ELEMENTS.length)];
-                const node = document.createElement('div');
-                node.className = `life-node ${el.c}`;
-                node.innerText = el.t;
-                node.style.left = "50%";
-                node.style.animation = "travel 3s linear forwards";
-               
-                node.onclick = () => {
-                    state.money += el.m;
-                    state.pressure += el.p;
-                    updateHUD();
-                    document.getElementById('sfx-hit').play();
-                    node.remove();
-                };
+        if (item.y > canvas.height) items.splice(i, 1);
+    });
 
-                document.getElementById('life-path').appendChild(node);
-                setTimeout(() => node.remove(), 3000);
-            };
+    if (Math.random() < 0.03) spawn();
+    if (stats.health <= 0) endGame("SISTEMA COLAPSADO", "El exceso de presión o falta de paz detuvo tu crecimiento. El equilibrio es la clave.");
+    if (stats.money >= 2000) endGame("ÉXITO ALCANZADO", "Has logrado capitalizar sin perder tu centro. Nivel de consciencia: Superior.");
+}
 
-            const updateHUD = () => {
-                document.getElementById('stat-money').innerText = state.money;
-                document.getElementById('stat-pressure').innerText = state.pressure;
-            };
+function applyEffect(item) {
+    if (item.type === 'money') stats.money += item.val;
+    if (item.type === 'biz') stats.biz += item.val;
+    if (item.type === 'health' || item.type === 'threat') {
+        stats.health = Math.min(100, stats.health + item.val);
+    }
+    
+    document.getElementById('val-money').innerText = stats.money;
+    document.getElementById('val-health').innerText = stats.health + "%";
+    document.getElementById('val-biz').innerText = stats.biz;
+}
 
-            const startMission = () => {
-                // Aquí se integra la lógica de la misión (Mismo sistema de preguntas previo)
-                // Al final de la misión, se dispara la respiración automática:
-                document.getElementById('text-display').innerText = "CONSEQUENCE ANALYSIS COMPLETE. BREATHE.";
-                triggerBreathing();
-            };
+function draw() {
+    ctx.fillStyle = 'rgba(5, 5, 5, 0.2)'; // Estela de movimiento
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            const triggerBreathing = () => {
-                // Lógica de círculo de respiración ya definida anteriormente
-                // ...
-                // Al final, reload para el siguiente bloque
-                setTimeout(() => location.reload(), 15000);
-            };
+    // Dibujar Jugador (Puntero Neón)
+    ctx.shadowBlur = 15;
+    ctx.shadowColor = player.color;
+    ctx.fillStyle = player.color;
+    ctx.fillRect(player.x - 30, player.y, 60, 4);
 
-            return { boot };
-        })();
-    </script>
+    // Dibujar Palabras Flotantes
+    items.forEach(item => {
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = item.color;
+        ctx.fillStyle = item.color;
+        ctx.font = "900 14px Orbitron";
+        ctx.fillText(item.label, item.x - 20, item.y - 10);
+        ctx.font = "30px Arial";
+        ctx.fillText(item.emoji, item.x - 15, item.y + 20);
+    });
+}
+
+function endGame(title, msg) {
+    gameActive = false;
+    document.getElementById('msg-overlay').style.display = 'flex';
+    document.getElementById('final-status').innerText = title;
+    document.getElementById('final-msg').innerText = msg;
+}
+
+// Control por Mouse/Touch
+window.addEventListener('mousemove', e => {
+    player.x = e.clientX;
+});
+
+window.addEventListener('touchmove', e => {
+    player.x = e.touches[0].clientX;
+});
+
+function loop() {
+    update();
+    draw();
+    requestAnimationFrame(loop);
+}
+
+loop();
+</script>
 </body>
 </html>
