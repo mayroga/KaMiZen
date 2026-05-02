@@ -5,172 +5,148 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>KAMIZEN SESSION</title>
 <style>
-    :root { --primary: #00f2ff; --bg: #05070d; }
-    body { 
-        margin:0; background: var(--bg); color:#fff; 
-        font-family: 'Segoe UI', Arial, sans-serif; overflow:hidden; 
-        transition: background 0.4s ease;
-    }
+    :root { --primary: #00f2ff; --bg: #05070d; --font: 'Segoe UI', Roboto, sans-serif; }
+    body { margin:0; background: var(--bg); color:#fff; font-family: var(--font); overflow:hidden; transition: background 0.5s; }
+    
+    /* UI Layout */
+    #timer { position:absolute; top:20px; left:50%; transform:translateX(-50%); font-size:80px; color:var(--primary); font-weight:bold; z-index:100; text-shadow: 0 0 20px rgba(0,242,255,0.5); }
+    #centerText { position:absolute; top:40%; left:50%; transform:translate(-50%,-50%); font-size:28px; width:80%; text-align:center; z-index:50; line-height: 1.6; }
+    
+    /* Control Buttons */
+    .btn-panel { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; gap: 20px; z-index: 1000; }
+    .btn-kam { padding:15px 40px; font-size:18px; background:var(--primary); color:#000; border:none; border-radius:50px; cursor:pointer; font-weight:bold; box-shadow: 0 0 20px var(--primary); }
+    #btnLang { background: #fff; box-shadow: 0 0 10px #fff; }
+    #btnBack { display:none; background: #444; color: #fff; box-shadow: none; }
 
-    /* PANTALLA INICIAL DE SEGURIDAD */
-    #overlay {
-        position: fixed; inset: 0; background: var(--bg);
-        display: flex; flex-direction: column; justify-content: center;
-        align-items: center; z-index: 1000;
-    }
+    /* Corner Explanation */
+    #explanationBox { position:absolute; bottom:120px; left:30px; width:320px; padding:20px; background: rgba(0,242,255,0.1); border-left: 5px solid var(--primary); font-size:16px; opacity:0; transition: opacity 0.5s; z-index:60; pointer-events: none; }
 
-    #timer { 
-        position:absolute; top:20px; left:50%; transform:translateX(-50%); 
-        font-size:60px; color:var(--primary); font-weight:bold; z-index:100; 
-    }
+    /* Metrics */
+    #indicators { position:absolute; right:30px; top:50%; transform:translateY(-50%); display:none; flex-direction:column; gap:15px; z-index:100; }
+    .bar-container { display: flex; align-items: center; gap: 10px; }
+    .bar-label { font-size: 10px; width: 60px; text-align: right; color: var(--primary); }
+    .bar { width:10px; height:60px; background:rgba(255,255,255,0.1); border-radius:5px; position:relative; }
+    .fill { position:absolute; bottom:0; width:100%; height:0%; background:var(--primary); transition: height 0.5s; }
 
-    #centerText { 
-        position:absolute; top:45%; left:50%; transform:translate(-50%,-50%); 
-        font-size:32px; width:85%; text-align:center; z-index:50; line-height: 1.5;
-    }
+    /* Breathing & Silence */
+    #breathContainer { display:none; position:fixed; inset:0; flex-direction:column; justify-content:center; align-items:center; z-index:150; background: var(--bg); }
+    #breathCircle { width: 220px; height: 220px; border-radius: 50%; background: radial-gradient(circle, #00f2ff 0%, #0044ff 100%); box-shadow: 0 0 80px #00f2ff; display:flex; justify-content:center; align-items:center; font-weight:bold; font-size:24px; color:white; transition: all 4s ease-in-out; }
+    #scienceText { margin-top: 60px; width: 60%; text-align: center; color: #00f2ff; font-size: 18px; line-height: 1.5; font-style: italic; }
 
-    .btn-main { 
-        padding:20px 60px; font-size:24px; background:var(--primary); color:#000; 
-        border:none; border-radius:50px; cursor:pointer; font-weight:bold;
-        box-shadow: 0 0 30px var(--primary); transition: transform 0.2s;
-    }
-    .btn-main:active { transform: scale(0.95); }
-
-    #btnContinue { display:none; position:absolute; bottom:80px; left:50%; transform:translateX(-50%); z-index: 200; }
-
-    /* GAMEPLAY UI */
-    #explanationBox {
-        position:absolute; bottom:30px; left:30px; width:300px; padding:20px;
-        background: rgba(0,242,255,0.1); border-left: 5px solid var(--primary); 
-        font-size:16px; opacity:0; transition: opacity 0.5s; z-index:60;
-    }
-
-    #indicators {
-        position:absolute; right:30px; top:50%; transform:translateY(-50%);
-        display:none; flex-direction:column; gap:15px; z-index:100;
-    }
-    .bar { width:12px; height:70px; background:rgba(255,255,255,0.1); border-radius:10px; position:relative; }
-    .fill { position:absolute; bottom:0; width:100%; height:0%; background:var(--primary); transition: height 0.4s; }
-
-    /* BREATHING */
-    #breathContainer {
-        display:none; position:fixed; inset:0; flex-direction:column; 
-        justify-content:center; align-items:center; z-index:150; background: var(--bg);
-    }
-    #breathCircle {
-        width: 200px; height: 200px; border-radius: 50%;
-        background: radial-gradient(circle, #00f2ff 0%, #0044ff 100%);
-        box-shadow: 0 0 60px #00f2ff;
-        display:flex; justify-content:center; align-items:center;
-        font-weight:bold; font-size:24px; color:white; transition: all 4s ease-in-out;
-    }
-
-    #finalModal {
-        display:none; position:fixed; inset:0; background:var(--bg); z-index:300;
-        flex-direction:column; justify-content:center; align-items:center; padding:40px; text-align:center;
-    }
-
-    .word { position:absolute; font-size:26px; color:var(--primary); font-weight:bold; cursor:pointer; animation: float 5s linear forwards; }
-    @keyframes float { 0%{transform:translateY(0); opacity:0;} 10%{opacity:1;} 90%{opacity:1;} 100%{transform:translateY(-350px); opacity:0;} }
+    /* Diagnosis */
+    #finalModal { display:none; position:fixed; inset:0; background:var(--bg); z-index:2000; flex-direction:column; justify-content:center; align-items:center; padding:40px; text-align:center; }
+    
+    .word { position:absolute; font-size:24px; color:var(--primary); font-weight:bold; cursor:pointer; animation: float 6s linear forwards; white-space: nowrap; }
+    @keyframes float { 0%{transform:translateY(0); opacity:0;} 10%{opacity:1;} 90%{opacity:1;} 100%{transform:translateY(-400px); opacity:0;} }
 </style>
 </head>
 <body>
 
-<div id="overlay">
-    <h1 style="color:var(--primary); letter-spacing: 5px;">KAMIZEN</h1>
-    <button class="btn-main" onclick="Engine.startSystem()">START SESSION</button>
-</div>
-
 <div id="timer">00:00</div>
-<div id="centerText"></div>
-<button id="btnContinue" class="btn-main" onclick="Engine.startTraining()">CONTINUE</button>
+<div id="centerText">Initializing MayKaMi Neuro-System...</div>
+
+<div class="btn-panel">
+    <button id="btnBack" class="btn-kam" onclick="Engine.repeatAudio()">BACK</button>
+    <button id="btnStart" class="btn-kam" onclick="Engine.start()">START SESSION</button>
+    <button id="btnLang" class="btn-kam" onclick="Engine.toggleLang()">ESP</button>
+</div>
 
 <div id="explanationBox">
     <strong id="expTitle"></strong><br><span id="expBody"></span>
 </div>
 
-<div id="indicators">
-    <div class="bar"><div class="fill" id="f-0"></div></div>
-    <div class="bar"><div class="fill" id="f-1"></div></div>
-    <div class="bar"><div class="fill" id="f-2"></div></div>
-    <div class="bar"><div class="fill" id="f-3"></div></div>
-</div>
+<div id="indicators"></div>
 
 <div id="breathContainer">
     <div id="breathCircle">IDLE</div>
-    <div id="scienceText" style="margin-top:50px; width:70%; text-align:center; color:var(--primary); font-style:italic;"></div>
+    <div id="scienceText"></div>
 </div>
 
 <div id="finalModal">
-    <h1 style="color:var(--primary)">DIAGNOSIS COMPLETE</h1>
-    <div id="diagText" style="margin-bottom:40px; font-size:20px;"></div>
-    <button class="btn-main" onclick="location.reload()">RESTART</button>
+    <h1 id="diagTitle" style="color:var(--primary); font-size: 40px;">NEURO-DIAGNOSIS</h1>
+    <div id="diagText" style="margin:30px 0; font-size:22px; line-height:1.6; max-width: 800px;"></div>
+    <button class="btn-kam" onclick="location.reload()">RESTART PROGRAM</button>
 </div>
 
-<audio id="bgMusic" loop src="https://assets.mixkit.co/music/preview/mixkit-lo-fi-night-chill-1616.mp3"></audio>
-<audio id="sfxGlass" src="https://www.soundjay.com/misc/sounds/glass-break-01.mp3"></audio>
+<audio id="bgMusic" loop src="https://assets.mixkit.co/music/preview/mixkit-tech-house-vibes-130.mp3"></audio>
+<audio id="sfxBreak" src="https://www.soundjay.com/misc/sounds/glass-break-01.mp3"></audio>
 
 <script>
 const Engine = (() => {
-    let state = { phase: 'init', index: 1, stats: {}, clicks: 0, data: null, gameTime: 300 };
+    let state = { 
+        lang: 'en', phase: 'init', index: 1, 
+        stats: {}, clicks: 0, data: null, 
+        gameTime: 300, currentText: "" 
+    };
 
     const pillars = {
-        "LIMITS": { cat: "Defense", desc: "Protección: Enseña a decir NO y cuidar tu espacio.", color: "#ff2e2e" },
-        "PERSISTENCE": { cat: "Resilience", desc: "Lucha: El error es parte del proceso, no el final.", color: "#ffa500" },
-        "METHOD": { cat: "Structure", desc: "Método: Caos por pasos lógicos. Aprender a aprender.", color: "#00ff88" },
-        "VALUE": { cat: "Wealth", desc: "Riqueza: El dinero sigue al valor que aportas.", color: "#ffd700" },
-        "ADAPTACION": { cat: "Survival", desc: "Entorno: Fluidez y resolución en el cambio.", color: "#00ccff" }
+        "PURPOSE": { cat: "Core", color: "#ff00ff", en: "Your internal 'Why'. The compass of every successful life.", es: "Tu 'Por qué' interno. La brújula de toda vida exitosa." },
+        "DISCIPLINE": { cat: "Action", color: "#00ff88", en: "Consistency over intensity. Building neural pathways for success.", es: "Consistencia sobre intensidad. Construyendo rutas neuronales." },
+        "RESILIENCE": { cat: "Spirit", color: "#ffa500", en: "The ability to absorb chaos and transform it into order.", es: "Capacidad de absorber el caos y transformarlo en orden." },
+        "EMPATHY": { cat: "Social", color: "#00f2ff", en: "Emotional intelligence: Understanding the human frequency.", es: "Inteligencia emocional: Entender la frecuencia humana." },
+        "WEALTH": { cat: "Value", color: "#ffd700", en: "The result of the value you provide to the world.", es: "El resultado del valor que aportas al mundo." },
+        "HEALTH": { cat: "Body", color: "#ff4444", en: "Your biological hardware. The foundation of high performance.", es: "Tu hardware biológico. La base del alto rendimiento." },
+        "STRATEGY": { cat: "Mind", color: "#4444ff", en: "Thinking steps ahead. Managing resources with wisdom.", es: "Pensar pasos adelante. Gestionar recursos con sabiduría." },
+        "LEGACY": { cat: "Time", color: "#ffffff", en: "What remains. Living for something bigger than yourself.", es: "Lo que queda. Vivir por algo más grande que tú mismo." }
     };
 
-    const startSystem = async () => {
-        document.getElementById("overlay").style.display = "none";
-        try {
-            const res = await fetch("/api/session/start");
-            state.data = await res.json();
-            state.index = state.data.index || 1;
-            runStory();
-        } catch (e) {
-            document.getElementById("centerText").innerText = "Connection Error. Reloading...";
-            setTimeout(() => location.reload(), 2000);
-        }
+    const start = async () => {
+        document.getElementById("btnStart").style.display = "none";
+        document.getElementById("btnBack").style.display = "block";
+        const res = await fetch("/api/session/start");
+        state.data = await res.json();
+        state.index = state.data.index || 1;
+        playPhase("story");
     };
 
-    const runStory = () => {
-        state.phase = 'story';
-        const text = state.data.story.en;
-        document.getElementById("centerText").innerText = text;
+    const playPhase = (type) => {
+        state.phase = type;
+        const rawText = type === "story" ? state.data.story[state.lang] : state.data.mission.b[0].tx[state.lang];
+        // Limpieza de voz: quitar caracteres especiales
+        state.currentText = rawText.replace(/[\\/_.,()]/g, ' '); 
+        document.getElementById("centerText").innerText = rawText;
+        speak(state.currentText, () => {
+            if(type === "story") setTimeout(() => playPhase("mission"), 1000);
+            else startGame();
+        });
+    };
 
-        const synth = window.speechSynthesis;
+    const speak = (text, callback) => {
+        window.speechSynthesis.cancel();
         const msg = new SpeechSynthesisUtterance(text);
-        const voices = synth.getVoices();
-        msg.voice = voices.find(v => v.name.includes("David") || v.name.includes("Male")) || voices[0];
-        msg.rate = 0.8;
-        msg.onend = () => {
-            document.getElementById("btnContinue").style.display = "block";
-        };
-        synth.speak(msg);
+        const voices = window.speechSynthesis.getVoices();
+        msg.voice = voices.find(v => v.name.includes("Male") || v.name.includes("David")) || voices[0];
+        msg.rate = 0.85;
+        msg.onend = callback;
+        window.speechSynthesis.speak(msg);
     };
 
-    const startTraining = () => {
+    const startGame = () => {
         state.phase = 'game';
-        document.getElementById("btnContinue").style.display = "none";
         document.getElementById("centerText").innerText = "";
-        document.getElementById("bgMusic").play();
-
+        const music = document.getElementById("bgMusic");
+        music.play();
+        
         let timeLeft = state.gameTime;
-        const gameLoop = setInterval(() => {
+        initIndicators();
+
+        const loop = setInterval(() => {
             timeLeft--;
             document.getElementById("timer").innerText = formatTime(timeLeft);
             spawnWord();
 
+            // Lógica de explicación (primer minuto)
             if (state.gameTime - timeLeft >= 60) {
                 document.getElementById("explanationBox").style.opacity = "0";
                 document.getElementById("indicators").style.display = "flex";
             }
 
+            // Cambiar ritmo música según velocidad de clicks
+            music.playbackRate = 1 + (state.clicks / 100);
+
             if (timeLeft <= 0) {
-                clearInterval(gameLoop);
-                runSilence();
+                clearInterval(loop);
+                runSilenceChallenge();
             }
         }, 1000);
     };
@@ -179,18 +155,18 @@ const Engine = (() => {
         const keys = Object.keys(pillars);
         const key = keys[Math.floor(Math.random()*keys.length)];
         const p = pillars[key];
-
         const el = document.createElement("div");
         el.className = "word";
         el.innerText = key;
         el.style.left = Math.random()*80 + 10 + "%";
-        el.style.top = Math.random()*60 + 20 + "%";
+        el.style.top = "90%";
+        el.style.color = p.color;
 
         el.onclick = () => {
-            document.getElementById("sfxGlass").cloneNode().play();
-            document.body.style.background = p.color + "33";
-            setTimeout(() => document.body.style.background = "#05070d", 150);
-
+            const glass = document.getElementById("sfxBreak").cloneNode();
+            glass.volume = 0.5;
+            glass.play();
+            
             state.clicks++;
             state.stats[p.cat] = (state.stats[p.cat] || 0) + 1;
             updateBars();
@@ -198,52 +174,77 @@ const Engine = (() => {
             if (state.gameTime - parseInt(document.getElementById("timer").innerText.split(":")[1]) < 60) {
                 document.getElementById("explanationBox").style.opacity = "1";
                 document.getElementById("expTitle").innerText = key;
-                document.getElementById("expBody").innerText = p.desc;
+                document.getElementById("expBody").innerText = p[state.lang];
             }
             el.remove();
         };
         document.body.appendChild(el);
     };
 
-    const updateBars = () => {
-        const cats = ["Defense", "Wealth", "Structure", "Resilience"];
-        cats.forEach((c, i) => {
-            const val = (state.stats[c] || 0) * 10;
-            document.getElementById(`f-${i}`).style.height = Math.min(val, 100) + "%";
-        });
-    };
-
-    const runSilence = async () => {
+    const runSilenceChallenge = async () => {
         state.phase = 'silence';
         document.getElementById("bgMusic").pause();
+        document.getElementById("indicators").style.display = "none";
         document.getElementById("breathContainer").style.display = "flex";
-        document.getElementById("scienceText").innerText = "Neuro-Reset: La coherencia rítmica reduce el cortisol y activa tu potencial cognitivo.";
 
-        let t = Math.min(30 + (state.index * 5), 180);
+        // Escalamiento de tiempo: Bloque 1 (30s) -> Bloque 35 (180s)
+        let silenceSeconds = Math.min(30 + (state.index - 1) * 4.4, 180);
+        let t = Math.round(silenceSeconds);
+
+        const scienceExp = {
+            en: "Silence deactivates the Amygdala (fear center) and synchronizes the Heart-Brain coherence, allowing the prefrontal cortex to rebuild logic and wealth-creation circuits.",
+            es: "El silencio desactiva la Amígdala (centro del miedo) y sincroniza la coherencia Corazón-Cerebro, permitiendo que la corteza prefrontal reconstruya circuitos de lógica y riqueza."
+        };
+        document.getElementById("scienceText").innerText = scienceExp[state.lang];
+
         while (t > 0) {
             document.getElementById("timer").innerText = formatTime(t);
-            await breathCycle("INHALA", 1.8);
-            await breathCycle("RETIENE", 1);
-            await breathCycle("EXHALA", 0.7);
+            await breathStep("INHALA / INHALE", 1.8, 4000);
+            await breathStep("RETIENE / HOLD", 1.8, 4000);
+            await breathStep("EXHALA / EXHALE", 1.0, 4000);
             t -= 12;
+            if(t < 0) t = 0;
         }
-        showFinal();
+        showDiagnosis();
     };
 
-    const breathCycle = (label, scale) => {
-        return new Promise(resolve => {
-            const circle = document.getElementById("breathCircle");
-            circle.innerText = label;
-            circle.style.transform = `scale(${scale})`;
-            setTimeout(resolve, 4000);
+    const breathStep = (txt, scale, time) => {
+        return new Promise(r => {
+            const c = document.getElementById("breathCircle");
+            c.innerText = txt;
+            c.style.transform = `scale(${scale})`;
+            setTimeout(r, time);
         });
     };
 
-    const showFinal = () => {
+    const showDiagnosis = () => {
         document.getElementById("breathContainer").style.display = "none";
         document.getElementById("finalModal").style.display = "flex";
-        const top = Object.keys(state.stats).reduce((a, b) => state.stats[a] > state.stats[b] ? a : b, "Proceso");
-        document.getElementById("diagText").innerHTML = `SESIÓN COMPLETADA<br>Tu enfoque principal hoy: <b>${top}</b>.<br>Tu sistema nervioso está ahora en equilibrio óptimo.`;
+        const top = Object.keys(state.stats).reduce((a, b) => state.stats[a] > state.stats[b] ? a : b, "Balance");
+        
+        const diag = {
+            en: `Based on your neural interaction, your current life trajectory is heavily weighted towards **${top}**. Your focus during the silence challenge has stabilized your cortisol levels. You are now 15% more efficient in high-pressure decision making.`,
+            es: `Basado en tu interacción neural, tu trayectoria de vida actual está inclinada hacia **${top}**. Tu enfoque durante el reto de silencio ha estabilizado tus niveles de cortisol. Eres ahora un 15% más eficiente en la toma de decisiones bajo presión.`
+        };
+        document.getElementById("diagText").innerText = diag[state.lang];
+    };
+
+    const initIndicators = () => {
+        const ind = document.getElementById("indicators");
+        Object.keys(pillars).forEach((k, i) => {
+            ind.innerHTML += `
+                <div class="bar-container">
+                    <div class="bar-label">${k}</div>
+                    <div class="bar"><div class="fill" id="bar-${pillars[k].cat}"></div></div>
+                </div>`;
+        });
+    };
+
+    const updateBars = () => {
+        Object.keys(state.stats).forEach(cat => {
+            const el = document.getElementById(`bar-${cat}`);
+            if(el) el.style.height = Math.min(state.stats[cat] * 8, 100) + "%";
+        });
     };
 
     const formatTime = (s) => {
@@ -252,7 +253,15 @@ const Engine = (() => {
         return `${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
     };
 
-    return { startSystem, startTraining };
+    return {
+        start,
+        repeatAudio: () => speak(state.currentText, () => {}),
+        toggleLang: () => {
+            state.lang = state.lang === 'en' ? 'es' : 'en';
+            document.getElementById("btnLang").innerText = state.lang === 'en' ? 'ESP' : 'ENG';
+            alert(state.lang === 'en' ? "Language: English" : "Idioma: Español");
+        }
+    };
 })();
 </script>
 </body>
