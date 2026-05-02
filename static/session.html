@@ -10,19 +10,44 @@
             --neon-purple: #9b59b6; --neon-red: #ff3131; --bg-dark: #020205;
         }
         body { margin: 0; overflow: hidden; background: var(--bg-dark); color: white; font-family: 'Orbitron', sans-serif; cursor: none; }
-        #hud { position: absolute; top: 10px; width: 100%; display: flex; justify-content: space-evenly; z-index: 100; pointer-events: none; flex-wrap: wrap; }
-        .data-box { background: rgba(0, 0, 0, 0.9); border: 2px solid var(--neon-blue); padding: 5px 10px; text-align: center; min-width: 85px; border-radius: 5px; margin: 2px; }
-        .label { font-size: 8px; color: var(--neon-blue); font-weight: 900; display: block; }
-        .value { font-size: 16px; font-weight: 900; color: #fff; }
-        #timer-box { color: var(--neon-red); border-color: var(--neon-red); }
-
-        #overlay-system { position: fixed; inset: 0; background: var(--bg-dark); z-index: 1000; display: flex; flex-direction: column; align-items: center; padding: 20px; overflow-y: auto; text-align: center; }
-        .tutorial-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-width: 700px; margin: 20px 0; }
-        .item-info { background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px; border-left: 4px solid var(--neon-blue); font-size: 11px; text-align: left; }
-        .btn-start { padding: 18px 50px; background: var(--neon-blue); border: none; font-family: 'Orbitron'; font-weight: 900; cursor: pointer; border-radius: 50px; box-shadow: 0 0 25px var(--neon-blue); margin-top: 15px; }
         
-        #flash-effect { position: fixed; inset: 0; pointer-events: none; z-index: 99; opacity: 0; transition: opacity 0.1s; }
+        /* HUD SUPERIOR REFORZADO */
+        #hud { position: absolute; top: 0; width: 100%; display: flex; justify-content: space-evenly; z-index: 100; background: rgba(0,0,0,0.8); padding: 10px 0; border-bottom: 1px solid var(--neon-blue); }
+        .data-box { text-align: center; min-width: 100px; }
+        .label { font-size: 10px; color: var(--neon-blue); font-weight: 900; display: block; letter-spacing: 1px; }
+        .value { font-size: 22px; font-weight: 900; color: #fff; }
+        
+        /* RELOJ GIGANTE */
+        #timer-box { border: 2px solid var(--neon-red); padding: 5px 20px; border-radius: 10px; animation: pulse 2s infinite; }
+        #val-time { font-size: 30px; color: var(--neon-red); }
+
+        /* SISTEMA DE OVERLAY (HISTORIAS Y MISIONES) */
+        #overlay-system { position: fixed; inset: 0; background: var(--bg-dark); z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px; text-align: center; }
+        #content-area { max-width: 800px; width: 90%; }
+        .mission-text { font-size: 18px; line-height: 1.6; color: #fff; margin: 20px 0; }
+        .scientific-inf { font-size: 12px; color: var(--neon-blue); font-style: italic; margin-top: 10px; }
+        
+        /* CÍRCULO RESPIRATORIO KAMIZEN */
+        #breathing-node { 
+            width: 250px; height: 250px; 
+            border: 8px solid var(--neon-blue); 
+            border-radius: 50%; 
+            display: none; 
+            align-items: center; 
+            justify-content: center; 
+            margin: 30px auto;
+            box-shadow: 0 0 50px var(--neon-blue);
+            transition: transform 4s ease-in-out; 
+        }
+        #breathing-text { font-size: 24px; font-weight: 900; color: var(--neon-blue); text-transform: uppercase; }
+
+        .btn-start { padding: 20px 60px; background: var(--neon-blue); border: none; font-family: 'Orbitron'; font-weight: 900; cursor: pointer; border-radius: 50px; box-shadow: 0 0 30px var(--neon-blue); margin-top: 30px; transition: 0.3s; }
+        .btn-start:hover { transform: scale(1.1); }
+
         canvas { display: block; }
+        #flash-effect { position: fixed; inset: 0; pointer-events: none; z-index: 99; opacity: 0; }
+        
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
 </head>
@@ -31,232 +56,176 @@
 <div id="flash-effect"></div>
 
 <div id="hud">
-    <div id="timer-box" class="data-box"><span class="label">SESSION TIME</span><span id="val-time" class="value">10:00</span></div>
-    <div class="data-box" style="border-color: var(--neon-gold);"><span class="label">CAPITAL</span><span id="val-money" class="value">0</span></div>
-    <div class="data-box" style="border-color: var(--neon-green);"><span class="label">STABILITY</span><span id="val-health" class="value">100%</span></div>
-    <div class="data-box" style="border-color: #e67e22;"><span class="label">LEGACY</span><span id="val-legacy" class="value">0</span></div>
+    <div id="timer-box" class="data-box"><span class="label">SESSION TIME</span><span id="val-time">05:00</span></div>
+    <div class="data-box"><span class="label">CAPITAL</span><span id="val-money" class="value">0</span></div>
+    <div class="data-box"><span class="label">STABILITY</span><span id="val-health" class="value">100%</span></div>
+    <div class="data-box"><span class="label">LEGACY</span><span id="val-legacy" class="value">0</span></div>
 </div>
 
 <div id="overlay-system">
-    <h1 id="main-title" style="color: var(--neon-blue); letter-spacing: 8px;">AL CIELO</h1>
-    <p id="sub-title" style="color: var(--neon-gold); font-size: 13px;"></p>
-    
-    <div id="dynamic-tutorial" class="tutorial-grid"></div>
-
-    <button id="action-btn" class="btn-start" onclick="beginSession()">INITIALIZE</button>
+    <div id="content-area">
+        <h1 id="display-title" style="color: var(--neon-gold); letter-spacing: 5px;">INITIALIZING...</h1>
+        <div id="display-body" class="mission-text"></div>
+        
+        <!-- Círculo Azul Automático -->
+        <div id="breathing-node"><span id="breathing-text">INHALE</span></div>
+        
+        <div id="display-inf" class="scientific-inf"></div>
+        <button id="action-btn" class="btn-start" onclick="Engine.start()">START TRAINING</button>
+    </div>
 </div>
 
 <canvas id="gameCanvas"></canvas>
 
+<!-- Audio Effects -->
+<audio id="sfxGlass" src="https://actions.google.com/sounds/v1/science_fiction/glitch_sequence.ogg"></audio>
+
+<script src="static/js/engine.js"></script>
 <script>
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 const flash = document.getElementById('flash-effect');
-let audioCtx, gameTimer, sessionSeconds = 600;
-let musicGain, musicOsc1, musicOsc2;
 
-const variants = {
-    safety: [
-        { t: "WATCH OUT", e: "👀", s: "aware", i: 15, c: "#00f2ff", freq: 523.25 },
-        { t: "STAY ALERT", e: "🔍", s: "aware", i: 20, c: "#00f2ff", freq: 587.33 },
-        { t: "BE VIGILANT", e: "🛡️", s: "health", i: 10, c: "#2ecc71", freq: 659.25 }
-    ],
-    danger: [
-        { t: "STRANGER", e: "👤", s: "health", i: -45, c: "#ff3131", freq: 110 },
-        { t: "BAD CALL", e: "👿", s: "health", i: -30, c: "#ff3131", freq: 98 },
-        { t: "THREAT", e: "🏎️", s: "health", i: -50, c: "#ff3131", freq: 82 }
-    ],
-    finance: [
-        { t: "SAVE CASH", e: "💰", s: "money", i: 150, c: "#f1c40f", freq: 783.99 },
-        { t: "NEW BUSINESS", e: "💡", s: "money", i: 300, c: "#f1c40f", freq: 880.00 },
-        { t: "WORK HARD", e: "🔨", s: "money", i: 100, c: "#f1c40f", freq: 987.77 }
-    ],
-    values: [
-        { t: "BE KIND", e: "🙏", s: "legacy", i: 25, c: "#9b59b6", freq: 440.00 },
-        { t: "RESPECT", e: "🫡", s: "legacy", i: 30, c: "#2ecc71", freq: 493.88 },
-        { t: "STUDY TIME", e: "📚", s: "legacy", i: 40, c: "#3498db", freq: 349.23 }
-    ]
-};
+// Configuración de juego integrada con las palabras de engine.js
+let gameActive = false;
+let gameSeconds = 300;
+let objects = [];
+const user = { x: 0, y: 0, size: 50 };
 
-const explanations = [
-    "Every touch defines your future. Avoid the red, embrace the growth.",
-    "Survival is about choice. Learn to filter the street from the noise.",
-    "Your legacy is built on daily habits. Start your 10-minute training."
+const pillars = [
+    { id: "LIMITS", c: "#ff3131", impact: "health", val: -15 },
+    { id: "VALUE", c: "#f1c40f", impact: "money", val: 100 },
+    { id: "BALANCE", c: "#2ecc71", impact: "health", val: 10 },
+    { id: "LEGACY", c: "#9b59b6", impact: "legacy", val: 20 },
+    { id: "METHOD", c: "#00f2ff", impact: "aware", val: 15 }
 ];
 
-let stats = { money: 0, health: 100, legacy: 0, aware: 0 };
-let active = false, objects = [];
-const user = { x: 0, y: 0, size: 60 };
-
-// --- SISTEMA DE AUDIO ---
-function initAudio() {
-    if (audioCtx) return;
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    
-    // Música de fondo (Dopamina Binaural)
-    musicGain = audioCtx.createGain();
-    musicGain.gain.value = 0.1;
-    musicGain.connect(audioCtx.destination);
-
-    musicOsc1 = audioCtx.createOscillator();
-    musicOsc2 = audioCtx.createOscillator();
-    
-    musicOsc1.frequency.value = 180; // Frecuencia relajante
-    musicOsc2.frequency.value = 185; // Diferencia para efecto binaural
-    
-    musicOsc1.connect(musicGain);
-    musicOsc2.connect(musicGain);
-    
-    musicOsc1.start();
-    musicOsc2.start();
+function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 }
+window.addEventListener('resize', resize);
+resize();
 
-function updateMusicVolume() {
-    if (!active) return;
-    // Sube y baja el volumen cada minuto para relajar
-    const phase = (sessionSeconds % 60) / 60;
-    const vol = 0.05 + (Math.sin(phase * Math.PI) * 0.15); 
-    musicGain.gain.setTargetAtTime(vol, audioCtx.currentTime, 0.5);
-}
+// Seguimiento de entrada
+const updatePos = (e) => {
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    user.x = clientX;
+    user.y = clientY;
+};
+window.addEventListener('mousemove', updatePos);
+window.addEventListener('touchmove', updatePos, {passive: false});
 
-function playEffect(freq, isPositive) {
-    const osc = audioCtx.createOscillator();
-    const g = audioCtx.createGain();
-    osc.connect(g);
-    g.connect(audioCtx.destination);
-
-    if (isPositive) {
-        // Sonido tipo Piano
-        osc.type = 'sine';
-        g.gain.setValueAtTime(0.6, audioCtx.currentTime);
-        g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
-    } else {
-        // Sonido tipo Electricidad/Castigo
-        osc.type = 'sawtooth';
-        g.gain.setValueAtTime(0.8, audioCtx.currentTime);
-        g.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + 0.2);
-    }
-
-    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-    osc.start();
-    osc.stop(audioCtx.currentTime + 0.5);
-}
-
-// --- LÓGICA DE JUEGO ---
-function generateSessionContent() {
-    const grid = document.getElementById('dynamic-tutorial');
-    const sub = document.getElementById('sub-title');
-    grid.innerHTML = '';
-    sub.innerText = explanations[Math.floor(Math.random() * explanations.length)];
-
-    const pool = [...variants.safety, ...variants.danger, ...variants.finance, ...variants.values];
-    const shuffled = pool.sort(() => 0.5 - Math.random()).slice(0, 8);
-
-    shuffled.forEach(item => {
-        const div = document.createElement('div');
-        div.className = 'item-info';
-        div.innerHTML = `<b>${item.e} ${item.t}:</b> Impact on ${item.s.toUpperCase()}.`;
-        grid.appendChild(div);
+function spawnObject() {
+    if(!gameActive) return;
+    const type = pillars[Math.floor(Math.random() * pillars.length)];
+    objects.push({
+        ...type,
+        x: Math.random() * (canvas.width - 100) + 50,
+        y: -50,
+        speed: 3 + Math.random() * 4
     });
 }
 
-function updateTimer() {
-    if(!active) return;
-    sessionSeconds--;
-    updateMusicVolume();
-    let mins = Math.floor(sessionSeconds / 60);
-    let secs = sessionSeconds % 60;
-    document.getElementById('val-time').innerText = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+function updateGame() {
+    if(!gameActive) return;
     
-    if(sessionSeconds <= 0) endGame("SESSION COMPLETE: Time is up. Review your legacy.");
-}
-
-function spawn() {
-    if(!active) return;
-    const cat = Object.keys(variants)[Math.floor(Math.random()*4)];
-    const item = variants[cat][Math.floor(Math.random()*3)];
-    objects.push({ 
-        ...item, 
-        x: Math.random()*(canvas.width-200)+100, 
-        y: -100, 
-        speed: 2.5 + Math.random()*2.5,
-        drift: (Math.random() - 0.5) * 3 
-    });
-}
-
-function update() {
-    if(!active) return;
     objects.forEach((obj, i) => {
         obj.y += obj.speed;
-        obj.x += obj.drift;
-        const dist = Math.sqrt((obj.x - user.x)**2 + (obj.y - user.y)**2);
         
-        if (dist < user.size) {
-            playEffect(obj.freq, obj.i > 0);
-            if(obj.s === 'money') stats.money += obj.i;
-            if(obj.s === 'health') stats.health = Math.max(0, Math.min(100, stats.health + obj.i));
-            if(obj.s === 'legacy') stats.legacy += obj.i;
-            if(obj.s === 'aware') stats.aware += obj.i;
+        // Colisión
+        const dist = Math.sqrt((obj.x - user.x)**2 + (obj.y - user.y)**2);
+        if(dist < user.size) {
+            triggerFlash(obj.val > 0 ? 'rgba(0,242,255,0.2)' : 'rgba(255,49,49,0.2)');
+            // Actualizar HUD localmente
+            if(obj.impact === 'money') document.getElementById('val-money').innerText = parseInt(document.getElementById('val-money').innerText) + obj.val;
+            if(obj.impact === 'health') {
+                let h = parseInt(document.getElementById('val-health').innerText);
+                document.getElementById('val-health').innerText = Math.max(0, Math.min(100, h + obj.val)) + "%";
+            }
+            if(obj.impact === 'legacy') document.getElementById('val-legacy').innerText = parseInt(document.getElementById('val-legacy').innerText) + obj.val;
             
-            triggerFlash(obj.i > 0 ? 'var(--neon-green)' : 'var(--neon-red)');
-            document.getElementById('val-money').innerText = stats.money;
-            document.getElementById('val-health').innerText = stats.health + "%";
-            document.getElementById('val-legacy').innerText = stats.legacy;
             objects.splice(i, 1);
+            document.getElementById('sfxGlass').cloneNode().play();
         }
-        if(obj.y > canvas.height + 100) objects.splice(i, 1);
+        if(obj.y > canvas.height + 50) objects.splice(i, 1);
     });
-
-    if(stats.health <= 0) endGame("SYSTEM COLLAPSE: Stability reached 0.");
 }
 
-function endGame(msg) {
-    active = false;
-    clearInterval(gameTimer);
-    if(musicGain) musicGain.gain.setTargetAtTime(0, audioCtx.currentTime, 1);
-    alert(msg);
-    document.getElementById('overlay-system').style.display = 'flex';
-    document.getElementById('action-btn').innerText = "RESTART TRAINING";
-    sessionSeconds = 600;
-    stats = { money: 0, health: 100, legacy: 0, aware: 0 };
-    objects = [];
-    generateSessionContent();
-}
-
-function draw() {
-    ctx.fillStyle = 'rgba(2, 2, 5, 0.3)';
+function drawGame() {
+    ctx.fillStyle = 'rgba(2, 2, 5, 0.2)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.strokeStyle = "#00f2ff"; ctx.lineWidth = 3; ctx.beginPath();
-    ctx.arc(user.x, user.y, user.size - 10, 0, Math.PI * 2); ctx.stroke();
 
+    // Usuario (Cursor)
+    ctx.strokeStyle = varColor('--neon-blue');
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(user.x, user.y, user.size, 0, Math.PI*2);
+    ctx.stroke();
+
+    // Objetos
     objects.forEach(obj => {
-        ctx.fillStyle = obj.c; ctx.textAlign = "center";
-        ctx.font = "bold 12px Orbitron"; ctx.fillText(obj.t, obj.x, obj.y - 40);
-        ctx.font = "50px Arial"; ctx.fillText(obj.e, obj.x, obj.y);
+        ctx.fillStyle = obj.c;
+        ctx.font = "bold 14px Orbitron";
+        ctx.textAlign = "center";
+        ctx.fillText(obj.id, obj.x, obj.y - 15);
+        
+        ctx.beginPath();
+        ctx.arc(obj.x, obj.y, 10, 0, Math.PI*2);
+        ctx.fill();
     });
+    
+    if(gameActive) requestAnimationFrame(drawGame);
+}
+
+function varColor(name) {
+    return getComputedStyle(document.documentElement).getPropertyValue(name).strip;
 }
 
 function triggerFlash(color) {
-    flash.style.backgroundColor = color; flash.style.opacity = "0.3";
-    setTimeout(() => flash.style.opacity = "0", 100);
+    flash.style.background = color;
+    flash.style.opacity = "1";
+    setTimeout(() => flash.style.opacity = "0", 150);
 }
 
-function beginSession() {
-    initAudio();
-    document.getElementById('overlay-system').style.display = 'none';
-    active = true;
-    gameTimer = setInterval(updateTimer, 1000);
-    setInterval(spawn, 800);
-    loop();
-}
+// Interfaz para engine.js
+window.GameVisuals = {
+    toggleOverlay: (show) => {
+        document.getElementById('overlay-system').style.display = show ? 'flex' : 'none';
+        gameActive = !show;
+        if(gameActive) {
+            objects = [];
+            drawGame();
+            spawnInterval = setInterval(spawnObject, 800);
+        } else {
+            clearInterval(spawnInterval);
+        }
+    },
+    updateContent: (title, body, inf = "") => {
+        document.getElementById('display-title').innerText = title;
+        document.getElementById('display-body').innerText = body;
+        document.getElementById('display-inf').innerText = inf;
+    },
+    runBreathing: (seconds, actionText) => {
+        const node = document.getElementById('breathing-node');
+        const txt = document.getElementById('breathing-text');
+        node.style.display = 'flex';
+        txt.innerText = actionText;
+        
+        if(actionText.toLowerCase().includes("inhale") || actionText.toLowerCase().includes("inhala")) {
+            node.style.transform = "scale(1.3)";
+        } else {
+            node.style.transform = "scale(0.8)";
+        }
+    },
+    stopBreathing: () => {
+        document.getElementById('breathing-node').style.display = 'none';
+    }
+};
 
-function loop() { if(active) { update(); draw(); requestAnimationFrame(loop); } }
-function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-window.addEventListener('resize', resize); resize();
-window.addEventListener('mousemove', e => { user.x = e.clientX; user.y = e.clientY; });
-window.addEventListener('touchmove', e => { user.x = e.touches[0].clientX; user.y = e.touches[0].clientY; }, {passive: false});
-
-generateSessionContent();
+let spawnInterval;
+Engine.init();
 </script>
 </body>
 </html>
