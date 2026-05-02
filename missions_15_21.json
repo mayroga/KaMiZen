@@ -29,16 +29,16 @@
 {"t":"br","tx":{"en":"Exhale","es":"Exhala"},"d":5},
 
 {"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
-"op":["React angry / Reaccionar con rabia","Stay calm & breathe / Mantener calma y respirar","Shout / Gritar","Walk into conflict / Entrar en conflicto"],
+"op":["React angry","Stay calm & breathe","Shout","Walk into conflict"],
 "c":1,
 "ex":[
-"Anger = loss of control / pérdida de control",
-"Calm + breathing = emotional regulation / regulación emocional",
-"Shouting = escalation / escalada",
-"Conflict entry = risk increase / aumenta el riesgo"
+"Anger = loss of control",
+"Calm + breathing = emotional regulation",
+"Shouting = escalation",
+"Conflict entry = risk increase"
 ]},
 
-{"t":"r","tx":"+Control / +Control","p":20},
+{"t":"r","tx":"+Control","p":20},
 
 {"t":"sil","d":30,
 "tx":{"en":"30s calm observation","es":"30s observación calmada"},
@@ -63,16 +63,16 @@
 {"story":{"en":"Focus is like a flashlight. It only works when pointed in one direction.","es":"El enfoque es como una linterna. Solo funciona cuando apunta en una dirección."}},
 
 {"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
-"op":["Multitask / Multitarea","Single focus / Un solo enfoque","Stop everything / Parar todo","Check phone / Revisar teléfono"],
+"op":["Multitask","Single focus","Stop everything","Check phone"],
 "c":1,
 "ex":[
-"Multitask = low efficiency / baja eficiencia",
-"Single focus = deep attention network / red de atención profunda",
-"Stop = no progress / sin progreso",
-"Phone = attention break / rompe la atención"
+"Multitask = low efficiency",
+"Single focus = deep attention network",
+"Stop = no progress",
+"Phone = attention break"
 ]},
 
-{"t":"r","tx":"+Focus / +Enfoque","p":20},
+{"t":"r","tx":"+Focus","p":20},
 
 {"t":"sil","d":45,
 "tx":{"en":"Quiet attention training","es":"Entrenamiento de atención silenciosa"},
@@ -97,16 +97,16 @@
 {"story":{"en":"Safety starts when you notice discomfort early.","es":"La seguridad empieza cuando notas incomodidad temprano."}},
 
 {"t":"d","q":{"en":"What is safest action?","es":"¿Cuál es la acción más segura?"},
-"op":["Ignore feeling / Ignorar sensación","Move away & ask help / Alejarse y pedir ayuda","Stay no matter what / Quedarse siempre","Act without thinking / Actuar sin pensar"],
+"op":["Ignore feeling","Move away & ask help","Stay no matter what","Act without thinking"],
 "c":1,
 "ex":[
-"Ignoring warning signals = risk / riesgo",
-"Moving away + help = protection system / sistema de protección",
-"Staying = exposure to danger / exposición a peligro",
-"Impulsive action = unsafe decisions / decisiones inseguras"
+"Ignoring warning signals = risk",
+"Moving away + help = protection system",
+"Staying = exposure to danger",
+"Impulsive action = unsafe decisions"
 ]},
 
-{"t":"r","tx":"+Safety / +Seguridad","p":20},
+{"t":"r","tx":"+Safety","p":20},
 
 {"t":"sil","d":60,
 "tx":{"en":"Safety breathing reset","es":"Respiración de seguridad"},
@@ -131,16 +131,16 @@
 {"story":{"en":"Truth is like light. It makes hidden things clear.","es":"La verdad es como la luz. Hace visibles las cosas ocultas."}},
 
 {"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
-"op":["Hide mistake / Ocultar error","Tell truth / Decir la verdad","Blame others / Culpar a otros","Run away / Escapar"],
+"op":["Hide mistake","Tell truth","Blame others","Run away"],
 "c":1,
 "ex":[
-"Hiding = weak trust / debilita confianza",
-"Truth = learning + respect / aprendizaje + respeto",
-"Blame = no growth / sin crecimiento",
-"Escape = unresolved issue / problema sin resolver"
+"Hiding = weak trust",
+"Truth = learning + respect",
+"Blame = no growth",
+"Escape = unresolved issue"
 ]},
 
-{"t":"r","tx":"+Integrity / +Integridad","p":20},
+{"t":"r","tx":"+Integrit","p":20},
 
 {"t":"sil","d":75,
 "tx":{"en":"Truth awareness breathing","es":"Respiración de conciencia de verdad"},
@@ -165,16 +165,16 @@
 {"story":{"en":"Strength is not following the crowd. Strength is choosing right.","es":"La fuerza no es seguir a la multitud. La fuerza es elegir lo correcto."}},
 
 {"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
-"op":["Follow group / Seguir grupo","Say no / Decir no","Laugh and join / Reír y unirse","Ignore thinking / No pensar"],
+"op":["Follow group","Say no","Laugh and join","Ignore thinking"],
 "c":1,
 "ex":[
-"Following = loss of self / pérdida de identidad",
-"Saying no = autonomy + respect / autonomía + respeto",
-"Joining = risk behavior / conducta de riesgo",
-"No thinking = poor decisions / malas decisiones"
+"Following = loss of self",
+"Saying no = autonomy + respect",
+"Joining = risk behavior",
+"No thinking = poor decisions"
 ]},
 
-{"t":"r","tx":"+Character / +Carácter","p":20},
+{"t":"r","tx":"+Character","p":20},
 
 {"t":"sil","d":90,
 "tx":{"en":"Confidence breathing practice","es":"Práctica de respiración de confianza"},
@@ -199,16 +199,16 @@
 {"story":{"en":"Discipline is doing what is right even when you don't feel like it.","es":"La disciplina es hacer lo correcto incluso cuando no tienes ganas."}},
 
 {"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
-"op":["Quit / Rendirse","Continue / Continuar","Delay / Posponer","Avoid / Evitar"],
+"op":["Quit","Continue","Delay","Avoid"],
 "c":1,
 "ex":[
-"Quitting = broken habit cycle / rompe el hábito",
-"Continuing = neuroplasticity growth / crecimiento neural",
-"Delaying = loss of momentum / pérdida de impulso",
-"Avoiding = no development / sin desarrollo"
+"Quitting = broken habit cycle",
+"Continuing = neuroplasticity growth",
+"Delaying = loss of momentum",
+"Avoiding = no development"
 ]},
 
-{"t":"r","tx":"+Discipline / +Disciplina","p":20},
+{"t":"r","tx":"+Discipline","p":20},
 
 {"t":"sil","d":105,
 "tx":{"en":"Endurance silence training","es":"Entrenamiento de silencio de resistencia"},
@@ -233,16 +233,16 @@
 {"story":{"en":"A strong mind does not react first. It understands first.","es":"Una mente fuerte no reacciona primero. Primero entiende."}},
 
 {"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
-"op":["React fast / Reaccionar rápido","Pause & think / Pausar y pensar","Ignore everything / Ignorar todo","Act randomly / Actuar sin pensar"],
+"op":["React fast","Pause & think","Ignore everything","Act randomly"],
 "c":1,
 "ex":[
-"Fast reaction = low control / poco control",
-"Pause = executive brain activation / activación del cerebro ejecutivo",
-"Ignoring = no awareness / sin conciencia",
-"Random action = chaos / caos"
+"Fast reaction = low control",
+"Pause = executive brain activation",
+"Ignoring = no awareness",
+"Random action = chaos"
 ]},
 
-{"t":"r","tx":"+Mastery / +Maestría","p":20},
+{"t":"r","tx":"+Mastery","p":20},
 
 {"t":"sil","d":180,
 "tx":{"en":"3-minute silence mastery challenge","es":"Reto de 3 minutos de silencio de maestría"},
