@@ -2,490 +2,234 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>KAMIZEN - NEURAL OPTIMIZATION INTERFACE</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MAYKAMI NEUROGAME | Session</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #00f2ff;
-            --secondary: #0044ff;
-            --bg: #03050a;
-            --surface: rgba(255, 255, 255, 0.05);
-            --font-main: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            --success: #28a745;
-            --error: #dc3545;
-            --breath-circle: rgba(0, 242, 255, 0.2);
+            --bg-dark: #0a0a0c;
+            --accent: #00d2ff;
+            --text-main: #e0e0e0;
+            --card-bg: rgba(25, 25, 30, 0.95);
+            --border: rgba(255, 255, 255, 0.1);
         }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         body {
-            margin: 0;
-            padding: 0;
-            background: var(--bg);
-            color: #fff;
-            font-family: var(--font-main);
-            overflow: hidden;
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at center, #1a1a2e 0%, var(--bg-dark) 100%);
+            color: var(--text-main);
             height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .brand { font-weight: 700; letter-spacing: 2px; color: var(--accent); }
+
+        #main-stage {
+            flex: 1;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            padding: 20px;
+            gap: 25px;
         }
 
-        /* FONDO DINÁMICO */
-        #stars-container {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1;
-            background: radial-gradient(circle at center, #0a0e1a 0%, #03050a 100%);
-        }
-
-        /* CÍRCULO RESPIRATORIO AUTOMÁTICO */
-        #breathing-portal {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 300px;
-            height: 300px;
-            border-radius: 50%;
-            border: 2px solid var(--primary);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            background: var(--breath-circle);
-            box-shadow: 0 0 50px rgba(0, 242, 255, 0.3);
-            pointer-events: none;
-        }
-
-        #breath-text {
-            font-size: 28px;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 5px;
-            color: #fff;
-            text-shadow: 0 0 10px var(--primary);
-        }
-
-        .inhale-anim { animation: inhale-cycle 4s ease-in-out infinite; }
-        @keyframes inhale-cycle {
-            0%, 100% { transform: translate(-50%, -50%) scale(1); background: rgba(0, 242, 255, 0.1); }
-            50% { transform: translate(-50%, -50%) scale(1.6); background: rgba(0, 242, 255, 0.4); }
-        }
-
-        /* UI ELEMENTS */
-        #timer {
-            position: absolute;
-            top: 40px;
-            font-size: 80px;
-            font-weight: 900;
-            color: var(--primary);
-            text-shadow: 0 0 30px rgba(0, 242, 255, 0.6);
-            z-index: 100;
-            display: none;
-        }
-
-        #main-container {
-            width: 85%;
-            max-width: 900px;
+        #display-text {
+            font-size: 1.4rem;
             text-align: center;
-            z-index: 50;
-        }
-
-        #text-narrator {
-            font-size: 28px;
-            line-height: 1.4;
-            min-height: 120px;
-            margin-bottom: 30px;
+            max-width: 600px;
+            line-height: 1.6;
+            min-height: 100px;
+            font-weight: 300;
         }
 
         #decision-area {
-            display: none;
-            flex-direction: column;
-            gap: 12px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            width: 100%;
+            max-width: 400px;
         }
 
-        .option-card {
-            background: var(--surface);
-            border: 1px solid rgba(0, 242, 255, 0.3);
+        .btn-option {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            color: white;
             padding: 18px;
-            border-radius: 8px;
+            border-radius: 12px;
+            font-size: 1rem;
             cursor: pointer;
-            transition: 0.3s;
-            font-size: 18px;
+            transition: all 0.2s ease;
+            text-align: center;
         }
 
-        .option-card:hover { background: rgba(0, 242, 255, 0.15); border-color: var(--primary); }
-
-        /* PALABRAS FLOTANTES Y EFECTO EXPLOSIÓN */
-        .word-node {
-            position: absolute;
-            padding: 12px 24px;
-            background: rgba(0, 242, 255, 0.1);
-            border: 1px solid var(--primary);
-            border-radius: 4px;
-            color: var(--primary);
-            font-weight: bold;
-            cursor: pointer;
-            z-index: 80;
-            animation: float-up 8s linear forwards;
-            text-transform: uppercase;
+        .btn-option:active {
+            transform: scale(0.98);
+            border-color: var(--accent);
+            background: rgba(0, 210, 255, 0.1);
         }
 
-        @keyframes float-up {
-            0% { transform: translateY(105vh) rotate(0deg); opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { transform: translateY(-10vh) rotate(10deg); opacity: 0; }
+        .control-bar {
+            padding: 25px;
+            display: flex;
+            justify-content: space-around;
+            border-top: 1px solid var(--border);
         }
 
-        .shard {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background: var(--primary);
-            pointer-events: none;
-            animation: shatter 0.6s ease-out forwards;
-        }
-
-        @keyframes shatter {
-            to { transform: translate(var(--tx), var(--ty)) rotate(360deg); opacity: 0; }
-        }
-
-        /* DASHBOARD */
-        #stats-sidebar {
-            position: absolute;
-            right: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            display: none;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .stat-bar-bg {
-            width: 8px;
-            height: 50px;
-            background: rgba(255,255,255,0.1);
-            position: relative;
-        }
-
-        .stat-bar-fill {
-            position: absolute;
-            bottom: 0; width: 100%; height: 0%;
-            background: var(--primary);
-            box-shadow: 0 0 10px var(--primary);
-            transition: height 0.5s;
-        }
-
-        .btn-system {
-            padding: 15px 40px;
-            font-weight: bold;
-            text-transform: uppercase;
+        .icon-btn {
+            background: none;
             border: none;
-            border-radius: 4px;
+            color: var(--text-main);
+            font-size: 0.9rem;
+            opacity: 0.6;
             cursor: pointer;
-            z-index: 1001;
         }
 
-        .btn-primary { background: var(--primary); color: #000; }
+        .icon-btn.danger { color: #ff4b2b; opacity: 1; }
 
-        #block-notifier {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            font-size: 14px;
-            color: rgba(255,255,255,0.5);
+        /* Loader */
+        .loader {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border);
+            border-top: 3px solid var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
         }
+
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
-    <div id="stars-container"></div>
-    <div id="block-notifier">BLOCK: 1/35</div>
-    <div id="timer">00:00</div>
-    
-    <div id="breathing-portal">
-        <div id="breath-text">INHALA</div>
-    </div>
+    <header>
+        <div class="brand">MAYKAMI NEUROGAME</div>
+    </header>
 
-    <div id="main-container">
-        <div id="text-narrator">SYSTEM INITIALIZING...</div>
-        <div id="decision-area"></div>
-        <div id="info-overlay" style="margin-top:20px; color: var(--primary); font-style: italic;"></div>
-    </div>
+    <main id="main-stage">
+        <div id="loading-view" class="hidden">
+            <div class="loader"></div>
+        </div>
 
-    <div id="stats-sidebar"></div>
+        <div id="session-content">
+            <p id="display-text">Initializing session...</p>
+        </div>
 
-    <div style="position:fixed; bottom: 30px; display:flex; gap:15px;">
-        <button id="btn-start" class="btn-system btn-primary" onclick="Kamizen.init()">INITIALIZE INTERFACE</button>
-        <button id="btn-next" class="btn-system btn-primary" style="display:none;" onclick="Kamizen.flow()">CONTINUE</button>
-    </div>
+        <div id="decision-area" class="hidden">
+            <!-- Buttons dynamically injected here -->
+        </div>
+    </main>
 
-    <!-- AUDIO ASSETS -->
-    <audio id="music-dopamine" loop src="https://assets.mixkit.co/music/preview/mixkit-deep-urban-623.mp3"></audio>
-    <audio id="sfx-shatter" src="https://www.soundjay.com/misc/sounds/glass-break-1.mp3"></audio>
-    <audio id="sfx-ping" src="https://www.soundjay.com/buttons/sounds/button-30.mp3"></audio>
+    <nav class="control-bar">
+        <button class="icon-btn" onclick="toggleAudio()">Mute/Unmute</button>
+        <button class="icon-btn danger" onclick="clearSession()">Reset</button>
+    </nav>
 
     <script>
-        const Kamizen = (() => {
-            let state = {
-                phase: 'boot',
-                block: 1,
-                points: {},
-                silenceTime: 30, // Segundos calculados
-                breathTime: 30,
-                sessionData: null,
-                isBreathing: false
-            };
+        const state = {
+            currentStep: 0,
+            missionData: null,
+            audioEnabled: true,
+            synth: window.speechSynthesis
+        };
 
-            const UI_WORDS = ["AWARENESS","SAFETY","CALM","ACTION","TRUTH","CONTROL","HELP","FOCUS"];
+        const UI = {
+            text: document.getElementById('display-text'),
+            decisions: document.getElementById('decision-area'),
+            loading: document.getElementById('loading-view'),
+            content: document.getElementById('session-content')
+        };
 
-            // MOTOR DE VOZ (SOLO EL SISTEMA HABLA)
-            const speak = (text, callback) => {
-                window.speechSynthesis.cancel();
-                const msg = new SpeechSynthesisUtterance(text);
-                msg.lang = 'en-US';
-                msg.rate = 0.95;
-                msg.onend = callback;
-                window.speechSynthesis.speak(msg);
-            };
-
-            const updateNarrator = (text) => {
-                document.getElementById('text-narrator').innerText = text;
-            };
-
-            const init = async () => {
-                document.getElementById('btn-start').style.display = 'none';
-                document.getElementById('music-dopamine').play();
-                
-                try {
-                    const res = await fetch('/api/session/start');
-                    state.sessionData = await res.json();
-                    state.block = state.sessionData.index || 1;
-                    document.getElementById('block-notifier').innerText = `BLOCK: ${state.block}/35`;
-                    
-                    // Cálculo de tiempos de silencio/respiración por bloque
-                    // Bloque 1: 30s. Resto: Reparte 3 min (180s) entre bloques 2-35.
-                    if(state.block === 1) {
-                        state.silenceTime = 30;
-                        state.breathTime = 30;
-                    } else {
-                        state.silenceTime = Math.floor(180 / 34);
-                        state.breathTime = Math.floor(180 / 34);
+        // Initialization
+        async function startSession() {
+            showLoading(true);
+            try {
+                // Simulación de carga de misión - Reemplazar con fetch real si es necesario
+                state.missionData = [
+                    {
+                        tx: "Bienvenido a su asesoría estratégica. ¿Desea comenzar la optimización de procesos?",
+                        options: [
+                            { text: "Iniciar", next: 1 },
+                            { text: "Revisar Protocolo", next: 0 }
+                        ]
+                    },
+                    {
+                        tx: "El primer paso requiere su total atención. Las soluciones deben ser directas.",
+                        options: [
+                            { text: "Entendido", next: 2 }
+                        ]
                     }
+                ];
+                renderStep(0);
+            } catch (err) {
+                UI.text.innerText = "Error loading session. Please try again.";
+            } finally {
+                showLoading(false);
+            }
+        }
 
-                    startIntro();
-                } catch(e) {
-                    updateNarrator("Connection Error. Reloading...");
-                }
-            };
+        function renderStep(index) {
+            const step = state.missionData[index];
+            if (!step) return;
 
-            const startIntro = () => {
-                state.phase = 'intro';
-                const text = state.sessionData.story.en;
-                updateNarrator(text);
-                speak(text, () => document.getElementById('btn-next').style.display = 'block');
-            };
+            UI.decisions.classList.add('hidden');
+            UI.text.innerText = step.tx;
+            
+            speak(step.tx);
 
-            const flow = () => {
-                document.getElementById('btn-next').style.display = 'none';
-                
-                if(state.phase === 'intro') {
-                    startNeuralCycle();
-                } else if(state.phase === 'diag-1') {
-                    startMission();
-                } else if(state.phase === 'diag-2') {
-                    startSilenceChallenge();
-                }
-            };
+            // Inyectar botones
+            UI.decisions.innerHTML = '';
+            step.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'btn-option';
+                btn.innerText = opt.text;
+                btn.onclick = () => renderStep(opt.next);
+                UI.decisions.appendChild(btn);
+            });
 
-            // CICLO 1: PALABRAS FLOTANTES
-            const startNeuralCycle = () => {
-                state.phase = 'cycle-1';
-                updateNarrator("SYNCHRONIZING NEURAL PATTERNS... CATCH THE CORE CONCEPTS.");
-                document.getElementById('timer').style.display = 'block';
-                document.getElementById('stats-sidebar').style.display = 'flex';
-                initStats();
-                
-                let timeLeft = 30;
-                const clock = setInterval(() => {
-                    timeLeft--;
-                    document.getElementById('timer').innerText = `00:${timeLeft.toString().padStart(2, '0')}`;
-                    if(Math.random() > 0.6) createFloatingWord();
-                    
-                    if(timeLeft <= 0) {
-                        clearInterval(clock);
-                        endCycle(1);
-                    }
-                }, 1000);
-            };
+            setTimeout(() => {
+                UI.decisions.classList.remove('hidden');
+            }, 500);
+        }
 
-            const createFloatingWord = () => {
-                const word = UI_WORDS[Math.floor(Math.random() * UI_WORDS.length)];
-                const div = document.createElement('div');
-                div.className = 'word-node';
-                div.innerText = word;
-                div.style.left = Math.random() * 80 + 10 + "%";
-                
-                div.onclick = (e) => {
-                    explode(e.clientX, e.clientY);
-                    document.getElementById('sfx-shatter').currentTime = 0;
-                    document.getElementById('sfx-shatter').play();
-                    document.getElementById('sfx-ping').play();
-                    state.points[word] = (state.points[word] || 0) + 1;
-                    updateStats();
-                    div.remove();
-                };
-                document.body.appendChild(div);
-            };
+        function speak(text) {
+            if (!state.audioEnabled) return;
+            state.synth.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'en-US'; // O 'es-ES' según prefieras
+            utterance.rate = 1;
+            state.synth.speak(utterance);
+        }
 
-            const explode = (x, y) => {
-                for(let i=0; i<15; i++) {
-                    const s = document.createElement('div');
-                    s.className = 'shard';
-                    s.style.left = x + 'px';
-                    s.style.top = y + 'px';
-                    s.style.setProperty('--tx', (Math.random()-0.5)*200 + 'px');
-                    s.style.setProperty('--ty', (Math.random()-0.5)*200 + 'px');
-                    document.body.appendChild(s);
-                    setTimeout(() => s.remove(), 600);
-                }
-            };
+        function toggleAudio() {
+            state.audioEnabled = !state.audioEnabled;
+            if (!state.audioEnabled) state.synth.cancel();
+        }
 
-            const endCycle = (num) => {
-                document.getElementById('timer').style.display = 'none';
-                state.phase = `diag-${num}`;
-                const diag = `Neural Diagnostic ${num} complete. Logic circuits stabilized. Efficiency at 98%.`;
-                updateNarrator(diag);
-                speak(diag, () => document.getElementById('btn-next').style.display = 'block');
-            };
+        function clearSession() {
+            if (confirm("¿Desea borrar los datos actuales?")) {
+                location.reload();
+            }
+        }
 
-            // MISIONES
-            const startMission = () => {
-                state.phase = 'mission';
-                const mission = state.sessionData.missions[0]; // Carga la misión del bloque actual
-                let stepIdx = 0;
+        function showLoading(show) {
+            UI.loading.classList.toggle('hidden', !show);
+            UI.content.classList.toggle('hidden', show);
+        }
 
-                const nextStep = () => {
-                    const step = mission.b[stepIdx];
-                    if(!step) {
-                        endCycle(2);
-                        return;
-                    }
-
-                    if(step.t === 'br' || step.t === 'breath_auto') {
-                        // Disparo automático de respiración si el texto contiene palabras clave
-                        triggerBreathing(10, "Inhale / Exhale Cycle: Stabilizing heart rate and oxygenating the prefrontal cortex.");
-                        setTimeout(() => { stepIdx++; nextStep(); }, 10000);
-                    } else if(step.t === 'v' || step.t === 'h' || step.story) {
-                        const txt = step.tx ? step.tx.en : step.story.en;
-                        updateNarrator(txt);
-                        speak(txt, () => {
-                            setTimeout(() => { stepIdx++; nextStep(); }, 1000);
-                        });
-                    } else if(step.t === 'd') {
-                        renderDecision(step, () => { stepIdx++; nextStep(); });
-                    } else {
-                        stepIdx++; nextStep();
-                    }
-                };
-                nextStep();
-            };
-
-            const renderDecision = (step, cb) => {
-                const area = document.getElementById('decision-area');
-                area.style.display = 'flex';
-                area.innerHTML = '';
-                updateNarrator(step.q.en);
-                speak(step.q.en);
-
-                step.op.forEach((o, i) => {
-                    const btn = document.createElement('div');
-                    btn.className = 'option-card';
-                    btn.innerText = o.split(' / ')[0]; // Solo Inglés
-                    btn.onclick = () => {
-                        area.style.display = 'none';
-                        const feedback = step.ex[i].split(' / ')[0];
-                        updateNarrator(feedback);
-                        speak(feedback, cb);
-                    };
-                    area.appendChild(btn);
-                });
-            };
-
-            // RETO DE SILENCIO + RESPIRACIÓN AUTOMÁTICA
-            const startSilenceChallenge = () => {
-                state.phase = 'silence';
-                updateNarrator("SILENCE CHALLENGE INITIATED. OBSERVE YOUR INTERNAL FLOW.");
-                speak("Silence challenge initiated. Observe your internal flow.");
-                
-                document.getElementById('timer').style.display = 'block';
-                let total = state.silenceTime + state.breathTime;
-                
-                // Activar Círculo Automático
-                triggerBreathing(total, "Silence and Controlled Breathing: Reducing cortisol levels while increasing focus and emotional regulation.");
-
-                const clock = setInterval(() => {
-                    total--;
-                    document.getElementById('timer').innerText = `00:${total.toString().padStart(2, '0')}`;
-                    if(total <= 0) {
-                        clearInterval(clock);
-                        finalize();
-                    }
-                }, 1000);
-            };
-
-            const triggerBreathing = (duration, explanation) => {
-                const portal = document.getElementById('breathing-portal');
-                const bText = document.getElementById('breath-text');
-                const info = document.getElementById('info-overlay');
-                
-                portal.style.display = 'flex';
-                portal.classList.add('inhale-anim');
-                info.innerText = explanation;
-
-                let elapsed = 0;
-                const cycle = setInterval(() => {
-                    elapsed += 4;
-                    bText.innerText = "INHALA";
-                    setTimeout(() => { bText.innerText = "EXHALA"; }, 2000);
-                    
-                    if(elapsed >= duration) {
-                        clearInterval(cycle);
-                        portal.style.display = 'none';
-                        portal.classList.remove('inhale-anim');
-                        info.innerText = "";
-                    }
-                }, 4000);
-            };
-
-            const finalize = () => {
-                updateNarrator("Optimization complete. System state: BALANCED.");
-                speak("Optimization complete. System state balanced. Restart for next level.");
-                const btn = document.getElementById('btn-next');
-                btn.innerText = "RESTART / NEXT LEVEL";
-                btn.style.display = 'block';
-                btn.onclick = () => location.href = '/';
-            };
-
-            const initStats = () => {
-                const barArea = document.getElementById('stats-sidebar');
-                UI_WORDS.forEach(w => {
-                    barArea.innerHTML += `<div class="stat-bar-bg"><div class="stat-bar-fill" id="bar-${w}"></div></div>`;
-                });
-            };
-
-            const updateStats = () => {
-                UI_WORDS.forEach(w => {
-                    const val = (state.points[w] || 0) * 20;
-                    document.getElementById(`bar-${w}`).style.height = Math.min(val, 100) + "%";
-                });
-            };
-
-            return { init, flow };
-        })();
+        window.onload = startSession;
     </script>
 </body>
 </html>
