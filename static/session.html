@@ -3,201 +3,199 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>MAYKAMI | NEUROGAME</title>
+    <title>MAYKAMI | TOTAL CONTROL</title>
     <style>
         :root {
             --neon-blue: #00f2ff;
             --neon-gold: #f1c40f;
             --neon-green: #2ecc71;
-            --neon-red: #e74c3c;
-            --bg-dark: #050505;
+            --neon-red: #ff3131;
+            --bg-dark: #020205;
         }
-
-        body { 
-            margin: 0; overflow: hidden; 
-            background: var(--bg-dark); 
-            color: white; 
-            font-family: 'Orbitron', sans-serif; 
-        }
-
-        #ui-layer {
-            position: absolute; top: 20px; left: 20px;
-            display: flex; flex-direction: column; gap: 10px;
+        body { margin: 0; overflow: hidden; background: var(--bg-dark); color: white; font-family: 'Orbitron', sans-serif; cursor: none; }
+        
+        #hud {
+            position: absolute; top: 20px; width: 100%;
+            display: flex; justify-content: space-around;
             z-index: 100; pointer-events: none;
         }
-
-        .stat-card {
-            background: rgba(0, 0, 0, 0.6);
-            border-left: 4px solid var(--neon-blue);
-            padding: 10px 20px;
-            min-width: 200px;
-            backdrop-filter: blur(5px);
+        .data-box {
+            background: rgba(0, 242, 255, 0.1);
+            border: 2px solid var(--neon-blue);
+            padding: 10px 20px; text-align: center;
+            box-shadow: 0 0 15px rgba(0, 242, 255, 0.3);
         }
+        .label { font-size: 10px; color: var(--neon-blue); letter-spacing: 2px; font-weight: bold; }
+        .value { font-size: 20px; font-weight: 900; display: block; }
 
-        .stat-label { font-size: 12px; text-transform: uppercase; letter-spacing: 2px; color: #aaa; }
-        .stat-value { font-size: 24px; font-weight: 900; display: block; }
+        canvas { display: block; }
 
-        canvas { display: block; cursor: none; }
-
-        #msg-overlay {
-            position: fixed; inset: 0;
-            background: rgba(0,0,0,0.85);
-            display: none; flex-direction: column;
-            justify-content: center; align-items: center;
-            z-index: 1000; text-align: center;
-        }
-
-        .btn-reboot {
-            margin-top: 30px; padding: 15px 40px;
-            background: var(--neon-blue); border: none;
-            color: #000; font-weight: bold; cursor: pointer;
+        #system-overlay {
+            position: fixed; inset: 0; background: var(--bg-dark);
+            display: flex; flex-direction: column; justify-content: center;
+            align-items: center; z-index: 1000;
         }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
 </head>
 <body>
 
-<div id="ui-layer">
-    <div class="stat-card" style="border-color: var(--neon-gold);">
-        <span class="stat-label">CAPITAL</span>
-        <span id="val-money" class="stat-value">0</span>
+<div id="hud">
+    <div class="data-box" style="border-color: var(--neon-gold);">
+        <span class="label">CAPITAL</span>
+        <span id="val-money" class="value">0</span>
     </div>
-    <div class="stat-card" style="border-color: var(--neon-green);">
-        <span class="stat-label">ESTABILIDAD</span>
-        <span id="val-health" class="stat-value">100%</span>
-    </div>
-    <div class="stat-card" style="border-color: var(--neon-blue);">
-        <span class="stat-label">NEGOCIOS</span>
-        <span id="val-biz" class="stat-value">0</span>
+    <div class="data-box" style="border-color: var(--neon-green);">
+        <span class="label">ESTABILIDAD</span>
+        <span id="val-health" class="value">100%</span>
     </div>
 </div>
 
-<div id="msg-overlay">
-    <h1 id="final-status" style="font-size: 40px; color: var(--neon-blue);">SESIÓN COMPLETADA</h1>
-    <p id="final-msg" style="max-width: 500px; margin-top: 20px; line-height: 1.6;"></p>
-    <button class="btn-reboot" onclick="location.reload()">REINICIAR INTERFAZ</button>
+<div id="system-overlay">
+    <p style="letter-spacing: 5px; color: var(--neon-blue);">INITIALIZING MAYKAMI INTERFACE...</p>
 </div>
 
-<canvas id="neuroCanvas"></canvas>
+<canvas id="gameCanvas"></canvas>
 
 <script>
-const canvas = document.getElementById('neuroCanvas');
+const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+// Ajuste dinámico de pantalla
+function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resize);
+resize();
 
-let gameActive = true;
-let stats = { money: 0, health: 100, biz: 0 };
-
-const player = {
-    x: canvas.width / 2,
-    y: canvas.height - 100,
-    w: 60,
-    h: 20,
-    color: '#00f2ff'
-};
-
-const items = [];
-const config = [
-    { label: 'CAPITAL', emoji: '💰', val: 100, type: 'money', color: '#f1c40f' },
-    { label: 'NEGOCIO', emoji: '🤝', val: 1, type: 'biz', color: '#3498db' },
-    { label: 'FAMILIA', emoji: '🏠', val: 15, type: 'health', color: '#2ecc71' },
-    { label: 'PAZ', emoji: '😊', val: 10, type: 'health', color: '#9b59b6' },
-    { label: 'AMENAZA', emoji: '⚠️', val: -25, type: 'threat', color: '#e74c3c' },
-    { label: 'STRESS', emoji: '🛑', val: -15, type: 'health', color: '#95a5a6' }
+// DATOS PROYECTADOS DESDE JSON
+const rawData = [
+    { "text": "CAPITAL", "emoji": "💰", "stat": "money", "impact": 100, "color": "#f1c40f" },
+    { "text": "NEGOCIO", "emoji": "🤝", "stat": "money", "impact": 250, "color": "#00f2ff" },
+    { "text": "PAZ", "emoji": "🧘", "stat": "health", "impact": 15, "color": "#2ecc71" },
+    { "text": "RIESGO", "emoji": "⚠️", "stat": "health", "impact": -20, "color": "#ff3131" },
+    { "text": "PÉRDIDA", "emoji": "🛑", "stat": "money", "impact": -150, "color": "#ff3131" }
 ];
 
-function spawn() {
-    if(!gameActive) return;
-    const c = config[Math.floor(Math.random() * config.length)];
-    items.push({
+let score = 0;
+let health = 100;
+let active = false;
+const objects = [];
+
+// AVATAR CON MOVIMIENTO TOTAL (X, Y)
+const user = { x: canvas.width / 2, y: canvas.height / 2, size: 40 };
+
+function processCycle() {
+    if(!active) return;
+    const entry = rawData[Math.floor(Math.random() * rawData.length)];
+    objects.push({
+        ...entry,
         x: Math.random() * (canvas.width - 100) + 50,
-        y: -50,
-        speed: 3 + Math.random() * 4,
-        ...c
+        y: -100,
+        speed: 3 + (score / 2000),
+        pulse: 0
     });
 }
+
+function handleInput(e) {
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    user.x = clientX;
+    user.y = clientY;
+}
+
+window.addEventListener('mousemove', handleInput);
+window.addEventListener('touchstart', handleInput);
+window.addEventListener('touchmove', handleInput);
+window.addEventListener('mousedown', handleInput);
 
 function update() {
-    if (!gameActive) return;
+    if(!active) return;
 
-    items.forEach((item, i) => {
-        item.y += item.speed;
+    objects.forEach((obj, i) => {
+        obj.y += obj.speed;
+        obj.pulse += 0.1;
 
-        // Detección de Colisión Proporcional
-        if (item.y > player.y - 20 && item.y < player.y + 20 &&
-            item.x > player.x - 40 && item.x < player.x + 40) {
+        // COLISIÓN MEJORADA (DISTANCIA EUCLIDIANA)
+        const dx = obj.x - user.x;
+        const dy = obj.y - user.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        if (distance < user.size) {
+            if(obj.stat === 'money') score += obj.impact;
+            if(obj.stat === 'health') health = Math.max(0, Math.min(100, health + obj.impact));
             
-            applyEffect(item);
-            items.splice(i, 1);
+            updateHUD();
+            objects.splice(i, 1);
         }
 
-        if (item.y > canvas.height) items.splice(i, 1);
+        if(obj.y > canvas.height + 100) objects.splice(i, 1);
     });
 
-    if (Math.random() < 0.03) spawn();
-    if (stats.health <= 0) endGame("SISTEMA COLAPSADO", "El exceso de presión o falta de paz detuvo tu crecimiento. El equilibrio es la clave.");
-    if (stats.money >= 2000) endGame("ÉXITO ALCANZADO", "Has logrado capitalizar sin perder tu centro. Nivel de consciencia: Superior.");
+    if(health <= 0) {
+        active = false;
+        alert("SISTEMA EN REVISIÓN: EQUILIBRIO PERDIDO.");
+        location.reload();
+    }
 }
 
-function applyEffect(item) {
-    if (item.type === 'money') stats.money += item.val;
-    if (item.type === 'biz') stats.biz += item.val;
-    if (item.type === 'health' || item.type === 'threat') {
-        stats.health = Math.min(100, stats.health + item.val);
-    }
-    
-    document.getElementById('val-money').innerText = stats.money;
-    document.getElementById('val-health').innerText = stats.health + "%";
-    document.getElementById('val-biz').innerText = stats.biz;
+function updateHUD() {
+    document.getElementById('val-money').innerText = score;
+    document.getElementById('val-health').innerText = health + "%";
 }
 
 function draw() {
-    ctx.fillStyle = 'rgba(5, 5, 5, 0.2)'; // Estela de movimiento
+    // Fondo con estela de alta fidelidad
+    ctx.fillStyle = 'rgba(2, 2, 5, 0.15)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Dibujar Jugador (Puntero Neón)
-    ctx.shadowBlur = 15;
-    ctx.shadowColor = player.color;
-    ctx.fillStyle = player.color;
-    ctx.fillRect(player.x - 30, player.y, 60, 4);
+    // DIBUJAR AVATAR (PUNTERO DE SELECCIÓN)
+    ctx.shadowBlur = 20;
+    ctx.shadowColor = varColor('--neon-blue');
+    ctx.strokeStyle = varColor('--neon-blue');
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.arc(user.x, user.y, 25, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.fillStyle = "rgba(0, 242, 255, 0.2)";
+    ctx.fill();
 
-    // Dibujar Palabras Flotantes
-    items.forEach(item => {
-        ctx.shadowBlur = 10;
-        ctx.shadowColor = item.color;
-        ctx.fillStyle = item.color;
-        ctx.font = "900 14px Orbitron";
-        ctx.fillText(item.label, item.x - 20, item.y - 10);
-        ctx.font = "30px Arial";
-        ctx.fillText(item.emoji, item.x - 15, item.y + 20);
+    // DIBUJAR ICONOS Y TEXTO DEL JSON (MÁXIMA CLARIDAD)
+    objects.forEach(obj => {
+        const bounce = Math.sin(obj.pulse) * 5;
+        
+        ctx.shadowBlur = 15;
+        ctx.shadowColor = obj.color;
+        
+        // Icono Grande y Claro
+        ctx.font = "45px Arial";
+        ctx.textAlign = "center";
+        ctx.fillText(obj.emoji, obj.x, obj.y + bounce);
+        
+        // Etiqueta de Texto con Peso
+        ctx.fillStyle = "white";
+        ctx.font = "bold 14px Orbitron";
+        ctx.fillText(obj.text, obj.x, obj.y + 35 + bounce);
     });
 }
 
-function endGame(title, msg) {
-    gameActive = false;
-    document.getElementById('msg-overlay').style.display = 'flex';
-    document.getElementById('final-status').innerText = title;
-    document.getElementById('final-msg').innerText = msg;
+function varColor(name) {
+    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 }
 
-// Control por Mouse/Touch
-window.addEventListener('mousemove', e => {
-    player.x = e.clientX;
-});
-
-window.addEventListener('touchmove', e => {
-    player.x = e.touches[0].clientX;
-});
+setTimeout(() => {
+    document.getElementById('system-overlay').style.display = 'none';
+    active = true;
+    setInterval(processCycle, 1000);
+    loop();
+}, 1500);
 
 function loop() {
     update();
     draw();
     requestAnimationFrame(loop);
 }
-
-loop();
 </script>
 </body>
 </html>
