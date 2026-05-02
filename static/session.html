@@ -4,19 +4,21 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>KAMIZEN SESSION</title>
-
 <style>
-    :root { 
-        --primary: #00f2ff; 
-        --bg: #05070d; 
-    }
+    :root { --primary: #00f2ff; --bg: #05070d; }
     body { 
         margin:0; background: var(--bg); color:#fff; 
         font-family: 'Segoe UI', Arial, sans-serif; overflow:hidden; 
         transition: background 0.4s ease;
     }
 
-    /* UI ELEMENTS */
+    /* PANTALLA INICIAL DE SEGURIDAD */
+    #overlay {
+        position: fixed; inset: 0; background: var(--bg);
+        display: flex; flex-direction: column; justify-content: center;
+        align-items: center; z-index: 1000;
+    }
+
     #timer { 
         position:absolute; top:20px; left:50%; transform:translateX(-50%); 
         font-size:60px; color:var(--primary); font-weight:bold; z-index:100; 
@@ -24,20 +26,22 @@
 
     #centerText { 
         position:absolute; top:45%; left:50%; transform:translate(-50%,-50%); 
-        font-size:28px; width:85%; text-align:center; z-index:50; line-height: 1.5;
+        font-size:32px; width:85%; text-align:center; z-index:50; line-height: 1.5;
     }
 
-    #btnContinue { 
-        display:none; position:absolute; bottom:60px; left:50%; transform:translateX(-50%);
-        padding:15px 50px; font-size:22px; background:var(--primary); color:#000; 
-        border:none; border-radius:50px; cursor:pointer; font-weight:bold; z-index:200;
-        box-shadow: 0 0 20px var(--primary);
+    .btn-main { 
+        padding:20px 60px; font-size:24px; background:var(--primary); color:#000; 
+        border:none; border-radius:50px; cursor:pointer; font-weight:bold;
+        box-shadow: 0 0 30px var(--primary); transition: transform 0.2s;
     }
+    .btn-main:active { transform: scale(0.95); }
+
+    #btnContinue { display:none; position:absolute; bottom:80px; left:50%; transform:translateX(-50%); z-index: 200; }
 
     /* GAMEPLAY UI */
     #explanationBox {
         position:absolute; bottom:30px; left:30px; width:300px; padding:20px;
-        background: rgba(0,242,255,0.08); border-left: 5px solid var(--primary); 
+        background: rgba(0,242,255,0.1); border-left: 5px solid var(--primary); 
         font-size:16px; opacity:0; transition: opacity 0.5s; z-index:60;
     }
 
@@ -48,40 +52,38 @@
     .bar { width:12px; height:70px; background:rgba(255,255,255,0.1); border-radius:10px; position:relative; }
     .fill { position:absolute; bottom:0; width:100%; height:0%; background:var(--primary); transition: height 0.4s; }
 
-    /* BREATHING CIRCLE */
+    /* BREATHING */
     #breathContainer {
         display:none; position:fixed; inset:0; flex-direction:column; 
         justify-content:center; align-items:center; z-index:150; background: var(--bg);
     }
     #breathCircle {
-        width: 180px; height: 180px; border-radius: 50%;
+        width: 200px; height: 200px; border-radius: 50%;
         background: radial-gradient(circle, #00f2ff 0%, #0044ff 100%);
         box-shadow: 0 0 60px #00f2ff;
         display:flex; justify-content:center; align-items:center;
         font-weight:bold; font-size:24px; color:white; transition: all 4s ease-in-out;
     }
-    #scienceText {
-        margin-top: 50px; width: 75%; text-align: center; color: #00f2ff; font-size: 16px; font-style: italic;
-    }
 
-    /* MODALS */
     #finalModal {
         display:none; position:fixed; inset:0; background:var(--bg); z-index:300;
         flex-direction:column; justify-content:center; align-items:center; padding:40px; text-align:center;
     }
 
-    .word { 
-        position:absolute; font-size:24px; color:var(--primary); font-weight:bold; 
-        cursor:pointer; animation: float 5s linear forwards; text-shadow: 0 0 10px var(--primary);
-    }
+    .word { position:absolute; font-size:26px; color:var(--primary); font-weight:bold; cursor:pointer; animation: float 5s linear forwards; }
     @keyframes float { 0%{transform:translateY(0); opacity:0;} 10%{opacity:1;} 90%{opacity:1;} 100%{transform:translateY(-350px); opacity:0;} }
 </style>
 </head>
 <body>
 
+<div id="overlay">
+    <h1 style="color:var(--primary); letter-spacing: 5px;">KAMIZEN</h1>
+    <button class="btn-main" onclick="Engine.startSystem()">START SESSION</button>
+</div>
+
 <div id="timer">00:00</div>
-<div id="centerText">Connecting to Kamizen Engine...</div>
-<button id="btnContinue" onclick="Engine.proceed()">CONTINUE TO TRAINING</button>
+<div id="centerText"></div>
+<button id="btnContinue" class="btn-main" onclick="Engine.startTraining()">CONTINUE</button>
 
 <div id="explanationBox">
     <strong id="expTitle"></strong><br><span id="expBody"></span>
@@ -92,18 +94,17 @@
     <div class="bar"><div class="fill" id="f-1"></div></div>
     <div class="bar"><div class="fill" id="f-2"></div></div>
     <div class="bar"><div class="fill" id="f-3"></div></div>
-    <div class="bar"><div class="fill" id="f-4"></div></div>
 </div>
 
 <div id="breathContainer">
     <div id="breathCircle">IDLE</div>
-    <div id="scienceText"></div>
+    <div id="scienceText" style="margin-top:50px; width:70%; text-align:center; color:var(--primary); font-style:italic;"></div>
 </div>
 
 <div id="finalModal">
-    <h1 style="color:var(--primary)">SESSION DIAGNOSIS</h1>
-    <div id="diagText" style="margin-bottom:40px; font-size:20px; line-height:1.6;"></div>
-    <button onclick="location.reload()" style="background:var(--primary); padding:18px 45px; border:none; border-radius:12px; font-weight:bold; cursor:pointer; font-size:18px;">START NEXT SESSION</button>
+    <h1 style="color:var(--primary)">DIAGNOSIS COMPLETE</h1>
+    <div id="diagText" style="margin-bottom:40px; font-size:20px;"></div>
+    <button class="btn-main" onclick="location.reload()">RESTART</button>
 </div>
 
 <audio id="bgMusic" loop src="https://assets.mixkit.co/music/preview/mixkit-lo-fi-night-chill-1616.mp3"></audio>
@@ -111,89 +112,65 @@
 
 <script>
 const Engine = (() => {
-    let state = { 
-        phase: 'init', index: 1, stats: {}, clicks: 0, 
-        data: null, gameTime: 300, startTime: 0
-    };
+    let state = { phase: 'init', index: 1, stats: {}, clicks: 0, data: null, gameTime: 300 };
 
     const pillars = {
-        "LIMITS": { cat: "Defense", desc: "Enseña a decir 'no' y a reconocer el espacio personal.", color: "#ff2e2e" },
-        "PERSISTENCE": { cat: "Resilience", desc: "Entender que el error es parte del proceso y no un destino.", color: "#ffa500" },
-        "METHOD": { cat: "Structure", desc: "Sustituir el caos por pasos lógicos; aprender a aprender.", color: "#00ff88" },
-        "CRITERION": { cat: "Logic", desc: "Capacidad de analizar información antes de aceptarla como verdad.", color: "#00f2ff" },
-        "VALUE": { cat: "Wealth", desc: "Comprender que el dinero sigue al valor que uno aporta.", color: "#ffd700" },
-        "EQUILIBRIO": { cat: "Health", desc: "Cuidar el cuerpo y la mente como el activo más preciado.", color: "#ff00ff" },
-        "LEALTAD": { cat: "Family", desc: "Fomentar vínculos sólidos basados en el respeto y apoyo.", color: "#4444ff" },
-        "AUTONOMIA": { cat: "Autonomy", desc: "Libertad de decidir basada en principios y no presión social.", color: "#ffffff" },
-        "ADAPTACION": { cat: "Survival", desc: "Capacidad de fluir y resolver en ambientes cambiantes.", color: "#00ccff" },
-        "LEGADO": { cat: "Legacy", desc: "Vivir con propósito para que lo construido trascienda.", color: "#aa88ff" }
+        "LIMITS": { cat: "Defense", desc: "Protección: Enseña a decir NO y cuidar tu espacio.", color: "#ff2e2e" },
+        "PERSISTENCE": { cat: "Resilience", desc: "Lucha: El error es parte del proceso, no el final.", color: "#ffa500" },
+        "METHOD": { cat: "Structure", desc: "Método: Caos por pasos lógicos. Aprender a aprender.", color: "#00ff88" },
+        "VALUE": { cat: "Wealth", desc: "Riqueza: El dinero sigue al valor que aportas.", color: "#ffd700" },
+        "ADAPTACION": { cat: "Survival", desc: "Entorno: Fluidez y resolución en el cambio.", color: "#00ccff" }
     };
 
-    const init = async () => {
+    const startSystem = async () => {
+        document.getElementById("overlay").style.display = "none";
         try {
             const res = await fetch("/api/session/start");
             state.data = await res.json();
             state.index = state.data.index || 1;
-            startStory();
+            runStory();
         } catch (e) {
-            document.getElementById("centerText").innerText = "Engine Link Offline. Retrying...";
-            setTimeout(init, 3000);
+            document.getElementById("centerText").innerText = "Connection Error. Reloading...";
+            setTimeout(() => location.reload(), 2000);
         }
     };
 
-    // --- FASE 1: HISTORIA Y VOZ ---
-    const startStory = () => {
+    const runStory = () => {
         state.phase = 'story';
-        const text = state.data.story.en || "Prepare your mind for the next level.";
+        const text = state.data.story.en;
         document.getElementById("centerText").innerText = text;
-        
-        // Voz Masculina y Pausada
-        const speak = () => {
-            const synth = window.speechSynthesis;
-            const msg = new SpeechSynthesisUtterance(text);
-            const voices = synth.getVoices();
-            msg.voice = voices.find(v => v.name.includes("David") || v.name.includes("Male") || v.name.includes("Google US English")) || voices[0];
-            msg.rate = 0.8; 
-            msg.pitch = 0.9;
-            msg.onend = () => {
-                document.getElementById("btnContinue").style.display = "block";
-            };
-            synth.speak(msg);
-        };
 
-        if (speechSynthesis.getVoices().length === 0) {
-            speechSynthesis.onvoiceschanged = speak;
-        } else {
-            speak();
-        }
+        const synth = window.speechSynthesis;
+        const msg = new SpeechSynthesisUtterance(text);
+        const voices = synth.getVoices();
+        msg.voice = voices.find(v => v.name.includes("David") || v.name.includes("Male")) || voices[0];
+        msg.rate = 0.8;
+        msg.onend = () => {
+            document.getElementById("btnContinue").style.display = "block";
+        };
+        synth.speak(msg);
     };
 
-    // --- FASE 2: JUEGO (5 MINUTOS) ---
-    const startGame = () => {
+    const startTraining = () => {
         state.phase = 'game';
         document.getElementById("btnContinue").style.display = "none";
         document.getElementById("centerText").innerText = "";
         document.getElementById("bgMusic").play();
-        
-        let timeLeft = state.gameTime;
-        state.startTime = timeLeft;
 
-        const interval = setInterval(() => {
+        let timeLeft = state.gameTime;
+        const gameLoop = setInterval(() => {
             timeLeft--;
             document.getElementById("timer").innerText = formatTime(timeLeft);
-            
             spawnWord();
-            
-            // Lógica de UI a los 60 segundos
-            const elapsed = state.gameTime - timeLeft;
-            if (elapsed >= 60) {
+
+            if (state.gameTime - timeLeft >= 60) {
                 document.getElementById("explanationBox").style.opacity = "0";
                 document.getElementById("indicators").style.display = "flex";
             }
 
             if (timeLeft <= 0) {
-                clearInterval(interval);
-                startMission();
+                clearInterval(gameLoop);
+                runSilence();
             }
         }, 1000);
     };
@@ -211,15 +188,14 @@ const Engine = (() => {
 
         el.onclick = () => {
             document.getElementById("sfxGlass").cloneNode().play();
-            document.body.style.background = p.color + "33"; // Flash de color
-            setTimeout(() => { document.body.style.background = "#05070d"; }, 150);
+            document.body.style.background = p.color + "33";
+            setTimeout(() => document.body.style.background = "#05070d", 150);
 
             state.clicks++;
             state.stats[p.cat] = (state.stats[p.cat] || 0) + 1;
             updateBars();
 
-            // Mostrar explicación solo en el primer minuto
-            if ((state.gameTime - parseInt(document.getElementById("timer").innerText.split(":")[1])) < 60) {
+            if (state.gameTime - parseInt(document.getElementById("timer").innerText.split(":")[1]) < 60) {
                 document.getElementById("explanationBox").style.opacity = "1";
                 document.getElementById("expTitle").innerText = key;
                 document.getElementById("expBody").innerText = p.desc;
@@ -227,49 +203,31 @@ const Engine = (() => {
             el.remove();
         };
         document.body.appendChild(el);
-    }
+    };
 
     const updateBars = () => {
-        const cats = Object.keys(state.stats);
+        const cats = ["Defense", "Wealth", "Structure", "Resilience"];
         cats.forEach((c, i) => {
-            if(i < 5) {
-                const val = (state.stats[c] || 0) * 10;
-                document.getElementById(`f-${i}`).style.height = Math.min(val, 100) + "%";
-            }
+            const val = (state.stats[c] || 0) * 10;
+            document.getElementById(`f-${i}`).style.height = Math.min(val, 100) + "%";
         });
     };
 
-    // --- FASE 3: MISION Y SILENCIO ---
-    const startMission = async () => {
-        state.phase = 'mission';
-        document.getElementById("bgMusic").pause();
-        const missionText = state.data.mission?.b?.[0]?.tx?.en || "Enter the Silence State.";
-        document.getElementById("centerText").innerText = "MISSION: " + missionText;
-        
-        await new Promise(r => setTimeout(r, 6000));
-        startBreathing();
-    };
-
-    const startBreathing = async () => {
+    const runSilence = async () => {
         state.phase = 'silence';
-        document.getElementById("centerText").innerText = "";
+        document.getElementById("bgMusic").pause();
         document.getElementById("breathContainer").style.display = "flex";
-        document.getElementById("scienceText").innerText = "La activación del nervio vago reduce el cortisol y resetea tu corteza prefrontal para una toma de decisiones superior.";
+        document.getElementById("scienceText").innerText = "Neuro-Reset: La coherencia rítmica reduce el cortisol y activa tu potencial cognitivo.";
 
-        // Tiempo crece con los bloques: 30s base, hasta 180s (3min) en bloque 35
-        let silenceTime = Math.min(30 + (state.index * 4.3), 180);
-        let t = Math.round(silenceTime);
-
+        let t = Math.min(30 + (state.index * 5), 180);
         while (t > 0) {
             document.getElementById("timer").innerText = formatTime(t);
             await breathCycle("INHALA", 1.8);
             await breathCycle("RETIENE", 1);
-            await breathCycle("EXHALA", 0.6);
-            t -= 12; // Cada ciclo dura 12 segundos (4-4-4)
-            if(t < 0) t = 0;
+            await breathCycle("EXHALA", 0.7);
+            t -= 12;
         }
-
-        showDiagnosis();
+        showFinal();
     };
 
     const breathCycle = (label, scale) => {
@@ -281,19 +239,11 @@ const Engine = (() => {
         });
     };
 
-    // --- FASE FINAL: DIAGNÓSTICO ---
-    const showDiagnosis = () => {
+    const showFinal = () => {
         document.getElementById("breathContainer").style.display = "none";
         document.getElementById("finalModal").style.display = "flex";
-        
-        const top = Object.keys(state.stats).reduce((a, b) => state.stats[a] > state.stats[b] ? a : b, "Growth");
-        
-        document.getElementById("diagText").innerHTML = `
-            <strong>Mindset Profile: ${top} Focused</strong><br><br>
-            Has interactuado con ${state.clicks} pilares de vida fundamentales.<br>
-            Este entrenamiento neuro-rítmico ha reforzado tu capacidad subconsciente de <b>${top}</b>.<br>
-            Tu cerebro se encuentra ahora en un estado de alta coherencia y listo para la ejecución.
-        `;
+        const top = Object.keys(state.stats).reduce((a, b) => state.stats[a] > state.stats[b] ? a : b, "Proceso");
+        document.getElementById("diagText").innerHTML = `SESIÓN COMPLETADA<br>Tu enfoque principal hoy: <b>${top}</b>.<br>Tu sistema nervioso está ahora en equilibrio óptimo.`;
     };
 
     const formatTime = (s) => {
@@ -302,13 +252,8 @@ const Engine = (() => {
         return `${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
     };
 
-    return { 
-        init, 
-        proceed: () => { if(state.phase === 'story') startGame(); } 
-    };
+    return { startSystem, startTraining };
 })();
-
-window.onload = Engine.init;
 </script>
 </body>
 </html>
