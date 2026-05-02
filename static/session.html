@@ -589,17 +589,29 @@
             // --- DIAGNÓSTICOS Y CIERRE ---
             const runDiagnosis = (num) => {
                 state.phase = `diagnosis-${num}`;
+                
+                // Detener música y limpiar elementos del juego
                 document.getElementById('bg-music').pause();
+                document.getElementById('timer').style.display = 'none';
+                
+                // Eliminar palabras flotantes restantes
+                document.querySelectorAll('.word-node').forEach(n => n.remove());
                 
                 // Cálculo de pilar dominante
                 const categories = Object.keys(state.score);
                 const topCat = categories.length > 0 
                     ? categories.reduce((a, b) => state.score[a] > state.score[b] ? a : b)
-                    : "Neural Balance";
+                    : "NEURAL BALANCE";
 
-                const diagText = `NEURAL DIAGNOSIS COMPLETED. High synchronization detected in: ${topCat.toUpperCase()}. Your logic circuits are now primed for objective advisory.`;
+                // Texto del diagnóstico
+                const diagText = `NEURAL DIAGNOSIS ${num} COMPLETED. High synchronization detected in: ${topCat.toUpperCase()}. Your logic circuits are now primed for the next phase.`;
+                
                 updateNarrator(diagText);
-                speak(diagText, showBtnContinue);
+                
+                // La voz lee el diagnóstico y AL TERMINAR muestra el botón CONTINUE
+                speak(diagText, () => {
+                    showBtnContinue();
+                });
             };
 
             const finishAllMissions = () => {
