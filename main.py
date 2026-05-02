@@ -21,74 +21,72 @@ STATE = {
 # =========================
 def load_json(file_name):
     path = os.path.join(BASE_DIR, file_name)
-    with open(path, "r", encoding="utf-8") as f:
-        return json.load(f)
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception as e:
+        print(f"Error loading {file_name}: {e}")
+        return {}
 
 # =========================
-# STORIES (EXACT KEY: stories.json)
+# STORIES (stories.json)
 # =========================
 def get_story(index):
     data = load_json("stories.json")
-
     for item in data.get("stories", []):
         if item.get("id") == index:
             return item
-
-    return None
+    return {"en": "Story not found.", "es": "Historia no encontrada."}
 
 # =========================
-# MISSIONS ROUTER (EXACT FILE MAPPING)
+# MISSIONS ROUTER
 # =========================
-def get_mission(index):
-
+def get_mission_list(index):
+    """
+    Retorna una lista con la misión correspondiente para que 
+    el frontend pueda iterar sobre ella.
+    """
     if 1 <= index <= 7:
         file_name = "missions_01_07.json"
-        key = "missions"
-
     elif 8 <= index <= 14:
         file_name = "missions_08_14.json"
-        key = "missions"
-
     elif 15 <= index <= 21:
         file_name = "missions_15_21.json"
-        key = "missions"
-
     elif 22 <= index <= 28:
         file_name = "missions_22_28.json"
-        key = "missions"
-
     else:
         file_name = "missions_29_35.json"
-        key = "missions"
 
     data = load_json(file_name)
-
-    for item in data.get(key, []):
+    
+    # Buscamos la misión específica por su ID
+    for item in data.get("missions", []):
         if item.get("id") == index:
-            return item
+            # Importante: El frontend espera una LISTA de misiones
+            return [item] 
 
-    return None
+    return []
 
 # =========================
-# SESSION API (SINGLE SOURCE OF TRUTH)
+# SESSION API (CORREGIDA)
 # =========================
 @app.route("/api/session/start")
 def session_start():
-
     index = STATE["index"]
 
     story = get_story(index)
-    mission = get_mission(index)
+    missions = get_mission_list(index) # Ahora devuelve una lista []
 
     # ADVANCE INDEX (SAFE LOOP 1–35)
     STATE["index"] += 1
     if STATE["index"] > 35:
         STATE["index"] = 1
 
+    # Retornamos 'missions' en plural para coincidir con session.html
     return jsonify({
         "index": index,
         "story": story,
-        "mission": mission
+        "missions": missions 
     })
 
 # =========================
@@ -96,9 +94,7 @@ def session_start():
 # =========================
 @app.route("/api/reset")
 def reset():
-
     STATE["index"] = 1
-
     return jsonify({
         "status": "reset",
         "index": 1
@@ -115,4 +111,5 @@ def home():
 # RUN SERVER
 # =========================
 if __name__ == "__main__":
-    app.run(debug=True)
+    # Escucha en todas las interfaces para pruebas locales
+    app.run(debug=True, host="0.0.0.0", port=5000)
