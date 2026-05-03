@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>AL CIELO - NEURAL INTERFACE</title>
+<title>KAMIZEN - NEURAL INTERFACE</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
 <style>
     :root {
@@ -24,7 +24,7 @@
     .label { font-size:11px; color:var(--neon-blue); letter-spacing:2px; font-weight:900; display:block; }
     .value { font-size:26px; font-weight:900; display:block; color:#fff; }
 
-    /* TERMINAL DE CARGA JSON */
+    /* LOADING TERMINAL */
     #terminal-overlay {
         position:fixed; inset:0; background:var(--bg-dark);
         display:flex; flex-direction:column; justify-content:center;
@@ -51,7 +51,7 @@
         transition: 0.3s;
     }
     .start-btn:hover { transform: scale(1.05); background: #fff; }
-    canvas { display:block; image-rendering: pixelated; }
+    canvas { display:block; }
 </style>
 </head>
 <body>
@@ -64,12 +64,12 @@
 
 <div id="terminal-overlay">
     <div id="init-view">
-        <h1 style="color:var(--neon-blue);letter-spacing:18px;font-size:70px;margin:0;">AL CIELO</h1>
+        <h1 style="color:var(--neon-blue);letter-spacing:18px;font-size:70px;margin:0;">KAMIZEN</h1>
         <p style="letter-spacing:10px;color:var(--neon-gold);margin-bottom:50px;">AURA BY MAY ROGA LLC</p>
-        <button class="start-btn" onclick="startSequence()">INITIALIZE NEURAL TRANSFER</button>
+        <button class="start-btn" onclick="startSequence()">INITIALIZE SYSTEM</button>
     </div>
     <div id="process-view" style="display:none;">
-        <div id="status-tag" style="font-size:16px; color:var(--neon-gold); margin-bottom:15px; letter-spacing:4px;">ACCESSING JSON DATABASE...</div>
+        <div id="status-tag" style="font-size:16px; color:var(--neon-gold); margin-bottom:15px; letter-spacing:4px;">DECODING JSON ARCHIVES...</div>
         <div id="main-log" class="terminal-text"></div>
         <div id="sub-log" style="font-size:18px; color:#ccc; max-width:700px; line-height:1.5;"></div>
         <div class="progress-bar"><div id="progress-fill"></div></div>
@@ -94,7 +94,6 @@ let active = false;
 let audioCtx;
 const user = {x: innerWidth/2, y: innerHeight/2, size: 65};
 
-// RECURSOS
 let STORIES = [];
 let MISSIONS = [];
 
@@ -108,48 +107,41 @@ async function startSequence() {
     document.getElementById("process-view").style.display = "flex";
     
     try {
-        // CARGA REAL DE ARCHIVOS
         const [sRes, mRes] = await Promise.all([
             fetch("stories.json").then(r => r.json()),
             fetch("missions.json").then(r => r.json())
         ]);
-        
         STORIES = sRes.stories || [];
         MISSIONS = mRes.missions || [];
-        
-        mainLog.innerText = "DATA DETECTED";
     } catch (e) {
-        console.error("Fallo de lectura:", e);
-        mainLog.innerText = "LOCAL DATA OVERRIDE";
-        STORIES = [{title: "CONOCIMIENTO VITAL", text: "Si el mundo no te enseña a invertir, tú debes aprender a hackear el sistema."}];
-        MISSIONS = [{id: "LECCIÓN 01: EL FLUJO"}];
+        console.error("JSON Read Error:", e);
+        STORIES = [{title: "NEURAL UPGRADE", text: "Loading core principles of financial freedom and discipline."}];
+        MISSIONS = [{id: "CORE_01"}];
     }
 
     const total = STORIES.length + MISSIONS.length;
     let step = 0;
 
-    // TRANSFERENCIA DE HISTORIAS
     for(let s of STORIES) {
         step++;
         mainLog.innerText = s.title;
-        subLog.innerText = s.text || "...";
+        subLog.innerText = s.text || "Synchronizing data...";
         progressFill.style.width = `${(step/total)*100}%`;
-        playBeep(440 + (step * 20), "sine");
+        playBeep(523, "sine");
         await new Promise(r => setTimeout(r, 2800));
     }
 
-    // TRANSFERENCIA DE MISIONES
     for(let m of MISSIONS) {
         step++;
-        mainLog.innerText = `MISSION PROTOCOL: ${m.id}`;
-        subLog.innerText = "Analizando objetivos de seguridad y activos...";
+        mainLog.innerText = `MISSION: ${m.id}`;
+        subLog.innerText = "Target: Master the flow of assets and security.";
         progressFill.style.width = `${(step/total)*100}%`;
-        playBeep(600, "square");
+        playBeep(659, "square");
         await new Promise(r => setTimeout(r, 2800));
     }
 
-    mainLog.innerText = "TRANSFER COMPLETE";
-    subLog.innerText = "Neural Interface Ready. Optimize your future.";
+    mainLog.innerText = "SYSTEM SYNCHRONIZED";
+    subLog.innerText = "Welcome to Kamizen. Protect your future.";
     await new Promise(r => setTimeout(r, 2000));
     
     terminal.style.display = "none";
@@ -157,13 +149,12 @@ async function startSequence() {
     launchGame();
 }
 
-/* ===================== EFECTOS SENSORIALES ===================== */
+/* ===================== EFFECTS ===================== */
 function playBeep(freq, type) {
     if(!audioCtx) return;
     const o = audioCtx.createOscillator();
     const g = audioCtx.createGain();
-    o.type = type;
-    o.frequency.value = freq;
+    o.type = type; o.frequency.value = freq;
     g.gain.setValueAtTime(0.15, audioCtx.currentTime);
     g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.6);
     o.connect(g); g.connect(audioCtx.destination);
@@ -171,25 +162,25 @@ function playBeep(freq, type) {
 }
 
 function createExplosion(x, y, color) {
-    for(let i=0; i<20; i++) {
+    for(let i=0; i<25; i++) {
         particles.push({
             x, y,
-            vx: (Math.random()-0.5)*12,
-            vy: (Math.random()-0.5)*12,
+            vx: (Math.random()-0.5)*15,
+            vy: (Math.random()-0.5)*15,
             life: 1.0,
             color: color,
-            size: Math.random()*4 + 2
+            size: Math.random()*5 + 2
         });
     }
 }
 
-/* ===================== SIMULACIÓN DINÁMICA ===================== */
+/* ===================== SIMULATION ===================== */
 const rawData = [
-    {text:"AHORRO", emoji:"💰", color:"#f1c40f", stat:"money", impact:500, freq:523},
-    {text:"NEGOCIO", emoji:"🤝", color:"#3498db", stat:"biz", impact:1, freq:659},
-    {text:"FAMILIA", emoji:"🏠", color:"#2ecc71", stat:"health", impact:20, freq:783},
-    {text:"HAPPINESS", emoji:"😊", color:"#9b59b6", stat:"health", impact:15, freq:880},
-    {text:"THREAT", emoji:"⚠️", color:"#ff3131", stat:"health", impact:-30, freq:110}
+    {text:"SAVINGS", emoji:"💰", color:"#f1c40f", stat:"money", impact:500, freq:523},
+    {text:"BUSINESS", emoji:"🤝", color:"#3498db", stat:"biz", impact:1, freq:659},
+    {text:"FAMILY", emoji:"🏠", color:"#2ecc71", stat:"health", impact:20, freq:783},
+    {text:"DISCIPLINE", emoji:"🧠", color:"#9b59b6", stat:"health", impact:15, freq:880},
+    {text:"LIABILITY", emoji:"⚠️", color:"#ff3131", stat:"health", impact:-30, freq:110}
 ];
 
 function spawn() {
@@ -198,37 +189,31 @@ function spawn() {
     objects.push({
         ...d,
         x: Math.random()*(innerWidth-150)+75,
-        y: -60,
-        speed: 3 + Math.random()*2.5
+        y: -100,
+        speed: 3 + Math.random()*3
     });
 }
 
 function update() {
     if(!active) return;
-
     for(let i=objects.length-1; i>=0; i--) {
         let o = objects[i];
         o.y += o.speed;
-        
         const dist = Math.hypot(o.x - user.x, o.y - user.y);
-        
         if(dist < user.size + 15) {
             playBeep(o.freq, o.impact < 0 ? "sawtooth" : "sine");
             createExplosion(o.x, o.y, o.color);
-            
             if(o.stat === "money") stats.money += o.impact;
             if(o.stat === "biz") stats.biz += o.impact;
             if(o.stat === "health") stats.health = Math.max(0, Math.min(100, stats.health + o.impact));
-            
             objects.splice(i, 1);
             updateHUD();
-        } else if (o.y > innerHeight + 100) {
+        } else if (o.y > innerHeight + 150) {
             objects.splice(i, 1);
         }
     }
-
     particles.forEach((p, index) => {
-        p.x += p.vx; p.y += p.vy; p.life -= 0.025;
+        p.x += p.vx; p.y += p.vy; p.life -= 0.03;
         if(p.life <= 0) particles.splice(index, 1);
     });
 }
@@ -240,10 +225,9 @@ function updateHUD() {
 }
 
 function draw() {
-    ctx.fillStyle = "rgba(2, 2, 5, 0.25)";
+    ctx.fillStyle = "rgba(2, 2, 5, 0.3)";
     ctx.fillRect(0, 0, innerWidth, innerHeight);
     
-    // Partículas
     particles.forEach(p => {
         ctx.globalAlpha = p.life;
         ctx.fillStyle = p.color;
@@ -251,55 +235,33 @@ function draw() {
     });
     ctx.globalAlpha = 1.0;
 
-    // Interface Cursor
     ctx.strokeStyle = "#00f2ff";
     ctx.lineWidth = 4;
-    ctx.shadowBlur = 20;
-    ctx.shadowColor = "#00f2ff";
+    ctx.shadowBlur = 20; ctx.shadowColor = "#00f2ff";
     ctx.beginPath(); ctx.arc(user.x, user.y, user.size, 0, Math.PI*2); ctx.stroke();
     ctx.shadowBlur = 0;
 
-    // Elementos Flotantes (Alta Visibilidad)
     objects.forEach(o => {
-        ctx.shadowBlur = 15;
-        ctx.shadowColor = o.color;
-        
-        // Avatar grande
-        ctx.font = "50px Arial";
-        ctx.textAlign = "center";
+        ctx.shadowBlur = 15; ctx.shadowColor = o.color;
+        ctx.font = "60px Arial"; ctx.textAlign = "center";
         ctx.fillText(o.emoji, o.x, o.y);
-        
-        // Texto Nítido
         ctx.fillStyle = o.color;
-        ctx.font = "900 20px Orbitron";
-        ctx.fillText(o.text, o.x, o.y + 45);
+        ctx.font = "900 22px Orbitron";
+        ctx.fillText(o.text, o.x, o.y + 50);
         ctx.shadowBlur = 0;
     });
 }
 
-function loop() {
-    update();
-    draw();
-    requestAnimationFrame(loop);
-}
-
-function launchGame() {
-    active = true;
-    resize();
-    setInterval(spawn, 850);
-    loop();
-}
-
+function loop() { update(); draw(); requestAnimationFrame(loop); }
+function launchGame() { active = true; resize(); setInterval(spawn, 800); loop(); }
 function resize() { canvas.width = innerWidth; canvas.height = innerHeight; }
 
 window.addEventListener("resize", resize);
 window.addEventListener("mousemove", e => { user.x = e.clientX; user.y = e.clientY; });
 window.addEventListener("touchmove", e => {
-    user.x = e.touches[0].clientX;
-    user.y = e.touches[0].clientY;
+    user.x = e.touches[0].clientX; user.y = e.touches[0].clientY;
     e.preventDefault();
 }, {passive: false});
-
 </script>
 </body>
 </html>
