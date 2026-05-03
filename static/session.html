@@ -149,7 +149,7 @@ function checkLockout() {
     const lastRun = localStorage.getItem('alCieloLastEnd');
     if (lastRun) {
         const hoursPassed = (Date.now() - parseInt(lastRun)) / (1000 * 60 * 60);
-        if (hoursPassed < 8) {
+        if (hoursPassed < 0) {
             const remaining = (8 - hoursPassed).toFixed(1);
             document.getElementById('desc').innerText = `SYSTEM LOCKED. ACCESS GRANTED IN ${remaining} HOURS.`;
             document.getElementById('main-btn').style.display = 'none';
