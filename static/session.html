@@ -1,4 +1,3 @@
-html_code = """
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -22,7 +21,7 @@ body{
     background:var(--bg-dark);
     color:white;
     font-family:'Orbitron', sans-serif;
-    cursor:none;
+    cursor:crosshair;
 }
 
 #hud{
@@ -58,6 +57,36 @@ body{
     font-weight:900;
     display:block;
     color:#fff;
+}
+
+/* Sistema de Mensajes Flotantes (Neural Overlay) */
+#neural-overlay {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    z-index: 500;
+    pointer-events: none;
+    width: 80%;
+}
+
+.msg-box {
+    background: rgba(0, 0, 0, 0.9);
+    border-left: 5px solid var(--neon-blue);
+    padding: 20px;
+    margin-bottom: 10px;
+    animation: slideIn 0.5s ease-out, fadeOut 0.5s ease-in 2.5s forwards;
+    box-shadow: 0 0 30px rgba(0, 242, 255, 0.2);
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeOut {
+    to { opacity: 0; visibility: hidden; }
 }
 
 canvas{display:block;}
@@ -110,6 +139,8 @@ canvas{display:block;}
     </div>
 </div>
 
+<div id="neural-overlay"></div>
+
 <div id="start-screen">
     <h1 style="color:var(--neon-blue);letter-spacing:15px;font-size:50px;">AL CIELO</h1>
     <p style="letter-spacing:5px;color:#888;">NEURAL DIAGNOSTICS & DOPAMINE FLOW</p>
@@ -119,9 +150,14 @@ canvas{display:block;}
 <canvas id="gameCanvas"></canvas>
 
 <script>
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+const overlay = document.getElementById("neural-overlay");
 
-const canvas=document.getElementById("gameCanvas");
-const ctx=canvas.getContext("2d");
+// Referencias HUD
+const valMoney = document.getElementById("val-money");
+const valHealth = document.getElementById("val-health");
+const valBiz = document.getElementById("val-biz");
 
 function resize(){
     canvas.width=innerWidth;
@@ -133,142 +169,103 @@ resize();
 /* ===================== STATE ===================== */
 let phase=0;
 let active=false;
-
 let stats={money:0,health:100,biz:0};
 let objects=[];
-let particles=[];
-
 const user={x:innerWidth/2,y:innerHeight/2,size:60};
-
 let audioCtx;
 
-/* ===================== JSON SYSTEM ===================== */
-let STORIES=null;
-let MISSIONS=null;
+/* ===================== JSON DATA (MOCK) ===================== */
+let STORIES = { stories: [{title: "INITIALIZING NEURAL LINK..."}, {title: "MARKET FLOW DETECTED"}] };
+let MISSIONS = { missions: [{id: "ALPHA-1", goal: "Collect Capital"}] };
 let storyIndex=0;
 let missionIndex=0;
 
-async function loadJSON(){
-    try{
-        const s=await fetch("stories.json");
-        STORIES=await s.json();
-
-        const m=await fetch("missions.json");
-        MISSIONS=await m.json();
-    }catch(e){
-        console.log("JSON ERROR",e);
-    }
+// Sistema de Mensajes sin Alert
+function showMessage(text, color = "var(--neon-blue)") {
+    const div = document.createElement("div");
+    div.className = "msg-box";
+    div.style.borderLeftColor = color;
+    div.innerHTML = `<h2 style="margin:0; font-size:18px; color:${color}">${text}</h2>`;
+    overlay.appendChild(div);
+    setTimeout(() => div.remove(), 3000);
 }
 
 /* ===================== PHASE CONTROLLER ===================== */
 function nextPhase(){
-
     if(phase===0){
         phase=1;
         runStory();
         return;
     }
-
     if(phase===1){
         phase=2;
         runMission();
         return;
     }
-
     if(phase===2){
         phase=3;
         triggerSilence();
         return;
     }
-
     if(phase===3){
         phase=4;
+        showMessage("SYSTEM REBOOTING...", "var(--neon-gold)");
         setTimeout(nextPhase,3000);
         return;
     }
-
     if(phase===4){
         phase=5;
-        alert("FINAL COMPLETE");
+        showMessage("SESSION SYNC COMPLETE", "var(--neon-green)");
         return;
     }
 }
 
-/* ===================== STORY ===================== */
 function runStory(){
-
-    const story=STORIES?.stories?.[storyIndex];
-
-    if(!story){
-        nextPhase();
-        return;
-    }
-
-    alert(story.title||"STORY");
-
+    const story = STORIES?.stories?.[storyIndex];
+    if(!story){ nextPhase(); return; }
+    showMessage(story.title);
     storyIndex++;
-
-    setTimeout(nextPhase,2500);
+    setTimeout(nextPhase, 4000);
 }
 
-/* ===================== MISSIONS ===================== */
 function runMission(){
-
-    const mission=MISSIONS?.missions?.[missionIndex];
-
-    if(!mission){
-        nextPhase();
-        return;
-    }
-
-    alert("MISSION "+mission.id);
-
+    const mission = MISSIONS?.missions?.[missionIndex];
+    if(!mission){ nextPhase(); return; }
+    showMessage("ACTIVE MISSION: " + mission.id, "var(--neon-purple)");
     missionIndex++;
-
-    setTimeout(nextPhase,3000);
+    setTimeout(nextPhase, 5000);
 }
 
-/* ===================== SILENCE ===================== */
 function triggerSilence(){
-
     active=false;
-
+    showMessage("SILENCE PROTOCOL ACTIVE (30s)", "var(--neon-red)");
     let t=30;
-
     const id=setInterval(()=>{
-
         t--;
-
         if(t<=0){
             clearInterval(id);
             active=true;
             nextPhase();
         }
-
     },1000);
 }
 
 /* ===================== AUDIO ===================== */
 function playSound(freq,type){
     if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)();
-
     const o=audioCtx.createOscillator();
     const g=audioCtx.createGain();
-
     o.type=type==="pos"?"sine":"sawtooth";
     o.frequency.value=freq;
-
-    g.gain.value=0.1;
-    g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.5);
-
+    g.gain.value=0.05;
+    g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.3);
     o.connect(g);
     g.connect(audioCtx.destination);
-
     o.start();
-    o.stop(audioCtx.currentTime+0.5);
+    o.stop(audioCtx.currentTime+0.3);
 }
 
-/* ===================== DATA ===================== */
+/* ===================== GAME LOGIC ===================== */
 const rawData=[
     {text:"SAVINGS",emoji:"💰",type:"pos",stat:"money",impact:150,color:"#f1c40f",freq:523.25},
     {text:"BUSINESS",emoji:"🤝",type:"pos",stat:"biz",impact:1,color:"#3498db",freq:659.25},
@@ -278,7 +275,6 @@ const rawData=[
     {text:"INVESTMENT",emoji:"📈",type:"pos",stat:"money",impact:300,color:"#00f2ff",freq:987.77}
 ];
 
-/* ===================== GAME ===================== */
 addEventListener("mousemove",e=>{
     user.x=e.clientX;
     user.y=e.clientY;
@@ -286,84 +282,80 @@ addEventListener("mousemove",e=>{
 
 function spawn(){
     if(!active) return;
-
     const d=rawData[Math.floor(Math.random()*rawData.length)];
-
-    objects.push({...d,x:Math.random()*innerWidth,y:-100,speed:2.5,pulse:0});
+    objects.push({...d, x:Math.random()*innerWidth, y:-50, speed:2 + Math.random()*2});
 }
 
 function update(){
     if(!active) return;
-
-    objects.forEach((o,i)=>{
-
-        o.y+=o.speed;
+    for(let i=objects.length-1; i>=0; i--){
+        let o = objects[i];
+        o.y += o.speed;
 
         const dx=o.x-user.x;
         const dy=o.y-user.y;
         const dist=Math.sqrt(dx*dx+dy*dy);
 
-        if(dist<user.size){
-
-            playSound(o.freq,o.type);
-
-            if(o.stat==="money") stats.money+=o.impact;
-            if(o.stat==="biz") stats.biz+=o.impact;
-            if(o.stat==="health") stats.health=Math.max(0,Math.min(100,stats.health+o.impact));
-
+        if(dist < user.size){
+            playSound(o.freq, o.type);
+            if(o.stat==="money") stats.money += o.impact;
+            if(o.stat==="biz") stats.biz += o.impact;
+            if(o.stat==="health") stats.health = Math.max(0, Math.min(100, stats.health + o.impact));
+            
             objects.splice(i,1);
             updateHUD();
+        } else if(o.y > innerHeight + 50) {
+            objects.splice(i,1);
         }
-    });
+    }
 }
 
-/* ===================== HUD ===================== */
 function updateHUD(){
-    val_money.innerText=stats.money;
-    val_health.innerText=stats.health+"%";
-    val_biz.innerText=stats.biz;
+    valMoney.innerText = stats.money;
+    valHealth.innerText = stats.health + "%";
+    valBiz.innerText = stats.biz;
 }
 
-/* ===================== DRAW ===================== */
 function draw(){
-    ctx.fillStyle="rgba(2,2,5,0.25)";
+    ctx.fillStyle="rgba(2,2,5,0.3)";
     ctx.fillRect(0,0,innerWidth,innerHeight);
 
-    ctx.strokeStyle="#00f2ff";
+    // User Cursor
+    ctx.strokeStyle= active ? "var(--neon-blue)" : "var(--neon-red)";
+    ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.arc(user.x,user.y,user.size,0,Math.PI*2);
+    ctx.arc(user.x, user.y, user.size, 0, Math.PI*2);
     ctx.stroke();
+    
+    // Scanline Effect
+    ctx.fillStyle = "rgba(0, 242, 255, 0.05)";
+    ctx.fillRect(0, Math.random()*innerHeight, innerWidth, 1);
 
-    objects.forEach(o=>{
-        ctx.fillText(o.text,o.x,o.y);
+    // Palabras Flotantes y Avatars
+    ctx.font = "900 14px Orbitron";
+    objects.forEach(o => {
+        ctx.fillStyle = o.color;
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = o.color;
+        ctx.fillText(`${o.emoji} ${o.text}`, o.x, o.y);
+        ctx.shadowBlur = 0;
     });
 }
 
-/* ===================== LOOP ===================== */
 function loop(){
     update();
     draw();
     requestAnimationFrame(loop);
 }
 
-/* ===================== START ===================== */
 function startGame(){
-
     document.getElementById("start-screen").style.display="none";
-
     active=true;
-
-    loadJSON().then(()=>{
-        nextPhase();
-    });
-
-    setInterval(spawn,800);
-
+    // Iniciamos fases
+    nextPhase();
+    setInterval(spawn, 800);
     loop();
 }
-
 </script>
-
 </body>
 </html>
-"""
