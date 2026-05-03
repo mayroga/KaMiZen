@@ -78,7 +78,7 @@
     <h1 style="color: var(--neon-blue); letter-spacing: 15px; font-size: 40px;">AL CIELO</h1>
     <h2 style="color: var(--neon-gold); font-size: 14px;">SURVIVAL & DISCIPLINE INTERFACE</h2>
     <p id="desc" style="color: #666; max-width: 400px; font-size: 12px; margin-top: 20px;">
-        WARNING: Threats reduce capital significantly. <br>Stability at 0% resets the current level.
+        WARNING: Threats reduce capital. <br>Stability at 0% resets the level.
     </p>
     <button id="main-btn" class="start-btn" onclick="startGame()">INITIALIZE INTERFACE</button>
 </div>
@@ -102,8 +102,7 @@ const levels = [
             { text: "DISCIPLINE", type: "pos", impact: 300, color: "#00f2ff", freq: 1046 },
             { text: "DISTRACTION", type: "neg", impact: -25, color: "#e67e22", freq: 130 }
         ],
-        target: 5000,
-        hasLasers: false
+        target: 5000
     },
     {
         name: "USA TOTAL SURVIVAL",
@@ -115,8 +114,7 @@ const levels = [
             { text: "PEER PRESSURE", type: "neg", impact: -20, color: "#ff3131", freq: 120 },
             { text: "CYBER SECURITY", type: "pos", impact: 300, color: "#00f2ff", freq: 1100 }
         ],
-        target: 25000,
-        hasLasers: true
+        target: 25000
     },
     {
         name: "50 STATES MATRIX",
@@ -128,8 +126,7 @@ const levels = [
             { text: "SITUATIONAL AWARENESS", type: "pos", impact: 500, color: "#00f2ff", freq: 900 },
             { text: "KNOW YOUR RIGHTS", type: "pos", impact: 800, color: "#f1c40f", freq: 750 }
         ],
-        target: 100000,
-        hasLasers: true
+        target: 100000
     }
 ];
 
@@ -197,12 +194,10 @@ function spawn() {
 
 function update() {
     if(!active) return;
-
-    const diff = sessionEndTime - Date.now();
-    if (diff <= 0) {
-        endGame("SESSION COMPLETE. SYSTEM DISCONNECTING.");
-        return;
-    }
+    const now = Date.now();
+    const diff = sessionEndTime - now;
+    if (diff <= 0) { endGame("SESSION COMPLETE. SYSTEM DISCONNECTING."); return; }
+    
     const mins = Math.floor(diff / 60000);
     const secs = Math.floor((diff % 60000) / 1000);
     document.getElementById('time-left').innerText = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
@@ -214,7 +209,7 @@ function update() {
         if (dist < user.size) {
             if (obj.type === 'neg') {
                 stats.health -= 25;
-                let penalty = stats.currentLevel === 0 ? 0.5 : 0.1; 
+                let penalty = stats.currentLevel === 0 ? 0.5 : (stats.currentLevel === 1 ? 0.2 : 0.1);
                 stats.money = Math.floor(stats.money * penalty);
                 triggerSound(obj.freq, 'neg');
                 flashScreen('red');
@@ -234,14 +229,15 @@ function update() {
 
     if (stats.money >= levels[stats.currentLevel].target && stats.currentLevel < 2) {
         stats.currentLevel++;
+        alert(`LEVEL UP: ${levels[stats.currentLevel].name}`);
         updateHUD();
     }
 
     if(stats.health <= 0) {
-        stats.health = 100;
-        stats.money = 0;
-        objects = [];
-        updateHUD();
+        active = false;
+        alert("STABILITY CRITICAL. RESTARTING LEVEL.");
+        stats.health = 100; stats.money = 0; objects = [];
+        updateHUD(); active = true;
     }
 }
 
@@ -253,17 +249,16 @@ function updateHUD() {
 
 function createExplosion(x, y, color) {
     for (let i = 0; i < 15; i++) {
-        particles.push({
-            x, y, vx: (Math.random()-0.5)*15, vy: (Math.random()-0.5)*15, life: 1.0, color
-        });
+        particles.push({ x, y, vx: (Math.random()-0.5)*15, vy: (Math.random()-0.5)*15, life: 1.0, color });
     }
 }
 
+// --- FUNCIÓN DE DIBUJO CON LÁSER / TELARAÑA ---
 function draw() {
     ctx.fillStyle = 'rgba(2, 2, 5, 0.2)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // USER CORE
+    // Núcleo del Usuario
     ctx.shadowBlur = 25;
     ctx.shadowColor = "#00f2ff";
     ctx.strokeStyle = "#00f2ff";
@@ -272,20 +267,31 @@ function draw() {
     ctx.arc(user.x, user.y, user.size - 10, 0, Math.PI * 2);
     ctx.stroke();
 
+    const time = Date.now() * 0.002;
+
     objects.forEach(obj => {
         ctx.shadowBlur = 15;
         ctx.shadowColor = obj.color;
         
-        // TELARAÑA / LÁSER (Solo niveles 2 y 3 para objetos NEGATIVOS)
-        if(levels[stats.currentLevel].hasLasers && obj.type === 'neg') {
+        // ESTRUCTURA DE TELARAÑA / LÁSER
+        let showLaser = false;
+        if (stats.currentLevel > 0 && obj.type === 'neg') {
+            // Niveles 2 y 3: Láser constante para negativos
+            showLaser = true;
+        } else if (stats.currentLevel === 0) {
+            // Nivel 1: Láser intermitente (aparece por intervalos de 2 segundos)
+            if (Math.sin(time) > 0) showLaser = true;
+        }
+
+        if (showLaser) {
             ctx.strokeStyle = obj.color;
             ctx.lineWidth = 1;
-            ctx.setLineDash([5, 5]); // Efecto punteado
+            ctx.setLineDash([5, 5]); // Efecto escáner punteado
             ctx.beginPath();
             ctx.moveTo(obj.x, obj.y);
             ctx.lineTo(user.x, user.y);
             ctx.stroke();
-            ctx.setLineDash([]); // Reset
+            ctx.setLineDash([]); 
         }
 
         ctx.fillStyle = "white";
