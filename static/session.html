@@ -33,18 +33,24 @@
             text-shadow: 0 0 20px var(--neon-red); z-index: 100;
         }
 
-        #overlay {
+        #overlay, #discipline-block {
             position: fixed; inset: 0; background: radial-gradient(circle, #111 0%, #000 100%);
             display: flex; flex-direction: column; justify-content: center;
-            align-items: center; z-index: 1000; text-align: center;
+            align-items: center; z-index: 1000; text-align: center; padding: 20px;
         }
-        .start-btn {
-            padding: 30px 70px; background: var(--neon-blue); color: black;
+
+        #discipline-block { background: rgba(150, 0, 0, 0.98); display: none; z-index: 5000; }
+
+        .start-btn, .commit-btn {
+            padding: 25px 50px; background: var(--neon-blue); color: black;
             border: none; font-family: 'Orbitron'; font-weight: 900;
-            cursor: pointer; letter-spacing: 5px; font-size: 1.8rem;
-            box-shadow: 0 0 50px var(--neon-blue);
+            cursor: pointer; letter-spacing: 3px; font-size: 1.2rem;
+            box-shadow: 0 0 30px var(--neon-blue); margin-top: 20px;
         }
+        .commit-btn { background: white; box-shadow: 0 0 30px white; }
+        
         #flash-alert { position: fixed; inset: 0; pointer-events: none; z-index: 50; opacity: 0; }
+        .warning-text { color: yellow; font-size: 1.5rem; margin: 20px; font-weight: 900; }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
 </head>
@@ -57,6 +63,15 @@
     <div class="data-box" style="border-color: var(--neon-gold);"><span class="label">NET WORTH</span><span id="val-money" class="value">$0</span></div>
     <div class="data-box" style="border-color: var(--neon-red);"><span class="label">STABILITY</span><span id="val-health" class="value">100%</span></div>
     <div class="data-box" style="border-color: var(--neon-blue);"><span class="label">LEVEL</span><span id="val-rank" class="value">1</span></div>
+</div>
+
+<!-- BLOQUEO DISCIPLINARIO -->
+<div id="discipline-block">
+    <h1 style="color: white; font-size: 50px; text-shadow: 0 0 20px black;">HALTED</h1>
+    <div class="warning-text">DEBILIDAD DETECTADA: FALTA DE ENFOQUE</div>
+    <p style="max-width: 600px; line-height: 1.6;">Has impactado 3 conceptos negativos. Tu disciplina mental ha fallado. Para continuar, debes aceptar el siguiente compromiso:</p>
+    <div id="dynamic-message" style="background: black; padding: 20px; border: 2px solid white; margin: 20px; font-weight: 900; color: var(--neon-gold);"></div>
+    <button class="commit-btn" onclick="resumeTraining()">ACEPTO EL COMPROMISO Y REINGRESAR</button>
 </div>
 
 <div id="overlay">
@@ -72,7 +87,6 @@ const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 let audioCtx;
 
-// --- 3 LEVELS CONFIGURATION ---
 const levels = [
     { name: "1", duration: 5 * 60, laserWidth: 1, laserDash: [10, 5], speedMult: 1, data: [
         { text: "TELLING TRUTH", type: "pos", impact: 300, color: "#2ecc71", freq: 523 },
@@ -116,10 +130,19 @@ const levels = [
     ]}
 ];
 
+const commitments = [
+"I PROMISE TO FILTER MY DISTRACTIONS AND FOCUS ON WHAT BUILDS MY VALUE.",
+"I RECOGNIZE THAT BAD DECISIONS DESTROY MY STABILITY. I WILL BE ALERT.",
+"MY MIND IS MY BEST WEAPON. I PROMISE NOT TO EXPOSE IT TO NEGATIVE CONCEPTS.",
+"I PROMISE TO LISTEN TO ADVICE AND OBSERVE MY SURROUNDINGS TO STAY SAFE.",
+"DISCIPLINE IS MY ONLY PATH TO SUCCESS. I RE-ENTER WITH TOTAL FOCUS."
+];
+
 let stats = { money: 0, health: 100, currentLevelIdx: 0, totalSeconds: 27 * 60 };
 let active = false;
 let objects = [];
 let particles = [];
+let consecutiveErrors = 0;
 const user = { x: 0, y: 0, size: 60 };
 
 function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
@@ -143,6 +166,19 @@ function flashScreen(color) {
     setTimeout(() => f.style.opacity = "0", 150);
 }
 
+function triggerDisciplineBlock() {
+    active = false;
+    const msgBox = document.getElementById('dynamic-message');
+    msgBox.innerText = commitments[Math.floor(Math.random() * commitments.length)];
+    document.getElementById('discipline-block').style.display = 'flex';
+}
+
+function resumeTraining() {
+    consecutiveErrors = 0;
+    document.getElementById('discipline-block').style.display = 'none';
+    active = true;
+}
+
 function spawn() {
     if(!active) return;
     const lvl = levels[stats.currentLevelIdx];
@@ -158,11 +194,8 @@ function spawn() {
 
 function update() {
     if(!active) return;
-    
-    // RELOJ DESCONTANDO (REWARD/PUNISHMENT LOGIC INSIDE)
     stats.totalSeconds -= 1/60; 
     
-    // LEVEL SWITCHING
     let elapsed = (27 * 60) - stats.totalSeconds;
     if (elapsed < 5 * 60) stats.currentLevelIdx = 0;
     else if (elapsed < 17 * 60) stats.currentLevelIdx = 1;
@@ -178,16 +211,16 @@ function update() {
         const d = Math.sqrt((obj.x - user.x)**2 + (obj.y - user.y)**2);
         if (d < user.size) {
             if (obj.type === 'neg') {
-                // PUNISHMENT
                 stats.health -= 25;
-                stats.money = Math.floor(stats.money * 0.3); // Lose 70% of wealth
+                stats.money = Math.floor(stats.money * 0.3);
+                consecutiveErrors++;
                 triggerSound(obj.freq, 'neg');
                 flashScreen('red');
-                if (window.navigator.vibrate) window.navigator.vibrate([400, 100, 400]);
+                if (consecutiveErrors >= 3) triggerDisciplineBlock();
             } else {
-                // REWARD
                 stats.money += obj.impact;
                 stats.health = Math.min(100, stats.health + 5);
+                consecutiveErrors = 0; // Se reinicia al hacerlo bien
                 triggerSound(obj.freq, 'pos');
                 flashScreen('cyan');
             }
@@ -204,14 +237,13 @@ function update() {
     });
 
     if(stats.health <= 0) { stats.health = 100; stats.money = 0; updateHUD(); }
-    updateHUD(); // Tick the clock in HUD
+    updateHUD();
 }
 
 function updateHUD() {
     document.getElementById('val-money').innerText = "$" + stats.money;
     document.getElementById('val-health').innerText = stats.health + "%";
     document.getElementById('val-rank').innerText = stats.currentLevelIdx + 1;
-    
     const m = Math.floor(Math.max(0, stats.totalSeconds) / 60);
     const s = Math.floor(Math.max(0, stats.totalSeconds) % 60);
     document.getElementById('clock').innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
@@ -227,7 +259,6 @@ function draw() {
     ctx.fillStyle = 'rgba(5, 5, 8, 0.4)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // USER CORE
     ctx.shadowBlur = 25; ctx.shadowColor = "#00f2ff";
     ctx.strokeStyle = "#00f2ff"; ctx.lineWidth = 5;
     ctx.beginPath(); ctx.arc(user.x, user.y, user.size - 20, 0, Math.PI * 2); ctx.stroke();
@@ -242,12 +273,10 @@ function draw() {
             ctx.beginPath(); ctx.moveTo(obj.x, obj.y); ctx.lineTo(user.x, user.y); ctx.stroke();
             ctx.setLineDash([]);
         }
-
         ctx.font = "900 24px Orbitron";
         const textWidth = ctx.measureText(obj.text).width;
         ctx.fillStyle = "black";
         ctx.fillRect(obj.x - textWidth/2 - 10, obj.y - 18, textWidth + 20, 35);
-        
         ctx.fillStyle = obj.color; ctx.textAlign = "center";
         ctx.fillText(obj.text, obj.x, obj.y + 10);
     });
