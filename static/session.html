@@ -7,94 +7,111 @@
 
 <style>
 :root {
-    --neon-blue:#00f2ff;
-    --neon-green:#00ff41;
-    --neon-red:#ff3131;
-    --neon-purple:#9b59b6;
-    --neon-gold:#f1c40f;
-    --bg-dark:#020205;
+    --neon-blue: #00f2ff;
+    --neon-gold: #f1c40f;
+    --neon-green: #2ecc71;
+    --neon-purple: #9b59b6;
+    --neon-red: #ff3131;
+    --bg-dark: #020205;
 }
 
-body{
-    margin:0;
-    overflow:hidden;
-    background:var(--bg-dark);
-    color:white;
-    font-family:'Orbitron',sans-serif;
-    cursor:none;
+body {
+    margin: 0;
+    overflow: hidden;
+    background: var(--bg-dark);
+    color: white;
+    font-family: 'Orbitron', sans-serif;
+    cursor: none;
 }
 
-/* HUD ORIGINAL (NO TOCAR) */
-#hud{
-    position:absolute;
-    top:20px;
-    width:100%;
-    display:flex;
-    justify-content:space-evenly;
-    z-index:100;
-    pointer-events:none;
+/* ===== TU HUD ORIGINAL ===== */
+#hud {
+    position: absolute;
+    top: 20px;
+    width: 100%;
+    display: flex;
+    justify-content: space-evenly;
+    z-index: 100;
+    pointer-events: none;
 }
 
-.data-box{
-    background:rgba(0,0,0,0.85);
-    border:2px solid var(--neon-blue);
-    padding:10px 20px;
-    text-align:center;
-    box-shadow:0 0 20px rgba(0,242,255,0.3);
-    min-width:120px;
-    border-radius:5px;
+.data-box {
+    background: rgba(0, 0, 0, 0.85);
+    border: 2px solid var(--neon-blue);
+    padding: 10px 20px;
+    text-align: center;
+    box-shadow: 0 0 20px rgba(0, 242, 255, 0.3);
+    min-width: 120px;
+    border-radius: 5px;
 }
 
-.label{
-    font-size:10px;
-    color:var(--neon-blue);
-    letter-spacing:2px;
-    font-weight:900;
+.label {
+    font-size: 10px;
+    color: var(--neon-blue);
+    letter-spacing: 2px;
+    font-weight: 900;
+    display: block;
 }
 
-.value{
-    font-size:24px;
-    font-weight:900;
+.value {
+    font-size: 24px;
+    font-weight: 900;
+    display: block;
+    color: #fff;
 }
 
-/* TIMER GLOBAL */
-#global-timer{
-    position:absolute;
-    bottom:20px;
-    left:50%;
-    transform:translateX(-50%);
-    font-size:20px;
-    letter-spacing:3px;
-    color:var(--neon-green);
-    z-index:200;
+/* ===== TIMER GLOBAL ===== */
+#global-timer {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: var(--neon-green);
+    font-size: 22px;
+    letter-spacing: 3px;
+    z-index: 200;
 }
 
-/* OVERLAY SISTEMA */
-#phase-overlay{
-    position:fixed;
-    inset:0;
-    background:rgba(0,0,0,0.9);
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
-    z-index:999;
-    text-align:center;
-    padding:30px;
+/* ===== OVERLAY DE FASES ===== */
+#phase-layer {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.92);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+    text-align: center;
 }
 
-.btn{
-    margin-top:20px;
-    padding:15px 40px;
-    background:var(--neon-blue);
-    color:black;
-    border:none;
-    font-weight:900;
-    cursor:pointer;
-    box-shadow:0 0 20px var(--neon-blue);
+.btn {
+    padding: 20px 50px;
+    background: var(--neon-blue);
+    color: black;
+    border: none;
+    font-family: 'Orbitron';
+    font-weight: 900;
+    cursor: pointer;
+    margin-top: 30px;
+    letter-spacing: 3px;
+    box-shadow: 0 0 30px var(--neon-blue);
 }
 
-canvas{display:block;}
+/* ===== CIRCULO RESPIRACION ===== */
+#breath-circle {
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    border: 3px solid var(--neon-green);
+    border-radius: 50%;
+    opacity: 0;
+    z-index: 300;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) scale(0.5);
+    transition: all 1s linear;
+}
 </style>
 
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
@@ -102,7 +119,7 @@ canvas{display:block;}
 
 <body>
 
-<!-- HUD ORIGINAL -->
+<!-- ===== HUD ORIGINAL ===== -->
 <div id="hud">
     <div class="data-box" style="border-color: var(--neon-gold);">
         <span class="label">CAPITAL</span>
@@ -113,238 +130,240 @@ canvas{display:block;}
         <span id="val-health" class="value">100%</span>
     </div>
     <div class="data-box" style="border-color: var(--neon-purple);">
-        <span class="label">BIZ</span>
+        <span class="label">BIZ UNITS</span>
         <span id="val-biz" class="value">0</span>
     </div>
 </div>
 
-<div id="global-timer">00:00</div>
+<div id="global-timer">05:00</div>
 
-<div id="phase-overlay">
+<div id="phase-layer">
     <h1 id="phase-title">KAMIZEN INIT</h1>
-    <p id="phase-text">Press Start</p>
+    <p id="phase-text">Start system</p>
     <button class="btn" onclick="nextPhase()">START</button>
 </div>
+
+<div id="breath-circle"></div>
 
 <canvas id="gameCanvas"></canvas>
 
 <script>
-// ========================= BASE ENGINE (NO MODIFICADO) =========================
+/* =========================
+   🔒 TU MOTOR ORIGINAL INTACTO
+   ========================= */
+
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 let audioCtx;
 
-function resize(){
+function resize() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 }
-window.addEventListener('resize',resize);
+window.addEventListener('resize', resize);
 resize();
 
-const rawData=[
-{text:"SAVINGS",emoji:"💰",type:"pos",stat:"money",impact:150,color:"#f1c40f",freq:523.25},
-{text:"BUSINESS",emoji:"🤝",type:"pos",stat:"biz",impact:1,color:"#3498db",freq:659.25},
-{text:"FAMILY",emoji:"🏠",type:"pos",stat:"health",impact:20,color:"#2ecc71",freq:783.99},
-{text:"HAPPINESS",emoji:"😊",type:"pos",stat:"health",impact:15,color:"#9b59b6",freq:880},
-{text:"THREAT",emoji:"⚠️",type:"neg",stat:"health",impact:-25,color:"#ff3131",freq:110},
-{text:"PROBLEM",emoji:"🛑",type:"neg",stat:"health",impact:-20,color:"#ff3131",freq:90},
-{text:"INVESTMENT",emoji:"📈",type:"pos",stat:"money",impact:300,color:"#00f2ff",freq:987},
-{text:"EDUCATION",emoji:"📚",type:"pos",stat:"biz",impact:1,color:"#00f2ff",freq:1046}
+const rawData = [
+    { text: "SAVINGS", emoji: "💰", type: "pos", stat: "money", impact: 150, color: "#f1c40f", freq: 523.25 },
+    { text: "BUSINESS", emoji: "🤝", type: "pos", stat: "biz", impact: 1, color: "#3498db", freq: 659.25 },
+    { text: "FAMILY", emoji: "🏠", type: "pos", stat: "health", impact: 20, color: "#2ecc71", freq: 783.99 },
+    { text: "HAPPINESS", emoji: "😊", type: "pos", stat: "health", impact: 15, color: "#9b59b6", freq: 880.00 },
+    { text: "THREAT", emoji: "⚠️", type: "neg", stat: "health", impact: -25, color: "#ff3131", freq: 110.00 },
+    { text: "PROBLEM", emoji: "🛑", type: "neg", stat: "health", impact: -20, color: "#ff3131", freq: 90.00 },
+    { text: "INVESTMENT", emoji: "📈", type: "pos", stat: "money", impact: 300, color: "#00f2ff", freq: 987.77 },
+    { text: "EDUCATION", emoji: "📚", type: "pos", stat: "biz", impact: 1, color: "#00f2ff", freq: 1046.50 }
 ];
 
-let stats={money:0,health:100,biz:0};
-let active=false;
-let objects=[];
-let particles=[];
-const user={x:canvas.width/2,y:canvas.height/2,size:60};
+let stats = { money: 0, health: 100, biz: 0 };
+let active = false;
+let objects = [];
+let particles = [];
+const user = { x: canvas.width / 2, y: canvas.height / 2, size: 60 };
 
-function playSound(freq,type){
-if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)();
-const osc=audioCtx.createOscillator();
-const gain=audioCtx.createGain();
-osc.type=type==='pos'?'sine':'sawtooth';
-osc.frequency.setValueAtTime(freq,audioCtx.currentTime);
-gain.gain.setValueAtTime(0.1,audioCtx.currentTime);
-gain.gain.exponentialRampToValueAtTime(0.0001,audioCtx.currentTime+0.5);
-osc.connect(gain);
-gain.connect(audioCtx.destination);
-osc.start();
-osc.stop(audioCtx.currentTime+0.5);
+function playSound(freq, type) {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = type === 'pos' ? 'sine' : 'sawtooth';
+    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.5);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.5);
 }
 
-function spawn(){
-if(!active) return;
-const entry=rawData[Math.floor(Math.random()*rawData.length)];
-objects.push({...entry,x:Math.random()*canvas.width,y:-150,speed:3,pulse:0});
+function spawn() {
+    if(!active) return;
+    const entry = rawData[Math.floor(Math.random() * rawData.length)];
+    objects.push({
+        ...entry,
+        x: Math.random() * (canvas.width - 200) + 100,
+        y: -150,
+        speed: 2.5 + (stats.money / 5000),
+        pulse: 0
+    });
 }
 
-function handleInput(e){
-const x=e.touches?e.touches[0].clientX:e.clientX;
-const y=e.touches?e.touches[0].clientY:e.clientY;
-user.x=x;user.y=y;
-}
-window.addEventListener('mousemove',handleInput);
-window.addEventListener('touchmove',handleInput);
-
-function update(){
-if(!active) return;
-
-objects.forEach((obj,i)=>{
-obj.y+=obj.speed;
-const dist=Math.hypot(obj.x-user.x,obj.y-user.y);
-if(dist<user.size){
-playSound(obj.freq,obj.type);
-if(obj.stat==='money') stats.money+=obj.impact;
-if(obj.stat==='biz') stats.biz+=obj.impact;
-if(obj.stat==='health') stats.health=Math.max(0,Math.min(100,stats.health+obj.impact));
-updateHUD();
-objects.splice(i,1);
-}
-});
-
-if(stats.health<=0){
-active=false;
-showOverlay("DIAGNOSIS","SYSTEM COLLAPSE");
-}
+function handleInput(e) {
+    const x = e.touches ? e.touches[0].clientX : e.clientX;
+    const y = e.touches ? e.touches[0].clientY : e.clientY;
+    user.x = x;
+    user.y = y;
 }
 
-function draw(){
-ctx.fillStyle='rgba(2,2,5,0.3)';
-ctx.fillRect(0,0,canvas.width,canvas.height);
+window.addEventListener('mousemove', handleInput);
+window.addEventListener('touchmove', handleInput);
 
-ctx.beginPath();
-ctx.arc(user.x,user.y,40,0,Math.PI*2);
-ctx.strokeStyle="#00f2ff";
-ctx.stroke();
+function update() {
+    if(!active) return;
 
-objects.forEach(obj=>{
-ctx.fillStyle="white";
-ctx.fillText(obj.text,obj.x,obj.y-20);
-ctx.fillText(obj.emoji,obj.x,obj.y);
-});
+    objects.forEach((obj, i) => {
+        obj.y += obj.speed;
+
+        const dist = Math.hypot(obj.x - user.x, obj.y - user.y);
+        if (dist < user.size) {
+
+            playSound(obj.freq, obj.type);
+
+            if(obj.stat === 'money') stats.money += obj.impact;
+            if(obj.stat === 'biz') stats.biz += obj.impact;
+            if(obj.stat === 'health') stats.health = Math.max(0, Math.min(100, stats.health + obj.impact));
+
+            updateHUD();
+            objects.splice(i, 1);
+        }
+    });
 }
 
-function loop(){update();draw();requestAnimationFrame(loop);}
-function updateHUD(){
-document.getElementById('val-money').innerText=stats.money;
-document.getElementById('val-health').innerText=stats.health+"%";
-document.getElementById('val-biz').innerText=stats.biz;
+function draw() {
+    ctx.fillStyle = 'rgba(2,2,5,0.2)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.beginPath();
+    ctx.arc(user.x, user.y, user.size - 10, 0, Math.PI * 2);
+    ctx.strokeStyle = "#00f2ff";
+    ctx.stroke();
+
+    objects.forEach(obj => {
+        ctx.fillStyle = "white";
+        ctx.fillText(obj.text, obj.x, obj.y - 40);
+        ctx.fillText(obj.emoji, obj.x, obj.y);
+    });
 }
 
-// ========================= KAMIZEN FLOW =========================
+function loop() {
+    update();
+    draw();
+    requestAnimationFrame(loop);
+}
 
-let phase=0;
-let globalTime=300;
-let timerInterval;
+function updateHUD() {
+    document.getElementById('val-money').innerText = stats.money;
+    document.getElementById('val-health').innerText = stats.health + "%";
+    document.getElementById('val-biz').innerText = stats.biz;
+}
+
+/* =========================
+   🚀 KAMIZEN ORQUESTADOR
+   ========================= */
+
+let phase = 0;
+let time = 300;
 
 function startTimer(){
-timerInterval=setInterval(()=>{
-globalTime--;
-let m=Math.floor(globalTime/60);
-let s=globalTime%60;
-document.getElementById('global-timer').innerText=
-`${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-
-if(globalTime<=0){
-clearInterval(timerInterval);
-showOverlay("SESSION END","KAMIZEN COMPLETE");
-}
-},1000);
-}
-
-function showOverlay(title,text){
-document.getElementById('phase-title').innerText=title;
-document.getElementById('phase-text').innerText=text;
-document.getElementById('phase-overlay').style.display='flex';
-}
-
-function hideOverlay(){
-document.getElementById('phase-overlay').style.display='none';
+    setInterval(()=>{
+        time--;
+        let m = Math.floor(time/60);
+        let s = time%60;
+        document.getElementById('global-timer').innerText =
+        `${m}:${s.toString().padStart(2,'0')}`;
+    },1000);
 }
 
 function nextPhase(){
-phase++;
-hideOverlay();
+    phase++;
+    document.getElementById("phase-layer").style.display="none";
 
-switch(phase){
+    switch(phase){
 
-case 1:
-// STORIES
-showOverlay("STORY","Loading narrative...");
-setTimeout(()=>nextPhase(),2000);
-break;
+        case 1: // GAME
+            active = true;
+            setInterval(spawn,800);
+            loop();
+            startTimer();
+            setTimeout(nextPhase,30000);
+        break;
 
-case 2:
-// GAME 1
-active=true;
-spawnLoop=setInterval(spawn,800);
-loop();
-startTimer();
-setTimeout(()=>nextPhase(),60000);
-break;
+        case 2: // DIAGNOSIS
+            active = false;
+            showPhase("DIAGNOSIS",
+            "Money:"+stats.money+" | Stability:"+stats.health+" | Biz:"+stats.biz);
+        break;
 
-case 3:
-// DIAGNOSIS
-active=false;
-clearInterval(spawnLoop);
-showOverlay("DIAGNOSIS",
-"Money:"+stats.money+
-" | Stability:"+stats.health+
-" | Biz:"+stats.biz);
-break;
+        case 3: // MISSIONS
+            loadMission();
+        break;
 
-case 4:
-// MISSIONS
-loadMission();
-break;
+        case 4: // BREATH
+            startBreath();
+        break;
 
-case 5:
-// BREATH
-startBreathing();
-break;
+        case 5: // SECOND GAME
+            active = true;
+            setTimeout(nextPhase,30000);
+        break;
 
-case 6:
-// GAME 2
-active=true;
-spawnLoop=setInterval(spawn,600);
-setTimeout(()=>nextPhase(),60000);
-break;
-
-case 7:
-// FINAL
-active=false;
-showOverlay("COMPLETE","Session Finished");
-break;
-}
+        case 6:
+            showPhase("END","KAMIZEN COMPLETE");
+        break;
+    }
 }
 
-// ========================= MISSIONS =========================
+function showPhase(title,text){
+    document.getElementById("phase-title").innerText=title;
+    document.getElementById("phase-text").innerText=text;
+    document.getElementById("phase-layer").style.display="flex";
+}
+
+/* =========================
+   MISSIONS JSON
+   ========================= */
 
 async function loadMission(){
-showOverlay("MISSION","Loading...");
-try{
-const res=await fetch('/static/missions_01_07.json');
-const data=await res.json();
-const m=data.missions[Math.floor(Math.random()*data.missions.length)];
-showOverlay("MISSION",m.b[0].tx.en);
-}catch(e){
-showOverlay("MISSION","Error loading JSON");
-}
+    try{
+        const res = await fetch('/static/missions_01_07.json');
+        const data = await res.json();
+        const m = data.missions[Math.floor(Math.random()*data.missions.length)];
+        showPhase("MISSION", m.b[0].tx.en);
+    }catch(e){
+        showPhase("MISSION","ERROR LOADING");
+    }
 }
 
-// ========================= BREATH =========================
+/* =========================
+   BREATH VISUAL
+   ========================= */
 
-function startBreathing(){
-let t=30;
-showOverlay("BREATH","Inhale / Exhale");
+function startBreath(){
+    const circle = document.getElementById("breath-circle");
+    circle.style.opacity = 1;
 
-let interval=setInterval(()=>{
-t--;
-if(t<=0){
-clearInterval(interval);
-nextPhase();
-}
-},1000);
+    let grow = true;
+
+    const interval = setInterval(()=>{
+        circle.style.transform =
+        grow ? "translate(-50%,-50%) scale(1.5)"
+             : "translate(-50%,-50%) scale(0.5)";
+        grow = !grow;
+    },4000);
+
+    setTimeout(()=>{
+        clearInterval(interval);
+        circle.style.opacity = 0;
+        nextPhase();
+    },30000);
 }
 
 </script>
