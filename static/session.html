@@ -1,3 +1,4 @@
+html_code = """
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,83 +8,83 @@
 
 <style>
 :root {
-    --neon-blue: #00f2ff;
-    --neon-gold: #f1c40f;
-    --neon-green: #2ecc71;
-    --neon-purple: #9b59b6;
-    --neon-red: #ff3131;
-    --bg-dark: #020205;
+    --neon-blue:#00f2ff;
+    --neon-gold:#f1c40f;
+    --neon-green:#2ecc71;
+    --neon-purple:#9b59b6;
+    --neon-red:#ff3131;
+    --bg-dark:#020205;
 }
 
-body {
-    margin: 0;
-    overflow: hidden;
-    background: var(--bg-dark);
-    color: white;
-    font-family: 'Orbitron', sans-serif;
-    cursor: none;
+body{
+    margin:0;
+    overflow:hidden;
+    background:var(--bg-dark);
+    color:white;
+    font-family:'Orbitron', sans-serif;
+    cursor:none;
 }
 
-#hud {
-    position: absolute;
-    top: 20px;
-    width: 100%;
-    display: flex;
-    justify-content: space-evenly;
-    z-index: 100;
-    pointer-events: none;
+#hud{
+    position:absolute;
+    top:20px;
+    width:100%;
+    display:flex;
+    justify-content:space-evenly;
+    z-index:100;
+    pointer-events:none;
 }
 
-.data-box {
-    background: rgba(0, 0, 0, 0.85);
-    border: 2px solid var(--neon-blue);
-    padding: 10px 20px;
-    text-align: center;
-    box-shadow: 0 0 20px rgba(0, 242, 255, 0.3);
-    min-width: 120px;
-    border-radius: 5px;
+.data-box{
+    background:rgba(0,0,0,0.85);
+    border:2px solid var(--neon-blue);
+    padding:10px 20px;
+    text-align:center;
+    box-shadow:0 0 20px rgba(0,242,255,0.3);
+    min-width:120px;
+    border-radius:5px;
 }
 
-.label {
-    font-size: 10px;
-    color: var(--neon-blue);
-    letter-spacing: 2px;
-    font-weight: 900;
-    display: block;
+.label{
+    font-size:10px;
+    color:var(--neon-blue);
+    letter-spacing:2px;
+    font-weight:900;
+    display:block;
 }
 
-.value {
-    font-size: 24px;
-    font-weight: 900;
-    display: block;
-    color: #fff;
+.value{
+    font-size:24px;
+    font-weight:900;
+    display:block;
+    color:#fff;
 }
 
-canvas { display: block; }
+canvas{display:block;}
 
-#start-screen {
-    position: fixed;
-    inset: 0;
-    background: var(--bg-dark);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-    text-align: center;
+#start-screen{
+    position:fixed;
+    inset:0;
+    background:var(--bg-dark);
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    z-index:1000;
+    text-align:center;
 }
 
-.start-btn {
-    padding: 20px 50px;
-    background: var(--neon-blue);
-    color: black;
-    border: none;
-    font-family: 'Orbitron';
-    font-weight: 900;
-    cursor: pointer;
-    margin-top: 30px;
-    letter-spacing: 3px;
-    box-shadow: 0 0 30px var(--neon-blue);
+.start-btn{
+    padding:20px 50px;
+    background:var(--neon-blue);
+    color:black;
+    border:none;
+    font-family:'Orbitron';
+    font-weight:900;
+    cursor:pointer;
+    margin-top:30px;
+    letter-spacing:3px;
+    box-shadow:0 0 30px var(--neon-blue);
 }
 </style>
 
@@ -93,25 +94,25 @@ canvas { display: block; }
 <body>
 
 <div id="hud">
-    <div class="data-box" style="border-color: var(--neon-gold);">
+    <div class="data-box" style="border-color:var(--neon-gold);">
         <span class="label">CAPITAL</span>
         <span id="val-money" class="value">0</span>
     </div>
 
-    <div class="data-box" style="border-color: var(--neon-green);">
+    <div class="data-box" style="border-color:var(--neon-green);">
         <span class="label">STABILITY</span>
         <span id="val-health" class="value">100%</span>
     </div>
 
-    <div class="data-box" style="border-color: var(--neon-purple);">
+    <div class="data-box" style="border-color:var(--neon-purple);">
         <span class="label">BIZ UNITS</span>
         <span id="val-biz" class="value">0</span>
     </div>
 </div>
 
 <div id="start-screen">
-    <h1 style="color: var(--neon-blue); letter-spacing: 15px; font-size: 50px;">AL CIELO</h1>
-    <p style="letter-spacing: 5px; color: #888;">NEURAL DIAGNOSTICS & DOPAMINE FLOW</p>
+    <h1 style="color:var(--neon-blue);letter-spacing:15px;font-size:50px;">AL CIELO</h1>
+    <p style="letter-spacing:5px;color:#888;">NEURAL DIAGNOSTICS & DOPAMINE FLOW</p>
     <button class="start-btn" onclick="startGame()">INITIALIZE INTERFACE</button>
 </div>
 
@@ -119,57 +120,146 @@ canvas { display: block; }
 
 <script>
 
-const canvas = document.getElementById("gameCanvas");
-const ctx = canvas.getContext("2d");
-let audioCtx;
+const canvas=document.getElementById("gameCanvas");
+const ctx=canvas.getContext("2d");
 
-/* ===================== RESIZE ===================== */
 function resize(){
-    canvas.width = innerWidth;
-    canvas.height = innerHeight;
+    canvas.width=innerWidth;
+    canvas.height=innerHeight;
 }
-addEventListener("resize", resize);
+addEventListener("resize",resize);
 resize();
 
 /* ===================== STATE ===================== */
-let stats = { money: 0, health: 100, biz: 0 };
-let objects = [];
-let particles = [];
-let active = false;
+let phase=0;
+let active=false;
 
-const user = { x: innerWidth/2, y: innerHeight/2, size: 60 };
+let stats={money:0,health:100,biz:0};
+let objects=[];
+let particles=[];
 
-/* ===================== PHASE ===================== */
-let phase = 0;
-let STORIES = null;
-let MISSIONS = null;
-let currentStory = 0;
-let currentMission = 0;
+const user={x:innerWidth/2,y:innerHeight/2,size:60};
 
-/* ===================== DATA ===================== */
-const rawData = [
-    { text:"SAVINGS", emoji:"💰", type:"pos", stat:"money", impact:150, color:"#f1c40f", freq:523.25 },
-    { text:"BUSINESS", emoji:"🤝", type:"pos", stat:"biz", impact:1, color:"#3498db", freq:659.25 },
-    { text:"FAMILY", emoji:"🏠", type:"pos", stat:"health", impact:20, color:"#2ecc71", freq:783.99 },
-    { text:"HAPPINESS", emoji:"😊", type:"pos", stat:"health", impact:15, color:"#9b59b6", freq:880 },
-    { text:"THREAT", emoji:"⚠️", type:"neg", stat:"health", impact:-25, color:"#ff3131", freq:110 },
-    { text:"PROBLEM", emoji:"🛑", type:"neg", stat:"health", impact:-20, color:"#ff3131", freq:90 },
-    { text:"INVESTMENT", emoji:"📈", type:"pos", stat:"money", impact:300, color:"#00f2ff", freq:987.77 },
-    { text:"EDUCATION", emoji:"📚", type:"pos", stat:"biz", impact:1, color:"#00f2ff", freq:1046.5 }
-];
+let audioCtx;
+
+/* ===================== JSON SYSTEM ===================== */
+let STORIES=null;
+let MISSIONS=null;
+let storyIndex=0;
+let missionIndex=0;
+
+async function loadJSON(){
+    try{
+        const s=await fetch("stories.json");
+        STORIES=await s.json();
+
+        const m=await fetch("missions.json");
+        MISSIONS=await m.json();
+    }catch(e){
+        console.log("JSON ERROR",e);
+    }
+}
+
+/* ===================== PHASE CONTROLLER ===================== */
+function nextPhase(){
+
+    if(phase===0){
+        phase=1;
+        runStory();
+        return;
+    }
+
+    if(phase===1){
+        phase=2;
+        runMission();
+        return;
+    }
+
+    if(phase===2){
+        phase=3;
+        triggerSilence();
+        return;
+    }
+
+    if(phase===3){
+        phase=4;
+        setTimeout(nextPhase,3000);
+        return;
+    }
+
+    if(phase===4){
+        phase=5;
+        alert("FINAL COMPLETE");
+        return;
+    }
+}
+
+/* ===================== STORY ===================== */
+function runStory(){
+
+    const story=STORIES?.stories?.[storyIndex];
+
+    if(!story){
+        nextPhase();
+        return;
+    }
+
+    alert(story.title||"STORY");
+
+    storyIndex++;
+
+    setTimeout(nextPhase,2500);
+}
+
+/* ===================== MISSIONS ===================== */
+function runMission(){
+
+    const mission=MISSIONS?.missions?.[missionIndex];
+
+    if(!mission){
+        nextPhase();
+        return;
+    }
+
+    alert("MISSION "+mission.id);
+
+    missionIndex++;
+
+    setTimeout(nextPhase,3000);
+}
+
+/* ===================== SILENCE ===================== */
+function triggerSilence(){
+
+    active=false;
+
+    let t=30;
+
+    const id=setInterval(()=>{
+
+        t--;
+
+        if(t<=0){
+            clearInterval(id);
+            active=true;
+            nextPhase();
+        }
+
+    },1000);
+}
 
 /* ===================== AUDIO ===================== */
 function playSound(freq,type){
-    if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+    if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)();
 
-    const o = audioCtx.createOscillator();
-    const g = audioCtx.createGain();
+    const o=audioCtx.createOscillator();
+    const g=audioCtx.createGain();
 
-    o.type = type==="pos" ? "sine" : "sawtooth";
-    o.frequency.value = freq;
+    o.type=type==="pos"?"sine":"sawtooth";
+    o.frequency.value=freq;
 
-    g.gain.value = 0.1;
-    g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime+0.5);
+    g.gain.value=0.1;
+    g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.5);
 
     o.connect(g);
     g.connect(audioCtx.destination);
@@ -178,187 +268,94 @@ function playSound(freq,type){
     o.stop(audioCtx.currentTime+0.5);
 }
 
-/* ===================== INPUT ===================== */
-addEventListener("mousemove", e=>{
-    user.x = e.clientX;
-    user.y = e.clientY;
+/* ===================== DATA ===================== */
+const rawData=[
+    {text:"SAVINGS",emoji:"💰",type:"pos",stat:"money",impact:150,color:"#f1c40f",freq:523.25},
+    {text:"BUSINESS",emoji:"🤝",type:"pos",stat:"biz",impact:1,color:"#3498db",freq:659.25},
+    {text:"FAMILY",emoji:"🏠",type:"pos",stat:"health",impact:20,color:"#2ecc71",freq:783.99},
+    {text:"HAPPINESS",emoji:"😊",type:"pos",stat:"health",impact:15,color:"#9b59b6",freq:880},
+    {text:"THREAT",emoji:"⚠️",type:"neg",stat:"health",impact:-25,color:"#ff3131",freq:110},
+    {text:"INVESTMENT",emoji:"📈",type:"pos",stat:"money",impact:300,color:"#00f2ff",freq:987.77}
+];
+
+/* ===================== GAME ===================== */
+addEventListener("mousemove",e=>{
+    user.x=e.clientX;
+    user.y=e.clientY;
 });
 
-/* ===================== SPAWN ===================== */
 function spawn(){
     if(!active) return;
 
-    const d = rawData[Math.floor(Math.random()*rawData.length)];
+    const d=rawData[Math.floor(Math.random()*rawData.length)];
 
-    objects.push({
-        ...d,
-        x: Math.random()*innerWidth,
-        y: -100,
-        speed: 2.5 + (stats.money/5000),
-        pulse: 0
-    });
+    objects.push({...d,x:Math.random()*innerWidth,y:-100,speed:2.5,pulse:0});
 }
 
-/* ===================== UPDATE ===================== */
 function update(){
     if(!active) return;
 
     objects.forEach((o,i)=>{
-        o.y += o.speed;
-        o.pulse += 0.05;
 
-        const dx = o.x - user.x;
-        const dy = o.y - user.y;
-        const dist = Math.sqrt(dx*dx+dy*dy);
+        o.y+=o.speed;
 
-        if(dist < user.size){
+        const dx=o.x-user.x;
+        const dy=o.y-user.y;
+        const dist=Math.sqrt(dx*dx+dy*dy);
+
+        if(dist<user.size){
+
             playSound(o.freq,o.type);
 
-            if(o.stat==="money") stats.money += o.impact;
-            if(o.stat==="biz") stats.biz += o.impact;
-            if(o.stat==="health") stats.health = Math.max(0,Math.min(100,stats.health+o.impact));
+            if(o.stat==="money") stats.money+=o.impact;
+            if(o.stat==="biz") stats.biz+=o.impact;
+            if(o.stat==="health") stats.health=Math.max(0,Math.min(100,stats.health+o.impact));
 
             objects.splice(i,1);
             updateHUD();
         }
-
-        if(o.y > innerHeight+100) objects.splice(i,1);
-    });
-}
-
-/* ===================== PARTICLES ===================== */
-function createExplosion(x,y,color){
-    for(let i=0;i<15;i++){
-        particles.push({
-            x,y,
-            vx:(Math.random()-0.5)*10,
-            vy:(Math.random()-0.5)*10,
-            life:1,
-            color
-        });
-    }
-}
-
-function updateParticles(){
-    particles.forEach((p,i)=>{
-        p.x += p.vx;
-        p.y += p.vy;
-        p.life -= 0.02;
-        if(p.life<=0) particles.splice(i,1);
     });
 }
 
 /* ===================== HUD ===================== */
 function updateHUD(){
-    val_money.innerText = stats.money;
-    val_health.innerText = stats.health + "%";
-    val_biz.innerText = stats.biz;
+    val_money.innerText=stats.money;
+    val_health.innerText=stats.health+"%";
+    val_biz.innerText=stats.biz;
 }
 
 /* ===================== DRAW ===================== */
 function draw(){
-    ctx.fillStyle = "rgba(2,2,5,0.25)";
+    ctx.fillStyle="rgba(2,2,5,0.25)";
     ctx.fillRect(0,0,innerWidth,innerHeight);
 
-    ctx.strokeStyle = "#00f2ff";
-    ctx.lineWidth = 3;
-
+    ctx.strokeStyle="#00f2ff";
     ctx.beginPath();
     ctx.arc(user.x,user.y,user.size,0,Math.PI*2);
     ctx.stroke();
 
-    particles.forEach(p=>{
-        ctx.globalAlpha = p.life;
-        ctx.fillStyle = p.color;
-        ctx.fillRect(p.x,p.y,4,4);
-    });
-
-    ctx.globalAlpha = 1;
-
     objects.forEach(o=>{
-        ctx.fillStyle = o.color;
-        ctx.font = "20px Orbitron";
         ctx.fillText(o.text,o.x,o.y);
-
-        ctx.font = "40px Arial";
-        ctx.fillText(o.emoji,o.x,o.y+30);
     });
-}
-
-/* ===================== SILENCE ===================== */
-function triggerSilence(){
-    active = false;
-
-    let t = 30;
-
-    const id = setInterval(()=>{
-        t--;
-        if(t<=0){
-            clearInterval(id);
-            active = true;
-            nextPhase();
-        }
-    },1000);
-}
-
-/* ===================== PHASE CONTROL ===================== */
-function nextPhase(){
-    if(phase===0){ phase=1; runStory(); return; }
-    if(phase===1){ phase=2; runMission(); return; }
-    if(phase===2){ phase=3; triggerSilence(); return; }
-    if(phase===3){ phase=4; setTimeout(nextPhase,3000); return; }
-    if(phase===4){ phase=5; alert("FINAL COMPLETE"); return; }
-}
-
-/* ===================== STORY ===================== */
-function runStory(){
-    if(!STORIES){ nextPhase(); return; }
-
-    const s = STORIES.stories?.[currentStory++];
-    if(!s){ nextPhase(); return; }
-
-    setTimeout(nextPhase,3000);
-}
-
-/* ===================== MISSION ===================== */
-function runMission(){
-    if(!MISSIONS){ nextPhase(); return; }
-
-    const m = MISSIONS.missions?.[currentMission++];
-    if(!m){ nextPhase(); return; }
-
-    setTimeout(nextPhase,3000);
 }
 
 /* ===================== LOOP ===================== */
 function loop(){
     update();
-    updateParticles();
     draw();
     requestAnimationFrame(loop);
 }
 
 /* ===================== START ===================== */
-async function loadGameData(){
-    try{
-        const s = await fetch("stories.json");
-        STORIES = await s.json();
-
-        const m = await fetch("missions.json");
-        MISSIONS = await m.json();
-    }catch(e){}
-}
-
 function startGame(){
+
     document.getElementById("start-screen").style.display="none";
 
-    active = true;
+    active=true;
 
-    loadGameData().then(()=>{
+    loadJSON().then(()=>{
         nextPhase();
     });
-
-    if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
 
     setInterval(spawn,800);
 
@@ -366,5 +363,7 @@ function startGame(){
 }
 
 </script>
+
 </body>
 </html>
+"""
