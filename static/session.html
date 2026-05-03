@@ -3,266 +3,254 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>AL CIELO - NEURAL SURVIVAL</title>
+    <title>AL CIELO | NEURAL PROGRESSION SYSTEM</title>
     <style>
         :root {
             --neon-blue: #00f2ff; --neon-gold: #f1c40f; --neon-green: #2ecc71;
             --neon-purple: #9b59b6; --neon-red: #ff3131; --bg-dark: #020205;
         }
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; font-family: 'Orbitron', sans-serif; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; font-family: 'Orbitron', sans-serif; color: white; }
         
-        /* HUD - Responsivo y Claro */
+        /* UI LAYERS */
         #hud {
             position: absolute; top: env(safe-area-inset-top, 20px); width: 100%;
             display: flex; justify-content: space-evenly; z-index: 100; pointer-events: none;
         }
         .data-box {
-            background: rgba(0, 0, 0, 0.8); border: 2px solid var(--neon-blue);
-            padding: 8px 15px; text-align: center; min-width: 100px;
-            border-radius: 12px; backdrop-filter: blur(10px);
-            box-shadow: 0 0 20px rgba(0, 242, 255, 0.2);
+            background: rgba(0, 0, 0, 0.85); border: 2px solid var(--neon-blue);
+            padding: 10px; text-align: center; min-width: 110px; border-radius: 12px;
         }
-        .label { font-size: 8px; color: var(--neon-blue); letter-spacing: 1px; font-weight: 900; display: block; text-transform: uppercase; }
-        .value { font-size: 20px; font-weight: 900; color: #fff; display: block; }
+        .label { font-size: 9px; color: var(--neon-blue); font-weight: 900; display: block; }
+        .value { font-size: 22px; font-weight: 900; display: block; }
 
-        #state-tag {
-            position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
-            padding: 5px 20px; border-radius: 20px; background: rgba(255,255,255,0.1);
-            font-size: 12px; letter-spacing: 3px; color: var(--neon-gold); z-index: 90;
+        #timer-bar {
+            position: absolute; bottom: 80px; width: 80%; left: 10%; height: 4px;
+            background: #222; border-radius: 2px; overflow: hidden;
+        }
+        #timer-fill { width: 100%; height: 100%; background: var(--neon-red); transition: 0.3s; }
+
+        #status-msg {
+            position: absolute; bottom: 30px; width: 100%; text-align: center;
+            font-size: 14px; color: var(--neon-gold); letter-spacing: 2px;
         }
 
+        /* SCREENS */
+        #overlay, #lockout-screen {
+            position: fixed; inset: 0; background: #000; z-index: 1000;
+            display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
+        }
+        #lockout-screen { display: none; z-index: 2000; color: var(--neon-red); }
+        
+        .btn {
+            padding: 20px 50px; background: var(--neon-blue); color: #000; border: none;
+            font-family: 'Orbitron'; font-weight: 900; cursor: pointer; border-radius: 50px; margin-top: 20px;
+        }
+        
         canvas { display: block; touch-action: none; }
-
-        /* Pantalla de Inicio */
-        #start-screen {
-            position: fixed; inset: 0; background: radial-gradient(circle, #111 0%, #000 100%);
-            display: flex; flex-direction: column; justify-content: center;
-            align-items: center; z-index: 1000; text-align: center; padding: 20px;
-        }
-        .start-btn {
-            padding: 20px 50px; background: var(--neon-blue); color: black;
-            border: none; font-family: 'Orbitron'; font-weight: 900;
-            cursor: pointer; margin-top: 30px; border-radius: 50px;
-            box-shadow: 0 0 40px var(--neon-blue); transition: 0.3s;
-        }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
 </head>
 <body>
 
 <div id="hud">
-    <div class="data-box" style="border-color: var(--neon-gold);">
-        <span class="label">CREDIT SCORE</span><span id="val-money" class="value">0</span>
-    </div>
-    <div class="data-box" style="border-color: var(--neon-red);">
-        <span class="label">SURVIVAL</span><span id="val-health" class="value">100%</span>
-    </div>
-    <div class="data-box" style="border-color: var(--neon-purple);">
-        <span class="label">UNITS</span><span id="val-biz" class="value">0</span>
-    </div>
+    <div class="data-box" style="border-color: var(--neon-gold);"><span class="label">CAPITAL</span><span id="v-money" class="value">0</span></div>
+    <div class="data-box" style="border-color: var(--neon-red);"><span class="label">STABILITY</span><span id="v-health" class="value">100%</span></div>
+    <div class="data-box" style="border-color: var(--neon-purple);"><span class="label">LEVEL</span><span id="v-level" class="value">1</span></div>
 </div>
 
-<div id="state-tag">LOCATION: <span id="current-loc">HOME BASE</span></div>
+<div id="timer-bar"><div id="timer-fill"></div></div>
+<div id="status-msg">NEURAL SYNC: <span id="v-time">27:00</span></div>
 
-<div id="start-screen">
-    <h1 style="color: var(--neon-blue); letter-spacing: 10px; font-size: clamp(30px, 8vw, 60px);">AL CIELO</h1>
-    <p style="color: #666; font-size: 12px; letter-spacing: 2px;">NEURAL INTERFACE - USA 50 STATES EDITION</p>
-    <button class="start-btn" onclick="init()">START TRAINING</button>
+<div id="overlay">
+    <h1 style="color: var(--neon-blue); letter-spacing: 10px;">AL CIELO</h1>
+    <p style="color: #888;">USA SURVIVAL & DISCIPLINE PROGRESSION</p>
+    <button class="btn" onclick="startApp()">ACTIVATE INTERFACE</button>
+</div>
+
+<div id="lockout-screen">
+    <h1>SYSTEM LOCKOUT</h1>
+    <p>Daily Training Limit Reached. Neural cooldown active.</p>
+    <h2 id="cooldown-timer">08:00:00</h2>
 </div>
 
 <canvas id="gameCanvas"></canvas>
 
 <script>
-const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
-let audioCtx, mainOsc, mainGain;
-
-// --- MATRIZ DE ESCENARIOS (VIDA REAL USA) ---
-const scenarios = [
-    { name: "HOME BASE", color: "#0a0a1a", data: ["FAMILY VALUE", "SAVINGS", "HOUSE RULES", "CHORES"] },
-    { name: "USA SCHOOL", color: "#1a0a0a", data: ["ACTIVE DRILL", "PEER PRESSURE", "GRADES", "BULLYING"] },
-    { name: "URBAN STREETS", color: "#0a1a0a", data: ["SITUATIONAL AWARENESS", "STRANGER DANGER", "911 CALL", "EXIT SIGNS"] },
-    { name: "FINANCIAL FUTURE", color: "#1a1a0a", data: ["INVESTMENT", "CREDIT CARD", "TAXES", "BUSINESS"] }
+// --- CONFIGURATION ---
+const SESSION_KEY = "AL_CIELO_PROGRESS";
+const TOTAL_MINUTES = 27;
+const LOCK_HOURS = 8;
+const LEVELS = [
+    { id: 1, duration: 7, name: "BASIC SURVIVAL", speed: 3, objects: ["FAMILY", "SAVINGS", "STRANGER"] },
+    { id: 2, duration: 10, name: "CITIZEN ELITE", speed: 5, objects: ["DRILL", "911 CALL", "BAD LOAN"] },
+    { id: 3, duration: 10, name: "FLOW MASTER", speed: 8, objects: ["INVESTMENT", "DANGER", "SECURITY"] }
 ];
 
-const rawData = [
-    { text: "FAMILY", type: "pos", stat: "health", impact: 15, color: "#2ecc71", freq: 440 },
-    { text: "SAVINGS", type: "pos", stat: "money", impact: 200, color: "#f1c40f", freq: 554 },
-    { text: "STRANGER", type: "neg", impact: -40, color: "#ff3131", freq: 80 }, // Castigo auditivo
-    { text: "911 CALL", type: "pos", stat: "health", impact: 25, color: "#00f2ff", freq: 880 },
-    { text: "BAD LOAN", type: "neg", stat: "money", impact: -100, color: "#e67e22", freq: 60 },
-    { text: "DRILL", type: "pos", stat: "health", impact: 30, color: "#9b59b6", freq: 1100 }
-];
-
-let stats = { money: 0, health: 100, biz: 0, sceneIdx: 0 };
+let stats = { money: 0, health: 100, levelIdx: 0, consumedSec: 0 };
 let active = false;
 let objects = [];
-let particles = [];
-let dpr = window.devicePixelRatio || 1;
-const user = { x: 0, y: 0, size: 45 };
+const user = { x: 0, y: 0, size: 50 };
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
 
-// --- MOTOR DE AUDIO "DENTRO DEL JUEGO" ---
-function setupAudio() {
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    // Ruido de fondo (Ambiente)
-    mainOsc = audioCtx.createOscillator();
-    mainGain = audioCtx.createGain();
-    mainOsc.type = 'triangle';
-    mainOsc.frequency.value = 60; 
-    mainGain.gain.value = 0.02;
-    mainOsc.connect(mainGain);
-    mainGain.connect(audioCtx.destination);
-    mainOsc.start();
+// --- SESSION LOGIC ---
+function checkLockout() {
+    const data = JSON.parse(localStorage.getItem(SESSION_KEY));
+    if (data) {
+        const timeSinceStart = (Date.now() - data.startTime) / 3600000;
+        if (timeSinceStart < LOCK_HOURS && data.consumedSec >= TOTAL_MINUTES * 60) {
+            return true;
+        }
+        if (timeSinceStart >= LOCK_HOURS) {
+            localStorage.removeItem(SESSION_KEY);
+        }
+    }
+    return false;
 }
 
-function playTriggerSound(freq, type) {
-    const osc = audioCtx.createOscillator();
-    const g = audioCtx.createGain();
-    osc.type = type === 'pos' ? 'sine' : 'sawtooth';
-    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-    g.gain.setValueAtTime(0.2, audioCtx.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.6);
-    osc.connect(g);
-    g.connect(audioCtx.destination);
-    osc.start();
-    osc.stop(audioCtx.currentTime + 0.6);
-    
-    // Pitch shift del fondo según salud
-    mainOsc.frequency.exponentialRampToValueAtTime(60 + (stats.health), audioCtx.currentTime + 0.2);
+function saveProgress() {
+    let data = JSON.parse(localStorage.getItem(SESSION_KEY)) || { startTime: Date.now(), consumedSec: 0 };
+    data.consumedSec = stats.consumedSec;
+    localStorage.setItem(SESSION_KEY, JSON.stringify(data));
 }
 
-// --- RESPONSIVE & SHARP GRAPHICS ---
-function resize() {
-    canvas.width = window.innerWidth * dpr;
-    canvas.height = window.innerHeight * dpr;
-    canvas.style.width = window.innerWidth + 'px';
-    canvas.style.height = window.innerHeight + 'px';
-    ctx.scale(dpr, dpr);
-}
-window.addEventListener('resize', resize);
-resize();
-
-function init() {
-    document.getElementById('start-screen').style.display = 'none';
-    setupAudio();
+// --- APP CORE ---
+function startApp() {
+    if (checkLockout()) { showLockout(); return; }
+    document.getElementById('overlay').style.display = 'none';
     active = true;
+    resize();
     user.x = window.innerWidth / 2;
     user.y = window.innerHeight * 0.8;
-    setInterval(spawn, 800);
-    setInterval(changeScenario, 15000); // Cambio de paisaje cada 15 seg
+    
+    // Recovery of previous session seconds if any
+    const saved = JSON.parse(localStorage.getItem(SESSION_KEY));
+    if(saved) stats.consumedSec = saved.consumedSec;
+
+    setInterval(tick, 1000);
+    setInterval(spawn, 700);
     loop();
 }
 
-function changeScenario() {
-    stats.sceneIdx = (stats.sceneIdx + 1) % scenarios.length;
-    document.getElementById('current-loc').innerText = scenarios[stats.sceneIdx].name;
+function tick() {
+    if (!active) return;
+    stats.consumedSec++;
+    saveProgress();
+
+    // Progression Logic
+    const currentMin = stats.consumedSec / 60;
+    if (currentMin < 7) stats.levelIdx = 0;
+    else if (currentMin < 17) stats.levelIdx = 1;
+    else if (currentMin < 27) stats.levelIdx = 2;
+    else { endGame(); }
+
+    updateUI();
+}
+
+function updateUI() {
+    const totalSec = TOTAL_MINUTES * 60;
+    const remaining = totalSec - stats.consumedSec;
+    const m = Math.floor(remaining / 60);
+    const s = remaining % 60;
+    
+    document.getElementById('v-time').innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
+    document.getElementById('v-level').innerText = LEVELS[stats.levelIdx].id;
+    document.getElementById('v-money').innerText = stats.money;
+    document.getElementById('v-health').innerText = stats.health + "%";
+    document.getElementById('timer-fill').style.width = (remaining / totalSec * 100) + "%";
 }
 
 function spawn() {
-    if(!active) return;
-    const entry = rawData[Math.floor(Math.random() * rawData.length)];
+    if (!active) return;
+    const level = LEVELS[stats.levelIdx];
+    const text = level.objects[Math.floor(Math.random() * level.objects.length)];
     objects.push({
-        ...entry,
+        text: text,
         x: Math.random() * (window.innerWidth - 100) + 50,
         y: -50,
-        speed: 3 + (stats.money / 10000)
+        speed: level.speed,
+        type: text === "STRANGER" || text === "BAD LOAN" || text === "DANGER" ? "neg" : "pos"
     });
 }
 
 function update() {
-    if(!active) return;
-
     objects.forEach((obj, i) => {
         obj.y += obj.speed;
         const dist = Math.sqrt((obj.x - user.x)**2 + (obj.y - user.y)**2);
-        
         if (dist < user.size) {
-            playTriggerSound(obj.freq, obj.type);
-            if(obj.type === 'neg') {
+            if (obj.type === "neg") {
                 stats.health -= 20;
-                stats.money = Math.floor(stats.money * 0.5); // El castigo de USA: Pierdes la mitad
+                stats.money = Math.floor(stats.money * 0.5);
             } else {
-                if(obj.stat === 'money') stats.money += obj.impact;
-                if(obj.stat === 'health') stats.health = Math.min(100, stats.health + 10);
+                stats.money += 100;
+                stats.health = Math.min(100, stats.health + 5);
             }
-            createExplosion(obj.x, obj.y, obj.color);
-            updateHUD();
             objects.splice(i, 1);
         }
-        if(obj.y > window.innerHeight + 100) objects.splice(i, 1);
+        if (obj.y > window.innerHeight) objects.splice(i, 1);
     });
 
-    particles.forEach((p, i) => {
-        p.x += p.vx; p.y += p.vy; p.life -= 0.03;
-        if(p.life <= 0) particles.splice(i, 1);
-    });
-
-    if(stats.health <= 0) {
-        active = false;
-        alert("GAME OVER: PROTECTION FAILED. Final Wealth: $" + stats.money);
+    if (stats.health <= 0) {
+        alert("CRITICAL FAILURE. REBOOTING NEURAL LINK.");
         location.reload();
     }
 }
 
-function updateHUD() {
-    document.getElementById('val-money').innerText = stats.money;
-    document.getElementById('val-health').innerText = stats.health + "%";
-}
-
-function createExplosion(x, y, color) {
-    for (let i = 0; i < 15; i++) {
-        particles.push({ x, y, vx: (Math.random()-0.5)*10, vy: (Math.random()-0.5)*10, life: 1.0, color });
-    }
-}
-
 function draw() {
-    // Fondo dinámico según escenario
-    ctx.fillStyle = scenarios[stats.sceneIdx].color;
-    ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
+    ctx.fillStyle = "#020205";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
     
-    // Dibujar Avatar (The Guard)
-    ctx.shadowBlur = 20;
-    ctx.shadowColor = varColor('--neon-blue');
-    ctx.strokeStyle = "#fff";
+    // User Guard
+    ctx.strokeStyle = varColor('--neon-blue');
     ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.arc(user.x, user.y, user.size - 10, 0, Math.PI*2);
-    ctx.stroke();
+    ctx.beginPath(); ctx.arc(user.x, user.y, user.size - 10, 0, Math.PI*2); ctx.stroke();
 
-    // Dibujar Objetos (Sharp Text)
+    // Level Specific Background Glow
+    const colors = [varColor('--neon-blue'), varColor('--neon-green'), varColor('--neon-purple')];
+    ctx.shadowBlur = 20; ctx.shadowColor = colors[stats.levelIdx];
+
     objects.forEach(obj => {
-        ctx.shadowBlur = 15;
-        ctx.shadowColor = obj.color;
-        ctx.fillStyle = "white";
-        ctx.font = "900 18px Orbitron";
+        ctx.fillStyle = obj.type === "neg" ? varColor('--neon-red') : "#fff";
+        ctx.font = "900 16px Orbitron";
         ctx.textAlign = "center";
         ctx.fillText(obj.text, obj.x, obj.y);
     });
-
-    // Partículas
-    particles.forEach(p => {
-        ctx.globalAlpha = p.life;
-        ctx.fillStyle = p.color;
-        ctx.fillRect(p.x, p.y, 4, 4);
-    });
-    ctx.globalAlpha = 1.0;
+    ctx.shadowBlur = 0;
 }
 
-function varColor(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+function showLockout() {
+    active = false;
+    document.getElementById('lockout-screen').style.display = 'flex';
+    setInterval(() => {
+        const data = JSON.parse(localStorage.getItem(SESSION_KEY));
+        const diff = (data.startTime + (LOCK_HOURS * 3600000)) - Date.now();
+        const h = Math.floor(diff / 3600000);
+        const m = Math.floor((diff % 3600000) / 60000);
+        const s = Math.floor((diff % 60000) / 1000);
+        document.getElementById('cooldown-timer').innerText = `${h}h ${m}m ${s}s`;
+    }, 1000);
+}
 
-const handleInput = (e) => {
-    const cx = e.touches ? e.touches[0].clientX : e.clientX;
-    const cy = e.touches ? e.touches[0].clientY : e.clientY;
-    user.x = cx; user.y = cy;
-};
-window.addEventListener('mousemove', handleInput);
-window.addEventListener('touchmove', (e) => { handleInput(e); e.preventDefault(); }, {passive: false});
+function endGame() {
+    active = false;
+    saveProgress();
+    showLockout();
+}
+
+function resize() {
+    canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+}
+function varColor(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+window.addEventListener('resize', resize);
+window.addEventListener('mousemove', e => { user.x = e.clientX; user.y = e.clientY; });
+window.addEventListener('touchmove', e => { user.x = e.touches[0].clientX; user.y = e.touches[0].clientY; e.preventDefault(); }, {passive: false});
 
 function loop() {
-    update();
-    draw();
-    requestAnimationFrame(loop);
+    if(active) { update(); draw(); requestAnimationFrame(loop); }
 }
+
+// Check on load
+if (checkLockout()) showLockout();
 </script>
 </body>
 </html>
