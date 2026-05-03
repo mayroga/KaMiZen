@@ -102,7 +102,7 @@
     <h2 style="color: var(--neon-gold); font-size: 14px; letter-spacing: 2px;">BRAVERY & DISCIPLINE INTERFACE</h2>
     <p id="desc" style="color: #666; max-width: 450px; font-size: 12px; line-height: 1.6;">
         Detect context. Protect innocence. Increase Capital.<br>
-        27-minute neuro-sync session. 8-hour cooldown enforced.
+        27-minute neuro-sync session. <span style="color:var(--neon-green)">REGULATION BYPASSED</span>.
     </p>
     <button id="main-btn" class="start-btn" onclick="startGame()">INITIALIZE SYSTEM</button>
 </div>
@@ -114,7 +114,6 @@ const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 let audioCtx;
 
-// --- DATABASE NIVELES DIVERSIFICADA ---
 const levels = [
     {
         name: "NEURO-HOGAR",
@@ -216,13 +215,12 @@ function update() {
             if (obj.type === 'neg') {
                 stats.health -= 20;
                 stats.money = Math.floor(stats.money * 0.7);
-                // Efecto "Plato Roto" (Varios osciladores discordantes)
                 triggerSound(60, 'sawtooth', 0.8, 0.2);
                 triggerSound(45, 'square', 0.5, 0.1);
             } else {
                 stats.money += obj.impact;
                 stats.health = Math.min(100, stats.health + 5);
-                triggerSound(obj.freq, 'sine', 0.3, 0.15); // Dopamina
+                triggerSound(obj.freq, 'sine', 0.3, 0.15); 
             }
             updateHUD();
             objects.splice(i, 1);
@@ -234,7 +232,6 @@ function update() {
     if (stats.money >= levels[stats.currentLevel].target && stats.currentLevel < 2) {
         stats.currentLevel++;
         difficulty += 0.2;
-        // Efecto "Viento" (Transición)
         triggerSound(150, 'sine', 3, 0.05);
         updateHUD();
     }
@@ -257,7 +254,6 @@ function draw() {
     ctx.fillStyle = 'rgba(2, 2, 5, 0.3)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Dibuja Usuario (Núcleo)
     ctx.shadowBlur = 20;
     ctx.shadowColor = "#00f2ff";
     ctx.strokeStyle = "#00f2ff"; 
@@ -268,12 +264,11 @@ function draw() {
     ctx.shadowBlur = 0;
 
     objects.forEach(obj => {
-        // Lógica de Láser/Telaraña
         let showLaser = false;
         if (stats.currentLevel > 0 && obj.type === 'neg') {
-            showLaser = true; // Constante en niveles 2 y 3 para negativos
+            showLaser = true; 
         } else if (stats.currentLevel === 0 && obj.type === 'neg') {
-            showLaser = Math.sin(Date.now()*0.005) > 0; // Intermitente en nivel 1
+            showLaser = Math.sin(Date.now()*0.005) > 0; 
         }
 
         if (showLaser) {
@@ -287,7 +282,6 @@ function draw() {
             ctx.setLineDash([]);
         }
 
-        // Estilo de la palabra
         ctx.fillStyle = obj.color;
         ctx.shadowBlur = 10;
         ctx.shadowColor = obj.color;
@@ -309,18 +303,11 @@ window.addEventListener('mousemove', handleInput);
 window.addEventListener('touchmove', (e) => { handleInput(e); e.preventDefault(); }, {passive:false});
 
 function startGame() {
-    const lastEnd = localStorage.getItem('alCieloLock');
-    if (lastEnd && (Date.now() - lastEnd < 8 * 60 * 60 * 1000)) {
-        const remaining = (8 - (Date.now() - lastEnd) / 3600000).toFixed(1);
-        alert(`ACCESS DENIED. SYSTEM RECOVERY: ${remaining} HOURS REMAINING.`);
-        return;
-    }
-
+    // REGULACIÓN ELIMINADA: Se puede entrar sin restricción de tiempo.
     document.getElementById('overlay').style.display = 'none';
     active = true;
     sessionEndTime = Date.now() + (27 * 60 * 1000);
     
-    // Generación constante
     const spawnRate = setInterval(() => {
         if (!active) clearInterval(spawnRate);
         spawn();
@@ -337,7 +324,7 @@ function loop() {
 
 function endGame(m) { 
     active = false; 
-    localStorage.setItem('alCieloLock', Date.now());
+    // ELIMINADO EL BLOQUEO: No se guarda marca de tiempo en localStorage.
     alert(m); 
     location.reload(); 
 }
