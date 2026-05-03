@@ -6,7 +6,6 @@
     <title>AL CIELO | NEURO-SYSTEM</title>
     <style>
         :root {
-            /* Level 1 Colors */
             --neon-blue: #00f2ff;
             --neon-gold: #f1c40f;
             --neon-green: #2ecc71;
@@ -60,15 +59,15 @@
 
 <div id="hud">
     <div class="data-box" style="border-color: var(--neon-gold);">
-        <span class="label" id="label-money">CURRENT CAPITAL</span>
+        <span class="label">CURRENT CAPITAL</span>
         <span id="val-money" class="value">0</span>
     </div>
     <div class="data-box" style="border-color: var(--neon-green);">
-        <span class="label" id="label-health">STABILITY</span>
+        <span class="label">STABILITY</span>
         <span id="val-health" class="value">100%</span>
     </div>
     <div class="data-box" style="border-color: var(--neon-blue);">
-        <span class="label" id="label-rank">SYSTEM LEVEL</span>
+        <span class="label">SYSTEM LEVEL</span>
         <span id="val-rank" class="value">LEVEL 1</span>
     </div>
 </div>
@@ -77,9 +76,9 @@
 
 <div id="overlay">
     <h1 style="color: var(--neon-blue); letter-spacing: 15px; font-size: 40px;">AL CIELO</h1>
-    <h2 id="sub-title" style="color: var(--neon-gold); font-size: 14px;">SURVIVAL & DISCIPLINE INTERFACE</h2>
+    <h2 style="color: var(--neon-gold); font-size: 14px;">SURVIVAL & DISCIPLINE INTERFACE</h2>
     <p id="desc" style="color: #666; max-width: 400px; font-size: 12px; margin-top: 20px;">
-        WARNING: Threats reduce capital by up to 90%. <br>Stability at 0% resets the current level.
+        WARNING: Threats reduce capital significantly. <br>Stability at 0% resets the current level.
     </p>
     <button id="main-btn" class="start-btn" onclick="startGame()">INITIALIZE INTERFACE</button>
 </div>
@@ -91,7 +90,6 @@ const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 let audioCtx;
 
-// --- DATABASE LEVELS ---
 const levels = [
     {
         name: "NEURO-SURVIVAL",
@@ -104,7 +102,8 @@ const levels = [
             { text: "DISCIPLINE", type: "pos", impact: 300, color: "#00f2ff", freq: 1046 },
             { text: "DISTRACTION", type: "neg", impact: -25, color: "#e67e22", freq: 130 }
         ],
-        target: 5000
+        target: 5000,
+        hasLasers: false
     },
     {
         name: "USA TOTAL SURVIVAL",
@@ -116,7 +115,8 @@ const levels = [
             { text: "PEER PRESSURE", type: "neg", impact: -20, color: "#ff3131", freq: 120 },
             { text: "CYBER SECURITY", type: "pos", impact: 300, color: "#00f2ff", freq: 1100 }
         ],
-        target: 25000
+        target: 25000,
+        hasLasers: true
     },
     {
         name: "50 STATES MATRIX",
@@ -128,7 +128,8 @@ const levels = [
             { text: "SITUATIONAL AWARENESS", type: "pos", impact: 500, color: "#00f2ff", freq: 900 },
             { text: "KNOW YOUR RIGHTS", type: "pos", impact: 800, color: "#f1c40f", freq: 750 }
         ],
-        target: 100000
+        target: 100000,
+        hasLasers: true
     }
 ];
 
@@ -147,7 +148,6 @@ function resize() {
 window.addEventListener('resize', resize);
 resize();
 
-// --- LOCKOUT LOGIC ---
 function checkLockout() {
     const lastRun = localStorage.getItem('alCieloLastEnd');
     if (lastRun) {
@@ -198,9 +198,7 @@ function spawn() {
 function update() {
     if(!active) return;
 
-    // Timer Logic
-    const now = Date.now();
-    const diff = sessionEndTime - now;
+    const diff = sessionEndTime - Date.now();
     if (diff <= 0) {
         endGame("SESSION COMPLETE. SYSTEM DISCONNECTING.");
         return;
@@ -216,8 +214,7 @@ function update() {
         if (dist < user.size) {
             if (obj.type === 'neg') {
                 stats.health -= 25;
-                // Penalties vary by level structure
-                let penalty = stats.currentLevel === 0 ? 0.5 : (stats.currentLevel === 1 ? 0.2 : 0.1);
+                let penalty = stats.currentLevel === 0 ? 0.5 : 0.1; 
                 stats.money = Math.floor(stats.money * penalty);
                 triggerSound(obj.freq, 'neg');
                 flashScreen('red');
@@ -235,23 +232,16 @@ function update() {
         if(obj.y > canvas.height + 200) objects.splice(i, 1);
     });
 
-    // Level Progression
     if (stats.money >= levels[stats.currentLevel].target && stats.currentLevel < 2) {
         stats.currentLevel++;
-        alert(`LEVEL UP: ${levels[stats.currentLevel].name}`);
         updateHUD();
-    } else if (stats.money >= levels[2].target && stats.currentLevel === 2) {
-        endGame("ULTIMATE DISCIPLINE ACHIEVED. SYSTEM CLOSING.");
     }
 
     if(stats.health <= 0) {
-        active = false;
-        alert("STABILITY CRITICAL. RESTARTING LEVEL.");
         stats.health = 100;
         stats.money = 0;
         objects = [];
         updateHUD();
-        active = true;
     }
 }
 
@@ -273,10 +263,11 @@ function draw() {
     ctx.fillStyle = 'rgba(2, 2, 5, 0.2)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    ctx.shadowBlur = 20;
+    // USER CORE
+    ctx.shadowBlur = 25;
     ctx.shadowColor = "#00f2ff";
     ctx.strokeStyle = "#00f2ff";
-    ctx.lineWidth = 3;
+    ctx.lineWidth = 4;
     ctx.beginPath();
     ctx.arc(user.x, user.y, user.size - 10, 0, Math.PI * 2);
     ctx.stroke();
@@ -284,6 +275,19 @@ function draw() {
     objects.forEach(obj => {
         ctx.shadowBlur = 15;
         ctx.shadowColor = obj.color;
+        
+        // TELARAÑA / LÁSER (Solo niveles 2 y 3 para objetos NEGATIVOS)
+        if(levels[stats.currentLevel].hasLasers && obj.type === 'neg') {
+            ctx.strokeStyle = obj.color;
+            ctx.lineWidth = 1;
+            ctx.setLineDash([5, 5]); // Efecto punteado
+            ctx.beginPath();
+            ctx.moveTo(obj.x, obj.y);
+            ctx.lineTo(user.x, user.y);
+            ctx.stroke();
+            ctx.setLineDash([]); // Reset
+        }
+
         ctx.fillStyle = "white";
         ctx.font = "900 18px Orbitron";
         ctx.textAlign = "center";
@@ -325,7 +329,6 @@ function loop() {
     if(active) requestAnimationFrame(loop);
 }
 
-// Initial Check
 checkLockout();
 </script>
 </body>
