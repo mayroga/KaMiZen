@@ -3,79 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>AL CIELO | TOTAL SURVIVAL INTERFACE</title>
+    <title>AL CIELO | USA 50 STATES SURVIVAL</title>
     <style>
         :root {
-            --neon-blue: #00f2ff;
-            --neon-gold: #f1c40f;
-            --neon-red: #ff3131;
-            --bg-dark: #050508;
+            --neon-blue: #00f2ff; --neon-gold: #f1c40f; --neon-red: #ff3131;
+            --bg-dark: #020205;
         }
         body { margin: 0; overflow: hidden; background: var(--bg-dark); color: white; font-family: 'Orbitron', sans-serif; cursor: none; }
         
         #hud {
             position: absolute; top: 20px; width: 100%;
-            display: flex; justify-content: space-evenly;
-            z-index: 100; pointer-events: none;
+            display: flex; justify-content: space-evenly; z-index: 100; pointer-events: none;
         }
         .data-box {
-            background: rgba(0, 0, 0, 0.95);
-            border: 2px solid var(--neon-blue);
-            padding: 15px; text-align: center;
-            box-shadow: 0 0 25px rgba(0, 242, 255, 0.2);
-            min-width: 150px;
+            background: rgba(0, 0, 0, 0.9); border: 2px solid var(--neon-blue);
+            padding: 10px 15px; text-align: center; min-width: 140px;
         }
-        .label { font-size: 10px; color: var(--neon-blue); letter-spacing: 2px; font-weight: 900; display: block; }
-        .value { font-size: 28px; font-weight: 900; display: block; }
+        .label { font-size: 9px; color: var(--neon-blue); letter-spacing: 1px; font-weight: 900; display: block; }
+        .value { font-size: 22px; font-weight: 900; display: block; }
+
+        #state-indicator {
+            position: absolute; bottom: 20px; left: 20px;
+            font-size: 14px; color: var(--neon-gold); border-left: 3px solid var(--neon-gold); padding-left: 10px;
+        }
 
         #overlay {
-            position: fixed; inset: 0; background: radial-gradient(circle, #111 0%, #000 100%);
-            display: flex; flex-direction: column; justify-content: center;
-            align-items: center; z-index: 1000; text-align: center;
+            position: fixed; inset: 0; background: #000;
+            display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 1000;
         }
         .start-btn {
-            padding: 25px 60px; background: var(--neon-blue); color: black;
-            border: none; font-family: 'Orbitron'; font-weight: 900;
-            cursor: pointer; margin-top: 30px; letter-spacing: 5px;
-            box-shadow: 0 0 50px var(--neon-blue); transition: 0.3s;
-        }
-        .start-btn:hover { transform: scale(1.1); background: #fff; }
-        
-        #warning-flash {
-            position: fixed; inset: 0; pointer-events: none;
-            z-index: 50; opacity: 0;
+            padding: 20px 40px; background: var(--neon-blue); color: black;
+            border: none; font-weight: 900; cursor: pointer; letter-spacing: 3px;
         }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
 </head>
 <body>
 
-<div id="warning-flash"></div>
-
 <div id="hud">
-    <div class="data-box" style="border-color: var(--neon-gold);">
-        <span class="label">NET WORTH</span>
-        <span id="val-money" class="value">$0</span>
-    </div>
-    <div class="data-box" style="border-color: #ff3131;">
-        <span class="label">NEURAL STABILITY</span>
-        <span id="val-health" class="value">100%</span>
-    </div>
-    <div class="data-box" style="border-color: var(--neon-blue);">
-        <span class="label">CITIZEN RANK</span>
-        <span id="val-rank" class="value">ROOKIE</span>
-    </div>
+    <div class="data-box" style="border-color: var(--neon-gold);"><span class="label">CREDIT SCORE / WEALTH</span><span id="val-money" class="value">$0</span></div>
+    <div class="data-box" style="border-color: var(--neon-red);"><span class="label">STABILITY</span><span id="val-health" class="value">100%</span></div>
+    <div class="data-box" style="border-color: #fff;"><span class="label">STATE LAW</span><span id="val-state" class="value">NEW YORK</span></div>
 </div>
 
+<div id="state-indicator">CURRENT ZONE: <span id="zone-name">URBAN DEFENSE</span></div>
+
 <div id="overlay">
-    <h1 style="color: var(--neon-blue); letter-spacing: 15px; font-size: 50px;">AL CIELO</h1>
-    <h2 style="color: var(--neon-gold); font-size: 16px; letter-spacing: 3px;">USA SURVIVAL & DISCIPLINE SIMULATOR</h2>
-    <p style="color: #888; max-width: 500px; font-size: 13px; line-height: 1.6; margin-top: 20px;">
-        SCHOOL IS NOT ENOUGH. <br>
-        AVOID THREATS TO PROTECT YOUR CAPITAL. <br>
-        STAY ALERT. STAY DISCIPLINED.
-    </p>
-    <button class="start-btn" onclick="startGame()">INITIALIZE TRAINING</button>
+    <h1 style="color: var(--neon-blue); letter-spacing: 10px;">AL CIELO</h1>
+    <p style="color: #666; font-size: 11px;">50 STATES SIMULATOR: SURVIVAL, LAW & DISCIPLINE</p>
+    <button class="start-btn" onclick="startGame()">INITIALIZE MATRIX</button>
 </div>
 
 <canvas id="gameCanvas"></canvas>
@@ -85,28 +61,26 @@ const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 let audioCtx;
 
-// --- USA SPECIFIC SURVIVAL DATA ---
-const rawData = [
-    { text: "EXIT SIGNS", type: "pos", impact: 500, color: "#2ecc71", freq: 900, msg: "Situational Awareness +10" },
-    { text: "STRANGER DANGER", type: "neg", impact: -40, color: "#ff3131", freq: 80, msg: "CRITICAL FAILURE" },
-    { text: "INVESTMENT", type: "pos", impact: 1000, color: "#f1c40f", freq: 600, msg: "Wealth Growth" },
-    { text: "PEER PRESSURE", type: "neg", impact: -20, color: "#ff3131", freq: 120, msg: "Stay Independent" },
-    { text: "CYBER SECURITY", type: "pos", impact: 300, color: "#00f2ff", freq: 1100, msg: "Privacy Guarded" },
-    { text: "SOCIAL MEDIA TRAP", type: "neg", impact: -15, color: "#e67e22", freq: 150, msg: "Focus Lost" },
-    { text: "EMERGENCY DRILL", type: "pos", impact: 400, color: "#9b59b6", freq: 1300, msg: "Protocol Mastered" }
+// --- DYNAMIC USA MATRIX (50+ SITUATIONS) ---
+const usaSituations = [
+    { text: "ACTIVE SHOOTER DRILL", type: "pos", impact: 1000, color: "#2ecc71", freq: 1200, state: "ALL" },
+    { text: "UNLOCKED FIREARM", type: "neg", impact: -100, color: "#ff3131", freq: 80, state: "TX/FL" },
+    { text: "CREDIT CARD DEBT", type: "neg", impact: -50, color: "#e67e22", freq: 110, state: "ALL" },
+    { text: "SITUATIONAL AWARENESS", type: "pos", impact: 500, color: "#00f2ff", freq: 900, state: "URBAN" },
+    { text: "PEER DRUG PRESSURE", type: "neg", impact: -80, color: "#ff3131", freq: 70, state: "CA/WA" },
+    { text: "911 EMERGENCY PROTOCOL", type: "pos", impact: 600, color: "#2ecc71", freq: 1000, state: "ALL" },
+    { text: "CYBER BULLYING", type: "neg", impact: -30, color: "#9b59b6", freq: 140, state: "ALL" },
+    { text: "KNOW YOUR RIGHTS", type: "pos", impact: 800, color: "#f1c40f", freq: 750, state: "ALL" },
+    { text: "EXIT STRATEGY", type: "pos", impact: 400, color: "#2ecc71", freq: 950, state: "PUBLIC PLACES" }
 ];
 
-let stats = { money: 0, health: 100, rank: "ROOKIE" };
+const states = ["TEXAS", "CALIFORNIA", "FLORIDA", "NEW YORK", "ILLINOIS", "GEORGIA", "ARIZONA"];
+let currentStats = { money: 0, health: 100, state: states[0] };
 let active = false;
 let objects = [];
-let particles = [];
-let difficulty = 1.0;
-const user = { x: canvas.width / 2, y: canvas.height / 2, size: 60 };
+const user = { x: canvas.width / 2, y: canvas.height / 2, size: 50 };
 
-function resize() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-}
+function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
 window.addEventListener('resize', resize);
 resize();
 
@@ -116,30 +90,30 @@ function triggerSound(freq, type) {
     const gain = audioCtx.createGain();
     osc.type = type === 'pos' ? 'sine' : 'sawtooth';
     osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-    gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.8);
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
-    osc.start();
-    osc.stop(audioCtx.currentTime + 0.8);
-}
-
-function flash(color) {
-    const f = document.getElementById('warning-flash');
-    f.style.background = color;
-    f.style.opacity = "0.5";
-    setTimeout(() => f.style.opacity = "0", 100);
+    gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.7);
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.start(); osc.stop(audioCtx.currentTime + 0.7);
 }
 
 function spawn() {
     if(!active) return;
-    const entry = rawData[Math.floor(Math.random() * rawData.length)];
+    const entry = usaSituations[Math.floor(Math.random() * usaSituations.length)];
+    // Multiplicador de velocidad por estado (NY/CA más rápido/caótico)
+    const stateSpeed = (currentStats.state === "NEW YORK" || currentStats.state === "CALIFORNIA") ? 1.5 : 1.0;
+    
     objects.push({
         ...entry,
         x: Math.random() * (canvas.width - 200) + 100,
         y: -100,
-        speed: (3.5 + (stats.money / 5000)) * difficulty
+        speed: (4 + (currentStats.money / 10000)) * stateSpeed
     });
+
+    // Cambio dinámico de estado cada 15 segundos
+    if(Math.random() < 0.01) {
+        currentStats.state = states[Math.floor(Math.random() * states.length)];
+        document.getElementById('val-state').innerText = currentStats.state;
+    }
 }
 
 function update() {
@@ -151,86 +125,48 @@ function update() {
 
         if (dist < user.size) {
             if (obj.type === 'neg') {
-                stats.health -= 25;
-                stats.money = Math.floor(stats.money * 0.2); // CRITICAL LOSS (80% gone)
+                currentStats.health -= 25;
+                // En USA un error legal o de seguridad te quita el futuro
+                currentStats.money = Math.floor(currentStats.money * 0.1); 
                 triggerSound(obj.freq, 'neg');
-                flash('red');
-                if (window.navigator.vibrate) window.navigator.vibrate([300, 100, 300]);
             } else {
-                stats.money += obj.impact;
-                stats.health = Math.min(100, stats.health + 10);
+                currentStats.money += obj.impact;
+                currentStats.health = Math.min(100, currentStats.health + 5);
                 triggerSound(obj.freq, 'pos');
-                flash('cyan');
-                difficulty += 0.05;
             }
             updateHUD();
-            createExplosion(obj.x, obj.y, obj.color);
             objects.splice(i, 1);
         }
         if(obj.y > canvas.height + 100) objects.splice(i, 1);
     });
 
-    if(stats.health <= 0) endGame("SYSTEM OVERLOAD: YOU ARE NOT PREPARED.");
+    if(currentStats.health <= 0) endGame("SYSTEM COLLAPSE: FAILURE TO ADAPT TO STATE LAWS.");
 }
 
 function updateHUD() {
-    document.getElementById('val-money').innerText = "$" + stats.money;
-    document.getElementById('val-health').innerText = stats.health + "%";
-    
-    if(stats.money > 10000) stats.rank = "SURVIVOR";
-    if(stats.money > 50000) stats.rank = "ELITE GUARDIAN";
-    if(stats.money > 100000) stats.rank = "MASTER OF FLOW";
-    document.getElementById('val-rank').innerText = stats.rank;
-}
-
-function createExplosion(x, y, color) {
-    for (let i = 0; i < 20; i++) {
-        particles.push({
-            x, y, vx: (Math.random()-0.5)*20, vy: (Math.random()-0.5)*20, life: 1.0, color
-        });
-    }
+    document.getElementById('val-money').innerText = "$" + currentStats.money;
+    document.getElementById('val-health').innerText = currentStats.health + "%";
 }
 
 function draw() {
-    ctx.fillStyle = 'rgba(5, 5, 8, 0.25)';
+    ctx.fillStyle = 'rgba(2, 2, 5, 0.3)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // USER AVATAR (THE CORE)
-    ctx.shadowBlur = 30;
-    ctx.shadowColor = "#00f2ff";
-    ctx.strokeStyle = "#00f2ff";
-    ctx.lineWidth = 5;
-    ctx.beginPath();
-    ctx.arc(user.x, user.y, user.size - 15, 0, Math.PI * 2);
-    ctx.stroke();
+    // USER SCANNER
+    ctx.strokeStyle = varColor('--neon-blue');
+    ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.arc(user.x, user.y, user.size - 10, 0, Math.PI * 2); ctx.stroke();
 
-    // PROJECTION SCANNER
     objects.forEach(obj => {
-        ctx.shadowBlur = 20;
-        ctx.shadowColor = obj.color;
-        ctx.fillStyle = "white";
-        ctx.font = "900 20px Orbitron";
+        ctx.fillStyle = obj.color;
+        ctx.shadowBlur = 15; ctx.shadowColor = obj.color;
+        ctx.font = "900 16px Orbitron";
         ctx.textAlign = "center";
         ctx.fillText(obj.text, obj.x, obj.y);
-        
-        if(obj.type === 'neg') {
-            ctx.strokeStyle = obj.color;
-            ctx.setLineDash([5, 5]);
-            ctx.beginPath(); ctx.moveTo(obj.x, obj.y); ctx.lineTo(user.x, user.y);
-            ctx.stroke();
-            ctx.setLineDash([]);
-        }
     });
-
-    particles.forEach((p, i) => {
-        ctx.globalAlpha = p.life;
-        ctx.fillStyle = p.color;
-        ctx.fillRect(p.x, p.y, 4, 4);
-        p.x += p.vx; p.y += p.vy; p.life -= 0.04;
-        if(p.life <= 0) particles.splice(i, 1);
-    });
-    ctx.globalAlpha = 1;
 }
+
+function varColor(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
 
 window.addEventListener('mousemove', e => { user.x = e.clientX; user.y = e.clientY; });
 window.addEventListener('touchmove', e => { user.x = e.touches[0].clientX; user.y = e.touches[0].clientY; e.preventDefault(); }, {passive: false});
@@ -238,21 +174,17 @@ window.addEventListener('touchmove', e => { user.x = e.touches[0].clientX; user.
 function startGame() {
     document.getElementById('overlay').style.display = 'none';
     active = true;
-    setInterval(spawn, 700);
+    setInterval(spawn, 900);
     loop();
 }
 
 function endGame(msg) {
     active = false;
-    alert(msg + "\n\nFINAL NET WORTH: $" + stats.money);
+    alert(msg + "\nFINAL WEALTH: $" + currentStats.money);
     location.reload();
 }
 
-function loop() {
-    update();
-    draw();
-    requestAnimationFrame(loop);
-}
+function loop() { update(); draw(); requestAnimationFrame(loop); }
 </script>
 </body>
 </html>
