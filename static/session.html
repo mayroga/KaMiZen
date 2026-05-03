@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>AL CIELO | NEURO-DISCIPLINE</title>
+    <title>AL CIELO | TOTAL NEURO-DISCIPLINE</title>
     <style>
         :root {
             --neon-blue: #00f2ff;
             --neon-gold: #f1c40f;
-            --neon-green: #2ecc71;
             --neon-red: #ff3131;
             --bg-dark: #050508;
         }
@@ -20,18 +19,18 @@
             z-index: 100; pointer-events: none;
         }
         .data-box {
-            background: rgba(0, 0, 0, 0.9);
+            background: rgba(0, 0, 0, 0.95);
             border: 2px solid var(--neon-blue);
             padding: 10px; text-align: center;
-            min-width: 120px; box-shadow: 0 0 20px rgba(0, 242, 255, 0.1);
+            min-width: 130px; box-shadow: 0 0 20px rgba(0, 242, 255, 0.1);
         }
-        .label { font-size: 9px; color: var(--neon-blue); letter-spacing: 1px; font-weight: 900; display: block; }
-        .value { font-size: 22px; font-weight: 900; display: block; }
+        .label { font-size: 10px; color: var(--neon-blue); letter-spacing: 2px; font-weight: 900; display: block; }
+        .value { font-size: 24px; font-weight: 900; display: block; }
 
-        #timer-box {
-            position: absolute; bottom: 20px; width: 100%; text-align: center;
-            color: var(--neon-red); font-size: 28px; font-weight: 900; text-shadow: 0 0 15px var(--neon-red);
-            z-index: 100;
+        #timer-display {
+            position: absolute; bottom: 30px; width: 100%; text-align: center;
+            color: var(--neon-red); font-size: 35px; font-weight: 900; 
+            text-shadow: 0 0 20px var(--neon-red); z-index: 100;
         }
 
         #overlay {
@@ -40,30 +39,30 @@
             align-items: center; z-index: 1000; text-align: center;
         }
         .start-btn {
-            padding: 25px 60px; background: var(--neon-blue); color: black;
+            padding: 30px 70px; background: var(--neon-blue); color: black;
             border: none; font-family: 'Orbitron'; font-weight: 900;
-            cursor: pointer; margin-top: 30px; letter-spacing: 5px;
-            box-shadow: 0 0 50px var(--neon-blue); font-size: 1.5rem;
+            cursor: pointer; letter-spacing: 5px; font-size: 1.8rem;
+            box-shadow: 0 0 50px var(--neon-blue);
         }
-        #warning-flash { position: fixed; inset: 0; pointer-events: none; z-index: 50; opacity: 0; }
+        #flash-alert { position: fixed; inset: 0; pointer-events: none; z-index: 50; opacity: 0; }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
 </head>
 <body>
 
-<div id="warning-flash"></div>
-<div id="timer-box">SESSION: <span id="clock">27:00</span></div>
+<div id="flash-alert"></div>
+<div id="timer-display">TIME REMAINING: <span id="clock">27:00</span></div>
 
 <div id="hud">
     <div class="data-box" style="border-color: var(--neon-gold);"><span class="label">NET WORTH</span><span id="val-money" class="value">$0</span></div>
-    <div class="data-box" style="border-color: var(--neon-red);"><span class="label">NEURAL STABILITY</span><span id="val-health" class="value">100%</span></div>
-    <div class="data-box" style="border-color: var(--neon-blue);"><span class="label">RANK</span><span id="val-rank" class="value">ROOKIE</span></div>
+    <div class="data-box" style="border-color: var(--neon-red);"><span class="label">STABILITY</span><span id="val-health" class="value">100%</span></div>
+    <div class="data-box" style="border-color: var(--neon-blue);"><span class="label">CURRENT LEVEL</span><span id="val-rank" class="value">1</span></div>
 </div>
 
 <div id="overlay">
-    <h1 style="color: var(--neon-blue); letter-spacing: 15px; font-size: 50px;">AL CIELO</h1>
-    <h2 style="color: var(--neon-gold); font-size: 14px;">SURVIVAL & DISCIPLINE SIMULATOR</h2>
-    <button class="start-btn" onclick="startGame()">INITIALIZE</button>
+    <h1 style="color: var(--neon-blue); letter-spacing: 15px; font-size: 60px; margin:0;">AL CIELO</h1>
+    <h2 style="color: var(--neon-gold); font-size: 18px; margin-bottom: 40px;">NEURO-DISCIPLINE SIMULATOR</h2>
+    <button class="start-btn" onclick="startGame()">INITIALIZE TRAINING</button>
 </div>
 
 <canvas id="gameCanvas"></canvas>
@@ -73,41 +72,39 @@ const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 let audioCtx;
 
-// --- ESTRUCTURA DE NIVELES Y PALABRAS ---
+// --- 3 LEVELS CONFIGURATION ---
 const levels = [
-    { name: "NEURO-HOGAR", time: 5*60, laser: 1, speed: 3, data: [
+    { name: "LEVEL 1: FOUNDATION", duration: 5 * 60, laserWidth: 1, laserDash: [10, 5], speedMult: 1, data: [
         { text: "TELLING TRUTH", type: "pos", impact: 300, color: "#2ecc71", freq: 523 },
-        { text: "HIDING TRUTH", type: "neg", impact: -100, color: "#ff3131", freq: 110 },
         { text: "CLEAN ROOM", type: "pos", impact: 200, color: "#2ecc71", freq: 587 },
-        { text: "MESSY ROOM", type: "neg", impact: -50, color: "#e67e22", freq: 90 },
         { text: "SAYING SORRY", type: "pos", impact: 400, color: "#00f2ff", freq: 659 },
-        { text: "MIRAR LADOS", type: "pos", impact: 200, color: "#2ecc71", freq: 698 },
-        { text: "AHORRO", type: "pos", impact: 150, color: "#f1c40f", freq: 784 },
-        { text: "DISTRACCIÓN", type: "neg", impact: -25, color: "#e67e22", freq: 130 }
+        { text: "HIDING TRUTH", type: "neg", impact: -100, color: "#ff3131", freq: 110 },
+        { text: "MESSY ROOM", type: "neg", impact: -50, color: "#e67e22", freq: 90 },
+        { text: "DISOBEDIENCE", type: "neg", impact: -150, color: "#ff3131", freq: 85 }
     ]},
-    { name: "SOCIAL MATRIX", time: 12*60, laser: 3, speed: 5, data: [
-        { text: "TEAMWORK", type: "pos", impact: 600, color: "#2ecc71", freq: 880 },
-        { text: "PEER PRESSURE", type: "neg", impact: -300, color: "#ff3131", freq: 120 },
-        { text: "CYBER SECURITY", type: "pos", impact: 300, color: "#00f2ff", freq: 987 },
+    { name: "LEVEL 2: SOCIAL MATRIX", duration: 12 * 60, laserWidth: 4, laserDash: [2, 2], speedMult: 1.6, data: [
+        { text: "TEAMWORK", type: "pos", impact: 600, color: "#2ecc71", freq: 783 },
+        { text: "INVESTMENT", type: "pos", impact: 1000, color: "#f1c40f", freq: 880 },
+        { text: "CYBER SECURITY", type: "pos", impact: 500, color: "#00f2ff", freq: 987 },
+        { text: "SAVING MONEY", type: "pos", impact: 400, color: "#f1c40f", freq: 1046 },
+        { text: "PEER PRESSURE", type: "neg", impact: -500, color: "#ff3131", freq: 120 },
         { text: "BULLYING", type: "neg", impact: -400, color: "#ff3131", freq: 70 },
-        { text: "CYBER BULLYING", type: "neg", impact: -30, color: "#9b59b6", freq: 140 },
-        { text: "DISCIPLINA", type: "pos", impact: 300, color: "#00f2ff", freq: 1046 },
-        { text: "INVESTMENT", type: "pos", impact: 1000, color: "#f1c40f", freq: 1174 },
-        { text: "SOCIAL MEDIA TRAP", type: "neg", impact: -15, color: "#e67e22", freq: 150 }
-    ]},
-    { name: "USA SURVIVAL", time: 10*60, laser: 6, speed: 7, data: [
-        { text: "ACTIVE SHOOTER DRILL", type: "pos", impact: 1000, color: "#2ecc71", freq: 1318 },
-        { text: "UNLOCKED FIREARM", type: "neg", impact: -2000, color: "#ff3131", freq: 80 },
-        { text: "911 PROTOCOL", type: "pos", impact: 600, color: "#2ecc71", freq: 1396 },
-        { text: "SITUATIONAL AWARENESS", type: "pos", impact: 500, color: "#00f2ff", freq: 1567 },
-        { text: "KNOW YOUR RIGHTS", type: "pos", impact: 800, color: "#f1c40f", freq: 1760 },
-        { text: "EXIT STRATEGY", type: "pos", impact: 400, color: "#2ecc71", freq: 1975 },
-        { text: "STRANGER DANGER", type: "neg", impact: -1500, color: "#ff3131", freq: 50 },
+        { text: "SOCIAL MEDIA TRAP", type: "neg", impact: -200, color: "#e67e22", freq: 150 },
         { text: "CREDIT CARD DEBT", type: "neg", impact: -100, color: "#e67e22", freq: 110 }
+    ]},
+    { name: "LEVEL 3: TOTAL SURVIVAL", duration: 10 * 60, laserWidth: 12, laserDash: [], speedMult: 2.3, data: [
+        { text: "ACTIVE SHOOTER DRILL", type: "pos", impact: 2000, color: "#2ecc71", freq: 1318 },
+        { text: "911 PROTOCOL", type: "pos", impact: 800, color: "#2ecc71", freq: 1396 },
+        { text: "SITUATIONAL AWARENESS", type: "pos", impact: 700, color: "#00f2ff", freq: 1567 },
+        { text: "KNOW YOUR RIGHTS", type: "pos", impact: 1200, color: "#f1c40f", freq: 1760 },
+        { text: "EXIT STRATEGY", type: "pos", impact: 600, color: "#2ecc71", freq: 1975 },
+        { text: "UNLOCKED FIREARM", type: "neg", impact: -5000, color: "#ff3131", freq: 60 },
+        { text: "STRANGER DANGER", type: "neg", impact: -2500, color: "#ff3131", freq: 50 },
+        { text: "PEER DRUG PRESSURE", type: "neg", impact: -3000, color: "#ff3131", freq: 40 }
     ]}
 ];
 
-let stats = { money: 0, health: 100, level: 0, totalSeconds: 27 * 60 };
+let stats = { money: 0, health: 100, currentLevelIdx: 0, totalSeconds: 27 * 60 };
 let active = false;
 let objects = [];
 let particles = [];
@@ -116,72 +113,73 @@ const user = { x: 0, y: 0, size: 60 };
 function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
 window.addEventListener('resize', resize); resize();
 
-function playSound(freq, type) {
+function triggerSound(freq, type) {
     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     const osc = audioCtx.createOscillator();
     const g = audioCtx.createGain();
-    osc.type = type === 'pos' ? 'triangle' : 'sawtooth'; // Piano vs Alarma
+    osc.type = type === 'pos' ? 'triangle' : 'sawtooth';
     osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
     g.gain.setValueAtTime(0.2, audioCtx.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.8);
+    g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 1.0);
     osc.connect(g); g.connect(audioCtx.destination);
-    osc.start(); osc.stop(audioCtx.currentTime + 0.8);
+    osc.start(); osc.stop(audioCtx.currentTime + 1.0);
 }
 
-function flash(color) {
-    const f = document.getElementById('warning-flash');
-    f.style.background = color; f.style.opacity = "0.4";
-    setTimeout(() => f.style.opacity = "0", 100);
+function flashScreen(color) {
+    const f = document.getElementById('flash-alert');
+    f.style.background = color; f.style.opacity = "0.5";
+    setTimeout(() => f.style.opacity = "0", 150);
 }
 
 function spawn() {
     if(!active) return;
-    const lvl = levels[stats.level];
-    const entry = lvl.data[Math.floor(Math.random() * lvl.data.length)];
+    const lvl = levels[stats.currentLevelIdx];
+    const data = lvl.data[Math.floor(Math.random() * lvl.data.length)];
     objects.push({
-        ...entry,
-        x: Math.random() * (canvas.width - 250) + 125,
+        ...data,
+        x: Math.random() * (canvas.width - 300) + 150,
         y: -100,
-        vx: (Math.random() - 0.5) * 4,
-        speed: lvl.speed + (Math.random() * 2)
+        vx: (Math.random() - 0.5) * 6,
+        speed: (3 + Math.random() * 3) * lvl.speedMult
     });
 }
 
 function update() {
     if(!active) return;
     stats.totalSeconds -= 1/60;
-    if(stats.totalSeconds <= 0) endGame("TRAINING COMPLETE: YOU ARE PREPARED.");
-
-    // Manejo de Niveles por tiempo
+    
+    // Auto-Level Switching Logic
     let elapsed = (27 * 60) - stats.totalSeconds;
-    if (elapsed < 5 * 60) stats.level = 0;
-    else if (elapsed < 17 * 60) stats.level = 1;
-    else stats.level = 2;
+    if (elapsed < 5 * 60) stats.currentLevelIdx = 0;
+    else if (elapsed < 17 * 60) stats.currentLevelIdx = 1;
+    else stats.currentLevelIdx = 2;
+
+    if(stats.totalSeconds <= 0) endGame("MISSION ACCOMPLISHED: YOU ARE PREPARED");
 
     objects.forEach((obj, i) => {
         obj.y += obj.speed;
-        obj.x += obj.vx + Math.sin(obj.y * 0.02) * 2;
-        if(obj.x < 50 || obj.x > canvas.width - 50) obj.vx *= -1;
+        obj.x += obj.vx + Math.sin(obj.y * 0.01) * 4;
+        if(obj.x < 100 || obj.x > canvas.width - 100) obj.vx *= -1;
 
-        const dist = Math.sqrt((obj.x - user.x)**2 + (obj.y - user.y)**2);
-        if (dist < user.size) {
+        const d = Math.sqrt((obj.x - user.x)**2 + (obj.y - user.y)**2);
+        if (d < user.size) {
             if (obj.type === 'neg') {
-                stats.health -= 15;
-                stats.money = Math.floor(stats.money * 0.5);
-                playSound(obj.freq, 'neg');
-                flash('red');
-                if (window.navigator.vibrate) window.navigator.vibrate([200, 100, 200]);
+                stats.health -= 20;
+                stats.money = Math.floor(stats.money * 0.4);
+                triggerSound(obj.freq, 'neg');
+                flashScreen('red');
+                if (window.navigator.vibrate) window.navigator.vibrate([300, 100, 300]);
             } else {
                 stats.money += obj.impact;
-                stats.health = Math.min(100, stats.health + 5);
-                playSound(obj.freq, 'pos');
-                flash('cyan');
+                stats.health = Math.min(100, stats.health + 2);
+                triggerSound(obj.freq, 'pos');
+                flashScreen('cyan');
             }
             createExplosion(obj.x, obj.y, obj.color);
             objects.splice(i, 1);
             updateHUD();
         }
-        if(obj.y > canvas.height + 100) objects.splice(i, 1);
+        if(obj.y > canvas.height + 150) objects.splice(i, 1);
     });
 
     particles.forEach((p, i) => {
@@ -195,7 +193,7 @@ function update() {
 function updateHUD() {
     document.getElementById('val-money').innerText = "$" + stats.money;
     document.getElementById('val-health').innerText = stats.health + "%";
-    document.getElementById('val-rank').innerText = levels[stats.level].name;
+    document.getElementById('val-rank').innerText = stats.currentLevelIdx + 1;
     
     const m = Math.floor(stats.totalSeconds / 60);
     const s = Math.floor(stats.totalSeconds % 60);
@@ -203,67 +201,67 @@ function updateHUD() {
 }
 
 function createExplosion(x, y, color) {
-    for (let i = 0; i < 15; i++) {
+    for (let i = 0; i < 20; i++) {
         particles.push({ x, y, vx: (Math.random()-0.5)*15, vy: (Math.random()-0.5)*15, life: 1, color });
     }
 }
 
 function draw() {
-    ctx.fillStyle = 'rgba(5, 5, 8, 0.3)';
+    ctx.fillStyle = 'rgba(5, 5, 8, 0.4)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Escudo del Usuario
-    ctx.shadowBlur = 20; ctx.shadowColor = varColor('--neon-blue');
-    ctx.strokeStyle = varColor('--neon-blue'); ctx.lineWidth = 4;
+    // User Avatar
+    ctx.shadowBlur = 25; ctx.shadowColor = "#00f2ff";
+    ctx.strokeStyle = "#00f2ff"; ctx.lineWidth = 5;
     ctx.beginPath(); ctx.arc(user.x, user.y, user.size - 20, 0, Math.PI * 2); ctx.stroke();
 
+    const currentLvl = levels[stats.currentLevelIdx];
+
     objects.forEach(obj => {
-        const power = levels[stats.level].laser;
         if(obj.type === 'neg') {
-            ctx.strokeStyle = obj.color; ctx.setLineDash([5, 10]); ctx.lineWidth = power;
+            ctx.strokeStyle = obj.color; 
+            ctx.setLineDash(currentLvl.laserDash); 
+            ctx.lineWidth = currentLvl.laserWidth;
             ctx.beginPath(); ctx.moveTo(obj.x, obj.y); ctx.lineTo(user.x, user.y); ctx.stroke();
             ctx.setLineDash([]);
         }
 
-        // TEXTO LEGIBLE
-        ctx.font = "900 22px Orbitron";
-        const tw = ctx.measureText(obj.text).width;
+        ctx.font = "900 24px Orbitron";
+        const textWidth = ctx.measureText(obj.text).width;
         ctx.fillStyle = "black";
-        ctx.fillRect(obj.x - tw/2 - 10, obj.y - 18, tw + 20, 30);
+        ctx.fillRect(obj.x - textWidth/2 - 10, obj.y - 15, textWidth + 20, 30);
         
         ctx.fillStyle = obj.color; ctx.textAlign = "center";
-        ctx.fillText(obj.text, obj.x, obj.y + 8);
+        ctx.fillText(obj.text, obj.x, obj.y + 10);
     });
 
     particles.forEach(p => {
         ctx.globalAlpha = p.life; ctx.fillStyle = p.color;
-        ctx.fillRect(p.x, p.y, 4, 4);
+        ctx.fillRect(p.x, p.y, 5, 5);
     });
     ctx.globalAlpha = 1;
 }
 
-function varColor(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
-
-const handleMove = e => { 
+const inputMove = e => { 
     const cx = e.touches ? e.touches[0].clientX : e.clientX;
     const cy = e.touches ? e.touches[0].clientY : e.clientY;
     user.x = cx; user.y = cy; 
 };
-window.addEventListener('mousemove', handleMove);
-window.addEventListener('touchmove', e => { handleMove(e); e.preventDefault(); }, {passive: false});
+window.addEventListener('mousemove', inputMove);
+window.addEventListener('touchmove', e => { inputMove(e); e.preventDefault(); }, {passive: false});
 
 function startGame() {
     document.getElementById('overlay').style.display = 'none';
     active = true;
-    setInterval(spawn, 800);
-    function loop() { update(); draw(); requestAnimationFrame(loop); }
-    loop();
+    setInterval(spawn, 700);
+    function gameLoop() { update(); draw(); requestAnimationFrame(gameLoop); }
+    gameLoop();
 }
 
-function endGame(msg) {
+function endGame(message) {
     active = false;
-    alert(msg + "\nFINAL WEALTH: $" + stats.money);
-    location.reload();
+    alert(message + "\n\nFINAL NET WORTH: $" + stats.money);
+    location.reload(); // Restart Button is effectively the reload
 }
 </script>
 </body>
