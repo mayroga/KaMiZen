@@ -56,12 +56,12 @@
 <div id="hud">
     <div class="data-box" style="border-color: var(--neon-gold);"><span class="label">NET WORTH</span><span id="val-money" class="value">$0</span></div>
     <div class="data-box" style="border-color: var(--neon-red);"><span class="label">STABILITY</span><span id="val-health" class="value">100%</span></div>
-    <div class="data-box" style="border-color: var(--neon-blue);"><span class="label">CURRENT LEVEL</span><span id="val-rank" class="value">1</span></div>
+    <div class="data-box" style="border-color: var(--neon-blue);"><span class="label">LEVEL</span><span id="val-rank" class="value">1</span></div>
 </div>
 
 <div id="overlay">
     <h1 style="color: var(--neon-blue); letter-spacing: 15px; font-size: 60px; margin:0;">AL CIELO</h1>
-    <h2 style="color: var(--neon-gold); font-size: 18px; margin-bottom: 40px;">NEURO-DISCIPLINE SIMULATOR</h2>
+    <h2 style="color: var(--neon-gold); font-size: 18px; margin-bottom: 40px;">USA SURVIVAL SIMULATOR</h2>
     <button class="start-btn" onclick="startGame()">INITIALIZE TRAINING</button>
 </div>
 
@@ -74,30 +74,31 @@ let audioCtx;
 
 // --- 3 LEVELS CONFIGURATION ---
 const levels = [
-    { name: "LEVEL 1: FOUNDATION", duration: 5 * 60, laserWidth: 1, laserDash: [10, 5], speedMult: 1, data: [
+    { name: "1", duration: 5 * 60, laserWidth: 1, laserDash: [10, 5], speedMult: 1, data: [
         { text: "TELLING TRUTH", type: "pos", impact: 300, color: "#2ecc71", freq: 523 },
         { text: "CLEAN ROOM", type: "pos", impact: 200, color: "#2ecc71", freq: 587 },
         { text: "SAYING SORRY", type: "pos", impact: 400, color: "#00f2ff", freq: 659 },
+        { text: "AHORRO", type: "pos", impact: 150, color: "#f1c40f", freq: 784 },
         { text: "HIDING TRUTH", type: "neg", impact: -100, color: "#ff3131", freq: 110 },
         { text: "MESSY ROOM", type: "neg", impact: -50, color: "#e67e22", freq: 90 },
         { text: "DISOBEDIENCE", type: "neg", impact: -150, color: "#ff3131", freq: 85 }
     ]},
-    { name: "LEVEL 2: SOCIAL MATRIX", duration: 12 * 60, laserWidth: 4, laserDash: [2, 2], speedMult: 1.6, data: [
+    { name: "2", duration: 12 * 60, laserWidth: 5, laserDash: [2, 2], speedMult: 1.6, data: [
         { text: "TEAMWORK", type: "pos", impact: 600, color: "#2ecc71", freq: 783 },
         { text: "INVESTMENT", type: "pos", impact: 1000, color: "#f1c40f", freq: 880 },
         { text: "CYBER SECURITY", type: "pos", impact: 500, color: "#00f2ff", freq: 987 },
-        { text: "SAVING MONEY", type: "pos", impact: 400, color: "#f1c40f", freq: 1046 },
+        { text: "KNOW YOUR RIGHTS", type: "pos", impact: 800, color: "#f1c40f", freq: 750 },
         { text: "PEER PRESSURE", type: "neg", impact: -500, color: "#ff3131", freq: 120 },
         { text: "BULLYING", type: "neg", impact: -400, color: "#ff3131", freq: 70 },
         { text: "SOCIAL MEDIA TRAP", type: "neg", impact: -200, color: "#e67e22", freq: 150 },
         { text: "CREDIT CARD DEBT", type: "neg", impact: -100, color: "#e67e22", freq: 110 }
     ]},
-    { name: "LEVEL 3: TOTAL SURVIVAL", duration: 10 * 60, laserWidth: 12, laserDash: [], speedMult: 2.3, data: [
+    { name: "3", duration: 10 * 60, laserWidth: 15, laserDash: [], speedMult: 2.3, data: [
         { text: "ACTIVE SHOOTER DRILL", type: "pos", impact: 2000, color: "#2ecc71", freq: 1318 },
         { text: "911 PROTOCOL", type: "pos", impact: 800, color: "#2ecc71", freq: 1396 },
-        { text: "SITUATIONAL AWARENESS", type: "pos", impact: 700, color: "#00f2ff", freq: 1567 },
-        { text: "KNOW YOUR RIGHTS", type: "pos", impact: 1200, color: "#f1c40f", freq: 1760 },
+        { text: "SITUATIONAL AWARENESS", type: "pos", impact: 1500, color: "#00f2ff", freq: 1567 },
         { text: "EXIT STRATEGY", type: "pos", impact: 600, color: "#2ecc71", freq: 1975 },
+        { text: "MIRAR LADOS", type: "pos", impact: 500, color: "#2ecc71", freq: 880 },
         { text: "UNLOCKED FIREARM", type: "neg", impact: -5000, color: "#ff3131", freq: 60 },
         { text: "STRANGER DANGER", type: "neg", impact: -2500, color: "#ff3131", freq: 50 },
         { text: "PEER DRUG PRESSURE", type: "neg", impact: -3000, color: "#ff3131", freq: 40 }
@@ -140,21 +141,23 @@ function spawn() {
         x: Math.random() * (canvas.width - 300) + 150,
         y: -100,
         vx: (Math.random() - 0.5) * 6,
-        speed: (3 + Math.random() * 3) * lvl.speedMult
+        speed: (4 + Math.random() * 3) * lvl.speedMult
     });
 }
 
 function update() {
     if(!active) return;
-    stats.totalSeconds -= 1/60;
     
-    // Auto-Level Switching Logic
+    // RELOJ DESCONTANDO (REWARD/PUNISHMENT LOGIC INSIDE)
+    stats.totalSeconds -= 1/60; 
+    
+    // LEVEL SWITCHING
     let elapsed = (27 * 60) - stats.totalSeconds;
     if (elapsed < 5 * 60) stats.currentLevelIdx = 0;
     else if (elapsed < 17 * 60) stats.currentLevelIdx = 1;
     else stats.currentLevelIdx = 2;
 
-    if(stats.totalSeconds <= 0) endGame("MISSION ACCOMPLISHED: YOU ARE PREPARED");
+    if(stats.totalSeconds <= 0) endGame("MISSION ACCOMPLISHED");
 
     objects.forEach((obj, i) => {
         obj.y += obj.speed;
@@ -164,14 +167,16 @@ function update() {
         const d = Math.sqrt((obj.x - user.x)**2 + (obj.y - user.y)**2);
         if (d < user.size) {
             if (obj.type === 'neg') {
-                stats.health -= 20;
-                stats.money = Math.floor(stats.money * 0.4);
+                // PUNISHMENT
+                stats.health -= 25;
+                stats.money = Math.floor(stats.money * 0.3); // Lose 70% of wealth
                 triggerSound(obj.freq, 'neg');
                 flashScreen('red');
-                if (window.navigator.vibrate) window.navigator.vibrate([300, 100, 300]);
+                if (window.navigator.vibrate) window.navigator.vibrate([400, 100, 400]);
             } else {
+                // REWARD
                 stats.money += obj.impact;
-                stats.health = Math.min(100, stats.health + 2);
+                stats.health = Math.min(100, stats.health + 5);
                 triggerSound(obj.freq, 'pos');
                 flashScreen('cyan');
             }
@@ -188,6 +193,7 @@ function update() {
     });
 
     if(stats.health <= 0) { stats.health = 100; stats.money = 0; updateHUD(); }
+    updateHUD(); // Tick the clock in HUD
 }
 
 function updateHUD() {
@@ -195,14 +201,14 @@ function updateHUD() {
     document.getElementById('val-health').innerText = stats.health + "%";
     document.getElementById('val-rank').innerText = stats.currentLevelIdx + 1;
     
-    const m = Math.floor(stats.totalSeconds / 60);
-    const s = Math.floor(stats.totalSeconds % 60);
+    const m = Math.floor(Math.max(0, stats.totalSeconds) / 60);
+    const s = Math.floor(Math.max(0, stats.totalSeconds) % 60);
     document.getElementById('clock').innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
 }
 
 function createExplosion(x, y, color) {
     for (let i = 0; i < 20; i++) {
-        particles.push({ x, y, vx: (Math.random()-0.5)*15, vy: (Math.random()-0.5)*15, life: 1, color });
+        particles.push({ x, y, vx: (Math.random()-0.5)*20, vy: (Math.random()-0.5)*20, life: 1, color });
     }
 }
 
@@ -210,7 +216,7 @@ function draw() {
     ctx.fillStyle = 'rgba(5, 5, 8, 0.4)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // User Avatar
+    // USER CORE
     ctx.shadowBlur = 25; ctx.shadowColor = "#00f2ff";
     ctx.strokeStyle = "#00f2ff"; ctx.lineWidth = 5;
     ctx.beginPath(); ctx.arc(user.x, user.y, user.size - 20, 0, Math.PI * 2); ctx.stroke();
@@ -229,7 +235,7 @@ function draw() {
         ctx.font = "900 24px Orbitron";
         const textWidth = ctx.measureText(obj.text).width;
         ctx.fillStyle = "black";
-        ctx.fillRect(obj.x - textWidth/2 - 10, obj.y - 15, textWidth + 20, 30);
+        ctx.fillRect(obj.x - textWidth/2 - 10, obj.y - 18, textWidth + 20, 35);
         
         ctx.fillStyle = obj.color; ctx.textAlign = "center";
         ctx.fillText(obj.text, obj.x, obj.y + 10);
@@ -253,15 +259,15 @@ window.addEventListener('touchmove', e => { inputMove(e); e.preventDefault(); },
 function startGame() {
     document.getElementById('overlay').style.display = 'none';
     active = true;
-    setInterval(spawn, 700);
+    setInterval(spawn, 750);
     function gameLoop() { update(); draw(); requestAnimationFrame(gameLoop); }
     gameLoop();
 }
 
 function endGame(message) {
     active = false;
-    alert(message + "\n\nFINAL NET WORTH: $" + stats.money);
-    location.reload(); // Restart Button is effectively the reload
+    alert(message + "\n\nFINAL WEALTH: $" + stats.money);
+    location.reload(); 
 }
 </script>
 </body>
