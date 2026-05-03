@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>KAMIZEN SESSION</title>
+    <title>KAMIZEN SESSION | ULTRA</title>
     <style>
         :root {
             --neon-blue: #00f2ff;
@@ -23,6 +23,7 @@
             border: 2px solid var(--neon-blue);
             padding: 10px; text-align: center;
             min-width: 130px; box-shadow: 0 0 20px rgba(0, 242, 255, 0.1);
+            transition: all 0.3s;
         }
         .label { font-size: 10px; color: var(--neon-blue); letter-spacing: 2px; font-weight: 900; display: block; }
         .value { font-size: 24px; font-weight: 900; display: block; }
@@ -46,10 +47,12 @@
             border: none; font-family: 'Orbitron'; font-weight: 900;
             cursor: pointer; letter-spacing: 3px; font-size: 1.2rem;
             box-shadow: 0 0 30px var(--neon-blue); margin-top: 20px;
+            transition: 0.3s;
         }
+        .start-btn:hover { transform: scale(1.1); box-shadow: 0 0 60px var(--neon-blue); }
         .commit-btn { background: white; box-shadow: 0 0 30px white; }
         
-        #flash-alert { position: fixed; inset: 0; pointer-events: none; z-index: 50; opacity: 0; }
+        #flash-alert { position: fixed; inset: 0; pointer-events: none; z-index: 50; opacity: 0; transition: opacity 0.1s; }
         .warning-text { color: yellow; font-size: 1.5rem; margin: 20px; font-weight: 900; }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
@@ -57,26 +60,25 @@
 <body>
 
 <div id="flash-alert"></div>
-<div id="timer-display">TIME REMAINING: <span id="clock">27:00</span></div>
+<div id="timer-display"><span id="clock">27:00</span></div>
 
 <div id="hud">
-    <div class="data-box" style="border-color: var(--neon-gold);"><span class="label">NET WORTH</span><span id="val-money" class="value">$0</span></div>
-    <div class="data-box" style="border-color: var(--neon-red);"><span class="label">STABILITY</span><span id="val-health" class="value">100%</span></div>
-    <div class="data-box" style="border-color: var(--neon-blue);"><span class="label">LEVEL</span><span id="val-rank" class="value">1</span></div>
+    <div id="box-money" class="data-box" style="border-color: var(--neon-gold);"><span class="label">NET WORTH</span><span id="val-money" class="value">$0</span></div>
+    <div id="box-health" class="data-box" style="border-color: var(--neon-red);"><span class="label">STABILITY</span><span id="val-health" class="value">100%</span></div>
+    <div id="box-rank" class="data-box" style="border-color: var(--neon-blue);"><span class="label">LEVEL</span><span id="val-rank" class="value">1</span></div>
 </div>
 
-<!-- DISCIPLINARY BLOCK -->
 <div id="discipline-block">
     <h1 style="color: white; font-size: 50px; text-shadow: 0 0 20px black;">HALTED</h1>
     <div class="warning-text">WEAKNESS DETECTED: LACK OF FOCUS</div>
-    <p style="max-width: 600px; line-height: 1.6;">You have triggered 3 negative concepts. Your mental discipline has failed. To continue, you must accept the following commitment.:</p>
+    <p style="max-width: 600px; line-height: 1.6;">You have triggered 3 negative concepts. Your mental discipline has failed. To continue, you must accept the following commitment:</p>
     <div id="dynamic-message" style="background: black; padding: 20px; border: 2px solid white; margin: 20px; font-weight: 900; color: var(--neon-gold);"></div>
     <button class="commit-btn" onclick="resumeTraining()">I ACCEPT THE COMMITMENT AND WILL REJOIN</button>
 </div>
 
 <div id="overlay">
-    <h1 style="color: var(--neon-blue); letter-spacing: 15px; font-size: 60px; margin:0;">KAMIZEN SESSION</h1>
-    <h2 style="color: var(--neon-gold); font-size: 18px; margin-bottom: 40px;">USA SURVIVAL SIMULATOR</h2>
+    <h1 style="color: var(--neon-blue); letter-spacing: 15px; font-size: 60px; margin:0;">KAMIZEN</h1>
+    <h2 style="color: var(--neon-gold); font-size: 18px; margin-bottom: 40px;">NEURO-DISCIPLINE SIMULATOR</h2>
     <button class="start-btn" onclick="startGame()">INITIALIZE TRAINING</button>
 </div>
 
@@ -85,45 +87,32 @@
 <script>
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
-let audioCtx;
+let audioCtx, mainGain, bgOsc;
 
 const levels = [
-    { name: "1", duration: 5 * 60, laserWidth: 1, laserDash: [10, 5], speedMult: 1, data: [
+    { name: "1", duration: 5 * 60, laserWidth: 1, laserDash: [10, 5], speedMult: 1, bgFreq: 110, data: [
         { text: "TELLING TRUTH", type: "pos", impact: 300, color: "#2ecc71", freq: 523 },
         { text: "CLEAN ROOM", type: "pos", impact: 200, color: "#2ecc71", freq: 587 },
         { text: "SAYING SORRY", type: "pos", impact: 400, color: "#00f2ff", freq: 659 },
         { text: "SAVE/BUSSINESS", type: "pos", impact: 150, color: "#f1c40f", freq: 784 },
         { text: "LISTEN YOUR PARENTS", type: "pos", impact: 250, color: "#2ecc71", freq: 440 },
-        { text: "FOLLOW ADVICE", type: "pos", impact: 300, color: "#00f2ff", freq: 493 },
-        { text: "RESPECT", type: "pos", impact: 200, color: "#2ecc71", freq: 523 },
         { text: "HIDING TRUTH", type: "neg", impact: -100, color: "#ff3131", freq: 110 },
         { text: "MESSY ROOM", type: "neg", impact: -50, color: "#e67e22", freq: 90 },
         { text: "DISOBEDIENCE", type: "neg", impact: -150, color: "#ff3131", freq: 85 }
     ]},
-    { name: "2", duration: 12 * 60, laserWidth: 5, laserDash: [2, 2], speedMult: 1.6, data: [
-        { text: "TEAMWORK", type: "pos", impact: 600, color: "#2ecc71", freq: 783 },
+    { name: "2", duration: 12 * 60, laserWidth: 5, laserDash: [2, 2], speedMult: 1.6, bgFreq: 164, data: [
         { text: "INVESTMENT", type: "pos", impact: 1000, color: "#f1c40f", freq: 880 },
         { text: "CYBER SECURITY", type: "pos", impact: 500, color: "#00f2ff", freq: 987 },
         { text: "KNOW YOUR RIGHTS", type: "pos", impact: 800, color: "#f1c40f", freq: 750 },
-        { text: "OBSERVE", type: "pos", impact: 400, color: "#2ecc71", freq: 659 },
-        { text: "BE CAREFUL", type: "pos", impact: 350, color: "#00f2ff", freq: 698 },
-        { text: "LISTEN", type: "pos", impact: 300, color: "#2ecc71", freq: 740 },
+        { text: "TEAMWORK", type: "pos", impact: 600, color: "#2ecc71", freq: 783 },
         { text: "PEER PRESSURE", type: "neg", impact: -500, color: "#ff3131", freq: 120 },
         { text: "BULLYING", type: "neg", impact: -400, color: "#ff3131", freq: 70 },
-        { text: "SOCIAL MEDIA TRAP", type: "neg", impact: -200, color: "#e67e22", freq: 150 },
-        { text: "CREDIT CARD DEBT", type: "neg", impact: -100, color: "#e67e22", freq: 110 },
-        { text: "DO NOT TALK WITH STRANGERS", type: "neg", impact: -800, color: "#ff3131", freq: 95 }
+        { text: "SOCIAL MEDIA TRAP", type: "neg", impact: -200, color: "#e67e22", freq: 150 }
     ]},
-    { name: "3", duration: 10 * 60, laserWidth: 15, laserDash: [], speedMult: 2.3, data: [
+    { name: "3", duration: 10 * 60, laserWidth: 15, laserDash: [], speedMult: 2.3, bgFreq: 220, data: [
         { text: "ACTIVE SHOOTER DRILL", type: "pos", impact: 2000, color: "#2ecc71", freq: 1318 },
-        { text: "911 PROTOCOL", type: "pos", impact: 800, color: "#2ecc71", freq: 1396 },
         { text: "SITUATIONAL AWARENESS", type: "pos", impact: 1500, color: "#00f2ff", freq: 1567 },
         { text: "EXIT STRATEGY", type: "pos", impact: 600, color: "#2ecc71", freq: 1975 },
-        { text: "LOOK TO THE SIDES", type: "pos", impact: 500, color: "#2ecc71", freq: 880 },
-        { text: "BE ALERT", type: "pos", impact: 1000, color: "#f1c40f", freq: 1760 },
-        { text: "BE SAFE", type: "pos", impact: 1200, color: "#00f2ff", freq: 1864 },
-        { text: "OBSERVE SURROUNDING", type: "pos", impact: 900, color: "#2ecc71", freq: 1661 },
-        { text: "WALKING OUT/BE ALERT", type: "pos", impact: 850, color: "#f1c40f", freq: 1480 },
         { text: "UNLOCKED FIREARM", type: "neg", impact: -5000, color: "#ff3131", freq: 60 },
         { text: "STRANGER DANGER", type: "neg", impact: -2500, color: "#ff3131", freq: 50 },
         { text: "PEER DRUG PRESSURE", type: "neg", impact: -3000, color: "#ff3131", freq: 40 }
@@ -131,52 +120,49 @@ const levels = [
 ];
 
 const commitments = [
-"I PROMISE TO FILTER MY DISTRACTIONS AND FOCUS ON WHAT BUILDS MY VALUE.",
-"I RECOGNIZE THAT BAD DECISIONS DESTROY MY STABILITY. I WILL BE ALERT.",
-"MY MIND IS MY BEST WEAPON. I PROMISE NOT TO EXPOSE IT TO NEGATIVE CONCEPTS.",
-"I PROMISE TO LISTEN TO ADVICE AND OBSERVE MY SURROUNDINGS TO STAY SAFE.",
-"DISCIPLINE IS MY ONLY PATH TO SUCCESS. I RE-ENTER WITH TOTAL FOCUS."
+    "I PROMISE TO FILTER MY DISTRACTIONS AND FOCUS ON WHAT BUILDS MY VALUE.",
+    "I RECOGNIZE THAT BAD DECISIONS DESTROY MY STABILITY. I WILL BE ALERT.",
+    "MY MIND IS MY BEST WEAPON. I PROMISE NOT TO EXPOSE IT TO NEGATIVE CONCEPTS.",
+    "I PROMISE TO LISTEN TO ADVICE AND OBSERVE MY SURROUNDINGS TO STAY SAFE.",
+    "DISCIPLINE IS MY ONLY PATH TO SUCCESS. I RE-ENTER WITH TOTAL FOCUS."
 ];
 
 let stats = { money: 0, health: 100, currentLevelIdx: 0, totalSeconds: 27 * 60 };
 let active = false;
-let objects = [];
-let particles = [];
+let objects = [], particles = [];
 let consecutiveErrors = 0;
 const user = { x: 0, y: 0, size: 60 };
 
 function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
 window.addEventListener('resize', resize); resize();
 
+function initAudio() {
+    if (audioCtx) return;
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    mainGain = audioCtx.createGain();
+    mainGain.connect(audioCtx.destination);
+    mainGain.gain.value = 0.3;
+
+    bgOsc = audioCtx.createOscillator();
+    bgOsc.type = 'sine';
+    bgOsc.frequency.value = levels[0].bgFreq;
+    const bgGain = audioCtx.createGain();
+    bgGain.gain.value = 0.05;
+    bgOsc.connect(bgGain);
+    bgGain.connect(mainGain);
+    bgOsc.start();
+}
+
 function triggerSound(freq, type) {
-    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (!audioCtx) return;
     const osc = audioCtx.createOscillator();
     const g = audioCtx.createGain();
     osc.type = type === 'pos' ? 'triangle' : 'sawtooth';
     osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-    g.gain.setValueAtTime(0.2, audioCtx.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 1.0);
-    osc.connect(g); g.connect(audioCtx.destination);
-    osc.start(); osc.stop(audioCtx.currentTime + 1.0);
-}
-
-function flashScreen(color) {
-    const f = document.getElementById('flash-alert');
-    f.style.background = color; f.style.opacity = "0.5";
-    setTimeout(() => f.style.opacity = "0", 150);
-}
-
-function triggerDisciplineBlock() {
-    active = false;
-    const msgBox = document.getElementById('dynamic-message');
-    msgBox.innerText = commitments[Math.floor(Math.random() * commitments.length)];
-    document.getElementById('discipline-block').style.display = 'flex';
-}
-
-function resumeTraining() {
-    consecutiveErrors = 0;
-    document.getElementById('discipline-block').style.display = 'none';
-    active = true;
+    g.gain.setValueAtTime(0.15, audioCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.8);
+    osc.connect(g); g.connect(mainGain);
+    osc.start(); osc.stop(audioCtx.currentTime + 0.8);
 }
 
 function spawn() {
@@ -197,9 +183,14 @@ function update() {
     stats.totalSeconds -= 1/60; 
     
     let elapsed = (27 * 60) - stats.totalSeconds;
+    let oldLvl = stats.currentLevelIdx;
     if (elapsed < 5 * 60) stats.currentLevelIdx = 0;
     else if (elapsed < 17 * 60) stats.currentLevelIdx = 1;
     else stats.currentLevelIdx = 2;
+
+    if (oldLvl !== stats.currentLevelIdx && bgOsc) {
+        bgOsc.frequency.setTargetAtTime(levels[stats.currentLevelIdx].bgFreq, audioCtx.currentTime, 2);
+    }
 
     if(stats.totalSeconds <= 0) endGame("MISSION ACCOMPLISHED");
 
@@ -215,33 +206,36 @@ function update() {
                 stats.money = Math.floor(stats.money * 0.3);
                 consecutiveErrors++;
                 triggerSound(obj.freq, 'neg');
-                flashScreen('red');
+                document.getElementById('flash-alert').style.background = 'red';
+                document.getElementById('flash-alert').style.opacity = '0.5';
+                setTimeout(() => document.getElementById('flash-alert').style.opacity = '0', 150);
                 if (consecutiveErrors >= 3) triggerDisciplineBlock();
             } else {
                 stats.money += obj.impact;
                 stats.health = Math.min(100, stats.health + 5);
-                consecutiveErrors = 0; // Se reinicia al hacerlo bien
+                consecutiveErrors = 0;
                 triggerSound(obj.freq, 'pos');
-                flashScreen('cyan');
+                document.getElementById('flash-alert').style.background = 'cyan';
+                document.getElementById('flash-alert').style.opacity = '0.3';
+                setTimeout(() => document.getElementById('flash-alert').style.opacity = '0', 100);
             }
             createExplosion(obj.x, obj.y, obj.color);
             objects.splice(i, 1);
-            updateHUD();
         }
         if(obj.y > canvas.height + 150) objects.splice(i, 1);
     });
 
     particles.forEach((p, i) => {
-        p.x += p.vx; p.y += p.vy; p.life -= 0.03;
+        p.x += p.vx; p.y += p.vy; p.life -= 0.02;
         if(p.life <= 0) particles.splice(i, 1);
     });
 
-    if(stats.health <= 0) { stats.health = 100; stats.money = 0; updateHUD(); }
+    if(stats.health <= 0) { stats.health = 100; stats.money = 0; }
     updateHUD();
 }
 
 function updateHUD() {
-    document.getElementById('val-money').innerText = "$" + stats.money;
+    document.getElementById('val-money').innerText = "$" + stats.money.toLocaleString();
     document.getElementById('val-health').innerText = stats.health + "%";
     document.getElementById('val-rank').innerText = stats.currentLevelIdx + 1;
     const m = Math.floor(Math.max(0, stats.totalSeconds) / 60);
@@ -250,18 +244,33 @@ function updateHUD() {
 }
 
 function createExplosion(x, y, color) {
-    for (let i = 0; i < 20; i++) {
-        particles.push({ x, y, vx: (Math.random()-0.5)*20, vy: (Math.random()-0.5)*20, life: 1, color });
+    for (let i = 0; i < 15; i++) {
+        particles.push({ x, y, vx: (Math.random()-0.5)*15, vy: (Math.random()-0.5)*15, life: 1, color });
     }
+}
+
+function triggerDisciplineBlock() {
+    active = false;
+    const msgBox = document.getElementById('dynamic-message');
+    msgBox.innerText = commitments[Math.floor(Math.random() * commitments.length)];
+    document.getElementById('discipline-block').style.display = 'flex';
+}
+
+function resumeTraining() {
+    consecutiveErrors = 0;
+    document.getElementById('discipline-block').style.display = 'none';
+    active = true;
 }
 
 function draw() {
     ctx.fillStyle = 'rgba(5, 5, 8, 0.4)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    ctx.shadowBlur = 25; ctx.shadowColor = "#00f2ff";
-    ctx.strokeStyle = "#00f2ff"; ctx.lineWidth = 5;
-    ctx.beginPath(); ctx.arc(user.x, user.y, user.size - 20, 0, Math.PI * 2); ctx.stroke();
+    // User Aura
+    ctx.shadowBlur = 20; ctx.shadowColor = "#00f2ff";
+    ctx.strokeStyle = "#00f2ff"; ctx.lineWidth = 4;
+    ctx.beginPath(); ctx.arc(user.x, user.y, user.size - 25, 0, Math.PI * 2); ctx.stroke();
+    ctx.shadowBlur = 0;
 
     const currentLvl = levels[stats.currentLevelIdx];
 
@@ -273,17 +282,14 @@ function draw() {
             ctx.beginPath(); ctx.moveTo(obj.x, obj.y); ctx.lineTo(user.x, user.y); ctx.stroke();
             ctx.setLineDash([]);
         }
-        ctx.font = "900 24px Orbitron";
-        const textWidth = ctx.measureText(obj.text).width;
-        ctx.fillStyle = "black";
-        ctx.fillRect(obj.x - textWidth/2 - 10, obj.y - 18, textWidth + 20, 35);
+        ctx.font = "900 22px Orbitron";
         ctx.fillStyle = obj.color; ctx.textAlign = "center";
-        ctx.fillText(obj.text, obj.x, obj.y + 10);
+        ctx.fillText(obj.text, obj.x, obj.y);
     });
 
     particles.forEach(p => {
         ctx.globalAlpha = p.life; ctx.fillStyle = p.color;
-        ctx.fillRect(p.x, p.y, 5, 5);
+        ctx.fillRect(p.x, p.y, 4, 4);
     });
     ctx.globalAlpha = 1;
 }
@@ -297,9 +303,10 @@ window.addEventListener('mousemove', inputMove);
 window.addEventListener('touchmove', e => { inputMove(e); e.preventDefault(); }, {passive: false});
 
 function startGame() {
+    initAudio();
     document.getElementById('overlay').style.display = 'none';
     active = true;
-    setInterval(spawn, 750);
+    setInterval(spawn, 800);
     function gameLoop() { update(); draw(); requestAnimationFrame(gameLoop); }
     gameLoop();
 }
