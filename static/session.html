@@ -1,350 +1,335 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>KaMiZen Session</title>
-    <style>
-        :root {
-            --neon-blue: #00f2ff;
-            --neon-gold: #f1c40f;
-            --neon-green: #2ecc71;
-            --neon-purple: #9b59b6;
-            --neon-red: #ff3131;
-            --bg-dark: #020205;
-        }
-        body { margin: 0; overflow: hidden; background: var(--bg-dark); color: white; font-family: 'Orbitron', sans-serif; cursor: none; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>KaMiZen Session</title>
 
-        #hud {
-            position: absolute; top: 20px; width: 100%;
-            display: flex; justify-content: space-evenly;
-            z-index: 100; pointer-events: none;
-        }
-        .data-box {
-            background: rgba(0, 0, 0, 0.85);
-            border: 2px solid var(--neon-blue);
-            padding: 10px 20px; text-align: center;
-            box-shadow: 0 0 20px rgba(0, 242, 255, 0.3);
-            min-width: 120px;
-            border-radius: 5px;
-        }
-        .label { font-size: 10px; color: var(--neon-blue); letter-spacing: 2px; font-weight: 900; display: block; }
-        .value { font-size: 24px; font-weight: 900; display: block; color: #fff; }
+<style>
+:root {
+    --neon-blue:#00f2ff;
+    --neon-gold:#f1c40f;
+    --neon-green:#2ecc71;
+    --neon-purple:#9b59b6;
+    --neon-red:#ff3131;
+    --bg-dark:#020205;
+}
 
-        canvas { display: block; }
+body{
+    margin:0;
+    overflow:hidden;
+    background:var(--bg-dark);
+    color:white;
+    font-family:'Orbitron', sans-serif;
+    cursor:none;
+}
 
-        #start-screen {
-            position: fixed; inset: 0; background: var(--bg-dark);
-            display: flex; flex-direction: column; justify-content: center;
-            align-items: center; z-index: 1000; text-align: center;
-        }
-        .start-btn {
-            padding: 20px 50px; background: var(--neon-blue); color: black;
-            border: none; font-family: 'Orbitron'; font-weight: 900;
-            cursor: pointer; margin-top: 30px; letter-spacing: 3px;
-            box-shadow: 0 0 30px var(--neon-blue);
-        }
-    </style>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
+#hud{
+    position:absolute;
+    top:20px;
+    width:100%;
+    display:flex;
+    justify-content:space-evenly;
+    z-index:100;
+    pointer-events:none;
+}
+
+.data-box{
+    background:rgba(0,0,0,0.85);
+    border:2px solid var(--neon-blue);
+    padding:10px 20px;
+    text-align:center;
+    box-shadow:0 0 20px rgba(0,242,255,0.3);
+    min-width:120px;
+    border-radius:5px;
+}
+
+.label{
+    font-size:10px;
+    color:var(--neon-blue);
+    letter-spacing:2px;
+    font-weight:900;
+    display:block;
+}
+
+.value{
+    font-size:24px;
+    font-weight:900;
+    display:block;
+    color:#fff;
+}
+
+canvas{display:block;}
+
+#start-screen{
+    position:fixed;
+    inset:0;
+    background:var(--bg-dark);
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    z-index:1000;
+    text-align:center;
+}
+
+.start-btn{
+    padding:20px 50px;
+    background:var(--neon-blue);
+    color:black;
+    border:none;
+    font-family:'Orbitron';
+    font-weight:900;
+    cursor:pointer;
+    margin-top:30px;
+    letter-spacing:3px;
+    box-shadow:0 0 30px var(--neon-blue);
+}
+</style>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
 </head>
 
 <body>
 
+<!-- HUD -->
 <div id="hud">
-    <div class="data-box" style="border-color: var(--neon-gold);">
+    <div class="data-box" style="border-color:var(--neon-gold);">
         <span class="label">CAPITAL</span>
         <span id="val-money" class="value">0</span>
     </div>
-    <div class="data-box" style="border-color: var(--neon-green);">
+
+    <div class="data-box" style="border-color:var(--neon-green);">
         <span class="label">STABILITY</span>
         <span id="val-health" class="value">100%</span>
     </div>
-    <div class="data-box" style="border-color: var(--neon-purple);">
+
+    <div class="data-box" style="border-color:var(--neon-purple);">
         <span class="label">BIZ UNITS</span>
         <span id="val-biz" class="value">0</span>
     </div>
 </div>
 
+<!-- START -->
 <div id="start-screen">
-    <h1 style="color: var(--neon-blue); letter-spacing: 15px; font-size: 50px;">kamizen</h1>
-    <p style="letter-spacing: 5px; color: #888;">NEURAL DIAGNOSTICS & DOPAMINE FLOW</p>
-    <button class="start-btn" onclick="startGame()">INITIALIZE INTERFACE</button>
+    <h1 style="color:var(--neon-blue);letter-spacing:15px;font-size:50px;">kamizen</h1>
+    <p style="letter-spacing:5px;color:#888;">NEURAL DIAGNOSTICS & DOPAMINE FLOW</p>
+    <button class="start-btn" onclick="startSession()">INITIALIZE SESSION</button>
 </div>
 
 <canvas id="gameCanvas"></canvas>
 
 <script>
-const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
-let audioCtx;
 
-function resize() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+/* ========================= CANVAS ========================= */
+const canvas=document.getElementById("gameCanvas");
+const ctx=canvas.getContext("2d");
+
+function resize(){
+    canvas.width=innerWidth;
+    canvas.height=innerHeight;
 }
-window.addEventListener('resize', resize);
+addEventListener("resize",resize);
 resize();
 
-/* ===================== PHASE SYSTEM ===================== */
-let phase = 0;
-let sessionTime = 600;
-let timerRunning = false;
+/* ========================= STATE ========================= */
+let phase=0;
+/*
+0 story
+1 game1
+2 mission
+3 silence
+4 game2
+5 final
+*/
 
-/* ===================== SILENCE BLOCK ===================== */
-function triggerSilence() {
-    active = false;
+let active=false;
 
-    let t = 30;
-    const interval = setInterval(() => {
-        if (t <= 0) {
-            clearInterval(interval);
-            phase = 5;
-            active = true;
-            return;
-        }
-        t--;
-    }, 1000);
+let stats={money:0,health:100,biz:0};
+let objects=[];
+let particles=[];
+
+const user={x:innerWidth/2,y:innerHeight/2,size:60};
+
+/* ========================= AUDIO ========================= */
+let audioCtx;
+
+function playSound(freq,type){
+    if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+
+    const o=audioCtx.createOscillator();
+    const g=audioCtx.createGain();
+
+    o.type=type==="pos"?"sine":"sawtooth";
+    o.frequency.value=freq;
+
+    g.gain.value=0.1;
+    g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.5);
+
+    o.connect(g);
+    g.connect(audioCtx.destination);
+
+    o.start();
+    o.stop(audioCtx.currentTime+0.5);
 }
 
-/* ===================== FINAL TIMER ===================== */
-function startTimer() {
-    timerRunning = true;
-
-    const interval = setInterval(() => {
-        if (!active || phase === 2 || phase === 4 || phase === 6) return;
-
-        sessionTime--;
-
-        if (sessionTime === 300) {
-            phase = 2;
-            triggerDiagnosis();
-        }
-
-        if (sessionTime === 0) {
-            phase = 6;
-            triggerFinalDiagnosis();
-            clearInterval(interval);
-        }
-    }, 1000);
-}
-
-/* ===================== DATA ===================== */
-const rawData = [
-    { text: "SAVINGS", emoji: "💰", type: "pos", stat: "money", impact: 150, color: "#f1c40f", freq: 523.25 },
-    { text: "BUSINESS", emoji: "🤝", type: "pos", stat: "biz", impact: 1, color: "#3498db", freq: 659.25 },
-    { text: "FAMILY", emoji: "🏠", type: "pos", stat: "health", impact: 20, color: "#2ecc71", freq: 783.99 },
-    { text: "HAPPINESS", emoji: "😊", type: "pos", stat: "health", impact: 15, color: "#9b59b6", freq: 880.00 },
-    { text: "THREAT", emoji: "⚠️", type: "neg", stat: "health", impact: -25, color: "#ff3131", freq: 110.00 },
-    { text: "PROBLEM", emoji: "🛑", type: "neg", stat: "health", impact: -20, color: "#ff3131", freq: 90.00 },
-    { text: "INVESTMENT", emoji: "📈", type: "pos", stat: "money", impact: 300, color: "#00f2ff", freq: 987.77 },
-    { text: "EDUCATION", emoji: "📚", type: "pos", stat: "biz", impact: 1, color: "#00f2ff", freq: 1046.50 }
+/* ========================= DATA ========================= */
+const rawData=[
+    {text:"SAVINGS",emoji:"💰",type:"pos",stat:"money",impact:150,color:"#f1c40f",freq:523.25},
+    {text:"BUSINESS",emoji:"🤝",type:"pos",stat:"biz",impact:1,color:"#3498db",freq:659.25},
+    {text:"FAMILY",emoji:"🏠",type:"pos",stat:"health",impact:20,color:"#2ecc71",freq:783.99},
+    {text:"HAPPINESS",emoji:"😊",type:"pos",stat:"health",impact:15,color:"#9b59b6",freq:880},
+    {text:"THREAT",emoji:"⚠️",type:"neg",stat:"health",impact:-25,color:"#ff3131",freq:110},
+    {text:"PROBLEM",emoji:"🛑",type:"neg",stat:"health",impact:-20,color:"#ff3131",freq:90},
+    {text:"INVESTMENT",emoji:"📈",type:"pos",stat:"money",impact:300,color:"#00f2ff",freq:987.77},
+    {text:"EDUCATION",emoji:"📚",type:"pos",stat:"biz",impact:1,color:"#00f2ff",freq:1046.5}
 ];
 
-/* ===================== STATE ===================== */
-let stats = { money: 0, health: 100, biz: 0 };
-let active = false;
-let objects = [];
-let particles = [];
+/* ========================= INPUT ========================= */
+addEventListener("mousemove",e=>{
+    user.x=e.clientX;
+    user.y=e.clientY;
+});
 
-const user = { x: canvas.width / 2, y: canvas.height / 2, size: 60 };
+/* ========================= SPAWN ========================= */
+function spawn(){
+    if(!active) return;
 
-/* ===================== AUDIO ===================== */
-function playSound(freq, type) {
-    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-
-    osc.type = type === 'pos' ? 'sine' : 'sawtooth';
-    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-
-    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.5);
-
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
-
-    osc.start();
-    osc.stop(audioCtx.currentTime + 0.5);
-}
-
-/* ===================== SPAWN ===================== */
-function spawn() {
-    if (!active) return;
-
-    const entry = rawData[Math.floor(Math.random() * rawData.length)];
+    const d=rawData[Math.floor(Math.random()*rawData.length)];
 
     objects.push({
-        ...entry,
-        x: Math.random() * (canvas.width - 200) + 100,
-        y: -150,
-        speed: 2.5 + (stats.money / 5000),
-        pulse: 0
+        ...d,
+        x:Math.random()*innerWidth,
+        y:-100,
+        speed:2.5+(stats.money/5000),
+        pulse:0
     });
 }
 
-/* ===================== EXPLOSION ===================== */
-function createExplosion(x, y, color) {
-    for (let i = 0; i < 15; i++) {
-        particles.push({
-            x, y,
-            vx: (Math.random() - 0.5) * 10,
-            vy: (Math.random() - 0.5) * 10,
-            life: 1.0,
-            color
-        });
-    }
-}
+/* ========================= UPDATE ========================= */
+function update(){
 
-/* ===================== INPUT ===================== */
-function handleInput(e) {
-    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    if(!active) return;
 
-    user.x = clientX;
-    user.y = clientY;
-}
+    objects.forEach((o,i)=>{
 
-window.addEventListener('mousemove', handleInput);
-window.addEventListener('touchmove', handleInput);
+        o.y+=o.speed;
+        o.pulse+=0.05;
 
-/* ===================== UPDATE ===================== */
-function update() {
-    if (!active) return;
+        const dx=o.x-user.x;
+        const dy=o.y-user.y;
+        const dist=Math.sqrt(dx*dx+dy*dy);
 
-    objects.forEach((obj, i) => {
-        obj.y += obj.speed;
-        obj.pulse += 0.07;
+        if(dist<user.size){
 
-        const dist = Math.sqrt((obj.x - user.x) ** 2 + (obj.y - user.y) ** 2);
+            playSound(o.freq,o.type);
 
-        if (dist < user.size) {
-            playSound(obj.freq, obj.type);
-            createExplosion(obj.x, obj.y, obj.color);
+            if(o.stat==="money") stats.money+=o.impact;
+            if(o.stat==="biz") stats.biz+=o.impact;
+            if(o.stat==="health") stats.health=Math.max(0,Math.min(100,stats.health+o.impact));
 
-            if (obj.stat === 'money') stats.money += obj.impact;
-            if (obj.stat === 'biz') stats.biz += obj.impact;
-            if (obj.stat === 'health') stats.health = Math.max(0, Math.min(100, stats.health + obj.impact));
-
+            objects.splice(i,1);
             updateHUD();
-            objects.splice(i, 1);
-
-            if (navigator.vibrate) navigator.vibrate(obj.type === 'pos' ? 20 : 100);
         }
 
-        if (obj.y > canvas.height + 200) objects.splice(i, 1);
+        if(o.y>innerHeight+100) objects.splice(i,1);
     });
-
-    particles.forEach((p, i) => {
-        p.x += p.vx;
-        p.y += p.vy;
-        p.life -= 0.02;
-
-        if (p.life <= 0) particles.splice(i, 1);
-    });
-
-    if (stats.health <= 0) {
-        active = false;
-        alert("DIAGNOSIS: SYSTEM COLLAPSE. Stability reached 0.");
-        location.reload();
-    }
 }
 
-/* ===================== HUD ===================== */
-function updateHUD() {
-    document.getElementById('val-money').innerText = stats.money;
-    document.getElementById('val-health').innerText = stats.health + "%";
-    document.getElementById('val-biz').innerText = stats.biz;
+/* ========================= HUD ========================= */
+function updateHUD(){
+    val_money.innerText=stats.money;
+    val_health.innerText=stats.health+"%";
+    val_biz.innerText=stats.biz;
 }
 
-/* ===================== DIAGNOSIS ===================== */
-function triggerDiagnosis() {
-    active = false;
+/* ========================= DRAW ========================= */
+function draw(){
 
-    let msg = "";
+    ctx.fillStyle="rgba(2,2,5,0.25)";
+    ctx.fillRect(0,0,innerWidth,innerHeight);
 
-    if (stats.health < 40) msg = "DIAGNOSIS: LOW CONTROL";
-    else if (stats.money > 2000) msg = "DIAGNOSIS: HIGH EXECUTION";
-    else msg = "DIAGNOSIS: BALANCED STATE";
-
-    alert(msg);
-
-    setTimeout(() => {
-        phase = 3;
-        active = true;
-    }, 3000);
-}
-
-/* ===================== FINAL ===================== */
-function triggerFinalDiagnosis() {
-    active = false;
-
-    alert(
-        "FINAL REPORT\n" +
-        "Money: " + stats.money + "\n" +
-        "Health: " + stats.health + "\n" +
-        "Biz: " + stats.biz
-    );
-
-    setTimeout(() => location.reload(), 3000);
-}
-
-/* ===================== DRAW ===================== */
-function draw() {
-    ctx.fillStyle = 'rgba(2, 2, 5, 0.2)';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    ctx.shadowBlur = 30;
-    ctx.shadowColor = getComputedStyle(document.documentElement).getPropertyValue('--neon-blue');
-
-    ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--neon-blue');
-    ctx.lineWidth = 4;
+    ctx.strokeStyle="#00f2ff";
+    ctx.lineWidth=3;
 
     ctx.beginPath();
-    ctx.arc(user.x, user.y, user.size - 10, 0, Math.PI * 2);
+    ctx.arc(user.x,user.y,user.size,0,Math.PI*2);
     ctx.stroke();
 
-    particles.forEach(p => {
-        ctx.globalAlpha = p.life;
-        ctx.fillStyle = p.color;
-        ctx.fillRect(p.x, p.y, 4, 4);
-    });
+    objects.forEach(o=>{
+        ctx.fillStyle=o.color;
+        ctx.font="20px Orbitron";
+        ctx.fillText(o.text,o.x,o.y);
 
-    ctx.globalAlpha = 1;
-
-    objects.forEach(obj => {
-        const bounce = Math.sin(obj.pulse) * 10;
-
-        ctx.fillStyle = "white";
-        ctx.font = "900 20px Orbitron";
-        ctx.textAlign = "center";
-        ctx.fillText(obj.text, obj.x, obj.y - 40 + bounce);
-
-        ctx.font = "60px Arial";
-        ctx.fillText(obj.emoji, obj.x, obj.y + bounce);
+        ctx.font="40px Arial";
+        ctx.fillText(o.emoji,o.x,o.y+30);
     });
 }
 
-/* ===================== LOOP ===================== */
-function loop() {
+/* ========================= LOOP ========================= */
+function loop(){
     update();
     draw();
     requestAnimationFrame(loop);
 }
 
-/* ===================== START ===================== */
-function startGame() {
-    document.getElementById('start-screen').style.display = 'none';
+/* ========================= SILENCE ========================= */
+function triggerSilence(){
 
-    active = true;
+    active=false;
 
-    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    let t=30;
 
-    setInterval(spawn, 800);
+    const id=setInterval(()=>{
+
+        t--;
+
+        if(t<=0){
+            clearInterval(id);
+            phase=4;
+            active=true;
+        }
+
+    },1000);
+}
+
+/* ========================= TIMER ========================= */
+function startTimer(){
+
+    let time=600;
+
+    setInterval(()=>{
+
+        if(!active) return;
+
+        time--;
+
+        if(time===300){
+            phase=2;
+        }
+
+        if(time<=0){
+            phase=5;
+            active=false;
+        }
+
+    },1000);
+}
+
+/* ========================= START ========================= */
+function startSession(){
+
+    document.getElementById("start-screen").style.display="none";
+
+    active=true;
 
     startTimer();
+
+    setInterval(spawn,800);
+
     loop();
 }
+
 </script>
 
 </body>
