@@ -3,115 +3,113 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>AL CIELO - KAMIZEN FLOW</title>
+<title>KAMIZEN LIFE SYSTEM</title>
 
 <style>
 :root {
-    --neon-blue: #00f2ff;
-    --neon-gold: #f1c40f;
-    --neon-green: #2ecc71;
-    --neon-purple: #9b59b6;
-    --neon-red: #ff3131;
-    --bg-dark: #020205;
+  --blue:#00f2ff;
+  --red:#ff3131;
+  --green:#2ecc71;
+  --gold:#f1c40f;
+  --dark:#020205;
 }
 
 body {
-    margin: 0;
-    overflow: hidden;
-    background: var(--bg-dark);
-    color: white;
-    font-family: 'Orbitron', sans-serif;
-    cursor: none;
+  margin:0;
+  background:var(--dark);
+  color:white;
+  font-family:Orbitron;
+  overflow:hidden;
 }
 
-/* ===== TU HUD ORIGINAL ===== */
+/* HUD */
 #hud {
-    position: absolute;
-    top: 20px;
-    width: 100%;
-    display: flex;
-    justify-content: space-evenly;
-    z-index: 100;
-    pointer-events: none;
+  position:absolute;
+  top:10px;
+  width:100%;
+  display:flex;
+  justify-content:space-around;
+  z-index:10;
 }
 
-.data-box {
-    background: rgba(0, 0, 0, 0.85);
-    border: 2px solid var(--neon-blue);
-    padding: 10px 20px;
-    text-align: center;
-    box-shadow: 0 0 20px rgba(0, 242, 255, 0.3);
-    min-width: 120px;
-    border-radius: 5px;
+.box {
+  padding:6px 10px;
+  border:1px solid var(--blue);
+  font-size:12px;
 }
 
-.label {
-    font-size: 10px;
-    color: var(--neon-blue);
-    letter-spacing: 2px;
-    font-weight: 900;
-    display: block;
+/* OVERLAY */
+#overlay {
+  position:fixed;
+  inset:0;
+  background:var(--dark);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  z-index:999;
+  text-align:center;
+  padding:20px;
 }
 
-.value {
-    font-size: 24px;
-    font-weight: 900;
-    display: block;
-    color: #fff;
-}
-
-/* ===== TIMER GLOBAL ===== */
-#global-timer {
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    color: var(--neon-green);
-    font-size: 22px;
-    letter-spacing: 3px;
-    z-index: 200;
-}
-
-/* ===== OVERLAY DE FASES ===== */
-#phase-layer {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.92);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    z-index: 999;
-    text-align: center;
+.title {
+  color:var(--blue);
+  font-size:22px;
+  letter-spacing:4px;
 }
 
 .btn {
-    padding: 20px 50px;
-    background: var(--neon-blue);
-    color: black;
-    border: none;
-    font-family: 'Orbitron';
-    font-weight: 900;
-    cursor: pointer;
-    margin-top: 30px;
-    letter-spacing: 3px;
-    box-shadow: 0 0 30px var(--neon-blue);
+  margin-top:20px;
+  padding:15px 40px;
+  border:none;
+  border-radius:30px;
+  font-weight:bold;
+  cursor:pointer;
+  background:var(--blue);
 }
 
-/* ===== CIRCULO RESPIRACION ===== */
-#breath-circle {
-    position: absolute;
-    width: 150px;
-    height: 150px;
-    border: 3px solid var(--neon-green);
-    border-radius: 50%;
-    opacity: 0;
-    z-index: 300;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%) scale(0.5);
-    transition: all 1s linear;
+/* CONTINUE BUTTON */
+#continueBtn {
+  display:none;
+  margin-top:20px;
+  padding:12px 35px;
+  border-radius:25px;
+  border:none;
+  font-weight:bold;
+  cursor:pointer;
+  background:var(--gold);
 }
+
+/* OPTIONS */
+.option {
+  padding:12px;
+  margin:6px;
+  border:1px solid var(--blue);
+  cursor:pointer;
+  transition:0.2s;
+}
+
+.option.correct {
+  background:var(--green);
+  border-color:var(--green);
+}
+
+.option.wrong {
+  background:var(--red);
+  border-color:var(--red);
+}
+
+/* TIMER */
+#timer {
+  position:absolute;
+  top:60px;
+  width:100%;
+  text-align:center;
+  font-size:18px;
+  color:var(--red);
+}
+
+canvas { position:absolute; top:0; left:0; }
 </style>
 
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
@@ -119,253 +117,212 @@ body {
 
 <body>
 
-<!-- ===== HUD ORIGINAL ===== -->
 <div id="hud">
-    <div class="data-box" style="border-color: var(--neon-gold);">
-        <span class="label">CAPITAL</span>
-        <span id="val-money" class="value">0</span>
-    </div>
-    <div class="data-box" style="border-color: var(--neon-green);">
-        <span class="label">STABILITY</span>
-        <span id="val-health" class="value">100%</span>
-    </div>
-    <div class="data-box" style="border-color: var(--neon-purple);">
-        <span class="label">BIZ UNITS</span>
-        <span id="val-biz" class="value">0</span>
-    </div>
+  <div class="box">MONEY <span id="money">0</span></div>
+  <div class="box">HEALTH <span id="health">100</span></div>
+  <div class="box">LEGACY <span id="legacy">0</span></div>
 </div>
 
-<div id="global-timer">05:00</div>
+<div id="timer">10:00</div>
 
-<div id="phase-layer">
-    <h1 id="phase-title">KAMIZEN INIT</h1>
-    <p id="phase-text">Start system</p>
-    <button class="btn" onclick="nextPhase()">START</button>
+<canvas id="game"></canvas>
+
+<!-- OVERLAY -->
+<div id="overlay">
+  <div class="title" id="title">KAMIZEN</div>
+  <div id="content"></div>
+
+  <button class="btn" id="startBtn">START</button>
+  <button id="continueBtn">CONTINUE</button>
 </div>
-
-<div id="breath-circle"></div>
-
-<canvas id="gameCanvas"></canvas>
 
 <script>
+const overlay = document.getElementById("overlay");
+const content = document.getElementById("content");
+const startBtn = document.getElementById("startBtn");
+const continueBtn = document.getElementById("continueBtn");
+const title = document.getElementById("title");
+
+let phase = "story";
+let game1Time = 300;
+let game2Time = 300;
+
+let selected = false;
+
 /* =========================
-   🔒 TU MOTOR ORIGINAL INTACTO
-   ========================= */
+   FLOW CONTROL
+========================= */
 
-const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
-let audioCtx;
+startBtn.onclick = async () => {
+  startBtn.style.display="none";
+  await loadStory();
+};
 
-function resize() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-}
-window.addEventListener('resize', resize);
-resize();
+continueBtn.onclick = async () => {
+  continueBtn.style.display="none";
 
-const rawData = [
-    { text: "SAVINGS", emoji: "💰", type: "pos", stat: "money", impact: 150, color: "#f1c40f", freq: 523.25 },
-    { text: "BUSINESS", emoji: "🤝", type: "pos", stat: "biz", impact: 1, color: "#3498db", freq: 659.25 },
-    { text: "FAMILY", emoji: "🏠", type: "pos", stat: "health", impact: 20, color: "#2ecc71", freq: 783.99 },
-    { text: "HAPPINESS", emoji: "😊", type: "pos", stat: "health", impact: 15, color: "#9b59b6", freq: 880.00 },
-    { text: "THREAT", emoji: "⚠️", type: "neg", stat: "health", impact: -25, color: "#ff3131", freq: 110.00 },
-    { text: "PROBLEM", emoji: "🛑", type: "neg", stat: "health", impact: -20, color: "#ff3131", freq: 90.00 },
-    { text: "INVESTMENT", emoji: "📈", type: "pos", stat: "money", impact: 300, color: "#00f2ff", freq: 987.77 },
-    { text: "EDUCATION", emoji: "📚", type: "pos", stat: "biz", impact: 1, color: "#00f2ff", freq: 1046.50 }
-];
+  if(phase === "story"){
+    await startGame1();
+  }
 
-let stats = { money: 0, health: 100, biz: 0 };
-let active = false;
-let objects = [];
-let particles = [];
-const user = { x: canvas.width / 2, y: canvas.height / 2, size: 60 };
+  else if(phase === "game1"){
+    await loadMission();
+  }
 
-function playSound(freq, type) {
-    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    osc.type = type === 'pos' ? 'sine' : 'sawtooth';
-    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.5);
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
-    osc.start();
-    osc.stop(audioCtx.currentTime + 0.5);
-}
+  else if(phase === "mission"){
+    await startGame2();
+  }
 
-function spawn() {
-    if(!active) return;
-    const entry = rawData[Math.floor(Math.random() * rawData.length)];
-    objects.push({
-        ...entry,
-        x: Math.random() * (canvas.width - 200) + 100,
-        y: -150,
-        speed: 2.5 + (stats.money / 5000),
-        pulse: 0
-    });
-}
+  else if(phase === "game2"){
+    endSession();
+  }
+};
 
-function handleInput(e) {
-    const x = e.touches ? e.touches[0].clientX : e.clientX;
-    const y = e.touches ? e.touches[0].clientY : e.clientY;
-    user.x = x;
-    user.y = y;
-}
+/* =========================
+   STORY
+========================= */
 
-window.addEventListener('mousemove', handleInput);
-window.addEventListener('touchmove', handleInput);
+async function loadStory(){
+  phase="story";
 
-function update() {
-    if(!active) return;
+  content.innerHTML = `
+    <h3>STORY MODE</h3>
+    <p>Loading story from system...</p>
+  `;
 
-    objects.forEach((obj, i) => {
-        obj.y += obj.speed;
+  setTimeout(() => {
+    content.innerHTML = `
+      <h3>STORY</h3>
+      <p>Your roots define your future.</p>
+    `;
 
-        const dist = Math.hypot(obj.x - user.x, obj.y - user.y);
-        if (dist < user.size) {
-
-            playSound(obj.freq, obj.type);
-
-            if(obj.stat === 'money') stats.money += obj.impact;
-            if(obj.stat === 'biz') stats.biz += obj.impact;
-            if(obj.stat === 'health') stats.health = Math.max(0, Math.min(100, stats.health + obj.impact));
-
-            updateHUD();
-            objects.splice(i, 1);
-        }
-    });
-}
-
-function draw() {
-    ctx.fillStyle = 'rgba(2,2,5,0.2)';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    ctx.beginPath();
-    ctx.arc(user.x, user.y, user.size - 10, 0, Math.PI * 2);
-    ctx.strokeStyle = "#00f2ff";
-    ctx.stroke();
-
-    objects.forEach(obj => {
-        ctx.fillStyle = "white";
-        ctx.fillText(obj.text, obj.x, obj.y - 40);
-        ctx.fillText(obj.emoji, obj.x, obj.y);
-    });
-}
-
-function loop() {
-    update();
-    draw();
-    requestAnimationFrame(loop);
-}
-
-function updateHUD() {
-    document.getElementById('val-money').innerText = stats.money;
-    document.getElementById('val-health').innerText = stats.health + "%";
-    document.getElementById('val-biz').innerText = stats.biz;
+    continueBtn.style.display="block";
+  },1500);
 }
 
 /* =========================
-   🚀 KAMIZEN ORQUESTADOR
-   ========================= */
+   GAME 1
+========================= */
 
-let phase = 0;
-let time = 300;
+async function startGame1(){
+  phase="game1";
+  content.innerHTML="<h3>GAME PHASE 1</h3><p>Training...</p>";
 
-function startTimer(){
-    setInterval(()=>{
-        time--;
-        let m = Math.floor(time/60);
-        let s = time%60;
-        document.getElementById('global-timer').innerText =
-        `${m}:${s.toString().padStart(2,'0')}`;
-    },1000);
-}
+  let t = game1Time;
 
-function nextPhase(){
-    phase++;
-    document.getElementById("phase-layer").style.display="none";
+  let interval = setInterval(()=>{
+    t--;
+    document.getElementById("timer").innerText = format(t);
 
-    switch(phase){
-
-        case 1: // GAME
-            active = true;
-            setInterval(spawn,800);
-            loop();
-            startTimer();
-            setTimeout(nextPhase,30000);
-        break;
-
-        case 2: // DIAGNOSIS
-            active = false;
-            showPhase("DIAGNOSIS",
-            "Money:"+stats.money+" | Stability:"+stats.health+" | Biz:"+stats.biz);
-        break;
-
-        case 3: // MISSIONS
-            loadMission();
-        break;
-
-        case 4: // BREATH
-            startBreath();
-        break;
-
-        case 5: // SECOND GAME
-            active = true;
-            setTimeout(nextPhase,30000);
-        break;
-
-        case 6:
-            showPhase("END","KAMIZEN COMPLETE");
-        break;
+    if(t<=0){
+      clearInterval(interval);
+      continueBtn.style.display="block";
+      content.innerHTML="<h3>PHASE COMPLETE</h3><p>Review your behavior</p>";
     }
-}
-
-function showPhase(title,text){
-    document.getElementById("phase-title").innerText=title;
-    document.getElementById("phase-text").innerText=text;
-    document.getElementById("phase-layer").style.display="flex";
+  },1000);
 }
 
 /* =========================
-   MISSIONS JSON
-   ========================= */
+   MISSION (Q/A SYSTEM)
+========================= */
 
 async function loadMission(){
-    try{
-        const res = await fetch('/static/missions_01_07.json');
-        const data = await res.json();
-        const m = data.missions[Math.floor(Math.random()*data.missions.length)];
-        showPhase("MISSION", m.b[0].tx.en);
-    }catch(e){
-        showPhase("MISSION","ERROR LOADING");
-    }
+  phase="mission";
+
+  content.innerHTML = `
+    <h3>MISSION</h3>
+    <p>Choose correctly</p>
+  `;
+
+  const question = {
+    q:"What is the safest action?",
+    options:[
+      {t:"Fight", ok:false},
+      {t:"Run away blindly", ok:false},
+      {t:"Stay calm & analyze", ok:true},
+      {t:"Ignore", ok:false}
+    ]
+  };
+
+  const box = document.createElement("div");
+
+  question.options.forEach((o)=>{
+    const div = document.createElement("div");
+    div.className="option";
+    div.innerText=o.t;
+
+    div.onclick = ()=>{
+      if(selected) return;
+      selected=true;
+
+      if(o.ok){
+        div.classList.add("correct");
+      } else {
+        div.classList.add("wrong");
+      }
+
+      // reveal correct
+      document.querySelectorAll(".option").forEach(el=>{
+        el.style.pointerEvents="none";
+      });
+
+      continueBtn.style.display="block";
+    };
+
+    box.appendChild(div);
+  });
+
+  content.appendChild(document.createElement("hr"));
+  content.appendChild(document.createTextNode(question.q));
+  content.appendChild(box);
 }
 
 /* =========================
-   BREATH VISUAL
-   ========================= */
+   GAME 2
+========================= */
 
-function startBreath(){
-    const circle = document.getElementById("breath-circle");
-    circle.style.opacity = 1;
+async function startGame2(){
+  phase="game2";
 
-    let grow = true;
+  content.innerHTML="<h3>GAME PHASE 2</h3><p>Applied learning...</p>";
 
-    const interval = setInterval(()=>{
-        circle.style.transform =
-        grow ? "translate(-50%,-50%) scale(1.5)"
-             : "translate(-50%,-50%) scale(0.5)";
-        grow = !grow;
-    },4000);
+  let t = game2Time;
 
-    setTimeout(()=>{
-        clearInterval(interval);
-        circle.style.opacity = 0;
-        nextPhase();
-    },30000);
+  let interval = setInterval(()=>{
+    t--;
+    document.getElementById("timer").innerText = format(t);
+
+    if(t<=0){
+      clearInterval(interval);
+      continueBtn.style.display="block";
+      content.innerHTML="<h3>FINAL PHASE COMPLETE</h3>";
+    }
+  },1000);
+}
+
+/* =========================
+   END
+========================= */
+
+function endSession(){
+  overlay.innerHTML=`
+    <h2>SESSION COMPLETE</h2>
+    <p>System analysis finished</p>
+    <button class="btn" onclick="location.reload()">RESTART</button>
+  `;
+}
+
+/* =========================
+   UTILS
+========================= */
+
+function format(s){
+  let m=Math.floor(s/60);
+  let sec=s%60;
+  return `${m}:${sec<10?"0":""}${sec}`;
 }
 
 </script>
+
 </body>
 </html>
