@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>AL CIELO | INTEGRATED INTERFACE</title>
+    <title>AL CIELO | NEURO-SYSTEM</title>
     <style>
         :root {
+            /* Level 1 Colors */
             --neon-blue: #00f2ff;
             --neon-gold: #f1c40f;
             --neon-green: #2ecc71;
@@ -29,7 +30,9 @@
         .label { font-size: 10px; color: var(--neon-blue); letter-spacing: 2px; font-weight: 900; display: block; }
         .value { font-size: 24px; font-weight: 900; display: block; }
 
-        #overlay, #lock-screen {
+        canvas { display: block; }
+
+        #overlay {
             position: fixed; inset: 0; background: var(--bg-dark);
             display: flex; flex-direction: column; justify-content: center;
             align-items: center; z-index: 1000; text-align: center;
@@ -44,9 +47,9 @@
             position: fixed; inset: 0; pointer-events: none;
             z-index: 50; opacity: 0; transition: opacity 0.1s;
         }
-        #level-indicator {
+        #timer-box {
             position: absolute; bottom: 20px; right: 20px;
-            color: var(--neon-gold); font-size: 12px; letter-spacing: 2px;
+            color: var(--neon-red); font-weight: 900; font-size: 18px;
         }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
@@ -57,32 +60,30 @@
 
 <div id="hud">
     <div class="data-box" style="border-color: var(--neon-gold);">
-        <span class="label">CAPITAL / NET WORTH</span>
-        <span id="val-money" class="value">$0</span>
+        <span class="label" id="label-money">CURRENT CAPITAL</span>
+        <span id="val-money" class="value">0</span>
     </div>
     <div class="data-box" style="border-color: var(--neon-green);">
-        <span class="label">STABILITY</span>
+        <span class="label" id="label-health">STABILITY</span>
         <span id="val-health" class="value">100%</span>
     </div>
     <div class="data-box" style="border-color: var(--neon-blue);">
-        <span class="label">NEURAL RANK</span>
+        <span class="label" id="label-rank">SYSTEM LEVEL</span>
         <span id="val-rank" class="value">LEVEL 1</span>
     </div>
 </div>
 
+<div id="timer-box">SESSION TIME: <span id="time-left">27:00</span></div>
+
 <div id="overlay">
     <h1 style="color: var(--neon-blue); letter-spacing: 15px; font-size: 40px;">AL CIELO</h1>
-    <h2 id="level-title" style="color: var(--neon-gold); font-size: 14px;">SURVIVAL & DISCIPLINE SYSTEM</h2>
-    <p id="timer-display" style="color: var(--neon-red); font-weight: 900; margin-top: 10px;"></p>
-    <button class="start-btn" onclick="startGame()">INITIALIZE INTERFACE</button>
+    <h2 id="sub-title" style="color: var(--neon-gold); font-size: 14px;">SURVIVAL & DISCIPLINE INTERFACE</h2>
+    <p id="desc" style="color: #666; max-width: 400px; font-size: 12px; margin-top: 20px;">
+        WARNING: Threats reduce capital by up to 90%. <br>Stability at 0% resets the current level.
+    </p>
+    <button id="main-btn" class="start-btn" onclick="startGame()">INITIALIZE INTERFACE</button>
 </div>
 
-<div id="lock-screen" style="display:none;">
-    <h1 style="color: var(--neon-red);">SYSTEM LOCKED</h1>
-    <p>RE-INITIALIZATION AVAILABLE IN 8 HOURS.</p>
-</div>
-
-<div id="level-indicator">PHASE: <span id="current-phase">1</span></div>
 <canvas id="gameCanvas"></canvas>
 
 <script>
@@ -90,68 +91,54 @@ const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 let audioCtx;
 
-// --- ESTRUCTURA DE DATOS POR NIVELES ---
-const levels = {
-    1: [
-        { text: "MIRAR LADOS", type: "pos", impact: 200, color: "#2ecc71", freq: 880 },
-        { text: "DESCONOCIDO", type: "neg", impact: -40, color: "#ff3131", freq: 110 },
-        { text: "AHORRO", type: "pos", impact: 150, color: "#f1c40f", freq: 659 },
-        { text: "BULLYING", type: "neg", impact: -30, color: "#ff3131", freq: 90 },
-        { text: "DISCIPLINA", type: "pos", impact: 300, color: "#00f2ff", freq: 1046 }
-    ],
-    2: [
-        { text: "EXIT SIGNS", type: "pos", impact: 500, color: "#2ecc71", freq: 900 },
-        { text: "STRANGER DANGER", type: "neg", impact: -400, color: "#ff3131", freq: 80 },
-        { text: "INVESTMENT", type: "pos", impact: 1000, color: "#f1c40f", freq: 600 },
-        { text: "PEER PRESSURE", type: "neg", impact: -200, color: "#ff3131", freq: 120 },
-        { text: "CYBER SECURITY", type: "pos", impact: 300, color: "#00f2ff", freq: 1100 }
-    ],
-    3: [
-        { text: "ACTIVE SHOOTER DRILL", type: "pos", impact: 2000, color: "#2ecc71", freq: 1200 },
-        { text: "UNLOCKED FIREARM", type: "neg", impact: -1000, color: "#ff3131", freq: 80 },
-        { text: "911 EMERGENCY PROTOCOL", type: "pos", impact: 1500, color: "#2ecc71", freq: 1000 },
-        { text: "CREDIT CARD DEBT", type: "neg", impact: -500, color: "#e67e22", freq: 110 },
-        { text: "KNOW YOUR RIGHTS", type: "pos", impact: 1200, color: "#f1c40f", freq: 750 }
-    ]
-};
+// --- DATABASE LEVELS ---
+const levels = [
+    {
+        name: "NEURO-SURVIVAL",
+        rank: "LEVEL 1",
+        data: [
+            { text: "LOOK AROUND", type: "pos", impact: 200, color: "#2ecc71", freq: 880 },
+            { text: "UNKNOWN", type: "neg", impact: -40, color: "#ff3131", freq: 110 },
+            { text: "SAVINGS", type: "pos", impact: 150, color: "#f1c40f", freq: 659 },
+            { text: "BULLYING", type: "neg", impact: -30, color: "#ff3131", freq: 90 },
+            { text: "DISCIPLINE", type: "pos", impact: 300, color: "#00f2ff", freq: 1046 },
+            { text: "DISTRACTION", type: "neg", impact: -25, color: "#e67e22", freq: 130 }
+        ],
+        target: 5000
+    },
+    {
+        name: "USA TOTAL SURVIVAL",
+        rank: "LEVEL 2",
+        data: [
+            { text: "EXIT SIGNS", type: "pos", impact: 500, color: "#2ecc71", freq: 900 },
+            { text: "STRANGER DANGER", type: "neg", impact: -40, color: "#ff3131", freq: 80 },
+            { text: "INVESTMENT", type: "pos", impact: 1000, color: "#f1c40f", freq: 600 },
+            { text: "PEER PRESSURE", type: "neg", impact: -20, color: "#ff3131", freq: 120 },
+            { text: "CYBER SECURITY", type: "pos", impact: 300, color: "#00f2ff", freq: 1100 }
+        ],
+        target: 25000
+    },
+    {
+        name: "50 STATES MATRIX",
+        rank: "LEVEL 3",
+        data: [
+            { text: "ACTIVE SHOOTER DRILL", type: "pos", impact: 1000, color: "#2ecc71", freq: 1200 },
+            { text: "UNLOCKED FIREARM", type: "neg", impact: -100, color: "#ff3131", freq: 80 },
+            { text: "CREDIT CARD DEBT", type: "neg", impact: -50, color: "#e67e22", freq: 110 },
+            { text: "SITUATIONAL AWARENESS", type: "pos", impact: 500, color: "#00f2ff", freq: 900 },
+            { text: "KNOW YOUR RIGHTS", type: "pos", impact: 800, color: "#f1c40f", freq: 750 }
+        ],
+        target: 100000
+    }
+];
 
-let stats = { money: 0, health: 100, currentLevel: 1 };
+let stats = { money: 0, health: 100, currentLevel: 0 };
 let active = false;
 let objects = [];
 let particles = [];
 let difficulty = 1.0;
+let sessionEndTime = null;
 const user = { x: canvas.width / 2, y: canvas.height / 2, size: 55 };
-
-// --- LOGICA DE BLOQUEO (8 HORAS) ---
-function checkLock() {
-    const lastRun = localStorage.getItem('alCieloLastRun');
-    if (lastRun) {
-        const diff = Date.now() - parseInt(lastRun);
-        if (diff < 8 * 60 * 60 * 1000) {
-            document.getElementById('lock-screen').style.display = 'flex';
-            document.getElementById('overlay').style.display = 'none';
-            return true;
-        }
-    }
-    return false;
-}
-
-// --- TEMPORIZADOR 27 MINUTOS ---
-let timeLeft = 27 * 60;
-function startGlobalTimer() {
-    const timerInterval = setInterval(() => {
-        timeLeft--;
-        const mins = Math.floor(timeLeft / 60);
-        const secs = timeLeft % 60;
-        document.getElementById('timer-display').innerText = `ACCESS EXPIRES IN: ${mins}:${secs < 10 ? '0' : ''}${secs}`;
-        
-        if (timeLeft <= 0) {
-            clearInterval(timerInterval);
-            localStorage.setItem('alCieloLastRun', Date.now().toString());
-            endGame("TIME EXPIRED. SYSTEM LOCKING.");
-        }
-    }, 1000);
-}
 
 function resize() {
     canvas.width = window.innerWidth;
@@ -159,6 +146,21 @@ function resize() {
 }
 window.addEventListener('resize', resize);
 resize();
+
+// --- LOCKOUT LOGIC ---
+function checkLockout() {
+    const lastRun = localStorage.getItem('alCieloLastEnd');
+    if (lastRun) {
+        const hoursPassed = (Date.now() - parseInt(lastRun)) / (1000 * 60 * 60);
+        if (hoursPassed < 8) {
+            const remaining = (8 - hoursPassed).toFixed(1);
+            document.getElementById('desc').innerText = `SYSTEM LOCKED. ACCESS GRANTED IN ${remaining} HOURS.`;
+            document.getElementById('main-btn').style.display = 'none';
+            return true;
+        }
+    }
+    return false;
+}
 
 function triggerSound(freq, type) {
     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -174,20 +176,38 @@ function triggerSound(freq, type) {
     osc.stop(audioCtx.currentTime + 0.6);
 }
 
+function flashScreen(color) {
+    const f = document.getElementById('alert-flash');
+    f.style.backgroundColor = color;
+    f.style.opacity = "0.4";
+    setTimeout(() => f.style.opacity = "0", 150);
+}
+
 function spawn() {
     if(!active) return;
-    const currentPool = levels[stats.currentLevel];
-    const entry = currentPool[Math.floor(Math.random() * currentPool.length)];
+    const levelData = levels[stats.currentLevel].data;
+    const entry = levelData[Math.floor(Math.random() * levelData.length)];
     objects.push({
         ...entry,
         x: Math.random() * (canvas.width - 200) + 100,
         y: -150,
-        speed: (3 + (stats.money / 10000)) * difficulty * (0.8 + stats.currentLevel * 0.2)
+        speed: (3 + (stats.money / 20000)) * difficulty
     });
 }
 
 function update() {
     if(!active) return;
+
+    // Timer Logic
+    const now = Date.now();
+    const diff = sessionEndTime - now;
+    if (diff <= 0) {
+        endGame("SESSION COMPLETE. SYSTEM DISCONNECTING.");
+        return;
+    }
+    const mins = Math.floor(diff / 60000);
+    const secs = Math.floor((diff % 60000) / 1000);
+    document.getElementById('time-left').innerText = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
 
     objects.forEach((obj, i) => {
         obj.y += obj.speed;
@@ -195,25 +215,19 @@ function update() {
         
         if (dist < user.size) {
             if (obj.type === 'neg') {
-                stats.health = Math.max(0, stats.health - 20);
-                stats.money = Math.floor(stats.money * 0.5);
+                stats.health -= 25;
+                // Penalties vary by level structure
+                let penalty = stats.currentLevel === 0 ? 0.5 : (stats.currentLevel === 1 ? 0.2 : 0.1);
+                stats.money = Math.floor(stats.money * penalty);
                 triggerSound(obj.freq, 'neg');
+                flashScreen('red');
             } else {
                 stats.money += obj.impact;
                 stats.health = Math.min(100, stats.health + 5);
                 triggerSound(obj.freq, 'pos');
-                difficulty += 0.01;
+                flashScreen('gold');
+                difficulty += 0.02;
             }
-            
-            // CAMBIO DE NIVEL DINÁMICO
-            if (stats.money >= 15000 && stats.currentLevel === 1) {
-                stats.currentLevel = 2;
-                flashScreen('#00f2ff');
-            } else if (stats.money >= 50000 && stats.currentLevel === 2) {
-                stats.currentLevel = 3;
-                flashScreen('#f1c40f');
-            }
-
             updateHUD();
             createExplosion(obj.x, obj.y, obj.color);
             objects.splice(i, 1);
@@ -221,21 +235,30 @@ function update() {
         if(obj.y > canvas.height + 200) objects.splice(i, 1);
     });
 
-    if(stats.health <= 0) endGame("SYSTEM COLLAPSED. ADAPTATION FAILED.");
+    // Level Progression
+    if (stats.money >= levels[stats.currentLevel].target && stats.currentLevel < 2) {
+        stats.currentLevel++;
+        alert(`LEVEL UP: ${levels[stats.currentLevel].name}`);
+        updateHUD();
+    } else if (stats.money >= levels[2].target && stats.currentLevel === 2) {
+        endGame("ULTIMATE DISCIPLINE ACHIEVED. SYSTEM CLOSING.");
+    }
+
+    if(stats.health <= 0) {
+        active = false;
+        alert("STABILITY CRITICAL. RESTARTING LEVEL.");
+        stats.health = 100;
+        stats.money = 0;
+        objects = [];
+        updateHUD();
+        active = true;
+    }
 }
 
 function updateHUD() {
-    document.getElementById('val-money').innerText = "$" + stats.money;
+    document.getElementById('val-money').innerText = (stats.currentLevel === 0 ? "" : "$") + stats.money;
     document.getElementById('val-health').innerText = stats.health + "%";
-    document.getElementById('val-rank').innerText = "LEVEL " + stats.currentLevel;
-    document.getElementById('current-phase').innerText = stats.currentLevel;
-}
-
-function flashScreen(color) {
-    const f = document.getElementById('alert-flash');
-    f.style.backgroundColor = color;
-    f.style.opacity = "0.4";
-    setTimeout(() => f.style.opacity = "0", 150);
+    document.getElementById('val-rank').innerText = levels[stats.currentLevel].rank;
 }
 
 function createExplosion(x, y, color) {
@@ -250,10 +273,9 @@ function draw() {
     ctx.fillStyle = 'rgba(2, 2, 5, 0.2)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // USER CORE
     ctx.shadowBlur = 20;
-    ctx.shadowColor = '#00f2ff';
-    ctx.strokeStyle = '#00f2ff';
+    ctx.shadowColor = "#00f2ff";
+    ctx.strokeStyle = "#00f2ff";
     ctx.lineWidth = 3;
     ctx.beginPath();
     ctx.arc(user.x, user.y, user.size - 10, 0, Math.PI * 2);
@@ -282,29 +304,29 @@ window.addEventListener('mousemove', e => { user.x = e.clientX; user.y = e.clien
 window.addEventListener('touchmove', e => { user.x = e.touches[0].clientX; user.y = e.touches[0].clientY; e.preventDefault(); }, {passive: false});
 
 function startGame() {
-    if (checkLock()) return;
+    if(checkLockout()) return;
     document.getElementById('overlay').style.display = 'none';
     active = true;
-    startGlobalTimer();
+    sessionEndTime = Date.now() + (27 * 60 * 1000);
     setInterval(spawn, 800);
     loop();
 }
 
 function endGame(msg) {
     active = false;
-    localStorage.setItem('alCieloLastRun', Date.now().toString());
-    alert(msg + "\nFINAL NET WORTH: $" + stats.money);
+    localStorage.setItem('alCieloLastEnd', Date.now().toString());
+    alert(msg);
     location.reload();
 }
 
 function loop() {
     update();
     draw();
-    requestAnimationFrame(loop);
+    if(active) requestAnimationFrame(loop);
 }
 
-// Check initial lock status
-checkLock();
+// Initial Check
+checkLockout();
 </script>
 </body>
 </html>
