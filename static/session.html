@@ -1,11 +1,9 @@
-
-html_code = """
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>AL CIELO - NEURAL INTERFACE</title>
+    <title>KaMiZen Session</title>
     <style>
         :root {
             --neon-blue: #00f2ff;
@@ -16,7 +14,7 @@ html_code = """
             --bg-dark: #020205;
         }
         body { margin: 0; overflow: hidden; background: var(--bg-dark); color: white; font-family: 'Orbitron', sans-serif; cursor: none; }
-       
+
         #hud {
             position: absolute; top: 20px; width: 100%;
             display: flex; justify-content: space-evenly;
@@ -49,6 +47,7 @@ html_code = """
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
 </head>
+
 <body>
 
 <div id="hud">
@@ -67,7 +66,7 @@ html_code = """
 </div>
 
 <div id="start-screen">
-    <h1 style="color: var(--neon-blue); letter-spacing: 15px; font-size: 50px;">AL CIELO</h1>
+    <h1 style="color: var(--neon-blue); letter-spacing: 15px; font-size: 50px;">kamizen</h1>
     <p style="letter-spacing: 5px; color: #888;">NEURAL DIAGNOSTICS & DOPAMINE FLOW</p>
     <button class="start-btn" onclick="startGame()">INITIALIZE INTERFACE</button>
 </div>
@@ -86,7 +85,50 @@ function resize() {
 window.addEventListener('resize', resize);
 resize();
 
-// DATA JSON - PALABRAS VISIBLES
+/* ===================== PHASE SYSTEM ===================== */
+let phase = 0;
+let sessionTime = 600;
+let timerRunning = false;
+
+/* ===================== SILENCE BLOCK ===================== */
+function triggerSilence() {
+    active = false;
+
+    let t = 30;
+    const interval = setInterval(() => {
+        if (t <= 0) {
+            clearInterval(interval);
+            phase = 5;
+            active = true;
+            return;
+        }
+        t--;
+    }, 1000);
+}
+
+/* ===================== FINAL TIMER ===================== */
+function startTimer() {
+    timerRunning = true;
+
+    const interval = setInterval(() => {
+        if (!active || phase === 2 || phase === 4 || phase === 6) return;
+
+        sessionTime--;
+
+        if (sessionTime === 300) {
+            phase = 2;
+            triggerDiagnosis();
+        }
+
+        if (sessionTime === 0) {
+            phase = 6;
+            triggerFinalDiagnosis();
+            clearInterval(interval);
+        }
+    }, 1000);
+}
+
+/* ===================== DATA ===================== */
 const rawData = [
     { text: "SAVINGS", emoji: "💰", type: "pos", stat: "money", impact: 150, color: "#f1c40f", freq: 523.25 },
     { text: "BUSINESS", emoji: "🤝", type: "pos", stat: "biz", impact: 1, color: "#3498db", freq: 659.25 },
@@ -98,30 +140,40 @@ const rawData = [
     { text: "EDUCATION", emoji: "📚", type: "pos", stat: "biz", impact: 1, color: "#00f2ff", freq: 1046.50 }
 ];
 
+/* ===================== STATE ===================== */
 let stats = { money: 0, health: 100, biz: 0 };
 let active = false;
 let objects = [];
 let particles = [];
+
 const user = { x: canvas.width / 2, y: canvas.height / 2, size: 60 };
 
-// SISTEMA DE AUDIO (DOPAMINA)
+/* ===================== AUDIO ===================== */
 function playSound(freq, type) {
     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
     const osc = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
+
     osc.type = type === 'pos' ? 'sine' : 'sawtooth';
     osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+
     gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.5);
+
     osc.connect(gain);
     gain.connect(audioCtx.destination);
+
     osc.start();
     osc.stop(audioCtx.currentTime + 0.5);
 }
 
+/* ===================== SPAWN ===================== */
 function spawn() {
-    if(!active) return;
+    if (!active) return;
+
     const entry = rawData[Math.floor(Math.random() * rawData.length)];
+
     objects.push({
         ...entry,
         x: Math.random() * (canvas.width - 200) + 100,
@@ -131,6 +183,7 @@ function spawn() {
     });
 }
 
+/* ===================== EXPLOSION ===================== */
 function createExplosion(x, y, color) {
     for (let i = 0; i < 15; i++) {
         particles.push({
@@ -143,9 +196,11 @@ function createExplosion(x, y, color) {
     }
 }
 
+/* ===================== INPUT ===================== */
 function handleInput(e) {
     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
     const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
     user.x = clientX;
     user.y = clientY;
 }
@@ -153,75 +208,113 @@ function handleInput(e) {
 window.addEventListener('mousemove', handleInput);
 window.addEventListener('touchmove', handleInput);
 
+/* ===================== UPDATE ===================== */
 function update() {
-    if(!active) return;
+    if (!active) return;
 
     objects.forEach((obj, i) => {
         obj.y += obj.speed;
         obj.pulse += 0.07;
 
-        const dist = Math.sqrt((obj.x - user.x)**2 + (obj.y - user.y)**2);
+        const dist = Math.sqrt((obj.x - user.x) ** 2 + (obj.y - user.y) ** 2);
+
         if (dist < user.size) {
-            // EFECTO TÁCTIL VISUAL Y SONORO
             playSound(obj.freq, obj.type);
             createExplosion(obj.x, obj.y, obj.color);
-           
-            if(obj.stat === 'money') stats.money += obj.impact;
-            if(obj.stat === 'biz') stats.biz += obj.impact;
-            if(obj.stat === 'health') stats.health = Math.max(0, Math.min(100, stats.health + obj.impact));
-           
+
+            if (obj.stat === 'money') stats.money += obj.impact;
+            if (obj.stat === 'biz') stats.biz += obj.impact;
+            if (obj.stat === 'health') stats.health = Math.max(0, Math.min(100, stats.health + obj.impact));
+
             updateHUD();
             objects.splice(i, 1);
-            if (window.navigator.vibrate) window.navigator.vibrate(obj.type === 'pos' ? 20 : 100);
+
+            if (navigator.vibrate) navigator.vibrate(obj.type === 'pos' ? 20 : 100);
         }
-        if(obj.y > canvas.height + 200) objects.splice(i, 1);
+
+        if (obj.y > canvas.height + 200) objects.splice(i, 1);
     });
 
     particles.forEach((p, i) => {
-        p.x += p.vx; p.y += p.vy; p.life -= 0.02;
-        if(p.life <= 0) particles.splice(i, 1);
+        p.x += p.vx;
+        p.y += p.vy;
+        p.life -= 0.02;
+
+        if (p.life <= 0) particles.splice(i, 1);
     });
 
-    if(stats.health <= 0) {
+    if (stats.health <= 0) {
         active = false;
         alert("DIAGNOSIS: SYSTEM COLLAPSE. Stability reached 0.");
         location.reload();
     }
 }
 
+/* ===================== HUD ===================== */
 function updateHUD() {
     document.getElementById('val-money').innerText = stats.money;
     document.getElementById('val-health').innerText = stats.health + "%";
     document.getElementById('val-biz').innerText = stats.biz;
 }
 
+/* ===================== DIAGNOSIS ===================== */
+function triggerDiagnosis() {
+    active = false;
+
+    let msg = "";
+
+    if (stats.health < 40) msg = "DIAGNOSIS: LOW CONTROL";
+    else if (stats.money > 2000) msg = "DIAGNOSIS: HIGH EXECUTION";
+    else msg = "DIAGNOSIS: BALANCED STATE";
+
+    alert(msg);
+
+    setTimeout(() => {
+        phase = 3;
+        active = true;
+    }, 3000);
+}
+
+/* ===================== FINAL ===================== */
+function triggerFinalDiagnosis() {
+    active = false;
+
+    alert(
+        "FINAL REPORT\n" +
+        "Money: " + stats.money + "\n" +
+        "Health: " + stats.health + "\n" +
+        "Biz: " + stats.biz
+    );
+
+    setTimeout(() => location.reload(), 3000);
+}
+
+/* ===================== DRAW ===================== */
 function draw() {
     ctx.fillStyle = 'rgba(2, 2, 5, 0.2)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // DIBUJAR SCANNER (PALPABLE)
     ctx.shadowBlur = 30;
-    ctx.shadowColor = varColor('--neon-blue');
-    ctx.strokeStyle = varColor('--neon-blue');
+    ctx.shadowColor = getComputedStyle(document.documentElement).getPropertyValue('--neon-blue');
+
+    ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--neon-blue');
     ctx.lineWidth = 4;
+
     ctx.beginPath();
     ctx.arc(user.x, user.y, user.size - 10, 0, Math.PI * 2);
     ctx.stroke();
 
-    // DIBUJAR EXPLOSIONES DE DOPAMINA
     particles.forEach(p => {
         ctx.globalAlpha = p.life;
         ctx.fillStyle = p.color;
         ctx.fillRect(p.x, p.y, 4, 4);
     });
-    ctx.globalAlpha = 1.0;
 
-    // DIBUJAR ICONOS (JSON PROJECTION)
+    ctx.globalAlpha = 1;
+
     objects.forEach(obj => {
         const bounce = Math.sin(obj.pulse) * 10;
-        ctx.shadowBlur = 25;
-        ctx.shadowColor = obj.color;
-       
+
         ctx.fillStyle = "white";
         ctx.font = "900 20px Orbitron";
         ctx.textAlign = "center";
@@ -232,27 +325,27 @@ function draw() {
     });
 }
 
-function varColor(name) {
-    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-}
-
-function startGame() {
-    document.getElementById('start-screen').style.display = 'none';
-    active = true;
-    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    setInterval(spawn, 800);
-    loop();
-}
-
+/* ===================== LOOP ===================== */
 function loop() {
     update();
     draw();
     requestAnimationFrame(loop);
 }
+
+/* ===================== START ===================== */
+function startGame() {
+    document.getElementById('start-screen').style.display = 'none';
+
+    active = true;
+
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    setInterval(spawn, 800);
+
+    startTimer();
+    loop();
+}
 </script>
+
 </body>
 </html>
-"""
-
-with open("al_cielo_neurogame.html", "w") as f:
-    f.write(html_code)
