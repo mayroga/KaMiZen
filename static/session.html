@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>AL CIELO | TOTAL NEURO-SURVIVAL</title>
+    <title>AL CIELO | INTEGRATED INTERFACE</title>
     <style>
         :root {
             --neon-blue: #00f2ff;
@@ -24,16 +24,12 @@
             border: 2px solid var(--neon-blue);
             padding: 10px 20px; text-align: center;
             box-shadow: 0 0 20px rgba(0, 242, 255, 0.2);
-            min-width: 140px;
+            min-width: 130px;
         }
         .label { font-size: 10px; color: var(--neon-blue); letter-spacing: 2px; font-weight: 900; display: block; }
         .value { font-size: 24px; font-weight: 900; display: block; }
 
-        #timer-box { position: absolute; bottom: 20px; right: 20px; border-color: var(--neon-red); }
-
-        canvas { display: block; }
-
-        #overlay {
+        #overlay, #lock-screen {
             position: fixed; inset: 0; background: var(--bg-dark);
             display: flex; flex-direction: column; justify-content: center;
             align-items: center; z-index: 1000; text-align: center;
@@ -48,10 +44,9 @@
             position: fixed; inset: 0; pointer-events: none;
             z-index: 50; opacity: 0; transition: opacity 0.1s;
         }
-        #block-screen {
-            position: fixed; inset: 0; background: black; color: var(--neon-red);
-            display: none; flex-direction: column; justify-content: center;
-            align-items: center; z-index: 2000; text-align: center;
+        #level-indicator {
+            position: absolute; bottom: 20px; right: 20px;
+            color: var(--neon-gold); font-size: 12px; letter-spacing: 2px;
         }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
@@ -59,41 +54,35 @@
 <body>
 
 <div id="alert-flash"></div>
-<div id="block-screen">
-    <h1 style="letter-spacing: 10px;">SISTEMA BLOQUEADO</h1>
-    <p id="lock-msg">TIEMPO DE ENTRENAMIENTO AGOTADO.</p>
-    <p>VUELVE EN 8 HORAS PARA REGENERACIÓN NEURAL.</p>
-</div>
 
 <div id="hud">
     <div class="data-box" style="border-color: var(--neon-gold);">
         <span class="label">CAPITAL / NET WORTH</span>
         <span id="val-money" class="value">$0</span>
     </div>
-    <div class="data-box" style="border-color: var(--neon-red);">
-        <span class="label">ESTABILIDAD</span>
+    <div class="data-box" style="border-color: var(--neon-green);">
+        <span class="label">STABILITY</span>
         <span id="val-health" class="value">100%</span>
     </div>
-    <div class="data-box">
-        <span class="label">NIVEL / RANGO</span>
-        <span id="val-rank" class="value">FASE 1</span>
-    </div>
-    <div id="timer-box" class="data-box" style="border-color: var(--neon-blue);">
-        <span class="label">SESIÓN RESTANTE</span>
-        <span id="val-timer" class="value">27:00</span>
+    <div class="data-box" style="border-color: var(--neon-blue);">
+        <span class="label">NEURAL RANK</span>
+        <span id="val-rank" class="value">LEVEL 1</span>
     </div>
 </div>
 
 <div id="overlay">
     <h1 style="color: var(--neon-blue); letter-spacing: 15px; font-size: 40px;">AL CIELO</h1>
-    <h2 style="color: var(--neon-gold); font-size: 14px;">USA SURVIVAL & DISCIPLINE MATRIX</h2>
-    <p style="color: #666; max-width: 450px; font-size: 12px; margin-top: 20px;">
-        3 NIVELES DE ENTRENAMIENTO. 27 MINUTOS DE ENFOQUE TOTAL. <br>
-        EL FRACASO BLOQUEA EL ACCESO POR 8 HORAS.
-    </p>
-    <button class="start-btn" onclick="startGame()">INICIAR INTERFAZ</button>
+    <h2 id="level-title" style="color: var(--neon-gold); font-size: 14px;">SURVIVAL & DISCIPLINE SYSTEM</h2>
+    <p id="timer-display" style="color: var(--neon-red); font-weight: 900; margin-top: 10px;"></p>
+    <button class="start-btn" onclick="startGame()">INITIALIZE INTERFACE</button>
 </div>
 
+<div id="lock-screen" style="display:none;">
+    <h1 style="color: var(--neon-red);">SYSTEM LOCKED</h1>
+    <p>RE-INITIALIZATION AVAILABLE IN 8 HOURS.</p>
+</div>
+
+<div id="level-indicator">PHASE: <span id="current-phase">1</span></div>
 <canvas id="gameCanvas"></canvas>
 
 <script>
@@ -101,7 +90,7 @@ const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 let audioCtx;
 
-// --- DATA UNIFICADA POR NIVELES ---
+// --- ESTRUCTURA DE DATOS POR NIVELES ---
 const levels = {
     1: [
         { text: "MIRAR LADOS", type: "pos", impact: 200, color: "#2ecc71", freq: 880 },
@@ -112,7 +101,7 @@ const levels = {
     ],
     2: [
         { text: "EXIT SIGNS", type: "pos", impact: 500, color: "#2ecc71", freq: 900 },
-        { text: "STRANGER DANGER", type: "neg", impact: -500, color: "#ff3131", freq: 80 },
+        { text: "STRANGER DANGER", type: "neg", impact: -400, color: "#ff3131", freq: 80 },
         { text: "INVESTMENT", type: "pos", impact: 1000, color: "#f1c40f", freq: 600 },
         { text: "PEER PRESSURE", type: "neg", impact: -200, color: "#ff3131", freq: 120 },
         { text: "CYBER SECURITY", type: "pos", impact: 300, color: "#00f2ff", freq: 1100 }
@@ -120,38 +109,56 @@ const levels = {
     3: [
         { text: "ACTIVE SHOOTER DRILL", type: "pos", impact: 2000, color: "#2ecc71", freq: 1200 },
         { text: "UNLOCKED FIREARM", type: "neg", impact: -1000, color: "#ff3131", freq: 80 },
+        { text: "911 EMERGENCY PROTOCOL", type: "pos", impact: 1500, color: "#2ecc71", freq: 1000 },
         { text: "CREDIT CARD DEBT", type: "neg", impact: -500, color: "#e67e22", freq: 110 },
-        { text: "911 EMERGENCY", type: "pos", impact: 1500, color: "#2ecc71", freq: 1000 },
-        { text: "KNOW YOUR RIGHTS", type: "pos", impact: 800, color: "#f1c40f", freq: 750 }
+        { text: "KNOW YOUR RIGHTS", type: "pos", impact: 1200, color: "#f1c40f", freq: 750 }
     ]
 };
 
-let stats = { money: 0, health: 100, level: 1, timer: 1620 }; // 1620s = 27min
+let stats = { money: 0, health: 100, currentLevel: 1 };
 let active = false;
 let objects = [];
 let particles = [];
 let difficulty = 1.0;
 const user = { x: canvas.width / 2, y: canvas.height / 2, size: 55 };
 
-function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-window.addEventListener('resize', resize);
-resize();
-
-// --- SISTEMA DE BLOQUEO (LÓGICA 8 HORAS) ---
+// --- LOGICA DE BLOQUEO (8 HORAS) ---
 function checkLock() {
-    const lockTime = localStorage.getItem('alCieloLock');
-    if (lockTime && Date.now() < lockTime) {
-        document.getElementById('block-screen').style.display = 'flex';
-        return true;
+    const lastRun = localStorage.getItem('alCieloLastRun');
+    if (lastRun) {
+        const diff = Date.now() - parseInt(lastRun);
+        if (diff < 8 * 60 * 60 * 1000) {
+            document.getElementById('lock-screen').style.display = 'flex';
+            document.getElementById('overlay').style.display = 'none';
+            return true;
+        }
     }
     return false;
 }
 
-function setLock() {
-    const eightHours = Date.now() + (8 * 60 * 60 * 1000);
-    localStorage.setItem('alCieloLock', eightHours);
-    document.getElementById('block-screen').style.display = 'flex';
+// --- TEMPORIZADOR 27 MINUTOS ---
+let timeLeft = 27 * 60;
+function startGlobalTimer() {
+    const timerInterval = setInterval(() => {
+        timeLeft--;
+        const mins = Math.floor(timeLeft / 60);
+        const secs = timeLeft % 60;
+        document.getElementById('timer-display').innerText = `ACCESS EXPIRES IN: ${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            localStorage.setItem('alCieloLastRun', Date.now().toString());
+            endGame("TIME EXPIRED. SYSTEM LOCKING.");
+        }
+    }, 1000);
 }
+
+function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resize);
+resize();
 
 function triggerSound(freq, type) {
     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -161,31 +168,26 @@ function triggerSound(freq, type) {
     osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
     gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.6);
-    osc.connect(gain); gain.connect(audioCtx.destination);
-    osc.start(); osc.stop(audioCtx.currentTime + 0.6);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.6);
 }
 
 function spawn() {
     if(!active) return;
-    const currentPool = levels[stats.level];
+    const currentPool = levels[stats.currentLevel];
     const entry = currentPool[Math.floor(Math.random() * currentPool.length)];
     objects.push({
         ...entry,
         x: Math.random() * (canvas.width - 200) + 100,
         y: -150,
-        speed: (3 + (stats.level * 1.5) + (stats.money / 20000)) * difficulty
+        speed: (3 + (stats.money / 10000)) * difficulty * (0.8 + stats.currentLevel * 0.2)
     });
 }
 
 function update() {
     if(!active) return;
-
-    // Timer Logic
-    if(Date.now() % 60 === 0) {
-        stats.timer--;
-        updateHUD();
-        if(stats.timer <= 0) endGame("ENTRENAMIENTO COMPLETADO. TIEMPO AGOTADO.");
-    }
 
     objects.forEach((obj, i) => {
         obj.y += obj.speed;
@@ -193,54 +195,88 @@ function update() {
         
         if (dist < user.size) {
             if (obj.type === 'neg') {
-                stats.health -= (stats.level * 15);
-                stats.money = Math.floor(stats.money * (0.6 - (stats.level * 0.1)));
+                stats.health = Math.max(0, stats.health - 20);
+                stats.money = Math.floor(stats.money * 0.5);
                 triggerSound(obj.freq, 'neg');
             } else {
                 stats.money += obj.impact;
                 stats.health = Math.min(100, stats.health + 5);
                 triggerSound(obj.freq, 'pos');
-                // Evolución de Niveles por Capital
-                if (stats.level === 1 && stats.money > 5000) stats.level = 2;
-                if (stats.level === 2 && stats.money > 20000) stats.level = 3;
+                difficulty += 0.01;
             }
+            
+            // CAMBIO DE NIVEL DINÁMICO
+            if (stats.money >= 15000 && stats.currentLevel === 1) {
+                stats.currentLevel = 2;
+                flashScreen('#00f2ff');
+            } else if (stats.money >= 50000 && stats.currentLevel === 2) {
+                stats.currentLevel = 3;
+                flashScreen('#f1c40f');
+            }
+
             updateHUD();
+            createExplosion(obj.x, obj.y, obj.color);
             objects.splice(i, 1);
         }
         if(obj.y > canvas.height + 200) objects.splice(i, 1);
     });
 
-    if(stats.health <= 0) endGame("COLAPSO NEURAL: ESTABILIDAD EN 0.");
+    if(stats.health <= 0) endGame("SYSTEM COLLAPSED. ADAPTATION FAILED.");
 }
 
 function updateHUD() {
     document.getElementById('val-money').innerText = "$" + stats.money;
     document.getElementById('val-health').innerText = stats.health + "%";
-    document.getElementById('val-rank').innerText = "FASE " + stats.level;
-    
-    let mins = Math.floor(stats.timer / 60);
-    let secs = stats.timer % 60;
-    document.getElementById('val-timer').innerText = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+    document.getElementById('val-rank').innerText = "LEVEL " + stats.currentLevel;
+    document.getElementById('current-phase').innerText = stats.currentLevel;
+}
+
+function flashScreen(color) {
+    const f = document.getElementById('alert-flash');
+    f.style.backgroundColor = color;
+    f.style.opacity = "0.4";
+    setTimeout(() => f.style.opacity = "0", 150);
+}
+
+function createExplosion(x, y, color) {
+    for (let i = 0; i < 15; i++) {
+        particles.push({
+            x, y, vx: (Math.random()-0.5)*15, vy: (Math.random()-0.5)*15, life: 1.0, color
+        });
+    }
 }
 
 function draw() {
-    ctx.fillStyle = 'rgba(2, 2, 5, 0.3)';
+    ctx.fillStyle = 'rgba(2, 2, 5, 0.2)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-    
-    // SCANNER
-    ctx.strokeStyle = stats.level === 3 ? varColor('--neon-gold') : varColor('--neon-blue');
+
+    // USER CORE
+    ctx.shadowBlur = 20;
+    ctx.shadowColor = '#00f2ff';
+    ctx.strokeStyle = '#00f2ff';
     ctx.lineWidth = 3;
-    ctx.beginPath(); ctx.arc(user.x, user.y, user.size - 10, 0, Math.PI * 2); ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(user.x, user.y, user.size - 10, 0, Math.PI * 2);
+    ctx.stroke();
 
     objects.forEach(obj => {
-        ctx.fillStyle = obj.color;
+        ctx.shadowBlur = 15;
+        ctx.shadowColor = obj.color;
+        ctx.fillStyle = "white";
         ctx.font = "900 18px Orbitron";
         ctx.textAlign = "center";
         ctx.fillText(obj.text, obj.x, obj.y);
     });
-}
 
-function varColor(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+    particles.forEach((p, i) => {
+        ctx.globalAlpha = p.life;
+        ctx.fillStyle = p.color;
+        ctx.fillRect(p.x, p.y, 3, 3);
+        p.x += p.vx; p.y += p.vy; p.life -= 0.03;
+        if(p.life <= 0) particles.splice(i, 1);
+    });
+    ctx.globalAlpha = 1;
+}
 
 window.addEventListener('mousemove', e => { user.x = e.clientX; user.y = e.clientY; });
 window.addEventListener('touchmove', e => { user.x = e.touches[0].clientX; user.y = e.touches[0].clientY; e.preventDefault(); }, {passive: false});
@@ -249,25 +285,25 @@ function startGame() {
     if (checkLock()) return;
     document.getElementById('overlay').style.display = 'none';
     active = true;
-    setInterval(spawn, 850 - (stats.level * 100));
-    setInterval(() => { if(active) stats.timer--; updateHUD(); }, 1000);
+    startGlobalTimer();
+    setInterval(spawn, 800);
     loop();
 }
 
 function endGame(msg) {
     active = false;
-    alert(msg + "\nCAPITAL FINAL: $" + stats.money);
-    setLock();
+    localStorage.setItem('alCieloLastRun', Date.now().toString());
+    alert(msg + "\nFINAL NET WORTH: $" + stats.money);
+    location.reload();
 }
 
 function loop() {
-    if(!active) return;
     update();
     draw();
     requestAnimationFrame(loop);
 }
 
-// Inicializar chequeo
+// Check initial lock status
 checkLock();
 </script>
 </body>
