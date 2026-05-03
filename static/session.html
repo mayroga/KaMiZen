@@ -92,7 +92,6 @@ canvas{display:block;}
 
 <body>
 
-<!-- HUD -->
 <div id="hud">
     <div class="data-box" style="border-color:var(--neon-gold);">
         <span class="label">CAPITAL</span>
@@ -110,7 +109,6 @@ canvas{display:block;}
     </div>
 </div>
 
-<!-- START -->
 <div id="start-screen">
     <h1 style="color:var(--neon-blue);letter-spacing:15px;font-size:50px;">kamizen</h1>
     <p style="letter-spacing:5px;color:#888;">NEURAL DIAGNOSTICS & DOPAMINE FLOW</p>
@@ -121,7 +119,6 @@ canvas{display:block;}
 
 <script>
 
-/* ========================= CANVAS ========================= */
 const canvas=document.getElementById("gameCanvas");
 const ctx=canvas.getContext("2d");
 
@@ -134,15 +131,6 @@ resize();
 
 /* ========================= STATE ========================= */
 let phase=0;
-/*
-0 story
-1 game1
-2 mission
-3 silence
-4 game2
-5 final
-*/
-
 let active=false;
 
 let stats={money:0,health:100,biz:0};
@@ -151,9 +139,9 @@ let particles=[];
 
 const user={x:innerWidth/2,y:innerHeight/2,size:60};
 
-/* ========================= AUDIO ========================= */
 let audioCtx;
 
+/* ========================= AUDIO ========================= */
 function playSound(freq,type){
     if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)();
 
@@ -208,11 +196,9 @@ function spawn(){
 
 /* ========================= UPDATE ========================= */
 function update(){
-
     if(!active) return;
 
     objects.forEach((o,i)=>{
-
         o.y+=o.speed;
         o.pulse+=0.05;
 
@@ -221,7 +207,6 @@ function update(){
         const dist=Math.sqrt(dx*dx+dy*dy);
 
         if(dist<user.size){
-
             playSound(o.freq,o.type);
 
             if(o.stat==="money") stats.money+=o.impact;
@@ -238,18 +223,17 @@ function update(){
 
 /* ========================= HUD ========================= */
 function updateHUD(){
-    val_money.innerText=stats.money;
-    val_health.innerText=stats.health+"%";
-    val_biz.innerText=stats.biz;
+    document.getElementById("val-money").innerText=stats.money;
+    document.getElementById("val-health").innerText=stats.health+"%";
+    document.getElementById("val-biz").innerText=stats.biz;
 }
 
 /* ========================= DRAW ========================= */
 function draw(){
-
     ctx.fillStyle="rgba(2,2,5,0.25)";
     ctx.fillRect(0,0,innerWidth,innerHeight);
 
-    ctx.strokeStyle="#00f2ff";
+    ctx.strokeStyle=varColor("--neon-blue");
     ctx.lineWidth=3;
 
     ctx.beginPath();
@@ -259,11 +243,16 @@ function draw(){
     objects.forEach(o=>{
         ctx.fillStyle=o.color;
         ctx.font="20px Orbitron";
+        ctx.textAlign="center";
         ctx.fillText(o.text,o.x,o.y);
 
         ctx.font="40px Arial";
         ctx.fillText(o.emoji,o.x,o.y+30);
     });
+}
+
+function varColor(n){
+    return getComputedStyle(document.documentElement).getPropertyValue(n);
 }
 
 /* ========================= LOOP ========================= */
@@ -273,33 +262,27 @@ function loop(){
     requestAnimationFrame(loop);
 }
 
-/* ========================= SILENCE ========================= */
+/* ========================= SILENCE (FIXED) ========================= */
 function triggerSilence(){
-
     active=false;
 
     let t=30;
 
     const id=setInterval(()=>{
-
         t--;
-
         if(t<=0){
             clearInterval(id);
-            phase=4;
             active=true;
+            phase=4;
         }
-
     },1000);
 }
 
-/* ========================= TIMER ========================= */
+/* ========================= TIMER (SAFE) ========================= */
 function startTimer(){
-
     let time=600;
 
-    setInterval(()=>{
-
+    const id=setInterval(()=>{
         if(!active) return;
 
         time--;
@@ -309,8 +292,9 @@ function startTimer(){
         }
 
         if(time<=0){
-            phase=5;
+            clearInterval(id);
             active=false;
+            phase=5;
         }
 
     },1000);
@@ -318,7 +302,6 @@ function startTimer(){
 
 /* ========================= START ========================= */
 function startSession(){
-
     document.getElementById("start-screen").style.display="none";
 
     active=true;
