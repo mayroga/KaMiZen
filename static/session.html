@@ -3,63 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>AL CIELO | NEURO-SYSTEM</title>
+    <title>AL CIELO | NEURO-DISCIPLINE</title>
     <style>
         :root {
             --neon-blue: #00f2ff;
             --neon-gold: #f1c40f;
             --neon-green: #2ecc71;
             --neon-red: #ff3131;
-            --bg-dark: #020205;
+            --bg-dark: #050508;
         }
-        body { 
-            margin: 0; overflow: hidden; background: var(--bg-dark); 
-            color: white; font-family: 'Orbitron', sans-serif; 
-            cursor: crosshair; user-select: none; touch-action: none;
-        }
-        #hud { 
-            position: absolute; top: 10px; width: 100%; 
-            display: flex; justify-content: space-around; z-index: 100; 
-        }
-        .data-box { 
-            background: rgba(0,0,0,0.85); border: 2px solid var(--neon-blue); 
-            padding: 5px 15px; text-align: center; border-radius: 5px;
-        }
-        .label { font-size: 9px; color: var(--neon-blue); font-weight: 900; display: block; }
-        .value { font-size: 18px; font-weight: 900; }
+        body { margin: 0; overflow: hidden; background: var(--bg-dark); color: white; font-family: 'Orbitron', sans-serif; cursor: none; touch-action: none; }
         
-        #timer-display {
-            position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
-            color: var(--neon-red); font-weight: 900; font-size: 24px; text-shadow: 0 0 10px var(--neon-red);
+        #hud {
+            position: absolute; top: 15px; width: 100%;
+            display: flex; justify-content: space-evenly;
+            z-index: 100; pointer-events: none;
+        }
+        .data-box {
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid var(--neon-blue);
+            padding: 10px; text-align: center;
+            min-width: 120px; box-shadow: 0 0 20px rgba(0, 242, 255, 0.1);
+        }
+        .label { font-size: 9px; color: var(--neon-blue); letter-spacing: 1px; font-weight: 900; display: block; }
+        .value { font-size: 22px; font-weight: 900; display: block; }
+
+        #timer-box {
+            position: absolute; bottom: 20px; width: 100%; text-align: center;
+            color: var(--neon-red); font-size: 28px; font-weight: 900; text-shadow: 0 0 15px var(--neon-red);
+            z-index: 100;
         }
 
-        #overlay { 
-            position: fixed; inset: 0; background: var(--bg-dark); 
-            display: flex; flex-direction: column; justify-content: center; 
-            align-items: center; z-index: 1000; text-align: center; 
+        #overlay {
+            position: fixed; inset: 0; background: radial-gradient(circle, #111 0%, #000 100%);
+            display: flex; flex-direction: column; justify-content: center;
+            align-items: center; z-index: 1000; text-align: center;
         }
-        .start-btn { 
-            padding: 25px 60px; background: var(--neon-blue); color: black; 
-            border: none; font-family: 'Orbitron'; font-weight: 900; 
-            cursor: pointer; font-size: 1.2rem; box-shadow: 0 0 40px var(--neon-blue); 
+        .start-btn {
+            padding: 25px 60px; background: var(--neon-blue); color: black;
+            border: none; font-family: 'Orbitron'; font-weight: 900;
+            cursor: pointer; margin-top: 30px; letter-spacing: 5px;
+            box-shadow: 0 0 50px var(--neon-blue); font-size: 1.5rem;
         }
-        canvas { display: block; }
+        #warning-flash { position: fixed; inset: 0; pointer-events: none; z-index: 50; opacity: 0; }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
 </head>
 <body>
 
+<div id="warning-flash"></div>
+<div id="timer-box">SESSION: <span id="clock">27:00</span></div>
+
 <div id="hud">
-    <div class="data-box" style="border-color: var(--neon-gold);"><span class="label">CAPITAL</span><span id="val-money" class="value">0</span></div>
-    <div class="data-box" style="border-color: var(--neon-green);"><span class="label">STABILITY</span><span id="val-health" class="value">100%</span></div>
-    <div class="data-box" style="border-color: var(--neon-blue);"><span class="label">LEVEL</span><span id="val-rank" class="value">1</span></div>
+    <div class="data-box" style="border-color: var(--neon-gold);"><span class="label">NET WORTH</span><span id="val-money" class="value">$0</span></div>
+    <div class="data-box" style="border-color: var(--neon-red);"><span class="label">NEURAL STABILITY</span><span id="val-health" class="value">100%</span></div>
+    <div class="data-box" style="border-color: var(--neon-blue);"><span class="label">RANK</span><span id="val-rank" class="value">ROOKIE</span></div>
 </div>
 
-<div id="timer-display">SESSION: <span id="time-left">27:00</span></div>
-
 <div id="overlay">
-    <h1 style="color: var(--neon-blue); letter-spacing: 10px; font-size: 3.5rem; margin-bottom: 0;">AL CIELO</h1>
-    <p style="color: var(--neon-gold); font-weight: 900; margin-bottom: 30px;">NEURO-DISCIPLINE INTERFACE</p>
+    <h1 style="color: var(--neon-blue); letter-spacing: 15px; font-size: 50px;">AL CIELO</h1>
+    <h2 style="color: var(--neon-gold); font-size: 14px;">SURVIVAL & DISCIPLINE SIMULATOR</h2>
     <button class="start-btn" onclick="startGame()">INITIALIZE</button>
 </div>
 
@@ -70,64 +73,54 @@ const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 let audioCtx;
 
+// --- ESTRUCTURA DE NIVELES Y PALABRAS ---
 const levels = [
-    { rank: "LEVEL 1", duration: 5 * 60, laserPower: 1, speedMult: 1, data: [
-        { text: "TELLING TRUTH", type: "pos", impact: 300, color: "#2ecc71", freq: 523.25 }, // C5 Piano
+    { name: "NEURO-HOGAR", time: 5*60, laser: 1, speed: 3, data: [
+        { text: "TELLING TRUTH", type: "pos", impact: 300, color: "#2ecc71", freq: 523 },
         { text: "HIDING TRUTH", type: "neg", impact: -100, color: "#ff3131", freq: 110 },
-        { text: "CLEAN ROOM", type: "pos", impact: 200, color: "#2ecc71", freq: 587.33 }, // D5 Piano
+        { text: "CLEAN ROOM", type: "pos", impact: 200, color: "#2ecc71", freq: 587 },
         { text: "MESSY ROOM", type: "neg", impact: -50, color: "#e67e22", freq: 90 },
-        { text: "SAYING SORRY", type: "pos", impact: 400, color: "#00f2ff", freq: 659.25 }, // E5 Piano
-        { text: "SCREAMING", type: "neg", impact: -40, color: "#ff3131", freq: 100 },
-        { text: "SHARING TOYS", type: "pos", impact: 250, color: "#2ecc71", freq: 698.46 }, // F5 Piano
-        { text: "DISOBEDIENCE", type: "neg", impact: -150, color: "#ff3131", freq: 85 }
+        { text: "SAYING SORRY", type: "pos", impact: 400, color: "#00f2ff", freq: 659 },
+        { text: "MIRAR LADOS", type: "pos", impact: 200, color: "#2ecc71", freq: 698 },
+        { text: "AHORRO", type: "pos", impact: 150, color: "#f1c40f", freq: 784 },
+        { text: "DISTRACCIÓN", type: "neg", impact: -25, color: "#e67e22", freq: 130 }
     ]},
-    { rank: "LEVEL 2", duration: 12 * 60, laserPower: 3, speedMult: 1.5, data: [
-        { text: "TEAMWORK", type: "pos", impact: 600, color: "#2ecc71", freq: 783.99 }, // G5 Piano
+    { name: "SOCIAL MATRIX", time: 12*60, laser: 3, speed: 5, data: [
+        { text: "TEAMWORK", type: "pos", impact: 600, color: "#2ecc71", freq: 880 },
         { text: "PEER PRESSURE", type: "neg", impact: -300, color: "#ff3131", freq: 120 },
-        { text: "HELPING OTHERS", type: "pos", impact: 700, color: "#f1c40f", freq: 880.00 }, // A5 Piano
-        { text: "KEEPING SECRETS", type: "neg", impact: -500, color: "#ff3131", freq: 60 },
-        { text: "REPORTING DANGER", type: "pos", impact: 800, color: "#2ecc71", freq: 987.77 }, // B5 Piano
+        { text: "CYBER SECURITY", type: "pos", impact: 300, color: "#00f2ff", freq: 987 },
         { text: "BULLYING", type: "neg", impact: -400, color: "#ff3131", freq: 70 },
-        { text: "STUDY TIME", type: "pos", impact: 500, color: "#00f2ff", freq: 1046.50 }, // C6 Piano
-        { text: "CHEATING", type: "neg", impact: -600, color: "#e67e22", freq: 115 }
+        { text: "CYBER BULLYING", type: "neg", impact: -30, color: "#9b59b6", freq: 140 },
+        { text: "DISCIPLINA", type: "pos", impact: 300, color: "#00f2ff", freq: 1046 },
+        { text: "INVESTMENT", type: "pos", impact: 1000, color: "#f1c40f", freq: 1174 },
+        { text: "SOCIAL MEDIA TRAP", type: "neg", impact: -15, color: "#e67e22", freq: 150 }
     ]},
-    { rank: "LEVEL 3", duration: 10 * 60, laserPower: 6, speedMult: 2.2, data: [
-        { text: "EMERGENCY 911", type: "pos", impact: 1500, color: "#2ecc71", freq: 1174.66 }, // D6 Piano
-        { text: "STRANGE CAR", type: "neg", impact: -1000, color: "#ff3131", freq: 80 },
-        { text: "SAFE ADULT", type: "pos", impact: 1200, color: "#00f2ff", freq: 1318.51 }, // E6 Piano
-        { text: "UNLOCKED DOOR", type: "neg", impact: -800, color: "#ff3131", freq: 90 },
-        { text: "FIRE DRILL", type: "pos", impact: 900, color: "#2ecc71", freq: 1396.91 }, // F6 Piano
-        { text: "PLAYING WITH FIRE", type: "neg", impact: -2000, color: "#ff3131", freq: 40 },
-        { text: "KNOWING ADDRESS", type: "pos", impact: 1000, color: "#f1c40f", freq: 1567.98 }, // G6 Piano
-        { text: "DARK ALLEY", type: "neg", impact: -1500, color: "#ff3131", freq: 50 }
+    { name: "USA SURVIVAL", time: 10*60, laser: 6, speed: 7, data: [
+        { text: "ACTIVE SHOOTER DRILL", type: "pos", impact: 1000, color: "#2ecc71", freq: 1318 },
+        { text: "UNLOCKED FIREARM", type: "neg", impact: -2000, color: "#ff3131", freq: 80 },
+        { text: "911 PROTOCOL", type: "pos", impact: 600, color: "#2ecc71", freq: 1396 },
+        { text: "SITUATIONAL AWARENESS", type: "pos", impact: 500, color: "#00f2ff", freq: 1567 },
+        { text: "KNOW YOUR RIGHTS", type: "pos", impact: 800, color: "#f1c40f", freq: 1760 },
+        { text: "EXIT STRATEGY", type: "pos", impact: 400, color: "#2ecc71", freq: 1975 },
+        { text: "STRANGER DANGER", type: "neg", impact: -1500, color: "#ff3131", freq: 50 },
+        { text: "CREDIT CARD DEBT", type: "neg", impact: -100, color: "#e67e22", freq: 110 }
     ]}
 ];
 
-let stats = { money: 0, health: 100, levelIdx: 0, totalTime: 27 * 60 };
+let stats = { money: 0, health: 100, level: 0, totalSeconds: 27 * 60 };
 let active = false;
 let objects = [];
 let particles = [];
-let user = { x: window.innerWidth/2, y: window.innerHeight/2, size: 60 };
+const user = { x: 0, y: 0, size: 60 };
 
 function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
 window.addEventListener('resize', resize); resize();
 
-function initAudio() {
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    osc.type = 'sine';
-    osc.frequency.value = 55; // Low frequency drone
-    gain.gain.value = 0.04;
-    osc.connect(gain); gain.connect(audioCtx.destination);
-    osc.start();
-}
-
-function playPiano(freq) {
-    if(!audioCtx) return;
+function playSound(freq, type) {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     const osc = audioCtx.createOscillator();
     const g = audioCtx.createGain();
-    osc.type = 'triangle'; // Piano-like timbre
+    osc.type = type === 'pos' ? 'triangle' : 'sawtooth'; // Piano vs Alarma
     osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
     g.gain.setValueAtTime(0.2, audioCtx.currentTime);
     g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.8);
@@ -135,78 +128,60 @@ function playPiano(freq) {
     osc.start(); osc.stop(audioCtx.currentTime + 0.8);
 }
 
-function playNeg(freq) {
-    if(!audioCtx) return;
-    const osc = audioCtx.createOscillator();
-    const g = audioCtx.createGain();
-    osc.type = 'sawtooth';
-    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-    g.gain.setValueAtTime(0.15, audioCtx.currentTime);
-    g.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.4);
-    osc.connect(g); g.connect(audioCtx.destination);
-    osc.start(); osc.stop(audioCtx.currentTime + 0.4);
-}
-
-function createExplosion(x, y, color) {
-    for(let i=0; i<20; i++) {
-        particles.push({
-            x, y, 
-            vx: (Math.random()-0.5)*15, 
-            vy: (Math.random()-0.5)*15, 
-            life: 1, color
-        });
-    }
+function flash(color) {
+    const f = document.getElementById('warning-flash');
+    f.style.background = color; f.style.opacity = "0.4";
+    setTimeout(() => f.style.opacity = "0", 100);
 }
 
 function spawn() {
     if(!active) return;
-    const lvl = levels[stats.levelIdx];
-    const data = lvl.data[Math.floor(Math.random() * lvl.data.length)];
+    const lvl = levels[stats.level];
+    const entry = lvl.data[Math.floor(Math.random() * lvl.data.length)];
     objects.push({
-        ...data,
-        x: Math.random() * (canvas.width - 200) + 100,
-        y: -50,
+        ...entry,
+        x: Math.random() * (canvas.width - 250) + 125,
+        y: -100,
         vx: (Math.random() - 0.5) * 4,
-        speed: (2.5 + (Math.random() * 2)) * lvl.speedMult,
-        sinOffset: Math.random() * Math.PI * 2
+        speed: lvl.speed + (Math.random() * 2)
     });
 }
 
 function update() {
     if(!active) return;
+    stats.totalSeconds -= 1/60;
+    if(stats.totalSeconds <= 0) endGame("TRAINING COMPLETE: YOU ARE PREPARED.");
 
-    stats.totalTime -= 1/60;
-    if(stats.totalTime <= 0) endGame("MISSION ACCOMPLISHED");
-
-    // Lógica de cambio de nivel por tiempo
-    let elapsed = (27 * 60) - stats.totalTime;
-    if (elapsed < 5 * 60) stats.levelIdx = 0;
-    else if (elapsed < 17 * 60) stats.levelIdx = 1;
-    else stats.levelIdx = 2;
+    // Manejo de Niveles por tiempo
+    let elapsed = (27 * 60) - stats.totalSeconds;
+    if (elapsed < 5 * 60) stats.level = 0;
+    else if (elapsed < 17 * 60) stats.level = 1;
+    else stats.level = 2;
 
     objects.forEach((obj, i) => {
         obj.y += obj.speed;
-        obj.x += obj.vx + Math.sin(obj.y * 0.01 + obj.sinOffset) * 3;
-
-        // Rebotar en paredes
+        obj.x += obj.vx + Math.sin(obj.y * 0.02) * 2;
         if(obj.x < 50 || obj.x > canvas.width - 50) obj.vx *= -1;
 
-        const d = Math.sqrt((obj.x - user.x)**2 + (obj.y - user.y)**2);
-        if (d < user.size) {
-            createExplosion(obj.x, obj.y, obj.color);
-            if(obj.type === 'neg') {
-                stats.health -= 10;
-                stats.money = Math.max(0, stats.money - 200);
-                playNeg(obj.freq);
+        const dist = Math.sqrt((obj.x - user.x)**2 + (obj.y - user.y)**2);
+        if (dist < user.size) {
+            if (obj.type === 'neg') {
+                stats.health -= 15;
+                stats.money = Math.floor(stats.money * 0.5);
+                playSound(obj.freq, 'neg');
+                flash('red');
+                if (window.navigator.vibrate) window.navigator.vibrate([200, 100, 200]);
             } else {
                 stats.money += obj.impact;
-                stats.health = Math.min(100, stats.health + 1);
-                playPiano(obj.freq);
+                stats.health = Math.min(100, stats.health + 5);
+                playSound(obj.freq, 'pos');
+                flash('cyan');
             }
+            createExplosion(obj.x, obj.y, obj.color);
             objects.splice(i, 1);
             updateHUD();
         }
-        if (obj.y > canvas.height + 100) objects.splice(i, 1);
+        if(obj.y > canvas.height + 100) objects.splice(i, 1);
     });
 
     particles.forEach((p, i) => {
@@ -214,82 +189,80 @@ function update() {
         if(p.life <= 0) particles.splice(i, 1);
     });
 
-    const mins = Math.floor(stats.totalTime / 60);
-    const secs = Math.floor(stats.totalTime % 60);
-    document.getElementById('time-left').innerText = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
-    
-    if(stats.health <= 0) {
-        stats.health = 100;
-        stats.money = Math.floor(stats.money * 0.8);
-        updateHUD();
-    }
+    if(stats.health <= 0) { stats.health = 100; stats.money = 0; updateHUD(); }
 }
 
 function updateHUD() {
-    document.getElementById('val-money').innerText = stats.money;
+    document.getElementById('val-money').innerText = "$" + stats.money;
     document.getElementById('val-health').innerText = stats.health + "%";
-    document.getElementById('val-rank').innerText = stats.levelIdx + 1;
+    document.getElementById('val-rank').innerText = levels[stats.level].name;
+    
+    const m = Math.floor(stats.totalSeconds / 60);
+    const s = Math.floor(stats.totalSeconds % 60);
+    document.getElementById('clock').innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
+}
+
+function createExplosion(x, y, color) {
+    for (let i = 0; i < 15; i++) {
+        particles.push({ x, y, vx: (Math.random()-0.5)*15, vy: (Math.random()-0.5)*15, life: 1, color });
+    }
 }
 
 function draw() {
-    ctx.fillStyle = 'rgba(2, 2, 5, 0.25)';
+    ctx.fillStyle = 'rgba(5, 5, 8, 0.3)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Usuario
-    ctx.strokeStyle = "#00f2ff";
-    ctx.lineWidth = 3;
-    ctx.shadowBlur = 15; ctx.shadowColor = "#00f2ff";
-    ctx.beginPath(); ctx.arc(user.x, user.y, user.size - 20, 0, Math.PI*2); ctx.stroke();
-    ctx.shadowBlur = 0;
+    // Escudo del Usuario
+    ctx.shadowBlur = 20; ctx.shadowColor = varColor('--neon-blue');
+    ctx.strokeStyle = varColor('--neon-blue'); ctx.lineWidth = 4;
+    ctx.beginPath(); ctx.arc(user.x, user.y, user.size - 20, 0, Math.PI * 2); ctx.stroke();
 
     objects.forEach(obj => {
-        const power = levels[stats.levelIdx].laserPower;
+        const power = levels[stats.level].laser;
         if(obj.type === 'neg') {
-            ctx.setLineDash([5, 10]);
-            ctx.strokeStyle = obj.color;
-            ctx.lineWidth = power;
+            ctx.strokeStyle = obj.color; ctx.setLineDash([5, 10]); ctx.lineWidth = power;
             ctx.beginPath(); ctx.moveTo(obj.x, obj.y); ctx.lineTo(user.x, user.y); ctx.stroke();
             ctx.setLineDash([]);
         }
 
+        // TEXTO LEGIBLE
         ctx.font = "900 22px Orbitron";
         const tw = ctx.measureText(obj.text).width;
-        ctx.fillStyle = "rgba(0,0,0,0.9)";
-        ctx.fillRect(obj.x - tw/2 - 10, obj.y - 15, tw + 20, 30);
+        ctx.fillStyle = "black";
+        ctx.fillRect(obj.x - tw/2 - 10, obj.y - 18, tw + 20, 30);
         
-        ctx.fillStyle = obj.color;
-        ctx.textAlign = "center";
+        ctx.fillStyle = obj.color; ctx.textAlign = "center";
         ctx.fillText(obj.text, obj.x, obj.y + 8);
     });
 
     particles.forEach(p => {
-        ctx.globalAlpha = p.life;
-        ctx.fillStyle = p.color;
-        ctx.fillRect(p.x, p.y, 5, 5);
+        ctx.globalAlpha = p.life; ctx.fillStyle = p.color;
+        ctx.fillRect(p.x, p.y, 4, 4);
     });
     ctx.globalAlpha = 1;
 }
 
-function handleInput(e) {
-    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-    user.x = clientX; user.y = clientY;
-}
-window.addEventListener('mousemove', handleInput);
-window.addEventListener('touchmove', (e) => { handleInput(e); e.preventDefault(); }, {passive:false});
+function varColor(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+
+const handleMove = e => { 
+    const cx = e.touches ? e.touches[0].clientX : e.clientX;
+    const cy = e.touches ? e.touches[0].clientY : e.clientY;
+    user.x = cx; user.y = cy; 
+};
+window.addEventListener('mousemove', handleMove);
+window.addEventListener('touchmove', e => { handleMove(e); e.preventDefault(); }, {passive: false});
 
 function startGame() {
     document.getElementById('overlay').style.display = 'none';
-    initAudio();
     active = true;
-    setInterval(spawn, 750);
+    setInterval(spawn, 800);
     function loop() { update(); draw(); requestAnimationFrame(loop); }
     loop();
 }
 
 function endGame(msg) {
     active = false;
-    alert(msg);
+    alert(msg + "\nFINAL WEALTH: $" + stats.money);
     location.reload();
 }
 </script>
