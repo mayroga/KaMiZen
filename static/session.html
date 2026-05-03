@@ -2,55 +2,72 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>AL CIELO - NEURAL SURVIVAL</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>AL CIELO - NEURAL INTERFACE</title>
     <style>
         :root {
-            --neon-blue: #00f2ff; --neon-gold: #f1c40f; --neon-green: #2ecc71;
-            --neon-red: #ff3131; --bg-dark: #020205;
+            --neon-blue: #00f2ff;
+            --neon-gold: #f1c40f;
+            --neon-green: #2ecc71;
+            --neon-purple: #9b59b6;
+            --neon-red: #ff3131;
+            --bg-dark: #020205;
         }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { margin: 0; overflow: hidden; background: var(--bg-dark); color: white; font-family: 'Orbitron', sans-serif; touch-action: none; }
-        
+        body { margin: 0; overflow: hidden; background: var(--bg-dark); color: white; font-family: 'Orbitron', sans-serif; cursor: none; }
+       
         #hud {
-            position: absolute; top: env(safe-area-inset-top, 20px); width: 100%;
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
-            padding: 0 15px; z-index: 100; pointer-events: none;
+            position: absolute; top: 20px; width: 100%;
+            display: flex; justify-content: space-evenly;
+            z-index: 100; pointer-events: none;
         }
         .data-box {
-            background: rgba(0, 0, 0, 0.8); border: 2px solid var(--neon-blue);
-            padding: 8px; text-align: center; border-radius: 12px;
-            backdrop-filter: blur(10px); box-shadow: 0 0 15px rgba(0, 242, 255, 0.2);
+            background: rgba(0, 0, 0, 0.85);
+            border: 2px solid var(--neon-blue);
+            padding: 10px 20px; text-align: center;
+            box-shadow: 0 0 20px rgba(0, 242, 255, 0.3);
+            min-width: 120px;
+            border-radius: 5px;
         }
-        .label { font-size: 8px; color: var(--neon-blue); letter-spacing: 1px; font-weight: 900; display: block; text-transform: uppercase; }
-        .value { font-size: 18px; font-weight: 900; display: block; color: #fff; }
+        .label { font-size: 10px; color: var(--neon-blue); letter-spacing: 2px; font-weight: 900; display: block; }
+        .value { font-size: 24px; font-weight: 900; display: block; color: #fff; }
+
+        canvas { display: block; }
 
         #start-screen {
-            position: fixed; inset: 0; background: radial-gradient(circle, #0a0a1a 0%, #020205 100%);
-            display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 1000;
+            position: fixed; inset: 0; background: var(--bg-dark);
+            display: flex; flex-direction: column; justify-content: center;
+            align-items: center; z-index: 1000; text-align: center;
         }
         .start-btn {
-            padding: 20px 60px; background: var(--neon-blue); color: #000;
-            border: none; font-family: 'Orbitron'; font-weight: 900; font-size: 1.2rem;
-            cursor: pointer; margin-top: 40px; letter-spacing: 4px; border-radius: 50px;
-            box-shadow: 0 0 40px var(--neon-blue); transition: 0.3s;
+            padding: 20px 50px; background: var(--neon-blue); color: black;
+            border: none; font-family: 'Orbitron'; font-weight: 900;
+            cursor: pointer; margin-top: 30px; letter-spacing: 3px;
+            box-shadow: 0 0 30px var(--neon-blue);
         }
-        canvas { display: block; width: 100vw; height: 100vh; }
     </style>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
 </head>
 <body>
 
 <div id="hud">
-    <div class="data-box" style="border-color: var(--neon-gold);"><span class="label">CAPITAL</span><span id="val-money" class="value">$0</span></div>
-    <div class="data-box" style="border-color: var(--neon-green);"><span class="label">STABILITY</span><span id="val-health" class="value">100%</span></div>
-    <div class="data-box" style="border-color: #fff;"><span class="label">LOCATION</span><span id="val-loc" class="value">HOME</span></div>
+    <div class="data-box" style="border-color: var(--neon-gold);">
+        <span class="label">CAPITAL</span>
+        <span id="val-money" class="value">0</span>
+    </div>
+    <div class="data-box" style="border-color: var(--neon-green);">
+        <span class="label">STABILITY</span>
+        <span id="val-health" class="value">100%</span>
+    </div>
+    <div class="data-box" style="border-color: var(--neon-purple);">
+        <span class="label">BIZ UNITS</span>
+        <span id="val-biz" class="value">0</span>
+    </div>
 </div>
 
 <div id="start-screen">
-    <h1 style="color: var(--neon-blue); letter-spacing: 12px; font-size: clamp(30px, 10vw, 60px); margin: 0;">AL CIELO</h1>
-    <p style="letter-spacing: 4px; color: var(--neon-gold); font-size: 10px;">USA SURVIVAL & NEURAL DISCIPLINE</p>
-    <button class="start-btn" onclick="startGame()">START LIFE</button>
+    <h1 style="color: var(--neon-blue); letter-spacing: 15px; font-size: 50px;">AL CIELO</h1>
+    <p style="letter-spacing: 5px; color: #888;">NEURAL DIAGNOSTICS & DOPAMINE FLOW</p>
+    <button class="start-btn" onclick="startGame()">INITIALIZE INTERFACE</button>
 </div>
 
 <canvas id="gameCanvas"></canvas>
@@ -58,70 +75,46 @@
 <script>
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
-let audioCtx, mainGain, bgOsc;
+let audioCtx;
 
-// --- CONFIGURACIÓN DE ALTA DEFINICIÓN (Retina/Mobile fix) ---
-function setupCanvas() {
-    const dpr = window.devicePixelRatio || 1;
-    canvas.width = window.innerWidth * dpr;
-    canvas.height = window.innerHeight * dpr;
-    ctx.scale(dpr, dpr);
+function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 }
-window.addEventListener('resize', setupCanvas);
-setupCanvas();
+window.addEventListener('resize', resize);
+resize();
 
-const locations = [
-    { name: "HOME", color: "#050510", accent: "#2ecc71" },
-    { name: "SCHOOL", color: "#0a0510", accent: "#f1c40f" },
-    { name: "USA STREET", color: "#051010", accent: "#3498db" },
-    { name: "FUTURE", color: "#100510", accent: "#9b59b6" }
-];
-
+// DATA JSON - PALABRAS VISIBLES
 const rawData = [
-    { text: "SAVINGS", type: "pos", impact: 200, color: "#f1c40f", freq: 523 },
-    { text: "FAMILY TIME", type: "pos", impact: 15, color: "#2ecc71", freq: 659 },
-    { text: "USA LAW", type: "pos", impact: 100, color: "#3498db", freq: 783 },
-    { text: "DANGER", type: "neg", impact: -30, color: "#ff3131", freq: 110 },
-    { text: "BAD DEBT", type: "neg", impact: -20, color: "#e67e22", freq: 90 },
-    { text: "EDUCATION", type: "pos", impact: 300, color: "#00f2ff", freq: 987 }
+    { text: "SAVINGS", emoji: "💰", type: "pos", stat: "money", impact: 150, color: "#f1c40f", freq: 523.25 },
+    { text: "BUSINESS", emoji: "🤝", type: "pos", stat: "biz", impact: 1, color: "#3498db", freq: 659.25 },
+    { text: "FAMILY", emoji: "🏠", type: "pos", stat: "health", impact: 20, color: "#2ecc71", freq: 783.99 },
+    { text: "HAPPINESS", emoji: "😊", type: "pos", stat: "health", impact: 15, color: "#9b59b6", freq: 880.00 },
+    { text: "THREAT", emoji: "⚠️", type: "neg", stat: "health", impact: -25, color: "#ff3131", freq: 110.00 },
+    { text: "PROBLEM", emoji: "🛑", type: "neg", stat: "health", impact: -20, color: "#ff3131", freq: 90.00 },
+    { text: "INVESTMENT", emoji: "📈", type: "pos", stat: "money", impact: 300, color: "#00f2ff", freq: 987.77 },
+    { text: "EDUCATION", emoji: "📚", type: "pos", stat: "biz", impact: 1, color: "#00f2ff", freq: 1046.50 }
 ];
 
-let stats = { money: 0, health: 100, locIndex: 0 };
+let stats = { money: 0, health: 100, biz: 0 };
 let active = false;
 let objects = [];
 let particles = [];
-const user = { x: window.innerWidth / 2, y: window.innerHeight * 0.8, size: 45 };
+const user = { x: canvas.width / 2, y: canvas.height / 2, size: 60 };
 
-// --- MOTOR DE AUDIO DINÁMICO ---
-function initAudio() {
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    mainGain = audioCtx.createGain();
-    mainGain.connect(audioCtx.destination);
-    
-    // Música de fondo latente (estilo Neural)
-    bgOsc = audioCtx.createOscillator();
-    bgOsc.type = 'triangle';
-    bgOsc.frequency.setValueAtTime(55, audioCtx.currentTime);
-    const bgGain = audioCtx.createGain();
-    bgGain.gain.value = 0.05;
-    bgOsc.connect(bgGain);
-    bgGain.connect(mainGain);
-    bgOsc.start();
-}
-
-function playEffect(freq, type) {
-    if (!audioCtx) return;
+// SISTEMA DE AUDIO (DOPAMINA)
+function playSound(freq, type) {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     const osc = audioCtx.createOscillator();
-    const g = audioCtx.createGain();
+    const gain = audioCtx.createGain();
     osc.type = type === 'pos' ? 'sine' : 'sawtooth';
     osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(freq / 2, audioCtx.currentTime + 0.4);
-    g.gain.setValueAtTime(0.2, audioCtx.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.4);
-    osc.connect(g);
-    g.connect(mainGain);
+    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.5);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
     osc.start();
-    osc.stop(audioCtx.currentTime + 0.4);
+    osc.stop(audioCtx.currentTime + 0.5);
 }
 
 function spawn() {
@@ -129,45 +122,57 @@ function spawn() {
     const entry = rawData[Math.floor(Math.random() * rawData.length)];
     objects.push({
         ...entry,
-        x: Math.random() * (window.innerWidth - 100) + 50,
-        y: -50,
-        speed: 3 + (stats.money / 10000),
-        rot: Math.random() * Math.PI
+        x: Math.random() * (canvas.width - 200) + 100,
+        y: -150,
+        speed: 2.5 + (stats.money / 5000),
+        pulse: 0
     });
-    
-    // Cambio de locación basado en progreso
-    if(stats.money > 0 && stats.money % 2000 === 0) {
-        stats.locIndex = (stats.locIndex + 1) % locations.length;
-        document.getElementById('val-loc').innerText = locations[stats.locIndex].name;
+}
+
+function createExplosion(x, y, color) {
+    for (let i = 0; i < 15; i++) {
+        particles.push({
+            x, y,
+            vx: (Math.random() - 0.5) * 10,
+            vy: (Math.random() - 0.5) * 10,
+            life: 1.0,
+            color
+        });
     }
 }
+
+function handleInput(e) {
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    user.x = clientX;
+    user.y = clientY;
+}
+
+window.addEventListener('mousemove', handleInput);
+window.addEventListener('touchmove', handleInput);
 
 function update() {
     if(!active) return;
 
     objects.forEach((obj, i) => {
         obj.y += obj.speed;
-        obj.rot += 0.02;
+        obj.pulse += 0.07;
 
         const dist = Math.sqrt((obj.x - user.x)**2 + (obj.y - user.y)**2);
         if (dist < user.size) {
-            playEffect(obj.freq, obj.type);
+            // EFECTO TÁCTIL VISUAL Y SONORO
+            playSound(obj.freq, obj.type);
             createExplosion(obj.x, obj.y, obj.color);
-            
-            if(obj.type === 'neg') {
-                stats.health = Math.max(0, stats.health + obj.impact);
-                stats.money = Math.floor(stats.money * 0.5); // Castigo USA: pierdes capital
-                if (window.navigator.vibrate) window.navigator.vibrate([100, 50, 100]);
-            } else {
-                stats.money += obj.impact;
-                stats.health = Math.min(100, stats.health + 2);
-                if (window.navigator.vibrate) window.navigator.vibrate(20);
-            }
-            
+           
+            if(obj.stat === 'money') stats.money += obj.impact;
+            if(obj.stat === 'biz') stats.biz += obj.impact;
+            if(obj.stat === 'health') stats.health = Math.max(0, Math.min(100, stats.health + obj.impact));
+           
             updateHUD();
             objects.splice(i, 1);
+            if (window.navigator.vibrate) window.navigator.vibrate(obj.type === 'pos' ? 20 : 100);
         }
-        if(obj.y > window.innerHeight + 100) objects.splice(i, 1);
+        if(obj.y > canvas.height + 200) objects.splice(i, 1);
     });
 
     particles.forEach((p, i) => {
@@ -175,90 +180,66 @@ function update() {
         if(p.life <= 0) particles.splice(i, 1);
     });
 
-    if(stats.health <= 0) endGame();
+    if(stats.health <= 0) {
+        active = false;
+        alert("DIAGNOSIS: SYSTEM COLLAPSE. Stability reached 0.");
+        location.reload();
+    }
 }
 
 function updateHUD() {
-    document.getElementById('val-money').innerText = "$" + stats.money;
+    document.getElementById('val-money').innerText = stats.money;
     document.getElementById('val-health').innerText = stats.health + "%";
-}
-
-function createExplosion(x, y, color) {
-    for (let i = 0; i < 12; i++) {
-        particles.push({
-            x, y, vx: (Math.random()-0.5)*12, vy: (Math.random()-0.5)*12, life: 1.0, color
-        });
-    }
+    document.getElementById('val-biz').innerText = stats.biz;
 }
 
 function draw() {
-    // Fondo dinámico según locación
-    const loc = locations[stats.locIndex];
-    ctx.fillStyle = loc.color;
-    ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
+    ctx.fillStyle = 'rgba(2, 2, 5, 0.2)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Grid de fondo (Efecto profundidad)
-    ctx.strokeStyle = "rgba(255,255,255,0.05)";
-    ctx.lineWidth = 1;
-    for(let i=0; i<window.innerWidth; i+=50) {
-        ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, window.innerHeight); ctx.stroke();
-    }
-
-    // Avatar del Usuario (Círculo de Enfoque)
-    ctx.shadowBlur = 20;
-    ctx.shadowColor = loc.accent;
-    ctx.strokeStyle = "#fff";
+    // DIBUJAR SCANNER (PALPABLE)
+    ctx.shadowBlur = 30;
+    ctx.shadowColor = varColor('--neon-blue');
+    ctx.strokeStyle = varColor('--neon-blue');
     ctx.lineWidth = 4;
     ctx.beginPath();
-    ctx.arc(user.x, user.y, user.size - 5, 0, Math.PI * 2);
+    ctx.arc(user.x, user.y, user.size - 10, 0, Math.PI * 2);
     ctx.stroke();
 
-    // Objetos (Texto nítido)
-    objects.forEach(obj => {
-        ctx.shadowBlur = 15;
-        ctx.shadowColor = obj.color;
-        ctx.fillStyle = obj.color;
-        ctx.font = "900 16px Orbitron";
-        ctx.textAlign = "center";
-        ctx.fillText(obj.text, obj.x, obj.y);
-        
-        // Línea de amenaza táctica
-        if(obj.type === 'neg') {
-            ctx.setLineDash([5, 5]);
-            ctx.strokeStyle = "rgba(255, 49, 49, 0.3)";
-            ctx.beginPath(); ctx.moveTo(obj.x, obj.y); ctx.lineTo(user.x, user.y); ctx.stroke();
-            ctx.setLineDash([]);
-        }
-    });
-
+    // DIBUJAR EXPLOSIONES DE DOPAMINA
     particles.forEach(p => {
         ctx.globalAlpha = p.life;
         ctx.fillStyle = p.color;
         ctx.fillRect(p.x, p.y, 4, 4);
     });
     ctx.globalAlpha = 1.0;
+
+    // DIBUJAR ICONOS (JSON PROJECTION)
+    objects.forEach(obj => {
+        const bounce = Math.sin(obj.pulse) * 10;
+        ctx.shadowBlur = 25;
+        ctx.shadowColor = obj.color;
+       
+        ctx.fillStyle = "white";
+        ctx.font = "900 20px Orbitron";
+        ctx.textAlign = "center";
+        ctx.fillText(obj.text, obj.x, obj.y - 40 + bounce);
+
+        ctx.font = "60px Arial";
+        ctx.fillText(obj.emoji, obj.x, obj.y + bounce);
+    });
 }
 
-function handleInput(e) {
-    const x = e.touches ? e.touches[0].clientX : e.clientX;
-    const y = e.touches ? e.touches[0].clientY : e.clientY;
-    user.x = x; user.y = y;
+function varColor(name) {
+    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 }
-window.addEventListener('mousemove', handleInput);
-window.addEventListener('touchmove', handleInput, {passive: false});
 
 function startGame() {
     document.getElementById('start-screen').style.display = 'none';
-    initAudio();
     active = true;
-    setInterval(spawn, 700);
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    setInterval(spawn, 800);
     loop();
-}
-
-function endGame() {
-    active = false;
-    alert("LIFE RECAP\nFinal Capital: $" + stats.money + "\nStability: 0%\nTry again with more discipline.");
-    location.reload();
 }
 
 function loop() {
@@ -269,3 +250,7 @@ function loop() {
 </script>
 </body>
 </html>
+"""
+
+with open("al_cielo_neurogame.html", "w") as f:
+    f.write(html_code)
