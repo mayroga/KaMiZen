@@ -3,296 +3,286 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>KAMIZEN</title>
+<title>KAMIZEN - AL CIELO</title>
 
 <style>
 :root{
 --neon-blue:#00f2ff;
 --neon-green:#2ecc71;
 --neon-red:#ff3131;
---bg:#020205;
+--neon-gold:#f1c40f;
+--bg-dark:#020205;
 }
-body{margin:0;background:var(--bg);color:white;font-family:Orbitron;overflow:hidden}
+
+body{margin:0;overflow:hidden;background:var(--bg-dark);color:white;font-family:'Orbitron',sans-serif}
 
 /* HUD */
-#hud{position:fixed;top:10px;width:100%;display:flex;justify-content:center;z-index:100}
-#timer{font-size:28px;color:var(--neon-red);border:2px solid var(--neon-red);padding:5px 15px}
-
-/* OVERLAY */
-#overlay{position:fixed;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;background:var(--bg);z-index:999}
-#text{font-size:20px;max-width:600px;padding:20px}
-
-/* BREATH */
-#breath{
-width:120px;height:120px;border-radius:50%;
-border:4px solid var(--neon-blue);
-display:none;align-items:center;justify-content:center;
-font-size:14px;
-animation:breathAnim 4s infinite;
+#hud{
+position:absolute;top:10px;width:100%;
+display:flex;justify-content:space-evenly;z-index:100;
 }
-@keyframes breathAnim{
-0%{transform:scale(1)}
-50%{transform:scale(1.4)}
-100%{transform:scale(1)}
+.data-box{
+background:rgba(0,0,0,0.8);
+border:2px solid var(--neon-blue);
+padding:8px;text-align:center;
+min-width:100px;
+}
+.label{font-size:10px}
+.value{font-size:20px;font-weight:bold}
+
+#timerBox{border-color:var(--neon-red);color:var(--neon-red)}
+
+/* Overlay fases */
+#phaseOverlay{
+position:fixed;inset:0;
+background:#000;
+display:flex;flex-direction:column;
+justify-content:center;align-items:center;
+z-index:1000;text-align:center;padding:20px;
+}
+
+#breathCircle{
+width:150px;height:150px;
+border-radius:50%;
+border:4px solid var(--neon-blue);
+display:none;
+margin-top:20px;
 }
 
 canvas{display:block}
-button{padding:10px 20px;margin-top:20px}
 </style>
 </head>
 
 <body>
 
 <div id="hud">
-<div id="timer">10:00</div>
+<div id="timerBox" class="data-box">
+<span class="label">TIME</span>
+<span id="time">10:00</span>
 </div>
 
-<div id="overlay">
-<div id="text">KAMIZEN</div>
-<div id="breath">INHALE</div>
+<div class="data-box"><span class="label">CAPITAL</span><span id="money">0</span></div>
+<div class="data-box"><span class="label">STABILITY</span><span id="health">100%</span></div>
+<div class="data-box"><span class="label">BIZ</span><span id="biz">0</span></div>
+</div>
+
+<div id="phaseOverlay">
+<h1>KAMIZEN</h1>
+<p id="phaseText">READY</p>
 <button onclick="startFlow()">START</button>
+<div id="breathCircle"></div>
 </div>
 
 <canvas id="gameCanvas"></canvas>
 
 <script>
-// ==================== BASE GAME (TU MOTOR) ====================
+// =========================
+// BASE GAME (NO TOCADO)
+// =========================
 const canvas=document.getElementById('gameCanvas');
 const ctx=canvas.getContext('2d');
 
-let stats={money:0,health:100,legacy:0};
-let active=false,objects=[];
+let stats={money:0,health:100,biz:0};
+let active=false;
+let objects=[];
 const user={x:0,y:0,size:60};
+let audioCtx;
 
-const variants={
-good:[{t:"SAVE",s:"money",i:100,c:"#2ecc71"}],
-bad:[{t:"DANGER",s:"health",i:-30,c:"#ff3131"}]
-};
+function resize(){canvas.width=innerWidth;canvas.height=innerHeight}
+resize();addEventListener('resize',resize);
 
-function spawn(){
-if(!active)return;
-const type=Math.random()>0.5?"good":"bad";
-const item=variants[type][0];
-objects.push({...item,x:Math.random()*canvas.width,y:-50,speed:3});
+const rawData=[
+{text:"SAVINGS",emoji:"💰",type:"pos",stat:"money",impact:150,color:"#f1c40f",freq:523},
+{text:"BUSINESS",emoji:"🤝",type:"pos",stat:"biz",impact:1,color:"#3498db",freq:659},
+{text:"THREAT",emoji:"⚠️",type:"neg",stat:"health",impact:-25,color:"#ff3131",freq:110}
+];
+
+// AUDIO ORIGINAL
+function playSound(freq,type){
+if(!audioCtx)audioCtx=new AudioContext();
+const osc=audioCtx.createOscillator();
+const g=audioCtx.createGain();
+osc.type=type==="pos"?"sine":"sawtooth";
+osc.frequency.value=freq;
+g.gain.value=0.1;
+osc.connect(g);g.connect(audioCtx.destination);
+osc.start();osc.stop(audioCtx.currentTime+0.4);
 }
 
+// SPAWN
+function spawn(){
+if(!active)return;
+const e=rawData[Math.floor(Math.random()*rawData.length)];
+objects.push({...e,x:Math.random()*canvas.width,y:-100,speed:3});
+}
+
+// UPDATE
 function update(){
 if(!active)return;
+
 objects.forEach((o,i)=>{
 o.y+=o.speed;
-let d=Math.hypot(o.x-user.x,o.y-user.y);
-if(d<50){
-if(o.s==="money")stats.money+=o.i;
-if(o.s==="health")stats.health+=o.i;
+const d=Math.hypot(o.x-user.x,o.y-user.y);
+
+if(d<user.size){
+playSound(o.freq,o.type);
+if(o.stat==="money")stats.money+=o.impact;
+if(o.stat==="biz")stats.biz+=o.impact;
+if(o.stat==="health")stats.health=Math.max(0,Math.min(100,stats.health+o.impact));
+updateHUD();
 objects.splice(i,1);
 }
 });
 }
 
+// DRAW
 function draw(){
 ctx.fillStyle="rgba(0,0,0,0.2)";
 ctx.fillRect(0,0,canvas.width,canvas.height);
-ctx.beginPath();
-ctx.arc(user.x,user.y,40,0,Math.PI*2);
+
 ctx.strokeStyle="#00f2ff";
+ctx.beginPath();
+ctx.arc(user.x,user.y,user.size,0,Math.PI*2);
 ctx.stroke();
 
 objects.forEach(o=>{
-ctx.fillStyle=o.c;
-ctx.fillText(o.t,o.x,o.y);
+ctx.fillStyle="white";
+ctx.fillText(o.emoji,o.x,o.y);
 });
 }
 
-function loop(){
-if(active){
-update();draw();
-requestAnimationFrame(loop);
+function loop(){update();draw();requestAnimationFrame(loop)}
+addEventListener('mousemove',e=>{user.x=e.clientX;user.y=e.clientY});
+
+// HUD
+function updateHUD(){
+money.innerText=stats.money;
+health.innerText=stats.health+"%";
+biz.innerText=stats.biz;
 }
-}
 
-window.addEventListener('mousemove',e=>{
-user.x=e.clientX;user.y=e.clientY;
-});
-
-function resize(){
-canvas.width=window.innerWidth;
-canvas.height=window.innerHeight;
-}
-resize();
-window.addEventListener('resize',resize);
-
-// ==================== KAMIZEN FLOW ====================
-
-let sessionTime=600;
-let globalTimer;
+// =========================
+// KAMIZEN FLOW
+// =========================
+let totalTime=600;
+let phaseText=document.getElementById("phaseText");
 
 function updateTimer(){
-sessionTime--;
-let m=Math.floor(sessionTime/60);
-let s=sessionTime%60;
-document.getElementById("timer").innerText=
-`${m}:${s<10?"0":""}${s}`;
-if(sessionTime<=0)endAll();
+totalTime--;
+let m=Math.floor(totalTime/60);
+let s=totalTime%60;
+time.innerText=`${m}:${s<10?'0':''}${s}`;
+if(totalTime<=0)endSession();
 }
 
-// ==================== FLOW ====================
-
+// =========================
+// PHASES
+// =========================
 async function startFlow(){
-document.getElementById("overlay").style.display="none";
-globalTimer=setInterval(updateTimer,1000);
-
-const data=await fetch("/api/session/start").then(r=>r.json());
-
-await showText(data.story.en,5000);
-
+phaseOverlay.style.display="none";
+setInterval(updateTimer,1000);
+await storyPhase();
 await gamePhase(300);
-
-await diagnostic("FIRST");
-
-await missionPhase(data.missions[0]);
-
+await diagnosis("FIRST");
+await missionPhase();
+await breathingPhase(30);
 await gamePhase(300);
-
-await diagnostic("FINAL");
-
+await diagnosis("FINAL");
 await finalBreath();
-
-endAll();
+endSession();
 }
 
-// ==================== PHASES ====================
-
-function showText(text,time){
-return new Promise(res=>{
-overlayOn(text);
-setTimeout(res,time);
-});
-}
-
-function overlayOn(text){
-document.getElementById("overlay").style.display="flex";
-document.getElementById("text").innerText=text;
-}
-
-function overlayOff(){
-document.getElementById("overlay").style.display="none";
+// STORY
+async function storyPhase(){
+showOverlay("STORY...");
+let r=await fetch("/api/session/start");
+let data=await r.json();
+phaseText.innerText=data.story.en;
+await sleep(5000);
+hideOverlay();
 }
 
 // GAME
 function gamePhase(sec){
 return new Promise(res=>{
-overlayOff();
 active=true;
-let t=sec;
-
-const sp=setInterval(spawn,800);
-
-const timer=setInterval(()=>{
-t--;
-if(t<=0){
-clearInterval(timer);
-clearInterval(sp);
+let t=setInterval(()=>{
+spawn();
+sec--;
+if(sec<=0){
+clearInterval(t);
 active=false;
 res();
 }
-},1000);
-
+},800);
 loop();
 });
 }
 
-// DIAGNOSTIC
-function diagnostic(type){
-return new Promise(res=>{
-let msg="";
-
-if(stats.health<50)msg="Low stability";
-else msg="Stable";
-
-if(stats.money>300)msg+=" | Good decisions";
-else msg+=" | Needs improvement";
-
-overlayOn(type+" DIAGNOSTIC: "+msg);
-setTimeout(res,4000);
-});
+// DIAGNOSIS
+async function diagnosis(type){
+showOverlay("DIAGNOSIS...");
+let txt=`${type} RESULT\nMoney:${stats.money}\nHealth:${stats.health}`;
+phaseText.innerText=txt;
+await sleep(4000);
+hideOverlay();
 }
 
 // MISSION
-async function missionPhase(mission){
-for(let step of mission.b){
-
-if(step.t==="v"||step.t==="h"){
-await showText(step.tx.en,3000);
-}
-
-if(step.t==="d"){
-await decision(step);
-}
-
-if(step.t==="sil"){
-await silence(step);
-}
-
-if(step.t==="breath_auto"){
-await breath(step.d);
-}
-
-}
-}
-
-// DECISION
-function decision(step){
-return new Promise(res=>{
-let txt=step.q.en+"\n"+step.op.join(" | ");
-overlayOn(txt);
-
-setTimeout(()=>{
-res();
-},4000);
-});
-}
-
-// SILENCE
-function silence(step){
-return new Promise(res=>{
-overlayOn(step.tx.en);
-setTimeout(res,step.d*1000);
-});
+async function missionPhase(){
+showOverlay("MISSION...");
+let r=await fetch("/api/session/start");
+let data=await r.json();
+let m=data.missions[0];
+phaseText.innerText=m.b[0].tx.en;
+await sleep(5000);
+hideOverlay();
 }
 
 // BREATH
-function breath(seconds){
+function breathingPhase(sec){
 return new Promise(res=>{
-const b=document.getElementById("breath");
-b.style.display="flex";
-overlayOn("");
+showOverlay("BREATH");
+breathCircle.style.display="block";
 
-let t=seconds;
-
-const i=setInterval(()=>{
-b.innerText=(t%4<2)?"INHALE":"EXHALE";
-t--;
-if(t<=0){
-clearInterval(i);
-b.style.display="none";
+let grow=true;
+let t=setInterval(()=>{
+breathCircle.style.transform=`scale(${grow?1.5:1})`;
+grow=!grow;
+sec--;
+if(sec<=0){
+clearInterval(t);
+breathCircle.style.display="none";
+hideOverlay();
 res();
 }
-},1000);
+},2000);
 });
 }
 
 // FINAL BREATH
 function finalBreath(){
-return breath(15);
+return breathingPhase(15);
 }
 
 // END
-function endAll(){
-overlayOn("SESSION COMPLETE");
-clearInterval(globalTimer);
+function endSession(){
+showOverlay("END SESSION");
+phaseText.innerText="Restart";
 }
 
-// ====================
+// UI
+function showOverlay(txt){
+phaseOverlay.style.display="flex";
+phaseText.innerText=txt;
+}
+function hideOverlay(){
+phaseOverlay.style.display="none";
+}
+
+// UTILS
+function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
 </script>
+
 </body>
 </html>
