@@ -17,34 +17,41 @@
         justify-content:space-evenly; z-index:100; pointer-events:none;
     }
     .data-box {
-        background:rgba(0,0,0,0.85); border:2px solid var(--neon-blue);
-        padding:10px 20px; text-align:center; box-shadow:0 0 20px rgba(0,242,255,0.3);
-        min-width:120px; border-radius:5px;
+        background:rgba(0,0,0,0.9); border:2px solid var(--neon-blue);
+        padding:10px 20px; text-align:center; box-shadow:0 0 25px rgba(0,242,255,0.4);
+        min-width:140px; border-radius:5px;
     }
-    .label { font-size:10px; color:var(--neon-blue); letter-spacing:2px; font-weight:900; display:block; }
-    .value { font-size:24px; font-weight:900; display:block; color:#fff; }
+    .label { font-size:11px; color:var(--neon-blue); letter-spacing:2px; font-weight:900; display:block; }
+    .value { font-size:26px; font-weight:900; display:block; color:#fff; }
 
+    /* TERMINAL DE CARGA JSON */
     #terminal-overlay {
         position:fixed; inset:0; background:var(--bg-dark);
         display:flex; flex-direction:column; justify-content:center;
         align-items:center; z-index:2000; padding:40px; text-align:center;
     }
     .terminal-text {
-        color: var(--neon-blue); font-size: 22px; margin: 15px;
-        text-shadow: 0 0 15px var(--neon-blue); font-weight: 900;
+        color: var(--neon-blue); font-size: 24px; margin: 15px;
+        text-shadow: 0 0 20px var(--neon-blue); font-weight: 900;
+        text-transform: uppercase;
     }
     .progress-bar {
-        width: 80%; max-width: 500px; height: 6px; background: #111; 
-        margin-top: 25px; border: 1px solid var(--neon-blue);
+        width: 80%; max-width: 600px; height: 8px; background: #111; 
+        margin-top: 30px; border: 1px solid var(--neon-blue); position: relative;
     }
-    #progress-fill { width: 0%; height: 100%; background: var(--neon-blue); box-shadow: 0 0 15px var(--neon-blue); transition: 0.4s; }
+    #progress-fill { 
+        width: 0%; height: 100%; background: var(--neon-blue); 
+        box-shadow: 0 0 20px var(--neon-blue); transition: 0.4s linear; 
+    }
     
     .start-btn {
-        padding:25px 60px; background:var(--neon-blue); color:black; border:none;
+        padding:25px 70px; background:var(--neon-blue); color:black; border:none;
         font-family:'Orbitron'; font-weight:900; cursor:pointer;
-        letter-spacing:5px; box-shadow:0 0 30px var(--neon-blue); font-size: 20px;
+        letter-spacing:6px; box-shadow:0 0 40px var(--neon-blue); font-size: 22px;
+        transition: 0.3s;
     }
-    canvas { display:block; }
+    .start-btn:hover { transform: scale(1.05); background: #fff; }
+    canvas { display:block; image-rendering: pixelated; }
 </style>
 </head>
 <body>
@@ -57,14 +64,14 @@
 
 <div id="terminal-overlay">
     <div id="init-view">
-        <h1 style="color:var(--neon-blue);letter-spacing:15px;font-size:60px;margin-bottom:0;">AL CIELO</h1>
-        <p style="letter-spacing:8px;color:var(--neon-gold);margin-bottom:40px;">NEURAL EDUCATION INTERFACE</p>
-        <button class="start-btn" onclick="startSequence()">INITIALIZE LEARNING</button>
+        <h1 style="color:var(--neon-blue);letter-spacing:18px;font-size:70px;margin:0;">AL CIELO</h1>
+        <p style="letter-spacing:10px;color:var(--neon-gold);margin-bottom:50px;">AURA BY MAY ROGA LLC</p>
+        <button class="start-btn" onclick="startSequence()">INITIALIZE NEURAL TRANSFER</button>
     </div>
     <div id="process-view" style="display:none;">
-        <div id="status-tag" style="font-size:14px; color:var(--neon-gold); margin-bottom:10px;">DECODING LIFE SECRETS...</div>
+        <div id="status-tag" style="font-size:16px; color:var(--neon-gold); margin-bottom:15px; letter-spacing:4px;">ACCESSING JSON DATABASE...</div>
         <div id="main-log" class="terminal-text"></div>
-        <div id="sub-log" style="font-size:16px; color:#aaa; max-width:600px;"></div>
+        <div id="sub-log" style="font-size:18px; color:#ccc; max-width:700px; line-height:1.5;"></div>
         <div class="progress-bar"><div id="progress-fill"></div></div>
     </div>
 </div>
@@ -85,9 +92,9 @@ let objects = [];
 let particles = [];
 let active = false;
 let audioCtx;
-const user = {x: innerWidth/2, y: innerHeight/2, size: 60};
+const user = {x: innerWidth/2, y: innerHeight/2, size: 65};
 
-// DATA DE TUS JSON
+// RECURSOS
 let STORIES = [];
 let MISSIONS = [];
 
@@ -98,84 +105,91 @@ function initAudio() {
 async function startSequence() {
     initAudio();
     document.getElementById("init-view").style.display = "none";
-    document.getElementById("process-view").style.display = "block";
+    document.getElementById("process-view").style.display = "flex";
     
     try {
-        const sRes = await fetch("stories.json");
-        const sData = await sRes.json();
-        STORIES = sData.stories || [];
-        const mRes = await fetch("missions.json");
-        const mData = await mRes.json();
-        MISSIONS = mData.missions || [];
+        // CARGA REAL DE ARCHIVOS
+        const [sRes, mRes] = await Promise.all([
+            fetch("stories.json").then(r => r.json()),
+            fetch("missions.json").then(r => r.json())
+        ]);
+        
+        STORIES = sRes.stories || [];
+        MISSIONS = mRes.missions || [];
+        
+        mainLog.innerText = "DATA DETECTED";
     } catch (e) {
-        STORIES = [{title: "CONOCIMIENTO PROHIBIDO", text: "Cargando lecciones de libertad financiera..."}];
-        MISSIONS = [{id: "LECCIÓN 1"}];
+        console.error("Fallo de lectura:", e);
+        mainLog.innerText = "LOCAL DATA OVERRIDE";
+        STORIES = [{title: "CONOCIMIENTO VITAL", text: "Si el mundo no te enseña a invertir, tú debes aprender a hackear el sistema."}];
+        MISSIONS = [{id: "LECCIÓN 01: EL FLUJO"}];
     }
 
-    // PROCESO SECUENCIAL DE TUS JSON
-    const totalSteps = STORIES.length + MISSIONS.length;
-    let currentStep = 0;
+    const total = STORIES.length + MISSIONS.length;
+    let step = 0;
 
+    // TRANSFERENCIA DE HISTORIAS
     for(let s of STORIES) {
-        currentStep++;
+        step++;
         mainLog.innerText = s.title;
-        subLog.innerText = s.text || "Descifrando información...";
-        progressFill.style.width = `${(currentStep/totalSteps)*100}%`;
-        playBeep(440, "sine");
-        await new Promise(r => setTimeout(r, 2500));
+        subLog.innerText = s.text || "...";
+        progressFill.style.width = `${(step/total)*100}%`;
+        playBeep(440 + (step * 20), "sine");
+        await new Promise(r => setTimeout(r, 2800));
     }
 
+    // TRANSFERENCIA DE MISIONES
     for(let m of MISSIONS) {
-        currentStep++;
-        mainLog.innerText = `MISIÓN: ${m.id}`;
-        subLog.innerText = "Objetivo: Dominar el flujo de activos.";
-        progressFill.style.width = `${(currentStep/totalSteps)*100}%`;
-        playBeep(554, "square");
-        await new Promise(r => setTimeout(r, 2500));
+        step++;
+        mainLog.innerText = `MISSION PROTOCOL: ${m.id}`;
+        subLog.innerText = "Analizando objetivos de seguridad y activos...";
+        progressFill.style.width = `${(step/total)*100}%`;
+        playBeep(600, "square");
+        await new Promise(r => setTimeout(r, 2800));
     }
 
-    mainLog.innerText = "SISTEMA CARGADO";
-    subLog.innerText = "Entrando en la zona de flujo...";
-    await new Promise(r => setTimeout(r, 1500));
+    mainLog.innerText = "TRANSFER COMPLETE";
+    subLog.innerText = "Neural Interface Ready. Optimize your future.";
+    await new Promise(r => setTimeout(r, 2000));
     
     terminal.style.display = "none";
     hud.style.display = "flex";
     launchGame();
 }
 
-/* ===================== SONIDOS Y EFECTOS ===================== */
+/* ===================== EFECTOS SENSORIALES ===================== */
 function playBeep(freq, type) {
     if(!audioCtx) return;
     const o = audioCtx.createOscillator();
     const g = audioCtx.createGain();
     o.type = type;
     o.frequency.value = freq;
-    g.gain.setValueAtTime(0.1, audioCtx.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.5);
-    o.connect(g);
-    g.connect(audioCtx.destination);
-    o.start(); o.stop(audioCtx.currentTime + 0.5);
+    g.gain.setValueAtTime(0.15, audioCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.6);
+    o.connect(g); g.connect(audioCtx.destination);
+    o.start(); o.stop(audioCtx.currentTime + 0.6);
 }
 
 function createExplosion(x, y, color) {
-    for(let i=0; i<15; i++) {
+    for(let i=0; i<20; i++) {
         particles.push({
-            x: x, y: y,
-            vx: (Math.random()-0.5)*10,
-            vy: (Math.random()-0.5)*10,
+            x, y,
+            vx: (Math.random()-0.5)*12,
+            vy: (Math.random()-0.5)*12,
             life: 1.0,
-            color: color
+            color: color,
+            size: Math.random()*4 + 2
         });
     }
 }
 
-/* ===================== MOTOR DE JUEGO ===================== */
+/* ===================== SIMULACIÓN DINÁMICA ===================== */
 const rawData = [
-    {text:"AHORRO", emoji:"💰", color:"#f1c40f", stat:"money", impact:200, freq:523},
+    {text:"AHORRO", emoji:"💰", color:"#f1c40f", stat:"money", impact:500, freq:523},
     {text:"NEGOCIO", emoji:"🤝", color:"#3498db", stat:"biz", impact:1, freq:659},
-    {text:"FAMILIA", emoji:"🏠", color:"#2ecc71", stat:"health", impact:15, freq:783},
-    {text:"VALOR", emoji:"🦁", color:"#ff8c00", stat:"biz", impact:2, freq:880},
-    {text:"DEUDA", emoji:"⚠️", color:"#ff3131", stat:"health", impact:-25, freq:110}
+    {text:"FAMILIA", emoji:"🏠", color:"#2ecc71", stat:"health", impact:20, freq:783},
+    {text:"HAPPINESS", emoji:"😊", color:"#9b59b6", stat:"health", impact:15, freq:880},
+    {text:"THREAT", emoji:"⚠️", color:"#ff3131", stat:"health", impact:-30, freq:110}
 ];
 
 function spawn() {
@@ -183,29 +197,25 @@ function spawn() {
     const d = rawData[Math.floor(Math.random()*rawData.length)];
     objects.push({
         ...d,
-        x: Math.random()*(innerWidth-100)+50,
-        y: -50,
-        speed: 2.5 + Math.random()*2,
-        rot: Math.random()*Math.PI
+        x: Math.random()*(innerWidth-150)+75,
+        y: -60,
+        speed: 3 + Math.random()*2.5
     });
 }
 
 function update() {
     if(!active) return;
 
-    // Actualizar Objetos
     for(let i=objects.length-1; i>=0; i--) {
         let o = objects[i];
         o.y += o.speed;
         
-        const dist = Math.hypot(o.x - user.x, (o.y) - user.y);
+        const dist = Math.hypot(o.x - user.x, o.y - user.y);
         
-        if(dist < user.size + 20) {
-            // EXPLOSIÓN Y SONIDO
-            playBeep(o.freq, o.stat === "health" && o.impact < 0 ? "sawtooth" : "sine");
+        if(dist < user.size + 15) {
+            playBeep(o.freq, o.impact < 0 ? "sawtooth" : "sine");
             createExplosion(o.x, o.y, o.color);
             
-            // IMPACTO DE STATS
             if(o.stat === "money") stats.money += o.impact;
             if(o.stat === "biz") stats.biz += o.impact;
             if(o.stat === "health") stats.health = Math.max(0, Math.min(100, stats.health + o.impact));
@@ -217,12 +227,10 @@ function update() {
         }
     }
 
-    // Actualizar Partículas
-    for(let i=particles.length-1; i>=0; i--) {
-        let p = particles[i];
-        p.x += p.vx; p.y += p.vy; p.life -= 0.02;
-        if(p.life <= 0) particles.splice(i, 1);
-    }
+    particles.forEach((p, index) => {
+        p.x += p.vx; p.y += p.vy; p.life -= 0.025;
+        if(p.life <= 0) particles.splice(index, 1);
+    });
 }
 
 function updateHUD() {
@@ -232,45 +240,39 @@ function updateHUD() {
 }
 
 function draw() {
-    ctx.fillStyle = "rgba(2, 2, 5, 0.2)"; // Efecto estela
+    ctx.fillStyle = "rgba(2, 2, 5, 0.25)";
     ctx.fillRect(0, 0, innerWidth, innerHeight);
     
-    // Partículas de explosión
+    // Partículas
     particles.forEach(p => {
-        ctx.fillStyle = p.color;
         ctx.globalAlpha = p.life;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, 3, 0, Math.PI*2);
-        ctx.fill();
+        ctx.fillStyle = p.color;
+        ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI*2); ctx.fill();
     });
     ctx.globalAlpha = 1.0;
 
-    // Usuario (Interface Cursor)
+    // Interface Cursor
     ctx.strokeStyle = "#00f2ff";
-    ctx.lineWidth = 3;
-    ctx.shadowBlur = 15;
+    ctx.lineWidth = 4;
+    ctx.shadowBlur = 20;
     ctx.shadowColor = "#00f2ff";
-    ctx.beginPath();
-    ctx.arc(user.x, user.y, user.size, 0, Math.PI*2);
-    ctx.stroke();
+    ctx.beginPath(); ctx.arc(user.x, user.y, user.size, 0, Math.PI*2); ctx.stroke();
     ctx.shadowBlur = 0;
 
-    // Palabras Flotantes, Avatares y Texto Nítido
-    ctx.font = "900 20px Orbitron";
-    ctx.textAlign = "center";
+    // Elementos Flotantes (Alta Visibilidad)
     objects.forEach(o => {
-        // Sombra para nitidez
-        ctx.shadowBlur = 10;
+        ctx.shadowBlur = 15;
         ctx.shadowColor = o.color;
-        ctx.fillStyle = o.color;
         
-        // Avatar (Emoji) más grande
-        ctx.font = "40px Arial";
+        // Avatar grande
+        ctx.font = "50px Arial";
+        ctx.textAlign = "center";
         ctx.fillText(o.emoji, o.x, o.y);
         
-        // Palabra debajo
-        ctx.font = "900 18px Orbitron";
-        ctx.fillText(o.text, o.x, o.y + 35);
+        // Texto Nítido
+        ctx.fillStyle = o.color;
+        ctx.font = "900 20px Orbitron";
+        ctx.fillText(o.text, o.x, o.y + 45);
         ctx.shadowBlur = 0;
     });
 }
@@ -284,22 +286,14 @@ function loop() {
 function launchGame() {
     active = true;
     resize();
-    setInterval(spawn, 900);
+    setInterval(spawn, 850);
     loop();
 }
 
-function resize() {
-    canvas.width = innerWidth;
-    canvas.height = innerHeight;
-}
+function resize() { canvas.width = innerWidth; canvas.height = innerHeight; }
 
 window.addEventListener("resize", resize);
-window.addEventListener("mousemove", e => {
-    user.x = e.clientX;
-    user.y = e.clientY;
-});
-
-// Soporte Touch para tablets
+window.addEventListener("mousemove", e => { user.x = e.clientX; user.y = e.clientY; });
 window.addEventListener("touchmove", e => {
     user.x = e.touches[0].clientX;
     user.y = e.touches[0].clientY;
