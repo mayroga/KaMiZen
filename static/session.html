@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>AL CIELO | NEURAL PROGRESSION SYSTEM</title>
+    <title>AL CIELO | INTEGRATED NEURAL SYSTEM</title>
     <style>
         :root {
             --neon-blue: #00f2ff; --neon-gold: #f1c40f; --neon-green: #2ecc71;
@@ -11,41 +11,37 @@
         }
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; font-family: 'Orbitron', sans-serif; color: white; }
         
-        /* UI LAYERS */
+        /* HUD & UI */
         #hud {
             position: absolute; top: env(safe-area-inset-top, 20px); width: 100%;
             display: flex; justify-content: space-evenly; z-index: 100; pointer-events: none;
         }
         .data-box {
-            background: rgba(0, 0, 0, 0.85); border: 2px solid var(--neon-blue);
-            padding: 10px; text-align: center; min-width: 110px; border-radius: 12px;
+            background: rgba(0, 0, 0, 0.9); border: 2px solid var(--neon-blue);
+            padding: 8px 12px; text-align: center; min-width: 100px; border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 242, 255, 0.1);
         }
-        .label { font-size: 9px; color: var(--neon-blue); font-weight: 900; display: block; }
-        .value { font-size: 22px; font-weight: 900; display: block; }
+        .label { font-size: 8px; color: var(--neon-blue); font-weight: 900; display: block; text-transform: uppercase; }
+        .value { font-size: 20px; font-weight: 900; display: block; }
 
-        #timer-bar {
-            position: absolute; bottom: 80px; width: 80%; left: 10%; height: 4px;
-            background: #222; border-radius: 2px; overflow: hidden;
-        }
-        #timer-fill { width: 100%; height: 100%; background: var(--neon-red); transition: 0.3s; }
-
-        #status-msg {
-            position: absolute; bottom: 30px; width: 100%; text-align: center;
-            font-size: 14px; color: var(--neon-gold); letter-spacing: 2px;
+        #timer-display {
+            position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+            font-size: 14px; color: var(--neon-red); font-weight: bold; letter-spacing: 2px;
         }
 
         /* SCREENS */
-        #overlay, #lockout-screen {
-            position: fixed; inset: 0; background: #000; z-index: 1000;
-            display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
+        #start-screen, #lockout-screen {
+            position: fixed; inset: 0; background: #000; display: flex; 
+            flex-direction: column; justify-content: center; align-items: center; z-index: 1000;
         }
-        #lockout-screen { display: none; z-index: 2000; color: var(--neon-red); }
-        
-        .btn {
-            padding: 20px 50px; background: var(--neon-blue); color: #000; border: none;
-            font-family: 'Orbitron'; font-weight: 900; cursor: pointer; border-radius: 50px; margin-top: 20px;
+        #lockout-screen { display: none; z-index: 2000; color: var(--neon-red); border: 5px solid var(--neon-red); }
+
+        .btn-start {
+            padding: 20px 60px; background: var(--neon-blue); color: #000; border: none;
+            font-family: 'Orbitron'; font-weight: 900; border-radius: 50px; cursor: pointer;
+            box-shadow: 0 0 30px var(--neon-blue);
         }
-        
+
         canvas { display: block; touch-action: none; }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
@@ -53,169 +49,208 @@
 <body>
 
 <div id="hud">
-    <div class="data-box" style="border-color: var(--neon-gold);"><span class="label">CAPITAL</span><span id="v-money" class="value">0</span></div>
-    <div class="data-box" style="border-color: var(--neon-red);"><span class="label">STABILITY</span><span id="v-health" class="value">100%</span></div>
-    <div class="data-box" style="border-color: var(--neon-purple);"><span class="label">LEVEL</span><span id="v-level" class="value">1</span></div>
+    <div class="data-box" id="box-1"><span class="label" id="l-1">CREDIT SCORE</span><span id="v-1" class="value">0</span></div>
+    <div class="data-box" id="box-2" style="border-color: var(--neon-red);"><span class="label" id="l-2">STABILITY</span><span id="v-2" class="value">100%</span></div>
+    <div class="data-box" id="box-3" style="border-color: var(--neon-purple);"><span class="label" id="l-3">NEURAL PHASE</span><span id="v-3" class="value">1</span></div>
 </div>
 
-<div id="timer-bar"><div id="timer-fill"></div></div>
-<div id="status-msg">NEURAL SYNC: <span id="v-time">27:00</span></div>
+<div id="timer-display">LOCKOUT IN: <span id="time-left">27:00</span></div>
 
-<div id="overlay">
-    <h1 style="color: var(--neon-blue); letter-spacing: 10px;">AL CIELO</h1>
-    <p style="color: #888;">USA SURVIVAL & DISCIPLINE PROGRESSION</p>
-    <button class="btn" onclick="startApp()">ACTIVATE INTERFACE</button>
+<div id="start-screen">
+    <h1 style="color: var(--neon-blue); letter-spacing: 12px; font-size: 40px;">AL CIELO</h1>
+    <p style="color: #555; margin-bottom: 30px;">TOTAL PROGRESSION INTERFACE</p>
+    <button class="btn-start" onclick="initSystem()">INITIALIZE SYNC</button>
 </div>
 
 <div id="lockout-screen">
-    <h1>SYSTEM LOCKOUT</h1>
-    <p>Daily Training Limit Reached. Neural cooldown active.</p>
-    <h2 id="cooldown-timer">08:00:00</h2>
+    <h1 style="font-size: 45px;">SYSTEM SECURED</h1>
+    <p>Neural capacity reached. System locked for 8 hours.</p>
+    <h2 id="cooldown-clock" style="font-size: 30px; margin-top: 20px;">08:00:00</h2>
 </div>
 
 <canvas id="gameCanvas"></canvas>
 
 <script>
-// --- CONFIGURATION ---
-const SESSION_KEY = "AL_CIELO_PROGRESS";
-const TOTAL_MINUTES = 27;
-const LOCK_HOURS = 8;
-const LEVELS = [
-    { id: 1, duration: 7, name: "BASIC SURVIVAL", speed: 3, objects: ["FAMILY", "SAVINGS", "STRANGER"] },
-    { id: 2, duration: 10, name: "CITIZEN ELITE", speed: 5, objects: ["DRILL", "911 CALL", "BAD LOAN"] },
-    { id: 3, duration: 10, name: "FLOW MASTER", speed: 8, objects: ["INVESTMENT", "DANGER", "SECURITY"] }
+// --- CORE CONFIG ---
+const SESSION_KEY = "AL_CIELO_MASTER_SYNC";
+const TOTAL_SEC = 27 * 60;
+const LOCK_MS = 8 * 60 * 60 * 1000;
+
+// Structure of the 3 Levels as requested
+const PHASES = [
+    { 
+        name: "NEURAL SURVIVAL", 
+        limit: 7 * 60, 
+        color: "#0a0a1a",
+        words: [
+            {t: "FAMILY", type: "pos", c: "#2ecc71"},
+            {t: "SAVINGS", type: "pos", c: "#f1c40f"},
+            {t: "STRANGER", type: "neg", c: "#ff3131"}
+        ],
+        speed: 3,
+        labels: ["CREDIT SCORE", "STABILITY", "PHASE"]
+    },
+    { 
+        name: "CITIZEN ELITE", 
+        limit: 17 * 60, // 7 + 10
+        color: "#1a0a0a",
+        words: [
+            {t: "EXIT SIGNS", type: "pos", c: "#00f2ff"},
+            {t: "911 CALL", type: "pos", c: "#fff"},
+            {t: "BAD LOAN", type: "neg", c: "#ff3131"}
+        ],
+        speed: 5.5,
+        labels: ["NET WORTH", "NEURAL STABILITY", "RANK"]
+    },
+    { 
+        name: "FLOW MASTER", 
+        limit: 27 * 60, // 17 + 10
+        color: "#0a1a0a",
+        words: [
+            {t: "INVESTMENT", type: "pos", c: "#2ecc71"},
+            {t: "DANGER", type: "neg", c: "#ff3131"},
+            {t: "SECURITY", type: "pos", c: "#9b59b6"}
+        ],
+        speed: 8,
+        labels: ["CAPITAL", "SYSTEM INTEGRITY", "MASTERY"]
+    }
 ];
 
-let stats = { money: 0, health: 100, levelIdx: 0, consumedSec: 0 };
+let stats = { money: 0, health: 100, sec: 0, phaseIdx: 0 };
 let active = false;
 let objects = [];
-const user = { x: 0, y: 0, size: 50 };
+const user = { x: 0, y: 0, size: 55 };
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
-// --- SESSION LOGIC ---
-function checkLockout() {
+// --- LOCKOUT LOGIC ---
+function checkLock() {
     const data = JSON.parse(localStorage.getItem(SESSION_KEY));
     if (data) {
-        const timeSinceStart = (Date.now() - data.startTime) / 3600000;
-        if (timeSinceStart < LOCK_HOURS && data.consumedSec >= TOTAL_MINUTES * 60) {
-            return true;
-        }
-        if (timeSinceStart >= LOCK_HOURS) {
-            localStorage.removeItem(SESSION_KEY);
-        }
+        const elapsed = Date.now() - data.startTime;
+        if (elapsed < LOCK_MS && data.sec >= TOTAL_SEC) return true;
+        if (elapsed >= LOCK_MS) localStorage.removeItem(SESSION_KEY);
     }
     return false;
 }
 
-function saveProgress() {
-    let data = JSON.parse(localStorage.getItem(SESSION_KEY)) || { startTime: Date.now(), consumedSec: 0 };
-    data.consumedSec = stats.consumedSec;
+function save() {
+    let data = JSON.parse(localStorage.getItem(SESSION_KEY)) || { startTime: Date.now(), sec: 0 };
+    data.sec = stats.sec;
     localStorage.setItem(SESSION_KEY, JSON.stringify(data));
 }
 
-// --- APP CORE ---
-function startApp() {
-    if (checkLockout()) { showLockout(); return; }
-    document.getElementById('overlay').style.display = 'none';
+// --- GAMEPLAY ---
+function initSystem() {
+    if (checkLock()) { showLockout(); return; }
+    document.getElementById('start-screen').style.display = 'none';
+    
+    const saved = JSON.parse(localStorage.getItem(SESSION_KEY));
+    if (saved) stats.sec = saved.sec;
+    
     active = true;
     resize();
     user.x = window.innerWidth / 2;
     user.y = window.innerHeight * 0.8;
-    
-    // Recovery of previous session seconds if any
-    const saved = JSON.parse(localStorage.getItem(SESSION_KEY));
-    if(saved) stats.consumedSec = saved.consumedSec;
 
-    setInterval(tick, 1000);
-    setInterval(spawn, 700);
-    loop();
+    setInterval(coreTick, 1000);
+    setInterval(spawnManager, 800);
+    renderLoop();
 }
 
-function tick() {
+function coreTick() {
     if (!active) return;
-    stats.consumedSec++;
-    saveProgress();
+    stats.sec++;
+    save();
 
-    // Progression Logic
-    const currentMin = stats.consumedSec / 60;
-    if (currentMin < 7) stats.levelIdx = 0;
-    else if (currentMin < 17) stats.levelIdx = 1;
-    else if (currentMin < 27) stats.levelIdx = 2;
-    else { endGame(); }
+    // Progression Switch
+    if (stats.sec < PHASES[0].limit) stats.phaseIdx = 0;
+    else if (stats.sec < PHASES[1].limit) stats.phaseIdx = 1;
+    else if (stats.sec < PHASES[2].limit) stats.phaseIdx = 2;
+    else { active = false; showLockout(); }
 
     updateUI();
 }
 
 function updateUI() {
-    const totalSec = TOTAL_MINUTES * 60;
-    const remaining = totalSec - stats.consumedSec;
-    const m = Math.floor(remaining / 60);
-    const s = remaining % 60;
+    const p = PHASES[stats.phaseIdx];
+    const rem = TOTAL_SEC - stats.sec;
+    const m = Math.floor(rem / 60);
+    const s = rem % 60;
+
+    document.getElementById('time-left').innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
     
-    document.getElementById('v-time').innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
-    document.getElementById('v-level').innerText = LEVELS[stats.levelIdx].id;
-    document.getElementById('v-money').innerText = stats.money;
-    document.getElementById('v-health').innerText = stats.health + "%";
-    document.getElementById('timer-fill').style.width = (remaining / totalSec * 100) + "%";
+    // Update Labels dynamic
+    document.getElementById('l-1').innerText = p.labels[0];
+    document.getElementById('l-2').innerText = p.labels[1];
+    document.getElementById('l-3').innerText = p.labels[2];
+    
+    document.getElementById('v-1').innerText = stats.money;
+    document.getElementById('v-2').innerText = stats.health + "%";
+    document.getElementById('v-3').innerText = stats.phaseIdx + 1;
 }
 
-function spawn() {
+function spawnManager() {
     if (!active) return;
-    const level = LEVELS[stats.levelIdx];
-    const text = level.objects[Math.floor(Math.random() * level.objects.length)];
+    const p = PHASES[stats.phaseIdx];
+    const wordBase = p.words[Math.floor(Math.random() * p.words.length)];
     objects.push({
-        text: text,
+        ...wordBase,
         x: Math.random() * (window.innerWidth - 100) + 50,
         y: -50,
-        speed: level.speed,
-        type: text === "STRANGER" || text === "BAD LOAN" || text === "DANGER" ? "neg" : "pos"
+        speed: p.speed
     });
 }
 
-function update() {
+function renderLoop() {
+    if (!active) return;
+    const p = PHASES[stats.phaseIdx];
+
+    // Core Visual Structure
+    ctx.fillStyle = p.color;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Grid effect
+    ctx.strokeStyle = "rgba(0, 242, 255, 0.05)";
+    for(let i=0; i<canvas.width; i+=40) { ctx.beginPath(); ctx.moveTo(i,0); ctx.lineTo(i,canvas.height); ctx.stroke(); }
+
+    // User Structure
+    ctx.strokeStyle = varColor('--neon-blue');
+    ctx.lineWidth = 3;
+    ctx.shadowBlur = 15; ctx.shadowColor = varColor('--neon-blue');
+    ctx.beginPath(); ctx.arc(user.x, user.y, user.size - 15, 0, Math.PI*2); ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    // Floating Words & Logic
     objects.forEach((obj, i) => {
         obj.y += obj.speed;
+        
+        ctx.fillStyle = obj.c;
+        ctx.font = "900 18px Orbitron";
+        ctx.textAlign = "center";
+        ctx.fillText(obj.t, obj.x, obj.y);
+
         const dist = Math.sqrt((obj.x - user.x)**2 + (obj.y - user.y)**2);
         if (dist < user.size) {
             if (obj.type === "neg") {
-                stats.health -= 20;
-                stats.money = Math.floor(stats.money * 0.5);
+                stats.health -= 25;
+                stats.money = Math.floor(stats.money * 0.4);
             } else {
-                stats.money += 100;
+                stats.money += 150;
                 stats.health = Math.min(100, stats.health + 5);
             }
             objects.splice(i, 1);
         }
-        if (obj.y > window.innerHeight) objects.splice(i, 1);
+        if (obj.y > canvas.height) objects.splice(i, 1);
     });
 
     if (stats.health <= 0) {
-        alert("CRITICAL FAILURE. REBOOTING NEURAL LINK.");
-        location.reload();
+        alert("NEURAL DISRUPTION. RESTARTING PHASE.");
+        stats.health = 100;
+        stats.money = 0;
     }
-}
 
-function draw() {
-    ctx.fillStyle = "#020205";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    
-    // User Guard
-    ctx.strokeStyle = varColor('--neon-blue');
-    ctx.lineWidth = 3;
-    ctx.beginPath(); ctx.arc(user.x, user.y, user.size - 10, 0, Math.PI*2); ctx.stroke();
-
-    // Level Specific Background Glow
-    const colors = [varColor('--neon-blue'), varColor('--neon-green'), varColor('--neon-purple')];
-    ctx.shadowBlur = 20; ctx.shadowColor = colors[stats.levelIdx];
-
-    objects.forEach(obj => {
-        ctx.fillStyle = obj.type === "neg" ? varColor('--neon-red') : "#fff";
-        ctx.font = "900 16px Orbitron";
-        ctx.textAlign = "center";
-        ctx.fillText(obj.text, obj.x, obj.y);
-    });
-    ctx.shadowBlur = 0;
+    requestAnimationFrame(renderLoop);
 }
 
 function showLockout() {
@@ -223,34 +258,22 @@ function showLockout() {
     document.getElementById('lockout-screen').style.display = 'flex';
     setInterval(() => {
         const data = JSON.parse(localStorage.getItem(SESSION_KEY));
-        const diff = (data.startTime + (LOCK_HOURS * 3600000)) - Date.now();
+        const diff = (data.startTime + LOCK_MS) - Date.now();
+        if (diff <= 0) location.reload();
         const h = Math.floor(diff / 3600000);
         const m = Math.floor((diff % 3600000) / 60000);
         const s = Math.floor((diff % 60000) / 1000);
-        document.getElementById('cooldown-timer').innerText = `${h}h ${m}m ${s}s`;
+        document.getElementById('cooldown-clock').innerText = `${h}h ${m}m ${s}s`;
     }, 1000);
 }
 
-function endGame() {
-    active = false;
-    saveProgress();
-    showLockout();
-}
-
-function resize() {
-    canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-}
+function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
 function varColor(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
 window.addEventListener('resize', resize);
 window.addEventListener('mousemove', e => { user.x = e.clientX; user.y = e.clientY; });
 window.addEventListener('touchmove', e => { user.x = e.touches[0].clientX; user.y = e.touches[0].clientY; e.preventDefault(); }, {passive: false});
 
-function loop() {
-    if(active) { update(); draw(); requestAnimationFrame(loop); }
-}
-
-// Check on load
-if (checkLockout()) showLockout();
+if (checkLock()) showLockout();
 </script>
 </body>
 </html>
