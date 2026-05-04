@@ -3,76 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>KAMIZEN SESSION</title>
+    <title>KaMiZen | Neuro-Entrenamiento de Vida</title>
     <style>
         :root {
-            --neon-blue: #00f2ff;
-            --neon-gold: #f1c40f;
-            --neon-red: #ff3131;
-            --bg-dark: #050508;
-            --neon-green: #2ecc71;
+            --zen-cyan: #00f2ff;
+            --caution-gold: #f1c40f;
+            --danger-red: #ff3131;
+            --honor-green: #2ecc71;
+            --void-black: #050508;
         }
         body { 
-            margin: 0; overflow: hidden; background: var(--bg-dark); 
-            color: white; font-family: 'Orbitron', sans-serif; touch-action: none; 
+            margin: 0; overflow: hidden; background: var(--void-black); 
+            color: white; font-family: 'Orbitron', sans-serif; touch-action: none;
         }
         
-        /* HUD Superior */
+        /* HUD - Conciencia de Recursos */
         #hud {
             position: absolute; top: 15px; width: 100%;
-            display: flex; justify-content: space-evenly;
-            z-index: 100; pointer-events: none;
+            display: flex; justify-content: space-evenly; z-index: 100;
         }
-        .data-box {
-            background: rgba(0, 0, 0, 0.9); border: 2px solid var(--neon-blue);
-            padding: 10px; text-align: center; min-width: 120px;
+        .stat-card {
+            background: rgba(0, 0, 0, 0.85); border-left: 4px solid var(--zen-cyan);
+            padding: 8px 15px; min-width: 100px;
         }
-        .label { font-size: 10px; color: var(--neon-blue); letter-spacing: 2px; display: block; }
-        .value { font-size: 20px; font-weight: 900; display: block; }
+        .stat-label { font-size: 9px; color: var(--zen-cyan); display: block; }
+        .stat-value { font-size: 18px; font-weight: 900; }
 
-        /* Contenedor Central de Contenido */
-        #main-stage {
+        /* Escenario de Vida */
+        #stage {
             position: fixed; inset: 0; display: flex; flex-direction: column;
-            justify-content: center; align-items: center; text-align: center;
-            padding: 40px; z-index: 50; background: radial-gradient(circle, #111 0%, #000 100%);
+            justify-content: center; align-items: center; padding: 30px;
+            background: radial-gradient(circle at center, #1a1a2e 0%, #050508 100%);
         }
 
-        #display-text { font-size: 2.5rem; font-weight: 900; color: var(--neon-blue); text-shadow: 0 0 20px var(--neon-blue); max-width: 800px; }
-        #sub-text { font-size: 1.2rem; color: var(--neon-gold); margin-top: 20px; max-width: 700px; }
+        #action-text { font-size: 2rem; text-transform: uppercase; margin-bottom: 10px; text-shadow: 0 0 15px var(--zen-cyan); }
+        #context-text { font-size: 1.1rem; color: #cbd5e0; max-width: 600px; line-height: 1.6; margin-bottom: 30px; }
 
-        /* Botones de Misión */
-        #options-container { margin-top: 30px; display: flex; flex-direction: column; gap: 15px; width: 100%; max-width: 500px; }
-        .btn-opt {
-            padding: 15px; background: transparent; border: 2px solid var(--neon-blue);
-            color: white; font-family: 'Orbitron'; font-weight: 900; cursor: pointer;
-            transition: 0.3s; text-transform: uppercase;
+        /* Botones de Acción Crítica */
+        .choice-stack { display: flex; flex-direction: column; gap: 15px; width: 100%; max-width: 450px; }
+        .btn-choice {
+            padding: 18px; background: rgba(255,255,255,0.05); border: 1px solid var(--zen-cyan);
+            color: white; font-family: 'Orbitron'; font-weight: 600; cursor: pointer;
+            transition: all 0.3s; position: relative; overflow: hidden;
         }
-        .btn-opt:hover { background: var(--neon-blue); color: black; }
-        .correct { background: var(--neon-green) !important; border-color: var(--neon-green); color: white; }
-        .wrong { background: var(--neon-red) !important; border-color: var(--neon-red); color: white; }
+        .btn-choice:hover { background: var(--zen-cyan); color: black; }
 
-        /* Círculo de Respiración */
-        #breath-wrap { display: none; flex-direction: column; align-items: center; }
-        #breath-circle {
-            width: 200px; height: 200px; border: 10px solid var(--neon-blue);
-            border-radius: 50%; transition: transform 4s ease-in-out;
-            box-shadow: 0 0 50px var(--neon-blue); display: flex; align-items: center; justify-content: center;
-        }
+        /* Simulador de Amenazas (Obstáculos en movimiento) */
+        #threat-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 10; opacity: 0.6; }
 
-        /* Palabras Flotantes (No tocables) */
-        .floating-word {
-            position: absolute; pointer-events: none; font-weight: 900;
-            color: white; background: rgba(0,0,0,0.7); padding: 5px 10px;
-            border-radius: 4px; font-size: 1.5rem; z-index: 10;
-            animation: floatUp 5s linear forwards;
+        /* Respiración de Reseteo (El ancla) */
+        #anchor-wrap { display: none; text-align: center; }
+        #anchor-circle {
+            width: 180px; height: 180px; border: 8px solid var(--zen-cyan);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 0 40px var(--zen-cyan); transition: transform 2s ease-in-out;
         }
 
-        @keyframes floatUp {
-            from { transform: translateY(100vh) scale(0.5); opacity: 0; }
-            to { transform: translateY(-10vh) scale(1.2); opacity: 1; }
-        }
-
-        #timer-clock { position: absolute; bottom: 20px; width: 100%; text-align: center; font-size: 30px; color: var(--neon-red); }
         .hidden { display: none !important; }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
@@ -80,179 +66,159 @@
 <body>
 
 <div id="hud">
-    <div class="data-box"><span class="label">ASSETS</span><span id="stat-money" class="value">$0</span></div>
-    <div class="data-box" style="border-color: var(--neon-gold);"><span class="label">SESSION</span><span id="stat-id" class="value">0</span></div>
-    <div class="data-box" style="border-color: var(--neon-red);"><span class="label">STABILITY</span><span id="stat-health" class="value">100%</span></div>
+    <div class="stat-card"><span class="stat-label">CAPITAL DE VIDA</span><span id="v-assets" class="stat-value">$0</span></div>
+    <div class="stat-card" style="border-color: var(--caution-gold)"><span class="stat-label">RESILIENCIA</span><span id="v-health" class="stat-value">100%</span></div>
+    <div class="stat-card" style="border-color: var(--danger-red)"><span class="stat-label">ALERTA</span><span id="v-alert" class="stat-value">BAJA</span></div>
 </div>
 
-<div id="main-stage">
-    <div id="content-area">
-        <h2 id="display-text">INITIALIZING SYSTEM...</h2>
-        <p id="sub-text"></p>
-        <div id="options-container" class="hidden"></div>
+<canvas id="threat-canvas"></canvas>
+
+<div id="stage">
+    <h1 id="action-text">Iniciando KaMiZen</h1>
+    <p id="context-text">El mundo no se detiene. Tu mente es tu único refugio y tu mejor arma. Identifícate para entrar al campo de entrenamiento.</p>
+    
+    <div id="setup-area">
+        <input type="text" id="user-name" placeholder="NOMBRE DEL APRENDIZ" style="background:transparent; border:2px solid var(--zen-cyan); color:white; padding:15px; font-family:'Orbitron'; text-align:center; width:280px; outline:none;">
+        <br><br>
+        <button id="init-btn" class="btn-choice" style="width: 315px; background: var(--zen-cyan); color: black;">COMENZAR DESAFÍO</button>
     </div>
 
-    <div id="breath-wrap">
-        <div id="breath-circle"><span id="breath-label" style="font-size: 1.5rem;">INHALE</span></div>
+    <div id="interaction-area" class="hidden">
+        <div class="choice-stack" id="choice-container"></div>
     </div>
 
-    <button id="start-btn" style="padding: 20px 50px; font-size: 1.5rem; background: var(--neon-blue); border: none; cursor: pointer; font-family: 'Orbitron'; font-weight: 900; margin-top: 20px;">
-        START TRAINING
-    </button>
+    <div id="anchor-wrap">
+        <div id="anchor-circle"><span id="anchor-label" style="font-weight: 900;">INHALA</span></div>
+        <p id="anchor-desc" style="margin-top: 20px; color: var(--caution-gold);"></p>
+    </div>
 </div>
-
-<div id="timer-clock">00:00</div>
 
 <script>
-    let sessionData = null;
-    let stats = { money: 0, health: 100, index: 0 };
-    let timerInterval;
-    let totalSeconds = 1200; // 20 Minutos
+    let state = { name: "", money: 10, health: 100, alert: "NORMAL" };
+    let synth = window.speechSynthesis;
 
     const ui = {
-        text: document.getElementById('display-text'),
-        sub: document.getElementById('sub-text'),
-        options: document.getElementById('options-container'),
-        breath: document.getElementById('breath-wrap'),
-        circle: document.getElementById('breath-circle'),
-        label: document.getElementById('breath-label'),
-        startBtn: document.getElementById('start-btn'),
-        clock: document.getElementById('timer-clock')
+        action: document.getElementById('action-text'),
+        context: document.getElementById('context-text'),
+        setup: document.getElementById('setup-area'),
+        interact: document.getElementById('interaction-area'),
+        choices: document.getElementById('choice-container'),
+        anchor: document.getElementById('anchor-wrap'),
+        circle: document.getElementById('anchor-circle'),
+        label: document.getElementById('anchor-label'),
+        assets: document.getElementById('v-assets'),
+        health: document.getElementById('v-health')
     };
 
-    async function fetchSession() {
-        const res = await fetch('/api/session/start');
-        sessionData = await res.json();
-        stats.index = sessionData.index;
-        document.getElementById('stat-id').innerText = stats.index;
+    function speak(txt) {
+        synth.cancel();
+        let utterance = new SpeechSynthesisUtterance(txt);
+        utterance.rate = 0.9;
+        utterance.pitch = 0.8;
+        synth.speak(utterance);
     }
 
-    function updateClock() {
-        const m = Math.floor(totalSeconds / 60);
-        const s = totalSeconds % 60;
-        ui.clock.innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
-        if(totalSeconds > 0) totalSeconds--;
+    document.getElementById('init-btn').onclick = async () => {
+        state.name = document.getElementById('user-name').value || "Aprendiz";
+        ui.setup.classList.add('hidden');
+        ui.interact.classList.remove('hidden');
+        runTrainingCycle();
+    };
+
+    async function runTrainingCycle() {
+        // Escenario 1: Seguridad Inmediata (El entorno)
+        await processScenario(
+            "CRUZANDO LA CALLE",
+            `${state.name}, vas camino a la escuela. Ves un helado al otro lado de la calle, pero el semáforo está en amarillo y un auto viene rápido. ¿Qué haces?`,
+            [
+                { t: "Correr para llegar rápido", c: false, ex: "ERROR. Priorizaste un deseo impulsivo sobre tu vida. El riesgo fue fatal.", h: -40, m: 0 },
+                { t: "Esperar y observar el entorno", c: true, ex: "BIEN. El helado puede esperar, tu vida no. Paciencia es poder.", h: 0, m: 10 }
+            ]
+        );
+
+        // Reset emocional (Respiración)
+        await runBreathing("DOMINA TU IMPULSO", "La gratificación inmediata es una trampa. Respira para recuperar el control.");
+
+        // Escenario 2: Relaciones y Respeto (Bullying/Conflicto)
+        await processScenario(
+            "DESAFÍO SOCIAL",
+            "Un compañero se burla de tus zapatos frente a otros. Sientes el calor en tu pecho. Todos esperan que reacciones.",
+            [
+                { t: "Responder con un insulto", c: false, ex: "PERDISTE. Te pusiste a su nivel. Le diste el poder de controlar tus emociones.", h: -20, m: 0 },
+                { t: "Mantener calma y retirarte", c: true, ex: "VICTORIA. Tu paz no está en venta. El silencio del fuerte aturde al débil.", h: 10, m: 50 }
+            ]
+        );
+        
+        // Escenario 3: Finanzas y Prioridades (Oportunidad vs Amenaza)
+        await processScenario(
+            "EL CAPITAL DE MAÑANA",
+            "Tienes $100. Quieres el juego de moda, pero tus zapatos están rotos y te hacen daño al caminar. ¿Cómo usas tu activo?",
+            [
+                { t: "Comprar el juego (Placer)", c: false, ex: "MAL. Caminarás con dolor por un placer efímero. Eso no es KaMiZen.", h: -10, m: -100 },
+                { t: "Arreglar tus zapatos (Necesidad)", c: true, ex: "EXCELENTE. El respeto por ti mismo empieza por cuidar tus herramientas de vida.", h: 20, m: -40 }
+            ]
+        );
+
+        showFinalReport();
     }
 
-    const sleep = ms => new Promise(r => setTimeout(r, ms));
+    async function processScenario(title, context, options) {
+        ui.action.innerText = title;
+        ui.context.innerText = context;
+        ui.choices.innerHTML = "";
+        speak(context);
 
-    async function runSession() {
-        ui.startBtn.classList.add('hidden');
-        timerInterval = setInterval(updateClock, 1000);
-
-        while (totalSeconds > 0) {
-            await fetchSession();
-            
-            // 1. PHASE: STORY (Basado en stories.json)
-            ui.text.innerText = sessionData.story.t || "KAMIZEN STORY";
-            ui.sub.innerText = sessionData.story.en; 
-            await sleep(8000);
-
-            // 2. PHASE: MISSION BLOCKS (Basado en missions_XX_XX.json)
-            const mission = sessionData.missions[0]; 
-            for (const block of mission.b) {
-                await processBlock(block);
-            }
-
-            // 3. PHASE: TRAINING VISUAL (Palabras flotantes)
-            await runVisualTraining(30); 
-        }
-    }
-
-    async function processBlock(block) {
-        ui.options.innerHTML = "";
-        ui.options.classList.add('hidden');
-        ui.breath.style.display = "none";
-        ui.sub.innerText = "";
-
-        switch (block.t) {
-            case 'v': // Voice/Header
-            case 'h': // Header
-                ui.text.innerText = block.tx.en;
-                await sleep(4000);
-                break;
-
-            case 'story': // Mini story
-                ui.text.innerText = "REFLECT";
-                ui.sub.innerText = block.en || block.story.en;
-                await sleep(7000);
-                break;
-
-            case 'br': // Breathing
-            case 'breath_auto':
-                ui.text.innerText = "RECENTER";
-                ui.breath.style.display = "flex";
-                let duration = block.d || 10;
-                for(let i=0; i < duration/4; i++){
-                    ui.label.innerText = "INHALE";
-                    ui.circle.style.transform = "scale(1.5)";
-                    await sleep(2000);
-                    ui.label.innerText = "EXHALE";
-                    ui.circle.style.transform = "scale(1.0)";
-                    await sleep(2000);
-                }
-                ui.breath.style.display = "none";
-                break;
-
-            case 'd': // Decision
-                ui.text.innerText = block.q.en;
-                ui.options.classList.remove('hidden');
-                return new Promise(resolve => {
-                    block.op.forEach((opt, idx) => {
-                        const btn = document.createElement('button');
-                        btn.className = 'btn-opt';
-                        btn.innerText = opt;
-                        btn.onclick = async () => {
-                            const isCorrect = (idx === block.c);
-                            btn.className = isCorrect ? 'btn-opt correct' : 'btn-opt wrong';
-                            ui.sub.innerText = block.ex[idx];
-                            if(isCorrect) stats.money += 500; else stats.health -= 10;
-                            updateStats();
-                            await sleep(5000);
-                            resolve();
-                        };
-                        ui.options.appendChild(btn);
-                    });
-                });
-                break;
-            
-            case 'sil': // Silence
-                ui.text.innerText = "SILENCE & FOCUS";
-                ui.sub.innerText = block.tx.en;
-                await sleep(block.d * 1000);
-                break;
-        }
-    }
-
-    function runVisualTraining(sec) {
         return new Promise(resolve => {
-            ui.text.innerText = "STAY ALERT";
-            ui.sub.innerText = "Observe the pillars of success";
-            let count = 0;
-            const spawn = setInterval(() => {
-                createFloatingWord();
-                count++;
-                if (count > sec) { clearInterval(spawn); resolve(); }
-            }, 1000);
+            options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'btn-choice';
+                btn.innerText = opt.t;
+                btn.onclick = async () => {
+                    ui.choices.innerHTML = "";
+                    ui.context.innerText = opt.ex;
+                    speak(opt.ex);
+                    state.health += opt.h;
+                    state.money += opt.m;
+                    updateHUD();
+                    await new Promise(r => setTimeout(r, 4000));
+                    resolve();
+                };
+                ui.choices.appendChild(btn);
+            });
         });
     }
 
-    function createFloatingWord() {
-        const words = ["TRUTH", "AWARENESS", "SAFETY", "CALM", "CONTROL", "FOCUS", "METHOD", "LIMITS"];
-        const el = document.createElement('div');
-        el.className = 'floating-word';
-        el.innerText = words[Math.floor(Math.random() * words.length)];
-        el.style.left = Math.random() * 80 + 10 + "%";
-        document.body.appendChild(el);
-        setTimeout(() => el.remove(), 5000);
+    async function runBreathing(title, desc) {
+        ui.interact.classList.add('hidden');
+        ui.anchor.style.display = "block";
+        ui.action.innerText = title;
+        document.getElementById('anchor-desc').innerText = desc;
+        speak(desc);
+
+        for(let i=0; i<3; i++) {
+            ui.label.innerText = "INHALA FUERZA";
+            ui.circle.style.transform = "scale(1.4)";
+            await new Promise(r => setTimeout(r, 3000));
+            ui.label.innerText = "EXHALA MIEDO";
+            ui.circle.style.transform = "scale(1.0)";
+            await new Promise(r => setTimeout(r, 3000));
+        }
+        ui.anchor.style.display = "none";
+        ui.interact.classList.remove('hidden');
     }
 
-    function updateStats() {
-        document.getElementById('stat-money').innerText = "$" + stats.money;
-        document.getElementById('stat-health').innerText = stats.health + "%";
+    function updateHUD() {
+        ui.assets.innerText = "$" + state.money;
+        ui.health.innerText = Math.max(0, state.health) + "%";
+        if(state.health < 50) ui.health.style.color = "var(--danger-red)";
     }
 
-    ui.startBtn.onclick = runSession;
+    function showFinalReport() {
+        ui.action.innerText = "DIAGNÓSTICO KAMIZEN";
+        let rank = state.health > 80 ? "SENSEI" : "APRENDIZ EN RIESGO";
+        ui.context.innerText = `${state.name}, tu Resiliencia es de ${state.health}%. \nTu capacidad de enfrentar la vida se basa en tu DISCIPLINA, no en tu suerte. Regresa cuando estés listo para elevar tu nivel.`;
+        speak(ui.context.innerText);
+    }
 </script>
 </body>
 </html>
