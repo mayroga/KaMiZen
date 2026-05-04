@@ -3,461 +3,257 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>AL CIELO - KAMIZEN BY MAY ROGA</title>
+    <title>AL CIELO - KAMIZEN</title>
     <style>
         :root {
-            --neon-blue: #00f2ff;
-            --neon-gold: #f1c40f;
-            --neon-red: #ff3131;
-            --bg-dark: #050508;
-            --neon-green: #2ecc71;
-            --neon-orange: #ff8c00;
-            --neon-yellow: #ffff00;
+            --neon-blue: #00f2ff; --neon-gold: #f1c40f; --neon-red: #ff3131;
+            --bg-dark: #050508; --neon-green: #2ecc71;
         }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
         body { 
-            margin: 0; overflow: hidden; background: var(--bg-dark); 
-            color: white; font-family: 'Orbitron', sans-serif; touch-action: none; 
-            height: 100vh; width: 100vw;
+            background: var(--bg-dark); color: white; font-family: 'Orbitron', sans-serif; 
+            overflow: hidden; height: 100vh; width: 100vw;
         }
         
-        /* HUD & TIMERS */
+        /* CAPA DE JUEGO (SIEMPRE ARRIBA CUANDO SE ACTIVA) */
+        #gameCanvas { 
+            position: fixed; inset: 0; z-index: 10; display: none; background: #000;
+        }
+
+        /* INTERFAZ UI */
+        #ui-layer {
+            position: relative; z-index: 20; height: 100%; width: 100%;
+            display: flex; flex-direction: column; pointer-events: none;
+        }
+        
         #hud {
-            position: absolute; top: 10px; width: 100%;
-            display: flex; justify-content: space-evenly;
-            z-index: 1000; pointer-events: none; padding: 0 5px;
+            display: flex; justify-content: space-around; padding: 10px;
+            background: rgba(0,0,0,0.8); border-bottom: 1px solid var(--neon-blue);
         }
-        .data-box {
-            background: rgba(0, 0, 0, 0.9); border: 1px solid var(--neon-blue);
-            padding: 5px; text-align: center; flex: 1; margin: 0 3px; max-width: 110px;
-        }
-        .label { font-size: 8px; color: var(--neon-blue); letter-spacing: 1px; display: block; text-transform: uppercase; }
-        .value { font-size: 14px; font-weight: 900; display: block; }
-        
-        #general-clock { position: absolute; bottom: 10px; right: 10px; color: var(--neon-gold); font-size: 12px; z-index: 1000; font-weight: 900; }
-        #game-clock { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); color: var(--neon-red); font-size: 24px; font-weight: 900; z-index: 1000; text-shadow: 0 0 10px var(--neon-red); }
+        .data-box { text-align: center; border: 1px solid var(--neon-blue); padding: 5px; flex: 1; margin: 0 5px; }
+        .label { font-size: 9px; color: var(--neon-blue); display: block; }
+        .value { font-size: 16px; font-weight: 900; }
 
-        /* ESCENARIO PRINCIPAL */
         #stage {
-            position: fixed; inset: 0; display: flex; flex-direction: column;
-            justify-content: center; align-items: center; text-align: center;
-            padding: 20px; z-index: 500; background: radial-gradient(circle, #111 0%, #000 100%);
+            flex: 1; display: flex; flex-direction: column; justify-content: center;
+            align-items: center; padding: 30px; text-align: center; pointer-events: auto;
         }
 
-        #display-text { font-size: 1.5rem; font-weight: 900; color: var(--neon-blue); text-shadow: 0 0 15px var(--neon-blue); margin-bottom: 15px; width: 100%; }
-        #sub-text { font-size: 1rem; color: #ccc; max-width: 600px; line-height: 1.4; font-weight: 400; }
+        #display-text { font-size: 2rem; color: var(--neon-blue); text-shadow: 0 0 10px var(--neon-blue); margin-bottom: 20px; }
+        #sub-text { font-size: 1.1rem; color: #ccc; max-width: 80% }
 
-        /* BOTONES INTERACTIVOS */
         .btn-core {
-            padding: 15px 30px; background: var(--neon-blue); color: black; border: none;
-            font-family: 'Orbitron'; font-weight: 900; cursor: pointer; margin-top: 20px;
-            text-transform: uppercase; clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
-            box-shadow: 0 0 20px var(--neon-blue);
+            margin-top: 30px; padding: 15px 40px; background: var(--neon-blue); color: #000;
+            border: none; font-family: 'Orbitron'; font-weight: 900; cursor: pointer;
+            pointer-events: auto;
         }
-        #options-container { margin-top: 20px; display: grid; gap: 10px; width: 100%; max-width: 400px; }
-        .btn-opt {
-            padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--neon-blue);
-            color: white; font-family: 'Orbitron'; font-size: 0.8rem; cursor: pointer; transition: 0.3s;
-        }
+        
+        #options-container { margin-top: 20px; display: grid; gap: 10px; width: 100%; max-width: 400px; pointer-events: auto; }
+        .btn-opt { padding: 15px; background: #111; border: 1px solid var(--neon-blue); color: white; cursor: pointer; }
 
-        /* RESPIRACIÓN CIRCULAR */
-        #breath-wrap { display: none; margin-top: 20px; flex-direction: column; align-items: center; }
-        #breath-circle {
-            width: 140px; height: 140px; border: 6px solid var(--neon-blue);
-            border-radius: 50%; transition: transform 2s ease-in-out;
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 0 30px var(--neon-blue);
-        }
-        #breath-info { font-size: 0.8rem; color: var(--neon-gold); margin-top: 20px; max-width: 280px; font-weight: 900; }
-
-        /* JUEGO (CANVAS) */
-        #gameCanvas { position: fixed; inset: 0; display: none; z-index: 600; cursor: crosshair; }
-        .skip-btn { position: absolute; bottom: 20px; left: 20px; font-size: 10px; opacity: 0.7; z-index: 2000; background: #333; color: white; padding: 5px 10px; border: 1px solid #555; }
+        /* RELOJES */
+        #general-clock { position: absolute; bottom: 10px; right: 10px; color: var(--neon-gold); font-size: 14px; }
+        #game-clock { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); color: var(--neon-red); font-size: 30px; font-weight: 900; display: none; z-index: 100; }
 
         .hidden { display: none !important; }
-        input[type="text"] { background: transparent; border: 2px solid var(--neon-blue); color: white; padding: 12px; font-family: 'Orbitron'; text-align: center; outline: none; width: 250px; }
-
-        @media (min-width: 768px) {
-            #display-text { font-size: 2.5rem; }
-            #sub-text { font-size: 1.2rem; }
-            #breath-circle { width: 200px; height: 200px; }
-        }
+        input { background: transparent; border: 2px solid var(--neon-blue); color: white; padding: 15px; font-family: 'Orbitron'; text-align: center; font-size: 1.2rem; pointer-events: auto; }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
 </head>
 <body>
 
-<div id="hud">
-    <div class="data-box"><span class="label">ASSETS</span><span id="stat-money" class="value">$0</span></div>
-    <div class="data-box" style="border-color: var(--neon-gold);"><span class="label">LEVEL</span><span id="stat-level" class="value">1</span></div>
-    <div class="data-box" style="border-color: var(--neon-red);"><span class="label">STABILITY</span><span id="stat-health" class="value">100%</span></div>
-</div>
-
-<div id="stage">
-    <div id="content-area">
-        <h2 id="display-text">KAMIZEN SYSTEM</h2>
-        <p id="sub-text">IDENTIFY YOURSELF TO PROCEED WITH TRAINING.</p>
-        <div id="input-wrap" style="margin-top: 20px;">
-            <input type="text" id="client-name" placeholder="ENTER NAME">
-        </div>
-        <div id="options-container"></div>
-        <button id="main-btn" class="btn-core">INITIALIZE</button>
-    </div>
-
-    <div id="breath-wrap">
-        <div id="breath-circle">
-            <span id="breath-label" style="font-size: 1.2rem; font-weight: 900;">INHALE</span>
-        </div>
-        <div id="breath-info"></div>
-    </div>
-</div>
-
 <canvas id="gameCanvas"></canvas>
-<div id="general-clock">MISSION TIME: 00:00</div>
-<div id="game-clock" class="hidden">05:00</div>
-<button class="skip-btn hidden" id="skip-btn">SKIP PHASE</button>
+<div id="game-clock">05:00</div>
+
+<div id="ui-layer">
+    <div id="hud">
+        <div class="data-box"><span class="label">MONEY</span><span id="v-money">$0</span></div>
+        <div class="data-box"><span class="label">LEVEL</span><span id="v-level">1</span></div>
+        <div class="data-box"><span class="label">STABILITY</span><span id="v-health">100%</span></div>
+    </div>
+
+    <div id="stage">
+        <h2 id="display-text">KAMIZEN</h2>
+        <p id="sub-text">SISTEMA DE ENTRENAMIENTO NEURAL</p>
+        
+        <div id="init-input">
+            <input type="text" id="user-name" placeholder="INGRESA TU NOMBRE">
+            <br>
+            <button class="btn-core" onclick="startApp()">INICIAR</button>
+        </div>
+
+        <div id="options-container"></div>
+        <button id="next-btn" class="btn-core hidden">CONTINUAR</button>
+    </div>
+
+    <div id="general-clock">TIME: 00:00</div>
+</div>
 
 <script>
-    // --- GLOBAL STATE ---
-    let stats = { money: 0, health: 100, name: "Explorer", wrongClicks: 0, totalTime: 0, level: 1 };
-    let sessionData = null;
-    let isGameRunning = false;
-    let gameTimer = 300;
+    let stats = { money: 0, health: 100, name: "", level: 1, wrong: 0, time: 0 };
+    let isPlaying = false;
+    let gameSecs = 300;
     const synth = window.speechSynthesis;
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    
-    const ui = {
-        text: document.getElementById('display-text'),
-        sub: document.getElementById('sub-text'),
-        mainBtn: document.getElementById('main-btn'),
-        optCont: document.getElementById('options-container'),
-        breath: document.getElementById('breath-wrap'),
-        circle: document.getElementById('breath-circle'),
-        label: document.getElementById('breath-label'),
-        info: document.getElementById('breath-info'),
-        canvas: document.getElementById('gameCanvas'),
-        gClock: document.getElementById('general-clock'),
-        gameClock: document.getElementById('game-clock'),
-        skip: document.getElementById('skip-btn'),
-        input: document.getElementById('input-wrap')
-    };
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    let words = [];
 
-    const ctx = ui.canvas.getContext('2d');
-    let objects = [];
-    let player = { x: window.innerWidth/2, y: window.innerHeight - 100 };
-
-    // --- SOUND ENGINE ---
-    function playTone(freq, type, dur) {
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = type;
-        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + dur);
-        osc.connect(gain); gain.connect(audioCtx.destination);
-        osc.start(); osc.stop(audioCtx.currentTime + dur);
-    }
-
-    // --- UTILS ---
-    const sleep = ms => new Promise(r => setTimeout(r, ms));
-    
-    function speak(text) {
+    function speak(txt) {
         synth.cancel();
-        const msg = new SpeechSynthesisUtterance(text);
-        msg.rate = 0.85; 
-        msg.pitch = 1.0;
-        msg.lang = 'en-US';
-        synth.speak(msg);
+        let m = new SpeechSynthesisUtterance(txt);
+        m.lang = 'es-ES'; m.rate = 0.9;
+        synth.speak(m);
     }
 
-    function updateHUD() {
-        document.getElementById('stat-money').innerText = "$" + stats.money;
-        document.getElementById('stat-health').innerText = stats.health + "%";
-        document.getElementById('stat-level').innerText = stats.level;
-    }
+    function startApp() {
+        stats.name = document.getElementById('user-name').value || "Explorador";
+        document.getElementById('init-input').classList.add('hidden');
+        
+        // SALUDO INICIAL CON NOMBRE Y EXPLICACIÓN
+        const saludo = `Hola ${stats.name}. Bienvenido a Kamizen. Vamos a entrenar tu enfoque y tus decisiones. Escucha con atención y sigue las instrucciones.`;
+        document.getElementById('display-text').innerText = "BIENVENIDO";
+        document.getElementById('sub-text').innerText = saludo;
+        speak(saludo);
 
-    // --- SYSTEM START ---
-    ui.mainBtn.onclick = async () => {
-        const nameVal = document.getElementById('client-name').value;
-        if(nameVal) stats.name = nameVal;
-        
-        // CORRECCIÓN: Saludo inicial con tiempo para leer y escuchar
-        ui.input.classList.add('hidden');
-        ui.mainBtn.classList.add('hidden');
-        
-        ui.text.innerText = `WELCOME, ${stats.name.toUpperCase()}`;
-        ui.sub.innerText = "KAMIZEN IS NOW SYNCHRONIZING WITH YOUR NEURAL PATTERNS. PREPARE FOR MENTAL DISCIPLINE TRAINING.";
-        speak(ui.sub.innerText);
-        
-        startGeneralClock();
-        await sleep(5000); // Tiempo para el saludo inicial
-        
-        await startProcess();
-    };
-
-    function startGeneralClock() {
         setInterval(() => {
-            stats.totalTime++;
-            const m = Math.floor(stats.totalTime / 60);
-            const s = stats.totalTime % 60;
-            ui.gClock.innerText = `MISSION TIME: ${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-        }, 1000);
-    }
-
-    async function startProcess() {
-        // Fetch real data o simulado estructurado
-        const response = await fetch('/api/session/start');
-        sessionData = await response.json();
-
-        // 1. NARRATIVA COMPLETA (PIES)
-        await playStories();
-
-        // 2. JUEGO DE PALABRAS NIVEL 1
-        stats.level = 1; updateHUD();
-        await runWordGame(300);
-
-        // 3. MISSIONS (JSON COMPLETO - CABEZA)
-        await playMissions();
-
-        // 4. JUEGO DE PALABRAS NIVEL 2 (MÁS RÁPIDO)
-        stats.level = 2; updateHUD();
-        await runWordGame(300);
-
-        // 5. DIAGNÓSTICO FINAL
-        await showFinalDiagnostic();
-    }
-
-    // --- PHASE: STORIES ---
-    async function playStories() {
-        ui.text.innerText = "NARRATIVE SEQUENCE";
-        ui.sub.innerText = sessionData.story.en;
-        speak(ui.sub.innerText);
-        
-        await sleep(4000);
-        ui.mainBtn.innerText = "CONTINUE TO TRAINING";
-        ui.mainBtn.classList.remove('hidden');
-        
-        return new Promise(resolve => {
-            ui.mainBtn.onclick = () => {
-                ui.mainBtn.classList.add('hidden');
-                resolve();
-            }
-        });
-    }
-
-    // --- PHASE: MISSIONS (CABEZA) ---
-    async function playMissions() {
-        // Se recorren todas las misiones del bloque JSON
-        const blocks = sessionData.missions[0].b;
-        for (const block of blocks) {
-            ui.optCont.innerHTML = "";
-            ui.breath.style.display = "none";
-            ui.sub.innerText = "";
-
-            if (block.t === 'd') { 
-                ui.text.innerText = block.q.en;
-                speak(block.q.en);
-                await new Promise(resolve => {
-                    block.op.forEach((opt, idx) => {
-                        const btn = document.createElement('button');
-                        btn.className = 'btn-opt';
-                        btn.innerText = opt;
-                        btn.onclick = () => {
-                            if(idx === block.c) { 
-                                btn.style.backgroundColor = 'var(--neon-green)'; 
-                                stats.money += 1000; 
-                                playTone(880, 'sine', 0.2);
-                            }
-                            else if(idx === 0) { btn.style.backgroundColor = 'var(--neon-red)'; stats.health -= 20; playTone(200, 'sawtooth', 0.3); }
-                            else if(idx === 1) { btn.style.backgroundColor = 'var(--neon-orange)'; stats.health -= 15; playTone(300, 'sawtooth', 0.3); }
-                            else { btn.style.backgroundColor = 'var(--neon-yellow)'; btn.style.color = 'black'; stats.health -= 5; playTone(400, 'sawtooth', 0.3); }
-                            
-                            ui.sub.innerText = block.ex[idx];
-                            speak(block.ex[idx]);
-                            updateHUD();
-                            ui.mainBtn.innerText = "NEXT ACTION";
-                            ui.mainBtn.classList.remove('hidden');
-                            ui.mainBtn.onclick = () => { ui.mainBtn.classList.add('hidden'); resolve(); };
-                        };
-                        ui.optCont.appendChild(btn);
-                    });
-                });
-            } 
-            else if (block.t.includes('breath') || block.t === 'sil') {
-                ui.text.innerText = "NEURAL CALIBRATION";
-                ui.breath.style.display = "flex";
-                ui.info.innerText = block.inf?.en || "Deep breathing stabilizes the amygdala.";
-                speak(ui.info.innerText);
-                
-                let cycles = 4;
-                for(let i=0; i<cycles; i++) {
-                    ui.label.innerText = "INHALE";
-                    ui.circle.style.transform = "scale(1.4)";
-                    playTone(440, 'triangle', 2);
-                    await sleep(2000);
-                    ui.label.innerText = "EXHALE";
-                    ui.circle.style.transform = "scale(1.0)";
-                    playTone(220, 'triangle', 2);
-                    await sleep(2000);
-                }
-            }
-        }
-    }
-
-    // --- PHASE: WORD GAME (MANOS) ---
-    async function runWordGame(seconds) {
-        ui.stage.style.display = "none"; // Ocultar el fondo para ver el Canvas
-        ui.canvas.style.display = "block";
-        ui.gameClock.classList.remove('hidden');
-        ui.skip.classList.remove('hidden');
-        isGameRunning = true;
-        gameTimer = seconds;
-
-        const timerInterval = setInterval(() => {
-            if(!isGameRunning) return;
-            gameTimer--;
-            const m = Math.floor(gameTimer/60);
-            const s = gameTimer % 60;
-            ui.gameClock.innerText = `${m}:${String(s).padStart(2,'0')}`;
-            if(gameTimer <= 0) endWordGame();
+            stats.time++;
+            let m = Math.floor(stats.time/60), s = stats.time%60;
+            document.getElementById('general-clock').innerText = `TIME: ${m}:${s<10?'0':''}${s}`;
         }, 1000);
 
-        function endWordGame() {
-            clearInterval(timerInterval);
-            isGameRunning = false;
-            ui.canvas.style.display = "none";
-            ui.stage.style.display = "flex";
-            ui.gameClock.classList.add('hidden');
-            ui.skip.classList.add('hidden');
-            objects = [];
-        }
-
-        ui.skip.onclick = () => { gameTimer = 0; endWordGame(); };
-
-        gameAnimate();
-        spawnWords();
-
-        return new Promise(resolve => {
-            const checkEnd = setInterval(() => {
-                if(!isGameRunning) { clearInterval(checkEnd); resolve(); }
-            }, 100);
-        });
+        setTimeout(loadStories, 6000);
     }
 
-    function spawnWords() {
-        if(!isGameRunning) return;
-        const words = [
-            {t: "FOCUS", p: true}, {t: "DISCIPLINE", p: true}, {t: "CALM", p: true}, {t: "PRESENCE", p: true},
-            {t: "FEAR", p: false}, {t: "DOUBT", p: false}, {t: "ANXIETY", p: false}, {t: "DISTRACTION", p: false}
-        ];
-        const w = words[Math.floor(Math.random()*words.length)];
-        const speedBase = stats.level === 1 ? 1.5 : 3.0; // Nivel 2 es más rápido
+    async function loadStories() {
+        // NARRATIVA
+        document.getElementById('display-text').innerText = "HISTORIA";
+        const historia = "Imagina que estás en el centro de tu propia galaxia mental. Cada palabra que atrapas es una estrella que iluminas.";
+        document.getElementById('sub-text').innerText = historia;
+        speak(historia);
         
-        objects.push({
-            text: w.t, pos: w.p,
-            x: Math.random() * (ui.canvas.width - 100) + 50,
-            y: -50,
-            s: speedBase + Math.random()
-        });
-        
-        let spawnRate = stats.level === 1 ? 1500 : 800;
-        setTimeout(spawnWords, spawnRate);
-    }
-
-    function gameAnimate() {
-        if(!isGameRunning) return;
-        ctx.fillStyle = 'rgba(5,5,8,0.3)';
-        ctx.fillRect(0,0,ui.canvas.width, ui.canvas.height);
-
-        objects.forEach((obj, i) => {
-            obj.y += obj.s;
-            
-            // Render de palabra
-            ctx.fillStyle = obj.pos ? 'var(--neon-blue)' : 'var(--neon-red)';
-            ctx.font = "900 22px Orbitron";
-            ctx.textAlign = "center";
-            ctx.fillText(obj.text, obj.x, obj.y);
-
-            // LASER EFFECT CORE
-            ctx.strokeStyle = obj.pos ? 'rgba(0,242,255,0.2)' : 'rgba(255,49,49,0.2)';
-            ctx.lineWidth = 2;
-            ctx.beginPath(); 
-            ctx.moveTo(obj.x, obj.y - 10); 
-            ctx.lineTo(player.x, player.y); 
-            ctx.stroke();
-
-            if(obj.y > ui.canvas.height) objects.splice(i, 1);
-        });
-
-        requestAnimationFrame(gameAnimate);
-    }
-
-    // Interacción con Lasers
-    ui.canvas.ontouchstart = (e) => handleInput(e.touches[0].clientX, e.touches[0].clientY);
-    ui.canvas.onmousedown = (e) => handleInput(e.clientX, e.clientY);
-
-    function handleInput(x, y) {
-        if(!isGameRunning) return;
-        player.x = x; player.y = y;
-        
-        objects.forEach((obj, i) => {
-            const d = Math.sqrt((x - obj.x)**2 + (y - obj.y)**2);
-            if(d < 60) {
-                if(!obj.pos) {
-                    playTone(150, 'sawtooth', 0.4);
-                    stats.wrongClicks++;
-                    if(stats.wrongClicks >= 3) triggerStopPenalty();
-                } else {
-                    playTone(1200, 'sine', 0.1);
-                    stats.money += 250;
-                    updateHUD();
-                }
-                objects.splice(i, 1);
-            }
-        });
-    }
-
-    async function triggerStopPenalty() {
-        isGameRunning = false;
-        stats.wrongClicks = 0;
-        ui.canvas.style.display = "none";
-        ui.stage.style.display = "flex";
-        
-        const msg = "Focus lost. You are attracting negative patterns. Sign the commitment to regain neural control.";
-        ui.text.innerText = "NEURAL RECOVERY";
-        ui.sub.innerText = msg;
-        speak(msg);
-        
-        ui.optCont.innerHTML = '<button class="btn-core" id="sign-btn">I COMMIT TO FOCUS</button>';
-        document.getElementById('sign-btn').onclick = () => {
-            ui.optCont.innerHTML = "";
-            ui.stage.style.display = "none";
-            ui.canvas.style.display = "block";
-            isGameRunning = true;
-            gameAnimate();
-            spawnWords();
+        let btn = document.getElementById('next-btn');
+        btn.classList.remove('hidden');
+        btn.onclick = () => {
+            btn.classList.add('hidden');
+            startGame();
         };
     }
 
-    // --- PHASE: FINAL DIAGNOSTIC ---
-    async function showFinalDiagnostic() {
-        ui.text.innerText = "KAMIZEN COMPLETED";
-        const recommendation = "Box Breathing (4-4-4-4) lowers cortisol instantly. Use it when the world feels chaotic.";
-        ui.sub.innerText = `${stats.name}: Training successful. Assets: $${stats.money}. Stability: ${stats.health}%. \n${recommendation}`;
-        speak(ui.sub.innerText);
+    function startGame() {
+        canvas.style.display = "block";
+        document.getElementById('game-clock').style.display = "block";
+        isPlaying = true;
+        gameSecs = 300;
+        words = [];
         
-        ui.mainBtn.innerText = "RESTART SESSION";
-        ui.mainBtn.classList.remove('hidden');
-        ui.mainBtn.onclick = () => location.reload();
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let timer = setInterval(() => {
+            gameSecs--;
+            let m = Math.floor(gameSecs/60), s = gameSecs%60;
+            document.getElementById('game-clock').innerText = `${m}:${s<10?'0':''}${s}`;
+            if(gameSecs <= 0 || !isPlaying) {
+                clearInterval(timer);
+                endGame();
+            }
+        }, 1000);
+
+        requestAnimationFrame(gameLoop);
+        spawnWords();
     }
 
-    window.onresize = () => {
-        ui.canvas.width = window.innerWidth;
-        ui.canvas.height = window.innerHeight;
-        player.x = ui.canvas.width/2;
-        player.y = ui.canvas.height - 100;
+    function spawnWords() {
+        if(!isPlaying) return;
+        const list = [
+            {t: "ENFOQUE", p: true}, {t: "PAZ", p: true}, {t: "FUERZA", p: true},
+            {t: "MIEDO", p: false}, {t: "CAOS", p: false}, {t: "DUDA", p: false}
+        ];
+        let w = list[Math.floor(Math.random()*list.length)];
+        words.push({
+            text: w.t, pos: w.p,
+            x: Math.random() * (canvas.width - 100) + 50,
+            y: -50,
+            s: stats.level + 1
+        });
+        setTimeout(spawnWords, stats.level === 1 ? 1500 : 800);
+    }
+
+    function gameLoop() {
+        if(!isPlaying) return;
+        ctx.fillStyle = "rgba(0,0,0,0.2)";
+        ctx.fillRect(0,0,canvas.width, canvas.height);
+
+        words.forEach((w, i) => {
+            w.y += w.s;
+            ctx.fillStyle = w.pos ? "#00f2ff" : "#ff3131";
+            ctx.font = "900 20px Orbitron";
+            ctx.textAlign = "center";
+            ctx.fillText(w.text, w.x, w.y);
+
+            // LASER
+            ctx.strokeStyle = w.pos ? "rgba(0,242,255,0.1)" : "rgba(255,49,49,0.1)";
+            ctx.beginPath(); ctx.moveTo(w.x, w.y); ctx.lineTo(canvas.width/2, canvas.height-50); ctx.stroke();
+
+            if(w.y > canvas.height) words.splice(i, 1);
+        });
+        requestAnimationFrame(gameLoop);
+    }
+
+    canvas.onclick = (e) => {
+        words.forEach((w, i) => {
+            let dist = Math.sqrt((e.clientX-w.x)**2 + (e.clientY-w.y)**2);
+            if(dist < 50) {
+                if(w.pos) {
+                    stats.money += 100;
+                } else {
+                    stats.wrong++;
+                    if(stats.wrong >= 3) {
+                        isPlaying = false;
+                        alert("DEMASIADOS ERRORES. RESPIRA Y COMPROMÉTETE.");
+                        stats.wrong = 0;
+                        isPlaying = true;
+                        gameLoop();
+                        spawnWords();
+                    }
+                }
+                words.splice(i, 1);
+                document.getElementById('v-money').innerText = `$${stats.money}`;
+            }
+        });
     };
-    window.onresize();
+
+    function endGame() {
+        isPlaying = false;
+        canvas.style.display = "none";
+        document.getElementById('game-clock').style.display = "none";
+        loadMissions();
+    }
+
+    function loadMissions() {
+        document.getElementById('display-text').innerText = "MISIONES";
+        document.getElementById('sub-text').innerText = "Responde con sabiduría.";
+        speak("Es hora de tomar decisiones importantes.");
+        
+        const opts = ["Opción A (Calma)", "Opción B (Acción)", "Opción C (Duda)", "Opción D (Miedo)"];
+        let container = document.getElementById('options-container');
+        container.innerHTML = "";
+        
+        opts.forEach((o, i) => {
+            let b = document.createElement('button');
+            b.className = "btn-opt";
+            b.innerText = o;
+            b.onclick = () => {
+                speak("Buena elección. Tu estabilidad ha cambiado.");
+                stats.level = 2;
+                document.getElementById('v-level').innerText = "2";
+                container.innerHTML = "";
+                startGame(); // Segunda ronda
+            };
+            container.appendChild(b);
+        });
+    }
+
 </script>
 </body>
 </html>
