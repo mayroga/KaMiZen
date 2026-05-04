@@ -25,7 +25,7 @@
         #hud {
             position: absolute; top: 10px; width: 100%;
             display: flex; justify-content: space-evenly;
-            z-index: 1000; pointer-events: none; padding: 0 5px;
+            z-index: 2000; pointer-events: none; padding: 0 5px;
         }
         .data-box {
             background: rgba(0, 0, 0, 0.9); border: 1px solid var(--neon-blue);
@@ -34,8 +34,8 @@
         .label { font-size: 8px; color: var(--neon-blue); letter-spacing: 1px; display: block; text-transform: uppercase; }
         .value { font-size: 14px; font-weight: 900; display: block; }
         
-        #general-clock { position: absolute; bottom: 10px; right: 10px; color: var(--neon-gold); font-size: 12px; z-index: 1000; font-weight: 900; }
-        #game-clock { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); color: var(--neon-red); font-size: 24px; font-weight: 900; z-index: 1000; text-shadow: 0 0 10px var(--neon-red); }
+        #general-clock { position: absolute; bottom: 10px; right: 10px; color: var(--neon-gold); font-size: 12px; z-index: 2000; font-weight: 900; }
+        #game-clock { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); color: var(--neon-red); font-size: 24px; font-weight: 900; z-index: 2000; text-shadow: 0 0 10px var(--neon-red); }
 
         /* ESCENARIO PRINCIPAL */
         #stage {
@@ -45,22 +45,21 @@
         }
 
         #display-text { font-size: 1.5rem; font-weight: 900; color: var(--neon-blue); text-shadow: 0 0 15px var(--neon-blue); margin-bottom: 15px; width: 100%; }
-        #sub-text { font-size: 1rem; color: #ccc; max-width: 600px; line-height: 1.4; font-weight: 400; }
+        #sub-text { font-size: 1rem; color: #ccc; max-width: 600px; line-height: 1.4; font-weight: 400; min-height: 1.5em; }
 
-        /* BOTONES INTERACTIVOS */
         .btn-core {
             padding: 15px 30px; background: var(--neon-blue); color: black; border: none;
             font-family: 'Orbitron'; font-weight: 900; cursor: pointer; margin-top: 20px;
             text-transform: uppercase; clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
-            box-shadow: 0 0 20px var(--neon-blue);
+            box-shadow: 0 0 20px var(--neon-blue); z-index: 1000;
         }
-        #options-container { margin-top: 20px; display: grid; gap: 10px; width: 100%; max-width: 400px; }
+        #options-container { margin-top: 20px; display: grid; gap: 10px; width: 100%; max-width: 400px; z-index: 1000; }
         .btn-opt {
             padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--neon-blue);
             color: white; font-family: 'Orbitron'; font-size: 0.8rem; cursor: pointer; transition: 0.3s;
         }
 
-        /* RESPIRACIÓN CIRCULAR */
+        /* RESPIRACIÓN */
         #breath-wrap { display: none; margin-top: 20px; flex-direction: column; align-items: center; }
         #breath-circle {
             width: 140px; height: 140px; border: 6px solid var(--neon-blue);
@@ -68,20 +67,13 @@
             display: flex; align-items: center; justify-content: center;
             box-shadow: 0 0 30px var(--neon-blue);
         }
-        #breath-info { font-size: 0.8rem; color: var(--neon-gold); margin-top: 20px; max-width: 280px; font-weight: 900; }
 
         /* JUEGO (CANVAS) */
-        #gameCanvas { position: fixed; inset: 0; display: none; z-index: 100; cursor: crosshair; }
+        #gameCanvas { position: fixed; inset: 0; display: none; z-index: 800; cursor: crosshair; background: transparent; }
         .skip-btn { position: absolute; bottom: 20px; left: 20px; font-size: 10px; opacity: 0.7; z-index: 2000; background: #333; color: white; padding: 5px 10px; border: 1px solid #555; }
 
         .hidden { display: none !important; }
         input[type="text"] { background: transparent; border: 2px solid var(--neon-blue); color: white; padding: 12px; font-family: 'Orbitron'; text-align: center; outline: none; width: 250px; }
-
-        @media (min-width: 768px) {
-            #display-text { font-size: 2.5rem; }
-            #sub-text { font-size: 1.2rem; }
-            #breath-circle { width: 200px; height: 200px; }
-        }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
 </head>
@@ -90,7 +82,7 @@
 <div id="hud">
     <div class="data-box"><span class="label">ASSETS</span><span id="stat-money" class="value">$0</span></div>
     <div class="data-box" style="border-color: var(--neon-gold);"><span class="label">STATUS</span><span id="stat-status" class="value">INIT</span></div>
-    <div class="data-box" style="border-color: var(--neon-red);"><span class="label">STABILITY</span><span id="stat-health" class="value">100%</span></div>
+    <div class="data-box" style="border-color: var(--neon-red);"><span class="label">LEVEL</span><span id="stat-level" class="value">1</span></div>
 </div>
 
 <div id="stage">
@@ -105,10 +97,8 @@
     </div>
 
     <div id="breath-wrap">
-        <div id="breath-circle">
-            <span id="breath-label" style="font-size: 1.2rem; font-weight: 900;">INHALE</span>
-        </div>
-        <div id="breath-info"></div>
+        <div id="breath-circle"><span id="breath-label" style="font-size: 1.2rem; font-weight: 900;">INHALE</span></div>
+        <div id="breath-info" style="font-size: 0.8rem; color: var(--neon-gold); margin-top: 20px; max-width: 280px; font-weight: 900;"></div>
     </div>
 </div>
 
@@ -118,8 +108,23 @@
 <button class="skip-btn hidden" id="skip-btn">SKIP PHASE</button>
 
 <script>
-    // --- GLOBAL STATE ---
-    let stats = { money: 0, health: 100, name: "Explorer", wrongClicks: 0, totalTime: 0 };
+    // --- AUDIO SYSTEM ---
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playTone(freq, type, dur) {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + dur);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + dur);
+    }
+
+    // --- STATE ---
+    let stats = { money: 0, health: 100, name: "Explorer", wrongClicks: 0, totalTime: 0, level: 1 };
     let sessionData = null;
     let isGameRunning = false;
     let gameTimer = 300;
@@ -143,27 +148,26 @@
 
     const ctx = ui.canvas.getContext('2d');
     let objects = [];
-    let player = { x: window.innerWidth/2, y: window.innerHeight - 100 };
+    let lasers = [];
 
-    // --- UTILS ---
-    const sleep = ms => new Promise(r => setTimeout(r, ms));
-    
-    function speak(text) {
+    // --- CORE FUNCTIONS ---
+    function speak(text, callback) {
         synth.cancel();
         const msg = new SpeechSynthesisUtterance(text);
-        msg.rate = 0.8; // Narración pausada
-        msg.pitch = 0.9;
+        msg.rate = 0.9;
         msg.lang = 'en-US';
+        msg.onend = callback;
         synth.speak(msg);
     }
 
+    const sleep = ms => new Promise(r => setTimeout(r, ms));
+
     function updateHUD() {
         document.getElementById('stat-money').innerText = "$" + stats.money;
-        document.getElementById('stat-health').innerText = stats.health + "%";
-        document.getElementById('stat-status').innerText = stats.health > 50 ? "STABLE" : "CRITICAL";
+        document.getElementById('stat-level').innerText = stats.level;
     }
 
-    // --- SYSTEM START ---
+    // --- FLOW ---
     ui.mainBtn.onclick = async () => {
         const nameVal = document.getElementById('client-name').value;
         if(nameVal) stats.name = nameVal;
@@ -171,7 +175,15 @@
         ui.mainBtn.classList.add('hidden');
         
         startGeneralClock();
-        await startProcess();
+        
+        // SALUDO PERSONALIZADO
+        ui.text.innerText = `WELCOME, ${stats.name.toUpperCase()}`;
+        const welcomeMsg = `Initializing Kamizen Protocol. I am your neural advisor. We will align your focus through narrative, action, and breathing.`;
+        ui.sub.innerText = welcomeMsg;
+        speak(welcomeMsg, async () => {
+            await sleep(1000);
+            await startProcess();
+        });
     };
 
     function startGeneralClock() {
@@ -184,46 +196,31 @@
     }
 
     async function startProcess() {
-        // Fetch JSON Data (Simulado para estructura)
+        // Simulación de carga de JSON completo (Misiones y Story)
         const response = await fetch('/api/session/start');
         sessionData = await response.json();
 
-        // 1. STORIES (PIES)
-        await playStories();
-
-        // 2. PRIMER JUEGO (MANOS - 5 MIN)
-        await runWordGame(300);
-
-        // 3. MISSIONS & RESPIRACIÓN (CABEZA)
-        await playMissions();
-
-        // 4. SEGUNDO JUEGO (MANOS - 5 MIN)
-        await runWordGame(300);
-
-        // 5. DIAGNÓSTICO FINAL
-        await showFinalDiagnostic();
-    }
-
-    // --- PHASE: STORIES ---
-    async function playStories() {
-        ui.text.innerText = "NARRATIVE SEQUENCE";
+        // 1. STORIES
+        ui.text.innerText = "STORY PHASE";
         ui.sub.innerText = sessionData.story.en;
-        speak(ui.sub.innerText);
-        
-        // Espera mínima para que termine o botón continue
-        await sleep(3000);
-        ui.mainBtn.innerText = "CONTINUE";
+        speak(sessionData.story.en);
+        ui.mainBtn.innerText = "CONTINUE TO ACTION";
         ui.mainBtn.classList.remove('hidden');
-        
-        return new Promise(resolve => {
-            ui.mainBtn.onclick = () => {
-                ui.mainBtn.classList.add('hidden');
-                resolve();
-            }
-        });
+
+        ui.mainBtn.onclick = async () => {
+            ui.mainBtn.classList.add('hidden');
+            // 2. JUEGO 1
+            await runWordGame(300);
+            // 3. MISSIONS (JSON COMPLETO)
+            await playMissions();
+            // 4. JUEGO 2 (DIFICULTAD AUMENTADA)
+            stats.level = 2;
+            await runWordGame(300);
+            // 5. DIAGNÓSTICO
+            showFinalDiagnostic();
+        };
     }
 
-    // --- PHASE: MISSIONS & DECISIONS ---
     async function playMissions() {
         const blocks = sessionData.missions[0].b;
         for (const block of blocks) {
@@ -231,7 +228,7 @@
             ui.breath.style.display = "none";
             ui.sub.innerText = "";
 
-            if (block.t === 'd') { // Decisiones con 4 colores
+            if (block.t === 'd') {
                 ui.text.innerText = block.q.en;
                 speak(block.q.en);
                 await new Promise(resolve => {
@@ -240,53 +237,49 @@
                         btn.className = 'btn-opt';
                         btn.innerText = opt;
                         btn.onclick = () => {
-                            // Lógica de colores requerida
-                            if(idx === block.c) { btn.style.backgroundColor = 'var(--neon-green)'; stats.money += 1000; }
-                            else if(idx === 0) { btn.style.backgroundColor = 'var(--neon-red)'; stats.health -= 20; }
-                            else if(idx === 1) { btn.style.backgroundColor = 'var(--neon-orange)'; stats.health -= 15; }
-                            else { btn.style.backgroundColor = 'var(--neon-yellow)'; btn.style.color = 'black'; stats.health -= 5; }
+                            if(idx === block.c) { btn.style.backgroundColor = 'var(--neon-green)'; stats.money += 1000; playTone(600, 'sine', 0.2); }
+                            else { btn.style.backgroundColor = 'var(--neon-red)'; playTone(200, 'sawtooth', 0.3); }
                             
                             ui.sub.innerText = block.ex[idx];
                             speak(block.ex[idx]);
                             updateHUD();
-                            ui.mainBtn.innerText = "CONTINUE ACTION";
                             ui.mainBtn.classList.remove('hidden');
+                            ui.mainBtn.innerText = "NEXT TASK";
                             ui.mainBtn.onclick = () => { ui.mainBtn.classList.add('hidden'); resolve(); };
                         };
                         ui.optCont.appendChild(btn);
                     });
                 });
             } 
-            else if (block.t === 'br' || block.t === 'sil' || block.t === 'breath_auto') {
-                ui.text.innerText = block.t === 'sil' ? "CALM & OBSERVATION" : "BREATHING PROTOCOL";
+            else if (block.t.includes('breath') || block.t === 'sil') {
+                ui.text.innerText = "NEURAL RE-CALIBRATION";
                 ui.breath.style.display = "flex";
-                ui.info.innerText = block.inf?.en || "Lowering cortisol to increase neural confidence.";
+                ui.info.innerText = block.inf?.en || "Stabilizing pulse...";
                 speak(ui.info.innerText);
-                
-                let duration = Math.max(block.d || 19, 19); 
-                let cycles = Math.floor(duration / 4);
-                
-                for(let i=0; i<cycles; i++) {
-                    ui.label.innerText = "INHALE";
-                    ui.circle.style.transform = "scale(1.4)";
-                    await sleep(2000);
-                    ui.label.innerText = "EXHALE";
-                    ui.circle.style.transform = "scale(1.0)";
-                    await sleep(2000);
+                let duration = block.d || 15;
+                for(let i=0; i < Math.floor(duration/4); i++) {
+                    ui.label.innerText = "INHALE"; ui.circle.style.transform = "scale(1.5)"; await sleep(2000);
+                    ui.label.innerText = "EXHALE"; ui.circle.style.transform = "scale(1.0)"; await sleep(2000);
                 }
             }
-            // Limpieza de memoria después de cada bloque
-            objects = [];
         }
     }
 
-    // --- PHASE: WORD GAME (LASERS & 5 MIN) ---
+    // --- WORD GAME ENGINE ---
     async function runWordGame(seconds) {
+        ui.text.innerText = "ACTION: PURIFY YOUR FOCUS";
+        ui.sub.innerText = "Destroy negative thoughts. Protect positive assets.";
+        speak(ui.sub.innerText);
+        
+        await sleep(2000);
         ui.canvas.style.display = "block";
         ui.gameClock.classList.remove('hidden');
         ui.skip.classList.remove('hidden');
+        
         isGameRunning = true;
         gameTimer = seconds;
+        objects = [];
+        lasers = [];
 
         const timerInterval = setInterval(() => {
             if(!isGameRunning) return;
@@ -294,126 +287,127 @@
             const m = Math.floor(gameTimer/60);
             const s = gameTimer % 60;
             ui.gameClock.innerText = `${m}:${String(s).padStart(2,'0')}`;
-            if(gameTimer <= 0) endWordGame();
+            if(gameTimer <= 0) { clearInterval(timerInterval); isGameRunning = false; }
         }, 1000);
 
-        function endWordGame() {
-            clearInterval(timerInterval);
-            isGameRunning = false;
-            ui.canvas.style.display = "none";
-            ui.gameClock.classList.add('hidden');
-            ui.skip.classList.add('hidden');
-            objects = []; // Limpieza de memoria
-            return;
-        }
+        ui.skip.onclick = () => { gameTimer = 0; isGameRunning = false; };
 
-        ui.skip.onclick = () => { gameTimer = 0; endWordGame(); };
-
-        // Game Loop
-        gameAnimate();
-        spawnWords();
+        gameLoop();
+        spawnLogic();
 
         return new Promise(resolve => {
-            const checkEnd = setInterval(() => {
-                if(!isGameRunning) { clearInterval(checkEnd); resolve(); }
+            const check = setInterval(() => {
+                if(!isGameRunning) {
+                    clearInterval(check);
+                    ui.canvas.style.display = "none";
+                    ui.gameClock.classList.add('hidden');
+                    ui.skip.classList.add('hidden');
+                    resolve();
+                }
             }, 100);
         });
     }
 
-    function spawnWords() {
+    function spawnLogic() {
         if(!isGameRunning) return;
         const words = [
-            {t: "FOCUS", p: true}, {t: "SAVINGS", p: true}, {t: "CALM", p: true},
-            {t: "ANXIETY", p: false}, {t: "LIES", p: false}, {t: "CHAOS", p: false}
+            {t: "STABILITY", p: true}, {t: "WEALTH", p: true}, {t: "JOY", p: true},
+            {t: "FEAR", p: false}, {t: "DEBT", p: false}, {t: "ANXIETY", p: false}
         ];
         const w = words[Math.floor(Math.random()*words.length)];
         objects.push({
             text: w.t, pos: w.p,
-            x: Math.random()*ui.canvas.width, y: -50,
-            s: 2 + Math.random()*2
+            x: 50 + Math.random() * (ui.canvas.width - 100),
+            y: -20,
+            s: (1.5 + Math.random() * 2) * stats.level
         });
-        setTimeout(spawnWords, 1200);
+        setTimeout(spawnLogic, 1000 / stats.level);
     }
 
-    function gameAnimate() {
+    function gameLoop() {
         if(!isGameRunning) return;
-        ctx.fillStyle = 'rgba(5,5,8,0.2)';
-        ctx.fillRect(0,0,ui.canvas.width, ui.canvas.height);
+        ctx.clearRect(0, 0, ui.canvas.width, ui.canvas.height);
 
+        // Draw Lasers
+        lasers.forEach((l, i) => {
+            ctx.strokeStyle = l.color;
+            ctx.lineWidth = 3;
+            ctx.beginPath(); ctx.moveTo(l.x1, l.y1); ctx.lineTo(l.x2, l.y2); ctx.stroke();
+            l.life--;
+            if(l.life <= 0) lasers.splice(i, 1);
+        });
+
+        // Draw Objects
         objects.forEach((obj, i) => {
             obj.y += obj.s;
             ctx.fillStyle = obj.pos ? 'var(--neon-blue)' : 'var(--neon-red)';
-            ctx.font = "900 18px Orbitron";
+            ctx.font = "900 20px Orbitron";
             ctx.textAlign = "center";
             ctx.fillText(obj.text, obj.x, obj.y);
 
-            // Laser effect
-            ctx.strokeStyle = obj.pos ? 'rgba(0,242,255,0.1)' : 'rgba(255,49,49,0.1)';
-            ctx.lineWidth = 1;
-            ctx.beginPath(); ctx.moveTo(obj.x, obj.y); ctx.lineTo(player.x, player.y); ctx.stroke();
-
-            if(obj.y > ui.canvas.height) objects.splice(i, 1);
+            if(obj.y > ui.canvas.height) {
+                if(obj.pos) stats.money -= 100; // Penalización por dejar pasar lo bueno
+                objects.splice(i, 1);
+                updateHUD();
+            }
         });
 
-        requestAnimationFrame(gameAnimate);
+        requestAnimationFrame(gameLoop);
     }
 
-    // Interacción
     ui.canvas.onmousedown = (e) => {
         if(!isGameRunning) return;
-        player.x = e.clientX; player.y = e.clientY;
+        const rect = ui.canvas.getBoundingClientRect();
+        const mx = e.clientX - rect.left;
+        const my = e.clientY - rect.top;
+
         objects.forEach((obj, i) => {
-            const d = Math.sqrt((e.clientX-obj.x)**2 + (e.clientY-obj.y)**2);
-            if(d < 40) {
-                if(!obj.pos) {
+            const dist = Math.sqrt((mx - obj.x)**2 + (my - obj.y)**2);
+            if(dist < 50) {
+                lasers.push({ x1: mx, y1: my, x2: obj.x, y2: obj.y, color: obj.pos ? '#00f2ff' : '#ff3131', life: 10 });
+                
+                if(!obj.pos) { // Destruir lo malo es bueno
+                    stats.money += 500;
+                    playTone(800, 'square', 0.1);
+                } else { // Destruir lo bueno es malo
                     stats.wrongClicks++;
-                    if(stats.wrongClicks >= 3) triggerStopPenalty();
-                } else {
-                    stats.money += 200;
-                    updateHUD();
+                    stats.money -= 1000;
+                    playTone(150, 'sawtooth', 0.4);
+                    if(stats.wrongClicks >= 3) triggerPenalty();
                 }
                 objects.splice(i, 1);
+                updateHUD();
             }
         });
     };
 
-    async function triggerStopPenalty() {
+    function triggerPenalty() {
         isGameRunning = false;
         stats.wrongClicks = 0;
-        const msg = "System Interrupted. You are focusing on negative patterns. Calm your mind to rejoin the mission.";
-        ui.text.innerText = "FOCUS RECOVERY REQUIRED";
-        ui.sub.innerText = msg;
-        speak(msg);
-        
-        ui.optCont.innerHTML = '<button class="btn-core" id="sign-btn">I COMMIT AND REJOIN</button>';
-        document.getElementById('sign-btn').onclick = () => {
+        const pMsg = "Involuntary patterns detected. Stop. Commit to your growth to continue.";
+        ui.text.innerText = "COGNITIVE LOCK";
+        ui.sub.innerText = pMsg;
+        speak(pMsg);
+        ui.optCont.innerHTML = '<button class="btn-core" style="background:var(--neon-red)">I COMMIT TO MY MISSION</button>';
+        ui.optCont.firstChild.onclick = () => {
             ui.optCont.innerHTML = "";
-            isGameRunning = true;
-            gameAnimate();
-            spawnWords();
+            runWordGame(gameTimer); // Reanuda el tiempo restante
         };
     }
 
-    // --- PHASE: FINAL DIAGNOSTIC ---
-    async function showFinalDiagnostic() {
-        ui.text.innerText = "FINAL NEURO-DIAGNOSTIC";
-        const diag = stats.health > 70 ? "Excellent Stability." : "Stability Recovery Needed.";
-        const recommendation = "\nScientific Note: Box Breathing (4-4-4-4) lowers cortisol in seconds, providing immediate confidence to the developing brain.";
-        
-        ui.sub.innerText = `${stats.name}: ${diag} Your total assets: $${stats.money}. ${recommendation}`;
-        speak(ui.sub.innerText);
-        
-        ui.mainBtn.innerText = "RESTART SYSTEM";
+    function showFinalDiagnostic() {
+        ui.text.innerText = "DIAGNOSTIC COMPLETE";
+        const msg = `Mission finished, ${stats.name}. Final Assets: $${stats.money}. Your neural stability is within optimal parameters. See you at the next level.`;
+        ui.sub.innerText = msg;
+        speak(msg);
+        ui.mainBtn.innerText = "REBOOT SYSTEM";
         ui.mainBtn.classList.remove('hidden');
         ui.mainBtn.onclick = () => location.reload();
     }
 
-    // --- RESPONSIVE LOGIC ---
     window.onresize = () => {
         ui.canvas.width = window.innerWidth;
         ui.canvas.height = window.innerHeight;
-        player.x = ui.canvas.width/2;
-        player.y = ui.canvas.height - 100;
     };
     window.onresize();
 </script>
