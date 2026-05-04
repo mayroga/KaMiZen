@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>KAMIZEN SESSION FINAL</title>
+<title>KAMIZEN FIXED SESSION</title>
 
 <style>
 :root{
@@ -13,51 +13,147 @@
 --neon-gold:#f1c40f;
 --bg:#000;
 }
-body{margin:0;background:#000;color:white;font-family:Orbitron;overflow:hidden;}
 
-.full{position:fixed;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;background:black;z-index:2000;text-align:center;}
+body{
+margin:0;
+overflow:hidden;
+background:#000;
+font-family:Orbitron;
+color:white;
+touch-action:none;
+}
 
-.btn{padding:20px 40px;background:var(--neon-blue);border:none;font-weight:900;cursor:pointer;margin:10px;}
+/* HUD */
+#hud{
+position:absolute;
+top:10px;
+width:100%;
+display:flex;
+justify-content:space-around;
+z-index:100;
+}
 
-.opt{width:80%;max-width:500px;margin:5px;}
-.correct{background:var(--neon-green);}
-.wrong{background:var(--neon-red);}
+.box{
+background:black;
+border:2px solid var(--neon-blue);
+padding:8px;
+min-width:90px;
+text-align:center;
+}
 
-#hud{position:absolute;top:10px;width:100%;display:flex;justify-content:space-around;z-index:100;}
-.box{background:black;border:2px solid var(--neon-blue);padding:10px;}
+.label{font-size:10px}
+.value{font-size:18px}
 
-#breath{width:250px;height:250px;border-radius:50%;border:8px solid var(--neon-blue);display:flex;justify-content:center;align-items:center;font-size:2rem;}
+/* TIMER GRANDE */
+#timer{
+position:absolute;
+bottom:10px;
+width:100%;
+text-align:center;
+font-size:38px;
+font-weight:900;
+color:var(--neon-red);
+z-index:100;
+}
 
+/* OVERLAYS */
+.full{
+position:fixed;
+inset:0;
+background:black;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+z-index:2000;
+text-align:center;
+padding:10px;
+}
+
+/* BOTONES MOBILE */
+.btn{
+padding:16px 28px;
+background:var(--neon-blue);
+border:none;
+font-weight:900;
+margin:10px;
+font-size:16px;
+}
+
+/* MISSION */
+.opt{
+width:90%;
+max-width:500px;
+margin:5px;
+font-size:14px;
+}
+
+.good{background:var(--neon-green)!important;}
+.bad{background:var(--neon-red)!important;}
+
+#exp{
+margin-top:10px;
+color:var(--neon-gold);
+font-weight:900;
+max-width:600px;
+}
+
+/* BREATH */
+#breathCircle{
+width:220px;
+height:220px;
+border-radius:50%;
+border:6px solid var(--neon-blue);
+display:flex;
+justify-content:center;
+align-items:center;
+font-size:22px;
+font-weight:900;
+}
+
+/* FLASH */
+#flash{
+position:fixed;
+inset:0;
+opacity:0;
+pointer-events:none;
+z-index:50;
+}
 </style>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
 </head>
 
 <body>
 
-<div id="overlay" class="full">
-<h1>KAMIZEN</h1>
-<button class="btn" onclick="start()">START</button>
+<div id="flash"></div>
+
+<!-- HUD -->
+<div id="hud">
+<div class="box"><div class="label">MONEY</div><div id="money" class="value">0</div></div>
+<div class="box"><div class="label">STABILITY</div><div id="health" class="value">100</div></div>
+<div class="box"><div class="label">LEVEL</div><div id="level" class="value">1</div></div>
 </div>
 
-<div id="storyBox" class="full" style="display:none;">
+<div id="timer">00:00</div>
+
+<!-- STORY -->
+<div id="story" class="full" style="display:none;">
 <h2 id="storyText"></h2>
 <button class="btn" onclick="nextStory()">CONTINUE</button>
 </div>
 
-<div id="missionBox" class="full" style="display:none;">
+<!-- MISSION -->
+<div id="mission" class="full" style="display:none;">
 <h2 id="q"></h2>
 <div id="opts"></div>
 <div id="exp"></div>
-<button class="btn" onclick="endMission()">CONTINUE</button>
+<button class="btn" onclick="nextMission()">CONTINUE</button>
 </div>
 
-<div id="breathBox" class="full" style="display:none;">
-<div id="breath"><span id="btext">INHALA</span></div>
-</div>
-
-<div id="hud">
-<div class="box">$<span id="money">0</span></div>
-<div class="box"><span id="health">100</span>%</div>
-<div class="box">LVL <span id="lvl">1</span></div>
+<!-- BREATH -->
+<div id="breath" class="full" style="display:none;">
+<div id="breathCircle"><span id="breathText">INHALA</span></div>
 </div>
 
 <canvas id="c"></canvas>
@@ -66,106 +162,124 @@ body{margin:0;background:#000;color:white;font-family:Orbitron;overflow:hidden;}
 const c=document.getElementById("c");
 const x=c.getContext("2d");
 
-let state="idle";
 let data=null;
-
-let stats={money:0,health:100,lvl:0};
-let objects=[];
 let active=false;
 
-let user={x:0,y:0,size:50};
+let stats={money:0,health:100,level:0,time:300};
+let objects=[];
 
-function resize(){c.width=innerWidth;c.height=innerHeight;}
+let user={x:0,y:0,r:60};
+
+/* RESIZE SAFE */
+function resize(){
+c.width=innerWidth;
+c.height=innerHeight;
+}
 resize();addEventListener("resize",resize);
 
+/* TIMER */
+setInterval(()=>{
+stats.time--;
+let m=Math.floor(stats.time/60);
+let s=stats.time%60;
+timer.innerText=`${m}:${s<10?'0':''}${s}`;
+},1000);
+
+/* SPAWN */
 function spawn(){
 if(!active)return;
 objects.push({
 x:Math.random()*c.width,
 y:-50,
-speed:2+Math.random()*2+(stats.lvl*0.5),
-text:Math.random()>0.5?"GOOD":"BAD",
-type:Math.random()>0.5?"pos":"neg"
+speed:2+stats.level,
+type:Math.random()>0.5?"pos":"neg",
+text:Math.random()>0.5?"GOOD":"BAD"
 });
 }
 
+/* UPDATE */
 function update(){
 if(!active)return;
+
 objects.forEach((o,i)=>{
 o.y+=o.speed;
+
 let d=Math.hypot(o.x-user.x,o.y-user.y);
-if(d<user.size){
-if(o.type==="pos"){stats.money+=100;}
-else{stats.health-=10;}
+if(d<user.r){
+
+if(o.type==="pos") stats.money+=100;
+else stats.health-=10;
+
+flash(o.type==="pos"?"#00f2ff":"#ff3131");
 objects.splice(i,1);
 }
 });
-updateHUD();
 }
 
+/* DRAW LASERS (RESTORED FULLY) */
 function draw(){
 x.fillStyle="rgba(0,0,0,0.3)";
 x.fillRect(0,0,c.width,c.height);
 
 objects.forEach(o=>{
-x.fillStyle=o.type==="pos"?"#2ecc71":"#ff3131";
+x.strokeStyle=o.type==="pos"?"#00f2ff":"#ff3131";
+x.lineWidth=3;
+
+x.beginPath();
+x.moveTo(o.x,o.y);
+x.lineTo(user.x,user.y);
+x.stroke();
+
+x.fillStyle="white";
+x.font="14px Orbitron";
 x.fillText(o.text,o.x,o.y);
 });
 }
 
+/* LOOP */
 function loop(){
-update();draw();
+update();
+draw();
 requestAnimationFrame(loop);
 }
 
-function updateHUD(){
-money.innerText=stats.money;
-health.innerText=stats.health;
-lvl.innerText=stats.lvl+1;
+/* FLASH */
+function flash(c){
+flash.style.background=c;
+flash.style.opacity=0.4;
+setTimeout(()=>flash.style.opacity=0,100);
 }
 
-async function fetchSession(){
-let r=await fetch("/api/session/start");
-data=await r.json();
+/* SESSION */
+async function start(){
+overlay.style.display="none";
+data=await (await fetch("/api/session/start")).json();
+
+runStory();
+loop();
+setInterval(spawn,900);
 }
 
-async function runStory(){
-state="story";
-storyBox.style.display="flex";
-let text=data.story.en;
-storyText.innerText="";
-
-let i=0;
-let t=setInterval(()=>{
-storyText.innerText+=text[i++];
-if(i>=text.length)clearInterval(t);
-},25);
-
-speechSynthesis.speak(new SpeechSynthesisUtterance(text));
+/* STORY CLEAN */
+function runStory(){
+story.style.display="flex";
+storyText.innerText=data.story.en;
+speechSynthesis.speak(new SpeechSynthesisUtterance(data.story.en));
 }
 
 function nextStory(){
 speechSynthesis.cancel();
-storyBox.style.display="none";
-runGame1();
+story.style.display="none";
+runMission();
 }
 
-function runGame1(){
-state="game";
-stats.lvl=0;
-active=true;
-setTimeout(()=>{
-active=false;
-objects=[];
-runMission();
-},300000); // 5 min real
-}
+/* MISSION FULL EXPLANATION */
+let mi=0;
 
 function runMission(){
-state="mission";
-missionBox.style.display="flex";
+mission.style.display="flex";
 
-let m=data.missions[0].b.find(b=>b.t==="d");
+let m=data.missions[mi].b.find(x=>x.t==="d");
 
 q.innerText=m.q.en;
 opts.innerHTML="";
@@ -175,62 +289,56 @@ m.op.forEach((o,i)=>{
 let b=document.createElement("button");
 b.className="btn opt";
 b.innerText=o;
+
 b.onclick=()=>{
 let ok=i===m.c;
-b.classList.add(ok?"correct":"wrong");
 
-exp.innerText=m.expl?.en || (ok?"Correct decision":"Wrong decision");
+b.classList.add(ok?"good":"bad");
 
-if(ok){stats.money+=500;}
-else{stats.health-=15;}
+/* EXPLANATION SIEMPRE */
+exp.innerHTML=
+(ok
+? "✔ CORRECT: " + m.expl.en
+: "✘ WRONG: " + m.expl.en);
+
+if(ok) stats.money+=500;
+else stats.health-=10;
 };
+
 opts.appendChild(b);
 });
 }
 
-function endMission(){
-missionBox.style.display="none";
-runGame2();
+function nextMission(){
+mission.style.display="none";
+mi++;
+if(mi>=data.missions.length) runBreath();
+else runMission();
 }
 
-function runGame2(){
-stats.lvl=2;
-active=true;
-setTimeout(()=>{
-active=false;
-runBreath();
-},300000);
-}
-
+/* BREATH */
 function runBreath(){
-breathBox.style.display="flex";
+breath.style.display="flex";
+
 let i=0;
-let int=setInterval(()=>{
-btext.innerText=i%2===0?"INHALA":"EXHALA";
-breath.style.transform=i%2===0?"scale(1.5)":"scale(1)";
+setInterval(()=>{
+breathText.innerText=i%2?"EXHALA":"INHALA";
+breathCircle.style.transform=i%2?"scale(1)":"scale(1.4)";
 i++;
-if(i>6){
-clearInterval(int);
-breathBox.style.display="none";
-startLoop();
-}
 },2000);
 }
 
-async function startLoop(){
-await fetchSession();
-await runStory();
-}
-
-async function start(){
-overlay.style.display="none";
-loop();
-setInterval(spawn,1200);
-startLoop();
-}
-
-addEventListener("mousemove",e=>{user.x=e.clientX;user.y=e.clientY;});
+/* INPUT */
+addEventListener("mousemove",e=>{
+user.x=e.clientX;
+user.y=e.clientY;
+});
 </script>
+
+<div id="overlay" class="full">
+<h1>KAMIZEN</h1>
+<button class="btn" onclick="start()">START</button>
+</div>
 
 </body>
 </html>
