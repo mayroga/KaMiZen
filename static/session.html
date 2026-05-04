@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>KAMIZEN SESSION - HIGH DOPAMINE</title>
+    <title>KAMIZEN SESSION</title>
     <style>
         :root {
             --neon-blue: #00f2ff;
@@ -12,421 +12,247 @@
             --bg-dark: #050508;
             --neon-green: #2ecc71;
         }
-        body { margin: 0; overflow: hidden; background: var(--bg-dark); color: white; font-family: 'Orbitron', sans-serif; cursor: none; touch-action: none; }
+        body { 
+            margin: 0; overflow: hidden; background: var(--bg-dark); 
+            color: white; font-family: 'Orbitron', sans-serif; touch-action: none; 
+        }
         
+        /* HUD Superior */
         #hud {
             position: absolute; top: 15px; width: 100%;
             display: flex; justify-content: space-evenly;
             z-index: 100; pointer-events: none;
         }
         .data-box {
-            background: rgba(0, 0, 0, 0.95);
-            border: 2px solid var(--neon-blue);
-            padding: 10px; text-align: center;
-            min-width: 130px; box-shadow: 0 0 20px rgba(0, 242, 255, 0.1);
+            background: rgba(0, 0, 0, 0.9); border: 2px solid var(--neon-blue);
+            padding: 10px; text-align: center; min-width: 120px;
         }
-        .label { font-size: 10px; color: var(--neon-blue); letter-spacing: 2px; font-weight: 900; display: block; }
-        .value { font-size: 24px; font-weight: 900; display: block; }
+        .label { font-size: 10px; color: var(--neon-blue); letter-spacing: 2px; display: block; }
+        .value { font-size: 20px; font-weight: 900; display: block; }
 
-        #timer-display {
-            position: absolute; bottom: 30px; width: 100%; text-align: center;
-            color: var(--neon-red); font-size: 35px; font-weight: 900; 
-            text-shadow: 0 0 20px var(--neon-red); z-index: 100;
-        }
-
-        /* OVERLAYS COMUNES */
-        .full-overlay {
-            position: fixed; inset: 0; background: radial-gradient(circle, #111 0%, #000 100%);
-            display: flex; flex-direction: column; justify-content: center;
-            align-items: center; z-index: 1000; text-align: center; padding: 20px;
+        /* Contenedor Central de Contenido */
+        #main-stage {
+            position: fixed; inset: 0; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; text-align: center;
+            padding: 40px; z-index: 50; background: radial-gradient(circle, #111 0%, #000 100%);
         }
 
-        /* BOTONES */
-        .btn-core {
-            padding: 20px 40px; background: var(--neon-blue); color: black;
-            border: none; font-family: 'Orbitron'; font-weight: 900;
-            cursor: pointer; letter-spacing: 3px; font-size: 1.2rem;
-            box-shadow: 0 0 30px var(--neon-blue); margin: 15px;
-            text-transform: uppercase;
+        #display-text { font-size: 2.5rem; font-weight: 900; color: var(--neon-blue); text-shadow: 0 0 20px var(--neon-blue); max-width: 800px; }
+        #sub-text { font-size: 1.2rem; color: var(--neon-gold); margin-top: 20px; max-width: 700px; }
+
+        /* Botones de Misión */
+        #options-container { margin-top: 30px; display: flex; flex-direction: column; gap: 15px; width: 100%; max-width: 500px; }
+        .btn-opt {
+            padding: 15px; background: transparent; border: 2px solid var(--neon-blue);
+            color: white; font-family: 'Orbitron'; font-weight: 900; cursor: pointer;
+            transition: 0.3s; text-transform: uppercase;
         }
+        .btn-opt:hover { background: var(--neon-blue); color: black; }
+        .correct { background: var(--neon-green) !important; border-color: var(--neon-green); color: white; }
+        .wrong { background: var(--neon-red) !important; border-color: var(--neon-red); color: white; }
 
-        /* MISSION STYLES */
-        .opt-btn { width: 80%; max-width: 500px; font-size: 0.9rem; transition: 0.3s; }
-        .opt-correct { background: var(--neon-green) !important; box-shadow: 0 0 40px var(--neon-green); color: white; }
-        .opt-wrong { background: var(--neon-red) !important; box-shadow: 0 0 40px var(--neon-red); color: white; }
-        #mission-explanation { margin-top: 20px; font-weight: 900; color: var(--neon-gold); display: none; max-width: 600px; }
-
-        /* BREATHING */
+        /* Círculo de Respiración */
+        #breath-wrap { display: none; flex-direction: column; align-items: center; }
         #breath-circle {
-            width: 250px; height: 250px; border-radius: 50%;
-            border: 8px solid var(--neon-blue);
-            display: flex; justify-content: center; align-items: center;
-            font-size: 2rem; font-weight: 900; transition: transform 2s ease-in-out;
-            text-shadow: 0 0 10px var(--neon-blue);
-            box-shadow: 0 0 50px var(--neon-blue);
+            width: 200px; height: 200px; border: 10px solid var(--neon-blue);
+            border-radius: 50%; transition: transform 4s ease-in-out;
+            box-shadow: 0 0 50px var(--neon-blue); display: flex; align-items: center; justify-content: center;
         }
 
-        #flash-alert { position: fixed; inset: 0; pointer-events: none; z-index: 50; opacity: 0; }
+        /* Palabras Flotantes (No tocables) */
+        .floating-word {
+            position: absolute; pointer-events: none; font-weight: 900;
+            color: white; background: rgba(0,0,0,0.7); padding: 5px 10px;
+            border-radius: 4px; font-size: 1.5rem; z-index: 10;
+            animation: floatUp 5s linear forwards;
+        }
+
+        @keyframes floatUp {
+            from { transform: translateY(100vh) scale(0.5); opacity: 0; }
+            to { transform: translateY(-10vh) scale(1.2); opacity: 1; }
+        }
+
+        #timer-clock { position: absolute; bottom: 20px; width: 100%; text-align: center; font-size: 30px; color: var(--neon-red); }
+        .hidden { display: none !important; }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
 </head>
 <body>
 
-<div id="flash-alert"></div>
-<div id="timer-display"><span id="clock">00:00</span></div>
-
 <div id="hud">
-    <div class="data-box" style="border-color: var(--neon-gold);"><span class="label">NET WORTH</span><span id="val-money" class="value">$0</span></div>
-    <div class="data-box" style="border-color: var(--neon-red);"><span class="label">STABILITY</span><span id="val-health" class="value">100%</span></div>
-    <div class="data-box" style="border-color: var(--neon-blue);"><span class="label">LEVEL</span><span id="val-rank" class="value">1</span></div>
+    <div class="data-box"><span class="label">ASSETS</span><span id="stat-money" class="value">$0</span></div>
+    <div class="data-box" style="border-color: var(--neon-gold);"><span class="label">SESSION</span><span id="stat-id" class="value">0</span></div>
+    <div class="data-box" style="border-color: var(--neon-red);"><span class="label">STABILITY</span><span id="stat-health" class="value">100%</span></div>
 </div>
 
-<!-- START OVERLAY -->
-<div id="overlay" class="full-overlay">
-    <h1 style="color: var(--neon-blue); letter-spacing: 15px; font-size: 50px;">KAMIZEN</h1>
-    <button class="btn-core" onclick="startGame()">INITIALIZE</button>
+<div id="main-stage">
+    <div id="content-area">
+        <h2 id="display-text">INITIALIZING SYSTEM...</h2>
+        <p id="sub-text"></p>
+        <div id="options-container" class="hidden"></div>
+    </div>
+
+    <div id="breath-wrap">
+        <div id="breath-circle"><span id="breath-label" style="font-size: 1.5rem;">INHALE</span></div>
+    </div>
+
+    <button id="start-btn" style="padding: 20px 50px; font-size: 1.5rem; background: var(--neon-blue); border: none; cursor: pointer; font-family: 'Orbitron'; font-weight: 900; margin-top: 20px;">
+        START TRAINING
+    </button>
 </div>
 
-<!-- STORY OVERLAY -->
-<div id="story-box" class="full-overlay" style="display:none; z-index:2000;">
-    <h2 id="story-text" style="font-size:24px; color:var(--neon-blue); max-width:800px;"></h2>
-    <button id="story-next" class="btn-core" style="display:none;">CONTINUE</button>
-</div>
-
-<!-- MISSION BOX -->
-<div id="mission-box" class="full-overlay" style="display:none; z-index:3000; background:black;">
-    <h2 id="mission-question" style="color:var(--neon-gold);"></h2>
-    <div id="mission-options" style="width:100%; display:flex; flex-direction:column; align-items:center;"></div>
-    <div id="mission-explanation"></div>
-    <button id="mission-next" class="btn-core" style="display:none;">CONTINUE TRAINING</button>
-</div>
-
-<!-- BREATHING -->
-<div id="breathing-box" class="full-overlay" style="display:none; z-index:4000;">
-    <div id="breath-circle"><span id="breath-text">INHALA</span></div>
-</div>
-
-<canvas id="gameCanvas"></canvas>
+<div id="timer-clock">00:00</div>
 
 <script>
-const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
-let audioCtx;
-let synthInterval;
+    let sessionData = null;
+    let stats = { money: 0, health: 100, index: 0 };
+    let timerInterval;
+    let totalSeconds = 1200; // 20 Minutos
 
-const levels = [
-    { name: "1", speedMult: 0.7, laserWidth: 2, laserDash: [10, 5], data: [
-        { text: "TELLING TRUTH", type: "pos", impact: 300, color: "#2ecc71", freq: 523 },
-        { text: "CLEAN ROOM", type: "pos", impact: 200, color: "#2ecc71", freq: 587 },
-        { text: "HIDING TRUTH", type: "neg", impact: -100, color: "#ff3131", freq: 110 },
-        { text: "DISOBEDIENCE", type: "neg", impact: -150, color: "#ff3131", freq: 85 }
-    ]},
-    { name: "2", speedMult: 1.1, laserWidth: 4, laserDash: [5, 5], data: [
-        { text: "TEAMWORK", type: "pos", impact: 600, color: "#2ecc71", freq: 783 },
-        { text: "INVESTMENT", type: "pos", impact: 1000, color: "#f1c40f", freq: 880 },
-        { text: "PEER PRESSURE", type: "neg", impact: -500, color: "#ff3131", freq: 120 },
-        { text: "BULLYING", type: "neg", impact: -400, color: "#ff3131", freq: 70 }
-    ]},
-    { name: "3", speedMult: 1.5, laserWidth: 8, laserDash: [], data: [
-        { text: "SITUATIONAL AWARENESS", type: "pos", impact: 1500, color: "#00f2ff", freq: 1567 },
-        { text: "911 PROTOCOL", type: "pos", impact: 800, color: "#2ecc71", freq: 1396 },
-        { text: "UNLOCKED FIREARM", type: "neg", impact: -5000, color: "#ff3131", freq: 60 },
-        { text: "STRANGER DANGER", type: "neg", impact: -2500, color: "#ff3131", freq: 50 }
-    ]}
-];
+    const ui = {
+        text: document.getElementById('display-text'),
+        sub: document.getElementById('sub-text'),
+        options: document.getElementById('options-container'),
+        breath: document.getElementById('breath-wrap'),
+        circle: document.getElementById('breath-circle'),
+        label: document.getElementById('breath-label'),
+        startBtn: document.getElementById('start-btn'),
+        clock: document.getElementById('timer-clock')
+    };
 
-let stats = { money: 0, health: 100, currentLevelIdx: 0, totalSeconds: 300 };
-let active = false;
-let objects = [];
-let particles = [];
-let sessionData = null;
-const user = { x: 0, y: 0, size: 60 };
-
-// AUDIO DOPAMINA (ESTILO SONIC/CHIPTUNE)
-function initDopamineAudio() {
-    if (audioCtx) return;
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    
-    // Beat constante de fondo
-    synthInterval = setInterval(() => {
-        if (!active) return;
-        playNote(150, 'square', 0.05, 0.1); // Kick
-        setTimeout(() => playNote(300, 'sawtooth', 0.02, 0.05), 250); // Snare-ish
-    }, 500);
-}
-
-function playNote(freq, type, vol, dur) {
-    const osc = audioCtx.createOscillator();
-    const g = audioCtx.createGain();
-    osc.type = type;
-    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-    g.gain.setValueAtTime(vol, audioCtx.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + dur);
-    osc.connect(g); g.connect(audioCtx.destination);
-    osc.start(); osc.stop(audioCtx.currentTime + dur);
-}
-
-function triggerSound(freq, type) {
-    if (type === 'pos') {
-        playNote(freq, 'triangle', 0.2, 0.5);
-        playNote(freq * 1.5, 'triangle', 0.1, 0.3); // Armonía "Power-up"
-    } else {
-        playNote(freq, 'sawtooth', 0.2, 0.8);
+    async function fetchSession() {
+        const res = await fetch('/api/session/start');
+        sessionData = await res.json();
+        stats.index = sessionData.index;
+        document.getElementById('stat-id').innerText = stats.index;
     }
-}
 
-// LOGICA DE SESIÓN
-async function fetchSession(){
-    const res = await fetch("/api/session/start");
-    sessionData = await res.json();
-}
+    function updateClock() {
+        const m = Math.floor(totalSeconds / 60);
+        const s = totalSeconds % 60;
+        ui.clock.innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
+        if(totalSeconds > 0) totalSeconds--;
+    }
 
-async function runStory(){
-    return new Promise(resolve => {
-        const box = document.getElementById("story-box");
-        const text = document.getElementById("story-text");
-        const btn = document.getElementById("story-next");
-        
-        const story = sessionData.story.en;
-        text.innerText = "";
-        box.style.display = "flex";
-        btn.style.display = "none";
+    const sleep = ms => new Promise(r => setTimeout(r, ms));
 
-        // Efecto Typewriter
-        let i = 0;
-        const timer = setInterval(() => {
-            text.innerText += story[i];
-            i++;
-            if(i >= story.length) {
-                clearInterval(timer);
-                btn.style.display = "block";
-            }
-        }, 30);
+    async function runSession() {
+        ui.startBtn.classList.add('hidden');
+        timerInterval = setInterval(updateClock, 1000);
 
-        // Voz
-        const msg = new SpeechSynthesisUtterance(story);
-        msg.lang = "en-US";
-        msg.rate = 0.9;
-        speechSynthesis.speak(msg);
-
-        btn.onclick = () => {
-            speechSynthesis.cancel();
-            box.style.display = "none";
-            resolve();
-        };
-    });
-}
-
-async function runMission(missionIdx){
-    return new Promise(resolve => {
-        const mission = sessionData.missions[missionIdx];
-        const decision = mission.b.find(x => x.t === "d");
-        
-        const box = document.getElementById("mission-box");
-        const q = document.getElementById("mission-question");
-        const ops = document.getElementById("mission-options");
-        const exp = document.getElementById("mission-explanation");
-        const next = document.getElementById("mission-next");
-
-        box.style.display = "flex";
-        next.style.display = "none";
-        exp.style.display = "none";
-        q.innerText = decision.q.en;
-        ops.innerHTML = "";
-
-        decision.op.forEach((opt, i) => {
-            const btn = document.createElement("button");
-            btn.className = "btn-core opt-btn";
-            btn.innerText = opt;
-            btn.onclick = () => {
-                const isCorrect = (i === decision.c);
-                btn.className = isCorrect ? "btn-core opt-btn opt-correct" : "btn-core opt-btn opt-wrong";
-                
-                // Deshabilitar otros
-                Array.from(ops.children).forEach(b => b.onclick = null);
-                
-                // Mostrar explicación
-                exp.innerText = decision.expl ? decision.expl.en : (isCorrect ? "Great job! That builds stability." : "Careful! That decision lowers your health.");
-                exp.style.display = "block";
-                next.style.display = "block";
-
-                if(isCorrect) stats.money += 1000; else stats.health -= 20;
-                updateHUD();
-            };
-            ops.appendChild(btn);
-        });
-
-        next.onclick = () => {
-            box.style.display = "none";
-            resolve();
-        };
-    });
-}
-
-async function runBreathing(){
-    return new Promise(resolve => {
-        const box = document.getElementById("breathing-box");
-        const circle = document.getElementById("breath-circle");
-        const text = document.getElementById("breath-text");
-        box.style.display = "flex";
-
-        let cycles = 0;
-        const interval = setInterval(() => {
-            const isInhaling = (cycles % 2 === 0);
-            text.innerText = isInhaling ? "INHALA" : "EXHALA";
-            circle.style.transform = isInhaling ? "scale(1.5)" : "scale(1.0)";
-            cycles++;
+        while (totalSeconds > 0) {
+            await fetchSession();
             
-            if(cycles > 6) { // 3 ciclos completos
-                clearInterval(interval);
-                box.style.display = "none";
-                resolve();
+            // 1. PHASE: STORY (Basado en stories.json)
+            ui.text.innerText = sessionData.story.t || "KAMIZEN STORY";
+            ui.sub.innerText = sessionData.story.en; 
+            await sleep(8000);
+
+            // 2. PHASE: MISSION BLOCKS (Basado en missions_XX_XX.json)
+            const mission = sessionData.missions[0]; 
+            for (const block of mission.b) {
+                await processBlock(block);
             }
-        }, 2000);
-    });
-}
 
-// GAME CORE
-function spawn() {
-    if(!active) return;
-    const lvl = levels[stats.currentLevelIdx];
-    const data = lvl.data[Math.floor(Math.random() * lvl.data.length)];
-    objects.push({
-        ...data,
-        x: Math.random() * (canvas.width - 300) + 150,
-        y: -50,
-        vx: (Math.random() - 0.5) * 4,
-        speed: (2 + Math.random() * 2) * lvl.speedMult // Más lento para leer
-    });
-}
-
-function update() {
-    if(!active) return;
-    stats.totalSeconds -= 1/60;
-
-    objects.forEach((obj, i) => {
-        obj.y += obj.speed;
-        obj.x += obj.vx;
-        if(obj.x < 50 || obj.x > canvas.width - 50) obj.vx *= -1;
-
-        const d = Math.sqrt((obj.x - user.x)**2 + (obj.y - user.y)**2);
-        if (d < user.size) {
-            triggerSound(obj.freq, obj.type);
-            if (obj.type === 'neg') {
-                stats.health -= 15;
-                flashScreen('rgba(255,0,0,0.5)');
-            } else {
-                stats.money += obj.impact;
-                flashScreen('rgba(0,242,255,0.3)');
-            }
-            objects.splice(i, 1);
+            // 3. PHASE: TRAINING VISUAL (Palabras flotantes)
+            await runVisualTraining(30); 
         }
-        if(obj.y > canvas.height + 100) objects.splice(i, 1);
-    });
-}
+    }
 
-function draw() {
-    ctx.fillStyle = 'rgba(5, 5, 8, 0.3)';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    async function processBlock(block) {
+        ui.options.innerHTML = "";
+        ui.options.classList.add('hidden');
+        ui.breath.style.display = "none";
+        ui.sub.innerText = "";
 
-    // Usuario
-    ctx.strokeStyle = varColor('--neon-blue');
-    ctx.lineWidth = 4;
-    ctx.beginPath(); ctx.arc(user.x, user.y, user.size-20, 0, Math.PI*2); ctx.stroke();
+        switch (block.t) {
+            case 'v': // Voice/Header
+            case 'h': // Header
+                ui.text.innerText = block.tx.en;
+                await sleep(4000);
+                break;
 
-    const lvl = levels[stats.currentLevelIdx];
+            case 'story': // Mini story
+                ui.text.innerText = "REFLECT";
+                ui.sub.innerText = block.en || block.story.en;
+                await sleep(7000);
+                break;
 
-    objects.forEach(obj => {
-        // Laser siempre visible desde nivel 1
-        ctx.strokeStyle = obj.color;
-        ctx.lineWidth = lvl.laserWidth;
-        ctx.setLineDash(lvl.laserDash);
-        ctx.beginPath(); ctx.moveTo(obj.x, obj.y); ctx.lineTo(user.x, user.y); ctx.stroke();
-        ctx.setLineDash([]);
+            case 'br': // Breathing
+            case 'breath_auto':
+                ui.text.innerText = "RECENTER";
+                ui.breath.style.display = "flex";
+                let duration = block.d || 10;
+                for(let i=0; i < duration/4; i++){
+                    ui.label.innerText = "INHALE";
+                    ui.circle.style.transform = "scale(1.5)";
+                    await sleep(2000);
+                    ui.label.innerText = "EXHALE";
+                    ui.circle.style.transform = "scale(1.0)";
+                    await sleep(2000);
+                }
+                ui.breath.style.display = "none";
+                break;
 
-        // Texto
-        ctx.font = "900 18px Orbitron";
-        ctx.fillStyle = obj.color;
-        ctx.textAlign = "center";
-        ctx.fillText(obj.text, obj.x, obj.y);
-    });
-}
+            case 'd': // Decision
+                ui.text.innerText = block.q.en;
+                ui.options.classList.remove('hidden');
+                return new Promise(resolve => {
+                    block.op.forEach((opt, idx) => {
+                        const btn = document.createElement('button');
+                        btn.className = 'btn-opt';
+                        btn.innerText = opt;
+                        btn.onclick = async () => {
+                            const isCorrect = (idx === block.c);
+                            btn.className = isCorrect ? 'btn-opt correct' : 'btn-opt wrong';
+                            ui.sub.innerText = block.ex[idx];
+                            if(isCorrect) stats.money += 500; else stats.health -= 10;
+                            updateStats();
+                            await sleep(5000);
+                            resolve();
+                        };
+                        ui.options.appendChild(btn);
+                    });
+                });
+                break;
+            
+            case 'sil': // Silence
+                ui.text.innerText = "SILENCE & FOCUS";
+                ui.sub.innerText = block.tx.en;
+                await sleep(block.d * 1000);
+                break;
+        }
+    }
 
-function varColor(name) { return getComputedStyle(document.documentElement).getPropertyValue(name); }
+    function runVisualTraining(sec) {
+        return new Promise(resolve => {
+            ui.text.innerText = "STAY ALERT";
+            ui.sub.innerText = "Observe the pillars of success";
+            let count = 0;
+            const spawn = setInterval(() => {
+                createFloatingWord();
+                count++;
+                if (count > sec) { clearInterval(spawn); resolve(); }
+            }, 1000);
+        });
+    }
 
-function flashScreen(color) {
-    const f = document.getElementById('flash-alert');
-    f.style.background = color; f.style.opacity = "1";
-    setTimeout(() => f.style.opacity = "0", 100);
-}
+    function createFloatingWord() {
+        const words = ["TRUTH", "AWARENESS", "SAFETY", "CALM", "CONTROL", "FOCUS", "METHOD", "LIMITS"];
+        const el = document.createElement('div');
+        el.className = 'floating-word';
+        el.innerText = words[Math.floor(Math.random() * words.length)];
+        el.style.left = Math.random() * 80 + 10 + "%";
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 5000);
+    }
 
-function updateHUD() {
-    document.getElementById('val-money').innerText = "$" + stats.money;
-    document.getElementById('val-health').innerText = stats.health + "%";
-    document.getElementById('val-rank').innerText = stats.currentLevelIdx + 1;
-    const m = Math.floor(stats.totalSeconds / 60);
-    const s = Math.floor(stats.totalSeconds % 60);
-    document.getElementById('clock').innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
-}
+    function updateStats() {
+        document.getElementById('stat-money').innerText = "$" + stats.money;
+        document.getElementById('stat-health').innerText = stats.health + "%";
+    }
 
-// CONTROLADOR MAESTRO
-async function runFullSession() {
-    await fetchSession();
-    
-    // 1. STORY
-    await runStory();
-
-    // 2. BLOQUE JUEGO 1 (Nivel 1)
-    stats.currentLevelIdx = 0;
-    active = true;
-    await new Promise(r => setTimeout(r, 60000)); // 1 min de juego
-    active = false; objects = [];
-
-    // 3. MISSION 1
-    await runMission(0);
-
-    // 4. BLOQUE JUEGO 2 (Nivel 2)
-    stats.currentLevelIdx = 1;
-    active = true;
-    await new Promise(r => setTimeout(r, 60000));
-    active = false; objects = [];
-
-    // 5. MISSION 2
-    await runMission(1);
-
-    // 6. BLOQUE JUEGO 3 (Nivel 3)
-    stats.currentLevelIdx = 2;
-    active = true;
-    await new Promise(r => setTimeout(r, 60000));
-    active = false;
-
-    // 7. BREATHING
-    await runBreathing();
-
-    alert("SESSION COMPLETE. TOTAL EARNINGS: $" + stats.money);
-    location.reload();
-}
-
-function startGame() {
-    document.getElementById('overlay').style.display = 'none';
-    initDopamineAudio();
-    
-    function loop() { update(); draw(); requestAnimationFrame(loop); }
-    loop();
-    setInterval(spawn, 1200); // Más lento el spawn para claridad
-    
-    runFullSession();
-}
-
-// Input
-const move = e => {
-    const c = e.touches ? e.touches[0] : e;
-    user.x = c.clientX; user.y = c.clientY;
-};
-window.addEventListener('mousemove', move);
-window.addEventListener('touchmove', e => { move(e); e.preventDefault(); }, {passive:false});
-window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
-canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+    ui.startBtn.onclick = runSession;
 </script>
 </body>
 </html>
