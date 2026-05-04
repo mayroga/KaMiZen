@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>KAMIZEN SESSION - USA SURVIVAL & SUCCESS</title>
+    <title>KAMIZEN SESSION - AURA BY MAY ROGA</title>
     <style>
         :root {
             --neon-blue: #00f2ff;
@@ -12,334 +12,247 @@
             --bg-dark: #050508;
             --neon-green: #2ecc71;
         }
-        body { margin: 0; overflow: hidden; background: var(--bg-dark); color: white; font-family: 'Orbitron', sans-serif; cursor: none; touch-action: none; }
+        body { 
+            margin: 0; overflow: hidden; background: var(--bg-dark); 
+            color: white; font-family: 'Orbitron', sans-serif; touch-action: none; 
+        }
         
-        /* UI CORE */
+        /* HUD Superior */
         #hud {
             position: absolute; top: 15px; width: 100%;
             display: flex; justify-content: space-evenly;
             z-index: 100; pointer-events: none;
         }
         .data-box {
-            background: rgba(0, 0, 0, 0.95);
-            border: 2px solid var(--neon-blue);
-            padding: 10px; text-align: center;
-            min-width: 130px; box-shadow: 0 0 20px rgba(0, 242, 255, 0.1);
+            background: rgba(0, 0, 0, 0.9); border: 2px solid var(--neon-blue);
+            padding: 10px; text-align: center; min-width: 120px;
         }
-        .label { font-size: 10px; color: var(--neon-blue); letter-spacing: 2px; font-weight: 900; display: block; }
-        .value { font-size: 24px; font-weight: 900; display: block; }
+        .label { font-size: 10px; color: var(--neon-blue); letter-spacing: 2px; display: block; }
+        .value { font-size: 20px; font-weight: 900; display: block; }
 
-        #timer-display {
-            position: absolute; bottom: 30px; width: 100%; text-align: center;
-            color: var(--neon-red); font-size: 35px; font-weight: 900; 
-            text-shadow: 0 0 20px var(--neon-red); z-index: 100;
-        }
-
-        /* OVERLAYS */
-        .full-overlay {
-            position: fixed; inset: 0; background: radial-gradient(circle, #111 0%, #000 100%);
-            display: flex; flex-direction: column; justify-content: center;
-            align-items: center; z-index: 1000; text-align: center; padding: 20px;
+        /* Contenedor Central de Contenido */
+        #main-stage {
+            position: fixed; inset: 0; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; text-align: center;
+            padding: 40px; z-index: 50; background: radial-gradient(circle, #111 0%, #000 100%);
         }
 
-        .btn-core {
-            padding: 20px 40px; background: var(--neon-blue); color: black;
-            border: none; font-family: 'Orbitron'; font-weight: 900;
-            cursor: pointer; letter-spacing: 3px; font-size: 1.2rem;
-            box-shadow: 0 0 30px var(--neon-blue); margin: 15px;
-            text-transform: uppercase;
+        #display-text { font-size: 2.5rem; font-weight: 900; color: var(--neon-blue); text-shadow: 0 0 20px var(--neon-blue); max-width: 800px; }
+        #sub-text { font-size: 1.2rem; color: var(--neon-gold); margin-top: 20px; max-width: 700px; }
+
+        /* Botones de Misión */
+        #options-container { margin-top: 30px; display: flex; flex-direction: column; gap: 15px; width: 100%; max-width: 500px; }
+        .btn-opt {
+            padding: 15px; background: transparent; border: 2px solid var(--neon-blue);
+            color: white; font-family: 'Orbitron'; font-weight: 900; cursor: pointer;
+            transition: 0.3s; text-transform: uppercase;
         }
+        .btn-opt:hover { background: var(--neon-blue); color: black; }
+        .correct { background: var(--neon-green) !important; border-color: var(--neon-green); color: white; }
+        .wrong { background: var(--neon-red) !important; border-color: var(--neon-red); color: white; }
 
-        /* MISSIONS & FEEDBACK */
-        .opt-btn { width: 80%; max-width: 500px; font-size: 0.9rem; margin: 10px; transition: 0.3s; }
-        .opt-correct { background: var(--neon-green) !important; box-shadow: 0 0 40px var(--neon-green); color: white; }
-        .opt-wrong { background: var(--neon-red) !important; box-shadow: 0 0 40px var(--neon-red); color: white; }
-        #mission-explanation { margin-top: 20px; font-weight: 900; color: var(--neon-gold); display: none; max-width: 600px; }
-
-        /* BREATHING CIRCLE */
+        /* Círculo de Respiración */
+        #breath-wrap { display: none; flex-direction: column; align-items: center; }
         #breath-circle {
-            width: 250px; height: 250px; border-radius: 50%;
-            border: 8px solid var(--neon-blue);
-            display: flex; justify-content: center; align-items: center;
-            font-size: 2rem; font-weight: 900; transition: transform 2s ease-in-out;
-            text-shadow: 0 0 10px var(--neon-blue);
-            box-shadow: 0 0 50px var(--neon-blue);
+            width: 200px; height: 200px; border: 10px solid var(--neon-blue);
+            border-radius: 50%; transition: transform 4s ease-in-out;
+            box-shadow: 0 0 50px var(--neon-blue); display: flex; align-items: center; justify-content: center;
         }
 
-        #flash-alert { position: fixed; inset: 0; pointer-events: none; z-index: 50; opacity: 0; }
+        /* Palabras Flotantes (No tocables) */
+        .floating-word {
+            position: absolute; pointer-events: none; font-weight: 900;
+            color: white; background: rgba(0,0,0,0.7); padding: 5px 10px;
+            border-radius: 4px; font-size: 1.5rem; z-index: 10;
+            animation: floatUp 5s linear forwards;
+        }
+
+        @keyframes floatUp {
+            from { transform: translateY(100vh) scale(0.5); opacity: 0; }
+            to { transform: translateY(-10vh) scale(1.2); opacity: 1; }
+        }
+
+        #timer-clock { position: absolute; bottom: 20px; width: 100%; text-align: center; font-size: 30px; color: var(--neon-red); }
+        .hidden { display: none !important; }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
 </head>
 <body>
 
-<div id="flash-alert"></div>
-<div id="timer-display"><span id="clock">05:00</span></div>
-
 <div id="hud">
-    <div class="data-box" style="border-color: var(--neon-gold);"><span class="label">NET WORTH</span><span id="val-money" class="value">$0</span></div>
-    <div class="data-box" style="border-color: var(--neon-red);"><span class="label">STABILITY</span><span id="val-health" class="value">100%</span></div>
-    <div class="data-box" style="border-color: var(--neon-blue);"><span class="label">LEVEL</span><span id="val-rank" class="value">1</span></div>
+    <div class="data-box"><span class="label">ASSETS</span><span id="stat-money" class="value">$0</span></div>
+    <div class="data-box" style="border-color: var(--neon-gold);"><span class="label">SESSION</span><span id="stat-id" class="value">0</span></div>
+    <div class="data-box" style="border-color: var(--neon-red);"><span class="label">STABILITY</span><span id="stat-health" class="value">100%</span></div>
 </div>
 
-<!-- START OVERLAY -->
-<div id="overlay" class="full-overlay">
-    <h1 style="color: var(--neon-blue); letter-spacing: 10px; font-size: 40px;">KAMIZEN: USA SURVIVAL</h1>
-    <p style="color: var(--neon-gold); font-weight: 900;">DECIDE. SURVIVE. WIN.</p>
-    <button class="btn-core" onclick="startGame()">INITIALIZE TRAINING</button>
+<div id="main-stage">
+    <div id="content-area">
+        <h2 id="display-text">INITIALIZING SYSTEM...</h2>
+        <p id="sub-text"></p>
+        <div id="options-container" class="hidden"></div>
+    </div>
+
+    <div id="breath-wrap">
+        <div id="breath-circle"><span id="breath-label" style="font-size: 1.5rem;">INHALE</span></div>
+    </div>
+
+    <button id="start-btn" style="padding: 20px 50px; font-size: 1.5rem; background: var(--neon-blue); border: none; cursor: pointer; font-family: 'Orbitron'; font-weight: 900; margin-top: 20px;">
+        START TRAINING
+    </button>
 </div>
 
-<!-- STORY OVERLAY (WITH CONTINUE BUTTON) -->
-<div id="story-box" class="full-overlay" style="display:none; z-index:2000;">
-    <h2 id="story-text" style="font-size:24px; color:var(--neon-blue); max-width:800px;"></h2>
-    <button id="story-next" class="btn-core" style="display:none;">CONTINUE</button>
-</div>
-
-<!-- MISSION BOX (WITH FEEDBACK) -->
-<div id="mission-box" class="full-overlay" style="display:none; z-index:3000; background:black;">
-    <h2 id="mission-question" style="color:var(--neon-gold);"></h2>
-    <div id="mission-options" style="width:100%; display:flex; flex-direction:column; align-items:center;"></div>
-    <div id="mission-explanation"></div>
-    <button id="mission-next" class="btn-core" style="display:none;">PROCEED</button>
-</div>
-
-<!-- BREATHING (WITH INTERNAL TEXT) -->
-<div id="breathing-box" class="full-overlay" style="display:none; z-index:4000;">
-    <div id="breath-circle"><span id="breath-text">INHALE</span></div>
-</div>
-
-<canvas id="gameCanvas"></canvas>
+<div id="timer-clock">00:00</div>
 
 <script>
-const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
-let audioCtx;
-let active = false;
-let objects = [];
-let stats = { money: 0, health: 100, currentLevelIdx: 0, totalSeconds: 300 };
-const user = { x: 0, y: 0, size: 60 };
+    let sessionData = null;
+    let stats = { money: 0, health: 100, index: 0 };
+    let timerInterval;
+    let totalSeconds = 1200; // 20 Minutos
 
-// INTEGRACIÓN DE TUS DATOS JSON POR NIVELES
-const levels = [
-    { name: "1", speedMult: 0.8, laserWidth: 2, data: [
-        { text: "SAVINGS", type: "pos", impact: 150, color: "#f1c40f", freq: 523 },
-        { text: "FAMILY", type: "pos", impact: 20, color: "#2ecc71", freq: 783 },
-        { text: "TELLING TRUTH", type: "pos", impact: 300, color: "#2ecc71", freq: 523 },
-        { text: "PROBLEM", type: "neg", impact: -20, color: "#ff3131", freq: 90 },
-        { text: "MESSY ROOM", type: "neg", impact: -50, color: "#ff3131", freq: 110 }
-    ]},
-    { name: "2", speedMult: 1.2, laserWidth: 5, data: [
-        { text: "INVESTMENT", type: "pos", impact: 300, color: "#00f2ff", freq: 987 },
-        { text: "BUSINESS", type: "pos", impact: 10, color: "#3498db", freq: 659 },
-        { text: "EDUCATION", type: "pos", impact: 200, color: "#00f2ff", freq: 1046 },
-        { text: "BULLYING", type: "neg", impact: -400, color: "#ff3131", freq: 70 },
-        { text: "THREAT", type: "neg", impact: -25, color: "#ff3131", freq: 110 }
-    ]},
-    { name: "3", speedMult: 1.6, laserWidth: 10, data: [
-        { text: "CAPITAL", type: "pos", impact: 1000, color: "#f1c40f", freq: 1200 },
-        { text: "NEGOCIO", type: "pos", impact: 250, color: "#00f2ff", freq: 1100 },
-        { text: "PAZ", type: "pos", impact: 50, color: "#2ecc71", freq: 1500 },
-        { text: "911 PROTOCOL", type: "pos", impact: 500, color: "#2ecc71", freq: 1396 },
-        { text: "RIESGO", type: "neg", impact: -500, color: "#ff3131", freq: 60 },
-        { text: "PÉRDIDA", type: "neg", impact: -150, color: "#ff3131", freq: 50 },
-        { text: "ACTIVE SHOOTER", type: "neg", impact: -5000, color: "#ff3131", freq: 40 }
-    ]}
-];
+    const ui = {
+        text: document.getElementById('display-text'),
+        sub: document.getElementById('sub-text'),
+        options: document.getElementById('options-container'),
+        breath: document.getElementById('breath-wrap'),
+        circle: document.getElementById('breath-circle'),
+        label: document.getElementById('breath-label'),
+        startBtn: document.getElementById('start-btn'),
+        clock: document.getElementById('timer-clock')
+    };
 
-// DOPAMINE AUDIO (SONIC STYLE)
-function initAudio() {
-    if (audioCtx) return;
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    setInterval(() => {
-        if (!active) return;
-        playNote(150, 'square', 0.05, 0.1); // Bass beat
-    }, 400);
-}
+    async function fetchSession() {
+        const res = await fetch('/api/session/start');
+        sessionData = await res.json();
+        stats.index = sessionData.index;
+        document.getElementById('stat-id').innerText = stats.index;
+    }
 
-function playNote(freq, type, vol, dur) {
-    const osc = audioCtx.createOscillator();
-    const g = audioCtx.createGain();
-    osc.type = type;
-    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-    g.gain.setValueAtTime(vol, audioCtx.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + dur);
-    osc.connect(g); g.connect(audioCtx.destination);
-    osc.start(); osc.stop(audioCtx.currentTime + dur);
-}
+    function updateClock() {
+        const m = Math.floor(totalSeconds / 60);
+        const s = totalSeconds % 60;
+        ui.clock.innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
+        if(totalSeconds > 0) totalSeconds--;
+    }
 
-// GAMEPLAY
-function spawn() {
-    if(!active) return;
-    const lvl = levels[stats.currentLevelIdx];
-    const data = lvl.data[Math.floor(Math.random() * lvl.data.length)];
-    objects.push({
-        ...data,
-        x: Math.random() * (canvas.width - 200) + 100,
-        y: -50,
-        vx: (Math.random() - 0.5) * 4,
-        speed: (2 + Math.random() * 2) * lvl.speedMult
-    });
-}
+    const sleep = ms => new Promise(r => setTimeout(r, ms));
 
-function update() {
-    if(!active) return;
-    stats.totalSeconds -= 1/60;
-    if(stats.totalSeconds <= 0) location.reload();
+    async function runSession() {
+        ui.startBtn.classList.add('hidden');
+        timerInterval = setInterval(updateClock, 1000);
 
-    objects.forEach((obj, i) => {
-        obj.y += obj.speed;
-        obj.x += obj.vx;
-        if(obj.x < 50 || obj.x > canvas.width - 50) obj.vx *= -1;
+        while (totalSeconds > 0) {
+            await fetchSession();
+            
+            // 1. PHASE: STORY (Basado en stories.json)
+            ui.text.innerText = sessionData.story.t || "KAMIZEN STORY";
+            ui.sub.innerText = sessionData.story.en; 
+            await sleep(8000);
 
-        const d = Math.sqrt((obj.x - user.x)**2 + (obj.y - user.y)**2);
-        if (d < user.size) {
-            playNote(obj.freq, 'triangle', 0.2, 0.5);
-            if (obj.type === 'neg') {
-                stats.health -= 10;
-                flashScreen('rgba(255,0,0,0.5)');
-            } else {
-                stats.money += obj.impact;
-                flashScreen('rgba(0,242,255,0.3)');
+            // 2. PHASE: MISSION BLOCKS (Basado en missions_XX_XX.json)
+            const mission = sessionData.missions[0]; 
+            for (const block of mission.b) {
+                await processBlock(block);
             }
-            objects.splice(i, 1);
-            updateHUD();
+
+            // 3. PHASE: TRAINING VISUAL (Palabras flotantes)
+            await runVisualTraining(30); 
         }
-        if(obj.y > canvas.height + 100) objects.splice(i, 1);
-    });
-}
+    }
 
-function draw() {
-    ctx.fillStyle = 'rgba(5, 5, 8, 0.4)';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    async function processBlock(block) {
+        ui.options.innerHTML = "";
+        ui.options.classList.add('hidden');
+        ui.breath.style.display = "none";
+        ui.sub.innerText = "";
 
-    // Player
-    ctx.strokeStyle = varColor('--neon-blue');
-    ctx.lineWidth = 4;
-    ctx.beginPath(); ctx.arc(user.x, user.y, user.size-20, 0, Math.PI*2); ctx.stroke();
+        switch (block.t) {
+            case 'v': // Voice/Header
+            case 'h': // Header
+                ui.text.innerText = block.tx.en;
+                await sleep(4000);
+                break;
 
-    const lvl = levels[stats.currentLevelIdx];
-    objects.forEach(obj => {
-        // Lasers visible from Level 1
-        ctx.strokeStyle = obj.color;
-        ctx.lineWidth = lvl.laserWidth;
-        ctx.beginPath(); ctx.moveTo(obj.x, obj.y); ctx.lineTo(user.x, user.y); ctx.stroke();
+            case 'story': // Mini story
+                ui.text.innerText = "REFLECT";
+                ui.sub.innerText = block.en || block.story.en;
+                await sleep(7000);
+                break;
 
-        ctx.font = "900 20px Orbitron";
-        ctx.fillStyle = obj.color;
-        ctx.textAlign = "center";
-        ctx.fillText(obj.text, obj.x, obj.y);
-    });
-}
+            case 'br': // Breathing
+            case 'breath_auto':
+                ui.text.innerText = "RECENTER";
+                ui.breath.style.display = "flex";
+                let duration = block.d || 10;
+                for(let i=0; i < duration/4; i++){
+                    ui.label.innerText = "INHALE";
+                    ui.circle.style.transform = "scale(1.5)";
+                    await sleep(2000);
+                    ui.label.innerText = "EXHALE";
+                    ui.circle.style.transform = "scale(1.0)";
+                    await sleep(2000);
+                }
+                ui.breath.style.display = "none";
+                break;
 
-function varColor(name) { return getComputedStyle(document.documentElement).getPropertyValue(name); }
+            case 'd': // Decision
+                ui.text.innerText = block.q.en;
+                ui.options.classList.remove('hidden');
+                return new Promise(resolve => {
+                    block.op.forEach((opt, idx) => {
+                        const btn = document.createElement('button');
+                        btn.className = 'btn-opt';
+                        btn.innerText = opt;
+                        btn.onclick = async () => {
+                            const isCorrect = (idx === block.c);
+                            btn.className = isCorrect ? 'btn-opt correct' : 'btn-opt wrong';
+                            ui.sub.innerText = block.ex[idx];
+                            if(isCorrect) stats.money += 500; else stats.health -= 10;
+                            updateStats();
+                            await sleep(5000);
+                            resolve();
+                        };
+                        ui.options.appendChild(btn);
+                    });
+                });
+                break;
+            
+            case 'sil': // Silence
+                ui.text.innerText = "SILENCE & FOCUS";
+                ui.sub.innerText = block.tx.en;
+                await sleep(block.d * 1000);
+                break;
+        }
+    }
 
-function flashScreen(color) {
-    const f = document.getElementById('flash-alert');
-    f.style.background = color; f.style.opacity = "1";
-    setTimeout(() => f.style.opacity = "0", 100);
-}
-
-function updateHUD() {
-    document.getElementById('val-money').innerText = "$" + stats.money;
-    document.getElementById('val-health').innerText = stats.health + "%";
-    document.getElementById('val-rank').innerText = stats.currentLevelIdx + 1;
-    const m = Math.floor(stats.totalSeconds / 60);
-    const s = Math.floor(stats.totalSeconds % 60);
-    document.getElementById('clock').innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
-}
-
-// CONTROL DE RESPIRACIÓN
-async function runBreathing(){
-    return new Promise(resolve => {
-        const box = document.getElementById("breathing-box");
-        const circle = document.getElementById("breath-circle");
-        const text = document.getElementById("breath-text");
-        box.style.display = "flex";
-
-        let cycles = 0;
-        const interval = setInterval(() => {
-            const isInhaling = (cycles % 2 === 0);
-            text.innerText = isInhaling ? "INHALE" : "EXHALE";
-            circle.style.transform = isInhaling ? "scale(1.5)" : "scale(1.0)";
-            cycles++;
-            if(cycles > 6) { clearInterval(interval); box.style.display = "none"; resolve(); }
-        }, 2000);
-    });
-}
-
-// CONTROL DE MISIONES (CON EXPLICACIÓN Y COLORES)
-async function runMission(qText, options, correctIdx, explText){
-    return new Promise(resolve => {
-        const box = document.getElementById("mission-box");
-        const ops = document.getElementById("mission-options");
-        const exp = document.getElementById("mission-explanation");
-        const next = document.getElementById("mission-next");
-
-        document.getElementById("mission-question").innerText = qText;
-        box.style.display = "flex";
-        ops.innerHTML = "";
-        exp.style.display = "none";
-        next.style.display = "none";
-
-        options.forEach((opt, i) => {
-            const btn = document.createElement("button");
-            btn.className = "btn-core opt-btn";
-            btn.innerText = opt;
-            btn.onclick = () => {
-                const isCorrect = (i === correctIdx);
-                btn.className = isCorrect ? "btn-core opt-btn opt-correct" : "btn-core opt-btn opt-wrong";
-                Array.from(ops.children).forEach(b => b.onclick = null);
-                exp.innerText = explText;
-                exp.style.display = "block";
-                next.style.display = "block";
-                if(isCorrect) stats.money += 1000; else stats.health -= 20;
-                updateHUD();
-            };
-            ops.appendChild(btn);
+    function runVisualTraining(sec) {
+        return new Promise(resolve => {
+            ui.text.innerText = "STAY ALERT";
+            ui.sub.innerText = "Observe the pillars of success";
+            let count = 0;
+            const spawn = setInterval(() => {
+                createFloatingWord();
+                count++;
+                if (count > sec) { clearInterval(spawn); resolve(); }
+            }, 1000);
         });
-        next.onclick = () => { box.style.display = "none"; resolve(); };
-    });
-}
+    }
 
-async function startGame() {
-    document.getElementById('overlay').style.display = 'none';
-    initAudio();
-    function loop() { update(); draw(); requestAnimationFrame(loop); }
-    loop();
-    setInterval(spawn, 1500); // Ritmo controlado para lectura
+    function createFloatingWord() {
+        const words = ["TRUTH", "AWARENESS", "SAFETY", "CALM", "CONTROL", "FOCUS", "METHOD", "LIMITS"];
+        const el = document.createElement('div');
+        el.className = 'floating-word';
+        el.innerText = words[Math.floor(Math.random() * words.length)];
+        el.style.left = Math.random() * 80 + 10 + "%";
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 5000);
+    }
 
-    // LEVEL 1: Basics
-    active = true;
-    await new Promise(r => setTimeout(r, 45000));
-    active = false; objects = [];
-    await runMission("A stranger asks for help in the park. What do you do?", 
-        ["Go with them", "Run and find a trusted adult", "Stay and talk"], 1, 
-        "ALWAYS maintain distance from strangers and find a trusted adult immediately.");
+    function updateStats() {
+        document.getElementById('stat-money').innerText = "$" + stats.money;
+        document.getElementById('stat-health').innerText = stats.health + "%";
+    }
 
-    // LEVEL 2: School & Money
-    stats.currentLevelIdx = 1; active = true;
-    await new Promise(r => setTimeout(r, 60000));
-    active = false; objects = [];
-    await runMission("You see a classmate being bullied. The right move is:", 
-        ["Join the bully", "Record it", "Tell a teacher or supervisor"], 2, 
-        "Reporting bullying protects your community and shows leadership.");
-
-    // LEVEL 3: High Alert
-    stats.currentLevelIdx = 2; active = true;
-    await new Promise(r => setTimeout(r, 60000));
-    active = false;
-    await runBreathing();
-    await runMission("In an emergency shooter situation, the protocol is:", 
-        ["Run, Hide, Fight", "Take photos", "Scream loudly"], 0, 
-        "RUN if you can, HIDE if you can't, FIGHT only as a last resort.");
-
-    alert("TRAINING COMPLETE. TOTAL ASSETS: $" + stats.money);
-    location.reload();
-}
-
-const input = e => { const c = e.touches ? e.touches[0] : e; user.x = c.clientX; user.y = c.clientY; };
-window.addEventListener('mousemove', input);
-window.addEventListener('touchmove', e => { input(e); e.preventDefault(); }, {passive:false});
-canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+    ui.startBtn.onclick = runSession;
 </script>
 </body>
 </html>
