@@ -1,432 +1,236 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>KAMIZEN SESSION - HIGH DOPAMINE</title>
-    <style>
-        :root {
-            --neon-blue: #00f2ff;
-            --neon-gold: #f1c40f;
-            --neon-red: #ff3131;
-            --bg-dark: #050508;
-            --neon-green: #2ecc71;
-        }
-        body { margin: 0; overflow: hidden; background: var(--bg-dark); color: white; font-family: 'Orbitron', sans-serif; cursor: none; touch-action: none; }
-        
-        #hud {
-            position: absolute; top: 15px; width: 100%;
-            display: flex; justify-content: space-evenly;
-            z-index: 100; pointer-events: none;
-        }
-        .data-box {
-            background: rgba(0, 0, 0, 0.95);
-            border: 2px solid var(--neon-blue);
-            padding: 10px; text-align: center;
-            min-width: 130px; box-shadow: 0 0 20px rgba(0, 242, 255, 0.1);
-        }
-        .label { font-size: 10px; color: var(--neon-blue); letter-spacing: 2px; font-weight: 900; display: block; }
-        .value { font-size: 24px; font-weight: 900; display: block; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>KAMIZEN SESSION FINAL</title>
 
-        #timer-display {
-            position: absolute; bottom: 30px; width: 100%; text-align: center;
-            color: var(--neon-red); font-size: 35px; font-weight: 900; 
-            text-shadow: 0 0 20px var(--neon-red); z-index: 100;
-        }
+<style>
+:root{
+--neon-blue:#00f2ff;
+--neon-red:#ff3131;
+--neon-green:#2ecc71;
+--neon-gold:#f1c40f;
+--bg:#000;
+}
+body{margin:0;background:#000;color:white;font-family:Orbitron;overflow:hidden;}
 
-        /* OVERLAYS COMUNES */
-        .full-overlay {
-            position: fixed; inset: 0; background: radial-gradient(circle, #111 0%, #000 100%);
-            display: flex; flex-direction: column; justify-content: center;
-            align-items: center; z-index: 1000; text-align: center; padding: 20px;
-        }
+.full{position:fixed;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;background:black;z-index:2000;text-align:center;}
 
-        /* BOTONES */
-        .btn-core {
-            padding: 20px 40px; background: var(--neon-blue); color: black;
-            border: none; font-family: 'Orbitron'; font-weight: 900;
-            cursor: pointer; letter-spacing: 3px; font-size: 1.2rem;
-            box-shadow: 0 0 30px var(--neon-blue); margin: 15px;
-            text-transform: uppercase;
-        }
+.btn{padding:20px 40px;background:var(--neon-blue);border:none;font-weight:900;cursor:pointer;margin:10px;}
 
-        /* MISSION STYLES */
-        .opt-btn { width: 80%; max-width: 500px; font-size: 0.9rem; transition: 0.3s; }
-        .opt-correct { background: var(--neon-green) !important; box-shadow: 0 0 40px var(--neon-green); color: white; }
-        .opt-wrong { background: var(--neon-red) !important; box-shadow: 0 0 40px var(--neon-red); color: white; }
-        #mission-explanation { margin-top: 20px; font-weight: 900; color: var(--neon-gold); display: none; max-width: 600px; }
+.opt{width:80%;max-width:500px;margin:5px;}
+.correct{background:var(--neon-green);}
+.wrong{background:var(--neon-red);}
 
-        /* BREATHING */
-        #breath-circle {
-            width: 250px; height: 250px; border-radius: 50%;
-            border: 8px solid var(--neon-blue);
-            display: flex; justify-content: center; align-items: center;
-            font-size: 2rem; font-weight: 900; transition: transform 2s ease-in-out;
-            text-shadow: 0 0 10px var(--neon-blue);
-            box-shadow: 0 0 50px var(--neon-blue);
-        }
+#hud{position:absolute;top:10px;width:100%;display:flex;justify-content:space-around;z-index:100;}
+.box{background:black;border:2px solid var(--neon-blue);padding:10px;}
 
-        #flash-alert { position: fixed; inset: 0; pointer-events: none; z-index: 50; opacity: 0; }
-    </style>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
+#breath{width:250px;height:250px;border-radius:50%;border:8px solid var(--neon-blue);display:flex;justify-content:center;align-items:center;font-size:2rem;}
+
+</style>
 </head>
+
 <body>
 
-<div id="flash-alert"></div>
-<div id="timer-display"><span id="clock">00:00</span></div>
+<div id="overlay" class="full">
+<h1>KAMIZEN</h1>
+<button class="btn" onclick="start()">START</button>
+</div>
+
+<div id="storyBox" class="full" style="display:none;">
+<h2 id="storyText"></h2>
+<button class="btn" onclick="nextStory()">CONTINUE</button>
+</div>
+
+<div id="missionBox" class="full" style="display:none;">
+<h2 id="q"></h2>
+<div id="opts"></div>
+<div id="exp"></div>
+<button class="btn" onclick="endMission()">CONTINUE</button>
+</div>
+
+<div id="breathBox" class="full" style="display:none;">
+<div id="breath"><span id="btext">INHALA</span></div>
+</div>
 
 <div id="hud">
-    <div class="data-box" style="border-color: var(--neon-gold);"><span class="label">NET WORTH</span><span id="val-money" class="value">$0</span></div>
-    <div class="data-box" style="border-color: var(--neon-red);"><span class="label">STABILITY</span><span id="val-health" class="value">100%</span></div>
-    <div class="data-box" style="border-color: var(--neon-blue);"><span class="label">LEVEL</span><span id="val-rank" class="value">1</span></div>
+<div class="box">$<span id="money">0</span></div>
+<div class="box"><span id="health">100</span>%</div>
+<div class="box">LVL <span id="lvl">1</span></div>
 </div>
 
-<!-- START OVERLAY -->
-<div id="overlay" class="full-overlay">
-    <h1 style="color: var(--neon-blue); letter-spacing: 15px; font-size: 50px;">KAMIZEN</h1>
-    <button class="btn-core" onclick="startGame()">INITIALIZE</button>
-</div>
-
-<!-- STORY OVERLAY -->
-<div id="story-box" class="full-overlay" style="display:none; z-index:2000;">
-    <h2 id="story-text" style="font-size:24px; color:var(--neon-blue); max-width:800px;"></h2>
-    <button id="story-next" class="btn-core" style="display:none;">CONTINUE</button>
-</div>
-
-<!-- MISSION BOX -->
-<div id="mission-box" class="full-overlay" style="display:none; z-index:3000; background:black;">
-    <h2 id="mission-question" style="color:var(--neon-gold);"></h2>
-    <div id="mission-options" style="width:100%; display:flex; flex-direction:column; align-items:center;"></div>
-    <div id="mission-explanation"></div>
-    <button id="mission-next" class="btn-core" style="display:none;">CONTINUE TRAINING</button>
-</div>
-
-<!-- BREATHING -->
-<div id="breathing-box" class="full-overlay" style="display:none; z-index:4000;">
-    <div id="breath-circle"><span id="breath-text">INHALA</span></div>
-</div>
-
-<canvas id="gameCanvas"></canvas>
+<canvas id="c"></canvas>
 
 <script>
-const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
-let audioCtx;
-let synthInterval;
+const c=document.getElementById("c");
+const x=c.getContext("2d");
 
-const levels = [
-    { name: "1", speedMult: 0.7, laserWidth: 2, laserDash: [10, 5], data: [
-        { text: "TELLING TRUTH", type: "pos", impact: 300, color: "#2ecc71", freq: 523 },
-        { text: "CLEAN ROOM", type: "pos", impact: 200, color: "#2ecc71", freq: 587 },
-        { text: "HIDING TRUTH", type: "neg", impact: -100, color: "#ff3131", freq: 110 },
-        { text: "DISOBEDIENCE", type: "neg", impact: -150, color: "#ff3131", freq: 85 }
-    ]},
-    { name: "2", speedMult: 1.1, laserWidth: 4, laserDash: [5, 5], data: [
-        { text: "TEAMWORK", type: "pos", impact: 600, color: "#2ecc71", freq: 783 },
-        { text: "INVESTMENT", type: "pos", impact: 1000, color: "#f1c40f", freq: 880 },
-        { text: "PEER PRESSURE", type: "neg", impact: -500, color: "#ff3131", freq: 120 },
-        { text: "BULLYING", type: "neg", impact: -400, color: "#ff3131", freq: 70 }
-    ]},
-    { name: "3", speedMult: 1.5, laserWidth: 8, laserDash: [], data: [
-        { text: "SITUATIONAL AWARENESS", type: "pos", impact: 1500, color: "#00f2ff", freq: 1567 },
-        { text: "911 PROTOCOL", type: "pos", impact: 800, color: "#2ecc71", freq: 1396 },
-        { text: "UNLOCKED FIREARM", type: "neg", impact: -5000, color: "#ff3131", freq: 60 },
-        { text: "STRANGER DANGER", type: "neg", impact: -2500, color: "#ff3131", freq: 50 }
-    ]}
-];
+let state="idle";
+let data=null;
 
-let stats = { money: 0, health: 100, currentLevelIdx: 0, totalSeconds: 300 };
-let active = false;
-let objects = [];
-let particles = [];
-let sessionData = null;
-const user = { x: 0, y: 0, size: 60 };
+let stats={money:0,health:100,lvl:0};
+let objects=[];
+let active=false;
 
-// AUDIO DOPAMINA (ESTILO SONIC/CHIPTUNE)
-function initDopamineAudio() {
-    if (audioCtx) return;
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    
-    // Beat constante de fondo
-    synthInterval = setInterval(() => {
-        if (!active) return;
-        playNote(150, 'square', 0.05, 0.1); // Kick
-        setTimeout(() => playNote(300, 'sawtooth', 0.02, 0.05), 250); // Snare-ish
-    }, 500);
+let user={x:0,y:0,size:50};
+
+function resize(){c.width=innerWidth;c.height=innerHeight;}
+resize();addEventListener("resize",resize);
+
+function spawn(){
+if(!active)return;
+objects.push({
+x:Math.random()*c.width,
+y:-50,
+speed:2+Math.random()*2+(stats.lvl*0.5),
+text:Math.random()>0.5?"GOOD":"BAD",
+type:Math.random()>0.5?"pos":"neg"
+});
 }
 
-function playNote(freq, type, vol, dur) {
-    const osc = audioCtx.createOscillator();
-    const g = audioCtx.createGain();
-    osc.type = type;
-    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-    g.gain.setValueAtTime(vol, audioCtx.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + dur);
-    osc.connect(g); g.connect(audioCtx.destination);
-    osc.start(); osc.stop(audioCtx.currentTime + dur);
+function update(){
+if(!active)return;
+objects.forEach((o,i)=>{
+o.y+=o.speed;
+let d=Math.hypot(o.x-user.x,o.y-user.y);
+if(d<user.size){
+if(o.type==="pos"){stats.money+=100;}
+else{stats.health-=10;}
+objects.splice(i,1);
+}
+});
+updateHUD();
 }
 
-function triggerSound(freq, type) {
-    if (type === 'pos') {
-        playNote(freq, 'triangle', 0.2, 0.5);
-        playNote(freq * 1.5, 'triangle', 0.1, 0.3); // Armonía "Power-up"
-    } else {
-        playNote(freq, 'sawtooth', 0.2, 0.8);
-    }
+function draw(){
+x.fillStyle="rgba(0,0,0,0.3)";
+x.fillRect(0,0,c.width,c.height);
+
+objects.forEach(o=>{
+x.fillStyle=o.type==="pos"?"#2ecc71":"#ff3131";
+x.fillText(o.text,o.x,o.y);
+});
 }
 
-// LOGICA DE SESIÓN
+function loop(){
+update();draw();
+requestAnimationFrame(loop);
+}
+
+function updateHUD(){
+money.innerText=stats.money;
+health.innerText=stats.health;
+lvl.innerText=stats.lvl+1;
+}
+
 async function fetchSession(){
-    const res = await fetch("/api/session/start");
-    sessionData = await res.json();
+let r=await fetch("/api/session/start");
+data=await r.json();
 }
 
 async function runStory(){
-    return new Promise(resolve => {
-        const box = document.getElementById("story-box");
-        const text = document.getElementById("story-text");
-        const btn = document.getElementById("story-next");
-        
-        const story = sessionData.story.en;
-        text.innerText = "";
-        box.style.display = "flex";
-        btn.style.display = "none";
+state="story";
+storyBox.style.display="flex";
+let text=data.story.en;
+storyText.innerText="";
 
-        // Efecto Typewriter
-        let i = 0;
-        const timer = setInterval(() => {
-            text.innerText += story[i];
-            i++;
-            if(i >= story.length) {
-                clearInterval(timer);
-                btn.style.display = "block";
-            }
-        }, 30);
+let i=0;
+let t=setInterval(()=>{
+storyText.innerText+=text[i++];
+if(i>=text.length)clearInterval(t);
+},25);
 
-        // Voz
-        const msg = new SpeechSynthesisUtterance(story);
-        msg.lang = "en-US";
-        msg.rate = 0.9;
-        speechSynthesis.speak(msg);
-
-        btn.onclick = () => {
-            speechSynthesis.cancel();
-            box.style.display = "none";
-            resolve();
-        };
-    });
+speechSynthesis.speak(new SpeechSynthesisUtterance(text));
 }
 
-async function runMission(missionIdx){
-    return new Promise(resolve => {
-        const mission = sessionData.missions[missionIdx];
-        const decision = mission.b.find(x => x.t === "d");
-        
-        const box = document.getElementById("mission-box");
-        const q = document.getElementById("mission-question");
-        const ops = document.getElementById("mission-options");
-        const exp = document.getElementById("mission-explanation");
-        const next = document.getElementById("mission-next");
-
-        box.style.display = "flex";
-        next.style.display = "none";
-        exp.style.display = "none";
-        q.innerText = decision.q.en;
-        ops.innerHTML = "";
-
-        decision.op.forEach((opt, i) => {
-            const btn = document.createElement("button");
-            btn.className = "btn-core opt-btn";
-            btn.innerText = opt;
-            btn.onclick = () => {
-                const isCorrect = (i === decision.c);
-                btn.className = isCorrect ? "btn-core opt-btn opt-correct" : "btn-core opt-btn opt-wrong";
-                
-                // Deshabilitar otros
-                Array.from(ops.children).forEach(b => b.onclick = null);
-                
-                // Mostrar explicación
-                exp.innerText = decision.expl ? decision.expl.en : (isCorrect ? "Great job! That builds stability." : "Careful! That decision lowers your health.");
-                exp.style.display = "block";
-                next.style.display = "block";
-
-                if(isCorrect) stats.money += 1000; else stats.health -= 20;
-                updateHUD();
-            };
-            ops.appendChild(btn);
-        });
-
-        next.onclick = () => {
-            box.style.display = "none";
-            resolve();
-        };
-    });
+function nextStory(){
+speechSynthesis.cancel();
+storyBox.style.display="none";
+runGame1();
 }
 
-async function runBreathing(){
-    return new Promise(resolve => {
-        const box = document.getElementById("breathing-box");
-        const circle = document.getElementById("breath-circle");
-        const text = document.getElementById("breath-text");
-        box.style.display = "flex";
-
-        let cycles = 0;
-        const interval = setInterval(() => {
-            const isInhaling = (cycles % 2 === 0);
-            text.innerText = isInhaling ? "INHALA" : "EXHALA";
-            circle.style.transform = isInhaling ? "scale(1.5)" : "scale(1.0)";
-            cycles++;
-            
-            if(cycles > 6) { // 3 ciclos completos
-                clearInterval(interval);
-                box.style.display = "none";
-                resolve();
-            }
-        }, 2000);
-    });
+function runGame1(){
+state="game";
+stats.lvl=0;
+active=true;
+setTimeout(()=>{
+active=false;
+objects=[];
+runMission();
+},300000); // 5 min real
 }
 
-// GAME CORE
-function spawn() {
-    if(!active) return;
-    const lvl = levels[stats.currentLevelIdx];
-    const data = lvl.data[Math.floor(Math.random() * lvl.data.length)];
-    objects.push({
-        ...data,
-        x: Math.random() * (canvas.width - 300) + 150,
-        y: -50,
-        vx: (Math.random() - 0.5) * 4,
-        speed: (2 + Math.random() * 2) * lvl.speedMult // Más lento para leer
-    });
-}
+function runMission(){
+state="mission";
+missionBox.style.display="flex";
 
-function update() {
-    if(!active) return;
-    stats.totalSeconds -= 1/60;
+let m=data.missions[0].b.find(b=>b.t==="d");
 
-    objects.forEach((obj, i) => {
-        obj.y += obj.speed;
-        obj.x += obj.vx;
-        if(obj.x < 50 || obj.x > canvas.width - 50) obj.vx *= -1;
+q.innerText=m.q.en;
+opts.innerHTML="";
+exp.innerText="";
 
-        const d = Math.sqrt((obj.x - user.x)**2 + (obj.y - user.y)**2);
-        if (d < user.size) {
-            triggerSound(obj.freq, obj.type);
-            if (obj.type === 'neg') {
-                stats.health -= 15;
-                flashScreen('rgba(255,0,0,0.5)');
-            } else {
-                stats.money += obj.impact;
-                flashScreen('rgba(0,242,255,0.3)');
-            }
-            objects.splice(i, 1);
-        }
-        if(obj.y > canvas.height + 100) objects.splice(i, 1);
-    });
-}
+m.op.forEach((o,i)=>{
+let b=document.createElement("button");
+b.className="btn opt";
+b.innerText=o;
+b.onclick=()=>{
+let ok=i===m.c;
+b.classList.add(ok?"correct":"wrong");
 
-function draw() {
-    ctx.fillStyle = 'rgba(5, 5, 8, 0.3)';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+exp.innerText=m.expl?.en || (ok?"Correct decision":"Wrong decision");
 
-    // Usuario
-    ctx.strokeStyle = varColor('--neon-blue');
-    ctx.lineWidth = 4;
-    ctx.beginPath(); ctx.arc(user.x, user.y, user.size-20, 0, Math.PI*2); ctx.stroke();
-
-    const lvl = levels[stats.currentLevelIdx];
-
-    objects.forEach(obj => {
-        // Laser siempre visible desde nivel 1
-        ctx.strokeStyle = obj.color;
-        ctx.lineWidth = lvl.laserWidth;
-        ctx.setLineDash(lvl.laserDash);
-        ctx.beginPath(); ctx.moveTo(obj.x, obj.y); ctx.lineTo(user.x, user.y); ctx.stroke();
-        ctx.setLineDash([]);
-
-        // Texto
-        ctx.font = "900 18px Orbitron";
-        ctx.fillStyle = obj.color;
-        ctx.textAlign = "center";
-        ctx.fillText(obj.text, obj.x, obj.y);
-    });
-}
-
-function varColor(name) { return getComputedStyle(document.documentElement).getPropertyValue(name); }
-
-function flashScreen(color) {
-    const f = document.getElementById('flash-alert');
-    f.style.background = color; f.style.opacity = "1";
-    setTimeout(() => f.style.opacity = "0", 100);
-}
-
-function updateHUD() {
-    document.getElementById('val-money').innerText = "$" + stats.money;
-    document.getElementById('val-health').innerText = stats.health + "%";
-    document.getElementById('val-rank').innerText = stats.currentLevelIdx + 1;
-    const m = Math.floor(stats.totalSeconds / 60);
-    const s = Math.floor(stats.totalSeconds % 60);
-    document.getElementById('clock').innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
-}
-
-// CONTROLADOR MAESTRO
-async function runFullSession() {
-    await fetchSession();
-    
-    // 1. STORY
-    await runStory();
-
-    // 2. BLOQUE JUEGO 1 (Nivel 1)
-    stats.currentLevelIdx = 0;
-    active = true;
-    await new Promise(r => setTimeout(r, 60000)); // 1 min de juego
-    active = false; objects = [];
-
-    // 3. MISSION 1
-    await runMission(0);
-
-    // 4. BLOQUE JUEGO 2 (Nivel 2)
-    stats.currentLevelIdx = 1;
-    active = true;
-    await new Promise(r => setTimeout(r, 60000));
-    active = false; objects = [];
-
-    // 5. MISSION 2
-    await runMission(1);
-
-    // 6. BLOQUE JUEGO 3 (Nivel 3)
-    stats.currentLevelIdx = 2;
-    active = true;
-    await new Promise(r => setTimeout(r, 60000));
-    active = false;
-
-    // 7. BREATHING
-    await runBreathing();
-
-    alert("SESSION COMPLETE. TOTAL EARNINGS: $" + stats.money);
-    location.reload();
-}
-
-function startGame() {
-    document.getElementById('overlay').style.display = 'none';
-    initDopamineAudio();
-    
-    function loop() { update(); draw(); requestAnimationFrame(loop); }
-    loop();
-    setInterval(spawn, 1200); // Más lento el spawn para claridad
-    
-    runFullSession();
-}
-
-// Input
-const move = e => {
-    const c = e.touches ? e.touches[0] : e;
-    user.x = c.clientX; user.y = c.clientY;
+if(ok){stats.money+=500;}
+else{stats.health-=15;}
 };
-window.addEventListener('mousemove', move);
-window.addEventListener('touchmove', e => { move(e); e.preventDefault(); }, {passive:false});
-window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
-canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+opts.appendChild(b);
+});
+}
+
+function endMission(){
+missionBox.style.display="none";
+runGame2();
+}
+
+function runGame2(){
+stats.lvl=2;
+active=true;
+setTimeout(()=>{
+active=false;
+runBreath();
+},300000);
+}
+
+function runBreath(){
+breathBox.style.display="flex";
+let i=0;
+let int=setInterval(()=>{
+btext.innerText=i%2===0?"INHALA":"EXHALA";
+breath.style.transform=i%2===0?"scale(1.5)":"scale(1)";
+i++;
+if(i>6){
+clearInterval(int);
+breathBox.style.display="none";
+startLoop();
+}
+},2000);
+}
+
+async function startLoop(){
+await fetchSession();
+await runStory();
+}
+
+async function start(){
+overlay.style.display="none";
+loop();
+setInterval(spawn,1200);
+startLoop();
+}
+
+addEventListener("mousemove",e=>{user.x=e.clientX;user.y=e.clientY;});
 </script>
+
 </body>
 </html>
