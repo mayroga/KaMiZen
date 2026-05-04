@@ -41,16 +41,21 @@
 
         #discipline-block { background: rgba(150, 0, 0, 0.98); display: none; z-index: 5000; }
 
-        .start-btn, .commit-btn {
-            padding: 25px 50px; background: var(--neon-blue); color: black;
+        .start-btn, .commit-btn, #mission-options button {
+            padding: 20px 40px; background: var(--neon-blue); color: black;
             border: none; font-family: 'Orbitron'; font-weight: 900;
-            cursor: pointer; letter-spacing: 3px; font-size: 1.2rem;
-            box-shadow: 0 0 30px var(--neon-blue); margin-top: 20px;
+            cursor: pointer; letter-spacing: 3px; font-size: 1rem;
+            box-shadow: 0 0 30px var(--neon-blue); margin: 10px;
+            transition: 0.3s;
         }
         .commit-btn { background: white; box-shadow: 0 0 30px white; }
         
         #flash-alert { position: fixed; inset: 0; pointer-events: none; z-index: 50; opacity: 0; }
         .warning-text { color: yellow; font-size: 1.5rem; margin: 20px; font-weight: 900; }
+
+        /* Estilos para nuevos elementos */
+        #mission-question { color: var(--neon-gold); margin-bottom: 30px; font-size: 24px; }
+        #breath-circle { transition: transform 1s ease-in-out; }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
 </head>
@@ -78,6 +83,24 @@
     <h1 style="color: var(--neon-blue); letter-spacing: 15px; font-size: 60px; margin:0;">KAMIZEN SESSION</h1>
     <h2 style="color: var(--neon-gold); font-size: 18px; margin-bottom: 40px;">USA SURVIVAL SIMULATOR</h2>
     <button class="start-btn" onclick="startGame()">INITIALIZE TRAINING</button>
+</div>
+
+<!-- STORY OVERLAY -->
+<div id="story-box" style="display:none;position:fixed;inset:0;z-index:2000;background:black;justify-content:center;align-items:center;text-align:center;padding:40px;">
+    <div>
+        <h2 id="story-text" style="font-size:28px;color:#00f2ff;"></h2>
+    </div>
+</div>
+
+<!-- MISSION BOX -->
+<div id="mission-box" style="display:none;position:fixed;inset:0;z-index:3000;background:#000;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:20px;">
+    <h2 id="mission-question"></h2>
+    <div id="mission-options"></div>
+</div>
+
+<!-- BREATHING -->
+<div id="breathing-box" style="display:none;position:fixed;inset:0;background:black;z-index:4000;justify-content:center;align-items:center;">
+    <div id="breath-circle" style="width:100px;height:100px;border-radius:50%;border:4px solid #00f2ff;"></div>
 </div>
 
 <canvas id="gameCanvas"></canvas>
@@ -201,7 +224,7 @@ function update() {
     else if (elapsed < 17 * 60) stats.currentLevelIdx = 1;
     else stats.currentLevelIdx = 2;
 
-    if(stats.totalSeconds <= 0) endGame("MISSION ACCOMPLISHED");
+    if(stats.totalSeconds <= 0 && !phaseRunning) endGame("MISSION ACCOMPLISHED");
 
     objects.forEach((obj, i) => {
         obj.y += obj.speed;
@@ -220,7 +243,7 @@ function update() {
             } else {
                 stats.money += obj.impact;
                 stats.health = Math.min(100, stats.health + 5);
-                consecutiveErrors = 0; // Se reinicia al hacerlo bien
+                consecutiveErrors = 0;
                 triggerSound(obj.freq, 'pos');
                 flashScreen('cyan');
             }
@@ -296,18 +319,191 @@ const inputMove = e => {
 window.addEventListener('mousemove', inputMove);
 window.addEventListener('touchmove', e => { inputMove(e); e.preventDefault(); }, {passive: false});
 
-function startGame() {
-    document.getElementById('overlay').style.display = 'none';
-    active = true;
-    setInterval(spawn, 750);
-    function gameLoop() { update(); draw(); requestAnimationFrame(gameLoop); }
-    gameLoop();
-}
-
 function endGame(message) {
     active = false;
     alert(message + "\n\nFINAL WEALTH: $" + stats.money);
     location.reload(); 
+}
+
+// =========================
+// GLOBAL SESSION CONTROL
+// =========================
+let sessionData = null;
+let phaseRunning = false;
+
+// =========================
+// FETCH BACKEND
+// =========================
+async function fetchSession(){
+    const res = await fetch("/api/session/start");
+    sessionData = await res.json();
+}
+
+// =========================
+// STORY PHASE
+// =========================
+async function runStory(){
+    return new Promise(resolve=>{
+        const box = document.getElementById("story-box");
+        const text = document.getElementById("story-text");
+
+        const story = sessionData.story.en || "READY";
+
+        text.innerText = story;
+        box.style.display = "flex";
+
+        // VOICE
+        try {
+            const msg = new SpeechSynthesisUtterance(story);
+            msg.lang = "en-US";
+            speechSynthesis.speak(msg);
+        } catch(e){}
+
+        setTimeout(()=>{
+            box.style.display = "none";
+            resolve();
+        },6000);
+    });
+}
+
+// =========================
+// GAME CONTROL WRAPPER
+// =========================
+function startGameBlock(duration){
+    return new Promise(resolve=>{
+        active = true;
+
+        const interval = setInterval(()=>{
+            // stats.totalSeconds ya se maneja en el loop de update()
+            if(stats.totalSeconds <= 0){
+                clearInterval(interval);
+                active = false;
+                resolve();
+            }
+        },1000);
+
+        setTimeout(()=>{
+            clearInterval(interval);
+            active = false;
+            resolve();
+        }, duration * 1000);
+    });
+}
+
+// =========================
+// MISSION PHASE
+// =========================
+async function runMission(){
+    return new Promise(resolve=>{
+        const mission = sessionData.missions[0];
+        const blocks = mission.b;
+
+        const decision = blocks.find(x=>x.t==="d");
+
+        const box = document.getElementById("mission-box");
+        const q = document.getElementById("mission-question");
+        const ops = document.getElementById("mission-options");
+
+        q.innerText = decision.q.en;
+        ops.innerHTML = "";
+
+        decision.op.forEach((opt,i)=>{
+            const btn = document.createElement("button");
+            btn.innerText = opt;
+            btn.style.margin="10px";
+
+            btn.onclick = ()=>{
+                if(i === decision.c){
+                    stats.money += 500;
+                    stats.health = Math.min(100, stats.health + 10);
+                }else{
+                    stats.health -= 20;
+                    stats.money *= 0.5;
+                }
+
+                updateHUD();
+                box.style.display="none";
+                resolve();
+            };
+
+            ops.appendChild(btn);
+        });
+
+        box.style.display="flex";
+    });
+}
+
+// =========================
+// BREATHING PHASE
+// =========================
+async function runBreathing(){
+    return new Promise(resolve=>{
+        const box = document.getElementById("breathing-box");
+        const circle = document.getElementById("breath-circle");
+
+        box.style.display = "flex";
+
+        let t = 0;
+        const id = setInterval(()=>{
+            t++;
+            const scale = (t%4<2)?1.5:1;
+            circle.style.transform = `scale(${scale})`;
+
+            if(t>20){
+                clearInterval(id);
+                box.style.display="none";
+                resolve();
+            }
+        },1000);
+    });
+}
+
+// =========================
+// MAIN LOOP
+// =========================
+async function runSessionLoop(){
+    if(phaseRunning) return;
+    phaseRunning = true;
+
+    while(true){
+        await fetchSession();
+
+        // STORY
+        await runStory();
+
+        // GAME 1
+        stats.totalSeconds = 300;
+        await startGameBlock(300);
+
+        // MISSION
+        await runMission();
+
+        // GAME 2 (más difícil)
+        levels[0].speedMult += 0.2;
+        levels[1].speedMult += 0.3;
+        levels[2].speedMult += 0.4;
+
+        stats.totalSeconds = 300;
+        await startGameBlock(300);
+
+        // BREATHING
+        await runBreathing();
+    }
+}
+
+// =========================
+// START OVERRIDE
+// =========================
+function startGame(){
+    document.getElementById('overlay').style.display = 'none';
+
+    // Mantiene tu loop de canvas intacto
+    function gameLoop() { update(); draw(); requestAnimationFrame(gameLoop); }
+    gameLoop();
+
+    setInterval(spawn, 750);
+
+    runSessionLoop(); // 🔥 NUEVO CONTROLADOR
 }
 </script>
 </body>
