@@ -11,179 +11,353 @@
             --neon-red: #ff3131;
             --bg-dark: #050508;
             --neon-green: #2ecc71;
-            --neon-orange: #ff8c00;
         }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        * { box-sizing: border-box; }
         body { 
             margin: 0; overflow: hidden; background: var(--bg-dark); 
             color: white; font-family: 'Orbitron', sans-serif; touch-action: none; 
             height: 100vh; width: 100vw;
         }
         
+        /* HUD */
         #hud {
             position: absolute; top: 10px; width: 100%;
             display: flex; justify-content: space-evenly;
-            z-index: 1000; pointer-events: none; padding: 0 5px;
+            z-index: 1000; pointer-events: none;
         }
         .data-box {
-            background: rgba(0, 0, 0, 0.9); border: 1px solid var(--neon-blue);
-            padding: 5px; text-align: center; flex: 1; margin: 0 3px; max-width: 110px;
+            background: rgba(0, 0, 0, 0.9); border: 2px solid var(--neon-blue);
+            padding: 8px; text-align: center; min-width: 100px;
         }
         .label { font-size: 8px; color: var(--neon-blue); letter-spacing: 1px; display: block; text-transform: uppercase; }
-        .value { font-size: 14px; font-weight: 900; display: block; }
-        #general-clock { position: absolute; bottom: 10px; right: 10px; color: var(--neon-gold); font-size: 12px; z-index: 1000; }
-        #game-clock { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); color: var(--neon-red); font-size: 20px; font-weight: 900; z-index: 1000; }
+        .value { font-size: 18px; font-weight: 900; display: block; }
+        #clock-display { position: absolute; bottom: 20px; width: 100%; text-align: center; color: var(--neon-red); font-size: 30px; font-weight: 900; z-index: 1000; }
 
-        #stage {
-            position: fixed; inset: 0; display: flex; flex-direction: column;
-            justify-content: center; align-items: center; text-align: center;
-            padding: 20px; z-index: 500; background: radial-gradient(circle, #111 0%, #000 100%);
+        /* CAPAS DE INTERFAZ */
+        .overlay {
+            position: fixed; inset: 0; background: radial-gradient(circle, #111 0%, #000 100%);
+            display: flex; flex-direction: column; justify-content: center;
+            align-items: center; z-index: 2000; text-align: center; padding: 30px;
         }
+        
+        #gameCanvas { position: fixed; inset: 0; z-index: 100; display: none; }
 
-        #display-text { font-size: 1.5rem; font-weight: 900; color: var(--neon-blue); text-shadow: 0 0 15px var(--neon-blue); margin-bottom: 15px; width: 100%; }
-        #sub-text { font-size: 1rem; color: #ccc; max-width: 600px; line-height: 1.4; }
-
+        /* BOTONES Y TEXTOS */
         .btn-core {
-            padding: 15px 30px; background: var(--neon-blue); color: black; border: none;
+            padding: 20px 40px; background: var(--neon-blue); color: black; border: none;
             font-family: 'Orbitron'; font-weight: 900; cursor: pointer; margin-top: 20px;
-            text-transform: uppercase; clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
+            text-transform: uppercase; box-shadow: 0 0 20px var(--neon-blue);
         }
-        #options-container { margin-top: 20px; display: grid; gap: 10px; width: 100%; max-width: 400px; }
-        .btn-opt {
-            padding: 12px; background: rgba(0,242,255,0.1); border: 1px solid var(--neon-blue);
-            color: white; font-family: 'Orbitron'; font-size: 0.8rem; cursor: pointer; transition: 0.3s;
+        .opt-btn { 
+            width: 90%; max-width: 500px; padding: 15px; margin: 10px; 
+            background: rgba(0,242,255,0.1); border: 1px solid var(--neon-blue);
+            color: white; font-family: 'Orbitron'; cursor: pointer;
         }
+        .correct { background: var(--neon-green) !important; color: black; }
+        .wrong { background: var(--neon-red) !important; color: white; }
 
-        #breath-wrap { display: none; margin-top: 20px; position: relative; }
+        /* CIRCULO RESPIRATORIO */
+        #breath-wrap { display: none; flex-direction: column; align-items: center; }
         #breath-circle {
-            width: 150px; height: 150px; border: 5px solid var(--neon-blue);
-            border-radius: 50%; transition: transform 2s ease-in-out;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            box-shadow: 0 0 30px var(--neon-blue);
+            width: 200px; height: 200px; border: 8px solid var(--neon-blue);
+            border-radius: 50%; display: flex; justify-content: center; align-items: center;
+            font-size: 1.5rem; font-weight: 900; transition: transform 2s ease-in-out;
+            box-shadow: 0 0 50px var(--neon-blue);
         }
-        #breath-info { font-size: 0.7rem; color: var(--neon-gold); margin-top: 15px; max-width: 250px; }
 
-        #gameCanvas { position: fixed; inset: 0; display: none; z-index: 100; cursor: crosshair; }
-        .skip-btn { position: absolute; bottom: 20px; left: 20px; font-size: 10px; opacity: 0.6; z-index: 2000; }
-
-        .overlay-full { position: fixed; inset: 0; background: black; z-index: 5000; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        input[type="text"] { background: transparent; border: 2px solid var(--neon-blue); color: white; padding: 10px; font-family: 'Orbitron'; text-align: center; outline: none; }
-
-        @media (min-width: 768px) {
-            #display-text { font-size: 2.5rem; }
-            #sub-text { font-size: 1.2rem; }
-            .data-box { max-width: 150px; }
-            .value { font-size: 20px; }
-        }
+        #flash { position: fixed; inset: 0; pointer-events: none; z-index: 5000; opacity: 0; }
     </style>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
 </head>
 <body>
 
+<div id="flash"></div>
+<div id="clock-display">00:00</div>
+
 <div id="hud">
-    <div class="data-box"><span class="label">NET WORTH</span><span id="stat-money" class="value">$0</span></div>
-    <div class="data-box" style="border-color: var(--neon-gold);"><span class="label">SESSION</span><span id="stat-id" class="value">0</span></div>
-    <div class="data-box" style="border-color: var(--neon-red);"><span class="label">STABILITY</span><span id="stat-health" class="value">100%</span></div>
+    <div class="data-box" style="border-color: var(--neon-gold);"><span class="label">NET WORTH</span><span id="val-money" class="value">$0</span></div>
+    <div class="data-box" style="border-color: var(--neon-red);"><span class="label">STABILITY</span><span id="val-health" class="value">100%</span></div>
+    <div class="data-box"><span class="label">LEVEL</span><span id="val-lvl" class="value">1</span></div>
 </div>
 
-<div id="stage">
-    <div id="content-area">
-        <h2 id="display-text">WELCOME TO KAMIZEN</h2>
-        <p id="sub-text">Please enter your identification to begin.</p>
-        <div id="input-wrap" style="margin-top: 20px;">
-            <input type="text" id="client-name" placeholder="YOUR NAME">
-        </div>
-        <div id="options-container"></div>
-        <button id="main-btn" class="btn-core">INITIALIZE</button>
-    </div>
+<!-- CAPA DINAMICA (PIES, CUERPO, CABEZA) -->
+<div id="ui-layer" class="overlay">
+    <h1 id="ui-title" style="color: var(--neon-blue); font-size: 30px;">AL CIELO</h1>
+    <p id="ui-text" style="max-width: 600px; line-height: 1.5; color: #ccc;"></p>
+    <div id="ui-extra" style="width: 100%; display: flex; flex-direction: column; align-items: center;"></div>
+    <button id="ui-btn" class="btn-core">INITIALIZE</button>
+</div>
 
-    <div id="breath-wrap">
-        <div id="breath-circle">
-            <span id="breath-label" style="font-size: 1rem; font-weight: 900;">INHALE</span>
-        </div>
-        <div id="breath-info"></div>
-    </div>
+<!-- BLOQUE DE DISCIPLINA -->
+<div id="discipline-layer" class="overlay" style="display:none; background: rgba(150,0,0,0.95); z-index: 6000;">
+    <h1 style="font-size: 50px;">HALTED</h1>
+    <p>WEAKNESS DETECTED: LACK OF FOCUS</p>
+    <div id="commitment-text" style="background: black; padding: 20px; border: 1px solid gold; margin: 20px; font-weight: 900;"></div>
+    <button class="btn-core" style="background: white;" onclick="resumeAfterPenalty()">I COMMIT TO FOCUS</button>
 </div>
 
 <canvas id="gameCanvas"></canvas>
-<div id="general-clock">MISSION TIME: 00:00</div>
-<div id="game-clock" class="hidden">00:00</div>
-<button class="btn-core skip-btn hidden" id="skip-btn">SKIP PHASE</button>
 
 <script>
-    let stats = { money: 0, health: 100, index: 0, name: "Explorer", wrongClicks: 0 };
-    let sessionData = null;
-    let totalSeconds = 0;
-    let gameSeconds = 300;
-    let isGameRunning = false;
-    let audioCtx = null;
-    let synth = window.speechSynthesis;
-    
-    const ui = {
-        text: document.getElementById('display-text'),
-        sub: document.getElementById('sub-text'),
-        mainBtn: document.getElementById('main-btn'),
-        optCont: document.getElementById('options-container'),
-        breath: document.getElementById('breath-wrap'),
-        circle: document.getElementById('breath-circle'),
-        label: document.getElementById('breath-label'),
-        info: document.getElementById('breath-info'),
-        canvas: document.getElementById('gameCanvas'),
-        gClock: document.getElementById('general-clock'),
-        gameClock: document.getElementById('game-clock'),
-        skip: document.getElementById('skip-btn')
-    };
-
-    const ctx = ui.canvas.getContext('2d');
+    // CONFIGURACIÓN Y ESTADO
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    let stats = { money: 0, health: 100, level: 0, totalTime: 27 * 60, name: "" };
+    let active = false;
     let objects = [];
-    let player = { x: window.innerWidth/2, y: window.innerHeight - 80 };
+    let gameMode = false;
+    let consecutiveErrors = 0;
+    const user = { x: window.innerWidth/2, y: window.innerHeight/2, size: 50 };
 
-    const sleep = ms => new Promise(r => setTimeout(r, ms));
-    
-    function speak(text) {
-        synth.cancel();
-        const msg = new SpeechSynthesisUtterance(text);
-        msg.rate = 0.85;
-        msg.pitch = 0.9;
-        msg.lang = 'en-US';
-        synth.speak(msg);
-    }
+    const commitments = [
+        "I PROMISE TO FILTER MY DISTRACTIONS AND FOCUS ON WHAT BUILDS MY VALUE.",
+        "MY MIND IS MY BEST WEAPON. I PROMISE NOT TO EXPOSE IT TO NEGATIVE CONCEPTS.",
+        "DISCIPLINE IS MY ONLY PATH TO SUCCESS. I RE-ENTER WITH TOTAL FOCUS."
+    ];
 
-    function updateStats() {
-        document.getElementById('stat-money').innerText = "$" + stats.money;
-        document.getElementById('stat-health').innerText = stats.health + "%";
-        document.getElementById('stat-id').innerText = stats.index;
-    }
-
-    ui.mainBtn.onclick = () => {
-        const nameInput = document.getElementById('client-name').value;
-        if(nameInput) stats.name = nameInput;
-        document.getElementById('input-wrap').classList.add('hidden');
-        ui.mainBtn.classList.add('hidden');
-        startGeneralClock();
-        runFullFlow();
+    // ELEMENTOS UI
+    const ui = {
+        layer: document.getElementById('ui-layer'),
+        title: document.getElementById('ui-title'),
+        text: document.getElementById('ui-text'),
+        extra: document.getElementById('ui-extra'),
+        btn: document.getElementById('ui-btn'),
+        clock: document.getElementById('clock-display'),
+        flash: document.getElementById('flash')
     };
 
-    function startGeneralClock() {
+    // AUDIO
+    let audioCtx;
+    function playTone(freq, type, dur) {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        g.gain.linearRampToValueAtTime(0.2, audioCtx.currentTime + 0.1);
+        g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + dur);
+        osc.connect(g); g.connect(audioCtx.destination);
+        osc.start(); osc.stop(audioCtx.currentTime + dur);
+    }
+
+    function speak(txt) {
+        window.speechSynthesis.cancel();
+        const msg = new SpeechSynthesisUtterance(txt);
+        msg.rate = 0.9; msg.pitch = 0.8; msg.lang = 'en-US';
+        window.speechSynthesis.speak(msg);
+    }
+
+    // FLUJO PRINCIPAL
+    async function init() {
+        ui.title.innerText = "AL CIELO";
+        ui.text.innerText = "Enter your name to synchronize training.";
+        ui.extra.innerHTML = '<input type="text" id="name-in" style="background:transparent; border:2px solid var(--neon-blue); color:white; padding:10px; font-family:Orbitron; text-align:center;">';
+        ui.btn.onclick = () => {
+            stats.name = document.getElementById('name-in').value || "Explorer";
+            startFlow();
+        };
+    }
+
+    async function startFlow() {
+        // Pies & Cuerpo (Story)
+        ui.extra.innerHTML = "";
+        ui.title.innerText = "MISSION START";
+        const intro = `Welcome ${stats.name}. You are about to enter a high-performance mental environment. Focus is your only currency.`;
+        ui.text.innerText = intro;
+        speak(intro);
+        
+        ui.btn.innerText = "ENTER CORE";
+        ui.btn.onclick = async () => {
+            ui.layer.style.display = "none";
+            startTimer();
+            runGamePhase(300); // 5 minutos de juego inicial
+        };
+    }
+
+    // MANOS: GAMEPLAY (Lógica de tus 27 min)
+    function runGamePhase(duration) {
+        canvas.style.display = "block";
+        active = true; gameMode = true;
+        const spawnInterval = setInterval(spawnObject, 800);
+        
+        setTimeout(() => {
+            clearInterval(spawnInterval);
+            active = false; gameMode = false;
+            canvas.style.display = "none";
+            runMissionPhase(); // Pasar a Cabeza (Decisiones)
+        }, duration * 1000);
+    }
+
+    function spawnObject() {
+        if (!active) return;
+        const concepts = [
+            { t: "TRUTH", type: "pos", c: "#2ecc71" },
+            { t: "INVEST", type: "pos", c: "#f1c40f" },
+            { t: "DISCIPLINE", type: "pos", c: "#00f2ff" },
+            { t: "LIES", type: "neg", c: "#ff3131" },
+            { t: "CHAOS", type: "neg", c: "#e67e22" }
+        ];
+        const obj = concepts[Math.floor(Math.random()*concepts.length)];
+        objects.push({
+            ...obj,
+            x: Math.random() * (canvas.width - 200) + 100,
+            y: -50,
+            speed: 3 + Math.random() * 3
+        });
+    }
+
+    function update() {
+        if (!active || !gameMode) return;
+        objects.forEach((obj, i) => {
+            obj.y += obj.speed;
+            const d = Math.sqrt((obj.x - user.x)**2 + (obj.y - user.y)**2);
+            if (d < user.size) {
+                if (obj.type === 'neg') {
+                    stats.health -= 20;
+                    consecutiveErrors++;
+                    playTone(100, 'sawtooth', 0.5);
+                    if (consecutiveErrors >= 3) triggerPenalty();
+                } else {
+                    stats.money += 500;
+                    consecutiveErrors = 0;
+                    playTone(600, 'sine', 0.3);
+                }
+                objects.splice(i, 1);
+                updateHUD();
+            }
+            if (obj.y > canvas.height) objects.splice(i, 1);
+        });
+    }
+
+    function draw() {
+        ctx.fillStyle = 'rgba(5, 5, 8, 0.3)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // Player Laser Ring
+        ctx.strokeStyle = "var(--neon-blue)";
+        ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.arc(user.x, user.y, user.size - 10, 0, Math.PI*2); ctx.stroke();
+
+        objects.forEach(obj => {
+            ctx.fillStyle = obj.c;
+            ctx.font = "900 20px Orbitron";
+            ctx.textAlign = "center";
+            ctx.fillText(obj.t, obj.x, obj.y);
+            
+            // Laser connection
+            ctx.strokeStyle = obj.c;
+            ctx.globalAlpha = 0.2;
+            ctx.beginPath(); ctx.moveTo(obj.x, obj.y); ctx.lineTo(user.x, user.y); ctx.stroke();
+            ctx.globalAlpha = 1;
+        });
+    }
+
+    // CABEZA: MISIONES Y RESPIRACIÓN
+    async function runMissionPhase() {
+        ui.layer.style.display = "flex";
+        ui.title.innerText = "DECISION NODE";
+        ui.text.innerText = "A critical situation requires your focus. How do you respond to high-pressure environments?";
+        ui.extra.innerHTML = `
+            <button class="opt-btn" onclick="resolveMission(true, 'Correct. Calmness creates wealth.')">I observe and act with logic.</button>
+            <button class="opt-btn" onclick="resolveMission(false, 'Incorrect. Emotional response leads to loss.')">I react immediately with emotion.</button>
+        `;
+        ui.btn.style.display = "none";
+    }
+
+    window.resolveMission = (isCorrect, feedback) => {
+        ui.extra.innerHTML = "";
+        ui.text.innerText = feedback;
+        speak(feedback);
+        if (isCorrect) stats.money += 2000; else stats.health -= 30;
+        updateHUD();
+        
+        setTimeout(() => {
+            runBreathingPhase();
+        }, 3000);
+    };
+
+    function runBreathingPhase() {
+        ui.title.innerText = "NEURAL RECOVERY";
+        ui.text.innerText = "Scientific Fact: Controlled breathing reduces cortisol and stabilizes decision-making in children and adults.";
+        ui.extra.innerHTML = `
+            <div id="breath-wrap" style="display:flex;">
+                <div id="breath-circle"><span id="b-txt">INHALE</span></div>
+            </div>
+        `;
+        
+        let cycle = 0;
+        const bCircle = document.getElementById('breath-circle');
+        const bTxt = document.getElementById('b-txt');
+        
+        const bInterval = setInterval(() => {
+            cycle++;
+            const inhale = cycle % 2 !== 0;
+            bTxt.innerText = inhale ? "INHALE" : "EXHALE";
+            bCircle.style.transform = inhale ? "scale(1.4)" : "scale(1.0)";
+            
+            if (cycle >= 6) {
+                clearInterval(bInterval);
+                finishSession();
+            }
+        }, 3000);
+    }
+
+    function triggerPenalty() {
+        active = false;
+        document.getElementById('commitment-text').innerText = commitments[Math.floor(Math.random()*commitments.length)];
+        document.getElementById('discipline-layer').style.display = 'flex';
+        speak("Discipline Halted. Accept the commitment to rejoin.");
+    }
+
+    window.resumeAfterPenalty = () => {
+        consecutiveErrors = 0;
+        document.getElementById('discipline-layer').style.display = 'none';
+        active = true;
+    };
+
+    function finishSession() {
+        ui.title.innerText = "DIAGNOSTIC COMPLETE";
+        ui.text.innerText = `Training Summary for ${stats.name}:\nTotal Assets: $${stats.money}\nMental Stability: ${stats.health}%\n\nRecommendation: Continue daily discipline to maintain high-value focus.`;
+        ui.extra.innerHTML = "";
+        ui.btn.innerText = "RESTART SYSTEM";
+        ui.btn.style.display = "block";
+        ui.btn.onclick = () => location.reload();
+        speak(ui.text.innerText);
+    }
+
+    // RELOJ Y HUD
+    function startTimer() {
         setInterval(() => {
-            totalSeconds++;
-            const m = Math.floor(totalSeconds / 60);
-            const s = totalSeconds % 60;
-            ui.gClock.innerText = `MISSION TIME: ${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+            if (stats.totalTime <= 0) return;
+            stats.totalTime--;
+            const m = Math.floor(stats.totalTime / 60);
+            const s = stats.totalTime % 60;
+            ui.clock.innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
         }, 1000);
     }
 
-    async function runFullFlow() {
-        const res = fetch('/api/session/start');
-        sessionData = res.json();
-        stats.index = sessionData.index;
-        updateStats();
-
-        playPhaseStory();
-        runWordGame(300);
-        playPhaseMissions();
-        runWordGame(300);
-        showFinalDiagnostic();
+    function updateHUD() {
+        document.getElementById('val-money').innerText = "$" + stats.money;
+        document.getElementById('val-health').innerText = stats.health + "%";
+        document.getElementById('val-lvl').innerText = stats.level + 1;
     }
+
+    // INPUTS
+    const move = e => {
+        const c = e.touches ? e.touches[0] : e;
+        user.x = c.clientX; user.y = c.clientY;
+    };
+    window.addEventListener('mousemove', move);
+    window.addEventListener('touchmove', e => { move(e); e.preventDefault(); }, {passive:false});
+
+    // LOOP
+    function loop() { update(); draw(); requestAnimationFrame(loop); }
+    window.onload = () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        init();
+        loop();
+    };
 </script>
 </body>
 </html>
