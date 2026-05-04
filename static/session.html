@@ -9,6 +9,7 @@
             --neon-blue: #00f2ff;
             --neon-gold: #f1c40f;
             --neon-red: #ff3131;
+            --neon-green: #2ecc71;
             --bg-dark: #050508;
         }
         body { margin: 0; overflow: hidden; background: var(--bg-dark); color: white; font-family: 'Orbitron', sans-serif; cursor: none; touch-action: none; }
@@ -33,29 +34,48 @@
             text-shadow: 0 0 20px var(--neon-red); z-index: 100;
         }
 
-        #overlay, #discipline-block {
-            position: fixed; inset: 0; background: radial-gradient(circle, #111 0%, #000 100%);
-            display: flex; flex-direction: column; justify-content: center;
-            align-items: center; z-index: 1000; text-align: center; padding: 20px;
+        #overlay, #discipline-block, #story-box, #mission-box, #breathing-box {
+            position: fixed; inset: 0; display: flex; flex-direction: column; 
+            justify-content: center; align-items: center; z-index: 1000; 
+            text-align: center; padding: 20px;
         }
 
+        #overlay { background: radial-gradient(circle, #111 0%, #000 100%); }
         #discipline-block { background: rgba(150, 0, 0, 0.98); display: none; z-index: 5000; }
+        #story-box { background: black; display: none; z-index: 2000; }
+        #mission-box { background: #000; display: none; z-index: 3000; }
+        #breathing-box { background: black; display: none; z-index: 4000; }
 
-        .start-btn, .commit-btn, #mission-options button {
+        .btn-ui {
             padding: 20px 40px; background: var(--neon-blue); color: black;
             border: none; font-family: 'Orbitron'; font-weight: 900;
-            cursor: pointer; letter-spacing: 3px; font-size: 1rem;
-            box-shadow: 0 0 30px var(--neon-blue); margin: 10px;
-            transition: 0.3s;
+            cursor: pointer; letter-spacing: 3px; font-size: 1.1rem;
+            box-shadow: 0 0 30px var(--neon-blue); margin: 15px;
+            text-transform: uppercase;
         }
-        .commit-btn { background: white; box-shadow: 0 0 30px white; }
+
+        #mission-options button {
+            display: block; width: 80%; max-width: 500px;
+            padding: 15px; margin: 10px auto; font-size: 1rem;
+            background: transparent; border: 2px solid var(--neon-blue);
+            color: white; font-family: 'Orbitron'; cursor: pointer;
+        }
+
+        #mission-explanation {
+            margin-top: 20px; padding: 15px; font-size: 1.2rem;
+            display: none; border-radius: 10px; font-weight: 900;
+        }
+
+        #breath-circle {
+            width: 250px; height: 250px; border-radius: 50%;
+            border: 8px solid var(--neon-blue);
+            display: flex; justify-content: center; align-items: center;
+            font-size: 2rem; color: var(--neon-blue);
+            transition: transform 2s ease-in-out;
+            box-shadow: 0 0 50px var(--neon-blue);
+        }
         
         #flash-alert { position: fixed; inset: 0; pointer-events: none; z-index: 50; opacity: 0; }
-        .warning-text { color: yellow; font-size: 1.5rem; margin: 20px; font-weight: 900; }
-
-        /* Estilos para nuevos elementos */
-        #mission-question { color: var(--neon-gold); margin-bottom: 30px; font-size: 24px; }
-        #breath-circle { transition: transform 1s ease-in-out; }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
 </head>
@@ -70,37 +90,32 @@
     <div class="data-box" style="border-color: var(--neon-blue);"><span class="label">LEVEL</span><span id="val-rank" class="value">1</span></div>
 </div>
 
-<!-- DISCIPLINARY BLOCK -->
-<div id="discipline-block">
-    <h1 style="color: white; font-size: 50px; text-shadow: 0 0 20px black;">HALTED</h1>
-    <div class="warning-text">WEAKNESS DETECTED: LACK OF FOCUS</div>
-    <p style="max-width: 600px; line-height: 1.6;">You have triggered 3 negative concepts. Your mental discipline has failed. To continue, you must accept the following commitment.:</p>
-    <div id="dynamic-message" style="background: black; padding: 20px; border: 2px solid white; margin: 20px; font-weight: 900; color: var(--neon-gold);"></div>
-    <button class="commit-btn" onclick="resumeTraining()">I ACCEPT THE COMMITMENT AND WILL REJOIN</button>
-</div>
-
 <div id="overlay">
-    <h1 style="color: var(--neon-blue); letter-spacing: 15px; font-size: 60px; margin:0;">KAMIZEN SESSION</h1>
+    <h1 style="color: var(--neon-blue); letter-spacing: 15px; font-size: 60px; margin:0;">KAMIZEN</h1>
     <h2 style="color: var(--neon-gold); font-size: 18px; margin-bottom: 40px;">USA SURVIVAL SIMULATOR</h2>
-    <button class="start-btn" onclick="startGame()">INITIALIZE TRAINING</button>
+    <button class="btn-ui" onclick="startGame()">INITIALIZE TRAINING</button>
 </div>
 
-<!-- STORY OVERLAY -->
-<div id="story-box" style="display:none;position:fixed;inset:0;z-index:2000;background:black;justify-content:center;align-items:center;text-align:center;padding:40px;">
-    <div>
-        <h2 id="story-text" style="font-size:28px;color:#00f2ff;"></h2>
-    </div>
+<div id="story-box">
+    <h2 id="story-text" style="font-size:28px; color:var(--neon-blue); max-width: 800px; line-height:1.5;"></h2>
+    <button id="story-continue" class="btn-ui" style="display:none;">CONTINUE</button>
 </div>
 
-<!-- MISSION BOX -->
-<div id="mission-box" style="display:none;position:fixed;inset:0;z-index:3000;background:#000;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:20px;">
+<div id="mission-box">
     <h2 id="mission-question"></h2>
     <div id="mission-options"></div>
+    <div id="mission-explanation"></div>
+    <button id="mission-next" class="btn-ui" style="display:none; background:white;">PROCEED</button>
 </div>
 
-<!-- BREATHING -->
-<div id="breathing-box" style="display:none;position:fixed;inset:0;background:black;z-index:4000;justify-content:center;align-items:center;">
-    <div id="breath-circle" style="width:100px;height:100px;border-radius:50%;border:4px solid #00f2ff;"></div>
+<div id="breathing-box">
+    <div id="breath-circle"><span id="breath-text">INHALA</span></div>
+</div>
+
+<div id="discipline-block">
+    <h1 style="color: white; font-size: 50px;">HALTED</h1>
+    <div id="dynamic-message" style="background: black; padding: 20px; border: 2px solid white; margin: 20px; font-weight: 900; color: var(--neon-gold);"></div>
+    <button class="btn-ui" style="background:white;" onclick="resumeTraining()">I ACCEPT AND REJOIN</button>
 </div>
 
 <canvas id="gameCanvas"></canvas>
@@ -108,57 +123,28 @@
 <script>
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
-let audioCtx;
+let audioCtx, musicGain;
 
+// CONFIGURACIÓN DE NIVELES (Velocidad reducida para aprendizaje)
 const levels = [
-    { name: "1", duration: 5 * 60, laserWidth: 1, laserDash: [10, 5], speedMult: 1, data: [
+    { name: "1", speedMult: 0.7, spawnRate: 1200, data: [
         { text: "TELLING TRUTH", type: "pos", impact: 300, color: "#2ecc71", freq: 523 },
         { text: "CLEAN ROOM", type: "pos", impact: 200, color: "#2ecc71", freq: 587 },
         { text: "SAYING SORRY", type: "pos", impact: 400, color: "#00f2ff", freq: 659 },
-        { text: "SAVE/BUSSINESS", type: "pos", impact: 150, color: "#f1c40f", freq: 784 },
-        { text: "LISTEN YOUR PARENTS", type: "pos", impact: 250, color: "#2ecc71", freq: 440 },
-        { text: "FOLLOW ADVICE", type: "pos", impact: 300, color: "#00f2ff", freq: 493 },
-        { text: "RESPECT", type: "pos", impact: 200, color: "#2ecc71", freq: 523 },
+        { text: "SAVE MONEY", type: "pos", impact: 150, color: "#f1c40f", freq: 784 },
+        { text: "LISTEN PARENTS", type: "pos", impact: 250, color: "#2ecc71", freq: 440 },
         { text: "HIDING TRUTH", type: "neg", impact: -100, color: "#ff3131", freq: 110 },
         { text: "MESSY ROOM", type: "neg", impact: -50, color: "#e67e22", freq: 90 },
         { text: "DISOBEDIENCE", type: "neg", impact: -150, color: "#ff3131", freq: 85 }
     ]},
-    { name: "2", duration: 12 * 60, laserWidth: 5, laserDash: [2, 2], speedMult: 1.6, data: [
+    { name: "2", speedMult: 1.0, spawnRate: 1000, data: [
         { text: "TEAMWORK", type: "pos", impact: 600, color: "#2ecc71", freq: 783 },
         { text: "INVESTMENT", type: "pos", impact: 1000, color: "#f1c40f", freq: 880 },
-        { text: "CYBER SECURITY", type: "pos", impact: 500, color: "#00f2ff", freq: 987 },
-        { text: "KNOW YOUR RIGHTS", type: "pos", impact: 800, color: "#f1c40f", freq: 750 },
-        { text: "OBSERVE", type: "pos", impact: 400, color: "#2ecc71", freq: 659 },
-        { text: "BE CAREFUL", type: "pos", impact: 350, color: "#00f2ff", freq: 698 },
-        { text: "LISTEN", type: "pos", impact: 300, color: "#2ecc71", freq: 740 },
+        { text: "KNOW RIGHTS", type: "pos", impact: 800, color: "#f1c40f", freq: 750 },
         { text: "PEER PRESSURE", type: "neg", impact: -500, color: "#ff3131", freq: 120 },
         { text: "BULLYING", type: "neg", impact: -400, color: "#ff3131", freq: 70 },
-        { text: "SOCIAL MEDIA TRAP", type: "neg", impact: -200, color: "#e67e22", freq: 150 },
-        { text: "CREDIT CARD DEBT", type: "neg", impact: -100, color: "#e67e22", freq: 110 },
-        { text: "DO NOT TALK WITH STRANGERS", type: "neg", impact: -800, color: "#ff3131", freq: 95 }
-    ]},
-    { name: "3", duration: 10 * 60, laserWidth: 15, laserDash: [], speedMult: 2.3, data: [
-        { text: "ACTIVE SHOOTER DRILL", type: "pos", impact: 2000, color: "#2ecc71", freq: 1318 },
-        { text: "911 PROTOCOL", type: "pos", impact: 800, color: "#2ecc71", freq: 1396 },
-        { text: "SITUATIONAL AWARENESS", type: "pos", impact: 1500, color: "#00f2ff", freq: 1567 },
-        { text: "EXIT STRATEGY", type: "pos", impact: 600, color: "#2ecc71", freq: 1975 },
-        { text: "LOOK TO THE SIDES", type: "pos", impact: 500, color: "#2ecc71", freq: 880 },
-        { text: "BE ALERT", type: "pos", impact: 1000, color: "#f1c40f", freq: 1760 },
-        { text: "BE SAFE", type: "pos", impact: 1200, color: "#00f2ff", freq: 1864 },
-        { text: "OBSERVE SURROUNDING", type: "pos", impact: 900, color: "#2ecc71", freq: 1661 },
-        { text: "WALKING OUT/BE ALERT", type: "pos", impact: 850, color: "#f1c40f", freq: 1480 },
-        { text: "UNLOCKED FIREARM", type: "neg", impact: -5000, color: "#ff3131", freq: 60 },
-        { text: "STRANGER DANGER", type: "neg", impact: -2500, color: "#ff3131", freq: 50 },
-        { text: "PEER DRUG PRESSURE", type: "neg", impact: -3000, color: "#ff3131", freq: 40 }
+        { text: "SOCIAL MEDIA TRAP", type: "neg", impact: -200, color: "#e67e22", freq: 150 }
     ]}
-];
-
-const commitments = [
-"I PROMISE TO FILTER MY DISTRACTIONS AND FOCUS ON WHAT BUILDS MY VALUE.",
-"I RECOGNIZE THAT BAD DECISIONS DESTROY MY STABILITY. I WILL BE ALERT.",
-"MY MIND IS MY BEST WEAPON. I PROMISE NOT TO EXPOSE IT TO NEGATIVE CONCEPTS.",
-"I PROMISE TO LISTEN TO ADVICE AND OBSERVE MY SURROUNDINGS TO STAY SAFE.",
-"DISCIPLINE IS MY ONLY PATH TO SUCCESS. I RE-ENTER WITH TOTAL FOCUS."
 ];
 
 let stats = { money: 0, health: 100, currentLevelIdx: 0, totalSeconds: 27 * 60 };
@@ -171,47 +157,50 @@ const user = { x: 0, y: 0, size: 60 };
 function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
 window.addEventListener('resize', resize); resize();
 
+// SONIDOS Y MÚSICA (Dopamina alta)
+function initAudio() {
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        musicGain = audioCtx.createGain();
+        musicGain.gain.value = 0.4; // Música fuerte
+        musicGain.connect(audioCtx.destination);
+        playBackgroundBeat();
+    }
+}
+
+function playBackgroundBeat() {
+    const osc = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(50, audioCtx.currentTime);
+    g.gain.setValueAtTime(0.1, audioCtx.currentTime);
+    osc.connect(g); g.connect(musicGain);
+    osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+    setTimeout(playBackgroundBeat, 500);
+}
+
 function triggerSound(freq, type) {
-    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     const osc = audioCtx.createOscillator();
     const g = audioCtx.createGain();
     osc.type = type === 'pos' ? 'triangle' : 'sawtooth';
     osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-    g.gain.setValueAtTime(0.2, audioCtx.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 1.0);
+    g.gain.setValueAtTime(0.3, audioCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.5);
     osc.connect(g); g.connect(audioCtx.destination);
-    osc.start(); osc.stop(audioCtx.currentTime + 1.0);
+    osc.start(); osc.stop(audioCtx.currentTime + 0.5);
 }
 
-function flashScreen(color) {
-    const f = document.getElementById('flash-alert');
-    f.style.background = color; f.style.opacity = "0.5";
-    setTimeout(() => f.style.opacity = "0", 150);
-}
-
-function triggerDisciplineBlock() {
-    active = false;
-    const msgBox = document.getElementById('dynamic-message');
-    msgBox.innerText = commitments[Math.floor(Math.random() * commitments.length)];
-    document.getElementById('discipline-block').style.display = 'flex';
-}
-
-function resumeTraining() {
-    consecutiveErrors = 0;
-    document.getElementById('discipline-block').style.display = 'none';
-    active = true;
-}
-
+// LOGICA DEL JUEGO BASE
 function spawn() {
     if(!active) return;
-    const lvl = levels[stats.currentLevelIdx];
+    const lvl = levels[stats.currentLevelIdx] || levels[0];
     const data = lvl.data[Math.floor(Math.random() * lvl.data.length)];
     objects.push({
         ...data,
         x: Math.random() * (canvas.width - 300) + 150,
         y: -100,
-        vx: (Math.random() - 0.5) * 6,
-        speed: (4 + Math.random() * 3) * lvl.speedMult
+        vx: (Math.random() - 0.5) * 3,
+        speed: (2 + Math.random() * 2) * lvl.speedMult
     });
 }
 
@@ -219,98 +208,207 @@ function update() {
     if(!active) return;
     stats.totalSeconds -= 1/60; 
     
-    let elapsed = (27 * 60) - stats.totalSeconds;
-    if (elapsed < 5 * 60) stats.currentLevelIdx = 0;
-    else if (elapsed < 17 * 60) stats.currentLevelIdx = 1;
-    else stats.currentLevelIdx = 2;
-
-    if(stats.totalSeconds <= 0 && !phaseRunning) endGame("MISSION ACCOMPLISHED");
-
     objects.forEach((obj, i) => {
         obj.y += obj.speed;
-        obj.x += obj.vx + Math.sin(obj.y * 0.01) * 4;
-        if(obj.x < 100 || obj.x > canvas.width - 100) obj.vx *= -1;
-
+        obj.x += obj.vx + Math.sin(obj.y * 0.01) * 2;
         const d = Math.sqrt((obj.x - user.x)**2 + (obj.y - user.y)**2);
         if (d < user.size) {
             if (obj.type === 'neg') {
-                stats.health -= 25;
-                stats.money = Math.floor(stats.money * 0.3);
+                stats.health -= 20;
                 consecutiveErrors++;
                 triggerSound(obj.freq, 'neg');
-                flashScreen('red');
                 if (consecutiveErrors >= 3) triggerDisciplineBlock();
             } else {
                 stats.money += obj.impact;
                 stats.health = Math.min(100, stats.health + 5);
                 consecutiveErrors = 0;
                 triggerSound(obj.freq, 'pos');
-                flashScreen('cyan');
             }
-            createExplosion(obj.x, obj.y, obj.color);
             objects.splice(i, 1);
             updateHUD();
         }
-        if(obj.y > canvas.height + 150) objects.splice(i, 1);
+        if(obj.y > canvas.height + 100) objects.splice(i, 1);
     });
-
-    particles.forEach((p, i) => {
-        p.x += p.vx; p.y += p.vy; p.life -= 0.03;
-        if(p.life <= 0) particles.splice(i, 1);
-    });
-
-    if(stats.health <= 0) { stats.health = 100; stats.money = 0; updateHUD(); }
-    updateHUD();
-}
-
-function updateHUD() {
-    document.getElementById('val-money').innerText = "$" + stats.money;
-    document.getElementById('val-health').innerText = stats.health + "%";
-    document.getElementById('val-rank').innerText = stats.currentLevelIdx + 1;
-    const m = Math.floor(Math.max(0, stats.totalSeconds) / 60);
-    const s = Math.floor(Math.max(0, stats.totalSeconds) % 60);
-    document.getElementById('clock').innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
-}
-
-function createExplosion(x, y, color) {
-    for (let i = 0; i < 20; i++) {
-        particles.push({ x, y, vx: (Math.random()-0.5)*20, vy: (Math.random()-0.5)*20, life: 1, color });
-    }
 }
 
 function draw() {
     ctx.fillStyle = 'rgba(5, 5, 8, 0.4)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    ctx.shadowBlur = 25; ctx.shadowColor = "#00f2ff";
-    ctx.strokeStyle = "#00f2ff"; ctx.lineWidth = 5;
+    
+    // User Glow
+    ctx.shadowBlur = 20; ctx.shadowColor = "#00f2ff";
+    ctx.strokeStyle = "#00f2ff"; ctx.lineWidth = 4;
     ctx.beginPath(); ctx.arc(user.x, user.y, user.size - 20, 0, Math.PI * 2); ctx.stroke();
 
-    const currentLvl = levels[stats.currentLevelIdx];
-
     objects.forEach(obj => {
-        if(obj.type === 'neg') {
-            ctx.strokeStyle = obj.color; 
-            ctx.setLineDash(currentLvl.laserDash); 
-            ctx.lineWidth = currentLvl.laserWidth;
-            ctx.beginPath(); ctx.moveTo(obj.x, obj.y); ctx.lineTo(user.x, user.y); ctx.stroke();
-            ctx.setLineDash([]);
-        }
-        ctx.font = "900 24px Orbitron";
-        const textWidth = ctx.measureText(obj.text).width;
-        ctx.fillStyle = "black";
-        ctx.fillRect(obj.x - textWidth/2 - 10, obj.y - 18, textWidth + 20, 35);
-        ctx.fillStyle = obj.color; ctx.textAlign = "center";
-        ctx.fillText(obj.text, obj.x, obj.y + 10);
+        ctx.font = "900 22px Orbitron";
+        ctx.fillStyle = obj.color;
+        ctx.textAlign = "center";
+        ctx.fillText(obj.text, obj.x, obj.y);
     });
-
-    particles.forEach(p => {
-        ctx.globalAlpha = p.life; ctx.fillStyle = p.color;
-        ctx.fillRect(p.x, p.y, 5, 5);
-    });
-    ctx.globalAlpha = 1;
 }
 
+function updateHUD() {
+    document.getElementById('val-money').innerText = "$" + stats.money;
+    document.getElementById('val-health').innerText = stats.health + "%";
+    const m = Math.floor(Math.max(0, stats.totalSeconds) / 60);
+    const s = Math.floor(Math.max(0, stats.totalSeconds) % 60);
+    document.getElementById('clock').innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
+}
+
+// =========================
+// CONTROL DE SESIÓN (PHASES)
+// =========================
+let sessionData = null;
+let currentMissionIdx = 0;
+
+async function fetchSession(){
+    try {
+        const res = await fetch("/api/session/start");
+        sessionData = await res.json();
+    } catch(e) {
+        // Fallback local para pruebas
+        sessionData = {
+            story: { en: "Welcome to Kamizen. Focus is your power." },
+            missions: [{ b: [{ t:"d", q:{en:"Should you save money for your business?"}, op:["Yes","No"], c:0, exp:{en:"Saving builds your future stability."} }] }]
+        };
+    }
+}
+
+async function runStory(){
+    return new Promise(resolve => {
+        const box = document.getElementById("story-box");
+        const text = document.getElementById("story-text");
+        const btn = document.getElementById("story-continue");
+
+        const story = sessionData.story.en;
+        text.innerText = "";
+        box.style.display = "flex";
+        btn.style.display = "none";
+
+        // TTS
+        const msg = new SpeechSynthesisUtterance(story);
+        msg.lang = "en-US";
+        msg.onend = () => { btn.style.display = "block"; };
+        
+        // Efecto Typewriter
+        let i = 0;
+        const interval = setInterval(() => {
+            text.innerText += story[i];
+            i++;
+            if(i >= story.length) clearInterval(interval);
+        }, 40);
+
+        window.speechSynthesis.speak(msg);
+
+        btn.onclick = () => {
+            box.style.display = "none";
+            resolve();
+        };
+    });
+}
+
+async function runMission(){
+    return new Promise(resolve => {
+        const mission = sessionData.missions[currentMissionIdx % sessionData.missions.length];
+        const decision = mission.b.find(x => x.t === "d");
+
+        const box = document.getElementById("mission-box");
+        const q = document.getElementById("mission-question");
+        const ops = document.getElementById("mission-options");
+        const exp = document.getElementById("mission-explanation");
+        const next = document.getElementById("mission-next");
+
+        q.innerText = decision.q.en;
+        ops.innerHTML = "";
+        exp.style.display = "none";
+        next.style.display = "none";
+        box.style.display = "flex";
+
+        decision.op.forEach((opt, i) => {
+            const btn = document.createElement("button");
+            btn.innerText = opt;
+            btn.onclick = () => {
+                const isCorrect = (i === decision.c);
+                btn.style.background = isCorrect ? "var(--neon-green)" : "var(--neon-red)";
+                
+                exp.innerText = decision.exp.en;
+                exp.style.display = "block";
+                exp.style.color = isCorrect ? "var(--neon-green)" : "var(--neon-red)";
+                
+                if(isCorrect) stats.money += 500;
+                else stats.health -= 20;
+
+                updateHUD();
+                next.style.display = "block";
+                Array.from(ops.children).forEach(b => b.disabled = true);
+            };
+            ops.appendChild(btn);
+        });
+
+        next.onclick = () => {
+            currentMissionIdx++;
+            box.style.display = "none";
+            resolve();
+        };
+    });
+}
+
+async function runBreathing(){
+    return new Promise(resolve => {
+        const box = document.getElementById("breathing-box");
+        const circle = document.getElementById("breath-circle");
+        const txt = document.getElementById("breath-text");
+        box.style.display = "flex";
+
+        let cycles = 0;
+        const totalCycles = 4; // 4 respiraciones (aprox 16 seg)
+
+        const interval = setInterval(() => {
+            if(cycles % 2 === 0) {
+                circle.style.transform = "scale(1.5)";
+                txt.innerText = "INHALA";
+            } else {
+                circle.style.transform = "scale(1)";
+                txt.innerText = "EXHALA";
+            }
+            cycles++;
+            if(cycles >= totalCycles * 2) {
+                clearInterval(interval);
+                box.style.display = "none";
+                resolve();
+            }
+        }, 2000);
+    });
+}
+
+async function runSessionLoop(){
+    while(true){
+        await fetchSession();
+        await runStory();
+        
+        // Bloque de juego (5 min)
+        active = true;
+        await new Promise(r => setTimeout(r, 300000)); 
+        active = false;
+
+        await runMission();
+        await runBreathing();
+    }
+}
+
+function startGame() {
+    initAudio();
+    document.getElementById('overlay').style.display = 'none';
+    
+    setInterval(spawn, 1200);
+    function gameLoop() { update(); draw(); requestAnimationFrame(gameLoop); }
+    gameLoop();
+
+    runSessionLoop();
+}
+
+// Input Control
 const inputMove = e => { 
     const cx = e.touches ? e.touches[0].clientX : e.clientX;
     const cy = e.touches ? e.touches[0].clientY : e.clientY;
@@ -319,191 +417,16 @@ const inputMove = e => {
 window.addEventListener('mousemove', inputMove);
 window.addEventListener('touchmove', e => { inputMove(e); e.preventDefault(); }, {passive: false});
 
-function endGame(message) {
+function triggerDisciplineBlock() {
     active = false;
-    alert(message + "\n\nFINAL WEALTH: $" + stats.money);
-    location.reload(); 
+    document.getElementById('dynamic-message').innerText = "STAY FOCUSED. DISCIPLINE IS FREEDOM.";
+    document.getElementById('discipline-block').style.display = 'flex';
 }
 
-// =========================
-// GLOBAL SESSION CONTROL
-// =========================
-let sessionData = null;
-let phaseRunning = false;
-
-// =========================
-// FETCH BACKEND
-// =========================
-async function fetchSession(){
-    const res = await fetch("/api/session/start");
-    sessionData = await res.json();
-}
-
-// =========================
-// STORY PHASE
-// =========================
-async function runStory(){
-    return new Promise(resolve=>{
-        const box = document.getElementById("story-box");
-        const text = document.getElementById("story-text");
-
-        const story = sessionData.story.en || "READY";
-
-        text.innerText = story;
-        box.style.display = "flex";
-
-        // VOICE
-        try {
-            const msg = new SpeechSynthesisUtterance(story);
-            msg.lang = "en-US";
-            speechSynthesis.speak(msg);
-        } catch(e){}
-
-        setTimeout(()=>{
-            box.style.display = "none";
-            resolve();
-        },6000);
-    });
-}
-
-// =========================
-// GAME CONTROL WRAPPER
-// =========================
-function startGameBlock(duration){
-    return new Promise(resolve=>{
-        active = true;
-
-        const interval = setInterval(()=>{
-            // stats.totalSeconds ya se maneja en el loop de update()
-            if(stats.totalSeconds <= 0){
-                clearInterval(interval);
-                active = false;
-                resolve();
-            }
-        },1000);
-
-        setTimeout(()=>{
-            clearInterval(interval);
-            active = false;
-            resolve();
-        }, duration * 1000);
-    });
-}
-
-// =========================
-// MISSION PHASE
-// =========================
-async function runMission(){
-    return new Promise(resolve=>{
-        const mission = sessionData.missions[0];
-        const blocks = mission.b;
-
-        const decision = blocks.find(x=>x.t==="d");
-
-        const box = document.getElementById("mission-box");
-        const q = document.getElementById("mission-question");
-        const ops = document.getElementById("mission-options");
-
-        q.innerText = decision.q.en;
-        ops.innerHTML = "";
-
-        decision.op.forEach((opt,i)=>{
-            const btn = document.createElement("button");
-            btn.innerText = opt;
-            btn.style.margin="10px";
-
-            btn.onclick = ()=>{
-                if(i === decision.c){
-                    stats.money += 500;
-                    stats.health = Math.min(100, stats.health + 10);
-                }else{
-                    stats.health -= 20;
-                    stats.money *= 0.5;
-                }
-
-                updateHUD();
-                box.style.display="none";
-                resolve();
-            };
-
-            ops.appendChild(btn);
-        });
-
-        box.style.display="flex";
-    });
-}
-
-// =========================
-// BREATHING PHASE
-// =========================
-async function runBreathing(){
-    return new Promise(resolve=>{
-        const box = document.getElementById("breathing-box");
-        const circle = document.getElementById("breath-circle");
-
-        box.style.display = "flex";
-
-        let t = 0;
-        const id = setInterval(()=>{
-            t++;
-            const scale = (t%4<2)?1.5:1;
-            circle.style.transform = `scale(${scale})`;
-
-            if(t>20){
-                clearInterval(id);
-                box.style.display="none";
-                resolve();
-            }
-        },1000);
-    });
-}
-
-// =========================
-// MAIN LOOP
-// =========================
-async function runSessionLoop(){
-    if(phaseRunning) return;
-    phaseRunning = true;
-
-    while(true){
-        await fetchSession();
-
-        // STORY
-        await runStory();
-
-        // GAME 1
-        stats.totalSeconds = 300;
-        await startGameBlock(300);
-
-        // MISSION
-        await runMission();
-
-        // GAME 2 (más difícil)
-        levels[0].speedMult += 0.2;
-        levels[1].speedMult += 0.3;
-        levels[2].speedMult += 0.4;
-
-        stats.totalSeconds = 300;
-        await startGameBlock(300);
-
-        // BREATHING
-        await runBreathing();
-    }
-}
-
-// =========================
-// START OVERRIDE
-// =========================
-function startGame(){
-    document.getElementById('overlay').style.display = 'none';
-
-    // Mantiene tu loop de canvas intacto
-    function gameLoop() { update(); draw(); requestAnimationFrame(gameLoop); }
-    gameLoop();
-
-    setInterval(spawn, 750);
-
-    runSessionLoop(); // 🔥 NUEVO CONTROLADOR
+function resumeTraining() {
+    consecutiveErrors = 0;
+    document.getElementById('discipline-block').style.display = 'none';
+    active = true;
 }
 </script>
 </body>
