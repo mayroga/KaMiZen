@@ -32,8 +32,9 @@
         }
         .label { font-size: 8px; color: var(--neon-blue); letter-spacing: 1px; display: block; text-transform: uppercase; }
         .value { font-size: 14px; font-weight: 900; display: block; }
+        
         #general-clock { position: absolute; bottom: 10px; right: 10px; color: var(--neon-gold); font-size: 12px; z-index: 1000; }
-        #game-clock { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); color: var(--neon-red); font-size: 20px; font-weight: 900; z-index: 1000; }
+        #game-clock { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); color: var(--neon-red); font-size: 24px; font-weight: 900; z-index: 1000; display: none; }
 
         /* ESCENARIO PRINCIPAL */
         #stage {
@@ -43,37 +44,41 @@
         }
 
         #display-text { font-size: 1.5rem; font-weight: 900; color: var(--neon-blue); text-shadow: 0 0 15px var(--neon-blue); margin-bottom: 15px; width: 100%; }
-        #sub-text { font-size: 1rem; color: #ccc; max-width: 600px; line-height: 1.4; overflow-y: auto; max-height: 30vh; }
+        #sub-text { font-size: 1rem; color: #ccc; max-width: 600px; line-height: 1.4; margin-bottom: 20px; }
 
-        /* BOTONES INTERACTIVOS */
+        /* BOTONES */
         .btn-core {
             padding: 15px 30px; background: var(--neon-blue); color: black; border: none;
-            font-family: 'Orbitron'; font-weight: 900; cursor: pointer; margin-top: 20px;
+            font-family: 'Orbitron'; font-weight: 900; cursor: pointer;
             text-transform: uppercase; clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
+            box-shadow: 0 0 20px var(--neon-blue);
         }
-        #options-container { margin-top: 20px; display: grid; gap: 10px; width: 100%; max-width: 400px; }
+        #options-container { display: grid; gap: 10px; width: 100%; max-width: 400px; }
         .btn-opt {
-            padding: 12px; background: rgba(0,242,255,0.1); border: 1px solid var(--neon-blue);
-            color: white; font-family: 'Orbitron'; font-size: 0.8rem; cursor: pointer; transition: 0.3s;
+            padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--neon-blue);
+            color: white; font-family: 'Orbitron'; font-size: 0.8rem; cursor: pointer;
         }
 
-        /* RESPIRACIÓN CIRCULAR */
-        #breath-wrap { display: none; margin-top: 20px; position: relative; flex-direction: column; align-items: center; }
+        /* RESPIRACIÓN */
+        #breath-wrap { display: none; margin-top: 20px; flex-direction: column; align-items: center; }
         #breath-circle {
             width: 140px; height: 140px; border: 5px solid var(--neon-blue);
             border-radius: 50%; transition: transform 2s ease-in-out;
             display: flex; align-items: center; justify-content: center;
             box-shadow: 0 0 30px var(--neon-blue);
         }
-        #breath-info { font-size: 0.75rem; color: var(--neon-gold); margin-top: 15px; max-width: 280px; font-style: italic; }
 
-        /* JUEGO DE PALABRAS (GAMEPLAY) */
-        #gameCanvas { position: fixed; inset: 0; display: none; z-index: 100; cursor: crosshair; }
-        .skip-btn { position: absolute; bottom: 20px; left: 20px; font-size: 10px; opacity: 0.6; z-index: 2000; background: none; border: 1px solid white; color: white; padding: 5px; }
+        /* JUEGO */
+        #gameCanvas { position: fixed; inset: 0; display: none; z-index: 100; }
+        .skip-btn { position: absolute; bottom: 20px; left: 20px; font-size: 10px; z-index: 2000; padding: 10px; background: rgba(255,0,0,0.3); color: white; border: none; font-family: 'Orbitron'; }
 
-        /* INPUTS */
-        input[type="text"] { background: transparent; border: 2px solid var(--neon-blue); color: white; padding: 10px; font-family: 'Orbitron'; text-align: center; outline: none; width: 80%; }
         .hidden { display: none !important; }
+        input { background: transparent; border: 2px solid var(--neon-blue); color: white; padding: 12px; font-family: 'Orbitron'; text-align: center; width: 80%; max-width: 300px; outline: none; margin-bottom: 20px; }
+
+        @media (min-width: 768px) {
+            #display-text { font-size: 2.8rem; }
+            .data-box { max-width: 180px; }
+        }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
 </head>
@@ -81,48 +86,45 @@
 
 <div id="hud">
     <div class="data-box"><span class="label">NET WORTH</span><span id="stat-money" class="value">$0</span></div>
-    <div class="data-box" style="border-color: var(--neon-gold);"><span class="label">SESSION</span><span id="stat-id" class="value">0</span></div>
-    <div class="data-box" style="border-color: var(--neon-red);"><span class="label">STABILITY</span><span id="stat-health" class="value">100%</span></div>
+    <div class="data-box" style="border-color: var(--neon-gold);"><span class="label">STABILITY</span><span id="stat-health" class="value">100%</span></div>
 </div>
 
 <div id="stage">
-    <div id="content-area">
-        <h2 id="display-text">WELCOME TO AL CIELO</h2>
-        <p id="sub-text">IDENTIFY YOURSELF TO INITIALIZE NEURO-TRAINING</p>
-        <div id="input-wrap" style="margin-top: 20px;">
-            <input type="text" id="client-name" placeholder="TYPE YOUR NAME">
-        </div>
-        <div id="options-container"></div>
-        <button id="main-btn" class="btn-core">START TRAINING</button>
+    <h2 id="display-text">KAMIZEN SYSTEM</h2>
+    <p id="sub-text">Prepare your mind for the mission.</p>
+    
+    <div id="input-area">
+        <input type="text" id="user-name" placeholder="ENTER YOUR NAME">
     </div>
 
+    <div id="options-container"></div>
+
     <div id="breath-wrap">
-        <div id="breath-circle">
-            <span id="breath-label" style="font-size: 0.9rem; font-weight: 900;">INHALE</span>
-        </div>
-        <div id="breath-info"></div>
+        <div id="breath-circle"><span id="breath-label" style="font-size: 1.2rem; font-weight: 900;">INHALE</span></div>
+        <p id="breath-info" style="font-size: 0.8rem; color: var(--neon-gold); margin-top: 15px;"></p>
     </div>
+
+    <button id="main-btn" class="btn-core">INITIALIZE</button>
 </div>
 
 <canvas id="gameCanvas"></canvas>
 <div id="general-clock">MISSION TIME: 00:00</div>
-<div id="game-clock" class="hidden">05:00</div>
-<button class="skip-btn hidden" id="skip-btn">SKIP PHASE</button>
+<div id="game-clock">05:00</div>
+<button id="skip-game" class="skip-btn hidden">SKIP PHASE</button>
 
 <script>
-    // --- STATE ---
-    let stats = { money: 0, health: 100, index: 0, name: "Explorer", wrongClicks: 0, totalGameTime: 0 };
-    let sessionData = null;
-    let totalSeconds = 0;
-    let gameSeconds = 300;
-    let isGameRunning = false;
+    // --- CONFIGURACIÓN Y ESTADO ---
+    let stats = { money: 0, health: 100, name: "", wrongHits: 0, totalTime: 0 };
+    let isGameActive = false;
     let synth = window.speechSynthesis;
-    
+    let gameTimer = 300; 
+
     const ui = {
         text: document.getElementById('display-text'),
         sub: document.getElementById('sub-text'),
-        mainBtn: document.getElementById('main-btn'),
-        optCont: document.getElementById('options-container'),
+        btn: document.getElementById('main-btn'),
+        input: document.getElementById('input-area'),
+        opts: document.getElementById('options-container'),
         breath: document.getElementById('breath-wrap'),
         circle: document.getElementById('breath-circle'),
         label: document.getElementById('breath-label'),
@@ -130,284 +132,256 @@
         canvas: document.getElementById('gameCanvas'),
         gClock: document.getElementById('general-clock'),
         gameClock: document.getElementById('game-clock'),
-        skip: document.getElementById('skip-btn')
+        skip: document.getElementById('skip-game')
     };
 
     const ctx = ui.canvas.getContext('2d');
     let objects = [];
+    let gameLoopReq;
 
-    // --- CORE UTILS ---
-    const sleep = ms => new Promise(r => setTimeout(r, ms));
-    
-    function speak(text) {
+    // --- FUNCIONES DE VOZ ---
+    function narrate(text) {
         synth.cancel();
-        const msg = new SpeechSynthesisUtterance(text);
-        msg.rate = 0.8; // Voz pausada narrador
-        msg.pitch = 0.9;
-        msg.lang = 'en-US';
-        synth.speak(msg);
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = 0.85; // Pausado
+        utterance.pitch = 0.9; // Masculino
+        utterance.lang = 'en-US';
+        synth.speak(utterance);
     }
 
-    function updateStats() {
-        document.getElementById('stat-money').innerText = "$" + stats.money;
-        document.getElementById('stat-health').innerText = stats.health + "%";
-        document.getElementById('stat-id').innerText = stats.index;
-    }
-
-    // --- SYSTEM FLOW (PIES, CUERPO, MANOS, CABEZA) ---
-    ui.mainBtn.onclick = async () => {
-        const nameInput = document.getElementById('client-name').value;
-        if(nameInput) stats.name = nameInput;
-        document.getElementById('input-wrap').classList.add('hidden');
-        ui.mainBtn.classList.add('hidden');
-        startGeneralClock();
-        await runFullFlow();
-    };
-
+    // --- RELOJ GENERAL ---
     function startGeneralClock() {
         setInterval(() => {
-            totalSeconds++;
-            const m = Math.floor(totalSeconds / 60);
-            const s = totalSeconds % 60;
+            stats.totalTime++;
+            const m = Math.floor(stats.totalTime / 60);
+            const s = stats.totalTime % 60;
             ui.gClock.innerText = `MISSION TIME: ${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
         }, 1000);
     }
 
-    async function runFullFlow() {
-        // Fetch Inicial
-        const res = await fetch('/api/session/start');
-        sessionData = await res.json();
-        stats.index = sessionData.index;
-        updateStats();
+    // --- FLUJO PRINCIPAL ---
+    ui.btn.onclick = async () => {
+        const name = document.getElementById('user-name').value;
+        if(!name) { alert("Please enter your name"); return; }
+        stats.name = name;
+        ui.input.classList.add('hidden');
+        ui.btn.classList.add('hidden');
+        startGeneralClock();
+        await startCoreFlow();
+    };
 
-        // 1. STORIES (Cuerpo - Narración)
-        await playPhaseStory();
+    async function startCoreFlow() {
+        // 1. Stories (Cuerpo)
+        await showStory("WELCOME AGENT " + stats.name, "In this world, your focus is your greatest weapon. You must protect your stability while building your future.");
         
-        // 2. JUEGO 1 (Manos - 5 min)
-        await runWordGame(300);
+        // 2. Primer Juego (Manos)
+        await runWordGame();
 
-        // 3. MISSIONS (Cabeza - Misiones, Decisiones, Respiración)
-        await playPhaseMissions();
+        // 3. Misiones y Respiración (Cabeza)
+        await runMissions();
 
-        // 4. JUEGO 2 (Manos - 5 min)
-        await runWordGame(300);
+        // 4. Segundo Juego (Manos)
+        await runWordGame();
 
-        // 5. DIAGNÓSTICO (Cabeza - Final)
-        await showFinalDiagnostic();
+        // 5. Diagnóstico Final
+        await showDiagnostic();
     }
 
-    // --- PHASE: STORIES ---
-    async function playPhaseStory() {
-        ui.text.innerText = sessionData.story.t;
-        ui.sub.innerText = sessionData.story.en;
-        speak(sessionData.story.en);
-        
-        await sleep(5000); 
-        ui.mainBtn.innerText = "CONTINUE";
-        ui.mainBtn.classList.remove('hidden');
+    async function showStory(title, content) {
+        ui.text.innerText = title;
+        ui.sub.innerText = content;
+        narrate(content);
+        await new Promise(r => setTimeout(r, 4000));
+        ui.btn.innerText = "CONTINUE";
+        ui.btn.classList.remove('hidden');
         return new Promise(resolve => {
-            ui.mainBtn.onclick = () => {
-                ui.mainBtn.classList.add('hidden');
-                resolve();
-            }
+            ui.btn.onclick = () => { ui.btn.classList.add('hidden'); resolve(); };
         });
     }
 
-    // --- PHASE: MISSIONS (Logística de JSON) ---
-    async function playPhaseMissions() {
-        const blocks = sessionData.missions[0].b;
-        for (const block of blocks) {
-            await processMissionBlock(block);
-        }
-    }
-
-    async function processMissionBlock(block) {
-        ui.optCont.innerHTML = "";
-        ui.breath.style.display = "none";
-        ui.sub.innerText = "";
-
-        if (block.t === 'v' || block.t === 'h') {
-            ui.text.innerText = block.tx.en;
-            speak(block.tx.en);
-            await sleep(4000);
-        } 
-        else if (block.t === 'story') {
-            ui.text.innerText = "KNOWLEDGE BLOCK";
-            ui.sub.innerText = block.en || block.story.en;
-            speak(ui.sub.innerText);
-            await sleep(6000);
-        }
-        else if (block.t === 'd') { // Decisiones con 4 colores
-            ui.text.innerText = block.q.en;
-            speak(block.q.en);
-            return new Promise(resolve => {
-                block.op.forEach((opt, idx) => {
-                    const btn = document.createElement('button');
-                    btn.className = 'btn-opt';
-                    btn.innerText = opt;
-                    btn.onclick = () => {
-                        const isCorrect = idx === block.c;
-                        // Lógica de colores según precisión
-                        if(isCorrect) { btn.style.backgroundColor = 'var(--neon-green)'; stats.money += 1000; }
-                        else if(idx === 0) { btn.style.backgroundColor = 'var(--neon-red)'; stats.health -= 20; }
-                        else if(idx === 1) { btn.style.backgroundColor = 'var(--neon-orange)'; stats.health -= 10; }
-                        else { btn.style.backgroundColor = '#f1c40f'; stats.health -= 5; } // Amarillo
-                        
-                        ui.sub.innerText = block.ex[idx];
-                        speak(block.ex[idx]);
-                        updateStats();
-                        
-                        ui.mainBtn.innerText = "NEXT ACTION";
-                        ui.mainBtn.classList.remove('hidden');
-                        ui.mainBtn.onclick = () => { ui.mainBtn.classList.add('hidden'); resolve(); };
-                    };
-                    ui.optCont.appendChild(btn);
-                });
-            });
-        }
-        else if (block.t === 'br' || block.t === 'breath_auto' || block.t === 'sil') {
-            ui.text.innerText = block.t === 'sil' ? "CALM & SILENCE" : "BREATHING SHIELD";
-            ui.breath.style.display = "flex";
-            
-            // Explicaciones científicas variables para evitar dogmas
-            const tips = [
-                "Oxygenating the prefrontal cortex improves decision making.",
-                "Slowing the breath signals safety to your nervous system.",
-                "Deep exhales activate the Vagus nerve for instant calm.",
-                "Focusing on air flow reduces cortisol levels by 20%."
-            ];
-            ui.info.innerText = tips[Math.floor(Math.random()*tips.length)];
-            
-            let d = Math.max(block.d || 19, 19); 
-            for(let i=0; i < d/4; i++) {
-                ui.label.innerText = "INHALE";
-                ui.circle.style.transform = "scale(1.4)";
-                await sleep(2000);
-                ui.label.innerText = "EXHALE";
-                ui.circle.style.transform = "scale(1.0)";
-                await sleep(2000);
-            }
-        }
-    }
-
-    // --- PHASE: WORD GAME (Core de 5 min) ---
-    async function runWordGame(duration) {
+    // --- JUEGO DE PALABRAS (5 MINUTOS) ---
+    async function runWordGame() {
         ui.canvas.style.display = "block";
-        ui.gameClock.classList.remove('hidden');
+        ui.gameClock.style.display = "block";
         ui.skip.classList.remove('hidden');
-        isGameRunning = true;
-        gameSeconds = duration;
+        isGameActive = true;
+        gameTimer = 300;
+        objects = [];
 
-        const loop = setInterval(() => {
-            if(!isGameRunning) return;
-            gameSeconds--;
-            const m = Math.floor(gameSeconds/60);
-            const s = gameSeconds % 60;
-            ui.gameClock.innerText = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-            if(gameSeconds <= 0) endGame();
+        const timerInterval = setInterval(() => {
+            if(!isGameActive) return;
+            gameTimer--;
+            const m = Math.floor(gameTimer/60);
+            const s = gameTimer % 60;
+            ui.gameClock.innerText = `${m}:${String(s).padStart(2,'0')}`;
+            if(gameTimer <= 0) end();
         }, 1000);
 
         function spawn() {
-            if(!isGameRunning) return;
+            if(!isGameActive) return;
             const words = [
-                {t: "TRUTH", p: true}, {t: "FOCUS", p: true}, {t: "CALM", p: true},
-                {t: "LIES", p: false}, {t: "CHAOS", p: false}, {t: "ANXIETY", p: false}
+                {t: "TRUTH", p: true}, {t: "SAVINGS", p: true}, {t: "FOCUS", p: true},
+                {t: "LIES", p: false}, {t: "CHAOS", p: false}, {t: "BULLY", p: false}
             ];
             const w = words[Math.floor(Math.random()*words.length)];
             objects.push({
                 text: w.t, pos: w.p,
-                x: Math.random()*ui.canvas.width, y: -50,
-                s: 2 + Math.random()*3
+                x: Math.random() * (ui.canvas.width - 100) + 50,
+                y: -50,
+                s: 2 + Math.random() * 3
             });
-            setTimeout(spawn, 1000);
+            setTimeout(spawn, 1200);
         }
+
         spawn();
         gameAnimate();
 
         return new Promise(resolve => {
-            ui.skip.onclick = () => endGame();
-            function endGame() {
-                clearInterval(loop);
-                isGameRunning = false;
+            ui.skip.onclick = () => end();
+            function end() {
+                clearInterval(timerInterval);
+                isGameActive = false;
                 ui.canvas.style.display = "none";
-                ui.gameClock.classList.add('hidden');
+                ui.gameClock.style.display = "none";
                 ui.skip.classList.add('hidden');
-                objects = [];
+                cancelAnimationFrame(gameLoopReq);
                 resolve();
             }
         });
     }
 
     function gameAnimate() {
-        if(!isGameRunning) return;
-        ctx.fillStyle = 'rgba(5,5,8,0.3)';
+        if(!isGameActive) return;
+        ctx.fillStyle = 'rgba(5, 5, 8, 0.3)';
         ctx.fillRect(0,0,ui.canvas.width, ui.canvas.height);
-
+        
         objects.forEach((obj, i) => {
             obj.y += obj.s;
             ctx.fillStyle = obj.pos ? 'var(--neon-blue)' : 'var(--neon-red)';
-            ctx.font = "900 18px Orbitron";
+            ctx.font = "900 20px Orbitron";
+            ctx.textAlign = "center";
             ctx.fillText(obj.text, obj.x, obj.y);
 
-            // Laser effect
-            ctx.strokeStyle = 'rgba(0,242,255,0.1)';
-            ctx.beginPath(); ctx.moveTo(obj.x, obj.y); ctx.lineTo(window.innerWidth/2, window.innerHeight); ctx.stroke();
+            // Efecto Laser
+            ctx.strokeStyle = obj.pos ? 'rgba(0,242,255,0.1)' : 'rgba(255,0,0,0.1)';
+            ctx.beginPath(); ctx.moveTo(obj.x, obj.y); ctx.lineTo(ui.canvas.width/2, ui.canvas.height); ctx.stroke();
+
+            if(obj.y > ui.canvas.height) objects.splice(i, 1);
         });
-        requestAnimationFrame(gameAnimate);
+        gameLoopReq = requestAnimationFrame(gameAnimate);
     }
 
-    // Interacción - Penalización 3 errores
-    window.addEventListener('mousedown', (e) => {
-        if(!isGameRunning) return;
+    // Interacción Juego
+    ui.canvas.onclick = (e) => {
         objects.forEach((obj, i) => {
-            const d = Math.sqrt((e.clientX-obj.x)**2 + (e.clientY-obj.y)**2);
-            if(d < 40) {
+            const d = Math.hypot(e.clientX - obj.x, e.clientY - obj.y);
+            if(d < 50) {
                 if(!obj.pos) {
-                    stats.wrongClicks++;
-                    if(stats.wrongClicks >= 3) triggerStopPenalty();
+                    stats.wrongHits++;
+                    if(stats.wrongHits >= 3) triggerPenalty();
                 } else {
-                    stats.money += 250;
-                    updateStats();
+                    stats.money += 100;
+                    document.getElementById('stat-money').innerText = "$" + stats.money;
                 }
                 objects.splice(i, 1);
             }
         });
-    });
+    };
 
-    async function triggerStopPenalty() {
-        isGameRunning = false;
-        stats.wrongClicks = 0;
-        const currentMsg = "Distraction detected. Negativity affects your balance. Sign this commitment to reclaim your path.";
-        ui.text.innerText = "STABILITY WARNING";
-        ui.sub.innerText = currentMsg;
-        speak(currentMsg);
-        
-        ui.optCont.innerHTML = '<button class="btn-core" id="sign-btn">I COMMIT AND WILL REJOIN</button>';
-        document.getElementById('sign-btn').onclick = () => {
-            ui.optCont.innerHTML = "";
-            isGameRunning = true;
+    async function triggerPenalty() {
+        isGameActive = false;
+        stats.wrongHits = 0;
+        const msg = "Focus lost. Negative choices block your success. Sign this commitment to rejoin.";
+        ui.text.innerText = "WARNING: UNSTABLE";
+        ui.sub.innerText = msg;
+        narrate(msg);
+        ui.opts.innerHTML = '<button class="btn-core">I COMMIT TO FOCUS</button>';
+        ui.opts.firstChild.onclick = () => {
+            ui.opts.innerHTML = "";
+            isGameActive = true;
             gameAnimate();
         };
     }
 
-    // --- FINAL DIAGNOSTIC ---
-    async function showFinalDiagnostic() {
-        ui.text.innerText = "NEURO-DIAGNOSTIC COMPLETE";
-        let feedback = stats.health > 80 ? "HIGH STABILITY DETECTED. You are a natural protector." : "STABILITY MODERATE. You must strengthen your mental shield.";
+    // --- MISIONES Y RESPIRACIÓN ---
+    async function runMissions() {
+        // Bloque de Respiración
+        await startBreathing("CALM & OBSERVATION", "Deep breathing lowers your heart rate and clears the mind. Scientific studies show it reduces cortisol by 25%.");
         
-        ui.sub.innerText = `${stats.name}, ${feedback} \n\nScientific Fact: Box Breathing (4-4-4-4) lowers heart rate in 60 seconds. This builds confidence and safety for children and seniors alike.`;
-        speak(ui.sub.innerText);
-        
-        ui.mainBtn.innerText = "RESTART SYSTEM";
-        ui.mainBtn.classList.remove('hidden');
-        ui.mainBtn.onclick = () => {
-            // Limpieza total antes de reiniciar
-            sessionStorage.clear();
-            location.reload();
-        };
+        // Pregunta de Decisión
+        await askMission("An emergency happens at school. What is the protocol?", 
+            ["Run/Hide/Fight", "Call Parents", "Hide and Scream", "Do Nothing"], 
+            0, "RUN if you can, HIDE if you can't, FIGHT only as a last resort.");
     }
 
-    // --- RESPONSIVE ADJUSTMENTS ---
+    async function startBreathing(title, info) {
+        ui.text.innerText = title;
+        ui.sub.innerText = "";
+        ui.breath.style.display = "flex";
+        ui.info.innerText = info;
+        narrate(info);
+
+        for(let i=0; i<5; i++) {
+            ui.label.innerText = "INHALE";
+            ui.circle.style.transform = "scale(1.4)";
+            await new Promise(r => setTimeout(r, 2000));
+            ui.label.innerText = "EXHALE";
+            ui.circle.style.transform = "scale(1)";
+            await new Promise(r => setTimeout(r, 2000));
+        }
+        ui.breath.style.display = "none";
+    }
+
+    async function askMission(q, ops, correct, expl) {
+        ui.text.innerText = "DECISION TIME";
+        ui.sub.innerText = q;
+        narrate(q);
+        ui.opts.innerHTML = "";
+
+        return new Promise(resolve => {
+            ops.forEach((op, i) => {
+                const b = document.createElement('button');
+                b.className = 'btn-opt';
+                b.innerText = op;
+                b.onclick = () => {
+                    const buttons = ui.opts.querySelectorAll('button');
+                    buttons.forEach(btn => btn.disabled = true);
+                    
+                    if(i === correct) { b.style.background = 'var(--neon-green)'; stats.money += 500; }
+                    else { b.style.background = 'var(--neon-red)'; stats.health -= 20; }
+                    
+                    document.getElementById('stat-health').innerText = stats.health + "%";
+                    ui.sub.innerText = expl;
+                    narrate(expl);
+                    
+                    ui.btn.innerText = "CONTINUE";
+                    ui.btn.classList.remove('hidden');
+                    ui.btn.onclick = () => {
+                        ui.btn.classList.add('hidden');
+                        ui.opts.innerHTML = "";
+                        resolve();
+                    };
+                };
+                ui.opts.appendChild(b);
+            });
+        });
+    }
+
+    async function showDiagnostic() {
+        ui.text.innerText = "FINAL DIAGNOSTIC";
+        const finalMsg = stats.health > 70 ? 
+            "Excellent stability. You are ready for the world." : 
+            "You need more practice in focus. Balance is key to survival.";
+        
+        ui.sub.innerText = `${stats.name}, your total assets are $${stats.money}. \n\nRemember: Box breathing (4-4-4-4) is used by professionals to maintain calm under pressure.`;
+        narrate(ui.sub.innerText);
+        
+        ui.btn.innerText = "RESTART SYSTEM";
+        ui.btn.classList.remove('hidden');
+        ui.btn.onclick = () => location.reload();
+    }
+
+    // Responsive
     window.onresize = () => {
         ui.canvas.width = window.innerWidth;
         ui.canvas.height = window.innerHeight;
