@@ -1,314 +1,329 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>KAMIZEN SESSION</title>
-    <style>
-        :root {
-            --neon-blue: #00f2ff;
-            --neon-gold: #f1c40f;
-            --neon-red: #ff3131;
-            --bg-dark: #050508;
-        }
-        body { margin: 0; overflow: hidden; background: var(--bg-dark); color: white; font-family: 'Orbitron', sans-serif; cursor: none; touch-action: none; }
-       
-        #hud {
-            position: absolute; top: 15px; width: 100%;
-            display: flex; justify-content: space-evenly;
-            z-index: 100; pointer-events: none;
-        }
-        .data-box {
-            background: rgba(0, 0, 0, 0.95);
-            border: 2px solid var(--neon-blue);
-            padding: 10px; text-align: center;
-            min-width: 130px; box-shadow: 0 0 20px rgba(0, 242, 255, 0.1);
-        }
-        .label { font-size: 10px; color: var(--neon-blue); letter-spacing: 2px; font-weight: 900; display: block; }
-        .value { font-size: 24px; font-weight: 900; display: block; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>KAMIZEN SESSION</title>
 
-        #timer-display {
-            position: absolute; bottom: 30px; width: 100%; text-align: center;
-            color: var(--neon-red); font-size: 35px; font-weight: 900;
-            text-shadow: 0 0 20px var(--neon-red); z-index: 100;
-        }
+<style>
+:root {
+    --neon-blue: #00f2ff;
+    --neon-gold: #f1c40f;
+    --neon-red: #ff3131;
+    --bg-dark: #050508;
+}
 
-        #overlay, #discipline-block {
-            position: fixed; inset: 0; background: radial-gradient(circle, #111 0%, #000 100%);
-            display: flex; flex-direction: column; justify-content: center;
-            align-items: center; z-index: 1000; text-align: center; padding: 20px;
-        }
+body {
+    margin: 0;
+    overflow: hidden;
+    background: var(--bg-dark);
+    color: white;
+    font-family: 'Orbitron', sans-serif;
+    cursor: none;
+    touch-action: none;
+}
 
-        #discipline-block { background: rgba(150, 0, 0, 0.98); display: none; z-index: 5000; }
+/* HUD */
+#hud {
+    position: absolute;
+    top: 15px;
+    width: 100%;
+    display: flex;
+    justify-content: space-evenly;
+    z-index: 100;
+    pointer-events: none;
+}
 
-        .start-btn, .commit-btn {
-            padding: 25px 50px; background: var(--neon-blue); color: black;
-            border: none; font-family: 'Orbitron'; font-weight: 900;
-            cursor: pointer; letter-spacing: 3px; font-size: 1.2rem;
-            box-shadow: 0 0 30px var(--neon-blue); margin-top: 20px;
-        }
-        .commit-btn { background: white; box-shadow: 0 0 30px white; }
-       
-        #flash-alert { position: fixed; inset: 0; pointer-events: none; z-index: 50; opacity: 0; }
-        .warning-text { color: yellow; font-size: 1.5rem; margin: 20px; font-weight: 900; }
-    </style>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
+.data-box {
+    background: rgba(0, 0, 0, 0.95);
+    border: 2px solid var(--neon-blue);
+    padding: 10px;
+    text-align: center;
+    min-width: 130px;
+}
+
+.label {
+    font-size: 10px;
+    color: var(--neon-blue);
+    font-weight: 900;
+}
+
+.value {
+    font-size: 24px;
+    font-weight: 900;
+}
+
+/* TIMER */
+#timer-display {
+    position: absolute;
+    bottom: 30px;
+    width: 100%;
+    text-align: center;
+    color: var(--neon-red);
+    font-size: 35px;
+    font-weight: 900;
+    z-index: 100;
+}
+
+/* OVERLAY */
+#overlay, #discipline-block {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle, #111 0%, #000 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    text-align: center;
+}
+
+#discipline-block {
+    background: rgba(150, 0, 0, 0.98);
+    display: none;
+    z-index: 5000;
+}
+
+.start-btn, .commit-btn {
+    padding: 25px 50px;
+    background: var(--neon-blue);
+    color: black;
+    border: none;
+    font-weight: 900;
+    cursor: pointer;
+    font-size: 1.2rem;
+    margin-top: 20px;
+}
+
+.commit-btn {
+    background: white;
+}
+
+/* FLASH */
+#flash-alert {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 50;
+    opacity: 0;
+}
+
+/* ENGINE REQUIRED UI (AÑADIDO) */
+#centerText {
+    position: absolute;
+    top: 40%;
+    width: 100%;
+    text-align: center;
+    font-size: 28px;
+    font-weight: bold;
+    z-index: 2;
+}
+
+#explanationBox {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    width: 280px;
+    background: #111;
+    border: 1px solid var(--neon-blue);
+    padding: 10px;
+    opacity: 0;
+    z-index: 10;
+}
+
+#expTitle { font-weight: bold; }
+#expBody { font-size: 14px; }
+
+#continueBtn, #resetBtn { display:none; }
+
+.word {
+    position: absolute;
+    color: #00ff41;
+    font-size: 18px;
+    z-index: 1;
+}
+</style>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
 </head>
+
 <body>
 
 <div id="flash-alert"></div>
+
+<div id="centerText"></div>
 <div id="timer-display">TIME REMAINING: <span id="clock">27:00</span></div>
 
 <div id="hud">
-    <div class="data-box" style="border-color: var(--neon-gold);"><span class="label">NET WORTH</span><span id="val-money" class="value">$0</span></div>
-    <div class="data-box" style="border-color: var(--neon-red);"><span class="label">STABILITY</span><span id="val-health" class="value">100%</span></div>
-    <div class="data-box" style="border-color: var(--neon-blue);"><span class="label">LEVEL</span><span id="val-rank" class="value">1</span></div>
+    <div class="data-box"><span class="label">NET WORTH</span><span id="val-money" class="value">$0</span></div>
+    <div class="data-box"><span class="label">STABILITY</span><span id="val-health" class="value">100%</span></div>
+    <div class="data-box"><span class="label">LEVEL</span><span id="val-rank" class="value">1</span></div>
 </div>
 
-<!-- DISCIPLINARY BLOCK -->
+<!-- ENGINE REQUIRED BOX -->
+<div id="explanationBox">
+    <div id="expTitle">INFO</div>
+    <div id="expBody"></div>
+</div>
+
+<audio id="sfxGlass" src="https://assets.mixkit.co/sfx/preview/mixkit-glass-click-1110.mp3"></audio>
+
+<!-- DISCIPLINE -->
 <div id="discipline-block">
-    <h1 style="color: white; font-size: 50px; text-shadow: 0 0 20px black;">HALTED</h1>
-    <div class="warning-text">WEAKNESS DETECTED: LACK OF FOCUS</div>
-    <p style="max-width: 600px; line-height: 1.6;">You have triggered 3 negative concepts. Your mental discipline has failed. To continue, you must accept the following commitment.:</p>
-    <div id="dynamic-message" style="background: black; padding: 20px; border: 2px solid white; margin: 20px; font-weight: 900; color: var(--neon-gold);"></div>
-    <button class="commit-btn" onclick="resumeTraining()">I ACCEPT THE COMMITMENT AND WILL REJOIN</button>
+    <h1>HALTED</h1>
+    <div>You triggered 3 negative concepts</div>
+    <div id="dynamic-message"></div>
+    <button class="commit-btn" onclick="resumeTraining()">I ACCEPT</button>
 </div>
 
+<!-- START -->
 <div id="overlay">
-    <h1 style="color: var(--neon-blue); letter-spacing: 15px; font-size: 60px; margin:0;">KAMIZEN SESSION</h1>
-    <h2 style="color: var(--neon-gold); font-size: 18px; margin-bottom: 40px;">USA SURVIVAL SIMULATOR</h2>
+    <h1>KAMIZEN SESSION</h1>
     <button class="start-btn" onclick="startGame()">INITIALIZE TRAINING</button>
 </div>
 
 <canvas id="gameCanvas"></canvas>
 
+<script src="js/engine.js"></script>
+
 <script>
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
-let audioCtx;
-
-const levels = [
-    { name: "1", duration: 5 * 60, laserWidth: 1, laserDash: [10, 5], speedMult: 1, data: [
-        { text: "TELLING TRUTH", type: "pos", impact: 300, color: "#2ecc71", freq: 523 },
-        { text: "CLEAN ROOM", type: "pos", impact: 200, color: "#2ecc71", freq: 587 },
-        { text: "SAYING SORRY", type: "pos", impact: 400, color: "#00f2ff", freq: 659 },
-        { text: "SAVE/BUSSINESS", type: "pos", impact: 150, color: "#f1c40f", freq: 784 },
-        { text: "LISTEN YOUR PARENTS", type: "pos", impact: 250, color: "#2ecc71", freq: 440 },
-        { text: "FOLLOW ADVICE", type: "pos", impact: 300, color: "#00f2ff", freq: 493 },
-        { text: "RESPECT", type: "pos", impact: 200, color: "#2ecc71", freq: 523 },
-        { text: "HIDING TRUTH", type: "neg", impact: -100, color: "#ff3131", freq: 110 },
-        { text: "MESSY ROOM", type: "neg", impact: -50, color: "#e67e22", freq: 90 },
-        { text: "DISOBEDIENCE", type: "neg", impact: -150, color: "#ff3131", freq: 85 }
-    ]},
-    { name: "2", duration: 12 * 60, laserWidth: 5, laserDash: [2, 2], speedMult: 1.6, data: [
-        { text: "TEAMWORK", type: "pos", impact: 600, color: "#2ecc71", freq: 783 },
-        { text: "INVESTMENT", type: "pos", impact: 1000, color: "#f1c40f", freq: 880 },
-        { text: "CYBER SECURITY", type: "pos", impact: 500, color: "#00f2ff", freq: 987 },
-        { text: "KNOW YOUR RIGHTS", type: "pos", impact: 800, color: "#f1c40f", freq: 750 },
-        { text: "OBSERVE", type: "pos", impact: 400, color: "#2ecc71", freq: 659 },
-        { text: "BE CAREFUL", type: "pos", impact: 350, color: "#00f2ff", freq: 698 },
-        { text: "LISTEN", type: "pos", impact: 300, color: "#2ecc71", freq: 740 },
-        { text: "PEER PRESSURE", type: "neg", impact: -500, color: "#ff3131", freq: 120 },
-        { text: "BULLYING", type: "neg", impact: -400, color: "#ff3131", freq: 70 },
-        { text: "SOCIAL MEDIA TRAP", type: "neg", impact: -200, color: "#e67e22", freq: 150 },
-        { text: "CREDIT CARD DEBT", type: "neg", impact: -100, color: "#e67e22", freq: 110 },
-        { text: "DO NOT TALK WITH STRANGERS", type: "neg", impact: -800, color: "#ff3131", freq: 95 }
-    ]},
-    { name: "3", duration: 10 * 60, laserWidth: 15, laserDash: [], speedMult: 2.3, data: [
-        { text: "ACTIVE SHOOTER DRILL", type: "pos", impact: 2000, color: "#2ecc71", freq: 1318 },
-        { text: "911 PROTOCOL", type: "pos", impact: 800, color: "#2ecc71", freq: 1396 },
-        { text: "SITUATIONAL AWARENESS", type: "pos", impact: 1500, color: "#00f2ff", freq: 1567 },
-        { text: "EXIT STRATEGY", type: "pos", impact: 600, color: "#2ecc71", freq: 1975 },
-        { text: "LOOK TO THE SIDES", type: "pos", impact: 500, color: "#2ecc71", freq: 880 },
-        { text: "BE ALERT", type: "pos", impact: 1000, color: "#f1c40f", freq: 1760 },
-        { text: "BE SAFE", type: "pos", impact: 1200, color: "#00f2ff", freq: 1864 },
-        { text: "OBSERVE SURROUNDING", type: "pos", impact: 900, color: "#2ecc71", freq: 1661 },
-        { text: "WALKING OUT/BE ALERT", type: "pos", impact: 850, color: "#f1c40f", freq: 1480 },
-        { text: "UNLOCKED FIREARM", type: "neg", impact: -5000, color: "#ff3131", freq: 60 },
-        { text: "STRANGER DANGER", type: "neg", impact: -2500, color: "#ff3131", freq: 50 },
-        { text: "PEER DRUG PRESSURE", type: "neg", impact: -3000, color: "#ff3131", freq: 40 }
-    ]}
-];
-
-const commitments = [
-"I PROMISE TO FILTER MY DISTRACTIONS AND FOCUS ON WHAT BUILDS MY VALUE.",
-"I RECOGNIZE THAT BAD DECISIONS DESTROY MY STABILITY. I WILL BE ALERT.",
-"MY MIND IS MY BEST WEAPON. I PROMISE NOT TO EXPOSE IT TO NEGATIVE CONCEPTS.",
-"I PROMISE TO LISTEN TO ADVICE AND OBSERVE MY SURROUNDINGS TO STAY SAFE.",
-"DISCIPLINE IS MY ONLY PATH TO SUCCESS. I RE-ENTER WITH TOTAL FOCUS."
-];
 
 let stats = { money: 0, health: 100, currentLevelIdx: 0, totalSeconds: 27 * 60 };
 let active = false;
 let objects = [];
-let particles = [];
+let user = { x: 0, y: 0, size: 60 };
 let consecutiveErrors = 0;
-const user = { x: 0, y: 0, size: 60 };
 
-function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-window.addEventListener('resize', resize); resize();
-
-function triggerSound(freq, type) {
-    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    const osc = audioCtx.createOscillator();
-    const g = audioCtx.createGain();
-    osc.type = type === 'pos' ? 'triangle' : 'sawtooth';
-    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-    g.gain.setValueAtTime(0.2, audioCtx.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 1.0);
-    osc.connect(g); g.connect(audioCtx.destination);
-    osc.start(); osc.stop(audioCtx.currentTime + 1.0);
-}
-
-function flashScreen(color) {
-    const f = document.getElementById('flash-alert');
-    f.style.background = color; f.style.opacity = "0.5";
-    setTimeout(() => f.style.opacity = "0", 150);
-}
-
-function triggerDisciplineBlock() {
-    active = false;
-    const msgBox = document.getElementById('dynamic-message');
-    msgBox.innerText = commitments[Math.floor(Math.random() * commitments.length)];
-    document.getElementById('discipline-block').style.display = 'flex';
-}
-
-function resumeTraining() {
-    consecutiveErrors = 0;
-    document.getElementById('discipline-block').style.display = 'none';
-    active = true;
-}
-
-function spawn() {
-    if(!active) return;
-    const lvl = levels[stats.currentLevelIdx];
-    const data = lvl.data[Math.floor(Math.random() * lvl.data.length)];
-    objects.push({
-        ...data,
-        x: Math.random() * (canvas.width - 300) + 150,
-        y: -100,
-        vx: (Math.random() - 0.5) * 6,
-        speed: (4 + Math.random() * 3) * lvl.speedMult
-    });
-}
-
-function update() {
-    if(!active) return;
-    stats.totalSeconds -= 1/60;
-   
-    let elapsed = (27 * 60) - stats.totalSeconds;
-    if (elapsed < 5 * 60) stats.currentLevelIdx = 0;
-    else if (elapsed < 17 * 60) stats.currentLevelIdx = 1;
-    else stats.currentLevelIdx = 2;
-
-    if(stats.totalSeconds <= 0) endGame("MISSION ACCOMPLISHED");
-
-    objects.forEach((obj, i) => {
-        obj.y += obj.speed;
-        obj.x += obj.vx + Math.sin(obj.y * 0.01) * 4;
-        if(obj.x < 100 || obj.x > canvas.width - 100) obj.vx *= -1;
-
-        const d = Math.sqrt((obj.x - user.x)**2 + (obj.y - user.y)**2);
-        if (d < user.size) {
-            if (obj.type === 'neg') {
-                stats.health -= 25;
-                stats.money = Math.floor(stats.money * 0.3);
-                consecutiveErrors++;
-                triggerSound(obj.freq, 'neg');
-                flashScreen('red');
-                if (consecutiveErrors >= 3) triggerDisciplineBlock();
-            } else {
-                stats.money += obj.impact;
-                stats.health = Math.min(100, stats.health + 5);
-                consecutiveErrors = 0; // Se reinicia al hacerlo bien
-                triggerSound(obj.freq, 'pos');
-                flashScreen('cyan');
-            }
-            createExplosion(obj.x, obj.y, obj.color);
-            objects.splice(i, 1);
-            updateHUD();
-        }
-        if(obj.y > canvas.height + 150) objects.splice(i, 1);
-    });
-
-    particles.forEach((p, i) => {
-        p.x += p.vx; p.y += p.vy; p.life -= 0.03;
-        if(p.life <= 0) particles.splice(i, 1);
-    });
-
-    if(stats.health <= 0) { stats.health = 100; stats.money = 0; updateHUD(); }
-    updateHUD();
-}
-
-function updateHUD() {
-    document.getElementById('val-money').innerText = "$" + stats.money;
-    document.getElementById('val-health').innerText = stats.health + "%";
-    document.getElementById('val-rank').innerText = stats.currentLevelIdx + 1;
-    const m = Math.floor(Math.max(0, stats.totalSeconds) / 60);
-    const s = Math.floor(Math.max(0, stats.totalSeconds) % 60);
-    document.getElementById('clock').innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
-}
-
-function createExplosion(x, y, color) {
-    for (let i = 0; i < 20; i++) {
-        particles.push({ x, y, vx: (Math.random()-0.5)*20, vy: (Math.random()-0.5)*20, life: 1, color });
+/* =========================
+   ENGINE CONNECT (SAFE)
+========================= */
+window.addEventListener("load", () => {
+    if (window.Engine) {
+        Engine.init();
+        // Engine.start() ❌ NO activado para evitar freeze
     }
+});
+
+/* =========================
+   SAFE SPEECH (ANTI FREEZE)
+========================= */
+let speaking = false;
+function safeSpeak(t){
+    try{
+        if(speaking) return;
+        speaking = true;
+        speechSynthesis.cancel();
+        const msg = new SpeechSynthesisUtterance(t);
+        msg.onend = () => speaking = false;
+        speechSynthesis.speak(msg);
+    }catch(e){ speaking = false; }
 }
 
-function draw() {
-    ctx.fillStyle = 'rgba(5, 5, 8, 0.4)';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    ctx.shadowBlur = 25; ctx.shadowColor = "#00f2ff";
-    ctx.strokeStyle = "#00f2ff"; ctx.lineWidth = 5;
-    ctx.beginPath(); ctx.arc(user.x, user.y, user.size - 20, 0, Math.PI * 2); ctx.stroke();
-
-    const currentLvl = levels[stats.currentLevelIdx];
-
-    objects.forEach(obj => {
-        if(obj.type === 'neg') {
-            ctx.strokeStyle = obj.color;
-            ctx.setLineDash(currentLvl.laserDash);
-            ctx.lineWidth = currentLvl.laserWidth;
-            ctx.beginPath(); ctx.moveTo(obj.x, obj.y); ctx.lineTo(user.x, user.y); ctx.stroke();
-            ctx.setLineDash([]);
-        }
-        ctx.font = "900 24px Orbitron";
-        const textWidth = ctx.measureText(obj.text).width;
-        ctx.fillStyle = "black";
-        ctx.fillRect(obj.x - textWidth/2 - 10, obj.y - 18, textWidth + 20, 35);
-        ctx.fillStyle = obj.color; ctx.textAlign = "center";
-        ctx.fillText(obj.text, obj.x, obj.y + 10);
-    });
-
-    particles.forEach(p => {
-        ctx.globalAlpha = p.life; ctx.fillStyle = p.color;
-        ctx.fillRect(p.x, p.y, 5, 5);
-    });
-    ctx.globalAlpha = 1;
-}
-
-const inputMove = e => {
-    const cx = e.touches ? e.touches[0].clientX : e.clientX;
-    const cy = e.touches ? e.touches[0].clientY : e.clientY;
-    user.x = cx; user.y = cy;
-};
-window.addEventListener('mousemove', inputMove);
-window.addEventListener('touchmove', e => { inputMove(e); e.preventDefault(); }, {passive: false});
-
-function startGame() {
-    document.getElementById('overlay').style.display = 'none';
+/* =========================
+   START GAME
+========================= */
+function startGame(){
+    document.getElementById("overlay").style.display = "none";
     active = true;
-    setInterval(spawn, 750);
-    function gameLoop() { update(); draw(); requestAnimationFrame(gameLoop); }
-    gameLoop();
+
+    safeSpeak("Training started");
+
+    setInterval(spawn, 800);
+
+    function loop(){
+        update();
+        draw();
+        requestAnimationFrame(loop);
+    }
+    loop();
 }
 
-function endGame(message) {
-    active = false;
-    alert(message + "\n\nFINAL WEALTH: $" + stats.money);
-    location.reload();
+/* =========================
+   SPAWN WORDS
+========================= */
+function spawn(){
+    if(!active) return;
+
+    const words = ["DISCIPLINE","FOCUS","ERROR","WIN","LOSS"];
+    const text = words[Math.floor(Math.random()*words.length)];
+
+    objects.push({
+        text,
+        x: Math.random()*canvas.width,
+        y: -50,
+        speed: 3 + Math.random()*3,
+        type: Math.random()>0.7 ? "neg" : "pos"
+    });
+}
+
+/* =========================
+   UPDATE
+========================= */
+function update(){
+    if(!active) return;
+
+    objects.forEach((o,i)=>{
+        o.y += o.speed;
+
+        const d = Math.hypot(o.x-user.x, o.y-user.y);
+
+        if(d < user.size){
+            if(o.type==="neg"){
+                stats.health -= 10;
+                consecutiveErrors++;
+                if(consecutiveErrors>=3){
+                    document.getElementById("discipline-block").style.display="flex";
+                }
+            } else {
+                stats.money += 100;
+                consecutiveErrors = 0;
+            }
+            objects.splice(i,1);
+        }
+    });
+
+    document.getElementById("val-money").innerText = "$"+stats.money;
+    document.getElementById("val-health").innerText = stats.health+"%";
+}
+
+/* =========================
+   DRAW
+========================= */
+function draw(){
+    ctx.fillStyle="rgba(0,0,0,0.4)";
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+
+    objects.forEach(o=>{
+        ctx.fillStyle = o.type==="neg" ? "red" : "lime";
+        ctx.font="20px Orbitron";
+        ctx.fillText(o.text,o.x,o.y);
+    });
+
+    ctx.beginPath();
+    ctx.arc(user.x,user.y,20,0,Math.PI*2);
+    ctx.strokeStyle="#00f2ff";
+    ctx.stroke();
+}
+
+/* =========================
+   INPUT
+========================= */
+window.addEventListener("mousemove",(e)=>{
+    user.x=e.clientX;
+    user.y=e.clientY;
+});
+
+/* =========================
+   RESUME
+========================= */
+function resumeTraining(){
+    consecutiveErrors=0;
+    document.getElementById("discipline-block").style.display="none";
+    active=true;
 }
 </script>
+
 </body>
-</html
+</html>
