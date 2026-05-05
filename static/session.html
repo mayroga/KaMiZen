@@ -1,185 +1,216 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>AL CIELO - KAMIZEN</title>
-    <style>
-        :root {
-            --neon-blue: #00f2ff;
-            --neon-gold: #f1c40f;
-            --neon-red: #ff3131;
-            --bg-dark: #050508;
-            --neon-green: #2ecc71;
-        }
-        body { margin: 0; overflow: hidden; background: var(--bg-dark); color: white; font-family: 'Orbitron', sans-serif; }
-        
-        /* HUD */
-        #hud {
-            position: absolute; top: 15px; width: 100%;
-            display: flex; justify-content: space-evenly;
-            z-index: 100; pointer-events: none;
-        }
-        .data-box {
-            background: rgba(0, 0, 0, 0.9); border: 2px solid var(--neon-blue);
-            padding: 10px; text-align: center; min-width: 120px;
-        }
-        .label { font-size: 10px; color: var(--neon-blue); font-weight: 900; display: block; }
-        .value { font-size: 22px; font-weight: 900; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KAMIZEN TRAINING</title>
 
-        .full-overlay {
-            position: fixed; inset: 0; background: black;
-            display: flex; flex-direction: column; justify-content: center;
-            align-items: center; z-index: 1000; text-align: center; padding: 25px;
-        }
+<style>
+body {
+    margin:0;
+    font-family:Arial, Helvetica, sans-serif;
+    background:#000;
+    color:#00f2ff;
+    overflow:hidden;
+}
 
-        .btn-core {
-            padding: 20px 40px; background: var(--neon-blue); color: black;
-            border: none; font-family: 'Orbitron'; font-weight: 900;
-            cursor: pointer; letter-spacing: 2px; margin: 10px; width: 80%; max-width: 450px;
-        }
+/* CENTER TEXT */
+#centerText {
+    position:absolute;
+    top:40%;
+    width:100%;
+    text-align:center;
+    font-size:28px;
+    font-weight:bold;
+}
 
-        .opt-correct { background: var(--neon-green) !important; color: white; }
-        .opt-wrong { background: var(--neon-red) !important; color: white; }
+/* TIMER */
+#timer {
+    position:absolute;
+    top:10px;
+    right:20px;
+    font-size:18px;
+}
 
-        #breath-circle {
-            width: 250px; height: 250px; border-radius: 50%;
-            border: 8px solid var(--neon-blue);
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            transition: transform 2s ease-in-out;
-        }
-        #timer-num { font-size: 4rem; color: var(--neon-red); font-weight: 900; }
-        #exp-text { color: var(--neon-gold); margin: 20px; font-weight: 900; display: none; }
-    </style>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
+/* START SCREEN */
+#startScreen {
+    position:absolute;
+    width:100%;
+    height:100%;
+    background:#000;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+}
+
+#nameInput {
+    padding:10px;
+    font-size:18px;
+    margin-bottom:15px;
+    border:none;
+    outline:none;
+}
+
+#startBtn {
+    padding:10px 20px;
+    font-size:18px;
+    cursor:pointer;
+}
+
+/* CHOICES */
+#choices {
+    position:absolute;
+    bottom:120px;
+    width:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:10px;
+}
+
+.choiceBtn {
+    width:80%;
+    padding:12px;
+    font-size:16px;
+    cursor:pointer;
+    border:none;
+    background:#111;
+    color:#fff;
+}
+
+/* EXPLANATION BOX */
+#explanationBox {
+    position:absolute;
+    bottom:10px;
+    right:10px;
+    width:300px;
+    background:#111;
+    padding:10px;
+    opacity:0;
+    transition:0.3s;
+}
+
+#expTitle {
+    font-weight:bold;
+    margin-bottom:5px;
+}
+
+#expBody {
+    font-size:14px;
+}
+
+/* CONTINUE BUTTON */
+#continueBtn {
+    position:absolute;
+    bottom:60px;
+    left:50%;
+    transform:translateX(-50%);
+    padding:10px 20px;
+    display:none;
+    cursor:pointer;
+}
+
+/* RESET */
+#resetBtn {
+    position:absolute;
+    bottom:20px;
+    left:50%;
+    transform:translateX(-50%);
+    padding:10px 20px;
+    display:none;
+}
+
+/* WORDS GAME */
+.word {
+    position:absolute;
+    color:#00ff41;
+    font-size:18px;
+    cursor:pointer;
+    transition:0.2s;
+}
+
+/* NEON EFFECT */
+.choiceBtn:hover {
+    background:#00f2ff;
+    color:#000;
+}
+</style>
 </head>
+
 <body>
 
-<div id="hud">
-    <div class="data-box" style="border-color: var(--neon-gold);"><span class="label">NET WORTH</span><span id="hud-money" class="value">$0</span></div>
-    <div class="data-box" style="border-color: var(--neon-red);"><span class="label">STABILITY</span><span id="hud-health" class="value">100%</span></div>
-    <div class="data-box"><span class="label">PHASE</span><span id="hud-index" class="value">1</span></div>
+<!-- START -->
+<div id="startScreen">
+    <h2>Enter your name</h2>
+    <input id="nameInput" placeholder="Your name">
+    <button id="startBtn">Start</button>
 </div>
 
-<!-- INICIO -->
-<div id="start-screen" class="full-overlay">
-    <h1 style="color:var(--neon-blue)">KAMIZEN SYSTEM</h1>
-    <button class="btn-core" onclick="nextStep()">INITIALIZE</button>
+<!-- MAIN UI -->
+<div id="centerText"></div>
+<div id="timer"></div>
+
+<!-- CHOICES -->
+<div id="choices"></div>
+
+<!-- CONTINUE -->
+<button id="continueBtn">Continue</button>
+
+<!-- RESET -->
+<button id="resetBtn">Restart</button>
+
+<!-- EXPLANATION -->
+<div id="explanationBox">
+    <div id="expTitle">Info</div>
+    <div id="expBody"></div>
 </div>
 
-<!-- HISTORIA (stories.json) -->
-<div id="story-screen" class="full-overlay" style="display:none;">
-    <h2 style="color:var(--neon-blue)">SITUATION</h2>
-    <p id="story-content" style="font-size:1.2rem; line-height:1.5; max-width:700px;"></p>
-    <button class="btn-core" onclick="showMission()">ANALYZE MISSION</button>
-</div>
+<!-- AUDIO -->
+<audio id="sfxGlass" src="https://assets.mixkit.co/sfx/preview/mixkit-glass-click-1110.mp3"></audio>
 
-<!-- MISION (missions_XX.json) -->
-<div id="mission-screen" class="full-overlay" style="display:none;">
-    <h3 id="mission-q" style="color:var(--neon-gold)"></h3>
-    <div id="options-container" style="width:100%; display:flex; flex-direction:column; align-items:center;"></div>
-    <div id="exp-text"></div>
-    <button id="btn-to-silence" class="btn-core" style="display:none;" onclick="startSilence()">PROCEED TO SILENCE</button>
-</div>
-
-<!-- SILENCIO -->
-<div id="silence-screen" class="full-overlay" style="display:none;">
-    <div id="breath-circle">
-        <span id="breath-label">PREPARE</span>
-        <div id="timer-num">0</div>
-    </div>
-    <p style="margin-top:20px; color:var(--neon-blue)">TOTAL IMMOBILITY</p>
-</div>
+<!-- ENGINE -->
+<script src="js/engine.js"></script>
 
 <script>
-    let sessionData = null;
-    let stats = { money: 0, health: 100 };
+let playerName = "Player";
 
-    async function nextStep() {
-        // Llama exactamente al endpoint de tu app.py
-        const r = await fetch('/api/session/start');
-        sessionData = await r.json();
-        
-        document.getElementById('start-screen').style.display = 'none';
-        document.getElementById('silence-screen').style.display = 'none';
-        
-        // Cargar historia (usando campo 'en' por defecto)
-        document.getElementById('story-content').innerText = sessionData.story.en;
-        document.getElementById('hud-index').innerText = sessionData.index;
-        document.getElementById('story-screen').style.display = 'flex';
-    }
+/* START APP */
+document.getElementById("startBtn").onclick = () => {
+    playerName = document.getElementById("nameInput").value || "Player";
+    document.getElementById("startScreen").style.display = "none";
 
-    function showMission() {
-        document.getElementById('story-screen').style.display = 'none';
-        document.getElementById('mission-screen').style.display = 'flex';
-        
-        // Acceder a la primera misión de la lista missions[]
-        const m = sessionData.missions[0];
-        document.getElementById('mission-q').innerText = m.q;
-        
-        const container = document.getElementById('options-container');
-        container.innerHTML = "";
-        document.getElementById('exp-text').style.display = 'none';
-        document.getElementById('btn-to-silence').style.display = 'none';
+    Engine.init();
 
-        m.options.forEach((opt, i) => {
-            const b = document.createElement('button');
-            b.className = 'btn-core';
-            b.innerText = opt;
-            b.onclick = () => {
-                const isCorrect = (i === m.correct);
-                b.className = isCorrect ? 'btn-core opt-correct' : 'btn-core opt-wrong';
-                
-                // Bloquear otros botones
-                document.querySelectorAll('#options-container .btn-core').forEach(btn => btn.onclick = null);
-                
-                // Mostrar explicación y botón de silencio
-                const exp = document.getElementById('exp-text');
-                exp.innerText = m.ex;
-                exp.style.display = 'block';
-                document.getElementById('btn-to-silence').style.display = 'block';
+    document.getElementById("centerText").innerText = "Welcome " + playerName;
 
-                // Actualizar Stats
-                if(isCorrect) stats.money += 1000; else stats.health -= 20;
-                updateHUD();
-            };
-            container.appendChild(b);
-        });
-    }
+    speak("Welcome " + playerName);
 
-    function startSilence() {
-        document.getElementById('mission-screen').style.display = 'none';
-        document.getElementById('silence-screen').style.display = 'flex';
-        
-        let timeLeft = sessionData.missions[0].sil;
-        const timerNum = document.getElementById('timer-num');
-        const circle = document.getElementById('breath-circle');
-        const label = document.getElementById('breath-label');
+    setTimeout(() => {
+        Engine.start();
+    }, 2000);
+};
 
-        const timer = setInterval(() => {
-            timerNum.innerText = timeLeft;
-            
-            if (timeLeft % 4 === 0) {
-                circle.style.transform = 'scale(1.2)';
-                label.innerText = "INHALE";
-            } else if (timeLeft % 4 === 2) {
-                circle.style.transform = 'scale(1.0)';
-                label.innerText = "EXHALE";
-            }
+/* VOICE */
+function speak(text){
+    try{
+        const msg = new SpeechSynthesisUtterance(text);
+        msg.lang = "en-US";
 
-            if (timeLeft <= 0) {
-                clearInterval(timer);
-                nextStep(); // Carga la siguiente sesión desde el server
-            }
-            timeLeft--;
-        }, 1000);
-    }
+        const voices = speechSynthesis.getVoices();
+        const male = voices.find(v => v.name.toLowerCase().includes("male"));
 
-    function updateHUD() {
-        document.getElementById('hud-money').innerText = "$" + stats.money;
-        document.getElementById('hud-health').innerText = stats.health + "%";
-        if(stats.health <= 0) location.reload();
-    }
+        if(male) msg.voice = male;
+
+        speechSynthesis.speak(msg);
+    }catch(e){}
+}
+
+/* RESET */
+document.getElementById("resetBtn").onclick = () => {
+    location.reload();
+};
 </script>
+
 </body>
 </html>
