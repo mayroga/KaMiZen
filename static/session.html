@@ -1,77 +1,94 @@
+Entendido. He fusionado ambos códigos para crear la versión definitiva de **AL CIELO: STREET WISDOM**. 
+
+Esta versión mantiene los **lasers rastreadores** del primer código (que te apuntan cuando hay una amenaza), pero integra la **lógica secuencial** (si sale BULLYING, le siguen sus formas), el **sistema de disparos**, el **cambio de paisajes (sueños)** y el **bloqueo disciplinario** si fallas tres veces seguidas.
+
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>AL CIELO - STREET WISDOM</title>
-<style>
-:root {
-    --neon-blue: #00f2ff;
-    --neon-gold: #f1c40f;
-    --neon-red: #ff3131;
-    --matrix-green: #00ff41;
-    --bg-dark: #050508;
-}
-body {
-    margin: 0; overflow: hidden; background: var(--bg-dark);
-    color: white; font-family: 'Orbitron', sans-serif; cursor: crosshair; touch-action: none;
-}
-#hud {
-    position: absolute; top: 10px; width: 100%;
-    display: flex; justify-content: space-evenly; z-index: 100;
-}
-.data-box {
-    background: rgba(0,0,0,0.9); border: 2px solid var(--neon-blue);
-    padding: 10px; text-align: center; min-width: 120px;
-}
-.label { font-size: 10px; color: var(--neon-blue); display: block; }
-.value { font-size: 22px; font-weight: 900; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>AL CIELO - STREET WISDOM ELITE</title>
+    <style>
+        :root {
+            --neon-blue: #00f2ff;
+            --neon-gold: #f1c40f;
+            --neon-red: #ff3131;
+            --matrix-green: #00ff41;
+            --bg-dark: #050508;
+        }
+        body { margin: 0; overflow: hidden; background: var(--bg-dark); color: white; font-family: 'Orbitron', sans-serif; cursor: crosshair; touch-action: none; }
+        
+        /* HUD SUPERIOR */
+        #hud {
+            position: absolute; top: 15px; width: 100%;
+            display: flex; justify-content: space-evenly; z-index: 100; pointer-events: none;
+        }
+        .data-box {
+            background: rgba(0, 0, 0, 0.95); border: 2px solid var(--neon-blue);
+            padding: 10px; text-align: center; min-width: 130px;
+        }
+        .label { font-size: 10px; color: var(--neon-blue); font-weight: 900; display: block; }
+        .value { font-size: 24px; font-weight: 900; display: block; }
 
-#timer-display {
-    position: absolute; bottom: 20px; width: 100%; text-align: center;
-    font-size: 40px; color: var(--neon-gold); z-index: 100;
-}
+        #timer-display {
+            position: absolute; bottom: 30px; width: 100%; text-align: center;
+            color: var(--neon-gold); font-size: 40px; font-weight: 900; z-index: 100;
+        }
 
-/* Telarañas de advertencia */
-#warning-edge {
-    position: fixed; inset: 0; pointer-events: none;
-    box-shadow: inset 0 0 0px 0px transparent; transition: box-shadow 0.3s; z-index: 50;
-}
+        /* FONDOS DINÁMICOS (SUEÑOS) */
+        #dream-bg {
+            position: fixed; inset: 0; z-index: -1;
+            background-size: cover; background-position: center;
+            transition: opacity 2s ease-in-out; opacity: 0.15;
+        }
 
-#screen-overlay {
-    position: fixed; inset: 0; background: radial-gradient(circle, #111, #000);
-    display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 2000;
-}
+        /* BLOQUEO DISCIPLINARIO */
+        #discipline-block, #overlay {
+            position: fixed; inset: 0; background: radial-gradient(circle, #111 0%, #000 100%);
+            display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 2000; text-align: center; padding: 20px;
+        }
+        #discipline-block { background: rgba(150, 0, 0, 0.98); display: none; z-index: 5000; }
 
-#breathing-circle {
-    width: 200px; height: 200px; border-radius: 50%;
-    border: 5px solid var(--neon-blue); display: none;
-    justify-content: center; align-items: center; font-size: 24px;
-    transition: transform 4s linear;
-}
+        .start-btn, .commit-btn {
+            padding: 25px 50px; background: var(--neon-blue); color: black;
+            border: none; font-family: 'Orbitron'; font-weight: 900; cursor: pointer; font-size: 1.2rem;
+        }
+        .commit-btn { background: white; margin-top: 20px; }
 
-.start-btn { padding: 20px 50px; background: var(--neon-blue); border: none; font-weight: 900; cursor: pointer; }
-</style>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
+        #breathing-circle {
+            width: 180px; height: 180px; border: 5px solid var(--neon-blue);
+            border-radius: 50%; display: none; justify-content: center; align-items: center;
+            font-size: 20px; transition: transform 4s linear; margin: 20px;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
 </head>
 <body>
 
-<div id="warning-edge"></div>
+<div id="dream-bg"></div>
 
 <div id="hud">
-    <div class="data-box"><span class="label">CAPITAL</span><span id="val-money" class="value">$0</span></div>
-    <div class="data-box"><span class="label">STABILITY</span><span id="val-health" class="value">100%</span></div>
-    <div class="data-box"><span class="label">AUTONOMY</span><span id="val-rec" class="value">0/3</span></div>
+    <div class="data-box" style="border-color: var(--neon-gold);"><span class="label">STREET CAPITAL</span><span id="val-money" class="value">$0</span></div>
+    <div class="data-box" style="border-color: var(--neon-red);"><span class="label">STABILITY</span><span id="val-health" class="value">100%</span></div>
+    <div class="data-box" style="border-color: var(--neon-blue);"><span class="label">AUTONOMY</span><span id="val-rec" class="value">0/3</span></div>
 </div>
 
 <div id="timer-display">10:00</div>
 
-<div id="screen-overlay">
-    <h1 id="main-title">AL CIELO: STREET WISDOM</h1>
-    <div id="diagnostic-area" style="margin: 20px; text-align: center; display: none;"></div>
+<!-- DISCIPLINE BLOCK -->
+<div id="discipline-block">
+    <h1 style="color: white; font-size: 40px;">FOCUS FAILED</h1>
+    <p>Negative concepts are overwhelming your mind. You must commit to continue:</p>
+    <div id="dynamic-message" style="background: black; padding: 20px; border: 2px solid gold; color: gold; font-weight: 900; margin: 20px;"></div>
+    <button class="commit-btn" onclick="resumeTraining()">I COMMIT TO MY GROWTH</button>
+</div>
+
+<div id="overlay">
+    <h1 id="main-title" style="color: var(--neon-blue); font-size: 50px;">AL CIELO</h1>
+    <p id="sub-msg">THE WISDOM OF THE STREETS</p>
     <div id="breathing-circle">INHALE</div>
-    <p id="sub-msg">Master life before it masters you.</p>
-    <button class="start-btn" id="action-btn" onclick="initGame()">INITIALIZE SESSION</button>
+    <button class="start-btn" id="action-btn" onclick="startGame()">INITIALIZE TRAINING</button>
 </div>
 
 <canvas id="gameCanvas"></canvas>
@@ -81,62 +98,54 @@ const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 let audioCtx;
 
-let stats = { money: 0, health: 100, recovery: 0, totalSeconds: 600 };
+// SECUENCIAS DE APRENDIZAJE REAL
+const sequences = {
+    "BULLYING": ["INSULTS", "SOCIAL TRAP", "CYBER-HATE", "ISOLATION"],
+    "ACTIVE SHOOTER": ["LOUD POPS", "PANIC", "LOCKED DOORS", "RUN-HIDE-FIGHT"],
+    "STREET DANGER": ["STRANGER LURE", "UNSAFE AREA", "DARK ALLEY", "SITUATIONAL AWARE"],
+    "BAD CHOICES": ["DRUG PRESSURE", "SKIPPING SCHOOL", "PHONE ADDICTION", "IMPULSE BUY"]
+};
+
+const dreamImages = [
+    "https://images.unsplash.com/photo-1506744038136-46273834b3fb",
+    "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b",
+    "https://images.unsplash.com/photo-1501785888041-af3ef285b470"
+];
+
+const commitments = [
+    "I PROMISE TO FILTER MY DISTRACTIONS AND FOCUS ON MY VALUE.",
+    "I RECOGNIZE THAT BAD DECISIONS DESTROY MY STABILITY.",
+    "MY MIND IS MY WEAPON. I WILL NOT EXPOSE IT TO WEAKNESS."
+];
+
+let stats = { money: 0, health: 100, recovery: 0, totalSeconds: 600, errors: 0 };
 let active = false;
 let objects = [];
 let bullets = [];
-let user = { x: 0, y: 0, size: 60, speedMult: 1 };
+let user = { x: 0, y: 0, size: 60, power: 1, speedMult: 1, name: "MAY" };
 let isHoldingBeam = false;
-
-// Configuración de Palabras y Lógica
-const lifeLessons = [
-    { red: "ACTIVE SHOOTER", green: "RUN-HIDE-FIGHT", type: "safety" },
-    { red: "KIDNAPPING", green: "SITUATION AWARE", type: "safety" },
-    { red: "BULLYING", green: "SELF-CONFIDENCE", type: "social" },
-    { red: "PHONE ADDICTION", green: "TIME CONTROL", type: "digital" },
-    { red: "IMPULSE BUY", green: "SAVINGS PLAN", type: "money" },
-    { red: "DIRTY TEETH", green: "SELF-CARE", type: "higiene" },
-    { red: "UNTIED SHOES", green: "AUTONOMY", type: "higiene" }
-];
+let currentSeq = null, seqIdx = 0;
 
 function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-window.addEventListener('resize', resize);
-resize();
+window.addEventListener('resize', resize); resize();
 
-// Sonidos Sintetizados
-function playSound(type) {
-    if(!audioCtx) return;
+function playSfx(freq, type) {
+    if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
-
-    if(type === 'pos') { // Piano-like
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(440, audioCtx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.1);
-        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-        gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.2);
-    } else if(type === 'neg') { // Broken glass/Noise
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(100, audioCtx.currentTime);
-        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-        gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.3);
-    } else if(type === 'beam') { // Air release
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(200, audioCtx.currentTime);
-        gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
-    }
-    osc.start();
-    osc.stop(audioCtx.currentTime + 0.3);
+    const g = audioCtx.createGain();
+    osc.type = type === 'pos' ? 'triangle' : 'sawtooth';
+    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+    g.gain.setValueAtTime(0.1, audioCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.5);
+    osc.connect(g); g.connect(audioCtx.destination);
+    osc.start(); osc.stop(audioCtx.currentTime + 0.5);
 }
 
-function initGame() {
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    document.getElementById("screen-overlay").style.display = "none";
+function startGame() {
+    document.getElementById('overlay').style.display = 'none';
     active = true;
+    setInterval(spawnManager, 1000);
     gameTimer();
-    setInterval(spawn, 1200);
     loop();
 }
 
@@ -144,42 +153,50 @@ function gameTimer() {
     const t = setInterval(() => {
         if(!active) return;
         stats.totalSeconds--;
-        let m = Math.floor(stats.totalSeconds / 60);
-        let s = stats.totalSeconds % 60;
+        let m = Math.floor(stats.totalSeconds / 60), s = stats.totalSeconds % 60;
         document.getElementById("timer-display").innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
-        if(stats.totalSeconds <= 0) {
-            clearInterval(t);
-            endGame();
-        }
+        if(stats.totalSeconds <= 0) { clearInterval(t); endGame(); }
     }, 1000);
 }
 
-function spawn() {
+function spawnManager() {
     if(!active) return;
-    const lesson = lifeLessons[Math.floor(Math.random() * lifeLessons.length)];
-    const isNeg = Math.random() > 0.4;
-    
-    // Alerta visual (Telaraña)
-    const edge = document.getElementById("warning-edge");
-    const color = isNeg ? "red" : "lime";
-    edge.style.boxShadow = `inset 0 0 40px 10px ${color}`;
-    setTimeout(() => edge.style.boxShadow = "none", 500);
+    let text, type, lesson = null;
+
+    if(!currentSeq && Math.random() > 0.7) {
+        const keys = Object.keys(sequences);
+        currentSeq = keys[Math.floor(Math.random() * keys.length)];
+        seqIdx = 0;
+        text = currentSeq; type = "neg";
+    } else if(currentSeq) {
+        text = sequences[currentSeq][seqIdx];
+        type = "neg";
+        seqIdx++;
+        if(seqIdx >= sequences[currentSeq].length) currentSeq = null;
+    } else {
+        const pos = ["SAVINGS", "RESPECT", "HONESTY", "911 PROTOCOL", "STUDY"];
+        text = pos[Math.floor(Math.random()*pos.length)];
+        type = "pos";
+    }
 
     objects.push({
-        text: isNeg ? lesson.red : lesson.green,
-        x: Math.random() * canvas.width,
-        y: -50,
-        speed: 2 + Math.random() * 2,
-        type: isNeg ? "neg" : "pos",
-        lesson: isNeg ? lesson.green : null
+        text, type, x: Math.random() * canvas.width, y: -50,
+        speed: (3 + Math.random() * 2) * (type === "neg" ? 1.2 : 1),
+        freq: type === "pos" ? 600 : 150
     });
+}
+
+function fire() {
+    if(!active) return;
+    bullets.push({ x: user.x, y: user.y });
+    playSfx(800, 'pos');
 }
 
 function update() {
     if(!active) return;
 
     bullets.forEach((b, i) => {
-        b.y -= 10;
+        b.y -= 12 * user.power;
         if(b.y < 0) bullets.splice(i, 1);
     });
 
@@ -187,29 +204,83 @@ function update() {
         o.y += o.speed * user.speedMult;
         const d = Math.hypot(o.x - user.x, o.y - user.y);
 
+        // CHOQUE CON EL AVATAR
         if(d < user.size/2) {
             if(o.type === "neg") {
-                stats.health -= 15;
-                user.speedMult = 0.5;
-                playSound('neg');
+                stats.health -= 20;
+                stats.errors++;
+                user.speedMult = 0.5; // El error te frena
+                playSfx(o.freq, 'neg');
+                if(stats.errors >= 3) triggerDiscipline();
             } else {
-                stats.money += 200;
-                stats.recovery++;
-                if(stats.recovery >= 3) { user.speedMult = 1; stats.recovery = 0; }
-                playSound('pos');
+                stats.money += 500;
+                applyBoost();
+                playSfx(o.freq, 'pos');
             }
             objects.splice(i, 1);
         }
 
+        // DISPAROS (Bala simple)
+        bullets.forEach((b, bi) => {
+            if(Math.hypot(o.x - b.x, o.y - b.y) < 30) {
+                if(o.type === "neg") {
+                    // Si disparas a lo malo sin transformarlo, el castigo es debilidad
+                    o.text = "LAMENT";
+                    o.speed *= 1.5;
+                    stats.health -= 5;
+                } else {
+                    stats.money += 100;
+                }
+                bullets.splice(bi, 1);
+            }
+        });
+
+        // LASER TRANSMUTADOR (Hold Click)
         if(isHoldingBeam && Math.abs(o.x - user.x) < 40 && o.y < user.y && o.type === "neg") {
             o.type = "pos";
-            o.text = o.lesson || "STRENGTH";
-            playSound('pos');
+            o.text = "WISDOM";
+            applyBoost();
         }
-        
+
         if(o.y > canvas.height) objects.splice(i, 1);
     });
 
+    updateHUD();
+}
+
+function applyBoost() {
+    stats.recovery++;
+    stats.errors = 0;
+    if(stats.recovery >= 3) {
+        user.speedMult = 1.3;
+        user.size = 80;
+        user.power = 2;
+        stats.recovery = 0;
+        changeBackground();
+    }
+}
+
+function changeBackground() {
+    const bg = document.getElementById("dream-bg");
+    bg.style.backgroundImage = `url(${dreamImages[Math.floor(Math.random()*dreamImages.length)]})`;
+    bg.style.opacity = "0.5";
+    setTimeout(() => bg.style.opacity = "0.15", 3000);
+}
+
+function triggerDiscipline() {
+    active = false;
+    document.getElementById('dynamic-message').innerText = commitments[Math.floor(Math.random()*commitments.length)];
+    document.getElementById('discipline-block').style.display = 'flex';
+}
+
+function resumeTraining() {
+    stats.errors = 0;
+    stats.health = 50;
+    document.getElementById('discipline-block').style.display = 'none';
+    active = true;
+}
+
+function updateHUD() {
     document.getElementById("val-money").innerText = "$" + stats.money;
     document.getElementById("val-health").innerText = stats.health + "%";
     document.getElementById("val-rec").innerText = stats.recovery + "/3";
@@ -219,46 +290,56 @@ function draw() {
     ctx.fillStyle = "rgba(5, 5, 8, 0.3)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+    // DIBUJAR BALAS
+    bullets.forEach(b => {
+        ctx.fillStyle = "white";
+        ctx.fillRect(b.x-2, b.y, 4, 15);
+    });
+
+    // DIBUJAR OBJETOS Y LASERES DE AMENAZA
+    objects.forEach(o => {
+        if(o.type === "neg") {
+            // LASER DE AMENAZA (LO QUE NO QUEREMOS QUITAR)
+            ctx.strokeStyle = "rgba(255, 49, 49, 0.4)";
+            ctx.setLineDash([10, 5]);
+            ctx.lineWidth = 1;
+            ctx.beginPath(); ctx.moveTo(o.x, o.y); ctx.lineTo(user.x, user.y); ctx.stroke();
+            ctx.setLineDash([]);
+        }
+
+        ctx.fillStyle = o.type === "neg" ? "#ff3131" : "#00ff41";
+        ctx.font = "bold 18px Orbitron";
+        ctx.textAlign = "center";
+        ctx.fillText(o.text, o.x, o.y);
+    });
+
+    // LASER DEL JUGADOR
     if(isHoldingBeam) {
         ctx.fillStyle = "rgba(0, 242, 255, 0.3)";
         ctx.fillRect(user.x - 20, 0, 40, user.y);
     }
 
-    objects.forEach(o => {
-        ctx.fillStyle = o.type === "neg" ? "#ff3131" : "#00ff41";
-        ctx.font = "bold 16px Orbitron";
-        ctx.textAlign = "center";
-        ctx.fillText(o.text, o.x, o.y);
-    });
-
+    // AVATAR
     ctx.beginPath();
     ctx.arc(user.x, user.y, user.size/2, 0, Math.PI*2);
     ctx.strokeStyle = "#00f2ff";
     ctx.lineWidth = 3;
     ctx.stroke();
+    ctx.fillStyle = "white";
+    ctx.font = "10px Orbitron";
+    ctx.fillText(user.name, user.x, user.y + 5);
 }
 
 function loop() {
-    update();
-    draw();
+    update(); draw();
     if(active) requestAnimationFrame(loop);
 }
 
 function endGame() {
     active = false;
-    const overlay = document.getElementById("screen-overlay");
-    const diag = document.getElementById("diagnostic-area");
-    const title = document.getElementById("main-title");
-    const btn = document.getElementById("action-btn");
-    
-    title.innerText = "SESSION COMPLETE";
-    diag.style.display = "block";
-    diag.innerHTML = `<h3>STREET IQ REPORT</h3>
-        <p>Capital: $${stats.money}</p>
-        <p>Stability: ${stats.health}%</p>
-        <p>You are ready for the next level.</p>`;
-    
-    btn.style.display = "none";
+    document.getElementById("overlay").style.display = "flex";
+    document.getElementById("main-title").innerText = "SESSION COMPLETE";
+    document.getElementById("action-btn").style.display = "none";
     startBreathing();
 }
 
@@ -266,50 +347,26 @@ function startBreathing() {
     const circle = document.getElementById("breathing-circle");
     circle.style.display = "flex";
     let timeLeft = 60;
-    
-    const breathCycle = () => {
-        if(timeLeft <= 0) {
-            circle.style.display = "none";
-            showReset();
-            return;
-        }
-        
-        circle.innerText = "INHALE";
-        circle.style.transform = "scale(1.5)";
+    const step = () => {
+        if(timeLeft <= 0) { location.reload(); return; }
+        circle.innerText = "INHALE"; circle.style.transform = "scale(1.5)";
         setTimeout(() => {
             circle.innerText = "HOLD";
             setTimeout(() => {
-                circle.innerText = "EXHALE";
-                circle.style.transform = "scale(0.8)";
+                circle.innerText = "EXHALE"; circle.style.transform = "scale(0.8)";
                 timeLeft -= 12;
-                setTimeout(breathCycle, 4000);
+                setTimeout(step, 4000);
             }, 4000);
         }, 4000);
     };
-    breathCycle();
-}
-
-function showReset() {
-    const btn = document.getElementById("action-btn");
-    let silenceTime = 60;
-    btn.style.display = "block";
-    btn.disabled = true;
-    
-    const timer = setInterval(() => {
-        silenceTime--;
-        btn.innerText = `RESTART IN ${silenceTime}s (SILENCE)`;
-        if(silenceTime <= 0) {
-            clearInterval(timer);
-            btn.innerText = "INITIALIZE SESSION";
-            btn.disabled = false;
-            btn.onclick = () => location.reload();
-        }
-    }, 1000);
+    step();
 }
 
 window.addEventListener("mousemove", e => { user.x = e.clientX; user.y = e.clientY; });
-window.addEventListener("mousedown", () => { isHoldingBeam = true; playSound('beam'); });
+window.addEventListener("mousedown", () => isHoldingBeam = true);
 window.addEventListener("mouseup", () => isHoldingBeam = false);
+window.addEventListener("keydown", e => { if(e.key === "ArrowUp" || e.key === " ") fire(); });
 </script>
 </body>
 </html>
+```
