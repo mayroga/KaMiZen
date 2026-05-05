@@ -6,7 +6,7 @@
 <title>KAMIZEN TRAINING</title>
 
 <style>
-body {
+body{
     margin:0;
     font-family:Arial, Helvetica, sans-serif;
     background:#000;
@@ -15,25 +15,28 @@ body {
 }
 
 /* CENTER TEXT */
-#centerText {
+#centerText{
     position:absolute;
-    top:40%;
+    top:35%;
     width:100%;
     text-align:center;
-    font-size:28px;
+    font-size:30px;
     font-weight:bold;
+    padding:0 20px;
+    z-index:2;
 }
 
 /* TIMER */
-#timer {
+#timer{
     position:absolute;
     top:10px;
     right:20px;
     font-size:18px;
+    z-index:2;
 }
 
 /* START SCREEN */
-#startScreen {
+#startScreen{
     position:absolute;
     width:100%;
     height:100%;
@@ -42,45 +45,64 @@ body {
     flex-direction:column;
     justify-content:center;
     align-items:center;
+    z-index:10;
 }
 
-#nameInput {
-    padding:10px;
+#nameInput{
+    padding:12px;
     font-size:18px;
     margin-bottom:15px;
     border:none;
     outline:none;
+    width:220px;
+    text-align:center;
 }
 
-#startBtn {
-    padding:10px 20px;
+#startBtn{
+    padding:12px 25px;
     font-size:18px;
     cursor:pointer;
+    background:#00f2ff;
+    border:none;
+    color:#000;
 }
 
 /* CHOICES */
-#choices {
+#choices{
     position:absolute;
-    bottom:120px;
+    bottom:140px;
     width:100%;
     display:flex;
     flex-direction:column;
     align-items:center;
     gap:10px;
+    z-index:3;
 }
 
-.choiceBtn {
-    width:80%;
-    padding:12px;
+.choiceBtn{
+    width:85%;
+    padding:14px;
     font-size:16px;
     cursor:pointer;
     border:none;
     background:#111;
     color:#fff;
+    transition:0.2s;
 }
 
-/* EXPLANATION BOX */
-#explanationBox {
+.choiceBtn:hover{
+    background:#00f2ff;
+    color:#000;
+}
+
+/* RESULT COLORS */
+.correct{ background:green !important; }
+.mid{ background:yellow !important; color:#000 !important; }
+.low{ background:orange !important; }
+.bad{ background:red !important; }
+
+/* EXPLANATION */
+#explanationBox{
     position:absolute;
     bottom:10px;
     right:10px;
@@ -89,51 +111,56 @@ body {
     padding:10px;
     opacity:0;
     transition:0.3s;
+    border:1px solid #00f2ff;
+    z-index:4;
 }
 
-#expTitle {
+#expTitle{
     font-weight:bold;
     margin-bottom:5px;
 }
 
-#expBody {
+#expBody{
     font-size:14px;
 }
 
-/* CONTINUE BUTTON */
-#continueBtn {
+/* CONTINUE */
+#continueBtn{
     position:absolute;
-    bottom:60px;
+    bottom:80px;
     left:50%;
     transform:translateX(-50%);
-    padding:10px 20px;
+    padding:12px 25px;
     display:none;
     cursor:pointer;
+    background:#00ff41;
+    border:none;
+    z-index:4;
 }
 
 /* RESET */
-#resetBtn {
+#resetBtn{
     position:absolute;
     bottom:20px;
     left:50%;
     transform:translateX(-50%);
-    padding:10px 20px;
+    padding:12px 25px;
     display:none;
+    background:#ff0040;
+    border:none;
+    color:#fff;
+    cursor:pointer;
+    z-index:4;
 }
 
-/* WORDS GAME */
-.word {
+/* WORDS */
+.word{
     position:absolute;
     color:#00ff41;
     font-size:18px;
     cursor:pointer;
     transition:0.2s;
-}
-
-/* NEON EFFECT */
-.choiceBtn:hover {
-    background:#00f2ff;
-    color:#000;
+    z-index:1;
 }
 </style>
 </head>
@@ -147,7 +174,7 @@ body {
     <button id="startBtn">Start</button>
 </div>
 
-<!-- MAIN UI -->
+<!-- MAIN -->
 <div id="centerText"></div>
 <div id="timer"></div>
 
@@ -174,42 +201,93 @@ body {
 
 <script>
 let playerName = "Player";
+let started = false;
 
-/* START APP */
+/* =========================
+   START APP (ANTI-FREEZE)
+========================= */
 document.getElementById("startBtn").onclick = () => {
-    playerName = document.getElementById("nameInput").value || "Player";
+
+    if(started) return;
+    started = true;
+
+    playerName = document.getElementById("nameInput").value.trim() || "Player";
+
     document.getElementById("startScreen").style.display = "none";
 
     Engine.init();
 
-    document.getElementById("centerText").innerText = "Welcome " + playerName;
+    safeSpeak("Welcome " + playerName);
 
-    speak("Welcome " + playerName);
+    document.getElementById("centerText").innerText = "Welcome " + playerName;
 
     setTimeout(() => {
         Engine.start();
-    }, 2000);
+    }, 1500);
 };
 
-/* VOICE */
-function speak(text){
+/* =========================
+   SAFE SPEECH (FIX FREEZE)
+========================= */
+let speaking = false;
+
+function safeSpeak(text){
     try{
+        if(speaking) return;
+        speaking = true;
+
+        speechSynthesis.cancel();
+
         const msg = new SpeechSynthesisUtterance(text);
         msg.lang = "en-US";
+        msg.rate = 0.92;
+        msg.pitch = 0.9;
 
         const voices = speechSynthesis.getVoices();
-        const male = voices.find(v => v.name.toLowerCase().includes("male"));
+        if(voices.length){
+            const male = voices.find(v =>
+                v.name.toLowerCase().includes("male") ||
+                v.name.toLowerCase().includes("david") ||
+                v.name.toLowerCase().includes("mark") ||
+                v.name.toLowerCase().includes("alex")
+            );
+            if(male) msg.voice = male;
+        }
 
-        if(male) msg.voice = male;
+        msg.onend = () => speaking = false;
+        msg.onerror = () => speaking = false;
 
         speechSynthesis.speak(msg);
-    }catch(e){}
+
+    }catch(e){
+        speaking = false;
+    }
 }
 
-/* RESET */
+/* =========================
+   RESET
+========================= */
 document.getElementById("resetBtn").onclick = () => {
+    speechSynthesis.cancel();
     location.reload();
 };
+
+/* =========================
+   VOICE LOAD FIX (CRUCIAL)
+========================= */
+window.speechSynthesis.onvoiceschanged = () => {
+    speechSynthesis.getVoices();
+};
+
+/* =========================
+   GLOBAL FAILSAFE (ANTI FREEZE)
+========================= */
+setInterval(() => {
+    if(speechSynthesis.speaking && speechSynthesis.pending){
+        speechSynthesis.cancel();
+    }
+}, 8000);
+
 </script>
 
 </body>
