@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>KAMIZEN SESSION - LIVE FEED</title>
+    <title>AL CIELO - KAMIZEN</title>
     <style>
         :root {
             --neon-blue: #00f2ff;
@@ -12,241 +12,166 @@
             --bg-dark: #050508;
             --neon-green: #2ecc71;
         }
-        body { 
-            margin: 0; overflow: hidden; background: var(--bg-dark); 
-            color: white; font-family: 'Orbitron', sans-serif; touch-action: none; 
-        }
+        body { margin: 0; overflow: hidden; background: var(--bg-dark); color: white; font-family: 'Orbitron', sans-serif; }
         
-        /* HUD SUPERIOR */
+        /* HUD */
         #hud {
             position: absolute; top: 15px; width: 100%;
             display: flex; justify-content: space-evenly;
             z-index: 100; pointer-events: none;
         }
         .data-box {
-            background: rgba(0, 0, 0, 0.8);
-            border: 2px solid var(--neon-blue);
-            padding: 10px; text-align: center;
-            min-width: 120px; box-shadow: 0 0 15px rgba(0, 242, 255, 0.2);
+            background: rgba(0, 0, 0, 0.9); border: 2px solid var(--neon-blue);
+            padding: 10px; text-align: center; min-width: 120px;
         }
         .label { font-size: 10px; color: var(--neon-blue); font-weight: 900; display: block; }
         .value { font-size: 22px; font-weight: 900; }
 
-        /* OVERLAYS DE ESTADO */
         .full-overlay {
-            position: fixed; inset: 0; background: radial-gradient(circle, #0a0a0f 0%, #000 100%);
+            position: fixed; inset: 0; background: black;
             display: flex; flex-direction: column; justify-content: center;
-            align-items: center; z-index: 1000; text-align: center; padding: 30px;
+            align-items: center; z-index: 1000; text-align: center; padding: 25px;
         }
 
         .btn-core {
             padding: 20px 40px; background: var(--neon-blue); color: black;
             border: none; font-family: 'Orbitron'; font-weight: 900;
-            cursor: pointer; letter-spacing: 2px; font-size: 1.1rem;
-            box-shadow: 0 0 20px var(--neon-blue); margin: 15px;
-            text-transform: uppercase; transition: 0.3s;
+            cursor: pointer; letter-spacing: 2px; margin: 10px; width: 80%; max-width: 450px;
         }
-        .btn-core:hover { transform: scale(1.05); filter: brightness(1.2); }
 
-        /* CIRCULO DE RESPIRACIÓN Y SILENCIO */
-        #breath-container { display: none; }
+        .opt-correct { background: var(--neon-green) !important; color: white; }
+        .opt-wrong { background: var(--neon-red) !important; color: white; }
+
         #breath-circle {
-            width: 280px; height: 280px; border-radius: 50%;
-            border: 6px solid var(--neon-blue);
+            width: 250px; height: 250px; border-radius: 50%;
+            border: 8px solid var(--neon-blue);
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-            transition: transform 3s ease-in-out;
-            box-shadow: 0 0 40px var(--neon-blue);
+            transition: transform 2s ease-in-out;
         }
-        #timer-countdown { font-size: 4rem; color: var(--neon-red); margin-top: 20px; font-weight: 900; }
-
-        /* MISIONES */
-        .opt-btn { width: 100%; max-width: 500px; font-size: 0.9rem; margin: 8px; }
-        .correct { background: var(--neon-green) !important; color: white; box-shadow: 0 0 30px var(--neon-green); }
-        .wrong { background: var(--neon-red) !important; color: white; box-shadow: 0 0 30px var(--neon-red); }
-        
-        #explanation { 
-            margin: 20px; color: var(--neon-gold); font-weight: 900; 
-            max-width: 600px; font-size: 1.2rem; display: none; 
-        }
-
-        #flash { position: fixed; inset: 0; pointer-events: none; z-index: 9999; opacity: 0; }
+        #timer-num { font-size: 4rem; color: var(--neon-red); font-weight: 900; }
+        #exp-text { color: var(--neon-gold); margin: 20px; font-weight: 900; display: none; }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
 </head>
 <body>
 
-<div id="flash"></div>
-
 <div id="hud">
     <div class="data-box" style="border-color: var(--neon-gold);"><span class="label">NET WORTH</span><span id="hud-money" class="value">$0</span></div>
-    <div class="data-box" style="border-color: var(--neon-red);"><span class="label">HEALTH</span><span id="hud-health" class="value">100%</span></div>
-    <div class="data-box" style="border-color: var(--neon-blue);"><span class="label">MISSION</span><span id="hud-level" class="value">1</span></div>
+    <div class="data-box" style="border-color: var(--neon-red);"><span class="label">STABILITY</span><span id="hud-health" class="value">100%</span></div>
+    <div class="data-box"><span class="label">PHASE</span><span id="hud-index" class="value">1</span></div>
 </div>
 
 <!-- INICIO -->
-<div id="start-overlay" class="full-overlay">
-    <h1 style="color: var(--neon-blue); letter-spacing: 10px;">KAMIZEN SYSTEM</h1>
-    <p style="color: var(--neon-gold);">MENTAL DISCIPLINE & SURVIVAL</p>
-    <button class="btn-core" onclick="initSession()">START TRAINING</button>
+<div id="start-screen" class="full-overlay">
+    <h1 style="color:var(--neon-blue)">KAMIZEN SYSTEM</h1>
+    <button class="btn-core" onclick="nextStep()">INITIALIZE</button>
 </div>
 
-<!-- NARRATIVA -->
-<div id="story-overlay" class="full-overlay" style="display:none;">
-    <h2 id="story-title" style="color:var(--neon-blue);">SITUATION REPORT</h2>
-    <p id="story-body" style="max-width:700px; line-height:1.6; font-size:1.3rem;"></p>
-    <button class="btn-core" onclick="showMission()">ANALYZE OPTIONS</button>
+<!-- HISTORIA (stories.json) -->
+<div id="story-screen" class="full-overlay" style="display:none;">
+    <h2 style="color:var(--neon-blue)">SITUATION</h2>
+    <p id="story-content" style="font-size:1.2rem; line-height:1.5; max-width:700px;"></p>
+    <button class="btn-core" onclick="showMission()">ANALYZE MISSION</button>
 </div>
 
-<!-- PREGUNTA -->
-<div id="mission-overlay" class="full-overlay" style="display:none;">
-    <h3 id="mission-q" style="color:var(--neon-gold);"></h3>
-    <div id="options-grid" style="width:100%; display:flex; flex-direction:column; align-items:center;"></div>
-    <div id="explanation"></div>
-    <button id="next-btn" class="btn-core" style="display:none;" onclick="startMeditation()">PHASE 2: SILENCE</button>
+<!-- MISION (missions_XX.json) -->
+<div id="mission-screen" class="full-overlay" style="display:none;">
+    <h3 id="mission-q" style="color:var(--neon-gold)"></h3>
+    <div id="options-container" style="width:100%; display:flex; flex-direction:column; align-items:center;"></div>
+    <div id="exp-text"></div>
+    <button id="btn-to-silence" class="btn-core" style="display:none;" onclick="startSilence()">PROCEED TO SILENCE</button>
 </div>
 
-<!-- MEDITACIÓN / SILENCIO -->
-<div id="meditation-overlay" class="full-overlay" style="display:none;">
+<!-- SILENCIO -->
+<div id="silence-screen" class="full-overlay" style="display:none;">
     <div id="breath-circle">
-        <span id="breath-text" style="font-size:1.5rem; letter-spacing:5px;">PREPARE</span>
-        <div id="timer-countdown">00</div>
+        <span id="breath-label">PREPARE</span>
+        <div id="timer-num">0</div>
     </div>
-    <p style="margin-top:40px; color:var(--neon-blue); letter-spacing:2px;">DO NOT MOVE. OBSERVE YOUR THOUGHTS.</p>
+    <p style="margin-top:20px; color:var(--neon-blue)">TOTAL IMMOBILITY</p>
 </div>
 
 <script>
-    let audioCtx;
-    let mainGain;
-    let currentMission = null;
+    let sessionData = null;
     let stats = { money: 0, health: 100 };
 
-    // --- AUDIO ENGINE (MUSICA DINÁMICA) ---
-    function initAudio() {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        mainGain = audioCtx.createGain();
-        mainGain.connect(audioCtx.destination);
-        playBackgroundMusic(440, 0.05); // Tono base calmo
-    }
-
-    function playBackgroundMusic(baseFreq, vol) {
-        const osc = audioCtx.createOscillator();
-        const g = audioCtx.createGain();
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(baseFreq, audioCtx.currentTime);
-        g.gain.setValueAtTime(vol, audioCtx.currentTime);
-        osc.connect(g);
-        g.connect(mainGain);
-        osc.start();
-    }
-
-    function triggerFeedbackAudio(isCorrect) {
-        const freq = isCorrect ? 880 : 110;
-        const type = isCorrect ? 'sine' : 'sawtooth';
-        const osc = audioCtx.createOscillator();
-        const g = audioCtx.createGain();
-        osc.type = type;
-        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-        g.gain.setValueAtTime(0.2, audioCtx.currentTime);
-        g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1);
-        osc.connect(g); g.connect(audioCtx.destination);
-        osc.start(); osc.stop(audioCtx.currentTime + 1);
+    async function nextStep() {
+        // Llama exactamente al endpoint de tu app.py
+        const r = await fetch('/api/session/start');
+        sessionData = await r.json();
         
-        // Cambiar "clima" musical
-        mainGain.gain.setTargetAtTime(isCorrect ? 0.05 : 0.15, audioCtx.currentTime, 0.5);
-    }
-
-    // --- LÓGICA DE FLUJO ---
-
-    async function initSession() {
-        document.getElementById('start-overlay').style.display = 'none';
-        initAudio();
-        loadNextStep();
-    }
-
-    async function loadNextStep() {
-        const res = await fetch('/api/mission');
-        currentMission = await res.json();
+        document.getElementById('start-screen').style.display = 'none';
+        document.getElementById('silence-screen').style.display = 'none';
         
-        if (currentMission.end) {
-            alert("TRAINING COMPLETE");
-            location.reload();
-            return;
-        }
-
-        // Mostrar Historia
-        document.getElementById('story-body').innerText = currentMission.story;
-        document.getElementById('story-overlay').style.display = 'flex';
-        document.getElementById('hud-level').innerText = currentMission.id;
+        // Cargar historia (usando campo 'en' por defecto)
+        document.getElementById('story-content').innerText = sessionData.story.en;
+        document.getElementById('hud-index').innerText = sessionData.index;
+        document.getElementById('story-screen').style.display = 'flex';
     }
 
     function showMission() {
-        document.getElementById('story-overlay').style.display = 'none';
-        const overlay = document.getElementById('mission-overlay');
-        const grid = document.getElementById('options-grid');
+        document.getElementById('story-screen').style.display = 'none';
+        document.getElementById('mission-screen').style.display = 'flex';
         
-        overlay.style.display = 'flex';
-        document.getElementById('mission-q').innerText = currentMission.q;
-        document.getElementById('explanation').style.display = 'none';
-        document.getElementById('next-btn').style.display = 'none';
+        // Acceder a la primera misión de la lista missions[]
+        const m = sessionData.missions[0];
+        document.getElementById('mission-q').innerText = m.q;
         
-        grid.innerHTML = "";
-        currentMission.options.forEach((opt, i) => {
-            const btn = document.createElement('button');
-            btn.className = 'btn-core opt-btn';
-            btn.innerText = opt;
-            btn.onclick = () => handleAnswer(i, btn);
-            grid.appendChild(btn);
+        const container = document.getElementById('options-container');
+        container.innerHTML = "";
+        document.getElementById('exp-text').style.display = 'none';
+        document.getElementById('btn-to-silence').style.display = 'none';
+
+        m.options.forEach((opt, i) => {
+            const b = document.createElement('button');
+            b.className = 'btn-core';
+            b.innerText = opt;
+            b.onclick = () => {
+                const isCorrect = (i === m.correct);
+                b.className = isCorrect ? 'btn-core opt-correct' : 'btn-core opt-wrong';
+                
+                // Bloquear otros botones
+                document.querySelectorAll('#options-container .btn-core').forEach(btn => btn.onclick = null);
+                
+                // Mostrar explicación y botón de silencio
+                const exp = document.getElementById('exp-text');
+                exp.innerText = m.ex;
+                exp.style.display = 'block';
+                document.getElementById('btn-to-silence').style.display = 'block';
+
+                // Actualizar Stats
+                if(isCorrect) stats.money += 1000; else stats.health -= 20;
+                updateHUD();
+            };
+            container.appendChild(b);
         });
     }
 
-    function handleAnswer(idx, btn) {
-        const isCorrect = (idx === currentMission.correct);
-        triggerFeedbackAudio(isCorrect);
+    function startSilence() {
+        document.getElementById('mission-screen').style.display = 'none';
+        document.getElementById('silence-screen').style.display = 'flex';
         
-        // Estilos de feedback
-        btn.className = isCorrect ? 'btn-core opt-btn correct' : 'btn-core opt-btn wrong';
-        document.querySelectorAll('.opt-btn').forEach(b => b.onclick = null);
-        
-        // Mostrar Explicación (del JSON campo "ex")
-        const exp = document.getElementById('explanation');
-        exp.innerText = currentMission.ex;
-        exp.style.display = 'block';
-        document.getElementById('next-btn').style.display = 'block';
-
-        // Actualizar Stats
-        if (isCorrect) stats.money += 500; else stats.health -= 20;
-        updateHUD();
-    }
-
-    function startMeditation() {
-        document.getElementById('mission-overlay').style.display = 'none';
-        document.getElementById('meditation-overlay').style.display = 'flex';
-        
-        let timeLeft = currentMission.sil; // Tiempo de silencio del JSON
-        const timerDisp = document.getElementById('timer-countdown');
-        const textDisp = document.getElementById('breath-text');
+        let timeLeft = sessionData.missions[0].sil;
+        const timerNum = document.getElementById('timer-num');
         const circle = document.getElementById('breath-circle');
+        const label = document.getElementById('breath-label');
 
-        const interval = setInterval(() => {
-            timeLeft--;
-            timerDisp.innerText = timeLeft;
+        const timer = setInterval(() => {
+            timerNum.innerText = timeLeft;
             
-            // Animación de respiración cada 4 segundos
             if (timeLeft % 4 === 0) {
-                circle.style.transform = "scale(1.2)";
-                textDisp.innerText = "INHALE";
-                textDisp.style.color = "var(--neon-blue)";
+                circle.style.transform = 'scale(1.2)';
+                label.innerText = "INHALE";
             } else if (timeLeft % 4 === 2) {
-                circle.style.transform = "scale(1.0)";
-                textDisp.innerText = "EXHALE";
-                textDisp.style.color = "var(--neon-green)";
+                circle.style.transform = 'scale(1.0)';
+                label.innerText = "EXHALE";
             }
 
             if (timeLeft <= 0) {
-                clearInterval(interval);
-                document.getElementById('meditation-overlay').style.display = 'none';
-                loadNextStep(); // Siguiente misión
+                clearInterval(timer);
+                nextStep(); // Carga la siguiente sesión desde el server
             }
+            timeLeft--;
         }, 1000);
     }
 
