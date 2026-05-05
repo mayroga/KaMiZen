@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>KAMIZEN SESSION</title>
+<title>KAMIZEN SESSION - ADVANCED DEFENSE</title>
 
 <style>
 :root {
@@ -19,7 +19,7 @@ body {
     background: var(--bg-dark);
     color: white;
     font-family: 'Orbitron', sans-serif;
-    cursor: none;
+    cursor: crosshair;
     touch-action: none;
 }
 
@@ -42,18 +42,9 @@ body {
     min-width: 130px;
 }
 
-.label {
-    font-size: 10px;
-    color: var(--neon-blue);
-    font-weight: 900;
-}
+.label { font-size: 10px; color: var(--neon-blue); font-weight: 900; }
+.value { font-size: 24px; font-weight: 900; }
 
-.value {
-    font-size: 24px;
-    font-weight: 900;
-}
-
-/* TIMER */
 #timer-display {
     position: absolute;
     bottom: 30px;
@@ -65,7 +56,6 @@ body {
     z-index: 100;
 }
 
-/* OVERLAY */
 #overlay, #discipline-block {
     position: fixed;
     inset: 0;
@@ -78,12 +68,7 @@ body {
     text-align: center;
 }
 
-#discipline-block {
-    background: rgba(150, 0, 0, 0.98);
-    display: none;
-    z-index: 5000;
-}
-
+#discipline-block { background: rgba(150, 0, 0, 0.98); display: none; z-index: 5000; }
 .start-btn, .commit-btn {
     padding: 25px 50px;
     background: var(--neon-blue);
@@ -94,82 +79,31 @@ body {
     font-size: 1.2rem;
     margin-top: 20px;
 }
-
-.commit-btn {
-    background: white;
-}
-
-/* FLASH */
-#flash-alert {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 50;
-    opacity: 0;
-}
-
-#centerText {
-    position: absolute;
-    top: 40%;
-    width: 100%;
-    text-align: center;
-    font-size: 28px;
-    font-weight: bold;
-    z-index: 2;
-}
-
-#explanationBox {
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
-    width: 280px;
-    background: #111;
-    border: 1px solid var(--neon-blue);
-    padding: 10px;
-    opacity: 0;
-    z-index: 10;
-}
-
-#expTitle { font-weight: bold; }
-#expBody { font-size: 14px; }
-
-#gameCanvas {
-    display: block;
-}
+.commit-btn { background: white; }
 </style>
-
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
 </head>
 
 <body>
 
-<div id="flash-alert"></div>
-<div id="centerText"></div>
-<div id="timer-display">TIME REMAINING: <span id="clock">27:00</span></div>
-
 <div id="hud">
     <div class="data-box"><span class="label">NET WORTH</span><span id="val-money" class="value">$0</span></div>
     <div class="data-box"><span class="label">STABILITY</span><span id="val-health" class="value">100%</span></div>
-    <div class="data-box"><span class="label">LEVEL</span><span id="val-rank" class="value">1</span></div>
+    <div class="data-box"><span class="label">RECOVERY</span><span id="val-recovery" class="value">0/3</span></div>
 </div>
 
-<div id="explanationBox">
-    <div id="expTitle">INFO</div>
-    <div id="expBody"></div>
-</div>
-
-<audio id="sfxGlass" src="https://assets.mixkit.co/sfx/preview/mixkit-glass-click-1110.mp3"></audio>
+<div id="timer-display">TIME REMAINING: <span id="clock">27:00</span></div>
 
 <div id="discipline-block">
     <h1>HALTED</h1>
     <div>You triggered 3 negative concepts</div>
-    <div id="dynamic-message"></div>
+    <div id="dynamic-message">Discipline is freedom.</div>
     <button class="commit-btn" onclick="resumeTraining()">I ACCEPT</button>
 </div>
 
 <div id="overlay">
     <h1>KAMIZEN SESSION</h1>
-    <p style="font-size: 12px; color: var(--neon-blue);">CLICK OR UP ARROW TO FIRE LASERS</p>
+    <p>CLICK/UP: LASER | HOLD: TRANSMUTATION BEAM</p>
     <button class="start-btn" onclick="startGame()">INITIALIZE TRAINING</button>
 </div>
 
@@ -179,206 +113,190 @@ body {
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
-let stats = { money: 0, health: 100, currentLevelIdx: 0, totalSeconds: 27 * 60 };
+let stats = { money: 0, health: 100, recovery: 0 };
 let active = false;
 let objects = [];
 let bullets = [];
-let user = { x: 0, y: 0, size: 60, baseSize: 60, power: 1.0 };
+let user = { x: 0, y: 0, size: 60, speedMult: 1, baseSize: 60 };
 let consecutiveErrors = 0;
-let recoveryCount = 0;
+let isHoldingBeam = false;
 
-function resize() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-}
+function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
 window.addEventListener('resize', resize);
 resize();
-
-let speaking = false;
-function safeSpeak(t){
-    try{
-        if(speaking) return;
-        speaking = true;
-        speechSynthesis.cancel();
-        const msg = new SpeechSynthesisUtterance(t);
-        msg.onend = () => speaking = false;
-        speechSynthesis.speak(msg);
-    }catch(e){ speaking = false; }
-}
 
 function startGame(){
     document.getElementById("overlay").style.display = "none";
     active = true;
-    safeSpeak("Training started");
     setInterval(spawn, 800);
     loop();
 }
 
-function fire(){
-    if(!active) return;
-    // La velocidad de la bala se ve afectada por el poder actual
-    bullets.push({ x: user.x, y: user.y, speed: 12 * user.power });
-    const sfx = document.getElementById("sfxGlass");
-    sfx.currentTime = 0;
-    sfx.play().catch(()=>{});
-}
-
 function spawn(){
     if(!active) return;
-
-    // Palabras originales + nuevas solicitadas
-    const wordsPos = ["DISCIPLINE","FOCUS","WIN","OPPORTUNITY","GROWTH","WEALTH","WISDOM","MONEY"];
-    const wordsNeg = ["ERROR","LOSS","FEAR","DEBT","PROCRASTINATION"];
+    const wordsPos = ["OPPORTUNITY","GROWTH","WEALTH","WISDOM","DINERO","FORTALEZA","DISCIPLINE","FOCUS","WIN"];
+    const wordsNeg = ["ERROR","LOSS","DEBT","FEAR","PROCRASTINATION"];
     
-    const isNeg = Math.random() > 0.7;
+    const isNeg = Math.random() > 0.6;
     const text = isNeg ? wordsNeg[Math.floor(Math.random()*wordsNeg.length)] : wordsPos[Math.floor(Math.random()*wordsPos.length)];
 
     objects.push({
         text,
         x: Math.random() * canvas.width,
         y: -50,
-        speed: 3 + Math.random() * 3,
+        speed: (2 + Math.random() * 3) * (isNeg ? 1.2 : 1),
         type: isNeg ? "neg" : "pos",
-        hunting: isNeg && Math.random() > 0.4 // Las negativas a veces persiguen
+        hunting: isNeg && Math.random() > 0.4
     });
+}
+
+function fire(){
+    if(!active) return;
+    bullets.push({ x: user.x, y: user.y, speed: 12 * user.speedMult });
 }
 
 function update(){
     if(!active) return;
 
-    // Balas
-    bullets.forEach((b, bi) => {
+    // Balas normales
+    bullets.forEach((b, i) => {
         b.y -= b.speed;
-        if(b.y < 0) bullets.splice(bi, 1);
+        if(b.y < 0) bullets.splice(i, 1);
     });
 
-    // Objetos
     objects.forEach((o, i) => {
         o.y += o.speed;
-
-        // Persecución si es negativa
-        if(o.hunting){
-            o.x += (user.x - o.x) * 0.015;
-        }
-
-        const d = Math.hypot(o.x - user.x, o.y - user.y);
+        if(o.hunting) o.x += (user.x - o.x) * 0.015;
 
         // Colisión con círculo azul
-        if(d < user.size / 2 + 10){
-            if(o.type === "neg"){
-                stats.health -= 10;
-                consecutiveErrors++;
-                
-                // EFECTO DEBILITANTE
-                user.power = 0.5; 
-                user.size = 35;
-                recoveryCount = 0;
-
-                if(consecutiveErrors >= 3){
-                    active = false;
-                    document.getElementById("discipline-block").style.display = "flex";
-                }
+        const dist = Math.hypot(o.x - user.x, o.y - user.y);
+        if(dist < user.size/2){
+            if(o.type === "neg") {
+                applyWeakness();
             } else {
-                stats.money += 100;
-                consecutiveErrors = 0;
-                
-                // Lógica de recuperación
-                if(user.power < 1.0) {
-                    recoveryCount++;
-                    if(recoveryCount >= 3) {
-                        user.power = 1.0;
-                        user.size = user.baseSize;
-                        recoveryCount = 0;
-                    }
-                }
+                applyRecovery();
             }
             objects.splice(i, 1);
         }
 
-        // Colisión con láseres
+        // Colisión con Balas
         bullets.forEach((b, bi) => {
-            const distB = Math.hypot(o.x - b.x, o.y - b.y);
-            if(distB < 30){
-                if(o.type === "neg") {
-                    stats.money += 20; // Recompensa por destruir
-                } else {
-                    stats.money += 50; // Recompensa por capturar oportunidad
-                }
+            if(Math.hypot(o.x - b.x, o.y - b.y) < 30){
+                stats.money += o.type === "pos" ? 100 : 20;
                 objects.splice(i, 1);
                 bullets.splice(bi, 1);
             }
         });
+
+        // Laser de Transmutación (Mantenido)
+        if(isHoldingBeam && Math.abs(o.x - user.x) < 40 && o.y < user.y){
+            if(o.type === "neg"){
+                o.type = "pos";
+                o.text = "FORTALEZA";
+                o.hunting = false;
+                stats.money += 50;
+            }
+        }
+
+        if(o.y > canvas.height) objects.splice(i, 1);
     });
 
-    document.getElementById("val-money").innerText = "$" + stats.money;
-    document.getElementById("val-health").innerText = stats.health + "%";
+    document.getElementById("val-money").innerText = "$"+stats.money;
+    document.getElementById("val-health").innerText = stats.health+"%";
+    document.getElementById("val-recovery").innerText = stats.recovery+"/3";
+}
+
+function applyWeakness(){
+    stats.health -= 10;
+    consecutiveErrors++;
+    user.speedMult = 0.4;
+    user.size = 35;
+    stats.recovery = 0;
+    if(consecutiveErrors >= 3){
+        active = false;
+        document.getElementById("discipline-block").style.display = "flex";
+    }
+}
+
+function applyRecovery(){
+    stats.money += 100;
+    consecutiveErrors = 0;
+    if(user.speedMult < 1){
+        stats.recovery++;
+        if(stats.recovery >= 3){
+            user.speedMult = 1;
+            user.size = user.baseSize;
+            stats.recovery = 0;
+        }
+    }
 }
 
 function draw(){
     ctx.fillStyle = "rgba(5, 5, 8, 0.4)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Dibujar Láseres
+    // Dibujar Balas
     bullets.forEach(b => {
-        ctx.strokeStyle = varProp("--neon-blue");
-        ctx.lineWidth = 3;
-        ctx.beginPath();
-        ctx.moveTo(b.x, b.y);
-        ctx.lineTo(b.x, b.y - 15);
-        ctx.stroke();
+        ctx.fillStyle = "white";
+        ctx.fillRect(b.x-2, b.y, 4, 15);
     });
+
+    // Dibujar Rayo de Transmutación
+    if(isHoldingBeam){
+        const grad = ctx.createLinearGradient(user.x, user.y, user.x, 0);
+        grad.addColorStop(0, "rgba(0, 242, 255, 0.8)");
+        grad.addColorStop(1, "transparent");
+        ctx.fillStyle = grad;
+        ctx.fillRect(user.x - 15, 0, 30, user.y);
+        ctx.shadowBlur = 20;
+        ctx.shadowColor = "#00f2ff";
+    }
 
     // Dibujar Palabras
     objects.forEach(o => {
-        ctx.fillStyle = o.type === "neg" ? "red" : "lime";
-        ctx.font = "20px Orbitron";
+        ctx.fillStyle = o.type === "neg" ? "#ff3131" : "#00ff41";
+        ctx.font = "bold 18px Orbitron";
         ctx.textAlign = "center";
         ctx.fillText(o.text, o.x, o.y);
     });
 
-    // Dibujar Círculo Azul (Usuario)
+    // Dibujar Usuario
+    ctx.shadowBlur = 15;
+    ctx.shadowColor = "#00f2ff";
     ctx.beginPath();
-    ctx.arc(user.x, user.y, user.size / 2, 0, Math.PI * 2);
-    ctx.strokeStyle = user.power < 1.0 ? "orange" : "#00f2ff";
+    ctx.arc(user.x, user.y, user.size/2, 0, Math.PI*2);
+    ctx.strokeStyle = "#00f2ff";
     ctx.lineWidth = 3;
     ctx.stroke();
-    
-    // Mira interna
-    ctx.beginPath();
-    ctx.moveTo(user.x - 5, user.y); ctx.lineTo(user.x + 5, user.y);
-    ctx.moveTo(user.x, user.y - 5); ctx.lineTo(user.x, user.y + 5);
-    ctx.stroke();
-}
-
-function varProp(name) {
-    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    ctx.shadowBlur = 0;
 }
 
 function loop(){
     update();
     draw();
-    requestAnimationFrame(loop);
+    if(active || !active) requestAnimationFrame(loop);
 }
 
-/* INPUTS */
-window.addEventListener("mousemove", (e) => {
-    user.x = e.clientX;
-    user.y = e.clientY;
-});
-
-window.addEventListener("mousedown", fire);
+/* CONTROLES */
+window.addEventListener("mousemove", (e) => { user.x = e.clientX; user.y = e.clientY; });
+window.addEventListener("mousedown", () => { isHoldingBeam = true; fire(); });
+window.addEventListener("mouseup", () => { isHoldingBeam = false; });
 window.addEventListener("keydown", (e) => {
     if(e.key === "ArrowUp") fire();
+    if(e.key === " ") isHoldingBeam = true;
+});
+window.addEventListener("keyup", (e) => {
+    if(e.key === " ") isHoldingBeam = false;
 });
 
 function resumeTraining(){
     consecutiveErrors = 0;
-    user.power = 1.0;
+    stats.health = 100;
+    user.speedMult = 1;
     user.size = user.baseSize;
     document.getElementById("discipline-block").style.display = "none";
     active = true;
 }
 </script>
-
 </body>
 </html>
