@@ -3,81 +3,75 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>AL CIELO - STREET WISDOM ELITE</title>
+<title>AL CIELO - STREET WISDOM</title>
 <style>
 :root {
     --neon-blue: #00f2ff;
     --neon-gold: #f1c40f;
     --neon-red: #ff3131;
     --matrix-green: #00ff41;
+    --bg-dark: #050508;
 }
 body {
-    margin: 0; overflow: hidden; background: #050508;
-    color: white; font-family: 'Orbitron', sans-serif; cursor: crosshair;
+    margin: 0; overflow: hidden; background: var(--bg-dark);
+    color: white; font-family: 'Orbitron', sans-serif; cursor: crosshair; touch-action: none;
 }
-/* HUD SUPERIOR MASIVO */
 #hud {
     position: absolute; top: 10px; width: 100%;
     display: flex; justify-content: space-evenly; z-index: 100;
 }
 .data-box {
     background: rgba(0,0,0,0.9); border: 2px solid var(--neon-blue);
-    padding: 10px; text-align: center; min-width: 150px;
+    padding: 10px; text-align: center; min-width: 120px;
 }
-.label { font-size: 10px; color: var(--neon-blue); font-weight: 900; }
-.value { font-size: 26px; font-weight: 900; }
+.label { font-size: 10px; color: var(--neon-blue); display: block; }
+.value { font-size: 22px; font-weight: 900; }
 
 #timer-display {
     position: absolute; bottom: 20px; width: 100%; text-align: center;
-    font-size: 50px; color: var(--neon-gold); text-shadow: 0 0 20px gold; z-index: 100;
+    font-size: 40px; color: var(--neon-gold); z-index: 100;
 }
 
-/* FONDOS DINÁMICOS (SUEÑOS) */
-#dream-bg {
-    position: fixed; inset: 0; z-index: -1;
-    background-size: cover; background-position: center;
-    transition: filter 1s, opacity 1s; opacity: 0.3;
+/* Telarañas de advertencia */
+#warning-edge {
+    position: fixed; inset: 0; pointer-events: none;
+    box-shadow: inset 0 0 0px 0px transparent; transition: box-shadow 0.3s; z-index: 50;
 }
 
 #screen-overlay {
-    position: fixed; inset: 0; background: black;
+    position: fixed; inset: 0; background: radial-gradient(circle, #111, #000);
     display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 2000;
 }
 
-.start-btn { padding: 25px 60px; background: var(--neon-blue); border: none; font-weight: 900; cursor: pointer; font-size: 1.2rem; }
+#breathing-circle {
+    width: 200px; height: 200px; border-radius: 50%;
+    border: 5px solid var(--neon-blue); display: none;
+    justify-content: center; align-items: center; font-size: 24px;
+    transition: transform 4s linear;
+}
 
-#breathing-ui {
-    display: none; flex-direction: column; align-items: center;
-}
-#b-circle {
-    width: 200px; height: 200px; border: 5px solid var(--neon-blue);
-    border-radius: 50%; display: flex; justify-content: center; align-items: center;
-    font-size: 24px; transition: transform 4s linear;
-}
+.start-btn { padding: 20px 50px; background: var(--neon-blue); border: none; font-weight: 900; cursor: pointer; }
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
 </head>
 <body>
 
-<div id="dream-bg"></div>
+<div id="warning-edge"></div>
+
 <div id="hud">
-    <div class="data-box"><span class="label">STREET CAPITAL</span><span id="val-money" class="value">$0</span></div>
-    <div class="data-box"><span class="label">MENTAL STABILITY</span><span id="val-health" class="value">100%</span></div>
-    <div class="data-box"><span class="label">AUTONOMY IQ</span><span id="val-rec" class="value">0/3</span></div>
+    <div class="data-box"><span class="label">CAPITAL</span><span id="val-money" class="value">$0</span></div>
+    <div class="data-box"><span class="label">STABILITY</span><span id="val-health" class="value">100%</span></div>
+    <div class="data-box"><span class="label">AUTONOMY</span><span id="val-rec" class="value">0/3</span></div>
 </div>
 
 <div id="timer-display">10:00</div>
 
 <div id="screen-overlay">
-    <h1 id="title">AL CIELO: WISDOM SESSION</h1>
-    <div id="diagnostic" style="display:none; text-align:center; margin: 20px;"></div>
-    
-    <div id="breathing-ui">
-        <div id="b-circle">READY</div>
-        <p id="b-timer">1:00</p>
-    </div>
-
-    <button class="start-btn" id="action-btn" onclick="init()">INITIALIZE</button>
+    <h1 id="main-title">AL CIELO: STREET WISDOM</h1>
+    <div id="diagnostic-area" style="margin: 20px; text-align: center; display: none;"></div>
+    <div id="breathing-circle">INHALE</div>
+    <p id="sub-msg">Master life before it masters you.</p>
+    <button class="start-btn" id="action-btn" onclick="initGame()">INITIALIZE SESSION</button>
 </div>
 
 <canvas id="gameCanvas"></canvas>
@@ -87,262 +81,235 @@ const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 let audioCtx;
 
-// CONFIGURACIÓN DE LOGICA SECUENCIAL
-const sequences = {
-    "BULLYING": ["INSULTS", "CYBER-HATE", "ISOLATION", "THREATS"],
-    "ACTIVE SHOOTER": ["LOUD POPS", "PANIC", "LOCKED DOORS", "STAY LOW"],
-    "FINANCES": ["SPENDING", "DEBT", "INTEREST", "BANKRUPTCY"],
-    "KIDNAPPING": ["STRANGER", "LURE", "TRAP", "DANGER"]
-};
-
-const dreamTemplates = [
-    "https://images.unsplash.com/photo-1506744038136-46273834b3fb", // Nature
-    "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b", // Mountains
-    "https://images.unsplash.com/photo-1501785888041-af3ef285b470"  // Serene Lake
-];
-
-let stats = { money: 0, health: 100, recovery: 0, time: 600, name: "MAY" };
+let stats = { money: 0, health: 100, recovery: 0, totalSeconds: 600 };
 let active = false;
 let objects = [];
 let bullets = [];
-let user = { x: 0, y: 0, size: 60, speed: 1, power: 1 };
-let currentSeq = null;
-let seqIndex = 0;
+let user = { x: 0, y: 0, size: 60, speedMult: 1 };
 let isHoldingBeam = false;
+
+// Configuración de Palabras y Lógica
+const lifeLessons = [
+    { red: "ACTIVE SHOOTER", green: "RUN-HIDE-FIGHT", type: "safety" },
+    { red: "KIDNAPPING", green: "SITUATION AWARE", type: "safety" },
+    { red: "BULLYING", green: "SELF-CONFIDENCE", type: "social" },
+    { red: "PHONE ADDICTION", green: "TIME CONTROL", type: "digital" },
+    { red: "IMPULSE BUY", green: "SAVINGS PLAN", type: "money" },
+    { red: "DIRTY TEETH", green: "SELF-CARE", type: "higiene" },
+    { red: "UNTIED SHOES", green: "AUTONOMY", type: "higiene" }
+];
 
 function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
 window.addEventListener('resize', resize);
 resize();
 
-// SONIDOS
-function sfx(type) {
+// Sonidos Sintetizados
+function playSound(type) {
     if(!audioCtx) return;
     const osc = audioCtx.createOscillator();
-    const g = audioCtx.createGain();
-    osc.connect(g); g.connect(audioCtx.destination);
-    
-    if(type==='pos'){ osc.type='sine'; osc.frequency.value=600; g.gain.value=0.1; }
-    else { osc.type='sawtooth'; osc.frequency.value=150; g.gain.value=0.2; }
-    
-    osc.start(); osc.stop(audioCtx.currentTime+0.1);
+    const gain = audioCtx.createGain();
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+
+    if(type === 'pos') { // Piano-like
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(440, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.1);
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.2);
+    } else if(type === 'neg') { // Broken glass/Noise
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(100, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+        gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.3);
+    } else if(type === 'beam') { // Air release
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(200, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+    }
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.3);
 }
 
-function init() {
+function initGame() {
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     document.getElementById("screen-overlay").style.display = "none";
     active = true;
-    startClock();
-    setInterval(spawnManager, 1000);
+    gameTimer();
+    setInterval(spawn, 1200);
     loop();
 }
 
-function startClock() {
+function gameTimer() {
     const t = setInterval(() => {
         if(!active) return;
-        stats.time--;
-        let m = Math.floor(stats.time/60), s = stats.time%60;
-        document.getElementById("timer-display").innerText = `${m}:${s<10?'0':''}${s}`;
-        if(stats.time <= 0) { clearInterval(t); end(); }
+        stats.totalSeconds--;
+        let m = Math.floor(stats.totalSeconds / 60);
+        let s = stats.totalSeconds % 60;
+        document.getElementById("timer-display").innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
+        if(stats.totalSeconds <= 0) {
+            clearInterval(t);
+            endGame();
+        }
     }, 1000);
 }
 
-function spawnManager() {
+function spawn() {
     if(!active) return;
+    const lesson = lifeLessons[Math.floor(Math.random() * lifeLessons.length)];
+    const isNeg = Math.random() > 0.4;
     
-    let text, type, isSequence = false;
-
-    if(!currentSeq && Math.random() > 0.7) {
-        const keys = Object.keys(sequences);
-        currentSeq = keys[Math.floor(Math.random()*keys.length)];
-        seqIndex = 0;
-        text = currentSeq;
-        type = "neg";
-    } else if(currentSeq) {
-        text = sequences[currentSeq][seqIndex];
-        type = "neg";
-        seqIndex++;
-        if(seqIndex >= sequences[currentSeq].length) currentSeq = null;
-    } else {
-        text = ["SAVINGS", "STUDY", "HELP PARENTS", "HEALTHY FOOD"][Math.floor(Math.random()*4)];
-        type = "pos";
-    }
+    // Alerta visual (Telaraña)
+    const edge = document.getElementById("warning-edge");
+    const color = isNeg ? "red" : "lime";
+    edge.style.boxShadow = `inset 0 0 40px 10px ${color}`;
+    setTimeout(() => edge.style.boxShadow = "none", 500);
 
     objects.push({
-        text, x: Math.random()*canvas.width, y: -50,
-        speed: (2 + Math.random()*3) * (type==="neg"?1.2:1),
-        type, hunting: type==="neg"
+        text: isNeg ? lesson.red : lesson.green,
+        x: Math.random() * canvas.width,
+        y: -50,
+        speed: 2 + Math.random() * 2,
+        type: isNeg ? "neg" : "pos",
+        lesson: isNeg ? lesson.green : null
     });
-}
-
-function fire() {
-    if(!active) return;
-    bullets.push({ x: user.x, y: user.y });
-    sfx('pos');
 }
 
 function update() {
     if(!active) return;
 
     bullets.forEach((b, i) => {
-        b.y -= 10 * user.power;
+        b.y -= 10;
         if(b.y < 0) bullets.splice(i, 1);
     });
 
     objects.forEach((o, i) => {
-        o.y += o.speed;
-        if(o.hunting) o.x += (user.x - o.x) * 0.02;
-
+        o.y += o.speed * user.speedMult;
         const d = Math.hypot(o.x - user.x, o.y - user.y);
 
-        // COLISIÓN: Consecuencias de la vida
         if(d < user.size/2) {
             if(o.type === "neg") {
-                // CASTIGO: El choque debilita
                 stats.health -= 15;
-                user.speed = 0.5;
-                user.size = 40;
-                user.power = 0.5;
-                sfx('neg');
+                user.speedMult = 0.5;
+                playSound('neg');
             } else {
-                // RECOMPENSA: Decisiones correctas empoderan
-                stats.money += 500;
-                applyBoost();
+                stats.money += 200;
+                stats.recovery++;
+                if(stats.recovery >= 3) { user.speedMult = 1; stats.recovery = 0; }
+                playSound('pos');
             }
             objects.splice(i, 1);
         }
 
-        // BALAS vs PALABRAS
-        bullets.forEach((b, bi) => {
-            if(Math.hypot(o.x - b.x, o.y - b.y) < 30) {
-                if(o.type === "neg") {
-                    // CASTIGO POR DISPARAR A LA AMENAZA EN VEZ DE TRANSFORMARLA
-                    stats.health -= 5;
-                    o.text = "REGRET";
-                    o.speed *= 2;
-                } else {
-                    stats.money += 100;
-                }
-                bullets.splice(bi, 1);
-            }
-        });
-
-        // LASER TRANSMUTADOR (HOLD CLICK)
         if(isHoldingBeam && Math.abs(o.x - user.x) < 40 && o.y < user.y && o.type === "neg") {
             o.type = "pos";
-            o.text = "STRENGTH";
-            o.hunting = false;
-            applyBoost();
+            o.text = o.lesson || "STRENGTH";
+            playSound('pos');
         }
-
+        
         if(o.y > canvas.height) objects.splice(i, 1);
     });
 
-    updateHUD();
-}
-
-function applyBoost() {
-    stats.recovery++;
-    if(stats.recovery >= 3) {
-        user.speed = 1.2;
-        user.size = 80;
-        user.power = 2;
-        stats.recovery = 0;
-        changeDream();
-    }
-}
-
-function changeDream() {
-    const bg = document.getElementById("dream-bg");
-    bg.style.backgroundImage = `url(${dreamTemplates[Math.floor(Math.random()*dreamTemplates.length)]})`;
-    bg.style.opacity = "0.6";
-    setTimeout(() => bg.style.opacity = "0.3", 3000);
-}
-
-function updateHUD() {
     document.getElementById("val-money").innerText = "$" + stats.money;
     document.getElementById("val-health").innerText = stats.health + "%";
     document.getElementById("val-rec").innerText = stats.recovery + "/3";
 }
 
 function draw() {
-    ctx.fillStyle = "rgba(5, 5, 8, 0.4)";
+    ctx.fillStyle = "rgba(5, 5, 8, 0.3)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     if(isHoldingBeam) {
-        ctx.fillStyle = "rgba(0, 242, 255, 0.2)";
-        ctx.fillRect(user.x - 15, 0, 30, user.y);
+        ctx.fillStyle = "rgba(0, 242, 255, 0.3)";
+        ctx.fillRect(user.x - 20, 0, 40, user.y);
     }
 
     objects.forEach(o => {
-        ctx.fillStyle = o.type === "neg" ? "red" : "#00ff41";
-        ctx.font = "900 18px Orbitron";
+        ctx.fillStyle = o.type === "neg" ? "#ff3131" : "#00ff41";
+        ctx.font = "bold 16px Orbitron";
         ctx.textAlign = "center";
         ctx.fillText(o.text, o.x, o.y);
     });
 
-    // AVATAR DEL NIÑO
     ctx.beginPath();
     ctx.arc(user.x, user.y, user.size/2, 0, Math.PI*2);
-    ctx.strokeStyle = varProp("--neon-blue");
-    ctx.lineWidth = 4;
+    ctx.strokeStyle = "#00f2ff";
+    ctx.lineWidth = 3;
     ctx.stroke();
-    ctx.fillStyle = "white";
-    ctx.font = "12px Orbitron";
-    ctx.fillText(stats.name, user.x, user.y + 5);
 }
 
-function varProp(n) { return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
-
 function loop() {
-    update(); draw();
+    update();
+    draw();
     if(active) requestAnimationFrame(loop);
 }
 
-function end() {
+function endGame() {
     active = false;
     const overlay = document.getElementById("screen-overlay");
-    overlay.style.display = "flex";
-    document.getElementById("title").innerText = "SESSION COMPLETE";
-    document.getElementById("diagnostic").style.display = "block";
-    document.getElementById("diagnostic").innerHTML = `<h2>IQ STREET REPORT</h2><p>Capital: $${stats.money}</p><p>Survival: ${stats.health}%</p>`;
-    document.getElementById("action-btn").style.display = "none";
+    const diag = document.getElementById("diagnostic-area");
+    const title = document.getElementById("main-title");
+    const btn = document.getElementById("action-btn");
+    
+    title.innerText = "SESSION COMPLETE";
+    diag.style.display = "block";
+    diag.innerHTML = `<h3>STREET IQ REPORT</h3>
+        <p>Capital: $${stats.money}</p>
+        <p>Stability: ${stats.health}%</p>
+        <p>You are ready for the next level.</p>`;
+    
+    btn.style.display = "none";
     startBreathing();
 }
 
 function startBreathing() {
-    const ui = document.getElementById("breathing-ui");
-    const circle = document.getElementById("b-circle");
-    ui.style.display = "flex";
+    const circle = document.getElementById("breathing-circle");
+    circle.style.display = "flex";
     let timeLeft = 60;
-
-    const step = () => {
-        if(timeLeft <= 0) { finishAll(); return; }
-        circle.innerText = "INHALE"; circle.style.transform = "scale(1.6)";
+    
+    const breathCycle = () => {
+        if(timeLeft <= 0) {
+            circle.style.display = "none";
+            showReset();
+            return;
+        }
+        
+        circle.innerText = "INHALE";
+        circle.style.transform = "scale(1.5)";
         setTimeout(() => {
             circle.innerText = "HOLD";
             setTimeout(() => {
-                circle.innerText = "EXHALE"; circle.style.transform = "scale(0.8)";
+                circle.innerText = "EXHALE";
+                circle.style.transform = "scale(0.8)";
                 timeLeft -= 12;
-                document.getElementById("b-timer").innerText = timeLeft + "s";
-                setTimeout(step, 4000);
+                setTimeout(breathCycle, 4000);
             }, 4000);
         }, 4000);
     };
-    step();
+    breathCycle();
 }
 
-function finishAll() {
+function showReset() {
     const btn = document.getElementById("action-btn");
+    let silenceTime = 60;
     btn.style.display = "block";
-    btn.innerText = "RESTART SESSION (1m SILENCE)";
     btn.disabled = true;
-    setTimeout(() => { btn.disabled = false; btn.innerText = "INITIALIZE"; btn.onclick = () => location.reload(); }, 60000);
+    
+    const timer = setInterval(() => {
+        silenceTime--;
+        btn.innerText = `RESTART IN ${silenceTime}s (SILENCE)`;
+        if(silenceTime <= 0) {
+            clearInterval(timer);
+            btn.innerText = "INITIALIZE SESSION";
+            btn.disabled = false;
+            btn.onclick = () => location.reload();
+        }
+    }, 1000);
 }
 
 window.addEventListener("mousemove", e => { user.x = e.clientX; user.y = e.clientY; });
-window.addEventListener("mousedown", () => isHoldingBeam = true);
+window.addEventListener("mousedown", () => { isHoldingBeam = true; playSound('beam'); });
 window.addEventListener("mouseup", () => isHoldingBeam = false);
-window.addEventListener("keydown", e => { if(e.key === "ArrowUp") fire(); });
 </script>
 </body>
 </html>
