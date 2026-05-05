@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>KAMIZEN SESSION</title>
+<title>KAMIZEN SESSION - DEFENSE MODE</title>
 
 <style>
 :root {
@@ -23,7 +23,6 @@ body {
     touch-action: none;
 }
 
-/* HUD */
 #hud {
     position: absolute;
     top: 15px;
@@ -53,7 +52,6 @@ body {
     font-weight: 900;
 }
 
-/* TIMER */
 #timer-display {
     position: absolute;
     bottom: 30px;
@@ -65,7 +63,6 @@ body {
     z-index: 100;
 }
 
-/* OVERLAY */
 #overlay, #discipline-block {
     position: fixed;
     inset: 0;
@@ -95,53 +92,9 @@ body {
     margin-top: 20px;
 }
 
-.commit-btn {
-    background: white;
-}
+.commit-btn { background: white; }
 
-/* FLASH */
-#flash-alert {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 50;
-    opacity: 0;
-}
-
-/* ENGINE REQUIRED UI (AÑADIDO) */
-#centerText {
-    position: absolute;
-    top: 40%;
-    width: 100%;
-    text-align: center;
-    font-size: 28px;
-    font-weight: bold;
-    z-index: 2;
-}
-
-#explanationBox {
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
-    width: 280px;
-    background: #111;
-    border: 1px solid var(--neon-blue);
-    padding: 10px;
-    opacity: 0;
-    z-index: 10;
-}
-
-#expTitle { font-weight: bold; }
-#expBody { font-size: 14px; }
-
-#continueBtn, #resetBtn { display:none; }
-
-.word {
-    position: absolute;
-    color: #00ff41;
-    font-size: 18px;
-    z-index: 1;
-}
+canvas { display: block; }
 </style>
 
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
@@ -149,9 +102,6 @@ body {
 
 <body>
 
-<div id="flash-alert"></div>
-
-<div id="centerText"></div>
 <div id="timer-display">TIME REMAINING: <span id="clock">27:00</span></div>
 
 <div id="hud">
@@ -160,23 +110,13 @@ body {
     <div class="data-box"><span class="label">LEVEL</span><span id="val-rank" class="value">1</span></div>
 </div>
 
-<!-- ENGINE REQUIRED BOX -->
-<div id="explanationBox">
-    <div id="expTitle">INFO</div>
-    <div id="expBody"></div>
-</div>
-
-<audio id="sfxGlass" src="https://assets.mixkit.co/sfx/preview/mixkit-glass-click-1110.mp3"></audio>
-
-<!-- DISCIPLINE -->
 <div id="discipline-block">
     <h1>HALTED</h1>
-    <div>You triggered 3 negative concepts</div>
-    <div id="dynamic-message"></div>
+    <div>CRITICAL COLLISION DETECTED</div>
+    <div id="dynamic-message">Discipline is the bridge between goals and accomplishment.</div>
     <button class="commit-btn" onclick="resumeTraining()">I ACCEPT</button>
 </div>
 
-<!-- START -->
 <div id="overlay">
     <h1>KAMIZEN SESSION</h1>
     <button class="start-btn" onclick="startGame()">INITIALIZE TRAINING</button>
@@ -184,145 +124,191 @@ body {
 
 <canvas id="gameCanvas"></canvas>
 
-<script src="js/engine.js"></script>
-
 <script>
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
-let stats = { money: 0, health: 100, currentLevelIdx: 0, totalSeconds: 27 * 60 };
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let stats = { money: 0, health: 100, totalSeconds: 27 * 60 };
 let active = false;
 let objects = [];
-let user = { x: 0, y: 0, size: 60 };
+let lasers = [];
+let user = { x: canvas.width/2, y: canvas.height/2, size: 30 };
 let consecutiveErrors = 0;
 
-/* =========================
-   ENGINE CONNECT (SAFE)
-========================= */
-window.addEventListener("load", () => {
-    if (window.Engine) {
-        Engine.init();
-        // Engine.start() ❌ NO activado para evitar freeze
-    }
-});
-
-/* =========================
-   SAFE SPEECH (ANTI FREEZE)
-========================= */
-let speaking = false;
 function safeSpeak(t){
-    try{
-        if(speaking) return;
-        speaking = true;
+    try {
         speechSynthesis.cancel();
         const msg = new SpeechSynthesisUtterance(t);
-        msg.onend = () => speaking = false;
         speechSynthesis.speak(msg);
-    }catch(e){ speaking = false; }
+    } catch(e){}
 }
 
-/* =========================
-   START GAME
-========================= */
 function startGame(){
     document.getElementById("overlay").style.display = "none";
     active = true;
-
-    safeSpeak("Training started");
-
-    setInterval(spawn, 800);
-
-    function loop(){
-        update();
-        draw();
-        requestAnimationFrame(loop);
-    }
+    safeSpeak("System Active. Eliminate obstacles. Secure wealth.");
+    
+    setInterval(spawn, 700);
+    setInterval(autoFire, 400); // Disparo automático
+    
     loop();
 }
 
-/* =========================
-   SPAWN WORDS
-========================= */
 function spawn(){
     if(!active) return;
 
-    const words = ["DISCIPLINE","FOCUS","ERROR","WIN","LOSS"];
-    const text = words[Math.floor(Math.random()*words.length)];
+    const posWords = ["OPPORTUNITY","WEALTH","WISDOM","MONEY","GROWTH"];
+    const negWords = ["DEBT","STAGNATION","LAZINESS","ERROR","DOUBT"];
+    
+    const isNeg = Math.random() > 0.7;
+    const text = isNeg ? negWords[Math.floor(Math.random()*negWords.length)] : posWords[Math.floor(Math.random()*posWords.length)];
 
     objects.push({
         text,
         x: Math.random()*canvas.width,
-        y: -50,
-        speed: 3 + Math.random()*3,
-        type: Math.random()>0.7 ? "neg" : "pos"
+        y: -20,
+        speed: 2 + Math.random()*3,
+        type: isNeg ? "neg" : "pos",
+        width: ctx.measureText(text).width + 20
     });
 }
 
-/* =========================
-   UPDATE
-========================= */
+function autoFire(){
+    if(!active) return;
+    // El láser apunta a la oportunidad más cercana o a la amenaza roja
+    let target = objects.find(o => o.y > 0);
+    if(target) {
+        lasers.push({
+            x: user.x,
+            y: user.y,
+            targetX: target.x,
+            targetY: target.y,
+            life: 10
+        });
+    }
+}
+
 function update(){
     if(!active) return;
 
-    objects.forEach((o,i)=>{
-        o.y += o.speed;
+    objects.forEach((o, i) => {
+        // Lógica de movimiento: Las rojas persiguen al jugador
+        if(o.type === "neg") {
+            const angle = Math.atan2(user.y - o.y, user.x - o.x);
+            o.x += Math.cos(angle) * (o.speed * 0.8);
+            o.y += Math.sin(angle) * (o.speed * 0.8);
+        } else {
+            o.y += o.speed;
+        }
 
-        const d = Math.hypot(o.x-user.x, o.y-user.y);
-
-        if(d < user.size){
-            if(o.type==="neg"){
-                stats.health -= 10;
+        // Colisión con el Jugador
+        const distToUser = Math.hypot(o.x - user.x, o.y - user.y);
+        if(distToUser < user.size + 10) {
+            if(o.type === "neg") {
+                stats.health -= 15;
                 consecutiveErrors++;
-                if(consecutiveErrors>=3){
-                    document.getElementById("discipline-block").style.display="flex";
+                if(consecutiveErrors >= 3) {
+                    active = false;
+                    document.getElementById("discipline-block").style.display = "flex";
                 }
             } else {
                 stats.money += 100;
                 consecutiveErrors = 0;
             }
-            objects.splice(i,1);
+            objects.splice(i, 1);
         }
+
+        // Colisión con Láser
+        lasers.forEach((l, li) => {
+            const distToLaser = Math.hypot(o.x - l.targetX, o.y - l.targetY);
+            if(distToLaser < 30) {
+                if(o.type === "pos") stats.money += 50; // Recolecta al disparar
+                objects.splice(i, 1);
+                lasers.splice(li, 1);
+            }
+        });
+
+        if(o.y > canvas.height) objects.splice(i, 1);
     });
 
-    document.getElementById("val-money").innerText = "$"+stats.money;
-    document.getElementById("val-health").innerText = stats.health+"%";
+    lasers.forEach((l, i) => {
+        l.life--;
+        if(l.life <= 0) lasers.splice(i, 1);
+    });
+
+    document.getElementById("val-money").innerText = "$" + stats.money;
+    document.getElementById("val-health").innerText = stats.health + "%";
 }
 
-/* =========================
-   DRAW
-========================= */
 function draw(){
-    ctx.fillStyle="rgba(0,0,0,0.4)";
-    ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle = "rgba(5, 5, 8, 0.3)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    objects.forEach(o=>{
-        ctx.fillStyle = o.type==="neg" ? "red" : "lime";
-        ctx.font="20px Orbitron";
-        ctx.fillText(o.text,o.x,o.y);
+    // Dibujar Láseres
+    lasers.forEach(l => {
+        ctx.beginPath();
+        ctx.moveTo(user.x, user.y);
+        ctx.lineTo(l.targetX, l.targetY);
+        ctx.strokeStyle = varColor('--neon-blue');
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        
+        ctx.beginPath();
+        ctx.arc(l.targetX, l.targetY, 5, 0, Math.PI*2);
+        ctx.fillStyle = "white";
+        ctx.fill();
     });
 
+    // Dibujar Palabras
+    objects.forEach(o => {
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = o.type === "neg" ? "red" : "#00ff41";
+        ctx.fillStyle = o.type === "neg" ? "red" : "#00ff41";
+        ctx.font = "bold 20px Orbitron";
+        ctx.fillText(o.text, o.x, o.y);
+        ctx.shadowBlur = 0;
+    });
+
+    // Dibujar Jugador (Círculo Azul)
     ctx.beginPath();
-    ctx.arc(user.x,user.y,20,0,Math.PI*2);
-    ctx.strokeStyle="#00f2ff";
+    ctx.arc(user.x, user.y, user.size, 0, Math.PI * 2);
+    ctx.strokeStyle = varColor('--neon-blue');
+    ctx.lineWidth = 3;
     ctx.stroke();
+    ctx.fillStyle = "rgba(0, 242, 255, 0.1)";
+    ctx.fill();
 }
 
-/* =========================
-   INPUT
-========================= */
-window.addEventListener("mousemove",(e)=>{
-    user.x=e.clientX;
-    user.y=e.clientY;
+function varColor(name) {
+    return getComputedStyle(document.documentElement).getPropertyValue(name);
+}
+
+function loop(){
+    update();
+    draw();
+    if(active) requestAnimationFrame(loop);
+}
+
+window.addEventListener("mousemove", (e) => {
+    user.x = e.clientX;
+    user.y = e.clientY;
 });
 
-/* =========================
-   RESUME
-========================= */
 function resumeTraining(){
-    consecutiveErrors=0;
-    document.getElementById("discipline-block").style.display="none";
-    active=true;
+    consecutiveErrors = 0;
+    stats.health = 100;
+    document.getElementById("discipline-block").style.display = "none";
+    active = true;
+    loop();
 }
+
+window.addEventListener('resize', () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+});
 </script>
 
 </body>
