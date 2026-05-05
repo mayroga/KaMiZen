@@ -3,42 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>AL CIELO - STREET WISDOM</title>
+    <title>AL CIELO - STREET WISDOM ELITE</title>
     <style>
         :root { --neon-blue: #00f2ff; --neon-gold: #f1c40f; --neon-red: #ff3131; --bg-dark: #050508; }
         body { margin: 0; overflow: hidden; background: var(--bg-dark); color: white; font-family: 'Orbitron', sans-serif; touch-action: none; }
-        #hud { position: absolute; top: 15px; width: 100%; display: flex; justify-content: space-evenly; z-index: 100; pointer-events: none; }
-        .data-box { background: rgba(0, 0, 0, 0.8); border: 1px solid var(--neon-blue); padding: 8px; text-align: center; min-width: 120px; }
-        .label { font-size: 9px; color: var(--neon-blue); display: block; }
-        .value { font-size: 20px; font-weight: 900; }
-        #timer-display { position: absolute; bottom: 20px; width: 100%; text-align: center; color: var(--neon-gold); font-size: 35px; font-weight: 900; }
-        canvas { display: block; }
+        
+        #hud { position: absolute; top: 10px; width: 100%; display: flex; justify-content: space-around; z-index: 100; pointer-events: none; }
+        .data-box { background: rgba(0, 0, 0, 0.9); border: 2px solid var(--neon-blue); padding: 10px; text-align: center; min-width: 130px; box-shadow: 0 0 10px var(--neon-blue); }
+        .label { font-size: 10px; color: var(--neon-blue); font-weight: 900; display: block; text-transform: uppercase; }
+        .value { font-size: 22px; font-weight: 900; display: block; color: #fff; }
+
+        #timer-display { position: absolute; bottom: 30px; width: 100%; text-align: center; color: var(--neon-gold); font-size: 45px; font-weight: 900; text-shadow: 2px 2px #000; z-index: 100; }
+        
         #overlay { position: fixed; inset: 0; background: black; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 2000; }
-        .start-btn { padding: 20px 40px; background: var(--neon-blue); border: none; font-family: 'Orbitron'; cursor: pointer; font-weight: 900; }
-        #breathing-ui { display: none; text-align: center; color: white; }
+        .start-btn { padding: 25px 50px; background: var(--neon-blue); color: #000; border: none; font-family: 'Orbitron'; font-weight: 900; cursor: pointer; font-size: 1.5rem; clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%); }
+        
+        #breathing-ui { display: none; text-align: center; }
+        .breath-circle { width: 150px; height: 150px; border: 8px solid var(--neon-blue); border-radius: 50%; margin: 30px auto; transition: transform 4s ease-in-out; }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
 </head>
 <body>
 
 <div id="hud">
-    <div class="data-box"><span class="label">STREET CAPITAL</span><span id="val-money" class="value">$0</span></div>
-    <div class="data-box"><span class="label">STABILITY</span><span id="val-health" class="value">100%</span></div>
-    <div class="data-box"><span class="label">AUTONOMY</span><span id="val-rec" class="value">0/3</span></div>
+    <div class="data-box" style="border-color: var(--neon-gold);"><span class="label">STREET CAPITAL</span><span id="val-money" class="value">$0</span></div>
+    <div class="data-box" style="border-color: var(--neon-red);"><span class="label">STABILITY</span><span id="val-health" class="value">100%</span></div>
+    <div class="data-box"><span class="label">SKILLS UNLOCKED</span><span id="val-rec" class="value">0/3</span></div>
 </div>
 
 <div id="timer-display">10:00</div>
 
 <div id="overlay">
     <div id="intro-content">
-        <h1 style="color: var(--neon-blue);">AL CIELO</h1>
-        <button class="start-btn" onclick="startGame()">START MISSION</button>
+        <h1 style="color: var(--neon-blue); font-size: 3rem; margin-bottom: 5px;">AL CIELO</h1>
+        <p style="color: var(--neon-gold); margin-bottom: 30px; letter-spacing: 3px;">STREET WISDOM TRAINING</p>
+        <button class="start-btn" onclick="startGame()">INITIALIZE MISSION</button>
     </div>
     <div id="breathing-ui">
-        <h2 id="breath-text">PREPARE</h2>
-        <div id="circle" style="width:100px; height:100px; border:4px solid var(--neon-blue); border-radius:50%; margin:20px auto; transition: transform 4s ease-in-out;"></div>
-        <p>1 MINUTE SILENCE FOR WISDOM</p>
-        <button id="reset-btn" class="start-btn" style="display:none; margin-top:20px;" onclick="location.reload()">REINITIALIZE</button>
+        <h2 id="breath-text" style="font-size: 2.5rem; color: var(--neon-blue);">RECOVER</h2>
+        <div class="breath-circle" id="b-circle"></div>
+        <p style="font-size: 1.2rem;">1 MINUTE OF SILENCE & DISCIPLINE</p>
+        <button id="reset-btn" class="start-btn" style="display:none; margin-top:40px;" onclick="location.reload()">NEW TRAINING</button>
     </div>
 </div>
 
@@ -50,15 +55,20 @@ const ctx = canvas.getContext('2d');
 let active = false;
 let objects = [];
 let stats = { money: 0, health: 100, recovery: 0, time: 600 };
-let user = { x: 0, y: 0, size: 50 };
+let user = { x: 0, y: 0, size: 60 };
 let isShooting = false;
 
-// Configuración de palabras
-const wordBank = {
-    hard: ["SMUGGLING", "FEDERAL OFFENSE", "SYSTEM BREACH"],
-    neg: ["DEBT", "LIES", "DANGER", "CHAOS", "FIGHT", "TRAP"],
-    pos: ["STABILITY", "PROFIT", "KNOWLEDGE", "SOP", "CBP", "IATA"]
-};
+// DICCIONARIO DE SUPERVIVENCIA REAL
+const threats = [
+    { neg: "BULLYING", pos: "REPORT & BLOCK", hard: false },
+    { neg: "STRANGER LURE", pos: "SITUATIONAL AWARE", hard: true },
+    { neg: "CYBER-HATE", pos: "DIGITAL SHIELD", hard: true },
+    { neg: "PEER PRESSURE", pos: "CORE VALUES", hard: false },
+    { neg: "ACTIVE SHOOTER", pos: "RUN-HIDE-FIGHT", hard: false },
+    { neg: "EASY MONEY", pos: "STREET CAPITAL", hard: true },
+    { neg: "DARK ALLEY", pos: "MAIN STREET", hard: false },
+    { neg: "IMPULSE BUY", pos: "SAVINGS FIRST", hard: false }
+];
 
 function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
 window.addEventListener('resize', resize); resize();
@@ -68,43 +78,35 @@ function startGame() {
     document.getElementById('overlay').style.backgroundColor = 'transparent';
     document.getElementById('overlay').style.pointerEvents = 'none';
     active = true;
-    setInterval(spawn, 800);
+    setInterval(spawn, 900);
     countDown();
     loop();
 }
 
 function spawn() {
     if(!active) return;
-    let type = Math.random() > 0.7 ? "pos" : "neg";
-    let text;
-    let speedMult = 1;
-    let isHard = false;
-
-    if (Math.random() > 0.85) {
-        text = wordBank.hard[Math.floor(Math.random()*wordBank.hard.length)];
-        speedMult = 2.5;
-        isHard = true;
-    } else {
-        text = type === "pos" ? wordBank.pos[Math.floor(Math.random()*wordBank.pos.length)] : wordBank.neg[Math.floor(Math.random()*wordBank.neg.length)];
-    }
-
+    const data = threats[Math.floor(Math.random() * threats.length)];
+    
     objects.push({
-        text, type, isHard,
-        x: Math.random() * canvas.width,
-        y: -20,
-        vx: (Math.random() - 0.5) * 4,
-        vy: (2 + Math.random() * 2) * speedMult,
-        opacity: 1
+        text: data.neg,
+        solution: data.pos,
+        type: "neg",
+        isHard: data.hard,
+        x: Math.random() * (canvas.width - 100) + 50,
+        y: -50,
+        vx: (Math.random() - 0.5) * 3,
+        vy: data.hard ? 4 : 2.5,
+        angle: 0
     });
 }
 
 function countDown() {
-    const t = setInterval(() => {
+    const timer = setInterval(() => {
         if(!active) return;
         stats.time--;
         let m = Math.floor(stats.time/60), s = stats.time%60;
         document.getElementById("timer-display").innerText = `${m}:${s<10?'0':''}${s}`;
-        if(stats.time <= 0) { clearInterval(t); endSession(); }
+        if(stats.time <= 0) { clearInterval(timer); endSession(); }
     }, 1000);
 }
 
@@ -115,39 +117,43 @@ function update() {
         o.x += o.vx;
         o.y += o.vy;
 
-        // Rebote lateral suave
-        if(o.x < 0 || o.x > canvas.width) o.vx *= -1;
+        // Rebote en paredes
+        if(o.x < 50 || o.x > canvas.width - 50) o.vx *= -1;
 
-        // Dificultad: Las palabras "Hard" esquivan al usuario
-        if(o.isHard && Math.hypot(o.x - user.x, o.y - user.y) < 150) {
-            o.vx = o.x < user.x ? -5 : 5;
-        }
-
-        // Detección de Láser Continuo
-        if(isShooting && Math.abs(o.x - user.x) < 35 && o.y < user.y) {
-            if(o.type === "neg") {
-                o.type = "pos";
-                o.text = "RESOLVED";
-                stats.money += 100;
+        // Inteligencia Evasiva para palabras HARD
+        if(o.isHard && o.type === "neg") {
+            let dist = Math.hypot(o.x - user.x, o.y - user.y);
+            if(dist < 200) {
+                o.vx = o.x < user.x ? -6 : 6;
+                o.vy = 5; // Aceleran al escapar
             }
         }
 
-        // Colisión con Avatar
-        if(Math.hypot(o.x - user.x, o.y - user.y) < user.size/2) {
+        // LÁSER CONTINUO: Transmutación al contacto
+        if(isShooting && Math.abs(o.x - user.x) < 40 && o.y < user.y) {
             if(o.type === "neg") {
-                stats.health -= 10;
+                o.type = "pos";
+                o.text = o.solution;
+                stats.money += 250;
+            }
+        }
+
+        // COLISIÓN CON EL AVATAR (Impacto Directo)
+        if(Math.hypot(o.x - user.x, o.y - user.y) < user.size/2 + 20) {
+            if(o.type === "neg") {
+                stats.health -= 15;
                 stats.recovery = 0;
             } else {
-                stats.money += 500;
+                stats.money += 1000;
                 stats.recovery++;
             }
             objects.splice(i, 1);
         }
 
-        if(o.y > canvas.height) objects.splice(i, 1);
+        if(o.y > canvas.height + 50) objects.splice(i, 1);
     });
 
-    // HUD Update
+    // Actualizar HUD
     document.getElementById("val-money").innerText = `$${stats.money}`;
     document.getElementById("val-health").innerText = `${stats.health}%`;
     document.getElementById("val-rec").innerText = `${stats.recovery}/3`;
@@ -156,73 +162,99 @@ function update() {
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Laser visual
+    // DIBUJAR LÁSER (DISPARO CONTINUO)
     if(isShooting) {
-        let grad = ctx.createLinearGradient(user.x, user.y, user.x, 0);
-        grad.addColorStop(0, "rgba(0, 242, 255, 0.8)");
-        grad.addColorStop(1, "transparent");
-        ctx.fillStyle = grad;
-        ctx.fillRect(user.x - 15, 0, 30, user.y);
+        let beam = ctx.createLinearGradient(user.x, user.y, user.x, 0);
+        beam.addColorStop(0, "rgba(0, 242, 255, 0.7)");
+        beam.addColorStop(0.5, "rgba(0, 242, 255, 0.2)");
+        beam.addColorStop(1, "transparent");
+        ctx.fillStyle = beam;
+        ctx.fillRect(user.x - 20, 0, 40, user.y);
+        
+        // Núcleo del láser
+        ctx.fillStyle = "#fff";
+        ctx.fillRect(user.x - 2, 0, 4, user.y);
     }
 
-    // Dibujar Palabras (con superposición permitida)
+    // DIBUJAR PALABRAS (VISIBILIDAD MEJORADA)
     objects.forEach(o => {
-        ctx.fillStyle = o.type === "neg" ? "rgba(255, 49, 49, 0.9)" : "rgba(0, 255, 65, 0.9)";
-        if(o.isHard) ctx.fillStyle = "var(--neon-gold)";
-        
-        ctx.font = o.isHard ? "bold 22px Orbitron" : "16px Orbitron";
+        ctx.font = "bold 24px Orbitron";
         ctx.textAlign = "center";
+        
+        // Sombra para lectura clara
+        ctx.fillStyle = "black";
+        ctx.fillText(o.text, o.x + 2, o.y + 2);
+
+        // Color según estado
+        if(o.type === "neg") {
+            ctx.fillStyle = o.isHard ? varColor('--neon-gold') : varColor('--neon-red');
+        } else {
+            ctx.fillStyle = "#00ff41"; // Verde Matrix para éxito
+        }
+        
         ctx.fillText(o.text, o.x, o.y);
     });
 
-    // Avatar
+    // AVATAR DEL USUARIO
     ctx.strokeStyle = varColor('--neon-blue');
-    ctx.lineWidth = 3;
+    ctx.lineWidth = 4;
     ctx.beginPath();
     ctx.arc(user.x, user.y, user.size/2, 0, Math.PI*2);
     ctx.stroke();
+    
+    // Brillo del avatar
+    ctx.shadowBlur = 15;
+    ctx.shadowColor = varColor('--neon-blue');
 }
 
 function varColor(name) { return getComputedStyle(document.documentElement).getPropertyValue(name); }
 
 function loop() {
     update(); draw();
+    ctx.shadowBlur = 0; // Reset sombra para rendimiento
     if(active) requestAnimationFrame(loop);
 }
 
 function endSession() {
     active = false;
     const overlay = document.getElementById('overlay');
-    overlay.style.backgroundColor = 'rgba(0,0,0,0.95)';
+    overlay.style.backgroundColor = 'rgba(0,0,0,0.98)';
     overlay.style.pointerEvents = 'all';
     document.getElementById('breathing-ui').style.display = 'block';
     
     let cycle = 0;
-    const circle = document.getElementById('circle');
+    const circle = document.getElementById('b-circle');
     const text = document.getElementById('breath-text');
     
-    const breathLoop = setInterval(() => {
+    const breathInt = setInterval(() => {
         cycle++;
-        if(cycle === 1) { text.innerText = "INHALE"; circle.style.transform = "scale(2)"; }
+        if(cycle === 1) { text.innerText = "INHALE"; circle.style.transform = "scale(1.8)"; }
         if(cycle === 2) { text.innerText = "HOLD"; }
         if(cycle === 3) { text.innerText = "EXHALE"; circle.style.transform = "scale(1)"; }
         if(cycle === 4) { cycle = 0; }
     }, 4000);
 
     setTimeout(() => {
-        clearInterval(breathLoop);
-        text.innerText = "SESSIONS COMPLETE";
+        clearInterval(breathInt);
+        text.innerText = "MISSION SECURED";
         document.getElementById('reset-btn').style.display = 'inline-block';
-    }, 60000); // 1 Minuto de silencio/respiración
+    }, 60000);
 }
 
+// CONTROLES
 window.addEventListener("mousemove", e => { user.x = e.clientX; user.y = e.clientY; });
 window.addEventListener("mousedown", () => isShooting = true);
 window.addEventListener("mouseup", () => isShooting = false);
+
+// Táctil
 window.addEventListener("touchstart", (e) => { 
     isShooting = true; 
     user.x = e.touches[0].clientX; 
     user.y = e.touches[0].clientY; 
+});
+window.addEventListener("touchmove", (e) => {
+    user.x = e.touches[0].clientX; 
+    user.y = e.touches[0].clientY;
 });
 window.addEventListener("touchend", () => isShooting = false);
 </script>
