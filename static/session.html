@@ -1,211 +1,345 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>KAMIZEN SESSION CORE</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>KAMIZEN SESSION - USA SURVIVAL & SUCCESS</title>
+    <style>
+        :root {
+            --neon-blue: #00f2ff;
+            --neon-gold: #f1c40f;
+            --neon-red: #ff3131;
+            --bg-dark: #050508;
+            --neon-green: #2ecc71;
+        }
+        body { margin: 0; overflow: hidden; background: var(--bg-dark); color: white; font-family: 'Orbitron', sans-serif; cursor: none; touch-action: none; }
+       
+        /* UI CORE */
+        #hud {
+            position: absolute; top: 15px; width: 100%;
+            display: flex; justify-content: space-evenly;
+            z-index: 100; pointer-events: none;
+        }
+        .data-box {
+            background: rgba(0, 0, 0, 0.95);
+            border: 2px solid var(--neon-blue);
+            padding: 10px; text-align: center;
+            min-width: 130px; box-shadow: 0 0 20px rgba(0, 242, 255, 0.1);
+        }
+        .label { font-size: 10px; color: var(--neon-blue); letter-spacing: 2px; font-weight: 900; display: block; }
+        .value { font-size: 24px; font-weight: 900; display: block; }
 
-<style>
-:root{
-    --neon-blue:#00f2ff;
-    --neon-green:#00ff41;
-    --neon-red:#ff3131;
-    --bg:#050508;
-}
+        #timer-display {
+            position: absolute; bottom: 30px; width: 100%; text-align: center;
+            color: var(--neon-red); font-size: 35px; font-weight: 900;
+            text-shadow: 0 0 20px var(--neon-red); z-index: 100;
+        }
 
-body{
-    margin:0;
-    background:var(--bg);
-    color:var(--neon-blue);
-    font-family:Arial, Helvetica, sans-serif;
-    overflow:hidden;
-}
+        /* OVERLAYS */
+        .full-overlay {
+            position: fixed; inset: 0; background: radial-gradient(circle, #111 0%, #000 100%);
+            display: flex; flex-direction: column; justify-content: center;
+            align-items: center; z-index: 1000; text-align: center; padding: 20px;
+        }
 
-/* ================= START ================= */
-#startScreen{
-    position:fixed;
-    inset:0;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
-    background:radial-gradient(circle,#111,#000);
-    z-index:9999;
-}
+        .btn-core {
+            padding: 20px 40px; background: var(--neon-blue); color: black;
+            border: none; font-family: 'Orbitron'; font-weight: 900;
+            cursor: pointer; letter-spacing: 3px; font-size: 1.2rem;
+            box-shadow: 0 0 30px var(--neon-blue); margin: 15px;
+            text-transform: uppercase;
+        }
 
-#nameInput{
-    padding:12px;
-    font-size:18px;
-    text-align:center;
-    margin-bottom:15px;
-    width:220px;
-}
+        /* MISSIONS & FEEDBACK */
+        .opt-btn { width: 80%; max-width: 500px; font-size: 0.9rem; margin: 10px; transition: 0.3s; }
+        .opt-correct { background: var(--neon-green) !important; box-shadow: 0 0 40px var(--neon-green); color: white; }
+        .opt-wrong { background: var(--neon-red) !important; box-shadow: 0 0 40px var(--neon-red); color: white; }
+        #mission-explanation { margin-top: 20px; font-weight: 900; color: var(--neon-gold); display: none; max-width: 600px; }
 
-#startBtn{
-    padding:12px 25px;
-    font-size:18px;
-    background:var(--neon-blue);
-    border:none;
-    cursor:pointer;
-    color:#000;
-    font-weight:bold;
-}
+        /* BREATHING CIRCLE */
+        #breath-circle {
+            width: 250px; height: 250px; border-radius: 50%;
+            border: 8px solid var(--neon-blue);
+            display: flex; justify-content: center; align-items: center;
+            font-size: 2rem; font-weight: 900; transition: transform 2s ease-in-out;
+            text-shadow: 0 0 10px var(--neon-blue);
+            box-shadow: 0 0 50px var(--neon-blue);
+        }
 
-/* ================= CORE UI ================= */
-#centerText{
-    position:absolute;
-    top:40%;
-    width:100%;
-    text-align:center;
-    font-size:28px;
-    font-weight:900;
-    z-index:2;
-}
-
-#timer{
-    position:absolute;
-    top:10px;
-    right:20px;
-    font-size:18px;
-    z-index:2;
-}
-
-/* ================= WORDS ================= */
-.word{
-    position:absolute;
-    font-size:18px;
-    color:var(--neon-green);
-    cursor:pointer;
-    z-index:1;
-    user-select:none;
-}
-
-/* ================= EXPLANATION ================= */
-#explanationBox{
-    position:absolute;
-    bottom:10px;
-    right:10px;
-    width:280px;
-    background:#111;
-    border:1px solid var(--neon-blue);
-    padding:10px;
-    opacity:0;
-    transition:0.3s;
-    z-index:5;
-}
-
-#expTitle{
-    font-weight:bold;
-    margin-bottom:5px;
-}
-
-#resetBtn{
-    position:absolute;
-    bottom:20px;
-    left:50%;
-    transform:translateX(-50%);
-    padding:12px 20px;
-    background:var(--neon-red);
-    color:white;
-    border:none;
-    cursor:pointer;
-    display:none;
-}
-</style>
+        #flash-alert { position: fixed; inset: 0; pointer-events: none; z-index: 50; opacity: 0; }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
 </head>
-
 <body>
 
-<!-- START -->
-<div id="startScreen">
-    <h2>ENTER NAME</h2>
-    <input id="nameInput" placeholder="Your name">
-    <button id="startBtn">START TRAINING</button>
+<div id="flash-alert"></div>
+<div id="timer-display"><span id="clock">05:00</span></div>
+
+<div id="hud">
+    <div class="data-box" style="border-color: var(--neon-gold);"><span class="label">NET WORTH</span><span id="val-money" class="value">$0</span></div>
+    <div class="data-box" style="border-color: var(--neon-red);"><span class="label">STABILITY</span><span id="val-health" class="value">100%</span></div>
+    <div class="data-box" style="border-color: var(--neon-blue);"><span class="label">LEVEL</span><span id="val-rank" class="value">1</span></div>
 </div>
 
-<!-- CORE -->
-<div id="centerText"></div>
-<div id="timer"></div>
-
-<!-- EXPLANATION -->
-<div id="explanationBox">
-    <div id="expTitle"></div>
-    <div id="expBody"></div>
+<!-- START OVERLAY -->
+<div id="overlay" class="full-overlay">
+    <h1 style="color: var(--neon-blue); letter-spacing: 10px; font-size: 40px;">KAMIZEN: USA SURVIVAL</h1>
+    <p style="color: var(--neon-gold); font-weight: 900;">DECIDE. SURVIVE. WIN.</p>
+    <button class="btn-core" onclick="startGame()">INITIALIZE TRAINING</button>
 </div>
 
-<!-- RESET -->
-<button id="resetBtn">RESTART</button>
+<!-- STORY OVERLAY (WITH CONTINUE BUTTON) -->
+<div id="story-box" class="full-overlay" style="display:none; z-index:2000;">
+    <h2 id="story-text" style="font-size:24px; color:var(--neon-blue); max-width:800px;"></h2>
+    <button id="story-next" class="btn-core" style="display:none;">CONTINUE</button>
+</div>
 
-<!-- AUDIO -->
-<audio id="sfxGlass" src="https://assets.mixkit.co/sfx/preview/mixkit-glass-click-1110.mp3"></audio>
+<!-- MISSION BOX (WITH FEEDBACK) -->
+<div id="mission-box" class="full-overlay" style="display:none; z-index:3000; background:black;">
+    <h2 id="mission-question" style="color:var(--neon-gold);"></h2>
+    <div id="mission-options" style="width:100%; display:flex; flex-direction:column; align-items:center;"></div>
+    <div id="mission-explanation"></div>
+    <button id="mission-next" class="btn-core" style="display:none;">PROCEED</button>
+</div>
 
-<!-- ENGINE -->
-<script src="js/engine.js"></script>
+<!-- BREATHING (WITH INTERNAL TEXT) -->
+<div id="breathing-box" class="full-overlay" style="display:none; z-index:4000;">
+    <div id="breath-circle"><span id="breath-text">INHALE</span></div>
+</div>
+
+<canvas id="gameCanvas"></canvas>
 
 <script>
-let playerName = "Player";
-let started = false;
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+let audioCtx;
+let active = false;
+let objects = [];
+let stats = { money: 0, health: 100, currentLevelIdx: 0, totalSeconds: 300 };
+const user = { x: 0, y: 0, size: 60 };
 
-/* ================= START ENGINE ================= */
-document.getElementById("startBtn").onclick = () => {
+// INTEGRACIÓN DE TUS DATOS JSON POR NIVELES
+const levels = [
+    { name: "1", speedMult: 0.8, laserWidth: 2, data: [
+        { text: "SAVINGS", type: "pos", impact: 150, color: "#f1c40f", freq: 523 },
+        { text: "FAMILY", type: "pos", impact: 20, color: "#2ecc71", freq: 783 },
+        { text: "TELLING TRUTH", type: "pos", impact: 300, color: "#2ecc71", freq: 523 },
+        { text: "PROBLEM", type: "neg", impact: -20, color: "#ff3131", freq: 90 },
+        { text: "MESSY ROOM", type: "neg", impact: -50, color: "#ff3131", freq: 110 }
+    ]},
+    { name: "2", speedMult: 1.2, laserWidth: 5, data: [
+        { text: "INVESTMENT", type: "pos", impact: 300, color: "#00f2ff", freq: 987 },
+        { text: "BUSINESS", type: "pos", impact: 10, color: "#3498db", freq: 659 },
+        { text: "EDUCATION", type: "pos", impact: 200, color: "#00f2ff", freq: 1046 },
+        { text: "BULLYING", type: "neg", impact: -400, color: "#ff3131", freq: 70 },
+        { text: "THREAT", type: "neg", impact: -25, color: "#ff3131", freq: 110 }
+    ]},
+    { name: "3", speedMult: 1.6, laserWidth: 10, data: [
+        { text: "CAPITAL", type: "pos", impact: 1000, color: "#f1c40f", freq: 1200 },
+        { text: "NEGOCIO", type: "pos", impact: 250, color: "#00f2ff", freq: 1100 },
+        { text: "PAZ", type: "pos", impact: 50, color: "#2ecc71", freq: 1500 },
+        { text: "911 PROTOCOL", type: "pos", impact: 500, color: "#2ecc71", freq: 1396 },
+        { text: "RIESGO", type: "neg", impact: -500, color: "#ff3131", freq: 60 },
+        { text: "PÉRDIDA", type: "neg", impact: -150, color: "#ff3131", freq: 50 },
+        { text: "ACTIVE SHOOTER", type: "neg", impact: -5000, color: "#ff3131", freq: 40 }
+    ]}
+];
 
-    if(started) return;
-    started = true;
-
-    playerName = document.getElementById("nameInput").value.trim() || "Player";
-
-    document.getElementById("startScreen").style.display = "none";
-
-    Engine.init();
-    Engine.start();
-
-    safeSpeak("Welcome " + playerName);
-    document.getElementById("centerText").innerText = "WELCOME " + playerName;
-};
-
-/* ================= SAFE SPEECH (NO FREEZE) ================= */
-let speaking = false;
-
-function safeSpeak(text){
-    try{
-        if(speaking) return;
-        speaking = true;
-
-        speechSynthesis.cancel();
-
-        const msg = new SpeechSynthesisUtterance(text);
-        msg.lang = "en-US";
-        msg.rate = 0.9;
-
-        msg.onend = () => speaking = false;
-        msg.onerror = () => speaking = false;
-
-        speechSynthesis.speak(msg);
-
-    }catch(e){
-        speaking = false;
-    }
+// DOPAMINE AUDIO (SONIC STYLE)
+function initAudio() {
+    if (audioCtx) return;
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    setInterval(() => {
+        if (!active) return;
+        playNote(150, 'square', 0.05, 0.1); // Bass beat
+    }, 400);
 }
 
-/* ================= RESET ================= */
-document.getElementById("resetBtn").onclick = () => {
-    speechSynthesis.cancel();
+function playNote(freq, type, vol, dur) {
+    const osc = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+    g.gain.setValueAtTime(vol, audioCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + dur);
+    osc.connect(g); g.connect(audioCtx.destination);
+    osc.start(); osc.stop(audioCtx.currentTime + dur);
+}
+
+// GAMEPLAY
+function spawn() {
+    if(!active) return;
+    const lvl = levels[stats.currentLevelIdx];
+    const data = lvl.data[Math.floor(Math.random() * lvl.data.length)];
+    objects.push({
+        ...data,
+        x: Math.random() * (canvas.width - 200) + 100,
+        y: -50,
+        vx: (Math.random() - 0.5) * 4,
+        speed: (2 + Math.random() * 2) * lvl.speedMult
+    });
+}
+
+function update() {
+    if(!active) return;
+    stats.totalSeconds -= 1/60;
+    if(stats.totalSeconds <= 0) location.reload();
+
+    objects.forEach((obj, i) => {
+        obj.y += obj.speed;
+        obj.x += obj.vx;
+        if(obj.x < 50 || obj.x > canvas.width - 50) obj.vx *= -1;
+
+        const d = Math.sqrt((obj.x - user.x)**2 + (obj.y - user.y)**2);
+        if (d < user.size) {
+            playNote(obj.freq, 'triangle', 0.2, 0.5);
+            if (obj.type === 'neg') {
+                stats.health -= 10;
+                flashScreen('rgba(255,0,0,0.5)');
+            } else {
+                stats.money += obj.impact;
+                flashScreen('rgba(0,242,255,0.3)');
+            }
+            objects.splice(i, 1);
+            updateHUD();
+        }
+        if(obj.y > canvas.height + 100) objects.splice(i, 1);
+    });
+}
+
+function draw() {
+    ctx.fillStyle = 'rgba(5, 5, 8, 0.4)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Player
+    ctx.strokeStyle = varColor('--neon-blue');
+    ctx.lineWidth = 4;
+    ctx.beginPath(); ctx.arc(user.x, user.y, user.size-20, 0, Math.PI*2); ctx.stroke();
+
+    const lvl = levels[stats.currentLevelIdx];
+    objects.forEach(obj => {
+        // Lasers visible from Level 1
+        ctx.strokeStyle = obj.color;
+        ctx.lineWidth = lvl.laserWidth;
+        ctx.beginPath(); ctx.moveTo(obj.x, obj.y); ctx.lineTo(user.x, user.y); ctx.stroke();
+
+        ctx.font = "900 20px Orbitron";
+        ctx.fillStyle = obj.color;
+        ctx.textAlign = "center";
+        ctx.fillText(obj.text, obj.x, obj.y);
+    });
+}
+
+function varColor(name) { return getComputedStyle(document.documentElement).getPropertyValue(name); }
+
+function flashScreen(color) {
+    const f = document.getElementById('flash-alert');
+    f.style.background = color; f.style.opacity = "1";
+    setTimeout(() => f.style.opacity = "0", 100);
+}
+
+function updateHUD() {
+    document.getElementById('val-money').innerText = "$" + stats.money;
+    document.getElementById('val-health').innerText = stats.health + "%";
+    document.getElementById('val-rank').innerText = stats.currentLevelIdx + 1;
+    const m = Math.floor(stats.totalSeconds / 60);
+    const s = Math.floor(stats.totalSeconds % 60);
+    document.getElementById('clock').innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
+}
+
+// CONTROL DE RESPIRACIÓN
+async function runBreathing(){
+    return new Promise(resolve => {
+        const box = document.getElementById("breathing-box");
+        const circle = document.getElementById("breath-circle");
+        const text = document.getElementById("breath-text");
+        box.style.display = "flex";
+
+        let cycles = 0;
+        const interval = setInterval(() => {
+            const isInhaling = (cycles % 2 === 0);
+            text.innerText = isInhaling ? "INHALE" : "EXHALE";
+            circle.style.transform = isInhaling ? "scale(1.5)" : "scale(1.0)";
+            cycles++;
+            if(cycles > 6) { clearInterval(interval); box.style.display = "none"; resolve(); }
+        }, 2000);
+    });
+}
+
+// CONTROL DE MISIONES (CON EXPLICACIÓN Y COLORES)
+async function runMission(qText, options, correctIdx, explText){
+    return new Promise(resolve => {
+        const box = document.getElementById("mission-box");
+        const ops = document.getElementById("mission-options");
+        const exp = document.getElementById("mission-explanation");
+        const next = document.getElementById("mission-next");
+
+        document.getElementById("mission-question").innerText = qText;
+        box.style.display = "flex";
+        ops.innerHTML = "";
+        exp.style.display = "none";
+        next.style.display = "none";
+
+        options.forEach((opt, i) => {
+            const btn = document.createElement("button");
+            btn.className = "btn-core opt-btn";
+            btn.innerText = opt;
+            btn.onclick = () => {
+                const isCorrect = (i === correctIdx);
+                btn.className = isCorrect ? "btn-core opt-btn opt-correct" : "btn-core opt-btn opt-wrong";
+                Array.from(ops.children).forEach(b => b.onclick = null);
+                exp.innerText = explText;
+                exp.style.display = "block";
+                next.style.display = "block";
+                if(isCorrect) stats.money += 1000; else stats.health -= 20;
+                updateHUD();
+            };
+            ops.appendChild(btn);
+        });
+        next.onclick = () => { box.style.display = "none"; resolve(); };
+    });
+}
+
+async function startGame() {
+    document.getElementById('overlay').style.display = 'none';
+    initAudio();
+    function loop() { update(); draw(); requestAnimationFrame(loop); }
+    loop();
+    setInterval(spawn, 1500); // Ritmo controlado para lectura
+
+    // LEVEL 1: Basics
+    active = true;
+    await new Promise(r => setTimeout(r, 45000));
+    active = false; objects = [];
+    await runMission("A stranger asks for help in the park. What do you do?",
+        ["Go with them", "Run and find a trusted adult", "Stay and talk"], 1,
+        "ALWAYS maintain distance from strangers and find a trusted adult immediately.");
+
+    // LEVEL 2: School & Money
+    stats.currentLevelIdx = 1; active = true;
+    await new Promise(r => setTimeout(r, 60000));
+    active = false; objects = [];
+    await runMission("You see a classmate being bullied. The right move is:",
+        ["Join the bully", "Record it", "Tell a teacher or supervisor"], 2,
+        "Reporting bullying protects your community and shows leadership.");
+
+    // LEVEL 3: High Alert
+    stats.currentLevelIdx = 2; active = true;
+    await new Promise(r => setTimeout(r, 60000));
+    active = false;
+    await runBreathing();
+    await runMission("In an emergency shooter situation, the protocol is:",
+        ["Run, Hide, Fight", "Take photos", "Scream loudly"], 0,
+        "RUN if you can, HIDE if you can't, FIGHT only as a last resort.");
+
+    alert("TRAINING COMPLETE. TOTAL ASSETS: $" + stats.money);
     location.reload();
-};
+}
 
-/* ================= VOICES FIX ================= */
-window.speechSynthesis.onvoiceschanged = () => {
-    speechSynthesis.getVoices();
-};
-
-/* ================= GLOBAL ANTI FREEZE ================= */
-setInterval(() => {
-    if(speechSynthesis.speaking && speechSynthesis.pending){
-        speechSynthesis.cancel();
-    }
-}, 8000);
-
+const input = e => { const c = e.touches ? e.touches[0] : e; user.x = c.clientX; user.y = c.clientY; };
+window.addEventListener('mousemove', input);
+window.addEventListener('touchmove', e => { input(e); e.preventDefault(); }, {passive:false});
+canvas.width = window.innerWidth; canvas.height = window.innerHeight;
 </script>
-
 </body>
 </html>
