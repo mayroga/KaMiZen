@@ -1,94 +1,45 @@
-Entendido. He fusionado ambos códigos para crear la versión definitiva de **AL CIELO: STREET WISDOM**. 
-
-Esta versión mantiene los **lasers rastreadores** del primer código (que te apuntan cuando hay una amenaza), pero integra la **lógica secuencial** (si sale BULLYING, le siguen sus formas), el **sistema de disparos**, el **cambio de paisajes (sueños)** y el **bloqueo disciplinario** si fallas tres veces seguidas.
-
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>AL CIELO - STREET WISDOM ELITE</title>
+    <title>AL CIELO - STREET WISDOM</title>
     <style>
-        :root {
-            --neon-blue: #00f2ff;
-            --neon-gold: #f1c40f;
-            --neon-red: #ff3131;
-            --matrix-green: #00ff41;
-            --bg-dark: #050508;
-        }
-        body { margin: 0; overflow: hidden; background: var(--bg-dark); color: white; font-family: 'Orbitron', sans-serif; cursor: crosshair; touch-action: none; }
-        
-        /* HUD SUPERIOR */
-        #hud {
-            position: absolute; top: 15px; width: 100%;
-            display: flex; justify-content: space-evenly; z-index: 100; pointer-events: none;
-        }
-        .data-box {
-            background: rgba(0, 0, 0, 0.95); border: 2px solid var(--neon-blue);
-            padding: 10px; text-align: center; min-width: 130px;
-        }
-        .label { font-size: 10px; color: var(--neon-blue); font-weight: 900; display: block; }
-        .value { font-size: 24px; font-weight: 900; display: block; }
-
-        #timer-display {
-            position: absolute; bottom: 30px; width: 100%; text-align: center;
-            color: var(--neon-gold); font-size: 40px; font-weight: 900; z-index: 100;
-        }
-
-        /* FONDOS DINÁMICOS (SUEÑOS) */
-        #dream-bg {
-            position: fixed; inset: 0; z-index: -1;
-            background-size: cover; background-position: center;
-            transition: opacity 2s ease-in-out; opacity: 0.15;
-        }
-
-        /* BLOQUEO DISCIPLINARIO */
-        #discipline-block, #overlay {
-            position: fixed; inset: 0; background: radial-gradient(circle, #111 0%, #000 100%);
-            display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 2000; text-align: center; padding: 20px;
-        }
-        #discipline-block { background: rgba(150, 0, 0, 0.98); display: none; z-index: 5000; }
-
-        .start-btn, .commit-btn {
-            padding: 25px 50px; background: var(--neon-blue); color: black;
-            border: none; font-family: 'Orbitron'; font-weight: 900; cursor: pointer; font-size: 1.2rem;
-        }
-        .commit-btn { background: white; margin-top: 20px; }
-
-        #breathing-circle {
-            width: 180px; height: 180px; border: 5px solid var(--neon-blue);
-            border-radius: 50%; display: none; justify-content: center; align-items: center;
-            font-size: 20px; transition: transform 4s linear; margin: 20px;
-        }
+        :root { --neon-blue: #00f2ff; --neon-gold: #f1c40f; --neon-red: #ff3131; --bg-dark: #050508; }
+        body { margin: 0; overflow: hidden; background: var(--bg-dark); color: white; font-family: 'Orbitron', sans-serif; touch-action: none; }
+        #hud { position: absolute; top: 15px; width: 100%; display: flex; justify-content: space-evenly; z-index: 100; pointer-events: none; }
+        .data-box { background: rgba(0, 0, 0, 0.8); border: 1px solid var(--neon-blue); padding: 8px; text-align: center; min-width: 120px; }
+        .label { font-size: 9px; color: var(--neon-blue); display: block; }
+        .value { font-size: 20px; font-weight: 900; }
+        #timer-display { position: absolute; bottom: 20px; width: 100%; text-align: center; color: var(--neon-gold); font-size: 35px; font-weight: 900; }
+        canvas { display: block; }
+        #overlay { position: fixed; inset: 0; background: black; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 2000; }
+        .start-btn { padding: 20px 40px; background: var(--neon-blue); border: none; font-family: 'Orbitron'; cursor: pointer; font-weight: 900; }
+        #breathing-ui { display: none; text-align: center; color: white; }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
 </head>
 <body>
 
-<div id="dream-bg"></div>
-
 <div id="hud">
-    <div class="data-box" style="border-color: var(--neon-gold);"><span class="label">STREET CAPITAL</span><span id="val-money" class="value">$0</span></div>
-    <div class="data-box" style="border-color: var(--neon-red);"><span class="label">STABILITY</span><span id="val-health" class="value">100%</span></div>
-    <div class="data-box" style="border-color: var(--neon-blue);"><span class="label">AUTONOMY</span><span id="val-rec" class="value">0/3</span></div>
+    <div class="data-box"><span class="label">STREET CAPITAL</span><span id="val-money" class="value">$0</span></div>
+    <div class="data-box"><span class="label">STABILITY</span><span id="val-health" class="value">100%</span></div>
+    <div class="data-box"><span class="label">AUTONOMY</span><span id="val-rec" class="value">0/3</span></div>
 </div>
 
 <div id="timer-display">10:00</div>
 
-<!-- DISCIPLINE BLOCK -->
-<div id="discipline-block">
-    <h1 style="color: white; font-size: 40px;">FOCUS FAILED</h1>
-    <p>Negative concepts are overwhelming your mind. You must commit to continue:</p>
-    <div id="dynamic-message" style="background: black; padding: 20px; border: 2px solid gold; color: gold; font-weight: 900; margin: 20px;"></div>
-    <button class="commit-btn" onclick="resumeTraining()">I COMMIT TO MY GROWTH</button>
-</div>
-
 <div id="overlay">
-    <h1 id="main-title" style="color: var(--neon-blue); font-size: 50px;">AL CIELO</h1>
-    <p id="sub-msg">THE WISDOM OF THE STREETS</p>
-    <div id="breathing-circle">INHALE</div>
-    <button class="start-btn" id="action-btn" onclick="startGame()">INITIALIZE TRAINING</button>
+    <div id="intro-content">
+        <h1 style="color: var(--neon-blue);">AL CIELO</h1>
+        <button class="start-btn" onclick="startGame()">START MISSION</button>
+    </div>
+    <div id="breathing-ui">
+        <h2 id="breath-text">PREPARE</h2>
+        <div id="circle" style="width:100px; height:100px; border:4px solid var(--neon-blue); border-radius:50%; margin:20px auto; transition: transform 4s ease-in-out;"></div>
+        <p>1 MINUTE SILENCE FOR WISDOM</p>
+        <button id="reset-btn" class="start-btn" style="display:none; margin-top:20px;" onclick="location.reload()">REINITIALIZE</button>
+    </div>
 </div>
 
 <canvas id="gameCanvas"></canvas>
@@ -96,277 +47,184 @@ Esta versión mantiene los **lasers rastreadores** del primer código (que te ap
 <script>
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
-let audioCtx;
-
-// SECUENCIAS DE APRENDIZAJE REAL
-const sequences = {
-    "BULLYING": ["INSULTS", "SOCIAL TRAP", "CYBER-HATE", "ISOLATION"],
-    "ACTIVE SHOOTER": ["LOUD POPS", "PANIC", "LOCKED DOORS", "RUN-HIDE-FIGHT"],
-    "STREET DANGER": ["STRANGER LURE", "UNSAFE AREA", "DARK ALLEY", "SITUATIONAL AWARE"],
-    "BAD CHOICES": ["DRUG PRESSURE", "SKIPPING SCHOOL", "PHONE ADDICTION", "IMPULSE BUY"]
-};
-
-const dreamImages = [
-    "https://images.unsplash.com/photo-1506744038136-46273834b3fb",
-    "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b",
-    "https://images.unsplash.com/photo-1501785888041-af3ef285b470"
-];
-
-const commitments = [
-    "I PROMISE TO FILTER MY DISTRACTIONS AND FOCUS ON MY VALUE.",
-    "I RECOGNIZE THAT BAD DECISIONS DESTROY MY STABILITY.",
-    "MY MIND IS MY WEAPON. I WILL NOT EXPOSE IT TO WEAKNESS."
-];
-
-let stats = { money: 0, health: 100, recovery: 0, totalSeconds: 600, errors: 0 };
 let active = false;
 let objects = [];
-let bullets = [];
-let user = { x: 0, y: 0, size: 60, power: 1, speedMult: 1, name: "MAY" };
-let isHoldingBeam = false;
-let currentSeq = null, seqIdx = 0;
+let stats = { money: 0, health: 100, recovery: 0, time: 600 };
+let user = { x: 0, y: 0, size: 50 };
+let isShooting = false;
+
+// Configuración de palabras
+const wordBank = {
+    hard: ["SMUGGLING", "FEDERAL OFFENSE", "SYSTEM BREACH"],
+    neg: ["DEBT", "LIES", "DANGER", "CHAOS", "FIGHT", "TRAP"],
+    pos: ["STABILITY", "PROFIT", "KNOWLEDGE", "SOP", "CBP", "IATA"]
+};
 
 function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
 window.addEventListener('resize', resize); resize();
 
-function playSfx(freq, type) {
-    if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    const osc = audioCtx.createOscillator();
-    const g = audioCtx.createGain();
-    osc.type = type === 'pos' ? 'triangle' : 'sawtooth';
-    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-    g.gain.setValueAtTime(0.1, audioCtx.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.5);
-    osc.connect(g); g.connect(audioCtx.destination);
-    osc.start(); osc.stop(audioCtx.currentTime + 0.5);
-}
-
 function startGame() {
-    document.getElementById('overlay').style.display = 'none';
+    document.getElementById('intro-content').style.display = 'none';
+    document.getElementById('overlay').style.backgroundColor = 'transparent';
+    document.getElementById('overlay').style.pointerEvents = 'none';
     active = true;
-    setInterval(spawnManager, 1000);
-    gameTimer();
+    setInterval(spawn, 800);
+    countDown();
     loop();
 }
 
-function gameTimer() {
-    const t = setInterval(() => {
-        if(!active) return;
-        stats.totalSeconds--;
-        let m = Math.floor(stats.totalSeconds / 60), s = stats.totalSeconds % 60;
-        document.getElementById("timer-display").innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
-        if(stats.totalSeconds <= 0) { clearInterval(t); endGame(); }
-    }, 1000);
-}
-
-function spawnManager() {
+function spawn() {
     if(!active) return;
-    let text, type, lesson = null;
+    let type = Math.random() > 0.7 ? "pos" : "neg";
+    let text;
+    let speedMult = 1;
+    let isHard = false;
 
-    if(!currentSeq && Math.random() > 0.7) {
-        const keys = Object.keys(sequences);
-        currentSeq = keys[Math.floor(Math.random() * keys.length)];
-        seqIdx = 0;
-        text = currentSeq; type = "neg";
-    } else if(currentSeq) {
-        text = sequences[currentSeq][seqIdx];
-        type = "neg";
-        seqIdx++;
-        if(seqIdx >= sequences[currentSeq].length) currentSeq = null;
+    if (Math.random() > 0.85) {
+        text = wordBank.hard[Math.floor(Math.random()*wordBank.hard.length)];
+        speedMult = 2.5;
+        isHard = true;
     } else {
-        const pos = ["SAVINGS", "RESPECT", "HONESTY", "911 PROTOCOL", "STUDY"];
-        text = pos[Math.floor(Math.random()*pos.length)];
-        type = "pos";
+        text = type === "pos" ? wordBank.pos[Math.floor(Math.random()*wordBank.pos.length)] : wordBank.neg[Math.floor(Math.random()*wordBank.neg.length)];
     }
 
     objects.push({
-        text, type, x: Math.random() * canvas.width, y: -50,
-        speed: (3 + Math.random() * 2) * (type === "neg" ? 1.2 : 1),
-        freq: type === "pos" ? 600 : 150
+        text, type, isHard,
+        x: Math.random() * canvas.width,
+        y: -20,
+        vx: (Math.random() - 0.5) * 4,
+        vy: (2 + Math.random() * 2) * speedMult,
+        opacity: 1
     });
 }
 
-function fire() {
-    if(!active) return;
-    bullets.push({ x: user.x, y: user.y });
-    playSfx(800, 'pos');
+function countDown() {
+    const t = setInterval(() => {
+        if(!active) return;
+        stats.time--;
+        let m = Math.floor(stats.time/60), s = stats.time%60;
+        document.getElementById("timer-display").innerText = `${m}:${s<10?'0':''}${s}`;
+        if(stats.time <= 0) { clearInterval(t); endSession(); }
+    }, 1000);
 }
 
 function update() {
     if(!active) return;
 
-    bullets.forEach((b, i) => {
-        b.y -= 12 * user.power;
-        if(b.y < 0) bullets.splice(i, 1);
-    });
-
     objects.forEach((o, i) => {
-        o.y += o.speed * user.speedMult;
-        const d = Math.hypot(o.x - user.x, o.y - user.y);
+        o.x += o.vx;
+        o.y += o.vy;
 
-        // CHOQUE CON EL AVATAR
-        if(d < user.size/2) {
-            if(o.type === "neg") {
-                stats.health -= 20;
-                stats.errors++;
-                user.speedMult = 0.5; // El error te frena
-                playSfx(o.freq, 'neg');
-                if(stats.errors >= 3) triggerDiscipline();
-            } else {
-                stats.money += 500;
-                applyBoost();
-                playSfx(o.freq, 'pos');
-            }
-            objects.splice(i, 1);
+        // Rebote lateral suave
+        if(o.x < 0 || o.x > canvas.width) o.vx *= -1;
+
+        // Dificultad: Las palabras "Hard" esquivan al usuario
+        if(o.isHard && Math.hypot(o.x - user.x, o.y - user.y) < 150) {
+            o.vx = o.x < user.x ? -5 : 5;
         }
 
-        // DISPAROS (Bala simple)
-        bullets.forEach((b, bi) => {
-            if(Math.hypot(o.x - b.x, o.y - b.y) < 30) {
-                if(o.type === "neg") {
-                    // Si disparas a lo malo sin transformarlo, el castigo es debilidad
-                    o.text = "LAMENT";
-                    o.speed *= 1.5;
-                    stats.health -= 5;
-                } else {
-                    stats.money += 100;
-                }
-                bullets.splice(bi, 1);
+        // Detección de Láser Continuo
+        if(isShooting && Math.abs(o.x - user.x) < 35 && o.y < user.y) {
+            if(o.type === "neg") {
+                o.type = "pos";
+                o.text = "RESOLVED";
+                stats.money += 100;
             }
-        });
+        }
 
-        // LASER TRANSMUTADOR (Hold Click)
-        if(isHoldingBeam && Math.abs(o.x - user.x) < 40 && o.y < user.y && o.type === "neg") {
-            o.type = "pos";
-            o.text = "WISDOM";
-            applyBoost();
+        // Colisión con Avatar
+        if(Math.hypot(o.x - user.x, o.y - user.y) < user.size/2) {
+            if(o.type === "neg") {
+                stats.health -= 10;
+                stats.recovery = 0;
+            } else {
+                stats.money += 500;
+                stats.recovery++;
+            }
+            objects.splice(i, 1);
         }
 
         if(o.y > canvas.height) objects.splice(i, 1);
     });
 
-    updateHUD();
-}
-
-function applyBoost() {
-    stats.recovery++;
-    stats.errors = 0;
-    if(stats.recovery >= 3) {
-        user.speedMult = 1.3;
-        user.size = 80;
-        user.power = 2;
-        stats.recovery = 0;
-        changeBackground();
-    }
-}
-
-function changeBackground() {
-    const bg = document.getElementById("dream-bg");
-    bg.style.backgroundImage = `url(${dreamImages[Math.floor(Math.random()*dreamImages.length)]})`;
-    bg.style.opacity = "0.5";
-    setTimeout(() => bg.style.opacity = "0.15", 3000);
-}
-
-function triggerDiscipline() {
-    active = false;
-    document.getElementById('dynamic-message').innerText = commitments[Math.floor(Math.random()*commitments.length)];
-    document.getElementById('discipline-block').style.display = 'flex';
-}
-
-function resumeTraining() {
-    stats.errors = 0;
-    stats.health = 50;
-    document.getElementById('discipline-block').style.display = 'none';
-    active = true;
-}
-
-function updateHUD() {
-    document.getElementById("val-money").innerText = "$" + stats.money;
-    document.getElementById("val-health").innerText = stats.health + "%";
-    document.getElementById("val-rec").innerText = stats.recovery + "/3";
+    // HUD Update
+    document.getElementById("val-money").innerText = `$${stats.money}`;
+    document.getElementById("val-health").innerText = `${stats.health}%`;
+    document.getElementById("val-rec").innerText = `${stats.recovery}/3`;
 }
 
 function draw() {
-    ctx.fillStyle = "rgba(5, 5, 8, 0.3)";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // DIBUJAR BALAS
-    bullets.forEach(b => {
-        ctx.fillStyle = "white";
-        ctx.fillRect(b.x-2, b.y, 4, 15);
-    });
+    // Laser visual
+    if(isShooting) {
+        let grad = ctx.createLinearGradient(user.x, user.y, user.x, 0);
+        grad.addColorStop(0, "rgba(0, 242, 255, 0.8)");
+        grad.addColorStop(1, "transparent");
+        ctx.fillStyle = grad;
+        ctx.fillRect(user.x - 15, 0, 30, user.y);
+    }
 
-    // DIBUJAR OBJETOS Y LASERES DE AMENAZA
+    // Dibujar Palabras (con superposición permitida)
     objects.forEach(o => {
-        if(o.type === "neg") {
-            // LASER DE AMENAZA (LO QUE NO QUEREMOS QUITAR)
-            ctx.strokeStyle = "rgba(255, 49, 49, 0.4)";
-            ctx.setLineDash([10, 5]);
-            ctx.lineWidth = 1;
-            ctx.beginPath(); ctx.moveTo(o.x, o.y); ctx.lineTo(user.x, user.y); ctx.stroke();
-            ctx.setLineDash([]);
-        }
-
-        ctx.fillStyle = o.type === "neg" ? "#ff3131" : "#00ff41";
-        ctx.font = "bold 18px Orbitron";
+        ctx.fillStyle = o.type === "neg" ? "rgba(255, 49, 49, 0.9)" : "rgba(0, 255, 65, 0.9)";
+        if(o.isHard) ctx.fillStyle = "var(--neon-gold)";
+        
+        ctx.font = o.isHard ? "bold 22px Orbitron" : "16px Orbitron";
         ctx.textAlign = "center";
         ctx.fillText(o.text, o.x, o.y);
     });
 
-    // LASER DEL JUGADOR
-    if(isHoldingBeam) {
-        ctx.fillStyle = "rgba(0, 242, 255, 0.3)";
-        ctx.fillRect(user.x - 20, 0, 40, user.y);
-    }
-
-    // AVATAR
+    // Avatar
+    ctx.strokeStyle = varColor('--neon-blue');
+    ctx.lineWidth = 3;
     ctx.beginPath();
     ctx.arc(user.x, user.y, user.size/2, 0, Math.PI*2);
-    ctx.strokeStyle = "#00f2ff";
-    ctx.lineWidth = 3;
     ctx.stroke();
-    ctx.fillStyle = "white";
-    ctx.font = "10px Orbitron";
-    ctx.fillText(user.name, user.x, user.y + 5);
 }
+
+function varColor(name) { return getComputedStyle(document.documentElement).getPropertyValue(name); }
 
 function loop() {
     update(); draw();
     if(active) requestAnimationFrame(loop);
 }
 
-function endGame() {
+function endSession() {
     active = false;
-    document.getElementById("overlay").style.display = "flex";
-    document.getElementById("main-title").innerText = "SESSION COMPLETE";
-    document.getElementById("action-btn").style.display = "none";
-    startBreathing();
-}
+    const overlay = document.getElementById('overlay');
+    overlay.style.backgroundColor = 'rgba(0,0,0,0.95)';
+    overlay.style.pointerEvents = 'all';
+    document.getElementById('breathing-ui').style.display = 'block';
+    
+    let cycle = 0;
+    const circle = document.getElementById('circle');
+    const text = document.getElementById('breath-text');
+    
+    const breathLoop = setInterval(() => {
+        cycle++;
+        if(cycle === 1) { text.innerText = "INHALE"; circle.style.transform = "scale(2)"; }
+        if(cycle === 2) { text.innerText = "HOLD"; }
+        if(cycle === 3) { text.innerText = "EXHALE"; circle.style.transform = "scale(1)"; }
+        if(cycle === 4) { cycle = 0; }
+    }, 4000);
 
-function startBreathing() {
-    const circle = document.getElementById("breathing-circle");
-    circle.style.display = "flex";
-    let timeLeft = 60;
-    const step = () => {
-        if(timeLeft <= 0) { location.reload(); return; }
-        circle.innerText = "INHALE"; circle.style.transform = "scale(1.5)";
-        setTimeout(() => {
-            circle.innerText = "HOLD";
-            setTimeout(() => {
-                circle.innerText = "EXHALE"; circle.style.transform = "scale(0.8)";
-                timeLeft -= 12;
-                setTimeout(step, 4000);
-            }, 4000);
-        }, 4000);
-    };
-    step();
+    setTimeout(() => {
+        clearInterval(breathLoop);
+        text.innerText = "SESSIONS COMPLETE";
+        document.getElementById('reset-btn').style.display = 'inline-block';
+    }, 60000); // 1 Minuto de silencio/respiración
 }
 
 window.addEventListener("mousemove", e => { user.x = e.clientX; user.y = e.clientY; });
-window.addEventListener("mousedown", () => isHoldingBeam = true);
-window.addEventListener("mouseup", () => isHoldingBeam = false);
-window.addEventListener("keydown", e => { if(e.key === "ArrowUp" || e.key === " ") fire(); });
+window.addEventListener("mousedown", () => isShooting = true);
+window.addEventListener("mouseup", () => isShooting = false);
+window.addEventListener("touchstart", (e) => { 
+    isShooting = true; 
+    user.x = e.touches[0].clientX; 
+    user.y = e.touches[0].clientY; 
+});
+window.addEventListener("touchend", () => isShooting = false);
 </script>
 </body>
 </html>
-```
