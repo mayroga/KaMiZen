@@ -1,59 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>KaMiZen Engine V2</title>
 
 <style>
 body {
     margin: 0;
     font-family: Arial, sans-serif;
-    background: #0f172a;
+    background: #0b1220;
     color: white;
     text-align: center;
-    font-size: 22px;
 }
 
+/* MAIN CONTAINER */
 #app {
-    padding: 25px;
+    padding: 20px;
     max-width: 900px;
     margin: auto;
 }
 
-/* TITLES */
-h1 {
-    font-size: 36px;
-    margin-top: 30px;
-}
-
-h2 {
-    font-size: 26px;
-    color: #60a5fa;
-}
-
 /* BUTTONS */
 button {
-    display: block;
-    margin: 10px auto;
-    padding: 14px;
-    width: 80%;
-    font-size: 18px;
+    padding: 12px 20px;
+    margin: 10px;
     border: none;
-    border-radius: 8px;
+    border-radius: 10px;
     cursor: pointer;
+    font-size: 16px;
 }
 
-/* ANSWERS STATES */
-.correct { background: #16a34a; color: white; }
-.wrong { background: #dc2626; color: white; }
-.medium { background: #f59e0b; }
-.low { background: #fb923c; }
+.primary { background: #2563eb; color: white; }
+.good { background: #22c55e; }
+.warn { background: #facc15; }
+.bad { background: #f97316; }
+.danger { background: #ef4444; }
 
-/* CONTINUE BUTTON */
-.next {
-    background: #2563eb;
-    color: white;
+/* STORY BOX */
+.card {
+    background: #111a2e;
+    padding: 20px;
+    border-radius: 15px;
     margin-top: 20px;
+    text-align: left;
 }
 
 /* BREATHING CIRCLE */
@@ -61,317 +51,248 @@ button {
     width: 140px;
     height: 140px;
     border-radius: 50%;
-    background: #1e90ff;
-    margin: 25px auto;
+    margin: 20px auto;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: bold;
-    transition: transform 3s ease-in-out;
+    border: 3px solid #3b82f6;
+    animation: breathe 6s infinite ease-in-out;
 }
 
-/* SILENCE MODE */
-.silence {
-    font-size: 24px;
-    opacity: 0.7;
-    margin: 20px;
+@keyframes breathe {
+    0% { transform: scale(0.9); opacity: 0.6; }
+    50% { transform: scale(1.2); opacity: 1; }
+    100% { transform: scale(0.9); opacity: 0.6; }
 }
 
-/* STORY TEXT */
-.story {
-    font-size: 20px;
-    opacity: 0.9;
-    margin: 20px;
+/* ANSWERS */
+.answer {
+    background: #1f2937;
+    padding: 10px;
+    margin: 5px;
+    border-radius: 8px;
+    cursor: pointer;
 }
 
-/* INPUT SCREEN */
-input {
-    padding: 12px;
-    font-size: 18px;
-    width: 70%;
-    margin-top: 20px;
-}
+.hidden { display: none; }
+
+.small { font-size: 14px; opacity: 0.8; }
 </style>
 </head>
 
 <body>
-
 <div id="app"></div>
 
 <script>
 /* =========================
-   🌐 GLOBAL STATE
+   ENGINE STATE
 ========================= */
-
-let userName = "";
-const app = document.getElementById("app");
+let state = {
+    name: "",
+    step: "welcome",
+    stories: [],
+    missions: [],
+    sIndex: 0,
+    mIndex: 0
+};
 
 /* =========================
-   🔊 VOZ (INGLÉS)
+   SPEECH (Narrator)
 ========================= */
 function speak(text) {
-    if (!text) return;
     const msg = new SpeechSynthesisUtterance(text);
     msg.lang = "en-US";
-    msg.rate = 0.95;
-    window.speechSynthesis.cancel();
+    msg.rate = 1;
     window.speechSynthesis.speak(msg);
 }
 
 /* =========================
-   🧼 CLEAR SCREEN
+   LOAD JSON
 ========================= */
-function clear() {
-    app.innerHTML = "";
+async function loadData() {
+    const storiesRes = await fetch("/stories.json");
+    const missionsRes = await fetch("/missions.json");
+
+    state.stories = await storiesRes.json();
+    state.stories = state.stories.stories || state.stories;
+
+    state.missions = await missionsRes.json();
+    state.missions = state.missions.missions || state.missions;
 }
 
 /* =========================
-   👋 SALUDO + NOMBRE
+   RENDER ENGINE
+========================= */
+function render() {
+    const app = document.getElementById("app");
+    app.innerHTML = "";
+
+    /* WELCOME */
+    if (state.step === "welcome") {
+        app.innerHTML = `
+            <h1>Welcome to KaMiZen</h1>
+            <p>Enter your name</p>
+            <input id="nameInput" placeholder="Your name"/>
+            <br/>
+            <button class="primary" onclick="startApp()">Start</button>
+        `;
+        return;
+    }
+
+    /* NAME CONFIRM */
+    if (state.step === "named") {
+        app.innerHTML = `
+            <h2>Hello, ${state.name}</h2>
+            <button class="primary" onclick="startStories()">Begin Journey</button>
+        `;
+        return;
+    }
+
+    /* STORIES */
+    if (state.step === "story") {
+        const s = state.stories[state.sIndex];
+
+        if (!s) {
+            state.step = "missions";
+            render();
+            return;
+        }
+
+        speak(s.en);
+
+        app.innerHTML = `
+            <h2>Story ${s.id}: ${s.t}</h2>
+            <div class="card">
+                <p>${s.en}</p>
+            </div>
+
+            <button class="primary" onclick="nextStory()">Continue</button>
+        `;
+        return;
+    }
+
+    /* MISSIONS */
+    if (state.step === "missions") {
+        const m = state.missions[state.mIndex];
+
+        if (!m) {
+            state.step = "complete";
+            render();
+            return;
+        }
+
+        app.innerHTML = `
+            <h2>Mission ${m.id}</h2>
+            <div class="card">
+                <p>${m.question}</p>
+
+                <div>
+                    ${m.answers.map((a, i) =>
+                        `<div class="answer" onclick="checkAnswer(${i}, ${m.correct})">${a.text}</div>`
+                    ).join("")}
+                </div>
+
+                <div id="feedback"></div>
+            </div>
+
+            <button class="primary" onclick="nextMission()">Continue</button>
+        `;
+        return;
+    }
+
+    /* BREATHING MODULE */
+    if (state.step === "complete") {
+        app.innerHTML = `
+            <h1>Training Complete</h1>
+
+            <div class="circle" id="breathCircle">
+                <span id="breathText">Inhale</span>
+            </div>
+
+            <p class="small">This exercise trains calm focus and nervous system control.</p>
+
+            <button class="primary" onclick="restart()">Restart</button>
+        `;
+
+        startBreathing();
+        return;
+    }
+}
+
+/* =========================
+   FLOW CONTROL
 ========================= */
 function startApp() {
-    clear();
+    state.name = document.getElementById("nameInput").value || "User";
+    state.step = "named";
+    render();
+}
 
-    const title = document.createElement("h1");
-    title.innerText = "Welcome to KaMiZen";
-    app.appendChild(title);
+function startStories() {
+    state.step = "story";
+    state.sIndex = 0;
+    render();
+}
 
-    speak("Welcome to Ka Mi Zen");
+function nextStory() {
+    state.sIndex++;
+    render();
+}
 
-    const input = document.createElement("input");
-    input.placeholder = "Enter your name";
-
-    const btn = document.createElement("button");
-    btn.innerText = "Start";
-
-    btn.onclick = () => {
-        userName = input.value || "User";
-        speak("Hello " + userName);
-        loadStories();
-    };
-
-    app.appendChild(input);
-    app.appendChild(btn);
+function nextMission() {
+    state.mIndex++;
+    render();
 }
 
 /* =========================
-   📖 STORIES LOAD
+   ANSWER SYSTEM
 ========================= */
-async function loadStories() {
-    clear();
+function checkAnswer(index, correct) {
+    const fb = document.getElementById("feedback");
 
-    const res = await fetch("/api/stories");
-    const data = await res.json();
-
-    const title = document.createElement("h1");
-    title.innerText = "Stories";
-    app.appendChild(title);
-
-    speak("Starting stories");
-
-    let i = 0;
-
-    function next() {
-        if (i >= data.stories.length) {
-            loadMissions();
-            return;
-        }
-
-        const s = data.stories[i];
-        i++;
-
-        clear();
-
-        const box = document.createElement("div");
-        box.className = "story";
-        box.innerText = s.title || "Story";
-
-        app.appendChild(box);
-
-        speak(s.title || "");
-
-        setTimeout(next, 2500);
+    if (index === correct) {
+        fb.innerHTML = `<p style="color:#22c55e">Correct</p>`;
+    } else {
+        fb.innerHTML = `<p style="color:#ef4444">Incorrect</p>`;
     }
-
-    next();
 }
 
 /* =========================
-   🎯 MISSIONS LOAD
+   BREATHING LOOP
 ========================= */
-async function loadMissions() {
-    clear();
+function startBreathing() {
+    const text = document.getElementById("breathText");
 
-    const res = await fetch("/api/missions");
-    const data = await res.json();
+    let inhale = true;
 
-    let i = 0;
-    let bIndex = 0;
+    setInterval(() => {
+        if (!text) return;
 
-    function renderBlock(block, next) {
-        clear();
-
-        /* TITLE */
-        if (block.t === "v") {
-            speak(block.tx.en);
-            const h = document.createElement("h1");
-            h.innerText = block.tx.en;
-            app.appendChild(h);
-            setTimeout(next, 2000);
+        if (inhale) {
+            text.innerText = "Inhale";
+        } else {
+            text.innerText = "Exhale";
         }
 
-        /* HEADER */
-        else if (block.t === "h") {
-            const h = document.createElement("h2");
-            h.innerText = block.tx.en;
-            app.appendChild(h);
-            setTimeout(next, 1500);
-        }
-
-        /* STORY */
-        else if (block.story) {
-            const s = document.createElement("div");
-            s.className = "story";
-            s.innerText = block.story.en;
-            app.appendChild(s);
-            speak(block.story.en);
-            setTimeout(next, 3000);
-        }
-
-        /* QUESTION */
-        else if (block.t === "d") {
-
-            const q = document.createElement("h2");
-            q.innerText = block.q.en;
-            app.appendChild(q);
-
-            block.op.forEach((opt, idx) => {
-
-                const b = document.createElement("button");
-                b.innerText = opt;
-
-                b.onclick = () => {
-
-                    const correct = idx === block.c;
-
-                    if (correct) {
-                        b.className = "correct";
-                        speak("Correct");
-                    } else {
-                        b.className = "wrong";
-                        speak("Incorrect");
-                    }
-
-                    const exp = document.createElement("div");
-                    exp.className = "story";
-                    exp.innerText = block.ex[idx] || "";
-                    app.appendChild(exp);
-
-                    const cont = document.createElement("button");
-                    cont.innerText = "CONTINUE";
-                    cont.className = "next";
-
-                    cont.onclick = next;
-                    app.appendChild(cont);
-                };
-
-                app.appendChild(b);
-            });
-        }
-
-        /* BREATHING */
-        else if (block.t === "breath_auto") {
-
-            const circle = document.createElement("div");
-            circle.className = "circle";
-            circle.innerText = "INHALE";
-
-            app.appendChild(circle);
-
-            speak(block.tx.en);
-
-            let inhale = true;
-
-            const interval = setInterval(() => {
-                if (inhale) {
-                    circle.innerText = "INHALE";
-                    circle.style.transform = "scale(1.4)";
-                } else {
-                    circle.innerText = "EXHALE";
-                    circle.style.transform = "scale(0.8)";
-                }
-                inhale = !inhale;
-            }, block.d * 500);
-
-            setTimeout(() => {
-                clearInterval(interval);
-                circle.innerText = "DONE";
-                circle.style.transform = "scale(1)";
-                next();
-            }, block.d * 1000);
-        }
-
-        /* SILENCE */
-        else if (block.t === "sil") {
-
-            const box = document.createElement("div");
-            box.className = "silence";
-            box.innerText = "SILENCE...";
-
-            app.appendChild(box);
-
-            setTimeout(() => {
-                box.innerText = "DONE";
-                next();
-            }, block.d * 1000);
-        }
-
-        else {
-            next();
-        }
-    }
-
-    function runMission(m) {
-
-        let bIndex = 0;
-
-        function next() {
-            if (bIndex < m.b.length) {
-                renderBlock(m.b[bIndex], () => {
-                    bIndex++;
-                    next();
-                });
-            } else {
-                setTimeout(runNextMission, 1500);
-            }
-        }
-
-        next();
-    }
-
-    function runNextMission() {
-
-        if (i >= data.missions.length) {
-            clear();
-
-            const done = document.createElement("h1");
-            done.innerText = "SYSTEM COMPLETE";
-            app.appendChild(done);
-
-            speak("System complete");
-            return;
-        }
-
-        runMission(data.missions[i]);
-        i++;
-    }
-
-    runNextMission();
+        inhale = !inhale;
+    }, 3000);
 }
 
 /* =========================
-   🚀 START
+   RESTART
 ========================= */
-startApp();
+function restart() {
+    location.reload();
+}
+
+/* =========================
+   INIT
+========================= */
+(async function init() {
+    await loadData();
+    render();
+})();
 </script>
 
 </body>
