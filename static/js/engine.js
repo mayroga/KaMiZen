@@ -1,302 +1,240 @@
-// =====================================
-// 🧠 KAMIZEN ENGINE vFINAL (NO CONFLICTS)
-// =====================================
+// =========================
+// KAMIZEN ENGINE V2
+// FULL UI + FLOW SYSTEM
+// =========================
 
-class KamiZenEngine {
-    constructor(config = {}) {
-        this.container = document.getElementById(config.container || "app");
-        this.lang = config.lang || "en";
+let stories = [];
+let missions = [];
+let storyIndex = 0;
+let missionIndex = 0;
 
-        this.missions = [];
-        this.currentMissionIndex = 0;
-        this.currentBlockIndex = 0;
+const app = document.getElementById("app");
 
-        this.score = 0;
-        this.isRunning = false;
+// =========================
+// 🔊 TTS ENGINE
+// =========================
+function speak(text) {
+    if (!text) return;
 
-        // Silence system
-        this.silenceActive = false;
-        this.silenceTimer = null;
-        this.lastInteraction = Date.now();
-        this.silenceTolerance = 1500; // ms
+    const msg = new SpeechSynthesisUtterance(text);
+    msg.lang = "en-US";
+    msg.rate = 0.95;
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(msg);
+}
 
-        // Breath system
-        this.breathInterval = null;
+// =========================
+// 🎨 UI HELPERS
+// =========================
+function clear() {
+    app.innerHTML = "";
+}
 
-        this.bindEvents();
-    }
+function el(tag, className, text) {
+    const e = document.createElement(tag);
+    if (className) e.className = className;
+    if (text) e.innerText = text;
+    return e;
+}
 
-    // =====================================
-    // LOAD DATA
-    // =====================================
+// =========================
+// 🌬️ BREATHING CIRCLE
+// =========================
+function breathingCircle(duration) {
+    const circle = el("div", "circle", "INHALE");
+    app.appendChild(circle);
 
-    load(data) {
-        try {
-            this.missions = data.missions || data.ses || [];
-        } catch (e) {
-            console.error("Load error:", e);
-            this.missions = [];
-        }
-    }
+    let inhale = true;
 
-    start() {
-        if (!this.missions.length) {
-            this.renderText("No missions loaded");
-            return;
-        }
-
-        this.isRunning = true;
-        this.currentMissionIndex = 0;
-        this.runMission();
-    }
-
-    // =====================================
-    // CORE FLOW
-    // =====================================
-
-    runMission() {
-        this.currentBlockIndex = 0;
-        this.runBlock();
-    }
-
-    runBlock() {
-        if (!this.isRunning) return;
-
-        const mission = this.missions[this.currentMissionIndex];
-        if (!mission) return;
-
-        const blocks = mission.b || [];
-        const block = blocks[this.currentBlockIndex];
-
-        if (!block) {
-            this.nextMission();
-            return;
-        }
-
-        this.renderBlock(block);
-    }
-
-    nextBlock() {
-        this.currentBlockIndex++;
-        this.runBlock();
-    }
-
-    nextMission() {
-        this.currentMissionIndex++;
-        if (this.currentMissionIndex >= this.missions.length) {
-            this.renderText("✅ Completed");
-            return;
-        }
-        this.runMission();
-    }
-
-    // =====================================
-    // RENDER
-    // =====================================
-
-    renderBlock(block) {
-        this.clear();
-
-        const type = block.t || (block.story ? "story" : null);
-
-        switch (type) {
-            case "v":
-            case "h":
-            case "c":
-                this.renderText(this.getText(block));
-                this.autoNext(2000);
-                break;
-
-            case "story":
-                this.renderText(this.getText(block));
-                this.autoNext(3000);
-                break;
-
-            case "br":
-                this.renderBreath(block);
-                break;
-
-            case "breath_auto":
-                this.renderBreathAuto(block);
-                break;
-
-            case "d":
-                this.renderDecision(block);
-                break;
-
-            case "r":
-                this.applyReward(block);
-                this.renderText(this.getText(block));
-                this.autoNext(1500);
-                break;
-
-            case "sil":
-                this.runSilence(block);
-                break;
-
-            default:
-                this.renderText("...");
-                this.autoNext(1000);
-        }
-    }
-
-    renderText(text) {
-        this.container.innerHTML = `<div class="kz-text">${text}</div>`;
-    }
-
-    clear() {
-        this.stopBreath();
-        this.stopSilence();
-        this.container.innerHTML = "";
-    }
-
-    getText(block) {
-        if (block.tx) return block.tx[this.lang] || block.tx["en"];
-        if (block.story) return block.story[this.lang] || block.story["en"];
-        return "";
-    }
-
-    // =====================================
-    // DECISION SYSTEM
-    // =====================================
-
-    renderDecision(block) {
-        const q = block.q[this.lang] || block.q["en"];
-
-        let html = `<div class="kz-question">${q}</div>`;
-
-        block.op.forEach((op, i) => {
-            html += `<button class="kz-btn" data-i="${i}">${op}</button>`;
-        });
-
-        this.container.innerHTML = html;
-
-        document.querySelectorAll(".kz-btn").forEach(btn => {
-            btn.onclick = (e) => {
-                const i = parseInt(e.target.dataset.i);
-                this.handleDecision(block, i);
-            };
-        });
-    }
-
-    handleDecision(block, choice) {
-        const correct = block.c;
-
-        if (choice === correct) {
-            this.score += 20;
+    const interval = setInterval(() => {
+        if (inhale) {
+            circle.innerText = "INHALE";
+            circle.style.transform = "scale(1.4)";
         } else {
-            this.score -= 5;
+            circle.innerText = "EXHALE";
+            circle.style.transform = "scale(0.8)";
         }
+        inhale = !inhale;
+    }, duration * 500);
 
-        const explanation = block.ex?.[choice] || "";
-        this.renderText(explanation);
+    setTimeout(() => {
+        clearInterval(interval);
+        circle.innerText = "DONE";
+        circle.style.transform = "scale(1)";
+    }, duration * 1000);
+}
 
-        setTimeout(() => this.nextBlock(), 2000);
-    }
+// =========================
+// 🤫 SILENCE MODE
+// =========================
+function silenceBlock(duration) {
+    const box = el("div", "silence", "SILENCE...");
+    app.appendChild(box);
 
-    // =====================================
-    // BREATH SYSTEM
-    // =====================================
+    setTimeout(() => {
+        box.innerText = "DONE";
+    }, duration * 1000);
+}
 
-    renderBreath(block) {
-        const text = this.getText(block);
-        this.renderText(text);
+// =========================
+// ❓ QUESTION RENDER
+// =========================
+function renderQuestion(block, next) {
+    const container = el("div", "question");
 
-        setTimeout(() => this.nextBlock(), block.d * 1000);
-    }
+    const title = el("h2", "", block.q.en);
+    container.appendChild(title);
 
-    renderBreathAuto(block) {
-        let t = 0;
-        const duration = block.d * 1000;
+    const btns = [];
 
-        this.breathInterval = setInterval(() => {
-            const phase = t % 8 < 4 ? "Inhale" : "Exhale";
-            this.renderText(phase);
-            t++;
+    block.op.forEach((opt, i) => {
+        const b = el("button", "btn", opt);
 
-        }, 1000);
+        b.onclick = () => {
+            btns.forEach(x => x.disabled = true);
 
-        setTimeout(() => {
-            this.stopBreath();
-            this.nextBlock();
-        }, duration);
-    }
+            const isCorrect = i === block.c;
 
-    stopBreath() {
-        if (this.breathInterval) {
-            clearInterval(this.breathInterval);
-            this.breathInterval = null;
-        }
-    }
-
-    // =====================================
-    // SILENCE SYSTEM (NO FALSE POSITIVES BASIC)
-    // =====================================
-
-    runSilence(block) {
-        this.silenceActive = true;
-        const duration = block.d * 1000;
-
-        this.renderText(this.getText(block));
-
-        const start = Date.now();
-
-        this.silenceTimer = setInterval(() => {
-            const now = Date.now();
-
-            if (now - this.lastInteraction < this.silenceTolerance) {
-                this.renderText("⚠️ Stay still");
-                this.resetSilence(block);
-                return;
+            if (isCorrect) {
+                b.classList.add("correct");
+                speak("Correct");
+            } else {
+                b.classList.add("wrong");
+                speak("Incorrect");
             }
 
-            if (now - start >= duration) {
-                this.stopSilence();
-                this.nextBlock();
-            }
-        }, 300);
-    }
+            const exp = el("p", "explanation", block.ex[i] || "");
+            container.appendChild(exp);
 
-    resetSilence(block) {
-        this.stopSilence();
-        setTimeout(() => this.runSilence(block), 500);
-    }
+            const nextBtn = el("button", "next", "CONTINUE");
+            nextBtn.onclick = next;
+            container.appendChild(nextBtn);
+        };
 
-    stopSilence() {
-        this.silenceActive = false;
-        if (this.silenceTimer) {
-            clearInterval(this.silenceTimer);
-            this.silenceTimer = null;
-        }
-    }
+        btns.push(b);
+        container.appendChild(b);
+    });
 
-    bindEvents() {
-        ["mousemove", "keydown", "click", "touchstart"].forEach(evt => {
-            document.addEventListener(evt, () => {
-                this.lastInteraction = Date.now();
-            });
-        });
-    }
+    app.appendChild(container);
+}
 
-    // =====================================
-    // REWARD
-    // =====================================
+// =========================
+// 🎯 BLOCK RENDERER
+// =========================
+function renderBlock(block, next) {
+    clear();
 
-    applyReward(block) {
-        this.score += block.p || 0;
-    }
+    switch (block.t) {
 
-    // =====================================
-    // UTILS
-    // =====================================
+        case "v":
+            speak(block.tx.en);
+            app.appendChild(el("h1", "title", block.tx.en));
+            setTimeout(next, 2000);
+            break;
 
-    autoNext(ms) {
-        setTimeout(() => this.nextBlock(), ms);
+        case "h":
+            app.appendChild(el("h2", "header", block.tx.en));
+            setTimeout(next, 1500);
+            break;
+
+        case "story":
+            app.appendChild(el("p", "story", block.story.en));
+            speak(block.story.en);
+            setTimeout(next, 3000);
+            break;
+
+        case "d":
+            renderQuestion(block, next);
+            break;
+
+        case "breath_auto":
+            app.appendChild(el("h3", "", block.tx.en));
+            breathingCircle(block.d);
+            speak(block.tx.en);
+            setTimeout(next, block.d * 1000);
+            break;
+
+        case "sil":
+            silenceBlock(block.d);
+            setTimeout(next, block.d * 1000);
+            break;
+
+        case "r":
+            app.appendChild(el("div", "reward", block.tx));
+            setTimeout(next, 1000);
+            break;
+
+        case "c":
+            app.appendChild(el("p", "comment", block.tx.en));
+            setTimeout(next, 1000);
+            break;
+
+        default:
+            next();
     }
 }
 
-// =====================================
-// INIT
-// =====================================
+// =========================
+// 📖 STORY ENGINE
+// =========================
+function runStory() {
+    if (storyIndex >= stories.length) {
+        runMission();
+        return;
+    }
 
-window.KamiZenEngine = KamiZenEngine;
+    const story = stories[storyIndex];
+    storyIndex++;
+
+    clear();
+    app.appendChild(el("h1", "title", story.title || "Story"));
+
+    speak(story.title || "");
+
+    setTimeout(runStory, 3000);
+}
+
+// =========================
+// 🎯 MISSION ENGINE
+// =========================
+function runMission() {
+    if (missionIndex >= missions.length) {
+        clear();
+        app.appendChild(el("h1", "", "SYSTEM COMPLETE"));
+        speak("System complete");
+        return;
+    }
+
+    const mission = missions[missionIndex];
+    missionIndex++;
+
+    let i = 0;
+
+    function next() {
+        if (i < mission.b.length) {
+            renderBlock(mission.b[i], () => {
+                i++;
+                next();
+            });
+        } else {
+            setTimeout(runMission, 1500);
+        }
+    }
+
+    next();
+}
+
+// =========================
+// 🚀 INIT
+// =========================
+async function init() {
+    const s = await fetch("/api/stories").then(r => r.json());
+    const m = await fetch("/api/missions").then(r => r.json());
+
+    stories = s.stories || [];
+    missions = m.missions || [];
+
+    runStory();
+}
+
+init();
