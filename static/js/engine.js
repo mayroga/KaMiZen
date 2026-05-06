@@ -1,9 +1,9 @@
 /* =============================================================
-   AURA BY MAY ROGA - KaMiZen ENGINE V8 (UNIFIED LOGIC)
-   - Mandatory English Only
-   - Integrated Timers for Silence and Breath
-   - Unified Question/Answer/Explanation flow
-   - Automated Physical Respiratory Cycle (Inhale/Exhale)
+   AURA BY MAY ROGA - KaMiZen ENGINE V8 (PROFESSIONAL PROTOCOL)
+   - Mandatory English Only.
+   - Unified Respiratory Cycle: Inhale (Expand) + Exhale (Contract).
+   - Real-time Countdown Timers for Breathing and Silence.
+   - Integrated Decision-Action Logic.
    ============================================================= */
 
 let state = {
@@ -35,7 +35,7 @@ async function loadData() {
         state.missions = (mData.missions || []).sort((a, b) => a.id - b.id);
         state.initialized = true;
     } catch (err) {
-        console.error("Knowledge Base Offline.");
+        console.error("Connection Lost: Knowledge Base Offline.");
     }
 }
 
@@ -54,12 +54,12 @@ function render() {
 
     if (state.step === "welcome") {
         app.innerHTML = `
-            <h1>AL CIELO - KAMIZEN</h1>
+            <h1>KAMIZEN LIFE SAFETY</h1>
             <div class="card">
-                <p>Welcome. Enter your name to start the protocol.</p>
-                <input id="nameInput" type="text" placeholder="Full Name" />
+                <p>Welcome. Enter your name to initiate the protocol.</p>
+                <input id="nameInput" type="text" placeholder="Full Name" autocomplete="off" />
             </div>
-            <button class="primary" onclick="startApp()">START</button>
+            <button class="primary" onclick="startApp()">START PROTOCOL</button>
         `;
         return;
     }
@@ -75,11 +75,11 @@ function render() {
 
         if (state.subStep === "story") {
             app.innerHTML = `
-                <h3 class="indicator">STORY PHASE ${currentStory.id}</h3>
+                <h3 class="indicator">KNOWLEDGE PHASE ${currentStory.id}</h3>
                 <div class="card story-box">
                     <p>${currentStory.en}</p>
                 </div>
-                <button class="primary" onclick="startMission()">GO TO MISSION</button>
+                <button class="primary" onclick="startMission()">BEGIN MISSION</button>
             `;
             speak(currentStory.en);
             return;
@@ -110,10 +110,10 @@ function renderBlock(block) {
             content = `<div class="card philo"><h3>PHILOSOPHY</h3><p>${block.story.en}</p></div>`;
             speak(block.story.en);
             break;
-        case "d": // Unified Question/Answer Logic
+        case "d": // Decision & Answer Linked
             content = `
                 <div class="card">
-                    <p class="question"><strong>QUESTION:</strong> ${block.q.en}</p>
+                    <p class="question">${block.q.en}</p>
                     <div id="answers">
                         ${block.op.map((opt, i) => `
                             <div class="answer" onclick="handleDecision(${i}, ${block.c}, ${JSON.stringify(block.ex).replace(/"/g, '&quot;')})">
@@ -125,24 +125,27 @@ function renderBlock(block) {
                 </div>`;
             speak(block.q.en);
             return app.innerHTML = content;
-        case "sil": // Silence with Timer
+        case "sil":
             content = `
                 <div class="card silence">
-                    <h3>${block.tx.en}</h3>
-                    <div class="timer" id="timerDisplay">${block.d}s</div>
-                    <p>${block.inf.en}</p>
+                    <h3>SILENCE PHASE</h3>
+                    <p>${block.tx.en}</p>
+                    <div class="timer-display">TIME REMAINING: <span id="silTimer">${block.d}</span>s</div>
+                    <p class="sub-info">${block.inf.en}</p>
                 </div>`;
             app.innerHTML = content;
-            return startCountdown(block.d);
-        case "breath_auto": // Integrated Respiratory Cycle
+            return startCountdown("silTimer", block.d);
+        case "breath_auto": 
             content = `
                 <div class="circle-container">
                     <div id="respiratoryCircle" class="circle blue-breath" style="transition: transform 4s ease-in-out;">
                         <span id="breathAction">READY</span>
                     </div>
                 </div>
-                <div class="timer-box">Time Remaining: <span id="timerDisplay">${block.d}</span>s</div>
-                <div class="card info"><p>${block.inf.en}</p></div>`;
+                <div class="card info">
+                    <div class="timer-display">CYCLE TIME: <span id="breathTimer">${block.d}</span>s</div>
+                    <p>${block.inf.en}</p>
+                </div>`;
             app.innerHTML = content;
             return startAutoBreath(block.d);
         case "r":
@@ -154,10 +157,10 @@ function renderBlock(block) {
             break;
     }
 
-    app.innerHTML = content + `<button class="primary" onclick="nextBlock()">CONTINUE</button>`;
+    app.innerHTML = content + `<button class="primary" id="btnNext" onclick="nextBlock()">CONTINUE</button>`;
 }
 
-/* --- LOGIC & TIMERS --- */
+/* --- LOGIC CONTROLS --- */
 
 function startApp() {
     const val = document.getElementById("nameInput").value;
@@ -192,26 +195,25 @@ function handleDecision(idx, correct, explanations) {
     const fb = document.getElementById("feedback");
     const exp = explanations[idx];
     
-    // Everything remains on one screen (Question + Selection + Explanation)
     fb.innerHTML = `
         <div class="feedback-box ${isCorrect ? 'correct' : 'wrong'}">
-            <p><strong>${isCorrect ? 'SUCCESS' : 'ATTENTION'}</strong></p>
+            <p><strong>${isCorrect ? 'CORRECT' : 'REVISE'}</strong></p>
             <span>${exp}</span>
         </div>
-        <button class="primary" onclick="nextBlock()">PROCEED</button>
+        <button class="primary" onclick="nextBlock()">CONTINUE</button>
     `;
     speak(exp);
 }
 
-function startCountdown(seconds) {
+function startCountdown(elementId, seconds) {
     let timeLeft = seconds;
-    const display = document.getElementById("timerDisplay");
-    const interval = setInterval(() => {
+    const timer = setInterval(() => {
         timeLeft--;
-        if (display) display.innerText = timeLeft + "s";
+        const el = document.getElementById(elementId);
+        if (el) el.innerText = timeLeft;
         if (timeLeft <= 0) {
-            clearInterval(interval);
-            document.getElementById("app").innerHTML += `<button class="primary" onclick="nextBlock()">CONTINUE</button>`;
+            clearInterval(timer);
+            document.getElementById("app").innerHTML += `<button class="primary" onclick="nextBlock()">PROCEED</button>`;
         }
     }, 1000);
 }
@@ -221,34 +223,34 @@ function startAutoBreath(seconds) {
     let isInhaling = true;
     const label = document.getElementById("breathAction");
     const circle = document.getElementById("respiratoryCircle");
-    const timerDisplay = document.getElementById("timerDisplay");
+    const timerDisplay = document.getElementById("breathTimer");
 
-    const runCycle = () => {
-        if (!label || !circle) return;
+    const breathInterval = setInterval(() => {
         if (isInhaling) {
             label.innerText = "INHALE";
-            circle.style.transform = "scale(1.5)";
+            circle.style.transform = "scale(1.5)"; 
             speak("Inhale");
         } else {
             label.innerText = "EXHALE";
-            circle.style.transform = "scale(0.7)";
+            circle.style.transform = "scale(0.8)"; 
             speak("Exhale");
         }
         isInhaling = !isInhaling;
-    };
+    }, 4000);
 
-    runCycle(); // Initial trigger
-    const cycleInterval = setInterval(runCycle, 4000);
-
-    const timerInterval = setInterval(() => {
+    const clockInterval = setInterval(() => {
         timeLeft--;
         if (timerDisplay) timerDisplay.innerText = timeLeft;
         if (timeLeft <= 0) {
-            clearInterval(cycleInterval);
-            clearInterval(timerInterval);
-            circle.style.transform = "scale(1.0)";
-            label.innerText = "COMPLETE";
-            document.getElementById("app").innerHTML += `<button class="primary" onclick="nextBlock()">MISSION SUCCESS</button>`;
+            clearInterval(breathInterval);
+            clearInterval(clockInterval);
+            circle.style.transform = "scale(1)";
+            label.innerText = "DONE";
+            const btn = document.createElement("button");
+            btn.className = "primary";
+            btn.innerText = "MISSION SUCCESS";
+            btn.onclick = nextBlock;
+            document.getElementById("app").appendChild(btn);
         }
     }, 1000);
 }
