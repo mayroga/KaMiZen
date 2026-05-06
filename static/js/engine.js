@@ -1,6 +1,6 @@
 /* =========================================================
-   KAMIZEN ENGINE V7 - STABLE CORE (NO FREEZE VERSION)
-   CONTROL: SINGLE FLOW ENGINE
+   KAMIZEN ENGINE V8 - SINGLE SOURCE OF TRUTH
+   FIXED: NO DOUBLE RENDER / NO FREEZE / CLEAN LOOP
    ========================================================= */
 
 let state = {
@@ -13,7 +13,7 @@ let state = {
 };
 
 /* =========================
-   INIT SYSTEM
+   INIT
 ========================= */
 
 window.addEventListener("load", async () => {
@@ -32,37 +32,32 @@ async function loadData() {
         const md = await m.json();
 
         state.stories = (sd.stories || []).sort((a, b) => a.id - b.id);
-
-        // missions vienen como {missions: []}
         state.missions = (md.missions || []).sort((a, b) => a.id - b.id);
 
         state.ready = true;
 
     } catch (err) {
-        console.error("ENGINE ERROR: DATA LOAD FAILED", err);
+        console.error("LOAD ERROR", err);
     }
 }
 
 /* =========================
-   MAIN RENDER ENGINE
+   RENDER CORE
 ========================= */
 
 function render() {
-    const app = document.getElementById("screen") || document.getElementById("app");
+    const app = document.getElementById("app");
     if (!app) return;
 
     if (!state.ready) {
-        app.innerHTML = `
-            <h3>Loading...</h3>
-            <p>System initializing</p>
-        `;
+        app.innerHTML = "<h3>Loading system...</h3>";
         return;
     }
 
     const story = state.stories[state.index];
     const mission = state.missions[state.index];
 
-    // RESET LOOP (1 → 35 → 1)
+    /* LOOP SAFE */
     if (!story || !mission) {
         state.index = 0;
         state.step = "story";
@@ -70,17 +65,13 @@ function render() {
         return render();
     }
 
-    /* =========================
-       STORY MODE
-    ========================= */
-
+    /* STORY MODE */
     if (state.step === "story") {
         app.innerHTML = `
             <div class="card">
                 <h2>STORY ${story.id}</h2>
                 <p>${story.en}</p>
             </div>
-
             <button onclick="startMission()">START MISSION</button>
         `;
 
@@ -88,103 +79,49 @@ function render() {
         return;
     }
 
-    /* =========================
-       MISSION MODE
-    ========================= */
+    /* MISSION MODE */
+    const block = mission.b[state.bIndex];
 
-    if (state.step === "mission") {
-        const block = mission.b[state.bIndex];
-
-        if (!block) {
-            nextStory();
-            return;
-        }
-
-        renderBlock(block);
+    if (!block) {
+        nextStory();
+        return;
     }
+
+    renderBlock(block);
 }
 
 /* =========================
-   BLOCK RENDER
+   BLOCKS
 ========================= */
 
 function renderBlock(b) {
-    const app = document.getElementById("screen") || document.getElementById("app");
-
+    const app = document.getElementById("app");
     let html = "";
 
-    /* VISUAL BLOCK */
-    if (b.t === "v") {
-        html += `<div class="card"><h2>${b.tx.en}</h2></div>`;
-        speak(b.tx.en);
-    }
+    if (b.t === "v") html += `<div class="card"><h2>${b.tx.en}</h2></div>`;
+    if (b.t === "h") html += `<div class="card"><p>${b.tx.en}</p></div>`;
+    if (b.story) html += `<div class="card"><p>${b.story.en}</p></div>`;
 
-    /* HEADER BLOCK */
-    if (b.t === "h") {
-        html += `<div class="card"><p>${b.tx.en}</p></div>`;
-        speak(b.tx.en);
-    }
-
-    /* STORY BLOCK INSIDE MISSION */
-    if (b.story) {
-        html += `<div class="card"><p>${b.story.en}</p></div>`;
-        speak(b.story.en);
-    }
-
-    /* QUESTION BLOCK */
     if (b.t === "d") {
-        html += `
-        <div class="card">
-            <p>${b.q.en}</p>
-        `;
+        html += `<div class="card"><p>${b.q.en}</p>`;
 
         b.op.forEach((opt, i) => {
-            html += `
-                <div class="answer" onclick="answer(${i},${b.c},${JSON.stringify(b.ex).replace(/"/g, '&quot;')})">
-                    ${opt}
-                </div>
-            `;
+            html += `<div class="answer" onclick="answer(${i},${b.c},${JSON.stringify(b.ex).replace(/"/g,'&quot;')})">${opt}</div>`;
         });
 
         html += `</div>`;
     }
 
-    /* BREATHING BLOCK */
     if (b.t === "br" || b.t === "breath_auto") {
         html += `
-        <div class="card center">
-            <div class="breath-circle">
-                <span>FOCUS</span>
-            </div>
+        <div class="card">
+            <div class="breath-circle">FOCUS</div>
             <p>${b.tx?.en || b.inf?.en || ""}</p>
         </div>`;
     }
 
-    /* SILENCE BLOCK */
-    if (b.t === "sil") {
-        html += `
-        <div class="card">
-            <h3>${b.tx.en}</h3>
-            <p>${b.inf?.en || ""}</p>
-        </div>`;
-    }
-
-    /* REWARD BLOCK */
-    if (b.t === "r") {
-        html += `
-        <div class="card" style="color:#22c55e;">
-            ⭐ +${b.p} XP
-        </div>`;
-    }
-
-    /* CONCLUSION */
-    if (b.t === "c") {
-        html += `
-        <div class="card">
-            <p>${b.tx.en}</p>
-        </div>`;
-        speak(b.tx.en);
-    }
+    if (b.t === "r") html += `<div class="card">⭐ +${b.p} XP</div>`;
+    if (b.t === "c") html += `<div class="card">${b.tx.en}</div>`;
 
     html += `<button onclick="nextBlock()">CONTINUE</button>`;
 
@@ -192,7 +129,7 @@ function renderBlock(b) {
 }
 
 /* =========================
-   CONTROL FLOW
+   FLOW CONTROL
 ========================= */
 
 function startMission() {
@@ -210,55 +147,52 @@ function nextStory() {
     state.index++;
 
     if (state.index >= state.stories.length) {
-        state.index = 0; // LOOP CLEAN 1→35→1
+        state.index = 0;
     }
 
     state.step = "story";
     state.bIndex = 0;
-
     render();
 }
 
 /* =========================
-   ANSWER SYSTEM
+   ANSWERS
 ========================= */
 
-function answer(i, correct, explanations) {
-    const app = document.getElementById("screen") || document.getElementById("app");
+function answer(i, correct, exp) {
+    const app = document.getElementById("app");
 
-    const isCorrect = i === correct;
-    const msg = explanations?.[i] || "";
+    const ok = i === correct;
 
     app.innerHTML += `
-        <div class="card" style="color:${isCorrect ? '#22c55e' : '#ef4444'};">
-            ${isCorrect ? "CORRECT" : "WRONG"}<br>
-            ${msg}
+        <div class="card" style="color:${ok ? 'lime' : 'red'}">
+            ${ok ? "CORRECT" : "WRONG"}<br>
+            ${exp?.[i] || ""}
         </div>
-
         <button onclick="nextBlock()">CONTINUE</button>
     `;
 
-    speak(msg);
+    speak(exp?.[i]);
 }
 
 /* =========================
-   SPEECH ENGINE
+   SPEECH
 ========================= */
 
-function speak(text) {
-    if (!text) return;
+function speak(t) {
+    if (!t) return;
     window.speechSynthesis.cancel();
-    const msg = new SpeechSynthesisUtterance(text);
-    msg.lang = "en-US";
-    window.speechSynthesis.speak(msg);
+    const u = new SpeechSynthesisUtterance(t);
+    u.lang = "en-US";
+    window.speechSynthesis.speak(u);
 }
 
 /* =========================
-   SAFETY: PREVENT DOUBLE ENGINE
+   SAFETY LOCK
 ========================= */
 
-if (window.__KAMIZEN_ENGINE_LOADED__) {
-    console.warn("ENGINE DUPLICATED - BLOCKED");
+if (window.__KAMIZEN_ENGINE__) {
+    console.warn("ENGINE DUPLICATED BLOCKED");
 } else {
-    window.__KAMIZEN_ENGINE_LOADED__ = true;
+    window.__KAMIZEN_ENGINE__ = true;
 }
