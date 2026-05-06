@@ -1,167 +1,158 @@
-from fastapi import FastAPI
-from fastapi.responses import FileResponse
+from fastapi import FastAPI, HTTPException
+from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
-from fastapi.middleware.cors import CORSMiddleware
 import os
 import json
 
-# =========================================================
-# KAMIZEN LIFE SYSTEM - BACKEND CORE
-# =========================================================
+app = FastAPI()
 
-app = FastAPI(title="KAMIZEN LIFE SYSTEM")
-
-# -------------------------
-# CORS (DEV MODE OPEN)
-# -------------------------
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-# -------------------------
-# PATHS
-# -------------------------
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 STATIC_DIR = os.path.join(BASE_DIR, "static")
 
-if not os.path.exists(STATIC_DIR):
-    os.makedirs(STATIC_DIR)
-
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
-# -------------------------
-# CACHE SYSTEM
-# -------------------------
+# =========================
+# 🧠 GLOBAL CONFIG
+# =========================
+MAX_LEVEL = 35
+
 CACHE = {
     "stories": None,
     "missions": None
 }
 
-# -------------------------
-# LOAD JSON SAFE
-# -------------------------
+STATE = {
+    "user": "",
+    "index": 1,   # GLOBAL INDEX (1–35)
+    "score": 0
+}
+
+# =========================
+# 📦 LOAD JSON
+# =========================
 def load_json(path):
     try:
-        if not os.path.exists(path):
-            return None
         with open(path, "r", encoding="utf-8") as f:
             return json.load(f)
-    except Exception as e:
-        print(f"[ERROR] Loading JSON: {path} -> {e}")
+    except:
         return None
 
-# -------------------------
-# STORIES LOADER
-# -------------------------
-def get_stories():
+# =========================
+# 📖 STORIES
+# =========================
+def load_stories():
     if CACHE["stories"] is not None:
         return CACHE["stories"]
 
     path = os.path.join(BASE_DIR, "stories.json")
     data = load_json(path)
 
-    stories = []
+    stories = data.get("stories", []) if isinstance(data, dict) else []
 
-    if isinstance(data, dict) and "stories" in data:
-        stories = data["stories"]
-    elif isinstance(data, list):
-        stories = data
+    stories = sorted(stories, key=lambda x: x.get("id", 0))
 
     CACHE["stories"] = stories
     return stories
 
-# -------------------------
-# MISSIONS LOADER (MULTI FILE SYSTEM)
-# -------------------------
-def get_missions():
+# =========================
+# 🎯 MISSIONS (MULTI FILE SAFE)
+# =========================
+def load_missions():
     if CACHE["missions"] is not None:
         return CACHE["missions"]
 
-    missions = []
+    all_missions = []
 
-    files = [
-        f for f in os.listdir(BASE_DIR)
-        if f.startswith("missions_") and f.endswith(".json")
-    ]
+    for file in sorted(os.listdir(BASE_DIR)):
+        if file.startswith("missions_") and file.endswith(".json"):
+            data = load_json(os.path.join(BASE_DIR, file))
 
-    for file in sorted(files):
-        path = os.path.join(BASE_DIR, file)
-        data = load_json(path)
+            if not data:
+                continue
 
-        if not data:
-            continue
+            missions = data.get("missions") or data.get("ses") or []
 
-        if "missions" in data:
-            missions.extend(data["missions"])
-        elif "ses" in data:
-            missions.extend(data["ses"])
+            if isinstance(missions, list):
+                all_missions.extend(missions)
 
-    # ORDER BY ID SAFE
-    missions.sort(key=lambda x: x.get("id", 0))
+    all_missions = sorted(all_missions, key=lambda x: x.get("id", 0))
 
-    CACHE["missions"] = missions
-    return missions
+    CACHE["missions"] = all_missions
+    return all_missions
 
-# =========================================================
-# ROUTES
-# =========================================================
+# =========================
+# 🔁 GLOBAL INDEX CONTROL
+# =========================
+def safe_index():
+    """FORZAR LOOP 1–35"""
+    if STATE["index"] > MAX_LEVEL:
+        STATE["index"] = 1
+    if STATE["index"] < 1:
+        STATE["index"] = 1
+    return STATE["index"]
 
+# =========================
+# 🌐 FRONTEND
+# =========================
 @app.get("/")
-def home():
+def root():
     return FileResponse(os.path.join(STATIC_DIR, "session.html"))
 
-# -------------------------
-# API: STORIES
-# -------------------------
+# =========================
+# 📖 STORIES API
+# =========================
 @app.get("/api/stories")
-def api_stories():
+def get_stories():
     return {
-        "stories": get_stories()
+        "total": len(load_stories()),
+        "stories": load_stories()
     }
 
-# -------------------------
-# API: MISSIONS
-# -------------------------
+# =========================
+# 🎯 MISSIONS API (SYNCED)
+# =========================
 @app.get("/api/missions")
-def api_missions():
+def get_missions():
+    missions = load_missions()
+
+    idx = safe_index()
+
     return {
-        "missions": get_missions()
+        "global_index": idx,
+        "total": len(missions),
+        "mission": missions[idx - 1] if idx - 1 < len(missions) else None
     }
 
-# -------------------------
-# COMPATIBILITY ENDPOINTS
-# -------------------------
-@app.get("/stories.json")
-def stories_json():
-    return {"stories": get_stories()}
+# =========================
+# 🔄 NEXT STEP CONTROL
+# =========================
+@app.post("/api/next")
+def next_step():
+    STATE["index"] += 1
 
-@app.get("/missions.json")
-def missions_json():
-    return {"missions": get_missions()}
+    if STATE["index"] > MAX_LEVEL:
+        STATE["index"] = 1  # 🔁 RESET LOOP
 
-# -------------------------
-# HEALTH CHECK
-# -------------------------
-@app.get("/health")
-def health():
     return {
-        "status": "OK",
-        "system": "KAMIZEN LIFE SYSTEM",
-        "missions_loaded": len(get_missions()),
-        "stories_loaded": len(get_stories())
+        "index": STATE["index"],
+        "reset": STATE["index"] == 1
     }
 
-# =========================================================
-# RUN SERVER
-# =========================================================
+# =========================
+# 🧠 STATE
+# =========================
+@app.get("/api/state")
+def get_state():
+    return STATE
+
+@app.post("/api/state")
+def update_state(data: dict):
+    STATE.update(data)
+    return STATE
+
+# =========================
+# ▶ RUN
+# =========================
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(
-        "main:app",
-        host="0.0.0.0",
-        port=8000,
-        reload=True
-    )
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
