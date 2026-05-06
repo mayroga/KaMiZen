@@ -1,5 +1,5 @@
 {
-"sys":"KAMIZEN LIFE SAFETY",
+"sys":"KAMIZEN LIFE SYSTEM",
 "ch":4,
 "rng":"22-28",
 
@@ -20,241 +20,264 @@
 "id":22,
 "cat":"awareness",
 "b":[
-{"t":"v","tx":{"en":"Today: AWARENESS","es":"Hoy: CONCIENCIA"}},
-{"t":"h","tx":{"en":"Something important may be around you","es":"Algo importante puede estar a tu alrededor"}},
+{"t":"v","tx":{"en":"Today: AWARENESS"}},
+{"t":"h","tx":{"en":"Reality always sends signals before problems appear"}},
 
-{"story":{"en":"A calm observer notices what others miss and stays safer.","es":"Un observador calmado nota lo que otros no ven y está más seguro."}},
+{"story":{"en":"Most danger is not sudden. It is ignored until it becomes visible."}},
 
-{"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
-"op":["Ignore","Observe surroundings","Look at phone","Walk distracted"],
+{"t":"breath_auto","d":30,
+"tx":{"en":"Inhale and exhale slowly"},
+"inf":{"en":"This exercise trains calm control and focus"}
+},
+
+{"t":"d","q":{"en":"What creates real safety?"},
+"op":["Ignore environment","Observe surroundings","Focus only on phone","Distract yourself"],
 "c":1,
 "ex":[
-"Ignore = miss important signals",
-"Observe = improves awareness and safety",
-"Phone distraction = reduced attention",
-"Distracted walking = higher risk"
+"Ignore = missed signals",
+"Observation = early detection",
+"Phone focus = reduced awareness",
+"Distraction = delayed reaction"
 ]},
 
 {"t":"r","tx":"+Awareness","p":20},
 
 {"t":"sil","d":30,
-"tx":{"en":"30s awareness pause","es":"30s pausa de conciencia"},
-"inf":{"en":"Short silence improves situational attention and reduces impulsive reactions","es":"Silencio corto mejora atención situacional y reduce reacciones impulsivas"}
+"tx":{"en":"Observe without reacting"},
+"inf":{"en":"Improves situational perception and reduces impulsive response"}
 },
 
 {"t":"breath_auto","d":30,
-"tx":{"en":"4-4 breathing (calm cycle)","es":"Respiración 4-4 (ciclo de calma)"},
-"inf":{"en":"Helps regulate nervous system and improve focus","es":"Ayuda a regular el sistema nervioso y mejorar enfoque"}
+"tx":{"en":"4-4 breathing stability"},
+"inf":{"en":"Regulates nervous system and improves focus"}
 }
 ]
 },
-
 
 {
 "id":23,
 "cat":"emotion",
 "b":[
-{"t":"v","tx":{"en":"Today: EMOTIONAL CONTROL","es":"Hoy: CONTROL EMOCIONAL"}},
-{"t":"h","tx":{"en":"Emotion rises quickly","es":"La emoción sube rápido"}},
+{"t":"v","tx":{"en":"Today: EMOTIONAL CONTROL"}},
+{"t":"h","tx":{"en":"Emotion is energy, not instruction"}},
 
-{"story":{"en":"Emotion is energy. Control decides the direction.","es":"La emoción es energía. El control decide la dirección."}},
+{"story":{"en":"Feelings rise automatically. Control decides direction."}},
 
-{"t":"br","tx":{"en":"Inhale","es":"Inhala"},"d":5},
-{"t":"br","tx":{"en":"Exhale","es":"Exhala"},"d":5},
+{"t":"breath_auto","d":30,
+"tx":{"en":"Inhale and exhale slowly"},
+"inf":{"en":"This exercise trains calm control and focus"}
+},
 
-{"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
-"op":["Explode","Breathe","Scream","Act impulsively"],
+{"t":"d","q":{"en":"What is real control?"},
+"op":["React instantly","Pause and regulate","Shout back","Act without thinking"],
 "c":1,
 "ex":[
-"Explode = loss of control",
-"Breathe = activates calm regulation system",
-"Scream = increases stress response",
-"Impulsive action = poor decisions"
+"Instant reaction = loss of control",
+"Pause + regulation = mastery",
+"Shouting = escalation",
+"Impulse = error increase"
 ]},
 
 {"t":"r","tx":"+Control","p":20},
 
 {"t":"sil","d":45,
-"tx":{"en":"Emotional reset silence","es":"Silencio de reinicio emocional"},
-"inf":{"en":"Supports amygdala calming and prefrontal activation","es":"Reduce reactividad emocional y activa control prefrontal"}
+"tx":{"en":"Watch emotion without acting"},
+"inf":{"en":"Strengthens emotional regulation circuits"}
 },
 
 {"t":"breath_auto","d":30,
-"tx":{"en":"Slow inhale 4 / exhale 6","es":"Inhala 4 / exhala 6"},
-"inf":{"en":"Long exhale supports nervous system calming","es":"Exhalación larga ayuda a calmar el sistema nervioso"}
+"tx":{"en":"4-6 breathing cycle"},
+"inf":{"en":"Long exhale stabilizes emotional response"}
 }
 ]
 },
-
 
 {
 "id":24,
 "cat":"decision",
 "b":[
-{"t":"v","tx":{"en":"Today: DECISION","es":"Hoy: DECISIÓN"}},
-{"t":"h","tx":{"en":"You must choose fast","es":"Debes elegir rápido"}},
+{"t":"v","tx":{"en":"Today: DECISION MAKING"}},
+{"t":"h","tx":{"en":"Speed without clarity creates mistakes"}},
 
-{"story":{"en":"Good decisions come from calm minds, not rushed emotions.","es":"Las buenas decisiones vienen de mentes calmadas, no de emociones rápidas."}},
+{"story":{"en":"Good decisions come from calm systems, not emotional spikes."}},
 
-{"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
-"op":["Rush","Think calmly","Random choice","Avoid decision"],
+{"t":"breath_auto","d":30,
+"tx":{"en":"Inhale and exhale slowly"},
+"inf":{"en":"This exercise trains calm control and focus"}
+},
+
+{"t":"d","q":{"en":"What produces best outcome?"},
+"op":["Rush decision","Think calmly","Random choice","Avoid decision"],
 "c":1,
 "ex":[
-"Rush = errors increase",
-"Think calmly = activates reasoning system",
+"Rush = errors",
+"Calm thinking = clarity",
 "Random = no control",
-"Avoid = no solution"
+"Avoidance = no result"
 ]},
 
 {"t":"r","tx":"+Clarity","p":20},
 
 {"t":"sil","d":60,
-"tx":{"en":"Decision clarity silence","es":"Silencio de claridad en decisión"},
-"inf":{"en":"Improves executive function and reduces impulsive behavior","es":"Mejora función ejecutiva y reduce impulsividad"}
+"tx":{"en":"Decision clarity pause"},
+"inf":{"en":"Improves executive function and reduces impulsivity"}
 },
 
 {"t":"breath_auto","d":30,
-"tx":{"en":"Balanced 4-4 breathing","es":"Respiración equilibrada 4-4"},
-"inf":{"en":"Stabilizes attention before action","es":"Estabiliza la atención antes de actuar"}
+"tx":{"en":"4-4 balanced breathing"},
+"inf":{"en":"Stabilizes cognitive control before action"}
 }
 ]
 },
-
 
 {
 "id":25,
 "cat":"learning",
 "b":[
-{"t":"v","tx":{"en":"Today: LEARNING FROM MISTAKES","es":"Hoy: APRENDER DE ERRORES"}},
-{"t":"h","tx":{"en":"You made a mistake","es":"Cometiste un error"}},
+{"t":"v","tx":{"en":"Today: ERROR PROCESSING"}},
+{"t":"h","tx":{"en":"Mistakes are data, not identity"}},
 
-{"story":{"en":"Mistakes are signals for learning, not failure.","es":"Los errores son señales de aprendizaje, no fracaso."}},
+{"story":{"en":"Every error contains information for improvement."}},
 
-{"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
-"op":["Ignore","Learn","Blame others","Hide mistake"],
+{"t":"breath_auto","d":30,
+"tx":{"en":"Inhale and exhale slowly"},
+"inf":{"en":"This exercise trains calm control and focus"}
+},
+
+{"t":"d","q":{"en":"What transforms mistakes?"},
+"op":["Ignore","Learn","Blame others","Hide"],
 "c":1,
 "ex":[
-"Ignore = repeat error",
-"Learn = strengthens brain adaptation",
-"Blame = avoids growth",
-"Hide = prevents improvement"
+"Ignore = repetition of error",
+"Learn = adaptation",
+"Blame = no growth",
+"Hide = no progress"
 ]},
 
 {"t":"r","tx":"+Learning","p":20},
 
 {"t":"sil","d":75,
-"tx":{"en":"Learning reflection silence","es":"Silencio de reflexión de aprendizaje"},
-"inf":{"en":"Supports memory consolidation and cognitive growth","es":"Apoya consolidación de memoria y crecimiento cognitivo"}
+"tx":{"en":"Reflect without judgment"},
+"inf":{"en":"Supports memory consolidation and cognitive growth"}
 },
 
 {"t":"breath_auto","d":30,
-"tx":{"en":"Calm learning breath cycle","es":"Ciclo de respiración calmada para aprender"},
-"inf":{"en":"Improves focus and retention","es":"Mejora enfoque y retención"}
+"tx":{"en":"Calm learning breathing"},
+"inf":{"en":"Improves focus and retention"}
 }
 ]
 },
-
 
 {
 "id":26,
 "cat":"mind",
 "b":[
-{"t":"v","tx":{"en":"Today: MIND CONTROL","es":"Hoy: CONTROL DE LA MENTE"}},
-{"t":"h","tx":{"en":"Thoughts feel chaotic","es":"Los pensamientos se sienten caóticos"}},
+{"t":"v","tx":{"en":"Today: MIND ORGANIZATION"}},
+{"t":"h","tx":{"en":"Chaos is untrained information"}},
 
-{"story":{"en":"A trained mind does not follow chaos, it organizes it.","es":"Una mente entrenada no sigue el caos, lo organiza."}},
+{"story":{"en":"A trained mind does not react to chaos, it structures it."}},
 
-{"t":"br","tx":{"en":"Inhale","es":"Inhala"},"d":4},
-{"t":"br","tx":{"en":"Exhale","es":"Exhala"},"d":4},
+{"breath_auto","d":30,
+"tx":{"en":"Inhale and exhale slowly"},
+"inf":{"en":"This exercise trains calm control and focus"}
+},
 
-{"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
-"op":["React","Organize thoughts","Ignore","Overthink"],
+{"t":"d","q":{"en":"What stabilizes the mind?"},
+"op":["React instantly","Organize thoughts","Ignore everything","Overthink"],
 "c":1,
 "ex":[
-"React = increases chaos",
-"Organize = restores clarity",
-"Ignore = unresolved noise",
-"Overthink = mental overload"
+"Reaction = chaos increase",
+"Organization = clarity",
+"Ignoring = unresolved noise",
+"Overthinking = overload"
 ]},
 
 {"t":"r","tx":"+Clarity","p":20},
 
 {"t":"sil","d":90,
-"tx":{"en":"Mental reset silence","es":"Silencio de reinicio mental"},
-"inf":{"en":"Supports prefrontal regulation and reduces mental overload","es":"Apoya regulación prefrontal y reduce sobrecarga mental"}
+"tx":{"en":"Mental reset awareness"},
+"inf":{"en":"Reduces cognitive overload and improves clarity"}
 },
 
 {"t":"breath_auto","d":30,
-"tx":{"en":"4-6 calming breath cycle","es":"Ciclo calmante 4-6"},
-"inf":{"en":"Long exhale improves emotional stability","es":"Exhalación larga mejora estabilidad emocional"}
+"tx":{"en":"4-6 calming cycle"},
+"inf":{"en":"Supports emotional and cognitive stability"}
 }
 ]
 },
-
 
 {
 "id":27,
 "cat":"calm",
 "b":[
-{"t":"v","tx":{"en":"Today: CALM IN CONFLICT","es":"Hoy: CALMA EN CONFLICTO"}},
-{"t":"h","tx":{"en":"Conflict appears","es":"Aparece un conflicto"}},
+{"t":"v","tx":{"en":"Today: CALM UNDER PRESSURE"}},
+{"t":"h","tx":{"en":"Calm is a form of control"}},
 
-{"story":{"en":"Calm is the strongest response in a chaotic moment.","es":"La calma es la respuesta más fuerte en un momento caótico."}},
+{"story":{"en":"In conflict, the calm system dominates the reactive system."}},
 
-{"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
+{"t":"breath_auto","d":30,
+"tx":{"en":"Inhale and exhale slowly"},
+"inf":{"en":"This exercise trains calm control and focus"}
+},
+
+{"t":"d","q":{"en":"What is strongest response?"},
 "op":["Fight","Stay calm","Run away","Shout"],
 "c":1,
 "ex":[
 "Fight = escalation",
-"Calm = control and better outcome",
+"Calm = control",
 "Run = avoidance",
-"Shout = emotional loss"
+"Shouting = loss of control"
 ]},
 
 {"t":"r","tx":"+Calm","p":20},
 
 {"t":"sil","d":120,
-"tx":{"en":"2 min calm control training","es":"2 min de entrenamiento de calma"},
-"inf":{"en":"Strengthens emotional regulation and impulse control","es":"Fortalece regulación emocional y control de impulsos"}
+"tx":{"en":"Pressure tolerance training"},
+"inf":{"en":"Improves emotional regulation under stress"}
 },
 
 {"t":"breath_auto","d":30,
-"tx":{"en":"Deep calm breathing cycle","es":"Ciclo de respiración profunda calmada"},
-"inf":{"en":"Stabilizes heart rate and stress response","es":"Estabiliza ritmo cardíaco y respuesta al estrés"}
+"tx":{"en":"Deep stabilizing breath"},
+"inf":{"en":"Stabilizes heart rate and stress response"}
 }
 ]
 },
 
-
 {
 "id":28,
-"cat":"final",
+"cat":"mastery",
 "b":[
-{"t":"v","tx":{"en":"Today: TOTAL VISION","es":"Hoy: VISIÓN TOTAL"}},
-{"t":"h","tx":{"en":"Everything is connected","es":"Todo está conectado"}},
+{"t":"v","tx":{"en":"Today: SYSTEM AWARENESS"}},
+{"t":"h","tx":{"en":"Everything is connected through attention"}},
 
-{"story":{"en":"Those who observe everything understand reality better.","es":"Quienes observan todo entienden mejor la realidad."}},
+{"story":{"en":"What you observe defines what you understand."}},
 
-{"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
-"op":["Ignore","Understand","React fast","Escape"],
+{"t":"breath_auto","d":30,
+"tx":{"en":"Inhale and exhale slowly"},
+"inf":{"en":"This exercise trains calm control and focus"}
+},
+
+{"t":"d","q":{"en":"What creates mastery?"},
+"op":["Ignore reality","Understand patterns","React fast","Escape"],
 "c":1,
 "ex":[
-"Ignore = low awareness",
-"Understand = full perception",
-"React fast = low control",
+"Ignore = blindness",
+"Understanding = mastery",
+"Reaction = instability",
 "Escape = avoidance"
 ]},
 
 {"t":"r","tx":"+Vision","p":20},
 
 {"t":"sil","d":180,
-"tx":{"en":"3-minute mastery silence","es":"3 minutos de silencio de maestría"},
-"inf":{"en":"Supports deep metacognition and emotional mastery","es":"Apoya metacognición profunda y dominio emocional"}
+"tx":{"en":"3-minute mastery awareness"},
+"inf":{"en":"Enhances metacognition and self-regulation"}
 },
 
 {"t":"breath_auto","d":30,
-"tx":{"en":"Final stabilization breathing","es":"Respiración final de estabilización"},
-"inf":{"en":"Balances nervous system after training","es":"Equilibra el sistema nervioso después del entrenamiento"}
+"tx":{"en":"Final stabilization breathing"},
+"inf":{"en":"Restores nervous system balance"}
 }
 ]
 }
