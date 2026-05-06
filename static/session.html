@@ -1,102 +1,95 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>KamiZen Session</title>
+<meta charset="UTF-8">
+<title>KaMiZen Engine V2</title>
 
 <style>
 body {
-    margin:0;
+    margin: 0;
     font-family: Arial, sans-serif;
-    background:#0b0f1a;
-    color:white;
-    text-align:center;
+    background: #0f172a;
+    color: white;
+    text-align: center;
+    font-size: 22px;
 }
 
-/* ================= HEADER ================= */
 #app {
-    padding:20px;
+    padding: 25px;
+    max-width: 900px;
+    margin: auto;
 }
 
-/* ================= BUTTONS ================= */
+/* TITLES */
+h1 {
+    font-size: 36px;
+    margin-top: 30px;
+}
+
+h2 {
+    font-size: 26px;
+    color: #60a5fa;
+}
+
+/* BUTTONS */
 button {
-    padding:10px 15px;
-    margin:5px;
-    border:none;
-    border-radius:8px;
-    cursor:pointer;
-    font-weight:bold;
+    display: block;
+    margin: 10px auto;
+    padding: 14px;
+    width: 80%;
+    font-size: 18px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
 }
 
-.btn {
-    background:#1f2a44;
-    color:white;
+/* ANSWERS STATES */
+.correct { background: #16a34a; color: white; }
+.wrong { background: #dc2626; color: white; }
+.medium { background: #f59e0b; }
+.low { background: #fb923c; }
+
+/* CONTINUE BUTTON */
+.next {
+    background: #2563eb;
+    color: white;
+    margin-top: 20px;
 }
 
-.btn:hover {
-    background:#2b3a5f;
-}
-
-.continue {
-    background:#00c3ff;
-    color:black;
-}
-
-/* ================= COLORS ================= */
-.correct { background:#00c853 !important; }
-.wrong { background:#d50000 !important; }
-.partial { background:#ff9100 !important; }
-.almost { background:#ffd600 !important; }
-
-/* ================= BREATHING ================= */
+/* BREATHING CIRCLE */
 .circle {
-    width:160px;
-    height:160px;
-    border-radius:50%;
-    margin:20px auto;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:18px;
-    font-weight:bold;
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    background: #1e90ff;
+    margin: 25px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    transition: transform 3s ease-in-out;
 }
 
-.breath {
-    border:4px solid #00c3ff;
-    animation:pulse 4s infinite;
-}
-
+/* SILENCE MODE */
 .silence {
-    border:4px solid #aaa;
-    opacity:0.7;
+    font-size: 24px;
+    opacity: 0.7;
+    margin: 20px;
 }
 
-@keyframes pulse {
-    0% { transform:scale(1); }
-    50% { transform:scale(1.3); }
-    100% { transform:scale(1); }
+/* STORY TEXT */
+.story {
+    font-size: 20px;
+    opacity: 0.9;
+    margin: 20px;
 }
 
-/* ================= BOX ================= */
-.box {
-    background:#111a2e;
-    padding:20px;
-    border-radius:10px;
-    margin:10px;
-}
-
-/* ================= SMALL ================= */
-small {
-    color:#aaa;
-}
-
-/* ================= INPUT ================= */
+/* INPUT SCREEN */
 input {
-    padding:10px;
-    border-radius:8px;
-    border:none;
-    width:200px;
+    padding: 12px;
+    font-size: 18px;
+    width: 70%;
+    margin-top: 20px;
 }
 </style>
 </head>
@@ -105,147 +98,279 @@ input {
 
 <div id="app"></div>
 
-<script src="/static/js/engine.js"></script>
-
 <script>
-// =====================================
-// GLOBAL STATE
-// =====================================
-let engine;
+/* =========================
+   🌐 GLOBAL STATE
+========================= */
+
 let userName = "";
-let stories = [];
-let missions = [];
-let storyIndex = 0;
+const app = document.getElementById("app");
 
-// =====================================
-// START SCREEN
-// =====================================
+/* =========================
+   🔊 VOZ (INGLÉS)
+========================= */
+function speak(text) {
+    if (!text) return;
+    const msg = new SpeechSynthesisUtterance(text);
+    msg.lang = "en-US";
+    msg.rate = 0.95;
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(msg);
+}
+
+/* =========================
+   🧼 CLEAR SCREEN
+========================= */
+function clear() {
+    app.innerHTML = "";
+}
+
+/* =========================
+   👋 SALUDO + NOMBRE
+========================= */
 function startApp() {
-    const app = document.getElementById("app");
+    clear();
 
-    app.innerHTML = `
-        <h1>Welcome to KamiZen</h1>
-        <p>Awareness • Calm • Control • Focus</p>
-        <button class="btn" onclick="askName()">Start</button>
-    `;
+    const title = document.createElement("h1");
+    title.innerText = "Welcome to KaMiZen";
+    app.appendChild(title);
+
+    speak("Welcome to Ka Mi Zen");
+
+    const input = document.createElement("input");
+    input.placeholder = "Enter your name";
+
+    const btn = document.createElement("button");
+    btn.innerText = "Start";
+
+    btn.onclick = () => {
+        userName = input.value || "User";
+        speak("Hello " + userName);
+        loadStories();
+    };
+
+    app.appendChild(input);
+    app.appendChild(btn);
 }
 
-// =====================================
-// ASK NAME
-// =====================================
-function askName() {
-    const app = document.getElementById("app");
-
-    app.innerHTML = `
-        <h2>What is your name?</h2>
-        <input id="nameInput" placeholder="Enter name"/>
-        <br><br>
-        <button class="btn" onclick="saveName()">Continue</button>
-    `;
-}
-
-function saveName() {
-    userName = document.getElementById("nameInput").value || "User";
-    loadStories();
-}
-
-// =====================================
-// LOAD STORIES
-// =====================================
+/* =========================
+   📖 STORIES LOAD
+========================= */
 async function loadStories() {
+    clear();
+
     const res = await fetch("/api/stories");
-    stories = Object.values(await res.json());
+    const data = await res.json();
 
-    showStory();
-}
+    const title = document.createElement("h1");
+    title.innerText = "Stories";
+    app.appendChild(title);
 
-function showStory() {
-    const app = document.getElementById("app");
+    speak("Starting stories");
 
-    if (storyIndex >= stories.length) {
-        loadMissions();
-        return;
+    let i = 0;
+
+    function next() {
+        if (i >= data.stories.length) {
+            loadMissions();
+            return;
+        }
+
+        const s = data.stories[i];
+        i++;
+
+        clear();
+
+        const box = document.createElement("div");
+        box.className = "story";
+        box.innerText = s.title || "Story";
+
+        app.appendChild(box);
+
+        speak(s.title || "");
+
+        setTimeout(next, 2500);
     }
 
-    let s = stories[storyIndex];
-
-    app.innerHTML = `
-        <div class="box">
-            <h2>Story ${storyIndex + 1}</h2>
-            <p>${s.text || JSON.stringify(s)}</p>
-        </div>
-
-        <button class="continue" onclick="nextStory()">Continue</button>
-    `;
+    next();
 }
 
-function nextStory() {
-    storyIndex++;
-    showStory();
-}
-
-// =====================================
-// LOAD MISSIONS
-// =====================================
+/* =========================
+   🎯 MISSIONS LOAD
+========================= */
 async function loadMissions() {
+    clear();
+
     const res = await fetch("/api/missions");
     const data = await res.json();
 
-    missions = data.missions;
+    let i = 0;
+    let bIndex = 0;
 
-    engine = new KamiZenEngine({ container: "app", lang: "en" });
-    engine.load(data);
-    engine.start();
+    function renderBlock(block, next) {
+        clear();
+
+        /* TITLE */
+        if (block.t === "v") {
+            speak(block.tx.en);
+            const h = document.createElement("h1");
+            h.innerText = block.tx.en;
+            app.appendChild(h);
+            setTimeout(next, 2000);
+        }
+
+        /* HEADER */
+        else if (block.t === "h") {
+            const h = document.createElement("h2");
+            h.innerText = block.tx.en;
+            app.appendChild(h);
+            setTimeout(next, 1500);
+        }
+
+        /* STORY */
+        else if (block.story) {
+            const s = document.createElement("div");
+            s.className = "story";
+            s.innerText = block.story.en;
+            app.appendChild(s);
+            speak(block.story.en);
+            setTimeout(next, 3000);
+        }
+
+        /* QUESTION */
+        else if (block.t === "d") {
+
+            const q = document.createElement("h2");
+            q.innerText = block.q.en;
+            app.appendChild(q);
+
+            block.op.forEach((opt, idx) => {
+
+                const b = document.createElement("button");
+                b.innerText = opt;
+
+                b.onclick = () => {
+
+                    const correct = idx === block.c;
+
+                    if (correct) {
+                        b.className = "correct";
+                        speak("Correct");
+                    } else {
+                        b.className = "wrong";
+                        speak("Incorrect");
+                    }
+
+                    const exp = document.createElement("div");
+                    exp.className = "story";
+                    exp.innerText = block.ex[idx] || "";
+                    app.appendChild(exp);
+
+                    const cont = document.createElement("button");
+                    cont.innerText = "CONTINUE";
+                    cont.className = "next";
+
+                    cont.onclick = next;
+                    app.appendChild(cont);
+                };
+
+                app.appendChild(b);
+            });
+        }
+
+        /* BREATHING */
+        else if (block.t === "breath_auto") {
+
+            const circle = document.createElement("div");
+            circle.className = "circle";
+            circle.innerText = "INHALE";
+
+            app.appendChild(circle);
+
+            speak(block.tx.en);
+
+            let inhale = true;
+
+            const interval = setInterval(() => {
+                if (inhale) {
+                    circle.innerText = "INHALE";
+                    circle.style.transform = "scale(1.4)";
+                } else {
+                    circle.innerText = "EXHALE";
+                    circle.style.transform = "scale(0.8)";
+                }
+                inhale = !inhale;
+            }, block.d * 500);
+
+            setTimeout(() => {
+                clearInterval(interval);
+                circle.innerText = "DONE";
+                circle.style.transform = "scale(1)";
+                next();
+            }, block.d * 1000);
+        }
+
+        /* SILENCE */
+        else if (block.t === "sil") {
+
+            const box = document.createElement("div");
+            box.className = "silence";
+            box.innerText = "SILENCE...";
+
+            app.appendChild(box);
+
+            setTimeout(() => {
+                box.innerText = "DONE";
+                next();
+            }, block.d * 1000);
+        }
+
+        else {
+            next();
+        }
+    }
+
+    function runMission(m) {
+
+        let bIndex = 0;
+
+        function next() {
+            if (bIndex < m.b.length) {
+                renderBlock(m.b[bIndex], () => {
+                    bIndex++;
+                    next();
+                });
+            } else {
+                setTimeout(runNextMission, 1500);
+            }
+        }
+
+        next();
+    }
+
+    function runNextMission() {
+
+        if (i >= data.missions.length) {
+            clear();
+
+            const done = document.createElement("h1");
+            done.innerText = "SYSTEM COMPLETE";
+            app.appendChild(done);
+
+            speak("System complete");
+            return;
+        }
+
+        runMission(data.missions[i]);
+        i++;
+    }
+
+    runNextMission();
 }
 
-// =====================================
-// BREATHING VISUAL (HOOK)
-// =====================================
-window.showBreathing = function(type, text, info, duration) {
-    const app = document.getElementById("app");
-
-    let cls = type === "silence" ? "circle silence" : "circle breath";
-
-    app.innerHTML = `
-        <div class="${cls}" id="circle">${text}</div>
-        <p><small>${info}</small></p>
-    `;
-
-    let inhale = true;
-
-    const interval = setInterval(() => {
-        document.getElementById("circle").innerText = inhale ? "INHALE" : "EXHALE";
-        inhale = !inhale;
-    }, 2000);
-
-    setTimeout(() => {
-        clearInterval(interval);
-    }, duration * 1000);
-};
-
-// =====================================
-// QUESTION COLOR FEEDBACK (HOOK)
-// =====================================
-window.showAnswerFeedback = function(state, explanation) {
-    const app = document.getElementById("app");
-
-    let color = "partial";
-
-    if (state === "correct") color = "correct";
-    if (state === "wrong") color = "wrong";
-    if (state === "almost") color = "almost";
-
-    app.innerHTML += `
-        <div class="box ${color}">
-            <p>${explanation}</p>
-            <button class="continue" onclick="engine.nextBlock()">Continue</button>
-        </div>
-    `;
-};
-
-// =====================================
-// INIT
-// =====================================
+/* =========================
+   🚀 START
+========================= */
 startApp();
 </script>
 
