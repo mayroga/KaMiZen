@@ -114,9 +114,20 @@ function renderBlock(block, totalBlocks) {
             speak(block.story.en);
             break;
         case "br":
-            content = `<div class="circle-container"><div class="circle manual-b"><span>${block.tx.en}</span></div></div>`;
-            speak(block.tx.en);
-            break;
+    // 🔥 Convertimos cualquier respiración manual en automática
+    content = `
+        <div class="circle-container">
+            <div id="respiratoryCircle" class="circle blue-breath">
+                <span id="breathAction">INHALE</span>
+            </div>
+        </div>
+        <div class="card info">
+            <p>${block.tx.en}</p>
+        </div>
+    `;
+    app.innerHTML = content;
+
+    return startAutoBreath(8); // duración corta estándar
         case "d":
             content = `
                 <div class="card">
@@ -203,25 +214,18 @@ function handleDecision(idx, correct, explanations) {
 
 function startAutoBreath(seconds) {
     let timeLeft = seconds;
-    let isInhaling = true;
 
     const label = document.getElementById("breathAction");
     const circle = document.getElementById("respiratoryCircle");
 
     if (!label || !circle) return;
 
-    // Estado inicial correcto
-    label.innerText = "INHALE";
-    circle.style.transform = "scale(0.7)";
+    // ✅ Estado inicial REAL (INHALE = EXPAND)
+    let isInhaling = true;
+
     circle.style.transition = "transform 4s ease-in-out";
 
-    const interval = setInterval(() => {
-
-        if (!document.getElementById("respiratoryCircle")) {
-            clearInterval(interval);
-            return;
-        }
-
+    function applyState() {
         if (isInhaling) {
             // INHALE → EXPAND
             label.innerText = "INHALE";
@@ -233,8 +237,23 @@ function startAutoBreath(seconds) {
             circle.style.transform = "scale(0.7)";
             speak("Exhale");
         }
+    }
 
+    // 🔥 APLICAR PRIMER ESTADO ANTES DEL INTERVALO (CLAVE)
+    applyState();
+
+    const interval = setInterval(() => {
+
+        if (!document.getElementById("respiratoryCircle")) {
+            clearInterval(interval);
+            return;
+        }
+
+        // 🔁 CAMBIO DESPUÉS DE COMPLETAR EL CICLO
         isInhaling = !isInhaling;
+
+        applyState();
+
         timeLeft -= 4;
 
         if (timeLeft <= 0) {
