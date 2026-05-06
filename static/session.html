@@ -1,230 +1,180 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>KaMiZen Engine V2</title>
+/* =============================================================
+   KaMiZen ENGINE V3 - ESTRUCTURA DE BLOQUES (STRICT)
+   Especialista: AURA BY MAY ROGA LLC
+   ============================================================= */
 
-<style>
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: #0b1220;
-    color: white;
-    text-align: center;
-}
-
-/* MAIN CONTAINER */
-#app {
-    padding: 20px;
-    max-width: 900px;
-    margin: auto;
-}
-
-/* BUTTONS */
-button {
-    padding: 12px 20px;
-    margin: 10px;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    font-size: 16px;
-}
-
-.primary { background: #2563eb; color: white; }
-.good { background: #22c55e; }
-.warn { background: #facc15; }
-.bad { background: #f97316; }
-.danger { background: #ef4444; }
-
-/* STORY BOX */
-.card {
-    background: #111a2e;
-    padding: 20px;
-    border-radius: 15px;
-    margin-top: 20px;
-    text-align: left;
-}
-
-/* BREATHING CIRCLE */
-.circle {
-    width: 140px;
-    height: 140px;
-    border-radius: 50%;
-    margin: 20px auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    border: 3px solid #3b82f6;
-    animation: breathe 6s infinite ease-in-out;
-}
-
-@keyframes breathe {
-    0% { transform: scale(0.9); opacity: 0.6; }
-    50% { transform: scale(1.2); opacity: 1; }
-    100% { transform: scale(0.9); opacity: 0.6; }
-}
-
-/* ANSWERS */
-.answer {
-    background: #1f2937;
-    padding: 10px;
-    margin: 5px;
-    border-radius: 8px;
-    cursor: pointer;
-}
-
-.hidden { display: none; }
-
-.small { font-size: 14px; opacity: 0.8; }
-</style>
-</head>
-
-<body>
-<div id="app"></div>
-
-<script>
-/* =========================
-   ENGINE STATE
-========================= */
 let state = {
     name: "",
     step: "welcome",
+    lang: "en", // Prioridad Inglés
     stories: [],
     missions: [],
     sIndex: 0,
-    mIndex: 0
+    mIndex: 0,
+    initialized: false
 };
 
 /* =========================
-   SPEECH (Narrator)
-========================= */
-function speak(text) {
-    const msg = new SpeechSynthesisUtterance(text);
-    msg.lang = "en-US";
-    msg.rate = 1;
-    window.speechSynthesis.speak(msg);
-}
+   INICIO Y CARGA DE DATOS
+   ========================= */
+window.addEventListener("load", async () => {
+    await loadData();
+    render();
+});
 
-/* =========================
-   LOAD JSON
-========================= */
 async function loadData() {
-    const storiesRes = await fetch("/stories.json");
-    const missionsRes = await fetch("/missions.json");
+    try {
+        // Llamadas a la API del main.py
+        const storiesRes = await fetch("/api/stories");
+        const missionsRes = await fetch("/api/missions");
 
-    state.stories = await storiesRes.json();
-    state.stories = state.stories.stories || state.stories;
+        const storiesData = await storiesRes.json();
+        const missionsData = await missionsRes.json();
 
-    state.missions = await missionsRes.json();
-    state.missions = state.missions.missions || state.missions;
+        state.stories = storiesData.stories || [];
+        state.missions = missionsData.missions || [];
+        state.initialized = true;
+
+        console.log("SISTEMA KAMIZEN CARGADO:", {
+            historias: state.stories.length,
+            misiones: state.missions.length
+        });
+    } catch (err) {
+        console.error("ERROR DE CARGA:", err);
+    }
 }
 
 /* =========================
-   RENDER ENGINE
-========================= */
+   NARRACIÓN (SPEECH)
+   ========================= */
+function speak(text) {
+    if (!text) return;
+    try {
+        const msg = new SpeechSynthesisUtterance(text);
+        msg.lang = state.lang === "en" ? "en-US" : "es-ES";
+        msg.rate = 0.95; 
+        window.speechSynthesis.cancel();
+        window.speechSynthesis.speak(msg);
+    } catch (e) {
+        console.warn("Error en salida de voz:", e);
+    }
+}
+
+/* =========================
+   MOTOR DE RENDERIZADO
+   ========================= */
 function render() {
     const app = document.getElementById("app");
+    if (!app) return;
     app.innerHTML = "";
 
-    /* WELCOME */
+    /* --- BIENVENIDA --- */
     if (state.step === "welcome") {
         app.innerHTML = `
-            <h1>Welcome to KaMiZen</h1>
-            <p>Enter your name</p>
-            <input id="nameInput" placeholder="Your name"/>
-            <br/>
-            <button class="primary" onclick="startApp()">Start</button>
+            <h1 style="color: #3b82f6; letter-spacing: 2px;">AL CIELO</h1>
+            <p>Intelligence, Awareness, Action, Truth</p>
+            <div class="card" style="border: 1px solid #1e293b;">
+                <input id="nameInput" type="text" placeholder="Full Name" 
+                       style="width: 80%; padding: 12px; border-radius: 8px; border: none; background: #0b1220; color: white;"/>
+            </div>
+            <button class="primary" onclick="startApp()">IDENTIFY</button>
         `;
         return;
     }
 
-    /* NAME CONFIRM */
+    /* --- CONFIRMACIÓN --- */
     if (state.step === "named") {
         app.innerHTML = `
-            <h2>Hello, ${state.name}</h2>
-            <button class="primary" onclick="startStories()">Begin Journey</button>
+            <h2>Protocol Ready: ${state.name}</h2>
+            <p>The journey to awareness begins now.</p>
+            <button class="primary" onclick="startStories()">BEGIN JOURNEY</button>
         `;
         return;
     }
 
-    /* STORIES */
+    /* --- MOTOR DE HISTORIAS --- */
     if (state.step === "story") {
-        const s = state.stories[state.sIndex];
-
-        if (!s) {
+        const story = state.stories[state.sIndex];
+        if (!story) {
             state.step = "missions";
+            state.mIndex = 0;
             render();
             return;
         }
 
-        speak(s.en);
+        const text = state.lang === "en" ? story.en : story.es;
+        speak(text);
 
         app.innerHTML = `
-            <h2>Story ${s.id}: ${s.t}</h2>
+            <h3 style="color: #facc15;">Knowledge Base: ${story.t}</h3>
             <div class="card">
-                <p>${s.en}</p>
+                <p style="font-size: 1.2em; line-height: 1.6;">${text}</p>
             </div>
-
-            <button class="primary" onclick="nextStory()">Continue</button>
+            <button class="primary" onclick="nextStory()">CONTINUE</button>
+            <p class="small">Knowledge Unit ${state.sIndex + 1} / ${state.stories.length}</p>
+            <button onclick="clearState()" style="background: none; color: #ef4444; font-size: 10px;">Clear Data</button>
         `;
         return;
     }
 
-    /* MISSIONS */
+    /* --- MOTOR DE MISIONES (EXTRACCIÓN DE BLOQUES b) --- */
     if (state.step === "missions") {
-        const m = state.missions[state.mIndex];
-
-        if (!m) {
+        const mission = state.missions[state.mIndex];
+        if (!mission) {
             state.step = "complete";
             render();
             return;
         }
 
+        // Buscamos el bloque 'd' dentro de 'b' para obtener pregunta y opciones
+        const dataBlock = mission.b.find(block => block.t === "d");
+        const question = dataBlock ? (state.lang === "en" ? dataBlock.q.en : dataBlock.q.es) : "...";
+        const options = dataBlock ? dataBlock.op : [];
+        const correctIdx = dataBlock ? dataBlock.c : 0;
+
         app.innerHTML = `
-            <h2>Mission ${m.id}</h2>
+            <h3 style="color: #ef4444;">Mission ${mission.id}: ${mission.cat.toUpperCase()}</h3>
             <div class="card">
-                <p>${m.question}</p>
-
-                <div>
-                    ${m.answers.map((a, i) =>
-                        `<div class="answer" onclick="checkAnswer(${i}, ${m.correct})">${a.text}</div>`
-                    ).join("")}
+                <p style="font-size: 1.1em; font-weight: bold;">${question}</p>
+                <div id="answers">
+                    ${options.map((opt, i) => `
+                        <div class="answer" onclick="checkAnswer(${i}, ${correctIdx})">
+                            ${opt}
+                        </div>
+                    `).join("")}
                 </div>
-
-                <div id="feedback"></div>
+                <div id="feedback" style="margin-top: 15px; min-height: 40px;"></div>
             </div>
-
-            <button class="primary" onclick="nextMission()">Continue</button>
+            <button class="primary" onclick="nextMission()">CONTINUE MISSION</button>
+            <p class="small">Mission ${state.mIndex + 1} / ${state.missions.length}</p>
         `;
         return;
     }
 
-    /* BREATHING MODULE */
+    /* --- FINALIZACIÓN Y RESPIRACIÓN --- */
     if (state.step === "complete") {
         app.innerHTML = `
-            <h1>Training Complete</h1>
-
+            <h1>Training Phase Complete</h1>
             <div class="circle" id="breathCircle">
                 <span id="breathText">Inhale</span>
             </div>
-
-            <p class="small">This exercise trains calm focus and nervous system control.</p>
-
-            <button class="primary" onclick="restart()">Restart</button>
+            <div class="card">
+                <p>This exercise trains calm focus and nervous system control.</p>
+            </div>
+            <button class="primary" onclick="restart()">RESTART</button>
         `;
-
         startBreathing();
         return;
     }
 }
 
 /* =========================
-   FLOW CONTROL
-========================= */
+   CONTROLES DE FLUJO
+   ========================= */
+
 function startApp() {
-    state.name = document.getElementById("nameInput").value || "User";
+    const input = document.getElementById("nameInput");
+    state.name = input?.value?.trim() || "User";
     state.step = "named";
     render();
 }
@@ -245,55 +195,42 @@ function nextMission() {
     render();
 }
 
-/* =========================
-   ANSWER SYSTEM
-========================= */
 function checkAnswer(index, correct) {
     const fb = document.getElementById("feedback");
+    if (!fb) return;
 
     if (index === correct) {
-        fb.innerHTML = `<p style="color:#22c55e">Correct</p>`;
+        fb.innerHTML = `<p style="color: #22c55e; font-weight: bold;">CORRECT: Awareness increases safety.</p>`;
+        speak("Correct. Awareness increases safety.");
     } else {
-        fb.innerHTML = `<p style="color:#ef4444">Incorrect</p>`;
+        fb.innerHTML = `<p style="color: #ef4444; font-weight: bold;">REVISE: Analyze the risk again.</p>`;
+        speak("Analyze the risk again.");
     }
 }
 
-/* =========================
-   BREATHING LOOP
-========================= */
 function startBreathing() {
-    const text = document.getElementById("breathText");
-
     let inhale = true;
-
-    setInterval(() => {
-        if (!text) return;
-
-        if (inhale) {
-            text.innerText = "Inhale";
-        } else {
-            text.innerText = "Exhale";
+    const interval = setInterval(() => {
+        const text = document.getElementById("breathText");
+        if (!text) {
+            clearInterval(interval);
+            return;
         }
-
+        text.innerText = inhale ? "Inhale" : "Exhale";
         inhale = !inhale;
-    }, 3000);
+    }, 4000); 
 }
 
-/* =========================
-   RESTART
-========================= */
+function clearState() {
+    if(confirm("Delete current session data?")) {
+        restart();
+    }
+}
+
 function restart() {
-    location.reload();
-}
-
-/* =========================
-   INIT
-========================= */
-(async function init() {
-    await loadData();
+    state.step = "welcome";
+    state.sIndex = 0;
+    state.mIndex = 0;
+    state.name = "";
     render();
-})();
-</script>
-
-</body>
-</html>
+}
