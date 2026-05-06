@@ -1,8 +1,9 @@
 /* =============================================================
-   AURA BY MAY ROGA - KaMiZen ENGINE V7 (FINAL STABLE)
+   AURA BY MAY ROGA - KaMiZen ENGINE V8 (UNIFIED LOGIC)
    - Mandatory English Only
-   - Automatic Respiratory Sync: Inhale (Expand) / Exhale (Contract)
-   - Order: Story(N) -> Mission(N) -> Repeat
+   - Integrated Timers for Silence and Breath
+   - Unified Question/Answer/Explanation flow
+   - Automated Physical Respiratory Cycle (Inhale/Exhale)
    ============================================================= */
 
 let state = {
@@ -51,20 +52,18 @@ function render() {
     if (!app) return;
     app.innerHTML = "";
 
-    // PHASE 1: WELCOME
     if (state.step === "welcome") {
         app.innerHTML = `
-            <h1>KAMIZEN LIFE SAFETY</h1>
+            <h1>AL CIELO - KAMIZEN</h1>
             <div class="card">
-                <p>Welcome. Please enter your name to begin the safety protocol.</p>
-                <input id="nameInput" type="text" placeholder="Your Name" autocomplete="off" />
+                <p>Welcome. Enter your name to start the protocol.</p>
+                <input id="nameInput" type="text" placeholder="Full Name" />
             </div>
-            <button class="primary" onclick="startApp()">CONTINUE</button>
+            <button class="primary" onclick="startApp()">START</button>
         `;
         return;
     }
 
-    // PHASE 2: TRAINING
     if (state.step === "training") {
         const currentStory = state.stories[state.index];
         const currentMission = state.missions[state.index];
@@ -74,28 +73,26 @@ function render() {
             return;
         }
 
-        // STEP A: STORY
         if (state.subStep === "story") {
             app.innerHTML = `
-                <h3 class="indicator">KNOWLEDGE BASE ${currentStory.id}</h3>
+                <h3 class="indicator">STORY PHASE ${currentStory.id}</h3>
                 <div class="card story-box">
                     <p>${currentStory.en}</p>
                 </div>
-                <button class="primary" onclick="startMission()">PROCEED TO MISSION</button>
+                <button class="primary" onclick="startMission()">GO TO MISSION</button>
             `;
             speak(currentStory.en);
             return;
         }
 
-        // STEP B: MISSION BLOCKS
         if (state.subStep === "blocks") {
             const block = currentMission.b[state.bIndex];
-            renderBlock(block, currentMission.b.length);
+            renderBlock(block);
         }
     }
 }
 
-function renderBlock(block, totalBlocks) {
+function renderBlock(block) {
     const app = document.getElementById("app");
     let content = "";
     const type = block.t || (block.story ? "story" : "");
@@ -113,14 +110,10 @@ function renderBlock(block, totalBlocks) {
             content = `<div class="card philo"><h3>PHILOSOPHY</h3><p>${block.story.en}</p></div>`;
             speak(block.story.en);
             break;
-        case "br": // Brief manual breath pause
-            content = `<div class="circle-container"><div class="circle breath-static"><span>${block.tx.en}</span></div></div>`;
-            speak(block.tx.en);
-            break;
-        case "d": // Decision Point
+        case "d": // Unified Question/Answer Logic
             content = `
                 <div class="card">
-                    <p class="question">${block.q.en}</p>
+                    <p class="question"><strong>QUESTION:</strong> ${block.q.en}</p>
                     <div id="answers">
                         ${block.op.map((opt, i) => `
                             <div class="answer" onclick="handleDecision(${i}, ${block.c}, ${JSON.stringify(block.ex).replace(/"/g, '&quot;')})">
@@ -132,16 +125,23 @@ function renderBlock(block, totalBlocks) {
                 </div>`;
             speak(block.q.en);
             return app.innerHTML = content;
-        case "sil":
-            content = `<div class="card silence"><h3>${block.tx.en}</h3><p>${block.inf.en}</p></div>`;
-            break;
-        case "breath_auto": // THE AUTOMATIC SYNC CIRCLE
+        case "sil": // Silence with Timer
+            content = `
+                <div class="card silence">
+                    <h3>${block.tx.en}</h3>
+                    <div class="timer" id="timerDisplay">${block.d}s</div>
+                    <p>${block.inf.en}</p>
+                </div>`;
+            app.innerHTML = content;
+            return startCountdown(block.d);
+        case "breath_auto": // Integrated Respiratory Cycle
             content = `
                 <div class="circle-container">
                     <div id="respiratoryCircle" class="circle blue-breath" style="transition: transform 4s ease-in-out;">
-                        <span id="breathAction">...</span>
+                        <span id="breathAction">READY</span>
                     </div>
                 </div>
+                <div class="timer-box">Time Remaining: <span id="timerDisplay">${block.d}</span>s</div>
                 <div class="card info"><p>${block.inf.en}</p></div>`;
             app.innerHTML = content;
             return startAutoBreath(block.d);
@@ -154,10 +154,10 @@ function renderBlock(block, totalBlocks) {
             break;
     }
 
-    app.innerHTML = content + `<button class="primary" id="btnNext" onclick="nextBlock()">CONTINUE</button>`;
+    app.innerHTML = content + `<button class="primary" onclick="nextBlock()">CONTINUE</button>`;
 }
 
-/* --- LOGIC CONTROLS --- */
+/* --- LOGIC & TIMERS --- */
 
 function startApp() {
     const val = document.getElementById("nameInput").value;
@@ -180,7 +180,6 @@ function nextBlock() {
         state.bIndex++;
         render();
     } else {
-        // Move to next unified index (Story + Mission)
         state.index++;
         state.subStep = "story";
         state.bIndex = 0;
@@ -193,15 +192,28 @@ function handleDecision(idx, correct, explanations) {
     const fb = document.getElementById("feedback");
     const exp = explanations[idx];
     
-    // Logic: explanation follows the question immediately
+    // Everything remains on one screen (Question + Selection + Explanation)
     fb.innerHTML = `
         <div class="feedback-box ${isCorrect ? 'correct' : 'wrong'}">
-            <p><strong>${isCorrect ? 'CORRECT' : 'REVISE'}</strong></p>
+            <p><strong>${isCorrect ? 'SUCCESS' : 'ATTENTION'}</strong></p>
             <span>${exp}</span>
         </div>
-        <button class="primary" onclick="nextBlock()">CONTINUE</button>
+        <button class="primary" onclick="nextBlock()">PROCEED</button>
     `;
     speak(exp);
+}
+
+function startCountdown(seconds) {
+    let timeLeft = seconds;
+    const display = document.getElementById("timerDisplay");
+    const interval = setInterval(() => {
+        timeLeft--;
+        if (display) display.innerText = timeLeft + "s";
+        if (timeLeft <= 0) {
+            clearInterval(interval);
+            document.getElementById("app").innerHTML += `<button class="primary" onclick="nextBlock()">CONTINUE</button>`;
+        }
+    }, 1000);
 }
 
 function startAutoBreath(seconds) {
@@ -209,31 +221,34 @@ function startAutoBreath(seconds) {
     let isInhaling = true;
     const label = document.getElementById("breathAction");
     const circle = document.getElementById("respiratoryCircle");
+    const timerDisplay = document.getElementById("timerDisplay");
 
-    // Immediate first cycle
     const runCycle = () => {
+        if (!label || !circle) return;
         if (isInhaling) {
             label.innerText = "INHALE";
-            circle.style.transform = "scale(1.4)"; // Expansion
+            circle.style.transform = "scale(1.5)";
             speak("Inhale");
         } else {
             label.innerText = "EXHALE";
-            circle.style.transform = "scale(0.8)"; // Contraction
+            circle.style.transform = "scale(0.7)";
             speak("Exhale");
         }
         isInhaling = !isInhaling;
-        timeLeft -= 4;
-
-        if (timeLeft <= 0) {
-            clearInterval(interval);
-            const btn = document.createElement("button");
-            btn.className = "primary";
-            btn.innerText = "MISSION SUCCESS";
-            btn.onclick = nextBlock;
-            document.getElementById("app").appendChild(btn);
-        }
     };
 
-    runCycle();
-    const interval = setInterval(runCycle, 4000);
+    runCycle(); // Initial trigger
+    const cycleInterval = setInterval(runCycle, 4000);
+
+    const timerInterval = setInterval(() => {
+        timeLeft--;
+        if (timerDisplay) timerDisplay.innerText = timeLeft;
+        if (timeLeft <= 0) {
+            clearInterval(cycleInterval);
+            clearInterval(timerInterval);
+            circle.style.transform = "scale(1.0)";
+            label.innerText = "COMPLETE";
+            document.getElementById("app").innerHTML += `<button class="primary" onclick="nextBlock()">MISSION SUCCESS</button>`;
+        }
+    }, 1000);
 }
