@@ -198,6 +198,54 @@
       "en": "When entering any place, always notice the exits. Awareness is not fear, it is preparation. The calm mind is the one that stays safe and can help others if something goes wrong.",
       "es": "Al entrar en cualquier lugar, siempre observa las salidas. La conciencia no es miedo, es preparación. La mente calmada es la que se mantiene segura y puede ayudar a otros si algo sale mal."
     },
-    {      "id": 29,      "cat": "love",      "t": "Love in Action",      "en": "Love is not only something you say, it is something you do. Every small act of care, listening, or help is a form of love that builds real connection between people.",      "es": "El amor no es solo algo que dices, es algo que haces. Cada pequeño acto de cuidado, escucha o ayuda es una forma de amor que construye conexión real entre las personas."    },    {      "id": 30,      "cat": "business",      "t": "The Bridge Builder",      "en": "A builder spent his life creating bridges so others could cross difficult paths. The greatest value in life is not what you keep, but what you make easier for others.",      "es": "Un constructor pasó su vida creando puentes para que otros cruzaran caminos difíciles. El mayor valor en la vida no es lo que guardas, sino lo que haces más fácil para los demás."    },    {      "id": 31,      "cat": "school",      "t": "The Keychain of Knowledge",      "en": "Learning is like a keychain. Every subject is a key. You may not use them all today, but one day a specific key will open an important door in your life.",      "es": "Aprender es como un llavero. Cada materia es una llave. Puede que no las uses todas hoy, pero un día una llave específica abrirá una puerta importante en tu vida."    },    {      "id": 32,      "cat": "family",      "t": "The Team at Home",      "en": "A family works like a team. When everyone helps, tasks become lighter and life becomes more peaceful. Cooperation at home creates strength outside.",      "es": "Una familia funciona como un equipo. Cuando todos ayudan, las tareas se vuelven más ligeras y la vida más tranquila. La cooperación en casa crea fuerza afuera."    },    {      "id": 33,      "cat": "street_safety",      "t": "The Hidden Hook",      "en": "Not everything that looks good is safe. Just like a fish must see beyond the bait, you must learn to see beyond appearances. Awareness protects your decisions.",      "es": "No todo lo que parece bueno es seguro. Así como un pez debe ver más allá del anzuelo, tú debes aprender a ver más allá de las apariencias. La conciencia protege tus decisiones."    },    {      "id": 34,      "cat": "wellbeing",      "t": "The Word 'Yet'",      "en": "When you say 'I can't', your mind closes. When you say 'I can't yet', your mind opens a path. Small words can change your entire direction.",      "es": "Cuando dices 'no puedo', tu mente se cierra. Cuando dices 'no puedo todavía', tu mente abre un camino. Pequeñas palabras pueden cambiar toda tu dirección."    },    {      "id": 35,      "cat": "happiness",      "t": "Gratitude Inside You",      "en": "Happiness is not in having more, but in appreciating what you already have. A grateful mind turns small things into big joy.",      "es": "La felicidad no está en tener más, sino en apreciar lo que ya tienes. Una mente agradecida convierte las cosas pequeñas en gran alegría."    }  ]}
-
-    
+     {
+      "id": 29,
+      "cat": "love",
+      "t": "Love in Action",
+      "en": "Love is not only something you feel, it is something you do. Small actions like listening, helping, and being present are how real love is proven every day.",
+      "es": "El amor no es solo algo que sientes, es algo que haces. Pequeñas acciones como escuchar, ayudar y estar presente son la forma en que el amor real se demuestra cada día."
+    },
+    {
+      "id": 30,
+      "cat": "business",
+      "t": "Building Bridges",
+      "en": "A builder spent his life making bridges so others could cross difficult rivers. The best success is not what you keep, but what you make easier for others after you.",
+      "es": "Un constructor pasó su vida haciendo puentes para que otros cruzaran ríos difíciles. El mejor éxito no es lo que guardas, sino lo que haces más fácil para los demás después de ti."
+    },
+    {
+      "id": 31,
+      "cat": "school",
+      "t": "The Key Collection",
+      "en": "Every subject you learn in school is a key. You may not use every key today, but one day a door will appear that only one of them can open.",
+      "es": "Cada materia que aprendes en la escuela es una llave. Quizás no uses todas hoy, pero un día aparecerá una puerta que solo una de ellas podrá abrir."
+    },
+    {
+      "id": 32,
+      "cat": "family",
+      "t": "The Circle of Teamwork",
+      "en": "A strong family works like a team where everyone helps. When each person contributes, life becomes easier and there is more time for happiness together.",
+      "es": "Una familia fuerte funciona como un equipo donde todos ayudan. Cuando cada persona contribuye, la vida se vuelve más fácil y hay más tiempo para la felicidad juntos."
+    },
+    {
+      "id": 33,
+      "cat": "street_safety",
+      "t": "The Hidden Hook",
+      "en": "Not everything that looks attractive is safe. Just like a fish cannot see the hook, we must learn to recognize hidden risks and trust awareness over curiosity.",
+      "es": "No todo lo que parece atractivo es seguro. Así como un pez no ve el anzuelo, debemos aprender a reconocer riesgos ocultos y confiar en la conciencia más que en la curiosidad."
+    },
+    {
+      "id": 34,
+      "cat": "wellbeing",
+      "t": "The Power of Yet",
+      "en": "Saying 'I can't' closes the mind. Saying 'I can't yet' opens a path. Growth begins when you believe you are still in progress, not finished.",
+      "es": "Decir 'no puedo' cierra la mente. Decir 'no puedo todavía' abre un camino. El crecimiento empieza cuando entiendes que estás en proceso, no terminado."
+    },
+    {
+      "id": 35,
+      "cat": "happiness",
+      "t": "Gratitude Light",
+      "en": "A child with one toy can feel happier than someone with many things. Happiness grows when you appreciate what you already have instead of chasing what you don’t.",
+      "es": "Un niño con un solo juguete puede ser más feliz que alguien con muchas cosas. La felicidad crece cuando valoras lo que ya tienes en lugar de perseguir lo que no tienes."
+    }
+  ]
+}
