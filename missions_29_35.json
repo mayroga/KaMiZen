@@ -1,232 +1,278 @@
 {
-"sys":"KAMIZEN KIDS",
+"sys":"KAMIZEN LIFE SYSTEM",
 "ch":4,
 "rng":"29-35",
 
 "ui":{"fw":["DISCIPLINE","AWARENESS","CALM","FOCUS","TRUTH","CONTROL","ACTION","PAUSE"]},
 
-"rules":["MasterSelf","Awareness=Freedom","Emotion=Data","Silence=Truth","Focus=Reality","Discipline>Impulse","Calm=Power","Action=Identity"],
+"rules":[
+"MasterSelf",
+"Awareness=Freedom",
+"Emotion=Data",
+"Silence=Truth",
+"Focus=Reality",
+"Discipline>Impulse",
+"Calm=Power",
+"Action=Identity"
+],
 
 "ses":[
 
-{"id":29,"cat":"emotion","b":[
-{"t":"v","tx":{"en":"Today: EMOTIONAL TRAP","es":"Hoy: TRAMPA EMOCIONAL"}},
-{"t":"h","tx":{"en":"You are insulted in public","es":"Te insultan en público"}},
+{
+"id":29,
+"cat":"emotion",
+"b":[
+{"t":"v","tx":{"en":"Today: EMOTIONAL CONTROL UNDER PRESSURE"}},
+{"t":"h","tx":{"en":"Public insult triggers emotional reaction"}},
 
-{"story":{"en":"A student learned that reacting fast feels powerful, but staying calm is what protects your future.","es":"Un estudiante aprendió que reaccionar rápido parece poder, pero la calma protege tu futuro."}},
+{"story":{"en":"Reaction feels powerful, but control defines your future behavior."}},
 
-{"t":"br","tx":{"en":"Inhale","es":"Inhala"},"d":5},
-{"t":"br","tx":{"en":"Exhale","es":"Exhala"},"d":5,
-"inf":{"en":"Parasympathetic activation → reduces cortisol and emotional reactivity","es":"Activación parasimpática → reduce cortisol y reactividad emocional"}},
+{"t":"breath_auto","d":30,
+"tx":{"en":"Inhale and exhale slowly"},
+"inf":{"en":"Activates parasympathetic system and reduces emotional reactivity"}
+},
 
-{"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
-"op":["Explode","Ignore","Breathe","Attack"],
+{"t":"d","q":{"en":"What is true control?"},
+"op":["Explode","Ignore blindly","Breathe and regulate","Attack"],
 "c":2,
 "ex":[
-"Explode = lose control",
-"Ignore without awareness = no learning",
-"Breathe = regulates emotion (real control)",
-"Attack = escalates conflict"
+"Explode = loss of self-control",
+"Blind ignoring = no awareness processing",
+"Breathe + regulate = executive control activation",
+"Attack = escalation and consequence increase"
 ]},
 
 {"t":"r","tx":"+Control","p":20},
-{"t":"c","tx":{"en":"Emotional control = power","es":"Control emocional = poder"}},
+{"t":"c","tx":{"en":"Emotional control = real power"}},
 
 {"t":"sil","d":30,
-"tx":{"en":"Silent reset focus","es":"Reset silencioso de enfoque"},
-"inf":{"en":"Short silence may help reduce impulsive reactions and improve attention stability","es":"Silencio corto puede reducir impulsividad y mejorar estabilidad de atención"}},
+"tx":{"en":"Silent emotional reset"},
+"inf":{"en":"Reduces impulsive response and stabilizes cognition"}
+},
 
 {"t":"breath_auto","d":30,
-"tx":{"en":"4-4 breathing cycle","es":"Ciclo respiración 4-4"},
-"inf":{"en":"Supports calm nervous system regulation","es":"Apoya regulación del sistema nervioso y calma"}}
-]},
+"tx":{"en":"4-4 breathing cycle"},
+"inf":{"en":"Supports nervous system regulation"}
+}
+]
+},
 
+{
+"id":30,
+"cat":"focus",
+"b":[
+{"t":"v","tx":{"en":"Today: FOCUS SYSTEM"}},
+{"t":"h","tx":{"en":"Attention determines perception"}},
 
-{"id":30,"cat":"focus","b":[
-{"t":"v","tx":{"en":"Today: FOCUS","es":"Hoy: ENFOQUE"}},
-{"t":"h","tx":{"en":"Distractions appear","es":"Aparecen distracciones"}},
+{"story":{"en":"Where attention goes, behavior follows. Focus is identity direction."}},
 
-{"story":{"en":"Focus is like a flashlight. Where you point it becomes your reality.","es":"El enfoque es como una linterna. Donde lo diriges se convierte en tu realidad."}},
-
-{"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
-"op":["Multitask","Stop","Focus","Phone"],
-"c":2,
+{"t":"d","q":{"en":"What creates performance?"},
+"op":["Multitasking","Single focus","Stopping work","Phone checking"],
+"c":1,
 "ex":[
-"Multitasking = low performance",
+"Multitasking = reduced cognitive depth",
+"Single focus = neural efficiency increase",
 "Stopping = no progress",
-"Focusing = improves attention network (prefrontal cortex)",
-"Phone = breaks mental flow"
+"Phone = attention fragmentation"
 ]},
 
 {"t":"r","tx":"+Focus","p":20},
-{"t":"c","tx":{"en":"Attention = energy","es":"Atención = energía"}},
+{"t":"c","tx":{"en":"Attention = mental energy"}},
 
 {"t":"sil","d":60,
-"tx":{"en":"Attention silence block","es":"Bloque de silencio de atención"},
-"inf":{"en":"1 minute quiet focus may improve cognitive stability and reduce distraction response","es":"1 minuto de silencio puede mejorar estabilidad cognitiva y reducir distracciones"}},
+"tx":{"en":"Attention stabilization pause"},
+"inf":{"en":"Improves sustained cognitive performance"}
+},
 
 {"t":"breath_auto","d":30,
-"tx":{"en":"Slow steady breathing","es":"Respiración lenta y estable"},
-"inf":{"en":"Helps maintain focus under distraction","es":"Ayuda a mantener enfoque bajo distracciones"}}
-]},
+"tx":{"en":"Slow stable breathing"},
+"inf":{"en":"Enhances focus retention"}
+}
+]
+},
 
+{
+"id":31,
+"cat":"truth",
+"b":[
+{"t":"v","tx":{"en":"Today: TRUTH IN ACTION"}},
+{"t":"h","tx":{"en":"Mistakes require acknowledgment"}},
 
-{"id":31,"cat":"truth","b":[
-{"t":"v","tx":{"en":"Today: TRUTH","es":"Hoy: VERDAD"}},
-{"t":"h","tx":{"en":"Hidden mistake","es":"Error oculto"}},
+{"story":{"en":"Truth accelerates learning. Avoidance delays growth."}},
 
-{"story":{"en":"A student who tells the truth grows faster than one who hides mistakes.","es":"Un estudiante que dice la verdad crece más rápido que uno que oculta errores."}},
-
-{"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
-"op":["Lie","Blame","Truth","Ignore"],
+{"t":"d","q":{"en":"What builds integrity?"},
+"op":["Lie","Blame others","Tell truth","Hide"],
 "c":2,
 "ex":[
-"Lying damages identity",
-"Blaming avoids growth",
-"Truth builds neural coherence and trust",
-"Ignoring = no improvement"
+"Lying = identity distortion",
+"Blame = no responsibility growth",
+"Truth = cognitive alignment and trust building",
+"Hiding = repeated patterns"
 ]},
 
 {"t":"r","tx":"+Integrity","p":20},
-{"t":"c","tx":{"en":"Truth creates respect","es":"La verdad crea respeto"}},
+{"t":"c","tx":{"en":"Truth strengthens identity"}},
 
 {"t":"sil","d":60,
-"tx":{"en":"Truth reflection silence","es":"Silencio de reflexión de verdad"},
-"inf":{"en":"May support self-awareness and better decision alignment","es":"Puede mejorar autoconciencia y alineación de decisiones"}},
+"tx":{"en":"Truth reflection pause"},
+"inf":{"en":"Improves self-awareness and decision alignment"}
+},
 
 {"t":"breath_auto","d":30,
-"tx":{"en":"Calm breathing 4-6","es":"Respiración calma 4-6"},
-"inf":{"en":"Longer exhale supports emotional regulation","es":"Exhalación más larga apoya regulación emocional"}}
-]},
+"tx":{"en":"Calm 4-6 breathing"},
+"inf":{"en":"Supports emotional stability"}
+}
+]
+},
 
+{
+"id":32,
+"cat":"social",
+"b":[
+{"t":"v","tx":{"en":"Today: SOCIAL PRESSURE TEST"}},
+{"t":"h","tx":{"en":"Group influence attempts to override decision"}},
 
-{"id":32,"cat":"social","b":[
-{"t":"v","tx":{"en":"Today: SOCIAL PRESSURE","es":"Hoy: PRESIÓN SOCIAL"}},
-{"t":"h","tx":{"en":"You are pressured wrongly","es":"Te presionan mal"}},
+{"story":{"en":"Autonomy is the ability to act independently of pressure."}},
 
-{"story":{"en":"Real strength is choosing your actions, even when others disagree.","es":"La verdadera fuerza es elegir tus acciones incluso cuando otros no están de acuerdo."}},
-
-{"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
-"op":["Follow","Laugh","Say no","Escape"],
-"c":2,
-"ex":[
-"Following = identity loss",
-"Laughing = normalizes error",
-"Saying no = activates autonomy and leadership",
-"Escaping = no trust building"
-]},
-
-{"t":"r","tx":"+Strength","p":20},
-{"t":"c","tx":{"en":"Saying no = leadership","es":"Decir no = liderazgo"}},
-
-{"t":"sil","d":75,
-"tx":{"en":"Boundary awareness silence","es":"Silencio de conciencia de límites"},
-"inf":{"en":"Supports self-control and reduces social pressure reactivity","es":"Apoya autocontrol y reduce reactividad a presión social"}},
-
-{"t":"breath_auto","d":30,
-"tx":{"en":"Steady confidence breathing","es":"Respiración de confianza estable"},
-"inf":{"en":"Helps maintain calm under social stress","es":"Ayuda a mantener calma bajo presión social"}}
-]},
-
-
-{"id":33,"cat":"mind","b":[
-{"t":"v","tx":{"en":"Today: MENTAL CHAOS","es":"Hoy: CAOS MENTAL"}},
-{"t":"h","tx":{"en":"Fast thoughts","es":"Pensamientos rápidos"}},
-
-{"story":{"en":"When the mind is noisy, breathing becomes the first tool to regain control.","es":"Cuando la mente está ruidosa, la respiración es la primera herramienta para recuperar control."}},
-
-{"t":"br","tx":{"en":"Inhale","es":"Inhala"},"d":4},
-{"t":"br","tx":{"en":"Exhale","es":"Exhala"},"d":4,
-"inf":{"en":"Neural reset through breathing","es":"Reinicio neural mediante respiración"}},
-
-{"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
-"op":["Overthink","Breathe","Act","Ignore"],
+{"t":"d","q":{"en":"What defines strength?"},
+"op":["Follow group","Say no","Mock others","Escape"],
 "c":1,
 "ex":[
-"Overthinking = confusion",
-"Breathe = reduces amygdala activity and restores order",
-"Acting without clarity = errors",
-"Ignoring = no understanding mind"
+"Following = identity loss",
+"No = autonomy activation",
+"Mocking = emotional instability",
+"Escape = avoidance pattern"
+]},
+
+{"t":"r","tx":"+Autonomy","p":20},
+{"t":"c","tx":{"en":"Saying no = leadership"}},
+
+{"t":"sil","d":75,
+"tx":{"en":"Boundary reinforcement silence"},
+"inf":{"en":"Strengthens self-control under social pressure"}
+},
+
+{"t":"breath_auto","d":30,
+"tx":{"en":"Stable confidence breathing"},
+"inf":{"en":"Supports emotional independence"}
+}
+]
+},
+
+{
+"id":33,
+"cat":"mind",
+"b":[
+{"t":"v","tx":{"en":"Today: MENTAL NOISE CONTROL"}},
+{"t":"h","tx":{"en":"Thoughts compete for attention"}},
+
+{"story":{"en":"Breathing is the first tool to reorganize mental chaos."}},
+
+{"breath_auto","d":30,
+"tx":{"en":"Inhale and exhale slowly"},
+"inf":{"en":"Supports neural reset and cognitive clarity"}
+},
+
+{"t":"d","q":{"en":"What restores clarity?"},
+"op":["Overthink","Breathe","React instantly","Ignore mind"],
+"c":1,
+"ex":[
+"Overthinking = cognitive overload",
+"Breathe = regulation of emotional circuits",
+"Instant reaction = instability",
+"Ignoring = unresolved mental noise"
 ]},
 
 {"t":"r","tx":"+Clarity","p":20},
-{"t":"c","tx":{"en":"Calm = clarity","es":"Calma = claridad"}},
+{"t":"c","tx":{"en":"Calm = structured thinking"}},
 
 {"t":"sil","d":90,
-"tx":{"en":"Mental reset silence","es":"Silencio de reinicio mental"},
-"inf":{"en":"May improve emotional regulation and cognitive clarity","es":"Puede mejorar regulación emocional y claridad cognitiva"}},
+"tx":{"en":"Mental reset silence"},
+"inf":{"en":"Improves cognitive regulation and focus stability"}
+},
 
 {"t":"breath_auto","d":30,
-"tx":{"en":"Balanced breathing cycle","es":"Ciclo de respiración equilibrada"},
-"inf":{"en":"Supports mental stabilization","es":"Apoya estabilización mental"}}
-]},
+"tx":{"en":"4-6 stabilization breathing"},
+"inf":{"en":"Enhances emotional balance"}
+}
+]
+},
 
+{
+"id":34,
+"cat":"inner",
+"b":[
+{"t":"v","tx":{"en":"Today: INNER OBSERVATION"}},
+{"t":"h","tx":{"en":"Emotions arise automatically"}},
 
-{"id":34,"cat":"inner","b":[
-{"t":"v","tx":{"en":"Today: INNER CONTROL","es":"Hoy: CONTROL INTERNO"}},
-{"t":"h","tx":{"en":"Strong emotion","es":"Emoción fuerte"}},
+{"story":{"en":"Observation creates distance between emotion and action."}},
 
-{"story":{"en":"Observing emotions instead of reacting gives you real control.","es":"Observar emociones en vez de reaccionar te da control real."}},
-
-{"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
+{"t":"d","q":{"en":"What creates mastery?"},
 "op":["React","Ignore","Observe","Avoid"],
 "c":2,
 "ex":[
-"Reacting = no control",
-"Ignoring = not solving",
-"Observing = increases metacognition and emotional mastery",
-"Avoiding = no growth"
+"React = no control gap",
+"Ignore = no processing",
+"Observe = metacognitive activation and self-regulation",
+"Avoid = stagnation"
 ]},
 
 {"t":"r","tx":"+Mastery","p":20},
-{"t":"c","tx":{"en":"Observe = control","es":"Observar = controlar"}},
+{"t":"c","tx":{"en":"Observation = control"}},
 
 {"t":"sil","d":120,
-"tx":{"en":"Deep awareness silence","es":"Silencio de conciencia profunda"},
-"inf":{"en":"Strengthens metacognitive awareness and impulse control","es":"Fortalece metacognición y control de impulsos"}},
+"tx":{"en":"Deep awareness silence"},
+"inf":{"en":"Strengthens metacognition and impulse control"}
+},
 
 {"t":"breath_auto","d":30,
-"tx":{"en":"Slow awareness breathing","es":"Respiración lenta de conciencia"},
-"inf":{"en":"Supports emotional regulation and attention control","es":"Apoya regulación emocional y control de atención"}}
-]},
+"tx":{"en":"Slow awareness breathing"},
+"inf":{"en":"Improves emotional regulation"}
+}
+]
+},
 
+{
+"id":35,
+"cat":"final",
+"b":[
+{"t":"v","tx":{"en":"FINAL TEST: DISCIPLINE SYSTEM"}},
+{"t":"h","tx":{"en":"Distraction is the real test"}},
 
-{"id":35,"cat":"final","b":[
-{"t":"v","tx":{"en":"FINAL TEST: DISCIPLINE","es":"PRUEBA FINAL: DISCIPLINA"}},
-{"t":"h","tx":{"en":"Total distraction","es":"Distracción total"}},
+{"story":{"en":"Discipline is not perfection. It is return to focus after distraction."}},
 
-{"story":{"en":"Discipline is not about never falling. It is about returning to focus every time.","es":"La disciplina no es nunca caer. Es volver al enfoque cada vez."}},
-
-{"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
+{"t":"d","q":{"en":"What defines discipline?"},
 "op":["Quit","Distract","Focus","React"],
 "c":2,
 "ex":[
-"Quitting = breaks discipline",
-"Distracting = no mastery",
-"Focusing = full prefrontal control",
-"Reacting = no precision"
+"Quit = system collapse",
+"Distract = loss of control loop",
+"Focus = executive function mastery",
+"React = no precision control"
 ]},
 
 {"t":"r","tx":"+Mastery","p":20},
 
-{"t":"v","tx":{"en":"FINAL CHALLENGE: TOTAL SILENCE","es":"RETO FINAL: SILENCIO TOTAL"}},
+{"t":"v","tx":{"en":"FINAL CHALLENGE: SILENCE CONTROL"}},
+{"t":"breath_auto","d":6,
+"tx":{"en":"Inhale deep"},
+"inf":{"en":"Activates parasympathetic regulation"}},
 
-{"t":"br","tx":{"en":"Inhale deep","es":"Inhala profundo"},"d":6,
-"inf":{"en":"Activates parasympathetic system","es":"Activa sistema parasimpático"}},
+{"t":"breath_auto","d":3,
+"tx":{"en":"Hold"},
+"inf":{"en":"Impulse control training"}},
 
-{"t":"br","tx":{"en":"Hold","es":"Retén"},"d":3,
-"inf":{"en":"Impulse control training","es":"Entrenamiento de control de impulsos"}},
-
-{"t":"br","tx":{"en":"Exhale slow","es":"Exhala lento"},"d":6,
-"inf":{"en":"Heart rate reduction","es":"Reducción del ritmo cardíaco"}},
+{"t":"breath_auto","d":6,
+"tx":{"en":"Exhale slow"},
+"inf":{"en":"Heart rate stabilization"}},
 
 {"t":"sil","d":180,
-"tx":{"en":"Do not move. Just observe.","es":"Sin moverte. Solo observa"},
-"inf":{"en":"High-level metacognitive control progression","es":"Progresión de control metacognitivo avanzado"}},
+"tx":{"en":"Total stillness awareness"},
+"inf":{"en":"High-level metacognitive control training"}},
 
-{"t":"v","tx":{"en":"You have completed the system","es":"Has completado el sistema"}},
+{"t":"v","tx":{"en":"SYSTEM COMPLETED"}},
 
-{"t":"c","tx":{"en":"Discipline + control = real power in life","es":"Disciplina + control = poder real en la vida"}}
+{"t":"c","tx":{"en":"Discipline + control = behavioral mastery"}}
 ]}
 
 ]
