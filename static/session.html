@@ -1,107 +1,198 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>KAMIZEN CORE TRAINING</title>
-<style>
-body { margin:0; background:#000; color:#fff; font-family:Arial; overflow:hidden; }
-#ui { position:absolute; top:0; width:100%; display:flex; justify-content:space-around; padding:10px; }
-.box { background:#111; padding:10px 20px; border:1px solid #444; }
-#scene { position:absolute; top:30%; width:100%; text-align:center; }
-.word { font-size:40px; margin:20px; }
-.btn { padding:10px 20px; margin:10px; cursor:pointer; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>AL CIELO - THE TRUTH GAME</title>
+    <style>
+        :root { --danger: #ff3e3e; --love: #ff75a0; --safe: #2ecc71; --gold: #f1c40f; }
+        body { margin: 0; overflow: hidden; background: #000; font-family: 'Orbitron', sans-serif; }
+        
+        #stats { position: absolute; top: 15px; width: 100%; display: flex; justify-content: space-around; z-index: 100; pointer-events: none; }
+        .stat-item { background: rgba(0,0,0,0.8); border: 2px solid white; padding: 10px; border-radius: 8px; text-align: center; min-width: 120px; }
+        .label { font-size: 10px; color: var(--gold); display: block; }
+        .val { font-size: 20px; font-weight: 900; color: white; }
+
+        #timer { position: absolute; bottom: 30px; width: 100%; text-align: center; font-size: 60px; font-weight: 900; color: white; opacity: 0.3; z-index: 50; }
+        
+        #overlay { position: fixed; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 2000; background: black; text-align: center; padding: 20px; }
+        .btn { padding: 20px 50px; background: white; color: black; border: none; font-weight: 900; cursor: pointer; border-radius: 50px; font-family: 'Orbitron'; }
+        
+        #breathing { display: none; }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
 </head>
 <body>
 
-<div id="ui">
-  <div class="box">WELL-BEING: <span id="score">0</span></div>
-  <div class="box">DAY: <span id="day">1</span></div>
-  <div class="box">AGE MODE: <span id="mode">YOUTH</span></div>
+<div id="stats">
+    <div class="stat-item"><span class="label">WELL-BEING</span><span id="score" class="val">0</span></div>
+    <div class="stat-item"><span class="label">STREET LEVEL</span><span id="lv" class="val">1</span></div>
 </div>
 
-<div id="scene">
-  <div id="situation" class="word">START</div>
-  <div id="options"></div>
+<div id="timer">10:00</div>
+
+<div id="overlay">
+    <div id="start-screen">
+        <h1 style="font-size: 3rem; margin-bottom: 0;">AL CIELO</h1>
+        <p style="color: var(--gold); margin-bottom: 40px;">TRANSFORM THE LIES INTO TRUTH</p>
+        <button class="btn" onclick="init()">START TRAINING</button>
+    </div>
+    <div id="breathing">
+        <h2 id="b-text" style="font-size: 3rem; color: var(--love);">BREATHE</h2>
+        <div id="b-circle" style="width:150px; height:150px; border:8px solid white; border-radius:50%; margin:40px auto; transition: 4s;"></div>
+        <p id="b-msg" style="max-width: 400px; line-height: 1.5;"></p>
+        <button id="reset" class="btn" style="display:none; margin-top: 30px;" onclick="location.reload()">RESTART</button>
+    </div>
 </div>
+
+<canvas id="game"></canvas>
 
 <script>
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+let active = false, words = [], score = 0, time = 600, level = 1;
+let mouse = { x: 0, y: 0, down: false, laserTime: 0 };
 
-let score = 0;
-let day = 1;
-let modeIndex = 0;
-
-const modes = ["YOUTH", "ADULT", "ELDER"];
-
-const data = [
-  {
-    situation: "SOMEONE IS MOCKING YOU",
-    options: [
-      { t:"IGNORE", v:+10 },
-      { t:"FIGHT BACK", v:-10 },
-      { t:"TALK", v:+20 }
-    ]
-  },
-  {
-    situation: "YOU FEEL LONELY",
-    options: [
-      { t:"ISOLATE", v:-10 },
-      { t:"CALL FAMILY", v:+20 },
-      { t:"SCROLL PHONE", v:-5 }
-    ]
-  },
-  {
-    situation: "SOMEONE LIES TO YOU",
-    options: [
-      { t:"CONFRONT", v:+10 },
-      { t:"ACCEPT", v:-10 },
-      { t:"DISTANCE", v:+5 }
-    ]
-  },
-  {
-    situation: "PRESSURE FROM FRIENDS",
-    options: [
-      { t:"SAY NO", v:+20 },
-      { t:"FOLLOW", v:-20 },
-      { t:"WAIT", v:+5 }
-    ]
-  }
+// Diccionario de "La Lógica de la Calle" vs "El Bienestar"
+const chains = [
+    { root: "BULLYING", followers: ["SHAME", "FEAR", "SILENCE"], cure: "TRUE FRIENDSHIP" },
+    { root: "DRUGS", followers: ["FREE", "TRY IT", "NOTHING HAPPENS"], cure: "CLEAN MIND" },
+    { root: "LIES", followers: ["HIDDEN", "SECRET", "TRUST ME"], cure: "PURE TRUTH" },
+    { root: "ANGER", followers: ["FIGHT", "HATE", "VENEGEANCE"], cure: "CALM HEART" },
+    { root: "STRANGER", followers: ["CANDY", "HELP ME", "GIFT"], cure: "SAFETY FIRST" }
 ];
 
-function load(){
-  let d = data[Math.floor(Math.random()*data.length)];
-  document.getElementById("situation").innerText = d.situation;
+const rewards = ["HUG", "KISS", "LOVE", "SMILE", "FAMILY", "PEACE", "JOY"];
 
-  let opt = document.getElementById("options");
-  opt.innerHTML = "";
-
-  d.options.forEach(o=>{
-    let b = document.createElement("button");
-    b.className = "btn";
-    b.innerText = o.t;
-    b.onclick = ()=>choose(o.v);
-    opt.appendChild(b);
-  });
+function init() {
+    document.getElementById('overlay').style.background = 'transparent';
+    document.getElementById('start-screen').style.display = 'none';
+    document.getElementById('overlay').style.pointerEvents = 'none';
+    active = true;
+    resize();
+    loop();
+    setInterval(tick, 1000);
+    spawnChain();
 }
 
-function choose(v){
-  score += v;
+function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+window.addEventListener('resize', resize);
 
-  if(score > 100){
-    day++;
-    score = 0;
-    modeIndex = (modeIndex+1)%modes.length;
-  }
+function spawnChain() {
+    if(!active) return;
+    const chain = chains[Math.floor(Math.random() * chains.length)];
+    let rootY = -50;
+    
+    // Palabra Raíz
+    words.push({ text: chain.root, x: Math.random()*(canvas.width-100)+50, y: rootY, s: 30, v: 1.5 + (level*0.5), type: 'bad' });
+    
+    // La carretilla de seguidores
+    chain.followers.forEach((f, index) => {
+        setTimeout(() => {
+            words.push({ text: f, x: Math.random()*(canvas.width-100)+50, y: -20, s: 18, v: 2.5 + (level*0.5), type: 'bad' });
+        }, (index + 1) * 600);
+    });
 
-  document.getElementById("score").innerText = score;
-  document.getElementById("day").innerText = day;
-  document.getElementById("mode").innerText = modes[modeIndex];
-
-  load();
+    setTimeout(spawnChain, 4000 / level);
 }
 
-load();
+function tick() {
+    if(!active) return;
+    time--;
+    if(time % 120 === 0) level++;
+    let m = Math.floor(time/60), s = time%60;
+    document.getElementById('timer').innerText = `${m}:${s<10?'0':''}${s}`;
+    document.getElementById('score').innerText = score;
+    document.getElementById('lv').innerText = level;
+    if(time <= 0) end();
+}
 
+function update() {
+    if(mouse.down) {
+        mouse.laserTime += 16;
+        if(mouse.laserTime > 2000) { mouse.down = false; mouse.laserTime = -1000; }
+    } else {
+        if(mouse.laserTime < 0) mouse.laserTime += 16; else mouse.laserTime = 0;
+    }
+
+    words.forEach((w, i) => {
+        w.y += w.v;
+        
+        // El truco: El láser transforma
+        if(mouse.down && mouse.laserTime > 0 && Math.abs(w.x - mouse.x) < 40 && w.y < mouse.y) {
+            if(w.type === 'bad') {
+                w.type = 'good';
+                w.text = rewards[Math.floor(Math.random()*rewards.length)];
+                score += 100;
+            }
+        }
+        
+        if(w.y > canvas.height) words.splice(i, 1);
+    });
+}
+
+function draw() {
+    ctx.fillStyle = 'rgba(0,0,0,0.2)';
+    ctx.fillRect(0,0,canvas.width, canvas.height);
+
+    // Dibujar Láser
+    if(mouse.down && mouse.laserTime > 0) {
+        let grad = ctx.createLinearGradient(mouse.x, 0, mouse.x, mouse.y);
+        grad.addColorStop(0, '#00f2ff');
+        grad.addColorStop(1, 'white');
+        ctx.strokeStyle = grad;
+        ctx.lineWidth = 4;
+        ctx.beginPath(); ctx.moveTo(mouse.x, 0); ctx.lineTo(mouse.x, mouse.y); ctx.stroke();
+    }
+
+    words.forEach(w => {
+        ctx.fillStyle = w.type === 'bad' ? '#ff3e3e' : '#2ecc71';
+        ctx.font = `900 ${w.s}px Orbitron`;
+        ctx.textAlign = 'center';
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = ctx.fillStyle;
+        ctx.fillText(w.text, w.x, w.y);
+    });
+}
+
+function loop() {
+    update(); draw();
+    if(active) requestAnimationFrame(loop);
+}
+
+function end() {
+    active = false;
+    document.getElementById('overlay').style.background = 'rgba(0,0,0,0.9)';
+    document.getElementById('overlay').style.pointerEvents = 'all';
+    document.getElementById('breathing').style.display = 'block';
+    
+    const cycle = [
+        { t: "INHALE", m: "Trae el AMOR de tu familia al centro de tu pecho." },
+        { t: "HOLD", m: "Siente la PAZ. Eres más fuerte que cualquier mentira de la calle." },
+        { t: "EXHALE", m: "Expulsa el MIEDO. Tu bienestar es tu decisión." }
+    ];
+    
+    let step = 0;
+    const interval = setInterval(() => {
+        document.getElementById('b-text').innerText = cycle[step].t;
+        document.getElementById('b-msg').innerText = cycle[step].m;
+        document.getElementById('b-circle').style.transform = step === 0 ? "scale(1.5)" : step === 2 ? "scale(1)" : "scale(1.5)";
+        step = (step + 1) % 3;
+    }, 4000);
+
+    setTimeout(() => {
+        clearInterval(interval);
+        document.getElementById('b-text').innerText = "STAY SAFE. STAY LOVED.";
+        document.getElementById('reset').style.display = 'block';
+    }, 60000);
+}
+
+window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+window.addEventListener('mousedown', () => mouse.down = true);
+window.addEventListener('mouseup', () => mouse.down = false);
+window.addEventListener('touchstart', e => { mouse.down = true; mouse.x = e.touches[0].clientX; mouse.y = e.touches[0].clientY; });
+window.addEventListener('touchmove', e => { mouse.x = e.touches[0].clientX; mouse.y = e.touches[0].clientY; });
+window.addEventListener('touchend', () => mouse.down = false);
 </script>
 </body>
 </html>
