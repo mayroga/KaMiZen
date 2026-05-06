@@ -1,109 +1,139 @@
 /* =============================================================
-   KAMIZEN ENGINE V8 - STABLE CONTROL SYSTEM
+   KAMIZEN ENGINE V9 - SAFE BOOT SYSTEM
    FIXES:
-   - No repetition bugs
-   - Proper 1–35 loop sync with backend
-   - Fixed breathing DOM destruction issue
-   - Single render authority
-   - Backend-driven index system
+   - No startup freeze
+   - Safe API parsing
+   - Default fallback state
+   - Async-safe rendering
 ============================================================= */
 
 const engine = {
     state: {
         stories: [],
         missions: [],
-        index: 1,          // 🔥 GLOBAL 1–35 CONTROLLED BY BACKEND
-        mode: "story",     // story | mission
+        index: 1,
+        mode: "story",
         blockIndex: 0,
         loaded: false
     }
 };
 
 /* =========================
-   INIT
+   SAFE INIT
 ========================= */
 window.addEventListener("load", async () => {
-    await loadData();
-    await syncState();
-    render();
+    await boot();
 });
 
 /* =========================
-   LOAD DATA
+   BOOT SEQUENCE (CRITICAL FIX)
+========================= */
+async function boot() {
+    try {
+        await loadData();
+        await syncState();
+
+        // 🔥 SAFE DEFAULT
+        if (!engine.state.index || engine.state.index < 1) {
+            engine.state.index = 1;
+        }
+
+        render();
+
+    } catch (e) {
+        console.error("BOOT FAILED", e);
+
+        document.getElementById("app").innerHTML = `
+            <div class="card">
+                <h2>System Error</h2>
+                <p>Backend not ready or data invalid</p>
+            </div>
+        `;
+    }
+}
+
+/* =========================
+   LOAD DATA SAFE
 ========================= */
 async function loadData() {
+    const app = document.getElementById("app");
+
     try {
-        const [s, m] = await Promise.all([
-            fetch("/api/stories"),
-            fetch("/api/missions")
-        ]);
+        const resS = await fetch("/api/stories");
+        const resM = await fetch("/api/missions");
 
-        const storiesData = await s.json();
-        const missionsData = await m.json();
+        const storiesData = await resS.json();
+        const missionsData = await resM.json();
 
-        engine.state.stories = (storiesData.stories || []).sort((a,b)=>a.id-b.id);
-        engine.state.missions = (missionsData.missions || []).sort((a,b)=>a.id-b.id);
+        engine.state.stories = Array.isArray(storiesData.stories)
+            ? storiesData.stories.sort((a,b)=>a.id-b.id)
+            : [];
+
+        engine.state.missions = Array.isArray(missionsData.missions)
+            ? missionsData.missions.sort((a,b)=>a.id-b.id)
+            : [];
 
         engine.state.loaded = true;
 
     } catch (e) {
         console.error("LOAD ERROR", e);
+
+        if (app) {
+            app.innerHTML = "<h3>Failed to load system data</h3>";
+        }
     }
 }
 
 /* =========================
-   SYNC WITH BACKEND STATE
+   SYNC SAFE STATE
 ========================= */
 async function syncState() {
     try {
         const res = await fetch("/api/state");
         const data = await res.json();
 
-        if (data.index) {
-            engine.state.index = data.index;
+        if (data && typeof data === "object") {
+            if (typeof data.index === "number") {
+                engine.state.index = data.index;
+            }
         }
+
     } catch (e) {
-        console.warn("STATE SYNC FAILED");
+        console.warn("STATE SYNC FAILED → using default index=1");
+        engine.state.index = 1;
     }
 }
 
 /* =========================
-   SPEECH
-========================= */
-function speak(text) {
-    if (!text) return;
-    window.speechSynthesis.cancel();
-    const msg = new SpeechSynthesisUtterance(text);
-    msg.lang = "en-US";
-    window.speechSynthesis.speak(msg);
-}
-
-/* =========================
-   MAIN RENDER
+   SAFE RENDER
 ========================= */
 function render() {
     const app = document.getElementById("app");
-    if (!app || !engine.state.loaded) {
-        app.innerHTML = "<h3>Loading...</h3>";
+    if (!app) return;
+
+    if (!engine.state.loaded) {
+        app.innerHTML = "<h3>Loading system...</h3>";
         return;
     }
 
-    const story = engine.state.stories[engine.state.index - 1];
-    const mission = engine.state.missions[engine.state.index - 1];
+    const idx = engine.state.index || 1;
 
+    const story = engine.state.stories[idx - 1];
+    const mission = engine.state.missions[idx - 1];
+
+    /* SAFE GUARD */
     if (!story || !mission) {
         app.innerHTML = `
             <div class="card">
-                <h2>COMPLETE LOOP</h2>
-                <button onclick="resetLoop()">RESTART</button>
+                <h2>Waiting Data Sync</h2>
+                <p>Index: ${idx}</p>
+                <button onclick="resetSystem()">RESET</button>
             </div>
         `;
         return;
     }
 
-    /* =========================
-       STORY MODE
-    ========================= */
+    /* STORY MODE */
     if (engine.state.mode === "story") {
         app.innerHTML = `
             <div class="card">
@@ -112,15 +142,11 @@ function render() {
                 <button onclick="startMission()">START MISSION</button>
             </div>
         `;
-
-        speak(story.en);
         return;
     }
 
-    /* =========================
-       MISSION MODE
-    ========================= */
-    const block = mission.b[engine.state.blockIndex];
+    /* MISSION MODE */
+    const block = mission.b?.[engine.state.blockIndex];
 
     if (!block) {
         nextMission();
@@ -129,58 +155,30 @@ function render() {
 
     let html = `<div class="card">`;
 
-    /* TEXT */
-    if (block.t === "v") {
-        html += `<h3>${block.tx.en}</h3>`;
-        speak(block.tx.en);
-    }
+    if (block.t === "v") html += `<h3>${block.tx.en}</h3>`;
+    if (block.t === "h") html += `<p>${block.tx.en}</p>`;
+    if (block.story) html += `<p>${block.story.en}</p>`;
 
-    if (block.t === "h") {
-        html += `<p>${block.tx.en}</p>`;
-        speak(block.tx.en);
-    }
-
-    if (block.story) {
-        html += `<p>${block.story.en}</p>`;
-        speak(block.story.en);
-    }
-
-    /* QUESTION */
     if (block.t === "d") {
-        html += `<div class="question">${block.q.en}</div>`;
+        html += `<div>${block.q.en}</div>`;
 
-        block.op.forEach((opt, i) => {
+        block.op.forEach((o, i) => {
             html += `
                 <div class="answer" onclick="answer(${i}, ${block.c})">
-                    ${opt}
+                    ${o}
                 </div>
             `;
         });
     }
 
-    /* BREATHING FIX 🔥 (NO DOM BREAK) */
-    if (block.t === "br" || block.t === "breath_auto") {
+    if (block.t === "br") {
         html += `
-            <div class="breath-wrapper">
-                <div id="breathCircle" class="breath">
-                    <span id="breathText">INHALE</span>
-                </div>
-                <p>${block.tx?.en || block.inf?.en || ""}</p>
+            <div class="breath">
+                <span id="breathText">INHALE</span>
             </div>
         `;
 
-        setTimeout(() => startBreathing(block.d || 8), 100);
-    }
-
-    /* REWARD */
-    if (block.t === "r") {
-        html += `<div class="feedback success">+${block.p} XP</div>`;
-    }
-
-    /* CONCLUSION */
-    if (block.t === "c") {
-        html += `<div class="feedback">${block.tx.en}</div>`;
-        speak(block.tx.en);
+        setTimeout(() => startBreathSafe(block.d || 8), 100);
     }
 
     html += `<button onclick="nextBlock()">CONTINUE</button></div>`;
@@ -189,40 +187,30 @@ function render() {
 }
 
 /* =========================
-   BREATHING SYSTEM FIXED
+   SAFE BREATHING (NO CRASH)
 ========================= */
-function startBreathing(seconds = 8) {
-    const circle = document.getElementById("breathCircle");
-    const text = document.getElementById("breathText");
-
-    if (!circle || !text) return;
+function startBreathSafe(seconds) {
+    const el = document.getElementById("breathText");
+    if (!el) return;
 
     let inhale = true;
 
-    circle.style.transition = "transform 4s ease-in-out";
-
     const interval = setInterval(() => {
-        const el = document.getElementById("breathCircle");
-        if (!el) return clearInterval(interval);
+        const current = document.getElementById("breathText");
+        if (!current) return clearInterval(interval);
 
         inhale = !inhale;
+        current.innerText = inhale ? "INHALE" : "EXHALE";
 
-        if (inhale) {
-            text.innerText = "INHALE";
-            circle.style.transform = "scale(1.3)";
-        } else {
-            text.innerText = "EXHALE";
-            circle.style.transform = "scale(0.7)";
-        }
     }, 4000);
 
     setTimeout(() => clearInterval(interval), seconds * 1000);
 }
 
 /* =========================
-   FLOW CONTROL
+   FLOW CONTROL SAFE
 ========================= */
-async function startMission() {
+function startMission() {
     engine.state.mode = "mission";
     render();
 }
@@ -241,7 +229,7 @@ function nextBlock() {
 }
 
 /* =========================
-   NEXT MISSION (BACKEND SYNC)
+   NEXT + LOOP SAFE
 ========================= */
 async function nextMission() {
     engine.state.blockIndex = 0;
@@ -251,20 +239,23 @@ async function nextMission() {
         const res = await fetch("/api/next", { method: "POST" });
         const data = await res.json();
 
-        engine.state.index = data.index;
+        engine.state.index = data.index || 1;
 
     } catch (e) {
         engine.state.index++;
-        if (engine.state.index > 35) engine.state.index = 1;
+
+        if (engine.state.index > 35) {
+            engine.state.index = 1;
+        }
     }
 
     render();
 }
 
 /* =========================
-   RESET LOOP
+   RESET SYSTEM
 ========================= */
-function resetLoop() {
+function resetSystem() {
     engine.state.index = 1;
     engine.state.mode = "story";
     engine.state.blockIndex = 0;
@@ -279,7 +270,7 @@ function resetLoop() {
 }
 
 /* =========================
-   ANSWER SYSTEM
+   ANSWER SAFE
 ========================= */
 function answer(i, correct) {
     const mission = engine.state.missions[engine.state.index - 1];
@@ -287,23 +278,14 @@ function answer(i, correct) {
 
     if (!block) return;
 
-    const app = document.getElementById("app");
-
-    const ok = i === correct;
-
-    app.innerHTML += `
-        <div class="feedback ${ok ? "success" : "error"}">
-            ${ok ? "CORRECT" : "WRONG"} - ${block.ex?.[i] || ""}
-        </div>
-        <button onclick="nextBlock()">CONTINUE</button>
-    `;
+    alert(i === correct ? "CORRECT" : "WRONG");
 }
 
 /* EXPOSE */
 window.engine = {
+    startMission,
     nextBlock,
     nextMission,
-    startMission,
-    resetLoop,
+    resetSystem,
     state: engine.state
 };
