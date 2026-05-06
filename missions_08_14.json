@@ -1,5 +1,5 @@
 {
-"sys":"KAMIZEN LIFE SAFETY",
+"sys":"KAMIZEN LIFE SYSTEM",
 "ch":2,
 "rng":"8-14",
 
@@ -20,35 +20,38 @@
 "id":8,
 "cat":"awareness",
 "b":[
-{"t":"v","tx":{"en":"Today: AWARENESS IN PUBLIC SPACES","es":"Hoy: CONCIENCIA EN LUGARES PÚBLICOS"}},
-{"t":"h","tx":{"en":"Pay attention to exits and people around you","es":"Presta atención a salidas y personas a tu alrededor"}},
+{"t":"v","tx":{"en":"Today: AWARENESS IN PUBLIC SPACES"}},
+{"t":"h","tx":{"en":"Your attention determines your safety"}},
 
-{"story":{"en":"A traveler who knows the exits always finds a safe way out.","es":"Un viajero que conoce las salidas siempre encuentra una salida segura."}},
+{"story":{"en":"Most people move on autopilot. Awareness gives you an advantage before problems appear."}},
 
-{"t":"br","tx":{"en":"Inhale","es":"Inhala"},"d":5},
-{"t":"br","tx":{"en":"Exhale","es":"Exhala"},"d":5},
+{"t":"breath_auto","d":30,
+"tx":{"en":"Inhale and exhale slowly"},
+"inf":{"en":"This exercise trains calm control and focus"}
+},
 
-{"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
-"op":["Look at phone","Observe exits","Ignore surroundings","Walk without attention"],
+{"t":"d","q":{"en":"What increases your safety most?"},
+"op":["Look at phone","Observe exits and people","Ignore surroundings","Walk distracted"],
 "c":1,
 "ex":[
-"Phone distraction = reduced awareness",
-"Observing exits = safety awareness",
+"Phone = reduced awareness",
+"Observation = control of environment",
 "Ignoring = vulnerability",
-"No attention = higher risk"
+"Distraction = delayed reaction"
 ]},
 
 {"t":"r","tx":"+Awareness","p":20},
-{"t":"c","tx":{"en":"Awareness helps prevent danger"}},
+{"t":"c","tx":{"en":"Attention is your most valuable resource"}},
 
 {"t":"sil","d":60,
-"tx":{"en":"60 seconds calm observation","es":"60 segundos de observación calmada"},
-"inf":{"en":"Short quiet focus may improve situational awareness and reduce panic response","es":"Silencio corto puede mejorar la conciencia situacional y reducir pánico"}
+"tx":{"en":"Observe without reacting"},
+"inf":{"en":"Improves situational awareness and reduces automatic behavior"}
 },
 
 {"t":"breath_auto","d":30,
-"tx":{"en":"Slow breathing: 4 in, 4 out","es":"Respiración lenta: 4 inhala, 4 exhala"},
-"inf":{"en":"Supports calm nervous system regulation","es":"Apoya regulación del sistema nervioso"}}
+"tx":{"en":"Inhale and exhale slowly"},
+"inf":{"en":"This exercise trains calm control and focus"}
+}
 ]
 },
 
@@ -56,35 +59,38 @@
 "id":9,
 "cat":"bullying",
 "b":[
-{"t":"v","tx":{"en":"Today: BULLYING RESPONSE","es":"Hoy: RESPUESTA AL BULLYING"}},
-{"t":"h","tx":{"en":"Someone tries to humiliate you","es":"Alguien intenta humillarte"}},
+{"t":"v","tx":{"en":"Today: SOCIAL PRESSURE CONTROL"}},
+{"t":"h","tx":{"en":"People test your emotional control"}},
 
-{"story":{"en":"Strength is not fighting. Strength is choosing the safest action.","es":"La fuerza no es pelear. La fuerza es elegir la acción más segura."}},
+{"story":{"en":"The one who controls emotions controls the situation. Reaction gives power away."}},
 
-{"t":"br","tx":{"en":"Inhale","es":"Inhala"},"d":4},
-{"t":"br","tx":{"en":"Exhale","es":"Exhala"},"d":4},
+{"t":"breath_auto","d":30,
+"tx":{"en":"Inhale and exhale slowly"},
+"inf":{"en":"This exercise trains calm control and focus"}
+},
 
-{"t":"d","q":{"en":"What is the safest action?","es":"¿Cuál es la acción más segura?"},
-"op":["Fight","Respond angry","Walk away & report","Stay silent always"],
+{"t":"d","q":{"en":"What gives you real power?"},
+"op":["Fight back","React emotionally","Walk away and report","Stay silent always"],
 "c":2,
 "ex":[
-"Fight = escalation risk",
-"Anger response = loss of control",
-"Walk away + report = protection + support",
-"Silent always = problem may continue"
+"Fighting = escalation",
+"Emotion = loss of control",
+"Walking away + report = strategic control",
+"Silence always = behavior repeats"
 ]},
 
-{"t":"r","tx":"+Safety / +Seguridad","p":20},
-{"t":"c","tx":{"en":"Report problems to trusted adults"}},
+{"t":"r","tx":"+Control","p":20},
+{"t":"c","tx":{"en":"What you tolerate, repeats"}},
 
 {"t":"sil","d":60,
-"tx":{"en":"Calm reset breathing","es":"Respiración de calma"},
-"inf":{"en":"May reduce stress response and improve decision clarity","es":"Puede reducir estrés y mejorar claridad mental"}
+"tx":{"en":"Pause before reacting"},
+"inf":{"en":"Reduces impulsive emotional reactions"}
 },
 
 {"t":"breath_auto","d":30,
-"tx":{"en":"Inhale calm, exhale tension","es":"Inhala calma, exhala tensión"},
-"inf":{"en":"Supports emotional regulation under pressure","es":"Apoya regulación emocional bajo presión"}}
+"tx":{"en":"Inhale and exhale slowly"},
+"inf":{"en":"This exercise trains calm control and focus"}
+}
 ]
 },
 
@@ -92,35 +98,38 @@
 "id":10,
 "cat":"stranger",
 "b":[
-{"t":"v","tx":{"en":"Today: STRANGER SAFETY","es":"Hoy: SEGURIDAD CON EXTRAÑOS"}},
-{"t":"h","tx":{"en":"Someone offers you something unusual","es":"Alguien te ofrece algo extraño"}},
+{"t":"v","tx":{"en":"Today: BOUNDARIES AND TRUST"}},
+{"t":"h","tx":{"en":"Not everyone deserves access to you"}},
 
-{"story":{"en":"Safe people do not pressure you into quick decisions.","es":"Las personas seguras no te presionan para decisiones rápidas."}},
+{"story":{"en":"Safe people do not rush you. Pressure is often a signal, not an accident."}},
 
-{"t":"br","tx":{"en":"Inhale","es":"Inhala"},"d":4},
-{"t":"br","tx":{"en":"Exhale","es":"Exhala"},"d":4},
+{"t":"breath_auto","d":30,
+"tx":{"en":"Inhale and exhale slowly"},
+"inf":{"en":"This exercise trains calm control and focus"}
+},
 
-{"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
-"op":["Accept quickly","Say no & leave","Follow stranger","Keep secret"],
+{"t":"d","q":{"en":"What protects you most?"},
+"op":["Accept quickly","Say no and leave","Follow stranger","Keep it secret"],
 "c":1,
 "ex":[
-"Accepting quickly = risk",
-"Saying no + leaving = safe boundary",
-"Following = danger",
+"Quick acceptance = manipulation risk",
+"Saying no + leaving = strong boundary",
+"Following = loss of control",
 "Secrets = reduced protection"
 ]},
 
 {"t":"r","tx":"+Protection","p":20},
-{"t":"c","tx":{"en":"Safe boundaries protect you"}},
+{"t":"c","tx":{"en":"Boundaries define how others treat you"}},
 
 {"t":"sil","d":75,
-"tx":{"en":"Awareness breathing focus","es":"Respiración de conciencia"},
-"inf":{"en":"Supports better judgment in uncertain situations","es":"Apoya mejor juicio en situaciones inciertas"}
+"tx":{"en":"Stay aware of pressure signals"},
+"inf":{"en":"Improves judgment in uncertain situations"}
 },
 
 {"t":"breath_auto","d":30,
-"tx":{"en":"Slow steady breathing cycle","es":"Respiración lenta y estable"},
-"inf":{"en":"Helps reduce panic and improve clarity","es":"Ayuda a reducir pánico y mejorar claridad"}}
+"tx":{"en":"Inhale and exhale slowly"},
+"inf":{"en":"This exercise trains calm control and focus"}
+}
 ]
 },
 
@@ -128,35 +137,38 @@
 "id":11,
 "cat":"emergency",
 "b":[
-{"t":"v","tx":{"en":"Today: EMERGENCY RESPONSE","es":"Hoy: RESPUESTA DE EMERGENCIA"}},
-{"t":"h","tx":{"en":"You are lost or separated from adults","es":"Estás perdido o separado de adultos"}},
+{"t":"v","tx":{"en":"Today: DECISION UNDER PRESSURE"}},
+{"t":"h","tx":{"en":"Speed and clarity matter"}},
 
-{"story":{"en":"In emergencies, the safest action is to find help quickly and stay visible.","es":"En emergencias, lo más seguro es buscar ayuda rápido y mantenerse visible."}},
+{"story":{"en":"In emergencies, hesitation increases risk. Clear action reduces danger."}},
 
-{"t":"br","tx":{"en":"Inhale","es":"Inhala"},"d":5},
-{"t":"br","tx":{"en":"Exhale","es":"Exhala"},"d":5},
+{"t":"breath_auto","d":30,
+"tx":{"en":"Inhale and exhale slowly"},
+"inf":{"en":"This exercise trains calm control and focus"}
+},
 
-{"t":"d","q":{"en":"What is correct?","es":"¿Qué es correcto?"},
-"op":["Hide alone","Find safe adult","Walk randomly","Wait forever"],
+{"t":"d","q":{"en":"What is the most effective action?"},
+"op":["Hide alone","Find a safe adult","Walk randomly","Wait"],
 "c":1,
 "ex":[
-"Hiding alone = delayed help",
-"Finding safe adult = fastest safety",
-"Random walking = increased risk",
-"Waiting = no resolution"
+"Hiding = delay",
+"Finding help = fastest solution",
+"Random movement = increased risk",
+"Waiting = no control"
 ]},
 
-{"t":"r","tx":"+Help","p":20},
-{"t":"c","tx":{"en":"Stay visible and ask for help"}},
+{"t":"r","tx":"+Action","p":20},
+{"t":"c","tx":{"en":"Fast clear action beats hesitation"}},
 
 {"t":"sil","d":90,
-"tx":{"en":"Calm emergency breathing","es":"Respiración de calma en emergencia"},
-"inf":{"en":"May reduce panic and improve decision speed","es":"Puede reducir pánico y mejorar rapidez de decisión"}
+"tx":{"en":"Control your breathing first"},
+"inf":{"en":"Reduces panic and improves decision speed"}
 },
 
 {"t":"breath_auto","d":30,
-"tx":{"en":"4-4 breathing stability cycle","es":"Ciclo de estabilidad 4-4"},
-"inf":{"en":"Supports nervous system stabilization","es":"Apoya estabilización del sistema nervioso"}}
+"tx":{"en":"Inhale and exhale slowly"},
+"inf":{"en":"This exercise trains calm control and focus"}
+}
 ]
 },
 
@@ -164,35 +176,38 @@
 "id":12,
 "cat":"digital",
 "b":[
-{"t":"v","tx":{"en":"Today: DIGITAL SAFETY","es":"Hoy: SEGURIDAD DIGITAL"}},
-{"t":"h","tx":{"en":"Online pressure to share private info","es":"Presión online para compartir información privada"}},
+{"t":"v","tx":{"en":"Today: DIGITAL PRESSURE"}},
+{"t":"h","tx":{"en":"Online actions have real consequences"}},
 
-{"story":{"en":"Your private information is like a key. Not everyone should have it.","es":"Tu información privada es como una llave. No todos deben tenerla."}},
+{"story":{"en":"The internet amplifies everything. One action can spread far beyond control."}},
 
-{"t":"br","tx":{"en":"Inhale","es":"Inhala"},"d":4},
-{"t":"br","tx":{"en":"Exhale","es":"Exhala"},"d":4},
+{"t":"breath_auto","d":30,
+"tx":{"en":"Inhale and exhale slowly"},
+"inf":{"en":"This exercise trains calm control and focus"}
+},
 
-{"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
-"op":["Share","Tell trusted adult ","Ignore rules","Send info"],
+{"t":"d","q":{"en":"What protects your identity?"},
+"op":["Share info","Tell trusted adult","Ignore risk","Send private data"],
 "c":1,
 "ex":[
-"Sharing = risk exposure",
-"Telling adult = protection system",
-"Ignoring rules = vulnerability",
-"Sending info = unsafe"
+"Sharing = exposure",
+"Trusted adult = protection",
+"Ignoring risk = vulnerability",
+"Sending data = loss of control"
 ]},
 
 {"t":"r","tx":"+Security","p":20},
-{"t":"c","tx":{"en":"Privacy protects identity"}},
+{"t":"c","tx":{"en":"Your reputation builds or breaks online"}},
 
 {"t":"sil","d":90,
-"tx":{"en":"Focus breathing for awareness","es":"Respiración de enfoque y conciencia"},
-"inf":{"en":"May improve impulse control in digital decisions","es":"Puede mejorar control de impulsos en decisiones digitales"}
+"tx":{"en":"Pause before sharing"},
+"inf":{"en":"Improves impulse control in digital decisions"}
 },
 
 {"t":"breath_auto","d":30,
-"tx":{"en":"Slow 4-6 breathing (inhale 4, exhale 6)","es":"Respiración lenta 4-6 (inhala 4, exhala 6)"},
-"inf":{"en":"Longer exhale supports calm response","es":"Exhalación más larga apoya la calma"}}
+"tx":{"en":"Inhale and exhale slowly"},
+"inf":{"en":"This exercise trains calm control and focus"}
+}
 ]
 },
 
@@ -200,32 +215,33 @@
 "id":13,
 "cat":"money",
 "b":[
-{"t":"v","tx":{"en":"Today: MONEY SAFETY","es":"Hoy: SEGURIDAD DEL DINERO"}},
-{"t":"h","tx":{"en":"You want something expensive","es":"Quieres algo caro"}},
+{"t":"v","tx":{"en":"Today: MONEY DECISIONS"}},
+{"t":"h","tx":{"en":"Impulse competes with your future"}},
 
-{"story":{"en":"Waiting and planning helps you avoid mistakes with money.","es":"Esperar y planificar ayuda a evitar errores con el dinero."}},
+{"story":{"en":"Money is not about effort, it is about decisions. Small habits shape long-term results."}},
 
-{"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
-"op":["Buy impulsively","Save & plan","Borrow without thinking","Ignore money"],
+{"t":"d","q":{"en":"What creates long-term value?"},
+"op":["Buy impulsively","Save and plan","Borrow carelessly","Ignore money"],
 "c":1,
 "ex":[
-"Impulse buying = poor control",
-"Saving + planning = financial discipline",
+"Impulse = short-term reward",
+"Saving = long-term control",
 "Borrowing = future pressure",
-"Ignoring = lack of awareness"
+"Ignoring = no awareness"
 ]},
 
-{"t":"r","tx":"+Responsibility","p":20},
-{"t":"c","tx":{"en":"Planning money builds independence"}},
+{"t":"r","tx":"+Discipline","p":20},
+{"t":"c","tx":{"en":"Small repeated actions create big results"}},
 
 {"t":"sil","d":90,
-"tx":{"en":"Calm decision breathing","es":"Respiración de decisión calmada"},
-"inf":{"en":"May improve self-control in spending decisions","es":"Puede mejorar autocontrol en decisiones de gasto"}
+"tx":{"en":"Think before acting"},
+"inf":{"en":"Improves long-term decision making"}
 },
 
 {"t":"breath_auto","d":30,
-"tx":{"en":"Slow calm breathing cycle","es":"Ciclo de respiración lenta calmada"},
-"inf":{"en":"Supports rational decision-making","es":"Apoya decisiones racionales"}}
+"tx":{"en":"Inhale and exhale slowly"},
+"inf":{"en":"This exercise trains calm control and focus"}
+}
 ]
 },
 
@@ -233,35 +249,38 @@
 "id":14,
 "cat":"family",
 "b":[
-{"t":"v","tx":{"en":"Today: FAMILY SAFETY & RESPECT","es":"Hoy: SEGURIDAD Y RESPETO FAMILIAR"}},
-{"t":"h","tx":{"en":"A disagreement happens at home","es":"Ocurre un desacuerdo en casa"}},
+{"t":"v","tx":{"en":"Today: EMOTIONAL CONTROL"}},
+{"t":"h","tx":{"en":"You cannot control others, only yourself"}},
 
-{"story":{"en":"Listening is like building bridges instead of walls.","es":"Escuchar es como construir puentes en lugar de muros."}},
+{"story":{"en":"In conflict, the calm person has the advantage. Control creates better outcomes."}},
 
-{"t":"br","tx":{"en":"Inhale","es":"Inhala"},"d":5},
-{"t":"br","tx":{"en":"Exhale","es":"Exhala"},"d":5},
+{"t":"breath_auto","d":30,
+"tx":{"en":"Inhale and exhale slowly"},
+"inf":{"en":"This exercise trains calm control and focus"}
+},
 
-{"t":"d","q":{"en":"What helps most?","es":"¿Qué ayuda más?"},
-"op":["Shout","Listen calmly","Walk away angry","Ignore family"],
+{"t":"d","q":{"en":"What improves the situation most?"},
+"op":["Shout","Listen calmly","Walk away angry","Ignore"],
 "c":1,
 "ex":[
-"Shouting = conflict grows",
+"Shouting = escalation",
 "Listening = resolution",
-"Walking away angry = unresolved issue",
+"Anger = loss of control",
 "Ignoring = weak connection"
 ]},
 
 {"t":"r","tx":"+Respect","p":20},
-{"t":"c","tx":{"en":"Calm communication builds trust"}},
+{"t":"c","tx":{"en":"Control yourself before controlling situations"}},
 
 {"t":"sil","d":120,
-"tx":{"en":"Long calm breathing practice","es":"Práctica larga de respiración calmada"},
-"inf":{"en":"Longer practice may support emotional regulation and patience","es":"Práctica larga puede mejorar regulación emocional y paciencia"}
+"tx":{"en":"Stay calm under pressure"},
+"inf":{"en":"Improves emotional regulation and patience"}
 },
 
 {"t":"breath_auto","d":30,
-"tx":{"en":"Gentle steady breathing","es":"Respiración suave y estable"},
-"inf":{"en":"Supports relaxation and emotional balance","es":"Apoya relajación y equilibrio emocional"}}
+"tx":{"en":"Inhale and exhale slowly"},
+"inf":{"en":"This exercise trains calm control and focus"}
+}
 ]
 }
 
