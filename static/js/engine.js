@@ -1,291 +1,191 @@
-/* =============================================================
-   KAMIZEN ENGINE V9 - SAFE BOOT SYSTEM
-   FIXES:
-   - No startup freeze
-   - Safe API parsing
-   - Default fallback state
-   - Async-safe rendering
-============================================================= */
-
-const engine = {
-    state: {
-        stories: [],
-        missions: [],
-        index: 1,
-        mode: "story",
-        blockIndex: 0,
-        loaded: false
-    }
+let state = {
+    stories: [],
+    missions: [],
+    index: 0,
+    step: "story",
+    bIndex: 0,
+    loaded: false
 };
 
-/* =========================
-   SAFE INIT
-========================= */
-window.addEventListener("load", async () => {
-    await boot();
-});
+window.addEventListener("load", init);
 
-/* =========================
-   BOOT SEQUENCE (CRITICAL FIX)
-========================= */
-async function boot() {
-    try {
-        await loadData();
-        await syncState();
+async function init(){
+    const [s, m] = await Promise.all([
+        fetch("/api/stories"),
+        fetch("/api/missions")
+    ]);
 
-        // 🔥 SAFE DEFAULT
-        if (!engine.state.index || engine.state.index < 1) {
-            engine.state.index = 1;
-        }
+    const sd = await s.json();
+    const md = await m.json();
 
-        render();
+    state.stories = sd.stories || [];
+    state.missions = md.missions || [];
 
-    } catch (e) {
-        console.error("BOOT FAILED", e);
-
-        document.getElementById("app").innerHTML = `
-            <div class="card">
-                <h2>System Error</h2>
-                <p>Backend not ready or data invalid</p>
-            </div>
-        `;
-    }
+    render();
 }
 
 /* =========================
-   LOAD DATA SAFE
+   MAIN FLOW CONTROLLER
 ========================= */
-async function loadData() {
+
+function render(){
+
     const app = document.getElementById("app");
+    if(!app) return;
 
-    try {
-        const resS = await fetch("/api/stories");
-        const resM = await fetch("/api/missions");
+    const story = state.stories[state.index];
+    const mission = state.missions[state.index];
 
-        const storiesData = await resS.json();
-        const missionsData = await resM.json();
-
-        engine.state.stories = Array.isArray(storiesData.stories)
-            ? storiesData.stories.sort((a,b)=>a.id-b.id)
-            : [];
-
-        engine.state.missions = Array.isArray(missionsData.missions)
-            ? missionsData.missions.sort((a,b)=>a.id-b.id)
-            : [];
-
-        engine.state.loaded = true;
-
-    } catch (e) {
-        console.error("LOAD ERROR", e);
-
-        if (app) {
-            app.innerHTML = "<h3>Failed to load system data</h3>";
-        }
-    }
-}
-
-/* =========================
-   SYNC SAFE STATE
-========================= */
-async function syncState() {
-    try {
-        const res = await fetch("/api/state");
-        const data = await res.json();
-
-        if (data && typeof data === "object") {
-            if (typeof data.index === "number") {
-                engine.state.index = data.index;
-            }
-        }
-
-    } catch (e) {
-        console.warn("STATE SYNC FAILED → using default index=1");
-        engine.state.index = 1;
-    }
-}
-
-/* =========================
-   SAFE RENDER
-========================= */
-function render() {
-    const app = document.getElementById("app");
-    if (!app) return;
-
-    if (!engine.state.loaded) {
-        app.innerHTML = "<h3>Loading system...</h3>";
-        return;
-    }
-
-    const idx = engine.state.index || 1;
-
-    const story = engine.state.stories[idx - 1];
-    const mission = engine.state.missions[idx - 1];
-
-    /* SAFE GUARD */
-    if (!story || !mission) {
-        app.innerHTML = `
-            <div class="card">
-                <h2>Waiting Data Sync</h2>
-                <p>Index: ${idx}</p>
-                <button onclick="resetSystem()">RESET</button>
-            </div>
-        `;
-        return;
+    if(!story || !mission){
+        state.index = 0; // 🔁 LOOP RESET
+        state.step = "story";
+        state.bIndex = 0;
+        return render();
     }
 
     /* STORY MODE */
-    if (engine.state.mode === "story") {
+    if(state.step === "story"){
         app.innerHTML = `
             <div class="card">
                 <h2>STORY ${story.id}</h2>
                 <p>${story.en}</p>
-                <button onclick="startMission()">START MISSION</button>
             </div>
+
+            <button onclick="startMission()" style="width:100%;padding:12px;">
+                START MISSION
+            </button>
         `;
+
+        speak(story.en);
         return;
     }
 
     /* MISSION MODE */
-    const block = mission.b?.[engine.state.blockIndex];
+    if(state.step === "mission"){
+        const block = mission.b[state.bIndex];
 
-    if (!block) {
-        nextMission();
-        return;
+        if(!block){
+            nextCycle();
+            return;
+        }
+
+        renderBlock(block);
+    }
+}
+
+/* =========================
+   BLOCK RENDER
+========================= */
+
+function renderBlock(b){
+    const app = document.getElementById("app");
+
+    let html = "";
+
+    if(b.t === "v"){
+        html += `<div class="card"><h2>${b.tx.en}</h2></div>`;
     }
 
-    let html = `<div class="card">`;
+    if(b.t === "h"){
+        html += `<div class="card"><p>${b.tx.en}</p></div>`;
+    }
 
-    if (block.t === "v") html += `<h3>${block.tx.en}</h3>`;
-    if (block.t === "h") html += `<p>${block.tx.en}</p>`;
-    if (block.story) html += `<p>${block.story.en}</p>`;
+    if(b.story){
+        html += `<div class="card"><p>${b.story.en}</p></div>`;
+    }
 
-    if (block.t === "d") {
-        html += `<div>${block.q.en}</div>`;
+    if(b.t === "d"){
+        html += `<div class="card">
+            <p>${b.q.en}</p>
+        `;
 
-        block.op.forEach((o, i) => {
+        b.op.forEach((o,i)=>{
             html += `
-                <div class="answer" onclick="answer(${i}, ${block.c})">
+                <div onclick="answer(${i},${b.c})"
+                     style="padding:10px;margin:5px;background:#1f2937;cursor:pointer;">
                     ${o}
                 </div>
             `;
         });
+
+        html += `</div>`;
     }
 
-    if (block.t === "br") {
+    if(b.t === "breath_auto"){
         html += `
-            <div class="breath">
-                <span id="breathText">INHALE</span>
-            </div>
-        `;
-
-        setTimeout(() => startBreathSafe(block.d || 8), 100);
+        <div class="card">
+            <div id="circle" style="
+                width:120px;height:120px;border-radius:50%;
+                margin:auto;
+                border:4px solid #3b82f6;
+                animation:breathe 6s infinite;
+            "></div>
+            <p>${b.tx?.en || ""}</p>
+        </div>`;
     }
 
-    html += `<button onclick="nextBlock()">CONTINUE</button></div>`;
+    html += `<button onclick="nextBlock()" style="width:100%;padding:12px;">CONTINUE</button>`;
 
     app.innerHTML = html;
 }
 
 /* =========================
-   SAFE BREATHING (NO CRASH)
+   CONTROL FLOW
 ========================= */
-function startBreathSafe(seconds) {
-    const el = document.getElementById("breathText");
-    if (!el) return;
 
-    let inhale = true;
-
-    const interval = setInterval(() => {
-        const current = document.getElementById("breathText");
-        if (!current) return clearInterval(interval);
-
-        inhale = !inhale;
-        current.innerText = inhale ? "INHALE" : "EXHALE";
-
-    }, 4000);
-
-    setTimeout(() => clearInterval(interval), seconds * 1000);
-}
-
-/* =========================
-   FLOW CONTROL SAFE
-========================= */
-function startMission() {
-    engine.state.mode = "mission";
+function startMission(){
+    state.step = "mission";
+    state.bIndex = 0;
     render();
 }
 
-function nextBlock() {
-    engine.state.blockIndex++;
+function nextBlock(){
+    state.bIndex++;
+    render();
+}
 
-    const mission = engine.state.missions[engine.state.index - 1];
+function nextCycle(){
+    state.index++;
 
-    if (!mission || engine.state.blockIndex >= mission.b.length) {
-        nextMission();
-        return;
+    if(state.index >= state.stories.length){
+        state.index = 0; // 🔁 LOOP FINAL
     }
 
+    state.step = "story";
+    state.bIndex = 0;
+
     render();
 }
 
 /* =========================
-   NEXT + LOOP SAFE
+   ANSWER
 ========================= */
-async function nextMission() {
-    engine.state.blockIndex = 0;
-    engine.state.mode = "story";
 
-    try {
-        const res = await fetch("/api/next", { method: "POST" });
-        const data = await res.json();
-
-        engine.state.index = data.index || 1;
-
-    } catch (e) {
-        engine.state.index++;
-
-        if (engine.state.index > 35) {
-            engine.state.index = 1;
-        }
+function answer(i,c){
+    if(i === c){
+        alert("CORRECT");
+    }else{
+        alert("TRY AGAIN");
     }
-
-    render();
 }
 
 /* =========================
-   RESET SYSTEM
+   SPEECH
 ========================= */
-function resetSystem() {
-    engine.state.index = 1;
-    engine.state.mode = "story";
-    engine.state.blockIndex = 0;
 
-    fetch("/api/state", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ index: 1 })
-    });
-
-    render();
+function speak(t){
+    if(!t) return;
+    const s = new SpeechSynthesisUtterance(t);
+    s.lang = "en-US";
+    speechSynthesis.speak(s);
 }
 
-/* =========================
-   ANSWER SAFE
-========================= */
-function answer(i, correct) {
-    const mission = engine.state.missions[engine.state.index - 1];
-    const block = mission?.b?.[engine.state.blockIndex];
-
-    if (!block) return;
-
-    alert(i === correct ? "CORRECT" : "WRONG");
-}
-
-/* EXPOSE */
-window.engine = {
-    startMission,
-    nextBlock,
-    nextMission,
-    resetSystem,
-    state: engine.state
-};
+/* CSS ANIMATION INJECTION */
+const style = document.createElement("style");
+style.innerHTML = `
+@keyframes breathe{
+    0%{transform:scale(0.8)}
+    50%{transform:scale(1.2)}
+    100%{transform:scale(0.8)}
+}`;
+document.head.appendChild(style);
