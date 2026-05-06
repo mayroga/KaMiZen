@@ -168,8 +168,8 @@ function startBreathingCycle(duration) {
         const el = document.getElementById("breathText");
         if (!el) { clearInterval(interval); return; }
         
-        el.innerText = inhale ? "INHALE" : "EXHALE";
-        speak(inhale ? "Inhale" : "Exhale");
+        el.innerText = inhale ? "EXHALE" : "INHALE";
+        speak(inhale ? "Exhale" : "Inhale");
         inhale = !inhale;
         
         timeLeft -= 4;
