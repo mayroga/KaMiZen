@@ -1,251 +1,203 @@
 {
-  "system": "KAMIZEN LIFE SAFETY - KNOWLEDGE BASE",
-  "total_stories": 35,
+  "system": "KAMIZEN LIFE SAFETY - KNOWLEDGE BASE (REFINED CORE)",
+  "stage": "1-7",
   "stories": [
     {
       "id": 1,
-      "cat": "patience",
-      "t": "The Fern and the Bamboo",
-      "en": "A child felt he was good at nothing. His grandfather showed him the forest: 'When I planted the fern and the bamboo, the fern grew fast. But the bamboo showed nothing for 5 years. In those years, it was growing roots so strong they could support its greatness when it finally climbed 20 meters into the sky. Your roots are growing now.'",
-      "es": "Un niño sentía que no era bueno en nada. Su abuelo le mostró el bosque: 'Cuando sembré el helecho y el bambú, el helecho creció rápido. Pero el bambú no mostró nada por 5 años. En esos años, estaba echando raíces tan fuertes que pudieran sostener su grandeza cuando finalmente subiera 20 metros al cielo. Tus raíces crecen ahora.'"
+      "cat": "growth",
+      "t": "The Hidden Roots of Growth",
+      "en": "A child felt useless because he couldn't see progress. His grandfather showed him bamboo: for years nothing was visible, but deep underground it was building roots strong enough to rise higher than any tree. Real growth is invisible before it becomes powerful.",
+      "es": "Un niño se sentía inútil porque no veía progreso. Su abuelo le mostró el bambú: durante años no se veía nada, pero bajo tierra estaba creando raíces capaces de crecer más alto que cualquier árbol. El crecimiento real es invisible antes de volverse poderoso."
     },
     {
       "id": 2,
-      "cat": "business",
-      "t": "The Lemonade Strategy",
-      "en": "Alex sold lemonade. One day, it rained. Instead of crying, Alex sold hot cocoa. In life and business, you don't control the weather, but you do control what you offer. Flexibility is the key to always having resources.",
-      "es": "Alex vendía limonada. Un día llovió. En lugar de llorar, Alex vendió chocolate caliente. En la vida y los negocios, no controlas el clima, pero sí controlas lo que ofreces. La flexibilidad es la clave para tener siempre recursos."
+      "cat": "adaptation",
+      "t": "The Weather of Opportunity",
+      "en": "A young seller only knew how to sell lemonade. When the weather changed, he adapted and sold warm drinks instead of stopping. He learned that life does not reward rigidity, but those who adjust fast without losing direction.",
+      "es": "Un joven vendedor solo sabía vender limonada. Cuando el clima cambió, se adaptó y vendió bebidas calientes en lugar de detenerse. Aprendió que la vida no premia la rigidez, sino a quienes se ajustan rápido sin perder el rumbo."
     },
     {
       "id": 3,
-      "cat": "street_safety",
-      "t": "The Invisible Golden Thread",
-      "en": "In the street, imagine a golden thread connecting you to your safe adult. If you move too far, the thread pulls your heart. Staying close isn't being small; it's being a smart explorer who knows where the base is.",
-      "es": "En la calle, imagina un hilo dorado que te une a tu adulto seguro. Si te alejas mucho, el hilo tira de tu corazón. Quedarse cerca no es ser pequeño; es ser un explorador inteligente que sabe dónde está su base."
+      "cat": "awareness",
+      "t": "The Invisible Safety Thread",
+      "en": "A child imagined a golden thread connecting him to safety. When he stayed aware of his surroundings, the thread stayed strong. When he got distracted, it felt weak. Awareness is the invisible connection between you and your protection.",
+      "es": "Un niño imaginaba un hilo dorado que lo conectaba con la seguridad. Cuando estaba atento, el hilo era fuerte. Cuando se distraía, se debilitaba. La conciencia es la conexión invisible entre tú y tu protección."
     },
     {
       "id": 4,
       "cat": "money",
-      "t": "The Two Wallets",
-      "en": "The wise king had two wallets: one for 'Now' and one for 'Tomorrow'. 'Now' bought bread; 'Tomorrow' bought the bakery. If you save a little of what you receive today, tomorrow you won't just have money, you will have freedom.",
-      "es": "El rey sabio tenía dos billeteras: una para 'Hoy' y otra para 'Mañana'. 'Hoy' compraba pan; 'Mañana' compraba la panadería. Si guardas un poco de lo que recibes hoy, mañana no solo tendrás dinero, tendrás libertad."
+      "t": "The Two Paths of Money",
+      "en": "A wise mind separates money into two paths: one for immediate needs and one for future growth. Those who only spend live in survival. Those who also save build freedom without realizing it.",
+      "es": "Una mente sabia separa el dinero en dos caminos: uno para necesidades inmediatas y otro para crecimiento futuro. Quienes solo gastan viven en supervivencia. Quienes ahorran también construyen libertad sin darse cuenta."
     },
     {
       "id": 5,
-      "cat": "emotions",
-      "t": "The Jar of Calm",
-      "en": "When you are angry, you are like a jar of glitter that has been shaken. You can't see through it. But if you wait and breathe, the glitter settles, and the water becomes clear again. Never make a decision while the glitter is still floating.",
-      "es": "Cuando estás enojado, eres como un frasco de purpurina agitado. No puedes ver a través de él. Pero si esperas y respiras, la purpurina se asienta y el agua vuelve a ser clara. Nunca tomes una decisión mientras la purpurina flote."
+      "cat": "emotion",
+      "t": "The Glass of Emotional Clarity",
+      "en": "When emotions rise, the mind becomes cloudy like shaken water. If you wait without reacting, the mind settles and clarity returns. Decisions made in emotional chaos always distort reality.",
+      "es": "Cuando las emociones suben, la mente se vuelve turbia como agua agitada. Si esperas sin reaccionar, la mente se calma y vuelve la claridad. Las decisiones tomadas en caos emocional siempre distorsionan la realidad."
     },
     {
       "id": 6,
-      "cat": "respect",
-      "t": "The Echo of the Mountain",
-      "en": "A boy shouted 'I hate you!' at a mountain and the mountain shouted it back. He shouted 'I love you!' and the mountain replied the same. The world is an echo: what you give to others is exactly what you will receive in return.",
-      "es": "Un niño gritó '¡Te odio!' a una montaña y la montaña se lo devolvió. Gritó '¡Te amo!' y la montaña respondió lo mismo. El mundo es un eco: lo que das a otros es exactamente lo que recibirás de vuelta."
+      "cat": "energy",
+      "t": "The Echo Principle",
+      "en": "A boy shouted into a mountain and heard his voice return. He learned that everything he sends into the world comes back to him. Thoughts, actions, and words always return multiplied.",
+      "es": "Un niño gritó en una montaña y escuchó su voz regresar. Aprendió que todo lo que envía al mundo vuelve a él. Pensamientos, acciones y palabras siempre regresan multiplicadas."
     },
     {
       "id": 7,
-      "cat": "school",
-      "t": "The Pencil and the Eraser",
-      "en": "The pencil was afraid of making mistakes. The eraser told him: 'Mistakes are just steps. I am here to turn them into new opportunities.' In school, the one who learns the most is not the one who never fails, but the one who keeps writing.",
-      "es": "El lápiz tenía miedo de cometer errores. El borrador le dijo: 'Los errores son solo escalones. Estoy aquí para convertirlos en nuevas oportunidades'. En la escuela, el que más aprende no es el que nunca falla, sino el que sigue escribiendo."
+      "cat": "learning",
+      "t": "The Pencil and Growth",
+      "en": "A pencil feared making mistakes, but learned that every error could be erased and improved. Growth is not about perfection, but about continuing even after failure.",
+      "es": "Un lápiz tenía miedo de cometer errores, pero aprendió que cada error puede borrarse y mejorar. El crecimiento no es perfección, sino continuar incluso después del fallo."
     },
     {
       "id": 8,
-      "cat": "danger_awareness",
-      "t": "The Captain's Intuition",
-      "en": "A captain feels a slight change in the wind before the storm arrives. That 'little feeling' in your stomach is your internal radar. If something feels wrong, even if you don't know why, trust your radar and move to a safe place.",
-      "es": "Un capitán siente un ligero cambio en el viento antes de que llegue la tormenta. Esa 'sensación' en tu estómago es tu radar interno. Si algo se siente mal, aunque no sepas por qué, confía en tu radar y muévete a un lugar seguro."
+      "cat": "intuition",
+      "t": "The Captain’s Internal Radar",
+      "en": "A captain notices small changes in wind before danger appears. Humans also have an internal signal called intuition. When something feels wrong without reason, awareness is your first layer of protection.",
+      "es": "Un capitán nota pequeños cambios en el viento antes del peligro. Los humanos también tienen una señal interna llamada intuición. Cuando algo se siente mal sin razón, la conciencia es tu primera protección."
     },
     {
       "id": 9,
       "cat": "family",
-      "t": "The Wall of Bricks",
-      "en": "A family is like a wall. Each member is a brick. If one brick is weak, the others support it. Speaking with love and helping at home is the cement that makes the wall impossible to knock down.",
-      "es": "Una familia es como una pared. Cada miembro es un ladrillo. Si un ladrillo está débil, los otros lo sostienen. Hablar con amor y ayudar en casa es el cemento que hace que la pared sea imposible de derribar."
+      "t": "The Structure of Support",
+      "en": "A family is not built by perfection, but by support. Each person holds another when they weaken. Strength in a system comes from cooperation, not control.",
+      "es": "Una familia no se construye con perfección, sino con apoyo. Cada persona sostiene a otra cuando cae. La fuerza de un sistema viene de la cooperación, no del control."
     },
     {
       "id": 10,
-      "cat": "business",
-      "t": "The Baker's Secret",
-      "en": "Two bakers sold bread. One gave exactly the weight; the other gave a tiny extra cookie for free. Everyone went to the second baker. Giving more than what is expected is the best business secret in the world.",
-      "es": "Dos panaderos vendían pan. Uno daba el peso exacto; el otro daba una galleta extra pequeña gratis. Todos iban al segundo. Dar más de lo que se espera es el mejor secreto de negocios del mundo."
+      "cat": "value",
+      "t": "The Extra Value Principle",
+      "en": "Two creators offer the same product. One gives only what is asked, the other adds value without being asked. The second always wins because value creates trust, and trust creates opportunity.",
+      "es": "Dos creadores ofrecen el mismo producto. Uno da solo lo que se pide, el otro añade valor sin que se lo pidan. El segundo siempre gana porque el valor crea confianza y la confianza crea oportunidades."
     },
     {
       "id": 11,
-      "cat": "wellbeing",
-      "t": "The Garden of the Mind",
-      "en": "Your mind is a garden. If you plant thoughts of 'I can't', weeds grow. If you plant 'I will try', flowers bloom. Water your garden every morning with a smile and see how your world changes.",
-      "es": "Tu mente es un jardín. Si siembras pensamientos de 'no puedo', crecen malezas. Si siembras 'lo intentaré', florecen flores. Riega tu jardín cada mañana con una sonrisa y mira cómo cambia tu mundo."
+      "cat": "mindset",
+      "t": "The Garden of Thought",
+      "en": "The mind grows whatever it is repeatedly exposed to. Negative thoughts grow into limits. Constructive thoughts grow into possibilities. Your internal environment defines your external results.",
+      "es": "La mente crece según a lo que se expone repetidamente. Los pensamientos negativos se convierten en límites. Los constructivos en posibilidades. Tu entorno interno define tus resultados externos."
     },
     {
       "id": 12,
-      "cat": "street_safety",
-      "t": "The Lion's Walk",
-      "en": "A lion walks with its head up, looking at everything, not just its feet. When you walk in the street, observe who is around and where the exits are. Awareness is the best shield against any surprise.",
-      "es": "Un león camina con la cabeza alta, mirando todo, no solo sus pies. Cuando camines por la calle, observa quién está alrededor y dónde están las salidas. La conciencia es el mejor escudo contra cualquier sorpresa."
+      "cat": "situational_awareness",
+      "t": "The Walking Lion Principle",
+      "en": "A lion walks with full awareness, not distraction. It observes everything without panic. Awareness is not fear; it is controlled attention that increases survival and clarity.",
+      "es": "Un león camina con conciencia total, no con distracción. Observa todo sin pánico. La conciencia no es miedo; es atención controlada que aumenta la supervivencia y claridad."
     },
     {
       "id": 13,
-      "cat": "money",
-      "t": "The Magic of Interest",
-      "en": "If you save one coin today and it grows, tomorrow it brings a friend. Soon, you have an army of coins working for you. Don't work for money; let your savings grow so they can work for you later.",
-      "es": "Si guardas una moneda hoy y crece, mañana traerá a una amiga. Pronto, tendrás un ejército de monedas trabajando para ti. No trabajes por el dinero; deja que tus ahorros crezcan para que ellos trabajen por ti luego."
+      "cat": "financial_growth",
+      "t": "The Seed of Wealth",
+      "en": "Small savings behave like seeds. At first nothing is visible, but over time they grow into systems that support you. Wealth is built silently before it becomes visible.",
+      "es": "Los pequeños ahorros funcionan como semillas. Al principio no se ve nada, pero con el tiempo crecen en sistemas que te sostienen. La riqueza se construye en silencio antes de hacerse visible."
     },
     {
       "id": 14,
-      "cat": "happiness",
-      "t": "The Treasure in the Mirror",
-      "en": "A king searched the world for the happiest person to steal their secret. He finally looked in a mirror after helping a child and realized: happiness is not something you find, it's something you create by being kind.",
-      "es": "Un rey buscó por el mundo a la persona más feliz para robar su secreto. Finalmente se miró al espejo tras ayudar a un niño y se dio cuenta: la felicidad no es algo que encuentras, es algo que creas siendo amable."
+      "cat": "self_awareness",
+      "t": "The Mirror of Real Happiness",
+      "en": "A king searched outside for happiness but found it only when he helped others and looked within. Happiness is not extracted from the world; it is generated by how you interpret and act in it.",
+      "es": "Un rey buscó la felicidad fuera, pero solo la encontró cuando ayudó a otros y miró dentro de sí. La felicidad no se extrae del mundo; se genera por cómo lo interpretas y actúas en él."
     },
     {
       "id": 15,
-      "cat": "social",
-      "t": "The Mask of Bullying",
-      "en": "A bully is like a balloon that tries to look big by blowing itself up with air. If you don't give them your fear, they have no air. Your calm is the needle that keeps you safe and shows they are just a balloon.",
-      "es": "Un acosador es como un globo que intenta parecer grande inflándose con aire. Si no le das tu miedo, no tiene aire. Tu calma es la aguja que te mantiene a salvo y demuestra que solo son un globo."
+      "cat": "social_control",
+      "t": "The Balloon of Ego",
+      "en": "Some people try to look powerful by reacting loudly. But real control is staying calm when others try to provoke you. Your response defines your strength more than their words.",
+      "es": "Algunas personas intentan parecer fuertes reaccionando con ruido. Pero el verdadero control es mantener la calma cuando otros te provocan. Tu respuesta define tu fuerza más que sus palabras."
     },
     {
       "id": 16,
       "cat": "discipline",
-      "t": "The Archer's Focus",
-      "en": "The archer doesn't look at the crowd, only at the center of the target. In your life, people will make noise, but if you keep your eyes on your goal, the arrow of your effort will always hit the mark.",
-      "es": "El arquero no mira a la multitud, solo al centro del blanco. En tu vida, la gente hará ruido, pero si mantienes tus ojos en tu meta, la flecha de tu esfuerzo siempre dará en el blanco."
+      "t": "The Arrow of Focus",
+      "en": "An archer does not aim at noise or crowd, only at the target. Discipline is the ability to ignore distractions and keep your energy aligned with one direction until you hit your goal.",
+      "es": "Un arquero no apunta al ruido ni a la multitud, solo al objetivo. La disciplina es ignorar distracciones y mantener tu energía en una sola dirección hasta lograr la meta."
     },
     {
       "id": 17,
       "cat": "health",
-      "t": "The Temple of the Hero",
-      "en": "A hero needs a strong temple to live in. Your body is that temple. Eating well and sleeping is not a chore; it's repairing your armor so you can go on bigger adventures tomorrow.",
-      "es": "Un héroe necesita un templo fuerte donde vivir. Tu cuerpo es ese templo. Comer bien y dormir no es una tarea; es reparar tu armadura para poder tener aventuras más grandes mañana."
+      "t": "The Human System",
+      "en": "Your body is a system, not a tool. When you sleep, eat well, and recover, you are not being lazy—you are maintaining the engine that carries your entire life forward.",
+      "es": "Tu cuerpo es un sistema, no una herramienta. Dormir, comer bien y recuperarte no es pereza—es mantener el motor que sostiene toda tu vida."
     },
     {
       "id": 18,
-      "cat": "honesty",
-      "t": "The Golden Key",
-      "en": "Trust is a golden key that opens all doors. It takes years to forge but only a second to break. Always tell the truth, and you will never have to remember what you said, because the truth never changes.",
-      "es": "La confianza es una llave de oro que abre todas las puertas. Toma años forjarla pero solo un segundo romperla. Di siempre la verdad, y nunca tendrás que recordar lo que dijiste, porque la verdad no cambia."
+      "cat": "truth",
+      "t": "The Cost of Lies",
+      "en": "Lies create mental debt. Every false version of reality requires memory, effort, and fear of being exposed. Truth creates freedom because it requires no maintenance.",
+      "es": "Las mentiras crean deuda mental. Cada versión falsa de la realidad requiere memoria, esfuerzo y miedo a ser descubierto. La verdad crea libertad porque no necesita mantenimiento."
     },
     {
       "id": 19,
-      "cat": "business",
-      "t": "The Value of a Smile",
-      "en": "A merchant with a sour face sold nothing. A merchant with a smile sold everything. People don't just buy things; they buy how you make them feel. Kindness is the best currency in any market.",
-      "es": "Un comerciante con cara amarga no vendía nada. Un comerciante con una sonrisa lo vendía todo. La gente no solo compra cosas; compra cómo los haces sentir. La amabilidad es la mejor moneda en cualquier mercado."
+      "cat": "social_strength",
+      "t": "Standing Alone",
+      "en": "True strength is not following a group blindly. It is the ability to say no when something feels wrong, even if you stand alone. Identity is built in moments of resistance.",
+      "es": "La verdadera fuerza no es seguir a un grupo ciegamente. Es poder decir no cuando algo está mal, incluso si estás solo. La identidad se construye en momentos de resistencia."
     },
     {
       "id": 20,
-      "cat": "danger_prevention",
-      "t": "The Safe Word",
-      "en": "The secret agents have a code word for emergencies. Does your family have one? Having a plan and a secret word is not being afraid; it's being prepared so you can act fast and stay safe together.",
-      "es": "Los agentes secretos tienen una palabra clave para emergencias. ¿Tiene la tuya una? Tener un plan y una palabra secreta no es tener miedo; es estar preparado para actuar rápido y estar a salvo juntos."
+      "cat": "discipline_endurance",
+      "t": "The Weight of Resistance",
+      "en": "When you feel like quitting, that moment is the real training. Discipline is not comfort; it is continuing even when your mind asks you to stop. That is where strength is created.",
+      "es": "Cuando quieres rendirte, ese momento es el verdadero entrenamiento. La disciplina no es comodidad; es continuar incluso cuando tu mente quiere parar. Ahí se crea la fuerza."
     },
     {
       "id": 21,
-      "cat": "generosity",
-      "t": "The Full Well",
-      "en": "A well that gives water stays fresh. A well that keeps its water becomes stagnant. Sharing what you know and what you have doesn't make you poor; it makes you a source that never runs dry.",
-      "es": "Un pozo que da agua se mantiene fresco. Un pozo que guarda su agua se estanca. Compartir lo que sabes y lo que tienes no te hace pobre; te convierte en una fuente que nunca se agota."
+      "cat": "mastery",
+      "t": "Returning to Control",
+      "en": "Mastery is not never losing control, but noticing when you lost it and returning faster each time. Awareness is the bridge between impulse and intelligent action.",
+      "es": "La maestría no es nunca perder el control, sino darte cuenta cuando lo pierdes y volver más rápido cada vez. La conciencia es el puente entre el impulso y la acción inteligente."
     },
     {
       "id": 22,
       "cat": "leadership",
-      "t": "The Lead Goose",
-      "en": "Geese fly in a V. The leader works hard, but when they get tired, another takes their place. True leaders don't do everything alone; they teach others how to fly so the whole group reaches the destination.",
-      "es": "Los gansos vuelan en V. El líder trabaja duro, pero cuando se cansa, otro toma su lugar. Los verdaderos líderes no lo hacen todo solos; enseñan a otros a volar para que todo el grupo llegue a su destino."
+      "t": "The Flying Formation",
+      "en": "A flock of geese flies in V formation. The leader leads, but when it gets tired, another takes its place. True leadership is not doing everything alone, but guiding others so the group keeps moving forward together.",
+      "es": "Una bandada de gansos vuela en formación en V. El líder guía, pero cuando se cansa otro toma su lugar. El verdadero liderazgo no es hacerlo todo solo, sino guiar a otros para que el grupo siga avanzando junto."
     },
     {
       "id": 23,
       "cat": "emotions",
-      "t": "The Cloud that Passes",
-      "en": "Sadness is like a dark cloud. It may cover the sun for a moment, but the sun is still there. Wait, breathe, and remember: no cloud stays in the sky forever. The blue sky of your joy will return.",
-      "es": "La tristeza es como una nube oscura. Puede tapar el sol por un momento, pero el sol sigue ahí. Espera, respira y recuerda: ninguna nube se queda en el cielo para siempre. El cielo azul de tu alegría volverá."
+      "t": "The Passing Storm",
+      "en": "Emotions are like weather inside you. Sadness can feel like a storm, but storms always pass. If you stay calm and breathe, you will see that the sky inside you never disappears.",
+      "es": "Las emociones son como el clima dentro de ti. La tristeza puede sentirse como una tormenta, pero las tormentas siempre pasan. Si mantienes la calma y respiras, verás que el cielo dentro de ti nunca desaparece."
     },
     {
       "id": 24,
       "cat": "digital_safety",
-      "t": "The Internet Window",
-      "en": "The internet is a window to the world, but windows work both ways. Don't show through the window what you wouldn't show to a stranger in the street. Privacy is the fence that protects your home.",
-      "es": "Internet es una ventana al mundo, pero las ventanas funcionan en ambos sentidos. No muestres por la ventana lo que no le mostrarías a un extraño en la calle. La privacidad es la cerca que protege tu hogar."
+      "t": "The Two-Way Window",
+      "en": "The internet is like a window: you can see the world, but others can also see you. What you share must be protected like your home door. Awareness online is digital safety.",
+      "es": "Internet es como una ventana: tú puedes ver el mundo, pero otros también pueden verte a ti. Lo que compartes debe protegerse como la puerta de tu casa. La conciencia digital es seguridad en internet."
     },
     {
       "id": 25,
       "cat": "perseverance",
-      "t": "The Little Ant's Rock",
-      "en": "An ant was carrying a crumb five times its size. It fell ten times. On the eleventh try, it reached the anthill. Success is not about how big you are, but about how many times you are willing to get back up.",
-      "es": "Una hormiga llevaba una migaja cinco veces su tamaño. Cayó diez veces. En el undécimo intento, llegó al hormiguero. El éxito no se trata de qué tan grande eres, sino de cuántas veces estás dispuesto a levantarte."
+      "t": "The Ant and the Rock",
+      "en": "An ant carries a heavy piece of food and falls many times. It never stops. Success is not speed, it is persistence. What seems impossible becomes possible through repetition.",
+      "es": "Una hormiga carga un trozo pesado de comida y cae muchas veces. Nunca se detiene. El éxito no es velocidad, es persistencia. Lo que parece imposible se vuelve posible con repetición."
     },
     {
       "id": 26,
       "cat": "money",
-      "t": "Needs vs. Wants",
-      "en": "A wise traveler carries water (need) but leaves the heavy gold statue (want). In life, if you spend your money on things you don't need, soon you won't have money for the things that are vital.",
-      "es": "Un viajero sabio lleva agua (necesidad) pero deja la pesada estatua de oro (deseo). En la vida, si gastas tu dinero en cosas que no necesitas, pronto no tendrás dinero para las cosas que son vitales."
+      "t": "Need and Desire",
+      "en": "A wise mind learns to separate what is needed from what is wanted. Needs build stability, wants must be controlled. Financial freedom starts when you decide instead of impulse deciding for you.",
+      "es": "Una mente sabia aprende a separar lo que necesita de lo que desea. Las necesidades construyen estabilidad, los deseos deben ser controlados. La libertad financiera empieza cuando tú decides y no el impulso por ti."
     },
     {
       "id": 27,
       "cat": "respect",
-      "t": "The Grandfather's Shoes",
-      "en": "Before you judge someone, try to imagine walking in their shoes for a day. You might discover they are carrying a heavy load you didn't see. Respect starts when you realize everyone is fighting their own battle.",
-      "es": "Antes de juzgar a alguien, intenta imaginar caminar en sus zapatos por un día. Podrías descubrir que llevan una carga pesada que no veías. El respeto comienza cuando te das cuenta de que todos luchan su propia batalla."
+      "t": "Walking in Their Shoes",
+      "en": "Before judging someone, imagine their path. Every person carries invisible weight you cannot see. Respect begins when you understand that everyone is fighting a battle you know nothing about.",
+      "es": "Antes de juzgar a alguien, imagina su camino. Cada persona carga un peso invisible que no puedes ver. El respeto comienza cuando entiendes que todos luchan una batalla que tú no conoces."
     },
     {
       "id": 28,
       "cat": "danger_awareness",
-      "t": "The Light in the Dark",
-      "en": "When you enter a new room, always look for the door. In life, knowing where the exits are is not being scared; it's being the person who can help everyone else stay calm if the lights go out.",
-      "es": "Cuando entres en una habitación nueva, siempre busca la puerta. En la vida, saber dónde están las salidas no es ser miedoso; es ser la persona que puede ayudar a los demás a mantener la calma si se apagan las luces."
+      "t": "Knowing the Exit",
+      "en": "When entering any place, always notice the exits. Awareness is not fear, it is preparation. The calm mind is the one that stays safe and can help others if something goes wrong.",
+      "es": "Al entrar en cualquier lugar, siempre observa las salidas. La conciencia no es miedo, es preparación. La mente calmada es la que se mantiene segura y puede ayudar a otros si algo sale mal."
     },
-    {
-      "id": 29,
-      "cat": "love",
-      "t": "The Language of Actions",
-      "en": "Love is not just a word; it's a verb. Helping with the dishes, giving a hug when someone is sad, or listening carefully are the ways we say 'I love you' without making a sound.",
-      "es": "El amor no es solo una palabra; es un verbo. Ayudar con los platos, dar un abrazo cuando alguien está triste o escuchar con atención son las formas en que decimos 'te amo' sin hacer ruido."
-    },
-    {
-      "id": 30,
-      "cat": "business",
-      "t": "The Bridge Builder",
-      "en": "A man spent his life building bridges. People asked why. 'So others can cross the rivers I struggled with,' he said. The best business and the best life is one that makes the path easier for those who follow.",
-      "es": "Un hombre pasó su vida construyendo puentes. La gente le preguntó por qué. 'Para que otros puedan cruzar los ríos que a mí me costaron', dijo. El mejor negocio y la mejor vida es la que hace el camino más fácil para los que siguen."
-    },
-    {
-      "id": 31,
-      "cat": "school",
-      "t": "The Key of Curiosity",
-      "en": "School is not a cage of facts; it's a keychain of possibilities. Every subject is a different key. You might not use all the keys today, but one day, you will find a door that only that specific key can open.",
-      "es": "La escuela no es una jaula de hechos; es un llavero de posibilidades. Cada materia es una llave diferente. Quizás no uses todas las llaves hoy, pero un día encontrarás una puerta que solo esa llave específica puede abrir."
-    },
-    {
-      "id": 32,
-      "cat": "family",
-      "t": "The Team Circle",
-      "en": "In a team, no one is left behind. When the family works together—one cleans, one cooks, one helps—the work finishes faster and there is more time for the most important thing: playing and being together.",
-      "es": "En un equipo, nadie se queda atrás. Cuando la familia trabaja junta (uno limpia, otro cocina, otro ayuda), el trabajo termina más rápido y hay más tiempo para lo más importante: jugar y estar juntos."
-    },
-    {
-      "id": 33,
-      "cat": "street_safety",
-      "t": "The Stranger's Gift",
-      "en": "A fish saw a delicious worm but didn't see the hook. Not every gift from a stranger is a present; sometimes it's a trick. Smart kids know that the best gifts come from the people who truly love and care for them.",
-      "es": "Un pez vio un gusano delicioso pero no vio el anzuelo. No todo regalo de un extraño es un presente; a veces es un truco. Los niños listos saben que los mejores regalos vienen de las personas que realmente los aman y cuidan."
-    },
-    {
-      "id": 34,
-      "cat": "wellbeing",
-      "t": "The Power of 'Yet'",
-      "en": "If you say 'I can't do it', the brain stops. If you say 'I can't do it YET', the brain starts looking for a way. 'Yet' is a magical word that turns a wall into a ladder.",
-      "es": "Si dices 'no puedo hacerlo', el cerebro se detiene. Si dices 'no puedo hacerlo TODAVÍA', el cerebro empieza a buscar una forma. 'Todavía' es una palabra mágica que convierte una pared en una escalera."
-    },
-    {
-      "id": 35,
-      "cat": "happiness",
-      "t": "The Grateful Heart",
-      "en": "A boy had only one toy and was happy. Another had a room full and was bored. Happiness is not about how much you have, but about how much you appreciate what is already in your hands. Gratitude is the shortcut to joy.",
-      "es": "Un niño tenía un solo juguete y era feliz. Otro tenía una habitación llena y estaba aburrido. La felicidad no se trata de cuánto tienes, sino de cuánto aprecias lo que ya está en tus manos. La gratitud es el atajo a la alegría."
-    }
-  ]
-}
+    {      "id": 29,      "cat": "love",      "t": "Love in Action",      "en": "Love is not only something you say, it is something you do. Every small act of care, listening, or help is a form of love that builds real connection between people.",      "es": "El amor no es solo algo que dices, es algo que haces. Cada pequeño acto de cuidado, escucha o ayuda es una forma de amor que construye conexión real entre las personas."    },    {      "id": 30,      "cat": "business",      "t": "The Bridge Builder",      "en": "A builder spent his life creating bridges so others could cross difficult paths. The greatest value in life is not what you keep, but what you make easier for others.",      "es": "Un constructor pasó su vida creando puentes para que otros cruzaran caminos difíciles. El mayor valor en la vida no es lo que guardas, sino lo que haces más fácil para los demás."    },    {      "id": 31,      "cat": "school",      "t": "The Keychain of Knowledge",      "en": "Learning is like a keychain. Every subject is a key. You may not use them all today, but one day a specific key will open an important door in your life.",      "es": "Aprender es como un llavero. Cada materia es una llave. Puede que no las uses todas hoy, pero un día una llave específica abrirá una puerta importante en tu vida."    },    {      "id": 32,      "cat": "family",      "t": "The Team at Home",      "en": "A family works like a team. When everyone helps, tasks become lighter and life becomes more peaceful. Cooperation at home creates strength outside.",      "es": "Una familia funciona como un equipo. Cuando todos ayudan, las tareas se vuelven más ligeras y la vida más tranquila. La cooperación en casa crea fuerza afuera."    },    {      "id": 33,      "cat": "street_safety",      "t": "The Hidden Hook",      "en": "Not everything that looks good is safe. Just like a fish must see beyond the bait, you must learn to see beyond appearances. Awareness protects your decisions.",      "es": "No todo lo que parece bueno es seguro. Así como un pez debe ver más allá del anzuelo, tú debes aprender a ver más allá de las apariencias. La conciencia protege tus decisiones."    },    {      "id": 34,      "cat": "wellbeing",      "t": "The Word 'Yet'",      "en": "When you say 'I can't', your mind closes. When you say 'I can't yet', your mind opens a path. Small words can change your entire direction.",      "es": "Cuando dices 'no puedo', tu mente se cierra. Cuando dices 'no puedo todavía', tu mente abre un camino. Pequeñas palabras pueden cambiar toda tu dirección."    },    {      "id": 35,      "cat": "happiness",      "t": "Gratitude Inside You",      "en": "Happiness is not in having more, but in appreciating what you already have. A grateful mind turns small things into big joy.",      "es": "La felicidad no está en tener más, sino en apreciar lo que ya tienes. Una mente agradecida convierte las cosas pequeñas en gran alegría."    }  ]}
+
+    
