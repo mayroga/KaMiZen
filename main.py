@@ -4,18 +4,19 @@ from fastapi.staticfiles import StaticFiles
 import os
 import json
 
-app = FastAPI()
+app = FastAPI(title="KaMiZen Life Safety Engine")
 
 # =========================
-# 📁 PATHS
+# 📁 CONFIGURACIÓN DE RUTAS
 # =========================
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 STATIC_DIR = os.path.join(BASE_DIR, "static")
 
+# Montar archivos estáticos (HTML, JS, CSS)
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 # =========================
-# 🧠 CACHE
+# 🧠 CACHE DE DATOS
 # =========================
 CACHE = {
     "stories": None,
@@ -23,169 +24,110 @@ CACHE = {
 }
 
 # =========================
-# 🔍 SAFE JSON LOADER
+# 🔍 CARGADOR DE JSON
 # =========================
-def load_json(path):
+def load_json_file(path):
+    if not os.path.exists(path):
+        return None
     try:
         with open(path, "r", encoding="utf-8") as f:
             return json.load(f)
     except Exception as e:
-        print(f"❌ JSON ERROR: {path} -> {e}")
+        print(f"❌ ERROR JSON en {path}: {e}")
         return None
 
 # =========================
-# 📖 STORIES LOADER (STRICT)
+# 📖 LÓGICA DE HISTORIAS
 # =========================
-def load_stories():
+def get_all_stories():
     if CACHE["stories"] is not None:
         return CACHE["stories"]
 
     path = os.path.join(BASE_DIR, "stories.json")
+    data = load_json_file(path)
 
-    data = load_json(path)
-
-    if not data:
-        CACHE["stories"] = []
-        return []
-
-    # soporta varios formatos posibles
-    if isinstance(data, list):
+    if data and "stories" in data:
+        stories = data["stories"]
+    elif isinstance(data, list):
         stories = data
-    elif isinstance(data, dict):
-        stories = (
-            data.get("stories") or
-            data.get("items") or
-            data.get("data") or
-            []
-        )
     else:
         stories = []
-
-    # asegurar orden por id si existe
-    try:
-        stories = sorted(stories, key=lambda x: x.get("id", 0))
-    except:
-        pass
 
     CACHE["stories"] = stories
     return stories
 
 # =========================
-# 🎯 MISSIONS LOADER (MULTI FILES)
+# 🎯 LÓGICA DE MISIONES
 # =========================
-def load_missions():
+def get_all_missions():
     if CACHE["missions"] is not None:
         return CACHE["missions"]
 
     all_missions = []
-
-    for file in sorted(os.listdir(BASE_DIR)):
-        if file.startswith("missions_") and file.endswith(".json"):
-            path = os.path.join(BASE_DIR, file)
-
-            data = load_json(path)
-
-            if not data:
-                continue
-
-            # soporta ambos formatos
-            missions = (
-                data.get("missions") or
-                data.get("ses") or
-                data.get("data") or
-                []
-            )
-
-            if isinstance(missions, list):
-                all_missions.extend(missions)
-
-    # ordenar por id (IMPORTANTE)
-    try:
-        all_missions = sorted(all_missions, key=lambda x: x.get("id", 0))
-    except:
-        pass
-
-    CACHE["missions"] = {
-        "total": len(all_missions),
-        "missions": all_missions
-    }
-
-    return CACHE["missions"]
+    # Busca todos los archivos que empiecen con missions_ y terminen en .json
+    files = [f for f in os.listdir(BASE_DIR) if f.startswith("missions_") and f.endswith(".json")]
+    
+    for file in sorted(files):
+        path = os.path.join(BASE_DIR, file)
+        data = load_json_file(path)
+        
+        if data and "missions" in data:
+            all_missions.extend(data["missions"])
+    
+    # Ordenar por ID para mantener la secuencia lógica
+    all_missions.sort(key=lambda x: x.get("id", 0))
+    
+    CACHE["missions"] = all_missions
+    return all_missions
 
 # =========================
-# 🌐 ROUTES FRONTEND
+# 🌐 RUTAS DE NAVEGACIÓN
 # =========================
 @app.get("/")
-def root():
-    return FileResponse(os.path.join(STATIC_DIR, "session.html"))
-
-@app.get("/session")
-def session():
+def read_root():
     return FileResponse(os.path.join(STATIC_DIR, "session.html"))
 
 # =========================
-# 📖 API STORIES
+# 📖 API ENDPOINTS
 # =========================
+
 @app.get("/api/stories")
-def get_stories():
-    stories = load_stories()
+def api_stories():
+    stories = get_all_stories()
+    return {"total": len(stories), "stories": stories}
 
-    return JSONResponse({
-        "total": len(stories),
-        "stories": stories
-    })
-
-# =========================
-# 🎯 API MISSIONS
-# =========================
 @app.get("/api/missions")
-def get_missions():
-    missions = load_missions()
+def api_missions():
+    missions = get_all_missions()
+    return {"total": len(missions), "missions": missions}
 
-    return JSONResponse(missions)
+# Estas rutas sirven los JSON directamente por si el JS los pide sin el prefijo /api/
+@app.get("/stories.json")
+def serve_stories_json():
+    return JSONResponse(content={"stories": get_all_stories()})
 
-# =========================
-# 🔍 SINGLE MISSION
-# =========================
-@app.get("/api/missions/{mission_id}")
-def get_mission(mission_id: int):
-    missions = load_missions()["missions"]
-
-    for m in missions:
-        if m.get("id") == mission_id:
-            return m
-
-    raise HTTPException(status_code=404, detail="Mission not found")
+@app.get("/missions.json")
+def serve_missions_json():
+    return JSONResponse(content={"missions": get_all_missions()})
 
 # =========================
-# 🧠 STATE SYSTEM
-# =========================
-STATE = {
-    "user": "",
-    "story_index": 0,
-    "mission_index": 1,
-    "score": 0
-}
-
-@app.get("/api/state")
-def get_state():
-    return STATE
-
-@app.post("/api/state")
-def update_state(data: dict):
-    STATE.update(data)
-    return {"ok": True, "state": STATE}
-
-# =========================
-# 🧪 HEALTH CHECK
+# ⚙️ ESTADO Y CONFIGURACIÓN
 # =========================
 @app.get("/health")
-def health():
-    return {"status": "ok"}
+def health_check():
+    return {
+        "status": "online",
+        "branding": "KAMIZEN LIFE SAFETY",
+        "files_loaded": {
+            "stories": len(get_all_stories()),
+            "missions": len(get_all_missions())
+        }
+    }
 
 # =========================
-# ▶ RUN SERVER
+# ▶️ EJECUCIÓN
 # =========================
 if __name__ == "__main__":
     import uvicorn
+    # Se recomienda usar reload=True solo en desarrollo
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
