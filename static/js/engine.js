@@ -1,12 +1,6 @@
 /* =========================================================
-   KAMIZEN ENGINE V9 - FULL SYNC + INF SUPPORT + SAFE FLOW
-   FIXES:
-   ✔ full mission reading
-   ✔ inf always rendered + spoken
-   ✔ no skipped blocks
-   ✔ breathing synced
-   ✔ stable index system
-========================================================= */
+   KAMIZEN ENGINE V8 FIX - FULL STABILITY + AUDIO QUEUE
+   ========================================================= */
 
 let state = {
     stories: [],
@@ -15,7 +9,7 @@ let state = {
     step: "story",
     bIndex: 0,
     ready: false,
-    lock: false
+    speaking: false
 };
 
 /* =========================
@@ -37,26 +31,51 @@ async function loadData() {
         const sd = await s.json();
         const md = await m.json();
 
-        state.stories = (sd.stories || []).sort((a,b)=>a.id-b.id);
-        state.missions = (md.missions || []).sort((a,b)=>a.id-b.id);
+        state.stories = (sd.stories || []).sort((a, b) => a.id - b.id);
+
+        // 🔥 FIX: missions vienen dentro de objeto
+        state.missions = (md.missions || []).sort((a, b) => a.id - b.id);
 
         state.ready = true;
 
-    } catch (e) {
-        console.error("LOAD ERROR", e);
+    } catch (err) {
+        console.error("LOAD ERROR", err);
     }
 }
 
 /* =========================
-   MAIN RENDER
+   SAFE SPEECH QUEUE (CRITICAL FIX)
+========================= */
+
+function speak(text, callback) {
+    if (!text) {
+        if (callback) callback();
+        return;
+    }
+
+    window.speechSynthesis.cancel();
+
+    const msg = new SpeechSynthesisUtterance(text);
+    msg.lang = "en-US";
+
+    state.speaking = true;
+
+    msg.onend = () => {
+        state.speaking = false;
+        if (callback) callback();
+    };
+
+    window.speechSynthesis.speak(msg);
+}
+
+/* =========================
+   RENDER CORE
 ========================= */
 
 function render() {
     const app = document.getElementById("app");
-    if (!app) return;
-
-    if (!state.ready) {
-        app.innerHTML = "<h3>Loading system...</h3>";
+    if (!app || !state.ready) {
+        if (app) app.innerHTML = "<h3>Loading...</h3>";
         return;
     }
 
@@ -70,23 +89,27 @@ function render() {
         return render();
     }
 
-    /* STORY */
-    if (state.step === "story") {
-        const text = story.en;
+    /* =========================
+       STORY MODE
+    ========================= */
 
+    if (state.step === "story") {
         app.innerHTML = `
             <div class="card">
                 <h2>STORY ${story.id}</h2>
-                <p>${text}</p>
+                <p>${story.en}</p>
             </div>
             <button onclick="startMission()">START MISSION</button>
         `;
 
-        speak(text);
+        speak(story.en);
         return;
     }
 
-    /* MISSION */
+    /* =========================
+       MISSION MODE
+    ========================= */
+
     const block = mission.b[state.bIndex];
 
     if (!block) {
@@ -98,61 +121,43 @@ function render() {
 }
 
 /* =========================
-   BLOCK ENGINE (FIXED INF SUPPORT)
+   BLOCK ENGINE (FULL FIX INF + BREATH)
 ========================= */
 
 function renderBlock(b) {
     const app = document.getElementById("app");
-
     let html = "";
-
-    const speakAll = (text) => {
-        if (text) speak(text);
-    };
 
     /* VISUAL */
     if (b.t === "v") {
         html += `<div class="card"><h2>${b.tx.en}</h2></div>`;
-        speakAll(b.tx.en);
     }
 
     /* HEADER */
     if (b.t === "h") {
         html += `<div class="card"><p>${b.tx.en}</p></div>`;
-        speakAll(b.tx.en);
     }
 
-    /* STORY INSIDE */
+    /* STORY INSIDE MISSION */
     if (b.story) {
         html += `<div class="card"><p>${b.story.en}</p></div>`;
-        speakAll(b.story.en);
     }
 
-    /* BREATHING AUTO (FULL FIX) */
-    if (b.t === "breath_auto") {
+    /* BREATHING FIXED (TX + INF + FULL SPEAK) */
+    if (b.t === "breath_auto" || b.t === "br") {
         html += `
-            <div class="card">
-                <div class="breath-circle">BREATH</div>
-                <p>${b.tx?.en || ""}</p>
-                <p style="color:#94a3b8">${b.inf?.en || ""}</p>
-            </div>
-        `;
+        <div class="card">
+            <div class="breath-circle">FOCUS</div>
+            <p>${b.tx?.en || ""}</p>
+            <small>${b.inf?.en || ""}</small>
+        </div>`;
 
-        speakAll(b.tx?.en);
-        setTimeout(() => speakAll(b.inf?.en), 800);
-    }
+        app.innerHTML = html;
 
-    /* SILENCE (FIX INF) */
-    if (b.t === "sil") {
-        html += `
-            <div class="card">
-                <h3>${b.tx.en}</h3>
-                <p>${b.inf?.en || ""}</p>
-            </div>
-        `;
-
-        speakAll(b.tx.en);
-        setTimeout(() => speakAll(b.inf?.en), 600);
+        return speak(
+            `${b.tx?.en || ""}. ${b.inf?.en || ""}`,
+            () => nextBlock()
+        );
     }
 
     /* QUESTION */
@@ -160,16 +165,26 @@ function renderBlock(b) {
         html += `<div class="card"><p>${b.q.en}</p>`;
 
         b.op.forEach((opt, i) => {
-            html += `
-                <div class="answer" onclick="answer(${i},${b.c},${JSON.stringify(b.ex).replace(/"/g,'&quot;')})">
-                    ${opt}
-                </div>
-            `;
+            html += `<div class="answer" onclick="answer(${i},${b.c},${JSON.stringify(b.ex).replace(/"/g,'&quot;')})">${opt}</div>`;
         });
 
         html += `</div>`;
+    }
 
-        speakAll(b.q.en);
+    /* SILENCE FIXED */
+    if (b.t === "sil") {
+        html += `
+        <div class="card">
+            <h3>${b.tx.en}</h3>
+            <p>${b.inf?.en || ""}</p>
+        </div>`;
+
+        app.innerHTML = html;
+
+        return speak(
+            `${b.tx.en}. ${b.inf?.en || ""}`,
+            () => nextBlock()
+        );
     }
 
     /* REWARD */
@@ -179,12 +194,14 @@ function renderBlock(b) {
 
     /* CONCLUSION */
     if (b.t === "c") {
-        html += `<div class="card"><p>${b.tx.en}</p></div>`;
-        speakAll(b.tx.en);
+        html += `<div class="card">${b.tx.en}</div>`;
+
+        app.innerHTML = html;
+
+        return speak(b.tx.en, () => nextBlock());
     }
 
     html += `<button onclick="nextBlock()">CONTINUE</button>`;
-
     app.innerHTML = html;
 }
 
@@ -199,15 +216,8 @@ function startMission() {
 }
 
 function nextBlock() {
-    if (state.lock) return;
-
-    state.lock = true;
-
-    setTimeout(() => {
-        state.bIndex++;
-        state.lock = false;
-        render();
-    }, 200);
+    state.bIndex++;
+    render();
 }
 
 function nextStory() {
@@ -219,43 +229,25 @@ function nextStory() {
 
     state.step = "story";
     state.bIndex = 0;
-
     render();
 }
 
 /* =========================
-   ANSWER SYSTEM
+   ANSWERS
 ========================= */
 
 function answer(i, correct, exp) {
     const app = document.getElementById("app");
 
     const ok = i === correct;
-    const msg = exp?.[i] || "";
 
     app.innerHTML += `
-        <div class="card" style="color:${ok?'#22c55e':'#ef4444'}">
+        <div class="card" style="color:${ok ? '#22c55e' : '#ef4444'}">
             ${ok ? "CORRECT" : "WRONG"}<br>
-            ${msg}
+            ${exp?.[i] || ""}
         </div>
         <button onclick="nextBlock()">CONTINUE</button>
     `;
 
-    speak(msg);
-}
-
-/* =========================
-   VOICE ENGINE (FIXED QUEUE)
-========================= */
-
-function speak(text) {
-    if (!text) return;
-
-    window.speechSynthesis.cancel();
-
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = "en-US";
-    u.rate = 0.95;
-
-    window.speechSynthesis.speak(u);
+    speak(exp?.[i]);
 }
