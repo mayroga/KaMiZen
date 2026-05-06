@@ -6,56 +6,72 @@ import json
 
 app = FastAPI()
 
+# =========================
+# 📁 PATHS
+# =========================
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 STATIC_DIR = os.path.join(BASE_DIR, "static")
 
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 # =========================
-# 🧠 GLOBAL CONFIG
+# 🧠 CACHE
 # =========================
-MAX_LEVEL = 35
-
 CACHE = {
     "stories": None,
     "missions": None
 }
 
-STATE = {
-    "user": "",
-    "index": 1,   # GLOBAL INDEX (1–35)
-    "score": 0
-}
-
 # =========================
-# 📦 LOAD JSON
+# 🔍 SAFE JSON LOADER
 # =========================
 def load_json(path):
     try:
         with open(path, "r", encoding="utf-8") as f:
             return json.load(f)
-    except:
+    except Exception as e:
+        print(f"❌ JSON ERROR: {path} -> {e}")
         return None
 
 # =========================
-# 📖 STORIES
+# 📖 STORIES LOADER (STRICT)
 # =========================
 def load_stories():
     if CACHE["stories"] is not None:
         return CACHE["stories"]
 
     path = os.path.join(BASE_DIR, "stories.json")
+
     data = load_json(path)
 
-    stories = data.get("stories", []) if isinstance(data, dict) else []
+    if not data:
+        CACHE["stories"] = []
+        return []
 
-    stories = sorted(stories, key=lambda x: x.get("id", 0))
+    # soporta varios formatos posibles
+    if isinstance(data, list):
+        stories = data
+    elif isinstance(data, dict):
+        stories = (
+            data.get("stories") or
+            data.get("items") or
+            data.get("data") or
+            []
+        )
+    else:
+        stories = []
+
+    # asegurar orden por id si existe
+    try:
+        stories = sorted(stories, key=lambda x: x.get("id", 0))
+    except:
+        pass
 
     CACHE["stories"] = stories
     return stories
 
 # =========================
-# 🎯 MISSIONS (MULTI FILE SAFE)
+# 🎯 MISSIONS LOADER (MULTI FILES)
 # =========================
 def load_missions():
     if CACHE["missions"] is not None:
@@ -65,82 +81,92 @@ def load_missions():
 
     for file in sorted(os.listdir(BASE_DIR)):
         if file.startswith("missions_") and file.endswith(".json"):
-            data = load_json(os.path.join(BASE_DIR, file))
+            path = os.path.join(BASE_DIR, file)
+
+            data = load_json(path)
 
             if not data:
                 continue
 
-            missions = data.get("missions") or data.get("ses") or []
+            # soporta ambos formatos
+            missions = (
+                data.get("missions") or
+                data.get("ses") or
+                data.get("data") or
+                []
+            )
 
             if isinstance(missions, list):
                 all_missions.extend(missions)
 
-    all_missions = sorted(all_missions, key=lambda x: x.get("id", 0))
+    # ordenar por id (IMPORTANTE)
+    try:
+        all_missions = sorted(all_missions, key=lambda x: x.get("id", 0))
+    except:
+        pass
 
-    CACHE["missions"] = all_missions
-    return all_missions
+    CACHE["missions"] = {
+        "total": len(all_missions),
+        "missions": all_missions
+    }
 
-# =========================
-# 🔁 GLOBAL INDEX CONTROL
-# =========================
-def safe_index():
-    """FORZAR LOOP 1–35"""
-    if STATE["index"] > MAX_LEVEL:
-        STATE["index"] = 1
-    if STATE["index"] < 1:
-        STATE["index"] = 1
-    return STATE["index"]
+    return CACHE["missions"]
 
 # =========================
-# 🌐 FRONTEND
+# 🌐 ROUTES FRONTEND
 # =========================
 @app.get("/")
 def root():
     return FileResponse(os.path.join(STATIC_DIR, "session.html"))
 
+@app.get("/session")
+def session():
+    return FileResponse(os.path.join(STATIC_DIR, "session.html"))
+
 # =========================
-# 📖 STORIES API
+# 📖 API STORIES
 # =========================
 @app.get("/api/stories")
 def get_stories():
-    return {
-        "total": len(load_stories()),
-        "stories": load_stories()
-    }
+    stories = load_stories()
+
+    return JSONResponse({
+        "total": len(stories),
+        "stories": stories
+    })
 
 # =========================
-# 🎯 MISSIONS API (SYNCED)
+# 🎯 API MISSIONS
 # =========================
 @app.get("/api/missions")
 def get_missions():
     missions = load_missions()
 
-    idx = safe_index()
-
-    return {
-        "global_index": idx,
-        "total": len(missions),
-        "mission": missions[idx - 1] if idx - 1 < len(missions) else None
-    }
+    return JSONResponse(missions)
 
 # =========================
-# 🔄 NEXT STEP CONTROL
+# 🔍 SINGLE MISSION
 # =========================
-@app.post("/api/next")
-def next_step():
-    STATE["index"] += 1
+@app.get("/api/missions/{mission_id}")
+def get_mission(mission_id: int):
+    missions = load_missions()["missions"]
 
-    if STATE["index"] > MAX_LEVEL:
-        STATE["index"] = 1  # 🔁 RESET LOOP
+    for m in missions:
+        if m.get("id") == mission_id:
+            return m
 
-    return {
-        "index": STATE["index"],
-        "reset": STATE["index"] == 1
-    }
+    raise HTTPException(status_code=404, detail="Mission not found")
 
 # =========================
-# 🧠 STATE
+# 🧠 STATE SYSTEM
 # =========================
+STATE = {
+    "user": "",
+    "story_index": 0,
+    "mission_index": 1,
+    "score": 0
+}
+
 @app.get("/api/state")
 def get_state():
     return STATE
@@ -148,10 +174,17 @@ def get_state():
 @app.post("/api/state")
 def update_state(data: dict):
     STATE.update(data)
-    return STATE
+    return {"ok": True, "state": STATE}
 
 # =========================
-# ▶ RUN
+# 🧪 HEALTH CHECK
+# =========================
+@app.get("/health")
+def health():
+    return {"status": "ok"}
+
+# =========================
+# ▶ RUN SERVER
 # =========================
 if __name__ == "__main__":
     import uvicorn
