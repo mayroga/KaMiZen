@@ -1,5 +1,5 @@
 {
-"sys":"KAMIZEN LIFE SAFETY",
+"sys":"KAMIZEN LIFE SYSTEM",
 "ch":3,
 "rng":"15-21",
 
@@ -20,238 +20,234 @@
 "id":15,
 "cat":"emotion",
 "b":[
-{"t":"v","tx":{"en":"Today: EMOTIONAL CONTROL","es":"Hoy: CONTROL EMOCIONAL"}},
-{"t":"h","tx":{"en":"Someone says something mean","es":"Alguien dice algo hiriente"}},
+{"t":"v","tx":{"en":"Today: EMOTIONAL CONTROL"}},
+{"t":"h","tx":{"en":"Your emotions are real, but not always true"}},
 
-{"story":{"en":"A calm mind is like water. It reflects reality without breaking.","es":"Una mente calmada es como el agua. Refleja la realidad sin romperse."}},
+{"story":{"en":"The first emotion is automatic. The second action is your responsibility."}},
 
-{"t":"br","tx":{"en":"Inhale","es":"Inhala"},"d":5},
-{"t":"br","tx":{"en":"Exhale","es":"Exhala"},"d":5},
+{"t":"breath_auto","d":30,
+"tx":{"en":"Inhale and exhale slowly"},
+"inf":{"en":"This exercise trains calm control and focus"}
+},
 
-{"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
-"op":["React angry","Stay calm & breathe","Shout","Walk into conflict"],
+{"t":"d","q":{"en":"What gives you real control?"},
+"op":["React instantly","Pause and breathe","Attack back","Enter conflict"],
 "c":1,
 "ex":[
-"Anger = loss of control",
-"Calm + breathing = emotional regulation",
-"Shouting = escalation",
-"Conflict entry = risk increase"
+"Instant reaction = emotional control loss",
+"Pause + breathe = control regained",
+"Attack = escalation",
+"Entering conflict = unnecessary risk"
 ]},
 
 {"t":"r","tx":"+Control","p":20},
 
 {"t":"sil","d":30,
-"tx":{"en":"30s calm observation","es":"30s observación calmada"},
-"inf":{"en":"Short silence supports prefrontal activation and reduces emotional reactivity","es":"El silencio corto activa control prefrontal y reduce reactividad emocional"}
+"tx":{"en":"Observe your emotion without reacting"},
+"inf":{"en":"Reduces impulsive reactions and strengthens self-control"}
 },
 
 {"t":"breath_auto","d":30,
-"tx":{"en":"4-4 breathing cycle","es":"Ciclo respiratorio 4-4"},
-"inf":{"en":"Supports nervous system balance and stress reduction","es":"Apoya equilibrio del sistema nervioso y reducción del estrés"}
+"tx":{"en":"Inhale and exhale slowly"},
+"inf":{"en":"This exercise trains calm control and focus"}
 }
 ]
 },
-
 
 {
 "id":16,
 "cat":"focus",
 "b":[
-{"t":"v","tx":{"en":"Today: FOCUS TEST","es":"Hoy: PRUEBA DE ENFOQUE"}},
-{"t":"h","tx":{"en":"Many distractions appear","es":"Aparecen muchas distracciones"}},
+{"t":"v","tx":{"en":"Today: FOCUS UNDER DISTRACTION"}},
+{"t":"h","tx":{"en":"Attention is your most valuable resource"}},
 
-{"story":{"en":"Focus is like a flashlight. It only works when pointed in one direction.","es":"El enfoque es como una linterna. Solo funciona cuando apunta en una dirección."}},
+{"story":{"en":"Where your attention goes, your life follows. Distraction steals progress."}},
 
-{"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
-"op":["Multitask","Single focus","Stop everything","Check phone"],
+{"t":"d","q":{"en":"What creates real progress?"},
+"op":["Multitask","Focus on one task","Stop working","Check phone"],
 "c":1,
 "ex":[
-"Multitask = low efficiency",
-"Single focus = deep attention network",
-"Stop = no progress",
-"Phone = attention break"
+"Multitasking = shallow work",
+"Single focus = deep progress",
+"Stopping = no output",
+"Phone = attention loss"
 ]},
 
 {"t":"r","tx":"+Focus","p":20},
 
 {"t":"sil","d":45,
-"tx":{"en":"Quiet attention training","es":"Entrenamiento de atención silenciosa"},
-"inf":{"en":"Improves sustained attention and impulse control","es":"Mejora atención sostenida y control de impulsos"}
+"tx":{"en":"Hold your attention on one point"},
+"inf":{"en":"Improves sustained focus and reduces distraction impulses"}
 },
 
 {"t":"breath_auto","d":30,
-"tx":{"en":"Slow inhale 4 / exhale 6","es":"Inhala 4 / exhala 6"},
-"inf":{"en":"Longer exhale promotes calm nervous system state","es":"Exhalación larga promueve estado de calma"}
+"tx":{"en":"Inhale and exhale slowly"},
+"inf":{"en":"This exercise trains calm control and focus"}
 }
 ]
 },
-
 
 {
 "id":17,
 "cat":"safety",
 "b":[
-{"t":"v","tx":{"en":"Today: PERSONAL SAFETY","es":"Hoy: SEGURIDAD PERSONAL"}},
-{"t":"h","tx":{"en":"You feel unsure about a situation","es":"Te sientes inseguro en una situación"}},
+{"t":"v","tx":{"en":"Today: INTUITION AND SAFETY"}},
+{"t":"h","tx":{"en":"Discomfort is information, not weakness"}},
 
-{"story":{"en":"Safety starts when you notice discomfort early.","es":"La seguridad empieza cuando notas incomodidad temprano."}},
+{"story":{"en":"Your brain detects danger before you understand it. Ignoring it increases risk."}},
 
-{"t":"d","q":{"en":"What is safest action?","es":"¿Cuál es la acción más segura?"},
-"op":["Ignore feeling","Move away & ask help","Stay no matter what","Act without thinking"],
+{"t":"d","q":{"en":"What is the smartest move?"},
+"op":["Ignore feeling","Move away and get help","Stay anyway","Act fast without thinking"],
 "c":1,
 "ex":[
-"Ignoring warning signals = risk",
-"Moving away + help = protection system",
-"Staying = exposure to danger",
-"Impulsive action = unsafe decisions"
+"Ignoring = missed warning",
+"Moving away + help = protection",
+"Staying = exposure",
+"Impulsive action = poor decision"
 ]},
 
 {"t":"r","tx":"+Safety","p":20},
 
 {"t":"sil","d":60,
-"tx":{"en":"Safety breathing reset","es":"Respiración de seguridad"},
-"inf":{"en":"Reduces panic and improves decision clarity","es":"Reduce pánico y mejora claridad de decisión"}
+"tx":{"en":"Notice your internal signals"},
+"inf":{"en":"Improves awareness of early risk detection"}
 },
 
 {"t":"breath_auto","d":30,
-"tx":{"en":"Calm steady breathing 4-4","es":"Respiración calmada 4-4"},
-"inf":{"en":"Stabilizes stress response system","es":"Estabiliza el sistema de respuesta al estrés"}
+"tx":{"en":"Inhale and exhale slowly"},
+"inf":{"en":"This exercise trains calm control and focus"}
 }
 ]
 },
-
 
 {
 "id":18,
 "cat":"truth",
 "b":[
-{"t":"v","tx":{"en":"Today: TRUTH & HONESTY","es":"Hoy: VERDAD Y HONESTIDAD"}},
-{"t":"h","tx":{"en":"You made a mistake","es":"Cometiste un error"}},
+{"t":"v","tx":{"en":"Today: TRUTH VS COMFORT"}},
+{"t":"h","tx":{"en":"Truth protects more than excuses"}},
 
-{"story":{"en":"Truth is like light. It makes hidden things clear.","es":"La verdad es como la luz. Hace visibles las cosas ocultas."}},
+{"story":{"en":"Avoiding truth protects your feelings short-term, but damages your future."}},
 
-{"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
-"op":["Hide mistake","Tell truth","Blame others","Run away"],
+{"t":"d","q":{"en":"What builds real strength?"},
+"op":["Hide mistake","Tell the truth","Blame others","Escape"],
 "c":1,
 "ex":[
-"Hiding = weak trust",
-"Truth = learning + respect",
-"Blame = no growth",
-"Escape = unresolved issue"
+"Hiding = weak identity",
+"Truth = growth + trust",
+"Blaming = no responsibility",
+"Escaping = no solution"
 ]},
 
-{"t":"r","tx":"+Integrit","p":20},
+{"t":"r","tx":"+Integrity","p":20},
 
 {"t":"sil","d":75,
-"tx":{"en":"Truth awareness breathing","es":"Respiración de conciencia de verdad"},
-"inf":{"en":"Supports emotional regulation during honesty decisions","es":"Apoya regulación emocional en decisiones honestas"}
+"tx":{"en":"Face reality without avoiding it"},
+"inf":{"en":"Improves emotional tolerance and decision clarity"}
 },
 
 {"t":"breath_auto","d":30,
-"tx":{"en":"Slow regulated breathing cycle","es":"Ciclo de respiración lenta regulada"},
-"inf":{"en":"Improves clarity under pressure","es":"Mejora claridad bajo presión"}
+"tx":{"en":"Inhale and exhale slowly"},
+"inf":{"en":"This exercise trains calm control and focus"}
 }
 ]
 },
-
 
 {
 "id":19,
 "cat":"social",
 "b":[
-{"t":"v","tx":{"en":"Today: SOCIAL PRESSURE","es":"Hoy: PRESIÓN SOCIAL"}},
-{"t":"h","tx":{"en":"Group pushes you to do something wrong","es":"El grupo te presiona a hacer algo incorrecto"}},
+{"t":"v","tx":{"en":"Today: SOCIAL INFLUENCE"}},
+{"t":"h","tx":{"en":"Most people follow the group, not logic"}},
 
-{"story":{"en":"Strength is not following the crowd. Strength is choosing right.","es":"La fuerza no es seguir a la multitud. La fuerza es elegir lo correcto."}},
+{"story":{"en":"If you don’t decide for yourself, the group decides for you."}},
 
-{"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
-"op":["Follow group","Say no","Laugh and join","Ignore thinking"],
+{"t":"d","q":{"en":"What defines your character?"},
+"op":["Follow group","Say no","Join for approval","Stop thinking"],
 "c":1,
 "ex":[
-"Following = loss of self",
-"Saying no = autonomy + respect",
-"Joining = risk behavior",
-"No thinking = poor decisions"
+"Following = loss of identity",
+"Saying no = self-control",
+"Joining = external validation",
+"No thinking = weak decisions"
 ]},
 
 {"t":"r","tx":"+Character","p":20},
 
 {"t":"sil","d":90,
-"tx":{"en":"Confidence breathing practice","es":"Práctica de respiración de confianza"},
-"inf":{"en":"Builds emotional independence and self-control","es":"Construye independencia emocional y autocontrol"}
+"tx":{"en":"Stand alone mentally"},
+"inf":{"en":"Builds independence from group pressure"}
 },
 
 {"t":"breath_auto","d":30,
-"tx":{"en":"Balanced inhale/exhale cycle","es":"Ciclo equilibrado inhala/exhala"},
-"inf":{"en":"Supports stable decision-making","es":"Apoya decisiones estables"}
+"tx":{"en":"Inhale and exhale slowly"},
+"inf":{"en":"This exercise trains calm control and focus"}
 }
 ]
 },
-
 
 {
 "id":20,
 "cat":"discipline",
 "b":[
-{"t":"v","tx":{"en":"Today: DISCIPLINE TEST","es":"Hoy: PRUEBA DE DISCIPLINA"}},
-{"t":"h","tx":{"en":"You feel like quitting","es":"Sientes ganas de rendirte"}},
+{"t":"v","tx":{"en":"Today: DISCIPLINE VS FEELING"}},
+{"t":"h","tx":{"en":"Motivation fades, discipline remains"}},
 
-{"story":{"en":"Discipline is doing what is right even when you don't feel like it.","es":"La disciplina es hacer lo correcto incluso cuando no tienes ganas."}},
+{"story":{"en":"You don’t get results from what you feel like doing. You get results from what you do consistently."}},
 
-{"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
+{"t":"d","q":{"en":"What builds long-term results?"},
 "op":["Quit","Continue","Delay","Avoid"],
 "c":1,
 "ex":[
-"Quitting = broken habit cycle",
-"Continuing = neuroplasticity growth",
-"Delaying = loss of momentum",
-"Avoiding = no development"
+"Quitting = broken pattern",
+"Continuing = identity building",
+"Delay = lost momentum",
+"Avoid = no growth"
 ]},
 
 {"t":"r","tx":"+Discipline","p":20},
 
 {"t":"sil","d":105,
-"tx":{"en":"Endurance silence training","es":"Entrenamiento de silencio de resistencia"},
-"inf":{"en":"Improves attention endurance and impulse resistance","es":"Mejora resistencia de atención y control de impulsos"}
+"tx":{"en":"Stay without escaping discomfort"},
+"inf":{"en":"Improves tolerance to effort and resistance"}
 },
 
 {"t":"breath_auto","d":30,
-"tx":{"en":"Controlled breathing 4-6 cycle","es":"Respiración controlada 4-6"},
-"inf":{"en":"Supports endurance under stress","es":"Apoya resistencia bajo estrés"}
+"tx":{"en":"Inhale and exhale slowly"},
+"inf":{"en":"This exercise trains calm control and focus"}
 }
 ]
 },
-
 
 {
 "id":21,
 "cat":"mastery",
 "b":[
-{"t":"v","tx":{"en":"Today: SELF MASTERY","es":"Hoy: MAESTRÍA PERSONAL"}},
-{"t":"h","tx":{"en":"Control your reactions","es":"Controla tus reacciones"}},
+{"t":"v","tx":{"en":"Today: SELF MASTERY"}},
+{"t":"h","tx":{"en":"Pause creates power"}},
 
-{"story":{"en":"A strong mind does not react first. It understands first.","es":"Una mente fuerte no reacciona primero. Primero entiende."}},
+{"story":{"en":"Between stimulus and response there is a gap. That gap is where control exists."}},
 
-{"t":"d","q":{"en":"What do you do?","es":"¿Qué haces?"},
-"op":["React fast","Pause & think","Ignore everything","Act randomly"],
+{"t":"d","q":{"en":"What creates mastery?"},
+"op":["React fast","Pause and think","Ignore everything","Act randomly"],
 "c":1,
 "ex":[
-"Fast reaction = low control",
-"Pause = executive brain activation",
-"Ignoring = no awareness",
+"Fast reaction = low awareness",
+"Pause = high control",
+"Ignoring = no perception",
 "Random action = chaos"
 ]},
 
 {"t":"r","tx":"+Mastery","p":20},
 
 {"t":"sil","d":180,
-"tx":{"en":"3-minute silence mastery challenge","es":"Reto de 3 minutos de silencio de maestría"},
-"inf":{"en":"Long silence may strengthen metacognition and emotional regulation pathways","es":"Silencio largo puede fortalecer metacognición y regulación emocional"}
+"tx":{"en":"Hold still and observe your thoughts"},
+"inf":{"en":"Strengthens metacognition and internal awareness"}
 },
 
 {"t":"breath_auto","d":30,
-"tx":{"en":"Deep slow breathing reset","es":"Respiración profunda de reinicio"},
-"inf":{"en":"Helps restore full nervous system balance","es":"Ayuda a restaurar equilibrio del sistema nervioso"}
+"tx":{"en":"Inhale and exhale slowly"},
+"inf":{"en":"This exercise trains calm control and focus"}
 }
 ]
 }
