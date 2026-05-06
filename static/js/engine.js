@@ -1,7 +1,6 @@
 /* =============================================================
-   AURA BY MAY ROGA - KaMiZen ENGINE V7 (STABLE CORE SYSTEM)
-   Flow: Story(N) → Mission(N) → Auto Next
-   System: Cognitive Training + Decision Layer + Breath Control
+   KAMIZEN ENGINE V7 - STABLE SYNCHRONIZED SYSTEM
+   FIXED: story-mission sync, breathing UI, safety parsing
    ============================================================= */
 
 let state = {
@@ -12,8 +11,7 @@ let state = {
     subStep: "story",
     stories: [],
     missions: [],
-    initialized: false,
-    breathingActive: false
+    initialized: false
 };
 
 window.addEventListener("load", async () => {
@@ -22,9 +20,8 @@ window.addEventListener("load", async () => {
 });
 
 /* =========================
-   DATA LOADING
+   DATA LOADER SAFE
 ========================= */
-
 async function loadData() {
     try {
         const [sRes, mRes] = await Promise.all([
@@ -35,102 +32,114 @@ async function loadData() {
         const sData = await sRes.json();
         const mData = await mRes.json();
 
-        state.stories = (sData.stories || []).sort((a, b) => a.id - b.id);
-        state.missions = (mData.missions || []).sort((a, b) => a.id - b.id);
+        state.stories = Array.isArray(sData.stories)
+            ? sData.stories.sort((a, b) => a.id - b.id)
+            : [];
+
+        state.missions = Array.isArray(mData.missions)
+            ? mData.missions.sort((a, b) => a.id - b.id)
+            : [];
+
+        console.log("✔ STORIES:", state.stories.length);
+        console.log("✔ MISSIONS:", state.missions.length);
 
         state.initialized = true;
+
     } catch (err) {
-        console.error("ENGINE ERROR: DATA OFFLINE", err);
+        console.error("❌ DATA LOAD ERROR:", err);
     }
 }
 
 /* =========================
-   SPEECH SYSTEM
+   SPEECH ENGINE
 ========================= */
-
 function speak(text) {
     if (!text) return;
     window.speechSynthesis.cancel();
-
     const msg = new SpeechSynthesisUtterance(text);
     msg.lang = "en-US";
-    msg.rate = 1;
-
     window.speechSynthesis.speak(msg);
 }
 
 /* =========================
-   MAIN RENDER
+   SAFE RENDER ENGINE
 ========================= */
-
 function render() {
     const app = document.getElementById("app");
     if (!app) return;
 
     app.innerHTML = "";
 
-    /* ---------- WELCOME ---------- */
+    /* -------------------------
+       WELCOME SCREEN
+    ------------------------- */
     if (state.step === "welcome") {
         app.innerHTML = `
-            <h1>KAMIZEN LIFE SYSTEM</h1>
+            <h1>KAMIZEN LIFE SAFETY</h1>
             <div class="card">
-                <p>Enter your identity to begin training</p>
-                <input id="nameInput" type="text" placeholder="Your Name"/>
+                <p>Enter your name to begin training system</p>
+                <input id="nameInput" type="text" placeholder="Your Name" />
             </div>
-            <button class="primary" onclick="startApp()">START SYSTEM</button>
+            <button class="primary" onclick="startApp()">START</button>
         `;
         return;
     }
 
-    /* ---------- TRAINING ---------- */
-    if (state.step === "training") {
+    /* -------------------------
+       SAFETY INDEX CHECK
+    ------------------------- */
+    const currentStory = state.stories.find(s => s.id === state.index + 1);
+    const currentMission = state.missions.find(m => m.id === state.index + 1);
 
-        const story = state.stories[state.index];
-        const mission = state.missions[state.index];
+    if (!currentStory || !currentMission) {
+        app.innerHTML = `
+            <h2>PROTOCOL COMPLETED</h2>
+            <p>All missions finished successfully.</p>
+            <button class="primary" onclick="location.reload()">RESTART</button>
+        `;
+        return;
+    }
 
-        if (!story && !mission) {
-            app.innerHTML = `
-                <h1>TRAINING COMPLETE</h1>
-                <button class="primary" onclick="location.reload()">RESTART SYSTEM</button>
-            `;
+    /* -------------------------
+       STORY PHASE
+    ------------------------- */
+    if (state.subStep === "story") {
+        app.innerHTML = `
+            <h3>STORY ${currentStory.id}</h3>
+            <div class="card">
+                <p>${currentStory.en}</p>
+            </div>
+            <button class="primary" onclick="startMission()">START MISSION</button>
+        `;
+
+        speak(currentStory.en);
+        return;
+    }
+
+    /* -------------------------
+       MISSION PHASE
+    ------------------------- */
+    if (state.subStep === "blocks") {
+        const block = currentMission.b[state.bIndex];
+
+        if (!block) {
+            nextMission();
             return;
         }
 
-        /* STORY MODE */
-        if (state.subStep === "story") {
-            app.innerHTML = `
-                <div class="card">
-                    <h3>STORY ${story?.id ?? state.index}</h3>
-                    <p>${story?.en ?? "No story loaded"}</p>
-                </div>
-                <button class="primary" onclick="startMission()">ENTER MISSION</button>
-            `;
-
-            if (story?.en) speak(story.en);
-            return;
-        }
-
-        /* MISSION MODE */
-        if (state.subStep === "blocks") {
-            const block = mission?.b?.[state.bIndex];
-            if (!block) return nextMission();
-
-            renderBlock(block, mission.b.length);
-        }
+        renderBlock(block, currentMission.b.length);
     }
 }
 
 /* =========================
-   BLOCK ENGINE
+   BLOCK RENDER
 ========================= */
-
 function renderBlock(block, total) {
     const app = document.getElementById("app");
     let html = "";
+    const type = block.t;
 
-    const t = block.t;
-
-    switch (t) {
+    switch (type) {
 
         case "v":
             html = `<h2>${block.tx.en}</h2>`;
@@ -138,57 +147,59 @@ function renderBlock(block, total) {
             break;
 
         case "h":
-            html = `<div class="card"><p>${block.tx.en}</p></div>`;
+            html = `<div class="card">${block.tx.en}</div>`;
             speak(block.tx.en);
             break;
 
         case "story":
-            html = `<div class="card"><p>${block.story.en}</p></div>`;
+            html = `<div class="card">${block.story.en}</div>`;
             speak(block.story.en);
             break;
+
+        /* =========================
+           BREATHING FIXED VISUAL
+        ========================= */
+        case "br":
+        case "breath_auto":
+            html = `
+                <div class="circle-container">
+                    <div id="respiratoryCircle" class="circle blue-breath">
+                        <span id="breathAction">INHALE</span>
+                    </div>
+                </div>
+                <div class="card">
+                    <p>${block.tx?.en || block.inf?.en || ""}</p>
+                </div>
+            `;
+
+            app.innerHTML = html;
+
+            setTimeout(() => startAutoBreath(block.d || 8), 80);
+            return;
 
         case "d":
             html = `
                 <div class="card">
-                    <p>${block.q.en}</p>
-                    ${block.op.map((o, i) => `
-                        <div class="answer" onclick="handleDecision(${i}, ${block.c}, ${JSON.stringify(block.ex).replace(/"/g,'&quot;')})">
-                            ${o}
+                    <h3>${block.q.en}</h3>
+                    ${block.op.map((opt, i) => `
+                        <div class="answer" onclick="handleDecision(${i}, ${block.c}, ${JSON.stringify(block.ex).replace(/"/g, '&quot;')})">
+                            ${opt}
                         </div>
                     `).join("")}
                     <div id="feedback"></div>
                 </div>
             `;
-            speak(block.q.en);
             app.innerHTML = html;
+            speak(block.q.en);
             return;
 
         case "sil":
-            html = `
-                <div class="card">
-                    <h3>${block.tx.en}</h3>
-                    <p>${block.inf.en}</p>
-                </div>
-            `;
+            html = `<div class="card">🧘 ${block.tx.en}</div>`;
+            speak(block.tx.en);
             break;
 
-        /* =========================
-           BREATH AUTO SYSTEM (FIXED)
-        ========================= */
-
-        case "breath_auto":
-            html = `
-                <div class="card" style="text-align:center;">
-                    <div id="circle" class="circle">FOCUS</div>
-                    <p>${block.tx.en || block.inf.en}</p>
-                </div>
-            `;
-            app.innerHTML = html;
-            startBreathing(block.d || 30);
-            return;
-
         case "r":
-            html = `<div class="card">⭐ REWARD +${block.p}</div>`;
+            html = `<div class="card">⭐ +${block.p} ${block.tx.en}</div>`;
             break;
 
         case "c":
@@ -197,15 +208,12 @@ function renderBlock(block, total) {
             break;
     }
 
-    app.innerHTML = html + `
-        <button class="primary" onclick="nextBlock()">CONTINUE</button>
-    `;
+    app.innerHTML = html + `<button class="primary" onclick="nextBlock()">CONTINUE</button>`;
 }
 
 /* =========================
    FLOW CONTROL
 ========================= */
-
 function startApp() {
     const val = document.getElementById("nameInput").value;
     if (!val) return;
@@ -213,7 +221,6 @@ function startApp() {
     state.name = val;
     state.step = "training";
     state.subStep = "story";
-
     render();
 }
 
@@ -224,15 +231,14 @@ function startMission() {
 }
 
 function nextBlock() {
-    const mission = state.missions[state.index];
+    const mission = state.missions.find(m => m.id === state.index + 1);
 
-    if (!mission) return nextMission();
+    if (!mission) return;
 
     if (state.bIndex < mission.b.length - 1) {
         state.bIndex++;
     } else {
         nextMission();
-        return;
     }
 
     render();
@@ -240,78 +246,73 @@ function nextBlock() {
 
 function nextMission() {
     state.index++;
-    state.bIndex = 0;
     state.subStep = "story";
+    state.bIndex = 0;
     render();
 }
 
 /* =========================
    DECISION SYSTEM
 ========================= */
-
-function handleDecision(i, correct, explanations) {
+function handleDecision(idx, correct, explanations) {
     const fb = document.getElementById("feedback");
-    const ok = i === correct;
+    const isCorrect = idx === correct;
 
     fb.innerHTML = `
-        <div class="${ok ? 'success' : 'error'}">
-            <p>${ok ? "CORRECT" : "WRONG"}</p>
-            <span>${explanations[i]}</span>
+        <div class="card">
+            <p>${isCorrect ? "CORRECT" : "INCORRECT"}</p>
+            <p>${explanations[idx]}</p>
+            <button class="primary" onclick="nextBlock()">CONTINUE</button>
         </div>
-        <button class="primary" onclick="nextBlock()">CONTINUE</button>
     `;
 
-    speak(explanations[i]);
+    speak(explanations[idx]);
 }
 
 /* =========================
-   BREATHING SYSTEM (STABLE)
+   BREATHING ENGINE FIXED
 ========================= */
+function startAutoBreath(seconds) {
+    let isInhale = true;
+    const circle = document.getElementById("respiratoryCircle");
+    const label = document.getElementById("breathAction");
 
-function startBreathing(seconds) {
-    if (state.breathingActive) return;
-    state.breathingActive = true;
+    if (!circle || !label) return;
 
-    const circle = document.getElementById("circle");
-    if (!circle) return;
-
-    let inhale = true;
-    let time = seconds;
+    circle.style.transition = "transform 4s ease-in-out";
 
     function cycle() {
-        if (!document.getElementById("circle")) return;
+        if (!document.getElementById("respiratoryCircle")) return;
 
-        circle.style.transition = "transform 3s ease-in-out";
-
-        if (inhale) {
-            circle.innerText = "INHALE";
+        if (isInhale) {
             circle.style.transform = "scale(1.3)";
-            speak("Inhale");
+            label.innerText = "INHALE";
+            speak("inhale");
         } else {
-            circle.innerText = "EXHALE";
-            circle.style.transform = "scale(0.8)";
-            speak("Exhale");
+            circle.style.transform = "scale(0.7)";
+            label.innerText = "EXHALE";
+            speak("exhale");
         }
 
-        inhale = !inhale;
+        isInhale = !isInhale;
     }
 
     cycle();
 
     const interval = setInterval(() => {
-
-        cycle();
-
-        time -= 3;
-
-        if (time <= 0) {
+        if (!document.getElementById("respiratoryCircle")) {
             clearInterval(interval);
-            state.breathingActive = false;
-
-            document.getElementById("app").innerHTML += `
-                <button class="primary" onclick="nextBlock()">COMPLETE</button>
-            `;
+            return;
         }
 
-    }, 3000);
+        cycle();
+    }, 4000);
+
+    setTimeout(() => {
+        clearInterval(interval);
+        const app = document.getElementById("app");
+        if (app) {
+            app.innerHTML += `<button class="primary" onclick="nextBlock()">CONTINUE</button>`;
+        }
+    }, seconds * 1000);
 }
