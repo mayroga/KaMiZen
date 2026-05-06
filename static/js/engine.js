@@ -147,13 +147,19 @@ function renderBlock(block, totalBlocks) {
             content = `<div class="card silence"><h3>${block.tx.en}</h3><p>${block.inf.en}</p></div>`;
             break;
         case "breath_auto":
-            content = `
-                <div class="circle-container">
-                    <div id="respiratoryCircle" class="circle blue-breath"><span id="breathAction">...</span></div>
-                </div>
-                <div class="card info"><p>${block.inf.en}</p></div>`;
-            app.innerHTML = content;
-            return startAutoBreath(block.d);
+    content = `
+        <div class="circle-container">
+            <div id="respiratoryCircle" class="circle blue-breath">
+                <span id="breathAction">INHALE</span>
+            </div>
+        </div>
+        <div class="card info">
+            <p>${block.inf.en}</p>
+        </div>
+    `;
+    app.innerHTML = content;
+
+    return startAutoBreath(block.d);
         case "r":
             content = `<div class="reward">⭐ ${block.tx} +${block.p} PTS</div>`;
             break;
