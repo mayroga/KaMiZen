@@ -1,290 +1,210 @@
-/* =========================
-   KaMiZen ENGINE V3 FIXED
-   STATE MACHINE STABLE
-========================= */
+/* =============================================================
+   KaMiZen ENGINE V3 - BLOCK ARCHITECTURE (STRICT)
+   ============================================================= */
 
 let state = {
     name: "",
     step: "welcome",
-
+    lang: "en", // "en" o "es"
     stories: [],
     missions: [],
-
     sIndex: 0,
     mIndex: 0,
-
     initialized: false
 };
 
-/* =========================
-   INIT SAFE LOAD
-========================= */
 window.addEventListener("load", async () => {
     await loadData();
     render();
 });
 
-/* =========================
-   LOAD JSON SAFE
-========================= */
 async function loadData() {
     try {
-        const storiesRes = await fetch("/stories.json");
-        const missionsRes = await fetch("/missions.json");
-
+        const storiesRes = await fetch("/api/stories");
+        const missionsRes = await fetch("/api/missions");
+        
         const storiesData = await storiesRes.json();
         const missionsData = await missionsRes.json();
 
-        state.stories = storiesData.stories || storiesData;
-        state.missions = missionsData.missions || missionsData;
-
+        state.stories = storiesData.stories || [];
+        state.missions = missionsData.missions || [];
         state.initialized = true;
 
-        console.log("ENGINE READY:", {
-            stories: state.stories.length,
-            missions: state.missions.length
+        console.log("SYSTEM READY", { 
+            stories: state.stories.length, 
+            missions: state.missions.length 
         });
-
     } catch (err) {
-        console.error("LOAD ERROR:", err);
+        console.error("CRITICAL LOAD ERROR:", err);
     }
 }
 
-/* =========================
-   SPEECH (SAFE)
-========================= */
 function speak(text) {
+    if (!text) return;
     try {
         const msg = new SpeechSynthesisUtterance(text);
-        msg.lang = "en-US";
+        msg.lang = state.lang === "en" ? "en-US" : "es-ES";
         msg.rate = 1;
         window.speechSynthesis.cancel();
         window.speechSynthesis.speak(msg);
-    } catch (e) {
-        console.warn("Speech error:", e);
-    }
+    } catch (e) { console.warn(e); }
 }
 
-/* =========================
-   MAIN RENDER
-========================= */
 function render() {
     const app = document.getElementById("app");
     if (!app) return;
-
     app.innerHTML = "";
 
-    /* =========================
-       WELCOME
-    ========================= */
+    // 1. WELCOME
     if (state.step === "welcome") {
         app.innerHTML = `
-            <h1>Welcome to KaMiZen</h1>
-            <p>Enter your name</p>
-
-            <input id="nameInput" placeholder="Your name" />
-
+            <h1>KAMIZEN LIFE SAFETY</h1>
+            <p>Enter your full name to begin</p>
+            input id="nameInput" type="text" placeholder="Your Name" />
             <br/><br/>
-
-            <button onclick="startApp()">Start</button>
+            <button class="primary" onclick="startApp()">START</button>
         `;
         return;
     }
 
-    /* =========================
-       NAME CONFIRM
-    ========================= */
+    // 2. NAMED
     if (state.step === "named") {
         app.innerHTML = `
-            <h2>Hello ${state.name}</h2>
-            <button onclick="startStories()">Begin Journey</button>
+            <h2>Protocol: ${state.name}</h2>
+            <button class="primary" onclick="startStories()">BEGIN JOURNEY</button>
         `;
         return;
     }
 
-    /* =========================
-       STORIES ENGINE
-    ========================= */
+    // 3. STORIES ENGINE (ONE BY ONE)
     if (state.step === "story") {
-
-        const story = state.stories[state.sIndex];
-
-        // 🔴 SAFETY CHECK (NO AUTO SKIP)
-        if (!story) {
-            console.log("Stories finished → switching to missions");
+        const s = state.stories[state.sIndex];
+        if (!s) {
             state.step = "missions";
+            state.mIndex = 0;
             render();
             return;
         }
 
-        speak(story.en);
+        const text = state.lang === "en" ? s.en : s.es;
+        speak(text);
 
         app.innerHTML = `
-            <h2>Story ${story.id}: ${story.t}</h2>
-
+            <h3>${s.t}</h3>
             <div class="card">
-                <p>${story.en}</p>
+                <p style="font-size:1.2em;">${text}</p>
             </div>
-
-            <button onclick="nextStory()">Continue Story</button>
-
+            <button class="primary" onclick="nextStory()">CONTINUE</button>
             <p class="small">Story ${state.sIndex + 1} / ${state.stories.length}</p>
         `;
-
         return;
     }
 
-    /* =========================
-       MISSIONS ENGINE
-    ========================= */
+    // 4. MISSIONS ENGINE (BLOCK SYSTEM)
     if (state.step === "missions") {
-
-        const mission = state.missions[state.mIndex];
-
-        // 🔴 STOP AUTO COMPLETE BUG
-        if (!mission) {
-            console.log("Missions finished → complete mode");
+        const m = state.missions[state.mIndex];
+        if (!m) {
             state.step = "complete";
             render();
             return;
         }
 
+        // --- BUSCAR BLOQUES ESPECÍFICOS ---
+        const vBlock = m.b.find(x => x.t === "v"); // Title
+        const hBlock = m.b.find(x => x.t === "h"); // Hint
+        const sBlock = m.b.find(x => x.story);    // Internal Story
+        const dBlock = m.b.find(x => x.t === "d"); // Decision/Question
+
+        const title = vBlock ? (state.lang === "en" ? vBlock.tx.en : vBlock.tx.es) : "Mission";
+        const hint = hBlock ? (state.lang === "en" ? hBlock.tx.en : hBlock.tx.es) : "";
+        const story = sBlock ? (state.lang === "en" ? sBlock.story.en : sBlock.story.es) : "";
+        
+        const question = dBlock ? (state.lang === "en" ? dBlock.q.en : dBlock.q.es) : "No question";
+        const options = dBlock ? dBlock.op : [];
+        const correctIdx = dBlock ? dBlock.c : 0;
+
+        speak(story || question);
+
         app.innerHTML = `
-            <h2>Mission ${mission.id}</h2>
-
+            <h2 style="color:#facc15;">${title}</h2>
+            <p class="small">${hint}</p>
+            
             <div class="card">
-                <p>${mission.question || "No question loaded"}</p>
-
+                ${story ? `<p style="font-style:italic; border-bottom:1px solid #333; padding-bottom:10px;">"${story}"</p>` : ""}
+                <p style="font-weight:bold; font-size:1.1em; margin-top:15px;">${question}</p>
+                
                 <div id="answers">
-                    ${(mission.answers || []).map((a, i) => `
-                        <div class="answer" onclick="checkAnswer(${i}, ${mission.correct})">
-                            ${a.text}
+                    ${options.map((opt, i) => `
+                        <div class="answer" onclick="checkAnswer(${i}, ${</correctIdx})">
+                            ${opt}
                         </div>
                     `).join("")}
                 </div>
-
                 <div id="feedback"></div>
             </div>
 
-            <button onclick="nextMission()">Continue Mission</button>
-
+            <button class="primary" onclick="nextMission()">NEXT MISSION</button>
             <p class="small">Mission ${state.mIndex + 1} / ${state.missions.length}</p>
         `;
-
         return;
     }
 
-    /* =========================
-       COMPLETE (BREATHING)
-    ========================= */
+    // 5. COMPLETE
     if (state.step === "complete") {
-
         app.innerHTML = `
             <h1>Training Complete</h1>
-
             <div class="circle" id="breathCircle">
                 <span id="breathText">Inhale</span>
             </div>
-
-            <p class="small">
-                This exercise trains calm focus and nervous system control.
-            </p>
-
-            <button onclick="restart()">Restart</button>
+            <button class="primary" onclick="location.reload()">RESTART</button>
         `;
-
         startBreathing();
         return;
     }
 }
 
-/* =========================
-   FLOW CONTROLS
-========================= */
+/* --- LOGIC --- */
 
 function startApp() {
     const input = document.getElementById("nameInput");
-
-    state.name = input?.value?.trim() || "User";
-
+    state.name = input?.value || "Explorer";
     state.step = "named";
-
     render();
 }
 
 function startStories() {
-    if (!state.stories.length) {
-        alert("Stories not loaded yet");
-        return;
-    }
-
     state.step = "story";
     state.sIndex = 0;
-
     render();
 }
 
 function nextStory() {
     state.sIndex++;
-
-    if (state.sIndex >= state.stories.length) {
-        state.step = "missions";
-        state.mIndex = 0;
-    }
-
     render();
 }
 
 function nextMission() {
     state.mIndex++;
-
-    if (state.mIndex >= state.missions.length) {
-        state.step = "complete";
-    }
-
     render();
 }
 
-/* =========================
-   ANSWER SYSTEM FIXED
-========================= */
-function checkAnswer(index, correct) {
+function checkAnswer(idx, correct) {
     const fb = document.getElementById("feedback");
-    if (!fb) return;
-
-    if (index === correct) {
-        fb.innerHTML = `<p style="color:green">Correct</p>`;
+    if (idx === correct) {
+        fb.innerHTML = `<p style="color:#22c55e">✓ CORRECT</p>`;
+        speak("Correct");
     } else {
-        fb.innerHTML = `<p style="color:red">Incorrect</p>`;
+        fb.innerHTML = `<p style="color:#ef4444">✗ REVISE</p>`;
+        speak("Observe again");
     }
 }
 
-/* =========================
-   BREATHING LOOP FIXED
-========================= */
 function startBreathing() {
-    const text = document.getElementById("breathText");
-    if (!text) return;
-
     let inhale = true;
-
     setInterval(() => {
-        if (!document.getElementById("breathText")) return;
-
+        const text = document.getElementById("breathText");
+        if (!text) return;
         text.innerText = inhale ? "Inhale" : "Exhale";
         inhale = !inhale;
-
-    }, 3000);
-}
-
-/* =========================
-   RESTART CLEAN
-========================= */
-function restart() {
-    state.step = "welcome";
-    state.sIndex = 0;
-    state.mIndex = 0;
-    state.name = "";
-
-    render();
+    }, 4000);
 }
