@@ -1,240 +1,290 @@
-// =========================
-// KAMIZEN ENGINE V2
-// FULL UI + FLOW SYSTEM
-// =========================
+/* =========================
+   KaMiZen ENGINE V3 FIXED
+   STATE MACHINE STABLE
+========================= */
 
-let stories = [];
-let missions = [];
-let storyIndex = 0;
-let missionIndex = 0;
+let state = {
+    name: "",
+    step: "welcome",
 
-const app = document.getElementById("app");
+    stories: [],
+    missions: [],
 
-// =========================
-// 🔊 TTS ENGINE
-// =========================
+    sIndex: 0,
+    mIndex: 0,
+
+    initialized: false
+};
+
+/* =========================
+   INIT SAFE LOAD
+========================= */
+window.addEventListener("load", async () => {
+    await loadData();
+    render();
+});
+
+/* =========================
+   LOAD JSON SAFE
+========================= */
+async function loadData() {
+    try {
+        const storiesRes = await fetch("/stories.json");
+        const missionsRes = await fetch("/missions.json");
+
+        const storiesData = await storiesRes.json();
+        const missionsData = await missionsRes.json();
+
+        state.stories = storiesData.stories || storiesData;
+        state.missions = missionsData.missions || missionsData;
+
+        state.initialized = true;
+
+        console.log("ENGINE READY:", {
+            stories: state.stories.length,
+            missions: state.missions.length
+        });
+
+    } catch (err) {
+        console.error("LOAD ERROR:", err);
+    }
+}
+
+/* =========================
+   SPEECH (SAFE)
+========================= */
 function speak(text) {
-    if (!text) return;
-
-    const msg = new SpeechSynthesisUtterance(text);
-    msg.lang = "en-US";
-    msg.rate = 0.95;
-    window.speechSynthesis.cancel();
-    window.speechSynthesis.speak(msg);
+    try {
+        const msg = new SpeechSynthesisUtterance(text);
+        msg.lang = "en-US";
+        msg.rate = 1;
+        window.speechSynthesis.cancel();
+        window.speechSynthesis.speak(msg);
+    } catch (e) {
+        console.warn("Speech error:", e);
+    }
 }
 
-// =========================
-// 🎨 UI HELPERS
-// =========================
-function clear() {
+/* =========================
+   MAIN RENDER
+========================= */
+function render() {
+    const app = document.getElementById("app");
+    if (!app) return;
+
     app.innerHTML = "";
+
+    /* =========================
+       WELCOME
+    ========================= */
+    if (state.step === "welcome") {
+        app.innerHTML = `
+            <h1>Welcome to KaMiZen</h1>
+            <p>Enter your name</p>
+
+            <input id="nameInput" placeholder="Your name" />
+
+            <br/><br/>
+
+            <button onclick="startApp()">Start</button>
+        `;
+        return;
+    }
+
+    /* =========================
+       NAME CONFIRM
+    ========================= */
+    if (state.step === "named") {
+        app.innerHTML = `
+            <h2>Hello ${state.name}</h2>
+            <button onclick="startStories()">Begin Journey</button>
+        `;
+        return;
+    }
+
+    /* =========================
+       STORIES ENGINE
+    ========================= */
+    if (state.step === "story") {
+
+        const story = state.stories[state.sIndex];
+
+        // 🔴 SAFETY CHECK (NO AUTO SKIP)
+        if (!story) {
+            console.log("Stories finished → switching to missions");
+            state.step = "missions";
+            render();
+            return;
+        }
+
+        speak(story.en);
+
+        app.innerHTML = `
+            <h2>Story ${story.id}: ${story.t}</h2>
+
+            <div class="card">
+                <p>${story.en}</p>
+            </div>
+
+            <button onclick="nextStory()">Continue Story</button>
+
+            <p class="small">Story ${state.sIndex + 1} / ${state.stories.length}</p>
+        `;
+
+        return;
+    }
+
+    /* =========================
+       MISSIONS ENGINE
+    ========================= */
+    if (state.step === "missions") {
+
+        const mission = state.missions[state.mIndex];
+
+        // 🔴 STOP AUTO COMPLETE BUG
+        if (!mission) {
+            console.log("Missions finished → complete mode");
+            state.step = "complete";
+            render();
+            return;
+        }
+
+        app.innerHTML = `
+            <h2>Mission ${mission.id}</h2>
+
+            <div class="card">
+                <p>${mission.question || "No question loaded"}</p>
+
+                <div id="answers">
+                    ${(mission.answers || []).map((a, i) => `
+                        <div class="answer" onclick="checkAnswer(${i}, ${mission.correct})">
+                            ${a.text}
+                        </div>
+                    `).join("")}
+                </div>
+
+                <div id="feedback"></div>
+            </div>
+
+            <button onclick="nextMission()">Continue Mission</button>
+
+            <p class="small">Mission ${state.mIndex + 1} / ${state.missions.length}</p>
+        `;
+
+        return;
+    }
+
+    /* =========================
+       COMPLETE (BREATHING)
+    ========================= */
+    if (state.step === "complete") {
+
+        app.innerHTML = `
+            <h1>Training Complete</h1>
+
+            <div class="circle" id="breathCircle">
+                <span id="breathText">Inhale</span>
+            </div>
+
+            <p class="small">
+                This exercise trains calm focus and nervous system control.
+            </p>
+
+            <button onclick="restart()">Restart</button>
+        `;
+
+        startBreathing();
+        return;
+    }
 }
 
-function el(tag, className, text) {
-    const e = document.createElement(tag);
-    if (className) e.className = className;
-    if (text) e.innerText = text;
-    return e;
+/* =========================
+   FLOW CONTROLS
+========================= */
+
+function startApp() {
+    const input = document.getElementById("nameInput");
+
+    state.name = input?.value?.trim() || "User";
+
+    state.step = "named";
+
+    render();
 }
 
-// =========================
-// 🌬️ BREATHING CIRCLE
-// =========================
-function breathingCircle(duration) {
-    const circle = el("div", "circle", "INHALE");
-    app.appendChild(circle);
+function startStories() {
+    if (!state.stories.length) {
+        alert("Stories not loaded yet");
+        return;
+    }
+
+    state.step = "story";
+    state.sIndex = 0;
+
+    render();
+}
+
+function nextStory() {
+    state.sIndex++;
+
+    if (state.sIndex >= state.stories.length) {
+        state.step = "missions";
+        state.mIndex = 0;
+    }
+
+    render();
+}
+
+function nextMission() {
+    state.mIndex++;
+
+    if (state.mIndex >= state.missions.length) {
+        state.step = "complete";
+    }
+
+    render();
+}
+
+/* =========================
+   ANSWER SYSTEM FIXED
+========================= */
+function checkAnswer(index, correct) {
+    const fb = document.getElementById("feedback");
+    if (!fb) return;
+
+    if (index === correct) {
+        fb.innerHTML = `<p style="color:green">Correct</p>`;
+    } else {
+        fb.innerHTML = `<p style="color:red">Incorrect</p>`;
+    }
+}
+
+/* =========================
+   BREATHING LOOP FIXED
+========================= */
+function startBreathing() {
+    const text = document.getElementById("breathText");
+    if (!text) return;
 
     let inhale = true;
 
-    const interval = setInterval(() => {
-        if (inhale) {
-            circle.innerText = "INHALE";
-            circle.style.transform = "scale(1.4)";
-        } else {
-            circle.innerText = "EXHALE";
-            circle.style.transform = "scale(0.8)";
-        }
+    setInterval(() => {
+        if (!document.getElementById("breathText")) return;
+
+        text.innerText = inhale ? "Inhale" : "Exhale";
         inhale = !inhale;
-    }, duration * 500);
 
-    setTimeout(() => {
-        clearInterval(interval);
-        circle.innerText = "DONE";
-        circle.style.transform = "scale(1)";
-    }, duration * 1000);
+    }, 3000);
 }
 
-// =========================
-// 🤫 SILENCE MODE
-// =========================
-function silenceBlock(duration) {
-    const box = el("div", "silence", "SILENCE...");
-    app.appendChild(box);
+/* =========================
+   RESTART CLEAN
+========================= */
+function restart() {
+    state.step = "welcome";
+    state.sIndex = 0;
+    state.mIndex = 0;
+    state.name = "";
 
-    setTimeout(() => {
-        box.innerText = "DONE";
-    }, duration * 1000);
+    render();
 }
-
-// =========================
-// ❓ QUESTION RENDER
-// =========================
-function renderQuestion(block, next) {
-    const container = el("div", "question");
-
-    const title = el("h2", "", block.q.en);
-    container.appendChild(title);
-
-    const btns = [];
-
-    block.op.forEach((opt, i) => {
-        const b = el("button", "btn", opt);
-
-        b.onclick = () => {
-            btns.forEach(x => x.disabled = true);
-
-            const isCorrect = i === block.c;
-
-            if (isCorrect) {
-                b.classList.add("correct");
-                speak("Correct");
-            } else {
-                b.classList.add("wrong");
-                speak("Incorrect");
-            }
-
-            const exp = el("p", "explanation", block.ex[i] || "");
-            container.appendChild(exp);
-
-            const nextBtn = el("button", "next", "CONTINUE");
-            nextBtn.onclick = next;
-            container.appendChild(nextBtn);
-        };
-
-        btns.push(b);
-        container.appendChild(b);
-    });
-
-    app.appendChild(container);
-}
-
-// =========================
-// 🎯 BLOCK RENDERER
-// =========================
-function renderBlock(block, next) {
-    clear();
-
-    switch (block.t) {
-
-        case "v":
-            speak(block.tx.en);
-            app.appendChild(el("h1", "title", block.tx.en));
-            setTimeout(next, 2000);
-            break;
-
-        case "h":
-            app.appendChild(el("h2", "header", block.tx.en));
-            setTimeout(next, 1500);
-            break;
-
-        case "story":
-            app.appendChild(el("p", "story", block.story.en));
-            speak(block.story.en);
-            setTimeout(next, 3000);
-            break;
-
-        case "d":
-            renderQuestion(block, next);
-            break;
-
-        case "breath_auto":
-            app.appendChild(el("h3", "", block.tx.en));
-            breathingCircle(block.d);
-            speak(block.tx.en);
-            setTimeout(next, block.d * 1000);
-            break;
-
-        case "sil":
-            silenceBlock(block.d);
-            setTimeout(next, block.d * 1000);
-            break;
-
-        case "r":
-            app.appendChild(el("div", "reward", block.tx));
-            setTimeout(next, 1000);
-            break;
-
-        case "c":
-            app.appendChild(el("p", "comment", block.tx.en));
-            setTimeout(next, 1000);
-            break;
-
-        default:
-            next();
-    }
-}
-
-// =========================
-// 📖 STORY ENGINE
-// =========================
-function runStory() {
-    if (storyIndex >= stories.length) {
-        runMission();
-        return;
-    }
-
-    const story = stories[storyIndex];
-    storyIndex++;
-
-    clear();
-    app.appendChild(el("h1", "title", story.title || "Story"));
-
-    speak(story.title || "");
-
-    setTimeout(runStory, 3000);
-}
-
-// =========================
-// 🎯 MISSION ENGINE
-// =========================
-function runMission() {
-    if (missionIndex >= missions.length) {
-        clear();
-        app.appendChild(el("h1", "", "SYSTEM COMPLETE"));
-        speak("System complete");
-        return;
-    }
-
-    const mission = missions[missionIndex];
-    missionIndex++;
-
-    let i = 0;
-
-    function next() {
-        if (i < mission.b.length) {
-            renderBlock(mission.b[i], () => {
-                i++;
-                next();
-            });
-        } else {
-            setTimeout(runMission, 1500);
-        }
-    }
-
-    next();
-}
-
-// =========================
-// 🚀 INIT
-// =========================
-async function init() {
-    const s = await fetch("/api/stories").then(r => r.json());
-    const m = await fetch("/api/missions").then(r => r.json());
-
-    stories = s.stories || [];
-    missions = m.missions || [];
-
-    runStory();
-}
-
-init();
