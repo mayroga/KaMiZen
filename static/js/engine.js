@@ -1,71 +1,102 @@
+/* =========================================================
+   KAMIZEN ENGINE V7 - STABLE CORE (NO FREEZE VERSION)
+   CONTROL: SINGLE FLOW ENGINE
+   ========================================================= */
+
 let state = {
     stories: [],
     missions: [],
     index: 0,
     step: "story",
     bIndex: 0,
-    loaded: false
+    ready: false
 };
 
-window.addEventListener("load", init);
+/* =========================
+   INIT SYSTEM
+========================= */
 
-async function init(){
-    const [s, m] = await Promise.all([
-        fetch("/api/stories"),
-        fetch("/api/missions")
-    ]);
-
-    const sd = await s.json();
-    const md = await m.json();
-
-    state.stories = sd.stories || [];
-    state.missions = md.missions || [];
-
+window.addEventListener("load", async () => {
+    await loadData();
     render();
+});
+
+async function loadData() {
+    try {
+        const [s, m] = await Promise.all([
+            fetch("/api/stories"),
+            fetch("/api/missions")
+        ]);
+
+        const sd = await s.json();
+        const md = await m.json();
+
+        state.stories = (sd.stories || []).sort((a, b) => a.id - b.id);
+
+        // missions vienen como {missions: []}
+        state.missions = (md.missions || []).sort((a, b) => a.id - b.id);
+
+        state.ready = true;
+
+    } catch (err) {
+        console.error("ENGINE ERROR: DATA LOAD FAILED", err);
+    }
 }
 
 /* =========================
-   MAIN FLOW CONTROLLER
+   MAIN RENDER ENGINE
 ========================= */
 
-function render(){
+function render() {
+    const app = document.getElementById("screen") || document.getElementById("app");
+    if (!app) return;
 
-    const app = document.getElementById("app");
-    if(!app) return;
+    if (!state.ready) {
+        app.innerHTML = `
+            <h3>Loading...</h3>
+            <p>System initializing</p>
+        `;
+        return;
+    }
 
     const story = state.stories[state.index];
     const mission = state.missions[state.index];
 
-    if(!story || !mission){
-        state.index = 0; // 🔁 LOOP RESET
+    // RESET LOOP (1 → 35 → 1)
+    if (!story || !mission) {
+        state.index = 0;
         state.step = "story";
         state.bIndex = 0;
         return render();
     }
 
-    /* STORY MODE */
-    if(state.step === "story"){
+    /* =========================
+       STORY MODE
+    ========================= */
+
+    if (state.step === "story") {
         app.innerHTML = `
             <div class="card">
                 <h2>STORY ${story.id}</h2>
                 <p>${story.en}</p>
             </div>
 
-            <button onclick="startMission()" style="width:100%;padding:12px;">
-                START MISSION
-            </button>
+            <button onclick="startMission()">START MISSION</button>
         `;
 
         speak(story.en);
         return;
     }
 
-    /* MISSION MODE */
-    if(state.step === "mission"){
+    /* =========================
+       MISSION MODE
+    ========================= */
+
+    if (state.step === "mission") {
         const block = mission.b[state.bIndex];
 
-        if(!block){
-            nextCycle();
+        if (!block) {
+            nextStory();
             return;
         }
 
@@ -77,33 +108,40 @@ function render(){
    BLOCK RENDER
 ========================= */
 
-function renderBlock(b){
-    const app = document.getElementById("app");
+function renderBlock(b) {
+    const app = document.getElementById("screen") || document.getElementById("app");
 
     let html = "";
 
-    if(b.t === "v"){
+    /* VISUAL BLOCK */
+    if (b.t === "v") {
         html += `<div class="card"><h2>${b.tx.en}</h2></div>`;
+        speak(b.tx.en);
     }
 
-    if(b.t === "h"){
+    /* HEADER BLOCK */
+    if (b.t === "h") {
         html += `<div class="card"><p>${b.tx.en}</p></div>`;
+        speak(b.tx.en);
     }
 
-    if(b.story){
+    /* STORY BLOCK INSIDE MISSION */
+    if (b.story) {
         html += `<div class="card"><p>${b.story.en}</p></div>`;
+        speak(b.story.en);
     }
 
-    if(b.t === "d"){
-        html += `<div class="card">
+    /* QUESTION BLOCK */
+    if (b.t === "d") {
+        html += `
+        <div class="card">
             <p>${b.q.en}</p>
         `;
 
-        b.op.forEach((o,i)=>{
+        b.op.forEach((opt, i) => {
             html += `
-                <div onclick="answer(${i},${b.c})"
-                     style="padding:10px;margin:5px;background:#1f2937;cursor:pointer;">
-                    ${o}
+                <div class="answer" onclick="answer(${i},${b.c},${JSON.stringify(b.ex).replace(/"/g, '&quot;')})">
+                    ${opt}
                 </div>
             `;
         });
@@ -111,20 +149,44 @@ function renderBlock(b){
         html += `</div>`;
     }
 
-    if(b.t === "breath_auto"){
+    /* BREATHING BLOCK */
+    if (b.t === "br" || b.t === "breath_auto") {
         html += `
-        <div class="card">
-            <div id="circle" style="
-                width:120px;height:120px;border-radius:50%;
-                margin:auto;
-                border:4px solid #3b82f6;
-                animation:breathe 6s infinite;
-            "></div>
-            <p>${b.tx?.en || ""}</p>
+        <div class="card center">
+            <div class="breath-circle">
+                <span>FOCUS</span>
+            </div>
+            <p>${b.tx?.en || b.inf?.en || ""}</p>
         </div>`;
     }
 
-    html += `<button onclick="nextBlock()" style="width:100%;padding:12px;">CONTINUE</button>`;
+    /* SILENCE BLOCK */
+    if (b.t === "sil") {
+        html += `
+        <div class="card">
+            <h3>${b.tx.en}</h3>
+            <p>${b.inf?.en || ""}</p>
+        </div>`;
+    }
+
+    /* REWARD BLOCK */
+    if (b.t === "r") {
+        html += `
+        <div class="card" style="color:#22c55e;">
+            ⭐ +${b.p} XP
+        </div>`;
+    }
+
+    /* CONCLUSION */
+    if (b.t === "c") {
+        html += `
+        <div class="card">
+            <p>${b.tx.en}</p>
+        </div>`;
+        speak(b.tx.en);
+    }
+
+    html += `<button onclick="nextBlock()">CONTINUE</button>`;
 
     app.innerHTML = html;
 }
@@ -133,22 +195,22 @@ function renderBlock(b){
    CONTROL FLOW
 ========================= */
 
-function startMission(){
+function startMission() {
     state.step = "mission";
     state.bIndex = 0;
     render();
 }
 
-function nextBlock(){
+function nextBlock() {
     state.bIndex++;
     render();
 }
 
-function nextCycle(){
+function nextStory() {
     state.index++;
 
-    if(state.index >= state.stories.length){
-        state.index = 0; // 🔁 LOOP FINAL
+    if (state.index >= state.stories.length) {
+        state.index = 0; // LOOP CLEAN 1→35→1
     }
 
     state.step = "story";
@@ -158,34 +220,45 @@ function nextCycle(){
 }
 
 /* =========================
-   ANSWER
+   ANSWER SYSTEM
 ========================= */
 
-function answer(i,c){
-    if(i === c){
-        alert("CORRECT");
-    }else{
-        alert("TRY AGAIN");
-    }
+function answer(i, correct, explanations) {
+    const app = document.getElementById("screen") || document.getElementById("app");
+
+    const isCorrect = i === correct;
+    const msg = explanations?.[i] || "";
+
+    app.innerHTML += `
+        <div class="card" style="color:${isCorrect ? '#22c55e' : '#ef4444'};">
+            ${isCorrect ? "CORRECT" : "WRONG"}<br>
+            ${msg}
+        </div>
+
+        <button onclick="nextBlock()">CONTINUE</button>
+    `;
+
+    speak(msg);
 }
 
 /* =========================
-   SPEECH
+   SPEECH ENGINE
 ========================= */
 
-function speak(t){
-    if(!t) return;
-    const s = new SpeechSynthesisUtterance(t);
-    s.lang = "en-US";
-    speechSynthesis.speak(s);
+function speak(text) {
+    if (!text) return;
+    window.speechSynthesis.cancel();
+    const msg = new SpeechSynthesisUtterance(text);
+    msg.lang = "en-US";
+    window.speechSynthesis.speak(msg);
 }
 
-/* CSS ANIMATION INJECTION */
-const style = document.createElement("style");
-style.innerHTML = `
-@keyframes breathe{
-    0%{transform:scale(0.8)}
-    50%{transform:scale(1.2)}
-    100%{transform:scale(0.8)}
-}`;
-document.head.appendChild(style);
+/* =========================
+   SAFETY: PREVENT DOUBLE ENGINE
+========================= */
+
+if (window.__KAMIZEN_ENGINE_LOADED__) {
+    console.warn("ENGINE DUPLICATED - BLOCKED");
+} else {
+    window.__KAMIZEN_ENGINE_LOADED__ = true;
+}
