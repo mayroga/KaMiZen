@@ -1,21 +1,22 @@
 /* =============================================================
-   AURA BY MAY ROGA - KaMiZen ENGINE V4 (STRICT LINEAR)
-   - Mandatory English Only
-   - Flow: Name -> Stories (Ascending) -> Missions (Ascending)
-   - Breathing circle synchronization (Inhale = Expand / Exhale = Contract)
+   AURA BY MAY ROGA - KaMiZen ENGINE V5 (PERFECT LINEAR FLOW)
+   - Mandatory English Protocol
+   - Sequence: Welcome -> Stories (Ascending) -> Missions (Ascending)
+   - Synchronized Respiratory Circle (Inhale/Exhale)
    ============================================================= */
 
 let state = {
     name: "",
-    step: "welcome", // welcome, stories, missions, complete
-    sIndex: 0,       // Story counter
-    mIndex: 0,       // Mission counter
-    bIndex: 0,       // Block counter within mission
+    step: "welcome", 
+    sIndex: 0,       
+    mIndex: 0,       
+    bIndex: 0,       
     stories: [],
     missions: [],
     initialized: false
 };
 
+// INITIALIZATION
 window.addEventListener("load", async () => {
     await loadData();
     render();
@@ -30,12 +31,12 @@ async function loadData() {
         const sData = await sRes.json();
         const mData = await mRes.json();
         
-        // Ensure strictly ascending order by ID
+        // Sorting by ID to ensure strict progression (1, 2, 3...)
         state.stories = (sData.stories || []).sort((a, b) => a.id - b.id);
         state.missions = (mData.missions || []).sort((a, b) => a.id - b.id);
         state.initialized = true;
     } catch (err) {
-        console.error("System initializing error...");
+        console.error("Critical: Database connection failed.");
     }
 }
 
@@ -43,29 +44,32 @@ function speak(text) {
     if (!text) return;
     window.speechSynthesis.cancel();
     const msg = new SpeechSynthesisUtterance(text);
-    msg.lang = "en-US"; // Strict English
+    msg.lang = "en-US";
     window.speechSynthesis.speak(msg);
 }
 
+// MAIN RENDER ENGINE
 function render() {
     const app = document.getElementById("app");
     if (!app) return;
     app.innerHTML = "";
 
-    // 1. MANDATORY GREETING & NAME
+    // PHASE 1: GREETING & NAME (MANDATORY)
     if (state.step === "welcome") {
         app.innerHTML = `
-            <h1>KAMIZEN LIFE SAFETY</h1>
-            <div class="card">
-                <p>Welcome. Please enter your name to begin the protocol.</p>
-                <input id="nameInput" type="text" placeholder="Full Name" autocomplete="off" />
+            <div class="welcome-screen">
+                <h1>KAMIZEN LIFE SAFETY</h1>
+                <div class="card">
+                    <p>Enter your name to initiate the protocol:</p>
+                    <input id="nameInput" type="text" placeholder="Full Name" autocomplete="off" />
+                </div>
+                <button class="primary" onclick="startApp()">CONTINUE</button>
             </div>
-            <button class="primary" onclick="startApp()">CONTINUE</button>
         `;
         return;
     }
 
-    // 2. STORIES PHASE (LOWER TO HIGHER ID)
+    // PHASE 2: KNOWLEDGE STORIES (ASCENDING)
     if (state.step === "stories") {
         const s = state.stories[state.sIndex];
         if (!s) {
@@ -74,9 +78,9 @@ function render() {
             return;
         }
         app.innerHTML = `
-            <h3 style="color:#3b82f6;">KNOWLEDGE BASE: PART ${s.id}</h3>
-            <div class="card">
-                <p style="font-size:1.4em; line-height:1.6;">${s.en}</p>
+            <h3 class="section-title">KNOWLEDGE PROTOCOL: ${s.id}</h3>
+            <div class="card story-card">
+                <p>${s.en}</p>
             </div>
             <button class="primary" onclick="nextStory()">CONTINUE</button>
         `;
@@ -84,12 +88,13 @@ function render() {
         return;
     }
 
-    // 3. MISSIONS PHASE (1 TO 35, BLOCK BY BLOCK)
+    // PHASE 3: MISSIONS (ASCENDING BLOCK BY BLOCK)
     if (state.step === "missions") {
         const mission = state.missions[state.mIndex];
         if (!mission) {
-            state.mIndex = 0; // Restart loop if finished
-            state.step = "stories"; // Or complete
+            // End of all levels -> Restart or Completion screen
+            state.mIndex = 0; 
+            state.step = "stories";
             render();
             return;
         }
@@ -102,33 +107,28 @@ function render() {
 function renderMissionBlock(block, totalBlocks) {
     const app = document.getElementById("app");
     let content = "";
-
-    // Mapping JSON block types to UI
     const type = block.t || (block.story ? "story" : "");
 
     switch (type) {
         case "v": // Title
-            content = `<h2 class="title-block">${block.tx.en}</h2>`;
+            content = `<h2 class="mission-title">${block.tx.en}</h2>`;
             speak(block.tx.en);
             break;
         case "h": // Hint
-            content = `<div class="card hint"><h3>Guidance:</h3><p>${block.tx.en}</p></div>`;
+            content = `<div class="card hint-card"><h3>GUIDANCE:</h3><p>${block.tx.en}</p></div>`;
             speak(block.tx.en);
             break;
-        case "story": // Internal Mission Story
-            content = `<div class="card story"><h3>Philosophy</h3><p>${block.story.en}</p></div>`;
+        case "story": // Philo
+            content = `<div class="card philosophy-card"><h3>PHILOSOPHY</h3><p>${block.story.en}</p></div>`;
             speak(block.story.en);
             break;
-        case "br": // Manual Breath
-            content = `
-                <div class="circle-container">
-                    <div class="circle breath-manual"><span>${block.tx.en}</span></div>
-                </div>`;
+        case "br": // Manual pause
+            content = `<div class="circle-container"><div class="circle breath-static"><span>${block.tx.en}</span></div></div>`;
             speak(block.tx.en);
             break;
-        case "d": // Decision
+        case "d": // Decision / Quiz
             content = `
-                <div class="card">
+                <div class="card quiz-card">
                     <p class="question">${block.q.en}</p>
                     <div id="answers">
                         ${block.op.map((opt, i) => `
@@ -141,22 +141,22 @@ function renderMissionBlock(block, totalBlocks) {
                 </div>`;
             speak(block.q.en);
             return app.innerHTML = content;
-        case "sil": // Silence Focus
-            content = `<div class="card"><h3>${block.tx.en}</h3><p>${block.inf.en}</p></div>`;
+        case "sil": // Focus
+            content = `<div class="card silence-card"><h3>${block.tx.en}</h3><p>${block.inf.en}</p></div>`;
             break;
-        case "breath_auto": // Automatic Respiratory Circle
+        case "breath_auto": // THE CIRCLE (MANDATORY SYNC)
             content = `
                 <div class="circle-container">
-                    <div id="respiratoryCircle" class="circle blue-breath"><span id="breathAction">...</span></div>
+                    <div id="respiratoryCircle" class="circle breathing-circle-active"><span id="breathAction">...</span></div>
                 </div>
-                <div class="card"><p>${block.inf.en}</p></div>`;
+                <div class="card info-card"><p>${block.inf.en}</p></div>`;
             app.innerHTML = content;
             return startAutoBreath(block.d);
-        case "r": // Points
-            content = `<div class="reward">⭐ ${block.tx} +${block.p} pts</div>`;
+        case "r": // Rewards
+            content = `<div class="reward-tag">⭐ ${block.tx} +${block.p} points</div>`;
             break;
         case "c": // Conclusion
-            content = `<div class="card conclusion"><p>${block.tx.en}</p></div>`;
+            content = `<div class="card final-card"><p>${block.tx.en}</p></div>`;
             speak(block.tx.en);
             break;
     }
@@ -164,12 +164,12 @@ function renderMissionBlock(block, totalBlocks) {
     app.innerHTML = content + `<button class="primary" onclick="nextBlock()">CONTINUE</button>`;
 }
 
-/* --- CONTROL LOGIC --- */
+/* --- LOGIC CONTROLLERS --- */
 
 function startApp() {
-    const val = document.getElementById("nameInput").value;
-    if (!val) return alert("Name required");
-    state.name = val;
+    const name = document.getElementById("nameInput").value;
+    if (!name.trim()) return; 
+    state.name = name;
     state.step = "stories";
     render();
 }
@@ -196,7 +196,7 @@ function handleDecision(idx, correct, explanations) {
     const explanation = explanations[idx];
     
     fb.innerHTML = `
-        <div class="exp-box ${isCorrect ? 'ok' : 'no'}">
+        <div class="explanation-box ${isCorrect ? 'success' : 'alert'}">
             <p><strong>${isCorrect ? 'CORRECT' : 'REVISE'}</strong></p>
             <span>${explanation}</span>
         </div>
@@ -207,29 +207,31 @@ function handleDecision(idx, correct, explanations) {
 
 function startAutoBreath(seconds) {
     let timeLeft = seconds;
-    let phase = true; // true = Inhale (Expand), false = Exhale (Contract)
+    let isInhaling = true; 
     const label = document.getElementById("breathAction");
     const circle = document.getElementById("respiratoryCircle");
     
     const interval = setInterval(() => {
         if (!label || !circle) { clearInterval(interval); return; }
         
-        if (phase) {
+        if (isInhaling) {
             label.innerText = "INHALE";
-            circle.style.transform = "scale(1.2)"; // Visual expansion
+            circle.classList.add("expand");
+            circle.classList.remove("contract");
             speak("Inhale");
         } else {
             label.innerText = "EXHALE";
-            circle.style.transform = "scale(0.8)"; // Visual contraction
+            circle.classList.add("contract");
+            circle.classList.remove("expand");
             speak("Exhale");
         }
         
-        phase = !phase;
-        timeLeft -= 4;
+        isInhaling = !isInhaling;
+        timeLeft -= 4; // 4 second cycles
         
         if (timeLeft <= 0) {
             clearInterval(interval);
-            document.getElementById("app").innerHTML += `<button class="primary" onclick="nextBlock()">MISSION COMPLETE</button>`;
+            document.getElementById("app").innerHTML += `<button class="primary" onclick="nextBlock()">COMPLETE PHASE</button>`;
         }
     }, 4000);
 }
