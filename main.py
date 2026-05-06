@@ -1,115 +1,161 @@
-from flask import Flask, jsonify, send_from_directory
-import json
+# =====================================
+# 🧠 KAMIZEN BACKEND vFINAL (FASTAPI)
+# =====================================
+
+from fastapi import FastAPI, HTTPException
+from fastapi.responses import FileResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
 import os
+import json
+from typing import List
 
-app = Flask(__name__, static_folder="static")
+app = FastAPI()
 
-# =========================
-# BASE DIR
-# =========================
+# =====================================
+# 📁 PATHS
+# =====================================
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+STATIC_DIR = os.path.join(BASE_DIR, "static")
 
-# =========================
-# STATE (SIMPLE MEMORY LOOP)
-# =========================
-STATE = {
-    "index": 1
+# Montar archivos estáticos
+app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+
+# =====================================
+# 🧠 CACHE (evita leer disco siempre)
+# =====================================
+
+CACHE = {
+    "missions": None,
+    "stories": None
 }
 
-# =========================
-# LOAD JSON SAFE
-# =========================
-def load_json(file_name):
-    path = os.path.join(BASE_DIR, file_name)
+# =====================================
+# 🔍 LOAD JSON SAFE
+# =====================================
+
+def load_json_file(path: str):
     try:
         with open(path, "r", encoding="utf-8") as f:
             return json.load(f)
     except Exception as e:
-        print(f"Error loading {file_name}: {e}")
+        print(f"Error loading {path}: {e}")
+        return None
+
+# =====================================
+# 📦 LOAD ALL MISSIONS
+# =====================================
+
+def load_all_missions():
+    if CACHE["missions"] is not None:
+        return CACHE["missions"]
+
+    all_missions = []
+
+    # Buscar archivos missions_*.json
+    for file in sorted(os.listdir(BASE_DIR)):
+        if file.startswith("missions_") and file.endswith(".json"):
+            path = os.path.join(BASE_DIR, file)
+            data = load_json_file(path)
+
+            if not data:
+                continue
+
+            missions = data.get("missions") or data.get("ses") or []
+
+            all_missions.extend(missions)
+
+    CACHE["missions"] = {
+        "total": len(all_missions),
+        "missions": all_missions
+    }
+
+    return CACHE["missions"]
+
+# =====================================
+# 📖 LOAD STORIES (OPCIONAL)
+# =====================================
+
+def load_stories():
+    if CACHE["stories"] is not None:
+        return CACHE["stories"]
+
+    path = os.path.join(BASE_DIR, "stories.json")
+
+    if not os.path.exists(path):
+        CACHE["stories"] = {}
         return {}
 
-# =========================
-# STORIES (stories.json)
-# =========================
-def get_story(index):
-    data = load_json("stories.json")
-    for item in data.get("stories", []):
-        if item.get("id") == index:
-            return item
-    return {"en": "Story not found.", "es": "Historia no encontrada."}
+    data = load_json_file(path) or {}
+    CACHE["stories"] = data
+    return data
 
-# =========================
-# MISSIONS ROUTER
-# =========================
-def get_mission_list(index):
-    """
-    Retorna una lista con la misión correspondiente para que 
-    el frontend pueda iterar sobre ella.
-    """
-    if 1 <= index <= 7:
-        file_name = "missions_01_07.json"
-    elif 8 <= index <= 14:
-        file_name = "missions_08_14.json"
-    elif 15 <= index <= 21:
-        file_name = "missions_15_21.json"
-    elif 22 <= index <= 28:
-        file_name = "missions_22_28.json"
-    else:
-        file_name = "missions_29_35.json"
+# =====================================
+# 🌐 ROUTES
+# =====================================
 
-    data = load_json(file_name)
-    
-    # Buscamos la misión específica por su ID
-    for item in data.get("missions", []):
-        if item.get("id") == index:
-            # Importante: El frontend espera una LISTA de misiones
-            return [item] 
+@app.get("/")
+def root():
+    return FileResponse(os.path.join(STATIC_DIR, "session.html"))
 
-    return []
+@app.get("/session")
+def session():
+    return FileResponse(os.path.join(STATIC_DIR, "session.html"))
 
-# =========================
-# SESSION API (CORREGIDA)
-# =========================
-@app.route("/api/session/start")
-def session_start():
-    index = STATE["index"]
+@app.get("/api/missions")
+def get_missions():
+    data = load_all_missions()
 
-    story = get_story(index)
-    missions = get_mission_list(index) # Ahora devuelve una lista []
+    if not data["missions"]:
+        raise HTTPException(status_code=404, detail="No missions found")
 
-    # ADVANCE INDEX (SAFE LOOP 1–35)
-    STATE["index"] += 1
-    if STATE["index"] > 35:
-        STATE["index"] = 1
+    return JSONResponse(content=data)
 
-    # Retornamos 'missions' en plural para coincidir con session.html
-    return jsonify({
-        "index": index,
-        "story": story,
-        "missions": missions 
-    })
+@app.get("/api/missions/{mission_id}")
+def get_mission(mission_id: int):
+    data = load_all_missions()
 
-# =========================
-# RESET (DEBUG ONLY)
-# =========================
-@app.route("/api/reset")
-def reset():
-    STATE["index"] = 1
-    return jsonify({
-        "status": "reset",
-        "index": 1
-    })
+    for m in data["missions"]:
+        if m.get("id") == mission_id:
+            return JSONResponse(content=m)
 
-# =========================
-# FRONTEND ENTRY
-# =========================
-@app.route("/")
-def home():
-    return send_from_directory("static", "session.html")
+    raise HTTPException(status_code=404, detail="Mission not found")
 
-# =========================
-# RUN SERVER
-# =========================
+@app.get("/api/stories")
+def get_stories():
+    data = load_stories()
+    return JSONResponse(content=data)
+
+# =====================================
+# 🧠 SIMPLE SESSION STATE (OPCIONAL)
+# =====================================
+
+STATE = {
+    "current_mission": 1,
+    "score": 0
+}
+
+@app.get("/api/state")
+def get_state():
+    return STATE
+
+@app.post("/api/state")
+def update_state(payload: dict):
+    STATE.update(payload)
+    return {"status": "updated", "state": STATE}
+
+# =====================================
+# 🧪 HEALTH CHECK
+# =====================================
+
+@app.get("/health")
+def health():
+    return {"status": "ok"}
+
+# =====================================
+# ▶ RUN
+# =====================================
+
 if __name__ == "__main__":
-    # Escucha en todas las interfaces para pruebas locales
-    app.run(debug=True, host="0.0.0.0", port=5000)
+    import uvicorn
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
