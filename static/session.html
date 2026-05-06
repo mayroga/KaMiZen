@@ -1,214 +1,253 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>AL CIELO - FAMILY & STREET WISDOM</title>
-    <style>
-        :root { --soft-blue: #00d2ff; --heart-pink: #ff4d6d; --gold: #ffd700; --safety-green: #2ecc71; }
-        body { margin: 0; overflow: hidden; background: #000; color: white; font-family: 'Orbitron', sans-serif; touch-action: none; }
-        
-        #hud { position: absolute; top: 10px; width: 100%; display: flex; justify-content: space-around; z-index: 100; }
-        .data-box { background: rgba(255, 255, 255, 0.1); border-radius: 15px; padding: 10px; text-align: center; min-width: 110px; border: 1px solid var(--soft-blue); }
-        .label { font-size: 10px; color: var(--soft-blue); display: block; letter-spacing: 1px; }
-        .value { font-size: 20px; font-weight: 900; }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>KamiZen Session</title>
 
-        #timer-display { position: absolute; bottom: 30px; width: 100%; text-align: center; font-size: 45px; font-weight: 900; color: var(--gold); }
-        
-        #overlay { position: fixed; inset: 0; background: radial-gradient(circle, #1a1a1a 0%, #000 100%); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 2000; text-align: center; }
-        .start-btn { padding: 20px 50px; background: var(--soft-blue); color: #000; border: none; border-radius: 30px; font-family: 'Orbitron'; font-weight: 900; cursor: pointer; font-size: 1.2rem; }
-        
-        #breathing-ui { display: none; padding: 20px; }
-        .breath-text { font-size: 2.5rem; color: var(--heart-pink); margin-bottom: 10px; }
-    </style>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
+<style>
+body {
+    margin:0;
+    font-family: Arial, sans-serif;
+    background:#0b0f1a;
+    color:white;
+    text-align:center;
+}
+
+/* ================= HEADER ================= */
+#app {
+    padding:20px;
+}
+
+/* ================= BUTTONS ================= */
+button {
+    padding:10px 15px;
+    margin:5px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.btn {
+    background:#1f2a44;
+    color:white;
+}
+
+.btn:hover {
+    background:#2b3a5f;
+}
+
+.continue {
+    background:#00c3ff;
+    color:black;
+}
+
+/* ================= COLORS ================= */
+.correct { background:#00c853 !important; }
+.wrong { background:#d50000 !important; }
+.partial { background:#ff9100 !important; }
+.almost { background:#ffd600 !important; }
+
+/* ================= BREATHING ================= */
+.circle {
+    width:160px;
+    height:160px;
+    border-radius:50%;
+    margin:20px auto;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:18px;
+    font-weight:bold;
+}
+
+.breath {
+    border:4px solid #00c3ff;
+    animation:pulse 4s infinite;
+}
+
+.silence {
+    border:4px solid #aaa;
+    opacity:0.7;
+}
+
+@keyframes pulse {
+    0% { transform:scale(1); }
+    50% { transform:scale(1.3); }
+    100% { transform:scale(1); }
+}
+
+/* ================= BOX ================= */
+.box {
+    background:#111a2e;
+    padding:20px;
+    border-radius:10px;
+    margin:10px;
+}
+
+/* ================= SMALL ================= */
+small {
+    color:#aaa;
+}
+
+/* ================= INPUT ================= */
+input {
+    padding:10px;
+    border-radius:8px;
+    border:none;
+    width:200px;
+}
+</style>
 </head>
+
 <body>
 
-<div id="hud">
-    <div class="data-box"><span class="label">JOY POINTS</span><span id="val-money" class="value">0</span></div>
-    <div class="data-box" style="border-color: var(--heart-pink);"><span class="label">HEART HEALTH</span><span id="val-health" class="value">100%</span></div>
-    <div class="data-box"><span class="label">STREET LEVEL</span><span id="val-lv" class="value">1</span></div>
-</div>
+<div id="app"></div>
 
-<div id="timer-display">10:00</div>
-
-<div id="overlay">
-    <div id="intro-content">
-        <h1 style="color: var(--soft-blue); font-size: 2.5rem;">AL CIELO</h1>
-        <p style="margin-bottom: 40px; color: #ccc;">PROTEGE TU FELICIDAD, DOMINA LA CALLE</p>
-        <button class="start-btn" onclick="startGame()">START TRAINING</button>
-    </div>
-    <div id="breathing-ui">
-        <h2 id="breath-text" class="breath-text">INHALE</h2>
-        <div id="b-circle" style="width:140px; height:140px; border:6px solid var(--heart-pink); border-radius:50%; margin:30px auto; transition: 4s ease-in-out;"></div>
-        <p id="breath-msg" style="color: #aaa; font-size: 0.9rem; max-width: 300px; margin: 0 auto;"></p>
-        <button id="reset-btn" class="start-btn" style="display:none; margin-top:30px;" onclick="location.reload()">RESTART</button>
-    </div>
-</div>
-
-<canvas id="gameCanvas"></canvas>
+<script src="/static/js/engine.js"></script>
 
 <script>
-const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
-let active = false;
-let objects = [];
-let stats = { money: 0, health: 100, time: 600, level: 1, mega: 3 };
-let user = { x: window.innerWidth/2, y: window.innerHeight/2, size: 60 };
-let isShooting = false;
-let laserTimer = 0;
+// =====================================
+// GLOBAL STATE
+// =====================================
+let engine;
+let userName = "";
+let stories = [];
+let missions = [];
+let storyIndex = 0;
 
-// El Banco de Palabras de un "Padre Americano"
-const wordBank = [
-    { n: "BULLYING", p: "BE KIND", c: "#ff4d6d" },
-    { n: "STRANGER", p: "RUN TO MOM", c: "#ff9f43" },
-    { n: "DRUGS", p: "CLEAN LIFE", c: "#ee5253" },
-    { n: "PEER PRESSURE", p: "BE YOURSELF", c: "#54a0ff" },
-    { n: "MEAN WORDS", p: "LOVE", c: "#ff4d6d" },
-    { n: "DARK ALLEY", p: "STAY IN LIGHT", c: "#feca57" },
-    { n: "LIES", p: "HAPPINESS", c: "#1dd1a1" },
-    { n: "STOLEN JOY", p: "FAMILY HUG", c: "#ff4d6d" }
-];
+// =====================================
+// START SCREEN
+// =====================================
+function startApp() {
+    const app = document.getElementById("app");
 
-function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-window.addEventListener('resize', resize); resize();
-
-function startGame() {
-    document.getElementById('overlay').style.backgroundColor = 'transparent';
-    document.getElementById('intro-content').style.display = 'none';
-    document.getElementById('overlay').style.pointerEvents = 'none';
-    active = true;
-    loop();
-    countDown();
-    spawnLoop();
+    app.innerHTML = `
+        <h1>Welcome to KamiZen</h1>
+        <p>Awareness • Calm • Control • Focus</p>
+        <button class="btn" onclick="askName()">Start</button>
+    `;
 }
 
-function spawnLoop() {
-    if(!active) return;
-    const data = wordBank[Math.floor(Math.random() * wordBank.length)];
-    objects.push({
-        text: data.n, sol: data.p, color: data.c, type: "neg",
-        x: Math.random() * (canvas.width - 100) + 50,
-        y: -50,
-        vx: (Math.random() - 0.5) * (stats.level * 3),
-        vy: 2 + (stats.level * 0.5)
-    });
-    setTimeout(spawnLoop, 1000 - (stats.level * 100));
+// =====================================
+// ASK NAME
+// =====================================
+function askName() {
+    const app = document.getElementById("app");
+
+    app.innerHTML = `
+        <h2>What is your name?</h2>
+        <input id="nameInput" placeholder="Enter name"/>
+        <br><br>
+        <button class="btn" onclick="saveName()">Continue</button>
+    `;
 }
 
-function countDown() {
-    setInterval(() => {
-        if(!active) return;
-        stats.time--;
-        if(stats.time % 120 === 0) stats.level++; // Sube nivel cada 2 min
-        let m = Math.floor(stats.time/60), s = stats.time%60;
-        document.getElementById("timer-display").innerText = `${m}:${s<10?'0':''}${s}`;
-        document.getElementById("val-lv").innerText = stats.level;
-        if(stats.time <= 0) endSession();
-    }, 1000);
+function saveName() {
+    userName = document.getElementById("nameInput").value || "User";
+    loadStories();
 }
 
-function update() {
-    if(!active) return;
+// =====================================
+// LOAD STORIES
+// =====================================
+async function loadStories() {
+    const res = await fetch("/api/stories");
+    stories = Object.values(await res.json());
 
-    if(isShooting) {
-        laserTimer += 16;
-        if(laserTimer > 2000) { isShooting = false; laserTimer = -1000; } // Bloqueo 1 seg
-    } else {
-        if(laserTimer < 0) laserTimer += 16; else laserTimer = 0;
+    showStory();
+}
+
+function showStory() {
+    const app = document.getElementById("app");
+
+    if (storyIndex >= stories.length) {
+        loadMissions();
+        return;
     }
 
-    objects.forEach((o, i) => {
-        o.x += o.vx; o.y += o.vy;
-        if(o.x < 0 || o.x > canvas.width) o.vx *= -1;
+    let s = stories[storyIndex];
 
-        // Laser transforma odio en amor
-        if(isShooting && laserTimer > 0 && Math.abs(o.x - user.x) < 50 && o.y < user.y) {
-            if(o.type === "neg") {
-                o.type = "pos"; o.text = o.sol; stats.money += 100;
-            }
-        }
+    app.innerHTML = `
+        <div class="box">
+            <h2>Story ${storyIndex + 1}</h2>
+            <p>${s.text || JSON.stringify(s)}</p>
+        </div>
 
-        // Colisión
-        if(Math.hypot(o.x - user.x, o.y - user.y) < 40) {
-            if(o.type === "neg") { stats.health -= 5; }
-            else { stats.money += 500; }
-            objects.splice(i, 1);
-        }
-        if(o.y > canvas.height) objects.splice(i, 1);
-    });
-
-    document.getElementById("val-money").innerText = stats.money;
-    document.getElementById("val-health").innerText = stats.health + "%";
+        <button class="continue" onclick="nextStory()">Continue</button>
+    `;
 }
 
-function draw() {
-    ctx.fillStyle = "rgba(0,0,0,0.3)";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    if(isShooting && laserTimer > 0) {
-        ctx.fillStyle = "rgba(0, 210, 255, 0.4)";
-        ctx.fillRect(user.x - 20, 0, 40, user.y);
-        ctx.fillStyle = "white";
-        ctx.fillRect(user.x - 2, 0, 4, user.y);
-    }
-
-    objects.forEach(o => {
-        ctx.fillStyle = o.type === "neg" ? o.color : "#2ecc71";
-        ctx.font = "bold 22px Orbitron";
-        ctx.textAlign = "center";
-        ctx.fillText(o.text, o.x, o.y);
-    });
-
-    // Avatar Corazón
-    ctx.strokeStyle = laserTimer < 0 ? "red" : varColor('--soft-blue');
-    ctx.lineWidth = 4;
-    ctx.beginPath();
-    ctx.arc(user.x, user.y, 30, 0, Math.PI*2);
-    ctx.stroke();
+function nextStory() {
+    storyIndex++;
+    showStory();
 }
 
-function varColor(name) { return getComputedStyle(document.documentElement).getPropertyValue(name); }
+// =====================================
+// LOAD MISSIONS
+// =====================================
+async function loadMissions() {
+    const res = await fetch("/api/missions");
+    const data = await res.json();
 
-function loop() {
-    update(); draw();
-    if(active) requestAnimationFrame(loop);
+    missions = data.missions;
+
+    engine = new KamiZenEngine({ container: "app", lang: "en" });
+    engine.load(data);
+    engine.start();
 }
 
-function endSession() {
-    active = false;
-    document.getElementById('overlay').style.backgroundColor = 'rgba(0,0,0,0.95)';
-    document.getElementById('overlay').style.pointerEvents = 'all';
-    document.getElementById('breathing-ui').style.display = 'block';
-    
-    const steps = [
-        { t: "INHALE", m: "Huele la flor: Trae amor y seguridad a tu cuerpo." },
-        { t: "HOLD", m: "Guarda ese beso y ese abrazo en tu corazón." },
-        { t: "EXHALE", m: "Sopla la vela: Suelta el miedo y la tristeza de la calle." }
-    ];
-    
-    let i = 0;
+// =====================================
+// BREATHING VISUAL (HOOK)
+// =====================================
+window.showBreathing = function(type, text, info, duration) {
+    const app = document.getElementById("app");
+
+    let cls = type === "silence" ? "circle silence" : "circle breath";
+
+    app.innerHTML = `
+        <div class="${cls}" id="circle">${text}</div>
+        <p><small>${info}</small></p>
+    `;
+
+    let inhale = true;
+
     const interval = setInterval(() => {
-        document.getElementById('breath-text').innerText = steps[i].t;
-        document.getElementById('breath-msg').innerText = steps[i].m;
-        document.getElementById('b-circle').style.transform = i === 0 ? "scale(1.8)" : i === 2 ? "scale(1)" : "scale(1.8)";
-        i = (i + 1) % 3;
-    }, 4000);
+        document.getElementById("circle").innerText = inhale ? "INHALE" : "EXHALE";
+        inhale = !inhale;
+    }, 2000);
 
     setTimeout(() => {
         clearInterval(interval);
-        document.getElementById('breath-text').innerText = "GOD BLESS YOU";
-        document.getElementById('reset-btn').style.display = 'block';
-    }, 60000);
-}
+    }, duration * 1000);
+};
 
-window.addEventListener("mousemove", e => { user.x = e.clientX; user.y = e.clientY; });
-window.addEventListener("mousedown", () => isShooting = true);
-window.addEventListener("mouseup", () => isShooting = false);
-window.addEventListener("touchstart", e => { isShooting = true; user.x = e.touches[0].clientX; user.y = e.touches[0].clientY; });
-window.addEventListener("touchmove", e => { user.x = e.touches[0].clientX; user.y = e.touches[0].clientY; });
-window.addEventListener("touchend", () => isShooting = false);
+// =====================================
+// QUESTION COLOR FEEDBACK (HOOK)
+// =====================================
+window.showAnswerFeedback = function(state, explanation) {
+    const app = document.getElementById("app");
+
+    let color = "partial";
+
+    if (state === "correct") color = "correct";
+    if (state === "wrong") color = "wrong";
+    if (state === "almost") color = "almost";
+
+    app.innerHTML += `
+        <div class="box ${color}">
+            <p>${explanation}</p>
+            <button class="continue" onclick="engine.nextBlock()">Continue</button>
+        </div>
+    `;
+};
+
+// =====================================
+// INIT
+// =====================================
+startApp();
 </script>
+
 </body>
 </html>
