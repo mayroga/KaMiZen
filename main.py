@@ -1,69 +1,109 @@
-# =====================================
-# 🧠 KAMIZEN BACKEND vFINAL (FASTAPI)
-# =====================================
-
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 import os
 import json
-from typing import List
 
 app = FastAPI()
 
-# =====================================
+# =========================
 # 📁 PATHS
-# =====================================
-
+# =========================
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 STATIC_DIR = os.path.join(BASE_DIR, "static")
 
-# Montar archivos estáticos
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
-# =====================================
-# 🧠 CACHE (evita leer disco siempre)
-# =====================================
-
+# =========================
+# 🧠 CACHE
+# =========================
 CACHE = {
-    "missions": None,
-    "stories": None
+    "stories": None,
+    "missions": None
 }
 
-# =====================================
-# 🔍 LOAD JSON SAFE
-# =====================================
-
-def load_json_file(path: str):
+# =========================
+# 🔍 SAFE JSON LOADER
+# =========================
+def load_json(path):
     try:
         with open(path, "r", encoding="utf-8") as f:
             return json.load(f)
     except Exception as e:
-        print(f"Error loading {path}: {e}")
+        print(f"❌ JSON ERROR: {path} -> {e}")
         return None
 
-# =====================================
-# 📦 LOAD ALL MISSIONS
-# =====================================
+# =========================
+# 📖 STORIES LOADER (STRICT)
+# =========================
+def load_stories():
+    if CACHE["stories"] is not None:
+        return CACHE["stories"]
 
-def load_all_missions():
+    path = os.path.join(BASE_DIR, "stories.json")
+
+    data = load_json(path)
+
+    if not data:
+        CACHE["stories"] = []
+        return []
+
+    # soporta varios formatos posibles
+    if isinstance(data, list):
+        stories = data
+    elif isinstance(data, dict):
+        stories = (
+            data.get("stories") or
+            data.get("items") or
+            data.get("data") or
+            []
+        )
+    else:
+        stories = []
+
+    # asegurar orden por id si existe
+    try:
+        stories = sorted(stories, key=lambda x: x.get("id", 0))
+    except:
+        pass
+
+    CACHE["stories"] = stories
+    return stories
+
+# =========================
+# 🎯 MISSIONS LOADER (MULTI FILES)
+# =========================
+def load_missions():
     if CACHE["missions"] is not None:
         return CACHE["missions"]
 
     all_missions = []
 
-    # Buscar archivos missions_*.json
     for file in sorted(os.listdir(BASE_DIR)):
         if file.startswith("missions_") and file.endswith(".json"):
             path = os.path.join(BASE_DIR, file)
-            data = load_json_file(path)
+
+            data = load_json(path)
 
             if not data:
                 continue
 
-            missions = data.get("missions") or data.get("ses") or []
+            # soporta ambos formatos
+            missions = (
+                data.get("missions") or
+                data.get("ses") or
+                data.get("data") or
+                []
+            )
 
-            all_missions.extend(missions)
+            if isinstance(missions, list):
+                all_missions.extend(missions)
+
+    # ordenar por id (IMPORTANTE)
+    try:
+        all_missions = sorted(all_missions, key=lambda x: x.get("id", 0))
+    except:
+        pass
 
     CACHE["missions"] = {
         "total": len(all_missions),
@@ -72,28 +112,9 @@ def load_all_missions():
 
     return CACHE["missions"]
 
-# =====================================
-# 📖 LOAD STORIES (OPCIONAL)
-# =====================================
-
-def load_stories():
-    if CACHE["stories"] is not None:
-        return CACHE["stories"]
-
-    path = os.path.join(BASE_DIR, "stories.json")
-
-    if not os.path.exists(path):
-        CACHE["stories"] = {}
-        return {}
-
-    data = load_json_file(path) or {}
-    CACHE["stories"] = data
-    return data
-
-# =====================================
-# 🌐 ROUTES
-# =====================================
-
+# =========================
+# 🌐 ROUTES FRONTEND
+# =========================
 @app.get("/")
 def root():
     return FileResponse(os.path.join(STATIC_DIR, "session.html"))
@@ -102,36 +123,47 @@ def root():
 def session():
     return FileResponse(os.path.join(STATIC_DIR, "session.html"))
 
+# =========================
+# 📖 API STORIES
+# =========================
+@app.get("/api/stories")
+def get_stories():
+    stories = load_stories()
+
+    return JSONResponse({
+        "total": len(stories),
+        "stories": stories
+    })
+
+# =========================
+# 🎯 API MISSIONS
+# =========================
 @app.get("/api/missions")
 def get_missions():
-    data = load_all_missions()
+    missions = load_missions()
 
-    if not data["missions"]:
-        raise HTTPException(status_code=404, detail="No missions found")
+    return JSONResponse(missions)
 
-    return JSONResponse(content=data)
-
+# =========================
+# 🔍 SINGLE MISSION
+# =========================
 @app.get("/api/missions/{mission_id}")
 def get_mission(mission_id: int):
-    data = load_all_missions()
+    missions = load_missions()["missions"]
 
-    for m in data["missions"]:
+    for m in missions:
         if m.get("id") == mission_id:
-            return JSONResponse(content=m)
+            return m
 
     raise HTTPException(status_code=404, detail="Mission not found")
 
-@app.get("/api/stories")
-def get_stories():
-    data = load_stories()
-    return JSONResponse(content=data)
-
-# =====================================
-# 🧠 SIMPLE SESSION STATE (OPCIONAL)
-# =====================================
-
+# =========================
+# 🧠 STATE SYSTEM
+# =========================
 STATE = {
-    "current_mission": 1,
+    "user": "",
+    "story_index": 0,
+    "mission_index": 1,
     "score": 0
 }
 
@@ -140,22 +172,20 @@ def get_state():
     return STATE
 
 @app.post("/api/state")
-def update_state(payload: dict):
-    STATE.update(payload)
-    return {"status": "updated", "state": STATE}
+def update_state(data: dict):
+    STATE.update(data)
+    return {"ok": True, "state": STATE}
 
-# =====================================
+# =========================
 # 🧪 HEALTH CHECK
-# =====================================
-
+# =========================
 @app.get("/health")
 def health():
     return {"status": "ok"}
 
-# =====================================
-# ▶ RUN
-# =====================================
-
+# =========================
+# ▶ RUN SERVER
+# =========================
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
