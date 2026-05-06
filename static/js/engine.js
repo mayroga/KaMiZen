@@ -1,151 +1,302 @@
-const Engine = (() => {
+// =====================================
+// 🧠 KAMIZEN ENGINE vFINAL (NO CONFLICTS)
+// =====================================
 
-    let state = { running: false, index: 1, busy: false, lang: 'en' };
-    let ui = { centerText: null, timer: null, expBox: null, expTitle: null, expBody: null };
-    let timers = [];
+class KamiZenEngine {
+    constructor(config = {}) {
+        this.container = document.getElementById(config.container || "app");
+        this.lang = config.lang || "en";
 
-    // DATA DE ASESORÍA PROFESIONAL
-    const pillars = [
-        { id: "LIMITS", en: "Set your boundaries to protect your peace.", es: "Pon límites para proteger tu paz." },
-        { id: "PERSISTENCE", en: "Never stop until the method works.", es: "No te detengas hasta que el método funcione." },
-        { id: "METHOD", en: "Organization is the base of intelligence.", es: "La organización es la base de la inteligencia." },
-        { id: "CRITERION", en: "Think for yourself before acting.", es: "Piensa por ti mismo antes de actuar." },
-        { id: "VALUE", en: "Money follows those who solve problems.", es: "El dinero sigue a quienes resuelven problemas." },
-        { id: "BALANCE", en: "Health is the fuel for your success.", es: "La salud es el combustible de tu éxito." },
-        { id: "LOYALTY", en: "Family and loyalty create true wealth.", es: "La familia y la lealtad crean riqueza real." },
-        { id: "AUTONOMY", en: "You decide your path, no one else.", es: "Tú decides tu camino, nadie más." },
-        { id: "ADAPTATION", en: "Survive and thrive in any environment.", es: "Sobrevive y prospera en cualquier entorno." },
-        { id: "LEGACY", en: "What you build today stays forever.", es: "Lo que construyes hoy queda para siempre." }
-    ];
+        this.missions = [];
+        this.currentMissionIndex = 0;
+        this.currentBlockIndex = 0;
 
-    function init(){
-        ui.centerText = document.getElementById("centerText");
-        ui.timer = document.getElementById("timer");
-        ui.expBox = document.getElementById("explanationBox");
-        ui.expTitle = document.getElementById("expTitle");
-        ui.expBody = document.getElementById("expBody");
+        this.score = 0;
+        this.isRunning = false;
+
+        // Silence system
+        this.silenceActive = false;
+        this.silenceTimer = null;
+        this.lastInteraction = Date.now();
+        this.silenceTolerance = 1500; // ms
+
+        // Breath system
+        this.breathInterval = null;
+
+        this.bindEvents();
     }
 
-    async function start(){
-        if(state.running) return;
-        state.running = true;
+    // =====================================
+    // LOAD DATA
+    // =====================================
 
-        while(state.running){
-            const data = await fetchSession();
-            if(!data) { await sleep(2000); continue; }
-
-            state.index = data.index;
-
-            // Secuencia del Asesor
-            await storyPhase(data.story);
-            await gamePhase(300); // 5 Minutos de Entrenamiento
-            await missionPhase(data.mission);
-            await gamePhase(300); 
-            await breathingPhase(state.index);
-
-            cleanup();
+    load(data) {
+        try {
+            this.missions = data.missions || data.ses || [];
+        } catch (e) {
+            console.error("Load error:", e);
+            this.missions = [];
         }
     }
 
-    async function fetchSession(){
-        try {
-            const res = await fetch("/api/session/start");
-            return await res.json();
-        } catch(e) { return null; }
+    start() {
+        if (!this.missions.length) {
+            this.renderText("No missions loaded");
+            return;
+        }
+
+        this.isRunning = true;
+        this.currentMissionIndex = 0;
+        this.runMission();
     }
 
-    async function storyPhase(story){
-        const text = story?.[state.lang] || story?.en || "GET READY";
-        render(text);
-        speak(text);
-        await sleep(6000);
-        clear();
+    // =====================================
+    // CORE FLOW
+    // =====================================
+
+    runMission() {
+        this.currentBlockIndex = 0;
+        this.runBlock();
     }
 
-    async function missionPhase(mission){
-        // Adaptación flexible para cualquier formato de tus JSONs
-        const text = mission?.b?.[0]?.tx?.[state.lang] || mission?.t?.[state.lang] || mission?.en || "NEW MISSION";
-        render(text);
-        await sleep(6000);
-        clear();
+    runBlock() {
+        if (!this.isRunning) return;
+
+        const mission = this.missions[this.currentMissionIndex];
+        if (!mission) return;
+
+        const blocks = mission.b || [];
+        const block = blocks[this.currentBlockIndex];
+
+        if (!block) {
+            this.nextMission();
+            return;
+        }
+
+        this.renderBlock(block);
     }
 
-    async function gamePhase(seconds){
-        return new Promise(resolve => {
-            let t = seconds;
-            const id = setInterval(() => {
-                t--;
-                if(ui.timer) ui.timer.innerText = formatTime(t);
-                spawnWord();
-                if(t <= 0){ clearInterval(id); resolve(); }
-            }, 1000);
-            timers.push(id);
+    nextBlock() {
+        this.currentBlockIndex++;
+        this.runBlock();
+    }
+
+    nextMission() {
+        this.currentMissionIndex++;
+        if (this.currentMissionIndex >= this.missions.length) {
+            this.renderText("✅ Completed");
+            return;
+        }
+        this.runMission();
+    }
+
+    // =====================================
+    // RENDER
+    // =====================================
+
+    renderBlock(block) {
+        this.clear();
+
+        const type = block.t || (block.story ? "story" : null);
+
+        switch (type) {
+            case "v":
+            case "h":
+            case "c":
+                this.renderText(this.getText(block));
+                this.autoNext(2000);
+                break;
+
+            case "story":
+                this.renderText(this.getText(block));
+                this.autoNext(3000);
+                break;
+
+            case "br":
+                this.renderBreath(block);
+                break;
+
+            case "breath_auto":
+                this.renderBreathAuto(block);
+                break;
+
+            case "d":
+                this.renderDecision(block);
+                break;
+
+            case "r":
+                this.applyReward(block);
+                this.renderText(this.getText(block));
+                this.autoNext(1500);
+                break;
+
+            case "sil":
+                this.runSilence(block);
+                break;
+
+            default:
+                this.renderText("...");
+                this.autoNext(1000);
+        }
+    }
+
+    renderText(text) {
+        this.container.innerHTML = `<div class="kz-text">${text}</div>`;
+    }
+
+    clear() {
+        this.stopBreath();
+        this.stopSilence();
+        this.container.innerHTML = "";
+    }
+
+    getText(block) {
+        if (block.tx) return block.tx[this.lang] || block.tx["en"];
+        if (block.story) return block.story[this.lang] || block.story["en"];
+        return "";
+    }
+
+    // =====================================
+    // DECISION SYSTEM
+    // =====================================
+
+    renderDecision(block) {
+        const q = block.q[this.lang] || block.q["en"];
+
+        let html = `<div class="kz-question">${q}</div>`;
+
+        block.op.forEach((op, i) => {
+            html += `<button class="kz-btn" data-i="${i}">${op}</button>`;
+        });
+
+        this.container.innerHTML = html;
+
+        document.querySelectorAll(".kz-btn").forEach(btn => {
+            btn.onclick = (e) => {
+                const i = parseInt(e.target.dataset.i);
+                this.handleDecision(block, i);
+            };
         });
     }
 
-    function spawnWord(){
-        const pillar = pillars[Math.floor(Math.random()*pillars.length)];
-        const el = document.createElement("div");
-        el.className = "word";
-        el.innerText = pillar.id;
+    handleDecision(block, choice) {
+        const correct = block.c;
 
-        el.style.left = (Math.random() * 80 + 10) + "%";
-        el.style.top = (Math.random() * 60 + 20) + "%";
+        if (choice === correct) {
+            this.score += 20;
+        } else {
+            this.score -= 5;
+        }
 
-        el.onclick = () => {
-            // Sonido de Cristal (SFX)
-            const sfx = document.getElementById("sfxGlass").cloneNode();
-            sfx.volume = 0.4;
-            sfx.play();
+        const explanation = block.ex?.[choice] || "";
+        this.renderText(explanation);
 
-            // Mostrar Explicación en la esquina
-            showExplanation(pillar);
-
-            el.style.transform = "scale(2.5)";
-            el.style.opacity = "0";
-            setTimeout(() => el.remove(), 200);
-        };
-
-        document.body.appendChild(el);
-        setTimeout(() => { if(el.parentNode) el.remove(); }, 5000);
+        setTimeout(() => this.nextBlock(), 2000);
     }
 
-    function showExplanation(pillar){
-        ui.expTitle.innerText = pillar.id;
-        ui.expBody.innerText = pillar[state.lang];
-        ui.expBox.style.opacity = "1";
-        // Desaparece después de 4 segundos para no saturar
-        setTimeout(() => { ui.expBox.style.opacity = "0"; }, 4000);
+    // =====================================
+    // BREATH SYSTEM
+    // =====================================
+
+    renderBreath(block) {
+        const text = this.getText(block);
+        this.renderText(text);
+
+        setTimeout(() => this.nextBlock(), block.d * 1000);
     }
 
-    async function breathingPhase(index){
-        let t = Math.min(30 + index * 2, 120);
-        return new Promise(resolve => {
-            const id = setInterval(() => {
-                t--;
-                const action = (t % 4 < 2) ? "INHALE" : "EXHALE";
-                render(action);
-                if(t <= 0){ clearInterval(id); resolve(); }
-            }, 1000);
-            timers.push(id);
+    renderBreathAuto(block) {
+        let t = 0;
+        const duration = block.d * 1000;
+
+        this.breathInterval = setInterval(() => {
+            const phase = t % 8 < 4 ? "Inhale" : "Exhale";
+            this.renderText(phase);
+            t++;
+
+        }, 1000);
+
+        setTimeout(() => {
+            this.stopBreath();
+            this.nextBlock();
+        }, duration);
+    }
+
+    stopBreath() {
+        if (this.breathInterval) {
+            clearInterval(this.breathInterval);
+            this.breathInterval = null;
+        }
+    }
+
+    // =====================================
+    // SILENCE SYSTEM (NO FALSE POSITIVES BASIC)
+    // =====================================
+
+    runSilence(block) {
+        this.silenceActive = true;
+        const duration = block.d * 1000;
+
+        this.renderText(this.getText(block));
+
+        const start = Date.now();
+
+        this.silenceTimer = setInterval(() => {
+            const now = Date.now();
+
+            if (now - this.lastInteraction < this.silenceTolerance) {
+                this.renderText("⚠️ Stay still");
+                this.resetSilence(block);
+                return;
+            }
+
+            if (now - start >= duration) {
+                this.stopSilence();
+                this.nextBlock();
+            }
+        }, 300);
+    }
+
+    resetSilence(block) {
+        this.stopSilence();
+        setTimeout(() => this.runSilence(block), 500);
+    }
+
+    stopSilence() {
+        this.silenceActive = false;
+        if (this.silenceTimer) {
+            clearInterval(this.silenceTimer);
+            this.silenceTimer = null;
+        }
+    }
+
+    bindEvents() {
+        ["mousemove", "keydown", "click", "touchstart"].forEach(evt => {
+            document.addEventListener(evt, () => {
+                this.lastInteraction = Date.now();
+            });
         });
     }
 
-    function formatTime(s){
-        const m = Math.floor(s / 60);
-        const sec = s % 60;
-        return `${String(m).padStart(2,"0")}:${String(sec).padStart(2,"0")}`;
+    // =====================================
+    // REWARD
+    // =====================================
+
+    applyReward(block) {
+        this.score += block.p || 0;
     }
 
-    function render(text){ if(ui.centerText) ui.centerText.innerText = text; }
-    function clear(){ if(ui.centerText) ui.centerText.innerText = ""; }
-    function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
-    function speak(t){ try { const m = new SpeechSynthesisUtterance(t); m.lang="en-US"; speechSynthesis.speak(m); } catch(e){} }
+    // =====================================
+    // UTILS
+    // =====================================
 
-    function cleanup(){
-        timers.forEach(t => clearInterval(t));
-        timers = [];
+    autoNext(ms) {
+        setTimeout(() => this.nextBlock(), ms);
     }
+}
 
-    return { init, start };
-})();
+// =====================================
+// INIT
+// =====================================
+
+window.KamiZenEngine = KamiZenEngine;
