@@ -204,21 +204,33 @@ function handleDecision(idx, correct, explanations) {
 function startAutoBreath(seconds) {
     let timeLeft = seconds;
     let isInhaling = true;
+
     const label = document.getElementById("breathAction");
     const circle = document.getElementById("respiratoryCircle");
 
+    if (!label || !circle) return;
+
+    // Estado inicial correcto
+    label.innerText = "INHALE";
+    circle.style.transform = "scale(0.7)";
+    circle.style.transition = "transform 4s ease-in-out";
+
     const interval = setInterval(() => {
-        if (!label || !circle) { clearInterval(interval); return; }
+
+        if (!document.getElementById("respiratoryCircle")) {
+            clearInterval(interval);
+            return;
+        }
 
         if (isInhaling) {
+            // INHALE → EXPAND
             label.innerText = "INHALE";
-            circle.style.transform = "scale(1.3)"; // Physically expands
-            circle.style.transition = "transform 4s ease-in-out";
+            circle.style.transform = "scale(1.3)";
             speak("Inhale");
         } else {
+            // EXHALE → CONTRACT
             label.innerText = "EXHALE";
-            circle.style.transform = "scale(0.7)"; // Physically contracts
-            circle.style.transition = "transform 4s ease-in-out";
+            circle.style.transform = "scale(0.7)";
             speak("Exhale");
         }
 
@@ -227,7 +239,11 @@ function startAutoBreath(seconds) {
 
         if (timeLeft <= 0) {
             clearInterval(interval);
-            document.getElementById("app").innerHTML += `<button class="primary" onclick="nextBlock()">MISSION SUCCESS</button>`;
+
+            document.getElementById("app").innerHTML += `
+                <button class="primary" onclick="nextBlock()">MISSION SUCCESS</button>
+            `;
         }
+
     }, 4000);
 }
