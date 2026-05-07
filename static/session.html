@@ -30,9 +30,13 @@ body{
     min-height:100vh;
 }
 
+/* =========================
+   MAIN APP CONTAINER
+========================= */
+
 #app{
     width:100%;
-    max-width:720px;
+    max-width:700px;
     padding:20px;
 }
 
@@ -42,15 +46,15 @@ body{
 
 .card{
     background:var(--card);
-    padding:18px;
+    padding:20px;
     border-radius:16px;
-    margin:14px 0;
-    box-shadow:0 10px 25px rgba(0,0,0,0.35);
+    margin:15px 0;
+    box-shadow:0 10px 25px rgba(0,0,0,0.3);
     border:1px solid rgba(255,255,255,0.05);
 }
 
 /* =========================
-   BUTTONS
+   BUTTONS (ONLY VISUAL)
 ========================= */
 
 button{
@@ -60,7 +64,7 @@ button{
     border-radius:12px;
     background:var(--primary);
     color:white;
-    font-weight:700;
+    font-weight:bold;
     cursor:pointer;
     transition:0.2s;
 }
@@ -81,7 +85,6 @@ button:hover{
     cursor:pointer;
     border-left:4px solid var(--primary);
     transition:0.2s;
-    font-size:15px;
 }
 
 .answer:hover{
@@ -90,32 +93,32 @@ button:hover{
 }
 
 /* =========================
-   BREATHING VISUAL (SAFE ONLY - ENGINE OVERRIDES)
+   BREATHING VISUAL (DECORATIVE ONLY)
+   ❗ NO JS CONTROL HERE (engine.js handles logic)
 ========================= */
 
 .breath-circle{
     width:140px;
     height:140px;
     border-radius:50%;
-    margin:25px auto;
+    margin:30px auto;
     border:4px solid var(--primary);
     display:flex;
     align-items:center;
     justify-content:center;
-    font-weight:bold;
-    letter-spacing:1px;
-    animation: breathe 6s infinite ease-in-out;
+
+    /* ONLY VISUAL LOOP (SAFE, NO LOGIC) */
+    animation:breathe 6s infinite ease-in-out;
 }
 
-/* default animation fallback ONLY (engine can override) */
 @keyframes breathe{
     0%{transform:scale(0.85);opacity:0.7;}
-    50%{transform:scale(1.2);opacity:1;border-color:var(--success);}
+    50%{transform:scale(1.25);opacity:1;border-color:var(--success);}
     100%{transform:scale(0.85);opacity:0.7;}
 }
 
 /* =========================
-   TEXT STYLES
+   TEXT
 ========================= */
 
 h1,h2,h3{
@@ -132,27 +135,31 @@ h1,h2,h3{
 }
 
 /* =========================
-   OPTIONAL EXAM MODE BUTTON
+   IMPORTANT SAFETY RULE
 ========================= */
+/*
+❗ DO NOT ADD:
+- exam navigation buttons
+- window.location redirects
+- extra JS logic
+- duplicated breathing controllers
+- hidden engines or timers
 
-.exam-mode{
-    margin-top:10px;
-    background:#1d4ed8;
-    font-size:14px;
-}
-
-.exam-mode:hover{
-    background:#2563eb;
-}
+Everything must be controlled ONLY by:
+👉 static/js/engine.js
+*/
 
 </style>
 </head>
 
 <body>
 
+<!-- =========================================================
+     ONLY ONE CONTROL SURFACE
+========================================================= -->
 <div id="app">
 
-    <!-- STATIC HEADER (NO ENGINE CONTROL HERE) -->
+    <!-- STATIC HEADER (NEVER CHANGES, SAFE VISUAL ONLY) -->
     <div class="card center">
         <h2 style="color:var(--primary);">
             KAMIZEN LIFE SYSTEM
@@ -163,41 +170,18 @@ h1,h2,h3{
         </p>
     </div>
 
-    <!-- SYSTEM LOADING / ENGINE CONTROLLED AREA -->
-    <div id="screen" class="card center">
+    <!-- DYNAMIC ENGINE RENDER AREA -->
+    <!-- ⚠️ ENGINE.JS WRITES EVERYTHING HERE -->
+    <div id="screen" class="card">
         <h3>Loading system...</h3>
-        <p class="small">Initializing neural missions</p>
+        <p class="small">
+            Initializing stories & missions
+        </p>
     </div>
 
-    <!-- OPTIONAL EXAM ACCESS (NEW FEATURE) -->
+    <!-- BREATHING VISUAL ONLY (NO LOGIC HERE) -->
+    <!-- engine.js will animate separately -->
     <div class="card center">
-
-        <h3>Exam Training Hub</h3>
-
-        <p class="small">
-            How to React Before & During Exams
-        </p>
-
-        <!-- OPTIONAL BUTTONS (ENGINE CAN HOOK THESE LATER) -->
-        <button class="exam-mode"
-                onclick="window.location.href='/exam36-42.html'">
-            Calm Before Exams (Level 1)
-        </button>
-
-        <button class="exam-mode"
-                onclick="window.location.href='/exam43-49.html'">
-            Body & Stress Control (Level 2)
-        </button>
-
-        <p class="small">
-            Optional modules – no interruption to main system
-        </p>
-
-    </div>
-
-    <!-- BREATHING VISUAL (PURE VISUAL ONLY - ENGINE OVERRIDES) -->
-    <div class="card center">
-
         <h3>Breathing Module</h3>
 
         <div class="breath-circle">
@@ -205,14 +189,15 @@ h1,h2,h3{
         </div>
 
         <p class="small">
-            Controlled by engine.js (do not modify manually)
+            Visual support only 
         </p>
-
     </div>
 
 </div>
 
-<!-- ENGINE (FULL CONTROL SYSTEM) -->
+<!-- =========================================================
+     ENGINE CONTROLLER (ONLY LOGIC SOURCE)
+========================================================= -->
 <script src="/static/js/engine.js"></script>
 
 </body>
