@@ -2,8 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>KAMIZEN LIFE SYSTEM - CORE SESSION</title>
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0"/>
+
+<title>KAMIZEN LIFE SYSTEM</title>
 
 <style>
 
@@ -17,15 +19,19 @@
     --dim:#94a3b8;
 }
 
+/* =========================
+   BASE
+========================= */
+
 *{
     box-sizing:border-box;
 }
 
 body{
     margin:0;
-    font-family:Segoe UI, Arial, sans-serif;
     background:var(--bg);
     color:var(--text);
+    font-family:Segoe UI, Arial, sans-serif;
     display:flex;
     justify-content:center;
     min-height:100vh;
@@ -33,78 +39,21 @@ body{
 
 #app{
     width:100%;
-    max-width:720px;
+    max-width:760px;
     padding:20px;
 }
 
 /* =========================
-   CARD SYSTEM
+   CARD
 ========================= */
 
 .card{
     background:var(--card);
-    padding:20px;
-    border-radius:16px;
-    margin:15px 0;
-    box-shadow:0 10px 25px rgba(0,0,0,0.3);
-    border:1px solid rgba(255,255,255,0.05);
-}
-
-/* =========================
-   BUTTONS
-========================= */
-
-button{
-    width:100%;
-    padding:14px;
-    border:none;
-    border-radius:12px;
-    background:var(--primary);
-    color:white;
-    font-weight:bold;
-    cursor:pointer;
-    margin-top:10px;
-    transition:0.2s;
-}
-
-button:hover{
-    transform:translateY(-2px);
-    opacity:0.95;
-}
-
-/* =========================
-   ANSWERS
-========================= */
-
-.answer{
-    background:#1f2937;
-    padding:12px;
-    margin:8px 0;
-    border-radius:10px;
-    cursor:pointer;
-    border-left:4px solid var(--primary);
-    transition:0.2s;
-}
-
-.answer:hover{
-    transform:translateX(5px);
-    background:#374151;
-}
-
-/* =========================
-   BREATHING VISUAL
-========================= */
-
-.breath-circle{
-    width:140px;
-    height:140px;
-    border-radius:50%;
-    margin:30px auto;
-    border:4px solid var(--primary);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    transition:transform 4s ease-in-out;
+    border-radius:18px;
+    padding:22px;
+    margin:14px 0;
+    border:1px solid rgba(255,255,255,.05);
+    box-shadow:0 12px 30px rgba(0,0,0,.35);
 }
 
 /* =========================
@@ -115,13 +64,176 @@ h1,h2,h3{
     margin:10px 0;
 }
 
-.small{
-    font-size:12px;
-    color:var(--dim);
-}
-
 .center{
     text-align:center;
+}
+
+.small{
+    font-size:13px;
+    color:var(--dim);
+    line-height:1.5;
+}
+
+/* =========================
+   BUTTONS
+========================= */
+
+button{
+    width:100%;
+    border:none;
+    border-radius:14px;
+    padding:15px;
+    margin-top:12px;
+    cursor:pointer;
+    font-size:15px;
+    font-weight:700;
+    color:white;
+    background:var(--primary);
+    transition:.2s;
+}
+
+button:hover{
+    transform:translateY(-2px);
+    opacity:.96;
+}
+
+button:disabled{
+    opacity:.6;
+    cursor:not-allowed;
+    transform:none;
+}
+
+/* =========================
+   ANSWERS
+========================= */
+
+.answer{
+    background:#1f2937;
+    border-left:4px solid var(--primary);
+    padding:14px;
+    margin:10px 0;
+    border-radius:12px;
+    cursor:pointer;
+    transition:.2s;
+    user-select:none;
+}
+
+.answer:hover{
+    background:#374151;
+    transform:translateX(4px);
+}
+
+/* =========================
+   BREATH SYSTEM
+========================= */
+
+.breath-circle{
+    width:170px;
+    height:170px;
+    margin:28px auto;
+    border-radius:50%;
+    border:4px solid var(--primary);
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    position:relative;
+    overflow:hidden;
+
+    transition:
+        transform 4s ease-in-out,
+        border-color 1s ease,
+        box-shadow 1s ease;
+
+    background:
+        radial-gradient(
+            circle at center,
+            rgba(59,130,246,.35),
+            rgba(59,130,246,.08)
+        );
+
+    box-shadow:
+        0 0 25px rgba(59,130,246,.25),
+        inset 0 0 25px rgba(255,255,255,.05);
+}
+
+.breath-circle::before{
+    content:"";
+    position:absolute;
+    inset:-20px;
+    border-radius:50%;
+    background:
+        conic-gradient(
+            from 0deg,
+            rgba(59,130,246,.25),
+            rgba(34,197,94,.20),
+            rgba(59,130,246,.25)
+        );
+
+    animation:spin 10s linear infinite;
+}
+
+.breath-circle span{
+    position:relative;
+    z-index:2;
+    font-size:24px;
+    font-weight:800;
+    letter-spacing:2px;
+    text-shadow:0 0 10px rgba(255,255,255,.25);
+}
+
+@keyframes spin{
+    from{
+        transform:rotate(0deg);
+    }
+    to{
+        transform:rotate(360deg);
+    }
+}
+
+/* =========================
+   FEEDBACK COLORS
+========================= */
+
+.correct{
+    border-left:6px solid var(--success);
+}
+
+.correct h3{
+    color:var(--success);
+}
+
+.wrong{
+    border-left:6px solid var(--danger);
+}
+
+.wrong h3{
+    color:var(--danger);
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:600px){
+
+    #app{
+        padding:14px;
+    }
+
+    .card{
+        padding:18px;
+    }
+
+    .breath-circle{
+        width:145px;
+        height:145px;
+    }
+
+    .breath-circle span{
+        font-size:20px;
+    }
 }
 
 </style>
@@ -129,56 +241,20 @@ h1,h2,h3{
 
 <body>
 
+<!-- =========================
+     ENGINE ROOT
+========================= -->
+
 <div id="app">
 
-    <!-- =========================
-         HEADER
-    ========================= -->
     <div class="card center">
-        <h2 style="color:var(--primary);">
+
+        <h1 style="color:var(--primary);">
             KAMIZEN LIFE SYSTEM
-        </h2>
+        </h1>
 
         <p class="small">
-            Awareness • Control • Focus • Discipline
-        </p>
-    </div>
-
-    <!-- =========================
-         MAIN SYSTEM INTRO
-    ========================= -->
-    <div class="card center">
-
-        <h3>CORE SYSTEM READY</h3>
-
-        <p class="small">
-            35 Life Missions • 35 Stories • Optional Exam Mode
-        </p>
-
-        <button onclick="startSystem()">
-            START CORE SYSTEM
-        </button>
-
-        <button onclick="loadExamMode()"
-                style="background:#22c55e;">
-            HOW TO REACT BEFORE & DURING EXAMS
-        </button>
-
-    </div>
-
-    <!-- =========================
-         BREATHING MODULE (VISUAL ONLY)
-    ========================= -->
-    <div class="card center">
-
-        <h3>Breathing System</h3>
-
-        <div class="breath-circle" id="breathCircle">
-            <span id="breathLabel">FOCUS</span>
-        </div>
-
-        <p class="small">
-            Controlled by engine.js (auto regulation system)
+            Awareness • Control • Safety • Focus
         </p>
 
     </div>
@@ -186,8 +262,9 @@ h1,h2,h3{
 </div>
 
 <!-- =========================
-     ENGINE CONTROLLER
+     MAIN ENGINE
 ========================= -->
+
 <script src="/static/js/engine.js"></script>
 
 </body>
