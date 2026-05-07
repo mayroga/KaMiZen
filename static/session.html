@@ -4,6 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>KAMIZEN LIFE SYSTEM - CORE SESSION</title>
+
 <style>
 :root{
     --bg:#0b1220;
@@ -14,9 +15,11 @@
     --text:#ffffff;
     --dim:#94a3b8;
 }
+
 *{
     box-sizing:border-box;
 }
+
 body{
     margin:0;
     font-family:Segoe UI, Arial, sans-serif;
@@ -26,14 +29,17 @@ body{
     justify-content:center;
     min-height:100vh;
 }
+
 #app{
     width:100%;
     max-width:700px;
     padding:20px;
 }
+
 /* =========================
    CARD SYSTEM
 ========================= */
+
 .card{
     background:var(--card);
     padding:20px;
@@ -42,9 +48,11 @@ body{
     box-shadow:0 10px 25px rgba(0,0,0,0.3);
     border:1px solid rgba(255,255,255,0.05);
 }
+
 /* =========================
    BUTTONS
 ========================= */
+
 button{
     width:100%;
     padding:14px;
@@ -56,12 +64,15 @@ button{
     cursor:pointer;
     transition:0.2s;
 }
+
 button:hover{
     transform:translateY(-2px);
 }
+
 /* =========================
    ANSWERS
 ========================= */
+
 .answer{
     background:#1f2937;
     padding:12px;
@@ -71,13 +82,16 @@ button:hover{
     border-left:4px solid var(--primary);
     transition:0.2s;
 }
+
 .answer:hover{
     transform:translateX(5px);
     background:#374151;
 }
+
 /* =========================
    BREATHING VISUAL
 ========================= */
+
 .breath-circle{
     width:140px;
     height:140px;
@@ -89,11 +103,13 @@ button:hover{
     justify-content:center;
     animation:breathe 6s infinite ease-in-out;
 }
+
 @keyframes breathe{
     0%{transform:scale(0.85);opacity:0.7;}
     50%{transform:scale(1.25);opacity:1;border-color:var(--success);}
     100%{transform:scale(0.85);opacity:0.7;}
 }
+
 /* =========================
    TEXT STYLES
 ========================= */
@@ -101,42 +117,56 @@ button:hover{
 h1,h2,h3{
     margin:10px 0;
 }
+
 .small{
     font-size:12px;
     color:var(--dim);
 }
+
 .center{
     text-align:center;
 }
+
 .hidden{
     display:none;
 }
+
 </style>
 </head>
+
 <body>
+
 <div id="app">
+
     <!-- HEADER STATIC -->
     <div class="card center">
         <h2 style="color:var(--primary);">KAMIZEN LIFE SYSTEM</h2>
         <p class="small">Neural Training • Awareness • Discipline • Control</p>
     </div>
+
     <!-- MAIN RENDER AREA (ENGINE CONTROLS THIS) -->
     <div id="screen" class="card">
         <h3>Loading system...</h3>
         <p class="small">Initializing stories & missions</p>
     </div>
+
     <!-- BREATHING AREA (OPTIONAL VISUAL ONLY) -->
     <div class="card center">
         <h3>Breathing Module</h3>
+
         <div class="breath-circle">
             <span>FOCUS</span>
         </div>
+
         <p class="small">
             Automatic regulation system (controlled by engine.js)
         </p>
     </div>
+
 </div>
+
 <!-- ENGINE (ONLY CONTROLLER) -->
 <script src="/static/js/engine.js"></script>
+
 </body>
 </html>
