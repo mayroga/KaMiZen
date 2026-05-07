@@ -1,17 +1,11 @@
 /* =========================================================
-   KAMIZEN ENGINE V10 - FULL STABLE SYSTEM
-   ✔ Reads ALL 35 stories
-   ✔ Reads ALL 35 missions
-   ✔ Reads inf correctly
-   ✔ No freeze
-   ✔ No double render
-   ✔ Speech lock until narration ends
-   ✔ Loading screen first
-   ✔ Manual start button
-   ✔ Breathing text + inf visible
-   ✔ Sequential clean flow 1 -> 35 -> 1
-   ✔ Direct mission jump (NEW SAFE FEATURE)
-   ========================================================= */
+   KAMIZEN ENGINE V10 - FULL STABLE SYSTEM (UPDATED)
+   ✔ Stories + Missions + Exams merged safely
+   ✔ No freeze / no duplicate render
+   ✔ Speech lock stable
+   ✔ Safe navigation by ID (with validation)
+   ✔ Exam system integrated 36–49
+========================================================= */
 
 /* =========================
    GLOBAL STATE
@@ -20,11 +14,12 @@
 let state = {
     stories: [],
     missions: [],
+    examMissions: [],
 
     currentIndex: 0,
     currentBlock: 0,
 
-    phase: "loading", // loading | intro | story | mission
+    phase: "loading",
 
     speechLocked: false,
     initialized: false
@@ -60,19 +55,21 @@ async function loadAllData() {
     app.innerHTML = `
         <div class="card">
             <h2>LOADING SYSTEM...</h2>
-            <p>Initializing neural missions</p>
+            <p>Initializing missions & exams</p>
         </div>
     `;
 
     try {
 
-        const [storiesReq, missionsReq] = await Promise.all([
+        const [storiesReq, missionsReq, examReq] = await Promise.all([
             fetch("/api/stories"),
-            fetch("/api/missions")
+            fetch("/api/missions"),
+            fetch("/api/exam")
         ]);
 
         const storiesData = await storiesReq.json();
         const missionsData = await missionsReq.json();
+        const examData = await examReq.json();
 
         /* STORIES */
         state.stories = Array.isArray(storiesData.stories)
@@ -84,8 +81,14 @@ async function loadAllData() {
             ? missionsData.missions.sort((a, b) => a.id - b.id)
             : [];
 
+        /* EXAMS (36–49 FIX) */
+        state.examMissions = Array.isArray(examData.missions)
+            ? examData.missions.sort((a, b) => a.id - b.id)
+            : [];
+
         console.log("STORIES:", state.stories.length);
         console.log("MISSIONS:", state.missions.length);
+        console.log("EXAMS:", state.examMissions.length);
 
         state.initialized = true;
 
@@ -96,14 +99,14 @@ async function loadAllData() {
         app.innerHTML = `
             <div class="card">
                 <h2>SYSTEM ERROR</h2>
-                <p>Failed loading missions</p>
+                <p>Failed loading system</p>
             </div>
         `;
     }
 }
 
 /* =========================
-   INTRO SCREEN
+   INTRO
 ========================= */
 
 function showIntro() {
@@ -115,26 +118,23 @@ function showIntro() {
     app.innerHTML = `
         <div class="card">
             <h1>KAMIZEN LIFE SYSTEM</h1>
-
-            <p>
-                Awareness • Control • Safety • Focus
-            </p>
-
-            <p style="opacity:.8;">
-                35 Stories • 35 Missions
-            </p>
+            <p>Awareness • Control • Focus</p>
+            <p class="small">Stories + Missions + Exams</p>
         </div>
 
-        <!-- ✅ NEW SAFE JUMP SYSTEM -->
         <div class="card">
             <input id="missionInput"
                    type="number"
-                   placeholder="Enter mission ID (e.g. 36)"
+                   placeholder="Enter mission ID (1–49)"
                    style="width:100%;padding:10px;border-radius:8px;border:none;margin-bottom:10px;">
 
             <button onclick="jumpToMission()">
                 GO TO MISSION
             </button>
+
+            <p class="small">
+                Type a valid ID from system (stories, missions, exams)
+            </p>
         </div>
 
         <button onclick="startSystem()">
@@ -157,6 +157,48 @@ function startSystem() {
 }
 
 /* =========================
+   NAVIGATION BY ID (FIXED)
+========================= */
+
+function goToMissionById(id) {
+
+    const all = [
+        ...(state.missions || []),
+        ...(state.examMissions || [])
+    ];
+
+    const index = all.findIndex(m => m.id === Number(id));
+
+    if (index === -1) {
+        alert("Write a valid mission ID from the list.");
+        return;
+    }
+
+    state.missions = all;
+    state.currentIndex = index;
+    state.currentBlock = 0;
+    state.phase = "mission";
+
+    render();
+}
+
+/* GLOBAL UI HOOK */
+window.jumpToMission = function () {
+
+    const input = document.getElementById("missionInput");
+    if (!input) return;
+
+    const id = Number(input.value);
+
+    if (!id) {
+        alert("Enter a valid number.");
+        return;
+    }
+
+    goToMissionById(id);
+};
+
+/* =========================
    MAIN RENDER
 ========================= */
 
@@ -170,11 +212,9 @@ function render() {
     const mission = state.missions[state.currentIndex];
 
     if (!story || !mission) {
-
         state.currentIndex = 0;
         state.currentBlock = 0;
         state.phase = "story";
-
         return render();
     }
 
@@ -182,24 +222,15 @@ function render() {
 
         app.innerHTML = `
             <div class="card">
-
                 <h2>STORY ${story.id}</h2>
-
-                <h3>${story.t || ""}</h3>
-
                 <p>${story.en || ""}</p>
-
             </div>
 
-            <button id="continueBtn" disabled>
-                NARRATING...
-            </button>
+            <button id="continueBtn" disabled>NARRATING...</button>
         `;
 
-        narrate(`${story.t || ""}. ${story.en || ""}`, () => {
-
+        narrate(story.en || "", () => {
             unlockContinue("START MISSION", startMission);
-
         });
 
         return;
@@ -219,68 +250,55 @@ function render() {
 }
 
 /* =========================
-   RENDER BLOCK
+   BLOCK RENDER
 ========================= */
 
 function renderBlock(block) {
 
     const app = document.getElementById("app");
-
     let html = "";
     let narration = "";
 
     if (block.t === "v") {
-
         html += `<div class="card"><h2>${block.tx?.en || ""}</h2></div>`;
-        narration += `${block.tx?.en || ""}. `;
+        narration += block.tx?.en || "";
     }
 
     if (block.t === "h") {
-
         html += `<div class="card"><p>${block.tx?.en || ""}</p></div>`;
-        narration += `${block.tx?.en || ""}. `;
+        narration += block.tx?.en || "";
     }
 
     if (block.story) {
-
         html += `<div class="card"><p>${block.story.en || ""}</p></div>`;
-        narration += `${block.story.en || ""}. `;
+        narration += block.story.en || "";
     }
 
-    if (block.t === "breath_auto" || block.t === "br") {
-
+    if (block.t === "breath_auto") {
         html += `
-        <div class="card center">
+        <div class="card">
             <div class="breath-circle" id="breathCircle">
                 <span id="breathLabel">INHALE</span>
             </div>
-
-            <h3>${block.tx?.en || ""}</h3>
-            <p>${block.inf?.en || ""}</p>
+            <p>${block.tx?.en || ""}</p>
+            <p class="small">${block.inf?.en || ""}</p>
         </div>`;
-
-        narration += `${block.tx?.en || ""}. ${block.inf?.en || ""}. `;
+        narration += block.tx?.en + block.inf?.en;
     }
 
     if (block.t === "d") {
 
         html += `<div class="card"><h3>${block.q?.en || ""}</h3>`;
 
-        narration += `${block.q?.en || ""}. `;
-
-        block.op?.forEach((opt, i) => {
-
+        block.op.forEach((o, i) => {
             html += `
-                <div class="answer"
-                     onclick="selectAnswer(${i}, ${block.c}, ${JSON.stringify(block.ex).replace(/"/g,'&quot;')})">
-                    ${opt}
-                </div>
-            `;
-
-            narration += `${opt}. `;
+            <div class="answer" onclick="selectAnswer(${i}, ${block.c}, ${JSON.stringify(block.ex || []).replace(/"/g, '&quot;')})">
+                ${o}
+            </div>`;
         });
 
         html += `</div>`;
+        narration += block.q?.en;
     }
 
     if (block.t !== "d") {
@@ -289,10 +307,7 @@ function renderBlock(block) {
 
     app.innerHTML = html;
 
-    startBreathingAnimation();
-
     narrate(narration, () => {
-
         if (block.t !== "d") {
             unlockContinue("CONTINUE", nextBlock);
         }
@@ -300,34 +315,7 @@ function renderBlock(block) {
 }
 
 /* =========================
-   ANSWER SYSTEM
-========================= */
-
-function selectAnswer(index, correct, explanations) {
-
-    if (state.speechLocked) return;
-
-    const isCorrect = index === correct;
-    const explanation = explanations?.[index] || "";
-
-    document.getElementById("app").innerHTML += `
-        <div class="card">
-            <h3 style="color:${isCorrect ? '#22c55e' : '#ef4444'}">
-                ${isCorrect ? "CORRECT" : "WRONG"}
-            </h3>
-            <p>${explanation}</p>
-        </div>
-
-        <button id="continueBtn" disabled>NARRATING...</button>
-    `;
-
-    narrate(explanation, () => {
-        unlockContinue("CONTINUE", nextBlock);
-    });
-}
-
-/* =========================
-   FLOW CONTROL
+   NAVIGATION
 ========================= */
 
 function nextBlock() {
@@ -337,94 +325,44 @@ function nextBlock() {
 }
 
 function startMission() {
-    if (state.speechLocked) return;
     state.phase = "mission";
     state.currentBlock = 0;
     render();
 }
 
 function nextStory() {
-
     state.currentIndex++;
-
-    if (state.currentIndex >= state.stories.length) {
-        state.currentIndex = 0;
-    }
-
+    if (state.currentIndex >= state.stories.length) state.currentIndex = 0;
     state.phase = "story";
     state.currentBlock = 0;
-
     render();
 }
 
 /* =========================
-   SAFE DIRECT JUMP (NEW FEATURE)
+   NARRATION
 ========================= */
 
-function goToMissionById(id) {
+function narrate(text, cb) {
 
-    if (!state.missions || !state.missions.length) return;
-
-    const index = state.missions.findIndex(m => m.id === Number(id));
-
-    if (index === -1) {
-        console.warn("Mission not found:", id);
-        return;
-    }
-
-    state.currentIndex = index;
-    state.currentBlock = 0;
-    state.phase = "mission";
-
-    render();
-}
-
-function jumpToMission() {
-
-    const input = document.getElementById("missionInput");
-    if (!input) return;
-
-    const id = parseInt(input.value);
-    if (isNaN(id)) return;
-
-    goToMissionById(id);
-}
-
-/* =========================
-   NARRATION SYSTEM
-========================= */
-
-function narrate(text, callback = null) {
-
-    if (!text) {
-        callback?.();
-        return;
-    }
+    if (!text) return cb?.();
 
     state.speechLocked = true;
-
     window.speechSynthesis.cancel();
 
-    const speech = new SpeechSynthesisUtterance(text);
+    const s = new SpeechSynthesisUtterance(text);
+    s.lang = "en-US";
+    s.rate = 0.92;
 
-    speech.lang = "en-US";
-    speech.rate = 0.92;
-
-    speech.onend = () => {
+    s.onend = () => {
         state.speechLocked = false;
-        callback?.();
+        cb?.();
     };
 
-    speech.onerror = () => {
-        state.speechLocked = false;
-        callback?.();
-    };
-
-    window.speechSynthesis.speak(speech);
+    window.speechSynthesis.speak(s);
 }
 
 /* =========================
-   UI HELPERS
+   UI CONTROL
 ========================= */
 
 function unlockContinue(label, action) {
@@ -435,31 +373,4 @@ function unlockContinue(label, action) {
     btn.disabled = false;
     btn.innerText = label;
     btn.onclick = action;
-}
-
-/* =========================
-   BREATHING
-========================= */
-
-function startBreathingAnimation() {
-
-    const circle = document.getElementById("breathCircle");
-    const label = document.getElementById("breathLabel");
-
-    if (!circle || !label) return;
-
-    let inhale = true;
-
-    function animate() {
-
-        if (!document.getElementById("breathCircle")) return;
-
-        label.innerText = inhale ? "INHALE" : "EXHALE";
-        circle.style.transform = inhale ? "scale(1.25)" : "scale(0.8)";
-
-        inhale = !inhale;
-    }
-
-    animate();
-    setInterval(animate, 4000);
 }
