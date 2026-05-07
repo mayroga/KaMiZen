@@ -6,6 +6,7 @@
 <title>KAMIZEN LIFE SYSTEM - CORE SESSION</title>
 
 <style>
+
 :root{
     --bg:#0b1220;
     --card:#111a2e;
@@ -32,7 +33,7 @@ body{
 
 #app{
     width:100%;
-    max-width:700px;
+    max-width:720px;
     padding:20px;
 }
 
@@ -62,11 +63,13 @@ button{
     color:white;
     font-weight:bold;
     cursor:pointer;
+    margin-top:10px;
     transition:0.2s;
 }
 
 button:hover{
     transform:translateY(-2px);
+    opacity:0.95;
 }
 
 /* =========================
@@ -101,17 +104,11 @@ button:hover{
     display:flex;
     align-items:center;
     justify-content:center;
-    animation:breathe 6s infinite ease-in-out;
-}
-
-@keyframes breathe{
-    0%{transform:scale(0.85);opacity:0.7;}
-    50%{transform:scale(1.25);opacity:1;border-color:var(--success);}
-    100%{transform:scale(0.85);opacity:0.7;}
+    transition:transform 4s ease-in-out;
 }
 
 /* =========================
-   TEXT STYLES
+   TEXT
 ========================= */
 
 h1,h2,h3{
@@ -127,10 +124,6 @@ h1,h2,h3{
     text-align:center;
 }
 
-.hidden{
-    display:none;
-}
-
 </style>
 </head>
 
@@ -138,34 +131,63 @@ h1,h2,h3{
 
 <div id="app">
 
-    <!-- HEADER STATIC -->
+    <!-- =========================
+         HEADER
+    ========================= -->
     <div class="card center">
-        <h2 style="color:var(--primary);">KAMIZEN LIFE SYSTEM</h2>
-        <p class="small">Neural Training • Awareness • Discipline • Control</p>
+        <h2 style="color:var(--primary);">
+            KAMIZEN LIFE SYSTEM
+        </h2>
+
+        <p class="small">
+            Awareness • Control • Focus • Discipline
+        </p>
     </div>
 
-    <!-- MAIN RENDER AREA (ENGINE CONTROLS THIS) -->
-    <div id="screen" class="card">
-        <h3>Loading system...</h3>
-        <p class="small">Initializing stories & missions</p>
+    <!-- =========================
+         MAIN SYSTEM INTRO
+    ========================= -->
+    <div class="card center">
+
+        <h3>CORE SYSTEM READY</h3>
+
+        <p class="small">
+            35 Life Missions • 35 Stories • Optional Exam Mode
+        </p>
+
+        <button onclick="startSystem()">
+            START CORE SYSTEM
+        </button>
+
+        <button onclick="loadExamMode()"
+                style="background:#22c55e;">
+            HOW TO REACT BEFORE & DURING EXAMS
+        </button>
+
     </div>
 
-    <!-- BREATHING AREA (OPTIONAL VISUAL ONLY) -->
+    <!-- =========================
+         BREATHING MODULE (VISUAL ONLY)
+    ========================= -->
     <div class="card center">
-        <h3>Breathing Module</h3>
 
-        <div class="breath-circle">
-            <span>FOCUS</span>
+        <h3>Breathing System</h3>
+
+        <div class="breath-circle" id="breathCircle">
+            <span id="breathLabel">FOCUS</span>
         </div>
 
         <p class="small">
-            Automatic regulation system (controlled by engine.js)
+            Controlled by engine.js (auto regulation system)
         </p>
+
     </div>
 
 </div>
 
-<!-- ENGINE (ONLY CONTROLLER) -->
+<!-- =========================
+     ENGINE CONTROLLER
+========================= -->
 <script src="/static/js/engine.js"></script>
 
 </body>
