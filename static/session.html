@@ -1,266 +1,420 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
     <title>KAMIZEN LIFE SYSTEM</title>
 
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
 
     <style>
-        :root {
-            --bg: #050508;
-            --card: rgba(0,0,0,0.85);
-            --blue: #00f2ff;
-            --gold: #f1c40f;
-            --green: #2ecc71;
-            --red: #ff3131;
-            --text: #ffffff;
-            --soft: #9ca3af;
+
+        :root{
+            --bg:#030712;
+            --card:#0f172a;
+            --blue:#00e5ff;
+            --green:#22c55e;
+            --red:#ef4444;
+            --gold:#facc15;
+            --white:#ffffff;
+            --muted:#94a3b8;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
         }
 
-        body {
-            background: radial-gradient(circle at center, #10131d 0%, #050508 100%);
-            color: var(--text);
-            font-family: 'Orbitron', sans-serif;
-            overflow-x: hidden;
-            min-height: 100vh;
+        body{
+            background:
+                radial-gradient(circle at top,#0f172a 0%,#020617 65%);
+            color:white;
+            font-family:'Orbitron',sans-serif;
+            width:100vw;
+            min-height:100vh;
+            overflow-x:hidden;
         }
 
-        #screen {
-            width: 100%;
-            max-width: 900px;
-            margin: auto;
-            padding: 25px 15px 120px;
+        button{
+            border:none;
+            cursor:pointer;
+            font-family:'Orbitron',sans-serif;
         }
 
-        .card {
-            background: var(--card);
-            border: 2px solid rgba(0,242,255,0.2);
-            border-radius: 24px;
-            padding: 25px;
-            margin-bottom: 20px;
-            box-shadow: 0 0 35px rgba(0,242,255,0.08);
-            backdrop-filter: blur(8px);
+        #screen{
+            width:100%;
+            max-width:950px;
+            margin:auto;
+            padding:20px 16px 120px;
         }
 
-        .center {
-            text-align: center;
+        .card{
+            background:rgba(15,23,42,.94);
+            border:1px solid rgba(0,229,255,.15);
+            border-radius:28px;
+            padding:28px;
+            margin-bottom:22px;
+            box-shadow:
+                0 0 30px rgba(0,229,255,.08),
+                inset 0 0 25px rgba(255,255,255,.02);
+            backdrop-filter:blur(8px);
         }
 
-        .title {
-            font-size: 2rem;
-            color: var(--blue);
-            text-align: center;
-            margin-bottom: 10px;
-            letter-spacing: 3px;
-            text-shadow: 0 0 20px rgba(0,242,255,0.4);
+        .center{
+            text-align:center;
         }
 
-        .subtitle {
-            text-align: center;
-            color: var(--soft);
-            margin-bottom: 25px;
-            font-size: 0.9rem;
+        .title{
+            color:var(--blue);
+            font-size:clamp(2rem,5vw,4rem);
+            text-align:center;
+            font-weight:900;
+            letter-spacing:4px;
+            text-shadow:0 0 20px rgba(0,229,255,.4);
         }
 
-        .story-title {
-            color: var(--gold);
-            margin-bottom: 20px;
-            font-size: 1.5rem;
+        .subtitle{
+            margin-top:15px;
+            text-align:center;
+            color:var(--gold);
+            line-height:1.8;
+            letter-spacing:2px;
+            font-size:14px;
         }
 
-        .story-text {
-            color: #e5e7eb;
-            line-height: 1.8;
-            font-size: 1.05rem;
+        .desc{
+            margin-top:25px;
+            text-align:center;
+            color:var(--muted);
+            line-height:2;
+            font-size:14px;
         }
 
-        .question {
-            font-size: 1.2rem;
-            line-height: 1.7;
-            margin-bottom: 20px;
-            color: var(--gold);
+        .story-title{
+            color:var(--gold);
+            text-align:center;
+            font-size:14px;
+            letter-spacing:3px;
+            margin-bottom:22px;
         }
 
-        .answer {
-            width: 100%;
-            padding: 18px;
-            border-radius: 18px;
-            margin-bottom: 15px;
-            border: 2px solid rgba(0,242,255,0.2);
-            background: rgba(255,255,255,0.04);
-            color: white;
-            cursor: pointer;
-            transition: 0.25s;
-            font-family: inherit;
-            font-size: 1rem;
-            text-align: left;
+        .story-text{
+            text-align:center;
+            line-height:2;
+            font-size:clamp(1rem,2.4vw,1.4rem);
         }
 
-        .answer:hover {
-            transform: translateY(-3px);
-            border-color: var(--blue);
-            background: rgba(0,242,255,0.08);
+        .mission-category{
+            color:var(--blue);
+            text-align:center;
+            letter-spacing:3px;
+            margin-bottom:20px;
+            font-size:14px;
         }
 
-        .correct {
-            border-color: var(--green) !important;
-            background: rgba(46,204,113,0.2) !important;
+        .mission-main{
+            line-height:2;
+            font-size:clamp(1rem,2.2vw,1.25rem);
+            text-align:center;
         }
 
-        .wrong {
-            border-color: var(--red) !important;
-            background: rgba(255,49,49,0.2) !important;
+        .mission-info{
+            margin-top:18px;
+            color:var(--muted);
+            text-align:center;
+            line-height:1.9;
+            font-size:14px;
         }
 
-        .btn-core {
-            width: 100%;
-            padding: 18px;
-            border: none;
-            border-radius: 18px;
-            cursor: pointer;
-            background: var(--blue);
-            color: black;
-            font-weight: 900;
-            font-size: 1rem;
-            letter-spacing: 2px;
-            font-family: inherit;
-            transition: 0.25s;
-            margin-top: 20px;
-            box-shadow: 0 0 30px rgba(0,242,255,0.25);
+        .answers{
+            margin-top:28px;
+            display:flex;
+            flex-direction:column;
+            gap:14px;
         }
 
-        .btn-core:hover {
-            transform: scale(1.02);
+        .answer{
+            width:100%;
+            background:#111827;
+            border:1px solid rgba(255,255,255,.06);
+            color:white;
+            padding:18px;
+            border-radius:18px;
+            font-size:14px;
+            transition:.25s;
         }
 
-        .feedback {
-            margin-top: 20px;
-            padding: 18px;
-            border-radius: 18px;
-            line-height: 1.7;
-            font-size: 0.95rem;
+        .answer:hover{
+            background:#1e293b;
+            transform:translateY(-2px);
         }
 
-        .feedback.good {
-            background: rgba(46,204,113,0.15);
-            border: 1px solid rgba(46,204,113,0.35);
+        .correct{
+            background:rgba(34,197,94,.25)!important;
+            border:1px solid rgba(34,197,94,.7)!important;
         }
 
-        .feedback.bad {
-            background: rgba(255,49,49,0.15);
-            border: 1px solid rgba(255,49,49,0.35);
+        .wrong{
+            background:rgba(239,68,68,.25)!important;
+            border:1px solid rgba(239,68,68,.7)!important;
         }
 
-        .breath-wrap {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20px 0;
+        .core-btn{
+            width:100%;
+            margin-top:28px;
+            padding:18px;
+            border-radius:18px;
+            background:linear-gradient(90deg,#00e5ff,#3b82f6);
+            color:black;
+            font-weight:900;
+            letter-spacing:2px;
+            font-size:14px;
+            box-shadow:0 0 25px rgba(0,229,255,.25);
+            transition:.25s;
         }
 
-        .breath-circle {
-            width: 240px;
-            height: 240px;
-            border-radius: 50%;
-            border: 8px solid var(--blue);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 2rem;
-            font-weight: 900;
-            transition: transform 2s ease-in-out;
-            text-shadow: 0 0 10px var(--blue);
-            box-shadow: 0 0 50px rgba(0,242,255,0.35);
-            margin-bottom: 25px;
+        .core-btn:hover{
+            transform:scale(1.02);
         }
 
-        .breath-info {
-            color: var(--soft);
-            text-align: center;
-            line-height: 1.7;
-            max-width: 650px;
+        .feedback{
+            margin-top:24px;
+            padding:18px;
+            border-radius:18px;
+            line-height:1.8;
+            font-size:14px;
         }
 
-        .xp {
-            color: var(--green);
-            font-size: 1.2rem;
-            font-weight: 900;
-            text-align: center;
+        .feedback.good{
+            background:rgba(34,197,94,.15);
+            border:1px solid rgba(34,197,94,.35);
         }
 
-        .loading-box {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
+        .feedback.bad{
+            background:rgba(239,68,68,.15);
+            border:1px solid rgba(239,68,68,.35);
         }
 
-        .loader {
-            width: 90px;
-            height: 90px;
-            border-radius: 50%;
-            border: 5px solid rgba(255,255,255,0.08);
-            border-top-color: var(--blue);
-            animation: spin 1s linear infinite;
-            margin-bottom: 30px;
+        .xp{
+            color:var(--green);
+            font-size:1.2rem;
+            font-weight:900;
+            text-align:center;
         }
 
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
+        /* LOADING */
+
+        .loading-box{
+            min-height:100vh;
+            display:flex;
+            flex-direction:column;
+            justify-content:center;
+            align-items:center;
+            text-align:center;
+        }
+
+        .loader{
+            width:110px;
+            height:110px;
+            border-radius:50%;
+            border:6px solid rgba(255,255,255,.08);
+            border-top-color:var(--blue);
+            animation:spin 1s linear infinite;
+            margin-bottom:30px;
+            box-shadow:0 0 35px rgba(0,229,255,.25);
+        }
+
+        @keyframes spin{
+            to{
+                transform:rotate(360deg);
             }
         }
 
-        .mini-game {
-            text-align: center;
+        /* BREATHING */
+
+        .breath-wrap{
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            justify-content:center;
+            padding:20px 0;
         }
 
-        .mini-game canvas {
-            width: 100%;
-            max-width: 650px;
-            height: 260px;
-            background: black;
-            border-radius: 20px;
-            border: 2px solid rgba(0,242,255,0.2);
-            margin-top: 20px;
+        .breath-circle{
+            width:260px;
+            height:260px;
+            border-radius:50%;
+            border:8px solid var(--blue);
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            position:relative;
+            transition:transform 4s ease-in-out;
+            box-shadow:
+                0 0 60px rgba(0,229,255,.35),
+                inset 0 0 35px rgba(0,229,255,.2);
+            background:
+                radial-gradient(circle at center,
+                rgba(0,229,255,.18),
+                rgba(0,0,0,.25));
+            margin:auto;
         }
 
-        @media(max-width: 700px) {
-            .breath-circle {
-                width: 190px;
-                height: 190px;
-                font-size: 1.5rem;
+        .breath-circle::after{
+            content:"";
+            position:absolute;
+            inset:-14px;
+            border-radius:50%;
+            border:2px solid rgba(0,229,255,.2);
+            animation:pulseRing 4s infinite ease-in-out;
+        }
+
+        @keyframes pulseRing{
+            0%{
+                transform:scale(.9);
+                opacity:.2;
+            }
+            50%{
+                transform:scale(1.12);
+                opacity:.7;
+            }
+            100%{
+                transform:scale(.9);
+                opacity:.2;
+            }
+        }
+
+        .breath-text{
+            font-size:34px;
+            font-weight:900;
+            letter-spacing:3px;
+            text-shadow:0 0 20px rgba(0,229,255,.7);
+        }
+
+        .breath-info{
+            margin-top:30px;
+            color:var(--muted);
+            line-height:1.9;
+            text-align:center;
+            max-width:700px;
+            font-size:15px;
+        }
+
+        /* HUD */
+
+        #hud{
+            position:sticky;
+            top:0;
+            z-index:100;
+            display:flex;
+            justify-content:center;
+            gap:12px;
+            flex-wrap:wrap;
+            padding:15px 10px;
+            background:rgba(0,0,0,.45);
+            backdrop-filter:blur(10px);
+        }
+
+        .hud-box{
+            background:rgba(0,0,0,.75);
+            border:1px solid rgba(0,229,255,.2);
+            border-radius:16px;
+            padding:10px 16px;
+            min-width:120px;
+            text-align:center;
+        }
+
+        .hud-label{
+            color:var(--blue);
+            font-size:10px;
+            letter-spacing:2px;
+        }
+
+        .hud-value{
+            margin-top:6px;
+            font-size:20px;
+            font-weight:900;
+        }
+
+        /* GAME */
+
+        .mini-game{
+            text-align:center;
+        }
+
+        .mini-game canvas{
+            width:100%;
+            max-width:700px;
+            height:260px;
+            background:black;
+            border-radius:20px;
+            border:2px solid rgba(0,229,255,.15);
+            margin-top:20px;
+        }
+
+        @media(max-width:700px){
+
+            .breath-circle{
+                width:210px;
+                height:210px;
             }
 
-            .title {
-                font-size: 1.4rem;
+            .breath-text{
+                font-size:26px;
+            }
+
+            .hud-box{
+                min-width:100px;
             }
         }
+
     </style>
 </head>
 <body>
 
-<div id="screen">
-    <div class="loading-box">
-        <div class="loader"></div>
-        <h1 class="title">KAMIZEN LIFE SYSTEM</h1>
-        <p class="subtitle">Loading neural awareness system...</p>
+<!-- HUD -->
+<div id="hud">
+
+    <div class="hud-box">
+        <div class="hud-label">MISSION</div>
+        <div class="hud-value" id="hud-mission">1/35</div>
     </div>
+
+    <div class="hud-box">
+        <div class="hud-label">XP</div>
+        <div class="hud-value" id="hud-xp">0</div>
+    </div>
+
+    <div class="hud-box">
+        <div class="hud-label">STATE</div>
+        <div class="hud-value" id="hud-state">FOCUS</div>
+    </div>
+
 </div>
 
-<!-- SOLO ENGINE.JS CONTROLA TODO -->
+<!-- SINGLE ROOT -->
+<div id="screen">
+
+    <div class="loading-box">
+        <div class="loader"></div>
+
+        <h1 class="title">
+            LOADING SYSTEM
+        </h1>
+
+        <p class="subtitle">
+            Neural Mission Interface<br>
+            Awareness • Control • Survival
+        </p>
+    </div>
+
+</div>
+
+<!-- IMPORTANT:
+     ENGINE.JS CONTROLS EVERYTHING
+     DO NOT ADD INLINE JS HERE
+-->
 <script src="/static/js/engine.js"></script>
 
 </body>
