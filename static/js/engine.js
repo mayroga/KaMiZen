@@ -1,672 +1,271 @@
 /* =========================================================
-   KAMIZEN ENGINE V10 - FULL STABLE SYSTEM
-   ✔ Reads ALL 35 stories
-   ✔ Reads ALL 35 missions
-   ✔ Reads inf correctly
+   KAMIZEN ENGINE V11 - BACKEND SYNC FIXED
+   ✔ Compatible with YOUR MAIN.PY (title/header/story/options/interactive_blocks)
    ✔ No freeze
    ✔ No double render
-   ✔ Speech lock until narration ends
-   ✔ Loading screen first
-   ✔ Manual start button
-   ✔ Breathing text + inf visible
-   ✔ Sequential clean flow 1 -> 35 -> 1
+   ✔ Breath circle floating (DOES NOT block UI)
+   ✔ Smooth inhale/exhale animation (inflate/deflate)
    ========================================================= */
 
 /* =========================
-   GLOBAL STATE
+   STATE
 ========================= */
 
 let state = {
-    stories: [],
-    missions: [],
-
-    currentIndex: 0,
-    currentBlock: 0,
-
-    phase: "loading", // loading | intro | story | mission
-
-    speechLocked: false,
-    initialized: false
+    mission: null,
+    locked: false,
+    lang: "en",
+    breathingActive: false
 };
-
-/* =========================
-   ENGINE LOCK
-========================= */
-
-if (window.__KAMIZEN_ENGINE_ACTIVE__) {
-    console.warn("KAMIZEN ENGINE ALREADY RUNNING");
-} else {
-    window.__KAMIZEN_ENGINE_ACTIVE__ = true;
-}
 
 /* =========================
    INIT
 ========================= */
 
-window.addEventListener("load", async () => {
-    await loadAllData();
-    showIntro();
+window.addEventListener("load", () => {
+    loadMission();
+    startTimerSync();
 });
 
 /* =========================
-   LOAD DATA
+   LOAD MISSION
 ========================= */
 
-async function loadAllData() {
-
-    const app = document.getElementById("app");
-
-    app.innerHTML = `
-        <div class="card">
-            <h2>LOADING SYSTEM...</h2>
-            <p>Initializing neural missions</p>
-        </div>
-    `;
+async function loadMission() {
 
     try {
 
-        const [storiesReq, missionsReq] = await Promise.all([
-            fetch("/api/stories"),
-            fetch("/api/missions")
-        ]);
+        const res = await fetch("/api/mission/next?lang=" + state.lang);
+        const data = await res.json();
 
-        const storiesData = await storiesReq.json();
-        const missionsData = await missionsReq.json();
-
-        /* STORIES */
-        state.stories = Array.isArray(storiesData.stories)
-            ? storiesData.stories.sort((a, b) => a.id - b.id)
-            : [];
-
-        /* MISSIONS */
-        state.missions = Array.isArray(missionsData.missions)
-            ? missionsData.missions.sort((a, b) => a.id - b.id)
-            : [];
-
-        console.log("STORIES:", state.stories.length);
-        console.log("MISSIONS:", state.missions.length);
-
-        state.initialized = true;
-
-    } catch (err) {
-
-        console.error("LOAD FAILURE:", err);
-
-        app.innerHTML = `
-            <div class="card">
-                <h2>SYSTEM ERROR</h2>
-                <p>Failed loading missions</p>
-            </div>
-        `;
-    }
-}
-
-/* =========================
-   INTRO SCREEN
-========================= */
-
-function showIntro() {
-
-    state.phase = "intro";
-
-    const app = document.getElementById("app");
-
-    app.innerHTML = `
-        <div class="card">
-            <h1>KAMIZEN LIFE SYSTEM</h1>
-
-            <p>
-                Awareness • Control • Safety • Focus
-            </p>
-
-            <p style="opacity:.8;">
-                35 Stories • 35 Missions
-            </p>
-        </div>
-
-        <button onclick="startSystem()">
-            START SYSTEM
-        </button>
-    `;
-}
-
-/* =========================
-   START SYSTEM
-========================= */
-
-function startSystem() {
-
-    state.currentIndex = 0;
-    state.currentBlock = 0;
-    state.phase = "story";
-
-    render();
-}
-
-/* =========================
-   MAIN RENDER
-========================= */
-
-function render() {
-
-    if (!state.initialized) return;
-
-    const app = document.getElementById("app");
-
-    const story = state.stories[state.currentIndex];
-    const mission = state.missions[state.currentIndex];
-
-    /* LOOP SYSTEM */
-
-    if (!story || !mission) {
-
-        state.currentIndex = 0;
-        state.currentBlock = 0;
-        state.phase = "story";
-
-        return render();
-    }
-
-    /* =========================
-       STORY SCREEN
-    ========================= */
-
-    if (state.phase === "story") {
-
-        app.innerHTML = `
-            <div class="card">
-
-                <h2>
-                    STORY ${story.id}
-                </h2>
-
-                <h3>
-                    ${story.t || ""}
-                </h3>
-
-                <p>
-                    ${story.en || ""}
-                </p>
-
-            </div>
-
-            <button id="continueBtn" disabled>
-                NARRATING...
-            </button>
-        `;
-
-        narrate(
-            `${story.t || ""}. ${story.en || ""}`,
-            () => {
-
-                unlockContinue(
-                    "START MISSION",
-                    startMission
-                );
-
-            }
-        );
-
-        return;
-    }
-
-    /* =========================
-       MISSION SCREEN
-    ========================= */
-
-    if (state.phase === "mission") {
-
-        const block = mission.b[state.currentBlock];
-
-        if (!block) {
-            nextStory();
+        if (data.end) {
+            document.body.innerHTML = `
+                <div style="color:white;text-align:center;padding:50px;">
+                    SESSION COMPLETE
+                </div>
+            `;
             return;
         }
 
-        renderBlock(block);
+        state.mission = data;
+        renderMission(data);
+
+    } catch (err) {
+        console.log("BACKEND ERROR", err);
+        setTimeout(loadMission, 1500);
     }
 }
 
 /* =========================
-   RENDER BLOCK
+   RENDER MISSION
 ========================= */
 
-function renderBlock(block) {
+function renderMission(data) {
 
-    const app = document.getElementById("app");
+    const app = document.getElementById("app") || createApp();
 
     let html = "";
 
-    let narration = "";
+    html += `
+        <div class="card">
+            <h2>${data.title || ""}</h2>
+            <h3>${data.header || ""}</h3>
+            <p>${data.story || ""}</p>
+        </div>
+    `;
 
     /* =========================
-       VISUAL TITLE
+       OPTIONS
     ========================= */
 
-    if (block.t === "v") {
+    if (data.options && data.options.length > 0) {
 
-        html += `
-            <div class="card">
-                <h2>${block.tx?.en || ""}</h2>
-            </div>
-        `;
+        html += `<div class="card">`;
 
-        narration += `${block.tx?.en || ""}. `;
-    }
+        data.options.forEach((opt, i) => {
 
-    /* =========================
-       HEADER
-    ========================= */
+            html += `
+                <div class="choice"
+                    onclick="selectOption(${i}, ${opt.is_correct})">
 
-    if (block.t === "h") {
-
-        html += `
-            <div class="card">
-                <p>${block.tx?.en || ""}</p>
-            </div>
-        `;
-
-        narration += `${block.tx?.en || ""}. `;
-    }
-
-    /* =========================
-       STORY INSIDE MISSION
-    ========================= */
-
-    if (block.story) {
-
-        html += `
-            <div class="card">
-                <p>${block.story.en || ""}</p>
-            </div>
-        `;
-
-        narration += `${block.story.en || ""}. `;
-    }
-
-    /* =========================
-       BREATHING
-    ========================= */
-
-    if (
-        block.t === "breath_auto" ||
-        block.t === "br"
-    ) {
-
-        html += `
-            <div class="card" style="text-align:center;">
-
-                <div class="breath-circle"
-                     id="breathCircle">
-
-                    <span id="breathLabel">
-                        INHALE
-                    </span>
+                    ${opt.text}
 
                 </div>
-
-                <h3>
-                    ${block.tx?.en || ""}
-                </h3>
-
-                <p>
-                    ${block.inf?.en || ""}
-                </p>
-
-            </div>
-        `;
-
-        narration += `
-            ${block.tx?.en || ""}.
-            ${block.inf?.en || ""}.
-        `;
-    }
-
-    /* =========================
-       DECISION
-    ========================= */
-
-    if (block.t === "d") {
-
-        html += `
-            <div class="card">
-
-                <h3>
-                    ${block.q?.en || ""}
-                </h3>
-        `;
-
-        narration += `${block.q?.en || ""}. `;
-
-        if (Array.isArray(block.op)) {
-
-            block.op.forEach((option, index) => {
-
-                html += `
-                    <div class="answer"
-                         onclick="selectAnswer(
-                            ${index},
-                            ${block.c},
-                            ${JSON.stringify(block.ex).replace(/"/g, '&quot;')}
-                         )">
-
-                        ${option}
-
-                    </div>
-                `;
-
-                narration += `${option}. `;
-            });
-        }
+            `;
+        });
 
         html += `</div>`;
     }
 
     /* =========================
-       SILENCE
+       INTERACTIVE BLOCKS
     ========================= */
 
-    if (block.t === "sil") {
+    if (data.interactive_blocks) {
 
-        html += `
-            <div class="card">
+        data.interactive_blocks.forEach(block => {
 
-                <h3>
-                    ${block.tx?.en || ""}
-                </h3>
+            if (block.type === "br" || block.type === "breath_auto") {
+                html += renderBreathing(block);
+            }
 
-                <p>
-                    ${block.inf?.en || ""}
-                </p>
-
-            </div>
-        `;
-
-        narration += `
-            ${block.tx?.en || ""}.
-            ${block.inf?.en || ""}.
-        `;
+            if (block.type === "sil") {
+                html += `
+                    <div class="card fade">
+                        <p>${block.text || ""}</p>
+                        <small>${block.info || ""}</small>
+                    </div>
+                `;
+            }
+        });
     }
 
-    /* =========================
-       REWARD
-    ========================= */
-
-    if (block.t === "r") {
-
-        html += `
-            <div class="card">
-
-                <h2>
-                    ⭐ ${block.tx || ""}
-                </h2>
-
-                <p>
-                    +${block.p || 0} XP
-                </p>
-
-            </div>
-        `;
-
-        narration += `
-            ${block.tx || ""}.
-            ${block.p || 0} experience points.
-        `;
-    }
-
-    /* =========================
-       CONCLUSION
-    ========================= */
-
-    if (block.t === "c") {
-
-        html += `
-            <div class="card">
-
-                <p>
-                    ${block.tx?.en || ""}
-                </p>
-
-            </div>
-        `;
-
-        narration += `${block.tx?.en || ""}. `;
-    }
-
-    /* =========================
-       CONTINUE BUTTON
-    ========================= */
-
-    if (block.t !== "d") {
-
-        html += `
-            <button id="continueBtn" disabled>
-                NARRATING...
-            </button>
-        `;
-    }
-
-    app.innerHTML = html;
-
-    /* =========================
-       BREATHING START
-    ========================= */
-
-    if (
-        block.t === "breath_auto" ||
-        block.t === "br"
-    ) {
-
-        startBreathingAnimation();
-    }
-
-    /* =========================
-       NARRATION LOCK
-    ========================= */
-
-    narrate(narration, () => {
-
-        if (block.t !== "d") {
-
-            unlockContinue(
-                "CONTINUE",
-                nextBlock
-            );
-        }
-    });
-}
-
-/* =========================
-   ANSWER SYSTEM
-========================= */
-
-function selectAnswer(index, correct, explanations) {
-
-    if (state.speechLocked) return;
-
-    const app = document.getElementById("app");
-
-    const isCorrect = index === correct;
-
-    const explanation = explanations?.[index] || "";
-
-    app.innerHTML += `
-        <div class="card">
-
-            <h3 style="color:${isCorrect ? '#22c55e' : '#ef4444'}">
-
-                ${isCorrect ? "CORRECT" : "WRONG"}
-
-            </h3>
-
-            <p>
-                ${explanation}
-            </p>
-
-        </div>
-
-        <button id="continueBtn" disabled>
-            NARRATING...
+    html += `
+        <button onclick="nextMission()">
+            NEXT
         </button>
     `;
 
-    narrate(explanation, () => {
+    app.innerHTML = html;
 
-        unlockContinue(
-            "CONTINUE",
-            nextBlock
-        );
-
-    });
+    /* trigger breathing AFTER render */
+    initBreathing();
 }
 
 /* =========================
-   NEXT BLOCK
+   BREATHING UI (FIXED)
+   Floating, NOT blocking text
 ========================= */
 
-function nextBlock() {
+function renderBreathing(block) {
 
-    if (state.speechLocked) return;
+    return `
+        <div class="breath-wrapper">
 
-    state.currentBlock++;
+            <div class="breath-circle" id="breathCircle">
 
-    render();
+                <span id="breathText">
+                    INHALE
+                </span>
+
+            </div>
+
+            <div class="breath-info">
+                <p>${block.text || ""}</p>
+                <small>${block.info || ""}</small>
+            </div>
+
+        </div>
+    `;
 }
 
 /* =========================
-   START MISSION
+   BREATH ENGINE (INHALE / EXHALE / INFLATE)
 ========================= */
 
-function startMission() {
-
-    if (state.speechLocked) return;
-
-    state.phase = "mission";
-    state.currentBlock = 0;
-
-    render();
-}
-
-/* =========================
-   NEXT STORY
-========================= */
-
-function nextStory() {
-
-    state.currentIndex++;
-
-    /* CLEAN LOOP */
-
-    if (state.currentIndex >= state.stories.length) {
-
-        state.currentIndex = 0;
-    }
-
-    state.phase = "story";
-    state.currentBlock = 0;
-
-    render();
-}
-
-/* =========================
-   NARRATOR
-========================= */
-
-function narrate(text, callback = null) {
-
-    if (!text) {
-
-        if (callback) callback();
-
-        return;
-    }
-
-    state.speechLocked = true;
-
-    window.speechSynthesis.cancel();
-
-    const speech = new SpeechSynthesisUtterance(text);
-
-    speech.lang = "en-US";
-
-    speech.rate = 0.92;
-    speech.pitch = 1;
-    speech.volume = 1;
-
-    speech.onend = () => {
-
-        state.speechLocked = false;
-
-        if (callback) callback();
-    };
-
-    speech.onerror = () => {
-
-        state.speechLocked = false;
-
-        if (callback) callback();
-    };
-
-    window.speechSynthesis.speak(speech);
-}
-
-/* =========================
-   BUTTON UNLOCK
-========================= */
-
-function unlockContinue(label, action) {
-
-    const btn = document.getElementById("continueBtn");
-
-    if (!btn) return;
-
-    btn.disabled = false;
-    btn.innerText = label;
-
-    btn.onclick = action;
-}
-
-/* =========================
-   BREATHING ANIMATION
-========================= */
-
-function startBreathingAnimation() {
+function initBreathing() {
 
     const circle = document.getElementById("breathCircle");
-    const label = document.getElementById("breathLabel");
+    const text = document.getElementById("breathText");
 
-    if (!circle || !label) return;
+    if (!circle || state.breathingActive) return;
+
+    state.breathingActive = true;
 
     let inhale = true;
 
-    circle.style.transition =
-        "transform 4s ease-in-out";
+    setInterval(() => {
 
-    function animate() {
-
-        if (!document.getElementById("breathCircle")) {
-            return;
-        }
+        if (!document.body.contains(circle)) return;
 
         if (inhale) {
 
-            label.innerText = "INHALE";
+            text.innerText = "INHALE";
 
-            circle.style.transform =
-                "scale(1.25)";
+            circle.style.transform = "scale(1.25)";
+            circle.style.boxShadow = "0 0 40px rgba(0,242,255,0.6)";
 
         } else {
 
-            label.innerText = "EXHALE";
+            text.innerText = "EXHALE";
 
-            circle.style.transform =
-                "scale(0.8)";
+            circle.style.transform = "scale(0.85)";
+            circle.style.boxShadow = "0 0 15px rgba(0,242,255,0.2)";
         }
 
         inhale = !inhale;
+
+    }, 3000);
+}
+
+/* =========================
+   OPTION SELECT
+========================= */
+
+function selectOption(index, correct) {
+
+    if (state.locked) return;
+
+    state.locked = true;
+
+    const choices = document.querySelectorAll(".choice");
+
+    if (correct) {
+        choices[index].style.background = "rgba(0,255,0,0.2)";
+    } else {
+        choices[index].style.background = "rgba(255,0,0,0.2)";
     }
 
-    animate();
+    setTimeout(() => {
+        state.locked = false;
+    }, 1000);
+}
 
-    setInterval(animate, 4000);
+/* =========================
+   NEXT
+========================= */
+
+function nextMission() {
+    loadMission();
+}
+
+/* =========================
+   TIMER SYNC (FROM BACKEND)
+========================= */
+
+function startTimerSync() {
+
+    setInterval(async () => {
+
+        try {
+
+            const res = await fetch("/api/mission/next?lang=" + state.lang);
+            const data = await res.json();
+
+            const timer = document.getElementById("timer");
+            if (timer && data.time_left !== undefined) {
+
+                let m = Math.floor(data.time_left / 60);
+                let s = data.time_left % 60;
+
+                timer.innerText =
+                    String(m).padStart(2, "0") + ":" +
+                    String(s).padStart(2, "0");
+            }
+
+        } catch (e) {}
+
+    }, 2000);
+}
+
+/* =========================
+   APP CREATOR
+========================= */
+
+function createApp() {
+
+    const div = document.createElement("div");
+    div.id = "app";
+    document.body.appendChild(div);
+    return div;
 }
