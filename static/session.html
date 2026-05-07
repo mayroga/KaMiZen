@@ -31,7 +31,7 @@ body{
 }
 
 /* =========================
-   MAIN APP CONTAINER
+   APP CONTAINER
 ========================= */
 
 #app{
@@ -41,7 +41,7 @@ body{
 }
 
 /* =========================
-   CARD SYSTEM
+   CARD SYSTEM (VISUAL ONLY)
 ========================= */
 
 .card{
@@ -54,7 +54,7 @@ body{
 }
 
 /* =========================
-   BUTTONS (ONLY VISUAL)
+   BUTTONS (NO LOGIC)
 ========================= */
 
 button{
@@ -74,7 +74,7 @@ button:hover{
 }
 
 /* =========================
-   ANSWERS
+   ANSWERS (VISUAL ONLY)
 ========================= */
 
 .answer{
@@ -93,8 +93,8 @@ button:hover{
 }
 
 /* =========================
-   BREATHING VISUAL (DECORATIVE ONLY)
-   ❗ NO JS CONTROL HERE (engine.js handles logic)
+   BREATHING (VISUAL ONLY)
+   ⚠ NO JS HERE, ENGINE CONTROLS IT
 ========================= */
 
 .breath-circle{
@@ -106,15 +106,13 @@ button:hover{
     display:flex;
     align-items:center;
     justify-content:center;
-
-    /* ONLY VISUAL LOOP (SAFE, NO LOGIC) */
     animation:breathe 6s infinite ease-in-out;
 }
 
 @keyframes breathe{
-    0%{transform:scale(0.85);opacity:0.7;}
-    50%{transform:scale(1.25);opacity:1;border-color:var(--success);}
-    100%{transform:scale(0.85);opacity:0.7;}
+    0%   {transform:scale(0.85);opacity:0.7;}
+    50%  {transform:scale(1.25);opacity:1;border-color:var(--success);}
+    100% {transform:scale(0.85);opacity:0.7;}
 }
 
 /* =========================
@@ -135,18 +133,20 @@ h1,h2,h3{
 }
 
 /* =========================
-   IMPORTANT SAFETY RULE
+   SAFETY RULES (IMPORTANT)
 ========================= */
 /*
-❗ DO NOT ADD:
-- exam navigation buttons
-- window.location redirects
-- extra JS logic
-- duplicated breathing controllers
-- hidden engines or timers
+❗ DO NOT ADD ANY LOGIC HERE
 
-Everything must be controlled ONLY by:
-👉 static/js/engine.js
+PROHIBITED:
+- no exam buttons
+- no window.location
+- no intervals or timers
+- no JS state handling
+- no duplicate breathing logic
+
+ONLY ENGINE.JS CONTROLS:
+👉 /static/js/engine.js
 */
 
 </style>
@@ -155,11 +155,11 @@ Everything must be controlled ONLY by:
 <body>
 
 <!-- =========================================================
-     ONLY ONE CONTROL SURFACE
+     SINGLE APP ROOT (ENGINE CONTROLLED)
 ========================================================= -->
 <div id="app">
 
-    <!-- STATIC HEADER (NEVER CHANGES, SAFE VISUAL ONLY) -->
+    <!-- STATIC HEADER (SAFE VISUAL ONLY) -->
     <div class="card center">
         <h2 style="color:var(--primary);">
             KAMIZEN LIFE SYSTEM
@@ -170,17 +170,15 @@ Everything must be controlled ONLY by:
         </p>
     </div>
 
-    <!-- DYNAMIC ENGINE RENDER AREA -->
-    <!-- ⚠️ ENGINE.JS WRITES EVERYTHING HERE -->
-    <div id="screen" class="card">
+    <!-- ENGINE RENDER TARGET (DO NOT TOUCH) -->
+    <div class="card center">
         <h3>Loading system...</h3>
         <p class="small">
-            Initializing stories & missions
+            Initializing neural framework
         </p>
     </div>
 
-    <!-- BREATHING VISUAL ONLY (NO LOGIC HERE) -->
-    <!-- engine.js will animate separately -->
+    <!-- BREATHING VISUAL (DECORATIVE ONLY) -->
     <div class="card center">
         <h3>Breathing Module</h3>
 
@@ -189,14 +187,14 @@ Everything must be controlled ONLY by:
         </div>
 
         <p class="small">
-            Visual support only 
+            Visual support only (engine controlled)
         </p>
     </div>
 
 </div>
 
 <!-- =========================================================
-     ENGINE CONTROLLER (ONLY LOGIC SOURCE)
+     ENGINE (ONLY LOGIC CONTROLLER)
 ========================================================= -->
 <script src="/static/js/engine.js"></script>
 
