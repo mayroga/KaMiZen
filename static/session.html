@@ -1,605 +1,268 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>KAMIZEN LIFE SYSTEM</title>
 
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
 
     <style>
-        :root{
-            --bg:#030712;
-            --card:#0f172a;
-            --line:#1e293b;
-            --blue:#00e5ff;
-            --green:#22c55e;
-            --red:#ef4444;
-            --gold:#facc15;
-            --white:#ffffff;
-            --muted:#94a3b8;
+        :root {
+            --bg: #050508;
+            --card: rgba(0,0,0,0.85);
+            --blue: #00f2ff;
+            --gold: #f1c40f;
+            --green: #2ecc71;
+            --red: #ff3131;
+            --text: #ffffff;
+            --soft: #9ca3af;
         }
 
-        *{
-            box-sizing:border-box;
-            margin:0;
-            padding:0;
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
-        body{
-            background:
-                radial-gradient(circle at top,#0f172a 0%,#020617 60%);
-            color:white;
-            font-family:'Orbitron',sans-serif;
-            overflow:hidden;
-            width:100vw;
-            height:100vh;
+        body {
+            background: radial-gradient(circle at center, #10131d 0%, #050508 100%);
+            color: var(--text);
+            font-family: 'Orbitron', sans-serif;
+            overflow-x: hidden;
+            min-height: 100vh;
         }
 
-        button{
-            border:none;
-            outline:none;
-            cursor:pointer;
-            font-family:'Orbitron',sans-serif;
+        #screen {
+            width: 100%;
+            max-width: 900px;
+            margin: auto;
+            padding: 25px 15px 120px;
         }
 
-        .hidden{
-            display:none !important;
+        .card {
+            background: var(--card);
+            border: 2px solid rgba(0,242,255,0.2);
+            border-radius: 24px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 35px rgba(0,242,255,0.08);
+            backdrop-filter: blur(8px);
         }
 
-        /* =========================
-           GLOBAL SCREEN
-        ========================= */
-
-        .screen{
-            position:fixed;
-            inset:0;
-            display:flex;
-            flex-direction:column;
-            align-items:center;
-            justify-content:center;
-            padding:20px;
-            z-index:10;
+        .center {
+            text-align: center;
         }
 
-        .card{
-            width:min(92vw,900px);
-            background:rgba(15,23,42,.95);
-            border:1px solid rgba(0,229,255,.2);
-            border-radius:28px;
-            padding:28px;
-            box-shadow:
-                0 0 30px rgba(0,229,255,.08),
-                inset 0 0 20px rgba(255,255,255,.02);
-            backdrop-filter:blur(8px);
+        .title {
+            font-size: 2rem;
+            color: var(--blue);
+            text-align: center;
+            margin-bottom: 10px;
+            letter-spacing: 3px;
+            text-shadow: 0 0 20px rgba(0,242,255,0.4);
         }
 
-        .title{
-            font-size:clamp(2rem,5vw,4rem);
-            color:var(--blue);
-            text-align:center;
-            font-weight:900;
-            letter-spacing:4px;
-            text-shadow:0 0 18px rgba(0,229,255,.5);
+        .subtitle {
+            text-align: center;
+            color: var(--soft);
+            margin-bottom: 25px;
+            font-size: 0.9rem;
         }
 
-        .subtitle{
-            margin-top:15px;
-            text-align:center;
-            color:var(--gold);
-            font-size:14px;
-            letter-spacing:2px;
-            line-height:1.8;
+        .story-title {
+            color: var(--gold);
+            margin-bottom: 20px;
+            font-size: 1.5rem;
         }
 
-        .desc{
-            margin-top:25px;
-            text-align:center;
-            color:var(--muted);
-            line-height:1.9;
-            font-size:14px;
+        .story-text {
+            color: #e5e7eb;
+            line-height: 1.8;
+            font-size: 1.05rem;
         }
 
-        .core-btn{
-            margin-top:35px;
-            padding:18px 30px;
-            border-radius:18px;
-            background:linear-gradient(90deg,#00e5ff,#3b82f6);
-            color:black;
-            font-weight:900;
-            letter-spacing:2px;
-            font-size:14px;
-            width:min(90vw,420px);
-            transition:.25s;
-            box-shadow:0 0 25px rgba(0,229,255,.3);
+        .question {
+            font-size: 1.2rem;
+            line-height: 1.7;
+            margin-bottom: 20px;
+            color: var(--gold);
         }
 
-        .core-btn:hover{
-            transform:scale(1.03);
+        .answer {
+            width: 100%;
+            padding: 18px;
+            border-radius: 18px;
+            margin-bottom: 15px;
+            border: 2px solid rgba(0,242,255,0.2);
+            background: rgba(255,255,255,0.04);
+            color: white;
+            cursor: pointer;
+            transition: 0.25s;
+            font-family: inherit;
+            font-size: 1rem;
+            text-align: left;
         }
 
-        /* =========================
-           LOADING
-        ========================= */
-
-        #loading-screen{
-            background:black;
-            z-index:9999;
+        .answer:hover {
+            transform: translateY(-3px);
+            border-color: var(--blue);
+            background: rgba(0,242,255,0.08);
         }
 
-        .loader-ring{
-            width:180px;
-            height:180px;
-            border-radius:50%;
-            border:6px solid rgba(255,255,255,.08);
-            border-top:6px solid var(--blue);
-            animation:spin 1.4s linear infinite;
-            margin-bottom:30px;
-            box-shadow:0 0 35px rgba(0,229,255,.3);
+        .correct {
+            border-color: var(--green) !important;
+            background: rgba(46,204,113,0.2) !important;
         }
 
-        @keyframes spin{
-            from{transform:rotate(0deg);}
-            to{transform:rotate(360deg);}
+        .wrong {
+            border-color: var(--red) !important;
+            background: rgba(255,49,49,0.2) !important;
         }
 
-        .loading-title{
-            font-size:32px;
-            color:var(--blue);
-            font-weight:900;
-            letter-spacing:5px;
-            text-shadow:0 0 18px rgba(0,229,255,.4);
+        .btn-core {
+            width: 100%;
+            padding: 18px;
+            border: none;
+            border-radius: 18px;
+            cursor: pointer;
+            background: var(--blue);
+            color: black;
+            font-weight: 900;
+            font-size: 1rem;
+            letter-spacing: 2px;
+            font-family: inherit;
+            transition: 0.25s;
+            margin-top: 20px;
+            box-shadow: 0 0 30px rgba(0,242,255,0.25);
         }
 
-        .loading-sub{
-            margin-top:15px;
-            color:var(--muted);
-            letter-spacing:2px;
-            text-align:center;
-            line-height:1.8;
+        .btn-core:hover {
+            transform: scale(1.02);
         }
 
-        /* =========================
-           HUD
-        ========================= */
-
-        #hud{
-            position:fixed;
-            top:15px;
-            left:50%;
-            transform:translateX(-50%);
-            display:flex;
-            gap:12px;
-            z-index:200;
-            width:min(96vw,1000px);
-            justify-content:center;
-            flex-wrap:wrap;
+        .feedback {
+            margin-top: 20px;
+            padding: 18px;
+            border-radius: 18px;
+            line-height: 1.7;
+            font-size: 0.95rem;
         }
 
-        .hud-box{
-            background:rgba(0,0,0,.82);
-            border:1px solid rgba(0,229,255,.25);
-            border-radius:16px;
-            padding:10px 16px;
-            min-width:130px;
-            text-align:center;
-            backdrop-filter:blur(10px);
+        .feedback.good {
+            background: rgba(46,204,113,0.15);
+            border: 1px solid rgba(46,204,113,0.35);
         }
 
-        .hud-label{
-            color:var(--blue);
-            font-size:10px;
-            letter-spacing:2px;
+        .feedback.bad {
+            background: rgba(255,49,49,0.15);
+            border: 1px solid rgba(255,49,49,0.35);
         }
 
-        .hud-value{
-            margin-top:6px;
-            font-size:22px;
-            font-weight:900;
+        .breath-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px 0;
         }
 
-        /* =========================
-           STORY
-        ========================= */
-
-        #story-screen{
-            z-index:100;
+        .breath-circle {
+            width: 240px;
+            height: 240px;
+            border-radius: 50%;
+            border: 8px solid var(--blue);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            font-weight: 900;
+            transition: transform 2s ease-in-out;
+            text-shadow: 0 0 10px var(--blue);
+            box-shadow: 0 0 50px rgba(0,242,255,0.35);
+            margin-bottom: 25px;
         }
 
-        .story-id{
-            color:var(--gold);
-            font-size:14px;
-            letter-spacing:3px;
-            margin-bottom:20px;
+        .breath-info {
+            color: var(--soft);
+            text-align: center;
+            line-height: 1.7;
+            max-width: 650px;
         }
 
-        .story-text{
-            font-size:clamp(1.1rem,2.6vw,1.5rem);
-            line-height:2;
-            color:white;
-            text-align:center;
+        .xp {
+            color: var(--green);
+            font-size: 1.2rem;
+            font-weight: 900;
+            text-align: center;
         }
 
-        /* =========================
-           MISSION
-        ========================= */
-
-        #mission-screen{
-            z-index:120;
+        .loading-box {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
         }
 
-        .mission-category{
-            color:var(--blue);
-            letter-spacing:3px;
-            font-size:14px;
-            margin-bottom:20px;
+        .loader {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            border: 5px solid rgba(255,255,255,0.08);
+            border-top-color: var(--blue);
+            animation: spin 1s linear infinite;
+            margin-bottom: 30px;
         }
 
-        .mission-main{
-            font-size:clamp(1rem,2.3vw,1.3rem);
-            line-height:2;
-            text-align:center;
-        }
-
-        .mission-info{
-            margin-top:20px;
-            color:var(--muted);
-            text-align:center;
-            line-height:1.8;
-            font-size:14px;
-        }
-
-        .answers{
-            margin-top:28px;
-            display:flex;
-            flex-direction:column;
-            gap:14px;
-        }
-
-        .answer{
-            padding:18px;
-            border-radius:16px;
-            background:#111827;
-            border:1px solid rgba(255,255,255,.06);
-            color:white;
-            transition:.25s;
-            font-size:14px;
-        }
-
-        .answer:hover{
-            background:#1e293b;
-            transform:translateY(-2px);
-        }
-
-        .correct{
-            background:rgba(34,197,94,.25) !important;
-            border:1px solid rgba(34,197,94,.7) !important;
-        }
-
-        .wrong{
-            background:rgba(239,68,68,.25) !important;
-            border:1px solid rgba(239,68,68,.7) !important;
-        }
-
-        /* =========================
-           BREATHING
-        ========================= */
-
-        #breathing-screen{
-            background:rgba(0,0,0,.92);
-            z-index:150;
-        }
-
-        .breath-wrapper{
-            display:flex;
-            flex-direction:column;
-            align-items:center;
-            justify-content:center;
-        }
-
-        #breath-circle{
-            width:260px;
-            height:260px;
-            border-radius:50%;
-            border:8px solid var(--blue);
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            position:relative;
-            transition:transform 4s ease-in-out;
-            box-shadow:
-                0 0 60px rgba(0,229,255,.35),
-                inset 0 0 35px rgba(0,229,255,.2);
-            background:
-                radial-gradient(circle at center,
-                rgba(0,229,255,.18),
-                rgba(0,0,0,.25));
-        }
-
-        #breath-circle::after{
-            content:"";
-            position:absolute;
-            inset:-14px;
-            border-radius:50%;
-            border:2px solid rgba(0,229,255,.2);
-            animation:pulseRing 4s infinite ease-in-out;
-        }
-
-        @keyframes pulseRing{
-            0%{
-                transform:scale(.9);
-                opacity:.2;
-            }
-            50%{
-                transform:scale(1.12);
-                opacity:.7;
-            }
-            100%{
-                transform:scale(.9);
-                opacity:.2;
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
             }
         }
 
-        #breath-text{
-            font-size:34px;
-            font-weight:900;
-            color:white;
-            text-shadow:0 0 20px rgba(0,229,255,.7);
-            letter-spacing:3px;
+        .mini-game {
+            text-align: center;
         }
 
-        #breath-info{
-            margin-top:30px;
-            max-width:700px;
-            text-align:center;
-            line-height:1.8;
-            color:var(--muted);
-            font-size:15px;
+        .mini-game canvas {
+            width: 100%;
+            max-width: 650px;
+            height: 260px;
+            background: black;
+            border-radius: 20px;
+            border: 2px solid rgba(0,242,255,0.2);
+            margin-top: 20px;
         }
 
-        /* =========================
-           MINI GAME
-        ========================= */
-
-        #game-screen{
-            background:black;
-            z-index:90;
-        }
-
-        #gameCanvas{
-            position:fixed;
-            inset:0;
-            width:100%;
-            height:100%;
-            background:black;
-        }
-
-        #game-ui{
-            position:fixed;
-            top:100px;
-            width:100%;
-            text-align:center;
-            z-index:999;
-            pointer-events:none;
-        }
-
-        #game-title{
-            color:var(--gold);
-            font-size:28px;
-            letter-spacing:4px;
-            text-shadow:0 0 15px rgba(250,204,21,.5);
-        }
-
-        #game-sub{
-            margin-top:12px;
-            color:var(--muted);
-            font-size:14px;
-            letter-spacing:2px;
-        }
-
-        /* =========================
-           MOBILE
-        ========================= */
-
-        @media(max-width:700px){
-
-            #breath-circle{
-                width:210px;
-                height:210px;
+        @media(max-width: 700px) {
+            .breath-circle {
+                width: 190px;
+                height: 190px;
+                font-size: 1.5rem;
             }
 
-            #breath-text{
-                font-size:26px;
-            }
-
-            .core-btn{
-                font-size:12px;
-            }
-
-            .hud-box{
-                min-width:100px;
+            .title {
+                font-size: 1.4rem;
             }
         }
-
     </style>
 </head>
-
 <body>
 
-<!-- =========================
-     HUD
-========================= -->
-
-<div id="hud">
-
-    <div class="hud-box">
-        <div class="hud-label">MISSIONS</div>
-        <div class="hud-value" id="hud-mission">1/35</div>
+<div id="screen">
+    <div class="loading-box">
+        <div class="loader"></div>
+        <h1 class="title">KAMIZEN LIFE SYSTEM</h1>
+        <p class="subtitle">Loading neural awareness system...</p>
     </div>
-
-    <div class="hud-box">
-        <div class="hud-label">XP</div>
-        <div class="hud-value" id="hud-xp">0</div>
-    </div>
-
-    <div class="hud-box">
-        <div class="hud-label">STATE</div>
-        <div class="hud-value" id="hud-state">FOCUS</div>
-    </div>
-
 </div>
 
-<!-- =========================
-     LOADING SCREEN
-========================= -->
-
-<div id="loading-screen" class="screen">
-
-    <div class="loader-ring"></div>
-
-    <div class="loading-title">
-        LOADING SYSTEM
-    </div>
-
-    <div class="loading-sub">
-        Neural Mission Interface<br>
-        Awareness • Control • Survival
-    </div>
-
-</div>
-
-<!-- =========================
-     START SCREEN
-========================= -->
-
-<div id="start-screen" class="screen hidden">
-
-    <div class="card">
-
-        <div class="title">
-            KAMIZEN LIFE SYSTEM
-        </div>
-
-        <div class="subtitle">
-            AWARENESS • SAFETY • DISCIPLINE • CALM
-        </div>
-
-        <div class="desc">
-            35 Stories<br>
-            35 Missions<br>
-            Guided Breathing<br>
-            Real Decision Training<br>
-            Narrator Voice System<br>
-            Interactive Reward Games
-        </div>
-
-        <div style="display:flex;justify-content:center;">
-            <button id="start-btn" class="core-btn">
-                START TRAINING
-            </button>
-        </div>
-
-    </div>
-
-</div>
-
-<!-- =========================
-     STORY SCREEN
-========================= -->
-
-<div id="story-screen" class="screen hidden">
-
-    <div class="card">
-
-        <div class="story-id" id="story-id">
-            STORY 1
-        </div>
-
-        <div class="story-text" id="story-text">
-        </div>
-
-        <div style="display:flex;justify-content:center;">
-            <button id="story-btn" class="core-btn hidden">
-                CONTINUE
-            </button>
-        </div>
-
-    </div>
-
-</div>
-
-<!-- =========================
-     MINI GAME SCREEN
-========================= -->
-
-<div id="game-screen" class="screen hidden">
-
-    <canvas id="gameCanvas"></canvas>
-
-    <div id="game-ui">
-        <div id="game-title">
-            BONUS FOCUS GAME
-        </div>
-
-        <div id="game-sub">
-            Catch positive thoughts • Avoid negative thoughts
-        </div>
-    </div>
-
-</div>
-
-<!-- =========================
-     MISSION SCREEN
-========================= -->
-
-<div id="mission-screen" class="screen hidden">
-
-    <div class="card">
-
-        <div class="mission-category" id="mission-category">
-            AWARENESS
-        </div>
-
-        <div class="mission-main" id="mission-main">
-        </div>
-
-        <div class="mission-info" id="mission-info">
-        </div>
-
-        <div class="answers" id="answers">
-        </div>
-
-        <div style="display:flex;justify-content:center;">
-            <button id="continue-btn" class="core-btn hidden">
-                CONTINUE
-            </button>
-        </div>
-
-    </div>
-
-</div>
-
-<!-- =========================
-     BREATHING SCREEN
-========================= -->
-
-<div id="breathing-screen" class="screen hidden">
-
-    <div class="breath-wrapper">
-
-        <div id="breath-circle">
-            <span id="breath-text">INHALE</span>
-        </div>
-
-        <div id="breath-info">
-            Calm breathing improves emotional regulation and focus
-        </div>
-
-    </div>
-
-</div>
-
+<!-- SOLO ENGINE.JS CONTROLA TODO -->
 <script src="/static/js/engine.js"></script>
 
 </body>
 </html>
+```
