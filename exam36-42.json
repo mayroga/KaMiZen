@@ -1,0 +1,300 @@
+{
+"sys":"KAMIZEN LIFE SYSTEM",
+"ch":6,
+"rng":"36-42",
+
+"ui":{"fw":["CALM","FOCUS","CONFIDENCE","CONTROL","TRUTH","AWARENESS","SAFETY","ACTION"]},
+
+"rules":[
+"Calm>Fear",
+"Focus>Noise",
+"Preparation>Worry",
+"Breath=Control",
+"Truth=Stability",
+"Action=Confidence"
+],
+
+"missions":[
+
+{
+"id":36,
+"cat":"exam_anxiety",
+"b":[
+
+{"t":"v","tx":{"en":"MISSION 36: BEFORE THE EXAM"}},
+{"t":"h","tx":{"en":"Feeling nervous is normal. It means your brain is ready."}},
+
+{"story":{"en":"Your body sends butterflies in your stomach. That is energy, not danger."}},
+
+{"t":"breath_auto","d":30,
+"tx":{"en":"Slow inhale... slow exhale. Let your body settle"},
+"inf":{"en":"This lowers heart rate and helps your brain focus clearly"}
+},
+
+{"t":"d","q":{"en":"What is the best way to handle nervous feelings?"},
+"op":["Fight the feeling","Breathe and stay calm","Run away","Think worst case"],
+"c":1,
+"ex":[
+"Fighting feeling = more stress",
+"Breathe = control returns",
+"Running away = no progress",
+"Worst case = anxiety increase"
+]},
+
+{"t":"r","tx":"+Calm","p":20},
+
+{"t":"sil","d":30,
+"tx":{"en":"Notice your body without judging it"},
+"inf":{"en":"Helps the brain stop alarm reactions"}
+},
+
+{"t":"breath_auto","d":30,
+"tx":{"en":"Inhale confidence... exhale fear"},
+"inf":{"en":"Builds emotional control before performance"}
+}
+
+]
+},
+
+{
+"id":37,
+"cat":"fear_management",
+"b":[
+
+{"t":"v","tx":{"en":"MISSION 37: HANDLING FEAR"}},
+{"t":"h","tx":{"en":"Fear is just a signal, not a command"}},
+
+{"story":{"en":"Fear appears before important moments. It does not mean something is wrong."}},
+
+{"t":"breath_auto","d":30,
+"tx":{"en":"Breathe slowly and keep your shoulders relaxed"},
+"inf":{"en":"Reduces muscle tension and improves mental clarity"}
+},
+
+{"t":"d","q":{"en":"What should you do when fear appears?"},
+"op":["Stop everything","Keep breathing and continue","Give up","Panic"],
+"c":1,
+"ex":[
+"Stopping = loss of control",
+"Breathing = stability",
+"Giving up = lost opportunity",
+"Panic = confusion"
+]},
+
+{"t":"r","tx":"+Control","p":20},
+
+{"t":"sil","d":40,
+"tx":{"en":"Let fear be there, but don’t follow it"},
+"inf":{"en":"Teaches separation between emotion and action"}
+},
+
+{"t":"breath_auto","d":30,
+"tx":{"en":"Inhale steady... exhale slow"},
+"inf":{"en":"Builds calm nervous system response"}
+}
+
+]
+},
+
+{
+"id":38,
+"cat":"focus_under_pressure",
+"b":[
+
+{"t":"v","tx":{"en":"MISSION 38: DURING THE EXAM"}},
+{"t":"h","tx":{"en":"Focus on one question at a time"}},
+
+{"story":{"en":"You don’t need to know everything at once. You only need the next answer."}},
+
+{"t":"breath_auto","d":25,
+"tx":{"en":"One slow breath before starting"},
+"inf":{"en":"Activates focus and reduces mental overload"}
+},
+
+{"t":"d","q":{"en":"What is the best strategy in an exam?"},
+"op":["Think of all questions at once","Do one question at a time","Skip everything","Guess everything"],
+"c":1,
+"ex":[
+"All at once = overload",
+"One by one = control",
+"Skipping = loss of structure",
+"Guessing = instability"
+]},
+
+{"t":"r","tx":"+Focus","p":20},
+
+{"t":"sil","d":45,
+"tx":{"en":"Stay with only this question in front of you"},
+"inf":{"en":"Improves attention and reduces anxiety loops"}
+},
+
+{"t":"breath_auto","d":25,
+"tx":{"en":"Inhale focus... exhale noise"},
+"inf":{"en":"Helps maintain attention stability"}
+}
+
+]
+},
+
+{
+"id":39,
+"cat":"problem_solving",
+"b":[
+
+{"t":"v","tx":{"en":"MISSION 39: WHEN A QUESTION IS HARD"}},
+{"t":"h","tx":{"en":"Hard does not mean impossible"}},
+
+{"story":{"en":"Some questions feel difficult at first, but your knowledge is already inside you."}},
+
+{"t":"breath_auto","d":30,
+"tx":{"en":"Slow breath to restart your thinking"},
+"inf":{"en":"Helps reset cognitive stress and improves recall"}
+},
+
+{"t":"d","q":{"en":"What should you do if a question is hard?"},
+"op":["Freeze and stop","Skip and return later","Panic","Give up immediately"],
+"c":1,
+"ex":[
+"Freezing = blocked thinking",
+"Skip + return = smart strategy",
+"Panic = confusion",
+"Giving up = lost opportunity"
+]},
+
+{"t":"r","tx":"+Strategy","p":20},
+
+{"t":"sil","d":60,
+"tx":{"en":"Trust your memory and move step by step"},
+"inf":{"en":"Builds problem decomposition skills"}
+},
+
+{"t":"breath_auto","d":30,
+"tx":{"en":"Inhale clarity... exhale doubt"},
+"inf":{"en":"Improves confidence in reasoning"}
+}
+
+]
+},
+
+{
+"id":40,
+"cat":"self_support",
+"b":[
+
+{"t":"v","tx":{"en":"MISSION 40: WHEN YOU FEEL ALONE IN EXAMS"}},
+{"t":"h","tx":{"en":"You are stronger than the moment"}},
+
+{"story":{"en":"Even if you feel pressure, you still have your knowledge and preparation."}},
+
+{"t":"breath_auto","d":30,
+"tx":{"en":"Slow breathing to bring comfort back"},
+"inf":{"en":"Activates calming systems and reduces stress perception"}
+},
+
+{"t":"d","q":{"en":"What is the best mindset?"},
+"op":["I will fail for sure","I will try step by step","I am helpless","I cannot do anything"],
+"c":1,
+"ex":[
+"Failure belief = stress increase",
+"Step by step = control",
+"Helplessness = shutdown",
+"No action belief = paralysis"
+]},
+
+{"t":"r","tx":"+Confidence","p":20},
+
+{"t":"sil","d":60,
+"tx":{"en":"Remind yourself: I am prepared"},
+"inf":{"en":"Builds emotional resilience"}
+},
+
+{"t":"breath_auto","d":30,
+"tx":{"en":"Inhale strength... exhale fear"},
+"inf":{"en":"Reinforces self-support system"}
+}
+
+]
+},
+
+{
+"id":41,
+"cat":"performance_mindset",
+"b":[
+
+{"t":"v","tx":{"en":"MISSION 41: PERFORMANCE MINDSET"}},
+{"t":"h","tx":{"en":"Do your best, not perfect"}},
+
+{"story":{"en":"Success is not about perfection. It is about showing what you know."}},
+
+{"t":"breath_auto","d":25,
+"tx":{"en":"Breathe and relax your face muscles"},
+"inf":{"en":"Reduces tension and improves cognitive performance"}
+},
+
+{"t":"d","q":{"en":"What matters most in an exam?"},
+"op":["Being perfect","Trying your best","Not making mistakes ever","Finishing first"],
+"c":1,
+"ex":[
+"Perfection = unrealistic pressure",
+"Best effort = real success",
+"No mistakes = impossible goal",
+"Speed alone = not accuracy"
+]},
+
+{"t":"r","tx":"+Performance","p":25},
+
+{"t":"sil","d":75,
+"tx":{"en":"Focus on effort, not fear"},
+"inf":{"en":"Builds healthy achievement mindset"}
+},
+
+{"t":"breath_auto","d":25,
+"tx":{"en":"Inhale effort... exhale pressure"},
+"inf":{"en":"Supports steady performance under stress"}
+}
+
+]
+},
+
+{
+"id":42,
+"cat":"post_exam_recovery",
+"b":[
+
+{"t":"v","tx":{"en":"MISSION 42: AFTER THE EXAM"}},
+{"t":"h","tx":{"en":"No matter what happened, you continue growing"}},
+
+{"story":{"en":"One exam does not define you. Learning is a long journey."}},
+
+{"t":"breath_auto","d":30,
+"tx":{"en":"Slow recovery breathing to relax your body"},
+"inf":{"en":"Helps release stress hormones after performance"}
+},
+
+{"t":"d","q":{"en":"What is the best reaction after finishing?"},
+"op":["Worry forever","Accept and move forward","Blame yourself","Stop trying"],
+"c":1,
+"ex":[
+"Worry = stress continuation",
+"Acceptance = emotional recovery",
+"Self-blame = low self-esteem",
+"Stopping = lost growth"
+]},
+
+{"t":"r","tx":"+Recovery","p":25},
+
+{"t":"sil","d":90,
+"tx":{"en":"Let your mind rest completely"},
+"inf":{"en":"Restores emotional balance and reduces cognitive fatigue"}
+},
+
+{"t":"breath_auto","d":30,
+"tx":{"en":"Inhale calm... exhale all tension"},
+"inf":{"en":"Completes stress cycle reset"}
+}
+
+]
+}
+
+]
+}
