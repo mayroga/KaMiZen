@@ -1,0 +1,302 @@
+{
+"sys":"KAMIZEN LIFE SYSTEM",
+"ch":6,
+"rng":"36-42",
+
+"ui":{"fw":["CALM","FOCUS","CONFIDENCE","CONTROL","TRUTH","AWARENESS","SAFETY","ACTION"]},
+
+"rules":[
+"Calm>Fear",
+"Focus>Noise",
+"StepByStep>Pressure",
+"Breath=Control",
+"Body=Signal",
+"Presence>Overthinking",
+"Truth=Safety",
+"SelfTrust>Fear"
+],
+
+"missions":[
+
+{
+"id":36,
+"cat":"exam_anxiety",
+"b":[
+
+{"t":"v","tx":{"en":"MISSION 36: CALM YOUR BODY BEFORE THE TEST"}},
+{"t":"h","tx":{"en":"Your body is safe. It is just getting ready."}},
+
+{"story":{"en":"If your heart beats fast or your stomach feels strange, it is only energy. Not danger. Your body is helping you focus."}},
+
+{"t":"breath_auto","d":40,
+"tx":{"en":"Breathe in slowly... breathe out slowly"},
+"inf":{"en":"Tells your body it is safe now"}
+},
+
+{"t":"d","q":{"en":"What does nervous feeling mean?"},
+"op":["Danger","My body is ready","Something is wrong","I should escape"],
+"c":1,
+"ex":[
+"Nervous = energy ready",
+"Danger idea = fear grows",
+"Wrong idea = panic starts",
+"Escape = loss of control"
+]},
+
+{"t":"r","tx":"+Body Calm","p":25},
+
+{"t":"sil","d":35,
+"tx":{"en":"Feel your body without fear"},
+"inf":{"en":"Helps your mind stay calm"}
+},
+
+{"t":"breath_auto","d":30,
+"tx":{"en":"Inhale calm... exhale worry"},
+"inf":{"en":"Helps control stress in the body"}
+}
+
+]
+},
+
+{
+"id":37,
+"cat":"fear_management",
+"b":[
+
+{"t":"v","tx":{"en":"MISSION 37: FEAR IS JUST A FEELING"}},
+{"t":"h","tx":{"en":"Fear is not a command. It is just a signal."}},
+
+{"story":{"en":"Fear comes when something is important. But you can still act calmly."}},
+
+{"t":"breath_auto","d":40,
+"tx":{"en":"Slow breathing helps you stay in control"},
+"inf":{"en":"Helps your brain stay calm and clear"}
+},
+
+{"t":"d","q":{"en":"What should you do when you feel fear?"},
+"op":["Stop everything","Stay calm and continue","Run away","Scream"],
+"c":1,
+"ex":[
+"Stopping breaks progress",
+"Calm keeps control",
+"Running avoids learning",
+"Screaming increases stress"
+]},
+
+{"t":"r","tx":"+Fear Control","p":25},
+
+{"t":"sil","d":40,
+"tx":{"en":"Let fear stay, but don’t follow it"},
+"inf":{"en":"Builds inner strength"}
+},
+
+{"t":"breath_auto","d":30,
+"tx":{"en":"Inhale calm... exhale fear"},
+"inf":{"en":"Helps your body relax"}
+}
+
+]
+},
+
+{
+"id":38,
+"cat":"focus_under_pressure",
+"b":[
+
+{"t":"v","tx":{"en":"MISSION 38: ONE STEP ONLY"}},
+{"t":"h","tx":{"en":"Do one question at a time"}},
+
+{"story":{"en":"You don’t need to do everything at once. Just focus on one step."}},
+
+{"t":"breath_auto","d":35,
+"tx":{"en":"One slow breath before starting"},
+"inf":{"en":"Helps your brain focus"}
+},
+
+{"t":"d","q":{"en":"Best way to take an exam?"},
+"op":["All at once","One by one","Random guessing","Skip everything"],
+"c":1,
+"ex":[
+"All at once = confusion",
+"One by one = control",
+"Guessing = mistakes",
+"Skipping = incomplete"
+]},
+
+{"t":"r","tx":"+Focus","p":25},
+
+{"t":"sil","d":45,
+"tx":{"en":"Stay only with this moment"},
+"inf":{"en":"Helps attention stay strong"}
+},
+
+{"t":"breath_auto","d":25,
+"tx":{"en":"Inhale focus... exhale noise"},
+"inf":{"en":"Helps clear your mind"}
+}
+
+]
+},
+
+{
+"id":39,
+"cat":"problem_solving",
+"b":[
+
+{"t":"v","tx":{"en":"MISSION 39: HARD QUESTIONS"}},
+{"t":"h","tx":{"en":"Hard does not mean impossible"}},
+
+{"story":{"en":"Your brain already knows more than you think. You just need to stay calm."}},
+
+{"t":"breath_auto","d":35,
+"tx":{"en":"Slow breath to help your memory"},
+"inf":{"en":"Helps your brain remember better"}
+},
+
+{"t":"d","q":{"en":"What should you do if a question is hard?"},
+"op":["Freeze","Skip and return later","Give up","Panic"],
+"c":1,
+"ex":[
+"Freezing stops thinking",
+"Skipping helps strategy",
+"Giving up ends progress",
+"Panic blocks memory"
+]},
+
+{"t":"r","tx":"+Smart Thinking","p":25},
+
+{"t":"sil","d":50,
+"tx":{"en":"Break it into small steps"},
+"inf":{"en":"Helps your brain solve problems"}
+},
+
+{"t":"breath_auto","d":30,
+"tx":{"en":"Inhale clarity... exhale doubt"},
+"inf":{"en":"Helps thinking become clear"}
+}
+
+]
+},
+
+{
+"id":40,
+"cat":"self_support",
+"b":[
+
+{"t":"v","tx":{"en":"MISSION 40: YOU CAN SUPPORT YOURSELF"}},
+{"t":"h","tx":{"en":"You are not alone inside your mind"}},
+
+{"story":{"en":"Even if you feel pressure, you still have your preparation inside you."}},
+
+{"t":"breath_auto","d":35,
+"tx":{"en":"Slow breathing to feel safe again"},
+"inf":{"en":"Helps your body calm down"}
+},
+
+{"t":"d","q":{"en":"What is the best thought?"},
+"op":["I will fail","I go step by step","I cannot do it","I give up"],
+"c":1,
+"ex":[
+"Failure = fear",
+"Step by step = control",
+"Cannot = block",
+"Giving up = stop"
+]},
+
+{"t":"r","tx":"+Self Trust","p":30},
+
+{"t":"sil","d":60,
+"tx":{"en":"Say: I am ready"},
+"inf":{"en":"Builds confidence"}
+},
+
+{"t":"breath_auto","d":30,
+"tx":{"en":"Inhale strength... exhale fear"},
+"inf":{"en":"Helps emotional control"}
+}
+
+]
+},
+
+{
+"id":41,
+"cat":"performance_mindset",
+"b":[
+
+{"t":"v","tx":{"en":"MISSION 41: DO YOUR BEST"}},
+{"t":"h","tx":{"en":"You don’t need to be perfect"}},
+
+{"story":{"en":"Doing your best is enough. Mistakes are part of learning."}},
+
+{"t":"breath_auto","d":30,
+"tx":{"en":"Relax and breathe slowly"},
+"inf":{"en":"Helps your body stay calm"}
+},
+
+{"t":"d","q":{"en":"What matters most?"},
+"op":["Being perfect","Doing your best","Never failing","Finishing first"],
+"c":1,
+"ex":[
+"Perfect = stress",
+"Best effort = success",
+"No failure = impossible",
+"Speed alone = not learning"
+]},
+
+{"t":"r","tx":"+Performance","p":30},
+
+{"t":"sil","d":60,
+"tx":{"en":"Focus on effort, not fear"},
+"inf":{"en":"Builds healthy mindset"}
+},
+
+{"t":"breath_auto","d":25,
+"tx":{"en":"Inhale action... exhale pressure"},
+"inf":{"en":"Helps you perform better"}
+}
+
+]
+},
+
+{
+"id":42,
+"cat":"post_exam_recovery",
+"b":[
+
+{"t":"v","tx":{"en":"MISSION 42: REST AND MOVE ON"}},
+{"t":"h","tx":{"en":"One test does not define you"}},
+
+{"story":{"en":"After the exam, your mind needs rest. You did your best and that is enough."}},
+
+{"t":"breath_auto","d":40,
+"tx":{"en":"Deep slow breathing to relax"},
+"inf":{"en":"Helps your body and mind recover"}
+},
+
+{"t":"d","q":{"en":"What is the best after-exam action?"},
+"op":["Worry forever","Accept and move on","Blame yourself","Quit studying"],
+"c":1,
+"ex":[
+"Worry = stress continues",
+"Accept = peace",
+"Blame = sadness",
+"Quit = stop growth"
+]},
+
+{"t":"r","tx":"+Peace","p":35},
+
+{"t":"sil","d":80,
+"tx":{"en":"Rest your mind fully"},
+"inf":{"en":"Helps emotional recovery"}
+},
+
+{"t":"breath_auto","d":30,
+"tx":{"en":"Inhale calm... exhale pressure"},
+"inf":{"en":"Completes stress cycle deactivation"}
+}
+
+]
+}
+
+]
+}
