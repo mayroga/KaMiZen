@@ -19,7 +19,8 @@ app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 # =========================================================
 CACHE = {
     "stories": None,
-    "missions": None
+    "missions": None,
+    "exam": None
 }
 
 # =========================================================
@@ -34,7 +35,7 @@ def load_json(path):
         return None
 
 # =========================================================
-# 📖 STORIES LOADER (STRICT 1–35 ORDER)
+# 📖 STORIES LOADER
 # =========================================================
 def load_stories():
 
@@ -53,7 +54,6 @@ def load_stories():
     else:
         stories = []
 
-    # 🔥 FORCE CLEAN SORT (NO DUPLICATES OR MISORDER)
     stories = sorted(
         [s for s in stories if isinstance(s, dict) and "id" in s],
         key=lambda x: x["id"]
@@ -63,7 +63,7 @@ def load_stories():
     return stories
 
 # =========================================================
-# 🎯 MISSIONS LOADER (MULTI FILE SYSTEM 01–35)
+# 🎯 MISSIONS LOADER (CORE SYSTEM)
 # =========================================================
 def load_missions():
 
@@ -86,7 +86,6 @@ def load_missions():
 
         missions = []
 
-        # soporta múltiples formatos
         if isinstance(data, dict):
             missions = (
                 data.get("missions") or
@@ -94,16 +93,13 @@ def load_missions():
                 data.get("data") or
                 []
             )
-
         elif isinstance(data, list):
             missions = data
 
-        # filtrar válidos
         for m in missions:
             if isinstance(m, dict) and "id" in m:
                 all_missions.append(m)
 
-    # 🔥 ORDEN GLOBAL ABSOLUTO 1 → 35
     all_missions = sorted(all_missions, key=lambda x: x["id"])
 
     CACHE["missions"] = {
@@ -112,6 +108,44 @@ def load_missions():
     }
 
     return CACHE["missions"]
+
+# =========================================================
+# 🧠 EXAM SYSTEM LOADER (NEW OPTIONAL MODE)
+# =========================================================
+def load_exam_system():
+
+    if CACHE["exam"] is not None:
+        return CACHE["exam"]
+
+    exam_files = [
+        "exam36-42.json",
+        "exam43-49.json"
+    ]
+
+    all_exam_missions = []
+
+    for file in exam_files:
+
+        path = os.path.join(BASE_DIR, file)
+        data = load_json(path)
+
+        if not data:
+            continue
+
+        missions = data.get("missions", [])
+
+        for m in missions:
+            if isinstance(m, dict) and "id" in m:
+                all_exam_missions.append(m)
+
+    all_exam_missions = sorted(all_exam_missions, key=lambda x: x["id"])
+
+    CACHE["exam"] = {
+        "total": len(all_exam_missions),
+        "missions": all_exam_missions
+    }
+
+    return CACHE["exam"]
 
 # =========================================================
 # 🌐 FRONTEND ROUTES
@@ -135,14 +169,21 @@ def get_stories():
     }
 
 # =========================================================
-# 🎯 API MISSIONS
+# 🎯 API MISSIONS (CORE)
 # =========================================================
 @app.get("/api/missions")
 def get_missions():
     return load_missions()
 
 # =========================================================
-# 🔍 SINGLE MISSION
+# 🧠 API EXAM MODE (OPTIONAL SYSTEM)
+# =========================================================
+@app.get("/api/exam")
+def get_exam():
+    return load_exam_system()
+
+# =========================================================
+# 🔍 SINGLE MISSION (CORE)
 # =========================================================
 @app.get("/api/missions/{mission_id}")
 def get_mission(mission_id: int):
@@ -156,7 +197,7 @@ def get_mission(mission_id: int):
     raise HTTPException(status_code=404, detail="Mission not found")
 
 # =========================================================
-# 🧠 STATE SYSTEM (USER PROGRESS)
+# 🧠 STATE SYSTEM
 # =========================================================
 STATE = {
     "user": "",
