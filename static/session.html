@@ -1,252 +1,132 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>KAMIZEN LIFE SYSTEM - AURA CORE</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>KAMIZEN SESSION CORE</title>
 
-    <style>
-        :root {
-            --bg-deep: #0b1220;
-            --card-bg: #111a2e;
-            --primary: #3b82f6;
-            --success: #22c55e;
-            --danger: #ef4444;
-            --warning: #facc15;
-            --text-main: #ffffff;
-            --text-dim: #94a3b8;
-        }
+<style>
+body{
+margin:0;
+background:#050508;
+color:white;
+font-family:Orbitron, sans-serif;
+overflow:hidden;
+}
 
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', sans-serif;
-            background: var(--bg-deep);
-            color: var(--text-main);
-            display: flex;
-            justify-content: center;
-            min-height: 100vh;
-        }
+.hidden{display:none !important;}
 
-        #app {
-            width: 100%;
-            max-width: 650px;
-            padding: 30px 20px;
-            text-align: center;
-        }
+.full{
+position:fixed;
+inset:0;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+text-align:center;
+background:radial-gradient(circle,#111,#000);
+z-index:10;
+padding:20px;
+}
 
-        .card {
-            background: var(--card-bg);
-            padding: 22px;
-            border-radius: 18px;
-            margin: 18px 0;
-            text-align: left;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.35);
-            border: 1px solid rgba(255,255,255,0.05);
-        }
+button{
+padding:18px 40px;
+margin-top:20px;
+border:none;
+background:#00e5ff;
+font-weight:900;
+cursor:pointer;
+}
 
-        h1, h2, h3 {
-            margin: 10px 0;
-        }
+#hud{
+position:fixed;
+top:10px;
+width:100%;
+display:flex;
+justify-content:space-around;
+z-index:20;
+pointer-events:none;
+}
 
-        .title {
-            color: var(--primary);
-            text-align: center;
-        }
+.box{
+background:black;
+border:1px solid #00e5ff;
+padding:10px;
+min-width:100px;
+text-align:center;
+}
 
-        .question {
-            font-size: 18px;
-            margin-bottom: 10px;
-        }
+#breath-circle{
+width:220px;
+height:220px;
+border-radius:50%;
+border:6px solid #00e5ff;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:28px;
+font-weight:900;
+transition:transform 2s ease;
+}
+</style>
 
-        .story {
-            color: var(--text-dim);
-            font-size: 14px;
-            margin-bottom: 15px;
-        }
-
-        .answer {
-            background: #1f2937;
-            padding: 14px;
-            margin: 10px 0;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: 0.2s;
-            border-left: 4px solid var(--primary);
-        }
-
-        .answer:hover {
-            transform: translateX(5px);
-            background: #374151;
-        }
-
-        button {
-            width: 100%;
-            padding: 14px;
-            border-radius: 12px;
-            border: none;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 10px;
-            background: var(--primary);
-            color: white;
-            transition: 0.2s;
-        }
-
-        button:hover {
-            transform: translateY(-2px);
-        }
-
-        .feedback {
-            margin-top: 10px;
-            padding: 10px;
-            border-radius: 8px;
-            font-size: 14px;
-        }
-
-        .success { background: rgba(34,197,94,0.2); }
-        .error { background: rgba(239,68,68,0.2); }
-
-        .breath {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            margin: 30px auto;
-            border: 4px solid var(--primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            animation: breathe 8s infinite ease-in-out;
-            font-weight: bold;
-        }
-
-        @keyframes breathe {
-            0%,100% { transform: scale(0.9); opacity: 0.7; }
-            50% { transform: scale(1.25); opacity: 1; border-color: var(--success); }
-        }
-
-        .small {
-            font-size: 12px;
-            color: var(--text-dim);
-        }
-
-    </style>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
 </head>
 
 <body>
 
-<div id="app">
+<!-- HUD -->
+<div id="hud">
+<div class="box">XP <div id="hud-xp">0</div></div>
+<div class="box">MISSION <div id="hud-mission">0/35</div></div>
+<div class="box">STATE <div id="hud-state">READY</div></div>
+</div>
 
-    <div class="card">
-        <h2 class="title">KAMIZEN LIFE SYSTEM</h2>
-        <p class="small">Neural Training Interface • Awareness • Control • Discipline</p>
-    </div>
+<!-- LOADING -->
+<div id="loading-screen" class="full">
+<h1>LOADING SYSTEM</h1>
+<p>Preparing neural missions...</p>
+</div>
 
-    <!-- MISSION CONTAINER -->
-    <div id="mission-container" class="card">
-        <h3>System Loading...</h3>
-        <p class="small">Initializing neural missions...</p>
-    </div>
+<!-- START -->
+<div id="start-screen" class="full hidden">
+<h1>KAMIZEN SYSTEM</h1>
+<p>TRAINING CORE ACTIVE</p>
+<button id="start-btn">START TRAINING</button>
+</div>
 
-    <!-- BREATHING MODULE -->
-    <div id="breathing" class="card" style="text-align:center;">
-        <h3>Breathing System</h3>
-        <div class="breath">FOCUS</div>
-        <p class="small">Automatic regulation active</p>
-    </div>
+<!-- STORY -->
+<div id="story-screen" class="full hidden">
+<h2 id="story-id"></h2>
+<p id="story-text"></p>
+<button id="story-btn" class="hidden">CONTINUE</button>
+</div>
 
+<!-- MISSION -->
+<div id="mission-screen" class="full hidden">
+<h2 id="mission-category"></h2>
+<p id="mission-main"></p>
+
+<div id="answers"></div>
+
+<p id="mission-info"></p>
+
+<button id="continue-btn" class="hidden">CONTINUE</button>
+</div>
+
+<!-- BREATHING (CORREGIDO Y SIMPLE) -->
+<div id="breathing-screen" class="full hidden">
+<div id="breath-circle">FOCUS</div>
+<p id="breath-text">INHALE</p>
+<p id="breath-info"></p>
+</div>
+
+<!-- GAME -->
+<div id="game-screen" class="full hidden">
+<canvas id="gameCanvas"></canvas>
 </div>
 
 <script src="/static/js/engine.js"></script>
-
-<script>
-/* =========================
-   KAMIZEN UI STATE CORE
-========================= */
-
-let state = {
-    missionIndex: 1,
-    score: 0,
-    loaded: false
-};
-
-function renderMission(mission) {
-    const container = document.getElementById("mission-container");
-
-    if (!mission) {
-        container.innerHTML = "<h3>Mission not found</h3>";
-        return;
-    }
-
-    let html = `
-        <h2>${mission.cat.toUpperCase()}</h2>
-    `;
-
-    mission.b.forEach(block => {
-
-        if (block.t === "v") {
-            html += `<h3>${block.tx.en}</h3>`;
-        }
-
-        if (block.t === "h") {
-            html += `<p class="story">${block.tx.en}</p>`;
-        }
-
-        if (block.story) {
-            html += `<p class="story">${block.story.en}</p>`;
-        }
-
-        if (block.q) {
-            html += `<div class="question">${block.q.en}</div>`;
-        }
-
-        if (block.op) {
-            block.op.forEach((opt, i) => {
-                html += `
-                    <div class="answer" onclick="answer(${i}, ${block.c})">
-                        ${opt}
-                    </div>
-                `;
-            });
-        }
-
-        if (block.t === "r") {
-            state.score += block.p;
-            html += `<div class="feedback success">+${block.p} XP</div>`;
-        }
-
-        if (block.t === "c") {
-            html += `<div class="feedback">${block.tx.en}</div>`;
-        }
-    });
-
-    container.innerHTML = html;
-}
-
-function answer(i, correct) {
-    const container = document.getElementById("mission-container");
-
-    if (i === correct) {
-        container.innerHTML += `<div class="feedback success">Correct decision</div>`;
-        state.score += 10;
-    } else {
-        container.innerHTML += `<div class="feedback error">Incorrect choice</div>`;
-    }
-
-    setTimeout(() => {
-        if (window.engine && window.engine.nextMission) {
-            window.engine.nextMission();
-        }
-    }, 800);
-}
-
-/* EXPOSE GLOBAL */
-window.kamizen = {
-    renderMission,
-    state
-};
-
-</script>
 
 </body>
 </html>
