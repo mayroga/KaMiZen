@@ -6,7 +6,6 @@
 <title>KAMIZEN LIFE SYSTEM - CORE SESSION</title>
 
 <style>
-
 :root{
     --bg:#0b1220;
     --card:#111a2e;
@@ -43,10 +42,10 @@ body{
 
 .card{
     background:var(--card);
-    padding:20px;
+    padding:18px;
     border-radius:16px;
-    margin:15px 0;
-    box-shadow:0 10px 25px rgba(0,0,0,0.3);
+    margin:14px 0;
+    box-shadow:0 10px 25px rgba(0,0,0,0.35);
     border:1px solid rgba(255,255,255,0.05);
 }
 
@@ -61,15 +60,13 @@ button{
     border-radius:12px;
     background:var(--primary);
     color:white;
-    font-weight:bold;
+    font-weight:700;
     cursor:pointer;
-    margin-top:10px;
     transition:0.2s;
 }
 
 button:hover{
     transform:translateY(-2px);
-    opacity:0.95;
 }
 
 /* =========================
@@ -84,6 +81,7 @@ button:hover{
     cursor:pointer;
     border-left:4px solid var(--primary);
     transition:0.2s;
+    font-size:15px;
 }
 
 .answer:hover{
@@ -92,23 +90,32 @@ button:hover{
 }
 
 /* =========================
-   BREATHING VISUAL
+   BREATHING VISUAL (SAFE ONLY - ENGINE OVERRIDES)
 ========================= */
 
 .breath-circle{
     width:140px;
     height:140px;
     border-radius:50%;
-    margin:30px auto;
+    margin:25px auto;
     border:4px solid var(--primary);
     display:flex;
     align-items:center;
     justify-content:center;
-    transition:transform 4s ease-in-out;
+    font-weight:bold;
+    letter-spacing:1px;
+    animation: breathe 6s infinite ease-in-out;
+}
+
+/* default animation fallback ONLY (engine can override) */
+@keyframes breathe{
+    0%{transform:scale(0.85);opacity:0.7;}
+    50%{transform:scale(1.2);opacity:1;border-color:var(--success);}
+    100%{transform:scale(0.85);opacity:0.7;}
 }
 
 /* =========================
-   TEXT
+   TEXT STYLES
 ========================= */
 
 h1,h2,h3{
@@ -124,6 +131,20 @@ h1,h2,h3{
     text-align:center;
 }
 
+/* =========================
+   OPTIONAL EXAM MODE BUTTON
+========================= */
+
+.exam-mode{
+    margin-top:10px;
+    background:#1d4ed8;
+    font-size:14px;
+}
+
+.exam-mode:hover{
+    background:#2563eb;
+}
+
 </style>
 </head>
 
@@ -131,63 +152,67 @@ h1,h2,h3{
 
 <div id="app">
 
-    <!-- =========================
-         HEADER
-    ========================= -->
+    <!-- STATIC HEADER (NO ENGINE CONTROL HERE) -->
     <div class="card center">
         <h2 style="color:var(--primary);">
             KAMIZEN LIFE SYSTEM
         </h2>
 
         <p class="small">
-            Awareness • Control • Focus • Discipline
+            Awareness • Control • Safety • Focus
         </p>
     </div>
 
-    <!-- =========================
-         MAIN SYSTEM INTRO
-    ========================= -->
+    <!-- SYSTEM LOADING / ENGINE CONTROLLED AREA -->
+    <div id="screen" class="card center">
+        <h3>Loading system...</h3>
+        <p class="small">Initializing neural missions</p>
+    </div>
+
+    <!-- OPTIONAL EXAM ACCESS (NEW FEATURE) -->
     <div class="card center">
 
-        <h3>CORE SYSTEM READY</h3>
+        <h3>Exam Training Hub</h3>
 
         <p class="small">
-            35 Life Missions • 35 Stories • Optional Exam Mode
+            How to React Before & During Exams
         </p>
 
-        <button onclick="startSystem()">
-            START CORE SYSTEM
+        <!-- OPTIONAL BUTTONS (ENGINE CAN HOOK THESE LATER) -->
+        <button class="exam-mode"
+                onclick="window.location.href='/exam36-42.html'">
+            Calm Before Exams (Level 1)
         </button>
 
-        <button onclick="loadExamMode()"
-                style="background:#22c55e;">
-            HOW TO REACT BEFORE & DURING EXAMS
+        <button class="exam-mode"
+                onclick="window.location.href='/exam43-49.html'">
+            Body & Stress Control (Level 2)
         </button>
+
+        <p class="small">
+            Optional modules – no interruption to main system
+        </p>
 
     </div>
 
-    <!-- =========================
-         BREATHING MODULE (VISUAL ONLY)
-    ========================= -->
+    <!-- BREATHING VISUAL (PURE VISUAL ONLY - ENGINE OVERRIDES) -->
     <div class="card center">
 
-        <h3>Breathing System</h3>
+        <h3>Breathing Module</h3>
 
-        <div class="breath-circle" id="breathCircle">
-            <span id="breathLabel">FOCUS</span>
+        <div class="breath-circle">
+            <span>FOCUS</span>
         </div>
 
         <p class="small">
-            Controlled by engine.js (auto regulation system)
+            Controlled by engine.js (do not modify manually)
         </p>
 
     </div>
 
 </div>
 
-<!-- =========================
-     ENGINE CONTROLLER
-========================= -->
+<!-- ENGINE (FULL CONTROL SYSTEM) -->
 <script src="/static/js/engine.js"></script>
 
 </body>
