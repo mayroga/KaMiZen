@@ -1,6 +1,6 @@
 /* =========================================================
-   KAMIZEN ENGINE V10 - FULL STABLE SYSTEM (FIXED FLOW)
-   STORIES → WORD GAME → MISSIONS → WORD GAME → BREATHING → END
+   KAMIZEN ENGINE V10 - FULL STABLE SYSTEM
+   + WORD GAME INTEGRATION (MID + END)
    ========================================================= */
 
 let state = {
@@ -13,12 +13,17 @@ let state = {
     phase: "loading",
 
     speechLocked: false,
-    initialized: false
+    initialized: false,
+
+    gameActive: false
 };
 
-/* ENGINE LOCK */
+/* =========================
+   ENGINE LOCK
+========================= */
+
 if (window.__KAMIZEN_ENGINE_ACTIVE__) {
-    console.warn("KAMIZEN ENGINE ALREADY RUNNING");
+    console.warn("ENGINE ALREADY RUNNING");
 } else {
     window.__KAMIZEN_ENGINE_ACTIVE__ = true;
 }
@@ -40,32 +45,28 @@ async function loadAllData() {
 
     const app = document.getElementById("app");
 
-    app.innerHTML = `<div class="card"><h2>LOADING SYSTEM...</h2></div>`;
+    app.innerHTML = `<div class="card"><h2>LOADING...</h2></div>`;
 
-    try {
+    const [storiesReq, missionsReq] = await Promise.all([
+        fetch("/api/stories"),
+        fetch("/api/missions")
+    ]);
 
-        const [storiesReq, missionsReq] = await Promise.all([
-            fetch("/api/stories"),
-            fetch("/api/missions")
-        ]);
+    const storiesData = await storiesReq.json();
+    const missionsData = await missionsReq.json();
 
-        const storiesData = await storiesReq.json();
-        const missionsData = await missionsReq.json();
+    state.stories = Array.isArray(storiesData.stories)
+        ? storiesData.stories.sort((a,b)=>a.id-b.id)
+        : [];
 
-        state.stories = Array.isArray(storiesData.stories)
-            ? storiesData.stories.sort((a, b) => a.id - b.id)
-            : [];
+    state.missions = Array.isArray(missionsData.missions)
+        ? missionsData.missions.sort((a,b)=>a.id-b.id)
+        : [];
 
-        state.missions = Array.isArray(missionsData.missions)
-            ? missionsData.missions.sort((a, b) => a.id - b.id)
-            : [];
+    console.log("STORIES:", state.stories.length);
+    console.log("MISSIONS:", state.missions.length);
 
-        state.initialized = true;
-
-    } catch (err) {
-        console.error(err);
-        app.innerHTML = `<div class="card"><h2>LOAD ERROR</h2></div>`;
-    }
+    state.initialized = true;
 }
 
 /* =========================
@@ -79,68 +80,70 @@ function showIntro() {
     app.innerHTML = `
         <div class="card">
             <h1>KAMIZEN SYSTEM</h1>
-            <p>Stories • Cognition • Survival Logic</p>
+            <p>Stories → Focus → Decisions → Control</p>
         </div>
 
-        <button onclick="startFlow()">START SYSTEM</button>
+        <button onclick="startSystem()">START</button>
     `;
 }
 
 /* =========================
-   MAIN FLOW CONTROLLER
+   START SYSTEM
 ========================= */
 
-async function startFlow() {
+function startSystem() {
 
     state.currentIndex = 0;
     state.currentBlock = 0;
+    state.phase = "story";
 
-    await runStories();
-
-    await wordGame(300000); // 🔥 AFTER STORIES (5 MIN)
-
-    await runMissions();
-
-    await wordGame(300000); // 🔥 AFTER MISSIONS
-
-    await breathingPhase();
-
-    await endScreen();
+    renderStory();
 }
 
 /* =========================
-   STORIES
+   STORY PHASE
 ========================= */
 
-async function runStories() {
+function renderStory() {
 
     const app = document.getElementById("app");
+    const story = state.stories[state.currentIndex];
 
-    state.phase = "stories";
+    if (!story) return;
 
-    for (let s of state.stories) {
+    app.innerHTML = `
+        <div class="card">
+            <h2>STORY ${story.id}</h2>
+            <p>${story.en || ""}</p>
+        </div>
 
-        app.innerHTML = `
-            <div class="card">
-                <h2>${s.t || ""}</h2>
-                <p>${s.en || ""}</p>
-            </div>
-        `;
+        <button id="nextBtn" disabled>NARRATING...</button>
+    `;
 
-        await speak(s.en || "");
-        await wait(1200);
-    }
+    speak(story.en, async () => {
+
+        document.getElementById("nextBtn").disabled = false;
+        document.getElementById("nextBtn").innerText = "CONTINUE";
+
+        document.getElementById("nextBtn").onclick = async () => {
+
+            await wordGame(300000); // 🎮 MID GAME (5 min)
+
+            state.phase = "mission";
+            state.currentBlock = 0;
+
+            renderMission();
+        };
+    });
 }
 
 /* =========================
-   WORD GAME (FLOATING + LASER SHIFT MEANING)
+   WORD GAME (FLOATING + LASER SEMANTIC SHIFT)
 ========================= */
 
 function wordGame(duration) {
 
     return new Promise(resolve => {
-
-        state.phase = "wordgame";
 
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
@@ -149,74 +152,79 @@ function wordGame(duration) {
         canvas.height = window.innerHeight;
 
         let objects = [];
-        let mouse = { x: canvas.width / 2, y: canvas.height / 2 };
+        let mouse = { x: canvas.width/2, y: canvas.height/2 };
 
-        const good = ["FOCUS", "TRUTH", "DISCIPLINE", "CONTROL", "CALM"];
-        const bad = ["ANGER", "CHAOS", "FEAR", "IMPULSE", "DISTRACTION"];
+        const good = ["FOCUS","TRUTH","CALM","CONTROL"];
+        const bad = ["ANGER","CHAOS","FEAR","IMPULSE"];
 
-        const start = Date.now();
+        let start = Date.now();
 
         function spawn() {
 
             const isBad = Math.random() > 0.5;
 
+            const text = isBad
+                ? bad[Math.floor(Math.random()*bad.length)]
+                : good[Math.floor(Math.random()*good.length)];
+
             objects.push({
-                x: Math.random() * canvas.width,
+                x: Math.random()*canvas.width,
                 y: -20,
-                speed: 2 + Math.random() * 2,
-                text: isBad ? bad[Math.floor(Math.random() * bad.length)]
-                            : good[Math.floor(Math.random() * good.length)],
+                speed: 2+Math.random()*2,
+                text,
                 bad: isBad,
-                neutralized: false
+                transformed: false
             });
         }
 
-        setInterval(spawn, 700);
+        let interval = setInterval(spawn, 600);
 
         function loop() {
 
             if (Date.now() - start > duration) {
+
+                clearInterval(interval);
                 resolve();
                 return;
             }
 
             ctx.fillStyle = "rgba(0,0,0,0.25)";
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillRect(0,0,canvas.width,canvas.height);
 
-            objects.forEach((o, i) => {
+            objects.forEach((o,i)=>{
 
                 o.y += o.speed;
 
                 const dx = mouse.x - o.x;
                 const dy = mouse.y - o.y;
-                const dist = Math.sqrt(dx * dx + dy * dy);
 
-                /* 🔥 LASER MEANING SHIFT */
-                if (dist < 120 && o.bad && !o.neutralized) {
-                    o.text = "NEUTRALIZED";
+                const dist = Math.sqrt(dx*dx+dy*dy);
+
+                // LASER TRANSFORM LOGIC
+                if (dist < 120 && o.bad && !o.transformed) {
+
                     o.bad = false;
-                    o.neutralized = true;
+                    o.text = "REDEFINED";
+                    o.transformed = true;
                 }
 
                 ctx.strokeStyle = o.bad ? "#ff3131" : "#2ecc71";
-
                 ctx.beginPath();
-                ctx.moveTo(o.x, o.y);
-                ctx.lineTo(mouse.x, mouse.y);
+                ctx.moveTo(o.x,o.y);
+                ctx.lineTo(mouse.x,mouse.y);
                 ctx.stroke();
 
                 ctx.fillStyle = ctx.strokeStyle;
                 ctx.font = "900 20px Orbitron";
-                ctx.textAlign = "center";
-                ctx.fillText(o.text, o.x, o.y);
+                ctx.fillText(o.text,o.x,o.y);
 
-                if (o.y > canvas.height + 50) objects.splice(i, 1);
+                if (o.y > canvas.height) objects.splice(i,1);
             });
 
             requestAnimationFrame(loop);
         }
 
-        window.onmousemove = (e) => {
+        window.onmousemove = e => {
             mouse.x = e.clientX;
             mouse.y = e.clientY;
         };
@@ -226,34 +234,94 @@ function wordGame(duration) {
 }
 
 /* =========================
-   MISSIONS
+   MISSION PHASE (FULL ORIGINAL STRUCTURE PRESERVED)
 ========================= */
 
-async function runMissions() {
-
-    state.phase = "missions";
+function renderMission() {
 
     const app = document.getElementById("app");
 
-    for (let m of state.missions) {
+    const mission = state.missions[state.currentIndex];
 
-        const blocks = m.b || [];
-
-        for (let b of blocks) {
-
-            app.innerHTML = `
-                <div class="card">
-                    <h3>${b.tx?.en || b.q?.en || ""}</h3>
-                </div>
-            `;
-
-            await speak(b.tx?.en || b.q?.en || "");
-        }
+    if (!mission) {
+        nextStory();
+        return;
     }
+
+    const block = mission.b[state.currentBlock];
+
+    if (!block) {
+
+        // 👉 AFTER MISSIONS → FINAL WORD GAME
+        wordGame(300000).then(() => breathingPhase());
+        return;
+    }
+
+    let html = "";
+    let text = "";
+
+    if (block.t === "v" || block.t === "h") {
+
+        html += `<div class="card"><p>${block.tx?.en || ""}</p></div>`;
+        text += block.tx?.en || "";
+    }
+
+    if (block.t === "d") {
+
+        html += `<div class="card"><h3>${block.q?.en || ""}</h3>`;
+
+        (block.op || []).forEach((o,i)=>{
+            html += `<button onclick="answer(${i},${block.c},'${JSON.stringify(block.ex)}')">${o}</button>`;
+        });
+
+        html += `</div>`;
+    }
+
+    if (block.t === "br") {
+
+        html += `
+            <div class="card">
+                <h3>${block.tx?.en || ""}</h3>
+                <p>${block.inf?.en || ""}</p>
+            </div>
+        `;
+
+        text += `${block.tx?.en} ${block.inf?.en}`;
+    }
+
+    app.innerHTML = html;
+
+    speak(text, () => {
+        state.currentBlock++;
+        renderMission();
+    });
 }
 
 /* =========================
-   BREATHING + SCIENCE
+   ANSWER
+========================= */
+
+function answer(i, correct, ex) {
+
+    const explanations = JSON.parse(ex || "[]");
+
+    const app = document.getElementById("app");
+
+    app.innerHTML += `
+        <div class="card">
+            <p>${explanations[i] || ""}</p>
+            <button onclick="nextBlock()">CONTINUE</button>
+        </div>
+    `;
+}
+
+function nextBlock() {
+    state.currentBlock++;
+    renderMission();
+}
+
+/* =========================
+   AFTER MISSIONS → BREATHING
 ========================= */
 
 async function breathingPhase() {
@@ -263,55 +331,61 @@ async function breathingPhase() {
     app.innerHTML = `
         <div class="card">
             <h2>BREATHING RESET</h2>
-            <p>Oxygen regulation active</p>
+            <p>
+            Deep breathing increases oxygen intake,
+            reduces cortisol and activates parasympathetic system,
+            improving focus and lowering stress.
+            </p>
         </div>
+
+        <button onclick="restartCountdown()">RESTART</button>
     `;
+}
 
-    await speak(
-        "Deep breathing increases oxygen intake, reduces cortisol, and activates the parasympathetic nervous system."
-    );
+/* =========================
+   RESTART 5 MIN COUNTDOWN
+========================= */
 
-    for (let i = 0; i < 6; i++) {
-        await speak("Inhale");
-        await wait(2000);
-        await speak("Exhale");
-        await wait(2000);
+function restartCountdown() {
+
+    let t = 300;
+
+    const id = setInterval(()=>{
+
+        t--;
+
+        if (t <= 0) location.reload();
+
+    },1000);
+}
+
+/* =========================
+   SPEECH
+========================= */
+
+function speak(text, cb) {
+
+    if (!text) return cb?.();
+
+    const u = new SpeechSynthesisUtterance(text);
+
+    u.onend = () => cb?.();
+
+    speechSynthesis.cancel();
+    speechSynthesis.speak(u);
+}
+
+/* =========================
+   STORY LOOP
+========================= */
+
+function nextStory() {
+
+    state.currentIndex++;
+
+    if (state.currentIndex >= state.stories.length) {
+        state.currentIndex = 0;
     }
-}
 
-/* =========================
-   END SCREEN
-========================= */
-
-async function endScreen() {
-
-    const app = document.getElementById("app");
-
-    app.innerHTML = `
-        <div class="card">
-            <h1>TRAINING COMPLETE</h1>
-            <p>System restart in 5 minutes</p>
-        </div>
-
-        <button onclick="location.reload()">RESTART NOW</button>
-    `;
-
-    setTimeout(() => location.reload(), 300000);
-}
-
-/* =========================
-   HELPERS
-========================= */
-
-function wait(ms) {
-    return new Promise(r => setTimeout(r, ms));
-}
-
-function speak(text) {
-    return new Promise(res => {
-        const u = new SpeechSynthesisUtterance(text);
-        u.onend = res;
-        speechSynthesis.cancel();
-        speechSynthesis.speak(u);
-    });
+    renderStory();
 }
