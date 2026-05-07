@@ -1,121 +1,107 @@
 /* =========================================================
-   KAMIZEN ENGINE — SEQUENTIAL FLOW VERSION
-   NO FREEZE • STATE MACHINE • CLEAN LOOPS
+   KAMIZEN ENGINE V10 - FULL STABLE SYSTEM (FIXED FLOW)
+   STORIES → WORD GAME → MISSIONS → WORD GAME → BREATHING → END
    ========================================================= */
 
-if (window.__KAMIZEN_ENGINE_RUNNING__) {
-    console.warn("ENGINE ALREADY RUNNING");
-} else {
-
-window.__KAMIZEN_ENGINE_RUNNING__ = true;
-
-/* =========================
-   STATE
-========================= */
-
-const state = {
+let state = {
     stories: [],
     missions: [],
-    index: 0,
-    xp: 0,
-    phase: "boot",
-    running: false
+
+    currentIndex: 0,
+    currentBlock: 0,
+
+    phase: "loading",
+
+    speechLocked: false,
+    initialized: false
 };
 
-/* =========================
-   ELEMENTS
-========================= */
-
-const $ = (id) => document.getElementById(id);
-
-const canvas = $("gameCanvas");
-const ctx = canvas.getContext("2d");
-
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-
-/* =========================
-   AUDIO (SAFE)
-========================= */
-
-let audioCtx;
-
-function beep(freq = 440, type = "sine", time = 0.1) {
-    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    const o = audioCtx.createOscillator();
-    const g = audioCtx.createGain();
-
-    o.frequency.value = freq;
-    o.type = type;
-    g.gain.value = 0.05;
-
-    o.connect(g);
-    g.connect(audioCtx.destination);
-
-    o.start();
-    o.stop(audioCtx.currentTime + time);
+/* ENGINE LOCK */
+if (window.__KAMIZEN_ENGINE_ACTIVE__) {
+    console.warn("KAMIZEN ENGINE ALREADY RUNNING");
+} else {
+    window.__KAMIZEN_ENGINE_ACTIVE__ = true;
 }
 
 /* =========================
-   UTIL
+   INIT
 ========================= */
 
-const wait = (ms) => new Promise(r => setTimeout(r, ms));
+window.addEventListener("load", async () => {
+    await loadAllData();
+    showIntro();
+});
 
 /* =========================
    LOAD DATA
 ========================= */
 
-async function loadData() {
-    const [s, m] = await Promise.all([
-        fetch("/api/stories").then(r => r.json()),
-        fetch("/api/missions").then(r => r.json())
-    ]);
+async function loadAllData() {
 
-    state.stories = Array.isArray(s) ? s : (s.stories || []);
-    state.missions = Array.isArray(m) ? m : (m.missions || []);
+    const app = document.getElementById("app");
+
+    app.innerHTML = `<div class="card"><h2>LOADING SYSTEM...</h2></div>`;
+
+    try {
+
+        const [storiesReq, missionsReq] = await Promise.all([
+            fetch("/api/stories"),
+            fetch("/api/missions")
+        ]);
+
+        const storiesData = await storiesReq.json();
+        const missionsData = await missionsReq.json();
+
+        state.stories = Array.isArray(storiesData.stories)
+            ? storiesData.stories.sort((a, b) => a.id - b.id)
+            : [];
+
+        state.missions = Array.isArray(missionsData.missions)
+            ? missionsData.missions.sort((a, b) => a.id - b.id)
+            : [];
+
+        state.initialized = true;
+
+    } catch (err) {
+        console.error(err);
+        app.innerHTML = `<div class="card"><h2>LOAD ERROR</h2></div>`;
+    }
 }
 
 /* =========================
-   SPEECH
+   INTRO
 ========================= */
 
-function speak(text) {
-    return new Promise(res => {
-        if (!text) return res();
+function showIntro() {
 
-        const u = new SpeechSynthesisUtterance(text);
-        u.lang = "en-US";
-        u.rate = 0.95;
+    const app = document.getElementById("app");
 
-        u.onend = () => res();
-        u.onerror = () => res();
+    app.innerHTML = `
+        <div class="card">
+            <h1>KAMIZEN SYSTEM</h1>
+            <p>Stories • Cognition • Survival Logic</p>
+        </div>
 
-        speechSynthesis.cancel();
-        speechSynthesis.speak(u);
-    });
+        <button onclick="startFlow()">START SYSTEM</button>
+    `;
 }
 
 /* =========================
-   START FLOW
+   MAIN FLOW CONTROLLER
 ========================= */
 
-window.addEventListener("load", async () => {
-    await boot();
-});
+async function startFlow() {
 
-async function boot() {
+    state.currentIndex = 0;
+    state.currentBlock = 0;
 
-    await loadData();
+    await runStories();
 
-    await presentation();
-    await storyPhase();
+    await wordGame(300000); // 🔥 AFTER STORIES (5 MIN)
 
-    await wordGame(300000); // 5 minutes
+    await runMissions();
 
-    await missionPhase();
-
-    await wordGame(300000); // second game
+    await wordGame(300000); // 🔥 AFTER MISSIONS
 
     await breathingPhase();
 
@@ -123,89 +109,73 @@ async function boot() {
 }
 
 /* =========================
-   PRESENTATION
-========================= */
-
-async function presentation() {
-    state.phase = "presentation";
-
-    const overlay = $("overlay");
-    if (overlay) overlay.style.display = "flex";
-
-    await speak("Welcome to Kamizen. Decision training starts now.");
-
-    await wait(2000);
-
-    if (overlay) overlay.style.display = "none";
-}
-
-/* =========================
    STORIES
 ========================= */
 
-async function storyPhase() {
+async function runStories() {
+
+    const app = document.getElementById("app");
+
     state.phase = "stories";
 
-    for (let i = 0; i < state.stories.length; i++) {
+    for (let s of state.stories) {
 
-        const story = state.stories[i];
-        const text = story?.en || "Story missing";
+        app.innerHTML = `
+            <div class="card">
+                <h2>${s.t || ""}</h2>
+                <p>${s.en || ""}</p>
+            </div>
+        `;
 
-        await speak(text);
-        await wait(800);
+        await speak(s.en || "");
+        await wait(1200);
     }
 }
 
 /* =========================
-   WORD GAME (FLOATING + LASER MEANING SHIFT)
+   WORD GAME (FLOATING + LASER SHIFT MEANING)
 ========================= */
 
 function wordGame(duration) {
+
     return new Promise(resolve => {
 
-        state.phase = "wordGame";
+        state.phase = "wordgame";
+
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
 
         let objects = [];
         let mouse = { x: canvas.width / 2, y: canvas.height / 2 };
 
-        const good = ["FOCUS", "TRUTH", "DISCIPLINE", "CALM"];
-        const bad = ["ANGER", "CHAOS", "FEAR", "IMPULSE"];
+        const good = ["FOCUS", "TRUTH", "DISCIPLINE", "CONTROL", "CALM"];
+        const bad = ["ANGER", "CHAOS", "FEAR", "IMPULSE", "DISTRACTION"];
 
-        let start = Date.now();
+        const start = Date.now();
 
         function spawn() {
+
             const isBad = Math.random() > 0.5;
-            const text = isBad
-                ? bad[Math.floor(Math.random() * bad.length)]
-                : good[Math.floor(Math.random() * good.length)];
 
             objects.push({
                 x: Math.random() * canvas.width,
                 y: -20,
                 speed: 2 + Math.random() * 2,
-                text,
+                text: isBad ? bad[Math.floor(Math.random() * bad.length)]
+                            : good[Math.floor(Math.random() * good.length)],
                 bad: isBad,
-                transformed: false
+                neutralized: false
             });
         }
 
-        let spawnInterval = setInterval(spawn, 700);
-
-        function laserEffect(obj, dx, dy) {
-            const dist = Math.sqrt(dx * dx + dy * dy);
-
-            if (dist < 120 && obj.bad && !obj.transformed) {
-                obj.bad = false;
-                obj.text = "NEUTRALIZED";
-                obj.transformed = true;
-                beep(880, "triangle", 0.2);
-            }
-        }
+        setInterval(spawn, 700);
 
         function loop() {
 
             if (Date.now() - start > duration) {
-                clearInterval(spawnInterval);
                 resolve();
                 return;
             }
@@ -219,10 +189,17 @@ function wordGame(duration) {
 
                 const dx = mouse.x - o.x;
                 const dy = mouse.y - o.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
 
-                laserEffect(o, dx, dy);
+                /* 🔥 LASER MEANING SHIFT */
+                if (dist < 120 && o.bad && !o.neutralized) {
+                    o.text = "NEUTRALIZED";
+                    o.bad = false;
+                    o.neutralized = true;
+                }
 
                 ctx.strokeStyle = o.bad ? "#ff3131" : "#2ecc71";
+
                 ctx.beginPath();
                 ctx.moveTo(o.x, o.y);
                 ctx.lineTo(mouse.x, mouse.y);
@@ -230,6 +207,7 @@ function wordGame(duration) {
 
                 ctx.fillStyle = ctx.strokeStyle;
                 ctx.font = "900 20px Orbitron";
+                ctx.textAlign = "center";
                 ctx.fillText(o.text, o.x, o.y);
 
                 if (o.y > canvas.height + 50) objects.splice(i, 1);
@@ -251,18 +229,25 @@ function wordGame(duration) {
    MISSIONS
 ========================= */
 
-async function missionPhase() {
+async function runMissions() {
+
     state.phase = "missions";
+
+    const app = document.getElementById("app");
 
     for (let m of state.missions) {
 
         const blocks = m.b || [];
 
         for (let b of blocks) {
-            if (b.t === "d") {
-                await speak(b.q?.en || "");
-                await wait(1500);
-            }
+
+            app.innerHTML = `
+                <div class="card">
+                    <h3>${b.tx?.en || b.q?.en || ""}</h3>
+                </div>
+            `;
+
+            await speak(b.tx?.en || b.q?.en || "");
         }
     }
 }
@@ -272,19 +257,21 @@ async function missionPhase() {
 ========================= */
 
 async function breathingPhase() {
-    state.phase = "breathing";
 
-    await speak("Start breathing exercise.");
+    const app = document.getElementById("app");
 
-    await wait(1000);
+    app.innerHTML = `
+        <div class="card">
+            <h2>BREATHING RESET</h2>
+            <p>Oxygen regulation active</p>
+        </div>
+    `;
 
     await speak(
-        "Deep breathing increases oxygen intake, reduces cortisol levels, and activates the parasympathetic nervous system, improving focus and lowering stress."
+        "Deep breathing increases oxygen intake, reduces cortisol, and activates the parasympathetic nervous system."
     );
 
-    let cycles = 6;
-
-    for (let i = 0; i < cycles; i++) {
+    for (let i = 0; i < 6; i++) {
         await speak("Inhale");
         await wait(2000);
         await speak("Exhale");
@@ -293,30 +280,38 @@ async function breathingPhase() {
 }
 
 /* =========================
-   END SCREEN + RESTART
+   END SCREEN
 ========================= */
 
 async function endScreen() {
-    state.phase = "end";
 
-    const overlay = $("overlay");
-    if (overlay) {
-        overlay.style.display = "flex";
-        overlay.innerHTML = `
-            <h1 style="color:#00f2ff">TRAINING COMPLETE</h1>
-            <p>Restart in 5 minutes</p>
-            <button id="restartBtn">RESTART NOW</button>
-        `;
-    }
+    const app = document.getElementById("app");
 
-    let time = 300;
+    app.innerHTML = `
+        <div class="card">
+            <h1>TRAINING COMPLETE</h1>
+            <p>System restart in 5 minutes</p>
+        </div>
 
-    const interval = setInterval(() => {
-        time--;
-        if (time <= 0) location.reload();
-    }, 1000);
+        <button onclick="location.reload()">RESTART NOW</button>
+    `;
 
-    $("restartBtn").onclick = () => location.reload();
+    setTimeout(() => location.reload(), 300000);
 }
 
+/* =========================
+   HELPERS
+========================= */
+
+function wait(ms) {
+    return new Promise(r => setTimeout(r, ms));
+}
+
+function speak(text) {
+    return new Promise(res => {
+        const u = new SpeechSynthesisUtterance(text);
+        u.onend = res;
+        speechSynthesis.cancel();
+        speechSynthesis.speak(u);
+    });
 }
