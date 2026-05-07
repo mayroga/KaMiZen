@@ -1,0 +1,302 @@
+{
+"sys":"KAMIZEN LIFE SYSTEM",
+"ch":7,
+"rng":"43-49",
+
+"ui":{"fw":["CALM","BODY","FOCUS","CONTROL","TRUTH","AWARENESS","SAFETY","ACTION"]},
+
+"rules":[
+"Body>Fear",
+"Calm>Stress",
+"Awareness=Control",
+"Breath=Stability",
+"Focus>Noise",
+"Understanding>Embarrassment",
+"Presence>Fear",
+"Slow>Rush"
+],
+
+"missions":[
+
+{
+"id":43,
+"cat":"body_reactions",
+"b":[
+
+{"t":"v","tx":{"en":"MISSION 43: YOUR BODY IS TALKING"}},
+{"t":"h","tx":{"en":"Your body is not broken. It is talking to you."}},
+
+{"story":{"en":"When you feel nervous, your heart may beat fast or your hands may shake. This is normal. Your body is getting ready, not in danger."}},
+
+{"t":"breath_auto","d":35,
+"tx":{"en":"Breathe in slowly... breathe out slowly"},
+"inf":{"en":"Helps your body feel safe again"}
+},
+
+{"t":"d","q":{"en":"What should you do when your body feels nervous?"},
+"op":["Get scared","Breathe slowly","Stop everything","Run away"],
+"c":1,
+"ex":[
+"Fear makes it stronger",
+"Breathing calms your body",
+"Stopping blocks progress",
+"Running away avoids learning"
+]},
+
+{"t":"r","tx":"+Body Calm","p":20},
+
+{"t":"sil","d":40,
+"tx":{"en":"Notice your body without fear"},
+"inf":{"en":"Helps you stay calm inside"}
+},
+
+{"t":"breath_auto","d":30,
+"tx":{"en":"Inhale calm... exhale worry"},
+"inf":{"en":"Helps your body relax"}
+}
+
+]
+},
+
+{
+"id":44,
+"cat":"stress_variations",
+"b":[
+
+{"t":"v","tx":{"en":"MISSION 44: EVERY BODY IS DIFFERENT"}},
+{"t":"h","tx":{"en":"Everyone feels stress in a different way"}},
+
+{"story":{"en":"Some kids move a lot, some get quiet, some feel hot or cold. All of this is normal."}},
+
+{"t":"breath_auto","d":30,
+"tx":{"en":"Slow breathing keeps your body balanced"},
+"inf":{"en":"Helps your body stay steady"}
+},
+
+{"t":"d","q":{"en":"What is the best thing to do when you feel stress?"},
+"op":["Ignore your body","Stay calm and notice it","Panic","Compare with others"],
+"c":1,
+"ex":[
+"Ignoring hides signals",
+"Noticing gives control",
+"Panic makes it worse",
+"Comparison creates stress"
+]},
+
+{"t":"r","tx":"+Adaptation","p":20},
+
+{"t":"sil","d":50,
+"tx":{"en":"Let your body feel without fear"},
+"inf":{"en":"Helps your mind stay stable"}
+},
+
+{"t":"breath_auto","d":30,
+"tx":{"en":"Inhale steady... exhale worry"},
+"inf":{"en":"Brings balance back"}
+}
+
+]
+},
+
+{
+"id":45,
+"cat":"focus_disruption",
+"b":[
+
+{"t":"v","tx":{"en":"MISSION 45: BRING YOUR MIND BACK"}},
+{"t":"h","tx":{"en":"If your mind leaves, you can bring it back"}},
+
+{"story":{"en":"Sometimes your mind thinks about other things. That is okay. You just return to your task."}},
+
+{"t":"breath_auto","d":25,
+"tx":{"en":"One slow breath"},
+"inf":{"en":"Helps your mind come back"}
+},
+
+{"t":"d","q":{"en":"What should you do when you get distracted?"},
+"op":["Give up","Come back to the question","Leave everything","Panic"],
+"c":1,
+"ex":[
+"Giving up stops progress",
+"Coming back builds focus",
+"Leaving breaks the task",
+"Panic blocks thinking"
+]},
+
+{"t":"r","tx":"+Focus","p":20},
+
+{"t":"sil","d":45,
+"tx":{"en":"Bring your attention back again"},
+"inf":{"en":"Makes your focus stronger"}
+},
+
+{"t":"breath_auto","d":25,
+"tx":{"en":"Inhale focus... exhale noise"},
+"inf":{"en":"Helps your brain stay clear"}
+}
+
+]
+},
+
+{
+"id":46,
+"cat":"comfort_strategies",
+"b":[
+
+{"t":"v","tx":{"en":"MISSION 46: CALM YOUR BODY"}},
+{"t":"h","tx":{"en":"Small actions help you feel safe"}},
+
+{"story":{"en":"Drinking water, sitting straight, and slow breathing help your body feel better."}},
+
+{"t":"breath_auto","d":30,
+"tx":{"en":"Relax your shoulders and breathe slow"},
+"inf":{"en":"Helps your body feel safe"}
+},
+
+{"t":"d","q":{"en":"What helps you feel better during stress?"},
+"op":["Rush more","Breathe slowly or drink water","Ignore your body","Get more stressed"],
+"c":1,
+"ex":[
+"Rushing increases stress",
+"Breathing helps calm down",
+"Ignoring removes control",
+"Stress adds overload"
+]},
+
+{"t":"r","tx":"+Stability","p":20},
+
+{"t":"sil","d":50,
+"tx":{"en":"Give your body a short rest"},
+"inf":{"en":"Helps you reset"}
+},
+
+{"t":"breath_auto","d":30,
+"tx":{"en":"Inhale calm... exhale pressure"},
+"inf":{"en":"Helps your body relax"}
+}
+
+]
+},
+
+{
+"id":47,
+"cat":"confidence_repair",
+"b":[
+
+{"t":"v","tx":{"en":"MISSION 47: YOU ARE STILL STRONG"}},
+{"t":"h","tx":{"en":"Feeling weak does not mean you are weak"}},
+
+{"story":{"en":"Sometimes you feel tired or slow. You can still continue step by step."}},
+
+{"t":"breath_auto","d":30,
+"tx":{"en":"Slow breathing to get your energy back"},
+"inf":{"en":"Helps your body recover"}
+},
+
+{"t":"d","q":{"en":"What should you do if you feel weak?"},
+"op":["Stop trying","Keep going slowly","Panic","Quit"],
+"c":1,
+"ex":[
+"Stopping ends progress",
+"Going slowly keeps you moving",
+"Panic drains energy",
+"Quitting stops learning"
+]},
+
+{"t":"r","tx":"+Resilience","p":25},
+
+{"t":"sil","d":60,
+"tx":{"en":"One step at a time"},
+"inf":{"en":"Builds strength and patience"}
+},
+
+{"t":"breath_auto","d":30,
+"tx":{"en":"Inhale strength... exhale doubt"},
+"inf":{"en":"Builds confidence"}
+}
+
+]
+},
+
+{
+"id":48,
+"cat":"focus_restoration",
+"b":[
+
+{"t":"v","tx":{"en":"MISSION 48: REST YOUR MIND"}},
+{"t":"h","tx":{"en":"Feeling tired is normal"}},
+
+{"story":{"en":"Your brain uses energy when you think. Rest helps you think better."}},
+
+{"t":"breath_auto","d":30,
+"tx":{"en":"Slow deep breathing"},
+"inf":{"en":"Helps your brain recover"}
+},
+
+{"t":"d","q":{"en":"What helps when you feel tired?"},
+"op":["Push harder","Pause and breathe","Panic","Quit"],
+"c":1,
+"ex":[
+"Push harder = burnout",
+"Pause = recovery",
+"Panic = worse tiredness",
+"Quit = stop progress"
+]},
+
+{"t":"r","tx":"+Energy","p":20},
+
+{"t":"sil","d":80,
+"tx":{"en":"Let your mind rest a little"},
+"inf":{"en":"Helps your brain reset"}
+},
+
+{"t":"breath_auto","d":30,
+"tx":{"en":"Inhale energy... exhale tiredness"},
+"inf":{"en":"Brings back focus"}
+}
+
+]
+},
+
+{
+"id":49,
+"cat":"integration_mastery",
+"b":[
+
+{"t":"v","tx":{"en":"MISSION 49: YOU CAN DO THIS"}},
+{"t":"h","tx":{"en":"You are ready more than you think"}},
+
+{"story":{"en":"Everything you practiced is inside you now. Stay calm, go step by step, and trust yourself."}},
+
+{"t":"breath_auto","d":35,
+"tx":{"en":"Final deep breath before starting"},
+"inf":{"en":"Helps your whole body and mind work together"}
+},
+
+{"t":"d","q":{"en":"What is the strongest mindset?"},
+"op":["I cannot do it","I go step by step","I must be perfect","I quit"],
+"c":1,
+"ex":[
+"Cannot = fear",
+"Step by step = control",
+"Perfection = pressure",
+"Quitting = stop"
+]},
+
+{"t":"r","tx":"+Mastery","p":40},
+
+{"t":"sil","d":100,
+"tx":{"en":"Stay calm. Stay present. You are ready."},
+"inf":{"en":"Connects body, breath, and mind"}
+},
+
+{"t":"breath_auto","d":35,
+"tx":{"en":"Inhale confidence... exhale fear"},
+"inf":{"en":"Final calm before action"}
+}
+
+]
+}
+
+]
+}
