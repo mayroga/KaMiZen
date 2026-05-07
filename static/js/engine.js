@@ -1,6 +1,8 @@
 /* =========================================================
-   KAMIZEN ENGINE FINAL FIXED
-   STABLE • NO DUPLICATES • NO FREEZE • FULL SPEECH LOCK
+   KAMIZEN ENGINE FINAL
+   STABLE • NO DUPLICATES • NO FREEZE
+   ORIGINAL GAMEPLAY PRESERVED
+   FIXED FLOW + INF + SPEECH LOCK
    ========================================================= */
 
 if (window.__KAMIZEN_ENGINE_RUNNING__) {
@@ -23,7 +25,7 @@ const state = {
 };
 
 /* =========================================================
-   ELEMENTS SAFE GRAB
+   ELEMENTS
    ========================================================= */
 
 const $ = (id) => document.getElementById(id);
@@ -49,30 +51,21 @@ window.addEventListener("load", bootSystem);
 
 async function bootSystem() {
 
-    try {
+    showOnly("loading");
 
-        showOnly("loading");
+    await wait(2000);
 
-        await wait(2000);
+    await loadAllData();
 
-        await loadAllData();
-
-        if (!state.stories.length || !state.missions.length) {
-            alert("Missing data");
-            return;
-        }
-
-        showOnly("start");
-
-        const btn = $("start-btn");
-        if (btn) {
-            btn.onclick = startTraining;
-        }
-
-    } catch (e) {
-        console.error(e);
-        alert("SYSTEM ERROR");
+    if (!state.stories.length || !state.missions.length) {
+        alert("Missing data");
+        return;
     }
+
+    showOnly("start");
+
+    const btn = $("start-btn");
+    if (btn) btn.onclick = startTraining;
 }
 
 /* =========================================================
@@ -86,14 +79,11 @@ async function loadAllData() {
         fetch("/api/missions")
     ]);
 
-    const stories = await s.json();
-    const missions = await m.json();
+    state.stories = normalize(await s.json());
+    state.missions = normalize(await m.json());
 
-    state.stories = normalize(stories);
-    state.missions = normalize(missions);
-
-    state.stories.sort((a,b)=> (a.id||0)-(b.id||0));
-    state.missions.sort((a,b)=> (a.id||0)-(b.id||0));
+    state.stories.sort((a,b)=>(a.id||0)-(b.id||0));
+    state.missions.sort((a,b)=>(a.id||0)-(b.id||0));
 }
 
 function normalize(d){
@@ -105,17 +95,12 @@ function normalize(d){
 }
 
 /* =========================================================
-   TRAIN LOOP (CONTROLLED SAFE LOOP)
+   TRAIN LOOP (UNCHANGED FLOW)
    ========================================================= */
-
-let trainingRunning = false;
 
 async function startTraining() {
 
-    if (trainingRunning) return;
-    trainingRunning = true;
-
-    while (trainingRunning) {
+    while (true) {
 
         if (state.current >= state.stories.length ||
             state.current >= state.missions.length) {
@@ -134,7 +119,7 @@ async function startTraining() {
 }
 
 /* =========================================================
-   STORY (LOCKED SPEECH)
+   STORY (SPEECH LOCKED)
    ========================================================= */
 
 async function runStory() {
@@ -146,23 +131,21 @@ async function runStory() {
     const text =
         story?.en ||
         story?.story?.en ||
-        "Missing story";
+        "Story missing";
 
     $("story-text").innerText = text;
 
     const btn = $("story-next");
-    if (btn) btn.style.display = "none";
+    btn.style.display = "none";
 
     await speak(text);
 
-    if (btn) {
-        btn.style.display = "block";
-        await waitButton(btn);
-    }
+    btn.style.display = "block";
+    await waitButton(btn);
 }
 
 /* =========================================================
-   MISSION CORE
+   MISSION (FULL ORIGINAL STRUCTURE KEPT)
    ========================================================= */
 
 async function runMission() {
@@ -175,41 +158,33 @@ async function runMission() {
         if (!b) continue;
 
         if (b.t === "v" || b.t === "h") {
-
-            await simple("MISSION", b.tx?.en || "");
+            await simple(mission.cat || "MISSION", b.tx?.en || "");
         }
 
         else if (b.story) {
-
             await simple("STORY", b.story?.en || "");
         }
 
         else if (b.t === "d") {
-
             await question(b);
         }
 
         else if (b.t === "breath_auto" || b.t === "br") {
-
             await breathing(b);
         }
 
         else if (b.t === "sil") {
-
             await silence(b);
         }
 
         else if (b.t === "r") {
-
             state.xp += Number(b.p || 0);
             updateHUD();
-
-            await simple("REWARD", `${b.tx?.en || ""} +${b.p || 0}`);
+            await simple("REWARD", `${b.tx?.en || ""} +${b.p || 0} XP`);
         }
 
         else if (b.t === "c") {
-
-            await simple("END", b.tx?.en || "");
+            await simple("CONCLUSION", b.tx?.en || "");
         }
     }
 }
@@ -222,24 +197,16 @@ async function simple(title, text) {
 
     showOnly("mission");
 
-    const cat = $("mission-category");
-    const main = $("mission-main");
-    const btn = $("continue-btn");
-
-    if (cat) cat.innerText = title;
-    if (main) main.innerText = text;
-    if (btn) btn.style.display = "none";
+    $("mission-category").innerText = title;
+    $("mission-main").innerText = text;
+    $("answers").innerHTML = "";
 
     await speak(text);
-
-    if (btn) {
-        btn.style.display = "block";
-        await waitButton(btn);
-    }
+    await waitButton($("continue-btn"));
 }
 
 /* =========================================================
-   QUESTION
+   QUESTION (UNCHANGED LOGIC)
    ========================================================= */
 
 async function question(b) {
@@ -253,26 +220,27 @@ async function question(b) {
         const box = $("answers");
         box.innerHTML = "";
 
-        let done = false;
-
         await speak(b.q?.en || "");
+
+        let done = false;
 
         (b.op || []).forEach((opt, i) => {
 
-            const el = document.createElement("button");
-            el.innerText = opt;
-            el.className = "answer";
+            const btn = document.createElement("button");
+            btn.className = "answer";
+            btn.innerText = opt;
 
-            el.onclick = async () => {
+            btn.onclick = async () => {
 
                 if (done) return;
                 done = true;
 
                 const ok = i === b.c;
 
-                el.classList.add(ok ? "correct" : "wrong");
+                btn.classList.add(ok ? "correct" : "wrong");
 
                 if (ok) state.xp += 10;
+
                 updateHUD();
 
                 const exp = b.ex?.[i] || "";
@@ -280,19 +248,17 @@ async function question(b) {
 
                 await speak(exp);
 
-                const btn = $("continue-btn");
-                btn.style.display = "block";
-
-                btn.onclick = resolve;
+                $("continue-btn").style.display = "block";
+                $("continue-btn").onclick = resolve;
             };
 
-            box.appendChild(el);
+            box.appendChild(btn);
         });
     });
 }
 
 /* =========================================================
-   BREATHING (FIXED INF + NO SKIP)
+   BREATHING (FIX INF + SPEECH COMPLETE)
    ========================================================= */
 
 async function breathing(b) {
@@ -303,23 +269,23 @@ async function breathing(b) {
     const info = $("breath-info");
     const circle = $("breath-circle");
 
-    const main = b.tx?.en || "Inhale / Exhale";
+    const main = b.tx?.en || "";
     const inf = b.inf?.en || "";
 
     if (info) info.innerText = inf;
 
-    await speak(main + ". " + inf);
+    await speak(main + " " + inf);
 
     const cycles = Math.max(2, Math.floor((b.d || 20) / 4));
 
     for (let i = 0; i < cycles; i++) {
 
-        if (text) text.innerText = "INHALE";
-        if (circle) circle.style.transform = "scale(1.3)";
+        text.innerText = "INHALE";
+        circle.style.transform = "scale(1.3)";
         await wait(4000);
 
-        if (text) text.innerText = "EXHALE";
-        if (circle) circle.style.transform = "scale(1)";
+        text.innerText = "EXHALE";
+        circle.style.transform = "scale(1)";
         await wait(4000);
     }
 }
@@ -335,7 +301,7 @@ async function silence(b) {
     $("mission-main").innerText = b.tx?.en || "";
     $("mission-info").innerText = b.inf?.en || "";
 
-    await speak((b.tx?.en || "") + " " + (b.inf?.en || ""));
+    await speak(b.tx?.en + " " + b.inf?.en);
 
     await wait((b.d || 10) * 1000);
 
@@ -343,7 +309,7 @@ async function silence(b) {
 }
 
 /* =========================================================
-   MINI GAME SAFE
+   MINI GAME (RESTORED ORIGINAL STYLE)
    ========================================================= */
 
 async function runMiniGame() {
@@ -352,61 +318,66 @@ async function runMiniGame() {
 
         showOnly("game");
 
-        state.gameRunning = true;
-
         const canvas = $("gameCanvas");
         const ctx = canvas.getContext("2d");
 
         canvas.width = innerWidth;
         canvas.height = innerHeight;
 
-        const player = { x: canvas.width/2, y: canvas.height-120, r: 50 };
-        const objs = [];
+        const player = {
+            x: canvas.width / 2,
+            y: canvas.height - 120,
+            size: 50
+        };
 
-        const good = ["FOCUS","TRUTH","CONTROL"];
-        const bad = ["FEAR","IMPULSE","CHAOS"];
+        const objects = [];
 
-        let t = 0;
+        const goodWords = ["FOCUS","TRUTH","CONTROL","CALM","DISCIPLINE"];
+        const badWords = ["ANGER","CHAOS","FEAR","IMPULSE"];
 
-        const spawn = setInterval(() => {
+        let time = 0;
 
-            objs.push({
+        state.gameRunning = true;
+
+        function spawn() {
+
+            objects.push({
                 x: Math.random()*canvas.width,
                 y: -20,
-                good: Math.random() > 0.4,
-                speed: 2 + Math.random()*3
+                speed: 2 + Math.random()*3,
+                good: Math.random() > 0.4
             });
+        }
 
-        }, 700);
+        const interval = setInterval(spawn, 700);
 
         function loop() {
 
             if (!state.gameRunning) return;
 
-            t++;
+            time++;
 
             ctx.fillStyle = "rgba(0,0,0,0.3)";
             ctx.fillRect(0,0,canvas.width,canvas.height);
 
             ctx.strokeStyle = "#00e5ff";
             ctx.beginPath();
-            ctx.arc(player.x, player.y, player.r, 0, Math.PI*2);
+            ctx.arc(player.x, player.y, player.size, 0, Math.PI*2);
             ctx.stroke();
 
-            for (let i = objs.length-1; i>=0; i--) {
+            for (let i = objects.length-1; i>=0; i--) {
 
-                const o = objs[i];
+                const o = objects[i];
                 o.y += o.speed;
 
                 ctx.fillStyle = o.good ? "#22c55e" : "#ef4444";
-                ctx.fillText(o.good ? good[0] : bad[0], o.x, o.y);
+                ctx.fillText(o.good ? goodWords[0] : badWords[0], o.x, o.y);
 
-                if (o.y > canvas.height) objs.splice(i,1);
+                if (o.y > canvas.height) objects.splice(i,1);
             }
 
-            if (t > 900) {
-
-                clearInterval(spawn);
+            if (time > 900) {
+                clearInterval(interval);
                 state.gameRunning = false;
                 resolve();
                 return;
@@ -458,22 +429,18 @@ function showOnly(name) {
         if (s) s.classList.add("hidden");
     });
 
-    if (screens[name]) {
-        screens[name].classList.remove("hidden");
-    }
+    if (screens[name]) screens[name].classList.remove("hidden");
 }
 
 function wait(ms){ return new Promise(r=>setTimeout(r,ms)); }
 
 function waitButton(btn){
-
     return new Promise(r=>{
         btn.onclick = ()=>r();
     });
 }
 
 function updateHUD(){
-
     if (hudMission) hudMission.innerText = state.current+1;
     if (hudXP) hudXP.innerText = state.xp;
     if (hudState) hudState.innerText = state.speaking ? "VOICE":"FOCUS";
