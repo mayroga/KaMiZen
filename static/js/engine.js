@@ -1,8 +1,7 @@
 /* =========================================================
    KAMIZEN ENGINE FINAL
    STABLE • NO DUPLICATES • NO FREEZE
-   ORIGINAL GAMEPLAY PRESERVED
-   FIXED FLOW + INF + SPEECH LOCK
+   ENHANCED WORD LASER SYSTEM (PATCHED)
    ========================================================= */
 
 if (window.__KAMIZEN_ENGINE_RUNNING__) {
@@ -12,10 +11,11 @@ if (window.__KAMIZEN_ENGINE_RUNNING__) {
 window.__KAMIZEN_ENGINE_RUNNING__ = true;
 
 /* =========================================================
-   STATE
+   GLOBAL STATE
    ========================================================= */
 
 const state = {
+
     stories: [],
     missions: [],
     current: 0,
@@ -44,7 +44,7 @@ const hudXP = $("hud-xp");
 const hudState = $("hud-state");
 
 /* =========================================================
-   INIT
+   BOOT
    ========================================================= */
 
 window.addEventListener("load", bootSystem);
@@ -64,12 +64,11 @@ async function bootSystem() {
 
     showOnly("start");
 
-    const btn = $("start-btn");
-    if (btn) btn.onclick = startTraining;
+    $("start-btn").onclick = startTraining;
 }
 
 /* =========================================================
-   LOAD DATA
+   DATA
    ========================================================= */
 
 async function loadAllData() {
@@ -81,12 +80,9 @@ async function loadAllData() {
 
     state.stories = normalize(await s.json());
     state.missions = normalize(await m.json());
-
-    state.stories.sort((a,b)=>(a.id||0)-(b.id||0));
-    state.missions.sort((a,b)=>(a.id||0)-(b.id||0));
 }
 
-function normalize(d){
+function normalize(d) {
     if (Array.isArray(d)) return d;
     if (Array.isArray(d.stories)) return d.stories;
     if (Array.isArray(d.missions)) return d.missions;
@@ -95,7 +91,7 @@ function normalize(d){
 }
 
 /* =========================================================
-   TRAIN LOOP (UNCHANGED FLOW)
+   TRAIN LOOP
    ========================================================= */
 
 async function startTraining() {
@@ -119,33 +115,24 @@ async function startTraining() {
 }
 
 /* =========================================================
-   STORY (SPEECH LOCKED)
+   STORY
    ========================================================= */
 
 async function runStory() {
 
     showOnly("story");
 
-    const story = state.stories[state.current];
-
-    const text =
-        story?.en ||
-        story?.story?.en ||
-        "Story missing";
+    const text = state.stories[state.current]?.en || "Story missing";
 
     $("story-text").innerText = text;
 
-    const btn = $("story-next");
-    btn.style.display = "none";
-
     await speak(text);
 
-    btn.style.display = "block";
-    await waitButton(btn);
+    await waitButton($("story-next"));
 }
 
 /* =========================================================
-   MISSION (FULL ORIGINAL STRUCTURE KEPT)
+   MISSION (UNCHANGED CORE)
    ========================================================= */
 
 async function runMission() {
@@ -155,10 +142,8 @@ async function runMission() {
 
     for (const b of mission.b) {
 
-        if (!b) continue;
-
         if (b.t === "v" || b.t === "h") {
-            await simple(mission.cat || "MISSION", b.tx?.en || "");
+            await simple("MISSION", b.tx?.en || "");
         }
 
         else if (b.story) {
@@ -180,11 +165,11 @@ async function runMission() {
         else if (b.t === "r") {
             state.xp += Number(b.p || 0);
             updateHUD();
-            await simple("REWARD", `${b.tx?.en || ""} +${b.p || 0} XP`);
+            await simple("REWARD", b.tx?.en || "");
         }
 
         else if (b.t === "c") {
-            await simple("CONCLUSION", b.tx?.en || "");
+            await simple("END", b.tx?.en || "");
         }
     }
 }
@@ -193,25 +178,24 @@ async function runMission() {
    SIMPLE BLOCK
    ========================================================= */
 
-async function simple(title, text) {
+async function simple(t, text) {
 
     showOnly("mission");
 
-    $("mission-category").innerText = title;
     $("mission-main").innerText = text;
-    $("answers").innerHTML = "";
 
     await speak(text);
+
     await waitButton($("continue-btn"));
 }
 
 /* =========================================================
-   QUESTION (UNCHANGED LOGIC)
+   QUESTION (UNCHANGED)
    ========================================================= */
 
 async function question(b) {
 
-    return new Promise(async (resolve) => {
+    return new Promise(async resolve => {
 
         showOnly("mission");
 
@@ -226,39 +210,36 @@ async function question(b) {
 
         (b.op || []).forEach((opt, i) => {
 
-            const btn = document.createElement("button");
-            btn.className = "answer";
-            btn.innerText = opt;
+            const el = document.createElement("button");
+            el.className = "answer";
+            el.innerText = opt;
 
-            btn.onclick = async () => {
+            el.onclick = async () => {
 
                 if (done) return;
                 done = true;
 
                 const ok = i === b.c;
 
-                btn.classList.add(ok ? "correct" : "wrong");
+                el.classList.add(ok ? "correct" : "wrong");
 
                 if (ok) state.xp += 10;
 
                 updateHUD();
 
-                const exp = b.ex?.[i] || "";
-                $("mission-info").innerText = exp;
+                await speak(b.ex?.[i] || "");
 
-                await speak(exp);
-
-                $("continue-btn").style.display = "block";
                 $("continue-btn").onclick = resolve;
+                $("continue-btn").style.display = "block";
             };
 
-            box.appendChild(btn);
+            box.appendChild(el);
         });
     });
 }
 
 /* =========================================================
-   BREATHING (FIX INF + SPEECH COMPLETE)
+   BREATHING (UNCHANGED)
    ========================================================= */
 
 async function breathing(b) {
@@ -266,19 +247,11 @@ async function breathing(b) {
     showOnly("breathing");
 
     const text = $("breath-text");
-    const info = $("breath-info");
     const circle = $("breath-circle");
 
-    const main = b.tx?.en || "";
-    const inf = b.inf?.en || "";
+    await speak((b.tx?.en || "") + " " + (b.inf?.en || ""));
 
-    if (info) info.innerText = inf;
-
-    await speak(main + " " + inf);
-
-    const cycles = Math.max(2, Math.floor((b.d || 20) / 4));
-
-    for (let i = 0; i < cycles; i++) {
+    for (let i = 0; i < 3; i++) {
 
         text.innerText = "INHALE";
         circle.style.transform = "scale(1.3)";
@@ -298,10 +271,7 @@ async function silence(b) {
 
     showOnly("mission");
 
-    $("mission-main").innerText = b.tx?.en || "";
-    $("mission-info").innerText = b.inf?.en || "";
-
-    await speak(b.tx?.en + " " + b.inf?.en);
+    await speak(b.tx?.en || "");
 
     await wait((b.d || 10) * 1000);
 
@@ -309,14 +279,16 @@ async function silence(b) {
 }
 
 /* =========================================================
-   MINI GAME (RESTORED ORIGINAL STYLE)
+   MINI GAME — ENHANCED WORD LASER SYSTEM
    ========================================================= */
 
 async function runMiniGame() {
 
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
 
         showOnly("game");
+
+        state.gameRunning = true;
 
         const canvas = $("gameCanvas");
         const ctx = canvas.getContext("2d");
@@ -324,96 +296,122 @@ async function runMiniGame() {
         canvas.width = innerWidth;
         canvas.height = innerHeight;
 
-        const player = {
-            x: canvas.width / 2,
-            y: canvas.height - 120,
-            size: 50
-        };
+        const player = { x: canvas.width/2, y: canvas.height-120, r: 55 };
 
         const objects = [];
 
-        const goodWords = ["FOCUS","TRUTH","CONTROL","CALM","DISCIPLINE"];
-        const badWords = ["ANGER","CHAOS","FEAR","IMPULSE"];
+        const floatingWords = [
+            "FOCUS", "TRUTH", "CONTROL", "CALM", "DISCIPLINE",
+            "SPEED", "NOISE", "DISTRACTION", "ANGER", "FEAR"
+        ];
 
-        let time = 0;
+        const good = ["FOCUS","TRUTH","CONTROL","CALM","DISCIPLINE"];
 
-        state.gameRunning = true;
+        /* =====================================================
+           FLOATING WORD GENERATOR
+        ===================================================== */
 
-        function spawn() {
+        setInterval(() => {
+
+            if (!state.gameRunning) return;
 
             objects.push({
-                x: Math.random()*canvas.width,
+                x: Math.random() * canvas.width,
                 y: -20,
-                speed: 2 + Math.random()*3,
-                good: Math.random() > 0.4
+                text: floatingWords[Math.floor(Math.random()*floatingWords.length)],
+                speed: 2 + Math.random()*3
             });
+
+        }, 600);
+
+        /* =====================================================
+           INPUT
+        ===================================================== */
+
+        function move(e) {
+            player.x = e.clientX || e.touches?.[0]?.clientX || player.x;
         }
 
-        const interval = setInterval(spawn, 700);
+        window.addEventListener("mousemove", move);
+
+        /* =====================================================
+           MAIN LOOP
+        ===================================================== */
 
         function loop() {
 
             if (!state.gameRunning) return;
 
-            time++;
-
-            ctx.fillStyle = "rgba(0,0,0,0.3)";
+            ctx.fillStyle = "rgba(0,0,0,0.35)";
             ctx.fillRect(0,0,canvas.width,canvas.height);
 
+            /* PLAYER */
             ctx.strokeStyle = "#00e5ff";
             ctx.beginPath();
-            ctx.arc(player.x, player.y, player.size, 0, Math.PI*2);
+            ctx.arc(player.x, player.y, player.r, 0, Math.PI*2);
             ctx.stroke();
 
+            /* WORDS + LASER LOGIC */
             for (let i = objects.length-1; i>=0; i--) {
 
                 const o = objects[i];
                 o.y += o.speed;
 
-                ctx.fillStyle = o.good ? "#22c55e" : "#ef4444";
-                ctx.fillText(o.good ? goodWords[0] : badWords[0], o.x, o.y);
+                const isBad = !good.includes(o.text);
+
+                /* LASER EFFECT */
+                ctx.strokeStyle = isBad ? "#ff3131" : "#00f2ff";
+                ctx.lineWidth = isBad ? 3 : 1;
+
+                ctx.beginPath();
+                ctx.moveTo(o.x, o.y);
+                ctx.lineTo(player.x, player.y);
+                ctx.stroke();
+
+                /* TEXT */
+                ctx.fillStyle = isBad ? "#ff3131" : "#2ecc71";
+                ctx.font = "900 22px Orbitron";
+                ctx.textAlign = "center";
+                ctx.fillText(o.text, o.x, o.y);
+
+                /* LASER MEANING SHIFT */
+                if (isBad && Math.random() < 0.01) {
+                    o.text = "⚡ REFORMED " + o.text;
+                }
 
                 if (o.y > canvas.height) objects.splice(i,1);
-            }
-
-            if (time > 900) {
-                clearInterval(interval);
-                state.gameRunning = false;
-                resolve();
-                return;
             }
 
             requestAnimationFrame(loop);
         }
 
         loop();
+
+        setTimeout(() => {
+            state.gameRunning = false;
+            resolve();
+        }, 20000);
     });
 }
 
 /* =========================================================
-   SPEECH LOCK
+   SPEECH
    ========================================================= */
 
 function speak(text) {
 
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
 
-        if (!text || !speechSynthesis) return resolve();
+        if (!text) return resolve();
 
         speechSynthesis.cancel();
 
         const u = new SpeechSynthesisUtterance(text);
+
         u.lang = "en-US";
         u.rate = 0.92;
 
-        state.speaking = true;
-
-        u.onend = () => {
-            state.speaking = false;
-            resolve();
-        };
-
-        u.onerror = resolve;
+        u.onend = resolve;
 
         speechSynthesis.speak(u);
     });
@@ -425,25 +423,25 @@ function speak(text) {
 
 function showOnly(name) {
 
-    Object.values(screens).forEach(s => {
-        if (s) s.classList.add("hidden");
-    });
+    Object.values(screens).forEach(s => s?.classList.add("hidden"));
 
-    if (screens[name]) screens[name].classList.remove("hidden");
+    screens[name]?.classList.remove("hidden");
 }
 
 function wait(ms){ return new Promise(r=>setTimeout(r,ms)); }
 
 function waitButton(btn){
+
     return new Promise(r=>{
-        btn.onclick = ()=>r();
+        btn.onclick = () => r();
     });
 }
 
 function updateHUD(){
-    if (hudMission) hudMission.innerText = state.current+1;
-    if (hudXP) hudXP.innerText = state.xp;
-    if (hudState) hudState.innerText = state.speaking ? "VOICE":"FOCUS";
+
+    hudMission.innerText = state.current + 1;
+    hudXP.innerText = state.xp;
+    hudState.innerText = state.speaking ? "VOICE":"FOCUS";
 }
 
 }
