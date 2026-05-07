@@ -1,300 +1,172 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>KAMIZEN SESSION CORE</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>KAMIZEN LIFE SYSTEM - CORE SESSION</title>
 
 <style>
 :root{
-  --blue:#00f2ff;
-  --gold:#f1c40f;
-  --red:#ff3131;
-  --bg:#050508;
-  --green:#2ecc71;
+    --bg:#0b1220;
+    --card:#111a2e;
+    --primary:#3b82f6;
+    --success:#22c55e;
+    --danger:#ef4444;
+    --text:#ffffff;
+    --dim:#94a3b8;
+}
+
+*{
+    box-sizing:border-box;
 }
 
 body{
-  margin:0;
-  overflow:hidden;
-  background:var(--bg);
-  color:white;
-  font-family:Orbitron,sans-serif;
+    margin:0;
+    font-family:Segoe UI, Arial, sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    display:flex;
+    justify-content:center;
+    min-height:100vh;
 }
 
-.full{
-  position:fixed;
-  inset:0;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  flex-direction:column;
-  background:radial-gradient(circle,#111,#000);
-  text-align:center;
-  z-index:999;
+#app{
+    width:100%;
+    max-width:700px;
+    padding:20px;
 }
 
-.btn{
-  padding:18px 40px;
-  font-weight:900;
-  border:none;
-  cursor:pointer;
-  background:var(--blue);
-  color:black;
-  margin-top:20px;
-  letter-spacing:3px;
+/* =========================
+   CARD SYSTEM
+========================= */
+
+.card{
+    background:var(--card);
+    padding:20px;
+    border-radius:16px;
+    margin:15px 0;
+    box-shadow:0 10px 25px rgba(0,0,0,0.3);
+    border:1px solid rgba(255,255,255,0.05);
 }
 
-/* HUD */
-#hud{
-  position:absolute;
-  top:10px;
-  width:100%;
-  display:flex;
-  justify-content:space-around;
-  pointer-events:none;
-  z-index:10;
+/* =========================
+   BUTTONS
+========================= */
+
+button{
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:12px;
+    background:var(--primary);
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
+    transition:0.2s;
 }
 
-.box{
-  border:2px solid var(--blue);
-  padding:10px;
-  min-width:120px;
-  background:rgba(0,0,0,.8);
+button:hover{
+    transform:translateY(-2px);
 }
 
-/* BREATHING (TU CÍRCULO MEJORADO) */
-#breathWrap{
-  width:260px;
-  height:260px;
-  border-radius:50%;
-  border:8px solid var(--blue);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-weight:900;
-  font-size:28px;
-  transition:transform 2s ease;
-  box-shadow:0 0 50px var(--blue);
+/* =========================
+   ANSWERS
+========================= */
+
+.answer{
+    background:#1f2937;
+    padding:12px;
+    margin:8px 0;
+    border-radius:10px;
+    cursor:pointer;
+    border-left:4px solid var(--primary);
+    transition:0.2s;
 }
+
+.answer:hover{
+    transform:translateX(5px);
+    background:#374151;
+}
+
+/* =========================
+   BREATHING VISUAL
+========================= */
+
+.breath-circle{
+    width:140px;
+    height:140px;
+    border-radius:50%;
+    margin:30px auto;
+    border:4px solid var(--primary);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    animation:breathe 6s infinite ease-in-out;
+}
+
+@keyframes breathe{
+    0%{transform:scale(0.85);opacity:0.7;}
+    50%{transform:scale(1.25);opacity:1;border-color:var(--success);}
+    100%{transform:scale(0.85);opacity:0.7;}
+}
+
+/* =========================
+   TEXT STYLES
+========================= */
+
+h1,h2,h3{
+    margin:10px 0;
+}
+
+.small{
+    font-size:12px;
+    color:var(--dim);
+}
+
+.center{
+    text-align:center;
+}
+
+.hidden{
+    display:none;
+}
+
 </style>
-
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
 </head>
 
 <body>
 
-<!-- HUD -->
-<div id="hud">
-  <div class="box">$<span id="money">0</span></div>
-  <div class="box"><span id="health">100</span>%</div>
-  <div class="box">LVL <span id="level">1</span></div>
+<div id="app">
+
+    <!-- HEADER STATIC -->
+    <div class="card center">
+        <h2 style="color:var(--primary);">KAMIZEN LIFE SYSTEM</h2>
+        <p class="small">Neural Training • Awareness • Discipline • Control</p>
+    </div>
+
+    <!-- MAIN RENDER AREA (ENGINE CONTROLS THIS) -->
+    <div id="screen" class="card">
+        <h3>Loading system...</h3>
+        <p class="small">Initializing stories & missions</p>
+    </div>
+
+    <!-- BREATHING AREA (OPTIONAL VISUAL ONLY) -->
+    <div class="card center">
+        <h3>Breathing Module</h3>
+
+        <div class="breath-circle">
+            <span>FOCUS</span>
+        </div>
+
+        <p class="small">
+            Automatic regulation system (controlled by engine.js)
+        </p>
+    </div>
+
 </div>
 
-<!-- LOADING SCREEN (OBLIGATORIO) -->
-<div id="loading" class="full">
-  <h1 style="color:var(--blue)">LOADING SYSTEM</h1>
-  <p>Preparing 35 Stories + 35 Missions</p>
-  <button class="btn" onclick="startSession()">START SESSION</button>
-</div>
-
-<!-- STORY SCREEN -->
-<div id="story" class="full" style="display:none;">
-  <h2 id="storyText"></h2>
-  <button class="btn" id="storyBtn" style="display:none;">CONTINUE</button>
-</div>
-
-<!-- MISSION SCREEN -->
-<div id="mission" class="full" style="display:none;">
-  <h2 id="q"></h2>
-  <div id="ops"></div>
-  <p id="inf" style="color:var(--gold);margin-top:10px;"></p>
-  <button class="btn" id="nextMission" style="display:none;">NEXT</button>
-</div>
-
-<!-- BREATHING SCREEN -->
-<div id="breathing" class="full" style="display:none;">
-  <div id="breathWrap">FOCUS</div>
-</div>
-
-<canvas id="c"></canvas>
-
-<script>
-/* =========================
-   STATE CLEAN
-========================= */
-let i=0;
-let step="loading";
-let stories=[];
-let missions=[];
-let score=0;
-
-/* =========================
-   LOAD DATA (ENGINE WILL FEED)
-========================= */
-async function load(){
-  const s=await fetch("/api/stories").then(r=>r.json());
-  const m=await fetch("/api/missions").then(r=>r.json());
-
-  stories=s.stories||[];
-  missions=m.missions||[];
-}
-
-/* =========================
-   START SESSION
-========================= */
-async function startSession(){
-  await load();
-  document.getElementById("loading").style.display="none";
-  step="story";
-  renderStory();
-}
-
-/* =========================
-   STORY FLOW (NO SKIP, NO FREEZE)
-========================= */
-function renderStory(){
-  if(i>=stories.length){i=0;}
-
-  let s=stories[i];
-
-  const box=document.getElementById("story");
-  box.style.display="flex";
-
-  const txt=document.getElementById("storyText");
-  const btn=document.getElementById("storyBtn");
-
-  txt.innerText=s.en;
-  btn.style.display="none";
-
-  speech(s.en, ()=>{
-    btn.style.display="block";
-  });
-
-  btn.onclick=()=>{
-    box.style.display="none";
-    step="mission";
-    renderMission();
-  };
-}
-
-/* =========================
-   MISSION FLOW (INF FIX INCLUDED)
-========================= */
-let b=0;
-
-function renderMission(){
-  let m=missions[i];
-  if(!m){i=0; return renderStory();}
-
-  const box=document.getElementById("mission");
-  box.style.display="flex";
-
-  const q=document.getElementById("q");
-  const ops=document.getElementById("ops");
-  const inf=document.getElementById("inf");
-  const next=document.getElementById("nextMission");
-
-  let block=m.b[b];
-
-  if(!block){
-    i++;
-    b=0;
-    step="story";
-    box.style.display="none";
-    return renderStory();
-  }
-
-  ops.innerHTML="";
-  inf.innerText="";
-  next.style.display="none";
-
-  if(block.t==="v"||block.t==="h"){
-    q.innerText=block.tx.en;
-    speech(block.tx.en);
-  }
-
-  if(block.story){
-    q.innerText=block.story.en;
-    speech(block.story.en);
-  }
-
-  if(block.t==="d"){
-    q.innerText=block.q.en;
-
-    block.op.forEach((o,idx)=>{
-      let btn=document.createElement("button");
-      btn.className="btn";
-      btn.innerText=o;
-
-      btn.onclick=()=>{
-        let ok=idx===block.c;
-        inf.innerText=block.ex[idx];
-
-        speech(block.ex[idx]);
-
-        next.style.display="block";
-        next.onclick=()=>{
-          b++;
-          renderMission();
-        };
-      };
-
-      ops.appendChild(btn);
-    });
-  }
-
-  /* BREATH FIXED */
-  if(block.t==="breath_auto"){
-    showBreath(block);
-  }
-}
-
-/* =========================
-   BREATHING FIX (TU DISEÑO)
-========================= */
-function showBreath(block){
-  const box=document.getElementById("breathing");
-  const circle=document.getElementById("breathWrap");
-
-  box.style.display="flex";
-
-  let c=0;
-
-  let t=setInterval(()=>{
-    let inha=(c%2===0);
-    circle.innerText=inha?"INHALE":"EXHALE";
-    circle.style.transform=inha?"scale(1.4)":"scale(1)";
-    c++;
-
-    if(c>6){
-      clearInterval(t);
-      box.style.display="none";
-      b++;
-      renderMission();
-    }
-  },2000);
-
-  speech(block.tx.en+" "+block.inf.en);
-}
-
-/* =========================
-   SPEECH LOCK (NO CUT)
-========================= */
-function speech(t,cb){
-  let u=new SpeechSynthesisUtterance(t);
-  u.lang="en-US";
-  u.onend=()=>{if(cb)cb();}
-  speechSynthesis.cancel();
-  speechSynthesis.speak(u);
-}
-
-/* HUD SIMPLE */
-setInterval(()=>{
-  document.getElementById("money").innerText=score;
-},500);
-
-</script>
+<!-- ENGINE (ONLY CONTROLLER) -->
+<script src="/static/js/engine.js"></script>
 
 </body>
 </html>
