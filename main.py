@@ -1,9 +1,12 @@
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 import os
 import json
 
+# =========================================================
+# 🚀 APP CORE
+# =========================================================
 app = FastAPI(title="KAMIZEN LIFE SYSTEM")
 
 # =========================================================
@@ -15,7 +18,7 @@ STATIC_DIR = os.path.join(BASE_DIR, "static")
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 # =========================================================
-# 🧠 CACHE SYSTEM (ANTI-RELOAD OVERLOAD)
+# 🧠 CACHE SYSTEM (ANTI OVERLOAD / NO FREEZE)
 # =========================================================
 CACHE = {
     "stories": None,
@@ -51,8 +54,6 @@ def load_stories():
         stories = data.get("stories", [])
     elif isinstance(data, list):
         stories = data
-    else:
-        stories = []
 
     stories = sorted(
         [s for s in stories if isinstance(s, dict) and "id" in s],
@@ -63,7 +64,7 @@ def load_stories():
     return stories
 
 # =========================================================
-# 🎯 MISSIONS LOADER (CORE SYSTEM)
+# 🎯 MISSIONS LOADER (1–35 SYSTEM CORE)
 # =========================================================
 def load_missions():
 
@@ -78,23 +79,14 @@ def load_missions():
     ])
 
     for file in files:
+
         path = os.path.join(BASE_DIR, file)
         data = load_json(path)
 
         if not data:
             continue
 
-        missions = []
-
-        if isinstance(data, dict):
-            missions = (
-                data.get("missions") or
-                data.get("ses") or
-                data.get("data") or
-                []
-            )
-        elif isinstance(data, list):
-            missions = data
+        missions = data.get("missions", []) if isinstance(data, dict) else data
 
         for m in missions:
             if isinstance(m, dict) and "id" in m:
@@ -110,7 +102,7 @@ def load_missions():
     return CACHE["missions"]
 
 # =========================================================
-# 🧠 EXAM SYSTEM LOADER (NEW OPTIONAL MODE)
+# 🧠 EXAM SYSTEM LOADER (OPTIONAL MODULE)
 # =========================================================
 def load_exam_system():
 
@@ -142,7 +134,8 @@ def load_exam_system():
 
     CACHE["exam"] = {
         "total": len(all_exam_missions),
-        "missions": all_exam_missions
+        "missions": all_exam_missions,
+        "mode": "How to React Before & During Exams"
     }
 
     return CACHE["exam"]
@@ -169,21 +162,21 @@ def get_stories():
     }
 
 # =========================================================
-# 🎯 API MISSIONS (CORE)
+# 🎯 API MISSIONS (CORE SYSTEM 1–35)
 # =========================================================
 @app.get("/api/missions")
 def get_missions():
     return load_missions()
 
 # =========================================================
-# 🧠 API EXAM MODE (OPTIONAL SYSTEM)
+# 🧠 API EXAM MODE (OPTIONAL MODULE)
 # =========================================================
 @app.get("/api/exam")
 def get_exam():
     return load_exam_system()
 
 # =========================================================
-# 🔍 SINGLE MISSION (CORE)
+# 🔍 SINGLE MISSION
 # =========================================================
 @app.get("/api/missions/{mission_id}")
 def get_mission(mission_id: int):
@@ -197,13 +190,14 @@ def get_mission(mission_id: int):
     raise HTTPException(status_code=404, detail="Mission not found")
 
 # =========================================================
-# 🧠 STATE SYSTEM
+# 🧠 STATE SYSTEM (USER PROGRESS)
 # =========================================================
 STATE = {
     "user": "",
     "story_index": 0,
     "mission_index": 1,
-    "score": 0
+    "score": 0,
+    "exam_mode": False
 }
 
 @app.get("/api/state")
@@ -226,7 +220,7 @@ def health():
     return {"status": "ok"}
 
 # =========================================================
-# ▶ RUN SERVER
+# 🚀 RUN SERVER
 # =========================================================
 if __name__ == "__main__":
     import uvicorn
