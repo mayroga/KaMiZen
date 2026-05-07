@@ -20,38 +20,51 @@
 "id":1,
 "cat":"awareness",
 "b":[
-{"t":"v","tx":{"en":"Today: AWARENESS IN SCHOOL"}},
-{"t":"h","tx":{"en":"Your mind interprets reality — pay attention"}},
 
-{"story":{"en":"A lamp in a dark room reveals what was always there. Awareness changes your decisions."}},
+{"t":"v","tx":{"en":"MISSION 1: AWARENESS IN EVERYWHERE"}},
+{"t":"h","tx":{"en":"What you notice can protect you"}},
 
-{"t":"breath_auto","d":30,
-"tx":{"en":"Inhale and exhale slowly"},
-"inf":{"en":"This exercise trains calm control and focus"}
+{"story":{"en":"Awareness is like turning on a light inside your mind. When you pay attention, you make safer choices without fear."}},
+
+{"t":"breath_auto","d":25,
+"tx":{"en":"Breathe slowly and feel your body relax"},
+"inf":{"en":"This breathing helps your brain focus and reduce distraction in the present moment"}
 },
 
-{"t":"d","q":{"en":"You feel something is off. What do you do?"},
-"op":["Ignore","Observe carefully","Run randomly","Freeze"],
+{"t":"d","q":{"en":"You are in school and something feels unusual. What is the best action?"},
+"op":["Ignore it","Observe carefully","Run without thinking","Close your eyes"],
 "c":1,
 "ex":[
-"Ignore = miss reality",
-"Observe = gain control",
-"Random reaction = confusion",
-"Freeze = no decision"
+"Ignore = you miss important signals",
+"Observe = you understand reality better",
+"Run without thinking = confusion",
+"Close eyes = no awareness"
 ]},
 
-{"t":"r","tx":"+Awareness","p":20},
-{"t":"c","tx":{"en":"Attention is your most valuable resource"}},
+{"t":"d","q":{"en":"You are walking and see something new in your environment. What do you do first?"},
+"op":["Look carefully","Look away fast","Laugh and ignore","Copy others"],
+"c":0,
+"ex":[
+"Looking carefully builds awareness",
+"Looking away loses information",
+"Ignoring removes learning",
+"Copying others reduces thinking"
+]},
 
-{"t":"sil","d":30,
-"tx":{"en":"30 seconds of focused awareness"},
-"inf":{"en":"Improves perception and reduces automatic behavior"}
+{"t":"r","tx":"+Awareness","p":25},
+
+{"t":"c","tx":{"en":"Attention helps you stay safe and smart"}},
+
+{"t":"sil","d":25,
+"tx":{"en":"Notice 3 things around you quietly"},
+"inf":{"en":"This silence trains observation and reduces automatic reactions"}
 },
 
-{"t":"breath_auto","d":30,
-"tx":{"en":"Inhale and exhale slowly"},
-"inf":{"en":"This exercise trains calm control and focus"}
+{"t":"breath_auto","d":20,
+"tx":{"en":"Inhale slowly... exhale gently"},
+"inf":{"en":"This breathing improves calm focus and attention control"}
 }
+
 ]
 },
 
@@ -59,228 +72,311 @@
 "id":2,
 "cat":"bullying",
 "b":[
-{"t":"v","tx":{"en":"Today: RESPONSE TO PRESSURE"}},
-{"t":"h","tx":{"en":"People test your limits"}},
 
-{"story":{"en":"People respect your boundaries, not your emotions. Limits define how others treat you."}},
+{"t":"v","tx":{"en":"MISSION 2: STRONG WORDS, STRONG ACTIONS"}},
+{"t":"h","tx":{"en":"You control your response, not others"}},
 
-{"t":"breath_auto","d":30,
-"tx":{"en":"Inhale and exhale slowly"},
-"inf":{"en":"This exercise trains calm control and focus"}
+{"story":{"en":"When someone tests your limits, your calm response is your real strength. You don’t lose power when you stay calm."}},
+
+{"t":"breath_auto","d":25,
+"tx":{"en":"Breathe slowly to calm your emotions"},
+"inf":{"en":"This breathing helps reduce anger signals in the body"}
 },
 
-{"t":"d","q":{"en":"What is the strongest response?"},
-"op":["Fight","React emotionally","Walk away and report","Stay silent"],
-"c":2,
+{"t":"d","q":{"en":"Someone says something mean. What is the best response?"},
+"op":["Shout back","Stay calm and walk away","Hit them","Cry silently"],
+"c":1,
 "ex":[
-"Fight = escalation",
-"Emotion = loss of control",
-"Walk away + report = real power",
-"Silence = behavior repeats"
+"Shouting escalates conflict",
+"Calm walk away protects you",
+"Physical reaction increases problems",
+"Crying alone doesn't solve situation"
 ]},
 
-{"t":"r","tx":"+Control","p":20},
-{"t":"c","tx":{"en":"What you tolerate, repeats"}},
+{"t":"d","q":{"en":"What should you do if it repeats often?"},
+"op":["Keep it secret","Tell a trusted adult","Ignore forever","React harder"],
+"c":1,
+"ex":[
+"Secrets can make it worse",
+"Trusted adults help solve it",
+"Ignoring may allow repetition",
+"Reacting harder increases risk"
+]},
+
+{"t":"r","tx":"+Control","p":25},
+
+{"t":"c","tx":{"en":"Calm decisions are strong decisions"}},
 
 {"t":"sil","d":30,
-"tx":{"en":"Calm reset before action"},
-"inf":{"en":"Supports emotional regulation"}
+"tx":{"en":"Let your thoughts settle like water"},
+"inf":{"en":"This silence helps reduce emotional overload"}
 },
 
-{"t":"breath_auto","d":30,
-"tx":{"en":"Inhale and exhale slowly"},
-"inf":{"en":"This exercise trains calm control and focus"}
+{"t":"breath_auto","d":25,
+"tx":{"en":"Inhale confidence... exhale tension"},
+"inf":{"en":"This breathing builds emotional stability and control"}
 }
+
 ]
 },
 
 {
 "id":3,
-"cat":"stranger",
+"cat":"stranger_safety",
 "b":[
-{"t":"v","tx":{"en":"Today: TRUST AND RISK"}},
-{"t":"h","tx":{"en":"Not everyone deserves access to you"}},
 
-{"story":{"en":"Safety is distance from the unknown. Trust is earned, not assumed."}},
+{"t":"v","tx":{"en":"MISSION 3: TRUST AND SAFETY"}},
+{"t":"h","tx":{"en":"Not everyone is part of your safe circle"}},
 
-{"t":"breath_auto","d":30,
-"tx":{"en":"Inhale and exhale slowly"},
-"inf":{"en":"This exercise trains calm control and focus"}
+{"story":{"en":"Safety means staying close to trusted adults and avoiding unknown situations alone. Smart choices protect you."}},
+
+{"t":"breath_auto","d":25,
+"tx":{"en":"Breathe slowly and stay grounded"},
+"inf":{"en":"This breathing improves awareness of surroundings and reduces panic"}
 },
 
-{"t":"d","q":{"en":"What is the safest decision?"},
-"op":["Follow them","Stay near trusted adults","Keep secrets","Go alone"],
+{"t":"d","q":{"en":"You are in a public place and lose sight of your parents. What do you do?"},
+"op":["Walk away alone","Stay in place and find staff or security","Follow strangers","Start running"],
 "c":1,
 "ex":[
-"Following = high risk",
-"Trusted adults = safety",
-"Secrets = danger",
-"Isolation = vulnerability"
+"Walking alone increases risk",
+"Staying and asking for help is safest",
+"Following strangers is unsafe",
+"Running creates confusion"
 ]},
 
-{"t":"r","tx":"+Protection","p":20},
-{"t":"c","tx":{"en":"Your environment influences your safety"}},
+{"t":"d","q":{"en":"A stranger asks you to go somewhere. What is correct?"},
+"op":["Go immediately","Say no and stay near safe adults","Keep it secret","Follow quietly"],
+"c":1,
+"ex":[
+"You should never go with strangers",
+"Saying no protects you",
+"Secrets increase danger",
+"Following is unsafe"
+]},
 
-{"t":"sil","d":45,
-"tx":{"en":"Stay aware and grounded"},
-"inf":{"en":"Supports decision clarity under pressure"}
+{"t":"r","tx":"+Protection","p":25},
+
+{"t":"c","tx":{"en":"Safe adults are your protection system"}},
+
+{"t":"sil","d":35,
+"tx":{"en":"Think: who are my safe adults?"},
+"inf":{"en":"This helps build safety awareness memory"}
 },
 
-{"t":"breath_auto","d":30,
-"tx":{"en":"Inhale and exhale slowly"},
-"inf":{"en":"This exercise trains calm control and focus"}
+{"t":"breath_auto","d":20,
+"tx":{"en":"Inhale calm... exhale fear"},
+"inf":{"en":"This breathing helps the body stay steady in uncertain situations"}
 }
+
 ]
 },
 
 {
 "id":4,
-"cat":"emergency",
+"cat":"emergency_awareness",
 "b":[
-{"t":"v","tx":{"en":"Today: FAST DECISIONS"}},
-{"t":"h","tx":{"en":"Time matters in danger"}},
 
-{"story":{"en":"In chaos, calm thinking is rare and powerful. Speed + clarity = survival."}},
+{"t":"v","tx":{"en":"MISSION 4: FAST AND SAFE ACTION"}},
+{"t":"h","tx":{"en":"In emergencies, calm thinking is power"}},
 
-{"t":"breath_auto","d":30,
-"tx":{"en":"Inhale and exhale slowly"},
-"inf":{"en":"This exercise trains calm control and focus"}
+{"story":{"en":"When something unexpected happens, listening to trusted adults and staying calm helps everyone stay safe."}},
+
+{"t":"breath_auto","d":20,
+"tx":{"en":"Breathe slowly to keep your mind clear"},
+"inf":{"en":"This breathing reduces panic and improves decision speed"}
 },
 
-{"t":"d","q":{"en":"What is the correct move?"},
-"op":["Hide alone","Find help immediately","Walk randomly","Do nothing"],
+{"t":"d","q":{"en":"In school, an announcement says to follow teacher instructions immediately. What do you do?"},
+"op":["Ignore it","Follow teacher calmly","Run alone","Hide randomly"],
 "c":1,
 "ex":[
-"Isolation = delay",
-"Help = fastest safety",
-"Random action = risk",
-"Inaction = danger continues"
+"Ignoring removes safety structure",
+"Teacher guidance keeps you safe",
+"Running alone creates risk",
+"Random hiding increases confusion"
 ]},
 
-{"t":"r","tx":"+Action","p":20},
-{"t":"c","tx":{"en":"Fast action beats hesitation"}},
+{"t":"d","q":{"en":"If something feels confusing, what is the best action?"},
+"op":["Panic","Stay near adults","Leave alone","Do nothing"],
+"c":1,
+"ex":[
+"Panic reduces thinking",
+"Adults guide safety",
+"Leaving alone is risky",
+"Doing nothing delays safety"
+]},
 
-{"t":"sil","d":45,
-"tx":{"en":"Control your reaction"},
-"inf":{"en":"Reduces panic and improves clarity"}
+{"t":"r","tx":"+Action","p":30},
+
+{"t":"c","tx":{"en":"Clear instructions keep everyone safe"}},
+
+{"t":"sil","d":40,
+"tx":{"en":"Focus on breathing and listening"},
+"inf":{"en":"This silence improves attention under stress"}
 },
 
-{"t":"breath_auto","d":30,
-"tx":{"en":"Inhale and exhale slowly"},
-"inf":{"en":"This exercise trains calm control and focus"}
+{"t":"breath_auto","d":20,
+"tx":{"en":"Inhale focus... exhale distraction"},
+"inf":{"en":"This breathing improves concentration and reduces confusion"}
 }
+
 ]
 },
 
 {
 "id":5,
-"cat":"digital",
+"cat":"digital_safety",
 "b":[
-{"t":"v","tx":{"en":"Today: DIGITAL REALITY"}},
-{"t":"h","tx":{"en":"Not everything online is safe"}},
 
-{"story":{"en":"The internet amplifies everything — good or bad. What you share has consequences."}},
+{"t":"v","tx":{"en":"MISSION 5: DIGITAL WORLD CONTROL"}},
+{"t":"h","tx":{"en":"What you see online is not always real or safe"}},
 
-{"t":"breath_auto","d":30,
-"tx":{"en":"Inhale and exhale slowly"},
-"inf":{"en":"This exercise trains calm control and focus"}
+{"story":{"en":"The digital world can help you learn, but also distract you or mislead you. Smart choices protect your mind."}},
+
+{"t":"breath_auto","d":25,
+"tx":{"en":"Breathe slowly before reacting to screens"},
+"inf":{"en":"This helps reduce impulsive decisions online"}
 },
 
-{"t":"d","q":{"en":"What protects you most?"},
-"op":["Share info","Tell a trusted adult","Send location","Ignore risk"],
+{"t":"d","q":{"en":"Someone online asks for personal information. What do you do?"},
+"op":["Share it","Tell a trusted adult","Ignore safety rules","Reply everything"],
 "c":1,
 "ex":[
-"Sharing = exposure",
-"Trusted adult = protection",
-"Location = danger",
-"Ignoring = vulnerability"
+"Sharing personal info is unsafe",
+"Adults help protect you",
+"Ignoring rules increases risk",
+"Replying everything gives control away"
 ]},
 
-{"t":"r","tx":"+Security","p":20},
-{"t":"c","tx":{"en":"Perception online can affect real life"}},
+{"t":"d","q":{"en":"You feel like using your phone too much. What is best?"},
+"op":["Use more","Take a break","Hide it forever","Give it to strangers"],
+"c":1,
+"ex":[
+"More use reduces balance",
+"Breaks restore control",
+"Hiding forever is unrealistic",
+"Giving to strangers is unsafe"
+]},
 
-{"t":"sil","d":60,
-"tx":{"en":"Pause before action"},
-"inf":{"en":"Improves impulse control"}
+{"t":"r","tx":"+Security","p":25},
+
+{"t":"c","tx":{"en":"You control technology — not the other way around"}},
+
+{"t":"sil","d":45,
+"tx":{"en":"Pause and disconnect mentally for a moment"},
+"inf":{"en":"This silence reduces digital overload"}
 },
 
-{"t":"breath_auto","d":30,
-"tx":{"en":"Inhale and exhale slowly"},
-"inf":{"en":"This exercise trains calm control and focus"}
+{"t":"breath_auto","d":25,
+"tx":{"en":"Inhale clarity... exhale distraction"},
+"inf":{"en":"This breathing helps reset attention from screens"}
 }
+
 ]
 },
 
 {
 "id":6,
-"cat":"money",
+"cat":"money_family_values",
 "b":[
-{"t":"v","tx":{"en":"Today: VALUE AND MONEY"}},
-{"t":"h","tx":{"en":"Money reflects decisions"}},
 
-{"story":{"en":"Money is not effort — it is value. Smart decisions create future freedom."}},
+{"t":"v","tx":{"en":"MISSION 6: MONEY, CHOICES AND FAMILY"}},
+{"t":"h","tx":{"en":"Choices affect your future and your family"}},
 
-{"t":"d","q":{"en":"What is the best strategy?"},
-"op":["Spend all","Save part","Give all","Ignore"],
-"c":1,
-"ex":[
-"Spending all = no control",
-"Saving = discipline",
-"Losing all = no resources",
-"Ignoring = no awareness"
-]},
+{"story":{"en":"Money is used carefully in families. Understanding this helps you respect effort and make better choices."}},
 
-{"t":"r","tx":"+Discipline","p":20},
-{"t":"c","tx":{"en":"Small repeated actions create big results"}},
-
-{"t":"sil","d":60,
-"tx":{"en":"Think before choosing"},
-"inf":{"en":"Supports long-term decision making"}
+{"t":"breath_auto","d":25,
+"tx":{"en":"Breathe slowly and think before choosing"},
+"inf":{"en":"This improves patience and decision awareness"}
 },
 
-{"t":"breath_auto","d":30,
-"tx":{"en":"Inhale and exhale slowly"},
-"inf":{"en":"This exercise trains calm control and focus"}
+{"t":"d","q":{"en":"You want ice cream, but your parents say money is limited. What do you do?"},
+"op":["Get angry","Understand and wait","Demand it","Take money secretly"],
+"c":1,
+"ex":[
+"Anger creates conflict",
+"Understanding builds respect",
+"Demanding is pressure",
+"Taking money is wrong"
+]},
+
+{"t":"d","q":{"en":"How can you help your family?"},
+"op":["Waste resources","Be responsible and help at home","Ignore everything","Ask only for things"],
+"c":1,
+"ex":[
+"Wasting resources is harmful",
+"Helping builds teamwork",
+"Ignoring reduces connection",
+"Only asking creates imbalance"
+]},
+
+{"t":"r","tx":"+Responsibility","p":30},
+
+{"t":"c","tx":{"en":"Small actions help your whole family"}},
+
+{"t":"sil","d":50,
+"tx":{"en":"Think about effort behind things you use"},
+"inf":{"en":"This silence builds gratitude awareness"}
+},
+
+{"t":"breath_auto","d":25,
+"tx":{"en":"Inhale gratitude... exhale impatience"},
+"inf":{"en":"This helps emotional maturity and patience"}
 }
+
 ]
 },
 
 {
 "id":7,
-"cat":"family",
+"cat":"family_control",
 "b":[
-{"t":"v","tx":{"en":"Today: CONTROL IN CONFLICT"}},
-{"t":"h","tx":{"en":"Emotions do not solve problems — actions do"}},
 
-{"story":{"en":"Calm in chaos is rare. Those who control themselves control outcomes."}},
+{"t":"v","tx":{"en":"MISSION 7: CONTROL, RESPECT AND DAILY LIFE"}},
+{"t":"h","tx":{"en":"Self-control makes life easier and safer"}},
 
-{"t":"breath_auto","d":30,
-"tx":{"en":"Inhale and exhale slowly"},
-"inf":{"en":"This exercise trains calm control and focus"}
+{"story":{"en":"Respect and control help you live better with others. Every small habit builds your future skills."}},
+
+{"t":"breath_auto","d":25,
+"tx":{"en":"Breathe slowly and relax your body"},
+"inf":{"en":"This helps reduce tension and improve behavior control"}
 },
 
-{"t":"d","q":{"en":"What improves the situation?"},
-"op":["Shout","Listen calmly","Leave forever","Ignore"],
+{"t":"d","q":{"en":"You are asked to do a small task at home. What is best?"},
+"op":["Ignore it","Do it calmly","Get angry","Run away"],
 "c":1,
 "ex":[
-"Shouting = escalation",
-"Listening = resolution",
-"Leaving = avoidance",
-"Ignoring = weak connection"
+"Ignoring reduces trust",
+"Doing it builds responsibility",
+"Anger creates conflict",
+"Running avoids growth"
 ]},
 
-{"t":"r","tx":"+Respect","p":20},
-{"t":"c","tx":{"en":"Control yourself before trying to control others"}},
+{"t":"d","q":{"en":"What helps you grow skills faster?"},
+"op":["Never practice","Practice small daily habits","Wait for others","Only play games"],
+"c":1,
+"ex":[
+"No practice stops growth",
+"Daily habits build mastery",
+"Waiting slows progress",
+"Only playing limits development"
+]},
 
-{"t":"sil","d":90,
-"tx":{"en":"Long calm focus"},
-"inf":{"en":"Improves emotional regulation"}
+{"t":"r","tx":"+Respect","p":30},
+
+{"t":"c","tx":{"en":"Self-control is a superpower in real life"}},
+
+{"t":"sil","d":60,
+"tx":{"en":"Observe your thoughts without reacting"},
+"inf":{"en":"This silence builds emotional intelligence"}
 },
 
-{"t":"breath_auto","d":30,
-"tx":{"en":"Inhale and exhale slowly"},
-"inf":{"en":"This exercise trains calm control and focus"}
+{"t":"breath_auto","d":25,
+"tx":{"en":"Inhale strength... exhale distraction"},
+"inf":{"en":"This strengthens focus and self-control"}
 }
+
 ]
 }
 
