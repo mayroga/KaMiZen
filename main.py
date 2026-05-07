@@ -1,5 +1,5 @@
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 import os
 import json
@@ -15,29 +15,29 @@ STATIC_DIR = os.path.join(BASE_DIR, "static")
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 # =========================================================
-# 🧠 CACHE SYSTEM (NO CHANGE)
+# 🧠 CACHE SYSTEM
 # =========================================================
 CACHE = {
     "stories": None,
-    "missions": None
+    "missions": None,
+    "exam": None
 }
 
 # =========================================================
-# 🔍 SAFE JSON LOADER
+# 🔍 JSON LOADER
 # =========================================================
 def load_json(path):
     try:
         with open(path, "r", encoding="utf-8") as f:
             return json.load(f)
     except Exception as e:
-        print(f"❌ JSON ERROR: {path} -> {e}")
+        print(f"JSON ERROR {path}: {e}")
         return None
 
 # =========================================================
-# 📖 STORIES (UNCHANGED - STABLE)
+# 📖 STORIES
 # =========================================================
 def load_stories():
-
     if CACHE["stories"] is not None:
         return CACHE["stories"]
 
@@ -50,8 +50,6 @@ def load_stories():
         stories = data.get("stories", [])
     elif isinstance(data, list):
         stories = data
-    else:
-        stories = []
 
     stories = sorted(
         [s for s in stories if isinstance(s, dict) and "id" in s],
@@ -62,10 +60,9 @@ def load_stories():
     return stories
 
 # =========================================================
-# 🎯 MISSIONS CORE (UNCHANGED)
+# 🎯 MISSIONS (NORMAL)
 # =========================================================
 def load_missions():
-
     if CACHE["missions"] is not None:
         return CACHE["missions"]
 
@@ -77,21 +74,14 @@ def load_missions():
     ])
 
     for file in files:
-        path = os.path.join(BASE_DIR, file)
-        data = load_json(path)
-
+        data = load_json(os.path.join(BASE_DIR, file))
         if not data:
             continue
 
         missions = []
 
         if isinstance(data, dict):
-            missions = (
-                data.get("missions") or
-                data.get("ses") or
-                data.get("data") or
-                []
-            )
+            missions = data.get("missions") or data.get("ses") or data.get("data") or []
         elif isinstance(data, list):
             missions = data
 
@@ -109,22 +99,22 @@ def load_missions():
     return CACHE["missions"]
 
 # =========================================================
-# 🧠 NEW: EXAM LOADER (ADD-ON ONLY)
+# 🧠 EXAM SYSTEM (FIXED + SAFE MERGE 36–49)
 # =========================================================
-def load_exam_missions():
+def load_exam_system():
+
+    if CACHE["exam"] is not None:
+        return CACHE["exam"]
 
     exam_files = [
         "exam36-42.json",
         "exam43-49.json"
     ]
 
-    exam_missions = []
+    all_exam = []
 
     for file in exam_files:
-
-        path = os.path.join(BASE_DIR, file)
-        data = load_json(path)
-
+        data = load_json(os.path.join(BASE_DIR, file))
         if not data:
             continue
 
@@ -132,12 +122,19 @@ def load_exam_missions():
 
         for m in missions:
             if isinstance(m, dict) and "id" in m:
-                exam_missions.append(m)
+                all_exam.append(m)
 
-    return sorted(exam_missions, key=lambda x: x["id"])
+    all_exam = sorted(all_exam, key=lambda x: x["id"])
+
+    CACHE["exam"] = {
+        "total": len(all_exam),
+        "missions": all_exam
+    }
+
+    return CACHE["exam"]
 
 # =========================================================
-# 🌐 FRONTEND ROUTES (UNCHANGED)
+# 🌐 ROUTES
 # =========================================================
 @app.get("/")
 def root():
@@ -148,55 +145,37 @@ def session():
     return FileResponse(os.path.join(STATIC_DIR, "session.html"))
 
 # =========================================================
-# 📖 API STORIES (UNCHANGED)
+# 📖 API
 # =========================================================
 @app.get("/api/stories")
 def get_stories():
-    return {
-        "total": len(load_stories()),
-        "stories": load_stories()
-    }
+    return {"total": len(load_stories()), "stories": load_stories()}
 
-# =========================================================
-# 🎯 API MISSIONS (PATCHED SAFE EXTENSION)
-# =========================================================
 @app.get("/api/missions")
 def get_missions():
+    return load_missions()
 
-    core = load_missions()["missions"]
-
-    # 🔥 ONLY ADD IF EXISTS, NO BREAK CORE SYSTEM
-    try:
-        exam = load_exam_missions()
-    except:
-        exam = []
-
-    # MERGE SAFE (NO DUPLICATES CRASH)
-    combined = core + exam
-
-    combined = sorted(combined, key=lambda x: x["id"])
-
-    return {
-        "total": len(combined),
-        "missions": combined
-    }
+# 🔥 IMPORTANT FIX: EXAMS NOW WORK PROPERLY
+@app.get("/api/exam")
+def get_exam():
+    return load_exam_system()
 
 # =========================================================
-# 🔍 SINGLE MISSION (UNCHANGED LOGIC)
+# SINGLE MISSION
 # =========================================================
 @app.get("/api/missions/{mission_id}")
 def get_mission(mission_id: int):
 
-    missions = get_missions()["missions"]
+    missions = load_missions()["missions"]
 
     for m in missions:
-        if m.get("id") == mission_id:
+        if m["id"] == mission_id:
             return m
 
     raise HTTPException(status_code=404, detail="Mission not found")
 
 # =========================================================
-# 🧠 STATE SYSTEM (UNCHANGED)
+# STATE
 # =========================================================
 STATE = {
     "user": "",
@@ -215,20 +194,15 @@ def update_state(data: dict):
     return {"ok": True, "state": STATE}
 
 # =========================================================
-# 🧪 HEALTH CHECK
+# HEALTH
 # =========================================================
 @app.get("/health")
 def health():
     return {"status": "ok"}
 
 # =========================================================
-# ▶ RUN SERVER
+# RUN
 # =========================================================
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(
-        "main:app",
-        host="0.0.0.0",
-        port=8000,
-        reload=True
-    )
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
