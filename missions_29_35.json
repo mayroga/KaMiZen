@@ -1,279 +1,300 @@
 {
 "sys":"KAMIZEN LIFE SYSTEM",
-"ch":4,
+"ch":5,
 "rng":"29-35",
 
-"ui":{"fw":["DISCIPLINE","AWARENESS","CALM","FOCUS","TRUTH","CONTROL","ACTION","PAUSE"]},
+"ui":{"fw":["VISION","CALM","CONTROL","FOCUS","TRUTH","AWARENESS","SAFETY","ACTION"]},
 
 "rules":[
-"MasterSelf",
-"Awareness=Freedom",
-"Emotion=Data",
-"Silence=Truth",
-"Focus=Reality",
-"Discipline>Impulse",
-"Calm=Power",
-"Action=Identity"
+"Obs>React",
+"Calm>Impulse",
+"Awareness=Safety",
+"Truth=Protection",
+"Focus>Noise",
+"Breath=Control"
 ],
 
-"ses":[
+"missions":[
 
 {
 "id":29,
-"cat":"emotion",
+"cat":"systems_awareness",
 "b":[
-{"t":"v","tx":{"en":"Today: EMOTIONAL CONTROL UNDER PRESSURE"}},
-{"t":"h","tx":{"en":"Public insult triggers emotional reaction"}},
 
-{"story":{"en":"Reaction feels powerful, but control defines your future behavior."}},
+{"t":"v","tx":{"en":"MISSION 29: SYSTEM AWARENESS"}},
+{"t":"h","tx":{"en":"Everything you do affects something else"}},
 
-{"t":"breath_auto","d":30,
-"tx":{"en":"Inhale and exhale slowly"},
-"inf":{"en":"Activates parasympathetic system and reduces emotional reactivity"}
+{"story":{"en":"Your actions are part of a system: school, family, friends, and environment."}},
+
+{"t":"breath_auto","d":25,
+"tx":{"en":"Breathe slowly and observe connections around you"},
+"inf":{"en":"This improves systems thinking and global awareness in decision-making"}
 },
 
-{"t":"d","q":{"en":"What is true control?"},
-"op":["Explode","Ignore blindly","Breathe and regulate","Attack"],
-"c":2,
+{"t":"d","q":{"en":"What shows systems thinking?"},
+"op":["Thinking only about now","Understanding consequences","Ignoring others","Reacting fast"],
+"c":1,
 "ex":[
-"Explode = loss of self-control",
-"Blind ignoring = no awareness processing",
-"Breathe + regulate = executive control activation",
-"Attack = escalation and consequence increase"
+"Only now = short-term thinking",
+"Consequences = systems awareness",
+"Ignoring = isolation thinking",
+"Reaction = low foresight"
 ]},
 
-{"t":"r","tx":"+Control","p":20},
-{"t":"c","tx":{"en":"Emotional control = real power"}},
+{"t":"r","tx":"+Vision","p":30},
 
-{"t":"sil","d":30,
-"tx":{"en":"Silent emotional reset"},
-"inf":{"en":"Reduces impulsive response and stabilizes cognition"}
+{"t":"sil","d":60,
+"tx":{"en":"Think how one action affects others"},
+"inf":{"en":"Builds causal reasoning and responsibility awareness"}
 },
 
-{"t":"breath_auto","d":30,
-"tx":{"en":"4-4 breathing cycle"},
-"inf":{"en":"Supports nervous system regulation"}
+{"t":"breath_auto","d":25,
+"tx":{"en":"Inhale awareness... exhale noise"},
+"inf":{"en":"Reduces cognitive fragmentation and improves clarity"}
 }
+
 ]
 },
 
 {
 "id":30,
-"cat":"focus",
+"cat":"identity_responsibility",
 "b":[
-{"t":"v","tx":{"en":"Today: FOCUS SYSTEM"}},
-{"t":"h","tx":{"en":"Attention determines perception"}},
 
-{"story":{"en":"Where attention goes, behavior follows. Focus is identity direction."}},
+{"t":"v","tx":{"en":"MISSION 30: IDENTITY AND RESPONSIBILITY"}},
+{"t":"h","tx":{"en":"Your habits build your identity"}},
 
-{"t":"d","q":{"en":"What creates performance?"},
-"op":["Multitasking","Single focus","Stopping work","Phone checking"],
-"c":1,
-"ex":[
-"Multitasking = reduced cognitive depth",
-"Single focus = neural efficiency increase",
-"Stopping = no progress",
-"Phone = attention fragmentation"
-]},
+{"story":{"en":"What you repeat becomes who you are."}},
 
-{"t":"r","tx":"+Focus","p":20},
-{"t":"c","tx":{"en":"Attention = mental energy"}},
-
-{"t":"sil","d":60,
-"tx":{"en":"Attention stabilization pause"},
-"inf":{"en":"Improves sustained cognitive performance"}
+{"t":"breath_auto","d":25,
+"tx":{"en":"Breathe slowly and reflect on your actions"},
+"inf":{"en":"Strengthens self-regulation and behavioral awareness"}
 },
 
-{"t":"breath_auto","d":30,
-"tx":{"en":"Slow stable breathing"},
-"inf":{"en":"Enhances focus retention"}
+{"t":"d","q":{"en":"What builds identity?"},
+"op":["Random actions","Repeated habits","One big event","Other people's opinion"],
+"c":1,
+"ex":[
+"Random = unstable identity",
+"Habits = consistent identity",
+"Single event = temporary impact",
+"Opinions = external control"
+]},
+
+{"t":"r","tx":"+Identity","p":30},
+
+{"t":"sil","d":90,
+"tx":{"en":"Observe who you are becoming"},
+"inf":{"en":"Builds self-reflective awareness and long-term identity formation"}
+},
+
+{"t":"breath_auto","d":25,
+"tx":{"en":"Inhale responsibility... exhale distraction"},
+"inf":{"en":"Strengthens behavioral alignment with values"}
 }
+
 ]
 },
 
 {
 "id":31,
-"cat":"truth",
+"cat":"social_pressure_systems",
 "b":[
-{"t":"v","tx":{"en":"Today: TRUTH IN ACTION"}},
-{"t":"h","tx":{"en":"Mistakes require acknowledgment"}},
 
-{"story":{"en":"Truth accelerates learning. Avoidance delays growth."}},
+{"t":"v","tx":{"en":"MISSION 31: SOCIAL SYSTEM PRESSURE"}},
+{"t":"h","tx":{"en":"Groups influence behavior more than words"}},
 
-{"t":"d","q":{"en":"What builds integrity?"},
-"op":["Lie","Blame others","Tell truth","Hide"],
-"c":2,
-"ex":[
-"Lying = identity distortion",
-"Blame = no responsibility growth",
-"Truth = cognitive alignment and trust building",
-"Hiding = repeated patterns"
-]},
+{"story":{"en":"People adapt to groups automatically. Awareness breaks automatic conformity."}},
 
-{"t":"r","tx":"+Integrity","p":20},
-{"t":"c","tx":{"en":"Truth strengthens identity"}},
-
-{"t":"sil","d":60,
-"tx":{"en":"Truth reflection pause"},
-"inf":{"en":"Improves self-awareness and decision alignment"}
+{"t":"breath_auto","d":25,
+"tx":{"en":"Breathe slowly and notice social influence"},
+"inf":{"en":"Reduces conformity bias and increases independent thinking"}
 },
 
-{"t":"breath_auto","d":30,
-"tx":{"en":"Calm 4-6 breathing"},
-"inf":{"en":"Supports emotional stability"}
+{"t":"d","q":{"en":"What is strongest thinking?"},
+"op":["Following group automatically","Thinking independently","Doing nothing","Copying behavior"],
+"c":1,
+"ex":[
+"Automatic following = low awareness",
+"Independent thinking = control",
+"Doing nothing = disengagement",
+"Copying = loss of identity"
+]},
+
+{"t":"r","tx":"+Character","p":30},
+
+{"t":"sil","d":120,
+"tx":{"en":"Separate your thoughts from group pressure"},
+"inf":{"en":"Strengthens cognitive independence under social influence"}
+},
+
+{"t":"breath_auto","d":25,
+"tx":{"en":"Inhale independence... exhale pressure"},
+"inf":{"en":"Reduces social conformity reflexes"}
 }
+
 ]
 },
 
 {
 "id":32,
-"cat":"social",
+"cat":"decision_under_complexity",
 "b":[
-{"t":"v","tx":{"en":"Today: SOCIAL PRESSURE TEST"}},
-{"t":"h","tx":{"en":"Group influence attempts to override decision"}},
 
-{"story":{"en":"Autonomy is the ability to act independently of pressure."}},
+{"t":"v","tx":{"en":"MISSION 32: COMPLEX DECISIONS"}},
+{"t":"h","tx":{"en":"Real life has multiple factors at once"}},
 
-{"t":"d","q":{"en":"What defines strength?"},
-"op":["Follow group","Say no","Mock others","Escape"],
-"c":1,
-"ex":[
-"Following = identity loss",
-"No = autonomy activation",
-"Mocking = emotional instability",
-"Escape = avoidance pattern"
-]},
+{"story":{"en":"Good decisions balance safety, truth, and consequences."}},
 
-{"t":"r","tx":"+Autonomy","p":20},
-{"t":"c","tx":{"en":"Saying no = leadership"}},
-
-{"t":"sil","d":75,
-"tx":{"en":"Boundary reinforcement silence"},
-"inf":{"en":"Strengthens self-control under social pressure"}
+{"t":"breath_auto","d":25,
+"tx":{"en":"Slow breathing before choosing"},
+"inf":{"en":"Activates executive function for multi-factor reasoning"}
 },
 
-{"t":"breath_auto","d":30,
-"tx":{"en":"Stable confidence breathing"},
-"inf":{"en":"Supports emotional independence"}
+{"t":"d","q":{"en":"What is best decision style?"},
+"op":["Rush without thinking","Analyze calmly","Ignore details","Follow emotion"],
+"c":1,
+"ex":[
+"Rush = errors",
+"Analysis = clarity",
+"Ignoring = incomplete data",
+"Emotion = bias"
+]},
+
+{"t":"r","tx":"+Clarity","p":30},
+
+{"t":"sil","d":120,
+"tx":{"en":"Hold all factors in mind before deciding"},
+"inf":{"en":"Improves cognitive integration and decision accuracy"}
+},
+
+{"t":"breath_auto","d":25,
+"tx":{"en":"Inhale structure... exhale confusion"},
+"inf":{"en":"Stabilizes reasoning under complexity"}
 }
+
 ]
 },
 
 {
 "id":33,
-"cat":"mind",
+"cat":"stress_mastery",
 "b":[
-{"t":"v","tx":{"en":"Today: MENTAL NOISE CONTROL"}},
-{"t":"h","tx":{"en":"Thoughts compete for attention"}},
 
-{"story":{"en":"Breathing is the first tool to reorganize mental chaos."}},
+{"t":"v","tx":{"en":"MISSION 33: STRESS MASTERY"}},
+{"t":"h","tx":{"en":"Stress is energy without direction"}},
 
-{"breath_auto","d":30,
-"tx":{"en":"Inhale and exhale slowly"},
-"inf":{"en":"Supports neural reset and cognitive clarity"}
+{"story":{"en":"Controlled stress improves performance. Uncontrolled stress reduces clarity."}},
+
+{"t":"breath_auto","d":25,
+"tx":{"en":"Deep slow breathing into abdomen"},
+"inf":{"en":"Activates parasympathetic regulation for stress control"}
 },
 
-{"t":"d","q":{"en":"What restores clarity?"},
-"op":["Overthink","Breathe","React instantly","Ignore mind"],
+{"t":"d","q":{"en":"What transforms stress into control?"},
+"op":["Panic","Structured breathing","Avoiding situation","Overreacting"],
 "c":1,
 "ex":[
-"Overthinking = cognitive overload",
-"Breathe = regulation of emotional circuits",
-"Instant reaction = instability",
-"Ignoring = unresolved mental noise"
+"Panic = loss of control",
+"Breathing = regulation",
+"Avoidance = unresolved stress",
+"Overreaction = escalation"
 ]},
 
-{"t":"r","tx":"+Clarity","p":20},
-{"t":"c","tx":{"en":"Calm = structured thinking"}},
+{"t":"r","tx":"+Calm","p":30},
 
-{"t":"sil","d":90,
-"tx":{"en":"Mental reset silence"},
-"inf":{"en":"Improves cognitive regulation and focus stability"}
+{"t":"sil","d":150,
+"tx":{"en":"Stay present inside pressure without reacting"},
+"inf":{"en":"Builds resilience and emotional stability under stress"}
 },
 
-{"t":"breath_auto","d":30,
-"tx":{"en":"4-6 stabilization breathing"},
-"inf":{"en":"Enhances emotional balance"}
+{"t":"breath_auto","d":25,
+"tx":{"en":"Inhale stability... exhale tension"},
+"inf":{"en":"Balances nervous system response"}
 }
+
 ]
 },
 
 {
 "id":34,
-"cat":"inner",
+"cat":"metacognition_mastery",
 "b":[
-{"t":"v","tx":{"en":"Today: INNER OBSERVATION"}},
-{"t":"h","tx":{"en":"Emotions arise automatically"}},
 
-{"story":{"en":"Observation creates distance between emotion and action."}},
+{"t":"v","tx":{"en":"MISSION 34: THINKING ABOUT THINKING"}},
+{"t":"h","tx":{"en":"You are the observer of your thoughts"}},
 
-{"t":"d","q":{"en":"What creates mastery?"},
-"op":["React","Ignore","Observe","Avoid"],
-"c":2,
-"ex":[
-"React = no control gap",
-"Ignore = no processing",
-"Observe = metacognitive activation and self-regulation",
-"Avoid = stagnation"
-]},
+{"story":{"en":"Awareness of thought patterns creates freedom from automatic reactions."}},
 
-{"t":"r","tx":"+Mastery","p":20},
-{"t":"c","tx":{"en":"Observation = control"}},
-
-{"t":"sil","d":120,
-"tx":{"en":"Deep awareness silence"},
-"inf":{"en":"Strengthens metacognition and impulse control"}
+{"t":"breath_auto","d":25,
+"tx":{"en":"Observe breath and thoughts at the same time"},
+"inf":{"en":"Enhances metacognitive awareness and self-monitoring"}
 },
 
-{"t":"breath_auto","d":30,
-"tx":{"en":"Slow awareness breathing"},
-"inf":{"en":"Improves emotional regulation"}
+{"t":"d","q":{"en":"What is highest mental skill?"},
+"op":["React instantly","Observe thoughts","Ignore thinking","Act randomly"],
+"c":1,
+"ex":[
+"Instant reaction = low awareness",
+"Observation = mastery",
+"Ignoring = unconscious behavior",
+"Random action = chaos"
+]},
+
+{"t":"r","tx":"+Mastery","p":35},
+
+{"t":"sil","d":180,
+"tx":{"en":"Observe mind without attachment or judgment"},
+"inf":{"en":"Develops advanced self-awareness and cognitive control"}
+},
+
+{"t":"breath_auto","d":25,
+"tx":{"en":"Final integration breathing cycle"},
+"inf":{"en":"Stabilizes full cognitive-emotional system"}
 }
+
 ]
 },
 
 {
 "id":35,
-"cat":"final",
+"cat":"life_mastery",
 "b":[
-{"t":"v","tx":{"en":"FINAL TEST: DISCIPLINE SYSTEM"}},
-{"t":"h","tx":{"en":"Distraction is the real test"}},
 
-{"story":{"en":"Discipline is not perfection. It is return to focus after distraction."}},
+{"t":"v","tx":{"en":"MISSION 35: LIFE MASTERY"}},
+{"t":"h","tx":{"en":"You are not your reactions, you are your choices"}},
 
-{"t":"d","q":{"en":"What defines discipline?"},
-"op":["Quit","Distract","Focus","React"],
-"c":2,
+{"story":{"en":"Mastery is not perfection. It is awareness, calm, and conscious action over time."}},
+
+{"t":"breath_auto","d":30,
+"tx":{"en":"Breathe slowly and fully integrate everything you learned"},
+"inf":{"en":"This breathing consolidates emotional, cognitive, and behavioral regulation"}
+},
+
+{"t":"d","q":{"en":"What defines mastery?"},
+"op":["No mistakes ever","Consistent awareness and control","Fast reactions","Avoiding all problems"],
+"c":1,
 "ex":[
-"Quit = system collapse",
-"Distract = loss of control loop",
-"Focus = executive function mastery",
-"React = no precision control"
+"No mistakes = unrealistic",
+"Consistency = mastery",
+"Fast reaction = instability",
+"Avoidance = no growth"
 ]},
 
-{"t":"r","tx":"+Mastery","p":20},
+{"t":"r","tx":"+Mastery","p":50},
 
-{"t":"v","tx":{"en":"FINAL CHALLENGE: SILENCE CONTROL"}},
-{"t":"breath_auto","d":6,
-"tx":{"en":"Inhale deep"},
-"inf":{"en":"Activates parasympathetic regulation"}},
+{"t":"sil","d":240,
+"tx":{"en":"Full system reflection: who are you becoming?"},
+"inf":{"en":"Integrates identity, awareness, and behavioral systems"}
+},
 
-{"t":"breath_auto","d":3,
-"tx":{"en":"Hold"},
-"inf":{"en":"Impulse control training"}},
+{"t":"breath_auto","d":30,
+"tx":{"en":"Final grounding breath: inhale clarity, exhale confusion"},
+"inf":{"en":"Resets nervous system and consolidates learning state"}
+}
 
-{"t":"breath_auto","d":6,
-"tx":{"en":"Exhale slow"},
-"inf":{"en":"Heart rate stabilization"}},
-
-{"t":"sil","d":180,
-"tx":{"en":"Total stillness awareness"},
-"inf":{"en":"High-level metacognitive control training"}},
-
-{"t":"v","tx":{"en":"SYSTEM COMPLETED"}},
-
-{"t":"c","tx":{"en":"Discipline + control = behavioral mastery"}}
-]}
+]
+}
 
 ]
 }
