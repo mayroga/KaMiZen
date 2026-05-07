@@ -6,67 +6,76 @@
 <title>KAMIZEN SESSION CORE</title>
 
 <style>
-body{
-margin:0;
-background:#050508;
-color:white;
-font-family:Orbitron, sans-serif;
-overflow:hidden;
+:root{
+  --blue:#00f2ff;
+  --gold:#f1c40f;
+  --red:#ff3131;
+  --bg:#050508;
+  --green:#2ecc71;
 }
 
-.hidden{display:none !important;}
+body{
+  margin:0;
+  overflow:hidden;
+  background:var(--bg);
+  color:white;
+  font-family:Orbitron,sans-serif;
+}
 
 .full{
-position:fixed;
-inset:0;
-display:flex;
-flex-direction:column;
-justify-content:center;
-align-items:center;
-text-align:center;
-background:radial-gradient(circle,#111,#000);
-z-index:10;
-padding:20px;
+  position:fixed;
+  inset:0;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  flex-direction:column;
+  background:radial-gradient(circle,#111,#000);
+  text-align:center;
+  z-index:999;
 }
 
-button{
-padding:18px 40px;
-margin-top:20px;
-border:none;
-background:#00e5ff;
-font-weight:900;
-cursor:pointer;
+.btn{
+  padding:18px 40px;
+  font-weight:900;
+  border:none;
+  cursor:pointer;
+  background:var(--blue);
+  color:black;
+  margin-top:20px;
+  letter-spacing:3px;
 }
 
+/* HUD */
 #hud{
-position:fixed;
-top:10px;
-width:100%;
-display:flex;
-justify-content:space-around;
-z-index:20;
-pointer-events:none;
+  position:absolute;
+  top:10px;
+  width:100%;
+  display:flex;
+  justify-content:space-around;
+  pointer-events:none;
+  z-index:10;
 }
 
 .box{
-background:black;
-border:1px solid #00e5ff;
-padding:10px;
-min-width:100px;
-text-align:center;
+  border:2px solid var(--blue);
+  padding:10px;
+  min-width:120px;
+  background:rgba(0,0,0,.8);
 }
 
-#breath-circle{
-width:220px;
-height:220px;
-border-radius:50%;
-border:6px solid #00e5ff;
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:28px;
-font-weight:900;
-transition:transform 2s ease;
+/* BREATHING (TU CÍRCULO MEJORADO) */
+#breathWrap{
+  width:260px;
+  height:260px;
+  border-radius:50%;
+  border:8px solid var(--blue);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:900;
+  font-size:28px;
+  transition:transform 2s ease;
+  box-shadow:0 0 50px var(--blue);
 }
 </style>
 
@@ -77,56 +86,215 @@ transition:transform 2s ease;
 
 <!-- HUD -->
 <div id="hud">
-<div class="box">XP <div id="hud-xp">0</div></div>
-<div class="box">MISSION <div id="hud-mission">0/35</div></div>
-<div class="box">STATE <div id="hud-state">READY</div></div>
+  <div class="box">$<span id="money">0</span></div>
+  <div class="box"><span id="health">100</span>%</div>
+  <div class="box">LVL <span id="level">1</span></div>
 </div>
 
-<!-- LOADING -->
-<div id="loading-screen" class="full">
-<h1>LOADING SYSTEM</h1>
-<p>Preparing neural missions...</p>
+<!-- LOADING SCREEN (OBLIGATORIO) -->
+<div id="loading" class="full">
+  <h1 style="color:var(--blue)">LOADING SYSTEM</h1>
+  <p>Preparing 35 Stories + 35 Missions</p>
+  <button class="btn" onclick="startSession()">START SESSION</button>
 </div>
 
-<!-- START -->
-<div id="start-screen" class="full hidden">
-<h1>KAMIZEN SYSTEM</h1>
-<p>TRAINING CORE ACTIVE</p>
-<button id="start-btn">START TRAINING</button>
+<!-- STORY SCREEN -->
+<div id="story" class="full" style="display:none;">
+  <h2 id="storyText"></h2>
+  <button class="btn" id="storyBtn" style="display:none;">CONTINUE</button>
 </div>
 
-<!-- STORY -->
-<div id="story-screen" class="full hidden">
-<h2 id="story-id"></h2>
-<p id="story-text"></p>
-<button id="story-btn" class="hidden">CONTINUE</button>
+<!-- MISSION SCREEN -->
+<div id="mission" class="full" style="display:none;">
+  <h2 id="q"></h2>
+  <div id="ops"></div>
+  <p id="inf" style="color:var(--gold);margin-top:10px;"></p>
+  <button class="btn" id="nextMission" style="display:none;">NEXT</button>
 </div>
 
-<!-- MISSION -->
-<div id="mission-screen" class="full hidden">
-<h2 id="mission-category"></h2>
-<p id="mission-main"></p>
-
-<div id="answers"></div>
-
-<p id="mission-info"></p>
-
-<button id="continue-btn" class="hidden">CONTINUE</button>
+<!-- BREATHING SCREEN -->
+<div id="breathing" class="full" style="display:none;">
+  <div id="breathWrap">FOCUS</div>
 </div>
 
-<!-- BREATHING (CORREGIDO Y SIMPLE) -->
-<div id="breathing-screen" class="full hidden">
-<div id="breath-circle">FOCUS</div>
-<p id="breath-text">INHALE</p>
-<p id="breath-info"></p>
-</div>
+<canvas id="c"></canvas>
 
-<!-- GAME -->
-<div id="game-screen" class="full hidden">
-<canvas id="gameCanvas"></canvas>
-</div>
+<script>
+/* =========================
+   STATE CLEAN
+========================= */
+let i=0;
+let step="loading";
+let stories=[];
+let missions=[];
+let score=0;
 
-<script src="/static/js/engine.js"></script>
+/* =========================
+   LOAD DATA (ENGINE WILL FEED)
+========================= */
+async function load(){
+  const s=await fetch("/api/stories").then(r=>r.json());
+  const m=await fetch("/api/missions").then(r=>r.json());
+
+  stories=s.stories||[];
+  missions=m.missions||[];
+}
+
+/* =========================
+   START SESSION
+========================= */
+async function startSession(){
+  await load();
+  document.getElementById("loading").style.display="none";
+  step="story";
+  renderStory();
+}
+
+/* =========================
+   STORY FLOW (NO SKIP, NO FREEZE)
+========================= */
+function renderStory(){
+  if(i>=stories.length){i=0;}
+
+  let s=stories[i];
+
+  const box=document.getElementById("story");
+  box.style.display="flex";
+
+  const txt=document.getElementById("storyText");
+  const btn=document.getElementById("storyBtn");
+
+  txt.innerText=s.en;
+  btn.style.display="none";
+
+  speech(s.en, ()=>{
+    btn.style.display="block";
+  });
+
+  btn.onclick=()=>{
+    box.style.display="none";
+    step="mission";
+    renderMission();
+  };
+}
+
+/* =========================
+   MISSION FLOW (INF FIX INCLUDED)
+========================= */
+let b=0;
+
+function renderMission(){
+  let m=missions[i];
+  if(!m){i=0; return renderStory();}
+
+  const box=document.getElementById("mission");
+  box.style.display="flex";
+
+  const q=document.getElementById("q");
+  const ops=document.getElementById("ops");
+  const inf=document.getElementById("inf");
+  const next=document.getElementById("nextMission");
+
+  let block=m.b[b];
+
+  if(!block){
+    i++;
+    b=0;
+    step="story";
+    box.style.display="none";
+    return renderStory();
+  }
+
+  ops.innerHTML="";
+  inf.innerText="";
+  next.style.display="none";
+
+  if(block.t==="v"||block.t==="h"){
+    q.innerText=block.tx.en;
+    speech(block.tx.en);
+  }
+
+  if(block.story){
+    q.innerText=block.story.en;
+    speech(block.story.en);
+  }
+
+  if(block.t==="d"){
+    q.innerText=block.q.en;
+
+    block.op.forEach((o,idx)=>{
+      let btn=document.createElement("button");
+      btn.className="btn";
+      btn.innerText=o;
+
+      btn.onclick=()=>{
+        let ok=idx===block.c;
+        inf.innerText=block.ex[idx];
+
+        speech(block.ex[idx]);
+
+        next.style.display="block";
+        next.onclick=()=>{
+          b++;
+          renderMission();
+        };
+      };
+
+      ops.appendChild(btn);
+    });
+  }
+
+  /* BREATH FIXED */
+  if(block.t==="breath_auto"){
+    showBreath(block);
+  }
+}
+
+/* =========================
+   BREATHING FIX (TU DISEÑO)
+========================= */
+function showBreath(block){
+  const box=document.getElementById("breathing");
+  const circle=document.getElementById("breathWrap");
+
+  box.style.display="flex";
+
+  let c=0;
+
+  let t=setInterval(()=>{
+    let inha=(c%2===0);
+    circle.innerText=inha?"INHALE":"EXHALE";
+    circle.style.transform=inha?"scale(1.4)":"scale(1)";
+    c++;
+
+    if(c>6){
+      clearInterval(t);
+      box.style.display="none";
+      b++;
+      renderMission();
+    }
+  },2000);
+
+  speech(block.tx.en+" "+block.inf.en);
+}
+
+/* =========================
+   SPEECH LOCK (NO CUT)
+========================= */
+function speech(t,cb){
+  let u=new SpeechSynthesisUtterance(t);
+  u.lang="en-US";
+  u.onend=()=>{if(cb)cb();}
+  speechSynthesis.cancel();
+  speechSynthesis.speak(u);
+}
+
+/* HUD SIMPLE */
+setInterval(()=>{
+  document.getElementById("money").innerText=score;
+},500);
+
+</script>
 
 </body>
 </html>
