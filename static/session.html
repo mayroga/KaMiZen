@@ -31,7 +31,7 @@ body{
 }
 
 /* =========================
-   APP CONTAINER
+   APP ROOT (ONLY ENGINE USES IT)
 ========================= */
 
 #app{
@@ -54,7 +54,7 @@ body{
 }
 
 /* =========================
-   BUTTONS (NO LOGIC)
+   BUTTONS (VISUAL ONLY)
 ========================= */
 
 button{
@@ -93,8 +93,8 @@ button:hover{
 }
 
 /* =========================
-   BREATHING (VISUAL ONLY)
-   ⚠ NO JS HERE, ENGINE CONTROLS IT
+   BREATHING VISUAL (DECORATIVE ONLY)
+   ❗ NO JS CONTROL HERE
 ========================= */
 
 .breath-circle{
@@ -106,13 +106,15 @@ button:hover{
     display:flex;
     align-items:center;
     justify-content:center;
+
+    /* SAFE ANIMATION ONLY (NO LOGIC) */
     animation:breathe 6s infinite ease-in-out;
 }
 
 @keyframes breathe{
-    0%   {transform:scale(0.85);opacity:0.7;}
-    50%  {transform:scale(1.25);opacity:1;border-color:var(--success);}
-    100% {transform:scale(0.85);opacity:0.7;}
+    0%{transform:scale(0.85);opacity:0.7;}
+    50%{transform:scale(1.25);opacity:1;border-color:var(--success);}
+    100%{transform:scale(0.85);opacity:0.7;}
 }
 
 /* =========================
@@ -132,21 +134,23 @@ h1,h2,h3{
     text-align:center;
 }
 
+.hidden{
+    display:none;
+}
+
 /* =========================
-   SAFETY RULES (IMPORTANT)
+   SAFETY RULE (IMPORTANT)
 ========================= */
 /*
-❗ DO NOT ADD ANY LOGIC HERE
+NO:
+- exam navigation logic
+- redirects (window.location)
+- timers or loops JS here
+- duplicate breathing logic
+- hidden controllers
 
-PROHIBITED:
-- no exam buttons
-- no window.location
-- no intervals or timers
-- no JS state handling
-- no duplicate breathing logic
-
-ONLY ENGINE.JS CONTROLS:
-👉 /static/js/engine.js
+ONLY:
+👉 static/js/engine.js handles everything
 */
 
 </style>
@@ -154,9 +158,9 @@ ONLY ENGINE.JS CONTROLS:
 
 <body>
 
-<!-- =========================================================
-     SINGLE APP ROOT (ENGINE CONTROLLED)
-========================================================= -->
+<!-- =========================
+     SINGLE APP SURFACE
+========================= -->
 <div id="app">
 
     <!-- STATIC HEADER (SAFE VISUAL ONLY) -->
@@ -170,15 +174,15 @@ ONLY ENGINE.JS CONTROLS:
         </p>
     </div>
 
-    <!-- ENGINE RENDER TARGET (DO NOT TOUCH) -->
-    <div class="card center">
+    <!-- ENGINE RENDER ZONE -->
+    <div class="card center" id="screen">
         <h3>Loading system...</h3>
         <p class="small">
-            Initializing neural framework
+            Initializing stories & missions
         </p>
     </div>
 
-    <!-- BREATHING VISUAL (DECORATIVE ONLY) -->
+    <!-- BREATHING VISUAL ONLY -->
     <div class="card center">
         <h3>Breathing Module</h3>
 
@@ -193,9 +197,7 @@ ONLY ENGINE.JS CONTROLS:
 
 </div>
 
-<!-- =========================================================
-     ENGINE (ONLY LOGIC CONTROLLER)
-========================================================= -->
+<!-- ENGINE (ONLY CONTROLLER) -->
 <script src="/static/js/engine.js"></script>
 
 </body>
