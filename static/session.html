@@ -31,7 +31,7 @@ body{
 }
 
 /* =========================
-   APP ROOT (ONLY ENGINE USES IT)
+   APP ROOT
 ========================= */
 
 #app{
@@ -41,7 +41,7 @@ body{
 }
 
 /* =========================
-   CARD SYSTEM (VISUAL ONLY)
+   CARD SYSTEM
 ========================= */
 
 .card{
@@ -54,7 +54,7 @@ body{
 }
 
 /* =========================
-   BUTTONS (VISUAL ONLY)
+   BUTTONS
 ========================= */
 
 button{
@@ -74,7 +74,16 @@ button:hover{
 }
 
 /* =========================
-   ANSWERS (VISUAL ONLY)
+   INPUT (NEW SAFE FEATURE UI)
+========================= */
+
+input{
+    outline:none;
+    font-size:14px;
+}
+
+/* =========================
+   ANSWERS
 ========================= */
 
 .answer{
@@ -93,8 +102,7 @@ button:hover{
 }
 
 /* =========================
-   BREATHING VISUAL (DECORATIVE ONLY)
-   ❗ NO JS CONTROL HERE
+   BREATHING VISUAL
 ========================= */
 
 .breath-circle{
@@ -106,8 +114,6 @@ button:hover{
     display:flex;
     align-items:center;
     justify-content:center;
-
-    /* SAFE ANIMATION ONLY (NO LOGIC) */
     animation:breathe 6s infinite ease-in-out;
 }
 
@@ -139,18 +145,16 @@ h1,h2,h3{
 }
 
 /* =========================
-   SAFETY RULE (IMPORTANT)
+   SAFETY RULE
 ========================= */
 /*
-NO:
-- exam navigation logic
-- redirects (window.location)
-- timers or loops JS here
-- duplicate breathing logic
-- hidden controllers
+ONLY engine.js controls logic.
 
-ONLY:
-👉 static/js/engine.js handles everything
+NO:
+- navigation logic
+- timers
+- JS state
+- duplication
 */
 
 </style>
@@ -158,12 +162,9 @@ ONLY:
 
 <body>
 
-<!-- =========================
-     SINGLE APP SURFACE
-========================= -->
 <div id="app">
 
-    <!-- STATIC HEADER (SAFE VISUAL ONLY) -->
+    <!-- HEADER STATIC -->
     <div class="card center">
         <h2 style="color:var(--primary);">
             KAMIZEN LIFE SYSTEM
@@ -174,15 +175,13 @@ ONLY:
         </p>
     </div>
 
-    <!-- ENGINE RENDER ZONE -->
+    <!-- ENGINE RENDER AREA -->
     <div class="card center" id="screen">
         <h3>Loading system...</h3>
-        <p class="small">
-            Initializing stories & missions
-        </p>
+        <p class="small">Initializing stories & missions</p>
     </div>
 
-    <!-- BREATHING VISUAL ONLY -->
+    <!-- BREATHING VISUAL (DECORATIVE ONLY) -->
     <div class="card center">
         <h3>Breathing Module</h3>
 
@@ -195,9 +194,25 @@ ONLY:
         </p>
     </div>
 
+    <!-- =========================
+         NEW FEATURE: DIRECT JUMP
+    ========================= -->
+    <div class="card">
+
+        <input id="missionInput"
+               type="number"
+               placeholder="Enter mission ID (e.g. 36)"
+               style="width:100%;padding:10px;border-radius:8px;border:none;margin-bottom:10px;">
+
+        <button onclick="jumpToMission()">
+            GO TO MISSION
+        </button>
+
+    </div>
+
 </div>
 
-<!-- ENGINE (ONLY CONTROLLER) -->
+<!-- ENGINE -->
 <script src="/static/js/engine.js"></script>
 
 </body>
