@@ -3,101 +3,101 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
-<title>KAMIZEN SESSION</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
+<title>KAMIZEN LIFE SYSTEM</title>
 
 <style>
-:root {
-    --blue:#00e5ff;
+:root{
+    --bg:#050508;
+    --blue:#00f2ff;
     --gold:#f1c40f;
     --red:#ff3131;
-    --green:#22c55e;
-    --bg:#050508;
+    --green:#2ecc71;
 }
 
-body {
+body{
     margin:0;
     background:var(--bg);
     color:white;
-    font-family:Orbitron;
+    font-family:Segoe UI;
     overflow:hidden;
 }
 
-/* ===== SCREENS ===== */
-.screen {
+/* ================= LOADING ================= */
+#loading-screen{
     position:fixed;
     inset:0;
     display:flex;
+    flex-direction:column;
     justify-content:center;
     align-items:center;
-    flex-direction:column;
+    background:radial-gradient(circle,#111,#000);
+    z-index:9999;
     text-align:center;
 }
 
-.hidden { display:none !important; }
-
-/* ===== LOADING ===== */
-#loading-screen h1 {
+#loading-screen h1{
     color:var(--blue);
     letter-spacing:6px;
 }
 
-/* ===== START ===== */
-#start-btn {
-    padding:20px 40px;
-    background:var(--blue);
+.btn{
+    padding:14px 30px;
+    margin-top:20px;
     border:none;
     font-weight:900;
     cursor:pointer;
+    background:var(--blue);
+    color:black;
+    letter-spacing:2px;
 }
 
-/* ===== STORY ===== */
-#story-text {
-    max-width:800px;
-    font-size:22px;
-    color:var(--blue);
+/* ================= STORY ================= */
+#story-box,
+#mission-box,
+#breathing-box{
+    position:fixed;
+    inset:0;
+    display:none;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    text-align:center;
+    z-index:2000;
+    padding:20px;
 }
 
-#story-btn {
-    margin-top:20px;
-    padding:15px 30px;
-    background:var(--gold);
-    border:none;
-    font-weight:900;
+.card{
+    max-width:700px;
+    background:#111a2e;
+    padding:20px;
+    border-radius:14px;
 }
 
-/* ===== MISSION ===== */
-#answers button {
-    width:80%;
-    margin:10px;
-    padding:15px;
-    background:#111;
-    border:1px solid var(--blue);
-    color:white;
-    font-weight:900;
-}
-
-.correct { background:var(--green) !important; }
-.wrong { background:var(--red) !important; }
-
-#mission-info {
-    margin-top:15px;
-    color:var(--gold);
-}
-
-/* ===== BREATHING ===== */
-#breath-circle {
+/* ================= BREATHING ================= */
+#breath-circle{
     width:220px;
     height:220px;
     border-radius:50%;
-    border:6px solid var(--blue);
+    border:5px solid var(--blue);
     display:flex;
-    justify-content:center;
     align-items:center;
-    font-size:28px;
+    justify-content:center;
     font-weight:900;
-    transition:transform 2s ease;
+    font-size:20px;
+    box-shadow:0 0 40px rgba(0,242,255,0.4);
+    animation:pulse 4s infinite ease-in-out;
+}
+
+@keyframes pulse{
+    0%{transform:scale(0.95);}
+    50%{transform:scale(1.2); border-color:var(--green);}
+    100%{transform:scale(0.95);}
+}
+
+.small{
+    font-size:13px;
+    opacity:0.7;
+    margin-top:10px;
 }
 </style>
 </head>
@@ -105,52 +105,49 @@ body {
 <body>
 
 <!-- ================= LOADING ================= -->
-<div id="loading-screen" class="screen">
-    <h1>LOADING SYSTEM</h1>
-    <p>Initializing neural flow...</p>
-</div>
-
-<!-- ================= START ================= -->
-<div id="start-screen" class="screen hidden">
-    <h1>KAMIZEN LIFE SYSTEM</h1>
-    <button id="start-btn">START TRAINING</button>
+<div id="loading-screen">
+    <h1>KAMIZEN SYSTEM</h1>
+    <p class="small">Loading neural missions...</p>
+    <button class="btn" onclick="startEngine()">START TRAINING</button>
 </div>
 
 <!-- ================= STORY ================= -->
-<div id="story-screen" class="screen hidden">
-    <h2 id="story-id"></h2>
-    <p id="story-text"></p>
-    <button id="story-btn" class="hidden">CONTINUE</button>
+<div id="story-box">
+    <div class="card">
+        <h2 id="story-title"></h2>
+        <p id="story-text"></p>
+    </div>
+    <button class="btn" id="story-next" style="display:none;">CONTINUE</button>
 </div>
 
 <!-- ================= MISSION ================= -->
-<div id="mission-screen" class="screen hidden">
-
-    <h2 id="mission-category"></h2>
-    <p id="mission-main"></p>
-
-    <div id="answers"></div>
-
-    <p id="mission-info"></p>
-
-    <button id="continue-btn" class="hidden">CONTINUE</button>
-</div>
-
-<!-- ================= BREATHING ================= -->
-<div id="breathing-screen" class="screen hidden">
-    <div id="breath-circle">
-        <span id="breath-text">INHALE</span>
+<div id="mission-box">
+    <div class="card">
+        <h2 id="mission-question"></h2>
+        <div id="mission-options"></div>
+        <p id="mission-explanation" style="color:var(--gold); display:none;"></p>
     </div>
-    <p id="breath-info"></p>
+    <button class="btn" id="mission-next" style="display:none;">NEXT</button>
 </div>
 
-<!-- ================= GAME ================= -->
-<div id="game-screen" class="screen hidden">
-    <canvas id="gameCanvas"></canvas>
+<!-- ================= BREATHING (NEW CLEAN CIRCLE) ================= -->
+<div id="breathing-box">
+    <div id="breath-circle">FOCUS</div>
+    <p class="small" id="breath-info"></p>
 </div>
 
-<!-- ================= ENGINE ================= -->
+<!-- ENGINE -->
 <script src="/static/js/engine.js"></script>
+
+<script>
+function startEngine(){
+    document.getElementById("loading-screen").style.display="none";
+
+    if(window.kamizen && window.kamizen.start){
+        window.kamizen.start();
+    }
+}
+</script>
 
 </body>
 </html>
