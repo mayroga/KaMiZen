@@ -1,672 +1,761 @@
 /* =========================================================
-   KAMIZEN ENGINE V10 - FULL STABLE SYSTEM
-   ✔ Reads ALL 35 stories
-   ✔ Reads ALL 35 missions
-   ✔ Reads inf correctly
-   ✔ No freeze
-   ✔ No double render
-   ✔ Speech lock until narration ends
-   ✔ Loading screen first
-   ✔ Manual start button
-   ✔ Breathing text + inf visible
-   ✔ Sequential clean flow 1 -> 35 -> 1
+   KAMIZEN ENGINE FINAL
+   STABLE • NO DUPLICATES • NO FREEZE
+   READS ALL 35 STORIES + 35 MISSIONS
    ========================================================= */
 
-/* =========================
-   GLOBAL STATE
-========================= */
+if (window.__KAMIZEN_ENGINE_RUNNING__) {
+    console.warn("ENGINE ALREADY RUNNING");
+} else {
 
-let state = {
+window.__KAMIZEN_ENGINE_RUNNING__ = true;
+
+/* =========================================================
+   GLOBAL STATE
+   ========================================================= */
+
+const state = {
+
     stories: [],
     missions: [],
 
-    currentIndex: 0,
-    currentBlock: 0,
+    current: 0,
 
-    phase: "loading", // loading | intro | story | mission
+    xp: 0,
 
-    speechLocked: false,
-    initialized: false
+    speaking: false,
+    locked: false,
+
+    gameRunning: false,
+
+    voice: null
 };
 
-/* =========================
-   ENGINE LOCK
-========================= */
+/* =========================================================
+   ELEMENTS
+   ========================================================= */
 
-if (window.__KAMIZEN_ENGINE_ACTIVE__) {
-    console.warn("KAMIZEN ENGINE ALREADY RUNNING");
-} else {
-    window.__KAMIZEN_ENGINE_ACTIVE__ = true;
-}
+const $ = (id) => document.getElementById(id);
 
-/* =========================
-   INIT
-========================= */
+const screens = {
+    loading: $("loading-screen"),
+    start: $("start-screen"),
+    story: $("story-screen"),
+    mission: $("mission-screen"),
+    breathing: $("breathing-screen"),
+    game: $("game-screen")
+};
+
+const hudMission = $("hud-mission");
+const hudXP = $("hud-xp");
+const hudState = $("hud-state");
+
+/* =========================================================
+   START
+   ========================================================= */
 
 window.addEventListener("load", async () => {
-    await loadAllData();
-    showIntro();
+
+    await bootSystem();
+
 });
 
-/* =========================
-   LOAD DATA
-========================= */
+/* =========================================================
+   BOOT SYSTEM
+   ========================================================= */
 
-async function loadAllData() {
-
-    const app = document.getElementById("app");
-
-    app.innerHTML = `
-        <div class="card">
-            <h2>LOADING SYSTEM...</h2>
-            <p>Initializing neural missions</p>
-        </div>
-    `;
+async function bootSystem() {
 
     try {
 
-        const [storiesReq, missionsReq] = await Promise.all([
-            fetch("/api/stories"),
-            fetch("/api/missions")
-        ]);
+        showOnly("loading");
 
-        const storiesData = await storiesReq.json();
-        const missionsData = await missionsReq.json();
+        await wait(2200);
 
-        /* STORIES */
-        state.stories = Array.isArray(storiesData.stories)
-            ? storiesData.stories.sort((a, b) => a.id - b.id)
-            : [];
+        await loadAllData();
 
-        /* MISSIONS */
-        state.missions = Array.isArray(missionsData.missions)
-            ? missionsData.missions.sort((a, b) => a.id - b.id)
-            : [];
+        console.log("Stories:", state.stories.length);
+        console.log("Missions:", state.missions.length);
 
-        console.log("STORIES:", state.stories.length);
-        console.log("MISSIONS:", state.missions.length);
+        if (!state.stories.length || !state.missions.length) {
 
-        state.initialized = true;
+            alert("Stories or Missions missing");
+            return;
+        }
+
+        showOnly("start");
+
+        $("start-btn").onclick = async () => {
+
+            await startTraining();
+        };
 
     } catch (err) {
 
-        console.error("LOAD FAILURE:", err);
+        console.error("BOOT ERROR", err);
 
-        app.innerHTML = `
-            <div class="card">
-                <h2>SYSTEM ERROR</h2>
-                <p>Failed loading missions</p>
-            </div>
-        `;
+        alert("SYSTEM ERROR");
     }
 }
 
-/* =========================
-   INTRO SCREEN
-========================= */
+/* =========================================================
+   LOAD DATA
+   ========================================================= */
 
-function showIntro() {
+async function loadAllData() {
 
-    state.phase = "intro";
+    const [storiesRes, missionsRes] = await Promise.all([
+        fetch("/api/stories"),
+        fetch("/api/missions")
+    ]);
 
-    const app = document.getElementById("app");
+    const storiesData = await storiesRes.json();
+    const missionsData = await missionsRes.json();
 
-    app.innerHTML = `
-        <div class="card">
-            <h1>KAMIZEN LIFE SYSTEM</h1>
+    state.stories = normalizeStories(storiesData);
+    state.missions = normalizeMissions(missionsData);
 
-            <p>
-                Awareness • Control • Safety • Focus
-            </p>
-
-            <p style="opacity:.8;">
-                35 Stories • 35 Missions
-            </p>
-        </div>
-
-        <button onclick="startSystem()">
-            START SYSTEM
-        </button>
-    `;
+    state.stories.sort((a, b) => (a.id || 0) - (b.id || 0));
+    state.missions.sort((a, b) => (a.id || 0) - (b.id || 0));
 }
 
-/* =========================
-   START SYSTEM
-========================= */
+/* =========================================================
+   NORMALIZERS
+   ========================================================= */
 
-function startSystem() {
+function normalizeStories(data) {
 
-    state.currentIndex = 0;
-    state.currentBlock = 0;
-    state.phase = "story";
+    if (Array.isArray(data)) return data;
 
-    render();
+    if (Array.isArray(data.stories)) return data.stories;
+
+    if (Array.isArray(data.data)) return data.data;
+
+    return [];
 }
 
-/* =========================
-   MAIN RENDER
-========================= */
+function normalizeMissions(data) {
 
-function render() {
+    if (Array.isArray(data)) return data;
 
-    if (!state.initialized) return;
+    if (Array.isArray(data.missions)) return data.missions;
 
-    const app = document.getElementById("app");
+    if (Array.isArray(data.data)) return data.data;
 
-    const story = state.stories[state.currentIndex];
-    const mission = state.missions[state.currentIndex];
+    return [];
+}
 
-    /* LOOP SYSTEM */
+/* =========================================================
+   MAIN TRAINING LOOP
+   ========================================================= */
 
-    if (!story || !mission) {
+async function startTraining() {
 
-        state.currentIndex = 0;
-        state.currentBlock = 0;
-        state.phase = "story";
+    while (true) {
 
-        return render();
-    }
+        if (state.current >= state.stories.length ||
+            state.current >= state.missions.length) {
 
-    /* =========================
-       STORY SCREEN
-    ========================= */
-
-    if (state.phase === "story") {
-
-        app.innerHTML = `
-            <div class="card">
-
-                <h2>
-                    STORY ${story.id}
-                </h2>
-
-                <h3>
-                    ${story.t || ""}
-                </h3>
-
-                <p>
-                    ${story.en || ""}
-                </p>
-
-            </div>
-
-            <button id="continueBtn" disabled>
-                NARRATING...
-            </button>
-        `;
-
-        narrate(
-            `${story.t || ""}. ${story.en || ""}`,
-            () => {
-
-                unlockContinue(
-                    "START MISSION",
-                    startMission
-                );
-
-            }
-        );
-
-        return;
-    }
-
-    /* =========================
-       MISSION SCREEN
-    ========================= */
-
-    if (state.phase === "mission") {
-
-        const block = mission.b[state.currentBlock];
-
-        if (!block) {
-            nextStory();
-            return;
+            state.current = 0;
         }
 
-        renderBlock(block);
+        updateHUD();
+
+        await runStory();
+
+        await runMiniGame();
+
+        await runMission();
+
+        await runMiniGame();
+
+        state.current++;
     }
 }
 
-/* =========================
-   RENDER BLOCK
-========================= */
+/* =========================================================
+   STORY
+   ========================================================= */
 
-function renderBlock(block) {
+async function runStory() {
 
-    const app = document.getElementById("app");
+    showOnly("story");
 
-    let html = "";
+    const story = state.stories[state.current];
 
-    let narration = "";
+    const storyText =
+        story?.en ||
+        story?.text?.en ||
+        story?.story?.en ||
+        "Story missing";
 
-    /* =========================
-       VISUAL TITLE
-    ========================= */
+    $("story-id").innerText = `STORY ${state.current + 1}`;
 
-    if (block.t === "v") {
+    $("story-text").innerText = storyText;
 
-        html += `
-            <div class="card">
-                <h2>${block.tx?.en || ""}</h2>
-            </div>
-        `;
+    const btn = $("story-btn");
 
-        narration += `${block.tx?.en || ""}. `;
+    btn.classList.add("hidden");
+
+    await speak(storyText);
+
+    btn.classList.remove("hidden");
+
+    await waitButton(btn);
+}
+
+/* =========================================================
+   MISSION
+   ========================================================= */
+
+async function runMission() {
+
+    const mission = state.missions[state.current];
+
+    if (!mission || !Array.isArray(mission.b)) return;
+
+    const blocks = mission.b;
+
+    for (let i = 0; i < blocks.length; i++) {
+
+        const b = blocks[i];
+
+        if (!b) continue;
+
+        /* =========================
+           VISUAL
+        ========================= */
+
+        if (b.t === "v") {
+
+            await showSimpleMission(
+                mission.cat || "MISSION",
+                b.tx?.en || ""
+            );
+        }
+
+        /* =========================
+           HEADER
+        ========================= */
+
+        else if (b.t === "h") {
+
+            await showSimpleMission(
+                mission.cat || "MISSION",
+                b.tx?.en || ""
+            );
+        }
+
+        /* =========================
+           STORY BLOCK
+        ========================= */
+
+        else if (b.story) {
+
+            await showSimpleMission(
+                "STORY",
+                b.story?.en || ""
+            );
+        }
+
+        /* =========================
+           QUESTION
+        ========================= */
+
+        else if (b.t === "d") {
+
+            await runQuestionBlock(b);
+        }
+
+        /* =========================
+           BREATHING
+        ========================= */
+
+        else if (
+            b.t === "breath_auto" ||
+            b.t === "br"
+        ) {
+
+            await runBreathingBlock(b);
+        }
+
+        /* =========================
+           SILENCE
+        ========================= */
+
+        else if (b.t === "sil") {
+
+            await runSilenceBlock(b);
+        }
+
+        /* =========================
+           REWARD
+        ========================= */
+
+        else if (b.t === "r") {
+
+            state.xp += Number(b.p || 0);
+
+            updateHUD();
+
+            await showSimpleMission(
+                "REWARD",
+                `${b.tx || ""} +${b.p || 0} XP`
+            );
+        }
+
+        /* =========================
+           CONCLUSION
+        ========================= */
+
+        else if (b.t === "c") {
+
+            await showSimpleMission(
+                "CONCLUSION",
+                b.tx?.en || ""
+            );
+        }
     }
+}
 
-    /* =========================
-       HEADER
-    ========================= */
+/* =========================================================
+   SIMPLE MISSION BLOCK
+   ========================================================= */
 
-    if (block.t === "h") {
+async function showSimpleMission(title, text) {
 
-        html += `
-            <div class="card">
-                <p>${block.tx?.en || ""}</p>
-            </div>
-        `;
+    showOnly("mission");
 
-        narration += `${block.tx?.en || ""}. `;
+    $("mission-category").innerText = title;
+
+    $("mission-main").innerText = text;
+
+    $("mission-info").innerText = "";
+
+    $("answers").innerHTML = "";
+
+    const btn = $("continue-btn");
+
+    btn.classList.add("hidden");
+
+    await speak(text);
+
+    btn.classList.remove("hidden");
+
+    await waitButton(btn);
+}
+
+/* =========================================================
+   QUESTION BLOCK
+   ========================================================= */
+
+async function runQuestionBlock(b) {
+
+    return new Promise(async (resolve) => {
+
+        showOnly("mission");
+
+        $("mission-category").innerText = "DECISION";
+
+        $("mission-main").innerText = b.q?.en || "";
+
+        $("mission-info").innerText = "";
+
+        const answers = $("answers");
+
+        answers.innerHTML = "";
+
+        $("continue-btn").classList.add("hidden");
+
+        await speak(b.q?.en || "");
+
+        let answered = false;
+
+        (b.op || []).forEach((option, index) => {
+
+            const div = document.createElement("button");
+
+            div.className = "answer";
+
+            div.innerText = option;
+
+            div.onclick = async () => {
+
+                if (answered) return;
+
+                answered = true;
+
+                const correct = index === b.c;
+
+                div.classList.add(
+                    correct ? "correct" : "wrong"
+                );
+
+                if (correct) {
+
+                    state.xp += 10;
+
+                    updateHUD();
+                }
+
+                const explanation =
+                    b.ex?.[index] || "";
+
+                $("mission-info").innerText = explanation;
+
+                await speak(explanation);
+
+                $("continue-btn").classList.remove("hidden");
+
+                $("continue-btn").onclick = () => {
+
+                    resolve();
+                };
+            };
+
+            answers.appendChild(div);
+        });
+    });
+}
+
+/* =========================================================
+   BREATHING BLOCK
+   ========================================================= */
+
+async function runBreathingBlock(b) {
+
+    showOnly("breathing");
+
+    const breathText = $("breath-text");
+    const breathInfo = $("breath-info");
+    const circle = $("breath-circle");
+
+    const mainText =
+        b.tx?.en ||
+        "Inhale and Exhale";
+
+    const infoText =
+        b.inf?.en ||
+        "";
+
+    breathInfo.innerText = infoText;
+
+    const duration = Number(b.d || 20);
+
+    await speak(`${mainText}. ${infoText}`);
+
+    const cycles = Math.max(2, Math.floor(duration / 4));
+
+    for (let i = 0; i < cycles; i++) {
+
+        breathText.innerText = "INHALE";
+
+        circle.style.transform = "scale(1.28)";
+
+        await wait(4000);
+
+        breathText.innerText = "EXHALE";
+
+        circle.style.transform = "scale(1)";
+
+        await wait(4000);
     }
+}
 
-    /* =========================
-       STORY INSIDE MISSION
-    ========================= */
+/* =========================================================
+   SILENCE BLOCK
+   ========================================================= */
 
-    if (block.story) {
+async function runSilenceBlock(b) {
 
-        html += `
-            <div class="card">
-                <p>${block.story.en || ""}</p>
-            </div>
-        `;
+    showOnly("mission");
 
-        narration += `${block.story.en || ""}. `;
-    }
+    $("mission-category").innerText = "FOCUS";
 
-    /* =========================
-       BREATHING
-    ========================= */
+    $("mission-main").innerText =
+        b.tx?.en || "Focus";
 
-    if (
-        block.t === "breath_auto" ||
-        block.t === "br"
-    ) {
+    $("mission-info").innerText =
+        b.inf?.en || "";
 
-        html += `
-            <div class="card" style="text-align:center;">
+    $("answers").innerHTML = "";
 
-                <div class="breath-circle"
-                     id="breathCircle">
+    $("continue-btn").classList.add("hidden");
 
-                    <span id="breathLabel">
-                        INHALE
-                    </span>
+    await speak(
+        `${b.tx?.en || ""}. ${b.inf?.en || ""}`
+    );
 
-                </div>
+    await wait(Number(b.d || 10) * 1000);
 
-                <h3>
-                    ${block.tx?.en || ""}
-                </h3>
+    $("continue-btn").classList.remove("hidden");
 
-                <p>
-                    ${block.inf?.en || ""}
-                </p>
+    await waitButton($("continue-btn"));
+}
 
-            </div>
-        `;
+/* =========================================================
+   MINI GAME
+   ========================================================= */
 
-        narration += `
-            ${block.tx?.en || ""}.
-            ${block.inf?.en || ""}.
-        `;
-    }
+async function runMiniGame() {
 
-    /* =========================
-       DECISION
-    ========================= */
+    return new Promise((resolve) => {
 
-    if (block.t === "d") {
+        showOnly("game");
 
-        html += `
-            <div class="card">
+        const canvas = $("gameCanvas");
 
-                <h3>
-                    ${block.q?.en || ""}
-                </h3>
-        `;
+        const ctx = canvas.getContext("2d");
 
-        narration += `${block.q?.en || ""}. `;
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
 
-        if (Array.isArray(block.op)) {
+        const player = {
+            x: canvas.width / 2,
+            y: canvas.height - 120,
+            size: 50
+        };
 
-            block.op.forEach((option, index) => {
+        const objects = [];
 
-                html += `
-                    <div class="answer"
-                         onclick="selectAnswer(
-                            ${index},
-                            ${block.c},
-                            ${JSON.stringify(block.ex).replace(/"/g, '&quot;')}
-                         )">
+        const goodWords = [
+            "FOCUS",
+            "TRUTH",
+            "CONTROL",
+            "CALM",
+            "DISCIPLINE"
+        ];
 
-                        ${option}
+        const badWords = [
+            "ANGER",
+            "CHAOS",
+            "FEAR",
+            "IMPULSE"
+        ];
 
-                    </div>
-                `;
+        let gameTime = 0;
 
-                narration += `${option}. `;
+        state.gameRunning = true;
+
+        function spawnObject() {
+
+            const good = Math.random() > 0.4;
+
+            const text = good
+                ? goodWords[Math.floor(Math.random() * goodWords.length)]
+                : badWords[Math.floor(Math.random() * badWords.length)];
+
+            objects.push({
+                x: Math.random() * (canvas.width - 100) + 50,
+                y: -20,
+                speed: 2 + Math.random() * 3,
+                text,
+                good
             });
         }
 
-        html += `</div>`;
-    }
+        const interval = setInterval(spawnObject, 700);
 
-    /* =========================
-       SILENCE
-    ========================= */
+        function move(e) {
 
-    if (block.t === "sil") {
-
-        html += `
-            <div class="card">
-
-                <h3>
-                    ${block.tx?.en || ""}
-                </h3>
-
-                <p>
-                    ${block.inf?.en || ""}
-                </p>
-
-            </div>
-        `;
-
-        narration += `
-            ${block.tx?.en || ""}.
-            ${block.inf?.en || ""}.
-        `;
-    }
-
-    /* =========================
-       REWARD
-    ========================= */
-
-    if (block.t === "r") {
-
-        html += `
-            <div class="card">
-
-                <h2>
-                    ⭐ ${block.tx || ""}
-                </h2>
-
-                <p>
-                    +${block.p || 0} XP
-                </p>
-
-            </div>
-        `;
-
-        narration += `
-            ${block.tx || ""}.
-            ${block.p || 0} experience points.
-        `;
-    }
-
-    /* =========================
-       CONCLUSION
-    ========================= */
-
-    if (block.t === "c") {
-
-        html += `
-            <div class="card">
-
-                <p>
-                    ${block.tx?.en || ""}
-                </p>
-
-            </div>
-        `;
-
-        narration += `${block.tx?.en || ""}. `;
-    }
-
-    /* =========================
-       CONTINUE BUTTON
-    ========================= */
-
-    if (block.t !== "d") {
-
-        html += `
-            <button id="continueBtn" disabled>
-                NARRATING...
-            </button>
-        `;
-    }
-
-    app.innerHTML = html;
-
-    /* =========================
-       BREATHING START
-    ========================= */
-
-    if (
-        block.t === "breath_auto" ||
-        block.t === "br"
-    ) {
-
-        startBreathingAnimation();
-    }
-
-    /* =========================
-       NARRATION LOCK
-    ========================= */
-
-    narrate(narration, () => {
-
-        if (block.t !== "d") {
-
-            unlockContinue(
-                "CONTINUE",
-                nextBlock
-            );
+            player.x =
+                e.clientX ||
+                e.touches?.[0]?.clientX ||
+                player.x;
         }
+
+        window.addEventListener("mousemove", move);
+        window.addEventListener("touchmove", move);
+
+        function loop() {
+
+            if (!state.gameRunning) return;
+
+            gameTime++;
+
+            ctx.fillStyle = "rgba(0,0,0,.35)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            /* PLAYER */
+
+            ctx.beginPath();
+            ctx.strokeStyle = "#00e5ff";
+            ctx.lineWidth = 5;
+            ctx.arc(player.x, player.y, player.size, 0, Math.PI * 2);
+            ctx.stroke();
+
+            /* OBJECTS */
+
+            for (let i = objects.length - 1; i >= 0; i--) {
+
+                const o = objects[i];
+
+                o.y += o.speed;
+
+                ctx.font = "900 22px Orbitron";
+
+                ctx.textAlign = "center";
+
+                ctx.fillStyle = o.good
+                    ? "#22c55e"
+                    : "#ef4444";
+
+                ctx.fillText(o.text, o.x, o.y);
+
+                const dx = o.x - player.x;
+                const dy = o.y - player.y;
+
+                const dist = Math.sqrt(dx * dx + dy * dy);
+
+                if (dist < player.size + 20) {
+
+                    if (o.good) {
+
+                        state.xp += 5;
+                    } else {
+
+                        state.xp = Math.max(0, state.xp - 3);
+                    }
+
+                    updateHUD();
+
+                    objects.splice(i, 1);
+                }
+
+                if (o.y > canvas.height + 50) {
+
+                    objects.splice(i, 1);
+                }
+            }
+
+            if (gameTime > 900) {
+
+                endGame();
+                return;
+            }
+
+            requestAnimationFrame(loop);
+        }
+
+        function endGame() {
+
+            state.gameRunning = false;
+
+            clearInterval(interval);
+
+            window.removeEventListener("mousemove", move);
+            window.removeEventListener("touchmove", move);
+
+            resolve();
+        }
+
+        loop();
     });
 }
 
-/* =========================
-   ANSWER SYSTEM
-========================= */
+/* =========================================================
+   SPEECH
+   ========================================================= */
 
-function selectAnswer(index, correct, explanations) {
+function speak(text) {
 
-    if (state.speechLocked) return;
+    return new Promise((resolve) => {
 
-    const app = document.getElementById("app");
+        if (!text || !window.speechSynthesis) {
 
-    const isCorrect = index === correct;
-
-    const explanation = explanations?.[index] || "";
-
-    app.innerHTML += `
-        <div class="card">
-
-            <h3 style="color:${isCorrect ? '#22c55e' : '#ef4444'}">
-
-                ${isCorrect ? "CORRECT" : "WRONG"}
-
-            </h3>
-
-            <p>
-                ${explanation}
-            </p>
-
-        </div>
-
-        <button id="continueBtn" disabled>
-            NARRATING...
-        </button>
-    `;
-
-    narrate(explanation, () => {
-
-        unlockContinue(
-            "CONTINUE",
-            nextBlock
-        );
-
-    });
-}
-
-/* =========================
-   NEXT BLOCK
-========================= */
-
-function nextBlock() {
-
-    if (state.speechLocked) return;
-
-    state.currentBlock++;
-
-    render();
-}
-
-/* =========================
-   START MISSION
-========================= */
-
-function startMission() {
-
-    if (state.speechLocked) return;
-
-    state.phase = "mission";
-    state.currentBlock = 0;
-
-    render();
-}
-
-/* =========================
-   NEXT STORY
-========================= */
-
-function nextStory() {
-
-    state.currentIndex++;
-
-    /* CLEAN LOOP */
-
-    if (state.currentIndex >= state.stories.length) {
-
-        state.currentIndex = 0;
-    }
-
-    state.phase = "story";
-    state.currentBlock = 0;
-
-    render();
-}
-
-/* =========================
-   NARRATOR
-========================= */
-
-function narrate(text, callback = null) {
-
-    if (!text) {
-
-        if (callback) callback();
-
-        return;
-    }
-
-    state.speechLocked = true;
-
-    window.speechSynthesis.cancel();
-
-    const speech = new SpeechSynthesisUtterance(text);
-
-    speech.lang = "en-US";
-
-    speech.rate = 0.92;
-    speech.pitch = 1;
-    speech.volume = 1;
-
-    speech.onend = () => {
-
-        state.speechLocked = false;
-
-        if (callback) callback();
-    };
-
-    speech.onerror = () => {
-
-        state.speechLocked = false;
-
-        if (callback) callback();
-    };
-
-    window.speechSynthesis.speak(speech);
-}
-
-/* =========================
-   BUTTON UNLOCK
-========================= */
-
-function unlockContinue(label, action) {
-
-    const btn = document.getElementById("continueBtn");
-
-    if (!btn) return;
-
-    btn.disabled = false;
-    btn.innerText = label;
-
-    btn.onclick = action;
-}
-
-/* =========================
-   BREATHING ANIMATION
-========================= */
-
-function startBreathingAnimation() {
-
-    const circle = document.getElementById("breathCircle");
-    const label = document.getElementById("breathLabel");
-
-    if (!circle || !label) return;
-
-    let inhale = true;
-
-    circle.style.transition =
-        "transform 4s ease-in-out";
-
-    function animate() {
-
-        if (!document.getElementById("breathCircle")) {
+            resolve();
             return;
         }
 
-        if (inhale) {
+        window.speechSynthesis.cancel();
 
-            label.innerText = "INHALE";
+        const utter = new SpeechSynthesisUtterance(text);
 
-            circle.style.transform =
-                "scale(1.25)";
+        utter.lang = "en-US";
 
-        } else {
+        utter.rate = 0.92;
 
-            label.innerText = "EXHALE";
+        utter.pitch = 1;
 
-            circle.style.transform =
-                "scale(0.8)";
-        }
+        utter.volume = 1;
 
-        inhale = !inhale;
-    }
+        state.speaking = true;
 
-    animate();
+        utter.onend = () => {
 
-    setInterval(animate, 4000);
+            state.speaking = false;
+
+            resolve();
+        };
+
+        utter.onerror = () => {
+
+            state.speaking = false;
+
+            resolve();
+        };
+
+        window.speechSynthesis.speak(utter);
+    });
+}
+
+/* =========================================================
+   WAIT BUTTON
+   ========================================================= */
+
+function waitButton(button) {
+
+    return new Promise((resolve) => {
+
+        const handler = () => {
+
+            button.onclick = null;
+
+            resolve();
+        };
+
+        button.onclick = handler;
+    });
+}
+
+/* =========================================================
+   HUD
+   ========================================================= */
+
+function updateHUD() {
+
+    hudMission.innerText =
+        `${state.current + 1}/35`;
+
+    hudXP.innerText =
+        state.xp;
+
+    hudState.innerText =
+        state.speaking
+            ? "VOICE"
+            : "FOCUS";
+}
+
+/* =========================================================
+   HELPERS
+   ========================================================= */
+
+function showOnly(name) {
+
+    Object.values(screens).forEach((s) => {
+
+        s.classList.add("hidden");
+    });
+
+    screens[name].classList.remove("hidden");
+}
+
+function wait(ms) {
+
+    return new Promise((resolve) => {
+
+        setTimeout(resolve, ms);
+    });
+}
+
 }
