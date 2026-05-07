@@ -30,10 +30,6 @@ body{
     min-height:100vh;
 }
 
-/* =========================
-   APP ROOT
-========================= */
-
 #app{
     width:100%;
     max-width:700px;
@@ -74,15 +70,6 @@ button:hover{
 }
 
 /* =========================
-   INPUT (NEW SAFE FEATURE UI)
-========================= */
-
-input{
-    outline:none;
-    font-size:14px;
-}
-
-/* =========================
    ANSWERS
 ========================= */
 
@@ -102,7 +89,7 @@ input{
 }
 
 /* =========================
-   BREATHING VISUAL
+   BREATHING VISUAL (ONLY VISUAL)
 ========================= */
 
 .breath-circle{
@@ -140,21 +127,18 @@ h1,h2,h3{
     text-align:center;
 }
 
-.hidden{
-    display:none;
-}
-
 /* =========================
-   SAFETY RULE
+   SAFETY RULES
 ========================= */
 /*
-ONLY engine.js controls logic.
+✔ NO JS LOGIC HERE
+✔ NO navigation buttons
+✔ NO exam routing
+✔ NO hidden timers
+✔ NO duplicates
 
-NO:
-- navigation logic
-- timers
-- JS state
-- duplication
+ALL CONTROLLED BY:
+👉 /static/js/engine.js
 */
 
 </style>
@@ -164,24 +148,26 @@ NO:
 
 <div id="app">
 
-    <!-- HEADER STATIC -->
+    <!-- HEADER -->
     <div class="card center">
         <h2 style="color:var(--primary);">
             KAMIZEN LIFE SYSTEM
         </h2>
 
         <p class="small">
-            Awareness • Control • Safety • Focus
+            Awareness • Control • Focus • Discipline
         </p>
     </div>
 
-    <!-- ENGINE RENDER AREA -->
-    <div class="card center" id="screen">
+    <!-- MAIN ENGINE AREA -->
+    <div id="screen" class="card">
         <h3>Loading system...</h3>
-        <p class="small">Initializing stories & missions</p>
+        <p class="small">
+            Initializing stories (1–35) + exams (36–49)
+        </p>
     </div>
 
-    <!-- BREATHING VISUAL (DECORATIVE ONLY) -->
+    <!-- BREATHING VISUAL ONLY -->
     <div class="card center">
         <h3>Breathing Module</h3>
 
@@ -195,24 +181,33 @@ NO:
     </div>
 
     <!-- =========================
-         NEW FEATURE: DIRECT JUMP
-    ========================= -->
+         NAVIGATION INPUT (SAFE)
+         NO LOGIC HERE
+    ========================== -->
+
     <div class="card">
+        <h3>Mission Jump</h3>
 
         <input id="missionInput"
                type="number"
-               placeholder="Enter mission ID (e.g. 36)"
+               placeholder="Enter ID (1–49)"
                style="width:100%;padding:10px;border-radius:8px;border:none;margin-bottom:10px;">
 
         <button onclick="jumpToMission()">
             GO TO MISSION
         </button>
 
+        <p class="small">
+            Range:
+            <br>• 1–35 = Missions
+            <br>• 36–42 = Exam file A
+            <br>• 43–49 = Exam file B
+        </p>
     </div>
 
 </div>
 
-<!-- ENGINE -->
+<!-- ENGINE CONTROLLER -->
 <script src="/static/js/engine.js"></script>
 
 </body>
