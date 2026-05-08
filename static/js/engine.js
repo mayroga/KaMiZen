@@ -1,14 +1,11 @@
 /* =========================================================
-   KAMIZEN ENGINE V13 - CONTROLLED FLOW EDITION
-   ✔ Persistencia Local (LocalStorage)
-   ✔ Narración Total
-   ✔ Continue Manual Entre Niveles
-   ✔ Respiración Visual Automática
-   ✔ La voz SOLO lee el JSON
-   ✔ El círculo NO habla
-   ✔ No auto-next después de respiración
-   ✔ Botón CONTINUE obligatorio
-   ✔ Soporte completo: v, h, story, br, sil, d, r, c
+   KAMIZEN ENGINE V12 - FULL EXPERT EDITION (UPDATED)
+   Persistencia Local (LocalStorage)
+   Narración Total: Preguntas + Opciones + Feedback
+   Respiración Automática Visual
+   Botón CONTINUE para avanzar respiraciones
+   Botón JUMP/SKIP para navegación directa
+   Soporte completo: v, h, story, br, sil, d, r, c
    ========================================================= */
 
 let state = {
@@ -36,7 +33,6 @@ function saveProgress() {
 
 function loadProgress() {
     const saved = localStorage.getItem('kamizen_save');
-
     if (saved) {
         const data = JSON.parse(saved);
         state.currentIndex = data.currentIndex || 0;
@@ -45,7 +41,7 @@ function loadProgress() {
 }
 
 /* =========================
-   INIT
+   INICIALIZACIÓN DEL SISTEMA
 ========================= */
 window.addEventListener("load", async () => {
     loadProgress();
@@ -54,7 +50,6 @@ window.addEventListener("load", async () => {
 });
 
 async function loadAllData() {
-
     const app = document.getElementById("app");
 
     app.innerHTML = `
@@ -65,7 +60,6 @@ async function loadAllData() {
     `;
 
     try {
-
         const [storiesReq, missionsReq] = await Promise.all([
             fetch("/api/stories"),
             fetch("/api/missions")
@@ -85,7 +79,6 @@ async function loadAllData() {
         state.initialized = true;
 
     } catch (err) {
-
         console.error(err);
 
         app.innerHTML = `
@@ -98,11 +91,13 @@ async function loadAllData() {
 }
 
 /* =========================
-   CONTROLES
+   CONTROLES DE NAVEGACIÓN
 ========================= */
 function jumpToBlock() {
 
-    const targetMissionId = prompt("Enter Mission ID:");
+    const targetMissionId = prompt(
+        "Enter the MISSION ID to jump to (e.g., 50, 60):"
+    );
 
     if (targetMissionId !== null && targetMissionId !== "") {
 
@@ -121,7 +116,7 @@ function jumpToBlock() {
             render();
 
         } else {
-            alert("Mission ID not found.");
+            alert("Mission ID not found. Please check your data.");
         }
     }
 }
@@ -146,7 +141,9 @@ function goBack() {
 
 function restartSystem() {
 
-    if (confirm("Restart all progress?")) {
+    if(confirm(
+        "Are you sure you want to RESTART from zero? All progress will be lost."
+    )) {
 
         localStorage.clear();
 
@@ -162,11 +159,10 @@ function restartSystem() {
 
 function stopAllSystems() {
 
-    window.speechSynthesis.cancel();
-
     clearInterval(state.timer);
-
     clearInterval(state.breathingInterval);
+
+    window.speechSynthesis.cancel();
 
     state.speechLocked = false;
 }
@@ -182,16 +178,17 @@ function startCountdown(seconds, onComplete) {
 
     const timerDisplay = document.getElementById("timerDisplay");
 
-    if (timerDisplay) {
-        timerDisplay.innerText = formatTime(seconds);
-    }
-
     state.timer = setInterval(() => {
 
         state.timeLeft--;
 
+        const m = Math.floor(state.timeLeft / 60);
+        const s = state.timeLeft % 60;
+
         if (timerDisplay) {
-            timerDisplay.innerText = formatTime(state.timeLeft);
+
+            timerDisplay.innerText =
+                `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
         }
 
         if (state.timeLeft <= 0) {
@@ -202,14 +199,6 @@ function startCountdown(seconds, onComplete) {
         }
 
     }, 1000);
-}
-
-function formatTime(seconds) {
-
-    const m = Math.floor(seconds / 60);
-    const s = seconds % 60;
-
-    return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
 }
 
 /* =========================
@@ -230,8 +219,8 @@ function showIntro() {
                 CONTINUE MISSION
             </button>
 
-            <button 
-                onclick="restartSystem()" 
+            <button
+                onclick="restartSystem()"
                 style="background:var(--danger);margin-top:10px;"
             >
                 RESET PROGRESS
@@ -249,7 +238,7 @@ function startSystem() {
 }
 
 /* =========================
-   RENDER
+   RENDER PRINCIPAL
 ========================= */
 function render() {
 
@@ -271,26 +260,26 @@ function render() {
         return render();
     }
 
-    const navHeader = `
+    let navHeader = `
         <div style="display:flex;gap:5px;margin-bottom:10px;">
 
-            <button 
-                onclick="goBack()" 
+            <button
+                onclick="goBack()"
                 style="flex:1;padding:8px;font-size:12px;background:#334155;"
             >
                 BACK
             </button>
 
-            <button 
-                onclick="jumpToBlock()" 
+            <button
+                onclick="jumpToBlock()"
                 style="flex:1;padding:8px;font-size:12px;background:#0ea5e9;"
             >
                 JUMP/SKIP
             </button>
 
-            <button 
-                onclick="restartSystem()" 
-                style="flex:1;padding:8px;font-size:12px;background:#ef4444;"
+            <button
+                onclick="restartSystem()"
+                style="flex:1;padding:8px;font-size:12px;background:var(--danger);"
             >
                 RESET
             </button>
@@ -309,7 +298,7 @@ function render() {
 
                 <h3>${story.t || ""}</h3>
 
-                <p style="font-size:1.1rem;line-height:1.6;">
+                <p style="font-size:1.1rem; line-height:1.6;">
                     ${story.en || ""}
                 </p>
 
@@ -320,17 +309,11 @@ function render() {
             </button>
         `;
 
-        narrate(
-            `${story.t || ""}. ${story.en || ""}`,
-            () => {
+        narrate(`${story.t}. ${story.en}`, () => {
 
-                unlockContinue(
-                    "START MISSION",
-                    startMission
-                );
+            setTimeout(startMission, 1500);
 
-            }
-        );
+        });
 
     } else {
 
@@ -346,28 +329,43 @@ function render() {
 }
 
 /* =========================
-   RENDER BLOCK
+   RENDER DE BLOQUES
 ========================= */
 function renderBlock(block, navHeader) {
 
-    stopAllSystems();
-
     const app = document.getElementById("app");
 
-    let html = navHeader;
-
+    let html = "";
     let textToRead = "";
 
-    const timerUI = `
-        <div class="card center" 
-             style="border:3px solid var(--primary);background:#0f172a;">
+    html += navHeader;
 
-            <h1 id="timerDisplay"
-                style="font-size:4rem;margin:0;font-family:monospace;">
+    const timerUI = `
+        <div
+            class="card center"
+            style="
+                border:3px solid var(--primary);
+                background:#0f172a;
+            "
+        >
+
+            <h1
+                id="timerDisplay"
+                style="
+                    font-size:4rem;
+                    margin:0;
+                    font-family:monospace;
+                "
+            >
                 00:00
             </h1>
 
-            <p style="color:var(--primary);letter-spacing:2px;">
+            <p
+                style="
+                    color:var(--primary);
+                    letter-spacing:2px;
+                "
+            >
                 STAY FOCUSED
             </p>
 
@@ -375,8 +373,9 @@ function renderBlock(block, navHeader) {
     `;
 
     /* =========================
-       V / H
+       TEXT BLOCKS
     ========================= */
+
     if (block.t === "v" || block.t === "h") {
 
         html += `
@@ -388,9 +387,6 @@ function renderBlock(block, navHeader) {
         textToRead = block.tx?.en || "";
     }
 
-    /* =========================
-       STORY
-    ========================= */
     if (block.story) {
 
         html += `
@@ -403,11 +399,14 @@ function renderBlock(block, navHeader) {
     }
 
     /* =========================
-       BREATH
+       BREATHING BLOCKS
     ========================= */
-    if (block.t === "br" || block.t === "breath_auto") {
 
-        html += timerUI + `
+    if (block.t === "breath_auto" || block.t === "br") {
+
+        html += timerUI;
+
+        html += `
             <div class="card center">
 
                 <div class="breath-circle" id="breathCircle">
@@ -425,18 +424,22 @@ function renderBlock(block, navHeader) {
             </button>
         `;
 
+        /* SOLO LEER JSON */
         textToRead = `
-            ${block.tx?.en || ""}.
+            ${block.tx?.en || ""}
             ${block.inf?.en || ""}
         `;
     }
 
     /* =========================
-       SILENCE
+       SILENCE BLOCK
     ========================= */
+
     if (block.t === "sil") {
 
-        html += timerUI + `
+        html += timerUI;
+
+        html += `
             <div class="card">
 
                 <h3>${block.tx?.en || ""}</h3>
@@ -451,7 +454,7 @@ function renderBlock(block, navHeader) {
         `;
 
         textToRead = `
-            ${block.tx?.en || ""}.
+            ${block.tx?.en || ""}
             ${block.inf?.en || ""}
         `;
     }
@@ -459,6 +462,7 @@ function renderBlock(block, navHeader) {
     /* =========================
        QUESTIONS
     ========================= */
+
     if (block.t === "d") {
 
         html += `
@@ -470,14 +474,16 @@ function renderBlock(block, navHeader) {
         block.op?.forEach((opt, i) => {
 
             html += `
-                <div 
+                <div
                     class="answer"
                     id="opt-${i}"
-                    onclick="selectAnswer(
-                        ${i},
-                        ${block.c},
-                        ${JSON.stringify(block.ex).replace(/"/g, '&quot;')}
-                    )"
+                    onclick="
+                        selectAnswer(
+                            ${i},
+                            ${block.c},
+                            ${JSON.stringify(block.ex).replace(/"/g, '&quot;')}
+                        )
+                    "
                 >
                     ${opt}
                 </div>
@@ -486,24 +492,20 @@ function renderBlock(block, navHeader) {
 
         html += `</div>`;
 
-        textToRead = `
-            ${block.q?.en || ""}.
-            Your options are:
-            ${block.op.join(". ")}
-        `;
+        textToRead =
+            `${block.q?.en}. Your options are: ${block.op.join(". ")}`;
     }
 
     /* =========================
-       REWARD
+       REWARDS
     ========================= */
+
     if (block.t === "r") {
 
         html += `
             <div class="card center">
 
-                <h2>
-                    ⭐ ${block.tx || "REWARD"}
-                </h2>
+                <h2>⭐ ${block.tx || "REWARD"}</h2>
 
                 <p style="font-size:1.5rem;">
                     +${block.p || 0} XP
@@ -516,15 +518,14 @@ function renderBlock(block, navHeader) {
             </button>
         `;
 
-        textToRead = `
-            ${block.tx || "Reward"}.
-            You earned ${block.p || 0} experience points.
-        `;
+        textToRead =
+            `${block.tx}. You have earned ${block.p} experience points.`;
     }
 
     /* =========================
-       COMMENT
+       COMMENT BLOCK
     ========================= */
+
     if (block.t === "c") {
 
         html += `
@@ -547,61 +548,46 @@ function renderBlock(block, navHeader) {
     narrate(textToRead, () => {
 
         /* =========================
-           BREATH BLOCK
+           BREATH / SILENCE
         ========================= */
-        if (block.t === "br" || block.t === "breath_auto") {
 
-            startCountdown(
-                block.d || 15,
-                () => {
+        if (
+            block.t === "breath_auto" ||
+            block.t === "br"
+        ) {
 
-                    unlockContinue(
-                        "CONTINUE",
-                        nextBlock
-                    );
+            startCountdown(15);
 
-                }
-            );
+            startBreathingAnimation();
 
-            /* SOLO ANIMACIÓN
-               NO HABLA */
-            startGuidedBreathing();
+            unlockContinue("CONTINUE", () => {
+
+                clearInterval(state.breathingInterval);
+
+                nextBlock();
+            });
         }
 
-        /* =========================
-           SILENCE
-        ========================= */
         else if (block.t === "sil") {
 
-            startCountdown(
-                block.d || 15,
-                () => {
+            startCountdown(15);
 
-                    unlockContinue(
-                        "CONTINUE",
-                        nextBlock
-                    );
-
-                }
-            );
+            unlockContinue("CONTINUE", nextBlock);
         }
 
         /* =========================
            NORMAL BLOCKS
         ========================= */
+
         else if (block.t !== "d") {
 
-            unlockContinue(
-                "CONTINUE",
-                nextBlock
-            );
+            unlockContinue("CONTINUE", nextBlock);
         }
-
     });
 }
 
 /* =========================
-   VOICE
+   NARRADOR
 ========================= */
 function narrate(text, callback) {
 
@@ -619,12 +605,7 @@ function narrate(text, callback) {
     const speech = new SpeechSynthesisUtterance(text);
 
     speech.lang = "en-US";
-
-    speech.rate = 0.88;
-
-    speech.pitch = 1;
-
-    speech.volume = 1;
+    speech.rate = 0.9;
 
     speech.onend = () => {
 
@@ -637,9 +618,12 @@ function narrate(text, callback) {
 }
 
 /* =========================
-   BREATH VISUAL ONLY
+   RESPIRACIÓN VISUAL
+   (SIN GUIA DE VOZ)
 ========================= */
-function startGuidedBreathing() {
+function startBreathingAnimation() {
+
+    clearInterval(state.breathingInterval);
 
     const circle = document.getElementById("breathCircle");
     const label = document.getElementById("breathLabel");
@@ -650,6 +634,9 @@ function startGuidedBreathing() {
 
     label.innerText = "INHALE";
 
+    circle.style.transform = "scale(1.4)";
+    circle.style.transition = "transform 4s ease-in-out";
+
     state.breathingInterval = setInterval(() => {
 
         if (!document.getElementById("breathCircle")) {
@@ -659,32 +646,28 @@ function startGuidedBreathing() {
             return;
         }
 
+        inhale = !inhale;
+
         if (inhale) {
 
             label.innerText = "INHALE";
 
-            circle.style.transform = "scale(1.35)";
-
-            circle.style.transition =
-                "transform 4s ease-in-out";
+            circle.style.transform = "scale(1.4)";
 
         } else {
 
             label.innerText = "EXHALE";
 
-            circle.style.transform = "scale(0.75)";
-
-            circle.style.transition =
-                "transform 4s ease-in-out";
+            circle.style.transform = "scale(0.8)";
         }
 
-        inhale = !inhale;
+        circle.style.transition = "transform 4s ease-in-out";
 
     }, 4000);
 }
 
 /* =========================
-   ANSWERS
+   RESPUESTAS
 ========================= */
 function selectAnswer(index, correct, explanations) {
 
@@ -699,9 +682,7 @@ function selectAnswer(index, correct, explanations) {
     feedbackWrap.innerHTML = `
         <div class="card">
 
-            <h3 style="
-                color:${isCorrect ? '#22c55e' : '#ef4444'}
-            ">
+            <h3 style="color:${isCorrect ? '#22c55e' : '#ef4444'}">
 
                 ${isCorrect ? "EXCELLENT!" : "KEEP LEARNING"}
 
@@ -716,25 +697,22 @@ function selectAnswer(index, correct, explanations) {
         </button>
     `;
 
-    document.getElementById("app")
-        .appendChild(feedbackWrap);
+    document.getElementById("app").appendChild(feedbackWrap);
 
     narrate(explanation, () => {
 
-        unlockContinue(
-            "NEXT STEP",
-            nextBlock
-        );
+        unlockContinue("NEXT STEP", nextBlock);
 
     });
 }
 
 /* =========================
-   FLOW
+   FLUJO
 ========================= */
 function nextBlock() {
 
-    stopAllSystems();
+    clearInterval(state.timer);
+    clearInterval(state.breathingInterval);
 
     state.currentBlock++;
 
@@ -744,15 +722,12 @@ function nextBlock() {
 function startMission() {
 
     state.phase = "mission";
-
     state.currentBlock = 0;
 
     render();
 }
 
 function nextStory() {
-
-    stopAllSystems();
 
     state.currentIndex++;
 
@@ -761,24 +736,24 @@ function nextStory() {
     }
 
     state.phase = "story";
-
     state.currentBlock = 0;
 
     render();
 }
 
 /* =========================
-   CONTINUE BUTTON
+   BOTÓN CONTINUE
 ========================= */
 function unlockContinue(label, action) {
 
     const btn = document.getElementById("continueBtn");
 
-    if (!btn) return;
+    if (btn) {
 
-    btn.disabled = false;
+        btn.disabled = false;
 
-    btn.innerText = label;
+        btn.innerText = label;
 
-    btn.onclick = action;
+        btn.onclick = action;
+    }
 }
