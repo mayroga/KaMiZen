@@ -2,7 +2,7 @@
    KAMIZEN ENGINE V12 - FULL EXPERT EDITION (NO CUTS)
    ✔ Persistencia Local (LocalStorage)
    ✔ Narración Total: Preguntas + Opciones + Feedback
-   ✔ Guía Vocal de Respiración (Inhale/Exhale)
+   ✔ Guía Vocal de Respiración (Visual)
    ✔ Botón JUMP/SKIP para navegación directa
    ✔ Soporte completo: v, h, story, br, sil, d, r, c
    ========================================================= */
@@ -225,7 +225,7 @@ function renderBlock(block, navHeader) {
                 <h3>${block.tx?.en || ""}</h3>
                 <p>${block.inf?.en || ""}</p>
             </div>`;
-        textToRead = `${block.tx?.en}. ${block.inf?.en}. Get ready to breathe with me.`;
+        textToRead = `${block.tx?.en}. ${block.inf?.en}. Get ready to breathe.`;
     }
 
     if (block.t === "sil") {
@@ -252,6 +252,7 @@ function renderBlock(block, navHeader) {
         textToRead = block.tx?.en;
     }
 
+    // ACTUALIZACIÓN: Botón siempre presente excepto en preguntas
     if (block.t !== "d") {
         html += `<button id="continueBtn" disabled>NARRATING...</button>`;
     }
@@ -261,8 +262,9 @@ function renderBlock(block, navHeader) {
     narrate(textToRead, () => {
         if (block.t === "breath_auto" || block.t === "br" || block.t === "sil") {
             startCountdown(15, nextBlock);
-            // NUEVO: Se pasa textToRead a la animación para mantener coherencia vocal
-            if (block.t.includes("br") || block.t.includes("breath")) startGuidedBreathing(textToRead);
+            if (block.t.includes("br") || block.t.includes("breath")) startGuidedBreathing();
+            // ACTUALIZACIÓN: Habilitar botón para saltar el ejercicio respiratorio
+            unlockContinue("SKIP / CONTINUE", nextBlock);
         } else if (block.t !== "d") {
             unlockContinue("CONTINUE", nextBlock);
         }
@@ -286,8 +288,8 @@ function narrate(text, callback) {
     window.speechSynthesis.speak(speech);
 }
 
-// NUEVO: Parámetro originalText añadido para reforzar la instrucción
-function startGuidedBreathing(originalText) {
+// ACTUALIZACIÓN: Se elimina la narración repetitiva de originalText
+function startGuidedBreathing() {
     const circle = document.getElementById("breathCircle");
     const label = document.getElementById("breathLabel");
     if (!circle || !label) return;
@@ -302,8 +304,7 @@ function startGuidedBreathing(originalText) {
         circle.style.transform = inhale ? "scale(1.4)" : "scale(0.8)";
         circle.style.transition = "transform 4s ease-in-out";
         
-        // NUEVO: Ahora utiliza la instrucción completa leída inicialmente para guiar el ciclo
-        narrate(inhale ? `Inhale deeply. ${originalText}` : `Exhale slowly. ${originalText}`);
+        // La voz ya no repite nada aquí para evitar saturación
         
         inhale = !inhale;
     }, 4000);
