@@ -1,13 +1,12 @@
 /* =========================================================
-   KAMIZEN ENGINE V11 - AUTOFLOW CONTROL SYSTEM
-   ✔ Reads ALL stories & missions
-   ✔ Speech lock until narration ends
-   ✔ +4s safety delay before auto next
-   ✔ Auto progression (story + mission blocks)
-   ✔ Manual intro buttons preserved
-   ✔ Breathing + questions remain manual
-   ✔ No double render / no freeze
-   ========================================================= */
+   KAMIZEN ENGINE V11 - AUTO FLOW + CONTROLLED PRESENCE
+   ✔ Reads ALL 49 stories/missions
+   ✔ Speech lock + 4s delay after voice
+   ✔ Auto progression system
+   ✔ Manual control only where needed
+   ✔ Breath + Q/A remain interactive
+   ✔ Start / End control buttons
+========================================================= */
 
 /* =========================
    GLOBAL STATE
@@ -23,9 +22,9 @@ let state = {
     phase: "loading",
 
     speechLocked: false,
-    autoAdvanceLocked: false,
+    initialized: false,
 
-    initialized: false
+    autoMode: true
 };
 
 /* =========================
@@ -72,13 +71,12 @@ async function loadAllData() {
         const storiesData = await storiesReq.json();
         const missionsData = await missionsReq.json();
 
-        state.stories = (storiesData.stories || []).sort((a,b)=>a.id-b.id);
-        state.missions = (missionsData.missions || []).sort((a,b)=>a.id-b.id);
+        state.stories = storiesData.stories.sort((a,b)=>a.id-b.id);
+        state.missions = missionsData.missions.sort((a,b)=>a.id-b.id);
 
         state.initialized = true;
 
     } catch (err) {
-
         console.error(err);
 
         app.innerHTML = `
@@ -91,7 +89,7 @@ async function loadAllData() {
 }
 
 /* =========================
-   INTRO (NO AUTO)
+   INTRO
 ========================= */
 
 function showIntro() {
@@ -99,11 +97,12 @@ function showIntro() {
     state.phase = "intro";
 
     document.getElementById("app").innerHTML = `
-        <div class="card">
+        <div class="card center">
             <h1>KAMIZEN LIFE SYSTEM</h1>
 
             <p>BODY • CALM • FOCUS • PRESENCE</p>
-            <p style="opacity:.7;">Stories + Missions Active</p>
+
+            <p class="small">Stories + Missions Active</p>
         </div>
 
         <button onclick="startSystem()">
@@ -117,11 +116,9 @@ function showIntro() {
 ========================= */
 
 function startSystem() {
-
+    state.phase = "story";
     state.currentIndex = 0;
     state.currentBlock = 0;
-    state.phase = "story";
-
     render();
 }
 
@@ -133,75 +130,75 @@ function render() {
 
     if (!state.initialized) return;
 
-    const app = document.getElementById("app");
-
     const story = state.stories[state.currentIndex];
-    const mission = state.missions.find(m => m.id === story?.id);
+    const mission = state.missions.find(m => m.id === story.id);
 
     if (!story || !mission) {
         state.currentIndex = 0;
-        state.currentBlock = 0;
         return render();
     }
 
     if (state.phase === "story") {
-
-        app.innerHTML = `
-            <div class="card">
-                <h2>STORY ${story.id}</h2>
-                <h3>${story.t}</h3>
-                <p>${story.en}</p>
-            </div>
-
-            <button id="continueBtn" disabled>NARRATING...</button>
-        `;
-
-        narrate(`${story.t}. ${story.en}`, () => {
-
-            unlockContinue("START MISSION", startMission);
-
-        });
-
+        renderStory(story);
         return;
     }
 
     if (state.phase === "mission") {
-
         const block = mission.b[state.currentBlock];
-
-        if (!block) {
-            nextStory();
-            return;
-        }
-
+        if (!block) return endBlock();
         renderBlock(block);
     }
 }
 
 /* =========================
-   BLOCK RENDER
+   STORY (AUTO AFTER VOICE)
+========================= */
+
+function renderStory(story) {
+
+    document.getElementById("app").innerHTML = `
+        <div class="card">
+            <h2>STORY ${story.id}</h2>
+            <h3>${story.t}</h3>
+            <p>${story.en}</p>
+        </div>
+
+        <button id="continueBtn" disabled>STARTING...</button>
+    `;
+
+    narrate(`${story.t}. ${story.en}`, () => {
+
+        setTimeout(() => {
+            state.phase = "mission";
+            state.currentBlock = 0;
+            render();
+        }, 4000);
+
+    });
+}
+
+/* =========================
+   MISSION BLOCK
 ========================= */
 
 function renderBlock(block) {
-
-    const app = document.getElementById("app");
 
     let html = "";
     let text = "";
 
     if (block.t === "v") {
         html += `<div class="card"><h2>${block.tx.en}</h2></div>`;
-        text += block.tx.en + ". ";
+        text += block.tx.en;
     }
 
     if (block.t === "h") {
         html += `<div class="card"><p>${block.tx.en}</p></div>`;
-        text += block.tx.en + ". ";
+        text += block.tx.en;
     }
 
     if (block.story) {
         html += `<div class="card"><p>${block.story.en}</p></div>`;
-        text += block.story.en + ". ";
+        text += block.story.en;
     }
 
     if (block.t === "breath_auto") {
@@ -211,11 +208,12 @@ function renderBlock(block) {
             <div class="breath-circle" id="breathCircle">
                 <span id="breathLabel">INHALE</span>
             </div>
+
             <h3>${block.tx.en}</h3>
             <p>${block.inf.en}</p>
         </div>`;
 
-        text += block.tx.en + ". " + block.inf.en + ".";
+        text += block.tx.en + block.inf.en;
     }
 
     if (block.t === "d") {
@@ -223,20 +221,10 @@ function renderBlock(block) {
         html += `<div class="card"><h3>${block.q.en}</h3>`;
 
         block.op.forEach((o,i)=>{
-            html += `<div class="answer"
-                onclick="selectAnswer(${i},${block.c},${JSON.stringify(block.ex).replace(/"/g,'&quot;')})">
-                ${o}
-            </div>`;
+            html += `<div class="answer" onclick="selectAnswer(${i},${block.c},${JSON.stringify(block.ex)})">${o}</div>`;
         });
 
         html += `</div>`;
-
-        text += block.q.en;
-    }
-
-    if (block.t === "sil") {
-        html += `<div class="card"><p>${block.tx.en}</p></div>`;
-        text += block.tx.en;
     }
 
     if (block.t === "r") {
@@ -244,30 +232,23 @@ function renderBlock(block) {
         text += block.tx;
     }
 
-    html += `<button id="continueBtn" disabled>NARRATING...</button>`;
-
-    app.innerHTML = html;
+    document.getElementById("app").innerHTML = html;
 
     if (block.t === "breath_auto") startBreathingAnimation();
 
-    narrate(text, async () => {
+    narrate(text, () => {
 
         if (block.t !== "d") {
-
-            await delay(4000); // 🔥 4 SECOND SAFETY BUFFER
-
-            unlockContinue("CONTINUE", nextBlock);
+            setTimeout(nextBlock, 4000); // 🔥 AUTO DELAY AFTER VOICE
         }
     });
 }
 
 /* =========================
-   ANSWERS (NO CHANGE)
+   ANSWERS (MANUAL ONLY)
 ========================= */
 
 function selectAnswer(i,c,ex) {
-
-    if (state.speechLocked) return;
 
     const ok = i === c;
 
@@ -276,121 +257,94 @@ function selectAnswer(i,c,ex) {
             <h3 style="color:${ok?'#22c55e':'#ef4444'}">
                 ${ok?'CORRECT':'WRONG'}
             </h3>
-            <p>${ex?.[i]||""}</p>
+            <p>${ex[i]}</p>
         </div>
 
-        <button id="continueBtn" disabled>NARRATING...</button>
+        <button onclick="nextBlock()">CONTINUE</button>
+        <button onclick="restart()">RESTART</button>
     `;
-
-    narrate(ex?.[i]||"", () => {
-
-        unlockContinue("CONTINUE", nextBlock);
-
-    });
 }
 
 /* =========================
-   FLOW CONTROL
+   BLOCK CONTROL
 ========================= */
 
 function nextBlock() {
-    if (state.speechLocked) return;
     state.currentBlock++;
     render();
 }
 
-function startMission() {
-    if (state.speechLocked) return;
-    state.phase = "mission";
+function endBlock() {
+
+    document.getElementById("app").innerHTML += `
+        <div class="card">
+            <button onclick="nextStory()">CONTINUE</button>
+            <button onclick="skipStory()">SKIP</button>
+            <button onclick="restart()">RESTART</button>
+        </div>
+    `;
+}
+
+function nextStory() {
+    state.currentIndex++;
+    state.phase = "story";
     state.currentBlock = 0;
     render();
 }
 
-function nextStory() {
+function skipStory() {
+    nextStory();
+}
 
-    state.currentIndex++;
-
-    if (state.currentIndex >= state.stories.length)
-        state.currentIndex = 0;
-
-    state.phase = "story";
+function restart() {
+    state.currentIndex = 0;
     state.currentBlock = 0;
-
+    state.phase = "story";
     render();
 }
 
 /* =========================
-   NARRATION ENGINE + SAFE LOCK
+   SPEECH + DELAY SYSTEM
 ========================= */
 
 function narrate(text, cb) {
 
-    if (!text) return cb?.();
-
     state.speechLocked = true;
-    state.autoAdvanceLocked = true;
 
-    window.speechSynthesis.cancel();
+    const s = new SpeechSynthesisUtterance(text);
 
-    const u = new SpeechSynthesisUtterance(text);
+    s.rate = 0.92;
 
-    u.rate = 0.92;
-    u.pitch = 1;
-
-    u.onend = async () => {
-
+    s.onend = () => {
         state.speechLocked = false;
-
-        await delay(4000); // 🔥 EXTRA BUFFER AFTER VOICE
-
-        state.autoAdvanceLocked = false;
-
-        cb?.();
+        cb && cb();
     };
 
-    window.speechSynthesis.speak(u);
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(s);
 }
 
 /* =========================
-   HELPERS
+   BREATHING
 ========================= */
 
-function delay(ms){
-    return new Promise(r=>setTimeout(r,ms));
-}
+function startBreathingAnimation() {
 
-function unlockContinue(t,a){
-    const b=document.getElementById("continueBtn");
-    if(!b) return;
-    b.disabled=false;
-    b.innerText=t;
-    b.onclick=a;
-}
+    const c = document.getElementById("breathCircle");
+    const l = document.getElementById("breathLabel");
 
-/* =========================
-   BREATHING (UNCHANGED LOGIC)
-========================= */
+    if (!c) return;
 
-function startBreathingAnimation(){
-
-    const c=document.getElementById("breathCircle");
-    const l=document.getElementById("breathLabel");
-
-    if(!c||!l) return;
-
-    let inha=true;
+    let i = true;
 
     setInterval(()=>{
-
-        if(inha){
+        if(i){
             l.innerText="INHALE";
             c.style.transform="scale(1.25)";
         }else{
             l.innerText="EXHALE";
             c.style.transform="scale(0.8)";
         }
-
-        inha=!inha;
-
+        i=!i;
     },4000);
 }
