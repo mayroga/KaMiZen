@@ -670,3 +670,39 @@ function startBreathingAnimation() {
 
     setInterval(animate, 4000);
 }
+/* =========================
+   🎯 DIRECT JUMP SYSTEM
+   ========================= */
+
+function goToMissionById(missionId) {
+    // 1. Validar que los datos estén cargados
+    if (!state.initialized || state.missions.length === 0) {
+        alert("System not ready. Please wait.");
+        return;
+    }
+
+    // 2. Buscar el índice real basado en el ID de la misión
+    // Usamos findIndex porque el ID 10 podría estar en la posición 9 del array
+    const targetIndex = state.missions.findIndex(m => m.id === Number(missionId));
+
+    // 3. Verificación de existencia
+    if (targetIndex === -1) {
+        alert("Mission ID not found. Inténtalo de nuevo.");
+        return;
+    }
+
+    // 4. Ejecutar el salto sin interrumpir el motor
+    // Cancelamos cualquier narración activa para evitar solapamiento de audio
+    window.speechSynthesis.cancel();
+    state.speechLocked = false;
+
+    // Actualizamos el estado global
+    state.currentIndex = targetIndex;
+    state.currentBlock = 0;
+    state.phase = "story"; // Siempre empezamos por la historia de esa misión
+
+    console.log(`🚀 Jumping to Mission ID: ${missionId} (Index: ${targetIndex})`);
+    
+    // Forzamos el renderizado de la nueva posición
+    render();
+}
