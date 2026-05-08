@@ -3,9 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>
-    KAMIZEN LIFE SYSTEM - CORE SESSION
-</title>
+<title>KAMIZEN LIFE SYSTEM - CORE SESSION</title>
 
 <style>
 :root{
@@ -38,7 +36,7 @@ body{
 }
 
 /* =========================
-   BACKGROUND SYSTEM (NATURALEZA DINÁMICA)
+   BACKGROUND SYSTEM
 ========================= */
 .container{
     position:fixed;
@@ -58,8 +56,8 @@ body{
     background-position:center;
     background-repeat:no-repeat;
     opacity:0;
-    transition:opacity 2s ease-in-out;
-    transform:scale(1.04); /* Efecto sutil de zoom para inmersión */
+    transition:opacity 2.5s ease-in-out; /* Transición más suave para 7s */
+    transform:scale(1.04);
 }
 
 .slide.active{
@@ -79,7 +77,7 @@ body{
 }
 
 /* =========================
-   APP LAYOUT
+   APP
 ========================= */
 #app{
     position:relative;
@@ -95,7 +93,7 @@ body{
 ========================= */
 .card{
     background:rgba(17,26,46,0.82);
-    backdrop-filter:blur(8px);
+    backdrop-filter:blur(6px);
     padding:20px;
     border-radius:16px;
     margin:15px 0;
@@ -122,7 +120,31 @@ button{
 
 button:hover{
     transform:translateY(-2px);
-    filter: brightness(1.1);
+}
+
+button:disabled{
+    opacity:0.7;
+    cursor:not-allowed;
+}
+
+/* =========================
+   ANSWERS
+========================= */
+.answer{
+    background:#1f2937;
+    padding:14px;
+    margin:10px 0;
+    border-radius:12px;
+    cursor:pointer;
+    border-left:4px solid var(--primary);
+    transition:0.2s;
+    font-size:18px;
+    font-weight:600;
+}
+
+.answer:hover{
+    transform:translateX(5px);
+    background:#374151;
 }
 
 /* =========================
@@ -140,32 +162,29 @@ button:hover{
     animation:breathe 6s infinite ease-in-out;
     font-size:22px;
     font-weight:bold;
-    box-shadow: 0 0 35px rgba(59,130,246,0.4);
+    box-shadow:
+        0 0 35px rgba(59,130,246,0.4);
 }
 
 @keyframes breathe{
-    0% { transform:scale(0.85); opacity:0.7; }
-    50% { transform:scale(1.25); opacity:1; border-color:var(--success); }
-    100% { transform:scale(0.85); opacity:0.7; }
+    0%{ transform:scale(0.85); opacity:0.7; }
+    50%{ transform:scale(1.25); opacity:1; border-color:var(--success); }
+    100%{ transform:scale(0.85); opacity:0.7; }
 }
 
-/* =========================
-   TEXT STYLES
-========================= */
 h1,h2,h3,p,span{
     margin:10px 0;
     text-shadow: 0 2px 8px rgba(0,0,0,0.95);
 }
 
+h1{ font-size:34px; font-weight:900; }
 h2{ font-size:28px; font-weight:800; }
 h3{ font-size:22px; font-weight:700; }
-p{ font-size:18px; line-height:1.6; }
+p{ font-size:18px; line-height:1.6; font-weight:500; }
 .small{ font-size:13px; color:var(--dim); }
 .center{ text-align:center; }
+.hidden{ display:none; }
 
-/* =========================
-   INPUT
-========================= */
 input{
     width:100%;
     padding:14px;
@@ -178,9 +197,17 @@ input{
     margin-bottom:10px;
 }
 
+input:focus{
+    outline:none;
+    box-shadow: 0 0 10px rgba(59,130,246,0.6);
+}
+
 @media(max-width:700px){
     #app{ padding:12px; }
+    h1{ font-size:28px; }
     h2{ font-size:24px; }
+    h3{ font-size:20px; }
+    p{ font-size:17px; }
     .breath-circle{ width:140px; height:140px; }
 }
 </style>
@@ -188,112 +215,95 @@ input{
 
 <body>
 
-<!-- FONDO DE NATURALEZA INFINITA -->
+<!-- BACKGROUND SYSTEM -->
 <div class="container">
     <div id="img1" class="slide active"></div>
     <div id="img2" class="slide"></div>
     <div class="overlay"></div>
 </div>
 
+<!-- MAIN APP -->
 <div id="app">
-
-    <!-- HEADER -->
     <div class="card center">
-        <h2 style="color:var(--primary);">
-            KAMIZEN LIFE SYSTEM
-        </h2>
-        <p class="small">
-            Neural Training • Awareness • Discipline • Control
-        </p>
-
+        <h2 style="color:var(--primary);">KAMIZEN LIFE SYSTEM</h2>
+        <p class="small">Neural Training • Awareness • Discipline • Control</p>
         <div style="margin-top:20px;">
-            <input
-                type="number"
-                id="missionSelector"
-                min="1"
-                max="49"
-                value="1"
-                placeholder="1-49"
-            />
-            <button onclick="jumpToMission()">
-                LOAD STORY & MISSION
-            </button>
+            <input type="number" id="missionSelector" min="1" max="49" value="1" placeholder="1-49" />
+            <button onclick="jumpToMission()">LOAD STORY & MISSION</button>
         </div>
     </div>
 
-    <!-- MAIN RENDER AREA -->
     <div id="screen" class="card">
         <h3>Loading system...</h3>
         <p class="small">Initializing stories & missions</p>
     </div>
 
-    <!-- BREATHING AREA -->
     <div class="card center">
         <h3>Breathing Module</h3>
-        <div class="breath-circle">
-            <span>FOCUS</span>
-        </div>
-        <p class="small">
-            Automatic regulation system
-        </p>
+        <div class="breath-circle"><span>FOCUS</span></div>
+        <p class="small">Automatic regulation system (controlled by engine.js)</p>
     </div>
-
 </div>
 
-<!-- SCRIPT DE FONDO DINÁMICO (CAMBIO 4 SEG) -->
+<!-- BACKGROUND SCRIPT -->
 <script>
-const slides = [
-    document.getElementById('img1'),
-    document.getElementById('img2')
-];
-
+const slides = [document.getElementById('img1'), document.getElementById('img2')];
 let currentIdx = 0;
+let lastTopic = 'nature';
 
-// Temas naturales de alto impacto para niños y jóvenes
-const topics = [
-    'nature', 'space', 'ocean', 'wildlife', 'forest', 
-    'galaxy', 'mountains', 'underwater', 'stars', 'lightning'
-];
+const topics = ['nature', 'space', 'ocean', 'animals', 'landscape', 'galaxy', 'forest', 'mountains', 'waterfall', 'stars'];
 
-function fetchImage() {
-    const topic = topics[Math.floor(Math.random() * topics.length)];
-    const randomID = Math.floor(Math.random() * 5000); // ID aleatorio para forzar imagen nueva
-    // Usamos picsum con dimensiones HD y el ID aleatorio
-    return `https://picsum.photos/1920/1080?random=${randomID}`;
+// Función para obtener una palabra clave del contenido de la APP
+function getContextTopic() {
+    const screenText = document.getElementById('screen').innerText.toLowerCase();
+    // Si el texto contiene palabras clave, priorizamos esa temática
+    for (let t of topics) {
+        if (screenText.includes(t)) return t;
+    }
+    // Si no encuentra coincidencia, elige una aleatoria
+    return topics[Math.floor(Math.random() * topics.length)];
 }
 
-// Carga inicial de las dos primeras imágenes
-slides[0].style.backgroundImage = `url('${fetchImage()}')`;
-slides[1].style.backgroundImage = `url('${fetchImage()}')`;
+function fetchImageUrl() {
+    const topic = getContextTopic();
+    const randomID = Math.floor(Math.random() * 10000);
+    // Cambiamos a un servicio robusto para evitar pantallas vacías
+    return `https://picsum.photos/1920/1080?random=${randomID}&keyword=${topic}`;
+}
+
+// Carga Inicial
+slides[0].style.backgroundImage = `url('${fetchImageUrl()}')`;
+slides[1].style.backgroundImage = `url('${fetchImageUrl()}')`;
 
 function rotateBackground() {
     const nextIdx = (currentIdx + 1) % 2;
-    const imgUrl = fetchImage();
-    
-    // Precarga de la imagen para evitar parpadeos en blanco
+    const imgUrl = fetchImageUrl();
     const img = new Image();
+
     img.src = imgUrl;
     img.onload = () => {
         slides[nextIdx].style.backgroundImage = `url('${imgUrl}')`;
-        
-        // Cambio de opacidad (Crossfade)
         slides[currentIdx].classList.remove('active');
         slides[nextIdx].classList.add('active');
-        
         currentIdx = nextIdx;
     };
 }
 
-// Ejecutar rotación cada 4000ms (4 segundos)
-setInterval(rotateBackground, 4000);
+// CAMBIO CADA 7 SEGUNDOS
+setInterval(rotateBackground, 7000);
 
-// Función placeholder para evitar errores si engine.js no carga rápido
-function jumpToMission() {
-    console.log("Loading mission from missionSelector...");
-}
+// EXTRA: Si el contenido de la pantalla cambia drásticamente, forzar un cambio de imagen
+const targetNode = document.getElementById('screen');
+const config = { childList: true, subtree: true };
+const callback = function(mutationsList, observer) {
+    // Cuando el sistema escribe algo nuevo, preparamos la rotación para que coincida
+    rotateBackground();
+};
+const observer = new MutationObserver(callback);
+observer.observe(targetNode, config);
+
 </script>
 
-<!-- ENGINE CORE -->
 <script src="/static/js/engine.js"></script>
 
 </body>
