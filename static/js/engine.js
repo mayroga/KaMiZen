@@ -1,10 +1,10 @@
 /* =========================================================
-   KAMIZEN ENGINE V11 - FULL EXPERT EDITION
-   ✔ Integración Total: v, h, story, br, sil, d, r, c
-   ✔ Reloj Descontador Fijo (MM:SS) para Silencio/Respiración
-   ✔ Persistencia Automática (LocalStorage)
-   ✔ Controles Profesionales: Back, Reset, Jump
-   ✔ Auto-Flow: Narración -> Acción
+   KAMIZEN ENGINE V12 - FULL EXPERT EDITION (NO CUTS)
+   ✔ Persistencia Local (LocalStorage)
+   ✔ Narración Total: Preguntas + Opciones + Feedback
+   ✔ Guía Vocal de Respiración (Inhale/Exhale)
+   ✔ Botón JUMP/SKIP para navegación directa
+   ✔ Soporte completo: v, h, story, br, sil, d, r, c
    ========================================================= */
 
 let state = {
@@ -22,12 +22,6 @@ let state = {
 /* =========================
    SISTEMA DE PERSISTENCIA
 ========================= */
-if (window.__KAMIZEN_ENGINE_ACTIVE__) {
-    console.warn("KAMIZEN ENGINE ALREADY RUNNING");
-} else {
-    window.__KAMIZEN_ENGINE_ACTIVE__ = true;
-}
-
 function saveProgress() {
     localStorage.setItem('kamizen_save', JSON.stringify({
         currentIndex: state.currentIndex,
@@ -45,7 +39,7 @@ function loadProgress() {
 }
 
 /* =========================
-   INICIALIZACIÓN
+   INICIALIZACIÓN DEL SISTEMA
 ========================= */
 window.addEventListener("load", async () => {
     loadProgress();
@@ -55,7 +49,7 @@ window.addEventListener("load", async () => {
 
 async function loadAllData() {
     const app = document.getElementById("app");
-    app.innerHTML = `<div class="card"><h2>LOADING SYSTEM...</h2><p>Wait a moment...</p></div>`;
+    app.innerHTML = `<div class="card"><h2>SYSTEM BOOTING...</h2><p>Loading Data...</p></div>`;
     try {
         const [storiesReq, missionsReq] = await Promise.all([
             fetch("/api/stories"),
@@ -68,27 +62,29 @@ async function loadAllData() {
         state.missions = Array.isArray(missionsData.missions) ? missionsData.missions.sort((a, b) => a.id - b.id) : [];
         state.initialized = true;
     } catch (err) {
-        app.innerHTML = `<div class="card"><h2>SYSTEM ERROR</h2><p>Check connection</p></div>`;
+        console.error(err);
+        app.innerHTML = `<div class="card"><h2>BOOT ERROR</h2><p>Check API Connection</p></div>`;
     }
 }
 
 /* =========================
-   CONTROLES DE USUARIO
+   CONTROLES DE NAVEGACIÓN
 ========================= */
-function restartSystem() {
-    if(confirm("Are you sure you want to start from scratch?")) {
-        localStorage.clear();
-        state.currentIndex = 0;
-        state.currentBlock = 0;
-        state.phase = "story";
+function jumpToBlock() {
+    const target = prompt("Enter the Block Number you want to jump to:");
+    if (target !== null && !isNaN(target) && target !== "") {
+        window.speechSynthesis.cancel();
+        clearInterval(state.timer);
+        state.currentBlock = parseInt(target);
+        state.phase = "mission";
         render();
     }
 }
 
 function goBack() {
     window.speechSynthesis.cancel();
-    state.speechLocked = false;
     clearInterval(state.timer);
+    state.speechLocked = false;
     if (state.currentBlock > 0) {
         state.currentBlock--;
     } else if (state.currentIndex > 0) {
@@ -99,17 +95,13 @@ function goBack() {
     render();
 }
 
-function goToMissionById(id) {
-    const idx = state.missions.findIndex(m => m.id === Number(id));
-    if (idx !== -1) {
-        window.speechSynthesis.cancel();
-        clearInterval(state.timer);
-        state.currentIndex = idx;
+function restartSystem() {
+    if(confirm("Are you sure you want to RESTART from zero? All progress will be lost.")) {
+        localStorage.clear();
+        state.currentIndex = 0;
         state.currentBlock = 0;
         state.phase = "story";
         render();
-    } else {
-        alert("ID not found. Please try again.");
     }
 }
 
@@ -145,8 +137,8 @@ function showIntro() {
         <div class="card center">
             <h1>KAMIZEN LIFE SYSTEM</h1>
             <p>Training • Awareness • Control</p>
-            <button onclick="startSystem()">Continue Session</button>
-            <button onclick="restartSystem()" style="background:var(--danger);margin-top:10px;">Reset All</button>
+            <button onclick="startSystem()">CONTINUE MISSION</button>
+            <button onclick="restartSystem()" style="background:var(--danger);margin-top:10px;">RESET PROGRESS</button>
         </div>
     `;
 }
@@ -171,9 +163,10 @@ function render() {
     }
 
     let navHeader = `
-        <div style="display:flex;gap:10px;margin-bottom:10px;">
-            <button onclick="goBack()" style="padding:8px;flex:1;background:#334155;">BACK</button>
-            <button onclick="restartSystem()" style="padding:8px;flex:1;background:var(--danger)">RESET</button>
+        <div style="display:flex;gap:5px;margin-bottom:10px;">
+            <button onclick="goBack()" style="flex:1;padding:8px;font-size:12px;background:#334155;">BACK</button>
+            <button onclick="jumpToBlock()" style="flex:1;padding:8px;font-size:12px;background:#0ea5e9;">JUMP/SKIP</button>
+            <button onclick="restartSystem()" style="flex:1;padding:8px;font-size:12px;background:var(--danger);">RESET</button>
         </div>
     `;
 
@@ -199,64 +192,57 @@ function render() {
 function renderBlock(block, navHeader) {
     const app = document.getElementById("app");
     let html = navHeader;
-    let narration = "";
+    let textToRead = "";
 
     const timerUI = `
         <div class="card center" style="border: 3px solid var(--primary); background: #0f172a;">
             <h1 id="timerDisplay" style="font-size:4rem;margin:0; font-family: monospace;">00:00</h1>
-            <p style="color:var(--primary); letter-spacing: 2px;">KEEP FOCUS</p>
+            <p style="color:var(--primary); letter-spacing: 2px;">STAY FOCUSED</p>
         </div>
     `;
 
-    // 1. BLOQUES VISUALES (v, h)
     if (block.t === "v" || block.t === "h") {
         html += `<div class="card"><h2>${block.tx?.en || ""}</h2></div>`;
-        narration = block.tx?.en;
+        textToRead = block.tx?.en;
     }
 
-    // 2. STORY INSIDE MISSION
     if (block.story) {
         html += `<div class="card"><p>${block.story.en || ""}</p></div>`;
-        narration = block.story.en;
+        textToRead = block.story.en;
     }
 
-    // 3. RESPIRACIÓN (br, breath_auto)
     if (block.t === "breath_auto" || block.t === "br") {
         html += timerUI + `
             <div class="card center">
-                <div class="breath-circle" id="breathCircle"><span id="breathLabel">INHALE</span></div>
+                <div class="breath-circle" id="breathCircle"><span id="breathLabel">READY</span></div>
                 <h3>${block.tx?.en || ""}</h3>
                 <p>${block.inf?.en || ""}</p>
             </div>`;
-        narration = `${block.tx?.en}. ${block.inf?.en}`;
+        textToRead = `${block.tx?.en}. ${block.inf?.en}. Get ready to breathe with me.`;
     }
 
-    // 4. SILENCIO (sil)
     if (block.t === "sil") {
         html += timerUI + `<div class="card"><h3>${block.tx?.en || ""}</h3><p>${block.inf?.en || ""}</p></div>`;
-        narration = `${block.tx?.en}. ${block.inf?.en}`;
+        textToRead = `${block.tx?.en}. ${block.inf?.en}. Practice silence now.`;
     }
 
-    // 5. DECISIÓN (d)
     if (block.t === "d") {
         html += `<div class="card"><h3>${block.q?.en || ""}</h3>`;
         block.op?.forEach((opt, i) => {
-            html += `<div class="answer" onclick="selectAnswer(${i}, ${block.c}, ${JSON.stringify(block.ex).replace(/"/g, '&quot;')})">${opt}</div>`;
+            html += `<div class="answer" id="opt-${i}" onclick="selectAnswer(${i}, ${block.c}, ${JSON.stringify(block.ex).replace(/"/g, '&quot;')})">${opt}</div>`;
         });
         html += `</div>`;
-        narration = block.q?.en;
+        textToRead = `${block.q?.en}. Your options are: ${block.op.join(". ")}`;
     }
 
-    // 6. REWARD (r)
     if (block.t === "r") {
         html += `<div class="card center"><h2>⭐ ${block.tx || "REWARD"}</h2><p style="font-size:1.5rem;">+${block.p || 0} XP</p></div>`;
-        narration = `${block.tx}. You have won. ${block.p} Experience points.`;
+        textToRead = `${block.tx}. You have earned ${block.p} experience points.`;
     }
 
-    // 7. CONCLUSIÓN (c)
     if (block.t === "c") {
         html += `<div class="card"><p>${block.tx?.en || ""}</p></div>`;
-        narration = block.tx?.en;
+        textToRead = block.tx?.en;
     }
 
     if (block.t !== "d") {
@@ -265,11 +251,10 @@ function renderBlock(block, navHeader) {
 
     app.innerHTML = html;
 
-    narrate(narration, () => {
+    narrate(textToRead, () => {
         if (block.t === "breath_auto" || block.t === "br" || block.t === "sil") {
-            // RELOJ: 15 segundos para respiración/silencio
             startCountdown(15, nextBlock);
-            if (block.t.includes("breath") || block.t === "br") startBreathingAnimation();
+            if (block.t.includes("br") || block.t.includes("breath")) startGuidedBreathing();
         } else if (block.t !== "d") {
             unlockContinue("CONTINUE", nextBlock);
         }
@@ -277,7 +262,7 @@ function renderBlock(block, navHeader) {
 }
 
 /* =========================
-   FUNCIONES NUCLEARES
+   FUNCIONES DE VOZ Y ACCIÓN
 ========================= */
 function narrate(text, callback) {
     if (!text) { if (callback) callback(); return; }
@@ -285,9 +270,53 @@ function narrate(text, callback) {
     window.speechSynthesis.cancel();
     const speech = new SpeechSynthesisUtterance(text);
     speech.lang = "en-US";
-    speech.rate = 0.95;
-    speech.onend = () => { state.speechLocked = false; if (callback) callback(); };
+    speech.rate = 0.9;
+    speech.onend = () => { 
+        state.speechLocked = false; 
+        if (callback) callback(); 
+    };
     window.speechSynthesis.speak(speech);
+}
+
+function startGuidedBreathing() {
+    const circle = document.getElementById("breathCircle");
+    const label = document.getElementById("breathLabel");
+    if (!circle || !label) return;
+
+    let inhale = true;
+    const aniInterval = setInterval(() => {
+        if (!document.getElementById("breathCircle") || state.timeLeft <= 0) { 
+            clearInterval(aniInterval); 
+            return; 
+        }
+        label.innerText = inhale ? "INHALE" : "EXHALE";
+        circle.style.transform = inhale ? "scale(1.4)" : "scale(0.8)";
+        circle.style.transition = "transform 4s ease-in-out";
+        
+        narrate(inhale ? "Inhale deeply" : "Exhale slowly");
+        
+        inhale = !inhale;
+    }, 4000);
+}
+
+function selectAnswer(index, correct, explanations) {
+    if (state.speechLocked) return;
+    const isCorrect = index === correct;
+    const explanation = explanations?.[index] || "";
+    
+    const feedbackWrap = document.createElement("div");
+    feedbackWrap.innerHTML = `
+        <div class="card">
+            <h3 style="color:${isCorrect ? '#22c55e' : '#ef4444'}">${isCorrect ? "EXCELLENT!" : "KEEP LEARNING"}</h3>
+            <p>${explanation}</p>
+        </div>
+        <button id="continueBtn" disabled>NARRATING...</button>`;
+    
+    document.getElementById("app").appendChild(feedbackWrap);
+    
+    narrate(explanation, () => {
+        unlockContinue("NEXT STEP", nextBlock);
+    });
 }
 
 function nextBlock() { 
@@ -317,39 +346,4 @@ function unlockContinue(label, action) {
         btn.innerText = label; 
         btn.onclick = action; 
     }
-}
-
-function selectAnswer(index, correct, explanations) {
-    if (state.speechLocked) return;
-    const isCorrect = index === correct;
-    const explanation = explanations?.[index] || "";
-    
-    // Añadir feedback a la pantalla sin borrar lo anterior
-    const feedbackWrap = document.createElement("div");
-    feedbackWrap.innerHTML = `
-        <div class="card">
-            <h3 style="color:${isCorrect ? '#22c55e' : '#ef4444'}">${isCorrect ? "CORRECT" : "WRONG"}</h3>
-            <p>${explanation}</p>
-        </div>
-        <button id="continueBtn" disabled>NARRATING...</button>`;
-    
-    document.getElementById("app").appendChild(feedbackWrap);
-    
-    narrate(explanation, () => {
-        unlockContinue("CONTINUE", nextBlock);
-    });
-}
-
-function startBreathingAnimation() {
-    const circle = document.getElementById("breathCircle");
-    const label = document.getElementById("breathLabel");
-    if (!circle || !label) return;
-    let inhale = true;
-    const aniInterval = setInterval(() => {
-        if (!document.getElementById("breathCircle")) { clearInterval(aniInterval); return; }
-        label.innerText = inhale ? "INHALE" : "EXHALE";
-        circle.style.transform = inhale ? "scale(1.3)" : "scale(0.8)";
-        circle.style.transition = "transform 4s ease-in-out";
-        inhale = !inhale;
-    }, 4000);
 }
