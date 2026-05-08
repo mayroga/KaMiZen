@@ -1,5 +1,5 @@
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 import os
 import json
@@ -34,7 +34,7 @@ def load_json(path):
         return None
 
 # =========================================================
-# 📖 STORIES LOADER (STRICT ORDER 1–35)
+# 📖 STORIES LOADER (STRICT 1–49 ORDER)
 # =========================================================
 def load_stories():
 
@@ -53,6 +53,7 @@ def load_stories():
     else:
         stories = []
 
+    # 🔥 FORCE CLEAN SORT (NO DUPLICATES OR MISORDER)
     stories = sorted(
         [s for s in stories if isinstance(s, dict) and "id" in s],
         key=lambda x: x["id"]
@@ -62,7 +63,7 @@ def load_stories():
     return stories
 
 # =========================================================
-# 🎯 MISSIONS LOADER (FULL MULTI-SYSTEM SUPPORT)
+# 🎯 MISSIONS LOADER (MULTI FILE SYSTEM 01–49)
 # =========================================================
 def load_missions():
 
@@ -73,7 +74,7 @@ def load_missions():
 
     files = sorted([
         f for f in os.listdir(BASE_DIR)
-        if f.startswith("missions") and f.endswith(".json")
+        if f.startswith("missions_") and f.endswith(".json")
     ])
 
     for file in files:
@@ -85,9 +86,7 @@ def load_missions():
 
         missions = []
 
-        # =========================
-        # SUPPORT ALL FORMATS
-        # =========================
+        # soporta múltiples formatos
         if isinstance(data, dict):
             missions = (
                 data.get("missions") or
@@ -99,16 +98,12 @@ def load_missions():
         elif isinstance(data, list):
             missions = data
 
-        # =========================
-        # VALIDATION FILTER
-        # =========================
+        # filtrar válidos
         for m in missions:
             if isinstance(m, dict) and "id" in m:
                 all_missions.append(m)
 
-    # =========================
-    # GLOBAL SORT (1 → 49+ SAFE)
-    # =========================
+    # 🔥 ORDEN GLOBAL ABSOLUTO 1 → 49
     all_missions = sorted(all_missions, key=lambda x: x["id"])
 
     CACHE["missions"] = {
@@ -134,10 +129,9 @@ def session():
 # =========================================================
 @app.get("/api/stories")
 def get_stories():
-    stories = load_stories()
     return {
-        "total": len(stories),
-        "stories": stories
+        "total": len(load_stories()),
+        "stories": load_stories()
     }
 
 # =========================================================
@@ -168,8 +162,7 @@ STATE = {
     "user": "",
     "story_index": 0,
     "mission_index": 1,
-    "score": 0,
-    "phase": "idle"
+    "score": 0
 }
 
 @app.get("/api/state")
@@ -189,11 +182,7 @@ def update_state(data: dict):
 # =========================================================
 @app.get("/health")
 def health():
-    return {
-        "status": "ok",
-        "system": "KAMIZEN LIFE SYSTEM",
-        "missions_loaded": len(CACHE["missions"]["missions"]) if CACHE["missions"] else 0
-    }
+    return {"status": "ok"}
 
 # =========================================================
 # ▶ RUN SERVER
