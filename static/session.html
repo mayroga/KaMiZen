@@ -7,105 +7,129 @@
 
 <style>
 
-/* =========================
-   BACKGROUND SYSTEM (NEW)
-========================= */
-
-body, html {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    overflow: hidden;
-    background: #000;
-}
-
-#bg-container {
-    position: fixed;
-    inset: 0;
-    z-index: -2;
-}
-
-.slide {
-    position: absolute;
-    inset: 0;
-    background-size: cover;
-    background-position: center;
-    opacity: 0;
-    transition: opacity 1.5s ease-in-out;
-    filter: brightness(0.6) contrast(1.1);
-}
-
-.slide.active {
-    opacity: 1;
-}
-
-.vignette {
-    position: fixed;
-    inset: 0;
-    z-index: -1;
-    box-shadow: inset 0 0 180px rgba(0,0,0,0.75);
-    pointer-events: none;
-}
-
-/* =========================
-   ROOT
-========================= */
-
 :root{
-    --bg:#0b1220;
-    --card:#111a2e;
+    --bg:#08111f;
+    --card:rgba(15,23,42,0.88);
     --primary:#3b82f6;
     --success:#22c55e;
     --danger:#ef4444;
     --warning:#f59e0b;
-    --mid:#fbbf24;
+    --yellow:#eab308;
     --text:#ffffff;
-    --dim:#94a3b8;
+    --dim:#cbd5e1;
 }
-
-/* =========================
-   GLOBAL
-========================= */
 
 *{
     box-sizing:border-box;
 }
 
+html,
 body{
+    margin:0;
+    padding:0;
+    min-height:100vh;
+    overflow-x:hidden;
+
     font-family:Segoe UI, Arial, sans-serif;
     color:var(--text);
+
+    background:#000;
 }
 
 /* =========================
-   APP LAYOUT
+   LIGHTWEIGHT BACKGROUND
+========================= */
+
+body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+
+    background-image:
+        url("https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1600");
+
+    background-size:cover;
+    background-position:center;
+
+    filter:brightness(0.45);
+
+    z-index:-2;
+
+    animation:bgMove 20s ease-in-out infinite alternate;
+}
+
+body::after{
+    content:"";
+    position:fixed;
+    inset:0;
+
+    background:rgba(0,0,0,0.35);
+
+    z-index:-1;
+}
+
+@keyframes bgMove{
+    0%{
+        transform:scale(1);
+    }
+    100%{
+        transform:scale(1.08);
+    }
+}
+
+/* =========================
+   APP
 ========================= */
 
 #app{
-    position:relative;
-    z-index:2;
     width:100%;
     max-width:720px;
     margin:auto;
-    padding:20px;
+    padding:18px;
 }
 
 /* =========================
-   CARD SYSTEM (STRONG TEXT)
+   CARD SYSTEM
 ========================= */
 
 .card{
-    background:rgba(17,26,46,0.88);
-    backdrop-filter: blur(8px);
+    background:var(--card);
+
     padding:22px;
+
     border-radius:18px;
+
     margin:15px 0;
-    border:1px solid rgba(255,255,255,0.08);
-    box-shadow:0 10px 30px rgba(0,0,0,0.4);
+
+    border:1px solid rgba(255,255,255,0.06);
+
+    box-shadow:0 10px 30px rgba(0,0,0,0.35);
 }
 
-h1,h2,h3,p{
-    font-weight:700;
-    letter-spacing:0.3px;
+/* =========================
+   TEXT
+========================= */
+
+h1,h2,h3{
+    margin:10px 0;
+    font-weight:800;
+    line-height:1.3;
+}
+
+p{
+    line-height:1.7;
+    font-size:18px;
+    color:#f8fafc;
+    font-weight:600;
+}
+
+.small{
+    font-size:13px;
+    color:var(--dim);
+}
+
+.center{
+    text-align:center;
 }
 
 /* =========================
@@ -114,96 +138,139 @@ h1,h2,h3,p{
 
 button{
     width:100%;
+
     padding:15px;
+
     border:none;
-    border-radius:12px;
+
+    border-radius:14px;
+
     background:var(--primary);
+
     color:white;
+
     font-weight:800;
+
+    font-size:16px;
+
     cursor:pointer;
-    transition:0.2s;
-    margin-top:10px;
+
+    margin-top:12px;
+
+    transition:.2s;
 }
 
 button:hover{
-    transform:scale(1.02);
+    transform:translateY(-2px);
 }
 
 /* =========================
-   ANSWERS (NEW COLOR SYSTEM)
+   ANSWERS
 ========================= */
 
 .answer{
-    padding:14px;
+    background:#1e293b;
+
+    padding:16px;
+
     margin:10px 0;
+
     border-radius:12px;
+
     cursor:pointer;
-    transition:0.2s;
-    font-weight:700;
+
     border-left:5px solid var(--primary);
-    background:#1f2937;
+
+    transition:.2s;
+
+    font-weight:700;
+
+    font-size:17px;
 }
 
 .answer:hover{
-    transform:translateX(6px);
+    transform:translateX(5px);
+
+    background:#334155;
 }
-
-/* engine puede cambiar color inline, pero fallback */
-
-.answer.correct{ border-left-color: var(--success); }
-.answer.wrong{ border-left-color: var(--danger); }
-.answer.mid{ border-left-color: var(--mid); }
-.answer.warning{ border-left-color: var(--warning); }
 
 /* =========================
    BREATHING
 ========================= */
 
 .breath-circle{
-    width:150px;
-    height:150px;
+    width:160px;
+    height:160px;
+
     border-radius:50%;
+
     margin:30px auto;
+
     border:4px solid var(--primary);
+
     display:flex;
+
     align-items:center;
+
     justify-content:center;
-    font-weight:900;
-}
 
-/* =========================
-   SMALL TEXT
-========================= */
-
-.small{
-    font-size:13px;
-    color:var(--dim);
-}
-
-/* =========================
-   SILENCE MODE VISUAL
-========================= */
-
-.silence{
-    text-align:center;
-    font-size:18px;
-    padding:20px;
-    color:var(--warning);
-    font-weight:800;
-}
-
-.timer{
     font-size:22px;
+
     font-weight:900;
-    margin-top:10px;
+
+    background:rgba(59,130,246,0.15);
+
+    animation:breathe 6s infinite ease-in-out;
+}
+
+@keyframes breathe{
+
+    0%{
+        transform:scale(0.85);
+        opacity:0.75;
+    }
+
+    50%{
+        transform:scale(1.2);
+        opacity:1;
+        border-color:var(--success);
+    }
+
+    100%{
+        transform:scale(0.85);
+        opacity:0.75;
+    }
 }
 
 /* =========================
-   UTIL
+   SILENCE
 ========================= */
 
-.center{
-    text-align:center;
+.silence-timer{
+    font-size:32px;
+    font-weight:900;
+    color:#facc15;
+    margin-top:15px;
+}
+
+/* =========================
+   RESULT COLORS
+========================= */
+
+.correct{
+    color:var(--success);
+}
+
+.wrong{
+    color:var(--danger);
+}
+
+.mid{
+    color:var(--yellow);
+}
+
+.warning{
+    color:var(--warning);
 }
 
 .hidden{
@@ -215,25 +282,12 @@ button:hover{
 
 <body>
 
-<!-- =========================
-     BACKGROUND SYSTEM
-========================= -->
-
-<div id="bg-container">
-    <div id="slide1" class="slide active"></div>
-    <div id="slide2" class="slide"></div>
-</div>
-
-<div class="vignette"></div>
-
-<!-- =========================
-     APP
-========================= -->
-
 <div id="app">
 
-    <!-- HEADER STATIC (NO TOCAR ENGINE) -->
+    <!-- STATIC HEADER -->
+
     <div class="card center">
+
         <h2 style="color:var(--primary);">
             KAMIZEN LIFE SYSTEM
         </h2>
@@ -245,60 +299,44 @@ button:hover{
         <p class="small">
             Stories + Missions Active
         </p>
+
     </div>
 
-    <!-- START PLACEHOLDER (ENGINE REPLACES) -->
+    <!-- ENGINE RENDER -->
+
+    <div id="screen" class="card">
+
+        <h3>Loading system...</h3>
+
+        <p class="small">
+            Initializing stories & missions
+        </p>
+
+    </div>
+
+    <!-- OPTIONAL BREATH VISUAL -->
+
     <div class="card center">
-        <h3>Initializing System...</h3>
-        <p class="small">Waiting engine.js</p>
+
+        <h3>Breathing Module</h3>
+
+        <div class="breath-circle">
+
+            <span>FOCUS</span>
+
+        </div>
+
+        <p class="small">
+            Automatic regulation system
+        </p>
+
     </div>
 
 </div>
 
-<!-- =========================
-     ENGINE
-========================= -->
+<!-- ENGINE -->
 
 <script src="/static/js/engine.js"></script>
-
-<!-- =========================
-     BACKGROUND ROTATOR
-========================= -->
-
-<script>
-const slide1 = document.getElementById("slide1");
-const slide2 = document.getElementById("slide2");
-
-let current = slide1;
-
-const keywords = [
-    "nature", "forest", "sky", "mountains",
-    "galaxy", "ocean", "calm", "sunset"
-];
-
-function newImage(){
-    const key = keywords[Math.floor(Math.random() * keywords.length)];
-    return `https://source.unsplash.com/1920x1080/?${key}&sig=${Math.random()}`;
-}
-
-slide1.style.backgroundImage = `url('${newImage()}')`;
-slide2.style.backgroundImage = `url('${newImage()}')`;
-
-function changeBG(){
-
-    const next = (current === slide1) ? slide2 : slide1;
-
-    next.style.backgroundImage = `url('${newImage()}')`;
-
-    setTimeout(() => {
-        current.classList.remove("active");
-        next.classList.add("active");
-        current = next;
-    }, 500);
-}
-
-setInterval(changeBG, 4000);
-</script>
 
 </body>
 </html>
