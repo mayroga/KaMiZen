@@ -71,13 +71,20 @@ async function loadAllData() {
    CONTROLES DE NAVEGACIÓN
 ========================= */
 function jumpToBlock() {
-    const target = prompt("Enter the Block Number you want to jump to:");
-    if (target !== null && !isNaN(target) && target !== "") {
-        window.speechSynthesis.cancel();
-        clearInterval(state.timer);
-        state.currentBlock = parseInt(target);
-        state.phase = "mission";
-        render();
+    const targetMissionId = prompt("Enter the MISSION ID to jump to (e.g., 50, 60):");
+    if (targetMissionId !== null && targetMissionId !== "") {
+        const idx = state.missions.findIndex(m => m.id === Number(targetMissionId));
+        
+        if (idx !== -1) {
+            window.speechSynthesis.cancel();
+            clearInterval(state.timer);
+            state.currentIndex = idx;   // Cambia a la misión correcta
+            state.currentBlock = 0;     // Reinicia al primer bloque de esa misión
+            state.phase = "story";      // Empieza por la historia de esa misión
+            render();
+        } else {
+            alert("Mission ID not found. Please check your data.");
+        }
     }
 }
 
