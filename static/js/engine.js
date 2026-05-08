@@ -78,9 +78,9 @@ function jumpToBlock() {
         if (idx !== -1) {
             window.speechSynthesis.cancel();
             clearInterval(state.timer);
-            state.currentIndex = idx;   // Cambia a la misión correcta
-            state.currentBlock = 0;     // Reinicia al primer bloque de esa misión
-            state.phase = "story";      // Empieza por la historia de esa misión
+            state.currentIndex = idx;   
+            state.currentBlock = 0;     
+            state.phase = "story";      
             render();
         } else {
             alert("Mission ID not found. Please check your data.");
@@ -261,7 +261,10 @@ function renderBlock(block, navHeader) {
     narrate(textToRead, () => {
         if (block.t === "breath_auto" || block.t === "br" || block.t === "sil") {
             startCountdown(15, nextBlock);
-            if (block.t.includes("br") || block.t.includes("breath")) startGuidedBreathing();
+            // NUEVO: Se pasan la instrucción (tx) y la info (inf) para que la voz sea específica y dinámica
+            if (block.t.includes("br") || block.t.includes("breath")) {
+                startGuidedBreathing(block.tx?.en, block.inf?.en);
+            }
         } else if (block.t !== "d") {
             unlockContinue("CONTINUE", nextBlock);
         }
@@ -285,8 +288,8 @@ function narrate(text, callback) {
     window.speechSynthesis.speak(speech);
 }
 
-// NUEVO: Parámetro originalText añadido para reforzar la instrucción
-function startGuidedBreathing(originalText) {
+// NUEVO: Función optimizada para leer la acción específica de cada bloque sin errores de 'undefined'
+function startGuidedBreathing(instruction, info) {
     const circle = document.getElementById("breathCircle");
     const label = document.getElementById("breathLabel");
     if (!circle || !label) return;
@@ -301,8 +304,11 @@ function startGuidedBreathing(originalText) {
         circle.style.transform = inhale ? "scale(1.4)" : "scale(0.8)";
         circle.style.transition = "transform 4s ease-in-out";
         
-        // NUEVO: Ahora utiliza la instrucción completa leída inicialmente para guiar el ciclo
-        narrate(inhale ? `BREATHE NOW. ${originalText}` : `BREATHE NOW. ${originalText}`);
+        // NUEVO: Construcción de voz dinámica. Si no hay info, usa un texto genérico profesional.
+        const actionText = inhale ? "Inhale deeply." : "Exhale slowly.";
+        const detailText = info || instruction || "Focus on your breath.";
+        
+        narrate(`${actionText} ${detailText}`);
         
         inhale = !inhale;
     }, 4000);
