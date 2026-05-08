@@ -14,22 +14,26 @@
             --danger: #ef4444;
             --text: #ffffff;
             --dim: #94a3b8;
-            --btn-response: #2563eb; /* Azul brillante y profesional */
+            --btn-response: #1d4ed8; /* Azul profundo para respuestas */
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
         html, body {
             width: 100%;
             min-height: 100%;
             overflow-x: hidden;
             background: #000;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', Arial, sans-serif;
             color: var(--text);
         }
 
         /* =========================
-           BACKGROUND SYSTEM (NINOS Y NATURALEZA)
+           BACKGROUND SYSTEM
         ========================= */
         .container {
             position: fixed;
@@ -48,140 +52,127 @@
             background-size: cover;
             background-position: center;
             opacity: 0;
-            transition: opacity 2.5s ease-in-out;
-            transform: scale(1.05);
+            transition: opacity 2s ease-in-out;
+            transform: scale(1.04);
         }
 
-        .slide.active { opacity: 1; transform: scale(1); }
+        .slide.active { opacity: 1; }
 
         .overlay {
             position: absolute;
             inset: 0;
-            background: radial-gradient(circle, rgba(0,0,0,0) 30%, rgba(0,0,0,0.8) 100%);
+            background: radial-gradient(circle, rgba(0,0,0,0.10) 20%, rgba(0,0,0,0.85) 100%);
             pointer-events: none;
             z-index: 1;
         }
 
         /* =========================
-           UI LAYOUT
+           APP UI
         ========================= */
         #app {
             position: relative;
             z-index: 5;
             width: 100%;
-            max-width: 750px;
+            max-width: 700px;
             margin: auto;
             padding: 20px;
         }
 
         .card {
-            background: rgba(10, 20, 40, 0.85);
-            backdrop-filter: blur(12px);
-            padding: 25px;
-            border-radius: 20px;
-            margin: 20px 0;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
-            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(17, 26, 46, 0.82);
+            backdrop-filter: blur(8px);
+            padding: 20px;
+            border-radius: 16px;
+            margin: 15px 0;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.45);
+            border: 1px solid rgba(255,255,255,0.08);
+            position: relative;
         }
 
         /* =========================
-           BOTONES DE RESPUESTA AZULES
+           RESPONSE BUTTONS (ENCAPSULACIÓN)
         ========================= */
-        .response-button {
+        .response-block {
             display: block;
             width: 100%;
             background: var(--btn-response);
             color: white;
-            padding: 22px;
-            border-radius: 16px;
-            margin: 12px 0;
-            border: 3px solid rgba(255,255,255,0.25);
-            text-align: center;
-            font-size: 20px;
-            font-weight: 700;
-            cursor: pointer;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
-            transition: all 0.3s ease;
-        }
-
-        .response-button:hover {
-            transform: translateY(-3px);
-            background: #1d4ed8;
-            border-color: white;
+            padding: 15px;
+            border-radius: 12px;
+            margin: 10px 0;
+            border: 1px solid rgba(255,255,255,0.2);
+            text-align: left;
+            font-size: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
 
         /* =========================
-           BOTÓN SKIP (ROJO Y LIMPIEZA)
+           SKIP BUTTON (LIMPIEZA)
         ========================= */
         .skip-btn {
             background: var(--danger);
             color: white;
-            padding: 14px 30px;
-            border-radius: 12px;
-            font-size: 15px;
-            font-weight: 900;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: bold;
             cursor: pointer;
             border: none;
-            margin: 15px auto;
-            display: block;
+            margin-top: 15px;
+            float: right;
+            transition: 0.3s;
             text-transform: uppercase;
-            letter-spacing: 2px;
-            transition: 0.4s;
         }
 
         .skip-btn:hover {
-            background: #ff1111;
-            box-shadow: 0 0 20px rgba(239, 68, 68, 0.6);
+            background: #b91c1c;
+            transform: scale(1.05);
         }
 
         /* =========================
-           INPUTS & UTILS
+           BREATHING & UTILS
         ========================= */
-        .main-btn {
-            background: var(--primary);
-            color: white;
-            padding: 18px;
-            border-radius: 15px;
-            width: 100%;
-            font-weight: 800;
-            font-size: 18px;
-            border: none;
-            cursor: pointer;
-            text-transform: uppercase;
-        }
-
-        input {
-            width: 100%;
-            padding: 16px;
-            border-radius: 15px;
-            border: 2px solid var(--primary);
-            background: #0f172a;
-            color: white;
-            text-align: center;
-            margin-bottom: 15px;
-            font-size: 22px;
-        }
-
         .breath-circle {
-            width: 130px;
-            height: 130px;
+            width: 140px;
+            height: 140px;
             border-radius: 50%;
             margin: 20px auto;
-            border: 5px solid var(--primary);
+            border: 4px solid var(--primary);
             display: flex;
             align-items: center;
             justify-content: center;
             animation: breathe 6s infinite ease-in-out;
-            font-weight: 900;
+            font-weight: bold;
         }
 
         @keyframes breathe {
-            0%, 100% { transform: scale(0.9); opacity: 0.8; }
+            0%, 100% { transform: scale(0.85); opacity: 0.7; }
             50% { transform: scale(1.15); opacity: 1; border-color: var(--success); }
         }
 
-        .center { text-align: center; }
-        .small { font-size: 14px; color: var(--dim); }
+        button.main-btn {
+            background: var(--primary);
+            color: white;
+            padding: 14px;
+            border-radius: 12px;
+            border: none;
+            width: 100%;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            border: none;
+            background: #1f2937;
+            color: white;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .clearfix::after { content: ""; clear: both; display: table; }
     </style>
 </head>
 
@@ -196,52 +187,44 @@
 <div id="app">
 
     <div class="card center">
-        <h2 style="color:var(--primary); font-size: 28px;">KAMIZEN LIFE SYSTEM</h2>
-        <p class="small">Neural Experience • Family • Nature • Discipline</p>
+        <h2 style="color:var(--primary);">KAMIZEN LIFE SYSTEM</h2>
+        <p class="small">Neural Training • Awareness • Discipline</p>
 
-        <div style="margin-top:25px;">
-            <input type="number" id="missionSelector" min="1" max="50" value="1" />
-            <button class="main-btn" onclick="jumpToMission()">ACTIVATE SESSION</button>
+        <div style="margin-top:20px;">
+            <input type="number" id="missionSelector" min="1" max="49" value="1" />
+            <button class="main-btn" onclick="jumpToMission()">LOAD STORY & MISSION</button>
         </div>
     </div>
 
-    <!-- AREA DE RESPUESTAS (BOTONES AZULES) -->
-    <div id="screen" class="card">
+    <!-- AREA DE RESPUESTAS DINÁMICAS -->
+    <div id="screen" class="card clearfix">
         <div id="responseContainer">
-            <button class="response-button">
-                SISTEMA LISTO: SELECCIONE UNA MISIÓN
-            </button>
+            <div class="response-block">
+                <h3>System Ready</h3>
+                <p>Waiting for mission activation...</p>
+            </div>
         </div>
-        
-        <button class="skip-btn" onclick="clearScreen()">SKIP / RESET CACHE</button>
+        <button class="skip-btn" onclick="clearScreen()">Skip / Clear</button>
     </div>
 
     <div class="card center">
+        <h3>Breathing Module</h3>
         <div class="breath-circle"><span>FOCUS</span></div>
-        <p class="small">BREATHING SYNC ACTIVE</p>
     </div>
 
 </div>
 
 <script>
-    /* LÓGICA DE FONDOS (TEMÁTICA SOLICITADA) */
+    /* LÓGICA DE FONDOS */
     const slides = [document.getElementById('img1'), document.getElementById('img2')];
     let currentIdx = 0;
-    
-    // Palabras clave para el generador de imágenes
-    const topics = [
-        'kids-playing-nature', 'beach-sunset', 'mountain-climbing', 'ocean-waves', 
-        'moon-night', 'blue-sky-sun', 'forest-trees', 'city-buildings-streets', 'happy-family'
-    ];
+    const topics = ['space', 'ocean', 'landscape', 'galaxy', 'forest', 'stars'];
 
     function fetchImage() {
-        const topic = topics[Math.floor(Math.random() * topics.length)];
-        const randomID = Math.floor(Math.random() * 14000);
-        // Usamos una fuente de imágenes de alta calidad (Unsplash via Source o similar)
-        return `https://source.unsplash.com/featured/1920x1080?${topic}&sig=${randomID}`;
+        const randomID = Math.floor(Math.random() * 10000);
+        return `https://picsum.photos/1920/1080?random=${randomID}&topic=${topics[Math.floor(Math.random()*topics.length)]}`;
     }
 
-    // Inicializar
     slides[0].style.backgroundImage = `url('${fetchImage()}')`;
     slides[1].style.backgroundImage = `url('${fetchImage()}')`;
 
@@ -259,39 +242,35 @@
     }
     setInterval(rotateBackground, 4000);
 
-    /* LÓGICA DE MISIONES */
+    /* LÓGICA DE INTERFAZ Y LIMPIEZA */
     function jumpToMission() {
         const val = document.getElementById('missionSelector').value;
         const container = document.getElementById('responseContainer');
         
-        // Crear un nuevo botón azul para la respuesta
-        const respBtn = document.createElement('button');
-        respBtn.className = 'response-button';
-        respBtn.innerHTML = `MISIÓN ${val} CARGADA: ¡A JUGAR Y APRENDER!`;
-        respBtn.onclick = () => console.log(`Iniciando misión ${val}`);
+        // Encapsulamos la nueva respuesta en el bloque azul
+        const newBlock = document.createElement('div');
+        newBlock.className = 'response-block';
+        newBlock.innerHTML = `<h3>Mission ${val} Loaded</h3><p>Neural link established. Proceed with caution.</p>`;
         
-        // Limpieza de rastro anterior
+        // Limpiamos lo anterior para no dejar rastro y ponemos lo nuevo
         container.innerHTML = ''; 
-        container.appendChild(respBtn);
+        container.appendChild(newBlock);
 
         if (typeof window.engineJump === 'function') window.engineJump(val);
     }
 
-    /* FUNCIÓN SKIP: LIMPIA TODO RASTRO */
     function clearScreen() {
         const container = document.getElementById('responseContainer');
-        
-        // Eliminación total de elementos del DOM
+        // Eliminación total de nodos para no dejar caché visual ni rastro en el DOM
         while (container.firstChild) {
             container.removeChild(container.firstChild);
         }
         
-        // Bloque vacío neutral
-        const placeholder = document.createElement('button');
-        placeholder.className = 'response-button';
+        // Feedback de sistema limpio
+        const placeholder = document.createElement('div');
+        placeholder.className = 'response-block';
         placeholder.style.background = 'rgba(255,255,255,0.05)';
-        placeholder.style.border = '1px dashed var(--dim)';
-        placeholder.innerText = 'SISTEMA LIMPIO - ESPERANDO SEÑAL';
+        placeholder.innerHTML = `<p style="color:var(--dim); text-align:center;">Cache cleared. System idle.</p>`;
         container.appendChild(placeholder);
     }
 </script>
