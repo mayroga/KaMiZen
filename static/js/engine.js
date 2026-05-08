@@ -1,13 +1,15 @@
 /* =========================================================
-   KAMIZEN ENGINE V10 - FULL STABLE SYSTEM (UPDATED)
+   KAMIZEN ENGINE V10 - FULL STABLE SYSTEM
    ✔ Reads ALL 49 stories
-   ✔ Reads ALL missions (01-35 + 36-42 + 43-49)
-   ✔ Safe multi-file mission system
+   ✔ Reads ALL 49 missions
+   ✔ Reads inf correctly
    ✔ No freeze
    ✔ No double render
    ✔ Speech lock until narration ends
-   ✔ Safe mission jump system
-   ✔ FIXED: exam/missions split support
+   ✔ Loading screen first
+   ✔ Manual start button
+   ✔ Breathing text + inf visible
+   ✔ Sequential clean flow 1 -> 49 -> 1
    ========================================================= */
 
 /* =========================
@@ -21,7 +23,7 @@ let state = {
     currentIndex: 0,
     currentBlock: 0,
 
-    phase: "loading",
+    phase: "loading", // loading | intro | story | mission
 
     speechLocked: false,
     initialized: false
@@ -76,18 +78,10 @@ async function loadAllData() {
             ? storiesData.stories.sort((a, b) => a.id - b.id)
             : [];
 
-        /* MISSIONS (FULL SAFE MERGE) */
-        let rawMissions = [];
-
-        if (Array.isArray(missionsData.missions)) {
-            rawMissions = missionsData.missions;
-        } else if (missionsData.missions && Array.isArray(missionsData.missions.missions)) {
-            rawMissions = missionsData.missions.missions;
-        }
-
-        state.missions = rawMissions
-            .filter(m => m && typeof m.id === "number")
-            .sort((a, b) => a.id - b.id);
+        /* MISSIONS */
+        state.missions = Array.isArray(missionsData.missions)
+            ? missionsData.missions.sort((a, b) => a.id - b.id)
+            : [];
 
         console.log("STORIES:", state.stories.length);
         console.log("MISSIONS:", state.missions.length);
@@ -101,14 +95,14 @@ async function loadAllData() {
         app.innerHTML = `
             <div class="card">
                 <h2>SYSTEM ERROR</h2>
-                <p>Failed loading system data</p>
+                <p>Failed loading missions</p>
             </div>
         `;
     }
 }
 
 /* =========================
-   INTRO
+   INTRO SCREEN
 ========================= */
 
 function showIntro() {
@@ -120,9 +114,13 @@ function showIntro() {
     app.innerHTML = `
         <div class="card">
             <h1>KAMIZEN LIFE SYSTEM</h1>
-            <p>Awareness • Control • Focus • Discipline</p>
+
+            <p>
+                Awareness • Control • Safety • Focus
+            </p>
+
             <p style="opacity:.8;">
-                ${state.missions.length} Missions Loaded
+                49 Stories • 49 Missions
             </p>
         </div>
 
@@ -133,7 +131,7 @@ function showIntro() {
 }
 
 /* =========================
-   START
+   START SYSTEM
 ========================= */
 
 function startSystem() {
@@ -143,14 +141,6 @@ function startSystem() {
     state.phase = "story";
 
     render();
-}
-
-/* =========================
-   SAFE MISSION FINDER (IMPORTANT FIX)
-========================= */
-
-function getMissionByIndex(index) {
-    return state.missions[index] || null;
 }
 
 /* =========================
@@ -164,7 +154,9 @@ function render() {
     const app = document.getElementById("app");
 
     const story = state.stories[state.currentIndex];
-    const mission = getMissionByIndex(state.currentIndex);
+    const mission = state.missions[state.currentIndex];
+
+    /* LOOP SYSTEM */
 
     if (!story || !mission) {
 
@@ -175,27 +167,53 @@ function render() {
         return render();
     }
 
-    /* STORY */
+    /* =========================
+       STORY SCREEN
+    ========================= */
+
     if (state.phase === "story") {
 
         app.innerHTML = `
             <div class="card">
-                <h2>STORY ${story.id}</h2>
-                <h3>${story.t || ""}</h3>
-                <p>${story.en || ""}</p>
+
+                <h2>
+                    STORY ${story.id}
+                </h2>
+
+                <h3>
+                    ${story.t || ""}
+                </h3>
+
+                <p>
+                    ${story.en || ""}
+                </p>
+
             </div>
 
-            <button id="continueBtn" disabled>NARRATING...</button>
+            <button id="continueBtn" disabled>
+                NARRATING...
+            </button>
         `;
 
-        narrate(`${story.t}. ${story.en}`, () => {
-            unlockContinue("START MISSION", startMission);
-        });
+        narrate(
+            `${story.t || ""}. ${story.en || ""}`,
+            () => {
+
+                unlockContinue(
+                    "START MISSION",
+                    startMission
+                );
+
+            }
+        );
 
         return;
     }
 
-    /* MISSION */
+    /* =========================
+       MISSION SCREEN
+    ========================= */
+
     if (state.phase === "mission") {
 
         const block = mission.b[state.currentBlock];
@@ -210,7 +228,7 @@ function render() {
 }
 
 /* =========================
-   BLOCK RENDER (UNCHANGED CORE)
+   RENDER BLOCK
 ========================= */
 
 function renderBlock(block) {
@@ -218,104 +236,329 @@ function renderBlock(block) {
     const app = document.getElementById("app");
 
     let html = "";
+
     let narration = "";
 
+    /* =========================
+       VISUAL TITLE
+    ========================= */
+
     if (block.t === "v") {
-        html += `<div class="card"><h2>${block.tx?.en || ""}</h2></div>`;
-        narration += block.tx?.en + ". ";
+
+        html += `
+            <div class="card">
+                <h2>${block.tx?.en || ""}</h2>
+            </div>
+        `;
+
+        narration += `${block.tx?.en || ""}. `;
     }
+
+    /* =========================
+       HEADER
+    ========================= */
 
     if (block.t === "h") {
-        html += `<div class="card"><p>${block.tx?.en || ""}</p></div>`;
-        narration += block.tx?.en + ". ";
+
+        html += `
+            <div class="card">
+                <p>${block.tx?.en || ""}</p>
+            </div>
+        `;
+
+        narration += `${block.tx?.en || ""}. `;
     }
+
+    /* =========================
+       STORY INSIDE MISSION
+    ========================= */
 
     if (block.story) {
-        html += `<div class="card"><p>${block.story.en || ""}</p></div>`;
-        narration += block.story.en + ". ";
-    }
-
-    /* ✅ FIXED SILENCE TIMER SUPPORT */
-    if (block.t === "sil") {
-
-        const t = block.d || 0;
 
         html += `
             <div class="card">
-                <h3>${block.tx?.en || ""}</h3>
-                <p>${block.inf?.en || ""}</p>
-                <p><b>Duration: ${t} seconds</b></p>
+                <p>${block.story.en || ""}</p>
             </div>
         `;
 
-        narration += `${block.tx?.en}. ${block.inf?.en}. ${t} seconds.`;
+        narration += `${block.story.en || ""}. `;
     }
 
-    if (block.t === "breath_auto" || block.t === "br") {
+    /* =========================
+       BREATHING
+    ========================= */
+
+    if (
+        block.t === "breath_auto" ||
+        block.t === "br"
+    ) {
+
         html += `
-            <div class="card">
-                <div class="breath-circle" id="breathCircle">
-                    <span id="breathLabel">INHALE</span>
+            <div class="card" style="text-align:center;">
+
+                <div class="breath-circle"
+                     id="breathCircle">
+
+                    <span id="breathLabel">
+                        INHALE
+                    </span>
+
                 </div>
 
-                <h3>${block.tx?.en || ""}</h3>
-                <p>${block.inf?.en || ""}</p>
+                <h3>
+                    ${block.tx?.en || ""}
+                </h3>
+
+                <p>
+                    ${block.inf?.en || ""}
+                </p>
+
             </div>
         `;
 
-        narration += `${block.tx?.en}. ${block.inf?.en}.`;
+        narration += `
+            ${block.tx?.en || ""}.
+            ${block.inf?.en || ""}.
+        `;
+    }
+
+    /* =========================
+       DECISION
+    ========================= */
+
+    if (block.t === "d") {
+
+        html += `
+            <div class="card">
+
+                <h3>
+                    ${block.q?.en || ""}
+                </h3>
+        `;
+
+        narration += `${block.q?.en || ""}. `;
+
+        if (Array.isArray(block.op)) {
+
+            block.op.forEach((option, index) => {
+
+                html += `
+                    <div class="answer"
+                         onclick="selectAnswer(
+                            ${index},
+                            ${block.c},
+                            ${JSON.stringify(block.ex).replace(/"/g, '&quot;')}
+                         )">
+
+                        ${option}
+
+                    </div>
+                `;
+
+                narration += `${option}. `;
+            });
+        }
+
+        html += `</div>`;
+    }
+
+    /* =========================
+       SILENCE
+    ========================= */
+
+    if (block.t === "sil") {
+
+        html += `
+            <div class="card">
+
+                <h3>
+                    ${block.tx?.en || ""}
+                </h3>
+
+                <p>
+                    ${block.inf?.en || ""}
+                </p>
+
+            </div>
+        `;
+
+        narration += `
+            ${block.tx?.en || ""}.
+            ${block.inf?.en || ""}.
+        `;
+    }
+
+    /* =========================
+       REWARD
+    ========================= */
+
+    if (block.t === "r") {
+
+        html += `
+            <div class="card">
+
+                <h2>
+                    ⭐ ${block.tx || ""}
+                </h2>
+
+                <p>
+                    +${block.p || 0} XP
+                </p>
+
+            </div>
+        `;
+
+        narration += `
+            ${block.tx || ""}.
+            ${block.p || 0} experience points.
+        `;
+    }
+
+    /* =========================
+       CONCLUSION
+    ========================= */
+
+    if (block.t === "c") {
+
+        html += `
+            <div class="card">
+
+                <p>
+                    ${block.tx?.en || ""}
+                </p>
+
+            </div>
+        `;
+
+        narration += `${block.tx?.en || ""}. `;
+    }
+
+    /* =========================
+       CONTINUE BUTTON
+    ========================= */
+
+    if (block.t !== "d") {
+
+        html += `
+            <button id="continueBtn" disabled>
+                NARRATING...
+            </button>
+        `;
     }
 
     app.innerHTML = html;
 
-    if (block.t === "breath_auto" || block.t === "br") {
+    /* =========================
+       BREATHING START
+    ========================= */
+
+    if (
+        block.t === "breath_auto" ||
+        block.t === "br"
+    ) {
+
         startBreathingAnimation();
     }
 
+    /* =========================
+       NARRATION LOCK
+    ========================= */
+
     narrate(narration, () => {
-        unlockContinue("CONTINUE", nextBlock);
+
+        if (block.t !== "d") {
+
+            unlockContinue(
+                "CONTINUE",
+                nextBlock
+            );
+        }
     });
 }
 
 /* =========================
-   FIXED SILENCE TIMING (IMPORTANT)
+   ANSWER SYSTEM
 ========================= */
 
-function handleSilence(duration, callback) {
+function selectAnswer(index, correct, explanations) {
 
-    state.speechLocked = true;
+    if (state.speechLocked) return;
 
-    setTimeout(() => {
+    const app = document.getElementById("app");
 
-        state.speechLocked = false;
+    const isCorrect = index === correct;
 
-        if (callback) callback();
+    const explanation = explanations?.[index] || "";
 
-    }, (duration || 0) * 1000);
+    app.innerHTML += `
+        <div class="card">
+
+            <h3 style="color:${isCorrect ? '#22c55e' : '#ef4444'}">
+
+                ${isCorrect ? "CORRECT" : "WRONG"}
+
+            </h3>
+
+            <p>
+                ${explanation}
+            </p>
+
+        </div>
+
+        <button id="continueBtn" disabled>
+            NARRATING...
+        </button>
+    `;
+
+    narrate(explanation, () => {
+
+        unlockContinue(
+            "CONTINUE",
+            nextBlock
+        );
+
+    });
 }
 
 /* =========================
-   NAVIGATION
+   NEXT BLOCK
 ========================= */
 
 function nextBlock() {
+
     if (state.speechLocked) return;
+
     state.currentBlock++;
+
     render();
 }
 
+/* =========================
+   START MISSION
+========================= */
+
 function startMission() {
+
     if (state.speechLocked) return;
+
     state.phase = "mission";
     state.currentBlock = 0;
+
     render();
 }
+
+/* =========================
+   NEXT STORY
+========================= */
 
 function nextStory() {
 
     state.currentIndex++;
 
+    /* CLEAN LOOP */
+
     if (state.currentIndex >= state.stories.length) {
+
         state.currentIndex = 0;
     }
 
@@ -326,31 +569,49 @@ function nextStory() {
 }
 
 /* =========================
-   SPEECH
+   NARRATOR
 ========================= */
 
-function narrate(text, callback) {
+function narrate(text, callback = null) {
 
-    if (!text) return callback?.();
+    if (!text) {
+
+        if (callback) callback();
+
+        return;
+    }
 
     state.speechLocked = true;
+
+    window.speechSynthesis.cancel();
 
     const speech = new SpeechSynthesisUtterance(text);
 
     speech.lang = "en-US";
+
     speech.rate = 0.92;
+    speech.pitch = 1;
+    speech.volume = 1;
 
     speech.onend = () => {
+
         state.speechLocked = false;
-        callback?.();
+
+        if (callback) callback();
     };
 
-    window.speechSynthesis.cancel();
+    speech.onerror = () => {
+
+        state.speechLocked = false;
+
+        if (callback) callback();
+    };
+
     window.speechSynthesis.speak(speech);
 }
 
 /* =========================
-   UI CONTROL
+   BUTTON UNLOCK
 ========================= */
 
 function unlockContinue(label, action) {
@@ -361,11 +622,12 @@ function unlockContinue(label, action) {
 
     btn.disabled = false;
     btn.innerText = label;
+
     btn.onclick = action;
 }
 
 /* =========================
-   BREATHING
+   BREATHING ANIMATION
 ========================= */
 
 function startBreathingAnimation() {
@@ -377,39 +639,34 @@ function startBreathingAnimation() {
 
     let inhale = true;
 
-    setInterval(() => {
+    circle.style.transition =
+        "transform 4s ease-in-out";
+
+    function animate() {
+
+        if (!document.getElementById("breathCircle")) {
+            return;
+        }
 
         if (inhale) {
+
             label.innerText = "INHALE";
-            circle.style.transform = "scale(1.2)";
+
+            circle.style.transform =
+                "scale(1.25)";
+
         } else {
+
             label.innerText = "EXHALE";
-            circle.style.transform = "scale(0.8)";
+
+            circle.style.transform =
+                "scale(0.8)";
         }
 
         inhale = !inhale;
-
-    }, 4000);
-}
-
-/* =========================
-   JUMP FUNCTION (YOU ADDED)
-========================= */
-
-function goToMissionById(id) {
-
-    if (!state.missions || !state.missions.length) return;
-
-    const index = state.missions.findIndex(m => m.id === Number(id));
-
-    if (index === -1) {
-        alert("Write another mission ID that exists in list");
-        return;
     }
 
-    state.currentIndex = index;
-    state.currentBlock = 0;
-    state.phase = "mission";
+    animate();
 
-    render();
+    setInterval(animate, 4000);
 }
