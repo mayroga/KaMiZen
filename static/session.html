@@ -7,28 +7,31 @@
 <style>
 :root{
     --bg:#0b1220;
-    --card:#111a2e;
+    --card:rgba(11, 18, 32, 0.75);
     --primary:#3b82f6;
     --success:#22c55e;
     --danger:#ef4444;
     --text:#ffffff;
     --dim:#94a3b8;
 }
+
 *{
     box-sizing:border-box;
     margin:0;
     padding:0;
 }
+
 html, body{
     width:100%;
     height:100%;
     overflow-x:hidden;
     background:#000;
-    font-family:Segoe UI, Arial, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     color:var(--text);
 }
+
 /* =========================
-   SISTEMA DE FONDOS MEJORADO
+   SISTEMA DE FONDOS (14s)
 ========================= */
 .container{
     position:fixed;
@@ -39,6 +42,7 @@ html, body{
     overflow:hidden;
     background: #000;
 }
+
 .slide{
     position:absolute;
     inset:0;
@@ -48,19 +52,24 @@ html, body{
     background-position:center;
     background-repeat:no-repeat;
     opacity:0;
-    transition:opacity 2.5s ease-in-out;
-    transform:scale(1.1); /* Efecto de profundidad */
+    transition:opacity 3s ease-in-out; /* Transición suave de 3 segundos */
+    transform:scale(1.1);
 }
+
 .slide.active{
     opacity:1;
+    transform:scale(1);
+    transition: opacity 3s ease-in-out, transform 14s linear;
 }
+
 .overlay{
     position:absolute;
     inset:0;
-    background: radial-gradient(circle, rgba(0,0,0,0) 30%, rgba(0,0,0,0.85) 100%);
+    background: radial-gradient(circle, rgba(0,0,0,0) 20%, rgba(0,0,0,0.85) 100%);
     pointer-events:none;
     z-index: 1;
 }
+
 /* =========================
    APP UI
 ========================= */
@@ -72,18 +81,20 @@ html, body{
     margin:auto;
     padding:20px;
 }
+
 .card{
-    background:rgba(11, 18, 32, 0.75);
-    backdrop-filter:blur(12px);
-    padding:25px;
-    border-radius:20px;
-    margin:15px 0;
-    box-shadow:0 15px 35px rgba(0,0,0,0.6);
+    background:var(--card);
+    backdrop-filter:blur(15px);
+    padding:30px;
+    border-radius:24px;
+    margin:20px 0;
+    box-shadow:0 20px 40px rgba(0,0,0,0.7);
     border:1px solid rgba(255,255,255,0.1);
 }
+
 button{
     width:100%;
-    padding:16px;
+    padding:18px;
     border:none;
     border-radius:14px;
     background:var(--primary);
@@ -94,11 +105,14 @@ button{
     transition:0.3s;
     margin-top:12px;
     text-transform: uppercase;
+    letter-spacing: 1px;
 }
-button:hover{ background: #2563eb; transform:scale(1.02); }
+
+button:hover{ background: #2563eb; transform:translateY(-2px); box-shadow: 0 5px 15px rgba(59,130,246,0.4); }
+
 .breath-circle{
-    width:140px;
-    height:140px;
+    width:150px;
+    height:150px;
     border-radius:50%;
     margin:25px auto;
     border:5px solid var(--primary);
@@ -106,18 +120,21 @@ button:hover{ background: #2563eb; transform:scale(1.02); }
     align-items:center;
     justify-content:center;
     animation:breathe 7s infinite ease-in-out;
-    font-size:20px;
+    font-size:22px;
     font-weight:bold;
     box-shadow: 0 0 40px rgba(59,130,246,0.5);
 }
+
 @keyframes breathe{
-    0%, 100%{ transform:scale(0.8); opacity:0.6; }
+    0%, 100%{ transform:scale(0.85); opacity:0.6; }
     50%{ transform:scale(1.2); opacity:1; border-color:var(--success); box-shadow: 0 0 60px rgba(34,197,94,0.6); }
 }
-h2{ font-size:26px; letter-spacing: 1px; }
-p{ font-size:17px; line-height:1.5; }
-.small{ font-size:12px; color:var(--dim); text-transform: uppercase; }
+
+h2{ font-size:28px; letter-spacing: 1px; margin-bottom: 5px; }
+p{ font-size:18px; line-height:1.6; }
+.small{ font-size:12px; color:var(--dim); text-transform: uppercase; letter-spacing: 2px; }
 .center{ text-align:center; }
+
 input{
     width:100%;
     padding:15px;
@@ -125,86 +142,95 @@ input{
     border:none;
     background:rgba(255,255,255,0.1);
     color:white;
-    font-size:20px;
+    font-size:22px;
     text-align:center;
+    margin-bottom: 10px;
 }
 </style>
 </head>
 <body>
+
 <div class="container">
     <div id="img1" class="slide active"></div>
     <div id="img2" class="slide"></div>
     <div class="overlay"></div>
 </div>
+
 <div id="app">
     <div class="card center">
         <h2 style="color:var(--primary);">KAMIZEN LIFE SYSTEM</h2>
-        <p class="small">Core Session • Neural Stability</p>
-        <div style="margin-top:20px;">
+        <p class="small">Neural Training • USA Core</p>
+        <div style="margin-top:25px;">
             <input type="number" id="missionSelector" min="1" max="49" value="1" />
-            <button onclick="jumpToMission()">LOAD MISSION</button>
+            <button onclick="jumpToMission()">ACTIVATE MISSION</button>
         </div>
     </div>
+
     <div id="screen" class="card">
-        <h3>System Active</h3>
-        <p>Waiting for mission data...</p>
+        <h3>System Status: Online</h3>
+        <p>Awaiting neural synchronization. Focus on the flow of the images and your breath.</p>
     </div>
+
     <div class="card center">
         <div class="breath-circle"><span>AURA</span></div>
-        <p class="small">Breathing Sync Active</p>
+        <p class="small">Stability Module Active</p>
     </div>
 </div>
+
 <script>
 const slides = [document.getElementById('img1'), document.getElementById('img2')];
 let currentIdx = 0;
-// Lista de búsqueda para imágenes naturales de alto impacto
-const keywords = [
-    'deep-space', 'underwater-ocean', 'tropical-jungle', 'snowy-mountains', 
-    'mystic-forest', 'volcano-lava', 'northern-lights', 'desert-dunes', 
-    'nebula', 'waterfall', 'wild-animals', 'lightning-storm'
+
+// Temas épicos para niños y jóvenes en USA
+const topics = [
+    'space-nebula', 'wild-tiger', 'lightning-bolt', 'underwater-shark', 
+    'mountain-peak', 'volcano-eruption', 'aurora-borealis', 'deep-forest', 
+    'ocean-storm', 'galaxy-stars', 'desert-dunes', 'giant-waterfall'
 ];
-function getContextImage() {
-    const text = document.getElementById('screen').innerText.toLowerCase();
-    let selectedSearch = keywords[Math.floor(Math.random() * keywords.length)];
-    
-    // Si el texto de la app menciona algo específico, lo buscamos
-    keywords.forEach(k => {
-        if(text.includes(k.split('-')[0])) selectedSearch = k;
-    });
-    const seed = Math.floor(Math.random() * 2000);
-    // Usamos Unsplash Source que es más variado y específico que Picsum
-    return `https://images.unsplash.com/photo-${seed}?auto=format&fit=crop&w=1920&q=80&sig=${seed}`;
-    // Nota: Como Unsplash requiere IDs específicos, usaremos una técnica de búsqueda por palabra clave más robusta:
+
+function getNewImageUrl() {
+    const topic = topics[Math.floor(Math.random() * topics.length)];
+    const seed = Math.floor(Math.random() * 10000);
+    // Fuente de alta fidelidad para paisajes naturales
+    return `https://loremflickr.com/1920/1080/${topic}?random=${seed}`;
 }
-function fetchNewImage() {
-    const topic = keywords[Math.floor(Math.random() * keywords.length)];
-    const randomSeed = Math.random();
-    return `https://source.unsplash.com/1920x1080/?${topic}&sig=${randomSeed}`;
-}
-// Fallback por si Unsplash demora: usamos imágenes de alta calidad de naturaleza directa
+
 function updateBackground() {
     const nextIdx = (currentIdx + 1) % 2;
-    const topic = keywords[Math.floor(Math.random() * keywords.length)];
-    const newImgUrl = `https://loremflickr.com/1920/1080/${topic}?random=${Math.random()}`;
+    const newImgUrl = getNewImageUrl();
+    
+    // Precarga silenciosa para evitar parpadeos
     const tempImg = new Image();
     tempImg.src = newImgUrl;
+    
     tempImg.onload = () => {
         slides[nextIdx].style.backgroundImage = `url('${newImgUrl}')`;
+        
+        // Ejecutar la transición visual
         slides[currentIdx].classList.remove('active');
         slides[nextIdx].classList.add('active');
+        
         currentIdx = nextIdx;
     };
 }
-// Rotación cada 14 segundos
-setInterval(updateBackground, 7000);
-// Carga inicial inmediata
-updateBackground();
-// Escuchar cambios en la pantalla para reaccionar
+
+// CAMBIO CADA 14 SEGUNDOS (14000 ms)
+setInterval(updateBackground, 14000);
+
+// Inicialización de la primera imagen
+slides[0].style.backgroundImage = `url('${getNewImageUrl()}')`;
+
+// Observador para cambios en pantalla (reacciona al texto nuevo)
 const observer = new MutationObserver(() => {
+    // Si hay un cambio drástico en el texto, actualiza el ambiente
     updateBackground();
 });
 observer.observe(document.getElementById('screen'), { childList: true, subtree: true });
+
 </script>
+
+<!-- Motor Lógico Externo -->
 <script src="/static/js/engine.js"></script>
+
 </body>
 </html>
