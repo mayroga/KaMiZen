@@ -302,7 +302,7 @@ function startGuidedBreathing(originalText) {
         circle.style.transition = "transform 4s ease-in-out";
         
         // NUEVO: Ahora utiliza la instrucción completa leída inicialmente para guiar el ciclo
-        narrate(inhale ? `Inhale deeply. ${originalText}` : `Exhale slowly. ${originalText}`);
+        narrate(inhale ? `BREATHE. ${originalText}` : `BREATHE. ${originalText}`);
         
         inhale = !inhale;
     }, 4000);
