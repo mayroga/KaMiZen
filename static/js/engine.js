@@ -1,10 +1,10 @@
 /* =========================================================
    KAMIZEN ENGINE V12 - FULL EXPERT EDITION (NO CUTS)
-   ✔ Persistencia Local (LocalStorage)
-   ✔ Narración Total: Preguntas + Opciones + Feedback
-   ✔ Guía Vocal de Respiración (Inhale/Exhale)
-   ✔ Botón JUMP/SKIP para navegación directa
-   ✔ Soporte completo: v, h, story, br, sil, d, r, c
+   Persistencia Local (LocalStorage)
+   Narración Total: Preguntas + Opciones + Feedback
+   Guía Vocal de Respiración (Inhale/Exhale)
+   Botón JUMP/SKIP para navegación directa
+   Soporte completo: v, h, story, br, sil, d, r, c
    ========================================================= */
 
 let state = {
@@ -261,10 +261,8 @@ function renderBlock(block, navHeader) {
     narrate(textToRead, () => {
         if (block.t === "breath_auto" || block.t === "br" || block.t === "sil") {
             startCountdown(15, nextBlock);
-            // NUEVO: Se pasan la instrucción (tx) y la info (inf) para que la voz sea específica y dinámica
-            if (block.t.includes("br") || block.t.includes("breath")) {
-                startGuidedBreathing(block.tx?.en, block.inf?.en);
-            }
+            // ACTUALIZACIÓN: Se envía block.inf.en para evitar 'undefined'
+            if (block.t.includes("br") || block.t.includes("breath")) startGuidedBreathing(block.inf?.en);
         } else if (block.t !== "d") {
             unlockContinue("CONTINUE", nextBlock);
         }
@@ -288,8 +286,8 @@ function narrate(text, callback) {
     window.speechSynthesis.speak(speech);
 }
 
-// NUEVO: Función optimizada para leer la acción específica de cada bloque sin errores de 'undefined'
-function startGuidedBreathing(instruction, info) {
+// ACTUALIZACIÓN: Se añadió valor por defecto para originalText para eliminar el "undefined"
+function startGuidedBreathing(originalText) {
     const circle = document.getElementById("breathCircle");
     const label = document.getElementById("breathLabel");
     if (!circle || !label) return;
@@ -304,11 +302,9 @@ function startGuidedBreathing(instruction, info) {
         circle.style.transform = inhale ? "scale(1.4)" : "scale(0.8)";
         circle.style.transition = "transform 4s ease-in-out";
         
-        // NUEVO: Construcción de voz dinámica. Si no hay info, usa un texto genérico profesional.
-        const actionText = inhale ? "Inhale deeply." : "Exhale slowly.";
-        const detailText = info || instruction || "Focus on your breath.";
-        
-        narrate(`${actionText} ${detailText}`);
+        // ACTUALIZACIÓN: Verificación limpia del texto para la narración cíclica
+        const textToSay = originalText || "Breathe with the circle";
+        narrate(inhale ? `BREATHE NOW. ${textToSay}` : `BREATHE NOW. ${textToSay}`);
         
         inhale = !inhale;
     }, 4000);
