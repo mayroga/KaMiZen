@@ -285,7 +285,8 @@ function narrate(text, callback) {
     window.speechSynthesis.speak(speech);
 }
 
-function startGuidedBreathing() {
+// NUEVO: Parámetro originalText añadido para reforzar la instrucción
+function startGuidedBreathing(originalText) {
     const circle = document.getElementById("breathCircle");
     const label = document.getElementById("breathLabel");
     if (!circle || !label) return;
@@ -300,7 +301,8 @@ function startGuidedBreathing() {
         circle.style.transform = inhale ? "scale(1.4)" : "scale(0.8)";
         circle.style.transition = "transform 4s ease-in-out";
         
-        narrate(inhale ? "Inhale deeply" : "Exhale slowly");
+        // NUEVO: Ahora utiliza la instrucción completa leída inicialmente para guiar el ciclo
+        narrate(inhale ? `Inhale deeply. ${originalText}` : `Exhale slowly. ${originalText}`);
         
         inhale = !inhale;
     }, 4000);
