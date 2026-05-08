@@ -1,71 +1,79 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
+<meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>KAMIZEN LIFE SYSTEM - CORE SESSION</title>
 
 <style>
+
+/* =========================
+   BACKGROUND SYSTEM (NEW)
+========================= */
+
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+    background: #000;
+}
+
+#bg-container {
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+}
+
+.slide {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    opacity: 0;
+    transition: opacity 1.5s ease-in-out;
+    filter: brightness(0.6) contrast(1.1);
+}
+
+.slide.active {
+    opacity: 1;
+}
+
+.vignette {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    box-shadow: inset 0 0 180px rgba(0,0,0,0.75);
+    pointer-events: none;
+}
+
+/* =========================
+   ROOT
+========================= */
+
 :root{
-    --bg:rgba(0,0,0,0.6);
-    --card:rgba(17,26,46,0.85);
+    --bg:#0b1220;
+    --card:#111a2e;
     --primary:#3b82f6;
     --success:#22c55e;
     --danger:#ef4444;
+    --warning:#f59e0b;
+    --mid:#fbbf24;
     --text:#ffffff;
-    --dim:#cbd5e1;
+    --dim:#94a3b8;
 }
+
+/* =========================
+   GLOBAL
+========================= */
 
 *{
     box-sizing:border-box;
 }
 
 body{
-    margin:0;
     font-family:Segoe UI, Arial, sans-serif;
     color:var(--text);
-    display:flex;
-    justify-content:center;
-    min-height:100vh;
-    overflow:hidden;
-}
-
-/* =========================
-   BACKGROUND SYSTEM
-========================= */
-
-#bg-container {
-    position: fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    z-index:-2;
-}
-
-.slide {
-    position:absolute;
-    width:100%;
-    height:100%;
-    background-size:cover;
-    background-position:center;
-    opacity:0;
-    transition: opacity 1.5s ease-in-out;
-}
-
-.slide.active {
-    opacity:1;
-}
-
-.vignette{
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    box-shadow: inset 0 0 180px rgba(0,0,0,0.7);
-    pointer-events:none;
-    z-index:-1;
 }
 
 /* =========================
@@ -73,42 +81,31 @@ body{
 ========================= */
 
 #app{
+    position:relative;
+    z-index:2;
     width:100%;
-    max-width:700px;
+    max-width:720px;
+    margin:auto;
     padding:20px;
 }
 
 /* =========================
-   CARD SYSTEM
+   CARD SYSTEM (STRONG TEXT)
 ========================= */
 
 .card{
-    background:var(--card);
+    background:rgba(17,26,46,0.88);
+    backdrop-filter: blur(8px);
     padding:22px;
-    border-radius:16px;
+    border-radius:18px;
     margin:15px 0;
     border:1px solid rgba(255,255,255,0.08);
+    box-shadow:0 10px 30px rgba(0,0,0,0.4);
 }
 
-/* =========================
-   TEXT STRONGER (NIÑOS)
-========================= */
-
-h1,h2,h3{
-    margin:10px 0;
-    font-weight:800;
-    letter-spacing:0.5px;
-}
-
-p{
-    font-size:18px;
-    line-height:1.5;
-    color:var(--text);
-}
-
-.small{
-    font-size:13px;
-    color:var(--dim);
+h1,h2,h3,p{
+    font-weight:700;
+    letter-spacing:0.3px;
 }
 
 /* =========================
@@ -117,36 +114,46 @@ p{
 
 button{
     width:100%;
-    padding:14px;
+    padding:15px;
     border:none;
     border-radius:12px;
     background:var(--primary);
     color:white;
-    font-weight:bold;
-    font-size:16px;
+    font-weight:800;
     cursor:pointer;
+    transition:0.2s;
     margin-top:10px;
 }
 
 button:hover{
-    transform:translateY(-2px);
+    transform:scale(1.02);
 }
 
-.btn-secondary{background:#334155;}
-.btn-danger{background:var(--danger);}
-
 /* =========================
-   ANSWERS
+   ANSWERS (NEW COLOR SYSTEM)
 ========================= */
 
 .answer{
-    background:#1f2937;
     padding:14px;
-    margin:8px 0;
-    border-radius:10px;
-    border-left:4px solid var(--primary);
+    margin:10px 0;
+    border-radius:12px;
     cursor:pointer;
+    transition:0.2s;
+    font-weight:700;
+    border-left:5px solid var(--primary);
+    background:#1f2937;
 }
+
+.answer:hover{
+    transform:translateX(6px);
+}
+
+/* engine puede cambiar color inline, pero fallback */
+
+.answer.correct{ border-left-color: var(--success); }
+.answer.wrong{ border-left-color: var(--danger); }
+.answer.mid{ border-left-color: var(--mid); }
+.answer.warning{ border-left-color: var(--warning); }
 
 /* =========================
    BREATHING
@@ -161,73 +168,136 @@ button:hover{
     display:flex;
     align-items:center;
     justify-content:center;
-    animation:breathe 6s infinite ease-in-out;
+    font-weight:900;
 }
 
-@keyframes breathe{
-    0%{transform:scale(0.85);}
-    50%{transform:scale(1.25);border-color:var(--success);}
-    100%{transform:scale(0.85);}
+/* =========================
+   SMALL TEXT
+========================= */
+
+.small{
+    font-size:13px;
+    color:var(--dim);
 }
+
+/* =========================
+   SILENCE MODE VISUAL
+========================= */
+
+.silence{
+    text-align:center;
+    font-size:18px;
+    padding:20px;
+    color:var(--warning);
+    font-weight:800;
+}
+
+.timer{
+    font-size:22px;
+    font-weight:900;
+    margin-top:10px;
+}
+
+/* =========================
+   UTIL
+========================= */
+
+.center{
+    text-align:center;
+}
+
+.hidden{
+    display:none;
+}
+
 </style>
 </head>
 
 <body>
 
-<!-- BACKGROUND SYSTEM -->
+<!-- =========================
+     BACKGROUND SYSTEM
+========================= -->
+
 <div id="bg-container">
     <div id="slide1" class="slide active"></div>
     <div id="slide2" class="slide"></div>
 </div>
+
 <div class="vignette"></div>
+
+<!-- =========================
+     APP
+========================= -->
 
 <div id="app">
 
-    <div class="card">
-        <h2>KAMIZEN LIFE SYSTEM</h2>
-        <p>BODY • CALM • FOCUS • PRESENCE</p>
-        <p class="small">Stories + Missions Active</p>
+    <!-- HEADER STATIC (NO TOCAR ENGINE) -->
+    <div class="card center">
+        <h2 style="color:var(--primary);">
+            KAMIZEN LIFE SYSTEM
+        </h2>
+
+        <p class="small">
+            BODY • CALM • FOCUS • PRESENCE
+        </p>
+
+        <p class="small">
+            Stories + Missions Active
+        </p>
+    </div>
+
+    <!-- START PLACEHOLDER (ENGINE REPLACES) -->
+    <div class="card center">
+        <h3>Initializing System...</h3>
+        <p class="small">Waiting engine.js</p>
     </div>
 
 </div>
 
+<!-- =========================
+     ENGINE
+========================= -->
+
 <script src="/static/js/engine.js"></script>
 
-<script>
-/* =========================
-   BACKGROUND ROTATION (4s)
-========================= */
+<!-- =========================
+     BACKGROUND ROTATOR
+========================= -->
 
+<script>
 const slide1 = document.getElementById("slide1");
 const slide2 = document.getElementById("slide2");
+
 let current = slide1;
 
 const keywords = [
-    "nature","galaxy","forest","mountains",
-    "waterfall","space","animals","sky"
+    "nature", "forest", "sky", "mountains",
+    "galaxy", "ocean", "calm", "sunset"
 ];
 
-function img(){
-    return `https://source.unsplash.com/1920x1080/?${
-        keywords[Math.floor(Math.random()*keywords.length)]
-    }&sig=${Math.random()}`;
+function newImage(){
+    const key = keywords[Math.floor(Math.random() * keywords.length)];
+    return `https://source.unsplash.com/1920x1080/?${key}&sig=${Math.random()}`;
 }
 
-slide1.style.backgroundImage = `url('${img()}')`;
-slide2.style.backgroundImage = `url('${img()}')`;
+slide1.style.backgroundImage = `url('${newImage()}')`;
+slide2.style.backgroundImage = `url('${newImage()}')`;
 
 function changeBG(){
-    const next = current === slide1 ? slide2 : slide1;
-    next.style.backgroundImage = `url('${img()}')`;
 
-    setTimeout(()=>{
+    const next = (current === slide1) ? slide2 : slide1;
+
+    next.style.backgroundImage = `url('${newImage()}')`;
+
+    setTimeout(() => {
         current.classList.remove("active");
         next.classList.add("active");
         current = next;
-    },500);
+    }, 500);
 }
 
-setInterval(changeBG,4000);
+setInterval(changeBG, 4000);
 </script>
 
 </body>
