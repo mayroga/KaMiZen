@@ -1,11 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>KAMIZEN LIFE SYSTEM - CORE SESSION</title>
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0"/>
+
+<title>
+    KAMIZEN LIFE SYSTEM - CORE SESSION
+</title>
 
 <style>
+
 :root{
     --bg:#0b1220;
     --card:#111a2e;
@@ -18,21 +25,76 @@
 
 *{
     box-sizing:border-box;
+    margin:0;
+    padding:0;
 }
 
+/* =========================
+   BODY
+========================= */
+
+html,
 body{
-    margin:0;
+    width:100%;
+    min-height:100%;
+    overflow-x:hidden;
+    background:#000;
     font-family:Segoe UI, Arial, sans-serif;
-    background:var(--bg);
     color:var(--text);
-    display:flex;
-    justify-content:center;
-    min-height:100vh;
 }
+
+/* =========================
+   BACKGROUND SYSTEM
+========================= */
+
+.container{
+    position:fixed;
+    inset:0;
+    width:100%;
+    height:100%;
+    z-index:-10;
+    overflow:hidden;
+}
+
+.slide{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    background-size:cover;
+    background-position:center;
+    background-repeat:no-repeat;
+    opacity:0;
+    transition:opacity 2s ease-in-out;
+    transform:scale(1.04);
+}
+
+.slide.active{
+    opacity:1;
+}
+
+.overlay{
+    position:absolute;
+    inset:0;
+    background:
+        radial-gradient(
+            circle,
+            rgba(0,0,0,0.10) 20%,
+            rgba(0,0,0,0.78) 100%
+        );
+    pointer-events:none;
+}
+
+/* =========================
+   APP
+========================= */
 
 #app{
+    position:relative;
+    z-index:5;
     width:100%;
     max-width:700px;
+    margin:auto;
     padding:20px;
 }
 
@@ -41,12 +103,13 @@ body{
 ========================= */
 
 .card{
-    background:var(--card);
+    background:rgba(17,26,46,0.82);
+    backdrop-filter:blur(6px);
     padding:20px;
     border-radius:16px;
     margin:15px 0;
-    box-shadow:0 10px 25px rgba(0,0,0,0.3);
-    border:1px solid rgba(255,255,255,0.05);
+    box-shadow:0 10px 25px rgba(0,0,0,0.45);
+    border:1px solid rgba(255,255,255,0.08);
 }
 
 /* =========================
@@ -61,12 +124,19 @@ button{
     background:var(--primary);
     color:white;
     font-weight:bold;
+    font-size:16px;
     cursor:pointer;
     transition:0.2s;
+    margin-top:10px;
 }
 
 button:hover{
     transform:translateY(-2px);
+}
+
+button:disabled{
+    opacity:0.7;
+    cursor:not-allowed;
 }
 
 /* =========================
@@ -75,12 +145,14 @@ button:hover{
 
 .answer{
     background:#1f2937;
-    padding:12px;
-    margin:8px 0;
-    border-radius:10px;
+    padding:14px;
+    margin:10px 0;
+    border-radius:12px;
     cursor:pointer;
     border-left:4px solid var(--primary);
     transition:0.2s;
+    font-size:18px;
+    font-weight:600;
 }
 
 .answer:hover{
@@ -93,8 +165,8 @@ button:hover{
 ========================= */
 
 .breath-circle{
-    width:140px;
-    height:140px;
+    width:160px;
+    height:160px;
     border-radius:50%;
     margin:30px auto;
     border:4px solid var(--primary);
@@ -102,24 +174,66 @@ button:hover{
     align-items:center;
     justify-content:center;
     animation:breathe 6s infinite ease-in-out;
+    font-size:22px;
+    font-weight:bold;
+    box-shadow:
+        0 0 35px rgba(59,130,246,0.4);
 }
 
 @keyframes breathe{
-    0%{transform:scale(0.85);opacity:0.7;}
-    50%{transform:scale(1.25);opacity:1;border-color:var(--success);}
-    100%{transform:scale(0.85);opacity:0.7;}
+
+    0%{
+        transform:scale(0.85);
+        opacity:0.7;
+    }
+
+    50%{
+        transform:scale(1.25);
+        opacity:1;
+        border-color:var(--success);
+    }
+
+    100%{
+        transform:scale(0.85);
+        opacity:0.7;
+    }
 }
 
 /* =========================
    TEXT STYLES
 ========================= */
 
-h1,h2,h3{
+h1,h2,h3,p,span{
+
     margin:10px 0;
+
+    text-shadow:
+        0 2px 8px rgba(0,0,0,0.95);
+}
+
+h1{
+    font-size:34px;
+    font-weight:900;
+}
+
+h2{
+    font-size:28px;
+    font-weight:800;
+}
+
+h3{
+    font-size:22px;
+    font-weight:700;
+}
+
+p{
+    font-size:18px;
+    line-height:1.6;
+    font-weight:500;
 }
 
 .small{
-    font-size:12px;
+    font-size:13px;
     color:var(--dim);
 }
 
@@ -131,77 +245,257 @@ h1,h2,h3{
     display:none;
 }
 
+/* =========================
+   INPUT
+========================= */
+
+input{
+    width:100%;
+    padding:14px;
+    border-radius:12px;
+    border:none;
+    background:#1f2937;
+    color:white;
+    font-size:18px;
+    text-align:center;
+    margin-bottom:10px;
+}
+
+input:focus{
+    outline:none;
+    box-shadow:
+        0 0 10px rgba(59,130,246,0.6);
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media(max-width:700px){
+
+    #app{
+        padding:12px;
+    }
+
+    h1{
+        font-size:28px;
+    }
+
+    h2{
+        font-size:24px;
+    }
+
+    h3{
+        font-size:20px;
+    }
+
+    p{
+        font-size:17px;
+    }
+
+    .breath-circle{
+        width:140px;
+        height:140px;
+    }
+}
+
 </style>
 </head>
 
 <body>
 
+<!-- =========================
+     BACKGROUND SYSTEM
+========================= -->
+
+<div class="container">
+
+    <div id="img1"
+         class="slide active"></div>
+
+    <div id="img2"
+         class="slide"></div>
+
+    <div class="overlay"></div>
+
+</div>
+
+<!-- =========================
+     MAIN APP
+========================= -->
+
 <div id="app">
 
     <!-- HEADER STATIC -->
-<div class="card center">
 
-    <h2 style="color:var(--primary);">
-        KAMIZEN LIFE SYSTEM
-    </h2>
-
-    <p class="small">
-        Neural Training • Awareness • Discipline • Control
-    </p>
-
-    <!-- DIRECT MISSION SELECTOR -->
-    <div style="margin-top:20px;">
-
-        <input
-            type="number"
-            id="missionSelector"
-            min="1"
-            max="49"
-            value="1"
-            placeholder="1-49"
-            style="
-                width:100%;
-                padding:14px;
-                border-radius:12px;
-                border:none;
-                background:#1f2937;
-                color:white;
-                font-size:18px;
-                text-align:center;
-                margin-bottom:10px;
-            "
-        />
-
-        <button onclick="jumpToMission()">
-            LOAD STORY & MISSION
-        </button>
-
-    </div>
-
-</div>
-
-    <!-- MAIN RENDER AREA (ENGINE CONTROLS THIS) -->
-    <div id="screen" class="card">
-        <h3>Loading system...</h3>
-        <p class="small">Initializing stories & missions</p>
-    </div>
-
-    <!-- BREATHING AREA (OPTIONAL VISUAL ONLY) -->
     <div class="card center">
-        <h3>Breathing Module</h3>
+
+        <h2 style="color:var(--primary);">
+            KAMIZEN LIFE SYSTEM
+        </h2>
+
+        <p class="small">
+            Neural Training • Awareness • Discipline • Control
+        </p>
+
+        <!-- DIRECT MISSION SELECTOR -->
+
+        <div style="margin-top:20px;">
+
+            <input
+                type="number"
+                id="missionSelector"
+                min="1"
+                max="49"
+                value="1"
+                placeholder="1-49"
+            />
+
+            <button onclick="jumpToMission()">
+                LOAD STORY & MISSION
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- MAIN RENDER AREA -->
+
+    <div id="screen" class="card">
+
+        <h3>
+            Loading system...
+        </h3>
+
+        <p class="small">
+            Initializing stories & missions
+        </p>
+
+    </div>
+
+    <!-- BREATHING AREA -->
+
+    <div class="card center">
+
+        <h3>
+            Breathing Module
+        </h3>
 
         <div class="breath-circle">
-            <span>FOCUS</span>
+
+            <span>
+                FOCUS
+            </span>
+
         </div>
 
         <p class="small">
-            Automatic regulation system (controlled by engine.js)
+            Automatic regulation system
+            (controlled by engine.js)
         </p>
+
     </div>
 
 </div>
 
-<!-- ENGINE (ONLY CONTROLLER) -->
+<!-- =========================
+     BACKGROUND SCRIPT
+========================= -->
+
+<script>
+
+/* BACKGROUND SLIDES */
+
+const slides = [
+    document.getElementById('img1'),
+    document.getElementById('img2')
+];
+
+let currentIdx = 0;
+
+/* THEMES */
+
+const topics = [
+    'nature',
+    'space',
+    'ocean',
+    'animals',
+    'landscape',
+    'galaxy',
+    'forest',
+    'mountains',
+    'waterfall',
+    'stars'
+];
+
+/* FETCH IMAGE */
+
+function fetchImage() {
+
+    const topic =
+        topics[
+            Math.floor(
+                Math.random() * topics.length
+            )
+        ];
+
+    const randomID =
+        Math.floor(Math.random() * 10000);
+
+    return `
+        https://picsum.photos/1920/1080
+        ?random=${randomID}
+        &topic=${topic}
+    `;
+}
+
+/* INITIAL LOAD */
+
+slides[0].style.backgroundImage =
+    `url('${fetchImage()}')`;
+
+slides[1].style.backgroundImage =
+    `url('${fetchImage()}')`;
+
+/* ROTATION */
+
+function rotateBackground() {
+
+    const nextIdx =
+        (currentIdx + 1) % 2;
+
+    const imgUrl = fetchImage();
+
+    const img = new Image();
+
+    img.src = imgUrl;
+
+    img.onload = () => {
+
+        slides[nextIdx].style.backgroundImage =
+            `url('${imgUrl}')`;
+
+        slides[currentIdx]
+            .classList.remove('active');
+
+        slides[nextIdx]
+            .classList.add('active');
+
+        currentIdx = nextIdx;
+    };
+}
+
+/* AUTO CHANGE */
+
+setInterval(
+    rotateBackground,
+    4000
+);
+
+</script>
+
+<!-- ENGINE -->
+
 <script src="/static/js/engine.js"></script>
 
 </body>
