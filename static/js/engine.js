@@ -141,7 +141,7 @@ function showIntro() {
     document.getElementById("app").innerHTML = `
         <div class="card center">
             <h1>KAMIZEN LIFE SYSTEM</h1>
-            <p>Guía de Control y Enfoque</p>
+            <p>Control and Focus Guide</p>
             <button onclick="startSystem()">Continue where I left off</button>
             <button onclick="restartSystem()" style="background:var(--danger);margin-top:10px;">RESTART FROM ZERO</button>
         </div>
