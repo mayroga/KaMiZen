@@ -1,11 +1,11 @@
-/* =========================
-   KAMIZEN ENGINE V11 - EXPERT EDITION
+/* =========================================================
+   KAMIZEN ENGINE V11 - FULL EXPERT EDITION
+   ✔ Integración Total: v, h, story, br, sil, d, r, c
+   ✔ Reloj Descontador Fijo (MM:SS) para Silencio/Respiración
    ✔ Persistencia Automática (LocalStorage)
-   ✔ Reloj Descontador en tiempo real (Respiración/Silencio)
-   ✔ Auto-Jump tras narración (Fricción Cero)
-   ✔ Controles: Back, Restart, Jump
-   ✔ Sistema Adaptado para Niños (Guía Visual)
-   ========================= */
+   ✔ Controles Profesionales: Back, Reset, Jump
+   ✔ Auto-Flow: Narración -> Acción
+   ========================================================= */
 
 let state = {
     stories: [],
@@ -20,7 +20,7 @@ let state = {
 };
 
 /* =========================
-   ENGINE LOCK & PERSISTENCE
+   SISTEMA DE PERSISTENCIA
 ========================= */
 if (window.__KAMIZEN_ENGINE_ACTIVE__) {
     console.warn("KAMIZEN ENGINE ALREADY RUNNING");
@@ -28,7 +28,6 @@ if (window.__KAMIZEN_ENGINE_ACTIVE__) {
     window.__KAMIZEN_ENGINE_ACTIVE__ = true;
 }
 
-// Cargar progreso al iniciar
 function saveProgress() {
     localStorage.setItem('kamizen_save', JSON.stringify({
         currentIndex: state.currentIndex,
@@ -46,7 +45,7 @@ function loadProgress() {
 }
 
 /* =========================
-   INIT
+   INICIALIZACIÓN
 ========================= */
 window.addEventListener("load", async () => {
     loadProgress();
@@ -56,7 +55,7 @@ window.addEventListener("load", async () => {
 
 async function loadAllData() {
     const app = document.getElementById("app");
-    app.innerHTML = `<div class="card"><h2>LOADING SYSTEM...</h2></div>`;
+    app.innerHTML = `<div class="card"><h2>LOADING SYSTEM...</h2><p>Wait a moment...</p></div>`;
     try {
         const [storiesReq, missionsReq] = await Promise.all([
             fetch("/api/stories"),
@@ -69,15 +68,15 @@ async function loadAllData() {
         state.missions = Array.isArray(missionsData.missions) ? missionsData.missions.sort((a, b) => a.id - b.id) : [];
         state.initialized = true;
     } catch (err) {
-        app.innerHTML = `<div class="card"><h2>SYSTEM ERROR</h2></div>`;
+        app.innerHTML = `<div class="card"><h2>SYSTEM ERROR</h2><p>Check connection</p></div>`;
     }
 }
 
 /* =========================
-   UI CONTROLS (BACK / RESTART / JUMP)
+   CONTROLES DE USUARIO
 ========================= */
 function restartSystem() {
-    if(confirm("¿Are you sure you want to start from scratch?")) {
+    if(confirm("Are you sure you want to start from scratch?")) {
         localStorage.clear();
         state.currentIndex = 0;
         state.currentBlock = 0;
@@ -89,9 +88,12 @@ function restartSystem() {
 function goBack() {
     window.speechSynthesis.cancel();
     state.speechLocked = false;
+    clearInterval(state.timer);
     if (state.currentBlock > 0) {
         state.currentBlock--;
-    } else {
+    } else if (state.currentIndex > 0) {
+        state.currentIndex--;
+        state.currentBlock = 0;
         state.phase = "story";
     }
     render();
@@ -101,6 +103,7 @@ function goToMissionById(id) {
     const idx = state.missions.findIndex(m => m.id === Number(id));
     if (idx !== -1) {
         window.speechSynthesis.cancel();
+        clearInterval(state.timer);
         state.currentIndex = idx;
         state.currentBlock = 0;
         state.phase = "story";
@@ -111,7 +114,7 @@ function goToMissionById(id) {
 }
 
 /* =========================
-   TIMER LOGIC (MM:SS)
+   LÓGICA DEL RELOJ (TIMER)
 ========================= */
 function startCountdown(seconds, onComplete) {
     clearInterval(state.timer);
@@ -134,16 +137,16 @@ function startCountdown(seconds, onComplete) {
 }
 
 /* =========================
-   RENDER ENGINE
+   MOTOR DE RENDERIZADO
 ========================= */
 function showIntro() {
     state.phase = "intro";
     document.getElementById("app").innerHTML = `
         <div class="card center">
             <h1>KAMIZEN LIFE SYSTEM</h1>
-            <p>Control and Focus Guide</p>
-            <button onclick="startSystem()">Continue where I left off</button>
-            <button onclick="restartSystem()" style="background:var(--danger);margin-top:10px;">RESTART FROM ZERO</button>
+            <p>Training • Awareness • Control</p>
+            <button onclick="startSystem()">Continue Session</button>
+            <button onclick="restartSystem()" style="background:var(--danger);margin-top:10px;">REINICIAR TODO</button>
         </div>
     `;
 }
@@ -162,29 +165,29 @@ function render() {
 
     if (!story || !mission) {
         state.currentIndex = 0;
+        state.currentBlock = 0;
+        state.phase = "story";
         return render();
     }
 
-    // Header de navegación siempre visible
     let navHeader = `
         <div style="display:flex;gap:10px;margin-bottom:10px;">
-            <button onclick="goBack()" style="padding:5px;flex:1;">BACK</button>
-            <button onclick="restartSystem()" style="padding:5px;flex:1;background:var(--danger)">RESET</button>
+            <button onclick="goBack()" style="padding:8px;flex:1;background:#334155;">BACK</button>
+            <button onclick="restartSystem()" style="padding:8px;flex:1;background:var(--danger)">RESET</button>
         </div>
     `;
 
     if (state.phase === "story") {
         app.innerHTML = navHeader + `
             <div class="card">
-                <h2>STORY ${story.id}</h2>
+                <h2 style="color:var(--primary)">STORY ${story.id}</h2>
                 <h3>${story.t || ""}</h3>
-                <p>${story.en || ""}</p>
+                <p style="font-size:1.1rem; line-height:1.6;">${story.en || ""}</p>
             </div>
             <button id="continueBtn" disabled>NARRATING...</button>
         `;
         narrate(`${story.t}. ${story.en}`, () => {
-            // Auto-jump a la misión después de 2 segundos de terminar de hablar
-            setTimeout(startMission, 2000);
+            setTimeout(startMission, 1500);
         });
     } else {
         const block = mission.b[state.currentBlock];
@@ -198,19 +201,26 @@ function renderBlock(block, navHeader) {
     let html = navHeader;
     let narration = "";
 
-    // Timer UI para Respiración y Silencio
     const timerUI = `
-        <div class="card center" style="border: 2px solid var(--primary);">
-            <h1 id="timerDisplay" style="font-size:3rem;margin:0;">00:00</h1>
-            <p class="small">Stay Focused</p>
+        <div class="card center" style="border: 3px solid var(--primary); background: #0f172a;">
+            <h1 id="timerDisplay" style="font-size:4rem;margin:0; font-family: monospace;">00:00</h1>
+            <p style="color:var(--primary); letter-spacing: 2px;">KEEP FOCUS</p>
         </div>
     `;
 
+    // 1. BLOQUES VISUALES (v, h)
     if (block.t === "v" || block.t === "h") {
         html += `<div class="card"><h2>${block.tx?.en || ""}</h2></div>`;
         narration = block.tx?.en;
     }
 
+    // 2. STORY INSIDE MISSION
+    if (block.story) {
+        html += `<div class="card"><p>${block.story.en || ""}</p></div>`;
+        narration = block.story.en;
+    }
+
+    // 3. RESPIRACIÓN (br, breath_auto)
     if (block.t === "breath_auto" || block.t === "br") {
         html += timerUI + `
             <div class="card center">
@@ -221,11 +231,13 @@ function renderBlock(block, navHeader) {
         narration = `${block.tx?.en}. ${block.inf?.en}`;
     }
 
+    // 4. SILENCIO (sil)
     if (block.t === "sil") {
         html += timerUI + `<div class="card"><h3>${block.tx?.en || ""}</h3><p>${block.inf?.en || ""}</p></div>`;
         narration = `${block.tx?.en}. ${block.inf?.en}`;
     }
 
+    // 5. DECISIÓN (d)
     if (block.t === "d") {
         html += `<div class="card"><h3>${block.q?.en || ""}</h3>`;
         block.op?.forEach((opt, i) => {
@@ -235,18 +247,29 @@ function renderBlock(block, navHeader) {
         narration = block.q?.en;
     }
 
+    // 6. REWARD (r)
+    if (block.t === "r") {
+        html += `<div class="card center"><h2>⭐ ${block.tx || "REWARD"}</h2><p style="font-size:1.5rem;">+${block.p || 0} XP</p></div>`;
+        narration = `${block.tx}. You have won. ${block.p} Experience points.`;
+    }
+
+    // 7. CONCLUSIÓN (c)
+    if (block.t === "c") {
+        html += `<div class="card"><p>${block.tx?.en || ""}</p></div>`;
+        narration = block.tx?.en;
+    }
+
     if (block.t !== "d") {
         html += `<button id="continueBtn" disabled>NARRATING...</button>`;
     }
 
     app.innerHTML = html;
 
-    // Lógica de narración y tiempos
     narrate(narration, () => {
         if (block.t === "breath_auto" || block.t === "br" || block.t === "sil") {
-            // Activar reloj descontador (ejemplo 15 segundos para niños)
+            // RELOJ: 15 segundos para respiración/silencio
             startCountdown(15, nextBlock);
-            if (block.t.includes("breath")) startBreathingAnimation();
+            if (block.t.includes("breath") || block.t === "br") startBreathingAnimation();
         } else if (block.t !== "d") {
             unlockContinue("CONTINUE", nextBlock);
         }
@@ -254,7 +277,7 @@ function renderBlock(block, navHeader) {
 }
 
 /* =========================
-   CORE FUNCTIONS (PRESERVED)
+   FUNCIONES NUCLEARES
 ========================= */
 function narrate(text, callback) {
     if (!text) { if (callback) callback(); return; }
@@ -262,30 +285,59 @@ function narrate(text, callback) {
     window.speechSynthesis.cancel();
     const speech = new SpeechSynthesisUtterance(text);
     speech.lang = "en-US";
+    speech.rate = 0.95;
     speech.onend = () => { state.speechLocked = false; if (callback) callback(); };
     window.speechSynthesis.speak(speech);
 }
 
-function nextBlock() { clearInterval(state.timer); state.currentBlock++; render(); }
-function startMission() { state.phase = "mission"; state.currentBlock = 0; render(); }
-function nextStory() { state.currentIndex++; state.phase = "story"; state.currentBlock = 0; render(); }
+function nextBlock() { 
+    clearInterval(state.timer); 
+    state.currentBlock++; 
+    render(); 
+}
+
+function startMission() { 
+    state.phase = "mission"; 
+    state.currentBlock = 0; 
+    render(); 
+}
+
+function nextStory() { 
+    state.currentIndex++; 
+    if (state.currentIndex >= state.stories.length) state.currentIndex = 0;
+    state.phase = "story"; 
+    state.currentBlock = 0; 
+    render(); 
+}
 
 function unlockContinue(label, action) {
     const btn = document.getElementById("continueBtn");
-    if (btn) { btn.disabled = false; btn.innerText = label; btn.onclick = action; }
+    if (btn) { 
+        btn.disabled = false; 
+        btn.innerText = label; 
+        btn.onclick = action; 
+    }
 }
 
 function selectAnswer(index, correct, explanations) {
     if (state.speechLocked) return;
     const isCorrect = index === correct;
     const explanation = explanations?.[index] || "";
-    document.getElementById("app").innerHTML += `
+    
+    // Añadir feedback a la pantalla sin borrar lo anterior
+    const feedbackWrap = document.createElement("div");
+    feedbackWrap.innerHTML = `
         <div class="card">
             <h3 style="color:${isCorrect ? '#22c55e' : '#ef4444'}">${isCorrect ? "CORRECT" : "WRONG"}</h3>
             <p>${explanation}</p>
         </div>
         <button id="continueBtn" disabled>NARRATING...</button>`;
-    narrate(explanation, () => unlockContinue("CONTINUE", nextBlock));
+    
+    document.getElementById("app").appendChild(feedbackWrap);
+    
+    narrate(explanation, () => {
+        unlockContinue("CONTINUE", nextBlock);
+    });
 }
 
 function startBreathingAnimation() {
@@ -293,11 +345,11 @@ function startBreathingAnimation() {
     const label = document.getElementById("breathLabel");
     if (!circle || !label) return;
     let inhale = true;
-    const ani = setInterval(() => {
-        if (!document.getElementById("breathCircle")) { clearInterval(ani); return; }
+    const aniInterval = setInterval(() => {
+        if (!document.getElementById("breathCircle")) { clearInterval(aniInterval); return; }
         label.innerText = inhale ? "INHALE" : "EXHALE";
-        circle.style.transform = inhale ? "scale(1.2)" : "scale(0.8)";
-        circle.style.transition = "4s ease-in-out";
+        circle.style.transform = inhale ? "scale(1.3)" : "scale(0.8)";
+        circle.style.transition = "transform 4s ease-in-out";
         inhale = !inhale;
     }, 4000);
 }
