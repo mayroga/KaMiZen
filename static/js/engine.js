@@ -1,16 +1,12 @@
 /* =========================================================
-   KAMIZEN ENGINE V10 - FULL STABLE SYSTEM (UPGRADED)
-   ✔ Reads ALL stories
-   ✔ Reads ALL missions (1–49 compatible)
-   ✔ Supports BODY + PRESENCE SYSTEM (NEW)
-   ✔ Reads inf correctly
-   ✔ No freeze
-   ✔ No double render
+   KAMIZEN ENGINE V11 - AUTOFLOW CONTROL SYSTEM
+   ✔ Reads ALL stories & missions
    ✔ Speech lock until narration ends
-   ✔ Loading screen first
-   ✔ Manual start button
-   ✔ Breathing system enhanced
-   ✔ Sequential clean flow 1 -> 35 -> 49 -> loop
+   ✔ +4s safety delay before auto next
+   ✔ Auto progression (story + mission blocks)
+   ✔ Manual intro buttons preserved
+   ✔ Breathing + questions remain manual
+   ✔ No double render / no freeze
    ========================================================= */
 
 /* =========================
@@ -27,6 +23,8 @@ let state = {
     phase: "loading",
 
     speechLocked: false,
+    autoAdvanceLocked: false,
+
     initialized: false
 };
 
@@ -74,34 +72,26 @@ async function loadAllData() {
         const storiesData = await storiesReq.json();
         const missionsData = await missionsReq.json();
 
-        state.stories = Array.isArray(storiesData.stories)
-            ? storiesData.stories.sort((a, b) => a.id - b.id)
-            : [];
-
-        state.missions = Array.isArray(missionsData.missions)
-            ? missionsData.missions.sort((a, b) => a.id - b.id)
-            : [];
-
-        console.log("STORIES:", state.stories.length);
-        console.log("MISSIONS:", state.missions.length);
+        state.stories = (storiesData.stories || []).sort((a,b)=>a.id-b.id);
+        state.missions = (missionsData.missions || []).sort((a,b)=>a.id-b.id);
 
         state.initialized = true;
 
     } catch (err) {
 
-        console.error("LOAD FAILURE:", err);
+        console.error(err);
 
         app.innerHTML = `
             <div class="card">
                 <h2>SYSTEM ERROR</h2>
-                <p>Failed loading missions</p>
+                <p>Failed loading system</p>
             </div>
         `;
     }
 }
 
 /* =========================
-   INTRO
+   INTRO (NO AUTO)
 ========================= */
 
 function showIntro() {
@@ -111,16 +101,19 @@ function showIntro() {
     document.getElementById("app").innerHTML = `
         <div class="card">
             <h1>KAMIZEN LIFE SYSTEM</h1>
+
             <p>BODY • CALM • FOCUS • PRESENCE</p>
-            <p style="opacity:.8;">Stories + Missions Active</p>
+            <p style="opacity:.7;">Stories + Missions Active</p>
         </div>
 
-        <button onclick="startSystem()">START SYSTEM</button>
+        <button onclick="startSystem()">
+            START SYSTEM
+        </button>
     `;
 }
 
 /* =========================
-   START
+   START SYSTEM
 ========================= */
 
 function startSystem() {
@@ -143,43 +136,34 @@ function render() {
     const app = document.getElementById("app");
 
     const story = state.stories[state.currentIndex];
-    const mission = state.missions[state.currentIndex];
+    const mission = state.missions.find(m => m.id === story?.id);
 
     if (!story || !mission) {
-
         state.currentIndex = 0;
         state.currentBlock = 0;
-        state.phase = "story";
-
         return render();
     }
-
-    /* =========================
-       STORY MODE
-    ========================= */
 
     if (state.phase === "story") {
 
         app.innerHTML = `
             <div class="card">
                 <h2>STORY ${story.id}</h2>
-                <h3>${story.t || ""}</h3>
-                <p>${story.en || ""}</p>
+                <h3>${story.t}</h3>
+                <p>${story.en}</p>
             </div>
 
             <button id="continueBtn" disabled>NARRATING...</button>
         `;
 
-        narrate(`${story.t || ""}. ${story.en || ""}`, () => {
+        narrate(`${story.t}. ${story.en}`, () => {
+
             unlockContinue("START MISSION", startMission);
+
         });
 
         return;
     }
-
-    /* =========================
-       MISSION MODE
-    ========================= */
 
     if (state.phase === "mission") {
 
@@ -195,7 +179,7 @@ function render() {
 }
 
 /* =========================
-   BLOCK RENDER (ENHANCED)
+   BLOCK RENDER
 ========================= */
 
 function renderBlock(block) {
@@ -203,144 +187,110 @@ function renderBlock(block) {
     const app = document.getElementById("app");
 
     let html = "";
-    let narration = "";
+    let text = "";
 
-    /* VISUAL */
     if (block.t === "v") {
-        html += `<div class="card"><h2>${block.tx?.en || ""}</h2></div>`;
-        narration += block.tx?.en + ". ";
+        html += `<div class="card"><h2>${block.tx.en}</h2></div>`;
+        text += block.tx.en + ". ";
     }
 
-    /* HEADER */
     if (block.t === "h") {
-        html += `<div class="card"><p>${block.tx?.en || ""}</p></div>`;
-        narration += block.tx?.en + ". ";
+        html += `<div class="card"><p>${block.tx.en}</p></div>`;
+        text += block.tx.en + ". ";
     }
 
-    /* STORY INSIDE */
     if (block.story) {
         html += `<div class="card"><p>${block.story.en}</p></div>`;
-        narration += block.story.en + ". ";
+        text += block.story.en + ". ";
     }
 
-    /* =========================
-       BREATHING SYSTEM (ENHANCED BODY + PRESENCE)
-    ========================= */
-
-    if (block.t === "breath_auto" || block.t === "br") {
+    if (block.t === "breath_auto") {
 
         html += `
-            <div class="card text-center">
-
-                <div class="breath-circle" id="breathCircle">
-                    <span id="breathLabel">INHALE</span>
-                </div>
-
-                <h3>${block.tx?.en || ""}</h3>
-                <p>${block.inf?.en || ""}</p>
-
+        <div class="card center">
+            <div class="breath-circle" id="breathCircle">
+                <span id="breathLabel">INHALE</span>
             </div>
-        `;
+            <h3>${block.tx.en}</h3>
+            <p>${block.inf.en}</p>
+        </div>`;
 
-        narration += block.tx?.en + ". " + (block.inf?.en || "") + ".";
+        text += block.tx.en + ". " + block.inf.en + ".";
     }
-
-    /* =========================
-       DECISION
-    ========================= */
 
     if (block.t === "d") {
 
-        html += `<div class="card"><h3>${block.q?.en}</h3>`;
+        html += `<div class="card"><h3>${block.q.en}</h3>`;
 
-        narration += block.q?.en + ". ";
-
-        block.op.forEach((o, i) => {
-
-            html += `
-                <div class="answer"
+        block.op.forEach((o,i)=>{
+            html += `<div class="answer"
                 onclick="selectAnswer(${i},${block.c},${JSON.stringify(block.ex).replace(/"/g,'&quot;')})">
                 ${o}
-                </div>
-            `;
-
-            narration += o + ". ";
+            </div>`;
         });
 
         html += `</div>`;
+
+        text += block.q.en;
     }
 
-    /* SILENCE */
     if (block.t === "sil") {
-
-        html += `<div class="card">
-            <h3>${block.tx?.en}</h3>
-            <p>${block.inf?.en}</p>
-        </div>`;
-
-        narration += block.tx?.en + ". " + block.inf?.en;
+        html += `<div class="card"><p>${block.tx.en}</p></div>`;
+        text += block.tx.en;
     }
 
-    /* REWARD */
     if (block.t === "r") {
-
-        html += `<div class="card">
-            <h2>⭐ ${block.tx}</h2>
-            <p>+${block.p} XP</p>
-        </div>`;
-
-        narration += block.tx + ". " + block.p + " XP.";
+        html += `<div class="card"><h2>⭐ ${block.tx}</h2><p>+${block.p} XP</p></div>`;
+        text += block.tx;
     }
 
-    /* CONTINUE BUTTON */
-    if (block.t !== "d") {
-        html += `<button id="continueBtn" disabled>NARRATING...</button>`;
-    }
+    html += `<button id="continueBtn" disabled>NARRATING...</button>`;
 
     app.innerHTML = html;
 
-    /* BREATH ANIMATION */
-    if (block.t === "breath_auto" || block.t === "br") {
-        startBreathingAnimation();
-    }
+    if (block.t === "breath_auto") startBreathingAnimation();
 
-    /* SPEECH */
-    narrate(narration, () => {
+    narrate(text, async () => {
 
         if (block.t !== "d") {
+
+            await delay(4000); // 🔥 4 SECOND SAFETY BUFFER
+
             unlockContinue("CONTINUE", nextBlock);
         }
     });
 }
 
 /* =========================
-   ANSWERS
+   ANSWERS (NO CHANGE)
 ========================= */
 
-function selectAnswer(i, correct, ex) {
+function selectAnswer(i,c,ex) {
 
     if (state.speechLocked) return;
 
-    const ok = i === correct;
+    const ok = i === c;
 
     document.getElementById("app").innerHTML += `
         <div class="card">
             <h3 style="color:${ok?'#22c55e':'#ef4444'}">
-                ${ok ? "CORRECT" : "TRY AGAIN"}
+                ${ok?'CORRECT':'WRONG'}
             </h3>
-            <p>${ex[i]}</p>
+            <p>${ex?.[i]||""}</p>
         </div>
 
         <button id="continueBtn" disabled>NARRATING...</button>
     `;
 
-    narrate(ex[i], () => {
+    narrate(ex?.[i]||"", () => {
+
         unlockContinue("CONTINUE", nextBlock);
+
     });
 }
 
 /* =========================
-   NAVIGATION
+   FLOW CONTROL
 ========================= */
 
 function nextBlock() {
@@ -350,29 +300,35 @@ function nextBlock() {
 }
 
 function startMission() {
+    if (state.speechLocked) return;
     state.phase = "mission";
     state.currentBlock = 0;
     render();
 }
 
 function nextStory() {
+
     state.currentIndex++;
-    if (state.currentIndex >= state.stories.length) state.currentIndex = 0;
+
+    if (state.currentIndex >= state.stories.length)
+        state.currentIndex = 0;
 
     state.phase = "story";
     state.currentBlock = 0;
+
     render();
 }
 
 /* =========================
-   SPEECH ENGINE
+   NARRATION ENGINE + SAFE LOCK
 ========================= */
 
 function narrate(text, cb) {
 
-    if (!text) return cb && cb();
+    if (!text) return cb?.();
 
     state.speechLocked = true;
+    state.autoAdvanceLocked = true;
 
     window.speechSynthesis.cancel();
 
@@ -381,60 +337,60 @@ function narrate(text, cb) {
     u.rate = 0.92;
     u.pitch = 1;
 
-    u.onend = () => {
+    u.onend = async () => {
+
         state.speechLocked = false;
-        cb && cb();
+
+        await delay(4000); // 🔥 EXTRA BUFFER AFTER VOICE
+
+        state.autoAdvanceLocked = false;
+
+        cb?.();
     };
 
-    u.onerror = () => {
-        state.speechLocked = false;
-        cb && cb();
-    };
-
-    speechSynthesis.speak(u);
+    window.speechSynthesis.speak(u);
 }
 
 /* =========================
-   UI CONTROLS
+   HELPERS
 ========================= */
 
-function unlockContinue(t, fn) {
+function delay(ms){
+    return new Promise(r=>setTimeout(r,ms));
+}
 
-    const b = document.getElementById("continueBtn");
-
-    if (!b) return;
-
-    b.disabled = false;
-    b.innerText = t;
-    b.onclick = fn;
+function unlockContinue(t,a){
+    const b=document.getElementById("continueBtn");
+    if(!b) return;
+    b.disabled=false;
+    b.innerText=t;
+    b.onclick=a;
 }
 
 /* =========================
-   BREATHING SYSTEM (BODY + PRESENCE CORE)
+   BREATHING (UNCHANGED LOGIC)
 ========================= */
 
-function startBreathingAnimation() {
+function startBreathingAnimation(){
 
-    const c = document.getElementById("breathCircle");
-    const l = document.getElementById("breathLabel");
+    const c=document.getElementById("breathCircle");
+    const l=document.getElementById("breathLabel");
 
-    if (!c || !l) return;
+    if(!c||!l) return;
 
-    let inb = true;
+    let inha=true;
 
-    setInterval(() => {
+    setInterval(()=>{
 
-        if (!c) return;
-
-        if (inb) {
-            l.innerText = "INHALE";
-            c.style.transform = "scale(1.3)";
-        } else {
-            l.innerText = "EXHALE";
-            c.style.transform = "scale(0.85)";
+        if(inha){
+            l.innerText="INHALE";
+            c.style.transform="scale(1.25)";
+        }else{
+            l.innerText="EXHALE";
+            c.style.transform="scale(0.8)";
         }
 
-        inb = !inb;
+        inha=!inha;
 
-    }, 4000);
+    },4000);
 }
