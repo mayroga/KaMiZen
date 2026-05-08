@@ -1,12 +1,11 @@
 /* =========================================================
-   KAMIZEN ENGINE V11 - AUTO FLOW + CONTROLLED PRESENCE
-   ✔ Reads ALL 49 stories/missions
-   ✔ Speech lock + 4s delay after voice
-   ✔ Auto progression system
-   ✔ Manual control only where needed
-   ✔ Breath + Q/A remain interactive
-   ✔ Start / End control buttons
-========================================================= */
+   KAMIZEN ENGINE V11 - AUTO FLOW + CONTROL HYBRID SYSTEM
+   ✔ Auto play with speech + 2s delay
+   ✔ Manual control ONLY for breathing + questions
+   ✔ Start button remains manual
+   ✔ End-of-block controls: continue / skip / restart
+   ✔ No freeze / no double render / speech lock safe
+   ========================================================= */
 
 /* =========================
    GLOBAL STATE
@@ -22,9 +21,7 @@ let state = {
     phase: "loading",
 
     speechLocked: false,
-    initialized: false,
-
-    autoMode: true
+    initialized: false
 };
 
 /* =========================
@@ -71,18 +68,18 @@ async function loadAllData() {
         const storiesData = await storiesReq.json();
         const missionsData = await missionsReq.json();
 
-        state.stories = storiesData.stories.sort((a,b)=>a.id-b.id);
-        state.missions = missionsData.missions.sort((a,b)=>a.id-b.id);
+        state.stories = (storiesData.stories || []).sort((a,b)=>a.id-b.id);
+        state.missions = (missionsData.missions || []).sort((a,b)=>a.id-b.id);
 
         state.initialized = true;
 
     } catch (err) {
+
         console.error(err);
 
         app.innerHTML = `
             <div class="card">
                 <h2>SYSTEM ERROR</h2>
-                <p>Failed loading system</p>
             </div>
         `;
     }
@@ -97,12 +94,14 @@ function showIntro() {
     state.phase = "intro";
 
     document.getElementById("app").innerHTML = `
-        <div class="card center">
+        <div class="card">
             <h1>KAMIZEN LIFE SYSTEM</h1>
 
             <p>BODY • CALM • FOCUS • PRESENCE</p>
 
-            <p class="small">Stories + Missions Active</p>
+            <p style="opacity:.8;">
+                Stories + Missions Active
+            </p>
         </div>
 
         <button onclick="startSystem()">
@@ -112,161 +111,219 @@ function showIntro() {
 }
 
 /* =========================
-   START SYSTEM
+   START
 ========================= */
 
 function startSystem() {
-    state.phase = "story";
+
     state.currentIndex = 0;
     state.currentBlock = 0;
+    state.phase = "story";
+
     render();
 }
 
 /* =========================
-   MAIN RENDER
+   AUTO DELAY (CRITICAL RULE)
+========================= */
+
+function autoNext(callback) {
+
+    setTimeout(() => {
+
+        if (!state.speechLocked) {
+            callback();
+        }
+
+    }, 2000); // 🧠 2 seconds AFTER voice ends
+}
+
+/* =========================
+   RENDER
 ========================= */
 
 function render() {
 
     if (!state.initialized) return;
 
+    const app = document.getElementById("app");
+
     const story = state.stories[state.currentIndex];
-    const mission = state.missions.find(m => m.id === story.id);
+    const mission = state.missions[state.currentIndex];
 
     if (!story || !mission) {
         state.currentIndex = 0;
+        state.currentBlock = 0;
         return render();
     }
 
+    /* =========================
+       STORY
+    ========================= */
+
     if (state.phase === "story") {
-        renderStory(story);
+
+        app.innerHTML = `
+            <div class="card">
+                <h2>STORY ${story.id}</h2>
+                <h3>${story.t}</h3>
+                <p>${story.en}</p>
+            </div>
+        `;
+
+        narrate(`${story.t}. ${story.en}`, () => {
+
+            autoNext(() => {
+                startMission();
+            });
+
+        });
+
         return;
     }
 
-    if (state.phase === "mission") {
-        const block = mission.b[state.currentBlock];
-        if (!block) return endBlock();
-        renderBlock(block);
+    /* =========================
+       MISSION
+    ========================= */
+
+    const block = mission.b[state.currentBlock];
+
+    if (!block) {
+        nextStory();
+        return;
     }
+
+    renderBlock(block);
 }
 
 /* =========================
-   STORY (AUTO AFTER VOICE)
-========================= */
-
-function renderStory(story) {
-
-    document.getElementById("app").innerHTML = `
-        <div class="card">
-            <h2>STORY ${story.id}</h2>
-            <h3>${story.t}</h3>
-            <p>${story.en}</p>
-        </div>
-
-        <button id="continueBtn" disabled>STARTING...</button>
-    `;
-
-    narrate(`${story.t}. ${story.en}`, () => {
-
-        setTimeout(() => {
-            state.phase = "mission";
-            state.currentBlock = 0;
-            render();
-        }, 4000);
-
-    });
-}
-
-/* =========================
-   MISSION BLOCK
+   BLOCK RENDER
 ========================= */
 
 function renderBlock(block) {
 
+    const app = document.getElementById("app");
+
     let html = "";
-    let text = "";
+    let narration = "";
 
-    if (block.t === "v") {
-        html += `<div class="card"><h2>${block.tx.en}</h2></div>`;
-        text += block.tx.en;
+    const isControl =
+        block.t === "d" ||
+        block.t === "breath_auto" ||
+        block.t === "br";
+
+    /* =========================
+       VISUAL / TEXT AUTO
+    ========================= */
+
+    if (block.t === "v" || block.t === "h" || block.story || block.t === "sil" || block.t === "r") {
+
+        html += `<div class="card">`;
+
+        html += `<p>${block.tx?.en || block.story?.en || block.inf?.en || ""}</p>`;
+
+        html += `</div>`;
+
+        narration += `${block.tx?.en || block.story?.en || ""}.`;
     }
 
-    if (block.t === "h") {
-        html += `<div class="card"><p>${block.tx.en}</p></div>`;
-        text += block.tx.en;
-    }
+    /* =========================
+       BREATHING (MANUAL CONTROL)
+    ========================= */
 
-    if (block.story) {
-        html += `<div class="card"><p>${block.story.en}</p></div>`;
-        text += block.story.en;
-    }
-
-    if (block.t === "breath_auto") {
+    if (block.t === "breath_auto" || block.t === "br") {
 
         html += `
         <div class="card center">
+
             <div class="breath-circle" id="breathCircle">
                 <span id="breathLabel">INHALE</span>
             </div>
 
-            <h3>${block.tx.en}</h3>
-            <p>${block.inf.en}</p>
+            <h3>${block.tx?.en}</h3>
+            <p>${block.inf?.en}</p>
+
+            ${controls()}
         </div>`;
 
-        text += block.tx.en + block.inf.en;
+        startBreathingAnimation();
     }
+
+    /* =========================
+       QUESTION (MANUAL CONTROL)
+    ========================= */
 
     if (block.t === "d") {
 
-        html += `<div class="card"><h3>${block.q.en}</h3>`;
+        html += `<div class="card"><h3>${block.q?.en}</h3>`;
 
         block.op.forEach((o,i)=>{
-            html += `<div class="answer" onclick="selectAnswer(${i},${block.c},${JSON.stringify(block.ex)})">${o}</div>`;
+
+            html += `
+                <div class="answer" onclick="selectAnswer(${i},${block.c},${JSON.stringify(block.ex).replace(/"/g,'&quot;')})">
+                    ${o}
+                </div>
+            `;
         });
 
+        html += controls();
         html += `</div>`;
     }
 
-    if (block.t === "r") {
-        html += `<div class="card"><h2>⭐ ${block.tx}</h2><p>+${block.p} XP</p></div>`;
-        text += block.tx;
+    app.innerHTML = html;
+
+    /* =========================
+       AUTO FLOW RULE
+    ========================= */
+
+    if (!isControl) {
+
+        narrate(narration, () => {
+
+            autoNext(() => {
+                nextBlock();
+            });
+
+        });
+
+    } else {
+
+        narrate(narration);
     }
+}
 
-    document.getElementById("app").innerHTML = html;
+/* =========================
+   CONTROLS UI
+========================= */
 
-    if (block.t === "breath_auto") startBreathingAnimation();
+function controls() {
+    return `
+    <div style="margin-top:15px;">
+        <button onclick="nextBlock()">CONTINUE</button>
+        <button onclick="nextStory()">SKIP</button>
+        <button onclick="restartSystem()">RESTART</button>
+    </div>`;
+}
 
-    narrate(text, () => {
+/* =========================
+   ANSWERS
+========================= */
 
-        if (block.t !== "d") {
-            setTimeout(nextBlock, 4000); // 🔥 AUTO DELAY AFTER VOICE
-        }
+function selectAnswer(i, correct, ex) {
+
+    const ok = i === correct;
+
+    narrate(ex[i] || "", () => {
+
+        autoNext(() => {
+            nextBlock();
+        });
+
     });
 }
 
 /* =========================
-   ANSWERS (MANUAL ONLY)
-========================= */
-
-function selectAnswer(i,c,ex) {
-
-    const ok = i === c;
-
-    document.getElementById("app").innerHTML += `
-        <div class="card">
-            <h3 style="color:${ok?'#22c55e':'#ef4444'}">
-                ${ok?'CORRECT':'WRONG'}
-            </h3>
-            <p>${ex[i]}</p>
-        </div>
-
-        <button onclick="nextBlock()">CONTINUE</button>
-        <button onclick="restart()">RESTART</button>
-    `;
-}
-
-/* =========================
-   BLOCK CONTROL
+   NAVIGATION
 ========================= */
 
 function nextBlock() {
@@ -274,42 +331,37 @@ function nextBlock() {
     render();
 }
 
-function endBlock() {
-
-    document.getElementById("app").innerHTML += `
-        <div class="card">
-            <button onclick="nextStory()">CONTINUE</button>
-            <button onclick="skipStory()">SKIP</button>
-            <button onclick="restart()">RESTART</button>
-        </div>
-    `;
-}
-
 function nextStory() {
     state.currentIndex++;
-    state.phase = "story";
     state.currentBlock = 0;
+    state.phase = "story";
     render();
 }
 
-function skipStory() {
-    nextStory();
-}
-
-function restart() {
+function restartSystem() {
     state.currentIndex = 0;
     state.currentBlock = 0;
     state.phase = "story";
     render();
 }
 
+function startMission() {
+    state.phase = "mission";
+    state.currentBlock = 0;
+    render();
+}
+
 /* =========================
-   SPEECH + DELAY SYSTEM
+   SPEECH ENGINE
 ========================= */
 
 function narrate(text, cb) {
 
+    if (!text) return cb?.();
+
     state.speechLocked = true;
+
+    window.speechSynthesis.cancel();
 
     const s = new SpeechSynthesisUtterance(text);
 
@@ -317,11 +369,10 @@ function narrate(text, cb) {
 
     s.onend = () => {
         state.speechLocked = false;
-        cb && cb();
+        cb?.();
     };
 
-    window.speechSynthesis.cancel();
-    window.speechSynthesis.speak(s);
+    speechSynthesis.speak(s);
 }
 
 /* =========================
@@ -333,18 +384,17 @@ function startBreathingAnimation() {
     const c = document.getElementById("breathCircle");
     const l = document.getElementById("breathLabel");
 
-    if (!c) return;
+    if (!c || !l) return;
 
-    let i = true;
+    let inhale = true;
 
     setInterval(()=>{
-        if(i){
-            l.innerText="INHALE";
-            c.style.transform="scale(1.25)";
-        }else{
-            l.innerText="EXHALE";
-            c.style.transform="scale(0.8)";
-        }
-        i=!i;
+
+        inhale = !inhale;
+
+        l.innerText = inhale ? "INHALE" : "EXHALE";
+
+        c.style.transform = inhale ? "scale(1.2)" : "scale(0.85)";
+
     },4000);
 }
