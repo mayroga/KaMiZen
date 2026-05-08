@@ -136,21 +136,31 @@ h1,h2,h3{
 
 <body>
 
+<!-- =========================================================
+   SINGLE ENGINE SURFACE (NO DUPLICATES, NO CONFLICTS)
+========================================================= -->
 <div id="app">
 
-    <!-- HEADER STATIC -->
+    <!-- STATIC HEADER (SAFE - NEVER CHANGES) -->
     <div class="card center">
-        <h2 style="color:var(--primary);">KAMIZEN LIFE SYSTEM</h2>
-        <p class="small">Neural Training • Awareness • Discipline • Control</p>
+        <h2 style="color:var(--primary);">
+            KAMIZEN LIFE SYSTEM
+        </h2>
+
+        <p class="small">
+            Neural Training • Awareness • Discipline • Control
+        </p>
     </div>
 
-    <!-- MAIN RENDER AREA (ENGINE CONTROLS THIS) -->
+    <!-- ENGINE RENDER TARGET (ONLY ONE ACTIVE AREA) -->
     <div id="screen" class="card">
         <h3>Loading system...</h3>
-        <p class="small">Initializing stories & missions</p>
+        <p class="small">
+            Initializing stories & missions (1 → 49)
+        </p>
     </div>
 
-    <!-- BREATHING AREA (OPTIONAL VISUAL ONLY) -->
+    <!-- BREATHING VISUAL (DECORATIVE ONLY, NO LOGIC) -->
     <div class="card center">
         <h3>Breathing Module</h3>
 
@@ -159,14 +169,52 @@ h1,h2,h3{
         </div>
 
         <p class="small">
-            Automatic regulation system (controlled by engine.js)
+            Visual support only — controlled by engine.js
         </p>
+    </div>
+
+    <!-- =====================================================
+         🎯 NEW: DIRECT MISSION JUMP CONTROL (SAFE ADDITION)
+    ====================================================== -->
+    <div class="card">
+
+        <input id="missionInput"
+               type="number"
+               placeholder="Enter mission ID (1 - 49)"
+               style="width:100%;padding:10px;border-radius:8px;border:none;margin-bottom:10px;">
+
+        <button onclick="jumpToMission()">
+            GO TO MISSION
+        </button>
+
+        <p class="small center">
+            Missions 1–35 | Exam 36–42 | Exam 43–49
+        </p>
+
     </div>
 
 </div>
 
 <!-- ENGINE (ONLY CONTROLLER) -->
 <script src="/static/js/engine.js"></script>
+
+<!-- =========================================================
+   SAFE UI BRIDGE (NO ENGINE BREAKAGE)
+========================================================= -->
+<script>
+function jumpToMission() {
+
+    const input = document.getElementById("missionInput");
+    const id = Number(input.value);
+
+    if (!id || typeof goToMissionById !== "function") {
+        alert("Invalid mission ID or system not ready");
+        return;
+    }
+
+    goToMissionById(id);
+}
+</script>
 
 </body>
 </html>
