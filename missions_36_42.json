@@ -37,10 +37,10 @@
 "op":["Danger","My body is ready","Something is wrong","I should escape"],
 "c":1,
 "ex":[
-"Nervous = energy ready",
-"Danger idea = fear grows",
-"Wrong idea = panic starts",
-"Escape = loss of control"
+"Thinking it is danger increases fear.",
+"Correct. Nervous feelings are your body preparing you.",
+"Believing something is wrong can create panic.",
+"Escaping teaches the brain to fear the situation."
 ]},
 
 {"t":"r","tx":"+Body Calm","p":25},
