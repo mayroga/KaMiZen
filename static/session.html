@@ -6,86 +6,34 @@
 <title>KAMIZEN LIFE SYSTEM - CORE SESSION</title>
 
 <style>
-
 :root{
-    --bg:#08111f;
-    --card:rgba(15,23,42,0.88);
+    --bg:#0b1220;
+    --card:#111a2e;
     --primary:#3b82f6;
     --success:#22c55e;
     --danger:#ef4444;
-    --warning:#f59e0b;
-    --yellow:#eab308;
     --text:#ffffff;
-    --dim:#cbd5e1;
+    --dim:#94a3b8;
 }
 
 *{
     box-sizing:border-box;
 }
 
-html,
 body{
     margin:0;
-    padding:0;
-    min-height:100vh;
-    overflow-x:hidden;
-
     font-family:Segoe UI, Arial, sans-serif;
+    background:var(--bg);
     color:var(--text);
-
-    background:#000;
+    display:flex;
+    justify-content:center;
+    min-height:100vh;
 }
-
-/* =========================
-   LIGHTWEIGHT BACKGROUND
-========================= */
-
-body::before{
-    content:"";
-    position:fixed;
-    inset:0;
-
-    background-image:
-        url("https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1600");
-
-    background-size:cover;
-    background-position:center;
-
-    filter:brightness(0.45);
-
-    z-index:-2;
-
-    animation:bgMove 20s ease-in-out infinite alternate;
-}
-
-body::after{
-    content:"";
-    position:fixed;
-    inset:0;
-
-    background:rgba(0,0,0,0.35);
-
-    z-index:-1;
-}
-
-@keyframes bgMove{
-    0%{
-        transform:scale(1);
-    }
-    100%{
-        transform:scale(1.08);
-    }
-}
-
-/* =========================
-   APP
-========================= */
 
 #app{
     width:100%;
-    max-width:720px;
-    margin:auto;
-    padding:18px;
+    max-width:700px;
+    padding:20px;
 }
 
 /* =========================
@@ -94,42 +42,11 @@ body::after{
 
 .card{
     background:var(--card);
-
-    padding:22px;
-
-    border-radius:18px;
-
+    padding:20px;
+    border-radius:16px;
     margin:15px 0;
-
-    border:1px solid rgba(255,255,255,0.06);
-
-    box-shadow:0 10px 30px rgba(0,0,0,0.35);
-}
-
-/* =========================
-   TEXT
-========================= */
-
-h1,h2,h3{
-    margin:10px 0;
-    font-weight:800;
-    line-height:1.3;
-}
-
-p{
-    line-height:1.7;
-    font-size:18px;
-    color:#f8fafc;
-    font-weight:600;
-}
-
-.small{
-    font-size:13px;
-    color:var(--dim);
-}
-
-.center{
-    text-align:center;
+    box-shadow:0 10px 25px rgba(0,0,0,0.3);
+    border:1px solid rgba(255,255,255,0.05);
 }
 
 /* =========================
@@ -138,26 +55,14 @@ p{
 
 button{
     width:100%;
-
-    padding:15px;
-
+    padding:14px;
     border:none;
-
-    border-radius:14px;
-
+    border-radius:12px;
     background:var(--primary);
-
     color:white;
-
-    font-weight:800;
-
-    font-size:16px;
-
+    font-weight:bold;
     cursor:pointer;
-
-    margin-top:12px;
-
-    transition:.2s;
+    transition:0.2s;
 }
 
 button:hover{
@@ -169,108 +74,57 @@ button:hover{
 ========================= */
 
 .answer{
-    background:#1e293b;
-
-    padding:16px;
-
-    margin:10px 0;
-
-    border-radius:12px;
-
+    background:#1f2937;
+    padding:12px;
+    margin:8px 0;
+    border-radius:10px;
     cursor:pointer;
-
-    border-left:5px solid var(--primary);
-
-    transition:.2s;
-
-    font-weight:700;
-
-    font-size:17px;
+    border-left:4px solid var(--primary);
+    transition:0.2s;
 }
 
 .answer:hover{
     transform:translateX(5px);
-
-    background:#334155;
+    background:#374151;
 }
 
 /* =========================
-   BREATHING
+   BREATHING VISUAL
 ========================= */
 
 .breath-circle{
-    width:160px;
-    height:160px;
-
+    width:140px;
+    height:140px;
     border-radius:50%;
-
     margin:30px auto;
-
     border:4px solid var(--primary);
-
     display:flex;
-
     align-items:center;
-
     justify-content:center;
-
-    font-size:22px;
-
-    font-weight:900;
-
-    background:rgba(59,130,246,0.15);
-
     animation:breathe 6s infinite ease-in-out;
 }
 
 @keyframes breathe{
-
-    0%{
-        transform:scale(0.85);
-        opacity:0.75;
-    }
-
-    50%{
-        transform:scale(1.2);
-        opacity:1;
-        border-color:var(--success);
-    }
-
-    100%{
-        transform:scale(0.85);
-        opacity:0.75;
-    }
+    0%{transform:scale(0.85);opacity:0.7;}
+    50%{transform:scale(1.25);opacity:1;border-color:var(--success);}
+    100%{transform:scale(0.85);opacity:0.7;}
 }
 
 /* =========================
-   SILENCE
+   TEXT STYLES
 ========================= */
 
-.silence-timer{
-    font-size:32px;
-    font-weight:900;
-    color:#facc15;
-    margin-top:15px;
+h1,h2,h3{
+    margin:10px 0;
 }
 
-/* =========================
-   RESULT COLORS
-========================= */
-
-.correct{
-    color:var(--success);
+.small{
+    font-size:12px;
+    color:var(--dim);
 }
 
-.wrong{
-    color:var(--danger);
-}
-
-.mid{
-    color:var(--yellow);
-}
-
-.warning{
-    color:var(--warning);
+.center{
+    text-align:center;
 }
 
 .hidden{
@@ -284,58 +138,34 @@ button:hover{
 
 <div id="app">
 
-    <!-- STATIC HEADER -->
-
+    <!-- HEADER STATIC -->
     <div class="card center">
-
-        <h2 style="color:var(--primary);">
-            KAMIZEN LIFE SYSTEM
-        </h2>
-
-        <p class="small">
-            BODY • CALM • FOCUS • PRESENCE
-        </p>
-
-        <p class="small">
-            Stories + Missions Active
-        </p>
-
+        <h2 style="color:var(--primary);">KAMIZEN LIFE SYSTEM</h2>
+        <p class="small">Neural Training • Awareness • Discipline • Control</p>
     </div>
 
-    <!-- ENGINE RENDER -->
-
+    <!-- MAIN RENDER AREA (ENGINE CONTROLS THIS) -->
     <div id="screen" class="card">
-
         <h3>Loading system...</h3>
-
-        <p class="small">
-            Initializing stories & missions
-        </p>
-
+        <p class="small">Initializing stories & missions</p>
     </div>
 
-    <!-- OPTIONAL BREATH VISUAL -->
-
+    <!-- BREATHING AREA (OPTIONAL VISUAL ONLY) -->
     <div class="card center">
-
         <h3>Breathing Module</h3>
 
         <div class="breath-circle">
-
             <span>FOCUS</span>
-
         </div>
 
         <p class="small">
-            Automatic regulation system
+            Automatic regulation system (controlled by engine.js)
         </p>
-
     </div>
 
 </div>
 
-<!-- ENGINE -->
-
+<!-- ENGINE (ONLY CONTROLLER) -->
 <script src="/static/js/engine.js"></script>
 
 </body>
