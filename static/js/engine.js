@@ -77,7 +77,7 @@ async function loadAllData() {
    UI CONTROLS (BACK / RESTART / JUMP)
 ========================= */
 function restartSystem() {
-    if(confirm("¿[?")) {
+    if(confirm("¿Are you sure you want to start from scratch?")) {
         localStorage.clear();
         state.currentIndex = 0;
         state.currentBlock = 0;
@@ -106,7 +106,7 @@ function goToMissionById(id) {
         state.phase = "story";
         render();
     } else {
-        alert("ID no encontrado. Inténtalo de nuevo.");
+        alert("ID not found. Please try again.");
     }
 }
 
@@ -142,7 +142,7 @@ function showIntro() {
         <div class="card center">
             <h1>KAMIZEN LIFE SYSTEM</h1>
             <p>Guía de Control y Enfoque</p>
-            <button onclick="startSystem()">CONTINUAR DONDE QUEDÉ</button>
+            <button onclick="startSystem()">Continue where I left off</button>
             <button onclick="restartSystem()" style="background:var(--danger);margin-top:10px;">RESTART FROM ZERO</button>
         </div>
     `;
@@ -202,7 +202,7 @@ function renderBlock(block, navHeader) {
     const timerUI = `
         <div class="card center" style="border: 2px solid var(--primary);">
             <h1 id="timerDisplay" style="font-size:3rem;margin:0;">00:00</h1>
-            <p class="small">MANTÉN EL ENFOQUE</p>
+            <p class="small">Stay Focused</p>
         </div>
     `;
 
