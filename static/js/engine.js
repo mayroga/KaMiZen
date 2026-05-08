@@ -1,7 +1,7 @@
 /* =========================================================
    KAMIZEN ENGINE V10 - FULL STABLE SYSTEM
-   ✔ Reads ALL 49 stories
-   ✔ Reads ALL 49 missions
+   ✔ Reads ALL 35 stories
+   ✔ Reads ALL 35 missions
    ✔ Reads inf correctly
    ✔ No freeze
    ✔ No double render
@@ -120,7 +120,7 @@ function showIntro() {
             </p>
 
             <p style="opacity:.8;">
-                49 Stories • 49 Missions
+                35 Stories • 35 Missions
             </p>
         </div>
 
@@ -669,47 +669,4 @@ function startBreathingAnimation() {
     animate();
 
     setInterval(animate, 4000);
-}
-/* =========================
-   DIRECT MISSION LOADER
-========================= */
-
-function jumpToMission() {
-
-    const input =
-        document.getElementById("missionSelector");
-
-    if (!input) return;
-
-    let num = parseInt(input.value);
-
-    if (isNaN(num)) return;
-
-    if (num < 1) num = 1;
-    if (num > 49) num = 49;
-
-    const index =
-        state.stories.findIndex(
-            s => s.id === num
-        );
-
-    if (index === -1) {
-
-        alert("Mission not found");
-        return;
-    }
-
-    /* STOP CURRENT SPEECH */
-
-    window.speechSynthesis.cancel();
-
-    state.speechLocked = false;
-
-    /* LOAD TARGET */
-
-    state.currentIndex = index;
-    state.currentBlock = 0;
-    state.phase = "story";
-
-    render();
 }
