@@ -1,235 +1,266 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>KAMIZEN LIFE SYSTEM - CORE SESSION</title>
-<style>
-:root{
-    --bg:#0b1220;
-    --card:rgba(11, 18, 32, 0.75);
-    --primary:#3b82f6;
-    --success:#22c55e;
-    --danger:#ef4444;
-    --text:#ffffff;
-    --dim:#94a3b8;
-}
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>KAMIZEN LIFE SYSTEM - CORE SESSION</title>
 
-*{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
-}
+    <style>
+        :root {
+            --bg: #0b1220;
+            --card: #111a2e;
+            --primary: #3b82f6;
+            --success: #22c55e;
+            --danger: #ef4444;
+            --text: #ffffff;
+            --dim: #94a3b8;
+        }
 
-html, body{
-    width:100%;
-    height:100%;
-    overflow-x:hidden;
-    background:#000;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color:var(--text);
-}
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-/* =========================
-   SISTEMA DE FONDOS (14s)
-========================= */
-.container{
-    position:fixed;
-    inset:0;
-    width:100%;
-    height:100%;
-    z-index:-10;
-    overflow:hidden;
-    background: #000;
-}
+        /* =========================
+           BODY & BACKGROUND
+        ========================= */
+        html, body {
+            width: 100%;
+            min-height: 100%;
+            overflow-x: hidden;
+            background: #000;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            color: var(--text);
+        }
 
-.slide{
-    position:absolute;
-    inset:0;
-    width:100%;
-    height:100%;
-    background-size:cover;
-    background-position:center;
-    background-repeat:no-repeat;
-    opacity:0;
-    transition:opacity 3s ease-in-out; /* Transición suave de 3 segundos */
-    transform:scale(1.1);
-}
+        .container {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -10;
+            overflow: hidden;
+        }
 
-.slide.active{
-    opacity:1;
-    transform:scale(1);
-    transition: opacity 3s ease-in-out, transform 14s linear;
-}
+        .slide {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0;
+            transition: opacity 2s ease-in-out;
+            transform: scale(1.04); /* Ligero zoom para inmersión */
+        }
 
-.overlay{
-    position:absolute;
-    inset:0;
-    background: radial-gradient(circle, rgba(0,0,0,0) 20%, rgba(0,0,0,0.85) 100%);
-    pointer-events:none;
-    z-index: 1;
-}
+        .slide.active {
+            opacity: 1;
+        }
 
-/* =========================
-   APP UI
-========================= */
-#app{
-    position:relative;
-    z-index:5;
-    width:100%;
-    max-width:700px;
-    margin:auto;
-    padding:20px;
-}
+        .overlay {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(
+                circle,
+                rgba(0,0,0,0.10) 20%,
+                rgba(0,0,0,0.85) 100%
+            );
+            pointer-events: none;
+            z-index: 1;
+        }
 
-.card{
-    background:var(--card);
-    backdrop-filter:blur(15px);
-    padding:30px;
-    border-radius:24px;
-    margin:20px 0;
-    box-shadow:0 20px 40px rgba(0,0,0,0.7);
-    border:1px solid rgba(255,255,255,0.1);
-}
+        /* =========================
+           APP UI
+        ========================= */
+        #app {
+            position: relative;
+            z-index: 5;
+            width: 100%;
+            max-width: 700px;
+            margin: auto;
+            padding: 20px;
+        }
 
-button{
-    width:100%;
-    padding:18px;
-    border:none;
-    border-radius:14px;
-    background:var(--primary);
-    color:white;
-    font-weight:bold;
-    font-size:16px;
-    cursor:pointer;
-    transition:0.3s;
-    margin-top:12px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
+        .card {
+            background: rgba(17, 26, 46, 0.82);
+            backdrop-filter: blur(8px);
+            padding: 20px;
+            border-radius: 16px;
+            margin: 15px 0;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.45);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
 
-button:hover{ background: #2563eb; transform:translateY(-2px); box-shadow: 0 5px 15px rgba(59,130,246,0.4); }
+        /* =========================
+           BUTTONS & INPUTS
+        ========================= */
+        button {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            background: var(--primary);
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 10px;
+        }
 
-.breath-circle{
-    width:150px;
-    height:150px;
-    border-radius:50%;
-    margin:25px auto;
-    border:5px solid var(--primary);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    animation:breathe 7s infinite ease-in-out;
-    font-size:22px;
-    font-weight:bold;
-    box-shadow: 0 0 40px rgba(59,130,246,0.5);
-}
+        button:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+        }
 
-@keyframes breathe{
-    0%, 100%{ transform:scale(0.85); opacity:0.6; }
-    50%{ transform:scale(1.2); opacity:1; border-color:var(--success); box-shadow: 0 0 60px rgba(34,197,94,0.6); }
-}
+        input {
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            border: none;
+            background: #1f2937;
+            color: white;
+            font-size: 18px;
+            text-align: center;
+            margin-bottom: 10px;
+        }
 
-h2{ font-size:28px; letter-spacing: 1px; margin-bottom: 5px; }
-p{ font-size:18px; line-height:1.6; }
-.small{ font-size:12px; color:var(--dim); text-transform: uppercase; letter-spacing: 2px; }
-.center{ text-align:center; }
+        /* =========================
+           BREATHING VISUAL
+        ========================= */
+        .breath-circle {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            margin: 30px auto;
+            border: 4px solid var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: breathe 6s infinite ease-in-out;
+            font-size: 22px;
+            font-weight: bold;
+            box-shadow: 0 0 35px rgba(59,130,246,0.4);
+        }
 
-input{
-    width:100%;
-    padding:15px;
-    border-radius:12px;
-    border:none;
-    background:rgba(255,255,255,0.1);
-    color:white;
-    font-size:22px;
-    text-align:center;
-    margin-bottom: 10px;
-}
-</style>
+        @keyframes breathe {
+            0% { transform: scale(0.85); opacity: 0.7; }
+            50% { transform: scale(1.25); opacity: 1; border-color: var(--success); }
+            100% { transform: scale(0.85); opacity: 0.7; }
+        }
+
+        /* =========================
+           TEXT STYLES
+        ========================= */
+        h1, h2, h3, p, span {
+            margin: 10px 0;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.95);
+        }
+
+        .center { text-align: center; }
+        .small { font-size: 13px; color: var(--dim); }
+
+        @media(max-width:700px){
+            #app { padding: 12px; }
+            .breath-circle { width: 140px; height: 140px; }
+        }
+    </style>
 </head>
+
 <body>
 
+<!-- BACKGROUND SYSTEM -->
 <div class="container">
     <div id="img1" class="slide active"></div>
     <div id="img2" class="slide"></div>
     <div class="overlay"></div>
 </div>
 
+<!-- MAIN APP -->
 <div id="app">
+
+    <!-- HEADER STATIC -->
     <div class="card center">
         <h2 style="color:var(--primary);">KAMIZEN LIFE SYSTEM</h2>
-        <p class="small">Neural Training • USA Core</p>
-        <div style="margin-top:25px;">
+        <p class="small">Neural Training • Awareness • Discipline • Control</p>
+
+        <div style="margin-top:20px;">
             <input type="number" id="missionSelector" min="1" max="49" value="1" />
-            <button onclick="jumpToMission()">ACTIVATE MISSION</button>
+            <button onclick="jumpToMission()">LOAD STORY & MISSION</button>
         </div>
     </div>
 
+    <!-- MAIN RENDER AREA -->
     <div id="screen" class="card">
-        <h3>System Status: Online</h3>
-        <p>Awaiting neural synchronization. Focus on the flow of the images and your breath.</p>
+        <h3>System Active</h3>
+        <p class="small">Waiting for mission data synchronization...</p>
     </div>
 
+    <!-- BREATHING AREA -->
     <div class="card center">
-        <div class="breath-circle"><span>AURA</span></div>
-        <p class="small">Stability Module Active</p>
+        <h3>Breathing Module</h3>
+        <div class="breath-circle">
+            <span>FOCUS</span>
+        </div>
+        <p class="small">Automatic regulation active</p>
     </div>
+
 </div>
 
+<!-- SCRIPT LOGIC -->
 <script>
-const slides = [document.getElementById('img1'), document.getElementById('img2')];
-let currentIdx = 0;
-
-// Temas épicos para niños y jóvenes en USA
-const topics = [
-    'space-nebula', 'wild-tiger', 'lightning-bolt', 'underwater-shark', 
-    'mountain-peak', 'volcano-eruption', 'aurora-borealis', 'deep-forest', 
-    'ocean-storm', 'galaxy-stars', 'desert-dunes', 'giant-waterfall'
-];
-
-function getNewImageUrl() {
-    const topic = topics[Math.floor(Math.random() * topics.length)];
-    const seed = Math.floor(Math.random() * 10000);
-    // Fuente de alta fidelidad para paisajes naturales
-    return `https://loremflickr.com/1920/1080/${topic}?random=${seed}`;
-}
-
-function updateBackground() {
-    const nextIdx = (currentIdx + 1) % 2;
-    const newImgUrl = getNewImageUrl();
+    const slides = [document.getElementById('img1'), document.getElementById('img2')];
+    let currentIdx = 0;
     
-    // Precarga silenciosa para evitar parpadeos
-    const tempImg = new Image();
-    tempImg.src = newImgUrl;
-    
-    tempImg.onload = () => {
-        slides[nextIdx].style.backgroundImage = `url('${newImgUrl}')`;
+    // Temas visuales de alto impacto
+    const topics = ['nature', 'space', 'ocean', 'animals', 'landscape', 'galaxy', 'forest', 'mountains', 'waterfall', 'stars'];
+
+    function fetchImage() {
+        const topic = topics[Math.floor(Math.random() * topics.length)];
+        const randomID = Math.floor(Math.random() * 10000);
+        return `https://picsum.photos/1920/1080?random=${randomID}&topic=${topic}`;
+    }
+
+    // Inicialización de imágenes
+    slides[0].style.backgroundImage = `url('${fetchImage()}')`;
+    slides[1].style.backgroundImage = `url('${fetchImage()}')`;
+
+    async function rotateBackground() {
+        const nextIdx = (currentIdx + 1) % 2;
+        const imgUrl = fetchImage();
         
-        // Ejecutar la transición visual
-        slides[currentIdx].classList.remove('active');
-        slides[nextIdx].classList.add('active');
-        
-        currentIdx = nextIdx;
-    };
-}
+        // Precarga de imagen para evitar parpadeos blancos
+        const img = new Image();
+        img.src = imgUrl;
+        img.onload = () => {
+            slides[nextIdx].style.backgroundImage = `url('${imgUrl}')`;
+            
+            // Transición cruzada
+            slides[currentIdx].classList.remove('active');
+            slides[nextIdx].classList.add('active');
+            
+            currentIdx = nextIdx;
+        };
+    }
 
-// CAMBIO CADA 14 SEGUNDOS (14000 ms)
-setInterval(updateBackground, 14000);
+    // Rotación automática cada 9 segundos
+    setInterval(rotateBackground, 9000);
 
-// Inicialización de la primera imagen
-slides[0].style.backgroundImage = `url('${getNewImageUrl()}')`;
-
-// Observador para cambios en pantalla (reacciona al texto nuevo)
-const observer = new MutationObserver(() => {
-    // Si hay un cambio drástico en el texto, actualiza el ambiente
-    updateBackground();
-});
-observer.observe(document.getElementById('screen'), { childList: true, subtree: true });
-
+    // Función de salto a misión (placeholder para engine.js)
+    function jumpToMission() {
+        const mission = document.getElementById('missionSelector').value;
+        const screen = document.getElementById('screen');
+        screen.innerHTML = `<h3>Mission ${mission} Initialized</h3><p>Connecting to neural core...</p>`;
+        if (typeof window.engineJump === 'function') {
+            window.engineJump(mission);
+        }
+    }
 </script>
 
-<!-- Motor Lógico Externo -->
+<!-- ENGINE -->
 <script src="/static/js/engine.js"></script>
 
 </body>
