@@ -30,6 +30,10 @@ body{
     min-height:100vh;
 }
 
+/* =========================
+   APP CONTAINER
+========================= */
+
 #app{
     width:100%;
     max-width:700px;
@@ -50,7 +54,7 @@ body{
 }
 
 /* =========================
-   BUTTONS
+   BUTTON SYSTEM (ENGINE CONTROLLED)
 ========================= */
 
 button{
@@ -70,7 +74,7 @@ button:hover{
 }
 
 /* =========================
-   ANSWERS
+   ANSWERS (Q/A MODE ONLY)
 ========================= */
 
 .answer{
@@ -89,7 +93,7 @@ button:hover{
 }
 
 /* =========================
-   BREATHING VISUAL
+   BREATHING VISUAL (VISUAL ONLY)
 ========================= */
 
 .breath-circle{
@@ -105,9 +109,19 @@ button:hover{
 }
 
 @keyframes breathe{
-    0%{transform:scale(0.85);opacity:0.7;}
-    50%{transform:scale(1.25);opacity:1;border-color:var(--success);}
-    100%{transform:scale(0.85);opacity:0.7;}
+    0%{
+        transform:scale(0.85);
+        opacity:0.7;
+    }
+    50%{
+        transform:scale(1.25);
+        opacity:1;
+        border-color:var(--success);
+    }
+    100%{
+        transform:scale(0.85);
+        opacity:0.7;
+    }
 }
 
 /* =========================
@@ -127,18 +141,21 @@ h1,h2,h3{
     text-align:center;
 }
 
+/* =========================
+   HIDDEN (ENGINE USE)
+========================= */
+
 .hidden{
     display:none;
 }
 
 /* =========================
-   KAMIZEN INTRO HEADER (NEW)
-   aligned with engine V11
+   KAMIZEN HEADER (V11 READY)
 ========================= */
 
 .kamizen-title{
-    font-size:20px;
-    font-weight:700;
+    font-size:22px;
+    font-weight:800;
     color:var(--primary);
     letter-spacing:1px;
 }
@@ -148,6 +165,12 @@ h1,h2,h3{
     opacity:0.8;
 }
 
+.kamizen-core{
+    font-size:13px;
+    opacity:0.7;
+    margin-top:5px;
+}
+
 </style>
 </head>
 
@@ -155,27 +178,44 @@ h1,h2,h3{
 
 <div id="app">
 
-    <!-- HEADER STATIC (UNCHANGED BUT CLEANED FOR ENGINE V11) -->
-    <div class="card center">
-        <div class="kamizen-title">KAMIZEN LIFE SYSTEM</div>
+    <!-- =========================
+         INTRO HEADER (STATIC ONLY)
+    ========================= -->
 
-        <p class="small">
+    <div class="card center">
+
+        <div class="kamizen-title">
+            KAMIZEN LIFE SYSTEM
+        </div>
+
+        <p class="kamizen-subtitle">
             BODY • CALM • FOCUS • PRESENCE
         </p>
 
-        <p class="kamizen-subtitle">
+        <p class="kamizen-core">
             Stories + Missions Active
+        </p>
+
+    </div>
+
+    <!-- =========================
+         MAIN ENGINE SCREEN
+    ========================= -->
+
+    <div id="screen" class="card">
+        <h3>Loading system...</h3>
+        <p class="small">
+            Initializing stories & missions
         </p>
     </div>
 
-    <!-- MAIN RENDER AREA (ENGINE CONTROLLED) -->
-    <div id="screen" class="card">
-        <h3>Loading system...</h3>
-        <p class="small">Initializing stories & missions</p>
-    </div>
+    <!-- =========================
+         BREATHING VISUAL MODULE
+         (NO LOGIC - ENGINE CONTROLLED)
+    ========================= -->
 
-    <!-- BREATHING MODULE (VISUAL ONLY - NO LOGIC CHANGE) -->
     <div class="card center">
+
         <h3>Breathing Module</h3>
 
         <div class="breath-circle">
@@ -183,13 +223,16 @@ h1,h2,h3{
         </div>
 
         <p class="small">
-            Automatic regulation system (controlled by engine.js)
+            Automatic regulation system (engine controlled)
         </p>
+
     </div>
 
 </div>
 
-<!-- ENGINE (ONLY CONTROLLER) -->
+<!-- =========================
+     ENGINE CORE
+========================= -->
 <script src="/static/js/engine.js"></script>
 
 </body>
