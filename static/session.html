@@ -4,7 +4,6 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>KAMIZEN LIFE SYSTEM - CORE SESSION</title>
-
 <style>
 :root{
     --bg:#0b1220;
@@ -15,13 +14,11 @@
     --text:#ffffff;
     --dim:#94a3b8;
 }
-
 *{
     box-sizing:border-box;
     margin:0;
     padding:0;
 }
-
 html, body{
     width:100%;
     height:100%;
@@ -30,7 +27,6 @@ html, body{
     font-family:Segoe UI, Arial, sans-serif;
     color:var(--text);
 }
-
 /* =========================
    SISTEMA DE FONDOS MEJORADO
 ========================= */
@@ -43,7 +39,6 @@ html, body{
     overflow:hidden;
     background: #000;
 }
-
 .slide{
     position:absolute;
     inset:0;
@@ -56,11 +51,9 @@ html, body{
     transition:opacity 2.5s ease-in-out;
     transform:scale(1.1); /* Efecto de profundidad */
 }
-
 .slide.active{
     opacity:1;
 }
-
 .overlay{
     position:absolute;
     inset:0;
@@ -68,7 +61,6 @@ html, body{
     pointer-events:none;
     z-index: 1;
 }
-
 /* =========================
    APP UI
 ========================= */
@@ -80,7 +72,6 @@ html, body{
     margin:auto;
     padding:20px;
 }
-
 .card{
     background:rgba(11, 18, 32, 0.75);
     backdrop-filter:blur(12px);
@@ -90,7 +81,6 @@ html, body{
     box-shadow:0 15px 35px rgba(0,0,0,0.6);
     border:1px solid rgba(255,255,255,0.1);
 }
-
 button{
     width:100%;
     padding:16px;
@@ -105,9 +95,7 @@ button{
     margin-top:12px;
     text-transform: uppercase;
 }
-
 button:hover{ background: #2563eb; transform:scale(1.02); }
-
 .breath-circle{
     width:140px;
     height:140px;
@@ -122,17 +110,14 @@ button:hover{ background: #2563eb; transform:scale(1.02); }
     font-weight:bold;
     box-shadow: 0 0 40px rgba(59,130,246,0.5);
 }
-
 @keyframes breathe{
     0%, 100%{ transform:scale(0.8); opacity:0.6; }
     50%{ transform:scale(1.2); opacity:1; border-color:var(--success); box-shadow: 0 0 60px rgba(34,197,94,0.6); }
 }
-
 h2{ font-size:26px; letter-spacing: 1px; }
 p{ font-size:17px; line-height:1.5; }
 .small{ font-size:12px; color:var(--dim); text-transform: uppercase; }
 .center{ text-align:center; }
-
 input{
     width:100%;
     padding:15px;
@@ -145,15 +130,12 @@ input{
 }
 </style>
 </head>
-
 <body>
-
 <div class="container">
     <div id="img1" class="slide active"></div>
     <div id="img2" class="slide"></div>
     <div class="overlay"></div>
 </div>
-
 <div id="app">
     <div class="card center">
         <h2 style="color:var(--primary);">KAMIZEN LIFE SYSTEM</h2>
@@ -163,29 +145,24 @@ input{
             <button onclick="jumpToMission()">LOAD MISSION</button>
         </div>
     </div>
-
     <div id="screen" class="card">
         <h3>System Active</h3>
         <p>Waiting for mission data...</p>
     </div>
-
     <div class="card center">
         <div class="breath-circle"><span>AURA</span></div>
         <p class="small">Breathing Sync Active</p>
     </div>
 </div>
-
 <script>
 const slides = [document.getElementById('img1'), document.getElementById('img2')];
 let currentIdx = 0;
-
 // Lista de búsqueda para imágenes naturales de alto impacto
 const keywords = [
     'deep-space', 'underwater-ocean', 'tropical-jungle', 'snowy-mountains', 
     'mystic-forest', 'volcano-lava', 'northern-lights', 'desert-dunes', 
     'nebula', 'waterfall', 'wild-animals', 'lightning-storm'
 ];
-
 function getContextImage() {
     const text = document.getElementById('screen').innerText.toLowerCase();
     let selectedSearch = keywords[Math.floor(Math.random() * keywords.length)];
@@ -194,28 +171,23 @@ function getContextImage() {
     keywords.forEach(k => {
         if(text.includes(k.split('-')[0])) selectedSearch = k;
     });
-
     const seed = Math.floor(Math.random() * 2000);
     // Usamos Unsplash Source que es más variado y específico que Picsum
     return `https://images.unsplash.com/photo-${seed}?auto=format&fit=crop&w=1920&q=80&sig=${seed}`;
     // Nota: Como Unsplash requiere IDs específicos, usaremos una técnica de búsqueda por palabra clave más robusta:
 }
-
 function fetchNewImage() {
     const topic = keywords[Math.floor(Math.random() * keywords.length)];
     const randomSeed = Math.random();
     return `https://source.unsplash.com/1920x1080/?${topic}&sig=${randomSeed}`;
 }
-
 // Fallback por si Unsplash demora: usamos imágenes de alta calidad de naturaleza directa
 function updateBackground() {
     const nextIdx = (currentIdx + 1) % 2;
     const topic = keywords[Math.floor(Math.random() * keywords.length)];
     const newImgUrl = `https://loremflickr.com/1920/1080/${topic}?random=${Math.random()}`;
-
     const tempImg = new Image();
     tempImg.src = newImgUrl;
-    
     tempImg.onload = () => {
         slides[nextIdx].style.backgroundImage = `url('${newImgUrl}')`;
         slides[currentIdx].classList.remove('active');
@@ -223,22 +195,16 @@ function updateBackground() {
         currentIdx = nextIdx;
     };
 }
-
 // Rotación cada 14 segundos
 setInterval(updateBackground, 7000);
-
 // Carga inicial inmediata
 updateBackground();
-
 // Escuchar cambios en la pantalla para reaccionar
 const observer = new MutationObserver(() => {
     updateBackground();
 });
 observer.observe(document.getElementById('screen'), { childList: true, subtree: true });
-
 </script>
-
 <script src="/static/js/engine.js"></script>
-
 </body>
 </html>
