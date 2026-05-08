@@ -1,7 +1,7 @@
 /* =========================================================
    KAMIZEN ENGINE V10 - FULL STABLE SYSTEM
-   ✔ Reads ALL 35 stories
-   ✔ Reads ALL 35 missions
+   ✔ Reads ALL 49 stories
+   ✔ Reads ALL 49 missions
    ✔ Reads inf correctly
    ✔ No freeze
    ✔ No double render
@@ -120,7 +120,7 @@ function showIntro() {
             </p>
 
             <p style="opacity:.8;">
-                35 Stories • 35 Missions
+                49 Stories • 49 Missions
             </p>
         </div>
 
