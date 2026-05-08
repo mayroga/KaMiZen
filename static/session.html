@@ -14,7 +14,7 @@
             --danger: #ef4444;
             --text: #ffffff;
             --dim: #94a3b8;
-            --btn-response: #1d4ed8; /* Azul profundo para respuestas */
+            --btn-response: #1d4ed8;
         }
 
         * {
@@ -32,9 +32,7 @@
             color: var(--text);
         }
 
-        /* =========================
-           BACKGROUND SYSTEM
-        ========================= */
+        /* FONDO DINÁMICO */
         .container {
             position: fixed;
             inset: 0;
@@ -66,9 +64,6 @@
             z-index: 1;
         }
 
-        /* =========================
-           APP UI
-        ========================= */
         #app {
             position: relative;
             z-index: 5;
@@ -79,62 +74,93 @@
         }
 
         .card {
-            background: rgba(17, 26, 46, 0.82);
-            backdrop-filter: blur(8px);
+            background: rgba(17, 26, 46, 0.85);
+            backdrop-filter: blur(10px);
             padding: 20px;
             border-radius: 16px;
             margin: 15px 0;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.45);
-            border: 1px solid rgba(255,255,255,0.08);
-            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.1);
+            overflow: hidden;
         }
 
-        /* =========================
-           RESPONSE BUTTONS (ENCAPSULACIÓN)
-        ========================= */
-        .response-block {
+        /* RESPUESTAS COMO BOTONES AZULES */
+        .response-btn {
             display: block;
             width: 100%;
             background: var(--btn-response);
             color: white;
-            padding: 15px;
+            padding: 18px;
             border-radius: 12px;
-            margin: 10px 0;
-            border: 1px solid rgba(255,255,255,0.2);
+            margin: 12px 0;
+            border: 1px solid rgba(255,255,255,0.3);
             text-align: left;
-            font-size: 16px;
+            font-size: 17px;
+            cursor: pointer;
+            transition: 0.3s;
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
 
-        /* =========================
-           SKIP BUTTON (LIMPIEZA)
-        ========================= */
+        .response-btn:hover {
+            background: #2563eb;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(59,130,246,0.4);
+        }
+
+        .response-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* BOTÓN SKIP */
         .skip-btn {
             background: var(--danger);
             color: white;
-            padding: 8px 16px;
+            padding: 12px 24px;
             border-radius: 8px;
-            font-size: 12px;
-            font-weight: bold;
+            font-size: 14px;
+            font-weight: 900;
             cursor: pointer;
             border: none;
-            margin-top: 15px;
-            float: right;
+            width: 100%;
+            margin-top: 10px;
             transition: 0.3s;
             text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .skip-btn:hover {
             background: #b91c1c;
-            transform: scale(1.05);
+            filter: brightness(1.2);
         }
 
-        /* =========================
-           BREATHING & UTILS
-        ========================= */
+        /* UTILIDADES */
+        .main-btn {
+            background: var(--primary);
+            color: white;
+            padding: 16px;
+            border-radius: 12px;
+            border: none;
+            width: 100%;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        input {
+            width: 100%;
+            padding: 16px;
+            border-radius: 12px;
+            border: none;
+            background: #1f2937;
+            color: white;
+            text-align: center;
+            margin-bottom: 12px;
+            font-size: 18px;
+        }
+
         .breath-circle {
-            width: 140px;
-            height: 140px;
+            width: 120px;
+            height: 120px;
             border-radius: 50%;
             margin: 20px auto;
             border: 4px solid var(--primary);
@@ -146,33 +172,11 @@
         }
 
         @keyframes breathe {
-            0%, 100% { transform: scale(0.85); opacity: 0.7; }
-            50% { transform: scale(1.15); opacity: 1; border-color: var(--success); }
+            0%, 100% { transform: scale(0.9); opacity: 0.8; }
+            50% { transform: scale(1.1); opacity: 1; border-color: var(--success); }
         }
 
-        button.main-btn {
-            background: var(--primary);
-            color: white;
-            padding: 14px;
-            border-radius: 12px;
-            border: none;
-            width: 100%;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        input {
-            width: 100%;
-            padding: 14px;
-            border-radius: 12px;
-            border: none;
-            background: #1f2937;
-            color: white;
-            text-align: center;
-            margin-bottom: 10px;
-        }
-
-        .clearfix::after { content: ""; clear: both; display: table; }
+        .center { text-align: center; }
     </style>
 </head>
 
@@ -188,27 +192,28 @@
 
     <div class="card center">
         <h2 style="color:var(--primary);">KAMIZEN LIFE SYSTEM</h2>
-        <p class="small">Neural Training • Awareness • Discipline</p>
+        <p style="font-size: 12px; color: var(--dim);">Neural Architecture • Session Control</p>
 
         <div style="margin-top:20px;">
             <input type="number" id="missionSelector" min="1" max="49" value="1" />
-            <button class="main-btn" onclick="jumpToMission()">LOAD STORY & MISSION</button>
+            <button class="main-btn" onclick="jumpToMission()">LOAD MISSION</button>
         </div>
     </div>
 
-    <!-- AREA DE RESPUESTAS DINÁMICAS -->
-    <div id="screen" class="card clearfix">
+    <!-- CONTENEDOR DE RESPUESTAS DINÁMICAS -->
+    <div id="screen" class="card">
         <div id="responseContainer">
-            <div class="response-block">
-                <h3>System Ready</h3>
-                <p>Waiting for mission activation...</p>
-            </div>
+            <button class="response-btn">
+                <strong>SYSTEM STATUS:</strong> ONLINE<br>
+                <small>Select a mission to begin training.</small>
+            </button>
         </div>
-        <button class="skip-btn" onclick="clearScreen()">Skip / Clear</button>
+        
+        <!-- BOTÓN SKIP REAL -->
+        <button class="skip-btn" onclick="clearAllData()">SKIP SESSION / CLEAR</button>
     </div>
 
     <div class="card center">
-        <h3>Breathing Module</h3>
         <div class="breath-circle"><span>FOCUS</span></div>
     </div>
 
@@ -218,7 +223,7 @@
     /* LÓGICA DE FONDOS */
     const slides = [document.getElementById('img1'), document.getElementById('img2')];
     let currentIdx = 0;
-    const topics = ['space', 'ocean', 'landscape', 'galaxy', 'forest', 'stars'];
+    const topics = ['space', 'ocean', 'landscape', 'galaxy', 'nature', 'stars'];
 
     function fetchImage() {
         const randomID = Math.floor(Math.random() * 10000);
@@ -228,7 +233,7 @@
     slides[0].style.backgroundImage = `url('${fetchImage()}')`;
     slides[1].style.backgroundImage = `url('${fetchImage()}')`;
 
-    function rotateBackground() {
+    setInterval(() => {
         const nextIdx = (currentIdx + 1) % 2;
         const imgUrl = fetchImage();
         const img = new Image();
@@ -239,39 +244,43 @@
             slides[nextIdx].classList.add('active');
             currentIdx = nextIdx;
         };
-    }
-    setInterval(rotateBackground, 14000);
+    }, 14000);
 
-    /* LÓGICA DE INTERFAZ Y LIMPIEZA */
+    /* LÓGICA DE INTERFAZ */
     function jumpToMission() {
         const val = document.getElementById('missionSelector').value;
         const container = document.getElementById('responseContainer');
         
-        // Encapsulamos la nueva respuesta en el bloque azul
-        const newBlock = document.createElement('div');
-        newBlock.className = 'response-block';
-        newBlock.innerHTML = `<h3>Mission ${val} Loaded</h3><p>Neural link established. Proceed with caution.</p>`;
+        // Crear respuesta como un botón azul
+        const btn = document.createElement('button');
+        btn.className = 'response-btn';
+        btn.innerHTML = `<strong>MISSION ${val} ACTIVE:</strong><br>Neural synchronization in progress. Click to acknowledge.`;
+        btn.onclick = () => console.log(`Acknowledged mission ${val}`);
         
-        // Limpiamos lo anterior para no dejar rastro y ponemos lo nuevo
+        // Limpiar y añadir
         container.innerHTML = ''; 
-        container.appendChild(newBlock);
+        container.appendChild(btn);
 
         if (typeof window.engineJump === 'function') window.engineJump(val);
     }
 
-    function clearScreen() {
+    function clearAllData() {
         const container = document.getElementById('responseContainer');
-        // Eliminación total de nodos para no dejar caché visual ni rastro en el DOM
+        
+        // Borrado absoluto de nodos (limpieza de rastro)
         while (container.firstChild) {
             container.removeChild(container.firstChild);
         }
         
-        // Feedback de sistema limpio
-        const placeholder = document.createElement('div');
-        placeholder.className = 'response-block';
+        // Estado neutro
+        const placeholder = document.createElement('button');
+        placeholder.className = 'response-btn';
         placeholder.style.background = 'rgba(255,255,255,0.05)';
-        placeholder.innerHTML = `<p style="color:var(--dim); text-align:center;">Cache cleared. System idle.</p>`;
+        placeholder.style.border = '1px dashed var(--dim)';
+        placeholder.innerHTML = `<center style="color:var(--dim)">SYSTEM SKIPPED. CACHE PURGED.</center>`;
         container.appendChild(placeholder);
+        
+        console.log("Session skipped and cache cleared.");
     }
 </script>
 
