@@ -146,7 +146,7 @@ function showIntro() {
             <h1>KAMIZEN LIFE SYSTEM</h1>
             <p>Training • Awareness • Control</p>
             <button onclick="startSystem()">Continue Session</button>
-            <button onclick="restartSystem()" style="background:var(--danger);margin-top:10px;">REINICIAR TODO</button>
+            <button onclick="restartSystem()" style="background:var(--danger);margin-top:10px;">Reset All</button>
         </div>
     `;
 }
