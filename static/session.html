@@ -3,147 +3,175 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>KAMIZEN LIFE SYSTEM - USA CORE</title>
+<title>KAMIZEN LIFE SYSTEM - CORE SESSION</title>
 
 <style>
 :root{
     --bg:#0b1220;
-    --card:rgba(17, 26, 46, 0.85);
+    --card:#111a2e;
     --primary:#3b82f6;
     --success:#22c55e;
+    --danger:#ef4444;
     --text:#ffffff;
+    --dim:#94a3b8;
 }
 
-*{ box-sizing:border-box; margin:0; padding:0; }
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
 
 html, body{
     width:100%;
-    min-height:100%;
+    height:100%;
     overflow-x:hidden;
     background:#000;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family:Segoe UI, Arial, sans-serif;
     color:var(--text);
 }
 
 /* =========================
-   SISTEMA DE FONDOS MASIVO
+   SISTEMA DE FONDOS MEJORADO
 ========================= */
-.background-engine {
-    position: fixed;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -10;
-    overflow: hidden;
+.container{
+    position:fixed;
+    inset:0;
+    width:100%;
+    height:100%;
+    z-index:-10;
+    overflow:hidden;
     background: #000;
 }
 
-.slide {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    opacity: 0;
-    transition: opacity 2.5s ease-in-out;
-    transform: scale(1.1); /* Efecto de zoom ligero */
-    filter: brightness(0.8) contrast(1.2);
+.slide{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    background-size:cover;
+    background-position:center;
+    background-repeat:no-repeat;
+    opacity:0;
+    transition:opacity 2.5s ease-in-out;
+    transform:scale(1.1); /* Efecto de profundidad */
 }
 
-.slide.active {
-    opacity: 1;
-    transform: scale(1); /* Animación de entrada */
-    transition: opacity 2.5s ease-in-out, transform 10s linear;
+.slide.active{
+    opacity:1;
 }
 
-.overlay {
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(circle, rgba(0,0,0,0) 30%, rgba(0,0,0,0.8) 100%);
-    z-index: -5;
-    pointer-events: none;
+.overlay{
+    position:absolute;
+    inset:0;
+    background: radial-gradient(circle, rgba(0,0,0,0) 30%, rgba(0,0,0,0.85) 100%);
+    pointer-events:none;
+    z-index: 1;
 }
 
 /* =========================
-   INTERFAZ
+   APP UI
 ========================= */
-#app {
-    position: relative;
-    z-index: 10;
-    width: 100%;
-    max-width: 750px;
-    margin: auto;
-    padding: 20px;
+#app{
+    position:relative;
+    z-index:5;
+    width:100%;
+    max-width:700px;
+    margin:auto;
+    padding:20px;
 }
 
-.card {
-    background: var(--card);
-    backdrop-filter: blur(12px);
-    padding: 25px;
-    border-radius: 20px;
-    margin: 20px 0;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.6);
-    border: 1px solid rgba(255,255,255,0.1);
+.card{
+    background:rgba(11, 18, 32, 0.75);
+    backdrop-filter:blur(12px);
+    padding:25px;
+    border-radius:20px;
+    margin:15px 0;
+    box-shadow:0 15px 35px rgba(0,0,0,0.6);
+    border:1px solid rgba(255,255,255,0.1);
 }
 
-.breath-circle {
-    width: 150px; height: 150px;
-    border-radius: 50%;
-    margin: 20px auto;
-    border: 5px solid var(--primary);
-    display: flex; align-items: center; justify-content: center;
-    animation: breathe 7s infinite ease-in-out;
-    box-shadow: 0 0 30px var(--primary);
+button{
+    width:100%;
+    padding:16px;
+    border:none;
+    border-radius:14px;
+    background:var(--primary);
+    color:white;
+    font-weight:bold;
+    font-size:16px;
+    cursor:pointer;
+    transition:0.3s;
+    margin-top:12px;
+    text-transform: uppercase;
 }
 
-@keyframes breathe {
-    0%, 100% { transform: scale(0.9); opacity: 0.6; }
-    50% { transform: scale(1.15); opacity: 1; border-color: var(--success); box-shadow: 0 0 50px var(--success); }
+button:hover{ background: #2563eb; transform:scale(1.02); }
+
+.breath-circle{
+    width:140px;
+    height:140px;
+    border-radius:50%;
+    margin:25px auto;
+    border:5px solid var(--primary);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    animation:breathe 7s infinite ease-in-out;
+    font-size:20px;
+    font-weight:bold;
+    box-shadow: 0 0 40px rgba(59,130,246,0.5);
 }
 
-button {
-    width: 100%; padding: 15px; border: none; border-radius: 12px;
-    background: var(--primary); color: #fff; font-weight: bold;
-    cursor: pointer; transition: 0.3s;
+@keyframes breathe{
+    0%, 100%{ transform:scale(0.8); opacity:0.6; }
+    50%{ transform:scale(1.2); opacity:1; border-color:var(--success); box-shadow: 0 0 60px rgba(34,197,94,0.6); }
 }
 
-button:hover { background: #2563eb; transform: scale(1.02); }
+h2{ font-size:26px; letter-spacing: 1px; }
+p{ font-size:17px; line-height:1.5; }
+.small{ font-size:12px; color:var(--dim); text-transform: uppercase; }
+.center{ text-align:center; }
 
-input {
-    width: 100%; padding: 15px; border-radius: 12px; border: none;
-    background: #1f2937; color: #fff; text-align: center; margin-bottom: 10px;
+input{
+    width:100%;
+    padding:15px;
+    border-radius:12px;
+    border:none;
+    background:rgba(255,255,255,0.1);
+    color:white;
+    font-size:20px;
+    text-align:center;
 }
 </style>
 </head>
+
 <body>
 
-<div class="background-engine" id="bgEngine">
+<div class="container">
     <div id="img1" class="slide active"></div>
     <div id="img2" class="slide"></div>
+    <div class="overlay"></div>
 </div>
-<div class="overlay"></div>
 
 <div id="app">
-    <div class="card center" style="text-align: center;">
-        <h2 style="color:var(--primary); font-size: 32px;">KAMIZEN LIFE SYSTEM</h2>
-        <p style="font-size: 14px; opacity: 0.8;">Advanced Neural Interface • USA Edition</p>
-        
+    <div class="card center">
+        <h2 style="color:var(--primary);">KAMIZEN LIFE SYSTEM</h2>
+        <p class="small">Core Session • Neural Stability</p>
         <div style="margin-top:20px;">
             <input type="number" id="missionSelector" min="1" max="49" value="1" />
-            <button onclick="jumpToMission()">ACTIVATE MISSION</button>
+            <button onclick="jumpToMission()">LOAD MISSION</button>
         </div>
     </div>
 
     <div id="screen" class="card">
-        <h3 id="displayTitle">SYSTEM READY</h3>
-        <p id="displayText">Initiating visual synchronization... Focus on the natural flow.</p>
+        <h3>System Active</h3>
+        <p>Waiting for mission data...</p>
     </div>
 
-    <div class="card center" style="text-align: center;">
-        <h3>Core Breathing</h3>
-        <div class="breath-circle"><span id="breathText">FOCUS</span></div>
+    <div class="card center">
+        <div class="breath-circle"><span>AURA</span></div>
+        <p class="small">Breathing Sync Active</p>
     </div>
 </div>
 
@@ -151,57 +179,62 @@ input {
 const slides = [document.getElementById('img1'), document.getElementById('img2')];
 let currentIdx = 0;
 
-// Temas que fascinan a niños de 5-14 años (USA tastes: Animals, Space, Epic Landscapes)
+// Lista de búsqueda para imágenes naturales de alto impacto
 const keywords = [
-    'wolf', 'tiger', 'galaxy', 'nebula', 'ocean-wave', 'tornado', 'lightning', 
-    'forest', 'mountain-peak', 'underwater', 'lion', 'eagle', 'volcano', 
-    'aurora-borealis', 'deep-space', 'desert-dunes', 'redwood-forest'
+    'deep-space', 'underwater-ocean', 'tropical-jungle', 'snowy-mountains', 
+    'mystic-forest', 'volcano-lava', 'northern-lights', 'desert-dunes', 
+    'nebula', 'waterfall', 'wild-animals', 'lightning-storm'
 ];
 
-function getImageUrl() {
-    // Generamos un término aleatorio para que cada carga sea diferente de las 100+ disponibles
-    const term = keywords[Math.floor(Math.random() * keywords.length)];
-    const salt = Math.floor(Math.random() * 5000);
-    // Usamos Unsplash Source para mayor calidad visual en USA
-    return `https://images.unsplash.com/photo-${salt}?auto=format&fit=crop&w=1920&q=80&sig=${salt}&keyword=${term}`;
+function getContextImage() {
+    const text = document.getElementById('screen').innerText.toLowerCase();
+    let selectedSearch = keywords[Math.floor(Math.random() * keywords.length)];
+    
+    // Si el texto de la app menciona algo específico, lo buscamos
+    keywords.forEach(k => {
+        if(text.includes(k.split('-')[0])) selectedSearch = k;
+    });
+
+    const seed = Math.floor(Math.random() * 2000);
+    // Usamos Unsplash Source que es más variado y específico que Picsum
+    return `https://images.unsplash.com/photo-${seed}?auto=format&fit=crop&w=1920&q=80&sig=${seed}`;
+    // Nota: Como Unsplash requiere IDs específicos, usaremos una técnica de búsqueda por palabra clave más robusta:
 }
 
-// Fallback en caso de error de carga
-function getFallbackUrl() {
-    const salt = Math.floor(Math.random() * 1000);
-    return `https://picsum.photos/1920/1080?random=${salt}`;
+function fetchNewImage() {
+    const topic = keywords[Math.floor(Math.random() * keywords.length)];
+    const randomSeed = Math.random();
+    return `https://source.unsplash.com/1920x1080/?${topic}&sig=${randomSeed}`;
 }
 
-// Inicialización
-slides[0].style.backgroundImage = `url('${getImageUrl()}')`;
-slides[1].style.backgroundImage = `url('${getImageUrl()}')`;
-
-async function rotateBackground() {
+// Fallback por si Unsplash demora: usamos imágenes de alta calidad de naturaleza directa
+function updateBackground() {
     const nextIdx = (currentIdx + 1) % 2;
-    const nextImg = new Image();
-    const newUrl = getImageUrl();
+    const topic = keywords[Math.floor(Math.random() * keywords.length)];
+    const newImgUrl = `https://loremflickr.com/1920/1080/${topic}?random=${Math.random()}`;
 
-    nextImg.src = newUrl;
-    nextImg.onload = () => {
-        slides[nextIdx].style.backgroundImage = `url('${newUrl}')`;
+    const tempImg = new Image();
+    tempImg.src = newImgUrl;
+    
+    tempImg.onload = () => {
+        slides[nextIdx].style.backgroundImage = `url('${newImgUrl}')`;
         slides[currentIdx].classList.remove('active');
         slides[nextIdx].classList.add('active');
         currentIdx = nextIdx;
     };
-    nextImg.onerror = () => {
-        slides[nextIdx].style.backgroundImage = `url('${getFallbackUrl()}')`;
-    };
 }
 
-// Rotación cada 7 segundos exactos
-setInterval(rotateBackground, 7000);
+// Rotación cada 14 segundos
+setInterval(updateBackground, 7000);
 
-// Sincronización con el contenido de la App
-const screenObserver = new MutationObserver(() => {
-    // Al detectar cambio de texto, aceleramos la transición para cambiar de ambiente
-    rotateBackground();
+// Carga inicial inmediata
+updateBackground();
+
+// Escuchar cambios en la pantalla para reaccionar
+const observer = new MutationObserver(() => {
+    updateBackground();
 });
-screenObserver.observe(document.getElementById('screen'), { childList: true, characterData: true, subtree: true });
+observer.observe(document.getElementById('screen'), { childList: true, subtree: true });
 
 </script>
 
