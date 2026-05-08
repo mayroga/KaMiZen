@@ -77,7 +77,7 @@ async function loadAllData() {
    UI CONTROLS (BACK / RESTART / JUMP)
 ========================= */
 function restartSystem() {
-    if(confirm("¿Seguro que quieres empezar desde cero?")) {
+    if(confirm("¿[?")) {
         localStorage.clear();
         state.currentIndex = 0;
         state.currentBlock = 0;
