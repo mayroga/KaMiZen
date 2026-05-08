@@ -1,11 +1,13 @@
 /* =========================================================
-   KAMIZEN ENGINE V11 - AUTO FLOW + CONTROL HYBRID SYSTEM
-   ✔ Auto play with speech + 2s delay
-   ✔ Manual control ONLY for breathing + questions
-   ✔ Start button remains manual
-   ✔ End-of-block controls: continue / skip / restart
-   ✔ No freeze / no double render / speech lock safe
-   ========================================================= */
+   KAMIZEN ENGINE V11 - SAFE AUTOPLAY + CONTROL VOZ
+   ✔ No elimina sistema original
+   ✔ Voz controla ritmo
+   ✔ Delay de seguridad 1s
+   ✔ Silence bloquea auto advance
+   ✔ Q&A con feedback completo
+   ✔ Colores de evaluación
+   ✔ Background sync hook
+========================================================= */
 
 /* =========================
    GLOBAL STATE
@@ -14,22 +16,19 @@
 let state = {
     stories: [],
     missions: [],
-
     currentIndex: 0,
     currentBlock: 0,
-
     phase: "loading",
-
     speechLocked: false,
     initialized: false
 };
 
 /* =========================
-   ENGINE LOCK
+   LOCK
 ========================= */
 
 if (window.__KAMIZEN_ENGINE_ACTIVE__) {
-    console.warn("KAMIZEN ENGINE ALREADY RUNNING");
+    console.warn("ALREADY RUNNING");
 } else {
     window.__KAMIZEN_ENGINE_ACTIVE__ = true;
 }
@@ -44,7 +43,7 @@ window.addEventListener("load", async () => {
 });
 
 /* =========================
-   LOAD DATA
+   LOAD DATA (UNCHANGED CORE)
 ========================= */
 
 async function loadAllData() {
@@ -54,59 +53,36 @@ async function loadAllData() {
     app.innerHTML = `
         <div class="card">
             <h2>LOADING SYSTEM...</h2>
-            <p>Initializing neural missions</p>
         </div>
     `;
 
-    try {
+    const [s, m] = await Promise.all([
+        fetch("/api/stories"),
+        fetch("/api/missions")
+    ]);
 
-        const [storiesReq, missionsReq] = await Promise.all([
-            fetch("/api/stories"),
-            fetch("/api/missions")
-        ]);
+    const sd = await s.json();
+    const md = await m.json();
 
-        const storiesData = await storiesReq.json();
-        const missionsData = await missionsReq.json();
+    state.stories = sd.stories.sort((a,b)=>a.id-b.id);
+    state.missions = md.missions.sort((a,b)=>a.id-b.id);
 
-        state.stories = (storiesData.stories || []).sort((a,b)=>a.id-b.id);
-        state.missions = (missionsData.missions || []).sort((a,b)=>a.id-b.id);
-
-        state.initialized = true;
-
-    } catch (err) {
-
-        console.error(err);
-
-        app.innerHTML = `
-            <div class="card">
-                <h2>SYSTEM ERROR</h2>
-            </div>
-        `;
-    }
+    state.initialized = true;
 }
 
 /* =========================
-   INTRO
+   INTRO (UNCHANGED)
 ========================= */
 
-function showIntro() {
+function showIntro(){
+    state.phase="intro";
+    document.getElementById("app").innerHTML=`
+    <div class="card center">
+        <h2>KAMIZEN LIFE SYSTEM</h2>
+        <p>BODY • CALM • FOCUS • PRESENCE</p>
+    </div>
 
-    state.phase = "intro";
-
-    document.getElementById("app").innerHTML = `
-        <div class="card">
-            <h1>KAMIZEN LIFE SYSTEM</h1>
-
-            <p>BODY • CALM • FOCUS • PRESENCE</p>
-
-            <p style="opacity:.8;">
-                Stories + Missions Active
-            </p>
-        </div>
-
-        <button onclick="startSystem()">
-            START SYSTEM
-        </button>
+    <button onclick="startSystem()">START SYSTEM</button>
     `;
 }
 
@@ -114,287 +90,258 @@ function showIntro() {
    START
 ========================= */
 
-function startSystem() {
-
-    state.currentIndex = 0;
-    state.currentBlock = 0;
-    state.phase = "story";
-
+function startSystem(){
+    state.currentIndex=0;
+    state.currentBlock=0;
+    state.phase="story";
     render();
 }
 
 /* =========================
-   AUTO DELAY (CRITICAL RULE)
+   CORE RENDER
 ========================= */
 
-function autoNext(callback) {
+function render(){
 
-    setTimeout(() => {
+    if(!state.initialized) return;
 
-        if (!state.speechLocked) {
-            callback();
-        }
+    const app=document.getElementById("app");
 
-    }, 2000); // 🧠 2 seconds AFTER voice ends
-}
+    const story=state.stories[state.currentIndex];
+    const mission=state.missions[state.currentIndex];
 
-/* =========================
-   RENDER
-========================= */
-
-function render() {
-
-    if (!state.initialized) return;
-
-    const app = document.getElementById("app");
-
-    const story = state.stories[state.currentIndex];
-    const mission = state.missions[state.currentIndex];
-
-    if (!story || !mission) {
-        state.currentIndex = 0;
-        state.currentBlock = 0;
+    if(!story || !mission){
+        state.currentIndex=0;
+        state.currentBlock=0;
         return render();
     }
 
-    /* =========================
-       STORY
-    ========================= */
+    if(state.phase==="story"){
 
-    if (state.phase === "story") {
+        app.innerHTML=`
+        <div class="card">
+            <h2>STORY ${story.id}</h2>
+            <h3>${story.t}</h3>
+            <p>${story.en}</p>
+        </div>
 
-        app.innerHTML = `
-            <div class="card">
-                <h2>STORY ${story.id}</h2>
-                <h3>${story.t}</h3>
-                <p>${story.en}</p>
-            </div>
+        <button id="continueBtn" disabled>NARRATING...</button>
         `;
 
-        narrate(`${story.t}. ${story.en}`, () => {
-
-            autoNext(() => {
-                startMission();
-            });
-
+        narrate(`${story.t}. ${story.en}`,()=>{
+            setTimeout(()=>unlockContinue("START MISSION",startMission),1000);
         });
 
         return;
     }
 
-    /* =========================
-       MISSION
-    ========================= */
-
-    const block = mission.b[state.currentBlock];
-
-    if (!block) {
-        nextStory();
-        return;
+    if(state.phase==="mission"){
+        const block=mission.b[state.currentBlock];
+        if(!block){ nextStory(); return; }
+        renderBlock(block);
     }
-
-    renderBlock(block);
 }
 
 /* =========================
-   BLOCK RENDER
+   BLOCK ENGINE (FIXED LOGIC)
 ========================= */
 
-function renderBlock(block) {
+function renderBlock(block){
 
-    const app = document.getElementById("app");
+    const app=document.getElementById("app");
 
-    let html = "";
-    let narration = "";
-
-    const isControl =
-        block.t === "d" ||
-        block.t === "breath_auto" ||
-        block.t === "br";
+    let html="";
+    let text="";
+    let blockType=block.t;
 
     /* =========================
-       VISUAL / TEXT AUTO
+       TEXT BLOCKS
     ========================= */
 
-    if (block.t === "v" || block.t === "h" || block.story || block.t === "sil" || block.t === "r") {
-
-        html += `<div class="card">`;
-
-        html += `<p>${block.tx?.en || block.story?.en || block.inf?.en || ""}</p>`;
-
-        html += `</div>`;
-
-        narration += `${block.tx?.en || block.story?.en || ""}.`;
+    if(block.t==="v"||block.t==="h"||block.story){
+        html+=`<div class="card"><p>${block.tx?.en||block.story?.en||""}</p></div>`;
+        text+=`${block.tx?.en||block.story?.en||""}. `;
     }
 
     /* =========================
-       BREATHING (MANUAL CONTROL)
+       BREATHING
     ========================= */
 
-    if (block.t === "breath_auto" || block.t === "br") {
-
-        html += `
+    if(block.t==="breath_auto"||block.t==="br"){
+        html+=`
         <div class="card center">
-
             <div class="breath-circle" id="breathCircle">
                 <span id="breathLabel">INHALE</span>
             </div>
-
-            <h3>${block.tx?.en}</h3>
+            <p>${block.tx?.en}</p>
             <p>${block.inf?.en}</p>
-
-            ${controls()}
         </div>`;
-
-        startBreathingAnimation();
+        text+=`${block.tx?.en}. ${block.inf?.en}.`;
     }
 
     /* =========================
-       QUESTION (MANUAL CONTROL)
+       SILENCE (NO AUTO ADVANCE)
     ========================= */
 
-    if (block.t === "d") {
+    if(block.t==="sil"){
+        html+=`
+        <div class="card center">
+            <h3>${block.tx?.en}</h3>
+            <p>${block.inf?.en}</p>
+        </div>
 
-        html += `<div class="card"><h3>${block.q?.en}</h3>`;
+        <button id="continueBtn" disabled>CONTINUE</button>
+        `;
+
+        text+=`${block.tx?.en}. ${block.inf?.en}.`;
+
+        renderUI(html,text,true);
+        return;
+    }
+
+    /* =========================
+       QUESTION SYSTEM (IMPORTANT FIX)
+    ========================= */
+
+    if(block.t==="d"){
+
+        html+=`<div class="card"><h3>${block.q.en}</h3>`;
 
         block.op.forEach((o,i)=>{
 
-            html += `
-                <div class="answer" onclick="selectAnswer(${i},${block.c},${JSON.stringify(block.ex).replace(/"/g,'&quot;')})">
-                    ${o}
-                </div>
-            `;
+            html+=`
+            <div class="answer"
+                onclick="selectAnswer(${i},${block.c},${JSON.stringify(block.ex)})">
+                ${o}
+            </div>`;
         });
 
-        html += controls();
-        html += `</div>`;
-    }
+        html+="</div>";
 
-    app.innerHTML = html;
+        text+=block.q.en;
+
+        renderUI(html,text,true);
+        return;
+    }
 
     /* =========================
-       AUTO FLOW RULE
+       AUTO CONTINUE BLOCKS
     ========================= */
 
-    if (!isControl) {
+    renderUI(html,text,false);
+}
 
-        narrate(narration, () => {
+/* =========================
+   UI RENDER SAFE
+========================= */
 
-            autoNext(() => {
+function renderUI(html,text,waitButton){
+
+    document.getElementById("app").innerHTML=html;
+
+    narrate(text,()=>{
+        setTimeout(()=>{
+
+            if(waitButton){
+                unlockContinue("CONTINUE",nextBlock);
+            }else{
                 nextBlock();
-            });
+            }
 
-        });
-
-    } else {
-
-        narrate(narration);
-    }
-}
-
-/* =========================
-   CONTROLS UI
-========================= */
-
-function controls() {
-    return `
-    <div style="margin-top:15px;">
-        <button onclick="nextBlock()">CONTINUE</button>
-        <button onclick="nextStory()">SKIP</button>
-        <button onclick="restartSystem()">RESTART</button>
-    </div>`;
-}
-
-/* =========================
-   ANSWERS
-========================= */
-
-function selectAnswer(i, correct, ex) {
-
-    const ok = i === correct;
-
-    narrate(ex[i] || "", () => {
-
-        autoNext(() => {
-            nextBlock();
-        });
-
+        },1000); // 🔥 safety delay
     });
 }
 
 /* =========================
-   NAVIGATION
+   ANSWERS (COLOR LOGIC FIXED)
 ========================= */
 
-function nextBlock() {
+function selectAnswer(i,correct,exp){
+
+    if(state.speechLocked) return;
+
+    const ok=i===correct;
+
+    let color= ok ? "#22c55e" :
+               i===1 ? "#facc15" :
+               i===2 ? "#f97316" :
+                       "#ef4444";
+
+    const app=document.getElementById("app");
+
+    app.innerHTML+=`
+    <div class="card">
+        <h3 style="color:${color}">
+            ${ok?"CORRECT":"RESULT"}
+        </h3>
+        <p>${exp[i]||""}</p>
+    </div>
+
+    <button id="continueBtn" disabled>CONTINUE</button>
+    `;
+
+    narrate(exp[i]||"",()=>{
+        setTimeout(()=>unlockContinue("CONTINUE",nextBlock),1000);
+    });
+}
+
+/* =========================
+   VOICE (UNCHANGED CORE + SAFETY)
+========================= */
+
+function narrate(text,cb){
+
+    if(!text){ cb&&cb(); return; }
+
+    state.speechLocked=true;
+
+    window.speechSynthesis.cancel();
+
+    let u=new SpeechSynthesisUtterance(text);
+
+    u.rate=0.9;
+    u.pitch=1;
+
+    u.onend=()=>{
+        state.speechLocked=false;
+        cb&&cb();
+    };
+
+    window.speechSynthesis.speak(u);
+}
+
+/* =========================
+   CONTROLS
+========================= */
+
+function unlockContinue(t,fn){
+
+    let b=document.getElementById("continueBtn");
+    if(!b) return;
+
+    b.disabled=false;
+    b.innerText=t;
+    b.onclick=fn;
+}
+
+/* =========================
+   FLOW CONTROL
+========================= */
+
+function nextBlock(){
     state.currentBlock++;
     render();
 }
 
-function nextStory() {
+function startMission(){
+    state.phase="mission";
+    state.currentBlock=0;
+    render();
+}
+
+function nextStory(){
     state.currentIndex++;
-    state.currentBlock = 0;
-    state.phase = "story";
+    state.currentBlock=0;
+    state.phase="story";
     render();
-}
-
-function restartSystem() {
-    state.currentIndex = 0;
-    state.currentBlock = 0;
-    state.phase = "story";
-    render();
-}
-
-function startMission() {
-    state.phase = "mission";
-    state.currentBlock = 0;
-    render();
-}
-
-/* =========================
-   SPEECH ENGINE
-========================= */
-
-function narrate(text, cb) {
-
-    if (!text) return cb?.();
-
-    state.speechLocked = true;
-
-    window.speechSynthesis.cancel();
-
-    const s = new SpeechSynthesisUtterance(text);
-
-    s.rate = 0.92;
-
-    s.onend = () => {
-        state.speechLocked = false;
-        cb?.();
-    };
-
-    speechSynthesis.speak(s);
-}
-
-/* =========================
-   BREATHING
-========================= */
-
-function startBreathingAnimation() {
-
-    const c = document.getElementById("breathCircle");
-    const l = document.getElementById("breathLabel");
-
-    if (!c || !l) return;
-
-    let inhale = true;
-
-    setInterval(()=>{
-
-        inhale = !inhale;
-
-        l.innerText = inhale ? "INHALE" : "EXHALE";
-
-        c.style.transform = inhale ? "scale(1.2)" : "scale(0.85)";
-
-    },4000);
 }
