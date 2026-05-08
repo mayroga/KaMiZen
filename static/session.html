@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>KAMIZEN LIFE SYSTEM - CORE SESSION</title>
 
 <style>
+
 :root{
     --bg:#0b1220;
     --card:#111a2e;
@@ -30,13 +32,9 @@ body{
     min-height:100vh;
 }
 
-/* =========================
-   APP CONTAINER
-========================= */
-
 #app{
     width:100%;
-    max-width:700px;
+    max-width:720px;
     padding:20px;
 }
 
@@ -54,12 +52,13 @@ body{
 }
 
 /* =========================
-   BUTTON SYSTEM (ENGINE CONTROLLED)
+   BUTTONS
 ========================= */
 
 button{
     width:100%;
     padding:14px;
+    margin-top:10px;
     border:none;
     border-radius:12px;
     background:var(--primary);
@@ -73,8 +72,16 @@ button:hover{
     transform:translateY(-2px);
 }
 
+button:nth-child(2){
+    background:#64748b;
+}
+
+button:nth-child(3){
+    background:var(--danger);
+}
+
 /* =========================
-   ANSWERS (Q/A MODE ONLY)
+   ANSWERS
 ========================= */
 
 .answer{
@@ -93,7 +100,7 @@ button:hover{
 }
 
 /* =========================
-   BREATHING VISUAL (VISUAL ONLY)
+   BREATHING VISUAL
 ========================= */
 
 .breath-circle{
@@ -105,27 +112,11 @@ button:hover{
     display:flex;
     align-items:center;
     justify-content:center;
-    animation:breathe 6s infinite ease-in-out;
-}
-
-@keyframes breathe{
-    0%{
-        transform:scale(0.85);
-        opacity:0.7;
-    }
-    50%{
-        transform:scale(1.25);
-        opacity:1;
-        border-color:var(--success);
-    }
-    100%{
-        transform:scale(0.85);
-        opacity:0.7;
-    }
+    transition:transform 4s ease-in-out;
 }
 
 /* =========================
-   TEXT STYLES
+   TEXT
 ========================= */
 
 h1,h2,h3{
@@ -141,37 +132,8 @@ h1,h2,h3{
     text-align:center;
 }
 
-/* =========================
-   HIDDEN (ENGINE USE)
-========================= */
-
-.hidden{
-    display:none;
-}
-
-/* =========================
-   KAMIZEN HEADER (V11 READY)
-========================= */
-
-.kamizen-title{
-    font-size:22px;
-    font-weight:800;
-    color:var(--primary);
-    letter-spacing:1px;
-}
-
-.kamizen-subtitle{
-    font-size:12px;
-    opacity:0.8;
-}
-
-.kamizen-core{
-    font-size:13px;
-    opacity:0.7;
-    margin-top:5px;
-}
-
 </style>
+
 </head>
 
 <body>
@@ -180,19 +142,19 @@ h1,h2,h3{
 
     <!-- =========================
          INTRO HEADER (STATIC ONLY)
-    ========================= -->
+    ========================== -->
 
     <div class="card center">
 
-        <div class="kamizen-title">
+        <h2 style="color:var(--primary);">
             KAMIZEN LIFE SYSTEM
-        </div>
+        </h2>
 
-        <p class="kamizen-subtitle">
+        <h3>
             BODY • CALM • FOCUS • PRESENCE
-        </p>
+        </h3>
 
-        <p class="kamizen-core">
+        <p class="small">
             Stories + Missions Active
         </p>
 
@@ -200,30 +162,36 @@ h1,h2,h3{
 
     <!-- =========================
          MAIN ENGINE SCREEN
-    ========================= -->
+    ========================== -->
 
-    <div id="screen" class="card">
+    <div id="screen" class="card center">
+
         <h3>Loading system...</h3>
+
         <p class="small">
             Initializing stories & missions
         </p>
+
     </div>
 
     <!-- =========================
-         BREATHING VISUAL MODULE
-         (NO LOGIC - ENGINE CONTROLLED)
-    ========================= -->
+         BREATHING VISUAL (CONTROLLED BY ENGINE)
+    ========================== -->
 
     <div class="card center">
 
         <h3>Breathing Module</h3>
 
-        <div class="breath-circle">
-            <span>FOCUS</span>
+        <div class="breath-circle" id="breathCircle">
+
+            <span id="breathLabel">
+                FOCUS
+            </span>
+
         </div>
 
         <p class="small">
-            Automatic regulation system (engine controlled)
+            Controlled by system engine (auto + manual hybrid mode)
         </p>
 
     </div>
@@ -231,9 +199,11 @@ h1,h2,h3{
 </div>
 
 <!-- =========================
-     ENGINE CORE
+     ENGINE CONTROLLER
 ========================= -->
+
 <script src="/static/js/engine.js"></script>
 
 </body>
+
 </html>
