@@ -22,13 +22,9 @@
     padding:0;
 }
 
-/* =========================
-   BODY
-========================= */
-html,
-body{
+html, body{
     width:100%;
-    min-height:100%;
+    height:100%;
     overflow-x:hidden;
     background:#000;
     font-family:Segoe UI, Arial, sans-serif;
@@ -36,7 +32,7 @@ body{
 }
 
 /* =========================
-   BACKGROUND SYSTEM
+   SISTEMA DE FONDOS MEJORADO
 ========================= */
 .container{
     position:fixed;
@@ -45,6 +41,7 @@ body{
     height:100%;
     z-index:-10;
     overflow:hidden;
+    background: #000;
 }
 
 .slide{
@@ -56,8 +53,8 @@ body{
     background-position:center;
     background-repeat:no-repeat;
     opacity:0;
-    transition:opacity 2.5s ease-in-out; /* Transición más suave para 7s */
-    transform:scale(1.04);
+    transition:opacity 2.5s ease-in-out;
+    transform:scale(1.1); /* Efecto de profundidad */
 }
 
 .slide.active{
@@ -67,17 +64,13 @@ body{
 .overlay{
     position:absolute;
     inset:0;
-    background:
-        radial-gradient(
-            circle,
-            rgba(0,0,0,0.10) 20%,
-            rgba(0,0,0,0.78) 100%
-        );
+    background: radial-gradient(circle, rgba(0,0,0,0) 30%, rgba(0,0,0,0.85) 100%);
     pointer-events:none;
+    z-index: 1;
 }
 
 /* =========================
-   APP
+   APP UI
 ========================= */
 #app{
     position:relative;
@@ -88,219 +81,160 @@ body{
     padding:20px;
 }
 
-/* =========================
-   CARD SYSTEM
-========================= */
 .card{
-    background:rgba(17,26,46,0.82);
-    backdrop-filter:blur(6px);
-    padding:20px;
-    border-radius:16px;
+    background:rgba(11, 18, 32, 0.75);
+    backdrop-filter:blur(12px);
+    padding:25px;
+    border-radius:20px;
     margin:15px 0;
-    box-shadow:0 10px 25px rgba(0,0,0,0.45);
-    border:1px solid rgba(255,255,255,0.08);
+    box-shadow:0 15px 35px rgba(0,0,0,0.6);
+    border:1px solid rgba(255,255,255,0.1);
 }
 
-/* =========================
-   BUTTONS
-========================= */
 button{
     width:100%;
-    padding:14px;
+    padding:16px;
     border:none;
-    border-radius:12px;
+    border-radius:14px;
     background:var(--primary);
     color:white;
     font-weight:bold;
     font-size:16px;
     cursor:pointer;
-    transition:0.2s;
-    margin-top:10px;
+    transition:0.3s;
+    margin-top:12px;
+    text-transform: uppercase;
 }
 
-button:hover{
-    transform:translateY(-2px);
-}
+button:hover{ background: #2563eb; transform:scale(1.02); }
 
-button:disabled{
-    opacity:0.7;
-    cursor:not-allowed;
-}
-
-/* =========================
-   ANSWERS
-========================= */
-.answer{
-    background:#1f2937;
-    padding:14px;
-    margin:10px 0;
-    border-radius:12px;
-    cursor:pointer;
-    border-left:4px solid var(--primary);
-    transition:0.2s;
-    font-size:18px;
-    font-weight:600;
-}
-
-.answer:hover{
-    transform:translateX(5px);
-    background:#374151;
-}
-
-/* =========================
-   BREATHING VISUAL
-========================= */
 .breath-circle{
-    width:160px;
-    height:160px;
+    width:140px;
+    height:140px;
     border-radius:50%;
-    margin:30px auto;
-    border:4px solid var(--primary);
+    margin:25px auto;
+    border:5px solid var(--primary);
     display:flex;
     align-items:center;
     justify-content:center;
-    animation:breathe 6s infinite ease-in-out;
-    font-size:22px;
+    animation:breathe 7s infinite ease-in-out;
+    font-size:20px;
     font-weight:bold;
-    box-shadow:
-        0 0 35px rgba(59,130,246,0.4);
+    box-shadow: 0 0 40px rgba(59,130,246,0.5);
 }
 
 @keyframes breathe{
-    0%{ transform:scale(0.85); opacity:0.7; }
-    50%{ transform:scale(1.25); opacity:1; border-color:var(--success); }
-    100%{ transform:scale(0.85); opacity:0.7; }
+    0%, 100%{ transform:scale(0.8); opacity:0.6; }
+    50%{ transform:scale(1.2); opacity:1; border-color:var(--success); box-shadow: 0 0 60px rgba(34,197,94,0.6); }
 }
 
-h1,h2,h3,p,span{
-    margin:10px 0;
-    text-shadow: 0 2px 8px rgba(0,0,0,0.95);
-}
-
-h1{ font-size:34px; font-weight:900; }
-h2{ font-size:28px; font-weight:800; }
-h3{ font-size:22px; font-weight:700; }
-p{ font-size:18px; line-height:1.6; font-weight:500; }
-.small{ font-size:13px; color:var(--dim); }
+h2{ font-size:26px; letter-spacing: 1px; }
+p{ font-size:17px; line-height:1.5; }
+.small{ font-size:12px; color:var(--dim); text-transform: uppercase; }
 .center{ text-align:center; }
-.hidden{ display:none; }
 
 input{
     width:100%;
-    padding:14px;
+    padding:15px;
     border-radius:12px;
     border:none;
-    background:#1f2937;
+    background:rgba(255,255,255,0.1);
     color:white;
-    font-size:18px;
+    font-size:20px;
     text-align:center;
-    margin-bottom:10px;
-}
-
-input:focus{
-    outline:none;
-    box-shadow: 0 0 10px rgba(59,130,246,0.6);
-}
-
-@media(max-width:700px){
-    #app{ padding:12px; }
-    h1{ font-size:28px; }
-    h2{ font-size:24px; }
-    h3{ font-size:20px; }
-    p{ font-size:17px; }
-    .breath-circle{ width:140px; height:140px; }
 }
 </style>
 </head>
 
 <body>
 
-<!-- BACKGROUND SYSTEM -->
 <div class="container">
     <div id="img1" class="slide active"></div>
     <div id="img2" class="slide"></div>
     <div class="overlay"></div>
 </div>
 
-<!-- MAIN APP -->
 <div id="app">
     <div class="card center">
         <h2 style="color:var(--primary);">KAMIZEN LIFE SYSTEM</h2>
-        <p class="small">Neural Training • Awareness • Discipline • Control</p>
+        <p class="small">Core Session • Neural Stability</p>
         <div style="margin-top:20px;">
-            <input type="number" id="missionSelector" min="1" max="49" value="1" placeholder="1-49" />
-            <button onclick="jumpToMission()">LOAD STORY & MISSION</button>
+            <input type="number" id="missionSelector" min="1" max="49" value="1" />
+            <button onclick="jumpToMission()">LOAD MISSION</button>
         </div>
     </div>
 
     <div id="screen" class="card">
-        <h3>Loading system...</h3>
-        <p class="small">Initializing stories & missions</p>
+        <h3>System Active</h3>
+        <p>Waiting for mission data...</p>
     </div>
 
     <div class="card center">
-        <h3>Breathing Module</h3>
-        <div class="breath-circle"><span>FOCUS</span></div>
-        <p class="small">Automatic regulation system (controlled by engine.js)</p>
+        <div class="breath-circle"><span>AURA</span></div>
+        <p class="small">Breathing Sync Active</p>
     </div>
 </div>
 
-<!-- BACKGROUND SCRIPT -->
 <script>
 const slides = [document.getElementById('img1'), document.getElementById('img2')];
 let currentIdx = 0;
-let lastTopic = 'nature';
 
-const topics = ['nature', 'space', 'ocean', 'animals', 'landscape', 'galaxy', 'forest', 'mountains', 'waterfall', 'stars'];
+// Lista de búsqueda para imágenes naturales de alto impacto
+const keywords = [
+    'deep-space', 'underwater-ocean', 'tropical-jungle', 'snowy-mountains', 
+    'mystic-forest', 'volcano-lava', 'northern-lights', 'desert-dunes', 
+    'nebula', 'waterfall', 'wild-animals', 'lightning-storm'
+];
 
-// Función para obtener una palabra clave del contenido de la APP
-function getContextTopic() {
-    const screenText = document.getElementById('screen').innerText.toLowerCase();
-    // Si el texto contiene palabras clave, priorizamos esa temática
-    for (let t of topics) {
-        if (screenText.includes(t)) return t;
-    }
-    // Si no encuentra coincidencia, elige una aleatoria
-    return topics[Math.floor(Math.random() * topics.length)];
+function getContextImage() {
+    const text = document.getElementById('screen').innerText.toLowerCase();
+    let selectedSearch = keywords[Math.floor(Math.random() * keywords.length)];
+    
+    // Si el texto de la app menciona algo específico, lo buscamos
+    keywords.forEach(k => {
+        if(text.includes(k.split('-')[0])) selectedSearch = k;
+    });
+
+    const seed = Math.floor(Math.random() * 2000);
+    // Usamos Unsplash Source que es más variado y específico que Picsum
+    return `https://images.unsplash.com/photo-${seed}?auto=format&fit=crop&w=1920&q=80&sig=${seed}`;
+    // Nota: Como Unsplash requiere IDs específicos, usaremos una técnica de búsqueda por palabra clave más robusta:
 }
 
-function fetchImageUrl() {
-    const topic = getContextTopic();
-    const randomID = Math.floor(Math.random() * 10000);
-    // Cambiamos a un servicio robusto para evitar pantallas vacías
-    return `https://picsum.photos/1920/1080?random=${randomID}&keyword=${topic}`;
+function fetchNewImage() {
+    const topic = keywords[Math.floor(Math.random() * keywords.length)];
+    const randomSeed = Math.random();
+    return `https://source.unsplash.com/1920x1080/?${topic}&sig=${randomSeed}`;
 }
 
-// Carga Inicial
-slides[0].style.backgroundImage = `url('${fetchImageUrl()}')`;
-slides[1].style.backgroundImage = `url('${fetchImageUrl()}')`;
-
-function rotateBackground() {
+// Fallback por si Unsplash demora: usamos imágenes de alta calidad de naturaleza directa
+function updateBackground() {
     const nextIdx = (currentIdx + 1) % 2;
-    const imgUrl = fetchImageUrl();
-    const img = new Image();
+    const topic = keywords[Math.floor(Math.random() * keywords.length)];
+    const newImgUrl = `https://loremflickr.com/1920/1080/${topic}?random=${Math.random()}`;
 
-    img.src = imgUrl;
-    img.onload = () => {
-        slides[nextIdx].style.backgroundImage = `url('${imgUrl}')`;
+    const tempImg = new Image();
+    tempImg.src = newImgUrl;
+    
+    tempImg.onload = () => {
+        slides[nextIdx].style.backgroundImage = `url('${newImgUrl}')`;
         slides[currentIdx].classList.remove('active');
         slides[nextIdx].classList.add('active');
         currentIdx = nextIdx;
     };
 }
 
-// CAMBIO CADA 7 SEGUNDOS
-setInterval(rotateBackground, 7000);
+// Rotación cada 7 segundos
+setInterval(updateBackground, 7000);
 
-// EXTRA: Si el contenido de la pantalla cambia drásticamente, forzar un cambio de imagen
-const targetNode = document.getElementById('screen');
-const config = { childList: true, subtree: true };
-const callback = function(mutationsList, observer) {
-    // Cuando el sistema escribe algo nuevo, preparamos la rotación para que coincida
-    rotateBackground();
-};
-const observer = new MutationObserver(callback);
-observer.observe(targetNode, config);
+// Carga inicial inmediata
+updateBackground();
+
+// Escuchar cambios en la pantalla para reaccionar
+const observer = new MutationObserver(() => {
+    updateBackground();
+});
+observer.observe(document.getElementById('screen'), { childList: true, subtree: true });
 
 </script>
 
