@@ -139,10 +139,46 @@ h1,h2,h3{
 <div id="app">
 
     <!-- HEADER STATIC -->
-    <div class="card center">
-        <h2 style="color:var(--primary);">KAMIZEN LIFE SYSTEM</h2>
-        <p class="small">Neural Training • Awareness • Discipline • Control</p>
+<div class="card center">
+
+    <h2 style="color:var(--primary);">
+        KAMIZEN LIFE SYSTEM
+    </h2>
+
+    <p class="small">
+        Neural Training • Awareness • Discipline • Control
+    </p>
+
+    <!-- DIRECT MISSION SELECTOR -->
+    <div style="margin-top:20px;">
+
+        <input
+            type="number"
+            id="missionSelector"
+            min="1"
+            max="49"
+            value="1"
+            placeholder="1-49"
+            style="
+                width:100%;
+                padding:14px;
+                border-radius:12px;
+                border:none;
+                background:#1f2937;
+                color:white;
+                font-size:18px;
+                text-align:center;
+                margin-bottom:10px;
+            "
+        />
+
+        <button onclick="jumpToMission()">
+            LOAD STORY & MISSION
+        </button>
+
     </div>
+
+</div>
 
     <!-- MAIN RENDER AREA (ENGINE CONTROLS THIS) -->
     <div id="screen" class="card">
