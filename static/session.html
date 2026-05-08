@@ -1,19 +1,19 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>KAMIZEN LIFE SYSTEM - CORE SESSION</title>
 
 <style>
 :root{
-    --bg:#0b1220;
-    --card:#111a2e;
+    --bg:rgba(0,0,0,0.6);
+    --card:rgba(17,26,46,0.85);
     --primary:#3b82f6;
     --success:#22c55e;
     --danger:#ef4444;
     --text:#ffffff;
-    --dim:#94a3b8;
+    --dim:#cbd5e1;
 }
 
 *{
@@ -23,12 +23,54 @@
 body{
     margin:0;
     font-family:Segoe UI, Arial, sans-serif;
-    background:var(--bg);
     color:var(--text);
     display:flex;
     justify-content:center;
     min-height:100vh;
+    overflow:hidden;
 }
+
+/* =========================
+   BACKGROUND SYSTEM
+========================= */
+
+#bg-container {
+    position: fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    z-index:-2;
+}
+
+.slide {
+    position:absolute;
+    width:100%;
+    height:100%;
+    background-size:cover;
+    background-position:center;
+    opacity:0;
+    transition: opacity 1.5s ease-in-out;
+}
+
+.slide.active {
+    opacity:1;
+}
+
+.vignette{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    box-shadow: inset 0 0 180px rgba(0,0,0,0.7);
+    pointer-events:none;
+    z-index:-1;
+}
+
+/* =========================
+   APP LAYOUT
+========================= */
 
 #app{
     width:100%;
@@ -42,11 +84,31 @@ body{
 
 .card{
     background:var(--card);
-    padding:20px;
+    padding:22px;
     border-radius:16px;
     margin:15px 0;
-    box-shadow:0 10px 25px rgba(0,0,0,0.3);
-    border:1px solid rgba(255,255,255,0.05);
+    border:1px solid rgba(255,255,255,0.08);
+}
+
+/* =========================
+   TEXT STRONGER (NIÑOS)
+========================= */
+
+h1,h2,h3{
+    margin:10px 0;
+    font-weight:800;
+    letter-spacing:0.5px;
+}
+
+p{
+    font-size:18px;
+    line-height:1.5;
+    color:var(--text);
+}
+
+.small{
+    font-size:13px;
+    color:var(--dim);
 }
 
 /* =========================
@@ -61,8 +123,8 @@ button{
     background:var(--primary);
     color:white;
     font-weight:bold;
+    font-size:16px;
     cursor:pointer;
-    transition:0.2s;
     margin-top:10px;
 }
 
@@ -70,14 +132,8 @@ button:hover{
     transform:translateY(-2px);
 }
 
-/* secondary buttons */
-.btn-secondary{
-    background:#334155;
-}
-
-.btn-danger{
-    background:var(--danger);
-}
+.btn-secondary{background:#334155;}
+.btn-danger{background:var(--danger);}
 
 /* =========================
    ANSWERS
@@ -85,26 +141,20 @@ button:hover{
 
 .answer{
     background:#1f2937;
-    padding:12px;
+    padding:14px;
     margin:8px 0;
     border-radius:10px;
-    cursor:pointer;
     border-left:4px solid var(--primary);
-    transition:0.2s;
-}
-
-.answer:hover{
-    transform:translateX(5px);
-    background:#374151;
+    cursor:pointer;
 }
 
 /* =========================
-   BREATHING VISUAL
+   BREATHING
 ========================= */
 
 .breath-circle{
-    width:140px;
-    height:140px;
+    width:150px;
+    height:150px;
     border-radius:50%;
     margin:30px auto;
     border:4px solid var(--primary);
@@ -115,71 +165,70 @@ button:hover{
 }
 
 @keyframes breathe{
-    0%{transform:scale(0.85);opacity:0.7;}
-    50%{transform:scale(1.25);opacity:1;border-color:var(--success);}
-    100%{transform:scale(0.85);opacity:0.7;}
-}
-
-/* =========================
-   TEXT
-========================= */
-
-h1,h2,h3{
-    margin:10px 0;
-}
-
-.small{
-    font-size:12px;
-    color:var(--dim);
-}
-
-.center{
-    text-align:center;
-}
-
-.hidden{
-    display:none;
+    0%{transform:scale(0.85);}
+    50%{transform:scale(1.25);border-color:var(--success);}
+    100%{transform:scale(0.85);}
 }
 </style>
 </head>
 
 <body>
 
+<!-- BACKGROUND SYSTEM -->
+<div id="bg-container">
+    <div id="slide1" class="slide active"></div>
+    <div id="slide2" class="slide"></div>
+</div>
+<div class="vignette"></div>
+
 <div id="app">
 
-    <!-- HEADER (NO CHANGE - SYSTEM CORE) -->
-    <div class="card center">
-        <h2 style="color:var(--primary);">KAMIZEN LIFE SYSTEM</h2>
-        <p class="small">BODY • CALM • FOCUS • PRESENCE</p>
+    <div class="card">
+        <h2>KAMIZEN LIFE SYSTEM</h2>
+        <p>BODY • CALM • FOCUS • PRESENCE</p>
         <p class="small">Stories + Missions Active</p>
     </div>
 
-    <!-- ENGINE RENDER AREA -->
-    <div id="screen" class="card">
-        <h3>Loading system...</h3>
-        <p class="small">Initializing stories & missions</p>
-    </div>
-
-    <!-- BREATHING VISUAL (NO LOGIC HERE) -->
-    <div class="card center">
-        <h3>Breathing Module</h3>
-
-        <div class="breath-circle">
-            <span>FOCUS</span>
-        </div>
-
-        <p class="small">
-            Controlled by engine.js (auto sync)
-        </p>
-    </div>
-
-    <!-- CONTROL PANEL (ONLY FOR ENGINE BUTTONS) -->
-    <div id="controls"></div>
-
 </div>
 
-<!-- ENGINE -->
 <script src="/static/js/engine.js"></script>
+
+<script>
+/* =========================
+   BACKGROUND ROTATION (4s)
+========================= */
+
+const slide1 = document.getElementById("slide1");
+const slide2 = document.getElementById("slide2");
+let current = slide1;
+
+const keywords = [
+    "nature","galaxy","forest","mountains",
+    "waterfall","space","animals","sky"
+];
+
+function img(){
+    return `https://source.unsplash.com/1920x1080/?${
+        keywords[Math.floor(Math.random()*keywords.length)]
+    }&sig=${Math.random()}`;
+}
+
+slide1.style.backgroundImage = `url('${img()}')`;
+slide2.style.backgroundImage = `url('${img()}')`;
+
+function changeBG(){
+    const next = current === slide1 ? slide2 : slide1;
+    next.style.backgroundImage = `url('${img()}')`;
+
+    setTimeout(()=>{
+        current.classList.remove("active");
+        next.classList.add("active");
+        current = next;
+    },500);
+}
+
+setInterval(changeBG,4000);
+</script>
 
 </body>
 </html>
