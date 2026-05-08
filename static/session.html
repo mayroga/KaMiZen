@@ -14,26 +14,22 @@
             --danger: #ef4444;
             --text: #ffffff;
             --dim: #94a3b8;
-            --btn-response: #1d4ed8; /* Azul intenso para bloques de respuesta */
+            --btn-response: #2563eb; /* Azul brillante y profesional */
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         html, body {
             width: 100%;
             min-height: 100%;
             overflow-x: hidden;
             background: #000;
-            font-family: 'Segoe UI', Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             color: var(--text);
         }
 
         /* =========================
-           BACKGROUND SYSTEM
+           BACKGROUND SYSTEM (NINOS Y NATURALEZA)
         ========================= */
         .container {
             position: fixed;
@@ -52,135 +48,140 @@
             background-size: cover;
             background-position: center;
             opacity: 0;
-            transition: opacity 2s ease-in-out;
-            transform: scale(1.04);
+            transition: opacity 2.5s ease-in-out;
+            transform: scale(1.05);
         }
 
-        .slide.active { opacity: 1; }
+        .slide.active { opacity: 1; transform: scale(1); }
 
         .overlay {
             position: absolute;
             inset: 0;
-            background: radial-gradient(circle, rgba(0,0,0,0.10) 20%, rgba(0,0,0,0.85) 100%);
+            background: radial-gradient(circle, rgba(0,0,0,0) 30%, rgba(0,0,0,0.8) 100%);
             pointer-events: none;
             z-index: 1;
         }
 
         /* =========================
-           APP UI
+           UI LAYOUT
         ========================= */
         #app {
             position: relative;
             z-index: 5;
             width: 100%;
-            max-width: 700px;
+            max-width: 750px;
             margin: auto;
             padding: 20px;
         }
 
         .card {
-            background: rgba(17, 26, 46, 0.82);
-            backdrop-filter: blur(8px);
-            padding: 20px;
-            border-radius: 16px;
-            margin: 15px 0;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.45);
-            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(10, 20, 40, 0.85);
+            backdrop-filter: blur(12px);
+            padding: 25px;
+            border-radius: 20px;
+            margin: 20px 0;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+            border: 1px solid rgba(255,255,255,0.1);
         }
 
         /* =========================
-           BOTONES DE RESPUESTA (AZULES)
+           BOTONES DE RESPUESTA AZULES
         ========================= */
         .response-button {
             display: block;
             width: 100%;
             background: var(--btn-response);
             color: white;
-            padding: 20px;
-            border-radius: 14px;
-            margin: 10px 0;
-            border: 2px solid rgba(255,255,255,0.3);
+            padding: 22px;
+            border-radius: 16px;
+            margin: 12px 0;
+            border: 3px solid rgba(255,255,255,0.25);
             text-align: center;
-            font-size: 18px;
-            font-weight: 600;
-            cursor: default;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
-            transition: transform 0.2s;
+            font-size: 20px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+            transition: all 0.3s ease;
+        }
+
+        .response-button:hover {
+            transform: translateY(-3px);
+            background: #1d4ed8;
+            border-color: white;
         }
 
         /* =========================
-           BOTÓN SKIP (ROJO / SALTAR)
+           BOTÓN SKIP (ROJO Y LIMPIEZA)
         ========================= */
         .skip-btn {
             background: var(--danger);
             color: white;
-            padding: 12px 24px;
-            border-radius: 10px;
-            font-size: 14px;
+            padding: 14px 30px;
+            border-radius: 12px;
+            font-size: 15px;
             font-weight: 900;
             cursor: pointer;
-            border: 2px solid rgba(255,255,255,0.2);
-            margin: 10px auto;
+            border: none;
+            margin: 15px auto;
             display: block;
-            width: fit-content;
-            transition: 0.3s;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 2px;
+            transition: 0.4s;
         }
 
         .skip-btn:hover {
-            background: #ff0000;
-            transform: scale(1.1);
-            box-shadow: 0 0 15px var(--danger);
+            background: #ff1111;
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.6);
         }
 
         /* =========================
-           BREATHING & UTILS
+           INPUTS & UTILS
         ========================= */
-        .breath-circle {
-            width: 140px;
-            height: 140px;
-            border-radius: 50%;
-            margin: 20px auto;
-            border: 4px solid var(--primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            animation: breathe 6s infinite ease-in-out;
-        }
-
-        @keyframes breathe {
-            0%, 100% { transform: scale(0.85); opacity: 0.7; }
-            50% { transform: scale(1.15); opacity: 1; border-color: var(--success); }
-        }
-
         .main-btn {
             background: var(--primary);
             color: white;
-            padding: 16px;
-            border-radius: 12px;
-            border: none;
+            padding: 18px;
+            border-radius: 15px;
             width: 100%;
-            font-weight: bold;
+            font-weight: 800;
             font-size: 18px;
+            border: none;
             cursor: pointer;
             text-transform: uppercase;
         }
 
         input {
             width: 100%;
-            padding: 14px;
-            border-radius: 12px;
-            border: none;
-            background: #1f2937;
+            padding: 16px;
+            border-radius: 15px;
+            border: 2px solid var(--primary);
+            background: #0f172a;
             color: white;
             text-align: center;
-            margin-bottom: 10px;
-            font-size: 20px;
+            margin-bottom: 15px;
+            font-size: 22px;
+        }
+
+        .breath-circle {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            margin: 20px auto;
+            border: 5px solid var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: breathe 6s infinite ease-in-out;
+            font-weight: 900;
+        }
+
+        @keyframes breathe {
+            0%, 100% { transform: scale(0.9); opacity: 0.8; }
+            50% { transform: scale(1.15); opacity: 1; border-color: var(--success); }
         }
 
         .center { text-align: center; }
-        .small { font-size: 13px; color: var(--dim); }
+        .small { font-size: 14px; color: var(--dim); }
     </style>
 </head>
 
@@ -195,46 +196,52 @@
 <div id="app">
 
     <div class="card center">
-        <h2 style="color:var(--primary);">KAMIZEN LIFE SYSTEM</h2>
-        <p class="small">Neural Training • Awareness • Discipline</p>
+        <h2 style="color:var(--primary); font-size: 28px;">KAMIZEN LIFE SYSTEM</h2>
+        <p class="small">Neural Experience • Family • Nature • Discipline</p>
 
-        <div style="margin-top:20px;">
-            <input type="number" id="missionSelector" min="1" max="49" value="1" />
-            <button class="main-btn" onclick="jumpToMission()">LOAD STORY & MISSION</button>
+        <div style="margin-top:25px;">
+            <input type="number" id="missionSelector" min="1" max="50" value="1" />
+            <button class="main-btn" onclick="jumpToMission()">ACTIVATE SESSION</button>
         </div>
     </div>
 
-    <!-- AREA DE RESPUESTAS DINÁMICAS -->
+    <!-- AREA DE RESPUESTAS (BOTONES AZULES) -->
     <div id="screen" class="card">
         <div id="responseContainer">
-            <div class="response-button">
-                <h3>System Ready</h3>
-                <p>Waiting for mission activation...</p>
-            </div>
+            <button class="response-button">
+                SISTEMA LISTO: SELECCIONE UNA MISIÓN
+            </button>
         </div>
         
-        <!-- BOTÓN SKIP PARA SALTAR BLOQUES -->
-        <button class="skip-btn" onclick="clearScreen()">SKIP / NEXT</button>
+        <button class="skip-btn" onclick="clearScreen()">SKIP / RESET CACHE</button>
     </div>
 
     <div class="card center">
         <div class="breath-circle"><span>FOCUS</span></div>
-        <p class="small">Breathing Module</p>
+        <p class="small">BREATHING SYNC ACTIVE</p>
     </div>
 
 </div>
 
 <script>
-    /* LÓGICA DE FONDOS NATURALES */
+    /* LÓGICA DE FONDOS (TEMÁTICA SOLICITADA) */
     const slides = [document.getElementById('img1'), document.getElementById('img2')];
     let currentIdx = 0;
-    const topics = ['space', 'ocean', 'landscape', 'forest', 'mountain', 'stars'];
+    
+    // Palabras clave para el generador de imágenes
+    const topics = [
+        'kids-playing-nature', 'beach-sunset', 'mountain-climbing', 'ocean-waves', 
+        'moon-night', 'blue-sky-sun', 'forest-trees', 'city-buildings-streets', 'happy-family'
+    ];
 
     function fetchImage() {
-        const randomID = Math.floor(Math.random() * 10000);
-        return `https://picsum.photos/1920/1080?random=${randomID}&topic=${topics[Math.floor(Math.random()*topics.length)]}`;
+        const topic = topics[Math.floor(Math.random() * topics.length)];
+        const randomID = Math.floor(Math.random() * 14000);
+        // Usamos una fuente de imágenes de alta calidad (Unsplash via Source o similar)
+        return `https://source.unsplash.com/featured/1920x1080?${topic}&sig=${randomID}`;
     }
 
+    // Inicializar
     slides[0].style.backgroundImage = `url('${fetchImage()}')`;
     slides[1].style.backgroundImage = `url('${fetchImage()}')`;
 
@@ -250,41 +257,42 @@
             currentIdx = nextIdx;
         };
     }
-    // Rotación cada 14 segundos
     setInterval(rotateBackground, 14000);
 
-    /* LÓGICA DE MISIONES Y BOTONES DE RESPUESTA */
+    /* LÓGICA DE MISIONES */
     function jumpToMission() {
         const val = document.getElementById('missionSelector').value;
         const container = document.getElementById('responseContainer');
         
         // Crear un nuevo botón azul para la respuesta
-        const respBtn = document.createElement('div');
+        const respBtn = document.createElement('button');
         respBtn.className = 'response-button';
-        respBtn.innerHTML = `<h3>MISSION ${val} ACTIVE</h3><p>Neural link successful. Focus on the visual flow.</p>`;
+        respBtn.innerHTML = `MISIÓN ${val} CARGADA: ¡A JUGAR Y APRENDER!`;
+        respBtn.onclick = () => console.log(`Iniciando misión ${val}`);
         
-        // Reemplazar contenido anterior (limpieza de rastro)
+        // Limpieza de rastro anterior
         container.innerHTML = ''; 
         container.appendChild(respBtn);
 
         if (typeof window.engineJump === 'function') window.engineJump(val);
     }
 
-    /* FUNCIÓN SKIP: LIMPIA TODO RASTRO DE DATOS */
+    /* FUNCIÓN SKIP: LIMPIA TODO RASTRO */
     function clearScreen() {
         const container = document.getElementById('responseContainer');
         
-        // Eliminación física de nodos para asegurar limpieza total de caché visual
+        // Eliminación total de elementos del DOM
         while (container.firstChild) {
             container.removeChild(container.firstChild);
         }
         
-        // Notificación de limpieza
-        const emptyBlock = document.createElement('div');
-        emptyBlock.className = 'response-button';
-        emptyBlock.style.background = 'rgba(255,255,255,0.1)';
-        emptyBlock.innerHTML = `<p>SYSTEM RESET: READY FOR NEXT INPUT</p>`;
-        container.appendChild(emptyBlock);
+        // Bloque vacío neutral
+        const placeholder = document.createElement('button');
+        placeholder.className = 'response-button';
+        placeholder.style.background = 'rgba(255,255,255,0.05)';
+        placeholder.style.border = '1px dashed var(--dim)';
+        placeholder.innerText = 'SISTEMA LIMPIO - ESPERANDO SEÑAL';
+        container.appendChild(placeholder);
     }
 </script>
 
