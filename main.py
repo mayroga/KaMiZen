@@ -1,294 +1,197 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>KAMIZEN LIFE SYSTEM - CORE SESSION</title>
+from fastapi import FastAPI, HTTPException
+from fastapi.responses import FileResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
+import os
+import json
 
-    <style>
-        :root {
-            --bg: #0b1220;
-            --card: #111a2e;
-            --primary: #3b82f6;
-            --success: #22c55e;
-            --danger: #ef4444;
-            --text: #ffffff;
-            --dim: #94a3b8;
-            --btn-response: #1d4ed8; /* Azul intenso para bloques de respuesta */
-        }
+app = FastAPI(title="KAMIZEN LIFE SYSTEM")
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+# =========================================================
+# 📁 PATHS
+# =========================================================
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+STATIC_DIR = os.path.join(BASE_DIR, "static")
 
-        html, body {
-            width: 100%;
-            min-height: 100%;
-            overflow-x: hidden;
-            background: #000;
-            font-family: 'Segoe UI', Arial, sans-serif;
-            color: var(--text);
-        }
+app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
-        /* =========================
-           BACKGROUND SYSTEM
-        ========================= */
-        .container {
-            position: fixed;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -10;
-            overflow: hidden;
-        }
+# =========================================================
+# 🧠 CACHE SYSTEM (ANTI-RELOAD OVERLOAD)
+# =========================================================
+CACHE = {
+    "stories": None,
+    "missions": None
+}
 
-        .slide {
-            position: absolute;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            background-size: cover;
-            background-position: center;
-            opacity: 0;
-            transition: opacity 2s ease-in-out;
-            transform: scale(1.04);
-        }
+# =========================================================
+# 🔍 SAFE JSON LOADER
+# =========================================================
+def load_json(path):
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception as e:
+        print(f"❌ JSON ERROR: {path} -> {e}")
+        return None
 
-        .slide.active { opacity: 1; }
+# =========================================================
+# 📖 STORIES LOADER (STRICT 1–49 ORDER)
+# =========================================================
+def load_stories():
 
-        .overlay {
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(circle, rgba(0,0,0,0.10) 20%, rgba(0,0,0,0.85) 100%);
-            pointer-events: none;
-            z-index: 1;
-        }
+    if CACHE["stories"] is not None:
+        return CACHE["stories"]
 
-        /* =========================
-           APP UI
-        ========================= */
-        #app {
-            position: relative;
-            z-index: 5;
-            width: 100%;
-            max-width: 700px;
-            margin: auto;
-            padding: 20px;
-        }
+    path = os.path.join(BASE_DIR, "stories.json")
+    data = load_json(path)
 
-        .card {
-            background: rgba(17, 26, 46, 0.82);
-            backdrop-filter: blur(8px);
-            padding: 20px;
-            border-radius: 16px;
-            margin: 15px 0;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.45);
-            border: 1px solid rgba(255,255,255,0.08);
-        }
+    stories = []
 
-        /* =========================
-           BOTONES DE RESPUESTA (AZULES)
-        ========================= */
-        .response-button {
-            display: block;
-            width: 100%;
-            background: var(--btn-response);
-            color: white;
-            padding: 20px;
-            border-radius: 14px;
-            margin: 10px 0;
-            border: 2px solid rgba(255,255,255,0.3);
-            text-align: center;
-            font-size: 18px;
-            font-weight: 600;
-            cursor: default;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
-            transition: transform 0.2s;
-        }
+    if isinstance(data, dict):
+        stories = data.get("stories", [])
+    elif isinstance(data, list):
+        stories = data
+    else:
+        stories = []
 
-        /* =========================
-           BOTÓN SKIP (ROJO / SALTAR)
-        ========================= */
-        .skip-btn {
-            background: var(--danger);
-            color: white;
-            padding: 12px 24px;
-            border-radius: 10px;
-            font-size: 14px;
-            font-weight: 900;
-            cursor: pointer;
-            border: 2px solid rgba(255,255,255,0.2);
-            margin: 10px auto;
-            display: block;
-            width: fit-content;
-            transition: 0.3s;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+    # 🔥 FORCE CLEAN SORT (NO DUPLICATES OR MISORDER)
+    stories = sorted(
+        [s for s in stories if isinstance(s, dict) and "id" in s],
+        key=lambda x: x["id"]
+    )
 
-        .skip-btn:hover {
-            background: #ff0000;
-            transform: scale(1.1);
-            box-shadow: 0 0 15px var(--danger);
-        }
+    CACHE["stories"] = stories
+    return stories
 
-        /* =========================
-           BREATHING & UTILS
-        ========================= */
-        .breath-circle {
-            width: 140px;
-            height: 140px;
-            border-radius: 50%;
-            margin: 20px auto;
-            border: 4px solid var(--primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            animation: breathe 6s infinite ease-in-out;
-        }
+# =========================================================
+# 🎯 MISSIONS LOADER (MULTI FILE SYSTEM 01–49)
+# =========================================================
+def load_missions():
 
-        @keyframes breathe {
-            0%, 100% { transform: scale(0.85); opacity: 0.7; }
-            50% { transform: scale(1.15); opacity: 1; border-color: var(--success); }
-        }
+    if CACHE["missions"] is not None:
+        return CACHE["missions"]
 
-        .main-btn {
-            background: var(--primary);
-            color: white;
-            padding: 16px;
-            border-radius: 12px;
-            border: none;
-            width: 100%;
-            font-weight: bold;
-            font-size: 18px;
-            cursor: pointer;
-            text-transform: uppercase;
-        }
+    all_missions = []
 
-        input {
-            width: 100%;
-            padding: 14px;
-            border-radius: 12px;
-            border: none;
-            background: #1f2937;
-            color: white;
-            text-align: center;
-            margin-bottom: 10px;
-            font-size: 20px;
-        }
+    files = sorted([
+        f for f in os.listdir(BASE_DIR)
+        if f.startswith("missions_") and f.endswith(".json")
+    ])
 
-        .center { text-align: center; }
-        .small { font-size: 13px; color: var(--dim); }
-    </style>
-</head>
+    for file in files:
+        path = os.path.join(BASE_DIR, file)
+        data = load_json(path)
 
-<body>
+        if not data:
+            continue
 
-<div class="container">
-    <div id="img1" class="slide active"></div>
-    <div id="img2" class="slide"></div>
-    <div class="overlay"></div>
-</div>
+        missions = []
 
-<div id="app">
+        # soporta múltiples formatos
+        if isinstance(data, dict):
+            missions = (
+                data.get("missions") or
+                data.get("ses") or
+                data.get("data") or
+                []
+            )
 
-    <div class="card center">
-        <h2 style="color:var(--primary);">KAMIZEN LIFE SYSTEM</h2>
-        <p class="small">Neural Training • Awareness • Discipline</p>
+        elif isinstance(data, list):
+            missions = data
 
-        <div style="margin-top:20px;">
-            <input type="number" id="missionSelector" min="1" max="49" value="1" />
-            <button class="main-btn" onclick="jumpToMission()">LOAD STORY & MISSION</button>
-        </div>
-    </div>
+        # filtrar válidos
+        for m in missions:
+            if isinstance(m, dict) and "id" in m:
+                all_missions.append(m)
 
-    <!-- AREA DE RESPUESTAS DINÁMICAS -->
-    <div id="screen" class="card">
-        <div id="responseContainer">
-            <div class="response-button">
-                <h3>System Ready</h3>
-                <p>Waiting for mission activation...</p>
-            </div>
-        </div>
-        
-        <!-- BOTÓN SKIP PARA SALTAR BLOQUES -->
-        <button class="skip-btn" onclick="clearScreen()">SKIP / NEXT</button>
-    </div>
+    # 🔥 ORDEN GLOBAL ABSOLUTO 1 → 49
+    all_missions = sorted(all_missions, key=lambda x: x["id"])
 
-    <div class="card center">
-        <div class="breath-circle"><span>FOCUS</span></div>
-        <p class="small">Breathing Module</p>
-    </div>
-
-</div>
-
-<script>
-    /* LÓGICA DE FONDOS NATURALES */
-    const slides = [document.getElementById('img1'), document.getElementById('img2')];
-    let currentIdx = 0;
-    const topics = ['space', 'ocean', 'landscape', 'forest', 'mountain', 'stars'];
-
-    function fetchImage() {
-        const randomID = Math.floor(Math.random() * 10000);
-        return `https://picsum.photos/1920/1080?random=${randomID}&topic=${topics[Math.floor(Math.random()*topics.length)]}`;
+    CACHE["missions"] = {
+        "total": len(all_missions),
+        "missions": all_missions
     }
 
-    slides[0].style.backgroundImage = `url('${fetchImage()}')`;
-    slides[1].style.backgroundImage = `url('${fetchImage()}')`;
+    return CACHE["missions"]
 
-    function rotateBackground() {
-        const nextIdx = (currentIdx + 1) % 2;
-        const imgUrl = fetchImage();
-        const img = new Image();
-        img.src = imgUrl;
-        img.onload = () => {
-            slides[nextIdx].style.backgroundImage = `url('${imgUrl}')`;
-            slides[currentIdx].classList.remove('active');
-            slides[nextIdx].classList.add('active');
-            currentIdx = nextIdx;
-        };
-    }
-    // Rotación cada 14 segundos
-    setInterval(rotateBackground, 14000);
+# =========================================================
+# 🌐 FRONTEND ROUTES
+# =========================================================
+@app.get("/")
+def root():
+    return FileResponse(os.path.join(STATIC_DIR, "session.html"))
 
-    /* LÓGICA DE MISIONES Y BOTONES DE RESPUESTA */
-    function jumpToMission() {
-        const val = document.getElementById('missionSelector').value;
-        const container = document.getElementById('responseContainer');
-        
-        // Crear un nuevo botón azul para la respuesta
-        const respBtn = document.createElement('div');
-        respBtn.className = 'response-button';
-        respBtn.innerHTML = `<h3>MISSION ${val} ACTIVE</h3><p>Neural link successful. Focus on the visual flow.</p>`;
-        
-        // Reemplazar contenido anterior (limpieza de rastro)
-        container.innerHTML = ''; 
-        container.appendChild(respBtn);
+@app.get("/session")
+def session():
+    return FileResponse(os.path.join(STATIC_DIR, "session.html"))
 
-        if (typeof window.engineJump === 'function') window.engineJump(val);
+# =========================================================
+# 📖 API STORIES
+# =========================================================
+@app.get("/api/stories")
+def get_stories():
+    return {
+        "total": len(load_stories()),
+        "stories": load_stories()
     }
 
-    /* FUNCIÓN SKIP: LIMPIA TODO RASTRO DE DATOS */
-    function clearScreen() {
-        const container = document.getElementById('responseContainer');
-        
-        // Eliminación física de nodos para asegurar limpieza total de caché visual
-        while (container.firstChild) {
-            container.removeChild(container.firstChild);
-        }
-        
-        // Notificación de limpieza
-        const emptyBlock = document.createElement('div');
-        emptyBlock.className = 'response-button';
-        emptyBlock.style.background = 'rgba(255,255,255,0.1)';
-        emptyBlock.innerHTML = `<p>SYSTEM RESET: READY FOR NEXT INPUT</p>`;
-        container.appendChild(emptyBlock);
+# =========================================================
+# 🎯 API MISSIONS
+# =========================================================
+@app.get("/api/missions")
+def get_missions():
+    return load_missions()
+
+# =========================================================
+# 🔍 SINGLE MISSION
+# =========================================================
+@app.get("/api/missions/{mission_id}")
+def get_mission(mission_id: int):
+
+    missions = load_missions()["missions"]
+
+    for m in missions:
+        if m.get("id") == mission_id:
+            return m
+
+    raise HTTPException(status_code=404, detail="Mission not found")
+
+# =========================================================
+# 🧠 STATE SYSTEM (USER PROGRESS)
+# =========================================================
+STATE = {
+    "user": "",
+    "story_index": 0,
+    "mission_index": 1,
+    "score": 0
+}
+
+@app.get("/api/state")
+def get_state():
+    return STATE
+
+@app.post("/api/state")
+def update_state(data: dict):
+    STATE.update(data)
+    return {
+        "ok": True,
+        "state": STATE
     }
-</script>
 
-<script src="/static/js/engine.js"></script>
+# =========================================================
+# 🧪 HEALTH CHECK
+# =========================================================
+@app.get("/health")
+def health():
+    return {"status": "ok"}
 
-</body>
-</html>
+# =========================================================
+# ▶ RUN SERVER
+# =========================================================
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(
+        "main:app",
+        host="0.0.0.0",
+        port=8000,
+        reload=True
+    )
