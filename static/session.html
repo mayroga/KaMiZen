@@ -14,7 +14,7 @@
             --danger: #ef4444;
             --text: #ffffff;
             --dim: #94a3b8;
-            --btn-response: #1d4ed8;
+            --btn-response: #1d4ed8; /* Azul intenso para bloques de respuesta */
         }
 
         * {
@@ -32,7 +32,9 @@
             color: var(--text);
         }
 
-        /* FONDO DINÁMICO */
+        /* =========================
+           BACKGROUND SYSTEM
+        ========================= */
         .container {
             position: fixed;
             inset: 0;
@@ -64,6 +66,9 @@
             z-index: 1;
         }
 
+        /* =========================
+           APP UI
+        ========================= */
         #app {
             position: relative;
             z-index: 5;
@@ -74,66 +79,81 @@
         }
 
         .card {
-            background: rgba(17, 26, 46, 0.85);
-            backdrop-filter: blur(10px);
+            background: rgba(17, 26, 46, 0.82);
+            backdrop-filter: blur(8px);
             padding: 20px;
             border-radius: 16px;
             margin: 15px 0;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            border: 1px solid rgba(255,255,255,0.1);
-            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.45);
+            border: 1px solid rgba(255,255,255,0.08);
         }
 
-        /* RESPUESTAS COMO BOTONES AZULES */
-        .response-btn {
+        /* =========================
+           BOTONES DE RESPUESTA (AZULES)
+        ========================= */
+        .response-button {
             display: block;
             width: 100%;
             background: var(--btn-response);
             color: white;
-            padding: 18px;
-            border-radius: 12px;
-            margin: 12px 0;
-            border: 1px solid rgba(255,255,255,0.3);
-            text-align: left;
-            font-size: 17px;
-            cursor: pointer;
-            transition: 0.3s;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            padding: 20px;
+            border-radius: 14px;
+            margin: 10px 0;
+            border: 2px solid rgba(255,255,255,0.3);
+            text-align: center;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: default;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+            transition: transform 0.2s;
         }
 
-        .response-btn:hover {
-            background: #2563eb;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(59,130,246,0.4);
-        }
-
-        .response-btn:active {
-            transform: scale(0.98);
-        }
-
-        /* BOTÓN SKIP */
+        /* =========================
+           BOTÓN SKIP (ROJO / SALTAR)
+        ========================= */
         .skip-btn {
             background: var(--danger);
             color: white;
             padding: 12px 24px;
-            border-radius: 8px;
+            border-radius: 10px;
             font-size: 14px;
             font-weight: 900;
             cursor: pointer;
-            border: none;
-            width: 100%;
-            margin-top: 10px;
+            border: 2px solid rgba(255,255,255,0.2);
+            margin: 10px auto;
+            display: block;
+            width: fit-content;
             transition: 0.3s;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
 
         .skip-btn:hover {
-            background: #b91c1c;
-            filter: brightness(1.2);
+            background: #ff0000;
+            transform: scale(1.1);
+            box-shadow: 0 0 15px var(--danger);
         }
 
-        /* UTILIDADES */
+        /* =========================
+           BREATHING & UTILS
+        ========================= */
+        .breath-circle {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            margin: 20px auto;
+            border: 4px solid var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: breathe 6s infinite ease-in-out;
+        }
+
+        @keyframes breathe {
+            0%, 100% { transform: scale(0.85); opacity: 0.7; }
+            50% { transform: scale(1.15); opacity: 1; border-color: var(--success); }
+        }
+
         .main-btn {
             background: var(--primary);
             color: white;
@@ -142,41 +162,25 @@
             border: none;
             width: 100%;
             font-weight: bold;
+            font-size: 18px;
             cursor: pointer;
-            font-size: 16px;
+            text-transform: uppercase;
         }
 
         input {
             width: 100%;
-            padding: 16px;
+            padding: 14px;
             border-radius: 12px;
             border: none;
             background: #1f2937;
             color: white;
             text-align: center;
-            margin-bottom: 12px;
-            font-size: 18px;
-        }
-
-        .breath-circle {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            margin: 20px auto;
-            border: 4px solid var(--primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            animation: breathe 6s infinite ease-in-out;
-            font-weight: bold;
-        }
-
-        @keyframes breathe {
-            0%, 100% { transform: scale(0.9); opacity: 0.8; }
-            50% { transform: scale(1.1); opacity: 1; border-color: var(--success); }
+            margin-bottom: 10px;
+            font-size: 20px;
         }
 
         .center { text-align: center; }
+        .small { font-size: 13px; color: var(--dim); }
     </style>
 </head>
 
@@ -192,38 +196,39 @@
 
     <div class="card center">
         <h2 style="color:var(--primary);">KAMIZEN LIFE SYSTEM</h2>
-        <p style="font-size: 12px; color: var(--dim);">Neural Architecture • Session Control</p>
+        <p class="small">Neural Training • Awareness • Discipline</p>
 
         <div style="margin-top:20px;">
             <input type="number" id="missionSelector" min="1" max="49" value="1" />
-            <button class="main-btn" onclick="jumpToMission()">LOAD MISSION</button>
+            <button class="main-btn" onclick="jumpToMission()">LOAD STORY & MISSION</button>
         </div>
     </div>
 
-    <!-- CONTENEDOR DE RESPUESTAS DINÁMICAS -->
+    <!-- AREA DE RESPUESTAS DINÁMICAS -->
     <div id="screen" class="card">
         <div id="responseContainer">
-            <button class="response-btn">
-                <strong>SYSTEM STATUS:</strong> ONLINE<br>
-                <small>Select a mission to begin training.</small>
-            </button>
+            <div class="response-button">
+                <h3>System Ready</h3>
+                <p>Waiting for mission activation...</p>
+            </div>
         </div>
         
-        <!-- BOTÓN SKIP REAL -->
-        <button class="skip-btn" onclick="clearAllData()">SKIP SESSION / CLEAR</button>
+        <!-- BOTÓN SKIP PARA SALTAR BLOQUES -->
+        <button class="skip-btn" onclick="clearScreen()">SKIP / NEXT</button>
     </div>
 
     <div class="card center">
         <div class="breath-circle"><span>FOCUS</span></div>
+        <p class="small">Breathing Module</p>
     </div>
 
 </div>
 
 <script>
-    /* LÓGICA DE FONDOS */
+    /* LÓGICA DE FONDOS NATURALES */
     const slides = [document.getElementById('img1'), document.getElementById('img2')];
     let currentIdx = 0;
-    const topics = ['space', 'ocean', 'landscape', 'galaxy', 'nature', 'stars'];
+    const topics = ['space', 'ocean', 'landscape', 'forest', 'mountain', 'stars'];
 
     function fetchImage() {
         const randomID = Math.floor(Math.random() * 10000);
@@ -233,7 +238,7 @@
     slides[0].style.backgroundImage = `url('${fetchImage()}')`;
     slides[1].style.backgroundImage = `url('${fetchImage()}')`;
 
-    setInterval(() => {
+    function rotateBackground() {
         const nextIdx = (currentIdx + 1) % 2;
         const imgUrl = fetchImage();
         const img = new Image();
@@ -244,43 +249,42 @@
             slides[nextIdx].classList.add('active');
             currentIdx = nextIdx;
         };
-    }, 14000);
+    }
+    // Rotación cada 14 segundos
+    setInterval(rotateBackground, 14000);
 
-    /* LÓGICA DE INTERFAZ */
+    /* LÓGICA DE MISIONES Y BOTONES DE RESPUESTA */
     function jumpToMission() {
         const val = document.getElementById('missionSelector').value;
         const container = document.getElementById('responseContainer');
         
-        // Crear respuesta como un botón azul
-        const btn = document.createElement('button');
-        btn.className = 'response-btn';
-        btn.innerHTML = `<strong>MISSION ${val} ACTIVE:</strong><br>Neural synchronization in progress. Click to acknowledge.`;
-        btn.onclick = () => console.log(`Acknowledged mission ${val}`);
+        // Crear un nuevo botón azul para la respuesta
+        const respBtn = document.createElement('div');
+        respBtn.className = 'response-button';
+        respBtn.innerHTML = `<h3>MISSION ${val} ACTIVE</h3><p>Neural link successful. Focus on the visual flow.</p>`;
         
-        // Limpiar y añadir
+        // Reemplazar contenido anterior (limpieza de rastro)
         container.innerHTML = ''; 
-        container.appendChild(btn);
+        container.appendChild(respBtn);
 
         if (typeof window.engineJump === 'function') window.engineJump(val);
     }
 
-    function clearAllData() {
+    /* FUNCIÓN SKIP: LIMPIA TODO RASTRO DE DATOS */
+    function clearScreen() {
         const container = document.getElementById('responseContainer');
         
-        // Borrado absoluto de nodos (limpieza de rastro)
+        // Eliminación física de nodos para asegurar limpieza total de caché visual
         while (container.firstChild) {
             container.removeChild(container.firstChild);
         }
         
-        // Estado neutro
-        const placeholder = document.createElement('button');
-        placeholder.className = 'response-btn';
-        placeholder.style.background = 'rgba(255,255,255,0.05)';
-        placeholder.style.border = '1px dashed var(--dim)';
-        placeholder.innerHTML = `<center style="color:var(--dim)">SYSTEM SKIPPED. CACHE PURGED.</center>`;
-        container.appendChild(placeholder);
-        
-        console.log("Session skipped and cache cleared.");
+        // Notificación de limpieza
+        const emptyBlock = document.createElement('div');
+        emptyBlock.className = 'response-button';
+        emptyBlock.style.background = 'rgba(255,255,255,0.1)';
+        emptyBlock.innerHTML = `<p>SYSTEM RESET: READY FOR NEXT INPUT</p>`;
+        container.appendChild(emptyBlock);
     }
 </script>
 
