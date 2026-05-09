@@ -113,6 +113,29 @@ function restartSystem() {
 }
 
 /* =========================
+   LÓGICA DEL RELOJ (TIMER)
+========================= */
+function startCountdown(seconds, onComplete) {
+    clearInterval(state.timer);
+    state.timeLeft = seconds;
+    const timerDisplay = document.getElementById("timerDisplay");
+
+    state.timer = setInterval(() => {
+        state.timeLeft--;
+        const m = Math.floor(state.timeLeft / 60);
+        const s = state.timeLeft % 60;
+        if (timerDisplay) {
+            timerDisplay.innerText = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        }
+
+        if (state.timeLeft <= 0) {
+            clearInterval(state.timer);
+            if (onComplete) onComplete();
+        }
+    }, 1000);
+}
+
+/* =========================
    MOTOR DE RENDERIZADO
 ========================= */
 function showIntro() {
@@ -173,9 +196,6 @@ function render() {
     }
 }
 
-/** 
- * ACTUALIZACIÓN DE TIEMPOS Y TRANSICIONES AUTOMÁTICAS
- */
 function renderBlock(block, navHeader) {
     const app = document.getElementById("app");
     let html = navHeader;
@@ -192,10 +212,12 @@ function renderBlock(block, navHeader) {
         html += `<div class="card"><h2>${block.tx?.en || ""}</h2></div>`;
         textToRead = block.tx?.en;
     }
+
     if (block.story) {
         html += `<div class="card"><p>${block.story.en || ""}</p></div>`;
         textToRead = block.story.en;
     }
+
     if (block.t === "breath_auto" || block.t === "br") {
         html += timerUI + `
             <div class="card center">
@@ -205,6 +227,7 @@ function renderBlock(block, navHeader) {
             </div>`;
         textToRead = `${block.tx?.en}. ${block.inf?.en}. Get ready to breathe.`;
     }
+
     if (block.t === "sil") {
         html += timerUI + `<div class="card"><h3>${block.tx?.en || ""}</h3><p>${block.inf?.en || ""}</p></div>`;
         textToRead = `${block.tx?.en}. ${block.inf?.en}. Practice silence now.`;
@@ -236,13 +259,14 @@ function renderBlock(block, navHeader) {
     app.innerHTML = html;
 
     narrate(textToRead, () => {
-        <span style="color:red;"><b>// AJUSTE DE TIEMPOS DINÁMICOS CON DELAY DE 4s AL FINALIZAR</b></span>
         if (block.t === "breath_auto" || block.t === "br") {
-            <span style="color:red;"><b>startCountdown(19, () => { setTimeout(nextBlock, 4000); });</b></span>
+            // ACTUALIZACIÓN: Duración de respiración a 19 segundos
+            startCountdown(19, nextBlock);
             startGuidedBreathing();
             unlockContinue("SKIP / CONTINUE", nextBlock);
         } else if (block.t === "sil") {
-            <span style="color:red;"><b>startCountdown(21, () => { setTimeout(nextBlock, 4000); });</b></span>
+            // ACTUALIZACIÓN: Duración de silencio a 21 segundos
+            startCountdown(21, nextBlock);
             unlockContinue("SKIP / CONTINUE", nextBlock);
         } else if (block.t !== "d") {
             unlockContinue("CONTINUE", nextBlock);
@@ -251,30 +275,8 @@ function renderBlock(block, navHeader) {
 }
 
 /* =========================
-   FUNCIONES DE APOYO
+   FUNCIONES DE VOZ Y ACCIÓN
 ========================= */
-
-function startCountdown(seconds, onComplete) {
-    clearInterval(state.timer);
-    state.timeLeft = seconds;
-    const timerDisplay = document.getElementById("timerDisplay");
-
-    state.timer = setInterval(() => {
-        state.timeLeft--;
-        const m = Math.floor(state.timeLeft / 60);
-        const s = state.timeLeft % 60;
-        if (timerDisplay) {
-            timerDisplay.innerText = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-        }
-
-        if (state.timeLeft <= 0) {
-            clearInterval(state.timer);
-            <span style="color:red;"><b>const label = document.getElementById("breathLabel"); if(label) label.innerText = "COMPLETE";</b></span>
-            if (onComplete) onComplete();
-        }
-    }, 1000);
-}
-
 function narrate(text, callback) {
     if (!text) { if (callback) callback(); return; }
     state.speechLocked = true;
