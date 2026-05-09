@@ -1,5 +1,5 @@
 /* =========================================================
-   KAMIZEN ENGINE V12 - FULL EXPERT EDITION (NO CUTS)
+   KAMIZEN ENGINE V12.1 - FULL EXPERT EDITION (NO CUTS)
    ✔ Persistencia Local (LocalStorage)
    ✔ Narración Total: Preguntas + Opciones + Feedback
    ✔ Guía Vocal de Respiración (Visual)
@@ -113,89 +113,8 @@ function restartSystem() {
 }
 
 /* =========================
-   LÓGICA DEL RELOJ (TIMER)
+   ACTUALIZACIÓN DE RENDERBLOCK
 ========================= */
-function startCountdown(seconds, onComplete) {
-    clearInterval(state.timer);
-    state.timeLeft = seconds;
-    const timerDisplay = document.getElementById("timerDisplay");
-
-    state.timer = setInterval(() => {
-        state.timeLeft--;
-        const m = Math.floor(state.timeLeft / 60);
-        const s = state.timeLeft % 60;
-        if (timerDisplay) {
-            timerDisplay.innerText = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-        }
-
-        if (state.timeLeft <= 0) {
-            clearInterval(state.timer);
-            if (onComplete) onComplete();
-        }
-    }, 1000);
-}
-
-/* =========================
-   MOTOR DE RENDERIZADO
-========================= */
-function showIntro() {
-    state.phase = "intro";
-    document.getElementById("app").innerHTML = `
-        <div class="card center">
-            <h1>KAMIZEN LIFE SYSTEM</h1>
-            <p>Training • Awareness • Control</p>
-            <button onclick="startSystem()">CONTINUE MISSION</button>
-            <button onclick="restartSystem()" style="background:var(--danger);margin-top:10px;">RESET PROGRESS</button>
-        </div>
-    `;
-}
-
-function startSystem() {
-    state.phase = "story";
-    render();
-}
-
-function render() {
-    if (!state.initialized) return;
-    saveProgress();
-    const app = document.getElementById("app");
-    const story = state.stories[state.currentIndex];
-    const mission = state.missions[state.currentIndex];
-
-    if (!story || !mission) {
-        state.currentIndex = 0;
-        state.currentBlock = 0;
-        state.phase = "story";
-        return render();
-    }
-
-    let navHeader = `
-        <div style="display:flex;gap:5px;margin-bottom:10px;">
-            <button onclick="goBack()" style="flex:1;padding:8px;font-size:12px;background:#334155;">BACK</button>
-            <button onclick="jumpToBlock()" style="flex:1;padding:8px;font-size:12px;background:#0ea5e9;">JUMP/SKIP</button>
-            <button onclick="restartSystem()" style="flex:1;padding:8px;font-size:12px;background:var(--danger);">RESET</button>
-        </div>
-    `;
-
-    if (state.phase === "story") {
-        app.innerHTML = navHeader + `
-            <div class="card">
-                <h2 style="color:var(--primary)">STORY ${story.id}</h2>
-                <h3>${story.t || ""}</h3>
-                <p style="font-size:1.1rem; line-height:1.6;">${story.en || ""}</p>
-            </div>
-            <button id="continueBtn" disabled>NARRATING...</button>
-        `;
-        narrate(`${story.t}. ${story.en}`, () => {
-            setTimeout(startMission, 1500);
-        });
-    } else {
-        const block = mission.b[state.currentBlock];
-        if (!block) { nextStory(); return; }
-        renderBlock(block, navHeader);
-    }
-}
-
 function renderBlock(block, navHeader) {
     const app = document.getElementById("app");
     let html = navHeader;
@@ -252,7 +171,6 @@ function renderBlock(block, navHeader) {
         textToRead = block.tx?.en;
     }
 
-    // ACTUALIZACIÓN: Botón siempre presente excepto en preguntas
     if (block.t !== "d") {
         html += `<button id="continueBtn" disabled>NARRATING...</button>`;
     }
@@ -260,20 +178,57 @@ function renderBlock(block, navHeader) {
     app.innerHTML = html;
 
     narrate(textToRead, () => {
-        if (block.t === "breath_auto" || block.t === "br" || block.t === "sil") {
-            startCountdown(15, nextBlock);
-            if (block.t.includes("br") || block.t.includes("breath")) startGuidedBreathing();
-            // ACTUALIZACIÓN: Habilitar botón para saltar el ejercicio respiratorio
+        // --- INICIO DE CAMBIOS DE TIEMPO (RESALTADO) ---
+        if (block.t === "breath_auto" || block.t === "br") {
+            // 19 SEGUNDOS Y ESPERA DE 4 SEGUNDOS AL FINAL
+            startCountdown(19, () => {
+                setTimeout(nextBlock, 4000); 
+            });
+            startGuidedBreathing();
             unlockContinue("SKIP / CONTINUE", nextBlock);
+
+        } else if (block.t === "sil") {
+            // 21 SEGUNDOS Y ESPERA DE 4 SEGUNDOS AL FINAL
+            startCountdown(21, () => {
+                setTimeout(nextBlock, 4000);
+            });
+            unlockContinue("SKIP / CONTINUE", nextBlock);
+
         } else if (block.t !== "d") {
             unlockContinue("CONTINUE", nextBlock);
         }
+        // --- FIN DE CAMBIOS DE TIEMPO ---
     });
 }
 
 /* =========================
-   FUNCIONES DE VOZ Y ACCIÓN
+   FUNCIONES DE APOYO ACTUALIZADAS
 ========================= */
+
+function startCountdown(seconds, onComplete) {
+    clearInterval(state.timer);
+    state.timeLeft = seconds;
+    const timerDisplay = document.getElementById("timerDisplay");
+
+    state.timer = setInterval(() => {
+        state.timeLeft--;
+        const m = Math.floor(state.timeLeft / 60);
+        const s = state.timeLeft % 60;
+        if (timerDisplay) {
+            timerDisplay.innerText = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        }
+
+        if (state.timeLeft <= 0) {
+            clearInterval(state.timer);
+            // CAMBIO: INDICADOR VISUAL DE QUE TERMINÓ EL TIEMPO PERO ESPERA EL RETRASO
+            const label = document.getElementById("breathLabel");
+            if(label) label.innerText = "COMPLETE";
+            
+            if (onComplete) onComplete();
+        }
+    }, 1000);
+}
+
 function narrate(text, callback) {
     if (!text) { if (callback) callback(); return; }
     state.speechLocked = true;
@@ -288,7 +243,6 @@ function narrate(text, callback) {
     window.speechSynthesis.speak(speech);
 }
 
-// ACTUALIZACIÓN: Se elimina la narración repetitiva de originalText
 function startGuidedBreathing() {
     const circle = document.getElementById("breathCircle");
     const label = document.getElementById("breathLabel");
@@ -303,9 +257,6 @@ function startGuidedBreathing() {
         label.innerText = inhale ? "INHALE" : "EXHALE";
         circle.style.transform = inhale ? "scale(1.4)" : "scale(0.8)";
         circle.style.transition = "transform 4s ease-in-out";
-        
-        // La voz ya no repite nada aquí para evitar saturación
-        
         inhale = !inhale;
     }, 4000);
 }
@@ -314,7 +265,6 @@ function selectAnswer(index, correct, explanations) {
     if (state.speechLocked) return;
     const isCorrect = index === correct;
     const explanation = explanations?.[index] || "";
-    
     const feedbackWrap = document.createElement("div");
     feedbackWrap.innerHTML = `
         <div class="card">
@@ -322,9 +272,7 @@ function selectAnswer(index, correct, explanations) {
             <p>${explanation}</p>
         </div>
         <button id="continueBtn" disabled>NARRATING...</button>`;
-    
     document.getElementById("app").appendChild(feedbackWrap);
-    
     narrate(explanation, () => {
         unlockContinue("NEXT STEP", nextBlock);
     });
@@ -336,18 +284,11 @@ function nextBlock() {
     render(); 
 }
 
-function startMission() { 
-    state.phase = "mission"; 
-    state.currentBlock = 0; 
-    render(); 
-}
-
+function startMission() { state.phase = "mission"; state.currentBlock = 0; render(); }
 function nextStory() { 
     state.currentIndex++; 
     if (state.currentIndex >= state.stories.length) state.currentIndex = 0;
-    state.phase = "story"; 
-    state.currentBlock = 0; 
-    render(); 
+    state.phase = "story"; state.currentBlock = 0; render(); 
 }
 
 function unlockContinue(label, action) {
@@ -357,4 +298,16 @@ function unlockContinue(label, action) {
         btn.innerText = label; 
         btn.onclick = action; 
     }
+}
+
+function showIntro() {
+    state.phase = "intro";
+    document.getElementById("app").innerHTML = `
+        <div class="card center">
+            <h1>KAMIZEN LIFE SYSTEM</h1>
+            <p>Training • Awareness • Control</p>
+            <button onclick="startSystem()">CONTINUE MISSION</button>
+            <button onclick="restartSystem()" style="background:var(--danger);margin-top:10px;">RESET PROGRESS</button>
+        </div>
+    `;
 }
