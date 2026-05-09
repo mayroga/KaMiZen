@@ -1,5 +1,5 @@
 /* =========================================================
-   KAMIZEN ENGINE V12.1 - FULL EXPERT EDITION (NO CUTS)
+   KAMIZEN ENGINE V12 - FULL EXPERT EDITION (NO CUTS)
    ✔ Persistencia Local (LocalStorage)
    ✔ Narración Total: Preguntas + Opciones + Feedback
    ✔ Guía Vocal de Respiración (Visual)
@@ -113,8 +113,69 @@ function restartSystem() {
 }
 
 /* =========================
-   ACTUALIZACIÓN DE RENDERBLOCK
+   MOTOR DE RENDERIZADO
 ========================= */
+function showIntro() {
+    state.phase = "intro";
+    document.getElementById("app").innerHTML = `
+        <div class="card center">
+            <h1>KAMIZEN LIFE SYSTEM</h1>
+            <p>Training • Awareness • Control</p>
+            <button onclick="startSystem()">CONTINUE MISSION</button>
+            <button onclick="restartSystem()" style="background:var(--danger);margin-top:10px;">RESET PROGRESS</button>
+        </div>
+    `;
+}
+
+function startSystem() {
+    state.phase = "story";
+    render();
+}
+
+function render() {
+    if (!state.initialized) return;
+    saveProgress();
+    const app = document.getElementById("app");
+    const story = state.stories[state.currentIndex];
+    const mission = state.missions[state.currentIndex];
+
+    if (!story || !mission) {
+        state.currentIndex = 0;
+        state.currentBlock = 0;
+        state.phase = "story";
+        return render();
+    }
+
+    let navHeader = `
+        <div style="display:flex;gap:5px;margin-bottom:10px;">
+            <button onclick="goBack()" style="flex:1;padding:8px;font-size:12px;background:#334155;">BACK</button>
+            <button onclick="jumpToBlock()" style="flex:1;padding:8px;font-size:12px;background:#0ea5e9;">JUMP/SKIP</button>
+            <button onclick="restartSystem()" style="flex:1;padding:8px;font-size:12px;background:var(--danger);">RESET</button>
+        </div>
+    `;
+
+    if (state.phase === "story") {
+        app.innerHTML = navHeader + `
+            <div class="card">
+                <h2 style="color:var(--primary)">STORY ${story.id}</h2>
+                <h3>${story.t || ""}</h3>
+                <p style="font-size:1.1rem; line-height:1.6;">${story.en || ""}</p>
+            </div>
+            <button id="continueBtn" disabled>NARRATING...</button>
+        `;
+        narrate(`${story.t}. ${story.en}`, () => {
+            setTimeout(startMission, 1500);
+        });
+    } else {
+        const block = mission.b[state.currentBlock];
+        if (!block) { nextStory(); return; }
+        renderBlock(block, navHeader);
+    }
+}
+
+/** 
+ * ACTUALIZACIÓN DE TIEMPOS Y TRANSICIONES AUTOMÁTICAS
+ */
 function renderBlock(block, navHeader) {
     const app = document.getElementById("app");
     let html = navHeader;
@@ -131,12 +192,10 @@ function renderBlock(block, navHeader) {
         html += `<div class="card"><h2>${block.tx?.en || ""}</h2></div>`;
         textToRead = block.tx?.en;
     }
-
     if (block.story) {
         html += `<div class="card"><p>${block.story.en || ""}</p></div>`;
         textToRead = block.story.en;
     }
-
     if (block.t === "breath_auto" || block.t === "br") {
         html += timerUI + `
             <div class="card center">
@@ -146,7 +205,6 @@ function renderBlock(block, navHeader) {
             </div>`;
         textToRead = `${block.tx?.en}. ${block.inf?.en}. Get ready to breathe.`;
     }
-
     if (block.t === "sil") {
         html += timerUI + `<div class="card"><h3>${block.tx?.en || ""}</h3><p>${block.inf?.en || ""}</p></div>`;
         textToRead = `${block.tx?.en}. ${block.inf?.en}. Practice silence now.`;
@@ -178,31 +236,22 @@ function renderBlock(block, navHeader) {
     app.innerHTML = html;
 
     narrate(textToRead, () => {
-        // --- INICIO DE CAMBIOS DE TIEMPO (RESALTADO) ---
+        <span style="color:red;"><b>// AJUSTE DE TIEMPOS DINÁMICOS CON DELAY DE 4s AL FINALIZAR</b></span>
         if (block.t === "breath_auto" || block.t === "br") {
-            // 19 SEGUNDOS Y ESPERA DE 4 SEGUNDOS AL FINAL
-            startCountdown(19, () => {
-                setTimeout(nextBlock, 4000); 
-            });
+            <span style="color:red;"><b>startCountdown(19, () => { setTimeout(nextBlock, 4000); });</b></span>
             startGuidedBreathing();
             unlockContinue("SKIP / CONTINUE", nextBlock);
-
         } else if (block.t === "sil") {
-            // 21 SEGUNDOS Y ESPERA DE 4 SEGUNDOS AL FINAL
-            startCountdown(21, () => {
-                setTimeout(nextBlock, 4000);
-            });
+            <span style="color:red;"><b>startCountdown(21, () => { setTimeout(nextBlock, 4000); });</b></span>
             unlockContinue("SKIP / CONTINUE", nextBlock);
-
         } else if (block.t !== "d") {
             unlockContinue("CONTINUE", nextBlock);
         }
-        // --- FIN DE CAMBIOS DE TIEMPO ---
     });
 }
 
 /* =========================
-   FUNCIONES DE APOYO ACTUALIZADAS
+   FUNCIONES DE APOYO
 ========================= */
 
 function startCountdown(seconds, onComplete) {
@@ -220,10 +269,7 @@ function startCountdown(seconds, onComplete) {
 
         if (state.timeLeft <= 0) {
             clearInterval(state.timer);
-            // CAMBIO: INDICADOR VISUAL DE QUE TERMINÓ EL TIEMPO PERO ESPERA EL RETRASO
-            const label = document.getElementById("breathLabel");
-            if(label) label.innerText = "COMPLETE";
-            
+            <span style="color:red;"><b>const label = document.getElementById("breathLabel"); if(label) label.innerText = "COMPLETE";</b></span>
             if (onComplete) onComplete();
         }
     }, 1000);
@@ -265,6 +311,7 @@ function selectAnswer(index, correct, explanations) {
     if (state.speechLocked) return;
     const isCorrect = index === correct;
     const explanation = explanations?.[index] || "";
+    
     const feedbackWrap = document.createElement("div");
     feedbackWrap.innerHTML = `
         <div class="card">
@@ -272,7 +319,9 @@ function selectAnswer(index, correct, explanations) {
             <p>${explanation}</p>
         </div>
         <button id="continueBtn" disabled>NARRATING...</button>`;
+    
     document.getElementById("app").appendChild(feedbackWrap);
+    
     narrate(explanation, () => {
         unlockContinue("NEXT STEP", nextBlock);
     });
@@ -284,11 +333,18 @@ function nextBlock() {
     render(); 
 }
 
-function startMission() { state.phase = "mission"; state.currentBlock = 0; render(); }
+function startMission() { 
+    state.phase = "mission"; 
+    state.currentBlock = 0; 
+    render(); 
+}
+
 function nextStory() { 
     state.currentIndex++; 
     if (state.currentIndex >= state.stories.length) state.currentIndex = 0;
-    state.phase = "story"; state.currentBlock = 0; render(); 
+    state.phase = "story"; 
+    state.currentBlock = 0; 
+    render(); 
 }
 
 function unlockContinue(label, action) {
@@ -298,16 +354,4 @@ function unlockContinue(label, action) {
         btn.innerText = label; 
         btn.onclick = action; 
     }
-}
-
-function showIntro() {
-    state.phase = "intro";
-    document.getElementById("app").innerHTML = `
-        <div class="card center">
-            <h1>KAMIZEN LIFE SYSTEM</h1>
-            <p>Training • Awareness • Control</p>
-            <button onclick="startSystem()">CONTINUE MISSION</button>
-            <button onclick="restartSystem()" style="background:var(--danger);margin-top:10px;">RESET PROGRESS</button>
-        </div>
-    `;
 }
