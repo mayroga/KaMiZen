@@ -40,12 +40,13 @@
         }
         button{
             width:100%;
-            padding:14px;
+            padding:18px;
             border:none;
             border-radius:12px;
             background:var(--primary);
             color:white;
             font-weight:bold;
+            font-size: 16px;
             cursor:pointer;
             transition:0.2s;
             margin-bottom: 5px;
@@ -64,65 +65,69 @@
         }
         .answer:hover{ transform:translateX(5px); background:#374151; }
 
-        /* Estilo para el círculo que genera el JS */
         .breath-circle{
-            width:140px;
-            height:140px;
+            width:160px;
+            height:160px;
             border-radius:50%;
             margin:30px auto;
-            border:4px solid var(--primary);
+            border:6px solid var(--primary);
             display:flex;
             align-items:center;
             justify-content:center;
-            transition: transform 4s ease-in-out; /* Crucial para el JS */
+            font-size: 24px;
+            font-weight: bold;
+            /* La transición se sincroniza con el motor JS de 4s */
+            transition: transform 4s ease-in-out; 
         }
 
         h1,h2,h3{ margin:10px 0; }
         .small{ font-size:12px; color:var(--dim); }
         .center{ text-align:center; }
+
+        #admin-controls {
+            display: none; 
+            margin-top: 20px;
+            opacity: 0.3;
+        }
+        #admin-controls:hover { opacity: 1; }
     </style>
 </head>
 <body>
 
 <div id="main-container">
-    <!-- HEADER FIJO -->
     <div class="card center">
         <h2 style="color:var(--primary);">KAMIZEN LIFE SYSTEM</h2>
         <p class="small">Neural Training • Awareness • Discipline • Control</p>
     </div>
 
-    <!-- ÁREA DE RENDERIZADO (Aquí es donde el engine.js trabajará) -->
     <div id="app">
+        <!-- Renderizado dinámico desde engine.js -->
         <div class="card center">
             <h3>INITIALIZING SYSTEM...</h3>
             <p>Please wait while we sync missions.</p>
         </div>
     </div>
 
-    <!-- CONTROL DE SALTO (Fuera del render para que no desaparezca) -->
-    <div class="card">
-        <input id="missionInput" type="number" placeholder="Enter mission ID (1 - 49)" 
+    <div id="admin-controls" class="card">
+        <input id="missionInput" type="number" placeholder="Mission ID" 
                style="width:100%;padding:12px;border-radius:8px;border:none;margin-bottom:10px; background:#1f2937; color:white;">
-        <button onclick="jumpToMissionManual()">GO TO MISSION</button>
-        <p class="small center">Missions 1–35 | Exam 36–42 | Exam 43–49</p>
+        <button onclick="jumpToMissionManual()" style="background:#4b5563;">DEBUG: JUMP TO MISSION</button>
     </div>
 </div>
 
 <script src="/static/js/engine.js"></script>
 
 <script>
-// Puente seguro con el motor
+// Vinculación manual con el estado del engine.js
 function jumpToMissionManual() {
     const input = document.getElementById("missionInput");
     const id = Number(input.value);
     
-    // El motor usa state.missions, así que buscamos el índice
-    if (id > 0 && typeof jumpToBlock === "function") {
-        // Simulamos el prompt que pide el motor o llamamos a la lógica interna
+    if (id > 0 && typeof state !== "undefined") {
         const idx = state.missions.findIndex(m => m.id === id);
         if (idx !== -1) {
             window.speechSynthesis.cancel();
-            clearInterval(state.timer);
+            if(state.timer) clearInterval(state.timer);
             state.currentIndex = idx;
             state.currentBlock = 0;
             state.phase = "story";
@@ -131,6 +136,10 @@ function jumpToMissionManual() {
             alert("Mission not found");
         }
     }
+}
+
+function showAdmin() {
+    document.getElementById('admin-controls').style.display = 'block';
 }
 </script>
 </body>
