@@ -6,7 +6,7 @@
    ✔ Botón JUMP/SKIP para navegación directa
    ✔ Soporte completo: v, h, story, br, sil, d, r, c
    ✔ Master Timer: 15 Minutes
-   ✔ Auto-Flow: Text blocks advance automatically
+   ✔ Auto-Flow: Solo para historias y bloques de texto
    ========================================================= */
 
 let state = {
@@ -75,11 +75,9 @@ async function loadAllData() {
 ========================= */
 function startMasterTimer() {
     state.sessionStartTime = Date.now();
-    const fifteenMinutes = 15 * 60 * 1000;
-    
     setTimeout(() => {
         finishSession();
-    }, fifteenMinutes);
+    }, 15 * 60 * 1000);
 }
 
 function finishSession() {
@@ -115,17 +113,8 @@ function finishSession() {
          <p>See you soon, champion. ⭐</p>`
     ];
 
-    const finalNote = notes[Math.floor(Math.random() * notes.length)];
-    
-    app.innerHTML = `
-        <div class="card center animated fadeIn">
-            ${finalNote}
-            <button onclick="location.reload()" style="margin-top:20px;">FINISH SESSION</button>
-        </div>
-    `;
-    
-    const plainText = app.innerText.replace(/✔/g, "");
-    narrate(plainText);
+    app.innerHTML = `<div class="card center animated fadeIn">${notes[Math.floor(Math.random() * notes.length)]}<button onclick="location.reload()" style="margin-top:20px;">FINISH SESSION</button></div>`;
+    narrate(app.innerText.replace(/✔/g, ""));
 }
 
 /* =========================
@@ -135,7 +124,6 @@ function jumpToBlock() {
     const targetMissionId = prompt("Enter the MISSION ID to jump to (e.g., 50, 60):");
     if (targetMissionId !== null && targetMissionId !== "") {
         const idx = state.missions.findIndex(m => m.id === Number(targetMissionId));
-        
         if (idx !== -1) {
             window.speechSynthesis.cancel();
             clearInterval(state.timer);
@@ -144,7 +132,7 @@ function jumpToBlock() {
             state.phase = "story";      
             render();
         } else {
-            alert("Mission ID not found. Please check your data.");
+            alert("Mission ID not found.");
         }
     }
 }
@@ -164,7 +152,7 @@ function goBack() {
 }
 
 function restartSystem() {
-    if(confirm("Are you sure you want to RESTART from zero? All progress will be lost.")) {
+    if(confirm("Are you sure you want to RESTART from zero?")) {
         localStorage.clear();
         state.currentIndex = 0;
         state.currentBlock = 0;
@@ -185,10 +173,7 @@ function startCountdown(seconds, onComplete) {
         state.timeLeft--;
         const m = Math.floor(state.timeLeft / 60);
         const s = state.timeLeft % 60;
-        if (timerDisplay) {
-            timerDisplay.innerText = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-        }
-
+        if (timerDisplay) timerDisplay.innerText = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
         if (state.timeLeft <= 0) {
             clearInterval(state.timer);
             if (onComplete) onComplete();
@@ -225,9 +210,7 @@ function render() {
     const mission = state.missions[state.currentIndex];
 
     if (!story || !mission) {
-        state.currentIndex = 0;
-        state.currentBlock = 0;
-        state.phase = "story";
+        state.currentIndex = 0; state.currentBlock = 0; state.phase = "story";
         return render();
     }
 
@@ -270,31 +253,16 @@ function renderBlock(block, navHeader) {
         </div>
     `;
 
-    if (block.t === "v" || block.t === "h") {
-        html += `<div class="card"><h2>${block.tx?.en || ""}</h2></div>`;
-        textToRead = block.tx?.en;
-    }
-
-    if (block.story) {
-        html += `<div class="card"><p>${block.story.en || ""}</p></div>`;
-        textToRead = block.story.en;
-    }
-
+    if (block.t === "v" || block.t === "h") { html += `<div class="card"><h2>${block.tx?.en || ""}</h2></div>`; textToRead = block.tx?.en; }
+    if (block.story) { html += `<div class="card"><p>${block.story.en || ""}</p></div>`; textToRead = block.story.en; }
     if (block.t === "breath_auto" || block.t === "br") {
-        html += timerUI + `
-            <div class="card center">
-                <div class="breath-circle" id="breathCircle"><span id="breathLabel">READY</span></div>
-                <h3>${block.tx?.en || ""}</h3>
-                <p>${block.inf?.en || ""}</p>
-            </div>`;
+        html += timerUI + `<div class="card center"><div class="breath-circle" id="breathCircle"><span id="breathLabel">READY</span></div><h3>${block.tx?.en || ""}</h3><p>${block.inf?.en || ""}</p></div>`;
         textToRead = `${block.tx?.en}. ${block.inf?.en}. Get ready to breathe.`;
     }
-
     if (block.t === "sil") {
         html += timerUI + `<div class="card"><h3>${block.tx?.en || ""}</h3><p>${block.inf?.en || ""}</p></div>`;
         textToRead = `${block.tx?.en}. ${block.inf?.en}. Practice silence now.`;
     }
-
     if (block.t === "d") {
         html += `<div class="card"><h3>${block.q?.en || ""}</h3>`;
         block.op?.forEach((opt, i) => {
@@ -303,21 +271,10 @@ function renderBlock(block, navHeader) {
         html += `</div>`;
         textToRead = `${block.q?.en}. Your options are: ${block.op.join(". ")}`;
     }
+    if (block.t === "r") { html += `<div class="card center"><h2>⭐ ${block.tx || "REWARD"}</h2><p style="font-size:1.5rem;">+${block.p || 0} XP</p></div>`; textToRead = `${block.tx}. You have earned ${block.p} experience points.`; }
+    if (block.t === "c") { html += `<div class="card"><p>${block.tx?.en || ""}</p></div>`; textToRead = block.tx?.en; }
 
-    if (block.t === "r") {
-        html += `<div class="card center"><h2>⭐ ${block.tx || "REWARD"}</h2><p style="font-size:1.5rem;">+${block.p || 0} XP</p></div>`;
-        textToRead = `${block.tx}. You have earned ${block.p} experience points.`;
-    }
-
-    if (block.t === "c") {
-        html += `<div class="card"><p>${block.tx?.en || ""}</p></div>`;
-        textToRead = block.tx?.en;
-    }
-
-    if (block.t !== "d") {
-        html += `<button id="continueBtn" disabled>NARRATING...</button>`;
-    }
-
+    if (block.t !== "d") html += `<button id="continueBtn" disabled>NARRATING...</button>`;
     app.innerHTML = html;
 
     narrate(textToRead, () => {
@@ -329,17 +286,14 @@ function renderBlock(block, navHeader) {
             startCountdown(24, nextBlock);
             unlockContinue("SKIP", nextBlock);
         } else if (block.t === "d") {
-            // Manual: No hacemos nada hasta que seleccionen respuesta
+            // Mantiene el control en la selección de respuesta
         } else {
-            // AUTOMATICO para v, h, story, r, c
+            // AUTO para v, h, story, r, c
             setTimeout(nextBlock, 1500);
         }
     });
 }
 
-/* =========================
-   FUNCIONES DE VOZ Y ACCIÓN
-========================= */
 function narrate(text, callback) {
     if (!text) { if (callback) callback(); return; }
     state.speechLocked = true;
@@ -347,10 +301,7 @@ function narrate(text, callback) {
     const speech = new SpeechSynthesisUtterance(text);
     speech.lang = "en-US";
     speech.rate = 0.9;
-    speech.onend = () => { 
-        state.speechLocked = false; 
-        if (callback) callback(); 
-    };
+    speech.onend = () => { state.speechLocked = false; if (callback) callback(); };
     window.speechSynthesis.speak(speech);
 }
 
@@ -358,7 +309,6 @@ function startGuidedBreathing() {
     const circle = document.getElementById("breathCircle");
     const label = document.getElementById("breathLabel");
     if (!circle || !label) return;
-
     let inhale = true;
     const step = () => {
         if (!document.getElementById("breathCircle") || state.timeLeft <= 0) return;
@@ -369,10 +319,7 @@ function startGuidedBreathing() {
     };
     step();
     const aniInterval = setInterval(() => {
-        if (!document.getElementById("breathCircle") || state.timeLeft <= 0) { 
-            clearInterval(aniInterval); 
-            return; 
-        }
+        if (!document.getElementById("breathCircle") || state.timeLeft <= 0) { clearInterval(aniInterval); return; }
         step();
     }, 4000);
 }
@@ -381,48 +328,19 @@ function selectAnswer(index, correct, explanations) {
     if (state.speechLocked) return;
     const isCorrect = index === correct;
     const explanation = explanations?.[index] || "";
-    
     const feedbackWrap = document.createElement("div");
-    feedbackWrap.innerHTML = `
-        <div class="card">
-            <h3 style="color:${isCorrect ? '#22c55e' : '#ef4444'}">${isCorrect ? "EXCELLENT!" : "KEEP LEARNING"}</h3>
-            <p>${explanation}</p>
-        </div>
-        <button id="continueBtn" disabled>NARRATING...</button>`;
-    
+    feedbackWrap.innerHTML = `<div class="card"><h3 style="color:${isCorrect ? '#22c55e' : '#ef4444'}">${isCorrect ? "EXCELLENT!" : "KEEP LEARNING"}</h3><p>${explanation}</p></div><button id="continueBtn" disabled>NARRATING...</button>`;
     document.getElementById("app").appendChild(feedbackWrap);
-    
     narrate(explanation, () => {
-        // Después del feedback de una pregunta, pasamos automático
-        setTimeout(nextBlock, 2000);
+        unlockContinue("NEXT STEP", nextBlock);
     });
 }
 
-function nextBlock() { 
-    clearInterval(state.timer); 
-    state.currentBlock++; 
-    render(); 
-}
-
-function startMission() { 
-    state.phase = "mission"; 
-    state.currentBlock = 0; 
-    render(); 
-}
-
-function nextStory() { 
-    state.currentIndex++; 
-    if (state.currentIndex >= state.stories.length) state.currentIndex = 0;
-    state.phase = "story"; 
-    state.currentBlock = 0; 
-    render(); 
-}
+function nextBlock() { clearInterval(state.timer); state.currentBlock++; render(); }
+function startMission() { state.phase = "mission"; state.currentBlock = 0; render(); }
+function nextStory() { state.currentIndex++; if (state.currentIndex >= state.stories.length) state.currentIndex = 0; state.phase = "story"; state.currentBlock = 0; render(); }
 
 function unlockContinue(label, action) {
     const btn = document.getElementById("continueBtn");
-    if (btn) { 
-        btn.disabled = false; 
-        btn.innerText = label; 
-        btn.onclick = action; 
-    }
+    if (btn) { btn.disabled = false; btn.innerText = label; btn.onclick = action; }
 }
