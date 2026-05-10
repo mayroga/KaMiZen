@@ -5,6 +5,8 @@
    ✔ Guía Vocal de Respiración (Visual)
    ✔ Botón JUMP/SKIP para navegación directa
    ✔ Soporte completo: v, h, story, br, sil, d, r, c
+   ✔ Master Timer: 15 Minutes
+   ✔ Auto-Flow: Text blocks advance automatically
    ========================================================= */
 
 let state = {
@@ -17,7 +19,7 @@ let state = {
     initialized: false,
     timer: null,
     timeLeft: 0,
-    sessionStartTime: null // Para controlar los 15 minutos
+    sessionStartTime: null
 };
 
 /* =========================
@@ -69,9 +71,9 @@ async function loadAllData() {
 }
 
 /* =========================
-   SISTEMA DE CIERRE (15 MIN)
+   CONTROL DE CIERRE (15 MIN)
 ========================= */
-function startGlobalTimer() {
+function startMasterTimer() {
     state.sessionStartTime = Date.now();
     const fifteenMinutes = 15 * 60 * 1000;
     
@@ -84,44 +86,46 @@ function finishSession() {
     window.speechSynthesis.cancel();
     clearInterval(state.timer);
     const app = document.getElementById("app");
-
+    
     const notes = [
-        `🌟 <strong>GREAT JOB TODAY</strong><br><br>
-        You completed your KAMIZEN session.<br>
-        Your brain and body only need a few focused minutes to grow stronger.<br>
-        More time does not always mean more progress.<br>
-        KAMIZEN is designed to help you train calmly, not endlessly.<br><br>
-        Now it is time to:<br>
-        ✔ Now you are ready to start your class<br>
-        ✔ Rest your mind<br>
-        ✔ Go play<br>
-        ✔ Talk with your family<br>
-        ✔ Explore the real world<br>
-        ✔ Come back tomorrow stronger<br><br>
-        You can continue if you want, but today’s mission is already complete.<br>
-        Remember:<br>
-        Small daily training creates powerful minds.<br>
-        See you next session, warrior. 🛡️`,
-
-        `🧠 <strong>Mission Complete</strong><br><br>
-        Your mind trained for 15 minutes today.<br>
-        That is enough for your brain to grow stronger.<br>
-        KAMIZEN is not about staying longer.<br>
-        It is about training wisely, which means you are now ready to begin your classes or your next school subject. 📚<br><br>
-        Now go enjoy your day, move your body, smile, learn, and live.<br>
-        You can always return tomorrow for another mission.<br>
-        See you soon, champion. ⭐`
+        `<h2>🌟 GREAT JOB TODAY</h2>
+         <p>You completed your KAMIZEN session.</p>
+         <p>Your brain and body only need a few focused minutes to grow stronger.</p>
+         <p>More time does not always mean more progress.</p>
+         <p>KAMIZEN is designed to help you train calmly, not endlessly.</p>
+         <p>Now it is time to:</p>
+         <ul style="text-align:left; display:inline-block;">
+            <li>✔ Now you are ready to start your class</li>
+            <li>✔ Rest your mind</li>
+            <li>✔ Go play</li>
+            <li>✔ Talk with your family</li>
+            <li>✔ Explore the real world</li>
+            <li>✔ Come back tomorrow stronger</li>
+         </ul>
+         <p>You can continue if you want, but today’s mission is already complete.</p>
+         <p><strong>Remember:</strong> Small daily training creates powerful minds. See you next session, warrior. 🛡️</p>`,
+        
+        `<h2>🧠 Mission Complete</h2>
+         <p>Your mind trained for 15 minutes today.</p>
+         <p>That is enough for your brain to grow stronger.</p>
+         <p>KAMIZEN is not about staying longer. It is about training wisely.</p>
+         <p>Which means you are now ready to begin your classes or your next school subject. 📚</p>
+         <p>Now go enjoy your day, move your body, smile, learn, and live.</p>
+         <p>You can always return tomorrow for another mission.</p>
+         <p>See you soon, champion. ⭐</p>`
     ];
 
-    const randomNote = notes[Math.floor(Math.random() * notes.length)];
+    const finalNote = notes[Math.floor(Math.random() * notes.length)];
     
     app.innerHTML = `
-        <div class="card center" style="border: 2px solid var(--primary); animation: fadeIn 1s;">
-            <p style="font-size:1.1rem; line-height:1.6; text-align:left;">${randomNote}</p>
+        <div class="card center animated fadeIn">
+            ${finalNote}
             <button onclick="location.reload()" style="margin-top:20px;">FINISH SESSION</button>
         </div>
     `;
-    narrate("Mission complete for today. Great job.");
+    
+    const plainText = app.innerText.replace(/✔/g, "");
+    narrate(plainText);
 }
 
 /* =========================
@@ -208,8 +212,8 @@ function showIntro() {
 }
 
 function startSystem() {
+    startMasterTimer();
     state.phase = "story";
-    startGlobalTimer(); // Inicia los 15 minutos aquí
     render();
 }
 
@@ -245,7 +249,6 @@ function render() {
             <button id="continueBtn" disabled>NARRATING...</button>
         `;
         narrate(`${story.t}. ${story.en}`, () => {
-            // AUTOMÁTICO: Pasa a la misión después de la historia
             setTimeout(startMission, 1500);
         });
     } else {
@@ -321,14 +324,14 @@ function renderBlock(block, navHeader) {
         if (block.t === "breath_auto" || block.t === "br") {
             startCountdown(24, nextBlock);
             startGuidedBreathing();
-            unlockContinue("SKIP / CONTINUE", nextBlock);
+            unlockContinue("SKIP", nextBlock);
         } else if (block.t === "sil") {
             startCountdown(24, nextBlock);
-            unlockContinue("SKIP / CONTINUE", nextBlock);
+            unlockContinue("SKIP", nextBlock);
         } else if (block.t === "d") {
-            // En preguntas no automatizamos para que el niño responda
+            // Manual: No hacemos nada hasta que seleccionen respuesta
         } else {
-            // AUTOMÁTICO: Pasa al siguiente bloque (acción/ejercicio) sin tocar botón
+            // AUTOMATICO para v, h, story, r, c
             setTimeout(nextBlock, 1500);
         }
     });
@@ -357,18 +360,14 @@ function startGuidedBreathing() {
     if (!circle || !label) return;
 
     let inhale = true;
-
     const step = () => {
         if (!document.getElementById("breathCircle") || state.timeLeft <= 0) return;
-        
         label.innerText = inhale ? "INHALE" : "EXHALE";
         circle.style.transition = "transform 4000ms ease-in-out";
         circle.style.transform = inhale ? "scale(1.4)" : "scale(0.8)";
         inhale = !inhale;
     };
-
     step();
-
     const aniInterval = setInterval(() => {
         if (!document.getElementById("breathCircle") || state.timeLeft <= 0) { 
             clearInterval(aniInterval); 
@@ -394,8 +393,8 @@ function selectAnswer(index, correct, explanations) {
     document.getElementById("app").appendChild(feedbackWrap);
     
     narrate(explanation, () => {
-        // AUTOMÁTICO: Pasa al siguiente después del feedback de la respuesta
-        setTimeout(nextBlock, 1500);
+        // Después del feedback de una pregunta, pasamos automático
+        setTimeout(nextBlock, 2000);
     });
 }
 
