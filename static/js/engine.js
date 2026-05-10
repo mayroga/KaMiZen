@@ -260,13 +260,13 @@ function renderBlock(block, navHeader) {
 
     narrate(textToRead, () => {
         if (block.t === "breath_auto" || block.t === "br") {
-            // ACTUALIZACIÓN: Duración de respiración a 19 segundos
-            startCountdown(19, nextBlock);
+            // ACTUALIZACIÓN: Duración a 24 segundos exactos
+            startCountdown(24, nextBlock);
             startGuidedBreathing();
             unlockContinue("SKIP / CONTINUE", nextBlock);
         } else if (block.t === "sil") {
-            // ACTUALIZACIÓN: Duración de silencio a 21 segundos
-            startCountdown(21, nextBlock);
+            // ACTUALIZACIÓN: Silencio también a 24 segundos para balance
+            startCountdown(24, nextBlock);
             unlockContinue("SKIP / CONTINUE", nextBlock);
         } else if (block.t !== "d") {
             unlockContinue("CONTINUE", nextBlock);
@@ -297,15 +297,27 @@ function startGuidedBreathing() {
     if (!circle || !label) return;
 
     let inhale = true;
+
+    // Función de ejecución inmediata para evitar el retraso inicial
+    const step = () => {
+        if (!document.getElementById("breathCircle") || state.timeLeft <= 0) return;
+        
+        label.innerText = inhale ? "INHALE" : "EXHALE";
+        circle.style.transition = "transform 4000ms ease-in-out";
+        circle.style.transform = inhale ? "scale(1.4)" : "scale(0.8)";
+        inhale = !inhale;
+    };
+
+    // Orden inicial (Inicia el movimiento en el segundo 0)
+    step();
+
+    // Ciclos subsiguientes cada 4 segundos
     const aniInterval = setInterval(() => {
         if (!document.getElementById("breathCircle") || state.timeLeft <= 0) { 
             clearInterval(aniInterval); 
             return; 
         }
-        label.innerText = inhale ? "INHALE" : "EXHALE";
-        circle.style.transform = inhale ? "scale(1.4)" : "scale(0.8)";
-        circle.style.transition = "transform 4s ease-in-out";
-        inhale = !inhale;
+        step();
     }, 4000);
 }
 
