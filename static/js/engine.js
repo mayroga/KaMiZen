@@ -1,5 +1,5 @@
 /* =========================================================
-   KAMIZEN ENGINE V12 - FULL EXPERT EDITION (NO CUTS)
+   KAMIZEN ENGINE V13 - EXTENDED EDITION (1-63)
    ✔ Persistencia Local (LocalStorage)
    ✔ Narración Total: Preguntas + Opciones + Feedback
    ✔ Guía Vocal de Respiración (Visual)
@@ -52,7 +52,7 @@ window.addEventListener("load", async () => {
 
 async function loadAllData() {
     const app = document.getElementById("app");
-    app.innerHTML = `<div class="card"><h2>SYSTEM BOOTING...</h2><p>Loading Data...</p></div>`;
+    app.innerHTML = `<div class="card"><h2>SYSTEM BOOTING...</h2><p>Loading Data (Missions 1-63)...</p></div>`;
     try {
         const [storiesReq, missionsReq] = await Promise.all([
             fetch("/api/stories"),
@@ -61,8 +61,10 @@ async function loadAllData() {
         const storiesData = await storiesReq.json();
         const missionsData = await missionsReq.json();
 
+        // Asegurar ordenamiento por ID para consistencia 1-63
         state.stories = Array.isArray(storiesData.stories) ? storiesData.stories.sort((a, b) => a.id - b.id) : [];
         state.missions = Array.isArray(missionsData.missions) ? missionsData.missions.sort((a, b) => a.id - b.id) : [];
+        
         state.initialized = true;
     } catch (err) {
         console.error(err);
@@ -89,7 +91,6 @@ function finishSession() {
         `<h2>🌟 GREAT JOB TODAY</h2>
          <p>You completed your KAMIZEN session.</p>
          <p>Your brain and body only need a few focused minutes to grow stronger.</p>
-         <p>More time does not always mean more progress.</p>
          <p>KAMIZEN is designed to help you train calmly, not endlessly.</p>
          <p>Now it is time to:</p>
          <ul style="text-align:left; display:inline-block;">
@@ -100,15 +101,13 @@ function finishSession() {
             <li>✔ Explore the real world</li>
             <li>✔ Come back tomorrow stronger</li>
          </ul>
-         <p>You can continue if you want, but today’s mission is already complete.</p>
-         <p><strong>Remember:</strong> Small daily training creates powerful minds. See you next session, warrior. 🛡️</p>`,
+         <p>Small daily training creates powerful minds. See you next session, warrior. 🛡️</p>`,
         
         `<h2>🧠 Mission Complete</h2>
          <p>Your mind trained for 15 minutes today.</p>
          <p>That is enough for your brain to grow stronger.</p>
          <p>KAMIZEN is not about staying longer. It is about training wisely.</p>
          <p>Which means you are now ready to begin your classes or your next school subject. 📚</p>
-         <p>Now go enjoy your day, move your body, smile, learn, and live.</p>
          <p>You can always return tomorrow for another mission.</p>
          <p>See you soon, champion. ⭐</p>`
     ];
@@ -121,9 +120,10 @@ function finishSession() {
    CONTROLES DE NAVEGACIÓN
 ========================= */
 function jumpToBlock() {
-    const targetMissionId = prompt("Enter the MISSION ID to jump to (e.g., 50, 60):");
+    const targetMissionId = prompt("Enter the MISSION ID to jump to (1-63):");
     if (targetMissionId !== null && targetMissionId !== "") {
-        const idx = state.missions.findIndex(m => m.id === Number(targetMissionId));
+        const idNum = Number(targetMissionId);
+        const idx = state.missions.findIndex(m => m.id === idNum);
         if (idx !== -1) {
             window.speechSynthesis.cancel();
             clearInterval(state.timer);
@@ -132,7 +132,7 @@ function jumpToBlock() {
             state.phase = "story";      
             render();
         } else {
-            alert("Mission ID not found.");
+            alert("Mission ID " + idNum + " not found.");
         }
     }
 }
@@ -190,6 +190,7 @@ function showIntro() {
         <div class="card center">
             <h1>KAMIZEN LIFE SYSTEM</h1>
             <p>Training • Awareness • Control</p>
+            <p class="small">Range: Missions 1 - 63 Loaded</p>
             <button onclick="startSystem()">CONTINUE MISSION</button>
             <button onclick="restartSystem()" style="background:var(--danger);margin-top:10px;">RESET PROGRESS</button>
         </div>
@@ -338,7 +339,13 @@ function selectAnswer(index, correct, explanations) {
 
 function nextBlock() { clearInterval(state.timer); state.currentBlock++; render(); }
 function startMission() { state.phase = "mission"; state.currentBlock = 0; render(); }
-function nextStory() { state.currentIndex++; if (state.currentIndex >= state.stories.length) state.currentIndex = 0; state.phase = "story"; state.currentBlock = 0; render(); }
+function nextStory() { 
+    state.currentIndex++; 
+    if (state.currentIndex >= state.missions.length) state.currentIndex = 0; 
+    state.phase = "story"; 
+    state.currentBlock = 0; 
+    render(); 
+}
 
 function unlockContinue(label, action) {
     const btn = document.getElementById("continueBtn");
