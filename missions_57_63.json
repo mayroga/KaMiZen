@@ -117,21 +117,21 @@
 "id":60,
 "cat":"discipline_rules",
 "b":[
-{"t":"v","tx":{"en":"MISSION 60: THE PLAYTIME RULE"}},
-{"t":"h","tx":{"en":"Balance your fun and your work"}},
-{"story":{"en":"To be the smartest, play for 5 to 20 minutes only. Don't play too much so you don't get distracted. Then, review your homework. Balance is the secret of a god."}},
+{"t":"v","tx":{"en":"MISSION 60: THE MASTER OF SCREENS"}},
+{"t":"h","tx":{"en":"Balance your fun and your work. Control your device, don't let it control you"}},
+{"story":{"en":"To be the smartest, play for 5 to 20 minutes only. Don't play too much so you don't get distracted. Then, review your homework. Balance is the secret of a god. Your phone and computer are tools, not your masters. To keep your brain at god-level, limit gaming or social media to 5-20 minutes. Use the screen to recharge, then shut it down. A true warrior knows when to disconnect to conquer their real-world homework."}},
 {"t":"breath_auto","d":30,
 "tx":{"en":"Breathe in focus..."},
 "inf":{"en":"Prepares you to switch tasks"}
 },
-{"t":"d","q":{"en":"How long should you play to stay focused?"},
-"op":["All day","5 to 20 minutes","Never play","Until you are tired"],
+{"t":"d","q":{"en":"What is the secret to keeping your brain sharp while using a phone or PC?"},
+"op":["Play until the battery dies","5 to 20 minutes sessions","Keep playing while doing homework","Check notifications every minute"],
 "c":1,
 "ex":[
-"All day makes you lose focus",
+"Empty batteries mean empty focus",
 "Short play keeps the brain fresh",
-"Never playing is boring",
-"Tiredness blocks study"
+"Multitasking is a lie that weakens your mind",
+"Constant checking creates a distracted brain"
 ]},
 {"t":"r","tx":"+Self-Control","p":30},
 {"t":"sil","d":40,
