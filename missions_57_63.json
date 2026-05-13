@@ -1,0 +1,245 @@
+{
+"sys":"KAMIZEN LIFE SYSTEM",
+"ch":9,
+"rng":"57-63",
+
+"ui":{"fw":["CALM","BODY","FOCUS","CONTROL","TRUTH","AWARENESS","SAFETY","ACTION"]},
+
+"rules":[
+"Imagination>Loneliness",
+"Effort=Excellence",
+"Listening>Pain",
+"Observation=Friendship",
+"Discipline>Laziness",
+"Creativity=Power",
+"Consistency>Luck"
+],
+
+"missions":[
+
+{
+"id":57,
+"cat":"social_support",
+"b":[
+{"t":"v","tx":{"en":"MISSION 57: NEVER ALONE"}},
+{"t":"h","tx":{"en":"Use your imagination to feel strong"}},
+{"story":{"en":"If you ever feel lonely, I got your back. Use your imagination! Pretend your plushies or imaginary friends are talking and playing with you. Your mind can create company whenever you need it."}},
+{"t":"breath_auto","d":30,
+"tx":{"en":"Breathe in friendship... breathe out lonely feelings"},
+"inf":{"en":"Fills your heart with comfort"}
+},
+{"t":"d","q":{"en":"What can you do if you feel lonely?"},
+"op":["Cry all day","Use your imagination and plushies","Wait for someone","Get angry"],
+"c":1,
+"ex":[
+"Crying doesn't solve it",
+"Imagination creates a happy world",
+"Waiting takes too long",
+"Anger hurts you"
+]},
+{"t":"r","tx":"+Emotional Support","p":20},
+{"t":"sil","d":45,
+"tx":{"en":"Your mind is a great friend"},
+"inf":{"en":"Builds inner peace"}
+},
+{"t":"breath_auto","d":30,
+"tx":{"en":"Inhale peace... exhale loneliness"},
+"inf":{"en":"Calms your emotions"}
+}
+]
+},
+
+{
+"id":58,
+"cat":"social_integration",
+"b":[
+{"t":"v","tx":{"en":"MISSION 58: JOINING THE GAME"}},
+{"t":"h","tx":{"en":"You don't need to ask to belong"}},
+{"story":{"en":"To play with other kids, you don't always have to ask their names. Just go where they are playing. When time passes, they will just accept you. It's how kids play!"}},
+{"t":"breath_auto","d":35,
+"tx":{"en":"Breathe and feel confident"},
+"inf":{"en":"Helps you join others calmly"}
+},
+{"t":"d","q":{"en":"What is a simple way to join a game?"},
+"op":["Interrupt everyone","Just be where they are playing","Stay home","Ask 100 questions"],
+"c":1,
+"ex":[
+"Interrupting is rude",
+"Joining the space leads to playing",
+"Staying home is lonely",
+"Too many questions stop the fun"
+]},
+{"t":"r","tx":"+Social Skills","p":25},
+{"t":"sil","d":50,
+"tx":{"en":"Observe the game first"},
+"inf":{"en":"Helps you understand the rules"}
+},
+{"t":"breath_auto","d":30,
+"tx":{"en":"Inhale courage... exhale shyness"},
+"inf":{"en":"Makes you ready to play"}
+}
+]
+},
+
+{
+"id":59,
+"cat":"pain_management",
+"b":[
+{"t":"v","tx":{"en":"MISSION 59: THE HEADACHE STRATEGY"}},
+{"t":"h","tx":{"en":"Listen when you cannot look"}},
+{"story":{"en":"If you have a headache in class, don't look at the screen or the teacher. Just hear her voice. Memorize the answers in your head so you don't have to use your eyes. Your ears can learn too!"}},
+{"t":"breath_auto","d":40,
+"tx":{"en":"Soft breathing for your head"},
+"inf":{"en":"Reduces pressure and pain"}
+},
+{"t":"d","q":{"en":"How do you learn if your head hurts from the light?"},
+"op":["Close your ears","Listen and memorize","Give up","Look harder"],
+"c":1,
+"ex":[
+"Ears are needed to learn",
+"Listening protects your eyes",
+"Giving up stops learning",
+"Looking harder makes it worse"
+]},
+{"t":"r","tx":"+Adaptability","p":20},
+{"t":"sil","d":60,
+"tx":{"en":"Rest your eyes, use your mind"},
+"inf":{"en":"Keeps you in the lesson safely"}
+},
+{"t":"breath_auto","d":30,
+"tx":{"en":"Inhale quiet... exhale pain"},
+"inf":{"en":"Helps your body relax"}
+}
+]
+},
+
+{
+"id":60,
+"cat":"discipline_rules",
+"b":[
+{"t":"v","tx":{"en":"MISSION 60: THE PLAYTIME RULE"}},
+{"t":"h","tx":{"en":"Balance your fun and your work"}},
+{"story":{"en":"To be the smartest, play for 5 to 20 minutes only. Don't play too much so you don't get distracted. Then, review your homework. Balance is the secret of a god."}},
+{"t":"breath_auto","d":30,
+"tx":{"en":"Breathe in focus..."},
+"inf":{"en":"Prepares you to switch tasks"}
+},
+{"t":"d","q":{"en":"How long should you play to stay focused?"},
+"op":["All day","5 to 20 minutes","Never play","Until you are tired"],
+"c":1,
+"ex":[
+"All day makes you lose focus",
+"Short play keeps the brain fresh",
+"Never playing is boring",
+"Tiredness blocks study"
+]},
+{"t":"r","tx":"+Self-Control","p":30},
+{"t":"sil","d":40,
+"tx":{"en":"Think of your next task"},
+"inf":{"en":"Prepares the brain for work"}
+},
+{"t":"breath_auto","d":30,
+"tx":{"en":"Inhale order... exhale distraction"},
+"inf":{"en":"Builds discipline"}
+}
+]
+},
+
+{
+"id":61,
+"cat":"academic_excellence",
+"b":[
+{"t":"v","tx":{"en":"MISSION 61: WORK LIKE A GOD"}},
+{"t":"h","tx":{"en":"Don't be lazy, be great"}},
+{"story":{"en":"If you are lazy, you get an F. But if you work like a god, you get an A. Don't think one A is enough; you need more and more to be the smartest in your class. Keep going!"}},
+{"t":"breath_auto","d":30,
+"tx":{"en":"Inhale effort... exhale laziness"},
+"inf":{"en":"Gives you energy to work"}
+},
+{"t":"d","q":{"en":"What happens when you work like a god?"},
+"op":["You fail","You get many As","You get tired and quit","Nothing happens"],
+"c":1,
+"ex":[
+"Failing is for lazy ones",
+"Hard work brings top grades",
+"Gods don't quit",
+"Effort always brings results"
+]},
+{"t":"r","tx":"+Excellence","p":35},
+{"t":"sil","d":50,
+"tx":{"en":"I am the smartest in my class"},
+"inf":{"en":"Builds winning mindset"}
+},
+{"t":"breath_auto","d":30,
+"tx":{"en":"Inhale strength... exhale doubt"},
+"inf":{"en":"Confirms your power"}
+}
+]
+},
+
+{
+"id":62,
+"cat":"observation_skills",
+"b":[
+{"t":"v","tx":{"en":"MISSION 62: THE SHARP OBSERVER"}},
+{"t":"h","tx":{"en":"Watch the actions of others"}},
+{"story":{"en":"When you are with your family or adults you trust, observe everything they do. Watch their encounters and actions. Being alert makes you smart and keeps you safe in any place."}},
+{"t":"breath_auto","d":30,
+"tx":{"en":"Slow breath... watch everything"},
+"inf":{"en":"Sharpen your senses"}
+},
+{"t":"d","q":{"en":"Why should you observe adults you trust?"},
+"op":["To copy them","To learn and stay safe","To be annoying","To get a prize"],
+"c":1,
+"ex":[
+"Not just to copy",
+"Observation is learning and safety",
+"It's not annoying",
+"The prize is your safety"
+]},
+{"t":"r","tx":"+Master Awareness","p":30},
+{"t":"sil","d":70,
+"tx":{"en":"Be still and watch the world"},
+"inf":{"en":"Increases your intelligence"}
+},
+{"t":"breath_auto","d":30,
+"tx":{"en":"Inhale sight... exhale distraction"},
+"inf":{"en":"Makes you an expert observer"}
+}
+]
+},
+
+{
+"id":63,
+"cat":"final_security",
+"b":[
+{"t":"v","tx":{"en":"MISSION 63: ATTENTION TO DETAIL"}},
+{"t":"h","tx":{"en":"Safety is in the movement"}},
+{"story":{"en":"Even in a parking zone, stay alert. Look at the movement of other cars around you. Never stop paying attention until you are safely inside. You are the master of your own safety."}},
+{"t":"breath_auto","d":35,
+"tx":{"en":"One last scan of the area"},
+"inf":{"en":"Ensures total security"}
+},
+{"t":"d","q":{"en":"When should you stop being attentive?"},
+"op":["When you see the car","Never, until you are safe","When you are talking","Immediately"],
+"c":1,
+"ex":[
+"Seeing the car is just the start",
+"Attention must stay until you are safe",
+"Talking distracts you",
+"Stopping early is dangerous"
+]},
+{"t":"r","tx":"+Safety Mastery","p":40},
+{"t":"sil","d":100,
+"tx":{"en":"I am safe. I am alert. I am ready."},
+"inf":{"en":"Final integration of all rules"}
+},
+{"t":"breath_auto","d":35,
+"tx":{"en":"Inhale power... exhale worry"},
+"inf":{"en":"Final calm before action"}
+}
+]
+}
+
+]
+}
