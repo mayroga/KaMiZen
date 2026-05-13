@@ -106,12 +106,12 @@
         <!-- Renderizado dinámico desde engine.js -->
         <div class="card center">
             <h3>INITIALIZING SYSTEM...</h3>
-            <p>Please wait while we sync missions.</p>
+            <p>Syncing missions 1-63. Please wait.</p>
         </div>
     </div>
 
     <div id="admin-controls" class="card">
-        <input id="missionInput" type="number" placeholder="Mission ID" 
+        <input id="missionInput" type="number" min="1" max="63" placeholder="Mission ID (1-63)" 
                style="width:100%;padding:12px;border-radius:8px;border:none;margin-bottom:10px; background:#1f2937; color:white;">
         
         <button onclick="jumpToMissionManual()" style="background:#4b5563;">
@@ -125,36 +125,27 @@
 <script>
 // =========================================================
 // KEEP SCREEN / SESSION ACTIVE ON MOBILE
-// Evita que la app se congele mientras esté abierta.
 // =========================================================
 
 let wakeLock = null;
 
-// Solicita mantener la pantalla activa
 async function requestWakeLock() {
     try {
         if ('wakeLock' in navigator) {
             wakeLock = await navigator.wakeLock.request('screen');
-
-            wakeLock.addEventListener('release', () => {
-                console.log('Wake Lock released');
-            });
-
             console.log('Wake Lock active');
         }
     } catch (err) {
-        console.log(`Wake Lock error: ${err.name}, ${err.message}`);
+        console.log(`Wake Lock error: ${err.name}`);
     }
 }
 
-// Reactiva el wake lock cuando el usuario vuelve a la app
 document.addEventListener('visibilitychange', async () => {
     if (document.visibilityState === 'visible') {
         await requestWakeLock();
     }
 });
 
-// Iniciar al cargar
 window.addEventListener('load', async () => {
     await requestWakeLock();
 });
@@ -163,12 +154,10 @@ window.addEventListener('load', async () => {
 // PREVENIR FREEZE EN IOS / ANDROID
 // =========================================================
 
-// Mantiene vivo el event loop
 setInterval(() => {
     document.body.dataset.keepalive = Date.now();
 }, 15000);
 
-// Reanuda speech synthesis si el móvil la pausa
 setInterval(() => {
     if (window.speechSynthesis && speechSynthesis.paused) {
         speechSynthesis.resume();
@@ -176,7 +165,7 @@ setInterval(() => {
 }, 2000);
 
 // =========================================================
-// VINCULACION MANUAL CON ENGINE.JS
+// VINCULACION MANUAL CON ENGINE.JS (Actualizado 1-63)
 // =========================================================
 
 function jumpToMissionManual() {
@@ -199,7 +188,7 @@ function jumpToMissionManual() {
 
             render();
         } else {
-            alert("Mission not found");
+            alert("Mission ID not found in current mission files.");
         }
     }
 }
