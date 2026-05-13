@@ -1,0 +1,301 @@
+{
+"sys":"KAMIZEN LIFE SYSTEM",
+"ch":8,
+"rng":"50-56",
+
+"ui":{"fw":["CALM","BODY","FOCUS","CONTROL","TRUTH","AWARENESS","SAFETY","ACTION"]},
+
+"rules":[
+"Observation>Hurry",
+"Preparation=Power",
+"Focus>DryMouth",
+"Safety>Distance",
+"Memory=Security",
+"Wait>Risk",
+"Action=Survival"
+],
+
+"missions":[
+
+{
+"id":50,
+"cat":"focus_hack",
+"b":[
+
+{"t":"v","tx":{"en":"MISSION 50: THE DRY MOUTH TRICK"}},
+{"t":"h","tx":{"en":"Don't let a dry mouth steal your focus"}},
+
+{"story":{"en":"Before a test, your mouth gets dry and rough. It makes you nervous. If you have no water, find a small thread from your shirt. Chew it many times. It makes saliva come back. Now your mind is back on the test."}},
+
+{"t":"breath_auto","d":35,
+"tx":{"en":"Breathe and feel the saliva return"},
+"inf":{"en":"Restores focus to your brain"}
+},
+
+{"t":"d","q":{"en":"What can you do if your mouth is dry and you have no water?"},
+"op":["Panic","Chew a small thread from your clothes","Stop the test","Forget everything"],
+"c":1,
+"ex":[
+"Panic loses time",
+"Chewing a thread creates saliva and focus",
+"Stopping fails the test",
+"Forgetting is not the way"
+]},
+
+{"t":"r","tx":"+Resourcefulness","p":25},
+
+{"t":"sil","d":40,
+"tx":{"en":"Your mind is back. Focus on the test."},
+"inf":{"en":"Eliminates distractions"}
+},
+
+{"t":"breath_auto","d":30,
+"tx":{"en":"Inhale focus... exhale worry"},
+"inf":{"en":"Keeps your mind clear"}
+}
+
+]
+},
+
+{
+"id":51,
+"cat":"car_safety",
+"b":[
+
+{"t":"v","tx":{"en":"MISSION 51: WAITING FOR THE CAR"}},
+{"t":"h","tx":{"en":"Stay visible, stay safe"}},
+
+{"story":{"en":"When waiting for your parents' car, stay where they can see you. Don't get too close to the moving auto. Stay far from danger until they call you. Safety first, then the ride."}},
+
+{"t":"breath_auto","d":30,
+"tx":{"en":"Patience is your superpower"},
+"inf":{"en":"Keeps you calm while waiting"}
+},
+
+{"t":"d","q":{"en":"Where should you wait for the car?"},
+"op":["In the middle of the road","Where your parents can see you","Behind a wall","Running to the door"],
+"c":1,
+"ex":[
+"Road is dangerous",
+"Visibility equals safety",
+"Hiding is unsafe",
+"Running leads to accidents"
+]},
+
+{"t":"r","tx":"+Safety Awareness","p":20},
+
+{"t":"sil","d":50,
+"tx":{"en":"Look around. Stay in the safe zone."},
+"inf":{"en":"Builds protective habits"}
+},
+
+{"t":"breath_auto","d":30,
+"tx":{"en":"Inhale patience... exhale hurry"},
+"inf":{"en":"Helps you wait safely"}
+}
+
+]
+},
+
+{
+"id":52,
+"cat":"car_exit",
+"b":[
+
+{"t":"v","tx":{"en":"MISSION 52: THE PERFECT EXIT"}},
+{"t":"h","tx":{"en":"Wait for the 'Full Stop'"}},
+
+{"story":{"en":"When you arrive, wait. The car must be stopped completely. Then unbuckle your belt. Exit only on the safe side where no cars are passing. Be like a pro."}},
+
+{"t":"breath_auto","d":30,
+"tx":{"en":"One breath before unbuckling"},
+"inf":{"en":"Prevents rushing into danger"}
+},
+
+{"t":"d","q":{"en":"When is it safe to unbuckle and get out?"},
+"op":["When the car is moving slow","When the car is fully stopped","As soon as you see the house","When you are bored"],
+"c":1,
+"ex":[
+"Moving cars are dangerous",
+"Full stop means safety",
+"Rushing causes falls",
+"Boredom is not a reason"
+]},
+
+{"t":"r","tx":"+Discipline","p":20},
+
+{"t":"sil","d":60,
+"tx":{"en":"Wait for the car to stand still"},
+"inf":{"en":"Ensures total control"}
+},
+
+{"t":"breath_auto","d":30,
+"tx":{"en":"Inhale calm... exhale rush"},
+"inf":{"en":"Keeps you steady"}
+}
+
+]
+},
+
+{
+"id":53,
+"cat":"environment_scan",
+"b":[
+
+{"t":"v","tx":{"en":"MISSION 53: THE 10-SECOND SCAN"}},
+{"t":"h","tx":{"en":"Know your world in 60 seconds"}},
+
+{"story":{"en":"When you enter a place, look around for 10 seconds to 1 minute. Find the exit. Find the entrance. Look for the police or a worker who knows things. Even if you know the place, look again."}},
+
+{"t":"breath_auto","d":30,
+"tx":{"en":"Scan the room slowly"},
+"inf":{"en":"Your eyes are your radar"}
+},
+
+{"t":"d","q":{"en":"What should you look for first in a new place?"},
+"op":["Toys","Exits and helpers","The floor","The ceiling"],
+"c":1,
+"ex":[
+"Toys can wait",
+"Exits and authority keep you safe",
+"Floor has no info",
+"Ceiling is not helpful"
+]},
+
+{"t":"r","tx":"+Awareness","p":30},
+
+{"t":"sil","d":60,
+"tx":{"en":"Memorize the path out"},
+"inf":{"en":"Gives you mental security"}
+},
+
+{"t":"breath_auto","d":30,
+"tx":{"en":"Inhale focus... exhale noise"},
+"inf":{"en":"Keeps your radar active"}
+}
+
+]
+},
+
+{
+"id":54,
+"cat":"school_security",
+"b":[
+
+{"t":"v","tx":{"en":"MISSION 54: SCHOOL RADAR"}},
+{"t":"h","tx":{"en":"Be the master of your hallways"}},
+
+{"story":{"en":"Memorize every door in school. Know who to follow in an emergency. If there is a threat, remember: Hide, Stay Safe, and Run if you can. You are prepared, so you are not afraid."}},
+
+{"t":"breath_auto","d":35,
+"tx":{"en":"Breathe and visualize your exits"},
+"inf":{"en":"Preparation removes fear"}
+},
+
+{"t":"d","q":{"en":"If there is a big danger at school, what do you do?"},
+"op":["Cry","Hide, stay safe, or run","Freeze","Call for friends"],
+"c":1,
+"ex":[
+"Crying blocks action",
+"Hide/Safe/Run is the protocol",
+"Freezing is dangerous",
+"Following protocol saves lives"
+]},
+
+{"t":"r","tx":"+Protection","p":30},
+
+{"t":"sil","d":80,
+"tx":{"en":"Think of your safe spot"},
+"inf":{"en":"Builds mental resilience"}
+},
+
+{"t":"breath_auto","d":30,
+"tx":{"en":"Inhale safety... exhale fear"},
+"inf":{"en":"Prepares your response"}
+}
+
+]
+},
+
+{
+"id":55,
+"cat":"memory_vault",
+"b":[
+
+{"t":"v","tx":{"en":"MISSION 55: THE NUMBERS IN YOUR HEAD"}},
+{"t":"h","tx":{"en":"Your mind is your best phone"}},
+
+{"story":{"en":"Your brain must keep the phone numbers of your parents and family. If there is an accident or you get lost, you don't need a phone, you have the numbers in your memory. You are never truly lost."}},
+
+{"t":"breath_auto","d":30,
+"tx":{"en":"Repeat the numbers in your mind"},
+"inf":{"en":"Locks info in your long-term memory"}
+},
+
+{"t":"d","q":{"en":"Why should you memorize phone numbers?"},
+"op":["To do math","To be safe if you lose your phone","To impress teachers","To talk a lot"],
+"c":1,
+"ex":[
+"Not for math",
+"Memory is your backup in emergencies",
+"Not for others",
+"For safety"
+]},
+
+{"t":"r","tx":"+Security","p":25},
+
+{"t":"sil","d":60,
+"tx":{"en":"Your memory is your shield"},
+"inf":{"en":"Reinforces survival skills"}
+},
+
+{"t":"breath_auto","d":30,
+"tx":{"en":"Inhale memory... exhale doubt"},
+"inf":{"en":"Strengthens your recall"}
+}
+
+]
+},
+
+{
+"id":56,
+"cat":"dream_power",
+"b":[
+
+{"t":"v","tx":{"en":"MISSION 56: MASTER OF DREAMS"}},
+{"t":"h","tx":{"en":"Control your mind while you sleep"}},
+
+{"story":{"en":"To have superpowers, keep your brain active for 30 minutes before bed. When you sleep, you are in your dreams. Since it is YOUR dream, you can control it. You are the boss of your mind."}},
+
+{"t":"breath_auto","d":40,
+"tx":{"en":"Inhale power... exhale into sleep"},
+"inf":{"en":"Prepares your brain for lucid dreaming"}
+},
+
+{"t":"d","q":{"en":"Who controls what happens in your dreams?"},
+"op":["The monsters","YOU do","The teacher","Nobody"],
+"c":1,
+"ex":[
+"Monsters are not real",
+"It is your mind, you have the power",
+"Teachers aren't there",
+"You have the control"
+]},
+
+{"t":"r","tx":"+Dream Control","p":40},
+
+{"t":"sil","d":120,
+"tx":{"en":"Visualize your superpower now."},
+"inf":{"en":"Builds the connection between mind and dream"}
+},
+
+{"t":"breath_auto","d":35,
+"tx":{"en":"Inhale power... exhale fear"},
+"inf":{"en":"Final calm before rest"}
+}
+
+]
+}
+
+]
+}
