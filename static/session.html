@@ -76,7 +76,6 @@
             justify-content:center;
             font-size: 24px;
             font-weight: bold;
-            /* La transición se sincroniza con el motor JS de 4s */
             transition: transform 4s ease-in-out; 
         }
 
@@ -89,7 +88,10 @@
             margin-top: 20px;
             opacity: 0.3;
         }
-        #admin-controls:hover { opacity: 1; }
+
+        #admin-controls:hover { 
+            opacity: 1; 
+        }
     </style>
 </head>
 <body>
@@ -111,26 +113,90 @@
     <div id="admin-controls" class="card">
         <input id="missionInput" type="number" placeholder="Mission ID" 
                style="width:100%;padding:12px;border-radius:8px;border:none;margin-bottom:10px; background:#1f2937; color:white;">
-        <button onclick="jumpToMissionManual()" style="background:#4b5563;">DEBUG: JUMP TO MISSION</button>
+        
+        <button onclick="jumpToMissionManual()" style="background:#4b5563;">
+            DEBUG: JUMP TO MISSION
+        </button>
     </div>
 </div>
 
 <script src="/static/js/engine.js"></script>
 
 <script>
-// Vinculación manual con el estado del engine.js
+// =========================================================
+// KEEP SCREEN / SESSION ACTIVE ON MOBILE
+// Evita que la app se congele mientras esté abierta.
+// =========================================================
+
+let wakeLock = null;
+
+// Solicita mantener la pantalla activa
+async function requestWakeLock() {
+    try {
+        if ('wakeLock' in navigator) {
+            wakeLock = await navigator.wakeLock.request('screen');
+
+            wakeLock.addEventListener('release', () => {
+                console.log('Wake Lock released');
+            });
+
+            console.log('Wake Lock active');
+        }
+    } catch (err) {
+        console.log(`Wake Lock error: ${err.name}, ${err.message}`);
+    }
+}
+
+// Reactiva el wake lock cuando el usuario vuelve a la app
+document.addEventListener('visibilitychange', async () => {
+    if (document.visibilityState === 'visible') {
+        await requestWakeLock();
+    }
+});
+
+// Iniciar al cargar
+window.addEventListener('load', async () => {
+    await requestWakeLock();
+});
+
+// =========================================================
+// PREVENIR FREEZE EN IOS / ANDROID
+// =========================================================
+
+// Mantiene vivo el event loop
+setInterval(() => {
+    document.body.dataset.keepalive = Date.now();
+}, 15000);
+
+// Reanuda speech synthesis si el móvil la pausa
+setInterval(() => {
+    if (window.speechSynthesis && speechSynthesis.paused) {
+        speechSynthesis.resume();
+    }
+}, 2000);
+
+// =========================================================
+// VINCULACION MANUAL CON ENGINE.JS
+// =========================================================
+
 function jumpToMissionManual() {
     const input = document.getElementById("missionInput");
     const id = Number(input.value);
     
     if (id > 0 && typeof state !== "undefined") {
         const idx = state.missions.findIndex(m => m.id === id);
+
         if (idx !== -1) {
             window.speechSynthesis.cancel();
-            if(state.timer) clearInterval(state.timer);
+
+            if(state.timer) {
+                clearInterval(state.timer);
+            }
+
             state.currentIndex = idx;
             state.currentBlock = 0;
             state.phase = "story";
+
             render();
         } else {
             alert("Mission not found");
@@ -142,5 +208,6 @@ function showAdmin() {
     document.getElementById('admin-controls').style.display = 'block';
 }
 </script>
+
 </body>
 </html>
