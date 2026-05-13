@@ -34,10 +34,9 @@ def load_json(path):
         return None
 
 # =========================================================
-# 📖 STORIES LOADER (STRICT 1–49 ORDER)
+# 📖 STORIES LOADER (STRICT 1–63 ORDER)
 # =========================================================
 def load_stories():
-
     if CACHE["stories"] is not None:
         return CACHE["stories"]
 
@@ -53,7 +52,7 @@ def load_stories():
     else:
         stories = []
 
-    # 🔥 FORCE CLEAN SORT (NO DUPLICATES OR MISORDER)
+    # 🔥 FORCE CLEAN SORT (STRICT ORDER 1-63)
     stories = sorted(
         [s for s in stories if isinstance(s, dict) and "id" in s],
         key=lambda x: x["id"]
@@ -63,15 +62,15 @@ def load_stories():
     return stories
 
 # =========================================================
-# 🎯 MISSIONS LOADER (MULTI FILE SYSTEM 01–49)
+# 🎯 MISSIONS LOADER (MULTI FILE SYSTEM 01–63)
 # =========================================================
 def load_missions():
-
     if CACHE["missions"] is not None:
         return CACHE["missions"]
 
     all_missions = []
 
+    # Detecta automáticamente missions_43_49.json, missions_50_56.json, etc.
     files = sorted([
         f for f in os.listdir(BASE_DIR)
         if f.startswith("missions_") and f.endswith(".json")
@@ -86,7 +85,7 @@ def load_missions():
 
         missions = []
 
-        # soporta múltiples formatos
+        # Soporta múltiples formatos de estructura
         if isinstance(data, dict):
             missions = (
                 data.get("missions") or
@@ -94,16 +93,15 @@ def load_missions():
                 data.get("data") or
                 []
             )
-
         elif isinstance(data, list):
             missions = data
 
-        # filtrar válidos
+        # Filtrar misiones válidas
         for m in missions:
             if isinstance(m, dict) and "id" in m:
                 all_missions.append(m)
 
-    # 🔥 ORDEN GLOBAL ABSOLUTO 1 → 49
+    # 🔥 ORDEN GLOBAL ABSOLUTO 1 → 63
     all_missions = sorted(all_missions, key=lambda x: x["id"])
 
     CACHE["missions"] = {
@@ -129,9 +127,10 @@ def session():
 # =========================================================
 @app.get("/api/stories")
 def get_stories():
+    stories = load_stories()
     return {
-        "total": len(load_stories()),
-        "stories": load_stories()
+        "total": len(stories),
+        "stories": stories
     }
 
 # =========================================================
@@ -146,7 +145,6 @@ def get_missions():
 # =========================================================
 @app.get("/api/missions/{mission_id}")
 def get_mission(mission_id: int):
-
     missions = load_missions()["missions"]
 
     for m in missions:
