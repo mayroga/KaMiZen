@@ -344,6 +344,104 @@
       "t": "You Are Ready Now",
       "en": "Before a big challenge, a child felt fear. Then he remembered everything he had learned: breathe, focus, go step by step. He realized he was more ready than he thought.",
       "es": "Antes de un gran desafío, un niño sintió miedo. Luego recordó todo lo que había aprendido: respirar, enfocarse, ir paso a paso. Se dio cuenta de que estaba más preparado de lo que pensaba."
+    },
+    {
+      "id": 50,
+      "cat": "focus",
+      "t": "The Secret Saliva Thread",
+      "en": "Before a big test, the mouth turns dry and focus fades. A smart student knows that if water is gone, a tiny thread from his shirt can save the day. By chewing it, the body wakes up, saliva returns, and the mind locks back onto the answers. Resourcefulness is the key to winning when everything seems dry.",
+      "es": "Antes de un gran examen, la boca se seca y el enfoque se desvanece. Un estudiante inteligente sabe que si no hay agua, un pequeño hilo de su camisa puede salvar el día. Al masticarlo, el cuerpo despierta, la saliva vuelve y la mente se conecta de nuevo con las respuestas. El ingenio es la clave para ganar cuando todo parece seco."
+    },
+    {
+      "id": 51,
+      "cat": "safety",
+      "t": "The Visible Sentinel",
+      "en": "Waiting for a car isn't just standing around; it's a mission of visibility. A wise child stays in the light, where parents can see him from afar, staying away from the moving wheels. Being seen is being safe. Never hide from those who come to protect you.",
+      "es": "Esperar un auto no es solo estar parado; es una misión de visibilidad. Un niño sabio se queda en la luz, donde sus padres puedan verlo desde lejos, manteniéndose lejos de las ruedas en movimiento. Ser visto es estar a salvo. Nunca te escondas de quienes vienen a protegerte."
+    },
+    {
+      "id": 52,
+      "cat": "control",
+      "t": "The Full Stop Rule",
+      "en": "A car in motion is a machine in power. The pro knows that the belt stays on and the door stays shut until the car is at a 'dead stop'. Rushing to leave is for the weak; waiting for the stop is for the disciplined. Exit only when the world is still.",
+      "es": "Un auto en movimiento es una máquina con poder. El experto sabe que el cinturón se queda puesto y la puerta cerrada hasta que el carro para 'en seco'. Apurarse por salir es para los débiles; esperar la parada es para los disciplinados. Sal solo cuando el mundo esté quieto."
+    },
+    {
+      "id": 53,
+      "cat": "awareness",
+      "t": "The 60-Second Radar",
+      "en": "Every time you enter a room, give yourself one minute to look. Find the doors, find the exits, and find the person in charge. Even if you have been there before, the world changes. A sharp mind always knows the way out before it's needed.",
+      "es": "Cada vez que entras en un lugar, regálate un minuto para mirar. Encuentra las puertas, las salidas y a la persona a cargo. Incluso si ya has estado allí, el mundo cambia. Una mente aguda siempre conoce la salida antes de necesitarla."
+    },
+    {
+      "id": 54,
+      "cat": "protection",
+      "t": "The Shield of Preparation",
+      "en": "School is a place of learning, but also a place to be alert. Memorize the paths and know the protocol: Hide, Safe, and Run. Fear disappears when you have a plan. Knowledge is the armor that keeps you calm when others panic.",
+      "es": "La escuela es un lugar de aprendizaje, pero también de estar alerta. Memoriza los caminos y conoce el protocolo: Escóndete, Asegúrate y Corre. El miedo desaparece cuando tienes un plan. El conocimiento es la armadura que te mantiene tranquilo cuando otros entran en pánico."
+    },
+    {
+      "id": 55,
+      "cat": "memory",
+      "t": "The Mental Phonebook",
+      "en": "Phones can break or get lost, but your brain is forever. Storing the phone numbers of your family in your memory is like having a superpower. No matter where you are or what happens, you are never lost if you carry the connection in your head.",
+      "es": "Los teléfonos pueden romperse o perderse, pero tu cerebro es para siempre. Guardar los números de tu familia en tu memoria es como tener un superpoder. No importa dónde estés o qué pase, nunca estás perdido si llevas la conexión en tu cabeza."
+    },
+    {
+      "id": 56,
+      "cat": "mastery",
+      "t": "The Architect of Dreams",
+      "en": "Superpowers aren't found in capes, but in dreams. By keeping your brain awake and active before sleep, you learn to take the wheel of your imagination. In your dreams, you are the boss. You can fly and be strong because you control the mind that creates the world.",
+      "es": "Los superpoderes no están en las capas, sino en los sueños. Al mantener tu cerebro despierto y activo antes de dormir, aprendes a tomar el volante de tu imaginación. En tus sueños, tú mandas. Puedes volar y ser fuerte porque controlas la mente que crea ese mundo."
+    },
+    {
+      "id": 57,
+      "cat": "emotion",
+      "t": "The Imaginary Alliance",
+      "en": "Loneliness is just a feeling, not a reality. When you are alone, your imagination is your best friend. A plushie can talk and a toy can listen. Those who use their creativity to find company are never truly by themselves; they carry a whole world inside.",
+      "es": "La soledad es solo un sentimiento, no una realidad. Cuando estás solo, tu imaginación es tu mejor amiga. Un peluche puede hablar y un juguete puede escuchar. Quienes usan su creatividad para encontrar compañía nunca están realmente solos; llevan un mundo entero por dentro."
+    },
+    {
+      "id": 58,
+      "cat": "social",
+      "t": "The Art of Joining In",
+      "en": "You don't always need a name to start a game. Sometimes, just being there is enough. By moving closer and sharing the space, others will naturally accept you. Friendship doesn't always start with words; it starts by simply showing up to play.",
+      "es": "No siempre necesitas un nombre para empezar un juego. A veces, solo estar ahí es suficiente. Al acercarte y compartir el espacio, los demás te aceptarán naturalmente. La amistad no siempre empieza con palabras; empieza simplemente presentándote para jugar."
+    },
+    {
+      "id": 59,
+      "cat": "adaptation",
+      "t": "The Wisdom of Silence",
+      "en": "When a headache strikes, the eyes suffer, but the ears remain open. A smart student doesn't fight the pain by staring at screens; they close their eyes and let the teacher's voice paint the answers. You don't need to see to learn; you only need to listen.",
+      "es": "Cuando el dolor de cabeza ataca, los ojos sufren, pero los oídos permanecen abiertos. Un estudiante inteligente no lucha contra el dolor mirando pantallas; cierra los ojos y deja que la voz de la maestra pinte las respuestas. No necesitas ver para aprender; solo necesitas escuchar."
+    },
+    {
+      "id": 60,
+      "cat": "discipline",
+      "t": "The 20-Minute Balance",
+      "en": "Too much play makes the mind wander; too much work makes the soul tired. A god-like student plays for 5 to 20 minutes to keep the spirit fresh, then returns to the mission. Success is found in the balance between the joy of the game and the duty of the book.",
+      "es": "Mucho juego hace que la mente divague; mucho trabajo cansa el alma. Un estudiante que trabaja como un dios juega de 5 a 20 minutos para mantener el espíritu fresco, luego regresa a la misión. El éxito se encuentra en el equilibrio entre la alegría del juego y el deber del libro."
+    },
+    {
+      "id": 61,
+      "cat": "growth",
+      "t": "Working Like a God",
+      "en": "Lazy minds settle for an F, but powerful minds work like gods to reach the A. Don't be satisfied with one victory; a true champion knows that to be the smartest in the class, every single task must be handled with divine effort. Greatness is a habit, not a lucky shot.",
+      "es": "Las mentes perezosas se conforman con una F, pero las mentes poderosas trabajan como dioses para alcanzar la A. No te conformes con una victoria; un verdadero campeón sabe que para ser el más inteligente de la clase, cada tarea debe hacerse con un esfuerzo divino. La grandeza es un hábito, no un golpe de suerte."
+    },
+    {
+      "id": 62,
+      "cat": "awareness",
+      "t": "The Mirror of Trust",
+      "en": "Watch the ones you trust like a mirror. By observing every move and every word of your parents or teachers, you learn how the world works. A student who watches carefully doesn't just learn facts; they learn how to navigate life with wisdom.",
+      "es": "Observa a los que confías como un espejo. Al observar cada movimiento y palabra de tus padres o maestros, aprendes cómo funciona el mundo. Un estudiante que observa con atención no solo aprende datos; aprende a navegar la vida con sabiduría."
+    },
+    {
+      "id": 63,
+      "cat": "safety",
+      "t": "The Master of the Zone",
+      "en": "Even in a safe zone, the wheels keep turning. A master of safety never stops looking around, watching the movement of every car until the mission is over. True safety isn't found in a parking spot, but in the attention you pay to everything around you.",
+      "es": "Incluso en una zona segura, las ruedas siguen girando. Un maestro de la seguridad nunca deja de mirar a su alrededor, observando el movimiento de cada auto hasta que la misión termina. La verdadera seguridad no está en el parqueo, sino en la atención que pones a todo lo que te rodea." 
     }
   ]
 }
