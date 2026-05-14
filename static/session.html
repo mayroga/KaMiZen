@@ -93,7 +93,7 @@
             opacity: 1; 
         }
 
-        /* ESTILOS DE VALIDACIÓN PARA PADRES */
+        /* PARENT VALIDATION STYLES */
         .validation-card {
             background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
             border: 2px solid var(--success);
@@ -154,42 +154,45 @@
 
 <script>
 // =========================================================
-// VALIDACIÓN Y REPORTE PARA PADRES (ALL PRO DAD MODEL)
+// VALIDATION & REPORT FOR PARENTS (ALL PRO DAD MODEL)
 // =========================================================
 function renderValidationScreen(missionId, stats) {
     const app = document.getElementById('app');
     
     app.innerHTML = `
         <div class="card validation-card">
-            <h2 style="color:var(--success);">MISIÓN COMPLETADA</h2>
-            <p class="small">VALIDACIÓN DE ENTRENAMIENTO NEURAL</p>
+            <h2 style="color:var(--success);">MISSION COMPLETED</h2>
+            <p class="small">NEURAL TRAINING VALIDATION REPORT</p>
             
             <div class="metric-grid">
-                <div class="metric-item"><strong>Misión:</strong> #${missionId}</div>
-                <div class="metric-item"><strong>Estado:</strong> Verificado</div>
-                <div class="metric-item"><strong>Enfoque:</strong> 100%</div>
-                <div class="metric-item"><strong>ID Sesión:</strong> ${Math.floor(Math.random()*90000) + 10000}</div>
+                <div class="metric-item"><strong>Mission:</strong> #${missionId}</div>
+                <div class="metric-item"><strong>Status:</strong> Verified</div>
+                <div class="metric-item"><strong>Focus:</strong> 100%</div>
+                <div class="metric-item"><strong>Session ID:</strong> ${Math.floor(Math.random()*90000) + 10000}</div>
             </div>
 
             <div style="background:#1f2937; padding:15px; border-radius:10px; text-align:left; font-size:14px;">
-                <p><strong>Guía para el Padre:</strong></p>
-                <p>Hoy el estudiante trabajó en <em>Control de Impulsos</em>. Durante las próximas 4 horas, observe:</p>
+                <p><strong>Parent Mentor Guide:</strong></p>
+                <p>Today the student worked on <em>Impulse Control and Focus</em>. During the next 4 hours, please observe:</p>
                 <ul style="padding-left:20px;">
-                    <li>¿Responde con calma ante instrucciones?</li>
-                    <li>¿Mantiene contacto visual al hablar?</li>
+                    <li>Does the student respond calmly to instructions?</li>
+                    <li>Does the student maintain eye contact when speaking?</li>
                 </ul>
+                <p style="font-size:11px; color:var(--dim); margin-top:10px;">
+                    This report certifies the completion of a high-performance mental conditioning cycle.
+                </p>
             </div>
 
             <button class="print-btn" onclick="window.print()">
-                GENERAR PDF DE CUMPLIMIENTO
+                GENERATE COMPLIANCE PDF
             </button>
             
             <button onclick="location.reload()" style="background:transparent; border:1px solid var(--dim); margin-top:10px;">
-                FINALIZAR SESIÓN
+                FINISH SESSION
             </button>
         </div>
     `;
-    console.log("Misión terminada y lista para validación del tutor.");
+    console.log("Mission finished and ready for tutor validation.");
 }
 
 // =========================================================
@@ -218,7 +221,7 @@ window.addEventListener('load', async () => {
 });
 
 // =========================================================
-// PREVENIR FREEZE EN IOS / ANDROID
+// PREVENT FREEZE ON IOS / ANDROID
 // =========================================================
 setInterval(() => {
     document.body.dataset.keepalive = Date.now();
@@ -231,7 +234,7 @@ setInterval(() => {
 }, 2000);
 
 // =========================================================
-// VINCULACION MANUAL CON ENGINE.JS (Actualizado 1-63)
+// MANUAL LINK WITH ENGINE.JS (Updated 1-63)
 // =========================================================
 function jumpToMissionManual() {
     const input = document.getElementById("missionInput");
