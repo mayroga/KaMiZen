@@ -1,11 +1,13 @@
 /* =========================================================
-   KAMIZEN ENGINE V14 - FULL OPERATIONAL EDITION
+   KAMIZEN ENGINE V14 - FULL VERSION WITH PDF REPORT
    ✔ Persistencia Local (LocalStorage)
-   ✔ Narración Total: Historias + Preguntas + Feedback
-   ✔ Guía Vocal y Visual de Respiración
-   ✔ Navegación: Botón JUMP/SKIP y BACK
-   ✔ Master Timer: 15 Minutes con Validación de Padres
-   ✔ Integración con renderValidationScreen (session.html)
+   ✔ Narración Total: Preguntas + Opciones + Feedback
+   ✔ Guía Vocal de Respiración (Visual)
+   ✔ Botón JUMP/SKIP para navegación directa
+   ✔ Soporte completo: v, h, story, br, sil, d, r, c
+   ✔ Master Timer: 15 Minutes
+   ✔ Auto-Flow: Solo para historias y bloques de texto
+   ✔ REPORT INTEGRATION: PDF Result generation
    ========================================================= */
 
 let state = {
@@ -13,13 +15,12 @@ let state = {
     missions: [],
     currentIndex: 0,
     currentBlock: 0,
-    phase: "loading", 
+    phase: "loading",
     speechLocked: false,
     initialized: false,
     timer: null,
     timeLeft: 0,
-    sessionStartTime: null,
-    masterTimerActive: false
+    sessionStartTime: null
 };
 
 /* =========================
@@ -61,10 +62,10 @@ async function loadAllData() {
         const storiesData = await storiesReq.json();
         const missionsData = await missionsReq.json();
 
-        // Ordenamiento por ID para consistencia 1-63
+        // Asegurar ordenamiento por ID para consistencia 1-63
         state.stories = Array.isArray(storiesData.stories) ? storiesData.stories.sort((a, b) => a.id - b.id) : [];
         state.missions = Array.isArray(missionsData.missions) ? missionsData.missions.sort((a, b) => a.id - b.id) : [];
-        
+       
         state.initialized = true;
     } catch (err) {
         console.error(err);
@@ -73,14 +74,10 @@ async function loadAllData() {
 }
 
 /* =========================
-   CONTROL DE CIERRE Y VALIDACIÓN (15 MIN)
+   CONTROL DE CIERRE Y REPORTE (15 MIN)
 ========================= */
 function startMasterTimer() {
-    if (state.masterTimerActive) return;
-    state.masterTimerActive = true;
     state.sessionStartTime = Date.now();
-    
-    // Al cumplirse los 15 minutos exactos, se dispara la validación
     setTimeout(() => {
         finishSession();
     }, 15 * 60 * 1000);
@@ -90,24 +87,36 @@ function finishSession() {
     window.speechSynthesis.cancel();
     clearInterval(state.timer);
     
-    // Obtenemos el ID de la misión actual para el reporte del padre
+    // Obtenemos el ID de la misión para el reporte PDF
     const currentMissionId = state.missions[state.currentIndex]?.id || 0;
     
-    // Llamada a la función global definida en session.html
+    // Integración con renderValidationScreen de session.html para generar el reporte PDF
     if (typeof renderValidationScreen === "function") {
         renderValidationScreen(currentMissionId, {
             timeSpent: "15:00",
-            status: "Success"
+            status: "Complete"
         });
     } else {
-        // Fallback si no encuentra la función de validación
+        // Fallback original si no existe la función de validación
         const app = document.getElementById("app");
-        app.innerHTML = `
-            <div class="card center">
-                <h2>MISSION COMPLETE</h2>
-                <p>15 minutes of training finished.</p>
-                <button onclick="location.reload()">FINISH</button>
-            </div>`;
+        const notes = [
+            `<h2>🌟 GREAT JOB TODAY</h2>
+             <p>You completed your KAMIZEN session.</p>
+             <p>Your brain and body only need a few focused minutes to grow stronger.</p>
+             <p>KAMIZEN is designed to help you train calmly, not endlessly.</p>
+             <p>Now it is time to:</p>
+             <ul style="text-align:left; display:inline-block;">
+                <li>✔ Now you are ready to start your class</li>
+                <li>✔ Rest your mind</li>
+                <li>✔ Go play</li>
+                <li>✔ Talk with your family</li>
+                <li>✔ Explore the real world</li>
+                <li>✔ Come back tomorrow stronger</li>
+             </ul>
+             <p>Small daily training creates powerful minds. See you next session, warrior. 🛡️</p>`
+        ];
+        app.innerHTML = `<div class="card center animated fadeIn">${notes[0]}<button onclick="location.reload()" style="margin-top:20px;">FINISH SESSION</button></div>`;
+        narrate(app.innerText.replace(/✔/g, ""));
     }
 }
 
@@ -183,11 +192,11 @@ function showIntro() {
     state.phase = "intro";
     document.getElementById("app").innerHTML = `
         <div class="card center">
-            <h1 style="color:var(--primary);">KAMIZEN</h1>
+            <h1>KAMIZEN LIFE SYSTEM</h1>
             <p>Training • Awareness • Control</p>
-            <p class="small">Missions 1 - 63 Active</p>
+            <p class="small">Range: Missions 1 - 63 Loaded</p>
             <button onclick="startSystem()">CONTINUE MISSION</button>
-            <button onclick="restartSystem()" style="background:var(--danger);margin-top:10px; font-size:12px;">RESET PROGRESS</button>
+            <button onclick="restartSystem()" style="background:var(--danger);margin-top:10px;">RESET PROGRESS</button>
         </div>
     `;
 }
@@ -212,9 +221,9 @@ function render() {
 
     let navHeader = `
         <div style="display:flex;gap:5px;margin-bottom:10px;">
-            <button onclick="goBack()" style="flex:1;padding:8px;font-size:11px;background:#334155;">BACK</button>
-            <button onclick="jumpToBlock()" style="flex:1;padding:8px;font-size:11px;background:#0ea5e9;">JUMP</button>
-            <button onclick="restartSystem()" style="flex:1;padding:8px;font-size:11px;background:var(--danger);">RESET</button>
+            <button onclick="goBack()" style="flex:1;padding:8px;font-size:12px;background:#334155;">BACK</button>
+            <button onclick="jumpToBlock()" style="flex:1;padding:8px;font-size:12px;background:#0ea5e9;">JUMP/SKIP</button>
+            <button onclick="restartSystem()" style="flex:1;padding:8px;font-size:12px;background:var(--danger);">RESET</button>
         </div>
     `;
 
@@ -245,41 +254,44 @@ function renderBlock(block, navHeader) {
     const timerUI = `
         <div class="card center" style="border: 3px solid var(--primary); background: #0f172a;">
             <h1 id="timerDisplay" style="font-size:4rem;margin:0; font-family: monospace;">00:00</h1>
-            <p style="color:var(--primary); letter-spacing: 2px; font-size:12px;">STAY FOCUSED</p>
+            <p style="color:var(--primary); letter-spacing: 2px;">STAY FOCUSED</p>
         </div>
     `;
 
     if (block.t === "v" || block.t === "h") { html += `<div class="card"><h2>${block.tx?.en || ""}</h2></div>`; textToRead = block.tx?.en; }
     if (block.story) { html += `<div class="card"><p>${block.story.en || ""}</p></div>`; textToRead = block.story.en; }
-    if (block.t === "br" || block.t === "breath_auto") {
-        html += timerUI + `<div class="card center"><div class="breath-circle" id="breathCircle"><span id="breathLabel">READY</span></div><h3>${block.tx?.en || ""}</h3></div>`;
-        textToRead = `${block.tx?.en}. Get ready to breathe.`;
+    if (block.t === "breath_auto" || block.t === "br") {
+        html += timerUI + `<div class="card center"><div class="breath-circle" id="breathCircle"><span id="breathLabel">READY</span></div><h3>${block.tx?.en || ""}</h3><p>${block.inf?.en || ""}</p></div>`;
+        textToRead = `${block.tx?.en}. ${block.inf?.en}. Get ready to breathe.`;
     }
     if (block.t === "sil") {
-        html += timerUI + `<div class="card center"><h3>SILENCE</h3><p>${block.tx?.en || ""}</p></div>`;
-        textToRead = `${block.tx?.en}. Practice silence.`;
+        html += timerUI + `<div class="card"><h3>${block.tx?.en || ""}</h3><p>${block.inf?.en || ""}</p></div>`;
+        textToRead = `${block.tx?.en}. ${block.inf?.en}. Practice silence now.`;
     }
     if (block.t === "d") {
         html += `<div class="card"><h3>${block.q?.en || ""}</h3>`;
         block.op?.forEach((opt, i) => {
-            html += `<div class="answer" onclick="selectAnswer(${i}, ${block.c}, ${JSON.stringify(block.ex).replace(/"/g, '&quot;')})">${opt}</div>`;
+            html += `<div class="answer" id="opt-${i}" onclick="selectAnswer(${i}, ${block.c}, ${JSON.stringify(block.ex).replace(/"/g, '&quot;')})">${opt}</div>`;
         });
         html += `</div>`;
-        textToRead = block.q?.en;
+        textToRead = `${block.q?.en}. Your options are: ${block.op.join(". ")}`;
     }
-    if (block.t === "r") { html += `<div class="card center"><h2>⭐ REWARD</h2><p style="font-size:1.5rem;">+${block.p || 0} XP</p></div>`; textToRead = "You earned experience points."; }
+    if (block.t === "r") { html += `<div class="card center"><h2>⭐ ${block.tx || "REWARD"}</h2><p style="font-size:1.5rem;">+${block.p || 0} XP</p></div>`; textToRead = `${block.tx}. You have earned ${block.p} experience points.`; }
     if (block.t === "c") { html += `<div class="card"><p>${block.tx?.en || ""}</p></div>`; textToRead = block.tx?.en; }
 
     if (block.t !== "d") html += `<button id="continueBtn" disabled>NARRATING...</button>`;
     app.innerHTML = html;
 
     narrate(textToRead, () => {
-        if (block.t === "br" || block.t === "breath_auto" || block.t === "sil") {
+        if (block.t === "breath_auto" || block.t === "br") {
             startCountdown(24, nextBlock);
-            if (block.t !== "sil") startGuidedBreathing();
+            startGuidedBreathing();
+            unlockContinue("SKIP", nextBlock);
+        } else if (block.t === "sil") {
+            startCountdown(24, nextBlock);
             unlockContinue("SKIP", nextBlock);
         } else if (block.t === "d") {
-            // Espera a que el usuario elija
+            // Wait for user selection
         } else {
             setTimeout(nextBlock, 1500);
         }
@@ -321,15 +333,10 @@ function selectAnswer(index, correct, explanations) {
     const isCorrect = index === correct;
     const explanation = explanations?.[index] || "";
     const feedbackWrap = document.createElement("div");
-    feedbackWrap.innerHTML = `
-        <div class="card" style="border:2px solid ${isCorrect ? '#22c55e' : '#ef4444'}">
-            <h3 style="color:${isCorrect ? '#22c55e' : '#ef4444'}">${isCorrect ? "EXCELLENT" : "LOGIC"}</h3>
-            <p>${explanation}</p>
-        </div>
-        <button id="continueBtn" disabled>NARRATING...</button>`;
+    feedbackWrap.innerHTML = `<div class="card"><h3 style="color:${isCorrect ? '#22c55e' : '#ef4444'}">${isCorrect ? "EXCELLENT!" : "KEEP LEARNING"}</h3><p>${explanation}</p></div><button id="continueBtn" disabled>NARRATING...</button>`;
     document.getElementById("app").appendChild(feedbackWrap);
     narrate(explanation, () => {
-        unlockContinue("CONTINUE", nextBlock);
+        unlockContinue("NEXT STEP", nextBlock);
     });
 }
 
