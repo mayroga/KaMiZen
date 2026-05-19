@@ -1,82 +1,305 @@
 /* =========================================================
-   ADD ONLY THIS TO KAMIZEN ENGINE V14
-   REAL-TIME MULTILANGUAGE PATCH
-   KEEP JSON ONLY IN ENGLISH
+   KAMIZEN ENGINE V15 - FULL MULTILANGUAGE VERSION
+   ✔ Persistencia Local (LocalStorage)
+   ✔ Narración Total
+   ✔ Traducción Inglés ⇄ Español en Tiempo Real
+   ✔ Voz Automática en Español/Inglés
+   ✔ Botón Language Toggle
+   ✔ JSON 100% ENGLISH
+   ✔ Perfecto para Miami Latino Parents
    ========================================================= */
 
+let state = {
+    stories: [],
+    missions: [],
+    currentIndex: 0,
+    currentBlock: 0,
+    phase: "loading",
+    speechLocked: false,
+    initialized: false,
+    timer: null,
+    timeLeft: 0,
+    sessionStartTime: null,
+
+    /* LANGUAGE */
+    language: localStorage.getItem("kamizen_lang") || "en"
+};
 
 /* =========================
-   ADD INSIDE state = { }
+   LANGUAGE SYSTEM
 ========================= */
 
-lang: localStorage.getItem("kamizen_lang") || (
-    navigator.language.toLowerCase().includes("es")
-    ? "es"
-    : "en"
-),
+function toggleLanguage() {
+    state.language = state.language === "en" ? "es" : "en";
+    localStorage.setItem("kamizen_lang", state.language);
+    render();
+}
 
-translationCache: {},
-
-
-/* =========================================================
-   ADD BELOW STATE
-========================================================= */
+/* =========================
+   REALTIME TRANSLATION
+========================= */
 
 async function tr(text) {
 
     if (!text) return "";
 
-    // ENGLISH = ORIGINAL
-    if (state.lang === "en") return text;
-
-    // CACHE
-    const key = state.lang + "_" + text;
-
-    if (state.translationCache[key]) {
-        return state.translationCache[key];
+    if (state.language === "en") {
+        return text;
     }
 
     try {
 
-        const url =
-        `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=${state.lang}&dt=t&q=${encodeURIComponent(text)}`;
-
-        const res = await fetch(url);
+        const res = await fetch(
+            "https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=es&dt=t&q=" +
+            encodeURIComponent(text)
+        );
 
         const data = await res.json();
 
-        const translated =
-            data?.[0]
-            ?.map(x => x[0])
-            ?.join("") || text;
+        return data[0].map(x => x[0]).join("");
 
-        state.translationCache[key] = translated;
+    } catch (err) {
 
-        return translated;
-
-    } catch(err) {
-
-        console.warn("Translation Error:", err);
+        console.error("Translation Error:", err);
 
         return text;
     }
 }
 
-function setLang(lang) {
+/* =========================
+   SAVE SYSTEM
+========================= */
 
-    state.lang = lang;
+function saveProgress() {
 
-    localStorage.setItem("kamizen_lang", lang);
+    localStorage.setItem('kamizen_save', JSON.stringify({
+        currentIndex: state.currentIndex,
+        currentBlock: state.currentBlock
+    }));
+}
+
+function loadProgress() {
+
+    const saved = localStorage.getItem('kamizen_save');
+
+    if (saved) {
+
+        const data = JSON.parse(saved);
+
+        state.currentIndex = data.currentIndex || 0;
+        state.currentBlock = data.currentBlock || 0;
+    }
+}
+
+/* =========================
+   INIT SYSTEM
+========================= */
+
+window.addEventListener("load", async () => {
+
+    loadProgress();
+
+    await loadAllData();
+
+    showIntro();
+});
+
+async function loadAllData() {
+
+    const app = document.getElementById("app");
+
+    app.innerHTML = `
+        <div class="card">
+            <h2>SYSTEM BOOTING...</h2>
+            <p>Loading Data...</p>
+        </div>
+    `;
+
+    try {
+
+        const [storiesReq, missionsReq] = await Promise.all([
+            fetch("/api/stories"),
+            fetch("/api/missions")
+        ]);
+
+        const storiesData = await storiesReq.json();
+        const missionsData = await missionsReq.json();
+
+        state.stories = Array.isArray(storiesData.stories)
+            ? storiesData.stories.sort((a, b) => a.id - b.id)
+            : [];
+
+        state.missions = Array.isArray(missionsData.missions)
+            ? missionsData.missions.sort((a, b) => a.id - b.id)
+            : [];
+
+        state.initialized = true;
+
+    } catch (err) {
+
+        console.error(err);
+
+        app.innerHTML = `
+            <div class="card">
+                <h2>BOOT ERROR</h2>
+                <p>Check API Connection</p>
+            </div>
+        `;
+    }
+}
+
+/* =========================
+   MASTER TIMER
+========================= */
+
+function startMasterTimer() {
+
+    state.sessionStartTime = Date.now();
+
+    setTimeout(() => {
+        finishSession();
+    }, 15 * 60 * 1000);
+}
+
+function finishSession() {
+
+    window.speechSynthesis.cancel();
+
+    clearInterval(state.timer);
+
+    const app = document.getElementById("app");
+
+    app.innerHTML = `
+        <div class="card center">
+            <h2>🌟 GREAT JOB TODAY</h2>
+
+            <p>You completed your KAMIZEN session.</p>
+
+            <button onclick="location.reload()">
+                FINISH SESSION
+            </button>
+        </div>
+    `;
+
+    narrate("Great job today. You completed your Kamizen session.");
+}
+
+/* =========================
+   NAVIGATION
+========================= */
+
+function jumpToBlock() {
+
+    const targetMissionId = prompt("Enter Mission ID");
+
+    if (targetMissionId !== null && targetMissionId !== "") {
+
+        const idNum = Number(targetMissionId);
+
+        const idx = state.missions.findIndex(m => m.id === idNum);
+
+        if (idx !== -1) {
+
+            window.speechSynthesis.cancel();
+
+            clearInterval(state.timer);
+
+            state.currentIndex = idx;
+
+            state.currentBlock = 0;
+
+            state.phase = "story";
+
+            render();
+
+        } else {
+
+            alert("Mission not found.");
+        }
+    }
+}
+
+function goBack() {
+
+    window.speechSynthesis.cancel();
+
+    clearInterval(state.timer);
+
+    state.speechLocked = false;
+
+    if (state.currentBlock > 0) {
+
+        state.currentBlock--;
+
+    } else if (state.currentIndex > 0) {
+
+        state.currentIndex--;
+
+        state.currentBlock = 0;
+
+        state.phase = "story";
+    }
 
     render();
 }
 
+function restartSystem() {
 
-/* =========================================================
-   REPLACE ONLY showIntro()
-========================================================= */
+    if (confirm("Restart all progress?")) {
 
-async function showIntro() {
+        localStorage.clear();
+
+        state.currentIndex = 0;
+
+        state.currentBlock = 0;
+
+        state.phase = "story";
+
+        render();
+    }
+}
+
+/* =========================
+   TIMER
+========================= */
+
+function startCountdown(seconds, onComplete) {
+
+    clearInterval(state.timer);
+
+    state.timeLeft = seconds;
+
+    const timerDisplay = document.getElementById("timerDisplay");
+
+    state.timer = setInterval(() => {
+
+        state.timeLeft--;
+
+        const m = Math.floor(state.timeLeft / 60);
+
+        const s = state.timeLeft % 60;
+
+        if (timerDisplay) {
+
+            timerDisplay.innerText =
+                `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        }
+
+        if (state.timeLeft <= 0) {
+
+            clearInterval(state.timer);
+
+            if (onComplete) onComplete();
+        }
+
+    }, 1000);
+}
+
+/* =========================
+   INTRO
+========================= */
+
+function showIntro() {
 
     state.phase = "intro";
 
@@ -84,43 +307,18 @@ async function showIntro() {
 
         <div class="card center">
 
-            <div style="
-                display:flex;
-                gap:10px;
-                justify-content:center;
-                margin-bottom:15px;
-            ">
+            <h1>KAMIZEN LIFE SYSTEM</h1>
 
-                <button onclick="setLang('en')">
-                    ENGLISH
-                </button>
-
-                <button onclick="setLang('es')">
-                    ESPAÑOL
-                </button>
-
-            </div>
-
-            <h1>${await tr("KAMIZEN LIFE SYSTEM")}</h1>
-
-            <p>${await tr("Training • Awareness • Control")}</p>
-
-            <p class="small">
-                ${await tr("Range: Missions 1 - 63 Loaded")}
-            </p>
+            <p>Training • Awareness • Control</p>
 
             <button onclick="startSystem()">
-                ${await tr("CONTINUE MISSION")}
+                CONTINUE
             </button>
 
-            <button
-                onclick="restartSystem()"
-                style="
-                    background:var(--danger);
-                    margin-top:10px;
-                ">
+            <button onclick="toggleLanguage()"
+            style="background:#16a34a;margin-top:10px;">
 
-                ${await tr("RESET PROGRESS")}
+                ${state.language === "en" ? "ESPAÑOL" : "ENGLISH"}
 
             </button>
 
@@ -128,15 +326,187 @@ async function showIntro() {
     `;
 }
 
+/* =========================
+   START
+========================= */
 
-/* =========================================================
-   REPLACE narrate()
-========================================================= */
+function startSystem() {
 
-function narrate(text, callback) {
+    startMasterTimer();
+
+    state.phase = "story";
+
+    render();
+}
+
+/* =========================
+   RENDER
+========================= */
+
+async function render() {
+
+    if (!state.initialized) return;
+
+    saveProgress();
+
+    const app = document.getElementById("app");
+
+    const story = state.stories[state.currentIndex];
+
+    const mission = state.missions[state.currentIndex];
+
+    if (!story || !mission) {
+
+        state.currentIndex = 0;
+
+        state.currentBlock = 0;
+
+        state.phase = "story";
+
+        return render();
+    }
+
+    let navHeader = `
+
+        <div style="display:flex;gap:5px;margin-bottom:10px;">
+
+            <button onclick="goBack()"
+            style="flex:1;">
+                BACK
+            </button>
+
+            <button onclick="jumpToBlock()"
+            style="flex:1;">
+                JUMP
+            </button>
+
+            <button onclick="toggleLanguage()"
+            style="flex:1;background:#16a34a;">
+
+                ${state.language === "en" ? "ESPAÑOL" : "ENGLISH"}
+
+            </button>
+
+        </div>
+    `;
+
+    if (state.phase === "story") {
+
+        app.innerHTML = navHeader + `
+
+            <div class="card">
+
+                <h2>
+                    STORY ${story.id}
+                </h2>
+
+                <h3>
+                    ${await tr(story.t || "")}
+                </h3>
+
+                <p>
+                    ${await tr(story.en || "")}
+                </p>
+
+            </div>
+
+            <button id="continueBtn" disabled>
+                NARRATING...
+            </button>
+        `;
+
+        narrate(`${story.t}. ${story.en}`, () => {
+
+            setTimeout(startMission, 1500);
+        });
+
+    } else {
+
+        const block = mission.b[state.currentBlock];
+
+        if (!block) {
+
+            nextStory();
+
+            return;
+        }
+
+        renderBlock(block, navHeader);
+    }
+}
+
+/* =========================
+   BLOCK RENDER
+========================= */
+
+async function renderBlock(block, navHeader) {
+
+    const app = document.getElementById("app");
+
+    let html = navHeader;
+
+    let textToRead = "";
+
+    if (block.t === "v" || block.t === "h") {
+
+        html += `
+            <div class="card">
+                <h2>${await tr(block.tx?.en || "")}</h2>
+            </div>
+        `;
+
+        textToRead = block.tx?.en;
+    }
+
+    if (block.story) {
+
+        html += `
+            <div class="card">
+                <p>${await tr(block.story.en || "")}</p>
+            </div>
+        `;
+
+        textToRead = block.story.en;
+    }
+
+    if (block.t === "c") {
+
+        html += `
+            <div class="card">
+                <p>${await tr(block.tx?.en || "")}</p>
+            </div>
+        `;
+
+        textToRead = block.tx?.en;
+    }
+
+    if (block.t !== "d") {
+
+        html += `
+            <button id="continueBtn" disabled>
+                NARRATING...
+            </button>
+        `;
+    }
+
+    app.innerHTML = html;
+
+    narrate(textToRead, () => {
+
+        setTimeout(nextBlock, 1500);
+    });
+}
+
+/* =========================
+   NARRATION
+========================= */
+
+async function narrate(text, callback) {
 
     if (!text) {
+
         if (callback) callback();
+
         return;
     }
 
@@ -144,11 +514,12 @@ function narrate(text, callback) {
 
     window.speechSynthesis.cancel();
 
-    const speech =
-        new SpeechSynthesisUtterance(text);
+    const finalText = await tr(text);
+
+    const speech = new SpeechSynthesisUtterance(finalText);
 
     speech.lang =
-        state.lang === "es"
+        state.language === "es"
         ? "es-US"
         : "en-US";
 
@@ -164,164 +535,75 @@ function narrate(text, callback) {
     window.speechSynthesis.speak(speech);
 }
 
+/* =========================
+   BREATHING
+========================= */
 
-/* =========================================================
-   INSIDE render()
-   REPLACE STORY HTML SECTION ONLY
-========================================================= */
+function startGuidedBreathing() {
 
-const storyTitle =
-    await tr(story.t || "");
+    const circle = document.getElementById("breathCircle");
 
-const storyBody =
-    await tr(story.en || "");
+    const label = document.getElementById("breathLabel");
 
-app.innerHTML = navHeader + `
+    if (!circle || !label) return;
 
-    <div class="card">
+    let inhale = true;
 
-        <h2 style="color:var(--primary)">
-            ${await tr("STORY")} ${story.id}
-        </h2>
+    const step = () => {
 
-        <h3>${storyTitle}</h3>
+        if (!document.getElementById("breathCircle")) return;
 
-        <p style="
-            font-size:1.1rem;
-            line-height:1.6;
-        ">
-            ${storyBody}
-        </p>
+        label.innerText =
+            inhale
+            ? "INHALE"
+            : "EXHALE";
 
-    </div>
+        circle.style.transition =
+            "transform 4000ms ease-in-out";
 
-    <button id="continueBtn" disabled>
-        ${await tr("NARRATING...")}
-    </button>
-`;
+        circle.style.transform =
+            inhale
+            ? "scale(1.4)"
+            : "scale(0.8)";
 
-narrate(
-    `${storyTitle}. ${storyBody}`,
-    () => {
-        setTimeout(startMission, 1500);
-    }
-);
+        inhale = !inhale;
+    };
 
+    step();
 
-/* =========================================================
-   INSIDE renderBlock()
-   ADD AT TOP
-========================================================= */
+    const aniInterval = setInterval(() => {
 
-const TT = async (t) => await tr(t || "");
+        if (!document.getElementById("breathCircle")) {
 
+            clearInterval(aniInterval);
 
-/* =========================================================
-   REPLACE:
-   block.tx?.en
-   WITH:
-========================================================= */
+            return;
+        }
 
-await TT(block.tx?.en)
+        step();
 
-
-/* =========================================================
-   REPLACE:
-   block.story.en
-   WITH:
-========================================================= */
-
-await TT(block.story.en)
-
-
-/* =========================================================
-   REPLACE QUESTION BLOCK
-========================================================= */
-
-if (block.t === "d") {
-
-    const q =
-        await TT(block.q?.en || "");
-
-    html += `<div class="card"><h3>${q}</h3>`;
-
-    for (let i = 0; i < block.op.length; i++) {
-
-        const translatedOption =
-            await TT(block.op[i]);
-
-        html += `
-
-            <div
-                class="answer"
-                id="opt-${i}"
-                onclick="selectAnswer(
-                    ${i},
-                    ${block.c},
-                    ${JSON.stringify(block.ex).replace(/"/g, '&quot;')}
-                )">
-
-                ${translatedOption}
-
-            </div>
-        `;
-    }
-
-    html += `</div>`;
-
-    const translatedOptions =
-        await Promise.all(
-            block.op.map(o => TT(o))
-        );
-
-    textToRead =
-        `${q}. ${
-            translatedOptions.join(". ")
-        }`;
+    }, 4000);
 }
 
+/* =========================
+   ANSWERS
+========================= */
 
-/* =========================================================
-   REPLACE selectAnswer()
-========================================================= */
-
-async function selectAnswer(
-    index,
-    correct,
-    explanations
-) {
+function selectAnswer(index, correct, explanations) {
 
     if (state.speechLocked) return;
 
-    const isCorrect =
-        index === correct;
+    const isCorrect = index === correct;
 
-    const explanation =
-        await tr(
-            explanations?.[index] || ""
-        );
+    const explanation = explanations?.[index] || "";
 
-    const feedbackWrap =
-        document.createElement("div");
+    const feedbackWrap = document.createElement("div");
 
     feedbackWrap.innerHTML = `
-
         <div class="card">
 
-            <h3 style="
-                color:${
-                    isCorrect
-                    ? '#22c55e'
-                    : '#ef4444'
-                }
-            ">
-
-                ${
-                    isCorrect
-                    ? await tr("EXCELLENT!")
-                    : await tr("KEEP LEARNING")
-                }
-
+            <h3>
+                ${isCorrect ? "EXCELLENT!" : "KEEP LEARNING"}
             </h3>
 
             <p>${explanation}</p>
@@ -329,46 +611,71 @@ async function selectAnswer(
         </div>
 
         <button id="continueBtn" disabled>
-            ${await tr("NARRATING...")}
+            NARRATING...
         </button>
     `;
 
-    document
-        .getElementById("app")
+    document.getElementById("app")
         .appendChild(feedbackWrap);
 
     narrate(explanation, () => {
 
-        unlockContinue(
-            state.lang === "es"
-            ? "SIGUIENTE"
-            : "NEXT STEP",
-
-            nextBlock
-        );
+        unlockContinue("NEXT", nextBlock);
     });
 }
 
+/* =========================
+   FLOW
+========================= */
 
-/* =========================================================
-   OPTIONAL:
-   INSIDE startGuidedBreathing()
-   REPLACE LABELS
-========================================================= */
+function nextBlock() {
 
-label.innerText =
-    inhale
-    ? (state.lang === "es" ? "INHALA" : "INHALE")
-    : (state.lang === "es" ? "EXHALA" : "EXHALE");
+    clearInterval(state.timer);
 
+    state.currentBlock++;
 
-/* =========================================================
-   DONE
-   NOW:
-   ✔ JSON STAYS ENGLISH ONLY
-   ✔ REAL-TIME SPANISH FOR MIAMI LATINO PARENTS
-   ✔ AUTO VOICE LANGUAGE
-   ✔ NO DUPLICATED ES JSON
-   ✔ VERY SMALL PATCH
-   ✔ ENGINE V14 REMAINS INTACT
-   ========================================================= */
+    render();
+}
+
+function startMission() {
+
+    state.phase = "mission";
+
+    state.currentBlock = 0;
+
+    render();
+}
+
+function nextStory() {
+
+    state.currentIndex++;
+
+    if (state.currentIndex >= state.missions.length) {
+
+        state.currentIndex = 0;
+    }
+
+    state.phase = "story";
+
+    state.currentBlock = 0;
+
+    render();
+}
+
+/* =========================
+   BUTTON UNLOCK
+========================= */
+
+function unlockContinue(label, action) {
+
+    const btn = document.getElementById("continueBtn");
+
+    if (btn) {
+
+        btn.disabled = false;
+
+        btn.innerText = label;
+
+        btn.onclick = action;
+    }
+}
