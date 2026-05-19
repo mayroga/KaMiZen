@@ -21,13 +21,11 @@ let state = {
     timer: null,
     timeLeft: 0,
     sessionStartTime: null,
-
-    // ✅ ADDED LANGUAGE STATE
     language: localStorage.getItem("kamizen_lang") || "en"
 };
 
 /* =========================
-   LANGUAGE SYSTEM (ADDED)
+   LANGUAGE TOGGLE SYSTEM (ADDED)
 ========================= */
 
 function toggleLanguage() {
@@ -93,8 +91,13 @@ async function loadAllData() {
         const storiesData = await storiesReq.json();
         const missionsData = await missionsReq.json();
 
-        state.stories = Array.isArray(storiesData.stories) ? storiesData.stories.sort((a, b) => a.id - b.id) : [];
-        state.missions = Array.isArray(missionsData.missions) ? missionsData.missions.sort((a, b) => a.id - b.id) : [];
+        state.stories = Array.isArray(storiesData.stories)
+            ? storiesData.stories.sort((a, b) => a.id - b.id)
+            : [];
+
+        state.missions = Array.isArray(missionsData.missions)
+            ? missionsData.missions.sort((a, b) => a.id - b.id)
+            : [];
 
         state.initialized = true;
     } catch (err) {
@@ -125,12 +128,14 @@ function finishSession() {
         });
     } else {
         const app = document.getElementById("app");
-        const notes = [
-            `<h2>🌟 GREAT JOB TODAY</h2>
-             <p>You completed your KAMIZEN session.</p>`
-        ];
-        app.innerHTML = `<div class="card center">${notes[0]}<button onclick="location.reload()">FINISH SESSION</button></div>`;
-        narrate(app.innerText);
+        const notes = `
+        <h2>🌟 GREAT JOB TODAY</h2>
+        <p>You completed your KAMIZEN session.</p>
+        <p>Small daily training creates powerful minds.</p>
+        <button onclick="location.reload()">FINISH SESSION</button>
+        `;
+        app.innerHTML = `<div class="card center animated fadeIn">${notes}</div>`;
+        narrate("Session complete");
     }
 }
 
@@ -139,7 +144,7 @@ function finishSession() {
 ========================= */
 
 function jumpToBlock() {
-    const targetMissionId = prompt("Enter the MISSION ID to jump to (1-63):");
+    const targetMissionId = prompt("Enter the MISSION ID (1-63):");
     const idNum = Number(targetMissionId);
     const idx = state.missions.findIndex(m => m.id === idNum);
     if (idx !== -1) {
@@ -147,6 +152,7 @@ function jumpToBlock() {
         clearInterval(state.timer);
         state.currentIndex = idx;
         state.currentBlock = 0;
+        state.phase = "story";
         render();
     }
 }
@@ -154,6 +160,7 @@ function jumpToBlock() {
 function goBack() {
     window.speechSynthesis.cancel();
     clearInterval(state.timer);
+    state.speechLocked = false;
 
     if (state.currentBlock > 0) state.currentBlock--;
     else if (state.currentIndex > 0) {
@@ -164,7 +171,7 @@ function goBack() {
 }
 
 function restartSystem() {
-    if (confirm("Are you sure?")) {
+    if (confirm("Restart?")) {
         localStorage.clear();
         state.currentIndex = 0;
         state.currentBlock = 0;
@@ -173,34 +180,24 @@ function restartSystem() {
 }
 
 /* =========================
-   RENDER INTRO
+   RENDER
 ========================= */
 
 function showIntro() {
     state.phase = "intro";
-    document.getElementById("app").innerHTML =
-        `<div class="card center">
+    document.getElementById("app").innerHTML = `
+        <div class="card center">
             <h1>KAMIZEN LIFE SYSTEM</h1>
-            <button onclick="toggleLanguage()" style="margin:10px;padding:10px;background:#16a34a;">
-                ${state.language === "en" ? "ESPAÑOL" : "ENGLISH"}
-            </button>
-            <button onclick="startSystem()">CONTINUE MISSION</button>
-        </div>`;
+            <button onclick="startSystem()">CONTINUE</button>
+        </div>
+    `;
 }
-
-/* =========================
-   START
-========================= */
 
 function startSystem() {
     startMasterTimer();
     state.phase = "story";
     render();
 }
-
-/* =========================
-   RENDER
-========================= */
 
 function render() {
     if (!state.initialized) return;
@@ -210,31 +207,32 @@ function render() {
     const story = state.stories[state.currentIndex];
     const mission = state.missions[state.currentIndex];
 
-    let navHeader =
-        `<div style="display:flex;gap:5px;margin-bottom:10px;">
+    let navHeader = `
+        <div style="display:flex;gap:5px;margin-bottom:10px;">
             <button onclick="goBack()">BACK</button>
+            <button onclick="jumpToBlock()">JUMP</button>
+            <button onclick="restartSystem()">RESET</button>
 
-            <!-- ✅ ADDED LANGUAGE BUTTON -->
+            <!-- ⭐ LANGUAGE BUTTON ADDED -->
             <button onclick="toggleLanguage()" style="background:#16a34a;">
                 ${state.language === "en" ? "ESPAÑOL" : "ENGLISH"}
             </button>
-
-            <button onclick="jumpToBlock()">JUMP/SKIP</button>
-            <button onclick="restartSystem()">RESET</button>
-        </div>`;
+        </div>
+    `;
 
     if (state.phase === "story") {
-        app.innerHTML = navHeader +
-            `<div class="card">
-                <h2>STORY ${story.id}</h2>
-                <h3>${story.t || ""}</h3>
+        app.innerHTML = navHeader + `
+            <div class="card">
+                <h2>${story.t || ""}</h2>
                 <p>${story.en || ""}</p>
             </div>
-            <button disabled>NARRATING...</button>`;
+            <button id="continueBtn" disabled>NARRATING...</button>
+        `;
 
         narrate(`${story.t}. ${story.en}`, () => {
-            setTimeout(startMission, 1500);
+            setTimeout(startMission, 1200);
         });
+
     } else {
         const block = mission.b[state.currentBlock];
         if (!block) return nextStory();
@@ -243,7 +241,7 @@ function render() {
 }
 
 /* =========================
-   BLOCK RENDER
+   BLOCKS
 ========================= */
 
 function renderBlock(block, navHeader) {
@@ -251,27 +249,38 @@ function renderBlock(block, navHeader) {
     let html = navHeader;
     let textToRead = "";
 
+    const t = (txt) => state.language === "en" ? txt : txt;
+
     if (block.t === "v" || block.t === "h") {
-        html += `<div class="card"><h2>${block.tx?.en || ""}</h2></div>`;
+        html += `<div class="card"><h2>${block.tx?.en}</h2></div>`;
         textToRead = block.tx?.en;
     }
 
     if (block.story) {
-        html += `<div class="card"><p>${block.story.en || ""}</p></div>`;
+        html += `<div class="card"><p>${block.story.en}</p></div>`;
         textToRead = block.story.en;
     }
 
-    if (block.t === "c") {
-        html += `<div class="card"><p>${block.tx?.en || ""}</p></div>`;
-        textToRead = block.tx?.en;
+    if (block.t === "d") {
+        html += `<div class="card"><h3>${block.q?.en}</h3>`;
+        block.op?.forEach((opt, i) => {
+            html += `<div class="answer">${opt}</div>`;
+        });
+        html += `</div>`;
+        textToRead = block.q?.en;
+    }
+
+    if (block.t !== "d") {
+        html += `<button id="continueBtn" disabled>NARRATING...</button>`;
     }
 
     app.innerHTML = html;
-    narrate(textToRead);
+
+    narrate(textToRead, () => nextBlock());
 }
 
 /* =========================
-   NARRATE (UPDATED ONLY)
+   NARRATION (UPDATED ONLY HERE)
 ========================= */
 
 async function narrate(text, callback) {
@@ -292,4 +301,27 @@ async function narrate(text, callback) {
     };
 
     window.speechSynthesis.speak(speech);
+}
+
+/* =========================
+   FLOW
+========================= */
+
+function nextBlock() {
+    clearInterval(state.timer);
+    state.currentBlock++;
+    render();
+}
+
+function startMission() {
+    state.phase = "mission";
+    state.currentBlock = 0;
+    render();
+}
+
+function nextStory() {
+    state.currentIndex++;
+    state.currentBlock = 0;
+    state.phase = "story";
+    render();
 }
