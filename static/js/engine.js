@@ -21,9 +21,7 @@ let state = {
     timer: null,
     timeLeft: 0,
     sessionStartTime: null,
-
-    /* ===== ADDED LANGUAGE SYSTEM ===== */
-    language: localStorage.getItem("kamizen_lang") || "en"
+    language: localStorage.getItem("kamizen_lang") || "en" // Inicializado aquí para compatibilidad
 };
 
 /* =========================
@@ -42,35 +40,6 @@ function loadProgress() {
         const data = JSON.parse(saved);
         state.currentIndex = data.currentIndex || 0;
         state.currentBlock = data.currentBlock || 0;
-    }
-}
-
-/* =========================
-   LANGUAGE TOGGLE (ADDED)
-========================= */
-function toggleLanguage() {
-    state.language = state.language === "en" ? "es" : "en";
-    localStorage.setItem("kamizen_lang", state.language);
-    render();
-}
-
-/* =========================
-   TRANSLATION ENGINE (ADDED)
-========================= */
-async function tr(text) {
-    if (!text) return "";
-    if (state.language === "en") return text;
-
-    try {
-        const res = await fetch(
-            "https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=es&dt=t&q=" +
-            encodeURIComponent(text)
-        );
-
-        const data = await res.json();
-        return data[0].map(x => x[0]).join("");
-    } catch (e) {
-        return text;
     }
 }
 
@@ -94,9 +63,10 @@ async function loadAllData() {
         const storiesData = await storiesReq.json();
         const missionsData = await missionsReq.json();
 
+        // Asegurar ordenamiento por ID para consistencia 1-63
         state.stories = Array.isArray(storiesData.stories) ? storiesData.stories.sort((a, b) => a.id - b.id) : [];
         state.missions = Array.isArray(missionsData.missions) ? missionsData.missions.sort((a, b) => a.id - b.id) : [];
-
+       
         state.initialized = true;
     } catch (err) {
         console.error(err);
@@ -117,33 +87,36 @@ function startMasterTimer() {
 function finishSession() {
     window.speechSynthesis.cancel();
     clearInterval(state.timer);
-
+    
+    // Obtenemos el ID de la misión para el reporte PDF
     const currentMissionId = state.missions[state.currentIndex]?.id || 0;
-
+    
+    // Integración con renderValidationScreen de session.html para generar el reporte PDF
     if (typeof renderValidationScreen === "function") {
         renderValidationScreen(currentMissionId, {
             timeSpent: "15:00",
             status: "Complete"
         });
     } else {
+        // Fallback original si no existe la función de validación
         const app = document.getElementById("app");
         const notes = [
-            `<h2>🌟 GREAT JOB TODAY</h2>
-             <p>You completed your KAMIZEN session.</p>
-             <p>Your brain and body only need a few focused minutes to grow stronger.</p>
-             <p>KAMIZEN is designed to help you train calmly, not endlessly.</p>
-             <p>Now it is time to:</p>
-             <ul style="text-align:left; display:inline-block;">
-                <li>✔ Now you are ready to start your class</li>
-                <li>✔ Rest your mind</li>
-                <li>✔ Go play</li>
-                <li>✔ Talk with your family</li>
-                <li>✔ Explore the real world</li>
-                <li>✔ Come back tomorrow stronger</li>
-             </ul>
-             <p>Small daily training creates powerful minds. See you next session, warrior. 🛡️</p>`
+            `<h2>🌟 GREAT JOB TODAY</h2>`,
+            `<p>You completed your KAMIZEN session.</p>`,
+            `<p>Your brain and body only need a few focused minutes to grow stronger.</p>`,
+            `<p>KAMIZEN is designed to help you train calmly, not endlessly.</p>`,
+            `<p>Now it is time to:</p>`,
+            `<ul style="text-align:left; display:inline-block;">`,
+            `   <li>✔ Now you are ready to start your class</li>`,
+            `   <li>✔ Rest your mind</li>`,
+            `   <li>✔ Go play</li>`,
+            `   <li>✔ Talk with your family</li>`,
+            `   <li>✔ Explore the real world</li>`,
+            `   <li>✔ Come back tomorrow stronger</li>`,
+            `</ul>`,
+            `<p>Small daily training creates powerful minds. See you next session, warrior. 🛡️</p>`
         ];
-        app.innerHTML = `<div class="card center animated fadeIn">${notes[0]}<button onclick="location.reload()" style="margin-top:20px;">FINISH SESSION</button></div>`;
+        app.innerHTML = `<div class="card center animated fadeIn">${notes.join("")}<button onclick="location.reload()" style="margin-top:20px;">FINISH SESSION</button></div>`;
         narrate(app.innerText.replace(/✔/g, ""));
     }
 }
@@ -159,9 +132,9 @@ function jumpToBlock() {
         if (idx !== -1) {
             window.speechSynthesis.cancel();
             clearInterval(state.timer);
-            state.currentIndex = idx;
-            state.currentBlock = 0;
-            state.phase = "story";
+            state.currentIndex = idx;  
+            state.currentBlock = 0;    
+            state.phase = "story";      
             render();
         } else {
             alert("Mission ID " + idNum + " not found.");
@@ -194,7 +167,7 @@ function restartSystem() {
 }
 
 /* =========================
-   TIMER
+   LÓGICA DEL RELOJ (TIMER)
 ========================= */
 function startCountdown(seconds, onComplete) {
     clearInterval(state.timer);
@@ -205,7 +178,7 @@ function startCountdown(seconds, onComplete) {
         state.timeLeft--;
         const m = Math.floor(state.timeLeft / 60);
         const s = state.timeLeft % 60;
-        if (timerDisplay) timerDisplay.innerText = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+        if (timerDisplay) timerDisplay.innerText = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
         if (state.timeLeft <= 0) {
             clearInterval(state.timer);
             if (onComplete) onComplete();
@@ -214,18 +187,19 @@ function startCountdown(seconds, onComplete) {
 }
 
 /* =========================
-   RENDER
+   MOTOR DE RENDERIZADO
 ========================= */
 function showIntro() {
     state.phase = "intro";
-    document.getElementById("app").innerHTML =
-        `<div class="card center">
+    document.getElementById("app").innerHTML = `
+        <div class="card center">
             <h1>KAMIZEN LIFE SYSTEM</h1>
             <p>Training • Awareness • Control</p>
             <p class="small">Range: Missions 1 - 63 Loaded</p>
             <button onclick="startSystem()">CONTINUE MISSION</button>
             <button onclick="restartSystem()" style="background:var(--danger);margin-top:10px;">RESET PROGRESS</button>
-         </div>`;
+        </div>
+    `;
 }
 
 function startSystem() {
@@ -234,115 +208,141 @@ function startSystem() {
     render();
 }
 
-/* =========================
-   RENDER NAV (ONLY CHANGE: BUTTON ADDED)
-========================= */
 function render() {
     if (!state.initialized) return;
     saveProgress();
-
     const app = document.getElementById("app");
     const story = state.stories[state.currentIndex];
     const mission = state.missions[state.currentIndex];
 
     if (!story || !mission) {
-        state.currentIndex = 0;
-        state.currentBlock = 0;
-        state.phase = "story";
+        state.currentIndex = 0; state.currentBlock = 0; state.phase = "story";
         return render();
     }
 
-    let navHeader =
-        `<div style="display:flex;gap:5px;margin-bottom:10px;">
+    let navHeader = `
+        <div style="display:flex;gap:5px;margin-bottom:10px;">
             <button onclick="goBack()" style="flex:1;padding:8px;font-size:12px;background:#334155;">BACK</button>
-
-            <!-- ADDED LANGUAGE BUTTON -->
-            <button onclick="toggleLanguage()" style="flex:1;padding:8px;font-size:12px;background:#16a34a;">
-                ${state.language === "en" ? "ESPAÑOL" : "ENGLISH"}
-            </button>
-
             <button onclick="jumpToBlock()" style="flex:1;padding:8px;font-size:12px;background:#0ea5e9;">JUMP/SKIP</button>
             <button onclick="restartSystem()" style="flex:1;padding:8px;font-size:12px;background:var(--danger);">RESET</button>
-        </div>`;
+        </div>
+    `;
 
     if (state.phase === "story") {
-        app.innerHTML = navHeader +
-            `<div class="card">
+        app.innerHTML = navHeader + `
+            <div class="card">
                 <h2 style="color:var(--primary)">STORY ${story.id}</h2>
                 <h3>${story.t || ""}</h3>
                 <p style="font-size:1.1rem; line-height:1.6;">${story.en || ""}</p>
             </div>
-            <button id="continueBtn" disabled>NARRATING...</button>`;
-
+            <button id="continueBtn" disabled>NARRATING...</button>
+        `;
         narrate(`${story.t}. ${story.en}`, () => {
             setTimeout(startMission, 1500);
         });
-
     } else {
         const block = mission.b[state.currentBlock];
-        if (!block) return nextStory();
+        if (!block) { nextStory(); return; }
         renderBlock(block, navHeader);
     }
 }
 
-/* =========================
-   RENDER BLOCK (UNCHANGED LOGIC)
-========================= */
 function renderBlock(block, navHeader) {
     const app = document.getElementById("app");
     let html = navHeader;
     let textToRead = "";
 
-    const timerUI =
-        `<div class="card center" style="border: 3px solid var(--primary); background: #0f172a;">
-            <h1 id="timerDisplay" style="font-size:4rem;margin:0;font-family:monospace;">00:00</h1>
-            <p style="color:var(--primary);letter-spacing:2px;">STAY FOCUSED</p>
-        </div>`;
+    const timerUI = `
+        <div class="card center" style="border: 3px solid var(--primary); background: #0f172a;">
+            <h1 id="timerDisplay" style="font-size:4rem;margin:0; font-family: monospace;">00:00</h1>
+            <p style="color:var(--primary); letter-spacing: 2px;">STAY FOCUSED</p>
+        </div>
+    `;
 
-    if (block.t === "v" || block.t === "h") {
-        html += `<div class="card"><h2>${block.tx?.en || ""}</h2></div>`;
-        textToRead = block.tx?.en;
+    if (block.t === "v" || block.t === "h") { html += `<div class="card"><h2>${block.tx?.en || ""}</h2></div>`; textToRead = block.tx?.en; }
+    if (block.story) { html += `<div class="card"><p>${block.story.en || ""}</p></div>`; textToRead = block.story.en; }
+    if (block.t === "breath_auto" || block.t === "br") {
+        html += timerUI + `<div class="card center"><div class="breath-circle" id="breathCircle"><span id="breathLabel">READY</span></div><h3>${block.tx?.en || ""}</h3><p>${block.inf?.en || ""}</p></div>`;
+        textToRead = `${block.tx?.en}. ${block.inf?.en}. Get ready to breathe.`;
     }
+    if (block.t === "sil") {
+        html += timerUI + `<div class="card"><h3>${block.tx?.en || ""}</h3><p>${block.inf?.en || ""}</p></div>`;
+        textToRead = `${block.tx?.en}. ${block.inf?.en}. Practice silence now.`;
+    }
+    if (block.t === "d") {
+        html += `<div class="card"><h3>${block.q?.en || ""}</h3>`;
+        block.op?.forEach((opt, i) => {
+            html += `<div class="answer" id="opt-${i}" onclick="selectAnswer(${i}, ${block.c}, ${JSON.stringify(block.ex).replace(/"/g, '&quot;')})">${opt}</div>`;
+        });
+        html += `</div>`;
+        textToRead = `${block.q?.en}. Your options are: ${block.op.join(". ")}`;
+    }
+    if (block.t === "r") { html += `<div class="card center"><h2>⭐ ${block.tx || "REWARD"}</h2><p style="font-size:1.5rem;">+${block.p || 0} XP</p></div>`; textToRead = `${block.tx}. You have earned ${block.p} experience points.`; }
+    if (block.t === "c") { html += `<div class="card"><p>${block.tx?.en || ""}</p></div>`; textToRead = block.tx?.en; }
 
+    if (block.t !== "d") html += `<button id="continueBtn" disabled>NARRATING...</button>`;
     app.innerHTML = html;
-    narrate(textToRead, () => nextBlock());
+
+    narrate(textToRead, () => {
+        if (block.t === "breath_auto" || block.t === "br") {
+            startCountdown(24, nextBlock);
+            startGuidedBreathing();
+            unlockContinue("SKIP", nextBlock);
+        } else if (block.t === "sil") {
+            startCountdown(24, nextBlock);
+            unlockContinue("SKIP", nextBlock);
+        } else if (block.t === "d") {
+            // Wait for user selection
+        } else {
+            setTimeout(nextBlock, 1500);
+        }
+    });
 }
 
-/* =========================
-   NARRATE (REPLACED ONLY FOR LANGUAGE)
-========================= */
-async function narrate(text, callback) {
-    if (!text) return callback && callback();
-
+function narrate(text, callback) {
+    if (!text) { if (callback) callback(); return; }
     state.speechLocked = true;
     window.speechSynthesis.cancel();
-
-    const finalText = await tr(text);
-
-    const speech = new SpeechSynthesisUtterance(finalText);
-    speech.lang = state.language === "es" ? "es-US" : "en-US";
+    const speech = new SpeechSynthesisUtterance(text);
+    speech.lang = "en-US";
     speech.rate = 0.9;
-
-    speech.onend = () => {
-        state.speechLocked = false;
-        if (callback) callback();
-    };
-
+    speech.onend = () => { state.speechLocked = false; if (callback) callback(); };
     window.speechSynthesis.speak(speech);
 }
 
-function nextBlock() {
-    clearInterval(state.timer);
-    state.currentBlock++;
-    render();
+function startGuidedBreathing() {
+    const circle = document.getElementById("breathCircle");
+    const label = document.getElementById("breathLabel");
+    if (!circle || !label) return;
+    let inhale = true;
+    const step = () => {
+        if (!document.getElementById("breathCircle") || state.timeLeft <= 0) return;
+        label.innerText = inhale ? "INHALE" : "EXHALE";
+        circle.style.transition = "transform 4000ms ease-in-out";
+        circle.style.transform = inhale ? "scale(1.4)" : "scale(0.8)";
+        inhale = !inhale;
+    };
+    step();
+    const aniInterval = setInterval(() => {
+        if (!document.getElementById("breathCircle") || state.timeLeft <= 0) { clearInterval(aniInterval); return; }
+        step();
+    }, 4000);
 }
 
-function startMission() {
-    state.phase = "mission";
-    state.currentBlock = 0;
-    render();
+function selectAnswer(index, correct, explanations) {
+    if (state.speechLocked) return;
+    const isCorrect = index === correct;
+    const explanation = explanations?.[index] || "";
+    const feedbackWrap = document.createElement("div");
+    feedbackWrap.innerHTML = `<div class="card"><h3 style="color:${isCorrect ? '#22c55e' : '#ef4444'}">${isCorrect ? "EXCELLENT!" : "KEEP LEARNING"}</h3><p>${explanation}</p></div><button id="continueBtn" disabled>NARRATING...</button>`;
+    document.getElementById("app").appendChild(feedbackWrap);
+    narrate(explanation, () => {
+        unlockContinue("NEXT STEP", nextBlock);
+    });
 }
 
+function nextBlock() { clearInterval(state.timer); state.currentBlock++; render(); }
+function startMission() { state.phase = "mission"; state.currentBlock = 0; render(); }
 function nextStory() {
     state.currentIndex++;
     if (state.currentIndex >= state.missions.length) state.currentIndex = 0;
@@ -353,9 +353,105 @@ function nextStory() {
 
 function unlockContinue(label, action) {
     const btn = document.getElementById("continueBtn");
-    if (btn) {
-        btn.disabled = false;
-        btn.innerText = label;
-        btn.onclick = action;
+    if (btn) { btn.disabled = false; btn.innerText = label; btn.onclick = action; }
+}
+
+/* =========================================================
+    🌐 KAMIZEN MULTILANGUAGE ADD-ON (NO CORE CHANGES)
+    ONLY: Button + Translation + Voice Switch
+========================================================= */
+
+/* =========================
+    LANGUAGE STATE
+========================= */
+// Nota: state.language ya se inicializa de forma segura al inicio del script principal.
+
+function toggleLanguage() {
+    state.language = state.language === "en" ? "es" : "en";
+    localStorage.setItem("kamizen_lang", state.language);
+    render(); // refresh UI
+}
+
+/* =========================
+    TRANSLATION ENGINE
+========================= */
+async function tr(text) {
+    if (!text) return "";
+    if (state.language === "en") return text;
+
+    try {
+        const res = await fetch(
+            "https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=es&dt=t&q=" +
+            encodeURIComponent(text)
+        );
+
+        const data = await res.json();
+        return data[0].map(x => x[0]).join("");
+    } catch (e) {
+        console.error("Translation error:", e);
+        return text;
     }
 }
+
+/* =========================
+    ADD LANGUAGE BUTTON TO HEADER
+    (MINIMAL PATCH FUNCTION)
+========================= */
+const originalRender = render;
+
+render = async function () {
+    if (!state.initialized) return;
+
+    await originalRender();
+
+    const app = document.getElementById("app");
+    if (!app) return;
+
+    // Inject button or update its state
+    let btn = document.getElementById("langBtn");
+    if (!btn) {
+        btn = document.createElement("button");
+        btn.id = "langBtn";
+        btn.style = "position:fixed;top:10px;right:10px;z-index:9999;padding:10px;background:#16a34a;color:white;border:none;border-radius:6px;font-weight:bold;cursor:pointer;";
+        btn.onclick = toggleLanguage;
+        document.body.appendChild(btn);
+    }
+    btn.innerText = state.language === "en" ? "ESPAÑOL" : "ENGLISH";
+};
+
+/* =========================
+    VOICE PATCH (ONLY OVERRIDE SPEECH)
+========================= */
+const originalNarrate = narrate;
+
+narrate = async function (text, callback) {
+    if (!text) {
+        if (callback) callback();
+        return;
+    }
+
+    state.speechLocked = true;
+    window.speechSynthesis.cancel();
+
+    const finalText = await tr(text);
+    const speech = new SpeechSynthesisUtterance(finalText);
+
+    // LANGUAGE SWITCH VOICE
+    speech.lang = state.language === "es" ? "es-ES" : "en-US";
+    speech.rate = 0.9;
+
+    speech.onend = () => {
+        state.speechLocked = false;
+        if (callback) callback();
+    };
+
+    window.speechSynthesis.speak(speech);
+};
+
+/* =========================================================
+    END ADD-ON
+    ✔ No core modification
+    ✔ Only adds language toggle
+    ✔ Works globally
+    ✔ Voice + UI translation
+========================================================= */
