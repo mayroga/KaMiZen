@@ -6,6 +6,7 @@
    ✔ Audio-Syllable Sync & Interruption Protection
    ✔ Complete Local Persistence (LocalStorage)
    ========================================================= */
+
 let state = {
     stories: [],
     missions: [],
@@ -16,12 +17,14 @@ let state = {
     initialized: false,
     timer: null,        
     timeLeft: 0,        
+    
     // Master Timer (15 minutes exact)
     globalTimer: null,
     endTime: null,       
     globalTimeLeft: 15 * 60, 
     isPaused: false,
     currentTextToNarrate: "",
+
     // MOTOR DE TELEMETRÍA CONDUCTUAL (Real-Time Metrics)
     telemetry: {
         sessionStart: null,
@@ -35,11 +38,13 @@ let state = {
         decisionTimes: [],          // Tiempos de reacción en milisegundos
         correctAnswers: 0,
         totalQuestions: 0
-    }, 
+    },
+    
     // Auxiliares de medición
     blockStartTime: null,
     voiceStartTime: null
 };
+
 const i18n = {
     booting: "SYSTEM BOOTING...",
     loading: "Loading Data (Missions 1-63)...",
@@ -73,6 +78,7 @@ const i18n = {
     btn_continue: "START LOGISTICS SESSION",
     btn_reset_prog: "RESET PROGRESS"
 };
+
 /* ====================================
    PERSISTENCIA Y REGISTRO DE EVENTOS
 ==================================== */
@@ -84,6 +90,7 @@ function saveProgress() {
         telemetry: state.telemetry
     }));
 }
+
 function loadProgress() {
     const saved = localStorage.getItem('kamizen_v16_save');
     if (saved) {
@@ -94,6 +101,7 @@ function loadProgress() {
         if (data.telemetry) state.telemetry = data.telemetry;
     }
 }
+
 /* ====================================
    INICIALIZACIÓN DEL SISTEMA
 ==================================== */
@@ -105,6 +113,7 @@ window.addEventListener("load", async () => {
     await loadAllData();
     showIntro();
 });
+
 async function loadAllData() {
     const app = document.getElementById("app");
     app.innerHTML = `<div class="card"><h2>${i18n.booting}</h2><p>${i18n.loading}</p></div>`;
@@ -121,6 +130,7 @@ async function loadAllData() {
         app.innerHTML = `<div class="card"><h2>${i18n.boot_error}</h2><p>${i18n.check_api}</p></div>`;
     }
 }
+
 function injectGlobalTimerDOM() {
     if (document.getElementById("kamizen-global-timer")) return;
     const timerDiv = document.createElement("div");
@@ -128,6 +138,7 @@ function injectGlobalTimerDOM() {
     timerDiv.style = "position: fixed; top: 10px; right: 10px; z-index: 1000; background: rgba(15, 23, 42, 0.9); border: 1px solid #0ea5e9; padding: 6px 10px; border-radius: 4px; font-family: monospace; font-size: 11px; color: #fff; display: none; text-align: right; box-shadow: 0 4px 6px rgba(0,0,0,0.3);";
     document.body.appendChild(timerDiv);
 }
+
 function updateGlobalTimerDisplay() {
     const timerDiv = document.getElementById("kamizen-global-timer");
     if (!timerDiv) return;
@@ -140,6 +151,7 @@ function updateGlobalTimerDisplay() {
     const s = Math.max(0, state.globalTimeLeft) % 60;
     timerDiv.innerHTML = `<div>${i18n.global_time}</div><div style="font-size:15px; font-weight:bold; color:#0ea5e9;">${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}</div>`;
 }
+
 /* ====================================
    CONTROL DE CIERRE ABSOLUTO (15 MIN)
 ==================================== */
@@ -151,9 +163,11 @@ function startMasterTimer() {
     if (!state.telemetry.sessionStart) {
         state.telemetry.sessionStart = Date.now();
     }
+
     state.globalTimer = setInterval(() => {
         const totalMsLeft = state.endTime - Date.now();
         state.globalTimeLeft = Math.ceil(totalMsLeft / 1000);
+
         // Si la app está activa, sumamos tiempo de enfoque real en ejercicios de respiración/silencio
         if (!state.isPaused && document.hasFocus()) {
             const block = state.missions[state.currentIndex]?.b[state.currentBlock];
@@ -162,6 +176,7 @@ function startMasterTimer() {
                 if (block.t === "sil") state.telemetry.silenceSecondsReal += 0.25;
             }
         }
+
         updateGlobalTimerDisplay();
         saveProgress();
 
@@ -171,6 +186,7 @@ function startMasterTimer() {
         }
     }, 250);
 }
+
 /* ====================================
    CAPTURA DE TELEMETRÍA PURA (MECÁNICAS VR)
 ==================================== */
@@ -189,6 +205,7 @@ function setupInterruptionListeners() {
         }
     });
 }
+
 function setupGlobalClickTracker() {
     // Detecta clicks ansiosos en la pantalla mientras el sistema está narrando con los controles deshabilitados
     document.addEventListener("click", (e) => {
@@ -200,6 +217,7 @@ function setupGlobalClickTracker() {
         }
     });
 }
+
 /* ====================================
    CONTROL DE NAVEGACIÓN Y PAUSAS
 ==================================== */
@@ -211,6 +229,7 @@ function togglePause() {
         pauseSystem();
     }
 }
+
 function pauseSystem() {
     if (state.phase === "intro" || state.phase === "loading") return;
     state.isPaused = true;
@@ -218,10 +237,12 @@ function pauseSystem() {
     clearInterval(state.timer); 
     render(); 
 }
+
 function resumeSystem() {
     state.isPaused = false;
     render(); 
 }
+
 function jumpToBlock() {
     const targetMissionId = prompt(i18n.jump_prompt);
     if (targetMissionId !== null && targetMissionId !== "") {
@@ -240,6 +261,7 @@ function jumpToBlock() {
         }
     }
 }
+
 function goBack() {
     window.speechSynthesis.cancel();
     clearInterval(state.timer);
@@ -254,6 +276,7 @@ function goBack() {
     }
     render();
 }
+
 function restartSystem() {
     if(confirm(i18n.reset_confirm)) {
         localStorage.clear();
@@ -271,10 +294,12 @@ function restartSystem() {
         render();
     }
 }
+
 function startCountdown(seconds, onComplete) {
     clearInterval(state.timer);
     state.timeLeft = seconds;
     const timerDisplay = document.getElementById("timerDisplay");
+
     state.timer = setInterval(() => {
         if (!state.isPaused) {
             state.timeLeft--;
@@ -290,6 +315,7 @@ function startCountdown(seconds, onComplete) {
         }
     }, 1000);
 }
+
 /* ====================================
    MOTOR DE RENDERIZADO
 ==================================== */
@@ -298,24 +324,28 @@ function showIntro() {
     updateGlobalTimerDisplay();
     document.getElementById("app").innerHTML = `
         <div class="card center">
-            <h1>AL CIELO • KAMIZEN</h1>
-            <p style="letter-spacing:3px;font-size:0.85rem;color:#0ea5e9;">PSYCHOMETRIC LOGISTICS TRAINING</p>
+            <h1>MASTER • KAMIZEN</h1>
+            <p style="letter-spacing:3px;font-size:0.85rem;color:#0ea5e9;">TRAINING</p>
             <p class="small">Operational Range: Missions 1 - 63 Active</p>
             <button onclick="startSystem()">${i18n.btn_continue}</button>
             <button onclick="restartSystem()" style="background:var(--danger);margin-top:10px;">${i18n.btn_reset_prog}</button>
         </div>
     `;
 }
+
 function startSystem() {
     state.phase = "story";
     startMasterTimer();
     render();
 }
+
 function render() {
     if (!state.initialized) return;
     saveProgress();
-    updateGlobalTimerDisplay(); 
+    updateGlobalTimerDisplay();
+    
     const app = document.getElementById("app");
+    
     let navHeader = `
         <div style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px; align-items:center;">
             <button onclick="goBack()" style="flex:1; min-width:60px; padding:8px; font-size:11px; background:#334155;">${i18n.back}</button>
@@ -324,6 +354,7 @@ function render() {
             <button onclick="restartSystem()" style="flex:1; min-width:60px; padding:8px; font-size:11px; background:var(--danger);">${i18n.reset}</button>
         </div>
     `;
+
     if (state.isPaused) {
         app.innerHTML = navHeader + `
             <div class="card center" style="border: 2px dashed #eab308;">
@@ -334,6 +365,7 @@ function render() {
         `;
         return;
     }
+
     const story = state.stories[state.currentIndex];
     const mission = state.missions[state.currentIndex];
 
@@ -341,6 +373,7 @@ function render() {
         state.currentIndex = 0; state.currentBlock = 0; state.phase = "story";
         return render();
     }
+
     if (state.phase === "story") {
         app.innerHTML = navHeader + `
             <div class="card">
@@ -350,6 +383,7 @@ function render() {
             </div>
             <button id="continueBtn" disabled>${i18n.narrating}</button>
         `;
+        
         narrate(`${story.t || ""}. ${story.en || ""}`, () => {
             setTimeout(startMission, 1200);
         });
@@ -359,20 +393,24 @@ function render() {
         renderBlock(block, navHeader);
     }
 }
+
 function renderBlock(block, navHeader) {
     const app = document.getElementById("app");
     let html = navHeader;
     let textToRead = "";
+
     const timerUI = `
         <div class="card center" style="border: 3px solid var(--primary); background: #0f172a; padding: 15px 10px;">
             <h1 id="timerDisplay" style="font-size:3.5rem; margin:0; font-family: monospace;">00:00</h1>
             <p style="color:var(--primary); letter-spacing: 2px; margin:5px 0 0 0; font-size:0.8rem;">${i18n.focused}</p>
         </div>
     `;
+
     const blockTx = block.tx?.en || block.tx || "";
     const blockInf = block.inf?.en || block.inf || "";
     const blockStory = block.story?.en || block.story || "";
     const blockQ = block.q?.en || block.q || "";
+
     if (block.t === "v" || block.t === "h") { 
         html += `<div class="card"><h2>${blockTx}</h2></div>`; 
         textToRead = blockTx; 
@@ -409,8 +447,10 @@ function renderBlock(block, navHeader) {
         html += `<div class="card"><p>${blockTx}</p></div>`; 
         textToRead = blockTx; 
     }
+
     if (block.t !== "d") html += `<button id="continueBtn" disabled>${i18n.narrating}</button>`;
     app.innerHTML = html;
+
     narrate(textToRead, () => {
         if (block.t === "breath_auto" || block.t === "br") {
             startCountdown(24, nextBlock);
@@ -427,25 +467,31 @@ function renderBlock(block, navHeader) {
         }
     });
 }
+
 function narrate(text, callback) {
     if (!text || state.isPaused) { if (callback) callback(); return; }
     state.speechLocked = true;
-    window.speechSynthesis.cancel(); 
+    window.speechSynthesis.cancel();
+    
     const speech = new SpeechSynthesisUtterance(text);
     speech.lang = "en-US"; 
-    speech.rate = 0.95; 
+    speech.rate = 0.95;
+    
     speech.onend = () => { 
         state.speechLocked = false; 
         if (callback && !state.isPaused) callback(); 
     };
     speech.onerror = () => { state.speechLocked = false; };
+
     window.speechSynthesis.speak(speech);
 }
+
 function startGuidedBreathing() {
     const circle = document.getElementById("breathCircle");
     const label = document.getElementById("breathLabel");
     if (!circle || !label) return;
-    let inhale = true;    
+    let inhale = true;
+    
     const step = () => {
         if (!document.getElementById("breathCircle") || state.timeLeft <= 0 || state.isPaused) return;
         label.innerText = inhale ? i18n.inhale : i18n.exhale;
@@ -459,17 +505,22 @@ function startGuidedBreathing() {
         step();
     }, 4000);
 }
+
 function selectAnswer(index, correct, explanations) {
-    if (state.speechLocked || state.isPaused) return;   
+    if (state.speechLocked || state.isPaused) return;
+    
     // Captura milisegundos de retraso en la decisión real
     if (state.voiceStartTime) {
         const reactionTime = Date.now() - state.voiceStartTime;
         state.telemetry.decisionTimes.push(reactionTime);
         state.voiceStartTime = null; 
     }
+
     const isCorrect = index === correct;
-    if (isCorrect) state.telemetry.correctAnswers++;   
+    if (isCorrect) state.telemetry.correctAnswers++;
+    
     let explanation = explanations?.[index] || "";
+
     const feedbackWrap = document.createElement("div");
     feedbackWrap.innerHTML = `
         <div class="card" style="margin-top:10px; border-left: 5px solid ${isCorrect ? '#22c55e' : '#ef4444'}">
@@ -479,10 +530,12 @@ function selectAnswer(index, correct, explanations) {
         <button id="continueBtn" disabled>${i18n.narrating}</button>
     `;
     document.getElementById("app").appendChild(feedbackWrap);
+    
     narrate(explanation, () => {
         unlockContinue(i18n.next_step, nextBlock);
     });
 }
+
 function nextBlock() { clearInterval(state.timer); state.currentBlock++; render(); }
 function startMission() { state.phase = "mission"; state.currentBlock = 0; render(); }
 function nextStory() {
@@ -492,23 +545,28 @@ function nextStory() {
     state.currentBlock = 0;
     render();
 }
+
 function unlockContinue(label, action) {
     const btn = document.getElementById("continueBtn");
     if (btn) { btn.disabled = false; btn.innerText = label; btn.onclick = action; }
 }
+
 /* ====================================
    FINALIZACIÓN Y GENERACIÓN DE REPORTE REAL
 ==================================== */
 function finishSession() {
     window.speechSynthesis.cancel();
     clearInterval(state.timer);
-    clearInterval(state.globalTimer); 
+    clearInterval(state.globalTimer);
+    
     // Cálculos de métricas conductuales absolutas
     const t = state.telemetry;
-    const avgDecisionTime = t.decisionTimes.length ? (t.decisionTimes.reduce((a,b)=>a+b,0) / t.decisionTimes.length / 1000).toFixed(2) : "0.00";   
+    const avgDecisionTime = t.decisionTimes.length ? (t.decisionTimes.reduce((a,b)=>a+b,0) / t.decisionTimes.length / 1000).toFixed(2) : "0.00";
+    
     const breathingFocus = t.breathingSecondsTarget ? Math.min(100, Math.round((t.breathingSecondsReal / t.breathingSecondsTarget) * 100)) : 100;
     const silenceFocus = t.silenceSecondsTarget ? Math.min(100, Math.round((t.silenceSecondsReal / t.silenceSecondsTarget) * 100)) : 100;
     const successRate = t.totalQuestions ? Math.round((t.correctAnswers / t.totalQuestions) * 100) : 100;
+
     // Guardar objeto final en localStorage para que el script del PDF lo extraiga limpio
     const finalReportData = {
         sessionDuration: "15:00",
@@ -521,6 +579,7 @@ function finishSession() {
         accuracyRate: `${successRate}%`
     };
     localStorage.setItem('kamizen_final_report', JSON.stringify(finalReportData));
+
     // Si tu sistema tiene inyectada la función nativa de renderizado de validación para el PDF, se ejecuta
     if (typeof renderValidationScreen === "function") {
         renderValidationScreen(state.missions[state.currentIndex]?.id || 63, finalReportData);
@@ -530,7 +589,8 @@ function finishSession() {
         app.innerHTML = `
             <div class="card animated fadeIn">
                 <h2 style="color:#0ea5e9; text-align:center;">📋 SESSION BIOMETRIC LOG</h2>
-                <p style="text-align:center; font-size:0.9rem; margin-bottom:20px;">Real execution data recorded during this 15-minute training block.</p>     
+                <p style="text-align:center; font-size:0.9rem; margin-bottom:20px;">Real execution data recorded during this 15-minute training block.</p>
+                
                 <table style="width:100%; border-collapse: collapse; font-size:13px;">
                     <tr style="border-bottom:1px solid #334155;"><td style="padding:6px 0;"><b>Cognitive Latency (Avg Delay):</b></td><td style="text-align:right; color:#0ea5e9;"><b>${finalReportData.cognitiveLatency}</b></td></tr>
                     <tr style="border-bottom:1px solid #334155;"><td style="padding:6px 0;"><b>Impulsivity Markers (Anxious Clicks):</b></td><td style="text-align:right; color:#ef4444;"><b>${finalReportData.impulsivityMarkers}</b></td></tr>
@@ -539,10 +599,12 @@ function finishSession() {
                     <tr style="border-bottom:1px solid #334155;"><td style="padding:6px 0;"><b>Breathing Compliance:</b></td><td style="text-align:right; color:#22c55e;">${finalReportData.breathingCompliance}</td></tr>
                     <tr style="border-bottom:1px solid #334155;"><td style="padding:6px 0;"><b>Silence Execution Retention:</b></td><td style="text-align:right; color:#22c55e;">${finalReportData.silenceCompliance}</td></tr>
                     <tr style="border-bottom:1px solid #334155;"><td style="padding:6px 0;"><b>Decision Accuracy Rate:</b></td><td style="text-align:right;">${finalReportData.accuracyRate}</td></tr>
-                </table>          
+                </table>
+                
                 <div style="margin-top:20px; background:rgba(14,165,233,0.1); padding:10px; border-radius:4px; font-size:12px; line-height:1.4; border:1px solid rgba(14,165,233,0.2);">
                     <b>AS ADVISORY LOG:</b> These psychometric metrics reflect true behavioral data points. High latency with low impulsivity proves executive processing stability. Frequent focus drops suggest attention-span fatigue.
                 </div>
+                
                 <button onclick="localStorage.clear(); location.reload();" style="margin-top:20px; width:100%;">EXPORT DATA & RESET</button>
             </div>`;
         narrate("Session closed. Your biometric data log is compiled and ready.");
