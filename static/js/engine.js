@@ -554,12 +554,20 @@ function unlockContinue(label, action) {
 /* ====================================
    FINALIZACIÓN Y GENERACIÓN DE REPORTE REAL
 ==================================== */
+/* =========================================================
+   REEMPLAZA ESTA FUNCIÓN AL FINAL DE TU SCRIPT
+   ========================================================= */
 function finishSession() {
+    // 1. Apagar inmediatamente todos los procesos y motores de voz
     window.speechSynthesis.cancel();
     clearInterval(state.timer);
     clearInterval(state.globalTimer);
     
-    // Cálculos de métricas conductuales absolutas
+    // 2. Romper los enlaces del objeto del temporizador para evitar ejecuciones residuales
+    state.globalTimer = null;
+    state.timer = null;
+    
+    // 3. Cálculos de métricas conductuales absolutas
     const t = state.telemetry;
     const avgDecisionTime = t.decisionTimes.length ? (t.decisionTimes.reduce((a,b)=>a+b,0) / t.decisionTimes.length / 1000).toFixed(2) : "0.00";
     
@@ -567,7 +575,6 @@ function finishSession() {
     const silenceFocus = t.silenceSecondsTarget ? Math.min(100, Math.round((t.silenceSecondsReal / t.silenceSecondsTarget) * 100)) : 100;
     const successRate = t.totalQuestions ? Math.round((t.correctAnswers / t.totalQuestions) * 100) : 100;
 
-    // Guardar objeto final en localStorage para que el script del PDF lo extraiga limpio
     const finalReportData = {
         sessionDuration: "15:00",
         interruptionIndex: t.totalPauses,
@@ -578,13 +585,15 @@ function finishSession() {
         cognitiveLatency: `${avgDecisionTime}s`,
         accuracyRate: `${successRate}%`
     };
+
+    // 4. Limpieza total y forzada de la persistencia vieja
+    localStorage.removeItem('kamizen_v16_save');
     localStorage.setItem('kamizen_final_report', JSON.stringify(finalReportData));
 
-    // Si tu sistema tiene inyectada la función nativa de renderizado de validación para el PDF, se ejecuta
+    // 5. Renderizado de la pantalla final libre de bucles
     if (typeof renderValidationScreen === "function") {
         renderValidationScreen(state.missions[state.currentIndex]?.id || 63, finalReportData);
     } else {
-        // Pantalla de cierre por defecto mostrando los datos del sensor psicométrico
         const app = document.getElementById("app");
         app.innerHTML = `
             <div class="card animated fadeIn">
@@ -602,11 +611,21 @@ function finishSession() {
                 </table>
                 
                 <div style="margin-top:20px; background:rgba(14,165,233,0.1); padding:10px; border-radius:4px; font-size:12px; line-height:1.4; border:1px solid rgba(14,165,233,0.2);">
-                    <b>AS ADVISORY LOG:</b> These psychometric metrics reflect true behavioral data points. High latency with low impulsivity proves executive processing stability. Frequent focus drops suggest attention-span fatigue.
+                    <b>AS ADVISORY LOG:</b> These psychometric metrics reflect true behavioral data points. High latency with low impulsivity proves executive processing stability.
                 </div>
                 
-                <button onclick="localStorage.clear(); location.reload();" style="margin-top:20px; width:100%;">EXPORT DATA & RESET</button>
+                <!-- El botón ahora ejecuta una función limpia que garantiza el reseteo completo sin dejar hilos sueltos -->
+                <button onclick="forceCleanReset();" style="margin-top:20px; width:100%; background:#22c55e; font-weight:bold;">START NEW SESSION</button>
             </div>`;
         narrate("Session closed. Your biometric data log is compiled and ready.");
     }
+}
+
+// Nueva función auxiliar de control absoluto para el botón de reinicio
+function forceCleanReset() {
+    window.speechSynthesis.cancel();
+    localStorage.clear();
+    setTimeout(() => {
+        location.reload();
+    }, 100);
 }
