@@ -4,7 +4,7 @@
    ✔ Measures: Impulsivity, Focus, Cognitive Delay, and Attention Drop
    ✔ Absolute Master Timer (15 Minutes strict, Unix Timestamp)
    ✔ Audio-Syllable Sync & Interruption Protection
-   ✔ Complete Local Persistence (LocalStorage)
+   ✔ Complete Local Persistence (LocalStorage) WITH PROGRESS RETENTION
    ========================================================= */
 
 let state = {
@@ -28,14 +28,14 @@ let state = {
     // MOTOR DE TELEMETRÍA CONDUCTUAL (Real-Time Metrics)
     telemetry: {
         sessionStart: null,
-        totalPauses: 0,             // Índice de interrupción
-        screenDesertions: 0,        // Veces que abandonó la pestaña / quitó foco
-        impulsiveClicks: 0,         // Clicks ansiosos mientras la voz está bloqueada
-        breathingSecondsTarget: 0,  // Segundos ideales de respiración
-        breathingSecondsReal: 0,    // Segundos reales manteniendo el foco en respiración
-        silenceSecondsTarget: 0,    // Segundos ideales de silencio
-        silenceSecondsReal: 0,      // Segundos reales manteniendo el foco en silencio
-        decisionTimes: [],          // Tiempos de reacción en milisegundos
+        totalPauses: 0,             
+        screenDesertions: 0,        
+        impulsiveClicks: 0,         
+        breathingSecondsTarget: 0,  
+        breathingSecondsReal: 0,    
+        silenceSecondsTarget: 0,    
+        silenceSecondsReal: 0,      
+        decisionTimes: [],          
         correctAnswers: 0,
         totalQuestions: 0
     },
@@ -168,7 +168,6 @@ function startMasterTimer() {
         const totalMsLeft = state.endTime - Date.now();
         state.globalTimeLeft = Math.ceil(totalMsLeft / 1000);
 
-        // Si la app está activa, sumamos tiempo de enfoque real en ejercicios de respiración/silencio
         if (!state.isPaused && document.hasFocus()) {
             const block = state.missions[state.currentIndex]?.b[state.currentBlock];
             if (block) {
@@ -191,7 +190,6 @@ function startMasterTimer() {
    CAPTURA DE TELEMETRÍA PURA (MECÁNICAS VR)
 ==================================== */
 function setupInterruptionListeners() {
-    // Detecta si el usuario cambia de pestaña, minimiza o bloquea el teléfono (Abandono de pantalla)
     document.addEventListener("visibilitychange", () => {
         if (document.hidden && state.phase !== "intro" && state.phase !== "loading") {
             state.telemetry.screenDesertions++;
@@ -207,7 +205,6 @@ function setupInterruptionListeners() {
 }
 
 function setupGlobalClickTracker() {
-    // Detecta clicks ansiosos en la pantalla mientras el sistema está narrando con los controles deshabilitados
     document.addEventListener("click", (e) => {
         if (state.speechLocked) {
             const targetTag = e.target.tagName.toLowerCase();
@@ -324,8 +321,8 @@ function showIntro() {
     updateGlobalTimerDisplay();
     document.getElementById("app").innerHTML = `
         <div class="card center">
-            <h1>MASTER • KAMIZEN</h1>
-            <p style="letter-spacing:3px;font-size:0.85rem;color:#0ea5e9;">TRAINING</p>
+            <h1>AL CIELO • KAMIZEN</h1>
+            <p style="letter-spacing:3px;font-size:0.85rem;color:#0ea5e9;">PSYCHOMETRIC LOGISTICS TRAINING</p>
             <p class="small">Operational Range: Missions 1 - 63 Active</p>
             <button onclick="startSystem()">${i18n.btn_continue}</button>
             <button onclick="restartSystem()" style="background:var(--danger);margin-top:10px;">${i18n.btn_reset_prog}</button>
@@ -337,6 +334,20 @@ function startSystem() {
     state.phase = "story";
     startMasterTimer();
     render();
+}
+
+// Limpia el bloqueo del temporizador y prepara el estado para el siguiente bloque de 15 minutos sin perder el progreso
+function cleanSessionForNextRun() {
+    state.endTime = null; 
+    state.globalTimeLeft = 15 * 60;
+    state.isPaused = false;
+    state.telemetry = {
+        sessionStart: null, totalPauses: 0, screenDesertions: 0, impulsiveClicks: 0,
+        breathingSecondsTarget: 0, breathingSecondsReal: 0, silenceSecondsTarget: 0, silenceSecondsReal: 0,
+        decisionTimes: [], correctAnswers: 0, totalQuestions: 0
+    };
+    saveProgress();
+    location.reload();
 }
 
 function render() {
@@ -460,7 +471,6 @@ function renderBlock(block, navHeader) {
             startCountdown(24, nextBlock);
             unlockContinue(i18n.skip, nextBlock);
         } else if (block.t === "d") {
-            // Se marca el momento exacto en que termina de hablar para medir latencia de decisión pura
             state.voiceStartTime = Date.now(); 
         } else {
             setTimeout(nextBlock, 1500);
@@ -509,7 +519,6 @@ function startGuidedBreathing() {
 function selectAnswer(index, correct, explanations) {
     if (state.speechLocked || state.isPaused) return;
     
-    // Captura milisegundos de retraso en la decisión real
     if (state.voiceStartTime) {
         const reactionTime = Date.now() - state.voiceStartTime;
         state.telemetry.decisionTimes.push(reactionTime);
@@ -554,20 +563,11 @@ function unlockContinue(label, action) {
 /* ====================================
    FINALIZACIÓN Y GENERACIÓN DE REPORTE REAL
 ==================================== */
-/* =========================================================
-   REEMPLAZA ESTA FUNCIÓN AL FINAL DE TU SCRIPT
-   ========================================================= */
 function finishSession() {
-    // 1. Apagar inmediatamente todos los procesos y motores de voz
     window.speechSynthesis.cancel();
     clearInterval(state.timer);
     clearInterval(state.globalTimer);
     
-    // 2. Romper los enlaces del objeto del temporizador para evitar ejecuciones residuales
-    state.globalTimer = null;
-    state.timer = null;
-    
-    // 3. Cálculos de métricas conductuales absolutas
     const t = state.telemetry;
     const avgDecisionTime = t.decisionTimes.length ? (t.decisionTimes.reduce((a,b)=>a+b,0) / t.decisionTimes.length / 1000).toFixed(2) : "0.00";
     
@@ -585,12 +585,8 @@ function finishSession() {
         cognitiveLatency: `${avgDecisionTime}s`,
         accuracyRate: `${successRate}%`
     };
-
-    // 4. Limpieza total y forzada de la persistencia vieja
-    localStorage.removeItem('kamizen_v16_save');
     localStorage.setItem('kamizen_final_report', JSON.stringify(finalReportData));
 
-    // 5. Renderizado de la pantalla final libre de bucles
     if (typeof renderValidationScreen === "function") {
         renderValidationScreen(state.missions[state.currentIndex]?.id || 63, finalReportData);
     } else {
@@ -611,21 +607,11 @@ function finishSession() {
                 </table>
                 
                 <div style="margin-top:20px; background:rgba(14,165,233,0.1); padding:10px; border-radius:4px; font-size:12px; line-height:1.4; border:1px solid rgba(14,165,233,0.2);">
-                    <b>AS ADVISORY LOG:</b> These psychometric metrics reflect true behavioral data points. High latency with low impulsivity proves executive processing stability.
+                    <b>AS ADVISORY LOG:</b> These psychometric metrics reflect true behavioral data points. High latency with low impulsivity proves executive processing stability. Frequent focus drops suggest attention-span fatigue.
                 </div>
                 
-                <!-- El botón ahora ejecuta una función limpia que garantiza el reseteo completo sin dejar hilos sueltos -->
-                <button onclick="forceCleanReset();" style="margin-top:20px; width:100%; background:#22c55e; font-weight:bold;">START NEW SESSION</button>
+                <button onclick="cleanSessionForNextRun()" style="margin-top:20px; width:100%;">CONTINUE ON NEXT SESSION</button>
             </div>`;
         narrate("Session closed. Your biometric data log is compiled and ready.");
     }
-}
-
-// Nueva función auxiliar de control absoluto para el botón de reinicio
-function forceCleanReset() {
-    window.speechSynthesis.cancel();
-    localStorage.clear();
-    setTimeout(() => {
-        location.reload();
-    }, 100);
 }
