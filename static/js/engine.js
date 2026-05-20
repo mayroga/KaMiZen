@@ -1,15 +1,16 @@
 /* =========================================================
    KAMIZEN ENGINE V15 - FULL VERSION WITH REPORTE PDF
-   ✔ Persistencia Local (LocalStorage)
+   ✔ Persistencia Local Real (LocalStorage)
+   ✔ Reloj Maestro Absoluto Basado en Tiempo Real (Date.now())
+   ✔ Detención Forzada a los 15 Minutos (Sin importar pausa, saltos o foco)
    ✔ Narración Total: Preguntas + Opciones + Feedback (English Only)
    ✔ Guía Vocal de Respiración (Visual)
    ✔ Botón JUMP/SKIP para navegación directa
    ✔ Soporte completo: v, h, story, br, sil, d, r, c
    ✔ Master Timer Visual: 15 Minutes (Cuenta regresiva global)
-   ✔ Sistema de Pausa / Reanudación Automática y Manual
+   ✔ Sistema de Pausa / Reanudación Manual y Automática
    ✔ REPORT INTEGRATION: PDF Result generation
    ========================================================= */
-
 let state = {
     stories: [],
     missions: [],
@@ -21,15 +22,14 @@ let state = {
     timer: null,        // Timer del bloque actual (respiración/silencio)
     timeLeft: 0,        // Tiempo restante del bloque actual
     
-    // Configuración del Master Timer (15 minutos globales)
+    // Configuración del Master Timer Implacable (15 minutos exactos)
     globalTimer: null,
+    endTime: null,       // Marca de tiempo absoluta donde DEBE terminar la app
     globalTimeLeft: 15 * 60, 
     isPaused: false,
-    
     // Guardado de textos para reanudar narración si se pausa
     currentTextToNarrate: ""
 };
-
 // Diccionario estático de interfaz en inglés americano
 const i18n = {
     booting: "SYSTEM BOOTING...",
@@ -65,7 +65,6 @@ const i18n = {
     btn_continue: "CONTINUE MISSION",
     btn_reset_prog: "RESET PROGRESS"
 };
-
 /* =========================
    SISTEMA DE PERSISTENCIA
 ========================= */
@@ -73,20 +72,18 @@ function saveProgress() {
     localStorage.setItem('kamizen_save', JSON.stringify({
         currentIndex: state.currentIndex,
         currentBlock: state.currentBlock,
-        globalTimeLeft: state.globalTimeLeft
+        endTime: state.endTime
     }));
 }
-
 function loadProgress() {
     const saved = localStorage.getItem('kamizen_save');
     if (saved) {
         const data = JSON.parse(saved);
         state.currentIndex = data.currentIndex || 0;
         state.currentBlock = data.currentBlock || 0;
-        state.globalTimeLeft = data.globalTimeLeft !== undefined ? data.globalTimeLeft : 15 * 60;
+        state.endTime = data.endTime || null;
     }
 }
-
 /* =========================
    INICIALIZACIÓN DEL SISTEMA
 ========================= */
@@ -97,7 +94,6 @@ window.addEventListener("load", async () => {
     await loadAllData();
     showIntro();
 });
-
 async function loadAllData() {
     const app = document.getElementById("app");
     app.innerHTML = `<div class="card"><h2>${i18n.booting}</h2><p>${i18n.loading}</p></div>`;
@@ -108,7 +104,6 @@ async function loadAllData() {
         ]);
         const storiesData = await storiesReq.json();
         const missionsData = await missionsReq.json();
-
         state.stories = Array.isArray(storiesData.stories) ? storiesData.stories.sort((a, b) => a.id - b.id) : [];
         state.missions = Array.isArray(missionsData.missions) ? missionsData.missions.sort((a, b) => a.id - b.id) : [];
         
@@ -118,7 +113,6 @@ async function loadAllData() {
         app.innerHTML = `<div class="card"><h2>${i18n.boot_error}</h2><p>${i18n.check_api}</p></div>`;
     }
 }
-
 /* =========================
    INYECTAR RELOJ GLOBAL (DOM)
 ========================= */
@@ -129,7 +123,6 @@ function injectGlobalTimerDOM() {
     timerDiv.style = "position: fixed; top: 10px; right: 10px; z-index: 1000; background: rgba(15, 23, 42, 0.85); border: 1px solid var(--primary, #0ea5e9); padding: 4px 8px; border-radius: 4px; font-family: monospace; font-size: 11px; color: #fff; display: none; text-align: right;";
     document.body.appendChild(timerDiv);
 }
-
 function updateGlobalTimerDisplay() {
     const timerDiv = document.getElementById("kamizen-global-timer");
     if (!timerDiv) return;
@@ -138,38 +131,41 @@ function updateGlobalTimerDisplay() {
         return;
     }
     timerDiv.style.display = "block";
-    const m = Math.floor(state.globalTimeLeft / 60);
-    const s = state.globalTimeLeft % 60;
+    const m = Math.floor(Math.max(0, state.globalTimeLeft) / 60);
+    const s = Math.max(0, state.globalTimeLeft) % 60;
     timerDiv.innerHTML = `<div>${i18n.global_time}</div><div style="font-size:14px; font-weight:bold; color:var(--primary, #0ea5e9);">${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}</div>`;
 }
-
-/* =========================
-   CONTROL DE CIERRE Y REPORTE (15 MIN)
-========================= */
+/* ====================================
+   CONTROL DE CIERRE ABSOLUTO (15 MIN)
+==================================== */
 function startMasterTimer() {
     clearInterval(state.globalTimer);
+    // Si no hay un tiempo de finalización guardado previamente, lo creamos basándonos en la hora actual
+    if (!state.endTime) {
+        state.endTime = Date.now() + (15 * 60 * 1000);
+    }
     state.globalTimer = setInterval(() => {
-        if (!state.isPaused) {
-            state.globalTimeLeft--;
-            updateGlobalTimerDisplay();
-            saveProgress();
-
-            if (state.globalTimeLeft <= 0) {
-                clearInterval(state.globalTimer);
-                finishSession();
-            }
+        // Cálculo basado en tiempo real Unix absoluto (No le afectan las pausas ni la inactividad de la pestaña)
+        const totalMsLeft = state.endTime - Date.now();
+        state.globalTimeLeft = Math.ceil(totalMsLeft / 1000);
+        updateGlobalTimerDisplay();
+        saveProgress();
+        if (state.globalTimeLeft <= 0) {
+            clearInterval(state.globalTimer);
+            finishSession();
         }
-    }, 1000);
+    }, 250); // Muestreo de alta frecuencia para garantizar precisión de ejecución
+    // Ejecución inicial para evitar delay visual de 1 segundo
+    const totalMsLeft = state.endTime - Date.now();
+    state.globalTimeLeft = Math.ceil(totalMsLeft / 1000);
     updateGlobalTimerDisplay();
 }
-
 function finishSession() {
     window.speechSynthesis.cancel();
     clearInterval(state.timer);
     clearInterval(state.globalTimer);
-    
+    localStorage.clear(); // Limpieza absoluta de persistencia al expirar
     const currentMissionId = state.missions[state.currentIndex]?.id || 0;
-    
     if (typeof renderValidationScreen === "function") {
         renderValidationScreen(currentMissionId, {
             timeSpent: "15:00",
@@ -189,7 +185,6 @@ function finishSession() {
         narrate(textToRead);
     }
 }
-
 /* =========================
    SISTEMA DE PAUSA MANUAL Y AUTOMÁTICA
 ========================= */
@@ -200,20 +195,17 @@ function togglePause() {
         pauseSystem();
     }
 }
-
 function pauseSystem() {
     if (state.phase === "intro" || state.phase === "loading") return;
     state.isPaused = true;
     window.speechSynthesis.cancel(); 
-    clearInterval(state.timer);
+    clearInterval(state.timer); // Detiene únicamente el temporizador del bloque (ej. respiración)
     render(); 
 }
-
 function resumeSystem() {
     state.isPaused = false;
     render(); 
 }
-
 function setupInterruptionListeners() {
     document.addEventListener("visibilitychange", () => {
         if (document.hidden && !state.isPaused && state.phase !== "intro" && state.phase !== "loading") {
@@ -226,7 +218,6 @@ function setupInterruptionListeners() {
         }
     });
 }
-
 /* =========================
    CONTROLES DE NAVEGACIÓN
 ========================= */
@@ -248,7 +239,6 @@ function jumpToBlock() {
         }
     }
 }
-
 function goBack() {
     window.speechSynthesis.cancel();
     clearInterval(state.timer);
@@ -263,19 +253,18 @@ function goBack() {
     }
     render();
 }
-
 function restartSystem() {
     if(confirm(i18n.reset_confirm)) {
         localStorage.clear();
         state.currentIndex = 0;
         state.currentBlock = 0;
+        state.endTime = Date.now() + (15 * 60 * 1000); // Reinicia también el reloj maestro a 15 minutos exactos
         state.globalTimeLeft = 15 * 60;
         state.phase = "story";
         state.isPaused = false;
         render();
     }
 }
-
 /* =========================
    LÓGICA DEL RELOJ DE BLOQUE
 ========================= */
@@ -283,7 +272,6 @@ function startCountdown(seconds, onComplete) {
     clearInterval(state.timer);
     state.timeLeft = seconds;
     const timerDisplay = document.getElementById("timerDisplay");
-
     state.timer = setInterval(() => {
         if (!state.isPaused) {
             state.timeLeft--;
@@ -297,14 +285,12 @@ function startCountdown(seconds, onComplete) {
         }
     }, 1000);
 }
-
 /* =========================
    MOTOR DE RENDERIZADO
 ========================= */
 function showIntro() {
     state.phase = "intro";
     updateGlobalTimerDisplay();
-    
     document.getElementById("app").innerHTML = `
         <div class="card center">
             <h1>KAMIZEN LIFE SYSTEM</h1>
@@ -315,20 +301,16 @@ function showIntro() {
         </div>
     `;
 }
-
 function startSystem() {
     state.phase = "story";
     startMasterTimer();
     render();
 }
-
 function render() {
     if (!state.initialized) return;
     saveProgress();
-    updateGlobalTimerDisplay();
-    
+    updateGlobalTimerDisplay();  
     const app = document.getElementById("app");
-    
     let navHeader = `
         <div style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px; align-items:center;">
             <button onclick="goBack()" style="flex:1; min-width:60px; padding:8px; font-size:11px; background:#334155;">${i18n.back}</button>
@@ -337,7 +319,6 @@ function render() {
             <button onclick="restartSystem()" style="flex:1; min-width:60px; padding:8px; font-size:11px; background:var(--danger);">${i18n.reset}</button>
         </div>
     `;
-
     if (state.isPaused) {
         app.innerHTML = navHeader + `
             <div class="card center" style="border: 2px dashed #eab308;">
@@ -348,20 +329,16 @@ function render() {
         `;
         return;
     }
-
     const story = state.stories[state.currentIndex];
     const mission = state.missions[state.currentIndex];
-
     if (!story || !mission) {
         state.currentIndex = 0; state.currentBlock = 0; state.phase = "story";
         return render();
     }
-
     if (state.phase === "story") {
         const storyTitle = `${i18n.story_title} ${story.id}`;
         const storyText = story.en || "";
         const storyHeading = story.t || "";
-
         app.innerHTML = navHeader + `
             <div class="card">
                 <h2 style="color:var(--primary)">${storyTitle}</h2>
@@ -370,7 +347,6 @@ function render() {
             </div>
             <button id="continueBtn" disabled>${i18n.narrating}</button>
         `;
-        
         state.currentTextToNarrate = `${storyHeading}. ${storyText}`;
         narrate(state.currentTextToNarrate, () => {
             setTimeout(startMission, 1500);
@@ -381,19 +357,16 @@ function render() {
         renderBlock(block, navHeader);
     }
 }
-
 function renderBlock(block, navHeader) {
     const app = document.getElementById("app");
     let html = navHeader;
     let textToRead = "";
-
     const timerUI = `
         <div class="card center" style="border: 3px solid var(--primary); background: #0f172a; padding: 15px 10px;">
             <h1 id="timerDisplay" style="font-size:3.5rem; margin:0; font-family: monospace;">00:00</h1>
             <p style="color:var(--primary); letter-spacing: 2px; margin:5px 0 0 0; font-size:0.8rem;">${i18n.focused}</p>
         </div>
     `;
-
     const blockTx = block.tx?.en || block.tx || "";
     const blockInf = block.inf?.en || block.inf || "";
     const blockStory = block.story?.en || block.story || "";
@@ -432,10 +405,8 @@ function renderBlock(block, navHeader) {
         html += `<div class="card"><p>${blockTx}</p></div>`; 
         textToRead = blockTx; 
     }
-
     if (block.t !== "d") html += `<button id="continueBtn" disabled>${i18n.narrating}</button>`;
     app.innerHTML = html;
-
     state.currentTextToNarrate = textToRead;
     narrate(textToRead, () => {
         if (block.t === "breath_auto" || block.t === "br") {
@@ -452,28 +423,22 @@ function renderBlock(block, navHeader) {
         }
     });
 }
-
 function narrate(text, callback) {
     if (!text || state.isPaused) { if (callback) callback(); return; }
     state.speechLocked = true;
     window.speechSynthesis.cancel();
-    
     const speech = new SpeechSynthesisUtterance(text);
-    speech.lang = "en-US"; // Configuración fija de Inglés Americano nativo
+    speech.lang = "en-US"; 
     speech.rate = 0.95;
-    
     speech.onend = () => { 
         state.speechLocked = false; 
         if (callback && !state.isPaused) callback(); 
     };
-    
     speech.onerror = () => {
         state.speechLocked = false;
     };
-
     window.speechSynthesis.speak(speech);
 }
-
 /* =========================
    GUÍA VISUAL DE RESPIRACIÓN
 ========================= */
@@ -482,7 +447,6 @@ function startGuidedBreathing() {
     const label = document.getElementById("breathLabel");
     if (!circle || !label) return;
     let inhale = true;
-    
     const step = () => {
         if (!document.getElementById("breathCircle") || state.timeLeft <= 0 || state.isPaused) return;
         label.innerText = inhale ? i18n.inhale : i18n.exhale;
@@ -499,13 +463,10 @@ function startGuidedBreathing() {
         step();
     }, 4000);
 }
-
 function selectAnswer(index, correct, explanations) {
     if (state.speechLocked || state.isPaused) return;
-    const isCorrect = index === correct;
-    
+    const isCorrect = index === correct;  
     let explanation = explanations?.[index] || "";
-
     const feedbackWrap = document.createElement("div");
     feedbackWrap.innerHTML = `
         <div class="card" style="margin-top:10px; border-left: 5px solid ${isCorrect ? '#22c55e' : '#ef4444'}">
@@ -515,13 +476,11 @@ function selectAnswer(index, correct, explanations) {
         <button id="continueBtn" disabled>${i18n.narrating}</button>
     `;
     document.getElementById("app").appendChild(feedbackWrap);
-    
     state.currentTextToNarrate = explanation;
     narrate(explanation, () => {
         unlockContinue(i18n.next_step, nextBlock);
     });
 }
-
 function nextBlock() { clearInterval(state.timer); state.currentBlock++; render(); }
 function startMission() { state.phase = "mission"; state.currentBlock = 0; render(); }
 function nextStory() {
@@ -531,7 +490,6 @@ function nextStory() {
     state.currentBlock = 0;
     render();
 }
-
 function unlockContinue(label, action) {
     const btn = document.getElementById("continueBtn");
     if (btn) { btn.disabled = false; btn.innerText = label; btn.onclick = action; }
