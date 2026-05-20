@@ -422,7 +422,7 @@ function render() {
         app.innerHTML = navHeader + `
             <div class="card center" style="border: 2px dashed #eab308;">
                 <h2 style="color:#eab308; margin:0;">⏸ ${t.paused_banner}</h2>
-                <p style="font-size:0.9rem; margin-top:10px;">Misión en pausa. Haz clic en REANUDAR o en el botón amarillo para continuar justo donde estabas.</p>
+                <p style="font-size:0.9rem; margin-top:10px;">Mission paused. Click RESUME or the yellow button to continue right where you left off.</p>
                 <button onclick="resumeSystem()" style="background:#eab308; color:#0f172a; margin-top:15px; width:100%;">${t.resume}</button>
             </div>
         `;
