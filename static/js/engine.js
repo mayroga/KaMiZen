@@ -4,7 +4,7 @@
    ✔ Measures: Impulsivity, Focus, Cognitive Delay, and Attention Drop
    ✔ Absolute Master Timer (15 Minutes strict, Unix Timestamp)
    ✔ Audio-Syllable Sync & Interruption Protection
-   ✔ Complete Local Persistence (LocalStorage) WITH PROGRESS RETENTION
+   ✔ Complete Local Persistence (LocalStorage)
    ========================================================= */
 
 let state = {
@@ -28,14 +28,14 @@ let state = {
     // MOTOR DE TELEMETRÍA CONDUCTUAL (Real-Time Metrics)
     telemetry: {
         sessionStart: null,
-        totalPauses: 0,             
-        screenDesertions: 0,        
-        impulsiveClicks: 0,         
-        breathingSecondsTarget: 0,  
-        breathingSecondsReal: 0,    
-        silenceSecondsTarget: 0,    
-        silenceSecondsReal: 0,      
-        decisionTimes: [],          
+        totalPauses: 0,             // Índice de interrupción
+        screenDesertions: 0,        // Veces que abandonó la pestaña / quitó foco
+        impulsiveClicks: 0,         // Clicks ansiosos mientras la voz está bloqueada
+        breathingSecondsTarget: 0,  // Segundos ideales de respiración
+        breathingSecondsReal: 0,    // Segundos reales manteniendo el foco en respiración
+        silenceSecondsTarget: 0,    // Segundos ideales de silencio
+        silenceSecondsReal: 0,      // Segundos reales manteniendo el foco en silencio
+        decisionTimes: [],          // Tiempos de reacción en milisegundos
         correctAnswers: 0,
         totalQuestions: 0
     },
@@ -303,7 +303,7 @@ function startCountdown(seconds, onComplete) {
             if (timerDisplay) {
                 const m = Math.floor(state.timeLeft / 60);
                 const s = state.timeLeft % 60;
-                timerDisplay.innerText = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+                timerDisplay.innerText = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')} =`;
             }
             if (state.timeLeft <= 0) {
                 clearInterval(state.timer);
@@ -336,8 +336,13 @@ function startSystem() {
     render();
 }
 
-// Limpia el bloqueo del temporizador y prepara el estado para el siguiente bloque de 15 minutos sin perder el progreso
-function cleanSessionForNextRun() {
+// Función limpia para reiniciar la app al terminar los 15 minutos sin perder el progreso de misión
+function resetSessionAfterFinish() {
+    window.speechSynthesis.cancel();
+    clearInterval(state.timer);
+    clearInterval(state.globalTimer);
+    
+    // Restablecer marcas de tiempo y métricas para el próximo bloque de 15 minutos
     state.endTime = null; 
     state.globalTimeLeft = 15 * 60;
     state.isPaused = false;
@@ -346,8 +351,12 @@ function cleanSessionForNextRun() {
         breathingSecondsTarget: 0, breathingSecondsReal: 0, silenceSecondsTarget: 0, silenceSecondsReal: 0,
         decisionTimes: [], correctAnswers: 0, totalQuestions: 0
     };
+    
+    // Guardar estado limpio manteniendo currentIndex y currentBlock intactos
     saveProgress();
-    location.reload();
+    
+    // Dirigir directamente al render inicial del sistema como al principio
+    showIntro();
 }
 
 function render() {
@@ -610,7 +619,7 @@ function finishSession() {
                     <b>AS ADVISORY LOG:</b> These psychometric metrics reflect true behavioral data points. High latency with low impulsivity proves executive processing stability. Frequent focus drops suggest attention-span fatigue.
                 </div>
                 
-                <button onclick="cleanSessionForNextRun()" style="margin-top:20px; width:100%;">CONTINUE ON NEXT SESSION</button>
+                <button onclick="resetSessionAfterFinish()" style="margin-top:20px; width:100%;">FINISH SESSION</button>
             </div>`;
         narrate("Session closed. Your biometric data log is compiled and ready.");
     }
