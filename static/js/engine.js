@@ -167,7 +167,6 @@ function injectGlobalTimerDOM() {
     if (document.getElementById("kamizen-global-timer")) return;
     const timerDiv = document.createElement("div");
     timerDiv.id = "kamizen-global-timer";
-    // Estilo fijo en esquina superior derecha sin estorbar la lectura principal
     timerDiv.style = "position: fixed; top: 10px; right: 10px; z-index: 1000; background: rgba(15, 23, 42, 0.85); border: 1px solid var(--primary, #0ea5e9); padding: 4px 8px; border-radius: 4px; font-family: monospace; font-size: 11px; color: #fff; display: none; text-align: right;";
     document.body.appendChild(timerDiv);
 }
@@ -220,7 +219,6 @@ function finishSession() {
         });
     } else {
         const app = document.getElementById("app");
-        // Pantalla final en el idioma activo
         if (state.lang === "es") {
             app.innerHTML = `
                 <div class="card center animated fadeIn">
@@ -235,7 +233,7 @@ function finishSession() {
                 <div class="card center animated fadeIn">
                     <h2>🌟 GREAT JOB TODAY</h2>
                     <p>You completed your KAMIZEN session.</p>
-                    <p>Your brain and body only need a few focused minutes to grow stronger.</p>
+                    <p>You brain and body only need a few focused minutes to grow stronger.</p>
                     <p>KAMIZEN is designed to help you train calmly, not endlessly.</p>
                     <button onclick="localStorage.clear(); location.reload();" style="margin-top:20px;">FINISH SESSION</button>
                 </div>`;
@@ -260,7 +258,6 @@ function pauseSystem() {
     if (state.phase === "intro" || state.phase === "loading") return;
     state.isPaused = true;
     window.speechSynthesis.cancel(); 
-    // Detener visualmente el timer del bloque secundario si está corriendo
     clearInterval(state.timer);
     render(); 
 }
@@ -270,15 +267,12 @@ function resumeSystem() {
     render(); 
 }
 
-// Interrupción inteligente por llamadas o salida de pantalla (Responsive & Mobile Friendly)
 function setupInterruptionListeners() {
-    // Al cambiar de pestaña o minimizar la app en el teléfono
     document.addEventListener("visibilitychange", () => {
         if (document.hidden && !state.isPaused) {
             pauseSystem();
         }
     });
-    // Alternativa para navegadores móviles tradicionales
     window.addEventListener("blur", () => {
         if (!state.isPaused) {
             pauseSystem();
@@ -291,9 +285,17 @@ function setupInterruptionListeners() {
 ========================= */
 function toggleLanguage() {
     state.lang = state.lang === "en" ? "es" : "en";
+    
+    // CORRECCIÓN CLAVE: Forzar la cancelación absoluta de la síntesis y liberar candados de voz
     window.speechSynthesis.cancel();
+    state.speechLocked = false; 
+    
     saveProgress();
     updateGlobalTimerDisplay();
+    
+    // Si hay un timer corriendo de un bloque, se limpia para evitar duplicidad al re-renderizar
+    clearInterval(state.timer); 
+    
     render();
 }
 
@@ -308,6 +310,7 @@ function jumpToBlock() {
         const idx = state.missions.findIndex(m => m.id === idNum);
         if (idx !== -1) {
             window.speechSynthesis.cancel();
+            state.speechLocked = false;
             clearInterval(state.timer);
             state.currentIndex = idx;  
             state.currentBlock = 0;    
@@ -344,6 +347,8 @@ function restartSystem() {
         state.globalTimeLeft = 15 * 60;
         state.phase = "story";
         state.isPaused = false;
+        window.speechSynthesis.cancel();
+        state.speechLocked = false;
         render();
     }
 }
@@ -406,7 +411,6 @@ function render() {
     const app = document.getElementById("app");
     const t = i18n[state.lang];
     
-    // Header de navegación responsive adaptado
     let navHeader = `
         <div style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px; align-items:center;">
             <button onclick="goBack()" style="flex:1; min-width:60px; padding:8px; font-size:11px; background:#334155;">${t.back}</button>
@@ -417,12 +421,11 @@ function render() {
         </div>
     `;
 
-    // Si el sistema está en pausa, muestra la cortina informativa
     if (state.isPaused) {
         app.innerHTML = navHeader + `
             <div class="card center" style="border: 2px dashed #eab308;">
                 <h2 style="color:#eab308; margin:0;">⏸ ${t.paused_banner}</h2>
-                <p style="font-size:0.9rem; margin-top:10px;">Mission paused. Click RESUME or the yellow button to continue right where you left off.</p>
+                <p style="font-size:0.9rem; margin-top:10px;">${state.lang === "es" ? "Misión pausada. Haz clic en REANUDAR para continuar donde quedaste." : "Mission paused. Click RESUME to continue right where you left off."}</p>
                 <button onclick="resumeSystem()" style="background:#eab308; color:#0f172a; margin-top:15px; width:100%;">${t.resume}</button>
             </div>
         `;
@@ -475,7 +478,6 @@ function renderBlock(block, navHeader) {
         </div>
     `;
 
-    // Extracción de textos según idioma del objeto de datos
     const blockTx = state.lang === "es" && block.tx?.es ? block.tx.es : (block.tx?.en || block.tx || "");
     const blockInf = state.lang === "es" && block.inf?.es ? block.inf.es : (block.inf?.en || block.inf || "");
     const blockStory = state.lang === "es" && block.story?.es ? block.story.es : (block.story?.en || "");
@@ -499,7 +501,6 @@ function renderBlock(block, navHeader) {
     }
     if (block.t === "d") {
         html += `<div class="card"><h3>${blockQ}</h3>`;
-        // Opciones admiten arreglo simple o localizado en objeto
         const currentOptions = state.lang === "es" && block.op_es ? block.op_es : block.op;
         currentOptions?.forEach((opt, i) => {
             html += `<div class="answer" id="opt-${i}" onclick="selectAnswer(${i}, ${block.c}, ${JSON.stringify(block.ex).replace(/"/g, '&quot;')}, ${JSON.stringify(block.ex_es).replace(/"/g, '&quot;')})">${opt}</div>`;
@@ -520,6 +521,8 @@ function renderBlock(block, navHeader) {
     app.innerHTML = html;
 
     state.currentTextToNarrate = textToRead;
+    
+    // CORRECCIÓN CLAVE: Al entrar en modos automáticos temporizados, aseguramos el refresco del layout.
     narrate(textToRead, () => {
         if (block.t === "breath_auto" || block.t === "br") {
             startCountdown(24, nextBlock);
@@ -529,7 +532,7 @@ function renderBlock(block, navHeader) {
             startCountdown(24, nextBlock);
             unlockContinue(t.skip, nextBlock);
         } else if (block.t === "d") {
-            // Esperar interacción del usuario
+            // Espera acción
         } else {
             setTimeout(nextBlock, 1500);
         }
@@ -542,13 +545,20 @@ function narrate(text, callback) {
     window.speechSynthesis.cancel();
     
     const speech = new SpeechSynthesisUtterance(text);
-    // Cambia dinámicamente la voz de síntesis al idioma seleccionado
+    
+    // CORRECCIÓN EN LA ASIGNACIÓN DETALLADA DEL IDIOMA
     speech.lang = state.lang === "es" ? "es-ES" : "en-US";
     speech.rate = 0.95;
+    
     speech.onend = () => { 
         state.speechLocked = false; 
         if (callback && !state.isPaused) callback(); 
     };
+    
+    speech.onerror = () => {
+        state.speechLocked = false;
+    };
+    
     window.speechSynthesis.speak(speech);
 }
 
@@ -584,7 +594,6 @@ function selectAnswer(index, correct, explanations, explanationsEs) {
     const isCorrect = index === correct;
     const t = i18n[state.lang];
     
-    // Seleccionar explicación según el idioma disponible
     let explanation = "";
     if (state.lang === "es") {
         explanation = explanationsEs?.[index] || explanations?.[index] || "";
