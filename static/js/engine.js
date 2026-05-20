@@ -336,26 +336,29 @@ function startSystem() {
     render();
 }
 
-// Función limpia para reiniciar la app al terminar los 15 minutos sin perder el progreso de misión
-function resetSessionAfterFinish() {
+// Acción del botón Finish: Limpieza total de ejecución y redirección directa al render inicial manteniendo el punto de corte actual
+function clickFinishAndRestart() {
     window.speechSynthesis.cancel();
     clearInterval(state.timer);
     clearInterval(state.globalTimer);
     
-    // Restablecer marcas de tiempo y métricas para el próximo bloque de 15 minutos
-    state.endTime = null; 
+    // Apagar temporizadores y limpiar reportes viejos del bloque terminado
+    localStorage.removeItem('kamizen_final_report');
+    state.endTime = null;
     state.globalTimeLeft = 15 * 60;
     state.isPaused = false;
+    
+    // Inicializar telemetría limpia para el nuevo ciclo de 15 minutos
     state.telemetry = {
         sessionStart: null, totalPauses: 0, screenDesertions: 0, impulsiveClicks: 0,
         breathingSecondsTarget: 0, breathingSecondsReal: 0, silenceSecondsTarget: 0, silenceSecondsReal: 0,
         decisionTimes: [], correctAnswers: 0, totalQuestions: 0
     };
     
-    // Guardar estado limpio manteniendo currentIndex y currentBlock intactos
+    // Guardar persistencia con los mismos currentIndex y currentBlock intactos (el lugar exacto donde se quedó)
     saveProgress();
     
-    // Dirigir directamente al render inicial del sistema como al principio
+    // Redirige limpiamente al Render inicial de la aplicación
     showIntro();
 }
 
@@ -619,7 +622,7 @@ function finishSession() {
                     <b>AS ADVISORY LOG:</b> These psychometric metrics reflect true behavioral data points. High latency with low impulsivity proves executive processing stability. Frequent focus drops suggest attention-span fatigue.
                 </div>
                 
-                <button onclick="resetSessionAfterFinish()" style="margin-top:20px; width:100%;">FINISH SESSION</button>
+                <button onclick="clickFinishAndRestart()" style="margin-top:20px; width:100%;">FINISH SESSION</button>
             </div>`;
         narrate("Session closed. Your biometric data log is compiled and ready.");
     }
