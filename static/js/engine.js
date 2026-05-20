@@ -233,7 +233,7 @@ function finishSession() {
                 <div class="card center animated fadeIn">
                     <h2>🌟 GREAT JOB TODAY</h2>
                     <p>You completed your KAMIZEN session.</p>
-                    <p>You brain and body only need a few focused minutes to grow stronger.</p>
+                    <p>Your brain and body only need a few focused minutes to grow stronger.</p>
                     <p>KAMIZEN is designed to help you train calmly, not endlessly.</p>
                     <button onclick="localStorage.clear(); location.reload();" style="margin-top:20px;">FINISH SESSION</button>
                 </div>`;
@@ -268,35 +268,49 @@ function resumeSystem() {
 }
 
 function setupInterruptionListeners() {
+    // Al recibir llamadas o si la aplicación pierde foco, se pausa preventivamente para no colgar el hilo del navegador
     document.addEventListener("visibilitychange", () => {
-        if (document.hidden && !state.isPaused) {
+        if (document.hidden && !state.isPaused && state.phase !== "intro" && state.phase !== "loading") {
             pauseSystem();
         }
     });
     window.addEventListener("blur", () => {
-        if (!state.isPaused) {
+        if (!state.isPaused && state.phase !== "intro" && state.phase !== "loading") {
             pauseSystem();
         }
     });
 }
 
 /* =========================
-   CAMBIO DE IDIOMA DINÁMICO
+   CAMBIO DE IDIOMA DINÁMICO REFORZADO
 ========================= */
 function toggleLanguage() {
     state.lang = state.lang === "en" ? "es" : "en";
     
-    // CORRECCIÓN CLAVE: Forzar la cancelación absoluta de la síntesis y liberar candados de voz
+    // 1. Forzar detención absoluta del motor de síntesis de voz
     window.speechSynthesis.cancel();
-    state.speechLocked = false; 
+    state.speechLocked = false;
+    
+    // 2. Limpiar timers activos para evitar colisiones de hilos asíncronos
+    clearInterval(state.timer);
     
     saveProgress();
     updateGlobalTimerDisplay();
     
-    // Si hay un timer corriendo de un bloque, se limpia para evitar duplicidad al re-renderizar
-    clearInterval(state.timer); 
+    const app = document.getElementById("app");
+    const t = i18n[state.lang];
     
-    render();
+    // 3. Renderizar pantalla de limpieza temporal para refrescar buffers locales y del servidor
+    app.innerHTML = `
+        <div class="card center">
+            <p style="font-size: 0.9rem; letter-spacing: 1px; opacity: 0.8;">${state.lang === "es" ? "CAMBIANDO IDIOMA..." : "CHANGING LANGUAGE..."}</p>
+        </div>
+    `;
+
+    // 4. Retardo de seguridad para asegurar el vaciado completo del buffer nativo de voz
+    setTimeout(() => {
+        render();
+    }, 800);
 }
 
 /* =========================
@@ -310,7 +324,6 @@ function jumpToBlock() {
         const idx = state.missions.findIndex(m => m.id === idNum);
         if (idx !== -1) {
             window.speechSynthesis.cancel();
-            state.speechLocked = false;
             clearInterval(state.timer);
             state.currentIndex = idx;  
             state.currentBlock = 0;    
@@ -347,8 +360,6 @@ function restartSystem() {
         state.globalTimeLeft = 15 * 60;
         state.phase = "story";
         state.isPaused = false;
-        window.speechSynthesis.cancel();
-        state.speechLocked = false;
         render();
     }
 }
@@ -425,7 +436,7 @@ function render() {
         app.innerHTML = navHeader + `
             <div class="card center" style="border: 2px dashed #eab308;">
                 <h2 style="color:#eab308; margin:0;">⏸ ${t.paused_banner}</h2>
-                <p style="font-size:0.9rem; margin-top:10px;">${state.lang === "es" ? "Misión pausada. Haz clic en REANUDAR para continuar donde quedaste." : "Mission paused. Click RESUME to continue right where you left off."}</p>
+                <p style="font-size:0.9rem; margin-top:10px;">${state.lang === 'es' ? 'Misión en pausa. Haz clic en REANUDAR o en el botón amarillo para continuar justo donde lo dejaste.' : 'Mission paused. Click RESUME or the yellow button to continue right where you left off.'}</p>
                 <button onclick="resumeSystem()" style="background:#eab308; color:#0f172a; margin-top:15px; width:100%;">${t.resume}</button>
             </div>
         `;
@@ -478,16 +489,16 @@ function renderBlock(block, navHeader) {
         </div>
     `;
 
-    const blockTx = state.lang === "es" && block.tx?.es ? block.tx.es : (block.tx?.en || block.tx || "");
-    const blockInf = state.lang === "es" && block.inf?.es ? block.inf.es : (block.inf?.en || block.inf || "");
-    const blockStory = state.lang === "es" && block.story?.es ? block.story.es : (block.story?.en || "");
-    const blockQ = state.lang === "es" && block.q?.es ? block.q.es : (block.q?.en || "");
+    const blockTx = state.lang === "es" && block.tx_es ? block.tx_es : (state.lang === "es" && block.tx?.es ? block.tx.es : (block.tx?.en || block.tx || ""));
+    const blockInf = state.lang === "es" && block.inf_es ? block.inf_es : (state.lang === "es" && block.inf?.es ? block.inf.es : (block.inf?.en || block.inf || ""));
+    const blockStory = state.lang === "es" && block.story_es ? block.story_es : (state.lang === "es" && block.story?.es ? block.story.es : (block.story?.en || block.story || ""));
+    const blockQ = state.lang === "es" && block.q_es ? block.q_es : (state.lang === "es" && block.q?.es ? block.q.es : (block.q?.en || block.q || ""));
 
     if (block.t === "v" || block.t === "h") { 
         html += `<div class="card"><h2>${blockTx}</h2></div>`; 
         textToRead = blockTx; 
     }
-    if (block.story) { 
+    if (block.story || (block.story_es && state.lang === "es")) { 
         html += `<div class="card"><p>${blockStory}</p></div>`; 
         textToRead = blockStory; 
     }
@@ -521,8 +532,6 @@ function renderBlock(block, navHeader) {
     app.innerHTML = html;
 
     state.currentTextToNarrate = textToRead;
-    
-    // CORRECCIÓN CLAVE: Al entrar en modos automáticos temporizados, aseguramos el refresco del layout.
     narrate(textToRead, () => {
         if (block.t === "breath_auto" || block.t === "br") {
             startCountdown(24, nextBlock);
@@ -532,7 +541,7 @@ function renderBlock(block, navHeader) {
             startCountdown(24, nextBlock);
             unlockContinue(t.skip, nextBlock);
         } else if (block.t === "d") {
-            // Espera acción
+            // Esperar interacción
         } else {
             setTimeout(nextBlock, 1500);
         }
@@ -545,8 +554,7 @@ function narrate(text, callback) {
     window.speechSynthesis.cancel();
     
     const speech = new SpeechSynthesisUtterance(text);
-    
-    // CORRECCIÓN EN LA ASIGNACIÓN DETALLADA DEL IDIOMA
+    // Asignación explícita de idioma según el estado actual configurado
     speech.lang = state.lang === "es" ? "es-ES" : "en-US";
     speech.rate = 0.95;
     
@@ -558,7 +566,7 @@ function narrate(text, callback) {
     speech.onerror = () => {
         state.speechLocked = false;
     };
-    
+
     window.speechSynthesis.speak(speech);
 }
 
