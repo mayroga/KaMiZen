@@ -66,7 +66,7 @@ async function loadAllData() {
         // Asegurar ordenamiento por ID para consistencia 1-63
         state.stories = Array.isArray(storiesData.stories) ? storiesData.stories.sort((a, b) => a.id - b.id) : [];
         state.missions = Array.isArray(missionsData.missions) ? missionsData.missions.sort((a, b) => a.id - b.id) : [];
-       
+        
         state.initialized = true;
     } catch (err) {
         console.error(err);
@@ -79,14 +79,25 @@ async function loadAllData() {
 ========================= */
 function startMasterTimer() {
     state.sessionStartTime = Date.now();
-    setTimeout(() => {
-        finishSession();
-    }, 15 * 60 * 1000);
+    
+    // Configura un intervalo de verificación cada segundo para garantizar el corte exacto
+    const masterInterval = setInterval(() => {
+        const elapsed = Date.now() - state.sessionStartTime;
+        if (elapsed >= 15 * 60 * 1000) {
+            clearInterval(masterInterval);
+            finishSession();
+        }
+    }, 1000);
 }
 
 function finishSession() {
     window.speechSynthesis.cancel();
     clearInterval(state.timer);
+    
+    // Forzar bloqueo de interfaz y desvío de funciones de renderizado secundarias
+    state.initialized = false;
+    render = function() { return; };
+    renderBlock = function() { return; };
     
     // Obtenemos el ID de la misión para el reporte PDF
     const currentMissionId = state.missions[state.currentIndex]?.id || 0;
@@ -107,12 +118,12 @@ function finishSession() {
             `<p>KAMIZEN is designed to help you train calmly, not endlessly.</p>`,
             `<p>Now it is time to:</p>`,
             `<ul style="text-align:left; display:inline-block;">`,
-            `   <li>✔ Now you are ready to start your class</li>`,
-            `   <li>✔ Rest your mind</li>`,
-            `   <li>✔ Go play</li>`,
-            `   <li>✔ Talk with your family</li>`,
-            `   <li>✔ Explore the real world</li>`,
-            `   <li>✔ Come back tomorrow stronger</li>`,
+            `    <li>✔ Now you are ready to start your class</li>`,
+            `    <li>✔ Rest your mind</li>`,
+            `    <li>✔ Go play</li>`,
+            `    <li>✔ Talk with your family</li>`,
+            `    <li>✔ Explore the real world</li>`,
+            `    <li>✔ Come back tomorrow stronger</li>`,
             `</ul>`,
             `<p>Small daily training creates powerful minds. See you next session, warrior. 🛡️</p>`
         ];
