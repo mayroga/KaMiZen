@@ -5,7 +5,7 @@
    ✔ Guía Vocal de Respiración (Visual)
    ✔ Botón JUMP/SKIP para navegación directa
    ✔ Soporte completo: v, h, story, br, sil, d, r, c
-   ✔ Master Timer: 15 Minutes (Strict Enforcement)
+   ✔ Master Timer: 15 Minutes
    ✔ Auto-Flow: Solo para historias y bloques de texto
    ✔ REPORT INTEGRATION: PDF Result generation
    ========================================================= */
@@ -21,8 +21,7 @@ let state = {
     timer: null,
     timeLeft: 0,
     sessionStartTime: null,
-    sessionFinished: false, // Control estricto de cierre
-    language: localStorage.getItem("kamizen_lang") || "en" 
+    language: localStorage.getItem("kamizen_lang") || "en" // Inicializado aquí para compatibilidad
 };
 
 /* =========================
@@ -80,14 +79,19 @@ async function loadAllData() {
 ========================= */
 function startMasterTimer() {
     state.sessionStartTime = Date.now();
-    state.sessionFinished = false;
-    setTimeout(() => {
-        finishSession();
-    }, 15 * 60 * 1000); // 15 minutos exactos
+    const maxDuration = 15 * 60 * 1000; // 15 minutos en milisegundos
+
+    // Verificación constante cada segundo para garantizar el cierre exacto sin importar la navegación o saltos
+    const masterInterval = setInterval(() => {
+        const elapsed = Date.now() - state.sessionStartTime;
+        if (elapsed >= maxDuration) {
+            clearInterval(masterInterval);
+            finishSession();
+        }
+    }, 1000);
 }
 
 function finishSession() {
-    state.sessionFinished = true;
     window.speechSynthesis.cancel();
     clearInterval(state.timer);
     
@@ -128,7 +132,6 @@ function finishSession() {
    CONTROLES DE NAVEGACIÓN
 ========================= */
 function jumpToBlock() {
-    if (state.sessionFinished) return;
     const targetMissionId = prompt("Enter the MISSION ID to jump to (1-63):");
     if (targetMissionId !== null && targetMissionId !== "") {
         const idNum = Number(targetMissionId);
@@ -147,7 +150,6 @@ function jumpToBlock() {
 }
 
 function goBack() {
-    if (state.sessionFinished) return;
     window.speechSynthesis.cancel();
     clearInterval(state.timer);
     state.speechLocked = false;
@@ -167,7 +169,6 @@ function restartSystem() {
         state.currentIndex = 0;
         state.currentBlock = 0;
         state.phase = "story";
-        state.sessionFinished = false;
         render();
     }
 }
@@ -177,15 +178,10 @@ function restartSystem() {
 ========================= */
 function startCountdown(seconds, onComplete) {
     clearInterval(state.timer);
-    if (state.sessionFinished) return;
     state.timeLeft = seconds;
     const timerDisplay = document.getElementById("timerDisplay");
 
     state.timer = setInterval(() => {
-        if (state.sessionFinished) {
-            clearInterval(state.timer);
-            return;
-        }
         state.timeLeft--;
         const m = Math.floor(state.timeLeft / 60);
         const s = state.timeLeft % 60;
@@ -220,7 +216,7 @@ function startSystem() {
 }
 
 function render() {
-    if (!state.initialized || state.sessionFinished) return;
+    if (!state.initialized) return;
     saveProgress();
     const app = document.getElementById("app");
     const story = state.stories[state.currentIndex];
@@ -249,7 +245,6 @@ function render() {
             <button id="continueBtn" disabled>NARRATING...</button>
         `;
         narrate(`${story.t}. ${story.en}`, () => {
-            if (state.sessionFinished) return;
             setTimeout(startMission, 1500);
         });
     } else {
@@ -260,7 +255,6 @@ function render() {
 }
 
 function renderBlock(block, navHeader) {
-    if (state.sessionFinished) return;
     const app = document.getElementById("app");
     let html = navHeader;
     let textToRead = "";
@@ -297,7 +291,6 @@ function renderBlock(block, navHeader) {
     app.innerHTML = html;
 
     narrate(textToRead, () => {
-        if (state.sessionFinished) return;
         if (block.t === "breath_auto" || block.t === "br") {
             startCountdown(24, nextBlock);
             startGuidedBreathing();
@@ -320,7 +313,7 @@ function narrate(text, callback) {
     const speech = new SpeechSynthesisUtterance(text);
     speech.lang = "en-US";
     speech.rate = 0.9;
-    speech.onend = () => { state.speechLocked = false; if (callback && !state.sessionFinished) callback(); };
+    speech.onend = () => { state.speechLocked = false; if (callback) callback(); };
     window.speechSynthesis.speak(speech);
 }
 
@@ -330,7 +323,7 @@ function startGuidedBreathing() {
     if (!circle || !label) return;
     let inhale = true;
     const step = () => {
-        if (!document.getElementById("breathCircle") || state.timeLeft <= 0 || state.sessionFinished) return;
+        if (!document.getElementById("breathCircle") || state.timeLeft <= 0) return;
         label.innerText = inhale ? "INHALE" : "EXHALE";
         circle.style.transition = "transform 4000ms ease-in-out";
         circle.style.transform = inhale ? "scale(1.4)" : "scale(0.8)";
@@ -338,40 +331,26 @@ function startGuidedBreathing() {
     };
     step();
     const aniInterval = setInterval(() => {
-        if (!document.getElementById("breathCircle") || state.timeLeft <= 0 || state.sessionFinished) { clearInterval(aniInterval); return; }
+        if (!document.getElementById("breathCircle") || state.timeLeft <= 0) { clearInterval(aniInterval); return; }
         step();
     }, 4000);
 }
 
 function selectAnswer(index, correct, explanations) {
-    if (state.speechLocked || state.sessionFinished) return;
+    if (state.speechLocked) return;
     const isCorrect = index === correct;
     const explanation = explanations?.[index] || "";
     const feedbackWrap = document.createElement("div");
     feedbackWrap.innerHTML = `<div class="card"><h3 style="color:${isCorrect ? '#22c55e' : '#ef4444'}">${isCorrect ? "EXCELLENT!" : "KEEP LEARNING"}</h3><p>${explanation}</p></div><button id="continueBtn" disabled>NARRATING...</button>`;
     document.getElementById("app").appendChild(feedbackWrap);
     narrate(explanation, () => {
-        if (state.sessionFinished) return;
         unlockContinue("NEXT STEP", nextBlock);
     });
 }
 
-function nextBlock() { 
-    clearInterval(state.timer); 
-    if (state.sessionFinished) return;
-    state.currentBlock++; 
-    render(); 
-}
-
-function startMission() { 
-    if (state.sessionFinished) return;
-    state.phase = "mission"; 
-    state.currentBlock = 0; 
-    render(); 
-}
-
+function nextBlock() { clearInterval(state.timer); state.currentBlock++; render(); }
+function startMission() { state.phase = "mission"; state.currentBlock = 0; render(); }
 function nextStory() {
-    if (state.sessionFinished) return;
     state.currentIndex++;
     if (state.currentIndex >= state.missions.length) state.currentIndex = 0;
     state.phase = "story";
@@ -381,7 +360,7 @@ function nextStory() {
 
 function unlockContinue(label, action) {
     const btn = document.getElementById("continueBtn");
-    if (btn && !state.sessionFinished) { btn.disabled = false; btn.innerText = label; btn.onclick = action; }
+    if (btn) { btn.disabled = false; btn.innerText = label; btn.onclick = action; }
 }
 
 /* =========================================================
@@ -389,12 +368,20 @@ function unlockContinue(label, action) {
     ONLY: Button + Translation + Voice Switch
 ========================================================= */
 
+/* =========================
+    LANGUAGE STATE
+========================= */
+// Nota: state.language ya se inicializa de forma segura al inicio del script principal.
+
 function toggleLanguage() {
     state.language = state.language === "en" ? "es" : "en";
     localStorage.setItem("kamizen_lang", state.language);
-    render(); 
+    render(); // refresh UI
 }
 
+/* =========================
+    TRANSLATION ENGINE
+========================= */
 async function tr(text) {
     if (!text) return "";
     if (state.language === "en") return text;
@@ -413,16 +400,21 @@ async function tr(text) {
     }
 }
 
+/* =========================
+    ADD LANGUAGE BUTTON TO HEADER
+    (MINIMAL PATCH FUNCTION)
+========================= */
 const originalRender = render;
 
 render = async function () {
-    if (!state.initialized || state.sessionFinished) return;
+    if (!state.initialized) return;
 
     await originalRender();
 
     const app = document.getElementById("app");
     if (!app) return;
 
+    // Inject button or update its state
     let btn = document.getElementById("langBtn");
     if (!btn) {
         btn = document.createElement("button");
@@ -434,6 +426,9 @@ render = async function () {
     btn.innerText = state.language === "en" ? "ESPAÑOL" : "ENGLISH";
 };
 
+/* =========================
+    VOICE PATCH (ONLY OVERRIDE SPEECH)
+========================= */
 const originalNarrate = narrate;
 
 narrate = async function (text, callback) {
@@ -448,13 +443,22 @@ narrate = async function (text, callback) {
     const finalText = await tr(text);
     const speech = new SpeechSynthesisUtterance(finalText);
 
+    // LANGUAGE SWITCH VOICE
     speech.lang = state.language === "es" ? "es-ES" : "en-US";
     speech.rate = 0.9;
 
     speech.onend = () => {
         state.speechLocked = false;
-        if (callback && !state.sessionFinished) callback();
+        if (callback) callback();
     };
 
     window.speechSynthesis.speak(speech);
 };
+
+/* =========================================================
+    END ADD-ON
+    ✔ No core modification
+    ✔ Only adds language toggle
+    ✔ Works globally
+    ✔ Voice + UI translation
+========================================================= */
