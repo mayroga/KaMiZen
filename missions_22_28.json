@@ -1,330 +1,465 @@
 {
-"sys":"KAMIZEN LIFE SYSTEM",
-"ch":4,
-"rng":"22-28",
-
-"ui":{"fw":["VISION","CALM","CONTROL","FOCUS","TRUTH","AWARENESS","SAFETY","ACTION"]},
-
-"rules":[
-"Obs>React",
-"Calm>Impulse",
-"Awareness=Safety",
-"Truth=Protection",
-"Focus>Noise",
-"Breath=Control"
-],
-
-"missions":[
-
-{
-"id":22,
-"cat":"situational_awareness",
-"b":[
-
-{"t":"v","tx":{"en":"MISSION 22: SITUATIONAL AWARENESS"}},
-{"t":"h","tx":{"en":"Danger is usually preceded by patterns"}},
-
-{"story":{"en":"Most problems are not surprises. They are ignored signals that grow over time."}},
-
-{"t":"breath_auto","d":25,
-"tx":{"en":"Breathe slowly and scan your environment mentally"},
-"inf":{"en":"This activates sustained attention networks and reduces automatic behavior"}
-},
-
-{"t":"d","q":{"en":"What increases your real safety in public places?"},
-"op":["Ignoring surroundings","Observing people and exits","Looking only at phone","Walking distracted"],
-"c":1,
-"ex":[
-"Ignoring = missed signals",
-"Observation = early detection",
-"Phone focus = reduced awareness",
-"Distraction = delayed reaction"
-]},
-
-{"t":"d","q":{"en":"What is a hidden risk signal?"},
-"op":["Calm environment awareness","Unusual discomfort feeling","Perfect silence always","Familiar routine only"],
-"c":1,
-"ex":[
-"Calm awareness = normal state",
-"Discomfort signal = intuition warning",
-"Silence is not always risk",
-"Routine alone does not detect change"
-]},
-
-{"t":"r","tx":"+Awareness","p":25},
-
-{"t":"sil","d":40,
-"tx":{"en":"Observe without reacting or judging"},
-"inf":{"en":"Builds environmental mapping and threat detection accuracy"}
-},
-
-{"t":"breath_auto","d":25,
-"tx":{"en":"4-4 breathing balance"},
-"inf":{"en":"Regulates autonomic nervous system for clarity"}
-}
-
-]
-},
-
-{
-"id":23,
-"cat":"emotional_regulation",
-"b":[
-
-{"t":"v","tx":{"en":"MISSION 23: EMOTIONAL REGULATION"}},
-{"t":"h","tx":{"en":"Emotion is energy, not instruction"}},
-
-{"story":{"en":"Emotion rises automatically. Regulation decides outcome."}},
-
-{"t":"breath_auto","d":25,
-"tx":{"en":"Inhale slowly... exhale longer"},
-"inf":{"en":"Long exhale activates parasympathetic calming response"}
-},
-
-{"t":"d","q":{"en":"What creates emotional mastery?"},
-"op":["React instantly","Pause and regulate","Suppress everything","Escalate emotion"],
-"c":1,
-"ex":[
-"Instant reaction = loss of control",
-"Pause + regulation = mastery",
-"Suppression = internal tension",
-"Escalation = emotional overload"
-]},
-
-{"t":"d","q":{"en":"When anger appears, what is first useful step?"},
-"op":["Act immediately","Name the emotion silently","Shout","Ignore completely"],
-"c":1,
-"ex":[
-"Immediate action = impulsive error",
-"Naming emotion = cognitive control",
-"Shouting = escalation",
-"Ignoring = unresolved stress"
-]},
-
-{"t":"r","tx":"+Control","p":25},
-
-{"t":"sil","d":50,
-"tx":{"en":"Watch emotion like an observer, not a participant"},
-"inf":{"en":"Separates identity from emotional state"}
-},
-
-{"t":"breath_auto","d":25,
-"tx":{"en":"Inhale calm... exhale intensity"},
-"inf":{"en":"Stabilizes emotional reactivity"}
-}
-
-]
-},
-
-{
-"id":24,
-"cat":"decision_systems",
-"b":[
-
-{"t":"v","tx":{"en":"MISSION 24: DECISION SYSTEMS"}},
-{"t":"h","tx":{"en":"Fast decisions without clarity create errors"}},
-
-{"story":{"en":"Good decisions come from structured thinking, not emotional spikes."}},
-
-{"t":"breath_auto","d":25,
-"tx":{"en":"Slow inhale... slow exhale"},
-"inf":{"en":"Improves prefrontal cortex activation for decision making"}
-},
-
-{"t":"d","q":{"en":"What produces best decision?"},
-"op":["Rush immediately","Pause and evaluate","Random choice","Avoid deciding"],
-"c":1,
-"ex":[
-"Rush = low accuracy",
-"Pause = structured thinking",
-"Random = no control",
-"Avoidance = no progress"
-]},
-
-{"t":"d","q":{"en":"What improves complex thinking?"},
-"op":["Multitasking","Single focused analysis","Distracted thinking","Emotional reaction"],
-"c":1,
-"ex":[
-"Multitasking = fragmentation",
-"Focus = deep processing",
-"Distraction = reduced accuracy",
-"Emotion = bias increase"
-]},
-
-{"t":"r","tx":"+Clarity","p":25},
-
-{"t":"sil","d":60,
-"tx":{"en":"Allow the mind to settle before choosing"},
-"inf":{"en":"Reduces cognitive noise and improves reasoning"}
-},
-
-{"t":"breath_auto","d":25,
-"tx":{"en":"4-6 breathing rhythm"},
-"inf":{"en":"Extends exhale for decision stability"}
-}
-
-]
-},
-
-{
-"id":25,
-"cat":"learning_systems",
-"b":[
-
-{"t":"v","tx":{"en":"MISSION 25: LEARNING FROM ERRORS"}},
-{"t":"h","tx":{"en":"Mistakes are feedback, not identity"}},
-
-{"story":{"en":"Every mistake contains information for adaptation."}},
-
-{"t":"breath_auto","d":25,
-"tx":{"en":"Breathe slowly and neutralize judgment"},
-"inf":{"en":"Reduces self-criticism and improves learning retention"}
-},
-
-{"t":"d","q":{"en":"What transforms mistakes into growth?"},
-"op":["Ignore them","Analyze and learn","Hide them","Blame others"],
-"c":1,
-"ex":[
-"Ignore = repetition",
-"Learning = adaptation",
-"Hiding = stagnation",
-"Blame = no ownership"
-]},
-
-{"t":"r","tx":"+Learning","p":25},
-
-{"t":"sil","d":75,
-"tx":{"en":"Reflect without labeling yourself"},
-"inf":{"en":"Builds cognitive flexibility and resilience"}
-},
-
-{"t":"breath_auto","d":25,
-"tx":{"en":"Calm learning breath"},
-"inf":{"en":"Supports memory consolidation"}
-}
-
-]
-},
-
-{
-"id":26,
-"cat":"cognitive_structure",
-"b":[
-
-{"t":"v","tx":{"en":"MISSION 26: MIND STRUCTURE"}},
-{"t":"h","tx":{"en":"Chaos is unorganized information"}},
-
-{"story":{"en":"A trained mind organizes chaos into patterns."}},
-
-{"t":"breath_auto","d":25,
-"tx":{"en":"Inhale clarity... exhale mental noise"},
-"inf":{"en":"Improves executive control and reduces overload"}
-},
-
-{"t":"d","q":{"en":"What stabilizes thinking?"},
-"op":["React immediately","Organize thoughts","Ignore everything","Overthink"],
-"c":1,
-"ex":[
-"Reaction = instability",
-"Organization = clarity",
-"Ignoring = unresolved signals",
-"Overthinking = overload loop"
-]},
-
-{"t":"r","tx":"+Clarity","p":25},
-
-{"t":"sil","d":90,
-"tx":{"en":"Reset mental space without judgment"},
-"inf":{"en":"Reduces cognitive fatigue and improves clarity"}
-},
-
-{"t":"breath_auto","d":25,
-"tx":{"en":"4-6 stabilization breathing"},
-"inf":{"en":"Balances cognitive and emotional systems"}
-}
-
-]
-},
-
-{
-"id":27,
-"cat":"stress_resilience",
-"b":[
-
-{"t":"v","tx":{"en":"MISSION 27: CALM UNDER PRESSURE"}},
-{"t":"h","tx":{"en":"Calm is control under stress"}},
-
-{"story":{"en":"In pressure, the calm system outperforms the reactive system."}},
-
-{"t":"breath_auto","d":25,
-"tx":{"en":"Deep slow breathing into the abdomen"},
-"inf":{"en":"Activates parasympathetic system and reduces stress response"}
-},
-
-{"t":"d","q":{"en":"What is strongest response under stress?"},
-"op":["Panic","Stay calm","React aggressively","Escape blindly"],
-"c":1,
-"ex":[
-"Panic = loss of control",
-"Calm = stable reasoning",
-"Aggression = escalation",
-"Blind escape = reduced awareness"
-]},
-
-{"t":"r","tx":"+Calm","p":25},
-
-{"t":"sil","d":120,
-"tx":{"en":"Endure pressure without reacting"},
-"inf":{"en":"Builds stress tolerance and emotional stability"}
-},
-
-{"t":"breath_auto","d":25,
-"tx":{"en":"Stability breathing cycle"},
-"inf":{"en":"Reduces heart rate variability under stress"}
-}
-
-]
-},
-
-{
-"id":28,
-"cat":"metacognition",
-"b":[
-
-{"t":"v","tx":{"en":"MISSION 28: SYSTEM AWARENESS"}},
-{"t":"h","tx":{"en":"You are not your thoughts — you observe them"}},
-
-{"story":{"en":"Awareness creates distance between stimulus and response."}},
-
-{"t":"breath_auto","d":25,
-"tx":{"en":"Observe breath and thoughts simultaneously"},
-"inf":{"en":"Enhances metacognitive monitoring systems"}
-},
-
-{"t":"d","q":{"en":"What creates mastery?"},
-"op":["React fast","Observe patterns","Ignore reality","Act randomly"],
-"c":1,
-"ex":[
-"Reaction = low control",
-"Observation = mastery",
-"Ignoring = blindness",
-"Randomness = chaos"
-]},
-
-{"t":"r","tx":"+Vision","p":30},
-
-{"t":"sil","d":180,
-"tx":{"en":"Observe thoughts without attachment"},
-"inf":{"en":"Develops metacognitive awareness and self-regulation"}
-},
-
-{"t":"breath_auto","d":25,
-"tx":{"en":"Final integration breath"},
-"inf":{"en":"Restores full system balance"}
-}
-
-]
-}
-
-]
+  "sys":"KAMIZEN LIFE SYSTEM",
+  "ch":4,
+  "rng":"22-28",
+  "ui":{
+    "fw":[
+      "VISION",
+      "CALM",
+      "CONTROL",
+      "FOCUS",
+      "TRUTH",
+      "AWARENESS",
+      "SAFETY",
+      "ACTION"
+    ]
+  },
+  "rules":[
+    "Obs>React",
+    "Calm>Impulse",
+    "Awareness=Safety",
+    "Truth=Protection",
+    "Focus>Noise",
+    "Breath=Control"
+  ],
+  "missions":[
+    {
+      "id":22,
+      "cat":"situational_awareness",
+      "b":[
+        {"t":"v","tx":{"en":"MISSION 22: SITUATIONAL AWARENESS"}},
+        {"t":"h","tx":{"en":"Danger is usually preceded by patterns"}},
+
+        {"story":{"en":"Most problems are not surprises. They are ignored signals that grow over time."}},
+        {
+          "t":"breath_auto",
+          "d":25,
+          "tx":{"en":"Breathe slowly and scan your environment mentally"},
+          "inf":{"en":"This activates sustained attention networks and reduces automatic behavior"}
+        },
+        {
+          "t":"d",
+          "q":{"en":"What increases your real safety in public places?"},
+          "op":[
+            "Ignoring surroundings",
+            "Observing people and exits",
+            "Looking only at phone",
+            "Walking distracted"
+          ],
+          "c":1,
+          "ex":[
+            "Ignoring = missed signals",
+            "Observation = early detection",
+            "Phone focus = reduced awareness",
+            "Distraction = delayed reaction"
+          ]
+        },
+        {
+          "t":"d",
+          "q":{"en":"What is a hidden risk signal?"},
+          "op":[
+            "Calm environment awareness",
+            "Unusual discomfort feeling",
+            "Perfect silence always",
+            "Familiar routine only"
+          ],
+          "c":1,
+          "ex":[
+            "Calm awareness = normal state",
+            "Discomfort signal = intuition warning",
+            "Silence is not always risk",
+            "Routine alone does not detect change"
+          ]
+        },
+        {"t":"r","tx":"+Awareness","p":25},
+        {
+          "t":"sil",
+          "d":40,
+          "tx":{"en":"Observe without reacting or judging"},
+          "inf":{"en":"Builds environmental mapping and threat detection accuracy"}
+        },
+        {
+          "t":"breath_auto",
+          "d":25,
+          "tx":{"en":"4-4 breathing balance"},
+          "inf":{"en":"Regulates autonomic nervous system for clarity"}
+        }
+      ]
+    },
+    {
+      "id":23,
+      "cat":"emotional_regulation",
+      "b":[
+
+        {"t":"v","tx":{"en":"MISSION 23: EMOTIONAL REGULATION"}},
+        {"t":"h","tx":{"en":"Emotion is energy, not instruction"}},
+        {"story":{"en":"Emotion rises automatically. Regulation decides outcome."}},
+        {
+          "t":"breath_auto",
+          "d":25,
+          "tx":{"en":"Inhale slowly... exhale longer"},
+          "inf":{"en":"Long exhale activates parasympathetic calming response"}
+        },
+        {
+          "t":"d",
+          "q":{"en":"What creates emotional mastery?"},
+          "op":[
+            "React instantly",
+            "Pause and regulate",
+            "Suppress everything",
+            "Escalate emotion"
+          ],
+          "c":1,
+          "ex":[
+            "Instant reaction = loss of control",
+            "Pause + regulation = mastery",
+            "Suppression = internal tension",
+            "Escalation = emotional overload"
+          ]
+        },
+        {
+          "t":"d",
+          "q":{"en":"When anger appears, what is first useful step?"},
+          "op":[
+            "Act immediately",
+            "Name the emotion silently",
+            "Shout",
+            "Ignore completely"
+          ],
+          "c":1,
+          "ex":[
+            "Immediate action = impulsive error",
+            "Naming emotion = cognitive control",
+            "Shouting = escalation",
+            "Ignoring = unresolved stress"
+          ]
+        },
+        {"t":"r","tx":"+Control","p":25},
+        {
+          "t":"sil",
+          "d":50,
+          "tx":{"en":"Watch emotion like an observer, not a participant"},
+          "inf":{"en":"Separates identity from emotional state"}
+        },
+        {
+          "t":"breath_auto",
+          "d":25,
+          "tx":{"en":"Inhale calm... exhale intensity"},
+          "inf":{"en":"Stabilizes emotional reactivity"}
+        }
+      ]
+    },
+    {
+      "id":24,
+      "cat":"decision_systems",
+      "b":[
+        {"t":"v","tx":{"en":"MISSION 24: DECISION SYSTEMS"}},
+        {"t":"h","tx":{"en":"Fast decisions without clarity create errors"}},
+
+        {"story":{"en":"Good decisions come from structured thinking, not emotional spikes."}},
+        {
+          "t":"breath_auto",
+          "d":25,
+          "tx":{"en":"Slow inhale... slow exhale"},
+          "inf":{"en":"Improves prefrontal cortex activation for decision making"}
+        },
+        {
+          "t":"d",
+          "q":{"en":"What produces best decision?"},
+          "op":[
+            "Rush immediately",
+            "Pause and evaluate",
+            "Random choice",
+            "Avoid deciding"
+          ],
+          "c":1,
+          "ex":[
+            "Rush = low accuracy",
+            "Pause = structured thinking",
+            "Random = no control",
+            "Avoidance = no progress"
+          ]
+        },
+        {
+          "t":"d",
+          "q":{"en":"What improves complex thinking?"},
+          "op":[
+            "Multitasking",
+            "Single focused analysis",
+            "Distracted thinking",
+            "Emotional reaction"
+          ],
+          "c":1,
+          "ex":[
+            "Multitasking = fragmentation",
+            "Focus = deep processing",
+            "Distraction = reduced accuracy",
+            "Emotion = bias increase"
+          ]
+        },
+        {"t":"r","tx":"+Clarity","p":25},
+        {
+          "t":"sil",
+          "d":60,
+          "tx":{"en":"Allow the mind to settle before choosing"},
+          "inf":{"en":"Reduces cognitive noise and improves reasoning"}
+        },
+        {
+          "t":"breath_auto",
+          "d":25,
+          "tx":{"en":"4-6 breathing rhythm"},
+          "inf":{"en":"Extends exhale for decision stability"}
+        }
+      ]
+    },
+    {
+      "id":25,
+      "cat":"learning_systems",
+      "b":[
+        {"t":"v","tx":{"en":"MISSION 25: LEARNING FROM ERRORS"}},
+        {"t":"h","tx":{"en":"Mistakes are feedback, not identity"}},
+        {"story":{"en":"Every mistake contains information for adaptation."}},
+        {
+          "t":"breath_auto",
+          "d":25,
+          "tx":{"en":"Breathe slowly and neutralize judgment"},
+          "inf":{"en":"Reduces self-criticism and improves learning retention"}
+        },
+        {
+          "t":"d",
+          "q":{"en":"What transforms mistakes into growth?"},
+          "op":[
+            "Ignore them",
+            "Analyze and learn",
+            "Hide them",
+            "Blame others"
+          ],
+          "c":1,
+          "ex":[
+            "Ignore = repetition",
+            "Learning = adaptation",
+            "Hiding = stagnation",
+            "Blame = no ownership"
+          ]
+        },
+        {
+          "t":"d",
+          "q":{"en":"What weakens learning after failure?"},
+          "op":[
+            "Reflection",
+            "Avoiding responsibility",
+            "Studying mistakes",
+            "Trying again calmly"
+          ],
+          "c":1,
+          "ex":[
+            "Reflection improves adaptation",
+            "Avoidance prevents growth",
+            "Studying mistakes builds skill",
+            "Trying again develops resilience"
+          ]
+        },
+        {"t":"r","tx":"+Learning","p":25},
+        {
+          "t":"sil",
+          "d":75,
+          "tx":{"en":"Reflect without labeling yourself"},
+          "inf":{"en":"Builds cognitive flexibility and resilience"}
+        },
+        {
+          "t":"breath_auto",
+          "d":25,
+          "tx":{"en":"Calm learning breath"},
+          "inf":{"en":"Supports memory consolidation"}
+        }
+      ]
+    },
+    {
+      "id":26,
+      "cat":"cognitive_structure",
+      "b":[
+        {"t":"v","tx":{"en":"MISSION 26: MIND STRUCTURE"}},
+        {"t":"h","tx":{"en":"Chaos is unorganized information"}},
+        {"story":{"en":"A trained mind organizes chaos into patterns."}},
+        {
+          "t":"breath_auto",
+          "d":25,
+          "tx":{"en":"Inhale clarity... exhale mental noise"},
+          "inf":{"en":"Improves executive control and reduces overload"}
+        },
+        {
+          "t":"d",
+          "q":{"en":"What stabilizes thinking?"},
+          "op":[
+            "React immediately",
+            "Organize thoughts",
+            "Ignore everything",
+            "Overthink"
+          ],
+          "c":1,
+          "ex":[
+            "Reaction = instability",
+            "Organization = clarity",
+            "Ignoring = unresolved signals",
+            "Overthinking = overload loop"
+          ]
+        },
+        {
+          "t":"d",
+          "q":{"en":"What increases mental overload?"},
+          "op":[
+            "Structured planning",
+            "Chaotic multitasking",
+            "Focused attention",
+            "Clear priorities"
+          ],
+          "c":1,
+          "ex":[
+            "Planning creates order",
+            "Chaos fragments cognition",
+            "Focus improves efficiency",
+            "Priorities reduce confusion"
+          ]
+        },
+        {"t":"r","tx":"+Clarity","p":25},
+        {
+          "t":"sil",
+          "d":90,
+          "tx":{"en":"Reset mental space without judgment"},
+          "inf":{"en":"Reduces cognitive fatigue and improves clarity"}
+        },
+        {
+          "t":"breath_auto",
+          "d":25,
+          "tx":{"en":"4-6 stabilization breathing"},
+          "inf":{"en":"Balances cognitive and emotional systems"}
+        }
+      ]
+    },
+    {
+      "id":27,
+      "cat":"stress_resilience",
+      "b":[
+        {"t":"v","tx":{"en":"MISSION 27: CALM UNDER PRESSURE"}},
+        {"t":"h","tx":{"en":"Calm is control under stress"}},
+        {"story":{"en":"In pressure, the calm system outperforms the reactive system."}},
+        {
+          "t":"breath_auto",
+          "d":25,
+          "tx":{"en":"Deep slow breathing into the abdomen"},
+          "inf":{"en":"Activates parasympathetic system and reduces stress response"}
+        },
+        {
+          "t":"d",
+          "q":{"en":"What is strongest response under stress?"},
+          "op":[
+            "Panic",
+            "Stay calm",
+            "React aggressively",
+            "Escape blindly"
+          ],
+          "c":1,
+          "ex":[
+            "Panic = loss of control",
+            "Calm = stable reasoning",
+            "Aggression = escalation",
+            "Blind escape = reduced awareness"
+          ]
+        },
+        {
+          "t":"d",
+          "q":{"en":"What improves resilience during pressure?"},
+          "op":[
+            "Controlled breathing",
+            "Impulsive reaction",
+            "Mental shutdown",
+            "Fear escalation"
+          ],
+          "c":0,
+          "ex":[
+            "Breathing stabilizes nervous system response",
+            "Impulsivity reduces control",
+            "Shutdown blocks reasoning",
+            "Escalation increases stress load"
+          ]
+        },
+        {"t":"r","tx":"+Calm","p":25},
+        {
+          "t":"sil",
+          "d":120,
+          "tx":{"en":"Endure pressure without reacting"},
+          "inf":{"en":"Builds stress tolerance and emotional stability"}
+        },
+        {
+          "t":"breath_auto",
+          "d":25,
+          "tx":{"en":"Stability breathing cycle"},
+          "inf":{"en":"Reduces heart rate variability under stress"}
+        }
+
+      ]
+    },
+    {
+      "id":28,
+      "cat":"metacognition",
+      "b":[
+        {"t":"v","tx":{"en":"MISSION 28: SYSTEM AWARENESS"}},
+        {"t":"h","tx":{"en":"You are not your thoughts — you observe them"}},
+        {"story":{"en":"Awareness creates distance between stimulus and response."}},
+        {
+          "t":"breath_auto",
+          "d":25,
+          "tx":{"en":"Observe breath and thoughts simultaneously"},
+          "inf":{"en":"Enhances metacognitive monitoring systems"}
+        },
+        {
+          "t":"d",
+          "q":{"en":"What creates mastery?"},
+          "op":[
+            "React fast",
+            "Observe patterns",
+            "Ignore reality",
+            "Act randomly"
+          ],
+          "c":1,
+          "ex":[
+            "Reaction = low control",
+            "Observation = mastery",
+            "Ignoring = blindness",
+            "Randomness = chaos"
+          ]
+        },
+        {
+          "t":"d",
+          "q":{"en":"What strengthens self-awareness most?"},
+          "op":[
+            "Watching thoughts calmly",
+            "Automatic impulsive action",
+            "Ignoring emotions",
+            "Constant distraction"
+          ],
+          "c":0,
+          "ex":[
+            "Observation builds metacognition",
+            "Impulsivity reduces awareness",
+            "Ignoring emotions blocks understanding",
+            "Distraction weakens attention"
+          ]
+        },
+        {"t":"r","tx":"+Vision","p":30},
+        {
+          "t":"sil",
+          "d":180,
+          "tx":{"en":"Observe thoughts without attachment"},
+          "inf":{"en":"Develops metacognitive awareness and self-regulation"}
+        },
+        {
+          "t":"breath_auto",
+          "d":25,
+          "tx":{"en":"Final integration breath"},
+          "inf":{"en":"Restores full system balance"}
+        }
+      ]
+    }
+  ]
 }
