@@ -20,8 +20,7 @@ let state = {
     initialized: false,
     timer: null,
     timeLeft: 0,
-    sessionStartTime: null,
-    language: localStorage.getItem("kamizen_lang") || "en" // Inicializado aquí para compatibilidad
+    sessionStartTime: null
 };
 
 /* =========================
@@ -66,7 +65,7 @@ async function loadAllData() {
         // Asegurar ordenamiento por ID para consistencia 1-63
         state.stories = Array.isArray(storiesData.stories) ? storiesData.stories.sort((a, b) => a.id - b.id) : [];
         state.missions = Array.isArray(missionsData.missions) ? missionsData.missions.sort((a, b) => a.id - b.id) : [];
-        
+       
         state.initialized = true;
     } catch (err) {
         console.error(err);
@@ -79,16 +78,9 @@ async function loadAllData() {
 ========================= */
 function startMasterTimer() {
     state.sessionStartTime = Date.now();
-    const maxDuration = 15 * 60 * 1000; // 15 minutos en milisegundos
-
-    // Verificación constante cada segundo para garantizar el cierre exacto sin importar la navegación o saltos
-    const masterInterval = setInterval(() => {
-        const elapsed = Date.now() - state.sessionStartTime;
-        if (elapsed >= maxDuration) {
-            clearInterval(masterInterval);
-            finishSession();
-        }
-    }, 1000);
+    setTimeout(() => {
+        finishSession();
+    }, 15 * 60 * 1000);
 }
 
 function finishSession() {
@@ -123,7 +115,7 @@ function finishSession() {
             `</ul>`,
             `<p>Small daily training creates powerful minds. See you next session, warrior. 🛡️</p>`
         ];
-        app.innerHTML = `<div class="card center animated fadeIn">${notes.join("")}<button onclick="location.reload()" style="margin-top:20px;">FINISH SESSION</button></div>`;
+        app.innerHTML = `<div class="card center animated fadeIn">${notes[0]}<button onclick="location.reload()" style="margin-top:20px;">FINISH SESSION</button></div>`;
         narrate(app.innerText.replace(/✔/g, ""));
     }
 }
@@ -234,7 +226,6 @@ function render() {
             <button onclick="restartSystem()" style="flex:1;padding:8px;font-size:12px;background:var(--danger);">RESET</button>
         </div>
     `;
-
     if (state.phase === "story") {
         app.innerHTML = navHeader + `
             <div class="card">
@@ -265,7 +256,6 @@ function renderBlock(block, navHeader) {
             <p style="color:var(--primary); letter-spacing: 2px;">STAY FOCUSED</p>
         </div>
     `;
-
     if (block.t === "v" || block.t === "h") { html += `<div class="card"><h2>${block.tx?.en || ""}</h2></div>`; textToRead = block.tx?.en; }
     if (block.story) { html += `<div class="card"><p>${block.story.en || ""}</p></div>`; textToRead = block.story.en; }
     if (block.t === "breath_auto" || block.t === "br") {
@@ -317,6 +307,9 @@ function narrate(text, callback) {
     window.speechSynthesis.speak(speech);
 }
 
+/* =========================
+   GUÍA VISUAL DE RESPIRACIÓN
+========================= */
 function startGuidedBreathing() {
     const circle = document.getElementById("breathCircle");
     const label = document.getElementById("breathLabel");
@@ -362,103 +355,3 @@ function unlockContinue(label, action) {
     const btn = document.getElementById("continueBtn");
     if (btn) { btn.disabled = false; btn.innerText = label; btn.onclick = action; }
 }
-
-/* =========================================================
-    🌐 KAMIZEN MULTILANGUAGE ADD-ON (NO CORE CHANGES)
-    ONLY: Button + Translation + Voice Switch
-========================================================= */
-
-/* =========================
-    LANGUAGE STATE
-========================= */
-// Nota: state.language ya se inicializa de forma segura al inicio del script principal.
-
-function toggleLanguage() {
-    state.language = state.language === "en" ? "es" : "en";
-    localStorage.setItem("kamizen_lang", state.language);
-    render(); // refresh UI
-}
-
-/* =========================
-    TRANSLATION ENGINE
-========================= */
-async function tr(text) {
-    if (!text) return "";
-    if (state.language === "en") return text;
-
-    try {
-        const res = await fetch(
-            "https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=es&dt=t&q=" +
-            encodeURIComponent(text)
-        );
-
-        const data = await res.json();
-        return data[0].map(x => x[0]).join("");
-    } catch (e) {
-        console.error("Translation error:", e);
-        return text;
-    }
-}
-
-/* =========================
-    ADD LANGUAGE BUTTON TO HEADER
-    (MINIMAL PATCH FUNCTION)
-========================= */
-const originalRender = render;
-
-render = async function () {
-    if (!state.initialized) return;
-
-    await originalRender();
-
-    const app = document.getElementById("app");
-    if (!app) return;
-
-    // Inject button or update its state
-    let btn = document.getElementById("langBtn");
-    if (!btn) {
-        btn = document.createElement("button");
-        btn.id = "langBtn";
-        btn.style = "position:fixed;top:10px;right:10px;z-index:9999;padding:10px;background:#16a34a;color:white;border:none;border-radius:6px;font-weight:bold;cursor:pointer;";
-        btn.onclick = toggleLanguage;
-        document.body.appendChild(btn);
-    }
-    btn.innerText = state.language === "en" ? "ESPAÑOL" : "ENGLISH";
-};
-
-/* =========================
-    VOICE PATCH (ONLY OVERRIDE SPEECH)
-========================= */
-const originalNarrate = narrate;
-
-narrate = async function (text, callback) {
-    if (!text) {
-        if (callback) callback();
-        return;
-    }
-
-    state.speechLocked = true;
-    window.speechSynthesis.cancel();
-
-    const finalText = await tr(text);
-    const speech = new SpeechSynthesisUtterance(finalText);
-
-    // LANGUAGE SWITCH VOICE
-    speech.lang = state.language === "es" ? "es-ES" : "en-US";
-    speech.rate = 0.9;
-
-    speech.onend = () => {
-        state.speechLocked = false;
-        if (callback) callback();
-    };
-
-    window.speechSynthesis.speak(speech);
-};
-
-/* =========================================================
-    END ADD-ON
-    ✔ No core modification
-    ✔ Only adds language toggle
-    ✔ Works globally
-    ✔ Voice + UI translation
-========================================================= */
