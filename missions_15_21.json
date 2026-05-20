@@ -1,310 +1,463 @@
 {
-"sys":"KAMIZEN LIFE SYSTEM",
-"ch":3,
-"rng":"15-21",
-
-"ui":{"fw":["AWARENESS","CALM","CONTROL","FOCUS","TRUTH","SAFETY","ACTION","HELP"]},
-
-"rules":[
-"Awareness>Reaction",
-"Calm>Impulse",
-"AskHelp=Strength",
-"Distance>Conflict",
-"Truth=Protection",
-"Action=Safety"
-],
-
-"missions":[
-
-{
-"id":15,
-"cat":"emotional_mastery",
-"b":[
-
-{"t":"v","tx":{"en":"MISSION 15: EMOTIONAL MASTERY"}},
-{"t":"h","tx":{"en":"You feel emotions, you are not your emotions"}},
-
-{"story":{"en":"Emotion is automatic. Control is learned. The space between feeling and action is where power exists."}},
-
-{"t":"breath_auto","d":25,
-"tx":{"en":"Breathe slowly to stabilize your emotional state"},
-"inf":{"en":"This breathing reduces amygdala reactivity and increases self-control before action"}
-},
-
-{"t":"d","q":{"en":"What creates real emotional control?"},
-"op":["React immediately","Pause and breathe before acting","Suppress feelings completely","Escalate response"],
-"c":1,
-"ex":[
-"Immediate reaction = loss of control",
-"Pause + breath = regulation and clarity",
-"Suppression = internal tension",
-"Escalation = conflict increase"
-]},
-
-{"t":"d","q":{"en":"If you feel angry, what is the smartest first step?"},
-"op":["Act instantly","Stop and observe the feeling","Shout","Leave without thinking"],
-"c":1,
-"ex":[
-"Instant action = impulsivity",
-"Observation = awareness and control",
-"Shouting = escalation",
-"Leaving without thinking = avoidance"
-]},
-
-{"t":"r","tx":"+Control","p":25},
-
-{"t":"sil","d":40,
-"tx":{"en":"Watch the emotion without responding to it"},
-"inf":{"en":"Strengthens emotional separation between feeling and action"}
-},
-
-{"t":"breath_auto","d":25,
-"tx":{"en":"Inhale stability... exhale impulsiveness"},
-"inf":{"en":"This regulates nervous system reactivity and improves decision timing"}
-}
-
-]
-},
-
-{
-"id":16,
-"cat":"deep_focus",
-"b":[
-
-{"t":"v","tx":{"en":"MISSION 16: DEEP FOCUS"}},
-{"t":"h","tx":{"en":"Attention is a limited resource"}},
-
-{"story":{"en":"What you focus on expands. Distraction fragments your results."}},
-
-{"t":"breath_auto","d":25,
-"tx":{"en":"Breathe slowly and lock your attention on one point"},
-"inf":{"en":"This improves sustained attention and reduces cognitive switching cost"}
-},
-
-{"t":"d","q":{"en":"What creates deep progress?"},
-"op":["Doing many things at once","Focusing on one task completely","Checking phone frequently","Working without attention"],
-"c":1,
-"ex":[
-"Multitasking = shallow performance",
-"Single focus = deep progress",
-"Phone checking = attention fragmentation",
-"Lack of attention = inefficient output"
-]},
-
-{"t":"r","tx":"+Focus","p":25},
-
-{"t":"sil","d":50,
-"tx":{"en":"Keep attention on a single thought or object"},
-"inf":{"en":"Builds sustained cognitive endurance"}
-},
-
-{"t":"breath_auto","d":25,
-"tx":{"en":"Inhale clarity... exhale distraction"},
-"inf":{"en":"This improves mental filtering and reduces noise"}
-}
-
-]
-},
-
-{
-"id":17,
-"cat":"situational_safety",
-"b":[
-
-{"t":"v","tx":{"en":"MISSION 17: SITUATIONAL SAFETY"}},
-{"t":"h","tx":{"en":"Your discomfort is information"}},
-
-{"story":{"en":"Your brain detects patterns before you consciously understand them. Ignoring signals reduces safety."}},
-
-{"t":"breath_auto","d":25,
-"tx":{"en":"Breathe slowly and scan your environment mentally"},
-"inf":{"en":"This strengthens situational awareness and early risk detection"}
-},
-
-{"t":"d","q":{"en":"You feel uncomfortable in a place. What is best?"},
-"op":["Ignore feeling and stay","Move toward safe adults or exit","Stay to prove bravery","Follow others blindly"],
-"c":1,
-"ex":[
-"Ignoring reduces safety signals",
-"Moving to safety improves protection",
-"Staying for pride increases exposure",
-"Blind following removes judgment"
-]},
-
-{"t":"r","tx":"+Safety","p":25},
-
-{"t":"sil","d":60,
-"tx":{"en":"Notice internal signals without judging them"},
-"inf":{"en":"Improves intuition recognition and decision accuracy"}
-},
-
-{"t":"breath_auto","d":25,
-"tx":{"en":"Inhale awareness... exhale tension"},
-"inf":{"en":"This reduces stress response and improves clarity"}
-}
-
-]
-},
-
-{
-"id":18,
-"cat":"truth_identity",
-"b":[
-
-{"t":"v","tx":{"en":"MISSION 18: TRUTH AND IDENTITY"}},
-{"t":"h","tx":{"en":"Truth builds long-term strength"}},
-
-{"story":{"en":"Avoiding truth protects comfort, but weakens identity over time."}},
-
-{"t":"breath_auto","d":25,
-"tx":{"en":"Breathe slowly and ground yourself in reality"},
-"inf":{"en":"This improves emotional tolerance to truth-based decisions"}
-},
-
-{"t":"d","q":{"en":"What builds real strength?"},
-"op":["Hiding mistakes","Admitting truth","Blaming others","Avoiding responsibility"],
-"c":1,
-"ex":[
-"Hiding = weak adaptation",
-"Truth = growth and trust",
-"Blame = no ownership",
-"Avoidance = stagnation"
-]},
-
-{"t":"r","tx":"+Integrity","p":25},
-
-{"t":"sil","d":70,
-"tx":{"en":"Accept reality without escaping it"},
-"inf":{"en":"Strengthens cognitive resilience and self-awareness"}
-},
-
-{"t":"breath_auto","d":25,
-"tx":{"en":"Inhale truth... exhale denial"},
-"inf":{"en":"This supports acceptance and decision clarity"}
-}
-
-]
-},
-
-{
-"id":19,
-"cat":"social_independence",
-"b":[
-
-{"t":"v","tx":{"en":"MISSION 19: SOCIAL INDEPENDENCE"}},
-{"t":"h","tx":{"en":"Following the crowd is not thinking"}},
-
-{"story":{"en":"Groups influence behavior. Independent thinking creates identity."}},
-
-{"t":"breath_auto","d":25,
-"tx":{"en":"Breathe slowly and separate from external pressure"},
-"inf":{"en":"This reduces conformity bias and improves independent thinking"}
-},
-
-{"t":"d","q":{"en":"What defines your character?"},
-"op":["Always follow group","Think and decide for yourself","Stop thinking","Act only for approval"],
-"c":1,
-"ex":[
-"Following = identity loss",
-"Independent thinking = self-control",
-"No thinking = weak decisions",
-"Approval seeking = external dependency"
-]},
-
-{"t":"r","tx":"+Character","p":25},
-
-{"t":"sil","d":90,
-"tx":{"en":"Stand mentally independent from others"},
-"inf":{"en":"Builds cognitive autonomy and self-direction"}
-},
-
-{"t":"breath_auto","d":25,
-"tx":{"en":"Inhale independence... exhale pressure"},
-"inf":{"en":"This reduces social dependency behavior"}
-}
-
-]
-},
-
-{
-"id":20,
-"cat":"discipline_identity",
-"b":[
-
-{"t":"v","tx":{"en":"MISSION 20: DISCIPLINE IDENTITY"}},
-{"t":"h","tx":{"en":"Your actions define your identity"}},
-
-{"story":{"en":"Consistency builds identity more than motivation ever will."}},
-
-{"t":"breath_auto","d":25,
-"tx":{"en":"Breathe slowly and prepare your mind for consistency"},
-"inf":{"en":"This improves persistence and reduces avoidance behavior"}
-},
-
-{"t":"d","q":{"en":"What builds strong identity?"},
-"op":["Quitting when hard","Continuing despite discomfort","Avoiding effort","Waiting for motivation"],
-"c":1,
-"ex":[
-"Quitting = unstable identity",
-"Continuing = strong identity formation",
-"Avoidance = stagnation",
-"Motivation dependency = inconsistency"
-]},
-
-{"t":"r","tx":"+Discipline","p":25},
-
-{"t":"sil","d":110,
-"tx":{"en":"Stay with discomfort without escaping"},
-"inf":{"en":"Builds effort tolerance and persistence capacity"}
-},
-
-{"t":"breath_auto","d":25,
-"tx":{"en":"Inhale persistence... exhale resistance"},
-"inf":{"en":"Strengthens behavioral consistency"}
-}
-
-]
-},
-
-{
-"id":21,
-"cat":"metacognition_mastery",
-"b":[
-
-{"t":"v","tx":{"en":"MISSION 21: SELF MASTERY"}},
-{"t":"h","tx":{"en":"Between impulse and action is your power"}},
-
-{"story":{"en":"The ability to pause creates control over behavior and outcomes."}},
-
-{"t":"breath_auto","d":25,
-"tx":{"en":"Breathe slowly and expand the pause between thought and action"},
-"inf":{"en":"This improves metacognitive awareness and decision regulation"}
-},
-
-{"t":"d","q":{"en":"What creates mastery?"},
-"op":["React instantly","Pause and evaluate","Ignore everything","Act randomly"],
-"c":1,
-"ex":[
-"Instant reaction = low control",
-"Pause = high self-regulation",
-"Ignoring = reduced awareness",
-"Random action = lack of structure"
-]},
-
-{"t":"r","tx":"+Mastery","p":30},
-
-{"t":"sil","d":180,
-"tx":{"en":"Observe thoughts without engaging them"},
-"inf":{"en":"Strengthens metacognitive control and internal observation capacity"}
-},
-
-{"t":"breath_auto","d":25,
-"tx":{"en":"Inhale awareness... exhale reaction"},
-"inf":{"en":"This trains separation between stimulus and response"}
-}
-
-]
-}
-
-]
+  "sys":"KAMIZEN LIFE SYSTEM",
+  "ch":3,
+  "rng":"15-21",
+  "ui":{
+    "fw":[
+      "AWARENESS",
+      "CALM",
+      "CONTROL",
+      "FOCUS",
+      "TRUTH",
+      "SAFETY",
+      "ACTION",
+      "HELP"
+    ]
+  },
+  "rules":[
+    "Awareness>Reaction",
+    "Calm>Impulse",
+    "AskHelp=Strength",
+    "Distance>Conflict",
+    "Truth=Protection",
+    "Action=Safety"
+  ],
+  "missions":[
+    {
+      "id":15,
+      "cat":"emotional_mastery",
+      "b":[
+        {"t":"v","tx":{"en":"MISSION 15: EMOTIONAL MASTERY"}},
+        {"t":"h","tx":{"en":"You feel emotions, you are not your emotions"}},
+        {"story":{"en":"Emotion is automatic. Control is learned. The space between feeling and action is where power exists."}},
+        {
+          "t":"breath_auto",
+          "d":25,
+          "tx":{"en":"Breathe slowly to stabilize your emotional state"},
+          "inf":{"en":"This breathing reduces amygdala reactivity and increases self-control before action"}
+        },
+        {
+          "t":"d",
+          "q":{"en":"What creates real emotional control?"},
+          "op":[
+            "React immediately",
+            "Pause and breathe before acting",
+            "Suppress feelings completely",
+            "Escalate response"
+          ],
+          "c":1,
+          "ex":[
+            "Immediate reaction = loss of control",
+            "Pause + breath = regulation and clarity",
+            "Suppression = internal tension",
+            "Escalation = conflict increase"
+          ]
+        },
+        {
+          "t":"d",
+          "q":{"en":"If you feel angry, what is the smartest first step?"},
+          "op":[
+            "Act instantly",
+            "Stop and observe the feeling",
+            "Shout",
+            "Leave without thinking"
+          ],
+          "c":1,
+          "ex":[
+            "Instant action = impulsivity",
+            "Observation = awareness and control",
+            "Shouting = escalation",
+            "Leaving without thinking = avoidance"
+          ]
+        },
+        {"t":"r","tx":"+Control","p":25},
+        {
+          "t":"sil",
+          "d":40,
+          "tx":{"en":"Watch the emotion without responding to it"},
+          "inf":{"en":"Strengthens emotional separation between feeling and action"}
+        },
+        {
+          "t":"breath_auto",
+          "d":25,
+          "tx":{"en":"Inhale stability... exhale impulsiveness"},
+          "inf":{"en":"This regulates nervous system reactivity and improves decision timing"}
+        }
+      ]
+    },
+    {
+      "id":16,
+      "cat":"deep_focus",
+      "b":[
+        {"t":"v","tx":{"en":"MISSION 16: DEEP FOCUS"}},
+        {"t":"h","tx":{"en":"Attention is a limited resource"}},
+        {"story":{"en":"What you focus on expands. Distraction fragments your results."}},
+        {
+          "t":"breath_auto",
+          "d":25,
+          "tx":{"en":"Breathe slowly and lock your attention on one point"},
+          "inf":{"en":"This improves sustained attention and reduces cognitive switching cost"}
+        },
+        {
+          "t":"d",
+          "q":{"en":"What creates deep progress?"},
+          "op":[
+            "Doing many things at once",
+            "Focusing on one task completely",
+            "Checking phone frequently",
+            "Working without attention"
+          ],
+          "c":1,
+          "ex":[
+            "Multitasking = shallow performance",
+            "Single focus = deep progress",
+            "Phone checking = attention fragmentation",
+            "Lack of attention = inefficient output"
+          ]
+        },
+        {
+          "t":"d",
+          "q":{"en":"What weakens concentration the most?"},
+          "op":[
+            "Single-task focus",
+            "Constant interruptions",
+            "Breathing calmly",
+            "Quiet observation"
+          ],
+          "c":1,
+          "ex":[
+            "Focus strengthens attention",
+            "Interruptions fragment cognitive processing",
+            "Calm breathing improves regulation",
+            "Observation increases awareness"
+          ]
+        },
+        {"t":"r","tx":"+Focus","p":25},
+        {
+          "t":"sil",
+          "d":50,
+          "tx":{"en":"Keep attention on a single thought or object"},
+          "inf":{"en":"Builds sustained cognitive endurance"}
+        },
+        {
+          "t":"breath_auto",
+          "d":25,
+          "tx":{"en":"Inhale clarity... exhale distraction"},
+          "inf":{"en":"This improves mental filtering and reduces noise"}
+        }
+      ]
+    },
+    {
+      "id":17,
+      "cat":"situational_safety",
+      "b":[
+        {"t":"v","tx":{"en":"MISSION 17: SITUATIONAL SAFETY"}},
+        {"t":"h","tx":{"en":"Your discomfort is information"}},
+        {"story":{"en":"Your brain detects patterns before you consciously understand them. Ignoring signals reduces safety."}},
+        {
+          "t":"breath_auto",
+          "d":25,
+          "tx":{"en":"Breathe slowly and scan your environment mentally"},
+          "inf":{"en":"This strengthens situational awareness and early risk detection"}
+        },
+        {
+          "t":"d",
+          "q":{"en":"You feel uncomfortable in a place. What is best?"},
+          "op":[
+            "Ignore feeling and stay",
+            "Move toward safe adults or exit",
+            "Stay to prove bravery",
+            "Follow others blindly"
+          ],
+          "c":1,
+          "ex":[
+            "Ignoring reduces safety signals",
+            "Moving to safety improves protection",
+            "Staying for pride increases exposure",
+            "Blind following removes judgment"
+          ]
+        },
+        {
+          "t":"d",
+          "q":{"en":"What improves personal safety most?"},
+          "op":[
+            "Ignoring surroundings",
+            "Paying attention to warning signs",
+            "Acting impulsively",
+            "Trusting everyone automatically"
+          ],
+          "c":1,
+          "ex":[
+            "Ignoring surroundings reduces awareness",
+            "Warning signs help early prevention",
+            "Impulsivity increases mistakes",
+            "Blind trust removes evaluation"
+          ]
+        },
+        {"t":"r","tx":"+Safety","p":25},
+        {
+          "t":"sil",
+          "d":60,
+          "tx":{"en":"Notice internal signals without judging them"},
+          "inf":{"en":"Improves intuition recognition and decision accuracy"}
+        },
+        {
+          "t":"breath_auto",
+          "d":25,
+          "tx":{"en":"Inhale awareness... exhale tension"},
+          "inf":{"en":"This reduces stress response and improves clarity"}
+        }
+      ]
+    },
+    {
+      "id":18,
+      "cat":"truth_identity",
+      "b":[
+        {"t":"v","tx":{"en":"MISSION 18: TRUTH AND IDENTITY"}},
+        {"t":"h","tx":{"en":"Truth builds long-term strength"}},
+
+        {"story":{"en":"Avoiding truth protects comfort, but weakens identity over time."}},
+        {
+          "t":"breath_auto",
+          "d":25,
+          "tx":{"en":"Breathe slowly and ground yourself in reality"},
+          "inf":{"en":"This improves emotional tolerance to truth-based decisions"}
+        },
+        {
+          "t":"d",
+          "q":{"en":"What builds real strength?"},
+          "op":[
+            "Hiding mistakes",
+            "Admitting truth",
+            "Blaming others",
+            "Avoiding responsibility"
+          ],
+          "c":1,
+          "ex":[
+            "Hiding = weak adaptation",
+            "Truth = growth and trust",
+            "Blame = no ownership",
+            "Avoidance = stagnation"
+          ]
+        },
+        {
+          "t":"d",
+          "q":{"en":"What weakens identity over time?"},
+          "op":[
+            "Accepting reality",
+            "Avoiding truth constantly",
+            "Learning from errors",
+            "Taking responsibility"
+          ],
+          "c":1,
+          "ex":[
+            "Reality strengthens adaptation",
+            "Avoidance weakens self-development",
+            "Learning improves growth",
+            "Responsibility builds integrity"
+          ]
+        },
+        {"t":"r","tx":"+Integrity","p":25},
+        {
+          "t":"sil",
+          "d":70,
+          "tx":{"en":"Accept reality without escaping it"},
+          "inf":{"en":"Strengthens cognitive resilience and self-awareness"}
+        },
+        {
+          "t":"breath_auto",
+          "d":25,
+          "tx":{"en":"Inhale truth... exhale denial"},
+          "inf":{"en":"This supports acceptance and decision clarity"}
+        }
+      ]
+    },
+    {
+      "id":19,
+      "cat":"social_independence",
+      "b":[
+        {"t":"v","tx":{"en":"MISSION 19: SOCIAL INDEPENDENCE"}},
+        {"t":"h","tx":{"en":"Following the crowd is not thinking"}},
+        {"story":{"en":"Groups influence behavior. Independent thinking creates identity."}},
+        {
+          "t":"breath_auto",
+          "d":25,
+          "tx":{"en":"Breathe slowly and separate from external pressure"},
+          "inf":{"en":"This reduces conformity bias and improves independent thinking"}
+        },
+        {
+          "t":"d",
+          "q":{"en":"What defines your character?"},
+          "op":[
+            "Always follow group",
+            "Think and decide for yourself",
+            "Stop thinking",
+            "Act only for approval"
+          ],
+          "c":1,
+          "ex":[
+            "Following = identity loss",
+            "Independent thinking = self-control",
+            "No thinking = weak decisions",
+            "Approval seeking = external dependency"
+          ]
+        },
+        {
+          "t":"d",
+          "q":{"en":"What creates stronger independence?"},
+          "op":[
+            "Blind imitation",
+            "Personal evaluation before acting",
+            "Fear of rejection",
+            "Constant approval seeking"
+          ],
+          "c":1,
+          "ex":[
+            "Blind imitation removes individuality",
+            "Evaluation strengthens autonomy",
+            "Fear limits action",
+            "Approval dependency weakens confidence"
+          ]
+        },
+        {"t":"r","tx":"+Character","p":25},
+        {
+          "t":"sil",
+          "d":90,
+          "tx":{"en":"Stand mentally independent from others"},
+          "inf":{"en":"Builds cognitive autonomy and self-direction"}
+        },
+        {
+          "t":"breath_auto",
+          "d":25,
+          "tx":{"en":"Inhale independence... exhale pressure"},
+          "inf":{"en":"This reduces social dependency behavior"}
+        }
+      ]
+    },
+    {
+      "id":20,
+      "cat":"discipline_identity",
+      "b":[
+        {"t":"v","tx":{"en":"MISSION 20: DISCIPLINE IDENTITY"}},
+        {"t":"h","tx":{"en":"Your actions define your identity"}},
+        {"story":{"en":"Consistency builds identity more than motivation ever will."}},
+        {
+          "t":"breath_auto",
+          "d":25,
+          "tx":{"en":"Breathe slowly and prepare your mind for consistency"},
+          "inf":{"en":"This improves persistence and reduces avoidance behavior"}
+        },
+        {
+          "t":"d",
+          "q":{"en":"What builds strong identity?"},
+          "op":[
+            "Quitting when hard",
+            "Continuing despite discomfort",
+            "Avoiding effort",
+            "Waiting for motivation"
+          ],
+          "c":1,
+          "ex":[
+            "Quitting = unstable identity",
+            "Continuing = strong identity formation",
+            "Avoidance = stagnation",
+            "Motivation dependency = inconsistency"
+          ]
+        },
+        {
+          "t":"d",
+          "q":{"en":"What strengthens discipline most?"},
+          "op":[
+            "Only acting when inspired",
+            "Repeating useful actions consistently",
+            "Avoiding difficult tasks",
+            "Stopping after failure"
+          ],
+          "c":1,
+          "ex":[
+            "Inspiration is temporary",
+            "Consistency builds behavioral patterns",
+            "Avoidance weakens resilience",
+            "Stopping prevents growth"
+          ]
+        },
+        {"t":"r","tx":"+Discipline","p":25},
+        {
+          "t":"sil",
+          "d":110,
+          "tx":{"en":"Stay with discomfort without escaping"},
+          "inf":{"en":"Builds effort tolerance and persistence capacity"}
+        },
+        {
+          "t":"breath_auto",
+          "d":25,
+          "tx":{"en":"Inhale persistence... exhale resistance"},
+          "inf":{"en":"Strengthens behavioral consistency"}
+        }
+      ]
+    },
+    {
+      "id":21,
+      "cat":"metacognition_mastery",
+      "b":[
+        {"t":"v","tx":{"en":"MISSION 21: SELF MASTERY"}},
+        {"t":"h","tx":{"en":"Between impulse and action is your power"}},
+        {"story":{"en":"The ability to pause creates control over behavior and outcomes."}},
+        {
+          "t":"breath_auto",
+          "d":25,
+          "tx":{"en":"Breathe slowly and expand the pause between thought and action"},
+          "inf":{"en":"This improves metacognitive awareness and decision regulation"}
+        },
+        {
+          "t":"d",
+          "q":{"en":"What creates mastery?"},
+          "op":[
+            "React instantly",
+            "Pause and evaluate",
+            "Ignore everything",
+            "Act randomly"
+          ],
+          "c":1,
+          "ex":[
+            "Instant reaction = low control",
+            "Pause = high self-regulation",
+            "Ignoring = reduced awareness",
+            "Random action = lack of structure"
+          ]
+        },
+        {
+          "t":"d",
+          "q":{"en":"What improves self-control most?"},
+          "op":[
+            "Impulsive behavior",
+            "Observing thoughts before acting",
+            "Avoiding reflection",
+            "Immediate emotional reaction"
+          ],
+          "c":1,
+          "ex":[
+            "Impulsivity reduces regulation",
+            "Observation improves conscious choice",
+            "Avoiding reflection weakens awareness",
+            "Emotional reaction reduces control"
+          ]
+        },
+        {"t":"r","tx":"+Mastery","p":30},
+        {
+          "t":"sil",
+          "d":180,
+          "tx":{"en":"Observe thoughts without engaging them"},
+          "inf":{"en":"Strengthens metacognitive control and internal observation capacity"}
+        },
+        {
+          "t":"breath_auto",
+          "d":25,
+          "tx":{"en":"Inhale awareness... exhale reaction"},
+          "inf":{"en":"This trains separation between stimulus and response"}
+        }
+
+      ]
+    }
+  ]
 }
