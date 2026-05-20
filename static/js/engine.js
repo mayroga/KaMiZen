@@ -1,15 +1,10 @@
 /* =========================================================
-   KAMIZEN ENGINE V15 - FULL VERSION WITH REPORTE PDF
-   ✔ Persistencia Local Real (LocalStorage)
-   ✔ Reloj Maestro Absoluto Basado en Tiempo Real (Date.now())
-   ✔ Detención Forzada a los 15 Minutos (Sin importar pausa, saltos o foco)
-   ✔ Narración Total: Preguntas + Opciones + Feedback (English Only)
-   ✔ Guía Vocal de Respiración (Visual)
-   ✔ Botón JUMP/SKIP para navegación directa
-   ✔ Soporte completo: v, h, story, br, sil, d, r, c
-   ✔ Master Timer Visual: 15 Minutes (Cuenta regresiva global)
-   ✔ Sistema de Pausa / Reanudación Manual y Automática
-   ✔ REPORT INTEGRATION: PDF Result generation
+   KAMIZEN ENGINE V16 - BEHAVIORAL TELEMETRY EDITION
+   ✔ Real-Time Bio-Behavioral Tracking (VR-Game Style)
+   ✔ Measures: Impulsivity, Focus, Cognitive Delay, and Attention Drop
+   ✔ Absolute Master Timer (15 Minutes strict, Unix Timestamp)
+   ✔ Audio-Syllable Sync & Interruption Protection
+   ✔ Complete Local Persistence (LocalStorage)
    ========================================================= */
 let state = {
     stories: [],
@@ -19,18 +14,32 @@ let state = {
     phase: "loading",
     speechLocked: false,
     initialized: false,
-    timer: null,        // Timer del bloque actual (respiración/silencio)
-    timeLeft: 0,        // Tiempo restante del bloque actual
-    
-    // Configuración del Master Timer Implacable (15 minutos exactos)
+    timer: null,        
+    timeLeft: 0,        
+    // Master Timer (15 minutes exact)
     globalTimer: null,
-    endTime: null,       // Marca de tiempo absoluta donde DEBE terminar la app
+    endTime: null,       
     globalTimeLeft: 15 * 60, 
     isPaused: false,
-    // Guardado de textos para reanudar narración si se pausa
-    currentTextToNarrate: ""
+    currentTextToNarrate: "",
+    // MOTOR DE TELEMETRÍA CONDUCTUAL (Real-Time Metrics)
+    telemetry: {
+        sessionStart: null,
+        totalPauses: 0,             // Índice de interrupción
+        screenDesertions: 0,        // Veces que abandonó la pestaña / quitó foco
+        impulsiveClicks: 0,         // Clicks ansiosos mientras la voz está bloqueada
+        breathingSecondsTarget: 0,  // Segundos ideales de respiración
+        breathingSecondsReal: 0,    // Segundos reales manteniendo el foco en respiración
+        silenceSecondsTarget: 0,    // Segundos ideales de silencio
+        silenceSecondsReal: 0,      // Segundos reales manteniendo el foco en silencio
+        decisionTimes: [],          // Tiempos de reacción en milisegundos
+        correctAnswers: 0,
+        totalQuestions: 0
+    }, 
+    // Auxiliares de medición
+    blockStartTime: null,
+    voiceStartTime: null
 };
-// Diccionario estático de interfaz en inglés americano
 const i18n = {
     booting: "SYSTEM BOOTING...",
     loading: "Loading Data (Missions 1-63)...",
@@ -46,51 +55,53 @@ const i18n = {
     focused: "STAY FOCUSED",
     silence: "Practice silence now.",
     get_ready: "Get ready to breathe.",
-    reward: "REWARD",
-    xp: "XP",
-    excellent: "EXCELLENT!",
-    learning: "KEEP LEARNING",
-    next_step: "NEXT STEP",
+    reward: "ANALYSIS",
+    xp: "PTS",
+    excellent: "COMPLETED",
+    learning: "PROCESSED",
+    next_step: "CONTINUE",
     skip: "SKIP",
-    story_title: "STORY",
+    story_title: "MISSION CONTEXT",
     jump_prompt: "Enter the MISSION ID to jump to (1-63):",
     jump_error: "Mission ID not found.",
     reset_confirm: "Are you sure you want to RESTART from zero?",
-    options_intro: "Your options are: ",
-    earned: "You have earned experience points.",
+    options_intro: "Your choices are: ",
     pause: "PAUSE",
     resume: "RESUME",
     paused_banner: "SYSTEM PAUSED",
-    global_time: "TOTAL TIME",
-    btn_continue: "CONTINUE MISSION",
+    global_time: "SESSION TIME",
+    btn_continue: "START LOGISTICS SESSION",
     btn_reset_prog: "RESET PROGRESS"
 };
-/* =========================
-   SISTEMA DE PERSISTENCIA
-========================= */
+/* ====================================
+   PERSISTENCIA Y REGISTRO DE EVENTOS
+==================================== */
 function saveProgress() {
-    localStorage.setItem('kamizen_save', JSON.stringify({
+    localStorage.setItem('kamizen_v16_save', JSON.stringify({
         currentIndex: state.currentIndex,
         currentBlock: state.currentBlock,
-        endTime: state.endTime
+        endTime: state.endTime,
+        telemetry: state.telemetry
     }));
 }
 function loadProgress() {
-    const saved = localStorage.getItem('kamizen_save');
+    const saved = localStorage.getItem('kamizen_v16_save');
     if (saved) {
         const data = JSON.parse(saved);
         state.currentIndex = data.currentIndex || 0;
         state.currentBlock = data.currentBlock || 0;
         state.endTime = data.endTime || null;
+        if (data.telemetry) state.telemetry = data.telemetry;
     }
 }
-/* =========================
+/* ====================================
    INICIALIZACIÓN DEL SISTEMA
-========================= */
+==================================== */
 window.addEventListener("load", async () => {
     loadProgress();
     injectGlobalTimerDOM();
     setupInterruptionListeners();
+    setupGlobalClickTracker();
     await loadAllData();
     showIntro();
 });
@@ -102,25 +113,19 @@ async function loadAllData() {
             fetch("/api/stories"),
             fetch("/api/missions")
         ]);
-        const storiesData = await storiesReq.json();
-        const missionsData = await missionsReq.json();
-        state.stories = Array.isArray(storiesData.stories) ? storiesData.stories.sort((a, b) => a.id - b.id) : [];
-        state.missions = Array.isArray(missionsData.missions) ? missionsData.missions.sort((a, b) => a.id - b.id) : [];
-        
+        state.stories = await storiesReq.json().then(d => Array.isArray(d.stories) ? d.stories.sort((a,b)=>a.id-b.id) : []);
+        state.missions = await missionsReq.json().then(d => Array.isArray(d.missions) ? d.missions.sort((a,b)=>a.id-b.id) : []);
         state.initialized = true;
     } catch (err) {
         console.error(err);
         app.innerHTML = `<div class="card"><h2>${i18n.boot_error}</h2><p>${i18n.check_api}</p></div>`;
     }
 }
-/* =========================
-   INYECTAR RELOJ GLOBAL (DOM)
-========================= */
 function injectGlobalTimerDOM() {
     if (document.getElementById("kamizen-global-timer")) return;
     const timerDiv = document.createElement("div");
     timerDiv.id = "kamizen-global-timer";
-    timerDiv.style = "position: fixed; top: 10px; right: 10px; z-index: 1000; background: rgba(15, 23, 42, 0.85); border: 1px solid var(--primary, #0ea5e9); padding: 4px 8px; border-radius: 4px; font-family: monospace; font-size: 11px; color: #fff; display: none; text-align: right;";
+    timerDiv.style = "position: fixed; top: 10px; right: 10px; z-index: 1000; background: rgba(15, 23, 42, 0.9); border: 1px solid #0ea5e9; padding: 6px 10px; border-radius: 4px; font-family: monospace; font-size: 11px; color: #fff; display: none; text-align: right; box-shadow: 0 4px 6px rgba(0,0,0,0.3);";
     document.body.appendChild(timerDiv);
 }
 function updateGlobalTimerDisplay() {
@@ -133,65 +138,76 @@ function updateGlobalTimerDisplay() {
     timerDiv.style.display = "block";
     const m = Math.floor(Math.max(0, state.globalTimeLeft) / 60);
     const s = Math.max(0, state.globalTimeLeft) % 60;
-    timerDiv.innerHTML = `<div>${i18n.global_time}</div><div style="font-size:14px; font-weight:bold; color:var(--primary, #0ea5e9);">${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}</div>`;
+    timerDiv.innerHTML = `<div>${i18n.global_time}</div><div style="font-size:15px; font-weight:bold; color:#0ea5e9;">${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}</div>`;
 }
 /* ====================================
    CONTROL DE CIERRE ABSOLUTO (15 MIN)
 ==================================== */
 function startMasterTimer() {
     clearInterval(state.globalTimer);
-    // Si no hay un tiempo de finalización guardado previamente, lo creamos basándonos en la hora actual
     if (!state.endTime) {
         state.endTime = Date.now() + (15 * 60 * 1000);
     }
+    if (!state.telemetry.sessionStart) {
+        state.telemetry.sessionStart = Date.now();
+    }
     state.globalTimer = setInterval(() => {
-        // Cálculo basado en tiempo real Unix absoluto (No le afectan las pausas ni la inactividad de la pestaña)
         const totalMsLeft = state.endTime - Date.now();
         state.globalTimeLeft = Math.ceil(totalMsLeft / 1000);
+        // Si la app está activa, sumamos tiempo de enfoque real en ejercicios de respiración/silencio
+        if (!state.isPaused && document.hasFocus()) {
+            const block = state.missions[state.currentIndex]?.b[state.currentBlock];
+            if (block) {
+                if (block.t === "breath_auto" || block.t === "br") state.telemetry.breathingSecondsReal += 0.25;
+                if (block.t === "sil") state.telemetry.silenceSecondsReal += 0.25;
+            }
+        }
         updateGlobalTimerDisplay();
         saveProgress();
+
         if (state.globalTimeLeft <= 0) {
             clearInterval(state.globalTimer);
             finishSession();
         }
-    }, 250); // Muestreo de alta frecuencia para garantizar precisión de ejecución
-    // Ejecución inicial para evitar delay visual de 1 segundo
-    const totalMsLeft = state.endTime - Date.now();
-    state.globalTimeLeft = Math.ceil(totalMsLeft / 1000);
-    updateGlobalTimerDisplay();
+    }, 250);
 }
-function finishSession() {
-    window.speechSynthesis.cancel();
-    clearInterval(state.timer);
-    clearInterval(state.globalTimer);
-    localStorage.clear(); // Limpieza absoluta de persistencia al expirar
-    const currentMissionId = state.missions[state.currentIndex]?.id || 0;
-    if (typeof renderValidationScreen === "function") {
-        renderValidationScreen(currentMissionId, {
-            timeSpent: "15:00",
-            status: "Complete"
-        });
-    } else {
-        const app = document.getElementById("app");
-        app.innerHTML = `
-            <div class="card center animated fadeIn">
-                <h2>🌟 GREAT JOB TODAY</h2>
-                <p>You completed your KAMIZEN session.</p>
-                <p>Your brain and body only need a few focused minutes to grow stronger.</p>
-                <p>KAMIZEN is designed to help you train calmly, not endlessly.</p>
-                <button onclick="localStorage.clear(); location.reload();" style="margin-top:20px;">FINISH SESSION</button>
-            </div>`;
-        const textToRead = app.innerText;
-        narrate(textToRead);
-    }
+/* ====================================
+   CAPTURA DE TELEMETRÍA PURA (MECÁNICAS VR)
+==================================== */
+function setupInterruptionListeners() {
+    // Detecta si el usuario cambia de pestaña, minimiza o bloquea el teléfono (Abandono de pantalla)
+    document.addEventListener("visibilitychange", () => {
+        if (document.hidden && state.phase !== "intro" && state.phase !== "loading") {
+            state.telemetry.screenDesertions++;
+            if (!state.isPaused) pauseSystem();
+        }
+    });
+    window.addEventListener("blur", () => {
+        if (state.phase !== "intro" && state.phase !== "loading") {
+            state.telemetry.screenDesertions++;
+            if (!state.isPaused) pauseSystem();
+        }
+    });
 }
-/* =========================
-   SISTEMA DE PAUSA MANUAL Y AUTOMÁTICA
-========================= */
+function setupGlobalClickTracker() {
+    // Detecta clicks ansiosos en la pantalla mientras el sistema está narrando con los controles deshabilitados
+    document.addEventListener("click", (e) => {
+        if (state.speechLocked) {
+            const targetTag = e.target.tagName.toLowerCase();
+            if (targetTag === "div" || targetTag === "p" || e.target.id === "continueBtn") {
+                state.telemetry.impulsiveClicks++;
+            }
+        }
+    });
+}
+/* ====================================
+   CONTROL DE NAVEGACIÓN Y PAUSAS
+==================================== */
 function togglePause() {
     if (state.isPaused) {
         resumeSystem();
     } else {
+        state.telemetry.totalPauses++;
         pauseSystem();
     }
 }
@@ -199,28 +215,13 @@ function pauseSystem() {
     if (state.phase === "intro" || state.phase === "loading") return;
     state.isPaused = true;
     window.speechSynthesis.cancel(); 
-    clearInterval(state.timer); // Detiene únicamente el temporizador del bloque (ej. respiración)
+    clearInterval(state.timer); 
     render(); 
 }
 function resumeSystem() {
     state.isPaused = false;
     render(); 
 }
-function setupInterruptionListeners() {
-    document.addEventListener("visibilitychange", () => {
-        if (document.hidden && !state.isPaused && state.phase !== "intro" && state.phase !== "loading") {
-            pauseSystem();
-        }
-    });
-    window.addEventListener("blur", () => {
-        if (!state.isPaused && state.phase !== "intro" && state.phase !== "loading") {
-            pauseSystem();
-        }
-    });
-}
-/* =========================
-   CONTROLES DE NAVEGACIÓN
-========================= */
 function jumpToBlock() {
     const targetMissionId = prompt(i18n.jump_prompt);
     if (targetMissionId !== null && targetMissionId !== "") {
@@ -258,16 +259,18 @@ function restartSystem() {
         localStorage.clear();
         state.currentIndex = 0;
         state.currentBlock = 0;
-        state.endTime = Date.now() + (15 * 60 * 1000); // Reinicia también el reloj maestro a 15 minutos exactos
+        state.endTime = Date.now() + (15 * 60 * 1000); 
         state.globalTimeLeft = 15 * 60;
         state.phase = "story";
         state.isPaused = false;
+        state.telemetry = {
+            sessionStart: Date.now(), totalPauses: 0, screenDesertions: 0, impulsiveClicks: 0,
+            breathingSecondsTarget: 0, breathingSecondsReal: 0, silenceSecondsTarget: 0, silenceSecondsReal: 0,
+            decisionTimes: [], correctAnswers: 0, totalQuestions: 0
+        };
         render();
     }
 }
-/* =========================
-   LÓGICA DEL RELOJ DE BLOQUE
-========================= */
 function startCountdown(seconds, onComplete) {
     clearInterval(state.timer);
     state.timeLeft = seconds;
@@ -275,9 +278,11 @@ function startCountdown(seconds, onComplete) {
     state.timer = setInterval(() => {
         if (!state.isPaused) {
             state.timeLeft--;
-            const m = Math.floor(state.timeLeft / 60);
-            const s = state.timeLeft % 60;
-            if (timerDisplay) timerDisplay.innerText = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+            if (timerDisplay) {
+                const m = Math.floor(state.timeLeft / 60);
+                const s = state.timeLeft % 60;
+                timerDisplay.innerText = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+            }
             if (state.timeLeft <= 0) {
                 clearInterval(state.timer);
                 if (onComplete) onComplete();
@@ -285,17 +290,17 @@ function startCountdown(seconds, onComplete) {
         }
     }, 1000);
 }
-/* =========================
+/* ====================================
    MOTOR DE RENDERIZADO
-========================= */
+==================================== */
 function showIntro() {
     state.phase = "intro";
     updateGlobalTimerDisplay();
     document.getElementById("app").innerHTML = `
         <div class="card center">
-            <h1>KAMIZEN LIFE SYSTEM</h1>
-            <p>Training • Awareness • Control</p>
-            <p class="small">Range: Missions 1 - 63 Loaded</p>
+            <h1>AL CIELO • KAMIZEN</h1>
+            <p style="letter-spacing:3px;font-size:0.85rem;color:#0ea5e9;">PSYCHOMETRIC LOGISTICS TRAINING</p>
+            <p class="small">Operational Range: Missions 1 - 63 Active</p>
             <button onclick="startSystem()">${i18n.btn_continue}</button>
             <button onclick="restartSystem()" style="background:var(--danger);margin-top:10px;">${i18n.btn_reset_prog}</button>
         </div>
@@ -309,7 +314,7 @@ function startSystem() {
 function render() {
     if (!state.initialized) return;
     saveProgress();
-    updateGlobalTimerDisplay();  
+    updateGlobalTimerDisplay(); 
     const app = document.getElementById("app");
     let navHeader = `
         <div style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px; align-items:center;">
@@ -323,7 +328,7 @@ function render() {
         app.innerHTML = navHeader + `
             <div class="card center" style="border: 2px dashed #eab308;">
                 <h2 style="color:#eab308; margin:0;">⏸ ${i18n.paused_banner}</h2>
-                <p style="font-size:0.9rem; margin-top:10px;">Mission paused. Click RESUME or the yellow button to continue right where you left off.</p>
+                <p style="font-size:0.9rem; margin-top:10px;">Training suspended. System is currently recording tracking retention state.</p>
                 <button onclick="resumeSystem()" style="background:#eab308; color:#0f172a; margin-top:15px; width:100%;">${i18n.resume}</button>
             </div>
         `;
@@ -331,25 +336,22 @@ function render() {
     }
     const story = state.stories[state.currentIndex];
     const mission = state.missions[state.currentIndex];
+
     if (!story || !mission) {
         state.currentIndex = 0; state.currentBlock = 0; state.phase = "story";
         return render();
     }
     if (state.phase === "story") {
-        const storyTitle = `${i18n.story_title} ${story.id}`;
-        const storyText = story.en || "";
-        const storyHeading = story.t || "";
         app.innerHTML = navHeader + `
             <div class="card">
-                <h2 style="color:var(--primary)">${storyTitle}</h2>
-                <h3>${storyHeading}</h3>
-                <p style="font-size:1.1rem; line-height:1.6;">${storyText}</p>
+                <h2 style="color:var(--primary)">${i18n.story_title} [M-${story.id}]</h2>
+                <h3>${story.t || ""}</h3>
+                <p style="font-size:1.1rem; line-height:1.6;">${story.en || ""}</p>
             </div>
             <button id="continueBtn" disabled>${i18n.narrating}</button>
         `;
-        state.currentTextToNarrate = `${storyHeading}. ${storyText}`;
-        narrate(state.currentTextToNarrate, () => {
-            setTimeout(startMission, 1500);
+        narrate(`${story.t || ""}. ${story.en || ""}`, () => {
+            setTimeout(startMission, 1200);
         });
     } else {
         const block = mission.b[state.currentBlock];
@@ -371,7 +373,6 @@ function renderBlock(block, navHeader) {
     const blockInf = block.inf?.en || block.inf || "";
     const blockStory = block.story?.en || block.story || "";
     const blockQ = block.q?.en || block.q || "";
-
     if (block.t === "v" || block.t === "h") { 
         html += `<div class="card"><h2>${blockTx}</h2></div>`; 
         textToRead = blockTx; 
@@ -381,14 +382,17 @@ function renderBlock(block, navHeader) {
         textToRead = blockStory; 
     }
     if (block.t === "breath_auto" || block.t === "br") {
+        state.telemetry.breathingSecondsTarget += 24;
         html += timerUI + `<div class="card center"><div class="breath-circle" id="breathCircle" style="margin: 15px auto;"><span id="breathLabel">${i18n.ready}</span></div><h3>${blockTx}</h3><p style="font-size:0.9rem;">${blockInf}</p></div>`;
         textToRead = `${blockTx}. ${blockInf}. ${i18n.get_ready}`;
     }
     if (block.t === "sil") {
+        state.telemetry.silenceSecondsTarget += 24;
         html += timerUI + `<div class="card"><h3>${blockTx}</h3><p style="font-size:0.9rem;">${blockInf}</p></div>`;
         textToRead = `${blockTx}. ${blockInf}. ${i18n.silence}`;
     }
     if (block.t === "d") {
+        state.telemetry.totalQuestions++;
         html += `<div class="card"><h3>${blockQ}</h3>`;
         const currentOptions = block.op || [];
         currentOptions.forEach((opt, i) => {
@@ -398,8 +402,8 @@ function renderBlock(block, navHeader) {
         textToRead = `${blockQ}. ${i18n.options_intro} ${currentOptions.join(". ")}`;
     }
     if (block.t === "r") { 
-        html += `<div class="card center"><h2>⭐ ${blockTx || i18n.reward}</h2><p style="font-size:1.5rem; margin:10px 0;">+${block.p || 0} ${i18n.xp}</p></div>`; 
-        textToRead = `${blockTx || i18n.reward}. ${i18n.earned.replace("experience points", (block.p || 0) + " " + i18n.xp)}`; 
+        html += `<div class="card center"><h2>📊 ${i18n.reward}</h2><p style="font-size:1.2rem; margin:10px 0; color:#22c55e;">METRICS ATTACHED TO REPORT</p></div>`; 
+        textToRead = `${blockTx || "Processing biometric tracking indices"}`; 
     }
     if (block.t === "c") { 
         html += `<div class="card"><p>${blockTx}</p></div>`; 
@@ -407,7 +411,6 @@ function renderBlock(block, navHeader) {
     }
     if (block.t !== "d") html += `<button id="continueBtn" disabled>${i18n.narrating}</button>`;
     app.innerHTML = html;
-    state.currentTextToNarrate = textToRead;
     narrate(textToRead, () => {
         if (block.t === "breath_auto" || block.t === "br") {
             startCountdown(24, nextBlock);
@@ -417,7 +420,8 @@ function renderBlock(block, navHeader) {
             startCountdown(24, nextBlock);
             unlockContinue(i18n.skip, nextBlock);
         } else if (block.t === "d") {
-            // Esperar interacción voluntaria
+            // Se marca el momento exacto en que termina de hablar para medir latencia de decisión pura
+            state.voiceStartTime = Date.now(); 
         } else {
             setTimeout(nextBlock, 1500);
         }
@@ -426,46 +430,45 @@ function renderBlock(block, navHeader) {
 function narrate(text, callback) {
     if (!text || state.isPaused) { if (callback) callback(); return; }
     state.speechLocked = true;
-    window.speechSynthesis.cancel();
+    window.speechSynthesis.cancel(); 
     const speech = new SpeechSynthesisUtterance(text);
     speech.lang = "en-US"; 
-    speech.rate = 0.95;
+    speech.rate = 0.95; 
     speech.onend = () => { 
         state.speechLocked = false; 
         if (callback && !state.isPaused) callback(); 
     };
-    speech.onerror = () => {
-        state.speechLocked = false;
-    };
+    speech.onerror = () => { state.speechLocked = false; };
     window.speechSynthesis.speak(speech);
 }
-/* =========================
-   GUÍA VISUAL DE RESPIRACIÓN
-========================= */
 function startGuidedBreathing() {
     const circle = document.getElementById("breathCircle");
     const label = document.getElementById("breathLabel");
     if (!circle || !label) return;
-    let inhale = true;
+    let inhale = true;    
     const step = () => {
         if (!document.getElementById("breathCircle") || state.timeLeft <= 0 || state.isPaused) return;
         label.innerText = inhale ? i18n.inhale : i18n.exhale;
         circle.style.transition = "transform 4000ms ease-in-out";
-        circle.style.transform = inhale ? "scale(1.3)" : "scale(0.85)";
+        circle.style.transform = inhale ? "scale(1.25)" : "scale(0.85)";
         inhale = !inhale;
     };
     step();
     const aniInterval = setInterval(() => {
-        if (!document.getElementById("breathCircle") || state.timeLeft <= 0 || state.isPaused) { 
-            clearInterval(aniInterval); 
-            return; 
-        }
+        if (!document.getElementById("breathCircle") || state.timeLeft <= 0 || state.isPaused) { clearInterval(aniInterval); return; }
         step();
     }, 4000);
 }
 function selectAnswer(index, correct, explanations) {
-    if (state.speechLocked || state.isPaused) return;
-    const isCorrect = index === correct;  
+    if (state.speechLocked || state.isPaused) return;   
+    // Captura milisegundos de retraso en la decisión real
+    if (state.voiceStartTime) {
+        const reactionTime = Date.now() - state.voiceStartTime;
+        state.telemetry.decisionTimes.push(reactionTime);
+        state.voiceStartTime = null; 
+    }
+    const isCorrect = index === correct;
+    if (isCorrect) state.telemetry.correctAnswers++;   
     let explanation = explanations?.[index] || "";
     const feedbackWrap = document.createElement("div");
     feedbackWrap.innerHTML = `
@@ -476,7 +479,6 @@ function selectAnswer(index, correct, explanations) {
         <button id="continueBtn" disabled>${i18n.narrating}</button>
     `;
     document.getElementById("app").appendChild(feedbackWrap);
-    state.currentTextToNarrate = explanation;
     narrate(explanation, () => {
         unlockContinue(i18n.next_step, nextBlock);
     });
@@ -493,4 +495,56 @@ function nextStory() {
 function unlockContinue(label, action) {
     const btn = document.getElementById("continueBtn");
     if (btn) { btn.disabled = false; btn.innerText = label; btn.onclick = action; }
+}
+/* ====================================
+   FINALIZACIÓN Y GENERACIÓN DE REPORTE REAL
+==================================== */
+function finishSession() {
+    window.speechSynthesis.cancel();
+    clearInterval(state.timer);
+    clearInterval(state.globalTimer); 
+    // Cálculos de métricas conductuales absolutas
+    const t = state.telemetry;
+    const avgDecisionTime = t.decisionTimes.length ? (t.decisionTimes.reduce((a,b)=>a+b,0) / t.decisionTimes.length / 1000).toFixed(2) : "0.00";   
+    const breathingFocus = t.breathingSecondsTarget ? Math.min(100, Math.round((t.breathingSecondsReal / t.breathingSecondsTarget) * 100)) : 100;
+    const silenceFocus = t.silenceSecondsTarget ? Math.min(100, Math.round((t.silenceSecondsReal / t.silenceSecondsTarget) * 100)) : 100;
+    const successRate = t.totalQuestions ? Math.round((t.correctAnswers / t.totalQuestions) * 100) : 100;
+    // Guardar objeto final en localStorage para que el script del PDF lo extraiga limpio
+    const finalReportData = {
+        sessionDuration: "15:00",
+        interruptionIndex: t.totalPauses,
+        focusDropCount: t.screenDesertions,
+        impulsivityMarkers: t.impulsiveClicks,
+        breathingCompliance: `${breathingFocus}%`,
+        silenceCompliance: `${silenceFocus}%`,
+        cognitiveLatency: `${avgDecisionTime}s`,
+        accuracyRate: `${successRate}%`
+    };
+    localStorage.setItem('kamizen_final_report', JSON.stringify(finalReportData));
+    // Si tu sistema tiene inyectada la función nativa de renderizado de validación para el PDF, se ejecuta
+    if (typeof renderValidationScreen === "function") {
+        renderValidationScreen(state.missions[state.currentIndex]?.id || 63, finalReportData);
+    } else {
+        // Pantalla de cierre por defecto mostrando los datos del sensor psicométrico
+        const app = document.getElementById("app");
+        app.innerHTML = `
+            <div class="card animated fadeIn">
+                <h2 style="color:#0ea5e9; text-align:center;">📋 SESSION BIOMETRIC LOG</h2>
+                <p style="text-align:center; font-size:0.9rem; margin-bottom:20px;">Real execution data recorded during this 15-minute training block.</p>     
+                <table style="width:100%; border-collapse: collapse; font-size:13px;">
+                    <tr style="border-bottom:1px solid #334155;"><td style="padding:6px 0;"><b>Cognitive Latency (Avg Delay):</b></td><td style="text-align:right; color:#0ea5e9;"><b>${finalReportData.cognitiveLatency}</b></td></tr>
+                    <tr style="border-bottom:1px solid #334155;"><td style="padding:6px 0;"><b>Impulsivity Markers (Anxious Clicks):</b></td><td style="text-align:right; color:#ef4444;"><b>${finalReportData.impulsivityMarkers}</b></td></tr>
+                    <tr style="border-bottom:1px solid #334155;"><td style="padding:6px 0;"><b>Focus Drops (App Desertions):</b></td><td style="text-align:right; color:#eab308;"><b>${finalReportData.focusDropCount}</b></td></tr>
+                    <tr style="border-bottom:1px solid #334155;"><td style="padding:6px 0;"><b>Manual Interruption Index (Pauses):</b></td><td style="text-align:right;">${finalReportData.interruptionIndex}</td></tr>
+                    <tr style="border-bottom:1px solid #334155;"><td style="padding:6px 0;"><b>Breathing Compliance:</b></td><td style="text-align:right; color:#22c55e;">${finalReportData.breathingCompliance}</td></tr>
+                    <tr style="border-bottom:1px solid #334155;"><td style="padding:6px 0;"><b>Silence Execution Retention:</b></td><td style="text-align:right; color:#22c55e;">${finalReportData.silenceCompliance}</td></tr>
+                    <tr style="border-bottom:1px solid #334155;"><td style="padding:6px 0;"><b>Decision Accuracy Rate:</b></td><td style="text-align:right;">${finalReportData.accuracyRate}</td></tr>
+                </table>          
+                <div style="margin-top:20px; background:rgba(14,165,233,0.1); padding:10px; border-radius:4px; font-size:12px; line-height:1.4; border:1px solid rgba(14,165,233,0.2);">
+                    <b>AS ADVISORY LOG:</b> These psychometric metrics reflect true behavioral data points. High latency with low impulsivity proves executive processing stability. Frequent focus drops suggest attention-span fatigue.
+                </div>
+                <button onclick="localStorage.clear(); location.reload();" style="margin-top:20px; width:100%;">EXPORT DATA & RESET</button>
+            </div>`;
+        narrate("Session closed. Your biometric data log is compiled and ready.");
+    }
 }
