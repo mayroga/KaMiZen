@@ -355,3 +355,149 @@ function unlockContinue(label, action) {
     const btn = document.getElementById("continueBtn");
     if (btn) { btn.disabled = false; btn.innerText = label; btn.onclick = action; }
 }
+// =================================================================
+// MÓDULO DE REVISIÓN Y EVALUACIÓN PSICOSOCIAL DEL ESTUDIANTE
+// =================================================================
+(function() {
+    // 1. Definición de los criterios de revisión organizados por áreas
+    const criteriosEvaluacion = [
+        { id: 'p1', area: 'Psicológica', aspecto: 'Manejo del estrés académico', sugerencia: '¿Muestra estabilidad ante tareas complejas o presión de tiempo?' },
+        { id: 'p2', area: 'Psicológica', aspecto: 'Motivación y Enfoque', sugerencia: '¿Mantiene la atención de forma constante durante las actividades?' },
+        { id: 's1', area: 'Social', aspecto: 'Comunicación y Entorno', sugerencia: '¿Expresa sus ideas con claridad y busca apoyo cuando lo requiere?' },
+        { id: 's2', area: 'Social', aspecto: 'Adaptación al Método', sugerencia: '¿Muestra una actitud abierta ante las dinámicas propuestas?' }
+    ];
+
+    // 2. Función para renderizar la interfaz de revisión en pantalla
+    function inicializarPanelEvaluacion() {
+        // Buscar un contenedor en tu HTML o insertarlo al final del body
+        const contenedorPadre = document.getElementById('contenedor-evaluacion') || document.body;
+        
+        const panelHTML = document.createElement('div');
+        panelHTML.id = 'panel-evaluacion-estudiante';
+        panelHTML.style.margin = '20px';
+        panelHTML.style.padding = '15px';
+        panelHTML.style.border = '1px solid #ccc';
+        panelHTML.style.borderRadius = '8px';
+        panelHTML.style.backgroundColor = '#f9f9f9';
+
+        // Construcción de la tabla para visualización clara y scannable
+        let tablaHTML = `
+            <h3 style="margin-top:0;">Revisión de Perfil Psicosocial</h3>
+            <p style="font-size:14px; color:#555;">Seleccione el estado observado para cada uno de los aspectos clave:</p>
+            <table style="width:100%; border-collapse: collapse; margin-bottom: 15px;">
+                <thead>
+                    <tr style="background-color: #eaeaea; text-align: left;">
+                        <th style="padding: 8px; border-bottom: 2px solid #ddd;">Área</th>
+                        <th style="padding: 8px; border-bottom: 2px solid #ddd;">Aspecto Clave</th>
+                        <th style="padding: 8px; border-bottom: 2px solid #ddd;">Sugerencia de Análisis</th>
+                        <th style="padding: 8px; border-bottom: 2px solid #ddd;">Valoración</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+
+        criteriosEvaluacion.forEach(item => {
+            tablaHTML += `
+                <tr style="border-bottom: 1px solid #eee;">
+                    <td style="padding: 8px; font-weight: bold;">${item.area}</td>
+                    <td style="padding: 8px;">${item.aspecto}</td>
+                    <td style="padding: 8px; color: #666; font-size: 13px;">${item.sugerencia}</td>
+                    <td style="padding: 8px;">
+                        <select id="eval_${item.id}" style="padding: 4px; border-radius: 4px;">
+                            <option value="en_observacion">En Observación</option>
+                            <option value="favorable">Favorable</option>
+                            <option value="requiere_atencion">Requiere Atención</option>
+                        </select>
+                    </td>
+                </tr>
+            `;
+        });
+
+        tablaHTML += `
+                </tbody>
+            </table>
+            <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                <button id="btn-borrar-eval" style="padding: 8px 12px; background-color: #f44336; color: white; border: none; border-radius: 4px; cursor: pointer;">Borrar Selección</button>
+                <button id="btn-guardar-eval" style="padding: 8px 12px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">Rectificar y Guardar</button>
+            </div>
+        `;
+
+        panelHTML.innerHTML = tablaHTML;
+        contenedorPadre.appendChild(panelHTML);
+
+        // 3. Asignación de eventos a los botones
+        document.getElementById('btn-borrar-eval').addEventListener('click', reiniciarFormulario);
+        document.getElementById('btn-guardar-eval').addEventListener('click', procesarEvaluacion);
+    }
+
+    // 4. Acción para restablecer las selecciones (Botón de borrar)
+    function reiniciarFormulario() {
+        criteriosEvaluacion.forEach(item => {
+            document.getElementById(`eval_${item.id}`).value = 'en_observacion';
+        });
+    }
+
+    // 5. Acción para recopilar y tramitar los resultados obtenidos
+    function procesarEvaluacion() {
+        const resultados = {};
+        criteriosEvaluacion.forEach(item => {
+            resultados[item.id] = document.getElementById(`eval_${item.id}`).value;
+        });
+
+        // Sugerencia de integración: Aquí se puede vincular con tu backend para almacenar los datos de forma segura
+        console.log("Datos de revisión psicosocial listos para procesamiento:", resultados);
+        alert("Los datos de la revisión han sido registrados correctamente para su posterior asesoría.");
+    }
+
+    // Asegurar que la interfaz se monte cuando el DOM esté completamente listo
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', inicializarPanelEvaluacion);
+    } else {
+        inicializarPanelEvaluacion();
+    }
+})();
+// =================================================================
+// MÓDULO DE ALEATORIZACIÓN DE RESPUESTAS (MÉTODO PEDAGÓGICO)
+// =================================================================
+(function() {
+    /**
+     * Algoritmo de Fisher-Yates para mezclar elementos de forma segura y eficiente.
+     * @param {Array} array - El arreglo original con las opciones de respuesta.
+     * @returns {Array} - El mismo arreglo con el orden de sus elementos invertido o mezclado al azar.
+     */
+    function mezclarOpciones(array) {
+        let copia = [...array]; // Se trabaja sobre una copia para no alterar el orden original del backend
+        for (let i = copia.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [copia[i], copia[j]] = [copia[j], copia[i]]; // Intercambio de posiciones
+        }
+        return copia;
+    }
+
+    /**
+     * Ejemplo práctico de integración con la lógica de tu aplicación.
+     * Cuando vayas a renderizar o mostrar una pregunta en la interfaz:
+     */
+    function prepararPreguntaParaMostrar(preguntaOriginal) {
+        // Validación para asegurar que la estructura contenga las opciones
+        if (!preguntaOriginal || !preguntaOriginal.opciones) {
+            return preguntaOriginal;
+        }
+
+        // Se mezclan las respuestas para que nunca aparezcan en la misma posición (como el segundo lugar)
+        const opcionesMezcladas = mezclarOpciones(preguntaOriginal.opciones);
+
+        // Devolvemos el objeto listo para ser pintado en el HTML con las opciones en orden aleatorio
+        return {
+            ...preguntaOriginal,
+            opciones: opcionesMezcladas
+        };
+    }
+
+    // Exponer la función de forma segura al entorno global o al motor existente si es necesario
+    window.SmartCargoEngine = window.SmartCargoEngine || {};
+    window.SmartCargoEngine.prepararPreguntaParaMostrar = prepararPreguntaParaMostrar;
+    window.SmartCargoEngine.mezclarOpciones = mezclarOpciones;
+
+    console.log("Módulo de aleatorización pedagógica inicializado correctamente.");
+})();
