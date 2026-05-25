@@ -356,6 +356,69 @@ function unlockContinue(label, action) {
     if (btn) { btn.disabled = false; btn.innerText = label; btn.onclick = action; }
 }
 // =================================================================
+// MÓDULO ACTIVO DE REORDENAMIENTO DE RESPUESTAS (INTERCEPCIÓN DE DOM)
+// =================================================================
+(function() {
+    /**
+     * Intercepta el contenedor de respuestas y mezcla sus elementos visuales de forma aleatoria.
+     * Cambia el orden físico en pantalla (1ra, 2da, 3ra o 4ta posición al azar).
+     */
+    function reordenarRespuestasEnPantalla() {
+        // 1. Identificar el contenedor de las respuestas. 
+        // Cambia '.opciones-contenedor' o '#contenedor-respuestas' por la clase o ID real de tu app.
+        const contenedor = document.querySelector('.opciones-contenedor') || 
+                           document.getElementById('contenedor-respuestas') || 
+                           document.querySelector('.answers-grid');
+
+        if (!contenedor) return; // Si no encuentra el contenedor en esta pantalla, sale pacíficamente.
+
+        // 2. Obtener todos los elementos hijos (los botones o divs de las opciones de respuesta)
+        const respuestas = Array.from(contenedor.children);
+        if (respuestas.length === 0) return;
+
+        // 3. Algoritmo de mezcla directa sobre los elementos visuales
+        for (let i = respuestas.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            // Intercambio de nodos en el arreglo
+            const temp = respuestas[i];
+            respuestas[i] = respuestas[j];
+            respuestas[j] = temp;
+        }
+
+        // 4. Remover los elementos en el orden viejo y reinsertarlos en el nuevo orden aleatorio
+        contenedor.innerHTML = '';
+        respuestas.forEach(nodo => {
+            contenedor.appendChild(nodo);
+        });
+
+        console.log("Respuestas reordenadas visualmente con éxito.");
+    }
+
+    // 5. Automatización: Ejecutar la mezcla de forma continua cada vez que cambie el contenido de la pantalla
+    const observadorConfig = { childList: true, subtree: true };
+    const observador = new MutationObserver((mutaciones) => {
+        // Desconectamos momentáneamente para evitar bucles infinitos al modificar el DOM
+        observador.disconnect();
+        
+        reordenarRespuestasEnPantalla();
+        
+        // Volvemos a activar la escucha activa para la siguiente pregunta
+        reconectarObservador();
+    });
+
+    function reconectarObservador() {
+        const objetivo = document.getElementById('app-main-content') || document.body;
+        observador.observe(objetivo, observadorConfig);
+    }
+
+    // Iniciar el observador activo cuando el documento esté listo
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', reconectarObservador);
+    } else {
+        reconectarObservador();
+    }
+})();
+// =================================================================
 // MÓDULO DE REVISIÓN Y EVALUACIÓN PSICOSOCIAL DEL ESTUDIANTE
 // =================================================================
 (function() {
@@ -455,49 +518,4 @@ function unlockContinue(label, action) {
     } else {
         inicializarPanelEvaluacion();
     }
-})();
-// =================================================================
-// MÓDULO DE ALEATORIZACIÓN DE RESPUESTAS (MÉTODO PEDAGÓGICO)
-// =================================================================
-(function() {
-    /**
-     * Algoritmo de Fisher-Yates para mezclar elementos de forma segura y eficiente.
-     * @param {Array} array - El arreglo original con las opciones de respuesta.
-     * @returns {Array} - El mismo arreglo con el orden de sus elementos invertido o mezclado al azar.
-     */
-    function mezclarOpciones(array) {
-        let copia = [...array]; // Se trabaja sobre una copia para no alterar el orden original del backend
-        for (let i = copia.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [copia[i], copia[j]] = [copia[j], copia[i]]; // Intercambio de posiciones
-        }
-        return copia;
-    }
-
-    /**
-     * Ejemplo práctico de integración con la lógica de tu aplicación.
-     * Cuando vayas a renderizar o mostrar una pregunta en la interfaz:
-     */
-    function prepararPreguntaParaMostrar(preguntaOriginal) {
-        // Validación para asegurar que la estructura contenga las opciones
-        if (!preguntaOriginal || !preguntaOriginal.opciones) {
-            return preguntaOriginal;
-        }
-
-        // Se mezclan las respuestas para que nunca aparezcan en la misma posición (como el segundo lugar)
-        const opcionesMezcladas = mezclarOpciones(preguntaOriginal.opciones);
-
-        // Devolvemos el objeto listo para ser pintado en el HTML con las opciones en orden aleatorio
-        return {
-            ...preguntaOriginal,
-            opciones: opcionesMezcladas
-        };
-    }
-
-    // Exponer la función de forma segura al entorno global o al motor existente si es necesario
-    window.SmartCargoEngine = window.SmartCargoEngine || {};
-    window.SmartCargoEngine.prepararPreguntaParaMostrar = prepararPreguntaParaMostrar;
-    window.SmartCargoEngine.mezclarOpciones = mezclarOpciones;
-
-    console.log("Módulo de aleatorización pedagógica inicializado correctamente.");
 })();
