@@ -1,9 +1,11 @@
 {
-  "sys":"KAMIZEN LIFE SYSTEM",
-  "ch":9,
-  "rng":"57-63",
-  "ui":{"fw":["CALM","BODY","FOCUS","CONTROL","TRUTH","AWARENESS","SAFETY","ACTION"]},
-  "rules":[
+  "sys": "KAMIZEN LIFE SYSTEM",
+  "ch": 9,
+  "rng": "57-63",
+  "ui": {
+    "fw": ["CALM", "BODY", "FOCUS", "CONTROL", "TRUTH", "AWARENESS", "SAFETY", "ACTION"]
+  },
+  "rules": [
     "Imagination>Loneliness",
     "Effort=Excellence",
     "Listening>Pain",
@@ -12,284 +14,333 @@
     "Creativity=Power",
     "Consistency>Luck"
   ],
-  "missions":[
+  "missions": [
     {
-      "id":57,
-      "cat":"social_support",
-      "b":[
-        {"t":"v","tx":{"en":"MISSION 57: NEVER ALONE"}},
-        {"t":"h","tx":{"en":"Use your imagination to feel strong"}},
-        {"story":{"en":"If you ever feel lonely, use your imagination. Pretend your plushies or imaginary friends are talking and playing with you. Your mind can create comfort and connection whenever you need it."}},
-        {"t":"breath_auto","d":30,
-        "tx":{"en":"Breathe in friendship... breathe out lonely feelings"},
-        "inf":{"en":"Fills your heart with comfort"}
+      "id": 57,
+      "cat": "social_support",
+      "b": [
+        {"t": "v", "tx": {"en": "MISSION 57: NEVER ALONE"}},
+        {"t": "h", "tx": {"en": "Use your imagination to feel strong"}},
+        {"story": {"en": "If you ever feel lonely, use your imagination. Pretend your plushies or imaginary friends are talking and playing with you. Your mind can create comfort and connection whenever you need it."}},
+        {
+          "t": "breath_auto", "d": 30,
+          "tx": {"en": "Breathe in friendship... breathe out lonely feelings"},
+          "inf": {"en": "Fills your heart with comfort"}
         },
-        {"t":"d","q":{"en":"What can you do if you feel lonely?"},
-        "op":["Cry all day","Use your imagination and plushies","Wait forever","Get angry"],
-        "c":1,
-        "ex":[
-          "Crying alone does not solve loneliness",
-          "Imagination creates comfort and connection",
-          "Waiting forever increases sadness",
-          "Anger hurts your emotions"
-        ]},
-        {"t":"d","q":{"en":"What helps you feel emotionally stronger?"},
-        "op":["Staying isolated","Creating positive thoughts","Ignoring feelings","Giving up"],
-        "c":1,
-        "ex":[
-          "Isolation increases loneliness",
-          "Positive imagination builds emotional support",
-          "Ignoring feelings removes awareness",
-          "Giving up weakens confidence"
-        ]},
-        {"t":"r","tx":"+Emotional Support","p":20},
-        {"t":"sil","d":45,
-        "tx":{"en":"Your mind can create comfort and peace"},
-        "inf":{"en":"Builds emotional resilience"}
+        {
+          "t": "d", "q": {"en": "What can you do if you feel lonely?"},
+          "op": ["Use your imagination and plushies", "Cry all day", "Wait forever", "Get angry"],
+          "c": 0,
+          "ex": [
+            "Imagination creates comfort and connection",
+            "Crying alone does not solve loneliness",
+            "Waiting forever increases sadness",
+            "Anger hurts your emotions"
+          ]
         },
-        {"t":"breath_auto","d":30,
-        "tx":{"en":"Inhale peace... exhale loneliness"},
-        "inf":{"en":"Calms your emotions"}
+        {
+          "t": "d", "q": {"en": "What helps you feel emotionally stronger?"},
+          "op": ["Staying isolated", "Ignoring feelings", "Creating positive thoughts", "Giving up"],
+          "c": 2,
+          "ex": [
+            "Isolation increases loneliness",
+            "Ignoring feelings removes awareness",
+            "Positive imagination builds emotional support",
+            "Giving up weakens confidence"
+          ]
+        },
+        {"t": "r", "tx": "+Emotional Support", "p": 20},
+        {
+          "t": "sil", "d": 45,
+          "tx": {"en": "Your mind can create comfort and peace"},
+          "inf": {"en": "Builds emotional resilience"}
+        },
+        {
+          "t": "breath_auto", "d": 30,
+          "tx": {"en": "Inhale peace... exhale loneliness"},
+          "inf": {"en": "Calms your emotions"}
         }
       ]
     },
     {
-      "id":58,
-      "cat":"social_integration",
-      "b":[
-        {"t":"v","tx":{"en":"MISSION 58: JOINING THE GAME"}},
-        {"t":"h","tx":{"en":"You can slowly become part of the group"}},
-        {"story":{"en":"To play with other kids, observe first and calmly join the activity. Social confidence grows through participation."}},
-        {"t":"breath_auto","d":35,
-        "tx":{"en":"Breathe slowly and feel confident"},
-        "inf":{"en":"Helps you join others calmly"}
+      "id": 58,
+      "cat": "social_integration",
+      "b": [
+        {"t": "v", "tx": {"en": "MISSION 58: JOINING THE GAME"}},
+        {"t": "h", "tx": {"en": "You can slowly become part of the group"}},
+        {"story": {"en": "To play with other kids, observe first and calmly join the activity. Social confidence grows through participation."}},
+        {
+          "t": "breath_auto", "d": 35,
+          "tx": {"en": "Breathe slowly and feel confident"},
+          "inf": {"en": "Helps you join others calmly"}
         },
-        {"t":"d","q":{"en":"What is a simple way to join a game?"},
-        "op":["Interrupt everyone","Join calmly where they are playing","Stay alone forever","Ask too many questions"],
-        "c":1,
-        "ex":[
-          "Interrupting creates tension",
-          "Joining calmly helps social connection",
-          "Isolation blocks friendship",
-          "Too many questions stop the flow"
-        ]},
-        {"t":"d","q":{"en":"What helps you understand a group activity?"},
-        "op":["Ignoring everyone","Observing before acting","Running away","Controlling the game"],
-        "c":1,
-        "ex":[
-          "Ignoring removes awareness",
-          "Observation helps understanding",
-          "Running away prevents participation",
-          "Control creates conflict"
-        ]},
-        {"t":"r","tx":"+Social Skills","p":25},
-        {"t":"sil","d":50,
-        "tx":{"en":"Observe the game before joining"},
-        "inf":{"en":"Helps you understand the group"}
+        {
+          "t": "d", "q": {"en": "What is a simple way to join a game?"},
+          "op": ["Interrupt everyone", "Stay alone forever", "Ask too many questions", "Join calmly where they are playing"],
+          "c": 3,
+          "ex": [
+            "Interrupting creates tension",
+            "Isolation blocks friendship",
+            "Too many questions stop the flow",
+            "Joining calmly helps social connection"
+          ]
         },
-        {"t":"breath_auto","d":30,
-        "tx":{"en":"Inhale courage... exhale shyness"},
-        "inf":{"en":"Makes you ready to play"}
+        {
+          "t": "d", "q": {"en": "What helps you understand a group activity?"},
+          "op": ["Ignoring everyone", "Observing before acting", "Running away", "Controlling the game"],
+          "c": 1,
+          "ex": [
+            "Ignoring removes awareness",
+            "Observation helps understanding",
+            "Running away prevents participation",
+            "Control creates conflict"
+          ]
+        },
+        {"t": "r", "tx": "+Social Skills", "p": 25},
+        {
+          "t": "sil", "d": 50,
+          "tx": {"en": "Observe the game before joining"},
+          "inf": {"en": "Helps you understand the group"}
+        },
+        {
+          "t": "breath_auto", "d": 30,
+          "tx": {"en": "Inhale courage... exhale shyness"},
+          "inf": {"en": "Makes you ready to play"}
         }
       ]
     },
     {
-      "id":59,
-      "cat":"pain_management",
-      "b":[
-        {"t":"v","tx":{"en":"MISSION 59: THE HEADACHE STRATEGY"}},
-        {"t":"h","tx":{"en":"Use other senses when one sense feels tired"}},
-        {"story":{"en":"If your eyes hurt from light, you can still learn by listening carefully. Your brain can adapt using different senses."}},
-        {"t":"breath_auto","d":40,
-        "tx":{"en":"Soft breathing for your head"},
-        "inf":{"en":"Reduces pressure and tension"}
+      "id": 59,
+      "cat": "pain_management",
+      "b": [
+        {"t": "v", "tx": {"en": "MISSION 59: THE HEADACHE STRATEGY"}},
+        {"t": "h", "tx": {"en": "Use other senses when one sense feels tired"}},
+        {"story": {"en": "If your eyes hurt from light, you can still learn by listening carefully. Your brain can adapt using different senses."}},
+        {
+          "t": "breath_auto", "d": 40,
+          "tx": {"en": "Soft breathing for your head"},
+          "inf": {"en": "Reduces pressure and tension"}
         },
-        {"t":"d","q":{"en":"How can you learn if your eyes hurt?"},
-        "op":["Close your ears","Listen and memorize","Give up completely","Look harder"],
-        "c":1,
-        "ex":[
-          "Closing your ears removes learning input",
-          "Listening helps protect your eyes",
-          "Giving up stops progress",
-          "Looking harder increases discomfort"
-        ]},
-        {"t":"d","q":{"en":"What shows adaptability during discomfort?"},
-        "op":["Panic immediately","Use another strategy","Quit the lesson","Ignore pain completely"],
-        "c":1,
-        "ex":[
-          "Panic reduces thinking",
-          "Adaptation keeps learning active",
-          "Quitting stops growth",
-          "Ignoring pain removes awareness"
-        ]},
-        {"t":"r","tx":"+Adaptability","p":20},
-        {"t":"sil","d":60,
-        "tx":{"en":"Rest your eyes and focus your hearing"},
-        "inf":{"en":"Builds flexible learning skills"}
+        {
+          "t": "d", "q": {"en": "How can you learn if your eyes hurt?"},
+          "op": ["Close your ears", "Give up completely", "Listen and memorize", "Look harder"],
+          "c": 2,
+          "ex": [
+            "Closing your ears removes learning input",
+            "Giving up stops progress",
+            "Listening helps protect your eyes",
+            "Looking harder increases discomfort"
+          ]
         },
-        {"t":"breath_auto","d":30,
-        "tx":{"en":"Inhale quiet... exhale pain"},
-        "inf":{"en":"Helps your body relax"}
+        {
+          "t": "d", "q": {"en": "What shows adaptability during discomfort?"},
+          "op": ["Use another strategy", "Panic immediately", "Quit the lesson", "Ignore pain completely"],
+          "c": 0,
+          "ex": [
+            "Adaptation keeps learning active",
+            "Panic reduces thinking",
+            "Quitting stops growth",
+            "Ignoring pain removes awareness"
+          ]
+        },
+        {"t": "r", "tx": "+Adaptability", "p": 20},
+        {
+          "t": "sil", "d": 60,
+          "tx": {"en": "Rest your eyes and focus your hearing"},
+          "inf": {"en": "Builds flexible learning skills"}
+        },
+        {
+          "t": "breath_auto", "d": 30,
+          "tx": {"en": "Inhale quiet... exhale pain"},
+          "inf": {"en": "Helps your body relax"}
         }
       ]
     },
     {
-      "id":60,
-      "cat":"discipline_rules",
-      "b":[
-        {"t":"v","tx":{"en":"MISSION 60: THE MASTER OF SCREENS"}},
-        {"t":"h","tx":{"en":"Control your devices with discipline"}},
-        {"story":{"en":"Phones and games are tools, not masters. Short balanced sessions protect your focus and help your brain stay strong."}},
-        {"t":"breath_auto","d":30,
-        "tx":{"en":"Breathe in focus... breathe out distraction"},
-        "inf":{"en":"Prepares your brain for self-control"}
+      "id": 60,
+      "cat": "discipline_rules",
+      "b": [
+        {"t": "v", "tx": {"en": "MISSION 60: THE MASTER OF SCREENS"}},
+        {"t": "h", "tx": {"en": "Control your devices with discipline"}},
+        {"story": {"en": "Phones and games are tools, not masters. Short balanced sessions protect your focus and help your brain stay strong."}},
+        {
+          "t": "breath_auto", "d": 30,
+          "tx": {"en": "Breathe in focus... breathe out distraction"},
+          "inf": {"en": "Prepares your brain for self-control"}
         },
-        {"t":"d","q":{"en":"What keeps your brain sharp while using screens?"},
-        "op":["Play endlessly","Short balanced sessions","Check notifications constantly","Ignore homework"],
-        "c":1,
-        "ex":[
-          "Endless play weakens focus",
-          "Balanced use protects attention",
-          "Constant checking creates distraction",
-          "Ignoring work creates problems"
-        ]},
-        {"t":"d","q":{"en":"What is a healthy use of technology?"},
-        "op":["Using it without limits","Using it with control","Playing during homework","Never stopping"],
-        "c":1,
-        "ex":[
-          "No limits create overload",
-          "Control builds discipline",
-          "Multitasking reduces learning",
-          "Never stopping causes fatigue"
-        ]},
-        {"t":"r","tx":"+Self-Control","p":30},
-        {"t":"sil","d":40,
-        "tx":{"en":"Think calmly about your next task"},
-        "inf":{"en":"Prepares your brain for responsibility"}
+        {
+          "t": "d", "q": {"en": "What keeps your brain sharp while using screens?"},
+          "op": ["Play endlessly", "Check notifications constantly", "Ignore homework", "Short balanced sessions"],
+          "c": 3,
+          "ex": [
+            "Endless play weakens focus",
+            "Constant checking creates distraction",
+            "Ignoring work creates problems",
+            "Balanced use protects attention"
+          ]
         },
-        {"t":"breath_auto","d":30,
-        "tx":{"en":"Inhale order... exhale distraction"},
-        "inf":{"en":"Builds discipline"}
+        {
+          "t": "d", "q": {"en": "What is a healthy use of technology?"},
+          "op": ["Using it without limits", "Playing during homework", "Using it with control", "Never stopping"],
+          "c": 2,
+          "ex": [
+            "No limits create overload",
+            "Playing during homework reduces learning",
+            "Control builds discipline",
+            "Never stopping causes fatigue"
+          ]
+        },
+        {"t": "r", "tx": "+Self-Control", "p": 30},
+        {
+          "t": "sil", "d": 40,
+          "tx": {"en": "Think calmly about your next task"},
+          "inf": {"en": "Prepares your brain for responsibility"}
+        },
+        {
+          "t": "breath_auto", "d": 30,
+          "tx": {"en": "Inhale order... exhale distraction"},
+          "inf": {"en": "Builds discipline"}
         }
       ]
     },
     {
-      "id":61,
-      "cat":"academic_excellence",
-      "b":[
-        {"t":"v","tx":{"en":"MISSION 61: WORK WITH EFFORT"}},
-        {"t":"h","tx":{"en":"Consistent effort creates excellence"}},
-        {"story":{"en":"Hard work and consistency improve learning over time. Great results come from repeated effort."}},
-        {"t":"breath_auto","d":30,
-        "tx":{"en":"Inhale effort... exhale laziness"},
-        "inf":{"en":"Builds motivation and persistence"}
+      "id": 61,
+      "cat": "academic_excellence",
+      "b": [
+        {"t": "v", "tx": {"en": "MISSION 61: WORK WITH EFFORT"}},
+        {"t": "h", "tx": {"en": "Consistent effort creates excellence"}},
+        {"story": {"en": "Hard work and consistency improve learning over time. Great results come from repeated effort."}},
+        {
+          "t": "breath_auto", "d": 30,
+          "tx": {"en": "Inhale effort... exhale laziness"},
+          "inf": {"en": "Builds motivation and persistence"}
         },
-        {"t":"d","q":{"en":"What helps you improve at school?"},
-        "op":["Giving up quickly","Working consistently","Avoiding homework","Waiting for luck"],
-        "c":1,
-        "ex":[
-          "Giving up blocks progress",
-          "Consistency builds excellence",
-          "Avoidance weakens learning",
-          "Luck is unreliable"
-        ]},
-        {"t":"d","q":{"en":"What creates long-term success?"},
-        "op":["Short bursts only","Daily effort and practice","Doing nothing","Complaining constantly"],
-        "c":1,
-        "ex":[
-          "Short bursts are unstable",
-          "Practice creates mastery",
-          "Doing nothing prevents growth",
-          "Complaining changes nothing"
-        ]},
-        {"t":"r","tx":"+Excellence","p":35},
-        {"t":"sil","d":50,
-        "tx":{"en":"Focus on becoming stronger every day"},
-        "inf":{"en":"Builds growth mindset"}
+        {
+          "t": "d", "q": {"en": "What helps you improve at school?"},
+          "op": ["Giving up quickly", "Working consistently", "Avoiding homework", "Waiting for luck"],
+          "c": 1,
+          "ex": [
+            "Giving up blocks progress",
+            "Consistency builds excellence",
+            "Avoidance weakens learning",
+            "Luck is unreliable"
+          ]
         },
-        {"t":"breath_auto","d":30,
-        "tx":{"en":"Inhale strength... exhale doubt"},
-        "inf":{"en":"Reinforces confidence"}
+        {
+          "t": "d", "q": {"en": "What creates long-term success?"},
+          "op": ["Daily effort and practice", "Short bursts only", "Doing nothing", "Complaining constantly"],
+          "c": 0,
+          "ex": [
+            "Practice creates mastery",
+            "Short bursts are unstable",
+            "Doing nothing prevents growth",
+            "Complaining changes nothing"
+          ]
+        },
+        {"t": "r", "tx": "+Excellence", "p": 35},
+        {
+          "t": "sil", "d": 50,
+          "tx": {"en": "Focus on becoming stronger every day"},
+          "inf": {"en": "Builds growth mindset"}
+        },
+        {
+          "t": "breath_auto", "d": 30,
+          "tx": {"en": "Inhale strength... exhale doubt"},
+          "inf": {"en": "Reinforces confidence"}
         }
       ]
     },
     {
-      "id":62,
-      "cat":"observation_skills",
-      "b":[
-        {"t":"v","tx":{"en":"MISSION 62: THE SHARP OBSERVER"}},
-        {"t":"h","tx":{"en":"Observation helps you learn and stay safe"}},
-        {"story":{"en":"Watching trusted adults carefully helps you understand situations, behavior, and safety patterns."}},
-        {"t":"breath_auto","d":30,
-        "tx":{"en":"Slow breath... observe carefully"},
-        "inf":{"en":"Sharpens your awareness"}
+      "id": 62,
+      "cat": "observation_skills",
+      "b": [
+        {"t": "v", "tx": {"en": "MISSION 62: THE SHARP OBSERVER"}},
+        {"t": "h", "tx": {"en": "Observation helps you learn and stay safe"}},
+        {"story": {"en": "Watching trusted adults carefully helps you understand situations, behavior, and safety patterns."}},
+        {
+          "t": "breath_auto", "d": 30,
+          "tx": {"en": "Slow breath... observe carefully"},
+          "inf": {"en": "Sharpens your awareness"}
         },
-        {"t":"d","q":{"en":"Why is observation important?"},
-        "op":["To copy everything","To learn and stay safe","To annoy others","To win prizes"],
-        "c":1,
-        "ex":[
-          "Copying is not the goal",
-          "Observation increases awareness and safety",
-          "Annoying others creates problems",
-          "Safety matters more than prizes"
-        ]},
-        {"t":"d","q":{"en":"What improves your awareness skills?"},
-        "op":["Ignoring details","Watching calmly and carefully","Rushing constantly","Looking at nothing"],
-        "c":1,
-        "ex":[
-          "Ignoring details reduces awareness",
-          "Calm observation improves learning",
-          "Rushing misses information",
-          "No observation means no learning"
-        ]},
-        {"t":"r","tx":"+Master Awareness","p":30},
-        {"t":"sil","d":70,
-        "tx":{"en":"Be still and observe the environment"},
-        "inf":{"en":"Strengthens intelligence and awareness"}
+        {
+          "t": "d", "q": {"en": "Why is observation important?"},
+          "op": ["To copy everything", "To annoy others", "To learn and stay safe", "To win prizes"],
+          "c": 2,
+          "ex": [
+            "Copying is not the goal",
+            "Annoying others creates problems",
+            "Observation increases awareness and safety",
+            "Safety matters more than prizes"
+          ]
         },
-        {"t":"breath_auto","d":30,
-        "tx":{"en":"Inhale focus... exhale distraction"},
-        "inf":{"en":"Improves observation skills"}
+        {
+          "t": "d", "q": {"en": "What improves your awareness skills?"},
+          "op": ["Ignoring details", "Rushing constantly", "Looking at nothing", "Watching calmly and carefully"],
+          "c": 3,
+          "ex": [
+            "Ignoring details reduces awareness",
+            "Rushing misses information",
+            "No observation means no learning",
+            "Calm observation improves learning"
+          ]
+        },
+        {"t": "r", "tx": "+Master Awareness", "p": 30},
+        {
+          "t": "sil", "d": 70,
+          "tx": {"en": "Be still and observe the environment"},
+          "inf": {"en": "Strengthens intelligence and awareness"}
+        },
+        {
+          "t": "breath_auto", "d": 30,
+          "tx": {"en": "Inhale focus... exhale distraction"},
+          "inf": {"en": "Improves observation skills"}
         }
       ]
     },
     {
-      "id":63,
-      "cat":"final_security",
-      "b":[
-        {"t":"v","tx":{"en":"MISSION 63: ATTENTION TO DETAIL"}},
-        {"t":"h","tx":{"en":"Safety grows through awareness"}},
-        {"story":{"en":"Even in parking areas or busy places, continue observing movement around you until you are completely safe."}},
-        {"t":"breath_auto","d":35,
-        "tx":{"en":"Take one calm breath and scan the area"},
-        "inf":{"en":"Strengthens environmental awareness"}
+      "id": 63,
+      "cat": "final_security",
+      "b": [
+        {"t": "v", "tx": {"en": "MISSION 63: ATTENTION TO DETAIL"}},
+        {"t": "h", "tx": {"en": "Safety grows through awareness"}},
+        {"story": {"en": "Even in parking areas or busy places, continue observing movement around you until you are completely safe."}},
+        {
+          "t": "breath_auto", "d": 35,
+          "tx": {"en": "Take one calm breath and scan the area"},
+          "inf": {"en": "Strengthens environmental awareness"}
         },
-        {"t":"d","q":{"en":"When should you stay attentive?"},
-        "op":["Only at the beginning","Until you are fully safe","Only while talking","For one second"],
-        "c":1,
-        "ex":[
-          "Beginning awareness is not enough",
-          "Attention should continue until safety is complete",
-          "Talking can create distraction",
-          "One second is insufficient"
-        ]},
-        {"t":"d","q":{"en":"What improves personal safety?"},
-        "op":["Ignoring movement","Observing your surroundings","Walking distracted","Rushing without looking"],
-        "c":1,
-        "ex":[
-          "Ignoring movement reduces awareness",
-          "Observation improves protection",
-          "Distraction creates risk",
-          "Rushing increases danger"
-        ]},
-        {"t":"r","tx":"+Safety Mastery","p":40},
-        {"t":"sil","d":100,
-        "tx":{"en":"Stay alert, calm, and aware"},
-        "inf":{"en":"Integrates all safety habits"}
+        {
+          "t": "d", "q": {"en": "When should you stay attentive?"},
+          "op": ["Until you are fully safe", "Only at the beginning", "Only while talking", "For one second"],
+          "c": 0,
+          "ex": [
+            "Attention should continue until safety is complete",
+            "Beginning awareness is not enough",
+            "Talking can create distraction",
+            "One second is insufficient"
+          ]
         },
-        {"t":"breath_auto","d":35,
-        "tx":{"en":"Inhale confidence... exhale worry"},
-        "inf":{"en":"Final calm before action"}
+        {
+          "t": "d", "q": {"en": "What improves personal safety?"},
+          "op": ["Ignoring movement", "Observing your surroundings", "Walking distracted", "Rushing without looking"],
+          "c": 1,
+          "ex": [
+            "Ignoring movement reduces awareness",
+            "Observation improves protection",
+            "Distraction creates risk",
+            "Rushing increases danger"
+          ]
+        },
+        {"t": "r", "tx": "+Safety Mastery", "p": 40},
+        {
+          "t": "sil", "d": 100,
+          "tx": {"en": "Stay alert, calm, and aware"},
+          "inf": {"en": "Integrates all safety habits"}
+        },
+        {
+          "t": "breath_auto", "d": 35,
+          "tx": {"en": "Inhale confidence... exhale worry"},
+          "inf": {"en": "Final calm before action"}
         }
       ]
     }
