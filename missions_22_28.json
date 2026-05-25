@@ -29,7 +29,6 @@
       "b":[
         {"t":"v","tx":{"en":"MISSION 22: SITUATIONAL AWARENESS"}},
         {"t":"h","tx":{"en":"Danger is usually preceded by patterns"}},
-
         {"story":{"en":"Most problems are not surprises. They are ignored signals that grow over time."}},
         {
           "t":"breath_auto",
@@ -42,15 +41,15 @@
           "q":{"en":"What increases your real safety in public places?"},
           "op":[
             "Ignoring surroundings",
-            "Observing people and exits",
             "Looking only at phone",
+            "Observing people and exits",
             "Walking distracted"
           ],
-          "c":1,
+          "c":2,
           "ex":[
             "Ignoring = missed signals",
-            "Observation = early detection",
             "Phone focus = reduced awareness",
+            "Observation = early detection",
             "Distraction = delayed reaction"
           ]
         },
@@ -58,15 +57,15 @@
           "t":"d",
           "q":{"en":"What is a hidden risk signal?"},
           "op":[
-            "Calm environment awareness",
             "Unusual discomfort feeling",
+            "Calm environment awareness",
             "Perfect silence always",
             "Familiar routine only"
           ],
-          "c":1,
+          "c":0,
           "ex":[
-            "Calm awareness = normal state",
             "Discomfort signal = intuition warning",
+            "Calm awareness = normal state",
             "Silence is not always risk",
             "Routine alone does not detect change"
           ]
@@ -90,7 +89,6 @@
       "id":23,
       "cat":"emotional_regulation",
       "b":[
-
         {"t":"v","tx":{"en":"MISSION 23: EMOTIONAL REGULATION"}},
         {"t":"h","tx":{"en":"Emotion is energy, not instruction"}},
         {"story":{"en":"Emotion rises automatically. Regulation decides outcome."}},
@@ -105,16 +103,16 @@
           "q":{"en":"What creates emotional mastery?"},
           "op":[
             "React instantly",
-            "Pause and regulate",
             "Suppress everything",
-            "Escalate emotion"
+            "Escalate emotion",
+            "Pause and regulate"
           ],
-          "c":1,
+          "c":3,
           "ex":[
             "Instant reaction = loss of control",
-            "Pause + regulation = mastery",
             "Suppression = internal tension",
-            "Escalation = emotional overload"
+            "Escalation = emotional overload",
+            "Pause + regulation = mastery"
           ]
         },
         {
@@ -122,15 +120,15 @@
           "q":{"en":"When anger appears, what is first useful step?"},
           "op":[
             "Act immediately",
-            "Name the emotion silently",
             "Shout",
+            "Name the emotion silently",
             "Ignore completely"
           ],
-          "c":1,
+          "c":2,
           "ex":[
             "Immediate action = impulsive error",
-            "Naming emotion = cognitive control",
             "Shouting = escalation",
+            "Naming emotion = cognitive control",
             "Ignoring = unresolved stress"
           ]
         },
@@ -155,7 +153,6 @@
       "b":[
         {"t":"v","tx":{"en":"MISSION 24: DECISION SYSTEMS"}},
         {"t":"h","tx":{"en":"Fast decisions without clarity create errors"}},
-
         {"story":{"en":"Good decisions come from structured thinking, not emotional spikes."}},
         {
           "t":"breath_auto",
@@ -167,15 +164,15 @@
           "t":"d",
           "q":{"en":"What produces best decision?"},
           "op":[
-            "Rush immediately",
             "Pause and evaluate",
+            "Rush immediately",
             "Random choice",
             "Avoid deciding"
           ],
-          "c":1,
+          "c":0,
           "ex":[
-            "Rush = low accuracy",
             "Pause = structured thinking",
+            "Rush = low accuracy",
             "Random = no control",
             "Avoidance = no progress"
           ]
@@ -185,15 +182,15 @@
           "q":{"en":"What improves complex thinking?"},
           "op":[
             "Multitasking",
-            "Single focused analysis",
             "Distracted thinking",
+            "Single focused analysis",
             "Emotional reaction"
           ],
-          "c":1,
+          "c":2,
           "ex":[
             "Multitasking = fragmentation",
+            "Distracted thinking = reduced accuracy",
             "Focus = deep processing",
-            "Distraction = reduced accuracy",
             "Emotion = bias increase"
           ]
         },
@@ -230,15 +227,15 @@
           "q":{"en":"What transforms mistakes into growth?"},
           "op":[
             "Ignore them",
-            "Analyze and learn",
             "Hide them",
+            "Analyze and learn",
             "Blame others"
           ],
-          "c":1,
+          "c":2,
           "ex":[
             "Ignore = repetition",
-            "Learning = adaptation",
             "Hiding = stagnation",
+            "Learning = adaptation",
             "Blame = no ownership"
           ]
         },
@@ -292,31 +289,31 @@
           "q":{"en":"What stabilizes thinking?"},
           "op":[
             "React immediately",
-            "Organize thoughts",
             "Ignore everything",
-            "Overthink"
+            "Overthink",
+            "Organize thoughts"
           ],
-          "c":1,
+          "c":3,
           "ex":[
             "Reaction = instability",
-            "Organization = clarity",
             "Ignoring = unresolved signals",
-            "Overthinking = overload loop"
+            "Overthinking = overload loop",
+            "Organization = clarity"
           ]
         },
         {
           "t":"d",
           "q":{"en":"What increases mental overload?"},
           "op":[
-            "Structured planning",
             "Chaotic multitasking",
+            "Structured planning",
             "Focused attention",
             "Clear priorities"
           ],
-          "c":1,
+          "c":0,
           "ex":[
-            "Planning creates order",
             "Chaos fragments cognition",
+            "Planning creates order",
             "Focus improves efficiency",
             "Priorities reduce confusion"
           ]
@@ -354,15 +351,15 @@
           "q":{"en":"What is strongest response under stress?"},
           "op":[
             "Panic",
-            "Stay calm",
             "React aggressively",
+            "Stay calm",
             "Escape blindly"
           ],
-          "c":1,
+          "c":2,
           "ex":[
             "Panic = loss of control",
-            "Calm = stable reasoning",
             "Aggression = escalation",
+            "Calm = stable reasoning",
             "Blind escape = reduced awareness"
           ]
         },
@@ -396,7 +393,6 @@
           "tx":{"en":"Stability breathing cycle"},
           "inf":{"en":"Reduces heart rate variability under stress"}
         }
-
       ]
     },
     {
@@ -417,15 +413,15 @@
           "q":{"en":"What creates mastery?"},
           "op":[
             "React fast",
-            "Observe patterns",
             "Ignore reality",
+            "Observe patterns",
             "Act randomly"
           ],
-          "c":1,
+          "c":2,
           "ex":[
             "Reaction = low control",
-            "Observation = mastery",
             "Ignoring = blindness",
+            "Observation = mastery",
             "Randomness = chaos"
           ]
         },
@@ -433,15 +429,15 @@
           "t":"d",
           "q":{"en":"What strengthens self-awareness most?"},
           "op":[
-            "Watching thoughts calmly",
             "Automatic impulsive action",
+            "Watching thoughts calmly",
             "Ignoring emotions",
             "Constant distraction"
           ],
-          "c":0,
+          "c":1,
           "ex":[
-            "Observation builds metacognition",
             "Impulsivity reduces awareness",
+            "Observation builds metacognition",
             "Ignoring emotions blocks understanding",
             "Distraction weakens attention"
           ]
