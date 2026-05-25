@@ -1,13 +1,10 @@
 /* =========================================================
-   KAMIZEN ENGINE V14 - FULL VERSION WITH PDF REPORT
+   KAMIZEN ENGINE V15 - FULL VERSION WITH STRICTOR CONTROL
+   ✔ Límite Absoluto: 10 Minutos exactos sin interrupción
+   ✔ Control Diario Estricto: Solo 1 sesión permitida por día
    ✔ Persistencia Local (LocalStorage)
-   ✔ Narración Total: Preguntas + Opciones + Feedback
-   ✔ Guía Vocal de Respiración (Visual)
-   ✔ Botón JUMP/SKIP para navegación directa
-   ✔ Soporte completo: v, h, story, br, sil, d, r, c
-   ✔ Master Timer: 15 Minutes
-   ✔ Auto-Flow: Solo para historias y bloques de texto
-   ✔ REPORT INTEGRATION: PDF Result generation
+   ✔ Narración Total + Aleatorización de Respuestas Real
+   ✔ Tabla de Revisión Psicosocial Persistente Fuera de App
    ========================================================= */
 
 let state = {
@@ -20,11 +17,50 @@ let state = {
     initialized: false,
     timer: null,
     timeLeft: 0,
-    sessionStartTime: null
+    sessionStartTime: null,
+    masterTimer: null // Controlador del bloqueo de 10 minutos
 };
 
+/* =====================================
+   SISTEMA DE SEGURIDAD Y CONTROL DIARIO
+   ===================================== */
+function verificarAccesoDiario() {
+    const hoy = new Date().toDateString(); // Formato "Mon May 25 2026"
+    const ultimaSesion = localStorage.getItem('kamizen_ultima_sesion_fecha');
+    
+    if (ultimaSesion === hoy) {
+        bloquearPantallaDiaCompletado();
+        return false;
+    }
+    return true;
+}
+
+function marcarDiaComoCompletado() {
+    const hoy = new Date().toDateString();
+    localStorage.setItem('kamizen_ultima_sesion_fecha', hoy);
+}
+
+function bloquearPantallaDiaCompletado() {
+    window.speechSynthesis.cancel();
+    clearInterval(state.timer);
+    clearTimeout(state.masterTimer);
+    
+    const app = document.getElementById("app");
+    app.innerHTML = `
+        <div class="card center" style="border: 3px solid var(--danger); background: #0f172a; padding: 40px;">
+            <h1 style="color:var(--danger); font-size: 2.5rem; margin-bottom: 20px;">🛡️ MISION COMPLETED TODAY</h1>
+            <p style="font-size: 1.2rem; line-height: 1.6;">You have already completed your daily training session.</p>
+            <p style="color: var(--primary); font-weight: bold; margin-top: 20px;">Come back tomorrow stronger, warrior.</p>
+        </div>
+    `;
+    
+    // Remover panel psicosocial si existe al bloquear por día completado
+    const panel = document.getElementById('panel-evaluacion-estudiante');
+    if (panel) panel.remove();
+}
+
 /* =========================
-   SISTEMA DE PERSISTENCIA
+   PERSISTENCIA DE PROGRESO
 ========================= */
 function saveProgress() {
     localStorage.setItem('kamizen_save', JSON.stringify({
@@ -46,6 +82,9 @@ function loadProgress() {
    INICIALIZACIÓN DEL SISTEMA
 ========================= */
 window.addEventListener("load", async () => {
+    // Si ya completó su sesión de hoy, se corta el inicio inmediatamente
+    if (!verificarAccesoDiario()) return;
+    
     loadProgress();
     await loadAllData();
     showIntro();
@@ -62,7 +101,6 @@ async function loadAllData() {
         const storiesData = await storiesReq.json();
         const missionsData = await missionsReq.json();
 
-        // Asegurar ordenamiento por ID para consistencia 1-63
         state.stories = Array.isArray(storiesData.stories) ? storiesData.stories.sort((a, b) => a.id - b.id) : [];
         state.missions = Array.isArray(missionsData.missions) ? missionsData.missions.sort((a, b) => a.id - b.id) : [];
        
@@ -73,57 +111,55 @@ async function loadAllData() {
     }
 }
 
-/* =========================
-   CONTROL DE CIERRE Y REPORTE (15 MIN)
-========================= */
+/* ==============================================
+   CONTROL DE CIERRE INMUTABLE (10 MINUTOS EXACTOS)
+   ============================================== */
 function startMasterTimer() {
     state.sessionStartTime = Date.now();
-    setTimeout(() => {
+    
+    // Temporizador de 10 minutos exactos (10 * 60 * 1000 ms)
+    state.masterTimer = setTimeout(() => {
         finishSession();
-    }, 15 * 60 * 1000);
+    }, 10 * 60 * 1000);
 }
 
 function finishSession() {
+    // 1. Guardar la fecha actual para bloquear futuros accesos hoy
+    marcarDiaComoCompletado();
+    
+    // 2. Cancelar absolutamente todos los procesos y audios activos
     window.speechSynthesis.cancel();
     clearInterval(state.timer);
     
-    // Obtenemos el ID de la misión para el reporte PDF
     const currentMissionId = state.missions[state.currentIndex]?.id || 0;
     
-    // Integración con renderValidationScreen de session.html para generar el reporte PDF
+    // 3. Renderizar pantalla de finalización forzada
     if (typeof renderValidationScreen === "function") {
         renderValidationScreen(currentMissionId, {
-            timeSpent: "15:00",
+            timeSpent: "10:00",
             status: "Complete"
         });
     } else {
-        // Fallback original si no existe la función de validación
         const app = document.getElementById("app");
         const notes = [
-            `<h2>🌟 GREAT JOB TODAY</h2>`,
-            `<p>You completed your KAMIZEN session.</p>`,
-            `<p>Your brain and body only need a few focused minutes to grow stronger.</p>`,
-            `<p>KAMIZEN is designed to help you train calmly, not endlessly.</p>`,
-            `<p>Now it is time to:</p>`,
-            `<ul style="text-align:left; display:inline-block;">`,
-            `    <li>✔ Now you are ready to start your class</li>`,
-            `    <li>✔ Rest your mind</li>`,
-            `    <li>✔ Go play</li>`,
-            `    <li>✔ Talk with your family</li>`,
-            `    <li>✔ Explore the real world</li>`,
-            `    <li>✔ Come back tomorrow stronger</li>`,
-            `</ul>`,
+            `<h2>🌟 10 MINUTES COMPLETED</h2>`,
+            `<p>Your time for today is up. The system has paused to protect your focus.</p>`,
             `<p>Small daily training creates powerful minds. See you next session, warrior. 🛡️</p>`
         ];
-        app.innerHTML = `<div class="card center animated fadeIn">${notes[0]}<button onclick="location.reload()" style="margin-top:20px;">FINISH SESSION</button></div>`;
-        narrate(app.innerText.replace(/✔/g, ""));
+        app.innerHTML = `<div class="card center animated fadeIn">${notes[0]}${notes[1]}${notes[2]}<button onclick="location.reload()" style="margin-top:20px;">CLOSE SESSION</button></div>`;
+        narrate("Your ten minutes are up. See you tomorrow.");
     }
+    
+    // Remover la tabla de evaluación para obligar al cierre total de la interfaz
+    const panel = document.getElementById('panel-evaluacion-estudiante');
+    if (panel) panel.remove();
 }
 
 /* =========================
    CONTROLES DE NAVEGACIÓN
 ========================= */
 function jumpToBlock() {
+    if (!verificarAccesoDiario()) return;
     const targetMissionId = prompt("Enter the MISSION ID to jump to (1-63):");
     if (targetMissionId !== null && targetMissionId !== "") {
         const idNum = Number(targetMissionId);
@@ -142,6 +178,7 @@ function jumpToBlock() {
 }
 
 function goBack() {
+    if (!verificarAccesoDiario()) return;
     window.speechSynthesis.cancel();
     clearInterval(state.timer);
     state.speechLocked = false;
@@ -157,7 +194,7 @@ function goBack() {
 
 function restartSystem() {
     if(confirm("Are you sure you want to RESTART from zero?")) {
-        localStorage.clear();
+        localStorage.removeItem('kamizen_save');
         state.currentIndex = 0;
         state.currentBlock = 0;
         state.phase = "story";
@@ -166,7 +203,7 @@ function restartSystem() {
 }
 
 /* =========================
-   LÓGICA DEL RELOJ (TIMER)
+   LÓGICA DEL RELOJ INTERNO (BLOQUE)
 ========================= */
 function startCountdown(seconds, onComplete) {
     clearInterval(state.timer);
@@ -195,23 +232,23 @@ function showIntro() {
             <h1>KAMIZEN LIFE SYSTEM</h1>
             <p>Training • Awareness • Control</p>
             <p class="small">Range: Missions 1 - 63 Loaded</p>
-            <button onclick="startSystem()">CONTINUE MISSION</button>
-            <button onclick="restartSystem()" style="background:var(--danger);margin-top:10px;">RESET PROGRESS</button>
+            <button onclick="startSystem()">START DAILY MISSION (10 MIN)</button>
         </div>
     `;
-    // Renderizar panel psicosocial al inicio
     inyectarPanelPsicosocialEstatico();
 }
 
 function startSystem() {
+    if (!verificarAccesoDiario()) return;
     startMasterTimer();
     state.phase = "story";
     render();
 }
 
 function render() {
-    if (!state.initialized) return;
+    if (!state.initialized || !verificarAccesoDiario()) return;
     saveProgress();
+    
     const app = document.getElementById("app");
     const story = state.stories[state.currentIndex];
     const mission = state.missions[state.currentIndex];
@@ -225,7 +262,6 @@ function render() {
         <div style="display:flex;gap:5px;margin-bottom:10px;">
             <button onclick="goBack()" style="flex:1;padding:8px;font-size:12px;background:#334155;">BACK</button>
             <button onclick="jumpToBlock()" style="flex:1;padding:8px;font-size:12px;background:#0ea5e9;">JUMP/SKIP</button>
-            <button onclick="restartSystem()" style="flex:1;padding:8px;font-size:12px;background:var(--danger);">RESET</button>
         </div>
     `;
     if (state.phase === "story") {
@@ -237,7 +273,6 @@ function render() {
             </div>
             <button id="continueBtn" disabled>NARRATING...</button>
         `;
-        // Asegurar que el panel psicosocial persista bajo el app
         inyectarPanelPsicosocialEstatico();
         
         narrate(`${story.t}. ${story.en}`, () => {
@@ -251,6 +286,7 @@ function render() {
 }
 
 function renderBlock(block, navHeader) {
+    if (!verificarAccesoDiario()) return;
     const app = document.getElementById("app");
     let html = navHeader;
     let textToRead = "";
@@ -273,30 +309,29 @@ function renderBlock(block, navHeader) {
     }
     
     // =================================================================
-    // SOLUCIÓN INTEGRADA: ALEATORIZACIÓN DIRECTA DE PREGUNTAS (TIPO D)
+    // ROTACIÓN IMPLACABLE Y REAL DE RESPUESTAS (TIPO D)
     // =================================================================
     if (block.t === "d") {
         html += `<div class="card"><h3>${block.q?.en || ""}</h3>`;
         
-        // Mapeamos las opciones originales junto con sus índices para no perder la respuesta correcta
+        // Mapeo estructurado para resguardar la validez de los índices de la base de datos
         let opcionesMapeadas = block.op.map((textoOpcion, indiceOriginal) => {
             return { texto: textoOpcion, idx: indiceOriginal };
         });
 
-        // Aplicamos la mezcla matemática pura (Fisher-Yates) para alterar las posiciones dinámicamente
+        // Mezcla aleatoria garantizada
         for (let i = opcionesMapeadas.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [opcionesMapeadas[i], opcionesMapeadas[j]] = [opcionesMapeadas[j], opcionesMapeadas[i]];
         }
 
-        // Renderizamos las respuestas en las nuevas posiciones aleatorias
+        // Imprimir las opciones en su nueva ubicación alterada al azar
         opcionesMapeadas.forEach((opcion, posicionVisual) => {
             html += `<div class="answer" id="opt-${posicionVisual}" onclick="selectAnswer(${opcion.idx}, ${block.c}, ${JSON.stringify(block.ex).replace(/"/g, '&quot;')})">${opcion.texto}</div>`;
         });
         
         html += `</div>`;
         
-        // La locución leerá las opciones en el nuevo orden establecido para mantener coherencia total
         let opcionesTextoLectura = opcionesMapeadas.map(o => o.texto).join(". ");
         textToRead = `${block.q?.en}. Your options are: ${opcionesTextoLectura}`;
     }
@@ -304,7 +339,6 @@ function renderBlock(block, navHeader) {
     if (block.t !== "d") html += `<button id="continueBtn" disabled>NARRATING...</button>`;
     app.innerHTML = html;
 
-    // Asegurar que el panel de perfil psicosocial persista tras actualizar el innerHTML de app
     inyectarPanelPsicosocialEstatico();
 
     narrate(textToRead, () => {
@@ -316,7 +350,7 @@ function renderBlock(block, navHeader) {
             startCountdown(24, nextBlock);
             unlockContinue("SKIP", nextBlock);
         } else if (block.t === "d") {
-            // Esperar interacción del alumno
+            // Espera activa del click
         } else {
             setTimeout(nextBlock, 1500);
         }
@@ -357,7 +391,7 @@ function startGuidedBreathing() {
 }
 
 function selectAnswer(index, correct, explanations) {
-    if (state.speechLocked) return;
+    if (state.speechLocked || !verificarAccesoDiario()) return;
     const isCorrect = index === correct;
     const explanation = explanations?.[index] || "";
     const feedbackWrap = document.createElement("div");
@@ -384,16 +418,15 @@ function unlockContinue(label, action) {
 }
 
 // =================================================================
-// NUEVA IMPLEMENTACIÓN DE REVISIÓN PSICOSOCIAL PERSISTENTE
+// ESTRUCTURA DE REVISIÓN PSICOSOCIAL REUBICADA DE FORMA PERSISTENTE
 // =================================================================
 function inyectarPanelPsicosocialEstatico() {
-    // Si ya se encuentra renderizado abajo, evitamos duplicados
     if (document.getElementById('panel-evaluacion-estudiante')) return;
 
     const criteriosEvaluacion = [
         { id: 'p1', area: 'Psicológica', aspecto: 'Manejo del estrés académico', sugerencia: '¿Muestra estabilidad ante tareas complejas o presión de tiempo?' },
         { id: 'p2', area: 'Psicológica', aspecto: 'Motivación y Enfoque', sugerencia: '¿Mantiene la atención de forma constante durante las actividades?' },
-        { id: 's1', area: 'Social', aspecto: 'Comunicación y Entorno', sugerencia: '¿Expresa sus ideas con claridad y busca apoyo cuando lo requiere?' },
+        { id: 's1', area: 'Social', aspecto: 'Comunicación y Enfoque', sugerencia: '¿Expresa sus ideas con claridad y busca apoyo cuando lo requiere?' },
         { id: 's2', area: 'Social', aspecto: 'Adaptación al Método', sugerencia: '¿Muestra una actitud abierta ante las dinámicas propuestas?' }
     ];
 
@@ -450,11 +483,9 @@ function inyectarPanelPsicosocialEstatico() {
 
     panelHTML.innerHTML = tablaHTML;
     
-    // Lo insertamos inmediatamente después del contenedor principal de la App para que no se borre con el innerHTML del render
     const appWrapper = document.getElementById("app");
     appWrapper.parentNode.insertBefore(panelHTML, appWrapper.nextSibling);
 
-    // Asignación de eventos en tiempo de ejecución
     document.getElementById('btn-borrar-eval').addEventListener('click', () => {
         criteriosEvaluacion.forEach(item => {
             document.getElementById(`eval_${item.id}`).value = 'en_observacion';
