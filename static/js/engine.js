@@ -1,7 +1,7 @@
 /* =========================================================
    KAMIZEN ENGINE V15 - FULL VERSION WITH STRICTOR CONTROL
    ✔ Límite Absoluto: 10 Minutos exactos sin interrupción
-   ✔ Control Estricto: Solo 1 sesión permitida cada 5 minutos
+   ✔ Control Diario Estricto: Solo 1 sesión permitida por día (Modificado a 5 minutos)
    ✔ Persistencia Local (LocalStorage)
    ✔ Narración Total + Aleatorización de Respuestas Real
    ✔ Tabla de Revisión Psicosocial Persistente Fuera de App
@@ -22,19 +22,18 @@ let state = {
 };
 
 /* =====================================
-   SISTEMA DE SEGURIDAD Y CONTROL DE TIEMPO (5 MINUTOS)
+   SISTEMA DE SEGURIDAD Y CONTROL DIARIO
    ===================================== */
 function verificarAccesoDiario() {
     const ahora = Date.now();
-    const ultimaSesion = localStorage.getItem('kamizen_ultima_sesion_tiempo');
+    const ultimaSesion = localStorage.getItem('kamizen_ultima_sesion_fecha');
     
     if (ultimaSesion) {
         const tiempoTranscurrido = ahora - parseInt(ultimaSesion, 10);
-        const cincoMinutosEnMs = 5 * 60 * 1000;
+        const cincoMinutos = 5 * 60 * 1000; // 5 minutos en milisegundos
         
-        if (tiempoTranscurrido < cincoMinutosEnMs) {
-            const minutosRestantes = Math.ceil((cincoMinutosEnMs - tiempoTranscurrido) / 1000 / 60);
-            bloquearPantallaDiaCompletado(minutosRestantes);
+        if (tiempoTranscurrido < cincoMinutos) {
+            bloquearPantallaDiaCompletado();
             return false;
         }
     }
@@ -43,10 +42,10 @@ function verificarAccesoDiario() {
 
 function marcarDiaComoCompletado() {
     const ahora = Date.now();
-    localStorage.setItem('kamizen_ultima_sesion_tiempo', ahora.toString());
+    localStorage.setItem('kamizen_ultima_sesion_fecha', ahora.toString());
 }
 
-function bloquearPantallaDiaCompletado(minutosRestantes) {
+function bloquearPantallaDiaCompletado() {
     window.speechSynthesis.cancel();
     clearInterval(state.timer);
     clearTimeout(state.masterTimer);
@@ -54,13 +53,13 @@ function bloquearPantallaDiaCompletado(minutosRestantes) {
     const app = document.getElementById("app");
     app.innerHTML = `
         <div class="card center" style="border: 3px solid var(--danger); background: #0f172a; padding: 40px;">
-            <h1 style="color:var(--danger); font-size: 2.5rem; margin-bottom: 20px;">🛡️ SESSION LOCK ACTIVE</h1>
-            <p style="font-size: 1.2rem; line-height: 1.6;">You have recently completed a training session.</p>
-            <p style="color: var(--primary); font-weight: bold; margin-top: 20px;">Please recover your focus. The system will unlock in less than ${minutosRestantes} minute(s).</p>
+            <h1 style="color:var(--danger); font-size: 2.5rem; margin-bottom: 20px;">🛡️ MISION COMPLETED TODAY</h1>
+            <p style="font-size: 1.2rem; line-height: 1.6;">You have already completed your daily training session.</p>
+            <p style="color: var(--primary); font-weight: bold; margin-top: 20px;">Come back tomorrow stronger, warrior.</p>
         </div>
     `;
     
-    // Remover panel psicosocial si existe al bloquear por tiempo restringido
+    // Remover panel psicosocial si existe al bloquear por día completado
     const panel = document.getElementById('panel-evaluacion-estudiante');
     if (panel) panel.remove();
 }
@@ -88,7 +87,7 @@ function loadProgress() {
    INICIALIZACIÓN DEL SISTEMA
 ========================= */
 window.addEventListener("load", async () => {
-    // Si no ha pasado el intervalo de 5 minutos, se corta el inicio inmediatamente
+    // Si ya completó su sesión de hoy, se corta el inicio inmediatamente
     if (!verificarAccesoDiario()) return;
     
     loadProgress();
@@ -109,7 +108,7 @@ async function loadAllData() {
 
         state.stories = Array.isArray(storiesData.stories) ? storiesData.stories.sort((a, b) => a.id - b.id) : [];
         state.missions = Array.isArray(missionsData.missions) ? missionsData.missions.sort((a, b) => a.id - b.id) : [];
-        
+       
         state.initialized = true;
     } catch (err) {
         console.error(err);
@@ -130,7 +129,7 @@ function startMasterTimer() {
 }
 
 function finishSession() {
-    // 1. Guardar la marca de tiempo actual para bloquear el acceso durante los próximos 5 minutos
+    // 1. Guardar la fecha actual para bloquear futuros accesos hoy
     marcarDiaComoCompletado();
     
     // 2. Cancelar absolutamente todos los procesos y audios activos
@@ -150,10 +149,10 @@ function finishSession() {
         const notes = [
             `<h2>🌟 10 MINUTES COMPLETED</h2>`,
             `<p>Your time for today is up. The system has paused to protect your focus.</p>`,
-            `<p>Small regular training creates powerful minds. See you next session, warrior. 🛡️</p>`
+            `<p>Small daily training creates powerful minds. See you next session, warrior. 🛡️</p>`
         ];
         app.innerHTML = `<div class="card center animated fadeIn">${notes[0]}${notes[1]}${notes[2]}<button onclick="location.reload()" style="margin-top:20px;">CLOSE SESSION</button></div>`;
-        narrate("Your ten minutes are up. See you soon.");
+        narrate("Your ten minutes are up. See you tomorrow.");
     }
     
     // Remover la tabla de evaluación para obligar al cierre total de la interfaz
@@ -198,7 +197,6 @@ function goBack() {
     render();
 }
 
-// Nota: se mantiene la firma original pero se invoca internamente cuando procede la inicialización de la sesión
 function restartSystem() {
     if(confirm("Are you sure you want to RESTART from zero?")) {
         localStorage.removeItem('kamizen_save');
@@ -239,13 +237,13 @@ function showIntro() {
             <h1>KAMIZEN LIFE SYSTEM</h1>
             <p>Training • Awareness • Control</p>
             <p class="small">Range: Missions 1 - 63 Loaded</p>
-            <button onclick="ejecutarInicioSesion()">START SESSION (10 MIN)</button>
+            <button onclick="startSystem()">START DAILY MISSION (10 MIN)</button>
         </div>
     `;
     inyectarPanelPsicosocialEstatico();
 }
 
-function ejecutarInicioSesion() {
+function startSystem() {
     if (!verificarAccesoDiario()) return;
     startMasterTimer();
     state.phase = "story";
@@ -422,9 +420,4 @@ function nextStory() {
 function unlockContinue(label, action) {
     const btn = document.getElementById("continueBtn");
     if (btn) { btn.disabled = false; btn.innerText = label; btn.onclick = action; }
-}
-
-// Marcador de posición para la función dependiente (para evitar errores en la carga inicial)
-if (typeof inyectarPanelPsicosocialEstatico !== "function") {
-    window.inyectarPanelPsicosocialEstatico = function() {};
 }
