@@ -32,23 +32,23 @@
 },
 
 {"t":"d","q":{"en":"You are in a store and your parents are nearby. What is the safest habit?"},
-"op":["Stay aware of exits and parents","Look only at phone","Walk far away alone","Ignore surroundings"],
-"c":0,
+"op":["Look only at phone","Stay aware of exits and parents","Walk far away alone","Ignore surroundings"],
+"c":1,
 "ex":[
-"Awareness keeps you safe and oriented",
 "Phone reduces attention",
+"Awareness keeps you safe and oriented",
 "Walking alone increases risk",
 "Ignoring surroundings reduces reaction ability"
 ]},
 
 {"t":"d","q":{"en":"If you feel lost in a crowded place, what is best?"},
-"op":["Run randomly","Stay still and find staff","Follow strangers","Hide alone"],
-"c":1,
+"op":["Run randomly","Follow strangers","Hide alone","Stay still and find staff"],
+"c":3,
 "ex":[
 "Running increases confusion",
-"Staff help reunite safely",
 "Strangers are not safe guides",
-"Hiding delays help"
+"Hiding delays help",
+"Staff help reunite safely"
 ]},
 
 {"t":"r","tx":"+Awareness","p":25},
@@ -84,12 +84,12 @@
 },
 
 {"t":"d","q":{"en":"Someone pressures you to do something you don’t like. What is strongest?"},
-"op":["Agree to fit in","Say no calmly and move away","Get angry","Stay silent and follow"],
-"c":1,
+"op":["Agree to fit in","Get angry","Say no calmly and move away","Stay silent and follow"],
+"c":2,
 "ex":[
 "Agreeing removes boundaries",
-"Saying no protects control",
 "Anger escalates conflict",
+"Saying no protects control",
 "Silent following reduces safety"
 ]},
 
@@ -136,21 +136,21 @@
 },
 
 {"t":"d","q":{"en":"A stranger offers you something and asks you to follow them. What do you do?"},
-"op":["Follow immediately","Say no and move to safe adults","Keep it secret","Take the offer"],
-"c":1,
+"op":["Follow immediately","Keep it secret","Take the offer","Say no and move to safe adults"],
+"c":3,
 "ex":[
 "Immediate follow is unsafe",
-"No + safe adults is protection",
 "Secrets increase vulnerability",
-"Accepting unknown offers is risky"
+"Accepting unknown offers is risky",
+"No + safe adults is protection"
 ]},
 
 {"t":"d","q":{"en":"What is a safe boundary?"},
-"op":["Doing everything asked","Saying no when uncomfortable","Ignoring feelings","Following anyone friendly"],
-"c":1,
+"op":["Saying no when uncomfortable","Doing everything asked","Ignoring feelings","Following anyone friendly"],
+"c":0,
 "ex":[
-"Blind obedience is unsafe",
 "No protects your limits",
+"Blind obedience is unsafe",
 "Ignoring feelings reduces awareness",
 "Not all friendly people are safe"
 ]},
@@ -188,12 +188,12 @@
 },
 
 {"t":"d","q":{"en":"Your teacher says to follow instructions immediately. What is correct?"},
-"op":["Ignore","Follow calmly","Run alone","Do opposite"],
-"c":1,
+"op":["Ignore","Run alone","Follow calmly","Do opposite"],
+"c":2,
 "ex":[
 "Ignoring removes structure",
-"Following ensures safety",
 "Running alone increases risk",
+"Following ensures safety",
 "Opposite action increases danger"
 ]},
 
@@ -240,12 +240,12 @@
 },
 
 {"t":"d","q":{"en":"Someone online asks for your location or personal info. What is best?"},
-"op":["Share it","Tell trusted adult","Ignore safety rules","Send everything"],
-"c":1,
+"op":["Share it","Ignore safety rules","Tell trusted adult","Send everything"],
+"c":2,
 "ex":[
 "Sharing is unsafe",
-"Adults protect your safety",
 "Ignoring rules increases risk",
+"Adults protect your safety",
 "Sending everything removes privacy"
 ]},
 
@@ -292,21 +292,21 @@
 },
 
 {"t":"d","q":{"en":"You want something expensive, but money is limited. What is best?"},
-"op":["Insist immediately","Wait and plan","Take without asking","Ignore reality"],
-"c":1,
+"op":["Insist immediately","Take without asking","Ignore reality","Wait and plan"],
+"c":3,
 "ex":[
 "Insisting creates pressure",
-"Planning builds discipline",
 "Taking without asking is wrong",
-"Ignoring reality removes control"
+"Ignoring reality removes control",
+"Planning builds discipline"
 ]},
 
 {"t":"d","q":{"en":"What builds strong habits?"},
-"op":["Impulse spending","Saving small amounts","Spending everything","Avoiding thinking"],
-"c":1,
+"op":["Saving small amounts","Impulse spending","Spending everything","Avoiding thinking"],
+"c":0,
 "ex":[
-"Impulse reduces control",
 "Saving builds discipline",
+"Impulse reduces control",
 "Spending everything removes future options",
 "Avoiding thinking weakens decisions"
 ]},
@@ -344,23 +344,23 @@
 },
 
 {"t":"d","q":{"en":"What helps solve conflict best?"},
-"op":["Shouting","Listening calmly","Running away angry","Ignoring everything"],
-"c":1,
+"op":["Shouting","Running away angry","Listening calmly","Ignoring everything"],
+"c":2,
 "ex":[
 "Shouting increases conflict",
-"Listening creates solutions",
 "Running away avoids resolution",
+"Listening creates solutions",
 "Ignoring delays repair"
 ]},
 
 {"t":"d","q":{"en":"What is strong emotional control?"},
-"op":["Reacting instantly","Pausing before speaking","Yelling louder","Hiding feelings forever"],
-"c":1,
+"op":["Reacting instantly","Yelling louder","Hiding feelings forever","Pausing before speaking"],
+"c":3,
 "ex":[
 "Instant reaction reduces control",
-"Pausing improves decisions",
 "Yelling escalates problems",
-"Hiding forever blocks communication"
+"Hiding forever blocks communication",
+"Pausing improves decisions"
 ]},
 
 {"t":"r","tx":"+Respect","p":30},
