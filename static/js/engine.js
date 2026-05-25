@@ -424,14 +424,14 @@ function inyectarPanelPsicosocialEstatico() {
     if (document.getElementById('panel-evaluacion-estudiante')) return;
 
     const criteriosEvaluacion = [
-        { id: 'p1', area: 'Psicológica', aspecto: 'Manejo del estrés académico', sugerencia: '¿Muestra estabilidad ante tareas complejas o presión de tiempo?' },
-        { id: 'p2', area: 'Psicológica', aspecto: 'Motivación y Enfoque', sugerencia: '¿Mantiene la atención de forma constante durante las actividades?' },
-        { id: 's1', area: 'Social', aspecto: 'Comunicación y Enfoque', sugerencia: '¿Expresa sus ideas con claridad y busca apoyo cuando lo requiere?' },
-        { id: 's2', area: 'Social', aspecto: 'Adaptación al Método', sugerencia: '¿Muestra una actitud abierta ante las dinámicas propuestas?' }
+        { id: 'p1', area: 'Psychological', aspect: 'Managing Academic Stress', suggestion: 'Does he/she demonstrate stability when faced with complex tasks or time pressure?' },
+        { id: 'p2', area: 'Psychological', aspect: 'Motivation and Focus', suggestion: 'Does he/she maintain attention consistently during activities?' },
+        { id: 's1', area: 'Social', aspect: 'Communication and Focus', suggestion: 'Do you express your ideas clearly and seek support when needed?' },
+        { id: 's2', area: 'Social', aspect: 'Adaptation to the Method', suggestion: 'Does he/she demonstrate an open attitude toward the proposed dynamics?' }
     ];
 
     const panelHTML = document.createElement('div');
-    panelHTML.id = 'panel-evaluacion-estudiante';
+    panelHTML.id = 'Student-Evaluation-Panel';
     panelHTML.style.margin = '20px auto';
     panelHTML.style.maxWidth = '600px';
     panelHTML.style.padding = '15px';
@@ -441,15 +441,15 @@ function inyectarPanelPsicosocialEstatico() {
     panelHTML.style.color = '#333';
 
     let tablaHTML = `
-        <h3 style="margin-top:0; color:#1e293b;">Revisión de Perfil Psicosocial</h3>
-        <p style="font-size:14px; color:#555;">Seleccione el estado observado para cada uno de los aspectos clave:</p>
+        <h3 style="margin-top:0; color:#1e293b;">Psychosocial Profile Review</h3>
+        <p style="font-size:14px; color:#555;">Select the observed status for each of the key aspects:</p>
         <table style="width:100%; border-collapse: collapse; margin-bottom: 15px; text-align: left;">
             <thead>
                 <tr style="background-color: #eaeaea; color:#333;">
-                    <th style="padding: 8px; border-bottom: 2px solid #ddd;">Área</th>
-                    <th style="padding: 8px; border-bottom: 2px solid #ddd;">Aspecto Clave</th>
-                    <th style="padding: 8px; border-bottom: 2px solid #ddd;">Sugerencia de Análisis</th>
-                    <th style="padding: 8px; border-bottom: 2px solid #ddd;">Valoración</th>
+                    <th style="padding: 8px; border-bottom: 2px solid #ddd;">Area</th>
+                    <th style="padding: 8px; border-bottom: 2px solid #ddd;">Key Aspect</th>
+                    <th style="padding: 8px; border-bottom: 2px solid #ddd;">Analysis Suggestion</th>
+                    <th style="padding: 8px; border-bottom: 2px solid #ddd;">Assessment</th>
                 </tr>
             </thead>
             <tbody>
@@ -463,9 +463,9 @@ function inyectarPanelPsicosocialEstatico() {
                 <td style="padding: 8px; color: #666; font-size: 13px;">${item.sugerencia}</td>
                 <td style="padding: 8px;">
                     <select id="eval_${item.id}" style="padding: 4px; border-radius: 4px; border: 1px solid #bbb; background: #fff; color: #000;">
-                        <option value="en_observacion">En Observación</option>
+                        <option value="Under_observation">Under Observation</option>
                         <option value="favorable">Favorable</option>
-                        <option value="requiere_atencion">Requiere Atención</option>
+                        <option value="requieres_attention">Requires Attention</option>
                     </select>
                 </td>
             </tr>
@@ -488,7 +488,7 @@ function inyectarPanelPsicosocialEstatico() {
 
     document.getElementById('btn-borrar-eval').addEventListener('click', () => {
         criteriosEvaluacion.forEach(item => {
-            document.getElementById(`eval_${item.id}`).value = 'en_observacion';
+            document.getElementById(`eval_${item.id}`).value = 'under_observation';
         });
     });
 
@@ -497,7 +497,7 @@ function inyectarPanelPsicosocialEstatico() {
         criteriosEvaluacion.forEach(item => {
             resultados[item.id] = document.getElementById(`eval_${item.id}`).value;
         });
-        console.log("Datos de revisión psicosocial listos para procesamiento:", resultados);
-        alert("Los datos de la revisión han sido registrados correctamente para su posterior asesoría.");
+        console.log("Psychosocial review data ready for processing:", results);
+        alert("The review data has been successfully recorded for future consultation.");
     });
 }
