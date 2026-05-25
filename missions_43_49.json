@@ -43,31 +43,31 @@
           "q":{"en":"What should you do when your body feels nervous?"},
           "op":[
             "Get scared",
-            "Breathe slowly",
             "Stop everything",
-            "Run away"
+            "Run away",
+            "Breathe slowly"
           ],
-          "c":1,
+          "c":3,
           "ex":[
             "Fear makes it stronger",
-            "Breathing calms your body",
             "Stopping blocks progress",
-            "Running away avoids learning"
+            "Running away avoids learning",
+            "Breathing calms your body"
           ]
         },
         {
           "t":"d",
           "q":{"en":"What does a fast heartbeat usually mean during stress?"},
           "op":[
-            "Your body is preparing",
             "You are broken",
+            "Your body is preparing",
             "You must escape",
             "You cannot continue"
           ],
-          "c":0,
+          "c":1,
           "ex":[
-            "Correct. Your body is preparing for action.",
             "Your body is not broken.",
+            "Correct. Your body is preparing for action.",
             "Escape is not always necessary.",
             "You can still continue calmly."
           ]
@@ -93,7 +93,6 @@
       "b":[
         {"t":"v","tx":{"en":"MISSION 44: EVERY BODY IS DIFFERENT"}},
         {"t":"h","tx":{"en":"Everyone feels stress in a different way"}},
-
         {"story":{"en":"Some kids move a lot, some get quiet, some feel hot or cold. All of this is normal."}},
         {
           "t":"breath_auto",
@@ -106,37 +105,36 @@
           "q":{"en":"What is the best thing to do when you feel stress?"},
           "op":[
             "Ignore your body",
-            "Stay calm and notice it",
             "Panic",
-            "Compare with others"
+            "Compare with others",
+            "Stay calm and notice it"
           ],
-          "c":1,
+          "c":3,
           "ex":[
             "Ignoring hides signals",
-            "Noticing gives control",
             "Panic makes it worse",
-            "Comparison creates stress"
+            "Comparison creates stress",
+            "Noticing gives control"
           ]
         },
         {
           "t":"d",
           "q":{"en":"Why should you avoid comparing your stress to others?"},
           "op":[
-            "Every body reacts differently",
             "Stress is fake",
             "Only others feel stress",
+            "Every body reacts differently",
             "Comparison solves fear"
           ],
-          "c":0,
+          "c":2,
           "ex":[
-            "Correct. Everyone experiences stress differently.",
             "Stress is real and normal.",
             "All people can feel stress.",
+            "Correct. Everyone experiences stress differently.",
             "Comparison often increases pressure."
           ]
         },
         {"t":"r","tx":"+Adaptation","p":20},
-
         {
           "t":"sil",
           "d":50,
@@ -157,7 +155,6 @@
       "b":[
         {"t":"v","tx":{"en":"MISSION 45: BRING YOUR MIND BACK"}},
         {"t":"h","tx":{"en":"If your mind leaves, you can bring it back"}},
-
         {"story":{"en":"Sometimes your mind thinks about other things. That is okay. You just return to your task."}},
         {
           "t":"breath_auto",
@@ -170,15 +167,15 @@
           "q":{"en":"What should you do when you get distracted?"},
           "op":[
             "Give up",
-            "Come back to the question",
             "Leave everything",
+            "Come back to the question",
             "Panic"
           ],
-          "c":1,
+          "c":2,
           "ex":[
             "Giving up stops progress",
-            "Coming back builds focus",
             "Leaving breaks the task",
+            "Coming back builds focus",
             "Panic blocks thinking"
           ]
         },
@@ -220,7 +217,6 @@
       "b":[
         {"t":"v","tx":{"en":"MISSION 46: CALM YOUR BODY"}},
         {"t":"h","tx":{"en":"Small actions help you feel safe"}},
-
         {"story":{"en":"Drinking water, sitting straight, and slow breathing help your body feel better."}},
         {
           "t":"breath_auto",
@@ -249,17 +245,17 @@
           "t":"d",
           "q":{"en":"Why are small calming actions important?"},
           "op":[
-            "They help your body feel safe",
             "They make stress bigger",
             "They stop all feelings forever",
-            "They create panic"
+            "They create panic",
+            "They help your body feel safe"
           ],
-          "c":0,
+          "c":3,
           "ex":[
-            "Correct. Small actions calm the nervous system.",
             "Calming actions reduce stress.",
             "Feelings still exist naturally.",
-            "They reduce panic instead."
+            "They reduce panic instead.",
+            "Correct. Small actions calm the nervous system."
           ]
         },
         {"t":"r","tx":"+Stability","p":20},
@@ -295,15 +291,15 @@
           "q":{"en":"What should you do if you feel weak?"},
           "op":[
             "Stop trying",
-            "Keep going slowly",
             "Panic",
+            "Keep going slowly",
             "Quit"
           ],
-          "c":1,
+          "c":2,
           "ex":[
             "Stopping ends progress",
-            "Going slowly keeps you moving",
             "Panic drains energy",
+            "Going slowly keeps you moving",
             "Quitting stops learning"
           ]
         },
@@ -311,15 +307,15 @@
           "t":"d",
           "q":{"en":"What builds confidence over time?"},
           "op":[
-            "Continuing step by step",
             "Giving up quickly",
+            "Continuing step by step",
             "Fear of mistakes",
             "Avoiding challenges"
           ],
-          "c":0,
+          "c":1,
           "ex":[
-            "Correct. Small progress builds confidence.",
             "Giving up weakens trust.",
+            "Correct. Small progress builds confidence.",
             "Fear blocks growth.",
             "Avoidance reduces resilience."
           ]
@@ -356,15 +352,15 @@
           "t":"d",
           "q":{"en":"What helps when you feel tired?"},
           "op":[
-            "Push harder",
             "Pause and breathe",
+            "Push harder",
             "Panic",
             "Quit"
           ],
-          "c":1,
+          "c":0,
           "ex":[
-            "Push harder = burnout",
             "Pause = recovery",
+            "Push harder = burnout",
             "Panic = worse tiredness",
             "Quit = stop progress"
           ]
@@ -373,15 +369,15 @@
           "t":"d",
           "q":{"en":"Why is rest important for focus?"},
           "op":[
-            "Rest helps the brain recover",
             "Rest creates confusion",
+            "Rest helps the brain recover",
             "Rest means weakness",
             "Rest stops learning forever"
           ],
-          "c":0,
+          "c":1,
           "ex":[
-            "Correct. Recovery improves focus.",
             "Healthy rest improves clarity.",
+            "Correct. Recovery improves focus.",
             "Rest is normal and healthy.",
             "Rest supports learning."
           ]
@@ -407,7 +403,6 @@
       "b":[
         {"t":"v","tx":{"en":"MISSION 49: YOU CAN DO THIS"}},
         {"t":"h","tx":{"en":"You are ready more than you think"}},
-
         {"story":{"en":"Everything you practiced is inside you now. Stay calm, go step by step, and trust yourself."}},
         {
           "t":"breath_auto",
@@ -420,31 +415,31 @@
           "q":{"en":"What is the strongest mindset?"},
           "op":[
             "I cannot do it",
-            "I go step by step",
             "I must be perfect",
-            "I quit"
+            "I quit",
+            "I go step by step"
           ],
-          "c":1,
+          "c":3,
           "ex":[
             "Cannot = fear",
-            "Step by step = control",
             "Perfection = pressure",
-            "Quitting = stop"
+            "Quitting = stop",
+            "Step by step = control"
           ]
         },
         {
           "t":"d",
           "q":{"en":"What helps you stay ready and calm?"},
           "op":[
-            "Trusting your practice",
             "Panicking early",
+            "Trusting your practice",
             "Thinking only about mistakes",
             "Giving up immediately"
           ],
-          "c":0,
+          "c":1,
           "ex":[
-            "Correct. Trust builds calm confidence.",
             "Panic reduces control.",
+            "Correct. Trust builds calm confidence.",
             "Mistake focus increases stress.",
             "Giving up removes growth."
           ]
