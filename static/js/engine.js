@@ -199,6 +199,8 @@ function showIntro() {
             <button onclick="restartSystem()" style="background:var(--danger);margin-top:10px;">RESET PROGRESS</button>
         </div>
     `;
+    // Renderizar panel psicosocial al inicio
+    inyectarPanelPsicosocialEstatico();
 }
 
 function startSystem() {
@@ -235,6 +237,9 @@ function render() {
             </div>
             <button id="continueBtn" disabled>NARRATING...</button>
         `;
+        // Asegurar que el panel psicosocial persista bajo el app
+        inyectarPanelPsicosocialEstatico();
+        
         narrate(`${story.t}. ${story.en}`, () => {
             setTimeout(startMission, 1500);
         });
@@ -266,19 +271,41 @@ function renderBlock(block, navHeader) {
         html += timerUI + `<div class="card"><h3>${block.tx?.en || ""}</h3><p>${block.inf?.en || ""}</p></div>`;
         textToRead = `${block.tx?.en}. ${block.inf?.en}. Practice silence now.`;
     }
+    
+    // =================================================================
+    // SOLUCIÓN INTEGRADA: ALEATORIZACIÓN DIRECTA DE PREGUNTAS (TIPO D)
+    // =================================================================
     if (block.t === "d") {
         html += `<div class="card"><h3>${block.q?.en || ""}</h3>`;
-        block.op?.forEach((opt, i) => {
-            html += `<div class="answer" id="opt-${i}" onclick="selectAnswer(${i}, ${block.c}, ${JSON.stringify(block.ex).replace(/"/g, '&quot;')})">${opt}</div>`;
+        
+        // Mapeamos las opciones originales junto con sus índices para no perder la respuesta correcta
+        let opcionesMapeadas = block.op.map((textoOpcion, indiceOriginal) => {
+            return { texto: textoOpcion, idx: indiceOriginal };
         });
-        html += `</div>`;
-        textToRead = `${block.q?.en}. Your options are: ${block.op.join(". ")}`;
-    }
-    if (block.t === "r") { html += `<div class="card center"><h2>⭐ ${block.tx || "REWARD"}</h2><p style="font-size:1.5rem;">+${block.p || 0} XP</p></div>`; textToRead = `${block.tx}. You have earned ${block.p} experience points.`; }
-    if (block.t === "c") { html += `<div class="card"><p>${block.tx?.en || ""}</p></div>`; textToRead = block.tx?.en; }
 
+        // Aplicamos la mezcla matemática pura (Fisher-Yates) para alterar las posiciones dinámicamente
+        for (let i = opcionesMapeadas.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [opcionesMapeadas[i], opcionesMapeadas[j]] = [opcionesMapeadas[j], opcionesMapeadas[i]];
+        }
+
+        // Renderizamos las respuestas en las nuevas posiciones aleatorias
+        opcionesMapeadas.forEach((opcion, posicionVisual) => {
+            html += `<div class="answer" id="opt-${posicionVisual}" onclick="selectAnswer(${opcion.idx}, ${block.c}, ${JSON.stringify(block.ex).replace(/"/g, '&quot;')})">${opcion.texto}</div>`;
+        });
+        
+        html += `</div>`;
+        
+        // La locución leerá las opciones en el nuevo orden establecido para mantener coherencia total
+        let opcionesTextoLectura = opcionesMapeadas.map(o => o.texto).join(". ");
+        textToRead = `${block.q?.en}. Your options are: ${opcionesTextoLectura}`;
+    }
+    
     if (block.t !== "d") html += `<button id="continueBtn" disabled>NARRATING...</button>`;
     app.innerHTML = html;
+
+    // Asegurar que el panel de perfil psicosocial persista tras actualizar el innerHTML de app
+    inyectarPanelPsicosocialEstatico();
 
     narrate(textToRead, () => {
         if (block.t === "breath_auto" || block.t === "br") {
@@ -289,7 +316,7 @@ function renderBlock(block, navHeader) {
             startCountdown(24, nextBlock);
             unlockContinue("SKIP", nextBlock);
         } else if (block.t === "d") {
-            // Wait for user selection
+            // Esperar interacción del alumno
         } else {
             setTimeout(nextBlock, 1500);
         }
@@ -355,74 +382,14 @@ function unlockContinue(label, action) {
     const btn = document.getElementById("continueBtn");
     if (btn) { btn.disabled = false; btn.innerText = label; btn.onclick = action; }
 }
+
 // =================================================================
-// MÓDULO ACTIVO DE REORDENAMIENTO DE RESPUESTAS (INTERCEPCIÓN DE DOM)
+// NUEVA IMPLEMENTACIÓN DE REVISIÓN PSICOSOCIAL PERSISTENTE
 // =================================================================
-(function() {
-    /**
-     * Intercepta el contenedor de respuestas y mezcla sus elementos visuales de forma aleatoria.
-     * Cambia el orden físico en pantalla (1ra, 2da, 3ra o 4ta posición al azar).
-     */
-    function reordenarRespuestasEnPantalla() {
-        // 1. Identificar el contenedor de las respuestas. 
-        // Cambia '.opciones-contenedor' o '#contenedor-respuestas' por la clase o ID real de tu app.
-        const contenedor = document.querySelector('.opciones-contenedor') || 
-                           document.getElementById('contenedor-respuestas') || 
-                           document.querySelector('.answers-grid');
+function inyectarPanelPsicosocialEstatico() {
+    // Si ya se encuentra renderizado abajo, evitamos duplicados
+    if (document.getElementById('panel-evaluacion-estudiante')) return;
 
-        if (!contenedor) return; // Si no encuentra el contenedor en esta pantalla, sale pacíficamente.
-
-        // 2. Obtener todos los elementos hijos (los botones o divs de las opciones de respuesta)
-        const respuestas = Array.from(contenedor.children);
-        if (respuestas.length === 0) return;
-
-        // 3. Algoritmo de mezcla directa sobre los elementos visuales
-        for (let i = respuestas.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            // Intercambio de nodos en el arreglo
-            const temp = respuestas[i];
-            respuestas[i] = respuestas[j];
-            respuestas[j] = temp;
-        }
-
-        // 4. Remover los elementos en el orden viejo y reinsertarlos en el nuevo orden aleatorio
-        contenedor.innerHTML = '';
-        respuestas.forEach(nodo => {
-            contenedor.appendChild(nodo);
-        });
-
-        console.log("Respuestas reordenadas visualmente con éxito.");
-    }
-
-    // 5. Automatización: Ejecutar la mezcla de forma continua cada vez que cambie el contenido de la pantalla
-    const observadorConfig = { childList: true, subtree: true };
-    const observador = new MutationObserver((mutaciones) => {
-        // Desconectamos momentáneamente para evitar bucles infinitos al modificar el DOM
-        observador.disconnect();
-        
-        reordenarRespuestasEnPantalla();
-        
-        // Volvemos a activar la escucha activa para la siguiente pregunta
-        reconectarObservador();
-    });
-
-    function reconectarObservador() {
-        const objetivo = document.getElementById('app-main-content') || document.body;
-        observador.observe(objetivo, observadorConfig);
-    }
-
-    // Iniciar el observador activo cuando el documento esté listo
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', reconectarObservador);
-    } else {
-        reconectarObservador();
-    }
-})();
-// =================================================================
-// MÓDULO DE REVISIÓN Y EVALUACIÓN PSICOSOCIAL DEL ESTUDIANTE
-// =================================================================
-(function() {
-    // 1. Definición de los criterios de revisión organizados por áreas
     const criteriosEvaluacion = [
         { id: 'p1', area: 'Psicológica', aspecto: 'Manejo del estrés académico', sugerencia: '¿Muestra estabilidad ante tareas complejas o presión de tiempo?' },
         { id: 'p2', area: 'Psicológica', aspecto: 'Motivación y Enfoque', sugerencia: '¿Mantiene la atención de forma constante durante las actividades?' },
@@ -430,92 +397,76 @@ function unlockContinue(label, action) {
         { id: 's2', area: 'Social', aspecto: 'Adaptación al Método', sugerencia: '¿Muestra una actitud abierta ante las dinámicas propuestas?' }
     ];
 
-    // 2. Función para renderizar la interfaz de revisión en pantalla
-    function inicializarPanelEvaluacion() {
-        // Buscar un contenedor en tu HTML o insertarlo al final del body
-        const contenedorPadre = document.getElementById('contenedor-evaluacion') || document.body;
-        
-        const panelHTML = document.createElement('div');
-        panelHTML.id = 'panel-evaluacion-estudiante';
-        panelHTML.style.margin = '20px';
-        panelHTML.style.padding = '15px';
-        panelHTML.style.border = '1px solid #ccc';
-        panelHTML.style.borderRadius = '8px';
-        panelHTML.style.backgroundColor = '#f9f9f9';
+    const panelHTML = document.createElement('div');
+    panelHTML.id = 'panel-evaluacion-estudiante';
+    panelHTML.style.margin = '20px auto';
+    panelHTML.style.maxWidth = '600px';
+    panelHTML.style.padding = '15px';
+    panelHTML.style.border = '1px solid #ccc';
+    panelHTML.style.borderRadius = '8px';
+    panelHTML.style.backgroundColor = '#f9f9f9';
+    panelHTML.style.color = '#333';
 
-        // Construcción de la tabla para visualización clara y scannable
-        let tablaHTML = `
-            <h3 style="margin-top:0;">Revisión de Perfil Psicosocial</h3>
-            <p style="font-size:14px; color:#555;">Seleccione el estado observado para cada uno de los aspectos clave:</p>
-            <table style="width:100%; border-collapse: collapse; margin-bottom: 15px;">
-                <thead>
-                    <tr style="background-color: #eaeaea; text-align: left;">
-                        <th style="padding: 8px; border-bottom: 2px solid #ddd;">Área</th>
-                        <th style="padding: 8px; border-bottom: 2px solid #ddd;">Aspecto Clave</th>
-                        <th style="padding: 8px; border-bottom: 2px solid #ddd;">Sugerencia de Análisis</th>
-                        <th style="padding: 8px; border-bottom: 2px solid #ddd;">Valoración</th>
-                    </tr>
-                </thead>
-                <tbody>
-        `;
-
-        criteriosEvaluacion.forEach(item => {
-            tablaHTML += `
-                <tr style="border-bottom: 1px solid #eee;">
-                    <td style="padding: 8px; font-weight: bold;">${item.area}</td>
-                    <td style="padding: 8px;">${item.aspecto}</td>
-                    <td style="padding: 8px; color: #666; font-size: 13px;">${item.sugerencia}</td>
-                    <td style="padding: 8px;">
-                        <select id="eval_${item.id}" style="padding: 4px; border-radius: 4px;">
-                            <option value="en_observacion">En Observación</option>
-                            <option value="favorable">Favorable</option>
-                            <option value="requiere_atencion">Requiere Atención</option>
-                        </select>
-                    </td>
+    let tablaHTML = `
+        <h3 style="margin-top:0; color:#1e293b;">Revisión de Perfil Psicosocial</h3>
+        <p style="font-size:14px; color:#555;">Seleccione el estado observado para cada uno de los aspectos clave:</p>
+        <table style="width:100%; border-collapse: collapse; margin-bottom: 15px; text-align: left;">
+            <thead>
+                <tr style="background-color: #eaeaea; color:#333;">
+                    <th style="padding: 8px; border-bottom: 2px solid #ddd;">Área</th>
+                    <th style="padding: 8px; border-bottom: 2px solid #ddd;">Aspecto Clave</th>
+                    <th style="padding: 8px; border-bottom: 2px solid #ddd;">Sugerencia de Análisis</th>
+                    <th style="padding: 8px; border-bottom: 2px solid #ddd;">Valoración</th>
                 </tr>
-            `;
-        });
+            </thead>
+            <tbody>
+    `;
 
+    criteriosEvaluacion.forEach(item => {
         tablaHTML += `
-                </tbody>
-            </table>
-            <div style="display: flex; gap: 10px; justify-content: flex-end;">
-                <button id="btn-borrar-eval" style="padding: 8px 12px; background-color: #f44336; color: white; border: none; border-radius: 4px; cursor: pointer;">Borrar Selección</button>
-                <button id="btn-guardar-eval" style="padding: 8px 12px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">Rectificar y Guardar</button>
-            </div>
+            <tr style="border-bottom: 1px solid #eee;">
+                <td style="padding: 8px; font-weight: bold;">${item.area}</td>
+                <td style="padding: 8px;">${item.aspecto}</td>
+                <td style="padding: 8px; color: #666; font-size: 13px;">${item.sugerencia}</td>
+                <td style="padding: 8px;">
+                    <select id="eval_${item.id}" style="padding: 4px; border-radius: 4px; border: 1px solid #bbb; background: #fff; color: #000;">
+                        <option value="en_observacion">En Observación</option>
+                        <option value="favorable">Favorable</option>
+                        <option value="requiere_atencion">Requiere Atención</option>
+                    </select>
+                </td>
+            </tr>
         `;
+    });
 
-        panelHTML.innerHTML = tablaHTML;
-        contenedorPadre.appendChild(panelHTML);
+    tablaHTML += `
+            </tbody>
+        </table>
+        <div style="display: flex; gap: 10px; justify-content: flex-end;">
+            <button id="btn-borrar-eval" style="padding: 8px 12px; background-color: #f44336; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">Borrar Selección</button>
+            <button id="btn-guardar-eval" style="padding: 8px 12px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">Rectificar y Guardar</button>
+        </div>
+    `;
 
-        // 3. Asignación de eventos a los botones
-        document.getElementById('btn-borrar-eval').addEventListener('click', reiniciarFormulario);
-        document.getElementById('btn-guardar-eval').addEventListener('click', procesarEvaluacion);
-    }
+    panelHTML.innerHTML = tablaHTML;
+    
+    // Lo insertamos inmediatamente después del contenedor principal de la App para que no se borre con el innerHTML del render
+    const appWrapper = document.getElementById("app");
+    appWrapper.parentNode.insertBefore(panelHTML, appWrapper.nextSibling);
 
-    // 4. Acción para restablecer las selecciones (Botón de borrar)
-    function reiniciarFormulario() {
+    // Asignación de eventos en tiempo de ejecución
+    document.getElementById('btn-borrar-eval').addEventListener('click', () => {
         criteriosEvaluacion.forEach(item => {
             document.getElementById(`eval_${item.id}`).value = 'en_observacion';
         });
-    }
+    });
 
-    // 5. Acción para recopilar y tramitar los resultados obtenidos
-    function procesarEvaluacion() {
+    document.getElementById('btn-guardar-eval').addEventListener('click', () => {
         const resultados = {};
         criteriosEvaluacion.forEach(item => {
             resultados[item.id] = document.getElementById(`eval_${item.id}`).value;
         });
-
-        // Sugerencia de integración: Aquí se puede vincular con tu backend para almacenar los datos de forma segura
         console.log("Datos de revisión psicosocial listos para procesamiento:", resultados);
         alert("Los datos de la revisión han sido registrados correctamente para su posterior asesoría.");
-    }
-
-    // Asegurar que la interfaz se monte cuando el DOM esté completamente listo
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', inicializarPanelEvaluacion);
-    } else {
-        inicializarPanelEvaluacion();
-    }
-})();
+    });
+}
