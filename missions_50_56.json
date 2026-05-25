@@ -25,21 +25,21 @@
         "inf":{"en":"Restores focus to your brain"}
         },
         {"t":"d","q":{"en":"What can you do if your mouth is dry and you have no water?"},
-        "op":["Panic","Chew a small thread from your clothes","Stop the test","Forget everything"],
-        "c":1,
+        "op":["Panic","Stop the test","Forget everything","Chew a small thread from your clothes"],
+        "c":3,
         "ex":[
           "Panic loses time",
-          "Chewing a thread creates saliva and focus",
           "Stopping fails the test",
-          "Forgetting is not the way"
+          "Forgetting is not the way",
+          "Chewing a thread creates saliva and focus"
         ]},
         {"t":"d","q":{"en":"Why is staying calm important during a test?"},
-        "op":["It helps focus","It makes you fail","It removes memory","It wastes time"],
-        "c":0,
+        "op":["It makes you fail","It removes memory","It helps focus","It wastes time"],
+        "c":2,
         "ex":[
-          "Calm improves concentration",
           "Stress causes more mistakes",
           "Memory works better when calm",
+          "Calm improves concentration",
           "Calm saves mental energy"
         ]},
         {"t":"r","tx":"+Resourcefulness","p":25},
@@ -65,20 +65,20 @@
         "inf":{"en":"Keeps you calm while waiting"}
         },
         {"t":"d","q":{"en":"Where should you wait for the car?"},
-        "op":["In the middle of the road","Where your parents can see you","Behind a wall","Running to the door"],
-        "c":1,
+        "op":["In the middle of the road","Behind a wall","Where your parents can see you","Running to the door"],
+        "c":2,
         "ex":[
           "Road is dangerous",
-          "Visibility equals safety",
           "Hiding is unsafe",
+          "Visibility equals safety",
           "Running leads to accidents"
         ]},
         {"t":"d","q":{"en":"Why should you stay far from moving cars?"},
-        "op":["To stay safe","To play games","To hide","To move faster"],
-        "c":0,
+        "op":["To play games","To stay safe","To hide","To move faster"],
+        "c":1,
         "ex":[
-          "Distance protects you",
           "Cars are not toys",
+          "Distance protects you",
           "Hiding reduces visibility",
           "Rushing increases danger"
         ]},
@@ -105,22 +105,22 @@
         "inf":{"en":"Prevents rushing into danger"}
         },
         {"t":"d","q":{"en":"When is it safe to unbuckle and get out?"},
-        "op":["When the car is moving slow","When the car is fully stopped","As soon as you see the house","When you are bored"],
-        "c":1,
+        "op":["When the car is fully stopped","When the car is moving slow","As soon as you see the house","When you are bored"],
+        "c":0,
         "ex":[
-          "Moving cars are dangerous",
           "Full stop means safety",
+          "Moving cars are dangerous",
           "Rushing causes falls",
           "Boredom is not a reason"
         ]},
         {"t":"d","q":{"en":"Which side should you exit from?"},
-        "op":["The safe side","The traffic side","Any side","The fastest side"],
-        "c":0,
+        "op":["The traffic side","Any side","The fastest side","The safe side"],
+        "c":3,
         "ex":[
-          "Safe side prevents accidents",
           "Traffic side increases danger",
           "Not every side is safe",
-          "Fast is not always safe"
+          "Fast is not always safe",
+          "Safe side prevents accidents"
         ]},
         {"t":"r","tx":"+Discipline","p":20},
         {"t":"sil","d":60,
@@ -145,12 +145,12 @@
         "inf":{"en":"Your eyes are your radar"}
         },
         {"t":"d","q":{"en":"What should you look for first in a new place?"},
-        "op":["Toys","Exits and helpers","The floor","The ceiling"],
-        "c":1,
+        "op":["Toys","The floor","Exits and helpers","The ceiling"],
+        "c":2,
         "ex":[
           "Toys can wait",
-          "Exits and authority keep you safe",
           "Floor has no info",
+          "Exits and authority keep you safe",
           "Ceiling is not helpful"
         ]},
         {"t":"d","q":{"en":"Why is scanning a place important?"},
@@ -185,20 +185,20 @@
         "inf":{"en":"Preparation removes fear"}
         },
         {"t":"d","q":{"en":"If there is a big danger at school, what do you do?"},
-        "op":["Cry","Hide, stay safe, or run","Freeze","Call for friends"],
-        "c":1,
+        "op":["Cry","Freeze","Call for friends","Hide, stay safe, or run"],
+        "c":3,
         "ex":[
           "Crying blocks action",
-          "Hide/Safe/Run is the protocol",
           "Freezing is dangerous",
-          "Following protocol saves lives"
+          "Following protocol saves lives",
+          "Hide/Safe/Run is the protocol"
         ]},
         {"t":"d","q":{"en":"Why is preparation important?"},
-        "op":["It helps you react safely","It creates panic","It wastes energy","It causes confusion"],
-        "c":0,
+        "op":["It creates panic","It helps you react safely","It wastes energy","It causes confusion"],
+        "c":1,
         "ex":[
-          "Preparation improves response",
           "Fear grows when unprepared",
+          "Preparation improves response",
           "Planning saves energy",
           "Preparation reduces confusion"
         ]},
@@ -225,22 +225,22 @@
         "inf":{"en":"Locks info in your long-term memory"}
         },
         {"t":"d","q":{"en":"Why should you memorize phone numbers?"},
-        "op":["To do math","To be safe if you lose your phone","To impress teachers","To talk a lot"],
-        "c":1,
+        "op":["To be safe if you lose your phone","To do math","To impress teachers","To talk a lot"],
+        "c":0,
         "ex":[
-          "Not for math",
           "Memory is your backup in emergencies",
+          "Not for math",
           "Not for others",
           "For safety"
         ]},
         {"t":"d","q":{"en":"What happens when you practice remembering important numbers?"},
-        "op":["Your memory gets stronger","You forget more","You become slower","Nothing changes"],
-        "c":0,
+        "op":["You forget more","You become slower","Nothing changes","Your memory gets stronger"],
+        "c":3,
         "ex":[
-          "Practice improves memory",
           "Training helps recall",
           "Memory skills support safety",
-          "Your brain learns through repetition"
+          "Your brain learns through repetition",
+          "Practice improves memory"
         ]},
         {"t":"r","tx":"+Security","p":25},
         {"t":"sil","d":60,
@@ -265,12 +265,12 @@
         "inf":{"en":"Prepares your brain for lucid dreaming"}
         },
         {"t":"d","q":{"en":"Who controls what happens in your dreams?"},
-        "op":["The monsters","YOU do","The teacher","Nobody"],
-        "c":1,
+        "op":["The monsters","The teacher","YOU do","Nobody"],
+        "c":2,
         "ex":[
           "Monsters are not real",
-          "It is your mind, you have the power",
           "Teachers aren't there",
+          "It is your mind, you have the power",
           "You have the control"
         ]},
         {"t":"d","q":{"en":"What helps your mind stay active before sleep?"},
