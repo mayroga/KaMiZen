@@ -31,7 +31,6 @@
       "b":[
         {"t":"v","tx":{"en":"MISSION 36: CALM YOUR BODY BEFORE THE TEST"}},
         {"t":"h","tx":{"en":"Your body is safe. It is just getting ready."}},
-
         {"story":{"en":"If your heart beats fast or your stomach feels strange, it is only energy. Not danger. Your body is helping you focus."}},
         {
           "t":"breath_auto",
@@ -44,16 +43,16 @@
           "q":{"en":"What does nervous feeling mean?"},
           "op":[
             "Danger",
-            "My body is ready",
             "Something is wrong",
-            "I should escape"
+            "I should escape",
+            "My body is ready"
           ],
-          "c":1,
+          "c":3,
           "ex":[
             "Thinking it is danger increases fear.",
-            "Correct. Nervous feelings are your body preparing you.",
             "Believing something is wrong can create panic.",
-            "Escaping teaches the brain to fear the situation."
+            "Escaping teaches the brain to fear the situation.",
+            "Correct. Nervous feelings are your body preparing you."
           ]
         },
         {
@@ -61,15 +60,15 @@
           "q":{"en":"What helps calm your body before a test?"},
           "op":[
             "Fast panic thinking",
-            "Slow breathing",
             "Running away",
+            "Slow breathing",
             "Ignoring feelings"
           ],
-          "c":1,
+          "c":2,
           "ex":[
             "Panic increases stress.",
-            "Correct. Slow breathing calms the nervous system.",
             "Avoiding increases fear later.",
+            "Correct. Slow breathing calms the nervous system.",
             "Ignoring feelings does not regulate them."
           ]
         },
@@ -106,16 +105,16 @@
           "q":{"en":"What should you do when you feel fear?"},
           "op":[
             "Stop everything",
-            "Stay calm and continue",
             "Run away",
-            "Scream"
+            "Scream",
+            "Stay calm and continue"
           ],
-          "c":1,
+          "c":3,
           "ex":[
             "Stopping breaks progress",
-            "Calm keeps control",
             "Running avoids learning",
-            "Screaming increases stress"
+            "Screaming increases stress",
+            "Calm keeps control"
           ]
         },
         {
@@ -123,15 +122,15 @@
           "q":{"en":"What is fear really?"},
           "op":[
             "A danger command",
-            "A temporary feeling",
             "Proof you cannot do it",
+            "A temporary feeling",
             "A reason to quit"
           ],
-          "c":1,
+          "c":2,
           "ex":[
             "Fear is not always danger.",
-            "Correct. Fear is only a feeling.",
             "Fear does not define ability.",
+            "Correct. Fear is only a feeling.",
             "Quitting strengthens avoidance."
           ]
         },
@@ -167,15 +166,15 @@
           "t":"d",
           "q":{"en":"Best way to take an exam?"},
           "op":[
-            "All at once",
             "One by one",
+            "All at once",
             "Random guessing",
             "Skip everything"
           ],
-          "c":1,
+          "c":0,
           "ex":[
-            "All at once = confusion",
             "One by one = control",
+            "All at once = confusion",
             "Guessing = mistakes",
             "Skipping = incomplete"
           ]
@@ -185,16 +184,16 @@
           "q":{"en":"What improves focus during pressure?"},
           "op":[
             "Thinking about everything",
-            "Staying with one step",
             "Panicking",
-            "Looking at others"
+            "Looking at others",
+            "Staying with one step"
           ],
-          "c":1,
+          "c":3,
           "ex":[
             "Too many thoughts create overload.",
-            "Correct. One step improves focus.",
             "Panic blocks concentration.",
-            "Comparing yourself creates distraction."
+            "Comparing yourself creates distraction.",
+            "Correct. One step improves focus."
           ]
         },
         {"t":"r","tx":"+Focus","p":25},
@@ -229,7 +228,7 @@
           "t":"d",
           "q":{"en":"What should you do if a question is hard?"},
           "op":[
-            "Freeze",
+            "Freezing stops thinking",
             "Skip and return later",
             "Give up",
             "Panic"
@@ -246,15 +245,15 @@
           "t":"d",
           "q":{"en":"What helps solve difficult problems?"},
           "op":[
-            "Breaking it into steps",
             "Panicking immediately",
+            "Breaking it into steps",
             "Thinking you are incapable",
             "Stopping completely"
           ],
-          "c":0,
+          "c":1,
           "ex":[
-            "Correct. Small steps improve problem solving.",
             "Panic reduces clear thinking.",
+            "Correct. Small steps improve problem solving.",
             "Negative beliefs block effort.",
             "Stopping removes all progress."
           ]
@@ -292,15 +291,15 @@
           "q":{"en":"What is the best thought?"},
           "op":[
             "I will fail",
-            "I go step by step",
             "I cannot do it",
+            "I go step by step",
             "I give up"
           ],
-          "c":1,
+          "c":2,
           "ex":[
             "Failure = fear",
-            "Step by step = control",
             "Cannot = block",
+            "Step by step = control",
             "Giving up = stop"
           ]
         },
@@ -308,15 +307,15 @@
           "t":"d",
           "q":{"en":"What builds self-trust?"},
           "op":[
-            "Encouraging yourself calmly",
             "Attacking yourself mentally",
+            "Encouraging yourself calmly",
             "Quitting early",
             "Comparing yourself constantly"
           ],
-          "c":0,
+          "c":1,
           "ex":[
-            "Correct. Calm support builds confidence.",
             "Self-attacks increase fear.",
+            "Correct. Calm support builds confidence.",
             "Quitting weakens trust.",
             "Comparison increases insecurity."
           ]
@@ -354,16 +353,16 @@
           "q":{"en":"What matters most?"},
           "op":[
             "Being perfect",
-            "Doing your best",
             "Never failing",
-            "Finishing first"
+            "Finishing first",
+            "Doing your best"
           ],
-          "c":1,
+          "c":3,
           "ex":[
             "Perfect = stress",
-            "Best effort = success",
             "No failure = impossible",
-            "Speed alone = not learning"
+            "Speed alone = not learning",
+            "Best effort = success"
           ]
         },
         {
@@ -432,16 +431,16 @@
           "t":"d",
           "q":{"en":"What helps recovery after stress?"},
           "op":[
-            "Resting calmly",
             "Overthinking constantly",
             "Attacking yourself mentally",
+            "Resting calmly",
             "Refusing to relax"
           ],
-          "c":0,
+          "c":2,
           "ex":[
-            "Correct. Rest helps recovery.",
             "Overthinking extends stress.",
             "Self-criticism increases emotional pain.",
+            "Correct. Rest helps recovery.",
             "No rest delays recovery."
           ]
         },
