@@ -32,13 +32,13 @@
 },
 
 {"t":"d","q":{"en":"You are in school and something feels unusual. What is the best action?"},
-"op":["Ignore it","Observe carefully","Run without thinking","Close your eyes"],
-"c":1,
+"op":["Ignore it","Run without thinking","Close your eyes","Observe carefully"],
+"c":3,
 "ex":[
 "Ignore = you miss important signals",
-"Observe = you understand reality better",
 "Run without thinking = confusion",
-"Close eyes = no awareness"
+"Close eyes = no awareness",
+"Observe = you understand reality better"
 ]},
 
 {"t":"d","q":{"en":"You are walking and see something new in your environment. What do you do first?"},
@@ -84,12 +84,12 @@
 },
 
 {"t":"d","q":{"en":"Someone says something mean. What is the best response?"},
-"op":["Shout back","Stay calm and walk away","Hit them","Cry silently"],
-"c":1,
+"op":["Shout back","Hit them","Stay calm and walk away","Cry silently"],
+"c":2,
 "ex":[
 "Shouting escalates conflict",
-"Calm walk away protects you",
 "Physical reaction increases problems",
+"Calm walk away protects you",
 "Crying alone doesn't solve situation"
 ]},
 
@@ -136,23 +136,23 @@
 },
 
 {"t":"d","q":{"en":"You are in a public place and lose sight of your parents. What do you do?"},
-"op":["Walk away alone","Stay in place and find staff or security","Follow strangers","Start running"],
-"c":1,
+"op":["Walk away alone","Follow strangers","Stay in place and find staff or security","Start running"],
+"c":2,
 "ex":[
 "Walking alone increases risk",
-"Staying and asking for help is safest",
 "Following strangers is unsafe",
+"Staying and asking for help is safest",
 "Running creates confusion"
 ]},
 
 {"t":"d","q":{"en":"A stranger asks you to go somewhere. What is correct?"},
-"op":["Go immediately","Say no and stay near safe adults","Keep it secret","Follow quietly"],
-"c":1,
+"op":["Go immediately","Keep it secret","Follow quietly","Say no and stay near safe adults"],
+"c":3,
 "ex":[
 "You should never go with strangers",
-"Saying no protects you",
 "Secrets increase danger",
-"Following is unsafe"
+"Following is unsafe",
+"Saying no protects you"
 ]},
 
 {"t":"r","tx":"+Protection","p":25},
@@ -188,23 +188,23 @@
 },
 
 {"t":"d","q":{"en":"In school, an announcement says to follow teacher instructions immediately. What do you do?"},
-"op":["Ignore it","Follow teacher calmly","Run alone","Hide randomly"],
-"c":1,
+"op":["Follow teacher calmly","Ignore it","Run alone","Hide randomly"],
+"c":0,
 "ex":[
-"Ignoring removes safety structure",
 "Teacher guidance keeps you safe",
+"Ignoring removes safety structure",
 "Running alone creates risk",
 "Random hiding increases confusion"
 ]},
 
 {"t":"d","q":{"en":"If something feels confusing, what is the best action?"},
-"op":["Panic","Stay near adults","Leave alone","Do nothing"],
-"c":1,
+"op":["Panic","Leave alone","Do nothing","Stay near adults"],
+"c":3,
 "ex":[
 "Panic reduces thinking",
-"Adults guide safety",
 "Leaving alone is risky",
-"Doing nothing delays safety"
+"Doing nothing delays safety",
+"Adults guide safety"
 ]},
 
 {"t":"r","tx":"+Action","p":30},
@@ -240,12 +240,12 @@
 },
 
 {"t":"d","q":{"en":"Someone online asks for personal information. What do you do?"},
-"op":["Share it","Tell a trusted adult","Ignore safety rules","Reply everything"],
-"c":1,
+"op":["Share it","Ignore safety rules","Tell a trusted adult","Reply everything"],
+"c":2,
 "ex":[
 "Sharing personal info is unsafe",
-"Adults help protect you",
 "Ignoring rules increases risk",
+"Adults help protect you",
 "Replying everything gives control away"
 ]},
 
@@ -292,21 +292,21 @@
 },
 
 {"t":"d","q":{"en":"You want ice cream, but your parents say money is limited. What do you do?"},
-"op":["Get angry","Understand and wait","Demand it","Take money secretly"],
-"c":1,
+"op":["Get angry","Demand it","Take money secretly","Understand and wait"],
+"c":3,
 "ex":[
 "Anger creates conflict",
-"Understanding builds respect",
 "Demanding is pressure",
-"Taking money is wrong"
+"Taking money is wrong",
+"Understanding builds respect"
 ]},
 
 {"t":"d","q":{"en":"How can you help your family?"},
-"op":["Waste resources","Be responsible and help at home","Ignore everything","Ask only for things"],
-"c":1,
+"op":["Be responsible and help at home","Waste resources","Ignore everything","Ask only for things"],
+"c":0,
 "ex":[
-"Wasting resources is harmful",
 "Helping builds teamwork",
+"Wasting resources is harmful",
 "Ignoring reduces connection",
 "Only asking creates imbalance"
 ]},
@@ -344,23 +344,23 @@
 },
 
 {"t":"d","q":{"en":"You are asked to do a small task at home. What is best?"},
-"op":["Ignore it","Do it calmly","Get angry","Run away"],
-"c":1,
+"op":["Ignore it","Get angry","Do it calmly","Run away"],
+"c":2,
 "ex":[
 "Ignoring reduces trust",
-"Doing it builds responsibility",
 "Anger creates conflict",
+"Doing it builds responsibility",
 "Running avoids growth"
 ]},
 
 {"t":"d","q":{"en":"What helps you grow skills faster?"},
-"op":["Never practice","Practice small daily habits","Wait for others","Only play games"],
-"c":1,
+"op":["Never practice","Wait for others","Only play games","Practice small daily habits"],
+"c":3,
 "ex":[
 "No practice stops growth",
-"Daily habits build mastery",
 "Waiting slows progress",
-"Only playing limits development"
+"Only playing limits development",
+"Daily habits build mastery"
 ]},
 
 {"t":"r","tx":"+Respect","p":30},
