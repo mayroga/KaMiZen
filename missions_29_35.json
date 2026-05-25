@@ -41,16 +41,16 @@
           "q":{"en":"What shows systems thinking?"},
           "op":[
             "Thinking only about now",
-            "Understanding consequences",
             "Ignoring others",
-            "Reacting fast"
+            "Reacting fast",
+            "Understanding consequences"
           ],
-          "c":1,
+          "c":3,
           "ex":[
             "Only now = short-term thinking",
-            "Consequences = systems awareness",
             "Ignoring = isolation thinking",
-            "Reaction = low foresight"
+            "Reaction = low foresight",
+            "Consequences = systems awareness"
           ]
         },
         {
@@ -83,7 +83,6 @@
           "tx":{"en":"Inhale awareness... exhale noise"},
           "inf":{"en":"Reduces cognitive fragmentation and improves clarity"}
         }
-
       ]
     },
     {
@@ -103,15 +102,15 @@
           "t":"d",
           "q":{"en":"What builds identity?"},
           "op":[
-            "Random actions",
             "Repeated habits",
+            "Random actions",
             "One big event",
             "Other people's opinion"
           ],
-          "c":1,
+          "c":0,
           "ex":[
-            "Random = unstable identity",
             "Habits = consistent identity",
+            "Random = unstable identity",
             "Single event = temporary impact",
             "Opinions = external control"
           ]
@@ -121,15 +120,15 @@
           "q":{"en":"What strengthens responsibility?"},
           "op":[
             "Blaming others",
-            "Owning your actions",
             "Avoiding consequences",
+            "Owning your actions",
             "Ignoring mistakes"
           ],
-          "c":1,
+          "c":2,
           "ex":[
             "Blame removes accountability",
-            "Ownership builds maturity",
             "Avoidance weakens growth",
+            "Ownership builds maturity",
             "Ignoring mistakes prevents learning"
           ]
         },
@@ -166,15 +165,15 @@
           "q":{"en":"What is strongest thinking?"},
           "op":[
             "Following group automatically",
-            "Thinking independently",
             "Doing nothing",
+            "Thinking independently",
             "Copying behavior"
           ],
-          "c":1,
+          "c":2,
           "ex":[
             "Automatic following = low awareness",
-            "Independent thinking = control",
             "Doing nothing = disengagement",
+            "Independent thinking = control",
             "Copying = loss of identity"
           ]
         },
@@ -183,16 +182,16 @@
           "q":{"en":"What reduces unhealthy conformity?"},
           "op":[
             "Blind imitation",
-            "Questioning social pressure",
             "Fear of rejection",
-            "Automatic agreement"
+            "Automatic agreement",
+            "Questioning social pressure"
           ],
-          "c":1,
+          "c":3,
           "ex":[
             "Imitation weakens individuality",
-            "Questioning builds awareness",
             "Fear increases dependency",
-            "Automatic agreement reduces control"
+            "Automatic agreement reduces control",
+            "Questioning builds awareness"
           ]
         },
         {"t":"r","tx":"+Character","p":30},
@@ -228,15 +227,15 @@
           "q":{"en":"What is best decision style?"},
           "op":[
             "Rush without thinking",
-            "Analyze calmly",
             "Ignore details",
+            "Analyze calmly",
             "Follow emotion"
           ],
-          "c":1,
+          "c":2,
           "ex":[
             "Rush = errors",
-            "Analysis = clarity",
             "Ignoring = incomplete data",
+            "Analysis = clarity",
             "Emotion = bias"
           ]
         },
@@ -244,15 +243,15 @@
           "t":"d",
           "q":{"en":"What improves complex decision accuracy?"},
           "op":[
-            "Impulsive action",
             "Evaluating multiple factors",
+            "Impulsive action",
             "Ignoring consequences",
             "Random choices"
           ],
-          "c":1,
+          "c":0,
           "ex":[
-            "Impulsivity reduces clarity",
             "Multiple-factor thinking improves reasoning",
+            "Impulsivity reduces clarity",
             "Ignoring outcomes creates risk",
             "Random choices reduce stability"
           ]
@@ -290,31 +289,31 @@
           "q":{"en":"What transforms stress into control?"},
           "op":[
             "Panic",
-            "Structured breathing",
             "Avoiding situation",
-            "Overreacting"
+            "Overreacting",
+            "Structured breathing"
           ],
-          "c":1,
+          "c":3,
           "ex":[
             "Panic = loss of control",
-            "Breathing = regulation",
             "Avoidance = unresolved stress",
-            "Overreaction = escalation"
+            "Overreaction = escalation",
+            "Breathing = regulation"
           ]
         },
         {
           "t":"d",
           "q":{"en":"What increases resilience under pressure?"},
           "op":[
-            "Calm focus",
             "Mental shutdown",
+            "Calm focus",
             "Fear escalation",
             "Impulsive reaction"
           ],
-          "c":0,
+          "c":1,
           "ex":[
-            "Focus stabilizes performance",
             "Shutdown blocks adaptation",
+            "Focus stabilizes performance",
             "Escalation increases stress",
             "Impulsivity reduces control"
           ]
@@ -352,15 +351,15 @@
           "q":{"en":"What is highest mental skill?"},
           "op":[
             "React instantly",
-            "Observe thoughts",
             "Ignore thinking",
+            "Observe thoughts",
             "Act randomly"
           ],
-          "c":1,
+          "c":2,
           "ex":[
             "Instant reaction = low awareness",
-            "Observation = mastery",
             "Ignoring = unconscious behavior",
+            "Observation = mastery",
             "Random action = chaos"
           ]
         },
@@ -368,17 +367,17 @@
           "t":"d",
           "q":{"en":"What improves self-awareness most?"},
           "op":[
-            "Watching thoughts calmly",
             "Automatic reactions",
             "Avoiding reflection",
-            "Constant distraction"
+            "Constant distraction",
+            "Watching thoughts calmly"
           ],
-          "c":0,
+          "c":3,
           "ex":[
-            "Observation strengthens metacognition",
             "Automatic behavior reduces awareness",
             "Avoidance blocks learning",
-            "Distraction weakens focus"
+            "Distraction weakens focus",
+            "Observation strengthens metacognition"
           ]
         },
         {"t":"r","tx":"+Mastery","p":35},
@@ -413,15 +412,15 @@
           "t":"d",
           "q":{"en":"What defines mastery?"},
           "op":[
-            "No mistakes ever",
             "Consistent awareness and control",
+            "No mistakes ever",
             "Fast reactions",
             "Avoiding all problems"
           ],
-          "c":1,
+          "c":0,
           "ex":[
-            "No mistakes = unrealistic",
             "Consistency = mastery",
+            "No mistakes = unrealistic",
             "Fast reaction = instability",
             "Avoidance = no growth"
           ]
@@ -430,15 +429,15 @@
           "t":"d",
           "q":{"en":"What strengthens long-term self-mastery?"},
           "op":[
-            "Daily conscious choices",
             "Impulsive behavior",
+            "Daily conscious choices",
             "Ignoring self-reflection",
             "Avoiding challenges"
           ],
-          "c":0,
+          "c":1,
           "ex":[
-            "Conscious action builds mastery",
             "Impulsivity weakens control",
+            "Conscious action builds mastery",
             "No reflection reduces awareness",
             "Avoidance blocks growth"
           ]
