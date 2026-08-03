@@ -193,3 +193,6 @@ if __name__ == "__main__":
         port=8000,
         reload=True
     )
+@app.get("/ping")
+def ping():
+    return JSONResponse(content={"status": "alive"}, status_code=200)
