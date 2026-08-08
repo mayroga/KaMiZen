@@ -1,158 +1,239 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>KAMIZEN LIFE SYSTEM - CORE SESSION</title>
-    <style>
-        :root{
-            --bg:#0b1220;
-            --card:#111a2e;
-            --primary:#3b82f6;
-            --success:#22c55e;
-            --danger:#ef4444;
-            --text:#ffffff;
-            --dim:#94a3b8;
-        }
-        *{ box-sizing:border-box; }
-        body{
-            margin:0;
-            font-family:'Segoe UI', Arial, sans-serif;
-            background:var(--bg);
-            color:var(--text);
-            display:flex;
-            flex-direction: column;
-            align-items:center;
-            min-height:100vh;
-        }
-        #main-container{
-            width:100%;
-            max-width:700px;
-            padding:20px;
-        }
-        .card{
-            background:var(--card);
-            padding:20px;
-            border-radius:16px;
-            margin:15px 0;
-            box-shadow:0 10px 25px rgba(0,0,0,0.3);
-            border:1px solid rgba(255,255,255,0.05);
-        }
-        button{
-            width:100%;
-            padding:18px;
-            border:none;
-            border-radius:12px;
-            background:var(--primary);
-            color:white;
-            font-weight:bold;
-            font-size: 16px;
-            cursor:pointer;
-            transition:0.2s;
-            margin-bottom: 5px;
-        }
-        button:hover{ transform:translateY(-2px); }
-        button:disabled{ background: #334155; cursor: not-allowed; transform: none; }
-        
-        .answer{
-            background:#1f2937;
-            padding:12px;
-            margin:8px 0;
-            border-radius:10px;
-            cursor:pointer;
-            border-left:4px solid var(--primary);
-            transition:0.2s;
-        }
-        .answer:hover{ transform:translateX(5px); background:#374151; }
+<!DOCTYPE html> 
+<html lang="en"> 
+<head> 
+ <meta charset="UTF-8" /> 
+ <meta name="viewport" content="width=device-width, initial-scale=1.0"/> 
+ <title>KAMIZEN LIFE SYSTEM - CORE SESSION</title> 
+ <style> 
+ :root{ 
+ --bg:#0b1220; 
+ --card:#111a2e; 
+ --primary:#3b82f6; 
+ --success:#22c55e; 
+ --danger:#ef4444; 
+ --text:#ffffff; 
+ --dim:#94a3b8; 
+ } 
+ *{ 
+ box-sizing:border-box; 
+ } 
+ body{ 
+ margin:0; 
+ font-family:'Segoe UI', Arial, sans-serif; 
+ background:var(--bg); 
+ color:var(--text); 
+ display:flex; 
+ flex-direction: column; 
+ align-items:center; 
+ min-height:100vh; 
+ } 
+ #main-container{ 
+ width:100%; 
+ max-width:700px; 
+ padding:20px; 
+ } 
+ .card{ 
+ background:var(--card); 
+ padding:20px; 
+ border-radius:16px; 
+ margin:15px 0; 
+ box-shadow:0 10px 25px rgba(0,0,0,0.3); 
+ border:1px solid rgba(255,255,255,0.05); 
+ } 
+ button{ 
+ width:100%; 
+ padding:18px; 
+ border:none; 
+ border-radius:12px; 
+ background:var(--primary); 
+ color:white; 
+ font-weight:bold; 
+ font-size: 16px; 
+ cursor:pointer; 
+ transition:0.2s; 
+ margin-bottom: 5px; 
+ } 
+ button:hover{ 
+ transform:translateY(-2px); 
+ } 
+ button:disabled{ 
+ background: #334155; 
+ cursor: not-allowed; 
+ transform: none; 
+ } 
+ .answer{ 
+ background:#1f2937; 
+ padding:12px; 
+ margin:8px 0; 
+ border-radius:10px; 
+ cursor:pointer; 
+ border-left:4px solid var(--primary); 
+ transition:0.2s; 
+ } 
+ .answer:hover{ 
+ transform:translateX(5px); 
+ background:#374151; 
+ } 
+ .breath-circle{ 
+ width:160px; 
+ height:160px; 
+ border-radius:50%; 
+ margin:30px auto; 
+ border:6px solid var(--primary); 
+ display:flex; 
+ align-items:center; 
+ justify-content:center; 
+ font-size: 24px; 
+ font-weight: bold; 
+ transition: transform 4s ease-in-out; 
+ } 
+ h1,h2,h3{ 
+ margin:10px 0; 
+ } 
+ .small{ 
+ font-size:12px; 
+ color:var(--dim); 
+ } 
+ .center{ 
+ text-align:center; 
+ } 
+ #admin-controls { 
+ display: none; 
+ margin-top: 20px; 
+ opacity: 0.3; 
+ } 
+ #admin-controls:hover { 
+ opacity: 1; 
+ } 
+ /* PARENT VALIDATION STYLES */ 
+ .validation-card { 
+ background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); 
+ border: 2px solid var(--success); 
+ padding: 25px; 
+ border-radius: 20px; 
+ text-align: center; 
+ } 
+ .metric-grid { 
+ display: grid; 
+ grid-template-columns: 1fr 1fr; gap: 10px; 
+ margin: 20px 0; 
+ } 
+ .metric-item { 
+ background: rgba(255,255,255,0.05); 
+ padding: 10px; 
+ border-radius: 8px; 
+ font-size: 13px; 
+ } 
+ .print-btn { 
+ background: var(--success); 
+ margin-top: 15px; 
+ } 
+ 
+ /* ANIMACION EN ESPAÑOL DEL CIRCULO DE CARGA INTERNO */
+ @keyframes girarCarga {
+ 0% { transform: rotate(0deg); }
+ 100% { transform: rotate(360deg); }
+ }
 
-        .breath-circle{
-            width:160px;
-            height:160px;
-            border-radius:50%;
-            margin:30px auto;
-            border:6px solid var(--primary);
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            font-size: 24px;
-            font-weight: bold;
-            transition: transform 4s ease-in-out; 
-        }
+ @media print { 
+ body { 
+ background: white; 
+ color: black; 
+ } 
+ .card { 
+ border: 1px solid #ccc; 
+ box-shadow: none; 
+ } 
+ button, #admin-controls { 
+ display: none; 
+ } 
+ } 
+ </style> 
+</head> 
+<body> 
+ <div id="main-container"> 
+ <div class="card center"> 
+ <h2 style="color:var(--primary);">KAMIZEN LIFE SYSTEM</h2> 
+ <p class="small">Neural Training • Awareness • Discipline • Control</p> 
+ </div> 
+ 
+ <div id="app"> 
+ <!-- VENTANA LIMPIA QUE ESCONDE TODO EN PANTALLA MIENTRAS CORRE EL RELOJ -->
+ <div id="pantallaApoyo" style="display: none; padding: 40px 10px; text-align: center;">
+ <div style="border: 4px solid rgba(255,255,255,0.1); border-top: 4px solid var(--primary); border-radius: 50%; width: 50px; height: 50px; animation: girarCarga 1s linear infinite; margin: 0 auto 30px auto;"></div>
+ <h2 id="textoApoyo" style="color: var(--text); font-size: 22px; line-height: 1.6; font-weight: 500; margin-bottom: 20px;">
+ Preparando tu conexión segura...
+ </h2>
+ <p style="color: var(--dim); font-size: 14px;">Espere un momento, por favor.</p>
+ </div>
 
-        h1,h2,h3{ margin:10px 0; }
-        .small{ font-size:12px; color:var(--dim); }
-        .center{ text-align:center; }
+ <!-- CAJA DE ENTRADA INICIAL CON EL BOTON QUE ACTIVA TODO EN SECRETO -->
+ <div id="cargaInicial" class="card center"> 
+ <h3>INITIALIZING SYSTEM...</h3> 
+ <p>Syncing missions 1-63. Please wait.</p> 
+ <button onclick="iniciarDespertarYApoyo(event)" style="margin-top: 15px;">CONECTAR AL SISTEMA</button>
+ </div> 
+ </div> 
 
-        #admin-controls {
-            display: none; 
-            margin-top: 20px;
-            opacity: 0.3;
-        }
+ <div id="admin-controls" class="card"> 
+ <input id="missionInput" type="number" min="1" max="63" placeholder="Mission ID (1-63)" style="width:100%;padding:12px;border-radius:8px;border:none;margin-bottom:10px; background:#1f2937; color:white;"> 
+ <button onclick="jumpToMissionManual()" style="background:#4b5563;"> DEBUG: JUMP TO MISSION </button> 
+ </div> 
+ </div> 
 
-        #admin-controls:hover { 
-            opacity: 1; 
-        }
+ <script src="/static/js/engine.js"></script> 
+ <script>
+ // =========================================================
+ // BANCO DE FRASES DE APOYO PSICOLÓGICO Y CONTROL DE RELOJ
+ // =========================================================
+ const frasesApoyo = [
+ "Tu paciencia es tu mayor virtud hoy. Todo gran proceso toma un momento para iniciar.",
+ "Respira profundo. Estás tomando el control de tus metas y eso ya es un paso importante.",
+ "El éxito no lleva prisa. Estamos ordenando tu entorno para que todo salga perfecto.",
+ "Mantén la mente en calma, la tranquilidad abre todas las puertas al conocimiento.",
+ "Un momento de espera en silencio fortalece tu autodisciplina y tu enfoque mental.",
+ "Estás haciendo las cosas bien. En menos de un minuto tendrás el control en tus manos.",
+ "La seguridad y la claridad requieren su tiempo. Gracias por tu valiosa constancia.",
+ "Relaja los hombros y respira. Tu sesión se está configurando de forma segura.",
+ "Cada segundo de espera es un espacio de meditación para iniciar con máxima potencia.",
+ "Estás usando un sistema diseñado para tu crecimiento. Tu espacio seguro se está activando.",
+ "La paciencia es una habilidad de campeones. El sistema ya casi está listo.",
+ "No te dejes agobiar por el tiempo, el servidor está haciendo el trabajo pesado por ti hoy."
+ ];
 
-        /* PARENT VALIDATION STYLES */
-        .validation-card {
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            border: 2px solid var(--success);
-            padding: 25px;
-            border-radius: 20px;
-            text-align: center;
-        }
-        .metric-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin: 20px 0;
-        }
-        .metric-item {
-            background: rgba(255,255,255,0.05);
-            padding: 10px;
-            border-radius: 8px;
-            font-size: 13px;
-        }
-        .print-btn {
-            background: var(--success);
-            margin-top: 15px;
-        }
+ function iniciarDespertarYApoyo(event) {
+ if (event) event.preventDefault();
+ 
+ // 1. Despertamos al servidor en Render de forma silenciosa
+ fetch('/ping').catch(err => console.log("Llamando al servidor..."));
 
-        @media print {
-            body { background: white; color: black; }
-            .card { border: 1px solid #ccc; box-shadow: none; }
-            button, #admin-controls { display: none; }
-        }
-    </style>
-</head>
-<body>
+ // 2. Filtro de memoria para que nunca se repita la misma frase que leyó antes
+ let fraseElegida = "";
+ const ultimaFrase = sessionStorage.getItem('ultimaFraseKamizen');
+ let opcionesDisponibles = frasesApoyo.filter(f => f !== ultimaFrase);
+ 
+ if (opcionesDisponibles.length === 0) opcionesDisponibles = frasesApoyo;
+ 
+ fraseElegida = opcionesDisponibles[Math.floor(Math.random() * opcionesDisponibles.length)];
+ sessionStorage.setItem('ultimaFraseKamizen', fraseElegida);
 
-<div id="main-container">
-    <div class="card center">
-        <h2 style="color:var(--primary);">KAMIZEN LIFE SYSTEM</h2>
-        <p class="small">Neural Training • Awareness • Discipline • Control</p>
-    </div>
+ // 3. Escondemos la pantalla inicial y mostramos la ventana limpia con el apoyo
+ document.getElementById('cargaInicial').style.display = 'none';
+ document.getElementById('textoApoyo').innerText = fraseElegida;
+ document.getElementById('pantallaApoyo').style.display = 'block';
 
-    <div id="app">
-        <div class="card center">
-            <h3>INITIALIZING SYSTEM...</h3>
-            <p>Syncing missions 1-63. Please wait.</p>
-        </div>
-    </div>
+ // 4. Reloj de 40 segundos exactos en secreto antes de liberar tu motor principal
+ setTimeout(function() {
+ // Quitamos la ventana limpia de apoyo para que la pantalla quede lista
+ document.getElementById('pantallaApoyo').style.display = 'none';
+ 
+ console.log("Servidor despierto y caliente. Iniciando motor principal...");
+ if (typeof render === "function") {
+ render(); 
+ }
+ }, 40000); // 40 segundos exactos
+ }
 
-    <div id="admin-controls" class="card">
-        <input id="missionInput" type="number" min="1" max="63" placeholder="Mission ID (1-63)" 
-               style="width:100%;padding:12px;border-radius:8px;border:none;margin-bottom:10px; background:#1f2937; color:white;">
-        
-        <button onclick="jumpToMissionManual()" style="background:#4b5563;">
-            DEBUG: JUMP TO MISSION
-        </button>
-    </div>
-</div>
-
-<script src="/static/js/engine.js"></script>
-
-<script>
 // =========================================================
 // VALIDATION & REPORT FOR PARENTS (ALL PRO DAD MODEL)
 // =========================================================
