@@ -193,11 +193,7 @@ if __name__ == "__main__":
         port=8000,
         reload=True
     )
-
-
-# HEALTH CHECK — NO GEMINI / NO STRIPE / NO SESIÓN
-
-@app.get("/health")
-async def health():
-    return {"status": "ok"}
+@app.get("/ping")
+def ping():
+    return JSONResponse(content={"status": "alive"}, status_code=200)
 
