@@ -196,3 +196,10 @@ if __name__ == "__main__":
 @app.get("/ping")
 def ping():
     return JSONResponse(content={"status": "alive"}, status_code=200)
+
+# HEALTH CHECK — NO GEMINI / NO STRIPE / NO SESIÓN
+
+@app.get("/health")
+async def health():
+    return {"status": "ok"}
+
