@@ -240,7 +240,7 @@
 function renderValidationScreen(missionId, stats) {
     const app = document.getElementById('app');
     
-    app.innerHTML = `
+app.innerHTML = `
         <div class="card validation-card">
             <h2 style="color:var(--success);">MISSION COMPLETED</h2>
             <p class="small">NEURAL TRAINING VALIDATION REPORT</p>
@@ -267,6 +267,12 @@ function renderValidationScreen(missionId, stats) {
             <button class="print-btn" onclick="window.print()">
                 GENERATE COMPLIANCE PDF
             </button>
+
+            <a href="https://buy.stripe.com/bJeeVc1RJfGj5kP8Hx7Vm0u" target="_blank" rel="noopener" style="display:block;text-decoration:none;margin-top:10px;">
+                <button type="button" style="background:#334155;">
+                    💙 SUPPORT / COLLABORATE
+                </button>
+            </a>
             
             <button onclick="location.reload()" style="background:transparent; border:1px solid var(--dim); margin-top:10px;">
                 FINISH SESSION
